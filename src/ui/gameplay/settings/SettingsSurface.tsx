@@ -140,6 +140,7 @@ export function SettingsSurface({
   const [developmentPanelOpen, setDevelopmentPanelOpen] =
     useState(developmentOnly)
   const [dialog, setDialog] = useState<SaveDialog | null>(null)
+  const surfaceRef = useRef<HTMLDivElement>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
   const returnFocusRef = useRef<HTMLButtonElement | null>(null)
   const backdropRef = useRef<HTMLDivElement>(null)
@@ -159,11 +160,13 @@ export function SettingsSurface({
   useEffect(() => {
     if (dialog === null) return undefined
     const returnFocus = returnFocusRef.current
-    const backgroundSiblings = Array.from(document.body.children)
+    const backdrop = backdropRef.current
+    const portalParent = backdrop?.parentElement ?? document.body
+    const backgroundSiblings = Array.from(portalParent.children)
       .filter(
         (element): element is HTMLElement =>
           element instanceof HTMLElement &&
-          element !== backdropRef.current,
+          element !== backdrop,
       )
       .map((element) => ({
         element,
@@ -385,7 +388,7 @@ export function SettingsSurface({
   }
 
   return (
-    <div className="settings-surface">
+    <div ref={surfaceRef} className="settings-surface">
       <div
         className="settings-surface__content"
         aria-hidden={dialog !== null || undefined}
@@ -944,7 +947,10 @@ export function SettingsSurface({
               )}
             </div>
           </section>
-        </div>, document.body)
+        </div>,
+        surfaceRef.current?.closest<HTMLElement>('.dyson-shell') ??
+          document.body,
+        )
       ) : null}
     </div>
   )

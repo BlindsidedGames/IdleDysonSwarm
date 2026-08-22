@@ -520,7 +520,6 @@
 .skill-settings__toggle input {
   inline-size: 1.35rem;
   block-size: 1.35rem;
-  accent-color: #8b5db6;
 }
 
 .skill-settings__reset {
@@ -692,7 +691,11 @@
   flex: 0 0 auto;
   inline-size: 1.35rem;
   block-size: 1.35rem;
-  accent-color: var(--skill-dialog-accent);
+}
+
+.skill-details__preset-toggle input:focus-visible {
+  outline: 3px solid #f7e766;
+  outline-offset: 2px;
 }
 
 .skill-details__queue-confirmation,

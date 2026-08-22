@@ -13,9 +13,6 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [ ] Implement a device-local inactivity-screensaver toggle and define its
-  idle threshold, lifecycle behavior, reduced-motion behavior, dismissal, and
-  interaction with background/offline processing. Source: parity P-04.
 - [ ] Implement device-local presentation frame-rate choices matching Unity's
   10, 30, 60, and Maximum options. Limit only rendering/animation delivery;
   canonical 10 Hz simulation, commands, saves, imports, lifecycle events, and

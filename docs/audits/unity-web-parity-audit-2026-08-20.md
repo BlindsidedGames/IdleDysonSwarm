@@ -92,14 +92,20 @@ panel control, portable-save isolation, trusted one-time Unity adoption,
 canonical unlock/completion separation, focus-safe filtering, and verified
 Infinity reset/reload behavior. See
 [Research visibility implementation evidence](../research-visibility-implementation-evidence.md).
+The Unity inactivity screensaver is intentionally omitted. The Web, Electron,
+and native hosts do not request a wake lock or otherwise keep the display
+awake, so ordinary platform display sleep remains the appropriate idle-screen
+protection. The legacy value may still be decoded for compatibility, but it is
+not an active Web/native product preference and does not affect simulation,
+lifecycle, saving, or offline processing.
 P-04 remains open for the other preferences listed below.
 
 - **Classification:** Confirmed mismatch
 - **Severity:** S2
 - **Unity evidence:** `Assets/Scripts/User Interface/NotationToggler.cs:12-43` supports Standard, Scientific, and Engineering notation. `Assets/Scripts/User Interface/HidePurchasedToggle.cs:9-17` controls purchased-research visibility, consumed by `Assets/Scripts/Research/ResearchPresenter.cs:434-449`. `Assets/Scripts/User Interface/ScreensaverToggle.cs:13-27` controls the idle display, consumed by `Assets/Scripts/Expansion/LoadScreenMethods.cs:70-85`. `Assets/Scripts/User Interface/ButtonThings.cs:32-47` persists frame-rate choices.
-- **Web evidence:** Number notation and completed Research visibility now use explicit versioned device-local services and controls. `src/save/importContext.ts` continues to classify the remaining legacy values as receiving-device preferences; screensaver and frame-rate controls remain unimplemented.
-- **Player impact:** The resolved preferences now behave explicitly without entering transferable saves. The Unity idle screensaver and frame-rate choices remain absent.
-- **Validation/fix direction:** Make an explicit per-preference product decision. Re-express relevant preferences as device-local Web settings and bind them to formatting/UI behavior, or remove them from the “preserved” promise and document the Web interaction model. Frame rate may be intentionally browser-owned, but that should be recorded as an adaptation rather than silently retained.
+- **Web evidence:** Number notation and completed Research visibility now use explicit versioned device-local services and controls. The screensaver is an intentional platform-owned adaptation: no host requests persistent display wakefulness, and no screensaver timer or overlay is installed. `src/save/importContext.ts` continues to recognize the legacy value only as receiving-device migration data. Frame-rate controls remain unimplemented.
+- **Player impact:** The resolved preferences now behave explicitly without entering transferable saves. Idle devices follow their normal display-sleep settings instead of showing a game-owned overlay. Unity's frame-rate choices remain absent.
+- **Validation/fix direction:** No screensaver implementation is planned unless a future product decision deliberately adds wake-lock or ambient-display behavior. Decide whether frame rate should become a device-local presentation preference or be documented as browser/platform owned; it must never change canonical simulation timing.
 
 ### P-05 — Web always starts on Bots instead of restoring the last top-level screen
 

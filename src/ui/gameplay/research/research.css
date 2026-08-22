@@ -292,48 +292,7 @@
   opacity: 0.7;
 }
 
-.research-surface__rounded-bulk {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-block-size: var(--target-minimum);
-  cursor: pointer;
-}
-
-.research-surface__rounded-bulk input {
-  appearance: none;
-  display: grid;
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-  flex: 0 0 auto;
-  place-content: center;
-  margin: 0;
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.18rem;
-  background: var(--theme-page);
-  color: var(--theme-accent);
-  cursor: pointer;
-}
-
-.research-surface__rounded-bulk input::after {
-  content: '';
-  inline-size: 0.55rem;
-  block-size: 0.3rem;
-  border-block-end: 0.14rem solid currentcolor;
-  border-inline-start: 0.14rem solid currentcolor;
-  transform: translateY(-0.05rem) rotate(-45deg) scale(0);
-  transition: transform 80ms ease-out;
-}
-
-.research-surface__rounded-bulk input:checked {
-  border-color: var(--theme-accent);
-  background: var(--theme-accent);
-}
-
-.research-surface__rounded-bulk input:checked::after {
-  transform: translateY(-0.05rem) rotate(-45deg) scale(1);
-}
-
+.research-surface__rounded-bulk,
 .research-surface__hide-completed {
   display: flex;
   align-items: center;
@@ -342,13 +301,10 @@
   cursor: pointer;
 }
 
+.research-surface__rounded-bulk input,
 .research-surface__hide-completed input {
   inline-size: 1.25rem;
   block-size: 1.25rem;
-  flex: 0 0 auto;
-  margin: 0;
-  accent-color: var(--theme-accent);
-  cursor: pointer;
 }
 
 .research-surface__settings-failure {
@@ -458,37 +414,8 @@
 }
 
 .research-surface__automation-grid input {
-  appearance: none;
-  display: grid;
   inline-size: 1.15rem;
   block-size: 1.15rem;
-  flex: 0 0 auto;
-  place-content: center;
-  margin: 0;
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.18rem;
-  background: var(--theme-page);
-  color: var(--theme-accent);
-  cursor: pointer;
-}
-
-.research-surface__automation-grid input::after {
-  content: '';
-  inline-size: 0.55rem;
-  block-size: 0.3rem;
-  border-block-end: 0.14rem solid currentcolor;
-  border-inline-start: 0.14rem solid currentcolor;
-  transform: translateY(-0.05rem) rotate(-45deg) scale(0);
-  transition: transform 80ms ease-out;
-}
-
-.research-surface__automation-grid input:checked {
-  border-color: var(--theme-accent);
-  background: var(--theme-accent);
-}
-
-.research-surface__automation-grid input:checked::after {
-  transform: translateY(-0.05rem) rotate(-45deg) scale(1);
 }
 
 .research-surface__automation-grid input:disabled {

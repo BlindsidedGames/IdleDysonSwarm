@@ -3,6 +3,24 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
 
 describe('Dyson gameplay shell CSS contract', () => {
+  test('gives every gameplay checkbox a visible themed tick', () => {
+    const source = readCss('./dysonGameplayShell.css')
+
+    expect(source).toContain(
+      ':is(.dyson-shell, .skill-details-dialog__backdrop)',
+    )
+    expect(source).toMatch(
+      /input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none;[^}]*background:\s*var\(--theme-page\);/s,
+    )
+    expect(source).toMatch(
+      /input\[type="checkbox"\]:checked\s*\{[^}]*background-color:\s*var\(--theme-accent\);[^}]*background-image:\s*url\("data:image\/svg\+xml,[^}]*background-repeat:\s*no-repeat;/s,
+    )
+    expect(source).not.toContain('input[type="checkbox"]::after')
+    expect(source).not.toContain(
+      'input[type="checkbox"]:focus-visible',
+    )
+  })
+
   test('keeps a growing route list on one horizontally scrollable row', () => {
     const source = readFileSync(
       fileURLToPath(

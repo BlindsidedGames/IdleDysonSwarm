@@ -127,6 +127,12 @@ describe('SettingsSurface', () => {
     expect(settingsStyles).toMatch(
       /\.settings-surface__dialog-actions > button:disabled\s*\{[^}]*cursor:\s*wait;[^}]*opacity:\s*0\.7;/,
     )
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__transfer textarea\s*\{[^}]*font-size:\s*max\(1rem,\s*calc\(0\.78rem \* var\(--game-text-scale\)\)\);/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__transfer textarea\s*\{[^}]*font-size:\s*max\(1rem,\s*calc\(0\.68rem \* var\(--game-text-scale\)\)\);/,
+    )
   })
 
   test('omits the redundant route title and changes the visualization preference', async () => {
@@ -170,6 +176,7 @@ describe('SettingsSurface', () => {
     const dialog = await screen.findByRole('dialog', {
       name: 'Export Save',
     })
+    expect(dialog.closest('.dyson-shell')).not.toBeNull()
     expect(readSaveText).toHaveBeenCalledOnce()
     expect(within(dialog).getByRole('textbox', {
       name: 'Save string',
@@ -338,7 +345,10 @@ describe('SettingsSurface', () => {
     expect(
       document.querySelector('.settings-surface__content'),
     ).toHaveAttribute('inert')
-    expect(container).toHaveAttribute('inert')
+    expect(
+      container.querySelector('.settings-surface'),
+    ).toHaveAttribute('inert')
+    expect(container).not.toHaveAttribute('inert')
     expect(cancel).toHaveFocus()
     const results = await axe.run(document.body, {
       rules: { 'color-contrast': { enabled: false } },
@@ -611,18 +621,20 @@ function renderSettings(
       onError={() => undefined}
     >
       <NumberNotationProvider preference={preference}>
-        <SettingsSurface
-          resetSave={resetSave}
-          previewImportSaveFile={vi.fn()}
-          previewImportSaveText={vi.fn()}
-          importSaveFile={vi.fn()}
-          importSaveText={vi.fn()}
-          readSaveText={vi.fn().mockResolvedValue(null)}
-          downloadSave={vi.fn()}
-          copySaveText={vi.fn()}
-          development={development}
-          {...overrides}
-        />
+        <div className="dyson-shell" data-route-theme="settings">
+          <SettingsSurface
+            resetSave={resetSave}
+            previewImportSaveFile={vi.fn()}
+            previewImportSaveText={vi.fn()}
+            importSaveFile={vi.fn()}
+            importSaveText={vi.fn()}
+            readSaveText={vi.fn().mockResolvedValue(null)}
+            downloadSave={vi.fn()}
+            copySaveText={vi.fn()}
+            development={development}
+            {...overrides}
+          />
+        </div>
       </NumberNotationProvider>
     </IntlProvider>,
   )

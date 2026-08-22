@@ -39,6 +39,12 @@ const baseResearchStyles = researchStyles.split('@media (max-width: 720px)')[0]
 afterEach(cleanup)
 
 describe('ResearchSurface', () => {
+  test('uses one checkbox size treatment for footer preferences', () => {
+    expect(researchStyles).toMatch(
+      /\.research-surface__rounded-bulk input,\s*\.research-surface__hide-completed input\s*\{[^}]*inline-size:\s*1\.25rem;[^}]*block-size:\s*1\.25rem;/,
+    )
+  })
+
   test('gives the mobile production summary more usable width', () => {
     expect(researchStyles).toMatch(
       /@media \(max-width: 720px\)[\s\S]*\.research-surface__summary p\s*\{[^}]*padding:\s*0\.25rem 0\.1rem;[^}]*font-size:\s*calc\(0\.88rem \* var\(--game-text-scale\)\);/,

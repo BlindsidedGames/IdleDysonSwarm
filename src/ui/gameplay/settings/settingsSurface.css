@@ -99,7 +99,9 @@
   border-radius: 0.35rem;
   background: var(--theme-page);
   color: white;
-  font: 0.78rem/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: max(1rem, calc(0.78rem * var(--game-text-scale)));
+  line-height: 1.35;
 }
 
 .settings-surface__transfer textarea:focus-visible {
@@ -276,8 +278,6 @@
 .settings-surface__toggle input {
   inline-size: 1.35rem;
   block-size: 1.35rem;
-  margin: 0;
-  accent-color: #79ac7d;
 }
 
 .settings-surface__toggle:has(input:focus-visible) {
@@ -638,7 +638,7 @@
 
   .settings-surface__transfer textarea {
     min-block-size: 8rem;
-    font-size: calc(0.68rem * var(--game-text-scale));
+    font-size: max(1rem, calc(0.68rem * var(--game-text-scale)));
   }
 
   .settings-surface__import-preview {
