@@ -71,6 +71,7 @@ interface PreparedPlayerCommand {
 export class RevisionedPlayerCommandDispatcher {
   private readonly options:
     Readonly<RevisionedPlayerCommandDispatcherOptions>
+  private storedTimeAdmission: symbol | null = null
 
   constructor(
     options: Readonly<RevisionedPlayerCommandDispatcherOptions>,
@@ -83,6 +84,19 @@ export class RevisionedPlayerCommandDispatcher {
   ): Promise<UiRuntimePlayerCommandResult> {
     const captured = this.prepare(command)
     if ('status' in captured) return captured
+    const storedTimeAdmission =
+      command.kind === 'time.request-stored-time-spend'
+        ? Symbol('stored-time-admission')
+        : null
+    if (storedTimeAdmission !== null) {
+      if (this.storedTimeAdmission !== null) {
+        return rejectedStoredTimeAdmission(
+          captured.activationRevision,
+          this.options.latestSnapshot(),
+        )
+      }
+      this.storedTimeAdmission = storedTimeAdmission
+    }
     try {
       const outcome = await this.options.serialize(async () => {
         const prepared = this.prepareForExecution(captured)
@@ -102,6 +116,10 @@ export class RevisionedPlayerCommandDispatcher {
       )
     } catch (error) {
       return this.mapFailure(error)
+    } finally {
+      if (this.storedTimeAdmission === storedTimeAdmission) {
+        this.storedTimeAdmission = null
+      }
     }
   }
 
@@ -307,6 +325,24 @@ function failed(
     code,
     reason,
     retryable: false,
+  })
+}
+
+function rejectedStoredTimeAdmission(
+  activationRevision: UiRuntimeCommandActivationRevision,
+  snapshot: DeepReadonly<FrontendApplicationSnapshot>,
+): UiRuntimePlayerCommandResult {
+  return Object.freeze({
+    status: 'rejected',
+    kind: 'stored-time',
+    code: 'CANONICAL-STORED-TIME-JOB-ACTIVE',
+    reason: 'A Stored Time job is already active.',
+    stale: false,
+    stateRevision:
+      snapshot.phase === 'ready'
+        ? snapshot.revision.state
+        : activationRevision.state,
+    activationRevision,
   })
 }
 
