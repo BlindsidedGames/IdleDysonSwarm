@@ -234,6 +234,9 @@ export interface BrowserRuntimeFoundationOptions {
   /** One-time receiving-device adoption during successful automatic Unity migration. */
   readonly automaticNumberFormattingAdopter?:
     import('../../save/repository').AutomaticUnityNumberFormattingAdopter
+  /** One-time receiving-device adoption during successful automatic Unity migration. */
+  readonly automaticResearchVisibilityAdopter?:
+    import('../../save/repository').AutomaticUnityResearchVisibilityAdopter
   /** Native release hosts expose the locally unlockable debug surface in production. */
   readonly developmentControlsAvailable?: boolean
   /** Native release controls remain gated until Store or gameplay unlock succeeds. */
@@ -1317,6 +1320,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       },
       this.options.automaticPurchaseEvidencePromoter,
       this.options.automaticNumberFormattingAdopter,
+      this.options.automaticResearchVisibilityAdopter,
     )
     const initialLifecyclePhase = this.lifecycle.currentPhase()
     const initialLifecycleReceipt =

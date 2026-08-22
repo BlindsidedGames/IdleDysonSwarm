@@ -266,6 +266,11 @@ export const researchMessages = defineMessages({
     defaultMessage: 'Round bulk purchases to the next milestone',
     description: 'Unity Research rounded-bulk setting.',
   },
+  hideCompleted: {
+    id: 'research.settings.hide-completed',
+    defaultMessage: 'Hide completed Research',
+    description: 'Device-local presentation preference for maxed Research cards.',
+  },
   settingsFailed: {
     id: 'research.settings.failed',
     defaultMessage: 'Research purchase settings were not changed.',
@@ -281,5 +286,12 @@ export const researchMessages = defineMessages({
     id: 'research.empty',
     defaultMessage: 'No research is currently available.',
     description: 'Safe empty state when no canonical Research cards are visible.',
+  },
+  completedHidden: {
+    id: 'research.completed-hidden',
+    defaultMessage:
+      'All currently available Research is completed and hidden.',
+    description:
+      'Empty state shown when the device preference hides every available Research card.',
   },
 })

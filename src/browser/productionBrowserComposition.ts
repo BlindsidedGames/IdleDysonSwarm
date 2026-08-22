@@ -76,6 +76,8 @@ export interface ProductionBrowserCompositionOptions {
   readonly developmentBuild?: boolean
   readonly automaticNumberFormattingAdopter?:
     import('../save/repository').AutomaticUnityNumberFormattingAdopter
+  readonly automaticResearchVisibilityAdopter?:
+    import('../save/repository').AutomaticUnityResearchVisibilityAdopter
 }
 
 export interface ProductionBrowserComposition {
@@ -161,6 +163,8 @@ export function createProductionBrowserComposition(
       ),
     automaticNumberFormattingAdopter:
       options.automaticNumberFormattingAdopter,
+    automaticResearchVisibilityAdopter:
+      options.automaticResearchVisibilityAdopter,
     developmentControlsAvailable:
       developmentBuild || options.releasePlatformServices !== undefined
         ? true

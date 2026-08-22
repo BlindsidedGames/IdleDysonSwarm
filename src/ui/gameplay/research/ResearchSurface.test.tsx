@@ -14,7 +14,14 @@ import type {
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
-import { ResearchSurface } from './ResearchSurface'
+import {
+  ResearchSurface,
+  type ResearchSurfaceProps,
+} from './ResearchSurface'
+import {
+  ResearchVisibilityPreferenceService,
+  ResearchVisibilityProvider,
+} from '../../research-visibility'
 
 const researchStyles = readFileSync(
   join(
@@ -124,6 +131,64 @@ describe('ResearchSurface', () => {
     expect(
       articles[0].querySelector('[data-symbol="science"]'),
     ).not.toBeInTheDocument()
+  })
+
+  test('hides only maxed cards and explains when every available card is hidden', async () => {
+    const user = userEvent.setup()
+    const preference = new ResearchVisibilityPreferenceService({ storage: null })
+    renderSurface([
+      card({
+        currentLevel: 1,
+        maximumLevel: 1,
+        maxed: true,
+        eligible: false,
+        code: 'already-maxed',
+      }),
+    ], undefined, preference)
+
+    expect(screen.getByText('Purchased')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', {
+      name: 'Research purchase settings',
+    }))
+    await user.click(screen.getByRole('checkbox', {
+      name: 'Hide completed Research',
+    }))
+
+    expect(screen.queryByRole('article')).not.toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'All currently available Research is completed and hidden.',
+    )
+  })
+
+  test('moves focus to the next purchase when a completed card disappears', () => {
+    const preference = new ResearchVisibilityPreferenceService({ storage: null })
+    preference.setHideCompleted(true)
+    const initialCards = [
+      card({ researchId: 'research.assembly_line_upgrade' }),
+      card({ researchId: 'research.ai_manager_upgrade' }),
+    ]
+    const view = renderSurface(initialCards, undefined, preference)
+    const firstPurchase = screen.getByRole('button', {
+      name: /Purchase Assembly Line boosts/,
+    })
+    firstPurchase.focus()
+    expect(firstPurchase).toHaveFocus()
+
+    view.rerender(surfaceElement([
+      card({
+        researchId: 'research.assembly_line_upgrade',
+        currentLevel: 1,
+        maximumLevel: 1,
+        maxed: true,
+        eligible: false,
+        code: 'already-maxed',
+      }),
+      card({ researchId: 'research.ai_manager_upgrade' }),
+    ], vi.fn(async () => accepted()), preference))
+
+    expect(screen.getByRole('button', {
+      name: /Purchase AI Manager boosts/,
+    })).toHaveFocus()
   })
 
   test('dispatches one ordinary canonical purchase while an activation is pending', async () => {
@@ -385,36 +450,47 @@ describe('ResearchSurface', () => {
 function renderSurface(
   cards: readonly FrontendResearchCardPreview[],
   dispatchPlayer = vi.fn(async () => accepted()),
+  preference = new ResearchVisibilityPreferenceService({ storage: null }),
 ) {
-  return render(
+  return render(surfaceElement(cards, dispatchPlayer, preference))
+}
+
+function surfaceElement(
+  cards: readonly FrontendResearchCardPreview[],
+  dispatchPlayer: ResearchSurfaceProps['dispatchPlayer'],
+  preference: ResearchVisibilityPreferenceService,
+) {
+  return (
     <IntlProvider locale="en">
-      <ResearchSurface
-        locale="en"
-        cards={cards}
-        researchers={2000}
-        sciencePerSecond={22}
-        buyMode="buy-1"
-        roundedBulkBuy={false}
-        presets={[
-          { name: 'Preset 1', skillIds: [], botDistribution: 0.5, colorId: 'cyan' },
-          { name: 'Preset 2', skillIds: [], botDistribution: 0.5, colorId: 'orange' },
-          { name: 'Preset 3', skillIds: [], botDistribution: 0.5, colorId: 'gold' },
-          { name: 'Preset 4', skillIds: [], botDistribution: 0.5, colorId: 'rose' },
-          { name: 'Preset 5', skillIds: [], botDistribution: 0.5, colorId: 'pink' },
-        ]}
-        presetAutomationSlot={0}
-        automationUnlocked
-        automationEnabledById={Object.fromEntries(
-          cards.map((entry) => [entry.researchId, entry.automationActive]),
-        )}
-        purchaseRouteAvailable
-        buyModeRouteAvailable
-        roundedBulkRouteAvailable
-        presetAutomationRouteAvailable
-        automationRouteAvailable
-        dispatchPlayer={dispatchPlayer}
-      />
-    </IntlProvider>,
+      <ResearchVisibilityProvider preference={preference}>
+        <ResearchSurface
+          locale="en"
+          cards={cards}
+          researchers={2000}
+          sciencePerSecond={22}
+          buyMode="buy-1"
+          roundedBulkBuy={false}
+          presets={[
+            { name: 'Preset 1', skillIds: [], botDistribution: 0.5, colorId: 'cyan' },
+            { name: 'Preset 2', skillIds: [], botDistribution: 0.5, colorId: 'orange' },
+            { name: 'Preset 3', skillIds: [], botDistribution: 0.5, colorId: 'gold' },
+            { name: 'Preset 4', skillIds: [], botDistribution: 0.5, colorId: 'rose' },
+            { name: 'Preset 5', skillIds: [], botDistribution: 0.5, colorId: 'pink' },
+          ]}
+          presetAutomationSlot={0}
+          automationUnlocked
+          automationEnabledById={Object.fromEntries(
+            cards.map((entry) => [entry.researchId, entry.automationActive]),
+          )}
+          purchaseRouteAvailable
+          buyModeRouteAvailable
+          roundedBulkRouteAvailable
+          presetAutomationRouteAvailable
+          automationRouteAvailable
+          dispatchPlayer={dispatchPlayer}
+        />
+      </ResearchVisibilityProvider>
+    </IntlProvider>
   )
 }
 

@@ -49,6 +49,8 @@ export interface ProductionNativeCompositionOptions {
   readonly reloadPage?: () => void
   readonly automaticNumberFormattingAdopter?:
     import('../save/repository').AutomaticUnityNumberFormattingAdopter
+  readonly automaticResearchVisibilityAdopter?:
+    import('../save/repository').AutomaticUnityResearchVisibilityAdopter
 }
 
 export interface ProductionNativeComposition {
@@ -128,6 +130,8 @@ export function createProductionNativeComposition(
       ),
     automaticNumberFormattingAdopter:
       options.automaticNumberFormattingAdopter,
+    automaticResearchVisibilityAdopter:
+      options.automaticResearchVisibilityAdopter,
     developmentControlsAvailable: true,
     developmentControlsRequireEntitlement: true,
   })

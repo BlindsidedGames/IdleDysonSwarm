@@ -9,6 +9,7 @@ import {
   previewCanonicalResearchPurchase,
   purchaseCanonicalResearch,
   runResearchAutomationTick,
+  selectCanonicalResearchPresentationFacts,
 } from './researchAutomation'
 import {
   buyXCost,
@@ -144,6 +145,22 @@ function indexOf(id: string): number {
 }
 
 describe('research automation', () => {
+  test('keeps canonical unlock visibility independent from maxed presentation', () => {
+    const state = withLevels(stateWith(0), {
+      'research.panel_lifetime_1': 1,
+    })
+    expect(selectCanonicalResearchPresentationFacts(
+      state,
+      neutralTuning,
+      'research.panel_lifetime_1',
+      0n,
+    )).toMatchObject({
+      prerequisitesMet: true,
+      visible: true,
+      maxed: true,
+    })
+  })
+
   test('previews the exact manual purchase consumed by execution', () => {
     const state = stateWith(5_000)
     const before = structuredClone(state)

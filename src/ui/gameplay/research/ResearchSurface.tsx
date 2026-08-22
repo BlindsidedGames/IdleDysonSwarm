@@ -1,5 +1,6 @@
 import {
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
@@ -39,6 +40,7 @@ import type {
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { useResearchVisibility } from '../../research-visibility'
 import { researchMessages as messages } from './messages'
 import './research.css'
 
@@ -122,6 +124,7 @@ export function ResearchSurface({
   dispatchPlayer,
 }: ResearchSurfaceProps) {
   const intl = useIntl()
+  const { hideCompleted, setHideCompleted } = useResearchVisibility()
   const settingsId = useId()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingPending, setSettingPending] = useState(false)
@@ -133,10 +136,48 @@ export function ResearchSurface({
     ReadonlySet<string>
   >(new Set())
   const automationVersions = useRef(new Map<string, number>())
-  const visibleCards = cards.filter((card) => card.visible)
-  const automatableVisibleCards = visibleCards.filter((card) =>
+  const cardItems = useRef(new Map<string, HTMLLIElement>())
+  const emptyState = useRef<HTMLParagraphElement>(null)
+  const focusedResearchId = useRef<string | null>(null)
+  const canonicalVisibleCards = cards.filter((card) => card.visible)
+  const visibleCards = canonicalVisibleCards.filter(
+    (card) => !hideCompleted || !card.maxed,
+  )
+  const previousVisibleIds = useRef(
+    visibleCards.map((card) => card.researchId),
+  )
+  const automatableVisibleCards = canonicalVisibleCards.filter((card) =>
     AUTOMATABLE_RESEARCH_IDS.has(card.researchId),
   )
+
+  useLayoutEffect(() => {
+    const previous = previousVisibleIds.current
+    const current = visibleCards.map((card) => card.researchId)
+    const removedFocusedId = focusedResearchId.current
+    previousVisibleIds.current = current
+    if (
+      removedFocusedId === null ||
+      current.includes(removedFocusedId) ||
+      document.activeElement !== document.body
+    ) return
+    const removedIndex = previous.indexOf(removedFocusedId)
+    const nextId = current[Math.min(
+      Math.max(removedIndex, 0),
+      current.length - 1,
+    )]
+    if (nextId === undefined) {
+      emptyState.current?.focus()
+      return
+    }
+    const nextItem = cardItems.current.get(nextId)
+    const nextAction = nextItem
+      ?.querySelector<HTMLElement>('button:not(:disabled)')
+    if (nextAction === undefined || nextAction === null) {
+      nextItem?.focus()
+    } else {
+      nextAction.focus()
+    }
+  }, [visibleCards])
 
   const applySetting = async (
     command: ResearchSettingCommand,
@@ -224,6 +265,17 @@ export function ResearchSurface({
               <li
                 className="research-surface__item"
                 key={card.researchId}
+                ref={(element) => {
+                  if (element === null) {
+                    cardItems.current.delete(card.researchId)
+                  } else {
+                    cardItems.current.set(card.researchId, element)
+                  }
+                }}
+                onFocusCapture={() => {
+                  focusedResearchId.current = card.researchId
+                }}
+                tabIndex={-1}
               >
                 <ResearchCard
                   card={card}
@@ -235,8 +287,17 @@ export function ResearchSurface({
             ))}
           </ol>
         ) : (
-          <p className="research-surface__empty">
-            {intl.formatMessage(messages.empty)}
+          <p
+            ref={emptyState}
+            className="research-surface__empty"
+            role="status"
+            tabIndex={-1}
+          >
+            {intl.formatMessage(
+              canonicalVisibleCards.length > 0
+                ? messages.completedHidden
+                : messages.empty,
+            )}
           </p>
         )}
       </div>
@@ -291,6 +352,16 @@ export function ResearchSurface({
               <span>
                 {intl.formatMessage(messages.roundedBulkBuy)}
               </span>
+            </label>
+            <label className="research-surface__hide-completed">
+              <input
+                type="checkbox"
+                checked={hideCompleted}
+                onChange={(event) =>
+                  setHideCompleted(event.currentTarget.checked)
+                }
+              />
+              <span>{intl.formatMessage(messages.hideCompleted)}</span>
             </label>
             <PresetAutomationSelect
               label={intl.formatMessage(messages.presetAutomation)}

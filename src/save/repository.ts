@@ -96,6 +96,10 @@ export interface AutomaticUnityNumberFormattingAdopter {
   adoptLegacyUnityNumberFormatting(value: unknown): boolean
 }
 
+export interface AutomaticUnityResearchVisibilityAdopter {
+  adoptLegacyUnityHidePurchased(value: unknown): boolean
+}
+
 /**
  * Platform shells supply only filesystem discovery and atomic primitives.
  * Decode, migration and validation remain shared TypeScript behavior.
@@ -109,6 +113,8 @@ export class PortableSaveRepository implements SaveRepository {
     AutomaticUnityPurchaseEvidencePromoter
   private readonly automaticNumberFormattingAdopter?:
     AutomaticUnityNumberFormattingAdopter
+  private readonly automaticResearchVisibilityAdopter?:
+    AutomaticUnityResearchVisibilityAdopter
 
   constructor(
     storage: SaveStorageAdapter,
@@ -121,6 +127,8 @@ export class PortableSaveRepository implements SaveRepository {
       AutomaticUnityPurchaseEvidencePromoter,
     automaticNumberFormattingAdopter?:
       AutomaticUnityNumberFormattingAdopter,
+    automaticResearchVisibilityAdopter?:
+      AutomaticUnityResearchVisibilityAdopter,
   ) {
     this.storage = storage
     this.paths = paths
@@ -130,6 +138,8 @@ export class PortableSaveRepository implements SaveRepository {
       automaticPurchaseEvidencePromoter
     this.automaticNumberFormattingAdopter =
       automaticNumberFormattingAdopter
+    this.automaticResearchVisibilityAdopter =
+      automaticResearchVisibilityAdopter
   }
 
   async hasCurrent(): Promise<boolean> {
@@ -236,7 +246,7 @@ export class PortableSaveRepository implements SaveRepository {
         await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
         await this.promoteAutomaticPurchaseEvidence(source, prepared)
         const committed = await this.commit(prepared)
-        this.adoptAutomaticNumberFormatting(source, prepared)
+        this.adoptAutomaticDevicePreferences(source, prepared)
         return { status: 'migrated', source, migration, save: committed }
       } catch (error) {
         return {
@@ -266,16 +276,17 @@ export class PortableSaveRepository implements SaveRepository {
       : { status: 'no-legacy-save' }
   }
 
-  private adoptAutomaticNumberFormatting(
+  private adoptAutomaticDevicePreferences(
     candidate: Readonly<LegacySaveCandidate>,
     save: PreparedSave,
   ): void {
     if (!isVerifiedAutomaticSameDeviceUnityCandidate(candidate)) return
     try {
+      const source = save.copyValidatedState()
       this.automaticNumberFormattingAdopter
-        ?.adoptLegacyUnityNumberFormatting(
-          save.copyValidatedState().numberFormatting,
-        )
+        ?.adoptLegacyUnityNumberFormatting(source.numberFormatting)
+      this.automaticResearchVisibilityAdopter
+        ?.adoptLegacyUnityHidePurchased(source.hidePurchased)
     } catch {
       // An optional device-local presentation preference can never invalidate
       // a successfully committed canonical migration.

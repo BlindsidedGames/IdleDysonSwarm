@@ -43,6 +43,12 @@
   min-inline-size: 0;
 }
 
+.research-surface__item:focus-visible,
+.research-surface__empty:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
+
 .research-surface__empty {
   max-inline-size: 32rem;
   margin: 1rem auto;
@@ -234,6 +240,7 @@
 .research-surface__settings-toggle:focus-visible,
 .research-surface__buy-modes button:focus-visible,
 .research-surface__rounded-bulk:has(input:focus-visible),
+.research-surface__hide-completed:has(input:focus-visible),
 .research-surface__automation input:focus-visible,
 .research-surface__automation-toggle-all:focus-visible {
   outline: 3px solid var(--color-focus);
@@ -325,6 +332,23 @@
 
 .research-surface__rounded-bulk input:checked::after {
   transform: translateY(-0.05rem) rotate(-45deg) scale(1);
+}
+
+.research-surface__hide-completed {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: var(--target-minimum);
+  cursor: pointer;
+}
+
+.research-surface__hide-completed input {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  flex: 0 0 auto;
+  margin: 0;
+  accent-color: var(--theme-accent);
+  cursor: pointer;
 }
 
 .research-surface__settings-failure {

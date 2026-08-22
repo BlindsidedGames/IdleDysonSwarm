@@ -59,6 +59,7 @@ export function stripNonShareableEntitlementClaims(
   // Unity/Web graph data may still contain this field for migration input,
   // but a portable share must never carry the sender's selection.
   delete shareable.numberFormatting
+  delete shareable.hidePurchased
   packSettingsFlags(shareable)
   return shareable
 }

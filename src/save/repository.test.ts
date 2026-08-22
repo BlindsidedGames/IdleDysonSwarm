@@ -121,7 +121,7 @@ describe('portable transactional save repository', () => {
     expect(storage.replacements).toHaveLength(1)
   })
 
-  test('adopts legacy notation only after a successful automatic migration commit', async () => {
+  test('adopts legacy presentation preferences only after a successful automatic migration commit', async () => {
     const storage = new MemoryStorage()
     storage.files.set('unity-readonly:canonical-unity', 'IDB1:test')
     storage.candidates = [
@@ -141,6 +141,9 @@ describe('portable transactional save repository', () => {
     const adopter = {
       adoptLegacyUnityNumberFormatting: vi.fn(() => true),
     }
+    const visibilityAdopter = {
+      adoptLegacyUnityHidePurchased: vi.fn(() => true),
+    }
     const repository = new PortableSaveRepository(
       storage,
       {
@@ -148,19 +151,22 @@ describe('portable transactional save repository', () => {
         temporary: '/current.tmp',
         legacyRecovery: '/recovery/original-idb1.txt',
       },
-      () => ({ saveVersion: 12, numberFormatting: 2 }),
+      () => ({ saveVersion: 12, numberFormatting: 2, hidePurchased: true }),
       { allowCanonicalPlayerWrites: false },
       undefined,
       adopter,
+      visibilityAdopter,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
       .toMatchObject({ status: 'migrated' })
     expect(adopter.adoptLegacyUnityNumberFormatting).toHaveBeenCalledOnce()
     expect(adopter.adoptLegacyUnityNumberFormatting).toHaveBeenCalledWith(2)
+    expect(visibilityAdopter.adoptLegacyUnityHidePurchased).toHaveBeenCalledWith(true)
 
     await repository.migrateLegacyOnFirstLaunch()
     expect(adopter.adoptLegacyUnityNumberFormatting).toHaveBeenCalledOnce()
+    expect(visibilityAdopter.adoptLegacyUnityHidePurchased).toHaveBeenCalledOnce()
   })
 
   test.each([
@@ -200,7 +206,7 @@ describe('portable transactional save repository', () => {
         pathClass: 'capacitor-external-files' as const,
       },
     },
-  ])('does not adopt notation from $label', async (candidate) => {
+  ])('does not adopt presentation preferences from $label', async (candidate) => {
     const storage = new MemoryStorage()
     storage.files.set(candidate.sourcePath, 'IDB1:test')
     storage.candidates = [{
@@ -212,6 +218,9 @@ describe('portable transactional save repository', () => {
     const adopter = {
       adoptLegacyUnityNumberFormatting: vi.fn(() => true),
     }
+    const visibilityAdopter = {
+      adoptLegacyUnityHidePurchased: vi.fn(() => true),
+    }
     const repository = new PortableSaveRepository(
       storage,
       {
@@ -219,15 +228,17 @@ describe('portable transactional save repository', () => {
         temporary: '/current.tmp',
         legacyRecovery: '/recovery/original-idb1.txt',
       },
-      () => ({ saveVersion: 12, numberFormatting: 2 }),
+      () => ({ saveVersion: 12, numberFormatting: 2, hidePurchased: true }),
       { allowCanonicalPlayerWrites: false },
       undefined,
       adopter,
+      visibilityAdopter,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
       .toMatchObject({ status: 'migrated' })
     expect(adopter.adoptLegacyUnityNumberFormatting).not.toHaveBeenCalled()
+    expect(visibilityAdopter.adoptLegacyUnityHidePurchased).not.toHaveBeenCalled()
   })
 
   test('does not adopt legacy notation when automatic migration fails to commit', async () => {
