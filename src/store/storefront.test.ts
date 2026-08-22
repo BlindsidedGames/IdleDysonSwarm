@@ -12,6 +12,7 @@ import {
 } from './contracts'
 import { StorefrontController } from './storefront'
 import { RuntimeEntitlementBridge } from './runtimeEntitlements'
+import { DoubleInfinityPointsEffectPreferenceService } from './doubleInfinityPointsEffect'
 
 describe('StorefrontController', () => {
   test('verifies repeatable supporter tiers without granting gameplay access', async () => {
@@ -63,6 +64,69 @@ describe('StorefrontController', () => {
     expect(controller.getSnapshot().feedback).toEqual({
       kind: 'entitlement-verified',
       productId: STORE_PRODUCT_IDS.doubleInfinityPoints,
+    })
+  })
+
+  test('toggles the effect without changing durable ownership or restore eligibility', async () => {
+    const store = fakeStore({
+      restored: [STORE_PRODUCT_IDS.doubleInfinityPoints],
+    })
+    const effect = new DoubleInfinityPointsEffectPreferenceService({ storage: null })
+    const synchronized = vi.fn(async () => true)
+    const controller = new StorefrontController({
+      store,
+      entitlements: fakeAuthority({
+        initial: {
+          doubleInfinityPoints: true,
+          developerOptions: false,
+        },
+        refresh: {
+          doubleInfinityPoints: true,
+          developerOptions: false,
+        },
+      }),
+      doubleInfinityPointsEffect: effect,
+      onVerifiedOwnershipChanged: synchronized,
+    })
+    await controller.initialize()
+
+    await controller.toggleDoubleInfinityPoints()
+    await controller.restorePurchases()
+
+    expect(controller.getSnapshot()).toMatchObject({
+      hostOwnership: { doubleInfinityPoints: true },
+      doubleInfinityPointsEnabled: false,
+      feedback: { kind: 'restore-completed', restoredCount: 1 },
+    })
+    expect(controller.effectiveAccess(false).doubleInfinityPoints).toBe(true)
+    expect(effect.getSnapshot()).toBe(false)
+    expect(synchronized).toHaveBeenCalledTimes(2)
+  })
+
+  test('rolls back a toggle when canonical runtime reapplication fails', async () => {
+    const effect = new DoubleInfinityPointsEffectPreferenceService({ storage: null })
+    const synchronized = vi.fn()
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true)
+    const controller = new StorefrontController({
+      store: fakeStore(),
+      entitlements: fakeAuthority({
+        initial: {
+          doubleInfinityPoints: true,
+          developerOptions: false,
+        },
+      }),
+      doubleInfinityPointsEffect: effect,
+      onVerifiedOwnershipChanged: synchronized,
+    })
+    await controller.initialize()
+
+    await controller.toggleDoubleInfinityPoints()
+
+    expect(effect.getSnapshot()).toBe(true)
+    expect(controller.getSnapshot()).toMatchObject({
+      doubleInfinityPointsEnabled: true,
+      feedback: { kind: 'operation-failed', code: 'effect-update-failed' },
     })
   })
 
@@ -433,6 +497,24 @@ describe('RuntimeEntitlementBridge', () => {
       developerOptions: true,
       supporterCatGallery: false,
     })
+  })
+
+  test('separates owned Double IP from its persisted enabled choice', async () => {
+    const effect = new DoubleInfinityPointsEffectPreferenceService({ storage: null })
+    effect.setEnabled(false)
+    const bridge = new RuntimeEntitlementBridge(fakeAuthority({
+      initial: {
+        doubleInfinityPoints: true,
+        developerOptions: false,
+      },
+    }), effect)
+
+    await bridge.initialize()
+
+    expect(bridge.currentOwnership().doubleInfinityPoints).toBe(true)
+    expect(bridge.currentDysonEntitlements().permanentDoubleIp).toBe(false)
+    effect.setEnabled(true)
+    expect(bridge.currentDysonEntitlements().permanentDoubleIp).toBe(true)
   })
 })
 

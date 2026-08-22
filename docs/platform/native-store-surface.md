@@ -35,6 +35,15 @@ gameplay. Developer Options additionally accepts the existing local in-game
 unlock supplied by gameplay; native release builds expose that path without
 depending on Vite's development-build flag.
 
+Once `ids.doubleip` ownership is verified, its existing purchase control
+becomes an Enabled/Disabled toggle. The device-local enabled preference is
+independent of provider ownership, defaults to enabled for existing owners,
+and is not included in portable saves. Purchase and restore retain ownership;
+restore and manual import do not overwrite an explicit disabled choice. The
+runtime projects `owned && enabled` through the existing canonical Double IP
+entitlement input, so active, offline, preview, ordinary Infinity and Break
+Infinity calculations all use the same effective value.
+
 `supporterCatGallery` is a third, distinct host-owned boolean. It is never
 serialized into `IDSWEB1`, inferred from checkout navigation, or coupled to
 Developer Options. Effective gallery access is
@@ -83,6 +92,7 @@ Restore Purchases is presented only alongside permanent upgrades. Returned
 supporter IDs are ignored because repeatable consumables are not generally
 restorable without an account-backed ledger. A restored product is counted and exposed only when the host
 authority independently verifies the matching durable entitlement.
+Restoring `ids.doubleip` never changes its device-local enabled preference.
 
 Mobile release certification must exercise purchases, cancellation, pending
 transactions, restoration, repeatable tips, offline cached ownership and

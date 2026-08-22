@@ -3,6 +3,10 @@ import type {
   EntitlementAuthority,
   HostEntitlementOwnership,
 } from './contracts'
+import {
+  DoubleInfinityPointsEffectPreferenceService,
+  type DoubleInfinityPointsEffectPreference,
+} from './doubleInfinityPointsEffect'
 
 const EMPTY_OWNERSHIP: Readonly<HostEntitlementOwnership> = Object.freeze({
   doubleInfinityPoints: false,
@@ -18,9 +22,16 @@ const EMPTY_OWNERSHIP: Readonly<HostEntitlementOwnership> = Object.freeze({
 export class RuntimeEntitlementBridge {
   private ownership: Readonly<HostEntitlementOwnership> = EMPTY_OWNERSHIP
   private readonly authority: EntitlementAuthority
+  private readonly doubleInfinityPointsEffect:
+    DoubleInfinityPointsEffectPreference
 
-  constructor(authority: EntitlementAuthority) {
+  constructor(
+    authority: EntitlementAuthority,
+    doubleInfinityPointsEffect: DoubleInfinityPointsEffectPreference =
+      new DoubleInfinityPointsEffectPreferenceService({ storage: null }),
+  ) {
     this.authority = authority
+    this.doubleInfinityPointsEffect = doubleInfinityPointsEffect
   }
 
   async initialize(): Promise<Readonly<HostEntitlementOwnership>> {
@@ -37,7 +48,9 @@ export class RuntimeEntitlementBridge {
 
   currentDysonEntitlements(): Readonly<DysonEntitlements> {
     return Object.freeze({
-      permanentDoubleIp: this.ownership.doubleInfinityPoints,
+      permanentDoubleIp:
+        this.ownership.doubleInfinityPoints &&
+        this.doubleInfinityPointsEffect.getSnapshot(),
     })
   }
 

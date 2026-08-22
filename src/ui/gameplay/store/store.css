@@ -155,6 +155,11 @@
   white-space: nowrap;
 }
 
+.store-surface__purchase-action--effect-disabled {
+  background: var(--theme-selected);
+  color: #f2ebfb;
+}
+
 .store-restore {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(10rem, auto);

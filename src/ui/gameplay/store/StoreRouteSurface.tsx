@@ -31,6 +31,8 @@ function controllerFor(
   const controller = new StorefrontController({
     store: releasePlatformServices.store,
     entitlements: releasePlatformServices.entitlements,
+    doubleInfinityPointsEffect:
+      releasePlatformServices.doubleInfinityPointsEffect,
     ...(synchronizeHostEntitlements === undefined
       ? {}
       : { onVerifiedOwnershipChanged: synchronizeHostEntitlements }),

@@ -11,16 +11,22 @@ import {
   type StoreProductId,
   type StoreProductListing,
 } from './contracts'
+import {
+  DoubleInfinityPointsEffectPreferenceService,
+  type DoubleInfinityPointsEffectPreference,
+} from './doubleInfinityPointsEffect'
 
 export type StorefrontOperation =
   | { readonly kind: 'idle' }
   | { readonly kind: 'loading' }
   | { readonly kind: 'purchasing'; readonly productId: StoreProductId }
   | { readonly kind: 'restoring' }
+  | { readonly kind: 'updating-double-infinity-points' }
 
 export type StorefrontFeedback =
   | { readonly kind: 'entitlement-verified'; readonly productId: StoreProductId }
   | { readonly kind: 'restore-completed'; readonly restoredCount: number }
+  | { readonly kind: 'double-infinity-points-effect-updated'; readonly enabled: boolean }
   | {
       readonly kind: 'operation-failed'
       readonly code:
@@ -31,6 +37,7 @@ export type StorefrontFeedback =
         | 'purchase-failed'
         | 'verification-failed'
         | 'restore-failed'
+        | 'effect-update-failed'
     }
 
 export interface StorefrontSnapshot {
@@ -38,12 +45,14 @@ export interface StorefrontSnapshot {
   readonly operation: StorefrontOperation
   readonly listings: readonly StoreProductListing[]
   readonly hostOwnership: Readonly<HostEntitlementOwnership>
+  readonly doubleInfinityPointsEnabled: boolean
   readonly feedback: StorefrontFeedback | null
 }
 
 export interface StorefrontControllerOptions {
   readonly store: StoreAdapter
   readonly entitlements: EntitlementAuthority
+  readonly doubleInfinityPointsEffect?: DoubleInfinityPointsEffectPreference
   /** Reprojects verified host ownership into canonical runtime state. */
   readonly onVerifiedOwnershipChanged?: () => Promise<boolean>
 }
@@ -59,6 +68,7 @@ const INITIAL_SNAPSHOT: StorefrontSnapshot = Object.freeze({
   operation: Object.freeze({ kind: 'idle' as const }),
   listings: Object.freeze([]),
   hostOwnership: EMPTY_OWNERSHIP,
+  doubleInfinityPointsEnabled: true,
   feedback: null,
 })
 
@@ -72,9 +82,19 @@ export class StorefrontController {
   private readonly listeners = new Set<() => void>()
   private initializePromise: Promise<void> | null = null
   private readonly options: StorefrontControllerOptions
+  private readonly doubleInfinityPointsEffect:
+    DoubleInfinityPointsEffectPreference
 
   constructor(options: StorefrontControllerOptions) {
     this.options = options
+    this.doubleInfinityPointsEffect =
+      options.doubleInfinityPointsEffect ??
+      new DoubleInfinityPointsEffectPreferenceService({ storage: null })
+    this.snapshotValue = Object.freeze({
+      ...INITIAL_SNAPSHOT,
+      doubleInfinityPointsEnabled:
+        this.doubleInfinityPointsEffect.getSnapshot(),
+    })
   }
 
   getSnapshot = (): StorefrontSnapshot => this.snapshotValue
@@ -209,6 +229,47 @@ export class StorefrontController {
       this.publish({
         operation: { kind: 'idle' },
         feedback: { kind: 'operation-failed', code: 'restore-failed' },
+      })
+    }
+  }
+
+  async toggleDoubleInfinityPoints(): Promise<void> {
+    if (
+      this.snapshotValue.operation.kind !== 'idle' ||
+      !this.snapshotValue.hostOwnership.doubleInfinityPoints
+    ) return
+    const previous = this.doubleInfinityPointsEffect.getSnapshot()
+    const enabled = !previous
+    this.publish({
+      operation: { kind: 'updating-double-infinity-points' },
+      feedback: null,
+    })
+    this.doubleInfinityPointsEffect.setEnabled(enabled)
+    try {
+      if (
+        this.options.onVerifiedOwnershipChanged !== undefined &&
+        !(await this.options.onVerifiedOwnershipChanged())
+      ) {
+        throw new Error('Runtime entitlement projection failed.')
+      }
+      this.publish({
+        operation: { kind: 'idle' },
+        doubleInfinityPointsEnabled: enabled,
+        feedback: {
+          kind: 'double-infinity-points-effect-updated',
+          enabled,
+        },
+      })
+    } catch {
+      this.doubleInfinityPointsEffect.setEnabled(previous)
+      await this.options.onVerifiedOwnershipChanged?.().catch(() => false)
+      this.publish({
+        operation: { kind: 'idle' },
+        doubleInfinityPointsEnabled: previous,
+        feedback: {
+          kind: 'operation-failed',
+          code: 'effect-update-failed',
+        },
       })
     }
   }

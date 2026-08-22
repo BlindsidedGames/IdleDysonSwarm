@@ -83,6 +83,7 @@ export function createProductionNativeComposition(
   const services = environment.releasePlatformServices
   const entitlementBridge = new RuntimeEntitlementBridge(
     services.entitlements,
+    services.doubleInfinityPointsEffect,
   )
   const storage = environment.target === 'electron'
     ? new ElectronPlatformSaveStorageAdapter(

@@ -15777,6 +15777,48 @@
       "value": "]"
     }
   ],
+  "store.action.effect-disabled": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīşȧȧƀŀḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.effect-enabled": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞȧȧƀŀḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.effect-updating": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƥḓȧȧŧīƞɠ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "store.action.purchase": [
     {
       "type": 0,
@@ -15897,6 +15939,34 @@
     {
       "type": 0,
       "value": "Ƥŭŭřƈħȧȧşḗḗş şŧȧȧẏ ǿǿƞ ŧħīş ḓḗḗṽīƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.feedback.effect-disabled": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş ḓīşȧȧƀŀḗḗḓ. Ẏǿǿŭŭř ƥŭŭřƈħȧȧşḗḗ řḗḗḿȧȧīƞş ǿǿẇƞḗḗḓ ȧȧƞḓ ƈȧȧƞ ƀḗḗ řḗḗ-ḗḗƞȧȧƀŀḗḗḓ ȧȧŧ ȧȧƞẏ ŧīḿḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.feedback.effect-enabled": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş ḗḗƞȧȧƀŀḗḗḓ. Ƒŭŭŧŭŭřḗḗ Īƞƒīƞīŧẏ Ƥǿǿīƞŧ řḗḗẇȧȧřḓş ẇīŀŀ ƀḗḗ ḓǿǿŭŭƀŀḗḗḓ."
     },
     {
       "type": 0,

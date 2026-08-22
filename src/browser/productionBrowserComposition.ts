@@ -111,6 +111,7 @@ export function createProductionBrowserComposition(
     ? undefined
     : new RuntimeEntitlementBridge(
         options.releasePlatformServices.entitlements,
+        options.releasePlatformServices.doubleInfinityPointsEffect,
       )
   const createFirstRunSave = () =>
     createUnityFirstRunPreparedSave({

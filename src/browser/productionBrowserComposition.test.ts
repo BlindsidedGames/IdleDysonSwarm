@@ -19,6 +19,7 @@ import {
   PRODUCTION_BROWSER_SAVE_PATHS,
 } from './productionBrowserComposition'
 import type { ReleasePlatformServices } from '../platform/releaseFoundation'
+import { DoubleInfinityPointsEffectPreferenceService } from '../store/doubleInfinityPointsEffect'
 
 describe('production browser composition', () => {
   test('loads native verified ownership before constructing canonical gameplay', async () => {
@@ -56,6 +57,47 @@ describe('production browser composition', () => {
       state: {
         entitlements: { permanentDoubleIp: true },
       },
+    })
+  })
+
+  test('reapplies a disabled Double IP choice when a save graph is opened', async () => {
+    let captured: Readonly<BrowserRuntimeFoundationOptions> | undefined
+    const effect = new DoubleInfinityPointsEffectPreferenceService({ storage: null })
+    effect.setEnabled(false)
+    createProductionBrowserComposition({
+      developmentBuild: false,
+      entitlementDocument: entitlementDocument('false'),
+      releasePlatformServices: {
+        hostKind: 'mobile-native',
+        doubleInfinityPointsEffect: effect,
+        entitlements: {
+          readOwnership: async () => ({
+            doubleInfinityPoints: true,
+            developerOptions: false,
+            supporterCatGallery: false,
+          }),
+          refreshOwnership: async () => ({
+            doubleInfinityPoints: true,
+            developerOptions: false,
+            supporterCatGallery: false,
+          }),
+        },
+      } as unknown as ReleasePlatformServices,
+      createRuntime: (options) => {
+        captured = options
+        return Object.freeze({}) as BrowserUiRuntimeFoundation
+      },
+    })
+
+    await captured?.hostEntitlements?.initialize()
+    expect(captured?.hostEntitlements?.currentOwnership())
+      .toMatchObject({ doubleInfinityPoints: true })
+    const opened = await captured?.createApplication(
+      new FirstRunRepository(),
+    ).start()
+    expect(opened).toMatchObject({
+      phase: 'ready',
+      state: { entitlements: { permanentDoubleIp: false } },
     })
   })
 

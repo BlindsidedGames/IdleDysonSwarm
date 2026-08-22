@@ -12,6 +12,7 @@ import {
   type StoreProductId,
 } from '../../../store/contracts'
 import { StorefrontController } from '../../../store/storefront'
+import { DoubleInfinityPointsEffectPreferenceService } from '../../../store/doubleInfinityPointsEffect'
 import enCatalog from '../../i18n/catalogs/compiled/en.json'
 import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type { SharedMessageCatalog } from '../../i18n/catalogs/types'
@@ -76,7 +77,42 @@ describe('StoreSurface', () => {
     await waitFor(() => expect(store.restorePurchases).toHaveBeenCalledOnce())
     expect(await screen.findByText('One permanent purchase was restored.'))
       .toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Owned' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Enabled' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  test('replaces the owned Double IP purchase button with its persisted toggle', async () => {
+    const user = userEvent.setup()
+    const effect = new DoubleInfinityPointsEffectPreferenceService({ storage: null })
+    const synchronize = vi.fn(async () => true)
+    const { controller } = renderStore(storeAdapter(), {
+      readOwnership: async () => ({
+        doubleInfinityPoints: true,
+        developerOptions: false,
+        supporterCatGallery: false,
+      }),
+      refreshOwnership: async () => ({
+        doubleInfinityPoints: true,
+        developerOptions: false,
+        supporterCatGallery: false,
+      }),
+    }, false, {}, effect, synchronize)
+
+    const toggle = await screen.findByRole('button', { name: 'Enabled' })
+    expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    await user.click(toggle)
+
+    expect(await screen.findByRole('button', { name: 'Disabled' }))
+      .toHaveAttribute('aria-pressed', 'false')
+    expect(effect.getSnapshot()).toBe(false)
+    expect(controller.getSnapshot().hostOwnership.doubleInfinityPoints)
+      .toBe(true)
+    expect(synchronize).toHaveBeenCalledOnce()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your purchase remains owned',
+    )
   })
 
   test('presents the existing in-game Developer Options unlock as an alternative', async () => {
@@ -195,9 +231,21 @@ function renderStore(
     deviceOnlyPurchases?: boolean
     restoreAvailable?: boolean
   }> = {},
+  doubleInfinityPointsEffect =
+    new DoubleInfinityPointsEffectPreferenceService({ storage: null }),
+  onVerifiedOwnershipChanged?: () => Promise<boolean>,
 ) {
-  const controller = new StorefrontController({ store, entitlements })
-  return render(
+  const controller = new StorefrontController({
+    store,
+    entitlements,
+    doubleInfinityPointsEffect,
+    ...(onVerifiedOwnershipChanged === undefined
+      ? {}
+      : { onVerifiedOwnershipChanged }),
+  })
+  return {
+    controller,
+    ...render(
     <PresentationIntlProvider
       locale="en"
       messages={enCatalog as SharedMessageCatalog}
@@ -208,7 +256,8 @@ function renderStore(
         {...presentation}
       />
     </PresentationIntlProvider>,
-  )
+    ),
+  }
 }
 
 function storeAdapter(): StoreAdapter & {
