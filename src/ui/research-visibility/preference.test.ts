@@ -41,6 +41,40 @@ describe('ResearchVisibilityPreferenceService', () => {
       .toBe(false)
   })
 
+  test('a changed explicit selection cannot be overwritten by later adoption', () => {
+    const local = storage()
+    const preference = new ResearchVisibilityPreferenceService({ storage: local })
+    const listener = vi.fn()
+    preference.subscribe(listener)
+
+    preference.setHideCompleted(true)
+    expect(preference.getSnapshot()).toBe(true)
+    expect(local.setItem).toHaveBeenCalledOnce()
+    expect(listener).toHaveBeenCalledOnce()
+
+    expect(preference.adoptLegacyUnityHidePurchased(false)).toBe(false)
+    expect(preference.getSnapshot()).toBe(true)
+    expect(local.setItem).toHaveBeenCalledOnce()
+    expect(listener).toHaveBeenCalledOnce()
+  })
+
+  test('a same-value explicit default is a no-op that still blocks adoption', () => {
+    const local = storage()
+    const preference = new ResearchVisibilityPreferenceService({ storage: local })
+    const listener = vi.fn()
+    preference.subscribe(listener)
+
+    preference.setHideCompleted(false)
+    expect(preference.getSnapshot()).toBe(false)
+    expect(local.setItem).not.toHaveBeenCalled()
+    expect(listener).not.toHaveBeenCalled()
+
+    expect(preference.adoptLegacyUnityHidePurchased(true)).toBe(false)
+    expect(preference.getSnapshot()).toBe(false)
+    expect(local.setItem).not.toHaveBeenCalled()
+    expect(listener).not.toHaveBeenCalled()
+  })
+
   test.each([
     '{',
     JSON.stringify({ version: 2, hideCompleted: true }),

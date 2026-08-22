@@ -45,10 +45,11 @@ export class ResearchVisibilityPreferenceService {
   }
 
   setHideCompleted(hideCompleted: boolean): void {
-    if (
-      typeof hideCompleted !== 'boolean' ||
-      hideCompleted === this.#hideCompleted
-    ) return
+    if (typeof hideCompleted !== 'boolean') return
+    // Any valid explicit selection establishes this device's intent, even
+    // when it repeats the default and therefore needs no write or publish.
+    this.#legacyAdoptionAvailable = false
+    if (hideCompleted === this.#hideCompleted) return
     this.#hideCompleted = hideCompleted
     this.#write()
     this.#publish()
