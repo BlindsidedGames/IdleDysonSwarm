@@ -6,6 +6,17 @@
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>fr</string>
+		<string>de</string>
+		<string>es-419</string>
+		<string>pt-BR</string>
+		<string>zh-Hans</string>
+		<string>ru</string>
+		<string>ja</string>
+	</array>
 	<key>CFBundleDisplayName</key>
         <string>Idle Dyson Swarm</string>
 	<key>CFBundleExecutable</key>

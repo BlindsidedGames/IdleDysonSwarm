@@ -215,22 +215,6 @@
   line-height: 1.2;
 }
 .avocato-meditation > .ui-button { min-block-size: var(--target-minimum); padding: 0.28rem; font-size: calc(0.72rem * var(--game-text-scale)); }
-.avotation-completion__backdrop { position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(7 4 13 / 84%); }
-.avotation-completion { --avotation-accent: #c8b3ff; display: grid; inline-size: min(100%, 36rem); max-block-size: calc(100dvh - 2rem); gap: 0.8rem; padding: 1rem; overflow-y: auto; border: 2px solid var(--avotation-accent); border-radius: 0.35rem; background: #2f2546; box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 45%); text-align: center; }
-.avotation-completion h2,
-.avotation-completion p { margin: 0; }
-.avotation-completion p { color: #91dd8f; font-weight: var(--font-weight-bold); }
-.avotation-completion__meditation { position: relative; inline-size: 100%; aspect-ratio: 1; margin: 0; overflow: hidden; border: 1px solid #171221; border-radius: 0.3rem; background: #fff; }
-.avotation-completion__meditation > img { display: block; inline-size: 100%; block-size: 100%; object-fit: contain; }
-.avotation-completion__meditation ul { position: absolute; inset: 0; padding: 0; margin: 0; list-style: none; }
-.avotation-completion__meditation li { position: absolute; padding: 0.12rem 0.28rem; border-radius: 0.2rem; background: rgb(29 20 42 / 78%); color: #fff; font-size: clamp(0.64rem, 2.2vw, 0.88rem); font-weight: var(--font-weight-bold); line-height: 1.1; text-shadow: 0 1px 2px #000; }
-.avotation-completion__meditation li:nth-child(1) { inset-block-start: 8%; inset-inline-start: 7%; }
-.avotation-completion__meditation li:nth-child(2) { inset-block-start: 7%; inset-inline-end: 7%; }
-.avotation-completion__meditation li:nth-child(3) { inset-block-start: 39%; inset-inline-start: 4%; }
-.avotation-completion__meditation li:nth-child(4) { inset-block-start: 39%; inset-inline-end: 4%; }
-.avotation-completion__meditation li:nth-child(5) { inset-block-end: 8%; inset-inline-start: 8%; }
-.avotation-completion__meditation li:nth-child(6) { inset-block-end: 6%; inset-inline-start: 50%; transform: translateX(-50%); }
-.avotation-completion__meditation li:nth-child(7) { inset-block-end: 8%; inset-inline-end: 8%; }
 .avocato-developer-note { padding: 0.65rem; }
 .avocato-developer-note summary { cursor: pointer; font-weight: var(--font-weight-bold); }
 .avocato-developer-note p { margin: 0.55rem 0 0; color: #e8def6; line-height: 1.35; }

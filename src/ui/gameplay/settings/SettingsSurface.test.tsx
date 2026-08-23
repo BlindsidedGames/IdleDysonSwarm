@@ -12,7 +12,6 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { IntlProvider } from 'react-intl'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import {
   SettingsSurface,
@@ -23,6 +22,11 @@ import {
   NumberNotationPreferenceService,
   NumberNotationProvider,
 } from '../../number-notation'
+import {
+  LocalePreferenceProvider,
+  LocalePreferenceService,
+} from '../../i18n'
+import enCatalog from '../../i18n/catalogs/compiled/en.json'
 
 const settingsStyles = readFileSync(
   join(
@@ -39,6 +43,61 @@ const settingsStyles = readFileSync(
 afterEach(cleanup)
 
 describe('SettingsSurface', () => {
+  test('changes the device-local game language and can return to device mode', async () => {
+    const user = userEvent.setup()
+    const storage = {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(),
+    }
+    const language = new LocalePreferenceService({
+      storage,
+      preferredLocales: ['en-AU'],
+    })
+    renderSettings(vi.fn(), undefined, {}, undefined, language)
+
+    const select = screen.getByRole('combobox', {
+      name: 'Game language',
+    })
+    expect(select).toHaveValue('system')
+    expect(within(select).getAllByRole('option')).toHaveLength(9)
+    expect(within(select).getByRole('option', {
+      name: 'Español (Latinoamérica)',
+    })).toBeInTheDocument()
+    expect(within(select).getByRole('option', {
+      name: 'Português (Brasil)',
+    })).toBeInTheDocument()
+    expect(within(select).getByRole('option', {
+      name: '简体中文',
+    })).toBeInTheDocument()
+    expect(within(select).getByRole('option', {
+      name: 'Русский',
+    })).toBeInTheDocument()
+    expect(within(select).getByRole('option', {
+      name: '日本語',
+    })).toBeInTheDocument()
+    await user.selectOptions(select, 'fr')
+    await waitFor(() => expect(language.getSnapshot()).toEqual({
+      preference: 'fr',
+      locale: 'fr',
+    }))
+    expect(
+      await screen.findByRole('heading', { name: 'Langue' }),
+    ).toBeInTheDocument()
+    expect(storage.setItem).toHaveBeenLastCalledWith(
+      'idle-dyson-swarm.presentation-locale',
+      'fr',
+    )
+
+    await user.selectOptions(select, 'system')
+    expect(language.getSnapshot()).toEqual({
+      preference: 'system',
+      locale: 'en',
+    })
+    expect(
+      await screen.findByRole('heading', { name: 'Language' }),
+    ).toBeInTheDocument()
+  })
+
   test('changes the accessible device-local notation select by mouse and keyboard', async () => {
     const user = userEvent.setup()
     const local = {
@@ -58,6 +117,7 @@ describe('SettingsSurface', () => {
     await user.selectOptions(select, 'engineering')
     expect(select).toHaveValue('engineering')
     select.blur()
+    await user.tab()
     await user.tab()
     expect(select).toHaveFocus()
   })
@@ -104,7 +164,19 @@ describe('SettingsSurface', () => {
       /\.settings-surface\s*\{[^}]*block-size:\s*100%;[^}]*min-block-size:\s*0;[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/,
     )
     expect(settingsStyles).toMatch(
+      /\.settings-surface__content\s*\{[^}]*padding:\s*0\.5rem max\(0\.5rem, var\(--safe-area-right\)\) 0\.5rem max\(0\.5rem, var\(--safe-area-left\)\);/,
+    )
+    expect(settingsStyles).toMatch(
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\s*\{[^}]*gap:\s*0\.45rem;[^}]*padding:\s*0\.55rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls\s*\{[^}]*gap:\s*0\.1rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls input\[type="range"\]\s*\{[^}]*block-size:\s*1\.75rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\.settings-surface__panel--audio\s*\{[^}]*gap:\s*0\.15rem;/,
     )
     expect(settingsStyles).toMatch(
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__copy h2\s*\{[^}]*font-size:\s*calc\(0\.95rem \* var\(--game-text-scale\)\);/,
@@ -652,12 +724,15 @@ function renderSettings(
   development?: SettingsSurfaceProps['development'],
   overrides: Partial<SettingsSurfaceProps> = {},
   preference = new NumberNotationPreferenceService({ storage: null }),
+  language = new LocalePreferenceService({
+    storage: null,
+    preferredLocales: ['en'],
+  }),
 ) {
   return render(
-    <IntlProvider
-      locale="en"
-      messages={{}}
-      onError={() => undefined}
+    <LocalePreferenceProvider
+      preference={language}
+      initialMessages={enCatalog}
     >
       <NumberNotationProvider preference={preference}>
         <div className="dyson-shell" data-route-theme="settings">
@@ -675,6 +750,6 @@ function renderSettings(
           />
         </div>
       </NumberNotationProvider>
-    </IntlProvider>,
+    </LocalePreferenceProvider>,
   )
 }

@@ -181,32 +181,46 @@ describe('WikiSurface', () => {
     const mostRecent = screen.getByRole('heading', { name: 'Most Recent' })
       .closest('section')
     expect(mostRecent).not.toBeNull()
-    expect(within(mostRecent!).getByRole('heading', { name: 'Version 3.1' })).toBeVisible()
-    expect(within(mostRecent!).getAllByRole('listitem')).toHaveLength(14)
-    expect(within(mostRecent!).getByText(/soundtrack and interface sounds/)).toBeVisible()
-    expect(within(mostRecent!).getByText(/Corrected Skill effects/)).toBeVisible()
-    expect(within(mostRecent!).getByText(/Supporter Cat Gallery/)).toBeVisible()
-    expect(within(mostRecent!).getByText(/ten most recent Infinity runs/)).toBeVisible()
-    expect(within(mostRecent!).getByText(/settling on the final galaxy field/)).toBeVisible()
-    expect(within(mostRecent!).getByText(/older Unity-save migration/)).toBeVisible()
+    expect(within(mostRecent!).getByRole('heading', { name: 'Version 3.1.2' })).toBeVisible()
+    expect(within(mostRecent!).getAllByRole('listitem')).toHaveLength(1)
+    expect(within(mostRecent!).getByText(/French, German, Latin American Spanish/)).toBeVisible()
+
+    const previous = screen.getByRole('heading', { name: 'Older' })
+      .closest('section')
+    expect(previous).not.toBeNull()
+    expect(within(previous!).getByRole('heading', { name: 'Version 3.1.1' })).toBeVisible()
+    expect(within(previous!).getByText(/Avotation and Secrets interactions/)).toBeVisible()
+    expect(within(previous!).getByText(/even facility gutters/)).toBeVisible()
+    expect(within(previous!).getByText(/remembers its position and zoom/)).toBeVisible()
+    expect(within(previous!).getByText(/teaser now stays hidden/)).toBeVisible()
     expect(mostRecent).not.toHaveTextContent(
       /TypeScript|canonical simulation|architecture|context|projection|pipeline|catalog|\bported\b/i,
     )
-    const previous = screen.getByRole('heading', { name: 'Previous' })
-      .closest('section')
-    expect(previous).not.toBeNull()
+    expect(within(previous!).getByRole('heading', { name: 'Version 3.1' })).toBeVisible()
+    expect(within(previous!).getByText(/soundtrack and interface sounds/)).toBeVisible()
+    expect(within(previous!).getByText(/Corrected Skill effects/)).toBeVisible()
+    expect(within(previous!).getByText(/Supporter Cat Gallery/)).toBeVisible()
+    expect(within(previous!).getByText(/ten most recent Infinity runs/)).toBeVisible()
+    expect(within(previous!).getByText(/settling on the final galaxy field/)).toBeVisible()
+    expect(within(previous!).getByText(/older Unity-save migration/)).toBeVisible()
     expect(within(previous!).getByRole('heading', { name: 'Version 3' })).toBeVisible()
-    expect(within(previous!).getAllByRole('listitem')).toHaveLength(13)
+    expect(within(previous!).getAllByRole('listitem')).toHaveLength(31)
     expect(within(previous!).getByText(/available to play on the Web/)).toBeVisible()
     expect(within(previous!).getByText(/Offline Time with Stored Time/)).toBeVisible()
     expect(within(previous!).getByText(/three rotating backups/)).toBeVisible()
     expect(within(previous!).getByText(/installed as an app/)).toBeVisible()
     expect(within(previous!).getByText(/Web Store with five/)).toBeVisible()
     expect(within(previous!).getByText(/Expanded the Wiki/)).toBeVisible()
+    const earlier = screen.getByRole('heading', { name: 'Retired' })
+      .closest('section')
+    expect(earlier).not.toBeNull()
+    expect(within(earlier!).queryByRole('listitem')).not.toBeInTheDocument()
+    expect(within(earlier!).queryByRole('heading', { name: 'Version 3' }))
+      .not.toBeInTheDocument()
+    expect(within(earlier!).getByText(/Began working on UI overhaul/)).toBeVisible()
+    expect(within(earlier!).getByText(/2.15-2.16/)).toBeVisible()
     expect(screen.queryByRole('heading', { name: '2.18.7' }))
       .not.toBeInTheDocument()
-    expect(screen.getByText(/Began working on UI overhaul/)).toBeVisible()
-    expect(screen.getByText(/2.15-2.16/)).toBeVisible()
 
     await user.click(topicButton(/^Lore/))
     expect(
@@ -295,6 +309,19 @@ describe('WikiSurface', () => {
     expect(screen.getByText('Meaning so far: Love, Family, and -----------s')).toBeVisible()
   })
 
+  test('reveals the localized meaning phrase instead of raw English', async () => {
+    const user = userEvent.setup()
+    renderWiki(
+      progression({ secretsOfTheUniverse: 27n }),
+      {},
+      { 'wiki.secrets.meaning-phrase': 'Amor, família e incrementais' },
+    )
+
+    await user.click(topicButton(/Secrets of the Universe/))
+    expect(screen.getByText('Meaning so far: Amor, família e incrementais'))
+      .toBeVisible()
+  })
+
   test('passes an accessibility scan with every category unlocked', async () => {
     const { container } = renderWiki(progression({
       infinityPoints: 42n,
@@ -322,9 +349,10 @@ function progression(overrides: Partial<WikiProgression> = {}): WikiProgression 
 function renderWiki(
   value: WikiProgression,
   overrides: Partial<WikiSurfaceProps> = {},
+  messages: Record<string, string> = {},
 ) {
   return render(
-    <IntlProvider locale="en" messages={{}} onError={() => undefined}>
+    <IntlProvider locale="en" messages={messages} onError={() => undefined}>
       <WikiSurface locale="en" progression={value} {...overrides} />
     </IntlProvider>,
   )

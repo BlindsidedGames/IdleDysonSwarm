@@ -3,7 +3,14 @@ import { useIntl, type IntlShape, type MessageDescriptor } from 'react-intl'
 import { formatNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { wikiMessages as messages } from './messages'
-import { WIKI_LORE_SECTIONS, WIKI_PATCH_NOTES } from './content'
+import {
+  WIKI_LORE_SECTIONS,
+  WIKI_PATCH_NOTES,
+  wikiLoreChapterBodyMessage,
+  wikiLoreChapterTitleMessage,
+  wikiLoreSectionTitleMessage,
+  wikiPatchNoteMessage,
+} from './content'
 import {
   visibleWikiLoreSectionIds,
   visibleWikiCategoryIds,
@@ -149,6 +156,17 @@ const version31PatchNoteMessages = [
   messages.patchNotesVersion31StoredTime,
   messages.patchNotesVersion31Saves,
   messages.patchNotesVersion31Economy,
+] as const
+
+const version311PatchNoteMessages = [
+  messages.patchNotesVersion311Overlays,
+  messages.patchNotesVersion311CompactLayouts,
+  messages.patchNotesVersion311SkillsAndTinker,
+  messages.patchNotesVersion311MegaTeaser,
+] as const
+
+const version312PatchNoteMessages = [
+  messages.patchNotesVersion312Languages,
 ] as const
 
 type SecretEffectMessage =
@@ -327,9 +345,9 @@ export function WikiSurface({
 
 function PatchNotesArticle() {
   const intl = useIntl()
-  const previousNotes = [...WIKI_PATCH_NOTES]
+  const previousNotes = WIKI_PATCH_NOTES
+    .map((entry, index) => intl.formatMessage(wikiPatchNoteMessage(entry, index)))
     .reverse()
-    .map((entry) => entry.notes)
     .join('\n\n')
 
   return (
@@ -337,21 +355,36 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion31)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion312)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version31PatchNoteMessages.map((message) => (
+            {version312PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
         </section>
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion311)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version311PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
+          <h4>{intl.formatMessage(messages.patchNotesVersion31)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version31PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
           <h4>{intl.formatMessage(messages.patchNotesVersion3)}</h4>
           <ul className="wiki-surface__patch-note-list">
             {version3PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
+        </section>
+        <section className="wiki-surface__section">
+          <h3>{intl.formatMessage(messages.patchNotesEarlier)}</h3>
           <p className="wiki-surface__authored-copy">{previousNotes}</p>
         </section>
       </div>
@@ -360,19 +393,22 @@ function PatchNotesArticle() {
 }
 
 function LoreArticle({ progression }: { readonly progression: WikiProgression }) {
+  const intl = useIntl()
   const visibleSectionIds = visibleWikiLoreSectionIds(progression)
   return (
     <div className="wiki-surface__lore">
       {WIKI_LORE_SECTIONS
         .filter((section) => visibleSectionIds.includes(section.id))
         .map((section) => (
-          <section key={section.title} className="wiki-surface__lore-section">
-            <h3>{section.title}</h3>
+          <section key={section.id} className="wiki-surface__lore-section">
+            <h3>{intl.formatMessage(wikiLoreSectionTitleMessage(section))}</h3>
             <div className="wiki-surface__lore-chapters">
-              {section.chapters.map((chapter) => (
-                <details key={chapter.title}>
-                  <summary>{chapter.title}</summary>
-                  <p className="wiki-surface__authored-copy">{chapter.body}</p>
+              {section.chapters.map((chapter, index) => (
+                <details key={`${section.id}-${index}`}>
+                  <summary>{intl.formatMessage(wikiLoreChapterTitleMessage(section, chapter, index))}</summary>
+                  <p className="wiki-surface__authored-copy">
+                    {intl.formatMessage(wikiLoreChapterBodyMessage(section, chapter, index))}
+                  </p>
                 </details>
               ))}
             </div>
@@ -465,7 +501,10 @@ function SecretsArticle({ locale, revealed }: { readonly locale: EnabledLocale; 
   const intl = useIntl()
   const count = Number(revealed > 27n ? 27n : revealed)
   const unlocked = secretEntries.slice(0, count)
-  const meaning = formatMeaning(count)
+  const meaning = formatMeaning(
+    intl.formatMessage(messages.meaningPhrase),
+    count,
+  )
 
   return (
     <>
@@ -490,7 +529,6 @@ function SecretsArticle({ locale, revealed }: { readonly locale: EnabledLocale; 
   )
 }
 
-const MEANING = 'Love, Family, and Incrementals'
 const SECRET_REVEAL_ORDER = [
   0, 1, 2, 3, 4,
   6, 7, 8, 9, 10, 11, 12,
@@ -498,13 +536,26 @@ const SECRET_REVEAL_ORDER = [
   29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18,
 ] as const
 
-function formatMeaning(revealed: number): string {
+function formatMeaning(phrase: string, revealed: number): string {
+  const characters = [...phrase]
+  const usesCanonicalOrder = phrase === messages.meaningPhrase.defaultMessage
+  const revealOrder = usesCanonicalOrder
+    ? SECRET_REVEAL_ORDER
+    : characters
+        .map((character, index) => ({ character, index }))
+        .filter(({ character }) => !/\s/u.test(character))
+        .map(({ index }) => index)
+  const revealCount = usesCanonicalOrder
+    ? revealed
+    : Math.ceil((revealed * revealOrder.length) / 27)
   const revealedIndexes = new Set<number>(
-    SECRET_REVEAL_ORDER.slice(0, revealed),
+    revealOrder.slice(0, revealCount),
   )
-  return [...MEANING]
+  return characters
     .map((character, index) => (
-      character === ' ' || revealedIndexes.has(index) ? character : '-'
+      /\s/u.test(character) || revealedIndexes.has(index)
+        ? character
+        : '-'
     ))
     .join('')
 }

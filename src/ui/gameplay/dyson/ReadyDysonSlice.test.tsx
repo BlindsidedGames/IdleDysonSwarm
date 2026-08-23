@@ -24,13 +24,23 @@ import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
 import arXbCatalog from '../../i18n/catalogs/compiled/ar-XB.json'
+import deCatalog from '../../i18n/catalogs/compiled/de.json'
 import enCatalog from '../../i18n/catalogs/compiled/en.json'
 import enXaCatalog from '../../i18n/catalogs/compiled/en-XA.json'
+import es419Catalog from '../../i18n/catalogs/compiled/es-419.json'
+import frCatalog from '../../i18n/catalogs/compiled/fr.json'
+import jaCatalog from '../../i18n/catalogs/compiled/ja.json'
+import ptBrCatalog from '../../i18n/catalogs/compiled/pt-BR.json'
+import ruCatalog from '../../i18n/catalogs/compiled/ru.json'
+import zhCnCatalog from '../../i18n/catalogs/compiled/zh-CN.json'
 import type {
   SharedMessageCatalog,
 } from '../../i18n/catalogs/types'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
-import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
+import {
+  LocalePreferenceProvider,
+  LocalePreferenceService,
+} from '../../i18n'
 import type {
   BrowserUiRuntimeFoundation,
   UiRuntimePlayerCommandResult,
@@ -65,6 +75,13 @@ afterEach(() => {
 
 const compiledCatalogs = {
   en: enCatalog,
+  fr: frCatalog,
+  de: deCatalog,
+  'es-419': es419Catalog,
+  'pt-BR': ptBrCatalog,
+  'zh-CN': zhCnCatalog,
+  ru: ruCatalog,
+  ja: jaCatalog,
   'en-XA': enXaCatalog,
   'ar-XB': arXbCatalog,
 } as const
@@ -1298,7 +1315,11 @@ describe('ReadyDysonSlice', () => {
         'data-route-theme',
         route,
       )
-      if (route === 'statistics') {
+      if (
+        route === 'statistics' ||
+        route === 'story' ||
+        route === 'wiki'
+      ) {
         expect(
           rendered.container.querySelector('.dyson-resource-header'),
         ).not.toBeInTheDocument()
@@ -1564,7 +1585,7 @@ describe('ReadyDysonSlice', () => {
       /\.bot-distribution__slider\s*\{[^}]*block-size:\s*2\.75rem;[^}]*margin:\s*-0\.675rem 0;/,
     )
     expect(stylesheet).toMatch(
-      /\.bot-distribution\s*\{[^}]*grid-template-columns:\s*minmax\(0, 0\.7fr\)\s*minmax\(0, 1\.45fr\)\s*minmax\(0, 0\.7fr\);[^}]*min-inline-size:\s*0;/,
+      /\.bot-distribution\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)\s*minmax\(5rem, 0\.8fr\)\s*minmax\(0, 1fr\);[^}]*grid-template-rows:\s*auto auto auto;[^}]*min-inline-size:\s*0;/,
     )
   })
 
@@ -2598,16 +2619,20 @@ function provider(
     throw error
   },
 ) {
+  const localePreference = new LocalePreferenceService({
+    storage: null,
+    preferredLocales: [locale],
+  })
   return (
-    <PresentationIntlProvider
-      locale={locale}
-      messages={
+    <LocalePreferenceProvider
+      preference={localePreference}
+      initialMessages={
         compiledCatalogs[locale] as unknown as SharedMessageCatalog
       }
       onError={onError}
     >
       {node}
-    </PresentationIntlProvider>
+    </LocalePreferenceProvider>
   )
 }
 

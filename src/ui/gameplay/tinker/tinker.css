@@ -17,9 +17,10 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 0.12rem;
   padding: 0.5rem 0.6rem;
-  border: 1px solid #0d0a0e;
-  border-radius: 0.35rem;
-  background: #403044;
+  border: 2px solid var(--theme-divider);
+  border-radius: 0.25rem;
+  background: var(--theme-panel);
+  box-shadow: 0 2px 0 #171018;
   color: var(--color-text-primary);
   font: inherit;
   line-height: var(--line-height-compact);
@@ -52,7 +53,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .tinker-surface__control[aria-disabled="false"]:hover {
-    background: #4a3750;
+    background: var(--theme-selected);
   }
 }
 

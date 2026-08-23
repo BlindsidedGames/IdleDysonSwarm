@@ -37,10 +37,10 @@ export interface AvocatoSurfaceProps {
   readonly dispatchPlayer: (command: AvocatoCommand) => Promise<UiRuntimePlayerCommandResult>
 }
 
-const FEED_META: Readonly<Record<AvocadoFeedSource, { readonly title: MessageDescriptor; readonly resource: string }>> = {
-  'infinity-points': { title: messages.infinityMultiplier, resource: 'Infinity Points' },
-  influence: { title: messages.influenceMultiplier, resource: 'Influence' },
-  'strange-matter': { title: messages.strangeMatterMultiplier, resource: 'Strange Matter' },
+const FEED_META: Readonly<Record<AvocadoFeedSource, { readonly title: MessageDescriptor; readonly resource: MessageDescriptor }>> = {
+  'infinity-points': { title: messages.infinityMultiplier, resource: messages.resourceInfinityPoints },
+  influence: { title: messages.influenceMultiplier, resource: messages.resourceInfluence },
+  'strange-matter': { title: messages.strangeMatterMultiplier, resource: messages.resourceStrangeMatter },
 }
 
 export function AvocatoSurface({ locale, unlocked, resources, spendable, derived, previews, commandAvailability, dispatchPlayer }: AvocatoSurfaceProps) {
@@ -144,7 +144,7 @@ function AvocatoFeedCard({ locale, preview, invested, multiplier, resourceAvaila
         variant="primary"
         state={pending ? 'pending' : failed ? 'failure' : 'idle'}
         disabled={disabled}
-        aria-label={intl.formatMessage(messages.feedAccessible, { resource: meta.resource })}
+        aria-label={intl.formatMessage(messages.feedAccessible, { resource: intl.formatMessage(meta.resource) })}
         onClick={() => void feed()}
       >
         {intl.formatMessage(messages.feed, { value: formatGameNumber(locale, preview.amount) })}

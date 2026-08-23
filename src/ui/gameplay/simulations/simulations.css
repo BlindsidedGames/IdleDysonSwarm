@@ -477,6 +477,7 @@
 }
 
 .simulation-time-control { border-block-start-width: 1px; }
+.simulation-time-control .ui-progress-controls-panel__collapsed { block-size: auto; min-block-size: 2.875rem; }
 .simulation-time-control .ui-progress-controls-panel__body { padding: .2rem 0; }
 .simulation-time-control__summary { display: grid; gap: .08rem; min-inline-size: 0; }
 .simulation-time-control__header { display: flex; justify-content: space-between; gap: .6rem; align-items: center; }

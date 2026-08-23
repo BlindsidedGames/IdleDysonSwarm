@@ -603,7 +603,7 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   block-size: 100%;
   min-block-size: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .dyson-shell[data-resource-header="false"] .dyson-shell__content {
@@ -796,10 +796,6 @@
     font-size: clamp(0.58rem, 2.8vw, 0.72rem);
   }
 
-  .dyson-shell__stage {
-    padding-inline: max(0.45rem, var(--safe-area-left))
-      max(0.45rem, var(--safe-area-right));
-  }
 }
 
 @media (max-width: 359px) {
@@ -846,27 +842,41 @@
 .dyson-shell__stage {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.dyson-shell__facility-region {
+  position: relative;
+  block-size: 100%;
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
   padding:
-    calc(var(--dyson-swarm-space) + 0.35rem)
+    calc(var(--dyson-swarm-space) + var(--game-card-content-inset))
     max(var(--game-card-content-inset), var(--safe-area-right))
     var(--game-card-content-inset)
     max(var(--game-card-content-inset), var(--safe-area-left));
 }
 
-.dyson-shell__stage::-webkit-scrollbar {
+.dyson-shell__stage[data-has-tinker="true"]
+  .dyson-shell__facility-region {
+  padding-block-end: calc(
+    var(--game-card-content-inset) +
+    var(--dyson-tinker-overlay-height, 0px) +
+    0.65rem
+  );
+}
+
+.dyson-shell__facility-region::-webkit-scrollbar {
   display: none;
   inline-size: 0;
   block-size: 0;
 }
 
 .dyson-shell__playfield[data-has-swarm="true"]
-  .dyson-shell__stage::after {
+  .dyson-shell__facility-region::after {
   position: absolute;
   inset-block-start: calc(100% + var(--dyson-swarm-space));
   inline-size: 1px;
@@ -875,9 +885,17 @@
   pointer-events: none;
 }
 
+.dyson-shell__tinker-layer {
+  position: absolute;
+  z-index: 3;
+  inset-inline:
+    max(var(--game-card-content-inset), var(--safe-area-left))
+    max(var(--game-card-content-inset), var(--safe-area-right));
+  inset-block-end: var(--game-card-content-inset);
+}
+
 .dyson-shell__tinker {
-  margin-block-start: auto;
-  padding-block-start: 0.65rem;
+  position: relative;
 }
 
 .dyson-shell__facility-region,

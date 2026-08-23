@@ -158,6 +158,14 @@ export interface SkillsSurfaceProps {
   readonly dispatchPlayer: (
     command: SkillCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
+  readonly initialTreeView?: SkillTreeViewState | null
+  readonly onTreeViewChange?: (view: SkillTreeViewState) => void
+}
+
+export interface SkillTreeViewState {
+  readonly centerX: number
+  readonly centerY: number
+  readonly scale: number
 }
 
 const presentation =
@@ -237,6 +245,8 @@ export function SkillsSurface({
   commandAvailability,
   presetActions,
   dispatchPlayer,
+  initialTreeView,
+  onTreeViewChange,
 }: SkillsSurfaceProps) {
   const intl = useIntl()
   const searchId = useId()
@@ -427,6 +437,8 @@ export function SkillsSurface({
         presetColorId={presets[selectedPresetSlot - 1]?.colorId ?? defaultSkillPresetColorId(selectedPresetSlot)}
         onSelect={setSelectedSkillId}
         registerFocus={registerTreeFocus}
+        initialView={initialTreeView}
+        onViewChange={onTreeViewChange}
         controlsStart={(
           <div className="skills-surface__search">
           <label
@@ -581,6 +593,8 @@ interface SkillTreeViewportProps {
   readonly controlsStart?: ReactNode
   readonly onSelect: (skillId: string) => void
   readonly registerFocus: (focus: (skillId: string) => void) => void
+  readonly initialView?: SkillTreeViewState | null
+  readonly onViewChange?: (view: SkillTreeViewState) => void
 }
 
 const SkillTreeViewport = memo(function SkillTreeViewport({
@@ -594,6 +608,8 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   controlsStart,
   onSelect,
   registerFocus,
+  initialView,
+  onViewChange,
 }: SkillTreeViewportProps) {
   const intl = useIntl()
   const instructionsId = useId()
@@ -633,9 +649,23 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   const startNode =
     nodeById.get('startHereTree') ?? presentation.nodes[0]
 
+  const rememberTransform = useCallback(
+    (current: SkillTreeTransform) => {
+      const size = viewportSize.current
+      if (size.width <= 0 || size.height <= 0) return
+      onViewChange?.({
+        centerX: (size.width / 2 - current.x) / current.scale,
+        centerY: (size.height / 2 - current.y) / current.scale,
+        scale: current.scale,
+      })
+    },
+    [onViewChange],
+  )
+
   const scheduleTransformUpdate = useCallback(
     (update: (current: SkillTreeTransform) => SkillTreeTransform) => {
       effectiveTransform.current = update(effectiveTransform.current)
+      rememberTransform(effectiveTransform.current)
       if (transformFrame.current !== null) return
       const scheduledFrame = requestAnimationFrame(() => {
         if (transformFrame.current !== scheduledFrame) return
@@ -644,7 +674,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
       })
       transformFrame.current = scheduledFrame
     },
-    [],
+    [rememberTransform],
   )
 
   const applyTransformUpdateImmediately = useCallback(
@@ -654,9 +684,10 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
         transformFrame.current = null
       }
       effectiveTransform.current = update(effectiveTransform.current)
+      rememberTransform(effectiveTransform.current)
       setTransform(effectiveTransform.current)
     },
-    [],
+    [rememberTransform],
   )
 
   useEffect(
@@ -693,8 +724,32 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   useLayoutEffect(() => {
     if (initialized.current || !startNode) return
     initialized.current = true
+    const bounds = viewportRef.current?.getBoundingClientRect()
+    if (bounds) {
+      viewportSize.current = {
+        width: bounds.width,
+        height: bounds.height,
+      }
+    }
+    if (initialView && bounds) {
+      const scale = Math.min(
+        MAX_SCALE,
+        Math.max(MIN_SCALE, initialView.scale),
+      )
+      applyTransformUpdateImmediately(() => ({
+        scale,
+        x: bounds.width / 2 - initialView.centerX * scale,
+        y: bounds.height / 2 - initialView.centerY * scale,
+      }))
+      return
+    }
     centreOn(startNode.skillId, false)
-  }, [centreOn, startNode])
+  }, [
+    applyTransformUpdateImmediately,
+    centreOn,
+    initialView,
+    startNode,
+  ])
 
   useEffect(() => {
     const viewport = viewportRef.current

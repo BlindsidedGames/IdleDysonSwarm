@@ -18,12 +18,17 @@ import type {
   CanonicalSkillAvailabilityPreview,
   CanonicalSkillCatalogPreview,
 } from '../../../simulation/canonicalSkillTransactions'
-import { SkillsSurface, type SkillsSurfaceProps } from './SkillsSurface'
-import type { SkillPresetActions } from './SkillsSurface'
+import {
+  SkillsSurface,
+  type SkillPresetActions,
+  type SkillTreeViewState,
+  type SkillsSurfaceProps,
+} from './SkillsSurface'
 
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  vi.restoreAllMocks()
 })
 
 const startSkill = {
@@ -104,6 +109,10 @@ function createSkillElement(
   selectedPresetSlot: CanonicalSkillPresetSlot = 1,
   catalogOverride: CanonicalSkillCatalogPreview = catalog,
   presetActions?: SkillPresetActions,
+  treeView?: {
+    readonly initialTreeView?: SkillTreeViewState | null
+    readonly onTreeViewChange?: (view: SkillTreeViewState) => void
+  },
 ) {
   return (
     <IntlProvider locale="en" messages={{}}>
@@ -126,6 +135,7 @@ function createSkillElement(
         }}
         presetActions={presetActions}
         dispatchPlayer={dispatchPlayer}
+        {...treeView}
       />
     </IntlProvider>
   )
@@ -538,6 +548,92 @@ describe('SkillsSurface', () => {
     expect(
       screen.queryByRole('dialog', { name: 'Cash & Science' }),
     ).not.toBeInTheDocument()
+  })
+
+  test('restores the remembered graph centre and zoom after remounting', () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockReturnValue({
+        bottom: 300,
+        height: 300,
+        left: 0,
+        right: 400,
+        top: 0,
+        width: 400,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      })
+    const frames: FrameRequestCallback[] = []
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.push(callback)
+        return frames.length
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    const remembered: { current: SkillTreeViewState | null } = {
+      current: null,
+    }
+    const remember = (view: SkillTreeViewState) => {
+      remembered.current = view
+    }
+    const first = render(
+      createSkillElement(
+        createDispatchPlayer(),
+        0.5,
+        1,
+        catalog,
+        undefined,
+        { onTreeViewChange: remember },
+      ),
+    )
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const canvas = first.container.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+    const initial = readCanvasTransform(canvas)
+
+    fireEvent.pointerDown(tree, {
+      pointerId: 21,
+      clientX: 10,
+      clientY: 10,
+    })
+    fireEvent.pointerMove(tree, {
+      pointerId: 21,
+      clientX: 45,
+      clientY: 55,
+    })
+    fireEvent.pointerUp(tree, {
+      pointerId: 21,
+      clientX: 45,
+      clientY: 55,
+    })
+    act(() => frames.shift()?.(0))
+    fireEvent.click(screen.getByRole('button', { name: 'Zoom in' }))
+    const moved = readCanvasTransform(canvas)
+    expect(moved).not.toEqual(initial)
+    expect(remembered.current?.scale).toBeCloseTo(0.9)
+
+    first.unmount()
+    const second = render(
+      createSkillElement(
+        createDispatchPlayer(),
+        0.5,
+        1,
+        catalog,
+        undefined,
+        {
+          initialTreeView: remembered.current,
+          onTreeViewChange: remember,
+        },
+      ),
+    )
+    expect(
+      readCanvasTransform(
+        second.container.querySelector('.skill-tree-viewport__canvas'),
+      ),
+    ).toEqual(moved)
   })
 
   test('keeps keyboard skill activation available after a drag', () => {

@@ -14,6 +14,7 @@ const componentStyles = readFileSync(
 
 afterEach(() => {
   cleanup()
+  vi.useRealTimers()
   vi.unstubAllGlobals()
 })
 
@@ -30,7 +31,8 @@ describe('StableSingleLineText', () => {
     )
   })
 
-  test('only reduces its fitted scale and observes stable layout inputs', () => {
+  test('reduces immediately and grows after the layout stays quiet', () => {
+    vi.useFakeTimers()
     let resize: ResizeObserverCallback | undefined
     const observe = vi.fn()
     const disconnect = vi.fn()
@@ -85,6 +87,18 @@ describe('StableSingleLineText', () => {
 
     expect(container).toHaveStyle(
       '--ui-stable-single-line-font-size: 0.792em',
+    )
+
+    act(() => vi.advanceTimersByTime(1_500))
+    act(() => resize?.([], {} as ResizeObserver))
+    act(() => vi.advanceTimersByTime(1_999))
+    expect(container).toHaveStyle(
+      '--ui-stable-single-line-font-size: 0.792em',
+    )
+
+    act(() => vi.advanceTimersByTime(1))
+    expect(container).toHaveStyle(
+      '--ui-stable-single-line-font-size: 1em',
     )
     rendered.unmount()
     expect(disconnect).toHaveBeenCalledOnce()

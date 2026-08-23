@@ -33,11 +33,11 @@ const TARGET_SELECTORS: Readonly<
   skills: '.skill-settings__preset-row:first-child',
   settings: '.settings-surface__panel--more',
   research: '.research-surface__settings',
-  side: '.dyson-shell__side-panel',
+  side: '.dyson-shell__side-heading > span',
 })
 
 const COMPLETED_MEDITATION_REPLAY_SELECTOR =
-  '.dyson-shell__side-heading'
+  '.dyson-shell__side-heading > span'
 
 /**
  * Connects Unity's seven ordered Avotation targets to their equivalent full

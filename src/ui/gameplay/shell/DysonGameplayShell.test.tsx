@@ -67,6 +67,7 @@ const rootCss = readFileSync(
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  vi.restoreAllMocks()
 })
 
 describe('DysonGameplayShell', () => {
@@ -365,7 +366,7 @@ describe('DysonGameplayShell', () => {
 
   it('uses the card gutter for both facilities and lower panels', () => {
     expect(shellCss).toMatch(
-      /\.dyson-shell__stage\s*\{[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-right\)\)[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\);/s,
+      /\.dyson-shell__facility-region\s*\{[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-right\)\)[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\);/s,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell__lower-regions\s*\{[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-right\)\)[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\);/s,
@@ -373,6 +374,49 @@ describe('DysonGameplayShell', () => {
     expect(shellCss).not.toMatch(
       /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__lower-regions\s*\{[^}]*padding-inline:/,
     )
+  })
+
+  it('reserves the measured Tinker overlay height inside the facility scroller', () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        const height = this.classList.contains('dyson-shell__tinker-layer')
+          ? 72
+          : 0
+        return {
+          bottom: height,
+          height,
+          left: 0,
+          right: 0,
+          top: 0,
+          width: 0,
+          x: 0,
+          y: 0,
+          toJSON: () => ({}),
+        }
+      })
+
+    const { container } = render(<DysonGameplayShell {...props()} />)
+    const stage = container.querySelector('.dyson-shell__stage')
+
+    expect(stage).toHaveAttribute('data-has-tinker', 'true')
+    expect(stage).toHaveStyle('--dyson-tinker-overlay-height: 72px')
+  })
+
+  it('keeps the local Tinker layer beneath the compact drawer', () => {
+    const tinkerLayerZ = Number(
+      shellCss.match(
+        /\.dyson-shell__tinker-layer\s*\{[^}]*z-index:\s*(\d+);/,
+      )?.[1],
+    )
+    const drawerZ = Number(
+      shellCss.match(
+        /\.dyson-shell__side-panel\s*\{[^}]*z-index:\s*(\d+);/,
+      )?.[1],
+    )
+
+    expect(tinkerLayerZ).toBe(3)
+    expect(drawerZ).toBe(40)
+    expect(tinkerLayerZ).toBeLessThan(drawerZ)
   })
 
   it('sets locale direction while keeping the physical Unity header order', () => {
@@ -492,7 +536,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
     )
     expect(shellCss).toContain('overflow: hidden')
     expect(shellCss).toMatch(
-      /\.dyson-shell__stage\s*\{[\s\S]*display:\s*flex;[\s\S]*flex-direction:\s*column;/,
+      /\.dyson-shell__stage\s*\{[^}]*position:\s*relative;[^}]*overflow:\s*hidden;/,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell__playfield\s*\{[^}]*--dyson-swarm-space:\s*clamp\(5\.5rem,\s*15vh,\s*9rem\);[^}]*grid-template-rows:\s*minmax\(0,\s*1fr\);/,
@@ -504,13 +548,13 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell__swarm\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*0 0 auto;[^}]*min-block-size:\s*var\(--dyson-swarm-space\);[^}]*pointer-events:\s*none;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell__stage\s*\{[^}]*overflow-y:\s*auto;[^}]*scrollbar-width:\s*none;[^}]*calc\(var\(--dyson-swarm-space\) \+ 0\.35rem\)/,
+      /\.dyson-shell__facility-region\s*\{[^}]*overflow-y:\s*auto;[^}]*scrollbar-width:\s*none;[^}]*calc\(var\(--dyson-swarm-space\) \+ var\(--game-card-content-inset\)\)/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell__stage::\s*-webkit-scrollbar\s*\{[^}]*display:\s*none;[^}]*inline-size:\s*0;[^}]*block-size:\s*0;/,
+      /\.dyson-shell__facility-region::\s*-webkit-scrollbar\s*\{[^}]*display:\s*none;[^}]*inline-size:\s*0;[^}]*block-size:\s*0;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell__playfield\[data-has-swarm="true"\][\s\S]*\.dyson-shell__stage::after\s*\{[^}]*position:\s*absolute;[^}]*inset-block-start:\s*calc\(100% \+ var\(--dyson-swarm-space\)\);[^}]*content:\s*"";[^}]*pointer-events:\s*none;/,
+      /\.dyson-shell__playfield\[data-has-swarm="true"\][\s\S]*\.dyson-shell__facility-region::after\s*\{[^}]*position:\s*absolute;[^}]*inset-block-start:\s*calc\(100% \+ var\(--dyson-swarm-space\)\);[^}]*content:\s*"";[^}]*pointer-events:\s*none;/,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell__side-panel\s*\{[^}]*scrollbar-color:\s*var\(--menu-scrollbar-thumb\)\s*var\(--menu-scrollbar-track\);[^}]*scrollbar-gutter:\s*stable;[^}]*scrollbar-width:\s*thin;/,
@@ -525,7 +569,10 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell\[data-route-theme="simulations"\]\s*\{[^}]*--menu-scrollbar-track:\s*var\(--simulations-menu-background\);[^}]*--menu-scrollbar-thumb:\s*var\(--simulations-navigation-border\);/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell__tinker\s*\{[\s\S]*margin-block-start:\s*auto;/,
+      /\.dyson-shell__tinker-layer\s*\{[^}]*position:\s*absolute;[^}]*z-index:\s*3;[^}]*inset-block-end:\s*var\(--game-card-content-inset\);/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__stage\[data-has-tinker="true"\][\s\S]*\.dyson-shell__facility-region\s*\{[^}]*padding-block-end:\s*calc\([^}]*var\(--dyson-tinker-overlay-height, 0px\)/,
     )
     expect(shellCss).toMatch(
       /\.dyson-resource-header\s*\{[^}]*background:\s*transparent;/,

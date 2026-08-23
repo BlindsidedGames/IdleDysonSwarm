@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest'
 import arXbCatalog from './catalogs/compiled/ar-XB.json'
 import enCatalog from './catalogs/compiled/en.json'
 import enXaCatalog from './catalogs/compiled/en-XA.json'
+import frCatalog from './catalogs/compiled/fr.json'
+import deCatalog from './catalogs/compiled/de.json'
+import es419Catalog from './catalogs/compiled/es-419.json'
+import jaCatalog from './catalogs/compiled/ja.json'
+import ptBrCatalog from './catalogs/compiled/pt-BR.json'
+import ruCatalog from './catalogs/compiled/ru.json'
+import zhCnCatalog from './catalogs/compiled/zh-CN.json'
 import sourceCatalog from './catalogs/source/en.json'
 import {
   ENABLED_LOCALES,
@@ -58,10 +65,31 @@ import {
   wikiMessages,
 } from '../gameplay/wiki/messages'
 import {
+  WIKI_LORE_SECTIONS,
+  WIKI_PATCH_NOTES,
+  wikiLoreChapterBodyMessage,
+  wikiLoreChapterTitleMessage,
+  wikiLoreSectionTitleMessage,
+  wikiPatchNoteMessage,
+} from '../gameplay/wiki/content'
+import {
   skillMessages,
 } from '../gameplay/skills/messages'
 import { startupShellMessages } from '../shell/messages'
 import { pwaUpdateMessages } from '../../pwa/messages'
+import skillTreePresentation from '../../game-data/generated/skill-tree-presentation.json'
+
+const WEB_CORRECTED_SKILL_TECHNICAL_IDS = new Set([
+  'skills.node.androids.technical',
+  'skills.node.fragmentAssembly.technical',
+  'skills.node.monetaryPolicy.technical',
+  'skills.node.panelWarranty.technical',
+  'skills.node.productionScaling.technical',
+  'skills.node.progressiveAssembly.technical',
+  'skills.node.regulatedAcademia.technical',
+  'skills.node.supernova.technical',
+  'skills.node.terraformingProtocols.technical',
+])
 
 describe('compiled locale catalogs', () => {
   it('keeps every enabled catalog complete and free of orphaned keys', () => {
@@ -88,12 +116,30 @@ describe('compiled locale catalogs', () => {
       ...Object.values(storeMessages),
       ...Object.values(storyMessages),
       ...Object.values(wikiMessages),
+      ...WIKI_PATCH_NOTES.map(wikiPatchNoteMessage),
+      ...WIKI_LORE_SECTIONS.flatMap((section) => [
+        wikiLoreSectionTitleMessage(section),
+        ...section.chapters.flatMap((chapter, index) => [
+          wikiLoreChapterTitleMessage(section, chapter, index),
+          wikiLoreChapterBodyMessage(section, chapter, index),
+        ]),
+      ]),
       ...Object.values(skillMessages),
+      ...skillTreePresentation.nodes.flatMap((node) =>
+        Object.values(node.messageIds).map((id) => ({ id })),
+      ),
     ]
       .map((descriptor) => descriptor.id)
       .sort()
     expect(Object.keys(sourceCatalog).sort()).toEqual(expected)
     expect(Object.keys(enCatalog).sort()).toEqual(expected)
+    expect(Object.keys(frCatalog).sort()).toEqual(expected)
+    expect(Object.keys(deCatalog).sort()).toEqual(expected)
+    expect(Object.keys(es419Catalog).sort()).toEqual(expected)
+    expect(Object.keys(ptBrCatalog).sort()).toEqual(expected)
+    expect(Object.keys(zhCnCatalog).sort()).toEqual(expected)
+    expect(Object.keys(ruCatalog).sort()).toEqual(expected)
+    expect(Object.keys(jaCatalog).sort()).toEqual(expected)
     expect(Object.keys(enXaCatalog).sort()).toEqual(expected)
     expect(Object.keys(arXbCatalog).sort()).toEqual(expected)
 
@@ -104,6 +150,44 @@ describe('compiled locale catalogs', () => {
     const loading =
       sourceCatalog['shared.status.loading'].defaultMessage
     expect(loading.codePointAt(loading.length - 1)).toBe(0x2026)
+  })
+
+  it('keeps generated Skill copy and stable message IDs in the source catalog', () => {
+    expect(skillTreePresentation.nodes).toHaveLength(104)
+    const generatedSourceCatalog = sourceCatalog as Readonly<
+      Record<
+        string,
+        { readonly defaultMessage: string; readonly description: string }
+      >
+    >
+
+    for (const node of skillTreePresentation.nodes) {
+      expect(generatedSourceCatalog[node.messageIds.displayName]).toMatchObject({
+        defaultMessage: node.displayName,
+      })
+      expect(generatedSourceCatalog[node.messageIds.description]).toMatchObject({
+        defaultMessage: node.description,
+      })
+      const technicalMessage =
+        generatedSourceCatalog[node.messageIds.technicalDescription]
+      if (
+        WEB_CORRECTED_SKILL_TECHNICAL_IDS.has(
+          node.messageIds.technicalDescription,
+        )
+      ) {
+        expect(technicalMessage.defaultMessage).not.toBe(
+          node.technicalDescription,
+        )
+        expect(technicalMessage.defaultMessage).toMatch(
+          /assigned|Unassigning/,
+        )
+      } else {
+        expect(technicalMessage).toMatchObject({
+          defaultMessage: node.technicalDescription,
+        })
+      }
+    }
+    expect(WEB_CORRECTED_SKILL_TECHNICAL_IDS.size).toBe(9)
   })
 
   it('expands and accents the LTR pseudo-locale without changing ICU arguments', () => {
@@ -144,10 +228,35 @@ describe('compiled locale catalogs', () => {
 })
 
 describe('typed locale registry', () => {
-  it('enables only English and the two required pseudo-locales', () => {
-    expect(ENABLED_LOCALES).toEqual(['en', 'en-XA', 'ar-XB'])
+  it('enables every production language and the two required pseudo-locales', () => {
+    expect(ENABLED_LOCALES).toEqual([
+      'en',
+      'fr',
+      'de',
+      'es-419',
+      'pt-BR',
+      'zh-CN',
+      'ru',
+      'ja',
+      'en-XA',
+      'ar-XB',
+    ])
     expect(Object.keys(LOCALE_REGISTRY)).toEqual(ENABLED_LOCALES)
     expect(LOCALE_REGISTRY.en.productionSelectable).toBe(true)
+    expect(LOCALE_REGISTRY.fr.productionSelectable).toBe(true)
+    expect(LOCALE_REGISTRY.de.productionSelectable).toBe(true)
+    expect(LOCALE_REGISTRY['es-419'].productionSelectable).toBe(true)
+    expect(LOCALE_REGISTRY['pt-BR'].productionSelectable).toBe(true)
+    expect(LOCALE_REGISTRY['zh-CN']).toMatchObject({
+      languageTag: 'zh-Hans',
+      fontFamily: 'cjk',
+      productionSelectable: true,
+    })
+    expect(LOCALE_REGISTRY.ru.productionSelectable).toBe(true)
+    expect(LOCALE_REGISTRY.ja).toMatchObject({
+      fontFamily: 'cjk',
+      productionSelectable: true,
+    })
     expect(LOCALE_REGISTRY['en-XA'].productionSelectable).toBe(false)
     expect(LOCALE_REGISTRY['ar-XB']).toMatchObject({
       languageTag: 'ar-XB',

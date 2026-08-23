@@ -63,7 +63,7 @@
       "showTinker": true,
       "visibleBasicFacilityIds": [],
       "visibleMegaStructureIds": [],
-      "showNextTierTeaser": true
+      "showNextTierTeaser": false
     },
     "tinker": {
       "status": "ready",
@@ -346,7 +346,7 @@
         "ai_managers"
       ],
       "visibleMegaStructureIds": [],
-      "showNextTierTeaser": true
+      "showNextTierTeaser": false
     },
     "tinker": {
       "status": "ready",

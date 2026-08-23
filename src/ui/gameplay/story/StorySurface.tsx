@@ -134,14 +134,16 @@ export function StorySurface({
 
   return (
     <div className="story-surface">
-      <div className="story-surface__content">
-        <header className="story-surface__summary">
+      <header className="story-surface__summary">
+        <div>
           <div className="story-surface__title" aria-hidden="true">
             {intl.formatMessage(messages.region)}
           </div>
           <p>{intl.formatMessage(messages.introduction)}</p>
-        </header>
+        </div>
+      </header>
 
+      <div className="story-surface__content">
         <div className="story-surface__chapters">
           {CHAPTERS.map((chapter) => {
             const passages = chapter.passages.filter((passageId) =>

@@ -1,6 +1,8 @@
 import {
+  useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -52,6 +54,13 @@ export function DysonGameplayShell({
   const closeMenuRef = useRef<HTMLButtonElement>(null)
   const sidePanelRef = useRef<HTMLElement>(null)
   const bottomNavigationRef = useRef<HTMLDivElement>(null)
+  const tinkerLayerRef = useRef<HTMLDivElement>(null)
+  const hasTinker = tinker !== undefined
+  const [tinkerOverlayHeight, setTinkerOverlayHeight] = useState(0)
+  const registerTinkerLayer = useCallback((node: HTMLDivElement | null) => {
+    tinkerLayerRef.current = node
+    setTinkerOverlayHeight(node?.getBoundingClientRect().height ?? 0)
+  }, [])
   const selectedBottomItemCount = navigation.items.filter(
     (item) => item.bottom !== false,
   ).length
@@ -89,6 +98,19 @@ export function DysonGameplayShell({
     update()
     return () => observer.disconnect()
   }, [navigation.includeBottomText, selectedBottomItemCount])
+
+  useLayoutEffect(() => {
+    const layer = tinkerLayerRef.current
+    if (!hasTinker || layer === null) return undefined
+    const update = () => {
+      setTinkerOverlayHeight(layer.getBoundingClientRect().height)
+    }
+    update()
+    if (typeof ResizeObserver === 'undefined') return undefined
+    const observer = new ResizeObserver(update)
+    observer.observe(layer)
+    return () => observer.disconnect()
+  }, [hasTinker])
 
   useEffect(() => {
     if (wideLayout && menuOpen) setMenuOpen(false)
@@ -244,18 +266,27 @@ export function DysonGameplayShell({
 
               <div
                 className="dyson-shell__stage"
-                data-has-tinker={tinker !== undefined}
+                data-has-tinker={hasTinker}
                 data-has-visible-facilities={hasVisibleFacilities}
+                style={hasTinker ? {
+                  '--dyson-tinker-overlay-height':
+                    `${tinkerOverlayHeight}px`,
+                } as CSSProperties : undefined}
               >
                 <div className="dyson-shell__facility-region">
                   {facilities}
                 </div>
 
                 {tinker !== undefined && (
-                  <ShellRegion
-                    className="dyson-shell__tinker"
-                    region={tinker}
-                  />
+                  <div
+                    ref={registerTinkerLayer}
+                    className="dyson-shell__tinker-layer"
+                  >
+                    <ShellRegion
+                      className="dyson-shell__tinker"
+                      region={tinker}
+                    />
+                  </div>
                 )}
               </div>
             </div>

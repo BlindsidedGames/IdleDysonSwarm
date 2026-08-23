@@ -1194,11 +1194,10 @@ export function selectGameplayVisibility(
   const earlyTinkerVisible =
     total('assembly_lines') < 10 ||
     facilities.ai_managers[1] < 1
-  const galacticBrainsVisible =
-    isCanonicalMegaStructureVisible(
-      state,
-      'galactic_brains',
-    )
+  const visibleMegaStructureIds = MEGA_STRUCTURE_IDS.filter(
+    (facilityId) =>
+      isCanonicalMegaStructureVisible(state, facilityId),
+  )
   const realityUnlocked =
     state.quantum.pointsEarned > 0n ||
     state.infinity.secretsOfTheUniverse >=
@@ -1212,14 +1211,10 @@ export function selectGameplayVisibility(
       visibleBasicFacilityIds: BASIC_DYSON_FACILITY_IDS.filter(
         (facilityId) => basicVisible[facilityId],
       ),
-      visibleMegaStructureIds: MEGA_STRUCTURE_IDS.filter(
-        (facilityId) =>
-          isCanonicalMegaStructureVisible(state, facilityId),
-      ),
+      visibleMegaStructureIds,
       showNextTierTeaser:
-        state.quantum.pointsEarned >= 1n
-          ? !galacticBrainsVisible
-          : !basicVisible.planets,
+        visibleMegaStructureIds.length > 0 &&
+        !visibleMegaStructureIds.includes('galactic_brains'),
     },
     skills: {
       routeUnlocked:

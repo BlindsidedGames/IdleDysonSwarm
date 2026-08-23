@@ -67,7 +67,7 @@ describe('Dyson gameplay shell CSS contract', () => {
     const simulations = readCss('../simulations/simulations.css')
 
     expect(shell).toMatch(
-      /\.dyson-shell__content\s*\{[^}]*grid-template-rows:\s*auto minmax\(0, 1fr\) auto;[^}]*min-block-size:\s*0;[^}]*overflow:\s*hidden;/s,
+      /\.dyson-shell__content\s*\{[^}]*grid-template-rows:\s*auto minmax\(0, 1fr\) auto;[^}]*min-block-size:\s*0;[^}]*overflow:\s*clip;/s,
     )
     expect(shell).toMatch(
       /\.dyson-shell__route-content\s*\{[^}]*block-size:\s*100%;[^}]*min-block-size:\s*0;[^}]*overflow:\s*hidden;/s,

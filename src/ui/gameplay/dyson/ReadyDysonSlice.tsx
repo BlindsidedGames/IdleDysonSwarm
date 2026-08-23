@@ -56,7 +56,10 @@ import {
 import type { SettingsSurfaceProps } from '../settings'
 import type { DebugSurfaceDraft } from '../debug'
 import type { OfflineTimeSurfaceDraft } from '../offline-time'
-import type { SkillPresetActions } from '../skills'
+import type {
+  SkillPresetActions,
+  SkillTreeViewState,
+} from '../skills'
 import {
   beginFirstSliceSnapshotSelection,
   isNewCommittedRevision,
@@ -541,6 +544,7 @@ export function ReadyDysonSlice({
     armed: false,
   })
   const wikiTopicRef = useRef<WikiCategoryId>('bots')
+  const skillTreeViewRef = useRef<SkillTreeViewState | null>(null)
   const rememberDebugDraft = useCallback(
     (draft: Readonly<DebugSurfaceDraft>) => {
       debugDraftRef.current = { ...draft }
@@ -556,6 +560,12 @@ export function ReadyDysonSlice({
   const rememberWikiTopic = useCallback((topic: WikiCategoryId) => {
     wikiTopicRef.current = topic
   }, [])
+  const rememberSkillTreeView = useCallback(
+    (view: SkillTreeViewState) => {
+      skillTreeViewRef.current = view
+    },
+    [],
+  )
   const storeVisible =
     releasePlatformServices !== undefined &&
     (releasePlatformServices.hostKind !== 'browser' ||
@@ -687,6 +697,8 @@ export function ReadyDysonSlice({
     realityActive ||
     simulationsActive ||
     quantumNavigationActive ||
+    storyActive ||
+    wikiActive ||
     statisticsActive ||
     storeActive ||
     settingsActive
@@ -1193,6 +1205,8 @@ export function ReadyDysonSlice({
                         }}
                         presetActions={presetActions}
                         dispatchPlayer={dispatchPlayer}
+                        initialTreeView={skillTreeViewRef.current}
+                        onTreeViewChange={rememberSkillTreeView}
                       />
                     </Suspense>
                   ),
