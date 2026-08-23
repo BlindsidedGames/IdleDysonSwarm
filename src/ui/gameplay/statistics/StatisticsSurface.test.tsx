@@ -173,7 +173,7 @@ describe('StatisticsSurface', () => {
           automatic: false,
           configuredTarget: 30n,
           reward: 40n,
-          durationSeconds: 20,
+          durationSeconds: 0.375,
         },
         {
           breakInfinity: true,
@@ -203,6 +203,7 @@ describe('StatisticsSurface', () => {
     expect(queries.getAllByText('Auto')).toHaveLength(3)
     expect(queries.getByText('Manual')).toBeVisible()
     expect(queries.getAllByText('Target 30.0')).toHaveLength(3)
+    expect(queries.getByText('0.38s')).toBeVisible()
   })
 
   test('shows the cycle empty state and passes an accessibility scan', async () => {
