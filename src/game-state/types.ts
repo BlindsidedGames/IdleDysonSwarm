@@ -403,6 +403,14 @@ export interface StatisticsWindowState {
   readonly realityWorkers: bigint
 }
 
+export interface InfinityCycleHistoryEntry {
+  readonly breakInfinity: boolean
+  readonly automatic: boolean
+  readonly configuredTarget: bigint
+  readonly reward: bigint
+  readonly durationSeconds: number
+}
+
 export interface SimulationStatisticsState {
   readonly trackedSinceUpdate: boolean
   readonly trackingStartedMarker: string
@@ -417,6 +425,8 @@ export interface SimulationStatisticsState {
     readonly reward: bigint
     readonly dreamCause: string | null
   }
+  /** Newest-first bounded history used for completed-run efficiency guidance. */
+  readonly recentInfinityCycles?: readonly InfinityCycleHistoryEntry[]
   readonly minuteWindows: readonly StatisticsWindowState[]
   readonly halfHourWindows: readonly StatisticsWindowState[]
   readonly dailyWindows: readonly StatisticsWindowState[]

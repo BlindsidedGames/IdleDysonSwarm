@@ -46,8 +46,8 @@
     {
       "id": "first-infinity",
       "description": "The result of one canonical Infinity reset awarding one point.",
-      "fingerprint": "b96404e48a526a693290d2d1c1207c4ebdb0308580452cc96c1cb863c006e567",
-      "saveSha256": "153db7d80cfb44bc8660f0ffa208c4e90d6783ac607efa549a0e5715cbd449c6",
+      "fingerprint": "b4a83d0b15c8bb086d63b9f11dc8af4c698c04a7a9832d9bfaa5d48eb7f681c2",
+      "saveSha256": "045fab3ac024da5992a816d6e03fe0096379a6af377b956e3e8a6ecf60219398",
       "reachableRoutes": [
         "bots",
         "research",
@@ -68,8 +68,8 @@
     {
       "id": "mature-infinity",
       "description": "Active mature Infinity economy with twenty Secrets and both automation unlocks purchased canonically.",
-      "fingerprint": "d2ca8af376777484be1627291623d4992c74437365bd25c71c395b9cf64e0ded",
-      "saveSha256": "2655f5fb89a8de39600a6fde2f0cd42b260df5ee58f1ae88ad26c19e787c0aaf",
+      "fingerprint": "0dda72fbcd5728eb0d3f0796819dc3639c2f8f2a61811555e9ac2a8b3649f39a",
+      "saveSha256": "cb9cf1691785c819905b0af327689cb03be10ec844cf80954520e0eeb36d0c20",
       "reachableRoutes": [
         "bots",
         "research",
@@ -94,8 +94,8 @@
     {
       "id": "reality-unlock",
       "description": "The authored 27 Secrets and ten permanent Skill purchases paid from 41 Infinity Points.",
-      "fingerprint": "e6189861b6ab443c425a8f44066a6d1753d7afdf7c6e222f85b3c378707c858a",
-      "saveSha256": "c0876f3568e9ef909dba164e389c2157ceab2f8b4451dde2f78e63fdf7627666",
+      "fingerprint": "2f109f384aea284de85c87360cebcedda4700bb563fc3f9d465b1f94858bb8df",
+      "saveSha256": "047522efab4a0a428b401583f62b2080ddf578d1408ed9517841b9eb4e21d5b1",
       "reachableRoutes": [
         "bots",
         "research",
@@ -119,8 +119,8 @@
     {
       "id": "mature-simulations",
       "description": "Reality unlocked with a reset, populated Dream run, and Simulation upgrade produced through canonical transactions.",
-      "fingerprint": "7e07aeb05acc0a10199850a916409b3be9660f6165c682fa09322abaca3a68be",
-      "saveSha256": "1b05c7c4b1fbd07791c3949737d000fc9640767364bc2b8f7cd73a047d30e40c",
+      "fingerprint": "a6b611ff78149ddf2303d92a6a1a7d1f621f2c045c3309ba260abf771af772b3",
+      "saveSha256": "6894f4513a575f1e94416974e8a3e424562218fd31e7c2dd7f675781b28bad84",
       "reachableRoutes": [
         "bots",
         "research",
@@ -146,8 +146,8 @@
     {
       "id": "quantum-unlock",
       "description": "The 42 Infinity Point Quantum threshold with valid Reality-unlock spending.",
-      "fingerprint": "d04a4762d47b7e9dd65c048f7ab24b624a18638db1b014171be59394edad1ba8",
-      "saveSha256": "de7da51d884cf89e057970225bd9326782382234b0fdb9f696c8c0b7521e2292",
+      "fingerprint": "f61441cc797005ca655d6260738921c5c30171865e0d703a887e3d197f062637",
+      "saveSha256": "d9f4fcbafc25bbbaea8893969e6831e1838235fde480179bb5bc245d704de365",
       "reachableRoutes": [
         "bots",
         "research",
@@ -172,8 +172,8 @@
     {
       "id": "late-quantum",
       "description": "Late Quantum built by 420 canonical leap cycles followed by canonical upgrade transactions.",
-      "fingerprint": "9702e080bb8c0500735f44993f87716fdf5b89b3b3b7e3fea662ba324dce6e46",
-      "saveSha256": "35e3d9205a82240da56156075bda56bfdf78890180901b7c5d0a98b75212430f",
+      "fingerprint": "827e6489fcc3661aa60926ff7497a505bea0d19c6b3656d204f32d3be401f21d",
+      "saveSha256": "72cef01d530d8ea945ef159b7303252310f1b2b1c96baea65bace0b3a62ae778",
       "reachableRoutes": [
         "bots",
         "research",
@@ -200,8 +200,8 @@
     {
       "id": "maximum-skills",
       "description": "Maximum deterministic non-conflicting Skill ownership from an explicit stress-funding seed and canonical purchases.",
-      "fingerprint": "a3dd4072bdecd046d7520055848bc926b5d7500ad410b7c813f199d1028d65d6",
-      "saveSha256": "d78a61b98b5c6a3c76a375b8d60243ad27360e4c4f89ab2faa8fb1cf38453fda",
+      "fingerprint": "e9c5fe2c262f6dd15e2aff6b6d891f747ef1e1571f85670b391767a428db0fd0",
+      "saveSha256": "5592d2ad44dffa01508a8f1c83f84ddb5cfae23cc608205f286ea63511bb5e00",
       "reachableRoutes": [
         "bots",
         "research",

@@ -3,6 +3,7 @@ import {
   useId,
   useRef,
   useState,
+  type ReactNode,
 } from 'react'
 import {
   FormattedMessage,
@@ -195,24 +196,32 @@ export function InfinitySurface({
                               },
                             )}
                           </span>
-                          <InlineImageSymbol
-                            src={infinitySymbol}
-                            symbol="infinity-point"
-                            tint
-                          />
                           <span aria-hidden="true">
-                            {formatGameNumber(
-                              locale,
-                              derived.botsRemainingToNextReward,
-                            )}
+                            {intl.formatMessage(messages.nextPointIn, {
+                              value: formatGameNumber(
+                                locale,
+                                derived.botsRemainingToNextReward,
+                              ),
+                            })}
                           </span>
                         </span>
                       )
                     : intl.formatMessage(messages.ordinaryProgress)}
                 </strong>
-                <span>
+                <span className="infinity-surface__reward-progress">
                   {derived.mode === 'break'
-                    ? `${formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/${formatGameNumber(locale, derived.breakTargetProgress.targetReward)}`
+                    ? (
+                        <>
+                          <InlineImageSymbol
+                            src={infinitySymbol}
+                            symbol="infinity-point"
+                            tint
+                          />
+                          <span>
+                            {formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/{formatGameNumber(locale, derived.breakTargetProgress.targetReward)}
+                          </span>
+                        </>
+                      )
                     : intl.formatMessage(messages.progressPercent, {
                         value: formatNumber(locale, progress * 100, {
                           minimumFractionDigits: 2,
@@ -259,9 +268,7 @@ export function InfinitySurface({
             enabled={progression.infinity.automaticResetEnabled}
             routeAvailable={commandAvailability.setAutomaticReset}
             dispatchPlayer={dispatchPlayer}
-          />
-          {derived.mode === 'break' ? (
-            <>
+            guidance={derived.mode === 'break' ? (
               <div className="infinity-surface__rate-guidance" aria-live="off">
                 <span>
                   {intl.formatMessage(messages.currentRate, {
@@ -284,15 +291,17 @@ export function InfinitySurface({
                   })}
                 </span>
               </div>
-              <BreakTargetControl
-                locale={locale}
-                target={progression.infinity.breakTarget}
-                routeAvailable={
-                  commandAvailability.setBreakTarget
-                }
-                dispatchPlayer={dispatchPlayer}
-              />
-            </>
+            ) : null}
+          />
+          {derived.mode === 'break' ? (
+            <BreakTargetControl
+              locale={locale}
+              target={progression.infinity.breakTarget}
+              routeAvailable={
+                commandAvailability.setBreakTarget
+              }
+              dispatchPlayer={dispatchPlayer}
+            />
           ) : null}
         </ProgressControlsPanel>
       </div>
@@ -335,15 +344,29 @@ function ManualInfinityButton({
     <span className="infinity-manual-reset">
       <button
         type="button"
+        aria-label={
+          reward === null
+            ? intl.formatMessage(messages.manualReset)
+            : intl.formatMessage(messages.manualResetForReward, {
+                value: formatGameNumber(locale, reward),
+              })
+        }
         disabled={!routeAvailable || !ready || pending}
         onClick={() => void requestReset()}
       >
         <span>
           {reward === null
             ? intl.formatMessage(messages.manualReset)
-            : intl.formatMessage(messages.manualResetForReward, {
-                value: formatGameNumber(locale, reward),
-              })}
+            : (
+                <span className="infinity-manual-reset__reward" aria-hidden="true">
+                  <InlineImageSymbol
+                    src={infinitySymbol}
+                    symbol="infinity-point"
+                    tint
+                  />
+                  <span>{formatGameNumber(locale, reward)}</span>
+                </span>
+              )}
         </span>
       </button>
       {failed ? (
@@ -357,12 +380,14 @@ function ManualInfinityButton({
 
 interface AutomaticInfinityControlProps {
   readonly enabled: boolean
+  readonly guidance?: ReactNode
   readonly routeAvailable: boolean
   readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
 }
 
 function AutomaticInfinityControl({
   enabled,
+  guidance,
   routeAvailable,
   dispatchPlayer,
 }: AutomaticInfinityControlProps) {
@@ -389,7 +414,10 @@ function AutomaticInfinityControl({
 
   return (
     <div className="infinity-automatic-reset">
-      <span>{intl.formatMessage(messages.automaticReset)}</span>
+      <div className="infinity-automatic-reset__copy">
+        <span>{intl.formatMessage(messages.automaticReset)}</span>
+        {guidance}
+      </div>
       <button
         type="button"
         aria-label={`${intl.formatMessage(messages.automaticReset)}: ${intl.formatMessage(

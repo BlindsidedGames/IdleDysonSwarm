@@ -1,4 +1,5 @@
 import type {
+  InfinityCycleHistoryEntry,
   StatisticsWindowState,
 } from '../../../game-state/types'
 
@@ -9,6 +10,78 @@ export interface StatisticsWindowAggregate {
   readonly dreamResetCount: bigint
   readonly strangeMatter: bigint
   readonly realityWorkers: bigint
+}
+
+export interface InfinityRunRate {
+  readonly cycle: Readonly<InfinityCycleHistoryEntry>
+  readonly ipPerMinute: number
+}
+
+export interface InfinityTargetPerformance {
+  readonly runs: readonly InfinityRunRate[]
+  readonly averageIpPerMinute: number
+  readonly medianIpPerMinute: number
+  readonly minimumIpPerMinute: number
+  readonly maximumIpPerMinute: number
+  readonly latestReward: bigint
+}
+
+export function infinityRunIpPerMinute(
+  cycle: Readonly<InfinityCycleHistoryEntry>,
+): number {
+  const rate = Number(cycle.reward) * 60 / cycle.durationSeconds
+  return Number.isFinite(rate) ? Math.max(0, rate) : Number.MAX_VALUE
+}
+
+/**
+ * Summarises automatic Break Infinity runs made at the currently configured
+ * target. The average is time-weighted so a collection of runs represents the
+ * actual points earned over the actual time spent, rather than allowing one
+ * unusually short run to dominate an average of rates.
+ */
+export function projectInfinityTargetPerformance(
+  history: readonly Readonly<InfinityCycleHistoryEntry>[],
+  configuredTarget: bigint,
+): InfinityTargetPerformance | null {
+  const matchingCycles = history.filter(
+    (cycle) =>
+      cycle.breakInfinity &&
+      cycle.automatic &&
+      cycle.configuredTarget === configuredTarget,
+  )
+  if (matchingCycles.length === 0) return null
+
+  const runs = matchingCycles.map((cycle) => ({
+    cycle,
+    ipPerMinute: infinityRunIpPerMinute(cycle),
+  }))
+  const totalDuration = matchingCycles.reduce(
+    (total, cycle) => total + cycle.durationSeconds,
+    0,
+  )
+  const totalReward = matchingCycles.reduce(
+    (total, cycle) => total + cycle.reward,
+    0n,
+  )
+  const average = Number(totalReward) * 60 / totalDuration
+  const sortedRates = runs
+    .map((run) => run.ipPerMinute)
+    .sort((left, right) => left - right)
+  const middle = Math.floor(sortedRates.length / 2)
+  const median = sortedRates.length % 2 === 0
+    ? (sortedRates[middle - 1] + sortedRates[middle]) / 2
+    : sortedRates[middle]
+
+  return {
+    runs,
+    averageIpPerMinute: Number.isFinite(average)
+      ? Math.max(0, average)
+      : Number.MAX_VALUE,
+    medianIpPerMinute: median,
+    minimumIpPerMinute: sortedRates[0],
+    maximumIpPerMinute: sortedRates[sortedRates.length - 1],
+    latestReward: matchingCycles[0].reward,
+  }
 }
 
 /**

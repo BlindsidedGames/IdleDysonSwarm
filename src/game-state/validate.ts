@@ -114,6 +114,20 @@ export function validateCanonicalGameState(
   if (state.statistics.dailyWindows.length !== 30) {
     errors.push('Statistics must contain exactly 30 daily windows.')
   }
+  const recentInfinityCycles = state.statistics.recentInfinityCycles ?? []
+  if (recentInfinityCycles.length > 10) {
+    errors.push('Recent Infinity history cannot exceed 10 cycles.')
+  }
+  for (const cycle of recentInfinityCycles) {
+    if (
+      cycle.configuredTarget < 1n ||
+      cycle.reward < 1n ||
+      !Number.isFinite(cycle.durationSeconds) ||
+      cycle.durationSeconds <= 0
+    ) {
+      errors.push('Recent Infinity cycles must contain a positive target, reward, and finite duration.')
+    }
+  }
   for (const [id, skill] of Object.entries(state.skills.byId)) {
     if (id.trim().length === 0) errors.push('Skill IDs cannot be blank.')
     if (!Number.isInteger(skill.level)) {

@@ -847,6 +847,7 @@ export class CanonicalEventTimeModel
         breakInfinity: evaluation.breakInfinity,
         requestedReward: evaluation.requestedReward,
         artifactSkillPoints: artifact.value,
+        automatic: !manual,
       },
       this.context.infinityResetAssetLookup,
     )

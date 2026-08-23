@@ -130,6 +130,7 @@ describe('canonical Infinity reset', () => {
         breakInfinity: false,
         requestedReward: 2n,
         artifactSkillPoints: 4n,
+        automatic: true,
       }),
     )
 
@@ -146,6 +147,13 @@ describe('canonical Infinity reset', () => {
     expect(result.state.infinity.botCapRewardsGranted).toBe(false)
     expect(result.state.meta.tutorialComplete).toBe(true)
     expect(result.state.meta.firstInfinityComplete).toBe(true)
+    expect(result.state.statistics.recentInfinityCycles?.[0]).toEqual({
+      breakInfinity: false,
+      automatic: true,
+      configuredTarget: 2n,
+      reward: 2n,
+      durationSeconds: state.infinity.lastCycleDurationSeconds,
+    })
 
     expect(result.state.dyson).toMatchObject({
       money: 0,
@@ -265,6 +273,13 @@ describe('canonical Infinity reset', () => {
         lifetime: saturatedTotals,
         currentQuantumRun: saturatedTotals,
         recentProcessedSegment: saturatedTotals,
+        recentInfinityCycles: Array.from({ length: 10 }, (_, index) => ({
+          breakInfinity: true,
+          automatic: true,
+          configuredTarget: BigInt(index + 1),
+          reward: BigInt(index + 1),
+          durationSeconds: index + 1,
+        })),
         minuteWindows,
       },
     }
@@ -306,6 +321,16 @@ describe('canonical Infinity reset', () => {
       reward: 2n,
       dreamCause: null,
     })
+    expect(statistics.recentInfinityCycles).toHaveLength(10)
+    expect(statistics.recentInfinityCycles?.[0]).toEqual({
+      breakInfinity: true,
+      automatic: false,
+      configuredTarget: source.infinity.breakTarget,
+      reward: 2n,
+      durationSeconds: 4.5,
+    })
+    expect(statistics.recentInfinityCycles?.at(-1)?.configuredTarget)
+      .toBe(9n)
     expect(statistics.minuteWindows[2]).toEqual({
       sequence: 2n,
       simulatedSeconds: 0,

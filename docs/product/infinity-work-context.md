@@ -36,6 +36,17 @@ Time simulation through the same event model, and resets at Infinity and
 Quantum boundaries. It is run-local guidance only: it never changes rewards,
 the configured target, or the Auto Infinity preference.
 
+The canonical statistics state also retains the ten most recently completed
+Infinity runs, newest first. Each entry records whether the reset was ordinary
+or Break Infinity, whether it was automatic or manual, the configured target,
+the actual quantized reward, and the completed-cycle duration. Statistics shows
+every retained run, while its current-target summary considers only automatic
+Break Infinity runs recorded at the target currently selected. The displayed
+average is time-weighted (`total reward / total duration`), accompanied by the
+median and range of individual run rates. This keeps manual experiments and
+older target settings visible without allowing them to distort the evidence
+used to tune the active automatic target.
+
 ## Compatibility and validation contract
 
 - Existing automation preferences remain unchanged when loading an existing
@@ -47,7 +58,8 @@ the configured target, or the Auto Infinity preference.
 - Browser verification covers narrow phone and desktop layouts, exact input,
   invalid input, target persistence, peak persistence, and manual reward text.
 - Automated coverage includes mapping round-trips, Stored Time, reset
-  boundaries, target parsing, frontend projection, and control accessibility.
+  boundaries, bounded recent-run persistence, target-specific performance
+  projection, target parsing, frontend projection, and control accessibility.
 
 ## Follow-up boundary
 

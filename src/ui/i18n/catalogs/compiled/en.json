@@ -2425,6 +2425,16 @@
       "value": " Infinity Points"
     }
   ],
+  "infinity.progress.next-point-in": [
+    {
+      "type": 0,
+      "value": "Next in "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "infinity.progress.ordinary": [
     {
       "type": 0,
@@ -7909,6 +7919,116 @@
     {
       "type": 0,
       "value": "Simulations"
+    }
+  ],
+  "statistics.infinity-performance": [
+    {
+      "type": 0,
+      "value": "Recent Infinity performance"
+    }
+  ],
+  "statistics.infinity-performance.average-rate": [
+    {
+      "type": 0,
+      "value": "Average IP/min"
+    }
+  ],
+  "statistics.infinity-performance.configured-target": [
+    {
+      "type": 0,
+      "value": "Configured target"
+    }
+  ],
+  "statistics.infinity-performance.current-target": [
+    {
+      "type": 0,
+      "value": "Current automatic target"
+    }
+  ],
+  "statistics.infinity-performance.empty-target": [
+    {
+      "type": 0,
+      "value": "Complete automatic runs at "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": " IP to measure this target."
+    }
+  ],
+  "statistics.infinity-performance.latest-reward": [
+    {
+      "type": 0,
+      "value": "Latest actual reward"
+    }
+  ],
+  "statistics.infinity-performance.median-rate": [
+    {
+      "type": 0,
+      "value": "Median IP/min"
+    }
+  ],
+  "statistics.infinity-performance.rate-range": [
+    {
+      "type": 0,
+      "value": "IP/min range"
+    }
+  ],
+  "statistics.infinity-performance.run-count": [
+    {
+      "type": 0,
+      "value": "Automatic runs recorded"
+    }
+  ],
+  "statistics.infinity-performance.run.automatic": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "statistics.infinity-performance.run.manual": [
+    {
+      "type": 0,
+      "value": "Manual"
+    }
+  ],
+  "statistics.infinity-performance.run.ordinary": [
+    {
+      "type": 0,
+      "value": "Ordinary Infinity"
+    }
+  ],
+  "statistics.infinity-performance.run.rate": [
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " IP/min"
+    }
+  ],
+  "statistics.infinity-performance.run.reward": [
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IP"
+    }
+  ],
+  "statistics.infinity-performance.run.target": [
+    {
+      "type": 0,
+      "value": "Target "
+    },
+    {
+      "type": 1,
+      "value": "target"
     }
   ],
   "statistics.last-cycle": [

@@ -251,6 +251,73 @@
   margin-inline: auto;
 }
 
+.statistics-surface__infinity-performance {
+  inline-size: min(100%, 82rem);
+  margin-block-start: 0.9rem;
+  margin-inline: auto;
+}
+
+.statistics-surface__infinity-performance > h2 {
+  color: white;
+  font-size: calc(1.05rem * var(--game-text-scale));
+}
+
+.statistics-infinity-performance {
+  margin-block-start: 0.45rem;
+}
+
+.statistics-infinity-performance__summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem 1rem !important;
+  padding-block: 0.5rem 0.65rem !important;
+}
+
+.statistics-infinity-performance__summary .statistics-fact {
+  display: block;
+}
+
+.statistics-infinity-performance__summary .statistics-fact dd {
+  margin-block-start: 0.12rem;
+  text-align: start;
+}
+
+.statistics-infinity-performance__runs {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-block-start: 1px solid var(--theme-divider);
+  list-style: none;
+}
+
+.statistics-infinity-performance__runs li {
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns: 4.5rem minmax(7rem, 1fr) repeat(3, auto);
+  align-items: baseline;
+  gap: 0.4rem 0.8rem;
+  padding: 0.42rem 0.65rem;
+  background: color-mix(in srgb, var(--statistics-panel-raised) 34%, transparent);
+  font-size: calc(0.74rem * var(--game-text-scale));
+  line-height: 1.25;
+}
+
+.statistics-infinity-performance__runs strong {
+  color: var(--statistics-accent);
+}
+
+.statistics-infinity-performance__runs span {
+  min-inline-size: 0;
+}
+
+.statistics-infinity-performance__rate {
+  color: var(--statistics-value);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+  text-align: end;
+}
+
 .statistics-surface__other {
   inline-size: min(100%, 82rem);
   margin-block-start: 0.9rem;
@@ -323,6 +390,27 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .statistics-infinity-performance__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statistics-infinity-performance__runs li {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .statistics-infinity-performance__runs li span:nth-of-type(2),
+  .statistics-infinity-performance__rate {
+    text-align: end;
+  }
+
+  .statistics-infinity-performance__runs li span:nth-of-type(3) {
+    grid-column: 2;
+  }
+
+  .statistics-infinity-performance__rate {
+    grid-column: 3;
+  }
+
   .statistics-swarm-scale .statistics-fact {
     display: grid;
   }
@@ -351,6 +439,10 @@
   }
 
   .statistics-last-cycle dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .statistics-infinity-performance__summary {
     grid-template-columns: minmax(0, 1fr);
   }
 }

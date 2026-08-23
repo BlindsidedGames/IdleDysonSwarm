@@ -4457,6 +4457,24 @@
       "value": "]"
     }
   ],
+  "infinity.progress.next-point-in": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ īƞ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "infinity.progress.ordinary": [
     {
       "type": 0,
@@ -15753,6 +15771,236 @@
     {
       "type": 0,
       "value": "Şīḿŭŭŀȧȧŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƈḗḗƞŧ Īƞƒīƞīŧẏ ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.average-rate": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧṽḗḗřȧȧɠḗḗ ĪƤ/ḿīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.configured-target": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞƒīɠŭŭřḗḗḓ ŧȧȧřɠḗḗŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.current-target": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŭŭřřḗḗƞŧ ȧȧŭŭŧǿǿḿȧȧŧīƈ ŧȧȧřɠḗḗŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.empty-target": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗ ȧȧŭŭŧǿǿḿȧȧŧīƈ řŭŭƞş ȧȧŧ "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": " ĪƤ ŧǿǿ ḿḗḗȧȧşŭŭřḗḗ ŧħīş ŧȧȧřɠḗḗŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.latest-reward": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀȧȧŧḗḗşŧ ȧȧƈŧŭŭȧȧŀ řḗḗẇȧȧřḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.median-rate": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿḗḗḓīȧȧƞ ĪƤ/ḿīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.rate-range": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "ĪƤ/ḿīƞ řȧȧƞɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.run-count": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭŧǿǿḿȧȧŧīƈ řŭŭƞş řḗḗƈǿǿřḓḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.run.automatic": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭŧǿǿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.run.manual": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧƞŭŭȧȧŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.run.ordinary": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿřḓīƞȧȧřẏ Īƞƒīƞīŧẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.run.rate": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " ĪƤ/ḿīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.run.reward": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " ĪƤ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.infinity-performance.run.target": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧȧȧřɠḗḗŧ "
+    },
+    {
+      "type": 1,
+      "value": "target"
     },
     {
       "type": 0,

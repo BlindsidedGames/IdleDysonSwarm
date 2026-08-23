@@ -51,6 +51,11 @@ export const infinityMessages = defineMessages({
     defaultMessage: 'Bots until next Infinity Point: {value}',
     description: 'Accessible label for the remaining bot count beside the Infinity Point icon.',
   },
+  nextPointIn: {
+    id: 'infinity.progress.next-point-in',
+    defaultMessage: 'Next in {value}',
+    description: 'Compact visible label for the remaining bots until the next Infinity Point.',
+  },
   realityWarning: {
     id: 'infinity.progress.reality-warning',
     defaultMessage: 'Warning Reality Break imminent!',

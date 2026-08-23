@@ -47,17 +47,23 @@
 
 .infinity-surface__control-panel .ui-progress-controls-panel__body {
   display: grid;
-  gap: 0.45rem;
+  gap: 0.35rem;
 }
 
 .infinity-automatic-reset {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.4rem 0.7rem;
-  align-items: center;
+  gap: 0.35rem 0.7rem;
+  align-items: start;
 }
 
-.infinity-automatic-reset > span:first-child {
+.infinity-automatic-reset__copy {
+  display: grid;
+  gap: 0.28rem;
+  align-self: start;
+}
+
+.infinity-automatic-reset__copy > span:first-child {
   font-weight: var(--font-weight-semibold);
 }
 
@@ -94,7 +100,7 @@
 
 .infinity-manual-reset button {
   position: relative;
-  inline-size: 7.25rem;
+  inline-size: 5.25rem;
   min-block-size: var(--target-minimum);
   padding-inline: 0.9rem;
   border: 0;
@@ -102,6 +108,20 @@
   color: white;
   font: inherit;
   font-weight: var(--font-weight-semibold);
+}
+
+.infinity-manual-reset__reward {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.infinity-manual-reset__reward .ui-inline-image-symbol {
+  inline-size: 1em;
+  block-size: 1em;
 }
 
 .infinity-manual-reset button::before {
@@ -194,7 +214,7 @@
   position: relative;
   padding-inline-end:
     calc(
-      7.25rem + 0.14rem + var(--infinity-action-edge-safety) -
+      5.25rem + 0.14rem + var(--infinity-action-edge-safety) -
       var(--infinity-summary-inline-padding)
     );
 }
@@ -215,7 +235,7 @@
 
 .infinity-surface__rate-guidance {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.08rem;
   color: #ded4ef;
   font-family: var(--font-family-numeric);
   font-size: calc(0.76rem * var(--game-text-scale));
@@ -242,6 +262,17 @@
   color: #ded4ef;
   font-family: var(--font-family-numeric);
   font-variant-numeric: tabular-nums;
+}
+
+.infinity-surface__reward-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+.infinity-surface__reward-progress [data-symbol="infinity-point"] {
+  inline-size: 0.95em;
+  block-size: 0.95em;
 }
 
 .infinity-surface__progress-track {
@@ -410,8 +441,6 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.4rem;
-  padding-block-start: 0.2rem;
-  border-block-start: 1px solid var(--theme-divider);
 }
 
 .infinity-break-target label {

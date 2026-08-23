@@ -3,6 +3,7 @@ import type { RuntimeGameAsset } from '../game-data/types'
 import type {
   CanonicalGameStateV1,
   CanonicalFacilityId,
+  InfinityCycleHistoryEntry,
   SimulationStatisticsState,
   SimulationTotalsState,
   SkillRuntimeState,
@@ -25,6 +26,8 @@ export interface CanonicalInfinityResetRequest {
   readonly requestedReward: bigint
   /** Platform/achievement contribution derived outside player state. */
   readonly artifactSkillPoints: bigint
+  /** True only when the event model initiated the reset automatically. */
+  readonly automatic?: boolean
 }
 
 export type CanonicalInfinityResetIssueCode =
@@ -162,6 +165,10 @@ export function applyCanonicalInfinityReset(
     request.breakInfinity,
     rewardGranted,
     state.infinity.lastCycleDurationSeconds,
+    request.automatic ?? false,
+    request.breakInfinity
+      ? state.infinity.breakTarget
+      : rewardGranted,
   )
 
   return {
@@ -639,6 +646,8 @@ function recordInfinityCycle(
   breakInfinity: boolean,
   reward: bigint,
   durationSeconds: number,
+  automatic: boolean,
+  configuredTarget: bigint,
 ): SimulationStatisticsState {
   const event: InfinityStatisticsEvent = {
     ordinaryCount: breakInfinity ? 0n : 1n,
@@ -654,6 +663,17 @@ function recordInfinityCycle(
     event.ordinaryCount,
     event.breakCount,
   )
+  const historyEntry: InfinityCycleHistoryEntry = {
+    breakInfinity,
+    automatic,
+    configuredTarget,
+    reward,
+    durationSeconds: clampContinuous(durationSeconds),
+  }
+  const recentInfinityCycles =
+    reward > 0n && durationSeconds > 0
+      ? [historyEntry, ...(statistics.recentInfinityCycles ?? [])].slice(0, 10)
+      : statistics.recentInfinityCycles ?? []
   return {
     ...statistics,
     trackedSinceUpdate: true,
@@ -676,6 +696,7 @@ function recordInfinityCycle(
       reward,
       dreamCause: null,
     },
+    recentInfinityCycles,
     minuteWindows: recordWindowEvent(
       statistics.minuteWindows,
       60,

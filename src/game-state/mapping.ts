@@ -15,6 +15,7 @@ import {
   type CanonicalOwnedPair,
   type DreamEducationId,
   type DreamEducationState,
+  type InfinityCycleHistoryEntry,
   type SimulationTotalsState,
   type StatisticsWindowState,
   type SkillRuntimeState,
@@ -580,6 +581,13 @@ export function hydrateGameState(
       lastCompletedCycle: toLastCompletedCycle(
         statistics.lastCompletedCycle,
       ),
+      ...(Array.isArray(statistics.recentInfinityCycles)
+        ? {
+            recentInfinityCycles: toRecentInfinityCycles(
+              statistics.recentInfinityCycles,
+            ),
+          }
+        : {}),
       minuteWindows: toStatisticsWindows(
         statistics.minuteWindows,
         60,
@@ -1032,6 +1040,32 @@ function toLastCompletedCycle(value: unknown) {
   }
 }
 
+function toRecentInfinityCycles(
+  value: unknown,
+): InfinityCycleHistoryEntry[] {
+  if (!Array.isArray(value)) return []
+  const result: InfinityCycleHistoryEntry[] = []
+  for (const candidate of value.slice(0, 10)) {
+    if (!isRecord(candidate)) continue
+    const configuredTarget = toNonNegativeBigInt(candidate.configuredTarget)
+    const reward = toNonNegativeBigInt(candidate.reward)
+    const durationSeconds = toFiniteNonNegativeNumber(
+      candidate.durationSeconds,
+    )
+    if (configuredTarget < 1n || reward < 1n || durationSeconds <= 0) {
+      continue
+    }
+    result.push({
+      breakInfinity: toBoolean(candidate.breakInfinity),
+      automatic: toBoolean(candidate.automatic),
+      configuredTarget,
+      reward,
+      durationSeconds,
+    })
+  }
+  return result
+}
+
 function fromSimulationStatistics(
   state: CanonicalGameStateV1['statistics'],
   preserved: SaveRecord,
@@ -1055,6 +1089,15 @@ function fromSimulationStatistics(
       dreamCause: state.lastCompletedCycle.dreamCause ?? '',
     },
   )
+  if (
+    state.recentInfinityCycles !== undefined ||
+    Array.isArray(preserved.recentInfinityCycles)
+  ) {
+    preserved.recentInfinityCycles = overlayBuckets(
+      preserved.recentInfinityCycles,
+      state.recentInfinityCycles ?? [],
+    )
+  }
   preserved.minuteWindows = overlayBuckets(
     preserved.minuteWindows,
     state.minuteWindows,
@@ -1084,7 +1127,7 @@ function overlayRecord(
 
 function overlayBuckets(
   value: unknown,
-  canonical: readonly StatisticsWindowState[],
+  canonical: readonly object[],
 ): SaveRecord[] {
   const preserved = Array.isArray(value) ? value : []
   return canonical.map((bucket, index) =>

@@ -221,14 +221,20 @@ describe('InfinitySurface', () => {
     expect(
       screen.getByText('Bots until next Infinity Point: 1.00Sp'),
     ).toHaveClass('ui-visually-hidden')
+    expect(screen.getByText('Next in 1.00Sp')).toBeVisible()
     expect(
-      container.querySelector('.infinity-surface__next-point [data-symbol="infinity-point"]'),
+      container.querySelector('.infinity-surface__reward-progress [data-symbol="infinity-point"]'),
     ).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Infinity settings' }))
 
-    expect(screen.getByText('Current: 15.0 IP/min')).toBeInTheDocument()
+    const currentRate = screen.getByText('Current: 15.0 IP/min')
+    expect(currentRate).toBeInTheDocument()
     expect(screen.getByText('Peak: 21.3 IP/min at 47.0 IP')).toBeInTheDocument()
+    expect(currentRate.closest('.infinity-automatic-reset__copy')).toBeInTheDocument()
+    expect(infinityStyles).not.toMatch(
+      /\.infinity-break-target\s*\{[^}]*border-block-start:/s,
+    )
   })
 
   test('keeps the saved Break target after invalid input', () => {
@@ -320,6 +326,11 @@ describe('InfinitySurface', () => {
       name: 'Infinity for 12.0 IP',
     })
     expect(button).toBeEnabled()
+    expect(
+      button.querySelector('[data-symbol="infinity-point"]'),
+    ).toBeInTheDocument()
+    expect(button).not.toHaveTextContent('Infinity for')
+    expect(button).toHaveTextContent('12.0')
     fireEvent.click(button)
     expect(dispatchPlayer).toHaveBeenCalledWith({
       kind: 'infinity.request-reset',
