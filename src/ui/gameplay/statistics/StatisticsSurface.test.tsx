@@ -128,6 +128,27 @@ describe('StatisticsSurface', () => {
     expect(cycleQueries.getByText('Black Hole')).toBeVisible()
     expect(cycleQueries.getByText('12.3K')).toBeVisible()
     expect(cycleQueries.queryByText('1m 30s')).not.toBeInTheDocument()
+
+    const otherStats = screen
+      .getByRole('heading', { name: 'Other Stats' })
+      .closest('section')
+    expect(otherStats).not.toBeNull()
+    const otherStatsQueries = within(otherStats as HTMLElement)
+    expect(
+      otherStatsQueries.getByRole('heading', { name: 'Dyson Swarm Scale' }),
+    ).toBeVisible()
+    expect(otherStatsQueries.getByText('Active Panels')).toBeVisible()
+    expect(otherStatsQueries.getByText('29.6OcDc')).toBeVisible()
+    expect(otherStatsQueries.getByText('Stars Surrounded')).toBeVisible()
+    expect(otherStatsQueries.getByText('1.48SpDc')).toBeVisible()
+    expect(otherStatsQueries.getByText('Galaxies Engulfed')).toBeVisible()
+    expect(otherStatsQueries.getByText('14.8TDc')).toBeVisible()
+    expect(
+      (cycle as HTMLElement).compareDocumentPosition(
+        otherStats as HTMLElement,
+      ) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
   })
 
   test('shows the cycle empty state and passes an accessibility scan', async () => {
@@ -198,6 +219,11 @@ function renderStatistics(
       <StatisticsSurface
         locale="en"
         statistics={state}
+        swarmScale={{
+          activePanels: 2.96e58,
+          starsSurrounded: 1.48e54,
+          galaxiesEngulfed: 1.48e43,
+        }}
         visibility={visibility}
       />
     </IntlProvider>,

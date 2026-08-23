@@ -13811,6 +13811,76 @@
       "value": "]"
     }
   ],
+  "skills.impact.bots": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.impact.cash-science": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧşħ & Şƈīḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.impact.everything": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗṽḗḗřẏŧħīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.impact.skill-points": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şķīŀŀ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.impact.to": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "ŧǿǿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.import-locked-queued": [
     {
       "type": 0,
@@ -14421,84 +14491,6 @@
     {
       "type": 0,
       "value": " Şķīŀŀ Ƥǿǿīƞŧş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "skills.purity-production-quote": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ŭƞşƥḗḗƞŧ ƥǿǿīƞŧş "
-    },
-    {
-      "type": 1,
-      "value": "pointsBefore"
-    },
-    {
-      "type": 0,
-      "value": " → "
-    },
-    {
-      "type": 1,
-      "value": "pointsAfter"
-    },
-    {
-      "type": 0,
-      "value": ". Ƈǿǿḿƀīƞḗḗḓ Ƥŭŭřīŧẏ ḿŭŭŀŧīƥŀīḗḗřş: Ƈȧȧşħ/Şƈīḗḗƞƈḗḗ ×"
-    },
-    {
-      "type": 1,
-      "value": "cashBefore"
-    },
-    {
-      "type": 0,
-      "value": " → ×"
-    },
-    {
-      "type": 1,
-      "value": "cashAfter"
-    },
-    {
-      "type": 0,
-      "value": "; Ɓǿǿŧş ×"
-    },
-    {
-      "type": 1,
-      "value": "botsBefore"
-    },
-    {
-      "type": 0,
-      "value": " → ×"
-    },
-    {
-      "type": 1,
-      "value": "botsAfter"
-    },
-    {
-      "type": 0,
-      "value": "; Ḗṽḗḗřẏŧħīƞɠ ×"
-    },
-    {
-      "type": 1,
-      "value": "everythingBefore"
-    },
-    {
-      "type": 0,
-      "value": " → ×"
-    },
-    {
-      "type": 1,
-      "value": "everythingAfter"
-    },
-    {
-      "type": 0,
-      "value": "."
     },
     {
       "type": 0,
@@ -15995,6 +15987,76 @@
     {
       "type": 0,
       "value": "Ƞǿǿƞḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.other-stats": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿŧħḗḗř Şŧȧȧŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.other-stats.active-panels": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƈŧīṽḗḗ Ƥȧȧƞḗḗŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.other-stats.dyson-swarm-scale": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓẏşǿǿƞ Şẇȧȧřḿ Şƈȧȧŀḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.other-stats.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŀȧȧẋīḗḗş Ḗƞɠŭŭŀƒḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.other-stats.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřş Şŭŭřřǿǿŭŭƞḓḗḗḓ"
     },
     {
       "type": 0,

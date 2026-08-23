@@ -356,12 +356,30 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Replace {name}?',
     description: 'Confirmation heading before replacing a named skill preset.',
   },
-  purityProductionQuote: {
-    id: 'skills.purity-production-quote',
-    defaultMessage:
-      'Unspent points {pointsBefore} → {pointsAfter}. Combined Purity multipliers: Cash/Science ×{cashBefore} → ×{cashAfter}; Bots ×{botsBefore} → ×{botsAfter}; Everything ×{everythingBefore} → ×{everythingAfter}.',
-    description:
-      'Exact pre-confirmation quote for the compounding Purity skill point cliff.',
+  impactSkillPoints: {
+    id: 'skills.impact.skill-points',
+    defaultMessage: 'Skill Points',
+    description: 'Skill Points row label in a skill-change consequence preview.',
+  },
+  impactCashScience: {
+    id: 'skills.impact.cash-science',
+    defaultMessage: 'Cash & Science',
+    description: 'Combined Cash and Science row label in a skill consequence preview.',
+  },
+  impactBots: {
+    id: 'skills.impact.bots',
+    defaultMessage: 'Bots',
+    description: 'Bots row label in a skill consequence preview.',
+  },
+  impactEverything: {
+    id: 'skills.impact.everything',
+    defaultMessage: 'Everything',
+    description: 'Everything multiplier row label in a skill consequence preview.',
+  },
+  impactTo: {
+    id: 'skills.impact.to',
+    defaultMessage: 'to',
+    description: 'Screen-reader connector between before and after values.',
   },
   supernovaSuppressionQuote: {
     id: 'skills.supernova-suppression-quote',

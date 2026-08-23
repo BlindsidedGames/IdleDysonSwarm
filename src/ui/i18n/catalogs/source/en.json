@@ -3431,6 +3431,26 @@
     "defaultMessage": "Fragments owned: {value} ({delta})",
     "description": "Skill fragment total and its recent change shown in skill details."
   },
+  "skills.impact.bots": {
+    "defaultMessage": "Bots",
+    "description": "Bots row label in a skill consequence preview."
+  },
+  "skills.impact.cash-science": {
+    "defaultMessage": "Cash & Science",
+    "description": "Combined Cash and Science row label in a skill consequence preview."
+  },
+  "skills.impact.everything": {
+    "defaultMessage": "Everything",
+    "description": "Everything multiplier row label in a skill consequence preview."
+  },
+  "skills.impact.skill-points": {
+    "defaultMessage": "Skill Points",
+    "description": "Skill Points row label in a skill-change consequence preview."
+  },
+  "skills.impact.to": {
+    "defaultMessage": "to",
+    "description": "Screen-reader connector between before and after values."
+  },
   "skills.import-locked-queued": {
     "defaultMessage": "{count, plural, one {# locked skill will remain queued until its line unlocks.} other {# locked skills will remain queued until their lines unlock.}}",
     "description": "Preset import warning explaining that gated skills stay queued without spending points."
@@ -3562,10 +3582,6 @@
   "skills.purchase-point-impact": {
     "defaultMessage": "Will cost {value} Skill Points",
     "description": "Exact skill-point total that assigning the selected skill will spend."
-  },
-  "skills.purity-production-quote": {
-    "defaultMessage": "Unspent points {pointsBefore} → {pointsAfter}. Combined Purity multipliers: Cash/Science ×{cashBefore} → ×{cashAfter}; Bots ×{botsBefore} → ×{botsAfter}; Everything ×{everythingBefore} → ×{everythingAfter}.",
-    "description": "Exact pre-confirmation quote for the compounding Purity skill point cliff."
   },
   "skills.queued": {
     "defaultMessage": "Queued for automatic assignment",
@@ -3982,6 +3998,26 @@
   "statistics.none": {
     "defaultMessage": "None",
     "description": "Empty state for a reached statistics group with no recorded activity."
+  },
+  "statistics.other-stats": {
+    "defaultMessage": "Other Stats",
+    "description": "Heading for additional current-state statistics."
+  },
+  "statistics.other-stats.active-panels": {
+    "defaultMessage": "Active Panels",
+    "description": "Current active Dyson panel count."
+  },
+  "statistics.other-stats.dyson-swarm-scale": {
+    "defaultMessage": "Dyson Swarm Scale",
+    "description": "Title for equivalent Dyson Swarm scale measurements."
+  },
+  "statistics.other-stats.galaxies-engulfed": {
+    "defaultMessage": "Galaxies Engulfed",
+    "description": "Current active Dyson panels expressed as engulfed galaxies."
+  },
+  "statistics.other-stats.stars-surrounded": {
+    "defaultMessage": "Stars Surrounded",
+    "description": "Current active Dyson panels expressed as surrounded stars."
   },
   "statistics.recent-activity": {
     "defaultMessage": "Recent activity",

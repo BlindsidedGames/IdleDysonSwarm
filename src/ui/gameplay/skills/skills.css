@@ -806,6 +806,66 @@
   flex-basis: 100%;
 }
 
+.skill-details__production-impact {
+  display: grid;
+  flex-basis: 100%;
+  gap: 0.28rem;
+  min-inline-size: 0;
+  inline-size: 100%;
+  padding-block: 0.1rem;
+}
+
+.skill-details__impact-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 0.32rem;
+  align-items: baseline;
+  min-inline-size: 0;
+  line-height: 1.2;
+}
+
+.skill-details__impact-label {
+  min-inline-size: 0;
+  color: #f0eafa;
+  font-weight: var(--font-weight-semibold);
+}
+
+.skill-details__impact-value {
+  color: #63e5ee;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.skill-details__impact-value--gain {
+  color: #91dd8f;
+}
+
+.skill-details__impact-value--loss {
+  color: #ffa45e;
+}
+
+.skill-details__impact-arrow {
+  display: inline-block;
+  margin-inline: 0.08em;
+  color: white;
+  font-size: 0.8em;
+  transform: translateY(-0.04em);
+}
+
+.skill-details__production-impact > ul {
+  display: grid;
+  gap: 0.28rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.skill-details__impact-list-item {
+  min-inline-size: 0;
+}
+
 .skill-details__actions > .ui-status-feedback {
   flex-basis: 100%;
 }

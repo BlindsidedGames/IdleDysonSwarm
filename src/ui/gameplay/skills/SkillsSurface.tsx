@@ -33,8 +33,6 @@ import {
 } from '../../components'
 import {
   formatGameNumber,
-  formatNumber,
-  type NumericValue,
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
@@ -59,16 +57,6 @@ type SkillCommand = Extract<
   CanonicalPlayerCommand,
   { readonly kind: `skill.${string}` }
 >
-
-function formatPreciseNumber(
-  locale: EnabledLocale,
-  value: NumericValue,
-): string {
-  return formatNumber(locale, value, {
-    maximumFractionDigits: 20,
-    useGrouping: true,
-  })
-}
 
 interface PendingExpectation {
   readonly beforeSignature: string
@@ -1609,18 +1597,44 @@ function SkillDetails({
                 return (
                   <div className="skill-details__production-impact">
                     {impact.purity && (
-                      <p>
-                        {intl.formatMessage(messages.purityProductionQuote, {
-                          pointsBefore: String(impact.pointsBefore),
-                          pointsAfter: String(impact.pointsAfter),
-                          cashBefore: formatPreciseNumber(locale, impact.purity.cashScienceBefore),
-                          cashAfter: formatPreciseNumber(locale, impact.purity.cashScienceAfter),
-                          botsBefore: formatPreciseNumber(locale, impact.purity.botsBefore),
-                          botsAfter: formatPreciseNumber(locale, impact.purity.botsAfter),
-                          everythingBefore: formatPreciseNumber(locale, impact.purity.everythingBefore),
-                          everythingAfter: formatPreciseNumber(locale, impact.purity.everythingAfter),
-                        })}
-                      </p>
+                      <>
+                        <ProductionImpactRow
+                          label={intl.formatMessage(messages.impactSkillPoints)}
+                          before={String(impact.pointsBefore)}
+                          after={String(impact.pointsAfter)}
+                          afterTone={impact.pointsAfter > impact.pointsBefore
+                            ? 'gain'
+                            : 'loss'}
+                          toLabel={intl.formatMessage(messages.impactTo)}
+                        />
+                        <ProductionImpactRow
+                          label={intl.formatMessage(messages.impactCashScience)}
+                          before={`×${formatGameNumber(locale, impact.purity.cashScienceBefore)}`}
+                          after={`×${formatGameNumber(locale, impact.purity.cashScienceAfter)}`}
+                          afterTone={impact.purity.cashScienceAfter >= impact.purity.cashScienceBefore
+                            ? 'gain'
+                            : 'loss'}
+                          toLabel={intl.formatMessage(messages.impactTo)}
+                        />
+                        <ProductionImpactRow
+                          label={intl.formatMessage(messages.impactBots)}
+                          before={`×${formatGameNumber(locale, impact.purity.botsBefore)}`}
+                          after={`×${formatGameNumber(locale, impact.purity.botsAfter)}`}
+                          afterTone={impact.purity.botsAfter >= impact.purity.botsBefore
+                            ? 'gain'
+                            : 'loss'}
+                          toLabel={intl.formatMessage(messages.impactTo)}
+                        />
+                        <ProductionImpactRow
+                          label={intl.formatMessage(messages.impactEverything)}
+                          before={`×${formatGameNumber(locale, impact.purity.everythingBefore)}`}
+                          after={`×${formatGameNumber(locale, impact.purity.everythingAfter)}`}
+                          afterTone={impact.purity.everythingAfter >= impact.purity.everythingBefore
+                            ? 'gain'
+                            : 'loss'}
+                          toLabel={intl.formatMessage(messages.impactTo)}
+                        />
+                      </>
                     )}
                     {impact.manualPurchase && (
                       <>
@@ -1633,8 +1647,16 @@ function SkillDetails({
                         </p>
                         <ul>
                           {impact.manualPurchase.map((entry) => (
-                            <li key={entry.facilityId}>
-                              {entry.facilityId}: ×{formatPreciseNumber(locale, entry.beforeMultiplier)} → ×{formatPreciseNumber(locale, entry.afterMultiplier)}
+                            <li key={entry.facilityId} className="skill-details__impact-list-item">
+                              <ProductionImpactRow
+                                label={entry.facilityId}
+                                before={`×${formatGameNumber(locale, entry.beforeMultiplier)}`}
+                                after={`×${formatGameNumber(locale, entry.afterMultiplier)}`}
+                                afterTone={entry.afterMultiplier >= entry.beforeMultiplier
+                                  ? 'gain'
+                                  : 'loss'}
+                                toLabel={intl.formatMessage(messages.impactTo)}
+                              />
                             </li>
                           ))}
                         </ul>
@@ -1677,6 +1699,39 @@ function SkillDetails({
         </div>
       </div>
     </SkillDetailsDialog>
+  )
+}
+
+function ProductionImpactRow({
+  label,
+  before,
+  after,
+  afterTone,
+  toLabel,
+}: {
+  readonly label: string
+  readonly before: string
+  readonly after: string
+  readonly afterTone: 'gain' | 'loss'
+  readonly toLabel: string
+}) {
+  return (
+    <div className="skill-details__impact-row">
+      <span className="skill-details__impact-label">{label}</span>
+      <span className="skill-details__impact-value">{before}</span>
+      <span className="ui-visually-hidden">{toLabel}</span>
+      <span
+        className="skill-details__impact-arrow"
+        aria-hidden="true"
+      >
+        {'\u25b6'}
+      </span>
+      <span
+        className={`skill-details__impact-value skill-details__impact-value--${afterTone}`}
+      >
+        {after}
+      </span>
+    </div>
   )
 }
 

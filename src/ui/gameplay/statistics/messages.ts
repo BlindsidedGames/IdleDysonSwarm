@@ -148,6 +148,31 @@ export const statisticsMessages = defineMessages({
     defaultMessage: 'No completed cycle has been recorded yet.',
     description: 'Empty state before the first tracked cycle.',
   },
+  otherStats: {
+    id: 'statistics.other-stats',
+    defaultMessage: 'Other Stats',
+    description: 'Heading for additional current-state statistics.',
+  },
+  dysonSwarmScale: {
+    id: 'statistics.other-stats.dyson-swarm-scale',
+    defaultMessage: 'Dyson Swarm Scale',
+    description: 'Title for equivalent Dyson Swarm scale measurements.',
+  },
+  activePanels: {
+    id: 'statistics.other-stats.active-panels',
+    defaultMessage: 'Active Panels',
+    description: 'Current active Dyson panel count.',
+  },
+  starsSurrounded: {
+    id: 'statistics.other-stats.stars-surrounded',
+    defaultMessage: 'Stars Surrounded',
+    description: 'Current active Dyson panels expressed as surrounded stars.',
+  },
+  galaxiesEngulfed: {
+    id: 'statistics.other-stats.galaxies-engulfed',
+    defaultMessage: 'Galaxies Engulfed',
+    description: 'Current active Dyson panels expressed as engulfed galaxies.',
+  },
   cycleType: {
     id: 'statistics.last-cycle.type',
     defaultMessage: 'Cycle type',

@@ -755,6 +755,62 @@ describe('SkillsSurface', () => {
     ).not.toBeInTheDocument()
   })
 
+  test('formats projected Purity multipliers with the active game notation', async () => {
+    const user = userEvent.setup()
+    const purityCatalog: CanonicalSkillCatalogPreview = {
+      ...catalog,
+      skills: [
+        createSkillPreview('startHereTree', {
+          purchase: {
+            ...startSkill.purchase,
+            productionImpact: {
+              pointsBefore: 33n,
+              pointsAfter: 26n,
+              purity: {
+                cashScienceBefore: 1,
+                cashScienceAfter: 345_040_194.0680835,
+                botsBefore: 1,
+                botsAfter: 3_014_097.468136991,
+                everythingBefore: 1,
+                everythingAfter: 9_109.550630164726,
+              },
+            },
+          },
+        }),
+      ],
+    }
+    render(
+      createSkillElement(
+        createDispatchPlayer(),
+        0.5,
+        1,
+        purityCatalog,
+      ),
+    )
+
+    await user.click(screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    }))
+    await user.click(screen.getByRole('button', {
+      name: 'Assign Skill. Will cost 1.00 Skill Points',
+    }))
+
+    expect(screen.getByRole('group', {
+      name: 'Confirm skill change',
+    })).toBeInTheDocument()
+
+    const impact = document.querySelector(
+      '.skill-details__production-impact',
+    )
+    expect(impact).toHaveTextContent('Skill Points33to▶26')
+    expect(impact).toHaveTextContent('Cash & Science×1.00to▶×345M')
+    expect(impact).toHaveTextContent('Bots×1.00to▶×3.01M')
+    expect(impact).toHaveTextContent('Everything×1.00to▶×9.10K')
+    expect(impact?.querySelectorAll('.skill-details__impact-row')).toHaveLength(4)
+    expect(impact?.querySelectorAll('.skill-details__impact-arrow')).toHaveLength(4)
+    expect(impact).not.toHaveTextContent('0680835')
+  })
+
   test('cleans up an interrupted pan before the next skill click', () => {
     renderSkills()
     const tree = screen.getByRole('region', { name: 'Skill tree' })
@@ -1325,7 +1381,9 @@ describe('SkillsSurface', () => {
         'Refunding Supernova restores the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.',
       ),
     ).toBeInTheDocument()
-    expect(screen.getByText('assembly_lines: ×1 → ×8.4')).toBeInTheDocument()
+    expect(
+      document.querySelector('.skill-details__production-impact'),
+    ).toHaveTextContent('assembly_lines×1.00to▶×8.40')
 
     await user.click(screen.getByRole('button', { name: 'Confirm' }))
     expect(dispatchPlayer).toHaveBeenCalledWith({

@@ -650,6 +650,11 @@ export type FrontendDysonSwarmVisualizationFacts =
     }
 
 export interface FrontendDysonPresentationFacts {
+  readonly swarmScale: {
+    readonly activePanels: number
+    readonly starsSurrounded: number
+    readonly galaxiesEngulfed: number
+  }
   readonly activePanelMetric: {
     readonly kind:
       | 'active-panels'
@@ -1761,6 +1766,7 @@ function projectDysonDerivedFacts(
     source.globals.panelsPerSecond,
     source.globals.panelLifetimeSeconds,
   )
+  const swarmScale = projectDysonSwarmScale(activePanels)
   const swarmVisualization =
     projectDysonSwarmVisualization(activePanels)
   const activePanelMetric =
@@ -1794,12 +1800,26 @@ function projectDysonDerivedFacts(
     megaStructureFacts: source.megaStructureFacts,
     productionArrivalRates: source.productionArrivalRates,
     presentation: {
+      swarmScale,
       activePanelMetric,
       swarmVisualization,
       currentGoal: projectDysonGoal(goalStage),
       facilities: source.facilityFacts,
     },
     entitlements: source.entitlements,
+  }
+}
+
+export function projectDysonSwarmScale(
+  activePanels: number,
+): FrontendDysonPresentationFacts['swarmScale'] {
+  const starsSurrounded =
+    activePanels / PANELS_PER_SURROUNDED_STAR
+  return {
+    activePanels,
+    starsSurrounded,
+    galaxiesEngulfed:
+      starsSurrounded / STARS_PER_ENGULFED_GALAXY,
   }
 }
 

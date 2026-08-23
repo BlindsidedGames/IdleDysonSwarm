@@ -99,6 +99,8 @@ export function InfinitySurface({
         : derived.progressFraction,
     ),
   )
+  const manualResetReady =
+    !progression.infinity.automaticResetEnabled && progress >= 1
   useForwardProgressAnimation(progressFillRef, {
     canonicalProgress: progress,
     inferRate: 'increasing',
@@ -167,7 +169,9 @@ export function InfinitySurface({
           settingsLabel={intl.formatMessage(messages.settings)}
           onExpandedChange={setSettingsOpen}
           summary={(
-            <div className="infinity-surface__progress">
+            <div
+              className="infinity-surface__progress infinity-surface__progress--manual-action"
+            >
               <div className="infinity-surface__progress-heading">
                 <strong>
                   {derived.mode === 'break'
@@ -179,23 +183,16 @@ export function InfinitySurface({
                       })
                     : intl.formatMessage(messages.ordinaryProgress)}
                 </strong>
-                {!progression.infinity.automaticResetEnabled && progress >= 1 ? (
-                  <ManualInfinityButton
-                    routeAvailable={commandAvailability.requestReset}
-                    dispatchPlayer={dispatchPlayer}
-                  />
-                ) : (
-                  <span>
-                    {derived.mode === 'break'
-                      ? `${formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/${formatGameNumber(locale, derived.breakTargetProgress.targetReward)}`
-                      : intl.formatMessage(messages.progressPercent, {
-                          value: formatNumber(locale, progress * 100, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }),
-                        })}
-                  </span>
-                )}
+                <span>
+                  {derived.mode === 'break'
+                    ? `${formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/${formatGameNumber(locale, derived.breakTargetProgress.targetReward)}`
+                    : intl.formatMessage(messages.progressPercent, {
+                        value: formatNumber(locale, progress * 100, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }),
+                      })}
+                </span>
               </div>
               <div
                 className="infinity-surface__progress-track"
@@ -221,6 +218,11 @@ export function InfinitySurface({
                   style={{ transform: `scaleX(${progress})` }}
                 />
               </div>
+              <ManualInfinityButton
+                ready={manualResetReady}
+                routeAvailable={commandAvailability.requestReset}
+                dispatchPlayer={dispatchPlayer}
+              />
             </div>
           )}
         >
@@ -247,9 +249,11 @@ export function InfinitySurface({
 }
 
 function ManualInfinityButton({
+  ready,
   routeAvailable,
   dispatchPlayer,
 }: {
+  readonly ready: boolean
   readonly routeAvailable: boolean
   readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
 }) {
@@ -258,7 +262,7 @@ function ManualInfinityButton({
   const [failed, setFailed] = useState(false)
 
   const requestReset = async (): Promise<void> => {
-    if (pending || !routeAvailable) return
+    if (pending || !ready || !routeAvailable) return
     setPending(true)
     setFailed(false)
     try {
@@ -275,10 +279,10 @@ function ManualInfinityButton({
     <span className="infinity-manual-reset">
       <button
         type="button"
-        disabled={!routeAvailable || pending}
+        disabled={!routeAvailable || !ready || pending}
         onClick={() => void requestReset()}
       >
-        {intl.formatMessage(messages.manualReset)}
+        <span>{intl.formatMessage(messages.manualReset)}</span>
       </button>
       {failed ? (
         <span role="alert" className="infinity-manual-reset__feedback">

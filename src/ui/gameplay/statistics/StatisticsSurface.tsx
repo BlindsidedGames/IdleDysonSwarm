@@ -4,6 +4,7 @@ import {
 } from 'react-intl'
 import type {
   FrontendCanonicalProgression,
+  FrontendDysonPresentationFacts,
 } from '../../../application/frontendSnapshot'
 import type {
   SimulationTotalsState,
@@ -32,6 +33,7 @@ type DisplayMetricKey =
 export interface StatisticsSurfaceProps {
   readonly locale: EnabledLocale
   readonly statistics: StatisticsState
+  readonly swarmScale: FrontendDysonPresentationFacts['swarmScale']
   readonly visibility: StatisticsVisibility
 }
 
@@ -143,6 +145,7 @@ type WindowMetricDefinition = (typeof windowMetrics)[number]
 export function StatisticsSurface({
   locale,
   statistics,
+  swarmScale,
   visibility,
 }: StatisticsSurfaceProps) {
   const intl = useIntl()
@@ -224,8 +227,45 @@ export function StatisticsSurface({
           locale={locale}
           cycle={statistics.lastCompletedCycle}
         />
+
+        <OtherStats
+          locale={locale}
+          swarmScale={swarmScale}
+        />
       </div>
     </div>
+  )
+}
+
+function OtherStats({
+  locale,
+  swarmScale,
+}: {
+  readonly locale: EnabledLocale
+  readonly swarmScale: FrontendDysonPresentationFacts['swarmScale']
+}) {
+  const intl = useIntl()
+  return (
+    <section className="statistics-surface__other">
+      <h2>{intl.formatMessage(messages.otherStats)}</h2>
+      <article className="statistics-card statistics-swarm-scale">
+        <h3>{intl.formatMessage(messages.dysonSwarmScale)}</h3>
+        <dl>
+          <StatisticFact
+            label={intl.formatMessage(messages.activePanels)}
+            value={formatGameNumber(locale, swarmScale.activePanels)}
+          />
+          <StatisticFact
+            label={intl.formatMessage(messages.starsSurrounded)}
+            value={formatGameNumber(locale, swarmScale.starsSurrounded)}
+          />
+          <StatisticFact
+            label={intl.formatMessage(messages.galaxiesEngulfed)}
+            value={formatGameNumber(locale, swarmScale.galaxiesEngulfed)}
+          />
+        </dl>
+      </article>
+    </section>
   )
 }
 
