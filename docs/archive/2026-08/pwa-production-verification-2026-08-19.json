@@ -1,10 +1,10 @@
 {
   "schemaVersion": 2,
   "runIdentity": {
-    "revision": "30c9c165fda0d7a31bd55593708ce9a1f06988f1",
+    "revision": "f80033ecf2eaa9778f59c0c8862bcfec317cbadd",
     "workingTreeDirty": false
   },
-  "verifiedAtUtc": "2026-08-23T14:09:25.068Z",
+  "verifiedAtUtc": "2026-08-23T14:13:22.925Z",
   "browser": "Chrome",
   "browserVersion": "151.0.7922.170",
   "platform": "darwin-arm64",
@@ -19,40 +19,40 @@
   "packages": {
     "old": {
       "buildId": "pwa-verification-old",
-      "sha256": "f215cb79dc8f71c0c513e452f4e596d9437faee42068ad1331d8965d59161b9c"
+      "sha256": "b4595ddcc4ddd1121a463681d3911bc667826a36bba88f0920afb2e43b84be52"
     },
     "new": {
       "buildId": "pwa-verification-new",
-      "sha256": "12917916e0c44436a0287c787e014f1ab49f85b89b9c9c1d5d6fe725dfdd4ac6"
+      "sha256": "d644b0fd4876f8d63d3199eeef34e6aee17b475dafa5a0453843906fec9ea922"
     }
   },
   "saves": {
     "initial": {
-      "sha256": "4f030afa247551733f71903ea1d29e427aa24600849d62829175e4e2c66e660b",
+      "sha256": "b55c39cf795c5a45499da00df69212931c9a7e3cb3e16e709874fd6397c185ef",
       "bots": 0,
       "botDistribution": 0.5,
       "schema": 12
     },
     "seeded": {
-      "sha256": "ebe569d39e7c332705125b83ef7471ed17e44bcf656840ea76532e6d7e9e34f5",
+      "sha256": "ea6fcd0c90ab46da65bb5642ca0985353b32f5a4e10ef10a51a61afebd8b9b65",
       "bots": 1,
       "botDistribution": 0.73,
       "schema": 12
     },
     "repeated": {
-      "sha256": "0ff8dbda7af10873f14e440c8f5d9290b978f9855dc8b89b892ed2d0049fe3d4",
+      "sha256": "139dc68e085c1335204ad0911c37a97c20a4d1cbc13224089b06feac2efd9275",
       "bots": 1,
       "botDistribution": 0.73,
       "schema": 12
     },
     "offline": {
-      "sha256": "1e85cbe7950ae7c7cccf0bff4ee00f56efa251b61d318e53b098e0b3447e68f6",
+      "sha256": "3eb725e7823c9a081735d92fbef66f9b28c7d759ab6ff9fef1c2cba0a2c3201b",
       "bots": 1,
       "botDistribution": 0.73,
       "schema": 12
     },
     "updated": {
-      "sha256": "6bac3c18761ce100a23e5f82aebeee747ac393f3bbf74f5beb990e8d826a14c0",
+      "sha256": "5ea5855857a2b50d57bd9986617ed8907381a4bb893ed77a430cc90cbb78b691",
       "bots": 1,
       "botDistribution": 0.73,
       "schema": 12
@@ -60,11 +60,11 @@
   },
   "caches": {
     "old": [
-      "idle-dyson-swarm-app-c1c7a79ac35f6474"
+      "idle-dyson-swarm-app-0347c185d0ca45f8"
     ],
     "injectedObsolete": "idle-dyson-swarm-app-obsolete-verification",
     "new": [
-      "idle-dyson-swarm-app-a577e94a085d53d8"
+      "idle-dyson-swarm-app-195ea7d1cfaccd0e"
     ]
   },
   "assertions": {
