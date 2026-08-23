@@ -29,6 +29,7 @@ import {
   InlineImageSymbol,
   PresetAutomationSelect,
   ProgressControlsPanel,
+  StableSingleLineText,
 } from '../../components'
 import {
   formatGameNumber,
@@ -312,24 +313,18 @@ export function ResearchSurface({
           onExpandedChange={setSettingsOpen}
           summary={(
             <p>
-              <FormattedMessage
-                {...messages.productionSummary}
-                values={{
-                  researchers: formatGameNumber(locale, researchers),
-                  science: formatGameNumber(locale, sciencePerSecond),
-                  scienceIcon: <ScienceSymbol />,
-                  researcherValue: (chunks: ReactNode) => (
-                    <span className="research-surface__researchers">
-                      {chunks}
-                    </span>
-                  ),
-                  scienceValue: (chunks: ReactNode) => (
-                    <span className="research-surface__science">
-                      {chunks}
-                    </span>
-                  ),
-                }}
-              />
+              <StableSingleLineText
+                className="research-surface__production-line"
+                measurement={<ResearchProductionMessage
+                  researchers="9.99QaQag"
+                  science="9.99QaQag"
+                />}
+              >
+                <ResearchProductionMessage
+                  researchers={formatGameNumber(locale, researchers)}
+                  science={formatGameNumber(locale, sciencePerSecond)}
+                />
+              </StableSingleLineText>
             </p>
           )}
         >
@@ -466,6 +461,31 @@ export function ResearchSurface({
         </ProgressControlsPanel>
       </footer>
     </div>
+  )
+}
+
+function ResearchProductionMessage({
+  researchers,
+  science,
+}: {
+  readonly researchers: string
+  readonly science: string
+}) {
+  return (
+    <FormattedMessage
+      {...messages.productionSummary}
+      values={{
+        researchers,
+        science,
+        scienceIcon: <ScienceSymbol />,
+        researcherValue: (chunks: ReactNode) => (
+          <span className="research-surface__researchers">{chunks}</span>
+        ),
+        scienceValue: (chunks: ReactNode) => (
+          <span className="research-surface__science">{chunks}</span>
+        ),
+      }}
+    />
   )
 }
 
