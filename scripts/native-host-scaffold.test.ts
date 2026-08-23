@@ -41,7 +41,7 @@ describe('native host scaffold', () => {
       .toContain('version: "4.0.0"')
   })
 
-  it('keeps debug builds open and release signing fail-closed', () => {
+  it('keeps debug builds open, Android fail-closed, and Xcode locally managed', () => {
     const variables = read('hosts/capacitor/android/variables.gradle')
     const gradle = read('hosts/capacitor/android/app/build.gradle')
     expect(variables).toContain('minSdkVersion = 26')
@@ -57,11 +57,10 @@ describe('native host scaffold', () => {
     const project = read(
       'hosts/capacitor/ios/App/App.xcodeproj/project.pbxproj',
     )
-    expect(project).toContain('CODE_SIGN_STYLE = Manual;')
-    expect(project).toContain('DEVELOPMENT_TEAM = "$(IDS_DEVELOPMENT_TEAM)";')
-    expect(project).toContain(
-      'PROVISIONING_PROFILE_SPECIFIER = "$(IDS_PROVISIONING_PROFILE_SPECIFIER)";',
-    )
+    expect(project).toContain('CODE_SIGN_STYLE = Automatic;')
+    expect(project).toMatch(/DEVELOPMENT_TEAM = [A-Z0-9]+;/)
+    expect(project).toContain('PROVISIONING_PROFILE_SPECIFIER = "";')
+    expect(project).not.toContain('$(IDS_DEVELOPMENT_TEAM)')
   })
 
   it('denies Electron permissions and waits for runtime readiness', () => {
