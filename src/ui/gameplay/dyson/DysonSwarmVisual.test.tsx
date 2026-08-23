@@ -9,6 +9,49 @@ import { DysonSwarmVisual } from './DysonSwarmVisual'
 afterEach(cleanup)
 
 describe('DysonSwarmVisual', () => {
+  test('holds a lightweight static galaxy group throughout rapid Infinity updates', () => {
+    const view = render(
+      <DysonSwarmVisual
+        mode="rapid-settled"
+        facts={{
+          phase: 'stellar-swarm',
+          activePanels: 1,
+          completion: 0,
+        }}
+      />,
+    )
+
+    const root = view.container.firstElementChild
+    const settledScene = view.container.querySelector(
+      '.dyson-swarm-visual__rapid-settled',
+    )
+    expect(root).toHaveAttribute('data-phase', 'rapid-settled')
+    expect(settledScene).toBeInTheDocument()
+    expect(
+      view.container.querySelectorAll(
+        '.dyson-swarm-visual__rapid-galaxy',
+      ),
+    ).toHaveLength(7)
+    expect(view.container.querySelector('svg')).not.toBeInTheDocument()
+
+    view.rerender(
+      <DysonSwarmVisual
+        mode="rapid-settled"
+        facts={{
+          phase: 'galaxy-group',
+          galaxiesEngulfed: 5e291,
+          completion: 1,
+        }}
+      />,
+    )
+    expect(view.container.firstElementChild).toBe(root)
+    expect(
+      view.container.querySelector(
+        '.dyson-swarm-visual__rapid-settled',
+      ),
+    ).toBe(settledScene)
+  })
+
   test('uses one bounded group transform and disables continuous motion on mobile', () => {
     const stylesheet = readFileSync(
       'src/ui/gameplay/dyson/dysonSwarmVisual.css',
@@ -45,6 +88,12 @@ describe('DysonSwarmVisual', () => {
     expect(stylesheet).toContain(
       'dyson-swarm-visual__field-galaxy-image',
     )
+    expect(stylesheet).toContain(
+      'drop-shadow(0 0 1.15px rgb(219 155 237 / 74%))',
+    )
+    expect(stylesheet).toContain(
+      'drop-shadow(0 0 5px rgb(194 102 184 / 35%))',
+    )
     expect(stylesheet).not.toMatch(
       /\.dyson-swarm-visual__galaxy-field\s*\{[^}]*animation:/,
     )
@@ -59,6 +108,9 @@ describe('DysonSwarmVisual', () => {
     )
     expect(stylesheet).not.toContain(
       'dyson-swarm-visual__orbit-plane-motion',
+    )
+    expect(stylesheet).not.toMatch(
+      /\.dyson-swarm-visual__rapid-(?:settled|galaxy)\s*\{[^}]*(?:animation|transition):/,
     )
   })
 
@@ -178,7 +230,7 @@ describe('DysonSwarmVisual', () => {
       view.container.querySelectorAll(
         '.dyson-swarm-visual__galaxy-light',
       ),
-    ).toHaveLength(144)
+    ).toHaveLength(420)
     expect(
       view.container.querySelectorAll(
         '.dyson-swarm-visual__galaxy-orbit-cluster',
@@ -201,7 +253,7 @@ describe('DysonSwarmVisual', () => {
     )
     expect(position).toHaveAttribute(
       'transform',
-      'translate(-6 -8)',
+      'translate(-6 13)',
     )
     expect(composition).toHaveAttribute(
       'transform',
@@ -211,7 +263,7 @@ describe('DysonSwarmVisual', () => {
       bulge?.querySelectorAll(
         '.dyson-swarm-visual__galaxy-core-light',
       ),
-    ).toHaveLength(16)
+    ).toHaveLength(36)
     expect(
       bulge?.parentElement,
     ).toBe(composition)
@@ -227,7 +279,7 @@ describe('DysonSwarmVisual', () => {
         '.dyson-swarm-visual__galaxy-light',
       ),
     ).filter((light) => light.style.opacity === '1')
-    expect(initiallyLit).toHaveLength(144)
+    expect(initiallyLit).toHaveLength(420)
 
     view.rerender(
       <DysonSwarmVisual
@@ -243,8 +295,8 @@ describe('DysonSwarmVisual', () => {
         '.dyson-swarm-visual__galaxy-light',
       ),
     ).filter((light) => Number(light.style.opacity) < 1)
-    expect(partlyExtinguished.length).toBeGreaterThan(50)
-    expect(partlyExtinguished.length).toBeLessThan(100)
+    expect(partlyExtinguished.length).toBeGreaterThan(150)
+    expect(partlyExtinguished.length).toBeLessThan(270)
 
     view.rerender(
       <DysonSwarmVisual
@@ -260,8 +312,8 @@ describe('DysonSwarmVisual', () => {
         '.dyson-swarm-visual__galaxy-light',
       ),
     ).filter((light) => Number(light.style.opacity) === 0.08)
-    expect(mostlyExtinguished.length).toBeGreaterThan(120)
-    expect(mostlyExtinguished.length).toBeLessThan(144)
+    expect(mostlyExtinguished.length).toBeGreaterThan(350)
+    expect(mostlyExtinguished.length).toBeLessThan(420)
   })
 
   test('fills the post-galaxy field and dims members across compressed progression', () => {

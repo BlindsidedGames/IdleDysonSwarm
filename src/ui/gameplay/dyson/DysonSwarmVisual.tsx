@@ -15,9 +15,9 @@ import './dysonSwarmVisual.css'
 const EXACT_COLLECTOR_LIMIT = 64
 const DENSE_COLLECTOR_LAYER_COUNT = 8
 const COLLECTORS_PER_DENSE_LAYER = 24
-const GALAXY_LIGHT_COUNT = 144
-const GALAXY_CORE_LIGHT_COUNT = 16
-const ORIGIN_STAR_INDEX = 57
+const GALAXY_LIGHT_COUNT = 420
+const GALAXY_CORE_LIGHT_COUNT = 36
+const ORIGIN_STAR_INDEX = 173
 const GALAXY_FIELD_MEMBER_COUNT = 32
 const GALAXY_FIELD_DUST_COUNT = 48
 const GALAXY_FIELD_ANCHOR_X = -8
@@ -42,6 +42,7 @@ const ORBIT_SPECS = [
 
 interface DysonSwarmVisualProps {
   readonly facts: FrontendDysonSwarmVisualizationFacts
+  readonly mode?: 'progressive' | 'rapid-settled'
 }
 
 type VisualStyle = CSSProperties & {
@@ -111,9 +112,22 @@ const GALAXY_FIELD_RESOURCE_CLEARANCE_ZONES:
  * Renders a bounded visual interpretation of the canonical Dyson scale facts.
  * It owns no gameplay state, thresholds, time advancement or player commands.
  */
-export function DysonSwarmVisual({
+function DysonSwarmVisualComponent({
   facts,
+  mode = 'progressive',
 }: DysonSwarmVisualProps) {
+  if (mode === 'rapid-settled') {
+    return (
+      <div
+        className="dyson-swarm-visual"
+        data-phase="rapid-settled"
+        aria-hidden="true"
+      >
+        <SettledGalaxyGroupScene />
+      </div>
+    )
+  }
+
   return (
     <div
       className="dyson-swarm-visual"
@@ -137,6 +151,46 @@ export function DysonSwarmVisual({
     </div>
   )
 }
+
+export const DysonSwarmVisual = memo(
+  DysonSwarmVisualComponent,
+  (previous, next) =>
+    previous.mode === 'rapid-settled' &&
+    next.mode === 'rapid-settled',
+)
+
+const SETTLED_GALAXIES = [
+  { image: galaxyFaceOn, x: '18%', y: '22%', size: '18%', rotation: '-14deg', opacity: 0.72 },
+  { image: galaxyOblique, x: '50%', y: '14%', size: '23%', rotation: '8deg', opacity: 0.84 },
+  { image: galaxyEdgeOn, x: '78%', y: '24%', size: '17%', rotation: '-5deg', opacity: 0.68 },
+  { image: galaxyShallowInclined, x: '31%', y: '52%', size: '25%', rotation: '12deg', opacity: 0.9 },
+  { image: galaxyFaceOn, x: '67%', y: '52%', size: '21%', rotation: '-18deg', opacity: 0.82 },
+  { image: galaxyOblique, x: '13%', y: '77%', size: '15%', rotation: '6deg', opacity: 0.58 },
+  { image: galaxyEdgeOn, x: '83%', y: '78%', size: '18%', rotation: '15deg', opacity: 0.62 },
+] as const
+
+const SettledGalaxyGroupScene = memo(function SettledGalaxyGroupScene() {
+  return (
+    <div className="dyson-swarm-visual__rapid-settled">
+      {SETTLED_GALAXIES.map((galaxy, index) => (
+        <img
+          className="dyson-swarm-visual__rapid-galaxy"
+          src={galaxy.image}
+          alt=""
+          draggable={false}
+          style={{
+            '--rapid-galaxy-x': galaxy.x,
+            '--rapid-galaxy-y': galaxy.y,
+            '--rapid-galaxy-size': galaxy.size,
+            '--rapid-galaxy-rotation': galaxy.rotation,
+            '--rapid-galaxy-opacity': galaxy.opacity,
+          } as CSSProperties}
+          key={index}
+        />
+      ))}
+    </div>
+  )
+})
 
 interface StellarSwarmSceneProps {
   readonly activePanels: number
@@ -303,7 +357,7 @@ function GalaxyScene({ completion }: GalaxySceneProps) {
       >
         <g
           className="dyson-swarm-visual__galaxy-position"
-          transform="translate(-6 -8)"
+          transform="translate(-6 13)"
         >
           <g
             className="dyson-swarm-visual__galaxy-plane"

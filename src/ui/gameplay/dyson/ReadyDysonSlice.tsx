@@ -75,6 +75,7 @@ import {
   DysonProductionSummary,
 } from './DysonLowerFacts'
 import { DysonSwarmVisual } from './DysonSwarmVisual'
+import { shouldSettleRapidInfinityVisualization } from './rapidInfinityVisualization'
 import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
 import {
   wikiProgressionFromResources,
@@ -584,6 +585,16 @@ export function ReadyDysonSlice({
   const meditationPlacement: AvocatoMeditationPlacement | null =
     AVOCATO_MEDITATION_ROUTE_PLACEMENT[route] ?? null
   const dyson = gameplay.derived.dyson
+  const rapidInfinityVisualization =
+    shouldSettleRapidInfinityVisualization({
+      automaticResetEnabled:
+        gameplay.progression.infinity.automaticResetEnabled,
+      infinityCycleSeconds:
+        gameplay.progression.timeline?.infinityCycleSeconds ??
+        Number.POSITIVE_INFINITY,
+      recentInfinityCycles:
+        gameplay.progression.statistics?.recentInfinityCycles,
+    })
   const tinker = gameplay.runtime.tinker
   const previousAutomatedRoute = useRef<'bots' | 'research' | null>(
     null,
@@ -1716,6 +1727,11 @@ export function ReadyDysonSlice({
                 <DysonSwarmVisual
                   facts={
                     dyson.value.presentation.swarmVisualization
+                  }
+                  mode={
+                    rapidInfinityVisualization
+                      ? 'rapid-settled'
+                      : 'progressive'
                   }
                 />
               ),

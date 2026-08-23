@@ -137,6 +137,7 @@
 }
 
 .dyson-swarm-visual__galaxy-plane {
+  filter: drop-shadow(0 0 1.15px rgb(219 155 237 / 74%));
   transform-box: view-box;
   transform-origin: center;
 }
@@ -165,6 +166,9 @@
 }
 
 .dyson-swarm-visual__galaxy-bulge {
+  filter:
+    drop-shadow(0 0 1.8px rgb(255 220 155 / 74%))
+    drop-shadow(0 0 5px rgb(194 102 184 / 35%));
   transition: opacity 1100ms ease;
 }
 
@@ -183,6 +187,29 @@
 .dyson-swarm-visual__scene--galaxy-group {
   inset: -12% -8%;
   isolation: isolate;
+}
+
+.dyson-swarm-visual__rapid-settled {
+  position: absolute;
+  inset: -8%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 48% 46%, rgb(157 107 172 / 13%), transparent 52%),
+    radial-gradient(circle at 70% 68%, rgb(112 69 111 / 9%), transparent 42%);
+  isolation: isolate;
+}
+
+.dyson-swarm-visual__rapid-galaxy {
+  position: absolute;
+  inset-inline-start: var(--rapid-galaxy-x);
+  inset-block-start: var(--rapid-galaxy-y);
+  inline-size: var(--rapid-galaxy-size);
+  max-inline-size: none;
+  opacity: var(--rapid-galaxy-opacity);
+  transform: translate(-50%, -50%) rotate(var(--rapid-galaxy-rotation));
+  filter: saturate(0.88) brightness(0.92);
+  pointer-events: none;
+  user-select: none;
 }
 
 .dyson-swarm-visual__galaxy-field {
