@@ -267,6 +267,8 @@ export function formatGameDuration(
   seconds: number,
   options: {
     readonly maximumFractionDigits?: number
+    readonly minimumSignificantDigits?: number
+    readonly maximumSignificantDigits?: number
   } = {},
 ): string {
   if (!Number.isFinite(seconds)) return NON_FINITE_NUMBER_FALLBACK
@@ -275,7 +277,13 @@ export function formatGameDuration(
     0,
     Math.floor(options.maximumFractionDigits ?? 0),
   )
-  const totalSeconds = maximumFractionDigits > 0
+  const maximumSignificantDigits = options.maximumSignificantDigits === undefined
+    ? undefined
+    : Math.max(1, Math.floor(options.maximumSignificantDigits))
+  const minimumSignificantDigits = options.minimumSignificantDigits === undefined
+    ? undefined
+    : Math.max(1, Math.floor(options.minimumSignificantDigits))
+  const totalSeconds = maximumFractionDigits > 0 || maximumSignificantDigits !== undefined
     ? Math.abs(seconds)
     : Math.floor(Math.abs(seconds))
   const days = Math.floor(totalSeconds / 86_400)
@@ -290,16 +298,26 @@ export function formatGameDuration(
     value: number,
     suffix: string,
     fractionDigits = 0,
+    minimumSignificant?: number,
+    significantDigits?: number,
   ) =>
     `${formatNumber(locale, value, {
       maximumFractionDigits: fractionDigits,
+      minimumSignificantDigits: minimumSignificant,
+      maximumSignificantDigits: significantDigits,
       useGrouping: false,
     })}${suffix}`
 
   if (days > 0) components.push(unit(days, 'd'))
   if (hours > 0) components.push(unit(hours, 'h'))
   if (minutes > 0) components.push(unit(minutes, 'm'))
-  components.push(unit(remainingSeconds, 's', maximumFractionDigits))
+  components.push(unit(
+    remainingSeconds,
+    's',
+    maximumFractionDigits,
+    minimumSignificantDigits,
+    maximumSignificantDigits,
+  ))
   return components.join(' ')
 }
 

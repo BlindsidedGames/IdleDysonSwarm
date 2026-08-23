@@ -326,7 +326,8 @@ function RecentInfinityPerformance({
                 </span>
                 <span>
                   {formatGameDuration(locale, cycle.durationSeconds, {
-                    maximumFractionDigits: 2,
+                    minimumSignificantDigits: 3,
+                    maximumSignificantDigits: 3,
                   })}
                 </span>
                 <span className="statistics-infinity-performance__rate">
