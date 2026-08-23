@@ -10,6 +10,7 @@ import './components.css'
 const DEFAULT_MINIMUM_SCALE = 0.72
 const WIDTH_SAFETY_MARGIN_PX = 2
 const SCALE_PRECISION = 1000
+const GROWTH_SETTLE_DELAY_MS = 2_000
 
 export interface StableSingleLineTextProps {
   readonly children: ReactNode
@@ -21,8 +22,8 @@ export interface StableSingleLineTextProps {
 
 /**
  * Fits a bounded status sentence onto one line without reacting to every live
- * value update. Once reduced, its scale is deliberately retained until the
- * component is remounted so changing digit widths cannot make it pulse.
+ * value update. Reductions apply immediately, while increases wait until the
+ * measured layout has been quiet long enough to avoid pulsing during resize.
  */
 export function StableSingleLineText({
   children,
@@ -40,21 +41,40 @@ export function StableSingleLineText({
     const sizingText = measurementRef.current
     if (container === null || sizingText === null) return undefined
 
-    const update = () => {
+    let growthTimer: ReturnType<typeof setTimeout> | undefined
+
+    const fittedScale = () => {
       const availableWidth = Math.max(
         0,
         container.clientWidth - WIDTH_SAFETY_MARGIN_PX,
       )
       const requiredWidth = sizingText.getBoundingClientRect().width
-      if (availableWidth === 0 || requiredWidth === 0) return
+      if (availableWidth === 0 || requiredWidth === 0) return null
 
-      const fittedScale = Math.max(
+      const nextScale = Math.max(
         minimumScale,
         Math.min(1, availableWidth / requiredWidth),
       )
-      const roundedDown = Math.floor(
-        fittedScale * SCALE_PRECISION,
+      return Math.floor(
+        nextScale * SCALE_PRECISION,
       ) / SCALE_PRECISION
+    }
+
+    const update = () => {
+      if (growthTimer !== undefined) clearTimeout(growthTimer)
+      const roundedDown = fittedScale()
+      if (roundedDown === null) return
+
+      growthTimer = setTimeout(() => {
+        const settledScale = fittedScale()
+        if (
+          settledScale === null ||
+          settledScale === retainedScaleRef.current
+        ) return
+        retainedScaleRef.current = settledScale
+        setScale(settledScale)
+      }, GROWTH_SETTLE_DELAY_MS)
+
       if (roundedDown >= retainedScaleRef.current) return
 
       retainedScaleRef.current = roundedDown
@@ -62,12 +82,19 @@ export function StableSingleLineText({
     }
 
     update()
-    if (typeof ResizeObserver === 'undefined') return undefined
+    if (typeof ResizeObserver === 'undefined') {
+      return () => {
+        if (growthTimer !== undefined) clearTimeout(growthTimer)
+      }
+    }
 
     const observer = new ResizeObserver(update)
     observer.observe(container)
     observer.observe(sizingText)
-    return () => observer.disconnect()
+    return () => {
+      if (growthTimer !== undefined) clearTimeout(growthTimer)
+      observer.disconnect()
+    }
   }, [minimumScale])
 
   return (
