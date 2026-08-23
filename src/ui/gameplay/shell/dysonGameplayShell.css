@@ -193,6 +193,7 @@
 
 .dyson-shell[data-route-theme="research"]
   .dyson-shell__lower-regions {
+  border-block-start: 0;
   border-color: #41615e;
   background: #334c4a;
 }
@@ -735,6 +736,15 @@
   line-height: 1.1;
 }
 
+.dyson-resource-header__detail {
+  max-inline-size: 100%;
+  overflow: hidden;
+  color: #91dd8f;
+  font-size: clamp(0.72rem, 2.1vw, 1rem);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
 .dyson-resource-header__item--total-bots .ui-inline-image-symbol,
 .dyson-resource-header__item--science .ui-inline-image-symbol {
   block-size: 0.95em;
@@ -764,6 +774,10 @@
   .dyson-resource-header .ui-resource-value__value,
   .dyson-resource-header__rate {
     white-space: nowrap;
+  }
+
+  .dyson-resource-header__detail {
+    font-size: clamp(0.56rem, 2.5vw, 0.7rem);
   }
 
   .dyson-resource-header .ui-resource-value__value {
@@ -889,6 +903,12 @@
   .dyson-shell__lower-regions {
   border-color: var(--simulations-time-border);
   background: var(--simulations-time-background);
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-shell__lower-regions {
+  gap: 0;
+  padding-block-start: 0;
 }
 
 .dyson-shell[data-route-theme="simulations"]

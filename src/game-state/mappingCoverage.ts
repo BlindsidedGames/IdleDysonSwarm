@@ -549,6 +549,13 @@ function buildEntries(): readonly MappingCoverageEntry[] {
 }
 
 const entries = buildEntries()
+const developmentExtensions = Object.freeze([
+  owned(
+    '$.infinityAutomaticReset',
+    'infinity',
+    '$.infinity.automaticResetEnabled',
+  ),
+])
 const unresolvedLeafCount = entries.filter(
   (entry) => entry.classification === 'still-unowned',
 ).length
@@ -564,6 +571,7 @@ export const mappingCoverageManifest = {
   unclassifiedLeafPolicy: 'fail-certification' as const,
   unresolvedLeafCount,
   entries,
+  developmentExtensions,
 }
 
 /**

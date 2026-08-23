@@ -24,6 +24,7 @@ describe('Unity save migration pipeline', () => {
       expect(getSavePath(decoded.root, 'saveVersion')).toBe(sourceSchema)
       expect(migrated.sourceSchema).toBe(sourceSchema)
       expect(migrated.save.saveVersion).toBe(12)
+      expect(migrated.save.infinityAutomaticReset).toBe(true)
       expect(migrated.validation).toEqual({ valid: true, error: null })
       expect(
         compareGraphs(migrated.save, expected, { expectedSubset: true }),
@@ -34,6 +35,7 @@ describe('Unity save migration pipeline', () => {
   test('ports legacy identifiers, sparse facilities, avocado and parity repairs', () => {
     const migrated = migrateDecodedSave({
       saveVersion: 0,
+      infinityAutomaticReset: false,
       avotationProgressStep: 99,
       sdPrestige: { mathematics3: true },
       sdSimulation: { solarPanelGeneration: 1 },
@@ -64,6 +66,7 @@ describe('Unity save migration pipeline', () => {
     const simulation = migrated.save.sdSimulation as Record<string, unknown>
 
     expect(migrated.save.avotation).toBe(true)
+    expect(migrated.save.infinityAutomaticReset).toBe(false)
     expect(migrated.save.avotationProgressStep).toBe(7)
     expect((infinity.skillOwnedById as Record<string, boolean>).startHereTree).toBe(true)
     expect(

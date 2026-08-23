@@ -140,6 +140,7 @@ function baseState(): CanonicalGameStateV1 {
     },
     infinity: {
       ...source.infinity,
+      automaticResetEnabled: true,
       points: 0n,
       spentPoints: 0n,
       breakTarget: 1n,
@@ -1375,6 +1376,84 @@ describe('canonical whole-game event-time model', () => {
     expect(
       result.candidateState.state.gameState.infinity.points,
     ).toBe(1n)
+  })
+
+  test.each([
+    ['ordinary active', false, false],
+    ['Break active', true, false],
+    ['ordinary Stored Time', false, true],
+  ] as const)(
+    'leaves a ready %s cycle running while automatic Infinity is disabled',
+    (_label, breakTheLoop, storedTime) => {
+      const source = baseState()
+      const disabled: CanonicalGameStateV1 = {
+        ...source,
+        dyson: {
+          ...source.dyson,
+          bots: 4.2e19,
+        },
+        infinity: {
+          ...source.infinity,
+          automaticResetEnabled: false,
+          breakTarget: 1n,
+        },
+        quantum: {
+          ...source.quantum,
+          unlocks: {
+            ...source.quantum.unlocks,
+            breakTheLoop,
+          },
+        },
+      }
+      expect(
+        evaluateCanonicalInfinityBoundary(carrier(disabled), 1),
+      ).toEqual({ status: 'not-ready' })
+
+      const result = advanceEventTime({
+        startingState: new CanonicalEventTimeModel(
+          carrier(disabled),
+          storedTime
+            ? prepareCanonicalEventTimeContextVariants(context()).storedTime
+            : context(),
+        ),
+        durationSeconds: 1,
+        automationIntervalSeconds: 1,
+        automationTimeUntilNextEvent: 1,
+        infinityMinimumCycleSeconds: 1,
+        processingBudgetMilliseconds: 0,
+      })
+
+      expect(result.completed).toBe(true)
+      expect(result.diagnosticCode).toBeUndefined()
+      expect(result.summary.ordinaryInfinityCount).toBe(0n)
+      expect(result.summary.breakInfinityCount).toBe(0n)
+      expect(result.candidateState.state.gameState.infinity.points).toBe(0n)
+      expect(result.candidateState.state.gameState.dyson.bots).toBeGreaterThanOrEqual(
+        4.2e19,
+      )
+    },
+  )
+
+  test('does not force a zero-time bot-cap prestige after rewards when automatic Infinity is disabled', () => {
+    const source = baseState()
+    const model = new CanonicalEventTimeModel(
+      carrier({
+        ...source,
+        dyson: {
+          ...source.dyson,
+          bots: Number.MAX_VALUE,
+        },
+        infinity: {
+          ...source.infinity,
+          automaticResetEnabled: false,
+          inProgress: true,
+          botCapRewardsGranted: true,
+        },
+      }),
+      context(),
+    )
+
+    expect(model.timeToNextMaterialEvent(10, 1)).toBeGreaterThan(0)
   })
 
   test('publishes one dynamic recalculation per material interval and survives split reconstruction', () => {

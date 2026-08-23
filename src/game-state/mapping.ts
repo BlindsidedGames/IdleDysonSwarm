@@ -251,6 +251,10 @@ export function hydrateGameState(
     infinity: {
       points: toNonNegativeBigInt(prestige.infinityPoints),
       spentPoints: toNonNegativeBigInt(prestige.spentInfinityPoints),
+      automaticResetEnabled: toBoolean(
+        source.infinityAutomaticReset,
+        true,
+      ),
       breakTarget: toNonNegativeBigInt(
         source.infinityPointsToBreakFor,
       ),
@@ -669,6 +673,8 @@ export function dehydrateGameState(
 
   prestige.infinityPoints = state.infinity.points
   prestige.spentInfinityPoints = state.infinity.spentPoints
+  source.infinityAutomaticReset =
+    state.infinity.automaticResetEnabled
   source.infinityPointsToBreakFor = Number(
     minimumBigInt(2_147_483_647n, state.infinity.breakTarget),
   )

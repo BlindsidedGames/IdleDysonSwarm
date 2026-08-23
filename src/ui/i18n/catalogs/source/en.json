@@ -951,6 +951,22 @@
     "defaultMessage": "Tinker in your garage",
     "description": "Visible primary title for the Unity manual-creation action."
   },
+  "infinity.automatic-reset": {
+    "defaultMessage": "Auto Infinity",
+    "description": "Label for the automatic Infinity reset toggle."
+  },
+  "infinity.automatic-reset.failed": {
+    "defaultMessage": "The Auto Infinity setting was not changed.",
+    "description": "Failure feedback for a rejected Auto Infinity setting."
+  },
+  "infinity.automatic-reset.off": {
+    "defaultMessage": "Off",
+    "description": "Disabled state for automatic Infinity resets."
+  },
+  "infinity.automatic-reset.on": {
+    "defaultMessage": "On",
+    "description": "Enabled state for automatic Infinity resets."
+  },
   "infinity.break-target": {
     "defaultMessage": "Infinity Points before reset",
     "description": "Label for the Break Infinity reset target control."
@@ -962,6 +978,14 @@
   "infinity.break-target.value": {
     "defaultMessage": "Target: {value} IP",
     "description": "Currently selected Break Infinity target."
+  },
+  "infinity.manual-reset": {
+    "defaultMessage": "Infinity",
+    "description": "Button that performs a ready manual Infinity reset."
+  },
+  "infinity.manual-reset.failed": {
+    "defaultMessage": "Infinity is not ready yet.",
+    "description": "Failure feedback for a rejected manual Infinity reset."
   },
   "infinity.points.label": {
     "defaultMessage": "Infinity Points:",
@@ -1002,6 +1026,10 @@
   "infinity.secret-phrase.full": {
     "defaultMessage": "The meaning of life is: Love, Family, and Incrementals",
     "description": "Full Secret of the Universe phrase; unrevealed letters are masked by the Infinity surface."
+  },
+  "infinity.settings": {
+    "defaultMessage": "Infinity settings",
+    "description": "Accessible label for the Infinity progress settings button."
   },
   "infinity.shop.ai-managers.description": {
     "defaultMessage": "As with assembly lines, this won't increase the price of AI Managers. But it does require the previous Upgrade.",
@@ -3331,6 +3359,10 @@
     "defaultMessage": "Centre on starting skill",
     "description": "Accessible label for centring the view on the first skill."
   },
+  "skills.clear-search": {
+    "defaultMessage": "Clear skill search",
+    "description": "Accessible label for clearing the skill-tree search field."
+  },
   "skills.close": {
     "defaultMessage": "Close",
     "description": "Label for closing a Skills dialog."
@@ -3451,6 +3483,10 @@
     "defaultMessage": "Allow automatic assignment of non-refundable skills",
     "description": "Toggle allowing presets to assign skills that cannot be refunded."
   },
+  "skills.none": {
+    "defaultMessage": "None",
+    "description": "Empty state for a Skills reset confirmation list."
+  },
   "skills.owned": {
     "defaultMessage": "Owned",
     "description": "Status indicating that the player has assigned a skill."
@@ -3462,6 +3498,10 @@
   "skills.points": {
     "defaultMessage": "Skill Points: {value}",
     "description": "Current number of skill points available to spend."
+  },
+  "skills.points-label": {
+    "defaultMessage": "Skill Points",
+    "description": "Screen-reader label for the compact Skill Points value."
   },
   "skills.preset-change-failed": {
     "defaultMessage": "The preset was not changed. Try again.",
@@ -3564,12 +3604,24 @@
     "description": "Number of prerequisite skills completed for the selected skill."
   },
   "skills.reset": {
-    "defaultMessage": "Reset refundable skills",
+    "defaultMessage": "Reset Skills",
     "description": "Button label for refunding every currently refundable skill."
   },
+  "skills.reset-refunded-heading": {
+    "defaultMessage": "Skills that will be refunded",
+    "description": "Heading above refundable skills in the reset confirmation."
+  },
+  "skills.reset-retained-heading": {
+    "defaultMessage": "Skills that won’t be refunded",
+    "description": "Heading above retained skills in the reset confirmation."
+  },
   "skills.reset-warning": {
-    "defaultMessage": "Refunds all currently refundable skills and clears automatic assignment.",
+    "defaultMessage": "Resets all refundable skills",
     "description": "Warning explaining the effects of resetting refundable skills."
+  },
+  "skills.reset.queued-heading": {
+    "defaultMessage": "Removed from auto-assignment",
+    "description": "Heading for queued skills cleared by a skill reset."
   },
   "skills.search": {
     "defaultMessage": "Search skills",

@@ -56,6 +56,41 @@ export const infinityMessages = defineMessages({
     defaultMessage: 'Warning Reality Break imminent!',
     description: 'Unity warning near the first ordinary Infinity boundary.',
   },
+  settings: {
+    id: 'infinity.settings',
+    defaultMessage: 'Infinity settings',
+    description: 'Accessible label for the Infinity progress settings button.',
+  },
+  automaticReset: {
+    id: 'infinity.automatic-reset',
+    defaultMessage: 'Auto Infinity',
+    description: 'Label for the automatic Infinity reset toggle.',
+  },
+  automaticResetOn: {
+    id: 'infinity.automatic-reset.on',
+    defaultMessage: 'On',
+    description: 'Enabled state for automatic Infinity resets.',
+  },
+  automaticResetOff: {
+    id: 'infinity.automatic-reset.off',
+    defaultMessage: 'Off',
+    description: 'Disabled state for automatic Infinity resets.',
+  },
+  automaticResetFailed: {
+    id: 'infinity.automatic-reset.failed',
+    defaultMessage: 'The Auto Infinity setting was not changed.',
+    description: 'Failure feedback for a rejected Auto Infinity setting.',
+  },
+  manualReset: {
+    id: 'infinity.manual-reset',
+    defaultMessage: 'Infinity',
+    description: 'Button that performs a ready manual Infinity reset.',
+  },
+  manualResetFailed: {
+    id: 'infinity.manual-reset.failed',
+    defaultMessage: 'Infinity is not ready yet.',
+    description: 'Failure feedback for a rejected manual Infinity reset.',
+  },
   breakTarget: {
     id: 'infinity.break-target',
     defaultMessage: 'Infinity Points before reset',

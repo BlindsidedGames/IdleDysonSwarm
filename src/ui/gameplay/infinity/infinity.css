@@ -12,7 +12,7 @@
   display: grid;
   block-size: 100%;
   min-block-size: 0;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
   background: var(--theme-page);
   color: white;
   user-select: none;
@@ -30,6 +30,87 @@
     max(0.75rem, var(--safe-area-right));
   border-block-end: 2px solid var(--theme-divider);
   background: var(--infinity-panel);
+}
+
+.infinity-surface__control-dock {
+  z-index: 2;
+  display: grid;
+  gap: 0.35rem;
+  border-block-start: 1px solid var(--theme-divider);
+  background: var(--infinity-panel);
+}
+
+.infinity-surface__control-panel .ui-progress-controls-panel__body {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.infinity-automatic-reset {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.4rem 0.7rem;
+  align-items: center;
+}
+
+.infinity-automatic-reset > span:first-child {
+  font-weight: var(--font-weight-semibold);
+}
+
+.infinity-automatic-reset button {
+  min-inline-size: 4.5rem;
+  min-block-size: var(--target-minimum);
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.25rem;
+  background: var(--theme-page);
+  color: white;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+}
+
+.infinity-automatic-reset button[aria-pressed="true"] {
+  border-color: var(--theme-accent);
+  background: var(--theme-selected);
+}
+
+.infinity-automatic-reset button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 0.18rem;
+}
+
+.infinity-automatic-reset__feedback {
+  grid-column: 1 / -1;
+  color: var(--color-negative);
+  font-size: 0.8rem;
+}
+
+.infinity-manual-reset {
+  position: relative;
+}
+
+.infinity-manual-reset button {
+  min-block-size: var(--target-minimum);
+  padding-inline: 0.9rem;
+  border: 1px solid var(--theme-accent);
+  border-radius: 0.25rem;
+  background: var(--theme-selected);
+  color: white;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+}
+
+.infinity-manual-reset button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 0.18rem;
+}
+
+.infinity-manual-reset__feedback {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-end: 0;
+  inline-size: max-content;
+  max-inline-size: 14rem;
+  color: var(--color-negative);
+  font-size: 0.72rem;
 }
 
 .infinity-surface__progress-heading {
@@ -74,11 +155,11 @@
 
 .infinity-surface__progress {
   display: grid;
-  gap: 0.28rem;
+  gap: 0.2rem;
 }
 
 .infinity-surface__progress-heading {
-  font-size: calc(0.9rem * var(--game-text-scale));
+  font-size: calc(0.82rem * var(--game-text-scale));
 }
 
 .infinity-surface__progress-heading span {
@@ -89,7 +170,7 @@
 
 .infinity-surface__progress-track {
   position: relative;
-  block-size: 0.7rem;
+  block-size: 0.48rem;
   overflow: hidden;
   border: 1px solid var(--theme-divider);
   border-radius: 0.2rem;
@@ -107,6 +188,7 @@
 }
 
 .infinity-surface__warning {
+  margin: 0;
   padding: 0.3rem 0.45rem;
   border: 1px solid #a9853d;
   border-radius: 0.2rem;

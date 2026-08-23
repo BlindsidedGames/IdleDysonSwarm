@@ -4,6 +4,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import type {
@@ -1009,6 +1010,9 @@ function AudioSettingsPanel({ audio }: { readonly audio: GameAudioService }) {
             min="0"
             max="100"
             value={Math.round(settings.musicVolume * 100)}
+            style={{
+              '--settings-range-progress': `${Math.round(settings.musicVolume * 100)}%`,
+            } as CSSProperties}
             aria-valuetext={`${Math.round(settings.musicVolume * 100)}%`}
             onChange={(event) => void audio.update({
               musicVolume: Number(event.currentTarget.value) / 100,
@@ -1022,6 +1026,9 @@ function AudioSettingsPanel({ audio }: { readonly audio: GameAudioService }) {
             min="0"
             max="100"
             value={Math.round(settings.effectsVolume * 100)}
+            style={{
+              '--settings-range-progress': `${Math.round(settings.effectsVolume * 100)}%`,
+            } as CSSProperties}
             aria-valuetext={`${Math.round(settings.effectsVolume * 100)}%`}
             onChange={(event) => void audio.update({
               effectsVolume: Number(event.currentTarget.value) / 100,

@@ -66,7 +66,9 @@ import {
 import { readyDysonMessages as messages } from './messages'
 import {
   BotDistribution,
+  DysonGoalSummary,
   DysonInfo,
+  DysonRunFacts,
 } from './DysonControls'
 import { LazySurfacePending } from './LazySurfacePending'
 import {
@@ -1218,6 +1220,14 @@ export function ReadyDysonSlice({
                               gameplay.commands.byKind[
                                 'infinity.set-break-target'
                               ].routeAvailable,
+                            setAutomaticReset:
+                              gameplay.commands.byKind[
+                                'infinity.set-automatic-reset'
+                              ].routeAvailable,
+                            requestReset:
+                              gameplay.commands.byKind[
+                                'infinity.request-reset'
+                              ]?.routeAvailable ?? false,
                           }}
                           dispatchPlayer={dispatchPlayer}
                         />
@@ -1670,6 +1680,16 @@ export function ReadyDysonSlice({
           value: display(resources.bots),
           fullPrecisionValue: precise(resources.bots),
           machineValue: String(resources.bots),
+          ...(route === 'bots'
+            ? {
+                detail: (
+                  <DysonGoalSummary
+                    locale={locale}
+                    currentGoal={dyson.value.presentation.currentGoal}
+                  />
+                ),
+              }
+            : {}),
         },
         science: {
           label: intl.formatMessage(messages.science),
@@ -1776,15 +1796,24 @@ export function ReadyDysonSlice({
         ariaLabel: intl.formatMessage(messages.info),
         content: (
           <DysonInfo
-            locale={locale}
-            metric={dyson.value.presentation.activePanelMetric}
-            currentGoal={dyson.value.presentation.currentGoal}
-            panelLifetimeSeconds={
-              dyson.value.globals.panelLifetimeSeconds
-            }
-            totalPanelsDecayed={
-              gameplay.progression.dyson.totalPanelsDecayed
-            }
+            summary={(
+              <DysonProductionSummary
+                gameplay={gameplay}
+                locale={locale}
+              />
+            )}
+            statusSummary={(
+              <DysonRunFacts
+                locale={locale}
+                metric={dyson.value.presentation.activePanelMetric}
+                panelLifetimeSeconds={
+                  dyson.value.globals.panelLifetimeSeconds
+                }
+                totalPanelsDecayed={
+                  gameplay.progression.dyson.totalPanelsDecayed
+                }
+              />
+            )}
             buyMode={
               gameplay.progression.dyson.automation.buyMode
             }
@@ -1823,15 +1852,6 @@ export function ReadyDysonSlice({
               ].routeAvailable
             }
             dispatchPlayer={dispatchPlayer}
-          />
-        ),
-      }}
-      productionSummary={{
-        ariaLabel: intl.formatMessage(messages.productionSummary),
-        content: (
-          <DysonProductionSummary
-            gameplay={gameplay}
-            locale={locale}
           />
         ),
       }}

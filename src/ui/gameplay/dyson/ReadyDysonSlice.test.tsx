@@ -241,7 +241,7 @@ describe('ReadyDysonSlice', () => {
     expect(resourceSummary).toHaveTextContent('Total Bots456')
     expect(resourceSummary).toHaveTextContent('Science78922.0 /s')
     expect(
-      screen.getByRole('region', { name: 'Production summary' }),
+      screen.getByRole('region', { name: 'Info' }),
     ).toHaveTextContent('1.00K Worker Bots producing 0.00 Panels /s')
     expect(
       screen.queryByText(/Science Bots producing/),
@@ -819,7 +819,7 @@ describe('ReadyDysonSlice', () => {
     'mounts the %s route target only for Avocato meditation secret %i',
     async (route, secretStep, routeOptions) => {
       const dispatchPlayer = vi.fn(acceptedDispatch)
-      const rendered = render(
+      render(
         provider(
           <ReadyDysonSlice
             snapshot={snapshot({ ...routeOptions, secretStep })}
@@ -836,6 +836,9 @@ describe('ReadyDysonSlice', () => {
             name: 'Skill presets and reset',
           }),
         )
+        fireEvent.click(
+          await screen.findByRole('button', { name: 'Presets' }),
+        )
       }
       if (route === 'research') {
         fireEvent.click(
@@ -845,7 +848,7 @@ describe('ReadyDysonSlice', () => {
         )
       }
       const trigger = await waitFor(() => {
-        const target = rendered.container.querySelector(
+        const target = document.querySelector(
           `[data-avocato-secret-step="${secretStep}"]`,
         )
         expect(target).not.toBeNull()
@@ -857,9 +860,7 @@ describe('ReadyDysonSlice', () => {
       )
       expect(trigger).toHaveAttribute('data-avotation-target', route)
       expect(
-        rendered.container.querySelectorAll(
-          '[data-avocato-secret-step]',
-        ),
+        document.querySelectorAll('[data-avocato-secret-step]'),
       ).toHaveLength(1)
       fireEvent.click(trigger)
       expect(dispatchPlayer).toHaveBeenCalledWith({
@@ -1398,10 +1399,13 @@ describe('ReadyDysonSlice', () => {
     )
 
     const infoRegion = screen.getByRole('region', { name: 'Info' })
-    expect(infoRegion).toHaveTextContent('Active: 0.00')
-    expect(infoRegion).toHaveTextContent('Lifetime: 10.0s')
-    expect(infoRegion).toHaveTextContent('Decayed: 0.00')
-    expect(infoRegion).toHaveTextContent('Goal: 10.0 Bots')
+    expect(infoRegion).toHaveTextContent(
+      '1.00K Worker Bots producing 0.00 Panels /s',
+    )
+    expect(
+      screen.getByRole('region', { name: 'Resources' }),
+    ).toHaveTextContent('Goal: 10.0 Bots')
+    expect(infoRegion).not.toHaveTextContent('Active: 0.00')
     expect(
       within(infoRegion).queryByRole('button', { name: 'Info' }),
     ).not.toBeInTheDocument()
@@ -1417,6 +1421,9 @@ describe('ReadyDysonSlice', () => {
     ).toBeInTheDocument()
     expect(settingsToggle).not.toHaveTextContent('⚙')
     await user.click(settingsToggle)
+    expect(infoRegion).toHaveTextContent('Active: 0.00')
+    expect(infoRegion).toHaveTextContent('Lifetime: 10.0s')
+    expect(infoRegion).toHaveTextContent('Decayed: 0.00')
     expect(
       within(infoRegion).getByRole('button', { name: 'x1' }),
     ).toHaveAttribute('aria-pressed', 'true')
@@ -2305,6 +2312,9 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             routeAvailable: true,
           },
           'infinity.set-break-target': {
+            routeAvailable: true,
+          },
+          'infinity.set-automatic-reset': {
             routeAvailable: true,
           },
           'reality.gather-influence': {

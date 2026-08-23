@@ -87,7 +87,10 @@ describe('DysonGameplayShell', () => {
       /\.dyson-info__fact\s*\{[^}]*border/,
     )
     expect(lowerFactsCss).toMatch(
-      /@media \(max-width: 720px\)[\s\S]*\.dyson-lower-facts p\s*\{[^}]*font-size:\s*calc\(0\.76rem \* var\(--game-text-scale\)\);/,
+      /@media \(max-width: 720px\)[\s\S]*\.dyson-lower-facts p\s*\{[^}]*font-size:\s*calc\(0\.88rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(lowerFactsCss).not.toMatch(
+      /\.dyson-lower-facts p\s*\{[^}]*border:/,
     )
   })
 

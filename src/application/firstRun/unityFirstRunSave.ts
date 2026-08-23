@@ -30,8 +30,17 @@ export interface UnityFirstRunSaveOptions {
 export const unityFirstRunProvenance: UnityFirstRunProvenance = provenance
 
 /**
+ * Intentional Web product defaults applied only when no player save exists.
+ * These are kept separate from Unity artifact provenance so every gameplay
+ * override authored by the Web host remains explicit and testable.
+ */
+export const webFirstRunGameplayOverridePaths = Object.freeze([
+  '$.infinityAutomaticReset',
+] as const)
+
+/**
  * Creates a production first-run save from Unity defaults with a host-supplied
- * UTC lifecycle origin. No gameplay value is authored in TypeScript.
+ * UTC lifecycle origin and the classified Web first-run gameplay overrides.
  */
 export function createUnityFirstRunPreparedSave(
   options: Readonly<UnityFirstRunSaveOptions>,
@@ -40,6 +49,7 @@ export function createUnityFirstRunPreparedSave(
   const deterministic = createDeterministicUnityFirstRunPreparedSave()
   const candidate = deterministic.copyValidatedState()
   candidate.dateStarted = startedAtUtc
+  candidate.infinityAutomaticReset = false
   return deterministic.withValidatedState(candidate)
 }
 

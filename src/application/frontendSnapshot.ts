@@ -1118,6 +1118,7 @@ export function selectFrontendGameplaySnapshot(
   const requirements = {
     ...context.runtimeRequirements,
     'compatibility-tuning': true,
+    'infinity-reset-port': true,
     'quantum-leap-port': true,
     'stored-time-cheater-carrier': true,
   }
@@ -1389,6 +1390,8 @@ function selectProgression(
       automation: state.dyson.automation,
     }),
     infinity: reuseShallowDomain(previous?.infinity, {
+      automaticResetEnabled:
+        state.infinity.automaticResetEnabled,
       breakTarget: state.infinity.breakTarget,
       inProgress: state.infinity.inProgress,
       botCapTransitionPending:
@@ -2811,6 +2814,18 @@ function reuseSkillCatalogPreview(
   if (
     previous.complete !== next.complete ||
     previous.definitionGap !== next.definitionGap ||
+    !sameStringArray(
+      previous.reset.refundableSkillIds,
+      next.reset.refundableSkillIds,
+    ) ||
+    !sameStringArray(
+      previous.reset.retainedSkillIds,
+      next.reset.retainedSkillIds,
+    ) ||
+    !sameStringArray(
+      previous.reset.queuedSkillIds,
+      next.reset.queuedSkillIds,
+    ) ||
     previous.skills.length !== next.skills.length
   ) {
     return next

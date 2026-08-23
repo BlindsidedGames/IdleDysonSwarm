@@ -352,8 +352,15 @@ export class CanonicalEventTimeModel
     if (!this.carrier.gameState.timeline.eventClockInitialized) {
       return 0
     }
+    const infinity = this.carrier.gameState.infinity
     if (
-      this.carrier.gameState.dyson.bots === Number.MAX_VALUE ||
+      (
+        this.carrier.gameState.dyson.bots === Number.MAX_VALUE &&
+        (
+          infinity.automaticResetEnabled ||
+          !infinity.botCapRewardsGranted
+        )
+      ) ||
       (
         this.context.mode === 'active' &&
         canApplyCanonicalAutomaticDreamReset(this.carrier.gameState)
@@ -389,15 +396,17 @@ export class CanonicalEventTimeModel
         tinker: synchronizedTinker.runtime,
       }
     }
-    const infinityHorizon = timeToNextInfinityEventAfterStellarSettlement(
-      this.carrier.gameState.dyson.bots,
-      derived.productionArrivalRates.bots,
-      derived.auxiliary.stellarSacrifice.botsPerSecond,
-      derived.auxiliary.stellarSacrifice.planetsPerSecond,
-      createInfinityCycleState(this.carrier),
-      Number.MAX_VALUE,
-      infinityMinimumCycleSeconds,
-    )
+    const infinityHorizon = infinity.automaticResetEnabled
+      ? timeToNextInfinityEventAfterStellarSettlement(
+          this.carrier.gameState.dyson.bots,
+          derived.productionArrivalRates.bots,
+          derived.auxiliary.stellarSacrifice.botsPerSecond,
+          derived.auxiliary.stellarSacrifice.planetsPerSecond,
+          createInfinityCycleState(this.carrier),
+          Number.MAX_VALUE,
+          infinityMinimumCycleSeconds,
+        )
+      : Number.MAX_VALUE
     this.replaceGameState(
       withNextInfinityBoundary(
         this.carrier.gameState,
@@ -1097,6 +1106,15 @@ export class CanonicalEventTimeModel
   private scheduleNextInfinityBoundary(
     minimumCycleSeconds: number,
   ): boolean {
+    if (!this.carrier.gameState.infinity.automaticResetEnabled) {
+      this.replaceGameState(
+        withNextInfinityBoundary(
+          this.carrier.gameState,
+          Number.MAX_VALUE,
+        ),
+      )
+      return true
+    }
     const derived = this.deriveForNextState(
       this.carrier.gameState,
       'eventTime.infinityBoundary',
@@ -1587,8 +1605,15 @@ function normalizeAutomationPhase(
 export function evaluateCanonicalInfinityBoundary(
   carrier: Readonly<CanonicalEventTimeState>,
   minimumCycleSeconds: number,
+  ignoreAutomaticResetPreference = false,
 ): CanonicalInfinityBoundaryEvaluation {
   const state = carrier.gameState
+  if (
+    !ignoreAutomaticResetPreference &&
+    !state.infinity.automaticResetEnabled
+  ) {
+    return { status: 'not-ready' }
+  }
   const infinity = createInfinityCycleState(carrier)
   const botCapTransition = state.infinity.botCapRewardsGranted
   if (

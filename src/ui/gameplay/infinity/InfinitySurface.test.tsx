@@ -181,6 +181,10 @@ describe('InfinitySurface', () => {
       dispatchPlayer,
     })
 
+    fireEvent.click(screen.getByRole('button', {
+      name: 'Infinity settings',
+    }))
+
     const slider = screen.getByRole('slider', {
       name: 'Infinity Points before reset',
     })
@@ -205,11 +209,51 @@ describe('InfinitySurface', () => {
   test('keeps the Break target absent during ordinary Infinity', () => {
     renderSurface({ shop: [preview('secret')] })
 
+    fireEvent.click(screen.getByRole('button', {
+      name: 'Infinity settings',
+    }))
+
     expect(
       screen.queryByRole('slider', {
         name: 'Infinity Points before reset',
       }),
     ).not.toBeInTheDocument()
+  })
+
+  test('toggles Auto Infinity before Break Infinity', () => {
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({ shop: [preview('secret')], dispatchPlayer })
+
+    fireEvent.click(screen.getByRole('button', {
+      name: 'Infinity settings',
+    }))
+    fireEvent.click(screen.getByRole('button', {
+      name: 'Auto Infinity: On',
+    }))
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'infinity.set-automatic-reset',
+      enabled: false,
+    })
+  })
+
+  test('offers and dispatches a manual Infinity only when a manual run is ready', () => {
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({
+      shop: [preview('secret')],
+      automaticResetEnabled: false,
+      derived: {
+        ...ordinaryFacts(),
+        progressFraction: 1,
+        botsRemainingToReset: 0,
+      },
+      dispatchPlayer,
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Infinity' }))
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'infinity.request-reset',
+    })
   })
 
   test('has no automated accessibility violations', async () => {
@@ -240,6 +284,7 @@ interface RenderOptions {
   readonly secrets?: bigint
   readonly derived?: InfinityProgressFacts
   readonly dispatchPlayer?: InfinitySurfaceProps['dispatchPlayer']
+  readonly automaticResetEnabled?: boolean
 }
 
 function renderSurface({
@@ -247,6 +292,7 @@ function renderSurface({
   secrets = 5n,
   derived = ordinaryFacts(),
   dispatchPlayer = vi.fn(async () => accepted()),
+  automaticResetEnabled = true,
 }: RenderOptions) {
   return render(
     <IntlProvider locale="en">
@@ -261,7 +307,10 @@ function renderSurface({
         }}
         progression={
           {
-            infinity: { breakTarget: 42n },
+            infinity: {
+              breakTarget: 42n,
+              automaticResetEnabled,
+            },
           } as InfinitySurfaceProps['progression']
         }
         derived={derived}
@@ -272,6 +321,8 @@ function renderSurface({
         commandAvailability={{
           purchaseShopItem: true,
           setBreakTarget: true,
+          setAutomaticReset: true,
+          requestReset: true,
         }}
         dispatchPlayer={dispatchPlayer}
       />

@@ -4197,6 +4197,62 @@
       "value": "‬"
     }
   ],
+  "infinity.automatic-reset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇo Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.automatic-reset.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ∀nʇo Iuɟıuıʇʎ sǝʇʇıuƃ ʍɐs uoʇ ɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.automatic-reset.off": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɟɟ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.automatic-reset.on": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "infinity.break-target": [
     {
       "type": 0,
@@ -4241,6 +4297,34 @@
     {
       "type": 0,
       "value": " IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.manual-reset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.manual-reset.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ ıs uoʇ ɹǝɐpʎ ʎǝʇ."
     },
     {
       "type": 0,
@@ -4405,6 +4489,20 @@
     {
       "type": 0,
       "value": "⊥ɥǝ ɯǝɐuıuƃ oɟ ʅıɟǝ ıs: ⅂oʌǝ, Ⅎɐɯıʅʎ, ɐup Iuɔɹǝɯǝuʇɐʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.settings": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ sǝʇʇıuƃs"
     },
     {
       "type": 0,
@@ -13429,6 +13527,20 @@
       "value": "‬"
     }
   ],
+  "skills.clear-search": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅǝɐɹ sʞıʅʅ sǝɐɹɔɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.close": [
     {
       "type": 0,
@@ -13953,6 +14065,20 @@
       "value": "‬"
     }
   ],
+  "skills.none": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nouǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.owned": [
     {
       "type": 0,
@@ -13993,6 +14119,20 @@
     {
       "type": 1,
       "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.points-label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅ Ԁoıuʇs"
     },
     {
       "type": 0,
@@ -14538,7 +14678,35 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝsǝʇ ɹǝɟnupɐqʅǝ sʞıʅʅs"
+      "value": "ᴚǝsǝʇ Sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.reset-refunded-heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅs ʇɥɐʇ ʍıʅʅ qǝ ɹǝɟnupǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.reset-retained-heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅs ʇɥɐʇ ʍou’ʇ qǝ ɹǝɟnupǝp"
     },
     {
       "type": 0,
@@ -14552,7 +14720,21 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝɟnups ɐʅʅ ɔnɹɹǝuʇʅʎ ɹǝɟnupɐqʅǝ sʞıʅʅs ɐup ɔʅǝɐɹs ɐnʇoɯɐʇıɔ ɐssıƃuɯǝuʇ."
+      "value": "ᴚǝsǝʇs ɐʅʅ ɹǝɟnupɐqʅǝ sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.reset.queued-heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɯoʌǝp ɟɹoɯ ɐnʇo-ɐssıƃuɯǝuʇ"
     },
     {
       "type": 0,

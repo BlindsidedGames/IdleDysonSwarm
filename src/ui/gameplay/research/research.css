@@ -191,8 +191,18 @@
 
 .research-surface__footer {
   z-index: 2;
-  border-block-start: 2px solid var(--theme-divider);
+  min-inline-size: 0;
+  border-block-start: 1px solid var(--theme-divider);
   background: var(--theme-panel);
+}
+
+.research-surface__control-panel .ui-progress-controls-panel__summary {
+  padding-inline: 0.7rem 0.35rem;
+  text-align: start;
+}
+
+.research-surface__control-panel .ui-progress-controls-panel__body {
+  padding: 0;
 }
 
 .research-surface__summary {
@@ -249,9 +259,9 @@
 
 .research-surface__settings {
   display: grid;
-  gap: 0.5rem;
-  padding: 0.55rem 0.7rem;
-  border-block-end: 1px solid var(--theme-divider);
+  gap: 0.2rem;
+  padding: 0.35rem 0.7rem 0.5rem;
+  border: 0;
   background: var(--theme-panel);
 }
 
@@ -297,7 +307,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-block-size: var(--target-minimum);
+  min-block-size: 2.35rem;
   cursor: pointer;
 }
 
@@ -334,7 +344,7 @@
   display: grid;
   min-inline-size: 0;
   padding: 0;
-  margin: 0;
+  margin: 0.35rem 0 0;
   border: 0;
 }
 
@@ -369,7 +379,7 @@
 
 .research-surface__automation legend {
   padding: 0;
-  margin-block-end: 0.3rem;
+  margin-block-end: 0.15rem;
   font-size: 0.86rem;
   font-weight: var(--font-weight-semibold);
 }
@@ -377,7 +387,7 @@
 .research-surface__automation-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
-  gap: 0.3rem;
+  gap: 0.2rem 0.3rem;
 }
 
 .research-surface__automation-grid label {

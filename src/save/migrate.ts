@@ -103,6 +103,7 @@ function ensureSaveShape(save: SaveRecord): void {
     maxOfflineTime: 86_400,
     simulationAutomationTimeUntilNextEvent: 0.1,
     simulationInfinityBoundaryRemaining: 1 / 60,
+    infinityAutomaticReset: true,
     skillsButtonToggle: true,
     infinityButtonToggle: true,
     realityButtonToggle: true,

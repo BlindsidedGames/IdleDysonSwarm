@@ -1,11 +1,13 @@
 .dyson-info {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  overflow: hidden;
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.35rem;
-  background: var(--theme-panel);
-  color: white;
+  border-block-start-width: 0;
+}
+
+.dyson-info .ui-progress-controls-panel__summary {
+  padding: 0;
+}
+
+.dyson-info .ui-progress-controls-panel__body {
+  padding: 0;
 }
 
 .dyson-info__overview {
@@ -68,9 +70,9 @@
 
 .dyson-info__settings {
   display: grid;
-  gap: 0.4rem;
-  padding: 0.5rem 0.65rem 0.6rem;
-  border-block-start: 1px solid var(--theme-divider);
+  gap: 0.2rem;
+  padding: 0.3rem 0.45rem 0.35rem;
+  border: 0;
   background: var(--theme-panel);
 }
 
@@ -132,6 +134,26 @@
 .dyson-info__settings-failure {
   color: var(--color-negative);
   font-size: 0.82rem;
+}
+
+.dyson-info__run-status {
+  margin-block-start: 0.25rem;
+  padding-block-start: 0.2rem;
+}
+
+.dyson-info__run-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  font-size: 0.82rem;
+}
+
+.dyson-info__run-facts .dyson-info__fact:nth-child(2) {
+  text-align: center;
+}
+
+.dyson-info__run-facts .dyson-info__fact:last-child {
+  text-align: end;
 }
 
 .bot-distribution {
@@ -265,7 +287,7 @@
   display: grid;
   min-inline-size: 0;
   padding: 0;
-  margin: 0;
+  margin: 0.35rem 0 0;
   border: 0;
 }
 

@@ -175,6 +175,11 @@ describe('frontend gameplay snapshot', () => {
       complete: true,
       definitionGap: null,
       skills: [],
+      reset: {
+        refundableSkillIds: [],
+        retainedSkillIds: [],
+        queuedSkillIds: [],
+      },
     }))
     const initial = selectStableFrontendSkillPreview(
       state,
@@ -230,6 +235,11 @@ describe('frontend gameplay snapshot', () => {
       complete: true,
       definitionGap: null,
       skills: [],
+      reset: {
+        refundableSkillIds: [],
+        retainedSkillIds: [],
+        queuedSkillIds: [],
+      },
     }))
     const initial = selectStableFrontendSkillPreview(
       state,
@@ -366,6 +376,7 @@ describe('frontend gameplay snapshot', () => {
         ...source.infinity,
         points: 100n,
         spentPoints: 7n,
+        automaticResetEnabled: false,
       },
       quantum: {
         ...source.quantum,
@@ -407,6 +418,9 @@ describe('frontend gameplay snapshot', () => {
     expect(snapshot.progression.dyson.facilities).toEqual(
       state.dyson.facilities,
     )
+    expect(
+      snapshot.progression.infinity.automaticResetEnabled,
+    ).toBe(false)
     expect(snapshot.progression.dream.upgrades).toEqual(
       state.dream.upgrades,
     )
@@ -1942,6 +1956,7 @@ function allRuntimeRequirements():
   FrontendCommandRequirementReadiness {
   return {
     'compatibility-tuning': true,
+    'infinity-reset-port': true,
     'quantum-leap-port': true,
     'runtime-evaluation-port': true,
     'selected-skill-preset-carrier': true,

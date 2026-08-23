@@ -253,6 +253,13 @@ export type CanonicalGameCommand =
       readonly kind: 'quantum.request-leap'
     }
   | {
+      readonly kind: 'infinity.set-automatic-reset'
+      readonly enabled: boolean
+    }
+  | {
+      readonly kind: 'infinity.request-reset'
+    }
+  | {
       readonly kind: 'infinity.set-break-target'
       readonly target: bigint
     }
@@ -312,6 +319,8 @@ export type CanonicalGameCommandCode =
   | `dyson-mega:${string}`
   | `dyson-setting:${string}`
   | `infinity-break-target:${string}`
+  | `infinity-automatic-reset:${string}`
+  | `infinity-reset:${string}`
   | `infinity-shop:${string}`
   | `quantum-leap:${string}`
   | `quantum-upgrade:${string}`
@@ -415,10 +424,32 @@ export interface CanonicalQuantumLeapPort {
   ): CanonicalQuantumLeapPortResult
 }
 
+export type CanonicalInfinityResetPortResult =
+  | {
+      readonly accepted: true
+      readonly changed: boolean
+      readonly code: string
+      readonly state: CanonicalGameStateV1
+      readonly issues?: readonly CanonicalGameCommandIssue[]
+    }
+  | {
+      readonly accepted: false
+      readonly code: string
+      readonly issues?: readonly CanonicalGameCommandIssue[]
+    }
+
+/** Owns manual Infinity eligibility, reward derivation, and reset execution. */
+export interface CanonicalInfinityResetPort {
+  requestReset(
+    state: Readonly<CanonicalGameStateV1>,
+  ): CanonicalInfinityResetPortResult
+}
+
 export interface CanonicalGameCommandOptions {
   readonly runtimeCarriers?: Readonly<CanonicalGameRuntimeCarriers>
   readonly runtimeEvaluation?: CanonicalRuntimeEvaluationPort
   readonly quantumLeap?: CanonicalQuantumLeapPort
+  readonly infinityReset?: CanonicalInfinityResetPort
 }
 
 export type CanonicalGameCommandIntent = {
@@ -449,6 +480,7 @@ export interface CanonicalGameCommandSupport {
   readonly authority: string
   readonly requires?: readonly (
     | 'compatibility-tuning'
+    | 'infinity-reset-port'
     | 'quantum-leap-port'
     | 'runtime-evaluation-port'
     | 'selected-skill-preset-carrier'
@@ -659,6 +691,15 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
   'infinity.set-break-target': {
     supported: true,
     authority: 'canonical queued Break-target setting',
+  },
+  'infinity.set-automatic-reset': {
+    supported: true,
+    authority: 'canonical persisted automatic Infinity setting',
+  },
+  'infinity.request-reset': {
+    supported: true,
+    authority: 'canonical manual Infinity event-model boundary',
+    requires: ['infinity-reset-port'],
   },
   'infinity.purchase-shop-item': {
     supported: true,
@@ -1990,6 +2031,78 @@ export function routeCanonicalGameCommand(
         carriers,
         options.runtimeEvaluation,
         result.issues,
+      )
+    }
+
+    case 'infinity.request-reset': {
+      if (options.infinityReset === undefined) {
+        return reject(
+          state,
+          carriers,
+          'infinity-reset:port-missing',
+          issue(
+            'INFINITY_RESET_PORT_MISSING',
+            'ports.infinityReset',
+            'Manual Infinity requires the event-model boundary that owns eligibility and reward derivation.',
+          ),
+        )
+      }
+      let result: CanonicalInfinityResetPortResult
+      try {
+        result = options.infinityReset.requestReset(state)
+      } catch (error) {
+        return reject(
+          state,
+          carriers,
+          'infinity-reset:port-failed',
+          issue(
+            'INFINITY_RESET_PORT_FAILED',
+            'ports.infinityReset',
+            errorDetail(error),
+          ),
+        )
+      }
+      if (!result.accepted) {
+        return reject(
+          state,
+          carriers,
+          `infinity-reset:${result.code}`,
+          ...(result.issues ?? [
+            issue('INFINITY_RESET_REJECTED', command.kind, result.code),
+          ]),
+        )
+      }
+      return finalizeAccepted(
+        state,
+        result.state,
+        result.changed,
+        `infinity-reset:${result.code}`,
+        carriers,
+        options.runtimeEvaluation,
+        result.issues,
+      )
+    }
+
+    case 'infinity.set-automatic-reset': {
+      const changed =
+        command.enabled !== state.infinity.automaticResetEnabled
+      return finalizeAccepted(
+        state,
+        changed
+          ? {
+              ...state,
+              infinity: {
+                ...state.infinity,
+                automaticResetEnabled: command.enabled,
+              },
+            }
+          : state,
+        changed,
+        `infinity-automatic-reset:${changed ? 'set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
       )
     }
 

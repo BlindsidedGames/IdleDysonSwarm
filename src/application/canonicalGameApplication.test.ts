@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
 import { TransactionalSimulationEngine } from '../core/simulationEngine'
+import { getGameAsset } from '../game-data/catalog'
 import { prepareIdb1Save } from '../save/prepare'
 import {
   createCapturedInfinityAssetLookup,
@@ -130,6 +131,83 @@ describe('canonical game application engine', () => {
       researchers: 250,
       botDistribution: 0.25,
     })
+  })
+
+  test('executes a checkpointed manual Infinity while keeping automatic resets off', () => {
+    const state = runtime()
+    const beforePoints = state.gameState.infinity.points
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        dyson: {
+          ...state.gameState.dyson,
+          bots: Number.MAX_VALUE,
+        },
+        infinity: {
+          ...state.gameState.infinity,
+          points: beforePoints + 1_000n,
+          automaticResetEnabled: false,
+          botCapRewardsGranted: true,
+        },
+        timeline: {
+          ...state.gameState.timeline,
+          infinityCycleSeconds: 1,
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: {
+        ...context(),
+        infinityResetAssetLookup: getGameAsset,
+      },
+    })
+
+    expect(definition.applyCommand(state, {
+      kind: 'infinity.request-reset',
+    })).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.infinity).toMatchObject({
+      automaticResetEnabled: false,
+      points: beforePoints + 1_001n,
+    })
+    expect(state.gameState.dyson.bots).toBeLessThan(Number.MAX_VALUE)
+  })
+
+  test('rejects manual Infinity until the finite bot-cap checkpoint is durable', () => {
+    const state = runtime()
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        dyson: {
+          ...state.gameState.dyson,
+          bots: Number.MAX_VALUE,
+        },
+        infinity: {
+          ...state.gameState.infinity,
+          automaticResetEnabled: false,
+          botCapTransitionPending: false,
+          botCapRewardsGranted: false,
+        },
+        timeline: {
+          ...state.gameState.timeline,
+          infinityCycleSeconds: 1,
+        },
+      },
+    })
+    const before = structuredClone(state)
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: {
+        ...context(),
+        infinityResetAssetLookup: getGameAsset,
+      },
+    })
+
+    expect(definition.applyCommand(state, {
+      kind: 'infinity.request-reset',
+    })).toMatchObject({
+      accepted: false,
+      code: 'infinity-reset:CANONICAL-EVENT-BOT-CAP-PERSISTENCE-REQUIRED',
+    })
+    expect(state).toEqual(before)
   })
 
   test('rejects an invalid development bot count without changing state', () => {

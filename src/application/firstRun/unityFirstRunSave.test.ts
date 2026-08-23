@@ -18,6 +18,7 @@ import {
   createDeterministicUnityFirstRunPreparedSave,
   createUnityFirstRunPreparedSave,
   unityFirstRunProvenance,
+  webFirstRunGameplayOverridePaths,
 } from './unityFirstRunSave'
 import parityDeltaManifest from './generated/first-run-schema-12.parity-deltas.json'
 
@@ -131,7 +132,7 @@ describe('Unity-generated first-run save', () => {
     expectClassifiedStorageDeltas(storageDifferences)
   })
 
-  test('changes only classified lifecycle metadata for production startup', () => {
+  test('changes lifecycle metadata and starts the first Infinity in manual mode', () => {
     const deterministic =
       createDeterministicUnityFirstRunPreparedSave().copyValidatedState()
     const production = createUnityFirstRunPreparedSave({
@@ -140,6 +141,7 @@ describe('Unity-generated first-run save', () => {
     const differences = compareGraphs(production, deterministic)
 
     expect(production.dateStarted).toBe(hostFirstRunUtc)
+    expect(production.infinityAutomaticReset).toBe(false)
     expect(differences).toEqual([
       {
         path: '$.dateStarted',
@@ -147,10 +149,23 @@ describe('Unity-generated first-run save', () => {
         actual: hostFirstRunUtc,
         reason: 'value',
       },
+      {
+        path: '$.infinityAutomaticReset',
+        expected: true,
+        actual: false,
+        reason: 'value',
+      },
     ])
     expect(
       unityFirstRunProvenance.lifecycleMetadataNormalizationPaths,
     ).toContain(differences[0]?.path)
+    expect(webFirstRunGameplayOverridePaths).toContain(
+      differences[1]?.path,
+    )
+    expect([
+      ...unityFirstRunProvenance.lifecycleMetadataNormalizationPaths,
+      ...webFirstRunGameplayOverridePaths,
+    ]).toEqual(expect.arrayContaining(differences.map(({ path }) => path)))
     expect(() =>
       createUnityFirstRunPreparedSave({ startedAtUtc: 'not-a-date' }),
     ).toThrow('First-run start timestamp is invalid')

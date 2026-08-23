@@ -13,6 +13,7 @@ export interface DysonResourcePresentation {
   readonly machineValue?: string
   readonly rate?: string
   readonly fullPrecisionRate?: string
+  readonly detail?: ReactNode
 }
 
 /**

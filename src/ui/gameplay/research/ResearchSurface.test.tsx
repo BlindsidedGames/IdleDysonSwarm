@@ -243,7 +243,7 @@ describe('ResearchSurface', () => {
     })).toBeDisabled()
     expect(screen.getByText('Auto')).toBeInTheDocument()
     expect(
-      document.querySelector('.research-surface__summary p'),
+      document.querySelector('.ui-progress-controls-panel__summary p'),
     ).toHaveTextContent('2.00K Researchers producing 22.0/s')
 
     const settingsToggle = screen.getByRole('button', {

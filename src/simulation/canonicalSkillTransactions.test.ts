@@ -86,6 +86,11 @@ describe('canonical skill transactions', () => {
 
     expect(preview.complete).toBe(true)
     expect(preview.definitionGap).toBeNull()
+    expect(preview.reset).toEqual({
+      refundableSkillIds: ['assemblyLineTree', 'startHereTree'],
+      retainedSkillIds: [],
+      queuedSkillIds: [],
+    })
     expect(preview.skills).toHaveLength(
       Object.keys(state.skills.byId).length,
     )
