@@ -47,6 +47,11 @@ Status conventions:
   contrast review, 200 percent visual appearance, browser-native 400 percent
   zoom, 320/390-pixel visual reflow, real-touch slider behavior, and screen
   reader behavior. Source: [accessibility review](release/web-accessibility-review-2026-08-19.md).
+  The compact navigation subset has current 320/390 portrait, compact
+  landscape, enlarged-text, reload-persistence, and drawer-reachability
+  evidence in
+  [the 2026-08-23 validation note](release/compact-bottom-navigation-validation-2026-08-23.md);
+  this does not close the broader physical-device and assistive-technology gate.
 - [ ] With explicit payment authority only, create and cancel an unpaid real
   Stripe Checkout session.
 - [ ] When the release candidate changes materially, rerun the clean-candidate

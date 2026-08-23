@@ -16,6 +16,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { targetSizes } from '../../tokens/tokens'
 import type { DysonGameplayShellProps } from './contracts'
 import { DysonGameplayShell } from './DysonGameplayShell'
+import { DysonNavigation } from './DysonNavigation'
 
 const shellCss = readFileSync(
   resolve(process.cwd(), 'src/ui/gameplay/shell/dysonGameplayShell.css'),
@@ -122,11 +123,33 @@ describe('DysonGameplayShell', () => {
     ).toBeDisabled()
   })
 
+  it('uses deterministic one-row overflow while retaining the selected route', () => {
+    render(
+      <DysonNavigation
+        ariaLabel="Game tabs"
+        placement="bottom"
+        maxItems={3}
+        items={[
+          { id: 'bots', label: 'Bots', onActivate: vi.fn() },
+          { id: 'research', label: 'Research', onActivate: vi.fn() },
+          { id: 'skills', label: 'Skills', onActivate: vi.fn() },
+          { id: 'settings', label: 'Settings', current: true },
+        ]}
+      />,
+    )
+    const navigation = screen.getByRole('navigation', { name: 'Game tabs' })
+    expect(within(navigation).getByText('Bots')).toBeInTheDocument()
+    expect(within(navigation).getByText('Research')).toBeInTheDocument()
+    expect(within(navigation).queryByText('Skills')).not.toBeInTheDocument()
+    expect(within(navigation).getByText('Settings').closest('[aria-current="page"]'))
+      .toBeInTheDocument()
+  })
+
   it('contains compact-menu focus and restores the opener on close', async () => {
     const user = userEvent.setup()
     const { container } = render(<DysonGameplayShell {...props()} />)
     const shell = container.querySelector('.dyson-shell')
-    const openMenu = screen.getByRole('button', { name: 'Open menu' })
+    const openMenu = screen.getByRole('button', { name: 'More' })
     const sidePanel = container.querySelector('.dyson-shell__side-panel')
     const main = container.querySelector('main')
     const bottomNavigation = container.querySelector(
@@ -409,7 +432,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /--safe-area-bottom:\s*max\([\s\S]*env\(safe-area-inset-bottom, 0px\),[\s\S]*var\(--android-safe-area-bottom\)[\s\S]*\);/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\s*\{[^}]*grid-template-rows:\s*minmax\(0, 1fr\)\s*calc\(4rem \+ var\(--safe-area-bottom\)\);/s,
+      /\.dyson-shell\s*\{[^}]*grid-template-rows:\s*minmax\(0, 1fr\)\s*calc\(var\(--bottom-navigation-height\) \+ var\(--safe-area-bottom\)\);/s,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell__bottom-navigation\s*\{[^}]*padding-block:\s*0\.32rem max\(0\.32rem, var\(--safe-area-bottom\)\);/s,
@@ -613,6 +636,7 @@ function props(): DysonGameplayShellProps {
     menuHeading: 'Menu',
     closeMenuLabel: 'Close menu',
     openMenuLabel: 'Open menu',
+    moreMenuLabel: 'More',
     heading: 'Bots',
     navigation: {
       ariaLabel: 'Primary',

@@ -1,5 +1,6 @@
 import type { CanonicalGameStateV1 } from './types'
 import { isSkillPresetColorId } from './skillPresetColors'
+import { isBottomNavigationSize } from './navigationPreferences'
 
 export interface CanonicalValidationResult {
   readonly valid: boolean
@@ -13,6 +14,19 @@ export function validateCanonicalGameState(
   validateNumericGraph(state, '$', errors, new Set())
   if (state.modelVersion !== 1) {
     errors.push(`Unsupported canonical model version ${state.modelVersion}.`)
+  }
+  if (
+    state.meta.bottomNavigationSize !== undefined &&
+    !isBottomNavigationSize(state.meta.bottomNavigationSize)
+  ) {
+    errors.push('Bottom navigation size must be Compact, Standard, or Large.')
+  }
+  for (const [id, visible] of Object.entries(
+    state.meta.navigationVisibility ?? {},
+  )) {
+    if (id.trim().length === 0 || typeof visible !== 'boolean') {
+      errors.push('Bottom navigation visibility entries must use non-blank IDs and boolean values.')
+    }
   }
   if (state.skills.presets.length !== 5) {
     errors.push('Skills must contain exactly five presets.')

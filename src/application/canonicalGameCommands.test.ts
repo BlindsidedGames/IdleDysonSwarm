@@ -212,6 +212,10 @@ const COMMAND_EXAMPLES = [
     item: 'story',
     visible: true,
   },
+  {
+    kind: 'settings.set-bottom-navigation-size',
+    size: 'large',
+  },
 ] as const satisfies readonly CanonicalGameCommand[]
 
 type MissingCommandKind = Exclude<
@@ -243,6 +247,43 @@ describe('canonical game command router', () => {
     })
     expect(unchanged.accepted).toBe(true)
     expect(unchanged.changed).toBe(false)
+  })
+
+  test('updates every known destination without discarding future entries', () => {
+    const original = state()
+    const seeded = {
+      ...original,
+      meta: {
+        ...original.meta,
+        navigationVisibility: {
+          ...original.meta.navigationVisibility!,
+          'future-destination': true,
+        },
+      },
+    }
+    const changed = routeCanonicalGameCommand(seeded, {
+      kind: 'settings.set-navigation-item-visible',
+      item: 'store',
+      visible: true,
+    })
+    expect(changed.state.meta.navigationVisibility?.store).toBe(true)
+    expect(
+      changed.state.meta.navigationVisibility?.['future-destination'],
+    ).toBe(true)
+  })
+
+  test('updates the persisted bottom navigation size idempotently', () => {
+    const original = state()
+    const changed = routeCanonicalGameCommand(original, {
+      kind: 'settings.set-bottom-navigation-size',
+      size: 'large',
+    })
+    expect(changed.changed).toBe(true)
+    expect(changed.state.meta.bottomNavigationSize).toBe('large')
+    expect(routeCanonicalGameCommand(changed.state, {
+      kind: 'settings.set-bottom-navigation-size',
+      size: 'large',
+    }).changed).toBe(false)
   })
 
   test('keeps an exhaustive routable example for every union member', () => {

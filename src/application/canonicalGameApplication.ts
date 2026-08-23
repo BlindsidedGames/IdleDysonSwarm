@@ -1772,6 +1772,8 @@ function validateStoredTimeJobCandidate(
       candidate.gameState.meta.navigationVisibility,
       before.gameState.meta.navigationVisibility,
     ) ||
+    candidate.gameState.meta.bottomNavigationSize !==
+      before.gameState.meta.bottomNavigationSize ||
     candidate.gameState.timeline.storedTimeCapacitySeconds !==
       before.gameState.timeline.storedTimeCapacitySeconds ||
     candidate.gameState.timeline.lastSuspendedAtLegacyText !==

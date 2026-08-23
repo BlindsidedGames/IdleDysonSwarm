@@ -21,7 +21,7 @@ describe('Dyson gameplay shell CSS contract', () => {
     )
   })
 
-  test('keeps a growing route list on one horizontally scrollable row', () => {
+  test('keeps a growing route list on one overflow-managed row', () => {
     const source = readFileSync(
       fileURLToPath(
         new URL('./dysonGameplayShell.css', import.meta.url),
@@ -32,9 +32,9 @@ describe('Dyson gameplay shell CSS contract', () => {
     expect(source).not.toContain(
       'grid-template-columns: repeat(7',
     )
-    expect(source).toContain('overflow-x: auto')
-    expect(source).toContain('scrollbar-width: none')
-    expect(source).toContain('flex: 1 0 3.2rem')
+    expect(source).toContain('overflow: hidden')
+    expect(source).toContain('flex: 1 1 0')
+    expect(source).toContain('grid-template-columns: minmax(0, 1fr) 4rem')
   })
 
   test('contains full-height routes and delegates scrolling to their inner regions', () => {

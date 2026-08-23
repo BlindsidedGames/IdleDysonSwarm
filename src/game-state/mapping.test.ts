@@ -80,6 +80,36 @@ describe('canonical game-state mapping', () => {
     expect(hydrated.state.statistics.minuteWindows).toHaveLength(60)
   })
 
+  test('defaults legacy saves and round-trips future bottom navigation preferences', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const hydrated = hydrateGameState(prepared)
+
+    expect(hydrated.state.meta.bottomNavigationSize).toBeUndefined()
+
+    const candidate = {
+      ...hydrated.state,
+      meta: {
+        ...hydrated.state.meta,
+        bottomNavigationSize: 'large' as const,
+        navigationVisibility: {
+          ...hydrated.state.meta.navigationVisibility!,
+          settings: false,
+          'future-destination': true,
+        },
+      },
+    }
+    const rehydrated = hydrateGameState(
+      dehydrateGameState(hydrated, candidate),
+    )
+    expect(rehydrated.state.meta.bottomNavigationSize).toBe('large')
+    expect(rehydrated.state.meta.navigationVisibility?.settings).toBe(false)
+    expect(
+      rehydrated.state.meta.navigationVisibility?.['future-destination'],
+    ).toBe(true)
+  })
+
   test('round-trips MAX cash and science as finite purchase-capable balances', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),

@@ -31,6 +31,11 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Open menu',
     description: 'Opens the compact game menu.',
   },
+  moreMenu: {
+    id: 'dyson.menu.more',
+    defaultMessage: 'More',
+    description: 'Visible label for the bottom navigation drawer affordance.',
+  },
   bottomNavigation: {
     id: 'dyson.navigation.bottom',
     defaultMessage: 'Game tabs',

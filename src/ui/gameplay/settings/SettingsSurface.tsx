@@ -23,6 +23,15 @@ import {
   isNumberNotationMode,
   useNumberNotation,
 } from '../../number-notation'
+import type {
+  BottomNavigationDestinationId,
+  BottomNavigationSize,
+} from '../../../game-state/navigationPreferences'
+import {
+  BOTTOM_NAVIGATION_DESTINATION_IDS,
+  DEFAULT_BOTTOM_NAVIGATION_SIZE,
+  DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
+} from '../../../game-state/navigationPreferences'
 
 export interface SettingsSurfaceProps {
   readonly resetSave: () => Promise<UiRuntimeImportResult>
@@ -46,21 +55,32 @@ export interface SettingsSurfaceProps {
   readonly visualizationVisible?: boolean
   readonly onVisualizationVisibleChange?: (visible: boolean) => void
   readonly navigationVisibility?: Readonly<
-    Record<NavigationShortcutId, boolean>
+    Record<string, boolean>
   >
   readonly onNavigationVisibilityChange?: (
-    item: NavigationShortcutId,
+    item: BottomNavigationDestinationId,
     visible: boolean,
   ) => void
+  readonly availableNavigationItems?: readonly BottomNavigationDestinationId[]
+  readonly bottomNavigationSize?: BottomNavigationSize
+  readonly onBottomNavigationSizeChange?: (size: BottomNavigationSize) => void
   readonly audio?: GameAudioService
 }
 
-export type NavigationShortcutId = 'story' | 'wiki' | 'statistics'
-
 const NAVIGATION_SHORTCUTS = [
+  ['bots', messages.botsShortcut] as const,
+  ['research', messages.researchShortcut] as const,
+  ['skills', messages.skillsShortcut] as const,
+  ['infinity', messages.infinityShortcut] as const,
+  ['reality', messages.realityShortcut] as const,
+  ['simulations', messages.simulationsShortcut] as const,
+  ['quantum', messages.quantumShortcut] as const,
+  ['store', messages.storeShortcut] as const,
   ['story', messages.storyShortcut] as const,
   ['wiki', messages.wikiShortcut] as const,
+  ['offline-time', messages.offlineTimeShortcut] as const,
   ['statistics', messages.statisticsShortcut] as const,
+  ['settings', messages.settingsShortcut] as const,
 ]
 
 type ResetStatus =
@@ -102,12 +122,11 @@ export function SettingsSurface({
   developmentOnly = false,
   visualizationVisible = true,
   onVisualizationVisibleChange = () => undefined,
-  navigationVisibility = {
-    story: false,
-    wiki: false,
-    statistics: true,
-  },
+  navigationVisibility = DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
   onNavigationVisibilityChange = () => undefined,
+  availableNavigationItems = BOTTOM_NAVIGATION_DESTINATION_IDS,
+  bottomNavigationSize = DEFAULT_BOTTOM_NAVIGATION_SIZE,
+  onBottomNavigationSizeChange = () => undefined,
   audio,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
@@ -457,12 +476,38 @@ export function SettingsSurface({
               <h2>{intl.formatMessage(messages.navigationTitle)}</h2>
               <p>{intl.formatMessage(messages.navigationDescription)}</p>
             </div>
+            <label className="settings-surface__select-label">
+              <span>{intl.formatMessage(messages.navigationSizeLabel)}</span>
+              <select
+                value={bottomNavigationSize}
+                onChange={(event) =>
+                  onBottomNavigationSizeChange(
+                    event.currentTarget.value as BottomNavigationSize,
+                  )
+                }
+              >
+                <option value="compact">
+                  {intl.formatMessage(messages.navigationSizeCompact)}
+                </option>
+                <option value="standard">
+                  {intl.formatMessage(messages.navigationSizeStandard)}
+                </option>
+                <option value="large">
+                  {intl.formatMessage(messages.navigationSizeLarge)}
+                </option>
+              </select>
+            </label>
             <div className="settings-surface__navigation-toggles">
-              {NAVIGATION_SHORTCUTS.map(([item, message]) => (
+              {NAVIGATION_SHORTCUTS.filter(([item]) =>
+                availableNavigationItems.includes(item)
+              ).map(([item, message]) => (
                 <label className="settings-surface__toggle" key={item}>
                   <input
                     type="checkbox"
-                    checked={navigationVisibility[item]}
+                    checked={
+                      navigationVisibility[item] ??
+                      DEFAULT_BOTTOM_NAVIGATION_VISIBILITY[item]
+                    }
                     onChange={(event) =>
                       onNavigationVisibilityChange(
                         item,

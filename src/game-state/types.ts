@@ -1,5 +1,6 @@
 import type { BuyMode } from '../simulation/transactions'
 import type { SkillPresetColorId } from './skillPresetColors'
+import type { BottomNavigationSize } from './navigationPreferences'
 
 export const CANONICAL_GAME_MODEL_VERSION = 1 as const
 
@@ -44,7 +45,9 @@ export interface GameMetaState {
     readonly story: boolean
     readonly wiki: boolean
     readonly statistics: boolean
+    readonly [destinationId: string]: boolean
   }
+  readonly bottomNavigationSize?: BottomNavigationSize
 }
 
 export interface DysonState {

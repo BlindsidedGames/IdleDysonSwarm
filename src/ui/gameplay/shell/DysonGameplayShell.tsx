@@ -25,6 +25,7 @@ export function DysonGameplayShell({
   menuHeading,
   closeMenuLabel,
   openMenuLabel,
+  moreMenuLabel,
   heading,
   routeTheme = 'bots',
   routeThemeVariant,
@@ -48,9 +49,35 @@ export function DysonGameplayShell({
   const openMenuRef = useRef<HTMLButtonElement>(null)
   const closeMenuRef = useRef<HTMLButtonElement>(null)
   const sidePanelRef = useRef<HTMLElement>(null)
+  const bottomNavigationRef = useRef<HTMLDivElement>(null)
+  const [bottomItemCapacity, setBottomItemCapacity] = useState(
+    Number.MAX_SAFE_INTEGER,
+  )
   const wideLayout = useMediaQuery('(min-width: 1024px)')
   const compactMenuOpen = menuOpen && !wideLayout
   const drawerUnavailable = !wideLayout && !menuOpen
+
+  useEffect(() => {
+    const element = bottomNavigationRef.current
+    if (element === null || typeof ResizeObserver === 'undefined') {
+      return undefined
+    }
+    const size = navigation.bottomSize ?? 'standard'
+    const itemWidth = size === 'compact' ? 48 : size === 'large' ? 76 : 64
+    const update = () => {
+      const styles = getComputedStyle(element)
+      const available = element.clientWidth -
+        Number.parseFloat(styles.paddingInlineStart || '0') -
+        Number.parseFloat(styles.paddingInlineEnd || '0')
+      setBottomItemCapacity(
+        Math.max(1, Math.floor(available / itemWidth) - 1),
+      )
+    }
+    const observer = new ResizeObserver(update)
+    observer.observe(element)
+    update()
+    return () => observer.disconnect()
+  }, [navigation.bottomSize])
 
   useEffect(() => {
     if (wideLayout && menuOpen) setMenuOpen(false)
@@ -110,6 +137,7 @@ export function DysonGameplayShell({
       data-route-content={routeContent !== undefined}
       data-route-theme={routeTheme}
       data-route-theme-variant={routeThemeVariant}
+      data-bottom-navigation-size={navigation.bottomSize ?? 'standard'}
     >
       <a
         className="dyson-shell__skip-link"
@@ -252,15 +280,24 @@ export function DysonGameplayShell({
       </main>
 
       <div
+        ref={bottomNavigationRef}
         className="dyson-shell__bottom-navigation"
+        data-size={navigation.bottomSize ?? 'standard'}
         aria-hidden={(compactMenuOpen || wideLayout) || undefined}
         inert={(compactMenuOpen || wideLayout) || undefined}
       >
+        <DysonNavigation
+          {...navigation}
+          placement="bottom"
+          maxItems={bottomItemCapacity}
+          interactive={!compactMenuOpen && !wideLayout}
+        />
         <button
           ref={openMenuRef}
           type="button"
           className="dyson-shell__bottom-menu"
-          aria-label={openMenuLabel}
+          aria-label={moreMenuLabel}
+          title={openMenuLabel}
           aria-controls={menuId}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(true)}
@@ -270,12 +307,10 @@ export function DysonGameplayShell({
             <i />
             <i />
           </span>
+          <span className="dyson-shell__bottom-menu-label" aria-hidden="true">
+            {moreMenuLabel}
+          </span>
         </button>
-          <DysonNavigation
-            {...navigation}
-            placement="bottom"
-            interactive={!compactMenuOpen && !wideLayout}
-          />
       </div>
     </div>
   )

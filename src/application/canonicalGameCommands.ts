@@ -8,6 +8,14 @@ import type {
   DreamEducationId,
   DreamUpgradeFlag,
 } from '../game-state/types'
+import type {
+  BottomNavigationDestinationId,
+  BottomNavigationSize,
+} from '../game-state/navigationPreferences'
+import {
+  DEFAULT_BOTTOM_NAVIGATION_SIZE,
+  DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
+} from '../game-state/navigationPreferences'
 import {
   defaultSkillPresetColorId,
   isSkillPresetColorId,
@@ -275,8 +283,12 @@ export type CanonicalGameCommand =
     }
   | {
       readonly kind: 'settings.set-navigation-item-visible'
-      readonly item: 'story' | 'wiki' | 'statistics'
+      readonly item: BottomNavigationDestinationId
       readonly visible: boolean
+    }
+  | {
+      readonly kind: 'settings.set-bottom-navigation-size'
+      readonly size: BottomNavigationSize
     }
 
 export type CanonicalGameCommandKind = CanonicalGameCommand['kind']
@@ -687,6 +699,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'canonical persisted menu shortcut preference',
   },
+  'settings.set-bottom-navigation-size': {
+    supported: true,
+    authority: 'canonical persisted bottom navigation sizing preference',
+  },
 } as const satisfies Readonly<
   Record<CanonicalGameCommandKind, CanonicalGameCommandSupport>
 >)
@@ -733,11 +749,8 @@ export function routeCanonicalGameCommand(
 
   switch (command.kind) {
     case 'settings.set-navigation-item-visible': {
-      const current = state.meta.navigationVisibility ?? {
-        story: false,
-        wiki: false,
-        statistics: true,
-      }
+      const current = state.meta.navigationVisibility ??
+        DEFAULT_BOTTOM_NAVIGATION_VISIBILITY
       const changed = current[command.item] !== command.visible
       return finalizeAccepted(
         state,
@@ -755,6 +768,27 @@ export function routeCanonicalGameCommand(
           : state,
         changed,
         `settings:${changed ? 'navigation-visibility-set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
+      )
+    }
+
+    case 'settings.set-bottom-navigation-size': {
+      const current = state.meta.bottomNavigationSize ??
+        DEFAULT_BOTTOM_NAVIGATION_SIZE
+      const changed = current !== command.size
+      return finalizeAccepted(
+        state,
+        changed
+          ? {
+              ...state,
+              meta: { ...state.meta, bottomNavigationSize: command.size },
+            }
+          : state,
+        changed,
+        `settings:${changed ? 'bottom-navigation-size-set' : 'unchanged'}`,
         carriers,
         options.runtimeEvaluation,
         EMPTY_ISSUES,

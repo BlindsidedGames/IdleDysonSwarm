@@ -2011,6 +2011,12 @@
       "value": "Menu"
     }
   ],
+  "dyson.menu.more": [
+    {
+      "type": 0,
+      "value": "More"
+    }
+  ],
   "dyson.menu.open": [
     {
       "type": 0,
@@ -5317,16 +5323,100 @@
       "value": "More by Blindsided Games"
     }
   ],
+  "settings.navigation.bots": [
+    {
+      "type": 0,
+      "value": "Show Bots"
+    }
+  ],
   "settings.navigation.description": [
     {
       "type": 0,
       "value": "Choose which optional pages appear in the bottom navigation. They remain available from the menu."
     }
   ],
+  "settings.navigation.infinity": [
+    {
+      "type": 0,
+      "value": "Show Infinity"
+    }
+  ],
+  "settings.navigation.offline-time": [
+    {
+      "type": 0,
+      "value": "Show Stored Time"
+    }
+  ],
+  "settings.navigation.quantum": [
+    {
+      "type": 0,
+      "value": "Show Quantum"
+    }
+  ],
+  "settings.navigation.reality": [
+    {
+      "type": 0,
+      "value": "Show Reality"
+    }
+  ],
+  "settings.navigation.research": [
+    {
+      "type": 0,
+      "value": "Show Research"
+    }
+  ],
+  "settings.navigation.settings": [
+    {
+      "type": 0,
+      "value": "Show Settings"
+    }
+  ],
+  "settings.navigation.simulations": [
+    {
+      "type": 0,
+      "value": "Show Simulations"
+    }
+  ],
+  "settings.navigation.size.compact": [
+    {
+      "type": 0,
+      "value": "Compact"
+    }
+  ],
+  "settings.navigation.size.label": [
+    {
+      "type": 0,
+      "value": "Bottom bar size"
+    }
+  ],
+  "settings.navigation.size.large": [
+    {
+      "type": 0,
+      "value": "Large"
+    }
+  ],
+  "settings.navigation.size.standard": [
+    {
+      "type": 0,
+      "value": "Standard"
+    }
+  ],
+  "settings.navigation.skills": [
+    {
+      "type": 0,
+      "value": "Show Skills"
+    }
+  ],
   "settings.navigation.statistics": [
     {
       "type": 0,
       "value": "Show Statistics shortcut"
+    }
+  ],
+  "settings.navigation.store": [
+    {
+      "type": 0,
+      "value": "Show Store"
     }
   ],
   "settings.navigation.story": [

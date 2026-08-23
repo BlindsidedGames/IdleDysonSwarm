@@ -203,6 +203,17 @@ with an overflow/menu destination. On wide screens, the same destinations use a
 persistent side rail. Labels remain visible in both modes; icon-only primary
 navigation is not acceptable.
 
+The compact bar is player-configurable through canonical save preferences.
+Every currently available player-facing top-level destination can be included
+or removed independently; Developer/Debug is excluded. The full drawer always
+retains every available destination, including Settings. Compact, Standard and
+Large sizing scale icons, labels and spacing without reducing the minimum touch
+target. Standard and the pre-existing destination composition are the upgrade
+defaults. If selected destinations do not fit one row, the bar keeps a final
+More control tied to the drawer and deterministically overflows destinations
+instead of scrolling, clipping, overlapping or shrinking targets. Unknown
+stored destination IDs are preserved so later routes can adopt them safely.
+
 Locked systems are hidden until their canonical reveal condition unless Unity
 intentionally previews them. A previewed locked destination explains its
 requirement from snapshot data; the UI does not infer unlock rules.

@@ -811,6 +811,10 @@
     "defaultMessage": "Menu",
     "description": "Visible heading for the responsive game menu."
   },
+  "dyson.menu.more": {
+    "defaultMessage": "More",
+    "description": "Visible label for the bottom navigation drawer affordance."
+  },
   "dyson.menu.open": {
     "defaultMessage": "Open menu",
     "description": "Opens the compact game menu."
@@ -2555,13 +2559,69 @@
     "defaultMessage": "More by Blindsided Games",
     "description": "Heading for the canonical developer area in Settings."
   },
+  "settings.navigation.bots": {
+    "defaultMessage": "Show Bots",
+    "description": "Controls the Bots bottom navigation destination."
+  },
   "settings.navigation.description": {
     "defaultMessage": "Choose which optional pages appear in the bottom navigation. They remain available from the menu.",
     "description": "Explains optional bottom navigation shortcuts."
   },
+  "settings.navigation.infinity": {
+    "defaultMessage": "Show Infinity",
+    "description": "Controls the Infinity bottom navigation destination."
+  },
+  "settings.navigation.offline-time": {
+    "defaultMessage": "Show Stored Time",
+    "description": "Controls the Stored Time bottom navigation destination."
+  },
+  "settings.navigation.quantum": {
+    "defaultMessage": "Show Quantum",
+    "description": "Controls the Quantum bottom navigation destination."
+  },
+  "settings.navigation.reality": {
+    "defaultMessage": "Show Reality",
+    "description": "Controls the Reality bottom navigation destination."
+  },
+  "settings.navigation.research": {
+    "defaultMessage": "Show Research",
+    "description": "Controls the Research bottom navigation destination."
+  },
+  "settings.navigation.settings": {
+    "defaultMessage": "Show Settings",
+    "description": "Controls the Settings bottom navigation destination."
+  },
+  "settings.navigation.simulations": {
+    "defaultMessage": "Show Simulations",
+    "description": "Controls the Simulations bottom navigation destination."
+  },
+  "settings.navigation.size.compact": {
+    "defaultMessage": "Compact",
+    "description": "Compact bottom navigation size."
+  },
+  "settings.navigation.size.label": {
+    "defaultMessage": "Bottom bar size",
+    "description": "Labels the bottom navigation sizing choice."
+  },
+  "settings.navigation.size.large": {
+    "defaultMessage": "Large",
+    "description": "Large bottom navigation size."
+  },
+  "settings.navigation.size.standard": {
+    "defaultMessage": "Standard",
+    "description": "Standard bottom navigation size."
+  },
+  "settings.navigation.skills": {
+    "defaultMessage": "Show Skills",
+    "description": "Controls the Skills bottom navigation destination."
+  },
   "settings.navigation.statistics": {
     "defaultMessage": "Show Statistics shortcut",
     "description": "Controls the Statistics bottom navigation shortcut."
+  },
+  "settings.navigation.store": {
+    "defaultMessage": "Show Store",
+    "description": "Controls the Store bottom navigation destination."
   },
   "settings.navigation.story": {
     "defaultMessage": "Show Story shortcut",

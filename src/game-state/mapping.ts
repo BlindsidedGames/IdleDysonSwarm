@@ -1,4 +1,4 @@
-import { requireRecord, type SaveRecord } from '../save/graph'
+import { isRecord, requireRecord, type SaveRecord } from '../save/graph'
 import { PreparedSave } from '../save/prepare'
 import {
   skillIdsToBitset,
@@ -21,6 +21,11 @@ import {
 } from './types'
 import { validateCanonicalGameState } from './validate'
 import {
+  DEFAULT_BOTTOM_NAVIGATION_SIZE,
+  isBottomNavigationSize,
+  normalizeBottomNavigationVisibility,
+} from './navigationPreferences'
+import {
   extractDysonCompatibilityTuning,
   type DysonCompatibilityTuning,
 } from './compatibilityTuning'
@@ -32,6 +37,10 @@ import {
   defaultSkillPresetColorId,
   isSkillPresetColorId,
 } from './skillPresetColors'
+
+function recordOrEmpty(value: unknown): SaveRecord {
+  return isRecord(value) ? value : {}
+}
 
 const DREAM_EDUCATION_IDS = [
   'engineering',
@@ -202,11 +211,24 @@ export function hydrateGameState(
         nonBlankStringOrNull(source.dateStarted),
       tutorialComplete: toBoolean(source.tutorial),
       firstInfinityComplete: toBoolean(source.firstInfinityDone),
-      navigationVisibility: {
-        story: toBoolean(source.storyButtonToggle),
-        wiki: toBoolean(source.wikiButtonToggle),
-        statistics: toBoolean(source.statisticsButtonToggle),
-      },
+      navigationVisibility: isRecord(source.bottomNavigationPreferences)
+        ? normalizeBottomNavigationVisibility(
+          source.bottomNavigationPreferences.visibility,
+          {
+            story: toBoolean(source.storyButtonToggle),
+            wiki: toBoolean(source.wikiButtonToggle),
+            statistics: toBoolean(source.statisticsButtonToggle),
+          },
+        ) as CanonicalGameStateV1['meta']['navigationVisibility']
+        : {
+          story: toBoolean(source.storyButtonToggle),
+          wiki: toBoolean(source.wikiButtonToggle),
+          statistics: toBoolean(source.statisticsButtonToggle),
+        },
+      ...(isRecord(source.bottomNavigationPreferences) &&
+        isBottomNavigationSize(source.bottomNavigationPreferences.size)
+        ? { bottomNavigationSize: source.bottomNavigationPreferences.size }
+        : {}),
     },
     dyson: {
       money: toFiniteNonNegativeNumber(infinityData.money),
@@ -601,6 +623,25 @@ export function dehydrateGameState(
     state.meta.navigationVisibility?.wiki ?? false
   source.statisticsButtonToggle =
     state.meta.navigationVisibility?.statistics ?? true
+  const visibilityKeys = Object.keys(state.meta.navigationVisibility ?? {})
+  if (
+    state.meta.bottomNavigationSize !== undefined ||
+    visibilityKeys.some((key) =>
+      key !== 'story' && key !== 'wiki' && key !== 'statistics'
+    )
+  ) {
+    source.bottomNavigationPreferences = {
+      version: 1,
+      visibility: {
+        ...(
+          recordOrEmpty(source.bottomNavigationPreferences)
+            .visibility as Record<string, unknown>
+        ),
+        ...state.meta.navigationVisibility,
+      },
+      size: state.meta.bottomNavigationSize ?? DEFAULT_BOTTOM_NAVIGATION_SIZE,
+    }
+  }
   infinityData.money = state.dyson.money
   infinityData.science = state.dyson.science
   infinityData.bots = state.dyson.bots
