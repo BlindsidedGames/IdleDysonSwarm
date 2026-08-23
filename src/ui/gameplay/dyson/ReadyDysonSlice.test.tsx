@@ -44,6 +44,7 @@ import {
   CANONICAL_STORE_PRODUCTS,
   type HostEntitlementOwnership,
 } from '../../../store/contracts'
+import { DoubleInfinityPointsEffectPreferenceService } from '../../../store/doubleInfinityPointsEffect'
 import {
   FIRST_SLICE_COMMIT_PROBE_MARKER,
   type FirstSliceCommitProbeSample,
@@ -2630,6 +2631,8 @@ function platformServices(
       readOwnership: async () => emptyOwnership,
       refreshOwnership: async () => emptyOwnership,
     },
+    doubleInfinityPointsEffect:
+      new DoubleInfinityPointsEffectPreferenceService({ storage: null }),
     store: {
       products: async () => CANONICAL_STORE_PRODUCTS.map((product) => ({
         productId: product.id,

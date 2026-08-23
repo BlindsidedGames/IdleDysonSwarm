@@ -229,6 +229,12 @@ function StoreProductCard({
     listing?.available === true &&
     listing.localizedPrice !== null &&
     snapshot.operation.kind === 'idle'
+  const isDoubleIpToggle =
+    product.id === STORE_PRODUCT_IDS.doubleInfinityPoints && owned
+  const doubleIpEnabled = snapshot.doubleInfinityPointsEnabled
+  const actionDisabled = isDoubleIpToggle
+    ? snapshot.operation.kind !== 'idle'
+    : !canPurchase
 
   return (
     <article className="store-product-card">
@@ -238,11 +244,37 @@ function StoreProductCard({
       </div>
       <button
         type="button"
-        className="store-surface__purchase-action"
-        disabled={!canPurchase}
-        onClick={() => void controller.purchase(product.id)}
+        className={`store-surface__purchase-action${
+          isDoubleIpToggle && !doubleIpEnabled
+            ? ' store-surface__purchase-action--effect-disabled'
+            : ''
+        }`}
+        disabled={actionDisabled}
+        aria-pressed={isDoubleIpToggle ? doubleIpEnabled : undefined}
+        aria-label={isDoubleIpToggle
+          ? intl.formatMessage(
+              snapshot.operation.kind === 'updating-double-infinity-points'
+                ? messages.doubleIpUpdatingAccessible
+                : doubleIpEnabled
+                  ? messages.doubleIpEnabledAccessible
+                  : messages.doubleIpDisabledAccessible,
+            )
+          : undefined}
+        onClick={() => void (
+          isDoubleIpToggle
+            ? controller.toggleDoubleInfinityPoints()
+            : controller.purchase(product.id)
+        )}
       >
-        {!isTip && owned
+        {isDoubleIpToggle
+          ? intl.formatMessage(
+              snapshot.operation.kind === 'updating-double-infinity-points'
+                ? messages.updatingEffect
+                : doubleIpEnabled
+                  ? messages.enabled
+                  : messages.disabled,
+            )
+          : !isTip && owned
           ? intl.formatMessage(
               unlockedInGame ? messages.unlockedInGame : messages.owned,
             )
@@ -269,6 +301,10 @@ function StoreFeedback({
   let message: string
   if (feedback.kind === 'entitlement-verified') {
     message = intl.formatMessage(messages.entitlementVerified)
+  } else if (feedback.kind === 'double-infinity-points-effect-updated') {
+    message = intl.formatMessage(
+      feedback.enabled ? messages.effectEnabled : messages.effectDisabled,
+    )
   } else if (feedback.kind === 'restore-completed') {
     message = intl.formatMessage(messages.restoreCompleted, {
       count: feedback.restoredCount,

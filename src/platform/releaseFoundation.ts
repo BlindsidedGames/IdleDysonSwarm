@@ -7,6 +7,10 @@ import {
 import type { NativeMigrationSource } from './platformSaveStorage'
 import { BrowserStripeCommerce } from '../store/browserStripe'
 import { DevelopmentStoreCommerce } from '../store/developmentStore'
+import {
+  DoubleInfinityPointsEffectPreferenceService,
+  type DoubleInfinityPointsEffectPreference,
+} from '../store/doubleInfinityPointsEffect'
 
 export type HostKind = 'browser' | 'desktop-native' | 'mobile-native'
 
@@ -94,6 +98,8 @@ export interface ReleasePlatformServices {
   readonly nativeFilesystemMigration: NativeMigrationSource
   readonly entitlements: EntitlementAuthority
   readonly store: StoreAdapter
+  /** Device-local use state; ownership remains solely with entitlements. */
+  readonly doubleInfinityPointsEffect: DoubleInfinityPointsEffectPreference
   readonly diagnostics: DiagnosticsExporter
 }
 
@@ -141,6 +147,8 @@ export function createBrowserReleasePlatformServices(): Readonly<ReleasePlatform
     nativeFilesystemMigration: new NoopNativeFilesystemMigrationSource(),
     entitlements: new NoopEntitlementAuthority(),
     store: new NoopStoreAdapter(),
+    doubleInfinityPointsEffect:
+      new DoubleInfinityPointsEffectPreferenceService(),
     diagnostics: new NoopDiagnosticsExporter(),
   })
 }
@@ -154,6 +162,8 @@ export function createBrowserStripeReleasePlatformServices(): Readonly<ReleasePl
     nativeFilesystemMigration: new NoopNativeFilesystemMigrationSource(),
     entitlements: commerce,
     store: commerce,
+    doubleInfinityPointsEffect:
+      new DoubleInfinityPointsEffectPreferenceService(),
     diagnostics: new NoopDiagnosticsExporter(),
   })
 }
@@ -168,6 +178,8 @@ export function createBrowserDevelopmentReleasePlatformServices(): Readonly<Rele
     nativeFilesystemMigration: new NoopNativeFilesystemMigrationSource(),
     entitlements: commerce,
     store: commerce,
+    doubleInfinityPointsEffect:
+      new DoubleInfinityPointsEffectPreferenceService(),
     diagnostics: new NoopDiagnosticsExporter(),
   })
 }
