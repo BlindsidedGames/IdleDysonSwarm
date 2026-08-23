@@ -200,8 +200,23 @@ showing empty destinations:
 
 On compact screens, primary unlocked destinations use a bottom navigation bar
 with an overflow/menu destination. On wide screens, the same destinations use a
-persistent side rail. Labels remain visible in both modes; icon-only primary
-navigation is not acceptable.
+persistent side rail. Compact and Standard bottom bars retain the established
+icon-only treatment. Large adds labels beneath unlocked icons; a previewed
+locked destination uses its progress bar in that space instead of label text.
+
+The compact bar is player-configurable. Destination visibility remains in the
+portable canonical save, while Compact/Standard/Large sizing is a versioned
+device-local presentation preference and never transfers through export or
+import. Every currently available player-facing top-level destination can be
+included or removed independently; Developer/Debug is excluded. The full
+drawer always retains every available destination, including Settings. The
+three sizes scale icons, labels and spacing without reducing the minimum touch
+target. Compact and the pre-existing destination composition are the defaults.
+The menu control retains its established leading position. If
+selected destinations do not fit one row, that drawer affordance remains fixed
+while the destination list deterministically overflows
+instead of scrolling, clipping, overlapping or shrinking targets. Unknown
+stored destination IDs are preserved so later routes can adopt them safely.
 
 Locked systems are hidden until their canonical reveal condition unless Unity
 intentionally previews them. A previewed locked destination explains its

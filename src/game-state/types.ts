@@ -44,6 +44,7 @@ export interface GameMetaState {
     readonly story: boolean
     readonly wiki: boolean
     readonly statistics: boolean
+    readonly [destinationId: string]: boolean
   }
 }
 

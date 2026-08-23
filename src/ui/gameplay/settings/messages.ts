@@ -94,6 +94,66 @@ export const settingsSurfaceMessages = defineMessages({
       'Choose which optional pages appear in the bottom navigation. They remain available from the menu.',
     description: 'Explains optional bottom navigation shortcuts.',
   },
+  navigationSizeLabel: {
+    id: 'settings.navigation.size.label',
+    defaultMessage: 'Bottom bar size',
+    description: 'Labels the bottom navigation sizing choice.',
+  },
+  navigationSizeCompact: {
+    id: 'settings.navigation.size.compact',
+    defaultMessage: 'Compact',
+    description: 'Compact bottom navigation size.',
+  },
+  navigationSizeStandard: {
+    id: 'settings.navigation.size.standard',
+    defaultMessage: 'Standard',
+    description: 'Standard bottom navigation size.',
+  },
+  navigationSizeLarge: {
+    id: 'settings.navigation.size.large',
+    defaultMessage: 'Large',
+    description: 'Large bottom navigation size.',
+  },
+  botsShortcut: {
+    id: 'settings.navigation.bots',
+    defaultMessage: 'Show Bots',
+    description: 'Controls the Bots bottom navigation destination.',
+  },
+  researchShortcut: {
+    id: 'settings.navigation.research',
+    defaultMessage: 'Show Research',
+    description: 'Controls the Research bottom navigation destination.',
+  },
+  skillsShortcut: {
+    id: 'settings.navigation.skills',
+    defaultMessage: 'Show Skills',
+    description: 'Controls the Skills bottom navigation destination.',
+  },
+  infinityShortcut: {
+    id: 'settings.navigation.infinity',
+    defaultMessage: 'Show Infinity',
+    description: 'Controls the Infinity bottom navigation destination.',
+  },
+  realityShortcut: {
+    id: 'settings.navigation.reality',
+    defaultMessage: 'Show Reality',
+    description: 'Controls the Reality bottom navigation destination.',
+  },
+  simulationsShortcut: {
+    id: 'settings.navigation.simulations',
+    defaultMessage: 'Show Simulations',
+    description: 'Controls the Simulations bottom navigation destination.',
+  },
+  quantumShortcut: {
+    id: 'settings.navigation.quantum',
+    defaultMessage: 'Show Quantum',
+    description: 'Controls the Quantum bottom navigation destination.',
+  },
+  storeShortcut: {
+    id: 'settings.navigation.store',
+    defaultMessage: 'Show Store',
+    description: 'Controls the Store bottom navigation destination.',
+  },
   storyShortcut: {
     id: 'settings.navigation.story',
     defaultMessage: 'Show Story shortcut',
@@ -108,6 +168,16 @@ export const settingsSurfaceMessages = defineMessages({
     id: 'settings.navigation.statistics',
     defaultMessage: 'Show Statistics shortcut',
     description: 'Controls the Statistics bottom navigation shortcut.',
+  },
+  offlineTimeShortcut: {
+    id: 'settings.navigation.offline-time',
+    defaultMessage: 'Show Stored Time',
+    description: 'Controls the Stored Time bottom navigation destination.',
+  },
+  settingsShortcut: {
+    id: 'settings.navigation.settings',
+    defaultMessage: 'Show Settings',
+    description: 'Controls the Settings bottom navigation destination.',
   },
   saveData: {
     id: 'settings.save-data.title',

@@ -317,6 +317,12 @@ describe('SettingsSurface', () => {
     expect(
       screen.getByRole('checkbox', { name: 'Show Wiki shortcut' }),
     ).toBeChecked()
+    expect(
+      screen.getByRole('checkbox', { name: 'Show Bots' }),
+    ).toBeChecked()
+    expect(
+      screen.getByRole('checkbox', { name: 'Show Store' }),
+    ).not.toBeChecked()
 
     await user.click(
       screen.getByRole('checkbox', { name: 'Show Story shortcut' }),
@@ -325,6 +331,39 @@ describe('SettingsSurface', () => {
       'story',
       true,
     )
+  })
+
+  test('offers available destinations and all bottom bar sizes', async () => {
+    const user = userEvent.setup()
+    const onNavigationVisibilityChange = vi.fn()
+    const onBottomNavigationSizeChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      availableNavigationItems: ['bots', 'infinity', 'store', 'settings'],
+      navigationVisibility: {
+        bots: true,
+        infinity: false,
+        store: true,
+        settings: false,
+      },
+      onNavigationVisibilityChange,
+      onBottomNavigationSizeChange,
+    })
+
+    const navigationPanel = screen.getByRole('heading', {
+      name: 'Navigation Shortcuts',
+    }).closest('section')!
+    expect(within(navigationPanel).getAllByRole('checkbox')).toHaveLength(4)
+    expect(screen.queryByRole('checkbox', { name: 'Show Wiki shortcut' }))
+      .not.toBeInTheDocument()
+    await user.click(screen.getByRole('checkbox', { name: 'Show Settings' }))
+    expect(onNavigationVisibilityChange).toHaveBeenCalledWith('settings', true)
+
+    const size = screen.getByRole('combobox', { name: 'Bottom bar size' })
+    expect(size).toHaveValue('compact')
+    expect(within(size).getAllByRole('option').map((option) => option.textContent))
+      .toEqual(['Compact', 'Standard', 'Large'])
+    await user.selectOptions(size, 'large')
+    expect(onBottomNavigationSizeChange).toHaveBeenCalledWith('large')
   })
 
   test('requires an accessible confirmation and cancels without resetting', async () => {

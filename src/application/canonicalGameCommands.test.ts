@@ -245,6 +245,29 @@ describe('canonical game command router', () => {
     expect(unchanged.changed).toBe(false)
   })
 
+  test('updates every known destination without discarding future entries', () => {
+    const original = state()
+    const seeded = {
+      ...original,
+      meta: {
+        ...original.meta,
+        navigationVisibility: {
+          ...original.meta.navigationVisibility!,
+          'future-destination': true,
+        },
+      },
+    }
+    const changed = routeCanonicalGameCommand(seeded, {
+      kind: 'settings.set-navigation-item-visible',
+      item: 'store',
+      visible: true,
+    })
+    expect(changed.state.meta.navigationVisibility?.store).toBe(true)
+    expect(
+      changed.state.meta.navigationVisibility?.['future-destination'],
+    ).toBe(true)
+  })
+
   test('keeps an exhaustive routable example for every union member', () => {
     expect(ALL_COMMAND_KINDS_COVERED).toBe(true)
     expect(

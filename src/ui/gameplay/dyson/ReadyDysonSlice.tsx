@@ -19,6 +19,11 @@ import type {
 import type { DeepReadonly } from '../../../core/contracts'
 import { defaultSkillPresetColorId } from '../../../game-state/skillPresetColors'
 import type { CanonicalFacilityId } from '../../../game-state/types'
+import {
+  DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
+  type BottomNavigationDestinationId,
+} from '../../../game-state/navigationPreferences'
+import { useBottomNavigationSize } from '../../bottom-navigation-size'
 import '../facilities/facilities.css'
 import {
   DysonGameplayShell,
@@ -510,6 +515,7 @@ export function ReadyDysonSlice({
   storedTime,
   audio,
 }: ReadyDysonSliceProps) {
+  const bottomNavigationSizePreference = useBottomNavigationSize()
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
     useState(readVisualizationPreference)
@@ -673,11 +679,26 @@ export function ReadyDysonSlice({
     settingsActive
   )
   const navigationVisibility =
-    gameplay.progression.meta?.navigationVisibility ?? {
-      story: false,
-      wiki: false,
-      statistics: true,
-    }
+    gameplay.progression.meta?.navigationVisibility ??
+    DEFAULT_BOTTOM_NAVIGATION_VISIBILITY
+  const bottomNavigationSize = bottomNavigationSizePreference.size
+  const bottomVisible = (id: BottomNavigationDestinationId) =>
+    navigationVisibility[id] ?? DEFAULT_BOTTOM_NAVIGATION_VISIBILITY[id]
+  const availableNavigationItems: BottomNavigationDestinationId[] = [
+    'bots',
+    'research',
+    'skills',
+    'infinity',
+    ...(gameplay.visibility.reality.routeVisible ? ['reality' as const] : []),
+    ...(gameplay.visibility.simulations.routeUnlocked ? ['simulations' as const] : []),
+    ...(quantumVisible ? ['quantum' as const] : []),
+    ...(storeVisible ? ['store' as const] : []),
+    'story',
+    'wiki',
+    'offline-time',
+    'statistics',
+    'settings',
+  ]
   const storedTimeCapacitySeconds = Math.max(
     0,
     gameplay.resources.time.storedTimeCapacitySeconds,
@@ -738,6 +759,7 @@ export function ReadyDysonSlice({
       menuHeading={intl.formatMessage(messages.menuHeading)}
       closeMenuLabel={intl.formatMessage(messages.closeMenu)}
       openMenuLabel={intl.formatMessage(messages.openMenu)}
+      moreMenuLabel={intl.formatMessage(messages.moreMenu)}
       heading={intl.formatMessage(routeHeading)}
       routeTheme={debugActive ? 'statistics' : storeActive ? 'bots' : route}
       routeThemeVariant={
@@ -747,11 +769,13 @@ export function ReadyDysonSlice({
         ariaLabel: intl.formatMessage(messages.primaryNavigation),
         drawerAriaLabel: intl.formatMessage(messages.sideNavigation),
         bottomAriaLabel: intl.formatMessage(messages.bottomNavigation),
+        bottomSize: bottomNavigationSize,
         items: [
           {
             id: 'bots',
             label: intl.formatMessage(messages.route),
             iconSrc: navigationAssets.bots,
+            bottom: bottomVisible('bots'),
             ...(route === 'bots'
               ? { current: true as const }
               : { onActivate: () => onRouteChange('bots') }),
@@ -760,6 +784,7 @@ export function ReadyDysonSlice({
             id: 'research',
             label: intl.formatMessage(messages.researchRoute),
             iconSrc: navigationAssets.research,
+            bottom: bottomVisible('research'),
             ...(researchActive
               ? { current: true as const }
               : { onActivate: () => onRouteChange('research') }),
@@ -768,6 +793,7 @@ export function ReadyDysonSlice({
             id: 'skills',
             label: intl.formatMessage(messages.skillsRoute),
             iconSrc: navigationAssets.skills,
+            bottom: bottomVisible('skills'),
             ...(gameplay.visibility.skills.routeUnlocked
               ? skillsActive
                 ? { current: true as const }
@@ -778,6 +804,7 @@ export function ReadyDysonSlice({
             id: 'infinity',
             label: infinityRouteLabel,
             iconSrc: navigationAssets.infinity,
+            bottom: bottomVisible('infinity'),
             ...(gameplay.visibility.infinity.routeUnlocked
               ? infinityActive
                 ? { current: true as const }
@@ -790,6 +817,7 @@ export function ReadyDysonSlice({
                   id: 'reality',
                   label: intl.formatMessage(messages.realityRoute),
                   iconSrc: navigationAssets.reality,
+                  bottom: bottomVisible('reality'),
                   ...(gameplay.visibility.reality.routeUnlocked
                     ? realityActive
                       ? { current: true as const }
@@ -829,6 +857,7 @@ export function ReadyDysonSlice({
                     messages.simulationsRoute,
                   ),
                   iconSrc: navigationAssets.simulations,
+                  bottom: bottomVisible('simulations'),
                   ...(simulationsActive
                     ? { current: true as const }
                     : {
@@ -844,6 +873,7 @@ export function ReadyDysonSlice({
                   id: 'quantum',
                   label: intl.formatMessage(messages.quantumRoute),
                   iconSrc: navigationAssets.quantum,
+                  bottom: bottomVisible('quantum'),
                   ...(quantumUnlocked
                     ? quantumNavigationActive
                       ? { current: true as const }
@@ -879,7 +909,7 @@ export function ReadyDysonSlice({
                   id: 'store',
                   label: intl.formatMessage(messages.storeRoute),
                   iconSrc: navigationAssets.store,
-                  bottom: false,
+                  bottom: bottomVisible('store'),
                   ...(storeActive
                     ? { current: true as const }
                     : { onActivate: () => onRouteChange('store') }),
@@ -890,7 +920,7 @@ export function ReadyDysonSlice({
             id: 'story',
             label: intl.formatMessage(messages.storyRoute),
             iconSrc: navigationAssets.story,
-            bottom: navigationVisibility.story,
+            bottom: bottomVisible('story'),
             ...(storyActive
               ? { current: true as const }
               : { onActivate: () => onRouteChange('story') }),
@@ -899,7 +929,7 @@ export function ReadyDysonSlice({
             id: 'wiki',
             label: intl.formatMessage(messages.wikiRoute),
             iconSrc: navigationAssets.wiki,
-            bottom: navigationVisibility.wiki,
+            bottom: bottomVisible('wiki'),
             ...(wikiActive
               ? { current: true as const }
               : { onActivate: () => onRouteChange('wiki') }),
@@ -908,7 +938,7 @@ export function ReadyDysonSlice({
             id: 'offline-time',
             label: intl.formatMessage(messages.offlineTimeRoute),
             iconSrc: navigationAssets.offlineTime,
-            bottom: false,
+            bottom: bottomVisible('offline-time'),
             progress: {
               fraction: storedTimeStorageFraction,
               label: intl.formatMessage(messages.offlineTimeProgress, {
@@ -932,7 +962,7 @@ export function ReadyDysonSlice({
             id: 'statistics',
             label: intl.formatMessage(messages.statisticsRoute),
             iconSrc: navigationAssets.statistics,
-            bottom: navigationVisibility.statistics,
+            bottom: bottomVisible('statistics'),
             ...(statisticsActive
               ? { current: true as const }
               : {
@@ -956,6 +986,7 @@ export function ReadyDysonSlice({
             id: 'settings',
             label: intl.formatMessage(messages.settingsRoute),
             iconSrc: navigationAssets.settings,
+            bottom: bottomVisible('settings'),
             ...(settingsActive
               ? { current: true as const }
               : { onActivate: () => onRouteChange('settings') }),
@@ -1008,12 +1039,17 @@ export function ReadyDysonSlice({
                     writeVisualizationPreference(visible)
                   }}
                   navigationVisibility={navigationVisibility}
+                  availableNavigationItems={availableNavigationItems}
+                  bottomNavigationSize={bottomNavigationSize}
                   onNavigationVisibilityChange={(item, visible) => {
                     void dispatchPlayer({
                       kind: 'settings.set-navigation-item-visible',
                       item,
                       visible,
                     })
+                  }}
+                  onBottomNavigationSizeChange={(size) => {
+                    bottomNavigationSizePreference.setSize(size)
                   }}
                   />
                 </Suspense>

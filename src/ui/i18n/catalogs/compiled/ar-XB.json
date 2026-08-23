@@ -3635,6 +3635,20 @@
       "value": "‬"
     }
   ],
+  "dyson.menu.more": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woɹǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.menu.open": [
     {
       "type": 0,
@@ -10429,6 +10443,20 @@
       "value": "‬"
     }
   ],
+  "settings.navigation.bots": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.navigation.description": [
     {
       "type": 0,
@@ -10443,6 +10471,174 @@
       "value": "‬"
     }
   ],
+  "settings.navigation.infinity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.offline-time": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Sʇoɹǝp ⊥ıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.quantum": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Ònɐuʇnɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.reality": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ ᴚǝɐʅıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.research": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ ᴚǝsǝɐɹɔɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.settings": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Sǝʇʇıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.simulations": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Sıɯnʅɐʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.size.compact": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdɐɔʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.size.label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoʇʇoɯ qɐɹ sızǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.size.large": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ɐɹƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.size.standard": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐupɐɹp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.skills": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.navigation.statistics": [
     {
       "type": 0,
@@ -10451,6 +10647,20 @@
     {
       "type": 0,
       "value": "Sɥoʍ Sʇɐʇısʇıɔs sɥoɹʇɔnʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.store": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Sʇoɹǝ"
     },
     {
       "type": 0,

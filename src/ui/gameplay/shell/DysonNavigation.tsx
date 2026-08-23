@@ -7,6 +7,7 @@ export interface DysonNavigationProps
   readonly placement: 'drawer' | 'bottom'
   readonly onNavigate?: () => void
   readonly interactive?: boolean
+  readonly maxItems?: number
 }
 
 /**
@@ -20,11 +21,15 @@ export function DysonNavigation({
   placement,
   onNavigate,
   interactive = true,
+  maxItems,
 }: DysonNavigationProps) {
-  const visibleItems =
+  const eligibleItems =
     placement === 'bottom'
       ? items.filter((item) => item.bottom !== false)
       : items
+  const visibleItems = placement === 'bottom' && maxItems !== undefined
+    ? fitBottomItems(eligibleItems, maxItems)
+    : eligibleItems
 
   return (
     <nav
@@ -42,6 +47,7 @@ export function DysonNavigation({
             key={item.id}
             className="dyson-navigation__item"
             data-navigation-id={item.id}
+            data-progress={item.progress !== undefined || undefined}
           >
             {item.current ? (
               <span
@@ -93,6 +99,19 @@ export function DysonNavigation({
       </ul>
     </nav>
   )
+}
+
+function fitBottomItems(
+  items: readonly DysonNavigationPresentation['items'][number][],
+  maxItems: number,
+) {
+  if (items.length <= maxItems) return items
+  const visible = items.slice(0, Math.max(1, maxItems))
+  const current = items.find((item) => item.current)
+  if (current !== undefined && !visible.includes(current)) {
+    visible[visible.length - 1] = current
+  }
+  return visible
 }
 
 function NavigationItemContent({

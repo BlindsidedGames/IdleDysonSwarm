@@ -14,6 +14,13 @@ export function validateCanonicalGameState(
   if (state.modelVersion !== 1) {
     errors.push(`Unsupported canonical model version ${state.modelVersion}.`)
   }
+  for (const [id, visible] of Object.entries(
+    state.meta.navigationVisibility ?? {},
+  )) {
+    if (id.trim().length === 0 || typeof visible !== 'boolean') {
+      errors.push('Bottom navigation visibility entries must use non-blank IDs and boolean values.')
+    }
+  }
   if (state.skills.presets.length !== 5) {
     errors.push('Skills must contain exactly five presets.')
   }

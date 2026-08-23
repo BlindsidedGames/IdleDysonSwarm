@@ -8,6 +8,12 @@ import type {
   DreamEducationId,
   DreamUpgradeFlag,
 } from '../game-state/types'
+import type {
+  BottomNavigationDestinationId,
+} from '../game-state/navigationPreferences'
+import {
+  DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
+} from '../game-state/navigationPreferences'
 import {
   defaultSkillPresetColorId,
   isSkillPresetColorId,
@@ -275,7 +281,7 @@ export type CanonicalGameCommand =
     }
   | {
       readonly kind: 'settings.set-navigation-item-visible'
-      readonly item: 'story' | 'wiki' | 'statistics'
+      readonly item: BottomNavigationDestinationId
       readonly visible: boolean
     }
 
@@ -733,11 +739,8 @@ export function routeCanonicalGameCommand(
 
   switch (command.kind) {
     case 'settings.set-navigation-item-visible': {
-      const current = state.meta.navigationVisibility ?? {
-        story: false,
-        wiki: false,
-        statistics: true,
-      }
+      const current = state.meta.navigationVisibility ??
+        DEFAULT_BOTTOM_NAVIGATION_VISIBILITY
       const changed = current[command.item] !== command.visible
       return finalizeAccepted(
         state,

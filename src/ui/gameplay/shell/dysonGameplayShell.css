@@ -20,10 +20,11 @@
   --menu-scrollbar-track: #1c1420;
   --menu-scrollbar-thumb: #694b70;
   --menu-scrollbar-thumb-hover: #8a6593;
+  --bottom-navigation-height: 4rem;
   display: grid;
   grid-template-rows:
     minmax(0, 1fr)
-    calc(4rem + var(--safe-area-bottom));
+    calc(var(--bottom-navigation-height) + var(--safe-area-bottom));
   inline-size: 100%;
   block-size: 100vh;
   block-size: 100dvb;
@@ -35,6 +36,14 @@
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+}
+
+.dyson-shell[data-bottom-navigation-size="compact"] {
+  --bottom-navigation-height: 3.5rem;
+}
+
+.dyson-shell[data-bottom-navigation-size="large"] {
+  --bottom-navigation-height: 4.75rem;
 }
 
 .dyson-shell[data-route-theme="research"] {
@@ -931,9 +940,11 @@
 
 .dyson-shell__bottom-menu {
   display: grid;
-  min-inline-size: 3.2rem;
-  min-block-size: 3.2rem;
+  min-inline-size: var(--target-minimum);
+  min-block-size: var(--target-minimum);
   place-items: center;
+  align-content: center;
+  gap: 0.05rem;
   border-radius: 0.35rem;
   background: transparent;
   color: white;
@@ -960,16 +971,7 @@
 }
 
 .dyson-navigation--bottom {
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  scrollbar-width: none;
-  touch-action: pan-x;
-}
-
-.dyson-navigation--bottom::-webkit-scrollbar {
-  display: none;
-  inline-size: 0;
-  block-size: 0;
+  overflow: hidden;
 }
 
 .dyson-navigation__list {
@@ -981,12 +983,13 @@
 
 .dyson-navigation--bottom .dyson-navigation__list {
   display: flex;
-  inline-size: max-content;
+  inline-size: 100%;
   min-inline-size: 100%;
 }
 
 .dyson-navigation--bottom .dyson-navigation__item {
-  flex: 1 0 3.2rem;
+  flex: 1 1 0;
+  min-inline-size: 0;
 }
 
 .dyson-navigation__item {
@@ -1100,7 +1103,10 @@
 
 .dyson-navigation--bottom .dyson-navigation__link {
   display: grid;
+  grid-template-rows: auto auto;
   place-items: center;
+  align-content: center;
+  gap: 0.05rem;
   padding: 0.1rem;
 }
 
@@ -1127,6 +1133,11 @@
   block-size: clamp(2.25rem, 7vw, 3rem);
   place-items: center;
   color: #f4eff5;
+}
+
+.dyson-navigation--bottom .dyson-navigation__icon {
+  inline-size: 1.85rem;
+  block-size: 1.85rem;
 }
 
 .dyson-navigation__link[aria-current="page"]
@@ -1175,6 +1186,75 @@
   block-size: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
+}
+
+.dyson-shell__bottom-menu-label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.dyson-shell__bottom-navigation[data-size="compact"] {
+  grid-template-columns: 3rem minmax(0, 1fr);
+}
+
+.dyson-shell__bottom-navigation[data-size="compact"]
+  :is(.dyson-navigation__link, .dyson-shell__bottom-menu) {
+  min-block-size: var(--target-minimum);
+}
+
+.dyson-shell__bottom-navigation[data-size="compact"]
+  :is(.dyson-navigation__icon, .dyson-shell__menu-icon) {
+  inline-size: 1.45rem;
+}
+
+.dyson-shell__bottom-navigation[data-size="compact"]
+  .dyson-navigation__icon {
+  block-size: 1.45rem;
+}
+
+.dyson-shell__bottom-navigation[data-size="large"] {
+  grid-template-columns: 4.75rem minmax(0, 1fr);
+}
+
+.dyson-shell__bottom-navigation[data-size="large"]
+  .dyson-navigation__icon {
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+}
+
+.dyson-shell__bottom-navigation[data-size="large"]
+  .dyson-shell__menu-icon {
+  inline-size: 1.7rem;
+}
+
+.dyson-shell__bottom-navigation[data-size="large"]
+  .dyson-navigation__item:not([data-progress="true"])
+  .dyson-navigation__label,
+.dyson-shell__bottom-navigation[data-size="large"]
+  .dyson-shell__bottom-menu-label {
+  position: static;
+  display: block;
+  inline-size: auto;
+  block-size: auto;
+  max-inline-size: 100%;
+  clip: auto;
+  overflow: hidden;
+  color: currentColor;
+  font-size: calc(0.72rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dyson-shell__bottom-navigation[data-size="large"]
+  .dyson-navigation__item[data-progress="true"]
+  .dyson-navigation__progress {
+  inset-block-end: 0.45rem;
+  block-size: 0.25rem;
 }
 
 .dyson-shell__menu-backdrop {
