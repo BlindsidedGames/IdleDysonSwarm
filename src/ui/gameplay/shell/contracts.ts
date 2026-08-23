@@ -33,6 +33,7 @@ export type DysonNavigationItem =
   | {
       readonly id: string
       readonly label: ReactNode
+      readonly ariaLabel?: string
       readonly icon?: ReactNode
       readonly iconSrc?: string
       readonly progress?: {
@@ -47,6 +48,7 @@ export type DysonNavigationItem =
   | {
       readonly id: string
       readonly label: ReactNode
+      readonly ariaLabel?: string
       readonly icon?: ReactNode
       readonly iconSrc?: string
       readonly progress?: {

@@ -181,11 +181,18 @@ describe('DysonGameplayShell', () => {
 
     expect(few.iconSize).toBe(36)
     expect(many.iconSize).toBeLessThan(few.iconSize)
-    expect(many.maxItems).toBe(7)
+    expect(many.labelSize).toBeLessThan(few.labelSize)
+    expect(many.maxItems).toBe(10)
     expect(few.slotWidth).toBeLessThanOrEqual(76)
     expect(labelled.barHeight).toBeLessThanOrEqual(76)
     expect(labelled.barHeight).toBeGreaterThan(few.barHeight)
-    expect(deriveBottomNavigationLayout(390, 0, false).maxItems).toBe(7)
+    expect(deriveBottomNavigationLayout(390, 0, false).maxItems).toBe(0)
+    expect(deriveBottomNavigationLayout(120, 10, true).iconSize)
+      .toBeLessThan(1)
+    expect(deriveBottomNavigationLayout(390, 10, true, 2).labelSize)
+      .toBe(many.labelSize / 2)
+    expect(deriveBottomNavigationLayout(320, 10, true).barHeight)
+      .toBe(55)
   })
 
   it('contains compact-menu focus and restores the opener on close', async () => {

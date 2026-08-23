@@ -21,7 +21,7 @@ describe('Dyson gameplay shell CSS contract', () => {
     )
   })
 
-  test('keeps a growing route list on one overflow-managed row', () => {
+  test('keeps a growing route list on one continuously scaled row', () => {
     const source = readFileSync(
       fileURLToPath(
         new URL('./dysonGameplayShell.css', import.meta.url),
@@ -36,6 +36,10 @@ describe('Dyson gameplay shell CSS contract', () => {
     expect(source).toContain('flex: 1 1 0')
     expect(source).toContain('var(--bottom-navigation-menu-width)')
     expect(source).toContain('var(--bottom-navigation-icon-size)')
+    expect(source).toContain('var(--bottom-navigation-label-size)')
+    expect(source).toMatch(
+      /\.dyson-shell__menu-icon\s*\{[^}]*grid-template-rows:\s*repeat\(3, 1fr\);[^}]*block-size:[^}]*--bottom-navigation-icon-size/s,
+    )
   })
 
   test('shows every bottom label only when Include text is enabled', () => {
@@ -46,6 +50,7 @@ describe('Dyson gameplay shell CSS contract', () => {
     )
     expect(source).toContain('[data-include-text="true"]')
     expect(source).not.toContain('[data-size="large"]')
+    expect(source).not.toContain('text-overflow: ellipsis')
   })
 
   test('lets the Settings scroller meet the real navigation boundary', () => {

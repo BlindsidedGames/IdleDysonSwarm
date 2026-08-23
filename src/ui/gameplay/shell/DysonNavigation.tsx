@@ -53,6 +53,7 @@ export function DysonNavigation({
               <span
                 className="dyson-navigation__link"
                 aria-current="page"
+                aria-label={item.ariaLabel}
               >
                 <NavigationItemContent item={item} />
               </span>
@@ -60,7 +61,7 @@ export function DysonNavigation({
               <button
                 type="button"
                 className="dyson-navigation__link"
-                aria-label={item.progress?.label}
+                aria-label={item.ariaLabel ?? item.progress?.label}
                 tabIndex={interactive ? undefined : -1}
                 onClick={() => {
                   item.onActivate?.()
@@ -73,7 +74,7 @@ export function DysonNavigation({
               <a
                 className="dyson-navigation__link"
                 href={item.href}
-                aria-label={item.progress?.label}
+                aria-label={item.ariaLabel ?? item.progress?.label}
                 tabIndex={interactive ? undefined : -1}
                 onClick={onNavigate}
               >
@@ -85,6 +86,7 @@ export function DysonNavigation({
                 className="dyson-navigation__link"
                 disabled
                 aria-label={
+                  item.ariaLabel ??
                   item.progress?.label ??
                   (typeof item.label === 'string'
                     ? item.label

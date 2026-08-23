@@ -711,9 +711,6 @@ export function ReadyDysonSlice({
       storedTimeCapacitySeconds,
     ),
   )
-  const storedTimeStorageFraction = storedTimeCapacitySeconds > 0
-    ? storedTimeAvailableSeconds / storedTimeCapacitySeconds
-    : 0
   const routeHeading = debugActive
     ? messages.debugRoute
     : avocatoActive
@@ -938,21 +935,18 @@ export function ReadyDysonSlice({
           {
             id: 'offline-time',
             label: intl.formatMessage(messages.offlineTimeRoute),
+            ariaLabel: intl.formatMessage(messages.offlineTimeProgress, {
+              stored: formatGameDuration(
+                locale,
+                storedTimeAvailableSeconds,
+              ),
+              capacity: formatGameDuration(
+                locale,
+                storedTimeCapacitySeconds,
+              ),
+            }),
             iconSrc: navigationAssets.offlineTime,
             bottom: bottomVisible('offline-time'),
-            progress: {
-              fraction: storedTimeStorageFraction,
-              label: intl.formatMessage(messages.offlineTimeProgress, {
-                stored: formatGameDuration(
-                  locale,
-                  storedTimeAvailableSeconds,
-                ),
-                capacity: formatGameDuration(
-                  locale,
-                  storedTimeCapacitySeconds,
-                ),
-              }),
-            },
             ...(offlineTimeActive
               ? { current: true as const }
               : {

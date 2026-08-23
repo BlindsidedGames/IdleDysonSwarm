@@ -202,8 +202,11 @@ On compact screens, primary unlocked destinations use a bottom navigation bar
 with an overflow/menu destination. On wide screens, the same destinations use a
 persistent side rail. The compact bar derives its icon and slot size from the
 available width and the number of selected destinations. Additional selected
-destinations progressively reduce the visual size while retaining accessible
-touch targets; a short bar grows only to the former Large-size ceiling.
+destinations progressively reduce icons and labels so every selection remains
+on the bar; a short bar grows only to the former Large-size ceiling. The full
+height of each control remains available as its interaction area even when its
+visuals and inline slot become small. Bar height follows the scaled content,
+and the More glyph scales proportionally with destination icons.
 
 The compact bar is player-configurable. Destination visibility remains in the
 portable canonical save. A separate Include text toggle consistently shows or
@@ -215,10 +218,9 @@ top-level destination can be included or removed independently;
 Developer/Debug is excluded. No minimum selection is enforced. The full drawer
 always retains every available destination, including Settings. The
 pre-existing destination composition and hidden labels are the defaults. The
-menu control retains its established leading position. If selected
-destinations do not fit one row, that drawer affordance remains fixed while the
-destination list deterministically overflows
-instead of scrolling, clipping, overlapping or shrinking targets. Unknown
+menu control retains its established leading position. Selected destinations
+remain in one row without scrolling, clipping, overlap, ellipsis, or removal;
+the user controls how dense that row becomes. Unknown
 stored destination IDs are preserved so later routes can adopt them safely.
 
 Locked systems are hidden until their canonical reveal condition unless Unity

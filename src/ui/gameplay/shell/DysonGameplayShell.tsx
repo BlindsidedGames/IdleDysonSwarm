@@ -72,11 +72,15 @@ export function DysonGameplayShell({
       const available = element.clientWidth -
         Number.parseFloat(styles.paddingInlineStart || '0') -
         Number.parseFloat(styles.paddingInlineEnd || '0')
+      const textScale = Number.parseFloat(
+        styles.getPropertyValue('--game-text-scale'),
+      ) || 1
       setBottomLayout(
         deriveBottomNavigationLayout(
           available,
           selectedBottomItemCount,
           navigation.includeBottomText ?? false,
+          textScale,
         ),
       )
     }
@@ -148,6 +152,7 @@ export function DysonGameplayShell({
       style={{
         '--bottom-navigation-height': `${bottomLayout.barHeight}px`,
         '--bottom-navigation-icon-size': `${bottomLayout.iconSize}px`,
+        '--bottom-navigation-label-size': `${bottomLayout.labelSize}px`,
         '--bottom-navigation-menu-width': `${bottomLayout.slotWidth}px`,
       } as CSSProperties}
     >
