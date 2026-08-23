@@ -104,8 +104,11 @@ describe('StoreSurface', () => {
     expect(toggle).toHaveAttribute('aria-pressed', 'true')
     await user.click(toggle)
 
-    expect(await screen.findByRole('button', { name: 'Disabled' }))
-      .toHaveAttribute('aria-pressed', 'false')
+    const disabledToggle = await screen.findByRole('button', {
+      name: 'Disabled',
+    })
+    expect(disabledToggle).toHaveAttribute('aria-pressed', 'false')
+    expect(disabledToggle).toBeEnabled()
     expect(effect.getSnapshot()).toBe(false)
     expect(controller.getSnapshot().hostOwnership.doubleInfinityPoints)
       .toBe(true)
@@ -113,6 +116,13 @@ describe('StoreSurface', () => {
     expect(screen.getByRole('status')).toHaveTextContent(
       'Your purchase remains owned',
     )
+
+    await user.click(disabledToggle)
+
+    expect(await screen.findByRole('button', { name: 'Enabled' }))
+      .toHaveAttribute('aria-pressed', 'true')
+    expect(effect.getSnapshot()).toBe(true)
+    expect(synchronize).toHaveBeenCalledTimes(2)
   })
 
   test('presents the existing in-game Developer Options unlock as an alternative', async () => {
