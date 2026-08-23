@@ -1,8 +1,13 @@
 {
-  "verifiedAtUtc": "2026-08-19T09:41:51.778Z",
+  "schemaVersion": 2,
+  "runIdentity": {
+    "revision": "89a1d27943fc46e076f43f08a9ba34b9e1c7bc72",
+    "workingTreeDirty": false
+  },
+  "verifiedAtUtc": "2026-08-23T11:23:09.326Z",
   "browser": "Chrome",
-  "browserVersion": "151.0.7922.138",
-  "platform": "win32-x64",
+  "browserVersion": "151.0.7922.170",
+  "platform": "darwin-arm64",
   "url": "http://127.0.0.1:4187/play/",
   "storageCompatibility": {
     "databaseName": "idle-dyson-swarm-web-development-v1",
@@ -14,40 +19,40 @@
   "packages": {
     "old": {
       "buildId": "pwa-verification-old",
-      "sha256": "a53ab7db8818311a40f06ee9638c98702bfe6d8fc4a1db4a9d9c8e7bc8f27800"
+      "sha256": "731926a40dd70dd1da0af060140b173d41b52879f778dd81107e244a1c08408e"
     },
     "new": {
       "buildId": "pwa-verification-new",
-      "sha256": "cea322284e8b9f11df9982bc69a48ce8317c99dbb5d2568cce49aadf098b5640"
+      "sha256": "8f4136c3f7913dbe3d827e88e83056fff729b66bb80251fb9e25f1437fee89a5"
     }
   },
   "saves": {
     "initial": {
-      "sha256": "480c0969203a650af3b814c83c3679ac6872a621c0524ea02eb0108f2b317cad",
+      "sha256": "cdaf9509569527861fe6b0f4f0d5dd15771da0460ee75663240cc7ef1a49ea59",
       "bots": 0,
       "botDistribution": 0.5,
       "schema": 12
     },
     "seeded": {
-      "sha256": "dc371a1c1d9474748d6ce73d33e9dc2d06ac03743648067d4c60b57a58487149",
+      "sha256": "8e669530342340c47207b6495c5c7b0999cf367a1481166c5535a820af7baafa",
       "bots": 1,
       "botDistribution": 0.73,
       "schema": 12
     },
     "repeated": {
-      "sha256": "bfa01def695becbdb31efde9d8a1b95c5874e0f5b6f4fc5f5bc4f2e2441a124a",
+      "sha256": "f4f1792fd87a6a80665305c81b1359344a077317711ada552b05dd7966485277",
       "bots": 1,
       "botDistribution": 0.73,
       "schema": 12
     },
     "offline": {
-      "sha256": "9d2fe767dc4050725f5b00e5804cd017d8d45a62184b7925c6266a60fd00104d",
+      "sha256": "c2fa69159045621b3fd487ccc20346fbace0f63483dbc4b245969b7b7be9b770",
       "bots": 1,
       "botDistribution": 0.73,
       "schema": 12
     },
     "updated": {
-      "sha256": "4275d56089da5d3dcb00a8be68122dd8aac5cd5366a8c60b87d19e7cb337ebfe",
+      "sha256": "cd08892af61caf9a7e93a0b3af262c30c0607a3c07fc75ced733da734af9bd1f",
       "bots": 1,
       "botDistribution": 0.73,
       "schema": 12
@@ -55,11 +60,11 @@
   },
   "caches": {
     "old": [
-      "idle-dyson-swarm-app-3cca0ce387774a39"
+      "idle-dyson-swarm-app-a2eb495cdb917876"
     ],
     "injectedObsolete": "idle-dyson-swarm-app-obsolete-verification",
     "new": [
-      "idle-dyson-swarm-app-87e0106f719d9963"
+      "idle-dyson-swarm-app-507e266600a92f9c"
     ]
   },
   "assertions": {
