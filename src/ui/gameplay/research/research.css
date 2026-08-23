@@ -201,6 +201,10 @@
   text-align: start;
 }
 
+.research-surface__production-line {
+  white-space: nowrap;
+}
+
 .research-surface__control-panel .ui-progress-controls-panel__body {
   padding: 0;
 }
@@ -322,6 +326,11 @@
 }
 
 @media (max-width: 720px) {
+  .research-surface__production-line {
+    font-size: calc(0.88rem * var(--game-text-scale));
+    line-height: 1.15;
+  }
+
   .research-surface__scroll-region {
     padding-block: var(--game-card-content-inset);
     padding-inline:

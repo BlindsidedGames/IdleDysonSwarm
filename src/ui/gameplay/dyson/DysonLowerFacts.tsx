@@ -9,6 +9,7 @@ import {
 import type {
   EnabledLocale,
 } from '../../i18n/localeRegistry'
+import { StableSingleLineText } from '../../components'
 import { readyDysonMessages as messages } from './messages'
 import './dysonLowerFacts.css'
 
@@ -28,20 +29,40 @@ export function DysonProductionSummary({
   return (
     <div className="dyson-lower-facts">
       <p>
-        <FormattedMessage
-          {...messages.workerProduction}
-          values={{
-            workers: formatFact(locale, resources.workers),
-            panels: formatFact(locale, rates.panels),
-            emphasis: (chunks) => (
-              <span className="dyson-lower-facts__value">
-                {chunks}
-              </span>
-            ),
-          }}
-        />
+        <StableSingleLineText
+          measurement={<WorkerProductionMessage
+            workers="9.99QaQag"
+            panels="9.99QaQag"
+          />}
+        >
+          <WorkerProductionMessage
+            workers={formatFact(locale, resources.workers)}
+            panels={formatFact(locale, rates.panels)}
+          />
+        </StableSingleLineText>
       </p>
     </div>
+  )
+}
+
+function WorkerProductionMessage({
+  workers,
+  panels,
+}: {
+  readonly workers: string
+  readonly panels: string
+}) {
+  return (
+    <FormattedMessage
+      {...messages.workerProduction}
+      values={{
+        workers,
+        panels,
+        emphasis: (chunks) => (
+          <span className="dyson-lower-facts__value">{chunks}</span>
+        ),
+      }}
+    />
   )
 }
 
