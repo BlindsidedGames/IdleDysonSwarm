@@ -19,6 +19,7 @@ export class ProductionGameAudioService implements GameAudioService {
   private playRequest: Promise<void> | undefined
   private playRequestRevision = -1
   private stateRevision = 0
+  private browserFocusLostSinceActive = false
   private unsubscribeLifecycle: (() => void) | undefined
   private readonly listeners = new Set<() => void>()
   private readonly options: Readonly<AudioServiceOptions>
@@ -98,6 +99,25 @@ export class ProductionGameAudioService implements GameAudioService {
 
   private async lifecycleChanged(phase: LifecyclePhase): Promise<void> {
     const revision = ++this.stateRevision
+    if (phase === 'focus-lost' && this.options.backend.target === 'browser') {
+      this.browserFocusLostSinceActive = this.active
+      if (!this.active) {
+        await this.options.backend.pauseMusic().catch(() => undefined)
+        await this.playRequest?.catch(() => undefined)
+      }
+      return
+    }
+    if (
+      phase === 'active'
+      && this.options.backend.target === 'browser'
+      && this.browserFocusLostSinceActive
+    ) {
+      this.browserFocusLostSinceActive = false
+      return
+    }
+
+    this.browserFocusLostSinceActive = false
+
     this.active = phase === 'active'
     if (!this.active) {
       await this.options.backend.pauseMusic().catch(() => undefined)

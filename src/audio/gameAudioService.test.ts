@@ -92,6 +92,24 @@ describe('ProductionGameAudioService', () => {
     await vi.waitFor(() => expect(audioBackend.playMusic).toHaveBeenCalledTimes(2))
   })
 
+  test('does not pause or replay music on browser focus-lost', async () => {
+    const lifecycle = new TestLifecycle()
+    const audioBackend = backend()
+    const service = new ProductionGameAudioService({ backend: audioBackend, lifecycle })
+
+    await service.semanticAction()
+    expect(audioBackend.playMusic).toHaveBeenCalledTimes(1)
+
+    lifecycle.emit('focus-lost')
+    await Promise.resolve()
+    expect(audioBackend.pauseMusic).toHaveBeenCalledTimes(0)
+    expect(audioBackend.playMusic).toHaveBeenCalledTimes(1)
+
+    lifecycle.emit('active')
+    await Promise.resolve()
+    expect(audioBackend.playMusic).toHaveBeenCalledTimes(1)
+  })
+
   test('reconciles a rapid background/active cycle after an in-flight start', async () => {
     const lifecycle = new TestLifecycle()
     const audioBackend = backend()
