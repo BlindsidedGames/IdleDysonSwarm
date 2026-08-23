@@ -99,7 +99,7 @@ export interface ReleasePlatformServices {
   readonly entitlements: EntitlementAuthority
   readonly store: StoreAdapter
   /** Device-local use state; ownership remains solely with entitlements. */
-  readonly doubleInfinityPointsEffect?: DoubleInfinityPointsEffectPreference
+  readonly doubleInfinityPointsEffect: DoubleInfinityPointsEffectPreference
   readonly diagnostics: DiagnosticsExporter
 }
 

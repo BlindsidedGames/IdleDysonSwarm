@@ -3,9 +3,8 @@ import type {
   EntitlementAuthority,
   HostEntitlementOwnership,
 } from './contracts'
-import {
-  DoubleInfinityPointsEffectPreferenceService,
-  type DoubleInfinityPointsEffectPreference,
+import type {
+  DoubleInfinityPointsEffectPreference,
 } from './doubleInfinityPointsEffect'
 
 const EMPTY_OWNERSHIP: Readonly<HostEntitlementOwnership> = Object.freeze({
@@ -27,8 +26,7 @@ export class RuntimeEntitlementBridge {
 
   constructor(
     authority: EntitlementAuthority,
-    doubleInfinityPointsEffect: DoubleInfinityPointsEffectPreference =
-      new DoubleInfinityPointsEffectPreferenceService({ storage: null }),
+    doubleInfinityPointsEffect: DoubleInfinityPointsEffectPreference,
   ) {
     this.authority = authority
     this.doubleInfinityPointsEffect = doubleInfinityPointsEffect

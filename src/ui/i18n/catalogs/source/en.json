@@ -3919,6 +3919,18 @@
     "defaultMessage": "Last 30 days",
     "description": "Title for the daily-bucket statistics horizon."
   },
+  "store.action.double-ip-disabled-accessible": {
+    "defaultMessage": "Double Infinity Points: Disabled",
+    "description": "Accessible name for the disabled Double Infinity Points effect toggle."
+  },
+  "store.action.double-ip-enabled-accessible": {
+    "defaultMessage": "Double Infinity Points: Enabled",
+    "description": "Accessible name for the enabled Double Infinity Points effect toggle."
+  },
+  "store.action.double-ip-updating-accessible": {
+    "defaultMessage": "Double Infinity Points: Updating",
+    "description": "Accessible name while the Double Infinity Points effect toggle is applying a change."
+  },
   "store.action.effect-disabled": {
     "defaultMessage": "Disabled",
     "description": "Double Infinity Points is owned and currently disabled; activating the toggle enables it."

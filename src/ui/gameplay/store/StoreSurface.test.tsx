@@ -77,10 +77,11 @@ describe('StoreSurface', () => {
     await waitFor(() => expect(store.restorePurchases).toHaveBeenCalledOnce())
     expect(await screen.findByText('One permanent purchase was restored.'))
       .toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Enabled' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    const toggle = screen.getByRole('button', {
+      name: 'Double Infinity Points: Enabled',
+    })
+    expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    expect(toggle).toHaveTextContent('Enabled')
   })
 
   test('replaces the owned Double IP purchase button with its persisted toggle', async () => {
@@ -100,14 +101,18 @@ describe('StoreSurface', () => {
       }),
     }, false, {}, effect, synchronize)
 
-    const toggle = await screen.findByRole('button', { name: 'Enabled' })
+    const toggle = await screen.findByRole('button', {
+      name: 'Double Infinity Points: Enabled',
+    })
     expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    expect(toggle).toHaveTextContent('Enabled')
     await user.click(toggle)
 
     const disabledToggle = await screen.findByRole('button', {
-      name: 'Disabled',
+      name: 'Double Infinity Points: Disabled',
     })
     expect(disabledToggle).toHaveAttribute('aria-pressed', 'false')
+    expect(disabledToggle).toHaveTextContent('Disabled')
     expect(disabledToggle).toBeEnabled()
     expect(effect.getSnapshot()).toBe(false)
     expect(controller.getSnapshot().hostOwnership.doubleInfinityPoints)
@@ -119,7 +124,9 @@ describe('StoreSurface', () => {
 
     await user.click(disabledToggle)
 
-    expect(await screen.findByRole('button', { name: 'Enabled' }))
+    expect(await screen.findByRole('button', {
+      name: 'Double Infinity Points: Enabled',
+    }))
       .toHaveAttribute('aria-pressed', 'true')
     expect(effect.getSnapshot()).toBe(true)
     expect(synchronize).toHaveBeenCalledTimes(2)

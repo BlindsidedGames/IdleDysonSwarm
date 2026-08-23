@@ -7937,6 +7937,24 @@
       "value": "Last 30 days"
     }
   ],
+  "store.action.double-ip-disabled-accessible": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points: Disabled"
+    }
+  ],
+  "store.action.double-ip-enabled-accessible": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points: Enabled"
+    }
+  ],
+  "store.action.double-ip-updating-accessible": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points: Updating"
+    }
+  ],
   "store.action.effect-disabled": [
     {
       "type": 0,

@@ -251,6 +251,15 @@ function StoreProductCard({
         }`}
         disabled={actionDisabled}
         aria-pressed={isDoubleIpToggle ? doubleIpEnabled : undefined}
+        aria-label={isDoubleIpToggle
+          ? intl.formatMessage(
+              snapshot.operation.kind === 'updating-double-infinity-points'
+                ? messages.doubleIpUpdatingAccessible
+                : doubleIpEnabled
+                  ? messages.doubleIpEnabledAccessible
+                  : messages.doubleIpDisabledAccessible,
+            )
+          : undefined}
         onClick={() => void (
           isDoubleIpToggle
             ? controller.toggleDoubleInfinityPoints()

@@ -24,7 +24,11 @@ describe('StorefrontController', () => {
         supporterCatGallery: true,
       },
     })
-    const controller = new StorefrontController({ store, entitlements })
+    const controller = new StorefrontController({
+      store,
+      entitlements,
+      doubleInfinityPointsEffect: effectPreference(),
+    })
 
     await controller.initialize()
     await controller.purchase(STORE_PRODUCT_IDS.tipTier1)
@@ -51,7 +55,11 @@ describe('StorefrontController', () => {
         developerOptions: false,
       },
     })
-    const controller = new StorefrontController({ store, entitlements })
+    const controller = new StorefrontController({
+      store,
+      entitlements,
+      doubleInfinityPointsEffect: effectPreference(),
+    })
 
     await controller.initialize()
     await controller.purchase(STORE_PRODUCT_IDS.doubleInfinityPoints)
@@ -140,6 +148,7 @@ describe('StorefrontController', () => {
           developerOptions: false,
         },
       }),
+      doubleInfinityPointsEffect: effectPreference(),
       onVerifiedOwnershipChanged: synchronized,
     })
     await controller.initialize()
@@ -156,6 +165,7 @@ describe('StorefrontController', () => {
     const controller = new StorefrontController({
       store: fakeStore(),
       entitlements: fakeAuthority(),
+      doubleInfinityPointsEffect: effectPreference(),
     })
     await controller.initialize()
 
@@ -172,6 +182,7 @@ describe('StorefrontController', () => {
     const controller = new StorefrontController({
       store: fakeStore(),
       entitlements: fakeAuthority(),
+      doubleInfinityPointsEffect: effectPreference(),
     })
     await controller.initialize()
 
@@ -196,6 +207,7 @@ describe('StorefrontController', () => {
           supporterCatGallery: true,
         },
       }),
+      doubleInfinityPointsEffect: effectPreference(),
       onVerifiedOwnershipChanged: synchronized,
     })
     await controller.initialize()
@@ -224,6 +236,7 @@ describe('StorefrontController', () => {
           developerOptions: true,
         },
       }),
+      doubleInfinityPointsEffect: effectPreference(),
     })
     await controller.initialize()
 
@@ -243,6 +256,7 @@ describe('StorefrontController', () => {
     const controller = new StorefrontController({
       store: fakeStore(),
       entitlements: fakeAuthority(),
+      doubleInfinityPointsEffect: effectPreference(),
     })
     await controller.initialize()
 
@@ -474,6 +488,34 @@ describe('CachedVerifiedEntitlementAuthority', () => {
 })
 
 describe('RuntimeEntitlementBridge', () => {
+  test('shares the host-provided effect preference with Store orchestration', async () => {
+    const effect = effectPreference()
+    const authority = fakeAuthority({
+      initial: {
+        doubleInfinityPoints: true,
+        developerOptions: false,
+      },
+    })
+    const bridge = new RuntimeEntitlementBridge(authority, effect)
+    const controller = new StorefrontController({
+      store: fakeStore(),
+      entitlements: authority,
+      doubleInfinityPointsEffect: effect,
+      onVerifiedOwnershipChanged: async () => {
+        await bridge.synchronize()
+        return true
+      },
+    })
+
+    await Promise.all([bridge.initialize(), controller.initialize()])
+    expect(bridge.currentDysonEntitlements().permanentDoubleIp).toBe(true)
+
+    await controller.toggleDoubleInfinityPoints()
+
+    expect(controller.getSnapshot().doubleInfinityPointsEnabled).toBe(false)
+    expect(bridge.currentDysonEntitlements().permanentDoubleIp).toBe(false)
+  })
+
   test('projects only authority-owned values into canonical gameplay', async () => {
     const authority = fakeAuthority({
       initial: {
@@ -485,7 +527,7 @@ describe('RuntimeEntitlementBridge', () => {
         developerOptions: true,
       },
     })
-    const bridge = new RuntimeEntitlementBridge(authority)
+    const bridge = new RuntimeEntitlementBridge(authority, effectPreference())
 
     await bridge.initialize()
     expect(bridge.currentDysonEntitlements()).toEqual({
@@ -537,6 +579,10 @@ function fakeStore(options: {
       restoredProductIds: options.restored ?? [],
     })),
   }
+}
+
+function effectPreference(): DoubleInfinityPointsEffectPreferenceService {
+  return new DoubleInfinityPointsEffectPreferenceService({ storage: null })
 }
 
 function listing(productId: StoreProductId, localizedPrice: string) {

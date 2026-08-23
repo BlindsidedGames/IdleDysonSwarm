@@ -11,9 +11,8 @@ import {
   type StoreProductId,
   type StoreProductListing,
 } from './contracts'
-import {
-  DoubleInfinityPointsEffectPreferenceService,
-  type DoubleInfinityPointsEffectPreference,
+import type {
+  DoubleInfinityPointsEffectPreference,
 } from './doubleInfinityPointsEffect'
 
 export type StorefrontOperation =
@@ -52,7 +51,7 @@ export interface StorefrontSnapshot {
 export interface StorefrontControllerOptions {
   readonly store: StoreAdapter
   readonly entitlements: EntitlementAuthority
-  readonly doubleInfinityPointsEffect?: DoubleInfinityPointsEffectPreference
+  readonly doubleInfinityPointsEffect: DoubleInfinityPointsEffectPreference
   /** Reprojects verified host ownership into canonical runtime state. */
   readonly onVerifiedOwnershipChanged?: () => Promise<boolean>
 }
@@ -87,9 +86,7 @@ export class StorefrontController {
 
   constructor(options: StorefrontControllerOptions) {
     this.options = options
-    this.doubleInfinityPointsEffect =
-      options.doubleInfinityPointsEffect ??
-      new DoubleInfinityPointsEffectPreferenceService({ storage: null })
+    this.doubleInfinityPointsEffect = options.doubleInfinityPointsEffect
     this.snapshotValue = Object.freeze({
       ...INITIAL_SNAPSHOT,
       doubleInfinityPointsEnabled:

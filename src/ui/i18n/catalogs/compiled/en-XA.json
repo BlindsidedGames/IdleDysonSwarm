@@ -15777,6 +15777,48 @@
       "value": "]"
     }
   ],
+  "store.action.double-ip-disabled-accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş: Ḓīşȧȧƀŀḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.double-ip-enabled-accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş: Ḗƞȧȧƀŀḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.double-ip-updating-accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş: Ŭƥḓȧȧŧīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "store.action.effect-disabled": [
     {
       "type": 0,

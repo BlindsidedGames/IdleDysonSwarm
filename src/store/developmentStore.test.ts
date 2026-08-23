@@ -4,6 +4,7 @@ import {
   STORE_PRODUCT_IDS,
 } from './contracts'
 import { DevelopmentStoreCommerce } from './developmentStore'
+import { DoubleInfinityPointsEffectPreferenceService } from './doubleInfinityPointsEffect'
 import { StorefrontController } from './storefront'
 
 afterEach(() => vi.unstubAllGlobals())
@@ -117,6 +118,8 @@ describe('development Store commerce', () => {
     const controller = new StorefrontController({
       store: commerce,
       entitlements: commerce,
+      doubleInfinityPointsEffect:
+        new DoubleInfinityPointsEffectPreferenceService({ storage: null }),
     })
 
     await controller.initialize()

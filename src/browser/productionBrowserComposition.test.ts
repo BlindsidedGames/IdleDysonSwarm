@@ -30,6 +30,8 @@ describe('production browser composition', () => {
       entitlementDocument: entitlementDocument('false'),
       releasePlatformServices: {
         hostKind: 'mobile-native',
+        doubleInfinityPointsEffect:
+          new DoubleInfinityPointsEffectPreferenceService({ storage: null }),
         entitlements: {
           readOwnership: async () => ({
             doubleInfinityPoints: true,
@@ -110,6 +112,8 @@ describe('production browser composition', () => {
       entitlementDocument: entitlementDocument('false'),
       releasePlatformServices: {
         hostKind: 'web',
+        doubleInfinityPointsEffect:
+          new DoubleInfinityPointsEffectPreferenceService({ storage: null }),
         entitlements: {
           readOwnership: async () => ({
             doubleInfinityPoints: false,
