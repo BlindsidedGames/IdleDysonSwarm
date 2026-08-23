@@ -3,12 +3,19 @@ import {
   BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM,
   BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM,
   breakInfinityTargetFromPresentationPosition,
+  infinityPointsPerMinute,
   ordinaryInfinityBotThreshold,
   projectBreakInfinityPresentationControl,
   projectInfinityProgress,
 } from './infinityCycle'
 
 describe('Infinity progress projection', () => {
+  test('projects finite run efficiency with a deterministic zero-time value', () => {
+    expect(infinityPointsPerMinute(72n, 120)).toBe(36)
+    expect(infinityPointsPerMinute(72n, 0)).toBe(0)
+    expect(infinityPointsPerMinute(0n, 60)).toBe(0)
+  })
+
   test('projects ordinary logarithmic progress without a navigation reward', () => {
     const resetThreshold = ordinaryInfinityBotThreshold(0n)
     const facts = projectInfinityProgress({

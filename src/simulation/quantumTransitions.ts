@@ -183,6 +183,8 @@ export function applyCanonicalQuantumReset(
         spentPoints: 0n,
         lastCycleDurationSeconds: 0,
         lastPointsGained: 0,
+        currentCyclePeakIpPerMinute: 0,
+        currentCyclePeakReward: 0n,
         storedTimeUsedThisCycleSeconds: 0,
         storedTimeUsedPreviousCycleSeconds: 0,
         secretsOfTheUniverse: permanentSecrets,

@@ -139,6 +139,8 @@ describe('canonical Infinity reset', () => {
     expect(result.state.infinity.storedTimeUsedPreviousCycleSeconds)
       .toBe(12.5)
     expect(result.state.infinity.storedTimeUsedThisCycleSeconds).toBe(0)
+    expect(result.state.infinity.currentCyclePeakIpPerMinute).toBe(0)
+    expect(result.state.infinity.currentCyclePeakReward).toBe(0n)
     expect(result.state.infinity.inProgress).toBe(false)
     expect(result.state.infinity.botCapTransitionPending).toBe(false)
     expect(result.state.infinity.botCapRewardsGranted).toBe(false)

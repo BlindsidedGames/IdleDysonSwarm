@@ -238,6 +238,26 @@ export function infinityPointsForBots(
   return base > 0n ? addDiscrete(0n, base * multiplier) : 0n
 }
 
+/**
+ * Projects the current run's reward efficiency without changing rewards or
+ * automation. The opening instant intentionally reports zero rather than an
+ * infinite or unstable rate.
+ */
+export function infinityPointsPerMinute(
+  projectedReward: bigint,
+  elapsedSeconds: number,
+): number {
+  if (
+    projectedReward <= 0n ||
+    !Number.isFinite(elapsedSeconds) ||
+    elapsedSeconds <= 0
+  ) {
+    return 0
+  }
+  const rate = Number(projectedReward) * 60 / elapsedSeconds
+  return Number.isFinite(rate) && rate > 0 ? rate : Number.MAX_VALUE
+}
+
 export function validateBasicDysonInfinityState(
   infinity: BasicDysonInfinityState,
 ): string | undefined {

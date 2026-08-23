@@ -75,6 +75,10 @@ export interface InfinityState {
   readonly spentPoints: bigint
   readonly automaticResetEnabled: boolean
   readonly breakTarget: bigint
+  /** Best projected IP/min observed during the current Infinity cycle. */
+  readonly currentCyclePeakIpPerMinute?: number
+  /** Projected reward associated with the current-cycle IP/min peak. */
+  readonly currentCyclePeakReward?: bigint
   readonly inProgress: boolean
   readonly botCapTransitionPending: boolean
   readonly botCapRewardsGranted: boolean

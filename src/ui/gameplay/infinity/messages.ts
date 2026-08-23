@@ -48,8 +48,8 @@ export const infinityMessages = defineMessages({
   },
   botsUntilNextPoint: {
     id: 'infinity.progress.bots-until-next',
-    defaultMessage: '{value} Bots till next Infinity Point',
-    description: 'Canonical remaining bot count for the next Infinity Point.',
+    defaultMessage: 'Bots until next Infinity Point: {value}',
+    description: 'Accessible label for the remaining bot count beside the Infinity Point icon.',
   },
   realityWarning: {
     id: 'infinity.progress.reality-warning',
@@ -86,6 +86,21 @@ export const infinityMessages = defineMessages({
     defaultMessage: 'Infinity',
     description: 'Button that performs a ready manual Infinity reset.',
   },
+  manualResetForReward: {
+    id: 'infinity.manual-reset.for-reward',
+    defaultMessage: 'Infinity for {value} IP',
+    description: 'Manual Break Infinity button including the currently available reward.',
+  },
+  currentRate: {
+    id: 'infinity.rate.current',
+    defaultMessage: 'Current: {value} IP/min',
+    description: 'Current projected Infinity Point reward rate for this run.',
+  },
+  peakRate: {
+    id: 'infinity.rate.peak',
+    defaultMessage: 'Peak: {rate} IP/min at {reward} IP',
+    description: 'Best projected Infinity Point reward rate observed during this run.',
+  },
   manualResetFailed: {
     id: 'infinity.manual-reset.failed',
     defaultMessage: 'Infinity is not ready yet.',
@@ -100,6 +115,16 @@ export const infinityMessages = defineMessages({
     id: 'infinity.break-target.value',
     defaultMessage: 'Target: {value} IP',
     description: 'Currently selected Break Infinity target.',
+  },
+  setBreakTarget: {
+    id: 'infinity.break-target.set',
+    defaultMessage: 'Set target',
+    description: 'Applies an exact automatic Break Infinity target.',
+  },
+  breakTargetInvalid: {
+    id: 'infinity.break-target.invalid',
+    defaultMessage: 'Enter a whole number from 1 to 2.14B IP.',
+    description: 'Validation feedback for an invalid exact Break Infinity target.',
   },
   breakTargetFailed: {
     id: 'infinity.break-target.failed',

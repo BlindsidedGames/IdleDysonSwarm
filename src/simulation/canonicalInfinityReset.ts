@@ -197,6 +197,8 @@ export function applyCanonicalInfinityReset(
             ? INT32_MAXIMUM
             : rewardGranted,
         ),
+        currentCyclePeakIpPerMinute: 0,
+        currentCyclePeakReward: 0n,
         storedTimeUsedThisCycleSeconds: 0,
         storedTimeUsedPreviousCycleSeconds: clampContinuous(
           state.infinity.storedTimeUsedThisCycleSeconds,

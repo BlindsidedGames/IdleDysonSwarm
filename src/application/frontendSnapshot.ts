@@ -80,6 +80,7 @@ import {
   multiplyContinuous,
 } from '../simulation/numeric'
 import {
+  infinityPointsPerMinute,
   projectBreakInfinityPresentationControl,
   projectInfinityProgress,
   type BreakInfinityPresentationControl,
@@ -852,7 +853,11 @@ export interface FrontendGameplayDerivedFacts {
     readonly workersFraction: number
     readonly scientistsFraction: number
   }
-  readonly infinity: InfinityProgressFacts
+  readonly infinity: InfinityProgressFacts & {
+    readonly currentIpPerMinute: number
+    readonly peakIpPerMinute: number
+    readonly peakReward: bigint
+  }
   readonly dream: FrontendDreamDerivedFacts
   readonly simulations: FrontendSimulationsDerivedFacts
   readonly reality: FrontendRealityDerivedFacts
@@ -1519,6 +1524,15 @@ function selectDerivedFacts(
   const simulations = dream === null
     ? previous!.simulations
     : selectFrontendSimulationsDerivedFacts(state, dream)
+  const infinityProgress = projectInfinityProgress({
+    bots: state.dyson.bots,
+    totalInfinityPoints: state.infinity.points,
+    divisionsPurchased: state.quantum.divisionsPurchased,
+    breakTheLoop: state.quantum.unlocks.breakTheLoop,
+    breakTarget: state.infinity.breakTarget,
+    permanentDoubleIp: context.entitlements.permanentDoubleIp,
+    quantumDoubleIp: state.quantum.unlocks.doubleInfinityPoints,
+  })
 
   return {
     dyson: dyson.ok
@@ -1543,16 +1557,16 @@ function selectDerivedFacts(
             workersFraction: 1 - state.dyson.botDistribution,
             scientistsFraction: state.dyson.botDistribution,
           },
-    infinity: projectInfinityProgress({
-      bots: state.dyson.bots,
-      totalInfinityPoints: state.infinity.points,
-      divisionsPurchased: state.quantum.divisionsPurchased,
-      breakTheLoop: state.quantum.unlocks.breakTheLoop,
-      breakTarget: state.infinity.breakTarget,
-      permanentDoubleIp: context.entitlements.permanentDoubleIp,
-      quantumDoubleIp:
-        state.quantum.unlocks.doubleInfinityPoints,
-    }),
+    infinity: {
+      ...infinityProgress,
+      currentIpPerMinute: infinityPointsPerMinute(
+        infinityProgress.currentReward,
+        state.timeline.infinityCycleSeconds,
+      ),
+      peakIpPerMinute:
+        state.infinity.currentCyclePeakIpPerMinute ?? 0,
+      peakReward: state.infinity.currentCyclePeakReward ?? 0n,
+    },
     dream:
       dream === null || doubleTimeTick === null
         ? previous!.dream

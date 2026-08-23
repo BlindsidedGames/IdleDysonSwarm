@@ -8,6 +8,7 @@ import {
   type CanonicalEventTimeContext,
 } from '../simulation/canonicalEventTimeModel'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../simulation/dreamEducationUpgrades'
+import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
 import { REALITY_UPGRADE_DEFINITIONS } from '../simulation/realityUpgrades'
 import {
   createCanonicalGameEngineDefinition,
@@ -170,6 +171,49 @@ describe('canonical game application engine', () => {
       points: beforePoints + 1_001n,
     })
     expect(state.gameState.dyson.bots).toBeLessThan(Number.MAX_VALUE)
+  })
+
+  test('allows manual Break Infinity below the configured automatic target', () => {
+    const state = runtime()
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        dyson: {
+          ...state.gameState.dyson,
+          bots: ordinaryInfinityBotThreshold(0n) * 1.01,
+        },
+        infinity: {
+          ...state.gameState.infinity,
+          automaticResetEnabled: false,
+          breakTarget: 42n,
+        },
+        quantum: {
+          ...state.gameState.quantum,
+          divisionsPurchased: 0n,
+          unlocks: {
+            ...state.gameState.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+        timeline: {
+          ...state.gameState.timeline,
+          infinityCycleSeconds: 1,
+        },
+      },
+    })
+    const beforePoints = state.gameState.infinity.points
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: {
+        ...context(),
+        infinityResetAssetLookup: getGameAsset,
+      },
+    })
+
+    expect(definition.applyCommand(state, {
+      kind: 'infinity.request-reset',
+    })).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.infinity.points).toBe(beforePoints + 1n)
+    expect(state.gameState.infinity.automaticResetEnabled).toBe(false)
   })
 
   test('rejects manual Infinity until the finite bot-cap checkpoint is durable', () => {

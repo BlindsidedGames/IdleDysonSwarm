@@ -1415,6 +1415,7 @@ function applyPlayerCommand(
               carrier,
               minimumCycleSeconds,
               true,
+              true,
             ).status !== 'ready'
           ) {
             return {
@@ -1424,21 +1425,13 @@ function applyPlayerCommand(
           }
 
           const model = CanonicalEventTimeModel.fromOwnedState(
-            {
-              ...carrier,
-              gameState: {
-                ...resetState,
-                infinity: {
-                  ...resetState.infinity,
-                  automaticResetEnabled: true,
-                },
-              },
-            },
+            carrier,
             context,
           )
           model.applyInfinityReset(
             minimumCycleSeconds,
             createSimulationSummary(),
+            true,
           )
           const issue = model.issue
           if (issue !== undefined) {

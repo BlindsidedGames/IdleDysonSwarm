@@ -255,8 +255,15 @@ export function hydrateGameState(
         source.infinityAutomaticReset,
         true,
       ),
-      breakTarget: toNonNegativeBigInt(
-        source.infinityPointsToBreakFor,
+      breakTarget: maximumBigInt(
+        1n,
+        toNonNegativeBigInt(source.infinityPointsToBreakFor),
+      ),
+      currentCyclePeakIpPerMinute: toFiniteNonNegativeNumber(
+        source.simulationInfinityPeakIpPerMinute,
+      ),
+      currentCyclePeakReward: toNonNegativeBigInt(
+        source.simulationInfinityPeakReward,
       ),
       inProgress: toBoolean(source.infinityInProgress),
       botCapTransitionPending: toBoolean(source.botCapTransitionPending),
@@ -678,6 +685,10 @@ export function dehydrateGameState(
   source.infinityPointsToBreakFor = Number(
     minimumBigInt(2_147_483_647n, state.infinity.breakTarget),
   )
+  source.simulationInfinityPeakIpPerMinute =
+    state.infinity.currentCyclePeakIpPerMinute ?? 0
+  source.simulationInfinityPeakReward =
+    state.infinity.currentCyclePeakReward ?? 0n
   source.infinityInProgress = state.infinity.inProgress
   source.botCapTransitionPending =
     state.infinity.botCapTransitionPending
@@ -1244,6 +1255,10 @@ function clampUnit(value: number): number {
 
 function minimumBigInt(left: bigint, right: bigint): bigint {
   return left < right ? left : right
+}
+
+function maximumBigInt(left: bigint, right: bigint): bigint {
+  return left > right ? left : right
 }
 
 function nonBlankStringOrNull(value: unknown): string | null {

@@ -2329,6 +2329,18 @@
       "value": "The Infinity target was not changed."
     }
   ],
+  "infinity.break-target.invalid": [
+    {
+      "type": 0,
+      "value": "Enter a whole number from 1 to 2.14B IP."
+    }
+  ],
+  "infinity.break-target.set": [
+    {
+      "type": 0,
+      "value": "Set target"
+    }
+  ],
   "infinity.break-target.value": [
     {
       "type": 0,
@@ -2355,6 +2367,20 @@
       "value": "Infinity is not ready yet."
     }
   ],
+  "infinity.manual-reset.for-reward": [
+    {
+      "type": 0,
+      "value": "Infinity for "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP"
+    }
+  ],
   "infinity.points.label": [
     {
       "type": 0,
@@ -2377,12 +2403,12 @@
   ],
   "infinity.progress.bots-until-next": [
     {
-      "type": 1,
-      "value": "value"
+      "type": 0,
+      "value": "Bots until next Infinity Point: "
     },
     {
-      "type": 0,
-      "value": " Bots till next Infinity Point"
+      "type": 1,
+      "value": "value"
     }
   ],
   "infinity.progress.break-accessible": [
@@ -2419,6 +2445,42 @@
     {
       "type": 0,
       "value": "Warning Reality Break imminent!"
+    }
+  ],
+  "infinity.rate.current": [
+    {
+      "type": 0,
+      "value": "Current: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP/min"
+    }
+  ],
+  "infinity.rate.peak": [
+    {
+      "type": 0,
+      "value": "Peak: "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " IP/min at "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IP"
     }
   ],
   "infinity.region": [

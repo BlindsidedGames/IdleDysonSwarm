@@ -1428,6 +1428,14 @@ describe('canonical whole-game event-time model', () => {
       expect(result.summary.ordinaryInfinityCount).toBe(0n)
       expect(result.summary.breakInfinityCount).toBe(0n)
       expect(result.candidateState.state.gameState.infinity.points).toBe(0n)
+      expect(
+        result.candidateState.state.gameState.infinity
+          .currentCyclePeakIpPerMinute,
+      ).toBeGreaterThan(0)
+      expect(
+        result.candidateState.state.gameState.infinity
+          .currentCyclePeakReward,
+      ).toBeGreaterThanOrEqual(1n)
       expect(result.candidateState.state.gameState.dyson.bots).toBeGreaterThanOrEqual(
         4.2e19,
       )

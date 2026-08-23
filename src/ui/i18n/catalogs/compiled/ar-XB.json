@@ -4281,6 +4281,34 @@
       "value": "‬"
     }
   ],
+  "infinity.break-target.invalid": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝuʇǝɹ ɐ ʍɥoʅǝ unɯqǝɹ ɟɹoɯ 1 ʇo 2.14Ԑ IԀ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.break-target.set": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝʇ ʇɐɹƃǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "infinity.break-target.value": [
     {
       "type": 0,
@@ -4331,6 +4359,28 @@
       "value": "‬"
     }
   ],
+  "infinity.manual-reset.for-reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ ɟoɹ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "infinity.points.label": [
     {
       "type": 0,
@@ -4373,12 +4423,12 @@
       "value": "‮"
     },
     {
-      "type": 1,
-      "value": "value"
+      "type": 0,
+      "value": "Ԑoʇs nuʇıʅ uǝxʇ Iuɟıuıʇʎ Ԁoıuʇ: "
     },
     {
-      "type": 0,
-      "value": " Ԑoʇs ʇıʅʅ uǝxʇ Iuɟıuıʇʎ Ԁoıuʇ"
+      "type": 1,
+      "value": "value"
     },
     {
       "type": 0,
@@ -4447,6 +4497,58 @@
     {
       "type": 0,
       "value": "Mɐɹuıuƃ ᴚǝɐʅıʇʎ Ԑɹǝɐʞ ıɯɯıuǝuʇ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.rate.current": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ/ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.rate.peak": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɐʞ: "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " IԀ/ɯıu ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
     },
     {
       "type": 0,

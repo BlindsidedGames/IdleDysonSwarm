@@ -555,6 +555,16 @@ const developmentExtensions = Object.freeze([
     'infinity',
     '$.infinity.automaticResetEnabled',
   ),
+  owned(
+    '$.simulationInfinityPeakIpPerMinute',
+    'infinity',
+    '$.infinity.currentCyclePeakIpPerMinute',
+  ),
+  owned(
+    '$.simulationInfinityPeakReward',
+    'infinity',
+    '$.infinity.currentCyclePeakReward',
+  ),
 ])
 const unresolvedLeafCount = entries.filter(
   (entry) => entry.classification === 'still-unowned',
