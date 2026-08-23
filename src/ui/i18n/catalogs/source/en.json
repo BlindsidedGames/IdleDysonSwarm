@@ -4619,6 +4619,10 @@
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",
     "description": "Version 3.1 release note for game audio."
   },
+  "wiki.patch-notes.version-3-1.dyson-visualization": {
+    "defaultMessage": "Improved Dyson visualization performance during extremely fast automatic Infinity runs by settling on the final galaxy field, while restoring the growing galaxy’s dense spiral, bright core, and balanced mobile placement.",
+    "description": "Version 3.1 release note for rapid Infinity visualization performance and restored galaxy presentation."
+  },
   "wiki.patch-notes.version-3-1.economy": {
     "defaultMessage": "Fixed purchases at the largest supported resource values and prevented extreme Assembly Megalines prices from becoming stuck at a reusable plateau.",
     "description": "Version 3.1 release note for very-late-game purchasing and pricing."

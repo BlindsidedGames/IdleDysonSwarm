@@ -9590,6 +9590,12 @@
       "value": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows."
     }
   ],
+  "wiki.patch-notes.version-3-1.dyson-visualization": [
+    {
+      "type": 0,
+      "value": "Improved Dyson visualization performance during extremely fast automatic Infinity runs by settling on the final galaxy field, while restoring the growing galaxy’s dense spiral, bright core, and balanced mobile placement."
+    }
+  ],
   "wiki.patch-notes.version-3-1.economy": [
     {
       "type": 0,

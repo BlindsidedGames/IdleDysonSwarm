@@ -182,11 +182,12 @@ describe('WikiSurface', () => {
       .closest('section')
     expect(mostRecent).not.toBeNull()
     expect(within(mostRecent!).getByRole('heading', { name: 'Version 3.1' })).toBeVisible()
-    expect(within(mostRecent!).getAllByRole('listitem')).toHaveLength(13)
+    expect(within(mostRecent!).getAllByRole('listitem')).toHaveLength(14)
     expect(within(mostRecent!).getByText(/soundtrack and interface sounds/)).toBeVisible()
     expect(within(mostRecent!).getByText(/Corrected Skill effects/)).toBeVisible()
     expect(within(mostRecent!).getByText(/Supporter Cat Gallery/)).toBeVisible()
     expect(within(mostRecent!).getByText(/ten most recent Infinity runs/)).toBeVisible()
+    expect(within(mostRecent!).getByText(/settling on the final galaxy field/)).toBeVisible()
     expect(within(mostRecent!).getByText(/older Unity-save migration/)).toBeVisible()
     expect(mostRecent).not.toHaveTextContent(
       /TypeScript|canonical simulation|architecture|context|projection|pipeline|catalog|\bported\b/i,

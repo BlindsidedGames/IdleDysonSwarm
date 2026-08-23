@@ -144,6 +144,7 @@ const version31PatchNoteMessages = [
   messages.patchNotesVersion31Store,
   messages.patchNotesVersion31ProgressPanels,
   messages.patchNotesVersion31Infinity,
+  messages.patchNotesVersion31DysonVisualization,
   messages.patchNotesVersion31Statistics,
   messages.patchNotesVersion31StoredTime,
   messages.patchNotesVersion31Saves,
