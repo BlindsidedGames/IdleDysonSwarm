@@ -23,7 +23,7 @@ import {
   DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
   type BottomNavigationDestinationId,
 } from '../../../game-state/navigationPreferences'
-import { useBottomNavigationSize } from '../../bottom-navigation-size'
+import { useBottomNavigationText } from '../../bottom-navigation-text'
 import '../facilities/facilities.css'
 import {
   DysonGameplayShell,
@@ -515,7 +515,7 @@ export function ReadyDysonSlice({
   storedTime,
   audio,
 }: ReadyDysonSliceProps) {
-  const bottomNavigationSizePreference = useBottomNavigationSize()
+  const bottomNavigationTextPreference = useBottomNavigationText()
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
     useState(readVisualizationPreference)
@@ -681,7 +681,8 @@ export function ReadyDysonSlice({
   const navigationVisibility =
     gameplay.progression.meta?.navigationVisibility ??
     DEFAULT_BOTTOM_NAVIGATION_VISIBILITY
-  const bottomNavigationSize = bottomNavigationSizePreference.size
+  const bottomNavigationIncludeText =
+    bottomNavigationTextPreference.includeText
   const bottomVisible = (id: BottomNavigationDestinationId) =>
     navigationVisibility[id] ?? DEFAULT_BOTTOM_NAVIGATION_VISIBILITY[id]
   const availableNavigationItems: BottomNavigationDestinationId[] = [
@@ -710,9 +711,6 @@ export function ReadyDysonSlice({
       storedTimeCapacitySeconds,
     ),
   )
-  const storedTimeStorageFraction = storedTimeCapacitySeconds > 0
-    ? storedTimeAvailableSeconds / storedTimeCapacitySeconds
-    : 0
   const routeHeading = debugActive
     ? messages.debugRoute
     : avocatoActive
@@ -769,7 +767,7 @@ export function ReadyDysonSlice({
         ariaLabel: intl.formatMessage(messages.primaryNavigation),
         drawerAriaLabel: intl.formatMessage(messages.sideNavigation),
         bottomAriaLabel: intl.formatMessage(messages.bottomNavigation),
-        bottomSize: bottomNavigationSize,
+        includeBottomText: bottomNavigationIncludeText,
         items: [
           {
             id: 'bots',
@@ -937,21 +935,18 @@ export function ReadyDysonSlice({
           {
             id: 'offline-time',
             label: intl.formatMessage(messages.offlineTimeRoute),
+            ariaLabel: intl.formatMessage(messages.offlineTimeProgress, {
+              stored: formatGameDuration(
+                locale,
+                storedTimeAvailableSeconds,
+              ),
+              capacity: formatGameDuration(
+                locale,
+                storedTimeCapacitySeconds,
+              ),
+            }),
             iconSrc: navigationAssets.offlineTime,
             bottom: bottomVisible('offline-time'),
-            progress: {
-              fraction: storedTimeStorageFraction,
-              label: intl.formatMessage(messages.offlineTimeProgress, {
-                stored: formatGameDuration(
-                  locale,
-                  storedTimeAvailableSeconds,
-                ),
-                capacity: formatGameDuration(
-                  locale,
-                  storedTimeCapacitySeconds,
-                ),
-              }),
-            },
             ...(offlineTimeActive
               ? { current: true as const }
               : {
@@ -1040,7 +1035,9 @@ export function ReadyDysonSlice({
                   }}
                   navigationVisibility={navigationVisibility}
                   availableNavigationItems={availableNavigationItems}
-                  bottomNavigationSize={bottomNavigationSize}
+                  bottomNavigationIncludeText={
+                    bottomNavigationIncludeText
+                  }
                   onNavigationVisibilityChange={(item, visible) => {
                     void dispatchPlayer({
                       kind: 'settings.set-navigation-item-visible',
@@ -1048,8 +1045,8 @@ export function ReadyDysonSlice({
                       visible,
                     })
                   }}
-                  onBottomNavigationSizeChange={(size) => {
-                    bottomNavigationSizePreference.setSize(size)
+                  onBottomNavigationIncludeTextChange={(includeText) => {
+                    bottomNavigationTextPreference.setIncludeText(includeText)
                   }}
                   />
                 </Suspense>

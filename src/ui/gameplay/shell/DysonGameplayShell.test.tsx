@@ -15,6 +15,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { targetSizes } from '../../tokens/tokens'
 import type { DysonGameplayShellProps } from './contracts'
+import { deriveBottomNavigationLayout } from './bottomNavigationLayout'
 import { DysonGameplayShell } from './DysonGameplayShell'
 import { DysonNavigation } from './DysonNavigation'
 
@@ -94,9 +95,9 @@ describe('DysonGameplayShell', () => {
     const { container } = render(<DysonGameplayShell {...props()} />)
 
     expect(container.querySelector('.dyson-shell'))
-      .toHaveAttribute('data-bottom-navigation-size', 'compact')
+      .not.toHaveAttribute('data-bottom-navigation-text')
     expect(container.querySelector('.dyson-shell__bottom-navigation'))
-      .toHaveAttribute('data-size', 'compact')
+      .not.toHaveAttribute('data-include-text')
 
     const navigations = screen.getAllByRole('navigation', {
       name: 'Primary',
@@ -128,6 +129,29 @@ describe('DysonGameplayShell', () => {
     ).toBeDisabled()
   })
 
+  it('keeps More when no destination is selected for the bottom bar', () => {
+    const base = props()
+    const { container } = render(
+      <DysonGameplayShell
+        {...base}
+        navigation={{
+          ...base.navigation,
+          includeBottomText: true,
+          items: base.navigation.items.map((item) => ({
+            ...item,
+            bottom: false,
+          })),
+        }}
+      />,
+    )
+
+    const bottom = container.querySelector('.dyson-shell__bottom-navigation')
+    expect(bottom).toHaveAttribute('data-include-text', 'true')
+    expect(within(bottom as HTMLElement).getByRole('button', { name: 'More' }))
+      .toBeInTheDocument()
+    expect(bottom?.querySelectorAll('.dyson-navigation__item')).toHaveLength(0)
+  })
+
   it('uses deterministic one-row overflow while retaining the selected route', () => {
     render(
       <DysonNavigation
@@ -148,6 +172,27 @@ describe('DysonGameplayShell', () => {
     expect(within(navigation).queryByText('Skills')).not.toBeInTheDocument()
     expect(within(navigation).getByText('Settings').closest('[aria-current="page"]'))
       .toBeInTheDocument()
+  })
+
+  it('derives icon scale from width and selected count within safe ceilings', () => {
+    const few = deriveBottomNavigationLayout(390, 3, false)
+    const many = deriveBottomNavigationLayout(390, 10, false)
+    const labelled = deriveBottomNavigationLayout(390, 3, true)
+
+    expect(few.iconSize).toBe(36)
+    expect(many.iconSize).toBeLessThan(few.iconSize)
+    expect(many.labelSize).toBeLessThan(few.labelSize)
+    expect(many.maxItems).toBe(10)
+    expect(few.slotWidth).toBeLessThanOrEqual(76)
+    expect(labelled.barHeight).toBeLessThanOrEqual(76)
+    expect(labelled.barHeight).toBeGreaterThan(few.barHeight)
+    expect(deriveBottomNavigationLayout(390, 0, false).maxItems).toBe(0)
+    expect(deriveBottomNavigationLayout(120, 10, true).iconSize)
+      .toBeLessThan(1)
+    expect(deriveBottomNavigationLayout(390, 10, true, 2).labelSize)
+      .toBe(many.labelSize / 2)
+    expect(deriveBottomNavigationLayout(320, 10, true).barHeight)
+      .toBe(55)
   })
 
   it('contains compact-menu focus and restores the opener on close', async () => {

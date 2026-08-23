@@ -3,13 +3,14 @@ import {
   useId,
   useRef,
   useState,
+  type CSSProperties,
 } from 'react'
-import { DEFAULT_BOTTOM_NAVIGATION_SIZE } from '../../../game-state/navigationPreferences'
 import { useMediaQuery } from '../../accessibility/useMediaQuery'
 import type {
   DysonGameplayShellProps,
   DysonShellRegion,
 } from './contracts'
+import { deriveBottomNavigationLayout } from './bottomNavigationLayout'
 import { DysonNavigation } from './DysonNavigation'
 import { DysonResourceHeader } from './DysonResourceHeader'
 import './dysonGameplayShell.css'
@@ -51,8 +52,11 @@ export function DysonGameplayShell({
   const closeMenuRef = useRef<HTMLButtonElement>(null)
   const sidePanelRef = useRef<HTMLElement>(null)
   const bottomNavigationRef = useRef<HTMLDivElement>(null)
-  const [bottomItemCapacity, setBottomItemCapacity] = useState(
-    Number.MAX_SAFE_INTEGER,
+  const selectedBottomItemCount = navigation.items.filter(
+    (item) => item.bottom !== false,
+  ).length
+  const [bottomLayout, setBottomLayout] = useState(() =>
+    deriveBottomNavigationLayout(390, selectedBottomItemCount, false)
   )
   const wideLayout = useMediaQuery('(min-width: 1024px)')
   const compactMenuOpen = menuOpen && !wideLayout
@@ -63,22 +67,28 @@ export function DysonGameplayShell({
     if (element === null || typeof ResizeObserver === 'undefined') {
       return undefined
     }
-    const size = navigation.bottomSize ?? DEFAULT_BOTTOM_NAVIGATION_SIZE
-    const itemWidth = size === 'compact' ? 48 : size === 'large' ? 76 : 64
     const update = () => {
       const styles = getComputedStyle(element)
       const available = element.clientWidth -
         Number.parseFloat(styles.paddingInlineStart || '0') -
         Number.parseFloat(styles.paddingInlineEnd || '0')
-      setBottomItemCapacity(
-        Math.max(1, Math.floor(available / itemWidth) - 1),
+      const textScale = Number.parseFloat(
+        styles.getPropertyValue('--game-text-scale'),
+      ) || 1
+      setBottomLayout(
+        deriveBottomNavigationLayout(
+          available,
+          selectedBottomItemCount,
+          navigation.includeBottomText ?? false,
+          textScale,
+        ),
       )
     }
     const observer = new ResizeObserver(update)
     observer.observe(element)
     update()
     return () => observer.disconnect()
-  }, [navigation.bottomSize])
+  }, [navigation.includeBottomText, selectedBottomItemCount])
 
   useEffect(() => {
     if (wideLayout && menuOpen) setMenuOpen(false)
@@ -138,9 +148,13 @@ export function DysonGameplayShell({
       data-route-content={routeContent !== undefined}
       data-route-theme={routeTheme}
       data-route-theme-variant={routeThemeVariant}
-      data-bottom-navigation-size={
-        navigation.bottomSize ?? DEFAULT_BOTTOM_NAVIGATION_SIZE
-      }
+      data-bottom-navigation-text={navigation.includeBottomText || undefined}
+      style={{
+        '--bottom-navigation-height': `${bottomLayout.barHeight}px`,
+        '--bottom-navigation-icon-size': `${bottomLayout.iconSize}px`,
+        '--bottom-navigation-label-size': `${bottomLayout.labelSize}px`,
+        '--bottom-navigation-menu-width': `${bottomLayout.slotWidth}px`,
+      } as CSSProperties}
     >
       <a
         className="dyson-shell__skip-link"
@@ -285,7 +299,7 @@ export function DysonGameplayShell({
       <div
         ref={bottomNavigationRef}
         className="dyson-shell__bottom-navigation"
-        data-size={navigation.bottomSize ?? DEFAULT_BOTTOM_NAVIGATION_SIZE}
+        data-include-text={navigation.includeBottomText || undefined}
         aria-hidden={(compactMenuOpen || wideLayout) || undefined}
         inert={(compactMenuOpen || wideLayout) || undefined}
       >
@@ -311,7 +325,7 @@ export function DysonGameplayShell({
         <DysonNavigation
           {...navigation}
           placement="bottom"
-          maxItems={bottomItemCapacity}
+          maxItems={bottomLayout.maxItems}
           interactive={!compactMenuOpen && !wideLayout}
         />
       </div>

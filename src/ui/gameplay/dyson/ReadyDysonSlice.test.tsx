@@ -985,12 +985,12 @@ describe('ReadyDysonSlice', () => {
   })
 
   test.each([
-    [0, 0],
-    [1_800, 50],
-    [3_600, 100],
+    0,
+    1_800,
+    3_600,
   ] as const)(
-    'shows Offline Time navigation storage at %s seconds',
-    (storedTimeAvailableSeconds, expectedPercent) => {
+    'announces Offline Time storage without a navigation progress bar at %s seconds',
+    (storedTimeAvailableSeconds) => {
       const rendered = render(
         provider(
           <ReadyDysonSlice
@@ -1020,8 +1020,8 @@ describe('ReadyDysonSlice', () => {
         hidden: true,
       })).toBeEnabled()
       expect(
-        drawerItem?.querySelector('.dyson-navigation__progress i'),
-      ).toHaveStyle({ inlineSize: `${expectedPercent}%` })
+        drawerItem?.querySelector('.dyson-navigation__progress'),
+      ).not.toBeInTheDocument()
     },
   )
 

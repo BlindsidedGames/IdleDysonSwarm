@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import type { BottomNavigationSize } from '../../../game-state/navigationPreferences'
 
 export type DysonShellDirection = 'ltr' | 'rtl'
 
@@ -34,6 +33,7 @@ export type DysonNavigationItem =
   | {
       readonly id: string
       readonly label: ReactNode
+      readonly ariaLabel?: string
       readonly icon?: ReactNode
       readonly iconSrc?: string
       readonly progress?: {
@@ -48,6 +48,7 @@ export type DysonNavigationItem =
   | {
       readonly id: string
       readonly label: ReactNode
+      readonly ariaLabel?: string
       readonly icon?: ReactNode
       readonly iconSrc?: string
       readonly progress?: {
@@ -66,7 +67,7 @@ export interface DysonNavigationPresentation {
   readonly drawerAriaLabel?: string
   readonly bottomAriaLabel?: string
   readonly items: readonly DysonNavigationItem[]
-  readonly bottomSize?: BottomNavigationSize
+  readonly includeBottomText?: boolean
 }
 
 /**

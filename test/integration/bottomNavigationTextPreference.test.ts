@@ -9,28 +9,28 @@ import {
   deserializeWebSave,
   serializeWebSave,
 } from '../../src/save/serialization'
-import { BottomNavigationSizePreferenceService } from '../../src/ui/bottom-navigation-size'
+import { BottomNavigationTextPreferenceService } from '../../src/ui/bottom-navigation-text'
 
 const fixture = new URL(
   '../fixtures/schema-08-canonical-idb1-main-save.txt',
   import.meta.url,
 )
 
-describe('device-local bottom navigation size import boundary', () => {
+describe('device-local bottom navigation text import boundary', () => {
   test('keeps the device choice and removes a legacy portable size', () => {
-    let stored: string | null = null
+    const values = new Map<string, string>()
     const storage = {
-      getItem: vi.fn(() => stored),
-      setItem: vi.fn((_key: string, value: string) => { stored = value }),
+      getItem: vi.fn((key: string) => values.get(key) ?? null),
+      setItem: vi.fn((key: string, value: string) => { values.set(key, value) }),
     }
-    const preference = new BottomNavigationSizePreferenceService({ storage })
-    preference.setSize('large')
+    const preference = new BottomNavigationTextPreferenceService({ storage })
+    preference.setIncludeText(true)
 
     const source = prepareIdb1Save(readFileSync(fixture, 'utf8'))
       .prepared.copyValidatedState()
     source.bottomNavigationPreferences = {
       version: 1,
-      size: 'standard',
+      size: 'compact',
       visibility: { settings: false },
     }
     const imported = hydrateGameState(PreparedSave.fromDecoded(
@@ -38,8 +38,8 @@ describe('device-local bottom navigation size import boundary', () => {
     ))
 
     expect('bottomNavigationSize' in imported.state.meta).toBe(false)
-    expect(new BottomNavigationSizePreferenceService({ storage }).getSnapshot())
-      .toBe('large')
+    expect(new BottomNavigationTextPreferenceService({ storage }).getSnapshot())
+      .toBe(true)
 
     const exported = dehydrateGameState(imported, imported.state)
       .copyValidatedState()

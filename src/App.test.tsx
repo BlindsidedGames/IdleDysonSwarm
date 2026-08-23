@@ -129,8 +129,8 @@ describe('application startup host', () => {
     )
     expect(offlineTimeItem).not.toBeNull()
     expect(
-      offlineTimeItem?.querySelector('.dyson-navigation__progress i'),
-    ).toHaveStyle({ inlineSize: '50%' })
+      offlineTimeItem?.querySelector('.dyson-navigation__progress'),
+    ).not.toBeInTheDocument()
     expect(
       offlineTimeItem?.querySelector('button'),
     ).toHaveAccessibleName('Offline Time, 30m 0s of 1h 0s stored')

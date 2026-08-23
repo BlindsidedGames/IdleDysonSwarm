@@ -55,7 +55,9 @@ Status conventions:
   The compact navigation subset has current 320/390 portrait, compact
   landscape, enlarged-text, reload-persistence, and drawer-reachability
   evidence in
-  [the 2026-08-23 validation note](release/compact-bottom-navigation-validation-2026-08-23.md);
+  [the original 2026-08-23 validation note](release/compact-bottom-navigation-validation-2026-08-23.md)
+  and its
+  [adaptive-navigation follow-up](release/adaptive-bottom-navigation-validation-2026-08-23.md);
   this does not close the broader physical-device and assistive-technology gate.
 - [ ] With explicit payment authority only, create and cancel an unpaid real
   Stripe Checkout session.

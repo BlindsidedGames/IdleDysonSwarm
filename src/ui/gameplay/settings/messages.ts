@@ -94,25 +94,10 @@ export const settingsSurfaceMessages = defineMessages({
       'Choose which optional pages appear in the bottom navigation. They remain available from the menu.',
     description: 'Explains optional bottom navigation shortcuts.',
   },
-  navigationSizeLabel: {
-    id: 'settings.navigation.size.label',
-    defaultMessage: 'Bottom bar size',
-    description: 'Labels the bottom navigation sizing choice.',
-  },
-  navigationSizeCompact: {
-    id: 'settings.navigation.size.compact',
-    defaultMessage: 'Compact',
-    description: 'Compact bottom navigation size.',
-  },
-  navigationSizeStandard: {
-    id: 'settings.navigation.size.standard',
-    defaultMessage: 'Standard',
-    description: 'Standard bottom navigation size.',
-  },
-  navigationSizeLarge: {
-    id: 'settings.navigation.size.large',
-    defaultMessage: 'Large',
-    description: 'Large bottom navigation size.',
+  navigationIncludeText: {
+    id: 'settings.navigation.include-text',
+    defaultMessage: 'Include text',
+    description: 'Shows labels beneath every displayed bottom navigation icon.',
   },
   botsShortcut: {
     id: 'settings.navigation.bots',

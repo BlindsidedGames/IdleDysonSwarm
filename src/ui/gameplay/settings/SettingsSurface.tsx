@@ -25,11 +25,9 @@ import {
 } from '../../number-notation'
 import type {
   BottomNavigationDestinationId,
-  BottomNavigationSize,
 } from '../../../game-state/navigationPreferences'
 import {
   BOTTOM_NAVIGATION_DESTINATION_IDS,
-  DEFAULT_BOTTOM_NAVIGATION_SIZE,
   DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
 } from '../../../game-state/navigationPreferences'
 
@@ -62,8 +60,10 @@ export interface SettingsSurfaceProps {
     visible: boolean,
   ) => void
   readonly availableNavigationItems?: readonly BottomNavigationDestinationId[]
-  readonly bottomNavigationSize?: BottomNavigationSize
-  readonly onBottomNavigationSizeChange?: (size: BottomNavigationSize) => void
+  readonly bottomNavigationIncludeText?: boolean
+  readonly onBottomNavigationIncludeTextChange?: (
+    includeText: boolean,
+  ) => void
   readonly audio?: GameAudioService
 }
 
@@ -125,8 +125,8 @@ export function SettingsSurface({
   navigationVisibility = DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
   onNavigationVisibilityChange = () => undefined,
   availableNavigationItems = BOTTOM_NAVIGATION_DESTINATION_IDS,
-  bottomNavigationSize = DEFAULT_BOTTOM_NAVIGATION_SIZE,
-  onBottomNavigationSizeChange = () => undefined,
+  bottomNavigationIncludeText = false,
+  onBottomNavigationIncludeTextChange = () => undefined,
   audio,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
@@ -476,26 +476,17 @@ export function SettingsSurface({
               <h2>{intl.formatMessage(messages.navigationTitle)}</h2>
               <p>{intl.formatMessage(messages.navigationDescription)}</p>
             </div>
-            <label className="settings-surface__select-label">
-              <span>{intl.formatMessage(messages.navigationSizeLabel)}</span>
-              <select
-                value={bottomNavigationSize}
+            <label className="settings-surface__toggle">
+              <input
+                type="checkbox"
+                checked={bottomNavigationIncludeText}
                 onChange={(event) =>
-                  onBottomNavigationSizeChange(
-                    event.currentTarget.value as BottomNavigationSize,
+                  onBottomNavigationIncludeTextChange(
+                    event.currentTarget.checked,
                   )
                 }
-              >
-                <option value="compact">
-                  {intl.formatMessage(messages.navigationSizeCompact)}
-                </option>
-                <option value="standard">
-                  {intl.formatMessage(messages.navigationSizeStandard)}
-                </option>
-                <option value="large">
-                  {intl.formatMessage(messages.navigationSizeLarge)}
-                </option>
-              </select>
+              />
+              <span>{intl.formatMessage(messages.navigationIncludeText)}</span>
             </label>
             <div className="settings-surface__navigation-toggles">
               {NAVIGATION_SHORTCUTS.filter(([item]) =>

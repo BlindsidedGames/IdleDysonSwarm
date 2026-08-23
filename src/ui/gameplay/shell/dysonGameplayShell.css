@@ -20,7 +20,10 @@
   --menu-scrollbar-track: #1c1420;
   --menu-scrollbar-thumb: #694b70;
   --menu-scrollbar-thumb-hover: #8a6593;
-  --bottom-navigation-height: 4rem;
+  --bottom-navigation-height: 56px;
+  --bottom-navigation-icon-size: 1.45rem;
+  --bottom-navigation-label-size: 0.72rem;
+  --bottom-navigation-menu-width: 3rem;
   display: grid;
   grid-template-rows:
     minmax(0, 1fr)
@@ -36,14 +39,6 @@
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
-}
-
-.dyson-shell[data-bottom-navigation-size="compact"] {
-  --bottom-navigation-height: 3.5rem;
-}
-
-.dyson-shell[data-bottom-navigation-size="large"] {
-  --bottom-navigation-height: 4.75rem;
 }
 
 .dyson-shell[data-route-theme="research"] {
@@ -918,7 +913,9 @@
   z-index: 30;
   grid-row: 2;
   display: grid;
-  grid-template-columns: 3.7rem minmax(0, 1fr);
+  grid-template-columns:
+    var(--bottom-navigation-menu-width)
+    minmax(0, 1fr);
   min-inline-size: 0;
   padding-block: 0.32rem max(0.32rem, var(--safe-area-bottom));
   padding-inline: max(0.25rem, var(--safe-area-left))
@@ -940,7 +937,7 @@
 
 .dyson-shell__bottom-menu {
   display: grid;
-  min-inline-size: var(--target-minimum);
+  min-inline-size: 0;
   min-block-size: var(--target-minimum);
   place-items: center;
   align-content: center;
@@ -955,13 +952,21 @@
 
 .dyson-shell__menu-icon {
   display: grid;
-  inline-size: 1.75rem;
-  gap: 0.3rem;
+  grid-template-rows: repeat(3, 1fr);
+  inline-size: min(
+    1.7rem,
+    calc(var(--bottom-navigation-icon-size) * 0.78)
+  );
+  block-size: min(
+    1.3rem,
+    calc(var(--bottom-navigation-icon-size) * 0.58)
+  );
+  gap: 18%;
 }
 
 .dyson-shell__menu-icon i {
   display: block;
-  block-size: 0.2rem;
+  min-block-size: 0;
   border-radius: 999px;
   background: currentColor;
 }
@@ -1136,8 +1141,8 @@
 }
 
 .dyson-navigation--bottom .dyson-navigation__icon {
-  inline-size: 1.85rem;
-  block-size: 1.85rem;
+  inline-size: var(--bottom-navigation-icon-size);
+  block-size: var(--bottom-navigation-icon-size);
 }
 
 .dyson-navigation__link[aria-current="page"]
@@ -1196,44 +1201,14 @@
   clip: rect(0 0 0 0);
 }
 
-.dyson-shell__bottom-navigation[data-size="compact"] {
-  grid-template-columns: 3rem minmax(0, 1fr);
-}
-
-.dyson-shell__bottom-navigation[data-size="compact"]
+.dyson-shell__bottom-navigation
   :is(.dyson-navigation__link, .dyson-shell__bottom-menu) {
   min-block-size: var(--target-minimum);
 }
 
-.dyson-shell__bottom-navigation[data-size="compact"]
-  :is(.dyson-navigation__icon, .dyson-shell__menu-icon) {
-  inline-size: 1.45rem;
-}
-
-.dyson-shell__bottom-navigation[data-size="compact"]
-  .dyson-navigation__icon {
-  block-size: 1.45rem;
-}
-
-.dyson-shell__bottom-navigation[data-size="large"] {
-  grid-template-columns: 4.75rem minmax(0, 1fr);
-}
-
-.dyson-shell__bottom-navigation[data-size="large"]
-  .dyson-navigation__icon {
-  inline-size: 2.25rem;
-  block-size: 2.25rem;
-}
-
-.dyson-shell__bottom-navigation[data-size="large"]
-  .dyson-shell__menu-icon {
-  inline-size: 1.7rem;
-}
-
-.dyson-shell__bottom-navigation[data-size="large"]
-  .dyson-navigation__item:not([data-progress="true"])
+.dyson-shell__bottom-navigation[data-include-text="true"]
   .dyson-navigation__label,
-.dyson-shell__bottom-navigation[data-size="large"]
+.dyson-shell__bottom-navigation[data-include-text="true"]
   .dyson-shell__bottom-menu-label {
   position: static;
   display: block;
@@ -1241,20 +1216,20 @@
   block-size: auto;
   max-inline-size: 100%;
   clip: auto;
-  overflow: hidden;
   color: currentColor;
-  font-size: calc(0.72rem * var(--game-text-scale));
+  font-size: calc(
+    var(--bottom-navigation-label-size) * var(--game-text-scale)
+  );
   font-weight: var(--font-weight-semibold);
   line-height: 1.05;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.dyson-shell__bottom-navigation[data-size="large"]
+.dyson-shell__bottom-navigation[data-include-text="true"]
   .dyson-navigation__item[data-progress="true"]
   .dyson-navigation__progress {
-  inset-block-end: 0.45rem;
-  block-size: 0.25rem;
+  inset-block-end: 0.12rem;
+  block-size: 0.2rem;
 }
 
 .dyson-shell__menu-backdrop {
@@ -1468,6 +1443,8 @@
 .dyson-shell[data-route-theme="offline-time"]
   .dyson-shell__route-content,
 .dyson-shell[data-route-theme="statistics"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="settings"]
   .dyson-shell__route-content,
 .dyson-shell[data-route-theme="story"]
   .dyson-shell__route-content,

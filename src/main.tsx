@@ -43,9 +43,9 @@ import {
   ResearchVisibilityProvider,
 } from './ui/research-visibility'
 import {
-  BottomNavigationSizePreferenceService,
-  BottomNavigationSizeProvider,
-} from './ui/bottom-navigation-size'
+  BottomNavigationTextPreferenceService,
+  BottomNavigationTextProvider,
+} from './ui/bottom-navigation-text'
 
 installTextSelectionPolicy()
 void bootstrap()
@@ -73,8 +73,8 @@ async function bootstrap(): Promise<void> {
       new NumberNotationPreferenceService()
     const researchVisibilityPreference =
       new ResearchVisibilityPreferenceService()
-    const bottomNavigationSizePreference =
-      new BottomNavigationSizePreferenceService()
+    const bottomNavigationTextPreference =
+      new BottomNavigationTextPreferenceService()
     const composition = createProductionHostComposition({
       detectNativeBridge: () => nativeBridge,
       automaticNumberFormattingAdopter: numberNotationPreference,
@@ -173,8 +173,8 @@ async function bootstrap(): Promise<void> {
             messages={messages}
           >
             <NumberNotationProvider preference={numberNotationPreference}>
-              <BottomNavigationSizeProvider
-                preference={bottomNavigationSizePreference}
+              <BottomNavigationTextProvider
+                preference={bottomNavigationTextPreference}
               >
                 <ResearchVisibilityProvider
                   preference={researchVisibilityPreference}
@@ -204,7 +204,7 @@ async function bootstrap(): Promise<void> {
                     />
                   )}
                 </ResearchVisibilityProvider>
-              </BottomNavigationSizeProvider>
+              </BottomNavigationTextProvider>
             </NumberNotationProvider>
           </PresentationIntlProvider>
         </StartupErrorBoundary>
