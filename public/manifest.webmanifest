@@ -2,8 +2,6 @@
   "id": "/play/",
   "name": "Idle Dyson Swarm",
   "short_name": "Dyson Swarm",
-  "description": "Build an automated Dyson swarm across simulations, realities, and infinity.",
-  "lang": "en",
   "start_url": "/play/",
   "scope": "/play/",
   "display": "standalone",

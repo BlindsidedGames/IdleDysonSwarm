@@ -67,12 +67,12 @@ export function DebugSurface({
       setOperation(
         result.applied
           ? { kind: 'success', message: label }
-          : { kind: 'failure', message: result.reason },
+          : { kind: 'failure', message: intl.formatMessage(messages.actionFailure) },
       )
-    } catch (error) {
+    } catch {
       setOperation({
         kind: 'failure',
-        message: error instanceof Error ? error.message : String(error),
+        message: intl.formatMessage(messages.actionFailure),
       })
     }
   }

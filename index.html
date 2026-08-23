@@ -27,7 +27,7 @@
         class="native-launch-loader"
         role="status"
         aria-live="polite"
-        aria-label="Idle Dyson Swarm is starting"
+        aria-busy="true"
       >
         <img
           class="native-launch-loader__mark"
@@ -36,7 +36,7 @@
         />
         <h1 class="native-launch-loader__title">Idle Dyson Swarm</h1>
         <span class="native-launch-loader__activity" aria-hidden="true"></span>
-        <p class="native-launch-loader__status">Starting your swarm…</p>
+        <p class="native-launch-loader__status" aria-hidden="true"></p>
       </main>
     </div>
     <script type="module" src="/src/main.tsx"></script>

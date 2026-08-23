@@ -33,4 +33,5 @@ export const debugSurfaceMessages = defineMessages({
   disable: { id: 'debug.disable', defaultMessage: 'Disable Developer Options', description: 'Action that disables developer tools.' },
   disabledSuccess: { id: 'debug.disabled-success', defaultMessage: 'Developer Options disabled. Your entitlement was retained.', description: 'Confirmation after disabling developer tools.' },
   actionSuccess: { id: 'debug.action-success', defaultMessage: 'Development change saved.', description: 'Generic confirmation after a developer action succeeds.' },
+  actionFailure: { id: 'debug.action-failure', defaultMessage: 'That development change could not be applied.', description: 'Generic localized failure shown when a Developer Options action is rejected or throws.' },
 })

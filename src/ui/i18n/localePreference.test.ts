@@ -14,14 +14,24 @@ import {
 describe('locale resolution', () => {
   it('falls back unavailable and malformed locales to English', () => {
     expect(resolveLocale('en-AU')).toBe('en')
-    expect(resolveLocale('fr-FR')).toBe('en')
+    expect(resolveLocale('fr-FR')).toBe('fr')
+    expect(resolveLocale('de-AT')).toBe('de')
+    expect(resolveLocale('es-MX')).toBe('es-419')
+    expect(resolveLocale('pt-PT')).toBe('pt-BR')
+    expect(resolveLocale('zh-Hans-SG')).toBe('zh-CN')
+    expect(resolveLocale('zh-Hant-TW')).toBe('en')
+    expect(resolveLocale('ru-KZ')).toBe('ru')
+    expect(resolveLocale('ja-JP')).toBe('ja')
     expect(resolveLocale('not_a_locale')).toBe('en')
     expect(resolveLocale(null)).toBe('en')
   })
 
-  it('preserves exact enabled pseudo-locales from browser preferences', () => {
-    expect(resolvePreferredLocale(['fr-FR', 'ar-XB'])).toBe('ar-XB')
+  it('honours ordered exact and regional browser preferences', () => {
+    expect(resolvePreferredLocale(['fr-FR', 'ar-XB'])).toBe('fr')
+    expect(resolvePreferredLocale(['fr-CA', 'de'])).toBe('fr')
     expect(resolvePreferredLocale(['en-AU', 'fr-FR'])).toBe('en')
+    expect(resolvePreferredLocale(['zh-Hant-TW', 'ja-JP'])).toBe('ja')
+    expect(resolvePreferredLocale(['es-AR', 'pt-BR'])).toBe('es-419')
   })
 })
 
@@ -39,6 +49,10 @@ describe('LocalePreferenceService', () => {
     expect(document.documentElement).toMatchObject({
       lang: 'en',
       dir: 'ltr',
+    })
+    expect(service.getSnapshot()).toMatchObject({
+      preference: 'system',
+      locale: 'en',
     })
     expect(service.setLocale('ar-XB')).toBe('ar-XB')
     expect(document.documentElement).toMatchObject({
@@ -66,9 +80,63 @@ describe('LocalePreferenceService', () => {
       storage,
       preferredLocales: ['ar-XB'],
     })
-    expect(service.getSnapshot()).toBe('en-XA')
+    expect(service.getSnapshot()).toEqual({
+      preference: 'en-XA',
+      locale: 'en-XA',
+    })
     expect(() => service.setLocale('ar-XB')).not.toThrow()
     expect(document.documentElement.dir).toBe('rtl')
+  })
+
+  it('applies the Simplified Chinese language tag and CJK font routing', () => {
+    const service = new LocalePreferenceService({
+      document,
+      storage: null,
+      preferredLocales: ['zh-Hans-CN'],
+    })
+
+    expect(service.getSnapshot()).toEqual({
+      preference: 'system',
+      locale: 'zh-CN',
+    })
+    expect(document.documentElement).toMatchObject({
+      lang: 'zh-Hans',
+      dir: 'ltr',
+    })
+    expect(document.documentElement.dataset.locale).toBe('zh-CN')
+    expect(document.documentElement.dataset.localeFont).toBe('cjk')
+  })
+
+  it('follows changing device preferences only while system mode is active', () => {
+    let preferredLocales: readonly string[] = ['en-AU']
+    const storage = memoryStorage()
+    const service = new LocalePreferenceService({
+      document,
+      storage,
+      readPreferredLocales: () => preferredLocales,
+    })
+    const listener = vi.fn()
+    service.subscribe(listener)
+
+    preferredLocales = ['fr-FR', 'de-DE']
+    expect(service.refreshPreferredLocales()).toBe('fr')
+    expect(service.getSnapshot()).toEqual({
+      preference: 'system',
+      locale: 'fr',
+    })
+
+    service.setPreference('de')
+    preferredLocales = ['fr-FR']
+    expect(service.refreshPreferredLocales()).toBe('de')
+    expect(service.getSnapshot().preference).toBe('de')
+    expect(listener).toHaveBeenCalledTimes(2)
+
+    service.setPreference('system')
+    expect(service.getSnapshot()).toEqual({
+      preference: 'system',
+      locale: 'fr',
+    })
+    expect(storage.getItem(LOCALE_STORAGE_KEY)).toBe('system')
   })
 })
 

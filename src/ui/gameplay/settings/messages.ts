@@ -1,6 +1,69 @@
 import { defineMessages } from 'react-intl'
 
 export const settingsSurfaceMessages = defineMessages({
+  languageTitle: {
+    id: 'settings.language.title',
+    defaultMessage: 'Language',
+    description: 'Heading for the device-local game language preference.',
+  },
+  languageDescription: {
+    id: 'settings.language.description',
+    defaultMessage:
+      'Follow this device’s preferred language or choose one for this game.',
+    description:
+      'Explains that language is a device-local presentation preference and can follow the device.',
+  },
+  languageLabel: {
+    id: 'settings.language.label',
+    defaultMessage: 'Game language',
+    description: 'Accessible label for the game language select.',
+  },
+  languageSystem: {
+    id: 'settings.language.system',
+    defaultMessage: 'Use device language',
+    description:
+      'Language option that follows the ordered language preferences of the current device.',
+  },
+  languageEnglish: {
+    id: 'settings.language.english',
+    defaultMessage: 'English',
+    description: 'Autonym for the English language option.',
+  },
+  languageFrench: {
+    id: 'settings.language.french',
+    defaultMessage: 'Français',
+    description: 'Autonym for the French language option.',
+  },
+  languageGerman: {
+    id: 'settings.language.german',
+    defaultMessage: 'Deutsch',
+    description: 'Autonym for the German language option.',
+  },
+  languageSpanishLatinAmerica: {
+    id: 'settings.language.spanish-latin-america',
+    defaultMessage: 'Español (Latinoamérica)',
+    description: 'Autonym for the Latin American Spanish language option.',
+  },
+  languagePortugueseBrazil: {
+    id: 'settings.language.portuguese-brazil',
+    defaultMessage: 'Português (Brasil)',
+    description: 'Autonym for the Brazilian Portuguese language option.',
+  },
+  languageChineseSimplified: {
+    id: 'settings.language.chinese-simplified',
+    defaultMessage: '简体中文',
+    description: 'Autonym for the Simplified Chinese language option.',
+  },
+  languageRussian: {
+    id: 'settings.language.russian',
+    defaultMessage: 'Русский',
+    description: 'Autonym for the Russian language option.',
+  },
+  languageJapanese: {
+    id: 'settings.language.japanese',
+    defaultMessage: '日本語',
+    description: 'Autonym for the Japanese language option.',
+  },
   numberNotationTitle: {
     id: 'settings.number-notation.title',
     defaultMessage: 'Number notation',

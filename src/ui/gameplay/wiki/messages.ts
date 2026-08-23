@@ -74,7 +74,9 @@ export const wikiMessages = defineMessages({
   quantumAdvice: { id: 'wiki.quantum.advice', defaultMessage: '<value>Quantum</value> upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset.', description: 'Web-appropriate Quantum Leap planning guidance based on Unity Wiki intent.' },
 
   patchNotesMostRecent: { id: 'wiki.patch-notes.most-recent', defaultMessage: 'Most Recent', description: 'Heading for the latest Wiki patch notes.' },
-  patchNotesVersion311: { id: 'wiki.patch-notes.version-3-1-1', defaultMessage: 'Version 3.1.1', description: 'Version label for the latest Wiki patch notes.' },
+  patchNotesVersion312: { id: 'wiki.patch-notes.version-3-1-2', defaultMessage: 'Version 3.1.2', description: 'Version label for the latest Wiki patch notes.' },
+  patchNotesVersion312Languages: { id: 'wiki.patch-notes.version-3-1-2.languages', defaultMessage: 'Added complete French, German, Latin American Spanish, Brazilian Portuguese, Simplified Chinese, Russian, and Japanese translations, with automatic selection from the device language and a manual override in Settings.', description: 'Version 3.1.2 release note for the seven new translations and language selection.' },
+  patchNotesVersion311: { id: 'wiki.patch-notes.version-3-1-1', defaultMessage: 'Version 3.1.1', description: 'Version label for the previous Wiki patch notes.' },
   patchNotesVersion311Overlays: { id: 'wiki.patch-notes.version-3-1-1.overlays', defaultMessage: 'Improved Avotation and Secrets interactions so their markers no longer obstruct menu or panel controls, their pop-ups remain usable, and clicking outside Secrets closes it.', description: 'Version 3.1.1 release note for Avotation and Secrets interaction fixes.' },
   patchNotesVersion311CompactLayouts: { id: 'wiki.patch-notes.version-3-1-1.compact-layouts', defaultMessage: 'Refined Bots, Research, Simulations, Settings, Story, and Wiki layouts on compact screens with even facility gutters, tighter controls, route-specific headers, and corrected panel spacing.', description: 'Version 3.1.1 release note for compact layout and spacing fixes.' },
   patchNotesVersion311SkillsAndTinker: { id: 'wiki.patch-notes.version-3-1-1.skills-and-tinker', defaultMessage: 'The Skill Tree now remembers its position and zoom while switching tabs, and Manual Labour keeps Tinker anchored above facilities without covering menus or late-game panels.', description: 'Version 3.1.1 release note for remembered Skill Tree view and anchored Tinker.' },
@@ -116,6 +118,7 @@ export const wikiMessages = defineMessages({
   secretsOverview: { id: 'wiki.secrets.overview', defaultMessage: '{revealed} of 27 Secrets revealed', description: 'Summary of the number of Secrets of the Universe revealed.' },
   secretLevel: { id: 'wiki.secrets.level', defaultMessage: 'Secret {level}', description: 'Label for a numbered Secret of the Universe.' },
   meaningSoFar: { id: 'wiki.secrets.meaning-so-far', defaultMessage: 'Meaning so far: {meaning}', description: 'Progressively revealed meaning-of-life phrase.' },
+  meaningPhrase: { id: 'wiki.secrets.meaning-phrase', defaultMessage: 'Love, Family, and Incrementals', description: 'The meaning-of-life phrase progressively revealed by Secrets of the Universe.' },
   assemblyLineBoost: { id: 'wiki.secrets.effect.assembly-line-boost', defaultMessage: 'Assembly Line research boost', description: 'Secret effect label.' },
   aiManagerBoost: { id: 'wiki.secrets.effect.ai-manager-boost', defaultMessage: 'AI Manager research boost', description: 'Secret effect label.' },
   serverBoost: { id: 'wiki.secrets.effect.server-boost', defaultMessage: 'Server research boost', description: 'Secret effect label.' },
