@@ -28,7 +28,7 @@ import type {
 } from '../../../simulation/canonicalSkillTransactions'
 import {
   Button,
-  SettingsIcon,
+  ProgressControlsPanel,
   StatusFeedback,
 } from '../../components'
 import {
@@ -42,6 +42,7 @@ import {
   SkillDetailsDialog,
   type SkillDetailsPalette,
 } from './SkillDetailsDialog'
+import skillsNavigationIcon from '../../assets/nav-skills.png'
 import { skillMessages as messages } from './messages'
 import {
   skillPresetColorStyle,
@@ -253,11 +254,14 @@ export function SkillsSurface({
   const searchId = useId()
   const searchStatusId = useId()
   const settingsId = useId()
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(
     null,
   )
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [presetsOpen, setPresetsOpen] = useState(false)
+  const [resetOpen, setResetOpen] = useState(false)
   const [pendingKind, setPendingKind] = useState<string | null>(null)
   const [pendingExpectation, setPendingExpectation] =
     useState<PendingExpectation | null>(null)
@@ -425,15 +429,18 @@ export function SkillsSurface({
       className="skills-surface"
       aria-label={intl.formatMessage(messages.region)}
     >
-      <header className="skills-surface__toolbar">
-        <div className="skills-surface__resources">
-          <strong>
-            {intl.formatMessage(messages.points, {
-              value: formatGameNumber(locale, points),
-            })}
-          </strong>
-        </div>
-        <div className="skills-surface__search">
+      <SkillTreeViewport
+        nodes={visibleNodes}
+        previews={previewById}
+        nodeById={nodeById}
+        selectedSkillId={selectedSkillId}
+        matchingIds={matchingIds}
+        searchActive={normalizedQuery.length > 0}
+        presetColorId={presets[selectedPresetSlot - 1]?.colorId ?? defaultSkillPresetColorId(selectedPresetSlot)}
+        onSelect={setSelectedSkillId}
+        registerFocus={registerTreeFocus}
+        controlsStart={(
+          <div className="skills-surface__search">
           <label
             htmlFor={searchId}
             className="skills-surface__visually-hidden"
@@ -441,6 +448,7 @@ export function SkillsSurface({
             {intl.formatMessage(messages.search)}
           </label>
           <input
+            ref={searchInputRef}
             id={searchId}
             type="search"
             value={query}
@@ -458,25 +466,88 @@ export function SkillsSurface({
               }
             }}
           />
+          {query.length > 0 && (
+            <button
+              type="button"
+              className="skills-surface__search-clear"
+              aria-label={intl.formatMessage(messages.clearSearch)}
+              onClick={() => {
+                setQuery('')
+                searchInputRef.current?.focus({ preventScroll: true })
+              }}
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          )}
           {normalizedQuery.length > 0 && (
-            <span id={searchStatusId} aria-live="polite">
+            <span
+              id={searchStatusId}
+              className="skills-surface__search-status"
+              aria-live="polite"
+            >
               {intl.formatMessage(messages.matches, {
                 count: matchingIds.size,
               })}
             </span>
           )}
-        </div>
-        <button
-          type="button"
-          className="skills-surface__settings"
-          aria-label={intl.formatMessage(messages.settings)}
-          aria-expanded={settingsOpen}
-          aria-controls={settingsId}
-          onClick={() => setSettingsOpen((open) => !open)}
-        >
-          <SettingsIcon />
-        </button>
-      </header>
+          </div>
+        )}
+      />
+
+      <ProgressControlsPanel
+        ariaLabel={intl.formatMessage(messages.settings)}
+        className="skills-surface__control-panel"
+        expanded={settingsOpen}
+        controlsId={settingsId}
+        settingsLabel={intl.formatMessage(messages.settings)}
+        onExpandedChange={setSettingsOpen}
+        summary={(
+          <div className="skills-surface__resources">
+            <img src={skillsNavigationIcon} alt="" />
+            <span className="skills-surface__visually-hidden">
+              {intl.formatMessage(messages.pointsLabel)}
+            </span>
+            <strong>{formatGameNumber(locale, points)}</strong>
+          </div>
+        )}
+      >
+        <SkillSettings
+          id={`${settingsId}-content`}
+          autoAssignNonRefundable={autoAssignNonRefundable}
+          commandAvailability={commandAvailability}
+          pendingKind={pendingKind}
+          dispatch={dispatch}
+          onOpenReset={() => setResetOpen(true)}
+          onOpenPresets={() => {
+            setPresetsOpen(true)
+          }}
+        />
+      </ProgressControlsPanel>
+
+      {presetsOpen && (
+        <SkillPresetsDialog
+          presets={presets}
+          selectedPresetSlot={selectedPresetSlot}
+          commandAvailability={commandAvailability}
+          presetActions={presetActions}
+          pendingKind={pendingKind}
+          dispatch={dispatch}
+          onClose={() => setPresetsOpen(false)}
+        />
+      )}
+
+      {resetOpen && (
+        <SkillResetDialog
+          refundableSkillIds={catalog.reset.refundableSkillIds}
+          retainedSkillIds={catalog.reset.retainedSkillIds}
+          queuedSkillIds={catalog.reset.queuedSkillIds}
+          nodeById={nodeById}
+          canReset={commandAvailability.reset}
+          pending={pendingKind === 'skill.reset'}
+          dispatch={dispatch}
+          onClose={() => setResetOpen(false)}
+        />
+      )}
 
       {failed && (
         <StatusFeedback
@@ -485,34 +556,6 @@ export function SkillsSurface({
         >
           {intl.formatMessage(messages.actionFailed)}
         </StatusFeedback>
-      )}
-
-      {settingsOpen ? (
-        <SkillSettings
-          id={settingsId}
-          presets={presets}
-          selectedPresetSlot={selectedPresetSlot}
-          autoAssignNonRefundable={autoAssignNonRefundable}
-          commandAvailability={commandAvailability}
-          presetActions={presetActions}
-          pendingKind={pendingKind}
-          dispatch={dispatch}
-        />
-      ) : (
-        <SkillTreeViewport
-          nodes={visibleNodes}
-          previews={previewById}
-          nodeById={nodeById}
-          selectedSkillId={selectedSkillId}
-          matchingIds={matchingIds}
-          searchActive={normalizedQuery.length > 0}
-          presetColorId={
-            presets[selectedPresetSlot - 1]?.colorId ??
-            defaultSkillPresetColorId(selectedPresetSlot)
-          }
-          onSelect={setSelectedSkillId}
-          registerFocus={registerTreeFocus}
-        />
       )}
 
       {selectedNode && selectedPreview && (
@@ -547,6 +590,7 @@ interface SkillTreeViewportProps {
   readonly matchingIds: ReadonlySet<string>
   readonly searchActive: boolean
   readonly presetColorId: SkillPresetColorId
+  readonly controlsStart?: ReactNode
   readonly onSelect: (skillId: string) => void
   readonly registerFocus: (focus: (skillId: string) => void) => void
 }
@@ -559,6 +603,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   matchingIds,
   searchActive,
   presetColorId,
+  controlsStart,
   onSelect,
   registerFocus,
 }: SkillTreeViewportProps) {
@@ -1059,6 +1104,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
         })}
       </div>
       <div className="skill-tree-viewport__controls">
+        {controlsStart}
         <button
           type="button"
           aria-label={intl.formatMessage(messages.zoomOut)}
@@ -1636,104 +1682,30 @@ function SkillDetails({
 
 interface SkillSettingsProps {
   readonly id: string
-  readonly presets: SkillsSurfaceProps['presets']
-  readonly selectedPresetSlot: CanonicalSkillPresetSlot
   readonly autoAssignNonRefundable: boolean
   readonly commandAvailability: SkillCommandAvailability
-  readonly presetActions?: SkillPresetActions
   readonly pendingKind: string | null
   readonly dispatch: (
     command: SkillCommand,
     expectation?: Omit<PendingExpectation, 'beforeSignature'>,
   ) => Promise<boolean>
+  readonly onOpenReset: () => void
+  readonly onOpenPresets: () => void
 }
 
 function SkillSettings({
   id,
-  presets,
-  selectedPresetSlot,
   autoAssignNonRefundable,
   commandAvailability,
-  presetActions,
   pendingKind,
   dispatch,
+  onOpenReset,
+  onOpenPresets,
 }: SkillSettingsProps) {
   const intl = useIntl()
-  const confirmId = useId()
-  const [confirmReset, setConfirmReset] = useState(false)
-  const [managedSlot, setManagedSlot] =
-    useState<CanonicalSkillPresetSlot | null>(null)
 
   return (
     <div id={id} className="skill-settings">
-      <section>
-        <h2>{intl.formatMessage(messages.presets)}</h2>
-        <div className="skill-settings__presets">
-          {presets.slice(0, 5).map((preset, index) => {
-            const slot = (index + 1) as CanonicalSkillPresetSlot
-            const workers = Math.round((1 - preset.botDistribution) * 100)
-            return (
-              <div
-                key={slot}
-                className="skill-settings__preset-row"
-                data-current={selectedPresetSlot === slot || undefined}
-                style={skillPresetColorStyle(preset.colorId)}
-              >
-                <button
-                  type="button"
-                  className="skill-settings__preset-load"
-                  disabled={
-                    !commandAvailability.selectPreset ||
-                    pendingKind === 'skill.select-preset'
-                  }
-                  aria-pressed={selectedPresetSlot === slot}
-                  onClick={() =>
-                    void dispatch(
-                      {
-                        kind: 'skill.select-preset',
-                        slot,
-                      },
-                      selectedPresetSlot === slot
-                        ? {}
-                        : { expectedPresetSlot: slot },
-                    )
-                  }
-                >
-                  <strong>
-                    <span
-                      className="skill-preset-color-swatch"
-                      aria-hidden="true"
-                    />
-                    {intl.formatMessage(messages.loadPreset, {
-                      name: preset.name,
-                    })}
-                  </strong>
-                  {selectedPresetSlot === slot && (
-                    <em className="skill-settings__current">
-                      {intl.formatMessage(messages.currentPreset)}
-                    </em>
-                  )}
-                  <PresetSummary
-                    count={preset.skillIds.length}
-                    workers={workers}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className="skill-settings__preset-manage"
-                  aria-label={intl.formatMessage(
-                    messages.managePreset,
-                    { name: preset.name },
-                  )}
-                  onClick={() => setManagedSlot(slot)}
-                >
-                  <span aria-hidden="true">⋯</span>
-                </button>
-              </div>
-            )
-          })}
-        </div>
-      </section>
       <label className="skill-settings__toggle">
         <input
           type="checkbox"
@@ -1752,56 +1724,216 @@ function SkillSettings({
         />
         <span>{intl.formatMessage(messages.nonRefundable)}</span>
       </label>
-      <section className="skill-settings__reset">
-        {!confirmReset ? (
-          <Button
-            variant="danger"
-            disabled={!commandAvailability.reset}
-            onClick={() => setConfirmReset(true)}
-          >
-            {intl.formatMessage(messages.reset)}
-          </Button>
+      <div className="skill-settings__actions">
+        <button
+          type="button"
+          className="skill-settings__reset"
+          disabled={
+            !commandAvailability.reset || pendingKind === 'skill.reset'
+          }
+          onClick={onOpenReset}
+        >
+          {intl.formatMessage(messages.reset)}
+        </button>
+        <button
+          type="button"
+          className="skill-settings__open-presets"
+          onClick={onOpenPresets}
+        >
+          {intl.formatMessage(messages.presets)}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+interface SkillResetDialogProps {
+  readonly refundableSkillIds: readonly string[]
+  readonly retainedSkillIds: readonly string[]
+  readonly queuedSkillIds: readonly string[]
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly canReset: boolean
+  readonly pending: boolean
+  readonly dispatch: SkillSettingsProps['dispatch']
+  readonly onClose: () => void
+}
+
+function SkillResetDialog({
+  refundableSkillIds,
+  retainedSkillIds,
+  queuedSkillIds,
+  nodeById,
+  canReset,
+  pending,
+  dispatch,
+  onClose,
+}: SkillResetDialogProps) {
+  const intl = useIntl()
+
+  return (
+    <SkillDetailsDialog
+      title={intl.formatMessage(messages.reset)}
+      closeLabel={intl.formatMessage(messages.close)}
+      palette="normal"
+      className="skill-reset-dialog"
+      onClose={onClose}
+    >
+      <p className="skill-reset-dialog__description">
+        {intl.formatMessage(messages.resetWarning)}
+      </p>
+      <section className="skill-reset-dialog__group">
+        <h3>{intl.formatMessage(messages.resetRefundedHeading)}</h3>
+        {refundableSkillIds.length > 0 ? (
+          <AffectedSkillList
+            skillIds={refundableSkillIds}
+            nodeById={nodeById}
+            label={intl.formatMessage(messages.resetRefundedHeading)}
+          />
         ) : (
-          <div
-            className="skill-confirmation"
-            role="group"
-            aria-labelledby={confirmId}
-          >
-            <span id={confirmId}>
-              {intl.formatMessage(messages.resetWarning)}
-            </span>
-            <Button
-              variant="danger"
-              state={
-                pendingKind === 'skill.reset' ? 'pending' : 'idle'
-              }
-              onClick={async () => {
-                if (await dispatch({ kind: 'skill.reset' })) {
-                  setConfirmReset(false)
-                }
-              }}
-            >
-              {intl.formatMessage(messages.reset)}
-            </Button>
-            <Button onClick={() => setConfirmReset(false)}>
-              {intl.formatMessage(messages.close)}
-            </Button>
-          </div>
+          <p className="skill-reset-dialog__empty">
+            {intl.formatMessage(messages.none)}
+          </p>
         )}
       </section>
-      {managedSlot !== null && presets[managedSlot - 1] && (
+      <section className="skill-reset-dialog__group">
+        <h3>{intl.formatMessage(messages.resetRetainedHeading)}</h3>
+        {retainedSkillIds.length > 0 ? (
+          <AffectedSkillList
+            skillIds={retainedSkillIds}
+            nodeById={nodeById}
+            label={intl.formatMessage(messages.resetRetainedHeading)}
+          />
+        ) : (
+          <p className="skill-reset-dialog__empty">
+            {intl.formatMessage(messages.none)}
+          </p>
+        )}
+      </section>
+      {queuedSkillIds.length > 0 ? (
+        <section className="skill-reset-dialog__group">
+          <h3>{intl.formatMessage(messages.resetQueuedHeading)}</h3>
+          <AffectedSkillList
+            skillIds={queuedSkillIds}
+            nodeById={nodeById}
+            label={intl.formatMessage(messages.resetQueuedHeading)}
+          />
+        </section>
+      ) : null}
+      <div className="skill-reset-dialog__actions">
+        <Button className="skill-reset-dialog__cancel" onClick={onClose}>
+          {intl.formatMessage(messages.cancel)}
+        </Button>
+        <Button
+          variant="primary"
+          disabled={
+            !canReset ||
+            (refundableSkillIds.length === 0 && queuedSkillIds.length === 0)
+          }
+          state={pending ? 'pending' : 'idle'}
+          onClick={async () => {
+            if (await dispatch({ kind: 'skill.reset' })) onClose()
+          }}
+        >
+          {intl.formatMessage(messages.reset)}
+        </Button>
+      </div>
+    </SkillDetailsDialog>
+  )
+}
+
+interface SkillPresetsDialogProps {
+  readonly presets: SkillsSurfaceProps['presets']
+  readonly selectedPresetSlot: CanonicalSkillPresetSlot
+  readonly commandAvailability: SkillCommandAvailability
+  readonly presetActions?: SkillPresetActions
+  readonly pendingKind: string | null
+  readonly dispatch: SkillSettingsProps['dispatch']
+  readonly onClose: () => void
+}
+
+function SkillPresetsDialog({
+  presets,
+  selectedPresetSlot,
+  commandAvailability,
+  presetActions,
+  pendingKind,
+  dispatch,
+  onClose,
+}: SkillPresetsDialogProps) {
+  const intl = useIntl()
+  const [managedSlot, setManagedSlot] =
+    useState<CanonicalSkillPresetSlot | null>(null)
+  const managedPreset = managedSlot === null
+    ? undefined
+    : presets[managedSlot - 1]
+
+  return (
+    <>
+      <SkillDetailsDialog
+        title={intl.formatMessage(messages.presets)}
+        closeLabel={intl.formatMessage(messages.close)}
+        palette="normal"
+        className="skill-presets-dialog"
+        onClose={onClose}
+      >
+        <div className="skill-settings__presets">
+          {presets.slice(0, 5).map((preset, index) => {
+          const slot = (index + 1) as CanonicalSkillPresetSlot
+          const workers = Math.round((1 - preset.botDistribution) * 100)
+          return (
+            <div
+              key={slot}
+              className="skill-settings__preset-row"
+              data-current={selectedPresetSlot === slot || undefined}
+              style={skillPresetColorStyle(preset.colorId)}
+            >
+              <button
+                type="button"
+                className="skill-settings__preset-load"
+                disabled={!commandAvailability.selectPreset || pendingKind === 'skill.select-preset'}
+                aria-pressed={selectedPresetSlot === slot}
+                onClick={() => void dispatch(
+                  { kind: 'skill.select-preset', slot },
+                  selectedPresetSlot === slot ? {} : { expectedPresetSlot: slot },
+                )}
+              >
+                <strong>
+                  <span className="skill-preset-color-swatch" aria-hidden="true" />
+                  {intl.formatMessage(messages.loadPreset, { name: preset.name })}
+                </strong>
+                {selectedPresetSlot === slot && (
+                  <em className="skill-settings__current">
+                    {intl.formatMessage(messages.currentPreset)}
+                  </em>
+                )}
+                <PresetSummary count={preset.skillIds.length} workers={workers} />
+              </button>
+              <button
+                type="button"
+                className="skill-settings__preset-manage"
+                aria-label={intl.formatMessage(messages.managePreset, { name: preset.name })}
+                onClick={() => setManagedSlot(slot)}
+              >
+                <span aria-hidden="true">⋯</span>
+              </button>
+            </div>
+          )
+          })}
+        </div>
+      </SkillDetailsDialog>
+      {managedSlot !== null && managedPreset !== undefined ? (
         <PresetManagementDialog
           key={managedSlot}
           slot={managedSlot}
-          preset={presets[managedSlot - 1]}
+          preset={managedPreset}
           canSetColor={commandAvailability.setPresetColor}
           presetActions={presetActions}
           pendingKind={pendingKind}
           dispatch={dispatch}
           onClose={() => setManagedSlot(null)}
         />
-      )}
-    </div>
+      ) : null}
+    </>
   )
 }
 

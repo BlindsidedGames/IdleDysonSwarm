@@ -73,6 +73,7 @@ export interface DysonState {
 export interface InfinityState {
   readonly points: bigint
   readonly spentPoints: bigint
+  readonly automaticResetEnabled: boolean
   readonly breakTarget: bigint
   readonly inProgress: boolean
   readonly botCapTransitionPending: boolean

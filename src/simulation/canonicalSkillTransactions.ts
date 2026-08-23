@@ -113,6 +113,12 @@ export interface CanonicalSkillCatalogPreview {
   readonly complete: boolean
   readonly definitionGap: string | null
   readonly skills: readonly CanonicalSkillAvailabilityPreview[]
+  /** Exact authored-order result of the bulk reset command at this state. */
+  readonly reset: {
+    readonly refundableSkillIds: readonly string[]
+    readonly retainedSkillIds: readonly string[]
+    readonly queuedSkillIds: readonly string[]
+  }
 }
 
 /**
@@ -132,6 +138,11 @@ export function previewCanonicalSkillCatalog(
       definitionGap:
         error instanceof Error ? error.message : String(error),
       skills: Object.freeze([]),
+      reset: Object.freeze({
+        refundableSkillIds: Object.freeze([]),
+        retainedSkillIds: Object.freeze([]),
+        queuedSkillIds: Object.freeze([]),
+      }),
     })
   }
 
@@ -232,10 +243,32 @@ export function previewCanonicalSkillCatalog(
       }),
     })
   })
+  const ownedDefinitions = [...definitions.values()].filter(
+    (definition) => state.skills.byId[definition.id]?.owned === true,
+  )
   return Object.freeze({
     complete: true,
     definitionGap: null,
     skills: Object.freeze(skills),
+    reset: Object.freeze({
+      refundableSkillIds: Object.freeze(
+        ownedDefinitions
+          .filter((definition) =>
+            isRefundable(definition, state.skills.byId),
+          )
+          .map((definition) => definition.id),
+      ),
+      retainedSkillIds: Object.freeze(
+        ownedDefinitions
+          .filter((definition) =>
+            !isRefundable(definition, state.skills.byId),
+          )
+          .map((definition) => definition.id),
+      ),
+      queuedSkillIds: Object.freeze([
+        ...state.skills.activeAutoAssignment,
+      ]),
+    }),
   })
 }
 

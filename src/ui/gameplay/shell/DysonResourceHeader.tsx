@@ -96,6 +96,11 @@ function Resource({
           <bdi dir="ltr">{presentation.rate}</bdi>
         </span>
       )}
+      {presentation.detail !== undefined && (
+        <div className="dyson-resource-header__detail">
+          {presentation.detail}
+        </div>
+      )}
     </div>
   )
 }

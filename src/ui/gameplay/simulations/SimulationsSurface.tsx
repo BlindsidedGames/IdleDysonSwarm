@@ -36,7 +36,7 @@ import {
   CollapsibleSection,
   FacilityCard,
   InlineImageSymbol,
-  SettingsIcon,
+  ProgressControlsPanel,
 } from '../../components'
 import influenceSymbol from '../../assets/symbol-influence.png'
 import strangeMatterSymbol from '../../assets/symbol-strange-matter.png'
@@ -217,20 +217,31 @@ export function SimulationTimeControl({ locale, bankSeconds, rate, enabled, disp
   readonly dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer']
 }) {
   const intl = useIntl()
-  return <section className="simulation-time-control" aria-label={intl.formatMessage(messages.timeMultiplier)}>
-    <div className="simulation-time-control__header"><strong>{intl.formatMessage(messages.timeMultiplier)}</strong><span>{enabled ? intl.formatMessage(messages.boostRemaining) : intl.formatMessage(messages.offlineTime)}: {formatGameDuration(locale, bankSeconds)}</span>{spaceAgeAvailable && <button type="button" className="simulation-time-control__settings-toggle" aria-label={intl.formatMessage(messages.purchaseSettings)} aria-expanded={purchaseSettingsOpen} onClick={() => onPurchaseSettingsOpenChange(!purchaseSettingsOpen)}><SettingsIcon /></button>}</div>
-    <input aria-label={intl.formatMessage(messages.timeMultiplier)} type="range" min="0" max="10" step="1" value={rate} disabled={!available} onChange={(event) => void dispatchPlayer({ kind: 'time.set-double-time-rate', rate: Number(event.currentTarget.value) })} />
-    <div className="simulation-time-control__rate">
-      <span>
-        {intl.formatMessage(messages.simulationSpeedIncreasedBy, {
-          value: formatNumber(locale, rate * 100, {
-            maximumFractionDigits: 0,
-          }),
-        })}
-      </span>
-    </div>
-    {spaceAgeAvailable && purchaseSettingsOpen && <div className="simulation-time-control__purchase-settings" role="group" aria-label={intl.formatMessage(messages.purchaseAmount)}>{SPACE_AGE_PURCHASE_QUANTITIES.map((quantity) => <button key={quantity} type="button" aria-pressed={spaceAgePurchaseQuantity === quantity} onClick={() => onSpaceAgePurchaseQuantityChange(quantity)}>{quantity === 'max' ? intl.formatMessage(messages.buyMax) : intl.formatMessage(messages.buyQuantity, { quantity })}</button>)}</div>}
-  </section>
+  return <ProgressControlsPanel
+    ariaLabel={intl.formatMessage(messages.timeMultiplier)}
+    className="simulation-time-control"
+    expanded={purchaseSettingsOpen}
+    controlsId="simulation-purchase-settings"
+    settingsLabel={intl.formatMessage(messages.purchaseSettings)}
+    settingsEnabled={spaceAgeAvailable}
+    onExpandedChange={onPurchaseSettingsOpenChange}
+    summary={(
+      <div className="simulation-time-control__summary">
+        <div className="simulation-time-control__header">
+          <strong>{intl.formatMessage(messages.timeMultiplier)}</strong>
+          <span>{enabled ? intl.formatMessage(messages.boostRemaining) : intl.formatMessage(messages.offlineTime)}: {formatGameDuration(locale, bankSeconds)}</span>
+        </div>
+        <div className="simulation-time-control__rate">
+          <span>{intl.formatMessage(messages.simulationSpeedIncreasedBy, {
+            value: formatNumber(locale, rate * 100, { maximumFractionDigits: 0 }),
+          })}</span>
+          <input aria-label={intl.formatMessage(messages.timeMultiplier)} type="range" min="0" max="10" step="1" value={rate} disabled={!available} onChange={(event) => void dispatchPlayer({ kind: 'time.set-double-time-rate', rate: Number(event.currentTarget.value) })} />
+        </div>
+      </div>
+    )}
+  >
+    {spaceAgeAvailable && <div className="simulation-time-control__purchase-settings" role="group" aria-label={intl.formatMessage(messages.purchaseAmount)}>{SPACE_AGE_PURCHASE_QUANTITIES.map((quantity) => <button key={quantity} type="button" aria-pressed={spaceAgePurchaseQuantity === quantity} onClick={() => onSpaceAgePurchaseQuantityChange(quantity)}>{quantity === 'max' ? intl.formatMessage(messages.buyMax) : intl.formatMessage(messages.buyQuantity, { quantity })}</button>)}</div>}
+  </ProgressControlsPanel>
 }
 
 interface SimulationCategoryModel {
@@ -467,7 +478,7 @@ function SimulationCategoryGroup({
           data-category={category.id}
           key={category.id}
         >
-          {category.id === 'education' || category.id === 'energy' ? (
+          {category.id === 'education' ? (
             <h3>{category.title}</h3>
           ) : null}
           <ol>
@@ -476,11 +487,7 @@ function SimulationCategoryGroup({
                 <SimulationPanelCard
                   panel={panel}
                   reducedMotion={reducedMotion}
-                  headingLevel={
-                    category.id === 'education' || category.id === 'energy'
-                      ? 'h4'
-                      : 'h3'
-                  }
+                  headingLevel={category.id === 'education' ? 'h4' : 'h3'}
                   dispatchPlayer={dispatchPlayer}
                 />
               </li>

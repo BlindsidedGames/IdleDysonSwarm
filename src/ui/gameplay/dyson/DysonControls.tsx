@@ -1,4 +1,10 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import type {
   FrontendDysonPresentationFacts,
@@ -13,7 +19,7 @@ import type {
 } from '../../../game-state/types'
 import {
   PresetAutomationSelect,
-  SettingsIcon,
+  ProgressControlsPanel,
 } from '../../components'
 import {
   formatGameNumber,
@@ -29,13 +35,8 @@ import { readyDysonMessages as messages } from './messages'
 import './dysonControls.css'
 
 export interface DysonInfoProps {
-  readonly locale: EnabledLocale
-  readonly metric:
-    FrontendDysonPresentationFacts['activePanelMetric']
-  readonly currentGoal:
-    FrontendDysonPresentationFacts['currentGoal']
-  readonly panelLifetimeSeconds: number
-  readonly totalPanelsDecayed: number
+  readonly summary: ReactNode
+  readonly statusSummary?: ReactNode
   readonly buyMode: DysonBuyMode
   readonly roundedBulkBuy: boolean
   readonly presets: readonly SkillPresetState[]
@@ -77,11 +78,8 @@ const BUY_MODE_OPTIONS = Object.freeze([
 ] as const)
 
 export function DysonInfo({
-  locale,
-  metric,
-  currentGoal,
-  panelLifetimeSeconds,
-  totalPanelsDecayed,
+  summary,
+  statusSummary,
   buyMode,
   roundedBulkBuy,
   presets,
@@ -109,43 +107,6 @@ export function DysonInfo({
     new Map<CanonicalFacilityId, number>(),
   )
   const settingsId = useId()
-  const goalMessage =
-    currentGoal.kind === 'create-bots'
-      ? messages.goalCreateBots
-      : currentGoal.kind === 'build-assembly-lines'
-        ? messages.goalBuildAssemblyLines
-        : currentGoal.kind === 'have-active-panels'
-          ? messages.goalHaveActivePanels
-          : currentGoal.kind === 'own-planets'
-            ? messages.goalOwnPlanets
-            : currentGoal.kind === 'decay-panels'
-              ? messages.goalDecayPanels
-              : currentGoal.kind === 'surround-stars'
-                ? messages.goalSurroundStars
-                : currentGoal.kind === 'engulf-galaxies'
-                  ? messages.goalEngulfGalaxies
-                  : messages.goalReachBots
-  const compactGoalMessage =
-    currentGoal.kind === 'create-bots' ||
-    currentGoal.kind === 'reach-bots'
-      ? messages.compactGoalBots
-      : currentGoal.kind === 'build-assembly-lines'
-        ? messages.compactGoalAssemblyLines
-        : currentGoal.kind === 'have-active-panels'
-          ? messages.compactGoalPanels
-          : currentGoal.kind === 'own-planets'
-            ? messages.compactGoalPlanets
-            : currentGoal.kind === 'decay-panels'
-              ? messages.compactGoalDecayed
-              : currentGoal.kind === 'surround-stars'
-                ? messages.compactGoalStars
-                : messages.compactGoalGalaxies
-  const compactMetricMessage =
-    metric.kind === 'active-panels'
-      ? messages.compactActivePanels
-      : metric.kind === 'stars-surrounded'
-        ? messages.compactStarsSurrounded
-        : messages.compactGalaxiesEngulfed
   const applySetting = async (
     command: DysonSettingsCommand,
   ): Promise<void> => applySettings([command])
@@ -223,73 +184,16 @@ export function DysonInfo({
   }
 
   return (
-    <div className="dyson-info">
-      <div className="dyson-info__overview">
-        <div className="dyson-info__facts">
-          <span className="dyson-info__fact">
-            <FormattedMessage
-              {...compactMetricMessage}
-              values={{
-                value: formatFact(locale, metric.value),
-                emphasis: (chunks) => (
-                  <span className="dyson-info__value">{chunks}</span>
-                ),
-              }}
-            />
-          </span>
-          <span className="dyson-info__fact">
-            <FormattedMessage
-              {...messages.compactPanelLifetime}
-              values={{
-                value: formatFact(locale, panelLifetimeSeconds),
-                emphasis: (chunks) => (
-                  <span className="dyson-info__value">{chunks}</span>
-                ),
-              }}
-            />
-          </span>
-          <span className="dyson-info__fact">
-            <FormattedMessage
-              {...messages.compactTotalPanelsDecayed}
-              values={{
-                value: formatFact(locale, totalPanelsDecayed),
-                emphasis: (chunks) => (
-                  <span className="dyson-info__value">{chunks}</span>
-                ),
-              }}
-            />
-          </span>
-          <span
-            className="dyson-info__fact dyson-info__goal"
-            title={intl.formatMessage(goalMessage, {
-              target: currentGoal.target,
-              targetDisplay: formatGameNumber(locale, currentGoal.target),
-            })}
-          >
-            <FormattedMessage
-              {...compactGoalMessage}
-              values={{
-                targetDisplay: formatGameNumber(locale, currentGoal.target),
-                emphasis: (chunks) => (
-                  <span className="dyson-info__goal-value">{chunks}</span>
-                ),
-              }}
-            />
-          </span>
-        </div>
-        <button
-          type="button"
-          className="dyson-info__settings-toggle"
-          aria-label={intl.formatMessage(messages.purchaseSettings)}
-          aria-expanded={settingsOpen}
-          aria-controls={settingsId}
-          onClick={() => setSettingsOpen((current) => !current)}
-        >
-          <SettingsIcon />
-        </button>
-      </div>
-      {settingsOpen && (
-        <div id={settingsId} className="dyson-info__settings">
+    <ProgressControlsPanel
+      ariaLabel={intl.formatMessage(messages.purchaseSettings)}
+      className="dyson-info"
+      expanded={settingsOpen}
+      controlsId={settingsId}
+      settingsLabel={intl.formatMessage(messages.purchaseSettings)}
+      onExpandedChange={setSettingsOpen}
+      summary={summary}
+    >
+        <div className="dyson-info__settings">
           <span className="dyson-info__settings-title">
             {intl.formatMessage(messages.purchaseAmount)}
           </span>
@@ -400,9 +304,131 @@ export function DysonInfo({
               {intl.formatMessage(messages.purchaseSettingsFailed)}
             </span>
           )}
+          {statusSummary !== undefined && (
+            <div className="dyson-info__run-status">
+              {statusSummary}
+            </div>
+          )}
         </div>
-      )}
+    </ProgressControlsPanel>
+  )
+}
+
+export interface DysonRunFactsProps {
+  readonly locale: EnabledLocale
+  readonly metric: FrontendDysonPresentationFacts['activePanelMetric']
+  readonly panelLifetimeSeconds: number
+  readonly totalPanelsDecayed: number
+}
+
+export function DysonRunFacts({
+  locale,
+  metric,
+  panelLifetimeSeconds,
+  totalPanelsDecayed,
+}: DysonRunFactsProps) {
+  const compactMetricMessage =
+    metric.kind === 'active-panels'
+      ? messages.compactActivePanels
+      : metric.kind === 'stars-surrounded'
+        ? messages.compactStarsSurrounded
+        : messages.compactGalaxiesEngulfed
+
+  return (
+    <div className="dyson-info__run-facts">
+      <span className="dyson-info__fact">
+        <FormattedMessage
+          {...compactMetricMessage}
+          values={{
+            value: formatFact(locale, metric.value),
+            emphasis: (chunks) => (
+              <span className="dyson-info__value">{chunks}</span>
+            ),
+          }}
+        />
+      </span>
+      <span className="dyson-info__fact">
+        <FormattedMessage
+          {...messages.compactPanelLifetime}
+          values={{
+            value: formatFact(locale, panelLifetimeSeconds),
+            emphasis: (chunks) => (
+              <span className="dyson-info__value">{chunks}</span>
+            ),
+          }}
+        />
+      </span>
+      <span className="dyson-info__fact">
+        <FormattedMessage
+          {...messages.compactTotalPanelsDecayed}
+          values={{
+            value: formatFact(locale, totalPanelsDecayed),
+            emphasis: (chunks) => (
+              <span className="dyson-info__value">{chunks}</span>
+            ),
+          }}
+        />
+      </span>
     </div>
+  )
+}
+
+export interface DysonGoalSummaryProps {
+  readonly locale: EnabledLocale
+  readonly currentGoal: FrontendDysonPresentationFacts['currentGoal']
+}
+
+export function DysonGoalSummary({
+  locale,
+  currentGoal,
+}: DysonGoalSummaryProps) {
+  const intl = useIntl()
+  const goalMessage =
+    currentGoal.kind === 'create-bots'
+      ? messages.goalCreateBots
+      : currentGoal.kind === 'build-assembly-lines'
+        ? messages.goalBuildAssemblyLines
+        : currentGoal.kind === 'have-active-panels'
+          ? messages.goalHaveActivePanels
+          : currentGoal.kind === 'own-planets'
+            ? messages.goalOwnPlanets
+            : currentGoal.kind === 'decay-panels'
+              ? messages.goalDecayPanels
+              : currentGoal.kind === 'surround-stars'
+                ? messages.goalSurroundStars
+                : currentGoal.kind === 'engulf-galaxies'
+                  ? messages.goalEngulfGalaxies
+                  : messages.goalReachBots
+  const compactGoalMessage =
+    currentGoal.kind === 'create-bots' ||
+    currentGoal.kind === 'reach-bots'
+      ? messages.compactGoalBots
+      : currentGoal.kind === 'build-assembly-lines'
+        ? messages.compactGoalAssemblyLines
+        : currentGoal.kind === 'have-active-panels'
+          ? messages.compactGoalPanels
+          : currentGoal.kind === 'own-planets'
+            ? messages.compactGoalPlanets
+            : currentGoal.kind === 'decay-panels'
+              ? messages.compactGoalDecayed
+              : currentGoal.kind === 'surround-stars'
+                ? messages.compactGoalStars
+                : messages.compactGoalGalaxies
+  return (
+    <span
+      title={intl.formatMessage(goalMessage, {
+        target: currentGoal.target,
+        targetDisplay: formatGameNumber(locale, currentGoal.target),
+      })}
+    >
+      <FormattedMessage
+        {...compactGoalMessage}
+        values={{
+          targetDisplay: formatGameNumber(locale, currentGoal.target),
+          emphasis: (chunks) => <>{chunks}</>,
+        }}
+      />
+    </span>
   )
 }
 

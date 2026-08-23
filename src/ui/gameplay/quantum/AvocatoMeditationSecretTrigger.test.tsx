@@ -114,7 +114,7 @@ describe('AvocatoMeditationSecretTrigger', () => {
           routeAvailable
           dispatchPlayer={dispatchPlayer}
         />
-        <button className="dyson-shell__production-summary" onClick={normalAction}>Open details</button>
+        <button className="dyson-shell__info" onClick={normalAction}>Open details</button>
       </>,
     )
 
@@ -247,7 +247,7 @@ function renderTrigger(
 function TestPanel({ placement }: { readonly placement: AvocatoMeditationPlacement }) {
   if (placement === 'quantum') return <article data-test-panel data-quantum-upgrade-id="Secrets" />
   if (placement === 'infinity') return <header data-test-panel className="infinity-surface__summary" />
-  if (placement === 'bots') return <div data-test-panel className="dyson-shell__production-summary" />
+  if (placement === 'bots') return <div data-test-panel className="dyson-shell__info" />
   if (placement === 'skills') return <div data-test-panel className="skill-settings__preset-row" />
   if (placement === 'settings') return <section data-test-panel className="settings-surface__panel--more" />
   if (placement === 'research') return <div data-test-panel className="research-surface__settings" />

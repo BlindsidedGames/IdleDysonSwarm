@@ -63,6 +63,12 @@ export function SkillDetailsDialog({
     closeRef.current?.focus({ preventScroll: true })
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      const openDialogs = document.querySelectorAll(
+        '.skill-details-dialog__backdrop',
+      )
+      if (openDialogs.item(openDialogs.length - 1) !== backdropRef.current) {
+        return
+      }
       if (event.key === 'Escape') {
         event.preventDefault()
         onCloseRef.current()

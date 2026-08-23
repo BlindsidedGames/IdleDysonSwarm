@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useId,
   useRef,
   useState,
 } from 'react'
@@ -24,7 +25,7 @@ import {
   type InfinityProgressFacts,
 } from '../../../simulation/infinityCycle'
 import infinitySymbol from '../../assets/nav-infinity.png'
-import { Button, InlineImageSymbol } from '../../components'
+import { Button, InlineImageSymbol, ProgressControlsPanel } from '../../components'
 import {
   formatGameNumber,
   formatNumber,
@@ -46,12 +47,16 @@ type InfinityCommand = Extract<
     readonly kind:
       | 'infinity.purchase-shop-item'
       | 'infinity.set-break-target'
+      | 'infinity.set-automatic-reset'
+      | 'infinity.request-reset'
   }
 >
 
 export interface InfinityCommandAvailability {
   readonly purchaseShopItem: boolean
   readonly setBreakTarget: boolean
+  readonly setAutomaticReset: boolean
+  readonly requestReset: boolean
 }
 
 export interface InfinitySurfaceProps {
@@ -82,6 +87,8 @@ export function InfinitySurface({
 }: InfinitySurfaceProps) {
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const settingsId = useId()
   const progressFillRef = useRef<HTMLSpanElement>(null)
   const progress = Math.max(
     0,
@@ -112,22 +119,9 @@ export function InfinitySurface({
       <header className="infinity-surface__summary">
         <p className="infinity-surface__points">
           <FormattedMessage {...messages.pointsLabel} />
-          <span className="infinity-surface__available">
-            {formatGameNumber(locale, resources.availablePoints)}
-          </span>
-          <span className="infinity-surface__spent">
-            <FormattedMessage
-              {...messages.spentParenthetical}
-              values={{
-                value: formatGameNumber(
-                  locale,
-                  resources.spentPoints,
-                ),
-              }}
-            />
-          </span>
+          <span className="infinity-surface__available">{formatGameNumber(locale, resources.availablePoints)}</span>
+          <span className="infinity-surface__spent"><FormattedMessage {...messages.spentParenthetical} values={{ value: formatGameNumber(locale, resources.spentPoints) }} /></span>
         </p>
-
         <p className="infinity-surface__secret">
           <FormattedMessage
             {...messages.secretPhrase}
@@ -135,75 +129,6 @@ export function InfinitySurface({
           />
         </p>
 
-        <div className="infinity-surface__progress">
-          <div className="infinity-surface__progress-heading">
-            <strong>
-              {derived.mode === 'break'
-                ? intl.formatMessage(messages.botsUntilNextPoint, {
-                    value: formatGameNumber(
-                      locale,
-                      derived.botsRemainingToNextReward,
-                    ),
-                  })
-                : intl.formatMessage(messages.ordinaryProgress)}
-            </strong>
-            <span>
-              {derived.mode === 'break'
-                ? `${formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/${formatGameNumber(locale, derived.breakTargetProgress.targetReward)}`
-                : intl.formatMessage(messages.progressPercent, {
-                    value: formatNumber(locale, progress * 100, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }),
-                  })}
-            </span>
-          </div>
-          <div
-            className="infinity-surface__progress-track"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(progress * 100)}
-            aria-label={intl.formatMessage(
-              derived.mode === 'break'
-                ? messages.breakProgressAccessible
-                : messages.ordinaryProgress,
-              {
-                target: formatGameNumber(
-                  locale,
-                  progression.infinity.breakTarget,
-                ),
-              },
-            )}
-          >
-            <span
-              ref={progressFillRef}
-              aria-hidden="true"
-              style={{ transform: `scaleX(${progress})` }}
-            />
-          </div>
-        </div>
-
-        {derived.showRealityWarning ? (
-          <p
-            className="infinity-surface__warning"
-            role="status"
-          >
-            {intl.formatMessage(messages.realityWarning)}
-          </p>
-        ) : null}
-
-        {derived.mode === 'break' ? (
-          <BreakTargetControl
-            locale={locale}
-            target={progression.infinity.breakTarget}
-            control={previews.breakTarget}
-            routeAvailable={
-              commandAvailability.setBreakTarget
-            }
-            dispatchPlayer={dispatchPlayer}
-          />
-        ) : null}
       </header>
 
       <div className="infinity-surface__shop">
@@ -215,9 +140,7 @@ export function InfinitySurface({
                   locale={locale}
                   preview={preview}
                   resources={resources}
-                  routeAvailable={
-                    commandAvailability.purchaseShopItem
-                  }
+                  routeAvailable={commandAvailability.purchaseShopItem}
                   dispatchPlayer={dispatchPlayer}
                 />
               </li>
@@ -229,7 +152,201 @@ export function InfinitySurface({
           </p>
         )}
       </div>
+
+      <div className="infinity-surface__control-dock">
+        {derived.showRealityWarning ? (
+          <p className="infinity-surface__warning" role="status">
+            {intl.formatMessage(messages.realityWarning)}
+          </p>
+        ) : null}
+        <ProgressControlsPanel
+          ariaLabel={intl.formatMessage(messages.ordinaryProgress)}
+          className="infinity-surface__control-panel"
+          expanded={settingsOpen}
+          controlsId={settingsId}
+          settingsLabel={intl.formatMessage(messages.settings)}
+          onExpandedChange={setSettingsOpen}
+          summary={(
+            <div className="infinity-surface__progress">
+              <div className="infinity-surface__progress-heading">
+                <strong>
+                  {derived.mode === 'break'
+                    ? intl.formatMessage(messages.botsUntilNextPoint, {
+                        value: formatGameNumber(
+                          locale,
+                          derived.botsRemainingToNextReward,
+                        ),
+                      })
+                    : intl.formatMessage(messages.ordinaryProgress)}
+                </strong>
+                {!progression.infinity.automaticResetEnabled && progress >= 1 ? (
+                  <ManualInfinityButton
+                    routeAvailable={commandAvailability.requestReset}
+                    dispatchPlayer={dispatchPlayer}
+                  />
+                ) : (
+                  <span>
+                    {derived.mode === 'break'
+                      ? `${formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/${formatGameNumber(locale, derived.breakTargetProgress.targetReward)}`
+                      : intl.formatMessage(messages.progressPercent, {
+                          value: formatNumber(locale, progress * 100, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }),
+                        })}
+                  </span>
+                )}
+              </div>
+              <div
+                className="infinity-surface__progress-track"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(progress * 100)}
+                aria-label={intl.formatMessage(
+                  derived.mode === 'break'
+                    ? messages.breakProgressAccessible
+                    : messages.ordinaryProgress,
+                  {
+                    target: formatGameNumber(
+                      locale,
+                      progression.infinity.breakTarget,
+                    ),
+                  },
+                )}
+              >
+                <span
+                  ref={progressFillRef}
+                  aria-hidden="true"
+                  style={{ transform: `scaleX(${progress})` }}
+                />
+              </div>
+            </div>
+          )}
+        >
+          <AutomaticInfinityControl
+            enabled={progression.infinity.automaticResetEnabled}
+            routeAvailable={commandAvailability.setAutomaticReset}
+            dispatchPlayer={dispatchPlayer}
+          />
+          {derived.mode === 'break' ? (
+            <BreakTargetControl
+              locale={locale}
+              target={progression.infinity.breakTarget}
+              control={previews.breakTarget}
+              routeAvailable={
+                commandAvailability.setBreakTarget
+              }
+              dispatchPlayer={dispatchPlayer}
+            />
+          ) : null}
+        </ProgressControlsPanel>
+      </div>
     </section>
+  )
+}
+
+function ManualInfinityButton({
+  routeAvailable,
+  dispatchPlayer,
+}: {
+  readonly routeAvailable: boolean
+  readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
+}) {
+  const intl = useIntl()
+  const [pending, setPending] = useState(false)
+  const [failed, setFailed] = useState(false)
+
+  const requestReset = async (): Promise<void> => {
+    if (pending || !routeAvailable) return
+    setPending(true)
+    setFailed(false)
+    try {
+      const result = await dispatchPlayer({ kind: 'infinity.request-reset' })
+      setFailed(result.status !== 'accepted')
+    } catch {
+      setFailed(true)
+    } finally {
+      setPending(false)
+    }
+  }
+
+  return (
+    <span className="infinity-manual-reset">
+      <button
+        type="button"
+        disabled={!routeAvailable || pending}
+        onClick={() => void requestReset()}
+      >
+        {intl.formatMessage(messages.manualReset)}
+      </button>
+      {failed ? (
+        <span role="alert" className="infinity-manual-reset__feedback">
+          {intl.formatMessage(messages.manualResetFailed)}
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
+interface AutomaticInfinityControlProps {
+  readonly enabled: boolean
+  readonly routeAvailable: boolean
+  readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
+}
+
+function AutomaticInfinityControl({
+  enabled,
+  routeAvailable,
+  dispatchPlayer,
+}: AutomaticInfinityControlProps) {
+  const intl = useIntl()
+  const pendingRef = useRef(false)
+  const [failed, setFailed] = useState(false)
+
+  const toggle = async (): Promise<void> => {
+    if (pendingRef.current || !routeAvailable) return
+    pendingRef.current = true
+    setFailed(false)
+    try {
+      const result = await dispatchPlayer({
+        kind: 'infinity.set-automatic-reset',
+        enabled: !enabled,
+      })
+      setFailed(result.status !== 'accepted')
+    } catch {
+      setFailed(true)
+    } finally {
+      pendingRef.current = false
+    }
+  }
+
+  return (
+    <div className="infinity-automatic-reset">
+      <span>{intl.formatMessage(messages.automaticReset)}</span>
+      <button
+        type="button"
+        aria-label={`${intl.formatMessage(messages.automaticReset)}: ${intl.formatMessage(
+          enabled
+            ? messages.automaticResetOn
+            : messages.automaticResetOff,
+        )}`}
+        aria-pressed={enabled}
+        disabled={!routeAvailable}
+        onClick={() => void toggle()}
+      >
+        {intl.formatMessage(
+          enabled
+            ? messages.automaticResetOn
+            : messages.automaticResetOff,
+        )}
+      </button>
+      {failed ? (
+        <span className="infinity-automatic-reset__feedback" role="alert">
+          {intl.formatMessage(messages.automaticResetFailed)}
+        </span>
+      ) : null}
+    </div>
   )
 }
 

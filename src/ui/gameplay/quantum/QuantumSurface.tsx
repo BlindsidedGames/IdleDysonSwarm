@@ -20,7 +20,7 @@ import {
   QUANTUM_CONSTANTS,
   type QuantumUpgradeId,
 } from '../../../simulation/quantumUpgrades'
-import { Button, SettingsIcon } from '../../components'
+import { Button, ProgressControlsPanel } from '../../components'
 import quantumShardsIcon from '../../assets/quantum-shards.png'
 import { formatGameNumber, formatNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -370,31 +370,32 @@ export function QuantumControlPanel({
   const available = infinityPoints >= required
 
   return (
-    <section className="quantum-control-panel" aria-label={intl.formatMessage(messages.progress)}>
-      <div className="quantum-control-panel__header">
+    <ProgressControlsPanel
+      ariaLabel={intl.formatMessage(messages.progress)}
+      className="quantum-control-panel"
+      expanded={purchaseSettingsOpen}
+      controlsId="quantum-purchase-settings"
+      settingsLabel={intl.formatMessage(messages.purchaseSettings)}
+      onExpandedChange={onPurchaseSettingsOpenChange}
+      summary={(
         <div className="quantum-control-panel__progress-copy">
-          <strong>{intl.formatMessage(messages.progress)}</strong>
-          {!available ? (
-            <span>
-              {intl.formatMessage(messages.progressValue, {
-                current: formatGameNumber(locale, infinityPoints),
-                required: formatGameNumber(locale, required),
-              })}
-            </span>
-          ) : null}
+          <div className="quantum-control-panel__progress-heading">
+            <strong>{intl.formatMessage(messages.progress)}</strong>
+            {!available ? (
+              <span>
+                {intl.formatMessage(messages.progressValue, {
+                  current: formatGameNumber(locale, infinityPoints),
+                  required: formatGameNumber(locale, required),
+                })}
+              </span>
+            ) : null}
+          </div>
+          <span className="quantum-surface__track" role="progressbar" aria-label={intl.formatMessage(messages.progress)} aria-valuemin={0} aria-valuemax={42} aria-valuenow={Number(current)}>
+            <span style={{ inlineSize: `${Math.max(0, Math.min(1, progress)) * 100}%` }} />
+          </span>
         </div>
-        <button
-          type="button"
-          className="quantum-control-panel__settings-toggle"
-          aria-label={intl.formatMessage(messages.purchaseSettings)}
-          aria-expanded={purchaseSettingsOpen}
-          onClick={() => onPurchaseSettingsOpenChange(!purchaseSettingsOpen)}
-        ><SettingsIcon /></button>
-      </div>
-      <span className="quantum-surface__track" role="progressbar" aria-label={intl.formatMessage(messages.progress)} aria-valuemin={0} aria-valuemax={42} aria-valuenow={Number(current)}>
-        <span style={{ inlineSize: `${Math.max(0, Math.min(1, progress)) * 100}%` }} />
-      </span>
-      {purchaseSettingsOpen && (
+      )}
+    >
         <div className="quantum-control-panel__purchase-settings" role="group" aria-label={intl.formatMessage(messages.purchaseAmount)}>
           {QUANTUM_PURCHASE_QUANTITIES.map((quantity) => (
             <button
@@ -407,8 +408,7 @@ export function QuantumControlPanel({
               : intl.formatMessage(messages.buyQuantity, { quantity })}</button>
           ))}
         </div>
-      )}
-    </section>
+    </ProgressControlsPanel>
   )
 }
 

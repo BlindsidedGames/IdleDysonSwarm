@@ -264,6 +264,30 @@ describe('canonical game-state mapping', () => {
     expect(hydrateGameState(dehydrated).state).toEqual(hydrated.state)
   })
 
+  test('defaults automatic Infinity on and round-trips an explicit off setting', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const hydrated = hydrateGameState(prepared)
+
+    expect(hydrated.state.infinity.automaticResetEnabled).toBe(true)
+
+    const disabled = dehydrateGameState(hydrated, {
+      ...hydrated.state,
+      infinity: {
+        ...hydrated.state.infinity,
+        automaticResetEnabled: false,
+      },
+    })
+
+    expect(
+      disabled.copyValidatedState().infinityAutomaticReset,
+    ).toBe(false)
+    expect(
+      hydrateGameState(disabled).state.infinity.automaticResetEnabled,
+    ).toBe(false)
+  })
+
   test('keeps packed flags and authoritative skill bitsets synchronized', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),

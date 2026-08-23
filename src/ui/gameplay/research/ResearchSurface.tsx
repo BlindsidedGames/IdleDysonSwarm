@@ -28,7 +28,7 @@ import {
   FacilityCard,
   InlineImageSymbol,
   PresetAutomationSelect,
-  SettingsIcon,
+  ProgressControlsPanel,
 } from '../../components'
 import {
   formatGameNumber,
@@ -303,11 +303,37 @@ export function ResearchSurface({
       </div>
 
       <footer className="research-surface__footer">
-        {settingsOpen ? (
-          <div
-            id={settingsId}
-            className="research-surface__settings"
-          >
+        <ProgressControlsPanel
+          ariaLabel={intl.formatMessage(messages.purchaseSettings)}
+          className="research-surface__control-panel"
+          expanded={settingsOpen}
+          controlsId={settingsId}
+          settingsLabel={intl.formatMessage(messages.purchaseSettings)}
+          onExpandedChange={setSettingsOpen}
+          summary={(
+            <p>
+              <FormattedMessage
+                {...messages.productionSummary}
+                values={{
+                  researchers: formatGameNumber(locale, researchers),
+                  science: formatGameNumber(locale, sciencePerSecond),
+                  scienceIcon: <ScienceSymbol />,
+                  researcherValue: (chunks: ReactNode) => (
+                    <span className="research-surface__researchers">
+                      {chunks}
+                    </span>
+                  ),
+                  scienceValue: (chunks: ReactNode) => (
+                    <span className="research-surface__science">
+                      {chunks}
+                    </span>
+                  ),
+                }}
+              />
+            </p>
+          )}
+        >
+          <div className="research-surface__settings">
             <span className="research-surface__settings-title">
               {intl.formatMessage(messages.purchaseAmount)}
             </span>
@@ -437,40 +463,7 @@ export function ResearchSurface({
               </span>
             ) : null}
           </div>
-        ) : null}
-
-        <div className="research-surface__summary">
-          <p>
-            <FormattedMessage
-              {...messages.productionSummary}
-              values={{
-                researchers: formatGameNumber(locale, researchers),
-                science: formatGameNumber(locale, sciencePerSecond),
-                scienceIcon: <ScienceSymbol />,
-                researcherValue: (chunks: ReactNode) => (
-                  <span className="research-surface__researchers">
-                    {chunks}
-                  </span>
-                ),
-                scienceValue: (chunks: ReactNode) => (
-                  <span className="research-surface__science">
-                    {chunks}
-                  </span>
-                ),
-              }}
-            />
-          </p>
-          <button
-            type="button"
-            className="research-surface__settings-toggle"
-            aria-label={intl.formatMessage(messages.purchaseSettings)}
-            aria-expanded={settingsOpen}
-            aria-controls={settingsId}
-            onClick={() => setSettingsOpen((current) => !current)}
-          >
-            <SettingsIcon />
-          </button>
-        </div>
+        </ProgressControlsPanel>
       </footer>
     </div>
   )

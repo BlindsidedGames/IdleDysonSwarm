@@ -448,7 +448,7 @@ describe('QuantumControlPanel', () => {
     expect(screen.queryByText('Quantum Leap Available')).not.toBeInTheDocument()
     expect(
       screen.getByText('Progress to Quantum Leap')
-        .closest('.quantum-control-panel__header'),
+        .closest('.ui-progress-controls-panel__collapsed'),
     ).toContainElement(
       screen.getByRole('button', { name: 'Purchase settings' }),
     )

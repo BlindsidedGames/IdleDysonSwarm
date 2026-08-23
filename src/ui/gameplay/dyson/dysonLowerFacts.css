@@ -3,34 +3,21 @@
 .dyson-lower-facts {
   min-inline-size: 0;
   block-size: 100%;
+  display: grid;
+  align-content: center;
+  grid-template-columns: minmax(0, 1fr);
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
 }
 
-.dyson-lower-facts {
-  display: grid;
-  align-content: center;
-  grid-template-columns: minmax(0, 1fr);
-}
-
 .dyson-lower-facts p {
   margin: 0;
-}
-
-.dyson-lower-facts p {
-  padding: 0.42rem 0.65rem;
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.2rem;
-  background: var(--theme-panel);
+  padding: 0.55rem 0.75rem;
   color: #f4edf5;
   line-height: var(--line-height-body);
-  text-align: center;
-}
-
-.dyson-lower-facts p {
-  border-color: #8b542f;
+  text-align: start;
 }
 
 .dyson-lower-facts__value {
@@ -39,14 +26,14 @@
 
 @media (max-width: 720px) {
   .dyson-lower-facts p {
-    padding: 0.28rem 0.35rem;
-    font-size: calc(0.76rem * var(--game-text-scale));
-    line-height: 1.1;
+    padding: 0.25rem 0.1rem;
+    font-size: calc(0.88rem * var(--game-text-scale));
+    line-height: 1.15;
   }
 }
 
 @media (max-width: 359px) {
   .dyson-lower-facts p {
-    font-size: calc(0.7rem * var(--game-text-scale));
+    font-size: calc(0.82rem * var(--game-text-scale));
   }
 }

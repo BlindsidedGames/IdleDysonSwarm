@@ -2293,6 +2293,30 @@
       "value": "Tinker in your garage"
     }
   ],
+  "infinity.automatic-reset": [
+    {
+      "type": 0,
+      "value": "Auto Infinity"
+    }
+  ],
+  "infinity.automatic-reset.failed": [
+    {
+      "type": 0,
+      "value": "The Auto Infinity setting was not changed."
+    }
+  ],
+  "infinity.automatic-reset.off": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
+  "infinity.automatic-reset.on": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "infinity.break-target": [
     {
       "type": 0,
@@ -2317,6 +2341,18 @@
     {
       "type": 0,
       "value": " IP"
+    }
+  ],
+  "infinity.manual-reset": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "infinity.manual-reset.failed": [
+    {
+      "type": 0,
+      "value": "Infinity is not ready yet."
     }
   ],
   "infinity.points.label": [
@@ -2401,6 +2437,12 @@
     {
       "type": 0,
       "value": "The meaning of life is: Love, Family, and Incrementals"
+    }
+  ],
+  "infinity.settings": [
+    {
+      "type": 0,
+      "value": "Infinity settings"
     }
   ],
   "infinity.shop.ai-managers.description": [
@@ -6765,6 +6807,12 @@
       "value": "Centre on starting skill"
     }
   ],
+  "skills.clear-search": [
+    {
+      "type": 0,
+      "value": "Clear skill search"
+    }
+  ],
   "skills.close": [
     {
       "type": 0,
@@ -7049,6 +7097,12 @@
       "value": "Allow automatic assignment of non-refundable skills"
     }
   ],
+  "skills.none": [
+    {
+      "type": 0,
+      "value": "None"
+    }
+  ],
   "skills.owned": [
     {
       "type": 0,
@@ -7069,6 +7123,12 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "skills.points-label": [
+    {
+      "type": 0,
+      "value": "Skill Points"
     }
   ],
   "skills.preset-change-failed": [
@@ -7406,13 +7466,31 @@
   "skills.reset": [
     {
       "type": 0,
-      "value": "Reset refundable skills"
+      "value": "Reset Skills"
+    }
+  ],
+  "skills.reset-refunded-heading": [
+    {
+      "type": 0,
+      "value": "Skills that will be refunded"
+    }
+  ],
+  "skills.reset-retained-heading": [
+    {
+      "type": 0,
+      "value": "Skills that won’t be refunded"
     }
   ],
   "skills.reset-warning": [
     {
       "type": 0,
-      "value": "Refunds all currently refundable skills and clears automatic assignment."
+      "value": "Resets all refundable skills"
+    }
+  ],
+  "skills.reset.queued-heading": [
+    {
+      "type": 0,
+      "value": "Removed from auto-assignment"
     }
   ],
   "skills.search": [

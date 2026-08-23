@@ -37,7 +37,74 @@
 }
 
 .settings-surface__audio-controls input[type="range"] {
+  appearance: none;
   inline-size: 100%;
+  block-size: var(--target-minimum);
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.settings-surface__audio-controls input[type="range"]::-webkit-slider-runnable-track {
+  block-size: 0.42rem;
+  border: 1px solid color-mix(in srgb, var(--theme-divider) 72%, black);
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--theme-accent) 0 var(--settings-range-progress),
+    color-mix(in srgb, var(--theme-panel) 68%, black)
+      var(--settings-range-progress) 100%
+  );
+  box-shadow: inset 0 0.08rem 0.15rem rgb(0 0 0 / 32%);
+}
+
+.settings-surface__audio-controls input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-block-start: -0.34rem;
+  border: 2px solid color-mix(in srgb, var(--theme-accent) 72%, white);
+  border-radius: 50%;
+  background: var(--theme-accent);
+  box-shadow: 0 0.08rem 0.18rem rgb(0 0 0 / 45%);
+}
+
+.settings-surface__audio-controls input[type="range"]::-moz-range-track {
+  block-size: 0.42rem;
+  border: 1px solid color-mix(in srgb, var(--theme-divider) 72%, black);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-panel) 68%, black);
+  box-shadow: inset 0 0.08rem 0.15rem rgb(0 0 0 / 32%);
+}
+
+.settings-surface__audio-controls input[type="range"]::-moz-range-progress {
+  block-size: 0.42rem;
+  border-radius: 999px;
+  background: var(--theme-accent);
+}
+
+.settings-surface__audio-controls input[type="range"]::-moz-range-thumb {
+  inline-size: 0.9rem;
+  block-size: 0.9rem;
+  border: 2px solid color-mix(in srgb, var(--theme-accent) 72%, white);
+  border-radius: 50%;
+  background: var(--theme-accent);
+  box-shadow: 0 0.08rem 0.18rem rgb(0 0 0 / 45%);
+}
+
+.settings-surface__audio-controls input[type="range"]:focus-visible {
+  outline: none;
+}
+
+.settings-surface__audio-controls input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.settings-surface__audio-controls input[type="range"]:focus-visible::-moz-range-thumb {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 .settings-surface__dialog-backdrop {

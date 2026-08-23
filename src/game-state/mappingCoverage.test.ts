@@ -108,6 +108,20 @@ describe('public Unity mapping coverage certification', () => {
     ).toBeNull()
   })
 
+  test('records the Web-owned automatic Infinity extension separately from the pinned Unity schema', () => {
+    expect(mappingCoverageManifest.developmentExtensions).toContainEqual(
+      expect.objectContaining({
+        sourcePath: '$.infinityAutomaticReset',
+        classification: 'canonically-owned',
+        canonicalPath: '$.infinity.automaticResetEnabled',
+        writePolicy: 'write-canonical',
+      }),
+    )
+    expect(
+      classifyPublicUnitySchema11Leaf('$.infinityAutomaticReset'),
+    ).toBeNull()
+  })
+
   test('matches escaped dots inside certified dictionary keys without widening fields', () => {
     expect(
       mappingPathMatches(

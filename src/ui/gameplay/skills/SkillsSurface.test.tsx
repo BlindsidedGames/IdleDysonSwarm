@@ -58,6 +58,11 @@ const catalog: CanonicalSkillCatalogPreview = {
   complete: true,
   definitionGap: null,
   skills: [startSkill],
+  reset: {
+    refundableSkillIds: [],
+    retainedSkillIds: [],
+    queuedSkillIds: [],
+  },
 }
 
 const presets = [
@@ -217,9 +222,17 @@ describe('SkillsSurface', () => {
   })
 
   test('renders the canonical resource strip and authored starting node', () => {
-    renderSkills()
+    const { container } = render(createSkillElement(createDispatchPlayer()))
 
-    expect(screen.getByText('Skill Points: 3.00')).toBeInTheDocument()
+    expect(screen.getByText('Skill Points')).toHaveClass(
+      'skills-surface__visually-hidden',
+    )
+    expect(
+      container.querySelector('.skills-surface__resources strong'),
+    ).toHaveTextContent('3.00')
+    expect(
+      container.querySelector('.skills-surface__resources img'),
+    ).toHaveAttribute('src', expect.stringContaining('nav-skills'))
     expect(screen.queryByText(/Fragments:/)).not.toBeInTheDocument()
     expect(
       screen.getByRole('button', {
@@ -390,6 +403,14 @@ describe('SkillsSurface', () => {
         name: 'Cash & Science. Cost: 1 Skill Points',
       }),
     ).toHaveAttribute('data-match', 'true')
+
+    await user.click(
+      screen.getByRole('button', { name: 'Clear skill search' }),
+    )
+    expect(
+      screen.getByRole('searchbox', { name: 'Search skills' }),
+    ).toHaveValue('')
+    expect(screen.queryByText('1 match')).not.toBeInTheDocument()
   })
 
   test('focuses a searched skill without scrolling the transformed viewport', async () => {
@@ -1439,6 +1460,7 @@ describe('SkillsSurface', () => {
     ).toBeInTheDocument()
     expect(settingsToggle).not.toHaveTextContent('⚙')
     await user.click(settingsToggle)
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     const currentPreset = screen.getByRole('button', {
       name: /Load Preset 1/,
     })
@@ -1475,6 +1497,7 @@ describe('SkillsSurface', () => {
         name: 'Skill presets and reset',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     const load = screen.getByRole('button', { name: /Load Preset 1/ })
     const manage = screen.getByRole('button', {
       name: 'Manage Preset 1',
@@ -1567,6 +1590,7 @@ describe('SkillsSurface', () => {
         name: 'Skill presets and reset',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     await user.click(
       screen.getByRole('button', {
         name: 'Manage Preset 1',
@@ -1590,7 +1614,7 @@ describe('SkillsSurface', () => {
     })
   })
 
-  test('closes preset management with Escape and restores its ellipsis trigger', async () => {
+  test('closes preset management with Escape and restores the preset list', async () => {
     const user = userEvent.setup()
     render(
       createSkillElement(
@@ -1606,22 +1630,47 @@ describe('SkillsSurface', () => {
         name: 'Skill presets and reset',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     const manage = screen.getByRole('button', {
       name: 'Manage Preset 1',
     })
     await user.click(manage)
-    expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus()
+    expect(screen.getAllByRole('button', { name: 'Close' }).at(-1)).toHaveFocus()
 
     await user.keyboard('{Escape}')
     expect(
       screen.queryByRole('dialog', { name: 'Manage Preset 1' }),
     ).not.toBeInTheDocument()
+    expect(screen.getByRole('dialog', { name: 'Presets' })).toBeInTheDocument()
     expect(manage).toHaveFocus()
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog', { name: 'Presets' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Presets' })).toHaveFocus()
   })
 
-  test('shows the reset explanation once, only while confirming', async () => {
+  test('previews refundable and retained skills in a reset dialog before dispatching', async () => {
     const user = userEvent.setup()
-    renderSkills()
+    const dispatchPlayer = createDispatchPlayer()
+    const resetCatalog: CanonicalSkillCatalogPreview = {
+      ...catalog,
+      skills: [
+        createSkillPreview('startHereTree', {
+          owned: true,
+          visualState: 'owned',
+        }),
+        createSkillPreview('assemblyLineTree', {
+          owned: true,
+          visualState: 'non-refundable-owned',
+          intrinsicallyRefundable: false,
+        }),
+      ],
+      reset: {
+        refundableSkillIds: ['startHereTree'],
+        retainedSkillIds: ['assemblyLineTree'],
+        queuedSkillIds: [],
+      },
+    }
+    render(createSkillElement(dispatchPlayer, 0.5, 1, resetCatalog))
 
     await user.click(
       screen.getByRole('button', {
@@ -1629,19 +1678,75 @@ describe('SkillsSurface', () => {
       }),
     )
     expect(
-      screen.queryByText(
-        'Refunds all currently refundable skills and clears automatic assignment.',
-      ),
+      screen.queryByRole('dialog', { name: 'Reset Skills' }),
     ).not.toBeInTheDocument()
 
     await user.click(
-      screen.getByRole('button', { name: 'Reset refundable skills' }),
+      screen.getByRole('button', { name: 'Reset Skills' }),
     )
+    const dialog = screen.getByRole('dialog', { name: 'Reset Skills' })
+    expect(within(dialog).getByText('Resets all refundable skills')).toBeInTheDocument()
     expect(
-      screen.getAllByText(
-        'Refunds all currently refundable skills and clears automatic assignment.',
-      ),
-    ).toHaveLength(1)
+      within(
+        within(dialog).getByRole('list', {
+          name: 'Skills that will be refunded',
+        }),
+      ).getByText('Cash & Science'),
+    ).toBeInTheDocument()
+    expect(
+      within(
+        within(dialog).getByRole('list', {
+          name: 'Skills that won’t be refunded',
+        }),
+      ).getByText('Assembly Lines'),
+    ).toBeInTheDocument()
+    expect(dispatchPlayer).not.toHaveBeenCalled()
+
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Reset Skills' }),
+    )
+    expect(dispatchPlayer).toHaveBeenCalledWith({ kind: 'skill.reset' })
+    expect(
+      screen.queryByRole('dialog', { name: 'Reset Skills' }),
+    ).not.toBeInTheDocument()
+  })
+
+  test('allows a queue-only reset and identifies the queued skills it clears', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = createDispatchPlayer()
+    const queuedCatalog: CanonicalSkillCatalogPreview = {
+      ...catalog,
+      reset: {
+        refundableSkillIds: [],
+        retainedSkillIds: [],
+        queuedSkillIds: ['startHereTree'],
+      },
+    }
+    render(createSkillElement(dispatchPlayer, 0.5, 1, queuedCatalog))
+
+    await user.click(screen.getByRole('button', {
+      name: 'Skill presets and reset',
+    }))
+    await user.click(screen.getByRole('button', { name: 'Reset Skills' }))
+    const dialog = screen.getByRole('dialog', { name: 'Reset Skills' })
+    expect(within(dialog).getByRole('list', {
+      name: 'Removed from auto-assignment',
+    })).toHaveTextContent('Cash & Science')
+    const reset = within(dialog).getByRole('button', { name: 'Reset Skills' })
+    expect(reset).toBeEnabled()
+
+    await user.click(reset)
+    expect(dispatchPlayer).toHaveBeenCalledWith({ kind: 'skill.reset' })
+  })
+
+  test('returns focus to the search input after clearing a query', async () => {
+    const user = userEvent.setup()
+    render(createSkillElement(createDispatchPlayer()))
+    const search = screen.getByRole('searchbox', { name: 'Search skills' })
+    await user.type(search, 'AI')
+    await user.click(screen.getByRole('button', { name: 'Clear skill search' }))
+    expect(search).toHaveFocus()
+    expect(search).toHaveValue('')
   })
 
   test('releases a completed preset command before bot distribution reconciliation', async () => {
@@ -1654,6 +1759,7 @@ describe('SkillsSurface', () => {
         name: 'Skill presets and reset',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     await user.click(
       screen.getByRole('button', {
         name: /Load Preset 2/,
@@ -1683,6 +1789,7 @@ describe('SkillsSurface', () => {
         name: 'Skill presets and reset',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     await user.click(
       screen.getByRole('button', {
         name: /Load Preset 2/,
@@ -1719,6 +1826,7 @@ describe('SkillsSurface', () => {
         name: 'Skill presets and reset',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     await user.click(
       screen.getByRole('button', {
         name: /Load Preset 2/,
@@ -1746,6 +1854,7 @@ describe('SkillsSurface', () => {
         name: 'Skill presets and reset',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     await user.click(
       screen.getByRole('button', {
         name: /Load Preset 1/,
@@ -1766,6 +1875,7 @@ describe('SkillsSurface', () => {
         name: 'Skill presets and reset',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
     await user.click(
       screen.getByRole('button', {
         name: /Load Preset 1/,
@@ -1796,6 +1906,8 @@ describe('SkillsSurface', () => {
         name: 'Allow automatic assignment of non-refundable skills',
       }),
     )
+
+    await user.click(screen.getByRole('button', { name: 'Presets' }))
 
     expect(
       screen.getByRole('button', { name: /Load Preset 2/ }),

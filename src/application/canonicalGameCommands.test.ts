@@ -87,6 +87,12 @@ function options(
         code: 'not-ready',
       }),
     },
+    infinityReset: {
+      requestReset: () => ({
+        accepted: false,
+        code: 'not-ready',
+      }),
+    },
     ...overrides,
   }
 }
@@ -191,6 +197,8 @@ const COMMAND_EXAMPLES = [
     upgradeId: 'BotMultitasking',
   },
   { kind: 'quantum.request-leap' },
+  { kind: 'infinity.request-reset' },
+  { kind: 'infinity.set-automatic-reset', enabled: false },
   { kind: 'infinity.set-break-target', target: 42n },
   {
     kind: 'infinity.purchase-shop-item',
@@ -843,6 +851,97 @@ describe('canonical game command router', () => {
     expect(original.quantum.pointsEarned + 1n).toBe(
       result.state.quantum.pointsEarned,
     )
+  })
+
+  test('toggles automatic Infinity before or after Break The Loop without runtime evaluation', () => {
+    const source = state()
+    const original = {
+      ...source,
+      infinity: {
+        ...source.infinity,
+        automaticResetEnabled: true,
+      },
+    }
+    const evaluate = vi.fn()
+    const disabled = routeCanonicalGameCommand(
+      original,
+      { kind: 'infinity.set-automatic-reset', enabled: false },
+      options({
+        runtimeEvaluation: { evaluate },
+      }),
+    )
+
+    expect(disabled).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'infinity-automatic-reset:set',
+      state: {
+        infinity: { automaticResetEnabled: false },
+      },
+    })
+    expect(evaluate).not.toHaveBeenCalled()
+
+    const unchanged = routeCanonicalGameCommand(
+      disabled.state,
+      { kind: 'infinity.set-automatic-reset', enabled: false },
+      options(),
+    )
+    expect(unchanged).toMatchObject({
+      accepted: true,
+      changed: false,
+      code: 'infinity-automatic-reset:unchanged',
+    })
+
+    const broken = {
+      ...disabled.state,
+      quantum: {
+        ...disabled.state.quantum,
+        unlocks: {
+          ...disabled.state.quantum.unlocks,
+          breakTheLoop: true,
+        },
+      },
+    }
+    expect(routeCanonicalGameCommand(
+      broken,
+      { kind: 'infinity.set-automatic-reset', enabled: true },
+      options(),
+    )).toMatchObject({
+      accepted: true,
+      changed: true,
+      state: { infinity: { automaticResetEnabled: true } },
+    })
+  })
+
+  test('routes manual Infinity through the event-model reset port', () => {
+    const original = state()
+    const next = {
+      ...original,
+      infinity: {
+        ...original.infinity,
+        points: original.infinity.points + 1n,
+      },
+    }
+    const requestReset = vi.fn(() => ({
+      accepted: true as const,
+      changed: true,
+      code: 'APPLIED',
+      state: next,
+    }))
+
+    const result = routeCanonicalGameCommand(
+      original,
+      { kind: 'infinity.request-reset' },
+      options({ infinityReset: { requestReset } }),
+    )
+
+    expect(requestReset).toHaveBeenCalledExactlyOnceWith(original)
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'infinity-reset:APPLIED',
+      state: { infinity: { points: next.infinity.points } },
+    })
   })
 
   test('returns stored-time repair metadata with state as one transaction', () => {

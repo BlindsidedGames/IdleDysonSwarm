@@ -11,6 +11,11 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Skill Points: {value}',
     description: 'Current number of skill points available to spend.',
   },
+  pointsLabel: {
+    id: 'skills.points-label',
+    defaultMessage: 'Skill Points',
+    description: 'Screen-reader label for the compact Skill Points value.',
+  },
   fragments: {
     id: 'skills.fragments',
     defaultMessage: 'Fragments: {value}',
@@ -25,6 +30,11 @@ export const skillMessages = defineMessages({
     id: 'skills.search',
     defaultMessage: 'Search skills',
     description: 'Accessible label for the skill-tree search field.',
+  },
+  clearSearch: {
+    id: 'skills.clear-search',
+    defaultMessage: 'Clear skill search',
+    description: 'Accessible label for clearing the skill-tree search field.',
   },
   searchPlaceholder: {
     id: 'skills.search-placeholder',
@@ -391,13 +401,32 @@ export const skillMessages = defineMessages({
   },
   reset: {
     id: 'skills.reset',
-    defaultMessage: 'Reset refundable skills',
+    defaultMessage: 'Reset Skills',
     description: 'Button label for refunding every currently refundable skill.',
   },
   resetWarning: {
     id: 'skills.reset-warning',
-    defaultMessage:
-      'Refunds all currently refundable skills and clears automatic assignment.',
+    defaultMessage: 'Resets all refundable skills',
     description: 'Warning explaining the effects of resetting refundable skills.',
+  },
+  resetRefundedHeading: {
+    id: 'skills.reset-refunded-heading',
+    defaultMessage: 'Skills that will be refunded',
+    description: 'Heading above refundable skills in the reset confirmation.',
+  },
+  resetRetainedHeading: {
+    id: 'skills.reset-retained-heading',
+    defaultMessage: 'Skills that won’t be refunded',
+    description: 'Heading above retained skills in the reset confirmation.',
+  },
+  resetQueuedHeading: {
+    id: 'skills.reset.queued-heading',
+    defaultMessage: 'Removed from auto-assignment',
+    description: 'Heading for queued skills cleared by a skill reset.',
+  },
+  none: {
+    id: 'skills.none',
+    defaultMessage: 'None',
+    description: 'Empty state for a Skills reset confirmation list.',
   },
 })

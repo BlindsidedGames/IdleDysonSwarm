@@ -58,16 +58,12 @@
 .quantum-control-panel {
   --quantum-accent: var(--theme-accent);
   --quantum-accent-strong: var(--theme-accent);
-  display: grid;
-  gap: 0.4rem;
-  padding: 0.38rem 0.15rem 0;
-  color: white;
+  border-block-start-width: 1px;
 }
-.quantum-control-panel__header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.65rem; }
-.quantum-control-panel__progress-copy { display: flex; min-inline-size: 0; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.2rem 0.65rem; }
-.quantum-control-panel__progress-copy > span { color: #e8def6; font-family: var(--font-family-numeric); font-variant-numeric: tabular-nums; }
-.quantum-control-panel__settings-toggle { display: grid; place-items: center; min-inline-size: 2.15rem; min-block-size: 2.05rem; border: 1px solid var(--theme-divider); border-radius: 0.25rem; background: var(--theme-selected); color: white; box-shadow: 0 0.12rem 0.24rem rgb(0 0 0 / 42%); font-size: 1.1rem; }
-.quantum-control-panel__settings-toggle[aria-expanded="true"] { border-color: var(--theme-divider); background: var(--theme-page); color: var(--quantum-accent); box-shadow: inset 0 0.08rem 0.15rem rgb(0 0 0 / 32%); }
+.quantum-control-panel .ui-progress-controls-panel__body { padding: 0.2rem 0; }
+.quantum-control-panel__progress-copy { display: grid; min-inline-size: 0; gap: 0.2rem; }
+.quantum-control-panel__progress-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+.quantum-control-panel__progress-heading > span { color: #e8def6; font-family: var(--font-family-numeric); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
 .quantum-control-panel__purchase-settings { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.25rem; padding-block-start: 0.2rem; }
 .quantum-control-panel__purchase-settings button { min-block-size: var(--target-minimum); border: 1px solid var(--theme-divider); border-radius: 0.2rem; background: var(--theme-page); color: white; font: inherit; font-size: 0.78rem; }
 .quantum-control-panel__purchase-settings button[aria-pressed="true"] { border-color: var(--quantum-accent); background: var(--theme-selected); }

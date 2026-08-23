@@ -43,7 +43,7 @@ describe('gameplay structural palette contract', () => {
       'skills/skills.css': [
         '--skills-panel: var(--theme-panel)',
         '--skills-panel-light: var(--theme-selected)',
-        'border-block: 1px solid var(--theme-divider)',
+        'border-block-start: 1px solid var(--theme-divider)',
       ],
       'infinity/infinity.css': [
         '--infinity-panel: var(--theme-panel)',

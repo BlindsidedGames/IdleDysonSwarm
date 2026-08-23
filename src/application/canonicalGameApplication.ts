@@ -16,6 +16,7 @@ import {
   CANONICAL_QUANTUM_LEAP_INPUT,
   CanonicalEventTimeModel,
   deriveCanonicalArtifactSkillPoints,
+  evaluateCanonicalInfinityBoundary,
   prepareCanonicalEventTimeContext,
   prepareCanonicalEventTimeContextVariants,
   type CanonicalEventTimeContext,
@@ -959,7 +960,12 @@ export function createCanonicalGameEngineDefinition(
           command.cancelRequested,
         )
       }
-      return applyPlayerCommand(candidate, command, eventContext)
+      return applyPlayerCommand(
+        candidate,
+        command,
+        eventContext,
+        minimumCycleSeconds,
+      )
     },
     advance: (candidate, milliseconds) =>
       advanceActive(
@@ -1352,6 +1358,7 @@ function applyPlayerCommand(
   candidate: CanonicalRuntimeState,
   command: CanonicalGameCommand,
   context: Readonly<CanonicalEventTimeContext>,
+  minimumCycleSeconds: number,
 ): DomainTransition {
   const result = routeCanonicalGameCommand(
     candidate.gameState,
@@ -1386,6 +1393,74 @@ function applyPlayerCommand(
               outcome?.code ??
               model.validateIncremental() ??
               'quantum-rejected',
+          }
+        },
+      },
+      infinityReset: {
+        requestReset: (state) => {
+          const botCap = evaluateCanonicalBotCapCheckpoint(state)
+          if (botCap.action.kind === 'persist') {
+            return {
+              accepted: false,
+              code: 'CANONICAL-EVENT-BOT-CAP-PERSISTENCE-REQUIRED',
+            }
+          }
+          const resetState = botCap.candidateState
+          const carrier = {
+            ...eventCarrier(candidate),
+            gameState: resetState,
+          }
+          if (
+            evaluateCanonicalInfinityBoundary(
+              carrier,
+              minimumCycleSeconds,
+              true,
+            ).status !== 'ready'
+          ) {
+            return {
+              accepted: false,
+              code: 'NOT_READY',
+            }
+          }
+
+          const model = CanonicalEventTimeModel.fromOwnedState(
+            {
+              ...carrier,
+              gameState: {
+                ...resetState,
+                infinity: {
+                  ...resetState.infinity,
+                  automaticResetEnabled: true,
+                },
+              },
+            },
+            context,
+          )
+          model.applyInfinityReset(
+            minimumCycleSeconds,
+            createSimulationSummary(),
+          )
+          const issue = model.issue
+          if (issue !== undefined) {
+            return {
+              accepted: false,
+              code: issue.code,
+              issues: [issue],
+            }
+          }
+          const next = model.takeState().gameState
+          return {
+            accepted: true,
+            changed: true,
+            code: 'APPLIED',
+            state: {
+              ...next,
+              infinity: {
+                ...next.infinity,
+                automaticResetEnabled:
+                  state.infinity.automaticResetEnabled,
+              },
+            },
           }
         },
       },

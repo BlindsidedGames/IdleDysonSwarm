@@ -29,7 +29,7 @@ const TARGET_SELECTORS: Readonly<
 > = Object.freeze({
   quantum: '[data-quantum-upgrade-id="Secrets"]',
   infinity: '.infinity-surface__summary',
-  bots: '.dyson-shell__production-summary',
+  bots: '.dyson-shell__info',
   skills: '.skill-settings__preset-row:first-child',
   settings: '.settings-surface__panel--more',
   research: '.research-surface__settings',
