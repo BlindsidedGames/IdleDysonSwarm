@@ -333,10 +333,10 @@ describe('SettingsSurface', () => {
     )
   })
 
-  test('offers available destinations and all bottom bar sizes', async () => {
+  test('offers available destinations and the Include text toggle', async () => {
     const user = userEvent.setup()
     const onNavigationVisibilityChange = vi.fn()
-    const onBottomNavigationSizeChange = vi.fn()
+    const onBottomNavigationIncludeTextChange = vi.fn()
     renderSettings(vi.fn(), undefined, {
       availableNavigationItems: ['bots', 'infinity', 'store', 'settings'],
       navigationVisibility: {
@@ -346,24 +346,24 @@ describe('SettingsSurface', () => {
         settings: false,
       },
       onNavigationVisibilityChange,
-      onBottomNavigationSizeChange,
+      onBottomNavigationIncludeTextChange,
     })
 
     const navigationPanel = screen.getByRole('heading', {
       name: 'Navigation Shortcuts',
     }).closest('section')!
-    expect(within(navigationPanel).getAllByRole('checkbox')).toHaveLength(4)
+    expect(within(navigationPanel).getAllByRole('checkbox')).toHaveLength(5)
     expect(screen.queryByRole('checkbox', { name: 'Show Wiki shortcut' }))
       .not.toBeInTheDocument()
     await user.click(screen.getByRole('checkbox', { name: 'Show Settings' }))
     expect(onNavigationVisibilityChange).toHaveBeenCalledWith('settings', true)
 
-    const size = screen.getByRole('combobox', { name: 'Bottom bar size' })
-    expect(size).toHaveValue('compact')
-    expect(within(size).getAllByRole('option').map((option) => option.textContent))
-      .toEqual(['Compact', 'Standard', 'Large'])
-    await user.selectOptions(size, 'large')
-    expect(onBottomNavigationSizeChange).toHaveBeenCalledWith('large')
+    expect(screen.queryByRole('combobox', { name: 'Bottom bar size' }))
+      .not.toBeInTheDocument()
+    const includeText = screen.getByRole('checkbox', { name: 'Include text' })
+    expect(includeText).not.toBeChecked()
+    await user.click(includeText)
+    expect(onBottomNavigationIncludeTextChange).toHaveBeenCalledWith(true)
   })
 
   test('requires an accessible confirmation and cancels without resetting', async () => {

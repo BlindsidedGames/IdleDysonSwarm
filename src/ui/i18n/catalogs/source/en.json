@@ -2567,6 +2567,10 @@
     "defaultMessage": "Choose which optional pages appear in the bottom navigation. They remain available from the menu.",
     "description": "Explains optional bottom navigation shortcuts."
   },
+  "settings.navigation.include-text": {
+    "defaultMessage": "Include text",
+    "description": "Shows labels beneath every displayed bottom navigation icon."
+  },
   "settings.navigation.infinity": {
     "defaultMessage": "Show Infinity",
     "description": "Controls the Infinity bottom navigation destination."
@@ -2594,22 +2598,6 @@
   "settings.navigation.simulations": {
     "defaultMessage": "Show Simulations",
     "description": "Controls the Simulations bottom navigation destination."
-  },
-  "settings.navigation.size.compact": {
-    "defaultMessage": "Compact",
-    "description": "Compact bottom navigation size."
-  },
-  "settings.navigation.size.label": {
-    "defaultMessage": "Bottom bar size",
-    "description": "Labels the bottom navigation sizing choice."
-  },
-  "settings.navigation.size.large": {
-    "defaultMessage": "Large",
-    "description": "Large bottom navigation size."
-  },
-  "settings.navigation.size.standard": {
-    "defaultMessage": "Standard",
-    "description": "Standard bottom navigation size."
   },
   "settings.navigation.skills": {
     "defaultMessage": "Show Skills",

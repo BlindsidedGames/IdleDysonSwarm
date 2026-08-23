@@ -17,10 +17,6 @@ export const BOTTOM_NAVIGATION_DESTINATION_IDS = [
 export type BottomNavigationDestinationId =
   (typeof BOTTOM_NAVIGATION_DESTINATION_IDS)[number]
 
-export type BottomNavigationSize = 'compact' | 'standard' | 'large'
-
-export const DEFAULT_BOTTOM_NAVIGATION_SIZE: BottomNavigationSize = 'compact'
-
 /** Matches the bottom bar that shipped before full navigation customization. */
 export const DEFAULT_BOTTOM_NAVIGATION_VISIBILITY = Object.freeze({
   bots: true,
@@ -42,12 +38,6 @@ export function isBottomNavigationDestinationId(
   value: string,
 ): value is BottomNavigationDestinationId {
   return (BOTTOM_NAVIGATION_DESTINATION_IDS as readonly string[]).includes(value)
-}
-
-export function isBottomNavigationSize(
-  value: unknown,
-): value is BottomNavigationSize {
-  return value === 'compact' || value === 'standard' || value === 'large'
 }
 
 export function normalizeBottomNavigationVisibility(

@@ -200,21 +200,24 @@ showing empty destinations:
 
 On compact screens, primary unlocked destinations use a bottom navigation bar
 with an overflow/menu destination. On wide screens, the same destinations use a
-persistent side rail. Compact and Standard bottom bars retain the established
-icon-only treatment. Large adds labels beneath unlocked icons; a previewed
-locked destination uses its progress bar in that space instead of label text.
+persistent side rail. The compact bar derives its icon and slot size from the
+available width and the number of selected destinations. Additional selected
+destinations progressively reduce the visual size while retaining accessible
+touch targets; a short bar grows only to the former Large-size ceiling.
 
 The compact bar is player-configurable. Destination visibility remains in the
-portable canonical save, while Compact/Standard/Large sizing is a versioned
-device-local presentation preference and never transfers through export or
-import. Every currently available player-facing top-level destination can be
-included or removed independently; Developer/Debug is excluded. The full
-drawer always retains every available destination, including Settings. The
-three sizes scale icons, labels and spacing without reducing the minimum touch
-target. Compact and the pre-existing destination composition are the defaults.
-The menu control retains its established leading position. If
-selected destinations do not fit one row, that drawer affordance remains fixed
-while the destination list deterministically overflows
+portable canonical save. A separate Include text toggle consistently shows or
+hides labels for every displayed compact-bar button and is a versioned,
+device-local presentation preference that never transfers through export or
+import. Released size preferences migrate for continuity: Large enables text;
+Compact and Standard disable it. Every currently available player-facing
+top-level destination can be included or removed independently;
+Developer/Debug is excluded. No minimum selection is enforced. The full drawer
+always retains every available destination, including Settings. The
+pre-existing destination composition and hidden labels are the defaults. The
+menu control retains its established leading position. If selected
+destinations do not fit one row, that drawer affordance remains fixed while the
+destination list deterministically overflows
 instead of scrolling, clipping, overlapping or shrinking targets. Unknown
 stored destination IDs are preserved so later routes can adopt them safely.
 

@@ -10471,6 +10471,20 @@
       "value": "‬"
     }
   ],
+  "settings.navigation.include-text": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔʅnpǝ ʇǝxʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.navigation.infinity": [
     {
       "type": 0,
@@ -10563,62 +10577,6 @@
     {
       "type": 0,
       "value": "Sɥoʍ Sıɯnʅɐʇıous"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "settings.navigation.size.compact": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Ↄoɯdɐɔʇ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "settings.navigation.size.label": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Ԑoʇʇoɯ qɐɹ sızǝ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "settings.navigation.size.large": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "⅂ɐɹƃǝ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "settings.navigation.size.standard": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Sʇɐupɐɹp"
     },
     {
       "type": 0,

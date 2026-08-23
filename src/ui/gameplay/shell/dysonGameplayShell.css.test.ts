@@ -34,22 +34,25 @@ describe('Dyson gameplay shell CSS contract', () => {
     )
     expect(source).toContain('overflow: hidden')
     expect(source).toContain('flex: 1 1 0')
-    expect(source).toContain('grid-template-columns: 3.7rem minmax(0, 1fr)')
-    expect(source).toContain('grid-template-columns: 3rem minmax(0, 1fr)')
-    expect(source).toContain('grid-template-columns: 4.75rem minmax(0, 1fr)')
+    expect(source).toContain('var(--bottom-navigation-menu-width)')
+    expect(source).toContain('var(--bottom-navigation-icon-size)')
   })
 
-  test('shows labels only in Large and lets locked progress replace them', () => {
+  test('shows every bottom label only when Include text is enabled', () => {
     const source = readCss('./dysonGameplayShell.css')
 
     expect(source).toMatch(
       /\.dyson-navigation--bottom \.dyson-navigation__label\s*\{[^}]*position:\s*absolute;[^}]*clip:\s*rect\(0 0 0 0\);/s,
     )
-    expect(source).toContain(
-      '.dyson-navigation__item:not([data-progress="true"])',
-    )
-    expect(source).toContain(
-      '.dyson-navigation__item[data-progress="true"]',
+    expect(source).toContain('[data-include-text="true"]')
+    expect(source).not.toContain('[data-size="large"]')
+  })
+
+  test('lets the Settings scroller meet the real navigation boundary', () => {
+    const source = readCss('./dysonGameplayShell.css')
+
+    expect(source).toMatch(
+      /\.dyson-shell\[data-route-theme="settings"\]\s*\.dyson-shell__route-content,[\s\S]*\{\s*padding:\s*0;/,
     )
   })
 

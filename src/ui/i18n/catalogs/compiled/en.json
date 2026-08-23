@@ -5335,6 +5335,12 @@
       "value": "Choose which optional pages appear in the bottom navigation. They remain available from the menu."
     }
   ],
+  "settings.navigation.include-text": [
+    {
+      "type": 0,
+      "value": "Include text"
+    }
+  ],
   "settings.navigation.infinity": [
     {
       "type": 0,
@@ -5375,30 +5381,6 @@
     {
       "type": 0,
       "value": "Show Simulations"
-    }
-  ],
-  "settings.navigation.size.compact": [
-    {
-      "type": 0,
-      "value": "Compact"
-    }
-  ],
-  "settings.navigation.size.label": [
-    {
-      "type": 0,
-      "value": "Bottom bar size"
-    }
-  ],
-  "settings.navigation.size.large": [
-    {
-      "type": 0,
-      "value": "Large"
-    }
-  ],
-  "settings.navigation.size.standard": [
-    {
-      "type": 0,
-      "value": "Standard"
     }
   ],
   "settings.navigation.skills": [
