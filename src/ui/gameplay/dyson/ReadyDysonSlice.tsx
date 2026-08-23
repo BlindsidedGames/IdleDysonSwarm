@@ -1580,6 +1580,9 @@ export function ReadyDysonSlice({
                                           statistics={
                                             gameplay.progression.statistics
                                           }
+                                          swarmScale={
+                                            dyson.value.presentation.swarmScale
+                                          }
                                           visibility={{
                                             infinity:
                                               gameplay.visibility.infinity

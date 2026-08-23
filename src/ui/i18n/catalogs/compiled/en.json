@@ -6947,6 +6947,36 @@
       "value": ")"
     }
   ],
+  "skills.impact.bots": [
+    {
+      "type": 0,
+      "value": "Bots"
+    }
+  ],
+  "skills.impact.cash-science": [
+    {
+      "type": 0,
+      "value": "Cash & Science"
+    }
+  ],
+  "skills.impact.everything": [
+    {
+      "type": 0,
+      "value": "Everything"
+    }
+  ],
+  "skills.impact.skill-points": [
+    {
+      "type": 0,
+      "value": "Skill Points"
+    }
+  ],
+  "skills.impact.to": [
+    {
+      "type": 0,
+      "value": "to"
+    }
+  ],
   "skills.import-locked-queued": [
     {
       "type": 6,
@@ -7297,76 +7327,6 @@
     {
       "type": 0,
       "value": " Skill Points"
-    }
-  ],
-  "skills.purity-production-quote": [
-    {
-      "type": 0,
-      "value": "Unspent points "
-    },
-    {
-      "type": 1,
-      "value": "pointsBefore"
-    },
-    {
-      "type": 0,
-      "value": " → "
-    },
-    {
-      "type": 1,
-      "value": "pointsAfter"
-    },
-    {
-      "type": 0,
-      "value": ". Combined Purity multipliers: Cash/Science ×"
-    },
-    {
-      "type": 1,
-      "value": "cashBefore"
-    },
-    {
-      "type": 0,
-      "value": " → ×"
-    },
-    {
-      "type": 1,
-      "value": "cashAfter"
-    },
-    {
-      "type": 0,
-      "value": "; Bots ×"
-    },
-    {
-      "type": 1,
-      "value": "botsBefore"
-    },
-    {
-      "type": 0,
-      "value": " → ×"
-    },
-    {
-      "type": 1,
-      "value": "botsAfter"
-    },
-    {
-      "type": 0,
-      "value": "; Everything ×"
-    },
-    {
-      "type": 1,
-      "value": "everythingBefore"
-    },
-    {
-      "type": 0,
-      "value": " → ×"
-    },
-    {
-      "type": 1,
-      "value": "everythingAfter"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "skills.queued": [
@@ -8031,6 +7991,36 @@
     {
       "type": 0,
       "value": "None"
+    }
+  ],
+  "statistics.other-stats": [
+    {
+      "type": 0,
+      "value": "Other Stats"
+    }
+  ],
+  "statistics.other-stats.active-panels": [
+    {
+      "type": 0,
+      "value": "Active Panels"
+    }
+  ],
+  "statistics.other-stats.dyson-swarm-scale": [
+    {
+      "type": 0,
+      "value": "Dyson Swarm Scale"
+    }
+  ],
+  "statistics.other-stats.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "Galaxies Engulfed"
+    }
+  ],
+  "statistics.other-stats.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "Stars Surrounded"
     }
   ],
   "statistics.recent-activity": [

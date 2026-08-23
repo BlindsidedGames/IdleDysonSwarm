@@ -794,6 +794,11 @@ function readySnapshot(): FrontendApplicationSnapshot {
             },
             presentation: {
               facilities: {},
+              swarmScale: {
+                activePanels: 0,
+                starsSurrounded: 0,
+                galaxiesEngulfed: 0,
+              },
               activePanelMetric: {
                 kind: 'active-panels',
                 value: 0,

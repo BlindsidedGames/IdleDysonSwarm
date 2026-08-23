@@ -250,10 +250,54 @@ describe('InfinitySurface', () => {
       dispatchPlayer,
     })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Infinity' }))
+    const manualInfinity = screen.getByRole('button', { name: 'Infinity' })
+    expect(manualInfinity).toBeEnabled()
+    fireEvent.click(manualInfinity)
     expect(dispatchPlayer).toHaveBeenCalledWith({
       kind: 'infinity.request-reset',
     })
+  })
+
+  test('reserves the manual Infinity action while it is not ready', () => {
+    renderSurface({ shop: [preview('secret')] })
+
+    expect(screen.getByRole('button', { name: 'Infinity' })).toBeDisabled()
+  })
+
+  test('keeps the manual action beside the progress track without changing the row', () => {
+    const { container } = renderSurface({
+      shop: [preview('secret')],
+      automaticResetEnabled: false,
+      derived: {
+        ...ordinaryFacts(),
+        progressFraction: 1,
+        botsRemainingToReset: 0,
+      },
+    })
+
+    const progress = container.querySelector(
+      '.infinity-surface__progress--manual-action',
+    )
+    const track = progress?.querySelector(
+      '.infinity-surface__progress-track',
+    )
+    const action = progress?.querySelector('.infinity-manual-reset')
+
+    expect(track).toBeInTheDocument()
+    expect(action).toBeInTheDocument()
+    if (!track || !action) {
+      throw new Error('Manual Infinity progress layout is incomplete.')
+    }
+    expect(
+      track.compareDocumentPosition(action) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(baseInfinityStyles).toMatch(
+      /\.infinity-surface__progress--manual-action \.infinity-manual-reset\s*\{[^}]*position:\s*absolute;[^}]*inset-block-start:\s*50%;[^}]*inset-inline-end:\s*calc\([\s\S]*var\(--infinity-action-edge-safety\)[\s\S]*var\(--infinity-summary-inline-padding\)[\s\S]*\);[^}]*translateY\(-50%\);/,
+    )
+    expect(baseInfinityStyles).toMatch(
+      /\.infinity-manual-reset button::before\s*\{[^}]*inset-block:\s*0\.22rem;[^}]*inset-inline:\s*0\.14rem;/,
+    )
   })
 
   test('has no automated accessibility violations', async () => {

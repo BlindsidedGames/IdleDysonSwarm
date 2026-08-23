@@ -40,6 +40,11 @@
   background: var(--infinity-panel);
 }
 
+.infinity-surface__control-panel {
+  --infinity-action-edge-safety: 1px;
+  --infinity-summary-inline-padding: 0.7rem;
+}
+
 .infinity-surface__control-panel .ui-progress-controls-panel__body {
   display: grid;
   gap: 0.45rem;
@@ -88,19 +93,46 @@
 }
 
 .infinity-manual-reset button {
+  position: relative;
+  inline-size: 5.75rem;
   min-block-size: var(--target-minimum);
   padding-inline: 0.9rem;
-  border: 1px solid var(--theme-accent);
-  border-radius: 0.25rem;
-  background: var(--theme-selected);
+  border: 0;
+  background: transparent;
   color: white;
   font: inherit;
   font-weight: var(--font-weight-semibold);
 }
 
+.infinity-manual-reset button::before {
+  position: absolute;
+  border: 1px solid var(--theme-accent);
+  border-radius: 0.25rem;
+  background: var(--theme-selected);
+  content: "";
+  inset-block: 0.22rem;
+  inset-inline: 0.14rem;
+}
+
+.infinity-manual-reset button > span {
+  position: relative;
+  z-index: 1;
+}
+
 .infinity-manual-reset button:focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 0.18rem;
+}
+
+.infinity-manual-reset button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.infinity-surface__control-panel
+  .ui-progress-controls-panel__settings::before {
+  inset-block: 0.22rem;
+  inset-inline: 0.14rem;
 }
 
 .infinity-manual-reset__feedback {
@@ -156,6 +188,26 @@
 .infinity-surface__progress {
   display: grid;
   gap: 0.2rem;
+}
+
+.infinity-surface__progress--manual-action {
+  position: relative;
+  padding-inline-end:
+    calc(
+      5.75rem + 0.14rem + var(--infinity-action-edge-safety) -
+      var(--infinity-summary-inline-padding)
+    );
+}
+
+.infinity-surface__progress--manual-action .infinity-manual-reset {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end:
+    calc(
+      var(--infinity-action-edge-safety) -
+      var(--infinity-summary-inline-padding)
+    );
+  transform: translateY(-50%);
 }
 
 .infinity-surface__progress-heading {
@@ -445,6 +497,11 @@
 }
 
 @media (max-width: 30rem) {
+  .infinity-surface__control-panel {
+    --infinity-action-edge-safety: 0px;
+    --infinity-summary-inline-padding: 0.5rem;
+  }
+
   .infinity-surface__summary {
     gap: 0.35rem;
     padding-block:

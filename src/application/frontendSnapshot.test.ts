@@ -21,6 +21,7 @@ import {
   createFrontendCommandEnvelope,
   FRONTEND_COMMAND_FAMILIES,
   inspectFrontendDefinitionCoverage,
+  projectDysonSwarmScale,
   projectDysonSwarmVisualization,
   selectFrontendApplicationSnapshot,
   selectFrontendCommandAvailability,
@@ -322,6 +323,14 @@ describe('frontend gameplay snapshot', () => {
       ).toEqual(expected)
     },
   )
+
+  test('projects every Dyson Swarm scale from the same active-panel value', () => {
+    expect(projectDysonSwarmScale(2.96e58)).toEqual({
+      activePanels: 2.96e58,
+      starsSurrounded: 1.48e54,
+      galaxiesEngulfed: 1.48e43,
+    })
+  })
 
   test('projects lifecycle and all application revisions with the gameplay read model', () => {
     const projected = selectFrontendApplicationSnapshot(

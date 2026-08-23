@@ -2031,6 +2031,11 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
               panelLifetimeSeconds: 10,
             },
             presentation: {
+              swarmScale: {
+                activePanels: 0,
+                starsSurrounded: 0,
+                galaxiesEngulfed: 0,
+              },
               activePanelMetric: {
                 kind: 'active-panels',
                 value: 0,
