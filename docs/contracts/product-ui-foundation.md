@@ -209,7 +209,7 @@ Every currently available player-facing top-level destination can be included
 or removed independently; Developer/Debug is excluded. The full drawer always
 retains every available destination, including Settings. Compact, Standard and
 Large sizing scale icons, labels and spacing without reducing the minimum touch
-target. Standard and the pre-existing destination composition are the upgrade
+target. Compact and the pre-existing destination composition are the upgrade
 defaults. The menu control retains its established leading position. If
 selected destinations do not fit one row, that drawer affordance remains fixed
 while the destination list deterministically overflows

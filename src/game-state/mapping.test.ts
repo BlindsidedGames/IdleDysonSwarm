@@ -22,6 +22,7 @@ import {
   GameStateSessionV1,
   hydrateGameState,
 } from './mapping'
+import { DEFAULT_BOTTOM_NAVIGATION_SIZE } from './navigationPreferences'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
@@ -87,6 +88,7 @@ describe('canonical game-state mapping', () => {
     const hydrated = hydrateGameState(prepared)
 
     expect(hydrated.state.meta.bottomNavigationSize).toBeUndefined()
+    expect(DEFAULT_BOTTOM_NAVIGATION_SIZE).toBe('compact')
 
     const candidate = {
       ...hydrated.state,

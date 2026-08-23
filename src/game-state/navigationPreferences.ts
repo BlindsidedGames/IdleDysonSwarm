@@ -19,7 +19,7 @@ export type BottomNavigationDestinationId =
 
 export type BottomNavigationSize = 'compact' | 'standard' | 'large'
 
-export const DEFAULT_BOTTOM_NAVIGATION_SIZE: BottomNavigationSize = 'standard'
+export const DEFAULT_BOTTOM_NAVIGATION_SIZE: BottomNavigationSize = 'compact'
 
 /** Matches the bottom bar that shipped before full navigation customization. */
 export const DEFAULT_BOTTOM_NAVIGATION_VISIBILITY = Object.freeze({

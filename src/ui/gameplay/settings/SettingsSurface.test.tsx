@@ -345,7 +345,6 @@ describe('SettingsSurface', () => {
         store: true,
         settings: false,
       },
-      bottomNavigationSize: 'standard',
       onNavigationVisibilityChange,
       onBottomNavigationSizeChange,
     })
@@ -360,7 +359,7 @@ describe('SettingsSurface', () => {
     expect(onNavigationVisibilityChange).toHaveBeenCalledWith('settings', true)
 
     const size = screen.getByRole('combobox', { name: 'Bottom bar size' })
-    expect(size).toHaveValue('standard')
+    expect(size).toHaveValue('compact')
     expect(within(size).getAllByRole('option').map((option) => option.textContent))
       .toEqual(['Compact', 'Standard', 'Large'])
     await user.selectOptions(size, 'large')

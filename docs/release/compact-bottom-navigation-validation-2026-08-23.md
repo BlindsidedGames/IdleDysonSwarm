@@ -13,7 +13,7 @@ target controls, and the Infinity surface were not changed.
   is the checked-out Git LFS pointer (133 bytes), not the 57,882,296-byte master.
 - Legacy saves retain the old three-field navigation representation until a
   new preference is selected, so untouched save fingerprints remain stable.
-- Mapping coverage proves Standard upgrade behavior, the pre-existing visible
+- Mapping coverage proves Compact upgrade behavior, the pre-existing visible
   destination composition, Large sizing, hidden Settings, and preservation of
   an unknown future destination ID through dehydrate/rehydrate.
 

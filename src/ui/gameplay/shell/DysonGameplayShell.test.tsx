@@ -91,7 +91,12 @@ describe('DysonGameplayShell', () => {
   })
 
   it('provides Unity-style drawer and compact bottom navigation', () => {
-    render(<DysonGameplayShell {...props()} />)
+    const { container } = render(<DysonGameplayShell {...props()} />)
+
+    expect(container.querySelector('.dyson-shell'))
+      .toHaveAttribute('data-bottom-navigation-size', 'compact')
+    expect(container.querySelector('.dyson-shell__bottom-navigation'))
+      .toHaveAttribute('data-size', 'compact')
 
     const navigations = screen.getAllByRole('navigation', {
       name: 'Primary',

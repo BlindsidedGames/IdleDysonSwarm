@@ -4,6 +4,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { DEFAULT_BOTTOM_NAVIGATION_SIZE } from '../../../game-state/navigationPreferences'
 import { useMediaQuery } from '../../accessibility/useMediaQuery'
 import type {
   DysonGameplayShellProps,
@@ -62,7 +63,7 @@ export function DysonGameplayShell({
     if (element === null || typeof ResizeObserver === 'undefined') {
       return undefined
     }
-    const size = navigation.bottomSize ?? 'standard'
+    const size = navigation.bottomSize ?? DEFAULT_BOTTOM_NAVIGATION_SIZE
     const itemWidth = size === 'compact' ? 48 : size === 'large' ? 76 : 64
     const update = () => {
       const styles = getComputedStyle(element)
@@ -137,7 +138,9 @@ export function DysonGameplayShell({
       data-route-content={routeContent !== undefined}
       data-route-theme={routeTheme}
       data-route-theme-variant={routeThemeVariant}
-      data-bottom-navigation-size={navigation.bottomSize ?? 'standard'}
+      data-bottom-navigation-size={
+        navigation.bottomSize ?? DEFAULT_BOTTOM_NAVIGATION_SIZE
+      }
     >
       <a
         className="dyson-shell__skip-link"
@@ -282,7 +285,7 @@ export function DysonGameplayShell({
       <div
         ref={bottomNavigationRef}
         className="dyson-shell__bottom-navigation"
-        data-size={navigation.bottomSize ?? 'standard'}
+        data-size={navigation.bottomSize ?? DEFAULT_BOTTOM_NAVIGATION_SIZE}
         aria-hidden={(compactMenuOpen || wideLayout) || undefined}
         inert={(compactMenuOpen || wideLayout) || undefined}
       >
