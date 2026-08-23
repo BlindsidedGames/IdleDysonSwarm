@@ -4,6 +4,7 @@ import { describe, expect, test } from 'vitest'
 import { createBasicDysonState } from './dysonModel'
 import { advanceEventTime } from './eventTime'
 import {
+  buyXCost,
   tryDebitContinuous,
   tryPurchaseBasicFacility,
   type BuyMode,
@@ -101,6 +102,16 @@ describe('facility transaction Unity parity', () => {
       charged: 1.99584030953472e292,
       status: 'success',
     })
+  })
+
+  test('keeps a discounted geometric price growing after the level factor overflows', () => {
+    const baseCost = 100 / 1e300
+    const costAt4000 = buyXCost(100n, baseCost, 1.22, 4_000)
+    const costAt4100 = buyXCost(100n, baseCost, 1.22, 4_100)
+
+    expect(costAt4000).toBeGreaterThan(0)
+    expect(costAt4100 / costAt4000 / (1.22 ** 100))
+      .toBeCloseTo(1, 10)
   })
 
   test('runs automation after production at the scheduler boundary', () => {

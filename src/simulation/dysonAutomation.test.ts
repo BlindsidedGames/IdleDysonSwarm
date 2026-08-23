@@ -263,6 +263,103 @@ describe('eight-slot Dyson automation', () => {
     expect(result.state.money).toBe(0)
   })
 
+  test.each([
+    ['single', 'buy-1'],
+    ['bulk', 'buy-100'],
+    ['maximum', 'buy-max'],
+  ] as const)(
+    'keeps extreme Assembly Megalines %s quotes canonical across manual and automation purchases',
+    (_name, buyMode) => {
+      const enabled = booleanRecord(false)
+      enabled.assembly_lines = true
+      const facilities = facilityRecord()
+      facilities.assembly_lines[1] = 4_000
+      facilities.planets = [0, 1e300]
+      const input = createState({
+        money: 1e200,
+        facilities,
+        enabledFacilities: enabled,
+        buyMode,
+        assemblyMegaLinesOwned: true,
+      })
+
+      const preview = previewDysonFacilityPurchase(
+        input,
+        'assembly_lines',
+      )
+      const manual = tryPurchaseDysonFacility(input, 'assembly_lines')
+      const automatic = runDysonAutomationTick(input)
+
+      expect(preview).toMatchObject({
+        eligible: true,
+        status: 'success',
+      })
+      expect(preview.cost).toBeGreaterThan(0)
+      expect(manual.attempt).toMatchObject({
+        purchased: true,
+        quantity: preview.selectedQuantity,
+        cost: preview.cost,
+        status: preview.status,
+      })
+      expect(automatic.attempts[0]).toEqual(manual.attempt)
+      expect(manual.state.money).toBe(automatic.state.money)
+      expect(manual.state.facilities.assembly_lines[1])
+        .toBe(automatic.state.facilities.assembly_lines[1])
+      expect(input.money).toBe(1e200)
+      expect(input.facilities.assembly_lines[1]).toBe(4_000)
+    },
+  )
+
+  test('raises the extreme Assembly Megalines quote across rapid repeated bulk automation ticks', () => {
+    const enabled = booleanRecord(false)
+    enabled.assembly_lines = true
+    const facilities = facilityRecord()
+    facilities.assembly_lines[1] = 4_000
+    facilities.planets = [0, 1e300]
+    const input = createState({
+      money: 1e200,
+      facilities,
+      enabledFacilities: enabled,
+      buyMode: 'buy-100',
+      assemblyMegaLinesOwned: true,
+    })
+
+    let current = input
+    let previousCost = 0
+    let purchasedTicks = 0
+    let exhausted = false
+
+    for (let tick = 0; tick < 32; tick += 1) {
+      const preview = previewDysonFacilityPurchase(
+        current,
+        'assembly_lines',
+      )
+      const result = runDysonAutomationTick(current)
+      const attempt = result.attempts.find(
+        ({ facilityId }) => facilityId === 'assembly_lines',
+      )!
+
+      expect(attempt.cost).toBe(preview.cost)
+      expect(preview.cost).toBeGreaterThan(previousCost)
+      if (!attempt.purchased) {
+        expect(attempt.status).toBe('insufficient-funds')
+        exhausted = true
+        break
+      }
+
+      expect(attempt.quantity).toBe(100n)
+      expect(result.state.money).toBeLessThan(current.money)
+      previousCost = preview.cost
+      purchasedTicks += 1
+      current = result.state
+    }
+
+    expect(purchasedTicks).toBeGreaterThan(2)
+    expect(exhausted).toBe(true)
+    expect(current.facilities.assembly_lines[1])
+      .toBe(4_000 + purchasedTicks * 100)
+  })
+
   test('fails a quote closed when the authored facility definition is unavailable', () => {
     const enabled = booleanRecord(false)
     enabled.assembly_lines = true
