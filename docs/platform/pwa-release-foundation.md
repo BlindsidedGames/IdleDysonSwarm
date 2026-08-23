@@ -70,13 +70,9 @@ file, and emits a route-specific header fragment. The apply command refuses a
 website checkout whose `HEAD` differs from the recorded pinned commit and
 revalidates every checksum before changing the exact configured website paths.
 
-The manual `promote-web-pwa.yml` workflow is protected by the
-`website-promotion` environment and requires a repository-scoped
-`WEBSITE_PROMOTION_TOKEN`. When deliberately dispatched, it runs tests, lint,
-and build; creates and retains the checksummed package for 30 days; checks out
-the exact website SHA; then opens a website pull request. Dispatch inputs are
-validated from environment variables before any shell use. The promoted files and the managed header
-fragment are checksum-protected, and manifest identity must match the pinned
-release configuration. The workflow does not merge or deploy that pull
-request. This foundation has not been dispatched and does not modify the
-separate website repository by itself.
+Promotion is prepared and applied locally. The promoted files and managed
+header fragment remain checksum-protected, and manifest identity must match the
+pinned release configuration. After review, the website checkout is committed
+and pushed normally; its own Cloudflare integration performs deployment.
+GitHub Actions in the game repository has no website token and does not create,
+merge, or deploy a website pull request.

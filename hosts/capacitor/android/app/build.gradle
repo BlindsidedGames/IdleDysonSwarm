@@ -72,7 +72,8 @@ if (
     throw new GradleException(
         "Release signing was requested but protected signing inputs are missing: " +
         missingProperties +
-        ". Supply the IDS_ANDROID_* Gradle properties through CI secrets, or " +
+        ". Supply the IDS_ANDROID_* Gradle properties from the protected local " +
+        "release command, or " +
         "set IDS_ALLOW_UNSIGNED_RELEASE=true only for a non-publishable " +
         "release-candidate package."
     )

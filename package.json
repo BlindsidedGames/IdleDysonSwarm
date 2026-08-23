@@ -9,6 +9,7 @@
     "dev:stripe": "vite --mode development-stripe",
     "build": "tsc -b && vite build && tsx scripts/check-production-store-boundary.ts",
     "native:release:sync": "tsx scripts/sync-native-release.ts",
+    "release:local": "tsx scripts/run-local-release.ts",
     "native:branding:sync": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-native-branding.ps1",
     "build:native": "npm run native:release:sync && tsc -b && vite build --mode native",
     "native:capacitor:sync": "npm run build:native && npm --prefix hosts/capacitor run sync",

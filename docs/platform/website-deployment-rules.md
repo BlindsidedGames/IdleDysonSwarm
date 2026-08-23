@@ -90,14 +90,8 @@ npm run website:promotion:prepare -- `
   --website-ref <40-character-website-commit>
 ```
 
-Prefer the manual `promote-web-pwa.yml` workflow when its protected
-`website-promotion` environment and repository-scoped
-`WEBSITE_PROMOTION_TOKEN` are available. It validates the game, checks out the
-pinned website revision, applies the checksummed package, and opens a website
-pull request. It deliberately does not merge or deploy that pull request.
-
-For a local promotion, apply only the generated package to a clean website
-checkout whose `HEAD` still equals the pinned website commit:
+Website promotion is local-first. Apply only the generated package to a clean
+website checkout whose `HEAD` still equals the pinned website commit:
 
 ```powershell
 npm run website:promotion:apply -- `
@@ -106,7 +100,9 @@ npm run website:promotion:apply -- `
 ```
 
 Review the promoted `public/play` package, managed header block, and promotion
-record before committing the website change.
+record before committing and pushing the website change. GitHub Actions in this
+repository does not receive a website token or create the promotion pull
+request.
 
 ## Preview rules
 
