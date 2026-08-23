@@ -1,11 +1,20 @@
 # Infinity controls and reset guidance
 
-Status: Phase One panel work is merged. Phase Two behavior is implemented on
-`codex/infinity-phase-two` and awaits final review and pull-request integration.
+Status: Phase One and Phase Two are merged on `main` through PR #119. This
+document records the shipped behavior and its compatibility boundaries.
 
-## Product behavior
+## Merged baseline
 
-- Infinity Points remain in the route header.
+- The shared progress-and-controls panel and its cross-tab visual treatment are
+  merged for Bots, Research, Infinity, Skills, Simulations, and Quantum.
+- Infinity Points remain in the Infinity route header.
+- The Store-owned Double Infinity Points entitlement toggle is merged and
+  remains independent from reset automation.
+- Compact bottom-navigation work is complete and no longer blocks Infinity
+  development.
+
+## Infinity behavior
+
 - Ordinary Infinity reaches a ready state instead of forcing a reset when Auto
   Infinity is off.
 - Auto Infinity is available before Break The Loop, defaults off for a new
@@ -23,7 +32,7 @@ Status: Phase One panel work is merged. Phase Two behavior is implemented on
 
 ## Run efficiency guidance
 
-The Infinity panel displays:
+The expanded Infinity panel displays:
 
 - current projected IP/min, calculated as projected reward divided by elapsed
   current-cycle minutes; and
@@ -43,9 +52,9 @@ the actual quantized reward, and the completed-cycle duration. Statistics shows
 every retained run, while its current-target summary considers only automatic
 Break Infinity runs recorded at the target currently selected. The displayed
 average is time-weighted (`total reward / total duration`), accompanied by the
-median and range of individual run rates. This keeps manual experiments and
-older target settings visible without allowing them to distort the evidence
-used to tune the active automatic target.
+median and range of individual run rates. Recent-run durations use three
+significant digits so short-cycle timing remains stable and explains small
+IP/min changes.
 
 ## Compatibility and validation contract
 
@@ -56,7 +65,8 @@ used to tune the active automatic target.
 - Manual and automatic reset eligibility are separate simulation-authority
   paths, including the finite bot-cap checkpoint.
 - Browser verification covers narrow phone and desktop layouts, exact input,
-  invalid input, target persistence, peak persistence, and manual reward text.
+  invalid input, target persistence, peak persistence, manual reward text, and
+  recent-run Statistics density.
 - Automated coverage includes mapping round-trips, Stored Time, reset
   boundaries, bounded recent-run persistence, target-specific performance
   projection, target parsing, frontend projection, and control accessibility.
