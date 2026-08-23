@@ -25,7 +25,12 @@ import {
   type InfinityProgressFacts,
 } from '../../../simulation/infinityCycle'
 import infinitySymbol from '../../assets/nav-infinity.png'
-import { Button, InlineImageSymbol, ProgressControlsPanel } from '../../components'
+import {
+  Button,
+  InlineImageSymbol,
+  ProgressControlsPanel,
+  StableSingleLineText,
+} from '../../components'
 import {
   formatGameNumber,
   formatNumber,
@@ -354,10 +359,15 @@ function ManualInfinityButton({
         disabled={!routeAvailable || !ready || pending}
         onClick={() => void requestReset()}
       >
-        <span>
-          {reward === null
-            ? intl.formatMessage(messages.manualReset)
-            : (
+        {reward === null ? (
+          <StableSingleLineText
+            measurement={intl.formatMessage(messages.manualReset)}
+            minimumScale={0.58}
+          >
+            {intl.formatMessage(messages.manualReset)}
+          </StableSingleLineText>
+        ) : (
+          <span>
                 <span className="infinity-manual-reset__reward" aria-hidden="true">
                   <InlineImageSymbol
                     src={infinitySymbol}
@@ -366,8 +376,8 @@ function ManualInfinityButton({
                   />
                   <span>{formatGameNumber(locale, reward)}</span>
                 </span>
-              )}
-        </span>
+          </span>
+        )}
       </button>
       {failed ? (
         <span role="alert" className="infinity-manual-reset__feedback">

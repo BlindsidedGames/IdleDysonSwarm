@@ -95,6 +95,33 @@ describe('Capacitor first-party native bridge', () => {
     expect(android).toContain('/ density')
   })
 
+  it('declares the complete production locale list on both mobile hosts', () => {
+    const manifest = read(
+      'hosts/capacitor/android/app/src/main/AndroidManifest.xml',
+    )
+    const androidLocales = read(
+      'hosts/capacitor/android/app/src/main/res/xml/locale_config.xml',
+    )
+    const iosInfo = read('hosts/capacitor/ios/App/App/Info.plist')
+
+    expect(manifest).toContain('android:localeConfig="@xml/locale_config"')
+    for (const locale of [
+      'en',
+      'fr',
+      'de',
+      'es-419',
+      'pt-BR',
+      'ru',
+      'ja',
+    ]) {
+      expect(androidLocales).toContain(`android:name="${locale}"`)
+      expect(iosInfo).toContain(`<string>${locale}</string>`)
+    }
+    expect(androidLocales).toContain('android:name="zh-CN"')
+    expect(iosInfo).toContain('<string>zh-Hans</string>')
+    expect(iosInfo).toContain('<key>CFBundleLocalizations</key>')
+  })
+
   it('binds first-party mobile Stores without exposing receipts or purchase tokens', () => {
     const androidStore = read(
       'hosts/capacitor/android/app/src/main/java/com/blindsidedgames/idledysonswarm/GooglePlayStore.kt',

@@ -17,13 +17,13 @@ type MeditationCommand = Extract<
 >
 
 const MEDITATION_HINTS = [
-  'Quantum; SU?',
-  'Infinity has a point... top-right.',
-  'Workers produced more than output.',
-  'Some paths are preset. Start with 1.',
-  'Settings hides a door to more.',
-  'Research has settings too...',
-  'The last clue sits in plain sight to the side.',
+  messages.meditationHint1,
+  messages.meditationHint2,
+  messages.meditationHint3,
+  messages.meditationHint4,
+  messages.meditationHint5,
+  messages.meditationHint6,
+  messages.meditationHint7,
 ] as const
 
 const AVOTATION_NAMES = [
@@ -153,7 +153,7 @@ export function AvotationProgress({
         <>
           {helpActive ? (
             <p className="avocato-meditation__hint">
-              {MEDITATION_HINTS[preview.requiredStepIndex ?? 0]}
+              {intl.formatMessage(MEDITATION_HINTS[preview.requiredStepIndex ?? 0])}
             </p>
           ) : null}
           <Button

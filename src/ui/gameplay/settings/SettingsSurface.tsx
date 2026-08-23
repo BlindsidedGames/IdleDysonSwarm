@@ -16,6 +16,11 @@ import type {
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
+import {
+  SYSTEM_LOCALE_PREFERENCE,
+  useLocalePreference,
+  type LocalePreference,
+} from '../../i18n'
 import { settingsSurfaceMessages as messages } from './messages'
 import './settingsSurface.css'
 import type { GameAudioService } from '../../../audio'
@@ -131,6 +136,7 @@ export function SettingsSurface({
   audio,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
+  const language = useLocalePreference()
   const numberNotation = useNumberNotation()
   const developmentPresetId = useId()
   const developmentPanelId = useId()
@@ -416,6 +422,53 @@ export function SettingsSurface({
       >
         {!developmentOnly && audio !== undefined ? (
           <AudioSettingsPanel audio={audio} />
+        ) : null}
+        {!developmentOnly ? (
+          <section className="settings-surface__panel settings-surface__panel--language">
+            <div className="settings-surface__copy">
+              <h2>{intl.formatMessage(messages.languageTitle)}</h2>
+              <p>{intl.formatMessage(messages.languageDescription)}</p>
+            </div>
+            <label className="settings-surface__select-label">
+              <span>{intl.formatMessage(messages.languageLabel)}</span>
+              <select
+                value={language.preference}
+                onChange={(event) => {
+                  language.setPreference(
+                    event.currentTarget.value as LocalePreference,
+                  )
+                }}
+              >
+                <option value={SYSTEM_LOCALE_PREFERENCE}>
+                  {intl.formatMessage(messages.languageSystem)}
+                </option>
+                <option value="en">
+                  {intl.formatMessage(messages.languageEnglish)}
+                </option>
+                <option value="fr">
+                  {intl.formatMessage(messages.languageFrench)}
+                </option>
+                <option value="de">
+                  {intl.formatMessage(messages.languageGerman)}
+                </option>
+                <option value="es-419">
+                  {intl.formatMessage(messages.languageSpanishLatinAmerica)}
+                </option>
+                <option value="pt-BR">
+                  {intl.formatMessage(messages.languagePortugueseBrazil)}
+                </option>
+                <option value="zh-CN">
+                  {intl.formatMessage(messages.languageChineseSimplified)}
+                </option>
+                <option value="ru">
+                  {intl.formatMessage(messages.languageRussian)}
+                </option>
+                <option value="ja">
+                  {intl.formatMessage(messages.languageJapanese)}
+                </option>
+              </select>
+            </label>
+          </section>
         ) : null}
         {!developmentOnly ? (
           <section className="settings-surface__panel settings-surface__panel--number-notation">

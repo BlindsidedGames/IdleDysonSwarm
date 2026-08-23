@@ -5,13 +5,13 @@ import {
   createIntlCache,
   type IntlShape,
 } from 'react-intl'
-import App from './App.tsx'
+import LocalizedApp from './LocalizedApp.tsx'
 import { renderStaticBootstrapFailure } from './bootstrapFailure'
 import { createProductionHostComposition } from './productionHostComposition'
 import {
   LOCALE_REGISTRY,
+  LocalePreferenceProvider,
   LocalePreferenceService,
-  PresentationIntlProvider,
 } from './ui/i18n'
 import {
   createProductionPwaUpdateController,
@@ -19,8 +19,9 @@ import {
 } from './pwa'
 import {
   NativeLaunchPresentationGate,
+  ReactiveStartupErrorBoundary,
   StartupErrorBoundary,
-  startupShellMessages,
+  formatStartupBoundaryCopy,
 } from './ui/shell'
 import './index.css'
 import {
@@ -66,7 +67,7 @@ async function bootstrap(): Promise<void> {
       ),
     ])
     const localePreference = new LocalePreferenceService()
-    const locale = localePreference.getSnapshot()
+    const locale = localePreference.getSnapshot().locale
     const messages =
       await LOCALE_REGISTRY[locale].loadSharedCatalog()
     const numberNotationPreference =
@@ -95,44 +96,7 @@ async function bootstrap(): Promise<void> {
       },
       createIntlCache(),
     )
-    const boundaryCopy = Object.freeze({
-      title: boundaryIntl.formatMessage(
-        startupShellMessages.boundaryTitle,
-      ),
-      body: boundaryIntl.formatMessage(
-        startupShellMessages.boundaryBody,
-      ),
-      diagnosticsSummary: boundaryIntl.formatMessage(
-        startupShellMessages.diagnosticsSummary,
-      ),
-      diagnosticsLabel: boundaryIntl.formatMessage(
-        startupShellMessages.diagnosticsLabel,
-      ),
-      reloadAction: boundaryIntl.formatMessage(
-        startupShellMessages.reloadAction,
-      ),
-      exportRecoveryAction: boundaryIntl.formatMessage(
-        startupShellMessages.exportRecoveryAction,
-      ),
-      reloadPending: boundaryIntl.formatMessage(
-        startupShellMessages.reloadPending,
-      ),
-      reloadCompleted: boundaryIntl.formatMessage(
-        startupShellMessages.reloadCompleted,
-      ),
-      reloadFailed: boundaryIntl.formatMessage(
-        startupShellMessages.reloadFailed,
-      ),
-      exportPending: boundaryIntl.formatMessage(
-        startupShellMessages.exportPending,
-      ),
-      exportSucceeded: boundaryIntl.formatMessage(
-        startupShellMessages.exportSucceeded,
-      ),
-      exportFailed: boundaryIntl.formatMessage(
-        startupShellMessages.exportFailed,
-      ),
-    })
+    const boundaryCopy = formatStartupBoundaryCopy(boundaryIntl)
     const boundaryActions = Object.freeze({
       reloadSafely: composition.reloadSafely,
       recoveryExportAvailable:
@@ -168,21 +132,27 @@ async function bootstrap(): Promise<void> {
               composition.saveSchemaVersion,
           }}
         >
-          <PresentationIntlProvider
-            locale={locale}
-            messages={messages}
+          <LocalePreferenceProvider
+            preference={localePreference}
+            initialMessages={messages}
           >
-            <NumberNotationProvider preference={numberNotationPreference}>
+            <ReactiveStartupErrorBoundary
+              actions={boundaryActions}
+              diagnosticContext={{
+                hostKind: composition.hostKind,
+                saveSchemaVersion: composition.saveSchemaVersion,
+              }}
+            >
+              <NumberNotationProvider preference={numberNotationPreference}>
               <BottomNavigationTextProvider
                 preference={bottomNavigationTextPreference}
               >
                 <ResearchVisibilityProvider
                   preference={researchVisibilityPreference}
                 >
-                  <App
+                  <LocalizedApp
                     runtime={composition.runtime}
                     hostKind={composition.hostKind}
-                    locale={locale}
                     saveSchemaVersion={
                       composition.saveSchemaVersion
                     }
@@ -205,8 +175,9 @@ async function bootstrap(): Promise<void> {
                   )}
                 </ResearchVisibilityProvider>
               </BottomNavigationTextProvider>
-            </NumberNotationProvider>
-          </PresentationIntlProvider>
+              </NumberNotationProvider>
+            </ReactiveStartupErrorBoundary>
+          </LocalePreferenceProvider>
         </StartupErrorBoundary>
       </StrictMode>,
     )
