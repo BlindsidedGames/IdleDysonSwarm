@@ -3979,6 +3979,30 @@
     "defaultMessage": "Last 30 days",
     "description": "Title for the daily-bucket statistics horizon."
   },
+  "store.action.double-ip-disabled-accessible": {
+    "defaultMessage": "Double Infinity Points: Disabled",
+    "description": "Accessible name for the disabled Double Infinity Points effect toggle."
+  },
+  "store.action.double-ip-enabled-accessible": {
+    "defaultMessage": "Double Infinity Points: Enabled",
+    "description": "Accessible name for the enabled Double Infinity Points effect toggle."
+  },
+  "store.action.double-ip-updating-accessible": {
+    "defaultMessage": "Double Infinity Points: Updating",
+    "description": "Accessible name while the Double Infinity Points effect toggle is applying a change."
+  },
+  "store.action.effect-disabled": {
+    "defaultMessage": "Disabled",
+    "description": "Double Infinity Points is owned and currently disabled; activating the toggle enables it."
+  },
+  "store.action.effect-enabled": {
+    "defaultMessage": "Enabled",
+    "description": "Double Infinity Points is owned and currently enabled; activating the toggle disables it."
+  },
+  "store.action.effect-updating": {
+    "defaultMessage": "Updating…",
+    "description": "Double Infinity Points enabled state is being applied to gameplay."
+  },
   "store.action.purchase": {
     "defaultMessage": "{price}",
     "description": "Purchases one permanent product using a store-localized price."
@@ -4014,6 +4038,14 @@
   "store.device-only.heading": {
     "defaultMessage": "Purchases stay on this device",
     "description": "Heading for Web purchase portability disclosure."
+  },
+  "store.feedback.effect-disabled": {
+    "defaultMessage": "Double Infinity Points disabled. Your purchase remains owned and can be re-enabled at any time.",
+    "description": "Confirms that the owned Double Infinity Points effect was disabled without revoking ownership."
+  },
+  "store.feedback.effect-enabled": {
+    "defaultMessage": "Double Infinity Points enabled. Future Infinity Point rewards will be doubled.",
+    "description": "Confirms that the owned Double Infinity Points effect was enabled."
   },
   "store.feedback.entitlement-verified": {
     "defaultMessage": "Purchase verified on this device.",

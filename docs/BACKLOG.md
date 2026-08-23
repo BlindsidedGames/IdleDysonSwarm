@@ -13,11 +13,16 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [ ] Add clear player-facing enable/disable toggles for the Double Infinity
-  Points and Developer Options purchases. Toggling either effect must preserve
-  its durable ownership and restore eligibility, apply consistently across Web
-  and native hosts, and keep the existing in-game Developer Options unlock
-  compatible with the purchased entitlement.
+- [x] Add a player-facing enable/disable toggle for Double Infinity Points.
+  The owned Store purchase control becomes the toggle; its device-local choice
+  defaults on for existing owners, survives host restarts, remains independent
+  from ownership and shared-save imports, and is applied through the canonical
+  entitlement path used by active, offline, preview, ordinary, and Break
+  Infinity rewards.
+- [ ] Add a player-facing enable/disable toggle for Developer Options. Toggling
+  it must preserve durable ownership and restore eligibility and keep the
+  existing in-game Developer Options unlock compatible with the purchased
+  entitlement.
 - [ ] Implement device-local presentation frame-rate choices matching Unity's
   10, 30, 60, and Maximum options. Limit only rendering/animation delivery;
   canonical 10 Hz simulation, commands, saves, imports, lifecycle events, and

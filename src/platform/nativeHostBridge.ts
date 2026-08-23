@@ -31,6 +31,7 @@ import type {
   DiagnosticsExportResult,
   ReleasePlatformServices,
 } from './releaseFoundation'
+import { DoubleInfinityPointsEffectPreferenceService } from '../store/doubleInfinityPointsEffect'
 import type {
   NativeMigrationSource,
   RootedNativeFileBridge,
@@ -247,6 +248,8 @@ export function createNativeHostEnvironment(
     nativeFilesystemMigration: migration,
     entitlements,
     store,
+    doubleInfinityPointsEffect:
+      new DoubleInfinityPointsEffectPreferenceService(),
     diagnostics,
   }) satisfies Readonly<ReleasePlatformServices>
   return Object.freeze({

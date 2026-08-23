@@ -8027,6 +8027,42 @@
       "value": "Last 30 days"
     }
   ],
+  "store.action.double-ip-disabled-accessible": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points: Disabled"
+    }
+  ],
+  "store.action.double-ip-enabled-accessible": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points: Enabled"
+    }
+  ],
+  "store.action.double-ip-updating-accessible": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points: Updating"
+    }
+  ],
+  "store.action.effect-disabled": [
+    {
+      "type": 0,
+      "value": "Disabled"
+    }
+  ],
+  "store.action.effect-enabled": [
+    {
+      "type": 0,
+      "value": "Enabled"
+    }
+  ],
+  "store.action.effect-updating": [
+    {
+      "type": 0,
+      "value": "Updating…"
+    }
+  ],
   "store.action.purchase": [
     {
       "type": 1,
@@ -8079,6 +8115,18 @@
     {
       "type": 0,
       "value": "Purchases stay on this device"
+    }
+  ],
+  "store.feedback.effect-disabled": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points disabled. Your purchase remains owned and can be re-enabled at any time."
+    }
+  ],
+  "store.feedback.effect-enabled": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points enabled. Future Infinity Point rewards will be doubled."
     }
   ],
   "store.feedback.entitlement-verified": [

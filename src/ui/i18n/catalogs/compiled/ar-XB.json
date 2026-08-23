@@ -15987,6 +15987,90 @@
       "value": "‬"
     }
   ],
+  "store.action.double-ip-disabled-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs: ᗡısɐqʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.double-ip-enabled-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs: Ǝuɐqʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.double-ip-updating-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs: ∩dpɐʇıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.effect-disabled": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısɐqʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.effect-enabled": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝuɐqʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.effect-updating": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩dpɐʇıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "store.action.purchase": [
     {
       "type": 0,
@@ -16107,6 +16191,34 @@
     {
       "type": 0,
       "value": "Ԁnɹɔɥɐsǝs sʇɐʎ ou ʇɥıs pǝʌıɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.feedback.effect-disabled": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs pısɐqʅǝp. ⅄onɹ dnɹɔɥɐsǝ ɹǝɯɐıus oʍuǝp ɐup ɔɐu qǝ ɹǝ-ǝuɐqʅǝp ɐʇ ɐuʎ ʇıɯǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.feedback.effect-enabled": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs ǝuɐqʅǝp. Ⅎnʇnɹǝ Iuɟıuıʇʎ Ԁoıuʇ ɹǝʍɐɹps ʍıʅʅ qǝ ponqʅǝp."
     },
     {
       "type": 0,
