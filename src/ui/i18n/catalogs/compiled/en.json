@@ -9578,6 +9578,90 @@
       "value": "Version 3"
     }
   ],
+  "wiki.patch-notes.version-3-1": [
+    {
+      "type": 0,
+      "value": "Version 3.1"
+    }
+  ],
+  "wiki.patch-notes.version-3-1.audio": [
+    {
+      "type": 0,
+      "value": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.economy": [
+    {
+      "type": 0,
+      "value": "Fixed purchases at the largest supported resource values and prevented extreme Assembly Megalines prices from becoming stuck at a reusable plateau."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.infinity": [
+    {
+      "type": 0,
+      "value": "Expanded Infinity with manual resets independent of Auto Infinity, exact automatic Infinity Point targets, and current and peak IP-per-minute guidance."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.mobile-ui": [
+    {
+      "type": 0,
+      "value": "Restored late-game mega structures and refreshed gameplay layouts with clearer facility cards, consistent route themes, safer mobile spacing, improved dialogs, and better compact-screen controls."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.navigation": [
+    {
+      "type": 0,
+      "value": "Added customizable bottom navigation shortcuts with an optional Include Text setting and automatic sizing that keeps selected destinations accessible across different screen widths."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.progress-panels": [
+    {
+      "type": 0,
+      "value": "Added shared progress and settings panels across Bots, Research, Skills, Infinity, Simulations, and Quantum, including clearer production comparisons and first-run manual Infinity controls."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.saves": [
+    {
+      "type": 0,
+      "value": "Improved older Unity-save migration and save reliability through backgrounding, suspension, reloads, offline startup, and updates, with restored application branding and loading screens."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.settings": [
+    {
+      "type": 0,
+      "value": "Added device-local Standard, Scientific, and Engineering number notation with stable-width gameplay digits, plus a setting to hide completed Research."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.skill-controls": [
+    {
+      "type": 0,
+      "value": "Improved Skills presets and confirmations: locked Skills remain queued until their progression line is unlocked, production changes are previewed more clearly, and preset, reset, search, touch, and drag controls are easier to use."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.skill-effects": [
+    {
+      "type": 0,
+      "value": "Corrected Skill effects across timer-based, offline, manual-purchase, Fragment, Purity, Terra, and Stellar branches so their bonuses, trade-offs, and unlock rules now behave as described."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.statistics": [
+    {
+      "type": 0,
+      "value": "Expanded Statistics with the full Dyson Swarm scale and detailed performance for the ten most recent Infinity runs, including automatic and manual runs, rewards, durations, averages, medians, and ranges."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.store": [
+    {
+      "type": 0,
+      "value": "Added the Supporter Cat Gallery for verified supporters and an Enabled/Disabled control for the owned Double Infinity Points upgrade without affecting ownership or restore eligibility."
+    }
+  ],
+  "wiki.patch-notes.version-3-1.stored-time": [
+    {
+      "type": 0,
+      "value": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages."
+    }
+  ],
   "wiki.patch-notes.version-3.accessibility": [
     {
       "type": 0,

@@ -134,6 +134,22 @@ const version3PatchNoteMessages = [
   messages.patchNotesVersion3InteractionFixes,
 ] as const
 
+const version31PatchNoteMessages = [
+  messages.patchNotesVersion31Audio,
+  messages.patchNotesVersion31SkillEffects,
+  messages.patchNotesVersion31SkillControls,
+  messages.patchNotesVersion31MobileUi,
+  messages.patchNotesVersion31Navigation,
+  messages.patchNotesVersion31Settings,
+  messages.patchNotesVersion31Store,
+  messages.patchNotesVersion31ProgressPanels,
+  messages.patchNotesVersion31Infinity,
+  messages.patchNotesVersion31Statistics,
+  messages.patchNotesVersion31StoredTime,
+  messages.patchNotesVersion31Saves,
+  messages.patchNotesVersion31Economy,
+] as const
+
 type SecretEffectMessage =
   | 'assemblyLineBoost'
   | 'aiManagerBoost'
@@ -320,15 +336,21 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion3)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion31)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version3PatchNoteMessages.map((message) => (
+            {version31PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
         </section>
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion3)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version3PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
           <p className="wiki-surface__authored-copy">{previousNotes}</p>
         </section>
       </div>
