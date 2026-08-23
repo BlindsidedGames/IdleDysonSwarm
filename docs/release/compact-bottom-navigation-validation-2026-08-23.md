@@ -1,7 +1,7 @@
 # Compact bottom navigation validation — 2026-08-23
 
 Scope: customizable compact bottom-bar destinations, Compact/Standard/Large
-sizing, and deterministic More overflow. Infinity gameplay, reset behavior,
+sizing, and deterministic menu overflow. Infinity gameplay, reset behavior,
 target controls, and the Infinity surface were not changed.
 
 ## Automated evidence
@@ -21,15 +21,17 @@ target controls, and the Infinity surface were not changed.
 
 Validated in Chromium through the local production UI:
 
-- 390 × 844 portrait, Standard: Bots, Research, Skills, Infinity, and final
-  More control fit one row with visible labels and no horizontal page overflow.
+- 390 × 844 portrait, Standard: the leading menu control and icon-only Bots,
+  Research, Skills, and Infinity destinations fit one row with no horizontal
+  page overflow.
 - 320 × 700 portrait, Standard: deterministic overflow retains Bots, Research,
   Skills, and More. Measured controls were at least 50.7 CSS pixels high.
 - 700 × 320 compact landscape, Large: one bottom row, no horizontal page
-  overflow, visible labels, and a final More control.
-- 390 × 844 with `--game-text-scale: 2`: labels remained present, long labels
-  ellipsized without overlap, the bar stayed one row, and measured controls
-  remained at least 62.7 CSS pixels high.
+  overflow, labels under unlocked icons, progress in place of locked labels,
+  and the menu retained at the leading edge.
+- 390 × 844 with `--game-text-scale: 2`: Large labels ellipsized without
+  overlap, the bar stayed one row, and measured controls remained at least
+  62.7 CSS pixels high.
 - Settings removal and Large sizing persisted after the normal 30-second
   canonical checkpoint and reload. The hidden Settings destination remained in
   the full drawer and successfully reopened Settings through More.

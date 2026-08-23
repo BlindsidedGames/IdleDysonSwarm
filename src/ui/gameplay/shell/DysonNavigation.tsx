@@ -47,6 +47,7 @@ export function DysonNavigation({
             key={item.id}
             className="dyson-navigation__item"
             data-navigation-id={item.id}
+            data-progress={item.progress !== undefined || undefined}
           >
             {item.current ? (
               <span

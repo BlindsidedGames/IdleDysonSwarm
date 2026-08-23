@@ -286,12 +286,6 @@ export function DysonGameplayShell({
         aria-hidden={(compactMenuOpen || wideLayout) || undefined}
         inert={(compactMenuOpen || wideLayout) || undefined}
       >
-        <DysonNavigation
-          {...navigation}
-          placement="bottom"
-          maxItems={bottomItemCapacity}
-          interactive={!compactMenuOpen && !wideLayout}
-        />
         <button
           ref={openMenuRef}
           type="button"
@@ -311,6 +305,12 @@ export function DysonGameplayShell({
             {moreMenuLabel}
           </span>
         </button>
+        <DysonNavigation
+          {...navigation}
+          placement="bottom"
+          maxItems={bottomItemCapacity}
+          interactive={!compactMenuOpen && !wideLayout}
+        />
       </div>
     </div>
   )

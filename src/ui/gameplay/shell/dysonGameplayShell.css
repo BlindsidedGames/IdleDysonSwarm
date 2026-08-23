@@ -918,7 +918,7 @@
   z-index: 30;
   grid-row: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 4rem;
+  grid-template-columns: 3.7rem minmax(0, 1fr);
   min-inline-size: 0;
   padding-block: 0.32rem max(0.32rem, var(--safe-area-bottom));
   padding-inline: max(0.25rem, var(--safe-area-left))
@@ -949,19 +949,19 @@
   background: transparent;
   color: white;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 2.55rem;
   line-height: 1;
 }
 
 .dyson-shell__menu-icon {
   display: grid;
-  inline-size: 1.35rem;
-  gap: 0.22rem;
+  inline-size: 1.75rem;
+  gap: 0.3rem;
 }
 
 .dyson-shell__menu-icon i {
   display: block;
-  block-size: 0.16rem;
+  block-size: 0.2rem;
   border-radius: 999px;
   background: currentColor;
 }
@@ -1181,29 +1181,23 @@
 }
 
 .dyson-navigation--bottom .dyson-navigation__label {
-  display: block;
-  max-inline-size: 100%;
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
   overflow: hidden;
-  color: currentColor;
-  font-size: calc(0.62rem * var(--game-text-scale));
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.05;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  clip: rect(0 0 0 0);
 }
 
 .dyson-shell__bottom-menu-label {
-  max-inline-size: 100%;
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
   overflow: hidden;
-  font-size: calc(0.62rem * var(--game-text-scale));
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.05;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  clip: rect(0 0 0 0);
 }
 
 .dyson-shell__bottom-navigation[data-size="compact"] {
-  grid-template-columns: minmax(0, 1fr) 3rem;
+  grid-template-columns: 3rem minmax(0, 1fr);
 }
 
 .dyson-shell__bottom-navigation[data-size="compact"]
@@ -1221,13 +1215,8 @@
   block-size: 1.45rem;
 }
 
-.dyson-shell__bottom-navigation[data-size="compact"]
-  :is(.dyson-navigation__label, .dyson-shell__bottom-menu-label) {
-  font-size: calc(0.55rem * var(--game-text-scale));
-}
-
 .dyson-shell__bottom-navigation[data-size="large"] {
-  grid-template-columns: minmax(0, 1fr) 4.75rem;
+  grid-template-columns: 4.75rem minmax(0, 1fr);
 }
 
 .dyson-shell__bottom-navigation[data-size="large"]
@@ -1242,8 +1231,30 @@
 }
 
 .dyson-shell__bottom-navigation[data-size="large"]
-  :is(.dyson-navigation__label, .dyson-shell__bottom-menu-label) {
+  .dyson-navigation__item:not([data-progress="true"])
+  .dyson-navigation__label,
+.dyson-shell__bottom-navigation[data-size="large"]
+  .dyson-shell__bottom-menu-label {
+  position: static;
+  display: block;
+  inline-size: auto;
+  block-size: auto;
+  max-inline-size: 100%;
+  clip: auto;
+  overflow: hidden;
+  color: currentColor;
   font-size: calc(0.72rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dyson-shell__bottom-navigation[data-size="large"]
+  .dyson-navigation__item[data-progress="true"]
+  .dyson-navigation__progress {
+  inset-block-end: 0.45rem;
+  block-size: 0.25rem;
 }
 
 .dyson-shell__menu-backdrop {
