@@ -265,25 +265,59 @@ export function formatGameEnergyParts(
 export function formatGameDuration(
   locale: EnabledLocale,
   seconds: number,
+  options: {
+    readonly maximumFractionDigits?: number
+    readonly minimumSignificantDigits?: number
+    readonly maximumSignificantDigits?: number
+  } = {},
 ): string {
   if (!Number.isFinite(seconds)) return NON_FINITE_NUMBER_FALLBACK
 
-  const totalSeconds = Math.floor(Math.abs(seconds))
+  const maximumFractionDigits = Math.max(
+    0,
+    Math.floor(options.maximumFractionDigits ?? 0),
+  )
+  const maximumSignificantDigits = options.maximumSignificantDigits === undefined
+    ? undefined
+    : Math.max(1, Math.floor(options.maximumSignificantDigits))
+  const minimumSignificantDigits = options.minimumSignificantDigits === undefined
+    ? undefined
+    : Math.max(1, Math.floor(options.minimumSignificantDigits))
+  const totalSeconds = maximumFractionDigits > 0 || maximumSignificantDigits !== undefined
+    ? Math.abs(seconds)
+    : Math.floor(Math.abs(seconds))
   const days = Math.floor(totalSeconds / 86_400)
   const hours = Math.floor(totalSeconds / 3_600) % 24
   const minutes = Math.floor(totalSeconds / 60) % 60
-  const remainingSeconds = totalSeconds % 60
+  const remainingSeconds = totalSeconds -
+    days * 86_400 -
+    hours * 3_600 -
+    minutes * 60
   const components: string[] = []
-  const unit = (value: number, suffix: string) =>
+  const unit = (
+    value: number,
+    suffix: string,
+    fractionDigits = 0,
+    minimumSignificant?: number,
+    significantDigits?: number,
+  ) =>
     `${formatNumber(locale, value, {
-      maximumFractionDigits: 0,
+      maximumFractionDigits: fractionDigits,
+      minimumSignificantDigits: minimumSignificant,
+      maximumSignificantDigits: significantDigits,
       useGrouping: false,
     })}${suffix}`
 
   if (days > 0) components.push(unit(days, 'd'))
   if (hours > 0) components.push(unit(hours, 'h'))
   if (minutes > 0) components.push(unit(minutes, 'm'))
-  components.push(unit(remainingSeconds, 's'))
+  components.push(unit(
+    remainingSeconds,
+    's',
+    maximumFractionDigits,
+    minimumSignificantDigits,
+    maximumSignificantDigits,
+  ))
   return components.join(' ')
 }
 

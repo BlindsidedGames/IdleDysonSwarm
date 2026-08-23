@@ -1580,6 +1580,10 @@ export function ReadyDysonSlice({
                                           statistics={
                                             gameplay.progression.statistics
                                           }
+                                          currentBreakTarget={
+                                            gameplay.progression.infinity
+                                              .breakTarget
+                                          }
                                           swarmScale={
                                             dyson.value.presentation.swarmScale
                                           }

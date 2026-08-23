@@ -288,6 +288,101 @@ describe('canonical game-state mapping', () => {
     ).toBe(false)
   })
 
+  test('round-trips the current Infinity run peak without changing legacy fields', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const hydrated = hydrateGameState(prepared)
+    const withPeak = dehydrateGameState(hydrated, {
+      ...hydrated.state,
+      infinity: {
+        ...hydrated.state.infinity,
+        currentCyclePeakIpPerMinute: 2_040.5,
+        currentCyclePeakReward: 72n,
+      },
+    })
+
+    expect(withPeak.copyValidatedState()).toMatchObject({
+      simulationInfinityPeakIpPerMinute: 2_040.5,
+      simulationInfinityPeakReward: 72n,
+    })
+    expect(hydrateGameState(withPeak).state.infinity).toMatchObject({
+      currentCyclePeakIpPerMinute: 2_040.5,
+      currentCyclePeakReward: 72n,
+    })
+  })
+
+  test('round-trips the bounded recent Infinity cycle history without changing old saves', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const hydrated = hydrateGameState(prepared)
+
+    expect(hydrated.state.statistics.recentInfinityCycles).toBeUndefined()
+    expect(
+      (dehydrateGameState(hydrated).copyValidatedState()
+        .simulationStatistics as Record<string, unknown>)
+        .recentInfinityCycles,
+    ).toBeUndefined()
+
+    const withHistory = dehydrateGameState(hydrated, {
+      ...hydrated.state,
+      statistics: {
+        ...hydrated.state.statistics,
+        recentInfinityCycles: [
+          {
+            breakInfinity: true,
+            automatic: true,
+            configuredTarget: 30n,
+            reward: 32n,
+            durationSeconds: 28.5,
+          },
+          {
+            breakInfinity: true,
+            automatic: false,
+            configuredTarget: 28n,
+            reward: 28n,
+            durationSeconds: 27,
+          },
+        ],
+      },
+    })
+
+    expect(hydrateGameState(withHistory).state.statistics.recentInfinityCycles)
+      .toEqual([
+        {
+          breakInfinity: true,
+          automatic: true,
+          configuredTarget: 30n,
+          reward: 32n,
+          durationSeconds: 28.5,
+        },
+        {
+          breakInfinity: true,
+          automatic: false,
+          configuredTarget: 28n,
+          reward: 28n,
+          durationSeconds: 27,
+        },
+      ])
+  })
+
+  test('repairs a missing or zero legacy Break target to one IP', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const invalid = prepared.copyValidatedState()
+    invalid.infinityPointsToBreakFor = 0
+
+    const hydrated = hydrateGameState(PreparedSave.fromDecoded(invalid))
+
+    expect(hydrated.state.infinity.breakTarget).toBe(1n)
+    expect(
+      dehydrateGameState(hydrated).copyValidatedState()
+        .infinityPointsToBreakFor,
+    ).toBe(1)
+  })
+
   test('keeps packed flags and authoritative skill bitsets synchronized', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),

@@ -7,6 +7,7 @@ import type {
   FrontendDysonPresentationFacts,
 } from '../../../application/frontendSnapshot'
 import type {
+  InfinityCycleHistoryEntry,
   SimulationTotalsState,
 } from '../../../game-state/types'
 import {
@@ -19,6 +20,8 @@ import type {
 import { statisticsMessages as messages } from './messages'
 import {
   aggregateStatisticsWindows,
+  infinityRunIpPerMinute,
+  projectInfinityTargetPerformance,
   type StatisticsWindowAggregate,
 } from './statisticsProjection'
 import './statistics.css'
@@ -33,6 +36,7 @@ type DisplayMetricKey =
 export interface StatisticsSurfaceProps {
   readonly locale: EnabledLocale
   readonly statistics: StatisticsState
+  readonly currentBreakTarget: bigint
   readonly swarmScale: FrontendDysonPresentationFacts['swarmScale']
   readonly visibility: StatisticsVisibility
 }
@@ -145,6 +149,7 @@ type WindowMetricDefinition = (typeof windowMetrics)[number]
 export function StatisticsSurface({
   locale,
   statistics,
+  currentBreakTarget,
   swarmScale,
   visibility,
 }: StatisticsSurfaceProps) {
@@ -228,12 +233,114 @@ export function StatisticsSurface({
           cycle={statistics.lastCompletedCycle}
         />
 
+        {visibility.infinity ? (
+          <RecentInfinityPerformance
+            locale={locale}
+            history={statistics.recentInfinityCycles ?? []}
+            currentBreakTarget={currentBreakTarget}
+          />
+        ) : null}
+
         <OtherStats
           locale={locale}
           swarmScale={swarmScale}
         />
       </div>
     </div>
+  )
+}
+
+function RecentInfinityPerformance({
+  locale,
+  history,
+  currentBreakTarget,
+}: {
+  readonly locale: EnabledLocale
+  readonly history: readonly Readonly<InfinityCycleHistoryEntry>[]
+  readonly currentBreakTarget: bigint
+}) {
+  const intl = useIntl()
+  const performance = projectInfinityTargetPerformance(
+    history,
+    currentBreakTarget,
+  )
+  return (
+    <section className="statistics-surface__infinity-performance">
+      <h2>{intl.formatMessage(messages.recentInfinityPerformance)}</h2>
+      <article className="statistics-card statistics-infinity-performance">
+        <h3>{intl.formatMessage(messages.currentAutomaticTarget)}</h3>
+        {performance ? (
+          <dl className="statistics-infinity-performance__summary">
+            <StatisticFact
+              label={intl.formatMessage(messages.configuredTarget)}
+              value={formatGameNumber(locale, currentBreakTarget)}
+            />
+            <StatisticFact
+              label={intl.formatMessage(messages.latestActualReward)}
+              value={formatGameNumber(locale, performance.latestReward)}
+            />
+            <StatisticFact
+              label={intl.formatMessage(messages.automaticRunsRecorded)}
+              value={`${performance.runs.length}/10`}
+            />
+            <StatisticFact
+              label={intl.formatMessage(messages.averageIpPerMinute)}
+              value={formatGameNumber(locale, performance.averageIpPerMinute)}
+            />
+            <StatisticFact
+              label={intl.formatMessage(messages.medianIpPerMinute)}
+              value={formatGameNumber(locale, performance.medianIpPerMinute)}
+            />
+            <StatisticFact
+              label={intl.formatMessage(messages.ipPerMinuteRange)}
+              value={`${formatGameNumber(locale, performance.minimumIpPerMinute)}–${formatGameNumber(locale, performance.maximumIpPerMinute)}`}
+            />
+          </dl>
+        ) : (
+          <p className="statistics-card__empty">
+            {intl.formatMessage(messages.noAutomaticRunsAtTarget, {
+              target: formatGameNumber(locale, currentBreakTarget),
+            })}
+          </p>
+        )}
+        {history.length > 0 ? (
+          <ol className="statistics-infinity-performance__runs">
+            {history.map((cycle, index) => (
+              <li key={`${index}-${cycle.durationSeconds}-${cycle.reward}`}>
+                <strong>
+                  {intl.formatMessage(
+                    cycle.automatic ? messages.automaticRun : messages.manualRun,
+                  )}
+                </strong>
+                <span>
+                  {cycle.breakInfinity
+                    ? intl.formatMessage(messages.runTarget, {
+                        target: formatGameNumber(locale, cycle.configuredTarget),
+                      })
+                    : intl.formatMessage(messages.ordinaryInfinityRun)}
+                </span>
+                <span>
+                  {intl.formatMessage(messages.runReward, {
+                    reward: formatGameNumber(locale, cycle.reward),
+                  })}
+                </span>
+                <span>
+                  {formatGameDuration(locale, cycle.durationSeconds, {
+                    minimumSignificantDigits: 3,
+                    maximumSignificantDigits: 3,
+                  })}
+                </span>
+                <span className="statistics-infinity-performance__rate">
+                  {intl.formatMessage(messages.runRate, {
+                    rate: formatGameNumber(locale, infinityRunIpPerMinute(cycle)),
+                  })}
+                </span>
+              </li>
+            ))}
+          </ol>
+        ) : null}
+      </article>
+    </section>
   )
 }
 

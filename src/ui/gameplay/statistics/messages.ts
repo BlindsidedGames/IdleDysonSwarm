@@ -148,6 +148,81 @@ export const statisticsMessages = defineMessages({
     defaultMessage: 'No completed cycle has been recorded yet.',
     description: 'Empty state before the first tracked cycle.',
   },
+  recentInfinityPerformance: {
+    id: 'statistics.infinity-performance',
+    defaultMessage: 'Recent Infinity performance',
+    description: 'Heading for the bounded recent Infinity run history.',
+  },
+  currentAutomaticTarget: {
+    id: 'statistics.infinity-performance.current-target',
+    defaultMessage: 'Current automatic target',
+    description: 'Heading for performance at the currently configured automatic Infinity target.',
+  },
+  configuredTarget: {
+    id: 'statistics.infinity-performance.configured-target',
+    defaultMessage: 'Configured target',
+    description: 'Configured Infinity Point target for automatic Infinity.',
+  },
+  latestActualReward: {
+    id: 'statistics.infinity-performance.latest-reward',
+    defaultMessage: 'Latest actual reward',
+    description: 'Actual quantized Infinity Point reward from the latest matching run.',
+  },
+  automaticRunsRecorded: {
+    id: 'statistics.infinity-performance.run-count',
+    defaultMessage: 'Automatic runs recorded',
+    description: 'Number of matching automatic runs retained in the ten-run history.',
+  },
+  averageIpPerMinute: {
+    id: 'statistics.infinity-performance.average-rate',
+    defaultMessage: 'Average IP/min',
+    description: 'Time-weighted Infinity Point rate across matching automatic runs.',
+  },
+  medianIpPerMinute: {
+    id: 'statistics.infinity-performance.median-rate',
+    defaultMessage: 'Median IP/min',
+    description: 'Median Infinity Point rate across matching automatic runs.',
+  },
+  ipPerMinuteRange: {
+    id: 'statistics.infinity-performance.rate-range',
+    defaultMessage: 'IP/min range',
+    description: 'Minimum and maximum Infinity Point rates across matching runs.',
+  },
+  noAutomaticRunsAtTarget: {
+    id: 'statistics.infinity-performance.empty-target',
+    defaultMessage: 'Complete automatic runs at {target} IP to measure this target.',
+    description: 'Empty state when the current automatic target has no recorded runs.',
+  },
+  automaticRun: {
+    id: 'statistics.infinity-performance.run.automatic',
+    defaultMessage: 'Auto',
+    description: 'Short label for an automatic Infinity run.',
+  },
+  manualRun: {
+    id: 'statistics.infinity-performance.run.manual',
+    defaultMessage: 'Manual',
+    description: 'Short label for a manually triggered Infinity run.',
+  },
+  runTarget: {
+    id: 'statistics.infinity-performance.run.target',
+    defaultMessage: 'Target {target}',
+    description: 'Configured target attached to one recent Infinity run.',
+  },
+  ordinaryInfinityRun: {
+    id: 'statistics.infinity-performance.run.ordinary',
+    defaultMessage: 'Ordinary Infinity',
+    description: 'Target label for an ordinary pre-Break Infinity run.',
+  },
+  runReward: {
+    id: 'statistics.infinity-performance.run.reward',
+    defaultMessage: '{reward} IP',
+    description: 'Actual Infinity Point reward attached to a recent run.',
+  },
+  runRate: {
+    id: 'statistics.infinity-performance.run.rate',
+    defaultMessage: '{rate} IP/min',
+    description: 'Realized Infinity Point rate attached to a recent run.',
+  },
   otherStats: {
     id: 'statistics.other-stats',
     defaultMessage: 'Other Stats',

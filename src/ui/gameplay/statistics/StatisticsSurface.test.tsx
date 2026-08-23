@@ -151,6 +151,61 @@ describe('StatisticsSurface', () => {
     ).toBeTruthy()
   })
 
+  test('shows a time-weighted ten-run Infinity summary for the current automatic target', () => {
+    renderStatistics(statistics({
+      recentInfinityCycles: [
+        {
+          breakInfinity: true,
+          automatic: true,
+          configuredTarget: 30n,
+          reward: 32n,
+          durationSeconds: 30,
+        },
+        {
+          breakInfinity: true,
+          automatic: true,
+          configuredTarget: 30n,
+          reward: 32n,
+          durationSeconds: 60,
+        },
+        {
+          breakInfinity: true,
+          automatic: false,
+          configuredTarget: 30n,
+          reward: 40n,
+          durationSeconds: 0.375,
+        },
+        {
+          breakInfinity: true,
+          automatic: true,
+          configuredTarget: 28n,
+          reward: 28n,
+          durationSeconds: 20,
+        },
+      ],
+    }))
+
+    const section = screen
+      .getByRole('heading', { name: 'Recent Infinity performance' })
+      .closest('section')
+    expect(section).not.toBeNull()
+    const queries = within(section as HTMLElement)
+    expect(queries.getByText('Configured target')).toBeVisible()
+    expect(queries.getByText('Latest actual reward')).toBeVisible()
+    expect(queries.getByText('Automatic runs recorded')).toBeVisible()
+    expect(queries.getByText('2/10')).toBeVisible()
+    expect(queries.getByText('Average IP/min')).toBeVisible()
+    expect(queries.getByText('42.6')).toBeVisible()
+    expect(queries.getByText('Median IP/min')).toBeVisible()
+    expect(queries.getByText('48.0')).toBeVisible()
+    expect(queries.getByText('IP/min range')).toBeVisible()
+    expect(queries.getByText('32.0–64.0')).toBeVisible()
+    expect(queries.getAllByText('Auto')).toHaveLength(3)
+    expect(queries.getByText('Manual')).toBeVisible()
+    expect(queries.getAllByText('Target 30.0')).toHaveLength(3)
+    expect(queries.getByText('0.375s')).toBeVisible()
+  })
+
   test('shows the cycle empty state and passes an accessibility scan', async () => {
     const state = statistics({
       lastCompletedCycle: {
@@ -219,6 +274,7 @@ function renderStatistics(
       <StatisticsSurface
         locale="en"
         statistics={state}
+        currentBreakTarget={30n}
         swarmScale={{
           activePanels: 2.96e58,
           starsSurrounded: 1.48e54,
@@ -267,6 +323,7 @@ function statistics(
       reward: 12_345n,
       dreamCause: 'BlackHole',
     },
+    recentInfinityCycles: [],
     minuteWindows: [window(), window({ sequence: 2n })],
     halfHourWindows: [window({ simulatedSeconds: 1_800 })],
     dailyWindows: [window({ simulatedSeconds: 86_400 })],

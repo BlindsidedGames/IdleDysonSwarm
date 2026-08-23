@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "source": "Lifecycle-normalized Unity prepared graph",
   "target": "Web dehydrate(hydrate(Unity prepared graph))",
-  "expectedDifferenceCount": 1071,
+  "expectedDifferenceCount": 1072,
   "allowedDeltas": [
     {
       "id": "legacy-skill-flag-compaction",
@@ -52,6 +52,16 @@
       "actualShape": "empty-string",
       "normalizedPaths": [
         "$.simulationStatistics.lastCompletedCycle.dreamCause"
+      ]
+    },
+    {
+      "id": "break-infinity-target-minimum",
+      "reason": "The Web canonical Infinity model repairs the legacy zero Break target to the minimum valid reward of one IP.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "zero-number-or-bigint",
+      "actualShape": "one-number-or-bigint",
+      "normalizedPaths": [
+        "$.infinityPointsToBreakFor"
       ]
     }
   ]

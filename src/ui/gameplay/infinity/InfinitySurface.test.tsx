@@ -17,7 +17,6 @@ import type {
   FrontendInfinityShopPreview,
 } from '../../../application/frontendSnapshot'
 import {
-  breakInfinityTargetFromPresentationPosition,
   projectBreakInfinityPresentationControl,
   type InfinityProgressFacts,
 } from '../../../simulation/infinityCycle'
@@ -172,9 +171,8 @@ describe('InfinitySurface', () => {
     ).toBeDisabled()
   })
 
-  test('commits the logarithmic Break target through the coordinator', () => {
+  test('commits an exact Break target through the coordinator', () => {
     const dispatchPlayer = vi.fn(async () => accepted())
-    const position = Math.log10(1001)
     renderSurface({
       shop: [preview('secret')],
       derived: breakFacts(),
@@ -185,25 +183,74 @@ describe('InfinitySurface', () => {
       name: 'Infinity settings',
     }))
 
-    const slider = screen.getByRole('slider', {
+    const input = screen.getByRole('textbox', {
       name: 'Infinity Points before reset',
     })
-    fireEvent.change(slider, { target: { value: String(position) } })
-    fireEvent.pointerUp(slider)
+    fireEvent.change(input, { target: { value: '1.5K' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Set target' }))
 
     expect(dispatchPlayer).toHaveBeenCalledWith({
       kind: 'infinity.set-break-target',
-      target: breakInfinityTargetFromPresentationPosition(position),
+      target: 1_500n,
     })
-    expect(
-      screen.queryByRole('button', { name: 'Set target' }),
-    ).not.toBeInTheDocument()
+    expect(screen.getByText('Target: 42.0 IP')).toBeInTheDocument()
     expect(infinityStyles).toMatch(
       /\.infinity-break-target__range\s*\{[^}]*grid-row:\s*1;[^}]*text-align:\s*end;/s,
     )
     expect(infinityStyles).toMatch(
       /\.infinity-break-target input\s*\{[^}]*grid-row:\s*2;/s,
     )
+    expect(infinityStyles).toMatch(
+      /\.infinity-break-target__submit\s*\{[^}]*background:\s*var\(--infinity-accent\);[^}]*color:\s*#100a18;/s,
+    )
+  })
+
+  test('keeps Break efficiency guidance inside the expanded settings', () => {
+    const { container } = renderSurface({
+      shop: [preview('secret')],
+      derived: {
+        ...breakFacts(),
+        currentIpPerMinute: 15,
+        peakIpPerMinute: 21.3,
+        peakReward: 47n,
+      },
+    })
+
+    expect(screen.queryByText('Current: 15.0 IP/min')).not.toBeInTheDocument()
+    expect(screen.queryByText('Peak: 21.3 IP/min at 47.0 IP')).not.toBeInTheDocument()
+    expect(
+      screen.getByText('Bots until next Infinity Point: 1.00Sp'),
+    ).toHaveClass('ui-visually-hidden')
+    expect(screen.getByText('Next in 1.00Sp')).toBeVisible()
+    expect(
+      container.querySelector('.infinity-surface__reward-progress [data-symbol="infinity-point"]'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Infinity settings' }))
+
+    const currentRate = screen.getByText('Current: 15.0 IP/min')
+    expect(currentRate).toBeInTheDocument()
+    expect(screen.getByText('Peak: 21.3 IP/min at 47.0 IP')).toBeInTheDocument()
+    expect(currentRate.closest('.infinity-automatic-reset__copy')).toBeInTheDocument()
+    expect(infinityStyles).not.toMatch(
+      /\.infinity-break-target\s*\{[^}]*border-block-start:/s,
+    )
+  })
+
+  test('keeps the saved Break target after invalid input', () => {
+    renderSurface({ shop: [preview('secret')], derived: breakFacts() })
+    fireEvent.click(screen.getByRole('button', { name: 'Infinity settings' }))
+
+    const input = screen.getByRole('textbox', {
+      name: 'Infinity Points before reset',
+    })
+    fireEvent.change(input, { target: { value: 'not infinity' } })
+    fireEvent.blur(input)
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Enter a whole number from 1 to 2.14B IP.',
+    )
+    expect(screen.getByText('Target: 42.0 IP')).toBeInTheDocument()
   })
 
   test('keeps the Break target absent during ordinary Infinity', () => {
@@ -214,7 +261,7 @@ describe('InfinitySurface', () => {
     }))
 
     expect(
-      screen.queryByRole('slider', {
+      screen.queryByRole('textbox', {
         name: 'Infinity Points before reset',
       }),
     ).not.toBeInTheDocument()
@@ -253,6 +300,38 @@ describe('InfinitySurface', () => {
     const manualInfinity = screen.getByRole('button', { name: 'Infinity' })
     expect(manualInfinity).toBeEnabled()
     fireEvent.click(manualInfinity)
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'infinity.request-reset',
+    })
+  })
+
+  test('allows manual Break Infinity before the automatic target and shows its reward', () => {
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({
+      shop: [preview('secret')],
+      automaticResetEnabled: false,
+      derived: {
+        ...breakFacts(),
+        currentReward: 12n,
+        breakTargetProgress: {
+          targetReward: 42n,
+          currentReward: 12n,
+          fraction: 12 / 42,
+        },
+      },
+      dispatchPlayer,
+    })
+
+    const button = screen.getByRole('button', {
+      name: 'Infinity for 12.0 IP',
+    })
+    expect(button).toBeEnabled()
+    expect(
+      button.querySelector('[data-symbol="infinity-point"]'),
+    ).toBeInTheDocument()
+    expect(button).not.toHaveTextContent('Infinity for')
+    expect(button).toHaveTextContent('12.0')
+    fireEvent.click(button)
     expect(dispatchPlayer).toHaveBeenCalledWith({
       kind: 'infinity.request-reset',
     })
@@ -326,7 +405,7 @@ describe('InfinitySurface', () => {
 interface RenderOptions {
   readonly shop: readonly FrontendInfinityShopPreview[]
   readonly secrets?: bigint
-  readonly derived?: InfinityProgressFacts
+  readonly derived?: InfinitySurfaceProps['derived']
   readonly dispatchPlayer?: InfinitySurfaceProps['dispatchPlayer']
   readonly automaticResetEnabled?: boolean
 }
@@ -392,7 +471,7 @@ function preview(
   }
 }
 
-function ordinaryFacts(): InfinityProgressFacts {
+function ordinaryFacts(): Extract<InfinityProgressFacts, { mode: 'ordinary' }> {
   return {
     mode: 'ordinary',
     currentReward: 1n,
@@ -408,7 +487,7 @@ function ordinaryFacts(): InfinityProgressFacts {
   }
 }
 
-function breakFacts(): InfinityProgressFacts {
+function breakFacts(): Extract<InfinityProgressFacts, { mode: 'break' }> {
   return {
     mode: 'break',
     currentReward: 12n,

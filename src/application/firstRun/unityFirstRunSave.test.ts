@@ -125,7 +125,6 @@ describe('Unity-generated first-run save', () => {
       mappedBack.copyValidatedState(),
       normalized.copyValidatedState(),
     )
-
     expect(
       compareGraphs(rehydrated.state, webSession.state),
     ).toEqual([])
@@ -319,6 +318,12 @@ function describeShape(value: unknown): string {
     (typeof value === 'bigint' && value === 0n)
   ) {
     return 'zero-number-or-bigint'
+  }
+  if (
+    (typeof value === 'number' && value === 1) ||
+    (typeof value === 'bigint' && value === 1n)
+  ) {
+    return 'one-number-or-bigint'
   }
   return typeof value
 }

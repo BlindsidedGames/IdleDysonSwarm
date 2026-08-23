@@ -4281,6 +4281,34 @@
       "value": "‬"
     }
   ],
+  "infinity.break-target.invalid": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝuʇǝɹ ɐ ʍɥoʅǝ unɯqǝɹ ɟɹoɯ 1 ʇo 2.14Ԑ IԀ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.break-target.set": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝʇ ʇɐɹƃǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "infinity.break-target.value": [
     {
       "type": 0,
@@ -4331,6 +4359,28 @@
       "value": "‬"
     }
   ],
+  "infinity.manual-reset.for-reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ ɟoɹ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "infinity.points.label": [
     {
       "type": 0,
@@ -4373,12 +4423,12 @@
       "value": "‮"
     },
     {
-      "type": 1,
-      "value": "value"
+      "type": 0,
+      "value": "Ԑoʇs nuʇıʅ uǝxʇ Iuɟıuıʇʎ Ԁoıuʇ: "
     },
     {
-      "type": 0,
-      "value": " Ԑoʇs ʇıʅʅ uǝxʇ Iuɟıuıʇʎ Ԁoıuʇ"
+      "type": 1,
+      "value": "value"
     },
     {
       "type": 0,
@@ -4401,6 +4451,24 @@
     {
       "type": 0,
       "value": " Iuɟıuıʇʎ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.progress.next-point-in": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ ıu "
+    },
+    {
+      "type": 1,
+      "value": "value"
     },
     {
       "type": 0,
@@ -4447,6 +4515,58 @@
     {
       "type": 0,
       "value": "Mɐɹuıuƃ ᴚǝɐʅıʇʎ Ԑɹǝɐʞ ıɯɯıuǝuʇ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.rate.current": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ/ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.rate.peak": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɐʞ: "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " IԀ/ɯıu ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
     },
     {
       "type": 0,
@@ -15651,6 +15771,236 @@
     {
       "type": 0,
       "value": "Sıɯnʅɐʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɔǝuʇ Iuɟıuıʇʎ dǝɹɟoɹɯɐuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.average-rate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʌǝɹɐƃǝ IԀ/ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.configured-target": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıƃnɹǝp ʇɐɹƃǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.current-target": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ ɐnʇoɯɐʇıɔ ʇɐɹƃǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.empty-target": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐnʇoɯɐʇıɔ ɹnus ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": " IԀ ʇo ɯǝɐsnɹǝ ʇɥıs ʇɐɹƃǝʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.latest-reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ɐʇǝsʇ ɐɔʇnɐʅ ɹǝʍɐɹp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.median-rate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wǝpıɐu IԀ/ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.rate-range": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "IԀ/ɯıu ɹɐuƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.run-count": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇoɯɐʇıɔ ɹnus ɹǝɔoɹpǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.run.automatic": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇo"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.run.manual": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐunɐʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.run.ordinary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɹpıuɐɹʎ Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.run.rate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " IԀ/ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.run.reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.infinity-performance.run.target": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɐɹƃǝʇ "
+    },
+    {
+      "type": 1,
+      "value": "target"
     },
     {
       "type": 0,

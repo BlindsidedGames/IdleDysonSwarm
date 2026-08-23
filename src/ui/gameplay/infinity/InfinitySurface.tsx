@@ -3,6 +3,7 @@ import {
   useId,
   useRef,
   useState,
+  type ReactNode,
 } from 'react'
 import {
   FormattedMessage,
@@ -21,7 +22,6 @@ import type {
   CanonicalInfinityShopItemId,
 } from '../../../simulation/canonicalInfinityShop'
 import {
-  breakInfinityTargetFromPresentationPosition,
   type InfinityProgressFacts,
 } from '../../../simulation/infinityCycle'
 import infinitySymbol from '../../assets/nav-infinity.png'
@@ -39,6 +39,7 @@ import type {
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { infinityMessages as messages } from './messages'
+import { parseInfinityTargetInput } from './parseInfinityTarget'
 import './infinity.css'
 
 type InfinityCommand = Extract<
@@ -63,7 +64,11 @@ export interface InfinitySurfaceProps {
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['infinity']
   readonly progression: Pick<FrontendCanonicalProgression, 'infinity'>
-  readonly derived: InfinityProgressFacts
+  readonly derived: InfinityProgressFacts & Partial<{
+    readonly currentIpPerMinute: number
+    readonly peakIpPerMinute: number
+    readonly peakReward: bigint
+  }>
   readonly previews: FrontendGameplayPreviews['infinity']
   readonly commandAvailability: InfinityCommandAvailability
   readonly dispatchPlayer: (
@@ -100,7 +105,8 @@ export function InfinitySurface({
     ),
   )
   const manualResetReady =
-    !progression.infinity.automaticResetEnabled && progress >= 1
+    !progression.infinity.automaticResetEnabled &&
+    (derived.mode === 'break' ? derived.currentReward >= 1n : progress >= 1)
   useForwardProgressAnimation(progressFillRef, {
     canonicalProgress: progress,
     inferRate: 'increasing',
@@ -175,17 +181,47 @@ export function InfinitySurface({
               <div className="infinity-surface__progress-heading">
                 <strong>
                   {derived.mode === 'break'
-                    ? intl.formatMessage(messages.botsUntilNextPoint, {
-                        value: formatGameNumber(
-                          locale,
-                          derived.botsRemainingToNextReward,
-                        ),
-                      })
+                    ? (
+                        <span
+                          className="infinity-surface__next-point"
+                        >
+                          <span className="ui-visually-hidden">
+                            {intl.formatMessage(
+                              messages.botsUntilNextPoint,
+                              {
+                                value: formatGameNumber(
+                                  locale,
+                                  derived.botsRemainingToNextReward,
+                                ),
+                              },
+                            )}
+                          </span>
+                          <span aria-hidden="true">
+                            {intl.formatMessage(messages.nextPointIn, {
+                              value: formatGameNumber(
+                                locale,
+                                derived.botsRemainingToNextReward,
+                              ),
+                            })}
+                          </span>
+                        </span>
+                      )
                     : intl.formatMessage(messages.ordinaryProgress)}
                 </strong>
-                <span>
+                <span className="infinity-surface__reward-progress">
                   {derived.mode === 'break'
-                    ? `${formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/${formatGameNumber(locale, derived.breakTargetProgress.targetReward)}`
+                    ? (
+                        <>
+                          <InlineImageSymbol
+                            src={infinitySymbol}
+                            symbol="infinity-point"
+                            tint
+                          />
+                          <span>
+                            {formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/{formatGameNumber(locale, derived.breakTargetProgress.targetReward)}
+                          </span>
+                        </>
+                      )
                     : intl.formatMessage(messages.progressPercent, {
                         value: formatNumber(locale, progress * 100, {
                           minimumFractionDigits: 2,
@@ -220,6 +256,8 @@ export function InfinitySurface({
               </div>
               <ManualInfinityButton
                 ready={manualResetReady}
+                reward={derived.mode === 'break' ? derived.currentReward : null}
+                locale={locale}
                 routeAvailable={commandAvailability.requestReset}
                 dispatchPlayer={dispatchPlayer}
               />
@@ -230,12 +268,35 @@ export function InfinitySurface({
             enabled={progression.infinity.automaticResetEnabled}
             routeAvailable={commandAvailability.setAutomaticReset}
             dispatchPlayer={dispatchPlayer}
+            guidance={derived.mode === 'break' ? (
+              <div className="infinity-surface__rate-guidance" aria-live="off">
+                <span>
+                  {intl.formatMessage(messages.currentRate, {
+                    value: formatGameNumber(
+                      locale,
+                      derived.currentIpPerMinute ?? 0,
+                    ),
+                  })}
+                </span>
+                <span>
+                  {intl.formatMessage(messages.peakRate, {
+                    rate: formatGameNumber(
+                      locale,
+                      derived.peakIpPerMinute ?? 0,
+                    ),
+                    reward: formatGameNumber(
+                      locale,
+                      derived.peakReward ?? 0n,
+                    ),
+                  })}
+                </span>
+              </div>
+            ) : null}
           />
           {derived.mode === 'break' ? (
             <BreakTargetControl
               locale={locale}
               target={progression.infinity.breakTarget}
-              control={previews.breakTarget}
               routeAvailable={
                 commandAvailability.setBreakTarget
               }
@@ -250,10 +311,14 @@ export function InfinitySurface({
 
 function ManualInfinityButton({
   ready,
+  reward,
+  locale,
   routeAvailable,
   dispatchPlayer,
 }: {
   readonly ready: boolean
+  readonly reward: bigint | null
+  readonly locale: EnabledLocale
   readonly routeAvailable: boolean
   readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
 }) {
@@ -279,10 +344,30 @@ function ManualInfinityButton({
     <span className="infinity-manual-reset">
       <button
         type="button"
+        aria-label={
+          reward === null
+            ? intl.formatMessage(messages.manualReset)
+            : intl.formatMessage(messages.manualResetForReward, {
+                value: formatGameNumber(locale, reward),
+              })
+        }
         disabled={!routeAvailable || !ready || pending}
         onClick={() => void requestReset()}
       >
-        <span>{intl.formatMessage(messages.manualReset)}</span>
+        <span>
+          {reward === null
+            ? intl.formatMessage(messages.manualReset)
+            : (
+                <span className="infinity-manual-reset__reward" aria-hidden="true">
+                  <InlineImageSymbol
+                    src={infinitySymbol}
+                    symbol="infinity-point"
+                    tint
+                  />
+                  <span>{formatGameNumber(locale, reward)}</span>
+                </span>
+              )}
+        </span>
       </button>
       {failed ? (
         <span role="alert" className="infinity-manual-reset__feedback">
@@ -295,12 +380,14 @@ function ManualInfinityButton({
 
 interface AutomaticInfinityControlProps {
   readonly enabled: boolean
+  readonly guidance?: ReactNode
   readonly routeAvailable: boolean
   readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
 }
 
 function AutomaticInfinityControl({
   enabled,
+  guidance,
   routeAvailable,
   dispatchPlayer,
 }: AutomaticInfinityControlProps) {
@@ -327,7 +414,10 @@ function AutomaticInfinityControl({
 
   return (
     <div className="infinity-automatic-reset">
-      <span>{intl.formatMessage(messages.automaticReset)}</span>
+      <div className="infinity-automatic-reset__copy">
+        <span>{intl.formatMessage(messages.automaticReset)}</span>
+        {guidance}
+      </div>
       <button
         type="button"
         aria-label={`${intl.formatMessage(messages.automaticReset)}: ${intl.formatMessage(
@@ -486,7 +576,6 @@ function InfinityShopCard({
 interface BreakTargetControlProps {
   readonly locale: EnabledLocale
   readonly target: bigint
-  readonly control: FrontendGameplayPreviews['infinity']['breakTarget']
   readonly routeAvailable: boolean
   readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
 }
@@ -494,32 +583,32 @@ interface BreakTargetControlProps {
 function BreakTargetControl({
   locale,
   target,
-  control,
   routeAvailable,
   dispatchPlayer,
 }: BreakTargetControlProps) {
   const intl = useIntl()
   const pendingRef = useRef(false)
-  const [draft, setDraft] = useState(control.currentPosition)
+  const [draft, setDraft] = useState(target.toString())
   const [failed, setFailed] = useState(false)
-  const lastSubmitted = useRef<number | null>(null)
+  const [validationReason, setValidationReason] = useState<string | null>(null)
+  const lastSubmitted = useRef<string | null>(null)
 
   useEffect(() => {
-    setDraft(control.currentPosition)
+    setDraft(target.toString())
     lastSubmitted.current = null
-  }, [control.currentPosition])
+  }, [target])
 
-  const parsed = breakInfinityTargetFromPresentationPosition(draft)
-  const changed = parsed !== target
+  const parsed = parseInfinityTargetInput(draft)
+  const changed = parsed.ok && parsed.value !== target
 
   const submit = async (): Promise<void> => {
     if (
       pendingRef.current ||
       !routeAvailable ||
       !changed ||
-      !Number.isFinite(draft) ||
       lastSubmitted.current === draft
     ) {
+      if (!parsed.ok) setValidationReason(parsed.reason)
       return
     }
     pendingRef.current = true
@@ -528,7 +617,7 @@ function BreakTargetControl({
     try {
       const result = await dispatchPlayer({
         kind: 'infinity.set-break-target',
-        target: parsed,
+        target: parsed.value,
       })
       const rejected = result.status !== 'accepted'
       setFailed(rejected)
@@ -548,28 +637,45 @@ function BreakTargetControl({
       </label>
       <input
         id="infinity-break-target-input"
-        type="range"
-        min={control.minimumPosition}
-        max={control.maximumPosition}
-        step="any"
+        type="text"
+        inputMode="decimal"
+        enterKeyHint="done"
+        autoComplete="off"
         value={draft}
         disabled={!routeAvailable}
-        aria-valuetext={intl.formatMessage(messages.breakTargetValue, {
-          value: formatGameNumber(locale, parsed),
-        })}
+        aria-invalid={validationReason !== null}
+        aria-describedby="infinity-break-target-help"
         onChange={(event) => {
           setFailed(false)
-          setDraft(event.currentTarget.valueAsNumber)
+          setValidationReason(null)
+          setDraft(event.currentTarget.value)
         }}
-        onPointerUp={() => void submit()}
-        onKeyUp={() => void submit()}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault()
+            void submit()
+            event.currentTarget.blur()
+          }
+        }}
         onBlur={() => void submit()}
       />
-      <span className="infinity-break-target__range">
+      <Button
+        className="infinity-break-target__submit"
+        disabled={!routeAvailable || !changed || pendingRef.current}
+        onClick={() => void submit()}
+      >
+        {intl.formatMessage(messages.setBreakTarget)}
+      </Button>
+      <span id="infinity-break-target-help" className="infinity-break-target__range">
         {intl.formatMessage(messages.breakTargetValue, {
-          value: formatGameNumber(locale, parsed),
+          value: formatGameNumber(locale, target),
         })}
       </span>
+      {validationReason !== null ? (
+        <span className="infinity-break-target__feedback" role="alert">
+          {intl.formatMessage(messages.breakTargetInvalid)}
+        </span>
+      ) : null}
       {failed ? (
         <span
           className="infinity-break-target__feedback"

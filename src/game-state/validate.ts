@@ -80,8 +80,24 @@ export function validateCanonicalGameState(
   ) {
     errors.push('Railgun rounds fired must be a non-negative safe integer.')
   }
-  if (state.infinity.breakTarget > 2_147_483_647n) {
-    errors.push('Infinity Break target exceeds the Unity schema-12 integer range.')
+  if (
+    state.infinity.breakTarget < 1n ||
+    state.infinity.breakTarget > 2_147_483_647n
+  ) {
+    errors.push('Infinity Break target must be within the Unity schema-12 integer range.')
+  }
+  if (
+    state.infinity.currentCyclePeakIpPerMinute !== undefined &&
+    (!Number.isFinite(state.infinity.currentCyclePeakIpPerMinute) ||
+      state.infinity.currentCyclePeakIpPerMinute < 0)
+  ) {
+    errors.push('Current Infinity peak IP per minute must be finite and non-negative.')
+  }
+  if (
+    state.infinity.currentCyclePeakReward !== undefined &&
+    state.infinity.currentCyclePeakReward < 0n
+  ) {
+    errors.push('Current Infinity peak reward must be non-negative.')
   }
   if (state.infinity.secretsOfTheUniverse > 27n) {
     errors.push('Secrets of the Universe exceeds its authored maximum.')
@@ -97,6 +113,20 @@ export function validateCanonicalGameState(
   }
   if (state.statistics.dailyWindows.length !== 30) {
     errors.push('Statistics must contain exactly 30 daily windows.')
+  }
+  const recentInfinityCycles = state.statistics.recentInfinityCycles ?? []
+  if (recentInfinityCycles.length > 10) {
+    errors.push('Recent Infinity history cannot exceed 10 cycles.')
+  }
+  for (const cycle of recentInfinityCycles) {
+    if (
+      cycle.configuredTarget < 1n ||
+      cycle.reward < 1n ||
+      !Number.isFinite(cycle.durationSeconds) ||
+      cycle.durationSeconds <= 0
+    ) {
+      errors.push('Recent Infinity cycles must contain a positive target, reward, and finite duration.')
+    }
   }
   for (const [id, skill] of Object.entries(state.skills.byId)) {
     if (id.trim().length === 0) errors.push('Skill IDs cannot be blank.')

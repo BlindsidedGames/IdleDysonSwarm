@@ -24,6 +24,7 @@ import { recordCanonicalStatisticsSegment } from './canonicalStatistics'
 import {
   createBasicDysonInfinityState,
   infinityPointsForBots,
+  infinityPointsPerMinute,
   ordinaryInfinityBotThreshold,
 } from './infinityCycle'
 import {
@@ -576,6 +577,10 @@ export class CanonicalEventTimeModel
         )
       }
       candidate = withAdvancedClock(candidate, seconds)
+      candidate = withUpdatedInfinityRatePeak(
+        candidate,
+        this.carrier.entitlements,
+      )
 
       this.carrier = {
         ...this.carrier,
@@ -791,11 +796,14 @@ export class CanonicalEventTimeModel
   applyInfinityReset(
     minimumCycleSeconds: number,
     summary: SimulationPresentationSummary,
+    manual = false,
   ): void {
     if (this.currentIssue !== undefined) return
     const evaluation = evaluateCanonicalInfinityBoundary(
       this.carrier,
       minimumCycleSeconds,
+      manual,
+      manual,
     )
     if (evaluation.status === 'not-ready') {
       if (!this.scheduleNextInfinityBoundary(
@@ -839,6 +847,7 @@ export class CanonicalEventTimeModel
         breakInfinity: evaluation.breakInfinity,
         requestedReward: evaluation.requestedReward,
         artifactSkillPoints: artifact.value,
+        automatic: !manual,
       },
       this.context.infinityResetAssetLookup,
     )
@@ -1558,6 +1567,37 @@ function withAdvancedClock(
   }
 }
 
+function withUpdatedInfinityRatePeak(
+  state: CanonicalGameStateV1,
+  entitlements: Readonly<DysonEntitlements>,
+): CanonicalGameStateV1 {
+  const infinity = createBasicDysonInfinityState({
+    points: state.infinity.points,
+    permanentSkillPoints: state.infinity.permanentSkillPoints,
+    breakTheLoop: state.quantum.unlocks.breakTheLoop,
+    divisionsPurchased: state.quantum.divisionsPurchased,
+    breakTarget: state.infinity.breakTarget,
+    permanentDoubleIp: entitlements.permanentDoubleIp,
+    quantumDoubleIp: state.quantum.unlocks.doubleInfinityPoints,
+    secondsInCurrentCycle: state.timeline.infinityCycleSeconds,
+  })
+  const reward = infinityPointsForBots(state.dyson.bots, infinity)
+  const rate = infinityPointsPerMinute(
+    reward,
+    state.timeline.infinityCycleSeconds,
+  )
+  const previousPeak = state.infinity.currentCyclePeakIpPerMinute ?? 0
+  if (rate <= previousPeak) return state
+  return {
+    ...state,
+    infinity: {
+      ...state.infinity,
+      currentCyclePeakIpPerMinute: rate,
+      currentCyclePeakReward: reward,
+    },
+  }
+}
+
 function withNextInfinityBoundary(
   state: CanonicalGameStateV1,
   nextBoundarySeconds: number,
@@ -1606,6 +1646,7 @@ export function evaluateCanonicalInfinityBoundary(
   carrier: Readonly<CanonicalEventTimeState>,
   minimumCycleSeconds: number,
   ignoreAutomaticResetPreference = false,
+  ignoreBreakTarget = false,
 ): CanonicalInfinityBoundaryEvaluation {
   const state = carrier.gameState
   if (
@@ -1631,7 +1672,7 @@ export function evaluateCanonicalInfinityBoundary(
   if (
     !botCapTransition &&
     (breakInfinity
-      ? breakReward < state.infinity.breakTarget
+      ? breakReward < (ignoreBreakTarget ? 1n : state.infinity.breakTarget)
       : state.dyson.bots <
         ordinaryInfinityBotThreshold(
           state.quantum.divisionsPurchased,

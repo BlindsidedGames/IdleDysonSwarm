@@ -15,6 +15,7 @@ import {
   type CanonicalOwnedPair,
   type DreamEducationId,
   type DreamEducationState,
+  type InfinityCycleHistoryEntry,
   type SimulationTotalsState,
   type StatisticsWindowState,
   type SkillRuntimeState,
@@ -255,8 +256,15 @@ export function hydrateGameState(
         source.infinityAutomaticReset,
         true,
       ),
-      breakTarget: toNonNegativeBigInt(
-        source.infinityPointsToBreakFor,
+      breakTarget: maximumBigInt(
+        1n,
+        toNonNegativeBigInt(source.infinityPointsToBreakFor),
+      ),
+      currentCyclePeakIpPerMinute: toFiniteNonNegativeNumber(
+        source.simulationInfinityPeakIpPerMinute,
+      ),
+      currentCyclePeakReward: toNonNegativeBigInt(
+        source.simulationInfinityPeakReward,
       ),
       inProgress: toBoolean(source.infinityInProgress),
       botCapTransitionPending: toBoolean(source.botCapTransitionPending),
@@ -573,6 +581,13 @@ export function hydrateGameState(
       lastCompletedCycle: toLastCompletedCycle(
         statistics.lastCompletedCycle,
       ),
+      ...(Array.isArray(statistics.recentInfinityCycles)
+        ? {
+            recentInfinityCycles: toRecentInfinityCycles(
+              statistics.recentInfinityCycles,
+            ),
+          }
+        : {}),
       minuteWindows: toStatisticsWindows(
         statistics.minuteWindows,
         60,
@@ -678,6 +693,10 @@ export function dehydrateGameState(
   source.infinityPointsToBreakFor = Number(
     minimumBigInt(2_147_483_647n, state.infinity.breakTarget),
   )
+  source.simulationInfinityPeakIpPerMinute =
+    state.infinity.currentCyclePeakIpPerMinute ?? 0
+  source.simulationInfinityPeakReward =
+    state.infinity.currentCyclePeakReward ?? 0n
   source.infinityInProgress = state.infinity.inProgress
   source.botCapTransitionPending =
     state.infinity.botCapTransitionPending
@@ -1021,6 +1040,32 @@ function toLastCompletedCycle(value: unknown) {
   }
 }
 
+function toRecentInfinityCycles(
+  value: unknown,
+): InfinityCycleHistoryEntry[] {
+  if (!Array.isArray(value)) return []
+  const result: InfinityCycleHistoryEntry[] = []
+  for (const candidate of value.slice(0, 10)) {
+    if (!isRecord(candidate)) continue
+    const configuredTarget = toNonNegativeBigInt(candidate.configuredTarget)
+    const reward = toNonNegativeBigInt(candidate.reward)
+    const durationSeconds = toFiniteNonNegativeNumber(
+      candidate.durationSeconds,
+    )
+    if (configuredTarget < 1n || reward < 1n || durationSeconds <= 0) {
+      continue
+    }
+    result.push({
+      breakInfinity: toBoolean(candidate.breakInfinity),
+      automatic: toBoolean(candidate.automatic),
+      configuredTarget,
+      reward,
+      durationSeconds,
+    })
+  }
+  return result
+}
+
 function fromSimulationStatistics(
   state: CanonicalGameStateV1['statistics'],
   preserved: SaveRecord,
@@ -1044,6 +1089,15 @@ function fromSimulationStatistics(
       dreamCause: state.lastCompletedCycle.dreamCause ?? '',
     },
   )
+  if (
+    state.recentInfinityCycles !== undefined ||
+    Array.isArray(preserved.recentInfinityCycles)
+  ) {
+    preserved.recentInfinityCycles = overlayBuckets(
+      preserved.recentInfinityCycles,
+      state.recentInfinityCycles ?? [],
+    )
+  }
   preserved.minuteWindows = overlayBuckets(
     preserved.minuteWindows,
     state.minuteWindows,
@@ -1073,7 +1127,7 @@ function overlayRecord(
 
 function overlayBuckets(
   value: unknown,
-  canonical: readonly StatisticsWindowState[],
+  canonical: readonly object[],
 ): SaveRecord[] {
   const preserved = Array.isArray(value) ? value : []
   return canonical.map((bucket, index) =>
@@ -1244,6 +1298,10 @@ function clampUnit(value: number): number {
 
 function minimumBigInt(left: bigint, right: bigint): bigint {
   return left < right ? left : right
+}
+
+function maximumBigInt(left: bigint, right: bigint): bigint {
+  return left > right ? left : right
 }
 
 function nonBlankStringOrNull(value: unknown): string | null {

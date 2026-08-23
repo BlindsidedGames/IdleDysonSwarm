@@ -975,6 +975,14 @@
     "defaultMessage": "The Infinity target was not changed.",
     "description": "Failure feedback for a rejected Break Infinity target."
   },
+  "infinity.break-target.invalid": {
+    "defaultMessage": "Enter a whole number from 1 to 2.14B IP.",
+    "description": "Validation feedback for an invalid exact Break Infinity target."
+  },
+  "infinity.break-target.set": {
+    "defaultMessage": "Set target",
+    "description": "Applies an exact automatic Break Infinity target."
+  },
   "infinity.break-target.value": {
     "defaultMessage": "Target: {value} IP",
     "description": "Currently selected Break Infinity target."
@@ -987,6 +995,10 @@
     "defaultMessage": "Infinity is not ready yet.",
     "description": "Failure feedback for a rejected manual Infinity reset."
   },
+  "infinity.manual-reset.for-reward": {
+    "defaultMessage": "Infinity for {value} IP",
+    "description": "Manual Break Infinity button including the currently available reward."
+  },
   "infinity.points.label": {
     "defaultMessage": "Infinity Points:",
     "description": "Unity label preceding the available and parenthesized spent Infinity Point values."
@@ -996,12 +1008,16 @@
     "description": "Unity parenthesized spent Infinity Point value shown after available points."
   },
   "infinity.progress.bots-until-next": {
-    "defaultMessage": "{value} Bots till next Infinity Point",
-    "description": "Canonical remaining bot count for the next Infinity Point."
+    "defaultMessage": "Bots until next Infinity Point: {value}",
+    "description": "Accessible label for the remaining bot count beside the Infinity Point icon."
   },
   "infinity.progress.break-accessible": {
     "defaultMessage": "Progress to {target} Infinity Points",
     "description": "Accessible label for automatic Break Infinity target progress."
+  },
+  "infinity.progress.next-point-in": {
+    "defaultMessage": "Next in {value}",
+    "description": "Compact visible label for the remaining bots until the next Infinity Point."
   },
   "infinity.progress.ordinary": {
     "defaultMessage": "Progress to Infinity",
@@ -1014,6 +1030,14 @@
   "infinity.progress.reality-warning": {
     "defaultMessage": "Warning Reality Break imminent!",
     "description": "Unity warning near the first ordinary Infinity boundary."
+  },
+  "infinity.rate.current": {
+    "defaultMessage": "Current: {value} IP/min",
+    "description": "Current projected Infinity Point reward rate for this run."
+  },
+  "infinity.rate.peak": {
+    "defaultMessage": "Peak: {rate} IP/min at {reward} IP",
+    "description": "Best projected Infinity Point reward rate observed during this run."
   },
   "infinity.region": {
     "defaultMessage": "Infinity",
@@ -3902,6 +3926,66 @@
   "statistics.group.simulations": {
     "defaultMessage": "Simulations",
     "description": "Heading for Simulation reset statistics."
+  },
+  "statistics.infinity-performance": {
+    "defaultMessage": "Recent Infinity performance",
+    "description": "Heading for the bounded recent Infinity run history."
+  },
+  "statistics.infinity-performance.average-rate": {
+    "defaultMessage": "Average IP/min",
+    "description": "Time-weighted Infinity Point rate across matching automatic runs."
+  },
+  "statistics.infinity-performance.configured-target": {
+    "defaultMessage": "Configured target",
+    "description": "Configured Infinity Point target for automatic Infinity."
+  },
+  "statistics.infinity-performance.current-target": {
+    "defaultMessage": "Current automatic target",
+    "description": "Heading for performance at the currently configured automatic Infinity target."
+  },
+  "statistics.infinity-performance.empty-target": {
+    "defaultMessage": "Complete automatic runs at {target} IP to measure this target.",
+    "description": "Empty state when the current automatic target has no recorded runs."
+  },
+  "statistics.infinity-performance.latest-reward": {
+    "defaultMessage": "Latest actual reward",
+    "description": "Actual quantized Infinity Point reward from the latest matching run."
+  },
+  "statistics.infinity-performance.median-rate": {
+    "defaultMessage": "Median IP/min",
+    "description": "Median Infinity Point rate across matching automatic runs."
+  },
+  "statistics.infinity-performance.rate-range": {
+    "defaultMessage": "IP/min range",
+    "description": "Minimum and maximum Infinity Point rates across matching runs."
+  },
+  "statistics.infinity-performance.run-count": {
+    "defaultMessage": "Automatic runs recorded",
+    "description": "Number of matching automatic runs retained in the ten-run history."
+  },
+  "statistics.infinity-performance.run.automatic": {
+    "defaultMessage": "Auto",
+    "description": "Short label for an automatic Infinity run."
+  },
+  "statistics.infinity-performance.run.manual": {
+    "defaultMessage": "Manual",
+    "description": "Short label for a manually triggered Infinity run."
+  },
+  "statistics.infinity-performance.run.ordinary": {
+    "defaultMessage": "Ordinary Infinity",
+    "description": "Target label for an ordinary pre-Break Infinity run."
+  },
+  "statistics.infinity-performance.run.rate": {
+    "defaultMessage": "{rate} IP/min",
+    "description": "Realized Infinity Point rate attached to a recent run."
+  },
+  "statistics.infinity-performance.run.reward": {
+    "defaultMessage": "{reward} IP",
+    "description": "Actual Infinity Point reward attached to a recent run."
+  },
+  "statistics.infinity-performance.run.target": {
+    "defaultMessage": "Target {target}",
+    "description": "Configured target attached to one recent Infinity run."
   },
   "statistics.last-cycle": {
     "defaultMessage": "Last completed cycle",
