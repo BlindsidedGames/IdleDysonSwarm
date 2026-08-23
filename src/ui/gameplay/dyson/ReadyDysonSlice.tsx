@@ -20,10 +20,10 @@ import type { DeepReadonly } from '../../../core/contracts'
 import { defaultSkillPresetColorId } from '../../../game-state/skillPresetColors'
 import type { CanonicalFacilityId } from '../../../game-state/types'
 import {
-  DEFAULT_BOTTOM_NAVIGATION_SIZE,
   DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
   type BottomNavigationDestinationId,
 } from '../../../game-state/navigationPreferences'
+import { useBottomNavigationSize } from '../../bottom-navigation-size'
 import '../facilities/facilities.css'
 import {
   DysonGameplayShell,
@@ -515,6 +515,7 @@ export function ReadyDysonSlice({
   storedTime,
   audio,
 }: ReadyDysonSliceProps) {
+  const bottomNavigationSizePreference = useBottomNavigationSize()
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
     useState(readVisualizationPreference)
@@ -680,9 +681,7 @@ export function ReadyDysonSlice({
   const navigationVisibility =
     gameplay.progression.meta?.navigationVisibility ??
     DEFAULT_BOTTOM_NAVIGATION_VISIBILITY
-  const bottomNavigationSize =
-    gameplay.progression.meta?.bottomNavigationSize ??
-    DEFAULT_BOTTOM_NAVIGATION_SIZE
+  const bottomNavigationSize = bottomNavigationSizePreference.size
   const bottomVisible = (id: BottomNavigationDestinationId) =>
     navigationVisibility[id] ?? DEFAULT_BOTTOM_NAVIGATION_VISIBILITY[id]
   const availableNavigationItems: BottomNavigationDestinationId[] = [
@@ -1050,10 +1049,7 @@ export function ReadyDysonSlice({
                     })
                   }}
                   onBottomNavigationSizeChange={(size) => {
-                    void dispatchPlayer({
-                      kind: 'settings.set-bottom-navigation-size',
-                      size,
-                    })
+                    bottomNavigationSizePreference.setSize(size)
                   }}
                   />
                 </Suspense>

@@ -32,11 +32,21 @@ describe('canonical web save serialization', () => {
       saveVersion: 12,
       numberFormatting: 2,
       hidePurchased: true,
+      bottomNavigationPreferences: {
+        version: 1,
+        size: 'large',
+        visibility: { settings: false },
+      },
       bots: 42,
     })
     const decoded = deserializeWebSave(exported)
     expect(decoded).not.toHaveProperty('numberFormatting')
     expect(decoded).not.toHaveProperty('hidePurchased')
+    expect(decoded).not.toHaveProperty('bottomNavigationPreferences.size')
+    expect(decoded).toHaveProperty(
+      'bottomNavigationPreferences.visibility.settings',
+      false,
+    )
     expect(decoded).toMatchObject({
       saveVersion: 12,
       bots: 42,

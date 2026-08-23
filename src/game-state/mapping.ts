@@ -21,8 +21,6 @@ import {
 } from './types'
 import { validateCanonicalGameState } from './validate'
 import {
-  DEFAULT_BOTTOM_NAVIGATION_SIZE,
-  isBottomNavigationSize,
   normalizeBottomNavigationVisibility,
 } from './navigationPreferences'
 import {
@@ -225,10 +223,6 @@ export function hydrateGameState(
           wiki: toBoolean(source.wikiButtonToggle),
           statistics: toBoolean(source.statisticsButtonToggle),
         },
-      ...(isRecord(source.bottomNavigationPreferences) &&
-        isBottomNavigationSize(source.bottomNavigationPreferences.size)
-        ? { bottomNavigationSize: source.bottomNavigationPreferences.size }
-        : {}),
     },
     dyson: {
       money: toFiniteNonNegativeNumber(infinityData.money),
@@ -624,22 +618,28 @@ export function dehydrateGameState(
   source.statisticsButtonToggle =
     state.meta.navigationVisibility?.statistics ?? true
   const visibilityKeys = Object.keys(state.meta.navigationVisibility ?? {})
+  const existingBottomNavigationPreferences = recordOrEmpty(
+    source.bottomNavigationPreferences,
+  )
+  const {
+    size: _legacyPortableSize,
+    ...portableBottomNavigationPreferences
+  } = existingBottomNavigationPreferences
   if (
-    state.meta.bottomNavigationSize !== undefined ||
+    isRecord(source.bottomNavigationPreferences) ||
     visibilityKeys.some((key) =>
       key !== 'story' && key !== 'wiki' && key !== 'statistics'
     )
   ) {
     source.bottomNavigationPreferences = {
+      ...portableBottomNavigationPreferences,
       version: 1,
       visibility: {
         ...(
-          recordOrEmpty(source.bottomNavigationPreferences)
-            .visibility as Record<string, unknown>
+          recordOrEmpty(existingBottomNavigationPreferences.visibility)
         ),
         ...state.meta.navigationVisibility,
       },
-      size: state.meta.bottomNavigationSize ?? DEFAULT_BOTTOM_NAVIGATION_SIZE,
     }
   }
   infinityData.money = state.dyson.money

@@ -42,6 +42,10 @@ import {
   ResearchVisibilityPreferenceService,
   ResearchVisibilityProvider,
 } from './ui/research-visibility'
+import {
+  BottomNavigationSizePreferenceService,
+  BottomNavigationSizeProvider,
+} from './ui/bottom-navigation-size'
 
 installTextSelectionPolicy()
 void bootstrap()
@@ -69,6 +73,8 @@ async function bootstrap(): Promise<void> {
       new NumberNotationPreferenceService()
     const researchVisibilityPreference =
       new ResearchVisibilityPreferenceService()
+    const bottomNavigationSizePreference =
+      new BottomNavigationSizePreferenceService()
     const composition = createProductionHostComposition({
       detectNativeBridge: () => nativeBridge,
       automaticNumberFormattingAdopter: numberNotationPreference,
@@ -167,34 +173,38 @@ async function bootstrap(): Promise<void> {
             messages={messages}
           >
             <NumberNotationProvider preference={numberNotationPreference}>
-              <ResearchVisibilityProvider
-                preference={researchVisibilityPreference}
+              <BottomNavigationSizeProvider
+                preference={bottomNavigationSizePreference}
               >
-                <App
-                  runtime={composition.runtime}
-                  hostKind={composition.hostKind}
-                  locale={locale}
-                  saveSchemaVersion={
-                    composition.saveSchemaVersion
-                  }
-                  sampleUtc={composition.sampleUtc}
-                  reloadSafely={composition.reloadSafely}
-                  resetSave={composition.resetSave}
-                  buildId={import.meta.env.VITE_BUILD_ID}
-                  releasePlatformServices={
-                    composition.releasePlatformServices
-                  }
-                  audio={composition.audio}
-                />
-                {pwaUpdateController === undefined ? null : (
-                  <PwaUpdatePrompt
-                    controller={pwaUpdateController}
-                    prepareForActivation={
-                      composition.prepareForUpdateActivation
+                <ResearchVisibilityProvider
+                  preference={researchVisibilityPreference}
+                >
+                  <App
+                    runtime={composition.runtime}
+                    hostKind={composition.hostKind}
+                    locale={locale}
+                    saveSchemaVersion={
+                      composition.saveSchemaVersion
                     }
+                    sampleUtc={composition.sampleUtc}
+                    reloadSafely={composition.reloadSafely}
+                    resetSave={composition.resetSave}
+                    buildId={import.meta.env.VITE_BUILD_ID}
+                    releasePlatformServices={
+                      composition.releasePlatformServices
+                    }
+                    audio={composition.audio}
                   />
-                )}
-              </ResearchVisibilityProvider>
+                  {pwaUpdateController === undefined ? null : (
+                    <PwaUpdatePrompt
+                      controller={pwaUpdateController}
+                      prepareForActivation={
+                        composition.prepareForUpdateActivation
+                      }
+                    />
+                  )}
+                </ResearchVisibilityProvider>
+              </BottomNavigationSizeProvider>
             </NumberNotationProvider>
           </PresentationIntlProvider>
         </StartupErrorBoundary>

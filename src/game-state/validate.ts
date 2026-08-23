@@ -1,6 +1,5 @@
 import type { CanonicalGameStateV1 } from './types'
 import { isSkillPresetColorId } from './skillPresetColors'
-import { isBottomNavigationSize } from './navigationPreferences'
 
 export interface CanonicalValidationResult {
   readonly valid: boolean
@@ -14,12 +13,6 @@ export function validateCanonicalGameState(
   validateNumericGraph(state, '$', errors, new Set())
   if (state.modelVersion !== 1) {
     errors.push(`Unsupported canonical model version ${state.modelVersion}.`)
-  }
-  if (
-    state.meta.bottomNavigationSize !== undefined &&
-    !isBottomNavigationSize(state.meta.bottomNavigationSize)
-  ) {
-    errors.push('Bottom navigation size must be Compact, Standard, or Large.')
   }
   for (const [id, visible] of Object.entries(
     state.meta.navigationVisibility ?? {},

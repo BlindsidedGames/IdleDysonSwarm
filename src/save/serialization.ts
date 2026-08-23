@@ -1,5 +1,10 @@
 import { Gunzip, gzipSync, strToU8 } from 'fflate'
-import { deepCloneSave, requireRecord, type SaveRecord } from './graph'
+import {
+  deepCloneSave,
+  isRecord,
+  requireRecord,
+  type SaveRecord,
+} from './graph'
 import {
   assertSuppliedSaveTextLimit,
   DEFAULT_SAVE_IMPORT_LIMITS,
@@ -60,6 +65,9 @@ export function stripNonShareableEntitlementClaims(
   // but a portable share must never carry the sender's selection.
   delete shareable.numberFormatting
   delete shareable.hidePurchased
+  if (isRecord(shareable.bottomNavigationPreferences)) {
+    delete shareable.bottomNavigationPreferences.size
+  }
   packSettingsFlags(shareable)
   return shareable
 }

@@ -22,7 +22,6 @@ import {
   GameStateSessionV1,
   hydrateGameState,
 } from './mapping'
-import { DEFAULT_BOTTOM_NAVIGATION_SIZE } from './navigationPreferences'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
@@ -81,31 +80,38 @@ describe('canonical game-state mapping', () => {
     expect(hydrated.state.statistics.minuteWindows).toHaveLength(60)
   })
 
-  test('defaults legacy saves and round-trips future bottom navigation preferences', () => {
-    const prepared = prepareIdb1Save(
+  test('ignores legacy portable size while round-tripping visibility', () => {
+    const original = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),
     ).prepared
-    const hydrated = hydrateGameState(prepared)
-
-    expect(hydrated.state.meta.bottomNavigationSize).toBeUndefined()
-    expect(DEFAULT_BOTTOM_NAVIGATION_SIZE).toBe('compact')
-
-    const candidate = {
-      ...hydrated.state,
-      meta: {
-        ...hydrated.state.meta,
-        bottomNavigationSize: 'large' as const,
-        navigationVisibility: {
-          ...hydrated.state.meta.navigationVisibility!,
-          settings: false,
-          'future-destination': true,
-        },
+    const legacyPortable = original.copyValidatedState()
+    legacyPortable.bottomNavigationPreferences = {
+      version: 1,
+      size: 'large',
+      visibility: {
+        settings: false,
+        'future-destination': true,
       },
     }
+    const hydrated = hydrateGameState(PreparedSave.fromDecoded(
+      deserializeWebSave(serializeWebSave(legacyPortable)),
+    ))
+
+    expect('bottomNavigationSize' in hydrated.state.meta).toBe(false)
+    expect(hydrated.state.meta.navigationVisibility?.settings).toBe(false)
+    expect(
+      hydrated.state.meta.navigationVisibility?.['future-destination'],
+    ).toBe(true)
+
+    const dehydrated = dehydrateGameState(hydrated, hydrated.state)
+    expect(dehydrated.copyValidatedState().bottomNavigationPreferences)
+      .not.toHaveProperty('size')
+
     const rehydrated = hydrateGameState(
-      dehydrateGameState(hydrated, candidate),
+      PreparedSave.fromDecoded(deserializeWebSave(
+        serializeWebSave(dehydrated.copyValidatedState()),
+      )),
     )
-    expect(rehydrated.state.meta.bottomNavigationSize).toBe('large')
     expect(rehydrated.state.meta.navigationVisibility?.settings).toBe(false)
     expect(
       rehydrated.state.meta.navigationVisibility?.['future-destination'],
