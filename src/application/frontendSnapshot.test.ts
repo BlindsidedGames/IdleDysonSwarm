@@ -463,7 +463,7 @@ describe('frontend gameplay snapshot', () => {
       showTinker: true,
       visibleBasicFacilityIds: [],
       visibleMegaStructureIds: [],
-      showNextTierTeaser: true,
+      showNextTierTeaser: false,
     })
     expect(snapshot.visibility.skills.routeUnlocked).toBe(false)
   })
@@ -1001,7 +1001,7 @@ describe('frontend gameplay snapshot', () => {
         'ai_managers',
       ],
       visibleMegaStructureIds: [],
-      showNextTierTeaser: true,
+      showNextTierTeaser: false,
     })
   })
 
@@ -1127,7 +1127,34 @@ describe('frontend gameplay snapshot', () => {
         postQuantum,
         frontendContext(),
       ).visibility.dyson.showNextTierTeaser,
-    ).toBe(true)
+    ).toBe(false)
+
+    const firstMegaVisible: CanonicalGameStateV1 = {
+      ...postQuantum,
+      dyson: {
+        ...postQuantum.dyson,
+        facilities: {
+          ...postQuantum.dyson.facilities,
+          planets: [1, 0],
+        },
+      },
+      quantum: {
+        ...postQuantum.quantum,
+        unlocks: {
+          ...postQuantum.quantum.unlocks,
+          matrioshkaBrains: true,
+        },
+      },
+    }
+    expect(
+      selectFrontendGameplaySnapshot(
+        firstMegaVisible,
+        frontendContext(),
+      ).visibility.dyson,
+    ).toMatchObject({
+      visibleMegaStructureIds: ['matrioshka_brains'],
+      showNextTierTeaser: true,
+    })
 
     const galacticEligible: CanonicalGameStateV1 = {
       ...postQuantum,

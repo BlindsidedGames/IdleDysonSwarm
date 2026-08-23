@@ -9,6 +9,7 @@ import meditationAvocadoUrl from '../../assets/avotation-meditation.webp'
 import { Button } from '../../components'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { avocatoMessages as messages } from './messages'
+import './avotationCompletion.css'
 
 type MeditationCommand = Extract<
   CanonicalPlayerCommand,
@@ -246,7 +247,13 @@ export function AvotationCompletionOverlay({
 
   if (!open) return null
   return createPortal(
-    <div ref={backdropRef} className="avotation-completion__backdrop">
+    <div
+      ref={backdropRef}
+      className="avotation-completion__backdrop"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onDismiss()
+      }}
+    >
       <section
         ref={dialogRef}
         className="avotation-completion"

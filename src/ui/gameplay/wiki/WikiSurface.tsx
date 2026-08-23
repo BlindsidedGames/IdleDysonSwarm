@@ -151,6 +151,13 @@ const version31PatchNoteMessages = [
   messages.patchNotesVersion31Economy,
 ] as const
 
+const version311PatchNoteMessages = [
+  messages.patchNotesVersion311Overlays,
+  messages.patchNotesVersion311CompactLayouts,
+  messages.patchNotesVersion311SkillsAndTinker,
+  messages.patchNotesVersion311MegaTeaser,
+] as const
+
 type SecretEffectMessage =
   | 'assemblyLineBoost'
   | 'aiManagerBoost'
@@ -337,21 +344,30 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion31)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion311)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version31PatchNoteMessages.map((message) => (
+            {version311PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
         </section>
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion31)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version31PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
           <h4>{intl.formatMessage(messages.patchNotesVersion3)}</h4>
           <ul className="wiki-surface__patch-note-list">
             {version3PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
+        </section>
+        <section className="wiki-surface__section">
+          <h3>{intl.formatMessage(messages.patchNotesEarlier)}</h3>
           <p className="wiki-surface__authored-copy">{previousNotes}</p>
         </section>
       </div>

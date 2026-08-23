@@ -1298,7 +1298,11 @@ describe('ReadyDysonSlice', () => {
         'data-route-theme',
         route,
       )
-      if (route === 'statistics') {
+      if (
+        route === 'statistics' ||
+        route === 'story' ||
+        route === 'wiki'
+      ) {
         expect(
           rendered.container.querySelector('.dyson-resource-header'),
         ).not.toBeInTheDocument()

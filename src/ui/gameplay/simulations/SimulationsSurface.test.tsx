@@ -568,6 +568,9 @@ describe('SimulationTimeControl', () => {
       screen.getByText('Simulation speed increased by 0%'),
     ).toBeInTheDocument()
     expect(screen.queryByText('0x')).not.toBeInTheDocument()
+    expect(simulationStyles).toMatch(
+      /\.simulation-time-control \.ui-progress-controls-panel__collapsed\s*\{[^}]*block-size:\s*auto;[^}]*min-block-size:\s*2\.875rem;/,
+    )
 
     rerender(timeControl(3, dispatchPlayer))
     expect(

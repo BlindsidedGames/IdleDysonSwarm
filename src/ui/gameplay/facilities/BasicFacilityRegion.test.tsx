@@ -687,6 +687,12 @@ describe('BasicFacilityRegion', () => {
     expect(items.at(-1)).toBe(teaser)
     expect(within(teaser).queryByRole('button')).not.toBeInTheDocument()
     expect(teaser).not.toHaveAttribute('tabindex')
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-region__teaser-surface\s*\{[^}]*min-block-size:\s*var\(--basic-facility-card-min-block-size\);[^}]*border:\s*2px solid var\(--theme-divider\);[^}]*border-radius:\s*0\.25rem;[^}]*background:\s*var\(--theme-panel\);[^}]*box-shadow:\s*0 2px 0 #171018;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.ui-facility-card\.basic-facility-card\s*\{[^}]*min-block-size:\s*var\(--basic-facility-card-min-block-size\);/,
+    )
 
     rerenderRegion(rerender, {
       visibleBasicFacilityIds: ['assembly_lines'],

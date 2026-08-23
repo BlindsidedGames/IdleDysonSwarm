@@ -8,7 +8,7 @@ export const settingsSurfaceMessages = defineMessages({
   },
   numberNotationDescription: {
     id: 'settings.number-notation.description',
-    defaultMessage: 'Choose how large game values are displayed on this device.',
+    defaultMessage: 'Choose how large game values are displayed.',
     description: 'Explains the scope of the number notation preference.',
   },
   numberNotationLabel: {
@@ -38,8 +38,8 @@ export const settingsSurfaceMessages = defineMessages({
   },
   audioDescription: {
     id: 'settings.audio.description',
-    defaultMessage: 'Control the soundtrack and interface sounds on this device.',
-    description: 'Explains that audio preferences are device-local.',
+    defaultMessage: 'Adjust music and sound effects.',
+    description: 'Explains the available audio controls.',
   },
   musicVolume: {
     id: 'settings.audio.music-volume',
@@ -171,8 +171,7 @@ export const settingsSurfaceMessages = defineMessages({
   },
   saveDescription: {
     id: 'settings.save-data.description',
-    defaultMessage:
-      'Your progress is saved automatically on this device.',
+    defaultMessage: 'Progress is saved automatically.',
     description: 'Explains automatic local browser persistence.',
   },
   reset: {

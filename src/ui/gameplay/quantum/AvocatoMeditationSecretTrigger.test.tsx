@@ -41,12 +41,12 @@ describe('AvocatoMeditationSecretTrigger', () => {
     })
   })
 
-  test('never overrides the shell side panel positioning', () => {
+  test('positions marker hosts without taking over the shell side panel', () => {
     expect(meditationSecretsCss).toMatch(
-      /\[data-avotation-marker-host\]:not\(\.dyson-shell__side-panel\)\s*\{[^}]*position:\s*relative;/,
+      /\[data-avotation-marker-host\]\s*\{[^}]*position:\s*relative;/,
     )
     expect(meditationSecretsCss).not.toMatch(
-      /\[data-avotation-marker-host\]\s*\{[^}]*position:\s*relative;/,
+      /\.dyson-shell__side-panel\s*\{[^}]*position:/,
     )
   })
 
@@ -188,7 +188,10 @@ describe('AvocatoMeditationSecretTrigger', () => {
           onSequenceCompleted={onSequenceCompleted}
         />
         <aside className="dyson-shell__side-panel">
-          <header className="dyson-shell__side-heading">Menu</header>
+          <header className="dyson-shell__side-heading">
+            <span>Menu</span>
+            <button type="button" aria-label="Close menu">×</button>
+          </header>
           <button type="button">Bots</button>
         </aside>
         <button type="button" className="dyson-shell__bottom-menu">Open menu</button>
@@ -198,7 +201,15 @@ describe('AvocatoMeditationSecretTrigger', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Open menu' }))
     expect(onSequenceCompleted).not.toHaveBeenCalled()
 
-    fireEvent.click(await waitFor(() => document.querySelector('.dyson-shell__side-heading')!))
+    const menuLabel = await waitFor(() => screen.getByText('Menu'))
+    expect(
+      document.querySelector('[data-avotation-found-marker="side"]')
+        ?.parentElement,
+    ).toBe(menuLabel)
+    fireEvent.click(screen.getByRole('button', { name: 'Close menu' }))
+    expect(onSequenceCompleted).not.toHaveBeenCalled()
+
+    fireEvent.click(menuLabel)
     expect(onSequenceCompleted).toHaveBeenCalledOnce()
     expect(dispatchPlayer).not.toHaveBeenCalled()
 
@@ -251,7 +262,13 @@ function TestPanel({ placement }: { readonly placement: AvocatoMeditationPlaceme
   if (placement === 'skills') return <div data-test-panel className="skill-settings__preset-row" />
   if (placement === 'settings') return <section data-test-panel className="settings-surface__panel--more" />
   if (placement === 'research') return <div data-test-panel className="research-surface__settings" />
-  return <aside data-test-panel className="dyson-shell__side-panel" />
+  return (
+    <aside data-test-panel className="dyson-shell__side-panel">
+      <header className="dyson-shell__side-heading">
+        <span>Menu</span>
+      </header>
+    </aside>
+  )
 }
 
 function accepted(): UiRuntimePlayerCommandResult {

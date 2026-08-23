@@ -5180,7 +5180,7 @@
   "settings.audio.description": [
     {
       "type": 0,
-      "value": "Control the soundtrack and interface sounds on this device."
+      "value": "Adjust music and sound effects."
     }
   ],
   "settings.audio.effects-volume": [
@@ -5536,7 +5536,7 @@
   "settings.number-notation.description": [
     {
       "type": 0,
-      "value": "Choose how large game values are displayed on this device."
+      "value": "Choose how large game values are displayed."
     }
   ],
   "settings.number-notation.engineering": [
@@ -5596,7 +5596,7 @@
   "settings.save-data.description": [
     {
       "type": 0,
-      "value": "Your progress is saved automatically on this device."
+      "value": "Progress is saved automatically."
     }
   ],
   "settings.save-data.download-file": [
@@ -9560,6 +9560,12 @@
       "value": "Offline Time"
     }
   ],
+  "wiki.patch-notes.earlier": [
+    {
+      "type": 0,
+      "value": "Retired"
+    }
+  ],
   "wiki.patch-notes.most-recent": [
     {
       "type": 0,
@@ -9569,7 +9575,7 @@
   "wiki.patch-notes.previous": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "Older"
     }
   ],
   "wiki.patch-notes.version-3": [
@@ -9582,6 +9588,36 @@
     {
       "type": 0,
       "value": "Version 3.1"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-1": [
+    {
+      "type": 0,
+      "value": "Version 3.1.1"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-1.compact-layouts": [
+    {
+      "type": 0,
+      "value": "Refined Bots, Research, Simulations, Settings, Story, and Wiki layouts on compact screens with even facility gutters, tighter controls, route-specific headers, and corrected panel spacing."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-1.mega-teaser": [
+    {
+      "type": 0,
+      "value": "The next mega-structure teaser now stays hidden until mega structures are available, and both the teaser and Tinker match the facility card styling."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-1.overlays": [
+    {
+      "type": 0,
+      "value": "Improved Avotation and Secrets interactions so their markers no longer obstruct menu or panel controls, their pop-ups remain usable, and clicking outside Secrets closes it."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-1.skills-and-tinker": [
+    {
+      "type": 0,
+      "value": "The Skill Tree now remembers its position and zoom while switching tabs, and Manual Labour keeps Tinker anchored above facilities without covering menus or late-game panels."
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [

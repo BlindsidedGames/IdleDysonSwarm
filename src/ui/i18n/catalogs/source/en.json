@@ -2492,8 +2492,8 @@
     "description": "Unity Research rounded-bulk setting."
   },
   "settings.audio.description": {
-    "defaultMessage": "Control the soundtrack and interface sounds on this device.",
-    "description": "Explains that audio preferences are device-local."
+    "defaultMessage": "Adjust music and sound effects.",
+    "description": "Explains the available audio controls."
   },
   "settings.audio.effects-volume": {
     "defaultMessage": "Effects volume",
@@ -2676,7 +2676,7 @@
     "description": "Controls the Wiki bottom navigation shortcut."
   },
   "settings.number-notation.description": {
-    "defaultMessage": "Choose how large game values are displayed on this device.",
+    "defaultMessage": "Choose how large game values are displayed.",
     "description": "Explains the scope of the number notation preference."
   },
   "settings.number-notation.engineering": {
@@ -2716,7 +2716,7 @@
     "description": "Copies the exported save string to the clipboard."
   },
   "settings.save-data.description": {
-    "defaultMessage": "Your progress is saved automatically on this device.",
+    "defaultMessage": "Progress is saved automatically.",
     "description": "Explains automatic local browser persistence."
   },
   "settings.save-data.download-file": {
@@ -4599,21 +4599,45 @@
     "defaultMessage": "Offline Time",
     "description": "Heading for Offline Time reference notes."
   },
+  "wiki.patch-notes.earlier": {
+    "defaultMessage": "Retired",
+    "description": "Heading for retired pre-3.0 Wiki patch notes."
+  },
   "wiki.patch-notes.most-recent": {
     "defaultMessage": "Most Recent",
     "description": "Heading for the latest Wiki patch notes."
   },
   "wiki.patch-notes.previous": {
-    "defaultMessage": "Previous",
-    "description": "Heading for archived Wiki patch notes."
+    "defaultMessage": "Older",
+    "description": "Heading for older Wiki patch notes."
   },
   "wiki.patch-notes.version-3": {
     "defaultMessage": "Version 3",
-    "description": "Version label for the previous Wiki patch notes."
+    "description": "Version label for earlier Wiki patch notes."
   },
   "wiki.patch-notes.version-3-1": {
     "defaultMessage": "Version 3.1",
+    "description": "Version label for the previous Wiki patch notes."
+  },
+  "wiki.patch-notes.version-3-1-1": {
+    "defaultMessage": "Version 3.1.1",
     "description": "Version label for the latest Wiki patch notes."
+  },
+  "wiki.patch-notes.version-3-1-1.compact-layouts": {
+    "defaultMessage": "Refined Bots, Research, Simulations, Settings, Story, and Wiki layouts on compact screens with even facility gutters, tighter controls, route-specific headers, and corrected panel spacing.",
+    "description": "Version 3.1.1 release note for compact layout and spacing fixes."
+  },
+  "wiki.patch-notes.version-3-1-1.mega-teaser": {
+    "defaultMessage": "The next mega-structure teaser now stays hidden until mega structures are available, and both the teaser and Tinker match the facility card styling.",
+    "description": "Version 3.1.1 release note for mega-structure teaser visibility and facility styling."
+  },
+  "wiki.patch-notes.version-3-1-1.overlays": {
+    "defaultMessage": "Improved Avotation and Secrets interactions so their markers no longer obstruct menu or panel controls, their pop-ups remain usable, and clicking outside Secrets closes it.",
+    "description": "Version 3.1.1 release note for Avotation and Secrets interaction fixes."
+  },
+  "wiki.patch-notes.version-3-1-1.skills-and-tinker": {
+    "defaultMessage": "The Skill Tree now remembers its position and zoom while switching tabs, and Manual Labour keeps Tinker anchored above facilities without covering menus or late-game panels.",
+    "description": "Version 3.1.1 release note for remembered Skill Tree view and anchored Tinker."
   },
   "wiki.patch-notes.version-3-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

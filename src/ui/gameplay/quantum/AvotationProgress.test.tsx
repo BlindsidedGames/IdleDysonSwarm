@@ -21,8 +21,16 @@ afterEach(() => {
   vi.useRealTimers()
 })
 
-const quantumStyles = readFileSync(
-  join(process.cwd(), 'src', 'ui', 'gameplay', 'quantum', 'quantum.css'),
+const completionStyles = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'quantum', 'avotationCompletion.css'),
+  'utf8',
+)
+const progressSource = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'quantum', 'AvotationProgress.tsx'),
+  'utf8',
+)
+const shellStyles = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'shell', 'dysonGameplayShell.css'),
   'utf8',
 )
 
@@ -110,7 +118,7 @@ describe('AvotationProgress', () => {
     }
   })
 
-  test('contains modal focus, closes with Escape and restores the trigger', async () => {
+  test('contains focus, dismisses from the backdrop or Escape and ignores dialog clicks', async () => {
     const user = userEvent.setup()
     const onDismiss = vi.fn()
     function OverlayHarness() {
@@ -145,17 +153,43 @@ describe('AvotationProgress', () => {
     ).toEqual([])
     await user.tab()
     expect(dismiss).toHaveFocus()
-    await user.keyboard('{Escape}')
+    await user.click(screen.getByRole('dialog'))
+    expect(onDismiss).not.toHaveBeenCalled()
+
+    const backdrop = screen.getByRole('dialog').parentElement
+    expect(backdrop).toHaveClass('avotation-completion__backdrop')
+    await user.click(backdrop!)
 
     expect(onDismiss).toHaveBeenCalledOnce()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+
+    await user.click(trigger)
+    await user.keyboard('{Escape}')
+
+    expect(onDismiss).toHaveBeenCalledTimes(2)
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(trigger).toHaveFocus()
   })
 
   test('defines its portaled accent without relying on a Quantum ancestor', () => {
-    expect(quantumStyles).toMatch(
+    expect(progressSource).toContain("import './avotationCompletion.css'")
+    expect(completionStyles).toMatch(
       /\.avotation-completion\s*\{[^}]*--avotation-accent:\s*#c8b3ff;[^}]*border:\s*2px solid var\(--avotation-accent\);/,
     )
+  })
+
+  test('keeps the completion modal above the compact navigation drawer', () => {
+    const modalLayer = completionStyles.match(
+      /\.avotation-completion__backdrop\s*\{[^}]*z-index:\s*(\d+);/,
+    )
+    const drawerLayer = shellStyles.match(
+      /\.dyson-shell__side-panel\s*\{[^}]*z-index:\s*(\d+);/,
+    )
+
+    expect(modalLayer).not.toBeNull()
+    expect(drawerLayer).not.toBeNull()
+    expect(Number(modalLayer?.[1])).toBeGreaterThan(Number(drawerLayer?.[1]))
   })
 })
 

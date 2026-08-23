@@ -104,7 +104,19 @@ describe('SettingsSurface', () => {
       /\.settings-surface\s*\{[^}]*block-size:\s*100%;[^}]*min-block-size:\s*0;[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/,
     )
     expect(settingsStyles).toMatch(
+      /\.settings-surface__content\s*\{[^}]*padding:\s*0\.5rem max\(0\.5rem, var\(--safe-area-right\)\) 0\.5rem max\(0\.5rem, var\(--safe-area-left\)\);/,
+    )
+    expect(settingsStyles).toMatch(
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\s*\{[^}]*gap:\s*0\.45rem;[^}]*padding:\s*0\.55rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls\s*\{[^}]*gap:\s*0\.1rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls input\[type="range"\]\s*\{[^}]*block-size:\s*1\.75rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\.settings-surface__panel--audio\s*\{[^}]*gap:\s*0\.15rem;/,
     )
     expect(settingsStyles).toMatch(
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__copy h2\s*\{[^}]*font-size:\s*calc\(0\.95rem \* var\(--game-text-scale\)\);/,

@@ -33,6 +33,25 @@ const firstRunStory = {
 } as const satisfies FrontendStoryDerivedFacts
 
 describe('StorySurface', () => {
+  test('keeps the route summary above the independently scrolling chapters', () => {
+    const { container } = renderSurface()
+    const surface = container.querySelector('.story-surface')
+    const summary = container.querySelector<HTMLElement>(
+      '.story-surface__summary',
+    )
+    const content = container.querySelector<HTMLElement>(
+      '.story-surface__content',
+    )
+
+    expect(surface?.firstElementChild).toBe(summary)
+    expect(surface?.lastElementChild).toBe(content)
+    expect(content).not.toContainElement(summary)
+    expect(content?.querySelector('.story-surface__chapters')).not.toBeNull()
+    expect(storyStyles).toMatch(
+      /\.story-surface\s*\{[^}]*grid-template-rows:\s*auto minmax\(0, 1fr\);/,
+    )
+  })
+
   test('uses compact text-scale-aware chapter headings on mobile', () => {
     expect(storyStyles).toMatch(
       /@media \(max-width: 32rem\)[\s\S]*\.story-chapter[^}]*\.ui-collapsible-section__trigger\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.92rem \* var\(--game-text-scale\)\);/,
