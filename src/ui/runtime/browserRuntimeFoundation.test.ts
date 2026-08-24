@@ -12,6 +12,7 @@ import type {
   CanonicalActiveAdvanceResult,
   CanonicalPlayerCommand,
   CanonicalPlayerDispatchResult,
+  CanonicalSaveTransferSnapshot,
   CanonicalStoredTimeCommitResult,
 } from '../../application/canonicalGameApplication'
 import type {
@@ -71,6 +72,9 @@ import {
   MOBILE_LIFECYCLE_POLICY,
   WEB_LIFECYCLE_POLICY,
 } from '../../simulation/lifecycleAwayTime'
+import {
+  createProductionBrowserComposition,
+} from '../../browser/productionBrowserComposition'
 import {
   createBrowserRuntimeFoundation,
   DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
@@ -3944,6 +3948,7 @@ describe('browser runtime foundation composition', () => {
       'copyLastRecovery',
       'development',
       'dispatchPlayer',
+      'downloadSaveText',
       'exportCurrentSave',
       'exportLastRecovery',
       'exportSkillPreset',
@@ -3954,6 +3959,7 @@ describe('browser runtime foundation composition', () => {
       'previewSkillPresetImport',
       'previewSkillPresetQueueChange',
       'readClipboardText',
+      'readCurrentSaveExport',
       'readCurrentSaveText',
       'recoveryExportAvailable',
       'requestCheckpoint',
@@ -4018,6 +4024,187 @@ describe('browser runtime foundation composition', () => {
       deserializeWebSave(downloads.last?.text ?? ''),
     ).toMatchObject({ marker: 'exported-checkpoint' })
 
+    await runtime.shutdown()
+  })
+
+  test('exports the immutable pre-Stored-Time capture without waiting for the occupied router lane', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const playerGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.playerGate = playerGate.promise
+        application.exportBasis = 'pre-stored-time'
+        application.setDirty('pre-stored-time')
+        return application
+      },
+    })
+    await runtime.start()
+
+    const occupied = runtime.dispatchPlayer({
+      kind: 'tinker.start',
+      repeat: false,
+    })
+    await waitUntil(() => application?.playerEnvelopes.length === 1)
+
+    await expect(runtime.readCurrentSaveExport()).resolves.toMatchObject({
+      basis: 'pre-stored-time',
+    })
+    const exported = await runtime.readCurrentSaveExport()
+    expect(deserializeWebSave(exported?.text ?? '')).toMatchObject({
+      marker: 'pre-stored-time',
+    })
+    expect(application?.checkpointCalls).toBe(0)
+
+    playerGate.resolve()
+    await occupied
+    await runtime.shutdown()
+  })
+
+  test('requests Stored Time cancellation immediately after confirmed overwrite and imports only after the old lane settles', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const playerGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.playerGate = playerGate.promise
+        return application
+      },
+    })
+    await runtime.start()
+    const occupied = runtime.dispatchPlayer({
+      kind: 'tinker.start',
+      repeat: false,
+    })
+    await waitUntil(() => application?.playerEnvelopes.length === 1)
+
+    const importing = runtime.importSave({
+      text: serializeWebSave({ saveVersion: 12, marker: 'replacement' }),
+      importedAtUtc: '2026-07-29T00:00:10Z',
+      overwriteApproved: true,
+    })
+    await flushMicrotasks()
+    expect(application?.cancelStoredTimeCalls).toBe(1)
+    expect(application?.importCalls).toBe(0)
+
+    playerGate.resolve()
+    await occupied
+    await expect(importing).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    expect(application?.events.indexOf('application.stored-time.cancel'))
+      .toBeLessThan(application?.events.indexOf('application.import') ?? -1)
+    await runtime.shutdown()
+  })
+
+  test('resets through production composition only after an active Stored Time lane is cancelled and settled', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const storedTimeGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.playerGate = storedTimeGate.promise
+        return application
+      },
+    })
+    const composition = createProductionBrowserComposition({
+      createRuntime: () => runtime,
+      developmentBuild: false,
+      entitlementDocument: {
+        querySelectorAll: () => [{
+          getAttribute: (name: string) =>
+            name === 'content' ? 'false' : null,
+        }],
+      },
+    })
+    await runtime.start()
+
+    const activeStoredTime = runtime.dispatchPlayer({
+      kind: 'time.request-stored-time-spend',
+      requestedSeconds: 10,
+    })
+    await waitUntil(() => application?.playerEnvelopes.length === 1)
+    const resetting = composition.resetSave()
+    await flushMicrotasks()
+    expect(application?.cancelStoredTimeCalls).toBe(1)
+    expect(application?.importCalls).toBe(0)
+
+    const stale = runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })
+    storedTimeGate.resolve()
+    await activeStoredTime
+    await expect(resetting).resolves.toMatchObject({
+      imported: true,
+      recoveryAvailable: true,
+      lifecycleReset: true,
+      sessionRevision: 2,
+    })
+    await expect(stale).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'APP-STALE-SESSION',
+      stale: true,
+    })
+    expect(application?.events.indexOf('application.stored-time.cancel'))
+      .toBeLessThan(application?.events.indexOf('application.import') ?? -1)
+    expect(application?.playerEnvelopes).toHaveLength(1)
+    expect(application?.snapshot()).toMatchObject({
+      phase: 'ready',
+      revision: { session: 2, state: 0 },
+    })
+    await runtime.shutdown()
+  })
+
+  test('invalidates commands admitted under the replaced session even when their local queue drains after import', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const playerGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.playerGate = playerGate.promise
+        return application
+      },
+    })
+    await runtime.start()
+    const first = runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })
+    await waitUntil(() => application?.playerEnvelopes.length === 1)
+    const importing = runtime.importSave({
+      text: serializeWebSave({ saveVersion: 12, marker: 'replacement' }),
+      importedAtUtc: '2026-07-29T00:00:10Z',
+      overwriteApproved: true,
+    })
+    await flushMicrotasks()
+    const stale = runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })
+
+    playerGate.resolve()
+    await first
+    await expect(importing).resolves.toMatchObject({ imported: true })
+    await expect(stale).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'APP-STALE-SESSION',
+      stale: true,
+    })
+    expect(application?.playerEnvelopes).toHaveLength(1)
+    expect(application?.snapshot()).toMatchObject({
+      phase: 'ready',
+      revision: { session: 2, state: 0 },
+    })
     await runtime.shutdown()
   })
 
@@ -4299,6 +4486,8 @@ class FakeRuntimeApplication
   awayCommits = 0
   importCalls = 0
   checkpointCalls = 0
+  cancelStoredTimeCalls = 0
+  exportBasis: CanonicalSaveTransferSnapshot['basis'] = 'current'
   readonly activeRequests: Array<{
     readonly milliseconds: number
     readonly sessionRevision: number
@@ -4607,6 +4796,21 @@ class FakeRuntimeApplication
         reason:
           error instanceof Error ? error.message : String(error),
       }
+    }
+  }
+
+  cancelStoredTimeJob(): void {
+    this.cancelStoredTimeCalls += 1
+    this.events.push('application.stored-time.cancel')
+  }
+
+  captureSaveTransferSnapshot(): CanonicalSaveTransferSnapshot {
+    return {
+      prepared: PreparedSave.fromDecoded({
+        saveVersion: 12,
+        marker: this.checkpointMarker,
+      }),
+      basis: this.exportBasis,
     }
   }
 

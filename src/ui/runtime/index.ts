@@ -16,6 +16,7 @@ export type {
   UiRuntimeDevelopmentActionResult,
   UiRuntimeDevelopmentStatus,
   UiRuntimeStoredTimeControls,
+  UiRuntimeSaveExportSnapshot,
   UiRuntimeCommandActivationRevision,
   UiRuntimeSuppliedFile,
   UiRuntimeDropData,

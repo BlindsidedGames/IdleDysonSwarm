@@ -5779,6 +5779,12 @@
       "value": "Подготовка строки сохранения…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "Сохранённое время всё ещё обрабатывается. Этот экспорт содержит полное сохранение непосредственно перед началом этой симуляции."
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +5855,12 @@
     {
       "type": 0,
       "value": "Очки навыков"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Если импортировать сейчас, текущая симуляция офлайн-времени будет отменена без расходования её офлайн-времени."
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +5939,12 @@
     {
       "type": 0,
       "value": "Сброс…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Если сбросить сохранение сейчас, текущая симуляция офлайн-времени будет отменена без расходования её офлайн-времени."
     }
   ],
   "settings.save-data.reset-succeeded": [

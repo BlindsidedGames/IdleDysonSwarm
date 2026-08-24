@@ -5779,6 +5779,12 @@
       "value": "セーブ文字列を準備中…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "保存時間はまだ処理中です。このエクスポートは、そのシミュレーション開始直前の完全なセーブデータです。"
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +5855,12 @@
     {
       "type": 0,
       "value": "スキルポイント"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "今インポートすると、現在のオフライン時間シミュレーションはオフライン時間を消費せずにキャンセルされます。"
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +5939,12 @@
     {
       "type": 0,
       "value": "リセット中…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "今リセットすると、現在のオフライン時間シミュレーションはオフライン時間を消費せずにキャンセルされます。"
     }
   ],
   "settings.save-data.reset-succeeded": [

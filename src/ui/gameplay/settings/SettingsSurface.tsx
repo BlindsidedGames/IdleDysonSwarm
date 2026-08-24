@@ -12,6 +12,8 @@ import type {
   UiRuntimeImportPreview,
   UiRuntimeImportPreviewResult,
   UiRuntimeImportResult,
+  UiRuntimeSaveExportSnapshot,
+  UiRuntimeStoredTimeControls,
   UiRuntimeSuppliedFile,
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
@@ -51,9 +53,10 @@ export interface SettingsSurfaceProps {
   readonly previewImportSaveText: (
     text: string,
   ) => Promise<UiRuntimeImportPreviewResult>
-  readonly readSaveText: () => Promise<string | null>
-  readonly downloadSave: () => Promise<boolean>
+  readonly readSaveExport: () => Promise<UiRuntimeSaveExportSnapshot | null>
+  readonly downloadSaveText: (text: string) => Promise<boolean>
   readonly copySaveText: (text: string) => Promise<void>
+  readonly storedTime?: UiRuntimeStoredTimeControls
   readonly development?: UiRuntimeDevelopmentControls
   readonly developmentOnly?: boolean
   readonly visualizationVisible?: boolean
@@ -121,9 +124,10 @@ export function SettingsSurface({
   importSaveText,
   previewImportSaveFile,
   previewImportSaveText,
-  readSaveText,
-  downloadSave,
+  readSaveExport,
+  downloadSaveText,
   copySaveText,
+  storedTime,
   development,
   developmentOnly = false,
   visualizationVisible = true,
@@ -151,6 +155,8 @@ export function SettingsSurface({
   const [importPreviewStatus, setImportPreviewStatus] =
     useState<ImportPreviewStatus>('idle')
   const [exportText, setExportText] = useState('')
+  const [exportBasis, setExportBasis] =
+    useState<UiRuntimeSaveExportSnapshot['basis']>('current')
   const [selectedImport, setSelectedImport] =
     useState<UiRuntimeSuppliedFile | null>(null)
   const [
@@ -206,7 +212,10 @@ export function SettingsSurface({
       : transferTextRef.current
     initialFocus?.focus()
     const handleKeyDown = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape' && !operationPendingRef.current) {
+      if (
+        event.key === 'Escape' &&
+        (!operationPendingRef.current || dialog === 'export')
+      ) {
         event.preventDefault()
         setDialog(null)
         return
@@ -321,14 +330,16 @@ export function SettingsSurface({
     setImportStatus('idle')
     setExportStatus('pending')
     setExportText('')
+    setExportBasis('current')
     setDialog('export')
     try {
-      const text = await readSaveText()
-      if (text === null) {
+      const exported = await readSaveExport()
+      if (exported === null) {
         setExportStatus('failed')
         return
       }
-      setExportText(text)
+      setExportText(exported.text)
+      setExportBasis(exported.basis)
       setExportStatus('ready')
     } catch {
       setExportStatus('failed')
@@ -351,7 +362,7 @@ export function SettingsSurface({
     setExportStatus('pending')
     try {
       setExportStatus(
-        (await downloadSave()) ? 'downloaded' : 'failed',
+        (await downloadSaveText(exportText)) ? 'downloaded' : 'failed',
       )
     } catch {
       setExportStatus('failed')
@@ -826,6 +837,11 @@ export function SettingsSurface({
                     : messages.exportDescription,
               )}
             </p>
+            {dialog === 'reset' &&
+            storedTime !== undefined &&
+            storedTime.status().kind !== 'idle' ? (
+              <p>{intl.formatMessage(messages.resetStoredTimeWarning)}</p>
+            ) : null}
             {dialog === 'import' ? (
               importPreview === null ? <div className="settings-surface__transfer">
                 <label htmlFor="settings-import-save-text">
@@ -906,11 +922,24 @@ export function SettingsSurface({
                     </div>
                   </dl>
                   <p>{intl.formatMessage(messages.importPreviewWarning)}</p>
+                  {storedTime !== undefined &&
+                  storedTime.status().kind !== 'idle' ? (
+                    <p>
+                      {intl.formatMessage(
+                        messages.importPreviewStoredTimeWarning,
+                      )}
+                    </p>
+                  ) : null}
                 </div>
               )
             ) : null}
             {dialog === 'export' ? (
               <div className="settings-surface__transfer">
+                {exportBasis === 'pre-stored-time' ? (
+                  <p className="settings-surface__dialog-feedback" role="status">
+                    {intl.formatMessage(messages.exportPreStoredTime)}
+                  </p>
+                ) : null}
                 <label htmlFor="settings-export-save-text">
                   {intl.formatMessage(messages.exportStringLabel)}
                 </label>
@@ -971,7 +1000,7 @@ export function SettingsSurface({
               <button
                 ref={cancelRef}
                 type="button"
-                disabled={operationPending}
+                disabled={dialog === 'export' ? false : operationPending}
                 onClick={() => setDialog(null)}
               >
                 {intl.formatMessage(

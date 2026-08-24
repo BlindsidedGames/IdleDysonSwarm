@@ -5779,6 +5779,12 @@
       "value": "Preparando cadena de guardado…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "El Tiempo almacenado todavía se está procesando. Esta exportación contiene el guardado completo de justo antes de que comenzara esa simulación."
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +5855,12 @@
     {
       "type": 0,
       "value": "Puntos de habilidad"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Si importas ahora, se cancelará la simulación actual de Tiempo sin conexión sin gastar su Tiempo sin conexión."
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +5939,12 @@
     {
       "type": 0,
       "value": "Restableciendo…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Si restableces ahora, se cancelará la simulación actual de Tiempo sin conexión sin gastar su Tiempo sin conexión."
     }
   ],
   "settings.save-data.reset-succeeded": [

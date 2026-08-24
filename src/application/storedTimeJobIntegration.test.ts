@@ -223,6 +223,109 @@ describe('Stored Time job application integration', () => {
     expect(after.state.gameState.timeline.storedTimeAvailableSeconds).toBe(10)
   })
 
+  test('discards a completed candidate when cancellation wins before worker settlement', async () => {
+    const repository = new MemoryRepository()
+    let finish: (() => void) | undefined
+    const runner: StoredTimeJobRunner = {
+      run: vi.fn((request) => new Promise((resolve) => {
+        finish = () => {
+          const simulation = new StoredTimeSimulation({
+            jobId: request.jobId,
+            state: request.state,
+            requestedSeconds: request.requestedSeconds,
+            infinityMinimumCycleSeconds: request.infinityMinimumCycleSeconds,
+            eventContext: context(),
+          })
+          for (;;) {
+            const terminal = simulation.step(0.01, false)
+            if (terminal !== null) {
+              resolve(terminal)
+              return
+            }
+          }
+        }
+      })),
+      dispose: vi.fn(),
+    }
+    const application = createApplication(repository, runner)
+    await application.start()
+    await installStoredBank(application, 10)
+    const beforeCommits = repository.commits
+    const before = application.snapshot()
+    expect(before.phase).toBe('ready')
+    if (before.phase !== 'ready') return
+
+    const processing = application.commitStoredTime({
+      sessionRevision: before.revision.session,
+      expectedStateRevision: before.revision.state,
+    }, 2)
+    application.cancelStoredTimeJob()
+    finish?.()
+
+    await expect(processing).resolves.toMatchObject({
+      committed: false,
+      consumedSeconds: 0,
+      remainingSeconds: 2,
+      code: 'CANONICAL-STORED-TIME-CANCELLED',
+    })
+    expect(repository.commits).toBe(beforeCommits)
+    const after = application.snapshot()
+    expect(after.phase).toBe('ready')
+    if (after.phase !== 'ready') return
+    expect(after.state.gameState.timeline.storedTimeAvailableSeconds).toBe(10)
+  })
+
+  test('captures one immutable pre-job export and switches atomically to the committed result', async () => {
+    const repository = new MemoryRepository()
+    let finish: (() => void) | undefined
+    const runner: StoredTimeJobRunner = {
+      run: vi.fn((request, options) => new Promise((resolve) => {
+        finish = () => {
+          const simulation = new StoredTimeSimulation({
+            jobId: request.jobId,
+            state: request.state,
+            requestedSeconds: request.requestedSeconds,
+            infinityMinimumCycleSeconds: request.infinityMinimumCycleSeconds,
+            eventContext: context(),
+          })
+          for (;;) {
+            const terminal = simulation.step(0.01, false)
+            options?.onProgress?.(simulation.progress())
+            if (terminal !== null) {
+              resolve(terminal)
+              return
+            }
+          }
+        }
+      })),
+      dispose: vi.fn(),
+    }
+    const application = createApplication(repository, runner)
+    await application.start()
+    await installStoredBank(application, 10)
+    const before = application.snapshot()
+    expect(before.phase).toBe('ready')
+    if (before.phase !== 'ready') return
+
+    const processing = application.commitStoredTime({
+      sessionRevision: before.revision.session,
+      expectedStateRevision: before.revision.state,
+    }, 2)
+    const captured = application.captureSaveTransferSnapshot()
+    expect(captured?.basis).toBe('pre-stored-time')
+    expect(captured?.prepared.copyValidatedState().offlineTime).toBe(10)
+
+    finish?.()
+    await expect(processing).resolves.toMatchObject({
+      committed: true,
+      consumedSeconds: 2,
+    })
+    const after = application.captureSaveTransferSnapshot()
+    expect(after?.basis).toBe('current')
+    expect(after?.prepared.copyValidatedState().offlineTime).toBe(8)
+    expect(captured?.prepared.copyValidatedState().offlineTime).toBe(10)
+  })
+
   test('rejects a concurrent request before replacing or cancelling the active job', async () => {
     const repository = new MemoryRepository()
     let finish: (() => void) | undefined

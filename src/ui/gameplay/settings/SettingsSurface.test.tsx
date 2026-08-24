@@ -5,6 +5,7 @@ import axe from 'axe-core'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import {
+  act,
   cleanup,
   render,
   screen,
@@ -234,13 +235,16 @@ describe('SettingsSurface', () => {
 
   test('shows the export string with copy and optional download actions', async () => {
     const user = userEvent.setup()
-    const readSaveText = vi.fn().mockResolvedValue('IDSWEB1:exported')
+    const readSaveExport = vi.fn().mockResolvedValue({
+      text: 'IDSWEB1:exported',
+      basis: 'current',
+    })
     const copySaveText = vi.fn().mockResolvedValue(undefined)
-    const downloadSave = vi.fn().mockResolvedValue(true)
+    const downloadSaveText = vi.fn().mockResolvedValue(true)
     renderSettings(vi.fn(), undefined, {
-      readSaveText,
+      readSaveExport,
       copySaveText,
-      downloadSave,
+      downloadSaveText,
     })
 
     await user.click(screen.getByRole('button', { name: 'Export' }))
@@ -249,7 +253,7 @@ describe('SettingsSurface', () => {
       name: 'Export Save',
     })
     expect(dialog.closest('.dyson-shell')).not.toBeNull()
-    expect(readSaveText).toHaveBeenCalledOnce()
+    expect(readSaveExport).toHaveBeenCalledOnce()
     expect(within(dialog).getByRole('textbox', {
       name: 'Save string',
     })).toHaveValue('IDSWEB1:exported')
@@ -263,9 +267,108 @@ describe('SettingsSurface', () => {
     await user.click(
       within(dialog).getByRole('button', { name: 'Download File' }),
     )
-    expect(downloadSave).toHaveBeenCalledOnce()
+    expect(downloadSaveText).toHaveBeenCalledOnce()
+    expect(downloadSaveText).toHaveBeenCalledWith('IDSWEB1:exported')
+    expect(readSaveExport).toHaveBeenCalledOnce()
     expect(within(dialog).getByRole('status')).toHaveTextContent(
       'Save exported successfully.',
+    )
+  })
+
+  test('labels a pre-Stored-Time export and keeps Close and Escape available while capture is pending', async () => {
+    const user = userEvent.setup()
+    let resolveExport:
+      | ((value: { text: string; basis: 'pre-stored-time' }) => void)
+      | undefined
+    const readSaveExport = vi.fn(() => new Promise<{
+      text: string
+      basis: 'pre-stored-time'
+    }>((resolve) => {
+      resolveExport = resolve
+    }))
+    renderSettings(vi.fn(), undefined, { readSaveExport })
+
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    let dialog = screen.getByRole('dialog', { name: 'Export Save' })
+    expect(within(dialog).getByRole('button', { name: 'Close' })).toBeEnabled()
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    await act(async () => {
+      resolveExport?.({
+        text: 'IDSWEB1:pre-stored-time',
+        basis: 'pre-stored-time',
+      })
+      await Promise.resolve()
+    })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    const secondCapture = new Promise<{
+      text: string
+      basis: 'pre-stored-time'
+    }>((resolve) => {
+      resolveExport = resolve
+    })
+    readSaveExport.mockReturnValueOnce(secondCapture)
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    dialog = screen.getByRole('dialog', { name: 'Export Save' })
+    await user.click(within(dialog).getByRole('button', { name: 'Close' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await act(async () => {
+      resolveExport?.({
+        text: 'IDSWEB1:pre-stored-time',
+        basis: 'pre-stored-time',
+      })
+      await Promise.resolve()
+    })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    readSaveExport.mockResolvedValueOnce({
+      text: 'IDSWEB1:pre-stored-time',
+      basis: 'pre-stored-time',
+    })
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    dialog = screen.getByRole('dialog', { name: 'Export Save' })
+    expect(await within(dialog).findByRole('status')).toHaveTextContent(
+      'complete save from immediately before that simulation began',
+    )
+  })
+
+  test('clears a prior pre-Stored-Time notice before capturing a current export', async () => {
+    const user = userEvent.setup()
+    let resolveCurrent:
+      | ((value: { text: string; basis: 'current' }) => void)
+      | undefined
+    const readSaveExport = vi.fn()
+      .mockResolvedValueOnce({
+        text: 'IDSWEB1:pre-stored-time',
+        basis: 'pre-stored-time' as const,
+      })
+      .mockImplementationOnce(() => new Promise<{
+        text: string
+        basis: 'current'
+      }>((resolve) => {
+        resolveCurrent = resolve
+      }))
+    renderSettings(vi.fn(), undefined, { readSaveExport })
+
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    let dialog = await screen.findByRole('dialog', { name: 'Export Save' })
+    expect(await within(dialog).findByRole('status')).toHaveTextContent(
+      'complete save from immediately before that simulation began',
+    )
+    await user.click(within(dialog).getByRole('button', { name: 'Close' }))
+
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    dialog = screen.getByRole('dialog', { name: 'Export Save' })
+    expect(dialog).not.toHaveTextContent(
+      'complete save from immediately before that simulation began',
+    )
+    resolveCurrent?.({ text: 'IDSWEB1:current', basis: 'current' })
+    expect(await within(dialog).findByDisplayValue('IDSWEB1:current'))
+      .toBeInTheDocument()
+    expect(dialog).not.toHaveTextContent(
+      'complete save from immediately before that simulation began',
     )
   })
 
@@ -319,6 +422,44 @@ describe('SettingsSurface', () => {
       expect(importSaveText).toHaveBeenCalledWith('IDSWEB1:test'),
     )
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+  })
+
+  test('extends confirmed import copy while Offline Time processing is active', async () => {
+    const user = userEvent.setup()
+    renderSettings(vi.fn(), undefined, {
+      storedTime: {
+        status: () => ({
+          kind: 'running',
+          jobId: 'active-job',
+          requestedSeconds: 60,
+          computedSeconds: 1,
+          fraction: 1 / 60,
+          elapsedMilliseconds: 10,
+          estimatedRemainingMilliseconds: 590,
+          maximumChunkMilliseconds: 5,
+        }),
+        subscribe: () => () => undefined,
+        cancel: vi.fn(),
+      },
+      previewImportSaveText: vi.fn().mockResolvedValue({
+        accepted: true,
+        preview: {
+          infinityPoints: 1n,
+          quantumPoints: 2n,
+          skillPoints: 3n,
+        },
+      }),
+    })
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+    const dialog = screen.getByRole('alertdialog', { name: 'Import Save?' })
+    await user.type(
+      within(dialog).getByRole('textbox', { name: 'Save string' }),
+      'IDSWEB1:test',
+    )
+    await user.click(within(dialog).getByRole('button', { name: 'Review Save' }))
+    expect(await within(dialog).findByText(
+      /cancel the current Offline Time simulation without spending its Offline Time/i,
+    )).toBeInTheDocument()
   })
 
   test('also accepts a save file from the import dialog', async () => {
@@ -474,6 +615,42 @@ describe('SettingsSurface', () => {
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
     expect(trigger).toHaveFocus()
     expect(resetSave).not.toHaveBeenCalled()
+  })
+
+  test('warns before confirming a reset that cancels active Stored Time', async () => {
+    const user = userEvent.setup()
+    const resetSave = vi.fn().mockResolvedValue({
+      imported: true,
+      sessionRevision: 2,
+      recoveryAvailable: true,
+      lifecycleReset: true,
+    })
+    renderSettings(resetSave, undefined, {
+      storedTime: {
+        status: () => ({
+          kind: 'running',
+          jobId: 'stored-time-test',
+          requestedSeconds: 10,
+          computedSeconds: 1,
+          fraction: 0.1,
+          elapsedMilliseconds: 10,
+          estimatedRemainingMilliseconds: 90,
+          maximumChunkMilliseconds: 5,
+        }),
+        subscribe: () => () => undefined,
+        cancel: vi.fn(),
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Reset Save' }))
+    const dialog = screen.getByRole('alertdialog', { name: 'Reset Save?' })
+    expect(dialog).toHaveTextContent(
+      'Resetting now will cancel the current Offline Time simulation without spending its Offline Time.',
+    )
+    expect(resetSave).not.toHaveBeenCalled()
+
+    await user.click(within(dialog).getByRole('button', { name: 'Reset Save' }))
+    await waitFor(() => expect(resetSave).toHaveBeenCalledOnce())
   })
 
   test('resets through the supplied runtime operation and reports success', async () => {
@@ -742,8 +919,8 @@ function renderSettings(
             previewImportSaveText={vi.fn()}
             importSaveFile={vi.fn()}
             importSaveText={vi.fn()}
-            readSaveText={vi.fn().mockResolvedValue(null)}
-            downloadSave={vi.fn()}
+            readSaveExport={vi.fn().mockResolvedValue(null)}
+            downloadSaveText={vi.fn()}
             copySaveText={vi.fn()}
             development={development}
             {...overrides}

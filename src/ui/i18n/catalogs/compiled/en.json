@@ -5779,6 +5779,12 @@
       "value": "Preparing save string…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "Stored Time is still processing. This export is the complete save from immediately before that simulation began."
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +5855,12 @@
     {
       "type": 0,
       "value": "Skill Points"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Importing now will cancel the current Offline Time simulation without spending its Offline Time."
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +5939,12 @@
     {
       "type": 0,
       "value": "Resetting…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Resetting now will cancel the current Offline Time simulation without spending its Offline Time."
     }
   ],
   "settings.save-data.reset-succeeded": [

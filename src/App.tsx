@@ -189,8 +189,9 @@ function App({
               importedAtUtc: sampleUtc(),
               overwriteApproved: true,
             })}
-          readSaveText={() => runtime.readCurrentSaveText()}
-          downloadSave={() => runtime.exportCurrentSave()}
+          readSaveExport={() => runtime.readCurrentSaveExport()}
+          downloadSaveText={(text: string) =>
+            runtime.downloadSaveText(text)}
           copySaveText={(text: string) =>
             runtime.writeClipboardText(text)}
           releasePlatformServices={releasePlatformServices}

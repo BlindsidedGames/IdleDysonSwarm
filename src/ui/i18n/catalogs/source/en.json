@@ -2839,6 +2839,10 @@
     "defaultMessage": "Preparing save string…",
     "description": "Placeholder while the export string is prepared."
   },
+  "settings.save-data.export-pre-stored-time": {
+    "defaultMessage": "Stored Time is still processing. This export is the complete save from immediately before that simulation began.",
+    "description": "Explains that an export captured during active Stored Time is the immutable pre-simulation save."
+  },
   "settings.save-data.export-string-label": {
     "defaultMessage": "Save string",
     "description": "Label for the exported save string field."
@@ -2886,6 +2890,10 @@
   "settings.save-data.import-preview-skill-points": {
     "defaultMessage": "Skill Points",
     "description": "Skill Point balance in an imported save preview."
+  },
+  "settings.save-data.import-preview-stored-time-warning": {
+    "defaultMessage": "Importing now will cancel the current Offline Time simulation without spending its Offline Time.",
+    "description": "Additional import confirmation warning while Stored Time processing is active."
   },
   "settings.save-data.import-preview-title": {
     "defaultMessage": "Progress in this save",
@@ -2938,6 +2946,10 @@
   "settings.save-data.reset-pending": {
     "defaultMessage": "Resetting…",
     "description": "Pending reset-save button text."
+  },
+  "settings.save-data.reset-stored-time-warning": {
+    "defaultMessage": "Resetting now will cancel the current Offline Time simulation without spending its Offline Time.",
+    "description": "Additional reset confirmation warning while Stored Time processing is active."
   },
   "settings.save-data.reset-succeeded": {
     "defaultMessage": "Save reset. A fresh game has been created.",

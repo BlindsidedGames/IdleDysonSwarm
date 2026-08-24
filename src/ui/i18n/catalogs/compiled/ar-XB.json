@@ -11459,6 +11459,20 @@
       "value": "‬"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹǝp ⊥ıɯǝ ıs sʇıʅʅ dɹoɔǝssıuƃ. ⊥ɥıs ǝxdoɹʇ ıs ʇɥǝ ɔoɯdʅǝʇǝ sɐʌǝ ɟɹoɯ ıɯɯǝpıɐʇǝʅʎ qǝɟoɹǝ ʇɥɐʇ sıɯnʅɐʇıou qǝƃɐu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -11621,6 +11635,20 @@
     {
       "type": 0,
       "value": "Sʞıʅʅ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇıuƃ uoʍ ʍıʅʅ ɔɐuɔǝʅ ʇɥǝ ɔnɹɹǝuʇ Oɟɟʅıuǝ ⊥ıɯǝ sıɯnʅɐʇıou ʍıʇɥonʇ sdǝupıuƃ ıʇs Oɟɟʅıuǝ ⊥ıɯǝ."
     },
     {
       "type": 0,
@@ -11803,6 +11831,20 @@
     {
       "type": 0,
       "value": "ᴚǝsǝʇʇıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇʇıuƃ uoʍ ʍıʅʅ ɔɐuɔǝʅ ʇɥǝ ɔnɹɹǝuʇ Oɟɟʅıuǝ ⊥ıɯǝ sıɯnʅɐʇıou ʍıʇɥonʇ sdǝupıuƃ ıʇs Oɟɟʅıuǝ ⊥ıɯǝ."
     },
     {
       "type": 0,

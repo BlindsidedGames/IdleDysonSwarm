@@ -5779,6 +5779,12 @@
       "value": "Preparando o texto do jogo salvo…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "O Tempo armazenado ainda está sendo processado. Esta exportação contém o jogo salvo completo de imediatamente antes do início dessa simulação."
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +5855,12 @@
     {
       "type": 0,
       "value": "Pontos de Habilidade"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Importar agora cancelará a simulação atual de Tempo offline sem gastar o Tempo offline dela."
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +5939,12 @@
     {
       "type": 0,
       "value": "Reiniciando…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Reiniciar agora cancelará a simulação atual de Tempo offline sem gastar o Tempo offline dela."
     }
   ],
   "settings.save-data.reset-succeeded": [

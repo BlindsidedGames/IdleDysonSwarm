@@ -21,6 +21,7 @@ import {
 } from '../../application/canonicalLifecycleCoordinator'
 import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
 import type { CanonicalDevelopmentAction } from '../../application/canonicalGameApplication'
+import type { CanonicalSaveTransferSnapshot } from '../../application/canonicalGameApplication'
 import type { StoredTimeJobListener } from '../../application/canonicalGameApplication'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 import type {
@@ -161,6 +162,7 @@ interface BrowserRuntimeApplicationPort
   storedTimeJobStatus?(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
   subscribeStoredTimeJob?(listener: StoredTimeJobListener): () => void
   cancelStoredTimeJob?(): void
+  captureSaveTransferSnapshot?(): CanonicalSaveTransferSnapshot | null
   disposeStoredTimeJobRunner?(): void
 }
 
@@ -368,6 +370,10 @@ export function createBrowserRuntimeFoundation(
       implementation.recoveryExportAvailable(),
     readCurrentSaveText: () =>
       implementation.readCurrentSaveText(),
+    readCurrentSaveExport: () =>
+      implementation.readCurrentSaveExport(),
+    downloadSaveText: (text: string) =>
+      implementation.downloadSaveText(text),
     exportCurrentSave: () =>
       implementation.exportCurrentSave(),
     exportLastRecovery: () =>
@@ -968,6 +974,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     request: UiRuntimeImportRequest,
   ): Promise<UiRuntimeImportResult> {
     const graph = this.requireGraph()
+    // Import is invoked only after the UI's existing preview and overwrite
+    // confirmation. Cancellation is deliberately out-of-band because the
+    // active worker owns the router lane that the replacement must await.
+    if (request.overwriteApproved) {
+      graph.application.cancelStoredTimeJob?.()
+    }
     const admittedLifecycleIntentEpoch =
       this.lifecycleIntentEpoch
     this.pendingImportCount += 1
@@ -1072,8 +1084,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   async exportCurrentSave(): Promise<boolean> {
-    const text = await this.readCurrentSaveText()
-    if (text === null) return false
+    const exported = await this.readCurrentSaveExport()
+    if (exported === null) return false
+    return this.downloadSaveText(exported.text)
+  }
+
+  async downloadSaveText(text: string): Promise<boolean> {
     this.downloads.downloadText(
       'idle-dyson-swarm-save.idsw',
       text,
@@ -1083,14 +1099,37 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   async readCurrentSaveText(): Promise<string | null> {
+    return (await this.readCurrentSaveExport())?.text ?? null
+  }
+
+  async readCurrentSaveExport() {
     const graph = this.requireGraph()
+    const captured = graph.application.captureSaveTransferSnapshot?.()
+    if (
+      captured !== undefined &&
+      captured !== null &&
+      (
+        captured.basis === 'pre-stored-time' ||
+        !isDirtySnapshot(graph.application.snapshot())
+      )
+    ) {
+      return {
+        text: serializeSharedWebSave(
+          captured.prepared.copyValidatedState(),
+        ),
+        basis: captured.basis,
+      } as const
+    }
     if (!(await this.requestFencedCheckpoint(graph, false))) {
       return null
     }
     const save = await graph.repository.loadCurrent()
     return save === null
       ? null
-      : serializeSharedWebSave(save.copyValidatedState())
+      : {
+          text: serializeSharedWebSave(save.copyValidatedState()),
+          basis: 'current' as const,
+        }
   }
 
   recoveryExportAvailable(): boolean {

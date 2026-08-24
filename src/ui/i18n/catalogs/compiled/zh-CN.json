@@ -5779,6 +5779,12 @@
       "value": "正在准备存档字符串…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "储存时间仍在处理中。此导出包含该模拟开始前一刻的完整存档。"
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +5855,12 @@
     {
       "type": 0,
       "value": "技能点"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "现在导入将取消当前的离线时间模拟，且不会消耗其离线时间。"
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +5939,12 @@
     {
       "type": 0,
       "value": "正在重置…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "现在重置将取消当前的离线时间模拟，且不会消耗其离线时间。"
     }
   ],
   "settings.save-data.reset-succeeded": [

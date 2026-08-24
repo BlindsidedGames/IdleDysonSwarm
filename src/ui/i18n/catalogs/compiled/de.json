@@ -5779,6 +5779,12 @@
       "value": "Spielstand-Zeichenfolge wird vorbereitet…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "Gespeicherte Zeit wird noch verarbeitet. Dieser Export enthält den vollständigen Spielstand unmittelbar vor Beginn dieser Simulation."
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +5855,12 @@
     {
       "type": 0,
       "value": "Skill-Punkte"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Wenn du jetzt importierst, wird die aktuelle Offline-Zeit-Simulation abgebrochen, ohne ihre Offline-Zeit auszugeben."
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +5939,12 @@
     {
       "type": 0,
       "value": "Wird zurückgesetzt…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Wenn du jetzt zurücksetzt, wird die aktuelle Offline-Zeit-Simulation abgebrochen, ohne ihre Offline-Zeit auszugeben."
     }
   ],
   "settings.save-data.reset-succeeded": [

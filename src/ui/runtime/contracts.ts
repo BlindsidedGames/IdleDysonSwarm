@@ -245,6 +245,11 @@ export interface UiRuntimeStoredTimeControls {
   cancel(): void
 }
 
+export interface UiRuntimeSaveExportSnapshot {
+  readonly text: string
+  readonly basis: 'current' | 'pre-stored-time'
+}
+
 /**
  * Host-neutral browser product boundary.
  *
@@ -282,7 +287,9 @@ export interface UiRuntimeFoundation<
   requestCheckpoint(): Promise<boolean>
   checkpointBeforeSafeReload(): Promise<boolean>
   recoveryExportAvailable(): boolean
+  readCurrentSaveExport(): Promise<UiRuntimeSaveExportSnapshot | null>
   readCurrentSaveText(): Promise<string | null>
+  downloadSaveText(text: string): Promise<boolean>
   exportCurrentSave(): Promise<boolean>
   exportLastRecovery(): Promise<boolean>
   copyLastRecovery(): Promise<boolean>

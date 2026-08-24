@@ -85,6 +85,15 @@ commands and platform lifecycle callbacks through that lane, including
 returned-time replay, forced-Buy-Max stored time and resumable bot-cap
 checkpoints.
 
+Confirmed save replacement may request Stored Time cancellation out-of-band,
+then waits behind the coordinator lane until the detached candidate is
+discarded or fully committed before import/reset installs a new session.
+Commands retain their admission session across that boundary. Export does not
+enter the occupied persistence lane: the application captures one validated,
+immutable pre-job save, and the transfer UI reuses its exact encoded string for
+display, copy and download. Once the job settles, export may capture only the
+fully committed current session.
+
 `frontendSnapshot.ts` is the only UI read boundary. It publishes application
 revisions, raw canonical resources and progression, exact transaction
 previews, derived gameplay facts and transient Tinker progress. It contains no

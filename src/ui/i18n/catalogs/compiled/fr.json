@@ -5779,6 +5779,12 @@
       "value": "Préparation de la chaîne de sauvegarde…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "Le Temps stocké est toujours en cours de traitement. Cet export contient la sauvegarde complète prise juste avant le début de cette simulation."
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +5855,12 @@
     {
       "type": 0,
       "value": "Points de compétence"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Importer maintenant annulera la simulation actuelle de Temps hors ligne sans dépenser son Temps hors ligne."
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +5939,12 @@
     {
       "type": 0,
       "value": "Réinitialisation…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Réinitialiser maintenant annulera la simulation actuelle de Temps hors ligne sans dépenser son Temps hors ligne."
     }
   ],
   "settings.save-data.reset-succeeded": [

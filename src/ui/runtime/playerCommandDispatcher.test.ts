@@ -266,6 +266,44 @@ describe('revisioned player command dispatcher', () => {
     expect(envelopes[0]?.expectedStateRevision).toBe(10)
   })
 
+  test('does not retarget latest idempotent intent admitted under a replaced session', async () => {
+    let sessionRevision = 4
+    let stateRevision = 9
+    let dispatches = 0
+    const blocker = deferred<void>()
+    const serialize = createSerializer()
+    const replacement = serialize(async () => {
+      await blocker.promise
+      sessionRevision = 5
+      stateRevision = 0
+    })
+    const dispatcher = new RevisionedPlayerCommandDispatcher({
+      latestSnapshot: () => readySnapshot(sessionRevision, stateRevision),
+      dispatch: async () => {
+        dispatches += 1
+        return acceptedTransition(1)
+      },
+      serialize,
+      publishSnapshot: () => undefined,
+      isCurrent: () => true,
+      cancelRequested: () => false,
+    })
+
+    const command = dispatcher.dispatchLatest({
+      kind: 'tinker.set-repeat',
+      enabled: false,
+    })
+    blocker.resolve()
+    await replacement
+    await expect(command).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'APP-STALE-SESSION',
+      stale: true,
+      activationRevision: { session: 4, state: 9 },
+    })
+    expect(dispatches).toBe(0)
+  })
+
   test('contains invalid commands, thrown dispatches, and late-owner results without publication', async () => {
     let dispatches = 0
     let current = true

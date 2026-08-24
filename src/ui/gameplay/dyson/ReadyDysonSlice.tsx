@@ -207,8 +207,8 @@ export interface ReadyDysonRuntimeHostProps {
   readonly importSaveText?: (
     text: string,
   ) => Promise<UiRuntimeImportResult>
-  readonly readSaveText?: () => Promise<string | null>
-  readonly downloadSave?: () => Promise<boolean>
+  readonly readSaveExport?: SettingsSurfaceProps['readSaveExport']
+  readonly downloadSaveText?: SettingsSurfaceProps['downloadSaveText']
   readonly copySaveText?: (text: string) => Promise<void>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly localDeveloperOptionsPurchased?: boolean
@@ -227,8 +227,8 @@ function UnprobedReadyDysonRuntimeHost({
   previewImportSaveText = unavailableImportPreview,
   importSaveFile = unavailableImport,
   importSaveText = unavailableImport,
-  readSaveText = unavailableReadSave,
-  downloadSave = unavailableExport,
+  readSaveExport = unavailableReadSaveExport,
+  downloadSaveText = unavailableDownloadSaveText,
   copySaveText = unavailableCopy,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
@@ -300,8 +300,8 @@ function UnprobedReadyDysonRuntimeHost({
       previewImportSaveText={previewImportSaveText}
       importSaveFile={importSaveFile}
       importSaveText={importSaveText}
-      readSaveText={readSaveText}
-      downloadSave={downloadSave}
+      readSaveExport={readSaveExport}
+      downloadSaveText={downloadSaveText}
       copySaveText={copySaveText}
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
@@ -321,8 +321,8 @@ export function ProbedReadyDysonRuntimeHost({
   previewImportSaveText = unavailableImportPreview,
   importSaveFile = unavailableImport,
   importSaveText = unavailableImport,
-  readSaveText = unavailableReadSave,
-  downloadSave = unavailableExport,
+  readSaveExport = unavailableReadSaveExport,
+  downloadSaveText = unavailableDownloadSaveText,
   copySaveText = unavailableCopy,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
@@ -394,8 +394,8 @@ export function ProbedReadyDysonRuntimeHost({
       previewImportSaveText={previewImportSaveText}
       importSaveFile={importSaveFile}
       importSaveText={importSaveText}
-      readSaveText={readSaveText}
-      downloadSave={downloadSave}
+      readSaveExport={readSaveExport}
+      downloadSaveText={downloadSaveText}
       copySaveText={copySaveText}
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
@@ -432,8 +432,8 @@ export interface ReadyDysonSliceProps {
   readonly importSaveText?: (
     text: string,
   ) => Promise<UiRuntimeImportResult>
-  readonly readSaveText?: () => Promise<string | null>
-  readonly downloadSave?: () => Promise<boolean>
+  readonly readSaveExport?: SettingsSurfaceProps['readSaveExport']
+  readonly downloadSaveText?: SettingsSurfaceProps['downloadSaveText']
   readonly copySaveText?: (text: string) => Promise<void>
   readonly development?: UiRuntimeDevelopmentControls
   readonly synchronizeHostEntitlements?: () => Promise<boolean>
@@ -511,8 +511,8 @@ export function ReadyDysonSlice({
   previewImportSaveText = unavailableImportPreview,
   importSaveFile = unavailableImport,
   importSaveText = unavailableImport,
-  readSaveText = unavailableReadSave,
-  downloadSave = unavailableExport,
+  readSaveExport = unavailableReadSaveExport,
+  downloadSaveText = unavailableDownloadSaveText,
   copySaveText = unavailableCopy,
   development,
   synchronizeHostEntitlements,
@@ -1046,9 +1046,10 @@ export function ReadyDysonSlice({
                   previewImportSaveText={previewImportSaveText}
                   importSaveFile={importSaveFile}
                   importSaveText={importSaveText}
-                  readSaveText={readSaveText}
-                  downloadSave={downloadSave}
+                  readSaveExport={readSaveExport}
+                  downloadSaveText={downloadSaveText}
                   copySaveText={copySaveText}
+                  storedTime={storedTime}
                   audio={audio}
                   development={
                     import.meta.env.DEV ? development : undefined
@@ -2023,11 +2024,11 @@ function unavailableImportPreview(): Promise<UiRuntimeImportPreviewResult> {
   })
 }
 
-function unavailableExport(): Promise<boolean> {
+function unavailableDownloadSaveText(_text: string): Promise<boolean> {
   return Promise.resolve(false)
 }
 
-function unavailableReadSave(): Promise<null> {
+function unavailableReadSaveExport(): Promise<null> {
   return Promise.resolve(null)
 }
 

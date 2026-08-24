@@ -45,6 +45,7 @@ import {
 } from '../simulation/canonicalTinker'
 import { applyAwayTimeGrant } from '../simulation/timeResources'
 import type { SaveRepository } from '../save/repository'
+import type { PreparedSave } from '../save/prepare'
 import type { StartupSaveResolver } from '../save/startupResolver'
 import {
   routeCanonicalGameCommand,
@@ -83,6 +84,11 @@ import type {
 } from '../workers/storedTime/storedTimeJobRunner'
 
 export const CANONICAL_GAME_APPLICATION_SCHEMA = 1 as const
+
+export interface CanonicalSaveTransferSnapshot {
+  readonly prepared: PreparedSave
+  readonly basis: 'current' | 'pre-stored-time'
+}
 
 export {
   CANONICAL_PLAYER_COMMAND_KINDS,
@@ -231,6 +237,7 @@ export class CanonicalGameApplicationFacade {
   })
   private activeStoredTimeJobId: string | null = null
   private storedTimeCancellationRequested = false
+  private storedTimeExportSnapshot: PreparedSave | null = null
   private cachedFrontendSnapshot:
     | DeepReadonly<FrontendApplicationSnapshot>
     | undefined
@@ -434,6 +441,22 @@ export class CanonicalGameApplicationFacade {
     })
   }
 
+  captureSaveTransferSnapshot(): CanonicalSaveTransferSnapshot | null {
+    if (
+      this.activeStoredTimeJobId !== null &&
+      this.storedTimeExportSnapshot !== null
+    ) {
+      return {
+        prepared: this.storedTimeExportSnapshot,
+        basis: 'pre-stored-time',
+      }
+    }
+    const prepared = this.application.capturePreparedSave()
+    return prepared === null
+      ? null
+      : { prepared, basis: 'current' }
+  }
+
   disposeStoredTimeJobRunner(): void {
     this.storedTimeCancellationRequested = true
     this.storedTimeJobRunner?.dispose()
@@ -541,6 +564,8 @@ export class CanonicalGameApplicationFacade {
     }
 
     const jobId = createStoredTimeJobId()
+    this.storedTimeExportSnapshot =
+      this.application.capturePreparedSave()
     this.activeStoredTimeJobId = jobId
     this.storedTimeCancellationRequested = false
     this.publishStoredTimeProgress({
@@ -568,6 +593,18 @@ export class CanonicalGameApplicationFacade {
           cancelRequested?.() === true,
         onProgress: (progress) => this.publishStoredTimeProgress(progress),
       })
+      if (
+        terminal.type === 'completed' &&
+        (this.storedTimeCancellationRequested ||
+          cancelRequested?.() === true)
+      ) {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          'CANONICAL-STORED-TIME-CANCELLED',
+          'Cancelled Stored Time work was discarded without charging the bank.',
+        )
+      }
       if (terminal.type === 'cancelled') {
         return rejectedStoredTimeCommit(
           this.snapshot(),
@@ -655,6 +692,7 @@ export class CanonicalGameApplicationFacade {
       if (this.activeStoredTimeJobId === jobId) {
         this.activeStoredTimeJobId = null
         this.storedTimeCancellationRequested = false
+        this.storedTimeExportSnapshot = null
         this.publishStoredTimeJobStatus({ kind: 'idle' })
       }
     }

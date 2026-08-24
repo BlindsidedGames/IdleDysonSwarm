@@ -65,8 +65,8 @@ interface PreparedPlayerCommand {
  * captures the latest state revision inside the authority lane. This lets
  * local commands follow admitted ticks and earlier commands without retrying
  * them, while a session replacement still invalidates intent from the old
- * save. Idempotent safety reconciliation captures both revisions inside the
- * lane through `dispatchLatest`.
+ * save. Idempotent safety reconciliation keeps the admitted session but
+ * captures the latest state revision inside the lane through `dispatchLatest`.
  */
 export class RevisionedPlayerCommandDispatcher {
   private readonly options:
@@ -127,16 +127,32 @@ export class RevisionedPlayerCommandDispatcher {
    * Captures the latest revision only after previously admitted lifecycle work
    * has settled. This is reserved for idempotent absolute settings and safety
    * reconciliation, such as bot distribution and an ongoing Tinker hold; it
-   * is not an ordinary intent retry.
+   * is not an ordinary intent retry. The session is still captured at
+   * activation so an import/reset can never retarget old intent at its new
+   * session.
    */
   async dispatchLatest(
     command: Readonly<LatestIdempotentCommand>,
   ): Promise<UiRuntimePlayerCommandResult> {
+    const admitted = this.prepare(command)
+    if ('status' in admitted) return admitted
     try {
       const outcome = await this.options.serialize(async () => {
         const prepared = this.prepare(command)
         if ('status' in prepared) {
           return { kind: 'failure', failure: prepared } as const
+        }
+        if (
+          prepared.activationRevision.session !==
+          admitted.activationRevision.session
+        ) {
+          return {
+            kind: 'failure',
+            failure: staleSession(
+              admitted.activationRevision,
+              prepared.activationRevision.state,
+            ),
+          } as const
         }
         const result = await this.options.dispatch(
           prepared.envelope,
