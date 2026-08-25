@@ -9,8 +9,8 @@ export const offlineTimeMessages = defineMessages({
   explanation: {
     id: 'offline-time.explanation',
     defaultMessage:
-      'Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time.',
-    description: 'Explains what stored Offline Time does and distinguishes it from Simulation Double Time.',
+      'Offline Time is stored while you are away. Choose when to spend it to advance the game.',
+    description: 'Explains that Offline Time is stored and spent manually.',
   },
   stored: {
     id: 'offline-time.stored',
@@ -104,14 +104,63 @@ export const offlineTimeMessages = defineMessages({
   },
   largeSpendDisclosure: {
     id: 'offline-time.large-spend-disclosure',
-    defaultMessage:
-      'Small spends replay every automation tick. Large spends execute up to 4,096 representative purchase decisions while continuous production still advances; omitted ticks make no purchases. Results may differ from exact replay, and splitting the same time into multiple spends may change results.',
-    description: 'Discloses the automatic exact versus bounded Stored Time policy.',
+    defaultMessage: 'Simulation becomes less accurate at larger time steps.',
+    description: 'Concise Stored Time accuracy disclosure.',
+  },
+  accuracyPreset: {
+    id: 'offline-time.accuracy-preset',
+    defaultMessage: 'Simulation accuracy',
+    description: 'Label for the Stored Time accuracy preset selector.',
+  },
+  fastPreset: {
+    id: 'offline-time.fast-preset',
+    defaultMessage: 'Fast',
+    description: 'Lowest-work Stored Time accuracy preset.',
+  },
+  balancedPreset: {
+    id: 'offline-time.balanced-preset',
+    defaultMessage: 'Balanced',
+    description: 'Default Stored Time accuracy preset.',
+  },
+  accuratePreset: {
+    id: 'offline-time.accurate-preset',
+    defaultMessage: 'Accurate',
+    description: 'Highest-work Stored Time accuracy preset.',
+  },
+  speedUp: {
+    id: 'offline-time.speed-up',
+    defaultMessage: 'Speed up',
+    description: 'Reduces the remaining Stored Time accuracy budget.',
   },
   simulationProgress: {
     id: 'offline-time.simulation-progress',
     defaultMessage: 'Offline Time simulation progress',
     description: 'Accessible label for Stored Time job progress.',
+  },
+  processingHeading: {
+    id: 'offline-time.processing-heading',
+    defaultMessage: 'Processing Offline Time',
+    description: 'Heading for the active Stored Time processing dialog.',
+  },
+  simulationComplete: {
+    id: 'offline-time.simulation-complete',
+    defaultMessage: 'Offline Time Complete',
+    description: 'Heading and accessible name for the completed Stored Time summary.',
+  },
+  timeSimulated: {
+    id: 'offline-time.time-simulated',
+    defaultMessage: 'Time simulated',
+    description: 'Completed Stored Time summary label for processed game time.',
+  },
+  timeRemaining: {
+    id: 'offline-time.time-remaining',
+    defaultMessage: 'Offline Time remaining',
+    description: 'Completed Stored Time summary label for the remaining bank.',
+  },
+  closeSummary: {
+    id: 'offline-time.close-summary',
+    defaultMessage: 'Continue',
+    description: 'Closes the completed Stored Time summary.',
   },
   progress: {
     id: 'offline-time.progress',
@@ -135,8 +184,8 @@ export const offlineTimeMessages = defineMessages({
   },
   spendSuccess: {
     id: 'offline-time.spend-success',
-    defaultMessage: 'Advanced the game by {duration}.',
-    description: 'Confirmation after stored Offline Time is successfully spent.',
+    defaultMessage: 'Spent {duration} of Offline Time.',
+    description: 'Confirms how much Offline Time was successfully spent.',
   },
   actionFailed: {
     id: 'offline-time.action-failed',

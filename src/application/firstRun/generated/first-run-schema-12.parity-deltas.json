@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "source": "Lifecycle-normalized Unity prepared graph",
   "target": "Web dehydrate(hydrate(Unity prepared graph))",
-  "expectedDifferenceCount": 1072,
+  "expectedDifferenceCount": 1075,
   "allowedDeltas": [
     {
       "id": "legacy-skill-flag-compaction",
@@ -62,6 +62,36 @@
       "actualShape": "one-number-or-bigint",
       "normalizedPaths": [
         "$.infinityPointsToBreakFor"
+      ]
+    },
+    {
+      "id": "processing-rewrite-migration-marker",
+      "reason": "The Web processing rewrite records its one-time legacy Double Time bank migration.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "boolean",
+      "normalizedPaths": [
+        "$.processingRewriteMigrated"
+      ]
+    },
+    {
+      "id": "processing-active-interval-default",
+      "reason": "The Web processing rewrite materializes its default active update interval.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "number",
+      "normalizedPaths": [
+        "$.processingActiveIntervalMilliseconds"
+      ]
+    },
+    {
+      "id": "processing-stored-time-preset-default",
+      "reason": "The Web processing rewrite materializes its default Stored Time accuracy preset.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "string",
+      "normalizedPaths": [
+        "$.processingStoredTimePreset"
       ]
     }
   ]

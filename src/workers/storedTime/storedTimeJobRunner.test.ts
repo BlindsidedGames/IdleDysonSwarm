@@ -70,6 +70,21 @@ describe('BrowserStoredTimeJobRunner', () => {
     expect(worker.terminated).toBe(true)
     runner.dispose()
   })
+
+  test('forwards an immediate speed-up before the worker starts its job', async () => {
+    const state = runtimeWithStoredTime(1)
+    const worker = new FakeWorker('complete')
+    const runner = new BrowserStoredTimeJobRunner({
+      createWorker: () => worker as unknown as Worker,
+      workerSupported: () => true,
+    })
+
+    const completed = runner.run(request(state))
+    runner.speedUp()
+    await expect(completed).resolves.toMatchObject({ type: 'completed' })
+    expect(worker.receivedTypes).toEqual(['speed-up', 'start'])
+    runner.dispose()
+  })
 })
 
 function request(state: CanonicalRuntimeState) {
@@ -104,6 +119,7 @@ class FakeWorker {
   private readonly errorListeners = new Set<(event: ErrorEvent) => void>()
   readonly mode: 'complete' | 'silent'
   readonly buildId: string | null
+  readonly receivedTypes: string[] = []
   terminated = false
 
   constructor(mode: 'complete' | 'silent', buildId: string | null = null) {
@@ -111,7 +127,7 @@ class FakeWorker {
     this.buildId = buildId
     queueMicrotask(() => this.emit({
       type: 'ready',
-      protocolVersion: 1,
+      protocolVersion: 2,
       buildId: this.buildId,
     }))
   }
@@ -133,12 +149,13 @@ class FakeWorker {
   }
 
   postMessage(value: unknown): void {
-    if (this.mode === 'silent') return
     const start = value as {
       readonly type?: string
       readonly jobId?: string
       readonly state?: CanonicalRuntimeState
     }
+    if (typeof start.type === 'string') this.receivedTypes.push(start.type)
+    if (this.mode === 'silent') return
     if (start.type !== 'start') return
     const progress = {
       jobId: start.jobId!,
@@ -150,15 +167,14 @@ class FakeWorker {
       maximumChunkMilliseconds: 1,
     }
     queueMicrotask(() => {
-      this.emit({ type: 'progress', protocolVersion: 1, progress })
+      this.emit({ type: 'progress', protocolVersion: 2, progress })
       this.emit({
         type: 'completed',
-        protocolVersion: 1,
+        protocolVersion: 2,
         jobId: start.jobId,
         candidate: start.state,
         consumedSeconds: 0.1,
         remainingSeconds: 0,
-        continuation: { kind: 'complete' },
         progress,
       })
     })

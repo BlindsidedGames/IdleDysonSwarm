@@ -74,6 +74,11 @@ export interface SettingsSurfaceProps {
     includeText: boolean,
   ) => void
   readonly audio?: GameAudioService
+  readonly processingIntervalMilliseconds?: number
+  readonly processingIntervalAvailable?: boolean
+  readonly onProcessingIntervalChange?: (
+    milliseconds: number,
+  ) => void | Promise<unknown>
 }
 
 const NAVIGATION_SHORTCUTS = [
@@ -138,6 +143,9 @@ export function SettingsSurface({
   bottomNavigationIncludeText = false,
   onBottomNavigationIncludeTextChange = () => undefined,
   audio,
+  processingIntervalMilliseconds = 33,
+  processingIntervalAvailable = true,
+  onProcessingIntervalChange = () => undefined,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
   const language = useLocalePreference()
@@ -172,6 +180,9 @@ export function SettingsSurface({
   const [developmentPanelOpen, setDevelopmentPanelOpen] =
     useState(developmentOnly)
   const [dialog, setDialog] = useState<SaveDialog | null>(null)
+  const [processingIntervalDraft, setProcessingIntervalDraft] = useState(
+    processingIntervalMilliseconds,
+  )
   const surfaceRef = useRef<HTMLDivElement>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
   const returnFocusRef = useRef<HTMLButtonElement | null>(null)
@@ -188,6 +199,10 @@ export function SettingsSurface({
     exportStatus === 'pending'
   const operationPendingRef = useRef(operationPending)
   operationPendingRef.current = operationPending
+
+  useEffect(() => {
+    setProcessingIntervalDraft(processingIntervalMilliseconds)
+  }, [processingIntervalMilliseconds])
 
   useEffect(() => {
     if (dialog === null) return undefined
@@ -506,6 +521,41 @@ export function SettingsSurface({
                   {intl.formatMessage(messages.numberNotationEngineering)}
                 </option>
               </select>
+            </label>
+          </section>
+        ) : null}
+        {!developmentOnly ? (
+          <section className="settings-surface__panel settings-surface__panel--processing">
+            <div className="settings-surface__copy">
+              <h2>{intl.formatMessage(messages.processingTitle)}</h2>
+              <p>{intl.formatMessage(messages.processingDescription)}</p>
+            </div>
+            <label className="settings-surface__processing-control">
+              <span className="settings-surface__processing-label">
+                {intl.formatMessage(messages.processingInterval)}
+              </span>
+              <span className="settings-surface__processing-value">
+                {intl.formatMessage(messages.processingIntervalValue, {
+                  milliseconds: processingIntervalDraft,
+                })}
+              </span>
+              <input
+                type="range"
+                min={33}
+                max={200}
+                step={1}
+                value={processingIntervalDraft}
+                aria-label={intl.formatMessage(messages.processingInterval)}
+                disabled={!processingIntervalAvailable}
+                style={{
+                  '--settings-processing-progress': `${((processingIntervalDraft - 33) / 167) * 100}%`,
+                } as CSSProperties}
+                onChange={(event) => {
+                  const milliseconds = event.currentTarget.valueAsNumber
+                  setProcessingIntervalDraft(milliseconds)
+                  void onProcessingIntervalChange(milliseconds)
+                }}
+              />
             </label>
           </section>
         ) : null}

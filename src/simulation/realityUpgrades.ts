@@ -440,16 +440,11 @@ function applyRealityUpgradeEffect(
       },
     }
   }
-  return {
-    ...state,
-    timeline: {
-      ...state.timeline,
-      doubleTime: {
-        ...state.timeline.doubleTime,
-        bankSeconds: effect.numericValue,
-      },
-    },
-  }
+  // Effect type 8 is the authored grant for the retired consumable Double
+  // Time bank. Keep accepting it so the Unity catalog remains compatible,
+  // but ownership now supplies a permanent whole-game speed multiplier and
+  // the legacy grant must not recreate mutable runtime state.
+  return state
 }
 
 function getUpgradeOwnership(
@@ -483,6 +478,9 @@ function setUpgradeOwnership(
         doubleTime: {
           ...state.timeline.doubleTime,
           unlocked: value,
+          enabled: false,
+          bankSeconds: 0,
+          rate: 0,
         },
       },
     }

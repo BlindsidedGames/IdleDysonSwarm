@@ -15,10 +15,10 @@ import {
   evaluateCanonicalInfinityBoundary,
   prepareCanonicalEventTimeContext,
   prepareCanonicalEventTimeContextVariants,
+  withCanonicalEventTimeAutomationInterval,
   type CanonicalEventTimeContext,
   type CanonicalEventTimeState,
 } from './canonicalEventTimeModel'
-import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { SIMULATION_UPGRADE_DEFINITIONS } from './dreamEducationUpgrades'
 import { advanceEventTime } from './eventTime'
 import {
@@ -357,9 +357,15 @@ const artifactDefinitions = new Map<
   ['speed1', artifactDefinition('speed1', [2, 3.5])],
 ])
 
-describe('canonical whole-game event-time model', () => {
+/**
+ * Legacy parity coverage for the pre-rewrite event-time adapter. Authoritative
+ * active and Stored Time acceptance belongs in gameStep.test.ts; this suite
+ * must not define cadence, grouping, or partition-equivalence requirements.
+ */
+describe('legacy canonical event-time parity adapter', () => {
   test('shares prepared definitions between active and stored-time contexts', () => {
-    const variants = prepareCanonicalEventTimeContextVariants(context())
+    const source = context()
+    const variants = prepareCanonicalEventTimeContextVariants(source)
 
     expect(variants.active.mode).toBe('active')
     expect(variants.storedTime.mode).toBe('stored-time')
@@ -381,6 +387,17 @@ describe('canonical whole-game event-time model', () => {
     expect(prepareCanonicalEventTimeContext(variants.storedTime)).toBe(
       variants.storedTime,
     )
+    expect(prepareCanonicalEventTimeContextVariants(source)).toBe(variants)
+    const adjusted = withCanonicalEventTimeAutomationInterval(
+      variants.storedTime,
+      2,
+      0.5,
+    )
+    expect(withCanonicalEventTimeAutomationInterval(
+      variants.storedTime,
+      2,
+      0.5,
+    )).toBe(adjusted)
   })
 
   test.each([undefined, 'background'])(
@@ -569,274 +586,6 @@ describe('canonical whole-game event-time model', () => {
     expect(next.facilities.data_centers[0]).toBeGreaterThan(0)
   })
 
-  test('recalculates timer production and Shoulders rates at representative boundaries', () => {
-    const source = baseState()
-    const gameState: CanonicalGameStateV1 = {
-      ...source,
-      dyson: {
-        ...source.dyson,
-        workers: 100,
-        researchers: 100,
-        facilities: {
-          ...source.dyson.facilities,
-          servers: [0, 1],
-        },
-      },
-      research: {
-        ...source.research,
-        levelsById: {
-          ...source.research.levelsById,
-          'research.science_boost': 2,
-        },
-      },
-      skills: {
-        ...source.skills,
-        byId: {
-          ...source.skills.byId,
-          androids: { ...source.skills.byId.androids!, owned: true },
-          pocketAndroids: {
-            ...source.skills.byId.pocketAndroids!,
-            owned: true,
-          },
-          superRadiantScattering: {
-            ...source.skills.byId.superRadiantScattering!,
-            owned: true,
-          },
-          scientificPlanets: {
-            ...source.skills.byId.scientificPlanets!,
-            owned: true,
-          },
-          shouldersOfGiants: {
-            ...source.skills.byId.shouldersOfGiants!,
-            owned: true,
-          },
-          shouldersOfTheFallen: {
-            ...source.skills.byId.shouldersOfTheFallen!,
-            owned: true,
-          },
-        },
-      },
-      timeline: {
-        ...source.timeline,
-        automationTimeUntilNextEvent: 10,
-      },
-    }
-    const representativeContext: CanonicalEventTimeContext = {
-      ...context(REALITY_UPGRADE_DEFINITIONS, 10),
-      mode: 'stored-time',
-      automationActionIntervalSeconds: 0.1,
-    }
-    const advanceGroup = (state: CanonicalEventTimeState) =>
-      advanceEventTime({
-        startingState: new CanonicalEventTimeModel(
-          state,
-          representativeContext,
-        ),
-        durationSeconds: 10,
-        automationIntervalSeconds: 10,
-        automationTimeUntilNextEvent: 10,
-        infinityMinimumCycleSeconds: 100,
-        processingBudgetMilliseconds: 0,
-      })
-    const run = () => {
-      const first = advanceGroup(carrier(gameState))
-      const firstState = first.candidateState.state
-      const second = advanceGroup(firstState)
-      return { firstState, secondState: second.candidateState.state }
-    }
-
-    const firstRun = run()
-    const repeat = run()
-    const firstGame = firstRun.firstState.gameState
-    const secondGame = firstRun.secondState.gameState
-    const firstManagers = firstGame.dyson.facilities.ai_managers[0]
-    const secondManagers = secondGame.dyson.facilities.ai_managers[0]
-    const firstScienceLevel =
-      firstGame.research.levelsById['research.science_boost'] ?? 0
-    const secondScienceLevel =
-      secondGame.research.levelsById['research.science_boost'] ?? 0
-
-    expect(firstGame.skills.byId.androids?.timerSeconds).toBe(10)
-    expect(firstGame.skills.byId.pocketAndroids?.timerSeconds).toBe(10)
-    expect(firstGame.skills.byId.superRadiantScattering?.timerSeconds)
-      .toBe(10)
-    expect(secondGame.skills.byId.superRadiantScattering?.timerSeconds)
-      .toBe(20)
-    expect(secondManagers - firstManagers).toBeGreaterThan(firstManagers)
-    expect(secondScienceLevel - firstScienceLevel)
-      .toBeGreaterThan(firstScienceLevel - 2)
-    expect(firstRun.secondState).toEqual(repeat.secondState)
-  })
-
-  test('does not refresh Stellar funding at a prevented Infinity horizon inside a representative interval', () => {
-    const source = baseState()
-    const gameState: CanonicalGameStateV1 = {
-      ...source,
-      dyson: {
-        ...source.dyson,
-        bots: 1,
-        botDistribution: 0,
-        facilities: {
-          ...source.dyson.facilities,
-          assembly_lines: [7, 0],
-        },
-      },
-      quantum: {
-        ...source.quantum,
-        divisionsPurchased: 19n,
-      },
-      skills: {
-        ...source.skills,
-        byId: {
-          ...source.skills.byId,
-          stellarSacrifices: {
-            ...source.skills.byId.stellarSacrifices!,
-            owned: true,
-          },
-        },
-      },
-      timeline: {
-        ...source.timeline,
-        automationTimeUntilNextEvent: 5,
-      },
-    }
-    const modelState: CanonicalEventTimeState = {
-      ...carrier(gameState, {
-        ...hydrated.skillEffectEvaluationSnapshot,
-        panelsPerSecond: 1e16,
-        panelLifetimeSeconds: 10,
-      }),
-      compatibilityTuning: {
-        ...hydrated.compatibilityTuning,
-        panelsPerSecMulti: 1e18,
-      },
-    }
-    const representativeContext: CanonicalEventTimeContext = {
-      ...context(REALITY_UPGRADE_DEFINITIONS, 5),
-      mode: 'stored-time',
-      automationActionIntervalSeconds: 0.1,
-    }
-    const result = advanceEventTime({
-      startingState: new CanonicalEventTimeModel(
-        modelState,
-        representativeContext,
-      ),
-      durationSeconds: 5,
-      automationIntervalSeconds: 5,
-      automationTimeUntilNextEvent: 5,
-      infinityMinimumCycleSeconds: 1 / 60,
-      processingBudgetMilliseconds: 0,
-    })
-
-    expect(result.completed).toBe(true)
-    expect(result.summary.ordinaryInfinityCount).toBe(0n)
-    expect(
-      result.events.filter(({ kind }) => kind === 'production-arrival'),
-    ).toHaveLength(1)
-    expect(result.candidateState.state.gameState.dyson.bots)
-      .toBeCloseTo(3.500000052154064, 10)
-    expect(
-      result.candidateState.state.gameState.dyson.facilities.planets[0],
-    ).toBeCloseTo(Math.pow(Math.log10(50), 2) / 5e12, 20)
-  })
-
-  test('orders ready and minimum-cycle Infinity boundaries around Stellar settlement', () => {
-    const createState = (
-      bots: number,
-      infinityCycleSeconds: number,
-    ): CanonicalEventTimeState => {
-      const source = baseState()
-      const gameState: CanonicalGameStateV1 = {
-        ...source,
-        dyson: {
-          ...source.dyson,
-          bots,
-          botDistribution: 0,
-          facilities: {
-            ...source.dyson.facilities,
-            assembly_lines: [7, 0],
-          },
-        },
-        quantum: {
-          ...source.quantum,
-          divisionsPurchased: 19n,
-        },
-        skills: {
-          ...source.skills,
-          byId: {
-            ...source.skills.byId,
-            stellarSacrifices: {
-              ...source.skills.byId.stellarSacrifices!,
-              owned: true,
-            },
-          },
-        },
-        research: {
-          ...source.research,
-          levelsById: { 'research.money_multiplier': 4 },
-          progressById: { 'research.money_multiplier': 0.75 },
-          automation: {
-            ...source.research.automation,
-            enabledById: {},
-          },
-        },
-        timeline: {
-          ...source.timeline,
-          automationTimeUntilNextEvent: 1,
-          infinityCycleSeconds,
-        },
-      }
-      return {
-        ...carrier(gameState, {
-          ...hydrated.skillEffectEvaluationSnapshot,
-          panelsPerSecond: 1e16,
-          panelLifetimeSeconds: 10,
-        }),
-        compatibilityTuning: {
-          ...hydrated.compatibilityTuning,
-          panelsPerSecMulti: 1e18,
-        },
-      }
-    }
-    const representativeContext: CanonicalEventTimeContext = {
-      ...context(REALITY_UPGRADE_DEFINITIONS, 1),
-      mode: 'stored-time',
-      automationActionIntervalSeconds: 0.1,
-    }
-    const advance = (
-      state: CanonicalEventTimeState,
-      durationSeconds: number,
-      minimumCycleSeconds: number,
-    ) => advanceEventTime({
-      startingState: new CanonicalEventTimeModel(
-        state,
-        representativeContext,
-      ),
-      durationSeconds,
-      automationIntervalSeconds: 1,
-      automationTimeUntilNextEvent: 1,
-      infinityMinimumCycleSeconds: minimumCycleSeconds,
-      processingBudgetMilliseconds: 0,
-    })
-
-    const ready = advance(createState(4.2, 1), 0.1, 1 / 60)
-    expect(ready.completed).toBe(true)
-    expect(ready.summary.ordinaryInfinityCount).toBe(1n)
-
-    const waiting = advance(createState(100, 0), 1, 0.5)
-    expect(waiting.completed).toBe(true)
-    expect(waiting.summary.ordinaryInfinityCount).toBe(0n)
-    expect(waiting.candidateState.state.gameState.research.levelsById)
-      .toEqual({ 'research.money_multiplier': 4 })
-    expect(waiting.candidateState.state.gameState.research.progressById)
-      .toEqual({ 'research.money_multiplier': 0.75 })
-    expect(
-      waiting.events.filter(({ kind }) => kind === 'production-arrival'),
-    ).toHaveLength(1)
-    expect(waiting.candidateState.state.gameState.dyson.bots)
-      .toBeCloseTo(0.7000000104308128, 10)
-  })
-
   test('advances every active Education subject during active time', () => {
     const educationIds = [
       'engineering',
@@ -894,11 +643,11 @@ describe('canonical whole-game event-time model', () => {
       expect(
         result.candidateState.state.gameState.dream.education[id]
           .progress,
-      ).toBe(3)
+      ).toBe(1)
     }
   })
 
-  test('freezes Dream, Reality, and Dream Double Time under Stored Time while Dyson production advances', () => {
+  test('advances Dream and Reality under Stored Time while leaving retired Double Time state untouched', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {
       ...source,
@@ -967,11 +716,7 @@ describe('canonical whole-game event-time model', () => {
         },
       },
     }
-    const beforeExcluded = {
-      dream: structuredClone(gameState.dream),
-      reality: structuredClone(gameState.reality),
-      doubleTime: structuredClone(gameState.timeline.doubleTime),
-    }
+    const beforeDoubleTime = structuredClone(gameState.timeline.doubleTime)
     const storedContext = prepareCanonicalEventTimeContextVariants(
       context(),
     ).storedTime
@@ -990,11 +735,9 @@ describe('canonical whole-game event-time model', () => {
     expect(result.completed).toBe(true)
     expect(result.diagnosticCode).toBeUndefined()
     const next = result.candidateState.state.gameState
-    expect({
-      dream: next.dream,
-      reality: next.reality,
-      doubleTime: next.timeline.doubleTime,
-    }).toEqual(beforeExcluded)
+    expect(next.dream).not.toEqual(gameState.dream)
+    expect(next.reality).not.toEqual(gameState.reality)
+    expect(next.timeline.doubleTime).toEqual(beforeDoubleTime)
     expect(next.dyson.money).toBeGreaterThan(gameState.dyson.money)
     expect(next.dyson.bots).toBeGreaterThan(gameState.dyson.bots)
     expect(next.research.levelsById).not.toEqual(
@@ -1022,7 +765,7 @@ describe('canonical whole-game event-time model', () => {
     expect(activeNext.reality.universeDesignationCount).toBeGreaterThan(
       gameState.reality.universeDesignationCount,
     )
-    expect(activeNext.timeline.doubleTime).not.toEqual(
+    expect(activeNext.timeline.doubleTime).toEqual(
       gameState.timeline.doubleTime,
     )
     expect(activeResult.summary).toMatchObject({
@@ -1036,7 +779,7 @@ describe('canonical whole-game event-time model', () => {
     expect(activeNext.statistics.lifetime.realityWorkers).toBe(4n)
   })
 
-  test('batches adaptive railgun rounds across Double Time event boundaries', () => {
+  test('batches at most one railgun volley at each automation boundary', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {
       ...source,
@@ -1085,15 +828,15 @@ describe('canonical whole-game event-time model', () => {
     expect(result.completed).toBe(true)
     expect(result.diagnosticCode).toBeUndefined()
     const next = result.candidateState.state.gameState
-    expect(next.dream.resources.swarmPanels).toBeGreaterThan(20n)
+    expect(next.dream.resources.swarmPanels).toBeGreaterThan(0n)
     expect(next.dream.resources.railgunCharge).toBeGreaterThanOrEqual(0)
     expect(next.dream.railgun.lastRoundsFired).toBeGreaterThan(0)
     expect(next.dream.railgun.lastRoundsFired).toBeLessThanOrEqual(10)
     expect(next.dream.railgun.reservedPanels).toBeGreaterThanOrEqual(0n)
-    expect(next.timeline.doubleTime.bankSeconds).toBeCloseTo(97.8)
+    expect(next.timeline.doubleTime.bankSeconds).toBe(100)
   })
 
-  test('uses the prepared fractional multiplier when Double Time expires mid-tick', () => {
+  test('does not consume the retired Double Time bank inside the domain model', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {
       ...source,
@@ -1132,11 +875,11 @@ describe('canonical whole-game event-time model', () => {
     expect(result.completed).toBe(true)
     expect(result.diagnosticCode).toBeUndefined()
     const next = result.candidateState.state.gameState
-    expect(next.timeline.doubleTime.bankSeconds).toBe(0)
+    expect(next.timeline.doubleTime.bankSeconds).toBe(0.05)
     expect(next.dream.resources.swarmPanels).toBe(1n)
     expect(next.dream.railgun.lastRoundsFired).toBe(1)
     expect(next.dream.railgun.shotsRemaining).toBe(9)
-    expect(next.dream.railgun.fireProgress).toBeCloseTo(0.05)
+    expect(next.dream.railgun.fireProgress).toBe(0)
   })
 
   test('finalizes elapsed statistics before a bot-cap persistence pause', () => {
@@ -1272,83 +1015,6 @@ describe('canonical whole-game event-time model', () => {
     expect(quantum.state.gameState.quantum.pointsEarned).toBe(1n)
   })
 
-  test('uses exact Infinity boundaries and records a colliding interval summary once after resets', () => {
-    const source = baseState()
-    const collision: CanonicalGameStateV1 = {
-      ...source,
-      dyson: {
-        ...source.dyson,
-        bots: 4.2e19,
-      },
-      infinity: {
-        ...source.infinity,
-        points: 42n,
-      },
-      quantum: {
-        ...source.quantum,
-        unlocks: {
-          ...source.quantum.unlocks,
-          quantumEntanglement: true,
-        },
-      },
-      dream: {
-        ...source.dream,
-        disasterStage: 0n,
-        resources: {
-          ...source.dream.resources,
-          villages: 25,
-          cities: 0,
-        },
-      },
-    }
-    expect(
-      evaluateCanonicalInfinityBoundary(carrier(collision), 1),
-    ).toEqual({ status: 'not-ready' })
-
-    const result = advanceEventTime({
-      startingState: new CanonicalEventTimeModel(
-        carrier(collision),
-        context(),
-      ),
-      durationSeconds: 1,
-      automationIntervalSeconds: 1,
-      automationTimeUntilNextEvent: 1,
-      infinityMinimumCycleSeconds: 1,
-      processingBudgetMilliseconds: 0,
-      queuedInputs: [
-        {
-          timeSeconds: 1,
-          kind: CANONICAL_QUANTUM_LEAP_INPUT,
-          id: 'collision',
-        },
-      ],
-    })
-
-    expect(result.diagnosticCode).toBeUndefined()
-    expect(result.completed).toBe(true)
-    expect(result.diagnosticCode).toBeUndefined()
-    expect(result.events.map((event) => event.kind)).toEqual([
-      'production-arrival',
-      'queued-input',
-      'automation',
-    ])
-    expect(result.summary).toMatchObject({
-      ordinaryInfinityCount: 1n,
-      ordinaryInfinityPoints: 1n,
-      meteorDreamResets: 1n,
-      strangeMatter: 1n,
-      realityWorkers: 4n,
-    })
-    const statistics = result.candidateState.state.gameState.statistics
-    expect(statistics.trackedSimulatedSeconds).toBe(1)
-    expect(statistics.lifetime.simulatedSeconds).toBe(1)
-    expect(statistics.lifetime.ordinaryInfinityCount).toBe(1n)
-    expect(statistics.lifetime.ordinaryInfinityPoints).toBe(1n)
-    expect(statistics.lifetime.meteorDreamResets).toBe(1n)
-    expect(statistics.lifetime.strangeMatter).toBe(1n)
-    expect(statistics.lifetime.realityWorkers).toBe(4n)
-  })
-
   test('continues Infinity progression under the Stored Time domain policy', () => {
     const source = baseState()
     const result = advanceEventTime({
@@ -1428,14 +1094,25 @@ describe('canonical whole-game event-time model', () => {
       expect(result.summary.ordinaryInfinityCount).toBe(0n)
       expect(result.summary.breakInfinityCount).toBe(0n)
       expect(result.candidateState.state.gameState.infinity.points).toBe(0n)
-      expect(
-        result.candidateState.state.gameState.infinity
-          .currentCyclePeakIpPerMinute,
-      ).toBeGreaterThan(0)
-      expect(
-        result.candidateState.state.gameState.infinity
-          .currentCyclePeakReward,
-      ).toBeGreaterThanOrEqual(1n)
+      if (storedTime) {
+        expect(
+          result.candidateState.state.gameState.infinity
+            .currentCyclePeakIpPerMinute,
+        ).toBe(0)
+        expect(
+          result.candidateState.state.gameState.infinity
+            .currentCyclePeakReward,
+        ).toBe(0n)
+      } else {
+        expect(
+          result.candidateState.state.gameState.infinity
+            .currentCyclePeakIpPerMinute,
+        ).toBeGreaterThan(0)
+        expect(
+          result.candidateState.state.gameState.infinity
+            .currentCyclePeakReward,
+        ).toBeGreaterThanOrEqual(1n)
+      }
       expect(result.candidateState.state.gameState.dyson.bots).toBeGreaterThanOrEqual(
         4.2e19,
       )
@@ -1462,118 +1139,6 @@ describe('canonical whole-game event-time model', () => {
     )
 
     expect(model.timeToNextMaterialEvent(10, 1)).toBeGreaterThan(0)
-  })
-
-  test('publishes one dynamic recalculation per material interval and survives split reconstruction', () => {
-    const source = baseState()
-    const dynamicSource: CanonicalGameStateV1 = {
-      ...source,
-      dyson: {
-        ...source.dyson,
-        workers: 40,
-        researchers: 10,
-        facilities: {
-          ...source.dyson.facilities,
-          assembly_lines: [5, 0],
-          ai_managers: [2, 0],
-          servers: [1, 0],
-        },
-      },
-      skills: {
-        ...source.skills,
-        byId: {
-          ...source.skills.byId,
-          rocketMania: {
-            ...source.skills.byId.rocketMania!,
-            owned: true,
-          },
-        },
-      },
-      timeline: {
-        ...source.timeline,
-        automationTimeUntilNextEvent: 0.5,
-      },
-    }
-    const previousSnapshot = {
-      ...hydrated.skillEffectEvaluationSnapshot,
-      panelsPerSecond: 400,
-      panelLifetimeSeconds: 20,
-    }
-    const originalCarrier = carrier(
-      dynamicSource,
-      previousSnapshot,
-    )
-    const untouched = structuredClone(originalCarrier)
-    const whole = advanceEventTime({
-      startingState: new CanonicalEventTimeModel(
-        originalCarrier,
-        context(REALITY_UPGRADE_DEFINITIONS, 0.5),
-      ),
-      durationSeconds: 1,
-      automationIntervalSeconds: 0.5,
-      automationTimeUntilNextEvent: 0.5,
-      infinityMinimumCycleSeconds: 10,
-      processingBudgetMilliseconds: 0,
-    })
-    const first = advanceEventTime({
-      startingState: new CanonicalEventTimeModel(
-        originalCarrier,
-        context(REALITY_UPGRADE_DEFINITIONS, 0.5),
-      ),
-      durationSeconds: 0.5,
-      automationIntervalSeconds: 0.5,
-      automationTimeUntilNextEvent: 0.5,
-      infinityMinimumCycleSeconds: 10,
-      processingBudgetMilliseconds: 0,
-    })
-    const expectedFirst = deriveBasicDysonState(
-      first.candidateState.state.gameState,
-      originalCarrier.compatibilityTuning,
-      originalCarrier.entitlements,
-      previousSnapshot,
-    )
-    expect(expectedFirst.ok).toBe(true)
-    if (!expectedFirst.ok) {
-      throw new Error(JSON.stringify(expectedFirst.issues))
-    }
-    expect(first.candidateState.state.evaluationSnapshot).toEqual(
-      expectedFirst.value.nextEvaluationSnapshot,
-    )
-    const reconstructed = new CanonicalEventTimeModel(
-      structuredClone(first.candidateState.state),
-      context(REALITY_UPGRADE_DEFINITIONS, 0.5),
-    )
-    const second = advanceEventTime({
-      startingState: reconstructed,
-      durationSeconds: 0.5,
-      automationIntervalSeconds: 0.5,
-      automationTimeUntilNextEvent:
-        first.automationTimeUntilNextEvent,
-      infinityMinimumCycleSeconds: 10,
-      processingBudgetMilliseconds: 0,
-    })
-
-    expect(originalCarrier).toEqual(untouched)
-    expect(second.completed).toBe(true)
-    expect(second.candidateState.state.compatibilityTuning).toEqual(
-      whole.candidateState.state.compatibilityTuning,
-    )
-    expect(second.candidateState.state.evaluationSnapshot).toEqual(
-      whole.candidateState.state.evaluationSnapshot,
-    )
-    expect(
-      second.candidateState.state.gameState.timeline,
-    ).toEqual(whole.candidateState.state.gameState.timeline)
-    expect(
-      second.candidateState.state.gameState.statistics.lifetime,
-    ).toEqual(
-      whole.candidateState.state.gameState.statistics.lifetime,
-    )
-    expect(
-      second.candidateState.state.gameState.statistics.currentQuantumRun,
-    ).toEqual(
-      whole.candidateState.state.gameState.statistics.currentQuantumRun,
-    )
   })
 
   test('fails closed when an owned Reality artifact definition is absent', () => {
@@ -1604,49 +1169,6 @@ describe('canonical whole-game event-time model', () => {
       path: 'gameData.realityUpgrades.translation1',
     })
     expect(model.state.gameState.infinity.points).toBe(42n)
-  })
-
-  test('keeps Tinker timing backend-owned and lands its reward at the exact material horizon', () => {
-    const source = baseState()
-    const model = new CanonicalEventTimeModel(
-      carrier({
-        ...source,
-        dyson: {
-          ...source.dyson,
-          manualCreationIntervalSeconds: 2,
-        },
-        timeline: {
-          ...source.timeline,
-          automationTimeUntilNextEvent: 10,
-        },
-      }),
-      context(REALITY_UPGRADE_DEFINITIONS, 10),
-    )
-
-    expect(model.startTinker(false)).toBe(true)
-    expect(model.timeToNextMaterialEvent(10, 10)).toBe(1.9)
-
-    const result = advanceEventTime({
-      startingState: model,
-      durationSeconds: 1.9,
-      automationIntervalSeconds: 10,
-      automationTimeUntilNextEvent: 10,
-      infinityMinimumCycleSeconds: 10,
-      processingBudgetMilliseconds: 0,
-    })
-
-    expect(result.diagnosticCode).toBeUndefined()
-    expect(result.completed).toBe(true)
-    expect(result.candidateState.state.gameState.dyson.bots).toBe(1)
-    expect(
-      result.candidateState.state.gameState.dyson
-        .manualCreationIntervalSeconds,
-    ).toBe(1)
-    expect(result.candidateState.state.tinker).toMatchObject({
-      running: false,
-      repeat: false,
-      elapsedSeconds: 0,
-    })
   })
 
   test('advances goals through the active-time event boundary', () => {

@@ -638,6 +638,70 @@ describe('canonical game-state mapping', () => {
     ).toEqual(session.prepare(session.state).copyValidatedState())
   })
 
+  test('migrates the retired Double Time bank into Stored Time exactly once', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const legacy = prepared.copyValidatedState() as Record<string, unknown>
+    legacy.offlineTime = 80
+    legacy.maxOfflineTime = 100
+    delete legacy.processingRewriteMigrated
+    const dreamProgression = legacy.sdPrestige as Record<string, unknown>
+    dreamProgression.doubleTimeOwned = true
+    dreamProgression.doDoubleTime = true
+    dreamProgression.doubleTime = 50
+    dreamProgression.doubleTimeRate = 10
+
+    const migrated = hydrateGameState(PreparedSave.fromDecoded(legacy))
+    expect(migrated.state.timeline).toMatchObject({
+      storedTimeAvailableSeconds: 100,
+      storedTimeCapacitySeconds: 100,
+      processing: {
+        rewriteMigrated: true,
+        activeIntervalMilliseconds: 33,
+        storedTimePreset: 'balanced',
+      },
+      doubleTime: {
+        unlocked: true,
+        enabled: false,
+        bankSeconds: 0,
+        rate: 0,
+      },
+    })
+
+    const persisted = dehydrateGameState(migrated).copyValidatedState() as Record<string, unknown>
+    expect(persisted.processingRewriteMigrated).toBe(true)
+    expect((persisted.sdPrestige as Record<string, unknown>).doubleTime).toBe(0)
+
+    persisted.offlineTime = 40
+    ;(persisted.sdPrestige as Record<string, unknown>).doubleTime = 99
+    const reloaded = hydrateGameState(PreparedSave.fromDecoded(persisted))
+    expect(reloaded.state.timeline.storedTimeAvailableSeconds).toBe(40)
+    expect(reloaded.state.timeline.doubleTime.unlocked).toBe(true)
+  })
+
+  test('round-trips the active cadence and Stored Time accuracy preset', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+    const candidate = {
+      ...session.state,
+      timeline: {
+        ...session.state.timeline,
+        processing: {
+          rewriteMigrated: true,
+          activeIntervalMilliseconds: 200,
+          storedTimePreset: 'accurate' as const,
+        },
+      },
+    }
+    const reloaded = hydrateGameState(dehydrateGameState(session, candidate))
+    expect(reloaded.state.timeline.processing).toEqual(
+      candidate.timeline.processing,
+    )
+  })
+
   test('rejects invalid canonical ranges before dehydration', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),

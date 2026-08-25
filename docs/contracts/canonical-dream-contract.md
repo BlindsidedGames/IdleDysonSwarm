@@ -7,19 +7,23 @@ content inputs rather than hidden frontend behavior.
 
 ## Tick ownership
 
-One logical Dream interval uses a prepared Double Time multiplier and a
-positive duration. Every producer count and progression gate is captured from
-the interval-start snapshot. Outputs produced in the interval cannot themselves
-produce until the next interval.
+One logical Dream interval uses the whole-game speed selected by the shared
+game step and a positive duration. Every producer count and progression gate
+is captured from the interval-start snapshot. Outputs produced in the interval
+cannot themselves produce until the next interval.
 
 The active scheduler owns interval ordering:
 
-1. prepare Double Time from the available bank;
-2. run Foundational, Information, education and Space production;
-3. run independent automation conversions and railgun work;
-4. publish timer progress and debit the prepared Double Time amount;
-5. evaluate automatic Dream resets;
-6. continue to bot-cap and Infinity boundaries.
+1. evaluate one automation boundary, including conversions and at most one
+   railgun volley;
+2. evaluate automatic Dream reset and Infinity opportunities;
+3. run Foundational, Information, education and Space production for the
+   elapsed game time;
+4. publish timer and production progress.
+
+Owning the former Double Time upgrade now gives permanent 2x whole-game speed.
+The legacy enabled/rate/bank fields remain save-compatibility inputs only and
+do not form a second Dream clock.
 
 ## Foundational and Information eras
 
@@ -86,6 +90,8 @@ timer objects are downstream concerns.
 ## Integration gate
 
 Domain-unit coverage does not make Dream part of the canonical whole-game
-engine. Completion requires scheduler routing, command adapters, partitioned
-time equivalence, reset collision ordering, and commit/reload acceptance
-through `TransactionalGameApplication`.
+engine. Completion requires shared-step scheduler routing, command adapters,
+deterministic boundary ordering for a supplied update sequence, reset collision
+ordering, and commit/reload acceptance through `TransactionalGameApplication`.
+Arbitrary partition equivalence is intentionally not required for coarse
+Stored Time updates.

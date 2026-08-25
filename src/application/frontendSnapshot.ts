@@ -62,7 +62,6 @@ import {
   type DreamPurchaseCommand,
 } from '../simulation/dreamFoundationalInformation'
 import {
-  DREAM_SPACE_AGE_CONSTANTS,
   purchaseDreamSpaceAge,
   type DreamSpaceAgePurchase,
 } from '../simulation/dreamSpaceAge'
@@ -123,10 +122,7 @@ import {
   UNITY_RESEARCH_PRESENTATION_ORDER,
   type CanonicalResearchPurchasePreview,
 } from '../simulation/researchAutomation'
-import {
-  prepareDreamDoubleTimeTick,
-  upgradeStoredTimeCapacity,
-} from '../simulation/timeResources'
+import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
 import {
   CANONICAL_PLAYER_COMMAND_KINDS,
   CANONICAL_PLAYER_COMMAND_SUPPORT,
@@ -421,20 +417,14 @@ export interface FrontendCanonicalResources {
   readonly time: {
     readonly storedTimeAvailableSeconds: number
     readonly storedTimeCapacitySeconds: number
-    readonly doubleTimeBankSeconds: number
   }
 }
 
-type TimelineProgression = Omit<
+type TimelineProgression = Pick<
   TimelineState,
-  | 'storedTimeAvailableSeconds'
-  | 'storedTimeCapacitySeconds'
-  | 'doubleTime'
+  'processing' | 'infinityCycleSeconds'
 > & {
-  readonly doubleTime: Omit<
-    TimelineState['doubleTime'],
-    'bankSeconds'
-  >
+  readonly doubleTime: Pick<TimelineState['doubleTime'], 'unlocked'>
 }
 
 export interface FrontendCanonicalProgression {
@@ -728,8 +718,8 @@ export interface FrontendRealityDerivedFacts {
 
 export interface FrontendDreamDerivedFacts {
   /**
-   * Production facts describe the current canonical 100 ms Dream interval.
-   * The application prepares this multiplier from the saved Double Time state;
+   * Production facts describe the current shared-step Dream rate basis.
+   * The application prepares this multiplier from permanent game-speed state;
    * frontends must not infer or apply an additional multiplier.
    */
   readonly productionBasis: 'current-rate'
@@ -966,11 +956,6 @@ export interface FrontendGameplayPreviews {
     }
   }
   readonly time: {
-    readonly doubleTimeRate: {
-      readonly minimum: number
-      readonly maximum: number
-      readonly current: number
-    }
     readonly storedCapacity: FrontendStoredCapacityPreview
     readonly storedSpend: {
       readonly maximumSeconds: number
@@ -1374,7 +1359,6 @@ function selectResources(
         state.timeline.storedTimeAvailableSeconds,
       storedTimeCapacitySeconds:
         state.timeline.storedTimeCapacitySeconds,
-      doubleTimeBankSeconds: state.timeline.doubleTime.bankSeconds,
     }),
   }
 }
@@ -1433,26 +1417,10 @@ function selectProgression(
       unlocked: state.avocado.unlocked,
     }),
     timeline: reuseShallowDomain(previous?.timeline, {
-      eventClockInitialized: state.timeline.eventClockInitialized,
-      automationTimeUntilNextEvent:
-        state.timeline.automationTimeUntilNextEvent,
-      dysonAutomationTargetIndex:
-        state.timeline.dysonAutomationTargetIndex,
-      researchAutomationTargetIndex:
-        state.timeline.researchAutomationTargetIndex,
-      infinityBoundaryRemaining:
-        state.timeline.infinityBoundaryRemaining,
       infinityCycleSeconds: state.timeline.infinityCycleSeconds,
-      infinityCycleStartingPoints:
-        state.timeline.infinityCycleStartingPoints,
-      infinityHasPostResetStart:
-        state.timeline.infinityHasPostResetStart,
-      lastSuspendedAtLegacyText:
-        state.timeline.lastSuspendedAtLegacyText,
+      processing: state.timeline.processing,
       doubleTime: {
         unlocked: state.timeline.doubleTime.unlocked,
-        enabled: state.timeline.doubleTime.enabled,
-        rate: state.timeline.doubleTime.rate,
       },
     }),
     secretProgress: reuseShallowDomain(
@@ -1501,21 +1469,13 @@ function selectDerivedFacts(
   const reality = deriveReality
     ? advanceRealityWorkers(state, 0, context.realityWorkerTuning)
     : null
-  const doubleTimeTick = deriveSimulations
-    ? prepareDreamDoubleTimeTick(
-        state.timeline.doubleTime.unlocked,
-        state.timeline.doubleTime.bankSeconds,
-        state.timeline.doubleTime.rate,
-        DREAM_SPACE_AGE_CONSTANTS.tickSeconds,
-      )
-    : null
-  const dream = doubleTimeTick === null
-    ? null
-    : deriveCanonicalDreamDerivedFacts(state, {
-        effectiveDoubleTimeMultiplier: doubleTimeTick.effectiveMultiplier,
-        doubleTimeActive: doubleTimeTick.active,
-        doubleTimeRate: doubleTimeTick.rate,
+  const dream = deriveSimulations
+    ? deriveCanonicalDreamDerivedFacts(state, {
+        effectiveDoubleTimeMultiplier: 1,
+        doubleTimeActive: false,
+        doubleTimeRate: 0,
       })
+    : null
   const simulations = dream === null
     ? previous!.simulations
     : selectFrontendSimulationsDerivedFacts(state, dream)
@@ -1563,12 +1523,11 @@ function selectDerivedFacts(
       peakReward: state.infinity.currentCyclePeakReward ?? 0n,
     },
     dream:
-      dream === null || doubleTimeTick === null
+      dream === null
         ? previous!.dream
         : {
             productionBasis: 'current-rate',
-            effectiveDoubleTimeMultiplier:
-              doubleTimeTick.effectiveMultiplier,
+            effectiveDoubleTimeMultiplier: 1,
             result: dream,
           },
     simulations,
@@ -2457,11 +2416,6 @@ function selectStoredTimePreviews(
     cheater,
   })
   return {
-    doubleTimeRate: {
-      minimum: 0,
-      maximum: 10,
-      current: state.timeline.doubleTime.rate,
-    },
     storedCapacity: {
       eligible: storedCapacity.upgraded,
       code: storedCapacity.upgraded

@@ -477,6 +477,36 @@
       "value": "Распределение не изменено."
     }
   ],
+  "dyson.bot-distribution.multitasking-efficiency": [
+    {
+      "type": 8,
+      "value": "workers",
+      "children": [
+        {
+          "type": 0,
+          "value": "Рабочие"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " и "
+    },
+    {
+      "type": 8,
+      "value": "science",
+      "children": [
+        {
+          "type": 0,
+          "value": "Наука"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": эффективность 100 %"
+    }
+  ],
   "dyson.bot-distribution.scientists": [
     {
       "type": 0,
@@ -2237,12 +2267,6 @@
       "value": "Переключить всё"
     }
   ],
-  "dyson.simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "Множитель времени"
-    }
-  ],
   "dyson.swarm.region": [
     {
       "type": 0,
@@ -2381,6 +2405,12 @@
     {
       "type": 0,
       "value": "Вкл."
+    }
+  ],
+  "infinity.automatic-target-warning": [
+    {
+      "type": 0,
+      "value": "Эта цель намного выше вашей лучшей точки Бесконечности в активной игре."
     }
   ],
   "infinity.break-target": [
@@ -2941,6 +2971,18 @@
       "value": "Вики"
     }
   ],
+  "offline-time.accuracy-preset": [
+    {
+      "type": 0,
+      "value": "Точность симуляции"
+    }
+  ],
+  "offline-time.accurate-preset": [
+    {
+      "type": 0,
+      "value": "Точный"
+    }
+  ],
   "offline-time.action-failed": [
     {
       "type": 0,
@@ -2951,6 +2993,12 @@
     {
       "type": 0,
       "value": "Всё"
+    }
+  ],
+  "offline-time.balanced-preset": [
+    {
+      "type": 0,
+      "value": "Сбалансированный"
     }
   ],
   "offline-time.calculating": [
@@ -2989,6 +3037,12 @@
     {
       "type": 1,
       "value": "capacity"
+    }
+  ],
+  "offline-time.close-summary": [
+    {
+      "type": 0,
+      "value": "Продолжить"
     }
   ],
   "offline-time.confirm-spend": [
@@ -3032,13 +3086,19 @@
   "offline-time.explanation": [
     {
       "type": 0,
-      "value": "Время вне игры накапливается, пока вас нет. Потратьте его, чтобы мгновенно продвинуть всю игру. Этот запас не связан с Двойным временем Симуляций."
+      "value": "Время вне игры накапливается, пока вас нет. Вы сами выбираете, когда потратить его, чтобы продвинуть игру."
+    }
+  ],
+  "offline-time.fast-preset": [
+    {
+      "type": 0,
+      "value": "Быстрый"
     }
   ],
   "offline-time.large-spend-disclosure": [
     {
       "type": 0,
-      "value": "При небольших тратах воспроизводится каждый такт автоматизации. При больших тратах выполняется до 4 096 типовых решений о покупке, а непрерывное производство продолжает работать; на пропущенных тактах покупки не совершаются. Результат может отличаться от точного воспроизведения, а разделение одного периода на несколько трат может изменить итог."
+      "value": "При больших шагах времени точность симуляции снижается."
     }
   ],
   "offline-time.maximum-storage": [
@@ -3077,6 +3137,12 @@
       "value": "Симуляция…"
     }
   ],
+  "offline-time.processing-heading": [
+    {
+      "type": 0,
+      "value": "Обработка офлайн-времени"
+    }
+  ],
   "offline-time.progress": [
     {
       "type": 1,
@@ -3111,10 +3177,22 @@
       "value": "duration"
     }
   ],
+  "offline-time.simulation-complete": [
+    {
+      "type": 0,
+      "value": "Офлайн-время обработано"
+    }
+  ],
   "offline-time.simulation-progress": [
     {
       "type": 0,
       "value": "Прогресс симуляции времени вне игры"
+    }
+  ],
+  "offline-time.speed-up": [
+    {
+      "type": 0,
+      "value": "Ускорить"
     }
   ],
   "offline-time.spend": [
@@ -3152,7 +3230,7 @@
   "offline-time.spend-success": [
     {
       "type": 0,
-      "value": "Игра продвинута на "
+      "value": "Потрачено времени вне игры: "
     },
     {
       "type": 1,
@@ -3179,6 +3257,18 @@
     {
       "type": 0,
       "value": "10 минут"
+    }
+  ],
+  "offline-time.time-remaining": [
+    {
+      "type": 0,
+      "value": "Оставшееся офлайн-время"
+    }
+  ],
+  "offline-time.time-simulated": [
+    {
+      "type": 0,
+      "value": "Смоделированное время"
     }
   ],
   "offline-time.usage-heading": [
@@ -4410,7 +4500,7 @@
   "reality.upgrades.double-time.description": [
     {
       "type": 0,
-      "value": "Накапливайте время вне игры и тратьте его в игре."
+      "value": "Навсегда ускоряет всю игру в 2 раза."
     }
   ],
   "reality.upgrades.double-time.title": [
@@ -5707,6 +5797,34 @@
       "value": "Формат чисел"
     }
   ],
+  "settings.processing.description": [
+    {
+      "type": 0,
+      "value": "Выберите частоту обновления игры. Большие интервалы снижают нагрузку на устройство, но уменьшают точность автоматизации."
+    }
+  ],
+  "settings.processing.interval": [
+    {
+      "type": 0,
+      "value": "Интервал обновления"
+    }
+  ],
+  "settings.processing.interval-value": [
+    {
+      "type": 1,
+      "value": "milliseconds"
+    },
+    {
+      "type": 0,
+      "value": " мс"
+    }
+  ],
+  "settings.processing.title": [
+    {
+      "type": 0,
+      "value": "Обработка игры"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -6423,12 +6541,6 @@
       "value": "В этой эпохе пока нет доступных панелей."
     }
   ],
-  "simulations.offline-time": [
-    {
-      "type": 0,
-      "value": "Время вне игры"
-    }
-  ],
   "simulations.panel.advanced-physics": [
     {
       "type": 0,
@@ -6947,12 +7059,6 @@
       "value": "Количество для покупки"
     }
   ],
-  "simulations.purchase-settings": [
-    {
-      "type": 0,
-      "value": "Настройки покупки"
-    }
-  ],
   "simulations.region": [
     {
       "type": 0,
@@ -6977,26 +7083,6 @@
     {
       "type": 1,
       "value": "value"
-    }
-  ],
-  "simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "Множитель времени"
-    }
-  ],
-  "simulations.time-multiplier.speed-increase": [
-    {
-      "type": 0,
-      "value": "Скорость Симуляции увеличена на "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
     }
   ],
   "simulations.unavailable": [
@@ -11912,10 +11998,34 @@
       "value": "Версия 3.1.2"
     }
   ],
+  "wiki.patch-notes.version-3-1-2.double-time": [
+    {
+      "type": 0,
+      "value": "Double Time теперь постоянно ускоряет все игровые системы в два раза."
+    }
+  ],
   "wiki.patch-notes.version-3-1-2.languages": [
     {
       "type": 0,
       "value": "Добавлены полные переводы на французский, немецкий, латиноамериканский испанский, бразильский португальский, упрощённый китайский, русский и японский языки, а также автоматический выбор по языку устройства и ручной выбор в настройках."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.offline-controls": [
+    {
+      "type": 0,
+      "value": "Добавлены быстрый, сбалансированный и точный режимы офлайн-времени, индикатор обработки, ускорение, безопасная отмена и итоговая сводка после каждого запуска."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.processing": [
+    {
+      "type": 0,
+      "value": "Активная игра и офлайн-время теперь используют одну игровую симуляцию, что повышает производительность и сохраняет постоянные награды и автоматизацию согласованными между обновлениями."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.update-interval": [
+    {
+      "type": 0,
+      "value": "Добавлена настройка обработки игры от 33 до 200 мс, позволяющая выбрать между более точной автоматизацией и меньшей нагрузкой на устройство."
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [

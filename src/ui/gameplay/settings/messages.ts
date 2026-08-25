@@ -94,6 +94,26 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Engineering',
     description: 'Engineering number notation option.',
   },
+  processingTitle: {
+    id: 'settings.processing.title',
+    defaultMessage: 'Game processing',
+    description: 'Heading for active game processing preferences.',
+  },
+  processingDescription: {
+    id: 'settings.processing.description',
+    defaultMessage: 'Choose how often the game updates. Larger intervals use less processing power but reduce automation accuracy.',
+    description: 'Explains the active update interval performance and accuracy tradeoff.',
+  },
+  processingInterval: {
+    id: 'settings.processing.interval',
+    defaultMessage: 'Update interval',
+    description: 'Label for the active game update interval control.',
+  },
+  processingIntervalValue: {
+    id: 'settings.processing.interval-value',
+    defaultMessage: '{milliseconds} ms',
+    description: 'Current active game update interval.',
+  },
   audioTitle: {
     id: 'settings.audio.title',
     defaultMessage: 'Audio',

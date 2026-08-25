@@ -477,6 +477,36 @@
       "value": "配分は変更されませんでした。"
     }
   ],
+  "dyson.bot-distribution.multitasking-efficiency": [
+    {
+      "type": 8,
+      "value": "workers",
+      "children": [
+        {
+          "type": 0,
+          "value": "ワーカー"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "と"
+    },
+    {
+      "type": 8,
+      "value": "science",
+      "children": [
+        {
+          "type": 0,
+          "value": "科学"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "の効率：100%"
+    }
+  ],
   "dyson.bot-distribution.scientists": [
     {
       "type": 0,
@@ -2237,12 +2267,6 @@
       "value": "すべて切り替え"
     }
   ],
-  "dyson.simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "時間倍率"
-    }
-  ],
   "dyson.swarm.region": [
     {
       "type": 0,
@@ -2381,6 +2405,12 @@
     {
       "type": 0,
       "value": "オン"
+    }
+  ],
+  "infinity.automatic-target-warning": [
+    {
+      "type": 0,
+      "value": "この目標は、アクティブプレイでの最高インフィニティポイントを大幅に上回っています。"
     }
   ],
   "infinity.break-target": [
@@ -2941,6 +2971,18 @@
       "value": "Wiki"
     }
   ],
+  "offline-time.accuracy-preset": [
+    {
+      "type": 0,
+      "value": "シミュレーション精度"
+    }
+  ],
+  "offline-time.accurate-preset": [
+    {
+      "type": 0,
+      "value": "高精度"
+    }
+  ],
   "offline-time.action-failed": [
     {
       "type": 0,
@@ -2951,6 +2993,12 @@
     {
       "type": 0,
       "value": "すべて"
+    }
+  ],
+  "offline-time.balanced-preset": [
+    {
+      "type": 0,
+      "value": "バランス"
     }
   ],
   "offline-time.calculating": [
@@ -2989,6 +3037,12 @@
     {
       "type": 1,
       "value": "capacity"
+    }
+  ],
+  "offline-time.close-summary": [
+    {
+      "type": 0,
+      "value": "続ける"
     }
   ],
   "offline-time.confirm-spend": [
@@ -3032,13 +3086,19 @@
   "offline-time.explanation": [
     {
       "type": 0,
-      "value": "ゲームを離れている間にオフライン時間が蓄積されます。使用するとゲーム全体を即座に進められます。この蓄積はシミュレーションの倍速時間とは別です。"
+      "value": "ゲームを離れている間にオフライン時間が蓄積されます。ゲームを進めたいときに使用できます。"
+    }
+  ],
+  "offline-time.fast-preset": [
+    {
+      "type": 0,
+      "value": "高速"
     }
   ],
   "offline-time.large-spend-disclosure": [
     {
       "type": 0,
-      "value": "少量を使用した場合は自動化の各ティックを再現します。大量に使用した場合は連続生産を進めながら、代表的な購入判断を最大4,096回実行します。省略されたティックでは購入しません。厳密な再現とは結果が異なる場合があり、同じ時間を複数回に分けて使用しても結果が変わることがあります。"
+      "value": "タイムステップが大きいほど、シミュレーションの精度は低下します。"
     }
   ],
   "offline-time.maximum-storage": [
@@ -3077,6 +3137,12 @@
       "value": "シミュレーション中…"
     }
   ],
+  "offline-time.processing-heading": [
+    {
+      "type": 0,
+      "value": "オフライン時間を処理中"
+    }
+  ],
   "offline-time.progress": [
     {
       "type": 1,
@@ -3111,10 +3177,22 @@
       "value": "duration"
     }
   ],
+  "offline-time.simulation-complete": [
+    {
+      "type": 0,
+      "value": "オフライン時間の処理完了"
+    }
+  ],
   "offline-time.simulation-progress": [
     {
       "type": 0,
       "value": "オフライン時間シミュレーション進捗"
+    }
+  ],
+  "offline-time.speed-up": [
+    {
+      "type": 0,
+      "value": "高速化"
     }
   ],
   "offline-time.spend": [
@@ -3152,7 +3230,7 @@
   "offline-time.spend-success": [
     {
       "type": 0,
-      "value": "ゲームを"
+      "value": "オフライン時間を "
     },
     {
       "type": 1,
@@ -3160,7 +3238,7 @@
     },
     {
       "type": 0,
-      "value": "進めました。"
+      "value": " 使用しました。"
     }
   ],
   "offline-time.storage-progress": [
@@ -3179,6 +3257,18 @@
     {
       "type": 0,
       "value": "10 分"
+    }
+  ],
+  "offline-time.time-remaining": [
+    {
+      "type": 0,
+      "value": "残りのオフライン時間"
+    }
+  ],
+  "offline-time.time-simulated": [
+    {
+      "type": 0,
+      "value": "シミュレートした時間"
     }
   ],
   "offline-time.usage-heading": [
@@ -4410,7 +4500,7 @@
   "reality.upgrades.double-time.description": [
     {
       "type": 0,
-      "value": "オフライン中に時間を集め、オンライン中に使用します。"
+      "value": "ゲーム全体が常に2倍速で進行します。"
     }
   ],
   "reality.upgrades.double-time.title": [
@@ -5707,6 +5797,34 @@
       "value": "数値表記"
     }
   ],
+  "settings.processing.description": [
+    {
+      "type": 0,
+      "value": "ゲームの更新頻度を選択します。間隔を長くすると処理負荷は下がりますが、自動化の精度も低下します。"
+    }
+  ],
+  "settings.processing.interval": [
+    {
+      "type": 0,
+      "value": "更新間隔"
+    }
+  ],
+  "settings.processing.interval-value": [
+    {
+      "type": 1,
+      "value": "milliseconds"
+    },
+    {
+      "type": 0,
+      "value": " ms"
+    }
+  ],
+  "settings.processing.title": [
+    {
+      "type": 0,
+      "value": "ゲーム処理"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -6423,12 +6541,6 @@
       "value": "この時代には利用可能なパネルがありません。"
     }
   ],
-  "simulations.offline-time": [
-    {
-      "type": 0,
-      "value": "オフライン時間"
-    }
-  ],
   "simulations.panel.advanced-physics": [
     {
       "type": 0,
@@ -6947,12 +7059,6 @@
       "value": "購入数"
     }
   ],
-  "simulations.purchase-settings": [
-    {
-      "type": 0,
-      "value": "購入設定"
-    }
-  ],
   "simulations.region": [
     {
       "type": 0,
@@ -6977,26 +7083,6 @@
     {
       "type": 1,
       "value": "value"
-    }
-  ],
-  "simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "時間倍率"
-    }
-  ],
-  "simulations.time-multiplier.speed-increase": [
-    {
-      "type": 0,
-      "value": "シミュレーション速度上昇 "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
     }
   ],
   "simulations.unavailable": [
@@ -11912,10 +11998,34 @@
       "value": "バージョン3.1.2"
     }
   ],
+  "wiki.patch-notes.version-3-1-2.double-time": [
+    {
+      "type": 0,
+      "value": "Double Time は、すべてのゲームシステムを常に通常の2倍の速度で進行させるようになりました。"
+    }
+  ],
   "wiki.patch-notes.version-3-1-2.languages": [
     {
       "type": 0,
       "value": "フランス語、ドイツ語、ラテンアメリカ向けスペイン語、ブラジルポルトガル語、簡体字中国語、ロシア語、日本語への完全翻訳を追加しました。端末の言語に応じた自動選択と、設定での手動切り替えにも対応しています。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.offline-controls": [
+    {
+      "type": 0,
+      "value": "オフライン時間に高速、バランス、正確のプリセット、処理進捗、スピードアップ、安全なキャンセル、各処理後の完了サマリーを追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.processing": [
+    {
+      "type": 0,
+      "value": "アクティブ時とオフライン時間の処理を同じゲームシミュレーションに統合し、永続的な獲得と自動化の一貫性を保ちながらパフォーマンスを向上しました。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.update-interval": [
+    {
+      "type": 0,
+      "value": "33～200 ms のゲーム処理設定を追加し、自動化の精度とデバイス負荷の軽減を選べるようにしました。"
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [

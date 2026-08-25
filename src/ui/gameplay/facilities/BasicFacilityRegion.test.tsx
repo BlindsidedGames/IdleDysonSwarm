@@ -393,10 +393,10 @@ describe('BasicFacilityRegion', () => {
     expect(animate).toHaveBeenCalledWith(
       [
         { offset: 0, transform: 'scaleX(0.2)' },
-        { offset: 1, transform: 'scaleX(0.30000000000000004)' },
+        { offset: 1, transform: 'scaleX(0.233)' },
       ],
       {
-        duration: 100,
+        duration: 33,
         easing: 'linear',
         fill: 'forwards',
       },

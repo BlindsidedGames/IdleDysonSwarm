@@ -273,17 +273,39 @@
   outline-offset: 2px;
 }
 
+.offline-time-job__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(0 0 0 / 72%);
+}
+
 .offline-time-job {
   display: grid;
+  inline-size: min(100%, 34rem);
   gap: 0.65rem;
-  margin-block-start: 0.8rem;
+  padding: 2rem;
+  border: 2px solid var(--theme-divider);
+  border-radius: 0.45rem;
+  background: var(--theme-panel);
+  color: white;
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 55%);
+}
+
+.offline-time-job h2,
+.offline-time-job p,
+.offline-time-job dl {
+  margin: 0;
 }
 
 .offline-time-job__progress {
   height: 0.55rem;
   overflow: hidden;
   border-radius: 0.2rem;
-  background: color-mix(in srgb, var(--offline-panel-raised) 75%, black);
+  background: color-mix(in srgb, var(--theme-selected) 75%, black);
 }
 
 .offline-time-job__progress > span {
@@ -291,15 +313,38 @@
   width: 100%;
   height: 100%;
   transform-origin: left center;
-  background: var(--offline-accent-bright);
+  background: var(--theme-accent);
 }
 
-.offline-time-card .offline-time-job__status {
-  color: var(--ids-text-secondary);
+.offline-time-job__status {
+  color: #eee7f8;
 }
 
 .offline-time-job .ui-button {
   justify-self: start;
+}
+
+.offline-time-job__summary {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.offline-time-job__summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem;
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.3rem;
+  background: var(--theme-selected);
+}
+
+.offline-time-job__summary dd {
+  margin: 0;
+  color: #00e1ff;
+  font-family: var(--font-family-numeric);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
 }
 
 .offline-time-card .offline-time-feedback--success {

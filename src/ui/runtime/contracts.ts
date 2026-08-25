@@ -243,6 +243,7 @@ export interface UiRuntimeStoredTimeControls {
   status(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
   subscribe(listener: () => void): () => void
   cancel(): void
+  speedUp?(): void
 }
 
 export interface UiRuntimeSaveExportSnapshot {

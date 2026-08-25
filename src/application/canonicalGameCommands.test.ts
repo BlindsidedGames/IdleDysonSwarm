@@ -209,12 +209,13 @@ const COMMAND_EXAMPLES = [
     kind: 'avocado.complete-meditation-step',
     requiredStepIndex: 0,
   },
-  { kind: 'time.set-double-time-rate', rate: 4 },
   { kind: 'time.upgrade-stored-capacity' },
   {
     kind: 'time.request-stored-time-spend',
     requestedSeconds: 120,
   },
+  { kind: 'time.set-stored-time-preset', preset: 'balanced' },
+  { kind: 'settings.set-processing-interval', milliseconds: 33 },
   {
     kind: 'settings.set-navigation-item-visible',
     item: 'story',
@@ -514,30 +515,6 @@ describe('canonical game command router', () => {
       code: 'avocado:fed',
     })
 
-    const timeInput = {
-      ...state(),
-      timeline: {
-        ...state().timeline,
-        doubleTime: {
-          ...state().timeline.doubleTime,
-          unlocked: true,
-          rate: 0,
-        },
-      },
-    }
-    const time = routeCanonicalGameCommand(
-      timeInput,
-      { kind: 'time.set-double-time-rate', rate: 7.9 },
-      options(),
-    )
-    expect(time).toMatchObject({
-      accepted: true,
-      changed: true,
-      code: 'time-double-rate:set',
-      state: {
-        timeline: { doubleTime: { rate: 7 } },
-      },
-    })
   })
 
   test('synchronizes bot allocation immediately when selecting a preset', () => {
@@ -983,38 +960,6 @@ describe('canonical game command router', () => {
     expect(original.timeline.storedTimeCapacitySeconds).toBe(100)
   })
 
-  test('does not call runtime evaluation for an accepted no-op', () => {
-    const original = {
-      ...state(),
-      timeline: {
-        ...state().timeline,
-        doubleTime: {
-          ...state().timeline.doubleTime,
-          unlocked: true,
-          rate: 4,
-        },
-      },
-    }
-    const evaluate = vi.fn()
-    const originalCarriers = carriers()
-    const result = routeCanonicalGameCommand(
-      original,
-      { kind: 'time.set-double-time-rate', rate: 4 },
-      {
-        runtimeCarriers: originalCarriers,
-        runtimeEvaluation: { evaluate },
-      },
-    )
-
-    expect(result).toMatchObject({
-      accepted: true,
-      changed: false,
-      code: 'time-double-rate:unchanged',
-    })
-    expect(result.state).toBe(original)
-    expect(result.runtimeCarriers).toBe(originalCarriers)
-    expect(evaluate).not.toHaveBeenCalled()
-  })
 })
 
 function megaPurchaseState(): CanonicalGameStateV1 {

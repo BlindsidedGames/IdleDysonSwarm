@@ -16,24 +16,24 @@ describe('forward progress animation', () => {
   it('predicts the next canonical interval from the published rate', () => {
     expect(buildForwardProgressKeyframes(0.2, 1, true)).toEqual([
       { offset: 0, transform: 'scaleX(0.2)' },
-      { offset: 1, transform: 'scaleX(0.30000000000000004)' },
+      { offset: 1, transform: 'scaleX(0.233)' },
     ])
-    expect(FORWARD_PROGRESS_INTERVAL_MILLISECONDS).toBe(100)
+    expect(FORWARD_PROGRESS_INTERVAL_MILLISECONDS).toBe(33)
   })
 
   it('fills, resets and continues forward when the prediction wraps', () => {
-    expect(buildForwardProgressKeyframes(0.95, 1, true)).toEqual([
+    expect(buildForwardProgressKeyframes(0.95, 2, true)).toEqual([
       { offset: 0, transform: 'scaleX(0.95)' },
-      { offset: 0.5000000000000004, transform: 'scaleX(1)' },
-      { offset: 0.5000010000000005, transform: 'scaleX(0)' },
-      { offset: 1, transform: 'scaleX(0.050000000000000044)' },
+      { offset: 0.7575757575757582, transform: 'scaleX(1)' },
+      { offset: 0.7575767575757583, transform: 'scaleX(0)' },
+      { offset: 1, transform: 'scaleX(0.016000000000000014)' },
     ])
   })
 
   it('holds at completion instead of wrapping a one-shot cycle', () => {
-    expect(buildForwardProgressKeyframes(0.95, 1, false)).toEqual([
+    expect(buildForwardProgressKeyframes(0.95, 2, false)).toEqual([
       { offset: 0, transform: 'scaleX(0.95)' },
-      { offset: 0.5000000000000004, transform: 'scaleX(1)' },
+      { offset: 0.7575757575757582, transform: 'scaleX(1)' },
       { offset: 1, transform: 'scaleX(1)' },
     ])
   })
@@ -41,14 +41,14 @@ describe('forward progress animation', () => {
   it('projects a decreasing timer toward the next canonical value', () => {
     expect(buildForwardProgressKeyframes(0.8, -1, false)).toEqual([
       { offset: 0, transform: 'scaleX(0.8)' },
-      { offset: 1, transform: 'scaleX(0.7000000000000001)' },
+      { offset: 1, transform: 'scaleX(0.767)' },
     ])
   })
 
   it('holds a decreasing timer at zero when it completes mid-tick', () => {
-    expect(buildForwardProgressKeyframes(0.05, -1, false)).toEqual([
+    expect(buildForwardProgressKeyframes(0.05, -2, false)).toEqual([
       { offset: 0, transform: 'scaleX(0.05)' },
-      { offset: 0.5, transform: 'scaleX(0)' },
+      { offset: 0.7575757575757576, transform: 'scaleX(0)' },
       { offset: 1, transform: 'scaleX(0)' },
     ])
   })

@@ -418,7 +418,7 @@ describe('Dream Space Age', () => {
     expect(result.state.dream.railgun.shotsRemaining).toBe(9)
   })
 
-  test('batches a 10x volley into one fixed 100 ms automation step', () => {
+  test('batches a 10x volley within one 100 ms gameplay update', () => {
     const source = state()
     const input: CanonicalGameStateV1 = {
       ...source,
@@ -491,7 +491,7 @@ describe('Dream Space Age', () => {
     })
   })
 
-  test('settles the eleventh round into a second volley at 11x', () => {
+  test('settles at most one volley per authoritative update', () => {
     const source = state()
     const input: CanonicalGameStateV1 = {
       ...source,
@@ -513,18 +513,18 @@ describe('Dream Space Age', () => {
       doubleTimeRate: 10,
     })
 
-    expect(result.panelsLaunched).toBe(11n)
-    expect(result.state.dream.resources.dysonPanels).toBe(0n)
-    expect(result.state.dream.resources.swarmPanels).toBe(11n)
-    expect(result.state.dream.resources.energy).toBe(0)
-    expect(result.state.dream.resources.railgunCharge).toBeCloseTo(22_500_000)
+    expect(result.panelsLaunched).toBe(10n)
+    expect(result.state.dream.resources.dysonPanels).toBe(10n)
+    expect(result.state.dream.resources.swarmPanels).toBe(10n)
+    expect(result.state.dream.resources.energy).toBe(25_000_000)
+    expect(result.state.dream.resources.railgunCharge).toBeCloseTo(0)
     expect(result.state.dream.railgun).toMatchObject({
-      firing: true,
-      shotsRemaining: 9,
-      activeRailguns: 1,
-      reservedPanels: 9n,
-      lastRoundsFired: 11,
-      lastPanelsLaunched: 11n,
+      firing: false,
+      shotsRemaining: 0,
+      activeRailguns: 0,
+      reservedPanels: 0n,
+      lastRoundsFired: 10,
+      lastPanelsLaunched: 10n,
     })
   })
 
@@ -797,7 +797,7 @@ describe('Dream Space Age', () => {
     expect(invalid.state).toBe(source)
   })
 
-  test('rejects automation intervals and prepared multipliers outside the supported bounds', () => {
+  test('accepts coarse elapsed intervals but rejects invalid prepared multipliers', () => {
     const source = state()
 
     const oversizedInterval = runDreamRailgunAutomation(source, {
@@ -813,8 +813,7 @@ describe('Dream Space Age', () => {
       doubleTimeRate: 10,
     })
 
-    expect(oversizedInterval.status).toBe('invalid-input')
-    expect(oversizedInterval.state).toBe(source)
+    expect(oversizedInterval.status).toBe('success')
     expect(oversizedMultiplier.status).toBe('invalid-input')
     expect(oversizedMultiplier.state).toBe(source)
   })

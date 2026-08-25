@@ -107,16 +107,12 @@ describe('frontend-ready canonical backend integration', () => {
       source: 'strange-matter',
     })
     await expectChanged(firstCoordinator, firstApplication, {
-      kind: 'time.set-double-time-rate',
-      rate: 3,
-    })
-    await expectChanged(firstCoordinator, firstApplication, {
       kind: 'tinker.start',
       repeat: false,
     })
 
     const active = await firstCoordinator.advanceActive(1_000)
-    expect(active.transition.accepted).toBe(true)
+    expect(active.transition.accepted, JSON.stringify(active)).toBe(true)
     expect(active.remainingMilliseconds).toBe(0)
     expect(active.checkpoints).toEqual(['pending', 'rewards'])
     expect(

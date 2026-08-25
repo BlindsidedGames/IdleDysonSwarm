@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const infinityMessages = defineMessages({
+  automaticTargetWarning: {
+    id: 'infinity.automatic-target-warning',
+    defaultMessage: 'This target is far above your best active Infinity point.',
+    description: 'Warns when the configured automatic Infinity target is at least 2.5 times the best active reward.',
+  },
   region: {
     id: 'infinity.region',
     defaultMessage: 'Infinity',

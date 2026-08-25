@@ -221,7 +221,9 @@ export function applyAwayTimeReplay(
           : canonical.timeline.lastSuspendedAtLegacyText,
         doubleTime: {
           ...canonical.timeline.doubleTime,
-          bankSeconds: grant.dreamDoubleTimeBankSeconds,
+          enabled: false,
+          bankSeconds: 0,
+          rate: 0,
         },
       },
     }

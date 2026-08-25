@@ -81,11 +81,11 @@ flags and grant one current-run skill point. Their owned flags also contribute
 one platform/artifact skill point each when a later Infinity reset rebuilds the
 skill tree.
 
-Enable Time Multiplier sets permanent Double Time ownership and replaces its
-bank with the authored 600 seconds. It does not itself set the persisted
-enabled flag; activity is derived at the next Dream interval. Automate Gather
-Influence sets the permanent auto-convert flag but does not synchronously
-convert an already-full batch inside the purchase transaction.
+Enable Time Multiplier sets permanent Double Time ownership, which permanently
+runs all gameplay domains at 2x game speed. It clears the retired mutable
+enabled/rate/bank state. Automate Gather Influence sets the permanent
+auto-convert flag but does not synchronously convert an already-full batch
+inside the purchase transaction.
 
 Artifact text substitution and animation speed are presentation consumers of
 Translation and Speed ownership. They are not gameplay mutations in this

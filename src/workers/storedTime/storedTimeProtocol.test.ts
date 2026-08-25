@@ -15,41 +15,49 @@ describe('Stored Time worker protocol', () => {
   test('accepts complete typed frames', () => {
     expect(isStoredTimeWorkerOutboundMessage({
       type: 'ready',
-      protocolVersion: 1,
+      protocolVersion: 2,
       buildId: null,
     })).toBe(true)
     expect(isStoredTimeWorkerOutboundMessage({
       type: 'completed',
-      protocolVersion: 1,
+      protocolVersion: 2,
       jobId: 'job',
       candidate: {},
-      consumedSeconds: 5,
-      remainingSeconds: 5,
-      continuation: { kind: 'complete' },
+      consumedSeconds: 10,
+      remainingSeconds: 0,
       progress,
     })).toBe(true)
   })
 
   test.each([
-    { type: 'progress', protocolVersion: 1 },
+    { type: 'ready', protocolVersion: 1, buildId: null },
+    { type: 'progress', protocolVersion: 2 },
     {
       type: 'progress',
-      protocolVersion: 1,
+      protocolVersion: 2,
       progress: { ...progress, fraction: 2 },
     },
     {
       type: 'completed',
-      protocolVersion: 1,
+      protocolVersion: 2,
+      jobId: 'job',
+      candidate: {},
+      consumedSeconds: 5,
+      remainingSeconds: 5,
+      progress,
+    },
+    {
+      type: 'completed',
+      protocolVersion: 2,
       jobId: 'job',
       candidate: {},
       consumedSeconds: Number.NaN,
       remainingSeconds: 0,
-      continuation: { kind: 'complete' },
       progress,
     },
     {
       type: 'failed',
-      protocolVersion: 1,
+      protocolVersion: 2,
       jobId: 'job',
       progress,
     },

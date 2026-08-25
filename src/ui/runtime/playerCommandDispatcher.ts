@@ -81,6 +81,9 @@ export class RevisionedPlayerCommandDispatcher {
 
   async dispatch(
     command: Readonly<CanonicalPlayerCommand>,
+    prepareForDispatch?: () => Promise<
+      UiRuntimePlayerCommandResult | undefined
+    >,
   ): Promise<UiRuntimePlayerCommandResult> {
     const captured = this.prepare(command)
     if ('status' in captured) return captured
@@ -99,6 +102,15 @@ export class RevisionedPlayerCommandDispatcher {
     }
     try {
       const outcome = await this.options.serialize(async () => {
+        const preparationFailure = prepareForDispatch === undefined
+          ? undefined
+          : await prepareForDispatch()
+        if (preparationFailure !== undefined) {
+          return {
+            kind: 'failure',
+            failure: preparationFailure,
+          } as const
+        }
         const prepared = this.prepareForExecution(captured)
         if ('status' in prepared) {
           return { kind: 'failure', failure: prepared } as const
@@ -133,11 +145,23 @@ export class RevisionedPlayerCommandDispatcher {
    */
   async dispatchLatest(
     command: Readonly<LatestIdempotentCommand>,
+    prepareForDispatch?: () => Promise<
+      UiRuntimePlayerCommandResult | undefined
+    >,
   ): Promise<UiRuntimePlayerCommandResult> {
     const admitted = this.prepare(command)
     if ('status' in admitted) return admitted
     try {
       const outcome = await this.options.serialize(async () => {
+        const preparationFailure = prepareForDispatch === undefined
+          ? undefined
+          : await prepareForDispatch()
+        if (preparationFailure !== undefined) {
+          return {
+            kind: 'failure',
+            failure: preparationFailure,
+          } as const
+        }
         const prepared = this.prepare(command)
         if ('status' in prepared) {
           return { kind: 'failure', failure: prepared } as const
@@ -319,8 +343,7 @@ function mapResult(
     })
   }
   return Object.freeze({
-    status:
-      stored.status === 'partial' ? 'partial' : 'accepted',
+    status: 'accepted',
     kind: 'stored-time',
     admittedSeconds: stored.admittedSeconds,
     consumedSeconds: stored.consumedSeconds,

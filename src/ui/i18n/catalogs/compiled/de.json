@@ -477,6 +477,36 @@
       "value": "Die Verteilung wurde nicht geändert."
     }
   ],
+  "dyson.bot-distribution.multitasking-efficiency": [
+    {
+      "type": 8,
+      "value": "workers",
+      "children": [
+        {
+          "type": 0,
+          "value": "Arbeiter"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "- und "
+    },
+    {
+      "type": 8,
+      "value": "science",
+      "children": [
+        {
+          "type": 0,
+          "value": "Wissenschafts"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "effizienz bei 100 %"
+    }
+  ],
   "dyson.bot-distribution.scientists": [
     {
       "type": 0,
@@ -2237,12 +2267,6 @@
       "value": "Alle umschalten"
     }
   ],
-  "dyson.simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "Zeitmultiplikator"
-    }
-  ],
   "dyson.swarm.region": [
     {
       "type": 0,
@@ -2381,6 +2405,12 @@
     {
       "type": 0,
       "value": "Ein"
+    }
+  ],
+  "infinity.automatic-target-warning": [
+    {
+      "type": 0,
+      "value": "Dieses Ziel liegt weit über deinem besten aktiven Infinity-Punkt."
     }
   ],
   "infinity.break-target": [
@@ -2941,6 +2971,18 @@
       "value": "Wiki"
     }
   ],
+  "offline-time.accuracy-preset": [
+    {
+      "type": 0,
+      "value": "Simulationsgenauigkeit"
+    }
+  ],
+  "offline-time.accurate-preset": [
+    {
+      "type": 0,
+      "value": "Genau"
+    }
+  ],
   "offline-time.action-failed": [
     {
       "type": 0,
@@ -2951,6 +2993,12 @@
     {
       "type": 0,
       "value": "Alles"
+    }
+  ],
+  "offline-time.balanced-preset": [
+    {
+      "type": 0,
+      "value": "Ausgewogen"
     }
   ],
   "offline-time.calculating": [
@@ -2989,6 +3037,12 @@
     {
       "type": 1,
       "value": "capacity"
+    }
+  ],
+  "offline-time.close-summary": [
+    {
+      "type": 0,
+      "value": "Weiter"
     }
   ],
   "offline-time.confirm-spend": [
@@ -3032,13 +3086,19 @@
   "offline-time.explanation": [
     {
       "type": 0,
-      "value": "Offline-Zeit wird gespeichert, während du fort bist. Gib sie aus, um das gesamte Spiel sofort voranzubringen. Dieser Speicher ist von der doppelten Simulationszeit getrennt."
+      "value": "Offline-Zeit wird gespeichert, während du fort bist. Entscheide selbst, wann du sie ausgibst, um das Spiel voranzubringen."
+    }
+  ],
+  "offline-time.fast-preset": [
+    {
+      "type": 0,
+      "value": "Schnell"
     }
   ],
   "offline-time.large-spend-disclosure": [
     {
       "type": 0,
-      "value": "Bei kleinen Ausgaben wird jeder Automatisierungsschritt wiederholt. Bei großen Ausgaben werden bis zu 4.096 repräsentative Kaufentscheidungen ausgeführt, während die kontinuierliche Produktion weiterläuft; in ausgelassenen Schritten werden keine Käufe getätigt. Die Ergebnisse können von einer exakten Wiederholung abweichen, und das Aufteilen derselben Zeit auf mehrere Ausgaben kann die Ergebnisse verändern."
+      "value": "Die Simulation wird bei größeren Zeitschritten ungenauer."
     }
   ],
   "offline-time.maximum-storage": [
@@ -3077,6 +3137,12 @@
       "value": "Simulation läuft …"
     }
   ],
+  "offline-time.processing-heading": [
+    {
+      "type": 0,
+      "value": "Offline-Zeit wird verarbeitet"
+    }
+  ],
   "offline-time.progress": [
     {
       "type": 1,
@@ -3111,10 +3177,22 @@
       "value": "duration"
     }
   ],
+  "offline-time.simulation-complete": [
+    {
+      "type": 0,
+      "value": "Offline-Zeit abgeschlossen"
+    }
+  ],
   "offline-time.simulation-progress": [
     {
       "type": 0,
       "value": "Fortschritt der Offline-Zeit-Simulation"
+    }
+  ],
+  "offline-time.speed-up": [
+    {
+      "type": 0,
+      "value": "Beschleunigen"
     }
   ],
   "offline-time.spend": [
@@ -3152,7 +3230,7 @@
   "offline-time.spend-success": [
     {
       "type": 0,
-      "value": "Das Spiel wurde um "
+      "value": "Du hast "
     },
     {
       "type": 1,
@@ -3160,7 +3238,7 @@
     },
     {
       "type": 0,
-      "value": " vorangebracht."
+      "value": " Offline-Zeit ausgegeben."
     }
   ],
   "offline-time.storage-progress": [
@@ -3179,6 +3257,18 @@
     {
       "type": 0,
       "value": "10 Minuten"
+    }
+  ],
+  "offline-time.time-remaining": [
+    {
+      "type": 0,
+      "value": "Verbleibende Offline-Zeit"
+    }
+  ],
+  "offline-time.time-simulated": [
+    {
+      "type": 0,
+      "value": "Simulierte Zeit"
     }
   ],
   "offline-time.usage-heading": [
@@ -4410,7 +4500,7 @@
   "reality.upgrades.double-time.description": [
     {
       "type": 0,
-      "value": "Sammle Offline-Zeit und gib sie online aus."
+      "value": "Lässt das gesamte Spiel dauerhaft mit doppelter Geschwindigkeit laufen."
     }
   ],
   "reality.upgrades.double-time.title": [
@@ -5707,6 +5797,34 @@
       "value": "Zahlendarstellung"
     }
   ],
+  "settings.processing.description": [
+    {
+      "type": 0,
+      "value": "Lege fest, wie oft das Spiel aktualisiert wird. Größere Intervalle benötigen weniger Rechenleistung, verringern aber die Genauigkeit der Automatisierung."
+    }
+  ],
+  "settings.processing.interval": [
+    {
+      "type": 0,
+      "value": "Aktualisierungsintervall"
+    }
+  ],
+  "settings.processing.interval-value": [
+    {
+      "type": 1,
+      "value": "milliseconds"
+    },
+    {
+      "type": 0,
+      "value": " ms"
+    }
+  ],
+  "settings.processing.title": [
+    {
+      "type": 0,
+      "value": "Spielverarbeitung"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -6423,12 +6541,6 @@
       "value": "In diesem Zeitalter sind noch keine Paneele verfügbar."
     }
   ],
-  "simulations.offline-time": [
-    {
-      "type": 0,
-      "value": "Offline-Zeit"
-    }
-  ],
   "simulations.panel.advanced-physics": [
     {
       "type": 0,
@@ -6947,12 +7059,6 @@
       "value": "Kaufmenge"
     }
   ],
-  "simulations.purchase-settings": [
-    {
-      "type": 0,
-      "value": "Kaufeinstellungen"
-    }
-  ],
   "simulations.region": [
     {
       "type": 0,
@@ -6977,26 +7083,6 @@
     {
       "type": 1,
       "value": "value"
-    }
-  ],
-  "simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "Zeitmultiplikator"
-    }
-  ],
-  "simulations.time-multiplier.speed-increase": [
-    {
-      "type": 0,
-      "value": "Simulationsgeschwindigkeit um "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "% erhöht"
     }
   ],
   "simulations.unavailable": [
@@ -11912,10 +11998,34 @@
       "value": "Version 3.1.2"
     }
   ],
+  "wiki.patch-notes.version-3-1-2.double-time": [
+    {
+      "type": 0,
+      "value": "Double Time lässt nun dauerhaft alle Spielsysteme mit doppelter Normalgeschwindigkeit laufen."
+    }
+  ],
   "wiki.patch-notes.version-3-1-2.languages": [
     {
       "type": 0,
       "value": "Vollständige Übersetzungen für Französisch, Deutsch, lateinamerikanisches Spanisch, brasilianisches Portugiesisch, vereinfachtes Chinesisch, Russisch und Japanisch hinzugefügt, mit automatischer Auswahl anhand der Gerätesprache und manueller Sprachauswahl in den Einstellungen."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.offline-controls": [
+    {
+      "type": 0,
+      "value": "Fast-, Balanced- und Accurate-Voreinstellungen für Offline-Zeit, Verarbeitungsfortschritt, Beschleunigen, sichere Abbruchmöglichkeit und eine Abschlussübersicht nach jedem Durchlauf hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.processing": [
+    {
+      "type": 0,
+      "value": "Die Verarbeitung im aktiven Spiel und für Offline-Zeit nutzt nun dieselbe Spielsimulation. Das verbessert die Leistung und hält dauerhafte Gewinne sowie Automatisierung zwischen Aktualisierungen konsistent."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.update-interval": [
+    {
+      "type": 0,
+      "value": "Eine Spielverarbeitungseinstellung von 33 bis 200 ms wurde hinzugefügt, um zwischen genauerer Automatisierung und geringerer Gerätebelastung wählen zu können."
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [

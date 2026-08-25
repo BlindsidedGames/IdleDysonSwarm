@@ -2,9 +2,7 @@ import { describe, expect, test } from 'vitest'
 import {
   applyAwayTimeGrant,
   clampDoubleTimeRate,
-  completeDreamDoubleTimeTick,
   DEFAULT_STORED_TIME_CAPACITY_SECONDS,
-  prepareDreamDoubleTimeTick,
   repairStoredTimeState,
   resolveAwayTime,
   STORED_TIME_MAXIMUM_SECONDS,
@@ -136,7 +134,7 @@ describe('stored-time grant and capacity parity', () => {
     expect(result.cheater).toBe(true)
   })
 
-  test('credits full away plus the admitted stored portion to Dream time', () => {
+  test('credits only the available Stored Time capacity and clears the retired Dream bank', () => {
     const result = applyAwayTimeGrant({
       awaySeconds: 40,
       bankSeconds: 80,
@@ -147,10 +145,10 @@ describe('stored-time grant and capacity parity', () => {
 
     expect(result.storedTimeCreditedSeconds).toBe(20)
     expect(result.bankSeconds).toBe(100)
-    expect(result.dreamDoubleTimeBankSeconds).toBe(70)
+    expect(result.dreamDoubleTimeBankSeconds).toBe(0)
   })
 
-  test('a full stored bank still receives the first Dream away-time credit', () => {
+  test('a full Stored Time bank discards excess away time and clears the retired Dream bank', () => {
     const result = applyAwayTimeGrant({
       awaySeconds: 40,
       bankSeconds: 100,
@@ -161,7 +159,7 @@ describe('stored-time grant and capacity parity', () => {
 
     expect(result.storedTimeCreditedSeconds).toBe(0)
     expect(result.bankSeconds).toBe(100)
-    expect(result.dreamDoubleTimeBankSeconds).toBe(50)
+    expect(result.dreamDoubleTimeBankSeconds).toBe(0)
   })
 
   test('invalid and backward durations grant zero, with only backward time flagged', () => {
@@ -181,10 +179,10 @@ describe('stored-time grant and capacity parity', () => {
     })
 
     expect(invalidResult.bankSeconds).toBe(10)
-    expect(invalidResult.dreamDoubleTimeBankSeconds).toBe(20)
+    expect(invalidResult.dreamDoubleTimeBankSeconds).toBe(0)
     expect(invalidResult.cheater).toBe(false)
     expect(backwardResult.bankSeconds).toBe(10)
-    expect(backwardResult.dreamDoubleTimeBankSeconds).toBe(20)
+    expect(backwardResult.dreamDoubleTimeBankSeconds).toBe(0)
     expect(backwardResult.cheater).toBe(true)
   })
 
@@ -217,79 +215,11 @@ describe('stored-time grant and capacity parity', () => {
   })
 })
 
-describe('Dream Double Time parity', () => {
+describe('legacy Double Time rate validation', () => {
   test('clamps the integer rate to 0 through 10', () => {
     expect(clampDoubleTimeRate(-4)).toBe(0)
     expect(clampDoubleTimeRate(3.9)).toBe(3)
     expect(clampDoubleTimeRate(12)).toBe(10)
     expect(clampDoubleTimeRate(Number.NaN)).toBe(0)
-  })
-
-  test('uses the full rate and defers bank debit until completion', () => {
-    const tick = prepareDreamDoubleTimeTick(true, 10, 3, 2)
-
-    expect(tick).toEqual({
-      active: true,
-      effectiveMultiplier: 4,
-      bankConsumedSeconds: 6,
-      rate: 3,
-    })
-    expect(completeDreamDoubleTimeTick(true, 10, tick)).toEqual({
-      bankSeconds: 4,
-      enabled: true,
-    })
-  })
-
-  test('uses a fractional multiplier for partial final-bank depletion', () => {
-    const tick = prepareDreamDoubleTimeTick(true, 1, 3, 2)
-
-    expect(tick.active).toBe(true)
-    expect(tick.bankConsumedSeconds).toBe(1)
-    expect(tick.effectiveMultiplier).toBe(1.5)
-    expect(completeDreamDoubleTimeTick(true, 1, tick)).toEqual({
-      bankSeconds: 0,
-      enabled: false,
-    })
-  })
-
-  test('keeps every full-bank multiplier within its selected rate boundary', () => {
-    const intervals = [0.1, 0.0997, 0.1003, 0.333_333_333_333_333_3]
-
-    for (let rate = 1; rate <= 10; rate += 1) {
-      for (const tickSeconds of intervals) {
-        const tick = prepareDreamDoubleTimeTick(
-          true,
-          10_000,
-          rate,
-          tickSeconds,
-        )
-
-        expect(tick.effectiveMultiplier).toBe(1 + rate)
-        expect(tick.effectiveMultiplier).toBeLessThanOrEqual(1 + rate)
-      }
-    }
-  })
-
-  test('rate zero stays active at x1 without consuming bank', () => {
-    const tick = prepareDreamDoubleTimeTick(true, 10, 0, 2)
-
-    expect(tick).toEqual({
-      active: true,
-      effectiveMultiplier: 1,
-      bankConsumedSeconds: 0,
-      rate: 0,
-    })
-    expect(completeDreamDoubleTimeTick(true, 10, tick)).toEqual({
-      bankSeconds: 10,
-      enabled: true,
-    })
-  })
-
-  test('ownership and invalid tick inputs disable Double Time', () => {
-    expect(prepareDreamDoubleTimeTick(false, 10, 3, 1).active).toBe(false)
-    expect(
-      prepareDreamDoubleTimeTick(true, Number.NaN, 3, 1).active,
-    ).toBe(false)
-    expect(prepareDreamDoubleTimeTick(true, 10, 3, 0).active).toBe(false)
   })
 })

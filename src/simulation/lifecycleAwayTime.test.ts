@@ -319,7 +319,7 @@ describe('pure canonical away-time replay', () => {
     expect(replay.state.canonical.timeline.storedTimeAvailableSeconds).toBe(70)
   })
 
-  test('valid timestamps consume quit state and grant stored and Dream time', () => {
+  test('valid timestamps consume quit state, grant Stored Time, and retire the Dream bank', () => {
     const result = applyAwayTimeReplay({
       state: coordinator({
         saveReady: false,
@@ -339,7 +339,12 @@ describe('pure canonical away-time replay', () => {
     expect(
       result.state.canonical.timeline.storedTimeAvailableSeconds,
     ).toBe(40)
-    expect(result.state.canonical.timeline.doubleTime.bankSeconds).toBe(80)
+    expect(result.state.canonical.timeline.doubleTime).toMatchObject({
+      unlocked: result.state.canonical.timeline.doubleTime.unlocked,
+      enabled: false,
+      bankSeconds: 0,
+      rate: 0,
+    })
     expect(
       result.state.canonical.timeline.lastSuspendedAtLegacyText,
     ).toBeNull()
@@ -386,7 +391,7 @@ describe('pure canonical away-time replay', () => {
     expect(
       result.state.canonical.timeline.storedTimeAvailableSeconds,
     ).toBe(10)
-    expect(result.state.canonical.timeline.doubleTime.bankSeconds).toBe(20)
+    expect(result.state.canonical.timeline.doubleTime.bankSeconds).toBe(0)
   })
 
   test('missing quit input grants nothing but still releases the cold gate', () => {

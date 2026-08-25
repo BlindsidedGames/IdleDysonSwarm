@@ -19,7 +19,7 @@ export interface CanonicalSkillIntervalInputs {
 /**
  * Commits timer-backed skills, Shoulders research accrual, and the atomic
  * Stellar Sacrifices debit/credit after ordinary tick-start arrivals. Each
- * active tick or adaptive Stored Time representative group is one canonical
+ * active or coarse Stored Time update is one canonical
  * interval: only Bots present at its start may fund sacrifice during it.
  * Produced Bots remain credited, but become eligible in the next interval.
  */
@@ -79,7 +79,7 @@ export function applyCanonicalSkillIntervalEffects(
  * that balance is exhausted, all later Bot production remains available.
  * This prevents a gross-production prediction from inventing a material
  * boundary that would incorrectly refresh Stellar funding inside one tick or
- * representative Stored Time group.
+ * coarse Stored Time update.
  */
 export function timeToNextInfinityEventAfterStellarSettlement(
   startingBots: number,

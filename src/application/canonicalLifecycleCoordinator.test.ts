@@ -42,7 +42,7 @@ const fixtureUrl = new URL(
 )
 
 describe('canonical lifecycle coordinator', () => {
-  test('cold-start replay atomically consumes the timestamp and credits both returned-time banks', async () => {
+  test('cold-start replay atomically consumes the timestamp and credits Stored Time', async () => {
     const runtime = fixtureRuntime()
     runtime.gameState = {
       ...runtime.gameState,
@@ -78,7 +78,7 @@ describe('canonical lifecycle coordinator', () => {
     const state = readyState(application.snapshot())
     expect(state.gameState.timeline.lastSuspendedAtLegacyText).toBeNull()
     expect(state.gameState.timeline.storedTimeAvailableSeconds).toBe(10)
-    expect(state.gameState.timeline.doubleTime.bankSeconds).toBe(20)
+    expect(state.gameState.timeline.doubleTime.bankSeconds).toBe(0)
     expect(application.awayCommits).toBe(1)
     expect(lifecycle.listenerCount).toBe(1)
   })
@@ -219,26 +219,17 @@ describe('canonical lifecycle coordinator', () => {
     })
   })
 
-  test('settles pending and reward bot-cap commits before resuming one stored-time intent', async () => {
+  test('reports one atomic Stored Time commit without coordinator continuation', async () => {
     const runtime = cappedRuntime()
     const application = new FakeCanonicalApplication(runtime)
     application.playerResult = {
       kind: 'stored-time',
       result: committedStoredTimeResult(
-        3,
-        2,
-        'pending',
+        5,
+        0,
         application.revision,
       ),
     }
-    application.storedResults.push(
-      committedStoredTimeResult(
-        2,
-        0,
-        undefined,
-        application.revision + 3,
-      ),
-    )
     const coordinator = new CanonicalLifecycleCoordinator({
       application,
       lifecycle: new FakeLifecycleAdapter(),
@@ -260,16 +251,13 @@ describe('canonical lifecycle coordinator', () => {
 
     expect(result.kind).toBe('stored-time')
     if (result.kind !== 'stored-time') return
-    expect(result.checkpoints).toEqual(['pending', 'rewards'])
     expect(result.result).toMatchObject({
       status: 'complete',
       admittedSeconds: 5,
       consumedSeconds: 5,
       remainingSeconds: 0,
     })
-    expect(application.storedRequests).toEqual([2])
-    const settled = readyState(application.snapshot())
-    expect(settled.gameState.infinity.botCapRewardsGranted).toBe(true)
+    expect(application.checkpointRequests).toEqual([])
   })
 
   test('settles bot-cap checkpoints and resumes the exact active-time tail', async () => {
@@ -296,50 +284,6 @@ describe('canonical lifecycle coordinator', () => {
       transition: { accepted: true },
     })
     expect(application.activeRequests).toEqual([100, 40])
-  })
-
-  test('reports already committed stored time as partial when a later checkpoint fails', async () => {
-    const application = new FakeCanonicalApplication(cappedRuntime())
-    application.failCheckpoint = 'pending'
-    application.playerResult = {
-      kind: 'stored-time',
-      result: committedStoredTimeResult(
-        3,
-        2,
-        'pending',
-        application.revision,
-      ),
-    }
-    const coordinator = new CanonicalLifecycleCoordinator({
-      application,
-      lifecycle: new FakeLifecycleAdapter(),
-      clock: fixedClock('2026-07-29T00:00:00Z'),
-      policy: DESKTOP_LIFECYCLE_POLICY,
-    })
-    await coordinator.start()
-    const snapshot = application.snapshot()
-    if (snapshot.phase !== 'ready') throw new Error('Expected ready fake.')
-
-    const result = await coordinator.dispatchPlayer({
-      sessionRevision: snapshot.revision.session,
-      expectedStateRevision: snapshot.revision.state,
-      command: {
-        kind: 'time.request-stored-time-spend',
-        requestedSeconds: 5,
-      },
-    })
-
-    expect(result).toMatchObject({
-      kind: 'stored-time',
-      checkpoints: [],
-      result: {
-        status: 'partial',
-        admittedSeconds: 5,
-        consumedSeconds: 3,
-        remainingSeconds: 2,
-        code: 'SCRIPTED-CHECKPOINT-FAILURE',
-      },
-    })
   })
 
   test('disposal unsubscribes the platform lifecycle source idempotently', async () => {
@@ -744,6 +688,53 @@ describe('canonical lifecycle coordinator', () => {
     ).toBe(10)
   })
 
+  test('visible hibernation reports raw time while Idle Electric Sheep doubles Stored Time credit', async () => {
+    const runtime = fixtureRuntimeWithoutQuitTimestamp()
+    runtime.gameState = {
+      ...runtime.gameState,
+      skills: {
+        ...runtime.gameState.skills,
+        byId: {
+          ...runtime.gameState.skills.byId,
+          idleElectricSheep: {
+            ...runtime.gameState.skills.byId.idleElectricSheep!,
+            owned: true,
+          },
+        },
+      },
+      timeline: {
+        ...runtime.gameState.timeline,
+        storedTimeAvailableSeconds: 10,
+        storedTimeCapacitySeconds: 500,
+      },
+    }
+    const application = new FakeCanonicalApplication(runtime)
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock: fixedClock('2026-07-29T00:00:00Z'),
+      policy: DESKTOP_LIFECYCLE_POLICY,
+    })
+    await coordinator.start()
+
+    await expect(
+      coordinator.creditVisibleHibernation(65_000),
+    ).resolves.toMatchObject({
+      replayed: true,
+      committed: true,
+      grantedSeconds: 65,
+      storedTimeCreditedSeconds: 130,
+      timestampConsumed: false,
+    })
+
+    expect(
+      readyState(application.snapshot()).gameState.timeline
+        .storedTimeAvailableSeconds,
+    ).toBe(140)
+    expect(application.awayCommitAttempts).toBe(1)
+    expect(application.awayCommits).toBe(1)
+  })
+
   test('preserves the earlier durable departure when a hidden startup also has a newer marker', async () => {
     const runtime = fixtureRuntimeWithoutQuitTimestamp()
     runtime.gameState.timeline = {
@@ -824,9 +815,8 @@ class FakeCanonicalApplication
   durableRevision: number | null = 0
   sessionRevision = 1
   readonly activeResults: CanonicalActiveAdvanceResult[] = []
-  readonly storedResults: CanonicalStoredTimeCommitResult[] = []
   readonly activeRequests: number[] = []
-  readonly storedRequests: number[] = []
+  readonly checkpointRequests: BotCapCheckpointName[] = []
   awayCommitAttempts = 0
   awayCommits = 0
   awayCommitGate: Promise<void> | undefined
@@ -897,25 +887,6 @@ class FakeCanonicalApplication
     return this.playerResult
   }
 
-  async commitStoredTime(
-    _envelope: Pick<
-      ApplicationCommandEnvelope<unknown>,
-      'sessionRevision' | 'expectedStateRevision'
-    >,
-    seconds: number,
-  ): Promise<CanonicalStoredTimeCommitResult> {
-    this.storedRequests.push(seconds)
-    const result = this.storedResults.shift()
-    if (result === undefined) {
-      throw new Error('No stored-time result was scripted.')
-    }
-    if (result.committed) {
-      this.revision += 1
-      this.durableRevision = this.revision
-    }
-    return result
-  }
-
   async commitAwayReplacement(
     _envelope: Pick<
       ApplicationCommandEnvelope<unknown>,
@@ -975,6 +946,7 @@ class FakeCanonicalApplication
     >,
     checkpoint: BotCapCheckpointName,
   ): Promise<CommitFirstResult> {
+    this.checkpointRequests.push(checkpoint)
     if (checkpoint === this.failCheckpoint) {
       return {
         committed: false,
@@ -1154,7 +1126,6 @@ function committedTransition(revision: number): CommitFirstResult {
 function committedStoredTimeResult(
   consumedSeconds: number,
   remainingSeconds: number,
-  checkpoint: BotCapCheckpointName | undefined,
   revision: number,
 ): CanonicalStoredTimeCommitResult {
   return {
@@ -1167,13 +1138,6 @@ function committedStoredTimeResult(
     durableRevision: revision,
     consumedSeconds,
     remainingSeconds,
-    continuation:
-      checkpoint === undefined
-        ? { kind: 'complete' }
-        : {
-            kind: 'bot-cap-persistence-required',
-            checkpoint,
-          },
   }
 }
 

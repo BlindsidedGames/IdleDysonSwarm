@@ -390,7 +390,18 @@ export function hydrateGameState(
         avocado.overflowMultiplier,
       ),
     },
-    timeline: {
+    timeline: (() => {
+      const processingRewriteMigrated = toBoolean(
+        source.processingRewriteMigrated,
+      )
+      const storedTimeCapacitySeconds = toFiniteNonNegativeNumber(
+        source.maxOfflineTime,
+        86_400,
+      )
+      const legacyDoubleTimeBankSeconds = toFiniteNonNegativeNumber(
+        dreamProgression.doubleTime,
+      )
+      return {
       eventClockInitialized: toBoolean(source.eventTimeClockInitialized),
       automationTimeUntilNextEvent: toFiniteNonNegativeNumber(
         source.simulationAutomationTimeUntilNextEvent,
@@ -415,25 +426,41 @@ export function hydrateGameState(
       infinityHasPostResetStart: toBoolean(
         source.simulationInfinityHasPostResetStart,
       ),
-      storedTimeAvailableSeconds: toFiniteNonNegativeNumber(
-        source.offlineTime,
+      storedTimeAvailableSeconds: Math.min(
+        storedTimeCapacitySeconds,
+        toFiniteNonNegativeNumber(source.offlineTime) +
+          (processingRewriteMigrated ? 0 : legacyDoubleTimeBankSeconds),
       ),
-      storedTimeCapacitySeconds: toFiniteNonNegativeNumber(
-        source.maxOfflineTime,
-        86_400,
-      ),
+      storedTimeCapacitySeconds,
       lastSuspendedAtLegacyText: nonBlankStringOrNull(
         source.dateQuitString,
       ),
+      processing: {
+        rewriteMigrated: true,
+        activeIntervalMilliseconds: Math.max(
+          33,
+          Math.min(
+            200,
+            toNonNegativeInteger(
+              source.processingActiveIntervalMilliseconds,
+              33,
+            ),
+          ),
+        ),
+        storedTimePreset:
+          source.processingStoredTimePreset === 'fast' ||
+          source.processingStoredTimePreset === 'accurate'
+            ? source.processingStoredTimePreset
+            : 'balanced',
+      },
       doubleTime: {
         unlocked: toBoolean(dreamProgression.doubleTimeOwned),
-        enabled: toBoolean(dreamProgression.doDoubleTime),
-        bankSeconds: toFiniteNonNegativeNumber(
-          dreamProgression.doubleTime,
-        ),
-        rate: toNonNegativeInteger(dreamProgression.doubleTimeRate),
+        enabled: false,
+        bankSeconds: 0,
+        rate: 0,
       },
-    },
+      }
+    })(),
     secretProgress: {
       completed: toBoolean(source.avotation),
       step: Math.min(
@@ -861,11 +888,17 @@ export function dehydrateGameState(
   source.offlineTime = state.timeline.storedTimeAvailableSeconds
   source.maxOfflineTime = state.timeline.storedTimeCapacitySeconds
   source.dateQuitString = state.timeline.lastSuspendedAtLegacyText
+  source.processingRewriteMigrated =
+    state.timeline.processing.rewriteMigrated
+  source.processingActiveIntervalMilliseconds =
+    state.timeline.processing.activeIntervalMilliseconds
+  source.processingStoredTimePreset =
+    state.timeline.processing.storedTimePreset
   dreamProgression.doubleTimeOwned =
     state.timeline.doubleTime.unlocked
-  dreamProgression.doDoubleTime = state.timeline.doubleTime.enabled
-  dreamProgression.doubleTime = state.timeline.doubleTime.bankSeconds
-  dreamProgression.doubleTimeRate = state.timeline.doubleTime.rate
+  dreamProgression.doDoubleTime = false
+  dreamProgression.doubleTime = 0
+  dreamProgression.doubleTimeRate = 0
 
   source.avotation = state.secretProgress.completed
   source.avotationProgressStep = state.secretProgress.completed

@@ -244,6 +244,9 @@ describe('RealitySurface', () => {
     expect(
       screen.getByText('Enable Time Multiplier'),
     ).toBeInTheDocument()
+    expect(
+      screen.getByText('Permanently runs the whole game at 2× speed.'),
+    ).toBeInTheDocument()
     expect(screen.getByText('Speed Reduction I')).toBeInTheDocument()
     expect(screen.queryByText('Translation II')).not.toBeInTheDocument()
     expect(screen.queryByText('Quantum')).not.toBeInTheDocument()
@@ -418,7 +421,7 @@ describe('RealitySurface', () => {
     }
   })
 
-  test('caps artifact presentation updates at the canonical 10 Hz cadence', () => {
+  test('caps artifact-only presentation updates at its 100 ms UI cadence', () => {
     vi.useFakeTimers()
     try {
       const { container } = renderSurface({

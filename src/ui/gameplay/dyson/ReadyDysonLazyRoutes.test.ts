@@ -12,7 +12,6 @@ describe('Ready Dyson destination loading boundary', () => {
     for (const component of [
       'SettingsSurface',
       'DebugSurface',
-      'SimulationTimeControl',
       'QuantumControlPanel',
       'AvotationCompletionOverlay',
       'StoreRouteSurface',
@@ -30,11 +29,8 @@ describe('Ready Dyson destination loading boundary', () => {
     expect(source).not.toMatch(
       /import\s*\{[^}]*SettingsSurface[^}]*\}\s*from\s*['"]\.\.\/settings['"]/s,
     )
-    expect(source).not.toMatch(
-      /import\s*\{[^}]*SimulationTimeControl[^}]*\}\s*from\s*['"]\.\.\/simulations\/SimulationsSurface['"]/s,
-    )
     expect(source).not.toContain('fallback={null}')
     expect(source.match(/fallback=\{<LazySurfacePending/g)?.length)
-      .toBeGreaterThanOrEqual(6)
+      .toBeGreaterThanOrEqual(5)
   })
 })

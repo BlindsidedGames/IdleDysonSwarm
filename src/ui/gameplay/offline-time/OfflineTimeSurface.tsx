@@ -5,6 +5,7 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import type {
   FrontendCanonicalProgression,
@@ -23,6 +24,7 @@ import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { offlineTimeMessages as messages } from './messages'
 import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
+import type { StoredTimeAccuracyPreset } from '../../../game-state/types'
 import './offlineTime.css'
 
 type OfflineTimeCommand = Extract<
@@ -31,12 +33,14 @@ type OfflineTimeCommand = Extract<
     readonly kind:
       | 'time.upgrade-stored-capacity'
       | 'time.request-stored-time-spend'
+      | 'time.set-stored-time-preset'
   }
 >
 
 export interface OfflineTimeCommandAvailability {
   readonly upgradeStoredCapacity: boolean
   readonly requestStoredTimeSpend: boolean
+  readonly setStoredTimePreset?: boolean
 }
 
 export interface OfflineTimeSurfaceDraft {
@@ -60,6 +64,9 @@ export interface OfflineTimeSurfaceProps {
     command: OfflineTimeCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
   readonly storedTime?: UiRuntimeStoredTimeControls
+  readonly processing?: {
+    readonly storedTimePreset: StoredTimeAccuracyPreset
+  }
   readonly initialDraft?: Readonly<OfflineTimeSurfaceDraft>
   readonly onDraftChange?: (
     draft: Readonly<OfflineTimeSurfaceDraft>,
@@ -81,6 +88,7 @@ const INACTIVE_STORED_TIME_CONTROLS: UiRuntimeStoredTimeControls =
     status: () => IDLE_STORED_TIME_JOB,
     subscribe: () => () => undefined,
     cancel: () => undefined,
+    speedUp: () => undefined,
   })
 
 /**
@@ -97,6 +105,9 @@ export function OfflineTimeSurface({
   commandAvailability,
   dispatchPlayer,
   storedTime = INACTIVE_STORED_TIME_CONTROLS,
+  processing = {
+    storedTimePreset: 'balanced',
+  },
   initialDraft,
   onDraftChange,
 }: OfflineTimeSurfaceProps) {
@@ -150,7 +161,12 @@ export function OfflineTimeSurface({
   const [feedback, setFeedback] = useState<
     { readonly kind: 'success' | 'failure'; readonly seconds?: number } | null
   >(null)
+  const [completionSummary, setCompletionSummary] = useState<{
+    readonly consumedSeconds: number
+    readonly remainingBankSeconds: number
+  } | null>(null)
   const pendingRef = useRef(false)
+  const jobDialogRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     setSelectedSeconds((current) =>
@@ -189,6 +205,50 @@ export function OfflineTimeSurface({
     repeatSeconds > 0 &&
     repeatSeconds <= bankSeconds
   const jobActive = jobStatus.kind !== 'idle'
+  const jobDialogOpen = jobActive || completionSummary !== null
+
+  useEffect(() => {
+    if (!jobDialogOpen) return undefined
+    const dialog = jobDialogRef.current
+    const backdrop = dialog?.parentElement
+    if (!dialog || !backdrop) return undefined
+    const returnFocus = document.activeElement as HTMLElement | null
+    const background = [...document.body.children]
+      .filter((element) => element !== backdrop)
+      .map((element) => ({
+        element: element as HTMLElement,
+        wasInert: (element as HTMLElement).inert,
+      }))
+    for (const entry of background) entry.element.inert = true
+    const focusable = () => [...dialog.querySelectorAll<HTMLElement>(
+      'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])',
+    )]
+    focusable()[0]?.focus()
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return
+      const items = focusable()
+      if (items.length === 0) {
+        event.preventDefault()
+        dialog.focus()
+        return
+      }
+      const first = items[0]!
+      const last = items[items.length - 1]!
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', trapFocus)
+    return () => {
+      document.removeEventListener('keydown', trapFocus)
+      for (const entry of background) entry.element.inert = entry.wasInert
+      if (returnFocus?.isConnected) returnFocus.focus()
+    }
+  }, [jobDialogOpen])
 
   const spend = async (): Promise<void> => {
     const requestedSeconds =
@@ -226,6 +286,13 @@ export function OfflineTimeSurface({
         result.kind === 'stored-time'
       ) {
         setFeedback({ kind: 'success', seconds: result.consumedSeconds })
+        setCompletionSummary({
+          consumedSeconds: result.consumedSeconds,
+          remainingBankSeconds: Math.max(
+            0,
+            bankSeconds - result.consumedSeconds,
+          ),
+        })
         setRepeatSeconds(requestedSeconds)
         publishDraft(selectedSeconds, requestedSeconds, false)
       } else {
@@ -264,6 +331,22 @@ export function OfflineTimeSurface({
     } finally {
       pendingRef.current = false
       setPendingAction(null)
+    }
+  }
+
+  const setProcessingPreference = async (
+    command: {
+      readonly kind: 'time.set-stored-time-preset'
+      readonly preset: StoredTimeAccuracyPreset
+    },
+  ): Promise<void> => {
+    if (jobActive) return
+    setFeedback(null)
+    try {
+      const result = await dispatchPlayer(command)
+      if (result.status !== 'accepted') setFeedback({ kind: 'failure' })
+    } catch {
+      setFeedback({ kind: 'failure' })
     }
   }
 
@@ -355,6 +438,23 @@ export function OfflineTimeSurface({
         <article className="offline-time-card offline-time-card--spend">
           <h2>{intl.formatMessage(messages.spendHeading)}</h2>
           <p>{intl.formatMessage(messages.spendDescription)}</p>
+          <div className="offline-time-processing-settings">
+            <label>
+              {intl.formatMessage(messages.accuracyPreset)}
+              <select
+                value={processing.storedTimePreset}
+                disabled={jobActive || pendingAction !== null || commandAvailability.setStoredTimePreset === false}
+                onChange={(event) => void setProcessingPreference({
+                  kind: 'time.set-stored-time-preset',
+                  preset: event.currentTarget.value as StoredTimeAccuracyPreset,
+                })}
+              >
+                <option value="fast">{intl.formatMessage(messages.fastPreset)}</option>
+                <option value="balanced">{intl.formatMessage(messages.balancedPreset)}</option>
+                <option value="accurate">{intl.formatMessage(messages.accuratePreset)}</option>
+              </select>
+            </label>
+          </div>
           <p className="offline-time-card__note">
             {intl.formatMessage(messages.largeSpendDisclosure)}
           </p>
@@ -433,13 +533,30 @@ export function OfflineTimeSurface({
             ) : null}
           </div>
 
-          {jobStatus.kind !== 'idle' ? (
+          {jobDialogOpen && typeof document !== 'undefined' ? (
+            createPortal(<div className="offline-time-job__backdrop">
             <div
+              ref={jobDialogRef}
               className="offline-time-job"
+              tabIndex={-1}
+              role="dialog"
+              aria-modal="true"
+              aria-label={intl.formatMessage(
+                completionSummary === null
+                  ? messages.simulationProgress
+                  : messages.simulationComplete,
+              )}
               aria-live="polite"
-              data-job-id={jobStatus.jobId}
+              data-job-id={jobStatus.kind === 'idle' ? undefined : jobStatus.jobId}
             >
-              <div
+              <h2>
+                {intl.formatMessage(
+                  completionSummary === null
+                    ? messages.processingHeading
+                    : messages.simulationComplete,
+                )}
+              </h2>
+              {completionSummary === null && jobStatus.kind !== 'idle' ? <><div
                 className="offline-time-job__progress"
                 role="progressbar"
                 aria-label={intl.formatMessage(messages.simulationProgress)}
@@ -465,14 +582,41 @@ export function OfflineTimeSurface({
                           ),
                     })}
               </p>
+              {jobStatus.kind === 'running' && jobStatus.canSpeedUp ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => storedTime.speedUp?.()}
+                >
+                  {intl.formatMessage(messages.speedUp)}
+                </Button>
+              ) : null}
               <Button
                 variant="secondary"
-                disabled={jobStatus.kind === 'cancelling'}
+                disabled={jobStatus.kind !== 'running'}
                 onClick={storedTime.cancel}
               >
                 {intl.formatMessage(messages.cancel)}
               </Button>
+              </> : completionSummary !== null ? <>
+                <dl className="offline-time-job__summary">
+                  <div>
+                    <dt>{intl.formatMessage(messages.timeSimulated)}</dt>
+                    <dd>{formatGameDuration(locale, completionSummary.consumedSeconds)}</dd>
+                  </div>
+                  <div>
+                    <dt>{intl.formatMessage(messages.timeRemaining)}</dt>
+                    <dd>{formatGameDuration(locale, completionSummary.remainingBankSeconds)}</dd>
+                  </div>
+                </dl>
+                <Button
+                  variant="primary"
+                  onClick={() => setCompletionSummary(null)}
+                >
+                  {intl.formatMessage(messages.closeSummary)}
+                </Button>
+              </> : null}
             </div>
+            </div>, document.body)
           ) : null}
 
           {feedback ? (

@@ -453,8 +453,6 @@ type DistributionCommand = Extract<
 export interface BotDistributionProps {
   readonly locale: EnabledLocale
   readonly distribution: number
-  readonly workersFraction: number
-  readonly scientistsFraction: number
   readonly multitasking: boolean
   readonly routeAvailable: boolean
   readonly dispatchPlayer: (
@@ -465,8 +463,6 @@ export interface BotDistributionProps {
 export function BotDistribution({
   locale,
   distribution,
-  workersFraction,
-  scientistsFraction,
   multitasking,
   routeAvailable,
   dispatchPlayer,
@@ -482,9 +478,30 @@ export function BotDistribution({
     lastSubmitted.current = null
   }, [distribution])
 
+  if (multitasking) {
+    return (
+      <div className="bot-distribution bot-distribution--multitasking">
+        <FormattedMessage
+          {...messages.botMultitaskingEfficiency}
+          values={{
+            workers: (chunks) => (
+              <span className="bot-distribution__multitasking-workers">
+                {chunks}
+              </span>
+            ),
+            science: (chunks) => (
+              <span className="bot-distribution__multitasking-science">
+                {chunks}
+              </span>
+            ),
+          }}
+        />
+      </div>
+    )
+  }
+
   const commit = async (): Promise<void> => {
     if (
-      multitasking ||
       !routeAvailable ||
       draft === distribution ||
       pending.current ||
@@ -511,12 +528,10 @@ export function BotDistribution({
   }
 
   const sliderPercent = Math.round(
-    (multitasking ? 0.5 : draft) * 100,
+    draft * 100,
   )
-  const displayedWorkersFraction =
-    multitasking ? workersFraction : 1 - draft
-  const displayedScientistsFraction =
-    multitasking ? scientistsFraction : draft
+  const displayedWorkersFraction = 1 - draft
+  const displayedScientistsFraction = draft
   return (
     <div className="bot-distribution">
       <div className="bot-distribution__heading">
@@ -551,7 +566,7 @@ export function BotDistribution({
         max="100"
         step="1"
         value={sliderPercent}
-        disabled={multitasking || !routeAvailable}
+        disabled={!routeAvailable}
         aria-label={intl.formatMessage(messages.botDistribution)}
         aria-valuetext={intl.formatMessage(
           messages.botDistributionAccessible,

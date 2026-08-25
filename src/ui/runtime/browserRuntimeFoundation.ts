@@ -120,6 +120,8 @@ import {
   CoordinatorActiveTimeDriver,
   type ActiveTimeFrameScheduler,
   type ActiveTimeMonotonicClock,
+  type ActiveTimeResidue,
+  type SuspendedActiveTime,
 } from './activeTimeDriver'
 import type {
   UiRuntimeFoundation,
@@ -162,6 +164,7 @@ interface BrowserRuntimeApplicationPort
   storedTimeJobStatus?(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
   subscribeStoredTimeJob?(listener: StoredTimeJobListener): () => void
   cancelStoredTimeJob?(): void
+  speedUpStoredTimeJob?(): void
   captureSaveTransferSnapshot?(): CanonicalSaveTransferSnapshot | null
   disposeStoredTimeJobRunner?(): void
 }
@@ -332,6 +335,7 @@ export function createBrowserRuntimeFoundation(
       subscribe: (listener: () => void) =>
         implementation.subscribeStoredTimeJob(listener),
       cancel: () => implementation.cancelStoredTimeJob(),
+      speedUp: () => implementation.speedUpStoredTimeJob(),
     }),
     previewSkillPresetQueueChange: (request) =>
       implementation.previewSkillPresetQueueChange(request),
@@ -577,40 +581,102 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     return this.start()
   }
 
-  dispatchPlayer(
+  async dispatchPlayer(
     command: CanonicalPlayerCommand,
   ): Promise<UiRuntimePlayerCommandResult> {
     const graph = this.graph
     if (graph === undefined || this.shutdownRequested) {
-      return Promise.resolve(
-        runtimePlayerFailure(
+      return runtimePlayerFailure(
           'RUNTIME-PLAYER-NOT-READY',
           'The browser runtime does not own a writable ready application.',
-        ),
       )
     }
-    if (
-      command.kind === 'tinker.start' ||
-      command.kind === 'tinker.set-repeat'
-    ) {
-      return graph.playerCommands.dispatchLatest(command)
+    const suspended = graph.activeTime.suspendForLifecycle()
+    const prepareForDispatch = async () => {
+      const residue = await resolveSuspendedActiveTime(suspended)
+      try {
+        await this.creditSuspendedHibernation(
+          graph.coordinator,
+          residue.hibernationMilliseconds,
+        )
+      } catch (error) {
+        graph.activeTime.restoreSuspendedTime(residue)
+        return runtimePlayerFailure(
+          'RUNTIME-HIBERNATION-FLUSH-FAILED',
+          errorMessage(error),
+        )
+      }
+      if (residue.activeMilliseconds > 0) {
+        try {
+          const flushed = await graph.coordinator
+            .advanceActiveContinuous(residue.activeMilliseconds)
+          if (flushed.accepted) {
+            this.publishFrontendSnapshot(graph)
+            return undefined
+          }
+          graph.activeTime.restoreSuspendedTime({
+            activeMilliseconds: residue.activeMilliseconds,
+            hibernationMilliseconds: 0,
+          })
+          return runtimePlayerFailure(
+            flushed.code ?? 'RUNTIME-CONTINUOUS-FLUSH-FAILED',
+            flushed.reason ?? 'The pending active-time flush was rejected.',
+          )
+        } catch (error) {
+          graph.activeTime.restoreSuspendedTime({
+            activeMilliseconds: residue.activeMilliseconds,
+            hibernationMilliseconds: 0,
+          })
+          return runtimePlayerFailure(
+            'RUNTIME-CONTINUOUS-FLUSH-FAILED',
+            errorMessage(error),
+          )
+        }
+      }
+      this.publishFrontendSnapshot(graph)
+      return undefined
     }
-    if (
-      command.kind === 'dyson.set-bot-distribution' ||
-      command.kind === 'dyson.set-buy-mode' ||
-      command.kind === 'dyson.set-rounded-bulk-buy' ||
-      command.kind === 'dyson.set-facility-automation'
-    ) {
-      return graph.playerCommands.dispatchLatest(command)
+    try {
+      if (
+        command.kind === 'tinker.start' ||
+        command.kind === 'tinker.set-repeat'
+      ) {
+        return graph.playerCommands.dispatchLatest(
+          command,
+          prepareForDispatch,
+        )
+      }
+      if (
+        command.kind === 'dyson.set-bot-distribution' ||
+        command.kind === 'dyson.set-buy-mode' ||
+        command.kind === 'dyson.set-rounded-bulk-buy' ||
+        command.kind === 'dyson.set-facility-automation'
+      ) {
+        return graph.playerCommands.dispatchLatest(
+          command,
+          prepareForDispatch,
+        )
+      }
+      if (
+        command.kind === 'research.set-buy-mode' ||
+        command.kind === 'research.set-rounded-bulk-buy' ||
+        command.kind === 'research.set-automation'
+      ) {
+        return graph.playerCommands.dispatchLatest(
+          command,
+          prepareForDispatch,
+        )
+      }
+      return graph.playerCommands.dispatch(command, prepareForDispatch)
+    } finally {
+      try {
+        if (!this.shutdownRequested) {
+          this.startActiveTimeIfForegroundIntended(graph)
+        }
+      } catch {
+        // Lifecycle reconciliation owns restart when the host phase is not readable.
+      }
     }
-    if (
-      command.kind === 'research.set-buy-mode' ||
-      command.kind === 'research.set-rounded-bulk-buy' ||
-      command.kind === 'research.set-automation'
-    ) {
-      return graph.playerCommands.dispatchLatest(command)
-    }
-    return graph.playerCommands.dispatch(command)
   }
 
   storedTimeJobStatus() {
@@ -628,6 +694,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   cancelStoredTimeJob(): void {
     this.graph?.application.cancelStoredTimeJob?.()
+  }
+
+  speedUpStoredTimeJob(): void {
+    this.graph?.application.speedUpStoredTimeJob?.()
   }
 
   previewSkillPresetQueueChange(request: {
@@ -983,18 +1053,24 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     const admittedLifecycleIntentEpoch =
       this.lifecycleIntentEpoch
     this.pendingImportCount += 1
-    const pendingActiveMilliseconds =
+    const suspendedActiveTime =
       this.suspendActiveTime(graph)
     let retainedPath: string | undefined
     let activeResult: CanonicalCoordinatedActiveResult | undefined
+    let importOwnsActiveResidue = false
     try {
       const routed = await graph.router.run(async () => {
-        activeResult =
-          pendingActiveMilliseconds > 0
-            ? await graph.coordinator.advanceActive(
-                pendingActiveMilliseconds,
-              )
-            : undefined
+        const importActiveTime = await this.collectImportActiveTime(
+          graph,
+          suspendedActiveTime,
+        )
+        activeResult = await this.flushSuspendedActiveTime(
+          graph,
+          importActiveTime,
+          false,
+        )
+        importOwnsActiveResidue =
+          (activeResult?.remainingMilliseconds ?? 0) > 0
         const supplied = await this.readSuppliedSave(request)
         const context =
           request.context ?? {
@@ -1015,6 +1091,14 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           target: 'development',
           context,
         })
+        if (imported.imported) {
+          // The confirmed replacement intentionally discards any unconsumed
+          // elapsed time that belonged to the overwritten session.
+          importOwnsActiveResidue = false
+        } else {
+          this.restoreActiveResultResidue(graph, activeResult)
+          importOwnsActiveResidue = false
+        }
         return {
           imported,
           recoveryPath: recovery.sourcePath,
@@ -1049,6 +1133,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       recordPerformanceImportResult(result)
       return result
     } catch (error) {
+      if (importOwnsActiveResidue) {
+        this.restoreActiveResultResidue(graph, activeResult)
+        importOwnsActiveResidue = false
+      }
       await this.lease.assertWritable()
       this.assertCurrentGraph(graph)
       if (activeResult !== undefined) {
@@ -1177,17 +1265,25 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     this.shutdownRequested = true
     this.foregroundIntended = false
     const graph = this.graph
+    let activeTimeSettlement: Promise<void> | undefined
     if (graph !== undefined) {
-      const pendingActiveMilliseconds =
+      const suspendedActiveTime =
         this.suspendActiveTime(graph)
-      if (pendingActiveMilliseconds > 0) {
-        void graph.router.run(() =>
-          graph.coordinator.advanceActive(
-            pendingActiveMilliseconds,
-          ),
-        ).catch(() => undefined)
-      }
-      graph.activeTime.shutdown()
+      activeTimeSettlement = hasSuspendedActiveTime(suspendedActiveTime)
+        ? graph.router.run(() =>
+            this.flushSuspendedActiveTime(
+              graph,
+              suspendedActiveTime,
+            ),
+          ).then((result) => {
+            if (result !== undefined) this.recordActiveResult(result)
+          }).catch((error: unknown) => {
+            this.addWarning({
+              code: 'active-time-failed',
+              reason: errorMessage(error),
+            }, false)
+          }).then(() => this.preserveShutdownActiveTime(graph))
+        : Promise.resolve()
     }
     graph?.router.stop()
     graph?.checkpoint.stop()
@@ -1196,7 +1292,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     const existingLossTeardown = this.teardownPromise
     this.teardownPromise = (
       existingLossTeardown ??
-      this.teardown(graph, true)
+      this.teardown(graph, true, activeTimeSettlement)
     ).then(() => {
       if (this.graph === graph) this.graph = undefined
       this.unsubscribeOwnership?.()
@@ -1275,7 +1371,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
                 false,
               )
             ) {
-              this.suspendActiveTime(graph)
+              graph.activeTime.pauseForeground()
             }
           }
           return replay
@@ -1323,7 +1419,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         }
         this.startActiveTimeIfForegroundIntended(graph)
       } else {
-        this.suspendActiveTime(graph)
+        graph.activeTime.pauseForeground()
         this.addWarning({
           code: 'persistence-failed',
           reason:
@@ -1421,9 +1517,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         ) {
           return undefined
         }
-        const milliseconds = this.suspendActiveTime(graph)
-        return milliseconds > 0
-          ? () => coordinator.advanceActive(milliseconds)
+        const suspended = this.suspendActiveTime(graph)
+        return hasSuspendedActiveTime(suspended)
+          ? () => this.flushSuspendedActiveTime(
+              graph,
+              suspended,
+            )
           : undefined
       },
       afterPhase: (
@@ -1444,7 +1543,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           const unsafeReplayReason =
             unsafeForegroundReplayReason(result)
           if (unsafeReplayReason !== undefined) {
-            this.suspendActiveTime(graph)
+            graph.activeTime.pauseForeground()
             this.addWarning({
               code: 'persistence-failed',
               reason:
@@ -1478,7 +1577,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           // non-active phase was observed. Reassert the stopped state after
           // its queued lifecycle operation so background time cannot enter
           // the foreground delivery lane.
-          this.suspendActiveTime(graph)
+          graph.activeTime.pauseForeground()
         }
       },
       onFailure: (_phase, error) => {
@@ -1496,15 +1595,32 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         }
       },
     })
+    const activeTimeSnapshot = application.snapshot()
     activeTime = new CoordinatorActiveTimeDriver({
       clock: this.options.activeTimeClock,
       scheduler: this.options.activeTimeScheduler,
       minimumDeliveryMilliseconds:
-        this.options.activeTimeDeliveryIntervalMilliseconds,
+        this.options.activeTimeDeliveryIntervalMilliseconds ??
+        (activeTimeSnapshot.phase === 'ready'
+          ? activeTimeSnapshot.state.gameState.timeline.processing
+              .activeIntervalMilliseconds
+          : 33),
       deliver: (milliseconds) =>
-        router.run(() => coordinator.advanceActive(milliseconds)),
+        router.runLocallyFenced(() =>
+          coordinator.advanceActive(milliseconds),
+        ),
       onDelivered: (result) => {
         if (!this.isCurrentGraph(graph)) return
+        const snapshot = application.snapshot()
+        if (
+          snapshot.phase === 'ready' &&
+          this.options.activeTimeDeliveryIntervalMilliseconds === undefined
+        ) {
+          activeTime.setDeliveryIntervalMilliseconds(
+            snapshot.state.gameState.timeline.processing
+              .activeIntervalMilliseconds,
+          )
+        }
         this.recordActiveResult(result)
         this.publishFrontendSnapshot(
           graph,
@@ -1515,6 +1631,8 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
             : 'immediate',
         )
       },
+      undeliveredMilliseconds: (result) =>
+        result.remainingMilliseconds,
       onFailure: (error) => {
         if (
           !(error instanceof WriterAuthorityLostError) &&
@@ -1525,6 +1643,20 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
             reason: errorMessage(error),
           })
         }
+      },
+      onHibernation: (milliseconds) => {
+        return router.run(() =>
+          coordinator.creditVisibleHibernation(milliseconds),
+        ).then((result) => {
+          if (!result.committed) {
+            throw new Error(
+              result.reason ?? 'Visible hibernation credit was not committed.',
+            )
+          }
+          if (this.isCurrentGraph(graph)) {
+            this.publishFrontendSnapshot(graph, true)
+          }
+        })
       },
     })
     const playerCommands = new RevisionedPlayerCommandDispatcher({
@@ -1613,8 +1745,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private async teardown(
     graph: BrowserRuntimeGraph | undefined,
     orderly: boolean,
+    beforeDriverShutdown?: Promise<void>,
   ): Promise<void> {
     if (graph !== undefined) {
+      await beforeDriverShutdown
       graph.activeTime.shutdown()
       await graph.router.shutdown()
       await graph.checkpoint.shutdown()
@@ -1624,6 +1758,43 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     }
     if (orderly) await this.lease.release()
     await this.lease.shutdown()
+  }
+
+  private async preserveShutdownActiveTime(
+    graph: BrowserRuntimeGraph,
+  ): Promise<void> {
+    const residue = await resolveSuspendedActiveTime(
+      this.suspendActiveTime(graph),
+    )
+    const unresolvedMilliseconds =
+      residue.activeMilliseconds + residue.hibernationMilliseconds
+    if (unresolvedMilliseconds <= 0) return
+    try {
+      const sampled = this.clock.sample()
+      const existing = parseUnityInvariantUtcTimestamp(
+        this.departureMarker.read(),
+      )
+      const departureUtcMilliseconds = Math.max(
+        0,
+        (existing.status === 'valid'
+          ? Math.min(
+              existing.utcMilliseconds,
+              sampled.utcMilliseconds,
+            )
+          : sampled.utcMilliseconds) - unresolvedMilliseconds,
+      )
+      this.departureMarker.record(
+        new Date(departureUtcMilliseconds).toISOString(),
+      )
+      this.departureRecordedForCurrentEpisode = true
+    } catch (error) {
+      this.addWarning({
+        code: 'active-time-failed',
+        reason:
+          'Unprocessed foreground time could not be preserved for the next startup: ' +
+          errorMessage(error),
+      }, false)
+    }
   }
 
   private async checkpointOrderlyShutdown(
@@ -1731,7 +1902,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   private suspendActiveTime(
     graph: BrowserRuntimeGraph,
-  ): number {
+  ): SuspendedActiveTime {
     try {
       return graph.activeTime.suspendForLifecycle()
     } catch (error) {
@@ -1739,7 +1910,102 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         code: 'active-time-failed',
         reason: errorMessage(error),
       })
-      return 0
+      return {
+        activeMilliseconds: 0,
+        hibernationMilliseconds: 0,
+        hasInFlightDelivery: false,
+        inFlightResidue: Promise.resolve({
+          activeMilliseconds: 0,
+          hibernationMilliseconds: 0,
+        }),
+      }
+    }
+  }
+
+  private async flushSuspendedActiveTime(
+    graph: BrowserRuntimeGraph,
+    suspended: SuspendedActiveTime,
+    restoreUnconsumed = true,
+  ): Promise<CanonicalCoordinatedActiveResult | undefined> {
+    const residue = await resolveSuspendedActiveTime(suspended)
+    try {
+      await this.creditSuspendedHibernation(
+        graph.coordinator,
+        residue.hibernationMilliseconds,
+      )
+    } catch (error) {
+      graph.activeTime.restoreSuspendedTime(residue)
+      throw error
+    }
+    if (residue.activeMilliseconds <= 0) return undefined
+    try {
+      const result = await graph.coordinator.advanceActive(
+        residue.activeMilliseconds,
+      )
+      if (
+        restoreUnconsumed &&
+        result.remainingMilliseconds > 0
+      ) {
+        graph.activeTime.restoreSuspendedTime({
+          activeMilliseconds: result.remainingMilliseconds,
+          hibernationMilliseconds: 0,
+        })
+      }
+      return result
+    } catch (error) {
+      graph.activeTime.restoreSuspendedTime({
+        activeMilliseconds: residue.activeMilliseconds,
+        hibernationMilliseconds: 0,
+      })
+      throw error
+    }
+  }
+
+  private async collectImportActiveTime(
+    graph: BrowserRuntimeGraph,
+    admitted: SuspendedActiveTime,
+  ): Promise<SuspendedActiveTime> {
+    const admittedResidue = await resolveSuspendedActiveTime(admitted)
+    // Earlier queued commands/lifecycle work may have restored residue after
+    // import admission. Drain it only once that older router work has settled.
+    await Promise.resolve()
+    const lateResidue = await resolveSuspendedActiveTime(
+      this.suspendActiveTime(graph),
+    )
+    return resolvedSuspendedActiveTime({
+      activeMilliseconds:
+        admittedResidue.activeMilliseconds +
+        lateResidue.activeMilliseconds,
+      hibernationMilliseconds:
+        admittedResidue.hibernationMilliseconds +
+        lateResidue.hibernationMilliseconds,
+    })
+  }
+
+  private restoreActiveResultResidue(
+    graph: BrowserRuntimeGraph,
+    result: CanonicalCoordinatedActiveResult | undefined,
+  ): void {
+    if (
+      result === undefined ||
+      result.remainingMilliseconds <= 0
+    ) return
+    graph.activeTime.restoreSuspendedTime({
+      activeMilliseconds: result.remainingMilliseconds,
+      hibernationMilliseconds: 0,
+    })
+  }
+
+  private async creditSuspendedHibernation(
+    coordinator: CanonicalLifecycleCoordinator,
+    milliseconds: number,
+  ): Promise<void> {
+    if (milliseconds <= 0) return
+    const result = await coordinator.creditVisibleHibernation(milliseconds)
+    if (!result.committed) {
+      throw new Error(
+        result.reason ?? 'Visible hibernation credit was not committed.',
+      )
     }
   }
 
@@ -1748,6 +2014,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     expectedIntentEpoch?: unknown,
   ): void {
     if (
+      this.pendingImportCount > 0 ||
       !this.foregroundIntended ||
       this.lifecycleReconciledIntentEpoch !==
         this.lifecycleIntentEpoch ||
@@ -2055,6 +2322,39 @@ function isCanonicalActiveResult(
     'remainingMilliseconds' in value &&
     'transition' in value
   )
+}
+
+function hasSuspendedActiveTime(
+  value: SuspendedActiveTime,
+): boolean {
+  return value.activeMilliseconds > 0 ||
+    value.hibernationMilliseconds > 0 ||
+    value.hasInFlightDelivery
+}
+
+async function resolveSuspendedActiveTime(
+  value: SuspendedActiveTime,
+): Promise<ActiveTimeResidue> {
+  const inFlight = await value.inFlightResidue
+  return {
+    activeMilliseconds:
+      value.activeMilliseconds + inFlight.activeMilliseconds,
+    hibernationMilliseconds:
+      value.hibernationMilliseconds + inFlight.hibernationMilliseconds,
+  }
+}
+
+function resolvedSuspendedActiveTime(
+  residue: ActiveTimeResidue,
+): SuspendedActiveTime {
+  return {
+    ...residue,
+    hasInFlightDelivery: false,
+    inFlightResidue: Promise.resolve({
+      activeMilliseconds: 0,
+      hibernationMilliseconds: 0,
+    }),
+  }
 }
 
 function requireLifecycleReceipt(

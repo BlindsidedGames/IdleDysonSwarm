@@ -1,7 +1,7 @@
 import type { DysonPresentationTuning } from '../../simulation/canonicalDysonDerivation'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 
-export const STORED_TIME_WORKER_PROTOCOL_VERSION = 1 as const
+export const STORED_TIME_WORKER_PROTOCOL_VERSION = 2 as const
 
 export interface StoredTimeJobProgress {
   readonly jobId: string
@@ -11,12 +11,19 @@ export interface StoredTimeJobProgress {
   readonly elapsedMilliseconds: number
   readonly estimatedRemainingMilliseconds: number | null
   readonly maximumChunkMilliseconds: number
+  readonly completedTicks?: number
+  readonly remainingTicks?: number
+  readonly plannedTicks?: number
+  readonly currentStepSeconds?: number
+  readonly ticksPerSecond?: number
+  readonly canSpeedUp?: boolean
 }
 
 export type StoredTimeJobStatus =
   | { readonly kind: 'idle' }
   | ({ readonly kind: 'running' } & StoredTimeJobProgress)
   | ({ readonly kind: 'cancelling' } & StoredTimeJobProgress)
+  | ({ readonly kind: 'committing' } & StoredTimeJobProgress)
 
 export interface StoredTimeJobStartMessage {
   readonly type: 'start'
@@ -34,9 +41,16 @@ export interface StoredTimeJobCancelMessage {
   readonly jobId: string
 }
 
+export interface StoredTimeJobSpeedUpMessage {
+  readonly type: 'speed-up'
+  readonly protocolVersion: typeof STORED_TIME_WORKER_PROTOCOL_VERSION
+  readonly jobId: string
+}
+
 export type StoredTimeWorkerInboundMessage =
   | StoredTimeJobStartMessage
   | StoredTimeJobCancelMessage
+  | StoredTimeJobSpeedUpMessage
 
 export type StoredTimeWorkerOutboundMessage =
   | {
@@ -56,9 +70,6 @@ export type StoredTimeWorkerOutboundMessage =
       readonly candidate: CanonicalRuntimeState
       readonly consumedSeconds: number
       readonly remainingSeconds: number
-      readonly continuation:
-        | { readonly kind: 'complete' }
-        | { readonly kind: 'bot-cap-persistence-required' }
       readonly progress: StoredTimeJobProgress
     }
   | {
@@ -111,14 +122,14 @@ export function isStoredTimeWorkerOutboundMessage(
     !isRecord(candidate.candidate) ||
     !isFiniteNonNegative(candidate.consumedSeconds) ||
     !isFiniteNonNegative(candidate.remainingSeconds) ||
-    !isRecord(candidate.continuation) ||
-    !['complete', 'bot-cap-persistence-required']
-      .includes(String(candidate.continuation.kind)) ||
     !isStoredTimeJobProgress(candidate.progress)
   ) {
     return false
   }
-  return true
+  return candidate.remainingSeconds <= 1e-8 &&
+    Math.abs(
+      candidate.consumedSeconds - candidate.progress.requestedSeconds,
+    ) <= 1e-8
 }
 
 function isStoredTimeJobProgress(value: unknown): value is StoredTimeJobProgress {
@@ -131,6 +142,12 @@ function isStoredTimeJobProgress(value: unknown): value is StoredTimeJobProgress
     (value.estimatedRemainingMilliseconds === null ||
       isFiniteNonNegative(value.estimatedRemainingMilliseconds)) &&
     isFiniteNonNegative(value.maximumChunkMilliseconds)
+    && optionalSafeNonNegativeInteger(value.completedTicks)
+    && optionalSafeNonNegativeInteger(value.remainingTicks)
+    && optionalSafeNonNegativeInteger(value.plannedTicks)
+    && optionalFiniteNonNegative(value.currentStepSeconds)
+    && optionalFiniteNonNegative(value.ticksPerSecond)
+    && (value.canSpeedUp === undefined || typeof value.canSpeedUp === 'boolean')
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -139,4 +156,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isFiniteNonNegative(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0
+}
+
+function optionalFiniteNonNegative(value: unknown): boolean {
+  return value === undefined || isFiniteNonNegative(value)
+}
+
+function optionalSafeNonNegativeInteger(value: unknown): boolean {
+  return value === undefined || (
+    typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
+  )
 }

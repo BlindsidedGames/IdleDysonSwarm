@@ -167,6 +167,10 @@ const version311PatchNoteMessages = [
 
 const version312PatchNoteMessages = [
   messages.patchNotesVersion312Languages,
+  messages.patchNotesVersion312Processing,
+  messages.patchNotesVersion312OfflineControls,
+  messages.patchNotesVersion312UpdateInterval,
+  messages.patchNotesVersion312DoubleTime,
 ] as const
 
 type SecretEffectMessage =

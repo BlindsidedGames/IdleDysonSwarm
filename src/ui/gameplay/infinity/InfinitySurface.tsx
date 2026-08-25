@@ -112,6 +112,12 @@ export function InfinitySurface({
   const manualResetReady =
     !progression.infinity.automaticResetEnabled &&
     (derived.mode === 'break' ? derived.currentReward >= 1n : progress >= 1)
+  const inefficientAutomaticTarget =
+    derived.mode === 'break' &&
+    progression.infinity.automaticResetEnabled &&
+    (derived.peakReward ?? 0n) > 0n &&
+    progression.infinity.breakTarget * 2n >=
+      (derived.peakReward ?? 0n) * 5n
   useForwardProgressAnimation(progressFillRef, {
     canonicalProgress: progress,
     inferRate: 'increasing',
@@ -299,14 +305,23 @@ export function InfinitySurface({
             ) : null}
           />
           {derived.mode === 'break' ? (
-            <BreakTargetControl
-              locale={locale}
-              target={progression.infinity.breakTarget}
-              routeAvailable={
-                commandAvailability.setBreakTarget
-              }
-              dispatchPlayer={dispatchPlayer}
-            />
+            <>
+              <BreakTargetControl
+                locale={locale}
+                target={progression.infinity.breakTarget}
+                routeAvailable={
+                  commandAvailability.setBreakTarget
+                }
+                dispatchPlayer={dispatchPlayer}
+              />
+              {inefficientAutomaticTarget ? (
+                <p className="infinity-surface__warning" role="status">
+                  {intl.formatMessage(messages.automaticTargetWarning, {
+                    reward: formatGameNumber(locale, derived.peakReward ?? 0n),
+                  })}
+                </p>
+              ) : null}
+            </>
           ) : null}
         </ProgressControlsPanel>
       </div>

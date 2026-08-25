@@ -929,12 +929,6 @@
   padding-block-start: 0;
 }
 
-.dyson-shell[data-route-theme="simulations"]
-  .simulation-time-control {
-  --simulation-slider-accent: var(--simulations-slider-accent);
-  --simulation-slider-track: var(--simulations-slider-track);
-}
-
 .dyson-shell[data-route-theme="quantum"]
   .dyson-shell__lower-regions {
   border-color: #69558a;

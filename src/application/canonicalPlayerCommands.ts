@@ -5,8 +5,8 @@ import {
 } from './canonicalGameCommands'
 
 /**
- * Complete frontend-dispatchable intent union. Internal away-time, bot-cap,
- * and stored-time continuation commands remain facade-private.
+ * Complete frontend-dispatchable intent union. Internal away-time and bot-cap
+ * checkpoint commands remain facade-private.
  */
 export type CanonicalPlayerCommand =
   | CanonicalGameCommand

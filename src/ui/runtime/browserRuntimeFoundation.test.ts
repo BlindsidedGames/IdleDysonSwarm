@@ -188,9 +188,6 @@ describe('browser runtime foundation composition', () => {
         offlineSnapshot.gameplay.resources.time
           .storedTimeCapacitySeconds,
       )
-      expect(
-        offlineSnapshot.gameplay.resources.time.doubleTimeBankSeconds,
-      ).toBe(42_000_000)
     }
     await expect(
       development?.setDysonBots(195_000),
@@ -1339,6 +1336,35 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
+  test('uses the local authority fence for non-durable foreground updates', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        return application
+      },
+    })
+    await runtime.start()
+    const inspectionsBeforeUpdate = database.events.filter(
+      (event) => event === 'lease.inspect',
+    ).length
+
+    activeClock.set(33)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+
+    expect(database.events.filter(
+      (event) => event === 'lease.inspect',
+    )).toHaveLength(inspectionsBeforeUpdate)
+    await runtime.shutdown()
+  })
+
   test('keeps foreground stopped between overlapping imports and resumes only after the final failed import settles', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const activeClock = new ManualActiveTimeClock()
@@ -1457,6 +1483,7 @@ describe('browser runtime foundation composition', () => {
     })
 
     activeClock.set(2)
+    await waitUntil(() => activeFrames.pending === 1)
     activeFrames.fire()
     await waitUntil(() => application?.activeRequests.length === 2)
     await flushMicrotasks()
@@ -1464,6 +1491,7 @@ describe('browser runtime foundation composition', () => {
     expect(revisions).toEqual([1])
 
     activeClock.set(3)
+    await waitUntil(() => activeFrames.pending === 1)
     activeFrames.fire()
     await waitUntil(() => application?.activeRequests.length === 3)
     await flushMicrotasks()
@@ -1471,6 +1499,7 @@ describe('browser runtime foundation composition', () => {
     expect(revisions).toEqual([1, 2])
 
     activeClock.set(4)
+    await waitUntil(() => activeFrames.pending === 1)
     activeFrames.fire()
     await waitUntil(() => application?.activeRequests.length === 4)
     await flushMicrotasks()
@@ -1699,7 +1728,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 5,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 10 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -2078,7 +2107,7 @@ describe('browser runtime foundation composition', () => {
           storedTimeAvailableSeconds: 10,
           storedTimeCapacitySeconds: 100,
           lastSuspendedAtLegacyText: null,
-          doubleTime: { bankSeconds: 20 },
+          doubleTime: { bankSeconds: 0 },
         })
       }
       expect(marker.read()).toBeNull()
@@ -2158,7 +2187,7 @@ describe('browser runtime foundation composition', () => {
           storedTimeAvailableSeconds: 10,
           storedTimeCapacitySeconds: 100,
           lastSuspendedAtLegacyText: null,
-          doubleTime: { bankSeconds: 20 },
+          doubleTime: { bankSeconds: 0 },
         })
       }
 
@@ -2231,7 +2260,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 1,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 2 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -2298,7 +2327,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 15,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 30 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -2380,7 +2409,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 15,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 30 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -2492,7 +2521,7 @@ describe('browser runtime foundation composition', () => {
           storedTimeAvailableSeconds: 10,
           storedTimeCapacitySeconds: 100,
           lastSuspendedAtLegacyText: null,
-          doubleTime: { bankSeconds: 20 },
+          doubleTime: { bankSeconds: 0 },
         })
       }
 
@@ -2587,7 +2616,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 10,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 20 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -2648,7 +2677,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 1,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 2 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -2779,7 +2808,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 10,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 20 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -2850,7 +2879,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 1,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 2 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -2946,7 +2975,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 5,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 10 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -3116,6 +3145,265 @@ describe('browser runtime foundation composition', () => {
         facilityId: 'assembly_lines',
       },
     })
+    await runtime.shutdown()
+  })
+
+  test('credits a visible hibernation before a state-changing player command', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.setTimeResources(0, 1_000, 0)
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(60_001)
+    await expect(runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })).resolves.toMatchObject({ status: 'accepted' })
+
+    expect(application?.events.indexOf('application.away')).toBeLessThan(
+      application?.events.indexOf('application.player') ?? -1,
+    )
+    const snapshot = application?.snapshot()
+    expect(snapshot?.phase).toBe('ready')
+    if (snapshot?.phase === 'ready') {
+      expect(snapshot.state.gameState.timeline.storedTimeAvailableSeconds)
+        .toBeCloseTo(60.001)
+    }
+    await runtime.shutdown()
+  })
+
+  test('persists a visible hibernation captured immediately before shutdown', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.setTimeResources(0, 1_000, 0)
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(60_001)
+    await runtime.shutdown()
+
+    expect(application?.awayCommits).toBe(1)
+    const snapshot = application?.snapshot()
+    expect(snapshot?.phase).toBe('ready')
+    if (snapshot?.phase === 'ready') {
+      expect(snapshot.state.gameState.timeline.storedTimeAvailableSeconds)
+        .toBeCloseTo(60.001)
+    }
+  })
+
+  test('preserves failed shutdown hibernation as the next startup departure', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:01:00.001Z',
+    )
+    const marker = new MemoryDepartureMarker()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      lifecycleClock,
+      departureMarker: marker,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.setTimeResources(0, 1_000, 0)
+        application.failAwayCommit = true
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(60_001)
+    await runtime.shutdown()
+
+    expect(application?.awayCommits).toBe(0)
+    expect(marker.read()).toBe('2026-07-29T00:00:00.000Z')
+  })
+
+  test('backdates an existing departure by active residue that remains rejected at shutdown', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const marker = new MemoryDepartureMarker()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      departureMarker: marker,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.activeOutcomes.push('rejected', 'rejected')
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(12)
+    lifecycle.emit('background')
+    await waitUntil(() => application?.awayCommits === 1)
+    expect(marker.read()).toBe('2026-07-29T00:00:00Z')
+
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    await runtime.shutdown()
+
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 12, sessionRevision: 1 },
+      { milliseconds: 12, sessionRevision: 1 },
+    ])
+    expect(marker.read()).toBe('2026-07-28T23:59:59.988Z')
+  })
+
+  test('clamps a future departure marker before additively preserving shutdown residue', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const marker = new MemoryDepartureMarker()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      departureMarker: marker,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.activeOutcomes.push('rejected', 'rejected')
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(12)
+    lifecycle.emit('background')
+    await waitUntil(() => application?.awayCommits === 1)
+    marker.record('2026-07-29T00:01:00Z')
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    await runtime.shutdown()
+
+    expect(marker.read()).toBe('2026-07-29T00:00:09.988Z')
+  })
+
+  test('restores a failed hibernation flush for the next foreground retry', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.setTimeResources(0, 1_000, 0)
+        application.failAwayCommit = true
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(60_001)
+    await expect(runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })).resolves.toMatchObject({
+      status: 'failed',
+      code: 'RUNTIME-HIBERNATION-FLUSH-FAILED',
+    })
+
+    application!.failAwayCommit = false
+    activeClock.set(60_002)
+    frames.fire()
+    await waitUntil(() => application?.awayCommits === 1)
+    const snapshot = application?.snapshot()
+    expect(snapshot?.phase).toBe('ready')
+    if (snapshot?.phase === 'ready') {
+      expect(snapshot.state.gameState.timeline.storedTimeAvailableSeconds)
+        .toBeCloseTo(60.001)
+    }
+    await runtime.shutdown()
+  })
+
+  test('restores a failed continuous command flush for normal active retry', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.rejectActiveContinuous = true
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    await expect(runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })).resolves.toMatchObject({
+      status: 'failed',
+      code: 'TEST-ACTIVE-CONTINUOUS-REJECTED',
+    })
+
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('restarts active processing after a command during supported focus loss', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter('active')
+    const frames = new ManualAnimationFrameScheduler()
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecyclePolicy: WEB_LIFECYCLE_POLICY,
+      activeTimeScheduler: frames,
+    })
+    await runtime.start()
+    expect(frames.pending).toBe(1)
+    lifecycle.emit('focus-lost')
+    await waitUntil(() => frames.pending === 1)
+
+    await expect(runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })).resolves.toMatchObject({ status: 'accepted' })
+    expect(frames.pending).toBe(1)
     await runtime.shutdown()
   })
 
@@ -3296,6 +3584,10 @@ describe('browser runtime foundation composition', () => {
       warnings: [{ code: 'persistence-failed' }],
     })
     await runtime.shutdown()
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 12, sessionRevision: 1 },
+      { milliseconds: 12, sessionRevision: 1 },
+    ])
   })
 
   test('applies pre-import elapsed time only to the replaced session and resumes from a fresh baseline', async () => {
@@ -3348,6 +3640,107 @@ describe('browser runtime foundation composition', () => {
 
     expect(application?.activeRequests).toEqual([
       { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 10, sessionRevision: 2 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test.each(['partial', 'rejected'] as const)(
+    'discards %s pre-import residue with the confirmed old-session replacement',
+    async (outcome) => {
+      const database = new MemoryBrowserSaveDatabase()
+      const activeClock = new ManualActiveTimeClock()
+      const frames = new ManualAnimationFrameScheduler()
+      let application: FakeRuntimeApplication | undefined
+      const runtime = createRuntime({
+        database,
+        activeTimeClock: activeClock,
+        activeTimeScheduler: frames,
+        createApplication: (repository) => {
+          application = new FakeRuntimeApplication(
+            repository,
+            database.events,
+          )
+          application.activeOutcomes.push(outcome)
+          application.importedState = runtimeStateWithoutQuitTimestamp()
+          return application
+        },
+      })
+      await runtime.start()
+
+      activeClock.set(10)
+      await expect(runtime.importSave({
+        text: serializeWebSave({
+          saveVersion: 12,
+          marker: 'replacement',
+        }),
+        importedAtUtc: '2026-07-29T00:00:00Z',
+        overwriteApproved: true,
+      })).resolves.toMatchObject({
+        imported: true,
+        sessionRevision: 2,
+      })
+
+      activeClock.set(20)
+      frames.fire()
+      await waitUntil(() => application?.activeRequests.length === 2)
+      expect(application?.activeRequests).toEqual([
+        { milliseconds: 10, sessionRevision: 1 },
+        { milliseconds: 10, sessionRevision: 2 },
+      ])
+      await runtime.shutdown()
+    },
+  )
+
+  test('drains residue restored by an earlier command before replacing its session', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const awayGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        application.setTimeResources(0, 1_000, 0)
+        application.awayGate = awayGate.promise
+        application.failAwayCommitAttempts.add(1)
+        application.importedState = runtimeStateWithoutQuitTimestamp()
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(60_001)
+    const command = runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })
+    await waitUntil(() => application?.awayCommitsStarted === 1)
+    const importing = runtime.importSave({
+      text: serializeWebSave({ saveVersion: 12, marker: 'replacement' }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })
+    application!.awayGate = undefined
+    awayGate.resolve()
+
+    await expect(command).resolves.toMatchObject({
+      status: 'failed',
+      code: 'RUNTIME-HIBERNATION-FLUSH-FAILED',
+    })
+    await expect(importing).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    expect(application?.awayCommits).toBe(1)
+
+    activeClock.set(60_011)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
       { milliseconds: 10, sessionRevision: 2 },
     ])
     await runtime.shutdown()
@@ -3493,7 +3886,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 1,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 2 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -3606,7 +3999,7 @@ describe('browser runtime foundation composition', () => {
         storedTimeAvailableSeconds: 5,
         storedTimeCapacitySeconds: 100,
         lastSuspendedAtLegacyText: null,
-        doubleTime: { bankSeconds: 10 },
+        doubleTime: { bankSeconds: 0 },
       })
     }
 
@@ -4255,8 +4648,6 @@ describe('browser runtime foundation composition', () => {
       return {
         storedTimeAvailableSeconds:
           snapshot.gameplay.resources.time.storedTimeAvailableSeconds,
-        doubleTimeBankSeconds:
-          snapshot.gameplay.resources.time.doubleTimeBankSeconds,
         bots: snapshot.gameplay.resources.dyson.bots,
         infinityPoints:
           snapshot.gameplay.resources.infinity.points,
@@ -4281,7 +4672,6 @@ describe('browser runtime foundation composition', () => {
     ).resolves.toMatchObject({ applied: true })
     const expected = progress(firstRuntime)
     expect(expected.storedTimeAvailableSeconds).toBeGreaterThan(0)
-    expect(expected.doubleTimeBankSeconds).toBeGreaterThan(0)
 
     for (let cycle = 0; cycle < 3; cycle += 1) {
       const exported = await firstRuntime.readCurrentSaveText()
@@ -4479,6 +4869,7 @@ class FakeRuntimeApplication
   checkpointSkipsPersistence = false
   blocked = false
   throwActive = false
+  rejectActiveContinuous = false
   throwPlayer = false
   failAwayCommit = false
   readonly failAwayCommitAttempts = new Set<number>()
@@ -4610,6 +5001,30 @@ class FakeRuntimeApplication
       consumedMilliseconds: partial ? milliseconds / 2 : milliseconds,
       remainingMilliseconds: partial ? milliseconds / 2 : 0,
       continuation: { kind: 'complete' },
+    }
+  }
+
+  advanceActiveContinuous(
+    milliseconds: number,
+  ): SimulationTransitionResult {
+    this.events.push('application.active-continuous')
+    if (this.rejectActiveContinuous) {
+      this.rejectActiveContinuous = false
+      return {
+        accepted: false,
+        code: 'TEST-ACTIVE-CONTINUOUS-REJECTED',
+        reason: 'Scripted continuous active-time rejection.',
+        revision: this.stateRevision,
+      }
+    }
+    if (milliseconds > 0) {
+      this.stateRevision += 1
+      this.dirty = true
+    }
+    return {
+      accepted: true,
+      changed: milliseconds > 0,
+      revision: this.stateRevision,
     }
   }
 

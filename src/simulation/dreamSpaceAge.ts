@@ -639,9 +639,8 @@ export function runDreamSpaceAgeProduction(
 }
 
 /**
- * Runs the persistent railgun automation phase. The canonical scheduler stays
- * at 100 ms; accelerated simulated time may cross several round boundaries in
- * one call and is therefore settled as one exact batch.
+ * Runs the persistent railgun automation phase. A gameplay update may cross
+ * several round boundaries and therefore settles them as one exact batch.
  */
 export function runDreamRailgunAutomation(
   state: Readonly<CanonicalGameStateV1>,
@@ -649,9 +648,7 @@ export function runDreamRailgunAutomation(
 ): DreamRailgunResult {
   if (
     !Number.isFinite(input.tickSeconds) ||
-    input.tickSeconds <= 0 ||
-    input.tickSeconds >
-      DREAM_SPACE_AGE_CONSTANTS.maximumRailgunAutomationIntervalSeconds
+    input.tickSeconds <= 0
   ) {
     return invalidRailgun(state)
   }
@@ -710,6 +707,14 @@ export function runDreamRailgunAutomation(
 
   while (accumulatedProgress > 0) {
     if (!firing) {
+      // One authoritative game update may start at most one volley. Any
+      // remaining simulated duration is intentionally left for the next
+      // update instead of turning a coarse Stored Time step into an
+      // unbounded automation loop.
+      if (volleyStarted) {
+        accumulatedProgress = 0
+        break
+      }
       const boundaryState: CanonicalGameStateV1 = {
         ...state,
         dream: {

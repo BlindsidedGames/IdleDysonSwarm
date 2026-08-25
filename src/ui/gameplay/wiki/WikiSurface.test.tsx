@@ -182,8 +182,12 @@ describe('WikiSurface', () => {
       .closest('section')
     expect(mostRecent).not.toBeNull()
     expect(within(mostRecent!).getByRole('heading', { name: 'Version 3.1.2' })).toBeVisible()
-    expect(within(mostRecent!).getAllByRole('listitem')).toHaveLength(1)
+    expect(within(mostRecent!).getAllByRole('listitem')).toHaveLength(5)
     expect(within(mostRecent!).getByText(/French, German, Latin American Spanish/)).toBeVisible()
+    expect(within(mostRecent!).getByText(/Rebuilt active and Offline Time processing/)).toBeVisible()
+    expect(within(mostRecent!).getByText(/completion summary after each run/)).toBeVisible()
+    expect(within(mostRecent!).getByText(/Game Processing setting from 33–200 ms/)).toBeVisible()
+    expect(within(mostRecent!).getByText(/all game systems at twice their normal speed/)).toBeVisible()
 
     const previous = screen.getByRole('heading', { name: 'Older' })
       .closest('section')

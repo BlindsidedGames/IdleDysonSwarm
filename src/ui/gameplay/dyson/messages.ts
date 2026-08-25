@@ -125,11 +125,6 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Offline Time',
     description: 'Unity Offline Time destination.',
   },
-  simulationTimeMultiplier: {
-    id: 'dyson.simulations.time-multiplier',
-    defaultMessage: 'Time multiplier',
-    description: 'Accessible name for the Simulation time multiplier controls.',
-  },
   offlineTimeProgress: {
     id: 'navigation.offline-time-progress',
     defaultMessage: 'Offline Time, {stored} of {capacity} stored',
@@ -429,6 +424,13 @@ export const readyDysonMessages = defineMessages({
     id: 'dyson.bot-distribution.title',
     defaultMessage: 'Bot Distribution',
     description: 'Unity Bots allocation slider label.',
+  },
+  botMultitaskingEfficiency: {
+    id: 'dyson.bot-distribution.multitasking-efficiency',
+    defaultMessage:
+      '<workers>Workers</workers> and <science>Science</science> efficiency at 100%',
+    description:
+      'Compact bot efficiency summary shown after Bot Multitasking is purchased. Workers and Science are separately color-coded.',
   },
   workerBots: {
     id: 'dyson.bot-distribution.workers',

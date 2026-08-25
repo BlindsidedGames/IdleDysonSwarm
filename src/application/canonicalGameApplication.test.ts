@@ -398,7 +398,7 @@ describe('canonical game application engine', () => {
     expect(state.gameState.timeline).toMatchObject({
       storedTimeAvailableSeconds: 100,
       storedTimeCapacitySeconds: 100,
-      doubleTime: { bankSeconds: 1_095 },
+      doubleTime: { bankSeconds: 0 },
     })
     expect(state.gameState.dyson).toEqual(dysonBefore)
     expect(state.gameState.statistics).toEqual(statisticsBefore)

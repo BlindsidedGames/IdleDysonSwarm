@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest'
 import { hydrateGameState } from '../../src/game-state/mapping'
 import { validateCanonicalGameState } from '../../src/game-state/validate'
 import { prepareImportedSaveText } from '../../src/save/import'
-import { serializeWebSave } from '../../src/save/serialization'
 import { previewCanonicalSkillCatalog } from '../../src/simulation/canonicalSkillTransactions'
 import { CanonicalRuntimeSession } from '../../src/application/canonicalRuntimeSession'
 import { createProductionCanonicalApplicationFactory } from '../../src/application/productionApplicationFactory'
@@ -20,15 +19,15 @@ import {
 
 describe('production-valid progression matrix fixtures', () => {
   const expectedSaveSha256 = {
-    fresh: '97bed9e16cfecb39e4ac33d54b5990087b09e7cd831dfb04417437b61a63eae6',
-    'mid-swarm': '9fbd9913a2f755a7233c36dc04414c2c36f37d2cb2ddf2f8f94b3a826d30d66f',
-    'first-infinity': '045fab3ac024da5992a816d6e03fe0096379a6af377b956e3e8a6ecf60219398',
-    'mature-infinity': 'cb9cf1691785c819905b0af327689cb03be10ec844cf80954520e0eeb36d0c20',
-    'reality-unlock': '047522efab4a0a428b401583f62b2080ddf578d1408ed9517841b9eb4e21d5b1',
-    'mature-simulations': '6894f4513a575f1e94416974e8a3e424562218fd31e7c2dd7f675781b28bad84',
-    'quantum-unlock': 'd9f4fcbafc25bbbaea8893969e6831e1838235fde480179bb5bc245d704de365',
-    'late-quantum': '72cef01d530d8ea945ef159b7303252310f1b2b1c96baea65bace0b3a62ae778',
-    'maximum-skills': '5592d2ad44dffa01508a8f1c83f84ddb5cfae23cc608205f286ea63511bb5e00',
+    fresh: 'ad0aa6b1d12489279d17d3a589a931e41c2178a2b2d3d107f4e9f13635834fe4',
+    'mid-swarm': '3088619600c2919b42e7464c9ce36ce661e2f8b74ec817b3742ddd2162f703a4',
+    'first-infinity': 'a4b3bbbc0cb37240eccbe9a2e6838b73efbd37e2b43223e165d807bf7f54b2e5',
+    'mature-infinity': '1e6af85502a0bcae3c99e58e72dd215fd3bd64ddb00bfced21ac3380534c13c9',
+    'reality-unlock': 'cc7d61675a9f3303c280879471335fa55c8f42bb476942bbb4851c1463f89a0b',
+    'mature-simulations': '35ee187fe410b9c3ce69850984bac891888bada4a554571dd68508286663c100',
+    'quantum-unlock': '194d8b1279fd0384469b44cedde4c03f7e8f9851ef4ae7c695b3e8f92c4bdb37',
+    'late-quantum': 'c60b62f1ee9a856c7c274d14ea6ef218bd5f87487975874dd21bf5e60c306a30',
+    'maximum-skills': 'b3fe37646efa4244d7d6da020256069e1fed377a4eebf550cb2bc018cf07bcff',
   }
   test('materializes every named deterministic state with stable fingerprints', () => {
     const first = createProgressionMatrixFixtures()
@@ -87,48 +86,6 @@ describe('production-valid progression matrix fixtures', () => {
         accepted: true,
       })
     }
-  })
-
-  test('rejects an invalid automation phase before commit and preserves the current fixture', async () => {
-    const fixtures = loadCheckedInProgressionMatrixFixtures()
-    const current = prepareImportedSaveText(
-      fixtures[0].saveText,
-      '2026-08-19T00:00:00.000Z',
-    )
-    const mature = prepareImportedSaveText(
-      fixtures.find((fixture) => fixture.id === 'mature-infinity')!.saveText,
-      '2026-08-19T00:00:00.000Z',
-    )
-    const hydrated = hydrateGameState(mature)
-    const invalid = hydrated.prepare({
-      ...hydrated.state,
-      timeline: {
-        ...hydrated.state.timeline,
-        automationTimeUntilNextEvent: 1,
-      },
-    })
-    const repository = new FixtureRepository(current)
-    const application = createProductionCanonicalApplicationFactory({
-      createFirstRunSave: () => {
-        throw new Error('Invalid-phase import test must not use first-run fallback.')
-      },
-      readHostEntitlements: () => ({ permanentDoubleIp: false }),
-    })(repository)
-    await expect(application.start()).resolves.toMatchObject({ phase: 'ready' })
-    const before = repository.current
-
-    await expect(application.importSave({
-      text: serializeWebSave(invalid.copyValidatedState()),
-      importedAtUtc: '2026-08-19T00:00:01.000Z',
-      overwriteApproved: true,
-    })).resolves.toMatchObject({
-      imported: false,
-      committed: false,
-      code: 'APP-IMPORT-INVALID',
-      reason: expect.stringContaining('CANONICAL_EVENT_AUTOMATION_PHASE_INVALID'),
-    })
-    expect(repository.current).toBe(before)
-    expect(repository.commits).toEqual([])
   })
 
   test('certifies exact Infinity accounting and populated Simulation progression', () => {

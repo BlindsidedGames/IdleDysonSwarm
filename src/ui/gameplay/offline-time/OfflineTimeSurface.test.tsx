@@ -2,7 +2,9 @@
 
 import '@testing-library/jest-dom/vitest'
 import axe from 'axe-core'
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
@@ -25,7 +27,6 @@ afterEach(() => cleanup())
 const resources = {
   storedTimeAvailableSeconds: 86_400,
   storedTimeCapacitySeconds: 86_400,
-  doubleTimeBankSeconds: 12_345,
 } as const satisfies FrontendCanonicalResources['time']
 
 const infinityUsage = {
@@ -38,7 +39,6 @@ const infinityUsage = {
 >
 
 const previews = {
-  doubleTimeRate: { minimum: 0, maximum: 10, current: 4 },
   storedCapacity: {
     eligible: true,
     code: 'upgradable',
@@ -65,21 +65,23 @@ const acceptedStoredTime = {
   kind: 'stored-time',
   admittedSeconds: 600,
   consumedSeconds: 600,
-  remainingSeconds: 85_800,
+  remainingSeconds: 0,
   durableRevision: 2,
   stateRevision: 2,
   activationRevision: { session: 1, state: 2 },
 } as const satisfies UiRuntimePlayerCommandResult
 
 describe('OfflineTimeSurface', () => {
-  test('presents the Unity stored-time bank separately from Simulation Double Time', () => {
+  test('presents the manually spent Offline Time bank', () => {
     const { container } = renderSurface()
 
     expect(screen.getByText('Offline Time')).toBeVisible()
     expect(screen.queryByRole('heading', { name: 'Offline Time' })).not.toBeInTheDocument()
     expect(screen.queryByRole('region', { name: 'Offline Time' })).not.toBeInTheDocument()
     expect(
-      screen.getByText(/separate from Simulation Double Time/),
+      screen.getByText(
+        'Offline Time is stored while you are away. Choose when to spend it to advance the game.',
+      ),
     ).toBeInTheDocument()
     expect(screen.getByText('1d 0s', { selector: 'strong' })).toBeInTheDocument()
     expect(screen.getByText('1d 0s of 1d 0s')).toBeInTheDocument()
@@ -115,8 +117,15 @@ describe('OfflineTimeSurface', () => {
       requestedSeconds: 600,
     })
     expect(
-      await screen.findByText('Advanced the game by 10m 0s.'),
+      await screen.findByText('Spent 10m 0s of Offline Time.'),
     ).toBeInTheDocument()
+    const summary = screen.getByRole('dialog', {
+      name: 'Offline Time Complete',
+    })
+    expect(within(summary).getByText('10m 0s')).toBeInTheDocument()
+    expect(within(summary).getByText('23h 50m 0s')).toBeInTheDocument()
+    await user.click(within(summary).getByRole('button', { name: 'Continue' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     await user.click(
       screen.getByRole('button', { name: 'Spend Again: 10m 0s' }),
@@ -243,7 +252,7 @@ describe('OfflineTimeSurface', () => {
     expect(cancelJob).toHaveBeenCalledOnce()
   })
 
-  test.each(['running', 'cancelling'] as const)(
+  test.each(['running', 'cancelling', 'committing'] as const)(
     'disables every conflicting control while a job is %s',
     (kind) => {
       const job = createStoredTimeControls({
@@ -258,7 +267,7 @@ describe('OfflineTimeSurface', () => {
       })
       renderSurface({
         storedTime: job.controls,
-        initialDraft: kind === 'cancelling'
+        initialDraft: kind !== 'running'
           ? { selectedSeconds: 600, repeatSeconds: 600, armed: false }
           : undefined,
       })
@@ -269,13 +278,17 @@ describe('OfflineTimeSurface', () => {
         expect(screen.getByRole('button', { name })).toBeDisabled()
       }
       expect(screen.getByRole('button', {
-        name: kind === 'cancelling'
+        name: kind !== 'running'
           ? 'Spend Again: 10m 0s'
           : 'Spend 1m 0s',
       }))
         .toBeDisabled()
       expect(screen.getByRole('button', { name: 'Double Storage' }))
         .toBeDisabled()
+      if (kind === 'committing') {
+        expect(screen.getByRole('button', { name: 'Cancel simulation' }))
+          .toBeDisabled()
+      }
     },
   )
 
@@ -308,6 +321,52 @@ describe('OfflineTimeSurface', () => {
       .not.toBeInTheDocument()
   })
 
+  test('makes the active job modal, traps focus, and restores the page afterwards', async () => {
+    const user = userEvent.setup()
+    const job = createStoredTimeControls({ kind: 'idle' })
+    renderSurface({ storedTime: job.controls })
+    const returnTarget = screen.getByRole('button', { name: 'Spend 1m 0s' })
+    returnTarget.focus()
+
+    act(() => job.set({
+      kind: 'running',
+      jobId: 'modal-job',
+      requestedSeconds: 600,
+      computedSeconds: 150,
+      fraction: 0.25,
+      elapsedMilliseconds: 1_000,
+      estimatedRemainingMilliseconds: 3_000,
+      maximumChunkMilliseconds: 12,
+      canSpeedUp: true,
+    }))
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Offline Time simulation progress',
+    })
+    const speedUp = within(dialog).getByRole('button', { name: 'Speed up' })
+    const cancel = within(dialog).getByRole('button', {
+      name: 'Cancel simulation',
+    })
+    expect(speedUp).toHaveFocus()
+    const backdrop = dialog.parentElement
+    expect(backdrop).toHaveClass('offline-time-job__backdrop')
+    for (const element of [...document.body.children]) {
+      if (element !== backdrop) expect((element as HTMLElement).inert).toBe(true)
+    }
+
+    await user.tab({ shift: true })
+    expect(cancel).toHaveFocus()
+    await user.tab()
+    expect(speedUp).toHaveFocus()
+
+    act(() => job.set({ kind: 'idle' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(returnTarget).toHaveFocus()
+    for (const element of [...document.body.children]) {
+      expect((element as HTMLElement).inert).toBeFalsy()
+    }
+  })
+
   test('has no serious or critical accessibility violations', async () => {
     const { container } = renderSurface()
     const results = await axe.run(container, {
@@ -320,6 +379,19 @@ describe('OfflineTimeSurface', () => {
         violation.impact === 'serious' || violation.impact === 'critical',
       ),
     ).toEqual([])
+  })
+
+  test('uses route-independent theme tokens for the portaled processing dialog', () => {
+    const styles = readFileSync(
+      join(process.cwd(), 'src/ui/gameplay/offline-time/offlineTime.css'),
+      'utf8',
+    )
+    expect(styles).toMatch(
+      /\.offline-time-job\s*\{[^}]*background:\s*var\(--theme-panel\);/s,
+    )
+    expect(styles).not.toMatch(
+      /\.offline-time-job\s*\{[^}]*var\(--offline-panel/s,
+    )
   })
 })
 
@@ -352,14 +424,20 @@ function renderSurface(
 
 function createStoredTimeControls(initial: StoredTimeJobStatus) {
   const listeners = new Set<() => void>()
+  let status = initial
   return {
     controls: {
-      status: () => initial,
+      status: () => status,
       subscribe(listener: () => void) {
         listeners.add(listener)
         return () => listeners.delete(listener)
       },
       cancel: vi.fn(),
+      speedUp: vi.fn(),
+    },
+    set(next: StoredTimeJobStatus) {
+      status = next
+      for (const listener of listeners) listener()
     },
   }
 }

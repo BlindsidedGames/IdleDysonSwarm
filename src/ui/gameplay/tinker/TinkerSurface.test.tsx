@@ -651,10 +651,10 @@ describe('TinkerSurface presentation and accessibility', () => {
       1,
       [
         { offset: 0, transform: 'scaleX(0.2)' },
-        { offset: 1, transform: 'scaleX(0.4)' },
+        { offset: 1, transform: 'scaleX(0.266)' },
       ],
       {
-        duration: 100,
+        duration: 33,
         easing: 'linear',
         fill: 'forwards',
       },
@@ -672,10 +672,10 @@ describe('TinkerSurface presentation and accessibility', () => {
       2,
       [
         { offset: 0, transform: 'scaleX(0.4)' },
-        { offset: 1, transform: 'scaleX(0.6000000000000001)' },
+        { offset: 1, transform: 'scaleX(0.466)' },
       ],
       {
-        duration: 100,
+        duration: 33,
         easing: 'linear',
         fill: 'forwards',
       },

@@ -22,10 +22,6 @@ import {
   type CanonicalEventTimeContext,
   type CanonicalEventTimeState,
 } from '../simulation/canonicalEventTimeModel'
-import { advanceEventTime } from '../simulation/eventTime'
-import {
-  completeStoredTimeInfinityAggregate,
-} from '../simulation/storedTimeAccounting'
 import { QUANTUM_CONSTANTS } from '../simulation/quantumUpgrades'
 import {
   withCanonicalBotAllocation,
@@ -37,9 +33,9 @@ import {
 import { runCanonicalSkillAutoAssignment } from '../simulation/canonicalSkillTransactions'
 import {
   createSimulationSummary,
-  transferEventTimeModelOwnership,
-  type SimulationAutomationPolicy,
 } from '../simulation/types'
+import { advanceGame } from '../simulation/gameStep'
+import { planStoredTimePolicy } from '../simulation/storedTimePolicy'
 import {
   normalizeCanonicalTinkerRuntimeState,
 } from '../simulation/canonicalTinker'
@@ -98,6 +94,10 @@ export {
 } from './canonicalPlayerCommands'
 
 type CanonicalInternalCommand =
+  | {
+      readonly kind: 'internal.advance-active-continuous'
+      readonly milliseconds: number
+    }
   | {
       readonly kind: 'internal.advance-stored-time'
       readonly seconds: number
@@ -188,12 +188,6 @@ export type CanonicalStoredTimeCommitResult =
       readonly durableRevision: number
       readonly consumedSeconds: number
       readonly remainingSeconds: number
-      readonly continuation:
-        | { readonly kind: 'complete' }
-        | {
-            readonly kind: 'bot-cap-persistence-required'
-            readonly checkpoint: BotCapCheckpointName
-          }
     }
   | {
       readonly committed: false
@@ -363,6 +357,26 @@ export class CanonicalGameApplicationFacade {
     return this.application.advanceActive(milliseconds)
   }
 
+  advanceActiveContinuous(milliseconds: number): SimulationTransitionResult {
+    const snapshot = this.snapshot()
+    if (snapshot.phase !== 'ready') {
+      return {
+        accepted: false,
+        code: 'APP-NOT-READY',
+        reason: 'Continuous active time requires a ready application.',
+        revision: 0,
+      }
+    }
+    return this.application.dispatch({
+      sessionRevision: snapshot.revision.session,
+      expectedStateRevision: snapshot.revision.state,
+      command: {
+        kind: 'internal.advance-active-continuous',
+        milliseconds,
+      },
+    })
+  }
+
   /**
    * Coordinator-facing active tick that preserves an exact resumable tail
    * when the event model reaches a commit-first bot-cap boundary.
@@ -433,12 +447,20 @@ export class CanonicalGameApplicationFacade {
   }
 
   cancelStoredTimeJob(): void {
-    if (this.storedTimeJobStatusValue.kind === 'idle') return
+    if (
+      this.storedTimeJobStatusValue.kind === 'idle' ||
+      this.storedTimeJobStatusValue.kind === 'committing'
+    ) return
     this.storedTimeCancellationRequested = true
     this.publishStoredTimeJobStatus({
       ...this.storedTimeJobStatusValue,
       kind: 'cancelling',
     })
+  }
+
+  speedUpStoredTimeJob(): void {
+    if (this.storedTimeJobStatusValue.kind === 'idle') return
+    this.storedTimeJobRunner?.speedUp?.()
   }
 
   captureSaveTransferSnapshot(): CanonicalSaveTransferSnapshot | null {
@@ -636,21 +658,14 @@ export class CanonicalGameApplicationFacade {
           candidateIssue,
         )
       }
-      const checkpoint = requiredBotCapCheckpoint(
-        structuredClone(terminal.candidate.gameState),
-      )
-      if (
-        terminal.continuation.kind ===
-          'bot-cap-persistence-required' &&
-        checkpoint === undefined
-      ) {
-        return rejectedStoredTimeCommit(
-          this.snapshot(),
-          seconds,
-          'STORED-TIME-WORKER-CONTINUATION-INVALID',
-          'The worker requested a bot-cap checkpoint that the candidate does not require.',
-        )
-      }
+      this.publishStoredTimeJobStatus({
+        ...terminal.progress,
+        computedSeconds: seconds,
+        fraction: 1,
+        estimatedRemainingMilliseconds: 0,
+        canSpeedUp: false,
+        kind: 'committing',
+      })
       const result = await this.application.dispatchCommitFirst(
         {
           ...envelope,
@@ -670,16 +685,8 @@ export class CanonicalGameApplicationFacade {
       }
       return {
         ...result,
-        consumedSeconds: terminal.consumedSeconds,
-        remainingSeconds: terminal.remainingSeconds,
-        continuation:
-          terminal.continuation.kind ===
-            'bot-cap-persistence-required' || checkpoint !== undefined
-            ? {
-                kind: 'bot-cap-persistence-required',
-                checkpoint: checkpoint as BotCapCheckpointName,
-              }
-            : { kind: 'complete' },
+        consumedSeconds: seconds,
+        remainingSeconds: 0,
       }
     } catch (error) {
       return rejectedStoredTimeCommit(
@@ -706,11 +713,6 @@ export class CanonicalGameApplicationFacade {
     seconds: number,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalStoredTimeCommitResult> {
-    const before = this.snapshot()
-    const beforeBank =
-      before.phase === 'ready'
-        ? before.state.gameState.timeline.storedTimeAvailableSeconds
-        : 0
     const result = await this.application.dispatchCommitFirst(
       {
         ...envelope,
@@ -730,30 +732,10 @@ export class CanonicalGameApplicationFacade {
       }
     }
 
-    const after = this.snapshot()
-    const afterBank =
-      after.phase === 'ready'
-        ? after.state.gameState.timeline.storedTimeAvailableSeconds
-        : beforeBank
-    const consumedSeconds = Math.max(0, beforeBank - afterBank)
-    const remainingSeconds = Math.max(0, seconds - consumedSeconds)
-    const checkpoint =
-      after.phase === 'ready'
-        ? requiredBotCapCheckpoint(
-            structuredClone(after.state.gameState) as CanonicalRuntimeState['gameState'],
-          )
-        : undefined
     return {
       ...result,
-      consumedSeconds,
-      remainingSeconds,
-      continuation:
-        checkpoint === undefined
-          ? { kind: 'complete' }
-          : {
-              kind: 'bot-cap-persistence-required',
-              checkpoint,
-            },
+      consumedSeconds: seconds,
+      remainingSeconds: 0,
     }
   }
 
@@ -941,6 +923,14 @@ export function createCanonicalGameEngineDefinition(
       if (command.kind === 'internal.replace-away-state') {
         replaceRuntimeState(candidate, command.state)
         return { accepted: true, changed: true }
+      }
+      if (command.kind === 'internal.advance-active-continuous') {
+        return advanceActiveContinuous(
+          candidate,
+          command.milliseconds,
+          eventContexts.active,
+          minimumCycleSeconds,
+        )
       }
       if (command.kind === 'internal.replace-stored-time-state') {
         replaceRuntimeState(candidate, command.state)
@@ -1574,22 +1564,50 @@ function advanceActive(
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }
-  const result = runEventAdvance(
-    candidate,
-    milliseconds / 1000,
+  const result = advanceGame(
+    eventCarrier(candidate),
+    {
+      source: 'active',
+      baseSeconds: milliseconds / 1000,
+      automation: 'enabled',
+    },
     context,
     minimumCycleSeconds,
   )
-  const botCapRequired =
-    result.diagnosticCode ===
-    'CANONICAL_EVENT_BOT_CAP_PERSISTENCE_REQUIRED'
-  if (!result.completed && !botCapRequired) {
+  if (result.issue !== undefined && !result.botCapPersistenceRequired) {
     return reject(
-      result.diagnosticCode ?? 'CANONICAL-ACTIVE-ADVANCE-INCOMPLETE',
-      `Active advance ended as ${result.validationStatus}.`,
+      result.issue,
+      `Active game step ended as ${result.issue}.`,
     )
   }
-  replaceEventCarrier(candidate, result.candidateState.takeState())
+  replaceEventCarrier(candidate, result.state)
+  return { accepted: true, changed: true }
+}
+
+function advanceActiveContinuous(
+  candidate: CanonicalRuntimeState,
+  milliseconds: number,
+  context: Readonly<CanonicalEventTimeContext>,
+  minimumCycleSeconds: number,
+): DomainTransition {
+  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
+  }
+  if (milliseconds === 0) return { accepted: true, changed: false }
+  const result = advanceGame(
+    eventCarrier(candidate),
+    {
+      source: 'active',
+      baseSeconds: milliseconds / 1000,
+      automation: 'suppressed',
+    },
+    context,
+    minimumCycleSeconds,
+  )
+  if (result.issue !== undefined) {
+    return reject(result.issue, `Continuous active step ended as ${result.issue}.`)
+  }
+  replaceEventCarrier(candidate, result.state)
   return { accepted: true, changed: true }
 }
 
@@ -1611,73 +1629,62 @@ function advanceStoredTime(
       'Stored-time spend must be positive, finite, and no greater than the bank.',
     )
   }
-  const preservedTinker = structuredClone(candidate.tinker)
-  const currentUsageBefore =
-    candidate.gameState.infinity.storedTimeUsedThisCycleSeconds
-  const previousUsageBefore =
-    candidate.gameState.infinity.storedTimeUsedPreviousCycleSeconds
-  const result = runEventAdvance(
-    candidate,
+  const working = structuredClone(candidate)
+  const plan = planStoredTimePolicy({
     requestedSeconds,
-    context,
-    minimumCycleSeconds,
-    cancelRequested,
-    'force-buy-max',
-  )
-  const botCapRequired =
-    result.diagnosticCode ===
-    'CANONICAL_EVENT_BOT_CAP_PERSISTENCE_REQUIRED'
-  if (result.validationStatus === 'cancelled') {
-    return reject(
-      'CANONICAL-STORED-TIME-CANCELLED',
-      'Cancelled stored-time candidates are discarded without charging the bank.',
-    )
-  }
-  if (!result.completed && !botCapRequired) {
-    return reject(
-      result.diagnosticCode ?? 'CANONICAL-STORED-TIME-ADVANCE-INCOMPLETE',
-      `Stored-time advance ended as ${result.validationStatus}.`,
-    )
-  }
-  if (result.consumedSeconds <= 0) {
-    return reject(
-      result.diagnosticCode ?? 'CANONICAL-STORED-TIME-NO-PROGRESS',
-      'Stored-time continuation made no durable progress.',
-    )
-  }
-
-  replaceEventCarrier(candidate, {
-    ...result.candidateState.takeState(),
-    // Unity's Tinker coroutine advances on wall Time.deltaTime only.
-    tinker: preservedTinker,
+    preset: working.gameState.timeline.processing.storedTimePreset,
   })
-  const completedCycles =
-    result.summary.ordinaryInfinityCount +
-    result.summary.breakInfinityCount
-  const usage = completeStoredTimeInfinityAggregate(
-    currentUsageBefore,
-    previousUsageBefore,
-    result.consumedSeconds,
-    completedCycles,
-    candidate.gameState.infinity.lastCycleDurationSeconds,
-  )
-  Object.assign(candidate, { gameState: {
-    ...candidate.gameState,
-    infinity: {
-      ...candidate.gameState.infinity,
-      storedTimeUsedThisCycleSeconds:
-        usage.currentCycleSeconds,
-      storedTimeUsedPreviousCycleSeconds:
-        usage.previousCycleSeconds,
-    },
+  let remainingSeconds = requestedSeconds
+  let remainingTicks = plan.plannedTicks
+  while (remainingTicks > 0 && remainingSeconds > 0) {
+    if (cancelRequested?.() === true) {
+      return reject(
+        'CANONICAL-STORED-TIME-CANCELLED',
+        'Cancelled stored-time candidates are discarded without charging the bank.',
+      )
+    }
+    const stepSeconds = remainingSeconds / remainingTicks
+    const result = advanceGame(
+      eventCarrier(working),
+      {
+        source: 'stored-time',
+        baseSeconds: stepSeconds,
+        automation: 'enabled',
+      },
+      context,
+      minimumCycleSeconds,
+    )
+    replaceEventCarrier(working, result.state)
+    if (result.botCapPersistenceRequired) {
+      return reject(
+        'CANONICAL-STORED-TIME-BOT-CAP-UNSETTLED',
+        'Detached Stored Time replay could not settle its bot-cap transition.',
+      )
+    }
+    if (result.issue !== undefined) {
+      return reject(result.issue, `Stored Time game step failed as ${result.issue}.`)
+    }
+    remainingSeconds = Math.max(0, remainingSeconds - stepSeconds)
+    remainingTicks -= 1
+  }
+  const consumedSeconds = requestedSeconds - remainingSeconds
+  if (consumedSeconds <= 0) {
+    return reject(
+      'CANONICAL-STORED-TIME-NO-PROGRESS',
+      'Stored Time replay made no durable progress.',
+    )
+  }
+  Object.assign(working, { gameState: {
+    ...working.gameState,
     timeline: {
-      ...candidate.gameState.timeline,
+      ...working.gameState.timeline,
       storedTimeAvailableSeconds: Math.max(
         0,
-        bank - result.consumedSeconds,
+        bank - consumedSeconds,
       ),
     },
   } })
+  Object.assign(candidate, working)
   return { accepted: true, changed: true }
 }
 
@@ -1730,34 +1737,6 @@ function applyTinker(
   if (issue) return reject(issue, model.issue?.detail ?? issue)
   if (changed) replaceEventCarrier(candidate, model.takeState())
   return { accepted: true, changed }
-}
-
-function runEventAdvance(
-  candidate: Readonly<CanonicalRuntimeState>,
-  seconds: number,
-  context: Readonly<CanonicalEventTimeContext>,
-  minimumCycleSeconds: number,
-  cancelRequested?: () => boolean,
-  automationPolicy: SimulationAutomationPolicy =
-    'preserve-configured-mode',
-) {
-  return advanceEventTime({
-    startingState: transferEventTimeModelOwnership(
-      CanonicalEventTimeModel.fromOwnedState(
-        eventCarrier(candidate),
-        context,
-      ),
-    ),
-    cloneStartingState: false,
-    durationSeconds: seconds,
-    automationIntervalSeconds: context.automationIntervalSeconds,
-    automationTimeUntilNextEvent:
-      candidate.gameState.timeline.automationTimeUntilNextEvent,
-    automationPolicy,
-    infinityMinimumCycleSeconds: minimumCycleSeconds,
-    processingBudgetMilliseconds: 0,
-    cancelRequested,
-  })
 }
 
 function eventCarrier(state: Readonly<CanonicalRuntimeState>) {
@@ -1840,6 +1819,19 @@ function validateStoredTimeJobCandidate(
     Math.abs(requestedSeconds - consumedSeconds - remainingSeconds) > 1e-8
   ) {
     return 'The worker reported inconsistent remaining duration.'
+  }
+  if (
+    Math.abs(requestedSeconds - consumedSeconds) > 1e-8 ||
+    remainingSeconds > 1e-8
+  ) {
+    return 'The worker did not complete the admitted Stored Time atomically.'
+  }
+  if (
+    requiredBotCapCheckpoint(
+      structuredClone(candidate.gameState) as CanonicalRuntimeState['gameState'],
+    ) !== undefined
+  ) {
+    return 'The worker candidate contains an unsettled bot-cap checkpoint.'
   }
   const expectedBank = Math.max(
     0,

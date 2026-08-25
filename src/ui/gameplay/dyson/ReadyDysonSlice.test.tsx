@@ -514,6 +514,43 @@ describe('ReadyDysonSlice', () => {
     expect(onRouteChange).toHaveBeenCalledWith('bots')
   })
 
+  test.each(['bots', 'research'] as const)(
+    'replaces bot distribution with the compact multitasking summary on %s',
+    (route) => {
+      render(
+        provider(
+          <ReadyDysonSlice
+            snapshot={snapshot({ botMultitasking: true })}
+            locale="en"
+            dispatchPlayer={acceptedDispatch}
+            route={route}
+          />,
+        ),
+      )
+
+      const summary = document.querySelector(
+        '.bot-distribution--multitasking',
+      )
+      expect(summary).toBeVisible()
+      expect(summary).toHaveTextContent(
+        'Workers and Science efficiency at 100%',
+      )
+      expect(summary?.querySelector(
+        '.bot-distribution__multitasking-workers',
+      )).toHaveTextContent('Workers')
+      expect(summary?.querySelector(
+        '.bot-distribution__multitasking-science',
+      )).toHaveTextContent('Science')
+      expect(
+        screen.queryByRole('slider', { name: 'Bot Distribution' }),
+      ).not.toBeInTheDocument()
+      expect(summary?.querySelector(
+        '.bot-distribution__allocation',
+      )).not.toBeInTheDocument()
+      expect(screen.queryByText('Scientists')).not.toBeInTheDocument()
+    },
+  )
+
   test('applies a configured preset once when its gameplay tab opens', async () => {
     const dispatchPlayer = vi.fn(acceptedDispatch)
     const rendered = render(
@@ -1364,7 +1401,7 @@ describe('ReadyDysonSlice', () => {
     }
   })
 
-  test('persists the visualization toggle and reclaims its playfield row', async () => {
+  test('defaults visualization off and preserves an explicit opt-in', async () => {
     const user = userEvent.setup()
     const rendered = render(
       provider(
@@ -1377,14 +1414,14 @@ describe('ReadyDysonSlice', () => {
       ),
     )
 
-    await user.click(
-      screen.getByRole('checkbox', {
-        name: 'Show visualization',
-      }),
-    )
+    const visualizationToggle = screen.getByRole('checkbox', {
+      name: 'Show visualization',
+    })
+    expect(visualizationToggle).not.toBeChecked()
+    await user.click(visualizationToggle)
     expect(
       localStorage.getItem(SWARM_VISUALIZATION_STORAGE_KEY),
-    ).toBe('hidden')
+    ).toBe('visible')
 
     rendered.rerender(
       provider(
@@ -1398,10 +1435,10 @@ describe('ReadyDysonSlice', () => {
     )
     expect(
       rendered.container.querySelector('.dyson-swarm-visual'),
-    ).not.toBeInTheDocument()
+    ).toBeInTheDocument()
     expect(
       rendered.container.querySelector('.dyson-shell__playfield'),
-    ).toHaveAttribute('data-has-swarm', 'false')
+    ).toHaveAttribute('data-has-swarm', 'true')
   })
 
   test('shows the compact Bots facts and expands canonical purchase settings', async () => {
@@ -1783,6 +1820,7 @@ interface SnapshotOptions {
   readonly researchPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly botsAutomationUnlocked?: boolean
   readonly researchAutomationUnlocked?: boolean
+  readonly botMultitasking?: boolean
   readonly enabledFacilities?: Partial<Record<FacilityId, boolean>>
   readonly facilities?: Partial<
     Record<FacilityId | MegaStructureId, readonly [number, number]>
@@ -1914,7 +1952,6 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             options.storedTimeAvailableSeconds ?? 600,
           storedTimeCapacitySeconds:
             options.storedTimeCapacitySeconds ?? 3600,
-          doubleTimeBankSeconds: 0,
         },
       },
       progression: {
@@ -1977,7 +2014,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
         quantum: {
           divisionsPurchased: 0n,
           unlocks: {
-            botMultitasking: false,
+            botMultitasking: options.botMultitasking ?? false,
             breakTheLoop: false,
             quantumEntanglement: false,
           },
@@ -2364,9 +2401,6 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           'dream.request-black-hole-reset': {
             routeAvailable: true,
           },
-          'time.set-double-time-rate': {
-            routeAvailable: true,
-          },
           'quantum.purchase-upgrade': {
             routeAvailable: true,
           },
@@ -2531,11 +2565,6 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           },
         },
         time: {
-          doubleTimeRate: {
-            minimum: 0,
-            maximum: 10,
-            current: 0,
-          },
           storedCapacity: {
             eligible: true,
             code: 'upgradable',

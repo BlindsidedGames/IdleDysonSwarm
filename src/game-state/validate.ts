@@ -56,6 +56,23 @@ export function validateCanonicalGameState(
     errors.push('Double Time rate must be an integer from 0 to 10.')
   }
   if (
+    state.timeline.processing.rewriteMigrated !== true ||
+    !Number.isInteger(
+      state.timeline.processing.activeIntervalMilliseconds,
+    ) ||
+    state.timeline.processing.activeIntervalMilliseconds < 33 ||
+    state.timeline.processing.activeIntervalMilliseconds > 200
+  ) {
+    errors.push('Game processing interval must be an integer from 33 to 200 milliseconds.')
+  }
+  if (
+    !['fast', 'balanced', 'accurate'].includes(
+      state.timeline.processing.storedTimePreset,
+    )
+  ) {
+    errors.push('Stored Time accuracy preset is invalid.')
+  }
+  if (
     state.reality.workerGenerationProgress < 0 ||
     state.reality.workerGenerationProgress >= 1
   ) {

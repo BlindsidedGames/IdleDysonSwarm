@@ -79,7 +79,6 @@ import {
 } from './DysonLowerFacts'
 import { DysonSwarmVisual } from './DysonSwarmVisual'
 import { shouldSettleRapidInfinityVisualization } from './rapidInfinityVisualization'
-import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
 import {
   wikiProgressionFromResources,
   type WikiCategoryId,
@@ -87,6 +86,7 @@ import {
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
+import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import type { GameAudioService } from '../../../audio'
 
@@ -166,11 +166,6 @@ const SettingsSurface = lazy(async () => {
 const DebugSurface = lazy(async () => {
   const module = await import('../debug')
   return { default: module.DebugSurface }
-})
-
-const SimulationTimeControl = lazy(async () => {
-  const module = await import('../simulations/SimulationsSurface')
-  return { default: module.SimulationTimeControl }
 })
 
 const QuantumControlPanel = lazy(async () => {
@@ -525,13 +520,12 @@ export function ReadyDysonSlice({
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
     useState(readVisualizationPreference)
-  const [purchaseSettingsOpen, setPurchaseSettingsOpen] = useState(false)
   const [quantumPurchaseSettingsOpen, setQuantumPurchaseSettingsOpen] =
-    useState(false)
-  const [avotationCompletionVisible, setAvotationCompletionVisible] =
     useState(false)
   const [spaceAgePurchaseQuantity, setSpaceAgePurchaseQuantity] =
     useState<SpaceAgePurchaseQuantity>(1)
+  const [avotationCompletionVisible, setAvotationCompletionVisible] =
+    useState(false)
   const [quantumPurchaseQuantity, setQuantumPurchaseQuantity] =
     useState<QuantumPurchaseQuantity>(1)
   const debugDraftRef = useRef<DebugSurfaceDraft>({
@@ -1051,6 +1045,20 @@ export function ReadyDysonSlice({
                   copySaveText={copySaveText}
                   storedTime={storedTime}
                   audio={audio}
+                  processingIntervalMilliseconds={
+                    gameplay.progression.timeline.processing
+                      ?.activeIntervalMilliseconds ?? 33
+                  }
+                  processingIntervalAvailable={
+                    gameplay.commands.byKind[
+                      'settings.set-processing-interval'
+                    ]?.routeAvailable ?? false
+                  }
+                  onProcessingIntervalChange={(milliseconds) =>
+                    dispatchPlayer({
+                      kind: 'settings.set-processing-interval',
+                      milliseconds,
+                    })}
                   development={
                     import.meta.env.DEV ? development : undefined
                   }
@@ -1352,11 +1360,12 @@ export function ReadyDysonSlice({
                                 gameplay.resources.reality.influence
                               }
                               activeDoubleTimeRate={
-                                gameplay.progression.timeline.doubleTime.enabled
-                                  ? gameplay.progression.timeline.doubleTime.rate
-                                  : 0
+                                0
                               }
                               spaceAgePurchaseQuantity={spaceAgePurchaseQuantity}
+                              onSpaceAgePurchaseQuantityChange={
+                                setSpaceAgePurchaseQuantity
+                              }
                               commandAvailability={{
                                 purchaseFoundational:
                                   gameplay.commands.byKind[
@@ -1373,10 +1382,6 @@ export function ReadyDysonSlice({
                                 blackHoleReset:
                                   gameplay.commands.byKind[
                                     'dream.request-black-hole-reset'
-                                  ].routeAvailable,
-                                setDoubleTimeRate:
-                                  gameplay.commands.byKind[
-                                    'time.set-double-time-rate'
                                   ].routeAvailable,
                               }}
                               dispatchPlayer={dispatchPlayer}
@@ -1571,8 +1576,13 @@ export function ReadyDysonSlice({
                                           requestStoredTimeSpend:
                                             gameplay.commands.byKind[
                                               'time.request-stored-time-spend'
-                                            ].routeAvailable,
+                                              ].routeAvailable,
+                                          setStoredTimePreset:
+                                            gameplay.commands.byKind[
+                                              'time.set-stored-time-preset'
+                                            ]?.routeAvailable ?? false,
                                         }}
+                                        processing={gameplay.progression.timeline.processing}
                                         dispatchPlayer={dispatchPlayer}
                                         storedTime={storedTime}
                                         initialDraft={
@@ -1659,28 +1669,7 @@ export function ReadyDysonSlice({
                                 : undefined
       }
       routeSupplement={
-        simulationsActive && gameplay.progression.timeline.doubleTime.unlocked
-          ? {
-              ariaLabel: intl.formatMessage(messages.simulationTimeMultiplier),
-              content: (
-                <Suspense fallback={<LazySurfacePending />}>
-                  <SimulationTimeControl
-                  locale={locale}
-                  bankSeconds={gameplay.resources.time.doubleTimeBankSeconds}
-                  rate={gameplay.progression.timeline.doubleTime.rate}
-                  enabled={gameplay.progression.timeline.doubleTime.enabled}
-                  available={gameplay.commands.byKind['time.set-double-time-rate'].routeAvailable}
-                  spaceAgeAvailable={gameplay.derived.simulations.eras.spaceAge.visible}
-                  purchaseSettingsOpen={purchaseSettingsOpen}
-                  spaceAgePurchaseQuantity={spaceAgePurchaseQuantity}
-                  onPurchaseSettingsOpenChange={setPurchaseSettingsOpen}
-                  onSpaceAgePurchaseQuantityChange={setSpaceAgePurchaseQuantity}
-                  dispatchPlayer={dispatchPlayer}
-                  />
-                </Suspense>
-              ),
-            }
-          : quantumRouteActive
+        quantumRouteActive
             ? {
                 ariaLabel: intl.formatMessage(messages.quantumControls),
                 content: (
@@ -1905,14 +1894,6 @@ export function ReadyDysonSlice({
                   distribution={
                     gameplay.progression.dyson.botDistribution
                   }
-                  workersFraction={
-                    gameplay.derived.dysonBotDistribution
-                      .workersFraction
-                  }
-                  scientistsFraction={
-                    gameplay.derived.dysonBotDistribution
-                      .scientistsFraction
-                  }
                   multitasking={
                     gameplay.progression.quantum.unlocks
                       .botMultitasking
@@ -1973,13 +1954,10 @@ export function ReadyDysonSlice({
 
 function readVisualizationPreference(): boolean {
   try {
-    return (
-      typeof localStorage === 'undefined' ||
-      localStorage.getItem(SWARM_VISUALIZATION_STORAGE_KEY) !==
-        'hidden'
-    )
+    return typeof localStorage !== 'undefined' &&
+      localStorage.getItem(SWARM_VISUALIZATION_STORAGE_KEY) === 'visible'
   } catch {
-    return true
+    return false
   }
 }
 

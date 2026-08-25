@@ -207,6 +207,11 @@ export interface TimelineState {
   readonly storedTimeAvailableSeconds: number
   readonly storedTimeCapacitySeconds: number
   readonly lastSuspendedAtLegacyText: string | null
+  readonly processing: {
+    readonly rewriteMigrated: boolean
+    readonly activeIntervalMilliseconds: number
+    readonly storedTimePreset: StoredTimeAccuracyPreset
+  }
   readonly doubleTime: {
     readonly unlocked: boolean
     readonly enabled: boolean
@@ -214,6 +219,8 @@ export interface TimelineState {
     readonly rate: number
   }
 }
+
+export type StoredTimeAccuracyPreset = 'fast' | 'balanced' | 'accurate'
 
 export interface SecretProgressState {
   readonly completed: boolean
@@ -362,7 +369,7 @@ export interface DreamState {
     readonly reservedPanels?: bigint
     /** Highest unreserved factory-panel inventory observed this run. */
     readonly highestStoredPanels?: bigint
-    /** Presentation telemetry from the most recent 100 ms automation step. */
+    /** Presentation telemetry from the most recent gameplay update. */
     readonly lastRoundsFired?: number
     readonly lastPanelsLaunched?: bigint
   }

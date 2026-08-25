@@ -7,6 +7,7 @@ import { join } from 'node:path'
 import {
   act,
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -123,6 +124,25 @@ describe('SettingsSurface', () => {
     expect(select).toHaveFocus()
   })
 
+  test('presents and updates the active game interval in Settings', () => {
+    const onProcessingIntervalChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+
+    expect(
+      screen.getByRole('heading', { name: 'Game processing' }),
+    ).toBeInTheDocument()
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+    expect(interval).toHaveValue('50')
+    expect(interval.previousElementSibling).toHaveTextContent('50 ms')
+    fireEvent.change(interval, { target: { value: '100' } })
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(100)
+    expect(interval.previousElementSibling).toHaveTextContent('100 ms')
+    expect(settingsStyles).toMatch(/\.settings-surface__processing-control/)
+  })
+
   test('exposes localized device audio volumes and mute controls', async () => {
     const update = vi.fn(() => Promise.resolve())
     const audioSettings = { musicVolume: 0.7, effectsVolume: 0.5, muted: false } as const
@@ -177,7 +197,16 @@ describe('SettingsSurface', () => {
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls input\[type="range"\]\s*\{[^}]*block-size:\s*1\.75rem;/,
     )
     expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__processing-control input\s*\{[^}]*min-block-size:\s*1\.75rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__audio-controls > label:not\(\.settings-surface__toggle\)\s*\{[^}]*font-weight:\s*var\(--font-weight-semibold\);/,
+    )
+    expect(settingsStyles).toMatch(
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\.settings-surface__panel--audio\s*\{[^}]*gap:\s*0\.15rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls > label:not\(\.settings-surface__toggle\),\s*\.settings-surface__processing-control\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
     )
     expect(settingsStyles).toMatch(
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__copy h2\s*\{[^}]*font-size:\s*calc\(0\.95rem \* var\(--game-text-scale\)\);/,

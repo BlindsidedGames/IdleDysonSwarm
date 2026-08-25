@@ -422,7 +422,6 @@ describe('frontend gameplay snapshot', () => {
     expect(snapshot.resources.time).toEqual({
       storedTimeAvailableSeconds: 91.25,
       storedTimeCapacitySeconds: 120,
-      doubleTimeBankSeconds: 17.5,
     })
     expect(snapshot.progression.dyson.facilities).toEqual(
       state.dyson.facilities,
@@ -840,8 +839,8 @@ describe('frontend gameplay snapshot', () => {
     const simulations = snapshot.derived.simulations
     const expectedProduction = deriveCanonicalDreamDerivedFacts(state, {
       effectiveDoubleTimeMultiplier: 1,
-      doubleTimeActive: state.timeline.doubleTime.enabled,
-      doubleTimeRate: state.timeline.doubleTime.rate,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
     })
 
     expect(simulations.live).toMatchObject({
@@ -1607,8 +1606,8 @@ describe('frontend gameplay snapshot', () => {
     )
     const expectedDream = deriveCanonicalDreamDerivedFacts(state, {
       effectiveDoubleTimeMultiplier: 1,
-      doubleTimeActive: state.timeline.doubleTime.enabled,
-      doubleTimeRate: state.timeline.doubleTime.rate,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
     })
 
     expect(expectedDyson.ok).toBe(true)
@@ -1687,7 +1686,7 @@ describe('frontend gameplay snapshot', () => {
     }
   })
 
-  test('publishes current wall-clock Dream rates at the selected Double Time multiplier', () => {
+  test('ignores retired Double Time bank and rate fields in Dream previews', () => {
     const source = fixtureState()
     const boosted: CanonicalGameStateV1 = {
       ...source,
@@ -1705,7 +1704,7 @@ describe('frontend gameplay snapshot', () => {
     const snapshot = selectFrontendGameplaySnapshot(boosted, frontendContext())
 
     expect(snapshot.derived.dream.productionBasis).toBe('current-rate')
-    expect(snapshot.derived.dream.effectiveDoubleTimeMultiplier).toBe(9)
+    expect(snapshot.derived.dream.effectiveDoubleTimeMultiplier).toBe(1)
     expect(snapshot.derived.dream.result.ok).toBe(true)
     expect(baseline.derived.dream.result.ok).toBe(true)
     if (
@@ -1717,7 +1716,7 @@ describe('frontend gameplay snapshot', () => {
         .cyclesPerSecond,
     ).toBeCloseTo(
       baseline.derived.dream.result.value.spaceAge.production.spaceFactory
-        .cyclesPerSecond * 9,
+        .cyclesPerSecond,
     )
   })
 
@@ -1921,8 +1920,7 @@ describe('frontend command envelopes', () => {
   ])('rejects invalid optimistic revisions %#', (revision) => {
     expect(() =>
       createFrontendCommandEnvelope(revision, {
-        kind: 'time.set-double-time-rate',
-        rate: 2,
+        kind: 'time.upgrade-stored-capacity',
       }),
     ).toThrow(/revision must be a non-negative safe integer/)
   })

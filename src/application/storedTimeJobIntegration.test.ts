@@ -55,7 +55,6 @@ describe('Stored Time job application integration', () => {
       committed: true,
       consumedSeconds: 2,
       remainingSeconds: 0,
-      continuation: { kind: 'complete' },
     })
     expect(repository.commits).toBe(beforeCommits + 1)
     const after = application.snapshot()
@@ -187,7 +186,7 @@ describe('Stored Time job application integration', () => {
         options?.onProgress?.(progress)
         return {
           type: 'cancelled',
-          protocolVersion: 1,
+          protocolVersion: 2,
           jobId: request.jobId,
           progress,
         }
@@ -344,7 +343,7 @@ describe('Stored Time job application integration', () => {
         return new Promise((resolve) => {
           finish = () => resolve({
             type: 'cancelled',
-            protocolVersion: 1,
+            protocolVersion: 2,
             jobId: request.jobId,
             progress,
           })
@@ -426,11 +425,44 @@ describe('Stored Time job application integration', () => {
     expect(after.state.gameState.timeline.storedTimeAvailableSeconds).toBe(10)
   })
 
-  test('rejects an inconsistent worker continuation before persistence', async () => {
+  test('enters a non-cancellable committing phase before durable persistence', async () => {
+    const repository = new MemoryRepository()
+    const application = createApplication(repository, simulationRunner())
+    await application.start()
+    await installStoredBank(application, 10)
+    let releaseCommit!: () => void
+    repository.nextCommitGate = new Promise<void>((resolve) => {
+      releaseCommit = resolve
+    })
+    const snapshot = application.snapshot()
+    expect(snapshot.phase).toBe('ready')
+    if (snapshot.phase !== 'ready') return
+
+    const processing = application.commitStoredTime({
+      sessionRevision: snapshot.revision.session,
+      expectedStateRevision: snapshot.revision.state,
+    }, 2)
+    await vi.waitFor(() => {
+      expect(application.storedTimeJobStatus().kind).toBe('committing')
+    })
+
+    application.cancelStoredTimeJob()
+    expect(application.storedTimeJobStatus().kind).toBe('committing')
+    releaseCommit()
+    await expect(processing).resolves.toMatchObject({
+      committed: true,
+      consumedSeconds: 2,
+      remainingSeconds: 0,
+    })
+    expect(application.storedTimeJobStatus()).toEqual({ kind: 'idle' })
+  })
+
+  test('rejects a partial worker completion before persistence', async () => {
     const repository = new MemoryRepository()
     const runner = transformingSimulationRunner((terminal) => ({
       ...terminal,
-      continuation: { kind: 'bot-cap-persistence-required' },
+      consumedSeconds: 1,
+      remainingSeconds: 1,
     }))
     const application = createApplication(repository, runner)
     await application.start()
@@ -446,7 +478,7 @@ describe('Stored Time job application integration', () => {
     }, 2)).resolves.toMatchObject({
       committed: false,
       consumedSeconds: 0,
-      code: 'STORED-TIME-WORKER-CONTINUATION-INVALID',
+      code: 'STORED-TIME-WORKER-CANDIDATE-INVALID',
     })
     expect(repository.commits).toBe(commitsBefore)
     const after = application.snapshot()
@@ -454,6 +486,47 @@ describe('Stored Time job application integration', () => {
     if (after.phase === 'ready') {
       expect(after.state.gameState.timeline.storedTimeAvailableSeconds).toBe(10)
     }
+  })
+
+  test('rejects an unsettled bot-cap candidate before persistence', async () => {
+    const repository = new MemoryRepository()
+    const runner = transformingSimulationRunner((terminal) => ({
+      ...terminal,
+      candidate: {
+        ...terminal.candidate,
+        gameState: {
+          ...terminal.candidate.gameState,
+          dyson: {
+            ...terminal.candidate.gameState.dyson,
+            bots: Number.MAX_VALUE,
+          },
+          infinity: {
+            ...terminal.candidate.gameState.infinity,
+            botCapTransitionPending: false,
+            botCapRewardsGranted: false,
+            inProgress: false,
+          },
+        },
+      },
+    }))
+    const application = createApplication(repository, runner)
+    await application.start()
+    await installStoredBank(application, 10)
+    const commitsBefore = repository.commits
+    const snapshot = application.snapshot()
+    expect(snapshot.phase).toBe('ready')
+    if (snapshot.phase !== 'ready') return
+
+    await expect(application.commitStoredTime({
+      sessionRevision: snapshot.revision.session,
+      expectedStateRevision: snapshot.revision.state,
+    }, 2)).resolves.toMatchObject({
+      committed: false,
+      consumedSeconds: 0,
+      code: 'STORED-TIME-WORKER-CANDIDATE-INVALID',
+      reason: 'The worker candidate contains an unsettled bot-cap checkpoint.',
+    })
+    expect(repository.commits).toBe(commitsBefore)
   })
 
   test('rejects a worker mutation of session-owned carriers before persistence', async () => {
@@ -598,6 +671,7 @@ function context(): CanonicalEventTimeContext {
 class MemoryRepository implements SaveRepository {
   commits = 0
   failNextCommit = false
+  nextCommitGate: Promise<void> | undefined
   private current = prepared
 
   async hasCurrent(): Promise<boolean> {
@@ -616,6 +690,11 @@ class MemoryRepository implements SaveRepository {
     if (this.failNextCommit) {
       this.failNextCommit = false
       throw new Error('simulated storage failure')
+    }
+    if (this.nextCommitGate !== undefined) {
+      const gate = this.nextCommitGate
+      this.nextCommitGate = undefined
+      await gate
     }
     this.commits += 1
     this.current = save

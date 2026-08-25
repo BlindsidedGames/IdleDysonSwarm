@@ -8,6 +8,7 @@ import type {
   DreamEducationId,
   DreamUpgradeFlag,
 } from '../game-state/types'
+import type { StoredTimeAccuracyPreset } from '../game-state/types'
 import type {
   BottomNavigationDestinationId,
 } from '../game-state/navigationPreferences'
@@ -79,10 +80,7 @@ import {
   purchaseCanonicalResearch,
   runResearchAutomationTick,
 } from '../simulation/researchAutomation'
-import {
-  clampDoubleTimeRate,
-  upgradeStoredTimeCapacity,
-} from '../simulation/timeResources'
+import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
 import type {
   BuyMode,
 } from '../simulation/transactions'
@@ -276,15 +274,19 @@ export type CanonicalGameCommand =
       readonly requiredStepIndex: number
     }
   | {
-      readonly kind: 'time.set-double-time-rate'
-      readonly rate: number
-    }
-  | {
       readonly kind: 'time.upgrade-stored-capacity'
     }
   | {
       readonly kind: 'time.request-stored-time-spend'
       readonly requestedSeconds: number
+    }
+  | {
+      readonly kind: 'time.set-stored-time-preset'
+      readonly preset: StoredTimeAccuracyPreset
+    }
+  | {
+      readonly kind: 'settings.set-processing-interval'
+      readonly milliseconds: number
     }
   | {
       readonly kind: 'settings.set-navigation-item-visible'
@@ -328,6 +330,8 @@ export type CanonicalGameCommandCode =
   | `reality-upgrade:${string}`
   | `research-automation:${string}`
   | `research-purchase:${string}`
+  | `time-stored-preset:${string}`
+  | `settings-processing-interval:${string}`
   | `research-setting:${string}`
   | `settings:${string}`
   | `skill:${string}`
@@ -716,10 +720,6 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     authority: 'completeCanonicalAvocadoMeditationStep',
     requires: ['runtime-evaluation-port'],
   },
-  'time.set-double-time-rate': {
-    supported: true,
-    authority: 'clampDoubleTimeRate plus canonical timeline carrier',
-  },
   'time.upgrade-stored-capacity': {
     supported: true,
     authority: 'upgradeStoredTimeCapacity',
@@ -729,6 +729,14 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'canonical commit-first stored-time spend intent',
     requires: ['stored-time-commit-first-runner'],
+  },
+  'time.set-stored-time-preset': {
+    supported: true,
+    authority: 'canonical persisted Stored Time accuracy preference',
+  },
+  'settings.set-processing-interval': {
+    supported: true,
+    authority: 'canonical persisted active gameplay cadence preference',
   },
   'settings.set-navigation-item-visible': {
     supported: true,
@@ -2226,42 +2234,6 @@ export function routeCanonicalGameCommand(
       )
     }
 
-    case 'time.set-double-time-rate': {
-      if (!state.timeline.doubleTime.unlocked) {
-        return rejectDomain(
-          state,
-          carriers,
-          'time-double-rate:locked',
-          command.kind,
-          'locked',
-        )
-      }
-      const rate = clampDoubleTimeRate(command.rate)
-      const changed = rate !== state.timeline.doubleTime.rate
-      const candidate = changed
-        ? {
-            ...state,
-            timeline: {
-              ...state.timeline,
-              doubleTime: {
-                ...state.timeline.doubleTime,
-                rate,
-              },
-            },
-          }
-        : state
-      return finalizeAccepted(
-        state,
-        candidate,
-        changed,
-        `time-double-rate:${changed ? 'set' : 'unchanged'}`,
-        carriers,
-        options.runtimeEvaluation,
-        EMPTY_ISSUES,
-        false,
-      )
-    }
-
     case 'time.upgrade-stored-capacity': {
       if (carriers.storedTimeCheater === null) {
         return reject(
@@ -2365,6 +2337,86 @@ export function routeCanonicalGameCommand(
           kind: 'advance-stored-time',
           seconds,
         }),
+      )
+    }
+
+    case 'time.set-stored-time-preset': {
+      if (!['fast', 'balanced', 'accurate'].includes(command.preset)) {
+        return rejectDomain(
+          state,
+          carriers,
+          'time-stored-preset:invalid',
+          command.kind,
+          'Stored Time accuracy preset is invalid.',
+        )
+      }
+      const changed =
+        command.preset !== state.timeline.processing.storedTimePreset
+      return finalizeAccepted(
+        state,
+        changed
+          ? {
+              ...state,
+              timeline: {
+                ...state.timeline,
+                processing: {
+                  ...state.timeline.processing,
+                  storedTimePreset: command.preset,
+                },
+              },
+            }
+          : state,
+        changed,
+        `time-stored-preset:${changed ? 'set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
+      )
+    }
+
+    case 'settings.set-processing-interval': {
+      if (
+        !Number.isInteger(command.milliseconds) ||
+        command.milliseconds < 33 ||
+        command.milliseconds > 200
+      ) {
+        return rejectDomain(
+          state,
+          carriers,
+          'settings-processing-interval:invalid',
+          command.kind,
+          'Game processing interval must be an integer from 33 to 200 milliseconds.',
+        )
+      }
+      const changed =
+        command.milliseconds !==
+        state.timeline.processing.activeIntervalMilliseconds
+      return finalizeAccepted(
+        state,
+        changed
+          ? {
+              ...state,
+              timeline: {
+                ...state.timeline,
+                processing: {
+                  ...state.timeline.processing,
+                  activeIntervalMilliseconds: command.milliseconds,
+                },
+              },
+              infinity: {
+                ...state.infinity,
+                currentCyclePeakIpPerMinute: 0,
+                currentCyclePeakReward: 0n,
+              },
+            }
+          : state,
+        changed,
+        `settings-processing-interval:${changed ? 'set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
       )
     }
   }

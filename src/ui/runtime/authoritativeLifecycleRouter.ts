@@ -9,6 +9,7 @@ import type {
 import type {
   WriterOperationAuthority,
 } from '../../platform/writerAuthority'
+import { WriterAuthorityLostError } from '../../platform/writerAuthority'
 
 export interface AuthoritativeLifecycleCoordinatorPort {
   handlePlatformPhase(
@@ -23,6 +24,7 @@ export interface AuthoritativeWriterLeasePort {
     ) => T | Promise<T>,
   ): Promise<T>
   assertWritable(): Promise<unknown>
+  isAuthoritative(): boolean
 }
 
 export type AuthoritativeLifecyclePhaseResult =
@@ -306,6 +308,33 @@ export class AuthoritativeLifecycleRouter {
     return routed
   }
 
+  /**
+   * Serializes an active gameplay update behind the same operation tail using
+   * the lease's synchronous epoch/deadline signal for admission. Ordinary
+   * steps avoid IndexedDB lease reads; an admitted bot-cap boundary may
+   * dynamically perform its own commit-first, database-fenced persistence.
+   *
+   * There is intentionally no post-operation rejection: gameplay state may
+   * already be mutated. A later ownership-loss signal discards that graph;
+   * rejecting here would make the driver replay already-consumed elapsed time.
+   */
+  runLocallyFenced<T>(operation: () => T | Promise<T>): Promise<T> {
+    if (!this.accepting) {
+      return Promise.reject(
+        new AuthoritativeLifecycleRouterClosedError(),
+      )
+    }
+    const routed = this.operationTail.then(
+      () => this.runLocalFence(operation),
+      () => this.runLocalFence(operation),
+    )
+    this.operationTail = routed.then(
+      () => undefined,
+      () => undefined,
+    )
+    return routed
+  }
+
   stop(): void {
     if (!this.accepting) return
     this.accepting = false
@@ -338,5 +367,14 @@ export class AuthoritativeLifecycleRouter {
       await this.lease.runAuthoritativeOperation(operation)
     await this.lease.assertWritable()
     return result
+  }
+
+  private async runLocalFence<T>(
+    operation: () => T | Promise<T>,
+  ): Promise<T> {
+    if (!this.lease.isAuthoritative()) {
+      throw new WriterAuthorityLostError()
+    }
+    return operation()
   }
 }

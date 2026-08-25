@@ -60,7 +60,7 @@ function App({
   audio,
 }: AppProps) {
   // One stable device-preference context update redraws presentation strings;
-  // it never enters the canonical snapshot store or 10 Hz scheduler.
+  // it never enters the canonical snapshot store or gameplay scheduler.
   useNumberNotation()
   const intl = useIntl()
   const status = useBrowserRuntimeStatus(runtime)

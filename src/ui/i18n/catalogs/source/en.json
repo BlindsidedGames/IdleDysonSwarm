@@ -283,6 +283,10 @@
     "defaultMessage": "Distribution was not changed.",
     "description": "Failure feedback after a rejected allocation command."
   },
+  "dyson.bot-distribution.multitasking-efficiency": {
+    "defaultMessage": "<workers>Workers</workers> and <science>Science</science> efficiency at 100%",
+    "description": "Compact bot efficiency summary shown after Bot Multitasking is purchased. Workers and Science are separately color-coded."
+  },
   "dyson.bot-distribution.scientists": {
     "defaultMessage": "Scientists",
     "description": "Scientist side of the bot allocation slider."
@@ -935,10 +939,6 @@
     "defaultMessage": "Toggle All",
     "description": "Sets every visible Bots auto-purchase option together."
   },
-  "dyson.simulations.time-multiplier": {
-    "defaultMessage": "Time multiplier",
-    "description": "Accessible name for the Simulation time multiplier controls."
-  },
   "dyson.swarm.region": {
     "defaultMessage": "Dyson swarm",
     "description": "Accessible region name for the decorative Unity-style swarm visual."
@@ -1010,6 +1010,10 @@
   "infinity.automatic-reset.on": {
     "defaultMessage": "On",
     "description": "Enabled state for automatic Infinity resets."
+  },
+  "infinity.automatic-target-warning": {
+    "defaultMessage": "This target is far above your best active Infinity point.",
+    "description": "Warns when the configured automatic Infinity target is at least 2.5 times the best active reward."
   },
   "infinity.break-target": {
     "defaultMessage": "Infinity Points before reset",
@@ -1279,6 +1283,14 @@
     "defaultMessage": "Wiki",
     "description": "Unity Wiki destination."
   },
+  "offline-time.accuracy-preset": {
+    "defaultMessage": "Simulation accuracy",
+    "description": "Label for the Stored Time accuracy preset selector."
+  },
+  "offline-time.accurate-preset": {
+    "defaultMessage": "Accurate",
+    "description": "Highest-work Stored Time accuracy preset."
+  },
   "offline-time.action-failed": {
     "defaultMessage": "That action was not completed. Try again.",
     "description": "Failure feedback for Offline Time actions."
@@ -1286,6 +1298,10 @@
   "offline-time.all": {
     "defaultMessage": "All",
     "description": "Quick selection for all stored time."
+  },
+  "offline-time.balanced-preset": {
+    "defaultMessage": "Balanced",
+    "description": "Default Stored Time accuracy preset."
   },
   "offline-time.calculating": {
     "defaultMessage": "calculating",
@@ -1306,6 +1322,10 @@
   "offline-time.capacity": {
     "defaultMessage": "{stored} of {capacity}",
     "description": "Stored Offline Time compared with its storage capacity."
+  },
+  "offline-time.close-summary": {
+    "defaultMessage": "Continue",
+    "description": "Closes the completed Stored Time summary."
   },
   "offline-time.confirm-spend": {
     "defaultMessage": "Tap again to confirm",
@@ -1328,12 +1348,16 @@
     "description": "Explains the Unity Offline Time capacity upgrade."
   },
   "offline-time.explanation": {
-    "defaultMessage": "Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time.",
-    "description": "Explains what stored Offline Time does and distinguishes it from Simulation Double Time."
+    "defaultMessage": "Offline Time is stored while you are away. Choose when to spend it to advance the game.",
+    "description": "Explains that Offline Time is stored and spent manually."
+  },
+  "offline-time.fast-preset": {
+    "defaultMessage": "Fast",
+    "description": "Lowest-work Stored Time accuracy preset."
   },
   "offline-time.large-spend-disclosure": {
-    "defaultMessage": "Small spends replay every automation tick. Large spends execute up to 4,096 representative purchase decisions while continuous production still advances; omitted ticks make no purchases. Results may differ from exact replay, and splitting the same time into multiple spends may change results.",
-    "description": "Discloses the automatic exact versus bounded Stored Time policy."
+    "defaultMessage": "Simulation becomes less accurate at larger time steps.",
+    "description": "Concise Stored Time accuracy disclosure."
   },
   "offline-time.maximum-storage": {
     "defaultMessage": "Maximum storage reached",
@@ -1359,6 +1383,10 @@
     "defaultMessage": "Simulating…",
     "description": "Status while stored Offline Time is being processed."
   },
+  "offline-time.processing-heading": {
+    "defaultMessage": "Processing Offline Time",
+    "description": "Heading for the active Stored Time processing dialog."
+  },
   "offline-time.progress": {
     "defaultMessage": "{percent}% complete · about {eta} remaining",
     "description": "Progress and estimated remaining time for a Stored Time job."
@@ -1371,9 +1399,17 @@
     "defaultMessage": "Selected: {duration}",
     "description": "The selected stored-time spend duration."
   },
+  "offline-time.simulation-complete": {
+    "defaultMessage": "Offline Time Complete",
+    "description": "Heading and accessible name for the completed Stored Time summary."
+  },
   "offline-time.simulation-progress": {
     "defaultMessage": "Offline Time simulation progress",
     "description": "Accessible label for Stored Time job progress."
+  },
+  "offline-time.speed-up": {
+    "defaultMessage": "Speed up",
+    "description": "Reduces the remaining Stored Time accuracy budget."
   },
   "offline-time.spend": {
     "defaultMessage": "Spend {duration}",
@@ -1392,8 +1428,8 @@
     "description": "Heading for stored-time spending controls."
   },
   "offline-time.spend-success": {
-    "defaultMessage": "Advanced the game by {duration}.",
-    "description": "Confirmation after stored Offline Time is successfully spent."
+    "defaultMessage": "Spent {duration} of Offline Time.",
+    "description": "Confirms how much Offline Time was successfully spent."
   },
   "offline-time.storage-progress": {
     "defaultMessage": "Offline Time storage",
@@ -1406,6 +1442,14 @@
   "offline-time.ten-minutes": {
     "defaultMessage": "10 minutes",
     "description": "Quick selection for ten minutes of stored time."
+  },
+  "offline-time.time-remaining": {
+    "defaultMessage": "Offline Time remaining",
+    "description": "Completed Stored Time summary label for the remaining bank."
+  },
+  "offline-time.time-simulated": {
+    "defaultMessage": "Time simulated",
+    "description": "Completed Stored Time summary label for processed game time."
   },
   "offline-time.usage-heading": {
     "defaultMessage": "Offline Time Used",
@@ -2140,7 +2184,7 @@
     "description": "Strange Matter cost for a Reality upgrade."
   },
   "reality.upgrades.double-time.description": {
-    "defaultMessage": "Gather time while offline, spend it while online.",
+    "defaultMessage": "Permanently runs the whole game at 2× speed.",
     "description": "Unity Reality upgrade description."
   },
   "reality.upgrades.double-time.title": {
@@ -2791,6 +2835,22 @@
     "defaultMessage": "Number notation",
     "description": "Heading for the device-local number notation preference."
   },
+  "settings.processing.description": {
+    "defaultMessage": "Choose how often the game updates. Larger intervals use less processing power but reduce automation accuracy.",
+    "description": "Explains the active update interval performance and accuracy tradeoff."
+  },
+  "settings.processing.interval": {
+    "defaultMessage": "Update interval",
+    "description": "Label for the active game update interval control."
+  },
+  "settings.processing.interval-value": {
+    "defaultMessage": "{milliseconds} ms",
+    "description": "Current active game update interval."
+  },
+  "settings.processing.title": {
+    "defaultMessage": "Game processing",
+    "description": "Heading for active game processing preferences."
+  },
   "settings.save-data.cancel": {
     "defaultMessage": "Cancel",
     "description": "Cancels a save reset."
@@ -3159,10 +3219,6 @@
     "defaultMessage": "No panels are available in this era yet.",
     "description": "Fallback when an unlocked Simulation category has no panels."
   },
-  "simulations.offline-time": {
-    "defaultMessage": "Offline time",
-    "description": "Stored offline time available to Simulation Double Time."
-  },
   "simulations.panel.advanced-physics": {
     "defaultMessage": "Advanced Physics",
     "description": "Unity Advanced Physics panel title."
@@ -3413,7 +3469,7 @@
   },
   "simulations.progress.railgun-waiting": {
     "defaultMessage": "Waiting for charge or panels",
-    "description": "Railgun throughput status when no round launched during the latest fixed tick."
+    "description": "Railgun throughput status when no round launched during the latest gameplay update."
   },
   "simulations.progress.record-stored-panels": {
     "defaultMessage": "Record stored",
@@ -3439,10 +3495,6 @@
     "defaultMessage": "Purchase amount",
     "description": "Accessible label for the Space Age purchase amount options."
   },
-  "simulations.purchase-settings": {
-    "defaultMessage": "Purchase settings",
-    "description": "Opens the Space Age solar and fusion purchase amount options."
-  },
   "simulations.region": {
     "defaultMessage": "Simulations",
     "description": "Accessible name for the live Unity Simulations route."
@@ -3454,14 +3506,6 @@
   "simulations.summary.simulation": {
     "defaultMessage": "Simulation: {value}",
     "description": "Current Simulation run number."
-  },
-  "simulations.time-multiplier": {
-    "defaultMessage": "Time multiplier",
-    "description": "Simulation offline-time multiplier control."
-  },
-  "simulations.time-multiplier.speed-increase": {
-    "defaultMessage": "Simulation speed increased by {value}%",
-    "description": "Describes the additional Simulation speed applied by the Double Time rate slider."
   },
   "simulations.unavailable": {
     "defaultMessage": "Simulation data is temporarily unavailable.",
@@ -6167,9 +6211,25 @@
     "defaultMessage": "Version 3.1.2",
     "description": "Version label for the latest Wiki patch notes."
   },
+  "wiki.patch-notes.version-3-1-2.double-time": {
+    "defaultMessage": "Double Time now permanently runs all game systems at twice their normal speed.",
+    "description": "Version 3.1.2 release note for permanent whole-game Double Time."
+  },
   "wiki.patch-notes.version-3-1-2.languages": {
     "defaultMessage": "Added complete French, German, Latin American Spanish, Brazilian Portuguese, Simplified Chinese, Russian, and Japanese translations, with automatic selection from the device language and a manual override in Settings.",
     "description": "Version 3.1.2 release note for the seven new translations and language selection."
+  },
+  "wiki.patch-notes.version-3-1-2.offline-controls": {
+    "defaultMessage": "Added Fast, Balanced, and Accurate Offline Time presets, processing progress, Speed Up and safe cancellation, plus a completion summary after each run.",
+    "description": "Version 3.1.2 release note for Stored Time accuracy and processing controls."
+  },
+  "wiki.patch-notes.version-3-1-2.processing": {
+    "defaultMessage": "Rebuilt active and Offline Time processing around the same game simulation, improving performance while keeping permanent gains and automation consistent between updates.",
+    "description": "Version 3.1.2 release note for the shared active and Stored Time processing engine."
+  },
+  "wiki.patch-notes.version-3-1-2.update-interval": {
+    "defaultMessage": "Added a Game Processing setting from 33–200 ms, allowing players to choose between more accurate automation and lower device workload.",
+    "description": "Version 3.1.2 release note for the active update interval setting."
   },
   "wiki.patch-notes.version-3-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

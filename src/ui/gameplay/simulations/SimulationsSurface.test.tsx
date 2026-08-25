@@ -17,7 +17,6 @@ import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type { SharedMessageCatalog } from '../../i18n/catalogs/types'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
-  SimulationTimeControl,
   SimulationsSurface,
   type SimulationsSurfaceProps,
 } from './SimulationsSurface'
@@ -558,71 +557,6 @@ describe('SimulationsSurface', () => {
     expect(results.violations).toEqual([])
   })
 })
-
-describe('SimulationTimeControl', () => {
-  test('describes the selected rate as additional Simulation speed', () => {
-    const dispatchPlayer = vi.fn(accepted)
-    const { rerender } = renderTimeControl(0, dispatchPlayer)
-
-    expect(
-      screen.getByText('Simulation speed increased by 0%'),
-    ).toBeInTheDocument()
-    expect(screen.queryByText('0x')).not.toBeInTheDocument()
-    expect(simulationStyles).toMatch(
-      /\.simulation-time-control \.ui-progress-controls-panel__collapsed\s*\{[^}]*block-size:\s*auto;[^}]*min-block-size:\s*2\.875rem;/,
-    )
-
-    rerender(timeControl(3, dispatchPlayer))
-    expect(
-      screen.getByText('Simulation speed increased by 300%'),
-    ).toBeInTheDocument()
-  })
-
-  test('uses the game settings artwork for purchase settings', () => {
-    renderTimeControl(0, vi.fn(accepted))
-
-    const settingsToggle = screen.getByRole('button', {
-      name: 'Purchase settings',
-    })
-    expect(
-      settingsToggle.querySelector('[data-symbol="settings"]'),
-    ).toBeInTheDocument()
-    expect(settingsToggle).not.toHaveTextContent('⚙')
-  })
-})
-
-function renderTimeControl(
-  rate: number,
-  dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer'],
-) {
-  return render(timeControl(rate, dispatchPlayer))
-}
-
-function timeControl(
-  rate: number,
-  dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer'],
-) {
-  return (
-    <PresentationIntlProvider
-      locale="en"
-      messages={enCatalog as unknown as SharedMessageCatalog}
-    >
-      <SimulationTimeControl
-        locale="en"
-        bankSeconds={60}
-        rate={rate}
-        enabled
-        available
-        spaceAgeAvailable
-        purchaseSettingsOpen={false}
-        spaceAgePurchaseQuantity={1}
-        onPurchaseSettingsOpenChange={vi.fn()}
-        onSpaceAgePurchaseQuantityChange={vi.fn()}
-        dispatchPlayer={dispatchPlayer}
-      />
-    </PresentationIntlProvider>
-  )
-}
 
 function renderSurface(
   dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer'] = accepted,
