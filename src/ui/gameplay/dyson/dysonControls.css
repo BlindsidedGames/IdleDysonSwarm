@@ -10,6 +10,35 @@
   padding: 0;
 }
 
+.dyson-info__summary {
+  min-inline-size: 0;
+}
+
+.dyson-info__summary--multitasking {
+  display: grid;
+  block-size: 100%;
+  align-content: center;
+}
+
+.dyson-info__summary--multitasking .dyson-lower-facts {
+  block-size: auto;
+}
+
+.dyson-info__summary--multitasking .dyson-lower-facts p {
+  padding-block: 0.08rem;
+}
+
+.dyson-info__summary--multitasking
+  .bot-distribution--multitasking {
+  min-inline-size: 0;
+  padding: 0.08rem 0.1rem;
+  overflow: hidden;
+  font-size: calc(0.72rem * var(--game-text-scale));
+  text-align: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .dyson-info__overview {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2.8rem;
@@ -159,11 +188,11 @@
 .bot-distribution {
   display: grid;
   grid-template-columns:
-    minmax(0, 1fr)
-    minmax(5rem, 0.8fr)
-    minmax(0, 1fr);
-  grid-template-rows: auto auto auto;
-  gap: 0.15rem 0.45rem;
+    minmax(4.75rem, max-content)
+    minmax(7rem, 1fr)
+    minmax(4.75rem, max-content);
+  grid-template-rows: auto auto;
+  gap: 0.15rem 0.25rem;
   align-items: end;
   min-inline-size: 0;
   color: white;
@@ -188,16 +217,16 @@
 }
 
 .bot-distribution__heading {
-  grid-column: 1 / -1;
+  grid-column: 2;
   grid-row: 1;
-  align-self: center;
+  align-self: end;
   font-size: clamp(0.95rem, 3.5vw, 1.35rem);
   font-weight: var(--font-weight-semibold);
   text-align: center;
 }
 
 .bot-distribution__allocation {
-  grid-row: 2 / span 2;
+  grid-row: 1 / span 2;
   display: grid;
   gap: 0.05rem;
   align-self: stretch;
@@ -229,7 +258,7 @@
 .bot-distribution__slider {
   appearance: none;
   grid-column: 2;
-  grid-row: 3;
+  grid-row: 2;
   inline-size: 100%;
   block-size: 2.75rem;
   margin: -0.675rem 0;
@@ -295,7 +324,7 @@
 
 .bot-distribution__failure {
   grid-column: 1 / -1;
-  grid-row: 3;
+  grid-row: 2;
   color: var(--color-negative);
   font-size: 0.82rem;
   text-align: center;

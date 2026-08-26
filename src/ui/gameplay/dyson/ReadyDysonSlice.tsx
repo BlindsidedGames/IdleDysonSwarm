@@ -672,6 +672,8 @@ export function ReadyDysonSlice({
     hasVisibleFacilities || visibility.showNextTierTeaser
   const settingsActive = route === 'settings'
   const researchActive = route === 'research'
+  const botMultitasking =
+    gameplay.progression.quantum.unlocks.botMultitasking
   const skillsActive = route === 'skills'
   const infinityActive = route === 'infinity'
   const realityActive = route === 'reality'
@@ -1824,10 +1826,29 @@ export function ReadyDysonSlice({
         content: (
           <DysonInfo
             summary={(
-              <DysonProductionSummary
-                gameplay={gameplay}
-                locale={locale}
-              />
+              <div
+                className={
+                  route === 'bots' && botMultitasking
+                    ? 'dyson-info__summary dyson-info__summary--multitasking'
+                    : 'dyson-info__summary'
+                }
+              >
+                <DysonProductionSummary
+                  gameplay={gameplay}
+                  locale={locale}
+                />
+                {route === 'bots' && botMultitasking && (
+                  <BotDistribution
+                    locale={locale}
+                    distribution={
+                      gameplay.progression.dyson.botDistribution
+                    }
+                    multitasking
+                    routeAvailable={false}
+                    dispatchPlayer={dispatchPlayer}
+                  />
+                )}
+              </div>
             )}
             statusSummary={(
               <DysonRunFacts
@@ -1883,7 +1904,7 @@ export function ReadyDysonSlice({
         ),
       }}
       distribution={
-        route === 'bots' || researchActive
+        (route === 'bots' && !botMultitasking) || researchActive
           ? {
               ariaLabel: intl.formatMessage(
                 messages.botDistribution,
@@ -1895,8 +1916,7 @@ export function ReadyDysonSlice({
                     gameplay.progression.dyson.botDistribution
                   }
                   multitasking={
-                    gameplay.progression.quantum.unlocks
-                      .botMultitasking
+                    botMultitasking
                   }
                   routeAvailable={
                     gameplay.commands.byKind[

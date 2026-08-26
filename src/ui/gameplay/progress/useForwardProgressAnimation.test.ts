@@ -30,6 +30,35 @@ describe('forward progress animation', () => {
     ])
   })
 
+  it('uses one bounded representative wrap at extreme forward rates', () => {
+    const keyframes = buildForwardProgressKeyframes(
+      0.25,
+      1_280_000_000 / 128,
+      true,
+    )
+
+    expect(keyframes).toEqual([
+      { offset: 0, transform: 'scaleX(0.25)' },
+      { offset: 0.75, transform: 'scaleX(1)' },
+      { offset: 0.750001, transform: 'scaleX(0)' },
+      { offset: 1, transform: 'scaleX(0.25)' },
+    ])
+  })
+
+  it('keeps maximum-rate keyframes finite, bounded and ordered', () => {
+    const keyframes = buildForwardProgressKeyframes(
+      0.4,
+      Number.MAX_VALUE,
+      true,
+    )
+    const offsets = keyframes.map(({ offset }) => Number(offset))
+
+    expect(keyframes.length).toBeLessThanOrEqual(4)
+    expect(offsets.every(Number.isFinite)).toBe(true)
+    expect(offsets.every((offset) => offset >= 0 && offset <= 1)).toBe(true)
+    expect(offsets).toEqual([...offsets].sort((left, right) => left - right))
+  })
+
   it('holds at completion instead of wrapping a one-shot cycle', () => {
     expect(buildForwardProgressKeyframes(0.95, 2, false)).toEqual([
       { offset: 0, transform: 'scaleX(0.95)' },
@@ -92,19 +121,44 @@ describe('forward progress animation', () => {
     view.unmount()
     Reflect.deleteProperty(HTMLElement.prototype, 'animate')
   })
+
+  it('keeps canonical progress when the browser rejects an animation', () => {
+    const animate = vi.fn(() => {
+      throw new TypeError('Offsets must be monotonically non-decreasing.')
+    })
+    Object.defineProperty(HTMLElement.prototype, 'animate', {
+      configurable: true,
+      value: animate,
+    })
+
+    const view = render(createElement(ProgressHarness, {
+      progress: 0.4,
+      unrelated: 'animation rejection',
+      rate: 12_800_000_000 / 128,
+    }))
+
+    expect(animate).toHaveBeenCalledTimes(1)
+    expect(
+      (view.container.firstElementChild as HTMLElement).style.transform,
+    ).toBe('scaleX(0.4)')
+    view.unmount()
+    Reflect.deleteProperty(HTMLElement.prototype, 'animate')
+  })
 })
 
 function ProgressHarness({
   progress,
   unrelated,
+  rate = 1,
 }: {
   readonly progress: number
   readonly unrelated: string
+  readonly rate?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
   useForwardProgressAnimation(ref, {
     canonicalProgress: progress,
-    normalizedRatePerSecond: 1,
+    normalizedRatePerSecond: rate,
     active: true,
     wraps: true,
     reducedMotion: false,
