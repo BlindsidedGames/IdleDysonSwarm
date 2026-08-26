@@ -46,6 +46,77 @@ const ENTITLEMENTS: DysonEntitlements = Object.freeze({
 })
 
 describe('frontend-ready canonical backend integration', () => {
+  test('settles a bot-cap checkpoint and resumes an automation-suppressed lifecycle tail', async () => {
+    const repository = new IntegrationRepository(
+      createSeededPreparedSave(),
+    )
+    const application = createApplication(repository)
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new TestLifecycleAdapter(),
+      clock: mutableClock('2026-07-29T00:00:00Z'),
+      policy: MOBILE_LIFECYCLE_POLICY,
+    })
+    await coordinator.start()
+
+    const before = readyRuntime(application)
+    const beforeSeconds =
+      before.gameState.statistics.trackedSimulatedSeconds
+    const result = await coordinator.advanceActiveContinuous(17)
+
+    expect(result).toMatchObject({
+      requestedMilliseconds: 17,
+      consumedMilliseconds: 17,
+      remainingMilliseconds: 0,
+      checkpoints: ['pending', 'rewards'],
+      transition: { accepted: true },
+    })
+    const after = readyRuntime(application)
+    expect(after.gameState.infinity.botCapTransitionPending).toBe(false)
+    expect(after.gameState.infinity.botCapRewardsGranted).toBe(true)
+    expect(after.gameState.statistics.trackedSimulatedSeconds)
+      .toBeCloseTo(beforeSeconds + 0.034, 12)
+  })
+
+  test.each([33, 100, 200])(
+    'reports exact %d ms active consumption after large cumulative simulated time',
+    async (milliseconds) => {
+      const repository = new IntegrationRepository(
+        createLongRunningPreparedSave(10_000_000),
+      )
+      const application = createApplication(repository)
+      const coordinator = new CanonicalLifecycleCoordinator({
+        application,
+        lifecycle: new TestLifecycleAdapter(),
+        clock: mutableClock('2026-07-29T00:00:00Z'),
+        policy: MOBILE_LIFECYCLE_POLICY,
+      })
+      await coordinator.start()
+
+      expect(application.advanceActiveWithContinuation(milliseconds))
+        .toMatchObject({
+          consumedMilliseconds: milliseconds,
+          remainingMilliseconds: 0,
+          continuation: { kind: 'complete' },
+          transition: { accepted: true },
+        })
+
+      await expect(coordinator.advanceActive(milliseconds)).resolves
+        .toMatchObject({
+          consumedMilliseconds: milliseconds,
+          remainingMilliseconds: 0,
+          transition: { accepted: true },
+        })
+
+      await expect(coordinator.advanceActiveContinuous(milliseconds)).resolves
+        .toMatchObject({
+          consumedMilliseconds: milliseconds,
+          remainingMilliseconds: 0,
+          transition: { accepted: true },
+        })
+    },
+  )
+
   test('loads, executes every gameplay family, crosses prestige boundaries, persists, reconstructs, and continues equivalently', async () => {
     const repository = new IntegrationRepository(
       createSeededPreparedSave(),
@@ -163,6 +234,11 @@ describe('frontend-ready canonical backend integration', () => {
         admittedSeconds: 1,
         consumedSeconds: 1,
         remainingSeconds: 0,
+        summary: {
+          preset: 'balanced',
+          simulationUpdates: 20,
+          accuracyReduced: false,
+        },
       },
     })
 
@@ -388,6 +464,36 @@ function createSeededPreparedSave(): PreparedSave {
   }
   Object.assign(runtime, {
     evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+  })
+  return session.prepare(runtime)
+}
+
+function createLongRunningPreparedSave(
+  trackedSimulatedSeconds: number,
+): PreparedSave {
+  const prepared = createSeededPreparedSave()
+  const session = new CanonicalRuntimeSession(prepared, {
+    entitlements: ENTITLEMENTS,
+  })
+  const runtime = cloneCanonicalRuntimeState(session.initialState)
+  Object.assign(runtime, {
+    gameState: {
+      ...runtime.gameState,
+      dyson: {
+        ...runtime.gameState.dyson,
+        bots: 1,
+      },
+      infinity: {
+        ...runtime.gameState.infinity,
+        inProgress: false,
+        botCapTransitionPending: false,
+        botCapRewardsGranted: false,
+      },
+      statistics: {
+        ...runtime.gameState.statistics,
+        trackedSimulatedSeconds,
+      },
+    },
   })
   return session.prepare(runtime)
 }

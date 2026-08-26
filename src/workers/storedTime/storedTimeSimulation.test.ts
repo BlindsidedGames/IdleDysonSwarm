@@ -92,7 +92,7 @@ describe('StoredTimeSimulation shared game-step replay', () => {
       .toBeGreaterThan(beforeSeconds)
   })
 
-  test('speed up halves only the remaining accuracy budget', () => {
+  test('repeated Speed Ups halve only the remaining accuracy budget', () => {
     const source = runtimeWithStoredTime(86_400)
     source.gameState = {
       ...source.gameState,
@@ -115,6 +115,9 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     expect(simulation.speedUp()).toBe(true)
     expect(simulation.progress().remainingTicks).toBe(50_000)
     expect(simulation.progress().currentStepSeconds).toBeCloseTo(1.728)
+    expect(simulation.speedUp()).toBe(true)
+    expect(simulation.progress().remainingTicks).toBe(25_000)
+    expect(simulation.progress().currentStepSeconds).toBeCloseTo(3.456)
   })
 
   test('cancellation returns no candidate for the application to commit', () => {

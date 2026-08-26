@@ -6,6 +6,7 @@ export const DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS = 33
 export const MINIMUM_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS = 33
 export const MAXIMUM_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS = 200
 export const ACTIVE_TIME_HIBERNATION_THRESHOLD_MILLISECONDS = 60_000
+export const MAXIMUM_FIXED_CADENCE_BURST_DELIVERIES = 8
 
 export interface ActiveTimeMonotonicClock {
   nowMilliseconds(): number
@@ -32,6 +33,8 @@ export interface ActiveTimeDriverOptions<TResult> {
   readonly clock?: ActiveTimeMonotonicClock
   readonly scheduler?: ActiveTimeFrameScheduler
   readonly minimumDeliveryMilliseconds?: number
+  /** Deliver accumulated foreground time in exact configured gameplay ticks. */
+  readonly fixedDeliveryCadence?: boolean
   readonly deliver: (milliseconds: number) => Promise<TResult>
   readonly onDelivered: (result: TResult) => void
   readonly undeliveredMilliseconds?: (
@@ -45,15 +48,17 @@ export interface ActiveTimeDriverOptions<TResult> {
 }
 
 /**
- * Coalesces exact monotonic foreground elapsed time behind one asynchronous
- * delivery at a time. A deliberately capped timer schedules sampling only;
- * the monotonic clock remains the sole authority for gameplay duration.
+ * Accumulates exact monotonic foreground elapsed time behind one asynchronous
+ * delivery at a time. Production may opt into fixed gameplay slices while
+ * retaining sub-tick residue; the monotonic clock remains the sole authority
+ * for total gameplay duration.
  */
 export class CoordinatorActiveTimeDriver<TResult> {
   private readonly clock: ActiveTimeMonotonicClock
   private readonly scheduler: ActiveTimeFrameScheduler
   private readonly deliver: (milliseconds: number) => Promise<TResult>
   private minimumDeliveryMilliseconds: number
+  private readonly fixedDeliveryCadence: boolean
   private readonly onDelivered: (result: TResult) => void
   private readonly undeliveredMilliseconds: (
     result: TResult,
@@ -68,6 +73,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
   private pendingMilliseconds = 0
   private pendingHibernationMilliseconds = 0
   private deliveryPending = false
+  private fixedCadenceBurstDeliveries = 0
   private inFlightResidue: Promise<ActiveTimeResidue> | undefined
   private foreground = false
   private disposed = false
@@ -78,6 +84,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
     this.minimumDeliveryMilliseconds =
       options.minimumDeliveryMilliseconds ??
       DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS
+    this.fixedDeliveryCadence = options.fixedDeliveryCadence ?? false
     if (
       !Number.isFinite(this.minimumDeliveryMilliseconds) ||
       this.minimumDeliveryMilliseconds <= 0
@@ -105,6 +112,14 @@ export class CoordinatorActiveTimeDriver<TResult> {
       ;(this.scheduler as BrowserActiveTimeFrameScheduler)
         .setDelayMilliseconds(milliseconds)
     }
+  }
+
+  deliveryIntervalMilliseconds(): number {
+    return this.minimumDeliveryMilliseconds
+  }
+
+  usesFixedDeliveryCadence(): boolean {
+    return this.fixedDeliveryCadence
   }
 
   startForeground(): void {
@@ -145,6 +160,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
       this.lastSampleMilliseconds = undefined
       this.pendingMilliseconds = 0
       this.pendingHibernationMilliseconds = 0
+      this.fixedCadenceBurstDeliveries = 0
       this.cancelSample()
     }
   }
@@ -187,6 +203,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
     if (!this.foreground || this.disposed) return
     try {
       this.captureElapsed()
+      if (!this.deliveryPending) this.fixedCadenceBurstDeliveries = 0
       this.pump()
       this.scheduleSample()
     } catch (error) {
@@ -258,9 +275,17 @@ export class CoordinatorActiveTimeDriver<TResult> {
     if (
       this.pendingMilliseconds < this.minimumDeliveryMilliseconds
     ) return
-    const milliseconds = this.pendingMilliseconds
+    const milliseconds = this.fixedDeliveryCadence
+      ? this.minimumDeliveryMilliseconds
+      : this.pendingMilliseconds
+    if (this.fixedDeliveryCadence) {
+      this.fixedCadenceBurstDeliveries += 1
+    }
     const publicationEpoch = this.publicationEpoch
-    this.pendingMilliseconds = 0
+    this.pendingMilliseconds = Math.max(
+      0,
+      this.pendingMilliseconds - milliseconds,
+    )
     this.deliveryPending = true
     let resolveResidue!: (residue: ActiveTimeResidue) => void
     const inFlightResidue = new Promise<ActiveTimeResidue>((resolve) => {
@@ -326,7 +351,14 @@ export class CoordinatorActiveTimeDriver<TResult> {
           this.inFlightResidue = undefined
         }
         this.deliveryPending = false
-        if (!retryDeferred) this.pump()
+        if (
+          !retryDeferred &&
+          (!this.fixedDeliveryCadence ||
+            this.fixedCadenceBurstDeliveries <
+              MAXIMUM_FIXED_CADENCE_BURST_DELIVERIES)
+        ) {
+          this.pump()
+        }
       })
   }
 

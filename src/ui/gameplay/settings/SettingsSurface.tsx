@@ -12,6 +12,7 @@ import type {
   UiRuntimeImportPreview,
   UiRuntimeImportPreviewResult,
   UiRuntimeImportResult,
+  UiRuntimePlayerCommandResult,
   UiRuntimeSaveExportSnapshot,
   UiRuntimeStoredTimeControls,
   UiRuntimeSuppliedFile,
@@ -78,7 +79,7 @@ export interface SettingsSurfaceProps {
   readonly processingIntervalAvailable?: boolean
   readonly onProcessingIntervalChange?: (
     milliseconds: number,
-  ) => void | Promise<unknown>
+  ) => void | Promise<UiRuntimePlayerCommandResult | void>
 }
 
 const NAVIGATION_SHORTCUTS = [
@@ -183,6 +184,13 @@ export function SettingsSurface({
   const [processingIntervalDraft, setProcessingIntervalDraft] = useState(
     processingIntervalMilliseconds,
   )
+  const processingIntervalDraftRef = useRef(processingIntervalMilliseconds)
+  const processingIntervalPropRef = useRef(processingIntervalMilliseconds)
+  const processingIntervalInteractionRef = useRef(false)
+  const processingIntervalRequestRef = useRef(0)
+  const processingIntervalPendingValueRef = useRef<number | null>(null)
+  const processingIntervalCommitTimerRef = useRef<number | null>(null)
+  const processingIntervalMountedRef = useRef(true)
   const surfaceRef = useRef<HTMLDivElement>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
   const returnFocusRef = useRef<HTMLButtonElement | null>(null)
@@ -201,8 +209,98 @@ export function SettingsSurface({
   operationPendingRef.current = operationPending
 
   useEffect(() => {
-    setProcessingIntervalDraft(processingIntervalMilliseconds)
+    processingIntervalPropRef.current = processingIntervalMilliseconds
+    if (
+      !processingIntervalInteractionRef.current &&
+      processingIntervalPendingValueRef.current === null
+    ) {
+      processingIntervalDraftRef.current = processingIntervalMilliseconds
+      setProcessingIntervalDraft(processingIntervalMilliseconds)
+    }
   }, [processingIntervalMilliseconds])
+
+  const previewProcessingInterval = (milliseconds: number): void => {
+    processingIntervalDraftRef.current = milliseconds
+    setProcessingIntervalDraft(milliseconds)
+  }
+
+  const cancelScheduledProcessingIntervalCommit = (): void => {
+    if (processingIntervalCommitTimerRef.current === null) return
+    window.clearTimeout(processingIntervalCommitTimerRef.current)
+    processingIntervalCommitTimerRef.current = null
+  }
+
+  const commitProcessingInterval = (): void => {
+    cancelScheduledProcessingIntervalCommit()
+    const milliseconds = processingIntervalDraftRef.current
+    if (processingIntervalPendingValueRef.current !== null) return
+    if (
+      milliseconds === processingIntervalPropRef.current
+    ) return
+    const request = processingIntervalRequestRef.current + 1
+    processingIntervalRequestRef.current = request
+    processingIntervalPendingValueRef.current = milliseconds
+    let dispatched: void | Promise<UiRuntimePlayerCommandResult | void>
+    try {
+      dispatched = onProcessingIntervalChange(milliseconds)
+    } catch {
+      processingIntervalPendingValueRef.current = null
+      previewProcessingInterval(processingIntervalPropRef.current)
+      return
+    }
+    void Promise.resolve(dispatched)
+      .then((result) => {
+        if (
+          !processingIntervalMountedRef.current ||
+          processingIntervalRequestRef.current !== request
+        ) return
+        processingIntervalPendingValueRef.current = null
+        if (
+          result !== undefined &&
+          result.status !== 'accepted'
+        ) {
+          previewProcessingInterval(processingIntervalPropRef.current)
+          return
+        }
+        processingIntervalPropRef.current = milliseconds
+        if (
+          !processingIntervalInteractionRef.current &&
+          processingIntervalDraftRef.current !== milliseconds
+        ) {
+          commitProcessingInterval()
+        }
+      })
+      .catch(() => {
+        if (
+          !processingIntervalMountedRef.current ||
+          processingIntervalRequestRef.current !== request
+        ) return
+        processingIntervalPendingValueRef.current = null
+        previewProcessingInterval(processingIntervalPropRef.current)
+      })
+  }
+
+  const scheduleProcessingIntervalCommit = (): void => {
+    cancelScheduledProcessingIntervalCommit()
+    if (processingIntervalInteractionRef.current) return
+    processingIntervalCommitTimerRef.current = window.setTimeout(() => {
+      processingIntervalCommitTimerRef.current = null
+      commitProcessingInterval()
+    }, 200)
+  }
+
+  useEffect(() => {
+    processingIntervalMountedRef.current = true
+    return () => {
+      processingIntervalMountedRef.current = false
+      processingIntervalRequestRef.current += 1
+      processingIntervalPendingValueRef.current = null
+      if (processingIntervalCommitTimerRef.current !== null) {
+        window.clearTimeout(processingIntervalCommitTimerRef.current)
+        processingIntervalCommitTimerRef.current = null
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (dialog === null) return undefined
@@ -546,14 +644,39 @@ export function SettingsSurface({
                 step={1}
                 value={processingIntervalDraft}
                 aria-label={intl.formatMessage(messages.processingInterval)}
+                aria-valuetext={intl.formatMessage(
+                  messages.processingIntervalValue,
+                  { milliseconds: processingIntervalDraft },
+                )}
                 disabled={!processingIntervalAvailable}
                 style={{
                   '--settings-processing-progress': `${((processingIntervalDraft - 33) / 167) * 100}%`,
                 } as CSSProperties}
                 onChange={(event) => {
                   const milliseconds = event.currentTarget.valueAsNumber
-                  setProcessingIntervalDraft(milliseconds)
-                  void onProcessingIntervalChange(milliseconds)
+                  previewProcessingInterval(milliseconds)
+                  scheduleProcessingIntervalCommit()
+                }}
+                onPointerDown={() => {
+                  cancelScheduledProcessingIntervalCommit()
+                  processingIntervalInteractionRef.current = true
+                }}
+                onPointerUp={() => {
+                  processingIntervalInteractionRef.current = false
+                  commitProcessingInterval()
+                }}
+                onPointerCancel={() => {
+                  processingIntervalInteractionRef.current = false
+                  commitProcessingInterval()
+                }}
+                onKeyUp={(event) => {
+                  if (isProcessingIntervalCommitKey(event.key)) {
+                    commitProcessingInterval()
+                  }
+                }}
+                onBlur={() => {
+                  processingIntervalInteractionRef.current = false
+                  commitProcessingInterval()
                 }}
               />
             </label>
@@ -1123,6 +1246,17 @@ export function SettingsSurface({
       ) : null}
     </div>
   )
+}
+
+function isProcessingIntervalCommitKey(key: string): boolean {
+  return key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'ArrowUp' ||
+    key === 'ArrowDown' ||
+    key === 'PageUp' ||
+    key === 'PageDown' ||
+    key === 'Home' ||
+    key === 'End'
 }
 
 function AudioSettingsPanel({ audio }: { readonly audio: GameAudioService }) {

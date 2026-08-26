@@ -2410,7 +2410,7 @@
   "infinity.automatic-target-warning": [
     {
       "type": 0,
-      "value": "Dieses Ziel liegt weit über deinem besten aktiven Infinity-Punkt."
+      "value": "Dieses Ziel liegt weit über deiner manuellen Infinity-Empfehlung."
     }
   ],
   "infinity.break-target": [
@@ -2570,7 +2570,7 @@
   "infinity.rate.peak": [
     {
       "type": 0,
-      "value": "Höchstwert: "
+      "value": "Empfohlen: "
     },
     {
       "type": 1,
@@ -3051,12 +3051,6 @@
       "value": "Tippe zum Bestätigen erneut"
     }
   ],
-  "offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "Aktuelle Unendlichkeit"
-    }
-  ],
   "offline-time.disabled": [
     {
       "type": 0,
@@ -3125,10 +3119,10 @@
       "value": "1 Minute"
     }
   ],
-  "offline-time.previous-infinity": [
+  "offline-time.preparing": [
     {
       "type": 0,
-      "value": "Vorherige Unendlichkeit"
+      "value": "Simulation wird vorbereitet…"
     }
   ],
   "offline-time.processing": [
@@ -3161,20 +3155,20 @@
       "value": " verbleibend"
     }
   ],
+  "offline-time.progress-announcement": [
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% abgeschlossen"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
       "value": "Offline-Zeit"
-    }
-  ],
-  "offline-time.selected-amount": [
-    {
-      "type": 0,
-      "value": "Ausgewählt: "
-    },
-    {
-      "type": 1,
-      "value": "duration"
     }
   ],
   "offline-time.simulation-complete": [
@@ -3227,20 +3221,6 @@
       "value": "Offline-Zeit ausgeben"
     }
   ],
-  "offline-time.spend-success": [
-    {
-      "type": 0,
-      "value": "Du hast "
-    },
-    {
-      "type": 1,
-      "value": "duration"
-    },
-    {
-      "type": 0,
-      "value": " Offline-Zeit ausgegeben."
-    }
-  ],
   "offline-time.storage-progress": [
     {
       "type": 0,
@@ -3251,6 +3231,94 @@
     {
       "type": 0,
       "value": "Gespeicherte Offline-Zeit"
+    }
+  ],
+  "offline-time.summary.bots": [
+    {
+      "type": 0,
+      "value": "Erhaltene Bots"
+    }
+  ],
+  "offline-time.summary.group.facilities": [
+    {
+      "type": 0,
+      "value": "Erhaltene Anlagen"
+    }
+  ],
+  "offline-time.summary.group.infinity": [
+    {
+      "type": 0,
+      "value": "Unendlichkeit"
+    }
+  ],
+  "offline-time.summary.group.reality": [
+    {
+      "type": 0,
+      "value": "Realität"
+    }
+  ],
+  "offline-time.summary.group.simulations": [
+    {
+      "type": 0,
+      "value": "Simulationen"
+    }
+  ],
+  "offline-time.summary.infinities": [
+    {
+      "type": 0,
+      "value": "Abgeschlossene Unendlichkeiten"
+    }
+  ],
+  "offline-time.summary.infinity-points": [
+    {
+      "type": 0,
+      "value": "Erhaltene Unendlichkeitspunkte"
+    }
+  ],
+  "offline-time.summary.influence": [
+    {
+      "type": 0,
+      "value": "Erhaltener Einfluss"
+    }
+  ],
+  "offline-time.summary.no-major-changes": [
+    {
+      "type": 0,
+      "value": "Keine wesentlichen Fortschrittsänderungen."
+    }
+  ],
+  "offline-time.summary.reality-workers": [
+    {
+      "type": 0,
+      "value": "Erschaffene Realitätsarbeiter"
+    }
+  ],
+  "offline-time.summary.reduced-accuracy": [
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": " (beschleunigt)"
+    }
+  ],
+  "offline-time.summary.simulation-resets": [
+    {
+      "type": 0,
+      "value": "Simulationszurücksetzungen"
+    }
+  ],
+  "offline-time.summary.simulation-updates": [
+    {
+      "type": 0,
+      "value": "Simulationsupdates"
+    }
+  ],
+  "offline-time.summary.strange-matter": [
+    {
+      "type": 0,
+      "value": "Erhaltene seltsame Materie"
     }
   ],
   "offline-time.ten-minutes": [
@@ -3269,12 +3337,6 @@
     {
       "type": 0,
       "value": "Simulierte Zeit"
-    }
-  ],
-  "offline-time.usage-heading": [
-    {
-      "type": 0,
-      "value": "Verwendete Offline-Zeit"
     }
   ],
   "pwa.update.accept": [
@@ -10287,6 +10349,24 @@
     {
       "type": 0,
       "value": "Keine"
+    }
+  ],
+  "statistics.offline-time": [
+    {
+      "type": 0,
+      "value": "Offline-Zeit"
+    }
+  ],
+  "statistics.offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "Aktuelle Unendlichkeit"
+    }
+  ],
+  "statistics.offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "Vorherige Unendlichkeit"
     }
   ],
   "statistics.other-stats": [

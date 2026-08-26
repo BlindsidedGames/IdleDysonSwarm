@@ -58,6 +58,8 @@ type InfinityCommand = Extract<
   }
 >
 
+const INFINITY_GUIDANCE_PRESENTATION_INTERVAL_MILLISECONDS = 250
+
 export interface InfinityCommandAvailability {
   readonly purchaseShopItem: boolean
   readonly setBreakTarget: boolean
@@ -98,6 +100,11 @@ export function InfinitySurface({
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const presentedGuidance = useInfinityRateGuidancePresentation({
+    currentIpPerMinute: derived.currentIpPerMinute ?? 0,
+    peakIpPerMinute: derived.peakIpPerMinute ?? 0,
+    peakReward: derived.peakReward ?? 0n,
+  })
   const settingsId = useId()
   const progressFillRef = useRef<HTMLSpanElement>(null)
   const progress = Math.max(
@@ -116,8 +123,8 @@ export function InfinitySurface({
     derived.mode === 'break' &&
     progression.infinity.automaticResetEnabled &&
     (derived.peakReward ?? 0n) > 0n &&
-    progression.infinity.breakTarget * 2n >=
-      (derived.peakReward ?? 0n) * 5n
+    progression.infinity.breakTarget >=
+      (derived.peakReward ?? 0n) * 3n
   useForwardProgressAnimation(progressFillRef, {
     canonicalProgress: progress,
     inferRate: 'increasing',
@@ -275,17 +282,23 @@ export function InfinitySurface({
             </div>
           )}
         >
+          {derived.mode === 'break' && inefficientAutomaticTarget ? (
+            <p className="infinity-surface__warning" role="status">
+              {intl.formatMessage(messages.automaticTargetWarning)}
+            </p>
+          ) : null}
           <AutomaticInfinityControl
             enabled={progression.infinity.automaticResetEnabled}
             routeAvailable={commandAvailability.setAutomaticReset}
             dispatchPlayer={dispatchPlayer}
-            guidance={derived.mode === 'break' ? (
+            guidance={
+              derived.mode === 'break' ? (
               <div className="infinity-surface__rate-guidance" aria-live="off">
                 <span>
                   {intl.formatMessage(messages.currentRate, {
                     value: formatGameNumber(
                       locale,
-                      derived.currentIpPerMinute ?? 0,
+                      presentedGuidance.currentIpPerMinute,
                     ),
                   })}
                 </span>
@@ -293,16 +306,17 @@ export function InfinitySurface({
                   {intl.formatMessage(messages.peakRate, {
                     rate: formatGameNumber(
                       locale,
-                      derived.peakIpPerMinute ?? 0,
+                      presentedGuidance.peakIpPerMinute,
                     ),
                     reward: formatGameNumber(
                       locale,
-                      derived.peakReward ?? 0n,
+                      presentedGuidance.peakReward,
                     ),
                   })}
                 </span>
               </div>
-            ) : null}
+              ) : null
+            }
           />
           {derived.mode === 'break' ? (
             <>
@@ -314,13 +328,6 @@ export function InfinitySurface({
                 }
                 dispatchPlayer={dispatchPlayer}
               />
-              {inefficientAutomaticTarget ? (
-                <p className="infinity-surface__warning" role="status">
-                  {intl.formatMessage(messages.automaticTargetWarning, {
-                    reward: formatGameNumber(locale, derived.peakReward ?? 0n),
-                  })}
-                </p>
-              ) : null}
             </>
           ) : null}
         </ProgressControlsPanel>
@@ -796,6 +803,36 @@ function prerequisiteName(
     default:
       return null
   }
+}
+
+interface InfinityRateGuidancePresentation {
+  readonly currentIpPerMinute: number
+  readonly peakIpPerMinute: number
+  readonly peakReward: bigint
+}
+
+function useInfinityRateGuidancePresentation(
+  guidance: Readonly<InfinityRateGuidancePresentation>,
+): InfinityRateGuidancePresentation {
+  const latestRef = useRef(guidance)
+  latestRef.current = guidance
+  const [presented, setPresented] = useState(guidance)
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      const latest = latestRef.current
+      setPresented((current) =>
+        current.currentIpPerMinute === latest.currentIpPerMinute &&
+        current.peakIpPerMinute === latest.peakIpPerMinute &&
+        current.peakReward === latest.peakReward
+          ? current
+          : latest,
+      )
+    }, INFINITY_GUIDANCE_PRESENTATION_INTERVAL_MILLISECONDS)
+    return () => window.clearInterval(interval)
+  }, [])
+
+  return presented
 }
 
 const SECRET_REVEAL_ORDER = Object.freeze([

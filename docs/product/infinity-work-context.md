@@ -34,25 +34,42 @@ document records the shipped behavior and its compatibility boundaries.
 
 The expanded Infinity panel displays:
 
-- current projected IP/min, calculated as projected reward divided by elapsed
-  current-cycle minutes; and
-- the best IP/min observed in that cycle plus the reward available at that
-  point.
+- with automation off, current projected IP/min and the best IP/min/reward
+  observed during the current manual run; and
+- with automation on, realized time-weighted IP/min from up to ten recent
+  completed, wholly active automatic Break cycles at the current target and
+  processing cadence, and the last persisted manual-run recommendation.
 
 The opening instant and a zero reward report zero rather than an infinite rate.
-The peak is persisted for reload continuity, is updated by active and Stored
-Time simulation through the same event model, and resets at Infinity and
-Quantum boundaries. It is run-local guidance only: it never changes rewards,
-the configured target, or the Auto Infinity preference.
+The active peak resets at Infinity and Quantum boundaries. A valid manual peak
+is also persisted for reload continuity when the player enables automation
+after at least one explicitly accumulated second of active manual observation
+or completes a manual reset. Stored Time never advances this observation
+clock. Disabling automation starts a fresh observation window. Automatic
+resets never replace or clear that manual
+calibration. Stored Time does not alter it. Guidance is presentation-only: it
+never changes rewards, the configured target, or the Auto Infinity preference,
+and displayed values publish at most every 250 ms while gameplay keeps its
+configured processing cadence.
 
 The canonical statistics state also retains the ten most recently completed
 Infinity runs, newest first. Each entry records whether the reset was ordinary
 or Break Infinity, whether it was automatic or manual, the configured target,
 the actual quantized reward, and the completed-cycle duration. Statistics shows
 every retained run, while its current-target summary considers only automatic
-Break Infinity runs recorded at the target currently selected. The displayed
-average is time-weighted (`total reward / total duration`), accompanied by the
-median and range of individual run rates. Recent-run durations use three
+Break Infinity runs recorded at the target currently selected. Infinity's
+Current guidance uses a separate bounded history which Stored Time and
+unrelated statistics entries cannot evict. Every actual Auto Infinity toggle
+clears this separate history, so Current begins unmeasured for each automatic
+session without changing the persisted manual recommendation. A cycle becomes
+eligible only after an active automatic reset starts it; Stored Time,
+target/cadence changes, and a manual-to-automatic handoff invalidate the mixed
+cycle. Purchasing permanent Double Time also clears both the throughput session
+and manual calibration because each active update begins representing twice as
+much game time. The following wholly active cycle is the first one admitted, so
+coarse Stored Time and stale cadences cannot distort the foreground rate. The
+displayed average is time-weighted (`total reward / total duration`), accompanied
+by the median and range of individual run rates. Recent-run durations use three
 significant digits so short-cycle timing remains stable and explains small
 IP/min changes.
 

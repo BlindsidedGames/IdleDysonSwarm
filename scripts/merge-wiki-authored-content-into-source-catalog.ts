@@ -34,7 +34,9 @@ for (const message of authored) {
   }
 }
 const serialized = `${JSON.stringify(
-  Object.fromEntries(Object.entries(source).sort(([left], [right]) => left.localeCompare(right))),
+  Object.fromEntries(Object.entries(source).sort(([left], [right]) =>
+    left < right ? -1 : left > right ? 1 : 0,
+  )),
   null,
   2,
 )}\n`

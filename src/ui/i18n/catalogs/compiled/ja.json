@@ -2410,7 +2410,7 @@
   "infinity.automatic-target-warning": [
     {
       "type": 0,
-      "value": "この目標は、アクティブプレイでの最高インフィニティポイントを大幅に上回っています。"
+      "value": "この目標は、手動インフィニティの推奨値を大幅に上回っています。"
     }
   ],
   "infinity.break-target": [
@@ -2570,7 +2570,7 @@
   "infinity.rate.peak": [
     {
       "type": 0,
-      "value": "最高："
+      "value": "推奨："
     },
     {
       "type": 1,
@@ -3051,12 +3051,6 @@
       "value": "再びタップ以確認"
     }
   ],
-  "offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "現在のインフィニティ"
-    }
-  ],
   "offline-time.disabled": [
     {
       "type": 0,
@@ -3125,10 +3119,10 @@
       "value": "1 分"
     }
   ],
-  "offline-time.previous-infinity": [
+  "offline-time.preparing": [
     {
       "type": 0,
-      "value": "上次インフィニティ"
+      "value": "シミュレーションを準備中…"
     }
   ],
   "offline-time.processing": [
@@ -3161,20 +3155,20 @@
       "value": "ほど"
     }
   ],
+  "offline-time.progress-announcement": [
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "%完了"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
       "value": "オフライン時間"
-    }
-  ],
-  "offline-time.selected-amount": [
-    {
-      "type": 0,
-      "value": "選択："
-    },
-    {
-      "type": 1,
-      "value": "duration"
     }
   ],
   "offline-time.simulation-complete": [
@@ -3227,20 +3221,6 @@
       "value": "オフライン時間を使用"
     }
   ],
-  "offline-time.spend-success": [
-    {
-      "type": 0,
-      "value": "オフライン時間を "
-    },
-    {
-      "type": 1,
-      "value": "duration"
-    },
-    {
-      "type": 0,
-      "value": " 使用しました。"
-    }
-  ],
   "offline-time.storage-progress": [
     {
       "type": 0,
@@ -3251,6 +3231,94 @@
     {
       "type": 0,
       "value": "蓄積オフライン時間"
+    }
+  ],
+  "offline-time.summary.bots": [
+    {
+      "type": 0,
+      "value": "獲得したボット"
+    }
+  ],
+  "offline-time.summary.group.facilities": [
+    {
+      "type": 0,
+      "value": "獲得した施設"
+    }
+  ],
+  "offline-time.summary.group.infinity": [
+    {
+      "type": 0,
+      "value": "インフィニティ"
+    }
+  ],
+  "offline-time.summary.group.reality": [
+    {
+      "type": 0,
+      "value": "リアリティ"
+    }
+  ],
+  "offline-time.summary.group.simulations": [
+    {
+      "type": 0,
+      "value": "シミュレーション"
+    }
+  ],
+  "offline-time.summary.infinities": [
+    {
+      "type": 0,
+      "value": "完了したインフィニティ"
+    }
+  ],
+  "offline-time.summary.infinity-points": [
+    {
+      "type": 0,
+      "value": "獲得したインフィニティポイント"
+    }
+  ],
+  "offline-time.summary.influence": [
+    {
+      "type": 0,
+      "value": "獲得した影響力"
+    }
+  ],
+  "offline-time.summary.no-major-changes": [
+    {
+      "type": 0,
+      "value": "大きな進行の変化はありません。"
+    }
+  ],
+  "offline-time.summary.reality-workers": [
+    {
+      "type": 0,
+      "value": "作成したリアリティワーカー"
+    }
+  ],
+  "offline-time.summary.reduced-accuracy": [
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": "（高速化済み）"
+    }
+  ],
+  "offline-time.summary.simulation-resets": [
+    {
+      "type": 0,
+      "value": "シミュレーションリセット"
+    }
+  ],
+  "offline-time.summary.simulation-updates": [
+    {
+      "type": 0,
+      "value": "シミュレーション更新回数"
+    }
+  ],
+  "offline-time.summary.strange-matter": [
+    {
+      "type": 0,
+      "value": "獲得したストレンジマター"
     }
   ],
   "offline-time.ten-minutes": [
@@ -3269,12 +3337,6 @@
     {
       "type": 0,
       "value": "シミュレートした時間"
-    }
-  ],
-  "offline-time.usage-heading": [
-    {
-      "type": 0,
-      "value": "使用したオフライン時間"
     }
   ],
   "pwa.update.accept": [
@@ -10287,6 +10349,24 @@
     {
       "type": 0,
       "value": "なし"
+    }
+  ],
+  "statistics.offline-time": [
+    {
+      "type": 0,
+      "value": "オフライン時間"
+    }
+  ],
+  "statistics.offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "現在のインフィニティ"
+    }
+  ],
+  "statistics.offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "前回のインフィニティ"
     }
   ],
   "statistics.other-stats": [

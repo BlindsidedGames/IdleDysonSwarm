@@ -286,6 +286,35 @@ describe('canonical lifecycle coordinator', () => {
     expect(application.activeRequests).toEqual([100, 40])
   })
 
+  test('preserves the unconsumed continuous tail when bot-cap persistence fails', async () => {
+    const application = new FakeCanonicalApplication(cappedRuntime())
+    application.activeResults.push(
+      activeResult(60, 40, 'pending', application.revision),
+    )
+    application.failCheckpoint = 'pending'
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock: fixedClock('2026-07-29T00:00:00Z'),
+      policy: DESKTOP_LIFECYCLE_POLICY,
+    })
+    await coordinator.start()
+
+    const result = await coordinator.advanceActiveContinuous(100)
+
+    expect(result).toMatchObject({
+      requestedMilliseconds: 100,
+      consumedMilliseconds: 60,
+      remainingMilliseconds: 40,
+      checkpoints: [],
+      transition: {
+        accepted: false,
+        code: 'SCRIPTED-CHECKPOINT-FAILURE',
+      },
+    })
+    expect(application.activeRequests).toEqual([100])
+  })
+
   test('disposal unsubscribes the platform lifecycle source idempotently', async () => {
     const lifecycle = new FakeLifecycleAdapter()
     const coordinator = new CanonicalLifecycleCoordinator({
@@ -881,6 +910,12 @@ class FakeCanonicalApplication
     }
   }
 
+  advanceActiveContinuousWithContinuation(
+    milliseconds: number,
+  ): CanonicalActiveAdvanceResult {
+    return this.advanceActiveWithContinuation(milliseconds)
+  }
+
   async dispatchPlayer(
     _envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
   ): Promise<CanonicalPlayerDispatchResult> {
@@ -1138,6 +1173,20 @@ function committedStoredTimeResult(
     durableRevision: revision,
     consumedSeconds,
     remainingSeconds,
+    summary: {
+      preset: 'balanced',
+      simulationUpdates: Math.max(1, Math.round(consumedSeconds / 0.05)),
+      accuracyReduced: false,
+      remainingBankSeconds: remainingSeconds,
+      infinityCount: 0n,
+      infinityPoints: 0n,
+      dreamResetCount: 0n,
+      strangeMatter: 0n,
+      realityWorkers: 0n,
+      influence: 0n,
+      botGain: 0,
+      facilityGains: [],
+    },
   }
 }
 

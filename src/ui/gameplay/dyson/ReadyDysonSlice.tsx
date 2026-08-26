@@ -1561,9 +1561,6 @@ export function ReadyDysonSlice({
                                       <OfflineTimeSurface
                                         locale={locale}
                                         resources={gameplay.resources.time}
-                                        infinityUsage={
-                                          gameplay.progression.infinity
-                                        }
                                         previews={gameplay.previews.time}
                                         storedTimeCheater={
                                           gameplay.runtime.storedTimeCheater
@@ -1622,6 +1619,9 @@ export function ReadyDysonSlice({
                                           }
                                           swarmScale={
                                             dyson.value.presentation.swarmScale
+                                          }
+                                          offlineTimeUsage={
+                                            gameplay.progression.infinity
                                           }
                                           visibility={{
                                             infinity:

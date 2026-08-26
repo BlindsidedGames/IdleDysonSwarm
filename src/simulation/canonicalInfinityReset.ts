@@ -28,6 +28,10 @@ export interface CanonicalInfinityResetRequest {
   readonly artifactSkillPoints: bigint
   /** True only when the event model initiated the reset automatically. */
   readonly automatic?: boolean
+  /** Processing lane which produced this reset. */
+  readonly processingSource?: 'active' | 'stored-time'
+  /** Active processing cadence in force when this reset completed. */
+  readonly activeIntervalMilliseconds?: number
 }
 
 export type CanonicalInfinityResetIssueCode =
@@ -169,6 +173,9 @@ export function applyCanonicalInfinityReset(
     request.breakInfinity
       ? state.infinity.breakTarget
       : rewardGranted,
+    request.processingSource,
+    request.activeIntervalMilliseconds,
+    state.infinity.activeAutomaticThroughputCycleEligible === true,
   )
 
   return {
@@ -206,6 +213,17 @@ export function applyCanonicalInfinityReset(
         ),
         currentCyclePeakIpPerMinute: 0,
         currentCyclePeakReward: 0n,
+        manualPeakIpPerMinute:
+          request.automatic || (state.infinity.currentCyclePeakReward ?? 0n) <= 0n
+            ? state.infinity.manualPeakIpPerMinute ?? 0
+            : state.infinity.currentCyclePeakIpPerMinute ?? 0,
+        manualPeakReward:
+          request.automatic || (state.infinity.currentCyclePeakReward ?? 0n) <= 0n
+            ? state.infinity.manualPeakReward ?? 0n
+            : state.infinity.currentCyclePeakReward ?? 0n,
+        manualCalibrationObservedActiveSeconds: 0,
+        activeAutomaticThroughputCycleEligible:
+          request.automatic === true && request.processingSource === 'active',
         storedTimeUsedThisCycleSeconds: 0,
         storedTimeUsedPreviousCycleSeconds: clampContinuous(
           state.infinity.storedTimeUsedThisCycleSeconds,
@@ -648,6 +666,9 @@ function recordInfinityCycle(
   durationSeconds: number,
   automatic: boolean,
   configuredTarget: bigint,
+  processingSource?: 'active' | 'stored-time',
+  activeIntervalMilliseconds?: number,
+  activeAutomaticThroughputCycleEligible = false,
 ): SimulationStatisticsState {
   const event: InfinityStatisticsEvent = {
     ordinaryCount: breakInfinity ? 0n : 1n,
@@ -669,11 +690,28 @@ function recordInfinityCycle(
     configuredTarget,
     reward,
     durationSeconds: clampContinuous(durationSeconds),
+    ...(processingSource === undefined ? {} : { processingSource }),
+    ...(activeIntervalMilliseconds === undefined
+      ? {}
+      : { activeIntervalMilliseconds }),
   }
   const recentInfinityCycles =
     reward > 0n && durationSeconds > 0
       ? [historyEntry, ...(statistics.recentInfinityCycles ?? [])].slice(0, 10)
       : statistics.recentInfinityCycles ?? []
+  const recentActiveAutomaticInfinityCycles =
+    activeAutomaticThroughputCycleEligible &&
+    breakInfinity &&
+    automatic &&
+    processingSource === 'active' &&
+    activeIntervalMilliseconds !== undefined &&
+    reward > 0n &&
+    durationSeconds > 0
+      ? [
+          historyEntry,
+          ...(statistics.recentActiveAutomaticInfinityCycles ?? []),
+        ].slice(0, 10)
+      : statistics.recentActiveAutomaticInfinityCycles ?? []
   return {
     ...statistics,
     trackedSinceUpdate: true,
@@ -697,6 +735,7 @@ function recordInfinityCycle(
       dreamCause: null,
     },
     recentInfinityCycles,
+    recentActiveAutomaticInfinityCycles,
     minuteWindows: recordWindowEvent(
       statistics.minuteWindows,
       60,

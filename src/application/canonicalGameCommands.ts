@@ -72,6 +72,9 @@ import {
   type QuantumUpgradeBulkQuantity,
 } from '../simulation/quantumUpgrades'
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
+import {
+  MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS,
+} from '../simulation/infinityCycle'
 import type { QuantumUpgradeId } from '../simulation/quantumUpgrades'
 import { purchaseRealityUpgrade } from '../simulation/realityUpgrades'
 import type { RealityUpgradeId } from '../simulation/realityUpgrades'
@@ -1931,9 +1934,28 @@ export function routeCanonicalGameCommand(
           issues,
         )
       }
+      const candidate =
+        command.upgradeId === 'doubleTimeOwned' && result.changed
+          ? {
+              ...result.candidate,
+              infinity: {
+                ...result.candidate.infinity,
+                currentCyclePeakIpPerMinute: 0,
+                currentCyclePeakReward: 0n,
+                manualPeakIpPerMinute: 0,
+                manualPeakReward: 0n,
+                manualCalibrationObservedActiveSeconds: 0,
+                activeAutomaticThroughputCycleEligible: false,
+              },
+              statistics: {
+                ...result.candidate.statistics,
+                recentActiveAutomaticInfinityCycles: [],
+              },
+            }
+          : result.candidate
       return finalizeAccepted(
         state,
-        result.candidate,
+        candidate,
         result.changed,
         `reality-upgrade:${result.code}`,
         carriers,
@@ -2094,6 +2116,13 @@ export function routeCanonicalGameCommand(
     case 'infinity.set-automatic-reset': {
       const changed =
         command.enabled !== state.infinity.automaticResetEnabled
+      const manualObservationSeconds =
+        state.infinity.manualCalibrationObservedActiveSeconds ?? 0
+      const inProgressManualCalibrationValid =
+        command.enabled &&
+        (state.infinity.currentCyclePeakReward ?? 0n) > 0n &&
+        manualObservationSeconds >=
+          MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS
       return finalizeAccepted(
         state,
         changed
@@ -2102,6 +2131,26 @@ export function routeCanonicalGameCommand(
               infinity: {
                 ...state.infinity,
                 automaticResetEnabled: command.enabled,
+                activeAutomaticThroughputCycleEligible: false,
+                ...(inProgressManualCalibrationValid
+                  ? {
+                      manualPeakIpPerMinute:
+                        state.infinity.currentCyclePeakIpPerMinute ?? 0,
+                      manualPeakReward:
+                        state.infinity.currentCyclePeakReward ?? 0n,
+                    }
+                  : {}),
+                ...(!command.enabled
+                  ? {
+                      currentCyclePeakIpPerMinute: 0,
+                      currentCyclePeakReward: 0n,
+                      manualCalibrationObservedActiveSeconds: 0,
+                    }
+                  : {}),
+              },
+              statistics: {
+                ...state.statistics,
+                recentActiveAutomaticInfinityCycles: [],
               },
             }
           : state,
@@ -2143,6 +2192,11 @@ export function routeCanonicalGameCommand(
               infinity: {
                 ...state.infinity,
                 breakTarget: target,
+                activeAutomaticThroughputCycleEligible: false,
+              },
+              statistics: {
+                ...state.statistics,
+                recentActiveAutomaticInfinityCycles: [],
               },
             }
           : state,
@@ -2408,6 +2462,14 @@ export function routeCanonicalGameCommand(
                 ...state.infinity,
                 currentCyclePeakIpPerMinute: 0,
                 currentCyclePeakReward: 0n,
+                manualPeakIpPerMinute: 0,
+                manualPeakReward: 0n,
+                manualCalibrationObservedActiveSeconds: 0,
+                activeAutomaticThroughputCycleEligible: false,
+              },
+              statistics: {
+                ...state.statistics,
+                recentActiveAutomaticInfinityCycles: [],
               },
             }
           : state,

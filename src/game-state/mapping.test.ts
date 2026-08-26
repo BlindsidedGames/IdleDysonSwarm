@@ -299,16 +299,48 @@ describe('canonical game-state mapping', () => {
         ...hydrated.state.infinity,
         currentCyclePeakIpPerMinute: 2_040.5,
         currentCyclePeakReward: 72n,
+        manualPeakIpPerMinute: 1_980.25,
+        manualPeakReward: 68n,
+        manualCalibrationObservedActiveSeconds: 12.5,
+        activeAutomaticThroughputCycleEligible: true,
       },
     })
 
     expect(withPeak.copyValidatedState()).toMatchObject({
       simulationInfinityPeakIpPerMinute: 2_040.5,
       simulationInfinityPeakReward: 72n,
+      simulationInfinityManualPeakIpPerMinute: 1_980.25,
+      simulationInfinityManualPeakReward: 68n,
+      simulationInfinityManualObservedActiveSeconds: 12.5,
+      simulationInfinityActiveAutomaticThroughputCycleEligible: true,
     })
     expect(hydrateGameState(withPeak).state.infinity).toMatchObject({
       currentCyclePeakIpPerMinute: 2_040.5,
       currentCyclePeakReward: 72n,
+      manualPeakIpPerMinute: 1_980.25,
+      manualPeakReward: 68n,
+      manualCalibrationObservedActiveSeconds: 12.5,
+      activeAutomaticThroughputCycleEligible: true,
+    })
+
+    const legacyPeakOnly = withPeak.copyValidatedState()
+    delete legacyPeakOnly.simulationInfinityManualPeakIpPerMinute
+    delete legacyPeakOnly.simulationInfinityManualPeakReward
+    delete legacyPeakOnly.simulationInfinityManualObservedActiveSeconds
+    delete legacyPeakOnly.simulationInfinityActiveAutomaticThroughputCycleEligible
+    expect(
+      hydrateGameState(withPeak.withValidatedState(legacyPeakOnly)).state.infinity,
+    ).toMatchObject({
+      manualPeakIpPerMinute: 0,
+      manualPeakReward: 0n,
+    })
+
+    legacyPeakOnly.infinityAutomaticReset = false
+    expect(
+      hydrateGameState(withPeak.withValidatedState(legacyPeakOnly)).state.infinity,
+    ).toMatchObject({
+      manualPeakIpPerMinute: 2_040.5,
+      manualPeakReward: 72n,
     })
   })
 
@@ -336,6 +368,8 @@ describe('canonical game-state mapping', () => {
             configuredTarget: 30n,
             reward: 32n,
             durationSeconds: 28.5,
+            processingSource: 'active',
+            activeIntervalMilliseconds: 33,
           },
           {
             breakInfinity: true,
@@ -343,6 +377,19 @@ describe('canonical game-state mapping', () => {
             configuredTarget: 28n,
             reward: 28n,
             durationSeconds: 27,
+            processingSource: 'stored-time',
+            activeIntervalMilliseconds: 200,
+          },
+        ],
+        recentActiveAutomaticInfinityCycles: [
+          {
+            breakInfinity: true,
+            automatic: true,
+            configuredTarget: 30n,
+            reward: 32n,
+            durationSeconds: 28.5,
+            processingSource: 'active',
+            activeIntervalMilliseconds: 33,
           },
         ],
       },
@@ -356,6 +403,8 @@ describe('canonical game-state mapping', () => {
           configuredTarget: 30n,
           reward: 32n,
           durationSeconds: 28.5,
+          processingSource: 'active',
+          activeIntervalMilliseconds: 33,
         },
         {
           breakInfinity: true,
@@ -363,8 +412,24 @@ describe('canonical game-state mapping', () => {
           configuredTarget: 28n,
           reward: 28n,
           durationSeconds: 27,
+          processingSource: 'stored-time',
+          activeIntervalMilliseconds: 200,
         },
       ])
+    expect(
+      hydrateGameState(withHistory).state.statistics
+        .recentActiveAutomaticInfinityCycles,
+    ).toEqual([
+      {
+        breakInfinity: true,
+        automatic: true,
+        configuredTarget: 30n,
+        reward: 32n,
+        durationSeconds: 28.5,
+        processingSource: 'active',
+        activeIntervalMilliseconds: 33,
+      },
+    ])
   })
 
   test('repairs a missing or zero legacy Break target to one IP', () => {

@@ -72,6 +72,10 @@ import {
   type CanonicalRuntimeState,
 } from './canonicalRuntimeSession'
 import {
+  summarizeStoredTimeCompletion,
+} from './storedTimeCompletionSummary'
+import type { StoredTimeCompletionSummary } from '../core/storedTimeCompletionSummary'
+import {
   type StoredTimeJobProgress,
   type StoredTimeJobStatus,
 } from '../workers/storedTime/storedTimeProtocol'
@@ -154,6 +158,15 @@ type CanonicalApplicationCommand =
 export interface CanonicalGameEngineOptions {
   readonly eventContext: Readonly<CanonicalEventTimeContext>
   readonly infinityMinimumCycleSeconds?: number
+  /** Internal observation seam for authoritative active-step consumption. */
+  readonly onActiveAdvance?: (
+    result: Readonly<CanonicalActiveAdvanceMeasurement>,
+  ) => void
+}
+
+interface CanonicalActiveAdvanceMeasurement {
+  readonly requestedMilliseconds: number
+  readonly consumedMilliseconds: number
 }
 
 export interface CanonicalGameApplicationOptions {
@@ -188,6 +201,7 @@ export type CanonicalStoredTimeCommitResult =
       readonly durableRevision: number
       readonly consumedSeconds: number
       readonly remainingSeconds: number
+      readonly summary: StoredTimeCompletionSummary
     }
   | {
       readonly committed: false
@@ -238,6 +252,9 @@ export class CanonicalGameApplicationFacade {
   private cachedFrontendPreviewDemand:
     | FrontendGameplayPreviewDemand
     | undefined
+  private lastActiveAdvanceMeasurement:
+    | CanonicalActiveAdvanceMeasurement
+    | undefined
 
   constructor(options: Readonly<CanonicalGameApplicationOptions>) {
     this.eventContext = prepareCanonicalEventTimeContext(
@@ -253,6 +270,9 @@ export class CanonicalGameApplicationFacade {
       engineDefinition: createCanonicalGameEngineDefinition({
         ...options.engine,
         eventContext: this.eventContext,
+        onActiveAdvance: (measurement) => {
+          this.lastActiveAdvanceMeasurement = measurement
+        },
       }),
     })
   }
@@ -378,49 +398,37 @@ export class CanonicalGameApplicationFacade {
   }
 
   /**
+   * Coordinator-facing automation-suppressed active residue which preserves
+   * the same exact bot-cap continuation contract as an ordinary active tick.
+   */
+  advanceActiveContinuousWithContinuation(
+    milliseconds: number,
+  ): CanonicalActiveAdvanceResult {
+    this.lastActiveAdvanceMeasurement = undefined
+    const transition = this.advanceActiveContinuous(milliseconds)
+    return activeAdvanceResult(
+      milliseconds,
+      transition,
+      this.snapshot(),
+      this.lastActiveAdvanceMeasurement,
+    )
+  }
+
+  /**
    * Coordinator-facing active tick that preserves an exact resumable tail
    * when the event model reaches a commit-first bot-cap boundary.
    */
   advanceActiveWithContinuation(
     milliseconds: number,
   ): CanonicalActiveAdvanceResult {
-    const before = this.snapshot()
-    const beforeSeconds =
-      before.phase === 'ready'
-        ? before.state.gameState.statistics.trackedSimulatedSeconds
-        : 0
+    this.lastActiveAdvanceMeasurement = undefined
     const transition = this.application.advanceActive(milliseconds)
-    const after = this.snapshot()
-    const afterSeconds =
-      after.phase === 'ready'
-        ? after.state.gameState.statistics.trackedSimulatedSeconds
-        : beforeSeconds
-    const consumedMilliseconds = Math.min(
+    return activeAdvanceResult(
       milliseconds,
-      Math.max(0, afterSeconds - beforeSeconds) * 1000,
-    )
-    const remainingMilliseconds = Math.max(
-      0,
-      milliseconds - consumedMilliseconds,
-    )
-    const checkpoint =
-      after.phase === 'ready'
-        ? requiredBotCapCheckpoint(
-            structuredClone(after.state.gameState) as CanonicalRuntimeState['gameState'],
-          )
-        : undefined
-    return {
       transition,
-      consumedMilliseconds,
-      remainingMilliseconds,
-      continuation:
-        checkpoint === undefined
-          ? { kind: 'complete' }
-          : {
-              kind: 'bot-cap-persistence-required',
-              checkpoint,
-            },
-    }
+      this.snapshot(),
+      this.lastActiveAdvanceMeasurement,
+    )
   }
 
   checkpoint(): Promise<CheckpointResult> {
@@ -687,6 +695,15 @@ export class CanonicalGameApplicationFacade {
         ...result,
         consumedSeconds: seconds,
         remainingSeconds: 0,
+        summary: summarizeStoredTimeCompletion(
+          before.state as CanonicalRuntimeState,
+          terminal.candidate,
+          storedTimeCompletionWork(
+            before.state as CanonicalRuntimeState,
+            seconds,
+            terminal.progress.completedTicks,
+          ),
+        ),
       }
     } catch (error) {
       return rejectedStoredTimeCommit(
@@ -713,6 +730,15 @@ export class CanonicalGameApplicationFacade {
     seconds: number,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalStoredTimeCommitResult> {
+    const before = this.snapshot()
+    if (before.phase !== 'ready') {
+      return rejectedStoredTimeCommit(
+        before,
+        seconds,
+        'APP-NOT-READY',
+        'Stored Time requires a ready application.',
+      )
+    }
     const result = await this.application.dispatchCommitFirst(
       {
         ...envelope,
@@ -732,10 +758,22 @@ export class CanonicalGameApplicationFacade {
       }
     }
 
+    const after = this.snapshot()
+    if (after.phase !== 'ready') {
+      throw new Error('Committed Stored Time did not leave a ready state.')
+    }
     return {
       ...result,
       consumedSeconds: seconds,
       remainingSeconds: 0,
+      summary: summarizeStoredTimeCompletion(
+        before.state as CanonicalRuntimeState,
+        after.state as CanonicalRuntimeState,
+        storedTimeCompletionWork(
+          before.state as CanonicalRuntimeState,
+          seconds,
+        ),
+      ),
     }
   }
 
@@ -884,10 +922,63 @@ export class CanonicalGameApplicationFacade {
   }
 }
 
+function storedTimeCompletionWork(
+  before: Readonly<CanonicalRuntimeState>,
+  requestedSeconds: number,
+  reportedUpdates?: number,
+): {
+  readonly simulationUpdates: number
+  readonly initiallyPlannedUpdates: number
+} {
+  const initiallyPlannedUpdates = planStoredTimePolicy({
+    requestedSeconds,
+    preset: before.gameState.timeline.processing.storedTimePreset,
+  }).plannedTicks
+  const simulationUpdates =
+    Number.isSafeInteger(reportedUpdates) &&
+    (reportedUpdates ?? 0) > 0 &&
+    (reportedUpdates ?? 0) <= initiallyPlannedUpdates
+      ? reportedUpdates as number
+      : initiallyPlannedUpdates
+  return { simulationUpdates, initiallyPlannedUpdates }
+}
+
 export function createCanonicalGameApplication(
   options: Readonly<CanonicalGameApplicationOptions>,
 ): CanonicalGameApplicationFacade {
   return new CanonicalGameApplicationFacade(options)
+}
+
+function activeAdvanceResult(
+  requestedMilliseconds: number,
+  transition: SimulationTransitionResult,
+  after: ApplicationSnapshot<CanonicalRuntimeState>,
+  measurement: Readonly<CanonicalActiveAdvanceMeasurement> | undefined,
+): CanonicalActiveAdvanceResult {
+  const consumedMilliseconds = transition.accepted &&
+    measurement?.requestedMilliseconds === requestedMilliseconds
+    ? measurement.consumedMilliseconds
+    : 0
+  const remainingMilliseconds = Math.max(
+    0,
+    requestedMilliseconds - consumedMilliseconds,
+  )
+  const checkpoint =
+    after.phase === 'ready'
+      ? requiredBotCapCheckpoint(after.state.gameState)
+      : undefined
+  return {
+    transition,
+    consumedMilliseconds,
+    remainingMilliseconds,
+    continuation:
+      checkpoint === undefined
+        ? { kind: 'complete' }
+        : {
+            kind: 'bot-cap-persistence-required',
+            checkpoint,
+          },
+  }
 }
 
 export function createCanonicalGameEngineDefinition(
@@ -930,6 +1021,7 @@ export function createCanonicalGameEngineDefinition(
           command.milliseconds,
           eventContexts.active,
           minimumCycleSeconds,
+          options.onActiveAdvance,
         )
       }
       if (command.kind === 'internal.replace-stored-time-state') {
@@ -1001,6 +1093,7 @@ export function createCanonicalGameEngineDefinition(
         milliseconds,
         eventContexts.active,
         minimumCycleSeconds,
+        options.onActiveAdvance,
       ),
   }
 }
@@ -1559,6 +1652,7 @@ function advanceActive(
   milliseconds: number,
   context: Readonly<CanonicalEventTimeContext>,
   minimumCycleSeconds: number,
+  onAdvance?: CanonicalGameEngineOptions['onActiveAdvance'],
 ): DomainTransition {
   if (!Number.isFinite(milliseconds) || milliseconds < 0) {
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
@@ -1574,6 +1668,7 @@ function advanceActive(
     context,
     minimumCycleSeconds,
   )
+  onAdvance?.(activeAdvanceMeasurement(milliseconds, result.baseSecondsConsumed))
   if (result.issue !== undefined && !result.botCapPersistenceRequired) {
     return reject(
       result.issue,
@@ -1589,6 +1684,7 @@ function advanceActiveContinuous(
   milliseconds: number,
   context: Readonly<CanonicalEventTimeContext>,
   minimumCycleSeconds: number,
+  onAdvance?: CanonicalGameEngineOptions['onActiveAdvance'],
 ): DomainTransition {
   if (!Number.isFinite(milliseconds) || milliseconds < 0) {
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
@@ -1604,11 +1700,32 @@ function advanceActiveContinuous(
     context,
     minimumCycleSeconds,
   )
-  if (result.issue !== undefined) {
+  onAdvance?.(activeAdvanceMeasurement(milliseconds, result.baseSecondsConsumed))
+  if (result.issue !== undefined && !result.botCapPersistenceRequired) {
     return reject(result.issue, `Continuous active step ended as ${result.issue}.`)
   }
   replaceEventCarrier(candidate, result.state)
   return { accepted: true, changed: true }
+}
+
+function activeAdvanceMeasurement(
+  requestedMilliseconds: number,
+  consumedBaseSeconds: number,
+): CanonicalActiveAdvanceMeasurement {
+  const requestedBaseSeconds = requestedMilliseconds / 1000
+  return {
+    requestedMilliseconds,
+    // advanceGame returns the admitted input verbatim for a complete step.
+    // Preserve that exact request instead of reintroducing floating residue
+    // through a seconds-to-milliseconds round trip.
+    consumedMilliseconds:
+      consumedBaseSeconds === requestedBaseSeconds
+        ? requestedMilliseconds
+        : Math.min(
+            requestedMilliseconds,
+            Math.max(0, consumedBaseSeconds * 1000),
+          ),
+  }
 }
 
 function advanceStoredTime(
@@ -2017,9 +2134,14 @@ function validateRuntimeTransitionState(
 }
 
 function requiredBotCapCheckpoint(
-  state: CanonicalRuntimeState['gameState'],
+  state: DeepReadonly<CanonicalRuntimeState['gameState']>,
 ): BotCapCheckpointName | undefined {
-  const evaluated = evaluateCanonicalBotCapCheckpoint(state)
+  // DeepReadonly widens persisted tuples to readonly arrays. The evaluator is
+  // itself read-only, so adapting that compile-time representation requires no
+  // defensive runtime copy.
+  const evaluated = evaluateCanonicalBotCapCheckpoint(
+    state as CanonicalRuntimeState['gameState'],
+  )
   return evaluated.action.kind === 'persist'
     ? evaluated.action.checkpoint
     : undefined

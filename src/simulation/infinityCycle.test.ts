@@ -5,6 +5,7 @@ import {
   breakInfinityTargetFromPresentationPosition,
   infinityPointsPerMinute,
   ordinaryInfinityBotThreshold,
+  preferredInfinityRatePeak,
   projectBreakInfinityPresentationControl,
   projectInfinityProgress,
 } from './infinityCycle'
@@ -14,6 +15,24 @@ describe('Infinity progress projection', () => {
     expect(infinityPointsPerMinute(72n, 120)).toBe(36)
     expect(infinityPointsPerMinute(72n, 0)).toBe(0)
     expect(infinityPointsPerMinute(0n, 60)).toBe(0)
+  })
+
+  test('keeps the lower reward across the two-percent throughput plateau', () => {
+    expect(preferredInfinityRatePeak(
+      { rate: 74_545.45, reward: 82n },
+      { rate: 75_400, reward: 166n },
+    )).toEqual({ rate: 74_545.45, reward: 82n })
+    expect(preferredInfinityRatePeak(
+      { rate: 74_208.1448, reward: 164n },
+      { rate: 74_200, reward: 82n },
+    )).toEqual({ rate: 74_200, reward: 82n })
+  })
+
+  test('replaces the peak only for a material rate improvement', () => {
+    expect(preferredInfinityRatePeak(
+      { rate: 74_208.1448, reward: 82n },
+      { rate: 76_000, reward: 164n },
+    )).toEqual({ rate: 76_000, reward: 164n })
   })
 
   test('projects ordinary logarithmic progress without a navigation reward', () => {

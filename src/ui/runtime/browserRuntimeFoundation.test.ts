@@ -3045,6 +3045,119 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
+  test('production cadence delivers only configured gameplay updates and retains residue', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      activeTimeDeliveryIntervalMilliseconds: 10,
+      fixedActiveTimeDeliveryCadence: true,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(25)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+
+    activeClock.set(30)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 3)
+    expect(application?.activeRequests[2]).toEqual({
+      milliseconds: 10,
+      sessionRevision: 1,
+    })
+    await runtime.shutdown()
+  })
+
+  test('lifecycle flush runs full configured ticks and suppresses automation for the residue', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      activeTimeDeliveryIntervalMilliseconds: 10,
+      fixedActiveTimeDeliveryCadence: true,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(25)
+    lifecycle.emit('background')
+    await waitUntil(() => application?.awayCommits === 1)
+
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+    expect(application?.activeContinuousRequests).toEqual([5])
+    await runtime.shutdown()
+  })
+
+  test('processing interval changes apply the new cadence to retained residue', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      activeTimeDeliveryIntervalMilliseconds: undefined,
+      fixedActiveTimeDeliveryCadence: true,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, database.events)
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(20)
+    await runtime.dispatchPlayer({
+      kind: 'settings.set-processing-interval',
+      milliseconds: 200,
+    })
+    activeClock.set(200)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests[0]?.milliseconds).toBe(200)
+
+    activeClock.set(300)
+    await runtime.dispatchPlayer({
+      kind: 'settings.set-processing-interval',
+      milliseconds: 33,
+    })
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 4)
+    expect(application?.activeRequests.slice(1).map((entry) => entry.milliseconds))
+      .toEqual([33, 33, 33])
+    expect(application?.activeContinuousRequests).toEqual([])
+    expect(application?.events).not.toContain('application.active-continuous')
+    await runtime.shutdown()
+  })
+
   test('serializes overlapping commands from one activation revision and publishes no stale result', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const gate = deferred<void>()
@@ -3350,7 +3463,7 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
-  test('restores a failed continuous command flush for normal active retry', async () => {
+  test('retains partial-tick residue instead of flushing it through a player command', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const activeClock = new ManualActiveTimeClock()
     const frames = new ManualAnimationFrameScheduler()
@@ -3361,7 +3474,6 @@ describe('browser runtime foundation composition', () => {
       activeTimeScheduler: frames,
       createApplication: (repository) => {
         application = new FakeRuntimeApplication(repository, database.events)
-        application.rejectActiveContinuous = true
         return application
       },
     })
@@ -3372,9 +3484,11 @@ describe('browser runtime foundation composition', () => {
       kind: 'dyson.purchase-basic-facility',
       facilityId: 'assembly_lines',
     })).resolves.toMatchObject({
-      status: 'failed',
-      code: 'TEST-ACTIVE-CONTINUOUS-REJECTED',
+      status: 'accepted',
+      stateRevision: 1,
     })
+    expect(application?.events).not.toContain('application.active-continuous')
+    expect(application?.activeRequests).toEqual([])
 
     frames.fire()
     await waitUntil(() => application?.activeRequests.length === 1)
@@ -4749,7 +4863,11 @@ function createRuntime(
       overrides.activeTimeScheduler ??
       new ManualAnimationFrameScheduler(),
     activeTimeDeliveryIntervalMilliseconds:
-      overrides.activeTimeDeliveryIntervalMilliseconds ?? 1,
+      'activeTimeDeliveryIntervalMilliseconds' in overrides
+        ? overrides.activeTimeDeliveryIntervalMilliseconds
+        : 1,
+    fixedActiveTimeDeliveryCadence:
+      overrides.fixedActiveTimeDeliveryCadence ?? false,
     storageManager:
       overrides.storageManager ?? {
         persisted: async () => true,
@@ -4883,6 +5001,7 @@ class FakeRuntimeApplication
     readonly milliseconds: number
     readonly sessionRevision: number
   }> = []
+  readonly activeContinuousRequests: number[] = []
   readonly activeOutcomes: Array<'success' | 'rejected' | 'partial'> = []
   readonly playerEnvelopes:
     ApplicationCommandEnvelope<CanonicalPlayerCommand>[] = []
@@ -5004,17 +5123,23 @@ class FakeRuntimeApplication
     }
   }
 
-  advanceActiveContinuous(
+  advanceActiveContinuousWithContinuation(
     milliseconds: number,
-  ): SimulationTransitionResult {
+  ): CanonicalActiveAdvanceResult {
     this.events.push('application.active-continuous')
+    this.activeContinuousRequests.push(milliseconds)
     if (this.rejectActiveContinuous) {
       this.rejectActiveContinuous = false
       return {
-        accepted: false,
-        code: 'TEST-ACTIVE-CONTINUOUS-REJECTED',
-        reason: 'Scripted continuous active-time rejection.',
-        revision: this.stateRevision,
+        transition: {
+          accepted: false,
+          code: 'TEST-ACTIVE-CONTINUOUS-REJECTED',
+          reason: 'Scripted continuous active-time rejection.',
+          revision: this.stateRevision,
+        },
+        consumedMilliseconds: 0,
+        remainingMilliseconds: milliseconds,
+        continuation: { kind: 'complete' },
       }
     }
     if (milliseconds > 0) {
@@ -5022,9 +5147,14 @@ class FakeRuntimeApplication
       this.dirty = true
     }
     return {
-      accepted: true,
-      changed: milliseconds > 0,
-      revision: this.stateRevision,
+      transition: {
+        accepted: true,
+        changed: milliseconds > 0,
+        revision: this.stateRevision,
+      },
+      consumedMilliseconds: milliseconds,
+      remainingMilliseconds: 0,
+      continuation: { kind: 'complete' },
     }
   }
 
@@ -5074,6 +5204,10 @@ class FakeRuntimeApplication
     }
     this.stateRevision += 1
     this.dirty = true
+    if (envelope.command.kind === 'settings.set-processing-interval') {
+      this.state.gameState.timeline.processing.activeIntervalMilliseconds =
+        envelope.command.milliseconds
+    }
     return {
       kind: 'transition',
       transition: {

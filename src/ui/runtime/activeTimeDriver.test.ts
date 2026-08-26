@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import {
   CoordinatorActiveTimeDriver,
+  MAXIMUM_FIXED_CADENCE_BURST_DELIVERIES,
   type ActiveTimeFrameScheduler,
   type ActiveTimeMonotonicClock,
 } from './activeTimeDriver'
@@ -103,6 +104,80 @@ describe('coordinator active-time driver', () => {
     expect(maximumConcurrent).toBe(1)
     gates[1]?.resolve()
     await flushMicrotasks()
+    driver.shutdown()
+  })
+
+  test('delivers delayed foreground time as exact gameplay ticks when configured', async () => {
+    const clock = new ManualMonotonicClock()
+    const frames = new ManualFrameScheduler()
+    const delivered: number[] = []
+    const driver = new CoordinatorActiveTimeDriver({
+      clock,
+      scheduler: frames,
+      minimumDeliveryMilliseconds: 33,
+      fixedDeliveryCadence: true,
+      deliver: async (milliseconds) => {
+        delivered.push(milliseconds)
+        return milliseconds
+      },
+      onDelivered: () => undefined,
+    })
+
+    driver.startForeground()
+    clock.set(100)
+    frames.fire()
+    await flushMicrotasks()
+
+    expect(delivered).toEqual([33, 33, 33])
+    expect(driver.suspendForLifecycle().activeMilliseconds).toBe(1)
+    driver.shutdown()
+  })
+
+  test('yields fixed-cadence backlog after a bounded delivery burst', async () => {
+    const clock = new ManualMonotonicClock()
+    const frames = new ManualFrameScheduler()
+    const delivered: number[] = []
+    const driver = new CoordinatorActiveTimeDriver({
+      clock,
+      scheduler: frames,
+      minimumDeliveryMilliseconds: 10,
+      fixedDeliveryCadence: true,
+      deliver: async (milliseconds) => {
+        delivered.push(milliseconds)
+        return milliseconds
+      },
+      onDelivered: () => undefined,
+    })
+
+    driver.startForeground()
+    clock.set(250)
+    frames.fire()
+    await flushMicrotasks()
+    await flushMicrotasks()
+    await flushMicrotasks()
+
+    expect(delivered).toHaveLength(MAXIMUM_FIXED_CADENCE_BURST_DELIVERIES)
+    expect(new Set(delivered)).toEqual(new Set([10]))
+    expect(frames.pending).toBe(1)
+
+    frames.fire()
+    await flushMicrotasks()
+    await flushMicrotasks()
+    await flushMicrotasks()
+    expect(delivered).toHaveLength(
+      MAXIMUM_FIXED_CADENCE_BURST_DELIVERIES * 2,
+    )
+
+    frames.fire()
+    await flushMicrotasks()
+    await flushMicrotasks()
+    await flushMicrotasks()
+    frames.fire()
+    await flushMicrotasks()
+    await flushMicrotasks()
+    await flushMicrotasks()
+    expect(delivered).toHaveLength(25)
+    expect(driver.suspendForLifecycle().activeMilliseconds).toBe(0)
     driver.shutdown()
   })
 

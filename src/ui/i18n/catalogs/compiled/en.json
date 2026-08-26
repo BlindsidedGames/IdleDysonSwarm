@@ -2410,7 +2410,7 @@
   "infinity.automatic-target-warning": [
     {
       "type": 0,
-      "value": "This target is far above your best active Infinity point."
+      "value": "This target is far above your manual Infinity recommendation."
     }
   ],
   "infinity.break-target": [
@@ -2570,7 +2570,7 @@
   "infinity.rate.peak": [
     {
       "type": 0,
-      "value": "Peak: "
+      "value": "Recommended: "
     },
     {
       "type": 1,
@@ -3051,12 +3051,6 @@
       "value": "Tap again to confirm"
     }
   ],
-  "offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "Current Infinity"
-    }
-  ],
   "offline-time.disabled": [
     {
       "type": 0,
@@ -3125,10 +3119,10 @@
       "value": "1 minute"
     }
   ],
-  "offline-time.previous-infinity": [
+  "offline-time.preparing": [
     {
       "type": 0,
-      "value": "Previous Infinity"
+      "value": "Preparing simulation…"
     }
   ],
   "offline-time.processing": [
@@ -3161,20 +3155,20 @@
       "value": " remaining"
     }
   ],
+  "offline-time.progress-announcement": [
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% complete"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
       "value": "Offline Time"
-    }
-  ],
-  "offline-time.selected-amount": [
-    {
-      "type": 0,
-      "value": "Selected: "
-    },
-    {
-      "type": 1,
-      "value": "duration"
     }
   ],
   "offline-time.simulation-complete": [
@@ -3227,20 +3221,6 @@
       "value": "Spend Offline Time"
     }
   ],
-  "offline-time.spend-success": [
-    {
-      "type": 0,
-      "value": "Spent "
-    },
-    {
-      "type": 1,
-      "value": "duration"
-    },
-    {
-      "type": 0,
-      "value": " of Offline Time."
-    }
-  ],
   "offline-time.storage-progress": [
     {
       "type": 0,
@@ -3251,6 +3231,94 @@
     {
       "type": 0,
       "value": "Stored Offline Time"
+    }
+  ],
+  "offline-time.summary.bots": [
+    {
+      "type": 0,
+      "value": "Bots gained"
+    }
+  ],
+  "offline-time.summary.group.facilities": [
+    {
+      "type": 0,
+      "value": "Facilities gained"
+    }
+  ],
+  "offline-time.summary.group.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "offline-time.summary.group.reality": [
+    {
+      "type": 0,
+      "value": "Reality"
+    }
+  ],
+  "offline-time.summary.group.simulations": [
+    {
+      "type": 0,
+      "value": "Simulations"
+    }
+  ],
+  "offline-time.summary.infinities": [
+    {
+      "type": 0,
+      "value": "Infinities completed"
+    }
+  ],
+  "offline-time.summary.infinity-points": [
+    {
+      "type": 0,
+      "value": "Infinity Points gained"
+    }
+  ],
+  "offline-time.summary.influence": [
+    {
+      "type": 0,
+      "value": "Influence gained"
+    }
+  ],
+  "offline-time.summary.no-major-changes": [
+    {
+      "type": 0,
+      "value": "No major progression changes."
+    }
+  ],
+  "offline-time.summary.reality-workers": [
+    {
+      "type": 0,
+      "value": "Reality workers created"
+    }
+  ],
+  "offline-time.summary.reduced-accuracy": [
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": " (sped up)"
+    }
+  ],
+  "offline-time.summary.simulation-resets": [
+    {
+      "type": 0,
+      "value": "Simulation resets"
+    }
+  ],
+  "offline-time.summary.simulation-updates": [
+    {
+      "type": 0,
+      "value": "Simulation updates"
+    }
+  ],
+  "offline-time.summary.strange-matter": [
+    {
+      "type": 0,
+      "value": "Strange Matter gained"
     }
   ],
   "offline-time.ten-minutes": [
@@ -3269,12 +3337,6 @@
     {
       "type": 0,
       "value": "Time simulated"
-    }
-  ],
-  "offline-time.usage-heading": [
-    {
-      "type": 0,
-      "value": "Offline Time Used"
     }
   ],
   "pwa.update.accept": [
@@ -10287,6 +10349,24 @@
     {
       "type": 0,
       "value": "None"
+    }
+  ],
+  "statistics.offline-time": [
+    {
+      "type": 0,
+      "value": "Offline Time"
+    }
+  ],
+  "statistics.offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "Current Infinity"
+    }
+  ],
+  "statistics.offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "Previous Infinity"
     }
   ],
   "statistics.other-stats": [

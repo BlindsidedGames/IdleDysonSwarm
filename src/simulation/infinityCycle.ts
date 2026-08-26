@@ -22,6 +22,14 @@ const ORDINARY_INFINITY_BOT_REQUIREMENT = 4.2e19
 const DEFAULT_INFINITY_EXPONENT = 3.9
 const MINIMUM_EVENT_PROGRESS_SECONDS = bitIncrement(1e-12)
 const INT_MAXIMUM = 2_147_483_647n
+export const INFINITY_RATE_MATERIAL_IMPROVEMENT = 0.02
+/**
+ * A manual run must be observed for this long before toggling automation may
+ * persist its in-progress peak. This prevents a single post-reset update from
+ * replacing the completed manual recommendation while keeping the intended
+ * short manual-calibration workflow.
+ */
+export const MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS = 1
 export const BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM = 1n
 export const BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM = 1_100n
 
@@ -256,6 +264,34 @@ export function infinityPointsPerMinute(
   }
   const rate = Number(projectedReward) * 60 / elapsedSeconds
   return Number.isFinite(rate) && rate > 0 ? rate : Number.MAX_VALUE
+}
+
+export interface InfinityRatePeak {
+  readonly rate: number
+  readonly reward: bigint
+}
+
+/**
+ * Selects a materially better observed rate from an active Infinity run.
+ * Rates within two percent are treated as the same throughput plateau and
+ * prefer the lower reward, keeping the recommended reset target stable.
+ */
+export function preferredInfinityRatePeak(
+  previous: Readonly<InfinityRatePeak>,
+  candidate: Readonly<InfinityRatePeak>,
+): InfinityRatePeak {
+  if (previous.rate <= 0 || previous.reward <= 0n) return { ...candidate }
+  if (candidate.rate <= 0 || candidate.reward <= 0n) return { ...previous }
+  const candidateMateriallyBetter = candidate.rate >
+    previous.rate * (1 + INFINITY_RATE_MATERIAL_IMPROVEMENT)
+  const previousMateriallyBetter = previous.rate >
+    candidate.rate * (1 + INFINITY_RATE_MATERIAL_IMPROVEMENT)
+  if (!candidateMateriallyBetter && !previousMateriallyBetter) {
+    return candidate.reward < previous.reward
+      ? { ...candidate }
+      : { ...previous }
+  }
+  return candidateMateriallyBetter ? { ...candidate } : { ...previous }
 }
 
 export function validateBasicDysonInfinityState(

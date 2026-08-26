@@ -55,6 +55,11 @@ describe('Stored Time job application integration', () => {
       committed: true,
       consumedSeconds: 2,
       remainingSeconds: 0,
+      summary: {
+        preset: 'balanced',
+        simulationUpdates: 40,
+        accuracyReduced: false,
+      },
     })
     expect(repository.commits).toBe(beforeCommits + 1)
     const after = application.snapshot()
@@ -63,6 +68,50 @@ describe('Stored Time job application integration', () => {
     expect(after.state.gameState.timeline.storedTimeAvailableSeconds).toBe(8)
     expect(statuses).toContain('running')
     expect(statuses.at(-1)).toBe('idle')
+  })
+
+  test('reports the actual update count after repeated Speed Ups', async () => {
+    const repository = new MemoryRepository()
+    const runner: StoredTimeJobRunner = {
+      async run(request, options) {
+        const simulation = new StoredTimeSimulation({
+          jobId: request.jobId,
+          state: request.state,
+          requestedSeconds: request.requestedSeconds,
+          infinityMinimumCycleSeconds: request.infinityMinimumCycleSeconds,
+          eventContext: context(),
+        })
+        expect(simulation.progress().remainingTicks).toBe(2_000)
+        expect(simulation.speedUp()).toBe(true)
+        expect(simulation.speedUp()).toBe(true)
+        for (;;) {
+          const terminal = simulation.step(1_000, false)
+          options?.onProgress?.(simulation.progress())
+          if (terminal !== null) return terminal
+        }
+      },
+      dispose() {},
+    }
+    const application = createApplication(repository, runner)
+    await application.start()
+    await installStoredBank(application, 100)
+    const snapshot = application.snapshot()
+    expect(snapshot.phase).toBe('ready')
+    if (snapshot.phase !== 'ready') return
+
+    const result = await application.commitStoredTime({
+      sessionRevision: snapshot.revision.session,
+      expectedStateRevision: snapshot.revision.state,
+    }, 100)
+
+    expect(result).toMatchObject({
+      committed: true,
+      summary: {
+        preset: 'balanced',
+        simulationUpdates: 500,
+        accuracyReduced: true,
+      },
+    })
   })
 
   test('persists unowned Quantum behavior through Stored Time and reload', async () => {

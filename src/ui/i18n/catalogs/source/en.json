@@ -1012,8 +1012,8 @@
     "description": "Enabled state for automatic Infinity resets."
   },
   "infinity.automatic-target-warning": {
-    "defaultMessage": "This target is far above your best active Infinity point.",
-    "description": "Warns when the configured automatic Infinity target is at least 2.5 times the best active reward."
+    "defaultMessage": "This target is far above your manual Infinity recommendation.",
+    "description": "Warns when the configured automatic Infinity target is at least three times the persisted manual-run recommendation."
   },
   "infinity.break-target": {
     "defaultMessage": "Infinity Points before reset",
@@ -1084,8 +1084,8 @@
     "description": "Current projected Infinity Point reward rate for this run."
   },
   "infinity.rate.peak": {
-    "defaultMessage": "Peak: {rate} IP/min at {reward} IP",
-    "description": "Best projected Infinity Point reward rate observed during this run."
+    "defaultMessage": "Recommended: {rate} IP/min at {reward} IP",
+    "description": "Stable current-run Infinity reward recommendation in the Infinity settings."
   },
   "infinity.region": {
     "defaultMessage": "Infinity",
@@ -1331,10 +1331,6 @@
     "defaultMessage": "Tap again to confirm",
     "description": "Unity-style confirmation text before spending stored Offline Time."
   },
-  "offline-time.current-infinity": {
-    "defaultMessage": "Current Infinity",
-    "description": "Label for Offline Time spent during the current Infinity."
-  },
   "offline-time.disabled": {
     "defaultMessage": "Offline Time is disabled for this save.",
     "description": "Warning shown when Unity-style clock-cheat protection disables Offline Time."
@@ -1375,9 +1371,9 @@
     "defaultMessage": "1 minute",
     "description": "Quick selection for one minute of stored time."
   },
-  "offline-time.previous-infinity": {
-    "defaultMessage": "Previous Infinity",
-    "description": "Label for Offline Time spent during the previous Infinity."
+  "offline-time.preparing": {
+    "defaultMessage": "Preparing simulation…",
+    "description": "Status shown while a Stored Time job is being admitted or finalized."
   },
   "offline-time.processing": {
     "defaultMessage": "Simulating…",
@@ -1391,13 +1387,13 @@
     "defaultMessage": "{percent}% complete · about {eta} remaining",
     "description": "Progress and estimated remaining time for a Stored Time job."
   },
+  "offline-time.progress-announcement": {
+    "defaultMessage": "{percent}% complete",
+    "description": "Coarsened screen-reader progress announcement for a Stored Time job."
+  },
   "offline-time.region": {
     "defaultMessage": "Offline Time",
     "description": "Accessible name and heading for the stored Offline Time page."
-  },
-  "offline-time.selected-amount": {
-    "defaultMessage": "Selected: {duration}",
-    "description": "The selected stored-time spend duration."
   },
   "offline-time.simulation-complete": {
     "defaultMessage": "Offline Time Complete",
@@ -1427,10 +1423,6 @@
     "defaultMessage": "Spend Offline Time",
     "description": "Heading for stored-time spending controls."
   },
-  "offline-time.spend-success": {
-    "defaultMessage": "Spent {duration} of Offline Time.",
-    "description": "Confirms how much Offline Time was successfully spent."
-  },
   "offline-time.storage-progress": {
     "defaultMessage": "Offline Time storage",
     "description": "Accessible label for the Offline Time storage progress bar."
@@ -1438,6 +1430,62 @@
   "offline-time.stored": {
     "defaultMessage": "Stored Offline Time",
     "description": "Heading for the available stored-time balance."
+  },
+  "offline-time.summary.bots": {
+    "defaultMessage": "Bots gained",
+    "description": "Stored Time completion result for net Bots gained without an Infinity."
+  },
+  "offline-time.summary.group.facilities": {
+    "defaultMessage": "Facilities gained",
+    "description": "Heading for facility gains in the Stored Time completion summary."
+  },
+  "offline-time.summary.group.infinity": {
+    "defaultMessage": "Infinity",
+    "description": "Heading for Infinity results in the Stored Time completion summary."
+  },
+  "offline-time.summary.group.reality": {
+    "defaultMessage": "Reality",
+    "description": "Heading for Reality results in the Stored Time completion summary."
+  },
+  "offline-time.summary.group.simulations": {
+    "defaultMessage": "Simulations",
+    "description": "Heading for Simulation results in the Stored Time completion summary."
+  },
+  "offline-time.summary.infinities": {
+    "defaultMessage": "Infinities completed",
+    "description": "Stored Time completion result for Infinity resets."
+  },
+  "offline-time.summary.infinity-points": {
+    "defaultMessage": "Infinity Points gained",
+    "description": "Stored Time completion result for earned Infinity Points."
+  },
+  "offline-time.summary.influence": {
+    "defaultMessage": "Influence gained",
+    "description": "Stored Time completion result for automatic Influence."
+  },
+  "offline-time.summary.no-major-changes": {
+    "defaultMessage": "No major progression changes.",
+    "description": "Stored Time completion result when no tracked progression changed."
+  },
+  "offline-time.summary.reality-workers": {
+    "defaultMessage": "Reality workers created",
+    "description": "Stored Time completion result for Reality workers."
+  },
+  "offline-time.summary.reduced-accuracy": {
+    "defaultMessage": "{preset} (sped up)",
+    "description": "Marks a Stored Time result whose update count was reduced with Speed Up."
+  },
+  "offline-time.summary.simulation-resets": {
+    "defaultMessage": "Simulation resets",
+    "description": "Stored Time completion result for Dream simulation resets."
+  },
+  "offline-time.summary.simulation-updates": {
+    "defaultMessage": "Simulation updates",
+    "description": "Actual number of authoritative game updates executed for a Stored Time spend."
+  },
+  "offline-time.summary.strange-matter": {
+    "defaultMessage": "Strange Matter gained",
+    "description": "Stored Time completion result for Strange Matter."
   },
   "offline-time.ten-minutes": {
     "defaultMessage": "10 minutes",
@@ -1450,10 +1498,6 @@
   "offline-time.time-simulated": {
     "defaultMessage": "Time simulated",
     "description": "Completed Stored Time summary label for processed game time."
-  },
-  "offline-time.usage-heading": {
-    "defaultMessage": "Offline Time Used",
-    "description": "Heading for per-Infinity stored-time usage statistics."
   },
   "pwa.update.accept": {
     "defaultMessage": "Save and update",
@@ -4511,6 +4555,18 @@
     "defaultMessage": "+600 seconds of Panel Lifetime.",
     "description": "Technical gameplay-effect description for the Shepherd Skill node."
   },
+  "skills.node.shoulderSurgery.description": {
+    "defaultMessage": "Transplanting these weird looking shoulders should be fine, right?",
+    "description": "Flavour description for the Shoulder Surgery Skill node."
+  },
+  "skills.node.shoulderSurgery.name": {
+    "defaultMessage": "Shoulder Surgery",
+    "description": "Display name for the Shoulder Surgery Skill node."
+  },
+  "skills.node.shoulderSurgery.technical": {
+    "defaultMessage": "Shoulders of the Fallen now also affect Pocket Dimensions.",
+    "description": "Technical gameplay-effect description for the Shoulder Surgery Skill node."
+  },
   "skills.node.shouldersOfGiants.description": {
     "defaultMessage": "You find an extinct civilization and learn from their mistakes.",
     "description": "Flavour description for the Shoulders of Giants Skill node."
@@ -4570,18 +4626,6 @@
   "skills.node.shouldersOfTheRevolution.technical": {
     "defaultMessage": "Gain 1% additional Cash per Science Boost.",
     "description": "Technical gameplay-effect description for the Shoulders of the Revolution Skill node."
-  },
-  "skills.node.shoulderSurgery.description": {
-    "defaultMessage": "Transplanting these weird looking shoulders should be fine, right?",
-    "description": "Flavour description for the Shoulder Surgery Skill node."
-  },
-  "skills.node.shoulderSurgery.name": {
-    "defaultMessage": "Shoulder Surgery",
-    "description": "Display name for the Shoulder Surgery Skill node."
-  },
-  "skills.node.shoulderSurgery.technical": {
-    "defaultMessage": "Shoulders of the Fallen now also affect Pocket Dimensions.",
-    "description": "Technical gameplay-effect description for the Shoulder Surgery Skill node."
   },
   "skills.node.solarBubbles.description": {
     "defaultMessage": "You noticed a significant efficiency potential. By introducing tiny condensed spheres (nicknamed bubbles) of solar energy, your panels in the pocket dimensions have something to do, resulting in a significant boost to production.",
@@ -4667,30 +4711,6 @@
     "defaultMessage": "Every second destroy Bots equal to Stars Surrounded and gain Planets equal to Log10(Stellar Galaxies Engulfed) ^ 2.\n\nA stellar galaxy is just a normal galaxy with stellar modifiers added.",
     "description": "Technical gameplay-effect description for the Stellar Sacrifices Skill node."
   },
-  "skills.node.superchargedPower.description": {
-    "defaultMessage": "Supercharge your power grid, drastically improving the performance of your empire!",
-    "description": "Flavour description for the Supercharged Power Skill node."
-  },
-  "skills.node.superchargedPower.name": {
-    "defaultMessage": "Supercharged Power",
-    "description": "Display name for the Supercharged Power Skill node."
-  },
-  "skills.node.superchargedPower.technical": {
-    "defaultMessage": "Boosts all Buildings, Cash, and Science by 50%",
-    "description": "Technical gameplay-effect description for the Supercharged Power Skill node."
-  },
-  "skills.node.supernova.description": {
-    "defaultMessage": "You discover a way to utilize supernovas to melt bots faster.",
-    "description": "Flavour description for the Supernova Skill node."
-  },
-  "skills.node.supernova.name": {
-    "defaultMessage": "Supernova",
-    "description": "Display name for the Supernova Skill node."
-  },
-  "skills.node.supernova.technical": {
-    "defaultMessage": "Stellar Sacrifices Galaxies are 1000x better. While Supernova is assigned, manually purchased buildings lose every production bonus including Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Unassigning Supernova restores the complete manual-purchase layer.",
-    "description": "Technical gameplay-effect description for the Supernova Skill node."
-  },
   "skills.node.superRadiantScattering.description": {
     "defaultMessage": "Scattering... Something... Causes a perpetually increasing value to affect everything you touch.",
     "description": "Flavour description for the Super-Radiant Scattering Skill node."
@@ -4714,6 +4734,30 @@
   "skills.node.superSwarm.technical": {
     "defaultMessage": "Increase the 1% production gain after 100 purchases to 2%",
     "description": "Technical gameplay-effect description for the Super Swarm Skill node."
+  },
+  "skills.node.superchargedPower.description": {
+    "defaultMessage": "Supercharge your power grid, drastically improving the performance of your empire!",
+    "description": "Flavour description for the Supercharged Power Skill node."
+  },
+  "skills.node.superchargedPower.name": {
+    "defaultMessage": "Supercharged Power",
+    "description": "Display name for the Supercharged Power Skill node."
+  },
+  "skills.node.superchargedPower.technical": {
+    "defaultMessage": "Boosts all Buildings, Cash, and Science by 50%",
+    "description": "Technical gameplay-effect description for the Supercharged Power Skill node."
+  },
+  "skills.node.supernova.description": {
+    "defaultMessage": "You discover a way to utilize supernovas to melt bots faster.",
+    "description": "Flavour description for the Supernova Skill node."
+  },
+  "skills.node.supernova.name": {
+    "defaultMessage": "Supernova",
+    "description": "Display name for the Supernova Skill node."
+  },
+  "skills.node.supernova.technical": {
+    "defaultMessage": "Stellar Sacrifices Galaxies are 1000x better. While Supernova is assigned, manually purchased buildings lose every production bonus including Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Unassigning Supernova restores the complete manual-purchase layer.",
+    "description": "Technical gameplay-effect description for the Supernova Skill node."
   },
   "skills.node.tasteOfPower.description": {
     "defaultMessage": "After getting your first taste of real power you crave more. Seek it out.",
@@ -4750,18 +4794,6 @@
   "skills.node.terraFirma.technical": {
     "defaultMessage": "Bought Planets also count towards Bought Data Centers.",
     "description": "Technical gameplay-effect description for the Terra Firma Skill node."
-  },
-  "skills.node.terraformingProtocols.description": {
-    "defaultMessage": "You find a fragment of another universe. You use this knowledge to discover new Planets, I wonder what other parts of this universe you can find?",
-    "description": "Flavour description for the Terraforming Protocols Skill node."
-  },
-  "skills.node.terraformingProtocols.name": {
-    "defaultMessage": "Terraforming Protocols",
-    "description": "Display name for the Terraforming Protocols Skill node."
-  },
-  "skills.node.terraformingProtocols.technical": {
-    "defaultMessage": "Assemble an additional Planet per second. Get an additional Planet for every other assigned Fragment Skill.",
-    "description": "Technical gameplay-effect description for the Terraforming Protocols Skill node."
   },
   "skills.node.terraGloriae.description": {
     "defaultMessage": "\"Glory to your planets\". The new galactic mega corporation motto, that surprisingly reduces the cost of getting more planets. Maybe you should come out with more of them.",
@@ -4822,6 +4854,18 @@
   "skills.node.terraNullius.technical": {
     "defaultMessage": "Bought Planets also count towards bought Assembly Lines.",
     "description": "Technical gameplay-effect description for the Terra Nullius Skill node."
+  },
+  "skills.node.terraformingProtocols.description": {
+    "defaultMessage": "You find a fragment of another universe. You use this knowledge to discover new Planets, I wonder what other parts of this universe you can find?",
+    "description": "Flavour description for the Terraforming Protocols Skill node."
+  },
+  "skills.node.terraformingProtocols.name": {
+    "defaultMessage": "Terraforming Protocols",
+    "description": "Display name for the Terraforming Protocols Skill node."
+  },
+  "skills.node.terraformingProtocols.technical": {
+    "defaultMessage": "Assemble an additional Planet per second. Get an additional Planet for every other assigned Fragment Skill.",
+    "description": "Technical gameplay-effect description for the Terraforming Protocols Skill node."
   },
   "skills.node.ultimateSwarm.description": {
     "defaultMessage": "Pushing the limits is what you do best.",
@@ -5478,6 +5522,18 @@
   "statistics.none": {
     "defaultMessage": "None",
     "description": "Empty state for a reached statistics group with no recorded activity."
+  },
+  "statistics.offline-time": {
+    "defaultMessage": "Offline Time",
+    "description": "Heading for per-Infinity Offline Time usage statistics."
+  },
+  "statistics.offline-time.current-infinity": {
+    "defaultMessage": "Current Infinity",
+    "description": "Offline Time spent during the current Infinity."
+  },
+  "statistics.offline-time.previous-infinity": {
+    "defaultMessage": "Previous Infinity",
+    "description": "Offline Time spent during the previous Infinity."
   },
   "statistics.other-stats": {
     "defaultMessage": "Other Stats",

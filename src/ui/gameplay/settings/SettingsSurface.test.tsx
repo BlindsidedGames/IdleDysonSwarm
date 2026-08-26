@@ -20,6 +20,7 @@ import {
   type SettingsSurfaceProps,
 } from './SettingsSurface'
 import type { GameAudioService } from '../../../audio'
+import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
   NumberNotationPreferenceService,
   NumberNotationProvider,
@@ -42,7 +43,10 @@ const settingsStyles = readFileSync(
   'utf8',
 )
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.useRealTimers()
+})
 
 describe('SettingsSurface', () => {
   test('changes the device-local game language and can return to device mode', async () => {
@@ -124,7 +128,7 @@ describe('SettingsSurface', () => {
     expect(select).toHaveFocus()
   })
 
-  test('presents and updates the active game interval in Settings', () => {
+  test('previews a rapid pointer drag and commits only its final interval', async () => {
     const onProcessingIntervalChange = vi.fn()
     renderSettings(vi.fn(), undefined, {
       processingIntervalMilliseconds: 50,
@@ -136,11 +140,168 @@ describe('SettingsSurface', () => {
     ).toBeInTheDocument()
     const interval = screen.getByRole('slider', { name: 'Update interval' })
     expect(interval).toHaveValue('50')
+    expect(interval).toHaveAttribute('aria-valuetext', '50 ms')
     expect(interval.previousElementSibling).toHaveTextContent('50 ms')
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '70' } })
+    fireEvent.change(interval, { target: { value: '85' } })
     fireEvent.change(interval, { target: { value: '100' } })
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+    fireEvent.pointerUp(interval)
     expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(100)
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
     expect(interval.previousElementSibling).toHaveTextContent('100 ms')
+    expect(interval).toHaveAttribute('aria-valuetext', '100 ms')
     expect(settingsStyles).toMatch(/\.settings-surface__processing-control/)
+    await act(async () => await Promise.resolve())
+  })
+
+  test('commits change-only interval input after a short trailing delay', async () => {
+    vi.useFakeTimers()
+    const onProcessingIntervalChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.change(interval, { target: { value: '70' } })
+    fireEvent.change(interval, { target: { value: '85' } })
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+
+    act(() => vi.advanceTimersByTime(199))
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+    act(() => vi.advanceTimersByTime(1))
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(85)
+    await act(async () => await Promise.resolve())
+  })
+
+  test('cancels the trailing fallback when a normal gesture commits', async () => {
+    vi.useFakeTimers()
+    const onProcessingIntervalChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '100' } })
+    fireEvent.pointerUp(interval)
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(100)
+
+    act(() => vi.advanceTimersByTime(1_000))
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+    await act(async () => await Promise.resolve())
+  })
+
+  test('cancels a pending change-only interval commit on unmount', () => {
+    vi.useFakeTimers()
+    const onProcessingIntervalChange = vi.fn()
+    const { unmount } = renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.change(interval, { target: { value: '85' } })
+    unmount()
+    act(() => vi.advanceTimersByTime(1_000))
+
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+  })
+
+  test('commits a completed keyboard interval change and uses blur as fallback', async () => {
+    const onProcessingIntervalChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.change(interval, { target: { value: '51' } })
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+    fireEvent.keyUp(interval, { key: 'ArrowRight' })
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(51)
+    await act(async () => await Promise.resolve())
+
+    fireEvent.change(interval, { target: { value: '75' } })
+    fireEvent.blur(interval)
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(75)
+    expect(onProcessingIntervalChange).toHaveBeenCalledTimes(2)
+    await act(async () => await Promise.resolve())
+  })
+
+  test('rolls a rejected processing interval back to the canonical value', async () => {
+    const onProcessingIntervalChange = vi.fn().mockResolvedValue({
+      status: 'failed',
+      kind: 'runtime',
+      code: 'TEST-FAILED',
+      reason: 'Rejected for test.',
+      retryable: false,
+    })
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '100' } })
+    expect(interval).toHaveValue('100')
+    fireEvent.pointerUp(interval)
+
+    await waitFor(() => expect(interval).toHaveValue('50'))
+    expect(interval.previousElementSibling).toHaveTextContent('50 ms')
+  })
+
+  test('serializes a newer interval selected while the previous request is pending', async () => {
+    const first = deferred<UiRuntimePlayerCommandResult | void>()
+    const onProcessingIntervalChange = vi.fn()
+      .mockImplementationOnce(() => first.promise)
+      .mockResolvedValueOnce(undefined)
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '100' } })
+    fireEvent.pointerUp(interval)
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '50' } })
+    fireEvent.pointerUp(interval)
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+
+    await act(async () => first.resolve(undefined))
+    expect(onProcessingIntervalChange).toHaveBeenCalledTimes(2)
+    expect(onProcessingIntervalChange).toHaveBeenNthCalledWith(1, 100)
+    expect(onProcessingIntervalChange).toHaveBeenNthCalledWith(2, 50)
+    expect(interval).toHaveValue('50')
+    expect(interval).toHaveAttribute('aria-valuetext', '50 ms')
+  })
+
+  test('rolls back when the interval callback throws synchronously', async () => {
+    const onProcessingIntervalChange = vi.fn(() => {
+      throw new Error('Synchronous test failure.')
+    })
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '100' } })
+    fireEvent.pointerUp(interval)
+
+    await waitFor(() => expect(interval).toHaveValue('50'))
+    expect(interval).toHaveAttribute('aria-valuetext', '50 ms')
   })
 
   test('exposes localized device audio volumes and mute controls', async () => {
@@ -958,4 +1119,12 @@ function renderSettings(
       </NumberNotationProvider>
     </LocalePreferenceProvider>,
   )
+}
+
+function deferred<T>() {
+  let resolve!: (value: T) => void
+  const promise = new Promise<T>((resolvePromise) => {
+    resolve = resolvePromise
+  })
+  return { promise, resolve }
 }

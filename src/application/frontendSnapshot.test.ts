@@ -945,6 +945,164 @@ describe('frontend gameplay snapshot', () => {
       currentPosition: Math.log10(6),
     })
 
+    const stableGuidance = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        infinity: {
+          ...source.infinity,
+          automaticResetEnabled: false,
+          currentCyclePeakIpPerMinute: 74_208.1448,
+          currentCyclePeakReward: 164n,
+        },
+        quantum: {
+          ...source.quantum,
+          unlocks: {
+            ...source.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+      },
+      frontendContext(),
+    )
+
+    expect(stableGuidance.derived.infinity).toMatchObject({
+      peakIpPerMinute: 74_208.1448,
+      peakReward: 164n,
+    })
+
+    const improvedGuidance = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        infinity: {
+          ...source.infinity,
+          automaticResetEnabled: false,
+          currentCyclePeakIpPerMinute: 76_000,
+          currentCyclePeakReward: 164n,
+        },
+        quantum: {
+          ...source.quantum,
+          unlocks: {
+            ...source.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+      },
+      frontendContext(),
+    )
+
+    expect(improvedGuidance.derived.infinity).toMatchObject({
+      peakIpPerMinute: 76_000,
+      peakReward: 164n,
+    })
+
+    const activeAutomationPeak = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        infinity: {
+          ...source.infinity,
+          automaticResetEnabled: true,
+          breakTarget: 83n,
+          currentCyclePeakIpPerMinute: 74_208.1448,
+          currentCyclePeakReward: 82n,
+          manualPeakIpPerMinute: 71_500,
+          manualPeakReward: 80n,
+        },
+        statistics: {
+          ...source.statistics,
+          recentInfinityCycles: [
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 5_000n,
+              durationSeconds: 0.1,
+              processingSource: 'stored-time',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 4_000n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 200,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 500n,
+              reward: 500n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 83n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 83n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: false,
+              configuredTarget: 80n,
+              reward: 80n,
+              durationSeconds: 1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+          ],
+          recentActiveAutomaticInfinityCycles: [
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 83n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 83n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+          ],
+        },
+        quantum: {
+          ...source.quantum,
+          unlocks: {
+            ...source.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+      },
+      frontendContext(),
+    )
+
+    expect(activeAutomationPeak.derived.infinity).toMatchObject({
+      currentIpPerMinute: 49_800,
+      peakIpPerMinute: 71_500,
+      peakReward: 80n,
+    })
+
     const warning = selectFrontendGameplaySnapshot(
       {
         ...source,

@@ -6,6 +6,7 @@ import { prepareIdb1Save } from '../save/prepare'
 import { createCapturedInfinityAssetLookup, type CanonicalEventTimeContext } from './canonicalEventTimeModel'
 import { SIMULATION_UPGRADE_DEFINITIONS } from './dreamEducationUpgrades'
 import { advanceGame } from './gameStep'
+import { MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS } from './infinityCycle'
 import { REALITY_UPGRADE_DEFINITIONS } from './realityUpgrades'
 import { DISCRETE_MAXIMUM } from './numeric'
 
@@ -157,6 +158,34 @@ describe('advanceGame', () => {
     expect(stored.state.gameState.infinity.currentCyclePeakIpPerMinute).toBe(0)
     expect(active.state.gameState.infinity.currentCyclePeakReward).toBeGreaterThan(0n)
     expect(active.state.gameState.infinity.currentCyclePeakIpPerMinute).toBeGreaterThan(0)
+
+    const automaticState = structuredClone(state)
+    automaticState.gameState.infinity = {
+      ...automaticState.gameState.infinity,
+      automaticResetEnabled: true,
+      breakTarget: 100n,
+      currentCyclePeakReward: 0n,
+      currentCyclePeakIpPerMinute: 0,
+    }
+    automaticState.gameState.dyson = {
+      ...automaticState.gameState.dyson,
+      bots: 4.2e19,
+    }
+    automaticState.gameState.quantum = {
+      ...automaticState.gameState.quantum,
+      unlocks: {
+        ...automaticState.gameState.quantum.unlocks,
+        breakTheLoop: true,
+      },
+    }
+    const automatic = advanceGame(
+      carrier(automaticState),
+      { source: 'active', baseSeconds: 0.05, automation: 'enabled' },
+      context(),
+      1 / 60,
+    )
+    expect(automatic.state.gameState.infinity.currentCyclePeakReward).toBeGreaterThan(0n)
+    expect(automatic.state.gameState.infinity.currentCyclePeakIpPerMinute).toBeGreaterThan(0)
   })
 
   test('records automatic Infinity statistics and sequential Stored Time usage', () => {
@@ -192,6 +221,163 @@ describe('advanceGame', () => {
     expect(
       result.state.gameState.infinity.storedTimeUsedThisCycleSeconds,
     ).toBe(1)
+    expect(result.state.gameState.statistics.recentInfinityCycles?.[0])
+      .toMatchObject({
+        processingSource: 'stored-time',
+        activeIntervalMilliseconds:
+          state.gameState.timeline.processing.activeIntervalMilliseconds,
+      })
+    expect(result.state.gameState.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+    expect(result.state.gameState.infinity.activeAutomaticThroughputCycleEligible)
+      .toBe(false)
+  })
+
+  test('counts only active manual seconds toward toggle calibration', () => {
+    const state = runtime()
+    state.gameState = {
+      ...state.gameState,
+      infinity: {
+        ...state.gameState.infinity,
+        automaticResetEnabled: false,
+        manualCalibrationObservedActiveSeconds: 0,
+      },
+    }
+    const active = advanceGame(
+      carrier(state),
+      { source: 'active', baseSeconds: 0.75, automation: 'enabled' },
+      context(),
+      1 / 60,
+    )
+    expect(active.state.gameState.infinity.manualCalibrationObservedActiveSeconds)
+      .toBe(0.75)
+
+    const stored = advanceGame(
+      active.state,
+      { source: 'stored-time', baseSeconds: 20, automation: 'enabled' },
+      context(),
+      1 / 60,
+    )
+    expect(stored.state.gameState.infinity.manualCalibrationObservedActiveSeconds)
+      .toBe(0.75)
+  })
+
+  test('counts real active time toward manual calibration under Double Time', () => {
+    const state = runtime()
+    state.gameState = {
+      ...state.gameState,
+      infinity: {
+        ...state.gameState.infinity,
+        automaticResetEnabled: false,
+        manualCalibrationObservedActiveSeconds: 0,
+      },
+      timeline: {
+        ...state.gameState.timeline,
+        doubleTime: {
+          unlocked: true,
+          enabled: false,
+          bankSeconds: 0,
+          rate: 0,
+        },
+      },
+    }
+
+    const halfSecond = advanceGame(
+      carrier(state),
+      { source: 'active', baseSeconds: 0.5, automation: 'enabled' },
+      context(),
+      1 / 60,
+    )
+    expect(halfSecond.gameSecondsAdvanced).toBe(1)
+    expect(
+      halfSecond.state.gameState.infinity
+        .manualCalibrationObservedActiveSeconds,
+    ).toBe(0.5)
+    expect(
+      halfSecond.state.gameState.infinity
+        .manualCalibrationObservedActiveSeconds,
+    ).toBeLessThan(MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS)
+
+    const fullSecond = advanceGame(
+      halfSecond.state,
+      { source: 'active', baseSeconds: 0.5, automation: 'enabled' },
+      context(),
+      1 / 60,
+    )
+    expect(
+      fullSecond.state.gameState.infinity
+        .manualCalibrationObservedActiveSeconds,
+    ).toBe(1)
+    expect(
+      fullSecond.state.gameState.infinity
+        .manualCalibrationObservedActiveSeconds,
+    ).toBeGreaterThanOrEqual(
+      MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS,
+    )
+  })
+
+  test('excludes the handoff cycle and admits the next wholly active automatic cycle', () => {
+    const state = runtime()
+    state.gameState = {
+      ...state.gameState,
+      dyson: { ...state.gameState.dyson, bots: 1e100 },
+      infinity: {
+        ...state.gameState.infinity,
+        automaticResetEnabled: true,
+        breakTarget: 1n,
+        activeAutomaticThroughputCycleEligible: false,
+      },
+      quantum: {
+        ...state.gameState.quantum,
+        unlocks: {
+          ...state.gameState.quantum.unlocks,
+          breakTheLoop: true,
+        },
+      },
+      timeline: {
+        ...state.gameState.timeline,
+        infinityCycleSeconds: 1,
+      },
+    }
+
+    const handoff = advanceGame(
+      carrier(state),
+      { source: 'active', baseSeconds: 0.05, automation: 'enabled' },
+      context(),
+      1 / 60,
+    )
+    expect(handoff.state.gameState.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+    expect(handoff.state.gameState.infinity.activeAutomaticThroughputCycleEligible)
+      .toBe(true)
+
+    const readyAgain = {
+      ...handoff.state,
+      gameState: {
+        ...handoff.state.gameState,
+        dyson: { ...handoff.state.gameState.dyson, bots: 1e100 },
+        timeline: {
+          ...handoff.state.gameState.timeline,
+          infinityCycleSeconds: 0.1,
+        },
+      },
+    }
+    const clean = advanceGame(
+      readyAgain,
+      { source: 'active', baseSeconds: 0.05, automation: 'enabled' },
+      context(),
+      1 / 60,
+    )
+    expect(clean.state.gameState.statistics.recentActiveAutomaticInfinityCycles)
+      .toHaveLength(1)
+    expect(clean.state.gameState.statistics.recentActiveAutomaticInfinityCycles?.[0])
+      .toMatchObject({
+        automatic: true,
+        breakInfinity: true,
+        processingSource: 'active',
+        activeIntervalMilliseconds:
+          state.gameState.timeline.processing.activeIntervalMilliseconds,
+      })
   })
 
   test('settles bot-cap checkpoints atomically inside a Stored Time candidate', () => {

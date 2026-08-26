@@ -2410,7 +2410,7 @@
   "infinity.automatic-target-warning": [
     {
       "type": 0,
-      "value": "此目标远高于你在活跃游戏中的最佳无限点。"
+      "value": "此目标远高于你的手动无限推荐值。"
     }
   ],
   "infinity.break-target": [
@@ -2570,7 +2570,7 @@
   "infinity.rate.peak": [
     {
       "type": 0,
-      "value": "峰值："
+      "value": "推荐："
     },
     {
       "type": 1,
@@ -3051,12 +3051,6 @@
       "value": "再次点击以确认"
     }
   ],
-  "offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "本次无限"
-    }
-  ],
   "offline-time.disabled": [
     {
       "type": 0,
@@ -3125,10 +3119,10 @@
       "value": "1 分钟"
     }
   ],
-  "offline-time.previous-infinity": [
+  "offline-time.preparing": [
     {
       "type": 0,
-      "value": "上次无限"
+      "value": "正在准备模拟…"
     }
   ],
   "offline-time.processing": [
@@ -3161,20 +3155,20 @@
       "value": "。"
     }
   ],
+  "offline-time.progress-announcement": [
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% 已完成"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
       "value": "离线时间"
-    }
-  ],
-  "offline-time.selected-amount": [
-    {
-      "type": 0,
-      "value": "已选择："
-    },
-    {
-      "type": 1,
-      "value": "duration"
     }
   ],
   "offline-time.simulation-complete": [
@@ -3227,20 +3221,6 @@
       "value": "消耗离线时间"
     }
   ],
-  "offline-time.spend-success": [
-    {
-      "type": 0,
-      "value": "已消耗 "
-    },
-    {
-      "type": 1,
-      "value": "duration"
-    },
-    {
-      "type": 0,
-      "value": " 的离线时间。"
-    }
-  ],
   "offline-time.storage-progress": [
     {
       "type": 0,
@@ -3251,6 +3231,94 @@
     {
       "type": 0,
       "value": "已储存离线时间"
+    }
+  ],
+  "offline-time.summary.bots": [
+    {
+      "type": 0,
+      "value": "获得的机器人"
+    }
+  ],
+  "offline-time.summary.group.facilities": [
+    {
+      "type": 0,
+      "value": "获得的设施"
+    }
+  ],
+  "offline-time.summary.group.infinity": [
+    {
+      "type": 0,
+      "value": "无限"
+    }
+  ],
+  "offline-time.summary.group.reality": [
+    {
+      "type": 0,
+      "value": "现实"
+    }
+  ],
+  "offline-time.summary.group.simulations": [
+    {
+      "type": 0,
+      "value": "模拟"
+    }
+  ],
+  "offline-time.summary.infinities": [
+    {
+      "type": 0,
+      "value": "完成的无限"
+    }
+  ],
+  "offline-time.summary.infinity-points": [
+    {
+      "type": 0,
+      "value": "获得的无限点数"
+    }
+  ],
+  "offline-time.summary.influence": [
+    {
+      "type": 0,
+      "value": "获得的影响力"
+    }
+  ],
+  "offline-time.summary.no-major-changes": [
+    {
+      "type": 0,
+      "value": "没有重大进度变化。"
+    }
+  ],
+  "offline-time.summary.reality-workers": [
+    {
+      "type": 0,
+      "value": "创建的现实工人"
+    }
+  ],
+  "offline-time.summary.reduced-accuracy": [
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": "（已加速）"
+    }
+  ],
+  "offline-time.summary.simulation-resets": [
+    {
+      "type": 0,
+      "value": "模拟重置"
+    }
+  ],
+  "offline-time.summary.simulation-updates": [
+    {
+      "type": 0,
+      "value": "模拟更新次数"
+    }
+  ],
+  "offline-time.summary.strange-matter": [
+    {
+      "type": 0,
+      "value": "获得的奇异物质"
     }
   ],
   "offline-time.ten-minutes": [
@@ -3269,12 +3337,6 @@
     {
       "type": 0,
       "value": "已模拟时间"
-    }
-  ],
-  "offline-time.usage-heading": [
-    {
-      "type": 0,
-      "value": "已使用离线时间"
     }
   ],
   "pwa.update.accept": [
@@ -10287,6 +10349,24 @@
     {
       "type": 0,
       "value": "无"
+    }
+  ],
+  "statistics.offline-time": [
+    {
+      "type": 0,
+      "value": "离线时间"
+    }
+  ],
+  "statistics.offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "当前无限"
+    }
+  ],
+  "statistics.offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "上一次无限"
     }
   ],
   "statistics.other-stats": [

@@ -2410,7 +2410,7 @@
   "infinity.automatic-target-warning": [
     {
       "type": 0,
-      "value": "Эта цель намного выше вашей лучшей точки Бесконечности в активной игре."
+      "value": "Эта цель намного выше вашей ручной рекомендации для Бесконечности."
     }
   ],
   "infinity.break-target": [
@@ -2570,7 +2570,7 @@
   "infinity.rate.peak": [
     {
       "type": 0,
-      "value": "Пик: "
+      "value": "Рекомендуется: "
     },
     {
       "type": 1,
@@ -3051,12 +3051,6 @@
       "value": "Нажмите ещё раз для подтверждения"
     }
   ],
-  "offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "Текущая Бесконечность"
-    }
-  ],
   "offline-time.disabled": [
     {
       "type": 0,
@@ -3125,10 +3119,10 @@
       "value": "1 минута"
     }
   ],
-  "offline-time.previous-infinity": [
+  "offline-time.preparing": [
     {
       "type": 0,
-      "value": "Предыдущая Бесконечность"
+      "value": "Подготовка симуляции…"
     }
   ],
   "offline-time.processing": [
@@ -3161,20 +3155,20 @@
       "value": " осталось"
     }
   ],
+  "offline-time.progress-announcement": [
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% готово"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
       "value": "Время вне игры"
-    }
-  ],
-  "offline-time.selected-amount": [
-    {
-      "type": 0,
-      "value": "Выбрано: "
-    },
-    {
-      "type": 1,
-      "value": "duration"
     }
   ],
   "offline-time.simulation-complete": [
@@ -3227,20 +3221,6 @@
       "value": "Потратить время вне игры"
     }
   ],
-  "offline-time.spend-success": [
-    {
-      "type": 0,
-      "value": "Потрачено времени вне игры: "
-    },
-    {
-      "type": 1,
-      "value": "duration"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "offline-time.storage-progress": [
     {
       "type": 0,
@@ -3251,6 +3231,94 @@
     {
       "type": 0,
       "value": "Накопленное время вне игры"
+    }
+  ],
+  "offline-time.summary.bots": [
+    {
+      "type": 0,
+      "value": "Получено ботов"
+    }
+  ],
+  "offline-time.summary.group.facilities": [
+    {
+      "type": 0,
+      "value": "Полученные сооружения"
+    }
+  ],
+  "offline-time.summary.group.infinity": [
+    {
+      "type": 0,
+      "value": "Бесконечность"
+    }
+  ],
+  "offline-time.summary.group.reality": [
+    {
+      "type": 0,
+      "value": "Реальность"
+    }
+  ],
+  "offline-time.summary.group.simulations": [
+    {
+      "type": 0,
+      "value": "Симуляции"
+    }
+  ],
+  "offline-time.summary.infinities": [
+    {
+      "type": 0,
+      "value": "Завершено бесконечностей"
+    }
+  ],
+  "offline-time.summary.infinity-points": [
+    {
+      "type": 0,
+      "value": "Получено очков бесконечности"
+    }
+  ],
+  "offline-time.summary.influence": [
+    {
+      "type": 0,
+      "value": "Получено влияния"
+    }
+  ],
+  "offline-time.summary.no-major-changes": [
+    {
+      "type": 0,
+      "value": "Значимых изменений прогресса нет."
+    }
+  ],
+  "offline-time.summary.reality-workers": [
+    {
+      "type": 0,
+      "value": "Создано рабочих реальности"
+    }
+  ],
+  "offline-time.summary.reduced-accuracy": [
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": " (ускорено)"
+    }
+  ],
+  "offline-time.summary.simulation-resets": [
+    {
+      "type": 0,
+      "value": "Сбросы симуляции"
+    }
+  ],
+  "offline-time.summary.simulation-updates": [
+    {
+      "type": 0,
+      "value": "Обновления симуляции"
+    }
+  ],
+  "offline-time.summary.strange-matter": [
+    {
+      "type": 0,
+      "value": "Получено странной материи"
     }
   ],
   "offline-time.ten-minutes": [
@@ -3269,12 +3337,6 @@
     {
       "type": 0,
       "value": "Смоделированное время"
-    }
-  ],
-  "offline-time.usage-heading": [
-    {
-      "type": 0,
-      "value": "Использовано времени вне игры"
     }
   ],
   "pwa.update.accept": [
@@ -10287,6 +10349,24 @@
     {
       "type": 0,
       "value": "Нет"
+    }
+  ],
+  "statistics.offline-time": [
+    {
+      "type": 0,
+      "value": "Время вне игры"
+    }
+  ],
+  "statistics.offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "Текущая бесконечность"
+    }
+  ],
+  "statistics.offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "Предыдущая бесконечность"
     }
   ],
   "statistics.other-stats": [

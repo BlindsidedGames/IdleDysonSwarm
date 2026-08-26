@@ -832,11 +832,26 @@ describe('canonical game command router', () => {
 
   test('toggles automatic Infinity before or after Break The Loop without runtime evaluation', () => {
     const source = state()
+    const automaticHistory = [{
+      breakInfinity: true,
+      automatic: true,
+      configuredTarget: 83n,
+      reward: 83n,
+      durationSeconds: 0.1,
+      processingSource: 'active' as const,
+      activeIntervalMilliseconds: 33,
+    }]
     const original = {
       ...source,
       infinity: {
         ...source.infinity,
         automaticResetEnabled: true,
+        currentCyclePeakIpPerMinute: 74_208.1448,
+        currentCyclePeakReward: 82n,
+      },
+      statistics: {
+        ...source.statistics,
+        recentActiveAutomaticInfinityCycles: automaticHistory,
       },
     }
     const evaluate = vi.fn()
@@ -853,9 +868,15 @@ describe('canonical game command router', () => {
       changed: true,
       code: 'infinity-automatic-reset:set',
       state: {
-        infinity: { automaticResetEnabled: false },
+        infinity: {
+          automaticResetEnabled: false,
+          currentCyclePeakIpPerMinute: 0,
+          currentCyclePeakReward: 0n,
+        },
       },
     })
+    expect(disabled.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
     expect(evaluate).not.toHaveBeenCalled()
 
     const unchanged = routeCanonicalGameCommand(
@@ -868,9 +889,22 @@ describe('canonical game command router', () => {
       changed: false,
       code: 'infinity-automatic-reset:unchanged',
     })
+    expect(unchanged.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
 
     const broken = {
       ...disabled.state,
+      timeline: {
+        ...disabled.state.timeline,
+        infinityCycleSeconds:
+          disabled.state.timeline.infinityCycleSeconds + 2,
+      },
+      infinity: {
+        ...disabled.state.infinity,
+        currentCyclePeakIpPerMinute: 74_208.1448,
+        currentCyclePeakReward: 82n,
+        manualCalibrationObservedActiveSeconds: 2,
+      },
       quantum: {
         ...disabled.state.quantum,
         unlocks: {
@@ -879,15 +913,213 @@ describe('canonical game command router', () => {
         },
       },
     }
-    expect(routeCanonicalGameCommand(
+    const enabled = routeCanonicalGameCommand(
       broken,
       { kind: 'infinity.set-automatic-reset', enabled: true },
       options(),
-    )).toMatchObject({
+    )
+    expect(enabled).toMatchObject({
       accepted: true,
       changed: true,
-      state: { infinity: { automaticResetEnabled: true } },
+      state: {
+        infinity: {
+          automaticResetEnabled: true,
+          currentCyclePeakIpPerMinute: 74_208.1448,
+          currentCyclePeakReward: 82n,
+          manualPeakIpPerMinute: 74_208.1448,
+          manualPeakReward: 82n,
+          activeAutomaticThroughputCycleEligible: false,
+        },
+      },
     })
+    expect(enabled.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+
+    const immature = routeCanonicalGameCommand(
+      {
+        ...disabled.state,
+        timeline: {
+          ...disabled.state.timeline,
+          infinityCycleSeconds:
+            disabled.state.timeline.infinityCycleSeconds + 0.5,
+        },
+        infinity: {
+          ...disabled.state.infinity,
+          currentCyclePeakIpPerMinute: 20_000,
+          currentCyclePeakReward: 12n,
+          manualPeakIpPerMinute: 74_208.1448,
+          manualPeakReward: 82n,
+          manualCalibrationObservedActiveSeconds: 0.5,
+        },
+      },
+      { kind: 'infinity.set-automatic-reset', enabled: true },
+      options(),
+    )
+    expect(immature.state.infinity).toMatchObject({
+      automaticResetEnabled: true,
+      manualPeakIpPerMinute: 74_208.1448,
+      manualPeakReward: 82n,
+    })
+
+    const disabledAgain = routeCanonicalGameCommand(
+      {
+        ...immature.state,
+        statistics: {
+          ...immature.state.statistics,
+          recentActiveAutomaticInfinityCycles: automaticHistory,
+        },
+      },
+      { kind: 'infinity.set-automatic-reset', enabled: false },
+      options(),
+    )
+    expect(disabledAgain.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+    const enabledAgain = routeCanonicalGameCommand(
+      {
+        ...disabledAgain.state,
+        timeline: {
+          ...disabledAgain.state.timeline,
+          infinityCycleSeconds:
+            disabledAgain.state.timeline.infinityCycleSeconds + 0.25,
+        },
+        infinity: {
+          ...disabledAgain.state.infinity,
+          currentCyclePeakIpPerMinute: 30_000,
+          currentCyclePeakReward: 20n,
+          manualCalibrationObservedActiveSeconds: 0.25,
+        },
+      },
+      { kind: 'infinity.set-automatic-reset', enabled: true },
+      options(),
+    )
+    expect(enabledAgain.state.infinity).toMatchObject({
+      automaticResetEnabled: true,
+      manualPeakIpPerMinute: 74_208.1448,
+      manualPeakReward: 82n,
+    })
+    expect(enabledAgain.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+  })
+
+  test('invalidates automatic throughput measurement when target or cadence changes', () => {
+    const source = state()
+    const history = [{
+      breakInfinity: true,
+      automatic: true,
+      configuredTarget: 83n,
+      reward: 83n,
+      durationSeconds: 0.1,
+      processingSource: 'active' as const,
+      activeIntervalMilliseconds: 33,
+    }]
+    const measuring = {
+      ...source,
+      infinity: {
+        ...source.infinity,
+        breakTarget: 83n,
+        activeAutomaticThroughputCycleEligible: true,
+      },
+      quantum: {
+        ...source.quantum,
+        unlocks: { ...source.quantum.unlocks, breakTheLoop: true },
+      },
+      statistics: {
+        ...source.statistics,
+        recentActiveAutomaticInfinityCycles: history,
+      },
+    }
+    const targetChanged = routeCanonicalGameCommand(
+      measuring,
+      { kind: 'infinity.set-break-target', target: 84n },
+      options(),
+    )
+    expect(targetChanged.state.infinity.activeAutomaticThroughputCycleEligible)
+      .toBe(false)
+    expect(targetChanged.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+
+    const cadenceChanged = routeCanonicalGameCommand(
+      measuring,
+      { kind: 'settings.set-processing-interval', milliseconds: 34 },
+      options(),
+    )
+    expect(cadenceChanged.state.infinity.activeAutomaticThroughputCycleEligible)
+      .toBe(false)
+    expect(cadenceChanged.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+  })
+
+  test('invalidates Infinity calibration and throughput when permanent Double Time is purchased', () => {
+    const source = state()
+    const history = [{
+      breakInfinity: true,
+      automatic: true,
+      configuredTarget: 83n,
+      reward: 83n,
+      durationSeconds: 0.1,
+      processingSource: 'active' as const,
+      activeIntervalMilliseconds: 33,
+    }]
+    const calibrated = {
+      ...source,
+      dream: {
+        ...source.dream,
+        strangeMatter: 100n,
+      },
+      infinity: {
+        ...source.infinity,
+        currentCyclePeakIpPerMinute: 74_208.1448,
+        currentCyclePeakReward: 82n,
+        manualPeakIpPerMinute: 74_208.1448,
+        manualPeakReward: 82n,
+        manualCalibrationObservedActiveSeconds: 3,
+        activeAutomaticThroughputCycleEligible: true,
+      },
+      statistics: {
+        ...source.statistics,
+        recentActiveAutomaticInfinityCycles: history,
+      },
+      timeline: {
+        ...source.timeline,
+        doubleTime: {
+          ...source.timeline.doubleTime,
+          unlocked: false,
+        },
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      calibrated,
+      {
+        kind: 'reality.purchase-upgrade',
+        upgradeId: 'doubleTimeOwned',
+      },
+      options(),
+    )
+
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'reality-upgrade:purchased',
+      state: {
+        infinity: {
+          currentCyclePeakIpPerMinute: 0,
+          currentCyclePeakReward: 0n,
+          manualPeakIpPerMinute: 0,
+          manualPeakReward: 0n,
+          manualCalibrationObservedActiveSeconds: 0,
+          activeAutomaticThroughputCycleEligible: false,
+        },
+        timeline: {
+          doubleTime: { unlocked: true },
+        },
+      },
+    })
+    expect(result.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+    expect(calibrated.infinity.manualPeakReward).toBe(82n)
+    expect(calibrated.statistics.recentActiveAutomaticInfinityCycles)
+      .toBe(history)
   })
 
   test('routes manual Infinity through the event-model reset port', () => {

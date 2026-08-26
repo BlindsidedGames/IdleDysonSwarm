@@ -60,6 +60,12 @@ export function advanceGame(
     ...state,
     gameState: {
       ...state.gameState,
+      infinity: input.source === 'stored-time'
+        ? {
+            ...state.gameState.infinity,
+            activeAutomaticThroughputCycleEligible: false,
+          }
+        : state.gameState.infinity,
       timeline: {
         ...state.gameState.timeline,
         automationTimeUntilNextEvent:

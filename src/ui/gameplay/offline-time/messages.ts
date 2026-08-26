@@ -52,11 +52,6 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'Choose how much time to simulate now.',
     description: 'Instruction for the stored-time amount selector.',
   },
-  selectedAmount: {
-    id: 'offline-time.selected-amount',
-    defaultMessage: 'Selected: {duration}',
-    description: 'The selected stored-time spend duration.',
-  },
   oneMinute: {
     id: 'offline-time.one-minute',
     defaultMessage: '1 minute',
@@ -112,6 +107,16 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'Simulation accuracy',
     description: 'Label for the Stored Time accuracy preset selector.',
   },
+  reducedAccuracy: {
+    id: 'offline-time.summary.reduced-accuracy',
+    defaultMessage: '{preset} (sped up)',
+    description: 'Marks a Stored Time result whose update count was reduced with Speed Up.',
+  },
+  simulationUpdates: {
+    id: 'offline-time.summary.simulation-updates',
+    defaultMessage: 'Simulation updates',
+    description: 'Actual number of authoritative game updates executed for a Stored Time spend.',
+  },
   fastPreset: {
     id: 'offline-time.fast-preset',
     defaultMessage: 'Fast',
@@ -142,6 +147,11 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'Processing Offline Time',
     description: 'Heading for the active Stored Time processing dialog.',
   },
+  preparing: {
+    id: 'offline-time.preparing',
+    defaultMessage: 'Preparing simulation…',
+    description: 'Status shown while a Stored Time job is being admitted or finalized.',
+  },
   simulationComplete: {
     id: 'offline-time.simulation-complete',
     defaultMessage: 'Offline Time Complete',
@@ -157,6 +167,66 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'Offline Time remaining',
     description: 'Completed Stored Time summary label for the remaining bank.',
   },
+  infinityGroup: {
+    id: 'offline-time.summary.group.infinity',
+    defaultMessage: 'Infinity',
+    description: 'Heading for Infinity results in the Stored Time completion summary.',
+  },
+  facilitiesGroup: {
+    id: 'offline-time.summary.group.facilities',
+    defaultMessage: 'Facilities gained',
+    description: 'Heading for facility gains in the Stored Time completion summary.',
+  },
+  simulationsGroup: {
+    id: 'offline-time.summary.group.simulations',
+    defaultMessage: 'Simulations',
+    description: 'Heading for Simulation results in the Stored Time completion summary.',
+  },
+  realityGroup: {
+    id: 'offline-time.summary.group.reality',
+    defaultMessage: 'Reality',
+    description: 'Heading for Reality results in the Stored Time completion summary.',
+  },
+  infinityPointsGained: {
+    id: 'offline-time.summary.infinity-points',
+    defaultMessage: 'Infinity Points gained',
+    description: 'Stored Time completion result for earned Infinity Points.',
+  },
+  infinitiesCompleted: {
+    id: 'offline-time.summary.infinities',
+    defaultMessage: 'Infinities completed',
+    description: 'Stored Time completion result for Infinity resets.',
+  },
+  botsGained: {
+    id: 'offline-time.summary.bots',
+    defaultMessage: 'Bots gained',
+    description: 'Stored Time completion result for net Bots gained without an Infinity.',
+  },
+  simulationResets: {
+    id: 'offline-time.summary.simulation-resets',
+    defaultMessage: 'Simulation resets',
+    description: 'Stored Time completion result for Dream simulation resets.',
+  },
+  strangeMatterGained: {
+    id: 'offline-time.summary.strange-matter',
+    defaultMessage: 'Strange Matter gained',
+    description: 'Stored Time completion result for Strange Matter.',
+  },
+  realityWorkersGained: {
+    id: 'offline-time.summary.reality-workers',
+    defaultMessage: 'Reality workers created',
+    description: 'Stored Time completion result for Reality workers.',
+  },
+  influenceGained: {
+    id: 'offline-time.summary.influence',
+    defaultMessage: 'Influence gained',
+    description: 'Stored Time completion result for automatic Influence.',
+  },
+  noMajorChanges: {
+    id: 'offline-time.summary.no-major-changes',
+    defaultMessage: 'No major progression changes.',
+    description: 'Stored Time completion result when no tracked progression changed.',
+  },
   closeSummary: {
     id: 'offline-time.close-summary',
     defaultMessage: 'Continue',
@@ -166,6 +236,11 @@ export const offlineTimeMessages = defineMessages({
     id: 'offline-time.progress',
     defaultMessage: '{percent}% complete · about {eta} remaining',
     description: 'Progress and estimated remaining time for a Stored Time job.',
+  },
+  progressAnnouncement: {
+    id: 'offline-time.progress-announcement',
+    defaultMessage: '{percent}% complete',
+    description: 'Coarsened screen-reader progress announcement for a Stored Time job.',
   },
   calculating: {
     id: 'offline-time.calculating',
@@ -182,11 +257,6 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'Cancelling safely…',
     description: 'Status while a Stored Time worker is discarding its candidate.',
   },
-  spendSuccess: {
-    id: 'offline-time.spend-success',
-    defaultMessage: 'Spent {duration} of Offline Time.',
-    description: 'Confirms how much Offline Time was successfully spent.',
-  },
   actionFailed: {
     id: 'offline-time.action-failed',
     defaultMessage: 'That action was not completed. Try again.',
@@ -196,21 +266,6 @@ export const offlineTimeMessages = defineMessages({
     id: 'offline-time.no-stored-time',
     defaultMessage: 'Return after time away to build up this bank.',
     description: 'Empty-state guidance for the stored Offline Time bank.',
-  },
-  usageHeading: {
-    id: 'offline-time.usage-heading',
-    defaultMessage: 'Offline Time Used',
-    description: 'Heading for per-Infinity stored-time usage statistics.',
-  },
-  currentInfinity: {
-    id: 'offline-time.current-infinity',
-    defaultMessage: 'Current Infinity',
-    description: 'Label for Offline Time spent during the current Infinity.',
-  },
-  previousInfinity: {
-    id: 'offline-time.previous-infinity',
-    defaultMessage: 'Previous Infinity',
-    description: 'Label for Offline Time spent during the previous Infinity.',
   },
   disabled: {
     id: 'offline-time.disabled',

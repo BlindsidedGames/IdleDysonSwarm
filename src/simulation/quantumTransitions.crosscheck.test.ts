@@ -179,6 +179,7 @@ function unityQuantumResetReferenceWithoutAssignment(
         : 'tracked-since-update',
       currentQuantumRun: emptyStatisticsTotals(),
       recentProcessedSegment: emptyStatisticsTotals(),
+      recentActiveAutomaticInfinityCycles: [],
     },
   }
 }

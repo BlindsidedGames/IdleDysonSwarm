@@ -4438,7 +4438,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥıs ʇɐɹƃǝʇ ıs ɟɐɹ ɐqoʌǝ ʎonɹ qǝsʇ ɐɔʇıʌǝ Iuɟıuıʇʎ doıuʇ."
+      "value": "⊥ɥıs ʇɐɹƃǝʇ ıs ɟɐɹ ɐqoʌǝ ʎonɹ ɯɐunɐʅ Iuɟıuıʇʎ ɹǝɔoɯɯǝupɐʇıou."
     },
     {
       "type": 0,
@@ -4742,7 +4742,7 @@
     },
     {
       "type": 0,
-      "value": "Ԁǝɐʞ: "
+      "value": "ᴚǝɔoɯɯǝupǝp: "
     },
     {
       "type": 1,
@@ -5715,20 +5715,6 @@
       "value": "‬"
     }
   ],
-  "offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Ↄnɹɹǝuʇ Iuɟıuıʇʎ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
   "offline-time.disabled": [
     {
       "type": 0,
@@ -5877,14 +5863,14 @@
       "value": "‬"
     }
   ],
-  "offline-time.previous-infinity": [
+  "offline-time.preparing": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "Ԁɹǝʌıons Iuɟıuıʇʎ"
+      "value": "Ԁɹǝdɐɹıuƃ sıɯnʅɐʇıou…"
     },
     {
       "type": 0,
@@ -5945,6 +5931,24 @@
       "value": "‬"
     }
   ],
+  "offline-time.progress-announcement": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% ɔoɯdʅǝʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
@@ -5953,24 +5957,6 @@
     {
       "type": 0,
       "value": "Oɟɟʅıuǝ ⊥ıɯǝ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "offline-time.selected-amount": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Sǝʅǝɔʇǝp: "
-    },
-    {
-      "type": 1,
-      "value": "duration"
     },
     {
       "type": 0,
@@ -6083,28 +6069,6 @@
       "value": "‬"
     }
   ],
-  "offline-time.spend-success": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Sdǝuʇ "
-    },
-    {
-      "type": 1,
-      "value": "duration"
-    },
-    {
-      "type": 0,
-      "value": " oɟ Oɟɟʅıuǝ ⊥ıɯǝ."
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
   "offline-time.storage-progress": [
     {
       "type": 0,
@@ -6127,6 +6091,206 @@
     {
       "type": 0,
       "value": "Sʇoɹǝp Oɟɟʅıuǝ ⊥ıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.bots": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoʇs ƃɐıuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.group.facilities": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɐɔıʅıʇıǝs ƃɐıuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.group.infinity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.group.reality": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐʅıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.group.simulations": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sıɯnʅɐʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.infinities": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇıǝs ɔoɯdʅǝʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.infinity-points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ԁoıuʇs ƃɐıuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.influence": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟʅnǝuɔǝ ƃɐıuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.no-major-changes": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "No ɯɐɾoɹ dɹoƃɹǝssıou ɔɥɐuƃǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.reality-workers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐʅıʇʎ ʍoɹʞǝɹs ɔɹǝɐʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.reduced-accuracy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": " (sdǝp nd)"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.simulation-resets": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sıɯnʅɐʇıou ɹǝsǝʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.simulation-updates": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sıɯnʅɐʇıou ndpɐʇǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.summary.strange-matter": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɹɐuƃǝ Wɐʇʇǝɹ ƃɐıuǝp"
     },
     {
       "type": 0,
@@ -6169,20 +6333,6 @@
     {
       "type": 0,
       "value": "⊥ıɯǝ sıɯnʅɐʇǝp"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "offline-time.usage-heading": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Oɟɟʅıuǝ ⊥ıɯǝ ∩sǝp"
     },
     {
       "type": 0,
@@ -21243,6 +21393,48 @@
     {
       "type": 0,
       "value": "Nouǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.offline-time": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɟɟʅıuǝ ⊥ıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝʌıons Iuɟıuıʇʎ"
     },
     {
       "type": 0,

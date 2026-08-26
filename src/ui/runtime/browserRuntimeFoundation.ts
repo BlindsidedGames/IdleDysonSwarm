@@ -118,6 +118,7 @@ import {
 } from './authoritativeLifecycleRouter'
 import {
   CoordinatorActiveTimeDriver,
+  MAXIMUM_FIXED_CADENCE_BURST_DELIVERIES,
   type ActiveTimeFrameScheduler,
   type ActiveTimeMonotonicClock,
   type ActiveTimeResidue,
@@ -221,6 +222,8 @@ export interface BrowserRuntimeFoundationOptions {
   readonly activeTimeClock?: ActiveTimeMonotonicClock
   readonly activeTimeScheduler?: ActiveTimeFrameScheduler
   readonly activeTimeDeliveryIntervalMilliseconds?: number
+  /** Test seam; production uses exact configured gameplay updates. */
+  readonly fixedActiveTimeDeliveryCadence?: boolean
   /** Deterministic presentation-publication test seam. */
   readonly frontendSnapshotScheduler?: FrontendSnapshotFrameScheduler
   readonly storageManager?: BrowserStorageManagerPort
@@ -607,76 +610,78 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         )
       }
       if (residue.activeMilliseconds > 0) {
-        try {
-          const flushed = await graph.coordinator
-            .advanceActiveContinuous(residue.activeMilliseconds)
-          if (flushed.accepted) {
-            this.publishFrontendSnapshot(graph)
-            return undefined
-          }
-          graph.activeTime.restoreSuspendedTime({
-            activeMilliseconds: residue.activeMilliseconds,
-            hibernationMilliseconds: 0,
-          })
-          return runtimePlayerFailure(
-            flushed.code ?? 'RUNTIME-CONTINUOUS-FLUSH-FAILED',
-            flushed.reason ?? 'The pending active-time flush was rejected.',
-          )
-        } catch (error) {
-          graph.activeTime.restoreSuspendedTime({
-            activeMilliseconds: residue.activeMilliseconds,
-            hibernationMilliseconds: 0,
-          })
-          return runtimePlayerFailure(
-            'RUNTIME-CONTINUOUS-FLUSH-FAILED',
-            errorMessage(error),
-          )
-        }
+        // Player input is admitted against the last completed gameplay tick.
+        // Retain sub-tick monotonic residue for the next configured update so
+        // a click cannot manufacture an irregular partial gameplay step.
+        graph.activeTime.restoreSuspendedTime({
+          activeMilliseconds: residue.activeMilliseconds,
+          hibernationMilliseconds: 0,
+        })
       }
       this.publishFrontendSnapshot(graph)
       return undefined
     }
     try {
+      let dispatched: Promise<UiRuntimePlayerCommandResult>
       if (
         command.kind === 'tinker.start' ||
         command.kind === 'tinker.set-repeat'
       ) {
-        return graph.playerCommands.dispatchLatest(
+        dispatched = graph.playerCommands.dispatchLatest(
           command,
           prepareForDispatch,
         )
-      }
-      if (
+      } else if (
         command.kind === 'dyson.set-bot-distribution' ||
         command.kind === 'dyson.set-buy-mode' ||
         command.kind === 'dyson.set-rounded-bulk-buy' ||
         command.kind === 'dyson.set-facility-automation'
       ) {
-        return graph.playerCommands.dispatchLatest(
+        dispatched = graph.playerCommands.dispatchLatest(
           command,
           prepareForDispatch,
         )
-      }
-      if (
+      } else if (
         command.kind === 'research.set-buy-mode' ||
         command.kind === 'research.set-rounded-bulk-buy' ||
         command.kind === 'research.set-automation'
       ) {
-        return graph.playerCommands.dispatchLatest(
+        dispatched = graph.playerCommands.dispatchLatest(
           command,
           prepareForDispatch,
         )
+      } else {
+        dispatched = graph.playerCommands.dispatch(command, prepareForDispatch)
       }
-      return graph.playerCommands.dispatch(command, prepareForDispatch)
+      return command.kind === 'settings.set-processing-interval'
+        ? await dispatched
+        : dispatched
     } finally {
       try {
         if (!this.shutdownRequested) {
+          if (command.kind === 'settings.set-processing-interval') {
+            this.reconcileActiveTimeDeliveryInterval(graph)
+          }
           this.startActiveTimeIfForegroundIntended(graph)
         }
       } catch {
         // Lifecycle reconciliation owns restart when the host phase is not readable.
       }
     }
+  }
+
+  private reconcileActiveTimeDeliveryInterval(
+    graph: BrowserRuntimeGraph,
+  ): void {
+    if (this.options.activeTimeDeliveryIntervalMilliseconds !== undefined) {
+      return
+    }
+    const snapshot = graph.application.snapshot()
+    if (snapshot.phase !== 'ready') return
+    graph.activeTime.setDeliveryIntervalMilliseconds(
+      snapshot.state.gameState.timeline.processing
+        .activeIntervalMilliseconds,
+    )
   }
 
   storedTimeJobStatus() {
@@ -1605,6 +1610,8 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           ? activeTimeSnapshot.state.gameState.timeline.processing
               .activeIntervalMilliseconds
           : 33),
+      fixedDeliveryCadence:
+        this.options.fixedActiveTimeDeliveryCadence ?? true,
       deliver: (milliseconds) =>
         router.runLocallyFenced(() =>
           coordinator.advanceActive(milliseconds),
@@ -1938,25 +1945,85 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       throw error
     }
     if (residue.activeMilliseconds <= 0) return undefined
+    const requestedMilliseconds = residue.activeMilliseconds
+    const intervalMilliseconds = graph.activeTime.usesFixedDeliveryCadence()
+      ? graph.activeTime.deliveryIntervalMilliseconds()
+      : requestedMilliseconds
+    let remainingMilliseconds = requestedMilliseconds
+    let consumedMilliseconds = 0
+    let transition: CanonicalCoordinatedActiveResult['transition'] = {
+      accepted: true,
+      changed: false,
+      revision: 0,
+    }
+    let fullTickIncomplete = false
+    let completedFullTicks = 0
+    const checkpoints: CanonicalCoordinatedActiveResult['checkpoints'][number][] = []
     try {
-      const result = await graph.coordinator.advanceActive(
-        residue.activeMilliseconds,
-      )
-      if (
-        restoreUnconsumed &&
-        result.remainingMilliseconds > 0
+      while (
+        remainingMilliseconds >= intervalMilliseconds
       ) {
+        const result = await graph.coordinator.advanceActive(
+          intervalMilliseconds,
+        )
+        transition = result.transition
+        checkpoints.push(...result.checkpoints)
+        consumedMilliseconds += result.consumedMilliseconds
+        remainingMilliseconds = Math.max(
+          0,
+          remainingMilliseconds - result.consumedMilliseconds,
+        )
+        if (
+          !result.transition.accepted ||
+          result.remainingMilliseconds > 0
+        ) {
+          fullTickIncomplete = true
+          break
+        }
+        completedFullTicks += 1
+        if (
+          graph.activeTime.usesFixedDeliveryCadence() &&
+          completedFullTicks % MAXIMUM_FIXED_CADENCE_BURST_DELIVERIES === 0 &&
+          remainingMilliseconds >= intervalMilliseconds
+        ) {
+          await yieldBrowserTask()
+        }
+      }
+      if (
+        !fullTickIncomplete &&
+        transition.accepted &&
+        remainingMilliseconds > Number.EPSILON &&
+        remainingMilliseconds < intervalMilliseconds
+      ) {
+        const continuous = await graph.coordinator.advanceActiveContinuous(
+          remainingMilliseconds,
+        )
+        transition = continuous.transition
+        checkpoints.push(...continuous.checkpoints)
+        consumedMilliseconds += continuous.consumedMilliseconds
+        remainingMilliseconds = continuous.remainingMilliseconds
+      }
+      const result: CanonicalCoordinatedActiveResult = {
+        transition,
+        requestedMilliseconds,
+        consumedMilliseconds,
+        remainingMilliseconds,
+        checkpoints: Object.freeze(checkpoints),
+      }
+      if (restoreUnconsumed && remainingMilliseconds > 0) {
         graph.activeTime.restoreSuspendedTime({
-          activeMilliseconds: result.remainingMilliseconds,
+          activeMilliseconds: remainingMilliseconds,
           hibernationMilliseconds: 0,
         })
       }
       return result
     } catch (error) {
-      graph.activeTime.restoreSuspendedTime({
-        activeMilliseconds: residue.activeMilliseconds,
-        hibernationMilliseconds: 0,
-      })
+      if (restoreUnconsumed && remainingMilliseconds > 0) {
+        graph.activeTime.restoreSuspendedTime({
+          activeMilliseconds: remainingMilliseconds,
+          hibernationMilliseconds: 0,
+        })
+      }
       throw error
     }
   }
@@ -2264,6 +2331,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         )
     }
   }
+}
+
+function yieldBrowserTask(): Promise<void> {
+  if (typeof globalThis.setTimeout !== 'function') return Promise.resolve()
+  return new Promise((resolve) => globalThis.setTimeout(resolve, 0))
 }
 
 async function sha256Hex(text: string): Promise<string> {

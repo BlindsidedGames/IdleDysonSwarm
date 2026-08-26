@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "source": "Lifecycle-normalized Unity prepared graph",
   "target": "Web dehydrate(hydrate(Unity prepared graph))",
-  "expectedDifferenceCount": 1075,
+  "expectedDifferenceCount": 1079,
   "allowedDeltas": [
     {
       "id": "legacy-skill-flag-compaction",
@@ -92,6 +92,28 @@
       "actualShape": "string",
       "normalizedPaths": [
         "$.processingStoredTimePreset"
+      ]
+    },
+    {
+      "id": "manual-infinity-calibration-default",
+      "reason": "The Web Infinity guidance materializes durable zero-valued manual calibration fields for Unity saves which predate that presentation state.",
+      "expectedDifferenceCount": 3,
+      "expectedShape": "missing",
+      "actualShape": "zero-number-or-bigint",
+      "normalizedPaths": [
+        "$.simulationInfinityManualPeakIpPerMinute",
+        "$.simulationInfinityManualPeakReward",
+        "$.simulationInfinityManualObservedActiveSeconds"
+      ]
+    },
+    {
+      "id": "active-infinity-throughput-cycle-default",
+      "reason": "The Web Infinity guidance starts legacy saves with no trusted active automatic cycle in progress.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "false",
+      "normalizedPaths": [
+        "$.simulationInfinityActiveAutomaticThroughputCycleEligible"
       ]
     }
   ]

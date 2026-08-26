@@ -1,3 +1,5 @@
+import type { StoredTimeCompletionSummary } from '../../core/storedTimeCompletionSummary'
+
 export type UiRuntimeWarningCode =
   | 'backup-recovered'
   | 'persistent-storage-denied'
@@ -146,6 +148,7 @@ export type UiRuntimePlayerCommandResult =
       readonly consumedSeconds: number
       readonly remainingSeconds: number
       readonly durableRevision: number | null
+      readonly summary: StoredTimeCompletionSummary
       readonly stateRevision: number
       readonly activationRevision: UiRuntimeCommandActivationRevision
     }

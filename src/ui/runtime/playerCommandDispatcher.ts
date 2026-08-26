@@ -349,6 +349,7 @@ function mapResult(
     consumedSeconds: stored.consumedSeconds,
     remainingSeconds: stored.remainingSeconds,
     durableRevision: stored.durableRevision,
+    summary: stored.summary,
     stateRevision: stored.transition.revision,
     activationRevision,
   })

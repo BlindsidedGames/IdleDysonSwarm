@@ -566,6 +566,33 @@ const developmentExtensions = Object.freeze([
     '$.infinity.currentCyclePeakReward',
   ),
   owned(
+    '$.simulationInfinityManualPeakIpPerMinute',
+    'infinity',
+    '$.infinity.manualPeakIpPerMinute',
+  ),
+  owned(
+    '$.simulationInfinityManualPeakReward',
+    'infinity',
+    '$.infinity.manualPeakReward',
+  ),
+  owned(
+    '$.simulationInfinityManualObservedActiveSeconds',
+    'infinity',
+    '$.infinity.manualCalibrationObservedActiveSeconds',
+  ),
+  owned(
+    '$.simulationInfinityActiveAutomaticThroughputCycleEligible',
+    'infinity',
+    '$.infinity.activeAutomaticThroughputCycleEligible',
+  ),
+  classified(
+    '$.simulationInfinityManualCalibrationStartedCycleSeconds',
+    'legacy-duplicate-omitted',
+    'preserve-source',
+    'Superseded development-build cycle-clock marker retained only for save compatibility.',
+    'infinity',
+  ),
+  owned(
     '$.processingRewriteMigrated',
     'timeline',
     '$.timeline.processing.rewriteMigrated',

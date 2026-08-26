@@ -8,6 +8,7 @@ import type {
   DreamEducationId,
   DreamUpgradeFlag,
   DreamState,
+  InfinityCycleHistoryEntry,
   TimelineState,
 } from '../game-state/types'
 import {
@@ -1488,6 +1489,21 @@ function selectDerivedFacts(
     permanentDoubleIp: context.entitlements.permanentDoubleIp,
     quantumDoubleIp: state.quantum.unlocks.doubleInfinityPoints,
   })
+  const minimumInfinityRateSeconds =
+    state.timeline.processing.activeIntervalMilliseconds / 1000
+  const liveInfinityRate = infinityPointsPerMinute(
+    infinityProgress.currentReward,
+    Math.max(
+      state.timeline.infinityCycleSeconds,
+      minimumInfinityRateSeconds,
+    ),
+  )
+  const automaticInfinityRate = recentAutomaticInfinityRate(
+    state.statistics.recentActiveAutomaticInfinityCycles ?? [],
+    state.infinity.breakTarget,
+    state.timeline.processing.activeIntervalMilliseconds,
+  )
+  const automaticResetEnabled = state.infinity.automaticResetEnabled
 
   return {
     dyson: dyson.ok
@@ -1514,13 +1530,16 @@ function selectDerivedFacts(
           },
     infinity: {
       ...infinityProgress,
-      currentIpPerMinute: infinityPointsPerMinute(
-        infinityProgress.currentReward,
-        state.timeline.infinityCycleSeconds,
-      ),
+      currentIpPerMinute: automaticResetEnabled
+        ? automaticInfinityRate
+        : liveInfinityRate,
       peakIpPerMinute:
-        state.infinity.currentCyclePeakIpPerMinute ?? 0,
-      peakReward: state.infinity.currentCyclePeakReward ?? 0n,
+        automaticResetEnabled
+          ? state.infinity.manualPeakIpPerMinute ?? 0
+          : state.infinity.currentCyclePeakIpPerMinute ?? 0,
+      peakReward: automaticResetEnabled
+        ? state.infinity.manualPeakReward ?? 0n
+        : state.infinity.currentCyclePeakReward ?? 0n,
     },
     dream:
       dream === null
@@ -1591,6 +1610,33 @@ function selectDerivedFacts(
         ? previous.avocado
         : deriveAvocadoMultiplier(state),
   }
+}
+
+export function recentAutomaticInfinityRate(
+  history: readonly Readonly<InfinityCycleHistoryEntry>[],
+  configuredTarget: bigint,
+  activeIntervalMilliseconds: number,
+): number {
+  let reward = 0n
+  let durationSeconds = 0
+  let included = 0
+  for (const cycle of history) {
+    if (
+      included >= 10 ||
+      !cycle.automatic ||
+      !cycle.breakInfinity ||
+      cycle.configuredTarget !== configuredTarget ||
+      cycle.processingSource !== 'active' ||
+      cycle.activeIntervalMilliseconds !== activeIntervalMilliseconds ||
+      cycle.reward <= 0n ||
+      !Number.isFinite(cycle.durationSeconds) ||
+      cycle.durationSeconds <= 0
+    ) continue
+    reward += cycle.reward
+    durationSeconds += cycle.durationSeconds
+    included += 1
+  }
+  return infinityPointsPerMinute(reward, durationSeconds)
 }
 
 function reuseShallowDomain<T extends object>(

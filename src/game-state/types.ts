@@ -75,10 +75,18 @@ export interface InfinityState {
   readonly spentPoints: bigint
   readonly automaticResetEnabled: boolean
   readonly breakTarget: bigint
-  /** Best projected IP/min observed during the current Infinity cycle. */
+  /** Highest observed IP/min rate in the current active Infinity cycle. */
   readonly currentCyclePeakIpPerMinute?: number
-  /** Projected reward associated with the current-cycle IP/min peak. */
+  /** Reward associated with the current active-cycle IP/min peak. */
   readonly currentCyclePeakReward?: bigint
+  /** Last valid peak observed during a manual Infinity run. */
+  readonly manualPeakIpPerMinute?: number
+  /** Reward associated with the last valid manual-run peak. */
+  readonly manualPeakReward?: bigint
+  /** Active-play seconds observed with Auto Infinity disabled in this run. */
+  readonly manualCalibrationObservedActiveSeconds?: number
+  /** True only when this entire cycle has used active automatic processing. */
+  readonly activeAutomaticThroughputCycleEligible?: boolean
   readonly inProgress: boolean
   readonly botCapTransitionPending: boolean
   readonly botCapRewardsGranted: boolean
@@ -416,6 +424,10 @@ export interface InfinityCycleHistoryEntry {
   readonly configuredTarget: bigint
   readonly reward: bigint
   readonly durationSeconds: number
+  /** Processing lane which produced this completed cycle. */
+  readonly processingSource?: 'active' | 'stored-time'
+  /** Active cadence in force when this cycle completed. */
+  readonly activeIntervalMilliseconds?: number
 }
 
 export interface SimulationStatisticsState {
@@ -434,6 +446,8 @@ export interface SimulationStatisticsState {
   }
   /** Newest-first bounded history used for completed-run efficiency guidance. */
   readonly recentInfinityCycles?: readonly InfinityCycleHistoryEntry[]
+  /** Active automatic cycles eligible for the current throughput readout. */
+  readonly recentActiveAutomaticInfinityCycles?: readonly InfinityCycleHistoryEntry[]
   readonly minuteWindows: readonly StatisticsWindowState[]
   readonly halfHourWindows: readonly StatisticsWindowState[]
   readonly dailyWindows: readonly StatisticsWindowState[]

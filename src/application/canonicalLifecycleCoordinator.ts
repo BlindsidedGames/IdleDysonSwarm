@@ -28,6 +28,7 @@ import type {
   CanonicalDevelopmentAction,
   CanonicalPlayerCommand,
   CanonicalPlayerDispatchResult,
+  CanonicalStoredTimeCommitResult,
 } from './canonicalGameApplication'
 import {
   cloneCanonicalRuntimeState,
@@ -47,7 +48,9 @@ export interface CanonicalLifecycleApplicationPort {
   advanceActiveWithContinuation(
     milliseconds: number,
   ): CanonicalActiveAdvanceResult
-  advanceActiveContinuous(milliseconds: number): SimulationTransitionResult
+  advanceActiveContinuousWithContinuation(
+    milliseconds: number,
+  ): CanonicalActiveAdvanceResult
   dispatchPlayer(
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
@@ -195,8 +198,7 @@ export type CanonicalCoordinatedPlayerResult =
       readonly result: CanonicalCoordinatedStoredTimeResult
     }
 
-export interface CanonicalCoordinatedStoredTimeResult {
-  readonly status: 'complete' | 'failed'
+interface CanonicalCoordinatedStoredTimeResultBase {
   /** Duration admitted after clamping the player request to the current bank. */
   readonly admittedSeconds: number
   /** The full admitted duration, or zero when the atomic commit fails. */
@@ -204,9 +206,23 @@ export interface CanonicalCoordinatedStoredTimeResult {
   readonly remainingSeconds: number
   readonly durableRevision: number | null
   readonly transition: SimulationTransitionResult
-  readonly code?: string
-  readonly reason?: string
 }
+
+export type CanonicalCoordinatedStoredTimeResult =
+  CanonicalCoordinatedStoredTimeResultBase & (
+    | {
+        readonly status: 'complete'
+        readonly summary: Extract<
+          CanonicalStoredTimeCommitResult,
+          { committed: true }
+        >['summary']
+      }
+    | {
+        readonly status: 'failed'
+        readonly code?: string
+        readonly reason?: string
+      }
+  )
 
 export type CanonicalCoordinatedImportResult =
   | {
@@ -380,9 +396,9 @@ export class CanonicalLifecycleCoordinator {
 
   async advanceActiveContinuous(
     milliseconds: number,
-  ): Promise<SimulationTransitionResult> {
+  ): Promise<CanonicalCoordinatedActiveResult> {
     return this.enqueue(() =>
-      Promise.resolve(this.application.advanceActiveContinuous(milliseconds)),
+      this.advanceActiveUnqueued(milliseconds, 'continuous'),
     )
   }
 
@@ -460,6 +476,7 @@ export class CanonicalLifecycleCoordinator {
 
   private async advanceActiveUnqueued(
     milliseconds: number,
+    mode: 'ordinary' | 'continuous' = 'ordinary',
   ): Promise<CanonicalCoordinatedActiveResult> {
     if (!Number.isFinite(milliseconds) || milliseconds < 0) {
       const transition = rejectedTransition(
@@ -483,10 +500,13 @@ export class CanonicalLifecycleCoordinator {
       unchangedTransition(this.application.snapshot())
 
     while (remainingMilliseconds > TIME_EPSILON) {
-      const advance =
-        this.application.advanceActiveWithContinuation(
-          remainingMilliseconds,
-        )
+      const advance = mode === 'continuous'
+        ? this.application.advanceActiveContinuousWithContinuation(
+            remainingMilliseconds,
+          )
+        : this.application.advanceActiveWithContinuation(
+            remainingMilliseconds,
+          )
       transition = advance.transition
       consumedMilliseconds += advance.consumedMilliseconds
       remainingMilliseconds = advance.remainingMilliseconds
@@ -773,19 +793,28 @@ export class CanonicalLifecycleCoordinator {
       finalSnapshot.phase === 'ready'
         ? finalSnapshot.revision.durable
         : null
+    const common = {
+      admittedSeconds,
+      consumedSeconds,
+      remainingSeconds,
+      durableRevision,
+      transition: result.transition,
+    }
+    if (result.committed && remainingSeconds <= TIME_EPSILON) {
+      return {
+        kind: 'stored-time',
+        result: {
+          ...common,
+          status: 'complete',
+          summary: result.summary,
+        },
+      }
+    }
     return {
       kind: 'stored-time',
       result: {
-        status:
-          result.committed &&
-          remainingSeconds <= TIME_EPSILON
-            ? 'complete'
-            : 'failed',
-        admittedSeconds,
-        consumedSeconds,
-        remainingSeconds,
-        durableRevision,
-        transition: result.transition,
+        ...common,
+        status: 'failed',
         ...(result.committed
           ? {}
           : {

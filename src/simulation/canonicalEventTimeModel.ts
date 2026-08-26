@@ -26,6 +26,7 @@ import {
   infinityPointsForBots,
   infinityPointsPerMinute,
   ordinaryInfinityBotThreshold,
+  preferredInfinityRatePeak,
 } from './infinityCycle'
 import {
   applyDysonProductionArrivals,
@@ -570,6 +571,10 @@ export class CanonicalEventTimeModel
         this.context.rateClockMultiplier ?? 1,
       )
       if (this.context.mode === 'active') {
+        candidate = withAdvancedManualInfinityObservation(
+          candidate,
+          seconds * (this.context.rateClockMultiplier ?? 1),
+        )
         candidate = withUpdatedInfinityRatePeak(
           candidate,
           this.carrier.entitlements,
@@ -861,6 +866,10 @@ export class CanonicalEventTimeModel
         requestedReward: evaluation.requestedReward,
         artifactSkillPoints: artifact.value,
         automatic: !manual,
+        processingSource: this.context.mode,
+        activeIntervalMilliseconds:
+          this.carrier.gameState.timeline.processing
+            .activeIntervalMilliseconds,
       },
       this.context.infinityResetAssetLookup,
     )
@@ -1624,18 +1633,47 @@ function withUpdatedInfinityRatePeak(
     secondsInCurrentCycle: state.timeline.infinityCycleSeconds,
   })
   const reward = infinityPointsForBots(state.dyson.bots, infinity)
+  const minimumObservedSeconds =
+    state.timeline.processing.activeIntervalMilliseconds / 1000
   const rate = infinityPointsPerMinute(
     reward,
-    state.timeline.infinityCycleSeconds,
+    Math.max(
+      state.timeline.infinityCycleSeconds,
+      minimumObservedSeconds,
+    ),
   )
-  const previousPeak = state.infinity.currentCyclePeakIpPerMinute ?? 0
-  if (rate <= previousPeak) return state
+  const previousPeak = {
+    rate: state.infinity.currentCyclePeakIpPerMinute ?? 0,
+    reward: state.infinity.currentCyclePeakReward ?? 0n,
+  }
+  const selected = preferredInfinityRatePeak(previousPeak, { rate, reward })
+  if (
+    selected.rate === previousPeak.rate &&
+    selected.reward === previousPeak.reward
+  ) return state
   return {
     ...state,
     infinity: {
       ...state.infinity,
-      currentCyclePeakIpPerMinute: rate,
-      currentCyclePeakReward: reward,
+      currentCyclePeakIpPerMinute: selected.rate,
+      currentCyclePeakReward: selected.reward,
+    },
+  }
+}
+
+function withAdvancedManualInfinityObservation(
+  state: CanonicalGameStateV1,
+  seconds: number,
+): CanonicalGameStateV1 {
+  if (state.infinity.automaticResetEnabled || seconds <= 0) return state
+  return {
+    ...state,
+    infinity: {
+      ...state.infinity,
+      manualCalibrationObservedActiveSeconds: addContinuous(
+        state.infinity.manualCalibrationObservedActiveSeconds ?? 0,
+        seconds,
+      ),
     },
   }
 }

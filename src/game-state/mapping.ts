@@ -202,6 +202,16 @@ export function hydrateGameState(
       toBoolean(source[sourceKey]),
     ]),
   ) as Record<CanonicalFacilityId, boolean>
+  const infinityAutomaticReset = toBoolean(
+    source.infinityAutomaticReset,
+    true,
+  )
+  const infinityCycleSeconds = toFiniteNonNegativeNumber(
+    source.simulationInfinityCycleSeconds,
+  )
+  const hasManualInfinityCalibration =
+    source.simulationInfinityManualPeakIpPerMinute !== undefined ||
+    source.simulationInfinityManualPeakReward !== undefined
 
   const state: CanonicalGameStateV1 = {
     modelVersion: CANONICAL_GAME_MODEL_VERSION,
@@ -252,10 +262,7 @@ export function hydrateGameState(
     infinity: {
       points: toNonNegativeBigInt(prestige.infinityPoints),
       spentPoints: toNonNegativeBigInt(prestige.spentInfinityPoints),
-      automaticResetEnabled: toBoolean(
-        source.infinityAutomaticReset,
-        true,
-      ),
+      automaticResetEnabled: infinityAutomaticReset,
       breakTarget: maximumBigInt(
         1n,
         toNonNegativeBigInt(source.infinityPointsToBreakFor),
@@ -265,6 +272,24 @@ export function hydrateGameState(
       ),
       currentCyclePeakReward: toNonNegativeBigInt(
         source.simulationInfinityPeakReward,
+      ),
+      manualPeakIpPerMinute: toFiniteNonNegativeNumber(
+        source.simulationInfinityManualPeakIpPerMinute,
+        !hasManualInfinityCalibration && !infinityAutomaticReset
+          ? toFiniteNonNegativeNumber(source.simulationInfinityPeakIpPerMinute)
+          : 0,
+      ),
+      manualPeakReward: toNonNegativeBigInt(
+        source.simulationInfinityManualPeakReward ??
+          (!infinityAutomaticReset
+            ? source.simulationInfinityPeakReward
+            : undefined),
+      ),
+      manualCalibrationObservedActiveSeconds: toFiniteNonNegativeNumber(
+        source.simulationInfinityManualObservedActiveSeconds,
+      ),
+      activeAutomaticThroughputCycleEligible: toBoolean(
+        source.simulationInfinityActiveAutomaticThroughputCycleEligible,
       ),
       inProgress: toBoolean(source.infinityInProgress),
       botCapTransitionPending: toBoolean(source.botCapTransitionPending),
@@ -417,9 +442,7 @@ export function hydrateGameState(
         source.simulationInfinityBoundaryRemaining,
         1 / 60,
       ),
-      infinityCycleSeconds: toFiniteNonNegativeNumber(
-        source.simulationInfinityCycleSeconds,
-      ),
+      infinityCycleSeconds,
       infinityCycleStartingPoints: toNonNegativeBigInt(
         source.simulationInfinityCycleStartingPoints,
       ),
@@ -615,6 +638,13 @@ export function hydrateGameState(
             ),
           }
         : {}),
+      ...(Array.isArray(statistics.recentActiveAutomaticInfinityCycles)
+        ? {
+            recentActiveAutomaticInfinityCycles: toRecentInfinityCycles(
+              statistics.recentActiveAutomaticInfinityCycles,
+            ),
+          }
+        : {}),
       minuteWindows: toStatisticsWindows(
         statistics.minuteWindows,
         60,
@@ -724,6 +754,14 @@ export function dehydrateGameState(
     state.infinity.currentCyclePeakIpPerMinute ?? 0
   source.simulationInfinityPeakReward =
     state.infinity.currentCyclePeakReward ?? 0n
+  source.simulationInfinityManualPeakIpPerMinute =
+    state.infinity.manualPeakIpPerMinute ?? 0
+  source.simulationInfinityManualPeakReward =
+    state.infinity.manualPeakReward ?? 0n
+  source.simulationInfinityManualObservedActiveSeconds =
+    state.infinity.manualCalibrationObservedActiveSeconds ?? 0
+  source.simulationInfinityActiveAutomaticThroughputCycleEligible =
+    state.infinity.activeAutomaticThroughputCycleEligible ?? false
   source.infinityInProgress = state.infinity.inProgress
   source.botCapTransitionPending =
     state.infinity.botCapTransitionPending
@@ -1094,6 +1132,18 @@ function toRecentInfinityCycles(
       configuredTarget,
       reward,
       durationSeconds,
+      ...(candidate.processingSource === 'active' ||
+      candidate.processingSource === 'stored-time'
+        ? { processingSource: candidate.processingSource }
+        : {}),
+      ...(Number.isInteger(candidate.activeIntervalMilliseconds) &&
+      Number(candidate.activeIntervalMilliseconds) >= 33 &&
+      Number(candidate.activeIntervalMilliseconds) <= 200
+        ? {
+            activeIntervalMilliseconds:
+              Number(candidate.activeIntervalMilliseconds),
+          }
+        : {}),
     })
   }
   return result
@@ -1129,6 +1179,15 @@ function fromSimulationStatistics(
     preserved.recentInfinityCycles = overlayBuckets(
       preserved.recentInfinityCycles,
       state.recentInfinityCycles ?? [],
+    )
+  }
+  if (
+    state.recentActiveAutomaticInfinityCycles !== undefined ||
+    Array.isArray(preserved.recentActiveAutomaticInfinityCycles)
+  ) {
+    preserved.recentActiveAutomaticInfinityCycles = overlayBuckets(
+      preserved.recentActiveAutomaticInfinityCycles,
+      state.recentActiveAutomaticInfinityCycles ?? [],
     )
   }
   preserved.minuteWindows = overlayBuckets(
