@@ -76,8 +76,16 @@ export function createAndroidSigningEnvironment(
 ): NodeJS.ProcessEnv {
   return {
     ...process.env,
-    JAVA_HOME: process.env.JAVA_HOME || LOCAL_JAVA_HOME,
-    ANDROID_HOME: process.env.ANDROID_HOME || LOCAL_ANDROID_HOME,
+    JAVA_HOME: resolveConfiguredDirectory(
+      process.env.JAVA_HOME,
+      LOCAL_JAVA_HOME,
+      'bin/java',
+    ),
+    ANDROID_HOME: resolveConfiguredDirectory(
+      process.env.ANDROID_HOME,
+      LOCAL_ANDROID_HOME,
+      'platform-tools',
+    ),
     ORG_GRADLE_PROJECT_IDS_ANDROID_KEYSTORE_PATH:
       process.env.IDS_ANDROID_KEYSTORE_PATH || LOCAL_ANDROID_KEYSTORE,
     ORG_GRADLE_PROJECT_IDS_ANDROID_KEYSTORE_PASSWORD: keystorePassword,
@@ -111,8 +119,16 @@ export async function runLocalRelease(options: LocalReleaseOptions): Promise<voi
   requireCleanCheckout()
 
   const keystorePath = process.env.IDS_ANDROID_KEYSTORE_PATH || LOCAL_ANDROID_KEYSTORE
-  const javaHome = process.env.JAVA_HOME || LOCAL_JAVA_HOME
-  const androidHome = process.env.ANDROID_HOME || LOCAL_ANDROID_HOME
+  const javaHome = resolveConfiguredDirectory(
+    process.env.JAVA_HOME,
+    LOCAL_JAVA_HOME,
+    'bin/java',
+  )
+  const androidHome = resolveConfiguredDirectory(
+    process.env.ANDROID_HOME,
+    LOCAL_ANDROID_HOME,
+    'platform-tools',
+  )
   requireFile(keystorePath, 'Android upload keystore')
   requireFile(resolve(javaHome, 'bin/java'), 'Java 21 runtime')
   requireFile(androidHome, 'Android SDK')
@@ -202,6 +218,20 @@ function readKeychainPassword(service: string): string {
 
 function requireFile(path: string, label: string): void {
   if (!existsSync(path)) throw new Error(`${label} is missing at ${path}.`)
+}
+
+export function resolveConfiguredDirectory(
+  configuredPath: string | undefined,
+  fallbackPath: string,
+  requiredChild: string,
+): string {
+  if (
+    configuredPath !== undefined &&
+    existsSync(resolve(configuredPath, requiredChild))
+  ) {
+    return configuredPath
+  }
+  return fallbackPath
 }
 
 function git(...arguments_: string[]): string {

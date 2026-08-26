@@ -8,6 +8,7 @@ import {
   ANDROID_KEY_PASSWORD_SERVICE,
   createAndroidSigningEnvironment,
   parseLocalReleaseArguments,
+  resolveConfiguredDirectory,
 } from './run-local-release'
 
 const repositoryRoot = resolve(import.meta.dirname, '..')
@@ -48,6 +49,14 @@ describe('local-first release workflow', () => {
     })
     expect(readFileSync(resolve(repositoryRoot, 'scripts/run-local-release.ts'), 'utf8'))
       .not.toContain('-PIDS_ANDROID_KEYSTORE_PASSWORD')
+  })
+
+  it('falls back when a configured toolchain directory is stale', () => {
+    expect(resolveConfiguredDirectory(
+      '/definitely/missing/java-home',
+      '/protected/local/java-home',
+      'bin/java',
+    )).toBe('/protected/local/java-home')
   })
 
   it('keeps GitHub verification-only and credential-free', () => {
