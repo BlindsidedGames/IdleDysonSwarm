@@ -154,7 +154,13 @@ describe('RealitySurface', () => {
       screen.getByText('Designation: 4'),
     ).toHaveClass('reality-surface__designation')
     expect(realityStyles).toMatch(
-      /\.reality-surface__designation\s*\{[^}]*font-size:\s*clamp\(\s*0\.7rem,\s*4vw,\s*calc\(0\.96rem \* var\(--game-text-scale\)\)[\s\S]*white-space:\s*nowrap;/,
+      /\.reality-surface__designation\s*\{[^}]*min-inline-size:\s*0;[^}]*overflow:\s*hidden;[^}]*font-size:\s*clamp\(\s*0\.7rem,\s*4vw,\s*calc\(0\.96rem \* var\(--game-text-scale\)\)[\s\S]*text-overflow:\s*ellipsis;[^}]*white-space:\s*nowrap;/,
+    )
+    expect(realityStyles).toMatch(
+      /\.reality-surface__balances\s*\{[^}]*min-inline-size:\s*0;[^}]*max-inline-size:\s*58%;/,
+    )
+    expect(realityStyles).toMatch(
+      /\.reality-surface__content\s*\{[^}]*min-inline-size:\s*0;/,
     )
     const influenceBalance = screen.getByLabelText('Influence: 42.0')
     expect(influenceBalance).toHaveTextContent('42.0')

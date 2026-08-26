@@ -11,6 +11,7 @@ export const FORWARD_PROGRESS_INTERVAL_MILLISECONDS =
   DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS
 
 const RESET_OFFSET_EPSILON = 0.000_001
+const MAXIMUM_VISUAL_PROGRESS_ADVANCE = 1
 
 export interface ForwardProgressAnimationOptions {
   readonly canonicalProgress: number
@@ -72,11 +73,18 @@ export function useForwardProgressAnimation(
     )
     if (keyframes.length < 2) return undefined
 
-    const animation = element.animate(keyframes, {
-      duration: FORWARD_PROGRESS_INTERVAL_MILLISECONDS,
-      easing: 'linear',
-      fill: 'forwards',
-    })
+    let animation: Animation
+    try {
+      animation = element.animate(keyframes, {
+        duration: FORWARD_PROGRESS_INTERVAL_MILLISECONDS,
+        easing: 'linear',
+        fill: 'forwards',
+      })
+    } catch {
+      // The canonical transform was already applied above. A browser-specific
+      // animation rejection must not take down the gameplay render tree.
+      return undefined
+    }
     animationRef.current = animation
 
     return () => {
@@ -130,15 +138,25 @@ export function buildForwardProgressKeyframes(
     ]
   }
 
+  // More than one complete cycle per publication cannot be represented
+  // meaningfully to a player. Keep the presentation work constant by showing
+  // one representative wrap instead of allocating keyframes for every real
+  // worker batch. Gameplay continues to use the uncapped canonical rate.
+  const visualAdvance = Math.min(
+    advance,
+    MAXIMUM_VISUAL_PROGRESS_ADVANCE,
+  )
+  const visualRawEnd = start + visualAdvance
+
   const keyframes: Keyframe[] = [
     { offset: 0, transform: progressTransform(start) },
   ]
   for (
     let boundary = 1;
-    boundary < rawEnd;
+    boundary < visualRawEnd;
     boundary += 1
   ) {
-    const boundaryOffset = (boundary - start) / advance
+    const boundaryOffset = (boundary - start) / visualAdvance
     keyframes.push({
       offset: boundaryOffset,
       transform: progressTransform(1),
@@ -151,7 +169,7 @@ export function buildForwardProgressKeyframes(
       transform: progressTransform(0),
     })
   }
-  const endFraction = rawEnd - Math.floor(rawEnd)
+  const endFraction = visualRawEnd - Math.floor(visualRawEnd)
   keyframes.push({
     offset: 1,
     transform: progressTransform(

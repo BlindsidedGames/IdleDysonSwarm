@@ -548,6 +548,10 @@ describe('ReadyDysonSlice', () => {
         '.bot-distribution__allocation',
       )).not.toBeInTheDocument()
       expect(screen.queryByText('Scientists')).not.toBeInTheDocument()
+      if (route === 'bots') {
+        expect(summary?.closest('.dyson-info__summary')).not.toBeNull()
+        expect(summary?.closest('.dyson-shell__distribution')).toBeNull()
+      }
     },
   )
 
@@ -1636,7 +1640,10 @@ describe('ReadyDysonSlice', () => {
       /\.bot-distribution__slider\s*\{[^}]*block-size:\s*2\.75rem;[^}]*margin:\s*-0\.675rem 0;/,
     )
     expect(stylesheet).toMatch(
-      /\.bot-distribution\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)\s*minmax\(5rem, 0\.8fr\)\s*minmax\(0, 1fr\);[^}]*grid-template-rows:\s*auto auto auto;[^}]*min-inline-size:\s*0;/,
+      /\.bot-distribution\s*\{[^}]*grid-template-columns:\s*minmax\(4\.75rem, max-content\)\s*minmax\(7rem, 1fr\)\s*minmax\(4\.75rem, max-content\);[^}]*grid-template-rows:\s*auto auto;[^}]*gap:\s*0\.15rem 0\.25rem;[^}]*min-inline-size:\s*0;/,
+    )
+    expect(stylesheet).toMatch(
+      /\.bot-distribution__heading\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1;[^}]*align-self:\s*end;/,
     )
   })
 
