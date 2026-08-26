@@ -36,7 +36,6 @@ import {
   CollapsibleSection,
   FacilityCard,
   InlineImageSymbol,
-  ProgressControlsPanel,
 } from '../../components'
 import influenceSymbol from '../../assets/symbol-influence.png'
 import strangeMatterSymbol from '../../assets/symbol-strange-matter.png'
@@ -61,7 +60,6 @@ type SimulationsCommand = Extract<
       | 'dream.purchase-foundational'
       | 'dream.purchase-space-age'
       | 'dream.start-education'
-      | 'time.set-double-time-rate'
       | 'dream.request-black-hole-reset'
   }
 >
@@ -96,7 +94,6 @@ export interface SimulationsCommandAvailability {
   readonly purchaseSpaceAge: boolean
   readonly startEducation: boolean
   readonly blackHoleReset: boolean
-  readonly setDoubleTimeRate?: boolean
 }
 
 export interface SimulationsSurfaceProps {
@@ -107,6 +104,9 @@ export interface SimulationsSurfaceProps {
   readonly influence: bigint
   readonly activeDoubleTimeRate: number
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
+  readonly onSpaceAgePurchaseQuantityChange?: (
+    quantity: SpaceAgePurchaseQuantity,
+  ) => void
   readonly commandAvailability: SimulationsCommandAvailability
   readonly dispatchPlayer: (
     command: SimulationsCommand,
@@ -126,6 +126,7 @@ export function SimulationsSurface({
   influence,
   activeDoubleTimeRate,
   spaceAgePurchaseQuantity,
+  onSpaceAgePurchaseQuantityChange = () => undefined,
   commandAvailability,
   dispatchPlayer,
 }: SimulationsSurfaceProps) {
@@ -190,6 +191,26 @@ export function SimulationsSurface({
       </header>
 
       <div className="simulations-surface__scroll-region">
+        {facts.eras.spaceAge.visible ? (
+          <div
+            className="simulations-purchase-quantity"
+            role="group"
+            aria-label={intl.formatMessage(messages.purchaseAmount)}
+          >
+            {SPACE_AGE_PURCHASE_QUANTITIES.map((quantity) => (
+              <button
+                key={quantity}
+                type="button"
+                aria-pressed={spaceAgePurchaseQuantity === quantity}
+                onClick={() => onSpaceAgePurchaseQuantityChange(quantity)}
+              >
+                {quantity === 'max'
+                  ? intl.formatMessage(messages.buyMax)
+                  : intl.formatMessage(messages.buyQuantity, { quantity })}
+              </button>
+            ))}
+          </div>
+        ) : null}
         {categoryGroups.map((group) => (
           <SimulationCategoryGroup
             key={group.id}
@@ -201,47 +222,6 @@ export function SimulationsSurface({
       </div>
     </section>
   )
-}
-
-export function SimulationTimeControl({ locale, bankSeconds, rate, enabled, dispatchPlayer, available, spaceAgeAvailable, purchaseSettingsOpen, spaceAgePurchaseQuantity, onPurchaseSettingsOpenChange, onSpaceAgePurchaseQuantityChange }: {
-  readonly locale: EnabledLocale
-  readonly bankSeconds: number
-  readonly rate: number
-  readonly enabled: boolean
-  readonly available: boolean
-  readonly spaceAgeAvailable: boolean
-  readonly purchaseSettingsOpen: boolean
-  readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
-  readonly onPurchaseSettingsOpenChange: (open: boolean) => void
-  readonly onSpaceAgePurchaseQuantityChange: (quantity: SpaceAgePurchaseQuantity) => void
-  readonly dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer']
-}) {
-  const intl = useIntl()
-  return <ProgressControlsPanel
-    ariaLabel={intl.formatMessage(messages.timeMultiplier)}
-    className="simulation-time-control"
-    expanded={purchaseSettingsOpen}
-    controlsId="simulation-purchase-settings"
-    settingsLabel={intl.formatMessage(messages.purchaseSettings)}
-    settingsEnabled={spaceAgeAvailable}
-    onExpandedChange={onPurchaseSettingsOpenChange}
-    summary={(
-      <div className="simulation-time-control__summary">
-        <div className="simulation-time-control__header">
-          <strong>{intl.formatMessage(messages.timeMultiplier)}</strong>
-          <span>{enabled ? intl.formatMessage(messages.boostRemaining) : intl.formatMessage(messages.offlineTime)}: {formatGameDuration(locale, bankSeconds)}</span>
-        </div>
-        <div className="simulation-time-control__rate">
-          <span>{intl.formatMessage(messages.simulationSpeedIncreasedBy, {
-            value: formatNumber(locale, rate * 100, { maximumFractionDigits: 0 }),
-          })}</span>
-          <input aria-label={intl.formatMessage(messages.timeMultiplier)} type="range" min="0" max="10" step="1" value={rate} disabled={!available} onChange={(event) => void dispatchPlayer({ kind: 'time.set-double-time-rate', rate: Number(event.currentTarget.value) })} />
-        </div>
-      </div>
-    )}
-  >
-    {spaceAgeAvailable && <div className="simulation-time-control__purchase-settings" role="group" aria-label={intl.formatMessage(messages.purchaseAmount)}>{SPACE_AGE_PURCHASE_QUANTITIES.map((quantity) => <button key={quantity} type="button" aria-pressed={spaceAgePurchaseQuantity === quantity} onClick={() => onSpaceAgePurchaseQuantityChange(quantity)}>{quantity === 'max' ? intl.formatMessage(messages.buyMax) : intl.formatMessage(messages.buyQuantity, { quantity })}</button>)}</div>}
-  </ProgressControlsPanel>
 }
 
 interface SimulationCategoryModel {

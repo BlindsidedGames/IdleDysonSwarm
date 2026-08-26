@@ -52,8 +52,9 @@ platform contracts              SaveRepository
   remain replaceable.
 - `src/App.tsx` composes the product UI and must communicate with gameplay only
   through application commands and immutable frontend snapshots.
-- The exact event-time scheduler follows `simulation-contract.md`. Gameplay
-  models and projection remain behind the same pure boundary.
+- The shared active/Stored Time game-step contract follows
+  `game-processing-and-offline-time-contract.md`. Gameplay models and
+  projection remain behind the same pure boundary.
 - Product UI changes must preserve the accessibility, responsive-layout,
   performance, and interaction contracts recorded alongside this document.
 
@@ -74,16 +75,25 @@ canonical domain state while privately preserving unmapped fields.
 `CanonicalRuntimeSession` carries the game state together with save-specific
 tuning, the evolving skill-effect evaluation snapshot, entitlements and
 transient runtime facts. `CanonicalGameApplicationFacade` composes the
-whole-game event model and keeps internal away-time, stored-time continuation
-and bot-cap checkpoint commands inaccessible to a frontend.
+whole-game event model and keeps internal away-time and bot-cap checkpoint
+commands inaccessible to a frontend.
 
 Active-play mutations may publish to memory before a later checkpoint.
 Recovery, import and stored-time work are commit-first flows: their isolated
 candidate cannot become visible until its matching save has been durably
 verified. `CanonicalLifecycleCoordinator` serializes active time, player
 commands and platform lifecycle callbacks through that lane, including
-returned-time replay, forced-Buy-Max stored time and resumable bot-cap
-checkpoints.
+returned-time credit, manually started Stored Time and resumable active-play
+bot-cap checkpoints.
+
+Confirmed save replacement may request Stored Time cancellation out-of-band,
+then waits behind the coordinator lane until the detached candidate is
+discarded or fully committed before import/reset installs a new session.
+Commands retain their admission session across that boundary. Export does not
+enter the occupied persistence lane: the application captures one validated,
+immutable pre-job save, and the transfer UI reuses its exact encoded string for
+display, copy and download. Once the job settles, export may capture only the
+fully committed current session.
 
 `frontendSnapshot.ts` is the only UI read boundary. It publishes application
 revisions, raw canonical resources and progression, exact transaction

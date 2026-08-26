@@ -169,6 +169,24 @@
   color: white;
 }
 
+.bot-distribution--multitasking {
+  display: block;
+  padding: 0.2rem 0;
+  color: white;
+  font-size: calc(0.82rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.bot-distribution__multitasking-workers {
+  color: #eb7df4;
+}
+
+.bot-distribution__multitasking-science {
+  color: #72ece8;
+}
+
 .bot-distribution__heading {
   grid-column: 1 / -1;
   grid-row: 1;

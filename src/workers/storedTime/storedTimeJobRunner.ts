@@ -36,6 +36,7 @@ export interface StoredTimeJobRunner {
     request: Readonly<StoredTimeJobRequest>,
     options?: Readonly<StoredTimeJobRunOptions>,
   ): Promise<StoredTimeJobTerminalMessage>
+  speedUp?(): void
   dispose(): void
 }
 
@@ -55,6 +56,7 @@ export class BrowserStoredTimeJobRunner implements StoredTimeJobRunner {
   private worker: Worker | null = null
   private ready: Promise<void> | null = null
   private activeJobId: string | null = null
+  private cooperativeSpeedUpRequests = 0
   private idleTimer: ReturnType<typeof setTimeout> | null = null
 
   constructor(options: Readonly<BrowserStoredTimeJobRunnerOptions> = {}) {
@@ -72,7 +74,11 @@ export class BrowserStoredTimeJobRunner implements StoredTimeJobRunner {
     this.clearIdleTimer()
     try {
       if (!this.workerSupported()) {
-        return await runCooperatively(request, options)
+        return await runCooperatively(request, options, () => {
+          if (this.cooperativeSpeedUpRequests <= 0) return false
+          this.cooperativeSpeedUpRequests -= 1
+          return true
+        })
       }
       try {
         return await this.runInWorker(request, options)
@@ -82,12 +88,29 @@ export class BrowserStoredTimeJobRunner implements StoredTimeJobRunner {
         // to restart through the cooperative bounded runner.
         this.dispose()
         this.activeJobId = request.jobId
-        return await runCooperatively(request, options)
+        return await runCooperatively(request, options, () => {
+          if (this.cooperativeSpeedUpRequests <= 0) return false
+          this.cooperativeSpeedUpRequests -= 1
+          return true
+        })
       }
     } finally {
       this.activeJobId = null
       this.scheduleIdleTermination()
     }
+  }
+
+  speedUp(): void {
+    if (this.activeJobId === null) return
+    if (this.worker !== null) {
+      this.worker.postMessage({
+        type: 'speed-up',
+        protocolVersion: STORED_TIME_WORKER_PROTOCOL_VERSION,
+        jobId: this.activeJobId,
+      })
+      return
+    }
+    this.cooperativeSpeedUpRequests += 1
   }
 
   dispose(): void {
@@ -246,6 +269,7 @@ function waitForReady(worker: Worker): Promise<void> {
 async function runCooperatively(
   request: Readonly<StoredTimeJobRequest>,
   options: Readonly<StoredTimeJobRunOptions>,
+  consumeSpeedUp: () => boolean,
 ): Promise<StoredTimeJobTerminalMessage> {
   const simulation = new StoredTimeSimulation({
     jobId: request.jobId,
@@ -258,6 +282,7 @@ async function runCooperatively(
   })
   let lastProgressAt = performance.now()
   for (;;) {
+    while (consumeSpeedUp()) simulation.speedUp()
     const chunkStartedAt = performance.now()
     let terminal
     do {

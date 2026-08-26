@@ -5,7 +5,9 @@ import axe from 'axe-core'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import {
+  act,
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -18,6 +20,7 @@ import {
   type SettingsSurfaceProps,
 } from './SettingsSurface'
 import type { GameAudioService } from '../../../audio'
+import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
   NumberNotationPreferenceService,
   NumberNotationProvider,
@@ -40,7 +43,10 @@ const settingsStyles = readFileSync(
   'utf8',
 )
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.useRealTimers()
+})
 
 describe('SettingsSurface', () => {
   test('changes the device-local game language and can return to device mode', async () => {
@@ -122,6 +128,182 @@ describe('SettingsSurface', () => {
     expect(select).toHaveFocus()
   })
 
+  test('previews a rapid pointer drag and commits only its final interval', async () => {
+    const onProcessingIntervalChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+
+    expect(
+      screen.getByRole('heading', { name: 'Game processing' }),
+    ).toBeInTheDocument()
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+    expect(interval).toHaveValue('50')
+    expect(interval).toHaveAttribute('aria-valuetext', '50 ms')
+    expect(interval.previousElementSibling).toHaveTextContent('50 ms')
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '70' } })
+    fireEvent.change(interval, { target: { value: '85' } })
+    fireEvent.change(interval, { target: { value: '100' } })
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+    fireEvent.pointerUp(interval)
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(100)
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+    expect(interval.previousElementSibling).toHaveTextContent('100 ms')
+    expect(interval).toHaveAttribute('aria-valuetext', '100 ms')
+    expect(settingsStyles).toMatch(/\.settings-surface__processing-control/)
+    await act(async () => await Promise.resolve())
+  })
+
+  test('commits change-only interval input after a short trailing delay', async () => {
+    vi.useFakeTimers()
+    const onProcessingIntervalChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.change(interval, { target: { value: '70' } })
+    fireEvent.change(interval, { target: { value: '85' } })
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+
+    act(() => vi.advanceTimersByTime(199))
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+    act(() => vi.advanceTimersByTime(1))
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(85)
+    await act(async () => await Promise.resolve())
+  })
+
+  test('cancels the trailing fallback when a normal gesture commits', async () => {
+    vi.useFakeTimers()
+    const onProcessingIntervalChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '100' } })
+    fireEvent.pointerUp(interval)
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(100)
+
+    act(() => vi.advanceTimersByTime(1_000))
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+    await act(async () => await Promise.resolve())
+  })
+
+  test('cancels a pending change-only interval commit on unmount', () => {
+    vi.useFakeTimers()
+    const onProcessingIntervalChange = vi.fn()
+    const { unmount } = renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.change(interval, { target: { value: '85' } })
+    unmount()
+    act(() => vi.advanceTimersByTime(1_000))
+
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+  })
+
+  test('commits a completed keyboard interval change and uses blur as fallback', async () => {
+    const onProcessingIntervalChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.change(interval, { target: { value: '51' } })
+    expect(onProcessingIntervalChange).not.toHaveBeenCalled()
+    fireEvent.keyUp(interval, { key: 'ArrowRight' })
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(51)
+    await act(async () => await Promise.resolve())
+
+    fireEvent.change(interval, { target: { value: '75' } })
+    fireEvent.blur(interval)
+    expect(onProcessingIntervalChange).toHaveBeenLastCalledWith(75)
+    expect(onProcessingIntervalChange).toHaveBeenCalledTimes(2)
+    await act(async () => await Promise.resolve())
+  })
+
+  test('rolls a rejected processing interval back to the canonical value', async () => {
+    const onProcessingIntervalChange = vi.fn().mockResolvedValue({
+      status: 'failed',
+      kind: 'runtime',
+      code: 'TEST-FAILED',
+      reason: 'Rejected for test.',
+      retryable: false,
+    })
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '100' } })
+    expect(interval).toHaveValue('100')
+    fireEvent.pointerUp(interval)
+
+    await waitFor(() => expect(interval).toHaveValue('50'))
+    expect(interval.previousElementSibling).toHaveTextContent('50 ms')
+  })
+
+  test('serializes a newer interval selected while the previous request is pending', async () => {
+    const first = deferred<UiRuntimePlayerCommandResult | void>()
+    const onProcessingIntervalChange = vi.fn()
+      .mockImplementationOnce(() => first.promise)
+      .mockResolvedValueOnce(undefined)
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '100' } })
+    fireEvent.pointerUp(interval)
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '50' } })
+    fireEvent.pointerUp(interval)
+    expect(onProcessingIntervalChange).toHaveBeenCalledOnce()
+
+    await act(async () => first.resolve(undefined))
+    expect(onProcessingIntervalChange).toHaveBeenCalledTimes(2)
+    expect(onProcessingIntervalChange).toHaveBeenNthCalledWith(1, 100)
+    expect(onProcessingIntervalChange).toHaveBeenNthCalledWith(2, 50)
+    expect(interval).toHaveValue('50')
+    expect(interval).toHaveAttribute('aria-valuetext', '50 ms')
+  })
+
+  test('rolls back when the interval callback throws synchronously', async () => {
+    const onProcessingIntervalChange = vi.fn(() => {
+      throw new Error('Synchronous test failure.')
+    })
+    renderSettings(vi.fn(), undefined, {
+      processingIntervalMilliseconds: 50,
+      onProcessingIntervalChange,
+    })
+    const interval = screen.getByRole('slider', { name: 'Update interval' })
+
+    fireEvent.pointerDown(interval)
+    fireEvent.change(interval, { target: { value: '100' } })
+    fireEvent.pointerUp(interval)
+
+    await waitFor(() => expect(interval).toHaveValue('50'))
+    expect(interval).toHaveAttribute('aria-valuetext', '50 ms')
+  })
+
   test('exposes localized device audio volumes and mute controls', async () => {
     const update = vi.fn(() => Promise.resolve())
     const audioSettings = { musicVolume: 0.7, effectsVolume: 0.5, muted: false } as const
@@ -176,7 +358,16 @@ describe('SettingsSurface', () => {
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls input\[type="range"\]\s*\{[^}]*block-size:\s*1\.75rem;/,
     )
     expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__processing-control input\s*\{[^}]*min-block-size:\s*1\.75rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__audio-controls > label:not\(\.settings-surface__toggle\)\s*\{[^}]*font-weight:\s*var\(--font-weight-semibold\);/,
+    )
+    expect(settingsStyles).toMatch(
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\.settings-surface__panel--audio\s*\{[^}]*gap:\s*0\.15rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls > label:not\(\.settings-surface__toggle\),\s*\.settings-surface__processing-control\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
     )
     expect(settingsStyles).toMatch(
       /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__copy h2\s*\{[^}]*font-size:\s*calc\(0\.95rem \* var\(--game-text-scale\)\);/,
@@ -234,13 +425,16 @@ describe('SettingsSurface', () => {
 
   test('shows the export string with copy and optional download actions', async () => {
     const user = userEvent.setup()
-    const readSaveText = vi.fn().mockResolvedValue('IDSWEB1:exported')
+    const readSaveExport = vi.fn().mockResolvedValue({
+      text: 'IDSWEB1:exported',
+      basis: 'current',
+    })
     const copySaveText = vi.fn().mockResolvedValue(undefined)
-    const downloadSave = vi.fn().mockResolvedValue(true)
+    const downloadSaveText = vi.fn().mockResolvedValue(true)
     renderSettings(vi.fn(), undefined, {
-      readSaveText,
+      readSaveExport,
       copySaveText,
-      downloadSave,
+      downloadSaveText,
     })
 
     await user.click(screen.getByRole('button', { name: 'Export' }))
@@ -249,7 +443,7 @@ describe('SettingsSurface', () => {
       name: 'Export Save',
     })
     expect(dialog.closest('.dyson-shell')).not.toBeNull()
-    expect(readSaveText).toHaveBeenCalledOnce()
+    expect(readSaveExport).toHaveBeenCalledOnce()
     expect(within(dialog).getByRole('textbox', {
       name: 'Save string',
     })).toHaveValue('IDSWEB1:exported')
@@ -263,9 +457,108 @@ describe('SettingsSurface', () => {
     await user.click(
       within(dialog).getByRole('button', { name: 'Download File' }),
     )
-    expect(downloadSave).toHaveBeenCalledOnce()
+    expect(downloadSaveText).toHaveBeenCalledOnce()
+    expect(downloadSaveText).toHaveBeenCalledWith('IDSWEB1:exported')
+    expect(readSaveExport).toHaveBeenCalledOnce()
     expect(within(dialog).getByRole('status')).toHaveTextContent(
       'Save exported successfully.',
+    )
+  })
+
+  test('labels a pre-Stored-Time export and keeps Close and Escape available while capture is pending', async () => {
+    const user = userEvent.setup()
+    let resolveExport:
+      | ((value: { text: string; basis: 'pre-stored-time' }) => void)
+      | undefined
+    const readSaveExport = vi.fn(() => new Promise<{
+      text: string
+      basis: 'pre-stored-time'
+    }>((resolve) => {
+      resolveExport = resolve
+    }))
+    renderSettings(vi.fn(), undefined, { readSaveExport })
+
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    let dialog = screen.getByRole('dialog', { name: 'Export Save' })
+    expect(within(dialog).getByRole('button', { name: 'Close' })).toBeEnabled()
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    await act(async () => {
+      resolveExport?.({
+        text: 'IDSWEB1:pre-stored-time',
+        basis: 'pre-stored-time',
+      })
+      await Promise.resolve()
+    })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    const secondCapture = new Promise<{
+      text: string
+      basis: 'pre-stored-time'
+    }>((resolve) => {
+      resolveExport = resolve
+    })
+    readSaveExport.mockReturnValueOnce(secondCapture)
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    dialog = screen.getByRole('dialog', { name: 'Export Save' })
+    await user.click(within(dialog).getByRole('button', { name: 'Close' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await act(async () => {
+      resolveExport?.({
+        text: 'IDSWEB1:pre-stored-time',
+        basis: 'pre-stored-time',
+      })
+      await Promise.resolve()
+    })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    readSaveExport.mockResolvedValueOnce({
+      text: 'IDSWEB1:pre-stored-time',
+      basis: 'pre-stored-time',
+    })
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    dialog = screen.getByRole('dialog', { name: 'Export Save' })
+    expect(await within(dialog).findByRole('status')).toHaveTextContent(
+      'complete save from immediately before that simulation began',
+    )
+  })
+
+  test('clears a prior pre-Stored-Time notice before capturing a current export', async () => {
+    const user = userEvent.setup()
+    let resolveCurrent:
+      | ((value: { text: string; basis: 'current' }) => void)
+      | undefined
+    const readSaveExport = vi.fn()
+      .mockResolvedValueOnce({
+        text: 'IDSWEB1:pre-stored-time',
+        basis: 'pre-stored-time' as const,
+      })
+      .mockImplementationOnce(() => new Promise<{
+        text: string
+        basis: 'current'
+      }>((resolve) => {
+        resolveCurrent = resolve
+      }))
+    renderSettings(vi.fn(), undefined, { readSaveExport })
+
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    let dialog = await screen.findByRole('dialog', { name: 'Export Save' })
+    expect(await within(dialog).findByRole('status')).toHaveTextContent(
+      'complete save from immediately before that simulation began',
+    )
+    await user.click(within(dialog).getByRole('button', { name: 'Close' }))
+
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+    dialog = screen.getByRole('dialog', { name: 'Export Save' })
+    expect(dialog).not.toHaveTextContent(
+      'complete save from immediately before that simulation began',
+    )
+    resolveCurrent?.({ text: 'IDSWEB1:current', basis: 'current' })
+    expect(await within(dialog).findByDisplayValue('IDSWEB1:current'))
+      .toBeInTheDocument()
+    expect(dialog).not.toHaveTextContent(
+      'complete save from immediately before that simulation began',
     )
   })
 
@@ -319,6 +612,44 @@ describe('SettingsSurface', () => {
       expect(importSaveText).toHaveBeenCalledWith('IDSWEB1:test'),
     )
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+  })
+
+  test('extends confirmed import copy while Offline Time processing is active', async () => {
+    const user = userEvent.setup()
+    renderSettings(vi.fn(), undefined, {
+      storedTime: {
+        status: () => ({
+          kind: 'running',
+          jobId: 'active-job',
+          requestedSeconds: 60,
+          computedSeconds: 1,
+          fraction: 1 / 60,
+          elapsedMilliseconds: 10,
+          estimatedRemainingMilliseconds: 590,
+          maximumChunkMilliseconds: 5,
+        }),
+        subscribe: () => () => undefined,
+        cancel: vi.fn(),
+      },
+      previewImportSaveText: vi.fn().mockResolvedValue({
+        accepted: true,
+        preview: {
+          infinityPoints: 1n,
+          quantumPoints: 2n,
+          skillPoints: 3n,
+        },
+      }),
+    })
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+    const dialog = screen.getByRole('alertdialog', { name: 'Import Save?' })
+    await user.type(
+      within(dialog).getByRole('textbox', { name: 'Save string' }),
+      'IDSWEB1:test',
+    )
+    await user.click(within(dialog).getByRole('button', { name: 'Review Save' }))
+    expect(await within(dialog).findByText(
+      /cancel the current Offline Time simulation without spending its Offline Time/i,
+    )).toBeInTheDocument()
   })
 
   test('also accepts a save file from the import dialog', async () => {
@@ -474,6 +805,42 @@ describe('SettingsSurface', () => {
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
     expect(trigger).toHaveFocus()
     expect(resetSave).not.toHaveBeenCalled()
+  })
+
+  test('warns before confirming a reset that cancels active Stored Time', async () => {
+    const user = userEvent.setup()
+    const resetSave = vi.fn().mockResolvedValue({
+      imported: true,
+      sessionRevision: 2,
+      recoveryAvailable: true,
+      lifecycleReset: true,
+    })
+    renderSettings(resetSave, undefined, {
+      storedTime: {
+        status: () => ({
+          kind: 'running',
+          jobId: 'stored-time-test',
+          requestedSeconds: 10,
+          computedSeconds: 1,
+          fraction: 0.1,
+          elapsedMilliseconds: 10,
+          estimatedRemainingMilliseconds: 90,
+          maximumChunkMilliseconds: 5,
+        }),
+        subscribe: () => () => undefined,
+        cancel: vi.fn(),
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Reset Save' }))
+    const dialog = screen.getByRole('alertdialog', { name: 'Reset Save?' })
+    expect(dialog).toHaveTextContent(
+      'Resetting now will cancel the current Offline Time simulation without spending its Offline Time.',
+    )
+    expect(resetSave).not.toHaveBeenCalled()
+
+    await user.click(within(dialog).getByRole('button', { name: 'Reset Save' }))
+    await waitFor(() => expect(resetSave).toHaveBeenCalledOnce())
   })
 
   test('resets through the supplied runtime operation and reports success', async () => {
@@ -742,8 +1109,8 @@ function renderSettings(
             previewImportSaveText={vi.fn()}
             importSaveFile={vi.fn()}
             importSaveText={vi.fn()}
-            readSaveText={vi.fn().mockResolvedValue(null)}
-            downloadSave={vi.fn()}
+            readSaveExport={vi.fn().mockResolvedValue(null)}
+            downloadSaveText={vi.fn()}
             copySaveText={vi.fn()}
             development={development}
             {...overrides}
@@ -752,4 +1119,12 @@ function renderSettings(
       </NumberNotationProvider>
     </LocalePreferenceProvider>,
   )
+}
+
+function deferred<T>() {
+  let resolve!: (value: T) => void
+  const promise = new Promise<T>((resolvePromise) => {
+    resolve = resolvePromise
+  })
+  return { promise, resolve }
 }

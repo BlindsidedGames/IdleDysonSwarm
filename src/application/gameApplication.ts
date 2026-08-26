@@ -175,6 +175,19 @@ export class TransactionalGameApplication<TState, TCommand>
     })
   }
 
+  /**
+   * Captures one validated, immutable save candidate without entering the
+   * persistence lane. This is intentionally read-only: save transfer can use
+   * it while a detached Stored Time worker owns the serialized commit lane.
+   */
+  capturePreparedSave(): PreparedSave | null {
+    const ready = this.readySnapshot()
+    if (ready === undefined) return null
+    return this.requireSession().prepare(
+      this.requireEngine().snapshot().state,
+    )
+  }
+
   dispatchCommitFirst(
     envelope: ApplicationCommandEnvelope<TCommand>,
     purpose: CommitFirstPurpose,

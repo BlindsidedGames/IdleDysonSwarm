@@ -422,7 +422,6 @@ describe('frontend gameplay snapshot', () => {
     expect(snapshot.resources.time).toEqual({
       storedTimeAvailableSeconds: 91.25,
       storedTimeCapacitySeconds: 120,
-      doubleTimeBankSeconds: 17.5,
     })
     expect(snapshot.progression.dyson.facilities).toEqual(
       state.dyson.facilities,
@@ -840,8 +839,8 @@ describe('frontend gameplay snapshot', () => {
     const simulations = snapshot.derived.simulations
     const expectedProduction = deriveCanonicalDreamDerivedFacts(state, {
       effectiveDoubleTimeMultiplier: 1,
-      doubleTimeActive: state.timeline.doubleTime.enabled,
-      doubleTimeRate: state.timeline.doubleTime.rate,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
     })
 
     expect(simulations.live).toMatchObject({
@@ -944,6 +943,164 @@ describe('frontend gameplay snapshot', () => {
       minimumPosition: Math.log10(2),
       maximumPosition: Math.log10(1_101),
       currentPosition: Math.log10(6),
+    })
+
+    const stableGuidance = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        infinity: {
+          ...source.infinity,
+          automaticResetEnabled: false,
+          currentCyclePeakIpPerMinute: 74_208.1448,
+          currentCyclePeakReward: 164n,
+        },
+        quantum: {
+          ...source.quantum,
+          unlocks: {
+            ...source.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+      },
+      frontendContext(),
+    )
+
+    expect(stableGuidance.derived.infinity).toMatchObject({
+      peakIpPerMinute: 74_208.1448,
+      peakReward: 164n,
+    })
+
+    const improvedGuidance = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        infinity: {
+          ...source.infinity,
+          automaticResetEnabled: false,
+          currentCyclePeakIpPerMinute: 76_000,
+          currentCyclePeakReward: 164n,
+        },
+        quantum: {
+          ...source.quantum,
+          unlocks: {
+            ...source.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+      },
+      frontendContext(),
+    )
+
+    expect(improvedGuidance.derived.infinity).toMatchObject({
+      peakIpPerMinute: 76_000,
+      peakReward: 164n,
+    })
+
+    const activeAutomationPeak = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        infinity: {
+          ...source.infinity,
+          automaticResetEnabled: true,
+          breakTarget: 83n,
+          currentCyclePeakIpPerMinute: 74_208.1448,
+          currentCyclePeakReward: 82n,
+          manualPeakIpPerMinute: 71_500,
+          manualPeakReward: 80n,
+        },
+        statistics: {
+          ...source.statistics,
+          recentInfinityCycles: [
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 5_000n,
+              durationSeconds: 0.1,
+              processingSource: 'stored-time',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 4_000n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 200,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 500n,
+              reward: 500n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 83n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 83n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: false,
+              configuredTarget: 80n,
+              reward: 80n,
+              durationSeconds: 1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+          ],
+          recentActiveAutomaticInfinityCycles: [
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 83n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+            {
+              breakInfinity: true,
+              automatic: true,
+              configuredTarget: 83n,
+              reward: 83n,
+              durationSeconds: 0.1,
+              processingSource: 'active',
+              activeIntervalMilliseconds: 33,
+            },
+          ],
+        },
+        quantum: {
+          ...source.quantum,
+          unlocks: {
+            ...source.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+      },
+      frontendContext(),
+    )
+
+    expect(activeAutomationPeak.derived.infinity).toMatchObject({
+      currentIpPerMinute: 49_800,
+      peakIpPerMinute: 71_500,
+      peakReward: 80n,
     })
 
     const warning = selectFrontendGameplaySnapshot(
@@ -1607,8 +1764,8 @@ describe('frontend gameplay snapshot', () => {
     )
     const expectedDream = deriveCanonicalDreamDerivedFacts(state, {
       effectiveDoubleTimeMultiplier: 1,
-      doubleTimeActive: state.timeline.doubleTime.enabled,
-      doubleTimeRate: state.timeline.doubleTime.rate,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
     })
 
     expect(expectedDyson.ok).toBe(true)
@@ -1687,7 +1844,7 @@ describe('frontend gameplay snapshot', () => {
     }
   })
 
-  test('publishes current wall-clock Dream rates at the selected Double Time multiplier', () => {
+  test('ignores retired Double Time bank and rate fields in Dream previews', () => {
     const source = fixtureState()
     const boosted: CanonicalGameStateV1 = {
       ...source,
@@ -1705,7 +1862,7 @@ describe('frontend gameplay snapshot', () => {
     const snapshot = selectFrontendGameplaySnapshot(boosted, frontendContext())
 
     expect(snapshot.derived.dream.productionBasis).toBe('current-rate')
-    expect(snapshot.derived.dream.effectiveDoubleTimeMultiplier).toBe(9)
+    expect(snapshot.derived.dream.effectiveDoubleTimeMultiplier).toBe(1)
     expect(snapshot.derived.dream.result.ok).toBe(true)
     expect(baseline.derived.dream.result.ok).toBe(true)
     if (
@@ -1717,7 +1874,7 @@ describe('frontend gameplay snapshot', () => {
         .cyclesPerSecond,
     ).toBeCloseTo(
       baseline.derived.dream.result.value.spaceAge.production.spaceFactory
-        .cyclesPerSecond * 9,
+        .cyclesPerSecond,
     )
   })
 
@@ -1921,8 +2078,7 @@ describe('frontend command envelopes', () => {
   ])('rejects invalid optimistic revisions %#', (revision) => {
     expect(() =>
       createFrontendCommandEnvelope(revision, {
-        kind: 'time.set-double-time-rate',
-        rate: 2,
+        kind: 'time.upgrade-stored-capacity',
       }),
     ).toThrow(/revision must be a non-negative safe integer/)
   })

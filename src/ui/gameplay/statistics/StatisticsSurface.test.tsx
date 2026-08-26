@@ -61,6 +61,12 @@ describe('StatisticsSurface', () => {
     expect(
       screen.getByRole('heading', { name: 'Current Quantum run' }),
     ).toBeVisible()
+    const offlineTime = screen
+      .getByRole('heading', { name: 'Offline Time' })
+      .closest('section')
+    expect(offlineTime).not.toBeNull()
+    expect(within(offlineTime as HTMLElement).getByText('1h 1m 1s')).toBeVisible()
+    expect(within(offlineTime as HTMLElement).getByText('10m 0s')).toBeVisible()
     const currentRun = screen
       .getByRole('heading', { name: 'Current Quantum run' })
       .closest('article')
@@ -279,6 +285,10 @@ function renderStatistics(
           activePanels: 2.96e58,
           starsSurrounded: 1.48e54,
           galaxiesEngulfed: 1.48e43,
+        }}
+        offlineTimeUsage={{
+          storedTimeUsedThisCycleSeconds: 3_661,
+          storedTimeUsedPreviousCycleSeconds: 600,
         }}
         visibility={visibility}
       />

@@ -12,6 +12,9 @@ import type {
   UiRuntimeImportPreview,
   UiRuntimeImportPreviewResult,
   UiRuntimeImportResult,
+  UiRuntimePlayerCommandResult,
+  UiRuntimeSaveExportSnapshot,
+  UiRuntimeStoredTimeControls,
   UiRuntimeSuppliedFile,
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
@@ -51,9 +54,10 @@ export interface SettingsSurfaceProps {
   readonly previewImportSaveText: (
     text: string,
   ) => Promise<UiRuntimeImportPreviewResult>
-  readonly readSaveText: () => Promise<string | null>
-  readonly downloadSave: () => Promise<boolean>
+  readonly readSaveExport: () => Promise<UiRuntimeSaveExportSnapshot | null>
+  readonly downloadSaveText: (text: string) => Promise<boolean>
   readonly copySaveText: (text: string) => Promise<void>
+  readonly storedTime?: UiRuntimeStoredTimeControls
   readonly development?: UiRuntimeDevelopmentControls
   readonly developmentOnly?: boolean
   readonly visualizationVisible?: boolean
@@ -71,6 +75,11 @@ export interface SettingsSurfaceProps {
     includeText: boolean,
   ) => void
   readonly audio?: GameAudioService
+  readonly processingIntervalMilliseconds?: number
+  readonly processingIntervalAvailable?: boolean
+  readonly onProcessingIntervalChange?: (
+    milliseconds: number,
+  ) => void | Promise<UiRuntimePlayerCommandResult | void>
 }
 
 const NAVIGATION_SHORTCUTS = [
@@ -121,9 +130,10 @@ export function SettingsSurface({
   importSaveText,
   previewImportSaveFile,
   previewImportSaveText,
-  readSaveText,
-  downloadSave,
+  readSaveExport,
+  downloadSaveText,
   copySaveText,
+  storedTime,
   development,
   developmentOnly = false,
   visualizationVisible = true,
@@ -134,6 +144,9 @@ export function SettingsSurface({
   bottomNavigationIncludeText = false,
   onBottomNavigationIncludeTextChange = () => undefined,
   audio,
+  processingIntervalMilliseconds = 33,
+  processingIntervalAvailable = true,
+  onProcessingIntervalChange = () => undefined,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
   const language = useLocalePreference()
@@ -151,6 +164,8 @@ export function SettingsSurface({
   const [importPreviewStatus, setImportPreviewStatus] =
     useState<ImportPreviewStatus>('idle')
   const [exportText, setExportText] = useState('')
+  const [exportBasis, setExportBasis] =
+    useState<UiRuntimeSaveExportSnapshot['basis']>('current')
   const [selectedImport, setSelectedImport] =
     useState<UiRuntimeSuppliedFile | null>(null)
   const [
@@ -166,6 +181,16 @@ export function SettingsSurface({
   const [developmentPanelOpen, setDevelopmentPanelOpen] =
     useState(developmentOnly)
   const [dialog, setDialog] = useState<SaveDialog | null>(null)
+  const [processingIntervalDraft, setProcessingIntervalDraft] = useState(
+    processingIntervalMilliseconds,
+  )
+  const processingIntervalDraftRef = useRef(processingIntervalMilliseconds)
+  const processingIntervalPropRef = useRef(processingIntervalMilliseconds)
+  const processingIntervalInteractionRef = useRef(false)
+  const processingIntervalRequestRef = useRef(0)
+  const processingIntervalPendingValueRef = useRef<number | null>(null)
+  const processingIntervalCommitTimerRef = useRef<number | null>(null)
+  const processingIntervalMountedRef = useRef(true)
   const surfaceRef = useRef<HTMLDivElement>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
   const returnFocusRef = useRef<HTMLButtonElement | null>(null)
@@ -182,6 +207,100 @@ export function SettingsSurface({
     exportStatus === 'pending'
   const operationPendingRef = useRef(operationPending)
   operationPendingRef.current = operationPending
+
+  useEffect(() => {
+    processingIntervalPropRef.current = processingIntervalMilliseconds
+    if (
+      !processingIntervalInteractionRef.current &&
+      processingIntervalPendingValueRef.current === null
+    ) {
+      processingIntervalDraftRef.current = processingIntervalMilliseconds
+      setProcessingIntervalDraft(processingIntervalMilliseconds)
+    }
+  }, [processingIntervalMilliseconds])
+
+  const previewProcessingInterval = (milliseconds: number): void => {
+    processingIntervalDraftRef.current = milliseconds
+    setProcessingIntervalDraft(milliseconds)
+  }
+
+  const cancelScheduledProcessingIntervalCommit = (): void => {
+    if (processingIntervalCommitTimerRef.current === null) return
+    window.clearTimeout(processingIntervalCommitTimerRef.current)
+    processingIntervalCommitTimerRef.current = null
+  }
+
+  const commitProcessingInterval = (): void => {
+    cancelScheduledProcessingIntervalCommit()
+    const milliseconds = processingIntervalDraftRef.current
+    if (processingIntervalPendingValueRef.current !== null) return
+    if (
+      milliseconds === processingIntervalPropRef.current
+    ) return
+    const request = processingIntervalRequestRef.current + 1
+    processingIntervalRequestRef.current = request
+    processingIntervalPendingValueRef.current = milliseconds
+    let dispatched: void | Promise<UiRuntimePlayerCommandResult | void>
+    try {
+      dispatched = onProcessingIntervalChange(milliseconds)
+    } catch {
+      processingIntervalPendingValueRef.current = null
+      previewProcessingInterval(processingIntervalPropRef.current)
+      return
+    }
+    void Promise.resolve(dispatched)
+      .then((result) => {
+        if (
+          !processingIntervalMountedRef.current ||
+          processingIntervalRequestRef.current !== request
+        ) return
+        processingIntervalPendingValueRef.current = null
+        if (
+          result !== undefined &&
+          result.status !== 'accepted'
+        ) {
+          previewProcessingInterval(processingIntervalPropRef.current)
+          return
+        }
+        processingIntervalPropRef.current = milliseconds
+        if (
+          !processingIntervalInteractionRef.current &&
+          processingIntervalDraftRef.current !== milliseconds
+        ) {
+          commitProcessingInterval()
+        }
+      })
+      .catch(() => {
+        if (
+          !processingIntervalMountedRef.current ||
+          processingIntervalRequestRef.current !== request
+        ) return
+        processingIntervalPendingValueRef.current = null
+        previewProcessingInterval(processingIntervalPropRef.current)
+      })
+  }
+
+  const scheduleProcessingIntervalCommit = (): void => {
+    cancelScheduledProcessingIntervalCommit()
+    if (processingIntervalInteractionRef.current) return
+    processingIntervalCommitTimerRef.current = window.setTimeout(() => {
+      processingIntervalCommitTimerRef.current = null
+      commitProcessingInterval()
+    }, 200)
+  }
+
+  useEffect(() => {
+    processingIntervalMountedRef.current = true
+    return () => {
+      processingIntervalMountedRef.current = false
+      processingIntervalRequestRef.current += 1
+      processingIntervalPendingValueRef.current = null
+      if (processingIntervalCommitTimerRef.current !== null) {
+        window.clearTimeout(processingIntervalCommitTimerRef.current)
+        processingIntervalCommitTimerRef.current = null
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (dialog === null) return undefined
@@ -206,7 +325,10 @@ export function SettingsSurface({
       : transferTextRef.current
     initialFocus?.focus()
     const handleKeyDown = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape' && !operationPendingRef.current) {
+      if (
+        event.key === 'Escape' &&
+        (!operationPendingRef.current || dialog === 'export')
+      ) {
         event.preventDefault()
         setDialog(null)
         return
@@ -321,14 +443,16 @@ export function SettingsSurface({
     setImportStatus('idle')
     setExportStatus('pending')
     setExportText('')
+    setExportBasis('current')
     setDialog('export')
     try {
-      const text = await readSaveText()
-      if (text === null) {
+      const exported = await readSaveExport()
+      if (exported === null) {
         setExportStatus('failed')
         return
       }
-      setExportText(text)
+      setExportText(exported.text)
+      setExportBasis(exported.basis)
       setExportStatus('ready')
     } catch {
       setExportStatus('failed')
@@ -351,7 +475,7 @@ export function SettingsSurface({
     setExportStatus('pending')
     try {
       setExportStatus(
-        (await downloadSave()) ? 'downloaded' : 'failed',
+        (await downloadSaveText(exportText)) ? 'downloaded' : 'failed',
       )
     } catch {
       setExportStatus('failed')
@@ -495,6 +619,66 @@ export function SettingsSurface({
                   {intl.formatMessage(messages.numberNotationEngineering)}
                 </option>
               </select>
+            </label>
+          </section>
+        ) : null}
+        {!developmentOnly ? (
+          <section className="settings-surface__panel settings-surface__panel--processing">
+            <div className="settings-surface__copy">
+              <h2>{intl.formatMessage(messages.processingTitle)}</h2>
+              <p>{intl.formatMessage(messages.processingDescription)}</p>
+            </div>
+            <label className="settings-surface__processing-control">
+              <span className="settings-surface__processing-label">
+                {intl.formatMessage(messages.processingInterval)}
+              </span>
+              <span className="settings-surface__processing-value">
+                {intl.formatMessage(messages.processingIntervalValue, {
+                  milliseconds: processingIntervalDraft,
+                })}
+              </span>
+              <input
+                type="range"
+                min={33}
+                max={200}
+                step={1}
+                value={processingIntervalDraft}
+                aria-label={intl.formatMessage(messages.processingInterval)}
+                aria-valuetext={intl.formatMessage(
+                  messages.processingIntervalValue,
+                  { milliseconds: processingIntervalDraft },
+                )}
+                disabled={!processingIntervalAvailable}
+                style={{
+                  '--settings-processing-progress': `${((processingIntervalDraft - 33) / 167) * 100}%`,
+                } as CSSProperties}
+                onChange={(event) => {
+                  const milliseconds = event.currentTarget.valueAsNumber
+                  previewProcessingInterval(milliseconds)
+                  scheduleProcessingIntervalCommit()
+                }}
+                onPointerDown={() => {
+                  cancelScheduledProcessingIntervalCommit()
+                  processingIntervalInteractionRef.current = true
+                }}
+                onPointerUp={() => {
+                  processingIntervalInteractionRef.current = false
+                  commitProcessingInterval()
+                }}
+                onPointerCancel={() => {
+                  processingIntervalInteractionRef.current = false
+                  commitProcessingInterval()
+                }}
+                onKeyUp={(event) => {
+                  if (isProcessingIntervalCommitKey(event.key)) {
+                    commitProcessingInterval()
+                  }
+                }}
+                onBlur={() => {
+                  processingIntervalInteractionRef.current = false
+                  commitProcessingInterval()
+                }}
+              />
             </label>
           </section>
         ) : null}
@@ -826,6 +1010,11 @@ export function SettingsSurface({
                     : messages.exportDescription,
               )}
             </p>
+            {dialog === 'reset' &&
+            storedTime !== undefined &&
+            storedTime.status().kind !== 'idle' ? (
+              <p>{intl.formatMessage(messages.resetStoredTimeWarning)}</p>
+            ) : null}
             {dialog === 'import' ? (
               importPreview === null ? <div className="settings-surface__transfer">
                 <label htmlFor="settings-import-save-text">
@@ -906,11 +1095,24 @@ export function SettingsSurface({
                     </div>
                   </dl>
                   <p>{intl.formatMessage(messages.importPreviewWarning)}</p>
+                  {storedTime !== undefined &&
+                  storedTime.status().kind !== 'idle' ? (
+                    <p>
+                      {intl.formatMessage(
+                        messages.importPreviewStoredTimeWarning,
+                      )}
+                    </p>
+                  ) : null}
                 </div>
               )
             ) : null}
             {dialog === 'export' ? (
               <div className="settings-surface__transfer">
+                {exportBasis === 'pre-stored-time' ? (
+                  <p className="settings-surface__dialog-feedback" role="status">
+                    {intl.formatMessage(messages.exportPreStoredTime)}
+                  </p>
+                ) : null}
                 <label htmlFor="settings-export-save-text">
                   {intl.formatMessage(messages.exportStringLabel)}
                 </label>
@@ -971,7 +1173,7 @@ export function SettingsSurface({
               <button
                 ref={cancelRef}
                 type="button"
-                disabled={operationPending}
+                disabled={dialog === 'export' ? false : operationPending}
                 onClick={() => setDialog(null)}
               >
                 {intl.formatMessage(
@@ -1044,6 +1246,17 @@ export function SettingsSurface({
       ) : null}
     </div>
   )
+}
+
+function isProcessingIntervalCommitKey(key: string): boolean {
+  return key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'ArrowUp' ||
+    key === 'ArrowDown' ||
+    key === 'PageUp' ||
+    key === 'PageDown' ||
+    key === 'Home' ||
+    key === 'End'
 }
 
 function AudioSettingsPanel({ audio }: { readonly audio: GameAudioService }) {

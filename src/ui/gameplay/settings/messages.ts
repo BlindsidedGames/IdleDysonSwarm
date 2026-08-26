@@ -94,6 +94,26 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Engineering',
     description: 'Engineering number notation option.',
   },
+  processingTitle: {
+    id: 'settings.processing.title',
+    defaultMessage: 'Game processing',
+    description: 'Heading for active game processing preferences.',
+  },
+  processingDescription: {
+    id: 'settings.processing.description',
+    defaultMessage: 'Choose how often the game updates. Larger intervals use less processing power but reduce automation accuracy.',
+    description: 'Explains the active update interval performance and accuracy tradeoff.',
+  },
+  processingInterval: {
+    id: 'settings.processing.interval',
+    defaultMessage: 'Update interval',
+    description: 'Label for the active game update interval control.',
+  },
+  processingIntervalValue: {
+    id: 'settings.processing.interval-value',
+    defaultMessage: '{milliseconds} ms',
+    description: 'Current active game update interval.',
+  },
   audioTitle: {
     id: 'settings.audio.title',
     defaultMessage: 'Audio',
@@ -308,6 +328,20 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Importing will replace your current progress.',
     description: 'Final warning below a validated save progress preview.',
   },
+  importPreviewStoredTimeWarning: {
+    id: 'settings.save-data.import-preview-stored-time-warning',
+    defaultMessage:
+      'Importing now will cancel the current Offline Time simulation without spending its Offline Time.',
+    description:
+      'Additional import confirmation warning while Stored Time processing is active.',
+  },
+  resetStoredTimeWarning: {
+    id: 'settings.save-data.reset-stored-time-warning',
+    defaultMessage:
+      'Resetting now will cancel the current Offline Time simulation without spending its Offline Time.',
+    description:
+      'Additional reset confirmation warning while Stored Time processing is active.',
+  },
   importPreviewFailed: {
     id: 'settings.save-data.import-preview-failed',
     defaultMessage: 'This save could not be read. Your current progress was kept.',
@@ -351,6 +385,13 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage:
       'Copy this save string somewhere safe, or download it as a file.',
     description: 'Explains the available save export formats.',
+  },
+  exportPreStoredTime: {
+    id: 'settings.save-data.export-pre-stored-time',
+    defaultMessage:
+      'Stored Time is still processing. This export is the complete save from immediately before that simulation began.',
+    description:
+      'Explains that an export captured during active Stored Time is the immutable pre-simulation save.',
   },
   exportStringLabel: {
     id: 'settings.save-data.export-string-label',

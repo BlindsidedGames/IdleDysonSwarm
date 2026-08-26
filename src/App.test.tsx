@@ -737,7 +737,6 @@ function readySnapshot(): FrontendApplicationSnapshot {
         time: {
           storedTimeAvailableSeconds: 1_800,
           storedTimeCapacitySeconds: 3_600,
-          doubleTimeBankSeconds: 0,
         },
       },
       progression: {

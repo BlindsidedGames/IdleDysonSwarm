@@ -58,18 +58,6 @@ export interface StoredTimeCapacityUpgradeResult extends StoredTimeRepairResult 
   readonly maximumReached: boolean
 }
 
-export interface DreamDoubleTimeTick {
-  readonly active: boolean
-  readonly effectiveMultiplier: number
-  readonly bankConsumedSeconds: number
-  readonly rate: number
-}
-
-export interface CompletedDreamDoubleTimeTick {
-  readonly bankSeconds: number
-  readonly enabled: boolean
-}
-
 /**
  * Resolves Unity's away-time source selection without relying on host-specific
  * Date parsing. Callers parse persisted strings and pass the outcome explicitly.
@@ -163,9 +151,8 @@ export function repairStoredTimeState(
 }
 
 /**
- * Applies both returned-time resources in Unity order. Oracle.Persistence
- * first credits the whole clamped away duration to Dream Double Time, then
- * OfflineProgressSystem credits the portion admitted to stored time again.
+ * Credits returned time to the single Stored Time bank. The retired Dream
+ * Double Time bank is always cleared by the processing rewrite.
  */
 export function applyAwayTimeGrant(
   request: AwayTimeGrantRequest,
@@ -177,10 +164,6 @@ export function applyAwayTimeGrant(
       : 0
   const cheater = repaired.cheater || request.awaySeconds < 0
 
-  let dreamDoubleTimeBankSeconds = Math.min(
-    STORED_TIME_MAXIMUM_SECONDS,
-    addContinuous(request.dreamDoubleTimeBankSeconds, awaySeconds),
-  )
   const availableCapacity = Math.max(
     0,
     repaired.capacitySeconds - repaired.bankSeconds,
@@ -194,20 +177,12 @@ export function applyAwayTimeGrant(
       ? repaired.capacitySeconds
       : addContinuous(repaired.bankSeconds, storedTimeCreditedSeconds)
 
-  dreamDoubleTimeBankSeconds = Math.min(
-    STORED_TIME_MAXIMUM_SECONDS,
-    addContinuous(
-      clampContinuous(dreamDoubleTimeBankSeconds),
-      storedTimeCreditedSeconds,
-    ),
-  )
-
   return {
     ...repaired,
     bankSeconds,
     cheater,
     storedTimeCreditedSeconds,
-    dreamDoubleTimeBankSeconds,
+    dreamDoubleTimeBankSeconds: 0,
   }
 }
 
@@ -246,82 +221,9 @@ export function upgradeStoredTimeCapacity(
   }
 }
 
-/**
- * Prepares one Dream production interval. Bank debit occurs after the interval.
- */
-export function prepareDreamDoubleTimeTick(
-  owned: boolean,
-  bankSeconds: number,
-  rate: number,
-  tickSeconds: number,
-): DreamDoubleTimeTick {
-  const safeRate = clampDoubleTimeRate(rate)
-  if (
-    !owned ||
-    !Number.isFinite(bankSeconds) ||
-    bankSeconds <= 0 ||
-    !Number.isFinite(tickSeconds) ||
-    tickSeconds <= 0
-  ) {
-    return {
-      active: false,
-      effectiveMultiplier: 1,
-      bankConsumedSeconds: 0,
-      rate: safeRate,
-    }
-  }
-  if (safeRate === 0) {
-    return {
-      active: true,
-      effectiveMultiplier: 1,
-      bankConsumedSeconds: 0,
-      rate: safeRate,
-    }
-  }
-
-  const requestedBankSeconds = safeRate * tickSeconds
-  const bankConsumedSeconds = Math.min(bankSeconds, requestedBankSeconds)
-  return {
-    active: true,
-    effectiveMultiplier:
-      bankConsumedSeconds >= requestedBankSeconds
-        ? 1 + safeRate
-        : Math.min(
-            1 + safeRate,
-            1 + bankConsumedSeconds / tickSeconds,
-          ),
-    bankConsumedSeconds,
-    rate: safeRate,
-  }
-}
-
-/**
- * Completes the deferred Double Time debit and derives the saved enabled flag.
- */
-export function completeDreamDoubleTimeTick(
-  owned: boolean,
-  bankSeconds: number,
-  tick: DreamDoubleTimeTick,
-): CompletedDreamDoubleTimeTick {
-  const safeBank = Number.isFinite(bankSeconds) ? Math.max(0, bankSeconds) : 0
-  const remaining = Math.max(
-    0,
-    safeBank - Math.min(safeBank, tick.bankConsumedSeconds),
-  )
-  return {
-    bankSeconds: remaining,
-    enabled: owned && remaining > 0,
-  }
-}
-
 export function clampDoubleTimeRate(rate: number): number {
   if (!Number.isFinite(rate)) return 0
   return Math.max(0, Math.min(10, Math.trunc(rate)))
-}
-
-function clampContinuous(value: number): number {
-  if (value === Number.POSITIVE_INFINITY) return Number.MAX_VALUE
-  return Number.isFinite(value) && value >= 0 ? value : 0
 }
 
 function assertFiniteTimestamp(value: number, field: string): void {

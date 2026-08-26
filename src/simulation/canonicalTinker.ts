@@ -1,5 +1,5 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
-import { addContinuous } from './numeric'
+import { addContinuous, multiplyContinuous } from './numeric'
 
 const MINIMUM_TINKER_COOLDOWN_SECONDS = 0.01
 const STARTING_PROGRESS_SECONDS = 0.1
@@ -249,6 +249,75 @@ export function advanceCanonicalTinker(
   let completions = 0
 
   while (active.running && remaining >= 0) {
+    const stableRepeatCooldown = active.repeat
+      ? stableRepeatTinkerCooldown(candidate, active)
+      : null
+    if (stableRepeatCooldown !== null) {
+      const available = addContinuous(active.elapsedSeconds, remaining)
+      const bulkCompletions = Math.min(
+        Number.MAX_SAFE_INTEGER,
+        Math.floor(
+          (available + TINKER_TIME_EPSILON_SECONDS) /
+            stableRepeatCooldown,
+        ),
+      )
+      if (bulkCompletions > 0) {
+        const manual = active.effectiveManualLabour
+        if (manual) {
+          const granted = multiplyContinuous(
+            stats.assemblyYield,
+            bulkCompletions,
+          )
+          candidate = {
+            ...candidate,
+            dyson: {
+              ...candidate.dyson,
+              facilities: {
+                ...candidate.dyson.facilities,
+                assembly_lines: [
+                  addContinuous(
+                    candidate.dyson.facilities.assembly_lines[0],
+                    granted,
+                  ),
+                  candidate.dyson.facilities.assembly_lines[1],
+                ],
+              },
+              manualCreationIntervalSeconds:
+                MANUAL_LABOUR_COOLDOWN_SECONDS,
+            },
+          }
+          assemblyLinesGranted = addContinuous(
+            assemblyLinesGranted,
+            granted,
+          )
+        } else {
+          candidate = {
+            ...candidate,
+            dyson: {
+              ...candidate.dyson,
+              bots: addContinuous(candidate.dyson.bots, bulkCompletions),
+              manualCreationIntervalSeconds: BOT_MINIMUM_COOLDOWN_SECONDS,
+            },
+          }
+          botsGranted = addContinuous(botsGranted, bulkCompletions)
+        }
+        completions = Math.min(
+          Number.MAX_SAFE_INTEGER,
+          completions + bulkCompletions,
+        )
+        active = {
+          ...active,
+          cycleId: nextCycleId(active.cycleId),
+          elapsedSeconds: Math.max(
+            0,
+            available - bulkCompletions * stableRepeatCooldown,
+          ),
+          cooldownSeconds: stableRepeatCooldown,
+        }
+        remaining = 0
+        break
+      }
+    }
     const rawUntilCompletion = Math.max(
       0,
       active.cooldownSeconds - active.elapsedSeconds,
@@ -343,6 +412,20 @@ export function advanceCanonicalTinker(
     assemblyLinesGranted,
     completions,
   }
+}
+
+function stableRepeatTinkerCooldown(
+  state: Readonly<CanonicalGameStateV1>,
+  runtime: Readonly<CanonicalTinkerRuntimeState>,
+): number | null {
+  if (!runtime.repeat || !runtime.running) return null
+  if (runtime.effectiveManualLabour) {
+    return MANUAL_LABOUR_COOLDOWN_SECONDS
+  }
+  return state.dyson.manualCreationIntervalSeconds <=
+    BOT_MINIMUM_COOLDOWN_SECONDS
+    ? BOT_MINIMUM_COOLDOWN_SECONDS
+    : null
 }
 
 function synchronizeRuntime(

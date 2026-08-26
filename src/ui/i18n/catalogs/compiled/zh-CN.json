@@ -477,6 +477,36 @@
       "value": "分配未更改。"
     }
   ],
+  "dyson.bot-distribution.multitasking-efficiency": [
+    {
+      "type": 8,
+      "value": "workers",
+      "children": [
+        {
+          "type": 0,
+          "value": "工人"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "和"
+    },
+    {
+      "type": 8,
+      "value": "science",
+      "children": [
+        {
+          "type": 0,
+          "value": "科研"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "效率均为 100%"
+    }
+  ],
   "dyson.bot-distribution.scientists": [
     {
       "type": 0,
@@ -2237,12 +2267,6 @@
       "value": "全部切换"
     }
   ],
-  "dyson.simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "时间倍率"
-    }
-  ],
   "dyson.swarm.region": [
     {
       "type": 0,
@@ -2381,6 +2405,12 @@
     {
       "type": 0,
       "value": "开启"
+    }
+  ],
+  "infinity.automatic-target-warning": [
+    {
+      "type": 0,
+      "value": "此目标远高于你的手动无限推荐值。"
     }
   ],
   "infinity.break-target": [
@@ -2540,7 +2570,7 @@
   "infinity.rate.peak": [
     {
       "type": 0,
-      "value": "峰值："
+      "value": "推荐："
     },
     {
       "type": 1,
@@ -2941,6 +2971,18 @@
       "value": "百科"
     }
   ],
+  "offline-time.accuracy-preset": [
+    {
+      "type": 0,
+      "value": "模拟精度"
+    }
+  ],
+  "offline-time.accurate-preset": [
+    {
+      "type": 0,
+      "value": "精确"
+    }
+  ],
   "offline-time.action-failed": [
     {
       "type": 0,
@@ -2951,6 +2993,12 @@
     {
       "type": 0,
       "value": "全部"
+    }
+  ],
+  "offline-time.balanced-preset": [
+    {
+      "type": 0,
+      "value": "均衡"
     }
   ],
   "offline-time.calculating": [
@@ -2991,16 +3039,16 @@
       "value": "capacity"
     }
   ],
+  "offline-time.close-summary": [
+    {
+      "type": 0,
+      "value": "继续"
+    }
+  ],
   "offline-time.confirm-spend": [
     {
       "type": 0,
       "value": "再次点击以确认"
-    }
-  ],
-  "offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "本次无限"
     }
   ],
   "offline-time.disabled": [
@@ -3032,13 +3080,19 @@
   "offline-time.explanation": [
     {
       "type": 0,
-      "value": "离开游戏时会储存离线时间。消耗它可立即推进整个游戏。此储存与模拟中的双倍时间相互独立。"
+      "value": "离开游戏时会储存离线时间。你可以选择何时消耗它来推进游戏。"
+    }
+  ],
+  "offline-time.fast-preset": [
+    {
+      "type": 0,
+      "value": "快速"
     }
   ],
   "offline-time.large-spend-disclosure": [
     {
       "type": 0,
-      "value": "少量消耗会重放每次自动化周期。大量消耗会执行最多 4,096 次代表性购买决策，同时推进连续生产；省略的周期不会购买。结果可能与完整重放不同，将同一段时间拆分多次消耗也可能改变结果。"
+      "value": "时间步长越大，模拟精度越低。"
     }
   ],
   "offline-time.maximum-storage": [
@@ -3065,16 +3119,22 @@
       "value": "1 分钟"
     }
   ],
-  "offline-time.previous-infinity": [
+  "offline-time.preparing": [
     {
       "type": 0,
-      "value": "上次无限"
+      "value": "正在准备模拟…"
     }
   ],
   "offline-time.processing": [
     {
       "type": 0,
       "value": "模拟中…"
+    }
+  ],
+  "offline-time.processing-heading": [
+    {
+      "type": 0,
+      "value": "正在处理离线时间"
     }
   ],
   "offline-time.progress": [
@@ -3095,26 +3155,38 @@
       "value": "。"
     }
   ],
+  "offline-time.progress-announcement": [
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% 已完成"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
       "value": "离线时间"
     }
   ],
-  "offline-time.selected-amount": [
+  "offline-time.simulation-complete": [
     {
       "type": 0,
-      "value": "已选择："
-    },
-    {
-      "type": 1,
-      "value": "duration"
+      "value": "离线时间处理完成"
     }
   ],
   "offline-time.simulation-progress": [
     {
       "type": 0,
       "value": "离线时间模拟进度"
+    }
+  ],
+  "offline-time.speed-up": [
+    {
+      "type": 0,
+      "value": "加速"
     }
   ],
   "offline-time.spend": [
@@ -3149,20 +3221,6 @@
       "value": "消耗离线时间"
     }
   ],
-  "offline-time.spend-success": [
-    {
-      "type": 0,
-      "value": "游戏已推进 "
-    },
-    {
-      "type": 1,
-      "value": "duration"
-    },
-    {
-      "type": 0,
-      "value": "。"
-    }
-  ],
   "offline-time.storage-progress": [
     {
       "type": 0,
@@ -3175,16 +3233,110 @@
       "value": "已储存离线时间"
     }
   ],
+  "offline-time.summary.bots": [
+    {
+      "type": 0,
+      "value": "获得的机器人"
+    }
+  ],
+  "offline-time.summary.group.facilities": [
+    {
+      "type": 0,
+      "value": "获得的设施"
+    }
+  ],
+  "offline-time.summary.group.infinity": [
+    {
+      "type": 0,
+      "value": "无限"
+    }
+  ],
+  "offline-time.summary.group.reality": [
+    {
+      "type": 0,
+      "value": "现实"
+    }
+  ],
+  "offline-time.summary.group.simulations": [
+    {
+      "type": 0,
+      "value": "模拟"
+    }
+  ],
+  "offline-time.summary.infinities": [
+    {
+      "type": 0,
+      "value": "完成的无限"
+    }
+  ],
+  "offline-time.summary.infinity-points": [
+    {
+      "type": 0,
+      "value": "获得的无限点数"
+    }
+  ],
+  "offline-time.summary.influence": [
+    {
+      "type": 0,
+      "value": "获得的影响力"
+    }
+  ],
+  "offline-time.summary.no-major-changes": [
+    {
+      "type": 0,
+      "value": "没有重大进度变化。"
+    }
+  ],
+  "offline-time.summary.reality-workers": [
+    {
+      "type": 0,
+      "value": "创建的现实工人"
+    }
+  ],
+  "offline-time.summary.reduced-accuracy": [
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": "（已加速）"
+    }
+  ],
+  "offline-time.summary.simulation-resets": [
+    {
+      "type": 0,
+      "value": "模拟重置"
+    }
+  ],
+  "offline-time.summary.simulation-updates": [
+    {
+      "type": 0,
+      "value": "模拟更新次数"
+    }
+  ],
+  "offline-time.summary.strange-matter": [
+    {
+      "type": 0,
+      "value": "获得的奇异物质"
+    }
+  ],
   "offline-time.ten-minutes": [
     {
       "type": 0,
       "value": "10 分钟"
     }
   ],
-  "offline-time.usage-heading": [
+  "offline-time.time-remaining": [
     {
       "type": 0,
-      "value": "已使用离线时间"
+      "value": "剩余离线时间"
+    }
+  ],
+  "offline-time.time-simulated": [
+    {
+      "type": 0,
+      "value": "已模拟时间"
     }
   ],
   "pwa.update.accept": [
@@ -4410,7 +4562,7 @@
   "reality.upgrades.double-time.description": [
     {
       "type": 0,
-      "value": "离线时积累时间，在线时消耗。"
+      "value": "使整个游戏永久以 2 倍速度运行。"
     }
   ],
   "reality.upgrades.double-time.title": [
@@ -5707,6 +5859,34 @@
       "value": "数字表示法"
     }
   ],
+  "settings.processing.description": [
+    {
+      "type": 0,
+      "value": "选择游戏更新频率。较大的间隔会降低处理负载，但也会降低自动化精度。"
+    }
+  ],
+  "settings.processing.interval": [
+    {
+      "type": 0,
+      "value": "更新间隔"
+    }
+  ],
+  "settings.processing.interval-value": [
+    {
+      "type": 1,
+      "value": "milliseconds"
+    },
+    {
+      "type": 0,
+      "value": " 毫秒"
+    }
+  ],
+  "settings.processing.title": [
+    {
+      "type": 0,
+      "value": "游戏处理"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -5779,6 +5959,12 @@
       "value": "正在准备存档字符串…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "储存时间仍在处理中。此导出包含该模拟开始前一刻的完整存档。"
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +6035,12 @@
     {
       "type": 0,
       "value": "技能点"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "现在导入将取消当前的离线时间模拟，且不会消耗其离线时间。"
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +6119,12 @@
     {
       "type": 0,
       "value": "正在重置…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "现在重置将取消当前的离线时间模拟，且不会消耗其离线时间。"
     }
   ],
   "settings.save-data.reset-succeeded": [
@@ -6403,12 +6601,6 @@
     {
       "type": 0,
       "value": "这个时代尚无可用面板。"
-    }
-  ],
-  "simulations.offline-time": [
-    {
-      "type": 0,
-      "value": "离线时间"
     }
   ],
   "simulations.panel.advanced-physics": [
@@ -6929,12 +7121,6 @@
       "value": "购买数量"
     }
   ],
-  "simulations.purchase-settings": [
-    {
-      "type": 0,
-      "value": "购买设置"
-    }
-  ],
   "simulations.region": [
     {
       "type": 0,
@@ -6959,26 +7145,6 @@
     {
       "type": 1,
       "value": "value"
-    }
-  ],
-  "simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "时间倍率"
-    }
-  ],
-  "simulations.time-multiplier.speed-increase": [
-    {
-      "type": 0,
-      "value": "模拟速度提高 "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
     }
   ],
   "simulations.unavailable": [
@@ -10185,6 +10351,24 @@
       "value": "无"
     }
   ],
+  "statistics.offline-time": [
+    {
+      "type": 0,
+      "value": "离线时间"
+    }
+  ],
+  "statistics.offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "当前无限"
+    }
+  ],
+  "statistics.offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "上一次无限"
+    }
+  ],
   "statistics.other-stats": [
     {
       "type": 0,
@@ -11894,10 +12078,34 @@
       "value": "版本 3.1.2"
     }
   ],
+  "wiki.patch-notes.version-3-1-2.double-time": [
+    {
+      "type": 0,
+      "value": "双倍时间现在会永久让所有游戏系统以正常速度的两倍运行。"
+    }
+  ],
   "wiki.patch-notes.version-3-1-2.languages": [
     {
       "type": 0,
       "value": "新增完整的法语、德语、拉丁美洲西班牙语、巴西葡萄牙语、简体中文、俄语和日语翻译，并可根据设备语言自动选择，也可在“设置”中手动切换。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.offline-controls": [
+    {
+      "type": 0,
+      "value": "新增快速、平衡和精确离线时间预设、处理进度、加速、安全取消，以及每次运行后的完成摘要。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.processing": [
+    {
+      "type": 0,
+      "value": "主动游戏与离线时间现在使用同一套游戏模拟，在提升性能的同时，让永久收益和自动化在各次更新之间保持一致。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.update-interval": [
+    {
+      "type": 0,
+      "value": "新增 33–200 毫秒的游戏处理设置，玩家可在更精确的自动化与更低的设备负载之间选择。"
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [

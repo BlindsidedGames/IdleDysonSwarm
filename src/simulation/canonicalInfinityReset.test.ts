@@ -94,6 +94,10 @@ describe('canonical Infinity reset', () => {
         inProgress: true,
         botCapTransitionPending: true,
         botCapRewardsGranted: true,
+        currentCyclePeakIpPerMinute: 74_208.1448,
+        currentCyclePeakReward: 82n,
+        manualPeakIpPerMinute: 70_000,
+        manualPeakReward: 80n,
         retainedFacilities: {
           assembly_lines: true,
           ai_managers: false,
@@ -131,6 +135,8 @@ describe('canonical Infinity reset', () => {
         requestedReward: 2n,
         artifactSkillPoints: 4n,
         automatic: true,
+        processingSource: 'stored-time',
+        activeIntervalMilliseconds: 200,
       }),
     )
 
@@ -142,6 +148,10 @@ describe('canonical Infinity reset', () => {
     expect(result.state.infinity.storedTimeUsedThisCycleSeconds).toBe(0)
     expect(result.state.infinity.currentCyclePeakIpPerMinute).toBe(0)
     expect(result.state.infinity.currentCyclePeakReward).toBe(0n)
+    expect(result.state.infinity.manualPeakIpPerMinute).toBe(70_000)
+    expect(result.state.infinity.manualPeakReward).toBe(80n)
+    expect(result.state.infinity.manualCalibrationObservedActiveSeconds).toBe(0)
+    expect(result.state.infinity.activeAutomaticThroughputCycleEligible).toBe(false)
     expect(result.state.infinity.inProgress).toBe(false)
     expect(result.state.infinity.botCapTransitionPending).toBe(false)
     expect(result.state.infinity.botCapRewardsGranted).toBe(false)
@@ -153,6 +163,8 @@ describe('canonical Infinity reset', () => {
       configuredTarget: 2n,
       reward: 2n,
       durationSeconds: state.infinity.lastCycleDurationSeconds,
+      processingSource: 'stored-time',
+      activeIntervalMilliseconds: 200,
     })
 
     expect(result.state.dyson).toMatchObject({
@@ -260,6 +272,8 @@ describe('canonical Infinity reset', () => {
         ...source.infinity,
         points: DISCRETE_MAXIMUM - 2n,
         lastCycleDurationSeconds: 4.5,
+        currentCyclePeakIpPerMinute: 74_208.1448,
+        currentCyclePeakReward: 82n,
       },
       skills: {
         ...source.skills,
@@ -296,6 +310,9 @@ describe('canonical Infinity reset', () => {
     expect(result.rewardGranted).toBe(2n)
     expect(result.state.infinity.points).toBe(DISCRETE_MAXIMUM)
     expect(result.state.infinity.lastPointsGained).toBe(2)
+    expect(result.state.infinity.manualPeakIpPerMinute).toBe(74_208.1448)
+    expect(result.state.infinity.manualPeakReward).toBe(82n)
+    expect(result.state.infinity.manualCalibrationObservedActiveSeconds).toBe(0)
     for (const totals of [
       statistics.lifetime,
       statistics.currentQuantumRun,
@@ -340,6 +357,92 @@ describe('canonical Infinity reset', () => {
       strangeMatter: 0n,
       realityWorkers: 0n,
     })
+  })
+
+  test('records throughput only after a wholly active automatic Break cycle', () => {
+    const source = baseState()
+    const mixed = requireSuccess(applyCanonicalInfinityReset({
+      ...source,
+      infinity: {
+        ...source.infinity,
+        lastCycleDurationSeconds: 5,
+        activeAutomaticThroughputCycleEligible: false,
+      },
+    }, {
+      breakInfinity: true,
+      requestedReward: 83n,
+      artifactSkillPoints: 0n,
+      automatic: true,
+      processingSource: 'active',
+      activeIntervalMilliseconds: 33,
+    }))
+
+    expect(mixed.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([])
+    expect(mixed.state.infinity.activeAutomaticThroughputCycleEligible)
+      .toBe(true)
+
+    const clean = requireSuccess(applyCanonicalInfinityReset({
+      ...mixed.state,
+      infinity: {
+        ...mixed.state.infinity,
+        lastCycleDurationSeconds: 0.1,
+      },
+    }, {
+      breakInfinity: true,
+      requestedReward: 83n,
+      artifactSkillPoints: 0n,
+      automatic: true,
+      processingSource: 'active',
+      activeIntervalMilliseconds: 33,
+    }))
+
+    expect(clean.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual([{
+        breakInfinity: true,
+        automatic: true,
+        configuredTarget: source.infinity.breakTarget,
+        reward: 83n,
+        durationSeconds: 0.1,
+        processingSource: 'active',
+        activeIntervalMilliseconds: 33,
+      }])
+  })
+
+  test('Stored Time history cannot evict active automatic throughput samples', () => {
+    const source = baseState()
+    const activeHistory = Array.from({ length: 10 }, (_, index) => ({
+      breakInfinity: true,
+      automatic: true,
+      configuredTarget: 83n,
+      reward: 83n,
+      durationSeconds: 0.1 + index / 100,
+      processingSource: 'active' as const,
+      activeIntervalMilliseconds: 33,
+    }))
+    const result = requireSuccess(applyCanonicalInfinityReset({
+      ...source,
+      infinity: {
+        ...source.infinity,
+        activeAutomaticThroughputCycleEligible: true,
+      },
+      statistics: {
+        ...source.statistics,
+        recentActiveAutomaticInfinityCycles: activeHistory,
+      },
+    }, {
+      breakInfinity: true,
+      requestedReward: 500n,
+      artifactSkillPoints: 0n,
+      automatic: true,
+      processingSource: 'stored-time',
+      activeIntervalMilliseconds: 33,
+    }))
+
+    expect(result.state.statistics.recentActiveAutomaticInfinityCycles)
+      .toEqual(activeHistory)
+    expect(result.state.infinity.activeAutomaticThroughputCycleEligible)
+      .toBe(false)
   })
 
   test('uses exported requirements in deterministic multi-pass order and rebuilds fragment state', () => {

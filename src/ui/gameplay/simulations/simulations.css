@@ -105,6 +105,45 @@
   block-size: 0;
 }
 
+.simulations-purchase-quantity {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  inline-size: min(100%, 86rem);
+  box-sizing: border-box;
+  gap: 0.3rem;
+  margin-inline: auto;
+  margin-block-end: var(--game-card-grid-gap);
+  padding: 0.4rem;
+  border: 1px solid var(--simulations-time-border);
+  border-radius: 0.3rem;
+  background: var(--simulations-time-background);
+}
+
+.simulations-purchase-quantity button {
+  min-block-size: var(--target-minimum);
+  border: 1px solid var(--simulations-slider-track);
+  border-radius: 0.25rem;
+  background: var(--simulations-slider-track);
+  color: white;
+  font: inherit;
+  font-size: calc(0.78rem * var(--game-text-scale));
+  cursor: pointer;
+}
+
+.simulations-purchase-quantity button[aria-pressed="true"] {
+  border-color: var(--simulations-slider-accent);
+  background: color-mix(
+    in srgb,
+    var(--simulations-slider-accent) 34%,
+    var(--simulations-slider-track)
+  );
+}
+
+.simulations-purchase-quantity button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .simulation-category {
   display: grid;
   inline-size: min(100%, 86rem);
@@ -476,26 +515,6 @@
   gap: 0.22rem;
 }
 
-.simulation-time-control { border-block-start-width: 1px; }
-.simulation-time-control .ui-progress-controls-panel__collapsed { block-size: auto; min-block-size: 2.875rem; }
-.simulation-time-control .ui-progress-controls-panel__body { padding: .2rem 0; }
-.simulation-time-control__summary { display: grid; gap: .08rem; min-inline-size: 0; }
-.simulation-time-control__header { display: flex; justify-content: space-between; gap: .6rem; align-items: center; }
-.simulation-time-control__header > span { margin-inline-start: auto; }
-.simulation-time-control__rate { display: grid; grid-template-columns: auto minmax(5rem, 1fr); gap: .55rem; align-items: center; font-size: .78rem; }
-.simulation-time-control input { appearance: none; inline-size: 100%; block-size: var(--target-minimum); margin: 0; background: transparent; cursor: pointer; touch-action: pan-y; }
-.simulation-time-control input::-webkit-slider-runnable-track { block-size: .42rem; border: 1px solid rgb(0 0 0 / 44%); border-radius: 999px; background: var(--simulation-slider-track, #152337); box-shadow: inset 0 .08rem .15rem rgb(0 0 0 / 32%); }
-.simulation-time-control input::-webkit-slider-thumb { appearance: none; inline-size: 1rem; block-size: 1rem; margin-block-start: -.34rem; border: 2px solid color-mix(in srgb, var(--simulation-slider-accent, #91b7d6) 72%, white); border-radius: 50%; background: var(--simulation-slider-accent, #91b7d6); box-shadow: 0 .08rem .18rem rgb(0 0 0 / 45%); }
-.simulation-time-control input::-moz-range-track { block-size: .42rem; border: 1px solid rgb(0 0 0 / 44%); border-radius: 999px; background: var(--simulation-slider-track, #152337); box-shadow: inset 0 .08rem .15rem rgb(0 0 0 / 32%); }
-.simulation-time-control input::-moz-range-progress { block-size: .42rem; border-radius: 999px; background: var(--simulation-slider-accent, #91b7d6); }
-.simulation-time-control input::-moz-range-thumb { inline-size: .9rem; block-size: .9rem; border: 2px solid color-mix(in srgb, var(--simulation-slider-accent, #91b7d6) 72%, white); border-radius: 50%; background: var(--simulation-slider-accent, #91b7d6); box-shadow: 0 .08rem .18rem rgb(0 0 0 / 45%); }
-.simulation-time-control input:focus-visible { outline: 3px solid var(--color-focus); outline-offset: .18rem; border-radius: .3rem; }
-.simulation-time-control input:disabled { cursor: not-allowed; opacity: .48; }
-
-.simulation-time-control__purchase-settings { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .25rem; padding-block-start: .2rem; }
-.simulation-time-control__purchase-settings button { min-block-size: var(--target-minimum); border: 1px solid rgb(0 0 0 / 44%); border-radius: .2rem; background: var(--simulation-slider-track, #152337); color: white; font: inherit; font-size: .78rem; }
-.simulation-time-control__purchase-settings button[aria-pressed="true"] { border-color: var(--simulation-slider-accent, #91b7d6); background: color-mix(in srgb, var(--simulation-slider-accent, #91b7d6) 34%, var(--simulation-slider-track, #152337)); }
-.simulation-time-control__settings-toggle:focus-visible, .simulation-time-control__purchase-settings button:focus-visible { outline: 3px solid var(--color-focus); outline-offset: .18rem; }
 
 .simulation-progress {
   position: relative;

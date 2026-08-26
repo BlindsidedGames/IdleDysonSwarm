@@ -15,7 +15,7 @@ import {
   type BotCapCheckpointName,
 } from '../simulation/canonicalBotCapCheckpoint'
 import { parseUnityInvariantUtcTimestamp } from '../simulation/unityUtcTimestamp'
-import type { ParsedUtcTimestamp } from '../simulation/timeResources'
+import { applyAwayTimeGrant, type ParsedUtcTimestamp } from '../simulation/timeResources'
 import type {
   ApplicationCommandEnvelope,
   ApplicationSnapshot,
@@ -48,18 +48,13 @@ export interface CanonicalLifecycleApplicationPort {
   advanceActiveWithContinuation(
     milliseconds: number,
   ): CanonicalActiveAdvanceResult
+  advanceActiveContinuousWithContinuation(
+    milliseconds: number,
+  ): CanonicalActiveAdvanceResult
   dispatchPlayer(
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalPlayerDispatchResult>
-  commitStoredTime(
-    envelope: Pick<
-      ApplicationCommandEnvelope<unknown>,
-      'sessionRevision' | 'expectedStateRevision'
-    >,
-    seconds: number,
-    cancelRequested?: () => boolean,
-  ): Promise<CanonicalStoredTimeCommitResult>
   commitAwayReplacement(
     envelope: Pick<
       ApplicationCommandEnvelope<unknown>,
@@ -201,21 +196,33 @@ export type CanonicalCoordinatedPlayerResult =
   | {
       readonly kind: 'stored-time'
       readonly result: CanonicalCoordinatedStoredTimeResult
-      readonly checkpoints: readonly BotCapCheckpointName[]
     }
 
-export interface CanonicalCoordinatedStoredTimeResult {
-  readonly status: 'complete' | 'partial' | 'failed'
+interface CanonicalCoordinatedStoredTimeResultBase {
   /** Duration admitted after clamping the player request to the current bank. */
   readonly admittedSeconds: number
-  /** Sum of every segment that was durably committed. */
+  /** The full admitted duration, or zero when the atomic commit fails. */
   readonly consumedSeconds: number
   readonly remainingSeconds: number
   readonly durableRevision: number | null
   readonly transition: SimulationTransitionResult
-  readonly code?: string
-  readonly reason?: string
 }
+
+export type CanonicalCoordinatedStoredTimeResult =
+  CanonicalCoordinatedStoredTimeResultBase & (
+    | {
+        readonly status: 'complete'
+        readonly summary: Extract<
+          CanonicalStoredTimeCommitResult,
+          { committed: true }
+        >['summary']
+      }
+    | {
+        readonly status: 'failed'
+        readonly code?: string
+        readonly reason?: string
+      }
+  )
 
 export type CanonicalCoordinatedImportResult =
   | {
@@ -244,8 +251,8 @@ export class CanonicalLifecycleCoordinatorClosedError extends Error {
  * Owns host lifecycle routing and every persistence-sensitive continuation.
  *
  * A frontend dispatches player intent and active wall time through this
- * boundary. Away replacement, bot-cap checkpoint commands, and stored-time
- * continuation remain privileged application operations.
+ * boundary. Away replacement and active bot-cap checkpoint commands remain
+ * privileged application operations. Stored Time commits atomically.
  */
 export class CanonicalLifecycleCoordinator {
   private readonly application: CanonicalLifecycleApplicationPort
@@ -387,8 +394,89 @@ export class CanonicalLifecycleCoordinator {
     )
   }
 
+  async advanceActiveContinuous(
+    milliseconds: number,
+  ): Promise<CanonicalCoordinatedActiveResult> {
+    return this.enqueue(() =>
+      this.advanceActiveUnqueued(milliseconds, 'continuous'),
+    )
+  }
+
+  async creditVisibleHibernation(
+    milliseconds: number,
+  ): Promise<CanonicalAwayReplayResult> {
+    return this.enqueue(async () => {
+      const snapshot = this.application.snapshot()
+      if (
+        snapshot.phase !== 'ready' ||
+        !Number.isFinite(milliseconds) ||
+        milliseconds <= 0
+      ) {
+        return {
+          replayed: false,
+          committed: false,
+          code: 'not-ready',
+        }
+      }
+      const runtime = cloneCanonicalRuntimeState(
+        snapshot.state as CanonicalRuntimeState,
+      )
+      const grant = applyAwayTimeGrant({
+        awaySeconds:
+          (milliseconds / 1000) *
+          (runtime.gameState.skills.byId.idleElectricSheep?.owned === true
+            ? 2
+            : 1),
+        bankSeconds:
+          runtime.gameState.timeline.storedTimeAvailableSeconds,
+        capacitySeconds:
+          runtime.gameState.timeline.storedTimeCapacitySeconds,
+        cheater: runtime.storedTimeCheater,
+        dreamDoubleTimeBankSeconds: 0,
+      })
+      const candidate = {
+        ...runtime,
+        storedTimeCheater: grant.cheater,
+        gameState: {
+          ...runtime.gameState,
+          timeline: {
+            ...runtime.gameState.timeline,
+            storedTimeAvailableSeconds: grant.bankSeconds,
+            storedTimeCapacitySeconds: grant.capacitySeconds,
+            doubleTime: {
+              ...runtime.gameState.timeline.doubleTime,
+              enabled: false,
+              bankSeconds: 0,
+              rate: 0,
+            },
+          },
+        },
+      }
+      const committed = await this.application.commitAwayReplacement(
+        revisionEnvelope(snapshot),
+        candidate,
+      )
+      return committed.committed
+        ? {
+            replayed: true,
+            committed: true,
+            grantedSeconds: milliseconds / 1000,
+            storedTimeCreditedSeconds: grant.storedTimeCreditedSeconds,
+            timestampConsumed: false,
+            durableRevision: committed.durableRevision,
+          }
+        : {
+            replayed: false,
+            committed: false,
+            code: 'commit-failed',
+            reason: committed.reason,
+          }
+    })
+  }
+
   private async advanceActiveUnqueued(
     milliseconds: number,
+    mode: 'ordinary' | 'continuous' = 'ordinary',
   ): Promise<CanonicalCoordinatedActiveResult> {
     if (!Number.isFinite(milliseconds) || milliseconds < 0) {
       const transition = rejectedTransition(
@@ -412,10 +500,13 @@ export class CanonicalLifecycleCoordinator {
       unchangedTransition(this.application.snapshot())
 
     while (remainingMilliseconds > TIME_EPSILON) {
-      const advance =
-        this.application.advanceActiveWithContinuation(
-          remainingMilliseconds,
-        )
+      const advance = mode === 'continuous'
+        ? this.application.advanceActiveContinuousWithContinuation(
+            remainingMilliseconds,
+          )
+        : this.application.advanceActiveWithContinuation(
+            remainingMilliseconds,
+          )
       transition = advance.transition
       consumedMilliseconds += advance.consumedMilliseconds
       remainingMilliseconds = advance.remainingMilliseconds
@@ -688,51 +779,11 @@ export class CanonicalLifecycleCoordinator {
     )
     if (dispatched.kind === 'transition') return dispatched
 
-    let result = dispatched.result
+    const result = dispatched.result
     const admittedSeconds =
       result.consumedSeconds + result.remainingSeconds
-    let consumedSeconds =
+    const consumedSeconds =
       result.committed ? result.consumedSeconds : 0
-    const checkpoints: BotCapCheckpointName[] = []
-    while (
-      result.committed &&
-      result.continuation.kind ===
-        'bot-cap-persistence-required'
-    ) {
-      const settlement = await this.settleBotCap(
-        result.continuation.checkpoint,
-      )
-      checkpoints.push(...settlement.checkpoints)
-      if (!settlement.settled) {
-        result = failedStoredTimeContinuation(
-          result.remainingSeconds,
-          settlement.code,
-          settlement.reason,
-          this.application.snapshot(),
-        )
-        break
-      }
-      if (result.remainingSeconds <= TIME_EPSILON) break
-      const revision = readyRevision(this.application.snapshot())
-      if (revision === undefined) {
-        result = failedStoredTimeContinuation(
-          result.remainingSeconds,
-          'APP-NOT-READY',
-          'The application became unavailable during stored-time continuation.',
-          this.application.snapshot(),
-        )
-        break
-      }
-      result = await this.application.commitStoredTime(
-        revision,
-        result.remainingSeconds,
-        cancelRequested,
-      )
-      if (result.committed) {
-        consumedSeconds += result.consumedSeconds
-      }
-    }
-
     const remainingSeconds = Math.max(
       0,
       admittedSeconds - consumedSeconds,
@@ -742,21 +793,28 @@ export class CanonicalLifecycleCoordinator {
       finalSnapshot.phase === 'ready'
         ? finalSnapshot.revision.durable
         : null
+    const common = {
+      admittedSeconds,
+      consumedSeconds,
+      remainingSeconds,
+      durableRevision,
+      transition: result.transition,
+    }
+    if (result.committed && remainingSeconds <= TIME_EPSILON) {
+      return {
+        kind: 'stored-time',
+        result: {
+          ...common,
+          status: 'complete',
+          summary: result.summary,
+        },
+      }
+    }
     return {
       kind: 'stored-time',
       result: {
-        status:
-          result.committed &&
-          remainingSeconds <= TIME_EPSILON
-            ? 'complete'
-            : consumedSeconds > TIME_EPSILON
-              ? 'partial'
-              : 'failed',
-        admittedSeconds,
-        consumedSeconds,
-        remainingSeconds,
-        durableRevision,
-        transition: result.transition,
+        ...common,
+        status: 'failed',
         ...(result.committed
           ? {}
           : {
@@ -764,7 +822,6 @@ export class CanonicalLifecycleCoordinator {
               reason: result.reason,
             }),
       },
-      checkpoints: Object.freeze([...checkpoints]),
     }
   }
 
@@ -1100,14 +1157,6 @@ function revisionEnvelope(
   }
 }
 
-function readyRevision(
-  snapshot: ApplicationSnapshot<CanonicalRuntimeState>,
-): ReturnType<typeof revisionEnvelope> | undefined {
-  return snapshot.phase === 'ready'
-    ? revisionEnvelope(snapshot)
-    : undefined
-}
-
 function requiredBotCapCheckpoint(
   snapshot: ApplicationSnapshot<CanonicalRuntimeState>,
 ): BotCapCheckpointName | undefined {
@@ -1143,21 +1192,5 @@ function rejectedTransition(
     reason,
     revision:
       snapshot.phase === 'ready' ? snapshot.revision.state : 0,
-  }
-}
-
-function failedStoredTimeContinuation(
-  remainingSeconds: number,
-  code: string,
-  reason: string,
-  snapshot: ApplicationSnapshot<CanonicalRuntimeState>,
-): CanonicalStoredTimeCommitResult {
-  return {
-    committed: false,
-    transition: rejectedTransition(snapshot, code, reason),
-    consumedSeconds: 0,
-    remainingSeconds,
-    code,
-    reason,
   }
 }

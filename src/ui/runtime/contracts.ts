@@ -1,3 +1,5 @@
+import type { StoredTimeCompletionSummary } from '../../core/storedTimeCompletionSummary'
+
 export type UiRuntimeWarningCode =
   | 'backup-recovered'
   | 'persistent-storage-denied'
@@ -146,6 +148,7 @@ export type UiRuntimePlayerCommandResult =
       readonly consumedSeconds: number
       readonly remainingSeconds: number
       readonly durableRevision: number | null
+      readonly summary: StoredTimeCompletionSummary
       readonly stateRevision: number
       readonly activationRevision: UiRuntimeCommandActivationRevision
     }
@@ -243,6 +246,12 @@ export interface UiRuntimeStoredTimeControls {
   status(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
   subscribe(listener: () => void): () => void
   cancel(): void
+  speedUp?(): void
+}
+
+export interface UiRuntimeSaveExportSnapshot {
+  readonly text: string
+  readonly basis: 'current' | 'pre-stored-time'
 }
 
 /**
@@ -282,7 +291,9 @@ export interface UiRuntimeFoundation<
   requestCheckpoint(): Promise<boolean>
   checkpointBeforeSafeReload(): Promise<boolean>
   recoveryExportAvailable(): boolean
+  readCurrentSaveExport(): Promise<UiRuntimeSaveExportSnapshot | null>
   readCurrentSaveText(): Promise<string | null>
+  downloadSaveText(text: string): Promise<boolean>
   exportCurrentSave(): Promise<boolean>
   exportLastRecovery(): Promise<boolean>
   copyLastRecovery(): Promise<boolean>

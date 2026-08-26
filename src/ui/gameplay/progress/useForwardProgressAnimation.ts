@@ -22,9 +22,9 @@ export interface ForwardProgressAnimationOptions {
 }
 
 /**
- * Reconciles to each canonical 10 Hz publication, then asks the browser's
- * animation compositor to present the expected next interval. No gameplay or
- * React state is advanced between publications.
+ * Reconciles to each canonical publication, then asks the browser's animation
+ * compositor to present the expected next interval. No gameplay or React state
+ * is advanced between publications.
  */
 export function useForwardProgressAnimation(
   elementRef: RefObject<HTMLElement | null>,

@@ -1,60 +1,39 @@
 import { describe, expect, test } from 'vitest'
 import {
-  STORED_TIME_AUTOMATIC_EXACT_BOUNDARY_LIMIT,
-  STORED_TIME_FAST_MAXIMUM_GROUPS,
   planStoredTimePolicy,
+  speedUpStoredTimeTicks,
 } from './storedTimePolicy'
 
-describe('Stored Time policy', () => {
-  test('keeps small requests exact', () => {
-    const plan = planStoredTimePolicy({
-      requestedSeconds: 60,
-      automationIntervalSeconds: 0.1,
-      automationTimeUntilNextEvent: 0.1,
-    })
-
-    expect(plan).toMatchObject({
-      executionKind: 'exact',
-      rawAutomationBoundaries: 600,
-      representativeAutomationBoundaries: 600,
-      omittedAutomationBoundaries: 0,
+describe('Stored Time coarse replay policy', () => {
+  test('uses nominal 50 ms updates while below the selected cap', () => {
+    expect(planStoredTimePolicy({
+      requestedSeconds: 10,
+      preset: 'fast',
+    })).toMatchObject({
+      nominalTicks: 200,
+      plannedTicks: 200,
+      initialStepSeconds: 0.05,
     })
   })
 
-  test('bounds the maximum bank independently of raw tick count', () => {
+  test.each([
+    ['fast', 5_000],
+    ['balanced', 100_000],
+    ['accurate', 1_000_000],
+  ] as const)('caps %s replay at %i updates', (preset, maximum) => {
     const plan = planStoredTimePolicy({
-      requestedSeconds: 42_000_000,
-      automationIntervalSeconds: 0.1,
-      automationTimeUntilNextEvent: 0.1,
+      requestedSeconds: 365 * 86_400,
+      preset,
     })
-
-    expect(plan.executionKind).toBe('representative-groups')
-    expect(plan.rawAutomationBoundaries).toBe(420_000_000)
-    expect(plan.groups).toHaveLength(STORED_TIME_FAST_MAXIMUM_GROUPS)
-    expect(plan.representativeAutomationBoundaries).toBe(4_096)
-    expect(plan.omittedAutomationBoundaries).toBe(419_995_904)
-    expect(
-      plan.groups.reduce((total, group) => total + group.logicalRawTicks, 0),
-    ).toBe(plan.rawAutomationBoundaries)
-    expect(
-      plan.groups.reduce((total, group) => total + group.durationSeconds, 0) +
-        plan.finalRemainderSeconds,
-    ).toBeCloseTo(42_000_000, 6)
+    expect(plan.plannedTicks).toBe(maximum)
+    expect(plan.initialStepSeconds).toBe(
+      plan.requestedSeconds / maximum,
+    )
   })
 
-  test('switches only after the automatic exact boundary limit', () => {
-    const exact = planStoredTimePolicy({
-      requestedSeconds: STORED_TIME_AUTOMATIC_EXACT_BOUNDARY_LIMIT,
-      automationIntervalSeconds: 1,
-      automationTimeUntilNextEvent: 1,
-    })
-    const fast = planStoredTimePolicy({
-      requestedSeconds: STORED_TIME_AUTOMATIC_EXACT_BOUNDARY_LIMIT + 1,
-      automationIntervalSeconds: 1,
-      automationTimeUntilNextEvent: 1,
-    })
-
-    expect(exact.executionKind).toBe('exact')
-    expect(fast.executionKind).toBe('representative-groups')
+  test('halves remaining updates without going below 500', () => {
+    expect(speedUpStoredTimeTicks(100_000)).toBe(50_000)
+    expect(speedUpStoredTimeTicks(501)).toBe(500)
+    expect(speedUpStoredTimeTicks(500)).toBe(500)
   })
 })

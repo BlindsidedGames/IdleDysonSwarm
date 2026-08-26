@@ -283,6 +283,10 @@
     "defaultMessage": "Distribution was not changed.",
     "description": "Failure feedback after a rejected allocation command."
   },
+  "dyson.bot-distribution.multitasking-efficiency": {
+    "defaultMessage": "<workers>Workers</workers> and <science>Science</science> efficiency at 100%",
+    "description": "Compact bot efficiency summary shown after Bot Multitasking is purchased. Workers and Science are separately color-coded."
+  },
   "dyson.bot-distribution.scientists": {
     "defaultMessage": "Scientists",
     "description": "Scientist side of the bot allocation slider."
@@ -935,10 +939,6 @@
     "defaultMessage": "Toggle All",
     "description": "Sets every visible Bots auto-purchase option together."
   },
-  "dyson.simulations.time-multiplier": {
-    "defaultMessage": "Time multiplier",
-    "description": "Accessible name for the Simulation time multiplier controls."
-  },
   "dyson.swarm.region": {
     "defaultMessage": "Dyson swarm",
     "description": "Accessible region name for the decorative Unity-style swarm visual."
@@ -1011,6 +1011,10 @@
     "defaultMessage": "On",
     "description": "Enabled state for automatic Infinity resets."
   },
+  "infinity.automatic-target-warning": {
+    "defaultMessage": "This target is far above your manual Infinity recommendation.",
+    "description": "Warns when the configured automatic Infinity target is at least three times the persisted manual-run recommendation."
+  },
   "infinity.break-target": {
     "defaultMessage": "Infinity Points before reset",
     "description": "Label for the Break Infinity reset target control."
@@ -1080,8 +1084,8 @@
     "description": "Current projected Infinity Point reward rate for this run."
   },
   "infinity.rate.peak": {
-    "defaultMessage": "Peak: {rate} IP/min at {reward} IP",
-    "description": "Best projected Infinity Point reward rate observed during this run."
+    "defaultMessage": "Recommended: {rate} IP/min at {reward} IP",
+    "description": "Stable current-run Infinity reward recommendation in the Infinity settings."
   },
   "infinity.region": {
     "defaultMessage": "Infinity",
@@ -1279,6 +1283,14 @@
     "defaultMessage": "Wiki",
     "description": "Unity Wiki destination."
   },
+  "offline-time.accuracy-preset": {
+    "defaultMessage": "Simulation accuracy",
+    "description": "Label for the Stored Time accuracy preset selector."
+  },
+  "offline-time.accurate-preset": {
+    "defaultMessage": "Accurate",
+    "description": "Highest-work Stored Time accuracy preset."
+  },
   "offline-time.action-failed": {
     "defaultMessage": "That action was not completed. Try again.",
     "description": "Failure feedback for Offline Time actions."
@@ -1286,6 +1298,10 @@
   "offline-time.all": {
     "defaultMessage": "All",
     "description": "Quick selection for all stored time."
+  },
+  "offline-time.balanced-preset": {
+    "defaultMessage": "Balanced",
+    "description": "Default Stored Time accuracy preset."
   },
   "offline-time.calculating": {
     "defaultMessage": "calculating",
@@ -1307,13 +1323,13 @@
     "defaultMessage": "{stored} of {capacity}",
     "description": "Stored Offline Time compared with its storage capacity."
   },
+  "offline-time.close-summary": {
+    "defaultMessage": "Continue",
+    "description": "Closes the completed Stored Time summary."
+  },
   "offline-time.confirm-spend": {
     "defaultMessage": "Tap again to confirm",
     "description": "Unity-style confirmation text before spending stored Offline Time."
-  },
-  "offline-time.current-infinity": {
-    "defaultMessage": "Current Infinity",
-    "description": "Label for Offline Time spent during the current Infinity."
   },
   "offline-time.disabled": {
     "defaultMessage": "Offline Time is disabled for this save.",
@@ -1328,12 +1344,16 @@
     "description": "Explains the Unity Offline Time capacity upgrade."
   },
   "offline-time.explanation": {
-    "defaultMessage": "Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time.",
-    "description": "Explains what stored Offline Time does and distinguishes it from Simulation Double Time."
+    "defaultMessage": "Offline Time is stored while you are away. Choose when to spend it to advance the game.",
+    "description": "Explains that Offline Time is stored and spent manually."
+  },
+  "offline-time.fast-preset": {
+    "defaultMessage": "Fast",
+    "description": "Lowest-work Stored Time accuracy preset."
   },
   "offline-time.large-spend-disclosure": {
-    "defaultMessage": "Small spends replay every automation tick. Large spends execute up to 4,096 representative purchase decisions while continuous production still advances; omitted ticks make no purchases. Results may differ from exact replay, and splitting the same time into multiple spends may change results.",
-    "description": "Discloses the automatic exact versus bounded Stored Time policy."
+    "defaultMessage": "Simulation becomes less accurate at larger time steps.",
+    "description": "Concise Stored Time accuracy disclosure."
   },
   "offline-time.maximum-storage": {
     "defaultMessage": "Maximum storage reached",
@@ -1351,29 +1371,41 @@
     "defaultMessage": "1 minute",
     "description": "Quick selection for one minute of stored time."
   },
-  "offline-time.previous-infinity": {
-    "defaultMessage": "Previous Infinity",
-    "description": "Label for Offline Time spent during the previous Infinity."
+  "offline-time.preparing": {
+    "defaultMessage": "Preparing simulation…",
+    "description": "Status shown while a Stored Time job is being admitted or finalized."
   },
   "offline-time.processing": {
     "defaultMessage": "Simulating…",
     "description": "Status while stored Offline Time is being processed."
   },
+  "offline-time.processing-heading": {
+    "defaultMessage": "Processing Offline Time",
+    "description": "Heading for the active Stored Time processing dialog."
+  },
   "offline-time.progress": {
     "defaultMessage": "{percent}% complete · about {eta} remaining",
     "description": "Progress and estimated remaining time for a Stored Time job."
+  },
+  "offline-time.progress-announcement": {
+    "defaultMessage": "{percent}% complete",
+    "description": "Coarsened screen-reader progress announcement for a Stored Time job."
   },
   "offline-time.region": {
     "defaultMessage": "Offline Time",
     "description": "Accessible name and heading for the stored Offline Time page."
   },
-  "offline-time.selected-amount": {
-    "defaultMessage": "Selected: {duration}",
-    "description": "The selected stored-time spend duration."
+  "offline-time.simulation-complete": {
+    "defaultMessage": "Offline Time Complete",
+    "description": "Heading and accessible name for the completed Stored Time summary."
   },
   "offline-time.simulation-progress": {
     "defaultMessage": "Offline Time simulation progress",
     "description": "Accessible label for Stored Time job progress."
+  },
+  "offline-time.speed-up": {
+    "defaultMessage": "Speed up",
+    "description": "Reduces the remaining Stored Time accuracy budget."
   },
   "offline-time.spend": {
     "defaultMessage": "Spend {duration}",
@@ -1391,10 +1423,6 @@
     "defaultMessage": "Spend Offline Time",
     "description": "Heading for stored-time spending controls."
   },
-  "offline-time.spend-success": {
-    "defaultMessage": "Advanced the game by {duration}.",
-    "description": "Confirmation after stored Offline Time is successfully spent."
-  },
   "offline-time.storage-progress": {
     "defaultMessage": "Offline Time storage",
     "description": "Accessible label for the Offline Time storage progress bar."
@@ -1403,13 +1431,73 @@
     "defaultMessage": "Stored Offline Time",
     "description": "Heading for the available stored-time balance."
   },
+  "offline-time.summary.bots": {
+    "defaultMessage": "Bots gained",
+    "description": "Stored Time completion result for net Bots gained without an Infinity."
+  },
+  "offline-time.summary.group.facilities": {
+    "defaultMessage": "Facilities gained",
+    "description": "Heading for facility gains in the Stored Time completion summary."
+  },
+  "offline-time.summary.group.infinity": {
+    "defaultMessage": "Infinity",
+    "description": "Heading for Infinity results in the Stored Time completion summary."
+  },
+  "offline-time.summary.group.reality": {
+    "defaultMessage": "Reality",
+    "description": "Heading for Reality results in the Stored Time completion summary."
+  },
+  "offline-time.summary.group.simulations": {
+    "defaultMessage": "Simulations",
+    "description": "Heading for Simulation results in the Stored Time completion summary."
+  },
+  "offline-time.summary.infinities": {
+    "defaultMessage": "Infinities completed",
+    "description": "Stored Time completion result for Infinity resets."
+  },
+  "offline-time.summary.infinity-points": {
+    "defaultMessage": "Infinity Points gained",
+    "description": "Stored Time completion result for earned Infinity Points."
+  },
+  "offline-time.summary.influence": {
+    "defaultMessage": "Influence gained",
+    "description": "Stored Time completion result for automatic Influence."
+  },
+  "offline-time.summary.no-major-changes": {
+    "defaultMessage": "No major progression changes.",
+    "description": "Stored Time completion result when no tracked progression changed."
+  },
+  "offline-time.summary.reality-workers": {
+    "defaultMessage": "Reality workers created",
+    "description": "Stored Time completion result for Reality workers."
+  },
+  "offline-time.summary.reduced-accuracy": {
+    "defaultMessage": "{preset} (sped up)",
+    "description": "Marks a Stored Time result whose update count was reduced with Speed Up."
+  },
+  "offline-time.summary.simulation-resets": {
+    "defaultMessage": "Simulation resets",
+    "description": "Stored Time completion result for Dream simulation resets."
+  },
+  "offline-time.summary.simulation-updates": {
+    "defaultMessage": "Simulation updates",
+    "description": "Actual number of authoritative game updates executed for a Stored Time spend."
+  },
+  "offline-time.summary.strange-matter": {
+    "defaultMessage": "Strange Matter gained",
+    "description": "Stored Time completion result for Strange Matter."
+  },
   "offline-time.ten-minutes": {
     "defaultMessage": "10 minutes",
     "description": "Quick selection for ten minutes of stored time."
   },
-  "offline-time.usage-heading": {
-    "defaultMessage": "Offline Time Used",
-    "description": "Heading for per-Infinity stored-time usage statistics."
+  "offline-time.time-remaining": {
+    "defaultMessage": "Offline Time remaining",
+    "description": "Completed Stored Time summary label for the remaining bank."
+  },
+  "offline-time.time-simulated": {
+    "defaultMessage": "Time simulated",
+    "description": "Completed Stored Time summary label for processed game time."
   },
   "pwa.update.accept": {
     "defaultMessage": "Save and update",
@@ -2140,7 +2228,7 @@
     "description": "Strange Matter cost for a Reality upgrade."
   },
   "reality.upgrades.double-time.description": {
-    "defaultMessage": "Gather time while offline, spend it while online.",
+    "defaultMessage": "Permanently runs the whole game at 2× speed.",
     "description": "Unity Reality upgrade description."
   },
   "reality.upgrades.double-time.title": {
@@ -2791,6 +2879,22 @@
     "defaultMessage": "Number notation",
     "description": "Heading for the device-local number notation preference."
   },
+  "settings.processing.description": {
+    "defaultMessage": "Choose how often the game updates. Larger intervals use less processing power but reduce automation accuracy.",
+    "description": "Explains the active update interval performance and accuracy tradeoff."
+  },
+  "settings.processing.interval": {
+    "defaultMessage": "Update interval",
+    "description": "Label for the active game update interval control."
+  },
+  "settings.processing.interval-value": {
+    "defaultMessage": "{milliseconds} ms",
+    "description": "Current active game update interval."
+  },
+  "settings.processing.title": {
+    "defaultMessage": "Game processing",
+    "description": "Heading for active game processing preferences."
+  },
   "settings.save-data.cancel": {
     "defaultMessage": "Cancel",
     "description": "Cancels a save reset."
@@ -2839,6 +2943,10 @@
     "defaultMessage": "Preparing save string…",
     "description": "Placeholder while the export string is prepared."
   },
+  "settings.save-data.export-pre-stored-time": {
+    "defaultMessage": "Stored Time is still processing. This export is the complete save from immediately before that simulation began.",
+    "description": "Explains that an export captured during active Stored Time is the immutable pre-simulation save."
+  },
   "settings.save-data.export-string-label": {
     "defaultMessage": "Save string",
     "description": "Label for the exported save string field."
@@ -2886,6 +2994,10 @@
   "settings.save-data.import-preview-skill-points": {
     "defaultMessage": "Skill Points",
     "description": "Skill Point balance in an imported save preview."
+  },
+  "settings.save-data.import-preview-stored-time-warning": {
+    "defaultMessage": "Importing now will cancel the current Offline Time simulation without spending its Offline Time.",
+    "description": "Additional import confirmation warning while Stored Time processing is active."
   },
   "settings.save-data.import-preview-title": {
     "defaultMessage": "Progress in this save",
@@ -2938,6 +3050,10 @@
   "settings.save-data.reset-pending": {
     "defaultMessage": "Resetting…",
     "description": "Pending reset-save button text."
+  },
+  "settings.save-data.reset-stored-time-warning": {
+    "defaultMessage": "Resetting now will cancel the current Offline Time simulation without spending its Offline Time.",
+    "description": "Additional reset confirmation warning while Stored Time processing is active."
   },
   "settings.save-data.reset-succeeded": {
     "defaultMessage": "Save reset. A fresh game has been created.",
@@ -3146,10 +3262,6 @@
   "simulations.empty": {
     "defaultMessage": "No panels are available in this era yet.",
     "description": "Fallback when an unlocked Simulation category has no panels."
-  },
-  "simulations.offline-time": {
-    "defaultMessage": "Offline time",
-    "description": "Stored offline time available to Simulation Double Time."
   },
   "simulations.panel.advanced-physics": {
     "defaultMessage": "Advanced Physics",
@@ -3401,7 +3513,7 @@
   },
   "simulations.progress.railgun-waiting": {
     "defaultMessage": "Waiting for charge or panels",
-    "description": "Railgun throughput status when no round launched during the latest fixed tick."
+    "description": "Railgun throughput status when no round launched during the latest gameplay update."
   },
   "simulations.progress.record-stored-panels": {
     "defaultMessage": "Record stored",
@@ -3427,10 +3539,6 @@
     "defaultMessage": "Purchase amount",
     "description": "Accessible label for the Space Age purchase amount options."
   },
-  "simulations.purchase-settings": {
-    "defaultMessage": "Purchase settings",
-    "description": "Opens the Space Age solar and fusion purchase amount options."
-  },
   "simulations.region": {
     "defaultMessage": "Simulations",
     "description": "Accessible name for the live Unity Simulations route."
@@ -3442,14 +3550,6 @@
   "simulations.summary.simulation": {
     "defaultMessage": "Simulation: {value}",
     "description": "Current Simulation run number."
-  },
-  "simulations.time-multiplier": {
-    "defaultMessage": "Time multiplier",
-    "description": "Simulation offline-time multiplier control."
-  },
-  "simulations.time-multiplier.speed-increase": {
-    "defaultMessage": "Simulation speed increased by {value}%",
-    "description": "Describes the additional Simulation speed applied by the Double Time rate slider."
   },
   "simulations.unavailable": {
     "defaultMessage": "Simulation data is temporarily unavailable.",
@@ -4455,6 +4555,18 @@
     "defaultMessage": "+600 seconds of Panel Lifetime.",
     "description": "Technical gameplay-effect description for the Shepherd Skill node."
   },
+  "skills.node.shoulderSurgery.description": {
+    "defaultMessage": "Transplanting these weird looking shoulders should be fine, right?",
+    "description": "Flavour description for the Shoulder Surgery Skill node."
+  },
+  "skills.node.shoulderSurgery.name": {
+    "defaultMessage": "Shoulder Surgery",
+    "description": "Display name for the Shoulder Surgery Skill node."
+  },
+  "skills.node.shoulderSurgery.technical": {
+    "defaultMessage": "Shoulders of the Fallen now also affect Pocket Dimensions.",
+    "description": "Technical gameplay-effect description for the Shoulder Surgery Skill node."
+  },
   "skills.node.shouldersOfGiants.description": {
     "defaultMessage": "You find an extinct civilization and learn from their mistakes.",
     "description": "Flavour description for the Shoulders of Giants Skill node."
@@ -4514,18 +4626,6 @@
   "skills.node.shouldersOfTheRevolution.technical": {
     "defaultMessage": "Gain 1% additional Cash per Science Boost.",
     "description": "Technical gameplay-effect description for the Shoulders of the Revolution Skill node."
-  },
-  "skills.node.shoulderSurgery.description": {
-    "defaultMessage": "Transplanting these weird looking shoulders should be fine, right?",
-    "description": "Flavour description for the Shoulder Surgery Skill node."
-  },
-  "skills.node.shoulderSurgery.name": {
-    "defaultMessage": "Shoulder Surgery",
-    "description": "Display name for the Shoulder Surgery Skill node."
-  },
-  "skills.node.shoulderSurgery.technical": {
-    "defaultMessage": "Shoulders of the Fallen now also affect Pocket Dimensions.",
-    "description": "Technical gameplay-effect description for the Shoulder Surgery Skill node."
   },
   "skills.node.solarBubbles.description": {
     "defaultMessage": "You noticed a significant efficiency potential. By introducing tiny condensed spheres (nicknamed bubbles) of solar energy, your panels in the pocket dimensions have something to do, resulting in a significant boost to production.",
@@ -4611,30 +4711,6 @@
     "defaultMessage": "Every second destroy Bots equal to Stars Surrounded and gain Planets equal to Log10(Stellar Galaxies Engulfed) ^ 2.\n\nA stellar galaxy is just a normal galaxy with stellar modifiers added.",
     "description": "Technical gameplay-effect description for the Stellar Sacrifices Skill node."
   },
-  "skills.node.superchargedPower.description": {
-    "defaultMessage": "Supercharge your power grid, drastically improving the performance of your empire!",
-    "description": "Flavour description for the Supercharged Power Skill node."
-  },
-  "skills.node.superchargedPower.name": {
-    "defaultMessage": "Supercharged Power",
-    "description": "Display name for the Supercharged Power Skill node."
-  },
-  "skills.node.superchargedPower.technical": {
-    "defaultMessage": "Boosts all Buildings, Cash, and Science by 50%",
-    "description": "Technical gameplay-effect description for the Supercharged Power Skill node."
-  },
-  "skills.node.supernova.description": {
-    "defaultMessage": "You discover a way to utilize supernovas to melt bots faster.",
-    "description": "Flavour description for the Supernova Skill node."
-  },
-  "skills.node.supernova.name": {
-    "defaultMessage": "Supernova",
-    "description": "Display name for the Supernova Skill node."
-  },
-  "skills.node.supernova.technical": {
-    "defaultMessage": "Stellar Sacrifices Galaxies are 1000x better. While Supernova is assigned, manually purchased buildings lose every production bonus including Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Unassigning Supernova restores the complete manual-purchase layer.",
-    "description": "Technical gameplay-effect description for the Supernova Skill node."
-  },
   "skills.node.superRadiantScattering.description": {
     "defaultMessage": "Scattering... Something... Causes a perpetually increasing value to affect everything you touch.",
     "description": "Flavour description for the Super-Radiant Scattering Skill node."
@@ -4658,6 +4734,30 @@
   "skills.node.superSwarm.technical": {
     "defaultMessage": "Increase the 1% production gain after 100 purchases to 2%",
     "description": "Technical gameplay-effect description for the Super Swarm Skill node."
+  },
+  "skills.node.superchargedPower.description": {
+    "defaultMessage": "Supercharge your power grid, drastically improving the performance of your empire!",
+    "description": "Flavour description for the Supercharged Power Skill node."
+  },
+  "skills.node.superchargedPower.name": {
+    "defaultMessage": "Supercharged Power",
+    "description": "Display name for the Supercharged Power Skill node."
+  },
+  "skills.node.superchargedPower.technical": {
+    "defaultMessage": "Boosts all Buildings, Cash, and Science by 50%",
+    "description": "Technical gameplay-effect description for the Supercharged Power Skill node."
+  },
+  "skills.node.supernova.description": {
+    "defaultMessage": "You discover a way to utilize supernovas to melt bots faster.",
+    "description": "Flavour description for the Supernova Skill node."
+  },
+  "skills.node.supernova.name": {
+    "defaultMessage": "Supernova",
+    "description": "Display name for the Supernova Skill node."
+  },
+  "skills.node.supernova.technical": {
+    "defaultMessage": "Stellar Sacrifices Galaxies are 1000x better. While Supernova is assigned, manually purchased buildings lose every production bonus including Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Unassigning Supernova restores the complete manual-purchase layer.",
+    "description": "Technical gameplay-effect description for the Supernova Skill node."
   },
   "skills.node.tasteOfPower.description": {
     "defaultMessage": "After getting your first taste of real power you crave more. Seek it out.",
@@ -4694,18 +4794,6 @@
   "skills.node.terraFirma.technical": {
     "defaultMessage": "Bought Planets also count towards Bought Data Centers.",
     "description": "Technical gameplay-effect description for the Terra Firma Skill node."
-  },
-  "skills.node.terraformingProtocols.description": {
-    "defaultMessage": "You find a fragment of another universe. You use this knowledge to discover new Planets, I wonder what other parts of this universe you can find?",
-    "description": "Flavour description for the Terraforming Protocols Skill node."
-  },
-  "skills.node.terraformingProtocols.name": {
-    "defaultMessage": "Terraforming Protocols",
-    "description": "Display name for the Terraforming Protocols Skill node."
-  },
-  "skills.node.terraformingProtocols.technical": {
-    "defaultMessage": "Assemble an additional Planet per second. Get an additional Planet for every other assigned Fragment Skill.",
-    "description": "Technical gameplay-effect description for the Terraforming Protocols Skill node."
   },
   "skills.node.terraGloriae.description": {
     "defaultMessage": "\"Glory to your planets\". The new galactic mega corporation motto, that surprisingly reduces the cost of getting more planets. Maybe you should come out with more of them.",
@@ -4766,6 +4854,18 @@
   "skills.node.terraNullius.technical": {
     "defaultMessage": "Bought Planets also count towards bought Assembly Lines.",
     "description": "Technical gameplay-effect description for the Terra Nullius Skill node."
+  },
+  "skills.node.terraformingProtocols.description": {
+    "defaultMessage": "You find a fragment of another universe. You use this knowledge to discover new Planets, I wonder what other parts of this universe you can find?",
+    "description": "Flavour description for the Terraforming Protocols Skill node."
+  },
+  "skills.node.terraformingProtocols.name": {
+    "defaultMessage": "Terraforming Protocols",
+    "description": "Display name for the Terraforming Protocols Skill node."
+  },
+  "skills.node.terraformingProtocols.technical": {
+    "defaultMessage": "Assemble an additional Planet per second. Get an additional Planet for every other assigned Fragment Skill.",
+    "description": "Technical gameplay-effect description for the Terraforming Protocols Skill node."
   },
   "skills.node.ultimateSwarm.description": {
     "defaultMessage": "Pushing the limits is what you do best.",
@@ -5422,6 +5522,18 @@
   "statistics.none": {
     "defaultMessage": "None",
     "description": "Empty state for a reached statistics group with no recorded activity."
+  },
+  "statistics.offline-time": {
+    "defaultMessage": "Offline Time",
+    "description": "Heading for per-Infinity Offline Time usage statistics."
+  },
+  "statistics.offline-time.current-infinity": {
+    "defaultMessage": "Current Infinity",
+    "description": "Offline Time spent during the current Infinity."
+  },
+  "statistics.offline-time.previous-infinity": {
+    "defaultMessage": "Previous Infinity",
+    "description": "Offline Time spent during the previous Infinity."
   },
   "statistics.other-stats": {
     "defaultMessage": "Other Stats",
@@ -6155,9 +6267,25 @@
     "defaultMessage": "Version 3.1.2",
     "description": "Version label for the latest Wiki patch notes."
   },
+  "wiki.patch-notes.version-3-1-2.double-time": {
+    "defaultMessage": "Double Time now permanently runs all game systems at twice their normal speed.",
+    "description": "Version 3.1.2 release note for permanent whole-game Double Time."
+  },
   "wiki.patch-notes.version-3-1-2.languages": {
     "defaultMessage": "Added complete French, German, Latin American Spanish, Brazilian Portuguese, Simplified Chinese, Russian, and Japanese translations, with automatic selection from the device language and a manual override in Settings.",
     "description": "Version 3.1.2 release note for the seven new translations and language selection."
+  },
+  "wiki.patch-notes.version-3-1-2.offline-controls": {
+    "defaultMessage": "Added Fast, Balanced, and Accurate Offline Time presets, processing progress, Speed Up and safe cancellation, plus a completion summary after each run.",
+    "description": "Version 3.1.2 release note for Stored Time accuracy and processing controls."
+  },
+  "wiki.patch-notes.version-3-1-2.processing": {
+    "defaultMessage": "Rebuilt active and Offline Time processing around the same game simulation, improving performance while keeping permanent gains and automation consistent between updates.",
+    "description": "Version 3.1.2 release note for the shared active and Stored Time processing engine."
+  },
+  "wiki.patch-notes.version-3-1-2.update-interval": {
+    "defaultMessage": "Added a Game Processing setting from 33–200 ms, allowing players to choose between more accurate automation and lower device workload.",
+    "description": "Version 3.1.2 release note for the active update interval setting."
   },
   "wiki.patch-notes.version-3-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

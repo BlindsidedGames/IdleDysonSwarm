@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const infinityMessages = defineMessages({
+  automaticTargetWarning: {
+    id: 'infinity.automatic-target-warning',
+    defaultMessage: 'This target is far above your manual Infinity recommendation.',
+    description: 'Warns when the configured automatic Infinity target is at least three times the persisted manual-run recommendation.',
+  },
   region: {
     id: 'infinity.region',
     defaultMessage: 'Infinity',
@@ -103,8 +108,8 @@ export const infinityMessages = defineMessages({
   },
   peakRate: {
     id: 'infinity.rate.peak',
-    defaultMessage: 'Peak: {rate} IP/min at {reward} IP',
-    description: 'Best projected Infinity Point reward rate observed during this run.',
+    defaultMessage: 'Recommended: {rate} IP/min at {reward} IP',
+    description: 'Stable current-run Infinity reward recommendation in the Infinity settings.',
   },
   manualResetFailed: {
     id: 'infinity.manual-reset.failed',

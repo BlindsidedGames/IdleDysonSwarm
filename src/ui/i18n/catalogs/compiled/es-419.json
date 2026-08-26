@@ -477,6 +477,36 @@
       "value": "No se modificó la distribución."
     }
   ],
+  "dyson.bot-distribution.multitasking-efficiency": [
+    {
+      "type": 8,
+      "value": "workers",
+      "children": [
+        {
+          "type": 0,
+          "value": "Trabajadores"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " y "
+    },
+    {
+      "type": 8,
+      "value": "science",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ciencia"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": eficiencia al 100 %"
+    }
+  ],
   "dyson.bot-distribution.scientists": [
     {
       "type": 0,
@@ -2237,12 +2267,6 @@
       "value": "Cambiar todo"
     }
   ],
-  "dyson.simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "Multiplicador de tiempo"
-    }
-  ],
   "dyson.swarm.region": [
     {
       "type": 0,
@@ -2381,6 +2405,12 @@
     {
       "type": 0,
       "value": "Activada"
+    }
+  ],
+  "infinity.automatic-target-warning": [
+    {
+      "type": 0,
+      "value": "Este objetivo está muy por encima de tu recomendación manual de Infinidad."
     }
   ],
   "infinity.break-target": [
@@ -2540,7 +2570,7 @@
   "infinity.rate.peak": [
     {
       "type": 0,
-      "value": "Máximo: "
+      "value": "Recomendado: "
     },
     {
       "type": 1,
@@ -2941,6 +2971,18 @@
       "value": "Wiki"
     }
   ],
+  "offline-time.accuracy-preset": [
+    {
+      "type": 0,
+      "value": "Precisión de la simulación"
+    }
+  ],
+  "offline-time.accurate-preset": [
+    {
+      "type": 0,
+      "value": "Precisa"
+    }
+  ],
   "offline-time.action-failed": [
     {
       "type": 0,
@@ -2951,6 +2993,12 @@
     {
       "type": 0,
       "value": "Todo"
+    }
+  ],
+  "offline-time.balanced-preset": [
+    {
+      "type": 0,
+      "value": "Equilibrada"
     }
   ],
   "offline-time.calculating": [
@@ -2991,16 +3039,16 @@
       "value": "capacity"
     }
   ],
+  "offline-time.close-summary": [
+    {
+      "type": 0,
+      "value": "Continuar"
+    }
+  ],
   "offline-time.confirm-spend": [
     {
       "type": 0,
       "value": "Toca de nuevo para confirmar"
-    }
-  ],
-  "offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "Infinidad actual"
     }
   ],
   "offline-time.disabled": [
@@ -3032,13 +3080,19 @@
   "offline-time.explanation": [
     {
       "type": 0,
-      "value": "El Tiempo sin conexión se almacena mientras estás ausente. Gástalo para adelantar todo el juego al instante. Esta reserva es independiente del Tiempo doble de Simulaciones."
+      "value": "El Tiempo sin conexión se almacena mientras estás ausente. Tú decides cuándo gastarlo para avanzar en el juego."
+    }
+  ],
+  "offline-time.fast-preset": [
+    {
+      "type": 0,
+      "value": "Rápida"
     }
   ],
   "offline-time.large-spend-disclosure": [
     {
       "type": 0,
-      "value": "Los gastos pequeños reproducen cada ciclo de automatización. Los gastos grandes ejecutan hasta 4096 decisiones de compra representativas mientras avanza la producción continua; los ciclos omitidos no realizan compras. Los resultados pueden diferir de una reproducción exacta, y dividir el mismo tiempo entre varios gastos puede cambiarlos."
+      "value": "La simulación pierde precisión con intervalos de tiempo más grandes."
     }
   ],
   "offline-time.maximum-storage": [
@@ -3065,16 +3119,22 @@
       "value": "1 minuto"
     }
   ],
-  "offline-time.previous-infinity": [
+  "offline-time.preparing": [
     {
       "type": 0,
-      "value": "Infinidad anterior"
+      "value": "Preparando simulación…"
     }
   ],
   "offline-time.processing": [
     {
       "type": 0,
       "value": "Simulando…"
+    }
+  ],
+  "offline-time.processing-heading": [
+    {
+      "type": 0,
+      "value": "Procesando tiempo sin conexión"
     }
   ],
   "offline-time.progress": [
@@ -3095,26 +3155,38 @@
       "value": "."
     }
   ],
+  "offline-time.progress-announcement": [
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% completado"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
       "value": "Tiempo sin conexión"
     }
   ],
-  "offline-time.selected-amount": [
+  "offline-time.simulation-complete": [
     {
       "type": 0,
-      "value": "Selección: "
-    },
-    {
-      "type": 1,
-      "value": "duration"
+      "value": "Tiempo sin conexión completado"
     }
   ],
   "offline-time.simulation-progress": [
     {
       "type": 0,
       "value": "Progreso de la simulación de Tiempo sin conexión"
+    }
+  ],
+  "offline-time.speed-up": [
+    {
+      "type": 0,
+      "value": "Acelerar"
     }
   ],
   "offline-time.spend": [
@@ -3149,20 +3221,6 @@
       "value": "Gastar Tiempo sin conexión"
     }
   ],
-  "offline-time.spend-success": [
-    {
-      "type": 0,
-      "value": "El juego avanzó "
-    },
-    {
-      "type": 1,
-      "value": "duration"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "offline-time.storage-progress": [
     {
       "type": 0,
@@ -3175,16 +3233,110 @@
       "value": "Tiempo sin conexión almacenado"
     }
   ],
+  "offline-time.summary.bots": [
+    {
+      "type": 0,
+      "value": "Bots obtenidos"
+    }
+  ],
+  "offline-time.summary.group.facilities": [
+    {
+      "type": 0,
+      "value": "Instalaciones obtenidas"
+    }
+  ],
+  "offline-time.summary.group.infinity": [
+    {
+      "type": 0,
+      "value": "Infinito"
+    }
+  ],
+  "offline-time.summary.group.reality": [
+    {
+      "type": 0,
+      "value": "Realidad"
+    }
+  ],
+  "offline-time.summary.group.simulations": [
+    {
+      "type": 0,
+      "value": "Simulaciones"
+    }
+  ],
+  "offline-time.summary.infinities": [
+    {
+      "type": 0,
+      "value": "Infinitos completados"
+    }
+  ],
+  "offline-time.summary.infinity-points": [
+    {
+      "type": 0,
+      "value": "Puntos de Infinito obtenidos"
+    }
+  ],
+  "offline-time.summary.influence": [
+    {
+      "type": 0,
+      "value": "Influencia obtenida"
+    }
+  ],
+  "offline-time.summary.no-major-changes": [
+    {
+      "type": 0,
+      "value": "No hubo cambios importantes de progreso."
+    }
+  ],
+  "offline-time.summary.reality-workers": [
+    {
+      "type": 0,
+      "value": "Trabajadores de Realidad creados"
+    }
+  ],
+  "offline-time.summary.reduced-accuracy": [
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": " (acelerada)"
+    }
+  ],
+  "offline-time.summary.simulation-resets": [
+    {
+      "type": 0,
+      "value": "Reinicios de Simulación"
+    }
+  ],
+  "offline-time.summary.simulation-updates": [
+    {
+      "type": 0,
+      "value": "Actualizaciones de simulación"
+    }
+  ],
+  "offline-time.summary.strange-matter": [
+    {
+      "type": 0,
+      "value": "Materia Extraña obtenida"
+    }
+  ],
   "offline-time.ten-minutes": [
     {
       "type": 0,
       "value": "10 minutos"
     }
   ],
-  "offline-time.usage-heading": [
+  "offline-time.time-remaining": [
     {
       "type": 0,
-      "value": "Tiempo sin conexión usado"
+      "value": "Tiempo sin conexión restante"
+    }
+  ],
+  "offline-time.time-simulated": [
+    {
+      "type": 0,
+      "value": "Tiempo simulado"
     }
   ],
   "pwa.update.accept": [
@@ -4410,7 +4562,7 @@
   "reality.upgrades.double-time.description": [
     {
       "type": 0,
-      "value": "Reúne tiempo sin conexión y gástalo mientras juegas."
+      "value": "Hace que todo el juego funcione permanentemente al doble de velocidad."
     }
   ],
   "reality.upgrades.double-time.title": [
@@ -5707,6 +5859,34 @@
       "value": "Notación numérica"
     }
   ],
+  "settings.processing.description": [
+    {
+      "type": 0,
+      "value": "Elige con qué frecuencia se actualiza el juego. Los intervalos mayores usan menos potencia de procesamiento, pero reducen la precisión de la automatización."
+    }
+  ],
+  "settings.processing.interval": [
+    {
+      "type": 0,
+      "value": "Intervalo de actualización"
+    }
+  ],
+  "settings.processing.interval-value": [
+    {
+      "type": 1,
+      "value": "milliseconds"
+    },
+    {
+      "type": 0,
+      "value": " ms"
+    }
+  ],
+  "settings.processing.title": [
+    {
+      "type": 0,
+      "value": "Procesamiento del juego"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -5779,6 +5959,12 @@
       "value": "Preparando cadena de guardado…"
     }
   ],
+  "settings.save-data.export-pre-stored-time": [
+    {
+      "type": 0,
+      "value": "El Tiempo almacenado todavía se está procesando. Esta exportación contiene el guardado completo de justo antes de que comenzara esa simulación."
+    }
+  ],
   "settings.save-data.export-string-label": [
     {
       "type": 0,
@@ -5849,6 +6035,12 @@
     {
       "type": 0,
       "value": "Puntos de habilidad"
+    }
+  ],
+  "settings.save-data.import-preview-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Si importas ahora, se cancelará la simulación actual de Tiempo sin conexión sin gastar su Tiempo sin conexión."
     }
   ],
   "settings.save-data.import-preview-title": [
@@ -5927,6 +6119,12 @@
     {
       "type": 0,
       "value": "Restableciendo…"
+    }
+  ],
+  "settings.save-data.reset-stored-time-warning": [
+    {
+      "type": 0,
+      "value": "Si restableces ahora, se cancelará la simulación actual de Tiempo sin conexión sin gastar su Tiempo sin conexión."
     }
   ],
   "settings.save-data.reset-succeeded": [
@@ -6403,12 +6601,6 @@
     {
       "type": 0,
       "value": "Todavía no hay paneles disponibles en esta era."
-    }
-  ],
-  "simulations.offline-time": [
-    {
-      "type": 0,
-      "value": "Tiempo sin conexión"
     }
   ],
   "simulations.panel.advanced-physics": [
@@ -6929,12 +7121,6 @@
       "value": "Cantidad de compra"
     }
   ],
-  "simulations.purchase-settings": [
-    {
-      "type": 0,
-      "value": "Ajustes de compra"
-    }
-  ],
   "simulations.region": [
     {
       "type": 0,
@@ -6959,26 +7145,6 @@
     {
       "type": 1,
       "value": "value"
-    }
-  ],
-  "simulations.time-multiplier": [
-    {
-      "type": 0,
-      "value": "Multiplicador de tiempo"
-    }
-  ],
-  "simulations.time-multiplier.speed-increase": [
-    {
-      "type": 0,
-      "value": "La velocidad de Simulación aumentó un "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
     }
   ],
   "simulations.unavailable": [
@@ -10185,6 +10351,24 @@
       "value": "Ninguno"
     }
   ],
+  "statistics.offline-time": [
+    {
+      "type": 0,
+      "value": "Tiempo sin conexión"
+    }
+  ],
+  "statistics.offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "Infinito actual"
+    }
+  ],
+  "statistics.offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "Infinito anterior"
+    }
+  ],
   "statistics.other-stats": [
     {
       "type": 0,
@@ -11894,10 +12078,34 @@
       "value": "Versión 3.1.2"
     }
   ],
+  "wiki.patch-notes.version-3-1-2.double-time": [
+    {
+      "type": 0,
+      "value": "Double Time ahora ejecuta permanentemente todos los sistemas del juego al doble de su velocidad normal."
+    }
+  ],
   "wiki.patch-notes.version-3-1-2.languages": [
     {
       "type": 0,
       "value": "Se agregaron traducciones completas al francés, alemán, español latinoamericano, portugués brasileño, chino simplificado, ruso y japonés, con selección automática según el idioma del dispositivo y una opción manual en Ajustes."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.offline-controls": [
+    {
+      "type": 0,
+      "value": "Se agregaron los ajustes Rápido, Equilibrado y Preciso para el tiempo sin conexión, progreso de procesamiento, aceleración, cancelación segura y un resumen al terminar cada ejecución."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.processing": [
+    {
+      "type": 0,
+      "value": "Se reconstruyó el procesamiento activo y del tiempo sin conexión sobre la misma simulación del juego, mejorando el rendimiento y manteniendo consistentes las ganancias permanentes y la automatización entre actualizaciones."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-2.update-interval": [
+    {
+      "type": 0,
+      "value": "Se agregó un ajuste de procesamiento del juego de 33 a 200 ms para elegir entre una automatización más precisa y una menor carga para el dispositivo."
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [

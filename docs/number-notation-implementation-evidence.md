@@ -5,7 +5,8 @@
 Idle Dyson Swarm exposes one Settings select with Standard, Scientific, and
 Engineering modes. `src/ui/i18n/formatters.ts` remains the only game-number
 formatter family; notation selects an output policy without changing canonical
-values, commands, saves, active-time delivery, or the 10 Hz simulation.
+values, commands, saves, active-time delivery, or the configured gameplay
+update cadence.
 
 The preference is validated version-1 state under
 `idle-dyson-swarm.number-notation.v1`. It is read once when the presentation

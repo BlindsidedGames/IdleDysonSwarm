@@ -120,6 +120,22 @@ describe('public Unity mapping coverage certification', () => {
     expect(
       classifyPublicUnitySchema11Leaf('$.infinityAutomaticReset'),
     ).toBeNull()
+    expect(mappingCoverageManifest.developmentExtensions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourcePath: '$.processingRewriteMigrated',
+          canonicalPath: '$.timeline.processing.rewriteMigrated',
+        }),
+        expect.objectContaining({
+          sourcePath: '$.processingActiveIntervalMilliseconds',
+          canonicalPath: '$.timeline.processing.activeIntervalMilliseconds',
+        }),
+        expect.objectContaining({
+          sourcePath: '$.processingStoredTimePreset',
+          canonicalPath: '$.timeline.processing.storedTimePreset',
+        }),
+      ]),
+    )
   })
 
   test('matches escaped dots inside certified dictionary keys without widening fields', () => {

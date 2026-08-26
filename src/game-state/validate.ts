@@ -56,6 +56,23 @@ export function validateCanonicalGameState(
     errors.push('Double Time rate must be an integer from 0 to 10.')
   }
   if (
+    state.timeline.processing.rewriteMigrated !== true ||
+    !Number.isInteger(
+      state.timeline.processing.activeIntervalMilliseconds,
+    ) ||
+    state.timeline.processing.activeIntervalMilliseconds < 33 ||
+    state.timeline.processing.activeIntervalMilliseconds > 200
+  ) {
+    errors.push('Game processing interval must be an integer from 33 to 200 milliseconds.')
+  }
+  if (
+    !['fast', 'balanced', 'accurate'].includes(
+      state.timeline.processing.storedTimePreset,
+    )
+  ) {
+    errors.push('Stored Time accuracy preset is invalid.')
+  }
+  if (
     state.reality.workerGenerationProgress < 0 ||
     state.reality.workerGenerationProgress >= 1
   ) {
@@ -99,6 +116,32 @@ export function validateCanonicalGameState(
   ) {
     errors.push('Current Infinity peak reward must be non-negative.')
   }
+  if (
+    state.infinity.manualPeakIpPerMinute !== undefined &&
+    (!Number.isFinite(state.infinity.manualPeakIpPerMinute) ||
+      state.infinity.manualPeakIpPerMinute < 0)
+  ) {
+    errors.push('Manual Infinity peak IP per minute must be finite and non-negative.')
+  }
+  if (
+    state.infinity.manualPeakReward !== undefined &&
+    state.infinity.manualPeakReward < 0n
+  ) {
+    errors.push('Manual Infinity peak reward must be non-negative.')
+  }
+  if (
+    state.infinity.manualCalibrationObservedActiveSeconds !== undefined &&
+    (!Number.isFinite(state.infinity.manualCalibrationObservedActiveSeconds) ||
+      state.infinity.manualCalibrationObservedActiveSeconds < 0)
+  ) {
+    errors.push('Manual Infinity active observation must be finite and non-negative.')
+  }
+  if (
+    state.infinity.activeAutomaticThroughputCycleEligible !== undefined &&
+    typeof state.infinity.activeAutomaticThroughputCycleEligible !== 'boolean'
+  ) {
+    errors.push('Active automatic Infinity cycle eligibility must be boolean.')
+  }
   if (state.infinity.secretsOfTheUniverse > 27n) {
     errors.push('Secrets of the Universe exceeds its authored maximum.')
   }
@@ -123,9 +166,37 @@ export function validateCanonicalGameState(
       cycle.configuredTarget < 1n ||
       cycle.reward < 1n ||
       !Number.isFinite(cycle.durationSeconds) ||
-      cycle.durationSeconds <= 0
+      cycle.durationSeconds <= 0 ||
+      (cycle.processingSource !== undefined &&
+        cycle.processingSource !== 'active' &&
+        cycle.processingSource !== 'stored-time') ||
+      (cycle.activeIntervalMilliseconds !== undefined &&
+        (!Number.isInteger(cycle.activeIntervalMilliseconds) ||
+          cycle.activeIntervalMilliseconds < 33 ||
+          cycle.activeIntervalMilliseconds > 200))
     ) {
       errors.push('Recent Infinity cycles must contain a positive target, reward, and finite duration.')
+    }
+  }
+  const recentActiveAutomaticInfinityCycles =
+    state.statistics.recentActiveAutomaticInfinityCycles ?? []
+  if (recentActiveAutomaticInfinityCycles.length > 10) {
+    errors.push('Recent active automatic Infinity history cannot exceed 10 cycles.')
+  }
+  for (const cycle of recentActiveAutomaticInfinityCycles) {
+    if (
+      !cycle.breakInfinity ||
+      !cycle.automatic ||
+      cycle.processingSource !== 'active' ||
+      cycle.configuredTarget < 1n ||
+      cycle.reward < 1n ||
+      !Number.isFinite(cycle.durationSeconds) ||
+      cycle.durationSeconds <= 0 ||
+      !Number.isInteger(cycle.activeIntervalMilliseconds) ||
+      cycle.activeIntervalMilliseconds! < 33 ||
+      cycle.activeIntervalMilliseconds! > 200
+    ) {
+      errors.push('Active automatic Infinity cycles must contain active Break-cycle throughput data.')
     }
   }
   for (const [id, skill] of Object.entries(state.skills.byId)) {

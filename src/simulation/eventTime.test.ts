@@ -145,39 +145,6 @@ describe('event-time scheduler characterization', () => {
     expect(result.candidateState.advanceSegments).toEqual([0.15, 0.1])
   })
 
-  test('is deterministic across caller frame partitions', () => {
-    const whole = advanceEventTime({
-      startingState: new CharacterizationModel(),
-      durationSeconds: 0.35,
-      automationIntervalSeconds: 0.1,
-      automationTimeUntilNextEvent: 0.1,
-      processingBudgetMilliseconds: 0,
-    })
-
-    const splitModel = new CharacterizationModel()
-    let phase = 0.1
-    for (const durationSeconds of [0.07, 0.11, 0.17]) {
-      const part = advanceEventTime({
-        startingState: transferEventTimeModelOwnership(splitModel),
-        durationSeconds,
-        automationIntervalSeconds: 0.1,
-        automationTimeUntilNextEvent: phase,
-        processingBudgetMilliseconds: 0,
-        cloneStartingState: false,
-      })
-      phase = part.automationTimeUntilNextEvent
-    }
-
-    expect(splitModel.advancedSeconds).toBeCloseTo(
-      whole.candidateState.advancedSeconds,
-      12,
-    )
-    expect(phase).toBeCloseTo(whole.automationTimeUntilNextEvent, 12)
-    expect(splitModel.calls.filter((call) => call === 'automation')).toHaveLength(
-      whole.candidateState.calls.filter((call) => call === 'automation').length,
-    )
-  })
-
   test('uses bounded model validation when the model provides it', () => {
     const model = new CharacterizationModel()
     const fullValidation = vi.spyOn(model, 'validate')

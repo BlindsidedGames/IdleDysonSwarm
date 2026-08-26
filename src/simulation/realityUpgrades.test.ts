@@ -324,7 +324,7 @@ describe('Reality upgrade purchases', () => {
     )
   })
 
-  test('unlocks Double Time, overwrites its bank to 600, and preserves enabled', () => {
+  test('unlocks permanent Double Time without recreating its retired mutable bank', () => {
     const initial = state()
     const result = purchaseRealityUpgrade(
       initial,
@@ -336,8 +336,9 @@ describe('Reality upgrade purchases', () => {
     expect(result.candidate.timeline.doubleTime).toEqual({
       ...initial.timeline.doubleTime,
       unlocked: true,
-      enabled: true,
-      bankSeconds: 600,
+      enabled: false,
+      bankSeconds: 0,
+      rate: 0,
     })
     expect(result.candidate.reality).toBe(initial.reality)
     expect(initial.timeline.doubleTime).toMatchObject({

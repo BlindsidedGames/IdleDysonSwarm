@@ -17,11 +17,14 @@ function laneProbePlugin(): Plugin {
     name: 'idle-dyson-temporary-lane-probe',
     enforce: 'pre',
     transform(code, id) {
-      if (id.endsWith('/src/application/canonicalGameApplication.ts')) {
-        const replacement = `const eventStartedAt = performance.now()\n  const eventResult = advanceEventTime({\n    startingState: transferEventTimeModelOwnership(\n      CanonicalEventTimeModel.fromOwnedState(\n        eventCarrier(candidate),\n        context,\n      ),\n    ),\n    cloneStartingState: false,\n    durationSeconds: seconds,\n    automationIntervalSeconds: context.automationIntervalSeconds,\n    automationTimeUntilNextEvent:\n      candidate.gameState.timeline.automationTimeUntilNextEvent,\n    automationPolicy,\n    infinityMinimumCycleSeconds: minimumCycleSeconds,\n    processingBudgetMilliseconds: 0,\n    cancelRequested,\n  })\n  globalThis.__idleDysonLaneProbeV1?.record('canonical-event-model', performance.now() - eventStartedAt)\n  return eventResult`
-        const pattern = /return\s+advanceEventTime\(\{\s*startingState:\s*transferEventTimeModelOwnership\(\s*CanonicalEventTimeModel\.fromOwnedState\(\s*eventCarrier\(candidate\),\s*context,?\s*\),\s*\),\s*cloneStartingState:\s*false,\s*durationSeconds:\s*seconds,\s*automationIntervalSeconds:\s*context\.automationIntervalSeconds,\s*automationTimeUntilNextEvent:\s*candidate\.gameState\.timeline\.automationTimeUntilNextEvent,\s*automationPolicy,\s*infinityMinimumCycleSeconds:\s*minimumCycleSeconds,\s*processingBudgetMilliseconds:\s*0,\s*cancelRequested,?\s*\}\)/
-        if (!pattern.test(code)) throw new Error('Event-model probe anchor missing.')
-        return code.replace(pattern, replacement)
+      if (id.endsWith('/src/simulation/gameStep.ts')) {
+        const signature = /export function advanceGame\([\s\S]*?\n\): GameStepResult \{\n/
+        const match = signature.exec(code)
+        if (match === null) throw new Error('Shared game-step probe start anchor missing.')
+        const bodyStart = match.index + match[0].length
+        const bodyEnd = code.indexOf('\n}\n\nfunction finish(', bodyStart)
+        if (bodyEnd < 0) throw new Error('Shared game-step probe end anchor missing.')
+        return `${code.slice(0, bodyStart)}  const gameStepStartedAt = performance.now()\n  try {\n${code.slice(bodyStart, bodyEnd)}\n  } finally {\n    globalThis.__idleDysonLaneProbeV1?.record(\n      'canonical-game-step',\n      performance.now() - gameStepStartedAt,\n    )\n  }${code.slice(bodyEnd)}`
       }
       if (id.endsWith('/src/application/frontendSnapshot.ts')) {
         const derivedPattern = /const\s+derived\s*=\s*selectDerivedFacts\(\s*state,\s*context,\s*previous\?\.derived,\s*context\.previewDemand\s*\?\?\s*'all',?\s*\)/
@@ -62,7 +65,7 @@ function laneProbePlugin(): Plugin {
         return code.replace(encodePattern, encodeReplacement)
       }
       if (!id.endsWith('/src/ui/runtime/browserRuntimeFoundation.ts')) return null
-      const activeReplacement = `deliver: async (milliseconds) => {\n        const startedAt = performance.now()\n        try {\n          return await router.run(() => coordinator.advanceActive(milliseconds))\n        } finally {\n          globalThis.__idleDysonLaneProbeV1?.record('canonical-active', performance.now() - startedAt)\n        }\n      },`
+      const activeReplacement = `deliver: async (milliseconds) => {\n        const startedAt = performance.now()\n        try {\n          return await router.runLocallyFenced(() =>\n            coordinator.advanceActive(milliseconds),\n          )\n        } finally {\n          globalThis.__idleDysonLaneProbeV1?.record('canonical-active', performance.now() - startedAt)\n        }\n      },`
       const publishReplacement = `const projectionStartedAt = performance.now()\n    const projected = graph.application.frontendSnapshot(this.gameplayPreviewDemand)\n    globalThis.__idleDysonLaneProbeV1?.record('frontend-projection', performance.now() - projectionStartedAt)\n    const publicationStartedAt = performance.now()\n    this.frontendSnapshots.publish(projected, force, delivery)\n    globalThis.__idleDysonLaneProbeV1?.record('snapshot-publication', performance.now() - publicationStartedAt)`
       const checkpointReplacement = `checkpoint: async () => {
           const checkpointStartedAt = performance.now()
@@ -72,7 +75,7 @@ function laneProbePlugin(): Plugin {
             globalThis.__idleDysonLaneProbeV1?.record('periodic-checkpoint', performance.now() - checkpointStartedAt)
           }
         },`
-      const activePattern = /deliver:\s*\(milliseconds\)\s*=>\s*router\.run\(\(\)\s*=>\s*coordinator\.advanceActive\(milliseconds\)\),/
+      const activePattern = /deliver:\s*\(milliseconds\)\s*=>\s*router\.runLocallyFenced\(\(\)\s*=>\s*coordinator\.advanceActive\(milliseconds\),?\s*\),/
       const publishPattern = /this\.frontendSnapshots\.publish\(\s*graph\.application\.frontendSnapshot\(this\.gameplayPreviewDemand\),\s*force,\s*delivery,?\s*\)/
       const checkpointPattern = /checkpoint:\s*\(\)\s*=>\s*router\.run\(\(\)\s*=>\s*application\.checkpoint\(\)\),/
       if (!activePattern.test(code) || !publishPattern.test(code) || !checkpointPattern.test(code)) {

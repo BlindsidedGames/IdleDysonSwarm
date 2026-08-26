@@ -2,7 +2,7 @@
 
 ## Scope and ownership
 
-Audio is owned once by `src/audio/ProductionGameAudioService`, outside React rendering and the canonical 10 Hz gameplay snapshot. The production host composition selects either the Web backend (Browser/PWA/Electron) or the project-owned Capacitor plugin (iOS/Android). Preferences use device-local `localStorage` key `idle-dyson-swarm.audio.v1`; they are not part of portable gameplay saves.
+Audio is owned once by `src/audio/ProductionGameAudioService`, outside React rendering and canonical gameplay snapshot publication. The production host composition selects either the Web backend (Browser/PWA/Electron) or the project-owned Capacitor plugin (iOS/Android). Preferences use device-local `localStorage` key `idle-dyson-swarm.audio.v1`; they are not part of portable gameplay saves.
 
 Playback does not start at application construction. The first enabled semantic action establishes user intent, starts the soundtrack, and plays the button cue. Disabled controls, range sliders, opted-out elements, and non-semantic pointer events do not cue. Music pauses whenever the shared lifecycle leaves `active` and resumes only when playback intent already existed. A single controller, persistent music player, preloaded cue player/buffer, in-flight play guard, and 35 ms Web cue throttle prevent duplicate players, start races, allocation churn, and excessive overlap.
 

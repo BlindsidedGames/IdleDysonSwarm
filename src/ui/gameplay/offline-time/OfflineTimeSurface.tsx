@@ -5,15 +5,17 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react'
+import type { ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import type {
-  FrontendCanonicalProgression,
   FrontendCanonicalResources,
   FrontendGameplayPreviews,
 } from '../../../application/frontendSnapshot'
+import type { StoredTimeCompletionSummary } from '../../../core/storedTimeCompletionSummary'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import { Button } from '../../components'
-import { formatGameDuration } from '../../i18n/formatters'
+import { formatGameDuration, formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type {
   UiRuntimePlayerCommandResult,
@@ -23,6 +25,8 @@ import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { offlineTimeMessages as messages } from './messages'
 import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
+import type { StoredTimeAccuracyPreset } from '../../../game-state/types'
+import { basicFacilityMessages } from '../facilities/messages'
 import './offlineTime.css'
 
 type OfflineTimeCommand = Extract<
@@ -31,12 +35,14 @@ type OfflineTimeCommand = Extract<
     readonly kind:
       | 'time.upgrade-stored-capacity'
       | 'time.request-stored-time-spend'
+      | 'time.set-stored-time-preset'
   }
 >
 
 export interface OfflineTimeCommandAvailability {
   readonly upgradeStoredCapacity: boolean
   readonly requestStoredTimeSpend: boolean
+  readonly setStoredTimePreset?: boolean
 }
 
 export interface OfflineTimeSurfaceDraft {
@@ -48,11 +54,6 @@ export interface OfflineTimeSurfaceDraft {
 export interface OfflineTimeSurfaceProps {
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['time']
-  readonly infinityUsage: Pick<
-    FrontendCanonicalProgression['infinity'],
-    | 'storedTimeUsedThisCycleSeconds'
-    | 'storedTimeUsedPreviousCycleSeconds'
-  >
   readonly previews: FrontendGameplayPreviews['time']
   readonly storedTimeCheater: boolean
   readonly commandAvailability: OfflineTimeCommandAvailability
@@ -60,6 +61,9 @@ export interface OfflineTimeSurfaceProps {
     command: OfflineTimeCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
   readonly storedTime?: UiRuntimeStoredTimeControls
+  readonly processing?: {
+    readonly storedTimePreset: StoredTimeAccuracyPreset
+  }
   readonly initialDraft?: Readonly<OfflineTimeSurfaceDraft>
   readonly onDraftChange?: (
     draft: Readonly<OfflineTimeSurfaceDraft>,
@@ -72,6 +76,17 @@ const QUICK_AMOUNTS = Object.freeze([
   { seconds: 3_600, message: messages.oneHour },
 ] as const)
 
+const FACILITY_NAME_MESSAGES = Object.freeze({
+  assembly_lines: basicFacilityMessages.assemblyLinesName,
+  ai_managers: basicFacilityMessages.aiManagersName,
+  servers: basicFacilityMessages.serversName,
+  data_centers: basicFacilityMessages.dataCentersName,
+  planets: basicFacilityMessages.planetsName,
+  matrioshka_brains: basicFacilityMessages.matrioshkaBrainsName,
+  birch_planets: basicFacilityMessages.birchPlanetsName,
+  galactic_brains: basicFacilityMessages.galacticBrainsName,
+})
+
 const IDLE_STORED_TIME_JOB: StoredTimeJobStatus = Object.freeze({
   kind: 'idle',
 })
@@ -81,6 +96,7 @@ const INACTIVE_STORED_TIME_CONTROLS: UiRuntimeStoredTimeControls =
     status: () => IDLE_STORED_TIME_JOB,
     subscribe: () => () => undefined,
     cancel: () => undefined,
+    speedUp: () => undefined,
   })
 
 /**
@@ -91,12 +107,14 @@ const INACTIVE_STORED_TIME_CONTROLS: UiRuntimeStoredTimeControls =
 export function OfflineTimeSurface({
   locale,
   resources,
-  infinityUsage,
   previews,
   storedTimeCheater,
   commandAvailability,
   dispatchPlayer,
   storedTime = INACTIVE_STORED_TIME_CONTROLS,
+  processing = {
+    storedTimePreset: 'balanced',
+  },
   initialDraft,
   onDraftChange,
 }: OfflineTimeSurfaceProps) {
@@ -147,10 +165,18 @@ export function OfflineTimeSurface({
   const [pendingAction, setPendingAction] = useState<
     'spend' | 'upgrade' | null
   >(null)
-  const [feedback, setFeedback] = useState<
-    { readonly kind: 'success' | 'failure'; readonly seconds?: number } | null
-  >(null)
+  const [feedback, setFeedback] = useState<'failure' | null>(null)
+  const [completionSummary, setCompletionSummary] = useState<{
+    readonly consumedSeconds: number
+    readonly result: StoredTimeCompletionSummary
+  } | null>(null)
   const pendingRef = useRef(false)
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(null)
+  const attachSurface = useCallback((node: HTMLDivElement | null) => {
+    if (node === null || typeof document === 'undefined') return
+    setPortalHost(node.closest('.dyson-shell') ?? document.body)
+  }, [])
+  const jobDialogRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     setSelectedSeconds((current) =>
@@ -189,6 +215,72 @@ export function OfflineTimeSurface({
     repeatSeconds > 0 &&
     repeatSeconds <= bankSeconds
   const jobActive = jobStatus.kind !== 'idle'
+  const jobDialogOpen =
+    jobActive || pendingAction === 'spend' || completionSummary !== null
+  const announcedProgressPercent = jobStatus.kind === 'idle'
+    ? 0
+    : Math.min(100, Math.floor(jobStatus.fraction * 10) * 10)
+
+  useEffect(() => {
+    if (!jobDialogOpen) return undefined
+    const dialog = jobDialogRef.current
+    const backdrop = dialog?.parentElement
+    if (!dialog || !backdrop) return undefined
+    const returnFocus = document.activeElement as HTMLElement | null
+    const modalParent = backdrop.parentElement
+    if (!modalParent) return undefined
+    const background = [...modalParent.children]
+      .filter((element) => element !== backdrop)
+      .map((element) => ({
+        element: element as HTMLElement,
+        wasInert: (element as HTMLElement).inert,
+      }))
+    for (const entry of background) entry.element.inert = true
+    const focusable = () => [...dialog.querySelectorAll<HTMLElement>(
+      'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])',
+    )]
+    ;(focusable()[0] ?? dialog).focus()
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return
+      const items = focusable()
+      if (items.length === 0) {
+        event.preventDefault()
+        dialog.focus()
+        return
+      }
+      const first = items[0]!
+      const last = items[items.length - 1]!
+      if (
+        event.shiftKey &&
+        (document.activeElement === first || document.activeElement === dialog)
+      ) {
+        event.preventDefault()
+        last.focus()
+      } else if (
+        !event.shiftKey &&
+        (document.activeElement === last || document.activeElement === dialog)
+      ) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', trapFocus)
+    return () => {
+      document.removeEventListener('keydown', trapFocus)
+      for (const entry of background) entry.element.inert = entry.wasInert
+      if (returnFocus?.isConnected) returnFocus.focus()
+    }
+  }, [jobDialogOpen, portalHost])
+
+  useEffect(() => {
+    if (completionSummary === null) return
+    const dialog = jobDialogRef.current
+    if (dialog === null) return
+    const continueControl = dialog.querySelector<HTMLButtonElement>(
+      '.offline-time-job__continue',
+    )
+    ;(continueControl ?? dialog).focus()
+  }, [completionSummary])
 
   const spend = async (): Promise<void> => {
     const requestedSeconds =
@@ -225,14 +317,18 @@ export function OfflineTimeSurface({
         (result.status === 'accepted' || result.status === 'partial') &&
         result.kind === 'stored-time'
       ) {
-        setFeedback({ kind: 'success', seconds: result.consumedSeconds })
+        setFeedback(null)
+        setCompletionSummary({
+          consumedSeconds: result.consumedSeconds,
+          result: result.summary,
+        })
         setRepeatSeconds(requestedSeconds)
         publishDraft(selectedSeconds, requestedSeconds, false)
       } else {
-        setFeedback({ kind: 'failure' })
+        setFeedback('failure')
       }
     } catch {
-      setFeedback({ kind: 'failure' })
+      setFeedback('failure')
     } finally {
       pendingRef.current = false
       setPendingAction(null)
@@ -257,13 +353,29 @@ export function OfflineTimeSurface({
         kind: 'time.upgrade-stored-capacity',
       })
       if (result.status !== 'accepted') {
-        setFeedback({ kind: 'failure' })
+        setFeedback('failure')
       }
     } catch {
-      setFeedback({ kind: 'failure' })
+      setFeedback('failure')
     } finally {
       pendingRef.current = false
       setPendingAction(null)
+    }
+  }
+
+  const setProcessingPreference = async (
+    command: {
+      readonly kind: 'time.set-stored-time-preset'
+      readonly preset: StoredTimeAccuracyPreset
+    },
+  ): Promise<void> => {
+    if (jobActive) return
+    setFeedback(null)
+    try {
+      const result = await dispatchPlayer(command)
+      if (result.status !== 'accepted') setFeedback('failure')
+    } catch {
+      setFeedback('failure')
     }
   }
 
@@ -275,7 +387,7 @@ export function OfflineTimeSurface({
     selectedSeconds <= 0
 
   return (
-    <div className="offline-time-surface">
+    <div ref={attachSurface} className="offline-time-surface">
       <header className="offline-time-surface__header">
         <div className="offline-time-surface__title" aria-hidden="true">
           {intl.formatMessage(messages.region)}
@@ -353,16 +465,13 @@ export function OfflineTimeSurface({
         </article>
 
         <article className="offline-time-card offline-time-card--spend">
-          <h2>{intl.formatMessage(messages.spendHeading)}</h2>
+          <div className="offline-time-card__heading">
+            <h2>{intl.formatMessage(messages.spendHeading)}</h2>
+            <output htmlFor="offline-time-amount">
+              {formatGameDuration(locale, selectedSeconds)}
+            </output>
+          </div>
           <p>{intl.formatMessage(messages.spendDescription)}</p>
-          <p className="offline-time-card__note">
-            {intl.formatMessage(messages.largeSpendDisclosure)}
-          </p>
-          <output htmlFor="offline-time-amount">
-            {intl.formatMessage(messages.selectedAmount, {
-              duration: formatGameDuration(locale, selectedSeconds),
-            })}
-          </output>
           <input
             id="offline-time-amount"
             type="range"
@@ -400,6 +509,29 @@ export function OfflineTimeSurface({
               {intl.formatMessage(messages.all)}
             </button>
           </div>
+          <div className="offline-time-processing-settings">
+            <label htmlFor="offline-time-accuracy">
+              {intl.formatMessage(messages.accuracyPreset)}
+            </label>
+            <div className="offline-time-processing-settings__select">
+              <select
+                id="offline-time-accuracy"
+                value={processing.storedTimePreset}
+                disabled={jobActive || pendingAction !== null || commandAvailability.setStoredTimePreset === false}
+                onChange={(event) => void setProcessingPreference({
+                  kind: 'time.set-stored-time-preset',
+                  preset: event.currentTarget.value as StoredTimeAccuracyPreset,
+                })}
+              >
+                <option value="fast">{intl.formatMessage(messages.fastPreset)}</option>
+                <option value="balanced">{intl.formatMessage(messages.balancedPreset)}</option>
+                <option value="accurate">{intl.formatMessage(messages.accuratePreset)}</option>
+              </select>
+            </div>
+          </div>
+          <p className="offline-time-card__note">
+            {intl.formatMessage(messages.largeSpendDisclosure)}
+          </p>
           <div className="offline-time-spend-actions">
             <Button
               className="offline-time-spend-button"
@@ -433,27 +565,60 @@ export function OfflineTimeSurface({
             ) : null}
           </div>
 
-          {jobStatus.kind !== 'idle' ? (
+          {jobDialogOpen && portalHost !== null ? (
+            createPortal(<div className="offline-time-job__backdrop">
             <div
+              ref={jobDialogRef}
               className="offline-time-job"
-              aria-live="polite"
-              data-job-id={jobStatus.jobId}
+              tabIndex={-1}
+              role="dialog"
+              aria-modal="true"
+              aria-label={intl.formatMessage(
+                completionSummary === null
+                  ? messages.simulationProgress
+                  : messages.simulationComplete,
+              )}
+              data-job-id={jobStatus.kind === 'idle' ? undefined : jobStatus.jobId}
             >
-              <div
+              <p
+                className="ui-visually-hidden"
+                role="status"
+                aria-atomic="true"
+              >
+                {completionSummary !== null
+                  ? intl.formatMessage(messages.simulationComplete)
+                  : jobStatus.kind === 'cancelling'
+                    ? intl.formatMessage(messages.cancelling)
+                    : jobStatus.kind === 'running' || jobStatus.kind === 'committing'
+                      ? intl.formatMessage(messages.progressAnnouncement, {
+                          percent: announcedProgressPercent,
+                        })
+                      : intl.formatMessage(messages.preparing)}
+              </p>
+              <h2>
+                {intl.formatMessage(
+                  completionSummary === null
+                    ? messages.processingHeading
+                    : messages.simulationComplete,
+                )}
+              </h2>
+              {completionSummary === null ? <><div
                 className="offline-time-job__progress"
                 role="progressbar"
                 aria-label={intl.formatMessage(messages.simulationProgress)}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-valuenow={Math.round(jobStatus.fraction * 100)}
+                aria-valuenow={jobStatus.kind === 'idle' ? 0 : Math.round(jobStatus.fraction * 100)}
               >
                 <span
                   aria-hidden="true"
-                  style={{ transform: `scaleX(${jobStatus.fraction})` }}
+                  style={{ transform: `scaleX(${jobStatus.kind === 'idle' ? 0 : jobStatus.fraction})` }}
                 />
               </div>
               <p className="offline-time-job__status">
-                {jobStatus.kind === 'cancelling'
+                {jobStatus.kind === 'idle'
+                  ? intl.formatMessage(messages.preparing)
+                  : jobStatus.kind === 'cancelling'
                   ? intl.formatMessage(messages.cancelling)
                   : intl.formatMessage(messages.progress, {
                       percent: Math.round(jobStatus.fraction * 100),
@@ -465,56 +630,190 @@ export function OfflineTimeSurface({
                           ),
                     })}
               </p>
+              {jobStatus.kind === 'running' && jobStatus.canSpeedUp ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => storedTime.speedUp?.()}
+                >
+                  {intl.formatMessage(messages.speedUp)}
+                </Button>
+              ) : null}
               <Button
                 variant="secondary"
-                disabled={jobStatus.kind === 'cancelling'}
+                disabled={jobStatus.kind !== 'running'}
                 onClick={storedTime.cancel}
               >
                 {intl.formatMessage(messages.cancel)}
               </Button>
+              </> : completionSummary !== null ? <>
+                <div className="offline-time-job__results">
+                  <dl className={`offline-time-job__meta ${
+                    completionSummary.result.infinityCount === 0n && completionSummary.result.botGain > 0
+                      ? 'offline-time-job__meta--with-bots'
+                      : ''
+                  }`}>
+                    <CompletionFact
+                      label={intl.formatMessage(messages.timeSimulated)}
+                      value={formatGameDuration(locale, completionSummary.consumedSeconds)}
+                    />
+                    <CompletionFact
+                      label={intl.formatMessage(messages.timeRemaining)}
+                      value={formatGameDuration(locale, completionSummary.result.remainingBankSeconds)}
+                    />
+                    <CompletionFact
+                      label={intl.formatMessage(messages.accuracyPreset)}
+                      value={completionSummary.result.accuracyReduced
+                        ? intl.formatMessage(messages.reducedAccuracy, {
+                            preset: intl.formatMessage(
+                              presetMessage(completionSummary.result.preset),
+                            ),
+                          })
+                        : intl.formatMessage(
+                            presetMessage(completionSummary.result.preset),
+                          )}
+                    />
+                    {completionSummary.result.infinityCount === 0n && completionSummary.result.botGain > 0 ? (
+                      <CompletionFact
+                        label={intl.formatMessage(messages.botsGained)}
+                        value={`+${formatGameNumber(locale, completionSummary.result.botGain)}`}
+                      />
+                    ) : null}
+                    <CompletionFact
+                      label={intl.formatMessage(messages.simulationUpdates)}
+                      value={formatGameNumber(
+                        locale,
+                        completionSummary.result.simulationUpdates,
+                      )}
+                    />
+                  </dl>
+
+                  {completionSummary.result.infinityPoints > 0n || completionSummary.result.infinityCount > 0n ? (
+                    <CompletionGroup title={intl.formatMessage(messages.infinityGroup)}>
+                      {completionSummary.result.infinityPoints > 0n ? <CompletionFact
+                        label={intl.formatMessage(messages.infinityPointsGained)}
+                        value={formatGameNumber(locale, completionSummary.result.infinityPoints)}
+                      /> : null}
+                      {completionSummary.result.infinityCount > 0n ? <CompletionFact
+                        label={intl.formatMessage(messages.infinitiesCompleted)}
+                        value={formatGameNumber(locale, completionSummary.result.infinityCount)}
+                      /> : null}
+                    </CompletionGroup>
+                  ) : null}
+
+                  {completionSummary.result.infinityCount === 0n && completionSummary.result.facilityGains.length > 0 ? (
+                    <CompletionGroup
+                      title={intl.formatMessage(messages.facilitiesGroup)}
+                      className="offline-time-job__group--facilities"
+                    >
+                      {completionSummary.result.facilityGains.map((gain) => <CompletionFact
+                        key={gain.facilityId}
+                        label={intl.formatMessage(FACILITY_NAME_MESSAGES[gain.facilityId])}
+                        value={`+${formatGameNumber(locale, gain.quantity)}`}
+                      />)}
+                    </CompletionGroup>
+                  ) : null}
+
+                  {completionSummary.result.dreamResetCount > 0n || completionSummary.result.strangeMatter > 0n ? (
+                    <CompletionGroup title={intl.formatMessage(messages.simulationsGroup)}>
+                      {completionSummary.result.dreamResetCount > 0n ? <CompletionFact
+                        label={intl.formatMessage(messages.simulationResets)}
+                        value={formatGameNumber(locale, completionSummary.result.dreamResetCount)}
+                      /> : null}
+                      {completionSummary.result.strangeMatter > 0n ? <CompletionFact
+                        label={intl.formatMessage(messages.strangeMatterGained)}
+                        value={formatGameNumber(locale, completionSummary.result.strangeMatter)}
+                      /> : null}
+                    </CompletionGroup>
+                  ) : null}
+
+                  {completionSummary.result.realityWorkers > 0n || completionSummary.result.influence > 0n ? (
+                    <CompletionGroup title={intl.formatMessage(messages.realityGroup)}>
+                      {completionSummary.result.realityWorkers > 0n ? <CompletionFact
+                        label={intl.formatMessage(messages.realityWorkersGained)}
+                        value={formatGameNumber(locale, completionSummary.result.realityWorkers)}
+                      /> : null}
+                      {completionSummary.result.influence > 0n ? <CompletionFact
+                        label={intl.formatMessage(messages.influenceGained)}
+                        value={formatGameNumber(locale, completionSummary.result.influence)}
+                      /> : null}
+                    </CompletionGroup>
+                  ) : null}
+                </div>
+                {!hasProgressionGains(completionSummary.result) ? (
+                  <p className="offline-time-job__empty">
+                    {intl.formatMessage(messages.noMajorChanges)}
+                  </p>
+                ) : null}
+                <Button
+                  className="offline-time-job__continue"
+                  variant="primary"
+                  onClick={() => setCompletionSummary(null)}
+                >
+                  {intl.formatMessage(messages.closeSummary)}
+                </Button>
+              </> : null}
             </div>
+            </div>, portalHost)
           ) : null}
 
           {feedback ? (
             <p
-              className={`offline-time-feedback offline-time-feedback--${feedback.kind}`}
-              role={feedback.kind === 'failure' ? 'alert' : 'status'}
+              className="offline-time-feedback offline-time-feedback--failure"
+              role="alert"
             >
-              {feedback.kind === 'success'
-                ? intl.formatMessage(messages.spendSuccess, {
-                    duration: formatGameDuration(locale, feedback.seconds ?? 0),
-                  })
-                : intl.formatMessage(messages.actionFailed)}
+              {intl.formatMessage(messages.actionFailed)}
             </p>
           ) : null}
         </article>
 
-        <article className="offline-time-card offline-time-card--usage">
-          <h2>{intl.formatMessage(messages.usageHeading)}</h2>
-          <dl>
-            <div>
-              <dt>{intl.formatMessage(messages.currentInfinity)}</dt>
-              <dd>
-                {formatGameDuration(
-                  locale,
-                  infinityUsage.storedTimeUsedThisCycleSeconds,
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>{intl.formatMessage(messages.previousInfinity)}</dt>
-              <dd>
-                {formatGameDuration(
-                  locale,
-                  infinityUsage.storedTimeUsedPreviousCycleSeconds,
-                )}
-              </dd>
-            </div>
-          </dl>
-        </article>
       </div>
     </div>
   )
+}
+
+function presetMessage(preset: StoredTimeAccuracyPreset) {
+  if (preset === 'fast') return messages.fastPreset
+  if (preset === 'accurate') return messages.accuratePreset
+  return messages.balancedPreset
+}
+
+function hasProgressionGains(summary: StoredTimeCompletionSummary): boolean {
+  return summary.infinityPoints > 0n ||
+    summary.infinityCount > 0n ||
+    summary.dreamResetCount > 0n ||
+    summary.strangeMatter > 0n ||
+    summary.realityWorkers > 0n ||
+    summary.influence > 0n ||
+    summary.botGain > 0 ||
+    summary.facilityGains.length > 0
+}
+
+function CompletionFact({
+  label,
+  value,
+}: {
+  readonly label: string
+  readonly value: string
+}) {
+  return <div className="offline-time-job__fact">
+    <dt>{label}</dt>
+    <dd>{value}</dd>
+  </div>
+}
+
+function CompletionGroup({
+  title,
+  className = '',
+  children,
+}: {
+  readonly title: string
+  readonly className?: string
+  readonly children: ReactNode
+}) {
+  return <section className={`offline-time-job__group ${className}`}>
+    <h3>{title}</h3>
+    <dl>{children}</dl>
+  </section>
 }
 
 function defaultSelection(bankSeconds: number): number {

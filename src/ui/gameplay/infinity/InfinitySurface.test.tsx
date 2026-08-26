@@ -3,7 +3,7 @@
 import '@testing-library/jest-dom/vitest'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import axe from 'axe-core'
 import { IntlProvider } from 'react-intl'
 import {
@@ -208,6 +208,7 @@ describe('InfinitySurface', () => {
   test('keeps Break efficiency guidance inside the expanded settings', () => {
     const { container } = renderSurface({
       shop: [preview('secret')],
+      automaticResetEnabled: false,
       derived: {
         ...breakFacts(),
         currentIpPerMinute: 15,
@@ -217,7 +218,7 @@ describe('InfinitySurface', () => {
     })
 
     expect(screen.queryByText('Current: 15.0 IP/min')).not.toBeInTheDocument()
-    expect(screen.queryByText('Peak: 21.3 IP/min at 47.0 IP')).not.toBeInTheDocument()
+    expect(screen.queryByText('Recommended: 21.3 IP/min at 47.0 IP')).not.toBeInTheDocument()
     expect(
       screen.getByText('Bots until next Infinity Point: 1.00Sp'),
     ).toHaveClass('ui-visually-hidden')
@@ -230,11 +231,163 @@ describe('InfinitySurface', () => {
 
     const currentRate = screen.getByText('Current: 15.0 IP/min')
     expect(currentRate).toBeInTheDocument()
-    expect(screen.getByText('Peak: 21.3 IP/min at 47.0 IP')).toBeInTheDocument()
+    expect(screen.getByText('Recommended: 21.3 IP/min at 47.0 IP')).toBeInTheDocument()
     expect(currentRate.closest('.infinity-automatic-reset__copy')).toBeInTheDocument()
     expect(infinityStyles).not.toMatch(
       /\.infinity-break-target\s*\{[^}]*border-block-start:/s,
     )
+  })
+
+  test('keeps current and recommended rates visible while Auto Infinity is enabled', () => {
+    renderSurface({
+      shop: [preview('secret')],
+      automaticResetEnabled: true,
+      derived: {
+        ...breakFacts(),
+        currentIpPerMinute: 15,
+        peakIpPerMinute: 21.3,
+        peakReward: 47n,
+      },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Infinity settings' }))
+
+    expect(screen.getByText('Current: 15.0 IP/min')).toBeInTheDocument()
+    expect(screen.getByText('Recommended: 21.3 IP/min at 47.0 IP'))
+      .toBeInTheDocument()
+  })
+
+  test('publishes rate guidance no more than four times per second', () => {
+    vi.useFakeTimers()
+    try {
+      const initial: RenderOptions = {
+        shop: [preview('secret')],
+        automaticResetEnabled: true,
+        derived: {
+          ...breakFacts(),
+          currentIpPerMinute: 15,
+          peakIpPerMinute: 21.3,
+          peakReward: 47n,
+        },
+      }
+      const view = renderSurface(initial)
+      fireEvent.click(screen.getByRole('button', { name: 'Infinity settings' }))
+
+      view.rerender(surface({
+        ...initial,
+        derived: {
+          ...breakFacts(),
+          currentIpPerMinute: 30,
+          peakIpPerMinute: 42.6,
+          peakReward: 94n,
+        },
+      }))
+      expect(screen.getByText('Current: 15.0 IP/min')).toBeInTheDocument()
+      expect(screen.getByText('Recommended: 21.3 IP/min at 47.0 IP'))
+        .toBeInTheDocument()
+
+      act(() => vi.advanceTimersByTime(249))
+      expect(screen.getByText('Current: 15.0 IP/min')).toBeInTheDocument()
+
+      act(() => vi.advanceTimersByTime(1))
+      expect(screen.getByText('Current: 30.0 IP/min')).toBeInTheDocument()
+      expect(screen.getByText('Recommended: 42.6 IP/min at 94.0 IP'))
+        .toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  test('places inefficient-target guidance above the controls', () => {
+    const { container } = renderSurface({
+      shop: [preview('secret')],
+      derived: {
+        ...breakFacts(),
+        currentIpPerMinute: 15,
+        peakIpPerMinute: 21.3,
+        peakReward: 10n,
+      },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Infinity settings' }))
+
+    const warning = screen.getByText(
+      'This target is far above your manual Infinity recommendation.',
+    )
+    const automaticControl = container.querySelector(
+      '.infinity-automatic-reset',
+    )
+    const targetControl = container.querySelector('.infinity-break-target')
+
+    expect(warning).toBeInTheDocument()
+    expect(automaticControl).toBeInTheDocument()
+    expect(targetControl).toBeInTheDocument()
+    expect(screen.getByText('Recommended: 21.3 IP/min at 10.0 IP'))
+      .toBeInTheDocument()
+    if (!automaticControl || !targetControl) {
+      throw new Error('Infinity controls are incomplete.')
+    }
+    expect(
+      warning.compareDocumentPosition(automaticControl) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(
+      warning.compareDocumentPosition(targetControl) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+  })
+
+  test('warns at three times the manual recommendation, not below it', () => {
+    const { rerender } = renderSurface({
+      shop: [preview('secret')],
+      derived: {
+        ...breakFacts(),
+        peakIpPerMinute: 20,
+        peakReward: 14n,
+      },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Infinity settings' }))
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'manual Infinity recommendation',
+    )
+
+    rerender(
+      <IntlProvider locale="en">
+        <InfinitySurface
+          locale="en"
+          resources={{
+            points: 10n,
+            spentPoints: 2n,
+            availablePoints: 8n,
+            secretsOfTheUniverse: 5n,
+            permanentSkillPoints: 2n,
+          }}
+          progression={{
+            infinity: {
+              breakTarget: 42n,
+              automaticResetEnabled: true,
+            },
+          } as InfinitySurfaceProps['progression']}
+          derived={{
+            ...breakFacts(),
+            peakIpPerMinute: 20,
+            peakReward: 15n,
+          }}
+          previews={{
+            shop: [preview('secret')],
+            breakTarget: projectBreakInfinityPresentationControl(42n),
+          }}
+          commandAvailability={{
+            purchaseShopItem: true,
+            setBreakTarget: true,
+            setAutomaticReset: true,
+            requestReset: true,
+          }}
+          dispatchPlayer={vi.fn(async () => accepted())}
+        />
+      </IntlProvider>,
+    )
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
   test('keeps the saved Break target after invalid input', () => {
@@ -410,14 +563,18 @@ interface RenderOptions {
   readonly automaticResetEnabled?: boolean
 }
 
-function renderSurface({
+function renderSurface(options: RenderOptions) {
+  return render(surface(options))
+}
+
+function surface({
   shop,
   secrets = 5n,
   derived = ordinaryFacts(),
   dispatchPlayer = vi.fn(async () => accepted()),
   automaticResetEnabled = true,
 }: RenderOptions) {
-  return render(
+  return (
     <IntlProvider locale="en">
       <InfinitySurface
         locale="en"
@@ -449,7 +606,7 @@ function renderSurface({
         }}
         dispatchPlayer={dispatchPlayer}
       />
-    </IntlProvider>,
+    </IntlProvider>
   )
 }
 

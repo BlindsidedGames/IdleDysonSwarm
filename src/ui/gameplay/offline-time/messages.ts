@@ -9,8 +9,8 @@ export const offlineTimeMessages = defineMessages({
   explanation: {
     id: 'offline-time.explanation',
     defaultMessage:
-      'Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time.',
-    description: 'Explains what stored Offline Time does and distinguishes it from Simulation Double Time.',
+      'Offline Time is stored while you are away. Choose when to spend it to advance the game.',
+    description: 'Explains that Offline Time is stored and spent manually.',
   },
   stored: {
     id: 'offline-time.stored',
@@ -51,11 +51,6 @@ export const offlineTimeMessages = defineMessages({
     id: 'offline-time.spend-description',
     defaultMessage: 'Choose how much time to simulate now.',
     description: 'Instruction for the stored-time amount selector.',
-  },
-  selectedAmount: {
-    id: 'offline-time.selected-amount',
-    defaultMessage: 'Selected: {duration}',
-    description: 'The selected stored-time spend duration.',
   },
   oneMinute: {
     id: 'offline-time.one-minute',
@@ -104,19 +99,148 @@ export const offlineTimeMessages = defineMessages({
   },
   largeSpendDisclosure: {
     id: 'offline-time.large-spend-disclosure',
-    defaultMessage:
-      'Small spends replay every automation tick. Large spends execute up to 4,096 representative purchase decisions while continuous production still advances; omitted ticks make no purchases. Results may differ from exact replay, and splitting the same time into multiple spends may change results.',
-    description: 'Discloses the automatic exact versus bounded Stored Time policy.',
+    defaultMessage: 'Simulation becomes less accurate at larger time steps.',
+    description: 'Concise Stored Time accuracy disclosure.',
+  },
+  accuracyPreset: {
+    id: 'offline-time.accuracy-preset',
+    defaultMessage: 'Simulation accuracy',
+    description: 'Label for the Stored Time accuracy preset selector.',
+  },
+  reducedAccuracy: {
+    id: 'offline-time.summary.reduced-accuracy',
+    defaultMessage: '{preset} (sped up)',
+    description: 'Marks a Stored Time result whose update count was reduced with Speed Up.',
+  },
+  simulationUpdates: {
+    id: 'offline-time.summary.simulation-updates',
+    defaultMessage: 'Simulation updates',
+    description: 'Actual number of authoritative game updates executed for a Stored Time spend.',
+  },
+  fastPreset: {
+    id: 'offline-time.fast-preset',
+    defaultMessage: 'Fast',
+    description: 'Lowest-work Stored Time accuracy preset.',
+  },
+  balancedPreset: {
+    id: 'offline-time.balanced-preset',
+    defaultMessage: 'Balanced',
+    description: 'Default Stored Time accuracy preset.',
+  },
+  accuratePreset: {
+    id: 'offline-time.accurate-preset',
+    defaultMessage: 'Accurate',
+    description: 'Highest-work Stored Time accuracy preset.',
+  },
+  speedUp: {
+    id: 'offline-time.speed-up',
+    defaultMessage: 'Speed up',
+    description: 'Reduces the remaining Stored Time accuracy budget.',
   },
   simulationProgress: {
     id: 'offline-time.simulation-progress',
     defaultMessage: 'Offline Time simulation progress',
     description: 'Accessible label for Stored Time job progress.',
   },
+  processingHeading: {
+    id: 'offline-time.processing-heading',
+    defaultMessage: 'Processing Offline Time',
+    description: 'Heading for the active Stored Time processing dialog.',
+  },
+  preparing: {
+    id: 'offline-time.preparing',
+    defaultMessage: 'Preparing simulation…',
+    description: 'Status shown while a Stored Time job is being admitted or finalized.',
+  },
+  simulationComplete: {
+    id: 'offline-time.simulation-complete',
+    defaultMessage: 'Offline Time Complete',
+    description: 'Heading and accessible name for the completed Stored Time summary.',
+  },
+  timeSimulated: {
+    id: 'offline-time.time-simulated',
+    defaultMessage: 'Time simulated',
+    description: 'Completed Stored Time summary label for processed game time.',
+  },
+  timeRemaining: {
+    id: 'offline-time.time-remaining',
+    defaultMessage: 'Offline Time remaining',
+    description: 'Completed Stored Time summary label for the remaining bank.',
+  },
+  infinityGroup: {
+    id: 'offline-time.summary.group.infinity',
+    defaultMessage: 'Infinity',
+    description: 'Heading for Infinity results in the Stored Time completion summary.',
+  },
+  facilitiesGroup: {
+    id: 'offline-time.summary.group.facilities',
+    defaultMessage: 'Facilities gained',
+    description: 'Heading for facility gains in the Stored Time completion summary.',
+  },
+  simulationsGroup: {
+    id: 'offline-time.summary.group.simulations',
+    defaultMessage: 'Simulations',
+    description: 'Heading for Simulation results in the Stored Time completion summary.',
+  },
+  realityGroup: {
+    id: 'offline-time.summary.group.reality',
+    defaultMessage: 'Reality',
+    description: 'Heading for Reality results in the Stored Time completion summary.',
+  },
+  infinityPointsGained: {
+    id: 'offline-time.summary.infinity-points',
+    defaultMessage: 'Infinity Points gained',
+    description: 'Stored Time completion result for earned Infinity Points.',
+  },
+  infinitiesCompleted: {
+    id: 'offline-time.summary.infinities',
+    defaultMessage: 'Infinities completed',
+    description: 'Stored Time completion result for Infinity resets.',
+  },
+  botsGained: {
+    id: 'offline-time.summary.bots',
+    defaultMessage: 'Bots gained',
+    description: 'Stored Time completion result for net Bots gained without an Infinity.',
+  },
+  simulationResets: {
+    id: 'offline-time.summary.simulation-resets',
+    defaultMessage: 'Simulation resets',
+    description: 'Stored Time completion result for Dream simulation resets.',
+  },
+  strangeMatterGained: {
+    id: 'offline-time.summary.strange-matter',
+    defaultMessage: 'Strange Matter gained',
+    description: 'Stored Time completion result for Strange Matter.',
+  },
+  realityWorkersGained: {
+    id: 'offline-time.summary.reality-workers',
+    defaultMessage: 'Reality workers created',
+    description: 'Stored Time completion result for Reality workers.',
+  },
+  influenceGained: {
+    id: 'offline-time.summary.influence',
+    defaultMessage: 'Influence gained',
+    description: 'Stored Time completion result for automatic Influence.',
+  },
+  noMajorChanges: {
+    id: 'offline-time.summary.no-major-changes',
+    defaultMessage: 'No major progression changes.',
+    description: 'Stored Time completion result when no tracked progression changed.',
+  },
+  closeSummary: {
+    id: 'offline-time.close-summary',
+    defaultMessage: 'Continue',
+    description: 'Closes the completed Stored Time summary.',
+  },
   progress: {
     id: 'offline-time.progress',
     defaultMessage: '{percent}% complete · about {eta} remaining',
     description: 'Progress and estimated remaining time for a Stored Time job.',
+  },
+  progressAnnouncement: {
+    id: 'offline-time.progress-announcement',
+    defaultMessage: '{percent}% complete',
+    description: 'Coarsened screen-reader progress announcement for a Stored Time job.',
   },
   calculating: {
     id: 'offline-time.calculating',
@@ -133,11 +257,6 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'Cancelling safely…',
     description: 'Status while a Stored Time worker is discarding its candidate.',
   },
-  spendSuccess: {
-    id: 'offline-time.spend-success',
-    defaultMessage: 'Advanced the game by {duration}.',
-    description: 'Confirmation after stored Offline Time is successfully spent.',
-  },
   actionFailed: {
     id: 'offline-time.action-failed',
     defaultMessage: 'That action was not completed. Try again.',
@@ -147,21 +266,6 @@ export const offlineTimeMessages = defineMessages({
     id: 'offline-time.no-stored-time',
     defaultMessage: 'Return after time away to build up this bank.',
     description: 'Empty-state guidance for the stored Offline Time bank.',
-  },
-  usageHeading: {
-    id: 'offline-time.usage-heading',
-    defaultMessage: 'Offline Time Used',
-    description: 'Heading for per-Infinity stored-time usage statistics.',
-  },
-  currentInfinity: {
-    id: 'offline-time.current-infinity',
-    defaultMessage: 'Current Infinity',
-    description: 'Label for Offline Time spent during the current Infinity.',
-  },
-  previousInfinity: {
-    id: 'offline-time.previous-infinity',
-    defaultMessage: 'Previous Infinity',
-    description: 'Label for Offline Time spent during the previous Infinity.',
   },
   disabled: {
     id: 'offline-time.disabled',

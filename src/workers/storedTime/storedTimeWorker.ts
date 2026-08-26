@@ -9,7 +9,7 @@ import {
 } from './storedTimeProtocol'
 import { StoredTimeSimulation } from './storedTimeSimulation'
 
-const CHUNK_BUDGET_MILLISECONDS = 20
+const CHUNK_BUDGET_MILLISECONDS = 50
 const PROGRESS_INTERVAL_MILLISECONDS = 250
 
 const scope = self as unknown as DedicatedWorkerGlobalScope
@@ -21,6 +21,7 @@ let active:
       lastProgressAt: number
     }
   | null = null
+let pendingSpeedUpJobId: string | null = null
 
 scope.addEventListener('message', (event: MessageEvent<unknown>) => {
   const message = event.data as Partial<StoredTimeWorkerInboundMessage>
@@ -29,6 +30,20 @@ scope.addEventListener('message', (event: MessageEvent<unknown>) => {
     const job = active
     if (job !== null && job.request.jobId === message.jobId) {
       job.cancelRequested = true
+    }
+    return
+  }
+  if (message.type === 'speed-up') {
+    const job = active
+    if (job !== null && job.request.jobId === message.jobId) {
+      job.simulation.speedUp()
+      post({
+        type: 'progress',
+        protocolVersion: STORED_TIME_WORKER_PROTOCOL_VERSION,
+        progress: job.simulation.progress(),
+      })
+    } else if (typeof message.jobId === 'string') {
+      pendingSpeedUpJobId = message.jobId
     }
     return
   }
@@ -68,6 +83,12 @@ scope.addEventListener('message', (event: MessageEvent<unknown>) => {
       cancelRequested: false,
       lastProgressAt: performance.now(),
     }
+    if (pendingSpeedUpJobId !== null) {
+      if (pendingSpeedUpJobId === request.jobId) {
+        active.simulation.speedUp()
+      }
+      pendingSpeedUpJobId = null
+    }
     scheduleStep()
   } catch (error) {
     const jobId = message.jobId ?? 'unknown'
@@ -88,6 +109,7 @@ scope.addEventListener('message', (event: MessageEvent<unknown>) => {
       },
     })
     active = null
+    if (pendingSpeedUpJobId === jobId) pendingSpeedUpJobId = null
   }
 })
 

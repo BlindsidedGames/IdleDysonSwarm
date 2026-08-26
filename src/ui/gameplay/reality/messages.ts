@@ -360,7 +360,7 @@ export const realityUpgradeMessages = defineMessages({
   doubleTimeOwnedDescription: {
     id: 'reality.upgrades.double-time.description',
     defaultMessage:
-      'Gather time while offline, spend it while online.',
+      'Permanently runs the whole game at 2× speed.',
     description: 'Unity Reality upgrade description.',
   },
   workerAutoConvertTitle: {

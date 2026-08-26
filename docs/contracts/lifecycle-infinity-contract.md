@@ -28,21 +28,17 @@ Backward clock movement grants zero and emits an integrity signal. A
 non-missing replay consumes the quit timestamp in its canonical candidate so it
 cannot be awarded twice.
 
-The returned duration follows Unity's two-stage credit path. Dream Double Time
-first receives the full clamped duration in `Oracle.Persistence`, then receives
-the portion admitted to the stored-time bank again through
-`OfflineProgressSystem`. Stored time receives only the portion that fits its
-capacity. Both banks and the capacity use the same finite 42,000,000-second
-ceiling as Unity numeric repair.
+The returned duration is credited to the Offline Time bank only up to its
+capacity. Idle Electric Sheep doubles eligible away-time credit but does not
+affect active play or manually spent Offline Time. A visible foreground gap
+over 60 seconds uses the same retry-safe credit path instead of becoming one
+unbounded active update.
 
 Stored-time capacity upgrades require a full bank, empty that bank, double the
-capacity and stop at the ceiling. Spending remains a commit-first application
-operation: a staged simulation candidate is persisted before it is published.
-
-Dream Double Time prepares its multiplier before Dream production and defers
-the bank debit until the interval finishes. Its integer rate is clamped from
-zero through ten, rate zero remains active at x1, and a partially depleted last
-interval uses the proportional multiplier.
+capacity and stop at the ceiling. Spending is started manually and remains a
+commit-first application operation: one detached candidate is persisted before
+it is published. Cancellation, failure, import or reset discards the complete
+uncommitted candidate without charging the bank.
 
 ## Finite bot-cap recovery
 

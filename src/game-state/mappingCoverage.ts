@@ -565,6 +565,48 @@ const developmentExtensions = Object.freeze([
     'infinity',
     '$.infinity.currentCyclePeakReward',
   ),
+  owned(
+    '$.simulationInfinityManualPeakIpPerMinute',
+    'infinity',
+    '$.infinity.manualPeakIpPerMinute',
+  ),
+  owned(
+    '$.simulationInfinityManualPeakReward',
+    'infinity',
+    '$.infinity.manualPeakReward',
+  ),
+  owned(
+    '$.simulationInfinityManualObservedActiveSeconds',
+    'infinity',
+    '$.infinity.manualCalibrationObservedActiveSeconds',
+  ),
+  owned(
+    '$.simulationInfinityActiveAutomaticThroughputCycleEligible',
+    'infinity',
+    '$.infinity.activeAutomaticThroughputCycleEligible',
+  ),
+  classified(
+    '$.simulationInfinityManualCalibrationStartedCycleSeconds',
+    'legacy-duplicate-omitted',
+    'preserve-source',
+    'Superseded development-build cycle-clock marker retained only for save compatibility.',
+    'infinity',
+  ),
+  owned(
+    '$.processingRewriteMigrated',
+    'timeline',
+    '$.timeline.processing.rewriteMigrated',
+  ),
+  owned(
+    '$.processingActiveIntervalMilliseconds',
+    'timeline',
+    '$.timeline.processing.activeIntervalMilliseconds',
+  ),
+  owned(
+    '$.processingStoredTimePreset',
+    'timeline',
+    '$.timeline.processing.storedTimePreset',
+  ),
 ])
 const unresolvedLeafCount = entries.filter(
   (entry) => entry.classification === 'still-unowned',

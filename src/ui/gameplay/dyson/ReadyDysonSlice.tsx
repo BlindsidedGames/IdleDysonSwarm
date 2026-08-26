@@ -79,7 +79,6 @@ import {
 } from './DysonLowerFacts'
 import { DysonSwarmVisual } from './DysonSwarmVisual'
 import { shouldSettleRapidInfinityVisualization } from './rapidInfinityVisualization'
-import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
 import {
   wikiProgressionFromResources,
   type WikiCategoryId,
@@ -87,6 +86,7 @@ import {
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
+import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import type { GameAudioService } from '../../../audio'
 
@@ -168,11 +168,6 @@ const DebugSurface = lazy(async () => {
   return { default: module.DebugSurface }
 })
 
-const SimulationTimeControl = lazy(async () => {
-  const module = await import('../simulations/SimulationsSurface')
-  return { default: module.SimulationTimeControl }
-})
-
 const QuantumControlPanel = lazy(async () => {
   const module = await import('../quantum/QuantumSurface')
   return { default: module.QuantumControlPanel }
@@ -207,8 +202,8 @@ export interface ReadyDysonRuntimeHostProps {
   readonly importSaveText?: (
     text: string,
   ) => Promise<UiRuntimeImportResult>
-  readonly readSaveText?: () => Promise<string | null>
-  readonly downloadSave?: () => Promise<boolean>
+  readonly readSaveExport?: SettingsSurfaceProps['readSaveExport']
+  readonly downloadSaveText?: SettingsSurfaceProps['downloadSaveText']
   readonly copySaveText?: (text: string) => Promise<void>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly localDeveloperOptionsPurchased?: boolean
@@ -227,8 +222,8 @@ function UnprobedReadyDysonRuntimeHost({
   previewImportSaveText = unavailableImportPreview,
   importSaveFile = unavailableImport,
   importSaveText = unavailableImport,
-  readSaveText = unavailableReadSave,
-  downloadSave = unavailableExport,
+  readSaveExport = unavailableReadSaveExport,
+  downloadSaveText = unavailableDownloadSaveText,
   copySaveText = unavailableCopy,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
@@ -300,8 +295,8 @@ function UnprobedReadyDysonRuntimeHost({
       previewImportSaveText={previewImportSaveText}
       importSaveFile={importSaveFile}
       importSaveText={importSaveText}
-      readSaveText={readSaveText}
-      downloadSave={downloadSave}
+      readSaveExport={readSaveExport}
+      downloadSaveText={downloadSaveText}
       copySaveText={copySaveText}
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
@@ -321,8 +316,8 @@ export function ProbedReadyDysonRuntimeHost({
   previewImportSaveText = unavailableImportPreview,
   importSaveFile = unavailableImport,
   importSaveText = unavailableImport,
-  readSaveText = unavailableReadSave,
-  downloadSave = unavailableExport,
+  readSaveExport = unavailableReadSaveExport,
+  downloadSaveText = unavailableDownloadSaveText,
   copySaveText = unavailableCopy,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
@@ -394,8 +389,8 @@ export function ProbedReadyDysonRuntimeHost({
       previewImportSaveText={previewImportSaveText}
       importSaveFile={importSaveFile}
       importSaveText={importSaveText}
-      readSaveText={readSaveText}
-      downloadSave={downloadSave}
+      readSaveExport={readSaveExport}
+      downloadSaveText={downloadSaveText}
       copySaveText={copySaveText}
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
@@ -432,8 +427,8 @@ export interface ReadyDysonSliceProps {
   readonly importSaveText?: (
     text: string,
   ) => Promise<UiRuntimeImportResult>
-  readonly readSaveText?: () => Promise<string | null>
-  readonly downloadSave?: () => Promise<boolean>
+  readonly readSaveExport?: SettingsSurfaceProps['readSaveExport']
+  readonly downloadSaveText?: SettingsSurfaceProps['downloadSaveText']
   readonly copySaveText?: (text: string) => Promise<void>
   readonly development?: UiRuntimeDevelopmentControls
   readonly synchronizeHostEntitlements?: () => Promise<boolean>
@@ -511,8 +506,8 @@ export function ReadyDysonSlice({
   previewImportSaveText = unavailableImportPreview,
   importSaveFile = unavailableImport,
   importSaveText = unavailableImport,
-  readSaveText = unavailableReadSave,
-  downloadSave = unavailableExport,
+  readSaveExport = unavailableReadSaveExport,
+  downloadSaveText = unavailableDownloadSaveText,
   copySaveText = unavailableCopy,
   development,
   synchronizeHostEntitlements,
@@ -525,13 +520,12 @@ export function ReadyDysonSlice({
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
     useState(readVisualizationPreference)
-  const [purchaseSettingsOpen, setPurchaseSettingsOpen] = useState(false)
   const [quantumPurchaseSettingsOpen, setQuantumPurchaseSettingsOpen] =
-    useState(false)
-  const [avotationCompletionVisible, setAvotationCompletionVisible] =
     useState(false)
   const [spaceAgePurchaseQuantity, setSpaceAgePurchaseQuantity] =
     useState<SpaceAgePurchaseQuantity>(1)
+  const [avotationCompletionVisible, setAvotationCompletionVisible] =
+    useState(false)
   const [quantumPurchaseQuantity, setQuantumPurchaseQuantity] =
     useState<QuantumPurchaseQuantity>(1)
   const debugDraftRef = useRef<DebugSurfaceDraft>({
@@ -1046,10 +1040,25 @@ export function ReadyDysonSlice({
                   previewImportSaveText={previewImportSaveText}
                   importSaveFile={importSaveFile}
                   importSaveText={importSaveText}
-                  readSaveText={readSaveText}
-                  downloadSave={downloadSave}
+                  readSaveExport={readSaveExport}
+                  downloadSaveText={downloadSaveText}
                   copySaveText={copySaveText}
+                  storedTime={storedTime}
                   audio={audio}
+                  processingIntervalMilliseconds={
+                    gameplay.progression.timeline.processing
+                      ?.activeIntervalMilliseconds ?? 33
+                  }
+                  processingIntervalAvailable={
+                    gameplay.commands.byKind[
+                      'settings.set-processing-interval'
+                    ]?.routeAvailable ?? false
+                  }
+                  onProcessingIntervalChange={(milliseconds) =>
+                    dispatchPlayer({
+                      kind: 'settings.set-processing-interval',
+                      milliseconds,
+                    })}
                   development={
                     import.meta.env.DEV ? development : undefined
                   }
@@ -1351,11 +1360,12 @@ export function ReadyDysonSlice({
                                 gameplay.resources.reality.influence
                               }
                               activeDoubleTimeRate={
-                                gameplay.progression.timeline.doubleTime.enabled
-                                  ? gameplay.progression.timeline.doubleTime.rate
-                                  : 0
+                                0
                               }
                               spaceAgePurchaseQuantity={spaceAgePurchaseQuantity}
+                              onSpaceAgePurchaseQuantityChange={
+                                setSpaceAgePurchaseQuantity
+                              }
                               commandAvailability={{
                                 purchaseFoundational:
                                   gameplay.commands.byKind[
@@ -1372,10 +1382,6 @@ export function ReadyDysonSlice({
                                 blackHoleReset:
                                   gameplay.commands.byKind[
                                     'dream.request-black-hole-reset'
-                                  ].routeAvailable,
-                                setDoubleTimeRate:
-                                  gameplay.commands.byKind[
-                                    'time.set-double-time-rate'
                                   ].routeAvailable,
                               }}
                               dispatchPlayer={dispatchPlayer}
@@ -1555,9 +1561,6 @@ export function ReadyDysonSlice({
                                       <OfflineTimeSurface
                                         locale={locale}
                                         resources={gameplay.resources.time}
-                                        infinityUsage={
-                                          gameplay.progression.infinity
-                                        }
                                         previews={gameplay.previews.time}
                                         storedTimeCheater={
                                           gameplay.runtime.storedTimeCheater
@@ -1570,8 +1573,13 @@ export function ReadyDysonSlice({
                                           requestStoredTimeSpend:
                                             gameplay.commands.byKind[
                                               'time.request-stored-time-spend'
-                                            ].routeAvailable,
+                                              ].routeAvailable,
+                                          setStoredTimePreset:
+                                            gameplay.commands.byKind[
+                                              'time.set-stored-time-preset'
+                                            ]?.routeAvailable ?? false,
                                         }}
+                                        processing={gameplay.progression.timeline.processing}
                                         dispatchPlayer={dispatchPlayer}
                                         storedTime={storedTime}
                                         initialDraft={
@@ -1611,6 +1619,9 @@ export function ReadyDysonSlice({
                                           }
                                           swarmScale={
                                             dyson.value.presentation.swarmScale
+                                          }
+                                          offlineTimeUsage={
+                                            gameplay.progression.infinity
                                           }
                                           visibility={{
                                             infinity:
@@ -1658,28 +1669,7 @@ export function ReadyDysonSlice({
                                 : undefined
       }
       routeSupplement={
-        simulationsActive && gameplay.progression.timeline.doubleTime.unlocked
-          ? {
-              ariaLabel: intl.formatMessage(messages.simulationTimeMultiplier),
-              content: (
-                <Suspense fallback={<LazySurfacePending />}>
-                  <SimulationTimeControl
-                  locale={locale}
-                  bankSeconds={gameplay.resources.time.doubleTimeBankSeconds}
-                  rate={gameplay.progression.timeline.doubleTime.rate}
-                  enabled={gameplay.progression.timeline.doubleTime.enabled}
-                  available={gameplay.commands.byKind['time.set-double-time-rate'].routeAvailable}
-                  spaceAgeAvailable={gameplay.derived.simulations.eras.spaceAge.visible}
-                  purchaseSettingsOpen={purchaseSettingsOpen}
-                  spaceAgePurchaseQuantity={spaceAgePurchaseQuantity}
-                  onPurchaseSettingsOpenChange={setPurchaseSettingsOpen}
-                  onSpaceAgePurchaseQuantityChange={setSpaceAgePurchaseQuantity}
-                  dispatchPlayer={dispatchPlayer}
-                  />
-                </Suspense>
-              ),
-            }
-          : quantumRouteActive
+        quantumRouteActive
             ? {
                 ariaLabel: intl.formatMessage(messages.quantumControls),
                 content: (
@@ -1904,14 +1894,6 @@ export function ReadyDysonSlice({
                   distribution={
                     gameplay.progression.dyson.botDistribution
                   }
-                  workersFraction={
-                    gameplay.derived.dysonBotDistribution
-                      .workersFraction
-                  }
-                  scientistsFraction={
-                    gameplay.derived.dysonBotDistribution
-                      .scientistsFraction
-                  }
                   multitasking={
                     gameplay.progression.quantum.unlocks
                       .botMultitasking
@@ -1972,13 +1954,10 @@ export function ReadyDysonSlice({
 
 function readVisualizationPreference(): boolean {
   try {
-    return (
-      typeof localStorage === 'undefined' ||
-      localStorage.getItem(SWARM_VISUALIZATION_STORAGE_KEY) !==
-        'hidden'
-    )
+    return typeof localStorage !== 'undefined' &&
+      localStorage.getItem(SWARM_VISUALIZATION_STORAGE_KEY) === 'visible'
   } catch {
-    return true
+    return false
   }
 }
 
@@ -2023,11 +2002,11 @@ function unavailableImportPreview(): Promise<UiRuntimeImportPreviewResult> {
   })
 }
 
-function unavailableExport(): Promise<boolean> {
+function unavailableDownloadSaveText(_text: string): Promise<boolean> {
   return Promise.resolve(false)
 }
 
-function unavailableReadSave(): Promise<null> {
+function unavailableReadSaveExport(): Promise<null> {
   return Promise.resolve(null)
 }
 
