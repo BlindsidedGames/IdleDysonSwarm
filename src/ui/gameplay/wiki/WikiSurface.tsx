@@ -165,6 +165,12 @@ const version311PatchNoteMessages = [
   messages.patchNotesVersion311MegaTeaser,
 ] as const
 
+const version313PatchNoteMessages = [
+  messages.patchNotesVersion313Details,
+  messages.patchNotesVersion313Calculations,
+  messages.patchNotesVersion313Cards,
+] as const
+
 const version312PatchNoteMessages = [
   messages.patchNotesVersion312Languages,
   messages.patchNotesVersion312Processing,
@@ -359,15 +365,21 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion312)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion313)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version312PatchNoteMessages.map((message) => (
+            {version313PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
         </section>
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion312)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version312PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
           <h4>{intl.formatMessage(messages.patchNotesVersion311)}</h4>
           <ul className="wiki-surface__patch-note-list">
             {version311PatchNoteMessages.map((message) => (

@@ -12458,6 +12458,30 @@
       "value": "Ajout d’un réglage de traitement du jeu de 33 à 200 ms, permettant de choisir entre une automatisation plus précise et une charge réduite pour l’appareil."
     }
   ],
+  "wiki.patch-notes.version-3-1-3": [
+    {
+      "type": 0,
+      "value": "Version 3.1.3"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.calculations": [
+    {
+      "type": 0,
+      "value": "Ajout de calculs dépliables pour les effets de Compétence variables, notamment Planètes scientifiques et Dimensions de poche, afin de pouvoir consulter leurs valeurs actuelles."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.cards": [
+    {
+      "type": 0,
+      "value": "Amélioration des cartes des Installations et Mégastructures avec des valeurs de production mises en évidence et des taux sur une seule ligne, lisibles même sur les petits écrans."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.details": [
+    {
+      "type": 0,
+      "value": "Refonte des Détails des Installations et Mégastructures avec une décomposition plus claire, étape par étape, de la production, couvrant les bonus d’achat, la Recherche, les Compétences, les effets dynamiques et la vitesse du jeu."
+    }
+  ],
   "wiki.patch-notes.version-3-1.audio": [
     {
       "type": 0,
