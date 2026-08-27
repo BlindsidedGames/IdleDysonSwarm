@@ -12458,6 +12458,30 @@
       "value": "Se agregó un ajuste de procesamiento del juego de 33 a 200 ms para elegir entre una automatización más precisa y una menor carga para el dispositivo."
     }
   ],
+  "wiki.patch-notes.version-3-1-3": [
+    {
+      "type": 0,
+      "value": "Versión 3.1.3"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.calculations": [
+    {
+      "type": 0,
+      "value": "Se agregaron cálculos desplegables para los efectos variables de Habilidades, como Planetas científicos y Dimensiones de bolsillo, para poder consultar sus valores actuales."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.cards": [
+    {
+      "type": 0,
+      "value": "Se mejoraron las tarjetas de Instalaciones y Megaestructuras con valores de producción resaltados y tasas en una sola línea que siguen siendo legibles en pantallas pequeñas."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.details": [
+    {
+      "type": 0,
+      "value": "Se rediseñaron los Detalles de Instalaciones y Megaestructuras con un desglose de producción paso a paso más claro que incluye bonos de compra, Investigación, Habilidades, efectos dinámicos y velocidad del juego."
+    }
+  ],
   "wiki.patch-notes.version-3-1.audio": [
     {
       "type": 0,

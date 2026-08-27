@@ -12458,6 +12458,30 @@
       "value": "Added a Game Processing setting from 33–200 ms, allowing players to choose between more accurate automation and lower device workload."
     }
   ],
+  "wiki.patch-notes.version-3-1-3": [
+    {
+      "type": 0,
+      "value": "Version 3.1.3"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.calculations": [
+    {
+      "type": 0,
+      "value": "Added expandable calculations for changing Skill effects, including Scientific Planets and Pocket Dimensions, so their current values can be inspected."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.cards": [
+    {
+      "type": 0,
+      "value": "Improved Facility and Mega-Structure cards with highlighted production values and single-line rates that stay readable on smaller screens."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.details": [
+    {
+      "type": 0,
+      "value": "Redesigned Facility and Mega-Structure Details with a clearer step-by-step production breakdown covering purchase bonuses, Research, Skills, dynamic effects, and game speed."
+    }
+  ],
   "wiki.patch-notes.version-3-1.audio": [
     {
       "type": 0,
