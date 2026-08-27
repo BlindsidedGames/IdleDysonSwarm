@@ -65,6 +65,7 @@ export function TinkerSurface({
   }
   const gesture = useTinkerPressController({
     canInteract: facts.canStart || facts.runtime.running,
+    repeatAvailable: facts.presentationMode !== 'default',
     runtimeRepeat: facts.runtime.repeat,
     dispatch,
     onResult: handleResult,
@@ -122,6 +123,7 @@ export function TinkerSurface({
           )
         : intl.formatMessage(tinkerMessages.defaultDescription)
   const showFreshSaveTip = facts.presentationMode === 'default'
+  const showRepeatStatus = facts.presentationMode !== 'default'
   const running = facts.runtime.running
   const showHeldVisual = gesture.active
   const disabled = !facts.canStart && !running && !gesture.active
@@ -197,16 +199,18 @@ export function TinkerSurface({
               className="tinker-surface__progress-fill"
               style={{ transform: `scaleX(${normalizedProgress})` }}
             />
-            <span
-              className="tinker-surface__hold-label"
-              aria-hidden="true"
-            >
-              {intl.formatMessage(
-                gesture.repeating
-                  ? tinkerMessages.repeatingWhileHeld
-                  : tinkerMessages.holdToRepeat,
-              )}
-            </span>
+            {showRepeatStatus && (
+              <span
+                className="tinker-surface__hold-label"
+                aria-hidden="true"
+              >
+                {intl.formatMessage(
+                  gesture.repeating
+                    ? tinkerMessages.repeating
+                    : tinkerMessages.holdToRepeat,
+                )}
+              </span>
+            )}
           </span>
           <span id={remainingId} className="tinker-surface__time">
             {intl.formatMessage(tinkerMessages.duration, {

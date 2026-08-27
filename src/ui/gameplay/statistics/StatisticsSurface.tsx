@@ -38,11 +38,6 @@ export interface StatisticsSurfaceProps {
   readonly statistics: StatisticsState
   readonly currentBreakTarget: bigint
   readonly swarmScale: FrontendDysonPresentationFacts['swarmScale']
-  readonly offlineTimeUsage: Pick<
-    FrontendCanonicalProgression['infinity'],
-    | 'storedTimeUsedThisCycleSeconds'
-    | 'storedTimeUsedPreviousCycleSeconds'
-  >
   readonly visibility: StatisticsVisibility
 }
 
@@ -156,7 +151,6 @@ export function StatisticsSurface({
   statistics,
   currentBreakTarget,
   swarmScale,
-  offlineTimeUsage,
   visibility,
 }: StatisticsSurfaceProps) {
   const intl = useIntl()
@@ -239,11 +233,6 @@ export function StatisticsSurface({
           cycle={statistics.lastCompletedCycle}
         />
 
-        <OfflineTimeStatistics
-          locale={locale}
-          usage={offlineTimeUsage}
-        />
-
         {visibility.infinity ? (
           <RecentInfinityPerformance
             locale={locale}
@@ -258,37 +247,6 @@ export function StatisticsSurface({
         />
       </div>
     </div>
-  )
-}
-
-function OfflineTimeStatistics({
-  locale,
-  usage,
-}: {
-  readonly locale: EnabledLocale
-  readonly usage: StatisticsSurfaceProps['offlineTimeUsage']
-}) {
-  const intl = useIntl()
-  return (
-    <section className="statistics-card statistics-offline-time">
-      <h2>{intl.formatMessage(messages.offlineTime)}</h2>
-      <dl>
-        <StatisticFact
-          label={intl.formatMessage(messages.currentInfinity)}
-          value={formatGameDuration(
-            locale,
-            usage.storedTimeUsedThisCycleSeconds,
-          )}
-        />
-        <StatisticFact
-          label={intl.formatMessage(messages.previousInfinity)}
-          value={formatGameDuration(
-            locale,
-            usage.storedTimeUsedPreviousCycleSeconds,
-          )}
-        />
-      </dl>
-    </section>
   )
 }
 

@@ -108,21 +108,6 @@ export const statisticsMessages = defineMessages({
     defaultMessage: 'Recent activity',
     description: 'Heading for rolling canonical statistics windows.',
   },
-  offlineTime: {
-    id: 'statistics.offline-time',
-    defaultMessage: 'Offline Time',
-    description: 'Heading for per-Infinity Offline Time usage statistics.',
-  },
-  currentInfinity: {
-    id: 'statistics.offline-time.current-infinity',
-    defaultMessage: 'Current Infinity',
-    description: 'Offline Time spent during the current Infinity.',
-  },
-  previousInfinity: {
-    id: 'statistics.offline-time.previous-infinity',
-    defaultMessage: 'Previous Infinity',
-    description: 'Offline Time spent during the previous Infinity.',
-  },
   lastHour: {
     id: 'statistics.window.last-hour',
     defaultMessage: 'Last 60 minutes',

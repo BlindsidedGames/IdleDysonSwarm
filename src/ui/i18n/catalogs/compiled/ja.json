@@ -2700,7 +2700,7 @@
   "dyson.tinker.hold-to-repeat": [
     {
       "type": 0,
-      "value": "どこでも長押しすると繰り返します…"
+      "value": "長押しすると繰り返します…"
     }
   ],
   "dyson.tinker.progress": [
@@ -2715,10 +2715,10 @@
       "value": "工作"
     }
   ],
-  "dyson.tinker.repeating-while-held": [
+  "dyson.tinker.repeating": [
     {
       "type": 0,
-      "value": "長押し中は繰り返し"
+      "value": "繰り返し中"
     }
   ],
   "dyson.tinker.tip.fresh-save": [
@@ -10701,24 +10701,6 @@
       "value": "なし"
     }
   ],
-  "statistics.offline-time": [
-    {
-      "type": 0,
-      "value": "オフライン時間"
-    }
-  ],
-  "statistics.offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "現在のインフィニティ"
-    }
-  ],
-  "statistics.offline-time.previous-infinity": [
-    {
-      "type": 0,
-      "value": "前回のインフィニティ"
-    }
-  ],
   "statistics.other-stats": [
     {
       "type": 0,
@@ -12480,6 +12462,18 @@
     {
       "type": 0,
       "value": "施設と巨大構造物の詳細を刷新し、購入ボーナス、研究、スキル、変動効果、ゲーム速度を含む生産計算を、より分かりやすく段階ごとに表示するようにしました。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.statistics": [
+    {
+      "type": 0,
+      "value": "統計からオフライン時間の使用状況セクションを削除しました。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.tinker": [
+    {
+      "type": 0,
+      "value": "手作業の工作は長押し後に連続生産を開始し、別の場所をタップするかボットタブを離れると停止するようになりました。"
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [

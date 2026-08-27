@@ -101,8 +101,8 @@ describe('ReadyDysonSlice', () => {
     expect(screen.queryByText('AI Managers')).not.toBeInTheDocument()
     expect(await screen.findByText('????')).toBeInTheDocument()
     expect(
-      screen.getByText('Hold anywhere to repeat...'),
-    ).toBeInTheDocument()
+      screen.queryByText('Long press to repeat...'),
+    ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /repeat/i }),
     ).not.toBeInTheDocument()

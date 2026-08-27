@@ -1168,8 +1168,8 @@
     "description": "Safe feedback when the UI runtime cannot dispatch a Tinker command."
   },
   "dyson.tinker.hold-to-repeat": {
-    "defaultMessage": "Hold anywhere to repeat...",
-    "description": "Exact Unity hold gesture hint inside the Tinker progress bar."
+    "defaultMessage": "Long press to repeat...",
+    "description": "Long-press gesture hint inside the Tinker progress bar."
   },
   "dyson.tinker.progress": {
     "defaultMessage": "Tinker progress",
@@ -1179,9 +1179,9 @@
     "defaultMessage": "Tinker",
     "description": "Accessible name for the Unity Tinker region."
   },
-  "dyson.tinker.repeating-while-held": {
-    "defaultMessage": "Repeating while held",
-    "description": "Tinker progress-bar status while the hold gesture is repeating."
+  "dyson.tinker.repeating": {
+    "defaultMessage": "Repeating",
+    "description": "Tinker progress-bar status while repeat remains active."
   },
   "dyson.tinker.tip.fresh-save": {
     "defaultMessage": "Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center).",
@@ -5719,18 +5719,6 @@
     "defaultMessage": "None",
     "description": "Empty state for a reached statistics group with no recorded activity."
   },
-  "statistics.offline-time": {
-    "defaultMessage": "Offline Time",
-    "description": "Heading for per-Infinity Offline Time usage statistics."
-  },
-  "statistics.offline-time.current-infinity": {
-    "defaultMessage": "Current Infinity",
-    "description": "Offline Time spent during the current Infinity."
-  },
-  "statistics.offline-time.previous-infinity": {
-    "defaultMessage": "Previous Infinity",
-    "description": "Offline Time spent during the previous Infinity."
-  },
   "statistics.other-stats": {
     "defaultMessage": "Other Stats",
     "description": "Heading for additional current-state statistics."
@@ -6498,6 +6486,14 @@
   "wiki.patch-notes.version-3-1-3.details": {
     "defaultMessage": "Redesigned Facility and Mega-Structure Details with a clearer step-by-step production breakdown covering purchase bonuses, Research, Skills, dynamic effects, and game speed.",
     "description": "Version 3.1.3 release note for redesigned Facility and Mega-Structure production details."
+  },
+  "wiki.patch-notes.version-3-1-3.statistics": {
+    "defaultMessage": "Removed the Offline Time usage section from Statistics.",
+    "description": "Version 3.1.3 release note for removing Offline Time usage from Statistics."
+  },
+  "wiki.patch-notes.version-3-1-3.tinker": {
+    "defaultMessage": "Manual Labour Tinker now starts continuous production after a long press and stops when you tap elsewhere or leave the Bots tab.",
+    "description": "Version 3.1.3 release note for latched Manual Labour Tinker repeat."
   },
   "wiki.patch-notes.version-3-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

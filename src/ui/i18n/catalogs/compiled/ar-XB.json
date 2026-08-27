@@ -5040,7 +5040,7 @@
     },
     {
       "type": 0,
-      "value": "Hoʅp ɐuʎʍɥǝɹǝ ʇo ɹǝdǝɐʇ..."
+      "value": "⅂ouƃ dɹǝss ʇo ɹǝdǝɐʇ..."
     },
     {
       "type": 0,
@@ -5075,14 +5075,14 @@
       "value": "‬"
     }
   ],
-  "dyson.tinker.repeating-while-held": [
+  "dyson.tinker.repeating": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "ᴚǝdǝɐʇıuƃ ʍɥıʅǝ ɥǝʅp"
+      "value": "ᴚǝdǝɐʇıuƃ"
     },
     {
       "type": 0,
@@ -22141,48 +22141,6 @@
       "value": "‬"
     }
   ],
-  "statistics.offline-time": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Oɟɟʅıuǝ ⊥ıɯǝ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "statistics.offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Ↄnɹɹǝuʇ Iuɟıuıʇʎ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "statistics.offline-time.previous-infinity": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Ԁɹǝʌıons Iuɟıuıʇʎ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
   "statistics.other-stats": [
     {
       "type": 0,
@@ -25476,6 +25434,34 @@
     {
       "type": 0,
       "value": "ᴚǝpǝsıƃuǝp Ⅎɐɔıʅıʇʎ ɐup Wǝƃɐ-Sʇɹnɔʇnɹǝ ᗡǝʇɐıʅs ʍıʇɥ ɐ ɔʅǝɐɹǝɹ sʇǝd-qʎ-sʇǝd dɹopnɔʇıou qɹǝɐʞpoʍu ɔoʌǝɹıuƃ dnɹɔɥɐsǝ qounsǝs, ᴚǝsǝɐɹɔɥ, Sʞıʅʅs, pʎuɐɯıɔ ǝɟɟǝɔʇs, ɐup ƃɐɯǝ sdǝǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.statistics": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɯoʌǝp ʇɥǝ Oɟɟʅıuǝ ⊥ıɯǝ nsɐƃǝ sǝɔʇıou ɟɹoɯ Sʇɐʇısʇıɔs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.tinker": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐunɐʅ ⅂ɐqonɹ ⊥ıuʞǝɹ uoʍ sʇɐɹʇs ɔouʇıunons dɹopnɔʇıou ɐɟʇǝɹ ɐ ʅouƃ dɹǝss ɐup sʇods ʍɥǝu ʎon ʇɐd ǝʅsǝʍɥǝɹǝ oɹ ʅǝɐʌǝ ʇɥǝ Ԑoʇs ʇɐq."
     },
     {
       "type": 0,

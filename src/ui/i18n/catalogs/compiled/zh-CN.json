@@ -2700,7 +2700,7 @@
   "dyson.tinker.hold-to-repeat": [
     {
       "type": 0,
-      "value": "按住任意位置以重复……"
+      "value": "长按以重复……"
     }
   ],
   "dyson.tinker.progress": [
@@ -2715,10 +2715,10 @@
       "value": "手工组装"
     }
   ],
-  "dyson.tinker.repeating-while-held": [
+  "dyson.tinker.repeating": [
     {
       "type": 0,
-      "value": "按住期间持续重复"
+      "value": "正在重复"
     }
   ],
   "dyson.tinker.tip.fresh-save": [
@@ -10701,24 +10701,6 @@
       "value": "无"
     }
   ],
-  "statistics.offline-time": [
-    {
-      "type": 0,
-      "value": "离线时间"
-    }
-  ],
-  "statistics.offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "当前无限"
-    }
-  ],
-  "statistics.offline-time.previous-infinity": [
-    {
-      "type": 0,
-      "value": "上一次无限"
-    }
-  ],
   "statistics.other-stats": [
     {
       "type": 0,
@@ -12480,6 +12462,18 @@
     {
       "type": 0,
       "value": "重新设计设施和巨型结构的详情，以更清晰的逐步产量明细展示购买加成、研究、技能、动态效果和游戏速度。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.statistics": [
+    {
+      "type": 0,
+      "value": "从统计中移除了离线时间使用情况部分。"
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.tinker": [
+    {
+      "type": 0,
+      "value": "手动劳动的修补功能现在会在长按后开始持续生产，并在点击其他位置或离开机器人标签页时停止。"
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [

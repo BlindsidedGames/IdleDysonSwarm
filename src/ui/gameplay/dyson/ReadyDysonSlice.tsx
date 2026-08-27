@@ -1622,9 +1622,6 @@ export function ReadyDysonSlice({
                                           swarmScale={
                                             dyson.value.presentation.swarmScale
                                           }
-                                          offlineTimeUsage={
-                                            gameplay.progression.infinity
-                                          }
                                           visibility={{
                                             infinity:
                                               gameplay.visibility.infinity

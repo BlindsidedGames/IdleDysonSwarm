@@ -2700,7 +2700,7 @@
   "dyson.tinker.hold-to-repeat": [
     {
       "type": 0,
-      "value": "Zum Wiederholen gedrückt halten..."
+      "value": "Zum Wiederholen lange drücken..."
     }
   ],
   "dyson.tinker.progress": [
@@ -2715,10 +2715,10 @@
       "value": "Basteln"
     }
   ],
-  "dyson.tinker.repeating-while-held": [
+  "dyson.tinker.repeating": [
     {
       "type": 0,
-      "value": "Wiederholung bei gedrückter Taste"
+      "value": "Wiederholung läuft"
     }
   ],
   "dyson.tinker.tip.fresh-save": [
@@ -10701,24 +10701,6 @@
       "value": "Keine"
     }
   ],
-  "statistics.offline-time": [
-    {
-      "type": 0,
-      "value": "Offline-Zeit"
-    }
-  ],
-  "statistics.offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "Aktuelle Unendlichkeit"
-    }
-  ],
-  "statistics.offline-time.previous-infinity": [
-    {
-      "type": 0,
-      "value": "Vorherige Unendlichkeit"
-    }
-  ],
   "statistics.other-stats": [
     {
       "type": 0,
@@ -12480,6 +12462,18 @@
     {
       "type": 0,
       "value": "Details für Einrichtungen und Megastrukturen wurden mit einer klareren, schrittweisen Produktionsaufschlüsselung über Kaufboni, Forschung, Fähigkeiten, dynamische Effekte und Spielgeschwindigkeit neu gestaltet."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.statistics": [
+    {
+      "type": 0,
+      "value": "Der Abschnitt zur Nutzung der Offline-Zeit wurde aus den Statistiken entfernt."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.tinker": [
+    {
+      "type": 0,
+      "value": "Das Tüfteln mit Manueller Arbeit startet nun nach langem Drücken die fortlaufende Produktion und endet, sobald du eine andere Stelle berührst oder den Bots-Reiter verlässt."
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [
