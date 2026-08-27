@@ -12362,277 +12362,295 @@
       "value": "Ältere"
     }
   ],
-  "wiki.patch-notes.version-3": [
+  "wiki.patch-notes.version-4": [
     {
       "type": 0,
-      "value": "Version 3"
+      "value": "Version 4"
     }
   ],
-  "wiki.patch-notes.version-3-1": [
+  "wiki.patch-notes.version-4-1": [
     {
       "type": 0,
-      "value": "Version 3.1"
+      "value": "Version 4.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1": [
+  "wiki.patch-notes.version-4-1-1": [
     {
       "type": 0,
-      "value": "Version 3.1.1"
+      "value": "Version 4.1.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.compact-layouts": [
+  "wiki.patch-notes.version-4-1-1.compact-layouts": [
     {
       "type": 0,
       "value": "Die Layouts für Bots, Forschung, Simulationen, Einstellungen, Geschichte und Wiki wurden auf kompakten Bildschirmen verfeinert: mit gleichmäßigen Abständen zwischen Anlagen, kompakteren Bedienelementen, seitenspezifischen Überschriften und korrigierten Abständen zwischen Bereichen."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.mega-teaser": [
+  "wiki.patch-notes.version-4-1-1.mega-teaser": [
     {
       "type": 0,
       "value": "Der Ausblick auf die nächste Megastruktur bleibt nun verborgen, bis Megastrukturen verfügbar sind. Außerdem entsprechen sowohl der Ausblick als auch das Basteln dem Stil der Anlagenkarten."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.overlays": [
+  "wiki.patch-notes.version-4-1-1.overlays": [
     {
       "type": 0,
       "value": "Die Interaktionen für Avotation und Geheimnisse wurden verbessert: Ihre Markierungen verdecken keine Menü- oder Bereichssteuerungen mehr, ihre Pop-ups bleiben bedienbar und ein Klick außerhalb der Geheimnisse schließt das Pop-up."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.skills-and-tinker": [
+  "wiki.patch-notes.version-4-1-1.skills-and-tinker": [
     {
       "type": 0,
       "value": "Der Skill-Baum merkt sich nun seine Position und Zoomstufe beim Wechsel zwischen Tabs. Handarbeit hält das Basteln oberhalb der Anlagen verankert, ohne Menüs oder Bereiche des späten Spiels zu verdecken."
     }
   ],
-  "wiki.patch-notes.version-3-1-2": [
+  "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
-      "value": "Version 3.1.2"
+      "value": "Version 4.1.2"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.double-time": [
+  "wiki.patch-notes.version-4-1-2.double-time": [
     {
       "type": 0,
       "value": "Double Time lässt nun dauerhaft alle Spielsysteme mit doppelter Normalgeschwindigkeit laufen."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.languages": [
+  "wiki.patch-notes.version-4-1-2.languages": [
     {
       "type": 0,
       "value": "Vollständige Übersetzungen für Französisch, Deutsch, lateinamerikanisches Spanisch, brasilianisches Portugiesisch, vereinfachtes Chinesisch, Russisch und Japanisch hinzugefügt, mit automatischer Auswahl anhand der Gerätesprache und manueller Sprachauswahl in den Einstellungen."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.offline-controls": [
+  "wiki.patch-notes.version-4-1-2.offline-controls": [
     {
       "type": 0,
       "value": "Fast-, Balanced- und Accurate-Voreinstellungen für Offline-Zeit, Verarbeitungsfortschritt, Beschleunigen, sichere Abbruchmöglichkeit und eine Abschlussübersicht nach jedem Durchlauf hinzugefügt."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.processing": [
+  "wiki.patch-notes.version-4-1-2.processing": [
     {
       "type": 0,
       "value": "Die Verarbeitung im aktiven Spiel und für Offline-Zeit nutzt nun dieselbe Spielsimulation. Das verbessert die Leistung und hält dauerhafte Gewinne sowie Automatisierung zwischen Aktualisierungen konsistent."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.update-interval": [
+  "wiki.patch-notes.version-4-1-2.update-interval": [
     {
       "type": 0,
       "value": "Eine Spielverarbeitungseinstellung von 33 bis 200 ms wurde hinzugefügt, um zwischen genauerer Automatisierung und geringerer Gerätebelastung wählen zu können."
     }
   ],
-  "wiki.patch-notes.version-3-1-3": [
+  "wiki.patch-notes.version-4-1-3": [
     {
       "type": 0,
-      "value": "Version 3.1.3"
+      "value": "Version 4.1.3"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.calculations": [
+  "wiki.patch-notes.version-4-1-3.calculations": [
     {
       "type": 0,
       "value": "Ausklappbare Berechnungen für veränderliche Fähigkeitseffekte wie Wissenschaftliche Planeten und Taschendimensionen hinzugefügt, damit ihre aktuellen Werte nachvollzogen werden können."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.cards": [
+  "wiki.patch-notes.version-4-1-3.cards": [
     {
       "type": 0,
       "value": "Karten für Einrichtungen und Megastrukturen wurden mit hervorgehobenen Produktionswerten und einzeiligen Raten verbessert, die auch auf kleineren Bildschirmen lesbar bleiben."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.details": [
+  "wiki.patch-notes.version-4-1-3.details": [
     {
       "type": 0,
       "value": "Details für Einrichtungen und Megastrukturen wurden mit einer klareren, schrittweisen Produktionsaufschlüsselung über Kaufboni, Forschung, Fähigkeiten, dynamische Effekte und Spielgeschwindigkeit neu gestaltet."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.statistics": [
+  "wiki.patch-notes.version-4-1-3.statistics": [
     {
       "type": 0,
       "value": "Der Abschnitt zur Nutzung der Offline-Zeit wurde aus den Statistiken entfernt."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.tinker": [
+  "wiki.patch-notes.version-4-1-3.tinker": [
     {
       "type": 0,
       "value": "Das Tüfteln mit Manueller Arbeit startet nun nach langem Drücken die fortlaufende Produktion und endet, sobald du eine andere Stelle berührst oder den Bots-Reiter verlässt."
     }
   ],
-  "wiki.patch-notes.version-3-1.audio": [
+  "wiki.patch-notes.version-4-1-4": [
+    {
+      "type": 0,
+      "value": "Version 4.1.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.simulation-resources": [
+    {
+      "type": 0,
+      "value": "Dyson-Paneele, Schwarm-Paneele, Seltsame Materie, Schwarzes-Loch-Belohnungen und zugehörige Statistiken können nun über die frühere Grenze von 9,22 Trillionen hinauswachsen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.stored-time": [
+    {
+      "type": 0,
+      "value": "Die Kapazität der gespeicherten Zeit wird nach großen Erweiterungen oder Speicherübertragungen nicht mehr auf einen Tag zurückgesetzt und kann nun ohne spielbedingte Obergrenze weiter verdoppelt werden."
+    }
+  ],
+  "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
       "value": "Ein Soundtrack und Klänge der Benutzeroberfläche wurden auf unterstützten Plattformen hinzugefügt, mit getrennter Lautstärkeregelung für Musik und Effekte, einer vollständigen Stummschaltung und zuverlässigerer Wiedergabe beim Wechsel zwischen Apps oder Browserfenstern."
     }
   ],
-  "wiki.patch-notes.version-3-1.dyson-visualization": [
+  "wiki.patch-notes.version-4-1.dyson-visualization": [
     {
       "type": 0,
       "value": "Verbesserte Leistung der Dyson-Visualisierung bei extrem schneller automatischer Unendlichkeit: Die Anzeige stabilisiert sich beim endgültigen Galaxienfeld, während die dichte Spirale, der helle Kern und die ausgewogene mobile Platzierung der wachsenden Galaxie wiederhergestellt wurden."
     }
   ],
-  "wiki.patch-notes.version-3-1.economy": [
+  "wiki.patch-notes.version-4-1.economy": [
     {
       "type": 0,
       "value": "Käufe bei den größten unterstützten Ressourcenwerten wurden korrigiert. Außerdem bleiben extrem hohe Preise für Mega-Fließbänder nicht mehr auf einem wiederverwendbaren Plateau hängen."
     }
   ],
-  "wiki.patch-notes.version-3-1.infinity": [
+  "wiki.patch-notes.version-4-1.infinity": [
     {
       "type": 0,
       "value": "Unendlichkeit wurde um manuelle, von der automatischen Unendlichkeit unabhängige Zurücksetzungen, genaue Ziele für automatische Unendlichkeitspunkte sowie Hinweise zu aktuellen und höchsten IP pro Minute erweitert."
     }
   ],
-  "wiki.patch-notes.version-3-1.mobile-ui": [
+  "wiki.patch-notes.version-4-1.mobile-ui": [
     {
       "type": 0,
       "value": "Megastrukturen im späten Spiel wurden wiederhergestellt und die Spiellayouts mit übersichtlicheren Anlagenkarten, einheitlichen Routendesigns, sichereren Abständen auf Mobilgeräten, verbesserten Dialogen und besserer Steuerung auf kompakten Bildschirmen überarbeitet."
     }
   ],
-  "wiki.patch-notes.version-3-1.navigation": [
+  "wiki.patch-notes.version-4-1.navigation": [
     {
       "type": 0,
       "value": "Anpassbare Verknüpfungen für die untere Navigation wurden hinzugefügt, einschließlich der optionalen Einstellung „Text einblenden“ und einer automatischen Größenanpassung, die ausgewählte Ziele bei unterschiedlichen Bildschirmbreiten erreichbar hält."
     }
   ],
-  "wiki.patch-notes.version-3-1.progress-panels": [
+  "wiki.patch-notes.version-4-1.progress-panels": [
     {
       "type": 0,
       "value": "Gemeinsame Fortschritts- und Einstellungsbereiche für Bots, Forschung, Skills, Unendlichkeit, Simulationen und Quanten wurden hinzugefügt, darunter klarere Produktionsvergleiche und Bedienelemente für die erste manuelle Unendlichkeit."
     }
   ],
-  "wiki.patch-notes.version-3-1.saves": [
+  "wiki.patch-notes.version-4-1.saves": [
     {
       "type": 0,
       "value": "Die Migration älterer Unity-Spielstände und die Zuverlässigkeit von Spielständen bei Hintergrundbetrieb, Unterbrechung, Neuladen, Offline-Start und Updates wurden verbessert. Außerdem wurden das App-Branding und die Ladebildschirme wiederhergestellt."
     }
   ],
-  "wiki.patch-notes.version-3-1.settings": [
+  "wiki.patch-notes.version-4-1.settings": [
     {
       "type": 0,
       "value": "Gerätelokale Zahlenformate „Standard“, „Wissenschaftlich“ und „Technisch“ mit Ziffern fester Breite wurden hinzugefügt, ebenso eine Einstellung zum Ausblenden abgeschlossener Forschung."
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-controls": [
+  "wiki.patch-notes.version-4-1.skill-controls": [
     {
       "type": 0,
       "value": "Skill-Voreinstellungen und Bestätigungen wurden verbessert: Gesperrte Skills bleiben vorgemerkt, bis ihre Fortschrittslinie freigeschaltet ist; Produktionsänderungen werden deutlicher in der Vorschau angezeigt; und Voreinstellungs-, Zurücksetzungs-, Such-, Berührungs- und Ziehsteuerung sind leichter zu bedienen."
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-effects": [
+  "wiki.patch-notes.version-4-1.skill-effects": [
     {
       "type": 0,
       "value": "Skill-Effekte in zeitbasierten, Offline-, manuellen Kauf-, Fragment-, Purity-, Terra- und Stellar-Zweigen wurden korrigiert, sodass ihre Boni, Kompromisse und Freischaltregeln nun wie beschrieben funktionieren."
     }
   ],
-  "wiki.patch-notes.version-3-1.statistics": [
+  "wiki.patch-notes.version-4-1.statistics": [
     {
       "type": 0,
       "value": "Die Statistiken wurden um die vollständige Skala des Dyson-Schwarms und detaillierte Leistungsdaten für die zehn letzten Unendlichkeitsläufe erweitert, darunter automatische und manuelle Läufe, Belohnungen, Laufzeiten, Mittelwerte, Mediane und Spannweiten."
     }
   ],
-  "wiki.patch-notes.version-3-1.store": [
+  "wiki.patch-notes.version-4-1.store": [
     {
       "type": 0,
       "value": "Die Unterstützer-Katzengalerie für verifizierte Unterstützer sowie eine Ein/Aus-Steuerung für das erworbene Upgrade „Doppelte Unendlichkeitspunkte“ wurden hinzugefügt, ohne Eigentum oder Wiederherstellungsberechtigung zu beeinflussen."
     }
   ],
-  "wiki.patch-notes.version-3-1.stored-time": [
+  "wiki.patch-notes.version-4-1.stored-time": [
     {
       "type": 0,
       "value": "Gespeicherte Zeit wurde verbessert: Doppelte oder überlappende Ausgaben werden sicher abgelehnt, aktive Vorgänge behalten ihren Fortschritt und ihre Abbruchsteuerung, und unfertige Einstellungen bleiben beim Seitenwechsel erhalten."
     }
   ],
-  "wiki.patch-notes.version-3.accessibility": [
+  "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
       "value": "Tastatur- und Bildschirmleser-Unterstützung, Verhalten bei reduzierter Bewegung, Textauswahl auf Mobilgeräten, Bearbeitung von Textfeldern, Fokusbehandlung und Schutz vor schnellen Berührungen wurden verbessert."
     }
   ],
-  "wiki.patch-notes.version-3.interaction-fixes": [
+  "wiki.patch-notes.version-4.interaction-fixes": [
     {
       "type": 0,
       "value": "Die Rückmeldung beim Gedrückthalten zum wiederholten Basteln wurde verbessert, Dyson- und Animationen des späten Spiels wurden korrigiert und mehrere blockierte oder unsichere Sonderfälle der Automatisierung behoben."
     }
   ],
-  "wiki.patch-notes.version-3.offline-time": [
+  "wiki.patch-notes.version-4.offline-time": [
     {
       "type": 0,
       "value": "Offline-Zeit wurde mit Unterstützung für gespeicherte und doppelte Zeit, sichtbarem Verarbeitungsfortschritt, Abbruch, sichererer Wiederherstellung, gemerkten Bedienelementen und einer Speicheranzeige in der Navigation verbessert."
     }
   ],
-  "wiki.patch-notes.version-3.pwa": [
+  "wiki.patch-notes.version-4.pwa": [
     {
       "type": 0,
       "value": "Das Webspiel kann als App installiert, ohne Netzwerkverbindung erneut geöffnet und über eine Aufforderung aktualisiert werden, die den Fortschritt vor dem Anwenden der neuen Version schützt."
     }
   ],
-  "wiki.patch-notes.version-3.responsive-ui": [
+  "wiki.patch-notes.version-4.responsive-ui": [
     {
       "type": 0,
       "value": "Die Oberfläche wurde für Desktop, Mobilgeräte im Hochformat und kompaktes Querformat neu gestaltet – mit berührungsfreundlicher Steuerung, Unterstützung sicherer Bildschirmbereiche, thematischer Navigation sowie sich entwickelnden Stern- und Galaxiengrafiken."
     }
   ],
-  "wiki.patch-notes.version-3.saves": [
+  "wiki.patch-notes.version-4.saves": [
     {
       "type": 0,
       "value": "Beständige Browser-Spielstände mit drei rotierenden Sicherungen, automatische Wiederherstellung aus der neuesten gültigen Sicherung, regelmäßige Sicherheitsprüfpunkte und Schutz des Spielstands vor dem Neuladen wurden hinzugefügt."
     }
   ],
-  "wiki.patch-notes.version-3.settings-and-debug": [
+  "wiki.patch-notes.version-4.settings-and-debug": [
     {
       "type": 0,
       "value": "Die Spielstandsteuerung in den Einstellungen und die Entwickleroptionen wurden verbessert – mit einem funktionierenden Freischaltschalter sowie gemerkten Debug- und Offline-Zeit-Werten beim Wechsel zwischen Registerkarten."
     }
   ],
-  "wiki.patch-notes.version-3.statistics": [
+  "wiki.patch-notes.version-4.statistics": [
     {
       "type": 0,
       "value": "Die Statistiken wurden mit einer Anzeige erreichter Systeme, kombinierten Unendlichkeitssummen, simulierter Zeit in jeder Verlaufsüberschrift und einer eigenen Darstellung anstelle der Diagnose im Desktopmenü verfeinert."
     }
   ],
-  "wiki.patch-notes.version-3.store": [
+  "wiki.patch-notes.version-4.store": [
     {
       "type": 0,
       "value": "Ein Webshop mit fünf Unterstützungs- und dauerhaften Upgrade-Produkten, Stripe Checkout sowie deutlichen Hinweisen wurde hinzugefügt, dass Webkäufe diesem Browser und Gerät statt einem Konto zugeordnet sind."
     }
   ],
-  "wiki.patch-notes.version-3.story-and-store": [
+  "wiki.patch-notes.version-4.story-and-store": [
     {
       "type": 0,
       "value": "Die Darstellung von Geschichte und Shop wurde mit klareren Bereichen und weniger redundanten, übereinanderliegenden Paneelen verfeinert."
     }
   ],
-  "wiki.patch-notes.version-3.transfers": [
+  "wiki.patch-notes.version-4.transfers": [
     {
       "type": 0,
       "value": "Import und Export von Spielständen wurden mit einer vorangestellten Vorschau hinzugefügt, einschließlich unterstützter Unity-Spielstände. Käufe und gerätespezifische Einstellungen verbleiben dabei auf ihrem ursprünglichen Gerät."
     }
   ],
-  "wiki.patch-notes.version-3.web-release": [
+  "wiki.patch-notes.version-4.web-release": [
     {
       "type": 0,
       "value": "Idle Dyson Swarm kann jetzt im Web gespielt werden."
     }
   ],
-  "wiki.patch-notes.version-3.wiki": [
+  "wiki.patch-notes.version-4.wiki": [
     {
       "type": 0,
       "value": "Das Wiki wurde um die ursprüngliche Hintergrundgeschichte, Spielreferenzen, Werthervorhebungen, Themenlinks, eine gemerkte Navigation, Themenauswahl auf Mobilgeräten und freischaltungsabhängige Hintergrundkapitel erweitert."

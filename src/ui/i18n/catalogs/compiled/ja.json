@@ -12362,277 +12362,295 @@
       "value": "過去のバージョン"
     }
   ],
-  "wiki.patch-notes.version-3": [
+  "wiki.patch-notes.version-4": [
     {
       "type": 0,
-      "value": "バージョン3"
+      "value": "バージョン4"
     }
   ],
-  "wiki.patch-notes.version-3-1": [
+  "wiki.patch-notes.version-4-1": [
     {
       "type": 0,
-      "value": "バージョン3.1"
+      "value": "バージョン4.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1": [
+  "wiki.patch-notes.version-4-1-1": [
     {
       "type": 0,
-      "value": "バージョン3.1.1"
+      "value": "バージョン4.1.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.compact-layouts": [
+  "wiki.patch-notes.version-4-1-1.compact-layouts": [
     {
       "type": 0,
       "value": "コンパクト画面のボット、研究、シミュレーション、設定、ストーリー、Wikiの配置を改善。施設間の余白を均等にし、操作部を引き締め、画面ごとのヘッダーとパネル間隔を調整しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.mega-teaser": [
+  "wiki.patch-notes.version-4-1-1.mega-teaser": [
     {
       "type": 0,
       "value": "次のメガストラクチャーの予告は、メガストラクチャーが利用可能になるまで表示されなくなりました。予告と工作の見た目も施設カードに統一しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.overlays": [
+  "wiki.patch-notes.version-4-1-1.overlays": [
     {
       "type": 0,
       "value": "Avotationと秘密の操作を改善。マーカーがメニューやパネル操作を妨げず、ポップアップを正常に使えるようにし、秘密の外側をクリックすると閉じるようになりました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.skills-and-tinker": [
+  "wiki.patch-notes.version-4-1-1.skills-and-tinker": [
     {
       "type": 0,
       "value": "タブを切り替えてもスキルツリーの位置とズームを記憶するようになりました。手動労働では、工作がメニューや終盤パネルを覆わず、施設の上に固定されます。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2": [
+  "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
-      "value": "バージョン3.1.2"
+      "value": "バージョン4.1.2"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.double-time": [
+  "wiki.patch-notes.version-4-1-2.double-time": [
     {
       "type": 0,
       "value": "Double Time は、すべてのゲームシステムを常に通常の2倍の速度で進行させるようになりました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.languages": [
+  "wiki.patch-notes.version-4-1-2.languages": [
     {
       "type": 0,
       "value": "フランス語、ドイツ語、ラテンアメリカ向けスペイン語、ブラジルポルトガル語、簡体字中国語、ロシア語、日本語への完全翻訳を追加しました。端末の言語に応じた自動選択と、設定での手動切り替えにも対応しています。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.offline-controls": [
+  "wiki.patch-notes.version-4-1-2.offline-controls": [
     {
       "type": 0,
       "value": "オフライン時間に高速、バランス、正確のプリセット、処理進捗、スピードアップ、安全なキャンセル、各処理後の完了サマリーを追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.processing": [
+  "wiki.patch-notes.version-4-1-2.processing": [
     {
       "type": 0,
       "value": "アクティブ時とオフライン時間の処理を同じゲームシミュレーションに統合し、永続的な獲得と自動化の一貫性を保ちながらパフォーマンスを向上しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.update-interval": [
+  "wiki.patch-notes.version-4-1-2.update-interval": [
     {
       "type": 0,
       "value": "33～200 ms のゲーム処理設定を追加し、自動化の精度とデバイス負荷の軽減を選べるようにしました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3": [
+  "wiki.patch-notes.version-4-1-3": [
     {
       "type": 0,
-      "value": "バージョン3.1.3"
+      "value": "バージョン4.1.3"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.calculations": [
+  "wiki.patch-notes.version-4-1-3.calculations": [
     {
       "type": 0,
       "value": "科学惑星やポケットディメンションなど、変動するスキル効果に展開式の計算表示を追加し、現在値を確認できるようにしました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.cards": [
+  "wiki.patch-notes.version-4-1-3.cards": [
     {
       "type": 0,
       "value": "施設と巨大構造物のカードで生産値を強調し、小さな画面でも読みやすい1行の生産速度表示に改善しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.details": [
+  "wiki.patch-notes.version-4-1-3.details": [
     {
       "type": 0,
       "value": "施設と巨大構造物の詳細を刷新し、購入ボーナス、研究、スキル、変動効果、ゲーム速度を含む生産計算を、より分かりやすく段階ごとに表示するようにしました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.statistics": [
+  "wiki.patch-notes.version-4-1-3.statistics": [
     {
       "type": 0,
       "value": "統計からオフライン時間の使用状況セクションを削除しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.tinker": [
+  "wiki.patch-notes.version-4-1-3.tinker": [
     {
       "type": 0,
       "value": "手作業の工作は長押し後に連続生産を開始し、別の場所をタップするかボットタブを離れると停止するようになりました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.audio": [
+  "wiki.patch-notes.version-4-1-4": [
+    {
+      "type": 0,
+      "value": "バージョン4.1.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.simulation-resources": [
+    {
+      "type": 0,
+      "value": "ダイソンパネル、スウォームパネル、ストレンジマター、ブラックホール報酬、および関連する統計が、従来の9.22×10^18の上限を超えて増加できるようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.stored-time": [
+    {
+      "type": 0,
+      "value": "保存時間の容量が、大幅なアップグレードやセーブ転送後に1日へ戻らなくなり、ゲーム上の上限なしで倍増し続けられるようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
       "value": "対応プラットフォームへBGMと操作音を追加。音楽・効果音の個別音量、全ミュート、アプリやブラウザ切り替え時の再生安定性を改善しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.dyson-visualization": [
+  "wiki.patch-notes.version-4-1.dyson-visualization": [
     {
       "type": 0,
       "value": "高速な自動インフィニティ時は最終銀河フィールドに固定して描画性能を改善し、成長する銀河の密な渦、明るい中心、モバイル配置を復元しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.economy": [
+  "wiki.patch-notes.version-4-1.economy": [
     {
       "type": 0,
       "value": "対応上限付近の資源量で購入できない問題と、極端なメガ組立ライン価格が再利用可能な一定値に留まる問題を修正しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.infinity": [
+  "wiki.patch-notes.version-4-1.infinity": [
     {
       "type": 0,
       "value": "自動インフィニティとは独立した手動リセット、正確な自動目標、現在・最高IP/分の案内を追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.mobile-ui": [
+  "wiki.patch-notes.version-4-1.mobile-ui": [
     {
       "type": 0,
       "value": "終盤のメガストラクチャーを復元し、施設カード、画面テーマ、モバイル余白、ダイアログ、小画面操作を改善しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.navigation": [
+  "wiki.patch-notes.version-4-1.navigation": [
     {
       "type": 0,
       "value": "文字表示を任意選択できる下部ナビゲーションショートカットと、画面幅に合わせる自動サイズ調整を追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.progress-panels": [
+  "wiki.patch-notes.version-4-1.progress-panels": [
     {
       "type": 0,
       "value": "ボット、研究、スキル、インフィニティ、シミュレーション、量子へ共通の進捗・設定パネルを追加し、生産比較と初回手動インフィニティ操作を明確化しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.saves": [
+  "wiki.patch-notes.version-4-1.saves": [
     {
       "type": 0,
       "value": "旧Unityセーブの移行と、バックグラウンド、休止、再読み込み、オフライン起動、更新時の保存信頼性を改善し、ブランド表示と読み込み画面を復元しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.settings": [
+  "wiki.patch-notes.version-4-1.settings": [
     {
       "type": 0,
       "value": "端末ごとの標準・科学・工学表記、幅の安定した数字、完了済み研究を隠す設定を追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-controls": [
+  "wiki.patch-notes.version-4-1.skill-controls": [
     {
       "type": 0,
       "value": "スキルプリセットと確認を改善。ロック中スキルのキュー保持、生産変化のプレビュー、プリセット・リセット・検索・タッチ・ドラッグ操作を分かりやすくしました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-effects": [
+  "wiki.patch-notes.version-4-1.skill-effects": [
     {
       "type": 0,
       "value": "タイマー、オフライン、手動購入、フラグメント、純化、Terra、恒星系統のスキル効果を修正し、説明どおりに動作させました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.statistics": [
+  "wiki.patch-notes.version-4-1.statistics": [
     {
       "type": 0,
       "value": "統計へダイソンスウォーム全規模と直近10回のインフィニティ詳細（自動・手動、報酬、所要時間、平均、中央値、範囲）を追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.store": [
+  "wiki.patch-notes.version-4-1.store": [
     {
       "type": 0,
       "value": "検証済みサポーター向け猫ギャラリーと、所有権・復元資格を変えずにインフィニティポイント2倍を有効・無効化する操作を追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3-1.stored-time": [
+  "wiki.patch-notes.version-4-1.stored-time": [
     {
       "type": 0,
       "value": "重複する蓄積時間の使用を安全に拒否し、進行中ジョブの進捗・取消操作と、画面移動時の未完了設定を保持するよう改善しました。"
     }
   ],
-  "wiki.patch-notes.version-3.accessibility": [
+  "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
       "value": "キーボード・スクリーンリーダー、動きの軽減、モバイル文字選択、入力欄編集、フォーカス、連続タップ保護を改善しました。"
     }
   ],
-  "wiki.patch-notes.version-3.interaction-fixes": [
+  "wiki.patch-notes.version-4.interaction-fixes": [
     {
       "type": 0,
       "value": "工作の長押し反復表示、ダイソン・終盤アニメーションを改善し、停止または危険な自動化の問題を修正しました。"
     }
   ],
-  "wiki.patch-notes.version-3.offline-time": [
+  "wiki.patch-notes.version-4.offline-time": [
     {
       "type": 0,
       "value": "蓄積時間と倍速時間、処理進捗、取消、安全な復旧、操作記憶、ナビゲーション蓄積メーターを追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3.pwa": [
+  "wiki.patch-notes.version-4.pwa": [
     {
       "type": 0,
       "value": "ウェブ版をアプリとしてインストールし、オフラインで再開し、進捗を保護する案内から更新できるようにしました。"
     }
   ],
-  "wiki.patch-notes.version-3.responsive-ui": [
+  "wiki.patch-notes.version-4.responsive-ui": [
     {
       "type": 0,
       "value": "デスクトップ、縦向きモバイル、小型横向けに、タッチ操作、セーフエリア、テーマ付きナビゲーション、恒星・銀河表示を再設計しました。"
     }
   ],
-  "wiki.patch-notes.version-3.saves": [
+  "wiki.patch-notes.version-4.saves": [
     {
       "type": 0,
       "value": "3世代のブラウザバックアップ、最新の有効データからの自動復旧、定期チェックポイント、再読み込み前の保存保護を追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3.settings-and-debug": [
+  "wiki.patch-notes.version-4.settings-and-debug": [
     {
       "type": 0,
       "value": "設定のセーブ操作と開発者オプションを拡張し、アンロック切り替え、デバッグ値、オフライン時間値をタブ間で保持しました。"
     }
   ],
-  "wiki.patch-notes.version-3.statistics": [
+  "wiki.patch-notes.version-4.statistics": [
     {
       "type": 0,
       "value": "到達システム表示、インフィニティ合計、履歴見出しのシミュレーション時間、専用画面で統計を改善しました。"
     }
   ],
-  "wiki.patch-notes.version-3.store": [
+  "wiki.patch-notes.version-4.store": [
     {
       "type": 0,
       "value": "5種類の支援・恒久アップグレード、Stripe決済、購入がアカウントではなくこのブラウザと端末に属する警告を備えたウェブストアを追加しました。"
     }
   ],
-  "wiki.patch-notes.version-3.story-and-store": [
+  "wiki.patch-notes.version-4.story-and-store": [
     {
       "type": 0,
       "value": "ストーリーとストアを、明確な区切りと少ない重複パネルで改善しました。"
     }
   ],
-  "wiki.patch-notes.version-3.transfers": [
+  "wiki.patch-notes.version-4.transfers": [
     {
       "type": 0,
       "value": "Unityセーブ対応のプレビュー付きインポート・エクスポートを追加し、購入と端末固有設定は元の端末に残します。"
     }
   ],
-  "wiki.patch-notes.version-3.web-release": [
+  "wiki.patch-notes.version-4.web-release": [
     {
       "type": 0,
       "value": "Idle Dyson Swarmがウェブで遊べるようになりました。"
     }
   ],
-  "wiki.patch-notes.version-3.wiki": [
+  "wiki.patch-notes.version-4.wiki": [
     {
       "type": 0,
       "value": "初代伝承、ゲーム資料、値の強調、トピックリンク、ナビゲーション記憶、モバイル選択、アンロック連動の伝承区分でWikiを拡張しました。"

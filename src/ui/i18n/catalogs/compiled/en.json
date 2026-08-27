@@ -12362,277 +12362,295 @@
       "value": "Older"
     }
   ],
-  "wiki.patch-notes.version-3": [
+  "wiki.patch-notes.version-4": [
     {
       "type": 0,
-      "value": "Version 3"
+      "value": "Version 4"
     }
   ],
-  "wiki.patch-notes.version-3-1": [
+  "wiki.patch-notes.version-4-1": [
     {
       "type": 0,
-      "value": "Version 3.1"
+      "value": "Version 4.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1": [
+  "wiki.patch-notes.version-4-1-1": [
     {
       "type": 0,
-      "value": "Version 3.1.1"
+      "value": "Version 4.1.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.compact-layouts": [
+  "wiki.patch-notes.version-4-1-1.compact-layouts": [
     {
       "type": 0,
       "value": "Refined Bots, Research, Simulations, Settings, Story, and Wiki layouts on compact screens with even facility gutters, tighter controls, route-specific headers, and corrected panel spacing."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.mega-teaser": [
+  "wiki.patch-notes.version-4-1-1.mega-teaser": [
     {
       "type": 0,
       "value": "The next mega-structure teaser now stays hidden until mega structures are available, and both the teaser and Tinker match the facility card styling."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.overlays": [
+  "wiki.patch-notes.version-4-1-1.overlays": [
     {
       "type": 0,
       "value": "Improved Avotation and Secrets interactions so their markers no longer obstruct menu or panel controls, their pop-ups remain usable, and clicking outside Secrets closes it."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.skills-and-tinker": [
+  "wiki.patch-notes.version-4-1-1.skills-and-tinker": [
     {
       "type": 0,
       "value": "The Skill Tree now remembers its position and zoom while switching tabs, and Manual Labour keeps Tinker anchored above facilities without covering menus or late-game panels."
     }
   ],
-  "wiki.patch-notes.version-3-1-2": [
+  "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
-      "value": "Version 3.1.2"
+      "value": "Version 4.1.2"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.double-time": [
+  "wiki.patch-notes.version-4-1-2.double-time": [
     {
       "type": 0,
       "value": "Double Time now permanently runs all game systems at twice their normal speed."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.languages": [
+  "wiki.patch-notes.version-4-1-2.languages": [
     {
       "type": 0,
       "value": "Added complete French, German, Latin American Spanish, Brazilian Portuguese, Simplified Chinese, Russian, and Japanese translations, with automatic selection from the device language and a manual override in Settings."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.offline-controls": [
+  "wiki.patch-notes.version-4-1-2.offline-controls": [
     {
       "type": 0,
       "value": "Added Fast, Balanced, and Accurate Offline Time presets, processing progress, Speed Up and safe cancellation, plus a completion summary after each run."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.processing": [
+  "wiki.patch-notes.version-4-1-2.processing": [
     {
       "type": 0,
       "value": "Rebuilt active and Offline Time processing around the same game simulation, improving performance while keeping permanent gains and automation consistent between updates."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.update-interval": [
+  "wiki.patch-notes.version-4-1-2.update-interval": [
     {
       "type": 0,
       "value": "Added a Game Processing setting from 33–200 ms, allowing players to choose between more accurate automation and lower device workload."
     }
   ],
-  "wiki.patch-notes.version-3-1-3": [
+  "wiki.patch-notes.version-4-1-3": [
     {
       "type": 0,
-      "value": "Version 3.1.3"
+      "value": "Version 4.1.3"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.calculations": [
+  "wiki.patch-notes.version-4-1-3.calculations": [
     {
       "type": 0,
       "value": "Added expandable calculations for changing Skill effects, including Scientific Planets and Pocket Dimensions, so their current values can be inspected."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.cards": [
+  "wiki.patch-notes.version-4-1-3.cards": [
     {
       "type": 0,
       "value": "Improved Facility and Mega-Structure cards with highlighted production values and single-line rates that stay readable on smaller screens."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.details": [
+  "wiki.patch-notes.version-4-1-3.details": [
     {
       "type": 0,
       "value": "Redesigned Facility and Mega-Structure Details with a clearer step-by-step production breakdown covering purchase bonuses, Research, Skills, dynamic effects, and game speed."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.statistics": [
+  "wiki.patch-notes.version-4-1-3.statistics": [
     {
       "type": 0,
       "value": "Removed the Offline Time usage section from Statistics."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.tinker": [
+  "wiki.patch-notes.version-4-1-3.tinker": [
     {
       "type": 0,
       "value": "Manual Labour Tinker now starts continuous production after a long press and stops when you tap elsewhere or leave the Bots tab."
     }
   ],
-  "wiki.patch-notes.version-3-1.audio": [
+  "wiki.patch-notes.version-4-1-4": [
+    {
+      "type": 0,
+      "value": "Version 4.1.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.simulation-resources": [
+    {
+      "type": 0,
+      "value": "Dyson Panels, Swarm Panels, Strange Matter, Black Hole rewards, and related statistics can now grow beyond the former 9.22 quintillion limit."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.stored-time": [
+    {
+      "type": 0,
+      "value": "Stored Time capacity no longer resets to one day after large upgrades or save transfers, and can now keep doubling without a gameplay cap."
+    }
+  ],
+  "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
       "value": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows."
     }
   ],
-  "wiki.patch-notes.version-3-1.dyson-visualization": [
+  "wiki.patch-notes.version-4-1.dyson-visualization": [
     {
       "type": 0,
       "value": "Improved Dyson visualization performance during extremely fast automatic Infinity runs by settling on the final galaxy field, while restoring the growing galaxy’s dense spiral, bright core, and balanced mobile placement."
     }
   ],
-  "wiki.patch-notes.version-3-1.economy": [
+  "wiki.patch-notes.version-4-1.economy": [
     {
       "type": 0,
       "value": "Fixed purchases at the largest supported resource values and prevented extreme Assembly Megalines prices from becoming stuck at a reusable plateau."
     }
   ],
-  "wiki.patch-notes.version-3-1.infinity": [
+  "wiki.patch-notes.version-4-1.infinity": [
     {
       "type": 0,
       "value": "Expanded Infinity with manual resets independent of Auto Infinity, exact automatic Infinity Point targets, and current and peak IP-per-minute guidance."
     }
   ],
-  "wiki.patch-notes.version-3-1.mobile-ui": [
+  "wiki.patch-notes.version-4-1.mobile-ui": [
     {
       "type": 0,
       "value": "Restored late-game mega structures and refreshed gameplay layouts with clearer facility cards, consistent route themes, safer mobile spacing, improved dialogs, and better compact-screen controls."
     }
   ],
-  "wiki.patch-notes.version-3-1.navigation": [
+  "wiki.patch-notes.version-4-1.navigation": [
     {
       "type": 0,
       "value": "Added customizable bottom navigation shortcuts with an optional Include Text setting and automatic sizing that keeps selected destinations accessible across different screen widths."
     }
   ],
-  "wiki.patch-notes.version-3-1.progress-panels": [
+  "wiki.patch-notes.version-4-1.progress-panels": [
     {
       "type": 0,
       "value": "Added shared progress and settings panels across Bots, Research, Skills, Infinity, Simulations, and Quantum, including clearer production comparisons and first-run manual Infinity controls."
     }
   ],
-  "wiki.patch-notes.version-3-1.saves": [
+  "wiki.patch-notes.version-4-1.saves": [
     {
       "type": 0,
       "value": "Improved older Unity-save migration and save reliability through backgrounding, suspension, reloads, offline startup, and updates, with restored application branding and loading screens."
     }
   ],
-  "wiki.patch-notes.version-3-1.settings": [
+  "wiki.patch-notes.version-4-1.settings": [
     {
       "type": 0,
       "value": "Added device-local Standard, Scientific, and Engineering number notation with stable-width gameplay digits, plus a setting to hide completed Research."
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-controls": [
+  "wiki.patch-notes.version-4-1.skill-controls": [
     {
       "type": 0,
       "value": "Improved Skills presets and confirmations: locked Skills remain queued until their progression line is unlocked, production changes are previewed more clearly, and preset, reset, search, touch, and drag controls are easier to use."
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-effects": [
+  "wiki.patch-notes.version-4-1.skill-effects": [
     {
       "type": 0,
       "value": "Corrected Skill effects across timer-based, offline, manual-purchase, Fragment, Purity, Terra, and Stellar branches so their bonuses, trade-offs, and unlock rules now behave as described."
     }
   ],
-  "wiki.patch-notes.version-3-1.statistics": [
+  "wiki.patch-notes.version-4-1.statistics": [
     {
       "type": 0,
       "value": "Expanded Statistics with the full Dyson Swarm scale and detailed performance for the ten most recent Infinity runs, including automatic and manual runs, rewards, durations, averages, medians, and ranges."
     }
   ],
-  "wiki.patch-notes.version-3-1.store": [
+  "wiki.patch-notes.version-4-1.store": [
     {
       "type": 0,
       "value": "Added the Supporter Cat Gallery for verified supporters and an Enabled/Disabled control for the owned Double Infinity Points upgrade without affecting ownership or restore eligibility."
     }
   ],
-  "wiki.patch-notes.version-3-1.stored-time": [
+  "wiki.patch-notes.version-4-1.stored-time": [
     {
       "type": 0,
       "value": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages."
     }
   ],
-  "wiki.patch-notes.version-3.accessibility": [
+  "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
       "value": "Improved keyboard and screen-reader support, reduced-motion behavior, mobile text selection, text-field editing, focus handling, and rapid-touch protection."
     }
   ],
-  "wiki.patch-notes.version-3.interaction-fixes": [
+  "wiki.patch-notes.version-4.interaction-fixes": [
     {
       "type": 0,
       "value": "Improved Tinker hold-to-repeat feedback, corrected Dyson and late-game animations, and fixed several stalled or unsafe automation edge cases."
     }
   ],
-  "wiki.patch-notes.version-3.offline-time": [
+  "wiki.patch-notes.version-4.offline-time": [
     {
       "type": 0,
       "value": "Improved Offline Time with Stored Time and Double Time support, visible processing progress, cancellation, safer recovery, remembered controls, and a storage meter in navigation."
     }
   ],
-  "wiki.patch-notes.version-3.pwa": [
+  "wiki.patch-notes.version-4.pwa": [
     {
       "type": 0,
       "value": "The Web game can be installed as an app, reopened without a network connection, and updated through a prompt that protects progress before applying the new version."
     }
   ],
-  "wiki.patch-notes.version-3.responsive-ui": [
+  "wiki.patch-notes.version-4.responsive-ui": [
     {
       "type": 0,
       "value": "Redesigned the interface for desktop, portrait mobile, and compact landscape with touch-friendly controls, safe-area support, themed navigation, and evolving star and galaxy visuals."
     }
   ],
-  "wiki.patch-notes.version-3.saves": [
+  "wiki.patch-notes.version-4.saves": [
     {
       "type": 0,
       "value": "Added durable browser saves with three rotating backups, automatic recovery from the newest valid backup, regular safety checkpoints, and save protection before reloading."
     }
   ],
-  "wiki.patch-notes.version-3.settings-and-debug": [
+  "wiki.patch-notes.version-4.settings-and-debug": [
     {
       "type": 0,
       "value": "Expanded Settings save controls and improved development options with a working unlock toggle and remembered Debug and Offline Time values between tab switches."
     }
   ],
-  "wiki.patch-notes.version-3.statistics": [
+  "wiki.patch-notes.version-4.statistics": [
     {
       "type": 0,
       "value": "Refined Statistics with reached-system disclosure, combined Infinity totals, simulated time in each history heading, and a dedicated presentation instead of desktop-menu diagnostics."
     }
   ],
-  "wiki.patch-notes.version-3.store": [
+  "wiki.patch-notes.version-4.store": [
     {
       "type": 0,
       "value": "Added a Web Store with five support and permanent-upgrade products, Stripe checkout, and clear warnings that Web purchases belong to this browser and device rather than an account."
     }
   ],
-  "wiki.patch-notes.version-3.story-and-store": [
+  "wiki.patch-notes.version-4.story-and-store": [
     {
       "type": 0,
       "value": "Refined Story and Store presentation with clearer sections and fewer redundant layered panels."
     }
   ],
-  "wiki.patch-notes.version-3.transfers": [
+  "wiki.patch-notes.version-4.transfers": [
     {
       "type": 0,
       "value": "Added preview-first save import and export, including supported Unity saves, while keeping purchases and device-specific preferences on their original device."
     }
   ],
-  "wiki.patch-notes.version-3.web-release": [
+  "wiki.patch-notes.version-4.web-release": [
     {
       "type": 0,
       "value": "Idle Dyson Swarm is now available to play on the Web."
     }
   ],
-  "wiki.patch-notes.version-3.wiki": [
+  "wiki.patch-notes.version-4.wiki": [
     {
       "type": 0,
       "value": "Expanded the Wiki with original lore, gameplay reference material, value highlighting, topic links, remembered navigation, mobile topic selection, and unlock-aware lore sections."

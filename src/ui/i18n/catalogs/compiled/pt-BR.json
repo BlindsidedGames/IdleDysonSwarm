@@ -12362,277 +12362,295 @@
       "value": "Mais antigas"
     }
   ],
-  "wiki.patch-notes.version-3": [
+  "wiki.patch-notes.version-4": [
     {
       "type": 0,
-      "value": "Versão 3"
+      "value": "Versão 4"
     }
   ],
-  "wiki.patch-notes.version-3-1": [
+  "wiki.patch-notes.version-4-1": [
     {
       "type": 0,
-      "value": "Versão 3.1"
+      "value": "Versão 4.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1": [
+  "wiki.patch-notes.version-4-1-1": [
     {
       "type": 0,
-      "value": "Versão 3.1.1"
+      "value": "Versão 4.1.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.compact-layouts": [
+  "wiki.patch-notes.version-4-1-1.compact-layouts": [
     {
       "type": 0,
       "value": "Refinamos a disposição de Robôs, Pesquisa, Simulações, Configurações, História e Wiki em telas compactas, com espaçamento uniforme entre instalações, controles mais enxutos, cabeçalhos específicos por tela e distância corrigida entre painéis."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.mega-teaser": [
+  "wiki.patch-notes.version-4-1-1.mega-teaser": [
     {
       "type": 0,
       "value": "A prévia da próxima megaestrutura agora fica oculta até que as megaestruturas estejam disponíveis, e tanto ela quanto a Gambiarra seguem o visual dos cartões de instalações."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.overlays": [
+  "wiki.patch-notes.version-4-1-1.overlays": [
     {
       "type": 0,
       "value": "Melhoramos as interações da Avotação e dos Segredos: seus marcadores não bloqueiam mais controles de menus ou painéis, as janelas continuam utilizáveis e clicar fora da janela de Segredos a fecha."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.skills-and-tinker": [
+  "wiki.patch-notes.version-4-1-1.skills-and-tinker": [
     {
       "type": 0,
       "value": "A Árvore de Habilidades agora mantém a posição e o zoom ao trocar de aba, e Trabalho Manual conserva a Gambiarra acima das instalações sem cobrir menus ou painéis do fim do jogo."
     }
   ],
-  "wiki.patch-notes.version-3-1-2": [
+  "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
-      "value": "Versão 3.1.2"
+      "value": "Versão 4.1.2"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.double-time": [
+  "wiki.patch-notes.version-4-1-2.double-time": [
     {
       "type": 0,
       "value": "Double Time agora faz todos os sistemas do jogo funcionarem permanentemente com o dobro da velocidade normal."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.languages": [
+  "wiki.patch-notes.version-4-1-2.languages": [
     {
       "type": 0,
       "value": "Adicionamos traduções completas para francês, alemão, espanhol latino-americano, português do Brasil, chinês simplificado, russo e japonês, com seleção automática pelo idioma do dispositivo e opção manual nas Configurações."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.offline-controls": [
+  "wiki.patch-notes.version-4-1-2.offline-controls": [
     {
       "type": 0,
       "value": "Adicionadas as predefinições Rápida, Equilibrada e Precisa de Tempo Offline, progresso do processamento, aceleração, cancelamento seguro e um resumo ao fim de cada execução."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.processing": [
+  "wiki.patch-notes.version-4-1-2.processing": [
     {
       "type": 0,
       "value": "O processamento ativo e de Tempo Offline foi reconstruído sobre a mesma simulação do jogo, melhorando o desempenho e mantendo ganhos permanentes e automação consistentes entre atualizações."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.update-interval": [
+  "wiki.patch-notes.version-4-1-2.update-interval": [
     {
       "type": 0,
       "value": "Adicionada uma configuração de processamento do jogo de 33 a 200 ms, permitindo escolher entre automação mais precisa e menor carga no dispositivo."
     }
   ],
-  "wiki.patch-notes.version-3-1-3": [
+  "wiki.patch-notes.version-4-1-3": [
     {
       "type": 0,
-      "value": "Versão 3.1.3"
+      "value": "Versão 4.1.3"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.calculations": [
+  "wiki.patch-notes.version-4-1-3.calculations": [
     {
       "type": 0,
       "value": "Adicionamos cálculos expansíveis para efeitos variáveis de Habilidades, incluindo Planetas Científicos e Dimensões de Bolso, permitindo consultar seus valores atuais."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.cards": [
+  "wiki.patch-notes.version-4-1-3.cards": [
     {
       "type": 0,
       "value": "Melhoramos os cartões de Instalações e Megaestruturas com valores de produção destacados e taxas em uma única linha, mantendo a legibilidade em telas menores."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.details": [
+  "wiki.patch-notes.version-4-1-3.details": [
     {
       "type": 0,
       "value": "Redesenhamos os Detalhes de Instalações e Megaestruturas com uma divisão mais clara e passo a passo da produção, incluindo bônus de compra, Pesquisa, Habilidades, efeitos dinâmicos e velocidade do jogo."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.statistics": [
+  "wiki.patch-notes.version-4-1-3.statistics": [
     {
       "type": 0,
       "value": "Removemos das Estatísticas a seção de uso do Tempo Offline."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.tinker": [
+  "wiki.patch-notes.version-4-1-3.tinker": [
     {
       "type": 0,
       "value": "O Tinker de Trabalho Manual agora inicia a produção contínua após um toque longo e para quando você toca em outro lugar ou sai da aba Bots."
     }
   ],
-  "wiki.patch-notes.version-3-1.audio": [
+  "wiki.patch-notes.version-4-1-4": [
+    {
+      "type": 0,
+      "value": "Versão 4.1.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.simulation-resources": [
+    {
+      "type": 0,
+      "value": "Painéis de Dyson, Painéis de Enxame, Matéria Estranha, recompensas de Buraco Negro e estatísticas relacionadas agora podem ultrapassar o antigo limite de 9,22 quintilhões."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.stored-time": [
+    {
+      "type": 0,
+      "value": "A capacidade de Tempo Armazenado não volta mais para um dia após grandes melhorias ou transferências de save, e agora pode continuar dobrando sem um limite de jogo."
+    }
+  ],
+  "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
       "value": "Adicionamos trilha sonora e sons da interface às plataformas compatíveis, com controles separados de Música e Efeitos, opção para silenciar todo o áudio e reprodução mais confiável ao alternar entre aplicativos ou janelas do navegador."
     }
   ],
-  "wiki.patch-notes.version-3-1.dyson-visualization": [
+  "wiki.patch-notes.version-4-1.dyson-visualization": [
     {
       "type": 0,
       "value": "Melhoramos o desempenho da Visualização de Dyson em ciclos extremamente rápidos de Infinito Automático, estabilizando o campo final de Galáxias e restaurando a espiral densa, o núcleo brilhante e o posicionamento equilibrado da Galáxia em crescimento nos dispositivos móveis."
     }
   ],
-  "wiki.patch-notes.version-3-1.economy": [
+  "wiki.patch-notes.version-4-1.economy": [
     {
       "type": 0,
       "value": "Corrigimos compras nos maiores valores de recursos compatíveis e impedimos que preços extremos das Megalinhas de Montagem ficassem presos em um patamar reutilizável."
     }
   ],
-  "wiki.patch-notes.version-3-1.infinity": [
+  "wiki.patch-notes.version-4-1.infinity": [
     {
       "type": 0,
       "value": "Expandimos o Infinito com reinícios Manuais independentes do Infinito Automático, metas exatas de Pontos de Infinito Automáticos e informações sobre PI por minuto atuais e máximos."
     }
   ],
-  "wiki.patch-notes.version-3-1.mobile-ui": [
+  "wiki.patch-notes.version-4-1.mobile-ui": [
     {
       "type": 0,
       "value": "Restauramos megaestruturas do fim do jogo e renovamos a disposição visual com cartões de Instalação mais claros, temas de páginas consistentes, espaçamento móvel mais seguro, diálogos aprimorados e controles melhores para telas compactas."
     }
   ],
-  "wiki.patch-notes.version-3-1.navigation": [
+  "wiki.patch-notes.version-4-1.navigation": [
     {
       "type": 0,
       "value": "Adicionamos Atalhos de Navegação inferiores personalizáveis, uma configuração opcional para Incluir texto e dimensionamento Automático que mantém os destinos escolhidos acessíveis em diferentes larguras de tela."
     }
   ],
-  "wiki.patch-notes.version-3-1.progress-panels": [
+  "wiki.patch-notes.version-4-1.progress-panels": [
     {
       "type": 0,
       "value": "Adicionamos painéis compartilhados de progresso e Configurações em Robôs, Pesquisa, Habilidades, Infinito, Simulações e Quântico, incluindo comparações de Produção mais claras e controles de Infinito Manual para a primeira jornada."
     }
   ],
-  "wiki.patch-notes.version-3-1.saves": [
+  "wiki.patch-notes.version-4-1.saves": [
     {
       "type": 0,
       "value": "Aprimoramos a migração de jogos salvos antigos do Unity e a confiabilidade ao colocar o aplicativo em segundo plano, suspender, recarregar, iniciar offline e atualizar, além de restaurar a identidade visual e as telas de Carregamento."
     }
   ],
-  "wiki.patch-notes.version-3-1.settings": [
+  "wiki.patch-notes.version-4-1.settings": [
     {
       "type": 0,
       "value": "Adicionamos as Notações numéricas Padrão, Científica e de Engenharia locais do dispositivo, com dígitos de largura estável, além de uma configuração para Ocultar Pesquisas concluídas."
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-controls": [
+  "wiki.patch-notes.version-4-1.skill-controls": [
     {
       "type": 0,
       "value": "Aprimoramos Predefinições e confirmações de Habilidades: Habilidades bloqueadas permanecem na fila até sua linha de Progressão ser desbloqueada, mudanças de Produção são exibidas com mais clareza e os controles de predefinição, reinício, busca, toque e arrasto ficaram mais fáceis de usar."
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-effects": [
+  "wiki.patch-notes.version-4-1.skill-effects": [
     {
       "type": 0,
       "value": "Corrigimos efeitos de Habilidades nos ramos de temporizador, offline, Compra Manual, Fragmento, Pureza, Terra e Estelar, para que bônus, compensações e regras de desbloqueio funcionem como descrito."
     }
   ],
-  "wiki.patch-notes.version-3-1.statistics": [
+  "wiki.patch-notes.version-4-1.statistics": [
     {
       "type": 0,
       "value": "Expandimos as Estatísticas com a escala total do Enxame de Dyson e o desempenho detalhado das dez jornadas de Infinito mais recentes, incluindo ciclos Automáticos e Manuais, recompensas, durações, médias, medianas e intervalos."
     }
   ],
-  "wiki.patch-notes.version-3-1.store": [
+  "wiki.patch-notes.version-4-1.store": [
     {
       "type": 0,
       "value": "Adicionamos a Galeria de Gatos dos Apoiadores para apoiadores verificados e um controle de Ativado/Desativado para a Melhoria adquirida Dobrar Pontos de Infinito, sem afetar a propriedade nem a elegibilidade de restauração."
     }
   ],
-  "wiki.patch-notes.version-3-1.stored-time": [
+  "wiki.patch-notes.version-4-1.stored-time": [
     {
       "type": 0,
       "value": "Aprimoramos o Tempo Armazenado para rejeitar com segurança gastos duplicados ou sobrepostos, preservar o progresso e os controles de cancelamento de tarefas ativas e manter Configurações inacabadas ao trocar de página."
     }
   ],
-  "wiki.patch-notes.version-3.accessibility": [
+  "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
       "value": "Aprimoramos o suporte a teclado e leitores de tela, o comportamento de movimento reduzido, a seleção de texto em dispositivos móveis, a edição de campos, o gerenciamento de foco e a proteção contra toques rápidos."
     }
   ],
-  "wiki.patch-notes.version-3.interaction-fixes": [
+  "wiki.patch-notes.version-4.interaction-fixes": [
     {
       "type": 0,
       "value": "Melhoramos o retorno visual ao manter pressionado para repetir na Gambiarra, corrigimos animações de Dyson e do fim do jogo e resolvemos vários casos extremos de automação travada ou insegura."
     }
   ],
-  "wiki.patch-notes.version-3.offline-time": [
+  "wiki.patch-notes.version-4.offline-time": [
     {
       "type": 0,
       "value": "Aprimoramos o Tempo Offline com suporte a Tempo Armazenado e Dobrar Tempo, progresso visível de Processamento, cancelamento, recuperação mais segura, controles memorizados e um medidor de armazenamento na navegação."
     }
   ],
-  "wiki.patch-notes.version-3.pwa": [
+  "wiki.patch-notes.version-4.pwa": [
     {
       "type": 0,
       "value": "O jogo da Web pode ser instalado como aplicativo, reaberto sem conexão de rede e atualizado por meio de uma confirmação que protege o progresso antes de aplicar a nova versão."
     }
   ],
-  "wiki.patch-notes.version-3.responsive-ui": [
+  "wiki.patch-notes.version-4.responsive-ui": [
     {
       "type": 0,
       "value": "Redesenhamos a interface para desktop, dispositivos móveis em modo retrato e paisagem compacta, com controles adequados ao toque, suporte a áreas seguras, navegação temática e visuais evolutivos de Estrelas e Galáxias."
     }
   ],
-  "wiki.patch-notes.version-3.saves": [
+  "wiki.patch-notes.version-4.saves": [
     {
       "type": 0,
       "value": "Adicionamos jogos salvos duráveis no navegador com três backups rotativos, recuperação Automática do backup válido mais recente, pontos de segurança regulares e proteção do progresso antes de recarregar."
     }
   ],
-  "wiki.patch-notes.version-3.settings-and-debug": [
+  "wiki.patch-notes.version-4.settings-and-debug": [
     {
       "type": 0,
       "value": "Expandimos os controles de jogos salvos nas Configurações e aprimoramos as opções de desenvolvimento com um controle de desbloqueio funcional e valores de Depuração e Tempo Offline preservados ao trocar de aba."
     }
   ],
-  "wiki.patch-notes.version-3.statistics": [
+  "wiki.patch-notes.version-4.statistics": [
     {
       "type": 0,
       "value": "Refinamos as Estatísticas com indicação dos sistemas alcançados, totais combinados de Infinito, tempo simulado no título de cada histórico e uma apresentação dedicada no lugar dos diagnósticos do menu de desktop."
     }
   ],
-  "wiki.patch-notes.version-3.store": [
+  "wiki.patch-notes.version-4.store": [
     {
       "type": 0,
       "value": "Adicionamos uma Loja Web com cinco produtos de apoio e Melhoria permanente, checkout do Stripe e avisos claros de que as compras Web pertencem a este navegador e dispositivo, não a uma conta."
     }
   ],
-  "wiki.patch-notes.version-3.story-and-store": [
+  "wiki.patch-notes.version-4.story-and-store": [
     {
       "type": 0,
       "value": "Refinamos a apresentação da História e da Loja com seções mais claras e menos Painéis redundantes em camadas."
     }
   ],
-  "wiki.patch-notes.version-3.transfers": [
+  "wiki.patch-notes.version-4.transfers": [
     {
       "type": 0,
       "value": "Adicionamos importação e exportação de jogos salvos com prévia, incluindo jogos salvos compatíveis do Unity, mantendo compras e preferências específicas do dispositivo no aparelho original."
     }
   ],
-  "wiki.patch-notes.version-3.web-release": [
+  "wiki.patch-notes.version-4.web-release": [
     {
       "type": 0,
       "value": "Idle Dyson Swarm agora está disponível para jogar na Web."
     }
   ],
-  "wiki.patch-notes.version-3.wiki": [
+  "wiki.patch-notes.version-4.wiki": [
     {
       "type": 0,
       "value": "Expandimos a Wiki com a História do Universo original, material de referência de jogabilidade, destaque de valores, links entre tópicos, navegação memorizada, seleção de tópicos em dispositivos móveis e seções de História do Universo que respeitam os desbloqueios."
