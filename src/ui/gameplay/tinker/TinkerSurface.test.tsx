@@ -46,7 +46,7 @@ afterEach(() => {
 })
 
 describe('TinkerSurface transient interaction', () => {
-  test('starts immediately, captures one pointer, enables repeat at 500 ms, and keeps the running panel visually intact on release', async () => {
+  test('starts immediately, latches repeat after a long press, and stops on an outside tap', async () => {
     const dispatch = createDispatch()
     const view = renderTinker(dispatch)
     const button = tinkerButton()
@@ -80,7 +80,10 @@ describe('TinkerSurface transient interaction', () => {
       repeat: true,
     })
 
-    view.rerender(tinkerElement(runningFacts({ repeat: true }), dispatch))
+    view.rerender(tinkerElement(runningFacts({
+      repeat: true,
+      effectiveManualLabour: true,
+    }), dispatch))
     expect(button).not.toBeDisabled()
     expect(button).not.toHaveAttribute('aria-disabled')
     expect(button.closest('.tinker-surface')).toHaveAttribute(
@@ -93,21 +96,27 @@ describe('TinkerSurface transient interaction', () => {
 
     fireEvent.pointerUp(button, { button: 0, pointerId: 17 })
     await flushDispatchQueue()
+    expect(dispatch).toHaveBeenCalledTimes(2)
+    expect(capture.release).toHaveBeenCalledWith(17)
+    expect(button).not.toBeDisabled()
+    expect(button).not.toHaveAttribute('aria-disabled')
+    expect(button).toHaveAttribute('data-gesture-active', 'true')
+    expect(button.closest('.tinker-surface')).toHaveAttribute(
+      'data-held-visual',
+      'true',
+    )
+    expect(screen.getByText('Repeating')).toBeInTheDocument()
+    expect(
+      screen.getByRole('progressbar', { name: 'Tinker progress' }),
+    ).toHaveAttribute('value', '0.1')
+
+    fireEvent.pointerDown(document.body, { button: 0, pointerId: 18 })
+    await flushDispatchQueue()
     expect(dispatch).toHaveBeenNthCalledWith(3, {
       kind: 'tinker.set-repeat',
       enabled: false,
     })
-    expect(capture.release).toHaveBeenCalledWith(17)
-    expect(button).not.toBeDisabled()
-    expect(button).not.toHaveAttribute('aria-disabled')
     expect(button).toHaveAttribute('data-gesture-active', 'false')
-    expect(button.closest('.tinker-surface')).toHaveAttribute(
-      'data-held-visual',
-      'false',
-    )
-    expect(
-      screen.getByRole('progressbar', { name: 'Tinker progress' }),
-    ).toHaveAttribute('value', '0.1')
   })
 
   test('accepts a press while running without replacing the active cycle', () => {
@@ -127,7 +136,7 @@ describe('TinkerSurface transient interaction', () => {
     })
   })
 
-  test('serializes repeat-on and release-off so revisioned dispatch cannot leave repeat enabled', async () => {
+  test('serializes repeat-on and outside-tap-off so revisioned dispatch cannot leave repeat enabled', async () => {
     const start = deferredResult()
     const enable = deferredResult()
     const dispatch = vi
@@ -144,6 +153,7 @@ describe('TinkerSurface transient interaction', () => {
       vi.advanceTimersByTime(TINKER_REPEAT_HOLD_MILLISECONDS)
     })
     fireEvent.pointerUp(button, { button: 0, pointerId: 91 })
+    fireEvent.pointerDown(document.body, { button: 0, pointerId: 92 })
     expect(dispatch).toHaveBeenCalledTimes(1)
 
     start.resolve(acceptedResult())
@@ -182,6 +192,27 @@ describe('TinkerSurface transient interaction', () => {
       kind: 'tinker.start',
       repeat: false,
     })
+  })
+
+  test('does not offer or enable repeat before Manual Labour is purchased', async () => {
+    const dispatch = createDispatch()
+    renderTinker(dispatch, readyFacts())
+    const button = tinkerButton()
+    installPointerCapture(button)
+
+    expect(
+      screen.queryByText('Long press to repeat...'),
+    ).not.toBeInTheDocument()
+    fireEvent.pointerDown(button, { button: 0, pointerId: 5 })
+    act(() => {
+      vi.advanceTimersByTime(TINKER_REPEAT_HOLD_MILLISECONDS)
+    })
+    fireEvent.pointerUp(button, { button: 0, pointerId: 5 })
+    await flushDispatchQueue()
+
+    expect(dispatch.mock.calls.map(([command]) => command)).toEqual([
+      { kind: 'tinker.start', repeat: false },
+    ])
   })
 
   test('allows distinct rapid taps without debounce and suppresses each compatibility click', async () => {
@@ -232,6 +263,9 @@ describe('TinkerSurface transient interaction', () => {
 
     fireEvent.pointerUp(button, { button: 0, pointerId: 3 })
     await flushDispatchQueue()
+    expect(stopCommands(dispatch)).toHaveLength(0)
+    fireEvent.pointerDown(document.body, { button: 0, pointerId: 4 })
+    await flushDispatchQueue()
     expect(dispatch).toHaveBeenLastCalledWith({
       kind: 'tinker.set-repeat',
       enabled: false,
@@ -261,6 +295,9 @@ describe('TinkerSurface transient interaction', () => {
     })
 
     fireEvent.pointerUp(button, { button: 0, pointerId: 11 })
+    await flushDispatchQueue()
+    expect(stopCommands(dispatch)).toHaveLength(0)
+    fireEvent.pointerDown(document.body, { button: 0, pointerId: 13 })
     await flushDispatchQueue()
     expect(dispatch).toHaveBeenLastCalledWith({
       kind: 'tinker.set-repeat',
@@ -413,6 +450,9 @@ describe('TinkerSurface transient interaction', () => {
 
     fireEvent.keyUp(button, { key: ' ' })
     await flushDispatchQueue()
+    expect(dispatch).toHaveBeenCalledTimes(2)
+    fireEvent.pointerDown(document.body, { button: 0, pointerId: 40 })
+    await flushDispatchQueue()
     expect(dispatch).toHaveBeenNthCalledWith(3, {
       kind: 'tinker.set-repeat',
       enabled: false,
@@ -439,11 +479,11 @@ describe('TinkerSurface transient interaction', () => {
     render(
       <IntlProvider locale="en">
         <TinkerSurface
-          facts={readyFacts()}
+          facts={manualLabourReadyFacts()}
           dispatch={firstDispatch}
         />
         <TinkerSurface
-          facts={readyFacts()}
+          facts={manualLabourReadyFacts()}
           dispatch={secondDispatch}
         />
       </IntlProvider>,
@@ -475,6 +515,11 @@ describe('TinkerSurface transient interaction', () => {
     })
 
     fireEvent.pointerUp(first, { pointerId: 31 })
+    await flushDispatchQueue()
+    expect(stopCommands(firstDispatch)).toHaveLength(0)
+    expect(stopCommands(secondDispatch)).toHaveLength(0)
+
+    fireEvent.pointerDown(second, { button: 0, pointerId: 33 })
     await flushDispatchQueue()
     expect(stopCommands(firstDispatch)).toHaveLength(1)
     expect(stopCommands(secondDispatch)).toHaveLength(0)
@@ -568,7 +613,7 @@ describe('TinkerSurface transient interaction', () => {
     dispatch.mockResolvedValueOnce(rejectedResult())
     const view = render(
       <StrictMode>
-        {tinkerElement(readyFacts(), dispatch)}
+        {tinkerElement(manualLabourReadyFacts(), dispatch)}
       </StrictMode>,
     )
     const button = tinkerButton()
@@ -756,7 +801,7 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(progress).toHaveAttribute('max', '0.5')
     expect(progress).toHaveAttribute('aria-valuetext', '0.37s')
     expect(
-      screen.getByText('Hold anywhere to repeat...'),
+      screen.getByText('Long press to repeat...'),
     ).toBeInTheDocument()
     expect(tinkerCss).toMatch(
       /\.tinker-surface__hold-label\s*\{[\s\S]*inset-block-start:\s*50%;[\s\S]*transform:\s*translateY\(-50%\);/,
@@ -807,13 +852,16 @@ describe('TinkerSurface presentation and accessibility', () => {
 
   test('shows the exact fresh-save tip only in default Tinker mode', () => {
     const dispatch = createDispatch()
-    const view = renderTinker(dispatch)
+    const view = renderTinker(dispatch, readyFacts())
 
     expect(
       screen.getByText(
         'Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center).',
       ),
     ).toBeInTheDocument()
+    expect(
+      screen.queryByText('Long press to repeat...'),
+    ).not.toBeInTheDocument()
 
     view.rerender(
       tinkerElement(
@@ -874,7 +922,7 @@ describe('TinkerSurface presentation and accessibility', () => {
 
 function renderTinker(
   dispatch: TinkerCommandDispatch,
-  facts: TinkerFacts = readyFacts(),
+  facts: TinkerFacts = manualLabourReadyFacts(),
 ) {
   return render(tinkerElement(facts, dispatch))
 }
@@ -919,6 +967,21 @@ function readyFacts(): TinkerFacts {
     canStart: true,
     eligibility: 'available',
     timeToCompletionSeconds: null,
+  }
+}
+
+function manualLabourReadyFacts(): TinkerFacts {
+  return {
+    ...readyFacts(),
+    runtime: {
+      ...readyFacts().runtime,
+      effectiveManualLabour: true,
+    },
+    stats: {
+      ...readyFacts().stats,
+      assemblyYield: 1,
+    },
+    presentationMode: 'manual-labour',
   }
 }
 

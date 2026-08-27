@@ -182,10 +182,12 @@ describe('WikiSurface', () => {
       .closest('section')
     expect(mostRecent).not.toBeNull()
     expect(within(mostRecent!).getByRole('heading', { name: 'Version 3.1.3' })).toBeVisible()
-    expect(within(mostRecent!).getAllByRole('listitem')).toHaveLength(3)
+    expect(within(mostRecent!).getAllByRole('listitem')).toHaveLength(5)
     expect(within(mostRecent!).getByText(/step-by-step production breakdown/)).toBeVisible()
     expect(within(mostRecent!).getByText(/Scientific Planets and Pocket Dimensions/)).toBeVisible()
     expect(within(mostRecent!).getByText(/single-line rates/)).toBeVisible()
+    expect(within(mostRecent!).getByText(/continuous production after a long press/)).toBeVisible()
+    expect(within(mostRecent!).getByText(/Offline Time usage section/)).toBeVisible()
 
     const previous = screen.getByRole('heading', { name: 'Older' })
       .closest('section')

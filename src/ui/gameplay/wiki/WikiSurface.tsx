@@ -169,6 +169,8 @@ const version313PatchNoteMessages = [
   messages.patchNotesVersion313Details,
   messages.patchNotesVersion313Calculations,
   messages.patchNotesVersion313Cards,
+  messages.patchNotesVersion313Tinker,
+  messages.patchNotesVersion313Statistics,
 ] as const
 
 const version312PatchNoteMessages = [

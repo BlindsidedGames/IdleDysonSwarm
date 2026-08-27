@@ -30,14 +30,13 @@ export const tinkerMessages = defineMessages({
   },
   holdToRepeat: {
     id: 'dyson.tinker.hold-to-repeat',
-    defaultMessage: 'Hold anywhere to repeat...',
-    description: 'Exact Unity hold gesture hint inside the Tinker progress bar.',
+    defaultMessage: 'Long press to repeat...',
+    description: 'Long-press gesture hint inside the Tinker progress bar.',
   },
-  repeatingWhileHeld: {
-    id: 'dyson.tinker.repeating-while-held',
-    defaultMessage: 'Repeating while held',
-    description:
-      'Tinker progress-bar status while the hold gesture is repeating.',
+  repeating: {
+    id: 'dyson.tinker.repeating',
+    defaultMessage: 'Repeating',
+    description: 'Tinker progress-bar status while repeat remains active.',
   },
   manualLabourDescription: {
     id: 'dyson.tinker.description.manual-labour',

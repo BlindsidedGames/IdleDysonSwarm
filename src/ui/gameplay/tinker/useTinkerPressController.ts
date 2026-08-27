@@ -30,6 +30,7 @@ export type TinkerPressPhase = 'idle' | 'pressed' | 'repeating'
 
 export interface TinkerPressControllerOptions {
   readonly canInteract: boolean
+  readonly repeatAvailable: boolean
   readonly runtimeRepeat: boolean
   readonly dispatch: TinkerCommandDispatch
   readonly onResult: (
@@ -65,12 +66,13 @@ type PressSource =
   | { readonly kind: 'space' }
 
 /**
- * Owns one transient press from activation through release. The controller
- * expresses only start and desired-repeat intents; canonical simulation owns
- * cycle completion and rewards.
+ * Owns one press through either a single activation or a latched repeat. The
+ * controller expresses only start and desired-repeat intents; canonical
+ * simulation owns cycle completion and rewards.
  */
 export function useTinkerPressController({
   canInteract,
+  repeatAvailable,
   runtimeRepeat,
   dispatch,
   onResult,
@@ -88,12 +90,14 @@ export function useTinkerPressController({
   const dispatchQueueRef = useRef<Promise<void> | null>(null)
   const controlRef = useRef<HTMLButtonElement | null>(null)
   const canInteractRef = useRef(canInteract)
+  const repeatAvailableRef = useRef(repeatAvailable)
   const runtimeRepeatRef = useRef(runtimeRepeat)
   const dispatchRef = useRef(dispatch)
   const onResultRef = useRef(onResult)
   const onDispatchFailureRef = useRef(onDispatchFailure)
 
   canInteractRef.current = canInteract
+  repeatAvailableRef.current = repeatAvailable
   runtimeRepeatRef.current = runtimeRepeat
   dispatchRef.current = dispatch
   onResultRef.current = onResult
@@ -132,33 +136,59 @@ export function useTinkerPressController({
     enqueue({ kind: 'tinker.set-repeat', enabled: false })
   }, [enqueue])
 
-  const finishPress = useCallback((): void => {
+  const releasePointerCapture = useCallback((
+    source: PressSource | null,
+  ): void => {
+    if (
+      source?.kind !== 'pointer' ||
+      !source.control.hasPointerCapture?.(source.pointerId)
+    ) return
+    try {
+      source.control.releasePointerCapture(source.pointerId)
+    } catch {
+      // The browser may have released capture during cancellation.
+    }
+  }, [])
+
+  const stopInteraction = useCallback((): void => {
+    const source = sourceRef.current
+    sourceRef.current = null
+    clearHoldTimer()
+    requestRepeatDisabled()
+    repeatEnabledRequestedRef.current = false
+    if (mountedRef.current) setPhase('idle')
+    releasePointerCapture(source)
+  }, [clearHoldTimer, releasePointerCapture, requestRepeatDisabled])
+
+  const releasePress = useCallback((): void => {
     const source = sourceRef.current
     if (source === null) return
     sourceRef.current = null
     clearHoldTimer()
-    requestRepeatDisabled()
-    if (mountedRef.current) setPhase('idle')
-
+    releasePointerCapture(source)
     if (
-      source.kind === 'pointer' &&
-      source.control.hasPointerCapture?.(source.pointerId)
+      repeatEnabledRequestedRef.current ||
+      runtimeRepeatRef.current
     ) {
-      try {
-        source.control.releasePointerCapture(source.pointerId)
-      } catch {
-        // The browser may have released capture during cancellation.
-      }
+      if (mountedRef.current) setPhase('repeating')
+      return
     }
-  }, [clearHoldTimer, requestRepeatDisabled])
+    if (mountedRef.current) setPhase('idle')
+  }, [clearHoldTimer, releasePointerCapture])
 
   const beginPress = useCallback((source: PressSource): boolean => {
-    if (sourceRef.current !== null || !canInteractRef.current) return false
+    if (
+      sourceRef.current !== null ||
+      repeatEnabledRequestedRef.current ||
+      runtimeRepeatRef.current ||
+      !canInteractRef.current
+    ) return false
     sourceRef.current = source
     repeatEnabledRequestedRef.current = false
     repeatDisabledRequestedRef.current = false
     if (mountedRef.current) setPhase('pressed')
     enqueue({ kind: 'tinker.start', repeat: false })
+    if (!repeatAvailableRef.current) return true
     holdTimerRef.current = setTimeout(() => {
       holdTimerRef.current = null
       if (sourceRef.current !== source) return
@@ -190,8 +220,14 @@ export function useTinkerPressController({
   const finishMatchingPointer = useCallback((pointerId: number): void => {
     const source = sourceRef.current
     if (source?.kind !== 'pointer' || source.pointerId !== pointerId) return
-    finishPress()
-  }, [finishPress])
+    releasePress()
+  }, [releasePress])
+
+  const cancelMatchingPointer = useCallback((pointerId: number): void => {
+    const source = sourceRef.current
+    if (source?.kind !== 'pointer' || source.pointerId !== pointerId) return
+    stopInteraction()
+  }, [stopInteraction])
 
   const onKeyDown = useCallback<KeyboardEventHandler<HTMLButtonElement>>(
     (event) => {
@@ -212,7 +248,7 @@ export function useTinkerPressController({
     (event) => {
       if (event.key !== ' ' && event.key !== 'Spacebar') return
       event.preventDefault()
-      if (sourceRef.current?.kind === 'space') finishPress()
+      if (sourceRef.current?.kind === 'space') releasePress()
       if (keyboardClickTimerRef.current !== null) {
         clearTimeout(keyboardClickTimerRef.current)
       }
@@ -221,7 +257,7 @@ export function useTinkerPressController({
         suppressSpaceClickRef.current = false
       }, 0)
     },
-    [finishPress],
+    [releasePress],
   )
 
   const onClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
@@ -234,7 +270,11 @@ export function useTinkerPressController({
         suppressSpaceClickRef.current = false
         return
       }
-      if (canInteractRef.current) {
+      if (
+        canInteractRef.current &&
+        !repeatEnabledRequestedRef.current &&
+        !runtimeRepeatRef.current
+      ) {
         enqueue({ kind: 'tinker.start', repeat: false })
       }
     },
@@ -292,9 +332,9 @@ export function useTinkerPressController({
 
   useEffect(() => {
     mountedRef.current = true
-    const endTransientInput = (): void => finishPress()
+    const endTransientInput = (): void => stopInteraction()
     const handleVisibilityChange = (): void => {
-      if (document.visibilityState !== 'visible') finishPress()
+      if (document.visibilityState !== 'visible') stopInteraction()
     }
     window.addEventListener('blur', endTransientInput)
     window.addEventListener('pagehide', endTransientInput)
@@ -312,10 +352,37 @@ export function useTinkerPressController({
         clearTimeout(keyboardClickTimerRef.current)
         keyboardClickTimerRef.current = null
       }
-      finishPress()
+      stopInteraction()
       sourceRef.current = null
     }
-  }, [clearHoldTimer, finishPress])
+  }, [clearHoldTimer, stopInteraction])
+
+  useEffect(() => {
+    if (repeatAvailable || phase !== 'repeating') return
+    stopInteraction()
+  }, [phase, repeatAvailable, stopInteraction])
+
+  useEffect(() => {
+    if (phase !== 'repeating') return
+    const stopOnOutsidePointer = (event: PointerEvent): void => {
+      const target = event.target
+      if (
+        target instanceof Node &&
+        controlRef.current?.contains(target)
+      ) return
+      stopInteraction()
+    }
+    document.addEventListener(
+      'pointerdown',
+      stopOnOutsidePointer,
+      true,
+    )
+    return () => document.removeEventListener(
+      'pointerdown',
+      stopOnOutsidePointer,
+      true,
+    )
+  }, [phase, stopInteraction])
 
   return {
     phase,
@@ -324,12 +391,12 @@ export function useTinkerPressController({
     controlRef: setControlRef,
     onPointerDown,
     onPointerUp: (event) => finishMatchingPointer(event.pointerId),
-    onPointerCancel: (event) => finishMatchingPointer(event.pointerId),
+    onPointerCancel: (event) => cancelMatchingPointer(event.pointerId),
     onLostPointerCapture: (event) =>
-      finishMatchingPointer(event.pointerId),
+      cancelMatchingPointer(event.pointerId),
     onKeyDown,
     onKeyUp,
-    onBlur: finishPress,
+    onBlur: stopInteraction,
     onClick,
     onContextMenu: preventContextMenu,
     onDragStart: preventDrag,

@@ -2700,7 +2700,7 @@
   "dyson.tinker.hold-to-repeat": [
     {
       "type": 0,
-      "value": "Hold anywhere to repeat..."
+      "value": "Long press to repeat..."
     }
   ],
   "dyson.tinker.progress": [
@@ -2715,10 +2715,10 @@
       "value": "Tinker"
     }
   ],
-  "dyson.tinker.repeating-while-held": [
+  "dyson.tinker.repeating": [
     {
       "type": 0,
-      "value": "Repeating while held"
+      "value": "Repeating"
     }
   ],
   "dyson.tinker.tip.fresh-save": [
@@ -10701,24 +10701,6 @@
       "value": "None"
     }
   ],
-  "statistics.offline-time": [
-    {
-      "type": 0,
-      "value": "Offline Time"
-    }
-  ],
-  "statistics.offline-time.current-infinity": [
-    {
-      "type": 0,
-      "value": "Current Infinity"
-    }
-  ],
-  "statistics.offline-time.previous-infinity": [
-    {
-      "type": 0,
-      "value": "Previous Infinity"
-    }
-  ],
   "statistics.other-stats": [
     {
       "type": 0,
@@ -12480,6 +12462,18 @@
     {
       "type": 0,
       "value": "Redesigned Facility and Mega-Structure Details with a clearer step-by-step production breakdown covering purchase bonuses, Research, Skills, dynamic effects, and game speed."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.statistics": [
+    {
+      "type": 0,
+      "value": "Removed the Offline Time usage section from Statistics."
+    }
+  ],
+  "wiki.patch-notes.version-3-1-3.tinker": [
+    {
+      "type": 0,
+      "value": "Manual Labour Tinker now starts continuous production after a long press and stops when you tap elsewhere or leave the Bots tab."
     }
   ],
   "wiki.patch-notes.version-3-1.audio": [
