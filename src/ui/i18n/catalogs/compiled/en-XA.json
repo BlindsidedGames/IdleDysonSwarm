@@ -1757,6 +1757,20 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.details.automatic-facilities": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.details.automatic-manual-tuple": [
     {
       "type": 0,
@@ -1783,6 +1797,20 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.details.avocato-power": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧṽǿǿƈȧȧŧǿǿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.details.base-production": [
     {
       "type": 0,
@@ -1791,6 +1819,20 @@
     {
       "type": 0,
       "value": "Ɓȧȧşḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.calculation-heading": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿẇ ŧħīş īş ƈȧȧŀƈŭŭŀȧȧŧḗḗḓ"
     },
     {
       "type": 0,
@@ -1833,6 +1875,34 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.details.current-production": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŭŭřřḗḗƞŧ ƥřǿǿḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.effective-manual-count": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƒƒḗḗƈŧīṽḗḗ ƥŭŭřƈħȧȧşḗḗḓ ƈǿǿŭŭƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 0,
@@ -1859,6 +1929,358 @@
     {
       "type": 0,
       "value": "Ƒȧȧƈīŀīŧẏ ḿǿǿḓīƒīḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.assigned-skill-points": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧşşīɠƞḗḗḓ Şķīŀŀ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.effective-planets": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƒƒḗḗƈŧīṽḗḗ Ƥŀȧȧƞḗḗŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.elapsed-skill-time": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗŀȧȧƥşḗḗḓ ȧȧşşīɠƞḗḗḓ ŧīḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.fragments": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒřȧȧɠḿḗḗƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŀȧȧẋīḗḗş ḗḗƞɠŭŭŀƒḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.manager-assembly-production": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "ȦĪ Ḿȧȧƞȧȧɠḗḗř ƥřǿǿḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.manual-data-centers": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗḓ Ḓȧȧŧȧȧ Ƈḗḗƞŧḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.not-assigned": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿŧ ȧȧşşīɠƞḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥȧȧƞḗḗŀ ŀīƒḗḗŧīḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.panels-per-second": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥȧȧƞḗḗŀş ƥḗḗř şḗḗƈǿǿƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.replaced-by": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƥŀȧȧƈḗḗḓ ƀẏ "
+    },
+    {
+      "type": 1,
+      "value": "skill"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.requirement-met": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗɋŭŭīřḗḗḿḗḗƞŧ ḿḗḗŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.result": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşŭŭŀŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.science-boost-level": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƈīḗḗƞƈḗḗ Ɓǿǿǿǿşŧ řḗḗşḗḗȧȧřƈħ ŀḗḗṽḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.science-bots": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƈīḗḗƞƈḗḗ Ɓǿǿŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřş Şŭŭřřǿǿŭŭƞḓḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.formula.worker-bots": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķḗḗř Ɓǿǿŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.game-speed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧḿḗḗ şƥḗḗḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.game-speed-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧƈħ řḗḗȧȧŀ şḗḗƈǿǿƞḓ ȧȧḓṽȧȧƞƈḗḗş "
+    },
+    {
+      "type": 1,
+      "value": "speed"
+    },
+    {
+      "type": 0,
+      "value": " ɠȧȧḿḗḗ şḗḗƈǿǿƞḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.group.other-bonuses": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿŧħḗḗř Ɓǿǿƞŭŭşḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.group.research": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗȧȧřƈħ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.group.skill-tree": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şķīŀŀ Ŧřḗḗḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.how-you-gain": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿẇ ẏǿǿŭŭ ɠȧȧīƞ "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.infinity-power": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒīƞīŧẏ"
     },
     {
       "type": 0,
@@ -1935,6 +2357,116 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.details.manual-acquisition-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " ƥŭŭřƈħȧȧşḗḗḓ ḓīřḗḗƈŧŀẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.manual-purchases": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧƞŭŭȧȧŀ Ƥŭŭřƈħȧȧşḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.manually-purchased": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧƞŭŭȧȧŀŀẏ ƥŭŭřƈħȧȧşḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.milestone-100": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "100 ƥŭŭřƈħȧȧşḗḗḓ ḿīŀḗḗşŧǿǿƞḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.milestone-50": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "50 ƥŭŭřƈħȧȧşḗḗḓ ḿīŀḗḗşŧǿǿƞḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.no-active-effects": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿ ȧȧƈŧīṽḗḗ ḗḗƒƒḗḗƈŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.numeric-safety": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞŭŭḿḗḗřīƈ şȧȧƒḗḗŧẏ ŀīḿīŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.details.output-adjustments": [
     {
       "type": 0,
@@ -1943,6 +2475,42 @@
     {
       "type": 0,
       "value": "Ǿŭŭŧƥŭŭŧ ȧȧḓĵŭŭşŧḿḗḗƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.per-game-second": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " / ɠȧȧḿḗḗ şḗḗƈǿǿƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.per-real-second": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " / şḗḗƈǿǿƞḓ"
     },
     {
       "type": 0,
@@ -1973,6 +2541,140 @@
     {
       "type": 0,
       "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.secrets-power": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗƈřḗḗŧş ǿǿƒ ŧħḗḗ Ŭƞīṽḗḗřşḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.source-technical-details": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿřḿŭŭŀȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.stage.base": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧşḗḗ Ǿŭŭŧƥŭŭŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.stage.count": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķīƞɠ ƒȧȧƈīŀīŧīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.stage.power": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧƈīŀīŧẏ Ƥǿǿẇḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.stage.production-modifiers": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈŧīǿǿƞ Ḿǿǿḓīƒīḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.stage.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ Ɓǿǿƞŭŭşḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.stage.time": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧīḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.terra-transfer-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓş "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " ḗḗƒƒḗḗƈŧīṽḗḗ ƥŭŭřƈħȧȧşḗḗḓ Ƥŀȧȧƞḗḗŧş"
     },
     {
       "type": 0,
@@ -2275,6 +2977,46 @@
     {
       "type": 0,
       "value": "Ƥřǿǿḓŭŭƈḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.output-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈḗḗş "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.produced-count-by": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " ƥřǿǿḓŭŭƈḗḗḓ ƀẏ "
+    },
+    {
+      "type": 1,
+      "value": "facility"
     },
     {
       "type": 0,

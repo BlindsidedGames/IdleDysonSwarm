@@ -169,6 +169,8 @@ export interface DysonResearchEffectIssue {
 export interface MaterializedDysonResearchEffect extends StatEffect {
   readonly researchId: DysonResearchId
   readonly targetStatId: string
+  readonly level: number
+  readonly perLevelValue: number
 }
 
 export type DysonResearchEffectMaterializationResult =
@@ -289,6 +291,10 @@ export function materializeDysonResearchEffects(
         spec.coefficientField === undefined
           ? parsed.value + parsed.perLevel * level
           : (override ?? tuning[spec.coefficientField]) * level
+      const perLevelValue =
+        spec.coefficientField === undefined
+          ? parsed.perLevel + parsed.value / level
+          : override ?? tuning[spec.coefficientField]
       if (!Number.isFinite(value)) {
         issues.push({
           code: 'DYSON_RESEARCH_EFFECT_VALUE_INVALID',
@@ -303,6 +309,8 @@ export function materializeDysonResearchEffects(
         Object.freeze({
           researchId: spec.id,
           targetStatId: parsed.targetStatId,
+          level,
+          perLevelValue,
           id: parsed.id,
           operation: parsed.operation,
           value,

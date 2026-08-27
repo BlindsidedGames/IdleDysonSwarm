@@ -277,13 +277,25 @@ describe('BasicFacilityRegion', () => {
       .toHaveTextContent('(5.00)')
     expect(identity.querySelector('.basic-facility-card__manual'))
       .toHaveAttribute('value', '5')
-    expect(assembly.getByText('Producing 4.25 Bots /s'))
-      .toBeInTheDocument()
+    const assemblyProduction = assembly.getByText(
+      (_, element) =>
+        element?.classList.contains('basic-facility-card__production') === true,
+    )
+    expect(assemblyProduction).toHaveTextContent('Producing 4.25 Bots /s')
     expect(
-      within(articles[1]).getByText(
-        'Generating 1 Assembly Line /2.00s',
+      assemblyProduction.querySelector(
+        '.basic-facility-card__production-value',
       ),
-    ).toBeInTheDocument()
+    ).toHaveTextContent('4.25')
+    expect(
+      articles[1].querySelector('.basic-facility-card__production'),
+    ).toHaveTextContent('Generating 1 Assembly Line /2.00s')
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card__production\s*\{[^}]*overflow:\s*hidden;[^}]*white-space:\s*nowrap;/s,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card__production-value\s*\{[^}]*color:\s*#56d8ed;/s,
+    )
     expect(assembly.getByText('+38.0').closest('data'))
       .toHaveAttribute('value', '38')
     expect(
@@ -481,52 +493,58 @@ describe('BasicFacilityRegion', () => {
     })
     expect(dialog).toHaveAttribute('aria-modal', 'true')
     expect(within(dialog).getByText('Base')).toBeInTheDocument()
-    expect(within(dialog).getByText('Assembly Lines Count'))
+    expect(within(dialog).getByText('Working facilities'))
       .toBeInTheDocument()
-    expect(within(dialog).getByText(
-      'Automatic 1.00, manually purchased 1.00',
-    ))
+    expect(within(dialog).getByText('1.00 Produced'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText(/Manually purchased/))
       .toBeInTheDocument()
     expect(within(dialog).getByText('Facility modifier'))
       .toBeInTheDocument()
     expect(within(dialog).getByText('×1.50'))
       .toBeInTheDocument()
-    expect(within(dialog).getByText('+1.00'))
-      .toBeInTheDocument()
-    expect(within(dialog).getByText('3.00'))
-      .toBeInTheDocument()
-    expect(within(dialog).getByText(
-      'Condition identifier: skill.unlocked',
-    ))
-      .toBeInTheDocument()
     expect(within(dialog).getByText('Condition: Unlocked label'))
       .toBeInTheDocument()
     expect(
       Array.from(
-        dialog.querySelectorAll(
-          '.facility-details-dialog__operation',
-        ),
+        dialog.querySelectorAll('.facility-effect-row__value'),
         (element) => element.textContent,
       ),
-    ).toEqual([
+    ).toEqual(expect.arrayContaining([
       '=0.10',
-      '×2.00',
       '×1.50',
       '+2.00',
       '^2.00',
       '≥0.00',
       '≤10.0',
-    ])
-    expect(within(dialog).getByText('effect.additive'))
+    ]))
+    expect(within(dialog).getAllByText('Formula').length)
+      .toBeGreaterThan(0)
+    expect(within(dialog).queryByText('How it applies'))
+      .not.toBeInTheDocument()
+    expect(within(dialog).getByText('Manual Purchases'))
       .toBeInTheDocument()
-    expect(within(dialog).getByText('Upstream Sources'))
+    expect(within(dialog).getByText('0.10 × 2.00 = 0.20'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('5.00 ^ 2.00 = 25.0'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('min(25.0, 10.0) = 10.0'))
+      .toBeInTheDocument()
+    expect(
+      Array.from(
+        dialog.querySelectorAll('.facility-details-stage__number'),
+        (element) => element.textContent,
+      ),
+    ).toEqual(['1', '2', '3'])
+    expect(within(dialog).queryByText('effect.additive'))
+      .not.toBeInTheDocument()
+    expect(within(dialog).getByText('How you gain Assembly Lines'))
       .toBeInTheDocument()
     expect(
       within(dialog).getByText('Produced by AI Managers (0.05)'),
     ).toBeInTheDocument()
-    expect(within(dialog).getByLabelText(
-      'Effect, Value, positive or negative Delta, Total',
-    )).toBeInTheDocument()
+    expect(within(dialog).getByText('How this is calculated'))
+      .toBeInTheDocument()
     expect(screen.getAllByRole('dialog')).toHaveLength(1)
     expect(screen.getByRole('button', { name: 'Close' }))
       .toHaveFocus()
@@ -562,6 +580,211 @@ describe('BasicFacilityRegion', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(detailsButton).toHaveFocus()
     expect(container).not.toHaveAttribute('inert')
+  })
+
+  it('shows Terra sources and distinguishes game time from real time', async () => {
+    const user = userEvent.setup()
+    const dataCenterFact = facilityFact('data_centers', 1, 0, 10)
+    renderRegion({
+      visibleBasicFacilityIds: ['data_centers'],
+      gameSpeed: 2,
+      facilityFacts: {
+        ...facilityFacts,
+        data_centers: {
+          ...dataCenterFact,
+          details: {
+            ...dataCenterFact.details,
+            manualPurchaseLayer: {
+              rawManualCount: 0,
+              effectiveManualCount: 60,
+              effectiveManualPlanets: 60,
+              transferredPlanetCount: 60,
+              transferSkillId: 'terraFirma',
+              terraIrradiantOwned: true,
+              suppressed: false,
+              avocadosMultiplier: 1,
+              milestone50Multiplier: 2,
+              milestone100Multiplier: 1,
+              scalingThreshold: 100,
+              scalingRate: 0.01,
+              scalingMultiplier: 1,
+              totalMultiplier: 2,
+            },
+          },
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Details' }))
+    const dialog = screen.getByRole('dialog', { name: 'Data Centers' })
+    expect(within(dialog).getByText('20.0 / second'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('10.0 / game second'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('Terra Firma')).toBeInTheDocument()
+    expect(within(dialog).getAllByText('Terra Irradiant').length)
+      .toBeGreaterThan(0)
+    expect(
+      dialog.querySelector('img[src*="terraFirma"]'),
+    ).toBeInTheDocument()
+  })
+
+  it('shows independent facility generators with expandable live formulas', async () => {
+    const user = userEvent.setup()
+    const dataCenterFact = facilityFact('data_centers', 1, 0, 10)
+    renderRegion({
+      visibleBasicFacilityIds: ['data_centers'],
+      facilityFacts: {
+        ...facilityFacts,
+        data_centers: {
+          ...dataCenterFact,
+          details: {
+            ...dataCenterFact.details,
+            generationContributions: [{
+              sourceId: 'effect.pocket_dimensions.planets',
+              displayRole: 'output-adjustments',
+              operation: 'add',
+              value: 69,
+              delta: 69,
+              runningTotal: 69,
+              source: { kind: 'skill', id: 'pocketDimensions' },
+              calculation: {
+                kind: 'pocket-dimensions',
+                workers: 100,
+                researchers: 1_000,
+                panelLifetimeSeconds: 20,
+                pocketAndroidsTimerSeconds: 1_800,
+                rudimentarySingularityProduction: 16,
+                pocketProtectors: true,
+                pocketMultiverse: false,
+                dimensionalCatCables: true,
+                solarBubbles: true,
+                pocketAndroids: true,
+                quantumComputing: true,
+              },
+            }],
+          },
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Details' }))
+    const dialog = screen.getByRole('dialog', { name: 'Data Centers' })
+    expect(within(dialog).getAllByText('Pocket Dimensions').length)
+      .toBeGreaterThan(0)
+    await user.click(within(dialog).getByText('Formula'))
+    expect(within(dialog).getByText('Worker Bots')).toBeInTheDocument()
+    expect(within(dialog).getByText('log10(100)'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('Pocket Multiverse'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('Result')).toBeInTheDocument()
+    expect(
+      dialog.querySelector(
+        '.facility-effect-formula__line[data-result="true"] bdi',
+      ),
+    ).toHaveTextContent('+69.0')
+  })
+
+  it('expands Scientific Planets into its current inputs and dependencies', async () => {
+    const user = userEvent.setup()
+    const planetsFact = facilityFact('planets', 1, 0, 10)
+    renderRegion({
+      visibleBasicFacilityIds: ['planets'],
+      facilityFacts: {
+        ...facilityFacts,
+        planets: {
+          ...planetsFact,
+          details: {
+            ...planetsFact.details,
+            generationContributions: [{
+              sourceId: 'effect.scientificPlanets.planets_per_second',
+              displayRole: 'output-adjustments',
+              operation: 'add',
+              value: 10,
+              delta: 10,
+              runningTotal: 10,
+              source: { kind: 'skill', id: 'scientificPlanets' },
+              calculation: {
+                kind: 'scientific-planets',
+                researchers: 1_000,
+                fragments: 4,
+                hubbleTelescope: true,
+                jamesWebbTelescope: false,
+                terraformingProtocols: true,
+              },
+            }],
+          },
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Details' }))
+    const dialog = screen.getByRole('dialog', { name: 'Planets' })
+    await user.click(within(dialog).getByText('Formula'))
+    expect(within(dialog).getByText('Science Bots')).toBeInTheDocument()
+    expect(within(dialog).getByText('log10(1.00K)'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('Hubble Telescope'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('James Webb Telescope'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('Not assigned'))
+      .toBeInTheDocument()
+    expect(
+      dialog.querySelector(
+        '.facility-effect-formula__line[data-result="true"] bdi',
+      ),
+    ).toHaveTextContent('+10.0')
+  })
+
+  it('explains scale-dependent production modifiers with their live input', async () => {
+    const user = userEvent.setup()
+    const dataCenterFact = facilityFact('data_centers', 1, 0, 10)
+    renderRegion({
+      visibleBasicFacilityIds: ['data_centers'],
+      facilityFacts: {
+        ...facilityFacts,
+        data_centers: {
+          ...dataCenterFact,
+          details: {
+            ...dataCenterFact.details,
+            modifierContributions: [{
+              sourceId: 'effect.hypercubeNetworks.data_centers_modifier',
+              displayRole: 'modifier',
+              operation: 'multiply',
+              value: 1.3,
+              delta: 0.3,
+              runningTotal: 1.3,
+              source: { kind: 'skill', id: 'hypercubeNetworks' },
+              calculation: {
+                kind: 'dynamic-facility-effect',
+                effectId: 'effect.hypercubeNetworks.data_centers_modifier',
+                panelLifetimeSeconds: 20,
+                fragments: 0,
+                assignedSkillPoints: 0,
+                servers: 1_000,
+                manualDataCenters: 0,
+                effectivePlanets: 0,
+                starsSurrounded: 0,
+                galaxiesEngulfed: 0,
+                timerSeconds: 0,
+              },
+            }],
+          },
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Details' }))
+    const dialog = screen.getByRole('dialog', { name: 'Data Centers' })
+    expect(within(dialog).getByText('Hypercube Networks'))
+      .toBeInTheDocument()
+    await user.click(within(dialog).getByText('Formula'))
+    expect(within(dialog).getByText('Servers')).toBeInTheDocument()
+    expect(within(dialog).getByText('1 + 10% × log10(1.00K)'))
+      .toBeInTheDocument()
+    expect(within(dialog).getAllByText('×1.30')).toHaveLength(2)
   })
 
   it('keeps every backend-hidden facility absent from the accessibility tree', () => {
@@ -936,6 +1159,24 @@ describe('BasicFacilityRegion', () => {
       /\.basic-facility-card__details-button:focus-visible,[\s\S]*\.facility-details-dialog__close:focus-visible\s*\{[\s\S]*outline:\s*3px solid var\(--color-focus\);/,
     )
     expect(facilitiesCss).toMatch(
+      /\.facility-details-dialog__close\s*\{[^}]*border:\s*1px solid color-mix\(in srgb, var\(--theme-accent\) 70%, white\);[^}]*background:\s*color-mix\(in srgb, var\(--theme-accent\) 32%, var\(--theme-panel\)\);[^}]*box-shadow:\s*0 0\.12rem 0\.24rem rgb\(0 0 0 \/ 42%\);/s,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.facility-details-dialog__backdrop\s*\{[^}]*--theme-panel:\s*#443148;[^}]*--theme-accent:\s*#e59aeb;/s,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.facility-details-dialog\s*\{[^}]*grid-template-rows:\s*auto minmax\(0, 1fr\) auto;[^}]*overflow:\s*hidden;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.facility-details-dialog__content\s*\{[^}]*min-block-size:\s*0;[^}]*overflow-y:\s*auto;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.facility-effect-row \+ \.facility-effect-row,[\s\S]*border-block-start:\s*1px solid #5d4564;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.facility-details-dialog__backdrop\s*\{[^}]*padding:\s*calc\(var\(--safe-area-top\) \+ 0\.5rem\) 0 0;[\s\S]*\.facility-details-dialog__safe-area\s*\{[^}]*min-block-size:\s*var\(--safe-area-bottom\);[^}]*border-block-start:\s*1px solid #72567b;/,
+    )
+    expect(facilitiesCss).toMatch(
       /\.basic-facility-card \.ui-button\s*\{[\s\S]*background:\s*#d1b6d7;/,
     )
     expect(facilitiesCss).toMatch(
@@ -1041,6 +1282,7 @@ function regionProps(
       options.purchasePreviews ?? purchasePreviews,
     purchaseRouteAvailable:
       options.purchaseRouteAvailable ?? true,
+    gameSpeed: options.gameSpeed,
     revision: options.revision ?? defaultRevision,
     dispatchPlayer:
       options.dispatchPlayer ??

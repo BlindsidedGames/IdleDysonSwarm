@@ -210,8 +210,15 @@ describe('ReadyDysonSlice', () => {
     expect(cards[0]).toHaveAccessibleName('Matrioshka Brains 5.00(3.00)')
     expect(cards[1]).toHaveAccessibleName('Birch Planets 9.00(5.00)')
     expect(cards[2]).toHaveAccessibleName('Galactic Brains 13.0(7.00)')
-    expect(within(cards[0]).getByText('Synthesizing 1.00 Planets /s'))
-      .toBeInTheDocument()
+    const production = cards[0].querySelector(
+      '.basic-facility-card__production-line',
+    )
+    expect(production).toHaveTextContent('Synthesizing 1.00 Planets /s')
+    expect(
+      within(cards[0]).getByText('1.00', {
+        selector: '.basic-facility-card__production-value',
+      }),
+    ).toBeInTheDocument()
 
     await userEvent.click(within(cards[0]).getByRole('button', {
       name: 'Details',
@@ -220,8 +227,24 @@ describe('ReadyDysonSlice', () => {
       name: 'Matrioshka Brains',
     })
     expect(within(details).getByText('Base')).toBeInTheDocument()
-    expect(within(details).getByText('Final production'))
+    expect(within(details).getByText('Production Modifiers'))
       .toBeInTheDocument()
+    const formula = within(details).getByText('Formula')
+    expect(formula.closest('details')?.parentElement)
+      .toHaveClass('facility-effect-row')
+    await userEvent.click(formula)
+    expect(within(details).getByText(/3\.00 × 10\.0% = \+30\.0%/))
+      .toBeInTheDocument()
+    expect(within(details).getByText('How you gain Matrioshka Brains'))
+      .toBeInTheDocument()
+    expect(within(details).getByText('2.00 Produced'))
+      .toBeInTheDocument()
+    expect(
+      Array.from(
+        details.querySelectorAll('.facility-details-stage__number'),
+        (element) => element.textContent,
+      ),
+    ).toEqual(['1', '2', '3'])
     expect(within(details).getByText(
       'Requires the Matrioshka Brains Quantum unlock and ownership of Planets.',
     )).toBeInTheDocument()
@@ -265,17 +288,23 @@ describe('ReadyDysonSlice', () => {
     ).not.toBeInTheDocument()
 
     const expected = [
-      ['Assembly Lines 5.00(3.00)', 'Producing 33.0 Bots /s'],
-      ['AI Managers 9.00(5.00)', 'Generating 44.0 Assembly Lines /s'],
-      ['Servers 13.0(7.00)', 'Training 55.0 AI Managers /s'],
-      ['Data Centers 17.0(9.00)', 'Deploying 66.0 Servers /s'],
-      ['Planets 21.0(11.0)', 'Creating 77.0 Data Centers /s'],
+      ['Assembly Lines 5.00(3.00)', 'Producing 33.0 Bots /s', '33.0'],
+      ['AI Managers 9.00(5.00)', 'Generating 44.0 Assembly Lines /s', '44.0'],
+      ['Servers 13.0(7.00)', 'Training 55.0 AI Managers /s', '55.0'],
+      ['Data Centers 17.0(9.00)', 'Deploying 66.0 Servers /s', '66.0'],
+      ['Planets 21.0(11.0)', 'Creating 77.0 Data Centers /s', '77.0'],
     ] as const
-    for (const [name, production] of expected) {
+    for (const [name, production, productionValue] of expected) {
+      const facility = await screen.findByRole('article', { name })
+      const productionLine = facility.querySelector(
+        '.basic-facility-card__production-line',
+      )
+
+      expect(productionLine).toHaveTextContent(production)
       expect(
-        within(
-          await screen.findByRole('article', { name }),
-        ).getByText(production),
+        within(facility).getByText(productionValue, {
+          selector: '.basic-facility-card__production-value',
+        }),
       ).toBeInTheDocument()
     }
   })
@@ -2160,6 +2189,22 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
                 baseProductionPerSecond: 1,
                 modifier: 1,
                 perSecond: 1,
+                details: {
+                  modifierContributions: [{
+                    sourceId: 'effect.research.matrioshka_brain',
+                    displayRole: 'modifier',
+                    operation: 'add',
+                    value: 0.3,
+                    delta: 0.3,
+                    runningTotal: 1.3,
+                    source: {
+                      kind: 'research',
+                      id: 'research.matrioshka_brain',
+                      level: 3,
+                      perLevelValue: 0.1,
+                    },
+                  }],
+                },
               },
               birch_planets: {
                 facilityId: 'birch_planets',
@@ -2174,6 +2219,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
                 baseProductionPerSecond: 0.01,
                 modifier: 1,
                 perSecond: 0.01,
+                details: { modifierContributions: [] },
               },
               galactic_brains: {
                 facilityId: 'galactic_brains',
@@ -2188,6 +2234,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
                 baseProductionPerSecond: 0.1,
                 modifier: 1,
                 perSecond: 0.1,
+                details: { modifierContributions: [] },
               },
             },
           },

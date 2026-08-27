@@ -8,6 +8,7 @@ import { createPortal } from 'react-dom'
 
 export interface FacilityDetailsDialogProps {
   readonly title: ReactNode
+  readonly subtitle?: ReactNode
   readonly closeLabel: string
   readonly children: ReactNode
   readonly onClose: () => void
@@ -15,6 +16,7 @@ export interface FacilityDetailsDialogProps {
 
 export function FacilityDetailsDialog({
   title,
+  subtitle,
   closeLabel,
   children,
   onClose,
@@ -44,7 +46,7 @@ export function FacilityDetailsDialog({
     for (const { element } of backgroundSiblings) {
       element.setAttribute('inert', '')
     }
-    closeRef.current?.focus()
+    closeRef.current?.focus({ preventScroll: true })
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -96,7 +98,10 @@ export function FacilityDetailsDialog({
         aria-labelledby={titleId}
       >
         <header className="facility-details-dialog__header">
-          <h2 id={titleId}>{title}</h2>
+          <span className="facility-details-dialog__heading">
+            <h2 id={titleId}>{title}</h2>
+            {subtitle && <span>{subtitle}</span>}
+          </span>
           <button
             ref={closeRef}
             type="button"
@@ -110,6 +115,7 @@ export function FacilityDetailsDialog({
         <div className="facility-details-dialog__content">
           {children}
         </div>
+        <div className="facility-details-dialog__safe-area" aria-hidden="true" />
       </section>
     </div>,
     document.body,
