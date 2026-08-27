@@ -12362,277 +12362,295 @@
       "value": "Versions précédentes"
     }
   ],
-  "wiki.patch-notes.version-3": [
+  "wiki.patch-notes.version-4": [
     {
       "type": 0,
-      "value": "Version 3"
+      "value": "Version 4"
     }
   ],
-  "wiki.patch-notes.version-3-1": [
+  "wiki.patch-notes.version-4-1": [
     {
       "type": 0,
-      "value": "Version 3.1"
+      "value": "Version 4.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1": [
+  "wiki.patch-notes.version-4-1-1": [
     {
       "type": 0,
-      "value": "Version 3.1.1"
+      "value": "Version 4.1.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.compact-layouts": [
+  "wiki.patch-notes.version-4-1-1.compact-layouts": [
     {
       "type": 0,
       "value": "Affinement des dispositions des Bots, de la Recherche, des Simulations, des Paramètres, de l’Histoire et du Wiki sur les écrans compacts, avec des marges régulières entre les installations, des contrôles resserrés, des en-têtes propres à chaque page et un espacement corrigé entre les panneaux."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.mega-teaser": [
+  "wiki.patch-notes.version-4-1-1.mega-teaser": [
     {
       "type": 0,
       "value": "L’aperçu de la prochaine mégastructure reste désormais masqué jusqu’au déblocage des mégastructures, et l’aperçu comme le Tinker reprennent le style des cartes d’installation."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.overlays": [
+  "wiki.patch-notes.version-4-1-1.overlays": [
     {
       "type": 0,
       "value": "Amélioration des interactions d’Avotation et des Secrets : leurs marqueurs ne masquent plus les contrôles des menus ou des panneaux, leurs fenêtres restent utilisables et un clic en dehors des Secrets ferme leur fenêtre."
     }
   ],
-  "wiki.patch-notes.version-3-1-1.skills-and-tinker": [
+  "wiki.patch-notes.version-4-1-1.skills-and-tinker": [
     {
       "type": 0,
       "value": "L’Arbre de compétences mémorise désormais sa position et son niveau de zoom lors d’un changement d’onglet, tandis que Travail manuel maintient le Tinker au-dessus des installations sans recouvrir les menus ni les panneaux de fin de partie."
     }
   ],
-  "wiki.patch-notes.version-3-1-2": [
+  "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
-      "value": "Version 3.1.2"
+      "value": "Version 4.1.2"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.double-time": [
+  "wiki.patch-notes.version-4-1-2.double-time": [
     {
       "type": 0,
       "value": "Double Time fait désormais fonctionner en permanence tous les systèmes du jeu à deux fois leur vitesse normale."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.languages": [
+  "wiki.patch-notes.version-4-1-2.languages": [
     {
       "type": 0,
       "value": "Ajout de traductions complètes en français, allemand, espagnol d’Amérique latine, portugais du Brésil, chinois simplifié, russe et japonais, avec sélection automatique selon la langue de l’appareil et possibilité de choisir une langue dans les Paramètres."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.offline-controls": [
+  "wiki.patch-notes.version-4-1-2.offline-controls": [
     {
       "type": 0,
       "value": "Ajout des préréglages Rapide, Équilibré et Précis pour le temps hors ligne, de la progression du traitement, de l’accélération, de l’annulation sécurisée et d’un résumé à la fin de chaque simulation."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.processing": [
+  "wiki.patch-notes.version-4-1-2.processing": [
     {
       "type": 0,
       "value": "Refonte du traitement actif et du temps hors ligne autour de la même simulation, améliorant les performances tout en conservant des gains permanents et une automatisation cohérente entre les mises à jour."
     }
   ],
-  "wiki.patch-notes.version-3-1-2.update-interval": [
+  "wiki.patch-notes.version-4-1-2.update-interval": [
     {
       "type": 0,
       "value": "Ajout d’un réglage de traitement du jeu de 33 à 200 ms, permettant de choisir entre une automatisation plus précise et une charge réduite pour l’appareil."
     }
   ],
-  "wiki.patch-notes.version-3-1-3": [
+  "wiki.patch-notes.version-4-1-3": [
     {
       "type": 0,
-      "value": "Version 3.1.3"
+      "value": "Version 4.1.3"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.calculations": [
+  "wiki.patch-notes.version-4-1-3.calculations": [
     {
       "type": 0,
       "value": "Ajout de calculs dépliables pour les effets de Compétence variables, notamment Planètes scientifiques et Dimensions de poche, afin de pouvoir consulter leurs valeurs actuelles."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.cards": [
+  "wiki.patch-notes.version-4-1-3.cards": [
     {
       "type": 0,
       "value": "Amélioration des cartes des Installations et Mégastructures avec des valeurs de production mises en évidence et des taux sur une seule ligne, lisibles même sur les petits écrans."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.details": [
+  "wiki.patch-notes.version-4-1-3.details": [
     {
       "type": 0,
       "value": "Refonte des Détails des Installations et Mégastructures avec une décomposition plus claire, étape par étape, de la production, couvrant les bonus d’achat, la Recherche, les Compétences, les effets dynamiques et la vitesse du jeu."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.statistics": [
+  "wiki.patch-notes.version-4-1-3.statistics": [
     {
       "type": 0,
       "value": "Suppression de la section d’utilisation du Temps hors ligne dans les Statistiques."
     }
   ],
-  "wiki.patch-notes.version-3-1-3.tinker": [
+  "wiki.patch-notes.version-4-1-3.tinker": [
     {
       "type": 0,
       "value": "Le bricolage du Travail manuel lance désormais une production continue après un appui long et s’arrête lorsque vous touchez ailleurs ou quittez l’onglet Robots."
     }
   ],
-  "wiki.patch-notes.version-3-1.audio": [
+  "wiki.patch-notes.version-4-1-4": [
+    {
+      "type": 0,
+      "value": "Version 4.1.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.simulation-resources": [
+    {
+      "type": 0,
+      "value": "Les Panneaux de Dyson, les Panneaux de l’Essaim, la Matière étrange, les récompenses de Trou noir et les statistiques associées peuvent désormais dépasser l’ancienne limite de 9,22 trillions."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.stored-time": [
+    {
+      "type": 0,
+      "value": "La capacité de Temps stocké ne revient plus à un jour après de grandes améliorations ou des transferts de sauvegarde, et peut désormais continuer à doubler sans limite de jeu."
+    }
+  ],
+  "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
       "value": "Ajout d’une bande-son et de sons d’interface sur les plateformes compatibles, avec des réglages de volume distincts pour la Musique et les Effets, une option Couper tous les sons et une lecture plus fiable lors du passage d’une application ou d’une fenêtre de navigateur à une autre."
     }
   ],
-  "wiki.patch-notes.version-3-1.dyson-visualization": [
+  "wiki.patch-notes.version-4-1.dyson-visualization": [
     {
       "type": 0,
       "value": "Amélioration des performances de la visualisation de Dyson pendant les cycles automatiques d’Infinité extrêmement rapides, en affichant directement le champ galactique final, tout en rétablissant la spirale dense, le noyau lumineux et le positionnement équilibré sur mobile de la galaxie en expansion."
     }
   ],
-  "wiki.patch-notes.version-3-1.economy": [
+  "wiki.patch-notes.version-4-1.economy": [
     {
       "type": 0,
       "value": "Correction des achats aux valeurs de ressources maximales prises en charge et résolution d’un problème qui bloquait les prix extrêmes des Mégachaînes d’assemblage sur un palier réutilisable."
     }
   ],
-  "wiki.patch-notes.version-3-1.infinity": [
+  "wiki.patch-notes.version-4-1.infinity": [
     {
       "type": 0,
       "value": "Développement de l’Infinité avec des réinitialisations manuelles indépendantes de l’Infinité automatique, des objectifs automatiques précis de Points d’Infinité et l’affichage des taux actuel et maximal de Points d’Infinité par minute."
     }
   ],
-  "wiki.patch-notes.version-3-1.mobile-ui": [
+  "wiki.patch-notes.version-4-1.mobile-ui": [
     {
       "type": 0,
       "value": "Rétablissement des mégastructures de fin de partie et modernisation des interfaces de jeu avec des cartes d’installation plus claires, des thèmes de navigation cohérents, un espacement mobile plus sûr, des boîtes de dialogue améliorées et de meilleurs contrôles sur les écrans compacts."
     }
   ],
-  "wiki.patch-notes.version-3-1.navigation": [
+  "wiki.patch-notes.version-4-1.navigation": [
     {
       "type": 0,
       "value": "Ajout de raccourcis personnalisables dans la barre de navigation inférieure, avec un réglage facultatif Inclure le texte et un redimensionnement automatique permettant de garder les destinations sélectionnées accessibles quelle que soit la largeur de l’écran."
     }
   ],
-  "wiki.patch-notes.version-3-1.progress-panels": [
+  "wiki.patch-notes.version-4-1.progress-panels": [
     {
       "type": 0,
       "value": "Ajout de panneaux communs de progression et de réglages pour les Bots, la Recherche, les Compétences, l’Infinité, les Simulations et le Quantique, avec notamment des comparaisons de production plus claires et des commandes d’Infinité manuelle pour la première partie."
     }
   ],
-  "wiki.patch-notes.version-3-1.saves": [
+  "wiki.patch-notes.version-4-1.saves": [
     {
       "type": 0,
       "value": "Amélioration de la migration des anciennes sauvegardes Unity et de la fiabilité des sauvegardes lors de la mise en arrière-plan, de la suspension, des rechargements, du démarrage hors ligne et des mises à jour, avec rétablissement de l’identité visuelle et des écrans de chargement de l’application."
     }
   ],
-  "wiki.patch-notes.version-3-1.settings": [
+  "wiki.patch-notes.version-4-1.settings": [
     {
       "type": 0,
       "value": "Ajout des notations numériques Standard, Scientifique et Ingénierie enregistrées localement sur l’appareil, avec des chiffres de largeur stable en jeu, ainsi que d’un réglage permettant de masquer les Recherches terminées."
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-controls": [
+  "wiki.patch-notes.version-4-1.skill-controls": [
     {
       "type": 0,
       "value": "Amélioration des préréglages et des confirmations des Compétences : les Compétences verrouillées restent en attente jusqu’au déverrouillage de leur ligne de progression, les changements de production sont prévisualisés plus clairement et les contrôles de préréglage, de réinitialisation, de recherche, tactiles et de glissement sont plus faciles à utiliser."
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-effects": [
+  "wiki.patch-notes.version-4-1.skill-effects": [
     {
       "type": 0,
       "value": "Correction des effets des Compétences dans les branches liées aux minuteurs, au mode hors ligne, aux achats manuels, aux Fragments, à la Pureté, à Terra et aux Étoiles, afin que leurs bonus, compromis et règles de déverrouillage fonctionnent désormais comme prévu."
     }
   ],
-  "wiki.patch-notes.version-3-1.statistics": [
+  "wiki.patch-notes.version-4-1.statistics": [
     {
       "type": 0,
       "value": "Développement des Statistiques avec l’échelle complète de l’Essaim de Dyson et les performances détaillées des dix cycles d’Infinité les plus récents, notamment les cycles automatiques et manuels, les récompenses, les durées, les moyennes, les médianes et les plages de valeurs."
     }
   ],
-  "wiki.patch-notes.version-3-1.store": [
+  "wiki.patch-notes.version-4-1.store": [
     {
       "type": 0,
       "value": "Ajout de la Galerie des chats des soutiens pour les soutiens vérifiés et d’un contrôle Activé/Désactivé pour l’amélioration achetée Doubler les Points d’Infinité, sans affecter sa possession ni son éligibilité à la restauration."
     }
   ],
-  "wiki.patch-notes.version-3-1.stored-time": [
+  "wiki.patch-notes.version-4-1.stored-time": [
     {
       "type": 0,
       "value": "Amélioration du Temps stocké afin que les dépenses en double ou simultanées soient refusées en toute sécurité, que les tâches actives conservent leur progression et leurs contrôles d’annulation, et que les réglages non terminés restent intacts lors d’un changement de page."
     }
   ],
-  "wiki.patch-notes.version-3.accessibility": [
+  "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
       "value": "Amélioration de la prise en charge du clavier et des lecteurs d’écran, du comportement avec la réduction des animations, de la sélection de texte sur mobile, de la modification des champs de texte, de la gestion du focus et de la protection contre les pressions tactiles rapides."
     }
   ],
-  "wiki.patch-notes.version-3.interaction-fixes": [
+  "wiki.patch-notes.version-4.interaction-fixes": [
     {
       "type": 0,
       "value": "Amélioration du retour visuel lors du maintien pour répéter dans Tinker, correction des animations de Dyson et de fin de partie, et résolution de plusieurs cas limites où l’automatisation pouvait se bloquer ou devenir instable."
     }
   ],
-  "wiki.patch-notes.version-3.offline-time": [
+  "wiki.patch-notes.version-4.offline-time": [
     {
       "type": 0,
       "value": "Amélioration du Temps hors ligne avec la prise en charge du Temps stocké et du Temps double, une progression du traitement visible, l’annulation, une récupération plus sûre, la mémorisation des contrôles et une jauge de stockage dans la navigation."
     }
   ],
-  "wiki.patch-notes.version-3.pwa": [
+  "wiki.patch-notes.version-4.pwa": [
     {
       "type": 0,
       "value": "Le jeu Web peut être installé comme une application, relancé sans connexion réseau et mis à jour via une invite qui protège la progression avant d’appliquer la nouvelle version."
     }
   ],
-  "wiki.patch-notes.version-3.responsive-ui": [
+  "wiki.patch-notes.version-4.responsive-ui": [
     {
       "type": 0,
       "value": "Refonte de l’interface pour les ordinateurs, les mobiles en mode portrait et les écrans compacts en mode paysage, avec des contrôles adaptés au tactile, la prise en charge des zones sûres, une navigation thématique et des visuels évolutifs d’étoiles et de galaxies."
     }
   ],
-  "wiki.patch-notes.version-3.saves": [
+  "wiki.patch-notes.version-4.saves": [
     {
       "type": 0,
       "value": "Ajout de sauvegardes durables dans le navigateur avec trois copies de secours alternées, une récupération automatique depuis la copie valide la plus récente, des points de contrôle de sécurité réguliers et une protection de la sauvegarde avant rechargement."
     }
   ],
-  "wiki.patch-notes.version-3.settings-and-debug": [
+  "wiki.patch-notes.version-4.settings-and-debug": [
     {
       "type": 0,
       "value": "Développement des contrôles de sauvegarde dans les Réglages et amélioration des options de développement, avec un interrupteur de déverrouillage fonctionnel et la mémorisation des valeurs de Débogage et de Temps hors ligne lors du changement d’onglet."
     }
   ],
-  "wiki.patch-notes.version-3.statistics": [
+  "wiki.patch-notes.version-4.statistics": [
     {
       "type": 0,
       "value": "Amélioration des Statistiques avec l’indication des systèmes atteints, les totaux combinés d’Infinité, le temps simulé dans chaque en-tête d’historique et une présentation dédiée remplaçant les diagnostics du menu d’ordinateur."
     }
   ],
-  "wiki.patch-notes.version-3.store": [
+  "wiki.patch-notes.version-4.store": [
     {
       "type": 0,
       "value": "Ajout d’une Boutique Web proposant cinq produits de soutien et d’amélioration permanente, le paiement par Stripe et des avertissements clairs indiquant que les achats Web sont associés à ce navigateur et à cet appareil plutôt qu’à un compte."
     }
   ],
-  "wiki.patch-notes.version-3.story-and-store": [
+  "wiki.patch-notes.version-4.story-and-store": [
     {
       "type": 0,
       "value": "Amélioration de la présentation de l’Histoire et de la Boutique avec des sections plus claires et moins de panneaux superposés redondants."
     }
   ],
-  "wiki.patch-notes.version-3.transfers": [
+  "wiki.patch-notes.version-4.transfers": [
     {
       "type": 0,
       "value": "Ajout de l’importation et de l’exportation des sauvegardes avec prévisualisation préalable, notamment pour les sauvegardes Unity compatibles, tout en conservant les achats et les préférences propres à l’appareil sur leur appareil d’origine."
     }
   ],
-  "wiki.patch-notes.version-3.web-release": [
+  "wiki.patch-notes.version-4.web-release": [
     {
       "type": 0,
       "value": "Idle Dyson Swarm est désormais disponible sur le Web."
     }
   ],
-  "wiki.patch-notes.version-3.wiki": [
+  "wiki.patch-notes.version-4.wiki": [
     {
       "type": 0,
       "value": "Développement du Wiki avec l’univers original, des ressources de référence sur le jeu, la mise en évidence des valeurs, des liens thématiques, la mémorisation de la navigation, la sélection des sujets sur mobile et des sections d’univers tenant compte des déverrouillages."

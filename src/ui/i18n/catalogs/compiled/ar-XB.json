@@ -25202,49 +25202,49 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3": [
+  "wiki.patch-notes.version-4": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "Ʌǝɹsıou 3"
+      "value": "Ʌǝɹsıou 4"
     },
     {
       "type": 0,
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1": [
+  "wiki.patch-notes.version-4-1": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "Ʌǝɹsıou 3.1"
+      "value": "Ʌǝɹsıou 4.1"
     },
     {
       "type": 0,
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-1": [
+  "wiki.patch-notes.version-4-1-1": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "Ʌǝɹsıou 3.1.1"
+      "value": "Ʌǝɹsıou 4.1.1"
     },
     {
       "type": 0,
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.compact-layouts": [
+  "wiki.patch-notes.version-4-1-1.compact-layouts": [
     {
       "type": 0,
       "value": "‮"
@@ -25258,7 +25258,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.mega-teaser": [
+  "wiki.patch-notes.version-4-1-1.mega-teaser": [
     {
       "type": 0,
       "value": "‮"
@@ -25272,7 +25272,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.overlays": [
+  "wiki.patch-notes.version-4-1-1.overlays": [
     {
       "type": 0,
       "value": "‮"
@@ -25286,7 +25286,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.skills-and-tinker": [
+  "wiki.patch-notes.version-4-1-1.skills-and-tinker": [
     {
       "type": 0,
       "value": "‮"
@@ -25300,21 +25300,21 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-2": [
+  "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "Ʌǝɹsıou 3.1.2"
+      "value": "Ʌǝɹsıou 4.1.2"
     },
     {
       "type": 0,
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.double-time": [
+  "wiki.patch-notes.version-4-1-2.double-time": [
     {
       "type": 0,
       "value": "‮"
@@ -25328,7 +25328,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.languages": [
+  "wiki.patch-notes.version-4-1-2.languages": [
     {
       "type": 0,
       "value": "‮"
@@ -25342,7 +25342,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.offline-controls": [
+  "wiki.patch-notes.version-4-1-2.offline-controls": [
     {
       "type": 0,
       "value": "‮"
@@ -25356,7 +25356,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.processing": [
+  "wiki.patch-notes.version-4-1-2.processing": [
     {
       "type": 0,
       "value": "‮"
@@ -25370,7 +25370,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.update-interval": [
+  "wiki.patch-notes.version-4-1-2.update-interval": [
     {
       "type": 0,
       "value": "‮"
@@ -25384,21 +25384,21 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-3": [
+  "wiki.patch-notes.version-4-1-3": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "Ʌǝɹsıou 3.1.3"
+      "value": "Ʌǝɹsıou 4.1.3"
     },
     {
       "type": 0,
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.calculations": [
+  "wiki.patch-notes.version-4-1-3.calculations": [
     {
       "type": 0,
       "value": "‮"
@@ -25412,7 +25412,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.cards": [
+  "wiki.patch-notes.version-4-1-3.cards": [
     {
       "type": 0,
       "value": "‮"
@@ -25426,7 +25426,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.details": [
+  "wiki.patch-notes.version-4-1-3.details": [
     {
       "type": 0,
       "value": "‮"
@@ -25440,7 +25440,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.statistics": [
+  "wiki.patch-notes.version-4-1-3.statistics": [
     {
       "type": 0,
       "value": "‮"
@@ -25454,7 +25454,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.tinker": [
+  "wiki.patch-notes.version-4-1-3.tinker": [
     {
       "type": 0,
       "value": "‮"
@@ -25468,7 +25468,49 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.audio": [
+  "wiki.patch-notes.version-4-1-4": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌǝɹsıou 4.1.4"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.simulation-resources": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡʎsou Ԁɐuǝʅs, Sʍɐɹɯ Ԁɐuǝʅs, Sʇɹɐuƃǝ Wɐʇʇǝɹ, Ԑʅɐɔʞ Hoʅǝ ɹǝʍɐɹps, ɐup ɹǝʅɐʇǝp sʇɐʇısʇıɔs ɔɐu uoʍ ƃɹoʍ qǝʎoup ʇɥǝ ɟoɹɯǝɹ 9.22 bnıuʇıʅʅıou ʅıɯıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.stored-time": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹǝp ⊥ıɯǝ ɔɐdɐɔıʇʎ uo ʅouƃǝɹ ɹǝsǝʇs ʇo ouǝ pɐʎ ɐɟʇǝɹ ʅɐɹƃǝ ndƃɹɐpǝs oɹ sɐʌǝ ʇɹɐusɟǝɹs, ɐup ɔɐu uoʍ ʞǝǝd ponqʅıuƃ ʍıʇɥonʇ ɐ ƃɐɯǝdʅɐʎ ɔɐd."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
       "value": "‮"
@@ -25482,7 +25524,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.dyson-visualization": [
+  "wiki.patch-notes.version-4-1.dyson-visualization": [
     {
       "type": 0,
       "value": "‮"
@@ -25496,7 +25538,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.economy": [
+  "wiki.patch-notes.version-4-1.economy": [
     {
       "type": 0,
       "value": "‮"
@@ -25510,7 +25552,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.infinity": [
+  "wiki.patch-notes.version-4-1.infinity": [
     {
       "type": 0,
       "value": "‮"
@@ -25524,7 +25566,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.mobile-ui": [
+  "wiki.patch-notes.version-4-1.mobile-ui": [
     {
       "type": 0,
       "value": "‮"
@@ -25538,7 +25580,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.navigation": [
+  "wiki.patch-notes.version-4-1.navigation": [
     {
       "type": 0,
       "value": "‮"
@@ -25552,7 +25594,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.progress-panels": [
+  "wiki.patch-notes.version-4-1.progress-panels": [
     {
       "type": 0,
       "value": "‮"
@@ -25566,7 +25608,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.saves": [
+  "wiki.patch-notes.version-4-1.saves": [
     {
       "type": 0,
       "value": "‮"
@@ -25580,7 +25622,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.settings": [
+  "wiki.patch-notes.version-4-1.settings": [
     {
       "type": 0,
       "value": "‮"
@@ -25594,7 +25636,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-controls": [
+  "wiki.patch-notes.version-4-1.skill-controls": [
     {
       "type": 0,
       "value": "‮"
@@ -25608,7 +25650,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-effects": [
+  "wiki.patch-notes.version-4-1.skill-effects": [
     {
       "type": 0,
       "value": "‮"
@@ -25622,7 +25664,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.statistics": [
+  "wiki.patch-notes.version-4-1.statistics": [
     {
       "type": 0,
       "value": "‮"
@@ -25636,7 +25678,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.store": [
+  "wiki.patch-notes.version-4-1.store": [
     {
       "type": 0,
       "value": "‮"
@@ -25650,7 +25692,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3-1.stored-time": [
+  "wiki.patch-notes.version-4-1.stored-time": [
     {
       "type": 0,
       "value": "‮"
@@ -25664,7 +25706,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.accessibility": [
+  "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
       "value": "‮"
@@ -25678,7 +25720,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.interaction-fixes": [
+  "wiki.patch-notes.version-4.interaction-fixes": [
     {
       "type": 0,
       "value": "‮"
@@ -25692,7 +25734,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.offline-time": [
+  "wiki.patch-notes.version-4.offline-time": [
     {
       "type": 0,
       "value": "‮"
@@ -25706,7 +25748,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.pwa": [
+  "wiki.patch-notes.version-4.pwa": [
     {
       "type": 0,
       "value": "‮"
@@ -25720,7 +25762,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.responsive-ui": [
+  "wiki.patch-notes.version-4.responsive-ui": [
     {
       "type": 0,
       "value": "‮"
@@ -25734,7 +25776,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.saves": [
+  "wiki.patch-notes.version-4.saves": [
     {
       "type": 0,
       "value": "‮"
@@ -25748,7 +25790,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.settings-and-debug": [
+  "wiki.patch-notes.version-4.settings-and-debug": [
     {
       "type": 0,
       "value": "‮"
@@ -25762,7 +25804,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.statistics": [
+  "wiki.patch-notes.version-4.statistics": [
     {
       "type": 0,
       "value": "‮"
@@ -25776,7 +25818,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.store": [
+  "wiki.patch-notes.version-4.store": [
     {
       "type": 0,
       "value": "‮"
@@ -25790,7 +25832,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.story-and-store": [
+  "wiki.patch-notes.version-4.story-and-store": [
     {
       "type": 0,
       "value": "‮"
@@ -25804,7 +25846,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.transfers": [
+  "wiki.patch-notes.version-4.transfers": [
     {
       "type": 0,
       "value": "‮"
@@ -25818,7 +25860,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.web-release": [
+  "wiki.patch-notes.version-4.web-release": [
     {
       "type": 0,
       "value": "‮"
@@ -25832,7 +25874,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-3.wiki": [
+  "wiki.patch-notes.version-4.wiki": [
     {
       "type": 0,
       "value": "‮"

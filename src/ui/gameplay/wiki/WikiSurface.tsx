@@ -125,60 +125,65 @@ const goalMessages = [
   messages.goal10,
 ] as const
 
-const version3PatchNoteMessages = [
-  messages.patchNotesVersion3WebRelease,
-  messages.patchNotesVersion3OfflineTime,
-  messages.patchNotesVersion3Saves,
-  messages.patchNotesVersion3Transfers,
-  messages.patchNotesVersion3Pwa,
-  messages.patchNotesVersion3Store,
-  messages.patchNotesVersion3ResponsiveUi,
-  messages.patchNotesVersion3Accessibility,
-  messages.patchNotesVersion3Wiki,
-  messages.patchNotesVersion3StoryAndStore,
-  messages.patchNotesVersion3Statistics,
-  messages.patchNotesVersion3SettingsAndDebug,
-  messages.patchNotesVersion3InteractionFixes,
+const version4PatchNoteMessages = [
+  messages.patchNotesVersion4WebRelease,
+  messages.patchNotesVersion4OfflineTime,
+  messages.patchNotesVersion4Saves,
+  messages.patchNotesVersion4Transfers,
+  messages.patchNotesVersion4Pwa,
+  messages.patchNotesVersion4Store,
+  messages.patchNotesVersion4ResponsiveUi,
+  messages.patchNotesVersion4Accessibility,
+  messages.patchNotesVersion4Wiki,
+  messages.patchNotesVersion4StoryAndStore,
+  messages.patchNotesVersion4Statistics,
+  messages.patchNotesVersion4SettingsAndDebug,
+  messages.patchNotesVersion4InteractionFixes,
 ] as const
 
-const version31PatchNoteMessages = [
-  messages.patchNotesVersion31Audio,
-  messages.patchNotesVersion31SkillEffects,
-  messages.patchNotesVersion31SkillControls,
-  messages.patchNotesVersion31MobileUi,
-  messages.patchNotesVersion31Navigation,
-  messages.patchNotesVersion31Settings,
-  messages.patchNotesVersion31Store,
-  messages.patchNotesVersion31ProgressPanels,
-  messages.patchNotesVersion31Infinity,
-  messages.patchNotesVersion31DysonVisualization,
-  messages.patchNotesVersion31Statistics,
-  messages.patchNotesVersion31StoredTime,
-  messages.patchNotesVersion31Saves,
-  messages.patchNotesVersion31Economy,
+const version41PatchNoteMessages = [
+  messages.patchNotesVersion41Audio,
+  messages.patchNotesVersion41SkillEffects,
+  messages.patchNotesVersion41SkillControls,
+  messages.patchNotesVersion41MobileUi,
+  messages.patchNotesVersion41Navigation,
+  messages.patchNotesVersion41Settings,
+  messages.patchNotesVersion41Store,
+  messages.patchNotesVersion41ProgressPanels,
+  messages.patchNotesVersion41Infinity,
+  messages.patchNotesVersion41DysonVisualization,
+  messages.patchNotesVersion41Statistics,
+  messages.patchNotesVersion41StoredTime,
+  messages.patchNotesVersion41Saves,
+  messages.patchNotesVersion41Economy,
 ] as const
 
-const version311PatchNoteMessages = [
-  messages.patchNotesVersion311Overlays,
-  messages.patchNotesVersion311CompactLayouts,
-  messages.patchNotesVersion311SkillsAndTinker,
-  messages.patchNotesVersion311MegaTeaser,
+const version411PatchNoteMessages = [
+  messages.patchNotesVersion411Overlays,
+  messages.patchNotesVersion411CompactLayouts,
+  messages.patchNotesVersion411SkillsAndTinker,
+  messages.patchNotesVersion411MegaTeaser,
 ] as const
 
-const version313PatchNoteMessages = [
-  messages.patchNotesVersion313Details,
-  messages.patchNotesVersion313Calculations,
-  messages.patchNotesVersion313Cards,
-  messages.patchNotesVersion313Tinker,
-  messages.patchNotesVersion313Statistics,
+const version413PatchNoteMessages = [
+  messages.patchNotesVersion413Details,
+  messages.patchNotesVersion413Calculations,
+  messages.patchNotesVersion413Cards,
+  messages.patchNotesVersion413Tinker,
+  messages.patchNotesVersion413Statistics,
 ] as const
 
-const version312PatchNoteMessages = [
-  messages.patchNotesVersion312Languages,
-  messages.patchNotesVersion312Processing,
-  messages.patchNotesVersion312OfflineControls,
-  messages.patchNotesVersion312UpdateInterval,
-  messages.patchNotesVersion312DoubleTime,
+const version414PatchNoteMessages = [
+  messages.patchNotesVersion414StoredTime,
+  messages.patchNotesVersion414SimulationResources,
+] as const
+
+const version412PatchNoteMessages = [
+  messages.patchNotesVersion412Languages,
+  messages.patchNotesVersion412Processing,
+  messages.patchNotesVersion412OfflineControls,
+  messages.patchNotesVersion412UpdateInterval,
+  messages.patchNotesVersion412DoubleTime,
 ] as const
 
 type SecretEffectMessage =
@@ -367,36 +372,42 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion313)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion414)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version313PatchNoteMessages.map((message) => (
+            {version414PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
         </section>
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion312)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion413)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version312PatchNoteMessages.map((message) => (
+            {version413PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
-          <h4>{intl.formatMessage(messages.patchNotesVersion311)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion412)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version311PatchNoteMessages.map((message) => (
+            {version412PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
-          <h4>{intl.formatMessage(messages.patchNotesVersion31)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion411)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version31PatchNoteMessages.map((message) => (
+            {version411PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
-          <h4>{intl.formatMessage(messages.patchNotesVersion3)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion41)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version3PatchNoteMessages.map((message) => (
+            {version41PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
+          <h4>{intl.formatMessage(messages.patchNotesVersion4)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version4PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>

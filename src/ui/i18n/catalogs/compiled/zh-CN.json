@@ -12362,277 +12362,295 @@
       "value": "以往版本"
     }
   ],
-  "wiki.patch-notes.version-3": [
+  "wiki.patch-notes.version-4": [
     {
       "type": 0,
-      "value": "版本 3"
+      "value": "版本 4"
     }
   ],
-  "wiki.patch-notes.version-3-1": [
+  "wiki.patch-notes.version-4-1": [
     {
       "type": 0,
-      "value": "版本 3.1"
+      "value": "版本 4.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1": [
+  "wiki.patch-notes.version-4-1-1": [
     {
       "type": 0,
-      "value": "版本 3.1.1"
+      "value": "版本 4.1.1"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.compact-layouts": [
+  "wiki.patch-notes.version-4-1-1.compact-layouts": [
     {
       "type": 0,
       "value": "优化机器人、研究、模拟、设置、故事和百科在小屏幕上的布局：设施间距更加均匀，控件更紧凑，各页面使用专属标题，并修正面板间距。"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.mega-teaser": [
+  "wiki.patch-notes.version-4-1-1.mega-teaser": [
     {
       "type": 0,
       "value": "下一座巨型结构的预告现会保持隐藏，直至巨型结构可用；预告和手工组装也统一采用设施卡片样式。"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.overlays": [
+  "wiki.patch-notes.version-4-1-1.overlays": [
     {
       "type": 0,
       "value": "改进 Avotation 与秘密的交互：标记不再遮挡菜单或面板控件，弹窗保持可用，点击秘密之外的区域会将其关闭。"
     }
   ],
-  "wiki.patch-notes.version-3-1-1.skills-and-tinker": [
+  "wiki.patch-notes.version-4-1-1.skills-and-tinker": [
     {
       "type": 0,
       "value": "技能树现会在切换标签页时记住位置和缩放级别；手工劳动会将组装操作固定在设施上方，不再遮挡菜单或后期面板。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2": [
+  "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
-      "value": "版本 3.1.2"
+      "value": "版本 4.1.2"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.double-time": [
+  "wiki.patch-notes.version-4-1-2.double-time": [
     {
       "type": 0,
       "value": "双倍时间现在会永久让所有游戏系统以正常速度的两倍运行。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.languages": [
+  "wiki.patch-notes.version-4-1-2.languages": [
     {
       "type": 0,
       "value": "新增完整的法语、德语、拉丁美洲西班牙语、巴西葡萄牙语、简体中文、俄语和日语翻译，并可根据设备语言自动选择，也可在“设置”中手动切换。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.offline-controls": [
+  "wiki.patch-notes.version-4-1-2.offline-controls": [
     {
       "type": 0,
       "value": "新增快速、平衡和精确离线时间预设、处理进度、加速、安全取消，以及每次运行后的完成摘要。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.processing": [
+  "wiki.patch-notes.version-4-1-2.processing": [
     {
       "type": 0,
       "value": "主动游戏与离线时间现在使用同一套游戏模拟，在提升性能的同时，让永久收益和自动化在各次更新之间保持一致。"
     }
   ],
-  "wiki.patch-notes.version-3-1-2.update-interval": [
+  "wiki.patch-notes.version-4-1-2.update-interval": [
     {
       "type": 0,
       "value": "新增 33–200 毫秒的游戏处理设置，玩家可在更精确的自动化与更低的设备负载之间选择。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3": [
+  "wiki.patch-notes.version-4-1-3": [
     {
       "type": 0,
-      "value": "版本 3.1.3"
+      "value": "版本 4.1.3"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.calculations": [
+  "wiki.patch-notes.version-4-1-3.calculations": [
     {
       "type": 0,
       "value": "为科学行星和口袋维度等会变化的技能效果新增可展开计算，便于查看它们的当前数值。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.cards": [
+  "wiki.patch-notes.version-4-1-3.cards": [
     {
       "type": 0,
       "value": "改进设施和巨型结构卡片，以高亮显示产量数值，并让单行速率在较小屏幕上依然清晰易读。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.details": [
+  "wiki.patch-notes.version-4-1-3.details": [
     {
       "type": 0,
       "value": "重新设计设施和巨型结构的详情，以更清晰的逐步产量明细展示购买加成、研究、技能、动态效果和游戏速度。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.statistics": [
+  "wiki.patch-notes.version-4-1-3.statistics": [
     {
       "type": 0,
       "value": "从统计中移除了离线时间使用情况部分。"
     }
   ],
-  "wiki.patch-notes.version-3-1-3.tinker": [
+  "wiki.patch-notes.version-4-1-3.tinker": [
     {
       "type": 0,
       "value": "手动劳动的修补功能现在会在长按后开始持续生产，并在点击其他位置或离开机器人标签页时停止。"
     }
   ],
-  "wiki.patch-notes.version-3-1.audio": [
+  "wiki.patch-notes.version-4-1-4": [
+    {
+      "type": 0,
+      "value": "版本 4.1.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.simulation-resources": [
+    {
+      "type": 0,
+      "value": "戴森面板、蜂群面板、奇异物质、黑洞奖励及相关统计数据现在可以突破原先的 9.22×10^18 上限。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-4.stored-time": [
+    {
+      "type": 0,
+      "value": "储存时间容量在大幅升级或转移存档后不再重置为一天，并且现在可以在没有游戏上限的情况下继续翻倍。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
       "value": "在支持的平台上加入背景音乐和界面音效，提供独立的音乐与音效音量控制、全部静音，并提高切换应用或浏览器窗口时的播放可靠性。"
     }
   ],
-  "wiki.patch-notes.version-3-1.dyson-visualization": [
+  "wiki.patch-notes.version-4-1.dyson-visualization": [
     {
       "type": 0,
       "value": "在极快的自动无限运行中固定显示最终星系场，提高戴森可视化性能；同时恢复成长中星系的密集旋臂、明亮核心与均衡的移动端布局。"
     }
   ],
-  "wiki.patch-notes.version-3-1.economy": [
+  "wiki.patch-notes.version-4-1.economy": [
     {
       "type": 0,
       "value": "修复资源达到支持的最大值时的购买问题，并防止超巨型装配线的极端价格卡在可重复利用的平台值。"
     }
   ],
-  "wiki.patch-notes.version-3-1.infinity": [
+  "wiki.patch-notes.version-4-1.infinity": [
     {
       "type": 0,
       "value": "扩展无限系统：加入独立于自动无限的手动重置、精确的自动无限点目标，以及当前与峰值 IP/分钟提示。"
     }
   ],
-  "wiki.patch-notes.version-3-1.mobile-ui": [
+  "wiki.patch-notes.version-4-1.mobile-ui": [
     {
       "type": 0,
       "value": "恢复后期巨型结构，更新游戏布局，提供更清晰的设施卡片、一致的页面主题、更安全的移动端间距、改进的对话框与更好的小屏控件。"
     }
   ],
-  "wiki.patch-notes.version-3-1.navigation": [
+  "wiki.patch-notes.version-4-1.navigation": [
     {
       "type": 0,
       "value": "加入可自定义的底部导航快捷方式、可选的显示文字设置，以及自动尺寸调整，使所选页面在不同屏幕宽度下始终可用。"
     }
   ],
-  "wiki.patch-notes.version-3-1.progress-panels": [
+  "wiki.patch-notes.version-4-1.progress-panels": [
     {
       "type": 0,
       "value": "为机器人、研究、技能、无限、模拟与量子加入共用进度和设置面板，包括更清晰的生产对比与首次运行的手动无限控件。"
     }
   ],
-  "wiki.patch-notes.version-3-1.saves": [
+  "wiki.patch-notes.version-4-1.saves": [
     {
       "type": 0,
       "value": "改进旧 Unity 存档迁移，以及后台运行、暂停、重新加载、离线启动和更新时的存档可靠性；恢复应用品牌与加载画面。"
     }
   ],
-  "wiki.patch-notes.version-3-1.settings": [
+  "wiki.patch-notes.version-4-1.settings": [
     {
       "type": 0,
       "value": "加入设备本地的标准、科学与工程数字表示法，游戏数字采用稳定宽度，并加入隐藏已完成研究的设置。"
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-controls": [
+  "wiki.patch-notes.version-4-1.skill-controls": [
     {
       "type": 0,
       "value": "改进技能预设与确认：锁定技能会保留在队列中直至其进度路线解锁；生产变化预览更清晰；预设、重置、搜索、触控和拖动更易用。"
     }
   ],
-  "wiki.patch-notes.version-3-1.skill-effects": [
+  "wiki.patch-notes.version-4-1.skill-effects": [
     {
       "type": 0,
       "value": "修正计时、离线、手动购买、碎片、纯净、大地与星辰分支的技能效果，使其增益、取舍与解锁规则按描述生效。"
     }
   ],
-  "wiki.patch-notes.version-3-1.statistics": [
+  "wiki.patch-notes.version-4-1.statistics": [
     {
       "type": 0,
       "value": "扩展统计：显示完整戴森蜂群规模，以及最近十次无限运行的详细表现，包括自动/手动运行、奖励、时长、平均值、中位数和范围。"
     }
   ],
-  "wiki.patch-notes.version-3-1.store": [
+  "wiki.patch-notes.version-4-1.store": [
     {
       "type": 0,
       "value": "为已验证支持者加入支持者猫咪画廊，并为已拥有的双倍无限点升级加入启用/禁用控件，不影响所有权或恢复资格。"
     }
   ],
-  "wiki.patch-notes.version-3-1.stored-time": [
+  "wiki.patch-notes.version-4-1.stored-time": [
     {
       "type": 0,
       "value": "改进储存时间：安全拒绝重复或重叠消耗；活动任务保留进度与取消控件；切换页面时保留未完成设置。"
     }
   ],
-  "wiki.patch-notes.version-3.accessibility": [
+  "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
       "value": "改进键盘与屏幕阅读器支持、减少动态效果、移动端文本选择、文本框编辑、焦点处理和快速触控保护。"
     }
   ],
-  "wiki.patch-notes.version-3.interaction-fixes": [
+  "wiki.patch-notes.version-4.interaction-fixes": [
     {
       "type": 0,
       "value": "改进手工组装按住重复的反馈，修正戴森与后期动画，并修复多种自动化停滞或不安全的边缘情况。"
     }
   ],
-  "wiki.patch-notes.version-3.offline-time": [
+  "wiki.patch-notes.version-4.offline-time": [
     {
       "type": 0,
       "value": "改进离线时间：支持储存时间与双倍时间、显示处理进度、允许取消、提供更安全的恢复、记住控件状态，并在导航中加入储存计量。"
     }
   ],
-  "wiki.patch-notes.version-3.pwa": [
+  "wiki.patch-notes.version-4.pwa": [
     {
       "type": 0,
       "value": "网页版游戏可安装为应用、在无网络连接时重新打开，并通过更新提示在应用新版本前保护进度。"
     }
   ],
-  "wiki.patch-notes.version-3.responsive-ui": [
+  "wiki.patch-notes.version-4.responsive-ui": [
     {
       "type": 0,
       "value": "为桌面端、手机竖屏与紧凑横屏重新设计界面，提供触控友好的控件、安全区域支持、主题导航，以及会演化的恒星和星系视觉效果。"
     }
   ],
-  "wiki.patch-notes.version-3.saves": [
+  "wiki.patch-notes.version-4.saves": [
     {
       "type": 0,
       "value": "加入可靠的浏览器存档、三份轮换备份、从最新有效备份自动恢复、定期安全检查点，以及重新加载前的存档保护。"
     }
   ],
-  "wiki.patch-notes.version-3.settings-and-debug": [
+  "wiki.patch-notes.version-4.settings-and-debug": [
     {
       "type": 0,
       "value": "扩展设置中的存档控件，改进开发选项：解锁开关正常可用，并在切换标签页时记住调试与离线时间数值。"
     }
   ],
-  "wiki.patch-notes.version-3.statistics": [
+  "wiki.patch-notes.version-4.statistics": [
     {
       "type": 0,
       "value": "改进统计：显示已到达系统、合并无限总数、在各历史标题中显示模拟时间，并以专用界面取代桌面菜单诊断。"
     }
   ],
-  "wiki.patch-notes.version-3.store": [
+  "wiki.patch-notes.version-4.store": [
     {
       "type": 0,
       "value": "加入网页商店，提供五种支持与永久升级商品、Stripe 结账，并明确提示网页购买属于当前浏览器与设备，而非账号。"
     }
   ],
-  "wiki.patch-notes.version-3.story-and-store": [
+  "wiki.patch-notes.version-4.story-and-store": [
     {
       "type": 0,
       "value": "改进故事与商店的呈现，分区更清晰，减少多余的嵌套面板。"
     }
   ],
-  "wiki.patch-notes.version-3.transfers": [
+  "wiki.patch-notes.version-4.transfers": [
     {
       "type": 0,
       "value": "加入先预览后导入的存档导入与导出，支持 Unity 存档，同时将购买内容与设备专属偏好保留在原设备。"
     }
   ],
-  "wiki.patch-notes.version-3.web-release": [
+  "wiki.patch-notes.version-4.web-release": [
     {
       "type": 0,
       "value": "Idle Dyson Swarm 现已可在网页上游玩。"
     }
   ],
-  "wiki.patch-notes.version-3.wiki": [
+  "wiki.patch-notes.version-4.wiki": [
     {
       "type": 0,
       "value": "扩展百科：加入原版背景故事、玩法参考资料、数值高亮、主题链接、导航记忆、移动端主题选择，以及按解锁状态显示的背景故事章节。"
