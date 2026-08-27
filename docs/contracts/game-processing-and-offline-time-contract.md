@@ -77,6 +77,12 @@ Accurate select total update budgets of 5,000, 100,000 and 1,000,000. Replay
 uses nominal 50 ms updates until the selected total budget would be exceeded;
 then all remaining time is redistributed across the remaining updates.
 
+Stored Time capacity starts at one day. A full bank may be consumed to double
+capacity, with no authored gameplay maximum. Every finite capacity is preserved
+across checkpoint, export, import and reload. Arithmetic overflow saturates only
+at JavaScript's largest finite number so persisted state never contains
+infinity.
+
 Every coarse update calls the same gameplay transition and sees all permanent
 state changes from the preceding update. Automation is offered once per coarse
 update; skipped fine-grained automation is not reconstructed and no IP

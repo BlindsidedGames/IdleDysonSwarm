@@ -18,6 +18,10 @@ import {
   purchaseCanonicalResearch,
 } from '../simulation/researchAutomation'
 import {
+  DISCRETE_MAXIMUM,
+  SIMULATION_RESOURCE_MAXIMUM,
+} from '../simulation/numeric'
+import {
   dehydrateGameState,
   GameStateSessionV1,
   hydrateGameState,
@@ -701,6 +705,130 @@ describe('canonical game-state mapping', () => {
     expect(
       dehydrateGameState(session).copyValidatedState(),
     ).toEqual(session.prepare(session.state).copyValidatedState())
+  })
+
+  test('round-trips Simulation resources above the legacy Int64 ceiling', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+    const aboveLegacyMaximum = DISCRETE_MAXIMUM + 42n
+    const candidate = {
+      ...session.state,
+      dream: {
+        ...session.state.dream,
+        resources: {
+          ...session.state.dream.resources,
+          dysonPanels: aboveLegacyMaximum,
+          swarmPanels: aboveLegacyMaximum + 1n,
+        },
+        railgun: {
+          ...session.state.dream.railgun,
+          reservedPanels: aboveLegacyMaximum + 2n,
+          highestStoredPanels: aboveLegacyMaximum + 3n,
+        },
+        strangeMatter: aboveLegacyMaximum + 4n,
+      },
+      statistics: {
+        ...session.state.statistics,
+        lifetime: {
+          ...session.state.statistics.lifetime,
+          strangeMatter: aboveLegacyMaximum + 5n,
+        },
+        currentQuantumRun: {
+          ...session.state.statistics.currentQuantumRun,
+          strangeMatter: aboveLegacyMaximum + 6n,
+        },
+        recentProcessedSegment: {
+          ...session.state.statistics.recentProcessedSegment,
+          strangeMatter: aboveLegacyMaximum + 7n,
+        },
+        lastCompletedCycle: {
+          ...session.state.statistics.lastCompletedCycle,
+          valid: true,
+          reward: aboveLegacyMaximum + 8n,
+          dreamCause: 'BlackHole',
+        },
+        minuteWindows: session.state.statistics.minuteWindows.map(
+          (window, index) => index === 0
+            ? { ...window, strangeMatter: aboveLegacyMaximum + 9n }
+            : window,
+        ),
+        halfHourWindows: session.state.statistics.halfHourWindows.map(
+          (window, index) => index === 0
+            ? { ...window, strangeMatter: aboveLegacyMaximum + 10n }
+            : window,
+        ),
+        dailyWindows: session.state.statistics.dailyWindows.map(
+          (window, index) => index === 0
+            ? { ...window, strangeMatter: aboveLegacyMaximum + 11n }
+            : window,
+        ),
+      },
+    }
+
+    const encoded = serializeWebSave(
+      dehydrateGameState(session, candidate).copyValidatedState(),
+    )
+    const reloaded = hydrateGameState(
+      PreparedSave.fromDecoded(deserializeWebSave(encoded)),
+    ).state
+
+    expect(reloaded.dream.resources.dysonPanels).toBe(aboveLegacyMaximum)
+    expect(reloaded.dream.resources.swarmPanels)
+      .toBe(aboveLegacyMaximum + 1n)
+    expect(reloaded.dream.railgun.reservedPanels)
+      .toBe(aboveLegacyMaximum + 2n)
+    expect(reloaded.dream.railgun.highestStoredPanels)
+      .toBe(aboveLegacyMaximum + 3n)
+    expect(reloaded.dream.strangeMatter).toBe(aboveLegacyMaximum + 4n)
+    expect(reloaded.dream.strangeMatter)
+      .toBeLessThan(SIMULATION_RESOURCE_MAXIMUM)
+    expect(reloaded.statistics.lifetime.strangeMatter)
+      .toBe(aboveLegacyMaximum + 5n)
+    expect(reloaded.statistics.currentQuantumRun.strangeMatter)
+      .toBe(aboveLegacyMaximum + 6n)
+    expect(reloaded.statistics.recentProcessedSegment.strangeMatter)
+      .toBe(aboveLegacyMaximum + 7n)
+    expect(reloaded.statistics.lastCompletedCycle.reward)
+      .toBe(aboveLegacyMaximum + 8n)
+    expect(reloaded.statistics.minuteWindows[0]?.strangeMatter)
+      .toBe(aboveLegacyMaximum + 9n)
+    expect(reloaded.statistics.halfHourWindows[0]?.strangeMatter)
+      .toBe(aboveLegacyMaximum + 10n)
+    expect(reloaded.statistics.dailyWindows[0]?.strangeMatter)
+      .toBe(aboveLegacyMaximum + 11n)
+
+    const oversized = {
+      ...candidate,
+      dream: {
+        ...candidate.dream,
+        resources: {
+          ...candidate.dream.resources,
+          dysonPanels: SIMULATION_RESOURCE_MAXIMUM + 1n,
+          swarmPanels: SIMULATION_RESOURCE_MAXIMUM + 2n,
+        },
+        railgun: {
+          ...candidate.dream.railgun,
+          reservedPanels: SIMULATION_RESOURCE_MAXIMUM + 3n,
+          highestStoredPanels: SIMULATION_RESOURCE_MAXIMUM + 4n,
+        },
+        strangeMatter: SIMULATION_RESOURCE_MAXIMUM + 5n,
+      },
+    }
+    const repaired = hydrateGameState(
+      dehydrateGameState(session, oversized),
+    ).state
+    expect(repaired.dream.resources.dysonPanels)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
+    expect(repaired.dream.resources.swarmPanels)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
+    expect(repaired.dream.railgun.reservedPanels)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
+    expect(repaired.dream.railgun.highestStoredPanels)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
+    expect(repaired.dream.strangeMatter)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
   })
 
   test('migrates the retired Double Time bank into Stored Time exactly once', () => {

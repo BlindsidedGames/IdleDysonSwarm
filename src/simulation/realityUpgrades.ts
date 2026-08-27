@@ -4,7 +4,11 @@ import {
   type CanonicalGameStateV1,
   type DreamUpgradeFlag,
 } from '../game-state/types'
-import { addDiscrete, DISCRETE_MAXIMUM } from './numeric'
+import {
+  addDiscrete,
+  DISCRETE_MAXIMUM,
+  SIMULATION_RESOURCE_MAXIMUM,
+} from './numeric'
 
 const SIMULATION_UPGRADE_KIND =
   'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
@@ -511,11 +515,19 @@ function hasValidPurchaseState(
   definition: RealityUpgradeDefinition,
 ): boolean {
   return (
-    isDiscrete(state.dream.strangeMatter) &&
+    isSimulationResource(state.dream.strangeMatter) &&
     (!definition.purchaseEffects.some(
       (effect) => effect.effectType === 2,
     ) ||
       isDiscrete(state.skills.points))
+  )
+}
+
+function isSimulationResource(value: unknown): value is bigint {
+  return (
+    typeof value === 'bigint' &&
+    value >= 0n &&
+    value <= SIMULATION_RESOURCE_MAXIMUM
   )
 }
 

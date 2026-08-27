@@ -7,8 +7,7 @@ import {
 
 export const CONTINUOUS_MAXIMUM = Number.MAX_VALUE
 export const DISCRETE_MAXIMUM = 9_223_372_036_854_775_807n
-export const STORED_TIME_MAXIMUM_SECONDS = 42_000_000
-export const UNITY_STORED_TIME_CAPACITY_RESET_SECONDS = 8_640_000
+export const STORED_TIME_MAXIMUM_SECONDS = Number.MAX_VALUE
 
 export interface NumericRepairEntry {
   readonly path: string
@@ -121,7 +120,16 @@ export function repairNumericSave(settings: SaveRecord): NumericRepairResult {
   clampTimeBank(prestige, 'doubleTime', add, settings, 'saveSettings.sdPrestige')
 
   const maxOffline = settings.maxOfflineTime
-  if (
+  if (maxOffline === Number.POSITIVE_INFINITY) {
+    settings.maxOfflineTime = STORED_TIME_MAXIMUM_SECONDS
+    settings.cheater = true
+    add(
+      'saveSettings.maxOfflineTime',
+      maxOffline,
+      STORED_TIME_MAXIMUM_SECONDS,
+      'stored_time_cap_and_comparison_flag',
+    )
+  } else if (
     typeof maxOffline !== 'number' ||
     !Number.isFinite(maxOffline) ||
     maxOffline <= 0
@@ -132,17 +140,6 @@ export function repairNumericSave(settings: SaveRecord): NumericRepairResult {
       maxOffline,
       86_400,
       'invalid_structure_to_authored_default',
-    )
-  } else if (maxOffline >= UNITY_STORED_TIME_CAPACITY_RESET_SECONDS) {
-    // OfflineTimeManager.TryInitialize applies this authored rollover when a
-    // Unity save is opened. Keep it at the save-preparation boundary rather
-    // than the live preview helper, which is evaluated on every UI snapshot.
-    settings.maxOfflineTime = 86_400
-    add(
-      'saveSettings.maxOfflineTime',
-      maxOffline,
-      86_400,
-      'unity_stored_time_capacity_rollover',
     )
   }
 

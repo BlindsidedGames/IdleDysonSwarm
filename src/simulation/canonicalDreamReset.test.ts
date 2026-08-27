@@ -17,7 +17,10 @@ import {
   SIMULATION_UPGRADE_DEFINITIONS,
   type SimulationUpgradeDefinition,
 } from './dreamEducationUpgrades'
-import { DISCRETE_MAXIMUM } from './numeric'
+import {
+  DISCRETE_MAXIMUM,
+  SIMULATION_RESOURCE_MAXIMUM,
+} from './numeric'
 
 const fixture = readFileSync(
   new URL(
@@ -340,19 +343,43 @@ describe('canonical Dream reset', () => {
       .toBe(state.statistics.lifetime.strangeMatter + 42n)
   })
 
+  test('grants a Black Hole reward above the legacy Int64 ceiling', () => {
+    const source = withoutUpgrades(baseState())
+    const reward = DISCRETE_MAXIMUM + 42n
+    const state: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        strangeMatter: 9n,
+        resources: {
+          ...source.dream.resources,
+          swarmPanels: reward,
+        },
+      },
+    }
+
+    const result = requireApplied(applyCanonicalBlackHoleReset(state))
+
+    expect(result.requestedReward).toBe(reward)
+    expect(result.rewardGranted).toBe(reward)
+    expect(result.state.dream.strangeMatter).toBe(reward + 9n)
+    expect(result.state.statistics.lifetime.strangeMatter).toBe(reward)
+    expect(result.state.statistics.lastCompletedCycle.reward).toBe(reward)
+  })
+
   test('records requested rather than partially granted reward at saturation', () => {
     const source = withoutUpgrades(baseState())
     const totals: SimulationTotalsState = {
       ...source.statistics.lifetime,
       globalWarmingDreamResets: DISCRETE_MAXIMUM,
-      strangeMatter: DISCRETE_MAXIMUM - 5n,
+      strangeMatter: SIMULATION_RESOURCE_MAXIMUM - 5n,
     }
     const state: CanonicalGameStateV1 = {
       ...source,
       dream: {
         ...source.dream,
         resetCount: 1n,
-        strangeMatter: DISCRETE_MAXIMUM - 2n,
+        strangeMatter: SIMULATION_RESOURCE_MAXIMUM - 2n,
       },
       statistics: {
         ...source.statistics,
@@ -374,9 +401,10 @@ describe('canonical Dream reset', () => {
     )
 
     expect(result.rewardGranted).toBe(2n)
-    expect(result.state.dream.strangeMatter).toBe(DISCRETE_MAXIMUM)
+    expect(result.state.dream.strangeMatter)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
     expect(result.state.statistics.lifetime.strangeMatter)
-      .toBe(DISCRETE_MAXIMUM)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
     expect(result.state.statistics.lastCompletedCycle.reward).toBe(20n)
     expect(result.state.statistics.minuteWindows[2]).toMatchObject({
       sequence: 2n,
@@ -400,7 +428,7 @@ describe('canonical Dream reset', () => {
       ...source,
       dream: {
         ...source.dream,
-        strangeMatter: DISCRETE_MAXIMUM,
+        strangeMatter: SIMULATION_RESOURCE_MAXIMUM,
       },
     }
 

@@ -110,7 +110,7 @@ describe('Unity save migration pipeline', () => {
     const dyson = migrated.save.dysonVerseSaveData as Record<string, unknown>
     const infinity = dyson.dysonVerseInfinityData as Record<string, unknown>
 
-    expect(migrated.save.offlineTime).toBe(42_000_000)
+    expect(migrated.save.offlineTime).toBe(Number.MAX_VALUE)
     expect(migrated.save.maxOfflineTime).toBe(86_400)
     expect(migrated.save.cheater).toBe(true)
     expect((migrated.save.saveData as Record<string, unknown>).workerGenerationProgress).toBe(0.25)
@@ -125,23 +125,31 @@ describe('Unity save migration pipeline', () => {
     expect(migrated.validation.valid).toBe(true)
   })
 
-  test('applies Unity stored-time capacity rollover during save preparation', () => {
+  test('preserves finite stored-time capacity without a gameplay cap', () => {
     const migrated = migrateDecodedSave({
       saveVersion: 12,
-      offlineTime: 123,
-      maxOfflineTime: 8_640_000,
+      offlineTime: 11_059_200,
+      maxOfflineTime: 11_059_200,
     })
 
-    expect(migrated.save.maxOfflineTime).toBe(86_400)
-    expect(migrated.save.offlineTime).toBe(123)
+    expect(migrated.save.maxOfflineTime).toBe(11_059_200)
+    expect(migrated.save.offlineTime).toBe(11_059_200)
     expect(migrated.save.cheater).not.toBe(true)
-    expect(migrated.numericRepair.entries).toContainEqual(
-      expect.objectContaining({
-        path: 'saveSettings.maxOfflineTime',
-        replacement: '86400',
-        rule: 'unity_stored_time_capacity_rollover',
-      }),
+    expect(migrated.numericRepair.entries).not.toContainEqual(
+      expect.objectContaining({ path: 'saveSettings.maxOfflineTime' }),
     )
+  })
+
+  test('repairs positive-infinite stored-time capacity to the finite numeric ceiling', () => {
+    const migrated = migrateDecodedSave({
+      saveVersion: 12,
+      offlineTime: Number.POSITIVE_INFINITY,
+      maxOfflineTime: Number.POSITIVE_INFINITY,
+    })
+
+    expect(migrated.save.maxOfflineTime).toBe(Number.MAX_VALUE)
+    expect(migrated.save.offlineTime).toBe(Number.MAX_VALUE)
+    expect(migrated.save.cheater).toBe(true)
   })
 
   test('validator rejects future schema and non-finite prepared state', () => {

@@ -233,6 +233,22 @@ describe('Reality upgrade purchases', () => {
     expect(initial.skills.points).toBe(5n)
   })
 
+  test('spends Strange Matter above the legacy Int64 ceiling', () => {
+    const initial = state()
+    const aboveLegacyMaximum = DISCRETE_MAXIMUM + 42n
+    const result = purchaseRealityUpgrade({
+      ...initial,
+      dream: {
+        ...initial.dream,
+        strangeMatter: aboveLegacyMaximum,
+      },
+    }, 'translation1')
+
+    expect(result.code).toBe('purchased')
+    expect(result.candidate.dream.strangeMatter)
+      .toBe(aboveLegacyMaximum - 8n)
+  })
+
   test('enforces each chain while keeping Speed I independent', () => {
     const initial = state()
     expect(

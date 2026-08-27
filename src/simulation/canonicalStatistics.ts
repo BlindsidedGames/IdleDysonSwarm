@@ -6,8 +6,10 @@ import type {
 import {
   addContinuous,
   addDiscrete,
+  addDiscreteAtMost,
   clampContinuous,
   floorToDiscrete,
+  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 import type { SimulationPresentationSummary } from './types'
 
@@ -140,9 +142,10 @@ function addTotals(
       totals.blackHoleDreamResets,
       summary.blackHoleDreamResets,
     ),
-    strangeMatter: addDiscrete(
+    strangeMatter: addDiscreteAtMost(
       totals.strangeMatter,
       summary.strangeMatter,
+      SIMULATION_RESOURCE_MAXIMUM,
     ),
     realityWorkers: addDiscrete(
       totals.realityWorkers,
@@ -247,9 +250,10 @@ function recordWindow(
       eventBucket.dreamResetCount,
       combinedDreamResets(summary),
     ),
-    strangeMatter: addDiscrete(
+    strangeMatter: addDiscreteAtMost(
       eventBucket.strangeMatter,
       summary.strangeMatter,
+      SIMULATION_RESOURCE_MAXIMUM,
     ),
     realityWorkers: addDiscrete(
       eventBucket.realityWorkers,

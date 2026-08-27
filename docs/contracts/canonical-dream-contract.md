@@ -75,7 +75,7 @@ generation to at least the current Unity legacy value of 200.
 Space production and reset behavior must preserve the same separation:
 
 - energy production reads Solar, Fusion and launched Swarm panels;
-- Space Factories create capped Dyson panels through their saved timer;
+- Space Factories create Dyson panels through their saved timer;
 - railgun charging and volleys occur only on automation boundaries and retain
   durable firing progress;
 - Meteor, Artificial Intelligence, Global Warming and Black Hole transitions
@@ -86,6 +86,13 @@ Space production and reset behavior must preserve the same separation:
 The reset must update lifetime, current-Quantum-run, recent-segment and windowed
 statistics in the same immutable candidate. Presentation alerts and runtime
 timer objects are downstream concerns.
+
+Stored Dyson Panels, launched Swarm Panels, Black Hole rewards, Strange Matter
+and their Strange Matter statistics share one Simulation-resource ceiling: the
+exact non-negative integer represented by JavaScript's maximum finite double
+(`Number.MAX_VALUE`). Existing saves at Unity's former signed-64 ceiling retain
+their earned value and resume progression without a schema rewrite. Dream reset
+counts and unrelated discrete economies retain their own signed-64 contracts.
 
 ## Integration gate
 

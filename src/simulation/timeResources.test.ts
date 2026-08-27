@@ -122,10 +122,10 @@ describe('stored-time grant and capacity parity', () => {
     expect(result.cheater).toBe(false)
   })
 
-  test('caps capacity and positive-infinite bank at the global maximum', () => {
+  test('repairs positive-infinite capacity and bank at the finite numeric ceiling', () => {
     const result = repairStoredTimeState({
       bankSeconds: Number.POSITIVE_INFINITY,
-      capacitySeconds: STORED_TIME_MAXIMUM_SECONDS + 1,
+      capacitySeconds: Number.POSITIVE_INFINITY,
       cheater: false,
     })
 
@@ -186,7 +186,7 @@ describe('stored-time grant and capacity parity', () => {
     expect(backwardResult.cheater).toBe(true)
   })
 
-  test('upgrades only from a full bank, consumes it, and caps the capacity', () => {
+  test('upgrades only from a full bank, consumes it, and keeps doubling without a gameplay cap', () => {
     expect(
       upgradeStoredTimeCapacity({
         bankSeconds: 99,
@@ -204,14 +204,23 @@ describe('stored-time grant and capacity parity', () => {
     expect(doubled.bankSeconds).toBe(0)
     expect(doubled.capacitySeconds).toBe(200)
 
-    const capped = upgradeStoredTimeCapacity({
+    const beyondLegacyCap = upgradeStoredTimeCapacity({
       bankSeconds: 30_000_000,
       capacitySeconds: 30_000_000,
       cheater: false,
     })
-    expect(capped.upgraded).toBe(true)
-    expect(capped.capacitySeconds).toBe(STORED_TIME_MAXIMUM_SECONDS)
-    expect(capped.maximumReached).toBe(true)
+    expect(beyondLegacyCap.upgraded).toBe(true)
+    expect(beyondLegacyCap.capacitySeconds).toBe(60_000_000)
+    expect(beyondLegacyCap.maximumReached).toBe(false)
+
+    const numericCeiling = upgradeStoredTimeCapacity({
+      bankSeconds: STORED_TIME_MAXIMUM_SECONDS / 2,
+      capacitySeconds: STORED_TIME_MAXIMUM_SECONDS / 2,
+      cheater: false,
+    })
+    expect(numericCeiling.upgraded).toBe(true)
+    expect(numericCeiling.capacitySeconds).toBe(STORED_TIME_MAXIMUM_SECONDS)
+    expect(numericCeiling.maximumReached).toBe(true)
   })
 })
 

@@ -1,5 +1,6 @@
 export const CONTINUOUS_MAXIMUM = Number.MAX_VALUE
 export const DISCRETE_MAXIMUM = 9_223_372_036_854_775_807n
+export const SIMULATION_RESOURCE_MAXIMUM = BigInt(CONTINUOUS_MAXIMUM)
 
 export function clampContinuous(value: number): number {
   if (value === Number.POSITIVE_INFINITY) return CONTINUOUS_MAXIMUM
@@ -71,8 +72,16 @@ export function powerContinuous(value: number, exponent: number): number {
 }
 
 export function floorToDiscrete(value: number): bigint {
+  return floorToDiscreteAtMost(value, DISCRETE_MAXIMUM)
+}
+
+export function floorToDiscreteAtMost(
+  value: number,
+  maximum: bigint,
+): bigint {
   if (!Number.isFinite(value) || value <= 0) return 0n
-  if (value >= Number(DISCRETE_MAXIMUM)) return DISCRETE_MAXIMUM
+  if (maximum < 0n) return 0n
+  if (value >= Number(maximum)) return maximum
   return BigInt(Math.floor(value))
 }
 
@@ -101,7 +110,17 @@ export function bitIncrement(value: number): number {
 }
 
 export function addDiscrete(left: bigint, right: bigint): bigint {
+  return addDiscreteAtMost(left, right, DISCRETE_MAXIMUM)
+}
+
+export function addDiscreteAtMost(
+  left: bigint,
+  right: bigint,
+  maximum: bigint,
+): bigint {
   if (left < 0n || right < 0n) return 0n
-  if (left > DISCRETE_MAXIMUM - right) return DISCRETE_MAXIMUM
+  if (maximum < 0n) return 0n
+  if (left > maximum || right > maximum) return maximum
+  if (left > maximum - right) return maximum
   return left + right
 }
