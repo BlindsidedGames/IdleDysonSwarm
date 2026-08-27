@@ -15,9 +15,11 @@ import {
 } from './dreamEducationUpgrades'
 import {
   addDiscrete,
+  addDiscreteAtMost,
   clampContinuous,
   DISCRETE_MAXIMUM,
   floorToDiscrete,
+  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 
 export type CanonicalDreamResetCause =
@@ -95,7 +97,7 @@ export function canApplyCanonicalAutomaticDreamReset(
   if (outcome.requestedReward <= 0n) return true
   return (
     state.dream.strangeMatter <=
-    DISCRETE_MAXIMUM - outcome.requestedReward
+    SIMULATION_RESOURCE_MAXIMUM - outcome.requestedReward
   )
 }
 
@@ -185,9 +187,10 @@ export function applyCanonicalDreamReset(
   if (nextCount <= state.dream.resetCount) {
     return notApplied(state, 'reset-count-saturated')
   }
-  const nextStrangeMatter = addDiscrete(
+  const nextStrangeMatter = addDiscreteAtMost(
     state.dream.strangeMatter,
     outcome.requestedReward,
+    SIMULATION_RESOURCE_MAXIMUM,
   )
   if (
     outcome.requestedReward > 0n &&
@@ -316,20 +319,20 @@ function validateInputs(
     request.kind === 'explicit' &&
     (!isCause(request.cause) ||
       typeof request.requestedReward !== 'bigint' ||
-      request.requestedReward > DISCRETE_MAXIMUM)
+      request.requestedReward > SIMULATION_RESOURCE_MAXIMUM)
   ) {
     issues.push({
       code: 'DREAM_RESET_REQUEST_INVALID',
       path: 'request',
       detail:
-        'Explicit Dream reset cause and requested Int64 reward are invalid.',
+        'Explicit Dream reset cause and requested Simulation-resource reward are invalid.',
     })
   }
   if (
     !isDiscrete(state.dream.resetCount) ||
-    !isDiscrete(state.dream.strangeMatter) ||
+    !isSimulationResource(state.dream.strangeMatter) ||
     !isDiscrete(state.dream.disasterStage) ||
-    !isDiscrete(state.dream.resources.swarmPanels) ||
+    !isSimulationResource(state.dream.resources.swarmPanels) ||
     !isFiniteNonNegative(state.dream.resources.cities) ||
     !isFiniteNonNegative(state.dream.resources.bots) ||
     !isFiniteNonNegative(state.dream.resources.spaceFactories)
@@ -741,9 +744,10 @@ function addDreamTotals(
       totals.blackHoleDreamResets,
       cause === 'BlackHole' ? 1n : 0n,
     ),
-    strangeMatter: addDiscrete(
+    strangeMatter: addDiscreteAtMost(
       totals.strangeMatter,
       requestedReward,
+      SIMULATION_RESOURCE_MAXIMUM,
     ),
   }
 }
@@ -772,9 +776,10 @@ function addDreamWindow(
   windows[index] = {
     ...bucket,
     dreamResetCount: addDiscrete(bucket.dreamResetCount, 1n),
-    strangeMatter: addDiscrete(
+    strangeMatter: addDiscreteAtMost(
       bucket.strangeMatter,
       requestedReward,
+      SIMULATION_RESOURCE_MAXIMUM,
     ),
   }
   return windows
@@ -838,6 +843,14 @@ function isDiscrete(value: unknown): value is bigint {
     typeof value === 'bigint' &&
     value >= 0n &&
     value <= DISCRETE_MAXIMUM
+  )
+}
+
+function isSimulationResource(value: unknown): value is bigint {
+  return (
+    typeof value === 'bigint' &&
+    value >= 0n &&
+    value <= SIMULATION_RESOURCE_MAXIMUM
   )
 }
 

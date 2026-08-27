@@ -6,7 +6,10 @@ import {
   type CanonicalGameStateV1,
 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
-import { DISCRETE_MAXIMUM } from './numeric'
+import {
+  DISCRETE_MAXIMUM,
+  SIMULATION_RESOURCE_MAXIMUM,
+} from './numeric'
 import {
   DREAM_SPACE_AGE_CONSTANTS,
   applyDreamOverdriveDiminishingReturn,
@@ -197,6 +200,34 @@ describe('Dream Space Age', () => {
     expect(second.state.dream.resources.dysonPanels).toBeGreaterThan(10_001n)
     expect(second.state.dream.railgun.highestStoredPanels)
       .toBe(second.state.dream.resources.dysonPanels)
+  })
+
+  test('resumes factory production from a save at the legacy Int64 ceiling', () => {
+    const source = state()
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          spaceFactories: 1,
+          dysonPanels: DISCRETE_MAXIMUM,
+        },
+        timers: {
+          ...source.dream.timers,
+          spaceFactoriesTimerProgress: 0,
+        },
+      },
+    }
+
+    const result = runDreamSpaceAgeProduction(input, {
+      tickSeconds: 2,
+      doubleTimeMultiplier: 1,
+    })
+
+    expect(result.dysonPanelsProduced).toBe(1n)
+    expect(result.state.dream.resources.dysonPanels)
+      .toBe(DISCRETE_MAXIMUM + 1n)
   })
 
   test('reserves a complete volley up front and depletes ten rounds at 100 ms', () => {
@@ -736,9 +767,9 @@ describe('Dream Space Age', () => {
     expect(result.state.dream.resources.swarmPanels).toBe(10n)
   })
 
-  test('stops safely when the Swarm integer boundary is saturated', () => {
+  test('continues beyond the legacy Swarm boundary and stops at the double-precision maximum', () => {
     const source = state()
-    const saturated: CanonicalGameStateV1 = {
+    const atLegacyBoundary: CanonicalGameStateV1 = {
       ...source,
       dream: {
         ...source.dream,
@@ -757,13 +788,33 @@ describe('Dream Space Age', () => {
         },
       },
     }
+    const continued = runDreamRailgunAutomation(atLegacyBoundary, {
+      tickSeconds: 0.1,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
+    })
+    expect(continued.shotFired).toBe(true)
+    expect(continued.state.dream.resources.swarmPanels)
+      .toBe(DISCRETE_MAXIMUM + 1n)
+
+    const saturated: CanonicalGameStateV1 = {
+      ...atLegacyBoundary,
+      dream: {
+        ...atLegacyBoundary.dream,
+        resources: {
+          ...atLegacyBoundary.dream.resources,
+          swarmPanels: SIMULATION_RESOURCE_MAXIMUM,
+        },
+      },
+    }
     const stopped = runDreamRailgunAutomation(saturated, {
       tickSeconds: 0.1,
       doubleTimeActive: false,
       doubleTimeRate: 0,
     })
     expect(stopped.shotFired).toBe(false)
-    expect(stopped.state.dream.resources.swarmPanels).toBe(DISCRETE_MAXIMUM)
+    expect(stopped.state.dream.resources.swarmPanels)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
     expect(stopped.state.dream.railgun.lastRoundsFired).toBe(0)
   })
 

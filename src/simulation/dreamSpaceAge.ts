@@ -1,10 +1,10 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   addContinuous,
-  addDiscrete,
-  DISCRETE_MAXIMUM,
-  floorToDiscrete,
+  addDiscreteAtMost,
+  floorToDiscreteAtMost,
   multiplyContinuous,
+  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 import { clampDoubleTimeRate } from './timeResources'
 import { tryDebitContinuous } from './transactions'
@@ -208,7 +208,8 @@ export function deriveDreamSpaceAgeProductionFacts(
     Number.isFinite(resources.spaceFactories) &&
     resources.spaceFactories >= 1
   const active =
-    hasSpaceFactories && resources.dysonPanels < DISCRETE_MAXIMUM
+    hasSpaceFactories &&
+    resources.dysonPanels < SIMULATION_RESOURCE_MAXIMUM
   let potentialBaseProgressPerSecond = 0
   if (hasSpaceFactories) {
     let globalMultiplier = doubleTimeMultiplier
@@ -436,7 +437,8 @@ export function deriveDreamRailgunReadinessFacts(
   const hasReservedPanelsForNextShot = canStartVolley ||
     reservedPanels >= panelsPerShot
   const hasSwarmCapacityForNextShot =
-    resources.swarmPanels <= DISCRETE_MAXIMUM - panelsPerShot
+    resources.swarmPanels <=
+      SIMULATION_RESOURCE_MAXIMUM - panelsPerShot
   const canFireNextShot =
     volleyActiveAfterStartBoundary &&
     shotsRemainingAfterStartBoundary > 0 &&
@@ -580,8 +582,9 @@ export function runDreamSpaceAgeProduction(
           input.tickSeconds,
       ),
     )
-    spaceFactoryCycles = floorToDiscrete(
+    spaceFactoryCycles = floorToDiscreteAtMost(
       accumulated / production.spaceFactory.durationSeconds,
+      SIMULATION_RESOURCE_MAXIMUM,
     )
     timerProgress =
       spaceFactoryCycles > 0n
@@ -589,16 +592,17 @@ export function runDreamSpaceAgeProduction(
         : accumulated
 
     const remainingDiscreteCapacity =
-      DISCRETE_MAXIMUM - resources.dysonPanels
+      SIMULATION_RESOURCE_MAXIMUM - resources.dysonPanels
     dysonPanelsProduced =
       spaceFactoryCycles > remainingDiscreteCapacity
         ? remainingDiscreteCapacity
         : spaceFactoryCycles
   }
 
-  const nextDysonPanels = addDiscrete(
+  const nextDysonPanels = addDiscreteAtMost(
     resources.dysonPanels,
     dysonPanelsProduced,
+    SIMULATION_RESOURCE_MAXIMUM,
   )
   const previousRecord =
     state.dream.railgun.highestStoredPanels ?? resources.dysonPanels
@@ -790,7 +794,8 @@ export function runDreamRailgunAutomation(
       charge,
       chargePerRound,
     )
-    const remainingSwarmCapacity = DISCRETE_MAXIMUM - swarmPanels
+    const remainingSwarmCapacity =
+      SIMULATION_RESOURCE_MAXIMUM - swarmPanels
     const roundsSupportedBySwarm = safeBigIntToPayload(
       remainingSwarmCapacity / panelsPerRound,
     )

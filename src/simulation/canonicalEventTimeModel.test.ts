@@ -27,7 +27,10 @@ import {
   type RealityUpgradeId,
 } from './realityUpgrades'
 import { createCanonicalTinkerRuntimeState } from './canonicalTinker'
-import { DISCRETE_MAXIMUM } from './numeric'
+import {
+  DISCRETE_MAXIMUM,
+  SIMULATION_RESOURCE_MAXIMUM,
+} from './numeric'
 import { createSimulationSummary } from './types'
 
 const fixture = readFileSync(
@@ -1119,6 +1122,32 @@ describe('legacy canonical event-time parity adapter', () => {
     },
   )
 
+  test('merges Strange Matter summaries above the legacy Int64 ceiling', () => {
+    const source = baseState()
+    const model = new CanonicalEventTimeModel(
+      carrier({
+        ...source,
+        dream: {
+          ...source.dream,
+          disasterStage: 0n,
+          resources: {
+            ...source.dream.resources,
+            cities: 1,
+          },
+        },
+      }),
+      context(),
+    )
+    const summary = createSimulationSummary()
+    summary.strangeMatter = DISCRETE_MAXIMUM
+
+    model.applyDreamReset(summary)
+
+    expect(model.issue).toBeUndefined()
+    expect(summary.strangeMatter).toBe(DISCRETE_MAXIMUM + 1n)
+    expect(summary.meteorDreamResets).toBe(1n)
+  })
+
   test('does not force a zero-time bot-cap prestige after rewards when automatic Infinity is disabled', () => {
     const source = baseState()
     const model = new CanonicalEventTimeModel(
@@ -1275,7 +1304,7 @@ describe('legacy canonical event-time parity adapter', () => {
     {
       name: 'Strange Matter',
       resetCount: 0n,
-      strangeMatter: DISCRETE_MAXIMUM,
+      strangeMatter: SIMULATION_RESOURCE_MAXIMUM,
     },
   ])(
     'does not schedule a zero-time Dream reset when the $name is saturated',

@@ -1,5 +1,5 @@
 export const DEFAULT_STORED_TIME_CAPACITY_SECONDS = 86_400
-export const STORED_TIME_MAXIMUM_SECONDS = 42_000_000
+export const STORED_TIME_MAXIMUM_SECONDS = Number.MAX_VALUE
 
 export type ParsedUtcTimestamp =
   | { readonly status: 'missing' }
@@ -117,17 +117,23 @@ export function resolveAwayTime(
 export function repairStoredTimeState(
   state: StoredTimeState,
 ): StoredTimeRepairResult {
+  const capacityIsPositiveInfinity =
+    state.capacitySeconds === Number.POSITIVE_INFINITY
   const capacityIsValid =
     Number.isFinite(state.capacitySeconds) && state.capacitySeconds > 0
-  const capacitySeconds = capacityIsValid
-    ? Math.min(state.capacitySeconds, STORED_TIME_MAXIMUM_SECONDS)
-    : DEFAULT_STORED_TIME_CAPACITY_SECONDS
+  const capacitySeconds = capacityIsPositiveInfinity
+    ? STORED_TIME_MAXIMUM_SECONDS
+    : capacityIsValid
+      ? state.capacitySeconds
+      : DEFAULT_STORED_TIME_CAPACITY_SECONDS
   const capacityRepaired =
-    !capacityIsValid || capacitySeconds !== state.capacitySeconds
+    capacityIsPositiveInfinity ||
+    !capacityIsValid ||
+    capacitySeconds !== state.capacitySeconds
 
   let bankSeconds = state.bankSeconds
   let bankRepaired = false
-  let cheater = state.cheater
+  let cheater = state.cheater || capacityIsPositiveInfinity
   if (bankSeconds === Number.POSITIVE_INFINITY) {
     bankSeconds = capacitySeconds
     bankRepaired = true

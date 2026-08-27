@@ -67,6 +67,25 @@ describe('save import text preparation', () => {
     })
   })
 
+  test('round-trips a 128-day stored-time bank and capacity without capping them', () => {
+    const seconds = 128 * 86_400
+    const text = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        offlineTime: seconds,
+        maxOfflineTime: seconds,
+      }).copyValidatedState(),
+    )
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+    ).copyValidatedState()
+
+    expect(imported.offlineTime).toBe(seconds)
+    expect(imported.maxOfflineTime).toBe(seconds)
+  })
+
   test('does not accept device entitlement claims from a shared Web save', () => {
     const text = serializeWebSave(
       PreparedSave.fromDecoded({

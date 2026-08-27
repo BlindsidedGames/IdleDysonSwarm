@@ -7,6 +7,7 @@ import {
 } from '../save/legacyIds'
 import { packSettingsFlags } from '../save/settingsFlags'
 import type { BuyMode } from '../simulation/transactions'
+import { SIMULATION_RESOURCE_MAXIMUM } from '../simulation/numeric'
 import {
   CANONICAL_GAME_MODEL_VERSION,
   DREAM_UPGRADE_FLAGS,
@@ -507,13 +508,13 @@ export function hydrateGameState(
         spaceFactories: toFiniteNonNegativeNumber(
           dreamRun.spaceFactories,
         ),
-        dysonPanels: toNonNegativeBigInt(dreamRun.dysonPanels),
+        dysonPanels: toSimulationResourceBigInt(dreamRun.dysonPanels),
         railgunCharge: toFiniteNonNegativeNumber(
           dreamRun.railgunCharge,
         ),
         solarPanels: toFiniteNonNegativeNumber(dreamRun.solarPanels),
         fusion: toFiniteNonNegativeNumber(dreamRun.fusion),
-        swarmPanels: toNonNegativeBigInt(dreamRun.swarmPanels),
+        swarmPanels: toSimulationResourceBigInt(dreamRun.swarmPanels),
       },
       parameters: {
         hunterCost: toNonNegativeBigInt(dreamRun.hunterCost),
@@ -576,12 +577,12 @@ export function hydrateGameState(
         activeRailguns: toNonNegativeInteger(
           dreamRun.railgunActiveRailguns,
         ),
-        reservedPanels: toNonNegativeBigInt(
+        reservedPanels: toSimulationResourceBigInt(
           dreamRun.railgunReservedPanels,
         ),
         highestStoredPanels: (() => {
-          const stored = toNonNegativeBigInt(dreamRun.dysonPanels)
-          const persisted = toNonNegativeBigInt(
+          const stored = toSimulationResourceBigInt(dreamRun.dysonPanels)
+          const persisted = toSimulationResourceBigInt(
             dreamRun.highestStoredDysonPanels,
           )
           return persisted > stored ? persisted : stored
@@ -590,7 +591,7 @@ export function hydrateGameState(
         lastPanelsLaunched: 0n,
       },
       resetCount: toNonNegativeBigInt(dreamProgression.simulationCount),
-      strangeMatter: toNonNegativeBigInt(
+      strangeMatter: toSimulationResourceBigInt(
         dreamProgression.strangeMatter,
       ),
       disasterStage: toNonNegativeBigInt(
@@ -1053,7 +1054,9 @@ function toSimulationTotals(value: unknown): SimulationTotalsState {
   const discrete = Object.fromEntries(
     STAT_BIGINT_FIELDS.map((field) => [
       field,
-      toNonNegativeBigInt(source[field]),
+      field === 'strangeMatter'
+        ? toSimulationResourceBigInt(source[field])
+        : toNonNegativeBigInt(source[field]),
     ]),
   ) as Pick<
     SimulationTotalsState,
@@ -1088,7 +1091,7 @@ function toStatisticsWindows(
       infinityCount: toNonNegativeBigInt(bucket.infinityCount),
       infinityPoints: toNonNegativeBigInt(bucket.infinityPoints),
       dreamResetCount: toNonNegativeBigInt(bucket.dreamResetCount),
-      strangeMatter: toNonNegativeBigInt(bucket.strangeMatter),
+      strangeMatter: toSimulationResourceBigInt(bucket.strangeMatter),
       realityWorkers: toNonNegativeBigInt(bucket.realityWorkers),
     }
   })
@@ -1099,15 +1102,18 @@ function toLastCompletedCycle(value: unknown) {
     value !== null && typeof value === 'object' && !Array.isArray(value)
       ? (value as SaveRecord)
       : {}
+  const dreamCause =
+    typeof source.dreamCause === 'string' && source.dreamCause.length > 0
+      ? source.dreamCause
+      : null
   return {
     valid: toBoolean(source.valid),
     breakInfinity: toBoolean(source.breakInfinity),
     durationSeconds: toFiniteNonNegativeNumber(source.durationSeconds),
-    reward: toNonNegativeBigInt(source.reward),
-    dreamCause:
-      typeof source.dreamCause === 'string' && source.dreamCause.length > 0
-        ? source.dreamCause
-        : null,
+    reward: dreamCause === null
+      ? toNonNegativeBigInt(source.reward)
+      : toSimulationResourceBigInt(source.reward),
+    dreamCause,
   }
 }
 
@@ -1358,6 +1364,16 @@ function toNonNegativeBigInt(value: unknown, fallback = 0n): bigint {
   }
   if (value === undefined || value === null) return fallback
   throw new Error(`Expected a non-negative discrete integer, received ${String(value)}.`)
+}
+
+function toSimulationResourceBigInt(
+  value: unknown,
+  fallback = 0n,
+): bigint {
+  const parsed = toNonNegativeBigInt(value, fallback)
+  return parsed > SIMULATION_RESOURCE_MAXIMUM
+    ? SIMULATION_RESOURCE_MAXIMUM
+    : parsed
 }
 
 function toBoolean(value: unknown, fallback = false): boolean {

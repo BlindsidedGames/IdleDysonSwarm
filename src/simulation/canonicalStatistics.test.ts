@@ -397,7 +397,7 @@ describe('canonical combined statistics segment', () => {
         aiDreamResets: DISCRETE_MAXIMUM,
         globalWarmingDreamResets: DISCRETE_MAXIMUM,
         blackHoleDreamResets: DISCRETE_MAXIMUM,
-        strangeMatter: DISCRETE_MAXIMUM,
+        strangeMatter: DISCRETE_MAXIMUM + 1n,
         realityWorkers: DISCRETE_MAXIMUM,
         automaticInfluence: DISCRETE_MAXIMUM,
         manualInfluence: DISCRETE_MAXIMUM,
@@ -419,7 +419,7 @@ describe('canonical combined statistics segment', () => {
     ).toBe(DISCRETE_MAXIMUM)
     expect(
       result.minuteWindows[expectedIndex].strangeMatter,
-    ).toBe(DISCRETE_MAXIMUM)
+    ).toBe(DISCRETE_MAXIMUM + 1n)
     expect(
       result.minuteWindows[expectedIndex].realityWorkers,
     ).toBe(DISCRETE_MAXIMUM)

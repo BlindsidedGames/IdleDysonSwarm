@@ -52,7 +52,9 @@ import {
 import {
   addContinuous,
   addDiscrete,
+  addDiscreteAtMost,
   DISCRETE_MAXIMUM,
+  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 import {
   applyCanonicalQuantumReset,
@@ -1912,9 +1914,10 @@ function mergeSummary(
     target.blackHoleDreamResets,
     source.blackHoleDreamResets,
   )
-  target.strangeMatter = addDiscrete(
+  target.strangeMatter = addDiscreteAtMost(
     target.strangeMatter,
     source.strangeMatter,
+    SIMULATION_RESOURCE_MAXIMUM,
   )
   target.realityWorkers = addDiscrete(
     target.realityWorkers,
