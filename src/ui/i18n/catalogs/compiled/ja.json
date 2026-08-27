@@ -901,6 +901,12 @@
       "value": "詳細"
     }
   ],
+  "dyson.facilities.details.automatic-facilities": [
+    {
+      "type": 0,
+      "value": "生産済み"
+    }
+  ],
   "dyson.facilities.details.automatic-manual-tuple": [
     {
       "type": 0,
@@ -919,10 +925,22 @@
       "value": "manual"
     }
   ],
+  "dyson.facilities.details.avocato-power": [
+    {
+      "type": 0,
+      "value": "アボカート"
+    }
+  ],
   "dyson.facilities.details.base-production": [
     {
       "type": 0,
       "value": "基本値"
+    }
+  ],
+  "dyson.facilities.details.calculation-heading": [
+    {
+      "type": 0,
+      "value": "計算方法"
     }
   ],
   "dyson.facilities.details.condition": [
@@ -945,6 +963,18 @@
       "value": "identifier"
     }
   ],
+  "dyson.facilities.details.current-production": [
+    {
+      "type": 0,
+      "value": "現在の生産量"
+    }
+  ],
+  "dyson.facilities.details.effective-manual-count": [
+    {
+      "type": 0,
+      "value": "有効購入数"
+    }
+  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 1,
@@ -959,6 +989,166 @@
     {
       "type": 0,
       "value": "施設修正"
+    }
+  ],
+  "dyson.facilities.details.formula.assigned-skill-points": [
+    {
+      "type": 0,
+      "value": "割り当て済みスキルポイント"
+    }
+  ],
+  "dyson.facilities.details.formula.effective-planets": [
+    {
+      "type": 0,
+      "value": "有効惑星数"
+    }
+  ],
+  "dyson.facilities.details.formula.elapsed-skill-time": [
+    {
+      "type": 0,
+      "value": "割り当て後の経過時間"
+    }
+  ],
+  "dyson.facilities.details.formula.fragments": [
+    {
+      "type": 0,
+      "value": "フラグメント"
+    }
+  ],
+  "dyson.facilities.details.formula.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "包み込んだ銀河"
+    }
+  ],
+  "dyson.facilities.details.formula.manager-assembly-production": [
+    {
+      "type": 0,
+      "value": "AIマネージャー生産量"
+    }
+  ],
+  "dyson.facilities.details.formula.manual-data-centers": [
+    {
+      "type": 0,
+      "value": "購入したデータセンター"
+    }
+  ],
+  "dyson.facilities.details.formula.not-assigned": [
+    {
+      "type": 0,
+      "value": "未割り当て"
+    }
+  ],
+  "dyson.facilities.details.formula.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "パネル寿命"
+    }
+  ],
+  "dyson.facilities.details.formula.panels-per-second": [
+    {
+      "type": 0,
+      "value": "毎秒のパネル数"
+    }
+  ],
+  "dyson.facilities.details.formula.replaced-by": [
+    {
+      "type": 0,
+      "value": "代替スキル："
+    },
+    {
+      "type": 1,
+      "value": "skill"
+    }
+  ],
+  "dyson.facilities.details.formula.requirement-met": [
+    {
+      "type": 0,
+      "value": "条件達成"
+    }
+  ],
+  "dyson.facilities.details.formula.result": [
+    {
+      "type": 0,
+      "value": "結果"
+    }
+  ],
+  "dyson.facilities.details.formula.science-boost-level": [
+    {
+      "type": 0,
+      "value": "科学ブースト研究レベル"
+    }
+  ],
+  "dyson.facilities.details.formula.science-bots": [
+    {
+      "type": 0,
+      "value": "科学ボット"
+    }
+  ],
+  "dyson.facilities.details.formula.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "包囲した恒星"
+    }
+  ],
+  "dyson.facilities.details.formula.worker-bots": [
+    {
+      "type": 0,
+      "value": "作業ボット"
+    }
+  ],
+  "dyson.facilities.details.game-speed": [
+    {
+      "type": 0,
+      "value": "ゲーム速度"
+    }
+  ],
+  "dyson.facilities.details.game-speed-description": [
+    {
+      "type": 0,
+      "value": "現実の1秒ごとにゲーム内時間が"
+    },
+    {
+      "type": 1,
+      "value": "speed"
+    },
+    {
+      "type": 0,
+      "value": "秒進みます"
+    }
+  ],
+  "dyson.facilities.details.group.other-bonuses": [
+    {
+      "type": 0,
+      "value": "その他のボーナス"
+    }
+  ],
+  "dyson.facilities.details.group.research": [
+    {
+      "type": 0,
+      "value": "研究"
+    }
+  ],
+  "dyson.facilities.details.group.skill-tree": [
+    {
+      "type": 0,
+      "value": "スキルツリー"
+    }
+  ],
+  "dyson.facilities.details.how-you-gain": [
+    {
+      "type": 0,
+      "value": "入手方法："
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "dyson.facilities.details.infinity-power": [
+    {
+      "type": 0,
+      "value": "インフィニティ"
     }
   ],
   "dyson.facilities.details.legend.accessible": [
@@ -991,10 +1181,84 @@
       "value": "値"
     }
   ],
+  "dyson.facilities.details.manual-acquisition-description": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "を直接購入"
+    }
+  ],
+  "dyson.facilities.details.manual-purchases": [
+    {
+      "type": 0,
+      "value": "手動購入"
+    }
+  ],
+  "dyson.facilities.details.manually-purchased": [
+    {
+      "type": 0,
+      "value": "手動購入"
+    }
+  ],
+  "dyson.facilities.details.milestone-100": [
+    {
+      "type": 0,
+      "value": "100個購入マイルストーン"
+    }
+  ],
+  "dyson.facilities.details.milestone-50": [
+    {
+      "type": 0,
+      "value": "50個購入マイルストーン"
+    }
+  ],
+  "dyson.facilities.details.no-active-effects": [
+    {
+      "type": 0,
+      "value": "有効な効果はありません"
+    }
+  ],
+  "dyson.facilities.details.numeric-safety": [
+    {
+      "type": 0,
+      "value": "数値安全上限"
+    }
+  ],
   "dyson.facilities.details.output-adjustments": [
     {
       "type": 0,
       "value": "出力補正"
+    }
+  ],
+  "dyson.facilities.details.per-game-second": [
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " / ゲーム秒"
+    }
+  ],
+  "dyson.facilities.details.per-real-second": [
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " / 秒"
     }
   ],
   "dyson.facilities.details.produced-by": [
@@ -1017,6 +1281,68 @@
     {
       "type": 0,
       "value": "）"
+    }
+  ],
+  "dyson.facilities.details.secrets-power": [
+    {
+      "type": 0,
+      "value": "宇宙の秘密"
+    }
+  ],
+  "dyson.facilities.details.source-technical-details": [
+    {
+      "type": 0,
+      "value": "計算式"
+    }
+  ],
+  "dyson.facilities.details.stage.base": [
+    {
+      "type": 0,
+      "value": "基本生産量"
+    }
+  ],
+  "dyson.facilities.details.stage.count": [
+    {
+      "type": 0,
+      "value": "稼働施設"
+    }
+  ],
+  "dyson.facilities.details.stage.power": [
+    {
+      "type": 0,
+      "value": "施設出力"
+    }
+  ],
+  "dyson.facilities.details.stage.production-modifiers": [
+    {
+      "type": 0,
+      "value": "生産補正"
+    }
+  ],
+  "dyson.facilities.details.stage.purchase": [
+    {
+      "type": 0,
+      "value": "購入施設ボーナス"
+    }
+  ],
+  "dyson.facilities.details.stage.time": [
+    {
+      "type": 0,
+      "value": "時間"
+    }
+  ],
+  "dyson.facilities.details.terra-transfer-description": [
+    {
+      "type": 0,
+      "value": "有効な購入済み惑星を"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": "個追加"
     }
   ],
   "dyson.facilities.details.upstream-sources": [
@@ -1183,6 +1509,30 @@
     {
       "type": 0,
       "value": "生産物"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.output-description": [
+    {
+      "type": 0,
+      "value": "生産対象："
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.produced-count-by": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": "を生産したのは"
+    },
+    {
+      "type": 1,
+      "value": "facility"
     }
   ],
   "dyson.facilities.mega-structure.details.production-rate-value": [

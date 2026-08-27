@@ -9,7 +9,6 @@ import {
   FormattedMessage,
   useIntl,
   type IntlShape,
-  type MessageDescriptor,
 } from 'react-intl'
 import type {
   FrontendResearchCardPreview,
@@ -43,6 +42,10 @@ import type {
 } from '../../runtime'
 import { useResearchVisibility } from '../../research-visibility'
 import { researchMessages as messages } from './messages'
+import {
+  researchDescriptionMessage,
+  researchNameMessage,
+} from './researchMessageSelectors'
 import './research.css'
 
 type ResearchCommand = Extract<
@@ -420,7 +423,9 @@ export function ResearchSurface({
                 </button>
                 <div className="research-surface__automation-grid">
                   {automatableVisibleCards.map((card) => {
-                      const name = intl.formatMessage(nameMessage(card.researchId))
+                      const name = intl.formatMessage(
+                        researchNameMessage(card.researchId),
+                      )
                       return (
                         <label
                           key={card.researchId}
@@ -519,7 +524,9 @@ function ResearchCard({
   const pendingRef = useRef(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
-  const name = intl.formatMessage(nameMessage(card.researchId))
+  const name = intl.formatMessage(
+    researchNameMessage(card.researchId),
+  )
   const panelLifetime =
     card.effectKind === 'panel-lifetime-seconds'
   const formattedLevel = formatGameNumber(locale, card.currentLevel)
@@ -579,7 +586,7 @@ function ResearchCard({
         </span>
       }
       description={intl.formatMessage(
-        descriptionMessage(card.researchId),
+        researchDescriptionMessage(card.researchId),
       )}
       progress={null}
       action={
@@ -722,61 +729,6 @@ function formatPercentPoints(
   return formatNumber(locale, value, {
     maximumFractionDigits: 2,
   })
-}
-
-function nameMessage(researchId: string): MessageDescriptor {
-  switch (researchId) {
-    case 'research.assembly_line_upgrade':
-      return messages.assemblyLine
-    case 'research.ai_manager_upgrade':
-      return messages.aiManager
-    case 'research.server_upgrade':
-      return messages.server
-    case 'research.data_center_upgrade':
-      return messages.dataCenter
-    case 'research.planet_upgrade':
-      return messages.planet
-    case 'research.matrioshka_brains_upgrade':
-      return messages.matrioshkaBrains
-    case 'research.birch_planets_upgrade':
-      return messages.birchPlanets
-    case 'research.galactic_brains_upgrade':
-      return messages.galacticBrains
-    case 'research.science_boost':
-      return messages.science
-    case 'research.money_multiplier':
-      return messages.cash
-    default:
-      return messages.durabilityUpgrade
-  }
-}
-
-function descriptionMessage(
-  researchId: string,
-): MessageDescriptor {
-  switch (researchId) {
-    case 'research.assembly_line_upgrade':
-      return messages.assemblyDescription
-    case 'research.ai_manager_upgrade':
-      return messages.aiDescription
-    case 'research.server_upgrade':
-      return messages.serverDescription
-    case 'research.data_center_upgrade':
-      return messages.dataCenterDescription
-    case 'research.planet_upgrade':
-    case 'research.matrioshka_brains_upgrade':
-    case 'research.birch_planets_upgrade':
-    case 'research.galactic_brains_upgrade':
-      return messages.machineWorldDescription
-    case 'research.panel_lifetime_1':
-      return messages.lifetimeOneDescription
-    case 'research.science_boost':
-      return messages.scienceDescription
-    case 'research.money_multiplier':
-      return messages.cashDescription
-    default:
-      return messages.lifetimeLaterDescription
-  }
 }
 
 function ScienceSymbol() {

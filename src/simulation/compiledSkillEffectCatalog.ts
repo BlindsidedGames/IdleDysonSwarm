@@ -32,6 +32,8 @@ export interface CompiledSkillEffectCatalog {
   readonly candidatesForStat: (
     targetStatId: string,
   ) => readonly Readonly<CompiledSkillEffectCandidate>[]
+  /** Resolves an authored effect back to the skill that owns its icon/name. */
+  readonly skillIdForEffect: (effectId: string) => string | undefined
 }
 
 const EMPTY_CANDIDATES: readonly Readonly<CompiledSkillEffectCandidate>[] =
@@ -72,6 +74,7 @@ export function compileSkillEffectCatalog(
     string,
     CompiledSkillEffectCandidate[]
   >()
+  const skillIdsByEffect = new Map<string, string>()
 
   for (const skillReference of skillReferences) {
     if (skillReference.id === null) continue
@@ -100,6 +103,7 @@ export function compileSkillEffectCatalog(
         skillId,
         effect: compiled.effect,
       })
+      skillIdsByEffect.set(effectId, skillId)
       const candidates =
         mutableCandidatesByStat.get(compiled.targetStatId) ?? []
       if (candidates.length === 0) {
@@ -121,6 +125,8 @@ export function compileSkillEffectCatalog(
   return Object.freeze({
     candidatesForStat: (targetStatId: string) =>
       candidatesByStat.get(targetStatId) ?? EMPTY_CANDIDATES,
+    skillIdForEffect: (effectId: string) =>
+      skillIdsByEffect.get(effectId),
   })
 }
 

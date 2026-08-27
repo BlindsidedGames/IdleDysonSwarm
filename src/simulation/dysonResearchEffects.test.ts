@@ -100,6 +100,8 @@ describe('canonical Dyson research-effect materialization', () => {
       expect(effect).toEqual({
         researchId,
         targetStatId,
+        level: 3,
+        perLevelValue: coefficient,
         id: effectId,
         operation: 'add',
         value: coefficient * 3,

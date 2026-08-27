@@ -21,6 +21,7 @@ import {
 } from './dysonProductionArrivals'
 import {
   deriveMegaStructureRates,
+  MEGA_STRUCTURE_FACILITY_IDS,
   type MegaStructureRateIssueCode,
   type MegaStructureRates,
   type MegaStructureProductionFact,
@@ -55,6 +56,7 @@ import {
 import { publishDysonSkillEffectEvaluationSnapshot } from './dysonSnapshotPublication'
 import { resolveStellarSacrificesRequiredBots } from './planetGenerationDynamicEffects'
 import { multiplyContinuous } from './numeric'
+import { getCompiledSkillEffectCatalog } from './compiledSkillEffectCatalog'
 
 export interface DysonEntitlements {
   readonly permanentDoubleIp: boolean
@@ -117,7 +119,7 @@ export interface DerivedBasicDysonState {
   readonly rates: Readonly<BasicDysonRates>
   readonly megaRates: Readonly<MegaStructureRates>
   readonly megaStructureFacts: Readonly<
-    Record<keyof MegaStructureRates, MegaStructureProductionFact>
+    Record<keyof MegaStructureRates, CanonicalMegaStructureProductionFact>
   >
   readonly productionArrivalRates: Readonly<DysonProductionArrivalRates>
   readonly facilityFacts: Readonly<
@@ -148,6 +150,12 @@ export interface CanonicalBasicFacilityFacts {
     readonly effectiveProducerCount: number
     readonly modifier: number
     readonly contributions?: readonly CanonicalFacilityContributionRow[]
+    /** Individual effects that compose the formerly collapsed modifier row. */
+    readonly modifierContributions?: readonly CanonicalFacilityContributionRow[]
+    /** Independent skill-driven sources that directly create Planets. */
+    readonly generationContributions?: readonly CanonicalFacilityContributionRow[]
+    /** Purchase-count bonuses, including the Terra chain, shown separately. */
+    readonly manualPurchaseLayer?: Readonly<ManualPurchaseProductionLayer>
     /**
      * Always populated by canonical derivation; empty when Unity would hide
      * the only gated upstream source.
@@ -156,6 +164,13 @@ export interface CanonicalBasicFacilityFacts {
       readonly sourceFacilityId: CanonicalFacilityId
       readonly contributionPerSecond: number
     }[]
+  }
+}
+
+export interface CanonicalMegaStructureProductionFact
+  extends MegaStructureProductionFact {
+  readonly details: {
+    readonly modifierContributions: readonly CanonicalFacilityContributionRow[]
   }
 }
 
@@ -171,6 +186,21 @@ export interface CanonicalFacilityContributionRow {
   readonly delta: number
   readonly runningTotal: number
   readonly conditionIdentifier?: string
+  readonly order?: number
+  readonly source?: {
+    readonly kind:
+      | 'skill'
+      | 'research'
+      | 'infinity'
+      | 'secret'
+      | 'avocato'
+      | 'facility'
+      | 'system'
+    readonly id: string
+    readonly level?: number
+    readonly perLevelValue?: number
+  }
+  readonly calculation?: CanonicalFacilitySourceCalculation
   /**
    * Legacy presentation-fixture field. Canonical derivation does not populate
    * this because no localized condition display text exists at this boundary.
@@ -181,6 +211,71 @@ export interface CanonicalFacilityContributionRow {
     manual: number,
   ]
 }
+
+export type CanonicalFacilitySourceCalculation =
+  | {
+      readonly kind: 'scientific-planets'
+      readonly researchers: number
+      readonly fragments: number
+      readonly hubbleTelescope: boolean
+      readonly jamesWebbTelescope: boolean
+      readonly terraformingProtocols: boolean
+    }
+  | {
+      readonly kind: 'planet-assembly'
+      readonly assemblyLines: number
+    }
+  | {
+      readonly kind: 'shell-worlds'
+      readonly planets: number
+      readonly planetAssembly: boolean
+    }
+  | {
+      readonly kind: 'stellar-sacrifices'
+      readonly panelsPerSecond: number
+      readonly panelLifetimeSeconds: number
+      readonly stellarObliteration: boolean
+      readonly supernova: boolean
+    }
+  | {
+      readonly kind: 'shoulders-of-the-fallen'
+      readonly scienceBoostLevel: number
+      readonly scientificPlanets: boolean
+    }
+  | {
+      readonly kind: 'pocket-dimensions'
+      readonly workers: number
+      readonly researchers: number
+      readonly panelLifetimeSeconds: number
+      readonly pocketAndroidsTimerSeconds: number
+      readonly rudimentarySingularityProduction: number
+      readonly pocketProtectors: boolean
+      readonly pocketMultiverse: boolean
+      readonly dimensionalCatCables: boolean
+      readonly solarBubbles: boolean
+      readonly pocketAndroids: boolean
+      readonly quantumComputing: boolean
+    }
+  | {
+      readonly kind: 'rudimentary-singularity'
+      readonly managerAssemblyLineProduction: number
+      readonly servers: number
+      readonly unsuspiciousAlgorithms: boolean
+      readonly clusterNetworking: boolean
+    }
+  | {
+      readonly kind: 'dynamic-facility-effect'
+      readonly effectId: string
+      readonly panelLifetimeSeconds: number
+      readonly fragments: number
+      readonly assignedSkillPoints: number
+      readonly servers: number
+      readonly manualDataCenters: number
+      readonly effectivePlanets: number
+      readonly starsSurrounded: number
+      readonly galaxiesEngulfed: number
+      readonly timerSeconds: number
+    }
 
 export type DysonDerivationResult =
   | { readonly ok: true; readonly value: DerivedBasicDysonState }
@@ -219,6 +314,10 @@ const BASIC_FACILITY_PRODUCTION_STATS: Readonly<
 export interface ManualPurchaseProductionLayer {
   readonly rawManualCount: number
   readonly effectiveManualCount: number
+  readonly effectiveManualPlanets: number
+  readonly transferredPlanetCount: number
+  readonly transferSkillId?: string
+  readonly terraIrradiantOwned: boolean
   readonly suppressed: boolean
   readonly avocadosMultiplier: number
   readonly milestone50Multiplier: number
@@ -252,6 +351,12 @@ export function deriveManualPurchaseProductionLayer(
       (terraSkill !== undefined && owned(terraSkill)
         ? effectiveManualPlanets
         : 0)
+  const transferredPlanetCount =
+    facilityId !== 'planets' &&
+    terraSkill !== undefined &&
+    owned(terraSkill)
+      ? effectiveManualPlanets
+      : 0
   const scalingThreshold = owned('productionScaling')
     ? Math.max(
         0,
@@ -278,6 +383,12 @@ export function deriveManualPurchaseProductionLayer(
   return Object.freeze({
     rawManualCount,
     effectiveManualCount,
+    effectiveManualPlanets,
+    transferredPlanetCount,
+    ...(transferredPlanetCount > 0 && terraSkill !== undefined
+      ? { transferSkillId: terraSkill }
+      : {}),
+    terraIrradiantOwned: owned('terraIrradiant'),
     suppressed,
     avocadosMultiplier,
     milestone50Multiplier,
@@ -512,13 +623,19 @@ export function deriveBasicDysonState(
     0,
     effectsAt(effectiveSkillEffectsByStat, 'Global.Tinker.AssemblyYield'),
   )
-  const facilityModifiers = deriveFacilityModifiers(
+  const facilityModifierCalculations = deriveFacilityModifiers(
     state,
     research.effects,
     effectiveSkillEffectsByStat,
     secrets.multipliers,
     avocadoMultiplier,
   )
+  const facilityModifiers = Object.fromEntries(
+    CANONICAL_DYSON_FACILITY_IDS.map((id) => [
+      id,
+      facilityModifierCalculations[id].value,
+    ]),
+  ) as Record<CanonicalFacilityId, number>
   const planetManualLayer = deriveManualPurchaseProductionLayer(
     state,
     'planets',
@@ -546,6 +663,29 @@ export function deriveBasicDysonState(
       ),
     }
   }
+  const megaStructureFacts = Object.freeze(
+    Object.fromEntries(
+      MEGA_STRUCTURE_FACILITY_IDS.map((facilityId) => [
+        facilityId,
+        Object.freeze({
+          ...mega.facts[facilityId],
+          details: Object.freeze({
+            modifierContributions: deriveAttributedEffectRows(
+              1,
+              facilityModifierCalculations[facilityId].effects,
+              'modifier',
+              research.effects,
+              state,
+              evaluationSnapshot,
+            ),
+          }),
+        }),
+      ]),
+    ) as Record<
+      keyof MegaStructureRates,
+      CanonicalMegaStructureProductionFact
+    >,
+  )
   const model = createBasicDysonState({
     money: state.dyson.money,
     science: state.dyson.science,
@@ -614,7 +754,7 @@ export function deriveBasicDysonState(
       planetPricingModifier,
       rates: Object.freeze({ ...model.rates }),
       megaRates: mega.rates,
-      megaStructureFacts: mega.facts,
+      megaStructureFacts,
       productionArrivalRates: combineDysonProductionArrivalRates(
         model.rates,
         mega.rates,
@@ -624,6 +764,10 @@ export function deriveBasicDysonState(
         model,
         mega.rates,
         facilityModifiers,
+        facilityModifierCalculations,
+        research.effects,
+        planetGenerationEffects,
+        evaluationSnapshot,
         presentationTuning,
       ),
       nextEvaluationSnapshot,
@@ -657,6 +801,12 @@ function deriveBasicFacilityFacts(
   model: Readonly<BasicDysonState>,
   megaRates: Readonly<MegaStructureRates>,
   modifiers: Readonly<Record<CanonicalFacilityId, number>>,
+  modifierCalculations: Readonly<
+    Record<CanonicalFacilityId, FacilityModifierCalculation>
+  >,
+  researchEffects: readonly MaterializedDysonResearchEffect[],
+  planetGenerationEffects: readonly StatEffect[],
+  evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
   presentationTuning: Readonly<DysonPresentationTuning>,
 ): Readonly<Record<BasicDysonFacilityId, CanonicalBasicFacilityFacts>> {
   const rates = model.rates
@@ -714,7 +864,37 @@ function deriveBasicFacilityFacts(
               contributions: deriveFacilityContributionRows(
                 rateCalculation,
                 pair,
+                researchEffects,
+                state,
+                evaluationSnapshot,
               ),
+              modifierContributions: deriveAttributedEffectRows(
+                1,
+                modifierCalculations[facilityId].effects,
+                'modifier',
+                researchEffects,
+                state,
+                evaluationSnapshot,
+              ),
+              generationContributions:
+                facilityId === 'planets'
+                  ? deriveAttributedEffectRows(
+                      0,
+                      planetGenerationEffects,
+                      'output-adjustments',
+                      researchEffects,
+                      state,
+                      evaluationSnapshot,
+                    )
+                  : deriveDirectFacilityGenerationContributions(
+                      model,
+                      facilityId,
+                      researchEffects,
+                      state,
+                      evaluationSnapshot,
+                    ),
+              manualPurchaseLayer:
+                deriveManualPurchaseProductionLayer(state, facilityId),
               upstreamSources: deriveBasicFacilityUpstreamSources(
                 state,
                 facilityId,
@@ -732,6 +912,9 @@ function deriveBasicFacilityFacts(
 function deriveFacilityContributionRows(
   calculation: Readonly<BasicDysonFacilityRateCalculation>,
   pair: readonly [automatic: number, manual: number],
+  researchEffects: readonly MaterializedDysonResearchEffect[],
+  state: CanonicalGameStateV1,
+  evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
 ): readonly CanonicalFacilityContributionRow[] {
   const rows: CanonicalFacilityContributionRow[] = [
     Object.freeze({
@@ -758,6 +941,13 @@ function deriveFacilityContributionRows(
             : 'output-adjustments',
         operation: effect.operation,
         value: effect.value,
+        order: effect.order,
+        source: sourceForEffect(effect.id, researchEffects),
+        calculation: sourceCalculationForEffect(
+          effect.id,
+          state,
+          evaluationSnapshot,
+        ),
         delta: next - runningTotal,
         runningTotal: next,
         ...(effect.conditionIdentifier === undefined
@@ -793,6 +983,251 @@ function deriveFacilityContributionRows(
     )
   }
   return Object.freeze(rows)
+}
+
+const DIRECT_FACILITY_GENERATION_EFFECTS = new Set([
+  'effect.pocket_dimensions.planets',
+  'effect.rudimentary_singularity.data_centers',
+])
+
+const DIRECT_GENERATION_PRODUCER: Readonly<
+  Partial<Record<BasicDysonFacilityId, BasicDysonFacilityId>>
+> = Object.freeze({
+  data_centers: 'planets',
+  servers: 'data_centers',
+})
+
+function deriveDirectFacilityGenerationContributions(
+  model: Readonly<BasicDysonState>,
+  outputFacilityId: BasicDysonFacilityId,
+  researchEffects: readonly MaterializedDysonResearchEffect[],
+  state: CanonicalGameStateV1,
+  evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
+): readonly CanonicalFacilityContributionRow[] {
+  const producerId = DIRECT_GENERATION_PRODUCER[outputFacilityId]
+  if (producerId === undefined) return Object.freeze([])
+  const calculation = calculateBasicDysonFacilityRate(model, producerId)
+  return Object.freeze(
+    deriveFacilityContributionRows(
+      calculation,
+      state.dyson.facilities[producerId],
+      researchEffects,
+      state,
+      evaluationSnapshot,
+    ).filter((row) =>
+      DIRECT_FACILITY_GENERATION_EFFECTS.has(row.sourceId),
+    ),
+  )
+}
+
+function sourceCalculationForEffect(
+  effectId: string,
+  state: CanonicalGameStateV1,
+  snapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
+): CanonicalFacilitySourceCalculation | undefined {
+  const owned = (skillId: string) =>
+    state.skills.byId[skillId]?.owned === true
+  switch (effectId) {
+    case 'effect.scientificPlanets.planets_per_second':
+      return Object.freeze({
+        kind: 'scientific-planets',
+        researchers: state.dyson.researchers,
+        fragments: Number(state.skills.fragments),
+        hubbleTelescope: owned('hubbleTelescope'),
+        jamesWebbTelescope: owned('jamesWebbTelescope'),
+        terraformingProtocols: owned('terraformingProtocols'),
+      })
+    case 'effect.planetAssembly.planets_per_second':
+      return Object.freeze({
+        kind: 'planet-assembly',
+        assemblyLines:
+          state.dyson.facilities.assembly_lines[0] +
+          state.dyson.facilities.assembly_lines[1],
+      })
+    case 'effect.shellWorlds.planets_per_second':
+      return Object.freeze({
+        kind: 'shell-worlds',
+        planets:
+          state.dyson.facilities.planets[0] +
+          state.dyson.facilities.planets[1],
+        planetAssembly: owned('planetAssembly'),
+      })
+    case 'effect.stellarSacrifices.planets_per_second':
+      return Object.freeze({
+        kind: 'stellar-sacrifices',
+        panelsPerSecond: snapshot.panelsPerSecond,
+        panelLifetimeSeconds: snapshot.panelLifetimeSeconds,
+        stellarObliteration: owned('stellarObliteration'),
+        supernova: owned('supernova'),
+      })
+    case 'effect.shouldersOfTheFallen.planets_per_second':
+      return Object.freeze({
+        kind: 'shoulders-of-the-fallen',
+        scienceBoostLevel:
+          state.research.levelsById['research.science_boost'] ?? 0,
+        scientificPlanets: owned('scientificPlanets'),
+      })
+    case 'effect.pocket_dimensions.planets':
+      return Object.freeze({
+        kind: 'pocket-dimensions',
+        workers: state.dyson.workers,
+        researchers: state.dyson.researchers,
+        panelLifetimeSeconds: snapshot.panelLifetimeSeconds,
+        pocketAndroidsTimerSeconds:
+          state.skills.byId.pocketAndroids?.timerSeconds ?? 0,
+        rudimentarySingularityProduction:
+          snapshot.rudimentarySingularityProduction,
+        pocketProtectors: owned('pocketProtectors'),
+        pocketMultiverse: owned('pocketMultiverse'),
+        dimensionalCatCables: owned('dimensionalCatCables'),
+        solarBubbles: owned('solarBubbles'),
+        pocketAndroids: owned('pocketAndroids'),
+        quantumComputing: owned('quantumComputing'),
+      })
+    case 'effect.rudimentary_singularity.data_centers':
+      return Object.freeze({
+        kind: 'rudimentary-singularity',
+        managerAssemblyLineProduction:
+          snapshot.managerAssemblyLineProduction,
+        servers:
+          state.dyson.facilities.servers[0] +
+          state.dyson.facilities.servers[1],
+        unsuspiciousAlgorithms: owned('unsuspiciousAlgorithms'),
+        clusterNetworking: owned('clusterNetworking'),
+      })
+    default:
+      return dynamicFacilityEffectCalculation(effectId, state, snapshot)
+  }
+}
+
+const DYNAMIC_FACILITY_FORMULA_SKILLS = new Set([
+  'fragmentAssembly',
+  'progressiveAssembly',
+  'versatileProductionTactics',
+  'oneMinutePlan',
+  'dysonSubsidies',
+  'purityOfBody',
+  'clusterNetworking',
+  'parallelProcessing',
+  'whatWillComeToPass',
+  'hypercubeNetworks',
+  'galacticPradigmShift',
+  'purityOfSEssence',
+  'superRadiantScattering',
+])
+
+function dynamicFacilityEffectCalculation(
+  effectId: string,
+  state: CanonicalGameStateV1,
+  snapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
+): CanonicalFacilitySourceCalculation | undefined {
+  const skillId = getCompiledSkillEffectCatalog().skillIdForEffect(effectId)
+  if (
+    effectId !== 'effect.staying_power.assembly_lines' &&
+    effectId !== 'effect.parallel_computation.data_centers' &&
+    (skillId === undefined || !DYNAMIC_FACILITY_FORMULA_SKILLS.has(skillId))
+  ) return undefined
+
+  const servers = state.dyson.facilities.servers
+  const dataCenters = state.dyson.facilities.data_centers
+  const planets = state.dyson.facilities.planets
+  const panelArea = snapshot.panelsPerSecond * snapshot.panelLifetimeSeconds
+  return Object.freeze({
+    kind: 'dynamic-facility-effect',
+    effectId,
+    panelLifetimeSeconds: snapshot.panelLifetimeSeconds,
+    fragments: Number(state.skills.fragments),
+    assignedSkillPoints: Number(state.skills.points),
+    servers: servers[0] + servers[1],
+    manualDataCenters: dataCenters[1],
+    effectivePlanets:
+      planets[0] + planets[1] * (state.skills.byId.terraIrradiant?.owned ? 12 : 1),
+    starsSurrounded: Math.floor(panelArea / 20_000),
+    galaxiesEngulfed: Math.floor(panelArea / 20_000 / 100_000_000_000),
+    timerSeconds:
+      state.skills.byId.superRadiantScattering?.timerSeconds ?? 0,
+  })
+}
+
+function deriveAttributedEffectRows(
+  initialValue: number,
+  effects: readonly StatEffect[],
+  displayRole: CanonicalFacilityContributionRow['displayRole'],
+  researchEffects: readonly MaterializedDysonResearchEffect[],
+  state?: CanonicalGameStateV1,
+  evaluationSnapshot?: Readonly<DysonSkillEffectEvaluationSnapshot>,
+): readonly CanonicalFacilityContributionRow[] {
+  let runningTotal = initialValue
+  return Object.freeze(
+    effects.map((effect) => {
+      const next = applyStatEffect(runningTotal, effect)
+      const row = Object.freeze({
+        sourceId: effect.id,
+        displayRole,
+        operation: effect.operation,
+        value: effect.value,
+        delta: next - runningTotal,
+        runningTotal: next,
+        order: effect.order,
+        source: sourceForEffect(effect.id, researchEffects),
+        ...(state === undefined || evaluationSnapshot === undefined
+          ? {}
+          : {
+              calculation: sourceCalculationForEffect(
+                effect.id,
+                state,
+                evaluationSnapshot,
+              ),
+            }),
+        ...(effect.conditionIdentifier === undefined
+          ? {}
+          : { conditionIdentifier: effect.conditionIdentifier }),
+      })
+      runningTotal = next
+      return row
+    }),
+  )
+}
+
+function sourceForEffect(
+  effectId: string,
+  researchEffects: readonly MaterializedDysonResearchEffect[],
+): CanonicalFacilityContributionRow['source'] {
+  const research = researchEffects.find((effect) => effect.id === effectId)
+  if (research) return {
+    kind: 'research',
+    id: research.researchId,
+    level: research.level,
+    perLevelValue: research.perLevelValue,
+  }
+  const skillId = getCompiledSkillEffectCatalog().skillIdForEffect(effectId)
+  if (skillId) return { kind: 'skill', id: skillId }
+  if (effectId.startsWith('manual-purchase.')) {
+    const manualSkill: Readonly<Record<string, string>> = {
+      'manual-purchase.avocados-69': 'avocados',
+      'manual-purchase.supernova-suppression': 'supernova',
+      'manual-purchase.milestone-50': 'milestone-50',
+      'manual-purchase.milestone-100': 'milestone-100',
+    }
+    const id = manualSkill[effectId] ??
+      (effectId.startsWith('manual-purchase.scaling-')
+        ? 'productionScaling'
+        : effectId)
+    return { kind: id.startsWith('milestone-') ? 'system' : 'skill', id }
+  }
+  if (effectId.startsWith('prestige.infinity')) {
+    return { kind: 'infinity', id: effectId }
+  }
+  if (effectId.startsWith('prestige.avocato')) {
+    return { kind: 'avocato', id: effectId }
+  }
+  if (effectId.startsWith('secrets.')) {
+    return { kind: 'secret', id: effectId }
+  }
+  if (effectId.endsWith('.count') || effectId.endsWith('.modifier')) {
+    return { kind: 'facility', id: effectId.split('.')[0] }
+  }
+  return { kind: 'system', id: effectId }
 }
 
 function deriveBasicFacilityUpstreamSources(
@@ -882,6 +1317,11 @@ function isEffect(effect: StatEffect | undefined): effect is StatEffect {
   return effect !== undefined
 }
 
+interface FacilityModifierCalculation {
+  readonly value: number
+  readonly effects: readonly StatEffect[]
+}
+
 function deriveFacilityModifiers(
   state: CanonicalGameStateV1,
   researchEffects: readonly MaterializedDysonResearchEffect[],
@@ -895,7 +1335,7 @@ function deriveFacilityModifiers(
     planets: number
   }>,
   avocadoMultiplier: number,
-): Record<CanonicalFacilityId, number> {
+): Record<CanonicalFacilityId, FacilityModifierCalculation> {
   const infinityThresholds: Readonly<
     Record<CanonicalFacilityId, bigint>
   > = {
@@ -936,9 +1376,20 @@ function deriveFacilityModifiers(
         multiplierEffect('secrets.facility', secretMultipliers[id], 90),
         multiplierEffect('prestige.avocato_modifier', avocadoMultiplier, 95),
       ].filter(isEffect)
-      return [id, calculateStat(1, [...effects, ...later])]
+      const orderedEffects = Object.freeze(
+        [...effects, ...later]
+          .sort((left, right) => left.order - right.order)
+          .map((effect) => Object.freeze({ ...effect })),
+      )
+      return [
+        id,
+        Object.freeze({
+          value: calculateStat(1, orderedEffects),
+          effects: orderedEffects,
+        }),
+      ]
     }),
-  ) as Record<CanonicalFacilityId, number>
+  ) as Record<CanonicalFacilityId, FacilityModifierCalculation>
 }
 
 const MATERIALIZED_SKILL_STATS = [

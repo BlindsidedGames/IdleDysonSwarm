@@ -1786,6 +1786,11 @@ export function ReadyDysonSlice({
                     'dyson.purchase-basic-facility'
                   ].routeAvailable
                 }
+                gameSpeed={
+                  gameplay.progression.timeline?.doubleTime?.unlocked
+                    ? 2
+                    : 1
+                }
                 revision={snapshot.revision}
                 dispatchPlayer={dispatchPlayer}
               />
@@ -1806,6 +1811,11 @@ export function ReadyDysonSlice({
                     gameplay.commands.byKind[
                       'dyson.purchase-mega-structure'
                     ].routeAvailable
+                  }
+                  gameSpeed={
+                    gameplay.progression.timeline?.doubleTime?.unlocked
+                      ? 2
+                      : 1
                   }
                   revision={snapshot.revision}
                   dispatchPlayer={dispatchPlayer}

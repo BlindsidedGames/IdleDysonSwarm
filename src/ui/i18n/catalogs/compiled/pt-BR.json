@@ -901,6 +901,12 @@
       "value": "Detalhes"
     }
   ],
+  "dyson.facilities.details.automatic-facilities": [
+    {
+      "type": 0,
+      "value": "Produzidas"
+    }
+  ],
   "dyson.facilities.details.automatic-manual-tuple": [
     {
       "type": 0,
@@ -919,10 +925,22 @@
       "value": "manual"
     }
   ],
+  "dyson.facilities.details.avocato-power": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
   "dyson.facilities.details.base-production": [
     {
       "type": 0,
       "value": "Produção-base"
+    }
+  ],
+  "dyson.facilities.details.calculation-heading": [
+    {
+      "type": 0,
+      "value": "Como este valor é calculado"
     }
   ],
   "dyson.facilities.details.condition": [
@@ -945,6 +963,18 @@
       "value": "identifier"
     }
   ],
+  "dyson.facilities.details.current-production": [
+    {
+      "type": 0,
+      "value": "Produção atual"
+    }
+  ],
+  "dyson.facilities.details.effective-manual-count": [
+    {
+      "type": 0,
+      "value": "Quantidade comprada efetiva"
+    }
+  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 1,
@@ -959,6 +989,166 @@
     {
       "type": 0,
       "value": "Instalação modifier"
+    }
+  ],
+  "dyson.facilities.details.formula.assigned-skill-points": [
+    {
+      "type": 0,
+      "value": "Pontos de Habilidade atribuídos"
+    }
+  ],
+  "dyson.facilities.details.formula.effective-planets": [
+    {
+      "type": 0,
+      "value": "Planetas efetivos"
+    }
+  ],
+  "dyson.facilities.details.formula.elapsed-skill-time": [
+    {
+      "type": 0,
+      "value": "Tempo decorrido desde a atribuição"
+    }
+  ],
+  "dyson.facilities.details.formula.fragments": [
+    {
+      "type": 0,
+      "value": "Fragmentos"
+    }
+  ],
+  "dyson.facilities.details.formula.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "Galáxias engolidas"
+    }
+  ],
+  "dyson.facilities.details.formula.manager-assembly-production": [
+    {
+      "type": 0,
+      "value": "Produção de Gerentes de IA"
+    }
+  ],
+  "dyson.facilities.details.formula.manual-data-centers": [
+    {
+      "type": 0,
+      "value": "Centros de Dados comprados"
+    }
+  ],
+  "dyson.facilities.details.formula.not-assigned": [
+    {
+      "type": 0,
+      "value": "Não atribuída"
+    }
+  ],
+  "dyson.facilities.details.formula.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "Vida útil dos Painéis"
+    }
+  ],
+  "dyson.facilities.details.formula.panels-per-second": [
+    {
+      "type": 0,
+      "value": "Painéis por segundo"
+    }
+  ],
+  "dyson.facilities.details.formula.replaced-by": [
+    {
+      "type": 0,
+      "value": "Substituída por "
+    },
+    {
+      "type": 1,
+      "value": "skill"
+    }
+  ],
+  "dyson.facilities.details.formula.requirement-met": [
+    {
+      "type": 0,
+      "value": "Requisito atendido"
+    }
+  ],
+  "dyson.facilities.details.formula.result": [
+    {
+      "type": 0,
+      "value": "Resultado"
+    }
+  ],
+  "dyson.facilities.details.formula.science-boost-level": [
+    {
+      "type": 0,
+      "value": "Nível da pesquisa Impulso Científico"
+    }
+  ],
+  "dyson.facilities.details.formula.science-bots": [
+    {
+      "type": 0,
+      "value": "Bots Científicos"
+    }
+  ],
+  "dyson.facilities.details.formula.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "Estrelas cercadas"
+    }
+  ],
+  "dyson.facilities.details.formula.worker-bots": [
+    {
+      "type": 0,
+      "value": "Bots Trabalhadores"
+    }
+  ],
+  "dyson.facilities.details.game-speed": [
+    {
+      "type": 0,
+      "value": "Velocidade do jogo"
+    }
+  ],
+  "dyson.facilities.details.game-speed-description": [
+    {
+      "type": 0,
+      "value": "Cada segundo real avança "
+    },
+    {
+      "type": 1,
+      "value": "speed"
+    },
+    {
+      "type": 0,
+      "value": " segundos de jogo"
+    }
+  ],
+  "dyson.facilities.details.group.other-bonuses": [
+    {
+      "type": 0,
+      "value": "Outros bônus"
+    }
+  ],
+  "dyson.facilities.details.group.research": [
+    {
+      "type": 0,
+      "value": "Pesquisa"
+    }
+  ],
+  "dyson.facilities.details.group.skill-tree": [
+    {
+      "type": 0,
+      "value": "Árvore de habilidades"
+    }
+  ],
+  "dyson.facilities.details.how-you-gain": [
+    {
+      "type": 0,
+      "value": "Como obter "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "dyson.facilities.details.infinity-power": [
+    {
+      "type": 0,
+      "value": "Infinito"
     }
   ],
   "dyson.facilities.details.legend.accessible": [
@@ -991,10 +1181,84 @@
       "value": "Valor"
     }
   ],
+  "dyson.facilities.details.manual-acquisition-description": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " compradas diretamente"
+    }
+  ],
+  "dyson.facilities.details.manual-purchases": [
+    {
+      "type": 0,
+      "value": "Compras manuais"
+    }
+  ],
+  "dyson.facilities.details.manually-purchased": [
+    {
+      "type": 0,
+      "value": "Compradas manualmente"
+    }
+  ],
+  "dyson.facilities.details.milestone-100": [
+    {
+      "type": 0,
+      "value": "Marco de 100 compras"
+    }
+  ],
+  "dyson.facilities.details.milestone-50": [
+    {
+      "type": 0,
+      "value": "Marco de 50 compras"
+    }
+  ],
+  "dyson.facilities.details.no-active-effects": [
+    {
+      "type": 0,
+      "value": "Nenhum efeito ativo"
+    }
+  ],
+  "dyson.facilities.details.numeric-safety": [
+    {
+      "type": 0,
+      "value": "Limite de segurança numérica"
+    }
+  ],
   "dyson.facilities.details.output-adjustments": [
     {
       "type": 0,
       "value": "Ajustes de produção"
+    }
+  ],
+  "dyson.facilities.details.per-game-second": [
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " / segundo de jogo"
+    }
+  ],
+  "dyson.facilities.details.per-real-second": [
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " / segundo"
     }
   ],
   "dyson.facilities.details.produced-by": [
@@ -1017,6 +1281,68 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "dyson.facilities.details.secrets-power": [
+    {
+      "type": 0,
+      "value": "Segredos do Universo"
+    }
+  ],
+  "dyson.facilities.details.source-technical-details": [
+    {
+      "type": 0,
+      "value": "Fórmula"
+    }
+  ],
+  "dyson.facilities.details.stage.base": [
+    {
+      "type": 0,
+      "value": "Produção base"
+    }
+  ],
+  "dyson.facilities.details.stage.count": [
+    {
+      "type": 0,
+      "value": "Instalações em atividade"
+    }
+  ],
+  "dyson.facilities.details.stage.power": [
+    {
+      "type": 0,
+      "value": "Potência da instalação"
+    }
+  ],
+  "dyson.facilities.details.stage.production-modifiers": [
+    {
+      "type": 0,
+      "value": "Modificadores de produção"
+    }
+  ],
+  "dyson.facilities.details.stage.purchase": [
+    {
+      "type": 0,
+      "value": "Bônus de instalações compradas"
+    }
+  ],
+  "dyson.facilities.details.stage.time": [
+    {
+      "type": 0,
+      "value": "Tempo"
+    }
+  ],
+  "dyson.facilities.details.terra-transfer-description": [
+    {
+      "type": 0,
+      "value": "Adiciona "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Planetas comprados efetivos"
     }
   ],
   "dyson.facilities.details.upstream-sources": [
@@ -1183,6 +1509,30 @@
     {
       "type": 0,
       "value": "Produz"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.output-description": [
+    {
+      "type": 0,
+      "value": "Produz "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.produced-count-by": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " produzidas por "
+    },
+    {
+      "type": 1,
+      "value": "facility"
     }
   ],
   "dyson.facilities.mega-structure.details.production-rate-value": [

@@ -1,4 +1,10 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import {
   useIntl,
   type IntlShape,
@@ -21,6 +27,18 @@ import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { basicFacilityMessages as messages } from './messages'
 import { FacilityDetailsDialog } from './FacilityDetailsDialog'
+import {
+  FittedProductionLine,
+} from './FittedProductionLine'
+import {
+  splitProductionDisplay,
+  type ProductionDisplay,
+} from './productionDisplay'
+import { navigationAssets } from '../shell/navigationAssets'
+import {
+  researchDescriptionMessage,
+  researchNameMessage,
+} from '../research/researchMessageSelectors'
 import './facilities.css'
 
 type MegaStructureId =
@@ -45,6 +63,7 @@ export interface MegaStructureRegionProps {
   readonly purchasePreviews:
     FrontendGameplayPreviews['dyson']['megaStructures']
   readonly purchaseRouteAvailable: boolean
+  readonly gameSpeed?: number
   readonly revision: { readonly session: number; readonly state: number }
   readonly dispatchPlayer: (
     command: MegaStructureCommand,
@@ -110,6 +129,20 @@ const presentationById: Readonly<Record<MegaStructureId, Presentation>> = {
   },
 }
 
+const skillIconModules = import.meta.glob<string>(
+  '../../assets/skill-icons/*.webp',
+  { eager: true, query: '?url', import: 'default' },
+)
+
+const skillIcons = Object.freeze(
+  Object.fromEntries(
+    Object.entries(skillIconModules).map(([path, url]) => [
+      path.split('/').pop()?.replace(/\.webp$/, '') ?? path,
+      url,
+    ]),
+  ) as Readonly<Record<string, string>>,
+)
+
 export function MegaStructureRegion({
   locale,
   visibleMegaStructureIds,
@@ -117,6 +150,7 @@ export function MegaStructureRegion({
   facts,
   purchasePreviews,
   purchaseRouteAvailable,
+  gameSpeed = 1,
   revision,
   dispatchPlayer,
   headingLevel = 'h2',
@@ -243,6 +277,9 @@ export function MegaStructureRegion({
           title={intl.formatMessage(
             presentationById[detailsFacilityId].name,
           )}
+          subtitle={intl.formatMessage(
+            presentationById[detailsFacilityId].description,
+          )}
           closeLabel={intl.formatMessage(messages.closeDetails)}
           onClose={() => setDetailsFacilityId(null)}
         >
@@ -250,6 +287,7 @@ export function MegaStructureRegion({
             locale={locale}
             facilityId={detailsFacilityId}
             fact={facts[detailsFacilityId]}
+            gameSpeed={gameSpeed}
           />
         </FacilityDetailsDialog>
       )}
@@ -331,9 +369,15 @@ function MegaStructureCard({
         </span>
       }
       production={
-        <p className="basic-facility-card__production">
-          {productionText(locale, fact.perSecond, presentation, prompt, intl)}
-        </p>
+        <FittedProductionLine
+          display={productionDisplay(
+            locale,
+            fact.perSecond,
+            presentation,
+            prompt,
+            intl,
+          )}
+        />
       }
       description={
         <p className="basic-facility-card__description">
@@ -402,61 +446,335 @@ function MegaStructureDetails({
   locale,
   facilityId,
   fact,
+  gameSpeed,
 }: {
   readonly locale: EnabledLocale
   readonly facilityId: MegaStructureId
   readonly fact: ReadyDyson['megaStructureFacts'][MegaStructureId]
+  readonly gameSpeed: number
 }) {
   const intl = useIntl()
   const presentation = presentationById[facilityId]
-  const automatic = formatGameNumber(locale, fact.ownership.automatic)
-  const manual = formatGameNumber(locale, fact.ownership.manual)
-  return (
-    <>
-      <p>{intl.formatMessage(presentation.description)}</p>
-      <dl className="mega-structure-details__list">
-        <div>
-          <dt>{intl.formatMessage(messages.baseProduction)}</dt>
-          <dd>{intl.formatMessage(messages.productionRateValue, {
-            value: formatGameNumber(locale, fact.baseProductionPerSecond),
-          })}</dd>
-        </div>
-        <div>
-          <dt>{intl.formatMessage(messages.facilityCount, {
-            facility: intl.formatMessage(presentation.name),
-          })}</dt>
-          <dd title={intl.formatMessage(messages.automaticManualTupleAccessible, {
-            automatic,
-            manual,
-          })}>
-            {formatGameNumber(locale, fact.ownership.total)}
-            {' '}({automatic} + {manual})
-          </dd>
-        </div>
-        <div>
-          <dt>{intl.formatMessage(messages.facilityModifier)}</dt>
-          <dd>×{formatGameNumber(locale, fact.modifier)}</dd>
-        </div>
-        <div>
-          <dt>{intl.formatMessage(messages.megaOutput)}</dt>
-          <dd>{intl.formatMessage(outputById[facilityId])}</dd>
-        </div>
-        <div>
-          <dt>{intl.formatMessage(messages.finalProduction)}</dt>
-          <dd>{intl.formatMessage(messages.productionRateValue, {
-            value: formatGameNumber(locale, fact.perSecond),
-          })}</dd>
-        </div>
-        <div>
-          <dt>{intl.formatMessage(messages.unlockCondition)}</dt>
-          <dd>{intl.formatMessage(messages.megaUnlockRequirement, {
-            structure: intl.formatMessage(presentation.name),
-            prerequisite: intl.formatMessage(prerequisiteById[facilityId]),
-          })}</dd>
-        </div>
-      </dl>
-    </>
+  const contributions = fact.details?.modifierContributions ?? []
+  const researchEffects = contributions.filter(
+    (contribution) => contribution.source?.kind === 'research',
   )
+  const skillEffects = contributions.filter(
+    (contribution) => contribution.source?.kind === 'skill',
+  )
+  const otherEffects = contributions.filter(
+    (contribution) =>
+      contribution.source?.kind !== 'research' &&
+      contribution.source?.kind !== 'skill',
+  )
+  const facilityName = intl.formatMessage(presentation.name)
+  const realRate = fact.perSecond * gameSpeed
+  const upstreamFacilityId = megaAcquisitionSource[facilityId]
+  return (
+    <div className="facility-details-redesign">
+      <section className="facility-details-hero">
+        <img
+          className="facility-details-hero__icon"
+          src={navigationAssets.quantum}
+          alt=""
+        />
+        <div>
+          <p className="facility-details-hero__eyebrow">
+            {intl.formatMessage(messages.currentProduction)}
+          </p>
+          <p className="facility-details-dialog__value">
+            {intl.formatMessage(messages.perRealSecond, {
+              rate: formatGameNumber(locale, realRate),
+            })}
+          </p>
+          <p className="facility-details-hero__game-rate">
+            {intl.formatMessage(messages.perGameSecond, {
+              rate: formatGameNumber(locale, fact.perSecond),
+            })}
+          </p>
+        </div>
+      </section>
+
+      <section className="facility-details-pipeline">
+        <h3>{intl.formatMessage(messages.calculationHeading)}</h3>
+        <MegaCalculationStage
+          number={1}
+          title={intl.formatMessage(messages.baseStage)}
+        >
+          <MegaSimpleRow
+            icon={navigationAssets.quantum}
+            name={intl.formatMessage(messages.baseProduction)}
+            description={intl.formatMessage(messages.megaOutputDescription, {
+              facility: intl.formatMessage(outputById[facilityId]),
+            })}
+            value={formatGameNumber(locale, fact.baseProductionPerSecond)}
+          />
+          <MegaSimpleRow
+            icon={navigationAssets.quantum}
+            name={intl.formatMessage(messages.countStage)}
+            description={
+              <span className="facility-effect-row__breakdown">
+                <span>{formatGameNumber(locale, fact.ownership.automatic)} {intl.formatMessage(messages.automaticFacilities)}</span>
+                <span>{formatGameNumber(locale, fact.ownership.manual)} {intl.formatMessage(messages.manuallyPurchased)}</span>
+              </span>
+            }
+            value={`×${formatGameNumber(locale, fact.ownership.total)}`}
+          />
+          <p className="facility-details-stage__result">
+            {formatGameNumber(locale, fact.baseProductionPerSecond)} × {formatGameNumber(locale, fact.ownership.total)} = {formatGameNumber(locale, fact.baseProductionPerSecond * fact.ownership.total)}
+          </p>
+        </MegaCalculationStage>
+
+        <MegaCalculationStage
+          number={2}
+          title={intl.formatMessage(messages.productionModifiersStage)}
+        >
+          {researchEffects.length > 0 && (
+            <MegaEffectGroup title={intl.formatMessage(messages.researchGroup)}>
+              <MegaEffectList locale={locale} contributions={researchEffects} />
+            </MegaEffectGroup>
+          )}
+          {skillEffects.length > 0 && (
+            <MegaEffectGroup title={intl.formatMessage(messages.skillTreeGroup)}>
+              <MegaEffectList locale={locale} contributions={skillEffects} />
+            </MegaEffectGroup>
+          )}
+          {otherEffects.length > 0 && (
+            <MegaEffectGroup title={intl.formatMessage(messages.otherBonusesGroup)}>
+              <MegaEffectList locale={locale} contributions={otherEffects} />
+            </MegaEffectGroup>
+          )}
+          {contributions.length === 0 && (
+            <p className="facility-details-empty">
+              {intl.formatMessage(messages.noActiveEffects)}
+            </p>
+          )}
+        </MegaCalculationStage>
+
+        <MegaCalculationStage
+          number={3}
+          title={intl.formatMessage(messages.timeStage)}
+        >
+          <MegaSimpleRow
+            icon={navigationAssets.offlineTime}
+            name={intl.formatMessage(messages.gameSpeed)}
+            description={intl.formatMessage(messages.gameSpeedDescription, {
+              speed: formatGameNumber(locale, gameSpeed),
+            })}
+            value={`×${formatGameNumber(locale, gameSpeed)}`}
+          />
+        </MegaCalculationStage>
+      </section>
+
+      <section className="facility-details-dialog__upstream">
+        <h3>{intl.formatMessage(messages.howYouGain, {
+          facility: facilityName,
+        })}</h3>
+        {upstreamFacilityId && fact.ownership.automatic > 0 && (
+          <MegaSimpleRow
+            icon={navigationAssets.quantum}
+            name={intl.formatMessage(
+              presentationById[upstreamFacilityId].name,
+            )}
+            description={intl.formatMessage(messages.megaProducedCountBy, {
+              count: formatGameNumber(locale, fact.ownership.automatic),
+              facility: intl.formatMessage(
+                presentationById[upstreamFacilityId].name,
+              ),
+            })}
+            value={`+${formatGameNumber(locale, fact.ownership.automatic)}`}
+          />
+        )}
+        <MegaSimpleRow
+          icon={navigationAssets.quantum}
+          name={intl.formatMessage(messages.manualPurchases)}
+          description={intl.formatMessage(messages.manualAcquisitionDescription, {
+            count: formatGameNumber(locale, fact.ownership.manual),
+            facility: facilityName,
+          })}
+          value={`+${formatGameNumber(locale, fact.ownership.manual)}`}
+        />
+        <MegaSimpleRow
+          icon={navigationAssets.quantum}
+          name={intl.formatMessage(messages.unlockCondition)}
+          description={intl.formatMessage(messages.megaUnlockRequirement, {
+            structure: facilityName,
+            prerequisite: intl.formatMessage(prerequisiteById[facilityId]),
+          })}
+        />
+      </section>
+    </div>
+  )
+}
+
+const megaAcquisitionSource: Readonly<
+  Record<MegaStructureId, MegaStructureId | undefined>
+> = {
+  matrioshka_brains: 'birch_planets',
+  birch_planets: 'galactic_brains',
+  galactic_brains: undefined,
+}
+
+type MegaFact = ReadyDyson['megaStructureFacts'][MegaStructureId]
+type MegaContribution = MegaFact['details']['modifierContributions'][number]
+
+function MegaCalculationStage({
+  number,
+  title,
+  children,
+}: {
+  readonly number: number
+  readonly title: string
+  readonly children: ReactNode
+}) {
+  return (
+    <section className="facility-details-stage">
+      <header>
+        <span className="facility-details-stage__number">{number}</span>
+        <h4>{title}</h4>
+      </header>
+      <div className="facility-details-stage__body">{children}</div>
+    </section>
+  )
+}
+
+function MegaEffectGroup({
+  title,
+  children,
+}: {
+  readonly title: string
+  readonly children: ReactNode
+}) {
+  return (
+    <section className="facility-details-effect-group">
+      <h5>{title}</h5>
+      <div>{children}</div>
+    </section>
+  )
+}
+
+function MegaEffectList({
+  locale,
+  contributions,
+}: {
+  readonly locale: EnabledLocale
+  readonly contributions: readonly MegaContribution[]
+}) {
+  const intl = useIntl()
+  return <>{contributions.map((contribution) => {
+    const source = contribution.source
+    const name = source?.kind === 'research'
+      ? intl.formatMessage(researchNameMessage(source.id))
+      : source?.kind === 'skill'
+        ? formatCatalogMessage(
+            intl,
+            `skills.node.${source.id}.name`,
+            humanizeIdentifier(source.id),
+          )
+        : megaOtherEffectName(contribution, intl)
+    const description = source?.kind === 'research'
+      ? intl.formatMessage(researchDescriptionMessage(source.id))
+      : source?.kind === 'skill'
+        ? formatCatalogMessage(
+            intl,
+            `skills.node.${source.id}.technical`,
+            humanizeIdentifier(source.id),
+          )
+        : ''
+    const icon = source?.kind === 'research'
+      ? navigationAssets.research
+      : source?.kind === 'skill'
+        ? skillIcons[source.id] ?? navigationAssets.skills
+        : source?.kind === 'infinity'
+          ? navigationAssets.infinity
+          : source?.kind === 'avocato'
+            ? skillIcons.avocados ?? navigationAssets.infinity
+          : navigationAssets.quantum
+    const formula = source?.kind === 'research' &&
+      source.level !== undefined && source.perLevelValue !== undefined
+      ? `${formatGameNumber(locale, source.level)} × ${formatGameNumber(locale, source.perLevelValue * 100)}% = +${formatGameNumber(locale, contribution.value * 100)}%`
+      : undefined
+    return (
+      <div className="facility-effect-row" key={`${contribution.sourceId}-${contribution.order ?? 0}`}>
+        <img className="facility-effect-row__icon" src={icon} alt="" />
+        <span className="facility-effect-row__copy">
+          <strong>{name}</strong>
+          {description && <small>{description}</small>}
+        </span>
+        <span className="facility-effect-row__value">
+          {megaOperationSymbol(contribution.operation)}{formatGameNumber(locale, contribution.value)}
+        </span>
+        {formula && (
+          <details className="facility-effect-row__technical">
+            <summary>{intl.formatMessage(messages.sourceTechnicalDetails)}</summary>
+            <span>{formula}</span>
+          </details>
+        )}
+      </div>
+    )
+  })}</>
+}
+
+function MegaSimpleRow({
+  icon,
+  name,
+  description,
+  value,
+}: {
+  readonly icon: string
+  readonly name: string
+  readonly description: ReactNode
+  readonly value?: string
+}) {
+  return (
+    <div className="facility-effect-row">
+      <img className="facility-effect-row__icon" src={icon} alt="" />
+      <span className="facility-effect-row__copy">
+        <strong>{name}</strong>
+        <small>{description}</small>
+      </span>
+      {value && <span className="facility-effect-row__value">{value}</span>}
+    </div>
+  )
+}
+
+function megaOtherEffectName(
+  contribution: MegaContribution,
+  intl: IntlShape,
+): string {
+  switch (contribution.source?.kind) {
+    case 'infinity': return intl.formatMessage(messages.infinityPower)
+    case 'secret': return intl.formatMessage(messages.secretsPower)
+    case 'avocato': return intl.formatMessage(messages.avocatoPower)
+    default: return intl.formatMessage(messages.facilityModifier)
+  }
+}
+
+function megaOperationSymbol(operation: MegaContribution['operation']): string {
+  switch (operation) {
+    case 'add': return '+'
+    case 'multiply': return '×'
+    case 'power': return '^'
+    case 'override': return '='
+    case 'clamp-min': return '≥'
+    case 'clamp-max': return '≤'
+  }
+}
+
+function formatCatalogMessage(
+  intl: IntlShape,
+  id: string,
+  defaultMessage: string,
+): string {
+  const format = intl.formatMessage
+  return format({ id, defaultMessage })
+}
+
+function humanizeIdentifier(identifier: string): string {
+  return identifier
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[._-]+/g, ' ')
+    .replace(/^./, (letter) => letter.toUpperCase())
 }
 
 function productionText(
@@ -475,6 +793,21 @@ function productionText(
   return intl.formatMessage(presentation.productionInterval, {
     interval: formatGameDuration(locale, 1 / rate),
   })
+}
+
+function productionDisplay(
+  locale: EnabledLocale,
+  rate: number,
+  presentation: Presentation,
+  prompt: string,
+  intl: IntlShape,
+): ProductionDisplay {
+  const text = productionText(locale, rate, presentation, prompt, intl)
+  if (rate === 0) return splitProductionDisplay(text)
+  const highlightedValue = rate >= 1
+    ? formatGameNumber(locale, rate)
+    : formatGameDuration(locale, 1 / rate)
+  return splitProductionDisplay(text, highlightedValue)
 }
 
 function preciseNumber(locale: EnabledLocale, value: NumericValue): string {

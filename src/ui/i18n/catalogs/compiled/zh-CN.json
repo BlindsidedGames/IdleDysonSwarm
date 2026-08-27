@@ -901,6 +901,12 @@
       "value": "详情"
     }
   ],
+  "dyson.facilities.details.automatic-facilities": [
+    {
+      "type": 0,
+      "value": "已生产"
+    }
+  ],
   "dyson.facilities.details.automatic-manual-tuple": [
     {
       "type": 0,
@@ -919,10 +925,22 @@
       "value": "manual"
     }
   ],
+  "dyson.facilities.details.avocato-power": [
+    {
+      "type": 0,
+      "value": "牛油果猫"
+    }
+  ],
   "dyson.facilities.details.base-production": [
     {
       "type": 0,
       "value": "基础值"
+    }
+  ],
+  "dyson.facilities.details.calculation-heading": [
+    {
+      "type": 0,
+      "value": "计算方式"
     }
   ],
   "dyson.facilities.details.condition": [
@@ -945,6 +963,18 @@
       "value": "identifier"
     }
   ],
+  "dyson.facilities.details.current-production": [
+    {
+      "type": 0,
+      "value": "当前产量"
+    }
+  ],
+  "dyson.facilities.details.effective-manual-count": [
+    {
+      "type": 0,
+      "value": "有效购买数量"
+    }
+  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 1,
@@ -959,6 +989,166 @@
     {
       "type": 0,
       "value": "设施修正"
+    }
+  ],
+  "dyson.facilities.details.formula.assigned-skill-points": [
+    {
+      "type": 0,
+      "value": "已分配技能点"
+    }
+  ],
+  "dyson.facilities.details.formula.effective-planets": [
+    {
+      "type": 0,
+      "value": "有效行星数"
+    }
+  ],
+  "dyson.facilities.details.formula.elapsed-skill-time": [
+    {
+      "type": 0,
+      "value": "分配后经过时间"
+    }
+  ],
+  "dyson.facilities.details.formula.fragments": [
+    {
+      "type": 0,
+      "value": "碎片"
+    }
+  ],
+  "dyson.facilities.details.formula.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "已吞噬星系"
+    }
+  ],
+  "dyson.facilities.details.formula.manager-assembly-production": [
+    {
+      "type": 0,
+      "value": "AI 管理器产量"
+    }
+  ],
+  "dyson.facilities.details.formula.manual-data-centers": [
+    {
+      "type": 0,
+      "value": "已购买数据中心"
+    }
+  ],
+  "dyson.facilities.details.formula.not-assigned": [
+    {
+      "type": 0,
+      "value": "未分配"
+    }
+  ],
+  "dyson.facilities.details.formula.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "面板寿命"
+    }
+  ],
+  "dyson.facilities.details.formula.panels-per-second": [
+    {
+      "type": 0,
+      "value": "每秒面板数"
+    }
+  ],
+  "dyson.facilities.details.formula.replaced-by": [
+    {
+      "type": 0,
+      "value": "取代技能："
+    },
+    {
+      "type": 1,
+      "value": "skill"
+    }
+  ],
+  "dyson.facilities.details.formula.requirement-met": [
+    {
+      "type": 0,
+      "value": "已满足要求"
+    }
+  ],
+  "dyson.facilities.details.formula.result": [
+    {
+      "type": 0,
+      "value": "结果"
+    }
+  ],
+  "dyson.facilities.details.formula.science-boost-level": [
+    {
+      "type": 0,
+      "value": "科学增益研究等级"
+    }
+  ],
+  "dyson.facilities.details.formula.science-bots": [
+    {
+      "type": 0,
+      "value": "科学机器人"
+    }
+  ],
+  "dyson.facilities.details.formula.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "已环绕恒星"
+    }
+  ],
+  "dyson.facilities.details.formula.worker-bots": [
+    {
+      "type": 0,
+      "value": "工作机器人"
+    }
+  ],
+  "dyson.facilities.details.game-speed": [
+    {
+      "type": 0,
+      "value": "游戏速度"
+    }
+  ],
+  "dyson.facilities.details.game-speed-description": [
+    {
+      "type": 0,
+      "value": "每个现实秒推进 "
+    },
+    {
+      "type": 1,
+      "value": "speed"
+    },
+    {
+      "type": 0,
+      "value": " 个游戏秒"
+    }
+  ],
+  "dyson.facilities.details.group.other-bonuses": [
+    {
+      "type": 0,
+      "value": "其他加成"
+    }
+  ],
+  "dyson.facilities.details.group.research": [
+    {
+      "type": 0,
+      "value": "研究"
+    }
+  ],
+  "dyson.facilities.details.group.skill-tree": [
+    {
+      "type": 0,
+      "value": "技能树"
+    }
+  ],
+  "dyson.facilities.details.how-you-gain": [
+    {
+      "type": 0,
+      "value": "如何获得"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "dyson.facilities.details.infinity-power": [
+    {
+      "type": 0,
+      "value": "无限"
     }
   ],
   "dyson.facilities.details.legend.accessible": [
@@ -991,10 +1181,84 @@
       "value": "数值"
     }
   ],
+  "dyson.facilities.details.manual-acquisition-description": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "（直接购买）"
+    }
+  ],
+  "dyson.facilities.details.manual-purchases": [
+    {
+      "type": 0,
+      "value": "手动购买"
+    }
+  ],
+  "dyson.facilities.details.manually-purchased": [
+    {
+      "type": 0,
+      "value": "手动购买"
+    }
+  ],
+  "dyson.facilities.details.milestone-100": [
+    {
+      "type": 0,
+      "value": "购买 100 个里程碑"
+    }
+  ],
+  "dyson.facilities.details.milestone-50": [
+    {
+      "type": 0,
+      "value": "购买 50 个里程碑"
+    }
+  ],
+  "dyson.facilities.details.no-active-effects": [
+    {
+      "type": 0,
+      "value": "没有生效中的效果"
+    }
+  ],
+  "dyson.facilities.details.numeric-safety": [
+    {
+      "type": 0,
+      "value": "数值安全上限"
+    }
+  ],
   "dyson.facilities.details.output-adjustments": [
     {
       "type": 0,
       "value": "产出调整"
+    }
+  ],
+  "dyson.facilities.details.per-game-second": [
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " / 游戏秒"
+    }
+  ],
+  "dyson.facilities.details.per-real-second": [
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " / 秒"
     }
   ],
   "dyson.facilities.details.produced-by": [
@@ -1017,6 +1281,68 @@
     {
       "type": 0,
       "value": "）"
+    }
+  ],
+  "dyson.facilities.details.secrets-power": [
+    {
+      "type": 0,
+      "value": "宇宙奥秘"
+    }
+  ],
+  "dyson.facilities.details.source-technical-details": [
+    {
+      "type": 0,
+      "value": "公式"
+    }
+  ],
+  "dyson.facilities.details.stage.base": [
+    {
+      "type": 0,
+      "value": "基础产量"
+    }
+  ],
+  "dyson.facilities.details.stage.count": [
+    {
+      "type": 0,
+      "value": "运行中的设施"
+    }
+  ],
+  "dyson.facilities.details.stage.power": [
+    {
+      "type": 0,
+      "value": "设施效能"
+    }
+  ],
+  "dyson.facilities.details.stage.production-modifiers": [
+    {
+      "type": 0,
+      "value": "生产修正"
+    }
+  ],
+  "dyson.facilities.details.stage.purchase": [
+    {
+      "type": 0,
+      "value": "已购设施加成"
+    }
+  ],
+  "dyson.facilities.details.stage.time": [
+    {
+      "type": 0,
+      "value": "时间"
+    }
+  ],
+  "dyson.facilities.details.terra-transfer-description": [
+    {
+      "type": 0,
+      "value": "增加 "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " 个有效已购行星"
     }
   ],
   "dyson.facilities.details.upstream-sources": [
@@ -1183,6 +1509,30 @@
     {
       "type": 0,
       "value": "产出"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.output-description": [
+    {
+      "type": 0,
+      "value": "生产"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.produced-count-by": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " 个产自"
+    },
+    {
+      "type": 1,
+      "value": "facility"
     }
   ],
   "dyson.facilities.mega-structure.details.production-rate-value": [

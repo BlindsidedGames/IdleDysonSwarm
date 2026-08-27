@@ -179,12 +179,13 @@ function characterizedState(
 function requireDerived(
   state: CanonicalGameStateV1,
   tuning: Readonly<DysonCompatibilityTuning> = neutralTuning,
+  evaluationSnapshot = neutralEvaluationSnapshot,
 ) {
   const result = deriveBasicDysonState(
     state,
     tuning,
     noEntitlements,
-    neutralEvaluationSnapshot,
+    evaluationSnapshot,
   )
   expect(result.ok).toBe(true)
   if (!result.ok) {
@@ -248,6 +249,7 @@ describe('canonical Basic Dyson derivation', () => {
           'research.money_multiplier': 2,
           'research.science_boost': 1,
           'research.assembly_line_upgrade': 2,
+          'research.matrioshka_brains_upgrade': 3,
           'research.panel_lifetime_1': 1,
         },
       },
@@ -274,6 +276,7 @@ describe('canonical Basic Dyson derivation', () => {
       moneyMultiUpgradePercent: 0.05,
       scienceBoostPercent: 0.05,
       assemblyLineUpgradePercent: 0.03,
+      matrioshkaUpgradePercent: 0.04,
     }
 
     const derived = requireDerived(state, tuning)
@@ -292,6 +295,226 @@ describe('canonical Basic Dyson derivation', () => {
     expect(derived.facilityModifiers.ai_managers).toBeCloseTo(3 * 2, 14)
     // Servers require 3 IP, but still receive Avocado.
     expect(derived.facilityModifiers.servers).toBeCloseTo(2, 14)
+    expect(
+      derived.facilityFacts.assembly_lines.details.modifierContributions
+        ?.map((row) => row.source),
+    ).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        kind: 'research',
+        id: 'research.assembly_line_upgrade',
+      }),
+      { kind: 'infinity', id: 'prestige.infinity' },
+      {
+        kind: 'avocato',
+        id: 'prestige.avocato_modifier',
+      },
+    ]))
+    expect(
+      derived.megaStructureFacts.matrioshka_brains.details
+        .modifierContributions[0],
+    ).toMatchObject({
+      operation: 'add',
+      value: 0.12,
+      source: {
+        kind: 'research',
+        id: 'research.matrioshka_brains_upgrade',
+        level: 3,
+        perLevelValue: 0.04,
+      },
+    })
+  })
+
+  test('attributes Scientific Planets as an independent Planet source', () => {
+    const derived = requireDerived(characterizedState([
+      'scientificPlanets',
+    ]))
+
+    expect(
+      derived.facilityFacts.planets.details.generationContributions,
+    ).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        sourceId: 'effect.scientificPlanets.planets_per_second',
+        displayRole: 'output-adjustments',
+        source: {
+          kind: 'skill',
+          id: 'scientificPlanets',
+        },
+        calculation: expect.objectContaining({
+          kind: 'scientific-planets',
+          researchers: 50,
+          hubbleTelescope: false,
+        }),
+      }),
+    ]))
+  })
+
+  test('gives every independent Planet-generating skill live calculation metadata', () => {
+    const source = characterizedState([
+      'scientificPlanets',
+      'planetAssembly',
+      'shellWorlds',
+      'stellarSacrifices',
+      'shouldersOfTheFallen',
+    ])
+    const derived = requireDerived(
+      {
+        ...source,
+        dyson: {
+          ...source.dyson,
+          facilities: {
+            ...source.dyson.facilities,
+            assembly_lines: [10, 0],
+            planets: [2, 0],
+          },
+        },
+        research: {
+          ...source.research,
+          levelsById: {
+            ...source.research.levelsById,
+            'research.science_boost': 4,
+          },
+        },
+      },
+      neutralTuning,
+      {
+        ...neutralEvaluationSnapshot,
+        panelsPerSecond: 2e16,
+        panelLifetimeSeconds: 1,
+      },
+    )
+
+    expect(
+      derived.facilityFacts.planets.details.generationContributions
+        ?.map((row) => [row.source?.id, row.calculation?.kind]),
+    ).toEqual(expect.arrayContaining([
+      ['scientificPlanets', 'scientific-planets'],
+      ['planetAssembly', 'planet-assembly'],
+      ['shellWorlds', 'shell-worlds'],
+      ['stellarSacrifices', 'stellar-sacrifices'],
+      ['shouldersOfTheFallen', 'shoulders-of-the-fallen'],
+    ]))
+  })
+
+  test('attributes Pocket Dimensions and Rudimentary Singularity to the facilities they create', () => {
+    const derived = requireDerived(
+      characterizedState([
+        'pocketDimensions',
+        'pocketProtectors',
+        'rudimentarySingularity',
+        'unsuspiciousAlgorithms',
+      ]),
+      neutralTuning,
+      {
+        ...neutralEvaluationSnapshot,
+        pocketDimensionsProduction: 69,
+        rudimentarySingularityProduction: 42,
+        managerAssemblyLineProduction: 16,
+      },
+    )
+
+    expect(
+      derived.facilityFacts.data_centers.details
+        .generationContributions,
+    ).toEqual([
+      expect.objectContaining({
+        sourceId: 'effect.pocket_dimensions.planets',
+        value: 69,
+        source: { kind: 'skill', id: 'pocketDimensions' },
+        calculation: expect.objectContaining({
+          kind: 'pocket-dimensions',
+          workers: 40,
+          researchers: 50,
+          pocketProtectors: true,
+        }),
+      }),
+    ])
+    expect(
+      derived.facilityFacts.servers.details.generationContributions,
+    ).toEqual([
+      expect.objectContaining({
+        sourceId: 'effect.rudimentary_singularity.data_centers',
+        value: 42,
+        source: {
+          kind: 'skill',
+          id: 'rudimentarySingularity',
+        },
+        calculation: expect.objectContaining({
+          kind: 'rudimentary-singularity',
+          managerAssemblyLineProduction: 16,
+          unsuspiciousAlgorithms: true,
+        }),
+      }),
+    ])
+  })
+
+  test('exposes formulas for every dynamic facility-production Skill family', () => {
+    const dynamicSkillIds = [
+      'stayingPower',
+      'parallelComputation',
+      'fragmentAssembly',
+      'progressiveAssembly',
+      'versatileProductionTactics',
+      'oneMinutePlan',
+      'dysonSubsidies',
+      'purityOfBody',
+      'clusterNetworking',
+      'parallelProcessing',
+      'whatWillComeToPass',
+      'hypercubeNetworks',
+      'galacticPradigmShift',
+      'purityOfSEssence',
+      'superRadiantScattering',
+    ] as const
+    const source = characterizedState(dynamicSkillIds)
+    const derived = requireDerived(
+      {
+        ...source,
+        skills: {
+          ...source.skills,
+          points: 8n,
+          fragments: 7n,
+          byId: {
+            ...source.skills.byId,
+            superRadiantScattering: {
+              ...source.skills.byId.superRadiantScattering!,
+              owned: true,
+              timerSeconds: 120,
+            },
+          },
+        },
+        dyson: {
+          ...source.dyson,
+          facilities: {
+            ...source.dyson.facilities,
+            servers: [100, 0],
+            data_centers: [1, 12],
+            planets: [1, 100],
+          },
+        },
+      },
+      neutralTuning,
+      {
+        ...neutralEvaluationSnapshot,
+        panelsPerSecond: 2e15,
+        panelLifetimeSeconds: 60,
+      },
+    )
+    const basicRows = Object.values(derived.facilityFacts).flatMap(
+      (fact) => [
+        ...(fact.details.contributions ?? []),
+        ...(fact.details.modifierContributions ?? []),
+      ],
+    )
+    const megaRows = Object.values(derived.megaStructureFacts).flatMap(
+      (fact) => fact.details.modifierContributions,
+    )
+    const formulaSkillIds = new Set(
+      [...basicRows, ...megaRows]
+        .filter((row) => row.calculation?.kind === 'dynamic-facility-effect')
+        .map((row) => row.source?.id),
+    )
+
+    expect(formulaSkillIds).toEqual(new Set(dynamicSkillIds))
   })
 
   test('derives all eight facility modifiers before mega production is enabled', () => {
@@ -836,6 +1059,26 @@ describe('canonical Basic Dyson derivation', () => {
       normalizedDataCenterRate(['terraFirma', 'terraIrradiant'], 5) /
         normalizedDataCenterRate([], 5),
     ).toBeCloseTo(2, 12)
+
+    const source = characterizedState(['terraFirma', 'terraIrradiant'])
+    const layer = requireDerived({
+      ...source,
+      dyson: {
+        ...source.dyson,
+        facilities: {
+          ...source.dyson.facilities,
+          data_centers: [1, 0],
+          planets: [0, 5],
+        },
+      },
+    }).facilityFacts.data_centers.details.manualPurchaseLayer
+    expect(layer).toMatchObject({
+      effectiveManualPlanets: 60,
+      transferredPlanetCount: 60,
+      transferSkillId: 'terraFirma',
+      terraIrradiantOwned: true,
+      effectiveManualCount: 60,
+    })
   })
 
   test('keeps Avocados eligibility on each facility raw manual count', () => {

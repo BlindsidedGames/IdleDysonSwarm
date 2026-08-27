@@ -123,6 +123,16 @@ export const basicFacilityMessages = defineMessages({
     defaultMessage: 'Produces',
     description: 'Label for the facility produced by a mega-structure.',
   },
+  megaOutputDescription: {
+    id: 'dyson.facilities.mega-structure.details.output-description',
+    defaultMessage: 'Produces {facility}',
+    description: 'Output facility produced by a mega-structure.',
+  },
+  megaProducedCountBy: {
+    id: 'dyson.facilities.mega-structure.details.produced-count-by',
+    defaultMessage: '{count} produced by {facility}',
+    description: 'Automatic mega-structure count and its upstream producer.',
+  },
   finalProduction: {
     id: 'dyson.facilities.mega-structure.details.final-production',
     defaultMessage: 'Final production',
@@ -499,6 +509,241 @@ export const basicFacilityMessages = defineMessages({
     defaultMessage: 'Effect, Value, positive or negative Delta, Total',
     description:
       'Screen-reader text for the color-coded facility effect legend.',
+  },
+  currentProduction: {
+    id: 'dyson.facilities.details.current-production',
+    defaultMessage: 'Current production',
+    description: 'Heading for the live facility production summary.',
+  },
+  perGameSecond: {
+    id: 'dyson.facilities.details.per-game-second',
+    defaultMessage: '{rate} / game second',
+    description: 'Facility output per simulated game second.',
+  },
+  perRealSecond: {
+    id: 'dyson.facilities.details.per-real-second',
+    defaultMessage: '{rate} / second',
+    description: 'Facility output per real second after game speed.',
+  },
+  calculationHeading: {
+    id: 'dyson.facilities.details.calculation-heading',
+    defaultMessage: 'How this is calculated',
+    description: 'Heading for the ordered facility production pipeline.',
+  },
+  baseStage: {
+    id: 'dyson.facilities.details.stage.base',
+    defaultMessage: 'Base Output',
+    description: 'First facility calculation stage.',
+  },
+  countStage: {
+    id: 'dyson.facilities.details.stage.count',
+    defaultMessage: 'Working facilities',
+    description: 'Facility count calculation stage.',
+  },
+  powerStage: {
+    id: 'dyson.facilities.details.stage.power',
+    defaultMessage: 'Facility Power',
+    description: 'Research, skill, and prestige modifier stage.',
+  },
+  productionModifiersStage: {
+    id: 'dyson.facilities.details.stage.production-modifiers',
+    defaultMessage: 'Production Modifiers',
+    description: 'Research, skill, prestige, and purchase modifier stage.',
+  },
+  researchGroup: {
+    id: 'dyson.facilities.details.group.research',
+    defaultMessage: 'Research',
+    description: 'Facility modifiers provided by the Research tab.',
+  },
+  skillTreeGroup: {
+    id: 'dyson.facilities.details.group.skill-tree',
+    defaultMessage: 'Skill Tree',
+    description: 'Facility modifiers provided by assigned skills.',
+  },
+  otherBonusesGroup: {
+    id: 'dyson.facilities.details.group.other-bonuses',
+    defaultMessage: 'Other Bonuses',
+    description: 'Facility modifiers provided by prestige and other systems.',
+  },
+  purchaseStage: {
+    id: 'dyson.facilities.details.stage.purchase',
+    defaultMessage: 'Purchase Bonuses',
+    description: 'Manual purchase and Terra calculation stage.',
+  },
+  timeStage: {
+    id: 'dyson.facilities.details.stage.time',
+    defaultMessage: 'Time',
+    description: 'Game speed calculation stage.',
+  },
+  noActiveEffects: {
+    id: 'dyson.facilities.details.no-active-effects',
+    defaultMessage: 'No active effects',
+    description: 'Shown when a calculation stage has no active modifiers.',
+  },
+  automaticFacilities: {
+    id: 'dyson.facilities.details.automatic-facilities',
+    defaultMessage: 'Produced',
+    description: 'Automatic facility count label.',
+  },
+  manuallyPurchased: {
+    id: 'dyson.facilities.details.manually-purchased',
+    defaultMessage: 'Manually purchased',
+    description: 'Manual facility count label.',
+  },
+  effectiveManualCount: {
+    id: 'dyson.facilities.details.effective-manual-count',
+    defaultMessage: 'Effective purchased count',
+    description: 'Count used by manual-purchase bonuses.',
+  },
+  terraTransferDescription: {
+    id: 'dyson.facilities.details.terra-transfer-description',
+    defaultMessage: 'Adds {count} effective purchased Planets',
+    description: 'Explanation of an active Terra facility transfer.',
+  },
+  sourceTechnicalDetails: {
+    id: 'dyson.facilities.details.source-technical-details',
+    defaultMessage: 'Formula',
+    description: 'Expandable formula label for a non-trivial effect.',
+  },
+  notAssigned: {
+    id: 'dyson.facilities.details.formula.not-assigned',
+    defaultMessage: 'Not assigned',
+    description: 'Formula dependency that is not currently assigned.',
+  },
+  requirementMet: {
+    id: 'dyson.facilities.details.formula.requirement-met',
+    defaultMessage: 'Requirement met',
+    description: 'Formula dependency whose prerequisite is active.',
+  },
+  replacedBy: {
+    id: 'dyson.facilities.details.formula.replaced-by',
+    defaultMessage: 'Replaced by {skill}',
+    description: 'Formula effect superseded by another assigned Skill.',
+  },
+  formulaResult: {
+    id: 'dyson.facilities.details.formula.result',
+    defaultMessage: 'Result',
+    description: 'Final value in an expanded facility source formula.',
+  },
+  scienceBots: {
+    id: 'dyson.facilities.details.formula.science-bots',
+    defaultMessage: 'Science Bots',
+    description: 'Current Science Bot input in a facility source formula.',
+  },
+  workerBots: {
+    id: 'dyson.facilities.details.formula.worker-bots',
+    defaultMessage: 'Worker Bots',
+    description: 'Current Worker Bot input in a facility source formula.',
+  },
+  panelsPerSecond: {
+    id: 'dyson.facilities.details.formula.panels-per-second',
+    defaultMessage: 'Panels per second',
+    description: 'Current panel production input in a formula.',
+  },
+  panelLifetime: {
+    id: 'dyson.facilities.details.formula.panel-lifetime',
+    defaultMessage: 'Panel lifetime',
+    description: 'Current panel lifetime input in a formula.',
+  },
+  galaxiesEngulfed: {
+    id: 'dyson.facilities.details.formula.galaxies-engulfed',
+    defaultMessage: 'Galaxies engulfed',
+    description: 'Calculated engulfed-galaxy input in a formula.',
+  },
+  scienceBoostLevel: {
+    id: 'dyson.facilities.details.formula.science-boost-level',
+    defaultMessage: 'Science Boost research level',
+    description: 'Current Science Boost research level in a formula.',
+  },
+  managerAssemblyProduction: {
+    id: 'dyson.facilities.details.formula.manager-assembly-production',
+    defaultMessage: 'AI Manager production',
+    description: 'Current AI Manager Assembly Line production in a formula.',
+  },
+  fragments: {
+    id: 'dyson.facilities.details.formula.fragments',
+    defaultMessage: 'Fragments',
+    description: 'Current Skill Fragment input in a facility formula.',
+  },
+  assignedSkillPoints: {
+    id: 'dyson.facilities.details.formula.assigned-skill-points',
+    defaultMessage: 'Assigned Skill Points',
+    description: 'Current assigned Skill Point input in a formula.',
+  },
+  effectivePlanets: {
+    id: 'dyson.facilities.details.formula.effective-planets',
+    defaultMessage: 'Effective Planets',
+    description: 'Planet count after applicable count modifiers.',
+  },
+  starsSurrounded: {
+    id: 'dyson.facilities.details.formula.stars-surrounded',
+    defaultMessage: 'Stars Surrounded',
+    description: 'Current surrounded-star input in a formula.',
+  },
+  manualDataCenters: {
+    id: 'dyson.facilities.details.formula.manual-data-centers',
+    defaultMessage: 'Purchased Data Centers',
+    description: 'Manually purchased Data Center input in a formula.',
+  },
+  elapsedSkillTime: {
+    id: 'dyson.facilities.details.formula.elapsed-skill-time',
+    defaultMessage: 'Elapsed assigned time',
+    description: 'Elapsed time since assigning a timed Skill.',
+  },
+  manualPurchases: {
+    id: 'dyson.facilities.details.manual-purchases',
+    defaultMessage: 'Manual Purchases',
+    description: 'Manual purchasing route in facility acquisition details.',
+  },
+  manualAcquisitionDescription: {
+    id: 'dyson.facilities.details.manual-acquisition-description',
+    defaultMessage: '{count} {facility} purchased directly',
+    description: 'Manual facility acquisition count and facility name.',
+  },
+  howYouGain: {
+    id: 'dyson.facilities.details.how-you-gain',
+    defaultMessage: 'How you gain {facility}',
+    description: 'Heading separating acquisition from production power.',
+  },
+  gameSpeed: {
+    id: 'dyson.facilities.details.game-speed',
+    defaultMessage: 'Game speed',
+    description: 'Game speed effect name.',
+  },
+  gameSpeedDescription: {
+    id: 'dyson.facilities.details.game-speed-description',
+    defaultMessage: 'Each real second advances {speed} game seconds',
+    description: 'Explanation of game speed conversion.',
+  },
+  infinityPower: {
+    id: 'dyson.facilities.details.infinity-power',
+    defaultMessage: 'Infinity',
+    description: 'Infinity prestige contribution name.',
+  },
+  secretsPower: {
+    id: 'dyson.facilities.details.secrets-power',
+    defaultMessage: 'Secrets of the Universe',
+    description: 'Secrets prestige contribution name.',
+  },
+  avocatoPower: {
+    id: 'dyson.facilities.details.avocato-power',
+    defaultMessage: 'Avocato',
+    description: 'Avocato prestige contribution name.',
+  },
+  milestone50: {
+    id: 'dyson.facilities.details.milestone-50',
+    defaultMessage: '50 purchased milestone',
+    description: 'Manual purchase milestone contribution name.',
+  },
+  milestone100: {
+    id: 'dyson.facilities.details.milestone-100',
+    defaultMessage: '100 purchased milestone',
+    description: 'Manual purchase milestone contribution name.',
+  },
+  numericSafety: {
+    id: 'dyson.facilities.details.numeric-safety',
+    defaultMessage: 'Numeric safety limit',
+    description: 'Canonical number clamping contribution name.',
   },
   closeDetails: {
     id: 'dyson.facilities.close-details',
