@@ -4407,6 +4407,22 @@
       "value": "Indéfini"
     }
   ],
+  "reality.automatic-gathering": [
+    {
+      "type": 0,
+      "value": "Collecte automatique d’Influence"
+    }
+  ],
+  "reality.automatic-influence-rate": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Influence par seconde"
+    }
+  ],
   "reality.avocato.description": [
     {
       "type": 0,
@@ -4477,6 +4493,12 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "reality.influence-generation": [
+    {
+      "type": 0,
+      "value": "Production d’Influence"
     }
   ],
   "reality.region": [

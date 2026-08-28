@@ -39,6 +39,7 @@ import {
   realityUpgradeMessages as upgradeMessages,
 } from './messages'
 import { SimulationUpgradeRegion } from '../simulations/SimulationUpgradeRegion'
+import { basicFacilityMessages } from '../facilities/messages'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import './reality.css'
 
@@ -243,56 +244,90 @@ export function RealitySurface({
             <div className="reality-worker-panel__status">
               <strong>
                 {intl.formatMessage(
-                  waitingForGather
-                    ? messages.consumptionHalted
-                    : messages.consuming,
+                  derived.autoGatherEnabled
+                    ? messages.automaticGathering
+                    : waitingForGather
+                      ? messages.consumptionHalted
+                      : messages.consuming,
                 )}
               </strong>
             </div>
 
-            <div className="reality-worker-panel__batch">
-              <RealityProgress
-                label={intl.formatMessage(messages.workersReady)}
-                value={batchProgress}
-                visualValue={visualBatchProgress}
-                normalizedRatePerSecond={
-                  derived.generationPerSecond /
-                  Math.max(1, Number(derived.workerBatchSize))
-                }
-                active={!waitingForGather && batchProgress < 1}
-                wraps={derived.autoGatherEnabled}
-                reducedMotion={reducedMotion}
-                valueText={intl.formatMessage(
-                  messages.workersReadyValue,
-                  {
-                    current: formatGameNumber(locale, resources.workersReady),
-                    total: formatGameNumber(locale, derived.workerBatchSize),
-                  },
-                )}
-              />
-              <strong
-                aria-label={intl.formatMessage(
-                  messages.workersReadyValue,
-                  {
-                    current: formatGameNumber(locale, resources.workersReady),
-                    total: formatGameNumber(locale, derived.workerBatchSize),
-                  },
-                )}
-              >
-                <InlineImageSymbol
-                  src={influenceSymbol}
-                  symbol="influence"
-                  tint
+            {derived.autoGatherEnabled ? (
+              <div className="reality-worker-panel__batch">
+                <span>{intl.formatMessage(messages.influenceGeneration)}</span>
+                <strong
+                  aria-label={intl.formatMessage(
+                    messages.automaticInfluenceRate,
+                    {
+                      value: formatGameNumber(
+                        locale,
+                        derived.generationPerSecond,
+                      ),
+                    },
+                  )}
+                >
+                  <InlineImageSymbol
+                    src={influenceSymbol}
+                    symbol="influence"
+                    tint
+                  />
+                  {intl.formatMessage(
+                    basicFacilityMessages.productionRateValue,
+                    {
+                      value: formatGameNumber(
+                        locale,
+                        derived.generationPerSecond,
+                      ),
+                    },
+                  )}
+                </strong>
+              </div>
+            ) : (
+              <div className="reality-worker-panel__batch">
+                <RealityProgress
+                  label={intl.formatMessage(messages.workersReady)}
+                  value={batchProgress}
+                  visualValue={visualBatchProgress}
+                  normalizedRatePerSecond={
+                    derived.generationPerSecond /
+                    Math.max(1, Number(derived.workerBatchSize))
+                  }
+                  active={!waitingForGather && batchProgress < 1}
+                  wraps={false}
+                  reducedMotion={reducedMotion}
+                  valueText={intl.formatMessage(
+                    messages.workersReadyValue,
+                    {
+                      current: formatGameNumber(locale, resources.workersReady),
+                      total: formatGameNumber(locale, derived.workerBatchSize),
+                    },
+                  )}
                 />
-                {intl.formatMessage(
-                  messages.workersReadyCompact,
-                  {
-                    current: formatGameNumber(locale, resources.workersReady),
-                    total: formatGameNumber(locale, derived.workerBatchSize),
-                  },
-                )}
-              </strong>
-            </div>
+                <strong
+                  aria-label={intl.formatMessage(
+                    messages.workersReadyValue,
+                    {
+                      current: formatGameNumber(locale, resources.workersReady),
+                      total: formatGameNumber(locale, derived.workerBatchSize),
+                    },
+                  )}
+                >
+                  <InlineImageSymbol
+                    src={influenceSymbol}
+                    symbol="influence"
+                    tint
+                  />
+                  {intl.formatMessage(
+                    messages.workersReadyCompact,
+                    {
+                      current: formatGameNumber(locale, resources.workersReady),
+                      total: formatGameNumber(locale, derived.workerBatchSize),
+                    },
+                  )}
+                </strong>
+              </div>
+            )}
 
             {!derived.autoGatherEnabled ? (
               <Button

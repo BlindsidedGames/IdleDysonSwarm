@@ -208,7 +208,7 @@ describe('RealitySurface', () => {
       }),
     ).not.toBeInTheDocument()
     expect(
-      screen.getByRole('progressbar', {
+      screen.queryByRole('progressbar', {
         name: 'Workers ready',
       }),
     ).toHaveAttribute(
@@ -391,16 +391,18 @@ describe('RealitySurface', () => {
         name: 'Gather 128 Influence',
       }),
     ).not.toBeInTheDocument()
-    expect(screen.getByText('Consuming')).toBeInTheDocument()
     expect(
-      screen.getByRole('progressbar', {
+      screen.getByText('Automatically gathering Influence'),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Influence generation')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('progressbar', {
         name: 'Workers ready',
       }),
-    ).toHaveAttribute('aria-valuenow', '50')
-    const fill = screen.getByRole('progressbar', {
-      name: 'Workers ready',
-    }).querySelector<HTMLElement>('span')
-    expect(fill).toHaveStyle({ transform: 'scaleX(0.501953125)' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByLabelText('1.00 Influence per second'),
+    ).toBeInTheDocument()
     expect(realityStyles).toMatch(
       /\.reality-progress > span\s*\{[^}]*transform-origin:\s*left center;/,
     )

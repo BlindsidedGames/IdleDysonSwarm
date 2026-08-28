@@ -4407,6 +4407,22 @@
       "value": "未定義"
     }
   ],
+  "reality.automatic-gathering": [
+    {
+      "type": 0,
+      "value": "影響力を自動収集中"
+    }
+  ],
+  "reality.automatic-influence-rate": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "影響力/秒"
+    }
+  ],
   "reality.avocato.description": [
     {
       "type": 0,
@@ -4477,6 +4493,12 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "reality.influence-generation": [
+    {
+      "type": 0,
+      "value": "影響力生成"
     }
   ],
   "reality.region": [

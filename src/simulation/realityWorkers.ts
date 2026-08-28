@@ -8,6 +8,7 @@ import type {
 import {
   addContinuous,
   addDiscrete,
+  bitDecrement,
   CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
   floorToDiscrete,
@@ -88,6 +89,7 @@ export function advanceRealityWorkers(
     state.reality.workerGenerationProgress,
   )
   let workersReady =
+    !state.reality.autoGather &&
     state.reality.workersReady > tuning.workerBatchSize
       ? tuning.workerBatchSize
       : state.reality.workersReady
@@ -113,38 +115,17 @@ export function advanceRealityWorkers(
         : Math.max(0, generatedExact - Number(completed))
 
     if (state.reality.autoGather) {
-      const influenceCapacity = CONTINUOUS_MAXIMUM - influence
-      const completeBatches =
-        (workersReady + completed) / tuning.workerBatchSize
-      const affordableBatches = floorToDiscrete(
-        influenceCapacity / Number(tuning.workerBatchSize),
+      const pendingWorkers = addDiscrete(workersReady, completed)
+      workersGenerated = pendingWorkers - workersReady
+      const overflow = completed - workersGenerated
+      const gathered = creditGeneratedWorkers(
+        influence,
+        pendingWorkers,
       )
-      const gatheredBatches =
-        completeBatches < affordableBatches
-          ? completeBatches
-          : affordableBatches
-      let gatheredWorkers = gatheredBatches * tuning.workerBatchSize
-      const requestedInfluence = Number(gatheredWorkers)
-      const nextInfluence = addContinuous(influence, requestedInfluence)
-      if (nextInfluence <= influence) {
-        gatheredWorkers = 0n
-      } else {
-        automaticInfluence = requestedInfluence
-        influence = nextInfluence
-      }
-      const workersAfterGather =
-        workersReady + completed - gatheredWorkers
-      const overflow =
-        workersAfterGather > tuning.workerBatchSize
-          ? workersAfterGather - tuning.workerBatchSize
-          : 0n
-      workersReady =
-        workersAfterGather > tuning.workerBatchSize
-          ? tuning.workerBatchSize
-          : workersAfterGather
-      workersGenerated = completed - overflow
-      progress =
-        workersReady >= tuning.workerBatchSize ? 0 : remainder
+      influence = gathered.influence
+      automaticInfluence = Number(gathered.consumedWorkers)
+      workersReady = pendingWorkers - gathered.consumedWorkers
+      progress = overflow > 0n ? 0 : remainder
       if (overflow > 0n) {
         stalledSeconds = Math.max(
           0,
@@ -219,12 +200,11 @@ export function gatherRealityInfluence(
   if (state.reality.workersReady < tuning.workerBatchSize) {
     return emptyGather('not-ready', state)
   }
-  if (
-    addContinuous(
-      state.reality.influence,
-      Number(tuning.workerBatchSize),
-    ) <= state.reality.influence
-  ) {
+  const gathered = creditGeneratedWorkers(
+    state.reality.influence,
+    tuning.workerBatchSize,
+  )
+  if (gathered.consumedWorkers !== tuning.workerBatchSize) {
     return emptyGather('output-maxed', state)
   }
 
@@ -243,10 +223,7 @@ export function gatherRealityInfluence(
       reality: {
         ...state.reality,
         workersReady: 0n,
-        influence: addContinuous(
-          state.reality.influence,
-          Number(tuning.workerBatchSize),
-        ),
+        influence: gathered.influence,
       },
       statistics: recordRealitySegment(
         state.statistics,
@@ -255,6 +232,49 @@ export function gatherRealityInfluence(
       ),
     },
   }
+}
+
+/**
+ * Converts as many already-generated workers as the current floating-point
+ * Influence balance can represent without losing or inventing workers. Any
+ * uncredited workers stay in workersReady and are retried after more workers
+ * accumulate, allowing automatic gathering to run continuously without a
+ * separate save-field remainder.
+ */
+function creditGeneratedWorkers(
+  influence: number,
+  availableWorkers: bigint,
+): {
+  readonly influence: number
+  readonly consumedWorkers: bigint
+} {
+  if (availableWorkers <= 0n || influence >= CONTINUOUS_MAXIMUM) {
+    return { influence, consumedWorkers: 0n }
+  }
+
+  let requestedInfluence = Number(availableWorkers)
+  if (floorToDiscrete(requestedInfluence) > availableWorkers) {
+    requestedInfluence = bitDecrement(requestedInfluence)
+  }
+  if (!Number.isFinite(requestedInfluence) || requestedInfluence <= 0) {
+    return { influence, consumedWorkers: 0n }
+  }
+
+  const nextInfluence = addContinuous(influence, requestedInfluence)
+  const creditedInfluence = nextInfluence - influence
+  if (
+    !Number.isFinite(creditedInfluence) ||
+    creditedInfluence <= 0 ||
+    creditedInfluence > requestedInfluence
+  ) {
+    return { influence, consumedWorkers: 0n }
+  }
+
+  const consumedWorkers = floorToDiscrete(creditedInfluence)
+  if (consumedWorkers <= 0n || consumedWorkers > availableWorkers) {
+    return { influence, consumedWorkers: 0n }
+  }
+  return { influence: nextInfluence, consumedWorkers }
 }
 
 export function readRealityWorkerTuning():

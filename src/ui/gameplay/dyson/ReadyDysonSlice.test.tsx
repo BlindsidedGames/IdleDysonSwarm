@@ -684,6 +684,29 @@ describe('ReadyDysonSlice', () => {
     },
   )
 
+  test('returns a stale Debug route to Bots when developer controls are unavailable', async () => {
+    const onRouteChange = vi.fn()
+    render(provider(
+      <ReadyDysonSlice
+        snapshot={snapshot()}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route="debug"
+        onRouteChange={onRouteChange}
+      />,
+    ))
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Bots' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { level: 1, name: 'Debug Options' }),
+    ).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(onRouteChange).toHaveBeenCalledWith('bots')
+    })
+  })
+
   test('badges unassigned Skill Points and highlights a newly unlocked Skills tab until visited', async () => {
     const onRouteChange = vi.fn()
     const rendered = render(
@@ -739,6 +762,31 @@ describe('ReadyDysonSlice', () => {
     expect(rendered.container.querySelector(
       '[data-navigation-id="skills"] .dyson-navigation__badge',
     )).not.toBeInTheDocument()
+  })
+
+  test('does not render a Skills badge when no Skill Points are unassigned', () => {
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            skillsRouteUnlocked: true,
+            skillPoints: 0n,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="bots"
+        />,
+      ),
+    )
+
+    const skillsItem = rendered.container.querySelector(
+      '.dyson-navigation--bottom [data-navigation-id="skills"]',
+    )
+    expect(skillsItem?.querySelector('.dyson-navigation__badge'))
+      .not.toBeInTheDocument()
+    expect(within(skillsItem as HTMLElement).getByRole('button', {
+      name: 'Skills',
+    })).toBeInTheDocument()
   })
 
   test('opens Infinity only when canonical visibility unlocks it', async () => {
@@ -2120,6 +2168,7 @@ interface SnapshotOptions {
   readonly showNextMegaStructureTeaser?: boolean
   readonly skillsRouteUnlocked?: boolean
   readonly infinityRouteUnlocked?: boolean
+  readonly skillPoints?: bigint
   readonly realityRouteVisible?: boolean
   readonly realityRouteUnlocked?: boolean
   readonly realitySecrets?: bigint
@@ -2237,7 +2286,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           researchers: 2000,
         },
         skills: {
-          points: 1n,
+          points: options.skillPoints ?? 1n,
           fragments: 0n,
         },
         infinity: {

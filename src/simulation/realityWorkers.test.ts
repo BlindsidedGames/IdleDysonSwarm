@@ -86,9 +86,9 @@ describe('Reality worker generation', () => {
     expect(result.status).toBe('success')
     expect(result.generationPerSecond).toBe(7)
     expect(result.workersGenerated).toBe(2n)
-    expect(result.automaticInfluence).toBe(0)
-    expect(result.state.reality.influence).toBe(0)
-    expect(result.state.reality.workersReady).toBe(2n)
+    expect(result.automaticInfluence).toBe(2)
+    expect(result.state.reality.influence).toBe(2)
+    expect(result.state.reality.workersReady).toBe(0n)
     expect(result.state.reality.workerGenerationProgress).toBe(0)
     expect(result.state.reality.universeDesignationCount).toBe(2n)
   })
@@ -151,8 +151,8 @@ describe('Reality worker generation', () => {
       whole.state.reality.workerGenerationProgress,
       12,
     )
-    expect(second.state.reality.influence).toBe(0)
-    expect(second.state.reality.workersReady).toBe(8n)
+    expect(second.state.reality.influence).toBe(8)
+    expect(second.state.reality.workersReady).toBe(0n)
     expect(second.state.reality.workerGenerationProgress).toBeCloseTo(
       0.65,
       12,
@@ -184,7 +184,7 @@ describe('Reality worker generation', () => {
     expect(result.state.statistics).toBe(state.statistics)
   })
 
-  test('gathers complete automatic batches and keeps the next batch visible', () => {
+  test('continuously converts every generated worker after automation', () => {
     const state = neutralState()
     const result = advanceRealityWorkers(
       {
@@ -199,10 +199,37 @@ describe('Reality worker generation', () => {
     )
 
     expect(result.workersGenerated).toBe(2n)
-    expect(result.automaticInfluence).toBe(128)
-    expect(result.state.reality.influence).toBe(128)
-    expect(result.state.reality.workersReady).toBe(1n)
+    expect(result.automaticInfluence).toBe(129)
+    expect(result.state.reality.influence).toBe(129)
+    expect(result.state.reality.workersReady).toBe(0n)
     expect(result.state.reality.universeDesignationCount).toBe(2n)
+  })
+
+  test('retains automatic workers until a high Influence balance can represent them exactly', () => {
+    const state = neutralState()
+    const influence = 2 ** 60 + 256
+    const retained = advanceRealityWorkers(
+      {
+        ...state,
+        reality: {
+          ...state.reality,
+          autoGather: true,
+          workersReady: 128n,
+          influence,
+        },
+      },
+      0.1,
+    )
+
+    expect(retained.automaticInfluence).toBe(0)
+    expect(retained.state.reality.influence).toBe(influence)
+    expect(retained.state.reality.workersReady).toBe(128n)
+
+    const credited = advanceRealityWorkers(retained.state, 32)
+    expect(credited.workersGenerated).toBe(128n)
+    expect(credited.automaticInfluence).toBe(256)
+    expect(credited.state.reality.influence - influence).toBe(256)
+    expect(credited.state.reality.workersReady).toBe(0n)
   })
 
   test('retains automatic workers when remaining Influence capacity cannot hold a batch', () => {
@@ -300,6 +327,22 @@ describe('manual Reality Influence gather', () => {
     const saturated = gatherRealityInfluence(saturatedState)
     expect(saturated.status).toBe('output-maxed')
     expect(saturated.state).toBe(saturatedState)
+  })
+
+  test('does not consume a manual batch when floating-point rounding would over-credit it', () => {
+    const state = neutralState()
+    const highBalanceState: CanonicalGameStateV1 = {
+      ...state,
+      reality: {
+        ...state.reality,
+        workersReady: 128n,
+        influence: 2 ** 60 + 256,
+      },
+    }
+
+    const result = gatherRealityInfluence(highBalanceState)
+    expect(result.status).toBe('output-maxed')
+    expect(result.state).toBe(highBalanceState)
   })
 
   test('fails closed when authored tuning is unavailable', () => {

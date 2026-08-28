@@ -663,7 +663,8 @@ export function ReadyDysonSlice({
     (requestedRoute === 'quantum' && !quantumUnlocked) ||
     (requestedRoute === 'store' && !storeVisible) ||
     (requestedRoute === 'avocato' &&
-      !gameplay.progression.avocado.unlocked)
+      !gameplay.progression.avocado.unlocked) ||
+    (requestedRoute === 'debug' && development === undefined)
   const route =
     requestedRouteUnavailable
       ? 'bots'
@@ -948,14 +949,18 @@ export function ReadyDysonSlice({
           {
             id: 'skills',
             label: intl.formatMessage(messages.skillsRoute),
-            ariaLabel: skillsActive || !gameplay.visibility.skills.routeUnlocked
+            ariaLabel: skillsActive ||
+              !gameplay.visibility.skills.routeUnlocked ||
+              gameplay.resources.skills.points <= 0n
               ? intl.formatMessage(messages.skillsRoute)
               : `${intl.formatMessage(messages.skillsRoute)}: ${displayWhole(
                 gameplay.resources.skills.points,
               )}`,
             iconSrc: navigationAssets.skills,
             bottom: bottomVisible('skills'),
-            badge: skillsActive || !gameplay.visibility.skills.routeUnlocked
+            badge: skillsActive ||
+              !gameplay.visibility.skills.routeUnlocked ||
+              gameplay.resources.skills.points <= 0n
               ? undefined
               : displayWhole(gameplay.resources.skills.points),
             newlyUnlocked: newlyUnlockedRoutes.has('skills'),

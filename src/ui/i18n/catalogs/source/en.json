@@ -2091,6 +2091,14 @@
     "defaultMessage": "Undefined",
     "description": "Unity artifact progress label before Speed Reduction VIII is owned."
   },
+  "reality.automatic-gathering": {
+    "defaultMessage": "Automatically gathering Influence",
+    "description": "Reality status after automatic Influence gathering is unlocked."
+  },
+  "reality.automatic-influence-rate": {
+    "defaultMessage": "{value} Influence per second",
+    "description": "Accessible continuous automatic Influence production rate."
+  },
   "reality.avocato.description": {
     "defaultMessage": "Feed Avocato resources to strengthen every reality.",
     "description": "Description of the unlocked Avocato economy."
@@ -2130,6 +2138,10 @@
   "reality.influence": {
     "defaultMessage": "Influence: {value}",
     "description": "Current Reality Influence balance."
+  },
+  "reality.influence-generation": {
+    "defaultMessage": "Influence generation",
+    "description": "Label for the continuous automatic Influence production rate."
   },
   "reality.region": {
     "defaultMessage": "Reality",

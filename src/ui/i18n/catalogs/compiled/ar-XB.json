@@ -8591,6 +8591,38 @@
       "value": "‬"
     }
   ],
+  "reality.automatic-gathering": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇoɯɐʇıɔɐʅʅʎ ƃɐʇɥǝɹıuƃ Iuɟʅnǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "reality.automatic-influence-rate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Iuɟʅnǝuɔǝ dǝɹ sǝɔoup"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "reality.avocato.description": [
     {
       "type": 0,
@@ -8737,6 +8769,20 @@
     {
       "type": 1,
       "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "reality.influence-generation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟʅnǝuɔǝ ƃǝuǝɹɐʇıou"
     },
     {
       "type": 0,

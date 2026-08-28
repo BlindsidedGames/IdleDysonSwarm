@@ -55,6 +55,24 @@ export const realityMessages = defineMessages({
     description:
       'Unity status while Reality workers are being generated.',
   },
+  automaticGathering: {
+    id: 'reality.automatic-gathering',
+    defaultMessage: 'Automatically gathering Influence',
+    description:
+      'Reality status after automatic Influence gathering is unlocked.',
+  },
+  influenceGeneration: {
+    id: 'reality.influence-generation',
+    defaultMessage: 'Influence generation',
+    description:
+      'Label for the continuous automatic Influence production rate.',
+  },
+  automaticInfluenceRate: {
+    id: 'reality.automatic-influence-rate',
+    defaultMessage: '{value} Influence per second',
+    description:
+      'Accessible continuous automatic Influence production rate.',
+  },
   consumptionHalted: {
     id: 'reality.consumption-halted',
     defaultMessage: 'Consumption Halted',
