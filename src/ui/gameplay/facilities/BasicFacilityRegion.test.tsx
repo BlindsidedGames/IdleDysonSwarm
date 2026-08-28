@@ -173,6 +173,17 @@ const defaultRevision = {
 }
 
 describe('BasicFacilityRegion', () => {
+  it('uses a visible themed scrollbar in the facility details dialog', () => {
+    expect(facilitiesCss).toMatch(
+      /\.facility-details-dialog__content\s*\{[^}]*overflow-y:\s*auto;[^}]*scrollbar-gutter:\s*stable;[^}]*scrollbar-color:\s*#9a72aa #2b1f2f;[^}]*scrollbar-width:\s*thin;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.facility-details-dialog__content::-webkit-scrollbar-thumb\s*\{[^}]*border:\s*2px solid #2b1f2f;[^}]*background:\s*#9a72aa;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /@media \(forced-colors: active\)[\s\S]*\.facility-details-dialog__content\s*\{[^}]*scrollbar-color:\s*ButtonText Canvas;/,
+    )
+  })
   it('renders the canonical Fresh collection as no named cards plus one teaser', () => {
     renderRegion({
       visibleBasicFacilityIds: [],
@@ -228,6 +239,23 @@ describe('BasicFacilityRegion', () => {
     expect(items[1]).toContainElement(screen.getByText('????'))
     expect(container.querySelector('.basic-facility-region'))
       .toHaveAttribute('data-visible-facility-count', '1')
+  })
+
+  it('replaces the quantity label with Auto while facility automation is active', () => {
+    renderRegion({
+      visibleBasicFacilityIds: ['assembly_lines'],
+      automationEnabledFacilities: { assembly_lines: true },
+    })
+
+    const purchase = screen.getByRole('button', {
+      name: /^Purchase an Assembly Line:/,
+    })
+    expect(
+      purchase.querySelector('.basic-facility-card__purchase-quantity'),
+    ).toHaveTextContent('Auto')
+    expect(
+      purchase.querySelector('.basic-facility-card__purchase-cost'),
+    ).toHaveTextContent('$869K')
   })
 
   it('preserves checkpoint order and exact canonical card values', () => {
@@ -911,7 +939,7 @@ describe('BasicFacilityRegion', () => {
     expect(within(teaser).queryByRole('button')).not.toBeInTheDocument()
     expect(teaser).not.toHaveAttribute('tabindex')
     expect(facilitiesCss).toMatch(
-      /\.basic-facility-region__teaser-surface\s*\{[^}]*min-block-size:\s*var\(--basic-facility-card-min-block-size\);[^}]*border:\s*2px solid var\(--theme-divider\);[^}]*border-radius:\s*0\.25rem;[^}]*background:\s*var\(--theme-panel\);[^}]*box-shadow:\s*0 2px 0 #171018;/,
+      /\.basic-facility-region__teaser-surface\s*\{[^}]*min-block-size:\s*var\(--basic-facility-card-min-block-size\);[^}]*border:\s*var\(--ui-panel-border-width\) solid var\(--theme-divider\);[^}]*border-radius:\s*var\(--ui-control-radius\);[^}]*background:\s*var\(--theme-panel\);[^}]*box-shadow:\s*0 2px 0 #171018;/,
     )
     expect(facilitiesCss).toMatch(
       /\.ui-facility-card\.basic-facility-card\s*\{[^}]*min-block-size:\s*var\(--basic-facility-card-min-block-size\);/,
@@ -1282,6 +1310,8 @@ function regionProps(
       options.purchasePreviews ?? purchasePreviews,
     purchaseRouteAvailable:
       options.purchaseRouteAvailable ?? true,
+    automationEnabledFacilities:
+      options.automationEnabledFacilities,
     gameSpeed: options.gameSpeed,
     revision: options.revision ?? defaultRevision,
     dispatchPlayer:

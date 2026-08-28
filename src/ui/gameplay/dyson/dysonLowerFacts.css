@@ -14,7 +14,7 @@
 
 .dyson-lower-facts p {
   margin: 0;
-  padding: 0.55rem 0.75rem;
+  padding: 0.25rem 0.1rem;
   color: #f4edf5;
   line-height: var(--line-height-body);
   text-align: start;
@@ -26,7 +26,6 @@
 
 @media (max-width: 720px) {
   .dyson-lower-facts p {
-    padding: 0.25rem 0.1rem;
     font-size: calc(0.88rem * var(--game-text-scale));
     line-height: 1.15;
   }

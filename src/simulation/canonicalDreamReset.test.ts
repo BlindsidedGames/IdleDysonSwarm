@@ -18,8 +18,9 @@ import {
   type SimulationUpgradeDefinition,
 } from './dreamEducationUpgrades'
 import {
+  bitDecrement,
+  CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
-  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 
 const fixture = readFileSync(
@@ -79,10 +80,10 @@ function requireApplied(
 
 describe('canonical Dream reset', () => {
   test.each([
-    [0n, 'cities', 1, 'Meteor', 1n],
-    [1n, 'cities', 1, 'Meteor', 1n],
-    [2n, 'bots', 100, 'ArtificialIntelligence', 10n],
-    [3n, 'spaceFactories', 5, 'GlobalWarming', 20n],
+    [0n, 'cities', 1, 'Meteor', 1],
+    [1n, 'cities', 1, 'Meteor', 1],
+    [2n, 'bots', 100, 'ArtificialIntelligence', 10],
+    [3n, 'spaceFactories', 5, 'GlobalWarming', 20],
   ] as const)(
     'applies automatic stage %s at its exact threshold',
     (stage, resource, value, cause, reward) => {
@@ -179,7 +180,7 @@ describe('canonical Dream reset', () => {
       dream: {
         ...source.dream,
         resetCount: 8n,
-        strangeMatter: 50n,
+        strangeMatter: 50,
         disasterStage: 2n,
         resources: {
           hunters: 999n,
@@ -286,11 +287,11 @@ describe('canonical Dream reset', () => {
       applyCanonicalDreamReset(state, {
         kind: 'explicit',
         cause: 'BlackHole',
-        requestedReward: 0n,
+        requestedReward: 0,
       }),
     )
 
-    expect(result.rewardGranted).toBe(0n)
+    expect(result.rewardGranted).toBe(0)
     expect(result.state.dream.resetCount).toBe(
       state.dream.resetCount + 1n,
     )
@@ -309,7 +310,7 @@ describe('canonical Dream reset', () => {
       valid: true,
       breakInfinity: false,
       durationSeconds: 0,
-      reward: 0n,
+      reward: 0,
       dreamCause: 'BlackHole',
     })
   })
@@ -320,7 +321,7 @@ describe('canonical Dream reset', () => {
       ...source,
       dream: {
         ...source.dream,
-        strangeMatter: 9n,
+        strangeMatter: 9,
         resources: {
           ...source.dream.resources,
           swarmPanels: 42n,
@@ -333,14 +334,14 @@ describe('canonical Dream reset', () => {
     )
 
     expect(result.cause).toBe('BlackHole')
-    expect(result.requestedReward).toBe(42n)
-    expect(result.rewardGranted).toBe(42n)
-    expect(result.state.dream.strangeMatter).toBe(51n)
+    expect(result.requestedReward).toBe(42)
+    expect(result.rewardGranted).toBe(42)
+    expect(result.state.dream.strangeMatter).toBe(51)
     expect(result.state.dream.resources.swarmPanels).toBe(0n)
     expect(result.state.statistics.lifetime.blackHoleDreamResets)
       .toBe(state.statistics.lifetime.blackHoleDreamResets + 1n)
     expect(result.state.statistics.lifetime.strangeMatter)
-      .toBe(state.statistics.lifetime.strangeMatter + 42n)
+      .toBe(state.statistics.lifetime.strangeMatter + 42)
   })
 
   test('grants a Black Hole reward above the legacy Int64 ceiling', () => {
@@ -350,7 +351,7 @@ describe('canonical Dream reset', () => {
       ...source,
       dream: {
         ...source.dream,
-        strangeMatter: 9n,
+        strangeMatter: 9,
         resources: {
           ...source.dream.resources,
           swarmPanels: reward,
@@ -360,26 +361,26 @@ describe('canonical Dream reset', () => {
 
     const result = requireApplied(applyCanonicalBlackHoleReset(state))
 
-    expect(result.requestedReward).toBe(reward)
-    expect(result.rewardGranted).toBe(reward)
-    expect(result.state.dream.strangeMatter).toBe(reward + 9n)
-    expect(result.state.statistics.lifetime.strangeMatter).toBe(reward)
-    expect(result.state.statistics.lastCompletedCycle.reward).toBe(reward)
+    expect(result.requestedReward).toBe(Number(reward))
+    expect(result.rewardGranted).toBe(Number(reward))
+    expect(result.state.dream.strangeMatter).toBe(Number(reward) + 9)
+    expect(result.state.statistics.lifetime.strangeMatter).toBe(Number(reward))
+    expect(result.state.statistics.lastCompletedCycle.reward).toBe(Number(reward))
   })
 
-  test('records requested rather than partially granted reward at saturation', () => {
+  test('records only the reward actually granted at saturation', () => {
     const source = withoutUpgrades(baseState())
     const totals: SimulationTotalsState = {
       ...source.statistics.lifetime,
       globalWarmingDreamResets: DISCRETE_MAXIMUM,
-      strangeMatter: SIMULATION_RESOURCE_MAXIMUM - 5n,
+      strangeMatter: bitDecrement(CONTINUOUS_MAXIMUM),
     }
     const state: CanonicalGameStateV1 = {
       ...source,
       dream: {
         ...source.dream,
         resetCount: 1n,
-        strangeMatter: SIMULATION_RESOURCE_MAXIMUM - 2n,
+        strangeMatter: bitDecrement(CONTINUOUS_MAXIMUM),
       },
       statistics: {
         ...source.statistics,
@@ -396,26 +397,29 @@ describe('canonical Dream reset', () => {
       applyCanonicalDreamReset(state, {
         kind: 'explicit',
         cause: 'GlobalWarming',
-        requestedReward: 20n,
+        requestedReward: CONTINUOUS_MAXIMUM,
       }),
     )
 
-    expect(result.rewardGranted).toBe(2n)
+    expect(result.rewardGranted).toBe(
+      CONTINUOUS_MAXIMUM - bitDecrement(CONTINUOUS_MAXIMUM),
+    )
     expect(result.state.dream.strangeMatter)
-      .toBe(SIMULATION_RESOURCE_MAXIMUM)
+      .toBe(CONTINUOUS_MAXIMUM)
     expect(result.state.statistics.lifetime.strangeMatter)
-      .toBe(SIMULATION_RESOURCE_MAXIMUM)
-    expect(result.state.statistics.lastCompletedCycle.reward).toBe(20n)
+      .toBe(CONTINUOUS_MAXIMUM)
+    expect(result.state.statistics.lastCompletedCycle.reward)
+      .toBe(result.rewardGranted)
     expect(result.state.statistics.minuteWindows[2]).toMatchObject({
       sequence: 2n,
       dreamResetCount: 1n,
-      strangeMatter: 20n,
+      strangeMatter: result.rewardGranted,
     })
     expect(result.state.statistics.trackingStartedMarker)
       .toBe('tracked-since-update')
   })
 
-  test('rejects saturated counters and rewards atomically', () => {
+  test('rejects saturated automatic resets but allows a capped Black Hole', () => {
     const source = withoutUpgrades(baseState())
     const countMaxed = {
       ...source,
@@ -428,7 +432,7 @@ describe('canonical Dream reset', () => {
       ...source,
       dream: {
         ...source.dream,
-        strangeMatter: SIMULATION_RESOURCE_MAXIMUM,
+        strangeMatter: CONTINUOUS_MAXIMUM,
       },
     }
 
@@ -436,7 +440,7 @@ describe('canonical Dream reset', () => {
       applyCanonicalDreamReset(countMaxed, {
         kind: 'explicit',
         cause: 'BlackHole',
-        requestedReward: 0n,
+        requestedReward: 0,
       }),
     ).toMatchObject({
       ok: true,
@@ -444,18 +448,22 @@ describe('canonical Dream reset', () => {
       reason: 'reset-count-saturated',
       state: countMaxed,
     })
-    expect(
+    const cappedBlackHole = requireApplied(
       applyCanonicalDreamReset(rewardMaxed, {
         kind: 'explicit',
         cause: 'BlackHole',
-        requestedReward: 1n,
+        requestedReward: 1,
       }),
-    ).toMatchObject({
-      ok: true,
-      applied: false,
-      reason: 'reward-saturated',
-      state: rewardMaxed,
-    })
+    )
+    expect(cappedBlackHole.requestedReward).toBe(1)
+    expect(cappedBlackHole.rewardGranted).toBe(0)
+    expect(cappedBlackHole.state.dream.resetCount)
+      .toBe(rewardMaxed.dream.resetCount + 1n)
+    expect(cappedBlackHole.state.dream.strangeMatter)
+      .toBe(CONTINUOUS_MAXIMUM)
+    expect(cappedBlackHole.state.statistics.lifetime.strangeMatter)
+      .toBe(rewardMaxed.statistics.lifetime.strangeMatter)
+    expect(cappedBlackHole.state.statistics.lastCompletedCycle.reward).toBe(0)
     const automaticCountMaxed = {
       ...countMaxed,
       dream: {
@@ -495,7 +503,7 @@ describe('canonical Dream reset', () => {
       {
         kind: 'explicit',
         cause: 'BlackHole',
-        requestedReward: 0n,
+        requestedReward: 0,
       },
       missing,
     )
@@ -529,7 +537,7 @@ describe('canonical Dream reset', () => {
       {
         kind: 'explicit',
         cause: 'BlackHole',
-        requestedReward: 0n,
+        requestedReward: 0,
       },
       unsupported as CanonicalDreamResetDefinitions,
     )

@@ -165,7 +165,7 @@ export interface RealityState {
   readonly universeDesignationCount: bigint
   readonly workersReady: bigint
   readonly workerGenerationProgress: number
-  readonly influence: bigint
+  readonly influence: number
   readonly autoGather: boolean
 }
 
@@ -382,11 +382,18 @@ export interface DreamState {
     readonly lastPanelsLaunched?: bigint
   }
   readonly resetCount: bigint
-  readonly strangeMatter: bigint
+  readonly strangeMatter: number
   readonly disasterStage: bigint
   readonly upgrades: Readonly<Record<DreamUpgradeFlag, boolean>>
   readonly huntersPerPurchase: bigint
   readonly gatherersPerPurchase: bigint
+  /** Number of paid batches in the current Simulation run. */
+  readonly purchaseBatches?: {
+    readonly hunters: bigint
+    readonly gatherers: bigint
+    readonly solar: bigint
+    readonly fusion: bigint
+  }
 }
 
 export interface SimulationTotalsState {
@@ -400,10 +407,10 @@ export interface SimulationTotalsState {
   readonly aiDreamResets: bigint
   readonly globalWarmingDreamResets: bigint
   readonly blackHoleDreamResets: bigint
-  readonly strangeMatter: bigint
+  readonly strangeMatter: number
   readonly realityWorkers: bigint
-  readonly automaticInfluence: bigint
-  readonly manualInfluence: bigint
+  readonly automaticInfluence: number
+  readonly manualInfluence: number
   readonly realityCapacityStallSeconds: number
   readonly simulatedSeconds: number
 }
@@ -414,7 +421,7 @@ export interface StatisticsWindowState {
   readonly infinityCount: bigint
   readonly infinityPoints: bigint
   readonly dreamResetCount: bigint
-  readonly strangeMatter: bigint
+  readonly strangeMatter: number
   readonly realityWorkers: bigint
 }
 
@@ -441,7 +448,7 @@ export interface SimulationStatisticsState {
     readonly valid: boolean
     readonly breakInfinity: boolean
     readonly durationSeconds: number
-    readonly reward: bigint
+    readonly reward: bigint | number
     readonly dreamCause: string | null
   }
   /** Newest-first bounded history used for completed-run efficiency guidance. */

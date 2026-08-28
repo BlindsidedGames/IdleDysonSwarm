@@ -11,17 +11,17 @@
 .store-surface__content {
   display: grid;
   align-content: start;
-  inline-size: min(100%, 82rem);
+  inline-size: min(100%, var(--ui-content-max));
   block-size: 100%;
   min-block-size: 0;
   box-sizing: border-box;
-  gap: 0.7rem;
+  gap: var(--ui-section-gap);
   padding-block:
-    calc(0.75rem + var(--safe-area-top))
-    0.75rem;
+    calc(var(--ui-page-gutter) + var(--safe-area-top))
+    var(--ui-page-gutter);
   padding-inline:
-    max(0.75rem, var(--safe-area-left))
-    max(0.75rem, var(--safe-area-right));
+    max(var(--ui-page-gutter), var(--safe-area-left))
+    max(var(--ui-page-gutter), var(--safe-area-right));
   margin-inline: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -44,8 +44,8 @@
 .store-restore,
 .store-surface__feedback,
 .store-surface__loading {
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.35rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-panel-radius);
   background: var(--theme-panel);
   box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 25%);
 }
@@ -53,7 +53,7 @@
 .store-surface__summary,
 .store-gallery-panel,
 .store-restore {
-  padding: 0.75rem;
+  padding: var(--ui-panel-inset-roomy);
 }
 
 .store-product-section {
@@ -168,6 +168,20 @@
   color: var(--theme-accent);
 }
 
+.store-surface__purchase-action--effect-updating:disabled {
+  background: var(--theme-accent);
+  color: var(--theme-page);
+  cursor: wait;
+  opacity: 1;
+}
+
+.store-surface__purchase-action--effect-disabled.store-surface__purchase-action--effect-updating:disabled {
+  border-color: var(--theme-accent);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--theme-accent);
+  color: var(--theme-accent);
+}
+
 .store-surface__purchase-action--effect-disabled:not(:disabled):hover {
   background: var(--theme-accent);
   color: var(--theme-page);
@@ -190,5 +204,16 @@
   .store-gallery-panel,
   .store-restore {
     grid-template-columns: 1fr;
+  }
+
+  .store-product-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.55rem;
+    padding: 0.6rem;
+  }
+
+  .store-surface__purchase-action {
+    inline-size: 100%;
+    justify-self: stretch;
   }
 }

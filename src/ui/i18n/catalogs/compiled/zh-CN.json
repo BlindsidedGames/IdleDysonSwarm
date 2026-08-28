@@ -327,6 +327,52 @@
       "value": "数量"
     }
   ],
+  "debug.amount-continuous-maximum": [
+    {
+      "type": 0,
+      "value": "连续资源不能超过 "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": "。"
+    }
+  ],
+  "debug.amount-discrete-maximum": [
+    {
+      "type": 0,
+      "value": "整数资源不能超过 "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": "。连续资源仍可接受此数值。"
+    }
+  ],
+  "debug.amount-discrete-whole": [
+    {
+      "type": 0,
+      "value": "整数资源必须使用整数。连续资源仍可接受此数值。"
+    }
+  ],
+  "debug.amount-help": [
+    {
+      "type": 0,
+      "value": "支持标准后缀，包括 100 Qi、100xqi 和 100 x qi 等形式。"
+    }
+  ],
+  "debug.amount-invalid": [
+    {
+      "type": 0,
+      "value": "请使用数字、科学计数法或游戏标准后缀输入非负数。"
+    }
+  ],
   "debug.apply-preset": [
     {
       "type": 0,
@@ -417,6 +463,18 @@
       "value": "秘密进度已重置。"
     }
   ],
+  "debug.set-double-cap": [
+    {
+      "type": 0,
+      "value": "双精度上限"
+    }
+  ],
+  "debug.set-whole-cap": [
+    {
+      "type": 0,
+      "value": "整数上限"
+    }
+  ],
   "debug.strange-matter": [
     {
       "type": 0,
@@ -498,7 +556,7 @@
       "children": [
         {
           "type": 0,
-          "value": "科研"
+          "value": "科学家"
         }
       ]
     },
@@ -1715,6 +1773,12 @@
     {
       "type": 0,
       "value": "生产进度"
+    }
+  ],
+  "dyson.facilities.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "自动"
     }
   ],
   "dyson.facilities.purchase.cost": [
@@ -3017,6 +3081,12 @@
       "value": "当前没有可用的无限升级。"
     }
   ],
+  "infinity.shop.hide-maxed": [
+    {
+      "type": 0,
+      "value": "隐藏已满级升级"
+    }
+  ],
   "infinity.shop.maximum-reached": [
     {
       "type": 0,
@@ -3102,13 +3172,13 @@
   "infinity.shop.purchased": [
     {
       "type": 0,
-      "value": "已购买"
+      "value": "已满级"
     }
   ],
   "infinity.shop.purchased-count": [
     {
       "type": 0,
-      "value": "已购买："
+      "value": "已拥有："
     },
     {
       "type": 1,
@@ -3757,6 +3827,12 @@
       "value": "量子操作未完成，请重试。"
     }
   ],
+  "quantum.hide-maxed": [
+    {
+      "type": 0,
+      "value": "隐藏满级升级"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -3815,6 +3891,22 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "quantum.maxed": [
+    {
+      "type": 0,
+      "value": "已满级"
+    }
+  ],
+  "quantum.maxed-upgrade": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：已满级"
     }
   ],
   "quantum.mega.all": [
@@ -3942,7 +4034,7 @@
   "quantum.purchase.quantity": [
     {
       "type": 0,
-      "value": "购买 +"
+      "value": "+"
     },
     {
       "type": 1,
@@ -3953,18 +4045,6 @@
     {
       "type": 0,
       "value": "购买设置"
-    }
-  ],
-  "quantum.purchase.short": [
-    {
-      "type": 0,
-      "value": "购买"
-    }
-  ],
-  "quantum.purchased": [
-    {
-      "type": 0,
-      "value": "已购买"
     }
   ],
   "quantum.region": [
@@ -4327,6 +4407,22 @@
       "value": "未定义"
     }
   ],
+  "reality.automatic-gathering": [
+    {
+      "type": 0,
+      "value": "正在自动收集影响力"
+    }
+  ],
+  "reality.automatic-influence-rate": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 影响力/秒"
+    }
+  ],
   "reality.avocato.description": [
     {
       "type": 0,
@@ -4397,6 +4493,12 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "reality.influence-generation": [
+    {
+      "type": 0,
+      "value": "影响力产量"
     }
   ],
   "reality.region": [
@@ -6615,6 +6717,12 @@
       "value": " 奇异物质"
     }
   ],
+  "simulations.action.black-hole-capped": [
+    {
+      "type": 0,
+      "value": "黑洞，已达上限"
+    }
+  ],
   "simulations.action.black-hole-label": [
     {
       "type": 0,
@@ -6639,6 +6747,12 @@
     {
       "type": 0,
       "value": "增幅"
+    }
+  ],
+  "simulations.action.capped-label": [
+    {
+      "type": 0,
+      "value": "已达上限"
     }
   ],
   "simulations.action.close": [
@@ -6819,6 +6933,12 @@
       "value": "当前速率"
     }
   ],
+  "simulations.details.effect": [
+    {
+      "type": 0,
+      "value": "效果"
+    }
+  ],
   "simulations.details.inactive-multiplier": [
     {
       "type": 0,
@@ -6945,6 +7065,48 @@
     {
       "type": 0,
       "value": "速度倍率"
+    }
+  ],
+  "simulations.details.status": [
+    {
+      "type": 0,
+      "value": "状态"
+    }
+  ],
+  "simulations.education.advanced-physics.effect": [
+    {
+      "type": 0,
+      "value": "解锁聚变发电机。"
+    }
+  ],
+  "simulations.education.engineering.effect": [
+    {
+      "type": 0,
+      "value": "使城市能够生产工厂。"
+    }
+  ],
+  "simulations.education.mathematics.effect": [
+    {
+      "type": 0,
+      "value": "太阳能板发电量翻倍，并解锁轨道炮路线。"
+    }
+  ],
+  "simulations.education.shipping.effect": [
+    {
+      "type": 0,
+      "value": "工厂产量翻倍。"
+    }
+  ],
+  "simulations.education.world-peace.effect": [
+    {
+      "type": 0,
+      "value": "机器人生产火箭的速度翻倍。"
+    }
+  ],
+  "simulations.education.world-trade.effect": [
+    {
+      "type": 0,
+      "value": "工厂产量再次翻倍。"
     }
   ],
   "simulations.empty": [
@@ -7341,6 +7503,12 @@
       "value": "轨道炮吞吐量"
     }
   ],
+  "simulations.progress.next-volley": [
+    {
+      "type": 0,
+      "value": "下一轮齐射"
+    }
+  ],
   "simulations.progress.percent": [
     {
       "type": 1,
@@ -7477,6 +7645,12 @@
       "value": "模拟"
     }
   ],
+  "simulations.show-formulas-inline": [
+    {
+      "type": 0,
+      "value": "在卡片中显示公式"
+    }
+  ],
   "simulations.summary.influence": [
     {
       "type": 0,
@@ -7605,6 +7779,12 @@
     {
       "type": 0,
       "value": "当前"
+    }
+  ],
+  "skills.double-click-to-assign": [
+    {
+      "type": 0,
+      "value": "双击分配技能"
     }
   ],
   "skills.effect": [
@@ -9801,6 +9981,40 @@
       "value": "玫红色"
     }
   ],
+  "skills.preset-distribution": [
+    {
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "% 工人"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "% 科学家"
+        }
+      ]
+    }
+  ],
   "skills.preset-name": [
     {
       "type": 0,
@@ -9837,42 +10051,6 @@
       },
       "offset": 0,
       "pluralType": "cardinal"
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "workerValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "workers"
-        },
-        {
-          "type": 0,
-          "value": "% 工人"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "scientistValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "scientists"
-        },
-        {
-          "type": 0,
-          "value": "% 科学家"
-        }
-      ]
     }
   ],
   "skills.preset-transfer-failed": [
@@ -10079,6 +10257,16 @@
     {
       "type": 0,
       "value": "超新星会压制完整的手动购买层：牛油果、50/100 两个里程碑、生产规模化以及所有蜂群倍率。"
+    }
+  ],
+  "skills.switch-preset": [
+    {
+      "type": 0,
+      "value": "切换到"
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.tree": [
@@ -11678,6 +11866,12 @@
       "value": "背景故事"
     }
   ],
+  "wiki.category.offline-time": [
+    {
+      "type": 0,
+      "value": "离线时间"
+    }
+  ],
   "wiki.category.other": [
     {
       "type": 0,
@@ -12295,21 +12489,7 @@
   "wiki.other.offline": [
     {
       "type": 0,
-      "value": "离开游戏的时间会转化为"
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "离线时间"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "货币，可在离线时间界面消耗。离开至少 "
+      "value": "离开游戏至少 "
     },
     {
       "type": 8,
@@ -12323,7 +12503,153 @@
     },
     {
       "type": 0,
-      "value": "后，返回时会显示摘要。"
+      "value": "后，这段时间会存入"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "离线时间"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "储备，而不是自动重放。初始容量为"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "一天"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。储备存满后，可消耗它来将容量翻倍。"
+    }
+  ],
+  "wiki.other.offline-accuracy": [
+    {
+      "type": 0,
+      "value": "重放期间会运行生产、自动化和永久升级，每次更新最多执行一次自动化决策。较大的时间步长可能错过较短更新能够抓住的机会，且不会提供补偿。处理离线时间时，"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "手动操作"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "会有意保持冻结。"
+    }
+  ],
+  "wiki.other.offline-accuracy-title": [
+    {
+      "type": 0,
+      "value": "重放期间运行的内容"
+    }
+  ],
+  "wiki.other.offline-processing": [
+    {
+      "type": 0,
+      "value": "处理过程通过与主动游玩相同的更新系统推进游戏。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "加速"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "会减少剩余更新次数并保留完整的所选时长，以精度换取更快的结果。取消会安全丢弃未完成的模拟，并且不会消耗所选离线时间。"
+    }
+  ],
+  "wiki.other.offline-processing-title": [
+    {
+      "type": 0,
+      "value": "处理、加速与取消"
+    }
+  ],
+  "wiki.other.offline-results": [
+    {
+      "type": 0,
+      "value": "完成后会显示模拟时长、剩余储备、最终精度和实际更新次数，同时显示相关的无限、模拟和现实收益。只有未发生无限时才显示设施和机器人收益，因为重置和重建会让简单的前后总数比较产生误导。"
+    }
+  ],
+  "wiki.other.offline-results-title": [
+    {
+      "type": 0,
+      "value": "完成结果"
+    }
+  ],
+  "wiki.other.offline-spending": [
+    {
+      "type": 0,
+      "value": "选择要消耗的储备时间，然后选择"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "快速"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "平衡"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "或"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "精确"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。这些预设会逐步使用更多游戏更新。精确模式能更贴近短期自动化，快速模式则更早完成。"
+    }
+  ],
+  "wiki.other.offline-spending-title": [
+    {
+      "type": 0,
+      "value": "选择时间与精度"
     }
   ],
   "wiki.other.offline-title": [

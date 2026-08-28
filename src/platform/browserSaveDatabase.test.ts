@@ -5,6 +5,7 @@ import {
   PRODUCTION_BROWSER_SAVE_PATHS,
 } from '../browser/productionBrowserComposition'
 import { PreparedSave } from '../save/prepare'
+import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
 import { PortableSaveRepository } from '../save/repository'
 import { serializeWebSave } from '../save/serialization'
 import {
@@ -147,7 +148,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     expect(
       (await reconstructedRepository.loadCurrent())?.copyValidatedState(),
     ).toMatchObject({
-      saveVersion: 12,
+      saveVersion: CURRENT_SAVE_SCHEMA,
       marker: 'persisted-across-reconstruction',
     })
   })
@@ -215,7 +216,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     expect(
       (await reconstructed.loadCurrent())?.copyValidatedState(),
     ).toMatchObject({
-      saveVersion: 12,
+      saveVersion: CURRENT_SAVE_SCHEMA,
       marker: 'last-verified-primary',
     })
   })
@@ -622,7 +623,7 @@ function repositoryFor(
   return new PortableSaveRepository(
     storageFor(database, fence, nowUtcMilliseconds),
     repositoryPaths,
-    () => ({ saveVersion: 12 }),
+    () => ({ saveVersion: CURRENT_SAVE_SCHEMA }),
   )
 }
 

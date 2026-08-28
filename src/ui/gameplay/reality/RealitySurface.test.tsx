@@ -59,7 +59,7 @@ const derived = {
 
 const gatherPreview = {
   eligible: true,
-  amount: 128n,
+  amount: 128,
   code: 'success',
 } as const satisfies FrontendGameplayPreviews['reality']['gatherInfluence']
 
@@ -67,28 +67,28 @@ const upgrades = [
   {
     upgradeId: 'translation1',
     eligible: true,
-    cost: 8n,
+    cost: 8,
     code: 'purchasable',
     definitionGap: null,
   },
   {
     upgradeId: 'translation2',
     eligible: false,
-    cost: 16n,
+    cost: 16,
     code: 'prerequisites_not_met',
     definitionGap: null,
   },
   {
     upgradeId: 'speed1',
     eligible: false,
-    cost: 2048n,
+    cost: 2048,
     code: 'insufficient_strange_matter',
     definitionGap: null,
   },
   {
     upgradeId: 'doubleTimeOwned',
     eligible: true,
-    cost: 5n,
+    cost: 5,
     code: 'purchasable',
     definitionGap: null,
   },
@@ -96,22 +96,31 @@ const upgrades = [
 
 test('uses the shared compact mobile upgrade hierarchy', () => {
   expect(baseRealityStyles).toMatch(
-    /\.reality-surface__content\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);[^}]*padding-block:\s*var\(--game-card-content-inset\);/,
+    /\.reality-surface__content\s*\{[^}]*align-content:\s*start;[^}]*gap:\s*var\(--ui-card-gap\);[^}]*padding-block:\s*var\(--ui-route-inset\);/,
+  )
+  expect(baseRealityStyles).toMatch(
+    /\.reality-worker-panel\s*\{[^}]*border:\s*var\(--ui-panel-border-width\) solid var\(--reality-accent\);/,
+  )
+  expect(baseRealityStyles).toMatch(
+    /\.reality-upgrade-card\s*\{[^}]*border:[^}]*var\(--reality-upgrade-action\)/,
   )
   expect(baseRealityStyles).toMatch(
     /\.reality-upgrade-category ol,[\s\S]*gap:\s*var\(--game-card-grid-gap\);/,
   )
-  expect(realityStyles).toMatch(
-    /@media \(max-width: 30rem\)[\s\S]*\.reality-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.82rem \* var\(--game-text-scale\)\);/,
+  expect(baseRealityStyles).toMatch(
+    /\.reality-upgrade-category > \.ui-collapsible-section__heading,[\s\S]*border:\s*var\(--ui-panel-border-width\) solid var\(--reality-upgrade-action\);/,
   )
   expect(baseRealityStyles).toMatch(
-    /\.reality-upgrade-category > \.ui-collapsible-section__heading,[\s\S]*border-inline-start:\s*0\.22rem solid var\(--reality-upgrade-header\);/,
+    /\.reality-upgrade-category,[\s\S]*\.reality-upgrade-subcategory\s*\{[^}]*margin-inline:\s*0;/,
   )
   expect(baseRealityStyles).toMatch(
-    /\.reality-upgrade-category,[\s\S]*\.reality-upgrade-subcategory\s*\{[^}]*margin-inline:\s*0\.18rem;/,
+    /\.reality-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*font-size:\s*var\(--ui-text-section-title\);/,
   )
   expect(baseRealityStyles).toMatch(
-    /\.reality-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*font-size:\s*calc\(1\.03rem \* var\(--game-text-scale\)\);/,
+    /\.reality-upgrades\s*\{[^}]*--ui-collapsible-section-collapsed-rotation:\s*90deg;/,
+  )
+  expect(baseRealityStyles).not.toMatch(
+    /\.ui-collapsible-section__chevron\s*\{[^}]*(?:border|background):/,
   )
   expect(baseRealityStyles).toMatch(
     /\.reality-upgrade-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 6rem;[\s\S]*\.reality-upgrade-card h4\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
@@ -130,7 +139,7 @@ const simulationUpgrades = [
   {
     upgradeId: 'counterMeteor',
     eligible: true,
-    cost: 3n,
+    cost: 3,
     code: 'purchasable',
     definitionGap: null,
   },
@@ -199,7 +208,7 @@ describe('RealitySurface', () => {
       }),
     ).not.toBeInTheDocument()
     expect(
-      screen.getByRole('progressbar', {
+      screen.queryByRole('progressbar', {
         name: 'Workers ready',
       }),
     ).toHaveAttribute(
@@ -343,14 +352,14 @@ describe('RealitySurface', () => {
       },
       gatherPreview: {
         eligible: false,
-        amount: 0n,
+        amount: 0,
         code: 'insufficient-workers',
       },
       resources: {
         universeDesignationCount: 3n,
         workersReady: 64n,
         workerGenerationProgress: 0.5,
-        influence: 42n,
+        influence: 42,
       },
     })
 
@@ -382,16 +391,18 @@ describe('RealitySurface', () => {
         name: 'Gather 128 Influence',
       }),
     ).not.toBeInTheDocument()
-    expect(screen.getByText('Consuming')).toBeInTheDocument()
     expect(
-      screen.getByRole('progressbar', {
+      screen.getByText('Automatically gathering Influence'),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Influence generation')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('progressbar', {
         name: 'Workers ready',
       }),
-    ).toHaveAttribute('aria-valuenow', '50')
-    const fill = screen.getByRole('progressbar', {
-      name: 'Workers ready',
-    }).querySelector<HTMLElement>('span')
-    expect(fill).toHaveStyle({ transform: 'scaleX(0.501953125)' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByLabelText('1.00 Influence per second'),
+    ).toBeInTheDocument()
     expect(realityStyles).toMatch(
       /\.reality-progress > span\s*\{[^}]*transform-origin:\s*left center;/,
     )
@@ -584,7 +595,7 @@ interface RenderOptions {
     readonly universeDesignationCount: bigint
     readonly workersReady: bigint
     readonly workerGenerationProgress: number
-    readonly influence: bigint
+    readonly influence: number
   }
   readonly derived?: FrontendGameplayDerivedFacts['reality']
   readonly gatherPreview?:
@@ -611,7 +622,7 @@ function renderSurface(options: RenderOptions = {}) {
             universeDesignationCount: 3n,
             workersReady: 128n,
             workerGenerationProgress: 0.25,
-            influence: 42n,
+            influence: 42,
           }
         }
         derived={options.derived ?? derived}
@@ -620,7 +631,7 @@ function renderSurface(options: RenderOptions = {}) {
         upgradeSections={realityUpgradeSections}
         simulationUpgrades={options.simulationUpgrades ?? simulationUpgrades}
         simulationUpgradeSections={simulationUpgradeSections}
-        strangeMatter={4096n}
+        strangeMatter={4096}
         gatherRouteAvailable={options.gatherRouteAvailable ?? true}
         purchaseRouteAvailable={
           options.purchaseRouteAvailable ?? true

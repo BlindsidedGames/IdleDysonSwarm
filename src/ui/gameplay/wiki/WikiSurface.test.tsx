@@ -33,6 +33,7 @@ describe('WikiSurface', () => {
     expect(within(navigation).getByRole('button', { name: /Research/ })).toBeVisible()
     expect(within(navigation).getByRole('button', { name: /Skill Tree/ })).toBeVisible()
     expect(within(navigation).getByRole('button', { name: /Infinity/ })).toBeVisible()
+    expect(within(navigation).getByRole('button', { name: /Offline Time/ })).toBeVisible()
     expect(within(navigation).getByRole('button', { name: /Other/ })).toBeVisible()
     expect(within(navigation).getByRole('button', { name: /Patch Notes/ })).toBeVisible()
     expect(within(navigation).getByRole('button', { name: /Lore/ })).toBeVisible()
@@ -53,10 +54,11 @@ describe('WikiSurface', () => {
       'research',
       'skills',
       'infinity',
-      'other',
       'lore',
       'reality',
       'quantum',
+      'offline-time',
+      'other',
       'patch-notes',
     ])
   })
@@ -141,11 +143,34 @@ describe('WikiSurface', () => {
       name: 'research points',
     })).not.toBeInTheDocument()
 
-    await user.click(topicButton(/Other/))
-    expect(screen.getByText('Offline Time')).toHaveClass('wiki-surface__value')
+    await user.click(topicButton(/Offline Time/))
+    expect(screen.getAllByText('Offline Time').find(
+      (element) => element.classList.contains('wiki-surface__value'),
+    )).toHaveClass('wiki-surface__value')
     expect(within(screen.getByRole('article')).queryByRole('button', {
       name: 'Offline Time',
     })).not.toBeInTheDocument()
+  })
+
+  test('documents the complete workflow in the dedicated Offline Time topic', async () => {
+    const user = userEvent.setup()
+    renderWiki(progression())
+
+    await user.click(topicButton(/Offline Time/))
+    const article = screen.getByRole('article')
+    for (const heading of [
+      'Offline Time',
+      'Choosing time and accuracy',
+      'Processing, Speed Up and cancellation',
+      'What runs during replay',
+      'Completion results',
+    ]) {
+      expect(within(article).getByRole('heading', { name: heading, level: 3 }))
+        .toBeVisible()
+    }
+    expect(within(article).getByText(/does not spend the selected Offline Time/))
+      .toBeVisible()
+    expect(within(article).getByText(/Tinker/)).toHaveClass('wiki-surface__value')
   })
 
   test('offers the same topic navigation through the compact selector', async () => {

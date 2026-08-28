@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest'
 import { hydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
-import { DISCRETE_MAXIMUM } from './numeric'
+import { bitDecrement, DISCRETE_MAXIMUM } from './numeric'
 import {
   findRealityUpgradeCanonicalGaps,
   purchaseRealityUpgrade,
@@ -22,25 +22,25 @@ const fixture = readFileSync(
 )
 
 const EXPECTED_COSTS = {
-  translation1: 8n,
-  translation2: 16n,
-  translation3: 32n,
-  translation4: 64n,
-  translation5: 128n,
-  translation6: 256n,
-  translation7: 512n,
-  translation8: 1_024n,
-  speed1: 2_048n,
-  speed2: 4_096n,
-  speed3: 8_192n,
-  speed4: 16_384n,
-  speed5: 32_768n,
-  speed6: 65_536n,
-  speed7: 131_072n,
-  speed8: 262_144n,
-  doubleTimeOwned: 5n,
-  workerAutoConvert: 10n,
-} as const satisfies Readonly<Record<RealityUpgradeId, bigint>>
+  translation1: 8,
+  translation2: 16,
+  translation3: 32,
+  translation4: 64,
+  translation5: 128,
+  translation6: 256,
+  translation7: 512,
+  translation8: 1_024,
+  speed1: 2_048,
+  speed2: 4_096,
+  speed3: 8_192,
+  speed4: 16_384,
+  speed5: 32_768,
+  speed6: 65_536,
+  speed7: 131_072,
+  speed8: 262_144,
+  doubleTimeOwned: 5,
+  workerAutoConvert: 10,
+} as const satisfies Readonly<Record<RealityUpgradeId, number>>
 
 function state(): CanonicalGameStateV1 {
   const initial =
@@ -66,7 +66,7 @@ function state(): CanonicalGameStateV1 {
     },
     dream: {
       ...initial.dream,
-      strangeMatter: 1_000_000n,
+      strangeMatter: 1_000_000,
       upgrades: Object.fromEntries(
         Object.keys(initial.dream.upgrades).map((key) => [
           key,
@@ -222,20 +222,20 @@ describe('Reality upgrade purchases', () => {
       definitionGap: null,
     })
     expect(result.candidate).not.toBe(initial)
-    expect(result.candidate.dream.strangeMatter).toBe(999_992n)
+    expect(result.candidate.dream.strangeMatter).toBe(999_992)
     expect(result.candidate.dream.upgrades.translation1).toBe(true)
     expect(result.candidate.skills.points).toBe(6n)
     expect(result.candidate.dyson).toBe(initial.dyson)
     expect(result.candidate.reality).toBe(initial.reality)
     expect(result.candidate.timeline).toBe(initial.timeline)
-    expect(initial.dream.strangeMatter).toBe(1_000_000n)
+    expect(initial.dream.strangeMatter).toBe(1_000_000)
     expect(initial.dream.upgrades.translation1).toBe(false)
     expect(initial.skills.points).toBe(5n)
   })
 
   test('spends Strange Matter above the legacy Int64 ceiling', () => {
     const initial = state()
-    const aboveLegacyMaximum = DISCRETE_MAXIMUM + 42n
+    const aboveLegacyMaximum = Number(DISCRETE_MAXIMUM) + 42
     const result = purchaseRealityUpgrade({
       ...initial,
       dream: {
@@ -246,7 +246,19 @@ describe('Reality upgrade purchases', () => {
 
     expect(result.code).toBe('purchased')
     expect(result.candidate.dream.strangeMatter)
-      .toBe(aboveLegacyMaximum - 8n)
+      .toBe(bitDecrement(aboveLegacyMaximum))
+  })
+
+  test('charges one representable Strange Matter step at the double cap', () => {
+    const initial = state()
+    const result = purchaseRealityUpgrade({
+      ...initial,
+      dream: { ...initial.dream, strangeMatter: Number.MAX_VALUE },
+    }, 'translation1')
+
+    expect(result.code).toBe('purchased')
+    expect(result.candidate.dream.strangeMatter)
+      .toBe(bitDecrement(Number.MAX_VALUE))
   })
 
   test('enforces each chain while keeping Speed I independent', () => {
@@ -264,13 +276,13 @@ describe('Reality upgrade purchases', () => {
     )
     expect(translation2.code).toBe('purchased')
     expect(translation2.candidate.dream.strangeMatter).toBe(
-      999_984n,
+      999_984,
     )
     expect(translation2.candidate.skills.points).toBe(6n)
 
     const speed1 = purchaseRealityUpgrade(initial, 'speed1')
     expect(speed1.code).toBe('purchased')
-    expect(speed1.candidate.dream.strangeMatter).toBe(997_952n)
+    expect(speed1.candidate.dream.strangeMatter).toBe(997_952)
     expect(speed1.candidate.dream.upgrades.speed1).toBe(true)
     expect(speed1.candidate.skills.points).toBe(6n)
   })
@@ -348,7 +360,7 @@ describe('Reality upgrade purchases', () => {
     )
 
     expect(result.code).toBe('purchased')
-    expect(result.candidate.dream.strangeMatter).toBe(999_995n)
+    expect(result.candidate.dream.strangeMatter).toBe(999_995)
     expect(result.candidate.timeline.doubleTime).toEqual({
       ...initial.timeline.doubleTime,
       unlocked: true,
@@ -372,7 +384,7 @@ describe('Reality upgrade purchases', () => {
     )
 
     expect(result.code).toBe('purchased')
-    expect(result.candidate.dream.strangeMatter).toBe(999_990n)
+    expect(result.candidate.dream.strangeMatter).toBe(999_990)
     expect(result.candidate.reality.autoGather).toBe(true)
     expect(result.candidate.timeline).toBe(initial.timeline)
     expect(initial.reality.autoGather).toBe(false)
@@ -392,7 +404,7 @@ describe('Reality upgrade purchases', () => {
           ...initial,
           dream: {
             ...initial.dream,
-            strangeMatter: 7n,
+            strangeMatter: 7,
           },
         },
         'translation1',
@@ -429,7 +441,7 @@ describe('Reality upgrade purchases', () => {
       'translation1',
       definitionsWith('translation1', {
         ...source,
-        cost: 0n,
+        cost: 0,
       }),
     )
     expect(zeroCost.code).toBe('invalid_definition')
@@ -468,7 +480,7 @@ describe('Reality upgrade purchases', () => {
       ...initial,
       dream: {
         ...initial.dream,
-        strangeMatter: -1n,
+        strangeMatter: -1,
       },
     }
     const result = purchaseRealityUpgrade(

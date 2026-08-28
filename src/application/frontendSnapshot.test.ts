@@ -12,7 +12,10 @@ import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker
 import {
   advanceRealityWorkers,
 } from '../simulation/realityWorkers'
-import { DISCRETE_MAXIMUM } from '../simulation/numeric'
+import {
+  bitDecrement,
+  DISCRETE_MAXIMUM,
+} from '../simulation/numeric'
 import {
   CANONICAL_PLAYER_COMMAND_KINDS,
   type CanonicalPlayerCommand,
@@ -462,9 +465,72 @@ describe('frontend gameplay snapshot', () => {
       showTinker: true,
       visibleBasicFacilityIds: [],
       visibleMegaStructureIds: [],
-      showNextTierTeaser: false,
+      showNextBasicFacilityTeaser: false,
+      showNextMegaStructureTeaser: false,
     })
     expect(snapshot.visibility.skills.routeUnlocked).toBe(false)
+    expect(snapshot.visibility.research.routeUnlocked).toBe(false)
+  })
+
+  test('reveals facility Research with facilities and keeps it permanent after Infinity', () => {
+    const source = firstRunFixtureState()
+    const facilityResearchIds = new Set([
+      'research.assembly_line_upgrade',
+      'research.ai_manager_upgrade',
+      'research.server_upgrade',
+      'research.data_center_upgrade',
+      'research.planet_upgrade',
+      'research.matrioshka_brains_upgrade',
+      'research.birch_planets_upgrade',
+      'research.galactic_brains_upgrade',
+    ])
+    const visibleFacilityResearch = (state: CanonicalGameStateV1) => {
+      const snapshot = selectFrontendGameplaySnapshot(
+        state,
+        frontendContext(),
+      )
+      return snapshot.previews.research.cards
+        .filter((card) => card.visible && facilityResearchIds.has(card.researchId))
+        .map((card) => card.researchId)
+    }
+
+    expect(visibleFacilityResearch(source)).toEqual([])
+
+    const assemblyAvailable = dysonProgressionState(source, {}, 10)
+    expect(
+      selectFrontendGameplaySnapshot(
+        assemblyAvailable,
+        frontendContext(),
+      ).visibility.research.routeUnlocked,
+    ).toBe(true)
+    expect(visibleFacilityResearch(assemblyAvailable)).toEqual([
+      'research.assembly_line_upgrade',
+    ])
+
+    const firstMegaAvailable: CanonicalGameStateV1 = {
+      ...dysonProgressionState(source, { planets: [1, 0] }),
+      quantum: {
+        ...source.quantum,
+        unlocks: {
+          ...source.quantum.unlocks,
+          matrioshkaBrains: true,
+        },
+      },
+    }
+    expect(visibleFacilityResearch(firstMegaAvailable)).toContain(
+      'research.matrioshka_brains_upgrade',
+    )
+
+    const afterInfinity: CanonicalGameStateV1 = {
+      ...source,
+      meta: { ...source.meta, firstInfinityComplete: true },
+    }
+    expect(
+      selectFrontendGameplaySnapshot(
+        afterInfinity,
+        frontendContext(),
+      ).visibility.research.routeUnlocked,
+    ).toBe(true)
   })
 
   test('publishes Skills route unlock from canonical progression', () => {
@@ -534,7 +600,34 @@ describe('frontend gameplay snapshot', () => {
         pointsEarned: 1n,
       },
     }
+    const threshold = selectFrontendGameplaySnapshot(
+      source,
+      frontendContext(),
+    ).derived.infinity.resetThresholdBots
+    const firstInfinityReady: CanonicalGameStateV1 = {
+      ...source,
+      dyson: { ...source.dyson, bots: threshold },
+    }
+    const justBeforeFirstInfinity: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: bitDecrement(threshold),
+      },
+    }
 
+    expect(
+      selectFrontendGameplaySnapshot(
+        firstInfinityReady,
+        frontendContext(),
+      ).visibility.infinity.routeUnlocked,
+    ).toBe(true)
+    expect(
+      selectFrontendGameplaySnapshot(
+        justBeforeFirstInfinity,
+        frontendContext(),
+      ).visibility.infinity.routeUnlocked,
+    ).toBe(false)
     expect(
       selectFrontendGameplaySnapshot(
         source,
@@ -1158,7 +1251,8 @@ describe('frontend gameplay snapshot', () => {
         'ai_managers',
       ],
       visibleMegaStructureIds: [],
-      showNextTierTeaser: false,
+      showNextBasicFacilityTeaser: true,
+      showNextMegaStructureTeaser: false,
     })
   })
 
@@ -1169,6 +1263,7 @@ describe('frontend gameplay snapshot', () => {
         name: 'ten total bots reveal Assembly',
         state: dysonProgressionState(source, {}, 10),
         expected: ['assembly_lines'],
+        teaser: true,
       },
       {
         name: 'automatic Assembly does not reveal AI Managers',
@@ -1176,6 +1271,7 @@ describe('frontend gameplay snapshot', () => {
           assembly_lines: [5, 0],
         }),
         expected: ['assembly_lines'],
+        teaser: true,
       },
       {
         name: 'owned AI Managers reveal themselves but automatic ownership does not reveal Servers',
@@ -1183,6 +1279,7 @@ describe('frontend gameplay snapshot', () => {
           ai_managers: [1, 0],
         }),
         expected: ['ai_managers'],
+        teaser: true,
       },
       {
         name: 'one manual AI Manager reveals Servers',
@@ -1190,6 +1287,7 @@ describe('frontend gameplay snapshot', () => {
           ai_managers: [0, 1],
         }),
         expected: ['ai_managers', 'servers'],
+        teaser: true,
       },
       {
         name: 'one total Server reveals Data Centers',
@@ -1197,6 +1295,7 @@ describe('frontend gameplay snapshot', () => {
           servers: [1, 0],
         }),
         expected: ['servers', 'data_centers'],
+        teaser: true,
       },
       {
         name: 'one total Data Center reveals Planets',
@@ -1204,6 +1303,7 @@ describe('frontend gameplay snapshot', () => {
           data_centers: [1, 0],
         }),
         expected: ['data_centers', 'planets'],
+        teaser: false,
       },
       {
         name: 'owned Planets remain visible',
@@ -1211,6 +1311,7 @@ describe('frontend gameplay snapshot', () => {
           planets: [1, 0],
         }),
         expected: ['planets'],
+        teaser: false,
       },
     ] as const
 
@@ -1223,7 +1324,28 @@ describe('frontend gameplay snapshot', () => {
         snapshot.visibility.dyson.visibleBasicFacilityIds,
         scenario.name,
       ).toEqual(scenario.expected)
+      expect(
+        snapshot.visibility.dyson.showNextBasicFacilityTeaser,
+        scenario.name,
+      ).toBe(scenario.teaser)
     }
+
+    const postInfinity = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        meta: { ...source.meta, firstInfinityComplete: true },
+      },
+      frontendContext(),
+    )
+    expect(postInfinity.visibility.dyson.visibleBasicFacilityIds).toEqual([
+      'assembly_lines',
+      'ai_managers',
+      'servers',
+      'data_centers',
+      'planets',
+    ])
+    expect(postInfinity.visibility.dyson.showNextBasicFacilityTeaser)
+      .toBe(false)
   })
 
   test('matches Tinker restoration and pre/post-Quantum teaser semantics', () => {
@@ -1269,7 +1391,8 @@ describe('frontend gameplay snapshot', () => {
         'planets',
       ],
       visibleMegaStructureIds: [],
-      showNextTierTeaser: false,
+      showNextBasicFacilityTeaser: false,
+      showNextMegaStructureTeaser: false,
     })
 
     const postQuantum: CanonicalGameStateV1 = {
@@ -1283,18 +1406,11 @@ describe('frontend gameplay snapshot', () => {
       selectFrontendGameplaySnapshot(
         postQuantum,
         frontendContext(),
-      ).visibility.dyson.showNextTierTeaser,
+      ).visibility.dyson.showNextMegaStructureTeaser,
     ).toBe(false)
 
     const firstMegaVisible: CanonicalGameStateV1 = {
       ...postQuantum,
-      dyson: {
-        ...postQuantum.dyson,
-        facilities: {
-          ...postQuantum.dyson.facilities,
-          planets: [1, 0],
-        },
-      },
       quantum: {
         ...postQuantum.quantum,
         unlocks: {
@@ -1310,7 +1426,8 @@ describe('frontend gameplay snapshot', () => {
       ).visibility.dyson,
     ).toMatchObject({
       visibleMegaStructureIds: ['matrioshka_brains'],
-      showNextTierTeaser: true,
+      showNextBasicFacilityTeaser: false,
+      showNextMegaStructureTeaser: false,
     })
 
     const galacticEligible: CanonicalGameStateV1 = {
@@ -1340,7 +1457,8 @@ describe('frontend gameplay snapshot', () => {
         'birch_planets',
         'galactic_brains',
       ],
-      showNextTierTeaser: false,
+      showNextBasicFacilityTeaser: false,
+      showNextMegaStructureTeaser: false,
     })
 
     const galacticOwned: CanonicalGameStateV1 = {
@@ -1360,7 +1478,8 @@ describe('frontend gameplay snapshot', () => {
       ).visibility.dyson,
     ).toMatchObject({
       visibleMegaStructureIds: ['galactic_brains'],
-      showNextTierTeaser: false,
+      showNextBasicFacilityTeaser: false,
+      showNextMegaStructureTeaser: false,
     })
 
     const manualLabour: CanonicalGameStateV1 = {

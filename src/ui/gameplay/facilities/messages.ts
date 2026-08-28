@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const basicFacilityMessages = defineMessages({
+  automaticPurchase: {
+    id: 'dyson.facilities.purchase.automatic',
+    defaultMessage: 'Auto',
+    description: 'Compact facility purchase label while automation is enabled.',
+  },
   heading: {
     id: 'dyson.facilities.heading',
     defaultMessage: 'Facilities',

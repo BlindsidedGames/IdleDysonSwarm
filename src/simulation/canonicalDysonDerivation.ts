@@ -169,6 +169,10 @@ export interface CanonicalBasicFacilityFacts {
 
 export interface CanonicalMegaStructureProductionFact
   extends MegaStructureProductionFact {
+  readonly productionProgress: {
+    readonly visible: boolean
+    readonly normalized: number
+  }
   readonly details: {
     readonly modifierContributions: readonly CanonicalFacilityContributionRow[]
   }
@@ -669,6 +673,23 @@ export function deriveBasicDysonState(
         facilityId,
         Object.freeze({
           ...mega.facts[facilityId],
+          productionProgress: Object.freeze((() => {
+            const fact = mega.facts[facilityId]
+            const runningOutput =
+              state.dyson.facilities[fact.outputFacilityId][0]
+            const visible = fact.perSecond > 0
+            const fractionalProgress =
+              runningOutput - Math.floor(runningOutput)
+            return {
+              visible,
+              normalized: visible
+                ? fact.perSecond >=
+                  presentationTuning.solidProgressThresholdPerSecond
+                  ? 1
+                  : Math.max(0, Math.min(1, fractionalProgress))
+                : 0,
+            }
+          })()),
           details: Object.freeze({
             modifierContributions: deriveAttributedEffectRows(
               1,

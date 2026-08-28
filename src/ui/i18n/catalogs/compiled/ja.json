@@ -327,6 +327,52 @@
       "value": "量"
     }
   ],
+  "debug.amount-continuous-maximum": [
+    {
+      "type": 0,
+      "value": "連続リソースは"
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": "を超えられません。"
+    }
+  ],
+  "debug.amount-discrete-maximum": [
+    {
+      "type": 0,
+      "value": "整数リソースは"
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": "を超えられません。連続リソースではこの値を使用できます。"
+    }
+  ],
+  "debug.amount-discrete-whole": [
+    {
+      "type": 0,
+      "value": "整数リソースには整数が必要です。連続リソースではこの値を使用できます。"
+    }
+  ],
+  "debug.amount-help": [
+    {
+      "type": 0,
+      "value": "100 Qi、100xqi、100 x qiのような標準サフィックスを使用できます。"
+    }
+  ],
+  "debug.amount-invalid": [
+    {
+      "type": 0,
+      "value": "数字、科学表記、またはゲームの標準サフィックスを使って0以上の数を入力してください。"
+    }
+  ],
   "debug.apply-preset": [
     {
       "type": 0,
@@ -417,6 +463,18 @@
       "value": "シークレットの進捗をリセットしました。"
     }
   ],
+  "debug.set-double-cap": [
+    {
+      "type": 0,
+      "value": "double 上限"
+    }
+  ],
+  "debug.set-whole-cap": [
+    {
+      "type": 0,
+      "value": "整数上限"
+    }
+  ],
   "debug.strange-matter": [
     {
       "type": 0,
@@ -498,7 +556,7 @@
       "children": [
         {
           "type": 0,
-          "value": "科学"
+          "value": "サイエンティスト"
         }
       ]
     },
@@ -1715,6 +1773,12 @@
     {
       "type": 0,
       "value": "生産進捗"
+    }
+  ],
+  "dyson.facilities.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "自動"
     }
   ],
   "dyson.facilities.purchase.cost": [
@@ -3017,6 +3081,12 @@
       "value": "現在利用可能なインフィニティアップグレードはありません。"
     }
   ],
+  "infinity.shop.hide-maxed": [
+    {
+      "type": 0,
+      "value": "最大レベルのアップグレードを隠す"
+    }
+  ],
   "infinity.shop.maximum-reached": [
     {
       "type": 0,
@@ -3102,13 +3172,13 @@
   "infinity.shop.purchased": [
     {
       "type": 0,
-      "value": "購入済み"
+      "value": "最大レベル"
     }
   ],
   "infinity.shop.purchased-count": [
     {
       "type": 0,
-      "value": "購入数："
+      "value": "所有数："
     },
     {
       "type": 1,
@@ -3757,6 +3827,12 @@
       "value": "量子操作を完了できませんでした。もう一度お試しください。"
     }
   ],
+  "quantum.hide-maxed": [
+    {
+      "type": 0,
+      "value": "最大のアップグレードを隠す"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -3815,6 +3891,22 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "quantum.maxed": [
+    {
+      "type": 0,
+      "value": "最大"
+    }
+  ],
+  "quantum.maxed-upgrade": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：最大"
     }
   ],
   "quantum.mega.all": [
@@ -3942,7 +4034,7 @@
   "quantum.purchase.quantity": [
     {
       "type": 0,
-      "value": "購入：+"
+      "value": "+"
     },
     {
       "type": 1,
@@ -3953,18 +4045,6 @@
     {
       "type": 0,
       "value": "購入設定"
-    }
-  ],
-  "quantum.purchase.short": [
-    {
-      "type": 0,
-      "value": "購入"
-    }
-  ],
-  "quantum.purchased": [
-    {
-      "type": 0,
-      "value": "購入済み"
     }
   ],
   "quantum.region": [
@@ -4327,6 +4407,22 @@
       "value": "未定義"
     }
   ],
+  "reality.automatic-gathering": [
+    {
+      "type": 0,
+      "value": "影響力を自動収集中"
+    }
+  ],
+  "reality.automatic-influence-rate": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "影響力/秒"
+    }
+  ],
   "reality.avocato.description": [
     {
       "type": 0,
@@ -4397,6 +4493,12 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "reality.influence-generation": [
+    {
+      "type": 0,
+      "value": "影響力生成"
     }
   ],
   "reality.region": [
@@ -6615,6 +6717,12 @@
       "value": " ストレンジマター"
     }
   ],
+  "simulations.action.black-hole-capped": [
+    {
+      "type": 0,
+      "value": "ブラックホール、上限到達"
+    }
+  ],
   "simulations.action.black-hole-label": [
     {
       "type": 0,
@@ -6639,6 +6747,12 @@
     {
       "type": 0,
       "value": "ブースト"
+    }
+  ],
+  "simulations.action.capped-label": [
+    {
+      "type": 0,
+      "value": "上限"
     }
   ],
   "simulations.action.close": [
@@ -6819,6 +6933,12 @@
       "value": "現在の速度"
     }
   ],
+  "simulations.details.effect": [
+    {
+      "type": 0,
+      "value": "効果"
+    }
+  ],
   "simulations.details.inactive-multiplier": [
     {
       "type": 0,
@@ -6945,6 +7065,48 @@
     {
       "type": 0,
       "value": "速度倍率"
+    }
+  ],
+  "simulations.details.status": [
+    {
+      "type": 0,
+      "value": "状態"
+    }
+  ],
+  "simulations.education.advanced-physics.effect": [
+    {
+      "type": 0,
+      "value": "核融合発電機を解放します。"
+    }
+  ],
+  "simulations.education.engineering.effect": [
+    {
+      "type": 0,
+      "value": "都市が工場を生産できるようになります。"
+    }
+  ],
+  "simulations.education.mathematics.effect": [
+    {
+      "type": 0,
+      "value": "ソーラーパネルの発電量を2倍にし、レールガンへの道を解放します。"
+    }
+  ],
+  "simulations.education.shipping.effect": [
+    {
+      "type": 0,
+      "value": "工場の生産量を2倍にします。"
+    }
+  ],
+  "simulations.education.world-peace.effect": [
+    {
+      "type": 0,
+      "value": "ボットのロケット生産量を2倍にします。"
+    }
+  ],
+  "simulations.education.world-trade.effect": [
+    {
+      "type": 0,
+      "value": "工場の生産量をさらに2倍にします。"
     }
   ],
   "simulations.empty": [
@@ -7341,6 +7503,12 @@
       "value": "レールガン吞吐量"
     }
   ],
+  "simulations.progress.next-volley": [
+    {
+      "type": 0,
+      "value": "次の斉射"
+    }
+  ],
   "simulations.progress.percent": [
     {
       "type": 1,
@@ -7477,6 +7645,12 @@
       "value": "シミュレーション"
     }
   ],
+  "simulations.show-formulas-inline": [
+    {
+      "type": 0,
+      "value": "カード内に数式を表示"
+    }
+  ],
   "simulations.summary.influence": [
     {
       "type": 0,
@@ -7605,6 +7779,12 @@
     {
       "type": 0,
       "value": "現在"
+    }
+  ],
+  "skills.double-click-to-assign": [
+    {
+      "type": 0,
+      "value": "ダブルクリックでスキルを割り当て"
     }
   ],
   "skills.effect": [
@@ -9801,6 +9981,40 @@
       "value": "ローズ"
     }
   ],
+  "skills.preset-distribution": [
+    {
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "%ワーカー"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "・"
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "%サイエンティスト"
+        }
+      ]
+    }
+  ],
   "skills.preset-name": [
     {
       "type": 0,
@@ -9837,42 +10051,6 @@
       },
       "offset": 0,
       "pluralType": "cardinal"
-    },
-    {
-      "type": 0,
-      "value": "・"
-    },
-    {
-      "type": 8,
-      "value": "workerValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "workers"
-        },
-        {
-          "type": 0,
-          "value": "%ワーカー"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "・"
-    },
-    {
-      "type": 8,
-      "value": "scientistValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "scientists"
-        },
-        {
-          "type": 0,
-          "value": "%サイエンティスト"
-        }
-      ]
     }
   ],
   "skills.preset-transfer-failed": [
@@ -10079,6 +10257,16 @@
     {
       "type": 0,
       "value": "超新星は、アボカド、50/100の節目、生産スケーリング、全スウォーム倍率を含む手動購入レイヤー全体を抑制します。"
+    }
+  ],
+  "skills.switch-preset": [
+    {
+      "type": 0,
+      "value": "切り替え先："
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.tree": [
@@ -11678,6 +11866,12 @@
       "value": "伝承"
     }
   ],
+  "wiki.category.offline-time": [
+    {
+      "type": 0,
+      "value": "オフライン時間"
+    }
+  ],
   "wiki.category.other": [
     {
       "type": 0,
@@ -12295,21 +12489,7 @@
   "wiki.other.offline": [
     {
       "type": 0,
-      "value": "ゲームを離れた時間は"
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "オフライン時間"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "という通貨になります。オフライン時間画面で使用できます。"
+      "value": "ゲームを離れてから"
     },
     {
       "type": 8,
@@ -12323,7 +12503,153 @@
     },
     {
       "type": 0,
-      "value": "以上離れていると、復帰時に概要が表示されます。"
+      "value": "以上経つと、その時間は自動再生されず"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "オフライン時間"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "の貯蓄に追加されます。容量は"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1日"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "から始まり、満杯になった貯蓄を消費すると容量を2倍にできます。"
+    }
+  ],
+  "wiki.other.offline-accuracy": [
+    {
+      "type": 0,
+      "value": "再生中は生産、自動化、恒久アップグレードが動作し、自動化の判断は1回の更新につき最大1回です。大きな時間刻みでは短い更新なら捉えられる機会を逃すことがあり、その補償はありません。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "ティンカー"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "はオフライン時間の処理中、意図的に停止します。"
+    }
+  ],
+  "wiki.other.offline-accuracy-title": [
+    {
+      "type": 0,
+      "value": "再生中に動作するもの"
+    }
+  ],
+  "wiki.other.offline-processing": [
+    {
+      "type": 0,
+      "value": "処理では通常プレイと同じ更新システムでゲームを進めます。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "高速化"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "は選択した全時間を維持したまま残りの更新回数を減らし、精度と引き換えに早く完了します。キャンセルすると未完了のシミュレーションを安全に破棄し、選択したオフライン時間は消費しません。"
+    }
+  ],
+  "wiki.other.offline-processing-title": [
+    {
+      "type": 0,
+      "value": "処理、高速化、キャンセル"
+    }
+  ],
+  "wiki.other.offline-results": [
+    {
+      "type": 0,
+      "value": "完了すると、シミュレーション時間、残りの貯蓄、最終精度、実際の更新回数が表示されます。関連するインフィニティ、シミュレーション、リアリティの獲得量も表示されます。施設とボットの獲得量はインフィニティが発生しなかった場合のみ表示されます。リセットと再構築があると単純な前後比較が誤解を招くためです。"
+    }
+  ],
+  "wiki.other.offline-results-title": [
+    {
+      "type": 0,
+      "value": "完了結果"
+    }
+  ],
+  "wiki.other.offline-spending": [
+    {
+      "type": 0,
+      "value": "貯めた時間から使用量を選び、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "高速"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "バランス"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "高精度"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "を選択します。後のプリセットほど多くのゲーム更新を使用します。高精度は短期的な自動化をより正確に追い、高速は早く完了します。"
+    }
+  ],
+  "wiki.other.offline-spending-title": [
+    {
+      "type": 0,
+      "value": "時間と精度の選択"
     }
   ],
   "wiki.other.offline-title": [

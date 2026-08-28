@@ -218,6 +218,7 @@ export type CanonicalGameCommand =
   | {
       readonly kind: 'dream.purchase-foundational'
       readonly purchase: DreamPurchaseCommand
+      readonly quantity?: number
     }
   | {
       readonly kind: 'dream.purchase-space-age'
@@ -1747,6 +1748,7 @@ export function routeCanonicalGameCommand(
       const result = purchaseDreamFoundationalInformation(
         state,
         command.purchase,
+        command.quantity,
       )
       if (!result.purchased) {
         return rejectDomain(

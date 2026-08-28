@@ -27,10 +27,10 @@
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-block: 0.7rem 1rem;
+  padding-block: var(--ui-route-inset);
   padding-inline:
-    max(0.7rem, var(--safe-area-left))
-    max(0.7rem, var(--safe-area-right));
+    max(var(--ui-route-inset), var(--safe-area-left))
+    max(var(--ui-route-inset), var(--safe-area-right));
   scrollbar-width: none;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
@@ -41,19 +41,22 @@
 }
 
 .story-surface__chapters {
-  inline-size: min(100%, 70rem);
+  inline-size: min(100%, var(--ui-reading-max));
   margin-inline: auto;
 }
 
 .story-surface__summary {
-  padding: 0.8rem max(0.75rem, var(--safe-area-left));
-  border-block-end: 1px solid var(--story-border);
+  padding-block: var(--ui-panel-inset-roomy);
+  padding-inline:
+    max(var(--ui-page-gutter), var(--safe-area-left))
+    max(var(--ui-page-gutter), var(--safe-area-right));
+  border-block-end: var(--ui-shell-divider-width) solid var(--story-border);
   background: var(--story-panel);
   box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 28%);
 }
 
 .story-surface__summary > div {
-  inline-size: min(100%, 70rem);
+  inline-size: min(100%, var(--ui-reading-max));
   margin-inline: auto;
 }
 
@@ -66,7 +69,7 @@
 }
 
 .story-surface__title {
-  font-size: calc(1.28rem * var(--game-text-scale));
+  font-size: var(--ui-text-page-title);
   font-weight: var(--font-weight-bold);
   line-height: 1.15;
 }
@@ -74,13 +77,13 @@
 .story-surface__summary p {
   margin-block-start: 0.28rem;
   color: #eee7f2;
-  font-size: calc(0.82rem * var(--game-text-scale));
+  font-size: var(--ui-text-body);
   line-height: 1.35;
 }
 
 .story-surface__chapters {
   display: grid;
-  gap: 0.62rem;
+  gap: var(--ui-section-stack-gap);
 }
 
 .story-chapter {
@@ -91,8 +94,8 @@
 }
 
 .story-chapter > .ui-collapsible-section__heading {
-  border: 1px solid var(--story-border);
-  border-radius: 0.35rem;
+  border: var(--ui-panel-border-width) solid var(--story-border);
+  border-radius: var(--ui-panel-radius);
   background: var(--story-panel-heading);
 }
 
@@ -102,21 +105,21 @@
 }
 
 .story-chapter > .ui-collapsible-section__content {
-  padding-block-start: 0.5rem;
+  padding-block-start: var(--ui-control-row-gap);
   background: transparent;
 }
 
 .story-chapter__passages {
   display: grid;
-  gap: 0.5rem;
+  gap: var(--ui-card-gap);
   padding: 0;
   list-style: none;
 }
 
 .story-chapter__passages li {
-  padding: 0.65rem;
-  border: 1px solid rgb(15 10 20 / 55%);
-  border-radius: 0.28rem;
+  padding: var(--ui-panel-inset);
+  border: var(--ui-panel-border-width) solid rgb(15 10 20 / 55%);
+  border-radius: var(--ui-panel-radius);
   background: var(--story-panel-raised);
 }
 

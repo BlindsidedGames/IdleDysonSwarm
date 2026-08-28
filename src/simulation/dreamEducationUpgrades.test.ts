@@ -6,6 +6,7 @@ import type {
   DreamEducationId,
 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
+import { bitDecrement } from './numeric'
 import {
   advanceDreamEducation,
   findSimulationUpgradeCanonicalGaps,
@@ -28,11 +29,11 @@ function state(): CanonicalGameStateV1 {
     ...initial,
     reality: {
       ...initial.reality,
-      influence: 10_000n,
+      influence: 10_000,
     },
     dream: {
       ...initial.dream,
-      strangeMatter: 1_000_000n,
+      strangeMatter: 1_000_000,
       resources: {
         ...initial.dream.resources,
         hunters: 0n,
@@ -100,7 +101,7 @@ describe('exported Simulation upgrade definitions', () => {
 
     const poor = {
       ...initial,
-      dream: { ...initial.dream, strangeMatter: 3n },
+      dream: { ...initial.dream, strangeMatter: 3 },
     }
     const result = purchaseSimulationUpgrade(poor, 'counterMeteor')
     expect(result.code).toBe('insufficient_strange_matter')
@@ -114,11 +115,27 @@ describe('exported Simulation upgrade definitions', () => {
 
     expect(result.code).toBe('purchased')
     expect(result.candidate).not.toBe(initial)
-    expect(result.candidate.dream.strangeMatter).toBe(999_996n)
+    expect(result.candidate.dream.strangeMatter).toBe(999_996)
     expect(result.candidate.dream.upgrades.counterMeteor).toBe(true)
     expect(result.candidate.dream.disasterStage).toBe(2n)
-    expect(initial.dream.strangeMatter).toBe(1_000_000n)
+    expect(initial.dream.strangeMatter).toBe(1_000_000)
     expect(initial.dream.upgrades.counterMeteor).toBe(false)
+  })
+
+  test('charges representable resource steps at the double cap', () => {
+    const initial = state()
+    const capped = {
+      ...initial,
+      reality: { ...initial.reality, influence: Number.MAX_VALUE },
+      dream: { ...initial.dream, strangeMatter: Number.MAX_VALUE },
+    }
+
+    expect(
+      purchaseSimulationUpgrade(capped, 'counterMeteor').candidate.dream
+        .strangeMatter,
+    ).toBe(bitDecrement(Number.MAX_VALUE))
+    expect(startDreamEducation(capped, 'engineering').candidate.reality.influence)
+      .toBe(bitDecrement(Number.MAX_VALUE))
   })
 
   test('applies authored education times and completion flags', () => {
@@ -193,9 +210,9 @@ describe('Dream education transitions', () => {
     const result = startDreamEducation(initial, 'engineering')
 
     expect(result.code).toBe('started')
-    expect(result.candidate.reality.influence).toBe(9_975n)
+    expect(result.candidate.reality.influence).toBe(9_975)
     expect(result.candidate.dream.education.engineering.active).toBe(true)
-    expect(initial.reality.influence).toBe(10_000n)
+    expect(initial.reality.influence).toBe(10_000)
     expect(initial.dream.education.engineering.active).toBe(false)
   })
 
@@ -217,7 +234,7 @@ describe('Dream education transitions', () => {
 
     const poor = {
       ...initial,
-      reality: { ...initial.reality, influence: 24n },
+      reality: { ...initial.reality, influence: 24 },
     }
     expect(startDreamEducation(poor, 'engineering').code).toBe(
       'insufficient_influence',

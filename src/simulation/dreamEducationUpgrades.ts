@@ -6,6 +6,7 @@ import {
   type DreamUpgradeFlag,
 } from '../game-state/types'
 import { addDiscrete, DISCRETE_MAXIMUM } from './numeric'
+import { tryDebitContinuous } from './transactions'
 
 const SIMULATION_UPGRADE_KIND =
   'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
@@ -36,7 +37,7 @@ export interface SimulationUpgradeEffect {
 
 export interface SimulationUpgradeDefinition {
   readonly key: DreamUpgradeFlag
-  readonly cost: bigint
+  readonly cost: number
   readonly prerequisites: readonly SimulationUpgradePrerequisite[]
   readonly purchaseEffects: readonly SimulationUpgradeEffect[]
 }
@@ -47,6 +48,7 @@ export type SimulationUpgradePurchaseCode =
   | 'already_owned'
   | 'prerequisites_not_met'
   | 'insufficient_strange_matter'
+  | 'invalid_cost'
   | 'missing_effects'
   | 'unsupported_effect'
 
@@ -108,8 +110,15 @@ export function purchaseSimulationUpgrade(
   ) {
     return rejectedPurchase(state, 'prerequisites_not_met')
   }
-  if (state.dream.strangeMatter < definition.cost) {
+  const debit = tryDebitContinuous(
+    state.dream.strangeMatter,
+    definition.cost,
+  )
+  if (debit.status === 'insufficient-funds') {
     return rejectedPurchase(state, 'insufficient_strange_matter')
+  }
+  if (debit.status !== 'success') {
+    return rejectedPurchase(state, 'invalid_cost')
   }
   if (definition.purchaseEffects.length === 0) {
     return rejectedPurchase(state, 'missing_effects')
@@ -131,7 +140,7 @@ export function purchaseSimulationUpgrade(
     ...candidate,
     dream: {
       ...candidate.dream,
-      strangeMatter: candidate.dream.strangeMatter - definition.cost,
+      strangeMatter: debit.balance,
     },
   }
   if (key === 'mathematics3') {
@@ -158,12 +167,16 @@ export function startDreamEducation(
   if (education.active) {
     return rejectedEducationStart(state, 'already_active')
   }
-  const cost = exactNonNegativeBigInt(education.cost)
-  if (cost === null) {
+  const cost = education.cost
+  if (!Number.isFinite(cost) || !Number.isInteger(cost) || cost < 0) {
     return rejectedEducationStart(state, 'invalid_cost')
   }
-  if (state.reality.influence < cost) {
+  const debit = tryDebitContinuous(state.reality.influence, cost)
+  if (debit.status === 'insufficient-funds') {
     return rejectedEducationStart(state, 'insufficient_influence')
+  }
+  if (debit.status !== 'success') {
+    return rejectedEducationStart(state, 'invalid_cost')
   }
 
   return {
@@ -174,7 +187,7 @@ export function startDreamEducation(
       ...state,
       reality: {
         ...state.reality,
-        influence: state.reality.influence - cost,
+        influence: debit.balance,
       },
       dream: {
         ...state.dream,
@@ -345,7 +358,7 @@ function loadSimulationUpgradeDefinitions(): ReadonlyMap<
       : []
     definitions.set(key, {
       key,
-      cost: BigInt(cost),
+      cost,
       prerequisites,
       purchaseEffects,
     })

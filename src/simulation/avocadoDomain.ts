@@ -1,6 +1,9 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   addContinuous,
+  clampContinuous,
+  CONTINUOUS_MAXIMUM,
+  floorToDiscrete,
   multiplyContinuous,
 } from './numeric'
 
@@ -22,7 +25,7 @@ export interface AvocadoFeedResult {
   readonly changed: boolean
   readonly code: AvocadoFeedCode
   readonly source: AvocadoFeedSource
-  readonly amount: bigint
+  readonly amount: number
   readonly state: CanonicalGameStateV1
 }
 
@@ -67,8 +70,8 @@ export function deriveAvocadoMultiplier(
 }
 
 /**
- * Mirrors each AvocadoFeeder button: drain the complete currently spendable
- * source balance into its accumulator as one immutable transaction.
+ * Mirrors each AvocadoFeeder button: move as much of the currently spendable
+ * source balance as the destination can represent in one immutable transaction.
  */
 export function feedAllToAvocado(
   state: Readonly<CanonicalGameStateV1>,
@@ -77,35 +80,51 @@ export function feedAllToAvocado(
   if (!state.avocado.unlocked) {
     return rejected(state, source, 'locked')
   }
-  const amount = feedableAmount(state, source)
-  if (amount <= 0n) return rejected(state, source, 'empty')
   const current = avocadoBalance(state, source)
-  const next = addContinuous(current, Number(amount))
-  if (
-    next <= current ||
-    !Number.isFinite(Number(amount))
-  ) {
-    return rejected(state, source, 'output-maxed')
-  }
 
   let candidate: CanonicalGameStateV1
+  let amount: number
   if (source === 'infinity-points') {
+    const available = state.infinity.points - state.infinity.spentPoints
+    if (available <= 0n) return rejected(state, source, 'empty')
+    const capacity = floorToDiscrete(CONTINUOUS_MAXIMUM - current)
+    const accepted = available < capacity ? available : capacity
+    if (accepted <= 0n) return rejected(state, source, 'output-maxed')
+    amount = Number(accepted)
+    const next = addContinuous(current, amount)
+    const credited = next - current
+    if (next <= current || credited > amount) {
+      return rejected(state, source, 'output-maxed')
+    }
     candidate = {
       ...state,
-      infinity: { ...state.infinity, points: state.infinity.spentPoints },
+      infinity: {
+        ...state.infinity,
+        points: state.infinity.points - accepted,
+      },
       avocado: { ...state.avocado, infinityPoints: next },
     }
   } else if (source === 'influence') {
+    amount = state.reality.influence
+    if (amount <= 0) return rejected(state, source, 'empty')
+    const transfer = continuousTransfer(current, amount)
+    if (transfer === null) return rejected(state, source, 'output-maxed')
+    amount = transfer.credited
     candidate = {
       ...state,
-      reality: { ...state.reality, influence: 0n },
-      avocado: { ...state.avocado, influence: next },
+      reality: { ...state.reality, influence: transfer.remaining },
+      avocado: { ...state.avocado, influence: transfer.next },
     }
   } else {
+    amount = state.dream.strangeMatter
+    if (amount <= 0) return rejected(state, source, 'empty')
+    const transfer = continuousTransfer(current, amount)
+    if (transfer === null) return rejected(state, source, 'output-maxed')
+    amount = transfer.credited
     candidate = {
       ...state,
-      dream: { ...state.dream, strangeMatter: 0n },
-      avocado: { ...state.avocado, strangeMatter: next },
+      dream: { ...state.dream, strangeMatter: transfer.remaining },
+      avocado: { ...state.avocado, strangeMatter: transfer.next },
     }
   }
   return {
@@ -118,17 +137,25 @@ export function feedAllToAvocado(
   }
 }
 
-function feedableAmount(
-  state: Readonly<CanonicalGameStateV1>,
-  source: AvocadoFeedSource,
-): bigint {
-  if (source === 'infinity-points') {
-    return state.infinity.points > state.infinity.spentPoints
-      ? state.infinity.points - state.infinity.spentPoints
-      : 0n
-  }
-  if (source === 'influence') return state.reality.influence
-  return state.dream.strangeMatter
+function continuousTransfer(
+  current: number,
+  available: number,
+): {
+  readonly credited: number
+  readonly next: number
+  readonly remaining: number
+} | null {
+  const requested = Math.min(
+    available,
+    Math.max(0, CONTINUOUS_MAXIMUM - current),
+  )
+  if (requested <= 0) return null
+  const next = addContinuous(current, requested)
+  const credited = next - current
+  if (credited <= 0 || credited > requested) return null
+  const remaining = clampContinuous(available - credited)
+  if (remaining === available) return null
+  return { credited, next, remaining }
 }
 
 function avocadoBalance(
@@ -166,7 +193,7 @@ function rejected(
     changed: false,
     code,
     source,
-    amount: 0n,
+    amount: 0,
     state,
   }
 }

@@ -166,13 +166,13 @@ describe('browser runtime foundation composition', () => {
     await expect(
       development?.apply({
         kind: 'add-strange-matter',
-        amount: 500_000n,
+        amount: 500_000,
       }),
     ).resolves.toMatchObject({ applied: true })
     await expect(
       development?.apply({
         kind: 'add-influence',
-        amount: 1_000n,
+        amount: 1_000,
       }),
     ).resolves.toMatchObject({ applied: true })
     await expect(

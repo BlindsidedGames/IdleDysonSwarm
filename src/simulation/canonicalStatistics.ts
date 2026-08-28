@@ -6,10 +6,8 @@ import type {
 import {
   addContinuous,
   addDiscrete,
-  addDiscreteAtMost,
   clampContinuous,
   floorToDiscrete,
-  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 import type { SimulationPresentationSummary } from './types'
 
@@ -142,20 +140,19 @@ function addTotals(
       totals.blackHoleDreamResets,
       summary.blackHoleDreamResets,
     ),
-    strangeMatter: addDiscreteAtMost(
+    strangeMatter: addContinuous(
       totals.strangeMatter,
       summary.strangeMatter,
-      SIMULATION_RESOURCE_MAXIMUM,
     ),
     realityWorkers: addDiscrete(
       totals.realityWorkers,
       summary.realityWorkers,
     ),
-    automaticInfluence: addDiscrete(
+    automaticInfluence: addContinuous(
       totals.automaticInfluence,
       summary.automaticInfluence,
     ),
-    manualInfluence: addDiscrete(
+    manualInfluence: addContinuous(
       totals.manualInfluence,
       summary.manualInfluence,
     ),
@@ -250,10 +247,9 @@ function recordWindow(
       eventBucket.dreamResetCount,
       combinedDreamResets(summary),
     ),
-    strangeMatter: addDiscreteAtMost(
+    strangeMatter: addContinuous(
       eventBucket.strangeMatter,
       summary.strangeMatter,
-      SIMULATION_RESOURCE_MAXIMUM,
     ),
     realityWorkers: addDiscrete(
       eventBucket.realityWorkers,
@@ -355,10 +351,10 @@ function emptyTotals(): SimulationTotalsState {
     aiDreamResets: 0n,
     globalWarmingDreamResets: 0n,
     blackHoleDreamResets: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: 0n,
+    automaticInfluence: 0,
+    manualInfluence: 0,
     realityCapacityStallSeconds: 0,
     simulatedSeconds: 0,
   }
@@ -371,7 +367,7 @@ function emptyWindow(sequence: bigint): StatisticsWindowState {
     infinityCount: 0n,
     infinityPoints: 0n,
     dreamResetCount: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
   }
 }

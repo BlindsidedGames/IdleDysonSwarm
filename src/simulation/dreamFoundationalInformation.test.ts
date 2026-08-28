@@ -7,8 +7,13 @@ import {
   type DreamEducationState,
 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
-import { CONTINUOUS_MAXIMUM, DISCRETE_MAXIMUM } from './numeric'
 import {
+  bitDecrement,
+  CONTINUOUS_MAXIMUM,
+  DISCRETE_MAXIMUM,
+} from './numeric'
+import {
+  DREAM_PRODUCER_COST_EXPONENT,
   DREAM_FOUNDATIONAL_INFORMATION_DURATIONS,
   purchaseDreamFoundationalInformation,
   runDreamFoundationalInformationConversions,
@@ -43,7 +48,7 @@ function neutralState(): CanonicalGameStateV1 {
     ...source,
     reality: {
       ...source.reality,
-      influence: 20_000n,
+      influence: 20_000,
     },
     dream: {
       ...source.dream,
@@ -294,18 +299,20 @@ describe('Dream foundational and information eras', () => {
     )
     expect(hunters).toMatchObject({
       purchased: true,
-      cost: 100n,
+      cost: 100,
       status: 'success',
     })
-    expect(hunters.state.reality.influence).toBe(19_900n)
+    expect(hunters.state.reality.influence).toBe(19_900)
     expect(hunters.state.dream.resources.hunters).toBe(1_000n)
+    expect(hunters.state.dream.purchaseBatches?.hunters).toBe(1n)
 
     const gatherers = purchaseDreamFoundationalInformation(
       hunters.state,
       'gatherers',
     )
-    expect(gatherers.state.reality.influence).toBe(19_800n)
+    expect(gatherers.state.reality.influence).toBe(19_800)
     expect(gatherers.state.dream.resources.gatherers).toBe(50n)
+    expect(gatherers.state.dream.purchaseBatches?.gatherers).toBe(1n)
 
     const maxed = withDream(state, {
       resources: {
@@ -316,6 +323,46 @@ describe('Dream foundational and information eras', () => {
     expect(
       purchaseDreamFoundationalInformation(maxed, 'hunters').status,
     ).toBe('output-maxed')
+  })
+
+  test('prices producer batches geometrically without scaling from units per batch', () => {
+    const source = withDream(neutralState(), {
+      huntersPerPurchase: 1_000n,
+    })
+    const firstTen = purchaseDreamFoundationalInformation(
+      source,
+      'hunters',
+      10,
+    )
+
+    expect(firstTen.purchased).toBe(true)
+    expect(firstTen.state.dream.resources.hunters).toBe(10_000n)
+    expect(firstTen.state.dream.purchaseBatches?.hunters).toBe(10n)
+    expect(firstTen.cost).toBeCloseTo(
+      100 * ((DREAM_PRODUCER_COST_EXPONENT ** 10 - 1) /
+        (DREAM_PRODUCER_COST_EXPONENT - 1)),
+    )
+
+    const next = purchaseDreamFoundationalInformation(
+      firstTen.state,
+      'hunters',
+    )
+    expect(next.cost).toBeCloseTo(
+      100 * DREAM_PRODUCER_COST_EXPONENT ** 10,
+    )
+    expect(next.state.dream.resources.hunters).toBe(11_000n)
+  })
+
+  test('charges one representable Influence step at the double cap', () => {
+    const source = neutralState()
+    const result = purchaseDreamFoundationalInformation({
+      ...source,
+      reality: { ...source.reality, influence: Number.MAX_VALUE },
+    }, 'hunters')
+
+    expect(result.purchased).toBe(true)
+    expect(result.state.reality.influence)
+      .toBe(bitDecrement(Number.MAX_VALUE))
   })
 
   test('enforces boost visibility gates, exact influence costs, and authored-free community boosts', () => {
@@ -338,8 +385,8 @@ describe('Dream foundational and information eras', () => {
       'community-boost',
     )
     expect(community.purchased).toBe(true)
-    expect(community.cost).toBe(0n)
-    expect(community.state.reality.influence).toBe(20_000n)
+    expect(community.cost).toBe(0)
+    expect(community.state.reality.influence).toBe(20_000)
     expect(community.state.dream.parameters.communityBoostClock)
       .toBe(1_200)
     expect(
@@ -367,8 +414,8 @@ describe('Dream foundational and information eras', () => {
       'factories-boost',
     )
     expect(factories.purchased).toBe(true)
-    expect(factories.cost).toBe(5_000n)
-    expect(factories.state.reality.influence).toBe(15_000n)
+    expect(factories.cost).toBe(5_000)
+    expect(factories.state.reality.influence).toBe(15_000)
     expect(factories.state.dream.parameters.factoriesBoostClock)
       .toBe(1_200)
   })

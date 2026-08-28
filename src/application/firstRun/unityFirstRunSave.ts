@@ -1,4 +1,5 @@
 import { prepareIdb1Save, type PreparedSave } from '../../save/prepare'
+import { CURRENT_SAVE_SCHEMA } from '../../save/migrate'
 import firstRunSaveText from './generated/first-run-schema-12.idb1.txt?raw'
 import provenance from './generated/first-run-schema-12.provenance.json'
 
@@ -59,9 +60,9 @@ export function createUnityFirstRunPreparedSave(
  */
 export function createDeterministicUnityFirstRunPreparedSave(): PreparedSave {
   const imported = prepareIdb1Save(firstRunSaveText)
-  if (imported.prepared.targetSchema !== provenance.saveSchema) {
+  if (imported.prepared.targetSchema !== CURRENT_SAVE_SCHEMA) {
     throw new Error(
-      `Unity first-run artifact schema ${imported.prepared.targetSchema} does not match provenance schema ${provenance.saveSchema}.`,
+      `Unity first-run artifact migrated to schema ${imported.prepared.targetSchema}, not supported schema ${CURRENT_SAVE_SCHEMA}.`,
     )
   }
   if (imported.prepared.sourceSchema !== provenance.saveSchema) {

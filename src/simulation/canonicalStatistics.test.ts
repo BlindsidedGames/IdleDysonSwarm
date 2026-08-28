@@ -6,6 +6,7 @@ import type {
 } from '../game-state/types'
 import { recordCanonicalStatisticsSegment } from './canonicalStatistics'
 import {
+  bitDecrement,
   CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
 } from './numeric'
@@ -28,10 +29,10 @@ function totals(
     aiDreamResets: 0n,
     globalWarmingDreamResets: 0n,
     blackHoleDreamResets: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: 0n,
+    automaticInfluence: 0,
+    manualInfluence: 0,
     realityCapacityStallSeconds: 0,
     simulatedSeconds: 0,
     ...overrides,
@@ -47,7 +48,7 @@ function window(
     infinityCount: 0n,
     infinityPoints: 0n,
     dreamResetCount: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
     ...overrides,
   }
@@ -152,10 +153,10 @@ describe('canonical combined statistics segment', () => {
       aiDreamResets: 17n,
       globalWarmingDreamResets: 19n,
       blackHoleDreamResets: 23n,
-      strangeMatter: 29n,
+      strangeMatter: 29,
       realityWorkers: 31n,
-      automaticInfluence: 37n,
-      manualInfluence: 41n,
+      automaticInfluence: 37,
+      manualInfluence: 41,
       realityCapacityStallSeconds: 0.5,
     })
 
@@ -187,7 +188,7 @@ describe('canonical combined statistics segment', () => {
         infinityCount: 3n,
         infinityPoints: 15n,
         dreamResetCount: 72n,
-        strangeMatter: 29n,
+        strangeMatter: 29,
         realityWorkers: 31n,
       }),
     )
@@ -197,7 +198,7 @@ describe('canonical combined statistics segment', () => {
         infinityCount: 3n,
         infinityPoints: 15n,
         dreamResetCount: 72n,
-        strangeMatter: 29n,
+        strangeMatter: 29,
         realityWorkers: 31n,
       }),
     )
@@ -246,14 +247,14 @@ describe('canonical combined statistics segment', () => {
         }),
       }),
       0,
-      summary({ manualInfluence: 128n }),
+      summary({ manualInfluence: 128 }),
     )
     const accumulatedEvent = recordCanonicalStatisticsSegment(
       zeroDuration,
       0,
       summary({
         meteorDreamResets: 1n,
-        strangeMatter: 4n,
+        strangeMatter: 4,
       }),
     )
     const completed = recordCanonicalStatisticsSegment(
@@ -261,7 +262,7 @@ describe('canonical combined statistics segment', () => {
       2,
       summary({
         realityWorkers: 8n,
-        automaticInfluence: 8n,
+        automaticInfluence: 8,
       }),
     )
     const replacement = recordCanonicalStatisticsSegment(
@@ -271,22 +272,22 @@ describe('canonical combined statistics segment', () => {
     )
 
     expect(zeroDuration.recentProcessedSegment).toEqual(
-      totals({ manualInfluence: 128n }),
+      totals({ manualInfluence: 128 }),
     )
     expect(accumulatedEvent.recentProcessedSegment).toEqual(
       totals({
-        manualInfluence: 128n,
+        manualInfluence: 128,
         meteorDreamResets: 1n,
-        strangeMatter: 4n,
+        strangeMatter: 4,
       }),
     )
     expect(completed.recentProcessedSegment).toEqual(
       totals({
-        manualInfluence: 128n,
+        manualInfluence: 128,
         meteorDreamResets: 1n,
-        strangeMatter: 4n,
+        strangeMatter: 4,
         realityWorkers: 8n,
-        automaticInfluence: 8n,
+        automaticInfluence: 8,
         simulatedSeconds: 2,
       }),
     )
@@ -320,6 +321,7 @@ describe('canonical combined statistics segment', () => {
 
   test('saturates totals and combined endpoint metrics', () => {
     const almostMaximum = DISCRETE_MAXIMUM - 1n
+    const almostContinuousMaximum = bitDecrement(CONTINUOUS_MAXIMUM)
     const maximumTotals = totals({
       ordinaryInfinityCount: almostMaximum,
       breakInfinityCount: almostMaximum,
@@ -331,10 +333,10 @@ describe('canonical combined statistics segment', () => {
       aiDreamResets: almostMaximum,
       globalWarmingDreamResets: almostMaximum,
       blackHoleDreamResets: almostMaximum,
-      strangeMatter: almostMaximum,
+      strangeMatter: almostContinuousMaximum,
       realityWorkers: almostMaximum,
-      automaticInfluence: almostMaximum,
-      manualInfluence: almostMaximum,
+      automaticInfluence: almostContinuousMaximum,
+      manualInfluence: almostContinuousMaximum,
       realityCapacityStallSeconds: CONTINUOUS_MAXIMUM,
       simulatedSeconds: CONTINUOUS_MAXIMUM,
     })
@@ -343,7 +345,7 @@ describe('canonical combined statistics segment', () => {
       infinityCount: almostMaximum,
       infinityPoints: almostMaximum,
       dreamResetCount: almostMaximum,
-      strangeMatter: almostMaximum,
+      strangeMatter: almostContinuousMaximum,
       realityWorkers: almostMaximum,
     })
     const maximumMinuteWindows = windows(60)
@@ -369,10 +371,10 @@ describe('canonical combined statistics segment', () => {
       aiDreamResets: 2n,
       globalWarmingDreamResets: 2n,
       blackHoleDreamResets: 2n,
-      strangeMatter: 2n,
+      strangeMatter: CONTINUOUS_MAXIMUM,
       realityWorkers: 2n,
-      automaticInfluence: 2n,
-      manualInfluence: 2n,
+      automaticInfluence: CONTINUOUS_MAXIMUM,
+      manualInfluence: CONTINUOUS_MAXIMUM,
       realityCapacityStallSeconds: CONTINUOUS_MAXIMUM,
     })
 
@@ -397,10 +399,10 @@ describe('canonical combined statistics segment', () => {
         aiDreamResets: DISCRETE_MAXIMUM,
         globalWarmingDreamResets: DISCRETE_MAXIMUM,
         blackHoleDreamResets: DISCRETE_MAXIMUM,
-        strangeMatter: DISCRETE_MAXIMUM + 1n,
+        strangeMatter: CONTINUOUS_MAXIMUM,
         realityWorkers: DISCRETE_MAXIMUM,
-        automaticInfluence: DISCRETE_MAXIMUM,
-        manualInfluence: DISCRETE_MAXIMUM,
+        automaticInfluence: CONTINUOUS_MAXIMUM,
+        manualInfluence: CONTINUOUS_MAXIMUM,
         realityCapacityStallSeconds: CONTINUOUS_MAXIMUM,
         simulatedSeconds: CONTINUOUS_MAXIMUM,
       }),
@@ -419,7 +421,7 @@ describe('canonical combined statistics segment', () => {
     ).toBe(DISCRETE_MAXIMUM)
     expect(
       result.minuteWindows[expectedIndex].strangeMatter,
-    ).toBe(DISCRETE_MAXIMUM + 1n)
+    ).toBe(CONTINUOUS_MAXIMUM)
     expect(
       result.minuteWindows[expectedIndex].realityWorkers,
     ).toBe(DISCRETE_MAXIMUM)

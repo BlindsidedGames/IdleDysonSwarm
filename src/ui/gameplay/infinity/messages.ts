@@ -252,7 +252,7 @@ export const infinityMessages = defineMessages({
   },
   purchased: {
     id: 'infinity.shop.purchased',
-    defaultMessage: 'Purchased',
+    defaultMessage: 'Maxed',
     description: 'Completed Infinity upgrade button label.',
   },
   maximumReached: {
@@ -262,9 +262,14 @@ export const infinityMessages = defineMessages({
   },
   purchasedCount: {
     id: 'infinity.shop.purchased-count',
-    defaultMessage: 'Purchased: {value}',
+    defaultMessage: 'Owned: {value}',
     description:
       'Unity count shown on repeatable Infinity upgrades after the first purchase.',
+  },
+  hideMaxed: {
+    id: 'infinity.shop.hide-maxed',
+    defaultMessage: 'Hide maxed upgrades',
+    description: 'Device-local control that hides completed Infinity upgrades.',
   },
   requires: {
     id: 'infinity.shop.requires',

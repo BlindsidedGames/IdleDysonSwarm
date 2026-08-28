@@ -403,6 +403,7 @@ function ScopeCard({
         <section
           key={group.title.id}
           data-statistics-group={group.visibility}
+          data-empty={!hasRecordedGroupActivity(totals, group.metrics) || undefined}
         >
           <h3>{intl.formatMessage(group.title)}</h3>
           {hasRecordedGroupActivity(totals, group.metrics) ? (

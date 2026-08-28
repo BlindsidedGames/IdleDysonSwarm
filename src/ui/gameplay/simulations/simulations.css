@@ -18,7 +18,7 @@
   display: grid;
   block-size: 100%;
   min-block-size: 0;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 5%, var(--simulation-era-glow), transparent 32rem),
@@ -48,23 +48,20 @@
 }
 
 .simulations-surface__summary {
-  z-index: 1;
-  display: flex;
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.75rem;
-  min-block-size: 2.85rem;
-  padding-block:
-    calc(0.6rem + var(--safe-area-top))
-    0.6rem;
-  padding-inline:
-    max(0.75rem, var(--safe-area-left))
-    max(0.75rem, var(--safe-area-right));
-  border-block-end: 2px solid var(--simulation-era-divider);
-  background: var(--simulation-era-summary);
+  gap: var(--ui-section-gap);
   font-family: var(--font-family-numeric);
   font-size: calc(0.95rem * var(--game-text-scale));
   font-variant-numeric: tabular-nums;
+}
+
+.simulations-surface__summary > strong {
+  min-inline-size: 0;
+  white-space: nowrap;
 }
 
 .simulations-surface__influence {
@@ -89,11 +86,11 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-block:
-    var(--game-card-content-inset)
-    max(var(--game-card-content-inset), var(--safe-area-bottom));
+    calc(var(--ui-route-inset) + var(--safe-area-top))
+    max(var(--ui-route-inset), var(--safe-area-bottom));
   padding-inline:
-    max(var(--game-card-content-inset), var(--safe-area-left))
-    max(var(--game-card-content-inset), var(--safe-area-right));
+    max(var(--ui-route-inset), var(--safe-area-left))
+    max(var(--ui-route-inset), var(--safe-area-right));
   scrollbar-width: none;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
@@ -105,18 +102,69 @@
   block-size: 0;
 }
 
+.simulations-surface__footer {
+  z-index: 2;
+  min-inline-size: 0;
+  border-block-start: 1px solid var(--simulation-era-divider);
+  background: var(--simulation-era-summary);
+}
+
+.simulations-surface__control-panel .ui-progress-controls-panel__summary {
+  padding-inline: 0.7rem 0.35rem;
+  text-align: start;
+}
+
+.simulations-surface__control-panel .ui-progress-controls-panel__body {
+  padding: 0.55rem 0.7rem;
+}
+
+.simulations-surface__settings {
+  display: grid;
+  gap: var(--ui-control-row-gap);
+}
+
+.simulations-surface__settings-title {
+  color: white;
+  font-size: var(--ui-text-label);
+  font-weight: var(--font-weight-semibold);
+}
+
+.simulations-surface__show-formulas {
+  display: flex;
+  min-block-size: var(--target-minimum);
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--simulation-era-divider);
+  border-radius: 0.2rem;
+  background: var(--simulation-era-summary);
+  color: white;
+  cursor: pointer;
+  font-size: var(--ui-text-control);
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.simulations-surface__show-formulas:has(input:checked) {
+  border-color: var(--simulation-space);
+  background: color-mix(
+    in srgb,
+    var(--simulation-era-summary) 72%,
+    var(--simulation-space)
+  );
+}
+
+.simulations-surface__show-formulas input {
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+}
+
 .simulations-purchase-quantity {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  inline-size: min(100%, 86rem);
+  inline-size: 100%;
   box-sizing: border-box;
   gap: 0.3rem;
-  margin-inline: auto;
-  margin-block-end: var(--game-card-grid-gap);
-  padding: 0.4rem;
-  border: 1px solid var(--simulations-time-border);
-  border-radius: 0.3rem;
-  background: var(--simulations-time-background);
 }
 
 .simulations-purchase-quantity button {
@@ -145,6 +193,9 @@
 }
 
 .simulation-category {
+  --simulation-category-accent: var(--simulation-foundational);
+  --simulation-category-surface: var(--simulation-foundational-header);
+  --ui-collapsible-section-collapsed-rotation: 90deg;
   display: grid;
   inline-size: min(100%, 86rem);
   justify-self: center;
@@ -154,20 +205,28 @@
 .simulation-category > .ui-collapsible-section__heading {
   overflow: hidden;
   margin: 0;
-  border: 1px solid #11151a;
-  border-radius: 0.3rem;
+  border: var(--ui-panel-border-width) solid var(--simulation-category-accent);
+  border-radius: var(--ui-panel-radius);
   background: linear-gradient(
     135deg,
-    var(--simulation-foundational-header),
-    var(--simulation-foundational-header-highlight)
+    var(--simulation-category-surface),
+    color-mix(in srgb, var(--simulation-category-accent) 36%, var(--simulation-category-surface))
   );
+  box-shadow: 0 2px 0 #11151a;
 }
 
 .simulation-category > .ui-collapsible-section__heading
   .ui-collapsible-section__trigger {
+  min-block-size: var(--target-minimum);
+  padding: var(--ui-panel-inset-compact) var(--ui-panel-inset);
   color: white;
-  font-size: calc(1.05rem * var(--game-text-scale));
-  line-height: 1.25;
+  font-size: var(--ui-text-section-title);
+  line-height: 1.15;
+}
+
+.simulation-category > .ui-collapsible-section__heading
+  .ui-collapsible-section__chevron {
+  color: var(--simulation-category-accent);
 }
 
 .simulation-category__title {
@@ -187,45 +246,109 @@
 
 .simulation-category--information > .ui-collapsible-section__heading
   .ui-collapsible-section__trigger {
-  color: var(--simulation-information);
+  color: white;
 }
 
-.simulation-category--information > .ui-collapsible-section__heading {
-  background: linear-gradient(135deg, #4a3357, #634570);
+.simulation-category--information {
+  --simulation-category-accent: var(--simulation-information);
+  --simulation-category-surface: #4a3357;
 }
 
 .simulation-category--space-age > .ui-collapsible-section__heading
   .ui-collapsible-section__trigger {
-  color: var(--simulation-space);
+  color: white;
 }
 
-.simulation-category--space-age > .ui-collapsible-section__heading {
-  background: linear-gradient(135deg, #294638, #3c624d);
+.simulation-category--space-age {
+  --simulation-category-accent: var(--simulation-space);
+  --simulation-category-surface: #294638;
 }
 
 .simulation-category__content {
   display: grid;
-  gap: var(--game-card-grid-gap);
-  padding-block-start: var(--game-card-grid-gap);
+  gap: var(--ui-card-gap);
+  padding-block-start: var(--ui-card-gap);
 }
 
 .simulation-category__subsection {
+  --simulation-subsection-accent: var(--simulation-foundational);
+  --simulation-subsection-surface: var(--simulation-foundational-header);
   display: grid;
-  gap: var(--game-card-grid-gap);
+  gap: var(--ui-card-gap);
 }
 
-.simulation-category__subsection > h3 {
+.simulation-category__subsection--collapsible {
+  --simulation-subsection-accent: var(--simulation-information);
+  --simulation-subsection-surface: #4a3357;
+  --ui-collapsible-section-collapsed-rotation: 90deg;
+  gap: 0;
+}
+
+.simulation-category__subsection--collapsible
+  > .ui-collapsible-section__heading {
+  overflow: hidden;
   margin: 0;
-  padding-inline: 0.15rem;
+  border: var(--ui-panel-border-width) solid var(--simulation-subsection-accent);
+  border-radius: var(--ui-control-radius);
+  background: color-mix(
+    in srgb,
+    var(--simulation-subsection-surface) 82%,
+    #172029
+  );
+  box-shadow: 0 2px 0 #11151a;
+  color: white;
+  font-size: var(--ui-text-card-title);
+  line-height: 1.15;
+}
+
+.simulation-category__subsection--collapsible
+  > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  min-block-size: var(--target-minimum);
+  padding: 0.38rem var(--ui-panel-inset-compact);
+  color: white;
+  font-size: var(--ui-text-card-title);
+  line-height: 1.15;
+}
+
+.simulation-category__subsection--collapsible
+  > .ui-collapsible-section__heading
+  .ui-collapsible-section__chevron {
+  color: var(--simulation-subsection-accent);
+}
+
+.simulation-category__subsection-title {
+  display: flex;
+  min-inline-size: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ui-section-gap);
+}
+
+.simulation-category__subsection-title > :last-child:not(:first-child) {
+  padding: 0.12rem 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--simulation-information) 18%, transparent);
   color: var(--simulation-information);
-  font-size: calc(0.9rem * var(--game-text-scale));
+  font-size: 0.76em;
+  line-height: 1;
+}
+
+.simulation-category__subsection-content {
+  padding-block-start: var(--ui-card-gap);
+}
+
+.simulation-category__subsection[data-category="energy"],
+.simulation-category__subsection[data-category="space-age"] {
+  --simulation-subsection-accent: var(--simulation-space);
+  --simulation-subsection-surface: #294638;
 }
 
 .simulation-category ol {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--game-card-grid-gap);
-  align-items: stretch;
+  gap: var(--ui-card-gap);
+  align-items: start;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -242,24 +365,25 @@
   --simulation-card-action-hover: #a4bfd8;
   --simulation-card-action-active: #7897b4;
   --simulation-card-action-disabled: #596a79;
-  --simulation-card-details: #b9c9d7;
-  --simulation-card-details-hover: #cfdae3;
-  --simulation-card-details-active: #9baebb;
   --simulation-card-progress: var(--simulation-foundational-progress);
   position: relative;
-  block-size: 100%;
+  block-size: auto;
   min-block-size: 0;
   grid-template-columns: minmax(0, 1fr) clamp(6.25rem, 27%, 6.75rem);
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
   gap: 0.05rem 0.32rem;
   align-items: start;
   padding: 0.34rem 0.38rem;
-  border: 1px solid #11151a;
-  border-radius: 0.3rem;
+  border: var(--ui-panel-border-width) solid color-mix(
+    in srgb,
+    var(--simulation-card-action) 76%,
+    #11151a
+  );
+  border-radius: var(--ui-control-radius);
   background:
     linear-gradient(110deg, var(--simulation-card-glow), transparent 48%),
     var(--simulation-card-panel);
-  box-shadow: 0 0.14rem 0.25rem rgb(0 0 0 / 32%);
+  box-shadow: 0 2px 0 #11151a;
 }
 
 .ui-facility-card.simulation-panel-card--information {
@@ -269,9 +393,6 @@
   --simulation-card-action-hover: #d4a7e5;
   --simulation-card-action-active: #aa72c1;
   --simulation-card-action-disabled: #745b7e;
-  --simulation-card-details: #d8b9e4;
-  --simulation-card-details-hover: #e5cfed;
-  --simulation-card-details-active: #c39fd2;
   --simulation-card-progress: var(--simulation-information);
 }
 
@@ -282,9 +403,6 @@
   --simulation-card-action-hover: #a9d8b0;
   --simulation-card-action-active: #76ae80;
   --simulation-card-action-disabled: #58705d;
-  --simulation-card-details: #b8d8be;
-  --simulation-card-details-hover: #cde5d1;
-  --simulation-card-details-active: #9fc5a6;
   --simulation-card-progress: var(--simulation-space);
 }
 
@@ -321,15 +439,15 @@
 }
 
 .simulation-panel-card--inline-status .ui-facility-card__description {
-  grid-row: 2;
-}
-
-.simulation-panel-card--inline-status .ui-facility-card__progress {
   grid-row: 3;
 }
 
+.simulation-panel-card--inline-status .ui-facility-card__progress {
+  grid-row: 5;
+}
+
 .simulation-panel-card--inline-status .ui-facility-card__feedback {
-  grid-row: 4;
+  grid-row: 6;
 }
 
 .simulation-panel-card .ui-facility-card__production {
@@ -347,20 +465,36 @@
 }
 
 .simulation-panel-card .ui-facility-card__progress {
-  grid-column: 1;
-  grid-row: 4;
+  grid-column: 1 / -1;
+  grid-row: 5;
   align-self: end;
+}
+
+.simulation-panel-card .ui-facility-card__progress:empty {
+  display: none;
 }
 
 .simulation-panel-card .ui-facility-card__action {
   grid-column: 2;
-  grid-row: 1 / -1;
+  grid-row: 1 / 4;
   align-self: stretch;
+}
+
+.simulation-panel-card .ui-facility-card__action:empty {
+  display: none;
+}
+
+.ui-facility-card.simulation-panel-card--no-action {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.simulation-panel-card--no-action .ui-facility-card__description {
+  grid-column: 1 / -1;
 }
 
 .simulation-panel-card .ui-facility-card__feedback {
   grid-column: 1 / -1;
-  grid-row: 5;
+  grid-row: 6;
   padding-block-start: 0.2rem;
   color: #ffb8b8;
   font-size: calc(0.72rem * var(--game-text-scale));
@@ -401,8 +535,20 @@
 .simulation-panel-card__actions {
   display: grid;
   block-size: 100%;
-  grid-template-rows: minmax(var(--target-minimum), 1fr) auto;
-  gap: 0.32rem;
+  grid-template-rows: minmax(var(--target-minimum), 1fr);
+}
+
+.ui-facility-card.simulation-panel-card--complete {
+  grid-template-rows: auto auto;
+  align-items: center;
+}
+
+.simulation-panel-card--complete .ui-facility-card__progress {
+  display: none;
+}
+
+.simulation-panel-card--complete .ui-facility-card__description {
+  grid-row: 2;
 }
 
 .simulation-panel-card__actions > .ui-button {
@@ -476,43 +622,46 @@
   background: #bb7f96;
 }
 
-.simulation-panel-card__details {
-  grid-row: 2;
-  align-self: end;
-  block-size: var(--target-minimum);
-  min-block-size: var(--target-minimum);
-  border: 1px solid #11151a;
-  border-radius: 0.24rem;
-  background: var(--simulation-card-details);
-  color: #101720;
-  cursor: pointer;
-  font: inherit;
-  font-size: calc(0.82rem * var(--game-text-scale));
-  font-weight: var(--font-weight-bold);
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-.simulation-panel-card__details:hover {
-  background: var(--simulation-card-details-hover);
-}
-
-.simulation-panel-card__details:active {
-  background: var(--simulation-card-details-active);
-}
-
-.simulation-panel-card__details:focus-visible,
 .simulation-panel-card .ui-button:focus-visible,
-.simulation-details button:focus-visible {
+.simulations-surface__show-formulas:has(input:focus-visible) {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
-.simulation-panel-card__progress-list,
-.simulation-details__progress {
+.simulation-panel-card__progress-content,
+.simulation-panel-card__progress-list {
   display: grid;
   gap: 0.22rem;
+}
+
+.simulation-panel-card__formulae {
+  display: grid;
+  gap: 0.15rem;
+  padding-block-start: 0.25rem;
+  margin: 0;
+  border-block-start: 1px solid color-mix(
+    in srgb,
+    var(--simulation-card-action) 42%,
+    transparent
+  );
+  color: #eef5f0;
+  font-size: calc(0.67rem * var(--game-text-scale));
+}
+
+.simulation-panel-card__formulae > div {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.45rem;
+}
+
+.simulation-panel-card__formulae dt {
+  font-weight: var(--font-weight-semibold);
+}
+
+.simulation-panel-card__formulae dd {
+  min-inline-size: 0;
+  margin: 0;
+  text-align: end;
 }
 
 
@@ -758,6 +907,15 @@
 @container (min-width: 46rem) {
   .simulation-category ol {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .simulation-category li {
+    display: grid;
+  }
+
+  .ui-facility-card.simulation-panel-card {
+    block-size: 100%;
   }
 }
 

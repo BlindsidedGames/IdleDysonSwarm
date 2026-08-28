@@ -28,8 +28,8 @@ export interface AvocatoSurfaceProps {
   readonly resources: FrontendCanonicalResources['avocado']
   readonly spendable: {
     readonly infinityPoints: bigint
-    readonly influence: bigint
-    readonly strangeMatter: bigint
+    readonly influence: number
+    readonly strangeMatter: number
   }
   readonly derived: FrontendGameplayDerivedFacts['avocado']
   readonly previews: FrontendGameplayPreviews['avocado']
@@ -103,7 +103,7 @@ interface FeedCardProps {
   readonly preview: FrontendGameplayPreviews['avocado']['feeds'][number]
   readonly invested: number
   readonly multiplier: number
-  readonly resourceAvailable: bigint
+  readonly resourceAvailable: number | bigint
   readonly routeAvailable: boolean
   readonly dispatchPlayer: AvocatoSurfaceProps['dispatchPlayer']
 }
@@ -154,7 +154,7 @@ function AvocatoFeedCard({ locale, preview, invested, multiplier, resourceAvaila
   )
 }
 
-function spendableValue(spendable: AvocatoSurfaceProps['spendable'], source: AvocadoFeedSource): bigint {
+function spendableValue(spendable: AvocatoSurfaceProps['spendable'], source: AvocadoFeedSource): number | bigint {
   if (source === 'infinity-points') return spendable.infinityPoints
   if (source === 'influence') return spendable.influence
   return spendable.strangeMatter

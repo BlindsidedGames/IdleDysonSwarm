@@ -711,6 +711,92 @@
       "value": "]"
     }
   ],
+  "debug.amount-continuous-maximum": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞŧīƞŭŭǿǿŭŭş řḗḗşǿǿŭŭřƈḗḗş ƈȧȧƞƞǿǿŧ ḗḗẋƈḗḗḗḗḓ "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": "."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.amount-discrete-maximum": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇħǿǿŀḗḗ-ƞŭŭḿƀḗḗř řḗḗşǿǿŭŭřƈḗḗş ƈȧȧƞƞǿǿŧ ḗḗẋƈḗḗḗḗḓ "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": ". Ƈǿǿƞŧīƞŭŭǿǿŭŭş řḗḗşǿǿŭŭřƈḗḗş ḿȧȧẏ şŧīŀŀ ȧȧƈƈḗḗƥŧ ŧħīş ȧȧḿǿǿŭŭƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.amount-discrete-whole": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇħǿǿŀḗḗ-ƞŭŭḿƀḗḗř řḗḗşǿǿŭŭřƈḗḗş řḗḗɋŭŭīřḗḗ ȧȧƞ īƞŧḗḗɠḗḗř. Ƈǿǿƞŧīƞŭŭǿǿŭŭş řḗḗşǿǿŭŭřƈḗḗş ḿȧȧẏ şŧīŀŀ ȧȧƈƈḗḗƥŧ ŧħīş ȧȧḿǿǿŭŭƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.amount-help": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧƞḓȧȧřḓ şŭŭƒƒīẋḗḗş ȧȧřḗḗ ȧȧƈƈḗḗƥŧḗḗḓ, īƞƈŀŭŭḓīƞɠ ƒǿǿřḿş şŭŭƈħ ȧȧş 100 Ɋī, 100ẋɋī ȧȧƞḓ 100 ẋ ɋī."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.amount-invalid": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞŧḗḗř ȧȧ ƞǿǿƞ-ƞḗḗɠȧȧŧīṽḗḗ ƞŭŭḿƀḗḗř ŭŭşīƞɠ ḓīɠīŧş, şƈīḗḗƞŧīƒīƈ ƞǿǿŧȧȧŧīǿǿƞ ǿǿř ȧȧ Şŧȧȧƞḓȧȧřḓ ɠȧȧḿḗḗ şŭŭƒƒīẋ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "debug.apply-preset": [
     {
       "type": 0,
@@ -921,6 +1007,34 @@
       "value": "]"
     }
   ],
+  "debug.set-double-cap": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ ƈȧȧƥ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.set-whole-cap": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇħǿǿŀḗḗ ƈȧȧƥ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "debug.strange-matter": [
     {
       "type": 0,
@@ -1070,7 +1184,7 @@
       "children": [
         {
           "type": 0,
-          "value": "Şƈīḗḗƞƈḗḗ"
+          "value": "Şƈīḗḗƞŧīşŧş"
         }
       ]
     },
@@ -3319,6 +3433,20 @@
     {
       "type": 0,
       "value": " ƥřǿǿḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭŧǿǿ"
     },
     {
       "type": 0,
@@ -5689,6 +5817,20 @@
       "value": "]"
     }
   ],
+  "infinity.shop.hide-maxed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħīḓḗḗ ḿȧȧẋḗḗḓ ŭŭƥɠřȧȧḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "infinity.shop.maximum-reached": [
     {
       "type": 0,
@@ -5850,7 +5992,7 @@
     },
     {
       "type": 0,
-      "value": "Ƥŭŭřƈħȧȧşḗḗḓ"
+      "value": "Ḿȧȧẋḗḗḓ"
     },
     {
       "type": 0,
@@ -5864,7 +6006,7 @@
     },
     {
       "type": 0,
-      "value": "Ƥŭŭřƈħȧȧşḗḗḓ: "
+      "value": "Ǿẇƞḗḗḓ: "
     },
     {
       "type": 1,
@@ -7229,6 +7371,20 @@
       "value": "]"
     }
   ],
+  "quantum.hide-maxed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħīḓḗḗ ḿȧȧẋḗḗḓ ŭŭƥɠřȧȧḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -7347,6 +7503,38 @@
     {
       "type": 1,
       "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "quantum.maxed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧẋḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "quantum.maxed-upgrade": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": Ḿȧȧẋḗḗḓ"
     },
     {
       "type": 0,
@@ -7570,7 +7758,7 @@
     },
     {
       "type": 0,
-      "value": "Ƥŭŭřƈħȧȧşḗḗ +"
+      "value": "+"
     },
     {
       "type": 1,
@@ -7589,34 +7777,6 @@
     {
       "type": 0,
       "value": "Ƥŭŭřƈħȧȧşḗḗ şḗḗŧŧīƞɠş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "quantum.purchase.short": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƥŭŭřƈħȧȧşḗḗ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "quantum.purchased": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƥŭŭřƈħȧȧşḗḗḓ"
     },
     {
       "type": 0,
@@ -8431,6 +8591,38 @@
       "value": "]"
     }
   ],
+  "reality.automatic-gathering": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ ɠȧȧŧħḗḗřīƞɠ Īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.automatic-influence-rate": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Īƞƒŀŭŭḗḗƞƈḗḗ ƥḗḗř şḗḗƈǿǿƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "reality.avocato.description": [
     {
       "type": 0,
@@ -8577,6 +8769,20 @@
     {
       "type": 1,
       "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.influence-generation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒŀŭŭḗḗƞƈḗḗ ɠḗḗƞḗḗřȧȧŧīǿǿƞ"
     },
     {
       "type": 0,
@@ -13239,6 +13445,20 @@
       "value": "]"
     }
   ],
+  "simulations.action.black-hole-capped": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŀȧȧƈķ Ħǿǿŀḗḗ, Ƈȧȧƥƥḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "simulations.action.black-hole-label": [
     {
       "type": 0,
@@ -13283,6 +13503,20 @@
     {
       "type": 0,
       "value": "Ɓǿǿǿǿşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.capped-label": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƥƥḗḗḓ"
     },
     {
       "type": 0,
@@ -13651,6 +13885,20 @@
       "value": "]"
     }
   ],
+  "simulations.details.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƒƒḗḗƈŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "simulations.details.inactive-multiplier": [
     {
       "type": 0,
@@ -13853,6 +14101,104 @@
     {
       "type": 0,
       "value": "Şƥḗḗḗḗḓ ḿŭŭŀŧīƥŀīḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.status": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧŧŭŭş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.education.advanced-physics.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞŀǿǿƈķş Ƒŭŭşīǿǿƞ Ɠḗḗƞḗḗřȧȧŧǿǿřş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.education.engineering.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞȧȧƀŀḗḗş Ƈīŧīḗḗş ŧǿǿ ƥřǿǿḓŭŭƈḗḗ Ƒȧȧƈŧǿǿřīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.education.mathematics.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗş Şǿǿŀȧȧř Ƥȧȧƞḗḗŀ ḗḗƞḗḗřɠẏ ɠḗḗƞḗḗřȧȧŧīǿǿƞ ȧȧƞḓ ḗḗƞȧȧƀŀḗḗş ŧħḗḗ Řȧȧīŀɠŭŭƞ ƥȧȧŧħ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.education.shipping.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗş Ƒȧȧƈŧǿǿřẏ ƥřǿǿḓŭŭƈŧīǿǿƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.education.world-peace.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗş Ɓǿǿŧ ƥřǿǿḓŭŭƈŧīǿǿƞ ǿǿƒ Řǿǿƈķḗḗŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.education.world-trade.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗş Ƒȧȧƈŧǿǿřẏ ƥřǿǿḓŭŭƈŧīǿǿƞ ȧȧɠȧȧīƞ."
     },
     {
       "type": 0,
@@ -14709,6 +15055,20 @@
       "value": "]"
     }
   ],
+  "simulations.progress.next-volley": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ ṽǿǿŀŀḗḗẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "simulations.progress.percent": [
     {
       "type": 0,
@@ -14951,6 +15311,20 @@
     {
       "type": 0,
       "value": "Şīḿŭŭŀȧȧŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.show-formulas-inline": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿẇ ƒǿǿřḿŭŭŀȧȧş īƞŀīƞḗḗ"
     },
     {
       "type": 0,
@@ -15233,6 +15607,20 @@
     {
       "type": 0,
       "value": "Ƈŭŭřřḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.double-click-to-assign": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ-ƈŀīƈķ ŧǿǿ ȧȧşşīɠƞ şķīŀŀş"
     },
     {
       "type": 0,
@@ -20225,6 +20613,48 @@
       "value": "]"
     }
   ],
+  "skills.preset-distribution": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "% Ẇǿǿřķḗḗřş"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "% Şƈīḗḗƞŧīşŧş"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.preset-name": [
     {
       "type": 0,
@@ -20273,42 +20703,6 @@
       },
       "offset": 0,
       "pluralType": "cardinal"
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "workerValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "workers"
-        },
-        {
-          "type": 0,
-          "value": "% Ẇǿǿřķḗḗřş"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "scientistValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "scientists"
-        },
-        {
-          "type": 0,
-          "value": "% Şƈīḗḗƞŧīşŧş"
-        }
-      ]
     },
     {
       "type": 0,
@@ -20715,6 +21109,24 @@
     {
       "type": 0,
       "value": "Şŭŭƥḗḗřƞǿǿṽȧȧ şŭŭƥƥřḗḗşşḗḗş ŧħḗḗ ƈǿǿḿƥŀḗḗŧḗḗ ḿȧȧƞŭŭȧȧŀ-ƥŭŭřƈħȧȧşḗḗ ŀȧȧẏḗḗř: Ȧṽǿǿƈȧȧḓǿǿş, ƀǿǿŧħ 50/100 ḿīŀḗḗşŧǿǿƞḗḗş, Ƥřǿǿḓŭŭƈŧīǿǿƞ Şƈȧȧŀīƞɠ, ȧȧƞḓ ḗḗṽḗḗřẏ Şẇȧȧřḿ řȧȧŧḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.switch-preset": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şẇīŧƈħ ŧǿǿ "
+    },
+    {
+      "type": 1,
+      "value": "name"
     },
     {
       "type": 0,
@@ -23998,6 +24410,20 @@
       "value": "]"
     }
   ],
+  "wiki.category.offline-time": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "wiki.category.other": [
     {
       "type": 0,
@@ -25083,21 +25509,7 @@
     },
     {
       "type": 0,
-      "value": "Ŧīḿḗḗ ȧȧẇȧȧẏ ƒřǿǿḿ ŧħḗḗ ɠȧȧḿḗḗ ƀḗḗƈǿǿḿḗḗş "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " ƈŭŭřřḗḗƞƈẏ. Şƥḗḗƞḓ īŧ ƒřǿǿḿ ŧħḗḗ Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ şƈřḗḗḗḗƞ. Ȧ řḗḗŧŭŭřƞ şŭŭḿḿȧȧřẏ ȧȧƥƥḗḗȧȧřş ȧȧƒŧḗḗř ẏǿǿŭŭ ħȧȧṽḗḗ ƀḗḗḗḗƞ ȧȧẇȧȧẏ ƒǿǿř ȧȧŧ ŀḗḗȧȧşŧ "
+      "value": "Ȧƒŧḗḗř ẏǿǿŭŭ ħȧȧṽḗḗ ƀḗḗḗḗƞ ȧȧẇȧȧẏ ƒǿǿř ȧȧŧ ŀḗḗȧȧşŧ "
     },
     {
       "type": 8,
@@ -25111,7 +25523,217 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": ", ŧħȧȧŧ ŧīḿḗḗ īş ȧȧḓḓḗḗḓ ŧǿǿ ẏǿǿŭŭř "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ƀȧȧƞķ īƞşŧḗḗȧȧḓ ǿǿƒ ƀḗḗīƞɠ řḗḗƥŀȧȧẏḗḗḓ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ. Ƈȧȧƥȧȧƈīŧẏ şŧȧȧřŧş ȧȧŧ "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "ǿǿƞḗḗ ḓȧȧẏ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Ẇħḗḗƞ ŧħḗḗ ƀȧȧƞķ īş ƒŭŭŀŀ, ẏǿǿŭŭ ƈȧȧƞ şƥḗḗƞḓ īŧ ŧǿǿ ḓǿǿŭŭƀŀḗḗ ŧħȧȧŧ ƈȧȧƥȧȧƈīŧẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.other.offline-accuracy": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈŧīǿǿƞ, ȧȧŭŭŧǿǿḿȧȧŧīǿǿƞ ȧȧƞḓ ƥḗḗřḿȧȧƞḗḗƞŧ ŭŭƥɠřȧȧḓḗḗş řŭŭƞ ḓŭŭřīƞɠ řḗḗƥŀȧȧẏ, ẇīŧħ ȧȧŧ ḿǿǿşŧ ǿǿƞḗḗ ȧȧŭŭŧǿǿḿȧȧŧīǿǿƞ ḓḗḗƈīşīǿǿƞ ƥḗḗř ŭŭƥḓȧȧŧḗḗ. Ŀȧȧřɠḗḗř ŧīḿḗḗ şŧḗḗƥş ƈȧȧƞ ḿīşş ǿǿƥƥǿǿřŧŭŭƞīŧīḗḗş ŧħȧȧŧ şħǿǿřŧḗḗř ŭŭƥḓȧȧŧḗḗş ẇǿǿŭŭŀḓ ƈȧȧŧƈħ, ȧȧƞḓ ƞǿǿ ƈǿǿḿƥḗḗƞşȧȧŧīǿǿƞ īş ȧȧḓḓḗḗḓ ƒǿǿř ŧħḗḗḿ. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ŧīƞķḗḗř"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " īş īƞŧḗḗƞŧīǿǿƞȧȧŀŀẏ ƒřǿǿẑḗḗƞ ẇħīŀḗḗ Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ īş ƥřǿǿƈḗḗşşīƞɠ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.other.offline-accuracy-title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇħȧȧŧ řŭŭƞş ḓŭŭřīƞɠ řḗḗƥŀȧȧẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.other.offline-processing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿƈḗḗşşīƞɠ ȧȧḓṽȧȧƞƈḗḗş ŧħḗḗ ɠȧȧḿḗḗ ŧħřǿǿŭŭɠħ ŧħḗḗ şȧȧḿḗḗ ŭŭƥḓȧȧŧḗḗ şẏşŧḗḗḿ ŭŭşḗḗḓ ḓŭŭřīƞɠ ȧȧƈŧīṽḗḗ ƥŀȧȧẏ. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Şƥḗḗḗḗḓ Ŭƥ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " řḗḗḓŭŭƈḗḗş ŧħḗḗ řḗḗḿȧȧīƞīƞɠ ŭŭƥḓȧȧŧḗḗ ƈǿǿŭŭƞŧ ȧȧƞḓ ķḗḗḗḗƥş ŧħḗḗ ƒŭŭŀŀ şḗḗŀḗḗƈŧḗḗḓ ḓŭŭřȧȧŧīǿǿƞ, ŧřȧȧḓīƞɠ ȧȧƈƈŭŭřȧȧƈẏ ƒǿǿř ȧȧ ƒȧȧşŧḗḗř řḗḗşŭŭŀŧ. Ƈȧȧƞƈḗḗŀŀīƞɠ şȧȧƒḗḗŀẏ ḓīşƈȧȧřḓş ŧħḗḗ ŭŭƞƒīƞīşħḗḗḓ şīḿŭŭŀȧȧŧīǿǿƞ ȧȧƞḓ ḓǿǿḗḗş ƞǿǿŧ şƥḗḗƞḓ ŧħḗḗ şḗḗŀḗḗƈŧḗḗḓ Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.other.offline-processing-title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿƈḗḗşşīƞɠ, Şƥḗḗḗḗḓ Ŭƥ ȧȧƞḓ ƈȧȧƞƈḗḗŀŀȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.other.offline-results": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ ƈǿǿḿƥŀḗḗŧḗḗḓ řŭŭƞ řḗḗƥǿǿřŧş ŧħḗḗ şīḿŭŭŀȧȧŧḗḗḓ ḓŭŭřȧȧŧīǿǿƞ, řḗḗḿȧȧīƞīƞɠ ƀȧȧƞķ, ƒīƞȧȧŀ ȧȧƈƈŭŭřȧȧƈẏ ȧȧƞḓ ȧȧƈŧŭŭȧȧŀ ŭŭƥḓȧȧŧḗḗ ƈǿǿŭŭƞŧ. Īŧ ȧȧŀşǿǿ şħǿǿẇş řḗḗŀḗḗṽȧȧƞŧ Īƞƒīƞīŧẏ, Şīḿŭŭŀȧȧŧīǿǿƞ ȧȧƞḓ Řḗḗȧȧŀīŧẏ ɠȧȧīƞş. Ƒȧȧƈīŀīŧẏ ȧȧƞḓ Ɓǿǿŧ ɠȧȧīƞş ȧȧƥƥḗḗȧȧř ǿǿƞŀẏ ẇħḗḗƞ ƞǿǿ Īƞƒīƞīŧẏ ǿǿƈƈŭŭřřḗḗḓ, ƀḗḗƈȧȧŭŭşḗḗ ȧȧ řḗḗşḗḗŧ ȧȧƞḓ řḗḗƀŭŭīŀḓ ẇǿǿŭŭŀḓ ḿȧȧķḗḗ ȧȧ şīḿƥŀḗḗ ƀḗḗƒǿǿřḗḗ-ȧȧƞḓ-ȧȧƒŧḗḗř ŧǿǿŧȧȧŀ ḿīşŀḗḗȧȧḓīƞɠ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.other.offline-results-title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧīǿǿƞ řḗḗşŭŭŀŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.other.offline-spending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħǿǿǿǿşḗḗ ħǿǿẇ ḿŭŭƈħ ƀȧȧƞķḗḗḓ ŧīḿḗḗ ŧǿǿ şƥḗḗƞḓ, ŧħḗḗƞ şḗḗŀḗḗƈŧ "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ƒȧȧşŧ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ɓȧȧŀȧȧƞƈḗḗḓ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ǿǿř "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ȧƈƈŭŭřȧȧŧḗḗ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Ŧħḗḗşḗḗ ƥřḗḗşḗḗŧş ŭŭşḗḗ ƥřǿǿɠřḗḗşşīṽḗḗŀẏ ḿǿǿřḗḗ ɠȧȧḿḗḗƥŀȧȧẏ ŭŭƥḓȧȧŧḗḗş. Ȧƈƈŭŭřȧȧŧḗḗ ƒǿǿŀŀǿǿẇş şħǿǿřŧ-ŧḗḗřḿ ȧȧŭŭŧǿǿḿȧȧŧīǿǿƞ ḿǿǿřḗḗ ƈŀǿǿşḗḗŀẏ, ẇħīŀḗḗ Ƒȧȧşŧ ƈǿǿḿƥŀḗḗŧḗḗş şǿǿǿǿƞḗḗř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.other.offline-spending-title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħǿǿǿǿşīƞɠ ŧīḿḗḗ ȧȧƞḓ ȧȧƈƈŭŭřȧȧƈẏ"
     },
     {
       "type": 0,

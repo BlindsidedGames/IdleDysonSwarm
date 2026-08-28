@@ -14,12 +14,12 @@ import {
   type SimulationUpgradeEffect,
 } from './dreamEducationUpgrades'
 import {
+  addContinuous,
   addDiscrete,
-  addDiscreteAtMost,
   clampContinuous,
+  CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
   floorToDiscrete,
-  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 
 export type CanonicalDreamResetCause =
@@ -33,7 +33,7 @@ export type CanonicalDreamResetRequest =
   | {
       readonly kind: 'explicit'
       readonly cause: CanonicalDreamResetCause
-      readonly requestedReward: bigint
+      readonly requestedReward: number
     }
 
 export type CanonicalDreamResetNotAppliedReason =
@@ -61,8 +61,8 @@ export type CanonicalDreamResetResult =
       readonly applied: true
       readonly state: CanonicalGameStateV1
       readonly cause: CanonicalDreamResetCause
-      readonly requestedReward: bigint
-      readonly rewardGranted: bigint
+      readonly requestedReward: number
+      readonly rewardGranted: number
     }
   | {
       readonly ok: true
@@ -94,16 +94,13 @@ export function canApplyCanonicalAutomaticDreamReset(
   if (outcome === null || state.dream.resetCount >= DISCRETE_MAXIMUM) {
     return false
   }
-  if (outcome.requestedReward <= 0n) return true
-  return (
-    state.dream.strangeMatter <=
-    SIMULATION_RESOURCE_MAXIMUM - outcome.requestedReward
-  )
+  if (outcome.requestedReward <= 0) return true
+  return state.dream.strangeMatter < CONTINUOUS_MAXIMUM
 }
 
 interface DreamResetOutcome {
   readonly cause: CanonicalDreamResetCause
-  readonly requestedReward: bigint
+  readonly requestedReward: number
 }
 
 const MATHEMATICS_SOLAR_GENERATION_MINIMUM = 200n
@@ -187,17 +184,18 @@ export function applyCanonicalDreamReset(
   if (nextCount <= state.dream.resetCount) {
     return notApplied(state, 'reset-count-saturated')
   }
-  const nextStrangeMatter = addDiscreteAtMost(
+  const nextStrangeMatter = addContinuous(
     state.dream.strangeMatter,
     outcome.requestedReward,
-    SIMULATION_RESOURCE_MAXIMUM,
   )
   if (
-    outcome.requestedReward > 0n &&
+    request.kind === 'automatic' &&
+    outcome.requestedReward > 0 &&
     nextStrangeMatter <= state.dream.strangeMatter
   ) {
     return notApplied(state, 'reward-saturated')
   }
+  const rewardGranted = nextStrangeMatter - state.dream.strangeMatter
 
   const definitionIssues = validateDefinitions(definitions)
   if (definitionIssues.length > 0) {
@@ -214,7 +212,7 @@ export function applyCanonicalDreamReset(
     statistics: recordDreamReset(
       state.statistics,
       outcome.cause,
-      outcome.requestedReward,
+      rewardGranted,
     ),
   }
   for (const definition of definitions.values()) {
@@ -240,7 +238,7 @@ export function applyCanonicalDreamReset(
     state: candidate,
     cause: outcome.cause,
     requestedReward: outcome.requestedReward,
-    rewardGranted: nextStrangeMatter - state.dream.strangeMatter,
+    rewardGranted,
   }
 }
 
@@ -258,7 +256,7 @@ export function applyCanonicalBlackHoleReset(
     {
       kind: 'explicit',
       cause: 'BlackHole',
-      requestedReward: state.dream.resources.swarmPanels,
+      requestedReward: clampContinuous(Number(state.dream.resources.swarmPanels)),
     },
     definitions,
   )
@@ -272,7 +270,7 @@ function getOutcome(
     return {
       cause: request.cause,
       requestedReward:
-        request.requestedReward < 0n ? 0n : request.requestedReward,
+        request.requestedReward < 0 ? 0 : request.requestedReward,
     }
   }
 
@@ -280,18 +278,18 @@ function getOutcome(
     case 0n:
     case 1n:
       return state.dream.resources.cities >= 1
-        ? { cause: 'Meteor', requestedReward: 1n }
+        ? { cause: 'Meteor', requestedReward: 1 }
         : null
     case 2n:
       return state.dream.resources.bots >= 100
         ? {
             cause: 'ArtificialIntelligence',
-            requestedReward: 10n,
+            requestedReward: 10,
           }
         : null
     case 3n:
       return state.dream.resources.spaceFactories >= 5
-        ? { cause: 'GlobalWarming', requestedReward: 20n }
+        ? { cause: 'GlobalWarming', requestedReward: 20 }
         : null
     default:
       return null
@@ -318,8 +316,9 @@ function validateInputs(
   if (
     request.kind === 'explicit' &&
     (!isCause(request.cause) ||
-      typeof request.requestedReward !== 'bigint' ||
-      request.requestedReward > SIMULATION_RESOURCE_MAXIMUM)
+      typeof request.requestedReward !== 'number' ||
+      !Number.isFinite(request.requestedReward) ||
+      request.requestedReward < 0)
   ) {
     issues.push({
       code: 'DREAM_RESET_REQUEST_INVALID',
@@ -330,7 +329,7 @@ function validateInputs(
   }
   if (
     !isDiscrete(state.dream.resetCount) ||
-    !isSimulationResource(state.dream.strangeMatter) ||
+    !isContinuousResource(state.dream.strangeMatter) ||
     !isDiscrete(state.dream.disasterStage) ||
     !isSimulationResource(state.dream.resources.swarmPanels) ||
     !isFiniteNonNegative(state.dream.resources.cities) ||
@@ -395,7 +394,7 @@ function validateDefinitions(
 function createResetDream(
   source: Readonly<DreamState>,
   resetCount: bigint,
-  strangeMatter: bigint,
+  strangeMatter: number,
 ): DreamState {
   return {
     resources: {
@@ -471,6 +470,12 @@ function createResetDream(
     upgrades: source.upgrades,
     huntersPerPurchase: source.huntersPerPurchase,
     gatherersPerPurchase: source.gatherersPerPurchase,
+    purchaseBatches: {
+      hunters: 0n,
+      gatherers: 0n,
+      solar: 0n,
+      fusion: 0n,
+    },
   }
 }
 
@@ -667,7 +672,7 @@ function disasterStageFor(
 function recordDreamReset(
   statistics: Readonly<SimulationStatisticsState>,
   cause: CanonicalDreamResetCause,
-  requestedReward: bigint,
+  requestedReward: number,
 ): SimulationStatisticsState {
   return {
     ...statistics,
@@ -724,7 +729,7 @@ function recordDreamReset(
 function addDreamTotals(
   totals: Readonly<SimulationTotalsState>,
   cause: CanonicalDreamResetCause,
-  requestedReward: bigint,
+  requestedReward: number,
 ): SimulationTotalsState {
   return {
     ...totals,
@@ -744,10 +749,9 @@ function addDreamTotals(
       totals.blackHoleDreamResets,
       cause === 'BlackHole' ? 1n : 0n,
     ),
-    strangeMatter: addDiscreteAtMost(
+    strangeMatter: addContinuous(
       totals.strangeMatter,
       requestedReward,
-      SIMULATION_RESOURCE_MAXIMUM,
     ),
   }
 }
@@ -757,7 +761,7 @@ function addDreamWindow(
   expectedLength: number,
   widthSeconds: number,
   trackedSimulatedSeconds: number,
-  requestedReward: bigint,
+  requestedReward: number,
 ): readonly StatisticsWindowState[] {
   const windows =
     source.length === expectedLength
@@ -776,10 +780,9 @@ function addDreamWindow(
   windows[index] = {
     ...bucket,
     dreamResetCount: addDiscrete(bucket.dreamResetCount, 1n),
-    strangeMatter: addDiscreteAtMost(
+    strangeMatter: addContinuous(
       bucket.strangeMatter,
       requestedReward,
-      SIMULATION_RESOURCE_MAXIMUM,
     ),
   }
   return windows
@@ -792,7 +795,7 @@ function emptyWindow(sequence: bigint): StatisticsWindowState {
     infinityCount: 0n,
     infinityPoints: 0n,
     dreamResetCount: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
   }
 }
@@ -846,11 +849,15 @@ function isDiscrete(value: unknown): value is bigint {
   )
 }
 
+function isContinuousResource(value: unknown): value is number {
+  return isFiniteNonNegative(value)
+}
+
 function isSimulationResource(value: unknown): value is bigint {
   return (
     typeof value === 'bigint' &&
     value >= 0n &&
-    value <= SIMULATION_RESOURCE_MAXIMUM
+    value <= BigInt(CONTINUOUS_MAXIMUM)
   )
 }
 

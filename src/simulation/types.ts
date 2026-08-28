@@ -43,10 +43,10 @@ export interface SimulationPresentationSummary {
   aiDreamResets: bigint
   globalWarmingDreamResets: bigint
   blackHoleDreamResets: bigint
-  strangeMatter: bigint
+  strangeMatter: number
   realityWorkers: bigint
-  automaticInfluence: bigint
-  manualInfluence: bigint
+  automaticInfluence: number
+  manualInfluence: number
   realityCapacityStallSeconds: number
 }
 
@@ -62,10 +62,10 @@ export function createSimulationSummary(): SimulationPresentationSummary {
     aiDreamResets: 0n,
     globalWarmingDreamResets: 0n,
     blackHoleDreamResets: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: 0n,
+    automaticInfluence: 0,
+    manualInfluence: 0,
     realityCapacityStallSeconds: 0,
   }
 }

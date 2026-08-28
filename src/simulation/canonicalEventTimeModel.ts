@@ -52,9 +52,7 @@ import {
 import {
   addContinuous,
   addDiscrete,
-  addDiscreteAtMost,
   DISCRETE_MAXIMUM,
-  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 import {
   applyCanonicalQuantumReset,
@@ -1839,7 +1837,7 @@ function withResetInfinityClock(
 
 function createIntervalSummary(
   realityWorkers: bigint,
-  automaticInfluence: bigint,
+  automaticInfluence: number,
   realityCapacityStallSeconds: number,
 ): SimulationPresentationSummary {
   return {
@@ -1862,10 +1860,10 @@ function emptySummary(): SimulationPresentationSummary {
     aiDreamResets: 0n,
     globalWarmingDreamResets: 0n,
     blackHoleDreamResets: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: 0n,
+    automaticInfluence: 0,
+    manualInfluence: 0,
     realityCapacityStallSeconds: 0,
   }
 }
@@ -1914,20 +1912,19 @@ function mergeSummary(
     target.blackHoleDreamResets,
     source.blackHoleDreamResets,
   )
-  target.strangeMatter = addDiscreteAtMost(
+  target.strangeMatter = addContinuous(
     target.strangeMatter,
     source.strangeMatter,
-    SIMULATION_RESOURCE_MAXIMUM,
   )
   target.realityWorkers = addDiscrete(
     target.realityWorkers,
     source.realityWorkers,
   )
-  target.automaticInfluence = addDiscrete(
+  target.automaticInfluence = addContinuous(
     target.automaticInfluence,
     source.automaticInfluence,
   )
-  target.manualInfluence = addDiscrete(
+  target.manualInfluence = addContinuous(
     target.manualInfluence,
     source.manualInfluence,
   )

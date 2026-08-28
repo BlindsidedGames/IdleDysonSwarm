@@ -16,12 +16,12 @@
 
 .offline-time-surface__header {
   display: grid;
-  gap: 0.35rem;
-  padding-block: 0.75rem;
+  gap: var(--ui-control-gap);
+  padding-block: var(--ui-panel-inset-roomy);
   padding-inline:
-    max(0.75rem, var(--safe-area-left))
-    max(0.75rem, var(--safe-area-right));
-  border-block-end: 2px solid var(--theme-divider);
+    max(var(--ui-page-gutter), var(--safe-area-left))
+    max(var(--ui-page-gutter), var(--safe-area-right));
+  border-block-end: var(--ui-shell-divider-width) solid var(--theme-divider);
   background: var(--offline-panel);
 }
 
@@ -33,14 +33,14 @@
 }
 
 .offline-time-surface__title {
-  font-size: calc(1.25rem * var(--game-text-scale));
+  font-size: var(--ui-text-page-title);
   font-weight: var(--font-weight-bold);
 }
 
 .offline-time-surface__header p {
   max-inline-size: 56rem;
   color: #eee7f8;
-  font-size: calc(0.86rem * var(--game-text-scale));
+  font-size: var(--ui-text-body);
   line-height: 1.35;
 }
 
@@ -48,13 +48,13 @@
   display: grid;
   min-block-size: 0;
   align-content: start;
-  gap: 0.625rem;
+  gap: var(--ui-section-stack-gap);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-block: 0.625rem;
+  padding-block: var(--ui-route-inset);
   padding-inline:
-    max(0.625rem, var(--safe-area-left))
-    max(0.625rem, var(--safe-area-right));
+    max(var(--ui-route-inset), var(--safe-area-left))
+    max(var(--ui-route-inset), var(--safe-area-right));
   scrollbar-width: none;
 }
 
@@ -74,22 +74,22 @@
 
 .offline-time-card {
   display: grid;
-  gap: 0.55rem;
-  padding: 0.75rem;
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.3rem;
+  gap: var(--ui-control-row-gap);
+  padding: var(--ui-panel-inset);
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-panel-radius);
   background: var(--offline-panel);
   box-shadow: 0 0.18rem 0.3rem rgb(0 0 0 / 28%);
 }
 
 .offline-time-card h2 {
-  font-size: calc(1rem * var(--game-text-scale));
+  font-size: var(--ui-text-section-title);
   font-weight: var(--font-weight-bold);
 }
 
 .offline-time-card p {
   color: #eee7f8;
-  font-size: calc(0.84rem * var(--game-text-scale));
+  font-size: var(--ui-text-body);
   line-height: 1.3;
 }
 
@@ -97,7 +97,7 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--ui-card-gap);
 }
 
 .offline-time-card__heading strong,

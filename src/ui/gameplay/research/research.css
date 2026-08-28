@@ -107,13 +107,13 @@
 
 .research-card .ui-facility-card__title {
   color: white;
-  font-size: calc(0.8rem * var(--game-text-scale));
-  line-height: 1.08;
+  font-size: var(--ui-text-card-title);
+  line-height: 1.12;
 }
 
 .research-card .ui-facility-card__production {
   color: white;
-  font-size: calc(0.72rem * var(--game-text-scale));
+  font-size: calc(0.8rem * var(--game-text-scale));
   font-weight: var(--font-weight-semibold);
   line-height: 1.1;
 }
@@ -149,7 +149,7 @@
   border-radius: 0.25rem;
   background: var(--theme-accent);
   color: var(--theme-page);
-  font-size: calc(0.76rem * var(--game-text-scale));
+  font-size: var(--ui-text-body);
   line-height: 1.08;
 }
 
@@ -199,6 +199,26 @@
 .research-surface__control-panel .ui-progress-controls-panel__summary {
   padding-inline: 0.7rem 0.35rem;
   text-align: start;
+}
+
+.research-surface__summary-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  min-inline-size: 0;
+  gap: var(--ui-control-row-gap);
+}
+
+.research-surface__summary-line > p {
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.research-surface__summary-line .bot-distribution--multitasking {
+  padding: 0;
+  font-size: calc(0.72rem * var(--game-text-scale));
+  text-align: start;
+  white-space: nowrap;
 }
 
 .research-surface__production-line {
@@ -346,6 +366,17 @@
     padding: 0.25rem 0.1rem;
     font-size: calc(0.88rem * var(--game-text-scale));
     line-height: 1.15;
+  }
+
+  .research-surface__summary-line {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 460px) {
+  .research-surface__summary-line .bot-distribution--multitasking {
+    padding-inline: 0;
+    text-align: start;
   }
 }
 

@@ -20,7 +20,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 12
+export const CURRENT_SAVE_SCHEMA = 13
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -39,7 +39,7 @@ export class UnsupportedFutureSaveSchemaError extends Error {
 export interface SaveMigrationResult {
   readonly save: SaveRecord
   readonly sourceSchema: number
-  readonly targetSchema: 12
+  readonly targetSchema: 13
   readonly appliedSteps: readonly string[]
   readonly numericRepair: NumericRepairResult
   readonly validation: SaveValidationResult
@@ -64,12 +64,18 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   applyPackedSettingsFlags(save)
   appliedSteps.push('ensure-root-and-dyson-shape')
   migrateAvotation(save)
-  migrateSkills(save, sourceSchema < CURRENT_SAVE_SCHEMA)
+  // Skill dependency ordering was the schema-12 migration. A schema-12 save
+  // upgrading only its continuous resources must retain the player's order.
+  migrateSkills(save, sourceSchema < 12)
   appliedSteps.push('stable-skill-ids-and-bitsets')
   migrateResearch(save)
   appliedSteps.push('stable-research-ids')
   migrateAvocado(save)
   appliedSteps.push('avocado-container')
+  if (sourceSchema < 13) {
+    migrateContinuousRealityResources(save)
+    appliedSteps.push('continuous-influence-and-strange-matter')
+  }
   migrateMegaStructures(save)
   normalizeFacilityArrays(
     ensureRecord(ensureRecord(save, 'dysonVerseSaveData'), 'dysonVerseInfinityData'),
@@ -136,7 +142,12 @@ function ensureSaveShape(save: SaveRecord): void {
     researchTabPresetOverride: 0,
   })
   const reality = ensureRecord(save, 'saveData')
-  applyDefaults(reality, { huntersPerPurchase: 1n, gatherersPerPurchase: 1n })
+  applyDefaults(reality, {
+    huntersPerPurchase: 1n,
+    gatherersPerPurchase: 1n,
+    hunterPurchaseBatches: 0n,
+    gathererPurchaseBatches: 0n,
+  })
   ensureSimulationStatistics(ensureRecord(save, 'simulationStatistics'))
   const dyson = ensureRecord(save, 'dysonVerseSaveData')
   applyDefaults(dyson, { manualCreationTime: 10 })
@@ -169,6 +180,8 @@ function ensureSaveShape(save: SaveRecord): void {
     fusionCost: 100_000n,
     fusionGeneration: 1_250_000n,
     swarmPanelGeneration: 3212n,
+    solarPurchaseBatches: 0n,
+    fusionPurchaseBatches: 0n,
   })
   ensureRecord(save, 'prestigePlus')
   ensureRecord(save, 'avocadoData')
@@ -433,6 +446,83 @@ function migrateAvocado(save: SaveRecord): void {
       prestigePlus[legacy] = 0
     }
   }
+}
+
+/**
+ * Schema 13 moves Influence and Strange Matter balances and statistics from
+ * the historical integer carrier onto the same finite-double contract as the
+ * other continuous resources. The conversion is deliberately versioned so a
+ * schema-13 save is never silently reinterpreted as legacy data.
+ */
+function migrateContinuousRealityResources(save: SaveRecord): void {
+  const reality = ensureRecord(save, 'saveData')
+  migrateContinuousField(reality, 'influence')
+
+  const dream = ensureRecord(save, 'sdPrestige')
+  migrateContinuousField(dream, 'strangeMatter')
+
+  const avocado = ensureRecord(save, 'avocadoData')
+  migrateContinuousField(avocado, 'influence')
+  migrateContinuousField(avocado, 'strangeMatter')
+
+  const statistics = ensureRecord(save, 'simulationStatistics')
+  for (const key of [
+    'lifetime',
+    'currentQuantumRun',
+    'recentProcessedSegment',
+  ]) {
+    const totals = ensureRecord(statistics, key)
+    migrateContinuousField(totals, 'strangeMatter')
+    migrateContinuousField(totals, 'automaticInfluence')
+    migrateContinuousField(totals, 'manualInfluence')
+  }
+  for (const key of [
+    'minuteWindows',
+    'halfHourWindows',
+    'dailyWindows',
+  ]) {
+    for (const bucket of ensureArray<SaveRecord>(statistics, key)) {
+      if (bucket !== null && typeof bucket === 'object') {
+        migrateContinuousField(bucket, 'strangeMatter')
+      }
+    }
+  }
+
+  const lastCompletedCycle = ensureRecord(
+    statistics,
+    'lastCompletedCycle',
+  )
+  if (
+    typeof lastCompletedCycle.dreamCause === 'string' &&
+    lastCompletedCycle.dreamCause.length > 0
+  ) {
+    migrateContinuousField(lastCompletedCycle, 'reward')
+  }
+}
+
+function migrateContinuousField(record: SaveRecord, key: string): void {
+  const value = record[key]
+  if (value === undefined || value === null) {
+    record[key] = 0
+    return
+  }
+
+  let parsed: number
+  if (typeof value === 'number') {
+    parsed = value
+  } else if (typeof value === 'bigint') {
+    parsed = Number(value)
+  } else if (typeof value === 'string' && value.trim().length > 0) {
+    parsed = Number(value)
+  } else {
+    parsed = 0
+  }
+
+  record[key] = parsed === Number.POSITIVE_INFINITY
+    ? Number.MAX_VALUE
+    : Number.isFinite(parsed) && parsed >= 0
+      ? parsed
+      : 0
 }
 
 function migrateMegaStructures(save: SaveRecord): void {

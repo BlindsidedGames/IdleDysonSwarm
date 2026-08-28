@@ -59,6 +59,8 @@ type InfinityCommand = Extract<
 >
 
 const INFINITY_GUIDANCE_PRESENTATION_INTERVAL_MILLISECONDS = 250
+const INFINITY_VISIBILITY_STORAGE_KEY =
+  'idle-dyson-swarm.infinity-visibility.v1'
 
 export interface InfinityCommandAvailability {
   readonly purchaseShopItem: boolean
@@ -100,6 +102,13 @@ export function InfinitySurface({
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [hideMaxed, setHideMaxed] = useState(() => {
+    try {
+      return localStorage.getItem(INFINITY_VISIBILITY_STORAGE_KEY) === 'true'
+    } catch {
+      return false
+    }
+  })
   const presentedGuidance = useInfinityRateGuidancePresentation({
     currentIpPerMinute: derived.currentIpPerMinute ?? 0,
     peakIpPerMinute: derived.peakIpPerMinute ?? 0,
@@ -136,6 +145,21 @@ export function InfinitySurface({
     intl.formatMessage(messages.secretPhraseFull),
     resources.secretsOfTheUniverse,
   )
+  const visibleShop = previews.shop.filter((preview) =>
+    !hideMaxed || !(
+      preview.code === 'already-purchased' ||
+      preview.code === 'maximum-reached'
+    ),
+  )
+
+  const updateHideMaxed = (next: boolean): void => {
+    setHideMaxed(next)
+    try {
+      localStorage.setItem(INFINITY_VISIBILITY_STORAGE_KEY, String(next))
+    } catch {
+      // Device-local presentation persistence must never block gameplay.
+    }
+  }
 
   return (
     <section
@@ -154,13 +178,12 @@ export function InfinitySurface({
             values={{ phrase }}
           />
         </p>
-
       </header>
 
       <div className="infinity-surface__shop">
-        {previews.shop.length > 0 ? (
+        {visibleShop.length > 0 ? (
           <ol className="infinity-surface__grid">
-            {previews.shop.map((preview) => (
+            {visibleShop.map((preview) => (
               <li key={preview.itemId}>
                 <InfinityShopCard
                   locale={locale}
@@ -282,6 +305,16 @@ export function InfinitySurface({
             </div>
           )}
         >
+          <label className="infinity-surface__hide-maxed">
+            <input
+              type="checkbox"
+              checked={hideMaxed}
+              onChange={(event) =>
+                updateHideMaxed(event.currentTarget.checked)
+              }
+            />
+            <span>{intl.formatMessage(messages.hideMaxed)}</span>
+          </label>
           {derived.mode === 'break' && inefficientAutomaticTarget ? (
             <p className="infinity-surface__warning" role="status">
               {intl.formatMessage(messages.automaticTargetWarning)}

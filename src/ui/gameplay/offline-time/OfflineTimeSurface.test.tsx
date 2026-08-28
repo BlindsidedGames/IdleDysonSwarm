@@ -65,9 +65,9 @@ const acceptedStoredTime = {
     infinityCount: 2n,
     infinityPoints: 125n,
     dreamResetCount: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    influence: 0n,
+    influence: 0,
     botGain: 0,
     facilityGains: [],
   },
@@ -88,7 +88,7 @@ describe('OfflineTimeSurface', () => {
       ),
     ).toBeInTheDocument()
     expect(screen.getByText('1d 0s', { selector: 'strong' })).toBeInTheDocument()
-    expect(screen.getByText('1d 0s of 1d 0s')).toBeInTheDocument()
+    expect(screen.queryByText('1d 0s of 1d 0s')).not.toBeInTheDocument()
     expect(screen.queryByText('3h 25m 45s')).not.toBeInTheDocument()
 
     const progress = screen.getByRole('progressbar', {

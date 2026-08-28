@@ -5,7 +5,13 @@ import type {
   UiRuntimeDevelopmentControls,
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
+import {
+  parseGameNumberInput,
+  toContinuousGameNumber,
+  toDiscreteGameNumber,
+} from '../../i18n/gameNumberInput'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
+import { DISCRETE_MAXIMUM } from '../../../simulation/numeric'
 import { debugSurfaceMessages as messages } from './messages'
 import './debugSurface.css'
 
@@ -35,6 +41,13 @@ const BOT_PRESETS = [
   { id: 'deep-field', bots: 2e47 },
 ] as const
 
+function clampAmountDraftToContinuousMaximum(value: string): string {
+  const parsed = parseGameNumberInput(value)
+  return parsed.ok && !toContinuousGameNumber(parsed.value).ok
+    ? Number.MAX_VALUE.toString()
+    : value
+}
+
 /**
  * Ports Unity's live Debug Options panel while delegating every mutation and
  * simulated-time request to the browser runtime's lifecycle-owned boundary.
@@ -47,8 +60,10 @@ export function DebugSurface({
 }: DebugSurfaceProps) {
   const intl = useIntl()
   const amountId = useId()
+  const amountFeedbackId = useId()
   const presetId = useId()
-  const [amount, setAmount] = useState(() => initialDraft?.amount ?? '1')
+  const [amount, setAmount] = useState(() =>
+    clampAmountDraftToContinuousMaximum(initialDraft?.amount ?? '1'))
   const [preset, setPreset] = useState(() => initialDraft?.preset ?? 'early')
   const [operation, setOperation] = useState<OperationStatus>({
     kind: 'idle',
@@ -77,20 +92,42 @@ export function DebugSurface({
     }
   }
 
-  const parsedAmount = Number(amount)
-  const validAmount = Number.isFinite(parsedAmount) && parsedAmount >= 0
-  const discreteAmount = validAmount
-    ? BigInt(Math.trunc(parsedAmount))
-    : 0n
+  const parsedAmount = parseGameNumberInput(amount)
+  const continuousAmount = parsedAmount.ok
+    ? toContinuousGameNumber(parsedAmount.value)
+    : { ok: false as const, reason: 'above-maximum' as const }
+  const discreteAmount = parsedAmount.ok
+    ? toDiscreteGameNumber(parsedAmount.value, DISCRETE_MAXIMUM)
+    : { ok: false as const, reason: 'above-maximum' as const }
+  const validContinuousAmount = continuousAmount.ok
+  const validDiscreteAmount = discreteAmount.ok
+  const amountFeedback = !parsedAmount.ok
+    ? intl.formatMessage(messages.invalidAmount)
+    : !continuousAmount.ok
+      ? intl.formatMessage(messages.continuousMaximum, {
+          maximum: Number.MAX_VALUE.toString(),
+        })
+      : !discreteAmount.ok && discreteAmount.reason === 'non-integer'
+        ? intl.formatMessage(messages.discreteWholeNumber)
+        : !discreteAmount.ok
+          ? intl.formatMessage(messages.discreteMaximum, {
+              maximum: DISCRETE_MAXIMUM.toString(),
+            })
+          : intl.formatMessage(messages.amountHelp)
   const canPurchase =
     status.entitled ||
     (status.quantumShards >= 100_000n &&
-      status.strangeMatter >= 500_000n)
+      status.strangeMatter >= 500_000)
 
   const apply = (
     action: UiRuntimeDevelopmentAction,
     success: string,
   ) => void run(success, () => development.apply(action))
+
+  const updateAmount = (nextAmount: string) => {
+    setAmount(nextAmount)
+    onDraftChange?.({ amount: nextAmount, preset })
+  }
 
   return (
     <section className="debug-surface" aria-label={intl.formatMessage(messages.title)}>
@@ -145,23 +182,44 @@ export function DebugSurface({
                   id={amountId}
                   inputMode="decimal"
                   value={amount}
-                  aria-invalid={!validAmount}
+                  aria-invalid={!parsedAmount.ok || !continuousAmount.ok}
+                  aria-describedby={amountFeedbackId}
                   onChange={(event) => {
-                    const nextAmount = event.currentTarget.value
-                    setAmount(nextAmount)
-                    onDraftChange?.({ amount: nextAmount, preset })
+                    const nextAmount = clampAmountDraftToContinuousMaximum(
+                      event.currentTarget.value,
+                    )
+                    updateAmount(nextAmount)
                   }}
+                />
+                <p
+                  id={amountFeedbackId}
+                  className="debug-surface__amount-feedback"
+                  role={!parsedAmount.ok || !continuousAmount.ok ? 'alert' : undefined}
+                >
+                  {amountFeedback}
+                </p>
+              </div>
+              <div className="debug-surface__cap-buttons">
+                <ActionButton
+                  label={intl.formatMessage(messages.setDoubleCap)}
+                  disabled={pending}
+                  onClick={() => updateAmount(Number.MAX_VALUE.toString())}
+                />
+                <ActionButton
+                  label={intl.formatMessage(messages.setWholeCap)}
+                  disabled={pending}
+                  onClick={() => updateAmount(DISCRETE_MAXIMUM.toString())}
                 />
               </div>
               <div className="debug-surface__button-grid">
-                <ActionButton label={intl.formatMessage(messages.addCash)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-cash', amount: parsedAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addBots)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-bots', amount: parsedAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addSkillPoints)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-skill-points', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addInfinityPoints)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-infinity-points', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addQuantumShards)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-quantum-shards', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addInfluence)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-influence', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addStrangeMatter)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-strange-matter', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addOfflineTime)} disabled={pending || !validAmount} onClick={() => void run(intl.formatMessage(messages.actionSuccess), () => development.simulateOfflineTime(parsedAmount))} />
+                <ActionButton label={intl.formatMessage(messages.addCash)} disabled={pending || !validContinuousAmount} onClick={() => continuousAmount.ok && apply({ kind: 'add-cash', amount: continuousAmount.value }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addBots)} disabled={pending || !validContinuousAmount} onClick={() => continuousAmount.ok && apply({ kind: 'add-bots', amount: continuousAmount.value }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addSkillPoints)} disabled={pending || !validDiscreteAmount} onClick={() => discreteAmount.ok && apply({ kind: 'add-skill-points', amount: discreteAmount.value }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addInfinityPoints)} disabled={pending || !validDiscreteAmount} onClick={() => discreteAmount.ok && apply({ kind: 'add-infinity-points', amount: discreteAmount.value }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addQuantumShards)} disabled={pending || !validDiscreteAmount} onClick={() => discreteAmount.ok && apply({ kind: 'add-quantum-shards', amount: discreteAmount.value }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addInfluence)} disabled={pending || !validContinuousAmount} onClick={() => continuousAmount.ok && apply({ kind: 'add-influence', amount: continuousAmount.value }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addStrangeMatter)} disabled={pending || !validContinuousAmount} onClick={() => continuousAmount.ok && apply({ kind: 'add-strange-matter', amount: continuousAmount.value }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addOfflineTime)} disabled={pending || !validContinuousAmount} onClick={() => continuousAmount.ok && void run(intl.formatMessage(messages.actionSuccess), () => development.simulateOfflineTime(continuousAmount.value))} />
               </div>
             </section>
 

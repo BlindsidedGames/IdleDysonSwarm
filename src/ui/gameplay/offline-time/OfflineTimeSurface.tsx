@@ -421,12 +421,6 @@ export function OfflineTimeSurface({
               style={{ transform: `scaleX(${fill})` }}
             />
           </div>
-          <p className="offline-time-card__capacity">
-            {intl.formatMessage(messages.capacity, {
-              stored: formatGameDuration(locale, bankSeconds),
-              capacity: formatGameDuration(locale, capacitySeconds),
-            })}
-          </p>
           {bankSeconds <= 0 ? (
             <p className="offline-time-card__note">
               {intl.formatMessage(messages.noStoredTime)}
@@ -713,13 +707,13 @@ export function OfflineTimeSurface({
                     </CompletionGroup>
                   ) : null}
 
-                  {completionSummary.result.dreamResetCount > 0n || completionSummary.result.strangeMatter > 0n ? (
+                  {completionSummary.result.dreamResetCount > 0n || completionSummary.result.strangeMatter > 0 ? (
                     <CompletionGroup title={intl.formatMessage(messages.simulationsGroup)}>
                       {completionSummary.result.dreamResetCount > 0n ? <CompletionFact
                         label={intl.formatMessage(messages.simulationResets)}
                         value={formatGameNumber(locale, completionSummary.result.dreamResetCount)}
                       /> : null}
-                      {completionSummary.result.strangeMatter > 0n ? <CompletionFact
+                      {completionSummary.result.strangeMatter > 0 ? <CompletionFact
                         label={intl.formatMessage(messages.strangeMatterGained)}
                         value={formatGameNumber(locale, completionSummary.result.strangeMatter)}
                       /> : null}
@@ -781,9 +775,9 @@ function hasProgressionGains(summary: StoredTimeCompletionSummary): boolean {
   return summary.infinityPoints > 0n ||
     summary.infinityCount > 0n ||
     summary.dreamResetCount > 0n ||
-    summary.strangeMatter > 0n ||
+    summary.strangeMatter > 0 ||
     summary.realityWorkers > 0n ||
-    summary.influence > 0n ||
+    summary.influence > 0 ||
     summary.botGain > 0 ||
     summary.facilityGains.length > 0
 }

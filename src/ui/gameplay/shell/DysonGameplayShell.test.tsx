@@ -73,7 +73,7 @@ afterEach(() => {
 describe('DysonGameplayShell', () => {
   it('compacts the mobile drawer and Bots lower regions without shrinking touch targets', () => {
     expect(shellCss).toMatch(
-      /@media \(max-width: 720px\)[\s\S]*\.dyson-navigation--drawer \.dyson-navigation__link\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.9rem \* var\(--game-text-scale\)\);/,
+      /\.dyson-navigation--drawer \.dyson-navigation__link\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*var\(--ui-text-control\);/,
     )
     expect(shellCss).toMatch(
       /@media \(max-width: 720px\)[\s\S]*\.dyson-navigation--drawer \.dyson-navigation__progress\s*\{[^}]*inset-inline-start:\s*2\.85rem;[^}]*inset-inline-end:\s*0\.45rem;/,
@@ -176,6 +176,83 @@ describe('DysonGameplayShell', () => {
     expect(within(navigation).queryByText('Skills')).not.toBeInTheDocument()
     expect(within(navigation).getByText('Settings').closest('[aria-current="page"]'))
       .toBeInTheDocument()
+  })
+
+  it('preserves a navigation button and icon while its route becomes current', () => {
+    const activate = vi.fn()
+    const item = {
+      id: 'bots',
+      label: 'Bots',
+      iconSrc: '/bots.png',
+      onActivate: activate,
+    }
+    const { rerender } = render(
+      <DysonNavigation
+        ariaLabel="Game tabs"
+        placement="bottom"
+        items={[item]}
+      />,
+    )
+    const before = screen.getByRole('button', { name: 'Bots' })
+    const icon = before.querySelector('.dyson-navigation__icon')
+
+    rerender(
+      <DysonNavigation
+        ariaLabel="Game tabs"
+        placement="bottom"
+        items={[{ ...item, current: true }]}
+      />,
+    )
+
+    const after = screen.getByRole('button', { name: 'Bots' })
+    expect(after).toBe(before)
+    expect(after.querySelector('.dyson-navigation__icon')).toBe(icon)
+    expect(after).toHaveAttribute('aria-current', 'page')
+    expect(after).toBeDisabled()
+  })
+
+  it('places compact values on bottom icons and beside drawer labels', () => {
+    const item = {
+      id: 'skills',
+      label: 'Skills',
+      iconSrc: '/skills.png',
+      badge: '12',
+      newlyUnlocked: true,
+      onActivate: vi.fn(),
+    }
+    const { container, rerender } = render(
+      <DysonNavigation
+        ariaLabel="Game tabs"
+        placement="bottom"
+        items={[item]}
+      />,
+    )
+
+    expect(container.querySelector('.dyson-navigation__badge'))
+      .toHaveTextContent('12')
+    expect(container.querySelector('[data-navigation-id="skills"]'))
+      .toHaveAttribute('data-new', 'true')
+    expect(container.querySelector('.dyson-navigation__drawer-value'))
+      .not.toBeInTheDocument()
+
+    rerender(
+      <DysonNavigation
+        ariaLabel="Game menu"
+        placement="drawer"
+        items={[item]}
+      />,
+    )
+
+    expect(container.querySelector('.dyson-navigation__badge'))
+      .not.toBeInTheDocument()
+    expect(container.querySelector('.dyson-navigation__drawer-value'))
+      .toHaveTextContent('12')
+    expect(shellCss).toMatch(
+      /\.dyson-navigation__badge\s*\{[^}]*inset-block-start:\s*0;[^}]*background:\s*var\(--theme-selected\);/s,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-navigation__drawer-value\s*\{[^}]*color:\s*var\(--theme-accent\);/s,
+    )
   })
 
   it('derives icon scale from width and selected count within safe ceilings', () => {
@@ -323,6 +400,24 @@ describe('DysonGameplayShell', () => {
     ).toHaveClass('dyson-shell__lower-regions')
   })
 
+  it('allows route-owned scrollers to meet the shell edges', () => {
+    const { container } = render(
+      <DysonGameplayShell
+        {...props()}
+        routeContent={{ ariaLabel: 'Store', content: <p>Store</p> }}
+        routeContentEdgeToEdge
+      />,
+    )
+
+    expect(container.querySelector('.dyson-shell')).toHaveAttribute(
+      'data-route-content-edge-to-edge',
+      'true',
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-content-edge-to-edge="true"\][\s\S]*\.dyson-shell__route-content\s*\{[^}]*padding:\s*0;/,
+    )
+  })
+
   it('publishes the active route theme variant for shared shell regions', () => {
     const { container } = render(
       <DysonGameplayShell
@@ -372,7 +467,16 @@ describe('DysonGameplayShell', () => {
       /\.dyson-shell__lower-regions\s*\{[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-right\)\)[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\);/s,
     )
     expect(shellCss).not.toMatch(
-      /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__lower-regions\s*\{[^}]*padding-inline:/,
+      /@media \(min-width: 1080px\)[\s\S]*\.dyson-shell__lower-regions\s*\{[^}]*padding-inline:/,
+    )
+  })
+
+  it('removes legacy shell padding from the compact Bots multitasking footer', () => {
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="bots"\]\s+\.dyson-shell__lower-regions:has\(\s*\.dyson-info__summary--multitasking\s*\)\s*\{[^}]*gap:\s*0;[^}]*padding:\s*0;/,
+    )
+    expect(shellCss).toMatch(
+      /@media \(min-width: 1080px\)[\s\S]*\.dyson-shell\[data-route-theme="bots"\][\s\S]*\.dyson-shell__lower-regions:has\([\s\S]*\.dyson-info__summary--multitasking[\s\S]*padding-block-end:\s*var\(--safe-area-bottom\);/,
     )
   })
 
@@ -466,22 +570,22 @@ describe('Dyson gameplay responsive CSS contract', () => {
 
   it('extends owned route panels through the top safe area', () => {
     expect(infinityCss).toMatch(
-      /\.infinity-surface__summary\s*\{[^}]*calc\(0\.625rem \+ var\(--safe-area-top\)\)/s,
+      /\.infinity-surface__summary\s*\{[^}]*calc\(var\(--ui-panel-inset-roomy\) \+ var\(--safe-area-top\)\)/s,
     )
     expect(realityCss).toMatch(
-      /\.reality-surface__summary\s*\{[^}]*calc\(0\.72rem \+ var\(--safe-area-top\)\)/s,
+      /\.reality-surface__summary\s*\{[^}]*calc\(var\(--ui-panel-inset-roomy\) \+ var\(--safe-area-top\)\)/s,
     )
     expect(simulationsCss).toMatch(
-      /\.simulations-surface__summary\s*\{[^}]*calc\(0\.6rem \+ var\(--safe-area-top\)\)/s,
+      /\.simulations-surface__scroll-region\s*\{[^}]*calc\(var\(--ui-route-inset\) \+ var\(--safe-area-top\)\)/s,
     )
     expect(quantumCss).toMatch(
-      /\.quantum-surface__summary\s*\{[^}]*calc\(0\.75rem \+ var\(--safe-area-top\)\)/s,
+      /\.quantum-surface__summary\s*\{[^}]*calc\(var\(--ui-panel-inset-roomy\) \+ var\(--safe-area-top\)\)/s,
     )
     expect(statisticsCss).toMatch(
-      /\.statistics-surface__summary\s*\{[^}]*calc\(0\.75rem \+ var\(--safe-area-top\)\)/s,
+      /\.statistics-surface__summary\s*\{[^}]*calc\(var\(--ui-panel-inset-roomy\) \+ var\(--safe-area-top\)\)/s,
     )
     expect(storeCss).toMatch(
-      /\.store-surface__content\s*\{[^}]*calc\(0\.75rem \+ var\(--safe-area-top\)\)/s,
+      /\.store-surface__content\s*\{[^}]*calc\(var\(--ui-page-gutter\) \+ var\(--safe-area-top\)\)/s,
     )
   })
 
@@ -517,13 +621,13 @@ describe('Dyson gameplay responsive CSS contract', () => {
   })
 
   it('keeps compact bottom navigation and switches to the permanent side menu', () => {
-    expect(shellCss).toContain('@media (min-width: 1024px)')
+    expect(shellCss).toContain('@media (min-width: 1080px)')
     expect(shellCss).not.toContain('@media (min-width: 900px)')
     expect(shellCss).toMatch(
-      /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__side-panel\s*\{[\s\S]*position:\s*relative;/,
+      /@media \(min-width: 1080px\)[\s\S]*\.dyson-shell__side-panel\s*\{[\s\S]*position:\s*relative;/,
     )
     expect(shellCss).toMatch(
-      /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__bottom-navigation\s*\{\s*display:\s*none !important;/,
+      /@media \(min-width: 1080px\)[\s\S]*\.dyson-shell__bottom-navigation\s*\{\s*display:\s*none !important;/,
     )
     expect(rootCss).toMatch(
       /--safe-area-bottom:\s*max\([\s\S]*env\(safe-area-inset-bottom, 0px\),[\s\S]*var\(--android-safe-area-bottom\)[\s\S]*\);/,
@@ -533,6 +637,9 @@ describe('Dyson gameplay responsive CSS contract', () => {
     )
     expect(shellCss).toMatch(
       /\.dyson-shell__bottom-navigation\s*\{[^}]*padding-block:\s*0\.32rem max\(0\.32rem, var\(--safe-area-bottom\)\);/s,
+    )
+    expect(shellCss).toMatch(
+      /@media \(min-width: 1080px\)[\s\S]*\.dyson-shell__lower-regions\s*\{[^}]*padding-block-end:\s*max\(0\.38rem, var\(--safe-area-bottom\)\);/,
     )
     expect(shellCss).toContain('overflow: hidden')
     expect(shellCss).toMatch(
@@ -578,7 +685,16 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-resource-header\s*\{[^}]*background:\s*transparent;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-resource-header\s*\{[^}]*min-block-size:\s*4\.7rem;[^}]*padding-block:\s*max\(0\.55rem,\s*var\(--safe-area-top\)\)\s*0\.18rem;/,
+      /\.dyson-resource-header\s*\{[^}]*min-block-size:\s*3\.9rem;[^}]*padding-block:\s*max\(0\.5rem,\s*var\(--safe-area-top\)\)\s*0\.3rem;/,
+    )
+    expect(shellCss).toMatch(
+      /@media \(min-width: 1080px\),[\s\S]*\(min-width: 960px\) and \(orientation: landscape\)[\s\S]*\.dyson-shell\s*\{[^}]*grid-template-columns:\s*clamp\(10\.75rem, 15vw, 12\.5rem\) minmax\(0, 1fr\);/,
+    )
+    expect(shellCss).toMatch(
+      /@media \(min-width: 960px\) and \(max-height: 820px\) and \(orientation: landscape\)[\s\S]*\.dyson-navigation--drawer \.dyson-navigation__link\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*var\(--ui-text-meta\);/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-resource-header \.ui-resource-value__value\s*\{[^}]*font-size:\s*clamp\([\s\S]*calc\(1\.3rem \* var\(--game-text-scale\)\)[\s\S]*3\.8vw[\s\S]*calc\(1\.55rem \* var\(--game-text-scale\)\)[\s\S]*\);/,
     )
     expect(shellCss).toMatch(
       /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*min-block-size:\s*3\.2rem;[^}]*padding-block:\s*calc\(0\.42rem \+ var\(--safe-area-top\)\)\s*0\.12rem;/,
@@ -649,7 +765,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell\[data-route-theme\]\s*\.dyson-resource-header,[\s\S]*\.dyson-shell\[data-route-theme\]\s*\.dyson-shell__bottom-navigation,[\s\S]*\.dyson-shell\[data-route-theme\]\s*\.dyson-shell__lower-regions\s*\{[^}]*border-color:\s*var\(--theme-divider\);[^}]*background:\s*var\(--theme-panel\);/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="bots"\]\s+\.dyson-resource-header,\s*\.dyson-shell\[data-route-theme="research"\]\s+\.dyson-resource-header\s*\{[^}]*border-block-end:\s*2px solid var\(--theme-divider\);/,
+      /\.dyson-shell\[data-route-theme="bots"\]\s+\.dyson-resource-header,\s*\.dyson-shell\[data-route-theme="research"\]\s+\.dyson-resource-header\s*\{[^}]*border-block-end:\s*var\(--ui-shell-divider-width\) solid var\(--theme-divider\);/,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell\[data-route-theme="simulations"\][\s\S]*\.dyson-resource-header\s*\{[^}]*background:\s*var\(--simulations-panel-color\);/,

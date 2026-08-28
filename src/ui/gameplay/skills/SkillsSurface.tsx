@@ -33,6 +33,7 @@ import {
 } from '../../components'
 import {
   formatGameNumber,
+  formatWholeGameNumber,
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
@@ -195,6 +196,29 @@ const MIN_SCALE = 0.4
 const MAX_SCALE = 1.5
 const DEFAULT_SCALE = 0.8
 const SKILL_DRAG_THRESHOLD_PX = 6
+const SKILL_DOUBLE_ACTIVATION_MILLISECONDS = 360
+const SKILL_DOUBLE_CLICK_STORAGE_KEY =
+  'idle-dyson-swarm:skill-double-click-assignment'
+
+function readDoubleClickAssignmentPreference(): boolean {
+  try {
+    return typeof window !== 'undefined' &&
+      window.localStorage.getItem(SKILL_DOUBLE_CLICK_STORAGE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+function writeDoubleClickAssignmentPreference(enabled: boolean): void {
+  try {
+    window.localStorage.setItem(
+      SKILL_DOUBLE_CLICK_STORAGE_KEY,
+      String(enabled),
+    )
+  } catch {
+    // A presentation preference should not block the Skill Tree.
+  }
+}
 
 const minX =
   Math.min(...presentation.nodes.map((node) => node.x)) -
@@ -257,7 +281,12 @@ export function SkillsSurface({
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(
     null,
   )
+  const [quickPurchaseSkillId, setQuickPurchaseSkillId] =
+    useState<string | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [doubleClickToAssign, setDoubleClickToAssign] = useState(
+    readDoubleClickAssignmentPreference,
+  )
   const [presetsOpen, setPresetsOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
   const [pendingKind, setPendingKind] = useState<string | null>(null)
@@ -414,6 +443,49 @@ export function SkillsSurface({
     skillSignature,
   ])
 
+  const selectSkill = useCallback((skillId: string) => {
+    setQuickPurchaseSkillId(null)
+    setSelectedSkillId(skillId)
+  }, [])
+
+  const quickAssignSkill = useCallback((skillId: string) => {
+    const preview = previewById.get(skillId)
+    if (
+      preview === undefined ||
+      preview.owned ||
+      !commandAvailability.purchase ||
+      !preview.purchase.eligible
+    ) {
+      selectSkill(skillId)
+      return
+    }
+    // Enabling double-click assignment is an explicit opt-in to purchase the
+    // clicked skill immediately. Purity skills always include a production
+    // projection, so treating that projection as a confirmation requirement
+    // made the shortcut silently fall back to the details dialog for the
+    // entire Purity branch. Keep confirmation for purchases that would alter
+    // other assigned skills, but allow an impact projection on the skill being
+    // assigned to use the shortcut as advertised.
+    const requiresConfirmation =
+      preview.purchase.affectedSkillIds.some(
+        (affectedSkillId) => affectedSkillId !== skillId,
+      )
+    if (requiresConfirmation) {
+      setQuickPurchaseSkillId(skillId)
+      setSelectedSkillId(skillId)
+      return
+    }
+    void dispatch(
+      { kind: 'skill.purchase', skillId },
+      { skillId, expectedOwned: true },
+    )
+  }, [
+    commandAvailability.purchase,
+    dispatch,
+    previewById,
+    selectSkill,
+  ])
+
   if (!catalog.complete) {
     return (
       <StatusFeedback tone="error">
@@ -435,12 +507,49 @@ export function SkillsSurface({
         matchingIds={matchingIds}
         searchActive={normalizedQuery.length > 0}
         presetColorId={presets[selectedPresetSlot - 1]?.colorId ?? defaultSkillPresetColorId(selectedPresetSlot)}
-        onSelect={setSelectedSkillId}
+        onSelect={selectSkill}
+        onDoubleActivate={quickAssignSkill}
+        doubleClickToAssign={doubleClickToAssign}
         registerFocus={registerTreeFocus}
         initialView={initialTreeView}
         onViewChange={onTreeViewChange}
         controlsStart={(
-          <div className="skills-surface__search">
+          <div className="skills-surface__viewport-controls">
+            <div
+              className="skills-surface__quick-presets"
+              aria-label={intl.formatMessage(messages.presets)}
+              role="group"
+            >
+              {presets.slice(0, 5).map((preset, index) => {
+                const slot = (index + 1) as CanonicalSkillPresetSlot
+                return (
+                  <button
+                    key={slot}
+                    type="button"
+                    className="skills-surface__quick-preset"
+                    style={skillPresetColorStyle(preset.colorId)}
+                    aria-label={intl.formatMessage(messages.switchPreset, {
+                      name: preset.name,
+                    })}
+                    aria-pressed={selectedPresetSlot === slot}
+                    disabled={
+                      !commandAvailability.selectPreset ||
+                      pendingKind === 'skill.select-preset'
+                    }
+                    onClick={() => void dispatch(
+                      { kind: 'skill.select-preset', slot },
+                      { expectedPresetSlot: slot },
+                    )}
+                  >
+                    <span>{slot}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <div
+              className="skills-surface__search"
+              data-has-clear={query.length > 0 || undefined}
+            >
           <label
             htmlFor={searchId}
             className="skills-surface__visually-hidden"
@@ -490,6 +599,7 @@ export function SkillsSurface({
               })}
             </span>
           )}
+            </div>
           </div>
         )}
       />
@@ -507,13 +617,18 @@ export function SkillsSurface({
             <span className="skills-surface__visually-hidden">
               {intl.formatMessage(messages.pointsLabel)}
             </span>
-            <strong>{formatGameNumber(locale, points)}</strong>
+            <strong>{formatWholeGameNumber(locale, points)}</strong>
           </div>
         )}
       >
         <SkillSettings
           id={`${settingsId}-content`}
           autoAssignNonRefundable={autoAssignNonRefundable}
+          doubleClickToAssign={doubleClickToAssign}
+          onDoubleClickToAssignChange={(enabled) => {
+            setDoubleClickToAssign(enabled)
+            writeDoubleClickAssignmentPreference(enabled)
+          }}
           commandAvailability={commandAvailability}
           pendingKind={pendingKind}
           dispatch={dispatch}
@@ -574,7 +689,13 @@ export function SkillsSurface({
           }
           presetActions={presetActions}
           pendingKind={pendingKind}
-          onClose={() => setSelectedSkillId(null)}
+          initialPurchaseConfirmation={
+            quickPurchaseSkillId === selectedSkillId
+          }
+          onClose={() => {
+            setQuickPurchaseSkillId(null)
+            setSelectedSkillId(null)
+          }}
           dispatch={dispatch}
         />
       )}
@@ -592,6 +713,8 @@ interface SkillTreeViewportProps {
   readonly presetColorId: SkillPresetColorId
   readonly controlsStart?: ReactNode
   readonly onSelect: (skillId: string) => void
+  readonly onDoubleActivate: (skillId: string) => void
+  readonly doubleClickToAssign: boolean
   readonly registerFocus: (focus: (skillId: string) => void) => void
   readonly initialView?: SkillTreeViewState | null
   readonly onViewChange?: (view: SkillTreeViewState) => void
@@ -607,6 +730,8 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   presetColorId,
   controlsStart,
   onSelect,
+  onDoubleActivate,
+  doubleClickToAssign,
   registerFocus,
   initialView,
   onViewChange,
@@ -624,11 +749,17 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
         startX: number
         startY: number
         skillId: string | null
+        pointerType: string
         dragged: boolean
       }
     >(),
   )
   const suppressedSkillClick = useRef<string | null>(null)
+  const activationTimer = useRef<number | null>(null)
+  const lastActivation = useRef<{
+    readonly skillId: string
+    readonly at: number
+  } | null>(null)
   const gesture = useRef({
     startDistance: 0,
     startScale: DEFAULT_SCALE,
@@ -696,9 +827,21 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
         cancelAnimationFrame(transformFrame.current)
         transformFrame.current = null
       }
+      if (activationTimer.current !== null) {
+        window.clearTimeout(activationTimer.current)
+      }
     },
     [],
   )
+
+  useEffect(() => {
+    if (doubleClickToAssign) return
+    if (activationTimer.current !== null) {
+      window.clearTimeout(activationTimer.current)
+      activationTimer.current = null
+    }
+    lastActivation.current = null
+  }, [doubleClickToAssign])
 
   const centreOn = useCallback(
     (skillId: string, focus = true) => {
@@ -843,6 +986,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
       startX: event.clientX,
       startY: event.clientY,
       skillId: skillNode?.dataset.skillId ?? null,
+      pointerType: event.pointerType,
       dragged: false,
     })
     if (pointers.current.size === 2) {
@@ -867,6 +1011,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
       startX: previous.startX,
       startY: previous.startY,
       skillId: previous.skillId,
+      pointerType: previous.pointerType,
       dragged: previous.dragged,
     }
     if (pointers.current.size === 1) {
@@ -923,10 +1068,44 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
     }
   }
 
-  const releasePointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+  const completeNodeActivation = (skillId: string) => {
+    const now = Date.now()
+    const previous = lastActivation.current
+    if (
+      previous?.skillId === skillId &&
+      now - previous.at <= SKILL_DOUBLE_ACTIVATION_MILLISECONDS
+    ) {
+      if (activationTimer.current !== null) {
+        window.clearTimeout(activationTimer.current)
+        activationTimer.current = null
+      }
+      lastActivation.current = null
+      onDoubleActivate(skillId)
+      return
+    }
+    lastActivation.current = { skillId, at: now }
+    if (activationTimer.current !== null) {
+      window.clearTimeout(activationTimer.current)
+    }
+    activationTimer.current = window.setTimeout(() => {
+      activationTimer.current = null
+      lastActivation.current = null
+      onSelect(skillId)
+    }, SKILL_DOUBLE_ACTIVATION_MILLISECONDS)
+  }
+
+  const releasePointer = (
+    event: ReactPointerEvent<HTMLDivElement>,
+    activate: boolean,
+  ) => {
     const pointer = pointers.current.get(event.pointerId)
     if (pointer?.skillId && pointer.dragged) {
       suppressedSkillClick.current = pointer.skillId
+    } else if (activate && pointer?.skillId) {
+      if (doubleClickToAssign && pointer.pointerType === 'touch') {
+        suppressedSkillClick.current = pointer.skillId
+        completeNodeActivation(pointer.skillId)
+      }
     }
     pointers.current.delete(event.pointerId)
     if (pointers.current.size < 2) gesture.current.startDistance = 0
@@ -936,7 +1115,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
     event: ReactPointerEvent<HTMLDivElement>,
   ) => {
     if (event.target !== event.currentTarget) return
-    releasePointer(event)
+    releasePointer(event, false)
   }
 
   const connectors = useMemo(
@@ -959,8 +1138,8 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
       aria-describedby={instructionsId}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
-      onPointerUp={releasePointer}
-      onPointerCancel={releasePointer}
+      onPointerUp={(event) => releasePointer(event, true)}
+      onPointerCancel={(event) => releasePointer(event, false)}
       onLostPointerCapture={losePointerCapture}
       onWheel={(event: ReactWheelEvent<HTMLDivElement>) => {
         event.preventDefault()
@@ -1103,6 +1282,23 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
                   return
                 }
                 suppressedSkillClick.current = null
+                if (!doubleClickToAssign) {
+                  onSelect(node.skillId)
+                  return
+                }
+                if (event.detail >= 2) {
+                  if (activationTimer.current !== null) {
+                    window.clearTimeout(activationTimer.current)
+                    activationTimer.current = null
+                  }
+                  lastActivation.current = null
+                  onDoubleActivate(node.skillId)
+                  return
+                }
+                if (event.detail === 1) {
+                  completeNodeActivation(node.skillId)
+                  return
+                }
                 onSelect(node.skillId)
               }}
             >
@@ -1278,6 +1474,7 @@ interface SkillDetailsProps {
   readonly selectedPresetName: string
   readonly presetActions?: SkillPresetActions
   readonly pendingKind: string | null
+  readonly initialPurchaseConfirmation: boolean
   readonly onClose: () => void
   readonly dispatch: (
     command: SkillCommand,
@@ -1328,6 +1525,7 @@ function SkillDetails({
   selectedPresetName,
   presetActions,
   pendingKind,
+  initialPurchaseConfirmation,
   onClose,
   dispatch,
 }: SkillDetailsProps) {
@@ -1339,7 +1537,12 @@ function SkillDetails({
   const [actionPreview, setActionPreview] = useState<{
     readonly kind: 'purchase' | 'refund'
     readonly affectedSkillIds: readonly string[]
-  } | null>(null)
+  } | null>(() => initialPurchaseConfirmation
+    ? {
+        kind: 'purchase',
+        affectedSkillIds: preview.purchase.affectedSkillIds,
+      }
+    : null)
   const [queuePending, setQueuePending] = useState(false)
   const [queueFailed, setQueueFailed] = useState(false)
   const names = (ids: readonly string[]) =>
@@ -1467,7 +1670,7 @@ function SkillDetails({
         <div className="skill-details__metadata">
           <strong>
             {intl.formatMessage(messages.cost, {
-              value: formatGameNumber(locale, preview.cost),
+              value: formatWholeGameNumber(locale, preview.cost),
             })}
           </strong>
           {preview.requiredSkillIds.length > 0 && (
@@ -1531,7 +1734,7 @@ function SkillDetails({
               aria-label={intl.formatMessage(
                 messages.purchasePointAction,
                 {
-                  value: formatGameNumber(
+                  value: formatWholeGameNumber(
                     locale,
                     preview.purchase.pointsRequired,
                   ),
@@ -1546,7 +1749,7 @@ function SkillDetails({
               <span>{intl.formatMessage(messages.purchase)}</span>
               <small>
                 {intl.formatMessage(messages.purchasePointImpact, {
-                  value: formatGameNumber(
+                  value: formatWholeGameNumber(
                     locale,
                     preview.purchase.pointsRequired,
                   ),
@@ -1560,7 +1763,7 @@ function SkillDetails({
               aria-label={intl.formatMessage(
                 messages.refundPointAction,
                 {
-                  value: formatGameNumber(
+                  value: formatWholeGameNumber(
                     locale,
                     preview.refund.pointsReturned,
                   ),
@@ -1575,7 +1778,7 @@ function SkillDetails({
               <span>{intl.formatMessage(messages.refund)}</span>
               <small>
                 {intl.formatMessage(messages.refundPointImpact, {
-                  value: formatGameNumber(
+                  value: formatWholeGameNumber(
                     locale,
                     preview.refund.pointsReturned,
                   ),
@@ -1793,6 +1996,8 @@ function ProductionImpactRow({
 interface SkillSettingsProps {
   readonly id: string
   readonly autoAssignNonRefundable: boolean
+  readonly doubleClickToAssign: boolean
+  readonly onDoubleClickToAssignChange: (enabled: boolean) => void
   readonly commandAvailability: SkillCommandAvailability
   readonly pendingKind: string | null
   readonly dispatch: (
@@ -1806,6 +2011,8 @@ interface SkillSettingsProps {
 function SkillSettings({
   id,
   autoAssignNonRefundable,
+  doubleClickToAssign,
+  onDoubleClickToAssignChange,
   commandAvailability,
   pendingKind,
   dispatch,
@@ -1833,6 +2040,16 @@ function SkillSettings({
           }
         />
         <span>{intl.formatMessage(messages.nonRefundable)}</span>
+      </label>
+      <label className="skill-settings__toggle">
+        <input
+          type="checkbox"
+          checked={doubleClickToAssign}
+          onChange={(event) =>
+            onDoubleClickToAssignChange(event.currentTarget.checked)
+          }
+        />
+        <span>{intl.formatMessage(messages.doubleClickToAssign)}</span>
       </label>
       <div className="skill-settings__actions">
         <button
@@ -2412,21 +2629,26 @@ function PresetSummary({
 
   return (
     <span className="skill-preset-summary">
-      {intl.formatMessage(messages.presetSummary, {
-        count,
-        workers: workerPercent,
-        scientists: scientistPercent,
-        workerValue: (chunks: ReactNode) => (
-          <span className="skill-preset-summary__workers">
-            {chunks}
-          </span>
-        ),
-        scientistValue: (chunks: ReactNode) => (
-          <span className="skill-preset-summary__scientists">
-            {chunks}
-          </span>
-        ),
-      })}
+      <span className="skill-preset-summary__queued">
+        {intl.formatMessage(messages.presetSummary, { count })}
+      </span>
+      <span className="skills-surface__visually-hidden"> · </span>
+      <span className="skill-preset-summary__distribution">
+        {intl.formatMessage(messages.presetDistribution, {
+          workers: workerPercent,
+          scientists: scientistPercent,
+          workerValue: (chunks: ReactNode) => (
+            <span className="skill-preset-summary__workers">
+              {chunks}
+            </span>
+          ),
+          scientistValue: (chunks: ReactNode) => (
+            <span className="skill-preset-summary__scientists">
+              {chunks}
+            </span>
+          ),
+        })}
+      </span>
     </span>
   )
 }

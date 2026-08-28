@@ -30,7 +30,7 @@ describe('gameplay structural palette contract', () => {
   it('makes every route surface consume shared structural roles', () => {
     const expectations = {
       'facilities/facilities.css': [
-        'border: 2px solid var(--theme-divider)',
+        'border: var(--ui-panel-border-width) solid var(--theme-divider)',
         'background: var(--theme-panel)',
         'background: var(--theme-accent)',
       ],
@@ -55,7 +55,7 @@ describe('gameplay structural palette contract', () => {
         '--reality-panel: var(--theme-panel)',
         '--reality-panel-raised: var(--theme-selected)',
         '--reality-accent: var(--theme-accent)',
-        'border-block-end: 2px solid var(--theme-divider)',
+        'border-block-end: var(--ui-shell-divider-width) solid var(--theme-divider)',
       ],
       'simulations/simulations.css': [
         '--simulation-era-background: var(--theme-page)',
@@ -102,7 +102,7 @@ describe('gameplay structural palette contract', () => {
         'background: var(--theme-selected)',
       ],
       'settings/settingsSurface.css': [
-        'border: 2px solid var(--theme-divider)',
+        'border: var(--ui-panel-border-width) solid var(--theme-divider)',
         'background: var(--theme-panel)',
         'background: var(--theme-selected)',
       ],
@@ -135,7 +135,7 @@ describe('gameplay structural palette contract', () => {
       /\.dyson-resource-header__item::before\s*\{[^}]*content:\s*none;/,
     )
     expect(shell).toMatch(
-      /\.dyson-shell\[data-route-theme="bots"\]\s+\.dyson-resource-header,\s*\.dyson-shell\[data-route-theme="research"\]\s+\.dyson-resource-header\s*\{[^}]*border-block-end:\s*2px solid var\(--theme-divider\);/,
+      /\.dyson-shell\[data-route-theme="bots"\]\s+\.dyson-resource-header,\s*\.dyson-shell\[data-route-theme="research"\]\s+\.dyson-resource-header\s*\{[^}]*border-block-end:\s*var\(--ui-shell-divider-width\) solid var\(--theme-divider\);/,
     )
     expect(quantum).toMatch(
       /\.quantum-upgrade-card--complete\s*\{\s*background:\s*var\(--quantum-panel\);\s*\}/,

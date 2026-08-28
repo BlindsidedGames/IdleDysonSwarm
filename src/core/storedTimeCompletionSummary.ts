@@ -18,9 +18,9 @@ export interface StoredTimeCompletionSummary {
   readonly infinityCount: bigint
   readonly infinityPoints: bigint
   readonly dreamResetCount: bigint
-  readonly strangeMatter: bigint
+  readonly strangeMatter: number
   readonly realityWorkers: bigint
-  readonly influence: bigint
+  readonly influence: number
   readonly botGain: number
   readonly facilityGains: readonly StoredTimeFacilityGain[]
 }

@@ -5,7 +5,9 @@ import {
   DISCRETE_MAXIMUM,
   multiplyContinuous,
 } from './numeric'
-import { tryDebitContinuous } from './transactions'
+import { buyXCost, tryDebitContinuous } from './transactions'
+
+export const DREAM_PRODUCER_COST_EXPONENT = 1.01
 
 export const DREAM_FOUNDATIONAL_INFORMATION_DURATIONS = Object.freeze({
   hunterTimerProgress: 3,
@@ -101,7 +103,7 @@ export type DreamPurchaseStatus =
 export interface DreamPurchaseResult {
   readonly purchased: boolean
   readonly command: DreamPurchaseCommand
-  readonly cost: bigint
+  readonly cost: number
   readonly status: DreamPurchaseStatus
   readonly state: CanonicalGameStateV1
 }
@@ -457,6 +459,7 @@ export function runDreamFoundationalInformationProduction(
 export function purchaseDreamFoundationalInformation(
   state: Readonly<CanonicalGameStateV1>,
   command: DreamPurchaseCommand,
+  batches = 1,
 ): DreamPurchaseResult {
   switch (command) {
     case 'hunters':
@@ -466,6 +469,8 @@ export function purchaseDreamFoundationalInformation(
         state.dream.parameters.hunterCost,
         state.dream.resources.hunters,
         state.dream.huntersPerPurchase,
+        state.dream.purchaseBatches?.hunters ?? 0n,
+        batches,
       )
     case 'gatherers':
       return purchaseDiscreteProducer(
@@ -474,6 +479,8 @@ export function purchaseDreamFoundationalInformation(
         state.dream.parameters.gathererCost,
         state.dream.resources.gatherers,
         state.dream.gatherersPerPurchase,
+        state.dream.purchaseBatches?.gatherers ?? 0n,
+        batches,
       )
     case 'community-boost':
       return purchaseBoost(
@@ -862,38 +869,78 @@ function purchaseDiscreteProducer(
   cost: bigint,
   owned: bigint,
   quantity: bigint,
+  purchasedBatches: bigint,
+  requestedBatches: number,
 ): DreamPurchaseResult {
-  if (cost <= 0n) return purchaseFailure(state, command, 'invalid-cost')
+  if (
+    cost <= 0n ||
+    !Number.isSafeInteger(requestedBatches) ||
+    requestedBatches < 1 ||
+    purchasedBatches > BigInt(Number.MAX_SAFE_INTEGER)
+  ) {
+    return purchaseFailure(state, command, 'invalid-cost')
+  }
   if (quantity <= 0n) {
-    return purchaseFailure(state, command, 'invalid-quantity', cost)
+    return purchaseFailure(state, command, 'invalid-quantity')
   }
-  if (owned > DISCRETE_MAXIMUM - quantity) {
-    return purchaseFailure(state, command, 'output-maxed', cost)
+  const batchQuantity = BigInt(requestedBatches)
+  const totalQuantity = quantity * batchQuantity
+  if (
+    totalQuantity <= 0n ||
+    totalQuantity > DISCRETE_MAXIMUM ||
+    owned > DISCRETE_MAXIMUM - totalQuantity ||
+    purchasedBatches > DISCRETE_MAXIMUM - batchQuantity
+  ) {
+    return purchaseFailure(state, command, 'output-maxed')
   }
-  if (state.reality.influence < cost) {
+  const totalCost = buyXCost(
+    batchQuantity,
+    Number(cost),
+    DREAM_PRODUCER_COST_EXPONENT,
+    Number(purchasedBatches),
+  )
+  const debit = tryDebitContinuous(
+    state.reality.influence,
+    totalCost,
+    batchQuantity,
+  )
+  if (debit.status === 'insufficient-funds') {
     return purchaseFailure(
       state,
       command,
       'insufficient-influence',
-      cost,
+      totalCost,
     )
+  }
+  if (debit.status !== 'success') {
+    return purchaseFailure(state, command, 'invalid-cost', totalCost)
+  }
+  const previousBatches = state.dream.purchaseBatches ?? {
+    hunters: 0n,
+    gatherers: 0n,
+    solar: 0n,
+    fusion: 0n,
   }
   return {
     purchased: true,
     command,
-    cost,
+    cost: totalCost,
     status: 'success',
     state: {
       ...state,
       reality: {
         ...state.reality,
-        influence: state.reality.influence - cost,
+        influence: debit.balance,
       },
       dream: {
         ...state.dream,
         resources: {
           ...state.dream.resources,
-          [command]: owned + quantity,
+          [command]: owned + totalQuantity,
+        },
+        purchaseBatches: {
+          ...previousBatches,
+          [command]: purchasedBatches + batchQuantity,
         },
       },
     },
@@ -917,13 +964,23 @@ function purchaseBoost(
   if (cost === undefined || (cost === 0n && !authoredFree)) {
     return purchaseFailure(state, command, 'invalid-cost')
   }
-  if (state.reality.influence < cost) {
+  const debit = cost === 0n && authoredFree
+    ? {
+        balance: state.reality.influence,
+        charged: 0,
+        status: 'success' as const,
+      }
+    : tryDebitContinuous(state.reality.influence, Number(cost))
+  if (debit.status === 'insufficient-funds') {
     return purchaseFailure(
       state,
       command,
       'insufficient-influence',
-      cost,
+      Number(cost),
     )
+  }
+  if (debit.status !== 'success') {
+    return purchaseFailure(state, command, 'invalid-cost', Number(cost))
   }
   const parameter =
     command === 'community-boost'
@@ -932,13 +989,13 @@ function purchaseBoost(
   return {
     purchased: true,
     command,
-    cost,
+    cost: Number(cost),
     status: 'success',
     state: {
       ...state,
       reality: {
         ...state.reality,
-        influence: state.reality.influence - cost,
+        influence: debit.balance,
       },
       dream: {
         ...state.dream,
@@ -967,7 +1024,7 @@ function purchaseFailure(
   state: Readonly<CanonicalGameStateV1>,
   command: DreamPurchaseCommand,
   status: DreamPurchaseStatus,
-  cost = 0n,
+  cost = 0,
 ): DreamPurchaseResult {
   return {
     purchased: false,

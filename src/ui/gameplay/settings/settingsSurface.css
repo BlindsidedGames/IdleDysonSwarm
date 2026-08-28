@@ -1,7 +1,9 @@
 .settings-surface {
+  container-name: settings-surface;
+  container-type: inline-size;
   block-size: 100%;
   min-block-size: 0;
-  max-inline-size: 62rem;
+  max-inline-size: var(--ui-content-max);
   margin-inline: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -17,9 +19,29 @@
 
 .settings-surface__content {
   display: grid;
-  gap: 0.8rem;
-  padding: 0.5rem max(0.5rem, var(--safe-area-right)) 0.5rem max(0.5rem, var(--safe-area-left));
+  align-content: start;
+  gap: var(--ui-section-stack-gap);
+  padding-block: var(--ui-route-inset);
+  padding-inline:
+    max(var(--ui-route-inset), var(--safe-area-left))
+    max(var(--ui-route-inset), var(--safe-area-right));
 }
+
+.settings-surface__column {
+  display: contents;
+}
+
+.settings-surface__panel--audio { order: 1; }
+.settings-surface__panel--language { order: 2; }
+.settings-surface__panel--number-notation { order: 3; }
+.settings-surface__panel--processing { order: 4; }
+.settings-surface__panel--visualization { order: 5; }
+.settings-surface__panel--more { order: 6; }
+.settings-surface__panel--navigation { order: 7; }
+.settings-surface__panel--save { order: 8; }
+.settings-surface__development-trigger,
+.settings-surface__panel--development { order: 9; }
+.settings-surface__status { order: 10; }
 
 .settings-surface__panel--audio {
   align-items: start;
@@ -27,7 +49,7 @@
 
 .settings-surface__audio-controls {
   display: grid;
-  gap: 0.65rem;
+  gap: 0;
 }
 
 .settings-surface__audio-controls > label:not(.settings-surface__toggle) {
@@ -35,13 +57,15 @@
   grid-template-columns: minmax(8rem, auto) minmax(8rem, 15rem);
   align-items: center;
   gap: 0.65rem;
+  min-block-size: 1.9rem;
+  line-height: 1.1;
   font-weight: var(--font-weight-semibold);
 }
 
 .settings-surface__audio-controls input[type="range"] {
   appearance: none;
   inline-size: 100%;
-  block-size: var(--target-minimum);
+  block-size: 1.9rem;
   margin: 0;
   background: transparent;
   cursor: pointer;
@@ -125,8 +149,8 @@
   inline-size: min(100%, 34rem);
   gap: 0.8rem;
   padding: 1.25rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.45rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-panel-radius);
   background: var(--theme-panel);
   box-shadow: 0 1rem 3rem rgb(0 0 0 / 55%);
 }
@@ -164,8 +188,8 @@
   min-block-size: 10rem;
   resize: vertical;
   padding: 0.65rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.35rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-page);
   color: white;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
@@ -182,8 +206,8 @@
   display: grid;
   gap: 0.65rem;
   padding: 0.8rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.4rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-selected);
 }
 
@@ -229,8 +253,8 @@
   flex: none;
   min-block-size: var(--target-minimum);
   padding: 0.45rem 0.75rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.4rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-selected);
   color: white;
   cursor: pointer;
@@ -269,8 +293,8 @@
 .settings-surface__dialog-actions > button {
   min-block-size: 3rem;
   padding: 0.55rem 1rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.4rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-selected);
   color: white;
   cursor: pointer;
@@ -287,12 +311,60 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 1rem;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.45rem;
+  gap: var(--ui-related-copy-gap);
+  padding: var(--ui-panel-inset);
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-panel-radius);
   background: var(--theme-panel);
   box-shadow: inset 0 1px rgb(255 255 255 / 8%);
+}
+
+@container settings-surface (min-width: 48rem) {
+  .settings-surface__content {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .settings-surface__column {
+    display: grid;
+    min-inline-size: 0;
+    align-content: start;
+    gap: var(--ui-section-stack-gap);
+  }
+
+  .settings-surface__column--primary { grid-column: 1; }
+  .settings-surface__column--secondary { grid-column: 2; }
+
+  .settings-surface__column .settings-surface__panel {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+  }
+
+  .settings-surface__panel--navigation,
+  .settings-surface__panel--save,
+  .settings-surface__panel--development,
+  .settings-surface__development-trigger,
+  .settings-surface__status {
+    grid-column: 1 / -1;
+  }
+
+  .settings-surface__panel.settings-surface__panel--navigation {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-surface__panel.settings-surface__panel--save {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .settings-surface__select-label,
+  .settings-surface__processing-control {
+    inline-size: 100%;
+    justify-self: stretch;
+  }
+
+  .settings-surface__audio-controls > label:not(.settings-surface__toggle) {
+    grid-template-columns: minmax(7rem, auto) minmax(7rem, 1fr);
+  }
 }
 
 .settings-surface__panel--visualization {
@@ -300,25 +372,33 @@
 }
 
 .settings-surface__panel--navigation {
-  grid-template-columns: minmax(0, 1fr) minmax(13rem, auto);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .settings-surface__select-label {
   display: grid;
-  min-inline-size: min(15rem, 100%);
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  justify-items: stretch;
+  justify-self: stretch;
   gap: 0.35rem;
   font-weight: var(--font-weight-semibold);
+  text-align: start;
 }
 
 .settings-surface__select-label select {
+  box-sizing: border-box;
   min-block-size: var(--target-minimum);
   inline-size: 100%;
+  max-inline-size: 100%;
   padding: 0.55rem 2.25rem 0.55rem 0.7rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.4rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-selected);
   color: white;
   font: inherit;
+  text-align: start;
 }
 
 .settings-surface__select-label select:focus-visible {
@@ -331,7 +411,7 @@
   grid-template-columns: auto minmax(10rem, 15rem);
   align-items: center;
   min-inline-size: min(18rem, 100%);
-  gap: 0.05rem 0.3rem;
+  gap: 0 0.3rem;
   font-weight: var(--font-weight-semibold);
 }
 
@@ -405,17 +485,21 @@
 
 .settings-surface__navigation-toggles {
   display: grid;
-  gap: 0.5rem;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 12rem), 1fr)
+  );
+  gap: var(--ui-control-row-gap);
 }
 
 .settings-surface__toggle {
   display: flex;
   align-items: center;
-  min-block-size: 3rem;
-  gap: 0.65rem;
-  padding: 0.55rem 0.8rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.4rem;
+  min-block-size: var(--target-minimum);
+  gap: 0.45rem;
+  padding: 0.35rem 0.5rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-selected);
   cursor: pointer;
   font-weight: var(--font-weight-semibold);
@@ -438,8 +522,8 @@
   min-block-size: 3.5rem;
   inline-size: 100%;
   padding: 0.75rem 1rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.45rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-panel);
   color: white;
   cursor: pointer;
@@ -507,8 +591,8 @@
 .settings-surface__development-controls select,
 .settings-surface__development-controls button {
   min-block-size: 3rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.4rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   font: inherit;
 }
 
@@ -558,12 +642,15 @@
 }
 
 .settings-surface__copy h2 {
-  font-size: 1.35rem;
+  font-size: var(--ui-text-section-title);
+  line-height: 1.2;
 }
 
 .settings-surface__copy p {
   margin-block-start: 0.35rem;
   color: #91bf8f;
+  font-size: var(--ui-text-body);
+  line-height: 1.35;
 }
 
 .settings-surface__save-actions {
@@ -580,8 +667,8 @@
 .settings-surface__save-actions > button {
   min-block-size: 3.25rem;
   padding: 0.65rem 1rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.4rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-selected);
   color: white;
   cursor: pointer;
@@ -652,7 +739,7 @@
   background: #4a2828;
 }
 
-@media (max-width: 40rem) {
+@container settings-surface (max-width: 40rem) {
   .settings-surface__content {
     gap: 0.42rem;
   }
@@ -662,11 +749,11 @@
   }
 
   .settings-surface__audio-controls input[type="range"] {
-    block-size: 1.75rem;
+    block-size: 1.9rem;
   }
 
   .settings-surface__processing-control input {
-    min-block-size: 1.75rem;
+    min-block-size: var(--target-minimum);
   }
 
   .settings-surface__audio-controls > .settings-surface__toggle {
@@ -737,7 +824,10 @@
 
   .settings-surface__save-actions {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 8rem), 1fr)
+    );
     gap: 0.35rem;
   }
 
@@ -818,6 +908,27 @@
   }
 
   .settings-surface__import-preview dl {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 7rem), 1fr)
+    );
     gap: 0.35rem;
+  }
+}
+
+@media (max-height: 38rem) and (orientation: landscape) {
+  .settings-surface__content {
+    gap: 0.42rem;
+    padding-block: 0.35rem;
+  }
+
+  .settings-surface__panel {
+    gap: 0.55rem;
+    padding-block: 0.65rem;
+  }
+
+  .settings-surface__copy p {
+    margin-block-start: 0.15rem;
+    line-height: 1.2;
   }
 }

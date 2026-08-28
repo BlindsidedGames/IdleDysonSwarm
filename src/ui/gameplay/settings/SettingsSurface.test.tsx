@@ -122,9 +122,10 @@ describe('SettingsSurface', () => {
     expect(local.setItem).toHaveBeenCalledOnce()
     await user.selectOptions(select, 'engineering')
     expect(select).toHaveValue('engineering')
-    select.blur()
-    await user.tab()
-    await user.tab()
+    screen.getByRole('checkbox', {
+      name: 'Show visualization',
+    }).focus()
+    await user.tab({ shift: true })
     expect(select).toHaveFocus()
   })
 
@@ -341,36 +342,51 @@ describe('SettingsSurface', () => {
     ).toEqual([])
   })
 
-  test('owns vertical scrolling and keeps the default mobile layout compact', () => {
+  test('owns vertical scrolling and adapts to its content container', () => {
     expect(settingsStyles).toMatch(
-      /\.settings-surface\s*\{[^}]*block-size:\s*100%;[^}]*min-block-size:\s*0;[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/,
+      /\.settings-surface\s*\{[^}]*container-name:\s*settings-surface;[^}]*container-type:\s*inline-size;[^}]*block-size:\s*100%;[^}]*min-block-size:\s*0;[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/,
     )
     expect(settingsStyles).toMatch(
-      /\.settings-surface__content\s*\{[^}]*padding:\s*0\.5rem max\(0\.5rem, var\(--safe-area-right\)\) 0\.5rem max\(0\.5rem, var\(--safe-area-left\)\);/,
+      /\.settings-surface__content\s*\{[^}]*align-content:\s*start;[^}]*gap:\s*var\(--ui-section-stack-gap\);[^}]*padding-block:\s*var\(--ui-route-inset\);[^}]*max\(var\(--ui-route-inset\), var\(--safe-area-left\)\)[^}]*max\(var\(--ui-route-inset\), var\(--safe-area-right\)\);/s,
     )
     expect(settingsStyles).toMatch(
-      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\s*\{[^}]*gap:\s*0\.45rem;[^}]*padding:\s*0\.55rem;/,
+      /@container settings-surface \(min-width: 48rem\)[\s\S]*\.settings-surface__content\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\);/,
     )
     expect(settingsStyles).toMatch(
-      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls\s*\{[^}]*gap:\s*0\.1rem;/,
+      /@container settings-surface \(min-width: 48rem\)[\s\S]*\.settings-surface__column\s*\{[^}]*display:\s*grid;[^}]*align-content:\s*start;[^}]*gap:\s*var\(--ui-section-stack-gap\);/,
     )
     expect(settingsStyles).toMatch(
-      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls input\[type="range"\]\s*\{[^}]*block-size:\s*1\.75rem;/,
+      /@container settings-surface \(min-width: 48rem\)[\s\S]*\.settings-surface__panel--navigation,[\s\S]*\.settings-surface__panel--save,[\s\S]*grid-column:\s*1 \/ -1;/,
     )
     expect(settingsStyles).toMatch(
-      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__processing-control input\s*\{[^}]*min-block-size:\s*1\.75rem;/,
+      /@container settings-surface \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\s*\{[^}]*gap:\s*0\.45rem;[^}]*padding:\s*0\.55rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@container settings-surface \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls\s*\{[^}]*gap:\s*0\.1rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@container settings-surface \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls input\[type="range"\]\s*\{[^}]*block-size:\s*1\.9rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@container settings-surface \(max-width: 40rem\)[\s\S]*\.settings-surface__processing-control input\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);/,
+    )
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__select-label select\s*\{[^}]*box-sizing:\s*border-box;[^}]*inline-size:\s*100%;[^}]*max-inline-size:\s*100%;/,
+    )
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__select-label\s*\{[^}]*inline-size:\s*100%;[^}]*justify-items:\s*stretch;[^}]*text-align:\s*start;/,
     )
     expect(settingsStyles).toMatch(
       /\.settings-surface__audio-controls > label:not\(\.settings-surface__toggle\)\s*\{[^}]*font-weight:\s*var\(--font-weight-semibold\);/,
     )
     expect(settingsStyles).toMatch(
-      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\.settings-surface__panel--audio\s*\{[^}]*gap:\s*0\.15rem;/,
+      /@container settings-surface \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\.settings-surface__panel--audio\s*\{[^}]*gap:\s*0\.15rem;/,
     )
     expect(settingsStyles).toMatch(
-      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls > label:not\(\.settings-surface__toggle\),\s*\.settings-surface__processing-control\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
+      /@container settings-surface \(max-width: 40rem\)[\s\S]*\.settings-surface__audio-controls > label:not\(\.settings-surface__toggle\),\s*\.settings-surface__processing-control\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
     )
     expect(settingsStyles).toMatch(
-      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__copy h2\s*\{[^}]*font-size:\s*calc\(0\.95rem \* var\(--game-text-scale\)\);/,
+      /@container settings-surface \(max-width: 40rem\)[\s\S]*\.settings-surface__copy h2\s*\{[^}]*font-size:\s*calc\(0\.95rem \* var\(--game-text-scale\)\);/,
     )
     expect(settingsStyles).not.toMatch(
       /\.settings-surface__(?:copy|toggle)[^{]*\{[^}]*white-space:\s*nowrap;/,
@@ -394,7 +410,7 @@ describe('SettingsSurface', () => {
       /\.settings-surface__transfer textarea\s*\{[^}]*font-size:\s*max\(1rem,\s*calc\(0\.78rem \* var\(--game-text-scale\)\)\);/,
     )
     expect(settingsStyles).toMatch(
-      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__transfer textarea\s*\{[^}]*font-size:\s*max\(1rem,\s*calc\(0\.68rem \* var\(--game-text-scale\)\)\);/,
+      /@container settings-surface \(max-width: 40rem\)[\s\S]*\.settings-surface__transfer textarea\s*\{[^}]*font-size:\s*max\(1rem,\s*calc\(0\.68rem \* var\(--game-text-scale\)\)\);/,
     )
   })
 
@@ -602,7 +618,7 @@ describe('SettingsSurface', () => {
     )
     expect(importSaveText).not.toHaveBeenCalled()
     expect(within(dialog).getByRole('status')).toHaveTextContent(
-      'Infinity Points42.0Quantum Points3.00Skill Points7.00',
+      'Infinity Points42.0Quantum Points3.00Skill Points7',
     )
     await user.click(
       within(dialog).getByRole('button', { name: 'Import' }),
@@ -943,7 +959,7 @@ describe('SettingsSurface', () => {
       durableRevision: 2,
     })
     renderSettings(vi.fn(), {
-      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
+      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0 }),
       setDysonBots,
       unlockReality: vi.fn(),
       apply: vi.fn(),
@@ -989,7 +1005,7 @@ describe('SettingsSurface', () => {
         entitled: true,
         purchasedInGame: true,
         quantumShards: 0n,
-        strangeMatter: 0n,
+        strangeMatter: 0,
       }),
       setDysonBots: vi.fn(),
       unlockReality: vi.fn(),
@@ -1027,7 +1043,7 @@ describe('SettingsSurface', () => {
       durableRevision: 2,
     })
     renderSettings(vi.fn(), {
-      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
+      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0 }),
       setDysonBots,
       unlockReality: vi.fn(),
       apply: vi.fn(),
@@ -1061,7 +1077,7 @@ describe('SettingsSurface', () => {
       durableRevision: 3,
     })
     renderSettings(vi.fn(), {
-      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
+      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0 }),
       setDysonBots: vi.fn(),
       unlockReality,
       apply: vi.fn(),

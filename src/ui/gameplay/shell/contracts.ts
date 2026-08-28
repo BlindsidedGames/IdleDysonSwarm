@@ -37,6 +37,10 @@ export type DysonNavigationItem =
       readonly ariaLabel?: string
       readonly icon?: ReactNode
       readonly iconSrc?: string
+      /** Compact value shown on the icon in bottom navigation and beside the label in the drawer. */
+      readonly badge?: string
+      /** Highlights a newly unlocked destination until it is first visited. */
+      readonly newlyUnlocked?: boolean
       readonly progress?: {
         readonly fraction: number
         readonly label: string
@@ -52,6 +56,10 @@ export type DysonNavigationItem =
       readonly ariaLabel?: string
       readonly icon?: ReactNode
       readonly iconSrc?: string
+      /** Compact value shown on the icon in bottom navigation and beside the label in the drawer. */
+      readonly badge?: string
+      /** Highlights a newly unlocked destination until it is first visited. */
+      readonly newlyUnlocked?: boolean
       readonly progress?: {
         readonly fraction: number
         readonly label: string
@@ -123,4 +131,7 @@ export interface DysonGameplayShellProps {
   readonly sidePanelSupplement?: ReactNode
   readonly routeSupplement?: DysonShellRegion
   readonly routeContent?: DysonShellRegion
+  /** Lets a route-owned scrolling surface meet the shell edges without a
+   * second shell inset. The route remains responsible for its content inset. */
+  readonly routeContentEdgeToEdge?: boolean
 }

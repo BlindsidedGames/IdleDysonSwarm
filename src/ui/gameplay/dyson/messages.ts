@@ -428,9 +428,9 @@ export const readyDysonMessages = defineMessages({
   botMultitaskingEfficiency: {
     id: 'dyson.bot-distribution.multitasking-efficiency',
     defaultMessage:
-      '<workers>Workers</workers> and <science>Science</science> efficiency at 100%',
+      '<workers>Workers</workers> and <science>Scientists</science> efficiency at 100%',
     description:
-      'Compact bot efficiency summary shown after Bot Multitasking is purchased. Workers and Science are separately color-coded.',
+      'Compact bot efficiency summary shown after Bot Multitasking is purchased. Workers and Scientists are separately color-coded.',
   },
   workerBots: {
     id: 'dyson.bot-distribution.workers',

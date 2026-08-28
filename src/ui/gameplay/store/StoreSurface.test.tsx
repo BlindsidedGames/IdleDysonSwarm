@@ -2,6 +2,8 @@
 
 import '@testing-library/jest-dom/vitest'
 import axe from 'axe-core'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, test, vi } from 'vitest'
@@ -18,9 +20,23 @@ import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type { SharedMessageCatalog } from '../../i18n/catalogs/types'
 import { StoreSurface } from './StoreSurface'
 
+const storeStyles = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/store/store.css'),
+  'utf8',
+)
+
 afterEach(cleanup)
 
 describe('StoreSurface', () => {
+  test('stacks product actions inside narrow mobile cards', () => {
+    expect(storeStyles).toMatch(
+      /@media \(max-width: 560px\)[\s\S]*\.store-product-card\s*\{[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)/u,
+    )
+    expect(storeStyles).toMatch(
+      /@media \(max-width: 560px\)[\s\S]*\.store-surface__purchase-action\s*\{[\s\S]*inline-size:\s*100%[\s\S]*justify-self:\s*stretch/u,
+    )
+  })
+
   test('has no serious or critical automated accessibility violations', async () => {
     const { container } = renderStore(storeAdapter())
     await screen.findByRole('button', { name: 'A$1.49' })
@@ -130,6 +146,51 @@ describe('StoreSurface', () => {
       .toHaveAttribute('aria-pressed', 'true')
     expect(effect.getSnapshot()).toBe(true)
     expect(synchronize).toHaveBeenCalledTimes(2)
+  })
+
+  test('keeps the Double IP label and visual state stable while updating', async () => {
+    const user = userEvent.setup()
+    let finishSynchronization: ((value: boolean) => void) | undefined
+    const synchronize = vi.fn(() => new Promise<boolean>((resolve) => {
+      finishSynchronization = resolve
+    }))
+    const effect = new DoubleInfinityPointsEffectPreferenceService({ storage: null })
+    renderStore(storeAdapter(), {
+      readOwnership: async () => ({
+        doubleInfinityPoints: true,
+        developerOptions: false,
+        supporterCatGallery: false,
+      }),
+      refreshOwnership: async () => ({
+        doubleInfinityPoints: true,
+        developerOptions: false,
+        supporterCatGallery: false,
+      }),
+    }, false, {}, effect, synchronize)
+
+    const enabled = await screen.findByRole('button', {
+      name: 'Double Infinity Points: Enabled',
+    })
+    await user.click(enabled)
+
+    const updating = screen.getByRole('button', {
+      name: 'Double Infinity Points: Updating',
+    })
+    expect(updating).toHaveTextContent('Enabled')
+    expect(updating).toHaveAttribute('aria-pressed', 'true')
+    expect(updating).toHaveAttribute('aria-busy', 'true')
+    expect(updating).not.toHaveClass(
+      'store-surface__purchase-action--effect-disabled',
+    )
+    expect(updating).toHaveClass(
+      'store-surface__purchase-action--effect-updating',
+    )
+    expect(updating).toBeDisabled()
+
+    finishSynchronization?.(true)
+    expect(await screen.findByRole('button', {
+      name: 'Double Infinity Points: Disabled',
+    })).toHaveTextContent('Disabled')
   })
 
   test('presents the existing in-game Developer Options unlock as an alternative', async () => {

@@ -20,7 +20,7 @@ function controls(
       entitled: true,
       purchasedInGame: true,
       quantumShards: 100_000n,
-      strangeMatter: 500_000n,
+      strangeMatter: 500_000,
     }),
     setDysonBots: vi.fn(),
     unlockReality: vi.fn(),
@@ -111,7 +111,7 @@ describe('DebugSurface', () => {
           entitled: false,
           purchasedInGame: false,
           quantumShards: 100_000n,
-          strangeMatter: 500_000n,
+          strangeMatter: 500_000,
         }),
         apply,
       }),
@@ -170,11 +170,97 @@ describe('DebugSurface', () => {
     await waitFor(() =>
       expect(apply).toHaveBeenCalledWith({
         kind: 'add-influence',
-        amount: 12n,
+        amount: 12,
       }),
     )
     await user.click(screen.getByRole('button', { name: 'Add Offline Time' }))
     await waitFor(() => expect(simulateOfflineTime).toHaveBeenCalledWith(12))
+  })
+
+  test('accepts game suffix variants and preserves exact discrete limits', async () => {
+    const user = userEvent.setup()
+    const apply = vi.fn().mockResolvedValue({
+      applied: true,
+      stateRevision: 2,
+      durableRevision: 2,
+    })
+    renderDebug(controls({ apply }))
+    const amount = screen.getByRole('textbox', { name: 'Amount' })
+
+    await user.clear(amount)
+    await user.type(amount, '100 QI')
+    await user.click(screen.getByRole('button', { name: 'Add Cash' }))
+    await waitFor(() => expect(apply).toHaveBeenLastCalledWith({
+      kind: 'add-cash',
+      amount: 100_000_000_000_000_000_000,
+    }))
+
+    for (const value of ['1 QI', '1xqi', '1 x qi']) {
+      await user.clear(amount)
+      await user.type(amount, value)
+      await user.click(screen.getByRole('button', { name: 'Add Skill Points' }))
+      await waitFor(() => expect(apply).toHaveBeenLastCalledWith({
+        kind: 'add-skill-points',
+        amount: 1_000_000_000_000_000_000n,
+      }))
+    }
+
+    await user.clear(amount)
+    await user.type(amount, '9223372036854775807')
+    expect(amount).toHaveValue('9223372036854775807')
+    await user.click(screen.getByRole('button', { name: 'Add Influence' }))
+    await waitFor(() => expect(apply).toHaveBeenLastCalledWith({
+      kind: 'add-influence',
+      amount: Number('9223372036854775807'),
+    }))
+  })
+
+  test('keeps continuous actions available when an amount is not a valid discrete value', async () => {
+    const user = userEvent.setup()
+    renderDebug(controls())
+    const amount = screen.getByRole('textbox', { name: 'Amount' })
+
+    await user.clear(amount)
+    await user.type(amount, '1.5')
+    expect(screen.getByRole('button', { name: 'Add Cash' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Add Skill Points' })).toBeDisabled()
+    expect(screen.getByText(/require an integer/)).toBeVisible()
+
+    await user.clear(amount)
+    await user.type(amount, '1e309')
+    expect(amount).toHaveValue(Number.MAX_VALUE.toString())
+    expect(screen.getByRole('button', { name: 'Add Cash' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Add Skill Points' })).toBeDisabled()
+    expect(amount).toHaveAttribute('aria-invalid', 'false')
+  })
+
+  test('offers compact cap shortcuts beneath the amount field', async () => {
+    const user = userEvent.setup()
+    const onDraftChange = vi.fn()
+    render(
+      <IntlProvider locale="en">
+        <DebugSurface
+          development={controls()}
+          locale="en"
+          onDraftChange={onDraftChange}
+        />
+      </IntlProvider>,
+    )
+    const amount = screen.getByRole('textbox', { name: 'Amount' })
+
+    await user.click(screen.getByRole('button', { name: 'Double cap' }))
+    expect(amount).toHaveValue(Number.MAX_VALUE.toString())
+    expect(onDraftChange).toHaveBeenLastCalledWith({
+      amount: Number.MAX_VALUE.toString(),
+      preset: 'early',
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Whole cap' }))
+    expect(amount).toHaveValue('9223372036854775807')
+    expect(onDraftChange).toHaveBeenLastCalledWith({
+      amount: '9223372036854775807',
+      preset: 'early',
+    })
   })
 
   test('restores a supplied draft and reports field changes', async () => {

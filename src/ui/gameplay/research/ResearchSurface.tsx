@@ -95,11 +95,13 @@ export interface ResearchSurfaceProps {
   readonly presetAutomationSlot: CanonicalSkillPresetAutomationSlot
   readonly automationUnlocked: boolean
   readonly automationEnabledById: Readonly<Record<string, boolean>>
+  readonly automationResearchIds: readonly string[]
   readonly purchaseRouteAvailable: boolean
   readonly buyModeRouteAvailable: boolean
   readonly roundedBulkRouteAvailable: boolean
   readonly presetAutomationRouteAvailable: boolean
   readonly automationRouteAvailable: boolean
+  readonly summarySupplement?: ReactNode
   readonly dispatchPlayer: (
     command: ResearchCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
@@ -120,11 +122,13 @@ export function ResearchSurface({
   presetAutomationSlot,
   automationUnlocked,
   automationEnabledById,
+  automationResearchIds,
   purchaseRouteAvailable,
   buyModeRouteAvailable,
   roundedBulkRouteAvailable,
   presetAutomationRouteAvailable,
   automationRouteAvailable,
+  summarySupplement,
   dispatchPlayer,
 }: ResearchSurfaceProps) {
   const intl = useIntl()
@@ -150,8 +154,9 @@ export function ResearchSurface({
   const previousVisibleIds = useRef(
     visibleCards.map((card) => card.researchId),
   )
-  const automatableVisibleCards = canonicalVisibleCards.filter((card) =>
-    AUTOMATABLE_RESEARCH_IDS.has(card.researchId),
+  const automatableCards = cards.filter((card) =>
+    AUTOMATABLE_RESEARCH_IDS.has(card.researchId) &&
+    automationResearchIds.includes(card.researchId),
   )
 
   useLayoutEffect(() => {
@@ -315,20 +320,23 @@ export function ResearchSurface({
           settingsLabel={intl.formatMessage(messages.purchaseSettings)}
           onExpandedChange={setSettingsOpen}
           summary={(
-            <p>
-              <StableSingleLineText
-                className="research-surface__production-line"
-                measurement={<ResearchProductionMessage
-                  researchers="9.99QaQag"
-                  science="9.99QaQag"
-                />}
-              >
-                <ResearchProductionMessage
-                  researchers={formatGameNumber(locale, researchers)}
-                  science={formatGameNumber(locale, sciencePerSecond)}
-                />
-              </StableSingleLineText>
-            </p>
+            <div className="research-surface__summary-line">
+              <p>
+                <StableSingleLineText
+                  className="research-surface__production-line"
+                  measurement={<ResearchProductionMessage
+                    researchers="9.99QaQag"
+                    science="9.99QaQag"
+                  />}
+                >
+                  <ResearchProductionMessage
+                    researchers={formatGameNumber(locale, researchers)}
+                    science={formatGameNumber(locale, sciencePerSecond)}
+                  />
+                </StableSingleLineText>
+              </p>
+              {summarySupplement}
+            </div>
           )}
         >
           <div className="research-surface__settings">
@@ -403,7 +411,7 @@ export function ResearchSurface({
                 })
               }
             />
-            {automationUnlocked && automatableVisibleCards.length > 0 ? (
+            {automationUnlocked && automatableCards.length > 0 ? (
               <fieldset className="research-surface__automation">
                 <legend>{intl.formatMessage(messages.autoPurchase)}</legend>
                 <button
@@ -411,10 +419,10 @@ export function ResearchSurface({
                   className="research-surface__automation-toggle-all"
                   disabled={!automationRouteAvailable}
                   onClick={() => {
-                    const enabled = automatableVisibleCards.some(
+                    const enabled = automatableCards.some(
                       (card) => !automationEnabled(card.researchId),
                     )
-                    automatableVisibleCards.forEach((card) =>
+                    automatableCards.forEach((card) =>
                       setResearchAutomation(card.researchId, enabled),
                     )
                   }}
@@ -422,7 +430,7 @@ export function ResearchSurface({
                   {intl.formatMessage(messages.toggleAll)}
                 </button>
                 <div className="research-surface__automation-grid">
-                  {automatableVisibleCards.map((card) => {
+                  {automatableCards.map((card) => {
                       const name = intl.formatMessage(
                         researchNameMessage(card.researchId),
                       )
