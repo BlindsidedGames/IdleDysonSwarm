@@ -187,6 +187,21 @@ const version414PatchNoteMessages = [
   messages.patchNotesVersion414SimulationResources,
 ] as const
 
+const version415PatchNoteMessages = [
+  messages.patchNotesVersion415VisualSystem,
+  messages.patchNotesVersion415ResponsiveLayouts,
+  messages.patchNotesVersion415Facilities,
+  messages.patchNotesVersion415Skills,
+  messages.patchNotesVersion415PrestigeShops,
+  messages.patchNotesVersion415SimulationsUi,
+  messages.patchNotesVersion415SimulationBalance,
+  messages.patchNotesVersion415SimulationFixes,
+  messages.patchNotesVersion415Reality,
+  messages.patchNotesVersion415Avocato,
+  messages.patchNotesVersion415NumberInput,
+  messages.patchNotesVersion415Persistence,
+] as const
+
 const version412PatchNoteMessages = [
   messages.patchNotesVersion412Languages,
   messages.patchNotesVersion412Processing,
@@ -381,15 +396,21 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion414)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion415)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            {version414PatchNoteMessages.map((message) => (
+            {version415PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
         </section>
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion414)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version414PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
           <h4>{intl.formatMessage(messages.patchNotesVersion413)}</h4>
           <ul className="wiki-surface__patch-note-list">
             {version413PatchNoteMessages.map((message) => (
