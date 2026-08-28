@@ -6,13 +6,13 @@ function read(relativePath: string): string {
 }
 
 describe('native host scaffold', () => {
-  it('uses generated 4.1.4 release metadata above the Unity build floor', () => {
+  it('uses generated 4.1.5 release metadata above the Unity build floor', () => {
     const source = JSON.parse(read('hosts/native-release.json')) as {
       marketingVersion: string
       defaultReleaseCandidateId: string
       unityBuildFloor: number
     }
-    expect(source.marketingVersion).toBe('4.1.4')
+    expect(source.marketingVersion).toBe('4.1.5')
     expect(source.defaultReleaseCandidateId).toMatch(/^\d{10}$/)
     expect(Number(source.defaultReleaseCandidateId)).toBeGreaterThan(
       source.unityBuildFloor,
@@ -38,7 +38,7 @@ describe('native host scaffold', () => {
       `buildVersion: "${releaseCandidateId}"`,
     )
     expect(electron)
-      .toContain('version: "4.1.4"')
+      .toContain('version: "4.1.5"')
   })
 
   it('keeps debug builds open, Android fail-closed, and Xcode locally managed', () => {
