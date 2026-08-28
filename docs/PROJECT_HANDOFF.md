@@ -1,6 +1,6 @@
 # Idle Dyson Swarm project handoff
 
-Last reconciled: 2026-08-27 on the release Mac.
+Last reconciled: 2026-08-29 on the release Mac.
 
 This is the first document a new Codex or ChatGPT account should read before
 changing, reviewing, or releasing Idle Dyson Swarm (IDS). It records the
@@ -23,28 +23,26 @@ linked; this handoff provides the map and the operational context.
 
 ### Source and deployment snapshot
 
-- Current game `main`: `b60dccc0fc9b8fab9695de4610e8d652cae83426`
-  (`Prepare 2026082702 mobile release`).
-- Latest mobile release: `2026082702`, built from that exact commit with
-  marketing version `4.1.4`.
-- This release includes the uncapped Stored Time and Simulation-resource work
-  from PR #131 and the 4.1.4 version and patch-note alignment from PR #132.
-  Stored Time capacity has no authored maximum and the relevant Simulation
-  resources now saturate only at JavaScript's maximum finite-number integer
-  representation. Read
-  `contracts/game-processing-and-offline-time-contract.md` and
+- Latest mobile release source: `1caf56d5961f31344570470cd91f23beff9ce2cb`
+  (`Align Electron 4.1.5 release contract`). Release `2026082901` was built
+  from that exact commit with
+  marketing version `4.1.5`.
+- This release includes the app-wide interface and Simulation/Reality
+  progression work from PR #133 and the 4.1.5 patch notes from PR #134. It
+  retains the uncapped Stored Time and Simulation-resource behavior from
+  PR #131. Read `contracts/game-processing-and-offline-time-contract.md` and
   `contracts/canonical-dream-contract.md` before touching those limits.
-- Release `2026082702` was validated with 202 test files / 2,084 tests, lint,
+- Release `2026082901` was validated with 203 test files / 2,155 tests, lint,
   localization checks, Web production build, Electron boundary checks,
   signed Android build, and iOS synchronization.
 - Its retained Android artifact is
-  `output/local-release/2026082702/android/idle-dyson-swarm-2026082702.aab`
+  `output/local-release/2026082901/android/idle-dyson-swarm-2026082901.aab`
   with SHA-256
-  `0797f8516748410f6a85db4338cc369d623af6b98d15f1cedf9cf8a75e7a3cda`.
+  `e65ac240d66a8178aef9f865818202796f7915b9ed95c0b7d9e184ae1f7dff37`.
   Its retained iOS archive is
-  `output/local-release/2026082702/ios/App-2026082702.xcarchive`.
-- Android `4.1.4 (2026082702)` was confirmed **Available to internal testers**.
-- iOS `4.1.4 (2608.27.02)` was archived and accepted by App Store Connect;
+  `output/local-release/2026082901/ios/App-2026082901.xcarchive`.
+- Android `4.1.5 (2026082901)` was confirmed **Available to internal testers**.
+- iOS `4.1.5 (2608.29.01)` was archived and accepted by App Store Connect;
   the last observed state in that deployment was **uploaded and processing**.
   Do not claim current TestFlight availability without checking App Store
   Connect again.
