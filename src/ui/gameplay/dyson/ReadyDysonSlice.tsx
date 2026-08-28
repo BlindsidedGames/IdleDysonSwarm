@@ -650,6 +650,10 @@ export function ReadyDysonSlice({
   const requestedRouteUnavailable =
     (requestedRoute === 'research' &&
       !(gameplay.visibility.research?.routeUnlocked ?? true)) ||
+    (requestedRoute === 'skills' &&
+      !gameplay.visibility.skills.routeUnlocked) ||
+    (requestedRoute === 'infinity' &&
+      !gameplay.visibility.infinity.routeUnlocked) ||
     ((requestedRoute === 'reality' ||
       requestedRoute === 'simulations') &&
       (!gameplay.visibility.reality.routeVisible ||

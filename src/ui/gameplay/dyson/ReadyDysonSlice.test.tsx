@@ -652,6 +652,38 @@ describe('ReadyDysonSlice', () => {
     ).not.toBeInTheDocument()
   })
 
+  test.each(['skills', 'infinity'] as const)(
+    'returns a stale locked %s route to Bots',
+    async (route) => {
+      const onRouteChange = vi.fn()
+      render(provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            skillsRouteUnlocked: false,
+            infinityRouteUnlocked: false,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route={route}
+          onRouteChange={onRouteChange}
+        />,
+      ))
+
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'Bots' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByRole('heading', {
+          level: 1,
+          name: route === 'skills' ? 'Skills' : 'Infinity',
+        }),
+      ).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(onRouteChange).toHaveBeenCalledWith('bots')
+      })
+    },
+  )
+
   test('badges unassigned Skill Points and highlights a newly unlocked Skills tab until visited', async () => {
     const onRouteChange = vi.fn()
     const rendered = render(
@@ -1817,6 +1849,45 @@ describe('ReadyDysonSlice', () => {
     )
     expect(screen.getByRole('heading', { name: 'Statistics' })).toBeVisible()
   })
+
+  test.each(['skills', 'infinity'] as const)(
+    'rejects a restored locked %s route against the active snapshot',
+    async (route) => {
+      localStorage.setItem(GAMEPLAY_ROUTE_STORAGE_KEY, route)
+      const current = snapshot({
+        skillsRouteUnlocked: false,
+        infinityRouteUnlocked: false,
+      })
+      const runtime = {
+        snapshot: () => current,
+        subscribeSnapshot: () => () => undefined,
+        setGameplayPreviewDemand: vi.fn(),
+        dispatchPlayer: vi.fn(acceptedDispatch),
+      } as unknown as BrowserUiRuntimeFoundation
+
+      render(provider(
+        <ProbedReadyDysonRuntimeHost runtime={runtime} locale="en" />,
+      ))
+
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'Bots' }),
+      ).toBeVisible()
+      expect(
+        screen.queryByRole('heading', {
+          level: 1,
+          name: route === 'skills' ? 'Skills' : 'Infinity',
+        }),
+      ).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(localStorage.getItem(GAMEPLAY_ROUTE_STORAGE_KEY)).toBe(
+          'bots',
+        )
+        expect(runtime.setGameplayPreviewDemand).toHaveBeenCalledWith(
+          'bots',
+        )
+      })
+    },
+  )
 
   test('keeps active-time and gameplay-rule authorities out of the composition source', () => {
     const source = readFileSync(

@@ -12,7 +12,10 @@ import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker
 import {
   advanceRealityWorkers,
 } from '../simulation/realityWorkers'
-import { DISCRETE_MAXIMUM } from '../simulation/numeric'
+import {
+  bitDecrement,
+  DISCRETE_MAXIMUM,
+} from '../simulation/numeric'
 import {
   CANONICAL_PLAYER_COMMAND_KINDS,
   type CanonicalPlayerCommand,
@@ -605,6 +608,13 @@ describe('frontend gameplay snapshot', () => {
       ...source,
       dyson: { ...source.dyson, bots: threshold },
     }
+    const justBeforeFirstInfinity: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: bitDecrement(threshold),
+      },
+    }
 
     expect(
       selectFrontendGameplaySnapshot(
@@ -612,6 +622,12 @@ describe('frontend gameplay snapshot', () => {
         frontendContext(),
       ).visibility.infinity.routeUnlocked,
     ).toBe(true)
+    expect(
+      selectFrontendGameplaySnapshot(
+        justBeforeFirstInfinity,
+        frontendContext(),
+      ).visibility.infinity.routeUnlocked,
+    ).toBe(false)
     expect(
       selectFrontendGameplaySnapshot(
         source,
