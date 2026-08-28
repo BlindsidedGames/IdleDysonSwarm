@@ -15,9 +15,9 @@ describe('Electron native host hardening', () => {
     const source = JSON.parse(read('hosts/native-release.json'))
     const release = validateReleaseMetadata(source)
 
-    expect(runtimeMetadata('4.1.4', release)).toEqual({
-      applicationVersion: '4.1.4',
-      buildNumber: '2026082702',
+    expect(runtimeMetadata('4.1.5', release)).toEqual({
+      applicationVersion: '4.1.5',
+      buildNumber: '2026082901',
     })
     expect(() => runtimeMetadata('4.0.1', release)).toThrow(
       'does not match',
