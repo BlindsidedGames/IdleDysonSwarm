@@ -6645,7 +6645,7 @@
   },
   "wiki.patch-notes.version-4-1-4": {
     "defaultMessage": "Version 4.1.4",
-    "description": "Version label for the latest Wiki patch notes."
+    "description": "Version label for the previous Wiki patch notes."
   },
   "wiki.patch-notes.version-4-1-4.simulation-resources": {
     "defaultMessage": "Dyson Panels, Swarm Panels, Strange Matter, Black Hole rewards, and related statistics can now grow beyond the former 9.22 quintillion limit.",
@@ -6654,6 +6654,58 @@
   "wiki.patch-notes.version-4-1-4.stored-time": {
     "defaultMessage": "Stored Time capacity no longer resets to one day after large upgrades or save transfers, and can now keep doubling without a gameplay cap.",
     "description": "Version 4.1.4 release note for uncapped Stored Time capacity and save-transfer preservation."
+  },
+  "wiki.patch-notes.version-4-1-5": {
+    "defaultMessage": "Version 4.1.5",
+    "description": "Version label for the latest Wiki patch notes."
+  },
+  "wiki.patch-notes.version-4-1-5.avocato": {
+    "defaultMessage": "Refined Reality and Avocato layouts and made feeding precision-aware, so Feed All leaves behind any amount that cannot be credited safely instead of silently destroying it.",
+    "description": "Version 4.1.5 release note for Avocato layout and precision-safe feeding."
+  },
+  "wiki.patch-notes.version-4-1-5.facilities": {
+    "defaultMessage": "Facilities and their Research now follow permanent progression unlocks. Mega-Structures continue the normal facility grid, include production progress, and reveal their automation and Research as each one is unlocked.",
+    "description": "Version 4.1.5 release note for facility and Research progression."
+  },
+  "wiki.patch-notes.version-4-1-5.number-input": {
+    "defaultMessage": "Debug amount fields now understand the game’s full Standard suffix vocabulary, including flexible forms such as 100 Qi, 100xQi, and 100 × qi, with separate continuous and whole-number caps.",
+    "description": "Version 4.1.5 release note for game-number input and caps."
+  },
+  "wiki.patch-notes.version-4-1-5.persistence": {
+    "defaultMessage": "Fixed route restoration and progression boundaries so reloads return to the correct available tab without exposing locked Skills, Infinity, Debug, or late-game content.",
+    "description": "Version 4.1.5 release note for route restoration and progression guards."
+  },
+  "wiki.patch-notes.version-4-1-5.prestige-shops": {
+    "defaultMessage": "Standardized Infinity and Quantum upgrade cards, purchase states, and settings. Both shops can hide maxed upgrades, and Infinity unlocks as soon as the first reset becomes available.",
+    "description": "Version 4.1.5 release note for Infinity and Quantum shop improvements."
+  },
+  "wiki.patch-notes.version-4-1-5.reality": {
+    "defaultMessage": "Influence and Strange Matter now use the same expanded continuous-number system as other large resources. Automatic Influence gathering is continuous and preserves generated workers when floating-point precision becomes limited.",
+    "description": "Version 4.1.5 release note for continuous Reality resources and automatic Influence."
+  },
+  "wiki.patch-notes.version-4-1-5.responsive-layouts": {
+    "defaultMessage": "Reworked Settings, navigation, Store offers, dialogs, bottom panels, and safe-area handling to use space more cleanly without clipping or oversized controls.",
+    "description": "Version 4.1.5 release note for responsive layout and navigation improvements."
+  },
+  "wiki.patch-notes.version-4-1-5.simulation-balance": {
+    "defaultMessage": "Added shallow batch-based cost scaling to Hunters, Gatherers, Solar Panels, and Fusion Generators so Buy Max remains useful at extreme values without creating effectively unlimited purchases.",
+    "description": "Version 4.1.5 release note for Simulation purchase scaling."
+  },
+  "wiki.patch-notes.version-4-1-5.simulation-fixes": {
+    "defaultMessage": "Restored Railgun and Space Factory scaling, corrected volley and completed-research displays, kept Black Hole resets usable at the resource cap, and fixed a timer edge case that could stop game processing.",
+    "description": "Version 4.1.5 release note for Simulation progression and processing fixes."
+  },
+  "wiki.patch-notes.version-4-1-5.simulations-ui": {
+    "defaultMessage": "Redesigned Simulations and Reality upgrade sections with clearer era colours, compact completed research, restored purchase settings, and an option to show formulas directly on facility cards.",
+    "description": "Version 4.1.5 release note for Simulations and Reality presentation."
+  },
+  "wiki.patch-notes.version-4-1-5.skills": {
+    "defaultMessage": "Improved Skill Presets, search controls, dialogs, assignment settings, and navigation badges. Unassigned Skill Points are now shown as whole numbers and empty badges stay hidden.",
+    "description": "Version 4.1.5 release note for Skills interface improvements."
+  },
+  "wiki.patch-notes.version-4-1-5.visual-system": {
+    "defaultMessage": "Refined the entire interface with more consistent text sizes, spacing, borders, panel density, and route colours across phones, tablets, and wide screens.",
+    "description": "Version 4.1.5 release note for the app-wide visual consistency pass."
   },
   "wiki.patch-notes.version-4-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",
