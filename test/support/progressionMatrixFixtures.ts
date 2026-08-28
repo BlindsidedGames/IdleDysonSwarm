@@ -194,7 +194,7 @@ function withInfinityShop(source: CanonicalGameStateV1, earnedPoints: bigint, se
 
 function matureSimulations(source: CanonicalGameStateV1): CanonicalGameStateV1 {
   const reset = applyCanonicalDreamReset(source, {
-    kind: 'explicit', cause: 'Meteor', requestedReward: 100n,
+    kind: 'explicit', cause: 'Meteor', requestedReward: 100,
   })
   if (!reset.ok || !reset.applied) throw new Error('Simulation fixture Dream reset failed')
   let funded = reset.state

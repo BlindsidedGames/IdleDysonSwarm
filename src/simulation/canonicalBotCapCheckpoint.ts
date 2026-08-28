@@ -327,7 +327,7 @@ function emptyStatisticsWindow(
     infinityCount: 0n,
     infinityPoints: 0n,
     dreamResetCount: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
   }
 }

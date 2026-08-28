@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "source": "Lifecycle-normalized Unity prepared graph",
   "target": "Web dehydrate(hydrate(Unity prepared graph))",
-  "expectedDifferenceCount": 1079,
+  "expectedDifferenceCount": 941,
   "allowedDeltas": [
     {
       "id": "legacy-skill-flag-compaction",
@@ -17,7 +17,7 @@
     {
       "id": "statistics-window-default-materialization",
       "reason": "The Web canonical statistics model materializes zero-valued fields omitted by Odin for empty fixed windows.",
-      "expectedDifferenceCount": 966,
+      "expectedDifferenceCount": 828,
       "expectedShape": "missing",
       "actualShape": "zero-number-or-bigint",
       "normalizedPaths": [
@@ -27,21 +27,18 @@
         "$.simulationStatistics.dailyWindows[*].realityWorkers",
         "$.simulationStatistics.dailyWindows[*].sequence",
         "$.simulationStatistics.dailyWindows[*].simulatedSeconds",
-        "$.simulationStatistics.dailyWindows[*].strangeMatter",
         "$.simulationStatistics.halfHourWindows[*].dreamResetCount",
         "$.simulationStatistics.halfHourWindows[*].infinityCount",
         "$.simulationStatistics.halfHourWindows[*].infinityPoints",
         "$.simulationStatistics.halfHourWindows[*].realityWorkers",
         "$.simulationStatistics.halfHourWindows[*].sequence",
         "$.simulationStatistics.halfHourWindows[*].simulatedSeconds",
-        "$.simulationStatistics.halfHourWindows[*].strangeMatter",
         "$.simulationStatistics.minuteWindows[*].dreamResetCount",
         "$.simulationStatistics.minuteWindows[*].infinityCount",
         "$.simulationStatistics.minuteWindows[*].infinityPoints",
         "$.simulationStatistics.minuteWindows[*].realityWorkers",
         "$.simulationStatistics.minuteWindows[*].sequence",
-        "$.simulationStatistics.minuteWindows[*].simulatedSeconds",
-        "$.simulationStatistics.minuteWindows[*].strangeMatter"
+        "$.simulationStatistics.minuteWindows[*].simulatedSeconds"
       ]
     },
     {

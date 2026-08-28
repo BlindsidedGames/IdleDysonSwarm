@@ -7,7 +7,9 @@ import {
   SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 import { clampDoubleTimeRate } from './timeResources'
-import { tryDebitContinuous } from './transactions'
+import { buyXCost, tryDebitContinuous } from './transactions'
+
+export const DREAM_SPACE_AGE_COST_EXPONENT = 1.01
 
 export const DREAM_SPACE_AGE_CONSTANTS = Object.freeze({
   tickSeconds: 0.1,
@@ -158,7 +160,7 @@ export type DreamSpaceAgePurchaseStatus =
 export interface DreamSpaceAgePurchaseResult {
   readonly purchased: boolean
   readonly command: DreamSpaceAgePurchase
-  readonly cost: bigint
+  readonly cost: number
   readonly status: DreamSpaceAgePurchaseStatus
   readonly state: CanonicalGameStateV1
 }
@@ -827,7 +829,14 @@ export function runDreamRailgunAutomation(
         reservedPanels -= launchedThisPass
         swarmPanels += launchedThisPass
         shotsRemaining -= roundsFiredThisPass
-        accumulatedProgress -= roundsFiredThisPass * shotThreshold
+        // Completed thresholds can leave a tiny negative IEEE-754 residue
+        // (for example 0.034 + 0.066 - 0.1). The timer is mathematically
+        // non-negative; normalise only that subtraction result so canonical
+        // validation does not reject the otherwise valid gameplay tick.
+        accumulatedProgress = Math.max(
+          0,
+          accumulatedProgress - roundsFiredThisPass * shotThreshold,
+        )
         fireProgress = accumulatedProgress
       } else {
         fireProgress = accumulatedProgress
@@ -898,17 +907,37 @@ export function purchaseDreamSpaceAge(
     command === 'solar'
       ? state.dream.parameters.solarCost
       : state.dream.parameters.fusionCost
-  if (!Number.isSafeInteger(quantity) || quantity < 1 || cost <= 0n) {
-    return purchaseFailure(state, command, cost, 'invalid-cost')
+  const purchasedBatches = state.dream.purchaseBatches?.[command] ?? 0n
+  if (
+    !Number.isSafeInteger(quantity) ||
+    quantity < 1 ||
+    cost <= 0n ||
+    purchasedBatches > BigInt(Number.MAX_SAFE_INTEGER)
+  ) {
+    return purchaseFailure(state, command, 0, 'invalid-cost')
   }
-  const totalCost = cost * BigInt(quantity)
-  if (state.reality.influence < totalCost) {
+  const batchQuantity = BigInt(quantity)
+  const totalCost = buyXCost(
+    batchQuantity,
+    Number(cost),
+    DREAM_SPACE_AGE_COST_EXPONENT,
+    Number(purchasedBatches),
+  )
+  const debit = tryDebitContinuous(
+    state.reality.influence,
+    totalCost,
+    batchQuantity,
+  )
+  if (debit.status === 'insufficient-funds') {
     return purchaseFailure(
       state,
       command,
       totalCost,
       'insufficient-influence',
     )
+  }
+  if (debit.status !== 'success') {
+    return purchaseFailure(state, command, totalCost, 'invalid-cost')
   }
   const resource = command === 'solar' ? 'solarPanels' : 'fusion'
   const current = state.dream.resources[resource]
@@ -926,6 +955,12 @@ export function purchaseDreamSpaceAge(
       'output-maxed',
     )
   }
+  const previousBatches = state.dream.purchaseBatches ?? {
+    hunters: 0n,
+    gatherers: 0n,
+    solar: 0n,
+    fusion: 0n,
+  }
 
   return {
     purchased: true,
@@ -936,13 +971,17 @@ export function purchaseDreamSpaceAge(
       ...state,
       reality: {
         ...state.reality,
-        influence: state.reality.influence - totalCost,
+        influence: debit.balance,
       },
       dream: {
         ...state.dream,
         resources: {
           ...state.dream.resources,
           [resource]: next,
+        },
+        purchaseBatches: {
+          ...previousBatches,
+          [command]: purchasedBatches + batchQuantity,
         },
       },
     },
@@ -1249,7 +1288,7 @@ function invalidRailgun(
 function purchaseFailure(
   state: Readonly<CanonicalGameStateV1>,
   command: DreamSpaceAgePurchase,
-  cost: bigint,
+  cost: number,
   status: Exclude<DreamSpaceAgePurchaseStatus, 'success'>,
 ): DreamSpaceAgePurchaseResult {
   return {

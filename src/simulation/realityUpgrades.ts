@@ -7,8 +7,8 @@ import {
 import {
   addDiscrete,
   DISCRETE_MAXIMUM,
-  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
+import { tryDebitContinuous } from './transactions'
 
 const SIMULATION_UPGRADE_KIND =
   'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
@@ -58,7 +58,7 @@ export interface RealityUpgradeEffect {
 
 export interface RealityUpgradeDefinition {
   readonly key: RealityUpgradeId
-  readonly cost: bigint
+  readonly cost: number
   readonly prerequisites: readonly RealityUpgradePrerequisite[]
   readonly purchaseEffects: readonly RealityUpgradeEffect[]
 }
@@ -140,11 +140,18 @@ export function purchaseRealityUpgrade(
     }
   }
 
-  if (state.dream.strangeMatter < definition.cost) {
+  const debit = tryDebitContinuous(
+    state.dream.strangeMatter,
+    definition.cost,
+  )
+  if (debit.status === 'insufficient-funds') {
     return rejectedPurchase(
       state,
       'insufficient_strange_matter',
     )
+  }
+  if (debit.status !== 'success') {
+    return rejectedPurchase(state, 'invalid_state')
   }
 
   let candidate = state
@@ -156,8 +163,7 @@ export function purchaseRealityUpgrade(
     ...candidate,
     dream: {
       ...candidate.dream,
-      strangeMatter:
-        state.dream.strangeMatter - definition.cost,
+      strangeMatter: debit.balance,
     },
   }
 
@@ -261,7 +267,7 @@ function loadRealityUpgradeDefinitions(): {
   return { definitions, gaps }
 }
 
-function parseCost(value: unknown): bigint | null {
+function parseCost(value: unknown): number | null {
   if (
     typeof value !== 'number' ||
     !Number.isInteger(value) ||
@@ -270,7 +276,7 @@ function parseCost(value: unknown): bigint | null {
   ) {
     return null
   }
-  return BigInt(value)
+  return value
 }
 
 function parsePrerequisites(
@@ -350,9 +356,10 @@ function findDefinitionGap(
     return `definition_key_mismatch:${mapKey}:${definition.key}`
   }
   if (
-    typeof definition.cost !== 'bigint' ||
-    definition.cost <= 0n ||
-    definition.cost > INT_MAXIMUM
+    typeof definition.cost !== 'number' ||
+    !Number.isInteger(definition.cost) ||
+    definition.cost <= 0 ||
+    definition.cost > Number(INT_MAXIMUM)
   ) {
     return `invalid_cost:${mapKey}`
   }
@@ -523,12 +530,8 @@ function hasValidPurchaseState(
   )
 }
 
-function isSimulationResource(value: unknown): value is bigint {
-  return (
-    typeof value === 'bigint' &&
-    value >= 0n &&
-    value <= SIMULATION_RESOURCE_MAXIMUM
-  )
+function isSimulationResource(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0
 }
 
 function isDiscrete(value: unknown): value is bigint {

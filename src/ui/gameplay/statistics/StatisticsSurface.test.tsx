@@ -100,6 +100,9 @@ describe('StatisticsSurface', () => {
       .closest('article')
     expect(currentRun).not.toBeNull()
     expect(within(currentRun as HTMLElement).getAllByText('None')).toHaveLength(3)
+    expect(within(currentRun as HTMLElement).getByRole('heading', {
+      name: 'Simulations',
+    }).closest('section')).toHaveAttribute('data-empty', 'true')
   })
 
   test('keeps exactly two player-facing scope cards', () => {
@@ -240,13 +243,13 @@ describe('aggregateStatisticsWindows', () => {
         window({
           simulatedSeconds: 12.5,
           infinityCount: 9_007_199_254_740_993n,
-          strangeMatter: 8n,
+          strangeMatter: 8,
         }),
         window({
           sequence: 2n,
           simulatedSeconds: 7.5,
           infinityCount: 10n,
-          strangeMatter: 12n,
+          strangeMatter: 12,
         }),
       ]),
     ).toEqual({
@@ -254,7 +257,7 @@ describe('aggregateStatisticsWindows', () => {
       infinityCount: 9_007_199_254_741_003n,
       infinityPoints: 40n,
       dreamResetCount: 6n,
-      strangeMatter: 20n,
+      strangeMatter: 20,
       realityWorkers: 10n,
     })
   })
@@ -305,10 +308,10 @@ function statistics(
     aiDreamResets: 10n,
     globalWarmingDreamResets: 11n,
     blackHoleDreamResets: 12n,
-    strangeMatter: 13n,
+    strangeMatter: 13,
     realityWorkers: 14n,
-    automaticInfluence: 15n,
-    manualInfluence: 16n,
+    automaticInfluence: 15,
+    manualInfluence: 16,
     realityCapacityStallSeconds: 17,
     simulatedSeconds: 7_205,
   })
@@ -348,10 +351,10 @@ function totals(
     aiDreamResets: 0n,
     globalWarmingDreamResets: 0n,
     blackHoleDreamResets: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: 0n,
+    automaticInfluence: 0,
+    manualInfluence: 0,
     realityCapacityStallSeconds: 0,
     simulatedSeconds: 0,
     ...overrides,
@@ -367,7 +370,7 @@ function window(
     infinityCount: 15n,
     infinityPoints: 20n,
     dreamResetCount: 3n,
-    strangeMatter: 4n,
+    strangeMatter: 4,
     realityWorkers: 5n,
     ...overrides,
   }

@@ -7,7 +7,7 @@ import {
 } from '../save/legacyIds'
 import { packSettingsFlags } from '../save/settingsFlags'
 import type { BuyMode } from '../simulation/transactions'
-import { SIMULATION_RESOURCE_MAXIMUM } from '../simulation/numeric'
+import { CONTINUOUS_MAXIMUM, SIMULATION_RESOURCE_MAXIMUM } from '../simulation/numeric'
 import {
   CANONICAL_GAME_MODEL_VERSION,
   DREAM_UPGRADE_FLAGS,
@@ -75,8 +75,11 @@ const STAT_BIGINT_FIELDS = [
   'aiDreamResets',
   'globalWarmingDreamResets',
   'blackHoleDreamResets',
-  'strangeMatter',
   'realityWorkers',
+] as const
+
+const STAT_CONTINUOUS_RESOURCE_FIELDS = [
+  'strangeMatter',
   'automaticInfluence',
   'manualInfluence',
 ] as const
@@ -373,7 +376,7 @@ export function hydrateGameState(
       workerGenerationProgress: toFractionalProgress(
         reality.workerGenerationProgress,
       ),
-      influence: toNonNegativeBigInt(reality.influence),
+      influence: toContinuousResourceNumber(reality.influence),
       autoGather: toBoolean(reality.workerAutoConvert),
     },
     quantum: {
@@ -591,7 +594,7 @@ export function hydrateGameState(
         lastPanelsLaunched: 0n,
       },
       resetCount: toNonNegativeBigInt(dreamProgression.simulationCount),
-      strangeMatter: toSimulationResourceBigInt(
+      strangeMatter: toContinuousResourceNumber(
         dreamProgression.strangeMatter,
       ),
       disasterStage: toNonNegativeBigInt(
@@ -612,6 +615,12 @@ export function hydrateGameState(
         reality.gatherersPerPurchase,
         1n,
       ),
+      purchaseBatches: {
+        hunters: toNonNegativeBigInt(reality.hunterPurchaseBatches),
+        gatherers: toNonNegativeBigInt(reality.gathererPurchaseBatches),
+        solar: toNonNegativeBigInt(dreamRun.solarPurchaseBatches),
+        fusion: toNonNegativeBigInt(dreamRun.fusionPurchaseBatches),
+      },
     },
     statistics: {
       trackedSinceUpdate: toBoolean(statistics.trackedSinceUpdate),
@@ -1017,6 +1026,10 @@ export function dehydrateGameState(
   }
   reality.huntersPerPurchase = state.dream.huntersPerPurchase
   reality.gatherersPerPurchase = state.dream.gatherersPerPurchase
+  reality.hunterPurchaseBatches = state.dream.purchaseBatches?.hunters ?? 0n
+  reality.gathererPurchaseBatches = state.dream.purchaseBatches?.gatherers ?? 0n
+  dreamRun.solarPurchaseBatches = state.dream.purchaseBatches?.solar ?? 0n
+  dreamRun.fusionPurchaseBatches = state.dream.purchaseBatches?.fusion ?? 0n
 
   source.simulationStatistics = fromSimulationStatistics(
     state.statistics,
@@ -1054,9 +1067,7 @@ function toSimulationTotals(value: unknown): SimulationTotalsState {
   const discrete = Object.fromEntries(
     STAT_BIGINT_FIELDS.map((field) => [
       field,
-      field === 'strangeMatter'
-        ? toSimulationResourceBigInt(source[field])
-        : toNonNegativeBigInt(source[field]),
+      toNonNegativeBigInt(source[field]),
     ]),
   ) as Pick<
     SimulationTotalsState,
@@ -1064,6 +1075,15 @@ function toSimulationTotals(value: unknown): SimulationTotalsState {
   >
   return {
     ...discrete,
+    ...Object.fromEntries(
+      STAT_CONTINUOUS_RESOURCE_FIELDS.map((field) => [
+        field,
+        toContinuousResourceNumber(source[field]),
+      ]),
+    ) as Pick<
+      SimulationTotalsState,
+      (typeof STAT_CONTINUOUS_RESOURCE_FIELDS)[number]
+    >,
     realityCapacityStallSeconds: toFiniteNonNegativeNumber(
       source.realityCapacityStallSeconds,
     ),
@@ -1091,7 +1111,7 @@ function toStatisticsWindows(
       infinityCount: toNonNegativeBigInt(bucket.infinityCount),
       infinityPoints: toNonNegativeBigInt(bucket.infinityPoints),
       dreamResetCount: toNonNegativeBigInt(bucket.dreamResetCount),
-      strangeMatter: toSimulationResourceBigInt(bucket.strangeMatter),
+      strangeMatter: toContinuousResourceNumber(bucket.strangeMatter),
       realityWorkers: toNonNegativeBigInt(bucket.realityWorkers),
     }
   })
@@ -1112,7 +1132,7 @@ function toLastCompletedCycle(value: unknown) {
     durationSeconds: toFiniteNonNegativeNumber(source.durationSeconds),
     reward: dreamCause === null
       ? toNonNegativeBigInt(source.reward)
-      : toSimulationResourceBigInt(source.reward),
+      : toContinuousResourceNumber(source.reward),
     dreamCause,
   }
 }
@@ -1340,6 +1360,36 @@ function toFiniteNonNegativeNumber(
     return value
   }
   throw new Error(`Expected a finite non-negative number, received ${String(value)}.`)
+}
+
+/**
+ * Continuous resources were historically persisted as BigInt values. Accept
+ * those existing saves, as well as decimal JSON/string values, and normalize
+ * every representation onto the finite double contract.
+ */
+function toContinuousResourceNumber(
+  value: unknown,
+  fallback = 0,
+): number {
+  if (value === undefined || value === null) return fallback
+  let parsed: number
+  if (typeof value === 'number') {
+    parsed = value
+  } else if (typeof value === 'bigint') {
+    if (value < 0n) {
+      throw new Error(`Expected a non-negative continuous resource, received ${value}.`)
+    }
+    parsed = Number(value)
+  } else if (typeof value === 'string' && value.trim().length > 0) {
+    parsed = Number(value)
+  } else {
+    throw new Error(`Expected a continuous resource, received ${String(value)}.`)
+  }
+  if (parsed === Number.POSITIVE_INFINITY) return CONTINUOUS_MAXIMUM
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    throw new Error(`Expected a finite non-negative continuous resource, received ${String(value)}.`)
+  }
+  return parsed
 }
 
 function toNonNegativeInteger(value: unknown, fallback = 0): number {

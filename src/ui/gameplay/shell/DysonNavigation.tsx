@@ -48,37 +48,45 @@ export function DysonNavigation({
             className="dyson-navigation__item"
             data-navigation-id={item.id}
             data-progress={item.progress !== undefined || undefined}
+            data-new={item.newlyUnlocked || undefined}
           >
-            {item.current ? (
-              <span
-                className="dyson-navigation__link"
-                aria-current="page"
-                aria-label={item.ariaLabel}
-              >
-                <NavigationItemContent item={item} />
-              </span>
-            ) : item.onActivate !== undefined && !item.disabled ? (
+            {item.current ||
+            ('onActivate' in item && item.onActivate !== undefined) ? (
               <button
                 type="button"
                 className="dyson-navigation__link"
+                disabled={
+                  item.current ||
+                  ('disabled' in item && item.disabled === true)
+                }
+                aria-current={item.current ? 'page' : undefined}
                 aria-label={item.ariaLabel ?? item.progress?.label}
                 tabIndex={interactive ? undefined : -1}
                 onClick={() => {
-                  item.onActivate?.()
+                  if (item.current) return
+                  if ('onActivate' in item) item.onActivate?.()
                   onNavigate?.()
                 }}
               >
-                <NavigationItemContent item={item} />
+                <NavigationItemContent item={item} placement={placement} />
               </button>
-            ) : item.href && !item.disabled ? (
+            ) : item.href ? (
               <a
                 className="dyson-navigation__link"
                 href={item.href}
+                aria-current={item.current ? 'page' : undefined}
+                aria-disabled={item.disabled || item.current || undefined}
                 aria-label={item.ariaLabel ?? item.progress?.label}
-                tabIndex={interactive ? undefined : -1}
-                onClick={onNavigate}
+                tabIndex={interactive && !item.disabled && !item.current ? undefined : -1}
+                onClick={(event) => {
+                  if (item.disabled || item.current) {
+                    event.preventDefault()
+                    return
+                  }
+                  onNavigate?.()
+                }}
               >
-                <NavigationItemContent item={item} />
+                <NavigationItemContent item={item} placement={placement} />
               </a>
             ) : (
               <button
@@ -93,7 +101,7 @@ export function DysonNavigation({
                     : undefined)
                 }
               >
-                <NavigationItemContent item={item} />
+                <NavigationItemContent item={item} placement={placement} />
               </button>
             )}
           </li>
@@ -119,8 +127,10 @@ function fitBottomItems(
 
 function NavigationItemContent({
   item,
+  placement,
 }: {
   readonly item: DysonNavigationPresentation['items'][number]
+  readonly placement: DysonNavigationProps['placement']
 }) {
   return (
     <>
@@ -143,11 +153,19 @@ function NavigationItemContent({
                 </>
               )
             : item.icon}
+          {placement === 'bottom' && item.badge !== undefined ? (
+            <span className="dyson-navigation__badge">{item.badge}</span>
+          ) : null}
         </span>
       )}
       <span className="dyson-navigation__label">
         {item.label}
       </span>
+      {placement === 'drawer' && item.badge !== undefined ? (
+        <span className="dyson-navigation__drawer-value">
+          {item.badge}
+        </span>
+      ) : null}
       {item.progress !== undefined ? (
         <span
           className="dyson-navigation__progress"

@@ -643,10 +643,10 @@
   display: grid;
   grid-template-columns: 1fr 1.4fr 1fr;
   align-items: start;
-  min-block-size: 4.7rem;
-  padding-block: max(0.55rem, var(--safe-area-top)) 0.18rem;
-  padding-inline: max(1rem, var(--safe-area-left))
-    max(1rem, var(--safe-area-right));
+  min-block-size: 3.9rem;
+  padding-block: max(0.5rem, var(--safe-area-top)) 0.3rem;
+  padding-inline: max(var(--ui-page-gutter), var(--safe-area-left))
+    max(var(--ui-page-gutter), var(--safe-area-right));
   background: transparent;
 }
 
@@ -717,14 +717,22 @@
 
 .dyson-resource-header .ui-resource-value__value {
   color: white;
-  font-size: clamp(1.65rem, 4.8vw, 2.35rem);
+  font-size: clamp(
+    calc(1.3rem * var(--game-text-scale)),
+    3.8vw,
+    calc(1.55rem * var(--game-text-scale))
+  );
   font-weight: var(--font-weight-semibold);
   line-height: 1;
   text-shadow: 0 2px 2px rgb(0 0 0 / 70%);
 }
 
 .dyson-resource-header__item--total-bots .ui-resource-value__value {
-  font-size: clamp(1.45rem, 4.6vw, 2.15rem);
+  font-size: clamp(
+    calc(1.2rem * var(--game-text-scale)),
+    3.5vw,
+    calc(1.45rem * var(--game-text-scale))
+  );
 }
 
 .dyson-resource-header__rate {
@@ -732,7 +740,11 @@
   align-items: baseline;
   gap: 0.16em;
   color: white;
-  font-size: clamp(0.85rem, 2.5vw, 1.25rem);
+  font-size: clamp(
+    calc(0.76rem * var(--game-text-scale)),
+    2.4vw,
+    var(--ui-text-control)
+  );
   line-height: 1.1;
 }
 
@@ -740,7 +752,11 @@
   max-inline-size: 100%;
   overflow: hidden;
   color: #91dd8f;
-  font-size: clamp(0.72rem, 2.1vw, 1rem);
+  font-size: clamp(
+    calc(0.66rem * var(--game-text-scale)),
+    2vw,
+    var(--ui-text-meta)
+  );
   line-height: 1.1;
   white-space: nowrap;
 }
@@ -929,6 +945,14 @@
   padding-block-start: 0;
 }
 
+.dyson-shell[data-route-theme="bots"]
+  .dyson-shell__lower-regions:has(
+    .dyson-info__summary--multitasking
+  ) {
+  gap: 0;
+  padding: 0;
+}
+
 .dyson-shell[data-route-theme="quantum"]
   .dyson-shell__lower-regions {
   border-color: #69558a;
@@ -952,7 +976,7 @@
   padding-block: 0.32rem max(0.32rem, var(--safe-area-bottom));
   padding-inline: max(0.25rem, var(--safe-area-left))
     max(0.25rem, var(--safe-area-right));
-  border-block-start: 3px solid #48364d;
+  border-block-start: var(--ui-shell-divider-width) solid #48364d;
   background: #3f3044;
 }
 
@@ -1132,10 +1156,10 @@
 }
 
 .dyson-navigation--drawer .dyson-navigation__progress {
-  inset-inline-start: 4rem;
-  inset-inline-end: 0.75rem;
-  inset-block-end: 0.45rem;
-  block-size: 0.28rem;
+  inset-inline-start: 2.85rem;
+  inset-inline-end: 0.45rem;
+  inset-block-end: 0.28rem;
+  block-size: 0.2rem;
 }
 
 .dyson-navigation--bottom .dyson-navigation__link {
@@ -1156,6 +1180,22 @@
 
 .dyson-navigation__link[aria-current="page"] {
   color: #c45adc;
+  opacity: 1;
+}
+
+.dyson-navigation__item[data-new="true"]
+  .dyson-navigation__link:not([aria-current="page"]) {
+  border-color: var(--navigation-item-accent, #d3c2ff);
+  background: color-mix(
+    in srgb,
+    var(--navigation-item-accent, #d3c2ff) 16%,
+    transparent
+  );
+  box-shadow: inset 0 0 0.4rem color-mix(
+    in srgb,
+    var(--navigation-item-accent, #d3c2ff) 24%,
+    transparent
+  );
 }
 
 .dyson-navigation__link:disabled {
@@ -1170,6 +1210,27 @@
   block-size: clamp(2.25rem, 7vw, 3rem);
   place-items: center;
   color: #f4eff5;
+}
+
+.dyson-navigation__badge {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 0;
+  inset-inline-end: -0.28rem;
+  min-inline-size: 1.15rem;
+  max-inline-size: 3.4rem;
+  padding: 0.08rem 0.28rem;
+  overflow: hidden;
+  border: 1px solid var(--theme-accent);
+  border-radius: 999px;
+  background: var(--theme-selected);
+  color: #fff;
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.62rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .dyson-navigation--bottom .dyson-navigation__icon {
@@ -1283,7 +1344,7 @@
   inset-block: 0;
   inset-inline-start: 0;
   display: grid;
-  inline-size: min(82vw, 25rem);
+  inline-size: min(78vw, 16rem);
   grid-template-rows: auto auto minmax(0, 1fr);
   overflow-y: auto;
   scrollbar-color:
@@ -1291,9 +1352,9 @@
     var(--menu-scrollbar-track);
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  padding: max(0.65rem, var(--safe-area-top)) 0.65rem
-    max(0.9rem, var(--safe-area-bottom));
-  border-inline-end: 4px solid #49384f;
+  padding: max(0.4rem, var(--safe-area-top)) 0.4rem
+    max(0.55rem, var(--safe-area-bottom));
+  border-inline-end: var(--ui-shell-divider-width) solid #49384f;
   background: #1c1420;
   box-shadow: 8px 0 20px rgb(0 0 0 / 45%);
   transform: translateX(-105%);
@@ -1330,41 +1391,51 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-block-size: 4rem;
+  min-block-size: 2.5rem;
   color: white;
-  font-size: 2rem;
+  font-size: var(--ui-text-section-title);
   text-align: center;
 }
 
 .dyson-shell__menu-close {
   position: absolute;
-  inset-block-start: max(0.55rem, var(--safe-area-top));
-  inset-inline-end: 0.7rem;
-  inline-size: 2.8rem;
-  block-size: 2.8rem;
+  inset-block-start: max(0.25rem, var(--safe-area-top));
+  inset-inline-end: 0.35rem;
+  inline-size: var(--target-minimum);
+  block-size: var(--target-minimum);
   border-radius: 0.3rem;
   background: transparent;
   color: white;
   cursor: pointer;
-  font-size: 2rem;
+  font-size: var(--ui-text-section-title);
 }
 
 .dyson-navigation--drawer .dyson-navigation__list {
-  gap: 0.45rem;
+  gap: 0.25rem;
 }
 
 .dyson-navigation--drawer .dyson-navigation__link {
   display: flex;
   justify-content: flex-start;
-  min-block-size: 4.25rem;
-  padding: 0.5rem 0.75rem;
+  min-block-size: var(--target-minimum);
+  gap: 0.35rem;
+  padding: 0.22rem 0.4rem;
   border-color: #0b080c;
   background: #443448;
   color: #d8bddf;
-  font-size: 1.35rem;
+  font-size: var(--ui-text-control);
   font-weight: var(--font-weight-semibold);
   text-align: start;
   text-shadow: 0 2px 1px rgb(0 0 0 / 65%);
+}
+
+.dyson-navigation__drawer-value {
+  margin-inline-start: auto;
+  color: var(--theme-accent);
+  font-family: var(--font-family-numeric);
+  font-size: var(--ui-text-meta);
+  font-weight: var(--font-weight-bold);
+  text-shadow: none;
 }
 
 .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] {
@@ -1373,8 +1444,8 @@
 }
 
 .dyson-navigation--drawer .dyson-navigation__icon {
-  inline-size: 2.8rem;
-  block-size: 2.8rem;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
 }
 
 .dyson-shell__side-supplement {
@@ -1387,14 +1458,12 @@
 
 @media (max-width: 720px) {
   .dyson-shell__side-panel {
-    inline-size: min(82vw, 20rem);
-    padding: max(0.4rem, var(--safe-area-top)) 0.4rem
-      max(0.55rem, var(--safe-area-bottom));
+    inline-size: min(78vw, 16rem);
   }
 
   .dyson-shell__side-heading {
-    min-block-size: 3rem;
-    font-size: calc(1.35rem * var(--game-text-scale));
+    min-block-size: 2.5rem;
+    font-size: var(--ui-text-section-title);
   }
 
   .dyson-shell__menu-close {
@@ -1402,23 +1471,23 @@
     inset-inline-end: 0.35rem;
     inline-size: var(--target-minimum);
     block-size: var(--target-minimum);
-    font-size: calc(1.35rem * var(--game-text-scale));
+    font-size: var(--ui-text-section-title);
   }
 
   .dyson-navigation--drawer .dyson-navigation__list {
-    gap: 0.28rem;
+    gap: 0.25rem;
   }
 
   .dyson-navigation--drawer .dyson-navigation__link {
     min-block-size: var(--target-minimum);
-    gap: 0.4rem;
-    padding: 0.3rem 0.45rem;
-    font-size: calc(0.9rem * var(--game-text-scale));
+    gap: 0.35rem;
+    padding: 0.22rem 0.4rem;
+    font-size: var(--ui-text-control);
   }
 
   .dyson-navigation--drawer .dyson-navigation__icon {
-    inline-size: 2rem;
-    block-size: 2rem;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
   }
 
   .dyson-navigation--drawer .dyson-navigation__progress {
@@ -1437,7 +1506,12 @@
   block-size: 100%;
   min-block-size: 0;
   overflow: hidden;
-  padding: clamp(0.75rem, 2vw, 1.5rem);
+  padding: var(--ui-page-gutter);
+}
+
+.dyson-shell[data-route-content-edge-to-edge="true"]
+  .dyson-shell__route-content {
+  padding: 0;
 }
 
 .dyson-shell__lazy-pending {
@@ -1521,7 +1595,7 @@
 
 .dyson-shell[data-route-theme="bots"] .dyson-resource-header,
 .dyson-shell[data-route-theme="research"] .dyson-resource-header {
-  border-block-end: 2px solid var(--theme-divider);
+  border-block-end: var(--ui-shell-divider-width) solid var(--theme-divider);
 }
 
 .dyson-shell[data-route-theme] .dyson-shell__side-panel {
@@ -1549,9 +1623,10 @@
   color: var(--theme-accent);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1080px),
+  (min-width: 960px) and (orientation: landscape) {
   .dyson-shell {
-    grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
+    grid-template-columns: clamp(10.75rem, 15vw, 12.5rem) minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
   }
 
@@ -1561,6 +1636,9 @@
     grid-column: 1;
     grid-row: 1;
     inline-size: auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    padding: max(0.4rem, var(--safe-area-top)) 0.45rem
+      max(0.55rem, var(--safe-area-bottom));
     transform: none;
     box-shadow: none;
   }
@@ -1579,9 +1657,54 @@
     grid-column: 2;
   }
 
+  .dyson-shell__lower-regions {
+    padding-block-end: max(0.38rem, var(--safe-area-bottom));
+  }
+
+  .dyson-shell[data-route-theme="bots"]
+    .dyson-shell__lower-regions:has(
+      .dyson-info__summary--multitasking
+    ) {
+    padding-block-end: var(--safe-area-bottom);
+  }
+
   .dyson-resource-header {
-    min-block-size: 4.7rem;
-    padding-inline: 1.5rem;
+    min-block-size: 3.9rem;
+    padding-inline: var(--ui-page-gutter);
+  }
+
+  .dyson-shell__side-heading {
+    min-block-size: 2.5rem;
+    font-size: var(--ui-text-control);
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__list {
+    gap: 0.25rem;
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__link {
+    min-block-size: var(--target-minimum);
+    gap: 0.35rem;
+    padding: 0.22rem 0.4rem;
+    border-radius: var(--ui-control-radius);
+    font-size: var(--ui-text-control);
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__icon {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__progress {
+    inset-inline-start: 2.45rem;
+    inset-inline-end: 0.4rem;
+    inset-block-end: 0.28rem;
+    block-size: 0.2rem;
+  }
+
+  .dyson-shell__side-supplement {
+    padding: 0.55rem 0.15rem 0;
+    font-size: var(--ui-text-meta);
   }
 
   .dyson-shell__playfield {
@@ -1594,6 +1717,34 @@
 
 }
 
+@media (min-width: 960px) and (max-height: 820px) and (orientation: landscape) {
+  .dyson-shell__side-heading {
+    min-block-size: 2.4rem;
+    font-size: var(--ui-text-control);
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__list {
+    gap: 0.15rem;
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__link {
+    min-block-size: var(--target-minimum);
+    gap: 0.35rem;
+    padding: 0.18rem 0.4rem;
+    font-size: var(--ui-text-meta);
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__icon {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__progress {
+    inset-inline-start: 2.45rem;
+    inset-inline-end: 0.4rem;
+  }
+}
+
 @media (max-height: 700px) and (orientation: landscape) {
   .dyson-shell__playfield {
     --dyson-swarm-space: 6.25rem;
@@ -1604,7 +1755,7 @@
   }
 
   .dyson-resource-header {
-    min-block-size: 4.6rem;
+    min-block-size: 3.7rem;
   }
 }
 

@@ -34,6 +34,7 @@ import {
   formatGameDuration,
   formatGameNumber,
   formatNumber,
+  formatWholeGameNumber,
   type NumericValue,
 } from '../../i18n/formatters'
 import {
@@ -157,6 +158,27 @@ const WikiSurface = lazy(async () => {
 
 export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
+export const QUANTUM_HIDE_MAXED_STORAGE_KEY =
+  'idle-dyson-swarm.quantum-hide-maxed.v1'
+export const NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY =
+  'idle-dyson-swarm.new-route-highlights.v1'
+
+const HIGHLIGHTABLE_ROUTES = [
+  'research',
+  'skills',
+  'infinity',
+  'reality',
+  'simulations',
+  'quantum',
+] as const
+
+type HighlightableRoute = (typeof HIGHLIGHTABLE_ROUTES)[number]
+
+interface StoredRouteHighlights {
+  readonly saveKey: string
+  readonly unlocked: readonly HighlightableRoute[]
+  readonly newRoutes: readonly HighlightableRoute[]
+}
 
 const SettingsSurface = lazy(async () => {
   const module = await import('../settings')
@@ -229,15 +251,18 @@ function UnprobedReadyDysonRuntimeHost({
   localDeveloperOptionsPurchased,
   audio,
 }: ReadyDysonRuntimeHostProps) {
-  const [route, setRoute] = useState<ReadyGameRoute>('bots')
+  const [route, setRoute] = useState<ReadyGameRoute>(
+    readGameplayRoutePreference,
+  )
   useLayoutEffect(() => {
-    runtime.setGameplayPreviewDemand('bots')
-  }, [runtime])
+    runtime.setGameplayPreviewDemand(gameplayPreviewDemandForRoute(route))
+  }, [route, runtime])
   const changeRoute = useCallback(
     (nextRoute: ReadyGameRoute) => {
       runtime.setGameplayPreviewDemand(
         gameplayPreviewDemandForRoute(nextRoute),
       )
+      writeGameplayRoutePreference(nextRoute)
       setRoute(nextRoute)
     },
     [runtime],
@@ -323,15 +348,18 @@ export function ProbedReadyDysonRuntimeHost({
   localDeveloperOptionsPurchased,
   audio,
 }: ReadyDysonRuntimeHostProps) {
-  const [route, setRoute] = useState<ReadyGameRoute>('bots')
+  const [route, setRoute] = useState<ReadyGameRoute>(
+    readGameplayRoutePreference,
+  )
   useLayoutEffect(() => {
-    runtime.setGameplayPreviewDemand('bots')
-  }, [runtime])
+    runtime.setGameplayPreviewDemand(gameplayPreviewDemandForRoute(route))
+  }, [route, runtime])
   const changeRoute = useCallback(
     (nextRoute: ReadyGameRoute) => {
       runtime.setGameplayPreviewDemand(
         gameplayPreviewDemandForRoute(nextRoute),
       )
+      writeGameplayRoutePreference(nextRoute)
       setRoute(nextRoute)
     },
     [runtime],
@@ -455,6 +483,48 @@ export type ReadyGameRoute =
   | 'debug'
   | 'settings'
 
+export const GAMEPLAY_ROUTE_STORAGE_KEY =
+  'idle-dyson-swarm.gameplay.last-route.v1'
+const READY_GAME_ROUTES = new Set<ReadyGameRoute>([
+  'bots',
+  'research',
+  'skills',
+  'infinity',
+  'reality',
+  'simulations',
+  'quantum',
+  'avocato',
+  'story',
+  'wiki',
+  'offline-time',
+  'statistics',
+  'store',
+  'debug',
+  'settings',
+])
+
+function readGameplayRoutePreference(): ReadyGameRoute {
+  try {
+    if (typeof localStorage === 'undefined') return 'bots'
+    const stored = localStorage.getItem(GAMEPLAY_ROUTE_STORAGE_KEY)
+    return stored !== null && READY_GAME_ROUTES.has(stored as ReadyGameRoute)
+      ? stored as ReadyGameRoute
+      : 'bots'
+  } catch {
+    return 'bots'
+  }
+}
+
+function writeGameplayRoutePreference(route: ReadyGameRoute): void {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(GAMEPLAY_ROUTE_STORAGE_KEY, route)
+    }
+  } catch {
+    // A presentation preference must never block gameplay navigation.
+  }
+}
+
 function gameplayPreviewDemandForRoute(
   route: ReadyGameRoute,
 ): FrontendGameplayPreviewDemand {
@@ -528,6 +598,12 @@ export function ReadyDysonSlice({
     useState(false)
   const [quantumPurchaseQuantity, setQuantumPurchaseQuantity] =
     useState<QuantumPurchaseQuantity>(1)
+  const [quantumHideMaxed, setQuantumHideMaxed] =
+    useState(readQuantumHideMaxedPreference)
+  const updateQuantumHideMaxed = useCallback((hideMaxed: boolean) => {
+    setQuantumHideMaxed(hideMaxed)
+    writeQuantumHideMaxedPreference(hideMaxed)
+  }, [])
   const debugDraftRef = useRef<DebugSurfaceDraft>({
     amount: '1',
     preset: 'early',
@@ -572,6 +648,8 @@ export function ReadyDysonSlice({
     gameplay.resources.infinity.points >= 42n ||
     gameplay.resources.quantum.pointsEarned >= 1n
   const requestedRouteUnavailable =
+    (requestedRoute === 'research' &&
+      !(gameplay.visibility.research?.routeUnlocked ?? true)) ||
     ((requestedRoute === 'reality' ||
       requestedRoute === 'simulations') &&
       (!gameplay.visibility.reality.routeVisible ||
@@ -632,6 +710,33 @@ export function ReadyDysonSlice({
     gameplay.progression.skills.tabPresetAutomation,
   ])
 
+  const highlightableRouteUnlocks = useMemo(() => ({
+    research: gameplay.visibility.research?.routeUnlocked ?? true,
+    skills: gameplay.visibility.skills.routeUnlocked,
+    infinity: gameplay.visibility.infinity.routeUnlocked,
+    reality: gameplay.visibility.reality.routeUnlocked,
+    simulations: gameplay.visibility.simulations.routeUnlocked,
+    quantum: quantumUnlocked,
+  }), [
+    gameplay.visibility.infinity.routeUnlocked,
+    gameplay.visibility.reality.routeUnlocked,
+    gameplay.visibility.research?.routeUnlocked,
+    gameplay.visibility.simulations.routeUnlocked,
+    gameplay.visibility.skills.routeUnlocked,
+    quantumUnlocked,
+  ])
+  const routeDiscoverySaveKey =
+    gameplay.progression.meta?.createdAtLegacyText ?? 'undated-save'
+  const { newlyUnlockedRoutes, markVisited } = useNewRouteHighlights(
+    routeDiscoverySaveKey,
+    highlightableRouteUnlocks,
+    route,
+  )
+  const navigateTo = useCallback((nextRoute: ReadyGameRoute) => {
+    markVisited(nextRoute)
+    onRouteChange(nextRoute)
+  }, [markVisited, onRouteChange])
+
   if (dyson.status !== 'ready') {
     return (
       <main role="alert">
@@ -643,20 +748,42 @@ export function ReadyDysonSlice({
   const resources = gameplay.resources.dyson
   const rates = dyson.value.rates
   const visibility = gameplay.visibility.dyson
-  const automationFacilityIds: CanonicalFacilityId[] = [
-    ...visibility.visibleBasicFacilityIds,
+  const quantumUnlocks = gameplay.progression.quantum.unlocks
+  const unlockedMegaStructureIds: CanonicalFacilityId[] = [
+    ...(quantumUnlocks.matrioshkaBrains
+      ? ['matrioshka_brains' as const]
+      : []),
+    ...(quantumUnlocks.birchPlanets
+      ? ['birch_planets' as const]
+      : []),
+    ...(quantumUnlocks.galacticBrains
+      ? ['galactic_brains' as const]
+      : []),
   ]
-  if (gameplay.progression.quantum.unlocks.matrioshkaBrains) {
-    automationFacilityIds.push('matrioshka_brains')
-  }
-  if (gameplay.progression.quantum.unlocks.birchPlanets) {
-    automationFacilityIds.push('birch_planets')
-  }
-  if (gameplay.progression.quantum.unlocks.galacticBrains) {
-    automationFacilityIds.push('galactic_brains')
-  }
+  const automationFacilityIds: CanonicalFacilityId[] = [
+    'assembly_lines',
+    'ai_managers',
+    'servers',
+    'data_centers',
+    'planets',
+    ...unlockedMegaStructureIds,
+  ]
+  const automationResearchIds = [
+    'research.science_boost',
+    'research.money_multiplier',
+    'research.assembly_line_upgrade',
+    'research.ai_manager_upgrade',
+    'research.server_upgrade',
+    'research.data_center_upgrade',
+    'research.planet_upgrade',
+    ...unlockedMegaStructureIds.map((facilityId) =>
+      `research.${facilityId}_upgrade`,
+    ),
+  ]
   const display = (value: NumericValue) =>
     formatGameNumber(locale, value)
+  const displayWhole = (value: NumericValue) =>
+    formatWholeGameNumber(locale, value)
   const precise = (value: NumericValue) =>
     formatPreciseNumber(locale, value)
   const cashValue = (value: string) =>
@@ -669,7 +796,9 @@ export function ReadyDysonSlice({
     visibility.visibleBasicFacilityIds.length > 0 ||
     visibility.visibleMegaStructureIds.length > 0
   const hasFacilityContent =
-    hasVisibleFacilities || visibility.showNextTierTeaser
+    hasVisibleFacilities ||
+    visibility.showNextBasicFacilityTeaser ||
+    visibility.showNextMegaStructureTeaser
   const settingsActive = route === 'settings'
   const researchActive = route === 'research'
   const botMultitasking =
@@ -781,6 +910,7 @@ export function ReadyDysonSlice({
       moreMenuLabel={intl.formatMessage(messages.moreMenu)}
       heading={intl.formatMessage(routeHeading)}
       routeTheme={debugActive ? 'statistics' : storeActive ? 'bots' : route}
+      routeContentEdgeToEdge={storeActive}
       routeThemeVariant={
         gameplay.derived.simulations?.currentEra ?? 'foundational'
       }
@@ -804,19 +934,31 @@ export function ReadyDysonSlice({
             label: intl.formatMessage(messages.researchRoute),
             iconSrc: navigationAssets.research,
             bottom: bottomVisible('research'),
-            ...(researchActive
-              ? { current: true as const }
-              : { onActivate: () => onRouteChange('research') }),
+            newlyUnlocked: newlyUnlockedRoutes.has('research'),
+            ...(gameplay.visibility.research?.routeUnlocked ?? true
+              ? researchActive
+                ? { current: true as const }
+                : { onActivate: () => navigateTo('research') }
+              : { disabled: true }),
           },
           {
             id: 'skills',
             label: intl.formatMessage(messages.skillsRoute),
+            ariaLabel: skillsActive || !gameplay.visibility.skills.routeUnlocked
+              ? intl.formatMessage(messages.skillsRoute)
+              : `${intl.formatMessage(messages.skillsRoute)}: ${displayWhole(
+                gameplay.resources.skills.points,
+              )}`,
             iconSrc: navigationAssets.skills,
             bottom: bottomVisible('skills'),
+            badge: skillsActive || !gameplay.visibility.skills.routeUnlocked
+              ? undefined
+              : displayWhole(gameplay.resources.skills.points),
+            newlyUnlocked: newlyUnlockedRoutes.has('skills'),
             ...(gameplay.visibility.skills.routeUnlocked
               ? skillsActive
                 ? { current: true as const }
-                : { onActivate: () => onRouteChange('skills') }
+                : { onActivate: () => navigateTo('skills') }
               : { disabled: true }),
           },
           {
@@ -824,10 +966,11 @@ export function ReadyDysonSlice({
             label: infinityRouteLabel,
             iconSrc: navigationAssets.infinity,
             bottom: bottomVisible('infinity'),
+            newlyUnlocked: newlyUnlockedRoutes.has('infinity'),
             ...(gameplay.visibility.infinity.routeUnlocked
               ? infinityActive
                 ? { current: true as const }
-                : { onActivate: () => onRouteChange('infinity') }
+                : { onActivate: () => navigateTo('infinity') }
               : { disabled: true }),
           },
           ...(gameplay.visibility.reality.routeVisible
@@ -837,12 +980,13 @@ export function ReadyDysonSlice({
                   label: intl.formatMessage(messages.realityRoute),
                   iconSrc: navigationAssets.reality,
                   bottom: bottomVisible('reality'),
+                  newlyUnlocked: newlyUnlockedRoutes.has('reality'),
                   ...(gameplay.visibility.reality.routeUnlocked
                     ? realityActive
                       ? { current: true as const }
                       : {
                           onActivate: () =>
-                            onRouteChange('reality'),
+                            navigateTo('reality'),
                         }
                     : {
                         disabled: true,
@@ -877,11 +1021,12 @@ export function ReadyDysonSlice({
                   ),
                   iconSrc: navigationAssets.simulations,
                   bottom: bottomVisible('simulations'),
+                  newlyUnlocked: newlyUnlockedRoutes.has('simulations'),
                   ...(simulationsActive
                     ? { current: true as const }
                     : {
                         onActivate: () =>
-                          onRouteChange('simulations'),
+                          navigateTo('simulations'),
                       }),
                 },
               ]
@@ -893,12 +1038,13 @@ export function ReadyDysonSlice({
                   label: intl.formatMessage(messages.quantumRoute),
                   iconSrc: navigationAssets.quantum,
                   bottom: bottomVisible('quantum'),
+                  newlyUnlocked: newlyUnlockedRoutes.has('quantum'),
                   ...(quantumUnlocked
                     ? quantumNavigationActive
                       ? { current: true as const }
                       : {
                           onActivate: () =>
-                            onRouteChange('quantum'),
+                            navigateTo('quantum'),
                         }
                     : {
                         disabled: true,
@@ -1128,6 +1274,7 @@ export function ReadyDysonSlice({
                         gameplay.progression.research.automation
                           .enabledById
                       }
+                      automationResearchIds={automationResearchIds}
                       purchaseRouteAvailable={
                         gameplay.commands.byKind[
                           'research.purchase'
@@ -1152,6 +1299,19 @@ export function ReadyDysonSlice({
                         gameplay.commands.byKind[
                           'research.set-automation'
                         ].routeAvailable
+                      }
+                      summarySupplement={
+                        botMultitasking ? (
+                          <BotDistribution
+                            locale={locale}
+                            distribution={
+                              gameplay.progression.dyson.botDistribution
+                            }
+                            multitasking
+                            routeAvailable={false}
+                            dispatchPlayer={dispatchPlayer}
+                          />
+                        ) : undefined
                       }
                       dispatchPlayer={dispatchPlayer}
                     />
@@ -1444,6 +1604,7 @@ export function ReadyDysonSlice({
                                     : undefined
                                 }
                                 purchaseQuantity={quantumPurchaseQuantity}
+                                hideMaxed={quantumHideMaxed}
                               />
                             </Suspense>
                           ),
@@ -1678,8 +1839,10 @@ export function ReadyDysonSlice({
                     infinityPoints={gameplay.resources.infinity.points}
                     purchaseSettingsOpen={quantumPurchaseSettingsOpen}
                     purchaseQuantity={quantumPurchaseQuantity}
+                    hideMaxed={quantumHideMaxed}
                     onPurchaseSettingsOpenChange={setQuantumPurchaseSettingsOpen}
                     onPurchaseQuantityChange={setQuantumPurchaseQuantity}
+                    onHideMaxedChange={updateQuantumHideMaxed}
                     />
                   </Suspense>
                 ),
@@ -1764,15 +1927,14 @@ export function ReadyDysonSlice({
               />
             }
           >
-            <>
+            <div className="dyson-facility-flow">
               <BasicFacilityRegion
                 locale={locale}
                 visibleBasicFacilityIds={
                   visibility.visibleBasicFacilityIds
                 }
                 showNextTierTeaser={
-                  visibility.visibleMegaStructureIds.length === 0 &&
-                  visibility.showNextTierTeaser
+                  visibility.showNextBasicFacilityTeaser
                 }
                 facilityFacts={dyson.value.presentation.facilities}
                 purchasePreviews={
@@ -1782,6 +1944,9 @@ export function ReadyDysonSlice({
                   gameplay.commands.byKind[
                     'dyson.purchase-basic-facility'
                   ].routeAvailable
+                }
+                automationEnabledFacilities={
+                  gameplay.progression.dyson.automation.enabledFacilities
                 }
                 gameSpeed={
                   gameplay.progression.timeline?.doubleTime?.unlocked
@@ -1798,7 +1963,7 @@ export function ReadyDysonSlice({
                     visibility.visibleMegaStructureIds
                   }
                   showNextTierTeaser={
-                    visibility.showNextTierTeaser
+                    visibility.showNextMegaStructureTeaser
                   }
                   facts={dyson.value.megaStructureFacts}
                   purchasePreviews={
@@ -1818,7 +1983,7 @@ export function ReadyDysonSlice({
                   dispatchPlayer={dispatchPlayer}
                 />
               )}
-            </>
+            </div>
           </Suspense>
         ) : (
           <section
@@ -1911,7 +2076,7 @@ export function ReadyDysonSlice({
         ),
       }}
       distribution={
-        (route === 'bots' && !botMultitasking) || researchActive
+        (route === 'bots' || researchActive) && !botMultitasking
           ? {
               ariaLabel: intl.formatMessage(
                 messages.botDistribution,
@@ -1988,6 +2153,132 @@ function readVisualizationPreference(): boolean {
   }
 }
 
+function useNewRouteHighlights(
+  saveKey: string,
+  unlockedByRoute: Readonly<Record<HighlightableRoute, boolean>>,
+  currentRoute: ReadyGameRoute,
+) {
+  const unlockedSignature = HIGHLIGHTABLE_ROUTES
+    .filter((routeId) => unlockedByRoute[routeId])
+    .join('|')
+  const [stored, setStored] = useState<StoredRouteHighlights>(() =>
+    readStoredRouteHighlights(saveKey, unlockedByRoute),
+  )
+
+  useEffect(() => {
+    setStored((current) => {
+      const baseline = current.saveKey === saveKey
+        ? current
+        : readStoredRouteHighlights(saveKey, unlockedByRoute)
+      const unlocked = new Set(baseline.unlocked)
+      const newRoutes = new Set(baseline.newRoutes)
+
+      for (const routeId of HIGHLIGHTABLE_ROUTES) {
+        if (!unlockedByRoute[routeId] || unlocked.has(routeId)) continue
+        unlocked.add(routeId)
+        if (routeId !== currentRoute) newRoutes.add(routeId)
+      }
+      if (isHighlightableRoute(currentRoute)) {
+        newRoutes.delete(currentRoute)
+      }
+
+      const next: StoredRouteHighlights = {
+        saveKey,
+        unlocked: HIGHLIGHTABLE_ROUTES.filter((routeId) =>
+          unlocked.has(routeId),
+        ),
+        newRoutes: HIGHLIGHTABLE_ROUTES.filter((routeId) =>
+          newRoutes.has(routeId),
+        ),
+      }
+      if (
+        baseline.saveKey === next.saveKey &&
+        baseline.unlocked.join('|') === next.unlocked.join('|') &&
+        baseline.newRoutes.join('|') === next.newRoutes.join('|')
+      ) {
+        return current
+      }
+      writeStoredRouteHighlights(next)
+      return next
+    })
+  }, [currentRoute, saveKey, unlockedByRoute, unlockedSignature])
+
+  const markVisited = useCallback((routeId: ReadyGameRoute) => {
+    if (!isHighlightableRoute(routeId)) return
+    setStored((current) => {
+      if (!current.newRoutes.includes(routeId)) return current
+      const next = {
+        ...current,
+        newRoutes: current.newRoutes.filter((id) => id !== routeId),
+      }
+      writeStoredRouteHighlights(next)
+      return next
+    })
+  }, [])
+
+  return {
+    newlyUnlockedRoutes: new Set(stored.newRoutes),
+    markVisited,
+  }
+}
+
+function isHighlightableRoute(routeId: ReadyGameRoute): routeId is HighlightableRoute {
+  return HIGHLIGHTABLE_ROUTES.includes(routeId as HighlightableRoute)
+}
+
+function readStoredRouteHighlights(
+  saveKey: string,
+  unlockedByRoute: Readonly<Record<HighlightableRoute, boolean>>,
+): StoredRouteHighlights {
+  const initialUnlocked = HIGHLIGHTABLE_ROUTES.filter((routeId) =>
+    unlockedByRoute[routeId],
+  )
+  try {
+    if (typeof localStorage === 'undefined') {
+      return { saveKey, unlocked: initialUnlocked, newRoutes: [] }
+    }
+    const raw = localStorage.getItem(NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY)
+    if (raw === null) {
+      return { saveKey, unlocked: initialUnlocked, newRoutes: [] }
+    }
+    const candidate = JSON.parse(raw) as Partial<StoredRouteHighlights>
+    if (
+      candidate.saveKey !== saveKey ||
+      !Array.isArray(candidate.unlocked) ||
+      !Array.isArray(candidate.newRoutes)
+    ) {
+      return { saveKey, unlocked: initialUnlocked, newRoutes: [] }
+    }
+    const unlocked = candidate.unlocked.filter(isStoredHighlightableRoute)
+    return {
+      saveKey,
+      unlocked,
+      newRoutes: candidate.newRoutes
+        .filter(isStoredHighlightableRoute)
+        .filter((routeId) => unlocked.includes(routeId)),
+    }
+  } catch {
+    return { saveKey, unlocked: initialUnlocked, newRoutes: [] }
+  }
+}
+
+function isStoredHighlightableRoute(value: unknown): value is HighlightableRoute {
+  return typeof value === 'string' &&
+    HIGHLIGHTABLE_ROUTES.includes(value as HighlightableRoute)
+}
+
+function writeStoredRouteHighlights(value: StoredRouteHighlights): void {
+  try {
+    if (typeof localStorage === 'undefined') return
+    localStorage.setItem(
+      NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY,
+      JSON.stringify(value),
+    )
+  } catch {
+    // A failed presentation preference must not block route navigation.
+  }
+}
+
 function writeVisualizationPreference(visible: boolean): void {
   try {
     if (typeof localStorage === 'undefined') return
@@ -1998,6 +2289,24 @@ function writeVisualizationPreference(visible: boolean): void {
   } catch {
     // Presentation preference persistence is best effort. Storage failure
     // must not affect gameplay or prevent changing the current view.
+  }
+}
+
+function readQuantumHideMaxedPreference(): boolean {
+  try {
+    return typeof localStorage !== 'undefined' &&
+      localStorage.getItem(QUANTUM_HIDE_MAXED_STORAGE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+function writeQuantumHideMaxedPreference(hideMaxed: boolean): void {
+  try {
+    if (typeof localStorage === 'undefined') return
+    localStorage.setItem(QUANTUM_HIDE_MAXED_STORAGE_KEY, String(hideMaxed))
+  } catch {
+    // Device-local presentation persistence must never block gameplay.
   }
 }
 

@@ -48,7 +48,7 @@ export function summarizeStoredTimeCompletion(
       combinedDreamResets(afterTotals),
       combinedDreamResets(beforeTotals),
     ),
-    strangeMatter: discreteDelta(
+    strangeMatter: positiveFiniteDelta(
       afterTotals.strangeMatter,
       beforeTotals.strangeMatter,
     ),
@@ -56,7 +56,7 @@ export function summarizeStoredTimeCompletion(
       afterTotals.realityWorkers,
       beforeTotals.realityWorkers,
     ),
-    influence: discreteDelta(
+    influence: positiveFiniteDelta(
       afterTotals.automaticInfluence,
       beforeTotals.automaticInfluence,
     ),

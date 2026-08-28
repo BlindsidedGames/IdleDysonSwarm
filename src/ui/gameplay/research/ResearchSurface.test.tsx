@@ -190,7 +190,9 @@ describe('ResearchSurface', () => {
         code: 'already-maxed',
       }),
       card({ researchId: 'research.ai_manager_upgrade' }),
-    ], vi.fn(async () => accepted()), preference))
+    ], vi.fn(async () => accepted()), preference, initialCards.map(
+      (entry) => entry.researchId,
+    )))
 
     expect(screen.getByRole('button', {
       name: /Purchase AI Manager boosts/,
@@ -370,6 +372,36 @@ describe('ResearchSurface', () => {
     expect(dispatchPlayer).toHaveBeenCalledTimes(2)
   })
 
+  test('keeps baseline research automation permanent and gates mega research by unlock', async () => {
+    const user = userEvent.setup()
+    const cards = [
+      card({ researchId: 'research.assembly_line_upgrade', visible: false }),
+      card({ researchId: 'research.planet_upgrade', visible: false }),
+      card({ researchId: 'research.matrioshka_brains_upgrade', visible: false }),
+      card({ researchId: 'research.birch_planets_upgrade', visible: false }),
+    ]
+    renderSurface(
+      cards,
+      vi.fn(async () => accepted()),
+      new ResearchVisibilityPreferenceService({ storage: null }),
+      [
+        'research.assembly_line_upgrade',
+        'research.planet_upgrade',
+        'research.matrioshka_brains_upgrade',
+      ],
+    )
+
+    await user.click(screen.getByRole('button', {
+      name: 'Research purchase settings',
+    }))
+
+    expect(screen.getByRole('checkbox', { name: 'Assembly Line' })).toBeVisible()
+    expect(screen.getByRole('checkbox', { name: 'Planet' })).toBeVisible()
+    expect(screen.getByRole('checkbox', { name: 'Matrioshka Brains' })).toBeVisible()
+    expect(screen.queryByRole('checkbox', { name: 'Birch Planets' }))
+      .not.toBeInTheDocument()
+  })
+
   test('keeps automation interactive and honors the latest intent while saving', async () => {
     const user = userEvent.setup()
     const settle: Array<(result: UiRuntimePlayerCommandResult) => void> = []
@@ -430,10 +462,10 @@ describe('ResearchSurface', () => {
       /\.ui-facility-card\.research-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\)\s*clamp\(6\.25rem, 29%, 7rem\);/,
     )
     expect(baseResearchStyles).toMatch(
-      /\.research-card \.ui-facility-card__title\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);[^}]*line-height:\s*1\.08;/,
+      /\.research-card \.ui-facility-card__title\s*\{[^}]*font-size:\s*var\(--ui-text-card-title\);[^}]*line-height:\s*1\.12;/,
     )
     expect(baseResearchStyles).toMatch(
-      /\.research-card \.ui-facility-card__production\s*\{[^}]*font-size:\s*calc\(0\.72rem \* var\(--game-text-scale\)\);[^}]*line-height:\s*1\.1;/,
+      /\.research-card \.ui-facility-card__production\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);[^}]*line-height:\s*1\.1;/,
     )
     expect(baseResearchStyles).toMatch(
       /\.research-card \.ui-facility-card__description\s*\{[^}]*font-size:\s*calc\(0\.67rem \* var\(--game-text-scale\)\);[^}]*line-height:\s*1\.12;/,
@@ -457,14 +489,21 @@ function renderSurface(
   cards: readonly FrontendResearchCardPreview[],
   dispatchPlayer = vi.fn(async () => accepted()),
   preference = new ResearchVisibilityPreferenceService({ storage: null }),
+  automationResearchIds = cards.map((entry) => entry.researchId),
 ) {
-  return render(surfaceElement(cards, dispatchPlayer, preference))
+  return render(surfaceElement(
+    cards,
+    dispatchPlayer,
+    preference,
+    automationResearchIds,
+  ))
 }
 
 function surfaceElement(
   cards: readonly FrontendResearchCardPreview[],
   dispatchPlayer: ResearchSurfaceProps['dispatchPlayer'],
   preference: ResearchVisibilityPreferenceService,
+  automationResearchIds: readonly string[],
 ) {
   return (
     <IntlProvider locale="en">
@@ -488,6 +527,7 @@ function surfaceElement(
           automationEnabledById={Object.fromEntries(
             cards.map((entry) => [entry.researchId, entry.automationActive]),
           )}
+          automationResearchIds={automationResearchIds}
           purchaseRouteAvailable
           buyModeRouteAvailable
           roundedBulkRouteAvailable

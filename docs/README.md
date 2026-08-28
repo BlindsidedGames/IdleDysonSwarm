@@ -15,6 +15,9 @@ an audit finding, release gate, or platform contract.
 
 ## Living references
 
+- [`PROJECT_HANDOFF.md`](PROJECT_HANDOFF.md) is the account-transition entry
+  point for the current repository state, product constraints, and proven
+  local-first deployment workflow.
 - [`contracts/`](contracts/) contains current architecture, gameplay,
   persistence, presentation, and parity contracts.
 - [`platform/`](platform/) contains host, Store, PWA, migration, deployment, and

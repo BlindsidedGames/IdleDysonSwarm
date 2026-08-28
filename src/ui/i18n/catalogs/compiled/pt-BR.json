@@ -327,6 +327,52 @@
       "value": "Quantidade"
     }
   ],
+  "debug.amount-continuous-maximum": [
+    {
+      "type": 0,
+      "value": "Recursos contínuos não podem ultrapassar "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "debug.amount-discrete-maximum": [
+    {
+      "type": 0,
+      "value": "Recursos de números inteiros não podem ultrapassar "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": ". Recursos contínuos ainda podem aceitar esse valor."
+    }
+  ],
+  "debug.amount-discrete-whole": [
+    {
+      "type": 0,
+      "value": "Recursos de números inteiros exigem um inteiro. Recursos contínuos ainda podem aceitar esse valor."
+    }
+  ],
+  "debug.amount-help": [
+    {
+      "type": 0,
+      "value": "Sufixos padrão são aceitos, incluindo formas como 100 Qi, 100xqi e 100 x qi."
+    }
+  ],
+  "debug.amount-invalid": [
+    {
+      "type": 0,
+      "value": "Insira um número não negativo usando algarismos, notação científica ou um sufixo padrão do jogo."
+    }
+  ],
   "debug.apply-preset": [
     {
       "type": 0,
@@ -417,6 +463,18 @@
       "value": "Progresso dos Segredos reiniciado."
     }
   ],
+  "debug.set-double-cap": [
+    {
+      "type": 0,
+      "value": "Limite duplo"
+    }
+  ],
+  "debug.set-whole-cap": [
+    {
+      "type": 0,
+      "value": "Limite inteiro"
+    }
+  ],
   "debug.strange-matter": [
     {
       "type": 0,
@@ -498,13 +556,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Ciência"
+          "value": "Cientistas"
         }
       ]
     },
     {
       "type": 0,
-      "value": ": eficiência em 100%"
+      "value": " com 100% de eficiência"
     }
   ],
   "dyson.bot-distribution.scientists": [
@@ -1715,6 +1773,12 @@
     {
       "type": 0,
       "value": ": produção"
+    }
+  ],
+  "dyson.facilities.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "Auto"
     }
   ],
   "dyson.facilities.purchase.cost": [
@@ -3017,6 +3081,12 @@
       "value": "Nenhuma Melhoria de Infinito está disponível no momento."
     }
   ],
+  "infinity.shop.hide-maxed": [
+    {
+      "type": 0,
+      "value": "Ocultar melhorias no máximo"
+    }
+  ],
   "infinity.shop.maximum-reached": [
     {
       "type": 0,
@@ -3102,13 +3172,13 @@
   "infinity.shop.purchased": [
     {
       "type": 0,
-      "value": "Comprada"
+      "value": "No máximo"
     }
   ],
   "infinity.shop.purchased-count": [
     {
       "type": 0,
-      "value": "Número de compras: "
+      "value": "Possuído: "
     },
     {
       "type": 1,
@@ -3757,6 +3827,12 @@
       "value": "Essa ação Quântica não foi concluída. Tente novamente."
     }
   ],
+  "quantum.hide-maxed": [
+    {
+      "type": 0,
+      "value": "Ocultar melhorias no máximo"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -3815,6 +3891,22 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "quantum.maxed": [
+    {
+      "type": 0,
+      "value": "Máximo"
+    }
+  ],
+  "quantum.maxed-upgrade": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": máximo"
     }
   ],
   "quantum.mega.all": [
@@ -3942,7 +4034,7 @@
   "quantum.purchase.quantity": [
     {
       "type": 0,
-      "value": "Comprar +"
+      "value": "+"
     },
     {
       "type": 1,
@@ -3953,18 +4045,6 @@
     {
       "type": 0,
       "value": "Configurações de compra"
-    }
-  ],
-  "quantum.purchase.short": [
-    {
-      "type": 0,
-      "value": "Comprar"
-    }
-  ],
-  "quantum.purchased": [
-    {
-      "type": 0,
-      "value": "Comprada"
     }
   ],
   "quantum.region": [
@@ -6615,6 +6695,12 @@
       "value": " Matéria Estranha"
     }
   ],
+  "simulations.action.black-hole-capped": [
+    {
+      "type": 0,
+      "value": "Buraco Negro, limite atingido"
+    }
+  ],
   "simulations.action.black-hole-label": [
     {
       "type": 0,
@@ -6639,6 +6725,12 @@
     {
       "type": 0,
       "value": "Impulsionar"
+    }
+  ],
+  "simulations.action.capped-label": [
+    {
+      "type": 0,
+      "value": "Limite"
     }
   ],
   "simulations.action.close": [
@@ -6819,6 +6911,12 @@
       "value": "Taxa atual"
     }
   ],
+  "simulations.details.effect": [
+    {
+      "type": 0,
+      "value": "Efeito"
+    }
+  ],
   "simulations.details.inactive-multiplier": [
     {
       "type": 0,
@@ -6945,6 +7043,48 @@
     {
       "type": 0,
       "value": "Multiplicador de velocidade"
+    }
+  ],
+  "simulations.details.status": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "simulations.education.advanced-physics.effect": [
+    {
+      "type": 0,
+      "value": "Desbloqueia os geradores de fusão."
+    }
+  ],
+  "simulations.education.engineering.effect": [
+    {
+      "type": 0,
+      "value": "Permite que as cidades produzam fábricas."
+    }
+  ],
+  "simulations.education.mathematics.effect": [
+    {
+      "type": 0,
+      "value": "Dobra a geração de energia dos painéis solares e libera o caminho dos canhões eletromagnéticos."
+    }
+  ],
+  "simulations.education.shipping.effect": [
+    {
+      "type": 0,
+      "value": "Dobra a produção das fábricas."
+    }
+  ],
+  "simulations.education.world-peace.effect": [
+    {
+      "type": 0,
+      "value": "Dobra a produção de foguetes dos bots."
+    }
+  ],
+  "simulations.education.world-trade.effect": [
+    {
+      "type": 0,
+      "value": "Dobra novamente a produção das fábricas."
     }
   ],
   "simulations.empty": [
@@ -7341,6 +7481,12 @@
       "value": "Vazão dos Canhões Eletromagnéticos"
     }
   ],
+  "simulations.progress.next-volley": [
+    {
+      "type": 0,
+      "value": "Próxima salva"
+    }
+  ],
   "simulations.progress.percent": [
     {
       "type": 1,
@@ -7477,6 +7623,12 @@
       "value": "Simulações"
     }
   ],
+  "simulations.show-formulas-inline": [
+    {
+      "type": 0,
+      "value": "Mostrar fórmulas nos cartões"
+    }
+  ],
   "simulations.summary.influence": [
     {
       "type": 0,
@@ -7605,6 +7757,12 @@
     {
       "type": 0,
       "value": "Atual"
+    }
+  ],
+  "skills.double-click-to-assign": [
+    {
+      "type": 0,
+      "value": "Clique duplo para atribuir Habilidades"
     }
   ],
   "skills.effect": [
@@ -9801,6 +9959,40 @@
       "value": "Rosa-claro"
     }
   ],
+  "skills.preset-distribution": [
+    {
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "% Operários"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "% Cientistas"
+        }
+      ]
+    }
+  ],
   "skills.preset-name": [
     {
       "type": 0,
@@ -9837,42 +10029,6 @@
       },
       "offset": 0,
       "pluralType": "cardinal"
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "workerValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "workers"
-        },
-        {
-          "type": 0,
-          "value": "% Operários"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "scientistValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "scientists"
-        },
-        {
-          "type": 0,
-          "value": "% Cientistas"
-        }
-      ]
     }
   ],
   "skills.preset-transfer-failed": [
@@ -10079,6 +10235,16 @@
     {
       "type": 0,
       "value": "Supernova suprime toda a camada de Compra Manual: Abacates, os dois marcos de 50/100, Escalonamento de Produção e todas as taxas do Enxame."
+    }
+  ],
+  "skills.switch-preset": [
+    {
+      "type": 0,
+      "value": "Mudar para "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.tree": [
@@ -11678,6 +11844,12 @@
       "value": "Crônicas"
     }
   ],
+  "wiki.category.offline-time": [
+    {
+      "type": 0,
+      "value": "Tempo offline"
+    }
+  ],
   "wiki.category.other": [
     {
       "type": 0,
@@ -12295,21 +12467,7 @@
   "wiki.other.offline": [
     {
       "type": 0,
-      "value": "O tempo longe do jogo se transforma na moeda "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Tempo Offline"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": ". Gaste-a na tela de Tempo Offline. Um resumo de retorno aparece depois de uma ausência de pelo menos "
+      "value": "Depois de ficar ausente por pelo menos "
     },
     {
       "type": 8,
@@ -12323,7 +12481,153 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": ", esse tempo é adicionado ao seu banco de "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Tempo Offline"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " em vez de ser simulado automaticamente. A capacidade começa em "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "um dia"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Quando o banco estiver cheio, você poderá gastá-lo para duplicar essa capacidade."
+    }
+  ],
+  "wiki.other.offline-accuracy": [
+    {
+      "type": 0,
+      "value": "Produção, automação e melhorias permanentes funcionam durante a simulação, com no máximo uma decisão de automação por atualização. Passos de tempo maiores podem perder oportunidades que passos menores capturariam, e nenhuma compensação é adicionada. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Improvisar"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " fica intencionalmente congelado durante o processamento."
+    }
+  ],
+  "wiki.other.offline-accuracy-title": [
+    {
+      "type": 0,
+      "value": "O que funciona durante a simulação"
+    }
+  ],
+  "wiki.other.offline-processing": [
+    {
+      "type": 0,
+      "value": "O processamento avança o jogo pelo mesmo sistema de atualização usado durante o jogo ativo. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Acelerar"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " reduz o número de atualizações restantes e mantém toda a duração selecionada, trocando precisão por um resultado mais rápido. Cancelar descarta com segurança a simulação inacabada e não gasta o Tempo Offline selecionado."
+    }
+  ],
+  "wiki.other.offline-processing-title": [
+    {
+      "type": 0,
+      "value": "Processamento, aceleração e cancelamento"
+    }
+  ],
+  "wiki.other.offline-results": [
+    {
+      "type": 0,
+      "value": "Uma execução concluída informa a duração simulada, o banco restante, a precisão final e o número real de atualizações. Ela também mostra os ganhos relevantes de Infinito, Simulação e Realidade. Ganhos de Instalações e Bots aparecem apenas quando não houve Infinito, pois uma redefinição e reconstrução tornariam um total simples de antes e depois enganoso."
+    }
+  ],
+  "wiki.other.offline-results-title": [
+    {
+      "type": 0,
+      "value": "Resultados da conclusão"
+    }
+  ],
+  "wiki.other.offline-spending": [
+    {
+      "type": 0,
+      "value": "Escolha quanto tempo acumulado gastar e selecione "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Rápido"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Equilibrado"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ou "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Preciso"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Essas predefinições usam progressivamente mais atualizações. Preciso acompanha melhor a automação de curto prazo, enquanto Rápido termina antes."
+    }
+  ],
+  "wiki.other.offline-spending-title": [
+    {
+      "type": 0,
+      "value": "Escolher tempo e precisão"
     }
   ],
   "wiki.other.offline-title": [

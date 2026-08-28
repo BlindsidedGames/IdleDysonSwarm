@@ -61,13 +61,13 @@ function renderSurface(overrides: Partial<AvocatoSurfaceProps> = {}) {
     locale: 'en',
     unlocked: true,
     resources: { infinityPoints: 1000, influence: 100, strangeMatter: 10, overflowMultiplier: 0.5 },
-    spendable: { infinityPoints: 42n, influence: 128n, strangeMatter: 64n },
+    spendable: { infinityPoints: 42n, influence: 128, strangeMatter: 64 },
     derived: { infinityPoints: 3, influence: 2, strangeMatter: 1, overflow: 1.5, total: 9 },
     previews: {
       feeds: [
-        { source: 'infinity-points', eligible: true, amount: 42n, code: 'fed' },
-        { source: 'influence', eligible: true, amount: 128n, code: 'fed' },
-        { source: 'strange-matter', eligible: true, amount: 64n, code: 'fed' },
+        { source: 'infinity-points', eligible: true, amount: 42, code: 'fed' },
+        { source: 'influence', eligible: true, amount: 128, code: 'fed' },
+        { source: 'strange-matter', eligible: true, amount: 64, code: 'fed' },
       ],
       meditation: { eligible: true, requiredStepIndex: 2, code: 'step-completed', skillPointReward: 4n },
     },

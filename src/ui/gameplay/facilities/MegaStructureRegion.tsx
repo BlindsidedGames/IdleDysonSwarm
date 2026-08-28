@@ -25,6 +25,8 @@ import {
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import { FacilityProductionProgress } from './BasicFacilityRegion'
 import { basicFacilityMessages as messages } from './messages'
 import { FacilityDetailsDialog } from './FacilityDetailsDialog'
 import {
@@ -319,6 +321,7 @@ function MegaStructureCard({
   readonly onOpenDetails: () => void
 }) {
   const intl = useIntl()
+  const reducedMotion = usePrefersReducedMotion()
   const feedbackId = useId()
   const availabilityId = useId()
   const presentation = presentationById[facilityId]
@@ -385,7 +388,15 @@ function MegaStructureCard({
         </p>
       }
       progress={
-        <div className="basic-facility-card__progress-track" data-visible="false" />
+        <FacilityProductionProgress
+          accessibleName={intl.formatMessage(
+            messages.productionProgressAccessible,
+            { facility: intl.formatMessage(presentation.name) },
+          )}
+          progress={fact.productionProgress}
+          productionRatePerSecond={fact.perSecond}
+          reducedMotion={reducedMotion}
+        />
       }
       feedback={displayFeedback || availability ? (
         <>

@@ -30,6 +30,7 @@ const quantumStyles = readFileSync(
 afterEach(() => {
   cleanup()
   vi.useRealTimers()
+  localStorage.clear()
 })
 
 describe('QuantumSurface', () => {
@@ -136,7 +137,7 @@ describe('QuantumSurface', () => {
       .toHaveTextContent('Claim')
     expect(screen.getByRole('button', {
       name: 'Purchase Secrets of the Universe for 1.00 Quantum Shards',
-    })).toHaveTextContent('Purchase')
+    })).not.toHaveTextContent('Purchase')
     expect(screen.getByRole('button', {
       name: 'Purchase Division for 2.00 Quantum Shards',
     })).toHaveTextContent('2.00')
@@ -278,7 +279,8 @@ describe('QuantumSurface', () => {
     const bulk = screen.getByRole('button', {
       name: 'Purchase 10.0 Cash Booster upgrades for 10.0 Quantum Shards',
     })
-    expect(bulk).toHaveTextContent('Purchase +10.0')
+    expect(bulk).toHaveTextContent('+10.0')
+    expect(bulk).not.toHaveTextContent('Purchase')
     fireEvent.click(bulk)
     expect(dispatchPlayer).toHaveBeenCalledWith({
       kind: 'quantum.purchase-upgrade',
@@ -320,6 +322,27 @@ describe('QuantumSurface', () => {
     expect(onOpenAvocato).toHaveBeenCalledOnce()
   })
 
+  test('labels completed purchases as maxed and hides them on request', () => {
+    const { rerender } = renderSurface({
+      hideMaxed: false,
+      upgradeOverrides: {
+        Automation: { code: 'already-maxed', eligible: false },
+      },
+    })
+
+    expect(screen.getByRole('button', { name: 'Permanent Automation: Maxed' }))
+      .toHaveTextContent('Maxed')
+
+    rerenderSurface(rerender, {
+      hideMaxed: true,
+      upgradeOverrides: {
+        Automation: { code: 'already-maxed', eligible: false },
+      },
+    })
+    expect(screen.queryByRole('heading', { name: 'Automation' }))
+      .not.toBeInTheDocument()
+  })
+
   test('has no serious or critical accessibility violations', async () => {
     const { container } = renderSurface()
     const result = await axe.run(container)
@@ -335,12 +358,13 @@ interface RenderOptions {
   readonly onOpenAvocato?: () => void
   readonly upgradeOverrides?: Partial<Record<QuantumUpgradeId, Partial<FrontendQuantumUpgradePreview>>>
   readonly purchaseQuantity?: QuantumSurfaceProps['purchaseQuantity']
+  readonly hideMaxed?: boolean
   readonly sections?: readonly QuantumUpgradeSectionPreview[]
 }
 
-function renderSurface(options: RenderOptions = {}) {
+function surfaceProps(options: RenderOptions = {}): QuantumSurfaceProps {
   const entangled = options.entangled ?? false
-  const props: QuantumSurfaceProps = {
+  return {
     locale: 'en',
     resources: {
       pointsEarned: 50n,
@@ -401,9 +425,19 @@ function renderSurface(options: RenderOptions = {}) {
     dispatchPlayer: options.dispatchPlayer ?? vi.fn(async () => accepted()),
     onOpenAvocato: options.onOpenAvocato,
     purchaseQuantity: options.purchaseQuantity,
+    hideMaxed: options.hideMaxed,
   }
+}
 
-  return render(<IntlProvider locale="en"><QuantumSurface {...props} /></IntlProvider>)
+function renderSurface(options: RenderOptions = {}) {
+  return render(<IntlProvider locale="en"><QuantumSurface {...surfaceProps(options)} /></IntlProvider>)
+}
+
+function rerenderSurface(
+  rerender: ReturnType<typeof render>['rerender'],
+  options: RenderOptions,
+) {
+  rerender(<IntlProvider locale="en"><QuantumSurface {...surfaceProps(options)} /></IntlProvider>)
 }
 
 describe('QuantumControlPanel', () => {
@@ -417,8 +451,10 @@ describe('QuantumControlPanel', () => {
           infinityPoints={41n}
           purchaseSettingsOpen={false}
           purchaseQuantity={1}
+          hideMaxed={false}
           onPurchaseSettingsOpenChange={onOpenChange}
           onPurchaseQuantityChange={onQuantityChange}
+          onHideMaxedChange={vi.fn()}
         />
       </IntlProvider>,
     )
@@ -440,8 +476,10 @@ describe('QuantumControlPanel', () => {
           infinityPoints={100n}
           purchaseSettingsOpen
           purchaseQuantity={1}
+          hideMaxed={false}
           onPurchaseSettingsOpenChange={onOpenChange}
           onPurchaseQuantityChange={onQuantityChange}
+          onHideMaxedChange={vi.fn()}
         />
       </IntlProvider>,
     )
@@ -455,6 +493,30 @@ describe('QuantumControlPanel', () => {
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '42')
     fireEvent.click(screen.getByRole('button', { name: 'Buy 10' }))
     expect(onQuantityChange).toHaveBeenCalledWith(10)
+  })
+
+  test('keeps the hide-maxed preference inside the expanded settings panel', () => {
+    const onHideMaxedChange = vi.fn()
+    render(
+      <IntlProvider locale="en">
+        <QuantumControlPanel
+          locale="en"
+          infinityPoints={42n}
+          purchaseSettingsOpen
+          purchaseQuantity={1}
+          hideMaxed={false}
+          onPurchaseSettingsOpenChange={vi.fn()}
+          onPurchaseQuantityChange={vi.fn()}
+          onHideMaxedChange={onHideMaxedChange}
+        />
+      </IntlProvider>,
+    )
+
+    const toggle = screen.getByRole('checkbox', { name: 'Hide maxed upgrades' })
+    expect(toggle.closest('.ui-progress-controls-panel__body')).not.toBeNull()
+    expect(toggle).not.toBeChecked()
+    fireEvent.click(toggle)
+    expect(onHideMaxedChange).toHaveBeenCalledWith(true)
   })
 })
 

@@ -201,8 +201,8 @@ export type UiRuntimeDevelopmentAction =
   | { readonly kind: 'add-skill-points'; readonly amount: bigint }
   | { readonly kind: 'add-infinity-points'; readonly amount: bigint }
   | { readonly kind: 'add-quantum-shards'; readonly amount: bigint }
-  | { readonly kind: 'add-influence'; readonly amount: bigint }
-  | { readonly kind: 'add-strange-matter'; readonly amount: bigint }
+  | { readonly kind: 'add-influence'; readonly amount: number }
+  | { readonly kind: 'add-strange-matter'; readonly amount: number }
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
@@ -215,7 +215,7 @@ export interface UiRuntimeDevelopmentStatus {
   /** Canonical save ownership, independent of free development-build access. */
   readonly purchasedInGame: boolean
   readonly quantumShards: bigint
-  readonly strangeMatter: bigint
+  readonly strangeMatter: number
 }
 
 export type UiRuntimeDevelopmentActionResult =

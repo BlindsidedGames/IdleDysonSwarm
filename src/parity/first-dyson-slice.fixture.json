@@ -3,7 +3,7 @@
   "preparedSave": {
     "sourcePath": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
     "sourceSha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78",
-    "preparedStateSha256": "dae01454277db2e12817bce343db2ca8767587994d25fcc83c6944b5c25ef200",
+    "preparedStateSha256": "2342cf28a32e2d3d5c29c1ffc43292505bcd6f0d2ac48c8d4bc007b9eb8f12d6",
     "catalogSha256": "0f7e96636565c8d2d268eaa417335b9eb049939ddd2463408540b0af64ecf665"
   },
   "initial": {
@@ -63,7 +63,8 @@
       "showTinker": true,
       "visibleBasicFacilityIds": [],
       "visibleMegaStructureIds": [],
-      "showNextTierTeaser": false
+      "showNextBasicFacilityTeaser": false,
+      "showNextMegaStructureTeaser": false
     },
     "tinker": {
       "status": "ready",
@@ -346,7 +347,8 @@
         "ai_managers"
       ],
       "visibleMegaStructureIds": [],
-      "showNextTierTeaser": false
+      "showNextBasicFacilityTeaser": true,
+      "showNextMegaStructureTeaser": false
     },
     "tinker": {
       "status": "ready",

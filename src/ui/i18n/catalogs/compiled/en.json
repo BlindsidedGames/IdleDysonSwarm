@@ -327,6 +327,52 @@
       "value": "Amount"
     }
   ],
+  "debug.amount-continuous-maximum": [
+    {
+      "type": 0,
+      "value": "Continuous resources cannot exceed "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "debug.amount-discrete-maximum": [
+    {
+      "type": 0,
+      "value": "Whole-number resources cannot exceed "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": ". Continuous resources may still accept this amount."
+    }
+  ],
+  "debug.amount-discrete-whole": [
+    {
+      "type": 0,
+      "value": "Whole-number resources require an integer. Continuous resources may still accept this amount."
+    }
+  ],
+  "debug.amount-help": [
+    {
+      "type": 0,
+      "value": "Standard suffixes are accepted, including forms such as 100 Qi, 100xqi and 100 x qi."
+    }
+  ],
+  "debug.amount-invalid": [
+    {
+      "type": 0,
+      "value": "Enter a non-negative number using digits, scientific notation or a Standard game suffix."
+    }
+  ],
   "debug.apply-preset": [
     {
       "type": 0,
@@ -417,6 +463,18 @@
       "value": "Secret progress reset."
     }
   ],
+  "debug.set-double-cap": [
+    {
+      "type": 0,
+      "value": "Double cap"
+    }
+  ],
+  "debug.set-whole-cap": [
+    {
+      "type": 0,
+      "value": "Whole cap"
+    }
+  ],
   "debug.strange-matter": [
     {
       "type": 0,
@@ -498,7 +556,7 @@
       "children": [
         {
           "type": 0,
-          "value": "Science"
+          "value": "Scientists"
         }
       ]
     },
@@ -1715,6 +1773,12 @@
     {
       "type": 0,
       "value": " production"
+    }
+  ],
+  "dyson.facilities.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "Auto"
     }
   ],
   "dyson.facilities.purchase.cost": [
@@ -3017,6 +3081,12 @@
       "value": "No Infinity upgrades are currently available."
     }
   ],
+  "infinity.shop.hide-maxed": [
+    {
+      "type": 0,
+      "value": "Hide maxed upgrades"
+    }
+  ],
   "infinity.shop.maximum-reached": [
     {
       "type": 0,
@@ -3102,13 +3172,13 @@
   "infinity.shop.purchased": [
     {
       "type": 0,
-      "value": "Purchased"
+      "value": "Maxed"
     }
   ],
   "infinity.shop.purchased-count": [
     {
       "type": 0,
-      "value": "Purchased: "
+      "value": "Owned: "
     },
     {
       "type": 1,
@@ -3757,6 +3827,12 @@
       "value": "That Quantum action was not completed. Try again."
     }
   ],
+  "quantum.hide-maxed": [
+    {
+      "type": 0,
+      "value": "Hide maxed upgrades"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -3815,6 +3891,22 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "quantum.maxed": [
+    {
+      "type": 0,
+      "value": "Maxed"
+    }
+  ],
+  "quantum.maxed-upgrade": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": Maxed"
     }
   ],
   "quantum.mega.all": [
@@ -3942,7 +4034,7 @@
   "quantum.purchase.quantity": [
     {
       "type": 0,
-      "value": "Purchase +"
+      "value": "+"
     },
     {
       "type": 1,
@@ -3953,18 +4045,6 @@
     {
       "type": 0,
       "value": "Purchase settings"
-    }
-  ],
-  "quantum.purchase.short": [
-    {
-      "type": 0,
-      "value": "Purchase"
-    }
-  ],
-  "quantum.purchased": [
-    {
-      "type": 0,
-      "value": "Purchased"
     }
   ],
   "quantum.region": [
@@ -6615,6 +6695,12 @@
       "value": " Strange Matter"
     }
   ],
+  "simulations.action.black-hole-capped": [
+    {
+      "type": 0,
+      "value": "Black Hole, Capped"
+    }
+  ],
   "simulations.action.black-hole-label": [
     {
       "type": 0,
@@ -6639,6 +6725,12 @@
     {
       "type": 0,
       "value": "Boost"
+    }
+  ],
+  "simulations.action.capped-label": [
+    {
+      "type": 0,
+      "value": "Capped"
     }
   ],
   "simulations.action.close": [
@@ -6819,6 +6911,12 @@
       "value": "Current rate"
     }
   ],
+  "simulations.details.effect": [
+    {
+      "type": 0,
+      "value": "Effect"
+    }
+  ],
   "simulations.details.inactive-multiplier": [
     {
       "type": 0,
@@ -6945,6 +7043,48 @@
     {
       "type": 0,
       "value": "Speed multiplier"
+    }
+  ],
+  "simulations.details.status": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "simulations.education.advanced-physics.effect": [
+    {
+      "type": 0,
+      "value": "Unlocks Fusion Generators."
+    }
+  ],
+  "simulations.education.engineering.effect": [
+    {
+      "type": 0,
+      "value": "Enables Cities to produce Factories."
+    }
+  ],
+  "simulations.education.mathematics.effect": [
+    {
+      "type": 0,
+      "value": "Doubles Solar Panel energy generation and enables the Railgun path."
+    }
+  ],
+  "simulations.education.shipping.effect": [
+    {
+      "type": 0,
+      "value": "Doubles Factory production."
+    }
+  ],
+  "simulations.education.world-peace.effect": [
+    {
+      "type": 0,
+      "value": "Doubles Bot production of Rockets."
+    }
+  ],
+  "simulations.education.world-trade.effect": [
+    {
+      "type": 0,
+      "value": "Doubles Factory production again."
     }
   ],
   "simulations.empty": [
@@ -7341,6 +7481,12 @@
       "value": "Railgun throughput"
     }
   ],
+  "simulations.progress.next-volley": [
+    {
+      "type": 0,
+      "value": "Next volley"
+    }
+  ],
   "simulations.progress.percent": [
     {
       "type": 1,
@@ -7477,6 +7623,12 @@
       "value": "Simulations"
     }
   ],
+  "simulations.show-formulas-inline": [
+    {
+      "type": 0,
+      "value": "Show formulas inline"
+    }
+  ],
   "simulations.summary.influence": [
     {
       "type": 0,
@@ -7605,6 +7757,12 @@
     {
       "type": 0,
       "value": "Current"
+    }
+  ],
+  "skills.double-click-to-assign": [
+    {
+      "type": 0,
+      "value": "Double-click to assign skills"
     }
   ],
   "skills.effect": [
@@ -9801,6 +9959,40 @@
       "value": "Rose"
     }
   ],
+  "skills.preset-distribution": [
+    {
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "% Workers"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "% Scientists"
+        }
+      ]
+    }
+  ],
   "skills.preset-name": [
     {
       "type": 0,
@@ -9837,42 +10029,6 @@
       },
       "offset": 0,
       "pluralType": "cardinal"
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "workerValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "workers"
-        },
-        {
-          "type": 0,
-          "value": "% Workers"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "scientistValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "scientists"
-        },
-        {
-          "type": 0,
-          "value": "% Scientists"
-        }
-      ]
     }
   ],
   "skills.preset-transfer-failed": [
@@ -10079,6 +10235,16 @@
     {
       "type": 0,
       "value": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate."
+    }
+  ],
+  "skills.switch-preset": [
+    {
+      "type": 0,
+      "value": "Switch to "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.tree": [
@@ -11678,6 +11844,12 @@
       "value": "Lore"
     }
   ],
+  "wiki.category.offline-time": [
+    {
+      "type": 0,
+      "value": "Offline Time"
+    }
+  ],
   "wiki.category.other": [
     {
       "type": 0,
@@ -12295,21 +12467,7 @@
   "wiki.other.offline": [
     {
       "type": 0,
-      "value": "Time away from the game becomes "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Offline Time"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " currency. Spend it from the Offline Time screen. A return summary appears after you have been away for at least "
+      "value": "After you have been away for at least "
     },
     {
       "type": 8,
@@ -12323,7 +12481,153 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": ", that time is added to your "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Offline Time"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " bank instead of being replayed automatically. Capacity starts at "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "one day"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". When the bank is full, you can spend it to double that capacity."
+    }
+  ],
+  "wiki.other.offline-accuracy": [
+    {
+      "type": 0,
+      "value": "Production, automation and permanent upgrades run during replay, with at most one automation decision per update. Larger time steps can miss opportunities that shorter updates would catch, and no compensation is added for them. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Tinker"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " is intentionally frozen while Offline Time is processing."
+    }
+  ],
+  "wiki.other.offline-accuracy-title": [
+    {
+      "type": 0,
+      "value": "What runs during replay"
+    }
+  ],
+  "wiki.other.offline-processing": [
+    {
+      "type": 0,
+      "value": "Processing advances the game through the same update system used during active play. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Speed Up"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " reduces the remaining update count and keeps the full selected duration, trading accuracy for a faster result. Cancelling safely discards the unfinished simulation and does not spend the selected Offline Time."
+    }
+  ],
+  "wiki.other.offline-processing-title": [
+    {
+      "type": 0,
+      "value": "Processing, Speed Up and cancellation"
+    }
+  ],
+  "wiki.other.offline-results": [
+    {
+      "type": 0,
+      "value": "A completed run reports the simulated duration, remaining bank, final accuracy and actual update count. It also shows relevant Infinity, Simulation and Reality gains. Facility and Bot gains appear only when no Infinity occurred, because a reset and rebuild would make a simple before-and-after total misleading."
+    }
+  ],
+  "wiki.other.offline-results-title": [
+    {
+      "type": 0,
+      "value": "Completion results"
+    }
+  ],
+  "wiki.other.offline-spending": [
+    {
+      "type": 0,
+      "value": "Choose how much banked time to spend, then select "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Fast"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Balanced"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " or "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Accurate"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". These presets use progressively more gameplay updates. Accurate follows short-term automation more closely, while Fast completes sooner."
+    }
+  ],
+  "wiki.other.offline-spending-title": [
+    {
+      "type": 0,
+      "value": "Choosing time and accuracy"
     }
   ],
   "wiki.other.offline-title": [

@@ -125,6 +125,16 @@ export function isCanonicalMegaStructureVisible(
   state: CanonicalGameStateV1,
   facilityId: MegaStructureId,
 ): boolean {
+  const ownership = state.dyson.facilities[facilityId]
+  if (ownership[0] + ownership[1] > 0) return true
+  const unlocks = megaUnlocks(state)
+  const permanentlyUnlocked = {
+    matrioshka_brains: unlocks.matrioshkaBrains,
+    birch_planets: unlocks.birchPlanets,
+    galactic_brains: unlocks.galacticBrains,
+  } satisfies Record<MegaStructureId, boolean>
+  if (permanentlyUnlocked[facilityId]) return true
+
   return isMegaStructureVisible(
     {
       facilities: state.dyson.facilities,

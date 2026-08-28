@@ -232,6 +232,8 @@ function StoreProductCard({
   const isDoubleIpToggle =
     product.id === STORE_PRODUCT_IDS.doubleInfinityPoints && owned
   const doubleIpEnabled = snapshot.doubleInfinityPointsEnabled
+  const doubleIpUpdating =
+    snapshot.operation.kind === 'updating-double-infinity-points'
   const actionDisabled = isDoubleIpToggle
     ? snapshot.operation.kind !== 'idle'
     : !canPurchase
@@ -248,9 +250,14 @@ function StoreProductCard({
           isDoubleIpToggle && !doubleIpEnabled
             ? ' store-surface__purchase-action--effect-disabled'
             : ''
+        }${
+          isDoubleIpToggle && doubleIpUpdating
+            ? ' store-surface__purchase-action--effect-updating'
+            : ''
         }`}
         disabled={actionDisabled}
         aria-pressed={isDoubleIpToggle ? doubleIpEnabled : undefined}
+        aria-busy={isDoubleIpToggle && doubleIpUpdating || undefined}
         aria-label={isDoubleIpToggle
           ? intl.formatMessage(
               snapshot.operation.kind === 'updating-double-infinity-points'
@@ -268,9 +275,7 @@ function StoreProductCard({
       >
         {isDoubleIpToggle
           ? intl.formatMessage(
-              snapshot.operation.kind === 'updating-double-infinity-points'
-                ? messages.updatingEffect
-                : doubleIpEnabled
+              doubleIpEnabled
                   ? messages.enabled
                   : messages.disabled,
             )

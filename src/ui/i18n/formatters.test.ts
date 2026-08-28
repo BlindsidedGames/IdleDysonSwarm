@@ -6,6 +6,7 @@ import {
   formatGameEnergy,
   formatGameEnergyParts,
   formatGameNumber,
+  formatWholeGameNumber,
   formatGameNumberParts,
   formatNumber,
   formatRelativeTime,
@@ -63,6 +64,13 @@ describe('cached locale formatters', () => {
     expect(formatGameNumber('en', -12.39)).toBe('-12.3')
     expect(formatGameNumber('en', 12_039_871_001_422_293n)).toBe('12.0Qa')
     expect(formatGameNumber('en', -12_102_296_928_535_773n)).toBe('-12.1Qa')
+  })
+
+  it('formats ordinary whole resources without decimal padding', () => {
+    expect(formatWholeGameNumber('en', 0n)).toBe('0')
+    expect(formatWholeGameNumber('en', 28n)).toBe('28')
+    expect(formatWholeGameNumber('en', 1000n)).toBe('1000')
+    expect(formatWholeGameNumber('en', 12_345n)).toBe('12.3K')
   })
 
   it.each([

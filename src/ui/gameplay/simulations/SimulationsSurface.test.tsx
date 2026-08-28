@@ -17,6 +17,7 @@ import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type { SharedMessageCatalog } from '../../i18n/catalogs/types'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
+  SIMULATION_FORMULAS_STORAGE_KEY,
   SimulationsSurface,
   type SimulationsSurfaceProps,
 } from './SimulationsSurface'
@@ -52,10 +53,10 @@ describe('SimulationsSurface', () => {
       /\.simulation-permanent-upgrade-category ol\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
     )
     expect(simulationStyles).toMatch(
-      /\.simulation-category ol\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
+      /\.simulation-category ol\s*\{[^}]*gap:\s*var\(--ui-card-gap\);/,
     )
     expect(simulationStyles).toMatch(
-      /\.ui-facility-card\.simulation-panel-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) clamp\(6\.25rem, 27%, 6\.75rem\);[^}]*gap:\s*0\.05rem 0\.32rem;[^}]*padding:\s*0\.34rem 0\.38rem;/,
+      /\.ui-facility-card\.simulation-panel-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) clamp\(6\.25rem, 27%, 6\.75rem\);[^}]*grid-template-rows:\s*auto auto auto minmax\(0, 1fr\) auto;[^}]*gap:\s*0\.05rem 0\.32rem;[^}]*padding:\s*0\.34rem 0\.38rem;/,
     )
     expect(simulationStyles).toMatch(
       /\.simulation-panel-card \.ui-facility-card__title\s*\{[^}]*padding:\s*0;[^}]*margin:\s*0;[^}]*font-size:\s*calc\(0\.9rem \* var\(--game-text-scale\)\);/,
@@ -63,26 +64,51 @@ describe('SimulationsSurface', () => {
     expect(simulationStyles).toMatch(
       /\.simulation-panel-card \.ui-facility-card__description\s*\{[^}]*font-size:\s*calc\(0\.67rem \* var\(--game-text-scale\)\);/,
     )
+    expect(simulationStyles).toMatch(
+      /\.simulation-panel-card \.ui-facility-card__description\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*3;/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulation-panel-card \.ui-facility-card__progress\s*\{[^}]*grid-column:\s*1 \/ -1;[^}]*grid-row:\s*5;/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulation-panel-card--no-action \.ui-facility-card__description\s*\{[^}]*grid-column:\s*1 \/ -1;/,
+    )
     expect(baseUpgradeStyles).toMatch(
       /\.simulation-permanent-upgrade-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 6rem;[\s\S]*\.simulation-permanent-upgrade-card h4\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
     )
-    expect(upgradeStyles).toMatch(
-      /@media \(max-width: 30rem\)[\s\S]*\.simulation-permanent-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.82rem \* var\(--game-text-scale\)\);/,
+    expect(baseUpgradeStyles).toMatch(
+      /\.simulation-permanent-upgrade-card\s*\{[^}]*border:[^}]*var\(--simulation-upgrade-action\)/,
     )
     expect(baseUpgradeStyles).toMatch(
-      /\.simulation-permanent-upgrade-category\s*> \.ui-collapsible-section__heading\s*\{[^}]*border-inline-start:\s*0\.22rem solid var\(--simulation-upgrade-header\);/,
+      /\.simulation-permanent-upgrade-category\s*> \.ui-collapsible-section__heading\s*\{[^}]*border:\s*var\(--ui-panel-border-width\) solid var\(--simulation-upgrade-action\);/,
     )
     expect(baseUpgradeStyles).toMatch(
-      /\.simulation-permanent-upgrade-category\s*\{[^}]*margin-inline:\s*0\.18rem;/,
+      /\.simulation-permanent-upgrade-category\s*\{[^}]*margin-inline:\s*0;/,
     )
     expect(baseUpgradeStyles).toMatch(
-      /\.simulation-permanent-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*font-size:\s*calc\(1\.03rem \* var\(--game-text-scale\)\);/,
+      /\.simulation-permanent-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*font-size:\s*var\(--ui-text-section-title\);/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.ui-facility-card\.simulation-panel-card\s*\{[^}]*block-size:\s*auto;[^}]*border:[^}]*var\(--simulation-card-action\)/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulation-category\s*\{[^}]*--ui-collapsible-section-collapsed-rotation:\s*90deg;/,
+    )
+    expect(baseUpgradeStyles).not.toMatch(
+      /\.ui-collapsible-section__chevron\s*\{[^}]*(?:border|background):/,
     )
   })
 
   test('renders canonical Foundational panels and dispatches purchases', async () => {
     const dispatchPlayer = vi.fn(accepted)
-    renderSurface(dispatchPlayer)
+    const onPurchaseQuantityChange = vi.fn()
+    renderSurface(
+      dispatchPlayer,
+      facts,
+      progression,
+      0,
+      onPurchaseQuantityChange,
+    )
 
     expect(screen.getByText('Foundational Era')).toBeInTheDocument()
     expect(screen.queryByText('Hunters')).not.toBeInTheDocument()
@@ -101,6 +127,25 @@ describe('SimulationsSurface', () => {
     expect(simulationStyles).toMatch(
       /\.simulations-surface__influence > span\s*\{[^}]*color:\s*var\(--simulation-value\);/,
     )
+
+    const purchaseSettings = screen.getByRole('button', {
+      name: 'Purchase settings',
+    })
+    expect(purchaseSettings).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByText('Simulation: 1')).toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'Purchase amount' }))
+      .not.toBeInTheDocument()
+
+    await userEvent.setup().click(purchaseSettings)
+    expect(purchaseSettings).toHaveAttribute('aria-expanded', 'true')
+    const purchaseAmount = screen.getByRole('group', {
+      name: 'Purchase amount',
+    })
+    const buyMax = within(purchaseAmount).getByRole('button', {
+      name: 'Buy Max',
+    })
+    await userEvent.setup().click(buyMax)
+    expect(onPurchaseQuantityChange).toHaveBeenCalledWith('max')
 
     await userEvent.setup().click(
       screen.getByRole('button', { name: 'Foundational Era' }),
@@ -123,32 +168,40 @@ describe('SimulationsSurface', () => {
     expect(dispatchPlayer).toHaveBeenCalledWith({
       kind: 'dream.purchase-foundational',
       purchase: 'hunters',
+      quantity: 1,
     })
   })
 
-  test('opens compact panel details without creating a player command', async () => {
+  test('shows optional formulas inline without creating a player command', async () => {
     const dispatchPlayer = vi.fn(accepted)
     renderSurface(dispatchPlayer)
 
     await userEvent.setup().click(
       screen.getByRole('button', { name: 'Foundational Era' }),
     )
-    const details = screen.getAllByRole('button', { name: 'Details' })
-    await userEvent.setup().click(details[0])
+    const hunters = screen.getByText('Hunters').closest('article')
+    expect(within(hunters!).queryByRole('button', { name: 'Details' }))
+      .not.toBeInTheDocument()
+    expect(within(hunters!).queryByText('Speed multiplier'))
+      .not.toBeInTheDocument()
 
-    const dialog = screen.getByRole('dialog', { name: 'Hunters' })
-    expect(dialog).toHaveClass('simulation-details--foundational')
-    expect(within(dialog).getByText('Output')).toBeInTheDocument()
-    expect(within(dialog).getByText('1.00 Community / cycle')).toBeInTheDocument()
-    expect(within(dialog).getByText('Base duration')).toBeInTheDocument()
-    expect(within(dialog).getByText('3.00 seconds')).toBeInTheDocument()
-    expect(within(dialog).getByText('Speed multiplier')).toBeInTheDocument()
-    expect(within(dialog).getByText(/Log₁₀\(2\.00\)/)).toBeInTheDocument()
-    expect(within(dialog).getByText('Current rate')).toBeInTheDocument()
-    expect(within(dialog).getByText('0.66 Community / s')).toBeInTheDocument()
-    expect(dialog).not.toHaveTextContent(
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Purchase settings' }),
+    )
+    const formulaToggle = screen.getByRole('checkbox', {
+      name: 'Show formulas inline',
+    })
+    await userEvent.setup().click(formulaToggle)
+
+    expect(within(hunters!).getByText('Speed multiplier')).toBeInTheDocument()
+    expect(within(hunters!).getByText(/Log₁₀\(2\.00\)/)).toBeInTheDocument()
+    expect(hunters).not.toHaveTextContent('Output')
+    expect(hunters).not.toHaveTextContent('Base duration')
+    expect(hunters).not.toHaveTextContent('Current rate')
+    expect(hunters).toHaveTextContent(
       'Influence heroic hunters to gather meat for your communities.',
     )
+    expect(localStorage.getItem(SIMULATION_FORMULAS_STORAGE_KEY)).toBe('true')
     expect(dispatchPlayer).not.toHaveBeenCalled()
   })
 
@@ -252,7 +305,7 @@ describe('SimulationsSurface', () => {
     )
   })
 
-  test('shows the live remaining duration in Education details', async () => {
+  test('shows Education effects and live progress directly on the card', async () => {
     renderSurface(accepted, activeInformationFacts)
 
     await userEvent.setup().click(
@@ -264,25 +317,40 @@ describe('SimulationsSurface', () => {
       .toBeInTheDocument()
     expect(within(engineeringCard!).getByText('24s')).toBeInTheDocument()
     expect(within(engineeringCard!).getAllByRole('progressbar')).toHaveLength(1)
+    expect(within(engineeringCard!).getByText(
+      'Enables Cities to produce Factories.',
+    )).toBeInTheDocument()
+    expect(engineeringCard).toHaveTextContent('Researching')
+    expect(within(engineeringCard!).queryByRole('button', { name: 'Details' }))
+      .not.toBeInTheDocument()
+  })
+
+  test('collapses permanently completed Education and renders compact accurate cards', async () => {
+    renderSurface(accepted, completedInformationFacts)
+
     await userEvent.setup().click(
-      screen.getByRole('button', { name: 'Details' }),
+      screen.getByRole('button', { name: 'Information Era' }),
+    )
+    const education = screen.getByRole('button', { name: 'Education' })
+    expect(education).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByText('Engineering')).not.toBeInTheDocument()
+
+    await userEvent.setup().click(education)
+    const engineeringCard = screen.getByText('Engineering').closest('article')
+    expect(engineeringCard).toHaveClass(
+      'simulation-panel-card--complete',
+      'simulation-panel-card--no-action',
+    )
+    expect(engineeringCard).toHaveTextContent(
+      'Engineering·CompleteEnables Cities to produce Factories.',
+    )
+    expect(engineeringCard).not.toHaveTextContent('Research progress')
+    expect(engineeringCard).not.toHaveTextContent(
+      'Invest Influence to complete this research.',
     )
 
-    const dialog = screen.getByRole('dialog', { name: 'Engineering' })
-    expect(
-      [...dialog.querySelectorAll('dt')].map((item) => item.textContent),
-    ).toEqual([
-      'Base duration',
-      'Remaining duration',
-      'Current progress',
-    ])
-    expect(within(dialog).getByText('Base duration')).toBeInTheDocument()
-    expect(within(dialog).getByText('30s')).toBeInTheDocument()
-    expect(within(dialog).getByText('Current progress')).toBeInTheDocument()
-    expect(within(dialog).getByText('Current progress').closest('div'))
-      .toHaveTextContent('Current progress20%')
-    expect(within(dialog).getByText('Remaining duration')).toBeInTheDocument()
-    expect(within(dialog).getByText('24s')).toBeInTheDocument()
+    expect(within(engineeringCard!).queryByRole('button', { name: 'Details' }))
+      .not.toBeInTheDocument()
   })
 
   test('shows an active boost as a second timed progress bar', async () => {
@@ -324,15 +392,45 @@ describe('SimulationsSurface', () => {
     })
   })
 
+  test('keeps a capped Black Hole available with a compact capped label', async () => {
+    const dispatchPlayer = vi.fn(accepted)
+    renderSurface(dispatchPlayer, {
+      ...spaceAgeFacts,
+      resets: {
+        ...spaceAgeFacts.resets,
+        blackHole: {
+          eligible: true,
+          requestedReward: 12,
+          rewardCapped: true,
+        },
+      },
+    } as FrontendSimulationsDerivedFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Space Age' }),
+    )
+    const blackHoleButton = screen.getByRole('button', {
+      name: 'Black Hole, Capped',
+    })
+    expect(blackHoleButton).toHaveTextContent('Black HoleCapped')
+    expect(blackHoleButton).toBeEnabled()
+
+    await userEvent.setup().click(blackHoleButton)
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'dream.request-black-hole-reset',
+    })
+  })
+
   test('formats large Swarm and Black Hole values with game suffixes', async () => {
-    const largeReward = 12_102_296_928_535_773n
+    const largeSwarm = 12_102_296_928_535_773n
+    const largeReward = Number(largeSwarm)
     renderSurface(accepted, {
       ...spaceAgeFacts,
       live: {
         ...spaceAgeFacts.live,
         resources: {
           ...spaceAgeFacts.live.resources,
-          swarmPanels: largeReward,
+          swarmPanels: largeSwarm,
         },
       },
       resets: {
@@ -367,6 +465,8 @@ describe('SimulationsSurface', () => {
     expect(
       swarmCard!.querySelector('.ui-facility-card__production'),
     ).toBeEmptyDOMElement()
+    expect(within(swarmCard!).queryByRole('button', { name: 'Details' }))
+      .not.toBeInTheDocument()
   })
 
   test('uses Unity energy prefixes for Space Age watts and joules', async () => {
@@ -382,6 +482,12 @@ describe('SimulationsSurface', () => {
     expect(solarCard).not.toBeNull()
     expect(railgunCard).not.toBeNull()
     expect(swarmCard).not.toBeNull()
+    expect(within(solarCard!).queryByRole('button', { name: 'Details' }))
+      .not.toBeInTheDocument()
+    const fusionCard = screen.getByText('Fusion Generators').closest('article')
+    expect(fusionCard).not.toBeNull()
+    expect(within(fusionCard!).queryByRole('button', { name: 'Details' }))
+      .not.toBeInTheDocument()
     expect(solarCard!.querySelector('.ui-facility-card__title'))
       .toHaveTextContent('Solar Panels274·109 KW')
     expect(
@@ -419,11 +525,18 @@ describe('SimulationsSurface', () => {
     expect(within(railgunCard!).queryByRole('progressbar', {
       name: 'Volley remaining',
     })).not.toBeInTheDocument()
-    expect(railgunCard).toHaveTextContent('0.00 rounds remaining')
-    expect(within(railgunCard!).getByText('Railgun array'))
-      .toBeInTheDocument()
+    expect(railgunCard).toHaveTextContent('Next volley10.0 rounds remaining')
+    expect(within(railgunCard!).getByText('Railgun array')).toBeInTheDocument()
     expect(within(railgunCard!).getByText(/panels \/ round · .*rounds \/ volley/))
       .toBeInTheDocument()
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Purchase settings' }),
+    )
+    await userEvent.setup().click(screen.getByRole('checkbox', {
+      name: 'Show formulas inline',
+    }))
+    expect(within(railgunCard!).getAllByText('Railgun array')).toHaveLength(1)
   })
 
   test('updates the text-only rounds remaining during a volley', async () => {
@@ -473,39 +586,26 @@ describe('SimulationsSurface', () => {
     expect(within(factoryCard!).getByText('Volley reserve').closest('div'))
       .toHaveAttribute('data-presentation', 'reservoir')
     expect(factoryCard).not.toHaveTextContent('Record stored')
-    await userEvent.setup().click(
-      within(factoryCard!).getByRole('button', { name: 'Details' }),
-    )
-    expect(screen.getByRole('dialog', { name: 'Space Factories' }))
-      .toHaveTextContent('Record stored')
+    expect(within(factoryCard!).queryByRole('button', { name: 'Details' }))
+      .not.toBeInTheDocument()
   })
 
-  test('contains details focus and restores its trigger after Escape', async () => {
+  test('persists the inline formula preference across renders', async () => {
     const user = userEvent.setup()
-    const { container } = renderSurface(accepted, spaceAgeFacts)
-    await user.click(screen.getByRole('button', { name: 'Space Age' }))
-    const card = screen.getByText('Swarm Stats').closest('article')
-    const trigger = within(card!).getByRole('button', { name: 'Details' })
-    await user.click(trigger)
+    const view = renderSurface(accepted)
+    await user.click(
+      screen.getByRole('button', { name: 'Purchase settings' }),
+    )
+    await user.click(screen.getByRole('checkbox', {
+      name: 'Show formulas inline',
+    }))
+    view.unmount()
 
-    const dialog = screen.getByRole('dialog', { name: 'Swarm Stats' })
-    const close = within(dialog).getByRole('button', { name: 'Close' })
-    expect(close).toHaveFocus()
-    expect(container).toHaveAttribute('inert')
-    const results = await axe.run(document.body, {
-      rules: { 'color-contrast': { enabled: false } },
-    })
-    expect(
-      results.violations.filter((violation) =>
-        violation.impact === 'serious' || violation.impact === 'critical',
-      ),
-    ).toEqual([])
-    await user.tab()
-    expect(close).toHaveFocus()
-    await user.keyboard('{Escape}')
-
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(trigger).toHaveFocus()
+    renderSurface(accepted)
+    await user.click(screen.getByRole('button', { name: 'Foundational Era' }))
+    const card = screen.getByText('Hunters').closest('article')
+    expect(within(card!).getByText('Speed multiplier')).toBeInTheDocument()
+    expect(localStorage.getItem(SIMULATION_FORMULAS_STORAGE_KEY)).toBe('true')
   })
 
   test('shows a solid bar and cycles per second for fast Space Factories', async () => {
@@ -563,12 +663,16 @@ function renderSurface(
   renderedFacts: FrontendSimulationsDerivedFacts = facts,
   renderedProgression: FrontendCanonicalProgression['dream'] = progression,
   activeDoubleTimeRate = 0,
+  onSpaceAgePurchaseQuantityChange: NonNullable<
+    SimulationsSurfaceProps['onSpaceAgePurchaseQuantityChange']
+  > = () => undefined,
 ) {
   return render(surfaceElement(
     dispatchPlayer,
     renderedFacts,
     renderedProgression,
     activeDoubleTimeRate,
+    onSpaceAgePurchaseQuantityChange,
   ))
 }
 
@@ -577,6 +681,9 @@ function surfaceElement(
   renderedFacts: FrontendSimulationsDerivedFacts = facts,
   renderedProgression: FrontendCanonicalProgression['dream'] = progression,
   activeDoubleTimeRate = 0,
+  onSpaceAgePurchaseQuantityChange: NonNullable<
+    SimulationsSurfaceProps['onSpaceAgePurchaseQuantityChange']
+  > = () => undefined,
 ) {
   return (
     <PresentationIntlProvider
@@ -588,9 +695,10 @@ function surfaceElement(
         facts={renderedFacts}
         progression={renderedProgression}
         previews={previews}
-        influence={20n}
+        influence={20}
         activeDoubleTimeRate={activeDoubleTimeRate}
         spaceAgePurchaseQuantity={1}
+        onSpaceAgePurchaseQuantityChange={onSpaceAgePurchaseQuantityChange}
         commandAvailability={{
           purchaseFoundational: true,
           purchaseSpaceAge: true,
@@ -693,8 +801,8 @@ const facts = {
   resets: {
     count: 1n,
     disasterStage: 0n,
-    automatic: { eligible: false, requestedReward: 0n },
-    blackHole: { eligible: false, requestedReward: 0n },
+    automatic: { eligible: false, requestedReward: 0 },
+    blackHole: { eligible: false, requestedReward: 0 },
   },
   permanentUpgrades: {
     simulationCategoryVisible: true,
@@ -746,6 +854,73 @@ const activeInformationFacts = {
   },
 } as unknown as FrontendSimulationsDerivedFacts
 
+const completedEducation = {
+  engineering: {
+    active: false,
+    complete: true,
+    progress: 0,
+    researchTime: 30,
+    cost: 1_000,
+  },
+  shipping: {
+    active: false,
+    complete: true,
+    progress: 0,
+    researchTime: 60,
+    cost: 5_000,
+  },
+  worldTrade: {
+    active: false,
+    complete: true,
+    progress: 0,
+    researchTime: 90,
+    cost: 7_000,
+  },
+  worldPeace: {
+    active: false,
+    complete: true,
+    progress: 0,
+    researchTime: 120,
+    cost: 8_000,
+  },
+  mathematics: {
+    active: false,
+    complete: true,
+    progress: 0,
+    researchTime: 150,
+    cost: 10_000,
+  },
+  advancedPhysics: {
+    active: false,
+    complete: true,
+    progress: 0,
+    researchTime: 180,
+    cost: 11_000,
+  },
+}
+
+const completedInformationFacts = {
+  ...informationFacts,
+  eras: {
+    ...informationFacts.eras,
+    information: {
+      visible: true,
+      visiblePanelIds: [
+        'engineering',
+        'shipping',
+        'world-trade',
+        'world-peace',
+        'mathematics',
+        'advanced-physics',
+      ],
+    },
+  },
+  live: {
+    ...informationFacts.live,
+    education: completedEducation,
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
 const progression = {
   huntersPerPurchase: 1,
   gatherersPerPurchase: 1,
@@ -777,7 +952,7 @@ const previews = {
     {
       upgradeId: 'counterMeteor',
       eligible: true,
-      cost: 3n,
+      cost: 3,
       code: 'purchasable',
       definitionGap: null,
     },
@@ -920,7 +1095,7 @@ const spaceAgeFacts = {
   },
   resets: {
     ...facts.resets,
-    blackHole: { eligible: true, requestedReward: 12n },
+    blackHole: { eligible: true, requestedReward: 12 },
   },
 } as unknown as FrontendSimulationsDerivedFacts
 
@@ -973,7 +1148,7 @@ const energyFormattingFacts = {
     ...inactiveRailgunFacts.eras,
     spaceAge: {
       visible: true,
-      visiblePanelIds: ['solar', 'railguns', 'swarm-stats'],
+      visiblePanelIds: ['solar', 'fusion', 'railguns', 'swarm-stats'],
     },
   },
   live: {
@@ -992,6 +1167,7 @@ const energyFormattingFacts = {
           production: {
             energy: {
               solarPerSecond: 109_000,
+              fusionPerSecond: 0,
               swarmPerSecond: 51_290_000,
             },
           },

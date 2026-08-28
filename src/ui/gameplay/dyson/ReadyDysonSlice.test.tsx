@@ -63,6 +63,8 @@ import { basicFacilityMessages } from '../facilities/messages'
 import { navigationAssets } from '../shell'
 import {
   ProbedReadyDysonRuntimeHost,
+  GAMEPLAY_ROUTE_STORAGE_KEY,
+  QUANTUM_HIDE_MAXED_STORAGE_KEY,
   ReadyDysonSlice,
   SWARM_VISUALIZATION_STORAGE_KEY,
 } from './ReadyDysonSlice'
@@ -160,7 +162,7 @@ describe('ReadyDysonSlice', () => {
   })
 
   test('omits the teaser when the authoritative fact is false with no visible facilities', () => {
-    renderSlice(snapshot({ showNextTierTeaser: false }))
+    renderSlice(snapshot({ showNextBasicFacilityTeaser: false }))
 
     expect(screen.queryByText('????')).not.toBeInTheDocument()
     expect(screen.getByRole('region', {
@@ -195,7 +197,8 @@ describe('ReadyDysonSlice', () => {
           birch_planets: [4, 5],
           galactic_brains: [6, 7],
         },
-        showNextTierTeaser: false,
+        showNextBasicFacilityTeaser: false,
+        showNextMegaStructureTeaser: false,
       }),
       dispatch,
     )
@@ -406,7 +409,7 @@ describe('ReadyDysonSlice', () => {
               entitled: true,
               purchasedInGame: true,
               quantumShards: 0n,
-              strangeMatter: 0n,
+              strangeMatter: 0,
             }),
             setDysonBots: vi.fn(),
             unlockReality: vi.fn(),
@@ -431,7 +434,7 @@ describe('ReadyDysonSlice', () => {
           dispatchPlayer={acceptedDispatch}
           route="debug"
           development={{
-            status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
+            status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0 }),
             setDysonBots: vi.fn(),
             unlockReality: vi.fn(),
             apply: vi.fn(),
@@ -460,7 +463,7 @@ describe('ReadyDysonSlice', () => {
         entitled: true,
         purchasedInGame: true,
         quantumShards: 0n,
-        strangeMatter: 0n,
+        strangeMatter: 0,
       }),
       setDysonBots: vi.fn(),
       unlockReality: vi.fn(),
@@ -562,23 +565,26 @@ describe('ReadyDysonSlice', () => {
       )
       expect(summary).toBeVisible()
       expect(summary).toHaveTextContent(
-        'Workers and Science efficiency at 100%',
+        'Workers and Scientists efficiency at 100%',
       )
       expect(summary?.querySelector(
         '.bot-distribution__multitasking-workers',
       )).toHaveTextContent('Workers')
       expect(summary?.querySelector(
         '.bot-distribution__multitasking-science',
-      )).toHaveTextContent('Science')
+      )).toHaveTextContent('Scientists')
       expect(
         screen.queryByRole('slider', { name: 'Bot Distribution' }),
       ).not.toBeInTheDocument()
       expect(summary?.querySelector(
         '.bot-distribution__allocation',
       )).not.toBeInTheDocument()
-      expect(screen.queryByText('Scientists')).not.toBeInTheDocument()
+      expect(screen.getByText('Scientists')).toBeVisible()
       if (route === 'bots') {
         expect(summary?.closest('.dyson-info__summary')).not.toBeNull()
+        expect(summary?.closest('.dyson-shell__distribution')).toBeNull()
+      } else {
+        expect(summary?.closest('.research-surface__footer')).not.toBeNull()
         expect(summary?.closest('.dyson-shell__distribution')).toBeNull()
       }
     },
@@ -644,6 +650,63 @@ describe('ReadyDysonSlice', () => {
     expect(
       rendered.container.querySelector('.dyson-resource-header'),
     ).not.toBeInTheDocument()
+  })
+
+  test('badges unassigned Skill Points and highlights a newly unlocked Skills tab until visited', async () => {
+    const onRouteChange = vi.fn()
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ skillsRouteUnlocked: false })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="bots"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+    expect(rendered.container.querySelector(
+      '[data-navigation-id="skills"] .dyson-navigation__badge',
+    )).not.toBeInTheDocument()
+
+    rendered.rerender(provider(
+      <ReadyDysonSlice
+        snapshot={snapshot({ skillsRouteUnlocked: true })}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route="bots"
+        onRouteChange={onRouteChange}
+      />,
+    ))
+
+    const skillsItem = await waitFor(() => {
+      const item = rendered.container.querySelector(
+        '.dyson-navigation--bottom [data-navigation-id="skills"]',
+      )
+      expect(item).toHaveAttribute('data-new', 'true')
+      expect(item?.querySelector('.dyson-navigation__badge'))
+        .toHaveTextContent('1')
+      return item as HTMLElement
+    })
+    fireEvent.click(within(skillsItem).getByRole('button', {
+      name: 'Skills: 1',
+    }))
+
+    expect(onRouteChange).toHaveBeenCalledWith('skills')
+    await waitFor(() => expect(skillsItem).not.toHaveAttribute('data-new'))
+
+    rendered.rerender(provider(
+      <ReadyDysonSlice
+        snapshot={snapshot({ skillsRouteUnlocked: true })}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route="skills"
+        onRouteChange={onRouteChange}
+      />,
+    ))
+    expect(rendered.container.querySelector(
+      '[data-navigation-id="skills"] .dyson-navigation__badge',
+    )).not.toBeInTheDocument()
   })
 
   test('opens Infinity only when canonical visibility unlocks it', async () => {
@@ -833,6 +896,44 @@ describe('ReadyDysonSlice', () => {
     ).not.toBeInTheDocument()
   })
 
+  test('persists Quantum hide-maxed settings and filters completed upgrades', async () => {
+    const user = userEvent.setup()
+    render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            infinityPoints: 42n,
+            quantumUpgradeMaxed: true,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="quantum"
+        />,
+      ),
+    )
+
+    expect(await screen.findByRole('heading', {
+      name: 'Secrets of the Universe',
+    })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', {
+      name: 'Hide maxed upgrades',
+    })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', {
+      name: 'Purchase settings',
+    }))
+    const toggle = screen.getByRole('checkbox', {
+      name: 'Hide maxed upgrades',
+    })
+    expect(toggle).not.toBeChecked()
+    await user.click(toggle)
+
+    expect(localStorage.getItem(QUANTUM_HIDE_MAXED_STORAGE_KEY)).toBe('true')
+    expect(screen.queryByRole('heading', {
+      name: 'Secrets of the Universe',
+    })).not.toBeInTheDocument()
+  })
+
   test('keeps Avocato subordinate to Quantum and exposes it through Reality', async () => {
     const user = userEvent.setup()
     const onRouteChange = vi.fn()
@@ -975,9 +1076,9 @@ describe('ReadyDysonSlice', () => {
               infinityCount: 0n,
               infinityPoints: 0n,
               dreamResetCount: 0n,
-              strangeMatter: 0n,
+              strangeMatter: 0,
               realityWorkers: 0n,
-              influence: 0n,
+              influence: 0,
               botGain: 0,
               facilityGains: [],
             },
@@ -1234,7 +1335,7 @@ describe('ReadyDysonSlice', () => {
               entitled: true,
               purchasedInGame: false,
               quantumShards: 0n,
-              strangeMatter: 0n,
+              strangeMatter: 0,
             }),
             setDysonBots: vi.fn(),
             unlockReality: vi.fn(),
@@ -1423,7 +1524,7 @@ describe('ReadyDysonSlice', () => {
           locale="en"
           dispatchPlayer={acceptedDispatch}
           development={{
-            status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
+            status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0 }),
             setDysonBots: vi.fn(),
             unlockReality: vi.fn(),
             apply: vi.fn(),
@@ -1564,8 +1665,23 @@ describe('ReadyDysonSlice', () => {
         facilityId: 'ai_managers',
         enabled: true,
       })
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-facility-automation',
+        facilityId: 'servers',
+        enabled: true,
+      })
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-facility-automation',
+        facilityId: 'data_centers',
+        enabled: true,
+      })
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-facility-automation',
+        facilityId: 'planets',
+        enabled: true,
+      })
     })
-    expect(dispatchPlayer).toHaveBeenCalledTimes(4)
+    expect(dispatchPlayer).toHaveBeenCalledTimes(7)
   })
 
   test('does not create commands or active-time work while merely rendered', () => {
@@ -1576,6 +1692,49 @@ describe('ReadyDysonSlice', () => {
     vi.advanceTimersByTime(60_000)
     expect(dispatchPlayer).not.toHaveBeenCalled()
     vi.useRealTimers()
+  })
+
+  test('keeps baseline automation permanent and gates each mega checkbox by its unlock', async () => {
+    const user = userEvent.setup()
+    renderSlice(
+      snapshot({
+        botsAutomationUnlocked: true,
+        visibleBasicFacilityIds: ['assembly_lines'],
+        visibleMegaStructureIds: [],
+        matrioshkaBrainsUnlocked: true,
+      }),
+      acceptedDispatch,
+    )
+
+    const infoRegion = screen.getByRole('region', { name: 'Info' })
+    await user.click(within(infoRegion).getByRole('button', {
+      name: 'Purchase settings',
+    }))
+
+    expect(within(infoRegion).getByRole('checkbox', {
+      name: 'Assembly Lines',
+    })).toBeVisible()
+    expect(within(infoRegion).getByRole('checkbox', {
+      name: 'Matrioshka Brains',
+    })).toBeVisible()
+    expect(within(infoRegion).getByRole('checkbox', {
+      name: 'AI Managers',
+    })).toBeVisible()
+    expect(within(infoRegion).getByRole('checkbox', {
+      name: 'Servers',
+    })).toBeVisible()
+    expect(within(infoRegion).getByRole('checkbox', {
+      name: 'Data Centers',
+    })).toBeVisible()
+    expect(within(infoRegion).getByRole('checkbox', {
+      name: 'Planets',
+    })).toBeVisible()
+    expect(within(infoRegion).queryByRole('checkbox', {
+      name: 'Birch Planets',
+    })).not.toBeInTheDocument()
+    expect(within(infoRegion).queryByRole('checkbox', {
+      name: 'Galactic Brains',
+    })).not.toBeInTheDocument()
   })
 
   test('performance host records one exact sample for one committed revision under StrictMode', () => {
@@ -1639,6 +1798,26 @@ describe('ReadyDysonSlice', () => {
     expect(samples).toHaveLength(1)
   })
 
+  test('restores the last valid gameplay route before requesting previews', () => {
+    localStorage.setItem(GAMEPLAY_ROUTE_STORAGE_KEY, 'statistics')
+    const current = snapshot()
+    const runtime = {
+      snapshot: () => current,
+      subscribeSnapshot: () => () => undefined,
+      setGameplayPreviewDemand: vi.fn(),
+      dispatchPlayer: vi.fn(acceptedDispatch),
+    } as unknown as BrowserUiRuntimeFoundation
+
+    render(provider(
+      <ProbedReadyDysonRuntimeHost runtime={runtime} locale="en" />,
+    ))
+
+    expect(runtime.setGameplayPreviewDemand).toHaveBeenCalledWith(
+      'statistics',
+    )
+    expect(screen.getByRole('heading', { name: 'Statistics' })).toBeVisible()
+  })
+
   test('keeps active-time and gameplay-rule authorities out of the composition source', () => {
     const source = readFileSync(
       resolve(
@@ -1673,6 +1852,25 @@ describe('ReadyDysonSlice', () => {
     )
     expect(stylesheet).toMatch(
       /\.bot-distribution__heading\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1;[^}]*align-self:\s*end;/,
+    )
+  })
+
+  test('uses the shared compact footer rhythm after Bot Multitasking', () => {
+    const stylesheet = readFileSync(
+      resolve(process.cwd(), 'src/ui/gameplay/dyson/dysonControls.css'),
+      'utf8',
+    )
+    expect(stylesheet).toMatch(
+      /\.dyson-info \.ui-progress-controls-panel__summary\s*\{[^}]*padding-block:\s*0\.42rem;[^}]*padding-inline:\s*0\.7rem 0\.35rem;/,
+    )
+    expect(stylesheet).toMatch(
+      /\.dyson-info__summary--multitasking\s*\{[^}]*gap:\s*var\(--ui-control-row-gap\);/,
+    )
+    expect(stylesheet).toMatch(
+      /\.dyson-info__summary--multitasking \.dyson-lower-facts p\s*\{[^}]*padding:\s*0;[^}]*line-height:\s*1\.15;/,
+    )
+    expect(stylesheet).toMatch(
+      /\.dyson-info__summary--multitasking\s+\.bot-distribution--multitasking\s*\{[^}]*padding:\s*0;[^}]*font-size:\s*calc\(0\.72rem \* var\(--game-text-scale\)\);/,
     )
   })
 
@@ -1847,7 +2045,8 @@ type MegaStructureId =
 interface SnapshotOptions {
   readonly visibleBasicFacilityIds?: readonly FacilityId[]
   readonly visibleMegaStructureIds?: readonly MegaStructureId[]
-  readonly showNextTierTeaser?: boolean
+  readonly showNextBasicFacilityTeaser?: boolean
+  readonly showNextMegaStructureTeaser?: boolean
   readonly skillsRouteUnlocked?: boolean
   readonly infinityRouteUnlocked?: boolean
   readonly realityRouteVisible?: boolean
@@ -1855,6 +2054,7 @@ interface SnapshotOptions {
   readonly realitySecrets?: bigint
   readonly infinityPoints?: bigint
   readonly quantumPoints?: bigint
+  readonly quantumUpgradeMaxed?: boolean
   readonly storedTimeAvailableSeconds?: number
   readonly storedTimeCapacitySeconds?: number
   readonly avocatoUnlocked?: boolean
@@ -1870,6 +2070,9 @@ interface SnapshotOptions {
   readonly researchPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly botsAutomationUnlocked?: boolean
   readonly researchAutomationUnlocked?: boolean
+  readonly matrioshkaBrainsUnlocked?: boolean
+  readonly birchPlanetsUnlocked?: boolean
+  readonly galacticBrainsUnlocked?: boolean
   readonly botMultitasking?: boolean
   readonly enabledFacilities?: Partial<Record<FacilityId, boolean>>
   readonly facilities?: Partial<
@@ -1986,7 +2189,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           universeDesignationCount: 3n,
           workersReady: 128n,
           workerGenerationProgress: 0.25,
-          influence: 42n,
+          influence: 42,
         },
         avocado: {
           infinityPoints: 0,
@@ -1995,7 +2198,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           overflowMultiplier: 0,
         },
         dream: {
-          strangeMatter: 4096n,
+          strangeMatter: 4096,
         },
         time: {
           storedTimeAvailableSeconds:
@@ -2067,6 +2270,9 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             botMultitasking: options.botMultitasking ?? false,
             breakTheLoop: false,
             quantumEntanglement: false,
+            matrioshkaBrains: options.matrioshkaBrainsUnlocked ?? false,
+            birchPlanets: options.birchPlanetsUnlocked ?? false,
+            galacticBrains: options.galacticBrainsUnlocked ?? false,
           },
         },
         avocado: {
@@ -2339,8 +2545,10 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             options.visibleBasicFacilityIds ?? [],
           visibleMegaStructureIds:
             options.visibleMegaStructureIds ?? [],
-          showNextTierTeaser:
-            options.showNextTierTeaser ?? true,
+          showNextBasicFacilityTeaser:
+            options.showNextBasicFacilityTeaser ?? true,
+          showNextMegaStructureTeaser:
+            options.showNextMegaStructureTeaser ?? false,
         },
         skills: {
           routeUnlocked: options.skillsRouteUnlocked ?? false,
@@ -2578,14 +2786,14 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
         reality: {
           gatherInfluence: {
             eligible: true,
-            amount: 128n,
+            amount: 128,
             code: 'success',
           },
           upgrades: [
             {
               upgradeId: 'translation1',
               eligible: true,
-              cost: 8n,
+              cost: 8,
               code: 'purchasable',
               definitionGap: null,
             },
@@ -2601,9 +2809,11 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           upgrades: [
             {
               upgradeId: 'Secrets',
-              eligible: true,
+              eligible: !options.quantumUpgradeMaxed,
               cost: 1n,
-              code: 'purchased',
+              code: options.quantumUpgradeMaxed
+                ? 'already-maxed'
+                : 'purchased',
               definitionGap: null,
             },
           ],
@@ -2682,10 +2892,10 @@ function emptyStatistics() {
     aiDreamResets: 0n,
     globalWarmingDreamResets: 0n,
     blackHoleDreamResets: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: 0n,
+    automaticInfluence: 0,
+    manualInfluence: 0,
     realityCapacityStallSeconds: 0,
     simulatedSeconds: 0,
   }

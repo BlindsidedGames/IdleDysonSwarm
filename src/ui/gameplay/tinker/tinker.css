@@ -15,9 +15,9 @@
   min-block-size: var(--target-touch);
   min-inline-size: var(--target-minimum);
   grid-template-columns: minmax(0, 1fr);
-  gap: 0.12rem;
-  padding: 0.5rem 0.6rem;
-  border: 2px solid var(--theme-divider);
+  gap: 0.1rem;
+  padding: 0.38rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
   border-radius: 0.25rem;
   background: var(--theme-panel);
   box-shadow: 0 2px 0 #171018;
@@ -76,7 +76,8 @@
 
 .tinker-surface__title {
   color: white;
-  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  font-size: calc(0.9rem * var(--game-text-scale));
+  line-height: 1.12;
   font-weight: var(--font-weight-bold);
 }
 
@@ -89,6 +90,8 @@
 
 .tinker-surface__label {
   color: white;
+  font-size: calc(0.67rem * var(--game-text-scale));
+  line-height: 1.18;
   overflow-wrap: anywhere;
 }
 
@@ -100,6 +103,8 @@
 
 .tinker-surface__output {
   color: #f2eaf3;
+  font-size: calc(0.67rem * var(--game-text-scale));
+  line-height: 1.18;
   overflow-wrap: anywhere;
 }
 
@@ -109,8 +114,8 @@
 
 .tinker-surface__tip {
   color: #bdb3bf;
-  font-size: 0.86em;
-  line-height: 1.2;
+  font-size: calc(0.64rem * var(--game-text-scale));
+  line-height: 1.15;
   overflow-wrap: anywhere;
 }
 
@@ -193,14 +198,14 @@
   }
 
   .tinker-surface__title {
-    font-size: 0.92rem;
-    line-height: 1.05;
+    font-size: calc(0.86rem * var(--game-text-scale));
+    line-height: 1.1;
   }
 
   .tinker-surface__output {
     grid-column: 1 / -1;
-    font-size: 0.72rem;
-    line-height: 1.05;
+    font-size: calc(0.65rem * var(--game-text-scale));
+    line-height: 1.12;
   }
 
   .tinker-surface__label,
@@ -210,13 +215,13 @@
   }
 
   .tinker-surface__label {
-    font-size: 0.76rem;
-    line-height: 1.08;
+    font-size: calc(0.65rem * var(--game-text-scale));
+    line-height: 1.12;
   }
 
   .tinker-surface__tip {
-    font-size: 0.66rem;
-    line-height: 1.08;
+    font-size: calc(0.61rem * var(--game-text-scale));
+    line-height: 1.1;
   }
 
   .tinker-surface__progress-row {

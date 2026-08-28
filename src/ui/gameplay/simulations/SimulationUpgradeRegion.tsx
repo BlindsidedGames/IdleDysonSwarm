@@ -171,7 +171,6 @@ function SimulationUpgradeCard({
         })}
         onClick={() => void purchase()}
       >
-        <span>{intl.formatMessage(realityMessages.purchase)}</span>
         <strong className="simulation-permanent-upgrade-card__cost">
           <InlineImageSymbol
             src={strangeMatterSymbol}

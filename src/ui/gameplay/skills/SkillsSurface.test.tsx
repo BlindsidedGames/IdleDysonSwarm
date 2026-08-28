@@ -1,6 +1,9 @@
 // @vitest-environment jsdom
+/// <reference types="node" />
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import axe from 'axe-core'
 import {
   act,
@@ -25,7 +28,14 @@ import {
   type SkillsSurfaceProps,
 } from './SkillsSurface'
 
+const skillsCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/skills/skills.css'),
+  'utf8',
+)
+
 afterEach(() => {
+  vi.useRealTimers()
+  window.localStorage.clear()
   cleanup()
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
@@ -239,7 +249,7 @@ describe('SkillsSurface', () => {
     )
     expect(
       container.querySelector('.skills-surface__resources strong'),
-    ).toHaveTextContent('3.00')
+    ).toHaveTextContent('3')
     expect(
       container.querySelector('.skills-surface__resources img'),
     ).toHaveAttribute('src', expect.stringContaining('nav-skills'))
@@ -250,6 +260,52 @@ describe('SkillsSurface', () => {
       }),
     ).toBeInTheDocument()
     expect(screen.queryByRole('slider')).not.toBeInTheDocument()
+  })
+
+  test('offers compact preset switching above the tree search', async () => {
+    const dispatchPlayer = createDispatchPlayer()
+    const { container } = render(createSkillElement(dispatchPlayer))
+
+    const switcher = container.querySelector(
+      '.skills-surface__quick-presets',
+    )
+    const search = container.querySelector('.skills-surface__search')
+    expect(switcher).not.toBeNull()
+    expect(search).not.toBeNull()
+    if (switcher === null || search === null) {
+      throw new Error('Expected quick presets and search controls')
+    }
+    expect(
+      switcher.compareDocumentPosition(search) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(screen.getByRole('button', {
+      name: 'Switch to Preset 1',
+    })).toHaveAttribute('aria-pressed', 'true')
+
+    fireEvent.click(screen.getByRole('button', {
+      name: 'Switch to Preset 2',
+    }))
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.select-preset',
+      slot: 2,
+    })
+    expect(skillsCss).toMatch(
+      /\.skills-surface__viewport-controls\s*\{[^}]*display:\s*contents;/,
+    )
+    expect(skillsCss).toMatch(
+      /\.skills-surface__quick-presets\s*\{[^}]*grid-column:\s*1 \/ -1;[^}]*grid-row:\s*1;/,
+    )
+    expect(skillsCss).toMatch(
+      /\.skill-tree-viewport__controls \.skills-surface__search\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*2;/,
+    )
+    expect(skillsCss).toMatch(
+      /\.skill-tree-viewport__controls\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)\s*repeat\(3, var\(--target-minimum\)\);[^}]*grid-template-rows:\s*auto var\(--target-minimum\);/,
+    )
+    expect(skillsCss).toMatch(
+      /\.skill-tree-viewport__controls > button\s*\{[^}]*grid-row:\s*2;[^}]*inline-size:\s*var\(--target-minimum\);[^}]*block-size:\s*var\(--target-minimum\);/,
+    )
   })
 
   test('places a labelled automatic-assignment marker at the queued node corner', () => {
@@ -274,7 +330,6 @@ describe('SkillsSurface', () => {
   })
 
   test('shows canonical multi-skill prerequisite progress and selected paths', async () => {
-    const user = userEvent.setup()
     const multiRequirementCatalog: CanonicalSkillCatalogPreview = {
       ...catalog,
       skills: [
@@ -325,7 +380,7 @@ describe('SkillsSurface', () => {
       target.querySelector('.skill-tree-node__requirements'),
     ).toHaveAccessibleName('Requirements: 1/3 complete')
 
-    await user.click(target)
+    fireEvent.click(target, { detail: 0 })
 
     expect(target).toHaveAttribute('data-selected', 'true')
     expect(
@@ -441,7 +496,7 @@ describe('SkillsSurface', () => {
     )
   })
 
-  test('opens skill details when movement stays below the drag threshold', () => {
+  test('opens skill details when movement stays below the drag threshold', async () => {
     renderSkills()
     const skill = screen.getByRole('button', {
       name: 'Cash & Science. Cost: 1 Skill Points',
@@ -477,7 +532,7 @@ describe('SkillsSurface', () => {
     expect(canvas?.getAttribute('style')).toBe(before)
     expect(capturePointer).not.toHaveBeenCalled()
     expect(
-      screen.getByRole('dialog', { name: 'Cash & Science' }),
+      await screen.findByRole('dialog', { name: 'Cash & Science' }),
     ).toBeInTheDocument()
     expect(
       document.querySelector(
@@ -664,6 +719,175 @@ describe('SkillsSurface', () => {
     ).toBeInTheDocument()
   })
 
+  test('assigns an eligible skill on a second tap without opening details', () => {
+    vi.useFakeTimers()
+    window.localStorage.setItem(
+      'idle-dyson-swarm:skill-double-click-assignment',
+      'true',
+    )
+    const dispatchPlayer = renderSkills()
+    const skill = screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    })
+    const tap = (pointerId: number) => {
+      fireEvent.pointerDown(skill, {
+        pointerId,
+        pointerType: 'touch',
+        clientX: 100,
+        clientY: 100,
+      })
+      fireEvent.pointerUp(skill, {
+        pointerId,
+        pointerType: 'touch',
+        clientX: 100,
+        clientY: 100,
+      })
+      fireEvent.click(skill, { detail: 1 })
+    }
+
+    tap(31)
+    act(() => vi.advanceTimersByTime(200))
+    tap(32)
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.purchase',
+      skillId: 'startHereTree',
+    })
+    expect(screen.queryByRole('dialog', { name: 'Cash & Science' }))
+      .not.toBeInTheDocument()
+  })
+
+  test('opens details after one tap waits beyond the double-tap window', () => {
+    vi.useFakeTimers()
+    window.localStorage.setItem(
+      'idle-dyson-swarm:skill-double-click-assignment',
+      'true',
+    )
+    renderSkills()
+    const skill = screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    })
+
+    fireEvent.pointerDown(skill, {
+      pointerId: 33,
+      pointerType: 'mouse',
+      clientX: 100,
+      clientY: 100,
+    })
+    fireEvent.pointerUp(skill, {
+      pointerId: 33,
+      pointerType: 'mouse',
+      clientX: 100,
+      clientY: 100,
+    })
+    fireEvent.click(skill, { detail: 1 })
+    expect(screen.queryByRole('dialog', { name: 'Cash & Science' }))
+      .not.toBeInTheDocument()
+
+    act(() => vi.advanceTimersByTime(360))
+    expect(screen.getByRole('dialog', { name: 'Cash & Science' }))
+      .toBeInTheDocument()
+  })
+
+  test('assigns an eligible skill on a mouse double click', () => {
+    vi.useFakeTimers()
+    window.localStorage.setItem(
+      'idle-dyson-swarm:skill-double-click-assignment',
+      'true',
+    )
+    const dispatchPlayer = createDispatchPlayer()
+    renderSkills(dispatchPlayer)
+    const skill = screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    })
+
+    fireEvent.click(skill, { detail: 1 })
+    fireEvent.click(skill, { detail: 2 })
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.purchase',
+      skillId: 'startHereTree',
+    })
+    expect(screen.queryByRole('dialog', { name: 'Cash & Science' }))
+      .not.toBeInTheDocument()
+  })
+
+  test('assigns an eligible Purity skill with projected production impact on a mouse double click', () => {
+    vi.useFakeTimers()
+    window.localStorage.setItem(
+      'idle-dyson-swarm:skill-double-click-assignment',
+      'true',
+    )
+    const dispatchPlayer = createDispatchPlayer()
+    const purityCatalog: CanonicalSkillCatalogPreview = {
+      ...catalog,
+      skills: [
+        createSkillPreview('startHereTree', {
+          purchase: {
+            ...startSkill.purchase,
+            productionImpact: {
+              pointsBefore: 4n,
+              pointsAfter: 2n,
+              purity: {
+                cashScienceBefore: 16,
+                cashScienceAfter: 4,
+                botsBefore: 8,
+                botsAfter: 2,
+                everythingBefore: 2,
+                everythingAfter: 1,
+              },
+            },
+          },
+        }),
+      ],
+    }
+    render(createSkillElement(dispatchPlayer, 0.5, 1, purityCatalog))
+    const skill = screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    })
+
+    fireEvent.click(skill, { detail: 1 })
+    fireEvent.click(skill, { detail: 2 })
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.purchase',
+      skillId: 'startHereTree',
+    })
+    expect(screen.queryByRole('dialog', { name: 'Cash & Science' }))
+      .not.toBeInTheDocument()
+  })
+
+  test('opens details immediately until double-click assignment is enabled', () => {
+    renderSkills()
+    const skill = screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    })
+
+    fireEvent.click(skill, { detail: 1 })
+
+    expect(screen.getByRole('dialog', { name: 'Cash & Science' }))
+      .toBeInTheDocument()
+  })
+
+  test('persists the double-click assignment toggle in expanded settings', () => {
+    renderSkills()
+
+    fireEvent.click(screen.getByRole('button', {
+      name: 'Skill presets and reset',
+    }))
+    const toggle = screen.getByRole('checkbox', {
+      name: 'Double-click to assign skills',
+    })
+    expect(toggle).not.toBeChecked()
+
+    fireEvent.click(toggle)
+
+    expect(toggle).toBeChecked()
+    expect(window.localStorage.getItem(
+      'idle-dyson-swarm:skill-double-click-assignment',
+    )).toBe('true')
+  })
+
   test('traps the skill dialog entry on its compact close control and restores focus', async () => {
     const user = userEvent.setup()
     renderSkills()
@@ -672,7 +896,8 @@ describe('SkillsSurface', () => {
     })
     const focus = vi.spyOn(skill, 'focus')
 
-    await user.click(skill)
+    skill.focus()
+    fireEvent.click(skill, { detail: 0 })
     expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus()
     const results = await axe.run(document.body, {
       rules: { 'color-contrast': { enabled: false } },
@@ -693,7 +918,6 @@ describe('SkillsSurface', () => {
   })
 
   test('shows fragment balance only inside a fragment skill dialog', async () => {
-    const user = userEvent.setup()
     const fragmentCatalog: CanonicalSkillCatalogPreview = {
       ...catalog,
       skills: [
@@ -729,10 +953,11 @@ describe('SkillsSurface', () => {
     )
 
     expect(screen.queryByText(/Fragments:/)).not.toBeInTheDocument()
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', {
         name: /Cash & Science\. Cost: 1 Skill Points/,
       }),
+      { detail: 0 },
     )
 
     expect(
@@ -746,7 +971,6 @@ describe('SkillsSurface', () => {
   })
 
   test('uses the authored non-refundable palette for permanent skills', async () => {
-    const user = userEvent.setup()
     const permanentCatalog: CanonicalSkillCatalogPreview = {
       ...catalog,
       skills: [
@@ -781,10 +1005,11 @@ describe('SkillsSurface', () => {
       </IntlProvider>,
     )
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', {
         name: 'Cash & Science. Cost: 1 Skill Points',
       }),
+      { detail: 0 },
     )
 
     expect(
@@ -795,7 +1020,6 @@ describe('SkillsSurface', () => {
   })
 
   test('uses the disabled action itself without redundant unavailable filler', async () => {
-    const user = userEvent.setup()
     const unavailableCatalog: CanonicalSkillCatalogPreview = {
       ...catalog,
       skills: [
@@ -833,18 +1057,19 @@ describe('SkillsSurface', () => {
       </IntlProvider>,
     )
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', {
         name: /Cash & Science\. Cost: 1 Skill Points/,
       }),
+      { detail: 0 },
     )
     const assign = screen.getByRole('button', {
-      name: 'Assign Skill. Will cost 1.00 Skill Points',
+      name: 'Assign Skill. Will cost 1 Skill Points',
     })
 
     expect(assign).toBeDisabled()
     expect(
-      screen.getByText('Will cost 1.00 Skill Points'),
+      screen.getByText('Will cost 1 Skill Points'),
     ).toBeInTheDocument()
     expect(
       screen.queryByText('This action is not currently available.'),
@@ -884,11 +1109,11 @@ describe('SkillsSurface', () => {
       ),
     )
 
-    await user.click(screen.getByRole('button', {
+    fireEvent.click(screen.getByRole('button', {
       name: 'Cash & Science. Cost: 1 Skill Points',
-    }))
+    }), { detail: 0 })
     await user.click(screen.getByRole('button', {
-      name: 'Assign Skill. Will cost 1.00 Skill Points',
+      name: 'Assign Skill. Will cost 1 Skill Points',
     }))
 
     expect(screen.getByRole('group', {
@@ -1258,17 +1483,18 @@ describe('SkillsSurface', () => {
     const user = userEvent.setup()
     const dispatchPlayer = renderSkills()
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', {
         name: 'Cash & Science. Cost: 1 Skill Points',
       }),
+      { detail: 0 },
     )
     expect(
       screen.getByRole('dialog', { name: 'Cash & Science' }),
     ).toBeInTheDocument()
     await user.click(
       screen.getByRole('button', {
-        name: 'Assign Skill. Will cost 1.00 Skill Points',
+        name: 'Assign Skill. Will cost 1 Skill Points',
       }),
     )
 
@@ -1312,14 +1538,15 @@ describe('SkillsSurface', () => {
       ),
     )
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', {
         name: 'Assembly Lines. Cost: 1 Skill Points',
       }),
+      { detail: 0 },
     )
     await user.click(
       screen.getByRole('button', {
-        name: 'Assign Skill. Will cost 2.00 Skill Points',
+        name: 'Assign Skill. Will cost 2 Skill Points',
       }),
     )
 
@@ -1378,17 +1605,18 @@ describe('SkillsSurface', () => {
       ),
     )
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', {
         name: 'Cash & Science. Owned',
       }),
+      { detail: 0 },
     )
     const unassign = screen.getByRole('button', {
-      name: 'Unassign Skill. Will refund 4.00 Skill Points',
+      name: 'Unassign Skill. Will refund 4 Skill Points',
     })
 
     expect(
-      screen.getByText('Will refund 4.00 Skill Points'),
+      screen.getByText('Will refund 4 Skill Points'),
     ).toBeInTheDocument()
     await user.click(unassign)
     expect(dispatchPlayer).not.toHaveBeenCalled()
@@ -1462,12 +1690,13 @@ describe('SkillsSurface', () => {
       ),
     )
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', { name: 'Stellar Obliteration. Owned' }),
+      { detail: 0 },
     )
     await user.click(
       screen.getByRole('button', {
-        name: 'Unassign Skill. Will refund 6.00 Skill Points',
+        name: 'Unassign Skill. Will refund 6 Skill Points',
       }),
     )
 
@@ -1523,14 +1752,15 @@ describe('SkillsSurface', () => {
       ),
     )
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', {
         name: 'Cash & Science. Owned',
       }),
+      { detail: 0 },
     )
     await user.click(
       screen.getByRole('button', {
-        name: 'Unassign Skill. Will refund 1.00 Skill Points',
+        name: 'Unassign Skill. Will refund 1 Skill Points',
       }),
     )
 
@@ -1561,10 +1791,11 @@ describe('SkillsSurface', () => {
       ),
     )
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole('button', {
         name: /Cash & Science\. Cost: 1 Skill Points/,
       }),
+      { detail: 0 },
     )
     const inclusion = screen.getByRole('checkbox', {
       name: 'Included in Preset 1',
@@ -1572,7 +1803,7 @@ describe('SkillsSurface', () => {
     const actionGroup = inclusion.closest('.skill-details__actions')
     expect(actionGroup).toContainElement(
       screen.getByRole('button', {
-        name: 'Assign Skill. Will cost 1.00 Skill Points',
+        name: 'Assign Skill. Will cost 1 Skill Points',
       }),
     )
     await user.click(inclusion)
@@ -1701,6 +1932,12 @@ describe('SkillsSurface', () => {
     ).toHaveTextContent(
       '3 queued skills · 20% Workers · 80% Scientists',
     )
+    expect(screen.getByText('3 queued skills')).toHaveClass(
+      'skill-preset-summary__queued',
+    )
+    expect(screen.getByText('20% Workers').closest(
+      '.skill-preset-summary__distribution',
+    )).toContainElement(screen.getByText('80% Scientists'))
     expect(screen.getByText('20% Workers')).toHaveClass(
       'skill-preset-summary__workers',
     )
@@ -1898,9 +2135,28 @@ describe('SkillsSurface', () => {
     render(createSkillElement(createDispatchPlayer()))
     const search = screen.getByRole('searchbox', { name: 'Search skills' })
     await user.type(search, 'AI')
+    const wrapper = search.closest('.skills-surface__search')
+    expect(wrapper).toHaveAttribute('data-has-clear', 'true')
+    expect(wrapper?.querySelector('.skills-surface__search-status'))
+      .toHaveTextContent(/matches/)
     await user.click(screen.getByRole('button', { name: 'Clear skill search' }))
     expect(search).toHaveFocus()
     expect(search).toHaveValue('')
+  })
+
+  test('keeps search controls unclipped and gives preset cards readable width', () => {
+    expect(skillsCss).toMatch(
+      /\.skills-surface__search input\s*\{[^}]*padding-inline:\s*0\.7rem;/,
+    )
+    expect(skillsCss).toMatch(
+      /\.skills-surface__search\[data-has-clear="true"\] input\s*\{[^}]*padding-inline-end:\s*3\.3rem;/,
+    )
+    expect(skillsCss).toMatch(
+      /\.skill-settings__presets\s*\{[^}]*grid-template-columns:\s*repeat\(\s*auto-fit,\s*minmax\(min\(100%, 18rem\), 1fr\)\s*\);/,
+    )
+    expect(skillsCss).toMatch(
+      /\.skill-preset-summary__distribution\s*\{[^}]*white-space:\s*nowrap;/,
+    )
   })
 
   test('releases a completed preset command before bot distribution reconciliation', async () => {

@@ -64,7 +64,7 @@ export interface RealitySurfaceProps {
   readonly simulationUpgrades: FrontendGameplayPreviews['dream']['upgrades']
   readonly simulationUpgradeSections:
     FrontendSimulationsDerivedFacts['permanentUpgrades']['simulation']
-  readonly strangeMatter: bigint
+  readonly strangeMatter: number
   readonly gatherRouteAvailable: boolean
   readonly purchaseRouteAvailable: boolean
   readonly simulationPurchaseRouteAvailable: boolean

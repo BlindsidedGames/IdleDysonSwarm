@@ -58,6 +58,7 @@ export interface QuantumSurfaceProps {
   readonly dispatchPlayer: (command: QuantumCommand) => Promise<UiRuntimePlayerCommandResult>
   readonly onOpenAvocato?: () => void
   readonly purchaseQuantity?: QuantumPurchaseQuantity
+  readonly hideMaxed?: boolean
 }
 
 const HOLD_TO_PURCHASE_IDS = new Set<QuantumUpgradeId>(
@@ -78,6 +79,7 @@ export function QuantumSurface({
   dispatchPlayer,
   onOpenAvocato,
   purchaseQuantity = 1,
+  hideMaxed = false,
 }: QuantumSurfaceProps) {
   const intl = useIntl()
 
@@ -123,6 +125,7 @@ export function QuantumSurface({
                 dispatchPlayer={dispatchPlayer}
                 onOpenAvocato={onOpenAvocato}
                 purchaseQuantity={purchaseQuantity}
+                hideMaxed={hideMaxed}
               />
             ))}
           </div>
@@ -142,6 +145,7 @@ interface QuantumUpgradeSectionProps {
   readonly dispatchPlayer: QuantumSurfaceProps['dispatchPlayer']
   readonly onOpenAvocato?: () => void
   readonly purchaseQuantity: QuantumPurchaseQuantity
+  readonly hideMaxed: boolean
 }
 
 function QuantumUpgradeSection({
@@ -154,6 +158,7 @@ function QuantumUpgradeSection({
   dispatchPlayer,
   onOpenAvocato,
   purchaseQuantity,
+  hideMaxed,
 }: QuantumUpgradeSectionProps) {
   const intl = useIntl()
   const headingId = `quantum-section-${section.sectionId}`
@@ -189,7 +194,12 @@ function QuantumUpgradeSection({
   const nextMega = isCosmic ? nextMegaPreview(sectionPreviews) : null
   const visiblePreviews = isCosmic
     ? nextMega === null ? [] : [nextMega]
-    : sectionPreviews
+    : sectionPreviews.filter((preview) =>
+        !hideMaxed || preview.code !== 'already-maxed',
+      )
+
+  if (hideMaxed && isCosmic && nextMega === null) return null
+  if (hideMaxed && !isCosmic && visiblePreviews.length === 0) return null
 
   return (
     <section className="quantum-upgrade-section" aria-labelledby={headingId}>
@@ -202,7 +212,7 @@ function QuantumUpgradeSection({
                 <h4>{intl.formatMessage(messages.allMegaStructures)}</h4>
                 <p>{intl.formatMessage(messages.allMegaStructuresDescription)}</p>
               </div>
-              <Button disabled>{intl.formatMessage(messages.purchased)}</Button>
+              <Button disabled>{intl.formatMessage(messages.maxed)}</Button>
             </article>
           </li>
         ) : (
@@ -305,8 +315,10 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
           variant="primary"
           state={pending ? 'pending' : failed ? 'failure' : 'idle'}
           disabled={disabled}
-          aria-label={isFreeClaim
-            ? intl.formatMessage(messages.claimUpgrade, { name })
+          aria-label={completed
+            ? intl.formatMessage(messages.maxedUpgrade, { name })
+            : isFreeClaim
+              ? intl.formatMessage(messages.claimUpgrade, { name })
             : intl.formatMessage(
                 repeatable && resolvedQuantity !== 1n
                   ? messages.purchaseBulk
@@ -326,13 +338,13 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
           onKeyUp={holdHandlers.onKeyUp}
         >
           <span>{completed
-            ? intl.formatMessage(messages.purchased)
+            ? intl.formatMessage(messages.maxed)
             : isFreeClaim
               ? intl.formatMessage(messages.claim)
             : repeatable
               ? intl.formatMessage(messages.purchaseQuantity, { quantity: formatGameNumber(locale, resolvedQuantity) })
               : preview.eligible || preview.code === 'insufficient-points'
-                ? intl.formatMessage(messages.purchaseShort)
+                ? null
                 : intl.formatMessage(messages.unavailable)}</span>
           {!completed && !isFreeClaim && (
             <small>
@@ -351,8 +363,10 @@ export interface QuantumControlPanelProps {
   readonly infinityPoints: bigint
   readonly purchaseSettingsOpen: boolean
   readonly purchaseQuantity: QuantumPurchaseQuantity
+  readonly hideMaxed: boolean
   readonly onPurchaseSettingsOpenChange: (open: boolean) => void
   readonly onPurchaseQuantityChange: (quantity: QuantumPurchaseQuantity) => void
+  readonly onHideMaxedChange: (hideMaxed: boolean) => void
 }
 
 export function QuantumControlPanel({
@@ -360,8 +374,10 @@ export function QuantumControlPanel({
   infinityPoints,
   purchaseSettingsOpen,
   purchaseQuantity,
+  hideMaxed,
   onPurchaseSettingsOpenChange,
   onPurchaseQuantityChange,
+  onHideMaxedChange,
 }: QuantumControlPanelProps) {
   const intl = useIntl()
   const required = QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
@@ -396,6 +412,14 @@ export function QuantumControlPanel({
         </div>
       )}
     >
+        <label className="quantum-control-panel__hide-maxed">
+          <input
+            type="checkbox"
+            checked={hideMaxed}
+            onChange={(event) => onHideMaxedChange(event.currentTarget.checked)}
+          />
+          <span>{intl.formatMessage(messages.hideMaxed)}</span>
+        </label>
         <div className="quantum-control-panel__purchase-settings" role="group" aria-label={intl.formatMessage(messages.purchaseAmount)}>
           {QUANTUM_PURCHASE_QUANTITIES.map((quantity) => (
             <button

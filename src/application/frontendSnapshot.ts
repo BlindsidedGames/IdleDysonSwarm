@@ -81,6 +81,7 @@ import {
 } from '../simulation/numeric'
 import {
   infinityPointsPerMinute,
+  ordinaryInfinityBotThreshold,
   projectBreakInfinityPresentationControl,
   projectInfinityProgress,
   type BreakInfinityPresentationControl,
@@ -395,7 +396,7 @@ export interface FrontendCanonicalResources {
     readonly universeDesignationCount: bigint
     readonly workersReady: bigint
     readonly workerGenerationProgress: number
-    readonly influence: bigint
+    readonly influence: number
   }
   readonly quantum: {
     readonly pointsEarned: bigint
@@ -413,7 +414,7 @@ export interface FrontendCanonicalResources {
     readonly overflowMultiplier: number
   }
   readonly dream: DeepReadonly<DreamState['resources']> & {
-    readonly strangeMatter: bigint
+    readonly strangeMatter: number
   }
   readonly time: {
     readonly storedTimeAvailableSeconds: number
@@ -566,14 +567,14 @@ export interface FrontendDreamPurchasePreview<
 > {
   readonly purchase: TPurchase
   readonly eligible: boolean
-  readonly cost: bigint
+  readonly cost: number
   readonly code: string
 }
 
 export interface FrontendDreamUpgradePreview {
   readonly upgradeId: DreamUpgradeFlag
   readonly eligible: boolean
-  readonly cost: bigint
+  readonly cost: number
   readonly code: string
   readonly definitionGap: string | null
 }
@@ -589,14 +590,15 @@ export interface FrontendDreamResetPreview {
   readonly eligible: boolean
   readonly code: string
   readonly cause: string | null
-  readonly requestedReward: bigint
+  readonly requestedReward: number
+  readonly rewardCapped?: boolean
   readonly definitionGaps: readonly string[]
 }
 
 export interface FrontendRealityUpgradePreview {
   readonly upgradeId: RealityUpgradeId
   readonly eligible: boolean
-  readonly cost: bigint
+  readonly cost: number
   readonly code: string
   readonly definitionGap: string | null
 }
@@ -612,7 +614,7 @@ export interface FrontendQuantumUpgradePreview {
 export interface FrontendAvocadoFeedPreview {
   readonly source: AvocadoFeedSource
   readonly eligible: boolean
-  readonly amount: bigint
+  readonly amount: number
   readonly code: string
 }
 
@@ -860,11 +862,15 @@ export interface FrontendDysonVisibility {
   readonly showTinker: boolean
   readonly visibleBasicFacilityIds: readonly BasicDysonFacilityId[]
   readonly visibleMegaStructureIds: readonly MegaStructureId[]
-  readonly showNextTierTeaser: boolean
+  readonly showNextBasicFacilityTeaser: boolean
+  readonly showNextMegaStructureTeaser: boolean
 }
 
 export interface FrontendGameplayVisibility {
   readonly dyson: FrontendDysonVisibility
+  readonly research: {
+    readonly routeUnlocked: boolean
+  }
   readonly skills: {
     readonly routeUnlocked: boolean
   }
@@ -934,7 +940,7 @@ export interface FrontendGameplayPreviews {
     readonly upgrades: readonly FrontendRealityUpgradePreview[]
     readonly gatherInfluence: {
       readonly eligible: boolean
-      readonly amount: bigint
+      readonly amount: number
       readonly code: string
     }
   }
@@ -1163,15 +1169,20 @@ export function selectGameplayVisibility(
   const facilities = state.dyson.facilities
   const basicVisible: Readonly<Record<BasicDysonFacilityId, boolean>> = {
     assembly_lines:
+      state.meta.firstInfinityComplete ||
       state.dyson.bots >= 10 || total('assembly_lines') > 0,
     ai_managers:
+      state.meta.firstInfinityComplete ||
       facilities.assembly_lines[1] >= 5 ||
       total('ai_managers') > 0,
     servers:
+      state.meta.firstInfinityComplete ||
       facilities.ai_managers[1] >= 1 || total('servers') > 0,
     data_centers:
+      state.meta.firstInfinityComplete ||
       total('servers') >= 1 || total('data_centers') > 0,
     planets:
+      state.meta.firstInfinityComplete ||
       total('data_centers') >= 1 || total('planets') > 0,
   }
   const hasDataCenters = total('data_centers') >= 1
@@ -1184,6 +1195,9 @@ export function selectGameplayVisibility(
     (facilityId) =>
       isCanonicalMegaStructureVisible(state, facilityId),
   )
+  const visibleBasicFacilityIds = BASIC_DYSON_FACILITY_IDS.filter(
+    (facilityId) => basicVisible[facilityId],
+  )
   const realityUnlocked =
     state.quantum.pointsEarned > 0n ||
     state.infinity.secretsOfTheUniverse >=
@@ -1194,13 +1208,21 @@ export function selectGameplayVisibility(
       showTinker:
         (earlyTinkerVisible && !hasDataCenters) ||
         manualLabourOwned,
-      visibleBasicFacilityIds: BASIC_DYSON_FACILITY_IDS.filter(
-        (facilityId) => basicVisible[facilityId],
-      ),
+      visibleBasicFacilityIds,
       visibleMegaStructureIds,
-      showNextTierTeaser:
-        visibleMegaStructureIds.length > 0 &&
-        !visibleMegaStructureIds.includes('galactic_brains'),
+      showNextBasicFacilityTeaser:
+        visibleBasicFacilityIds.length > 0 &&
+        !visibleBasicFacilityIds.includes('planets'),
+      showNextMegaStructureTeaser: false,
+    },
+    research: {
+      routeUnlocked:
+        visibleBasicFacilityIds.length > 0 ||
+        visibleMegaStructureIds.length > 0 ||
+        state.meta.firstInfinityComplete ||
+        Object.values(state.research.levelsById).some(
+          (level) => level > 0,
+        ),
     },
     skills: {
       routeUnlocked:
@@ -1219,7 +1241,11 @@ export function selectGameplayVisibility(
       routeUnlocked:
         state.meta.firstInfinityComplete ||
         state.infinity.points > 0n ||
-        state.quantum.pointsEarned > 0n,
+        state.quantum.pointsEarned > 0n ||
+        state.dyson.bots >=
+          ordinaryInfinityBotThreshold(
+            state.quantum.divisionsPurchased,
+          ),
     },
     reality: {
       routeVisible:
@@ -1438,6 +1464,12 @@ function selectProgression(
       upgrades: state.dream.upgrades,
       huntersPerPurchase: state.dream.huntersPerPurchase,
       gatherersPerPurchase: state.dream.gatherersPerPurchase,
+      purchaseBatches: state.dream.purchaseBatches ?? {
+        hunters: 0n,
+        gatherers: 0n,
+        solar: 0n,
+        fusion: 0n,
+      },
     }),
     statistics: reuseShallowDomain(
       previous?.statistics,
@@ -2364,7 +2396,7 @@ function selectRealityPreviews(
       return {
         upgradeId,
         eligible: result.accepted && result.changed,
-        cost: definition?.cost ?? 0n,
+        cost: definition?.cost ?? 0,
         code: result.code,
         definitionGap:
           result.definitionGap ??
@@ -2511,6 +2543,11 @@ function previewResearchCatalog(
     .map((researchId) =>
       previewCanonicalResearchPurchase(state, tuning, researchId),
     )
+  const dysonVisibility = selectGameplayVisibility(state).dyson
+  const visibleFacilities = new Set<CanonicalFacilityId>([
+    ...dysonVisibility.visibleBasicFacilityIds,
+    ...dysonVisibility.visibleMegaStructureIds,
+  ])
   const cards = purchases.flatMap((purchase) => {
     const presentation =
       selectCanonicalResearchPresentationFacts(
@@ -2519,9 +2556,18 @@ function previewResearchCatalog(
         purchase.researchId,
         purchase.selectedQuantity,
       )
+    const facilityId = RESEARCH_FACILITY_BY_ID[purchase.researchId]
     return presentation === undefined
       ? []
-      : [{ ...purchase, ...presentation }]
+      : [{
+          ...purchase,
+          ...presentation,
+          visible:
+            facilityId === undefined
+              ? presentation.visible
+              : visibleFacilities.has(facilityId) ||
+                purchase.currentLevel > 0,
+        }]
   })
   const gap = purchases.find(
     (preview) =>
@@ -2540,6 +2586,19 @@ function previewResearchCatalog(
   }
 }
 
+const RESEARCH_FACILITY_BY_ID: Readonly<
+  Partial<Record<string, CanonicalFacilityId>>
+> = Object.freeze({
+  'research.assembly_line_upgrade': 'assembly_lines',
+  'research.ai_manager_upgrade': 'ai_managers',
+  'research.server_upgrade': 'servers',
+  'research.data_center_upgrade': 'data_centers',
+  'research.planet_upgrade': 'planets',
+  'research.matrioshka_brains_upgrade': 'matrioshka_brains',
+  'research.birch_planets_upgrade': 'birch_planets',
+  'research.galactic_brains_upgrade': 'galactic_brains',
+})
+
 function previewDreamReset(
   result:
     | ReturnType<typeof applyCanonicalDreamReset>
@@ -2550,7 +2609,7 @@ function previewDreamReset(
       eligible: false,
       code: result.issues[0]?.code ?? 'invalid',
       cause: null,
-      requestedReward: 0n,
+      requestedReward: 0,
       definitionGaps: result.issues.map(
         (issue) => `${issue.path}:${issue.detail}`,
       ),
@@ -2561,7 +2620,7 @@ function previewDreamReset(
       eligible: false,
       code: result.reason,
       cause: null,
-      requestedReward: 0n,
+      requestedReward: 0,
       definitionGaps: [],
     }
   }
@@ -2570,6 +2629,7 @@ function previewDreamReset(
     code: 'applied',
     cause: result.cause,
     requestedReward: result.requestedReward,
+    rewardCapped: result.rewardGranted < result.requestedReward,
     definitionGaps: [],
   }
 }

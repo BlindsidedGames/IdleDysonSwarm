@@ -73,11 +73,14 @@ const baseCategories: readonly WikiCategory[] = [
     ],
   },
   {
-    id: 'other',
-    title: messages.other,
+    id: 'offline-time',
+    title: messages.offlineTime,
     sections: [
-      { title: messages.easterEggTitle, body: messages.easterEgg },
-      { title: messages.offlineTitle, body: messages.offline },
+      { title: messages.offlineTitle, body: messages.offlineEarning },
+      { title: messages.offlineSpendingTitle, body: messages.offlineSpending },
+      { title: messages.offlineProcessingTitle, body: messages.offlineProcessing },
+      { title: messages.offlineAccuracyTitle, body: messages.offlineAccuracy },
+      { title: messages.offlineResultsTitle, body: messages.offlineResults },
     ],
   },
   { id: 'lore', title: messages.lore, sections: [] },
@@ -101,6 +104,13 @@ const baseCategories: readonly WikiCategory[] = [
     ],
   },
   { id: 'secrets', title: messages.secrets, sections: [] },
+  {
+    id: 'other',
+    title: messages.other,
+    sections: [
+      { title: messages.easterEggTitle, body: messages.easterEgg },
+    ],
+  },
   { id: 'patch-notes', title: messages.patchNotes, sections: [] },
 ]
 
@@ -109,7 +119,6 @@ const FLAT_CATEGORY_IDS = new Set<WikiCategoryId>([
   'research',
   'skills',
   'infinity',
-  'other',
 ])
 
 const goalMessages = [

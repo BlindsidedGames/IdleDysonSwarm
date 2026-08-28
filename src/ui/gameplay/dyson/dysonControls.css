@@ -3,7 +3,8 @@
 }
 
 .dyson-info .ui-progress-controls-panel__summary {
-  padding: 0;
+  padding-block: 0.42rem;
+  padding-inline: 0.7rem 0.35rem;
 }
 
 .dyson-info .ui-progress-controls-panel__body {
@@ -17,6 +18,7 @@
 .dyson-info__summary--multitasking {
   display: grid;
   block-size: 100%;
+  gap: var(--ui-control-row-gap);
   align-content: center;
 }
 
@@ -25,13 +27,14 @@
 }
 
 .dyson-info__summary--multitasking .dyson-lower-facts p {
-  padding-block: 0.08rem;
+  padding: 0;
+  line-height: 1.15;
 }
 
 .dyson-info__summary--multitasking
   .bot-distribution--multitasking {
   min-inline-size: 0;
-  padding: 0.08rem 0.1rem;
+  padding: 0;
   overflow: hidden;
   font-size: calc(0.72rem * var(--game-text-scale));
   text-align: start;

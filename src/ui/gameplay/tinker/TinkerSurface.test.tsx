@@ -420,7 +420,7 @@ describe('TinkerSurface transient interaction', () => {
       '-webkit-tap-highlight-color: transparent',
     )
     expect(tinkerCss).toMatch(
-      /\.tinker-surface__control\s*\{[^}]*border:\s*2px solid var\(--theme-divider\);[^}]*border-radius:\s*0\.25rem;[^}]*background:\s*var\(--theme-panel\);[^}]*box-shadow:\s*0 2px 0 #171018;/,
+      /\.tinker-surface__control\s*\{[^}]*border:\s*var\(--ui-panel-border-width\) solid var\(--theme-divider\);[^}]*border-radius:\s*0\.25rem;[^}]*background:\s*var\(--theme-panel\);[^}]*box-shadow:\s*0 2px 0 #171018;/,
     )
     expect(tinkerCss).toMatch(
       /\.tinker-surface__control,\s*\.tinker-surface__control \*\s*\{[\s\S]*-webkit-touch-callout:\s*none !important;[\s\S]*user-select:\s*none !important;/,

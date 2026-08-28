@@ -27,38 +27,48 @@
 }
 
 .wiki-surface__summary {
-  padding: 0.8rem max(0.75rem, var(--safe-area-left));
-  border-block-end: 1px solid var(--theme-divider);
+  padding-block: var(--ui-panel-inset-roomy);
+  padding-inline:
+    max(var(--ui-page-gutter), var(--safe-area-left))
+    max(var(--ui-page-gutter), var(--safe-area-right));
+  border-block-end: var(--ui-shell-divider-width) solid var(--theme-divider);
   background: var(--theme-panel);
   box-shadow: 0 0.15rem 0.4rem rgb(0 0 0 / 26%);
 }
 
 .wiki-surface__summary > div {
-  inline-size: min(100%, 82rem);
+  inline-size: min(100%, var(--ui-content-max));
   margin-inline: auto;
 }
 
 .wiki-surface__title {
-  font-size: calc(1.3rem * var(--game-text-scale));
+  font-size: var(--ui-text-page-title);
   font-weight: var(--font-weight-bold);
 }
 
 .wiki-surface__layout {
   display: grid;
-  inline-size: min(100%, 82rem);
+  inline-size: min(100%, var(--ui-content-max));
   min-block-size: 0;
   grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr);
-  gap: 0.75rem;
-  padding: 0.75rem;
+  align-content: start;
+  align-items: start;
+  gap: var(--ui-section-stack-gap);
+  padding-block: var(--ui-route-inset);
+  padding-inline:
+    max(var(--ui-route-inset), var(--safe-area-left))
+    max(var(--ui-route-inset), var(--safe-area-right));
   margin-inline: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .wiki-surface__navigation,
 .wiki-surface__article {
   min-inline-size: 0;
   min-block-size: 0;
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.35rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-panel-radius);
   background: var(--wiki-panel);
   box-shadow: 0 0.15rem 0.35rem rgb(0 0 0 / 25%);
 }
@@ -75,7 +85,7 @@
 .wiki-surface__navigation > h2,
 .wiki-surface__article > h2,
 .wiki-surface__article-heading {
-  padding: 0.72rem 0.8rem;
+  padding: var(--ui-panel-inset);
   background: var(--wiki-heading);
   font-size: calc(1rem * var(--game-text-scale));
 }
@@ -125,8 +135,8 @@
 }
 
 .wiki-surface__article {
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  align-self: start;
+  overflow: visible;
   scrollbar-width: thin;
   scrollbar-color: #765d92 #251d31;
 }

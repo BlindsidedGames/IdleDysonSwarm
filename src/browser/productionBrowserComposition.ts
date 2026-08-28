@@ -6,8 +6,8 @@ import type {
 } from '../application/canonicalLifecycleCoordinator'
 import {
   createUnityFirstRunPreparedSave,
-  unityFirstRunProvenance,
 } from '../application/firstRun/unityFirstRunSave'
+import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
 import {
   BrowserLifecycleUtcClock,
   BrowserMonotonicClock,
@@ -216,7 +216,7 @@ export function createProductionBrowserComposition(
   return Object.freeze({
     runtime,
     releasePlatformServices: options.releasePlatformServices,
-    saveSchemaVersion: unityFirstRunProvenance.saveSchema,
+    saveSchemaVersion: CURRENT_SAVE_SCHEMA,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
     resetSave: () => {

@@ -411,7 +411,7 @@ describe('canonical game command router', () => {
         ...state(),
         reality: {
           ...state().reality,
-          influence: 1_000_000n,
+          influence: 1_000_000,
         },
       },
       {
@@ -431,7 +431,7 @@ describe('canonical game command router', () => {
       reality: {
         ...state().reality,
         workersReady: 1_000_000n,
-        influence: 0n,
+        influence: 0,
       },
     }
     const reality = routeCanonicalGameCommand(
@@ -496,7 +496,7 @@ describe('canonical game command router', () => {
       ...state(),
       reality: {
         ...state().reality,
-        influence: 42n,
+        influence: 42,
       },
       avocado: {
         ...state().avocado,
@@ -1064,7 +1064,7 @@ describe('canonical game command router', () => {
       ...source,
       dream: {
         ...source.dream,
-        strangeMatter: 100n,
+        strangeMatter: 100,
       },
       infinity: {
         ...source.infinity,

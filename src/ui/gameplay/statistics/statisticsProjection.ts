@@ -2,13 +2,14 @@ import type {
   InfinityCycleHistoryEntry,
   StatisticsWindowState,
 } from '../../../game-state/types'
+import { addContinuous } from '../../../simulation/numeric'
 
 export interface StatisticsWindowAggregate {
   readonly simulatedSeconds: number
   readonly infinityCount: bigint
   readonly infinityPoints: bigint
   readonly dreamResetCount: bigint
-  readonly strangeMatter: bigint
+  readonly strangeMatter: number
   readonly realityWorkers: bigint
 }
 
@@ -101,7 +102,7 @@ export function aggregateStatisticsWindows(
         total.infinityPoints + window.infinityPoints,
       dreamResetCount:
         total.dreamResetCount + window.dreamResetCount,
-      strangeMatter: total.strangeMatter + window.strangeMatter,
+      strangeMatter: addContinuous(total.strangeMatter, window.strangeMatter),
       realityWorkers:
         total.realityWorkers + window.realityWorkers,
     }),
@@ -110,7 +111,7 @@ export function aggregateStatisticsWindows(
       infinityCount: 0n,
       infinityPoints: 0n,
       dreamResetCount: 0n,
-      strangeMatter: 0n,
+      strangeMatter: 0,
       realityWorkers: 0n,
     },
   )

@@ -164,7 +164,7 @@ describe('production browser composition', () => {
     })
 
     expect(composition.runtime).toBe(runtime)
-    expect(composition.saveSchemaVersion).toBe(12)
+    expect(composition.saveSchemaVersion).toBe(13)
     expect(captured).toBeDefined()
     if (captured === undefined) return
     expect(captured.lifecyclePolicy).toBe(WEB_LIFECYCLE_POLICY)

@@ -111,6 +111,38 @@
   --space-6: 2rem;
   --game-card-grid-gap: 0.35rem;
   --game-card-content-inset: 0.45rem;
+  /*
+   * App-wide semantic defaults. They still follow the player's text-scale
+   * preference; components with genuinely responsive content (for example the
+   * resource header) may use bounded clamp() values around these roles.
+   * Route colour remains local, and content determines panel height.
+   */
+  --ui-text-meta: calc(0.72rem * var(--game-text-scale));
+  --ui-text-body: calc(0.82rem * var(--game-text-scale));
+  --ui-text-control: calc(0.84rem * var(--game-text-scale));
+  --ui-text-card-title: calc(0.9rem * var(--game-text-scale));
+  --ui-text-section-title: calc(1.05rem * var(--game-text-scale));
+  --ui-text-page-title: calc(1.25rem * var(--game-text-scale));
+  --ui-route-inset: 0.5rem;
+  --ui-section-stack-gap: 0.5rem;
+  --ui-panel-inset: 0.6rem;
+  --ui-control-row-gap: 0.25rem;
+  --ui-related-copy-gap: 0.25rem;
+  --ui-divider-inset: 0.6rem;
+  /* Compatibility aliases while route-local styles migrate to named roles. */
+  --ui-page-gutter: var(--ui-route-inset);
+  --ui-panel-inset-compact: 0.45rem;
+  --ui-panel-inset-roomy: var(--ui-panel-inset);
+  --ui-control-gap: var(--ui-control-row-gap);
+  --ui-card-gap: 0.4rem;
+  --ui-section-gap: var(--ui-section-stack-gap);
+  --ui-panel-border-width: 1px;
+  --ui-shell-divider-width: 2px;
+  --ui-focus-ring-width: 3px;
+  --ui-control-radius: 0.25rem;
+  --ui-panel-radius: 0.35rem;
+  --ui-content-max: 82rem;
+  --ui-reading-max: 70rem;
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --border-width: 1px;
@@ -124,6 +156,7 @@
   --breakpoint-compact-max: 599px;
   --breakpoint-medium-min: 600px;
   --breakpoint-wide-min: 1024px;
+  --breakpoint-navigation-rail-min: 1080px;
 }
 
 :root:lang(ja) {

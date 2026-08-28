@@ -8,6 +8,7 @@ export type WikiCategoryId =
   | 'research'
   | 'skills'
   | 'infinity'
+  | 'offline-time'
   | 'other'
   | 'patch-notes'
   | 'lore'
@@ -36,7 +37,6 @@ export function visibleWikiCategoryIds(
     'research',
     'skills',
     'infinity',
-    'other',
     'lore',
   ]
   if (
@@ -47,6 +47,7 @@ export function visibleWikiCategoryIds(
   }
   if (progression.quantumPoints >= 1n) ids.push('quantum')
   if (progression.secretsOfTheUniverse > 0n) ids.push('secrets')
+  ids.push('offline-time', 'other')
   ids.push('patch-notes')
   return ids
 }

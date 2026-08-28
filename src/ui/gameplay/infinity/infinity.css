@@ -21,14 +21,14 @@
 .infinity-surface__summary {
   z-index: 2;
   display: grid;
-  gap: 0.45rem;
+  gap: var(--ui-card-gap);
   padding-block:
-    calc(0.625rem + var(--safe-area-top))
-    0.625rem;
+    calc(var(--ui-panel-inset-roomy) + var(--safe-area-top))
+    var(--ui-panel-inset-roomy);
   padding-inline:
-    max(0.75rem, var(--safe-area-left))
-    max(0.75rem, var(--safe-area-right));
-  border-block-end: 2px solid var(--theme-divider);
+    max(var(--ui-page-gutter), var(--safe-area-left))
+    max(var(--ui-page-gutter), var(--safe-area-right));
+  border-block-end: var(--ui-shell-divider-width) solid var(--theme-divider);
   background: var(--infinity-panel);
 }
 
@@ -203,6 +203,25 @@
   );
   line-height: 1.25;
   white-space: nowrap;
+}
+
+.infinity-surface__hide-maxed {
+  display: flex;
+  min-block-size: 2.35rem;
+  align-items: center;
+  gap: 0.5rem;
+  color: #e8dffa;
+  cursor: pointer;
+}
+
+.infinity-surface__hide-maxed input {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.infinity-surface__hide-maxed:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
 }
 
 .infinity-surface__progress {

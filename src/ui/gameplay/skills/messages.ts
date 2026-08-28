@@ -171,6 +171,11 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Load {name}',
     description: 'Button label for activating a named skill preset.',
   },
+  switchPreset: {
+    id: 'skills.switch-preset',
+    defaultMessage: 'Switch to {name}',
+    description: 'Accessible label for the compact skill preset switcher.',
+  },
   currentPreset: {
     id: 'skills.current-preset',
     defaultMessage: 'Current',
@@ -178,9 +183,13 @@ export const skillMessages = defineMessages({
   },
   presetSummary: {
     id: 'skills.preset-summary',
-    defaultMessage:
-      '{count, plural, one {# queued skill} other {# queued skills}} · <workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>',
-    description: 'Summary of a preset queue and its worker versus scientist distribution.',
+    defaultMessage: '{count, plural, one {# queued skill} other {# queued skills}}',
+    description: 'Queued-skill summary shown on its own line for one Skill preset.',
+  },
+  presetDistribution: {
+    id: 'skills.preset-distribution',
+    defaultMessage: '<workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>',
+    description: 'Worker and Scientist distribution shown beneath the queued-skill summary for one Skill preset.',
   },
   managePreset: {
     id: 'skills.manage-preset',
@@ -416,6 +425,12 @@ export const skillMessages = defineMessages({
     id: 'skills.non-refundable',
     defaultMessage: 'Allow automatic assignment of non-refundable skills',
     description: 'Toggle allowing presets to assign skills that cannot be refunded.',
+  },
+  doubleClickToAssign: {
+    id: 'skills.double-click-to-assign',
+    defaultMessage: 'Double-click to assign skills',
+    description:
+      'Optional Skill Tree interaction that delays opening details so a double click or double tap can assign a skill.',
   },
   reset: {
     id: 'skills.reset',

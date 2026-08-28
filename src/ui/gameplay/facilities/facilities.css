@@ -6,8 +6,19 @@
   container-type: inline-size;
 }
 
-.mega-structure-region {
-  margin-block-start: var(--game-card-grid-gap);
+.dyson-facility-flow {
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns:
+    repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+  gap: var(--game-card-grid-gap);
+  align-items: stretch;
+  container-type: inline-size;
+}
+
+.dyson-facility-flow > .basic-facility-region,
+.dyson-facility-flow > .basic-facility-region > .basic-facility-region__grid {
+  display: contents;
 }
 
 .basic-facility-region__heading {
@@ -23,6 +34,7 @@
 }
 
 .basic-facility-region__grid {
+  /* Facilities retain their established compact interaction footprint. */
   --basic-facility-card-min-block-size: 5.5rem;
   display: grid;
   min-inline-size: 0;
@@ -42,8 +54,8 @@
   min-block-size: var(--basic-facility-card-min-block-size);
   place-items: center;
   padding: 0.38rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.25rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-panel);
   box-shadow: 0 2px 0 #171018;
   color: var(--color-text-secondary);
@@ -64,8 +76,8 @@
   gap: var(--basic-facility-section-gap) 0.38rem;
   align-items: start;
   padding: 0.38rem;
-  border: 2px solid var(--theme-divider);
-  border-radius: 0.25rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
   background: var(--theme-panel);
   box-shadow: 0 2px 0 #171018;
 }
@@ -396,6 +408,26 @@
   padding: 0.85rem 1rem 1rem;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
+  scrollbar-color: #9a72aa #2b1f2f;
+  scrollbar-width: thin;
+}
+
+.facility-details-dialog__content::-webkit-scrollbar {
+  inline-size: 0.7rem;
+}
+
+.facility-details-dialog__content::-webkit-scrollbar-track {
+  background: #2b1f2f;
+}
+
+.facility-details-dialog__content::-webkit-scrollbar-thumb {
+  border: 2px solid #2b1f2f;
+  border-radius: 999px;
+  background: #9a72aa;
+}
+
+.facility-details-dialog__content::-webkit-scrollbar-thumb:hover {
+  background: #bd8ed0;
 }
 
 .facility-details-dialog__safe-area {
@@ -840,14 +872,6 @@
   }
 }
 
-@container (min-width: 50rem) {
-  .basic-facility-region__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: auto;
-    align-items: stretch;
-  }
-}
-
 @media (hover: hover) and (pointer: fine) {
   .basic-facility-card__actions {
     grid-template-rows:
@@ -861,8 +885,17 @@
   }
 }
 
+@container (min-width: 50rem) {
+  .basic-facility-region:not(.mega-structure-region)
+    > .basic-facility-region__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: auto;
+  }
+}
+
 @container (min-width: 80rem) {
-  .basic-facility-region__grid {
+  .basic-facility-region:not(.mega-structure-region)
+    > .basic-facility-region__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -875,6 +908,10 @@
   .facility-details-dialog,
   .facility-details-dialog__close {
     forced-color-adjust: auto;
+  }
+
+  .facility-details-dialog__content {
+    scrollbar-color: ButtonText Canvas;
   }
 
   .basic-facility-card__progress {

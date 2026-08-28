@@ -9,6 +9,7 @@ import {
 } from '../simulation/canonicalEventTimeModel'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../simulation/dreamEducationUpgrades'
 import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
+import { bitDecrement } from '../simulation/numeric'
 import { REALITY_UPGRADE_DEFINITIONS } from '../simulation/realityUpgrades'
 import {
   createCanonicalGameEngineDefinition,
@@ -312,8 +313,8 @@ describe('canonical game application engine', () => {
       { kind: 'add-skill-points', amount: 3n },
       { kind: 'add-infinity-points', amount: 4n },
       { kind: 'add-quantum-shards', amount: 5n },
-      { kind: 'add-strange-matter', amount: 6n },
-      { kind: 'add-influence', amount: 7n },
+      { kind: 'add-strange-matter', amount: 6 },
+      { kind: 'add-influence', amount: 7 },
     ] as const) {
       expect(
         definition.applyCommand(state, {
@@ -326,8 +327,8 @@ describe('canonical game application engine', () => {
     expect(state.gameState.skills.points).toBeGreaterThanOrEqual(3n)
     expect(state.gameState.infinity.points).toBeGreaterThanOrEqual(4n)
     expect(state.gameState.quantum.pointsEarned).toBeGreaterThanOrEqual(5n)
-    expect(state.gameState.dream.strangeMatter).toBeGreaterThanOrEqual(6n)
-    expect(state.gameState.reality.influence).toBeGreaterThanOrEqual(7n)
+    expect(state.gameState.dream.strangeMatter).toBeGreaterThanOrEqual(6)
+    expect(state.gameState.reality.influence).toBeGreaterThanOrEqual(7)
   })
 
   test('runs Unity auto-assignment immediately after granting skill points', () => {
@@ -442,7 +443,7 @@ describe('canonical game application engine', () => {
         },
         dream: {
           ...state.gameState.dream,
-          strangeMatter: 500_000n,
+          strangeMatter: 500_000,
         },
       },
     })
@@ -464,7 +465,7 @@ describe('canonical game application engine', () => {
       debugEntitlementPurchased: true,
     })
     expect(state.gameState.quantum.pointsEarned).toBe(0n)
-    expect(state.gameState.dream.strangeMatter).toBe(0n)
+    expect(state.gameState.dream.strangeMatter).toBe(0)
 
     expect(dispatch('disable-debug-options')).toEqual({
       accepted: true,
@@ -476,6 +477,36 @@ describe('canonical game application engine', () => {
       changed: true,
     })
     expect(state.debugOptionsEnabled).toBe(true)
+  })
+
+  test('charges a representable Strange Matter step for Developer Options at the double cap', () => {
+    const state = runtime()
+    Object.assign(state, {
+      debugOptionsEnabled: false,
+      debugEntitlementPurchased: false,
+      gameState: {
+        ...state.gameState,
+        quantum: {
+          ...state.gameState.quantum,
+          pointsEarned: 100_000n,
+          pointsSpent: 0n,
+        },
+        dream: {
+          ...state.gameState.dream,
+          strangeMatter: Number.MAX_VALUE,
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(definition.applyCommand(state, {
+      kind: 'internal.development-apply-action',
+      action: { kind: 'purchase-debug-options' },
+    })).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.dream.strangeMatter)
+      .toBe(bitDecrement(Number.MAX_VALUE))
   })
 
   test('applies trusted host entitlements without persisting a paid save claim', () => {

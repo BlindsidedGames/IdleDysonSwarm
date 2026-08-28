@@ -7,10 +7,12 @@ import {
 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
 import {
+  bitDecrement,
   DISCRETE_MAXIMUM,
   SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 import {
+  DREAM_SPACE_AGE_COST_EXPONENT,
   DREAM_SPACE_AGE_CONSTANTS,
   applyDreamOverdriveDiminishingReturn,
   deriveDreamRailgunReadinessFacts,
@@ -34,7 +36,7 @@ function state(): CanonicalGameStateV1 {
   ).state
   return {
     ...source,
-    reality: { ...source.reality, influence: 1_000_000n },
+    reality: { ...source.reality, influence: 1_000_000 },
     dream: {
       ...source.dream,
       resources: {
@@ -279,6 +281,47 @@ describe('Dream Space Age', () => {
       lastPanelsLaunched: 1n,
     })
   })
+
+  test.each([0.033, 0.083, 0.133, 0.183])(
+    'normalises railgun threshold residue at a %s second active tick',
+    (tickSeconds) => {
+      const source = state()
+      const completedThresholds = Math.ceil(tickSeconds / 0.1)
+      const startingProgress = completedThresholds * 0.1 - tickSeconds
+      const input: CanonicalGameStateV1 = {
+        ...source,
+        dream: {
+          ...source.dream,
+          resources: {
+            ...source.dream.resources,
+            railgunCharge: 25_000_000,
+            dysonPanels: 0n,
+          },
+          railgun: {
+            firing: true,
+            fireProgress: startingProgress,
+            shotsRemaining: 10,
+            activeRailguns: 1,
+            reservedPanels: 10n,
+            highestStoredPanels: 10n,
+            lastRoundsFired: 0,
+            lastPanelsLaunched: 0n,
+          },
+        },
+      }
+
+      const result = runDreamRailgunAutomation(input, {
+        tickSeconds,
+        doubleTimeActive: false,
+        doubleTimeRate: 0,
+      })
+
+      expect(result.status).toBe('success')
+      expect(result.shotFired).toBe(true)
+      expect(result.state.dream.railgun.fireProgress).toBeGreaterThanOrEqual(0)
+      expect(Number.isFinite(result.state.dream.railgun.fireProgress)).toBe(true)
+    },
+  )
 
   test('settles a multi-billion-railgun final round despite charge rounding drift', () => {
     const source = state()
@@ -824,15 +867,21 @@ describe('Dream Space Age', () => {
     const solar = purchaseDreamSpaceAge(source, 'solar')
     expect(solar).toMatchObject({
       purchased: true,
-      cost: 50n,
+      cost: 50,
       status: 'success',
     })
-    expect(solar.state.reality.influence).toBe(999_950n)
+    expect(solar.state.reality.influence).toBe(999_950)
     expect(solar.state.dream.resources.solarPanels).toBe(1)
 
     const bulkSolar = purchaseDreamSpaceAge(source, 'solar', 10)
-    expect(bulkSolar.state.reality.influence).toBe(999_500n)
+    expect(bulkSolar.cost).toBeCloseTo(
+      50 * ((DREAM_SPACE_AGE_COST_EXPONENT ** 10 - 1) /
+        (DREAM_SPACE_AGE_COST_EXPONENT - 1)),
+    )
+    expect(bulkSolar.state.reality.influence)
+      .toBeCloseTo(1_000_000 - bulkSolar.cost)
     expect(bulkSolar.state.dream.resources.solarPanels).toBe(10)
+    expect(bulkSolar.state.dream.purchaseBatches?.solar).toBe(10n)
 
     const fusion = purchaseDreamSpaceAge(solar.state, 'fusion')
     expect(fusion.purchased).toBe(true)
@@ -846,6 +895,18 @@ describe('Dream Space Age', () => {
     })
     expect(invalid.status).toBe('invalid-input')
     expect(invalid.state).toBe(source)
+  })
+
+  test('charges one representable Influence step at the double cap', () => {
+    const source = state()
+    const result = purchaseDreamSpaceAge({
+      ...source,
+      reality: { ...source.reality, influence: Number.MAX_VALUE },
+    }, 'solar')
+
+    expect(result.purchased).toBe(true)
+    expect(result.state.reality.influence)
+      .toBe(bitDecrement(Number.MAX_VALUE))
   })
 
   test('accepts coarse elapsed intervals but rejects invalid prepared multipliers', () => {

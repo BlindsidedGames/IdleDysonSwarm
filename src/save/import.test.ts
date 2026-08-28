@@ -24,7 +24,7 @@ describe('save import text preparation', () => {
       '2026-07-29T05:00:00Z',
     )
 
-    expect(imported.targetSchema).toBe(12)
+    expect(imported.targetSchema).toBe(13)
     expect(imported.copyValidatedState()).toMatchObject({
       dateQuitString: '',
       lastSuccessfulLoadUtc: '2026-07-29T05:00:00Z',
@@ -309,7 +309,7 @@ describe('save import text preparation', () => {
       '2026-07-29T05:00:00Z',
     )
 
-    expect(imported.targetSchema).toBe(12)
+    expect(imported.targetSchema).toBe(13)
     expect(imported.copyValidatedState()).toMatchObject({
       dateQuitString: '',
       lastSuccessfulLoadUtc: '2026-07-29T05:00:00Z',

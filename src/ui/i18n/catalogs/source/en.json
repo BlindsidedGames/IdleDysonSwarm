@@ -191,6 +191,26 @@
     "defaultMessage": "Amount",
     "description": "Label for the developer resource amount input."
   },
+  "debug.amount-continuous-maximum": {
+    "defaultMessage": "Continuous resources cannot exceed {maximum}.",
+    "description": "Validation error for developer values above the continuous resource cap."
+  },
+  "debug.amount-discrete-maximum": {
+    "defaultMessage": "Whole-number resources cannot exceed {maximum}. Continuous resources may still accept this amount.",
+    "description": "Validation guidance when developer input exceeds the whole-number resource cap."
+  },
+  "debug.amount-discrete-whole": {
+    "defaultMessage": "Whole-number resources require an integer. Continuous resources may still accept this amount.",
+    "description": "Validation guidance when developer input is fractional."
+  },
+  "debug.amount-help": {
+    "defaultMessage": "Standard suffixes are accepted, including forms such as 100 Qi, 100xqi and 100 x qi.",
+    "description": "Help for entering game-formatted numbers in Developer Options."
+  },
+  "debug.amount-invalid": {
+    "defaultMessage": "Enter a non-negative number using digits, scientific notation or a Standard game suffix.",
+    "description": "Validation error for malformed developer resource input."
+  },
   "debug.apply-preset": {
     "defaultMessage": "Apply",
     "description": "Action that applies a developer progression preset."
@@ -251,6 +271,14 @@
     "defaultMessage": "Secret progress reset.",
     "description": "Confirmation after resetting Avotation secret progress."
   },
+  "debug.set-double-cap": {
+    "defaultMessage": "Double cap",
+    "description": "Button that fills the developer amount field with the maximum finite double value."
+  },
+  "debug.set-whole-cap": {
+    "defaultMessage": "Whole cap",
+    "description": "Button that fills the developer amount field with the maximum supported whole-number value."
+  },
   "debug.strange-matter": {
     "defaultMessage": "Strange Matter",
     "description": "Strange Matter resource label in developer tools."
@@ -284,8 +312,8 @@
     "description": "Failure feedback after a rejected allocation command."
   },
   "dyson.bot-distribution.multitasking-efficiency": {
-    "defaultMessage": "<workers>Workers</workers> and <science>Science</science> efficiency at 100%",
-    "description": "Compact bot efficiency summary shown after Bot Multitasking is purchased. Workers and Science are separately color-coded."
+    "defaultMessage": "<workers>Workers</workers> and <science>Scientists</science> efficiency at 100%",
+    "description": "Compact bot efficiency summary shown after Bot Multitasking is purchased. Workers and Scientists are separately color-coded."
   },
   "dyson.bot-distribution.scientists": {
     "defaultMessage": "Scientists",
@@ -802,6 +830,10 @@
   "dyson.facilities.production-progress-accessible": {
     "defaultMessage": "{facility} production",
     "description": "Accessible name for a facility production-cycle progress bar."
+  },
+  "dyson.facilities.purchase.automatic": {
+    "defaultMessage": "Auto",
+    "description": "Compact facility purchase label while automation is enabled."
   },
   "dyson.facilities.purchase.cost": {
     "defaultMessage": "${cost}",
@@ -1335,6 +1367,10 @@
     "defaultMessage": "No Infinity upgrades are currently available.",
     "description": "Safe empty state for the Infinity shop."
   },
+  "infinity.shop.hide-maxed": {
+    "defaultMessage": "Hide maxed upgrades",
+    "description": "Device-local control that hides completed Infinity upgrades."
+  },
   "infinity.shop.maximum-reached": {
     "defaultMessage": "Maxed",
     "description": "Repeatable Infinity upgrade at its purchase limit."
@@ -1372,11 +1408,11 @@
     "description": "Status while an Infinity upgrade purchase is pending."
   },
   "infinity.shop.purchased": {
-    "defaultMessage": "Purchased",
+    "defaultMessage": "Maxed",
     "description": "Completed Infinity upgrade button label."
   },
   "infinity.shop.purchased-count": {
-    "defaultMessage": "Purchased: {value}",
+    "defaultMessage": "Owned: {value}",
     "description": "Unity count shown on repeatable Infinity upgrades after the first purchase."
   },
   "infinity.shop.requires": {
@@ -1735,6 +1771,10 @@
     "defaultMessage": "That Quantum action was not completed. Try again.",
     "description": "Quantum command failure feedback."
   },
+  "quantum.hide-maxed": {
+    "defaultMessage": "Hide maxed upgrades",
+    "description": "Hides completed upgrades from the Quantum catalog."
+  },
   "quantum.leap": {
     "defaultMessage": "Quantum Leap",
     "description": "Quantum Leap card title."
@@ -1766,6 +1806,14 @@
   "quantum.level": {
     "defaultMessage": "Level {value}",
     "description": "Repeatable Quantum upgrade level."
+  },
+  "quantum.maxed": {
+    "defaultMessage": "Maxed",
+    "description": "Completed Quantum upgrade state."
+  },
+  "quantum.maxed-upgrade": {
+    "defaultMessage": "{name}: Maxed",
+    "description": "Accessible completed Quantum upgrade state."
   },
   "quantum.mega.all": {
     "defaultMessage": "Mega-Structures",
@@ -1812,20 +1860,12 @@
     "description": "Selects a fixed repeatable Quantum purchase quantity."
   },
   "quantum.purchase.quantity": {
-    "defaultMessage": "Purchase +{quantity}",
+    "defaultMessage": "+{quantity}",
     "description": "Visible quantity for a repeatable Quantum upgrade purchase."
   },
   "quantum.purchase.settings": {
     "defaultMessage": "Purchase settings",
     "description": "Opens repeatable Quantum purchase quantity settings."
-  },
-  "quantum.purchase.short": {
-    "defaultMessage": "Purchase",
-    "description": "Visible Quantum purchase action."
-  },
-  "quantum.purchased": {
-    "defaultMessage": "Purchased",
-    "description": "Completed Quantum upgrade state."
   },
   "quantum.region": {
     "defaultMessage": "Quantum",
@@ -3311,6 +3351,10 @@
     "defaultMessage": "Black Hole +{reward} Strange Matter",
     "description": "Black Hole reset action and canonical reward."
   },
+  "simulations.action.black-hole-capped": {
+    "defaultMessage": "Black Hole, Capped",
+    "description": "Accessible Black Hole action label when Strange Matter is capped."
+  },
   "simulations.action.black-hole-label": {
     "defaultMessage": "Black Hole",
     "description": "Visible label on the Simulation Black Hole reset button."
@@ -3322,6 +3366,10 @@
   "simulations.action.boost-label": {
     "defaultMessage": "Boost",
     "description": "Visible label on a Simulation boost button."
+  },
+  "simulations.action.capped-label": {
+    "defaultMessage": "Capped",
+    "description": "Compact capped-resource label on a Simulation action."
   },
   "simulations.action.close": {
     "defaultMessage": "Close",
@@ -3365,7 +3413,7 @@
   },
   "simulations.buy-max": {
     "defaultMessage": "Buy Max",
-    "description": "Selects the largest affordable Space Age purchase quantity."
+    "description": "Selects the largest affordable Simulation producer batch quantity."
   },
   "simulations.buy-quantity": {
     "defaultMessage": "Buy {quantity}",
@@ -3415,6 +3463,10 @@
     "defaultMessage": "Current rate",
     "description": "Label for the canonical effective Simulation production rate."
   },
+  "simulations.details.effect": {
+    "defaultMessage": "Effect",
+    "description": "Label for the permanent effect granted by completed Education research."
+  },
   "simulations.details.inactive-multiplier": {
     "defaultMessage": "Inactive — no producers",
     "description": "Simulation production multiplier while its source count is zero."
@@ -3454,6 +3506,34 @@
   "simulations.details.speed-multiplier": {
     "defaultMessage": "Speed multiplier",
     "description": "Label for the canonical Simulation production speed formula."
+  },
+  "simulations.details.status": {
+    "defaultMessage": "Status",
+    "description": "Label for an Education research state in Simulation details."
+  },
+  "simulations.education.advanced-physics.effect": {
+    "defaultMessage": "Unlocks Fusion Generators.",
+    "description": "Permanent gameplay effect of completing Advanced Physics."
+  },
+  "simulations.education.engineering.effect": {
+    "defaultMessage": "Enables Cities to produce Factories.",
+    "description": "Permanent gameplay effect of completing Engineering."
+  },
+  "simulations.education.mathematics.effect": {
+    "defaultMessage": "Doubles Solar Panel energy generation and enables the Railgun path.",
+    "description": "Permanent gameplay effect of completing Mathematics."
+  },
+  "simulations.education.shipping.effect": {
+    "defaultMessage": "Doubles Factory production.",
+    "description": "Permanent gameplay effect of completing Shipping."
+  },
+  "simulations.education.world-peace.effect": {
+    "defaultMessage": "Doubles Bot production of Rockets.",
+    "description": "Permanent gameplay effect of completing World Peace."
+  },
+  "simulations.education.world-trade.effect": {
+    "defaultMessage": "Doubles Factory production again.",
+    "description": "Permanent gameplay effect of completing World Trade."
   },
   "simulations.empty": {
     "defaultMessage": "No panels are available in this era yet.",
@@ -3683,6 +3763,10 @@
     "defaultMessage": "Railgun throughput",
     "description": "Accessible Railgun throughput label once volleys are too fast to animate."
   },
+  "simulations.progress.next-volley": {
+    "defaultMessage": "Next volley",
+    "description": "Railgun rounds prepared while the next volley is charging."
+  },
   "simulations.progress.percent": {
     "defaultMessage": "{value}%",
     "description": "Visible progress percentage."
@@ -3733,11 +3817,15 @@
   },
   "simulations.purchase-amount": {
     "defaultMessage": "Purchase amount",
-    "description": "Accessible label for the Space Age purchase amount options."
+    "description": "Accessible label for Simulation producer batch purchase options."
   },
   "simulations.region": {
     "defaultMessage": "Simulations",
     "description": "Accessible name for the live Unity Simulations route."
+  },
+  "simulations.show-formulas-inline": {
+    "defaultMessage": "Show formulas inline",
+    "description": "Shows optional Simulation formulas directly on their cards."
   },
   "simulations.summary.influence": {
     "defaultMessage": "Influence: {value}",
@@ -3814,6 +3902,10 @@
   "skills.current-preset": {
     "defaultMessage": "Current",
     "description": "Status marking the currently active skill preset."
+  },
+  "skills.double-click-to-assign": {
+    "defaultMessage": "Double-click to assign skills",
+    "description": "Optional Skill Tree interaction that delays opening details so a double click or double tap can assign a skill."
   },
   "skills.effect": {
     "defaultMessage": "Effect:",
@@ -5211,13 +5303,17 @@
     "defaultMessage": "Rose",
     "description": "Name of the rose-red skill preset color."
   },
+  "skills.preset-distribution": {
+    "defaultMessage": "<workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>",
+    "description": "Worker and Scientist distribution shown beneath the queued-skill summary for one Skill preset."
+  },
   "skills.preset-name": {
     "defaultMessage": "Preset name",
     "description": "Label for the editable skill preset name."
   },
   "skills.preset-summary": {
-    "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}} · <workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>",
-    "description": "Summary of a preset queue and its worker versus scientist distribution."
+    "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}}",
+    "description": "Queued-skill summary shown on its own line for one Skill preset."
   },
   "skills.preset-transfer-failed": {
     "defaultMessage": "The preset string could not be processed. Check it and try again.",
@@ -5318,6 +5414,10 @@
   "skills.supernova-suppression-quote": {
     "defaultMessage": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.",
     "description": "Exact warning before purchasing Supernova."
+  },
+  "skills.switch-preset": {
+    "defaultMessage": "Switch to {name}",
+    "description": "Accessible label for the compact skill preset switcher."
   },
   "skills.tree": {
     "defaultMessage": "Skill tree",
@@ -6159,9 +6259,13 @@
     "defaultMessage": "Lore",
     "description": "Wiki category containing the authored lore chapters."
   },
+  "wiki.category.offline-time": {
+    "defaultMessage": "Offline Time",
+    "description": "Wiki category for earning and spending stored Offline Time."
+  },
   "wiki.category.other": {
     "defaultMessage": "Other",
-    "description": "Wiki category for offline time and hidden discoveries."
+    "description": "Wiki category for miscellaneous and hidden discoveries."
   },
   "wiki.category.patch-notes": {
     "defaultMessage": "Patch Notes",
@@ -6392,8 +6496,40 @@
     "description": "Heading for the hidden discovery Wiki note."
   },
   "wiki.other.offline": {
-    "defaultMessage": "Time away from the game becomes <value>Offline Time</value> currency. Spend it from the Offline Time screen. A return summary appears after you have been away for at least <value>60 seconds</value>.",
-    "description": "Offline Time explanation adapted from the Unity WikiContent prefab."
+    "defaultMessage": "After you have been away for at least <value>60 seconds</value>, that time is added to your <value>Offline Time</value> bank instead of being replayed automatically. Capacity starts at <value>one day</value>. When the bank is full, you can spend it to double that capacity.",
+    "description": "Explains how Offline Time is earned and how its capacity grows."
+  },
+  "wiki.other.offline-accuracy": {
+    "defaultMessage": "Production, automation and permanent upgrades run during replay, with at most one automation decision per update. Larger time steps can miss opportunities that shorter updates would catch, and no compensation is added for them. <value>Tinker</value> is intentionally frozen while Offline Time is processing.",
+    "description": "Explains active, frozen and accuracy-sensitive systems during Offline Time replay."
+  },
+  "wiki.other.offline-accuracy-title": {
+    "defaultMessage": "What runs during replay",
+    "description": "Heading for systems active or frozen during Offline Time replay."
+  },
+  "wiki.other.offline-processing": {
+    "defaultMessage": "Processing advances the game through the same update system used during active play. <value>Speed Up</value> reduces the remaining update count and keeps the full selected duration, trading accuracy for a faster result. Cancelling safely discards the unfinished simulation and does not spend the selected Offline Time.",
+    "description": "Explains Offline Time processing, Speed Up and safe cancellation."
+  },
+  "wiki.other.offline-processing-title": {
+    "defaultMessage": "Processing, Speed Up and cancellation",
+    "description": "Heading for Offline Time processing controls."
+  },
+  "wiki.other.offline-results": {
+    "defaultMessage": "A completed run reports the simulated duration, remaining bank, final accuracy and actual update count. It also shows relevant Infinity, Simulation and Reality gains. Facility and Bot gains appear only when no Infinity occurred, because a reset and rebuild would make a simple before-and-after total misleading.",
+    "description": "Explains the player-facing Offline Time completion summary."
+  },
+  "wiki.other.offline-results-title": {
+    "defaultMessage": "Completion results",
+    "description": "Heading for the Offline Time completion summary."
+  },
+  "wiki.other.offline-spending": {
+    "defaultMessage": "Choose how much banked time to spend, then select <value>Fast</value>, <value>Balanced</value> or <value>Accurate</value>. These presets use progressively more gameplay updates. Accurate follows short-term automation more closely, while Fast completes sooner.",
+    "description": "Explains choosing an Offline Time amount and accuracy preset."
+  },
+  "wiki.other.offline-spending-title": {
+    "defaultMessage": "Choosing time and accuracy",
+    "description": "Heading for selecting an Offline Time amount and accuracy preset."
   },
   "wiki.other.offline-title": {
     "defaultMessage": "Offline Time",

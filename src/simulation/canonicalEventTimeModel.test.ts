@@ -28,8 +28,8 @@ import {
 } from './realityUpgrades'
 import { createCanonicalTinkerRuntimeState } from './canonicalTinker'
 import {
+  CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
-  SIMULATION_RESOURCE_MAXIMUM,
 } from './numeric'
 import { createSimulationSummary } from './types'
 
@@ -55,10 +55,10 @@ function emptyTotals(): SimulationTotalsState {
     aiDreamResets: 0n,
     globalWarmingDreamResets: 0n,
     blackHoleDreamResets: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: 0n,
+    automaticInfluence: 0,
+    manualInfluence: 0,
     realityCapacityStallSeconds: 0,
     simulatedSeconds: 0,
   }
@@ -75,7 +75,7 @@ function emptyStatistics(
     infinityCount: 0n,
     infinityPoints: 0n,
     dreamResetCount: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
   })
   return {
@@ -196,7 +196,7 @@ function baseState(): CanonicalGameStateV1 {
       universeDesignationCount: 0n,
       workersReady: 0n,
       workerGenerationProgress: 0,
-      influence: 0n,
+      influence: 0,
       autoGather: false,
     },
     quantum: {
@@ -260,7 +260,7 @@ function baseState(): CanonicalGameStateV1 {
         swarmPanels: 0n,
       },
       disasterStage: 42n,
-      strangeMatter: 0n,
+      strangeMatter: 0,
       upgrades: Object.fromEntries(
         Object.keys(source.dream.upgrades).map((id) => [id, false]),
       ) as CanonicalGameStateV1['dream']['upgrades'],
@@ -773,7 +773,7 @@ describe('legacy canonical event-time parity adapter', () => {
     )
     expect(activeResult.summary).toMatchObject({
       meteorDreamResets: 1n,
-      strangeMatter: 1n,
+      strangeMatter: 1,
       realityWorkers: 4n,
     })
     expect(
@@ -1122,7 +1122,7 @@ describe('legacy canonical event-time parity adapter', () => {
     },
   )
 
-  test('merges Strange Matter summaries above the legacy Int64 ceiling', () => {
+  test('keeps Strange Matter summaries finite above the legacy Int64 ceiling', () => {
     const source = baseState()
     const model = new CanonicalEventTimeModel(
       carrier({
@@ -1139,12 +1139,12 @@ describe('legacy canonical event-time parity adapter', () => {
       context(),
     )
     const summary = createSimulationSummary()
-    summary.strangeMatter = DISCRETE_MAXIMUM
+    summary.strangeMatter = Number(DISCRETE_MAXIMUM) + 4_096
 
     model.applyDreamReset(summary)
 
     expect(model.issue).toBeUndefined()
-    expect(summary.strangeMatter).toBe(DISCRETE_MAXIMUM + 1n)
+    expect(summary.strangeMatter).toBe(Number(DISCRETE_MAXIMUM) + 4_096)
     expect(summary.meteorDreamResets).toBe(1n)
   })
 
@@ -1299,12 +1299,12 @@ describe('legacy canonical event-time parity adapter', () => {
     {
       name: 'reset count',
       resetCount: DISCRETE_MAXIMUM,
-      strangeMatter: 0n,
+      strangeMatter: 0,
     },
     {
       name: 'Strange Matter',
       resetCount: 0n,
-      strangeMatter: SIMULATION_RESOURCE_MAXIMUM,
+      strangeMatter: CONTINUOUS_MAXIMUM,
     },
   ])(
     'does not schedule a zero-time Dream reset when the $name is saturated',

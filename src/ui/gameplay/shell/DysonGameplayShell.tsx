@@ -17,6 +17,9 @@ import { DysonNavigation } from './DysonNavigation'
 import { DysonResourceHeader } from './DysonResourceHeader'
 import './dysonGameplayShell.css'
 
+const PERMANENT_NAVIGATION_QUERY =
+  '(min-width: 1080px), (min-width: 960px) and (orientation: landscape)'
+
 /**
  * Presentation-only responsive composition for the Dyson gameplay route.
  *
@@ -46,6 +49,7 @@ export function DysonGameplayShell({
   sidePanelSupplement,
   routeSupplement,
   routeContent,
+  routeContentEdgeToEdge = false,
 }: DysonGameplayShellProps) {
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
   const menuId = `dyson-menu-${useId().replaceAll(':', '')}`
@@ -67,7 +71,7 @@ export function DysonGameplayShell({
   const [bottomLayout, setBottomLayout] = useState(() =>
     deriveBottomNavigationLayout(390, selectedBottomItemCount, false)
   )
-  const wideLayout = useMediaQuery('(min-width: 1024px)')
+  const wideLayout = useMediaQuery(PERMANENT_NAVIGATION_QUERY)
   const compactMenuOpen = menuOpen && !wideLayout
   const drawerUnavailable = !wideLayout && !menuOpen
 
@@ -168,6 +172,9 @@ export function DysonGameplayShell({
       data-menu-open={menuOpen}
       data-resource-header={showResourceHeader}
       data-route-content={routeContent !== undefined}
+      data-route-content-edge-to-edge={
+        routeContentEdgeToEdge || undefined
+      }
       data-route-theme={routeTheme}
       data-route-theme-variant={routeThemeVariant}
       data-bottom-navigation-text={navigation.includeBottomText || undefined}

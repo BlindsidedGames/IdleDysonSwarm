@@ -7,6 +7,8 @@
   min-block-size: 0;
   block-size: 100%;
   overflow: hidden;
+  container-name: skills-surface;
+  container-type: inline-size;
   background:
     radial-gradient(circle at 50% 45%, rgb(84 63 119 / 16%), transparent 42%),
     var(--theme-page);
@@ -65,17 +67,67 @@
   min-inline-size: 0;
 }
 
+.skills-surface__viewport-controls {
+  display: contents;
+}
+
+.skills-surface__quick-presets {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  grid-template-columns: repeat(5, minmax(var(--target-minimum), 1fr));
+  gap: 0.25rem;
+}
+
+.skill-tree-viewport__controls .skills-surface__search {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.skill-tree-viewport__controls
+  .skills-surface__quick-preset {
+  min-inline-size: 0;
+  min-block-size: 2rem;
+  border-color: color-mix(
+    in srgb,
+    var(--skill-preset-color) 68%,
+    var(--theme-divider)
+  );
+  background: color-mix(
+    in srgb,
+    var(--skill-preset-color) 24%,
+    var(--theme-panel)
+  );
+  color: white;
+  font-size: calc(0.75rem * var(--game-text-scale));
+}
+
+.skill-tree-viewport__controls
+  .skills-surface__quick-preset[aria-pressed="true"] {
+  border-color: var(--skill-preset-color);
+  background: color-mix(
+    in srgb,
+    var(--skill-preset-color) 48%,
+    var(--theme-panel)
+  );
+  box-shadow: inset 0 0 0 1px var(--skill-preset-color);
+}
+
 .skills-surface__search input {
   appearance: none;
   min-inline-size: 0;
   min-block-size: var(--target-minimum);
-  padding-inline: 0.7rem 9rem;
+  padding-inline: 0.7rem;
   border: 1px solid var(--theme-divider);
   border-radius: 0.25rem;
   outline: none;
   background: var(--theme-page);
   color: white;
   font: inherit;
+}
+
+.skills-surface__search[data-has-clear="true"] input {
+  padding-inline-end: 3.3rem;
 }
 
 .skills-surface__search input::-webkit-search-cancel-button {
@@ -119,7 +171,12 @@
 
 .skills-surface__search-status {
   position: absolute;
-  inset-inline-end: 3.3rem;
+  inset-block-end: calc(100% + 0.3rem);
+  inset-inline-start: 0.15rem;
+  padding: 0.16rem 0.38rem;
+  border: 1px solid color-mix(in srgb, var(--theme-divider) 75%, transparent);
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, var(--theme-page) 88%, transparent);
   color: #c9bfda;
   font-size: 0.82rem;
   pointer-events: none;
@@ -414,8 +471,17 @@
     max(0.75rem, var(--safe-area-left))
     max(0.75rem, var(--safe-area-right));
   display: grid;
-  grid-template-columns: minmax(0, 1fr) repeat(3, auto);
+  grid-template-columns:
+    minmax(0, 1fr)
+    repeat(3, var(--target-minimum));
+  grid-template-rows: auto var(--target-minimum);
   gap: 0.35rem;
+}
+
+.skill-tree-viewport__controls > button {
+  grid-row: 2;
+  inline-size: var(--target-minimum);
+  block-size: var(--target-minimum);
 }
 
 .skill-settings {
@@ -480,7 +546,10 @@
 
 .skill-settings__presets {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 18rem), 1fr)
+  );
   gap: 0.55rem;
 }
 
@@ -512,6 +581,9 @@
   gap: 0.45rem;
   align-items: center;
   min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .skill-preset-color-swatch {
@@ -563,10 +635,24 @@
   opacity: 0.64;
 }
 
-.skill-settings__preset-load > span {
+.skill-settings__preset-load > .skill-preset-summary {
   grid-column: 1 / -1;
   color: #c8bddc;
   font-size: 0.85rem;
+}
+
+.skill-preset-summary {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.skill-preset-summary__queued,
+.skill-preset-summary__distribution {
+  display: block;
+}
+
+.skill-preset-summary__distribution {
+  white-space: nowrap;
 }
 
 .skill-preset-summary__workers {
@@ -614,7 +700,7 @@
 }
 
 .skill-presets-dialog {
-  inline-size: min(31rem, calc(100% - 1rem));
+  inline-size: min(76rem, calc(100% - 1rem));
   max-block-size: calc(100dvh - 1rem);
   padding: 0.55rem;
   border: 1px solid var(--theme-divider);
@@ -667,7 +753,8 @@
 
 .skill-details {
   display: grid;
-  gap: 0.65rem;
+  gap: 0.5rem;
+  font-size: calc(0.78rem * var(--game-text-scale, 1));
 }
 
 .skill-details p {
@@ -687,11 +774,11 @@
 }
 
 .skill-details__icon {
-  inline-size: 4.5rem;
-  block-size: 4.5rem;
-  padding: 0.45rem;
-  border: 3px solid #18121f;
-  border-radius: 0.65rem;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  padding: 0.35rem;
+  border: var(--ui-panel-border-width) solid #18121f;
+  border-radius: var(--ui-control-radius);
   background: #8054ab;
   object-fit: contain;
 }
@@ -713,7 +800,7 @@
 }
 
 .skill-details__technical {
-  padding: 0.65rem;
+  padding: 0.5rem;
   border: 1px solid
     color-mix(in srgb, var(--skill-dialog-accent) 32%, transparent);
   border-radius: 0.28rem;
@@ -1171,20 +1258,14 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
-  padding: 0.9rem;
-  border: 2px solid var(--skill-dialog-accent);
-  border-radius: 0.55rem;
+  padding: 0.65rem;
+  border: var(--ui-panel-border-width) solid var(--skill-dialog-accent);
+  border-radius: var(--ui-control-radius);
   background: var(--skill-dialog-background);
   box-shadow:
     0 1rem 3rem rgb(0 0 0 / 58%),
     inset 0 1px 0 rgb(255 255 255 / 8%);
   color: #f7f1ff;
-}
-
-@media (min-width: 48rem) {
-  .skill-details-dialog:not(.skill-preset-management-dialog) {
-    inline-size: min(44rem, 100%);
-  }
 }
 
 .skill-details-dialog[data-palette="fragment"] {
@@ -1207,7 +1288,7 @@
 .skill-details-dialog__header h2 {
   margin: 0;
   color: white;
-  font-size: clamp(1.35rem, 4vw, 1.7rem);
+  font-size: calc(1.1rem * var(--game-text-scale, 1));
   line-height: 1.12;
 }
 
@@ -1239,9 +1320,9 @@
 
 .skill-details-dialog__content {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.55rem;
   min-block-size: 0;
-  margin-block-start: 0.6rem;
+  margin-block-start: 0.45rem;
   overflow-y: auto;
 }
 
@@ -1301,9 +1382,6 @@
     block-size: 70px;
   }
 
-  .skill-settings__presets {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 360px) {

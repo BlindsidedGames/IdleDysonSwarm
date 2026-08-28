@@ -27,9 +27,11 @@ import {
   withCanonicalBotAllocation,
 } from '../simulation/canonicalBotAllocation'
 import {
+  addContinuous,
   addDiscrete,
   DISCRETE_MAXIMUM,
 } from '../simulation/numeric'
+import { tryDebitContinuous } from '../simulation/transactions'
 import { runCanonicalSkillAutoAssignment } from '../simulation/canonicalSkillTransactions'
 import {
   createSimulationSummary,
@@ -141,8 +143,8 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'add-skill-points'; readonly amount: bigint }
   | { readonly kind: 'add-infinity-points'; readonly amount: bigint }
   | { readonly kind: 'add-quantum-shards'; readonly amount: bigint }
-  | { readonly kind: 'add-influence'; readonly amount: bigint }
-  | { readonly kind: 'add-strange-matter'; readonly amount: bigint }
+  | { readonly kind: 'add-influence'; readonly amount: number }
+  | { readonly kind: 'add-strange-matter'; readonly amount: number }
   | { readonly kind: 'add-offline-time'; readonly seconds: number }
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
@@ -1249,28 +1251,28 @@ function applyDevelopmentAction(
         },
       })
     case 'add-influence':
-      if (!isDevelopmentDiscreteAmount(action.amount)) {
+      if (!isDevelopmentContinuousAmount(action.amount)) {
         return invalidDevelopmentAction('Influence amount')
       }
       return replaceDevelopmentState(candidate, {
         ...state,
         reality: {
           ...state.reality,
-          influence: addDevelopmentDiscrete(
+          influence: addContinuous(
             state.reality.influence,
             action.amount,
           ),
         },
       })
     case 'add-strange-matter':
-      if (!isDevelopmentDiscreteAmount(action.amount)) {
+      if (!isDevelopmentContinuousAmount(action.amount)) {
         return invalidDevelopmentAction('Strange Matter amount')
       }
       return replaceDevelopmentState(candidate, {
         ...state,
         dream: {
           ...state.dream,
-          strangeMatter: addDevelopmentDiscrete(
+          strangeMatter: addContinuous(
             state.dream.strangeMatter,
             action.amount,
           ),
@@ -1388,14 +1390,18 @@ function applyDevelopmentAction(
         })
       }
       const quantumCost = 100_000n
-      const strangeMatterCost = 500_000n
+      const strangeMatterCost = 500_000
       const availableQuantum =
         state.quantum.pointsEarned > state.quantum.pointsSpent
           ? state.quantum.pointsEarned - state.quantum.pointsSpent
           : 0n
+      const strangeMatterDebit = tryDebitContinuous(
+        state.dream.strangeMatter,
+        strangeMatterCost,
+      )
       if (
         availableQuantum < quantumCost ||
-        state.dream.strangeMatter < strangeMatterCost
+        strangeMatterDebit.status !== 'success'
       ) {
         return {
           accepted: false,
@@ -1413,8 +1419,7 @@ function applyDevelopmentAction(
           },
           dream: {
             ...state.dream,
-            strangeMatter:
-              state.dream.strangeMatter - strangeMatterCost,
+            strangeMatter: strangeMatterDebit.balance,
           },
         },
         debugOptionsEnabled: true,
@@ -1439,6 +1444,10 @@ function addDevelopmentDiscrete(current: bigint, amount: bigint): bigint {
 
 function isDevelopmentDiscreteAmount(amount: bigint): boolean {
   return amount >= 0n && amount <= DISCRETE_MAXIMUM
+}
+
+function isDevelopmentContinuousAmount(amount: number): boolean {
+  return Number.isFinite(amount) && amount >= 0
 }
 
 function replaceDevelopmentRuntime(

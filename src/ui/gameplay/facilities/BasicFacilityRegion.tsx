@@ -73,13 +73,16 @@ export interface BasicFacilityRegionProps {
   readonly visibleBasicFacilityIds:
     FrontendDysonVisibility['visibleBasicFacilityIds']
   readonly showNextTierTeaser:
-    FrontendDysonVisibility['showNextTierTeaser']
+    FrontendDysonVisibility['showNextBasicFacilityTeaser']
   readonly facilityFacts: Readonly<
     Record<EarlyBasicFacilityId, BasicFacilityCanonicalFact>
   >
   readonly purchasePreviews:
     FrontendGameplayPreviews['dyson']['basicFacilities']
   readonly purchaseRouteAvailable: boolean
+  readonly automationEnabledFacilities?: Readonly<
+    Record<string, boolean>
+  >
   readonly gameSpeed?: number
   readonly revision: BasicFacilityPresentationRevision
   readonly dispatchPlayer: (
@@ -191,6 +194,7 @@ export function BasicFacilityRegion({
   facilityFacts,
   purchasePreviews,
   purchaseRouteAvailable,
+  automationEnabledFacilities = {},
   gameSpeed = 1,
   revision,
   dispatchPlayer,
@@ -316,6 +320,9 @@ export function BasicFacilityRegion({
                 feedback={feedbackById[facilityId]}
                 revision={revision}
                 reducedMotion={reducedMotion}
+                automationActive={
+                  automationEnabledFacilities[facilityId] === true
+                }
                 onPurchase={() => purchase(facilityId)}
                 onOpenDetails={() =>
                   setDetailsFacilityId(facilityId)
@@ -371,6 +378,7 @@ interface BasicFacilityPresentationCardProps {
   readonly feedback?: PurchaseFeedback
   readonly revision: BasicFacilityPresentationRevision
   readonly reducedMotion: boolean
+  readonly automationActive: boolean
   readonly onPurchase: () => void
   readonly onOpenDetails: () => void
 }
@@ -385,6 +393,7 @@ function BasicFacilityPresentationCard({
   feedback,
   revision,
   reducedMotion,
+  automationActive,
   onPurchase,
   onOpenDetails,
 }: BasicFacilityPresentationCardProps) {
@@ -514,9 +523,11 @@ function BasicFacilityPresentationCard({
               title={selectedQuantityPrecise}
             >
               <bdi>
-                {intl.formatMessage(messages.purchaseQuantity, {
-                  quantity: selectedQuantity,
-                })}
+                {automationActive
+                  ? intl.formatMessage(messages.automaticPurchase)
+                  : intl.formatMessage(messages.purchaseQuantity, {
+                      quantity: selectedQuantity,
+                    })}
               </bdi>
             </data>
             <data
@@ -556,14 +567,17 @@ const upstreamFacilityNameMessages: Readonly<
   galactic_brains: messages.galacticBrainsName,
 }
 
-function FacilityProductionProgress({
+export function FacilityProductionProgress({
   accessibleName,
   progress,
   productionRatePerSecond,
   reducedMotion,
 }: {
   readonly accessibleName: string
-  readonly progress?: BasicFacilityCanonicalFact['productionProgress']
+  readonly progress?: {
+    readonly visible: boolean
+    readonly normalized: number
+  }
   readonly productionRatePerSecond: number
   readonly reducedMotion: boolean
 }) {

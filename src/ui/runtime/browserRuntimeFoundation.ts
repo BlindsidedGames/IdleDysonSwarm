@@ -746,7 +746,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         entitled: false,
         purchasedInGame: false,
         quantumShards: 0n,
-        strangeMatter: 0n,
+        strangeMatter: 0,
       }
     }
     const entitled =

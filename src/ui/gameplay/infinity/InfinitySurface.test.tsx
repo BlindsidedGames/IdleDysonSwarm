@@ -34,7 +34,10 @@ const infinityStyles = readFileSync(
 )
 const baseInfinityStyles = infinityStyles.split('@media (max-width: 30rem)')[0]
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  localStorage.clear()
+})
 
 describe('InfinitySurface', () => {
   test('uses the compact Research-scale card hierarchy at every width', () => {
@@ -99,8 +102,8 @@ describe('InfinitySurface', () => {
       'Start with 10 Data Centers',
       'Start with 10 Planets',
     ])
-    expect(screen.getByText('Purchased: 5.00')).toBeInTheDocument()
-    expect(screen.getByText('Purchased: 2.00')).toBeInTheDocument()
+    expect(screen.getByText('Owned: 5.00')).toBeInTheDocument()
+    expect(screen.getByText('Owned: 2.00')).toBeInTheDocument()
     expect(
       screen.getByText('Requires Start with 10 Assembly Lines'),
     ).toBeInTheDocument()
@@ -166,9 +169,55 @@ describe('InfinitySurface', () => {
     ).toBeDisabled()
     expect(
       screen.getByRole('button', {
-        name: 'Automate Bots: Purchased',
+        name: 'Automate Bots: Maxed',
       }),
     ).toBeDisabled()
+  })
+
+  test('shows maxed upgrades by default and hides them on request', () => {
+    const { container } = renderSurface({
+      shop: [
+        preview('unlock-bot-automation', {
+          eligible: false,
+          code: 'already-purchased',
+        }),
+        preview('retain-assembly-lines'),
+      ],
+    })
+
+    expect(screen.queryByRole('checkbox', {
+      name: 'Hide maxed upgrades',
+    })).not.toBeInTheDocument()
+    expect(container.querySelector(
+      '.infinity-surface__summary .infinity-surface__hide-maxed',
+    )).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', {
+      name: 'Infinity settings',
+    }))
+
+    const toggle = screen.getByRole('checkbox', {
+      name: 'Hide maxed upgrades',
+    })
+    expect(toggle.closest('.ui-progress-controls-panel__body'))
+      .not.toBeNull()
+    expect(toggle).not.toBeChecked()
+    expect(screen.getByRole('heading', { name: 'Automate Bots' }))
+      .toBeInTheDocument()
+
+    fireEvent.click(toggle)
+
+    expect(toggle).toBeChecked()
+    expect(screen.queryByRole('heading', { name: 'Automate Bots' }))
+      .not.toBeInTheDocument()
+    expect(screen.getByRole('heading', {
+      name: 'Start with 10 Assembly Lines',
+    })).toBeInTheDocument()
+    expect(infinityStyles).toMatch(
+      /\.infinity-surface__hide-maxed\s*\{[^}]*min-block-size:\s*2\.35rem;[^}]*gap:\s*0\.5rem;/,
+    )
+    expect(infinityStyles).toMatch(
+      /\.infinity-surface__hide-maxed input\s*\{[^}]*inline-size:\s*1\.25rem;[^}]*block-size:\s*1\.25rem;/,
+    )
   })
 
   test('commits an exact Break target through the coordinator', () => {

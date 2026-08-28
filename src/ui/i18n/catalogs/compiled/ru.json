@@ -327,6 +327,52 @@
       "value": "Количество"
     }
   ],
+  "debug.amount-continuous-maximum": [
+    {
+      "type": 0,
+      "value": "Непрерывные ресурсы не могут превышать "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "debug.amount-discrete-maximum": [
+    {
+      "type": 0,
+      "value": "Целочисленные ресурсы не могут превышать "
+    },
+    {
+      "type": 1,
+      "value": "maximum"
+    },
+    {
+      "type": 0,
+      "value": ". Непрерывные ресурсы всё ещё могут принять это значение."
+    }
+  ],
+  "debug.amount-discrete-whole": [
+    {
+      "type": 0,
+      "value": "Для целочисленных ресурсов требуется целое число. Непрерывные ресурсы всё ещё могут принять это значение."
+    }
+  ],
+  "debug.amount-help": [
+    {
+      "type": 0,
+      "value": "Поддерживаются стандартные суффиксы, в том числе 100 Qi, 100xqi и 100 x qi."
+    }
+  ],
+  "debug.amount-invalid": [
+    {
+      "type": 0,
+      "value": "Введите неотрицательное число цифрами, в научной записи или со стандартным игровым суффиксом."
+    }
+  ],
   "debug.apply-preset": [
     {
       "type": 0,
@@ -417,6 +463,18 @@
       "value": "Прогресс секретов сброшен."
     }
   ],
+  "debug.set-double-cap": [
+    {
+      "type": 0,
+      "value": "Предел double"
+    }
+  ],
+  "debug.set-whole-cap": [
+    {
+      "type": 0,
+      "value": "Целый предел"
+    }
+  ],
   "debug.strange-matter": [
     {
       "type": 0,
@@ -498,7 +556,7 @@
       "children": [
         {
           "type": 0,
-          "value": "Наука"
+          "value": "Учёные"
         }
       ]
     },
@@ -1715,6 +1773,12 @@
     {
       "type": 0,
       "value": ": производство"
+    }
+  ],
+  "dyson.facilities.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "Авто"
     }
   ],
   "dyson.facilities.purchase.cost": [
@@ -3017,6 +3081,12 @@
       "value": "Сейчас нет доступных улучшений Бесконечности."
     }
   ],
+  "infinity.shop.hide-maxed": [
+    {
+      "type": 0,
+      "value": "Скрыть улучшения максимального уровня"
+    }
+  ],
   "infinity.shop.maximum-reached": [
     {
       "type": 0,
@@ -3102,13 +3172,13 @@
   "infinity.shop.purchased": [
     {
       "type": 0,
-      "value": "Куплено"
+      "value": "Максимум"
     }
   ],
   "infinity.shop.purchased-count": [
     {
       "type": 0,
-      "value": "Куплено: "
+      "value": "В собственности: "
     },
     {
       "type": 1,
@@ -3757,6 +3827,12 @@
       "value": "Квантовое действие не выполнено. Попробуйте ещё раз."
     }
   ],
+  "quantum.hide-maxed": [
+    {
+      "type": 0,
+      "value": "Скрыть улучшения на максимуме"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -3815,6 +3891,22 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "quantum.maxed": [
+    {
+      "type": 0,
+      "value": "Максимум"
+    }
+  ],
+  "quantum.maxed-upgrade": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": максимум"
     }
   ],
   "quantum.mega.all": [
@@ -3942,7 +4034,7 @@
   "quantum.purchase.quantity": [
     {
       "type": 0,
-      "value": "Купить +"
+      "value": "+"
     },
     {
       "type": 1,
@@ -3953,18 +4045,6 @@
     {
       "type": 0,
       "value": "Настройки покупки"
-    }
-  ],
-  "quantum.purchase.short": [
-    {
-      "type": 0,
-      "value": "Купить"
-    }
-  ],
-  "quantum.purchased": [
-    {
-      "type": 0,
-      "value": "Куплено"
     }
   ],
   "quantum.region": [
@@ -6615,6 +6695,12 @@
       "value": " ед."
     }
   ],
+  "simulations.action.black-hole-capped": [
+    {
+      "type": 0,
+      "value": "Чёрная дыра, предел достигнут"
+    }
+  ],
   "simulations.action.black-hole-label": [
     {
       "type": 0,
@@ -6639,6 +6725,12 @@
     {
       "type": 0,
       "value": "Усилить"
+    }
+  ],
+  "simulations.action.capped-label": [
+    {
+      "type": 0,
+      "value": "Предел"
     }
   ],
   "simulations.action.close": [
@@ -6819,6 +6911,12 @@
       "value": "Текущая скорость"
     }
   ],
+  "simulations.details.effect": [
+    {
+      "type": 0,
+      "value": "Эффект"
+    }
+  ],
   "simulations.details.inactive-multiplier": [
     {
       "type": 0,
@@ -6945,6 +7043,48 @@
     {
       "type": 0,
       "value": "Множитель скорости"
+    }
+  ],
+  "simulations.details.status": [
+    {
+      "type": 0,
+      "value": "Статус"
+    }
+  ],
+  "simulations.education.advanced-physics.effect": [
+    {
+      "type": 0,
+      "value": "Открывает термоядерные генераторы."
+    }
+  ],
+  "simulations.education.engineering.effect": [
+    {
+      "type": 0,
+      "value": "Позволяет городам производить фабрики."
+    }
+  ],
+  "simulations.education.mathematics.effect": [
+    {
+      "type": 0,
+      "value": "Удваивает выработку энергии солнечными панелями и открывает путь к рельсотронам."
+    }
+  ],
+  "simulations.education.shipping.effect": [
+    {
+      "type": 0,
+      "value": "Удваивает производство фабрик."
+    }
+  ],
+  "simulations.education.world-peace.effect": [
+    {
+      "type": 0,
+      "value": "Удваивает производство ракет ботами."
+    }
+  ],
+  "simulations.education.world-trade.effect": [
+    {
+      "type": 0,
+      "value": "Снова удваивает производство фабрик."
     }
   ],
   "simulations.empty": [
@@ -7341,6 +7481,12 @@
       "value": "Темп стрельбы"
     }
   ],
+  "simulations.progress.next-volley": [
+    {
+      "type": 0,
+      "value": "Следующий залп"
+    }
+  ],
   "simulations.progress.percent": [
     {
       "type": 1,
@@ -7477,6 +7623,12 @@
       "value": "Симуляции"
     }
   ],
+  "simulations.show-formulas-inline": [
+    {
+      "type": 0,
+      "value": "Показывать формулы в карточках"
+    }
+  ],
   "simulations.summary.influence": [
     {
       "type": 0,
@@ -7605,6 +7757,12 @@
     {
       "type": 0,
       "value": "Текущий"
+    }
+  ],
+  "skills.double-click-to-assign": [
+    {
+      "type": 0,
+      "value": "Назначать навыки двойным щелчком"
     }
   ],
   "skills.effect": [
@@ -9801,6 +9959,40 @@
       "value": "Малиновый"
     }
   ],
+  "skills.preset-distribution": [
+    {
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "% рабочих"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "% учёных"
+        }
+      ]
+    }
+  ],
   "skills.preset-name": [
     {
       "type": 0,
@@ -9837,42 +10029,6 @@
       },
       "offset": 0,
       "pluralType": "cardinal"
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "workerValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "workers"
-        },
-        {
-          "type": 0,
-          "value": "% рабочих"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " · "
-    },
-    {
-      "type": 8,
-      "value": "scientistValue",
-      "children": [
-        {
-          "type": 1,
-          "value": "scientists"
-        },
-        {
-          "type": 0,
-          "value": "% учёных"
-        }
-      ]
     }
   ],
   "skills.preset-transfer-failed": [
@@ -10079,6 +10235,16 @@
     {
       "type": 0,
       "value": "«Сверхновая» подавляет весь слой ручных покупок: Авокадо, оба рубежа 50/100, Масштабирование производства и все скорости Роя."
+    }
+  ],
+  "skills.switch-preset": [
+    {
+      "type": 0,
+      "value": "Переключиться на "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.tree": [
@@ -11678,6 +11844,12 @@
       "value": "Лор"
     }
   ],
+  "wiki.category.offline-time": [
+    {
+      "type": 0,
+      "value": "Офлайн-время"
+    }
+  ],
   "wiki.category.other": [
     {
       "type": 0,
@@ -12295,21 +12467,7 @@
   "wiki.other.offline": [
     {
       "type": 0,
-      "value": "Время вдали от игры превращается в валюту "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Время вне игры"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": ". Расходуйте её на одноимённом экране. После отсутствия в течение хотя бы "
+      "value": "После отсутствия не менее "
     },
     {
       "type": 8,
@@ -12323,7 +12481,153 @@
     },
     {
       "type": 0,
-      "value": " появится сводка возвращения."
+      "value": " это время добавляется в запас "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Времени вне игры"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", а не воспроизводится автоматически. Начальная вместимость — "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "один день"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Когда запас полон, его можно потратить, чтобы удвоить вместимость."
+    }
+  ],
+  "wiki.other.offline-accuracy": [
+    {
+      "type": 0,
+      "value": "Во время воспроизведения работают производство, автоматизация и постоянные улучшения, но выполняется не более одного решения автоматизации за обновление. Крупные шаги времени могут пропустить возможности, которые заметили бы короткие обновления; компенсация за них не начисляется. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ручная работа"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " намеренно заморожена во время обработки."
+    }
+  ],
+  "wiki.other.offline-accuracy-title": [
+    {
+      "type": 0,
+      "value": "Что работает при воспроизведении"
+    }
+  ],
+  "wiki.other.offline-processing": [
+    {
+      "type": 0,
+      "value": "Обработка продвигает игру через ту же систему обновлений, что используется при активной игре. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ускорение"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " уменьшает число оставшихся обновлений, сохраняя всю выбранную длительность, но снижает точность ради быстрого результата. Отмена безопасно отбрасывает незавершённую симуляцию и не расходует выбранное время вне игры."
+    }
+  ],
+  "wiki.other.offline-processing-title": [
+    {
+      "type": 0,
+      "value": "Обработка, ускорение и отмена"
+    }
+  ],
+  "wiki.other.offline-results": [
+    {
+      "type": 0,
+      "value": "Завершённый запуск показывает длительность симуляции, оставшийся запас, итоговую точность и фактическое число обновлений. Также отображаются соответствующие приросты Бесконечности, Симуляции и Реальности. Приросты объектов и ботов показываются только без Бесконечности, поскольку сброс и повторное развитие сделали бы простое сравнение до и после вводящим в заблуждение."
+    }
+  ],
+  "wiki.other.offline-results-title": [
+    {
+      "type": 0,
+      "value": "Результаты завершения"
+    }
+  ],
+  "wiki.other.offline-spending": [
+    {
+      "type": 0,
+      "value": "Выберите, сколько накопленного времени потратить, затем выберите "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Быстро"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Сбалансированно"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " или "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Точно"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Эти режимы используют всё больше игровых обновлений. Точный режим лучше отслеживает краткосрочную автоматизацию, а быстрый завершается раньше."
+    }
+  ],
+  "wiki.other.offline-spending-title": [
+    {
+      "type": 0,
+      "value": "Выбор времени и точности"
     }
   ],
   "wiki.other.offline-title": [

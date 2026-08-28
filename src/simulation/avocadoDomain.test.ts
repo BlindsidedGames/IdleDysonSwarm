@@ -8,6 +8,7 @@ import {
   deriveAvocadoMultiplier,
   feedAllToAvocado,
 } from './avocadoDomain'
+import { bitDecrement } from './numeric'
 
 const fixture = readFileSync(
   new URL(
@@ -28,8 +29,8 @@ function state(): CanonicalGameStateV1 {
       points: 50n,
       spentPoints: 8n,
     },
-    reality: { ...source.reality, influence: 100n },
-    dream: { ...source.dream, strangeMatter: 1_000n },
+    reality: { ...source.reality, influence: 100 },
+    dream: { ...source.dream, strangeMatter: 1_000 },
     avocado: {
       unlocked: true,
       infinityPoints: 0,
@@ -93,7 +94,7 @@ describe('canonical Avocado domain', () => {
       accepted: true,
       changed: true,
       code: 'fed',
-      amount: 42n,
+      amount: 42,
     })
     expect(result.state.infinity.points).toBe(8n)
     expect(result.state.infinity.spentPoints).toBe(8n)
@@ -104,17 +105,70 @@ describe('canonical Avocado domain', () => {
   test('drains all Influence and Strange Matter atomically', () => {
     const source = state()
     const influence = feedAllToAvocado(source, 'influence')
-    expect(influence.amount).toBe(100n)
-    expect(influence.state.reality.influence).toBe(0n)
+    expect(influence.amount).toBe(100)
+    expect(influence.state.reality.influence).toBe(0)
     expect(influence.state.avocado.influence).toBe(100)
 
     const matter = feedAllToAvocado(
       influence.state,
       'strange-matter',
     )
-    expect(matter.amount).toBe(1_000n)
-    expect(matter.state.dream.strangeMatter).toBe(0n)
+    expect(matter.amount).toBe(1_000)
+    expect(matter.state.dream.strangeMatter).toBe(0)
     expect(matter.state.avocado.strangeMatter).toBe(1_000)
+  })
+
+  test('feeds continuous resources near the double ceiling', () => {
+    const source = state()
+    const enormous = bitDecrement(Number.MAX_VALUE)
+    const result = feedAllToAvocado({
+      ...source,
+      dream: { ...source.dream, strangeMatter: enormous },
+    }, 'strange-matter')
+
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      amount: enormous,
+    })
+    expect(result.state.dream.strangeMatter).toBe(0)
+    expect(result.state.avocado.strangeMatter).toBe(enormous)
+  })
+
+  test('preserves resources when the Avocato accumulator is already saturated', () => {
+    const source = state()
+    const result = feedAllToAvocado({
+      ...source,
+      avocado: { ...source.avocado, strangeMatter: Number.MAX_VALUE },
+    }, 'strange-matter')
+
+    expect(result).toMatchObject({
+      accepted: false,
+      changed: false,
+      code: 'output-maxed',
+    })
+    expect(result.state.dream.strangeMatter).toBe(1_000)
+  })
+
+  test('partially drains a continuous source when only part fits', () => {
+    const source = state()
+    const available = 1e308
+    const current = 1e308
+    const result = feedAllToAvocado({
+      ...source,
+      dream: { ...source.dream, strangeMatter: available },
+      avocado: { ...source.avocado, strangeMatter: current },
+    }, 'strange-matter')
+
+    const credited = Number.MAX_VALUE - current
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'fed',
+      amount: credited,
+    })
+    expect(result.state.avocado.strangeMatter).toBe(Number.MAX_VALUE)
+    expect(result.state.dream.strangeMatter).toBe(available - credited)
   })
 
   test('rejects locked and empty feeds without mutation', () => {
@@ -132,7 +186,7 @@ describe('canonical Avocado domain', () => {
 
     const empty = {
       ...source,
-      reality: { ...source.reality, influence: 0n },
+      reality: { ...source.reality, influence: 0 },
     }
     expect(feedAllToAvocado(empty, 'influence')).toMatchObject({
       accepted: false,

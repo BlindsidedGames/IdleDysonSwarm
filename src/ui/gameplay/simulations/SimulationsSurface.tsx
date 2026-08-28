@@ -1,6 +1,5 @@
 import {
   Fragment,
-  useCallback,
   useEffect,
   useId,
   useRef,
@@ -8,7 +7,6 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
-import { createPortal } from 'react-dom'
 import {
   useIntl,
   type IntlShape,
@@ -29,13 +27,19 @@ import type {
   DreamTimerId,
   DreamTimerProductionFact,
 } from '../../../simulation/dreamFoundationalInformation'
+import { DREAM_PRODUCER_COST_EXPONENT } from '../../../simulation/dreamFoundationalInformation'
 import type { CanonicalDreamDerivedFacts } from '../../../simulation/canonicalDreamDerivedFacts'
-import type { DreamSpaceAgePurchase } from '../../../simulation/dreamSpaceAge'
+import {
+  DREAM_SPACE_AGE_COST_EXPONENT,
+  type DreamSpaceAgePurchase,
+} from '../../../simulation/dreamSpaceAge'
+import { buyXCost, maxAffordable } from '../../../simulation/transactions'
 import {
   Button,
   CollapsibleSection,
   FacilityCard,
   InlineImageSymbol,
+  ProgressControlsPanel,
 } from '../../components'
 import influenceSymbol from '../../assets/symbol-influence.png'
 import strangeMatterSymbol from '../../assets/symbol-strange-matter.png'
@@ -49,6 +53,7 @@ import {
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import { readyDysonMessages } from '../dyson/messages'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { simulationsMessages as messages } from './messages'
 import './simulations.css'
@@ -88,6 +93,8 @@ const SPACE_AGE_PURCHASE_QUANTITIES = Object.freeze([
 
 const RESERVOIR_RATE_SMOOTHING = 0.25
 const RESERVOIR_IDLE_TIMEOUT_MS = 500
+export const SIMULATION_FORMULAS_STORAGE_KEY =
+  'idle-dyson-swarm.simulations.show-formulas'
 
 export interface SimulationsCommandAvailability {
   readonly purchaseFoundational: boolean
@@ -101,7 +108,7 @@ export interface SimulationsSurfaceProps {
   readonly facts: FrontendSimulationsDerivedFacts
   readonly progression: FrontendCanonicalProgression['dream']
   readonly previews: FrontendGameplayPreviews['dream']
-  readonly influence: bigint
+  readonly influence: number
   readonly activeDoubleTimeRate: number
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
   readonly onSpaceAgePurchaseQuantityChange?: (
@@ -132,6 +139,24 @@ export function SimulationsSurface({
 }: SimulationsSurfaceProps) {
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
+  const purchaseSettingsId = useId()
+  const [purchaseSettingsOpen, setPurchaseSettingsOpen] = useState(false)
+  const [showFormulas, setShowFormulas] = useState(() => {
+    try {
+      return localStorage.getItem(SIMULATION_FORMULAS_STORAGE_KEY) === 'true'
+    } catch {
+      return false
+    }
+  })
+
+  const updateShowFormulas = (next: boolean): void => {
+    setShowFormulas(next)
+    try {
+      localStorage.setItem(SIMULATION_FORMULAS_STORAGE_KEY, String(next))
+    } catch {
+      // Device-local presentation persistence must never block gameplay.
+    }
+  }
 
   if (!facts.live.production.ok) {
     return (
@@ -169,57 +194,89 @@ export function SimulationsSurface({
       aria-label={intl.formatMessage(messages.region)}
       data-era={facts.currentEra}
     >
-      <header className="simulations-surface__summary">
-        <strong>
-          {intl.formatMessage(messages.simulation, {
-            value: formatGameNumber(locale, facts.resets.count),
-          })}
-        </strong>
-        <strong
-          className="simulations-surface__influence"
-          aria-label={intl.formatMessage(messages.influence, {
-            value: formatGameNumber(locale, influence),
-          })}
-        >
-          <InlineImageSymbol
-            src={influenceSymbol}
-            symbol="influence"
-            tint
-          />
-          <span>{renderSimulationText(highlightedNumber(locale, influence))}</span>
-        </strong>
-      </header>
-
       <div className="simulations-surface__scroll-region">
-        {facts.eras.spaceAge.visible ? (
-          <div
-            className="simulations-purchase-quantity"
-            role="group"
-            aria-label={intl.formatMessage(messages.purchaseAmount)}
-          >
-            {SPACE_AGE_PURCHASE_QUANTITIES.map((quantity) => (
-              <button
-                key={quantity}
-                type="button"
-                aria-pressed={spaceAgePurchaseQuantity === quantity}
-                onClick={() => onSpaceAgePurchaseQuantityChange(quantity)}
-              >
-                {quantity === 'max'
-                  ? intl.formatMessage(messages.buyMax)
-                  : intl.formatMessage(messages.buyQuantity, { quantity })}
-              </button>
-            ))}
-          </div>
-        ) : null}
         {categoryGroups.map((group) => (
           <SimulationCategoryGroup
             key={group.id}
             group={group}
             reducedMotion={reducedMotion}
+            showFormulas={showFormulas}
             dispatchPlayer={dispatchPlayer}
           />
         ))}
       </div>
+
+      <footer className="simulations-surface__footer">
+        <ProgressControlsPanel
+          ariaLabel={intl.formatMessage(readyDysonMessages.purchaseSettings)}
+          className="simulations-surface__control-panel"
+          expanded={purchaseSettingsOpen}
+          controlsId={purchaseSettingsId}
+          settingsLabel={intl.formatMessage(readyDysonMessages.purchaseSettings)}
+          onExpandedChange={setPurchaseSettingsOpen}
+          summary={(
+            <div className="simulations-surface__summary">
+              <strong>
+                {intl.formatMessage(messages.simulation, {
+                  value: formatNumber(locale, facts.resets.count, {
+                    maximumFractionDigits: 0,
+                    useGrouping: false,
+                  }),
+                })}
+              </strong>
+              <strong
+                className="simulations-surface__influence"
+                aria-label={intl.formatMessage(messages.influence, {
+                  value: formatGameNumber(locale, influence),
+                })}
+              >
+                <InlineImageSymbol
+                  src={influenceSymbol}
+                  symbol="influence"
+                  tint
+                />
+                <span>
+                  {renderSimulationText(highlightedNumber(locale, influence))}
+                </span>
+              </strong>
+            </div>
+          )}
+        >
+          <div className="simulations-surface__settings">
+            <span className="simulations-surface__settings-title">
+              {intl.formatMessage(messages.purchaseAmount)}
+            </span>
+            <div
+              className="simulations-purchase-quantity"
+              role="group"
+              aria-label={intl.formatMessage(messages.purchaseAmount)}
+            >
+              {SPACE_AGE_PURCHASE_QUANTITIES.map((quantity) => (
+                <button
+                  key={quantity}
+                  type="button"
+                  aria-pressed={spaceAgePurchaseQuantity === quantity}
+                  onClick={() => onSpaceAgePurchaseQuantityChange(quantity)}
+                >
+                  {quantity === 'max'
+                    ? intl.formatMessage(messages.buyMax)
+                    : intl.formatMessage(messages.buyQuantity, { quantity })}
+                </button>
+              ))}
+            </div>
+            <label className="simulations-surface__show-formulas">
+              <input
+                type="checkbox"
+                checked={showFormulas}
+                onChange={(event) =>
+                  updateShowFormulas(event.currentTarget.checked)
+                }
+              />
+              <span>{intl.formatMessage(messages.showFormulasInline)}</span>
+            </label>
+          </div>
+        </ProgressControlsPanel>
+      </footer>
     </section>
   )
 }
@@ -244,6 +301,7 @@ interface SimulationPanelModel {
   readonly count?: SimulationText
   readonly status: SimulationText
   readonly description: string
+  readonly complete?: boolean
   readonly progress: readonly SimulationProgressModel[]
   readonly details: readonly SimulationDetailRowModel[]
   readonly action?: {
@@ -428,10 +486,12 @@ function formatSimulationMessage(
 function SimulationCategoryGroup({
   group,
   reducedMotion,
+  showFormulas,
   dispatchPlayer,
 }: {
   readonly group: SimulationCategoryGroupModel
   readonly reducedMotion: boolean
+  readonly showFormulas: boolean
   readonly dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer']
 }) {
   return (
@@ -453,28 +513,80 @@ function SimulationCategoryGroup({
       }
     >
       {group.categories.map((category) => (
-        <section
-          className="simulation-category__subsection"
-          data-category={category.id}
+        <SimulationCategorySubsection
           key={category.id}
-        >
-          {category.id === 'education' ? (
-            <h3>{category.title}</h3>
-          ) : null}
-          <ol>
-            {category.panels.map((panel) => (
-              <li key={panel.id}>
-                <SimulationPanelCard
-                  panel={panel}
-                  reducedMotion={reducedMotion}
-                  headingLevel={category.id === 'education' ? 'h4' : 'h3'}
-                  dispatchPlayer={dispatchPlayer}
-                />
-              </li>
-            ))}
-          </ol>
-        </section>
+          category={category}
+          reducedMotion={reducedMotion}
+          showFormulas={showFormulas}
+          dispatchPlayer={dispatchPlayer}
+        />
       ))}
+    </CollapsibleSection>
+  )
+}
+
+function SimulationCategorySubsection({
+  category,
+  reducedMotion,
+  showFormulas,
+  dispatchPlayer,
+}: {
+  readonly category: SimulationCategoryModel
+  readonly reducedMotion: boolean
+  readonly showFormulas: boolean
+  readonly dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer']
+}) {
+  const intl = useIntl()
+  const educationComplete =
+    category.id === 'education' &&
+    category.panels.length > 0 &&
+    category.panels.every((panel) => panel.complete === true)
+  const panels = (
+    <ol>
+      {category.panels.map((panel) => (
+        <li key={panel.id}>
+          <SimulationPanelCard
+            panel={panel}
+            reducedMotion={reducedMotion}
+            showFormulas={showFormulas}
+            headingLevel={category.id === 'education' ? 'h4' : 'h3'}
+            dispatchPlayer={dispatchPlayer}
+          />
+        </li>
+      ))}
+    </ol>
+  )
+
+  if (category.id !== 'education') {
+    return (
+      <section
+        className="simulation-category__subsection"
+        data-category={category.id}
+      >
+        {panels}
+      </section>
+    )
+  }
+
+  return (
+    <CollapsibleSection
+      key={educationComplete ? 'complete' : 'active'}
+      className="simulation-category__subsection simulation-category__subsection--collapsible"
+      contentClassName="simulation-category__subsection-content"
+      headingLevel="h3"
+      storageKey={`simulations.live.education.${educationComplete ? 'complete' : 'active'}`}
+      defaultExpanded={!educationComplete}
+      ariaLabel={category.title}
+      title={(
+        <span className="simulation-category__subsection-title">
+          <span>{category.title}</span>
+          {educationComplete ? (
+            <span>{intl.formatMessage(messages.complete)}</span>
+          ) : null}
+        </span>
+      )}
+    >
+      {panels}
     </CollapsibleSection>
   )
 }
@@ -482,80 +594,21 @@ function SimulationCategoryGroup({
 function SimulationPanelCard({
   panel,
   reducedMotion,
+  showFormulas,
   headingLevel,
   dispatchPlayer,
 }: {
   readonly panel: SimulationPanelModel
   readonly reducedMotion: boolean
+  readonly showFormulas: boolean
   readonly headingLevel: 'h3' | 'h4'
   readonly dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer']
 }) {
   const intl = useIntl()
-  const statusInline = panel.era === 'space-age'
-  const dialogTitleId = useId()
+  const statusInline = panel.era === 'space-age' || panel.complete === true
   const pendingRef = useRef(false)
-  const detailsButtonRef = useRef<HTMLButtonElement>(null)
-  const detailsBackdropRef = useRef<HTMLDivElement>(null)
-  const detailsDialogRef = useRef<HTMLElement>(null)
-  const closeButtonRef = useRef<HTMLButtonElement>(null)
-  const [detailsOpen, setDetailsOpen] = useState(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
-
-  const closeDetails = useCallback((): void => {
-    setDetailsOpen(false)
-  }, [])
-
-  useEffect(() => {
-    if (!detailsOpen) return
-    const returnFocus = detailsButtonRef.current
-    const backgroundSiblings = Array.from(document.body.children)
-      .filter(
-        (element): element is HTMLElement =>
-          element instanceof HTMLElement &&
-          element !== detailsBackdropRef.current,
-      )
-      .map((element) => ({
-        element,
-        hadInertAttribute: element.hasAttribute('inert'),
-      }))
-    for (const { element } of backgroundSiblings) {
-      element.setAttribute('inert', '')
-    }
-    closeButtonRef.current?.focus()
-
-    const handleKeyDown = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        closeDetails()
-        return
-      }
-      if (event.key !== 'Tab') return
-
-      const focusable = detailsDialogRef.current?.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      )
-      if (!focusable || focusable.length === 0) return
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      for (const { element, hadInertAttribute } of backgroundSiblings) {
-        if (!hadInertAttribute) element.removeAttribute('inert')
-      }
-      returnFocus?.focus({ preventScroll: true })
-    }
-  }, [closeDetails, detailsOpen])
 
   const runAction = async (): Promise<void> => {
     if (!panel.action || panel.action.disabled || pendingRef.current) return
@@ -573,71 +626,75 @@ function SimulationPanelCard({
     }
   }
 
-  const progress = (
-    <div className="simulation-panel-card__progress-list">
-      {panel.progress.map((item) => (
-        <SimulationProgress
-          key={item.label}
-          progress={item}
-          reducedMotion={reducedMotion}
-        />
-      ))}
-    </div>
-  )
-  const actions = (
-    <div className="simulation-panel-card__actions">
-      {panel.action ? (
-        <Button
-          variant={panel.action.danger ? 'danger' : 'primary'}
-          state={pending ? 'pending' : failed ? 'failure' : 'idle'}
-          disabled={panel.action.disabled}
-          aria-label={panel.action.accessibleLabel}
-          onClick={() => void runAction()}
-        >
-          <span className="simulation-panel-card__action-primary">
-            {panel.action.primaryLabel}
-          </span>
-          {panel.action.influenceCost ? (
-            <span className="simulation-panel-card__action-cost">
-              <InlineImageSymbol
-                src={influenceSymbol}
-                className="simulation-panel-card__influence-symbol"
-                symbol="influence"
-                tint
-              />
-              <span>{panel.action.influenceCost}</span>
-            </span>
-          ) : panel.action.strangeMatterReward ? (
-            <span className="simulation-panel-card__action-reward">
-              <InlineImageSymbol
-                src={strangeMatterSymbol}
-                symbol="strange-matter"
-                tint
-              />
-              <span>{panel.action.strangeMatterReward}</span>
-            </span>
-          ) : panel.action.secondaryLabel ? (
-            <span className="simulation-panel-card__action-secondary">
-              {panel.action.secondaryLabel}
-            </span>
-          ) : null}
-        </Button>
+  const progress = panel.progress.length > 0 ||
+    (showFormulas && panel.details.length > 0) ? (
+    <div className="simulation-panel-card__progress-content">
+      {panel.progress.length > 0 ? (
+        <div className="simulation-panel-card__progress-list">
+          {panel.progress.map((item) => (
+            <SimulationProgress
+              key={item.label}
+              progress={item}
+              reducedMotion={reducedMotion}
+            />
+          ))}
+        </div>
       ) : null}
-      <button
-        ref={detailsButtonRef}
-        type="button"
-        className="simulation-panel-card__details"
-        onClick={() => setDetailsOpen(true)}
-      >
-        {intl.formatMessage(messages.details)}
-      </button>
+      {showFormulas && panel.details.length > 0 ? (
+        <dl className="simulation-panel-card__formulae">
+          {panel.details.map((detail) => (
+            <div key={detail.label}>
+              <dt>{detail.label}</dt>
+              <dd>{renderSimulationText(detail.value)}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
     </div>
-  )
+  ) : null
+  const actions = panel.action ? (
+    <div className="simulation-panel-card__actions">
+      <Button
+        variant={panel.action.danger ? 'danger' : 'primary'}
+        state={pending ? 'pending' : failed ? 'failure' : 'idle'}
+        disabled={panel.action.disabled}
+        aria-label={panel.action.accessibleLabel}
+        onClick={() => void runAction()}
+      >
+        <span className="simulation-panel-card__action-primary">
+          {panel.action.primaryLabel}
+        </span>
+        {panel.action.influenceCost ? (
+          <span className="simulation-panel-card__action-cost">
+            <InlineImageSymbol
+              src={influenceSymbol}
+              className="simulation-panel-card__influence-symbol"
+              symbol="influence"
+              tint
+            />
+            <span>{panel.action.influenceCost}</span>
+          </span>
+        ) : panel.action.strangeMatterReward ? (
+          <span className="simulation-panel-card__action-reward">
+            <InlineImageSymbol
+              src={strangeMatterSymbol}
+              symbol="strange-matter"
+              tint
+            />
+            <span>{panel.action.strangeMatterReward}</span>
+          </span>
+        ) : panel.action.secondaryLabel ? (
+          <span className="simulation-panel-card__action-secondary">
+            {panel.action.secondaryLabel}
+          </span>
+        ) : null}
+      </Button>
+    </div>
+  ) : null
 
   return (
-    <>
       <FacilityCard
-        className={`simulation-panel-card simulation-panel-card--${panel.era}${statusInline ? ' simulation-panel-card--inline-status' : ''}`}
+        className={`simulation-panel-card simulation-panel-card--${panel.era}${statusInline ? ' simulation-panel-card--inline-status' : ''}${panel.complete ? ' simulation-panel-card--complete' : ''}${panel.action ? '' : ' simulation-panel-card--no-action'}`}
         headingLevel={headingLevel}
         title={
           <>
@@ -674,49 +731,6 @@ function SimulationPanelCard({
           ) : undefined
         }
       />
-
-      {detailsOpen ? (
-        createPortal(<div
-          ref={detailsBackdropRef}
-          className="simulation-details__backdrop"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.currentTarget === event.target) closeDetails()
-          }}
-        >
-          <section
-            ref={detailsDialogRef}
-            className={`simulation-details simulation-details--${panel.era}`}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={dialogTitleId}
-          >
-            <header>
-              <h2 id={dialogTitleId}>{panel.title}</h2>
-              <button
-                ref={closeButtonRef}
-                type="button"
-                aria-label={intl.formatMessage(messages.close)}
-                onClick={closeDetails}
-              >
-                <span
-                  className="simulation-details__close-icon"
-                  aria-hidden="true"
-                />
-              </button>
-            </header>
-            <dl className="simulation-details__facts">
-              {panel.details.map((detail) => (
-                <div key={detail.label}>
-                  <dt>{detail.label}</dt>
-                  <dd>{renderSimulationText(detail.value)}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        </div>, document.body)
-      ) : null}
-    </>
   )
 }
 
@@ -993,7 +1007,7 @@ function createPanelModels(input: {
   readonly progression: FrontendCanonicalProgression['dream']
   readonly previews: FrontendGameplayPreviews['dream']
   readonly commandAvailability: SimulationsCommandAvailability
-  readonly influence: bigint
+  readonly influence: number
   readonly cyclePresentation: CyclePresentationMode
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
 }): ReadonlyMap<PanelId, SimulationPanelModel> {
@@ -1085,37 +1099,39 @@ function createPanelModels(input: {
     if (isEducationPanel(id)) {
       const educationId = toEducationId(id)
       const education = facts.live.education[educationId]
-      const fraction = education.researchTime > 0
-        ? education.progress / education.researchTime
-        : education.complete ? 1 : 0
+      const fraction = education.complete
+        ? 1
+        : education.researchTime > 0
+          ? education.progress / education.researchTime
+          : 0
+      const educationStatus = intl.formatMessage(
+        education.complete
+          ? messages.complete
+          : education.active
+            ? messages.researching
+            : messages.notStarted,
+      )
       output.set(id, {
         id,
         era: 'information',
         title: intl.formatMessage(panelTitleMessage(id)),
-        status: intl.formatMessage(
-          education.complete
-            ? messages.complete
-            : education.active
-              ? messages.researching
-              : messages.notStarted,
-        ),
-        description: intl.formatMessage(messages.educationDescription),
-        progress: education.complete || education.active
+        status: educationStatus,
+        description: intl.formatMessage(educationEffectMessage(educationId)),
+        complete: education.complete,
+        progress: education.active && !education.complete
           ? [
-              ...(education.active && !education.complete
-                ? [{
-                    label: intl.formatMessage(messages.timeRemaining),
-                    valueText: formatGameDuration(
-                      locale,
-                      Math.max(
-                        0,
-                        education.researchTime - education.progress,
-                      ),
-                    ),
-                    fraction,
-                    showBar: false,
-                  }]
-                : []),
+              {
+                label: intl.formatMessage(messages.timeRemaining),
+                valueText: formatGameDuration(
+                  locale,
+                  Math.max(
+                    0,
+                    education.researchTime - education.progress,
+                  ),
+                ),
+                fraction,
+                showBar: false,
+              },
               {
                 label: intl.formatMessage(messages.researchProgress),
                 valueText: percentRich(fraction),
@@ -1123,23 +1139,7 @@ function createPanelModels(input: {
               },
             ]
           : [],
-        details: [
-          {
-            label: intl.formatMessage(messages.detailBaseDuration),
-            value: formatGameDuration(locale, education.researchTime),
-          },
-          {
-            label: intl.formatMessage(messages.detailRemainingDuration),
-            value: formatGameDuration(
-              locale,
-              Math.max(0, education.researchTime - education.progress),
-            ),
-          },
-          {
-            label: intl.formatMessage(messages.detailCurrentProgress),
-            value: percentRich(fraction),
-          },
-        ],
+        details: [],
         action: education.complete || education.active
           ? undefined
           : educationAction(educationId, input, display),
@@ -1204,7 +1204,6 @@ function createPanelModels(input: {
             : 'fusion'
     const count = countKey ? resources[countKey] : undefined
     const progress: SimulationProgressModel[] = []
-    let recordStoredPanels: bigint | undefined
     let status: SimulationText = count !== undefined
       ? intl.formatMessage(messages.owned, { value: display(count) })
       : ''
@@ -1231,12 +1230,9 @@ function createPanelModels(input: {
         activeThroughput.panelsPerVolley > 0n
           ? activeThroughput.panelsPerVolley
           : BigInt(activeThroughput.shotsPerVolley ?? 10)
-      const storedRecord = facts.live.railgun.highestStoredPanels ??
-        resources.dysonPanels
       const factoryCycleSeconds = factory.progressPerSecond > 0
         ? factory.durationSeconds / factory.progressPerSecond
         : 0
-      recordStoredPanels = storedRecord
       progress.push(productionProgress(
         factory,
         cyclePresentation,
@@ -1305,22 +1301,32 @@ function createPanelModels(input: {
         },
       })
       progress.push({
-        label: intl.formatMessage(messages.railgunPayload),
-        valueText: formatSimulationMessage(intl, messages.railgunPayloadValue, {
-          railguns: displayRich(railgun.mechanicalPayload),
-          perRound: displayRich(railgun.panelsPerShot),
-          rounds: displayRich(railgun.shotsPerVolley),
+        label: intl.formatMessage(
+          facts.live.railgun.firing
+            ? messages.firingProgress
+            : messages.nextVolley,
+        ),
+        valueText: formatSimulationMessage(intl, messages.shotsRemaining, {
+          value: displayRich(
+            facts.live.railgun.firing
+              ? facts.live.railgun.shotsRemaining
+              : railgun.shotsPerVolley,
+          ),
         }),
-        fraction:
-          railgun.mechanicalPayload /
-          Math.max(1, railgun.payloadCapacity),
+        fraction: 0,
         showBar: false,
       })
       progress.push({
-        label: intl.formatMessage(messages.firingProgress),
-        valueText: formatSimulationMessage(intl, messages.shotsRemaining, {
-          value: displayRich(facts.live.railgun.shotsRemaining),
-        }),
+        label: intl.formatMessage(messages.railgunPayload),
+        valueText: formatSimulationMessage(
+          intl,
+          messages.railgunPayloadValue,
+          {
+            railguns: displayRich(railgun.mechanicalPayload),
+            perRound: displayRich(railgun.panelsPerShot),
+            rounds: displayRich(railgun.shotsPerVolley),
+          },
+        ),
         fraction: 0,
         showBar: false,
       })
@@ -1332,7 +1338,6 @@ function createPanelModels(input: {
         ),
       })
     }
-    const details = spaceAgeDetailRows(id, status, progress, intl)
     output.set(id, {
       id,
       era: 'space-age',
@@ -1341,15 +1346,7 @@ function createPanelModels(input: {
       status,
       description: intl.formatMessage(panelDescriptionMessage(id)),
       progress,
-      details: recordStoredPanels === undefined
-        ? details
-        : [
-            ...details,
-            {
-              label: intl.formatMessage(messages.recordStoredPanels),
-              value: displayRich(recordStoredPanels),
-            },
-          ],
+      details: [],
       action: spaceAgeAction(id, input, display),
     })
   }
@@ -1399,22 +1396,6 @@ function timerDetailRows(
   intl: IntlShape,
   display: (value: number | bigint) => string,
 ): readonly SimulationDetailRowModel[] {
-  const outputs = Object.entries(timer.outputPerCycle)
-    .filter(([, amount]) => amount > 0)
-  const output = outputs.map(([resource, amount]) =>
-    intl.formatMessage(messages.detailOutputPerCycle, {
-      value: display(amount),
-      resource: intl.formatMessage(panelTitleMessage(resource as PanelId)),
-    }),
-  ).join(' + ')
-  const currentRate = Object.entries(timer.outputPerSecond)
-    .filter(([, amount]) => amount > 0)
-    .map(([resource, amount]) =>
-    intl.formatMessage(messages.detailRatePerSecond, {
-      value: display(amount),
-      resource: intl.formatMessage(panelTitleMessage(resource as PanelId)),
-    }),
-  ).join(' + ')
   const speedMultiplier = timer.advanceEnabled
     ? intl.formatMessage(
         timer.multiplierFormula === 'logarithmic-source'
@@ -1430,20 +1411,9 @@ function timerDetailRows(
     : intl.formatMessage(messages.detailInactiveMultiplier)
 
   return [
-    { label: intl.formatMessage(messages.detailOutput), value: output },
-    {
-      label: intl.formatMessage(messages.detailBaseDuration),
-      value: intl.formatMessage(messages.detailSeconds, {
-        value: display(timer.durationSeconds),
-      }),
-    },
     {
       label: intl.formatMessage(messages.detailSpeedMultiplier),
       value: speedMultiplier,
-    },
-    {
-      label: intl.formatMessage(messages.detailCurrentRate),
-      value: currentRate,
     },
   ]
 }
@@ -1467,28 +1437,6 @@ function rocketConversionDetailRows(
   ]
 }
 
-function spaceAgeDetailRows(
-  id: PanelId,
-  status: SimulationText,
-  progress: readonly SimulationProgressModel[],
-  intl: IntlShape,
-): readonly SimulationDetailRowModel[] {
-  const rows: SimulationDetailRowModel[] = status
-    ? [{
-        label: intl.formatMessage(
-          id === 'swarm-stats'
-            ? messages.detailCurrentRate
-            : messages.detailCurrentOutput,
-        ),
-        value: status,
-      }]
-    : []
-  for (const item of progress) {
-    rows.push({ label: item.label, value: item.valueText })
-  }
-  return rows
-}
-
 function foundationalAction(
   id: PanelId,
   input: Parameters<typeof createPanelModels>[0],
@@ -1505,18 +1453,50 @@ function foundationalAction(
   if (!purchase) return undefined
   const preview = input.previews.foundational.find((item) => item.purchase === purchase)
   if (!preview) return undefined
-  const quantity = purchase === 'hunters'
+  const perBatchQuantity = purchase === 'hunters'
     ? input.progression.huntersPerPurchase
     : purchase === 'gatherers'
       ? input.progression.gatherersPerPurchase
       : 1
   const isBoost = purchase.endsWith('-boost')
-  const free = purchase === 'community-boost' && preview.cost === 0n
+  const scalable = purchase === 'hunters' || purchase === 'gatherers'
+  const authoredBaseCost = purchase === 'hunters'
+    ? Number(input.progression.parameters.hunterCost)
+    : purchase === 'gatherers'
+      ? Number(input.progression.parameters.gathererCost)
+      : Number(preview.cost)
+  const baseCost = Number.isFinite(authoredBaseCost) && authoredBaseCost > 0
+    ? authoredBaseCost
+    : Number(preview.cost)
+  const purchasedBatches = scalable
+    ? input.progression.purchaseBatches?.[purchase] ?? 0n
+    : 0n
+  const batches = scalable
+    ? resolveSimulationPurchaseQuantity(
+        input.spaceAgePurchaseQuantity,
+        input.influence,
+        baseCost,
+        DREAM_PRODUCER_COST_EXPONENT,
+        purchasedBatches,
+      )
+    : 1
+  const quantity = typeof perBatchQuantity === 'bigint'
+    ? perBatchQuantity * BigInt(batches)
+    : perBatchQuantity * batches
+  const totalCost = scalable
+    ? quoteSimulationPurchaseCost(
+        batches,
+        baseCost,
+        DREAM_PRODUCER_COST_EXPONENT,
+        purchasedBatches,
+      )
+    : preview.cost
+  const free = purchase === 'community-boost' && preview.cost === 0
   const label = input.intl.formatMessage(
     free ? messages.freeBoost : isBoost ? messages.boost : messages.purchase,
     {
       quantity: formatWholeQuantity(input.locale, quantity),
-      cost: display(preview.cost),
+      cost: display(totalCost),
     },
   )
   return {
@@ -1527,10 +1507,19 @@ function foundationalAction(
     secondaryLabel: free
       ? input.intl.formatMessage(messages.freeLabel)
       : undefined,
-    influenceCost: free ? undefined : display(preview.cost),
+    influenceCost: free ? undefined : display(totalCost),
     accessibleLabel: label.replace('\n', ', '),
-    command: { kind: 'dream.purchase-foundational', purchase },
-    disabled: !preview.eligible || !input.commandAvailability.purchaseFoundational,
+    command: {
+      kind: 'dream.purchase-foundational',
+      purchase,
+      ...(scalable ? { quantity: batches } : {}),
+    },
+    disabled:
+      batches < 1 ||
+      totalCost <= 0 ||
+      totalCost > input.influence ||
+      !preview.eligible ||
+      !input.commandAvailability.purchaseFoundational,
   }
 }
 
@@ -1557,14 +1546,20 @@ function spaceAgeAction(
   display: (value: number | bigint) => string,
 ): SimulationPanelModel['action'] {
   if (id === 'swarm-stats') {
-    const label = input.intl.formatMessage(messages.blackHole, {
-      reward: display(input.facts.resets.blackHole.requestedReward),
-    })
+    const capped = input.facts.resets.blackHole.rewardCapped === true
+    const label = capped
+      ? input.intl.formatMessage(messages.blackHoleCapped)
+      : input.intl.formatMessage(messages.blackHole, {
+          reward: display(input.facts.resets.blackHole.requestedReward),
+        })
     return {
       primaryLabel: input.intl.formatMessage(messages.blackHoleLabel),
-      strangeMatterReward: display(
-        input.facts.resets.blackHole.requestedReward,
-      ),
+      strangeMatterReward: capped
+        ? undefined
+        : display(input.facts.resets.blackHole.requestedReward),
+      secondaryLabel: capped
+        ? input.intl.formatMessage(messages.cappedLabel)
+        : undefined,
       accessibleLabel: label.replace('\n', ', '),
       command: { kind: 'dream.request-black-hole-reset' },
       disabled:
@@ -1581,12 +1576,28 @@ function spaceAgeAction(
   if (!purchase) return undefined
   const preview = input.previews.spaceAge.find((item) => item.purchase === purchase)
   if (!preview) return undefined
-  const quantity = resolveSpaceAgePurchaseQuantity(
+  const purchasedBatches = input.progression.purchaseBatches?.[purchase] ?? 0n
+  const authoredBaseCost = Number(
+    purchase === 'solar'
+      ? input.progression.parameters.solarCost
+      : input.progression.parameters.fusionCost,
+  )
+  const baseCost = Number.isFinite(authoredBaseCost) && authoredBaseCost > 0
+    ? authoredBaseCost
+    : Number(preview.cost)
+  const quantity = resolveSimulationPurchaseQuantity(
     input.spaceAgePurchaseQuantity,
     input.influence,
-    preview.cost,
+    baseCost,
+    DREAM_SPACE_AGE_COST_EXPONENT,
+    purchasedBatches,
   )
-  const totalCost = preview.cost * BigInt(quantity)
+  const totalCost = quoteSimulationPurchaseCost(
+    quantity,
+    baseCost,
+    DREAM_SPACE_AGE_COST_EXPONENT,
+    purchasedBatches,
+  )
   const label = input.intl.formatMessage(messages.purchase, {
     quantity: formatWholeQuantity(input.locale, quantity),
     cost: display(totalCost),
@@ -1600,21 +1611,54 @@ function spaceAgeAction(
     command: { kind: 'dream.purchase-space-age', purchase, quantity },
     disabled:
       quantity < 1 ||
+      totalCost <= 0 ||
+      totalCost > input.influence ||
       !preview.eligible ||
       !input.commandAvailability.purchaseSpaceAge,
   }
 }
 
-function resolveSpaceAgePurchaseQuantity(
+function resolveSimulationPurchaseQuantity(
   selected: SpaceAgePurchaseQuantity,
-  influence: bigint,
-  unitCost: bigint,
+  influence: number,
+  baseCost: number,
+  exponent: number,
+  purchasedBatches: bigint,
 ): number {
   if (selected !== 'max') return selected
-  if (unitCost <= 0n || influence < unitCost) return 0
-  const affordable = influence / unitCost
-  const maximum = BigInt(Number.MAX_SAFE_INTEGER)
-  return Number(affordable > maximum ? maximum : affordable)
+  if (
+    baseCost <= 0 ||
+    influence < baseCost ||
+    purchasedBatches > BigInt(Number.MAX_SAFE_INTEGER)
+  ) return 0
+  return Math.min(
+    Number.MAX_SAFE_INTEGER,
+    Number(maxAffordable(
+      influence,
+      baseCost,
+      exponent,
+      Number(purchasedBatches),
+    )),
+  )
+}
+
+function quoteSimulationPurchaseCost(
+  batches: number,
+  baseCost: number,
+  exponent: number,
+  purchasedBatches: bigint,
+): number {
+  if (
+    !Number.isSafeInteger(batches) ||
+    batches < 1 ||
+    purchasedBatches > BigInt(Number.MAX_SAFE_INTEGER)
+  ) return 0
+  return buyXCost(
+    BigInt(batches),
+    baseCost,
+    exponent,
+    Number(purchasedBatches),
+  )
 }
 
 function formatWholeQuantity(
@@ -1764,6 +1808,20 @@ function toEducationId(id: ReturnTypeGuardEducation): DreamEducationId {
       : id === 'advanced-physics'
         ? 'advancedPhysics'
         : id
+}
+
+function educationEffectMessage(
+  id: DreamEducationId,
+): MessageDescriptor {
+  const map: Record<DreamEducationId, MessageDescriptor> = {
+    engineering: messages.engineeringEffect,
+    shipping: messages.shippingEffect,
+    worldTrade: messages.worldTradeEffect,
+    worldPeace: messages.worldPeaceEffect,
+    mathematics: messages.mathematicsEffect,
+    advancedPhysics: messages.advancedPhysicsEffect,
+  }
+  return map[id]
 }
 
 type ReturnTypeGuardEducation =

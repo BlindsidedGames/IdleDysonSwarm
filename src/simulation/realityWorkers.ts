@@ -8,6 +8,7 @@ import type {
 import {
   addContinuous,
   addDiscrete,
+  CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
   floorToDiscrete,
   multiplyContinuous,
@@ -34,7 +35,7 @@ export interface RealityWorkerAdvanceResult {
   readonly state: CanonicalGameStateV1
   readonly generationPerSecond: number
   readonly workersGenerated: bigint
-  readonly automaticInfluence: bigint
+  readonly automaticInfluence: number
   readonly stalledSeconds: number
 }
 
@@ -48,14 +49,14 @@ export type RealityInfluenceGatherStatus =
 export interface RealityInfluenceGatherResult {
   readonly status: RealityInfluenceGatherStatus
   readonly gathered: boolean
-  readonly amount: bigint
+  readonly amount: number
   readonly state: CanonicalGameStateV1
 }
 
 interface RealitySegmentSummary {
   readonly workersGenerated: bigint
-  readonly automaticInfluence: bigint
-  readonly manualInfluence: bigint
+  readonly automaticInfluence: number
+  readonly manualInfluence: number
   readonly stalledSeconds: number
 }
 
@@ -92,7 +93,7 @@ export function advanceRealityWorkers(
       : state.reality.workersReady
   let influence = state.reality.influence
   let workersGenerated = 0n
-  let automaticInfluence = 0n
+  let automaticInfluence = 0
   let stalledSeconds = 0
 
   if (
@@ -112,20 +113,27 @@ export function advanceRealityWorkers(
         : Math.max(0, generatedExact - Number(completed))
 
     if (state.reality.autoGather) {
-      const influenceCapacity = DISCRETE_MAXIMUM - influence
+      const influenceCapacity = CONTINUOUS_MAXIMUM - influence
       const completeBatches =
         (workersReady + completed) / tuning.workerBatchSize
-      const affordableBatches =
-        influenceCapacity / tuning.workerBatchSize
+      const affordableBatches = floorToDiscrete(
+        influenceCapacity / Number(tuning.workerBatchSize),
+      )
       const gatheredBatches =
         completeBatches < affordableBatches
           ? completeBatches
           : affordableBatches
-      automaticInfluence =
-        gatheredBatches * tuning.workerBatchSize
-      influence += automaticInfluence
+      let gatheredWorkers = gatheredBatches * tuning.workerBatchSize
+      const requestedInfluence = Number(gatheredWorkers)
+      const nextInfluence = addContinuous(influence, requestedInfluence)
+      if (nextInfluence <= influence) {
+        gatheredWorkers = 0n
+      } else {
+        automaticInfluence = requestedInfluence
+        influence = nextInfluence
+      }
       const workersAfterGather =
-        workersReady + completed - automaticInfluence
+        workersReady + completed - gatheredWorkers
       const overflow =
         workersAfterGather > tuning.workerBatchSize
           ? workersAfterGather - tuning.workerBatchSize
@@ -212,29 +220,33 @@ export function gatherRealityInfluence(
     return emptyGather('not-ready', state)
   }
   if (
-    state.reality.influence >
-    DISCRETE_MAXIMUM - tuning.workerBatchSize
+    addContinuous(
+      state.reality.influence,
+      Number(tuning.workerBatchSize),
+    ) <= state.reality.influence
   ) {
     return emptyGather('output-maxed', state)
   }
 
   const summary: RealitySegmentSummary = {
     workersGenerated: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: tuning.workerBatchSize,
+    automaticInfluence: 0,
+    manualInfluence: Number(tuning.workerBatchSize),
     stalledSeconds: 0,
   }
   return {
     status: 'success',
     gathered: true,
-    amount: tuning.workerBatchSize,
+    amount: Number(tuning.workerBatchSize),
     state: {
       ...state,
       reality: {
         ...state.reality,
         workersReady: 0n,
-        influence:
-          state.reality.influence + tuning.workerBatchSize,
+        influence: addContinuous(
+          state.reality.influence,
+          Number(tuning.workerBatchSize),
+        ),
       },
       statistics: recordRealitySegment(
         state.statistics,
@@ -305,8 +317,8 @@ function isValidRealityState(
     reality.universeDesignationCount <= DISCRETE_MAXIMUM &&
     reality.workersReady >= 0n &&
     reality.workersReady <= DISCRETE_MAXIMUM &&
-    reality.influence >= 0n &&
-    reality.influence <= DISCRETE_MAXIMUM &&
+    Number.isFinite(reality.influence) &&
+    reality.influence >= 0 &&
     state.quantum.influenceSpeedBonus >= 0n &&
     state.quantum.influenceSpeedBonus <= DISCRETE_MAXIMUM
   )
@@ -321,7 +333,7 @@ function emptyAdvance(
     state,
     generationPerSecond: 0,
     workersGenerated: 0n,
-    automaticInfluence: 0n,
+    automaticInfluence: 0,
     stalledSeconds: 0,
   }
 }
@@ -333,7 +345,7 @@ function emptyGather(
   return {
     status,
     gathered: false,
-    amount: 0n,
+    amount: 0,
     state,
   }
 }
@@ -409,11 +421,11 @@ function addRealityTotals(
       totals.realityWorkers,
       summary.workersGenerated,
     ),
-    automaticInfluence: addDiscrete(
+    automaticInfluence: addContinuous(
       totals.automaticInfluence,
       summary.automaticInfluence,
     ),
-    manualInfluence: addDiscrete(
+    manualInfluence: addContinuous(
       totals.manualInfluence,
       summary.manualInfluence,
     ),
@@ -440,10 +452,10 @@ function emptyTotals(): SimulationTotalsState {
     aiDreamResets: 0n,
     globalWarmingDreamResets: 0n,
     blackHoleDreamResets: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
-    automaticInfluence: 0n,
-    manualInfluence: 0n,
+    automaticInfluence: 0,
+    manualInfluence: 0,
     realityCapacityStallSeconds: 0,
     simulatedSeconds: 0,
   }
@@ -535,7 +547,7 @@ function prepareWindow(
     infinityCount: 0n,
     infinityPoints: 0n,
     dreamResetCount: 0n,
-    strangeMatter: 0n,
+    strangeMatter: 0,
     realityWorkers: 0n,
   }
 }

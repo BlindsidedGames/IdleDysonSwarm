@@ -1,0 +1,16 @@
+export const GAME_NUMBER_PREFIXES = Object.freeze([
+  '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No',
+  'Dc', 'UDc', 'DDc', 'TDc', 'QaDc', 'QiDc', 'SxDc', 'SpDc',
+  'OcDc', 'NoDc', 'Vg', 'UVg', 'DVg', 'TVg', 'QaVg', 'QiVg',
+  'SxVg', 'SpVg', 'OcVg', 'NoVg', 'Tg', 'UTg', 'DTg', 'TTg',
+  'QaTg', 'QiTg', 'SxTg', 'SpTg', 'OcTg', 'NoTg', 'Qag',
+  'UQag', 'DQag', 'TQag', 'QaQag', 'QiQag', 'SxQag', 'SpQag',
+  'OcQag', 'NoQag', 'Qig', 'UQig', 'DQig', 'TQig', 'QaQig',
+  'QiQig', 'SxQig', 'SpQig', 'OcQig', 'NoQig', 'Sxg', 'USxg',
+  'DSxg', 'TSxg', 'QaSxg', 'QiSxg', 'SxSxg', 'SpSxg',
+  'OcSxg', 'NoSxg', 'Spg', 'USpg', 'DSpg', 'TSpg', 'QaSpg',
+  'QiSpg', 'SxSpg', 'SpSpg', 'OcSpg', 'NoSpg', 'Ocg', 'UOcg',
+  'DOcg', 'TOcg', 'QaOcg', 'QiOcg', 'SxOcg', 'SpOcg', 'OcOcg',
+  'NoOcg', 'Nog', 'UNog', 'DNog', 'TNog', 'QaNog', 'QiNog',
+  'SxNog', 'SpNog', 'OcNog', 'NoNog', 'Ce', 'UCe', 'DCe',
+] as const)

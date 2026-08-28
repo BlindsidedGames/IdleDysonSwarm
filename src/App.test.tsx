@@ -848,7 +848,8 @@ function readySnapshot(): FrontendApplicationSnapshot {
           showTinker: true,
           visibleBasicFacilityIds: [],
           visibleMegaStructureIds: [],
-          showNextTierTeaser: true,
+          showNextBasicFacilityTeaser: true,
+          showNextMegaStructureTeaser: false,
         },
         skills: {
           routeUnlocked: false,

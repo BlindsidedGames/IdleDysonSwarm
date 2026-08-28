@@ -53,6 +53,18 @@ describe('presentation tokens', () => {
     expect(targetSizes.preferredTouch).toBe(48)
     expect(tokensCss).toContain('--game-card-grid-gap: 0.35rem')
     expect(tokensCss).toContain('--game-card-content-inset: 0.45rem')
+    expect(tokensCss).toContain('--ui-route-inset: 0.5rem')
+    expect(tokensCss).toContain('--ui-section-stack-gap: 0.5rem')
+    expect(tokensCss).toContain('--ui-panel-inset: 0.6rem')
+    expect(tokensCss).toContain('--ui-control-row-gap: 0.25rem')
+    expect(tokensCss).toContain('--ui-related-copy-gap: 0.25rem')
+    expect(tokensCss).toContain('--ui-page-gutter: var(--ui-route-inset)')
+    expect(tokensCss).toContain('--ui-panel-inset-roomy: var(--ui-panel-inset)')
+    expect(tokensCss).toContain('--ui-panel-border-width: 1px')
+    expect(tokensCss).toContain('--ui-shell-divider-width: 2px')
+    expect(tokensCss).toContain('--ui-panel-radius: 0.35rem')
+    expect(tokensCss).toContain('--ui-text-page-title: calc(1.25rem * var(--game-text-scale))')
+    expect(tokensCss).toContain('--breakpoint-navigation-rail-min: 1080px')
   })
 
   it('routes future script fonts by token while bundling only the Latin UI faces', () => {

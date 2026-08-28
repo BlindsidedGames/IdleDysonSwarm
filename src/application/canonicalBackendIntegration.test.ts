@@ -409,7 +409,7 @@ function createSeededPreparedSave(): PreparedSave {
       },
       reality: {
         ...runtime.gameState.reality,
-        influence: 1_000_000n,
+        influence: 1_000_000,
         workersReady: 128n,
       },
       quantum: {
@@ -426,7 +426,7 @@ function createSeededPreparedSave(): PreparedSave {
       },
       dream: {
         ...runtime.gameState.dream,
-        strangeMatter: 0n,
+        strangeMatter: 0,
         disasterStage: 0n,
         resources: {
           ...runtime.gameState.dream.resources,

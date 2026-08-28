@@ -263,7 +263,7 @@ describe('canonical Infinity reset', () => {
       infinityCount: 80n,
       infinityPoints: 90n,
       dreamResetCount: 70n,
-      strangeMatter: 60n,
+      strangeMatter: 60,
       realityWorkers: 50n,
     }
     const state: CanonicalGameStateV1 = {
@@ -354,7 +354,7 @@ describe('canonical Infinity reset', () => {
       infinityCount: 1n,
       infinityPoints: 2n,
       dreamResetCount: 0n,
-      strangeMatter: 0n,
+      strangeMatter: 0,
       realityWorkers: 0n,
     })
   })

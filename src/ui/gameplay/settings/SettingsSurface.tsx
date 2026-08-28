@@ -17,7 +17,10 @@ import type {
   UiRuntimeStoredTimeControls,
   UiRuntimeSuppliedFile,
 } from '../../runtime'
-import { formatGameNumber } from '../../i18n/formatters'
+import {
+  formatGameNumber,
+  formatWholeGameNumber,
+} from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import {
   SYSTEM_LOCALE_PREFERENCE,
@@ -544,170 +547,150 @@ export function SettingsSurface({
         aria-hidden={dialog !== null || undefined}
         inert={dialog !== null || undefined}
       >
-        {!developmentOnly && audio !== undefined ? (
-          <AudioSettingsPanel audio={audio} />
-        ) : null}
         {!developmentOnly ? (
-          <section className="settings-surface__panel settings-surface__panel--language">
-            <div className="settings-surface__copy">
-              <h2>{intl.formatMessage(messages.languageTitle)}</h2>
-              <p>{intl.formatMessage(messages.languageDescription)}</p>
+          <>
+            <div className="settings-surface__column settings-surface__column--primary">
+              {audio !== undefined ? <AudioSettingsPanel audio={audio} /> : null}
+              <section className="settings-surface__panel settings-surface__panel--number-notation">
+                <div className="settings-surface__copy">
+                  <h2>{intl.formatMessage(messages.numberNotationTitle)}</h2>
+                  <p>{intl.formatMessage(messages.numberNotationDescription)}</p>
+                </div>
+                <label className="settings-surface__select-label">
+                  <span>{intl.formatMessage(messages.numberNotationLabel)}</span>
+                  <select
+                    value={numberNotation.mode}
+                    onChange={(event) => {
+                      const mode = event.currentTarget.value
+                      if (isNumberNotationMode(mode)) numberNotation.setMode(mode)
+                    }}
+                  >
+                    <option value="standard">
+                      {intl.formatMessage(messages.numberNotationStandard)}
+                    </option>
+                    <option value="scientific">
+                      {intl.formatMessage(messages.numberNotationScientific)}
+                    </option>
+                    <option value="engineering">
+                      {intl.formatMessage(messages.numberNotationEngineering)}
+                    </option>
+                  </select>
+                </label>
+              </section>
+              <section className="settings-surface__panel settings-surface__panel--visualization">
+                <div className="settings-surface__copy">
+                  <h2>{intl.formatMessage(messages.visualizationTitle)}</h2>
+                  <p>{intl.formatMessage(messages.visualizationDescription)}</p>
+                </div>
+                <label className="settings-surface__toggle">
+                  <input
+                    type="checkbox"
+                    checked={visualizationVisible}
+                    onChange={(event) =>
+                      onVisualizationVisibleChange(event.currentTarget.checked)
+                    }
+                  />
+                  <span>{intl.formatMessage(messages.visualizationToggle)}</span>
+                </label>
+              </section>
             </div>
-            <label className="settings-surface__select-label">
-              <span>{intl.formatMessage(messages.languageLabel)}</span>
-              <select
-                value={language.preference}
-                onChange={(event) => {
-                  language.setPreference(
-                    event.currentTarget.value as LocalePreference,
-                  )
-                }}
-              >
-                <option value={SYSTEM_LOCALE_PREFERENCE}>
-                  {intl.formatMessage(messages.languageSystem)}
-                </option>
-                <option value="en">
-                  {intl.formatMessage(messages.languageEnglish)}
-                </option>
-                <option value="fr">
-                  {intl.formatMessage(messages.languageFrench)}
-                </option>
-                <option value="de">
-                  {intl.formatMessage(messages.languageGerman)}
-                </option>
-                <option value="es-419">
-                  {intl.formatMessage(messages.languageSpanishLatinAmerica)}
-                </option>
-                <option value="pt-BR">
-                  {intl.formatMessage(messages.languagePortugueseBrazil)}
-                </option>
-                <option value="zh-CN">
-                  {intl.formatMessage(messages.languageChineseSimplified)}
-                </option>
-                <option value="ru">
-                  {intl.formatMessage(messages.languageRussian)}
-                </option>
-                <option value="ja">
-                  {intl.formatMessage(messages.languageJapanese)}
-                </option>
-              </select>
-            </label>
-          </section>
-        ) : null}
-        {!developmentOnly ? (
-          <section className="settings-surface__panel settings-surface__panel--number-notation">
-            <div className="settings-surface__copy">
-              <h2>{intl.formatMessage(messages.numberNotationTitle)}</h2>
-              <p>{intl.formatMessage(messages.numberNotationDescription)}</p>
+            <div className="settings-surface__column settings-surface__column--secondary">
+              <section className="settings-surface__panel settings-surface__panel--language">
+                <div className="settings-surface__copy">
+                  <h2>{intl.formatMessage(messages.languageTitle)}</h2>
+                  <p>{intl.formatMessage(messages.languageDescription)}</p>
+                </div>
+                <label className="settings-surface__select-label">
+                  <span>{intl.formatMessage(messages.languageLabel)}</span>
+                  <select
+                    value={language.preference}
+                    onChange={(event) => {
+                      language.setPreference(
+                        event.currentTarget.value as LocalePreference,
+                      )
+                    }}
+                  >
+                    <option value={SYSTEM_LOCALE_PREFERENCE}>
+                      {intl.formatMessage(messages.languageSystem)}
+                    </option>
+                    <option value="en">{intl.formatMessage(messages.languageEnglish)}</option>
+                    <option value="fr">{intl.formatMessage(messages.languageFrench)}</option>
+                    <option value="de">{intl.formatMessage(messages.languageGerman)}</option>
+                    <option value="es-419">{intl.formatMessage(messages.languageSpanishLatinAmerica)}</option>
+                    <option value="pt-BR">{intl.formatMessage(messages.languagePortugueseBrazil)}</option>
+                    <option value="zh-CN">{intl.formatMessage(messages.languageChineseSimplified)}</option>
+                    <option value="ru">{intl.formatMessage(messages.languageRussian)}</option>
+                    <option value="ja">{intl.formatMessage(messages.languageJapanese)}</option>
+                  </select>
+                </label>
+              </section>
+              <section className="settings-surface__panel settings-surface__panel--processing">
+                <div className="settings-surface__copy">
+                  <h2>{intl.formatMessage(messages.processingTitle)}</h2>
+                  <p>{intl.formatMessage(messages.processingDescription)}</p>
+                </div>
+                <label className="settings-surface__processing-control">
+                  <span className="settings-surface__processing-label">
+                    {intl.formatMessage(messages.processingInterval)}
+                  </span>
+                  <span className="settings-surface__processing-value">
+                    {intl.formatMessage(messages.processingIntervalValue, {
+                      milliseconds: processingIntervalDraft,
+                    })}
+                  </span>
+                  <input
+                    type="range"
+                    min={33}
+                    max={200}
+                    step={1}
+                    value={processingIntervalDraft}
+                    aria-label={intl.formatMessage(messages.processingInterval)}
+                    aria-valuetext={intl.formatMessage(
+                      messages.processingIntervalValue,
+                      { milliseconds: processingIntervalDraft },
+                    )}
+                    disabled={!processingIntervalAvailable}
+                    style={{
+                      '--settings-processing-progress': `${((processingIntervalDraft - 33) / 167) * 100}%`,
+                    } as CSSProperties}
+                    onChange={(event) => {
+                      const milliseconds = event.currentTarget.valueAsNumber
+                      previewProcessingInterval(milliseconds)
+                      scheduleProcessingIntervalCommit()
+                    }}
+                    onPointerDown={() => {
+                      cancelScheduledProcessingIntervalCommit()
+                      processingIntervalInteractionRef.current = true
+                    }}
+                    onPointerUp={() => {
+                      processingIntervalInteractionRef.current = false
+                      commitProcessingInterval()
+                    }}
+                    onPointerCancel={() => {
+                      processingIntervalInteractionRef.current = false
+                      commitProcessingInterval()
+                    }}
+                    onKeyUp={(event) => {
+                      if (isProcessingIntervalCommitKey(event.key)) {
+                        commitProcessingInterval()
+                      }
+                    }}
+                    onBlur={() => {
+                      processingIntervalInteractionRef.current = false
+                      commitProcessingInterval()
+                    }}
+                  />
+                </label>
+              </section>
+              <section className="settings-surface__panel settings-surface__panel--more">
+                <div className="settings-surface__copy">
+                  <h2>{intl.formatMessage(messages.moreByTitle)}</h2>
+                  <p>{intl.formatMessage(messages.moreByDescription)}</p>
+                </div>
+              </section>
             </div>
-            <label className="settings-surface__select-label">
-              <span>{intl.formatMessage(messages.numberNotationLabel)}</span>
-              <select
-                value={numberNotation.mode}
-                onChange={(event) => {
-                  const mode = event.currentTarget.value
-                  if (isNumberNotationMode(mode)) numberNotation.setMode(mode)
-                }}
-              >
-                <option value="standard">
-                  {intl.formatMessage(messages.numberNotationStandard)}
-                </option>
-                <option value="scientific">
-                  {intl.formatMessage(messages.numberNotationScientific)}
-                </option>
-                <option value="engineering">
-                  {intl.formatMessage(messages.numberNotationEngineering)}
-                </option>
-              </select>
-            </label>
-          </section>
+          </>
         ) : null}
-        {!developmentOnly ? (
-          <section className="settings-surface__panel settings-surface__panel--processing">
-            <div className="settings-surface__copy">
-              <h2>{intl.formatMessage(messages.processingTitle)}</h2>
-              <p>{intl.formatMessage(messages.processingDescription)}</p>
-            </div>
-            <label className="settings-surface__processing-control">
-              <span className="settings-surface__processing-label">
-                {intl.formatMessage(messages.processingInterval)}
-              </span>
-              <span className="settings-surface__processing-value">
-                {intl.formatMessage(messages.processingIntervalValue, {
-                  milliseconds: processingIntervalDraft,
-                })}
-              </span>
-              <input
-                type="range"
-                min={33}
-                max={200}
-                step={1}
-                value={processingIntervalDraft}
-                aria-label={intl.formatMessage(messages.processingInterval)}
-                aria-valuetext={intl.formatMessage(
-                  messages.processingIntervalValue,
-                  { milliseconds: processingIntervalDraft },
-                )}
-                disabled={!processingIntervalAvailable}
-                style={{
-                  '--settings-processing-progress': `${((processingIntervalDraft - 33) / 167) * 100}%`,
-                } as CSSProperties}
-                onChange={(event) => {
-                  const milliseconds = event.currentTarget.valueAsNumber
-                  previewProcessingInterval(milliseconds)
-                  scheduleProcessingIntervalCommit()
-                }}
-                onPointerDown={() => {
-                  cancelScheduledProcessingIntervalCommit()
-                  processingIntervalInteractionRef.current = true
-                }}
-                onPointerUp={() => {
-                  processingIntervalInteractionRef.current = false
-                  commitProcessingInterval()
-                }}
-                onPointerCancel={() => {
-                  processingIntervalInteractionRef.current = false
-                  commitProcessingInterval()
-                }}
-                onKeyUp={(event) => {
-                  if (isProcessingIntervalCommitKey(event.key)) {
-                    commitProcessingInterval()
-                  }
-                }}
-                onBlur={() => {
-                  processingIntervalInteractionRef.current = false
-                  commitProcessingInterval()
-                }}
-              />
-            </label>
-          </section>
-        ) : null}
-        {!developmentOnly ? <section className="settings-surface__panel settings-surface__panel--visualization">
-          <div className="settings-surface__copy">
-            <h2>
-              {intl.formatMessage(messages.visualizationTitle)}
-            </h2>
-            <p>
-              {intl.formatMessage(
-                messages.visualizationDescription,
-              )}
-            </p>
-          </div>
-          <label className="settings-surface__toggle">
-            <input
-              type="checkbox"
-              checked={visualizationVisible}
-              onChange={(event) =>
-                onVisualizationVisibleChange(
-                  event.currentTarget.checked,
-                )
-              }
-            />
-            <span>
-              {intl.formatMessage(messages.visualizationToggle)}
-            </span>
-          </label>
-        </section> : null}
         {!developmentOnly ? (
           <section className="settings-surface__panel settings-surface__panel--navigation">
             <div className="settings-surface__copy">
@@ -750,15 +733,7 @@ export function SettingsSurface({
             </div>
           </section>
         ) : null}
-        {!developmentOnly ? (
-          <section className="settings-surface__panel settings-surface__panel--more">
-            <div className="settings-surface__copy">
-              <h2>{intl.formatMessage(messages.moreByTitle)}</h2>
-              <p>{intl.formatMessage(messages.moreByDescription)}</p>
-            </div>
-          </section>
-        ) : null}
-        {!developmentOnly ? <section className="settings-surface__panel">
+        {!developmentOnly ? <section className="settings-surface__panel settings-surface__panel--save">
           <div className="settings-surface__copy">
             <h2>{intl.formatMessage(messages.saveData)}</h2>
             <p>{intl.formatMessage(messages.saveDescription)}</p>
@@ -1088,7 +1063,7 @@ export function SettingsSurface({
                     </div>
                     <div>
                       <dt>{intl.formatMessage(messages.skillPoints)}</dt>
-                      <dd>{formatGameNumber(
+                      <dd>{formatWholeGameNumber(
                         intl.locale as EnabledLocale,
                         importPreview.skillPoints,
                       )}</dd>
