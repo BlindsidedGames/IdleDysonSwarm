@@ -1,4 +1,5 @@
 import { formatUnknownError as errorDetail } from '../core/unknownError'
+import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
@@ -1278,11 +1279,11 @@ export function routeCanonicalGameCommand(
       const skillIds = normalizeSkillAssignment(command.skillIds)
       const preset = state.skills.presets[selected - 1]
       const changed =
-        !sameStrings(
+        !sameOrderedStrings(
           state.skills.activeAutoAssignment,
           skillIds,
         ) ||
-        !sameStrings(preset.skillIds, skillIds)
+        !sameOrderedStrings(preset.skillIds, skillIds)
       return finalizeAccepted(
         state,
         changed
@@ -1311,7 +1312,7 @@ export function routeCanonicalGameCommand(
     case 'skill.set-preset-assignment': {
       const skillIds = normalizeSkillAssignment(command.skillIds)
       const preset = state.skills.presets[command.slot - 1]
-      const changed = !sameStrings(preset.skillIds, skillIds)
+      const changed = !sameOrderedStrings(preset.skillIds, skillIds)
       return finalizeAccepted(
         state,
         changed
@@ -1467,11 +1468,11 @@ export function routeCanonicalGameCommand(
       }
       const preset = state.skills.presets[selected - 1]
       const changed =
-        !sameStrings(
+        !sameOrderedStrings(
           state.skills.activeAutoAssignment,
           preview.nextSkillIds,
         ) ||
-        !sameStrings(preset.skillIds, preview.nextSkillIds)
+        !sameOrderedStrings(preset.skillIds, preview.nextSkillIds)
       return finalizeAccepted(
         state,
         changed
@@ -2753,14 +2754,4 @@ function replacePreset(
   const candidate = [...presets]
   candidate[slot - 1] = preset
   return candidate as unknown as CanonicalGameStateV1['skills']['presets']
-}
-
-function sameStrings(
-  left: readonly string[],
-  right: readonly string[],
-): boolean {
-  return (
-    left.length === right.length &&
-    left.every((value, index) => value === right[index])
-  )
 }

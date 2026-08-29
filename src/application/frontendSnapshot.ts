@@ -1,5 +1,6 @@
 import type { DeepReadonly } from '../core/contracts'
 import { deepFreezePlainGraph } from '../core/deepFreezePlainGraph'
+import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
@@ -2948,15 +2949,15 @@ function reuseSkillCatalogPreview(
   if (
     previous.complete !== next.complete ||
     previous.definitionGap !== next.definitionGap ||
-    !sameStringArray(
+    !sameOrderedStrings(
       previous.reset.refundableSkillIds,
       next.reset.refundableSkillIds,
     ) ||
-    !sameStringArray(
+    !sameOrderedStrings(
       previous.reset.retainedSkillIds,
       next.reset.retainedSkillIds,
     ) ||
-    !sameStringArray(
+    !sameOrderedStrings(
       previous.reset.queuedSkillIds,
       next.reset.queuedSkillIds,
     ) ||
@@ -2978,12 +2979,12 @@ function reuseSkillCatalogPreview(
       before.visualState !== after.visualState ||
       before.fragment !== after.fragment ||
       before.intrinsicallyRefundable !== after.intrinsicallyRefundable ||
-      !sameStringArray(before.requiredSkillIds, after.requiredSkillIds) ||
-      !sameStringArray(
+      !sameOrderedStrings(before.requiredSkillIds, after.requiredSkillIds) ||
+      !sameOrderedStrings(
         before.shadowRequiredSkillIds,
         after.shadowRequiredSkillIds,
       ) ||
-      !sameStringArray(
+      !sameOrderedStrings(
         before.exclusiveWithSkillIds,
         after.exclusiveWithSkillIds,
       ) ||
@@ -3014,16 +3015,6 @@ function sameSkillActionPreview(
   return (
     before.eligible === after.eligible &&
     before.code === after.code &&
-    sameStringArray(before.affectedSkillIds, after.affectedSkillIds)
-  )
-}
-
-function sameStringArray(
-  before: readonly string[],
-  after: readonly string[],
-): boolean {
-  return (
-    before.length === after.length &&
-    before.every((value, index) => value === after[index])
+    sameOrderedStrings(before.affectedSkillIds, after.affectedSkillIds)
   )
 }
