@@ -3,6 +3,7 @@ import {
   isFinitePositiveNumber,
 } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { RESEARCH_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import { readStringArray } from '../game-data/runtimeValueGuards'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
@@ -23,8 +24,6 @@ import {
   maxAffordable,
   tryDebitContinuous,
 } from './transactions'
-
-const RESEARCH_KIND = 'GameData.ResearchDefinition'
 
 export const UNITY_RESEARCH_PRESENTATION_ORDER = Object.freeze([
   'research.assembly_line_upgrade',
@@ -811,7 +810,7 @@ function prerequisitesMet(
 }
 
 function loadDefinitions(): readonly ResearchDefinition[] {
-  return getGameAssetsByKind(RESEARCH_KIND)
+  return getGameAssetsByKind(RESEARCH_DEFINITION_ASSET_KIND)
     .map(parseDefinition)
     .sort((left, right) =>
       left.id < right.id ? -1 : left.id > right.id ? 1 : 0,

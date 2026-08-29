@@ -6,6 +6,7 @@ import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { getGameAsset } from '../game-data/catalog'
+import { RESEARCH_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import type { RuntimeGameAsset } from '../game-data/types'
 import {
   isSecretResearchCoefficientId,
@@ -232,7 +233,7 @@ export function materializeDysonResearchEffects(
       continue
     }
 
-    const definition = lookup('GameData.ResearchDefinition', spec.id)
+    const definition = lookup(RESEARCH_DEFINITION_ASSET_KIND, spec.id)
     if (definition === undefined) {
       issues.push({
         code: 'DYSON_RESEARCH_DEFINITION_MISSING',
@@ -245,7 +246,7 @@ export function materializeDysonResearchEffects(
     const maxLevel = definition.data.maxLevel
     const references = definition.data.effects
     if (
-      definition.kind !== 'GameData.ResearchDefinition' ||
+      definition.kind !== RESEARCH_DEFINITION_ASSET_KIND ||
       definition.id !== spec.id ||
       maxLevel !== spec.maxLevel ||
       !Array.isArray(references) ||
