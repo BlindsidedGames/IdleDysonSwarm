@@ -1079,10 +1079,7 @@ function createDreamEducation(
 }
 
 function toSimulationTotals(value: unknown): SimulationTotalsState {
-  const source =
-    value !== null && typeof value === 'object' && !Array.isArray(value)
-      ? (value as SaveRecord)
-      : {}
+  const source = recordOrEmpty(value)
   const discrete = Object.fromEntries(
     STAT_BIGINT_FIELDS.map((field) => [
       field,
@@ -1116,12 +1113,7 @@ function toStatisticsWindows(
 ): StatisticsWindowState[] {
   const source = Array.isArray(value) ? value : []
   return Array.from({ length }, (_, index) => {
-    const bucket =
-      source[index] !== null &&
-      typeof source[index] === 'object' &&
-      !Array.isArray(source[index])
-        ? (source[index] as SaveRecord)
-        : {}
+    const bucket = recordOrEmpty(source[index])
     return {
       sequence: toNonNegativeBigInt(bucket.sequence),
       simulatedSeconds: toFiniteNonNegativeNumber(
@@ -1137,10 +1129,7 @@ function toStatisticsWindows(
 }
 
 function toLastCompletedCycle(value: unknown) {
-  const source =
-    value !== null && typeof value === 'object' && !Array.isArray(value)
-      ? (value as SaveRecord)
-      : {}
+  const source = recordOrEmpty(value)
   const dreamCause =
     typeof source.dreamCause === 'string' && source.dreamCause.length > 0
       ? source.dreamCause
@@ -1254,10 +1243,7 @@ function overlayRecord(
   value: unknown,
   canonical: object,
 ): SaveRecord {
-  const preserved =
-    value !== null && typeof value === 'object' && !Array.isArray(value)
-      ? (value as SaveRecord)
-      : {}
+  const preserved = recordOrEmpty(value)
   Object.assign(preserved, canonical)
   return preserved
 }
