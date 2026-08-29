@@ -374,6 +374,36 @@ export function createEmptyStatisticsWindow(
   }
 }
 
+/** Updates the current rolling-window bucket for one instantaneous event. */
+export function updateStatisticsEventWindow(
+  source: readonly StatisticsWindowState[],
+  expectedLength: number,
+  widthSeconds: number,
+  trackedSimulatedSeconds: number,
+  update: (
+    bucket: Readonly<StatisticsWindowState>,
+  ) => StatisticsWindowState,
+): readonly StatisticsWindowState[] {
+  const windows =
+    source.length === expectedLength
+      ? [...source]
+      : Array.from(
+          { length: expectedLength },
+          () => createEmptyStatisticsWindow(0n),
+        )
+  const sequence = floorToDiscrete(
+    clampContinuous(trackedSimulatedSeconds) / widthSeconds,
+  )
+  const index = Number(sequence % BigInt(expectedLength))
+  const current = windows[index]
+  const bucket =
+    current.sequence === sequence
+      ? current
+      : createEmptyStatisticsWindow(sequence)
+  windows[index] = update(bucket)
+  return windows
+}
+
 function emptyCycle(): SimulationStatisticsState['lastCompletedCycle'] {
   return {
     valid: false,

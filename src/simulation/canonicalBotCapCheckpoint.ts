@@ -4,12 +4,10 @@ import type {
   SimulationTotalsState,
   StatisticsWindowState,
 } from '../game-state/types'
-import { createEmptyStatisticsWindow } from './canonicalStatistics'
+import { updateStatisticsEventWindow } from './canonicalStatistics'
 import {
   addContinuous,
   addDiscrete,
-  clampContinuous,
-  floorToDiscrete,
 } from './numeric'
 
 export const FINITE_BOT_CAP = Number.MAX_VALUE
@@ -293,28 +291,17 @@ function addBotCapWindowPoints(
   trackedSimulatedSeconds: number,
   infinityPoints: bigint,
 ): readonly StatisticsWindowState[] {
-  const windows =
-    source.length === expectedLength
-      ? [...source]
-      : Array.from(
-          { length: expectedLength },
-          () => createEmptyStatisticsWindow(0n),
-        )
-  const sequence = floorToDiscrete(
-    clampContinuous(trackedSimulatedSeconds) / widthSeconds,
+  return updateStatisticsEventWindow(
+    source,
+    expectedLength,
+    widthSeconds,
+    trackedSimulatedSeconds,
+    (bucket) => ({
+      ...bucket,
+      infinityPoints: addDiscrete(
+        bucket.infinityPoints,
+        infinityPoints,
+      ),
+    }),
   )
-  const index = Number(sequence % BigInt(expectedLength))
-  const current = windows[index]
-  const bucket =
-    current.sequence === sequence
-      ? current
-      : createEmptyStatisticsWindow(sequence)
-  windows[index] = {
-    ...bucket,
-    infinityPoints: addDiscrete(
-      bucket.infinityPoints,
-      infinityPoints,
-    ),
-  }
-  return windows
 }

@@ -9,12 +9,11 @@ import type {
   SkillRuntimeState,
   StatisticsWindowState,
 } from '../game-state/types'
-import { createEmptyStatisticsWindow } from './canonicalStatistics'
+import { updateStatisticsEventWindow } from './canonicalStatistics'
 import {
   addDiscrete,
   clampContinuous,
   DISCRETE_MAXIMUM,
-  floorToDiscrete,
 } from './numeric'
 
 const INT32_MAXIMUM = 2_147_483_647n
@@ -797,34 +796,23 @@ function recordWindowEvent(
   infinityCount: bigint,
   infinityPoints: bigint,
 ): readonly StatisticsWindowState[] {
-  const windows =
-    source.length === expectedLength
-      ? [...source]
-      : Array.from(
-          { length: expectedLength },
-          () => createEmptyStatisticsWindow(0n),
-        )
-  const sequence = floorToDiscrete(
-    clampContinuous(trackedSimulatedSeconds) / widthSeconds,
+  return updateStatisticsEventWindow(
+    source,
+    expectedLength,
+    widthSeconds,
+    trackedSimulatedSeconds,
+    (bucket) => ({
+      ...bucket,
+      infinityCount: addDiscrete(
+        bucket.infinityCount,
+        infinityCount,
+      ),
+      infinityPoints: addDiscrete(
+        bucket.infinityPoints,
+        infinityPoints,
+      ),
+    }),
   )
-  const index = Number(sequence % BigInt(expectedLength))
-  const sourceBucket = windows[index]
-  const bucket =
-    sourceBucket.sequence === sequence
-      ? sourceBucket
-      : createEmptyStatisticsWindow(sequence)
-  windows[index] = {
-    ...bucket,
-    infinityCount: addDiscrete(
-      bucket.infinityCount,
-      infinityCount,
-    ),
-    infinityPoints: addDiscrete(
-      bucket.infinityPoints,
-      infinityPoints,
-    ),
-  }
-  return windows
 }
 
 function readBooleanFlag(value: unknown): boolean | undefined {

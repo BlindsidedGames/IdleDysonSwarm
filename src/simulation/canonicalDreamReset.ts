@@ -10,7 +10,7 @@ import type {
   SimulationTotalsState,
   StatisticsWindowState,
 } from '../game-state/types'
-import { createEmptyStatisticsWindow } from './canonicalStatistics'
+import { updateStatisticsEventWindow } from './canonicalStatistics'
 import {
   applyDreamMathematicsCompletionParity,
   applyDreamUpgradeEffect,
@@ -24,7 +24,6 @@ import {
   clampContinuous,
   CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
-  floorToDiscrete,
 } from './numeric'
 
 export type CanonicalDreamResetCause =
@@ -589,31 +588,20 @@ function addDreamWindow(
   trackedSimulatedSeconds: number,
   requestedReward: number,
 ): readonly StatisticsWindowState[] {
-  const windows =
-    source.length === expectedLength
-      ? [...source]
-      : Array.from(
-          { length: expectedLength },
-          () => createEmptyStatisticsWindow(0n),
-        )
-  const sequence = floorToDiscrete(
-    clampContinuous(trackedSimulatedSeconds) / widthSeconds,
+  return updateStatisticsEventWindow(
+    source,
+    expectedLength,
+    widthSeconds,
+    trackedSimulatedSeconds,
+    (bucket) => ({
+      ...bucket,
+      dreamResetCount: addDiscrete(bucket.dreamResetCount, 1n),
+      strangeMatter: addContinuous(
+        bucket.strangeMatter,
+        requestedReward,
+      ),
+    }),
   )
-  const index = Number(sequence % BigInt(expectedLength))
-  const current = windows[index]
-  const bucket =
-    current.sequence === sequence
-      ? current
-      : createEmptyStatisticsWindow(sequence)
-  windows[index] = {
-    ...bucket,
-    dreamResetCount: addDiscrete(bucket.dreamResetCount, 1n),
-    strangeMatter: addContinuous(
-      bucket.strangeMatter,
-      requestedReward,
-    ),
-  }
-  return windows
 }
 
 function roundedDiscrete(value: number): bigint {
