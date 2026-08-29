@@ -6,9 +6,10 @@ Swarm. Update cadence, active play and Offline Time are defined by
 
 ## Source and scope
 
-- Existing Unity saves remain canonical compatibility input.
-- Unity and checked-in characterization fixtures remain evidence for IDS
-  gameplay formulas, reset rewards and authored progression.
+- Supported legacy saves remain compatibility input only.
+- Checked-in characterization fixtures are regression evidence, while current
+  TypeScript contracts and tests own gameplay formulas, reset rewards, and
+  progression.
 - The processing rewrite does not make Antimatter Dimensions gameplay a source
   of IDS balance or progression rules.
 - Old exact-event, 100 ms partition-equivalence and 4,096 representative-cycle

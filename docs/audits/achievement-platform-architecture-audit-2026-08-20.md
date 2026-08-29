@@ -68,7 +68,7 @@ Run fact evaluation after validated hydrate/import publication, after canonical 
 Reliability rules:
 
 1. Retroactive unlocks: after hydrate/import, evaluate all 27 approved predicates; query or tolerate already-complete provider records, then submit reached facts. Do not infer unresolved legacy behaviour.
-2. Idempotency: persist records keyed by platform account, canonical ID and command UUID. Completion is replay-safe; acknowledgements suppress repeats. Keep ownership outside GameState as already required by docs/contracts/game-state-contract.md:87-90.
+2. Idempotency: persist records keyed by platform account, canonical ID and command UUID. Completion is replay-safe; acknowledgements suppress repeats. Keep ownership outside GameState as required by `docs/contracts/state-and-persistence-contract.md`.
 3. Semantics: latest revision wins for absolute values; maxima merge upward; play time is sequenced, acknowledged delta. Never coalesce an unacknowledged delta.
 4. Offline/reconnect: host-private outbox stores canonical ID, semantics, value/delta, revision, command ID, attempt, retry time and receipt. Use bounded exponential backoff with jitter; nonretryable authentication/map errors become diagnostics.
 5. Lifecycle: bounded flush at checkpoint/background/Electron-close preparation. Clear presence after final publish attempt. Mobile termination remains best effort under docs/platform/native-host-foundation.md:58-62. Platform failures cannot delay or roll back canonical save.

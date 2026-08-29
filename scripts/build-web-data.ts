@@ -1,8 +1,8 @@
 /**
- * Materialises the Web runtime catalogs from the frozen Unity handoff capsule.
- * The capsule is an unreleased development snapshot, not the public 3.0.328
- * binary. Keeping this step byte-exact makes Unity removal independent from
- * any future authored-data redesign.
+ * Materialises legacy runtime inputs from the deprecated, frozen Unity
+ * compatibility capsule. The capsule is not current gameplay authority.
+ * Keeping this step byte-exact lets consumers migrate to Web-owned catalogs
+ * independently without silently changing legacy save or content inputs.
  */
 import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
@@ -54,6 +54,6 @@ for (const [sourceName, outputName, expectedHash] of files) {
 
 console.log(
   checkOnly
-    ? 'Web-authored gameplay data is valid and generated catalogs are current.'
-    : 'Generated Web gameplay catalogs from the versioned handoff capsule.',
+    ? 'Legacy compatibility data is valid and generated catalogs are current.'
+    : 'Generated legacy compatibility catalogs from the frozen capsule.',
 )

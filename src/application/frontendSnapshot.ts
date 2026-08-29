@@ -1,6 +1,5 @@
 import type { DeepReadonly } from '../core/contracts'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
-import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
   CanonicalFacilityId,
@@ -144,7 +143,7 @@ import type {
   ReadySource,
 } from './contracts'
 
-export const FRONTEND_GAMEPLAY_SNAPSHOT_VERSION = 1 as const
+export const FRONTEND_GAMEPLAY_SNAPSHOT_VERSION = 2 as const
 
 export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
   'dyson',
@@ -475,12 +474,6 @@ export interface FrontendCanonicalProgression {
   readonly statistics: DeepReadonly<
     CanonicalGameStateV1['statistics']
   >
-}
-
-export interface FrontendPersistenceReadiness {
-  readonly mappingCoverageComplete: boolean
-  readonly canonicalWriteAllowed: boolean
-  readonly unmatchedWritePolicy: 'preserve-source'
 }
 
 export interface FrontendSnapshotContext {
@@ -1013,7 +1006,6 @@ export interface FrontendGameplaySnapshot {
   readonly commands: DeepReadonly<FrontendCommandAvailabilityIndex>
   readonly previews: DeepReadonly<FrontendGameplayPreviews>
   readonly definitionCoverage: DeepReadonly<FrontendDefinitionCoverage>
-  readonly persistence: FrontendPersistenceReadiness
 }
 
 export type FrontendApplicationSnapshot =
@@ -1152,18 +1144,8 @@ export function selectFrontendGameplaySnapshot(
     commands,
     previews,
     definitionCoverage,
-    persistence: previous?.persistence ?? FRONTEND_PERSISTENCE_READINESS,
   }, sourceOwnership)
 }
-
-const FRONTEND_PERSISTENCE_READINESS: FrontendPersistenceReadiness =
-  Object.freeze({
-    mappingCoverageComplete:
-      mappingCoverageManifest.coverageComplete,
-    canonicalWriteAllowed:
-      mappingCoverageManifest.releaseCanonicalWriteAllowed,
-    unmatchedWritePolicy: mappingCoverageManifest.unmatchedWritePolicy,
-  })
 
 export function selectGameplayVisibility(
   state: CanonicalGameStateV1,

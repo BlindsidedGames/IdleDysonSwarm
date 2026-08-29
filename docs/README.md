@@ -15,13 +15,19 @@ an audit finding, release gate, or platform contract.
 
 ## Living references
 
-- [`PROJECT_HANDOFF.md`](PROJECT_HANDOFF.md) is the account-transition entry
-  point for the current repository state, product constraints, and proven
-  local-first deployment workflow.
+- [`../README.md`](../README.md) is the repository entry point.
 - [`contracts/`](contracts/) contains current architecture, gameplay,
-  persistence, presentation, and parity contracts.
+  persistence, and presentation contracts.
+- [`contracts/state-and-persistence-contract.md`](contracts/state-and-persistence-contract.md)
+  defines canonical state ownership and publication.
+- [`contracts/legacy-data-authority.md`](contracts/legacy-data-authority.md)
+  explains when a retained generated value remains active and records explicit
+  TypeScript overrides.
 - [`platform/`](platform/) contains host, Store, PWA, migration, deployment, and
   release-operation guidance.
+- [`platform/legacy-save-compatibility.md`](platform/legacy-save-compatibility.md)
+  contains the retired-engine import boundary without granting it gameplay
+  authority.
 - [`product/`](product/) contains current product direction that is not an
   implementation contract.
 
@@ -30,9 +36,9 @@ an audit finding, release gate, or platform contract.
 - [`archive/`](archive/) preserves completed plans, superseded inventories,
   diagnostic baselines, and dated evidence. Archived material is evidence of a
   past state, not the current implementation contract.
-- [`archive/unity-development-snapshot/`](archive/unity-development-snapshot/)
-  is frozen reference material for the unreleased Unity handoff; its old paths
-  resolve against the public archive branch/tag, not `main`.
+- Retired Unity source and migration history remain available in Git history
+  and the archive branch/tag recorded by the deprecated compatibility capsule.
+  They are intentionally absent from the living documentation tree.
 
 ## Maintenance rules
 

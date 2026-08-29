@@ -5,6 +5,19 @@ Actions verifies committed source on pushes and pull requests; it does not
 hold store credentials, sign native packages, upload to Apple or Google, or
 prepare website promotion pull requests.
 
+## Release targeting and reporting
+
+Android, iOS, and Website are independent release targets. Build, upload,
+processing or review, tester availability, production deployment, and live
+verification are distinct states; do not describe an earlier state as a later
+one. Only prepare, upload, deploy, or publish a target when that target is
+explicitly in the requested release scope.
+
+The Website beta is intentionally paused. Restoring or replacing the deployed
+`/play/` package is a product decision, not an automatic consequence of a
+native release. Call out that effect before preparing a Website promotion and
+proceed only when Website publication was explicitly requested.
+
 ## One-time local setup
 
 Android uses the existing Google Play upload key, stored outside the repository
@@ -84,6 +97,10 @@ build does not mean the release is live.
 
 ## Website promotion
 
+Skip this section for Android-only or iOS-only work. A Website promotion
+restores or replaces the public `/play/` package and therefore requires the
+explicit Website scope described above.
+
 To prepare the website package in the same local run, pin the exact website
 commit:
 
@@ -98,6 +115,23 @@ with `npm run website:promotion:apply`, review the exact `public/play` and
 managed-header changes, then commit and push the website repository. Cloudflare
 deploys from that repository. Treat its build, production deployment, and live
 site verification as separate gates.
+
+## Final release report
+
+Record the source commit, release ID, validation commands and passing test
+counts, then report every target independently:
+
+- Android: artifact path, SHA-256, version identity, Play track, and whether it
+  is built, uploaded, processing/reviewing, available to testers, or blocked.
+- iOS: archive identity, marketing/build versions, App Store Connect or
+  TestFlight state, and whether it is built, uploaded, processing, available to
+  testers, submitted for review, released, or blocked.
+- Website: game commit, website commit, promotion package/deployment identity,
+  live verification result, rollback target, and whether it was intentionally
+  untouched, built, committed, deployed, verified live, or blocked.
+
+Finish with the local Git status and the observed `origin/main` commit so the
+report distinguishes released source from uncommitted or unpublished work.
 
 ## GitHub's remaining job
 

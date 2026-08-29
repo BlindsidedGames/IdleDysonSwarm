@@ -618,7 +618,6 @@ export const mappingCoverageManifest = {
   unityImportSchema: publicUnitySaveCertification.saveSchema,
   canonicalGameModelVersion: 1,
   coverageComplete: unresolvedLeafCount === 0,
-  releaseCanonicalWriteAllowed: false,
   unmatchedWritePolicy: 'preserve-source' as const,
   unclassifiedLeafPolicy: 'fail-certification' as const,
   unresolvedLeafCount,

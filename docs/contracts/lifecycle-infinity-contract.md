@@ -1,13 +1,13 @@
 # Lifecycle and Infinity contract
 
-This checkpoint ports the persistence-sensitive boundary around returned time,
-stored time, the finite bot cap and Infinity. The modules are pure: they
+This contract defines the persistence-sensitive boundary around returned time,
+Stored Time, the finite bot cap, and Infinity. The modules are pure: they
 produce immutable candidates and explicit intents, while
 `TransactionalGameApplication` remains the only owner of durable publication.
 
 ## Returned time and lifecycle
 
-Lifecycle policy matches the current Unity runtime:
+Lifecycle policy is owned by the canonical TypeScript runtime:
 
 - mobile pause and focus loss request a timestamped save;
 - desktop pause and focus loss are no-ops;
@@ -60,10 +60,10 @@ after the reward checkpoint is known to be durable.
 
 ## Infinity reset ownership
 
-The reset transition may replace only the Dyson run, research runtime, skill
-runtime and Infinity-cycle metadata that Unity resets. Dream, Reality, Quantum,
-Avocado, secret progress, permanent progression and unrelated statistics are
-preserved.
+The reset transition may replace only the Dyson run, Research runtime, Skill
+runtime, and Infinity-cycle metadata defined by the canonical reset contract.
+Dream, Reality, Quantum, Avocado, secret progress, permanent progression, and
+unrelated statistics are preserved.
 
 The pure reset must:
 
@@ -84,10 +84,8 @@ Infinity-boundary phase, run clock and starting-point rollover. This separation
 prevents an internal reset helper from silently disturbing deterministic
 scheduler state.
 
-## Integration gate
+## Runtime integration
 
-These domain functions do not yet claim whole-game integration. The canonical
-engine must still route their candidates through
-`TransactionalGameApplication`, prove save/reload behavior at every checkpoint,
-and combine them with Dream and the remaining prestige domains before the
-frontend-ready boundary is complete.
+The canonical engine routes candidates through the transactional application,
+persists each checkpoint through the verified lane, and orders Infinity with
+Dream and the remaining prestige domains before snapshot publication.

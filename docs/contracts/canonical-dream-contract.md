@@ -1,8 +1,8 @@
 # Canonical Dream contract
 
 Dream is a deterministic gameplay domain over canonical player state. It does
-not depend on Unity components, frame callbacks or presentation objects.
-Scene-authored durations and exported upgrade definitions remain explicit
+not depend on host components, frame callbacks, deprecated engine records, or
+presentation objects. Durations and upgrade definitions remain explicit
 content inputs rather than hidden frontend behavior.
 
 ## Tick ownership
@@ -27,8 +27,7 @@ do not form a second Dream clock.
 
 ## Foundational and Information eras
 
-Current `Game.unity` production durations are characterized as content
-constants:
+Canonical production durations are explicit content constants:
 
 - Hunters, Gatherers, Community and Cities: 3 seconds;
 - Housing: 20 seconds;
@@ -37,7 +36,7 @@ constants:
 - Factories: 30 seconds;
 - Bots: 20 seconds.
 
-The production contract preserves Unity's logarithmic producer pacing,
+The production contract preserves the established logarithmic producer pacing,
 community/factory temporary boosts, Worker/Cities/Factories/Bots permanent
 boosts, education multipliers, the intentional sub-100 Bot soft start, and
 saturating outputs.
@@ -53,8 +52,8 @@ Player transactions are immutable and atomic:
 
 ## Education and permanent Simulation upgrades
 
-All 43 exported Simulation-layer upgrade definitions are consumed from the
-generated Unity catalog. Purchase order is:
+All 43 Simulation-layer upgrade definitions are consumed from the generated
+content catalog. Purchase order is:
 
 1. resolve the stable upgrade key;
 2. reject owned, locked or unaffordable definitions;
@@ -68,7 +67,7 @@ stage and Mathematics solar-generation parity.
 
 All six education subjects advance from the same interval multiplier.
 Completion preserves overshoot, and Mathematics completion raises solar
-generation to at least the current Unity legacy value of 200.
+generation to at least the canonical compatibility value of 200.
 
 ## Space age and reset boundary
 
@@ -90,15 +89,14 @@ timer objects are downstream concerns.
 Stored Dyson Panels, launched Swarm Panels, Black Hole rewards, Strange Matter
 and their Strange Matter statistics share one Simulation-resource ceiling: the
 exact non-negative integer represented by JavaScript's maximum finite double
-(`Number.MAX_VALUE`). Existing saves at Unity's former signed-64 ceiling retain
+(`Number.MAX_VALUE`). Existing saves at the former signed-64 ceiling retain
 their earned value and resume progression without a schema rewrite. Dream reset
 counts and unrelated discrete economies retain their own signed-64 contracts.
 
-## Integration gate
+## Runtime integration
 
-Domain-unit coverage does not make Dream part of the canonical whole-game
-engine. Completion requires shared-step scheduler routing, command adapters,
-deterministic boundary ordering for a supplied update sequence, reset collision
-ordering, and commit/reload acceptance through `TransactionalGameApplication`.
+The shared-step scheduler owns Dream command routing, deterministic boundary
+ordering, reset collisions, statistics publication, and commit/reload behavior.
+Presentation consumes projected facts and never invokes isolated Dream helpers.
 Arbitrary partition equivalence is intentionally not required for coarse
 Stored Time updates.

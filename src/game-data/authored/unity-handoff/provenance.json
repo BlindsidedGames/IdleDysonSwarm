@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "description": "Unreleased post-3.0.328 Unity development snapshot retained as the initial Web-authored gameplay-data capsule; this is not a shipped binary.",
+  "description": "Deprecated, byte-frozen Unity compatibility capsule retained for legacy save and generated-content consumers. It is not current gameplay or product authority and was not a shipped binary.",
   "archive": {
     "branch": "archive/unity-development-handoff-2026-08-21",
     "tag": "unity-dev-handoff-2026-08-21",

@@ -1,10 +1,13 @@
 # Save import and recovery contract
 
-The Web runtime distinguishes three import contexts:
+The canonical runtime distinguishes three import contexts:
 
-- automatic same-device Unity migration;
+- automatic same-device legacy migration;
 - manual or shared import;
-- transitional Web-save upgrade.
+- canonical save-envelope upgrade.
+
+The retired Unity application is supported only as an existing-player import
+source. Its records and preferences do not define current gameplay behavior.
 
 Manual/shared imports keep the receiving installation's schema-classified
 presentation preferences, including display/accessibility settings, tap-to-buy,
@@ -17,15 +20,18 @@ manual replacement. Store ownership remains host-owned and outside the save.
 Manual/shared imports preserve the imported save's stored offline-time bank but
 consume its exported quit timestamp, so they do not grant elapsed time since the
 export. Before applying a valid manual import, the runtime publishes a verified
-checkpoint of displaced dirty Web progress. Automatic same-device Unity
-migration keeps the Unity quit timestamp for the existing capped, one-time
-offline-credit startup path and retains eligible same-device Unity entitlement
-evidence. Transitional Web upgrades likewise preserve local lifecycle and claim
-state while changing only the codec/schema representation.
+checkpoint of displaced dirty progress. Automatic same-device legacy migration
+keeps the source quit timestamp for the existing capped, one-time offline-credit
+startup path and retains eligible same-device entitlement evidence. Canonical
+envelope upgrades likewise preserve local lifecycle and claim state while
+changing only the codec/schema representation.
 
 If the current Web save is invalid, its exact original text is copied to the
 recovery location before a backup is attempted. The runtime restores the newest
 valid verified backup and tells the player when that recovery was required. If
 startup remains blocked, the recovery surface provides Retry, Copy Original,
 and Start Fresh. Starting fresh records the choice locally; neither that action
-nor any migration path overwrites or deletes a Unity source save.
+nor any migration path overwrites or deletes a legacy source save.
+
+Exact accepted legacy baselines and fixture requirements are defined in
+[`legacy-save-compatibility.md`](legacy-save-compatibility.md).

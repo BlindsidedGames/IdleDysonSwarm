@@ -36,10 +36,10 @@ platform contracts              SaveRepository
 ## Rules
 
 - `src/core` contains game-facing ports and may not import React or a platform SDK.
-- `src/game-data/authored` owns versioned Web gameplay-data inputs. The initial
-  V1 capsule is a hash-verified handoff from the archived Unity development
-  snapshot; `scripts/build-web-data.ts` deterministically materializes the
-  stable files in `src/game-data/generated`.
+- `src/game-data/authored` contains versioned data inputs. The
+  `unity-handoff` subdirectory is a deprecated, hash-verified compatibility
+  capsule, not gameplay authority; `scripts/build-web-data.ts` materializes its
+  remaining legacy consumers in `src/game-data/generated`.
 - `src/save` owns compatibility, migration, validation and persistence envelopes.
 - `src/application` owns the concrete runtime session, exhaustive player
   command boundary, whole-game facade, lifecycle serialization and immutable
@@ -47,7 +47,7 @@ platform contracts              SaveRepository
 - Raw `SaveRecord` values are compatibility DTOs only. Repository load and
   commit operations accept the opaque `PreparedSave` proof produced by the
   migration, repair and validation pipeline.
-- `src/parity` owns engine-independent golden-master fixture and comparison tools.
+- `src/parity` owns engine-independent characterization and comparison tools.
 - `src/platform` defines capabilities; Electron and Capacitor implementations
   remain replaceable.
 - `src/App.tsx` composes the product UI and must communicate with gameplay only
@@ -70,8 +70,8 @@ commands publish nothing.
 `TransactionalSimulationEngine` enforces those publication rules for any typed
 state and command union. `TransactionalGameApplication` owns that engine, the
 mapper session, application revisions and the single persistence lane. The
-version-1 mapper separates the prepared Unity compatibility graph from
-canonical domain state while privately preserving unmapped fields.
+mapper separates a prepared legacy compatibility graph from canonical domain
+state while privately preserving unmapped fields.
 `CanonicalRuntimeSession` carries the game state together with save-specific
 tuning, the evolving skill-effect evaluation snapshot, entitlements and
 transient runtime facts. `CanonicalGameApplicationFacade` composes the

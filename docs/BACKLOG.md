@@ -1,7 +1,7 @@
-# Product and parity backlog
+# Product backlog
 
-This is the root-level action list for the remaining release-certification and
-Steam work after the Web port. Detailed evidence belongs in the linked audits
+This is the root-level action list for remaining release-certification and
+Steam work. Detailed evidence belongs in the linked audits
 and release documents rather than being duplicated here.
 
 Status conventions:
@@ -27,9 +27,10 @@ Status conventions:
    platform sandboxes, certify purchase success, cancellation,
    pending/interrupted transactions, durable ownership restore, account
    switching, reinstall, offline verified-cache behavior, and entitlement
-   reapplication after import. Also certify in-place Unity-save migration,
+   reapplication after import. Also certify in-place legacy-save migration,
    lifecycle/offline replay, update survival, and native accessibility before
-   either Store submission. Sources: parity runtime gates R-01 through R-03.
+   either Store submission. Sources: the native host, Store, legacy-save, and
+   release workflow contracts.
 
 ## Deferred Steam release work
 
@@ -42,9 +43,11 @@ Status conventions:
   failure outcomes; restore; offline verified-cache behavior; Steam-account
   switching; renderer restart; and interrupted-consumption recovery. Treat
   this as a blocker for a monetized Steam release unless the Steam SKU
-  intentionally excludes the Store. Source: [parity P-02](audits/unity-web-parity-audit-2026-08-20.md#p-02--the-electron-steam-store-is-explicitly-disabled).
+  intentionally excludes the Store. Source:
+  [Steam Inventory foundation](platform/steam-inventory-electron-foundation.md).
 - [ ] Implement and certify achievements, statistics, and rich presence through
-  the Electron/Steam host. Source: [parity P-01](audits/unity-web-parity-audit-2026-08-20.md#p-01--steam-achievements-stats-and-rich-presence-have-no-web-implementation).
+  the Electron/Steam host. Source:
+  [achievement architecture audit](audits/achievement-platform-architecture-audit-2026-08-20.md).
 - [ ] Before enabling Steam achievements, verify first-completion achievement
   timing, the reported false Division Master unlock, and Point Blank
   progress-notification cadence.
