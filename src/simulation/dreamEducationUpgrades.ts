@@ -147,7 +147,7 @@ export function purchaseSimulationUpgrade(
     },
   }
   if (key === 'mathematics3') {
-    candidate = applyMathematicsCompletionParity(candidate)
+    candidate = applyDreamMathematicsCompletionParity(candidate)
   }
   return {
     accepted: true,
@@ -273,7 +273,7 @@ export function advanceDreamEducation(
     },
   }
   if (mathematicsCompleted) {
-    candidate = applyMathematicsCompletionParity(candidate)
+    candidate = applyDreamMathematicsCompletionParity(candidate)
   }
   return {
     accepted: true,
@@ -559,7 +559,8 @@ function applyCanonicalUpgradeEffect(
   }
 }
 
-function applyMathematicsCompletionParity(
+/** Applies the canonical state patch shared by every mathematics completion path. */
+export function applyDreamMathematicsCompletionParity(
   state: CanonicalGameStateV1,
 ): CanonicalGameStateV1 {
   const mathematics = state.dream.education.mathematics

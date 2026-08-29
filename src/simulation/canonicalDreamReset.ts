@@ -11,6 +11,7 @@ import type {
   StatisticsWindowState,
 } from '../game-state/types'
 import {
+  applyDreamMathematicsCompletionParity,
   findSimulationUpgradeCanonicalGaps,
   SIMULATION_UPGRADE_DEFINITIONS,
   type SimulationUpgradeDefinition,
@@ -105,8 +106,6 @@ interface DreamResetOutcome {
   readonly cause: CanonicalDreamResetCause
   readonly requestedReward: number
 }
-
-const MATHEMATICS_SOLAR_GENERATION_MINIMUM = 200n
 
 const DREAM_EDUCATION_IDS = [
   'engineering',
@@ -225,7 +224,7 @@ export function applyCanonicalDreamReset(
     }
   }
   if (candidate.dream.upgrades.mathematics3) {
-    candidate = applyMathematicsParity(candidate)
+    candidate = applyDreamMathematicsCompletionParity(candidate)
   }
   candidate = {
     ...candidate,
@@ -633,32 +632,6 @@ function applyUpgradeEffect(
     dream: {
       ...state.dream,
       disasterStage: roundedDiscrete(effect.numericValue),
-    },
-  }
-}
-
-function applyMathematicsParity(
-  state: CanonicalGameStateV1,
-): CanonicalGameStateV1 {
-  return {
-    ...state,
-    dream: {
-      ...state.dream,
-      education: {
-        ...state.dream.education,
-        mathematics: {
-          ...state.dream.education.mathematics,
-          complete: true,
-        },
-      },
-      parameters: {
-        ...state.dream.parameters,
-        solarPanelGeneration:
-          state.dream.parameters.solarPanelGeneration >
-          MATHEMATICS_SOLAR_GENERATION_MINIMUM
-            ? state.dream.parameters.solarPanelGeneration
-            : MATHEMATICS_SOLAR_GENERATION_MINIMUM,
-      },
     },
   }
 }
