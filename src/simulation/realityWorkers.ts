@@ -10,6 +10,7 @@ import type {
   StatisticsWindowState,
 } from '../game-state/types'
 import { hasVisitedNavigationRoute } from '../game-state/navigationPreferences'
+import { createEmptySimulationTotals } from './canonicalStatistics'
 import {
   addContinuous,
   addDiscrete,
@@ -418,7 +419,7 @@ function recordRealitySegment(
   const end = addContinuous(start, safeSeconds)
   const recentBase =
     statistics.recentProcessedSegment.simulatedSeconds > 0
-      ? emptyTotals()
+      ? createEmptySimulationTotals()
       : statistics.recentProcessedSegment
 
   return {
@@ -494,27 +495,6 @@ function addRealityTotals(
       totals.simulatedSeconds,
       seconds,
     ),
-  }
-}
-
-function emptyTotals(): SimulationTotalsState {
-  return {
-    ordinaryInfinityCount: 0n,
-    breakInfinityCount: 0n,
-    ordinaryInfinityPoints: 0n,
-    breakInfinityPoints: 0n,
-    botCapInfinityPoints: 0n,
-    botCapOverflowRewards: 0n,
-    meteorDreamResets: 0n,
-    aiDreamResets: 0n,
-    globalWarmingDreamResets: 0n,
-    blackHoleDreamResets: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-    automaticInfluence: 0,
-    manualInfluence: 0,
-    realityCapacityStallSeconds: 0,
-    simulatedSeconds: 0,
   }
 }
 

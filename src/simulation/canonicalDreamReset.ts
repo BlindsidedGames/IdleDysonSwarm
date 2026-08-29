@@ -10,6 +10,7 @@ import type {
   SimulationTotalsState,
   StatisticsWindowState,
 } from '../game-state/types'
+import { createEmptyStatisticsWindow } from './canonicalStatistics'
 import {
   applyDreamMathematicsCompletionParity,
   applyDreamUpgradeEffect,
@@ -593,7 +594,7 @@ function addDreamWindow(
       ? [...source]
       : Array.from(
           { length: expectedLength },
-          () => emptyWindow(0n),
+          () => createEmptyStatisticsWindow(0n),
         )
   const sequence = floorToDiscrete(
     clampContinuous(trackedSimulatedSeconds) / widthSeconds,
@@ -601,7 +602,9 @@ function addDreamWindow(
   const index = Number(sequence % BigInt(expectedLength))
   const current = windows[index]
   const bucket =
-    current.sequence === sequence ? current : emptyWindow(sequence)
+    current.sequence === sequence
+      ? current
+      : createEmptyStatisticsWindow(sequence)
   windows[index] = {
     ...bucket,
     dreamResetCount: addDiscrete(bucket.dreamResetCount, 1n),
@@ -611,18 +614,6 @@ function addDreamWindow(
     ),
   }
   return windows
-}
-
-function emptyWindow(sequence: bigint): StatisticsWindowState {
-  return {
-    sequence,
-    simulatedSeconds: 0,
-    infinityCount: 0n,
-    infinityPoints: 0n,
-    dreamResetCount: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-  }
 }
 
 function roundedDiscrete(value: number): bigint {

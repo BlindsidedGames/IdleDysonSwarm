@@ -9,6 +9,7 @@ import type {
   SkillRuntimeState,
   StatisticsWindowState,
 } from '../game-state/types'
+import { createEmptyStatisticsWindow } from './canonicalStatistics'
 import {
   addDiscrete,
   clampContinuous,
@@ -801,7 +802,7 @@ function recordWindowEvent(
       ? [...source]
       : Array.from(
           { length: expectedLength },
-          () => emptyWindow(0n),
+          () => createEmptyStatisticsWindow(0n),
         )
   const sequence = floorToDiscrete(
     clampContinuous(trackedSimulatedSeconds) / widthSeconds,
@@ -811,7 +812,7 @@ function recordWindowEvent(
   const bucket =
     sourceBucket.sequence === sequence
       ? sourceBucket
-      : emptyWindow(sequence)
+      : createEmptyStatisticsWindow(sequence)
   windows[index] = {
     ...bucket,
     infinityCount: addDiscrete(
@@ -824,18 +825,6 @@ function recordWindowEvent(
     ),
   }
   return windows
-}
-
-function emptyWindow(sequence: bigint): StatisticsWindowState {
-  return {
-    sequence,
-    simulatedSeconds: 0,
-    infinityCount: 0n,
-    infinityPoints: 0n,
-    dreamResetCount: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-  }
 }
 
 function readBooleanFlag(value: unknown): boolean | undefined {
