@@ -5,6 +5,7 @@ import {
   WriterLeaseLostError,
 } from './browserSaveDatabase'
 import { requireBrowserCapability } from './browserEnvironment'
+import { createBrowserOwnerToken } from './browserOwnerToken'
 import type {
   WriterAuthorityPort,
   WriterAuthorityTakeoverPort,
@@ -142,7 +143,7 @@ implements WriterAuthorityPort, WriterAuthorityTakeoverPort {
       options.nowUtcMilliseconds ?? Date.now
     this.ownerToken =
       options.ownerToken ??
-      (options.ownerTokenFactory ?? defaultOwnerTokenFactory)()
+      (options.ownerTokenFactory ?? createBrowserOwnerToken)()
     this.allowUnexpiredSameOwnerTakeover =
       options.allowUnexpiredSameOwnerTakeover ?? false
     this.leaseDurationMilliseconds = leaseDurationMilliseconds
@@ -799,21 +800,6 @@ function validateHeartbeatBounds(
       'Writer heartbeat must be positive, at most 10 seconds, and no more than half the lease duration.',
     )
   }
-}
-
-function defaultOwnerTokenFactory(): string {
-  const browserCrypto = requireBrowserCapability(
-    'Crypto',
-    globalThis.crypto,
-  )
-  if (typeof browserCrypto.randomUUID === 'function') {
-    return browserCrypto.randomUUID()
-  }
-  const random = new Uint8Array(16)
-  browserCrypto.getRandomValues(random)
-  return [...random]
-    .map((value) => value.toString(16).padStart(2, '0'))
-    .join('')
 }
 
 function defaultBroadcastChannelFactory(
