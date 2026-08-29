@@ -4,6 +4,7 @@ import type {
   CommitFirstResult,
 } from '../../application/contracts'
 import type { DeepReadonly } from '../../core/contracts'
+import { formatUnknownError as errorMessage } from '../../core/unknownError'
 import type {
   FrontendApplicationSnapshot,
   FrontendGameplayPreviewDemand,
@@ -2664,8 +2665,4 @@ function requireBrowserBlockedState(
     generation: number
     expiresAtUtcMilliseconds: number
   }>
-}
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
 }

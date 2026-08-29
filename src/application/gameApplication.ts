@@ -3,6 +3,7 @@ import type {
   SimulationTransitionResult,
 } from '../core/contracts'
 import { TransactionalSimulationEngine } from '../core/simulationEngine'
+import { formatUnknownError as errorMessage } from '../core/unknownError'
 import type { PreparedSave } from '../save/prepare'
 import { prepareImportedSaveText } from '../save/import'
 import type {
@@ -644,8 +645,4 @@ export class TransactionalGameApplication<TState, TCommand>
     | undefined {
     return this.options.engineDefinition.onListenerError
   }
-}
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
 }

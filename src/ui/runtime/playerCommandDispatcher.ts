@@ -1,4 +1,5 @@
 import type { DeepReadonly } from '../../core/contracts'
+import { formatUnknownError as errorMessage } from '../../core/unknownError'
 import type {
   CanonicalCoordinatedPlayerResult,
 } from '../../application/canonicalLifecycleCoordinator'
@@ -403,8 +404,4 @@ function staleSession(
 
 function isStaleCode(code: string): boolean {
   return code === 'APP-STALE-SESSION' || code === 'SIM-STALE-REVISION'
-}
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
 }

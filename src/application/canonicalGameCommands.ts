@@ -1,3 +1,4 @@
+import { formatUnknownError as errorDetail } from '../core/unknownError'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
@@ -2648,10 +2649,6 @@ function freezeIssues(
   return issues.length === 0
     ? EMPTY_ISSUES
     : Object.freeze([...issues])
-}
-
-function errorDetail(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
 }
 
 function researchTuningCarrierUnavailable(
