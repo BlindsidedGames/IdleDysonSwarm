@@ -256,7 +256,11 @@
 }
 
 .research-surface__summary .ui-inline-image-symbol {
-  margin-inline: 0.12em;
+  margin: 0;
+}
+
+.research-surface__science .ui-resource-value__content {
+  gap: 0.06em;
 }
 
 .research-surface__settings-toggle {

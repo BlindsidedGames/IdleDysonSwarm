@@ -49,11 +49,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-.quantum-surface__shard-icon { display: block; inline-size: 1.35rem; block-size: 1.35rem; flex: 0 0 auto; object-fit: contain; }
-.quantum-shard-amount { display: inline-flex; align-items: center; justify-content: center; gap: 0.22em; white-space: nowrap; }
-.quantum-shard-amount__icon { display: block; inline-size: 1em; block-size: 1em; flex: 0 0 auto; background: currentcolor; mask-position: center; mask-repeat: no-repeat; mask-size: contain; }
+.quantum-shard-amount { justify-content: center; white-space: nowrap; }
 .quantum-shard-sentence { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.22em; }
-.quantum-surface__balance > span { color: var(--quantum-warm); font-size: calc(1.15rem * var(--game-text-scale)); font-weight: var(--font-weight-bold); }
+.quantum-surface__balance > .quantum-shard-amount { color: var(--quantum-warm); font-size: calc(1.15rem * var(--game-text-scale)); font-weight: var(--font-weight-bold); }
 .quantum-surface__balance small { color: #aaecac; }
 .quantum-surface__track { display: block; block-size: 0.68rem; overflow: hidden; border: 1px solid var(--theme-divider); border-radius: 0.2rem; background: var(--theme-page); }
 .quantum-surface__track > span { display: block; block-size: 100%; background: linear-gradient(90deg, var(--quantum-accent-strong), var(--quantum-accent)); transition: inline-size 160ms linear; }

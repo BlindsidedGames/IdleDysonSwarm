@@ -1,14 +1,13 @@
-import scienceSymbolSrc from '../../assets/symbol-science.png'
 import {
-  InlineImageSymbol,
+  BotsSymbol,
   ResourceValue,
+  ScienceSymbol,
 } from '../../components'
 import type {
   DysonResourceHeaderPresentation,
   DysonResourcePresentation,
   DysonShellDirection,
 } from './contracts'
-import { navigationAssets } from './navigationAssets'
 
 export interface DysonResourceHeaderProps
   extends DysonResourceHeaderPresentation {
@@ -102,23 +101,5 @@ function Resource({
         </div>
       )}
     </div>
-  )
-}
-
-function BotsSymbol() {
-  return (
-    <InlineImageSymbol
-      src={navigationAssets.bots}
-      symbol="bots"
-    />
-  )
-}
-
-function ScienceSymbol() {
-  return (
-    <InlineImageSymbol
-      src={scienceSymbolSrc}
-      symbol="science"
-    />
   )
 }

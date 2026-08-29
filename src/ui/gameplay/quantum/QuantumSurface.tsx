@@ -20,8 +20,16 @@ import {
   QUANTUM_CONSTANTS,
   type QuantumUpgradeId,
 } from '../../../simulation/quantumUpgrades'
-import { Button, ProgressControlsPanel } from '../../components'
-import quantumShardsIcon from '../../assets/quantum-shards.png'
+import {
+  Button,
+  InlineResourceAmount,
+  ProgressControlsPanel,
+  QuantumShardSymbol,
+} from '../../components'
+import {
+  InfinityPointSymbol,
+} from '../../components/InfinityPointAmount'
+import { formatInfinityPointAmount } from '../../components/infinityPointFormatting'
 import { formatGameNumber, formatNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
@@ -87,9 +95,13 @@ export function QuantumSurface({
     <div className="quantum-surface">
       <header className="quantum-surface__summary">
         <div className="quantum-surface__balance">
-          <img className="quantum-surface__shard-icon" src={quantumShardsIcon} alt="" aria-hidden="true" />
-          <strong>{intl.formatMessage(messages.shards)}</strong>
-          <span>{formatGameNumber(locale, resources.availablePoints)}</span>
+          <strong className="ui-visually-hidden">
+            {intl.formatMessage(messages.shards)}
+          </strong>
+          <QuantumShardAmount
+            locale={locale}
+            value={resources.availablePoints}
+          />
           <small>{intl.formatMessage(messages.spent, { value: formatGameNumber(locale, resources.pointsSpent) })}</small>
         </div>
       </header>
@@ -399,10 +411,21 @@ export function QuantumControlPanel({
             <strong>{intl.formatMessage(messages.progress)}</strong>
             {!available ? (
               <span>
-                {intl.formatMessage(messages.progressValue, {
-                  current: formatGameNumber(locale, infinityPoints),
-                  required: formatGameNumber(locale, required),
-                })}
+                <span className="ui-visually-hidden">
+                  {intl.formatMessage(messages.progressValue, {
+                    current: formatInfinityPointAmount(
+                      locale,
+                      infinityPoints,
+                    ),
+                    required: formatInfinityPointAmount(locale, required),
+                  })}
+                </span>
+                <InlineResourceAmount
+                  className="quantum-control-panel__infinity-progress"
+                  ariaHidden
+                  leadingSymbol={<InfinityPointSymbol />}
+                  value={`${formatInfinityPointAmount(locale, infinityPoints)} / ${formatInfinityPointAmount(locale, required)}`}
+                />
               </span>
             ) : null}
           </div>
@@ -604,14 +627,11 @@ function QuantumLeapCard({ locale, availableInfinityPoints, preview, entangled, 
 
 function QuantumShardAmount({ locale, value }: { readonly locale: EnabledLocale; readonly value: bigint }) {
   return (
-    <span className="quantum-shard-amount">
-      <span
-        className="quantum-shard-amount__icon"
-        style={{ maskImage: `url(${quantumShardsIcon})` }}
-        aria-hidden="true"
-      />
-      <span>{formatGameNumber(locale, value)}</span>
-    </span>
+    <InlineResourceAmount
+      className="quantum-shard-amount"
+      leadingSymbol={<QuantumShardSymbol />}
+      value={formatGameNumber(locale, value)}
+    />
   )
 }
 

@@ -410,6 +410,7 @@ export function FacilityDetailsContent({
         base,
         count,
         contributions,
+        intl.formatMessage(messages.baseProduction),
       )
     : null
   const hasTerraPurchaseEffects = Boolean(
@@ -523,9 +524,10 @@ export function FacilityDetailsContent({
             )}
           {productionFormula && (
             <p className="facility-details-stage__result">
-              <bdi>{productionFormula}</bdi> = {intl.formatMessage(messages.perGameSecond, {
-                rate: formatGameNumber(locale, fact.production.perSecond),
-              })}
+              <bdi>{productionFormula}</bdi> = {formatGameNumber(
+                locale,
+                fact.production.perSecond,
+              )}
             </p>
           )}
         </CalculationStage>
@@ -594,9 +596,10 @@ function formatProductionFormula(
   base: FacilityContribution,
   count: FacilityContribution,
   contributions: readonly FacilityContribution[],
+  baseLabel: string,
 ): string {
   const number = (value: number) => formatGameNumber(locale, value)
-  let formula = `${number(base.value)} × ${number(count.value)}`
+  let formula = `${baseLabel} (${number(base.value * count.value)})`
 
   for (const contribution of contributions) {
     if (

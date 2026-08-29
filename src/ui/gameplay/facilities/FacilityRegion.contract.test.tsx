@@ -111,14 +111,84 @@ describe('FacilityRegion unified presentation contract', () => {
       facilityId: 'galactic_brains',
     })
   })
+
+  test('starts the modifier formula from total base output without a rate suffix', () => {
+    const regionProps = props(vi.fn())
+    const assemblyLines = regionProps.facts.assembly_lines
+    const facts = {
+      ...regionProps.facts,
+      assembly_lines: {
+        ...assemblyLines,
+        ownership: {
+          automatic: 10_000_000,
+          manual: 0,
+          total: 10_000_000,
+        },
+        production: {
+          ...assemblyLines.production,
+          perSecond: 2_000_000,
+        },
+        details: {
+          ...assemblyLines.details,
+          baseProductionPerSecond: 0.1,
+          effectiveProducerCount: 10_000_000,
+          modifier: 2,
+          contributions: [
+            {
+              sourceId: 'base',
+              displayRole: 'base',
+              operation: 'override',
+              value: 0.1,
+              delta: 0.1,
+              runningTotal: 0.1,
+            },
+            {
+              sourceId: 'assembly_lines.count',
+              displayRole: 'producer-count',
+              operation: 'multiply',
+              value: 10_000_000,
+              delta: 999_999.9,
+              runningTotal: 1_000_000,
+              automaticManualTuple: [10_000_000, 0],
+            },
+            {
+              sourceId: 'assembly_lines.modifier',
+              displayRole: 'modifier',
+              operation: 'multiply',
+              value: 2,
+              delta: 1_000_000,
+              runningTotal: 2_000_000,
+              source: { kind: 'system', id: 'test.production-modifier' },
+            },
+          ],
+          modifierContributions: [],
+        },
+      },
+    } as FacilityRegionProps['facts']
+
+    renderRegionProps({ ...regionProps, facts })
+    fireEvent.click(screen.getAllByRole('button', { name: 'Details' })[0]!)
+
+    const stageResults = document.querySelectorAll(
+      '.facility-details-stage__result',
+    )
+    const modifierResult = stageResults[1]?.textContent ?? ''
+    expect(modifierResult).toBe('Base (1.00M) × 2.00 = 2.00M')
+    expect(modifierResult).not.toContain('/ game second')
+    expect(modifierResult).not.toContain('0.10 × 10.0M')
+  })
 })
 
 function renderRegion(
   dispatchPlayer: FacilityRegionProps['dispatchPlayer'],
 ) {
+  renderRegionProps(props(dispatchPlayer))
+}
+
+function renderRegionProps(regionProps: FacilityRegionProps) {
   render(
     <IntlProvider locale="en" messages={{}} onError={() => undefined}>
-      <FacilityRegion {...props(dispatchPlayer)} />
+      <FacilityRegion {...regionProps} />
     </IntlProvider>,
   )
 }

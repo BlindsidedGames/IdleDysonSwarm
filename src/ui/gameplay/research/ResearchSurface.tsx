@@ -21,13 +21,14 @@ import type {
   SkillPresetState,
 } from '../../../game-state/types'
 import researchCostSymbolSrc from '../../assets/symbol-research-cost.png'
-import scienceSymbolSrc from '../../assets/symbol-science.png'
 import {
   Button,
   FacilityCard,
   InlineImageSymbol,
+  InlineResourceAmount,
   PresetAutomationSelect,
   ProgressControlsPanel,
+  ScienceSymbol,
   StableSingleLineText,
 } from '../../components'
 import {
@@ -497,8 +498,13 @@ function ResearchProductionMessage({
       {...messages.productionSummary}
       values={{
         researchers,
-        science,
-        scienceIcon: <ScienceSymbol />,
+        science: (
+          <InlineResourceAmount
+            leadingSymbol={<ScienceSymbol tint />}
+            value={science}
+          />
+        ),
+        scienceIcon: null,
         researcherValue: (chunks: ReactNode) => (
           <span className="research-surface__researchers">{chunks}</span>
         ),
@@ -747,15 +753,6 @@ function formatPercentPoints(
   return formatNumber(locale, value, {
     maximumFractionDigits: 2,
   })
-}
-
-function ScienceSymbol() {
-  return (
-    <InlineImageSymbol
-      src={scienceSymbolSrc}
-      symbol="science"
-    />
-  )
 }
 
 function ResearchCostSymbol() {
