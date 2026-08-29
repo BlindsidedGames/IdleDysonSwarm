@@ -17,8 +17,12 @@ import { useIntl } from 'react-intl'
 import {
   FacilityDetailsContent,
   FacilityPresentationCard,
-  type FacilityPurchaseFeedback,
 } from './FacilityPresentation'
+import {
+  facilityFeedbackMatchesRevision,
+  sameFacilityRevision,
+  type FacilityPurchaseFeedback,
+} from './facilityPurchaseFeedback'
 import { FacilityDetailsDialog } from './FacilityDetailsDialog'
 import { facilityPresentation } from './facilityPresentationCatalog'
 import { basicFacilityMessages as messages } from './messages'
@@ -102,7 +106,7 @@ export function FacilityRegion({
     setFeedbackById((current) =>
       Object.fromEntries(
         Object.entries(current).filter(([, feedback]) =>
-          feedbackMatches(feedback, currentRevision),
+          facilityFeedbackMatchesRevision(feedback, currentRevision),
         ),
       ),
     )
@@ -123,14 +127,18 @@ export function FacilityRegion({
         kind: 'dyson.purchase-facility',
         facilityId,
       })
-      if (sameRevision(activationRevision, currentRevisionRef.current)) {
+      if (
+        sameFacilityRevision(activationRevision, currentRevisionRef.current)
+      ) {
         setFeedbackById((current) => ({
           ...current,
           [facilityId]: mapFeedback(result, activationRevision),
         }))
       }
     } catch {
-      if (sameRevision(activationRevision, currentRevisionRef.current)) {
+      if (
+        sameFacilityRevision(activationRevision, currentRevisionRef.current)
+      ) {
         setFeedbackById((current) => ({
           ...current,
           [facilityId]: {
@@ -276,21 +284,4 @@ function mapFeedback(
     revision: activationRevision,
     activationRevision,
   }
-}
-
-function feedbackMatches(
-  feedback: FacilityPurchaseFeedback | undefined,
-  revision: FacilityRegionProps['revision'],
-) {
-  return feedback !== undefined && (
-    sameRevision(feedback.revision, revision) ||
-    sameRevision(feedback.activationRevision, revision)
-  )
-}
-
-function sameRevision(
-  left: FacilityRegionProps['revision'],
-  right: FacilityRegionProps['revision'],
-) {
-  return left.session === right.session && left.state === right.state
 }

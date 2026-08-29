@@ -27,6 +27,11 @@ import {
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { clampProgress } from '../progress/clampProgress'
+import {
+  facilityFeedbackMatchesRevision,
+  type FacilityPresentationRevision,
+  type FacilityPurchaseFeedback,
+} from './facilityPurchaseFeedback'
 import { basicFacilityMessages as messages } from './messages'
 import {
   FittedProductionLine,
@@ -57,16 +62,10 @@ export type FacilityCanonicalFact =
     { readonly status: 'ready' }
   >['value']['presentation']['facilities'][DysonFacilityId]
 
-export interface FacilityPresentationRevision {
-  readonly session: number
-  readonly state: number
-}
-
-export type FacilityPurchaseFeedback = {
-  readonly state: 'success' | 'stale' | 'rejected' | 'failed'
-  readonly revision: FacilityPresentationRevision
-  readonly activationRevision: FacilityPresentationRevision
-}
+export type {
+  FacilityPresentationRevision,
+  FacilityPurchaseFeedback,
+} from './facilityPurchaseFeedback'
 
 const skillIconModules = import.meta.glob<string>(
   '../../assets/skill-icons/*.webp',
@@ -1210,21 +1209,7 @@ function feedbackRevisionMatches(
   feedback: FacilityPurchaseFeedback | undefined,
   revision: FacilityPresentationRevision,
 ): boolean {
-  return (
-    feedback !== undefined &&
-    (sameRevision(feedback.revision, revision) ||
-      sameRevision(feedback.activationRevision, revision))
-  )
-}
-
-function sameRevision(
-  left: FacilityPresentationRevision,
-  right: FacilityPresentationRevision,
-): boolean {
-  return (
-    left.session === right.session &&
-    left.state === right.state
-  )
+  return facilityFeedbackMatchesRevision(feedback, revision)
 }
 
 function feedbackMessage(
