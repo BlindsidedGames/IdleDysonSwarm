@@ -82,6 +82,20 @@ export const CANONICAL_STORE_PRODUCTS: readonly StoreProduct[] = Object.freeze([
   }),
 ])
 
+const STORE_PRODUCTS_BY_ID = new Map<StoreProductId, StoreProduct>(
+  CANONICAL_STORE_PRODUCTS.map((product) => [product.id, product]),
+)
+
+export function getCanonicalStoreProduct(
+  productId: StoreProductId,
+): StoreProduct {
+  const product = STORE_PRODUCTS_BY_ID.get(productId)
+  if (product === undefined) {
+    throw new Error(`Unknown Store product: ${productId}`)
+  }
+  return product
+}
+
 export interface StorePurchaseSuccess {
   readonly accepted: true
   readonly productId: StoreProductId
@@ -370,7 +384,5 @@ function freezeOwnership(
 export function isSupporterProductId(
   productId: StoreProductId,
 ): boolean {
-  return productId === STORE_PRODUCT_IDS.tipTier1 ||
-    productId === STORE_PRODUCT_IDS.tipTier2 ||
-    productId === STORE_PRODUCT_IDS.tipTier3
+  return STORE_PRODUCTS_BY_ID.get(productId)?.kind === 'supporter-tier'
 }

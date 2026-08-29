@@ -1,5 +1,6 @@
 import {
   CANONICAL_STORE_PRODUCTS,
+  getCanonicalStoreProduct,
   STORE_PRODUCT_IDS,
   isSupporterProductId,
   resolveEffectiveEntitlementAccess,
@@ -7,7 +8,6 @@ import {
   type EntitlementAuthority,
   type HostEntitlementOwnership,
   type StoreAdapter,
-  type StoreProduct,
   type StoreProductId,
   type StoreProductListing,
 } from './contracts'
@@ -352,18 +352,8 @@ function normalizeListings(
   )
 }
 
-function productById(productId: StoreProductId): StoreProduct {
-  const product = CANONICAL_STORE_PRODUCTS.find(
-    (candidate) => candidate.id === productId,
-  )
-  if (product === undefined) {
-    throw new Error(`Unknown Store product: ${productId}`)
-  }
-  return product
-}
-
 function isDurableProductId(productId: StoreProductId): boolean {
-  return productById(productId).durability === 'durable'
+  return getCanonicalStoreProduct(productId).durability === 'durable'
 }
 
 function ownsProduct(
