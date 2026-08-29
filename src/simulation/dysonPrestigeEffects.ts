@@ -1,5 +1,9 @@
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import {
+  REALITY_SYSTEM_TUNING_ASSET_ID,
+  REALITY_SYSTEM_TUNING_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import type {
   AvocadoState,
   QuantumState,
@@ -70,8 +74,8 @@ function quantumBonusMultiplier(levels: bigint): number {
 
 function readAvocadoLogThreshold(): number {
   const asset = getGameAsset(
-    'IdleDysonSwarm.Data.Balance.RealitySystemTuning',
-    'RealitySystemTuning',
+    REALITY_SYSTEM_TUNING_ASSET_KIND,
+    REALITY_SYSTEM_TUNING_ASSET_ID,
   )
   const threshold = asset?.data.avocadoLogThreshold
   if (

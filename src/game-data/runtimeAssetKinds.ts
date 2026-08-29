@@ -7,6 +7,12 @@ export const FACILITY_DEFINITION_ASSET_KIND =
 export const RESEARCH_DEFINITION_ASSET_KIND =
   'GameData.ResearchDefinition' as const
 
+export const REALITY_SYSTEM_TUNING_ASSET_KIND =
+  'IdleDysonSwarm.Data.Balance.RealitySystemTuning' as const
+
+export const REALITY_SYSTEM_TUNING_ASSET_ID =
+  'RealitySystemTuning' as const
+
 export const SKILL_DATABASE_ASSET_KIND =
   'GameData.SkillDatabase' as const
 

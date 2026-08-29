@@ -4,6 +4,10 @@ import {
   isSafeNonNegativeInteger,
 } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import {
+  REALITY_SYSTEM_TUNING_ASSET_ID,
+  REALITY_SYSTEM_TUNING_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import type {
   CanonicalGameStateV1,
   SimulationStatisticsState,
@@ -26,9 +30,6 @@ import {
 } from './numeric'
 import { QUANTUM_CONSTANTS } from './quantumUpgrades'
 
-const REALITY_TUNING_KIND =
-  'IdleDysonSwarm.Data.Balance.RealitySystemTuning'
-const REALITY_TUNING_ID = 'RealitySystemTuning'
 const FLOAT32_MAXIMUM = 3.4028234663852886e38
 
 export interface RealityWorkerTuning {
@@ -310,8 +311,8 @@ export function readRealityWorkerTuning():
   | RealityWorkerTuning
   | undefined {
   const asset = getGameAsset(
-    REALITY_TUNING_KIND,
-    REALITY_TUNING_ID,
+    REALITY_SYSTEM_TUNING_ASSET_KIND,
+    REALITY_SYSTEM_TUNING_ASSET_ID,
   )
   const workerBatchSize = asset?.data.workerBatchSize
   const baseWorkerGenerationSpeed =
