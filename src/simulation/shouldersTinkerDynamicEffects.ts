@@ -2,13 +2,13 @@ import {
   isFiniteNonNegativeNumber,
   isSafeNonNegativeInteger,
 } from '../core/finiteNonNegativeNumber'
+import { extractDynamicSkillId } from './dynamicEffectId'
 
 const SCIENCE_BOOST_PER_SECOND_SUFFIX =
   '.science_boost_per_second'
 const MONEY_UPGRADE_PER_SECOND_SUFFIX =
   '.money_multi_upgrade_per_second'
 const TINKER_ASSEMBLY_YIELD_SUFFIX = '.tinker_assembly_yield'
-const EFFECT_PREFIX = 'effect.'
 
 export interface ShouldersAccrualDynamicInputs {
   readonly ownedSkills: ReadonlySet<string>
@@ -35,8 +35,8 @@ export function tryResolveShouldersAccrualDynamicEffect(
   inputs: Readonly<ShouldersAccrualDynamicInputs>,
 ): number | undefined {
   const skillId =
-    extractSkillId(effectId, SCIENCE_BOOST_PER_SECOND_SUFFIX) ??
-    extractSkillId(effectId, MONEY_UPGRADE_PER_SECOND_SUFFIX)
+    extractDynamicSkillId(effectId, SCIENCE_BOOST_PER_SECOND_SUFFIX) ??
+    extractDynamicSkillId(effectId, MONEY_UPGRADE_PER_SECOND_SUFFIX)
   if (
     skillId === undefined ||
     !SHOULDERS_ACCRUAL_SKILLS.has(skillId)
@@ -85,7 +85,7 @@ export function tryResolveTinkerDynamicEffect(
   effectId: string,
   inputs: Readonly<TinkerDynamicInputs>,
 ): number | undefined {
-  const skillId = extractSkillId(
+  const skillId = extractDynamicSkillId(
     effectId,
     TINKER_ASSEMBLY_YIELD_SUFFIX,
   )
@@ -153,17 +153,6 @@ function shouldersOfTheFallenBonus(
     inputs.scienceBoostLevel > 0
     ? Math.log2(inputs.scienceBoostLevel)
     : 0
-}
-
-function extractSkillId(
-  effectId: string,
-  suffix: string,
-): string | undefined {
-  if (!effectId.startsWith(EFFECT_PREFIX) || !effectId.endsWith(suffix)) {
-    return undefined
-  }
-  const value = effectId.slice(EFFECT_PREFIX.length, -suffix.length)
-  return value.length > 0 ? value : undefined
 }
 
 function validateShouldersInputs(

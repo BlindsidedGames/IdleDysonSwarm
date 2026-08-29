@@ -1,8 +1,8 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import { extractDynamicSkillId } from './dynamicEffectId'
 
 const PANEL_LIFETIME_SUFFIX = '.panel_lifetime'
 const PANELS_PER_SECOND_SUFFIX = '.panels_per_second'
-const EFFECT_PREFIX = 'effect.'
 
 export interface PanelDynamicEffectInputs {
   readonly ownedSkills: ReadonlySet<string>
@@ -22,7 +22,7 @@ export function tryResolvePanelLifetimeDynamicEffect(
   effectId: string,
   inputs: PanelDynamicEffectInputs,
 ): number | undefined {
-  const skillId = extractSkillId(effectId, PANEL_LIFETIME_SUFFIX)
+  const skillId = extractDynamicSkillId(effectId, PANEL_LIFETIME_SUFFIX)
   if (skillId === undefined) return undefined
   if (!PANEL_LIFETIME_SKILLS.has(skillId)) return undefined
   validateInputs(inputs)
@@ -71,7 +71,7 @@ export function tryResolvePanelsPerSecondDynamicEffect(
   effectId: string,
   inputs: PanelDynamicEffectInputs,
 ): number | undefined {
-  const skillId = extractSkillId(effectId, PANELS_PER_SECOND_SUFFIX)
+  const skillId = extractDynamicSkillId(effectId, PANELS_PER_SECOND_SUFFIX)
   if (skillId === undefined) return undefined
   if (!PANELS_PER_SECOND_SKILLS.has(skillId)) return undefined
   validateInputs(inputs)
@@ -105,17 +105,6 @@ const PANELS_PER_SECOND_SKILLS = new Set([
   'reapers',
   'rocketMania',
 ])
-
-function extractSkillId(
-  effectId: string,
-  suffix: string,
-): string | undefined {
-  if (!effectId.startsWith(EFFECT_PREFIX) || !effectId.endsWith(suffix)) {
-    return undefined
-  }
-  const value = effectId.slice(EFFECT_PREFIX.length, -suffix.length)
-  return value.length > 0 ? value : undefined
-}
 
 function stellarSacrificesRequiredBots(
   inputs: PanelDynamicEffectInputs,
