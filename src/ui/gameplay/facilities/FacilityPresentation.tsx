@@ -137,7 +137,7 @@ export function FacilityPresentationCard({
   const costPrecise = preciseNumber(locale, preview.cost)
   const displayFeedback = pending
     ? 'pending'
-    : feedbackRevisionMatches(feedback, revision)
+    : facilityFeedbackMatchesRevision(feedback, revision)
       ? feedback?.state
       : undefined
   const disabled = !routeAvailable || !preview.eligible
@@ -1203,13 +1203,6 @@ function disabledReason(
     default:
       return { message: messages.unavailable }
   }
-}
-
-function feedbackRevisionMatches(
-  feedback: FacilityPurchaseFeedback | undefined,
-  revision: FacilityPresentationRevision,
-): boolean {
-  return facilityFeedbackMatchesRevision(feedback, revision)
 }
 
 function feedbackMessage(
