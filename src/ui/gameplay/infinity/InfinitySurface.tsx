@@ -51,7 +51,7 @@ import { useForwardProgressAnimation } from '../progress/useForwardProgressAnima
 import { infinityMessages as messages } from './messages'
 import {
   formatAutoInfinityTargetInput,
-  parseInfinityTargetInput,
+  resolveInfinityTargetDraft,
 } from './parseInfinityTarget'
 import './infinity.css'
 
@@ -682,22 +682,22 @@ function AutoInfinityTargetControl({
 }: AutoInfinityTargetControlProps) {
   const intl = useIntl()
   const pendingRef = useRef(false)
-  // Editable state stays exact; abbreviated display values are intentionally
-  // lossy and must never become the submitted Auto Infinity target.
   const [draft, setDraft] = useState(() =>
-    formatAutoInfinityTargetInput(target),
+    formatAutoInfinityTargetInput(locale, target),
   )
+  const [draftEdited, setDraftEdited] = useState(false)
   const [failed, setFailed] = useState(false)
   const [validationReason, setValidationReason] = useState<string | null>(null)
   const lastSubmitted = useRef<string | null>(null)
 
   useEffect(() => {
-    setDraft(formatAutoInfinityTargetInput(target))
+    setDraft(formatAutoInfinityTargetInput(locale, target))
+    setDraftEdited(false)
     lastSubmitted.current = null
-  }, [target])
+  }, [locale, target])
 
-  const parsed = parseInfinityTargetInput(draft)
-  const changed = parsed.ok && parsed.value !== target
+  const parsed = resolveInfinityTargetDraft(draft, target, draftEdited, locale)
+  const changed = draftEdited && parsed.ok && parsed.value !== target
 
   const submit = async (): Promise<void> => {
     if (
@@ -746,10 +746,10 @@ function AutoInfinityTargetControl({
           value={draft}
           disabled={!routeAvailable}
           aria-invalid={validationReason !== null}
-          aria-describedby="infinity-break-target-help"
           onChange={(event) => {
             setFailed(false)
             setValidationReason(null)
+            setDraftEdited(true)
             setDraft(event.currentTarget.value)
           }}
           onKeyDown={(event) => {
@@ -769,17 +769,6 @@ function AutoInfinityTargetControl({
       >
         {intl.formatMessage(messages.setBreakTarget)}
       </Button>
-      <span id="infinity-break-target-help" className="infinity-break-target__range">
-        <InfinityCurrencySentence
-          accessible={intl.formatMessage(messages.breakTargetValue, {
-            value: formatInfinityPointAmount(locale, target),
-          })}
-          amounts={[formatInfinityPointAmount(locale, target)]}
-          template={intl.formatMessage(messages.breakTargetValue, {
-            value: infinityAmountMarker(0),
-          })}
-        />
-      </span>
       {validationReason !== null ? (
         <span className="infinity-break-target__feedback" role="alert">
           {intl.formatMessage(messages.breakTargetInvalid)}

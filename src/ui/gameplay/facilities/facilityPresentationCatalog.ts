@@ -11,7 +11,6 @@ export interface FacilityPresentationMessages {
   readonly productionPerSecond: MessageDescriptor
   readonly productionSeconds: MessageDescriptor
   readonly productionMinutes: MessageDescriptor
-  readonly unlockPrerequisite?: MessageDescriptor
 }
 
 /** Presentation-only differences for the shared eight-facility UI. */
@@ -75,9 +74,8 @@ export const facilityPresentation: Readonly<
     purchasePrompt: messages.constructMatrioshkaBrain,
     purchaseAccessible: messages.constructMegaStructureAccessible,
     productionPerSecond: messages.matrioshkaBrainsProductionPerSecond,
-    productionSeconds: messages.matrioshkaBrainsProductionInterval,
-    productionMinutes: messages.matrioshkaBrainsProductionInterval,
-    unlockPrerequisite: messages.planetsName,
+    productionSeconds: messages.matrioshkaBrainsProductionSeconds,
+    productionMinutes: messages.matrioshkaBrainsProductionMinutes,
   },
   birch_planets: {
     name: messages.birchPlanetsName,
@@ -86,9 +84,8 @@ export const facilityPresentation: Readonly<
     purchasePrompt: messages.constructBirchPlanet,
     purchaseAccessible: messages.constructMegaStructureAccessible,
     productionPerSecond: messages.birchPlanetsProductionPerSecond,
-    productionSeconds: messages.birchPlanetsProductionInterval,
-    productionMinutes: messages.birchPlanetsProductionInterval,
-    unlockPrerequisite: messages.matrioshkaBrainsName,
+    productionSeconds: messages.birchPlanetsProductionSeconds,
+    productionMinutes: messages.birchPlanetsProductionMinutes,
   },
   galactic_brains: {
     name: messages.galacticBrainsName,
@@ -97,8 +94,7 @@ export const facilityPresentation: Readonly<
     purchasePrompt: messages.constructGalacticBrain,
     purchaseAccessible: messages.constructMegaStructureAccessible,
     productionPerSecond: messages.galacticBrainsProductionPerSecond,
-    productionSeconds: messages.galacticBrainsProductionInterval,
-    productionMinutes: messages.galacticBrainsProductionInterval,
-    unlockPrerequisite: messages.birchPlanetsName,
+    productionSeconds: messages.galacticBrainsProductionSeconds,
+    productionMinutes: messages.galacticBrainsProductionMinutes,
   },
 }

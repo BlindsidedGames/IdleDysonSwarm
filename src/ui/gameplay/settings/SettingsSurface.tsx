@@ -558,6 +558,46 @@ export function SettingsSurface({
       >
         {!developmentOnly ? (
           <>
+            <section className="settings-surface__panel settings-surface__panel--more">
+              <div className="settings-surface__copy">
+                <h2>{intl.formatMessage(messages.moreByTitle)}</h2>
+              </div>
+              <div className="settings-surface__community-actions">
+                <div className="settings-surface__community-card">
+                  <p>{intl.formatMessage(messages.discordDescription)}</p>
+                  <button
+                    type="button"
+                    className="settings-surface__community-action settings-surface__community-action--primary"
+                    onClick={() => {
+                      void openExternalUrl(IDLE_DYSON_SWARM_DISCORD_URL)
+                    }}
+                  >
+                    <DiscordIcon />
+                    <span>{intl.formatMessage(messages.discordAction)}</span>
+                  </button>
+                </div>
+                {developerDestination !== undefined ? (
+                  <div className="settings-surface__community-card">
+                    <p>{intl.formatMessage(messages.moreByDescription)}</p>
+                    <button
+                      type="button"
+                      className="settings-surface__community-action"
+                      onClick={() => {
+                        void openExternalUrl(developerDestination.url)
+                      }}
+                    >
+                      {intl.formatMessage(
+                        developerDestination.kind === 'app-store'
+                          ? messages.appStoreAction
+                          : developerDestination.kind === 'google-play'
+                            ? messages.googlePlayAction
+                            : messages.websiteAction,
+                      )}
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            </section>
             <div className="settings-surface__column settings-surface__column--primary">
               {audio !== undefined ? <AudioSettingsPanel audio={audio} /> : null}
               <section className="settings-surface__panel settings-surface__panel--number-notation">
@@ -584,22 +624,6 @@ export function SettingsSurface({
                       {intl.formatMessage(messages.numberNotationEngineering)}
                     </option>
                   </select>
-                </label>
-              </section>
-              <section className="settings-surface__panel settings-surface__panel--visualization">
-                <div className="settings-surface__copy">
-                  <h2>{intl.formatMessage(messages.visualizationTitle)}</h2>
-                  <p>{intl.formatMessage(messages.visualizationDescription)}</p>
-                </div>
-                <label className="settings-surface__toggle">
-                  <input
-                    type="checkbox"
-                    checked={visualizationVisible}
-                    onChange={(event) =>
-                      onVisualizationVisibleChange(event.currentTarget.checked)
-                    }
-                  />
-                  <span>{intl.formatMessage(messages.visualizationToggle)}</span>
                 </label>
               </section>
             </div>
@@ -690,46 +714,6 @@ export function SettingsSurface({
                     }}
                   />
                 </label>
-              </section>
-              <section className="settings-surface__panel settings-surface__panel--more">
-                <div className="settings-surface__copy">
-                  <h2>{intl.formatMessage(messages.moreByTitle)}</h2>
-                </div>
-                <div className="settings-surface__community-actions">
-                  <div className="settings-surface__community-card">
-                    <p>{intl.formatMessage(messages.discordDescription)}</p>
-                    <button
-                      type="button"
-                      className="settings-surface__community-action settings-surface__community-action--primary"
-                      onClick={() => {
-                        void openExternalUrl(IDLE_DYSON_SWARM_DISCORD_URL)
-                      }}
-                    >
-                      <DiscordIcon />
-                      <span>{intl.formatMessage(messages.discordAction)}</span>
-                    </button>
-                  </div>
-                  {developerDestination !== undefined ? (
-                    <div className="settings-surface__community-card">
-                      <p>{intl.formatMessage(messages.moreByDescription)}</p>
-                      <button
-                        type="button"
-                        className="settings-surface__community-action"
-                        onClick={() => {
-                          void openExternalUrl(developerDestination.url)
-                        }}
-                      >
-                        {intl.formatMessage(
-                          developerDestination.kind === 'app-store'
-                            ? messages.appStoreAction
-                            : developerDestination.kind === 'google-play'
-                              ? messages.googlePlayAction
-                              : messages.websiteAction,
-                        )}
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
               </section>
             </div>
           </>
@@ -823,6 +807,24 @@ export function SettingsSurface({
             </button>
           </div>
         </section> : null}
+        {!developmentOnly ? (
+          <section className="settings-surface__panel settings-surface__panel--visualization">
+            <div className="settings-surface__copy">
+              <h2>{intl.formatMessage(messages.visualizationTitle)}</h2>
+              <p>{intl.formatMessage(messages.visualizationDescription)}</p>
+            </div>
+            <label className="settings-surface__toggle">
+              <input
+                type="checkbox"
+                checked={visualizationVisible}
+                onChange={(event) =>
+                  onVisualizationVisibleChange(event.currentTarget.checked)
+                }
+              />
+              <span>{intl.formatMessage(messages.visualizationToggle)}</span>
+            </label>
+          </section>
+        ) : null}
         {development !== undefined ? (
           <>
             {!developmentOnly ? <button

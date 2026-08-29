@@ -1,8 +1,18 @@
+import { formatInfinityPointAmount } from '../../components/infinityPointFormatting'
+import {
+  parseGameNumberInput,
+  toDiscreteGameNumber,
+} from '../../i18n/gameNumberInput'
+import type { EnabledLocale } from '../../i18n/localeRegistry'
+
 export const MAXIMUM_INFINITY_TARGET = 2_147_483_647n
 
-/** Editable Auto Infinity targets must round-trip without display abbreviation. */
-export function formatAutoInfinityTargetInput(value: bigint): string {
-  return value.toString()
+/** Compact presentation for the editable Auto Infinity target. */
+export function formatAutoInfinityTargetInput(
+  locale: EnabledLocale,
+  value: bigint,
+): string {
+  return formatInfinityPointAmount(locale, value)
 }
 
 export type InfinityTargetParseResult =
@@ -12,85 +22,45 @@ export type InfinityTargetParseResult =
       readonly reason: 'empty' | 'malformed' | 'non-positive' | 'non-integer' | 'too-large'
     }
 
-const SUFFIX_EXPONENTS: Readonly<Record<string, number>> = Object.freeze({
-  k: 3,
-  m: 6,
-  b: 9,
-  t: 12,
-  qa: 15,
-  qi: 18,
-})
-
-/** Parses exact, English game-number input without passing through a float. */
+/** Parses an exact game-number input using the player's active culture. */
 export function parseInfinityTargetInput(
   input: string,
+  locale: EnabledLocale = 'en',
 ): InfinityTargetParseResult {
   const normalized = input.trim().replace(/\s*ip$/i, '').trim()
-  if (normalized.length === 0) return { ok: false, reason: 'empty' }
-
-  const match = normalized.match(
-    /^([+-]?)([\d,_ ]+(?:\.\d*)?|\.\d+)(?:(?:e([+-]?\d+))|([a-z]+))?$/i,
-  )
-  if (match === null) return { ok: false, reason: 'malformed' }
-  if (match[1] === '-') return { ok: false, reason: 'non-positive' }
-
-  const [groupedWhole = '', fraction = ''] = match[2]!.split('.')
-  const whole = normalizeGroupedWhole(groupedWhole)
-  if (whole === null || !/^\d*$/.test(fraction)) {
-    return { ok: false, reason: 'malformed' }
-  }
-
-  const suffix = match[4]?.toLowerCase()
-  const suffixExponent = suffix === undefined
-    ? 0
-    : SUFFIX_EXPONENTS[suffix]
-  if (suffix !== undefined && suffixExponent === undefined) {
-    return { ok: false, reason: 'malformed' }
-  }
-  const explicitExponent = match[3] === undefined
-    ? suffixExponent
-    : Number(match[3])
-  if (
-    !Number.isSafeInteger(explicitExponent) ||
-    explicitExponent > 100 ||
-    explicitExponent < -100
-  ) {
-    return { ok: false, reason: 'too-large' }
-  }
-
-  const digitsText = `${whole}${fraction}`.replace(/^0+(?=\d)/, '')
-  const digits = BigInt(digitsText.length === 0 ? '0' : digitsText)
-  const decimalShift = explicitExponent - fraction.length
-  let value: bigint
-  if (decimalShift >= 0) {
-    value = digits * 10n ** BigInt(decimalShift)
-  } else {
-    const divisor = 10n ** BigInt(-decimalShift)
-    if (digits % divisor !== 0n) {
-      return { ok: false, reason: 'non-integer' }
+  const parsed = parseGameNumberInput(normalized, locale)
+  if (!parsed.ok) {
+    return {
+      ok: false,
+      reason: parsed.reason === 'empty'
+        ? 'empty'
+        : parsed.reason === 'negative'
+          ? 'non-positive'
+          : 'malformed',
     }
-    value = digits / divisor
   }
-
-  if (value < 1n) return { ok: false, reason: 'non-positive' }
-  if (value > MAXIMUM_INFINITY_TARGET) {
-    return { ok: false, reason: 'too-large' }
+  const discrete = toDiscreteGameNumber(parsed.value, MAXIMUM_INFINITY_TARGET)
+  if (!discrete.ok) {
+    return discrete.reason === 'above-maximum'
+      ? { ok: true, value: MAXIMUM_INFINITY_TARGET }
+      : { ok: false, reason: 'non-integer' }
   }
-  return { ok: true, value }
+  return discrete.value < 1n
+    ? { ok: false, reason: 'non-positive' }
+    : { ok: true, value: discrete.value }
 }
 
-function normalizeGroupedWhole(value: string): string | null {
-  if (/^\d+$/.test(value) || value === '') return value
-
-  const separators = [...new Set(value.match(/[,_ ]/g) ?? [])]
-  if (separators.length !== 1) return null
-  const groups = value.split(separators[0]!)
-  if (
-    groups.length < 2 ||
-    !/^\d{1,3}$/.test(groups[0]!) ||
-    groups.slice(1).some((group) => !/^\d{3}$/.test(group))
-  ) {
-    return null
-  }
-  return groups.join('')
+/**
+ * A compact display string is intentionally lossy. Until the player edits it,
+ * retain the exact canonical value instead of reparsing the abbreviation.
+ */
+export function resolveInfinityTargetDraft(
+  input: string,
+  currentTarget: bigint,
+  edited: boolean,
+  locale: EnabledLocale = 'en',
+): InfinityTargetParseResult {
+  return edited
+    ? parseInfinityTargetInput(input, locale)
+    : { ok: true, value: currentTarget }
 }

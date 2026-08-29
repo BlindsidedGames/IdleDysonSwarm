@@ -600,8 +600,12 @@ The application shell owns one active-time driver:
   Science displays retain decimal presentation, formula/detail values retain
   significant digits throughout, and the Reality universe designation remains
   the deliberately unabridged integer exception. Editable Auto Infinity Target
-  text also remains exact and round-trippable; its adjacent read-only summary
-  uses the normal abbreviated currency presentation.
+  text uses the normal abbreviated currency presentation, but an untouched
+  abbreviation retains its exact canonical value rather than being reparsed
+  through display rounding. Player-edited numeric text follows the active
+  locale's digits and decimal/grouping separators, is parsed exactly, and
+  clamps only above the canonical maximum target. Developer numeric inputs use
+  the same locale-aware coefficient parsing while retaining game suffixes.
 - Pair abbreviated values with an accessible/full-precision representation on
   focus, hover or details.
 - Use `/s` for rates and explicit units for durations. Durations under one

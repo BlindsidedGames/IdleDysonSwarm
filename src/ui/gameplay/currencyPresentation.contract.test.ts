@@ -3,10 +3,12 @@ import { resolve } from 'node:path'
 import { describe, expect, test } from 'vitest'
 import { formatInfinityPointAmount } from '../components/infinityPointFormatting'
 import { formatGameNumber } from '../i18n/formatters'
+import { ENABLED_LOCALES } from '../i18n/localeRegistry'
 import {
   formatAutoInfinityTargetInput,
   MAXIMUM_INFINITY_TARGET,
   parseInfinityTargetInput,
+  resolveInfinityTargetDraft,
 } from './infinity/parseInfinityTarget'
 
 function source(path: string): string {
@@ -41,15 +43,58 @@ describe('progression currency presentation contract', () => {
     })).toBe('1.23K')
   })
 
-  test.each([
-    1_234n,
-    1_234_567n,
-    MAXIMUM_INFINITY_TARGET,
-  ])('keeps the editable Auto Infinity target %s exact', (target) => {
-    expect(parseInfinityTargetInput(
-      formatAutoInfinityTargetInput(target),
-    )).toEqual({ ok: true, value: target })
+  test('keeps an untouched compact Auto Infinity target exact', () => {
+    const target = 1_234_567n
+    const display = formatAutoInfinityTargetInput('en', target)
+
+    expect(display).toBe('1.23M')
+    expect(resolveInfinityTargetDraft(display, target, false)).toEqual({
+      ok: true,
+      value: target,
+    })
+    expect(resolveInfinityTargetDraft(display, target, true)).toEqual({
+      ok: true,
+      value: 1_230_000n,
+    })
   })
+
+  test('clamps an edited Auto Infinity target only at the true maximum', () => {
+    expect(parseInfinityTargetInput('2147483647')).toEqual({
+      ok: true,
+      value: MAXIMUM_INFINITY_TARGET,
+    })
+    expect(parseInfinityTargetInput('2.15B')).toEqual({
+      ok: true,
+      value: MAXIMUM_INFINITY_TARGET,
+    })
+    expect(parseInfinityTargetInput('2.14B')).toEqual({
+      ok: true,
+      value: 2_140_000_000n,
+    })
+  })
+
+  test.each([
+    ['fr', '1,23M'],
+    ['de', '1,23M'],
+    ['pt-BR', '1,23M'],
+    ['ru', '1,23M'],
+  ] as const)('parses a compact %s Auto Infinity target', (locale, input) => {
+    expect(parseInfinityTargetInput(input, locale)).toEqual({
+      ok: true,
+      value: 1_230_000n,
+    })
+  })
+
+  test.each(ENABLED_LOCALES)(
+    'parses its own compact Auto Infinity display in %s after editing',
+    (locale) => {
+      const display = formatAutoInfinityTargetInput(locale, 1_234_567n)
+      expect(parseInfinityTargetInput(display, locale)).toEqual({
+        ok: true,
+        value: 1_230_000n,
+      })
+    },
+  )
 
   test('uses currency icons instead of visible resource names', () => {
     const quantum = source('src/ui/gameplay/quantum/QuantumSurface.tsx')

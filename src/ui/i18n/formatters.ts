@@ -7,6 +7,7 @@ import { GAME_NUMBER_PREFIXES } from './gameNumberMagnitudes'
 
 export type NumericValue = number | bigint
 export const NON_FINITE_NUMBER_FALLBACK = '—'
+export const CAPPED_GAME_DURATION_LABEL = 'MAX'
 
 const GAME_ENERGY_PREFIXES = Object.freeze({
   joules: Object.freeze([
@@ -298,6 +299,9 @@ export function formatGameDuration(
   } = {},
 ): string {
   if (!Number.isFinite(seconds)) return NON_FINITE_NUMBER_FALLBACK
+  if (Math.abs(seconds) >= Number.MAX_VALUE) {
+    return CAPPED_GAME_DURATION_LABEL
+  }
 
   const maximumFractionDigits = Math.max(
     0,

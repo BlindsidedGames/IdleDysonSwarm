@@ -85,21 +85,18 @@ export const DYSON_FACILITY_DEFINITIONS: Readonly<
   matrioshka_brains: {
     id: 'matrioshka_brains',
     group: 'megastructure',
-    prerequisite: { facilityId: 'planets', owned: 1 },
     quantumUnlock: 'matrioshkaBrains',
     outputFacilityId: 'planets',
   },
   birch_planets: {
     id: 'birch_planets',
     group: 'megastructure',
-    prerequisite: { facilityId: 'matrioshka_brains', owned: 1 },
     quantumUnlock: 'birchPlanets',
     outputFacilityId: 'matrioshka_brains',
   },
   galactic_brains: {
     id: 'galactic_brains',
     group: 'megastructure',
-    prerequisite: { facilityId: 'birch_planets', owned: 1 },
     quantumUnlock: 'galacticBrains',
     outputFacilityId: 'birch_planets',
   },

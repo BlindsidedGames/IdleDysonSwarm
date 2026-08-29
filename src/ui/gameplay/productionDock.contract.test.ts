@@ -11,12 +11,16 @@ describe('Bots and Research production dock contract', () => {
     const panelStyles = source(
       'src/ui/components/progressControlsPanel.css',
     )
+    const botsStyles = source('src/ui/gameplay/dyson/dysonControls.css')
 
     expect(panelStyles).toMatch(
       /\.ui-progress-controls-panel--production-summary\s+\.ui-progress-controls-panel__collapsed\s*\{[^}]*padding-inline-end:\s*var\(--safe-area-right\);/,
     )
     expect(panelStyles).toMatch(
       /\.ui-progress-controls-panel--production-summary\s+\.ui-progress-controls-panel__summary\s*\{[^}]*align-content:\s*start;[^}]*padding-block:\s*0\.42rem;[^}]*padding-inline:\s*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\)\s*0\.35rem;/s,
+    )
+    expect(botsStyles).toMatch(
+      /\.dyson-info__settings\s*\{[^}]*padding-block:\s*0\.3rem 0\.35rem;[^}]*padding-inline:\s*max\(0\.45rem, var\(--safe-area-left\)\)\s*max\(0\.45rem, var\(--safe-area-right\)\);/s,
     )
   })
 

@@ -387,7 +387,7 @@ export function WikiSurface({
 function PatchNotesArticle() {
   const intl = useIntl()
   const previousNotes = WIKI_PATCH_NOTES
-    .map((entry, index) => intl.formatMessage(wikiPatchNoteMessage(entry, index)))
+    .map((entry) => intl.formatMessage(wikiPatchNoteMessage(entry)))
     .reverse()
     .join('\n\n')
 
@@ -462,11 +462,11 @@ function LoreArticle({ progression }: { readonly progression: WikiProgression })
           <section key={section.id} className="wiki-surface__lore-section">
             <h3>{intl.formatMessage(wikiLoreSectionTitleMessage(section))}</h3>
             <div className="wiki-surface__lore-chapters">
-              {section.chapters.map((chapter, index) => (
-                <details key={`${section.id}-${index}`}>
-                  <summary>{intl.formatMessage(wikiLoreChapterTitleMessage(section, chapter, index))}</summary>
+              {section.chapters.map((chapter) => (
+                <details key={`${section.id}-${chapter.id}`}>
+                  <summary>{intl.formatMessage(wikiLoreChapterTitleMessage(section, chapter))}</summary>
                   <p className="wiki-surface__authored-copy">
-                    {intl.formatMessage(wikiLoreChapterBodyMessage(section, chapter, index))}
+                    {intl.formatMessage(wikiLoreChapterBodyMessage(section, chapter))}
                   </p>
                 </details>
               ))}

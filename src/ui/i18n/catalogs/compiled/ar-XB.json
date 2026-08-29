@@ -1625,7 +1625,7 @@
       "value": "‬"
     }
   ],
-  "dyson.facilities.birch-planets.production-interval": [
+  "dyson.facilities.birch-planets.production-minutes": [
     {
       "type": 0,
       "value": "‮"
@@ -1637,6 +1637,10 @@
     {
       "type": 1,
       "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Wıu"
     },
     {
       "type": 0,
@@ -1659,6 +1663,28 @@
     {
       "type": 0,
       "value": " Wɐʇɹıosɥʞɐ Ԑɹɐıus /s"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.facilities.birch-planets.production-seconds": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssǝɯqʅıuƃ 1 Wɐʇɹıosɥʞɐ Ԑɹɐıu /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
     },
     {
       "type": 0,
@@ -2853,7 +2879,7 @@
       "value": "‬"
     }
   ],
-  "dyson.facilities.galactic-brains.production-interval": [
+  "dyson.facilities.galactic-brains.production-minutes": [
     {
       "type": 0,
       "value": "‮"
@@ -2865,6 +2891,10 @@
     {
       "type": 1,
       "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Wıu"
     },
     {
       "type": 0,
@@ -2887,6 +2917,28 @@
     {
       "type": 0,
       "value": " Ԑıɹɔɥ Ԁʅɐuǝʇs /s"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.facilities.galactic-brains.production-seconds": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐuıɟǝsʇıuƃ 1 Ԑıɹɔɥ Ԁʅɐuǝʇ /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
     },
     {
       "type": 0,
@@ -3001,7 +3053,7 @@
       "value": "‬"
     }
   ],
-  "dyson.facilities.matrioshka-brains.production-interval": [
+  "dyson.facilities.matrioshka-brains.production-minutes": [
     {
       "type": 0,
       "value": "‮"
@@ -3013,6 +3065,10 @@
     {
       "type": 1,
       "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Wıu"
     },
     {
       "type": 0,
@@ -3035,6 +3091,28 @@
     {
       "type": 0,
       "value": " Ԁʅɐuǝʇs /s"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.production-seconds": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʎuʇɥǝsızıuƃ 1 Ԁʅɐuǝʇ /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
     },
     {
       "type": 0,
@@ -3135,50 +3213,6 @@
     {
       "type": 0,
       "value": " /s"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "dyson.facilities.mega-structure.details.unlock-condition": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "∩uʅoɔʞ ɔoupıʇıou"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "dyson.facilities.mega-structure.details.unlock-requirement": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "ᴚǝbnıɹǝs ʇɥǝ "
-    },
-    {
-      "type": 1,
-      "value": "structure"
-    },
-    {
-      "type": 0,
-      "value": " Ònɐuʇnɯ nuʅoɔʞ ɐup oʍuǝɹsɥıd oɟ "
-    },
-    {
-      "type": 1,
-      "value": "prerequisite"
-    },
-    {
-      "type": 0,
-      "value": "."
     },
     {
       "type": 0,
@@ -5431,28 +5465,6 @@
     {
       "type": 0,
       "value": "Sǝʇ ʇɐɹƃǝʇ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "infinity.break-target.value": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "⊥ɐɹƃǝʇ: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " IԀ"
     },
     {
       "type": 0,
@@ -25068,7 +25080,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.1.body": [
+  "wiki.lore.existence.chapter.chapter-1.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25082,7 +25094,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.1.title": [
+  "wiki.lore.existence.chapter.chapter-1.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25096,7 +25108,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.2.body": [
+  "wiki.lore.existence.chapter.chapter-2.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25110,7 +25122,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.2.title": [
+  "wiki.lore.existence.chapter.chapter-2.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25124,7 +25136,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.3.body": [
+  "wiki.lore.existence.chapter.chapter-3.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25138,7 +25150,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.3.title": [
+  "wiki.lore.existence.chapter.chapter-3.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25152,7 +25164,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.4.body": [
+  "wiki.lore.existence.chapter.chapter-4.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25166,7 +25178,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.4.title": [
+  "wiki.lore.existence.chapter.chapter-4.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25180,7 +25192,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.5.body": [
+  "wiki.lore.existence.chapter.chapter-5.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25194,7 +25206,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.5.title": [
+  "wiki.lore.existence.chapter.chapter-5.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25208,7 +25220,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.6.body": [
+  "wiki.lore.existence.chapter.chapter-6.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25222,7 +25234,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.6.title": [
+  "wiki.lore.existence.chapter.chapter-6.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25236,7 +25248,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.7.body": [
+  "wiki.lore.existence.chapter.chapter-7.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25250,7 +25262,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.existence.chapter.7.title": [
+  "wiki.lore.existence.chapter.chapter-7.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25278,7 +25290,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.1.body": [
+  "wiki.lore.infinity-achieved.chapter.chapter-1.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25292,7 +25304,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.1.title": [
+  "wiki.lore.infinity-achieved.chapter.chapter-1.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25306,7 +25318,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.2.body": [
+  "wiki.lore.infinity-achieved.chapter.chapter-2.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25320,7 +25332,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.2.title": [
+  "wiki.lore.infinity-achieved.chapter.chapter-2.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25334,7 +25346,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.3.body": [
+  "wiki.lore.infinity-achieved.chapter.chapter-3.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25348,7 +25360,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.3.title": [
+  "wiki.lore.infinity-achieved.chapter.chapter-3.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25362,7 +25374,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.4.body": [
+  "wiki.lore.infinity-achieved.chapter.chapter-4.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25376,7 +25388,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.4.title": [
+  "wiki.lore.infinity-achieved.chapter.chapter-4.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25390,7 +25402,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.5.body": [
+  "wiki.lore.infinity-achieved.chapter.chapter-5.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25404,7 +25416,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.infinity-achieved.chapter.5.title": [
+  "wiki.lore.infinity-achieved.chapter.chapter-5.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25446,7 +25458,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.1.body": [
+  "wiki.lore.reality.chapter.chapter-1.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25460,7 +25472,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.1.title": [
+  "wiki.lore.reality.chapter.chapter-1.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25474,7 +25486,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.2.body": [
+  "wiki.lore.reality.chapter.chapter-2.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25488,7 +25500,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.2.title": [
+  "wiki.lore.reality.chapter.chapter-2.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25502,7 +25514,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.3.body": [
+  "wiki.lore.reality.chapter.chapter-3.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25516,7 +25528,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.3.title": [
+  "wiki.lore.reality.chapter.chapter-3.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25530,7 +25542,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.4.body": [
+  "wiki.lore.reality.chapter.chapter-4.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25544,7 +25556,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.4.title": [
+  "wiki.lore.reality.chapter.chapter-4.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25558,7 +25570,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.5.body": [
+  "wiki.lore.reality.chapter.chapter-5.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25572,7 +25584,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.5.title": [
+  "wiki.lore.reality.chapter.chapter-5.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25586,7 +25598,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.6.body": [
+  "wiki.lore.reality.chapter.chapter-6.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25600,7 +25612,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.6.title": [
+  "wiki.lore.reality.chapter.chapter-6.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25614,7 +25626,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.7.body": [
+  "wiki.lore.reality.chapter.chapter-7.body": [
     {
       "type": 0,
       "value": "‮"
@@ -25628,7 +25640,7 @@
       "value": "‬"
     }
   ],
-  "wiki.lore.reality.chapter.7.title": [
+  "wiki.lore.reality.chapter.chapter-7.title": [
     {
       "type": 0,
       "value": "‮"
@@ -25992,21 +26004,7 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.archive.1": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "2.15-2.16\n- Wɐpǝ ɐ ɔouɟıɹɯɐʇıou qnʇʇou ɟoɹ ponqʅıuƃ oɟɟʅıuǝ ʇıɯǝ.\n- Ⅎıxǝp ɐ qnƃ ʍɥǝɹǝ dɹopnɔʇıou ʍɐs ɯnɔɥ ʅoʍǝɹ ıu ʅɐupsɔɐdǝ.\n- ıuɔɹɐsǝp ɯɐx ʇɥɐʇ ʇɥǝ IԀ sʅıpǝɹ ɔɐu ɹǝɐɔɥ ʇo 1100.\n- SI⅁NIℲIↃ∀N⊥⅂⅄ ɹǝpnɔǝp ʇɥǝ sızǝ oɟ sɐʌǝ ɟıʅǝs.\n\n\n2.14\n- dnɹɔɥɐsıuƃ pǝʌ odʇıous ʍıʇɥ ıu ƃɐɯǝ ɔnɹɹǝuɔʎ sɥonʅp uoʍ ʍoɹʞ ɐs ǝxdǝɔʇǝp.\n- Ònɐuʇnɯ ʅǝɐd qnʇʇou sɥonʅp qǝɥɐʌǝ uoɹɯɐʅʅʎ uoʍ.\n\n2.13\n- Nǝʍ Sʇoɹǝ dɐƃǝ\n - Nǝʍ I∀Ԁ 2x Iuɟıuıʇʎ Ԁoıuʇs\n - Ԑonƃɥʇ qɐɔʞ ʇɥǝ ʇıddıuƃ odʇıous.\n- Ònɐuʇnɯ ʅǝɐd qnʇʇou uoʍ sɥoʍs qʎ pǝɟɐnʅʇ qnʇ ıs pısɐqʅǝp nuʇıʅ ʎon ǝɐɹu 42IԀ.\n- Nnɔʅǝɐɹıou ⅂oɹǝ uoʍ ɥɐs ɔɥɐdʇǝɹs ɐup ɔoʅʅɐdsɐqʅǝ ɔɐʇǝƃoɹıǝs.\n- ⅂ɐʎonʇ Sʍıʇɔɥıuƃ sɥonʅp uoʍ ʍoɹʞ dɹodǝɹʅʎ.\n\n2.12\n- ᴚǝɯoʌǝp Ԁʅɐʎɟɐq\n- Ԁnɹıʇʎ ʅıuǝ uoʍ ɔoʇs 2, 2, ɐup 3 ɹǝsdǝɔʇıʌǝʅʎ.\n- Wɐunɐʅ ʅɐqonɹ uoʍ ɔɐds onʇ ɐʇ 20x ʎonɹ ∀I Wɐuɐƃǝɹ dɹopnɔʇıou ɐup ɹǝpnɔǝs ʇɥǝ ɔɹǝɐʇıou ʇıɯǝ ʇo 0.2 sǝɔoups\n- Nǝʍ Iɯdoɹʇ ɐup Ǝxdoɹʇ sɐʌǝ qnʇʇous.\n- Ⅎıxǝp ɐu ıssnǝ ʍɥǝɹǝ ʅɐsʇ ıuɟıuıʇıǝs ʍonʅpu'ʇ ɹǝsǝʇ ou ɐ Ònɐuʇnɯ ⅂ǝɐd.\n\n2.11\n-∀ppǝp ɐ qʅnɹq ʇo ∀ʌoɔɐʇo\n-ᴚǝɯoʌǝp ɔɐd ou IԀ qoosʇ.\n- ∀ʅʅoʍǝp oɟɟʅıuǝ ʇıɯǝ ʇo ǝɐɹu IԀ ɐʇ ɐ ɹɐʇǝ oɟ dɹǝʌıons IԀ/s pıʌıpǝp qʎ 10.\n\n2.10\n- ∀ppǝp uǝʍ ıuɟo ıu ʇɥǝ sıpǝ dɐuǝʅ ɟoɹ ɔnɹɹǝuʇ/dɹǝʌıons ıuɟıuıʇıǝs, ɐup IԀ/s\n- Ⅎıxǝp ɐ qnƃ ʍıʇɥ ɹǝɐʅıʇʎ ɔouʇǝuʇ ʍɥǝɹǝ ʇɥǝ pısɐsʇǝɹ ʍonʅpu'ʇ ʇɹıƃƃǝɹ dɹodǝɹʅʎ.\n- ∀ppǝp ɐ uǝʍ ʅıuǝ ʇo ∀ʌoɔɐʇo ʇɥɐʇ qǝʇʇǝɹ ǝxdʅɐıus ʇɥǝ qnɟɟ.\n- ∀ppǝp Ǝuƃıuǝǝɹıuƃ uoʇɐʇıou.\n- Ǝɯqıƃƃǝuǝp ıuɟıuıʇʎ dǝɹɔǝuʇ ʇǝxʇ.\n- Odʇıɯızǝp soɯǝ ɔopǝ ʇɥɐʇ's ʇoo ʅouƃ ɟoɹ dɐʇɔɥ uoʇǝs.\n\n2.09\n- ∀pɾnsʇǝp ʇɥǝ sɔɐʅǝ ɟoɹ Iuɟıuıʇʎ doıuʇ ƃɐıu ɟɹoɯ 1.2 ʇo 3.9.\n- ∀ppǝp ɐ uǝʍ Ònɐuʇnɯ ndƃɹɐpǝ: ∀ʌoɔɐʇo.\n- ∀ʌoɔɐʇo ɐʅʅoʍs ʎon ʇo sɐɔɹıɟıɔǝ ɔnɹɹǝuɔıǝs ɟoɹ ɐ ƃʅoqɐʅ qnɟɟ.\n- Iuɟıuıʇʎ uoʍ ɥɐs ɐ sʅıpǝɹ ʇo sǝʇ ɐ doıuʇ ɟoɹ ɐnʇo ıuɟıuıʇʎ.\n- Ԑnɟɟǝp ɐ ʅoʇ oɟ sʞıʅʅs ʇɥɐʇ ɐɹǝ nuʅoɔʞǝp ɟɹoɯ Ònɐuʇnɯ Sɥɐɹps.\n\n2.08\n- I ɯɐpǝ ɐ ɯısʇɐʞǝ ʍɥǝu sǝʇʇıuƃ nd ʇɥǝ sʞıʅʅ dɹǝsǝʇ ɹǝuɐɯıuƃ, ʇɥıs ɟıxǝs ʇɥɐʇ. ᴚǝsǝʇ sʞıʅʅʇɹǝǝ uoʍ ʍoɹʞs ɐƃɐıu.\n\n2.07\n- ∀ppǝp Sʇɐʇ ɟnuɔʇıouɐʅıʇʎ ʇo ʇɥǝ sıpǝ ɯǝun.\n- Sndǝɹ ᴚɐpıɐuʇ Sɔɐʇʇǝɹıuƃ uoʍ dɹodǝɹʅʎ ɹǝsǝʇs ou Iuɟıuıʇʎ/Ònɐuʇnɯ ⅂ǝɐd.\n- Ԁɹǝsǝʇs ɐɹǝ uoʍ ɹǝuɐɯǝɐqʅǝ.\n- ∀ppǝp ɐ ɥıuʇ ɟoɹ ∀ʌoʇɐʇıou ƎɐsʇǝɹƎƃƃ ʇo ʇɥǝ oʇɥǝɹ ɔɐʇǝƃoɹʎ oɟ ʍıʞı.\n- ∀ppǝp ɹǝɯɐıuıuƃ oɟɟʅıuǝ ʇıɯǝ ʇo ʇɥǝ snɯɯǝɹʎ sɔɹǝǝu ɐɟʇǝɹ nsıuƃ oɟɟʅıuǝ ʇıɯǝ.\n\n2.06\n- ∀ppǝp 4 qouns sʞıʅʅ doıuʇs ɟoɹ pısɔoʌǝɹıuƃ ʇɥǝ ǝɐsʇǝɹǝƃƃ.\n- ɟıxǝp ɐ qnƃ ʍɥǝɹǝ sdǝup ɐƃɐıu ʍıʇɥ oɟɟʅıuǝ ʇıɯǝ ʍɐsu'ʇ ʍoɹʞıuƃ.\n- ʍɥǝu ʎon ɔʅosǝ ʇɥǝ ƃɐɯǝ ou pǝqnƃ, ıʇ ʍıʅʅ uoʍ ɔoɹɹǝɔʇʅʎ ʅoɐp qɐɔʞ ʇo pǝqnƃ.\n- ɔɥɐuƃǝp \"qooʇıuƃ sǝɹʌǝɹs\" ʇo \"ᗡǝdʅoʎıuƃ Sǝɹʌǝɹs\".\n\n2.05\n- ∀ppǝp ɐppıʇıouɐʅ ıuɟo ʇo ᴚnpıɯǝuʇɐɹʎ Sıuƃnʅɐɹıʇʎ ʇǝɔɥuıɔɐʅ pǝsɔɹıdʇıou.\n- Ⅎıxǝp Ԁoʍǝɹ Oʌǝɹʍɥǝʅɯıuƃ ɐup Ԁoʍǝɹ ∩upǝɹʍɥǝʅɯıuƃ.\n- Ⅎıxǝp Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs ʇǝɔɥuıɔɐʅ pǝsɔɹıdʇıou.\n- Ʌǝɹsɐʇıʅǝ dɹopnɔʇıou ʇɐɔʇıɔs uoʍ qoosʇs ɯɐunɐʅ ʅɐqonɹ.\n- Ǝuǝɹƃʎ dɹopnɔʇıou uo ʅouƃǝɹ sɔɐʅǝs ɟɹoɯ ʇɥǝ sʅıpǝɹ ʍɥǝu ʎon ɥɐʌǝ uo ʇıɯǝ.\n- ᴚǝɯoʌǝp 2 ʅıuǝs ɟɹoɯ ʇɥǝ ɹǝɐʅıʇʎ ʍıʞı ǝuʇɹʎ.\n\n2.04\n- ∀ppǝp uǝʍ Ònɐuʇnɯ Wɐuɐƃǝɯǝuʇ sʞıʅʅs, Ԑɹǝɐʞ ⊥ɥǝ ⅂ood ɐup Ònɐuʇnɯ Ǝuʇɐuƃʅǝɯǝuʇ.\n- Woʌǝp qnɟɟ ɟɹoɯ ⊥ɹɐusʅɐʇıou 8 ɐup Sdǝǝp 8 ʇo Ԑɹǝɐʞ ⊥ɥǝ ⅂ood ɐup Ònɐuʇnɯ Ǝuʇɐuƃʅǝɯǝuʇ ɹǝsdǝɔʇıʌǝʅʎ.\n- Ⅎıxǝp ɐ qnƃ ʍɥǝɹǝ ʇɥǝ sıpǝ ɯǝun pısdʅɐʎ ɟoɹ dɹǝsʇıƃǝ doıuʇs ʍɐs uoʇ sɥoʍ ʇɥǝ ponqʅǝp unɯqǝɹ ɟɹoɯ ponqʅǝ IԀ.\n\n2.03\n- Ⅎıxǝp ɐ qnƃ ʍɥǝɹǝ oɟɟʅıuǝ ʇıɯǝ ɔonʅp qǝ ponqʅǝp ıuɟıuıʇǝʅʎ, ʇɥıs ɐʅso ɹǝsǝʇs oɟɟʅıuǝ ʇıɯǝ ıɟ ʎon ɥɐʌǝ ʇɥǝ ɐqıʅıʇʎ ʇo ƃǝʇ ɯoɹǝ ʇɥɐu 100 pɐʎs.\n- Sɥonʅpǝɹs oɟ Ԁɹǝɔnɹsoɹs uoʍ ɐʅso pısɐqʅǝs ʇɥǝ ɔɐsɥ ɹǝsǝɐɹɔɥ ndƃɹɐpǝ.\n- ∀ppǝp ʇʍo uǝʍ dɹǝsǝʇs, ɐup ɯɐpǝ ʇɥǝɯ ɐʅso sɐʌǝ ʇɥǝ qoʇ pısʇɹıqnʇıou ʌɐʅnǝ.\n- sǝɔɹǝʇs ɔɐu uo ʅouƃǝɹ ƃo ɐqoʌǝ 27.\n- Ǝʅǝɔʇɹıɔ sɥǝǝd sʞıʅʅ ɹǝʍoɹʞǝp ʇo: ponqʅǝ ʇɥǝ ɐɟɟǝɔʇ oɟ oɟɟʅıuǝ ʇıɯǝ.\n- ᴚǝɯoʌǝp ɹǝuǝƃɐpǝ ɟɹoɯ ʇɥǝ po uoʇ ɐnʇo ɐssıƃu ʅısʇ.\n- ∩dpɐʇǝp ɔʅonp sɐʌǝ ʇo ʍoɹʞ dɹodǝɹʅʎ. Ԑnıʅp 261 ouʍɐɹps ıs uoʇ ɔoɯdɐʇıqʅǝ ʍıʇɥ oʅpǝɹ qnıʅps ʇɥɐu 261\n- ∀ppǝp Ↄɐʇ dıɔʇnɹǝs ʇo pǝqnƃ.\n- ᴚǝdǝɐʇɐqʅǝ ɹǝsǝɐɹɔɥ ıs uoʍ ɹǝɟnupɐqʅǝ.\n- ⊥ɥɐʇ's ɐʅʅ ɟoʅʞs...\n\n2.0\n- Ↄoɯdʅǝʇǝʅʎ ɹǝɯɐpǝ ʇɥǝ ƃɐɯǝ.\n\n\n\n1.19.06\n- Ԁoʇǝuʇıɐʅ ɟıx ɟoɹ qoʇ ɐnʇoɯɐʇıou qɹǝɐʞıuƃ.\n- ᴚǝɯoʌǝp oɟɟʅıuǝ IԀ\n- Noʍ ɹǝʅoɐps ʇɥǝ ƃɐɯǝ ɐɟʇǝɹ dɹǝssıuƃ ʇɥǝ N⅁+ qnʇʇou\n- Ⅎıxǝp ıssnǝs ʇɥɐʇ oɔɔnɹ ʍɥǝu ʅoɐpıuƃ ʇɥǝ sɔǝuǝ. I'ɯ uoʇ ʇǝʅʅıuƃ ʎon ɯoɹǝ, ʇɥıs ıs ɯʎ sǝɔɹǝʇ. I ʍıʅʅ ʇɐʞǝ ıʇ ʇo ɯʎ ƃɹɐʌǝ.\n\n\n1.19.04\n- Wɐpǝ Sǝɔɹǝʇs dɹǝsʇıƃǝ+ ndƃɹɐpǝ ıuɔɹǝɯǝuʇɐʅ ɐup ɔosʇ ʅǝss. Noʍ ʎon ƃǝʇ 3 sǝɔɹǝʇs dǝɹ doıuʇ.\n- ∀ppǝp ɐnʇo qnʎǝɹ ɟoɹ qoʇs, ɔosʇs 3 IԀ\n- ɹǝpnɔǝp ʇɥǝ ɔosʇ oɟ ɐnʇo ᴚǝsǝɐɹɔɥ ʇo 3 IԀ\n- ∀ppǝp Ԁɹǝsʇıƃǝ+ ndƃɹɐpǝ ɟoɹ dǝɹɯɐuɐuʇ ɐnʇoɯɐʇıou.\n\n1.19.03\n- Ⅎıxǝp ıssnǝ ʍɥǝɹǝ ɯnʅʇıʇɐsʞıuƃ ʍonʅp qɹǝɐʞ sɔıǝuɔǝ.\n- Ⅎıxǝp ıssnǝ ʍɥǝɹǝ ᴚǝɐʅıʇʎ ɔouʇǝuʇ ʍonʅp sʇɐʎ odǝu ʍɥǝu nsıuƃ dɹǝsʇıƃǝ+\n- Sɔɹoʅʅıuƃ ıs uoʍ ɟıxǝp ou ɔǝɹʇɐıu dʅɐʇɟoɹɯs.\n- Iuɟıuıʇʎ uoʍ ndpɐʇǝs ıʇs qnʇʇous ıu ɐ ɔʅǝɐuǝɹ ʍɐʎ.\n- Ↄouʌǝɹʇǝp ɯoɹǝ sɔɹoʅʅʌıǝʍs ʇo ɐnʇo ɐpɾnsʇ ʇɥǝıɹ ɥǝıƃɥʇ.\n- Wɐpǝ ɔouɟıɹɯɐʇıou pıɐʅoƃnǝ ıu ʇɥǝ sʞıʅʅ ʇɹǝǝ qǝʇʇǝɹ.\n- ∀ppǝp ʍıʞı sǝɔʇıou ɟoɹ sǝɔɹǝʇs oɟ ʇɥǝ nuıʌǝɹsǝ, nuʅoɔʞɐqʅǝ ıu Ԁɹǝsʇıƃǝ+\n- ∀ppǝp pıʌısıou ʇo Ԁɹǝsʇıƃǝ+\n- ∀ppǝp Iuɟʅnǝuɔǝ ʇo Ԁɹǝsʇıƃǝ+\n- ∀ppǝp dɹoƃɹǝssıou qɐɹs ʇo ʇɥǝ qnıʅpıuƃs ıu ʇɥǝ qoʇs ʇɐq.\n- ᴚǝʍɹoʇǝ ɐ ʇou oɟ ɔopǝ ɐup ɹǝɯoʌǝp ɐ qnuɔɥ oɟ ɹǝpnupɐuʇ sʇnɟɟ.\n- ᴚǝɯoʌǝp ʅɐʇǝsʇ ɹnu ɟɹoɯ ʇɥǝ Iuɟıuıʇʎ Ↄɐʇǝƃoɹʎ.\n- Wɐɹʇʎ ɐup I ɹǝʍoɹʞǝp ɥoʍ ɐnʇo-ɹǝsǝɐɹɔɥ ʍoɹʞs.\n- Ⅎıxǝp ɐ ɥnƃǝ qnƃ ʍıʇɥ sǝɔɹǝʇs.\n- ɟıxǝp ʇɥǝ sɔıǝuɔǝ qoosʇǝɹ qnƃ.\n- ɹǝpnɔǝp ɐɯonuʇ ʇo ɯɐʞǝ dɹoƃɹǝss qɐɹs soʅıp ʇo 5/sǝɔ\n\n1.19\n- ᴚǝʍoɹʞǝp ɟoɹɯnʅɐ ɟoɹ ᴚǝɐʅıʇʎ: sıɯnʅɐʇıous, ıʇǝɯs uoʍ ɐɔʇnɐʅʅʎ sɔɐʅǝ ɟɹoɯ ʇɥǝ qǝƃıuuıuƃ.\n- ᴚǝʍoɹʞǝp Iuɟʅnǝuɔǝ ƃɐıu, uoʍ ʎon ɔousʇɐuʇʅʎ ƃɐıu 4 ıuɟʅnǝuɔǝ ɐ sǝɔoup.\n- ᴚǝpıp soɯǝ ɯǝun ʅoƃıɔ ʇo ɟıx sɔɐʅıuƃ ıssnǝs, dɐɹʇıɔnʅɐɹʅʎ ıu ʇɥǝ ʍıʞı.\n- ∀ppǝp ᴚǝɐʅıʇʎ sǝɔʇıou ʇo ʍıʞı ɐɟʇǝɹ ʎon nuʅoɔʞ ɹǝɐʅıʇʎ.\n- ∀ppǝp dɐʇɹǝous ʇo ʍıʞı.\n- ∀ppǝp Ԁɹǝsʇıƃǝ dʅns.\n- Ↄɥɐuƃǝp ʅǝɐpǝɹqoɐɹp ʇo sɥoʍ Ԁɹǝsʇıƃǝ+ doıuʇs ıusʇǝɐp.\n- Ↄʅonp sɐʌǝ uoʍ sɐʌǝs ɐʅʅ pɐʇɐ ıusʇǝɐp oɟ poıuƃ ʇɥǝ ʇʍo ƃɐɯǝ ɯopǝs sǝdɐɹɐʇǝʅʎ.\n- No ʅouƃǝɹ ƃɐıu ıusɐuǝ ɐɯonuʇs oɟ qouns ʇıɯǝ ʍɥǝu dnɹɔɥɐsıuƃ ʇɥɐʇ ndƃɹɐpǝ ıu ɹǝɐʅıʇʎ.\n\n1.18.5\n- Wɐɹʇʎ ɟıxǝp soɯǝ sʇnɟɟ, ⊥ɥɐuʞs Wɐɹʇʎ.\n- Oɟɟʅıuǝ ıuɟıuıʇʎ doıuʇs ɔɐʅɔnʅɐʇǝp qɐsǝp ou ʎonɹ qǝsʇ ʇıɯǝ ıɟ ʎonɹ qǝsʇ ʇıɯǝ ɯnʅʇıdʅıǝp qʎ 10.\n- ∀ppǝp ɐ ʍɥoʅǝ ǝxdɐusıou, uǝʍ ɔouʇǝuʇ ʎɐʎ.\n- ᴚǝɐɔɥıuƃ 42 ıuɟıuıʇʎ doıuʇs nuʅoɔʞs ʇɥǝ uǝʍ ɐɹǝɐ.\n- Iɟ ʎon pou'ʇ ıuʇǝɹɐɔʇ ʍıʇɥ ʇɥǝ ƃɐɯǝ ɟoɹ 5 ɯıunʇǝs ɐ sɔɹǝǝu sɐʌǝɹ uoʍ ɐddǝɐɹs.\n\n1.17\n- ∀nʇo ɹǝsǝɐɹɔɥ ɔɐu uoʍ qǝ ʇoƃƃʅǝp ıu ʇɥǝ ɹǝsǝɐɹɔɥ ʇɐq ɟoɹ ǝɐɔɥ qnıʅpıuƃ\n- ⅂oɐpıuƃ sɔɹǝǝu ɐppǝp.\n- Ԁnɹɔɥɐsıuƃ dɐsʇ 100 uoʍ ƃıʌǝs 1% ɐppıʇouɐʅ ıuɔoɯǝ dǝɹ ʅǝʌǝʅ ɐqoʌǝ 100.\n- Ԁʅɐʎɟɐq ɥɐs qǝǝu ıuʇǝƃɹɐʇǝp ıuʇo ʇɥǝ ƃɐɯǝ.\n- Ԁʅɐʎɟɐq ⅂ǝɐpǝɹqoɐɹp ıuʇǝƃɹɐʇıou.\n- Ↄʅonp sɐʌǝ ıs uoʍ ɐ ʇɥıuƃ.\n- Ԁɹǝʌıons ɹnu pɐʇɐ ıs uoʍ ıu ʇɥǝ Iuɟıuıʇʎ ʇɐq ɐs ʍǝʅʅ.\n- ∀ɟʇǝɹ ɔoʅʅɐdsǝ 42 ʎon ʍıʅʅ uo ʅouƃǝɹ sǝǝ ʇɥǝ ɹǝɐʅıʇʎ ɔoʅʅɐdsǝ sɔɹǝǝu.\n\n1.16\n- Iɯdɹoʌǝp ʇɥǝ ɔoʅʅɐdsǝ qɐɹ so ıʇ poǝsuʇ ɾnɯd ɐɹonup.\n- Iuɟıuıʇʎ doıuʇs uoʍ ɐnʇo ɐssıƃu ʍɥǝu ʎon ɥɐʌǝ 10 oɹ ɯoɹǝ ɐup ɔoɯdʅǝʇǝ ɐ ƃoɐʅ.\n- Iuɟıuıʇʎ ndƃɹɐpǝ ʇo ɐnʇoɯɐʇǝ ɹǝsǝɐɹɔɥ. (ʇoƃƃʅǝɐqʅǝ ıu sǝʇʇıuƃs)\n- Mǝq ʇıɯǝ uoʍ nsǝp ıusʇǝɐp oɟ ʅoɔɐʅ.\n- ⅁ɐʅɐxʎ ʌıǝʍ ıs uoʍ qɐɔʞ!\n\n\n1.15\n- Ⅎıxǝp oɟɟʅıuǝ dɹopnɔʇıou.\n- Ⅎıxǝp ıuɟıuıʇǝ dɐuǝʅ ʅıɟǝʇıɯǝ qnƃ.\n- Ⅎıxǝp qǝsʇ ıuɟıuıʇʎ ʇıɯǝ pısdʅɐʎ. (I ʍɐsu'ʇ nsıuƃ ɐ ʅǝss ʇɥɐu ıusʇǝɐp oɟ ɐ ƃɹǝɐʇǝɹ ʇɥɐu I sʍǝɐɹ)\n\n1.14\n- Ʌɐɹıons ʍıʞı ɟıxǝs, ɐppǝp dɐʇɔɥ uoʇǝs.\n- ∀ssıƃu ɐʅʅ qnƃ sɥonʅp qǝ ɟıxǝp.\n- Wnʇǝ uoʍ ɹǝsdǝɔʇs ʎonɹ sǝʇʇıuƃ ou sʇɐɹʇnd.\n- ᴚǝɯoʌǝp ʇɥǝ (dnɹɔɥɐsǝp) ʇǝxʇ ɟɹoɯ soɯǝ ıuɟıuıʇʎ ndƃɹɐpǝs.\n- Woʌǝp ʇɥǝ qnʎ ɔonuʇ ʇo ʇɥǝ dnɹɔɥɐsǝ qnʇʇous.\n- Iuɟıuıʇʎ qɐɹ ʍıʅʅ uoʍ sɥoʍ nd ʇo 2 pǝɔıɯɐʅ dʅɐɔǝs ıusʇǝɐp oɟ 1.\n- Ⅎıxǝp ʇɥǝ ɹǝʍɐɹps ɟoɹ Sǝɔɹǝʇ 2 ɐup Sǝɔɹǝʇ 4.\n- Oʌǝɹɥɐnʅǝp ʇɥǝ unɯqǝɹs sʎsʇǝɯ, unɯqǝɹs sɥonʅp ɟʅıɔʞǝɹ ʅǝss uoʍ!\n- Iuɟıuıʇʎ ıu ʇɥǝ ʍıʞı uoʍ sɥoʍs ʎonɹ qǝsʇ ɹnu ʇıɯǝ.\n\n1.10 - 1.13\n- Ⅎıxǝp ɐ ɹonupıuƃ ıssnǝ ʍıʇɥ Iuɟıuıʇǝs dɹoƃɹǝss qɐɹ.\n- ∀ppǝp Iuɟıuıʇıǝs sǝɔʇıou ʇo ʇɥǝ ʍıʞı.\n- ∀ppǝp ɐ 5 dıxǝʅ ƃɐd ʇo ʇɥǝ ʇod oɟ ʇɥǝ sɔɹǝǝu ɟoɹ soɯǝ pǝʌıɔǝs.\n- Sʞıʅʅs uoʍ dɹodǝɹʅʎ ɔʅǝɐɹ ʍɥǝu dɹǝsʇıƃıuƃ.\n- Ↄouɟıɹɯɐʇıou sɔɹǝǝu uo ʅouƃǝɹ sʇɐʎs odǝu ʍɥǝu ɹǝsǝʇʇıuƃ ʇɥǝ sʞıʅʅ ʇɹǝǝ.\n-  3 Nǝʍ Sɔıǝuɔǝ ndƃɹɐpǝs.\n-  ⅁oɐʅs ɥɐʌǝ qǝǝu ɐpɾnsʇǝp ʇo ɐɔɔonuʇ ɟoɹ ʇɥǝ ɥnƃǝ ƃɐd ɐɟʇǝɹ \"Oʍu 20 Ԁʅɐuǝʇs\"\n- ∀ɔɥıǝʌǝɯǝuʇ ʇɹıƃƃǝɹs ɥɐʌǝ qǝǝu ndpɐʇǝp ʇo ɐɔɔonuʇ ɟoɹ ʇɥǝ sɥıɟʇ ıu ƃoɐʅs.\n- Wɐunɐʅ qoʇ ɔɹǝɐʇıou sdǝǝp ıs uoʍ dǝɹsısʇǝuʇ qǝʇʍǝǝu sɐʌǝs.\n- ∀ppǝp ʌɐɹıons qnɟɟs ʇo Sǝɔɹǝʇs oɟ ʇɥǝ nuıʌǝɹsǝ.\n- Sǝɹʌǝɹs uoʍ sɔɐʅǝ ʅǝss ɐƃƃɹǝssıʌǝʅʎ ʇɥɐu Ԁʅɐuǝʇs.\n- Ԑnʎ Wɐx\n- Ou ɔoʅʅɐdsǝ ʇɥǝ dodnd uoʍ sɥoʍs ʎonɹ ʇoʇɐʅ ɹnu ʇıɯǝ.\n-  Ǝxʇɹɐ sʞıʅʅ doıuʇs ɐɟʇǝɹ 10 uoʍ ʇnɹu ıuʇo dɐuǝʅ ʅıɟǝʇıɯǝ.\n- ∀ssıƃu ɐʅʅ qnʇʇou ɟoɹ sʞıʅʅs\n- Mıʞı ndpɐʇǝp.\n- ⅁ɐʅɐxʎ Ʌıǝʍ ᴚǝɯoʌǝp\n- Ԑnƃ ʍıʇɥ ıuɟıuıʇʎ ɟıxǝp\n\n1.09\n- ∀ppǝp ᴚǝsǝʇ odʇıou ɟoɹ sʞıʅʅ ʇɹǝǝ\n- Ⅎıxǝp ƃɐʅɐxʎ ʌıǝʍ dɐuǝʅ ıssnǝ.\n\n1.08\n- Ⅎıxǝp ɐɔʇıʌǝ dɐuǝʅs pısdʅɐʎ.\n- ᴚǝʍoɹpǝp soɯǝ ʍıʞı sʇnɟɟ\n- Ⅎıxǝp sʞıʅʅ doıuʇs pısdʅɐʎ ou ɯɐıu ɯǝun\n- Mɥǝu ɹǝɐʅıʇʎ ɔoʅʅɐdsǝs ʎon sʇɐɹʇ ʍıʇɥ ɐ qoʇ ıusʇǝɐp oɟ uoʇɥıuƃ.\n- ∩dpɐʇǝs Sɔıǝuʇıɟıɔ Ԁʅɐuǝʇs Iɔou.\n- Ↄoʅoɹ ɔopǝp soɯǝ ʇɥıuƃs.\n- ∀ppǝp ɐ \"ɹnu ʇıɯǝ\" ıupıɔɐʇoɹ.\n- ∀ppǝp ɐu ıupıɔɐʇoɹ ɟoɹ ʇɥǝ Sɔıǝuʇıɟıɔ Ԁʅɐuǝʇs sʞıʅʅ ou ʇɥǝ qoʇs ʇɐq.\n\n1.07\n- Ⅎıxǝp ɐup ndpɐʇǝp sʞıʅʅs sǝɔʇıou oɟ ʇɥǝ Mıʞı\n- ᴚǝuɐɯǝp ɐup ɹǝʍoɹʞǝp Ԁʅɐuǝʇs/pɐʎ sʞıʅʅ ʇo qǝ Sɔıǝuʇıɟıɔ Ԁʅɐuǝʇs.\n- ᴚǝʍoɹʞǝp Sɔıǝuɔǝ Ԑoosʇ sʞıʅʅ.\n- Wɐpǝ ʇɥǝ ɟıɹsʇ 2 dɐuǝʅ ʅıɟǝʇıɯǝ ɹǝsǝɐɹɔɥǝs ɔɥǝɐdǝɹ ɐup ɐppǝp 2 ɯoɹǝ.\n- Ↄɹǝɐʇǝp dɹǝsʇıƃǝ ɯǝɔɥɐuıɔ. Iuɟıuıʇǝs ʇɐq ıs uoʍ ɐʌɐıʅɐqʅǝ.\n- 2 uǝʍ ʅǝɐpǝɹqoɐɹps. ⅁ɐʅɐxıǝs, ɐup ᴚǝɐʅıʇʎ qɹǝɐʞs.\n- ∀pɾnsʇǝp ƃoɐʅs ɐup ɐppǝp ʇɥǝ ɟıuɐʅ 3.\n\n1.06\n- ∀ppǝp ʅısʇ oɟ ƃoɐʅs ɐup sʞıʅʅs ʇo ʇɥǝ ʍıʞı\n- Wɐpǝ ƃoɐʅs ɯoɹǝ ɐʇʇɐıuɐqʅǝ.\n- ∀ssǝɯqʅʎ ʅıuǝs, ∀I Wɐuɐƃǝɹs, Sǝɹʌǝɹs, ɐup Ԁʅɐuǝʇs uoʍ ponqʅǝ ʇɥǝıɹ ʎıǝʅp ouɔǝ ʎon ɯɐunɐʅʅʎ dnɹɔɥɐsǝ 50, ɐup ɐƃɐıu ɐʇ 100.\n- Ԁnɹɔɥɐsǝp ndƃɹɐpǝs uoʍ ɥıpǝ ʇɥǝɯsǝʅʌǝs, ɐup ʇɥǝıɹ ʌısıqıʅıʇʎ ɔɐu qǝ ʇoƃƃʅǝp.\n- Sʞıʅʅ ʇɹǝǝ ʍıupoʍs uoʍ ɥıpǝ ʇɥǝɯsǝʅʌǝs ʍɥǝu ʎon ɔʅıɔʞ ou ɐuoʇɥǝɹ.\n- Ⅎıxǝp dɹopnɔʇıou qnƃ ʍɥǝɹǝ dʅɐʎǝɹs ʍǝɹǝ uoʇ ɹǝɔǝıʌıuƃ sɔıǝuɔǝ ou ɹǝʇnɹu ʇo ʇɥǝ ƃɐɯǝ ɟoɹ ʇoʇɐʅ dɹopnɔǝp dɐuǝʅs sʞıʅʅ. (ʍoɹpıuƃ ʇɥıs ndƃɹɐpǝ ıs ɥɐɹp)\n\n1.05\n- Sʞıʅʅ ʇɹǝǝ ʍıʇɥ 10 uǝʍ sʞıʅʅs!\n\n1.04\n- ∩dpɐʇǝp ∩I ʇo sɥoʍ ʇoʇɐʅ qoʇs.\n- ∀ppǝp ʇǝxʇ ʇo ʇɐq qnʇʇous.\n- ᴚǝɐɹɹɐuƃǝp sǝʇʇıuƃs qnʇʇous, ɐup ɯoʌǝp ⅁ɐɯǝ ɔǝuʇǝɹ qnʇʇous ʇo sǝʇʇıuƃs ʇɐq.\n- ∀ppǝp sɐʌǝ ɐƃǝ ıupıɔɐʇoɹ ʇo sǝʇʇıuƃs ʇɐq.\n- Ↄouʌǝɹʇǝp ɟʅoɐʇs ʇo ponqʅǝs ıu soɯǝ ɐɹǝɐs.\n- Ⅎıxǝp soɯǝ ʇʎdos, ʇɥɐuʞs pısɔoɹp ɯǝɯqǝɹs!\n\n1.03\n- ⅁ʅoqɐʅ Wnʇǝ\n- ⅁ɹɐɯɯɐʇıɔɐʅ ɟıxǝs\n- ∀qıʅıʇʎ ʇo ʍıdǝ sɐʌǝ\n- ∩dpɐʇǝp ıu ƃɐɯǝ Mıʞı\n- ∀ppǝp ʇʍo uǝʍ ndƃɹɐpǝs\n\n1.00\n- ᴚǝʅǝɐsǝ"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "wiki.patch-notes.archive.2": [
+  "wiki.patch-notes.archive.2-18-7": [
     {
       "type": 0,
       "value": "‮"
@@ -26014,6 +26012,20 @@
     {
       "type": 0,
       "value": "2.18.7\n- Ԑǝƃɐu ʍoɹʞıuƃ ou ∩I oʌǝɹɥɐnʅ\n- ᴚǝʍoɹʞǝp qoʇs ɔopǝ\n- ᴚǝʍoɹʞǝp ɹǝsǝɐɹɔɥ ɔopǝ\n- ᴚǝʍoɹʞǝp ∀nʇoqnʎǝɹs (dɐuǝʅ ʅıɟǝʇıɯǝ ndƃɹɐpǝs sʇıʅʅ uǝǝp soɯǝ ʅoʌǝ.)\n- ∀pɾnsʇǝp ƃoɐʅ ʇǝxʇ ʇo ɹǝsdǝɔʇ unɯqǝɹ sǝʇʇıuƃs ɐup ɐppǝp ɹǝɐɔɥ 42 Òı qoʇs ʇo ʇɥǝ ǝup, ʇɥıs ʍouʇ ɔɥɐuƃǝ ʍɥǝu ʎon nuʅoɔʞ pıʌısıou ndƃɹɐpǝs. ıʇs ɯoɹǝ ɟoɹ ʇɥǝ ɟıɹsʇ ɔondʅǝ oɟ ɹnus so dʅɐʎǝɹs ʞuoʍ ʍɥɐʇ ʇɥǝʎ'ɹǝ poıuƃ.\n\n- Ⅎıx ɟoɹ Wǝƃɐ ∀ssǝɯqʅʎ ʅıuǝs\n- Ԁɐuǝʅ ɐuıɯɐʇıou ou qoʇs ʇɐq sɥonʅp uoʍ ɹǝsǝʇ ou bnɐuʇnɯ ʅǝɐd\n- ∀ppǝp ɐ qnʇʇou ʇo ɐʇʇǝɯdʇ sɐʌǝ ɹǝɔoʌǝɹʎ\n- ᴚǝɯoʌǝp qnʇʇou sonups\n- ∀ppǝp uǝʍ ɯnsıɔ ʇɹɐɔʞ\n- ∀ʇʇǝɯdʇǝp ɟıx ɟoɹ ʅonp sonup ou sʇɐɹʇ.\n\n- Ԁoʇǝuʇıɐʅ ɟıx ɟoɹ ƃɹǝʎ ʅoɐp sɔɹǝǝu\n- Ԁoʇǝuʇıɐʅ ɟıx ɟoɹ sɐʌǝs qǝıuƃ ɹǝsǝʇ\n\n- ∩dpɐʇǝp ɟouʇ\n- Ⅎıxǝp ʇɥǝ ʅɐƃ ʍɥǝu ıuɟıuıʇʎıuƃ, sɥonʅp qǝ ɐ snqsʇɐuʇıɐʅ qoosʇ ʇo ʅɐʇǝ ƃɐɯǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.archive.legacy-2-15-through-1-00": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "2.15-2.16\n- Wɐpǝ ɐ ɔouɟıɹɯɐʇıou qnʇʇou ɟoɹ ponqʅıuƃ oɟɟʅıuǝ ʇıɯǝ.\n- Ⅎıxǝp ɐ qnƃ ʍɥǝɹǝ dɹopnɔʇıou ʍɐs ɯnɔɥ ʅoʍǝɹ ıu ʅɐupsɔɐdǝ.\n- ıuɔɹɐsǝp ɯɐx ʇɥɐʇ ʇɥǝ IԀ sʅıpǝɹ ɔɐu ɹǝɐɔɥ ʇo 1100.\n- SI⅁NIℲIↃ∀N⊥⅂⅄ ɹǝpnɔǝp ʇɥǝ sızǝ oɟ sɐʌǝ ɟıʅǝs.\n\n\n2.14\n- dnɹɔɥɐsıuƃ pǝʌ odʇıous ʍıʇɥ ıu ƃɐɯǝ ɔnɹɹǝuɔʎ sɥonʅp uoʍ ʍoɹʞ ɐs ǝxdǝɔʇǝp.\n- Ònɐuʇnɯ ʅǝɐd qnʇʇou sɥonʅp qǝɥɐʌǝ uoɹɯɐʅʅʎ uoʍ.\n\n2.13\n- Nǝʍ Sʇoɹǝ dɐƃǝ\n - Nǝʍ I∀Ԁ 2x Iuɟıuıʇʎ Ԁoıuʇs\n - Ԑonƃɥʇ qɐɔʞ ʇɥǝ ʇıddıuƃ odʇıous.\n- Ònɐuʇnɯ ʅǝɐd qnʇʇou uoʍ sɥoʍs qʎ pǝɟɐnʅʇ qnʇ ıs pısɐqʅǝp nuʇıʅ ʎon ǝɐɹu 42IԀ.\n- Nnɔʅǝɐɹıou ⅂oɹǝ uoʍ ɥɐs ɔɥɐdʇǝɹs ɐup ɔoʅʅɐdsɐqʅǝ ɔɐʇǝƃoɹıǝs.\n- ⅂ɐʎonʇ Sʍıʇɔɥıuƃ sɥonʅp uoʍ ʍoɹʞ dɹodǝɹʅʎ.\n\n2.12\n- ᴚǝɯoʌǝp Ԁʅɐʎɟɐq\n- Ԁnɹıʇʎ ʅıuǝ uoʍ ɔoʇs 2, 2, ɐup 3 ɹǝsdǝɔʇıʌǝʅʎ.\n- Wɐunɐʅ ʅɐqonɹ uoʍ ɔɐds onʇ ɐʇ 20x ʎonɹ ∀I Wɐuɐƃǝɹ dɹopnɔʇıou ɐup ɹǝpnɔǝs ʇɥǝ ɔɹǝɐʇıou ʇıɯǝ ʇo 0.2 sǝɔoups\n- Nǝʍ Iɯdoɹʇ ɐup Ǝxdoɹʇ sɐʌǝ qnʇʇous.\n- Ⅎıxǝp ɐu ıssnǝ ʍɥǝɹǝ ʅɐsʇ ıuɟıuıʇıǝs ʍonʅpu'ʇ ɹǝsǝʇ ou ɐ Ònɐuʇnɯ ⅂ǝɐd.\n\n2.11\n-∀ppǝp ɐ qʅnɹq ʇo ∀ʌoɔɐʇo\n-ᴚǝɯoʌǝp ɔɐd ou IԀ qoosʇ.\n- ∀ʅʅoʍǝp oɟɟʅıuǝ ʇıɯǝ ʇo ǝɐɹu IԀ ɐʇ ɐ ɹɐʇǝ oɟ dɹǝʌıons IԀ/s pıʌıpǝp qʎ 10.\n\n2.10\n- ∀ppǝp uǝʍ ıuɟo ıu ʇɥǝ sıpǝ dɐuǝʅ ɟoɹ ɔnɹɹǝuʇ/dɹǝʌıons ıuɟıuıʇıǝs, ɐup IԀ/s\n- Ⅎıxǝp ɐ qnƃ ʍıʇɥ ɹǝɐʅıʇʎ ɔouʇǝuʇ ʍɥǝɹǝ ʇɥǝ pısɐsʇǝɹ ʍonʅpu'ʇ ʇɹıƃƃǝɹ dɹodǝɹʅʎ.\n- ∀ppǝp ɐ uǝʍ ʅıuǝ ʇo ∀ʌoɔɐʇo ʇɥɐʇ qǝʇʇǝɹ ǝxdʅɐıus ʇɥǝ qnɟɟ.\n- ∀ppǝp Ǝuƃıuǝǝɹıuƃ uoʇɐʇıou.\n- Ǝɯqıƃƃǝuǝp ıuɟıuıʇʎ dǝɹɔǝuʇ ʇǝxʇ.\n- Odʇıɯızǝp soɯǝ ɔopǝ ʇɥɐʇ's ʇoo ʅouƃ ɟoɹ dɐʇɔɥ uoʇǝs.\n\n2.09\n- ∀pɾnsʇǝp ʇɥǝ sɔɐʅǝ ɟoɹ Iuɟıuıʇʎ doıuʇ ƃɐıu ɟɹoɯ 1.2 ʇo 3.9.\n- ∀ppǝp ɐ uǝʍ Ònɐuʇnɯ ndƃɹɐpǝ: ∀ʌoɔɐʇo.\n- ∀ʌoɔɐʇo ɐʅʅoʍs ʎon ʇo sɐɔɹıɟıɔǝ ɔnɹɹǝuɔıǝs ɟoɹ ɐ ƃʅoqɐʅ qnɟɟ.\n- Iuɟıuıʇʎ uoʍ ɥɐs ɐ sʅıpǝɹ ʇo sǝʇ ɐ doıuʇ ɟoɹ ɐnʇo ıuɟıuıʇʎ.\n- Ԑnɟɟǝp ɐ ʅoʇ oɟ sʞıʅʅs ʇɥɐʇ ɐɹǝ nuʅoɔʞǝp ɟɹoɯ Ònɐuʇnɯ Sɥɐɹps.\n\n2.08\n- I ɯɐpǝ ɐ ɯısʇɐʞǝ ʍɥǝu sǝʇʇıuƃ nd ʇɥǝ sʞıʅʅ dɹǝsǝʇ ɹǝuɐɯıuƃ, ʇɥıs ɟıxǝs ʇɥɐʇ. ᴚǝsǝʇ sʞıʅʅʇɹǝǝ uoʍ ʍoɹʞs ɐƃɐıu.\n\n2.07\n- ∀ppǝp Sʇɐʇ ɟnuɔʇıouɐʅıʇʎ ʇo ʇɥǝ sıpǝ ɯǝun.\n- Sndǝɹ ᴚɐpıɐuʇ Sɔɐʇʇǝɹıuƃ uoʍ dɹodǝɹʅʎ ɹǝsǝʇs ou Iuɟıuıʇʎ/Ònɐuʇnɯ ⅂ǝɐd.\n- Ԁɹǝsǝʇs ɐɹǝ uoʍ ɹǝuɐɯǝɐqʅǝ.\n- ∀ppǝp ɐ ɥıuʇ ɟoɹ ∀ʌoʇɐʇıou ƎɐsʇǝɹƎƃƃ ʇo ʇɥǝ oʇɥǝɹ ɔɐʇǝƃoɹʎ oɟ ʍıʞı.\n- ∀ppǝp ɹǝɯɐıuıuƃ oɟɟʅıuǝ ʇıɯǝ ʇo ʇɥǝ snɯɯǝɹʎ sɔɹǝǝu ɐɟʇǝɹ nsıuƃ oɟɟʅıuǝ ʇıɯǝ.\n\n2.06\n- ∀ppǝp 4 qouns sʞıʅʅ doıuʇs ɟoɹ pısɔoʌǝɹıuƃ ʇɥǝ ǝɐsʇǝɹǝƃƃ.\n- ɟıxǝp ɐ qnƃ ʍɥǝɹǝ sdǝup ɐƃɐıu ʍıʇɥ oɟɟʅıuǝ ʇıɯǝ ʍɐsu'ʇ ʍoɹʞıuƃ.\n- ʍɥǝu ʎon ɔʅosǝ ʇɥǝ ƃɐɯǝ ou pǝqnƃ, ıʇ ʍıʅʅ uoʍ ɔoɹɹǝɔʇʅʎ ʅoɐp qɐɔʞ ʇo pǝqnƃ.\n- ɔɥɐuƃǝp \"qooʇıuƃ sǝɹʌǝɹs\" ʇo \"ᗡǝdʅoʎıuƃ Sǝɹʌǝɹs\".\n\n2.05\n- ∀ppǝp ɐppıʇıouɐʅ ıuɟo ʇo ᴚnpıɯǝuʇɐɹʎ Sıuƃnʅɐɹıʇʎ ʇǝɔɥuıɔɐʅ pǝsɔɹıdʇıou.\n- Ⅎıxǝp Ԁoʍǝɹ Oʌǝɹʍɥǝʅɯıuƃ ɐup Ԁoʍǝɹ ∩upǝɹʍɥǝʅɯıuƃ.\n- Ⅎıxǝp Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs ʇǝɔɥuıɔɐʅ pǝsɔɹıdʇıou.\n- Ʌǝɹsɐʇıʅǝ dɹopnɔʇıou ʇɐɔʇıɔs uoʍ qoosʇs ɯɐunɐʅ ʅɐqonɹ.\n- Ǝuǝɹƃʎ dɹopnɔʇıou uo ʅouƃǝɹ sɔɐʅǝs ɟɹoɯ ʇɥǝ sʅıpǝɹ ʍɥǝu ʎon ɥɐʌǝ uo ʇıɯǝ.\n- ᴚǝɯoʌǝp 2 ʅıuǝs ɟɹoɯ ʇɥǝ ɹǝɐʅıʇʎ ʍıʞı ǝuʇɹʎ.\n\n2.04\n- ∀ppǝp uǝʍ Ònɐuʇnɯ Wɐuɐƃǝɯǝuʇ sʞıʅʅs, Ԑɹǝɐʞ ⊥ɥǝ ⅂ood ɐup Ònɐuʇnɯ Ǝuʇɐuƃʅǝɯǝuʇ.\n- Woʌǝp qnɟɟ ɟɹoɯ ⊥ɹɐusʅɐʇıou 8 ɐup Sdǝǝp 8 ʇo Ԑɹǝɐʞ ⊥ɥǝ ⅂ood ɐup Ònɐuʇnɯ Ǝuʇɐuƃʅǝɯǝuʇ ɹǝsdǝɔʇıʌǝʅʎ.\n- Ⅎıxǝp ɐ qnƃ ʍɥǝɹǝ ʇɥǝ sıpǝ ɯǝun pısdʅɐʎ ɟoɹ dɹǝsʇıƃǝ doıuʇs ʍɐs uoʇ sɥoʍ ʇɥǝ ponqʅǝp unɯqǝɹ ɟɹoɯ ponqʅǝ IԀ.\n\n2.03\n- Ⅎıxǝp ɐ qnƃ ʍɥǝɹǝ oɟɟʅıuǝ ʇıɯǝ ɔonʅp qǝ ponqʅǝp ıuɟıuıʇǝʅʎ, ʇɥıs ɐʅso ɹǝsǝʇs oɟɟʅıuǝ ʇıɯǝ ıɟ ʎon ɥɐʌǝ ʇɥǝ ɐqıʅıʇʎ ʇo ƃǝʇ ɯoɹǝ ʇɥɐu 100 pɐʎs.\n- Sɥonʅpǝɹs oɟ Ԁɹǝɔnɹsoɹs uoʍ ɐʅso pısɐqʅǝs ʇɥǝ ɔɐsɥ ɹǝsǝɐɹɔɥ ndƃɹɐpǝ.\n- ∀ppǝp ʇʍo uǝʍ dɹǝsǝʇs, ɐup ɯɐpǝ ʇɥǝɯ ɐʅso sɐʌǝ ʇɥǝ qoʇ pısʇɹıqnʇıou ʌɐʅnǝ.\n- sǝɔɹǝʇs ɔɐu uo ʅouƃǝɹ ƃo ɐqoʌǝ 27.\n- Ǝʅǝɔʇɹıɔ sɥǝǝd sʞıʅʅ ɹǝʍoɹʞǝp ʇo: ponqʅǝ ʇɥǝ ɐɟɟǝɔʇ oɟ oɟɟʅıuǝ ʇıɯǝ.\n- ᴚǝɯoʌǝp ɹǝuǝƃɐpǝ ɟɹoɯ ʇɥǝ po uoʇ ɐnʇo ɐssıƃu ʅısʇ.\n- ∩dpɐʇǝp ɔʅonp sɐʌǝ ʇo ʍoɹʞ dɹodǝɹʅʎ. Ԑnıʅp 261 ouʍɐɹps ıs uoʇ ɔoɯdɐʇıqʅǝ ʍıʇɥ oʅpǝɹ qnıʅps ʇɥɐu 261\n- ∀ppǝp Ↄɐʇ dıɔʇnɹǝs ʇo pǝqnƃ.\n- ᴚǝdǝɐʇɐqʅǝ ɹǝsǝɐɹɔɥ ıs uoʍ ɹǝɟnupɐqʅǝ.\n- ⊥ɥɐʇ's ɐʅʅ ɟoʅʞs...\n\n2.0\n- Ↄoɯdʅǝʇǝʅʎ ɹǝɯɐpǝ ʇɥǝ ƃɐɯǝ.\n\n\n\n1.19.06\n- Ԁoʇǝuʇıɐʅ ɟıx ɟoɹ qoʇ ɐnʇoɯɐʇıou qɹǝɐʞıuƃ.\n- ᴚǝɯoʌǝp oɟɟʅıuǝ IԀ\n- Noʍ ɹǝʅoɐps ʇɥǝ ƃɐɯǝ ɐɟʇǝɹ dɹǝssıuƃ ʇɥǝ N⅁+ qnʇʇou\n- Ⅎıxǝp ıssnǝs ʇɥɐʇ oɔɔnɹ ʍɥǝu ʅoɐpıuƃ ʇɥǝ sɔǝuǝ. I'ɯ uoʇ ʇǝʅʅıuƃ ʎon ɯoɹǝ, ʇɥıs ıs ɯʎ sǝɔɹǝʇ. I ʍıʅʅ ʇɐʞǝ ıʇ ʇo ɯʎ ƃɹɐʌǝ.\n\n\n1.19.04\n- Wɐpǝ Sǝɔɹǝʇs dɹǝsʇıƃǝ+ ndƃɹɐpǝ ıuɔɹǝɯǝuʇɐʅ ɐup ɔosʇ ʅǝss. Noʍ ʎon ƃǝʇ 3 sǝɔɹǝʇs dǝɹ doıuʇ.\n- ∀ppǝp ɐnʇo qnʎǝɹ ɟoɹ qoʇs, ɔosʇs 3 IԀ\n- ɹǝpnɔǝp ʇɥǝ ɔosʇ oɟ ɐnʇo ᴚǝsǝɐɹɔɥ ʇo 3 IԀ\n- ∀ppǝp Ԁɹǝsʇıƃǝ+ ndƃɹɐpǝ ɟoɹ dǝɹɯɐuɐuʇ ɐnʇoɯɐʇıou.\n\n1.19.03\n- Ⅎıxǝp ıssnǝ ʍɥǝɹǝ ɯnʅʇıʇɐsʞıuƃ ʍonʅp qɹǝɐʞ sɔıǝuɔǝ.\n- Ⅎıxǝp ıssnǝ ʍɥǝɹǝ ᴚǝɐʅıʇʎ ɔouʇǝuʇ ʍonʅp sʇɐʎ odǝu ʍɥǝu nsıuƃ dɹǝsʇıƃǝ+\n- Sɔɹoʅʅıuƃ ıs uoʍ ɟıxǝp ou ɔǝɹʇɐıu dʅɐʇɟoɹɯs.\n- Iuɟıuıʇʎ uoʍ ndpɐʇǝs ıʇs qnʇʇous ıu ɐ ɔʅǝɐuǝɹ ʍɐʎ.\n- Ↄouʌǝɹʇǝp ɯoɹǝ sɔɹoʅʅʌıǝʍs ʇo ɐnʇo ɐpɾnsʇ ʇɥǝıɹ ɥǝıƃɥʇ.\n- Wɐpǝ ɔouɟıɹɯɐʇıou pıɐʅoƃnǝ ıu ʇɥǝ sʞıʅʅ ʇɹǝǝ qǝʇʇǝɹ.\n- ∀ppǝp ʍıʞı sǝɔʇıou ɟoɹ sǝɔɹǝʇs oɟ ʇɥǝ nuıʌǝɹsǝ, nuʅoɔʞɐqʅǝ ıu Ԁɹǝsʇıƃǝ+\n- ∀ppǝp pıʌısıou ʇo Ԁɹǝsʇıƃǝ+\n- ∀ppǝp Iuɟʅnǝuɔǝ ʇo Ԁɹǝsʇıƃǝ+\n- ∀ppǝp dɹoƃɹǝssıou qɐɹs ʇo ʇɥǝ qnıʅpıuƃs ıu ʇɥǝ qoʇs ʇɐq.\n- ᴚǝʍɹoʇǝ ɐ ʇou oɟ ɔopǝ ɐup ɹǝɯoʌǝp ɐ qnuɔɥ oɟ ɹǝpnupɐuʇ sʇnɟɟ.\n- ᴚǝɯoʌǝp ʅɐʇǝsʇ ɹnu ɟɹoɯ ʇɥǝ Iuɟıuıʇʎ Ↄɐʇǝƃoɹʎ.\n- Wɐɹʇʎ ɐup I ɹǝʍoɹʞǝp ɥoʍ ɐnʇo-ɹǝsǝɐɹɔɥ ʍoɹʞs.\n- Ⅎıxǝp ɐ ɥnƃǝ qnƃ ʍıʇɥ sǝɔɹǝʇs.\n- ɟıxǝp ʇɥǝ sɔıǝuɔǝ qoosʇǝɹ qnƃ.\n- ɹǝpnɔǝp ɐɯonuʇ ʇo ɯɐʞǝ dɹoƃɹǝss qɐɹs soʅıp ʇo 5/sǝɔ\n\n1.19\n- ᴚǝʍoɹʞǝp ɟoɹɯnʅɐ ɟoɹ ᴚǝɐʅıʇʎ: sıɯnʅɐʇıous, ıʇǝɯs uoʍ ɐɔʇnɐʅʅʎ sɔɐʅǝ ɟɹoɯ ʇɥǝ qǝƃıuuıuƃ.\n- ᴚǝʍoɹʞǝp Iuɟʅnǝuɔǝ ƃɐıu, uoʍ ʎon ɔousʇɐuʇʅʎ ƃɐıu 4 ıuɟʅnǝuɔǝ ɐ sǝɔoup.\n- ᴚǝpıp soɯǝ ɯǝun ʅoƃıɔ ʇo ɟıx sɔɐʅıuƃ ıssnǝs, dɐɹʇıɔnʅɐɹʅʎ ıu ʇɥǝ ʍıʞı.\n- ∀ppǝp ᴚǝɐʅıʇʎ sǝɔʇıou ʇo ʍıʞı ɐɟʇǝɹ ʎon nuʅoɔʞ ɹǝɐʅıʇʎ.\n- ∀ppǝp dɐʇɹǝous ʇo ʍıʞı.\n- ∀ppǝp Ԁɹǝsʇıƃǝ dʅns.\n- Ↄɥɐuƃǝp ʅǝɐpǝɹqoɐɹp ʇo sɥoʍ Ԁɹǝsʇıƃǝ+ doıuʇs ıusʇǝɐp.\n- Ↄʅonp sɐʌǝ uoʍ sɐʌǝs ɐʅʅ pɐʇɐ ıusʇǝɐp oɟ poıuƃ ʇɥǝ ʇʍo ƃɐɯǝ ɯopǝs sǝdɐɹɐʇǝʅʎ.\n- No ʅouƃǝɹ ƃɐıu ıusɐuǝ ɐɯonuʇs oɟ qouns ʇıɯǝ ʍɥǝu dnɹɔɥɐsıuƃ ʇɥɐʇ ndƃɹɐpǝ ıu ɹǝɐʅıʇʎ.\n\n1.18.5\n- Wɐɹʇʎ ɟıxǝp soɯǝ sʇnɟɟ, ⊥ɥɐuʞs Wɐɹʇʎ.\n- Oɟɟʅıuǝ ıuɟıuıʇʎ doıuʇs ɔɐʅɔnʅɐʇǝp qɐsǝp ou ʎonɹ qǝsʇ ʇıɯǝ ıɟ ʎonɹ qǝsʇ ʇıɯǝ ɯnʅʇıdʅıǝp qʎ 10.\n- ∀ppǝp ɐ ʍɥoʅǝ ǝxdɐusıou, uǝʍ ɔouʇǝuʇ ʎɐʎ.\n- ᴚǝɐɔɥıuƃ 42 ıuɟıuıʇʎ doıuʇs nuʅoɔʞs ʇɥǝ uǝʍ ɐɹǝɐ.\n- Iɟ ʎon pou'ʇ ıuʇǝɹɐɔʇ ʍıʇɥ ʇɥǝ ƃɐɯǝ ɟoɹ 5 ɯıunʇǝs ɐ sɔɹǝǝu sɐʌǝɹ uoʍ ɐddǝɐɹs.\n\n1.17\n- ∀nʇo ɹǝsǝɐɹɔɥ ɔɐu uoʍ qǝ ʇoƃƃʅǝp ıu ʇɥǝ ɹǝsǝɐɹɔɥ ʇɐq ɟoɹ ǝɐɔɥ qnıʅpıuƃ\n- ⅂oɐpıuƃ sɔɹǝǝu ɐppǝp.\n- Ԁnɹɔɥɐsıuƃ dɐsʇ 100 uoʍ ƃıʌǝs 1% ɐppıʇouɐʅ ıuɔoɯǝ dǝɹ ʅǝʌǝʅ ɐqoʌǝ 100.\n- Ԁʅɐʎɟɐq ɥɐs qǝǝu ıuʇǝƃɹɐʇǝp ıuʇo ʇɥǝ ƃɐɯǝ.\n- Ԁʅɐʎɟɐq ⅂ǝɐpǝɹqoɐɹp ıuʇǝƃɹɐʇıou.\n- Ↄʅonp sɐʌǝ ıs uoʍ ɐ ʇɥıuƃ.\n- Ԁɹǝʌıons ɹnu pɐʇɐ ıs uoʍ ıu ʇɥǝ Iuɟıuıʇʎ ʇɐq ɐs ʍǝʅʅ.\n- ∀ɟʇǝɹ ɔoʅʅɐdsǝ 42 ʎon ʍıʅʅ uo ʅouƃǝɹ sǝǝ ʇɥǝ ɹǝɐʅıʇʎ ɔoʅʅɐdsǝ sɔɹǝǝu.\n\n1.16\n- Iɯdɹoʌǝp ʇɥǝ ɔoʅʅɐdsǝ qɐɹ so ıʇ poǝsuʇ ɾnɯd ɐɹonup.\n- Iuɟıuıʇʎ doıuʇs uoʍ ɐnʇo ɐssıƃu ʍɥǝu ʎon ɥɐʌǝ 10 oɹ ɯoɹǝ ɐup ɔoɯdʅǝʇǝ ɐ ƃoɐʅ.\n- Iuɟıuıʇʎ ndƃɹɐpǝ ʇo ɐnʇoɯɐʇǝ ɹǝsǝɐɹɔɥ. (ʇoƃƃʅǝɐqʅǝ ıu sǝʇʇıuƃs)\n- Mǝq ʇıɯǝ uoʍ nsǝp ıusʇǝɐp oɟ ʅoɔɐʅ.\n- ⅁ɐʅɐxʎ ʌıǝʍ ıs uoʍ qɐɔʞ!\n\n\n1.15\n- Ⅎıxǝp oɟɟʅıuǝ dɹopnɔʇıou.\n- Ⅎıxǝp ıuɟıuıʇǝ dɐuǝʅ ʅıɟǝʇıɯǝ qnƃ.\n- Ⅎıxǝp qǝsʇ ıuɟıuıʇʎ ʇıɯǝ pısdʅɐʎ. (I ʍɐsu'ʇ nsıuƃ ɐ ʅǝss ʇɥɐu ıusʇǝɐp oɟ ɐ ƃɹǝɐʇǝɹ ʇɥɐu I sʍǝɐɹ)\n\n1.14\n- Ʌɐɹıons ʍıʞı ɟıxǝs, ɐppǝp dɐʇɔɥ uoʇǝs.\n- ∀ssıƃu ɐʅʅ qnƃ sɥonʅp qǝ ɟıxǝp.\n- Wnʇǝ uoʍ ɹǝsdǝɔʇs ʎonɹ sǝʇʇıuƃ ou sʇɐɹʇnd.\n- ᴚǝɯoʌǝp ʇɥǝ (dnɹɔɥɐsǝp) ʇǝxʇ ɟɹoɯ soɯǝ ıuɟıuıʇʎ ndƃɹɐpǝs.\n- Woʌǝp ʇɥǝ qnʎ ɔonuʇ ʇo ʇɥǝ dnɹɔɥɐsǝ qnʇʇous.\n- Iuɟıuıʇʎ qɐɹ ʍıʅʅ uoʍ sɥoʍ nd ʇo 2 pǝɔıɯɐʅ dʅɐɔǝs ıusʇǝɐp oɟ 1.\n- Ⅎıxǝp ʇɥǝ ɹǝʍɐɹps ɟoɹ Sǝɔɹǝʇ 2 ɐup Sǝɔɹǝʇ 4.\n- Oʌǝɹɥɐnʅǝp ʇɥǝ unɯqǝɹs sʎsʇǝɯ, unɯqǝɹs sɥonʅp ɟʅıɔʞǝɹ ʅǝss uoʍ!\n- Iuɟıuıʇʎ ıu ʇɥǝ ʍıʞı uoʍ sɥoʍs ʎonɹ qǝsʇ ɹnu ʇıɯǝ.\n\n1.10 - 1.13\n- Ⅎıxǝp ɐ ɹonupıuƃ ıssnǝ ʍıʇɥ Iuɟıuıʇǝs dɹoƃɹǝss qɐɹ.\n- ∀ppǝp Iuɟıuıʇıǝs sǝɔʇıou ʇo ʇɥǝ ʍıʞı.\n- ∀ppǝp ɐ 5 dıxǝʅ ƃɐd ʇo ʇɥǝ ʇod oɟ ʇɥǝ sɔɹǝǝu ɟoɹ soɯǝ pǝʌıɔǝs.\n- Sʞıʅʅs uoʍ dɹodǝɹʅʎ ɔʅǝɐɹ ʍɥǝu dɹǝsʇıƃıuƃ.\n- Ↄouɟıɹɯɐʇıou sɔɹǝǝu uo ʅouƃǝɹ sʇɐʎs odǝu ʍɥǝu ɹǝsǝʇʇıuƃ ʇɥǝ sʞıʅʅ ʇɹǝǝ.\n-  3 Nǝʍ Sɔıǝuɔǝ ndƃɹɐpǝs.\n-  ⅁oɐʅs ɥɐʌǝ qǝǝu ɐpɾnsʇǝp ʇo ɐɔɔonuʇ ɟoɹ ʇɥǝ ɥnƃǝ ƃɐd ɐɟʇǝɹ \"Oʍu 20 Ԁʅɐuǝʇs\"\n- ∀ɔɥıǝʌǝɯǝuʇ ʇɹıƃƃǝɹs ɥɐʌǝ qǝǝu ndpɐʇǝp ʇo ɐɔɔonuʇ ɟoɹ ʇɥǝ sɥıɟʇ ıu ƃoɐʅs.\n- Wɐunɐʅ qoʇ ɔɹǝɐʇıou sdǝǝp ıs uoʍ dǝɹsısʇǝuʇ qǝʇʍǝǝu sɐʌǝs.\n- ∀ppǝp ʌɐɹıons qnɟɟs ʇo Sǝɔɹǝʇs oɟ ʇɥǝ nuıʌǝɹsǝ.\n- Sǝɹʌǝɹs uoʍ sɔɐʅǝ ʅǝss ɐƃƃɹǝssıʌǝʅʎ ʇɥɐu Ԁʅɐuǝʇs.\n- Ԑnʎ Wɐx\n- Ou ɔoʅʅɐdsǝ ʇɥǝ dodnd uoʍ sɥoʍs ʎonɹ ʇoʇɐʅ ɹnu ʇıɯǝ.\n-  Ǝxʇɹɐ sʞıʅʅ doıuʇs ɐɟʇǝɹ 10 uoʍ ʇnɹu ıuʇo dɐuǝʅ ʅıɟǝʇıɯǝ.\n- ∀ssıƃu ɐʅʅ qnʇʇou ɟoɹ sʞıʅʅs\n- Mıʞı ndpɐʇǝp.\n- ⅁ɐʅɐxʎ Ʌıǝʍ ᴚǝɯoʌǝp\n- Ԑnƃ ʍıʇɥ ıuɟıuıʇʎ ɟıxǝp\n\n1.09\n- ∀ppǝp ᴚǝsǝʇ odʇıou ɟoɹ sʞıʅʅ ʇɹǝǝ\n- Ⅎıxǝp ƃɐʅɐxʎ ʌıǝʍ dɐuǝʅ ıssnǝ.\n\n1.08\n- Ⅎıxǝp ɐɔʇıʌǝ dɐuǝʅs pısdʅɐʎ.\n- ᴚǝʍoɹpǝp soɯǝ ʍıʞı sʇnɟɟ\n- Ⅎıxǝp sʞıʅʅ doıuʇs pısdʅɐʎ ou ɯɐıu ɯǝun\n- Mɥǝu ɹǝɐʅıʇʎ ɔoʅʅɐdsǝs ʎon sʇɐɹʇ ʍıʇɥ ɐ qoʇ ıusʇǝɐp oɟ uoʇɥıuƃ.\n- ∩dpɐʇǝs Sɔıǝuʇıɟıɔ Ԁʅɐuǝʇs Iɔou.\n- Ↄoʅoɹ ɔopǝp soɯǝ ʇɥıuƃs.\n- ∀ppǝp ɐ \"ɹnu ʇıɯǝ\" ıupıɔɐʇoɹ.\n- ∀ppǝp ɐu ıupıɔɐʇoɹ ɟoɹ ʇɥǝ Sɔıǝuʇıɟıɔ Ԁʅɐuǝʇs sʞıʅʅ ou ʇɥǝ qoʇs ʇɐq.\n\n1.07\n- Ⅎıxǝp ɐup ndpɐʇǝp sʞıʅʅs sǝɔʇıou oɟ ʇɥǝ Mıʞı\n- ᴚǝuɐɯǝp ɐup ɹǝʍoɹʞǝp Ԁʅɐuǝʇs/pɐʎ sʞıʅʅ ʇo qǝ Sɔıǝuʇıɟıɔ Ԁʅɐuǝʇs.\n- ᴚǝʍoɹʞǝp Sɔıǝuɔǝ Ԑoosʇ sʞıʅʅ.\n- Wɐpǝ ʇɥǝ ɟıɹsʇ 2 dɐuǝʅ ʅıɟǝʇıɯǝ ɹǝsǝɐɹɔɥǝs ɔɥǝɐdǝɹ ɐup ɐppǝp 2 ɯoɹǝ.\n- Ↄɹǝɐʇǝp dɹǝsʇıƃǝ ɯǝɔɥɐuıɔ. Iuɟıuıʇǝs ʇɐq ıs uoʍ ɐʌɐıʅɐqʅǝ.\n- 2 uǝʍ ʅǝɐpǝɹqoɐɹps. ⅁ɐʅɐxıǝs, ɐup ᴚǝɐʅıʇʎ qɹǝɐʞs.\n- ∀pɾnsʇǝp ƃoɐʅs ɐup ɐppǝp ʇɥǝ ɟıuɐʅ 3.\n\n1.06\n- ∀ppǝp ʅısʇ oɟ ƃoɐʅs ɐup sʞıʅʅs ʇo ʇɥǝ ʍıʞı\n- Wɐpǝ ƃoɐʅs ɯoɹǝ ɐʇʇɐıuɐqʅǝ.\n- ∀ssǝɯqʅʎ ʅıuǝs, ∀I Wɐuɐƃǝɹs, Sǝɹʌǝɹs, ɐup Ԁʅɐuǝʇs uoʍ ponqʅǝ ʇɥǝıɹ ʎıǝʅp ouɔǝ ʎon ɯɐunɐʅʅʎ dnɹɔɥɐsǝ 50, ɐup ɐƃɐıu ɐʇ 100.\n- Ԁnɹɔɥɐsǝp ndƃɹɐpǝs uoʍ ɥıpǝ ʇɥǝɯsǝʅʌǝs, ɐup ʇɥǝıɹ ʌısıqıʅıʇʎ ɔɐu qǝ ʇoƃƃʅǝp.\n- Sʞıʅʅ ʇɹǝǝ ʍıupoʍs uoʍ ɥıpǝ ʇɥǝɯsǝʅʌǝs ʍɥǝu ʎon ɔʅıɔʞ ou ɐuoʇɥǝɹ.\n- Ⅎıxǝp dɹopnɔʇıou qnƃ ʍɥǝɹǝ dʅɐʎǝɹs ʍǝɹǝ uoʇ ɹǝɔǝıʌıuƃ sɔıǝuɔǝ ou ɹǝʇnɹu ʇo ʇɥǝ ƃɐɯǝ ɟoɹ ʇoʇɐʅ dɹopnɔǝp dɐuǝʅs sʞıʅʅ. (ʍoɹpıuƃ ʇɥıs ndƃɹɐpǝ ıs ɥɐɹp)\n\n1.05\n- Sʞıʅʅ ʇɹǝǝ ʍıʇɥ 10 uǝʍ sʞıʅʅs!\n\n1.04\n- ∩dpɐʇǝp ∩I ʇo sɥoʍ ʇoʇɐʅ qoʇs.\n- ∀ppǝp ʇǝxʇ ʇo ʇɐq qnʇʇous.\n- ᴚǝɐɹɹɐuƃǝp sǝʇʇıuƃs qnʇʇous, ɐup ɯoʌǝp ⅁ɐɯǝ ɔǝuʇǝɹ qnʇʇous ʇo sǝʇʇıuƃs ʇɐq.\n- ∀ppǝp sɐʌǝ ɐƃǝ ıupıɔɐʇoɹ ʇo sǝʇʇıuƃs ʇɐq.\n- Ↄouʌǝɹʇǝp ɟʅoɐʇs ʇo ponqʅǝs ıu soɯǝ ɐɹǝɐs.\n- Ⅎıxǝp soɯǝ ʇʎdos, ʇɥɐuʞs pısɔoɹp ɯǝɯqǝɹs!\n\n1.03\n- ⅁ʅoqɐʅ Wnʇǝ\n- ⅁ɹɐɯɯɐʇıɔɐʅ ɟıxǝs\n- ∀qıʅıʇʎ ʇo ʍıdǝ sɐʌǝ\n- ∩dpɐʇǝp ıu ƃɐɯǝ Mıʞı\n- ∀ppǝp ʇʍo uǝʍ ndƃɹɐpǝs\n\n1.00\n- ᴚǝʅǝɐsǝ"
     },
     {
       "type": 0,
