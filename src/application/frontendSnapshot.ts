@@ -37,10 +37,9 @@ import {
   type CanonicalDreamDerivedFactsResult,
 } from '../simulation/canonicalDreamDerivedFacts'
 import {
-  isCanonicalMegaStructureVisible,
-  previewCanonicalBasicFacilityPurchase,
-  tryPurchaseCanonicalMegaStructure,
-  type CanonicalBasicFacilityPurchasePreview,
+  isCanonicalFacilityVisible,
+  previewCanonicalFacilityPurchase,
+  type CanonicalFacilityPurchasePreview,
 } from '../simulation/canonicalDysonCommands'
 import {
   availableCanonicalInfinityShopPoints,
@@ -71,9 +70,10 @@ import {
   type BasicDysonFacilityId,
 } from '../simulation/dysonFacilities'
 import {
-  MEGA_STRUCTURE_IDS,
-  type MegaStructureId,
-} from '../simulation/megaStructurePurchases'
+  DYSON_FACILITY_DEFINITIONS,
+  DYSON_FACILITY_IDS,
+  MEGA_STRUCTURE_FACILITY_IDS,
+} from '../simulation/dysonFacilityCatalog'
 import {
   addDiscrete,
   divideContinuous,
@@ -526,15 +526,6 @@ export interface FrontendQuantumLeapPreview {
   readonly definitionGap: string | null
 }
 
-export interface FrontendMegaStructurePurchasePreview {
-  readonly facilityId: MegaStructureId
-  readonly eligible: boolean
-  readonly selectedQuantity: bigint
-  readonly cost: number
-  readonly code: string
-  readonly definitionGap: string | null
-}
-
 export interface FrontendResearchCatalogPreview {
   readonly complete: boolean
   readonly issue: string | null
@@ -682,7 +673,7 @@ export type FrontendDysonDerivedFacts =
       readonly status: 'ready'
       readonly value: Omit<
         DerivedBasicDysonState,
-        'nextEvaluationSnapshot'
+        'nextEvaluationSnapshot' | 'megaRates'
       > & {
         readonly presentation: FrontendDysonPresentationFacts
       }
@@ -861,10 +852,8 @@ export interface FrontendGameplayDerivedFacts {
 
 export interface FrontendDysonVisibility {
   readonly showTinker: boolean
-  readonly visibleBasicFacilityIds: readonly BasicDysonFacilityId[]
-  readonly visibleMegaStructureIds: readonly MegaStructureId[]
-  readonly showNextBasicFacilityTeaser: boolean
-  readonly showNextMegaStructureTeaser: boolean
+  readonly visibleFacilityIds: readonly CanonicalFacilityId[]
+  readonly showNextFacilityTeaser: boolean
 }
 
 export interface FrontendGameplayVisibility {
@@ -920,10 +909,7 @@ export interface FrontendRuntimeFacts {
 
 export interface FrontendGameplayPreviews {
   readonly dyson: {
-    readonly basicFacilities:
-      readonly CanonicalBasicFacilityPurchasePreview[]
-    readonly megaStructures:
-      readonly FrontendMegaStructurePurchasePreview[]
+    readonly facilities: readonly CanonicalFacilityPurchasePreview[]
   }
   readonly research: FrontendResearchCatalogPreview
   readonly skills: CanonicalSkillCatalogPreview
@@ -1168,33 +1154,35 @@ export function selectGameplayVisibility(
     return owned[0] + owned[1]
   }
   const facilities = state.dyson.facilities
-  const basicVisible: Readonly<Record<BasicDysonFacilityId, boolean>> = {
-    assembly_lines:
-      state.meta.firstInfinityComplete ||
-      state.dyson.bots >= 10 || total('assembly_lines') > 0,
-    ai_managers:
-      state.meta.firstInfinityComplete ||
-      facilities.assembly_lines[1] >= 5 ||
-      total('ai_managers') > 0,
-    servers:
-      state.meta.firstInfinityComplete ||
-      facilities.ai_managers[1] >= 1 || total('servers') > 0,
-    data_centers:
-      state.meta.firstInfinityComplete ||
-      total('servers') >= 1 || total('data_centers') > 0,
-    planets:
-      state.meta.firstInfinityComplete ||
-      total('data_centers') >= 1 || total('planets') > 0,
-  }
+  const basicVisible = Object.fromEntries(
+    BASIC_DYSON_FACILITY_IDS.map((facilityId) => {
+      const prerequisite =
+        DYSON_FACILITY_DEFINITIONS[facilityId].prerequisite
+      const prerequisiteOwned = prerequisite === undefined
+        ? 0
+        : prerequisite.manualOnly
+          ? facilities[prerequisite.facilityId][1]
+          : total(prerequisite.facilityId)
+      return [
+        facilityId,
+        state.meta.firstInfinityComplete ||
+          total(facilityId) > 0 ||
+          (facilityId === 'assembly_lines'
+            ? state.dyson.bots >= 10
+            : prerequisite !== undefined &&
+              prerequisiteOwned >= prerequisite.owned),
+      ]
+    }),
+  ) as Readonly<Record<BasicDysonFacilityId, boolean>>
   const hasDataCenters = total('data_centers') >= 1
   const manualLabourOwned =
     state.skills.byId.manualLabour?.owned === true
   const earlyTinkerVisible =
     total('assembly_lines') < 10 ||
     facilities.ai_managers[1] < 1
-  const visibleMegaStructureIds = MEGA_STRUCTURE_IDS.filter(
+  const visibleMegaStructureIds = MEGA_STRUCTURE_FACILITY_IDS.filter(
     (facilityId) =>
-      isCanonicalMegaStructureVisible(state, facilityId),
+      isCanonicalFacilityVisible(state, facilityId),
   )
   const visibleBasicFacilityIds = BASIC_DYSON_FACILITY_IDS.filter(
     (facilityId) => basicVisible[facilityId],
@@ -1209,12 +1197,13 @@ export function selectGameplayVisibility(
       showTinker:
         (earlyTinkerVisible && !hasDataCenters) ||
         manualLabourOwned,
-      visibleBasicFacilityIds,
-      visibleMegaStructureIds,
-      showNextBasicFacilityTeaser:
+      visibleFacilityIds: [
+        ...visibleBasicFacilityIds,
+        ...visibleMegaStructureIds,
+      ],
+      showNextFacilityTeaser:
         visibleBasicFacilityIds.length > 0 &&
         !visibleBasicFacilityIds.includes('planets'),
-      showNextMegaStructureTeaser: false,
     },
     research: {
       routeUnlocked:
@@ -1806,7 +1795,10 @@ export function projectFrontendStoryDerivedFacts(
 function projectDysonDerivedFacts(
   source: Readonly<DerivedBasicDysonState>,
   goalStage: bigint,
-): Omit<DerivedBasicDysonState, 'nextEvaluationSnapshot'> & {
+): Omit<
+  DerivedBasicDysonState,
+  'nextEvaluationSnapshot' | 'megaRates'
+> & {
   readonly presentation: FrontendDysonPresentationFacts
 } {
   const activePanels = multiplyContinuous(
@@ -1843,8 +1835,6 @@ function projectDysonDerivedFacts(
     planetPricingModifier: source.planetPricingModifier,
     facilityFacts: source.facilityFacts,
     rates: source.rates,
-    megaRates: source.megaRates,
-    megaStructureFacts: source.megaStructureFacts,
     productionArrivalRates: source.productionArrivalRates,
     presentation: {
       swarmScale,
@@ -2320,15 +2310,12 @@ function selectDysonPreviews(
     ? derived.dyson.value.planetPricingModifier
     : 1
   return {
-    basicFacilities: BASIC_DYSON_FACILITY_IDS.map((facilityId) =>
-      previewCanonicalBasicFacilityPurchase(
+    facilities: DYSON_FACILITY_IDS.map((facilityId) =>
+      previewCanonicalFacilityPurchase(
         state,
         facilityId,
         planetModifier,
       ),
-    ),
-    megaStructures: MEGA_STRUCTURE_IDS.map((facilityId) =>
-      previewMegaStructure(state, facilityId),
     ),
   }
 }
@@ -2518,24 +2505,6 @@ function selectStoredTimePreviews(
   }
 }
 
-function previewMegaStructure(
-  state: CanonicalGameStateV1,
-  facilityId: MegaStructureId,
-): FrontendMegaStructurePurchasePreview {
-  const result = tryPurchaseCanonicalMegaStructure(state, facilityId)
-  return {
-    facilityId,
-    eligible: result.purchased,
-    selectedQuantity: result.quantity,
-    cost: result.cost,
-    code: result.status,
-    definitionGap:
-      result.status === 'invalid-definition'
-        ? `invalid_definition:${facilityId}`
-        : null,
-  }
-}
-
 function previewResearchCatalog(
   state: CanonicalGameStateV1,
   tuning: Readonly<DysonCompatibilityTuning>,
@@ -2554,8 +2523,7 @@ function previewResearchCatalog(
     )
   const dysonVisibility = selectGameplayVisibility(state).dyson
   const visibleFacilities = new Set<CanonicalFacilityId>([
-    ...dysonVisibility.visibleBasicFacilityIds,
-    ...dysonVisibility.visibleMegaStructureIds,
+    ...dysonVisibility.visibleFacilityIds,
   ])
   const cards = purchases.flatMap((purchase) => {
     const presentation =

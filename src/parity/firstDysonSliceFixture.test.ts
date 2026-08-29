@@ -36,12 +36,11 @@ describe('frozen first-Dyson canonical fixture', () => {
     expect(fixture.tinker.completed.bots).toBe(1)
     expect(fixture.initial.visibility).toEqual({
       showTinker: true,
-      visibleBasicFacilityIds: [],
-      visibleMegaStructureIds: [],
-      showNextBasicFacilityTeaser: false,
-      showNextMegaStructureTeaser: false,
+      visibleFacilityIds: [],
+      showNextFacilityTeaser: false,
     })
-    expect(fixture.initial.basicFacilityPreviews[0]).toMatchObject({
+    expect(fixture.initial.facilityPreviews).toHaveLength(8)
+    expect(fixture.initial.facilityPreviews[0]).toMatchObject({
       facilityId: 'assembly_lines',
       eligible: true,
     })
@@ -62,7 +61,7 @@ describe('frozen first-Dyson canonical fixture', () => {
       kind: 'transition',
       transition: {
         accepted: false,
-        code: 'dyson-basic:locked',
+        code: 'dyson-facility:locked',
         reason: 'locked',
         revision: 4,
       },
@@ -71,13 +70,11 @@ describe('frozen first-Dyson canonical fixture', () => {
       .toEqual([0, 38])
     expect(fixture.checkpointedReconstruction.visibility).toEqual({
       showTinker: true,
-      visibleBasicFacilityIds: [
+      visibleFacilityIds: [
         'assembly_lines',
         'ai_managers',
       ],
-      visibleMegaStructureIds: [],
-      showNextBasicFacilityTeaser: true,
-      showNextMegaStructureTeaser: false,
+      showNextFacilityTeaser: true,
     })
     expect(fixture.checkpointedReconstruction.tinker.value.runtime.running)
       .toBe(false)

@@ -6,14 +6,14 @@ import {
   createDeterministicMatureDysonFixture,
   DETERMINISTIC_DYSON_SNAPSHOT,
   DETERMINISTIC_DYSON_TUNING,
-} from '../../test/support/deterministicMatureDysonFixture'
-import { resolveReferenceDynamicSkillEffect } from '../../test/support/referenceDynamicSkillEffectResolver'
-import { materializeReferenceSkillEffects } from '../../test/support/referenceSkillEffectMaterializer'
+} from '../support/deterministicMatureDysonFixture'
+import { resolveReferenceDynamicSkillEffect } from '../support/referenceDynamicSkillEffectResolver'
+import { materializeReferenceSkillEffects } from '../support/referenceSkillEffectMaterializer'
 import {
   ALL_EFFECT_DEFINITION_IDS,
   materializeCandidateCertificationTargets,
   materializeCertificationTargets,
-} from '../../test/support/skillEffectCertification'
+} from '../support/skillEffectCertification'
 
 const DEFAULT_SAMPLES = 300
 const WARMUP_SAMPLES = 50

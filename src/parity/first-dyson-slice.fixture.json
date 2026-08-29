@@ -61,10 +61,8 @@
     },
     "visibility": {
       "showTinker": true,
-      "visibleBasicFacilityIds": [],
-      "visibleMegaStructureIds": [],
-      "showNextBasicFacilityTeaser": false,
-      "showNextMegaStructureTeaser": false
+      "visibleFacilityIds": [],
+      "showNextFacilityTeaser": false
     },
     "tinker": {
       "status": "ready",
@@ -102,12 +100,12 @@
         "definitionGaps": []
       },
       "basicFacility": {
-        "kind": "dyson.purchase-basic-facility",
+        "kind": "dyson.purchase-facility",
         "family": "dyson",
         "supported": true,
         "routeAvailable": true,
         "status": "available",
-        "authority": "tryPurchaseCanonicalBasicFacility",
+        "authority": "tryPurchaseCanonicalFacility",
         "blocker": null,
         "requirements": [
           "runtime-evaluation-port"
@@ -116,7 +114,7 @@
         "definitionGaps": []
       }
     },
-    "basicFacilityPreviews": [
+    "facilityPreviews": [
       {
         "facilityId": "assembly_lines",
         "eligible": true,
@@ -156,6 +154,30 @@
         "affordableQuantity": "0",
         "cost": 0,
         "status": "locked"
+      },
+      {
+        "facilityId": "matrioshka_brains",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "birch_planets",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "galactic_brains",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
       }
     ]
   },
@@ -172,7 +194,7 @@
       "sessionRevision": 1,
       "expectedStateRevision": 3,
       "command": {
-        "kind": "dyson.purchase-basic-facility",
+        "kind": "dyson.purchase-facility",
         "facilityId": "assembly_lines"
       }
     }
@@ -229,7 +251,7 @@
       "kind": "transition",
       "transition": {
         "accepted": false,
-        "code": "dyson-basic:locked",
+        "code": "dyson-facility:locked",
         "reason": "locked",
         "revision": 4
       }
@@ -342,13 +364,11 @@
     },
     "visibility": {
       "showTinker": true,
-      "visibleBasicFacilityIds": [
+      "visibleFacilityIds": [
         "assembly_lines",
         "ai_managers"
       ],
-      "visibleMegaStructureIds": [],
-      "showNextBasicFacilityTeaser": true,
-      "showNextMegaStructureTeaser": false
+      "showNextFacilityTeaser": true
     },
     "tinker": {
       "status": "ready",
@@ -386,12 +406,12 @@
         "definitionGaps": []
       },
       "basicFacility": {
-        "kind": "dyson.purchase-basic-facility",
+        "kind": "dyson.purchase-facility",
         "family": "dyson",
         "supported": true,
         "routeAvailable": true,
         "status": "available",
-        "authority": "tryPurchaseCanonicalBasicFacility",
+        "authority": "tryPurchaseCanonicalFacility",
         "blocker": null,
         "requirements": [
           "runtime-evaluation-port"
@@ -400,7 +420,7 @@
         "definitionGaps": []
       }
     },
-    "basicFacilityPreviews": [
+    "facilityPreviews": [
       {
         "facilityId": "assembly_lines",
         "eligible": false,
@@ -435,6 +455,30 @@
       },
       {
         "facilityId": "planets",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "matrioshka_brains",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "birch_planets",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "galactic_brains",
         "eligible": false,
         "selectedQuantity": "0",
         "affordableQuantity": "0",

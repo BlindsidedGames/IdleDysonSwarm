@@ -91,14 +91,9 @@ import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import type { GameAudioService } from '../../../audio'
 
-const BasicFacilityRegion = lazy(async () => {
+const FacilityRegion = lazy(async () => {
   const module = await import('../facilities')
-  return { default: module.BasicFacilityRegion }
-})
-
-const MegaStructureRegion = lazy(async () => {
-  const module = await import('../facilities')
-  return { default: module.MegaStructureRegion }
+  return { default: module.FacilityRegion }
 })
 
 const ResearchSurface = lazy(async () => {
@@ -800,12 +795,10 @@ export function ReadyDysonSlice({
   const scienceRate = (value: string) =>
     intl.formatMessage(messages.scienceRate, { value })
   const hasVisibleFacilities =
-    visibility.visibleBasicFacilityIds.length > 0 ||
-    visibility.visibleMegaStructureIds.length > 0
+    visibility.visibleFacilityIds.length > 0
   const hasFacilityContent =
     hasVisibleFacilities ||
-    visibility.showNextBasicFacilityTeaser ||
-    visibility.showNextMegaStructureTeaser
+    visibility.showNextFacilityTeaser
   const settingsActive = route === 'settings'
   const researchActive = route === 'research'
   const botMultitasking =
@@ -1943,21 +1936,14 @@ export function ReadyDysonSlice({
             }
           >
             <div className="dyson-facility-flow">
-              <BasicFacilityRegion
+              <FacilityRegion
                 locale={locale}
-                visibleBasicFacilityIds={
-                  visibility.visibleBasicFacilityIds
-                }
-                showNextTierTeaser={
-                  visibility.showNextBasicFacilityTeaser
-                }
-                facilityFacts={dyson.value.presentation.facilities}
-                purchasePreviews={
-                  gameplay.previews.dyson.basicFacilities
-                }
+                visibility={visibility}
+                facts={dyson.value.presentation.facilities}
+                purchasePreviews={gameplay.previews.dyson.facilities}
                 purchaseRouteAvailable={
                   gameplay.commands.byKind[
-                    'dyson.purchase-basic-facility'
+                    'dyson.purchase-facility'
                   ].routeAvailable
                 }
                 automationEnabledFacilities={
@@ -1974,39 +1960,6 @@ export function ReadyDysonSlice({
                 revision={snapshot.revision}
                 dispatchPlayer={dispatchPlayer}
               />
-              {visibility.visibleMegaStructureIds.length > 0 && (
-                <MegaStructureRegion
-                  locale={locale}
-                  visibleMegaStructureIds={
-                    visibility.visibleMegaStructureIds
-                  }
-                  showNextTierTeaser={
-                    visibility.showNextMegaStructureTeaser
-                  }
-                  facts={dyson.value.megaStructureFacts}
-                  purchasePreviews={
-                    gameplay.previews.dyson.megaStructures
-                  }
-                  purchaseRouteAvailable={
-                    gameplay.commands.byKind[
-                      'dyson.purchase-mega-structure'
-                    ].routeAvailable
-                  }
-                  automationUnlocked={
-                    gameplay.progression.infinity.automationUnlocked.bots
-                  }
-                  automationEnabledFacilities={
-                    gameplay.progression.dyson.automation.enabledFacilities
-                  }
-                  gameSpeed={
-                    gameplay.progression.timeline?.doubleTime?.unlocked
-                      ? 2
-                      : 1
-                  }
-                  revision={snapshot.revision}
-                  dispatchPlayer={dispatchPlayer}
-                />
-              )}
             </div>
           </Suspense>
         ) : (

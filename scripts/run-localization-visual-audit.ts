@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import {
   loadCheckedInProgressionMatrixFixtures,
   type ProgressionMatrixFixture,
-} from '../test/support/progressionMatrixFixtures'
+} from './support/progressionMatrixFixtures'
 import {
   delay,
   openChromiumPage,

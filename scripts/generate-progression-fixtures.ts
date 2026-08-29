@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { createProgressionMatrixFixtures } from '../test/support/progressionMatrixFixtures'
+import { createProgressionMatrixFixtures } from './support/progressionMatrixFixtures'
 
 const output = resolve(import.meta.dirname, '..', 'test', 'fixtures', 'progression')
 mkdirSync(output, { recursive: true })

@@ -74,6 +74,7 @@ scripts/
   decode-save.ts       Standalone read-only decoder command
   prepare-save.ts      Decode + migrate + repair + validate command
   build-web-data.ts    Deterministic Web-authored data materializer
+  support/             Shared deterministic fixture/report support
 src/
   application/         Runtime session, commands, lifecycle and UI read boundary
   core/                Framework-independent simulation contracts
@@ -88,6 +89,11 @@ hosts/                 Capacitor mobile and Electron desktop hosts
 test/fixtures/         Immutable save fixtures
 test/parity/           Executable save and simulation parity cases
 ```
+
+The Vitest suite is deliberately contract-first. It protects saves, canonical
+transactions, deterministic time progression, persistence/writer authority,
+and release packaging. Add focused tests for changed behavior; do not recreate
+exhaustive component-markup or static-data-restatement coverage.
 
 See the [documentation index](docs/README.md), the active
 [product backlog](docs/BACKLOG.md),

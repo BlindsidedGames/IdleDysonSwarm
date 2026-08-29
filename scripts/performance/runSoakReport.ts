@@ -21,7 +21,7 @@ import {
 } from './reportArtifacts'
 import {
   loadCheckedInProgressionMatrixFixtures,
-} from '../../test/support/progressionMatrixFixtures'
+} from '../support/progressionMatrixFixtures'
 import { importSaveThroughSettings } from './browserFixtureImport'
 
 const webRoot = resolve(import.meta.dirname, '..', '..')
