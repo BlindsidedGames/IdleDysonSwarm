@@ -24,7 +24,7 @@ import type {
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { offlineTimeMessages as messages } from './messages'
-import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
+import { createIdleStoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
 import {
   STORED_TIME_ACCURACY_PRESETS,
   type StoredTimeAccuracyPreset,
@@ -90,9 +90,7 @@ const FACILITY_NAME_MESSAGES = Object.freeze({
   galactic_brains: basicFacilityMessages.galacticBrainsName,
 })
 
-const IDLE_STORED_TIME_JOB: StoredTimeJobStatus = Object.freeze({
-  kind: 'idle',
-})
+const IDLE_STORED_TIME_JOB = createIdleStoredTimeJobStatus()
 
 const INACTIVE_STORED_TIME_CONTROLS: UiRuntimeStoredTimeControls =
   Object.freeze({

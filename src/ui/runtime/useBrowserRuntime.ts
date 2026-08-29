@@ -12,7 +12,10 @@ import type {
 import type {
   UiRuntimeFoundationStatus,
 } from './contracts'
-import type { StoredTimeJobStatus } from '../../workers/storedTime/storedTimeProtocol'
+import {
+  createIdleStoredTimeJobStatus,
+  type StoredTimeJobStatus,
+} from '../../workers/storedTime/storedTimeProtocol'
 
 export function useBrowserRuntimeStatus(
   runtime: BrowserUiRuntimeFoundation,
@@ -58,9 +61,7 @@ export function useBrowserRuntimeSnapshot(
   )
 }
 
-const IDLE_STORED_TIME_JOB = Object.freeze({
-  kind: 'idle' as const,
-})
+const IDLE_STORED_TIME_JOB = createIdleStoredTimeJobStatus()
 
 export function useBrowserStoredTimeJob(
   runtime: BrowserUiRuntimeFoundation,

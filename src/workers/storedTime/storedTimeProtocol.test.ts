@@ -1,5 +1,8 @@
 import { describe, expect, test } from 'vitest'
-import { isStoredTimeWorkerOutboundMessage } from './storedTimeProtocol'
+import {
+  createIdleStoredTimeJobStatus,
+  isStoredTimeWorkerOutboundMessage,
+} from './storedTimeProtocol'
 
 const progress = Object.freeze({
   jobId: 'job',
@@ -12,6 +15,13 @@ const progress = Object.freeze({
 })
 
 describe('Stored Time worker protocol', () => {
+  test('creates immutable, identity-independent idle statuses', () => {
+    const status = createIdleStoredTimeJobStatus()
+    expect(status).toEqual({ kind: 'idle' })
+    expect(Object.isFrozen(status)).toBe(true)
+    expect(createIdleStoredTimeJobStatus()).not.toBe(status)
+  })
+
   test('accepts complete typed frames', () => {
     expect(isStoredTimeWorkerOutboundMessage({
       type: 'ready',

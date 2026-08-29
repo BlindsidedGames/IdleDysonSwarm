@@ -29,6 +29,10 @@ export type StoredTimeJobStatus =
   | ({ readonly kind: 'cancelling' } & StoredTimeJobProgress)
   | ({ readonly kind: 'committing' } & StoredTimeJobProgress)
 
+export function createIdleStoredTimeJobStatus(): StoredTimeJobStatus {
+  return Object.freeze({ kind: 'idle' })
+}
+
 export interface StoredTimeJobStartMessage {
   readonly type: 'start'
   readonly protocolVersion: typeof STORED_TIME_WORKER_PROTOCOL_VERSION
