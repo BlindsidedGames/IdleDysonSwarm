@@ -9,6 +9,7 @@ import {
   type BasicDysonFacilityId,
 } from './dysonFacilities'
 import { DYSON_FACILITY_IDS } from './dysonFacilityCatalog'
+import { createDysonFacilityModifierStatIds } from './dysonFacilityStatIds'
 import {
   calculateBasicDysonFacilityRate,
   createBasicDysonState,
@@ -281,18 +282,7 @@ export type DysonDerivationResult =
   | { readonly ok: true; readonly value: DerivedBasicDysonState }
   | { readonly ok: false; readonly issues: readonly DysonDerivationIssue[] }
 
-const FACILITY_MODIFIER_STATS: Readonly<
-  Record<CanonicalFacilityId, string>
-> = {
-  assembly_lines: 'Facility.AssemblyLine.Modifier',
-  ai_managers: 'Facility.Manager.Modifier',
-  servers: 'Facility.Server.Modifier',
-  data_centers: 'Facility.DataCenter.Modifier',
-  planets: 'Facility.Planet.Modifier',
-  matrioshka_brains: 'Facility.Matrioshka.Modifier',
-  birch_planets: 'Facility.Birch.Modifier',
-  galactic_brains: 'Facility.Galactic.Modifier',
-}
+const FACILITY_MODIFIER_STATS = createDysonFacilityModifierStatIds()
 
 const BASIC_FACILITY_PRODUCTION_STATS: Readonly<
   Record<BasicDysonFacilityId, string>

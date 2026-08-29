@@ -12,6 +12,7 @@ import {
   type BasicDysonFacilityId,
   type OwnedPair,
 } from './dysonFacilities'
+import { createDysonFacilityModifierStatIds } from './dysonFacilityStatIds'
 import {
   applyFiniteBotCapSpecialReward,
   breakInfinityBotThreshold,
@@ -229,13 +230,7 @@ export function calculateBasicDysonFacilityRate(
   })
 }
 
-const FACILITY_MODIFIER_STATS: Record<BasicDysonFacilityId, string> = {
-  assembly_lines: 'Facility.AssemblyLine.Modifier',
-  ai_managers: 'Facility.Manager.Modifier',
-  servers: 'Facility.Server.Modifier',
-  data_centers: 'Facility.DataCenter.Modifier',
-  planets: 'Facility.Planet.Modifier',
-}
+const FACILITY_MODIFIER_STATS = createDysonFacilityModifierStatIds()
 
 export function recalculateBasicDysonRates(
   state: BasicDysonState,
