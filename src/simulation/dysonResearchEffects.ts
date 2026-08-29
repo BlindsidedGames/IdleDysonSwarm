@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -219,10 +222,7 @@ export function materializeDysonResearchEffects(
     const researchPath = `research.levelsById.${spec.id}`
     const rawLevel = levelsById[spec.id] ?? 0
     if (
-      typeof rawLevel !== 'number' ||
-      !Number.isFinite(rawLevel) ||
-      !Number.isSafeInteger(rawLevel) ||
-      rawLevel < 0
+      !isSafeNonNegativeInteger(rawLevel)
     ) {
       issues.push({
         code: 'DYSON_RESEARCH_LEVEL_INVALID',
@@ -448,10 +448,7 @@ function validateActiveResearchIds(
     if (DYSON_RESEARCH_ID_SET.has(id)) continue
     const path = `research.levelsById.${id}`
     if (
-      typeof level !== 'number' ||
-      !Number.isFinite(level) ||
-      !Number.isSafeInteger(level) ||
-      level < 0
+      !isSafeNonNegativeInteger(level)
     ) {
       issues.push({
         code: 'DYSON_RESEARCH_LEVEL_INVALID',

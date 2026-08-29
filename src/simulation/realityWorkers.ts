@@ -1,6 +1,7 @@
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
+  isSafeNonNegativeInteger,
 } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import type {
@@ -319,9 +320,7 @@ export function readRealityWorkerTuning():
     typeof workerBatchSize !== 'number' ||
     !Number.isSafeInteger(workerBatchSize) ||
     workerBatchSize <= 0 ||
-    typeof baseWorkerGenerationSpeed !== 'number' ||
-    !Number.isSafeInteger(baseWorkerGenerationSpeed) ||
-    baseWorkerGenerationSpeed < 0
+    !isSafeNonNegativeInteger(baseWorkerGenerationSpeed)
   ) {
     return undefined
   }
@@ -351,8 +350,7 @@ function isValidTuning(
     tuning != null &&
     tuning.workerBatchSize > 0n &&
     tuning.workerBatchSize <= DISCRETE_MAXIMUM &&
-    Number.isSafeInteger(tuning.baseWorkerGenerationSpeed) &&
-    tuning.baseWorkerGenerationSpeed >= 0
+    isSafeNonNegativeInteger(tuning.baseWorkerGenerationSpeed)
   )
 }
 

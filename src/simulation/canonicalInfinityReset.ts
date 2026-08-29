@@ -1,3 +1,4 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import {
   readStringArray,
@@ -496,9 +497,7 @@ function readSkillRule(
   if (
     asset.kind !== SKILL_DEFINITION_KIND ||
     asset.id !== id ||
-    typeof cost !== 'number' ||
-    !Number.isSafeInteger(cost) ||
-    cost < 0 ||
+    !isSafeNonNegativeInteger(cost) ||
     cost > 2_147_483_647 ||
     refundable === undefined ||
     isFragment === undefined ||

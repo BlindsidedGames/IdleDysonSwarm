@@ -1,3 +1,4 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import {
   DREAM_EDUCATION_IDS,
@@ -311,9 +312,7 @@ function loadSimulationUpgradeDefinitions(): ReadonlyMap<
     if (
       typeof key !== 'string' ||
       !isDreamUpgradeFlag(key) ||
-      typeof cost !== 'number' ||
-      !Number.isSafeInteger(cost) ||
-      cost < 0
+      !isSafeNonNegativeInteger(cost)
     ) {
       continue
     }

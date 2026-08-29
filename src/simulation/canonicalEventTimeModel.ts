@@ -1,6 +1,7 @@
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
+  isSafeNonNegativeInteger,
 } from '../core/finiteNonNegativeNumber'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
@@ -1584,8 +1585,7 @@ function validateCarrier(
   if (
     typeof state.tinker.running !== 'boolean' ||
     typeof state.tinker.repeat !== 'boolean' ||
-    !Number.isSafeInteger(state.tinker.cycleId) ||
-    state.tinker.cycleId < 0 ||
+    !isSafeNonNegativeInteger(state.tinker.cycleId) ||
     typeof state.tinker.effectiveManualLabour !== 'boolean' ||
     !Number.isFinite(state.tinker.elapsedSeconds) ||
     state.tinker.elapsedSeconds < 0 ||
@@ -1982,8 +1982,7 @@ function roundedNonNegativeDiscrete(value: number): bigint | null {
           ? floor
           : floor + 1
   if (
-    !Number.isSafeInteger(rounded) ||
-    rounded < 0
+    !isSafeNonNegativeInteger(rounded)
   ) {
     return null
   }

@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from './finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from './finiteNonNegativeNumber'
 import type {
   CommandEnvelope,
   DeepReadonly,
@@ -73,8 +76,7 @@ export class TransactionalSimulationEngine<TState, TCommand>
     envelope: CommandEnvelope<TCommand>,
   ): SimulationStageResult<TState> {
     if (
-      !Number.isSafeInteger(envelope.expectedRevision) ||
-      envelope.expectedRevision < 0
+      !isSafeNonNegativeInteger(envelope.expectedRevision)
     ) {
       return this.rejected(
         'SIM-INVALID-REVISION',

@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { clampPreBreakInfinityBots } from './infinityCycle'
 import { addContinuous, multiplyContinuous } from './numeric'
@@ -79,8 +82,7 @@ export function normalizeCanonicalTinkerRuntimeState(
   runtime: Readonly<CanonicalTinkerRuntimeState>,
 ): CanonicalTinkerRuntimeState {
   if (
-    Number.isSafeInteger(runtime.cycleId) &&
-    runtime.cycleId >= 0
+    isSafeNonNegativeInteger(runtime.cycleId)
   ) {
     return runtime
   }
@@ -494,7 +496,7 @@ function synchronizeRuntime(
 }
 
 function nextCycleId(current: number): number {
-  if (!Number.isSafeInteger(current) || current < 0) return 1
+  if (!isSafeNonNegativeInteger(current)) return 1
   return current >= Number.MAX_SAFE_INTEGER ? 1 : current + 1
 }
 

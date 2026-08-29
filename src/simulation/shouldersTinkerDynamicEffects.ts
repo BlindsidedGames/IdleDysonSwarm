@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 
 const SCIENCE_BOOST_PER_SECOND_SUFFIX =
   '.science_boost_per_second'
@@ -168,8 +171,7 @@ function validateShouldersInputs(
 ): void {
   requireOwnedSkillSet(inputs.ownedSkills, 'Shoulders accrual')
   if (
-    !Number.isSafeInteger(inputs.scienceBoostLevel) ||
-    inputs.scienceBoostLevel < 0
+    !isSafeNonNegativeInteger(inputs.scienceBoostLevel)
   ) {
     throw new Error(
       'Shoulders accrual effects require a non-negative safe-integer science boost level.',

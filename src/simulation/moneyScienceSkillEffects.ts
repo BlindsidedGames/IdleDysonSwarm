@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { DISCRETE_MAXIMUM } from './numeric'
@@ -570,10 +573,7 @@ function readResearchLevel(
   }
   const level = state.research.levelsById[researchId]
   if (
-    typeof level !== 'number' ||
-    !Number.isFinite(level) ||
-    !Number.isSafeInteger(level) ||
-    level < 0
+    !isSafeNonNegativeInteger(level)
   ) {
     return failure(
       'DYSON_MONEY_SCIENCE_CANONICAL_INPUT_INVALID',

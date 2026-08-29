@@ -1,3 +1,4 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import type {
   AvocadoState,
@@ -59,7 +60,7 @@ export function avocadoDysonMultiplier(
 
 function quantumBonusMultiplier(levels: bigint): number {
   const level = Number(levels)
-  if (!Number.isSafeInteger(level) || level < 0) {
+  if (!isSafeNonNegativeInteger(level)) {
     throw new Error(
       'Quantum bonus levels exceed the characterized numeric range.',
     )
