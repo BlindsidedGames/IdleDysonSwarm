@@ -101,8 +101,36 @@
   display: none;
 }
 
+/*
+ * Bots and Research share this full-bleed production dock. Keep its content
+ * aligned with the facility/distribution gutter while the dock background
+ * continues to reach the viewport edges. The trailing safe-area reservation
+ * keeps the Settings control clear of landscape cutouts and rounded corners.
+ */
+.ui-progress-controls-panel--production-summary
+  .ui-progress-controls-panel__collapsed {
+  padding-inline-end: var(--safe-area-right);
+}
+
+.ui-progress-controls-panel--production-summary
+  .ui-progress-controls-panel__summary {
+  align-content: start;
+  padding-block: 0.42rem;
+  padding-inline:
+    max(var(--game-card-content-inset), var(--safe-area-left))
+    0.35rem;
+}
+
 @media (max-width: 720px) {
   .ui-progress-controls-panel__summary {
     padding: 0.3rem 0.5rem;
+  }
+
+  .ui-progress-controls-panel--production-summary
+    .ui-progress-controls-panel__summary {
+    padding-block: 0.42rem;
+    padding-inline:
+      max(var(--game-card-content-inset), var(--safe-area-left))
+      0.35rem;
   }
 }

@@ -315,13 +315,20 @@ export function ResearchSurface({
       <footer className="research-surface__footer">
         <ProgressControlsPanel
           ariaLabel={intl.formatMessage(messages.purchaseSettings)}
-          className="research-surface__control-panel"
+          className="research-surface__control-panel ui-progress-controls-panel--production-summary"
           expanded={settingsOpen}
           controlsId={settingsId}
           settingsLabel={intl.formatMessage(messages.purchaseSettings)}
           onExpandedChange={setSettingsOpen}
           summary={(
-            <div className="research-surface__summary-line">
+            <div
+              className={[
+                'research-surface__summary-line',
+                summarySupplement === undefined
+                  ? 'research-surface__summary-line--single-production'
+                  : '',
+              ].filter(Boolean).join(' ')}
+            >
               <p>
                 <StableSingleLineText
                   className="research-surface__production-line"

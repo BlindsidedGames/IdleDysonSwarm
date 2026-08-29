@@ -2,28 +2,30 @@
   border-block-start-width: 0;
 }
 
-.dyson-info .ui-progress-controls-panel__summary {
-  padding-block: 0.42rem;
-  padding-inline: 0.7rem 0.35rem;
-}
-
 .dyson-info .ui-progress-controls-panel__body {
   padding: 0;
 }
 
 .dyson-info__summary {
+  display: grid;
   min-inline-size: 0;
+  block-size: 100%;
+  align-content: start;
+}
+
+.dyson-info__summary .dyson-lower-facts {
+  block-size: auto;
+  align-content: start;
+}
+
+.dyson-info__summary--single-production .dyson-lower-facts p {
+  padding: 0;
+  font-size: var(--ui-text-page-title);
+  line-height: 1.15;
 }
 
 .dyson-info__summary--multitasking {
-  display: grid;
-  block-size: 100%;
   gap: var(--ui-control-row-gap);
-  align-content: center;
-}
-
-.dyson-info__summary--multitasking .dyson-lower-facts {
-  block-size: auto;
 }
 
 .dyson-info__summary--multitasking .dyson-lower-facts p {
