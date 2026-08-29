@@ -1257,23 +1257,23 @@
   },
   "infinity.break-target": {
     "defaultMessage": "Infinity Points before reset",
-    "description": "Label for the Break Infinity reset target control."
+    "description": "Label for the Auto Infinity target control."
   },
   "infinity.break-target.failed": {
     "defaultMessage": "The Infinity target was not changed.",
-    "description": "Failure feedback for a rejected Break Infinity target."
+    "description": "Failure feedback for a rejected Auto Infinity target."
   },
   "infinity.break-target.invalid": {
     "defaultMessage": "Enter a whole number from 1 to 2.14B IP.",
-    "description": "Validation feedback for an invalid exact Break Infinity target."
+    "description": "Validation feedback for an invalid exact Auto Infinity target."
   },
   "infinity.break-target.set": {
     "defaultMessage": "Set target",
-    "description": "Applies an exact automatic Break Infinity target."
+    "description": "Applies an exact Auto Infinity target."
   },
   "infinity.break-target.value": {
     "defaultMessage": "Target: {value} IP",
-    "description": "Currently selected Break Infinity target."
+    "description": "Currently selected Auto Infinity target."
   },
   "infinity.manual-reset": {
     "defaultMessage": "Infinity",
@@ -1510,6 +1510,10 @@
   "navigation.simulations": {
     "defaultMessage": "Simulations",
     "description": "Unity live Simulations destination."
+  },
+  "navigation.simulations-influence-progress": {
+    "defaultMessage": "{destination}, {current} of {required} Influence gathered",
+    "description": "Accessible manual Influence unlock progress for the visible but locked Simulations destination."
   },
   "navigation.skills": {
     "defaultMessage": "Skills",

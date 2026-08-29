@@ -30,7 +30,7 @@ import {
   InfinityPointSymbol,
 } from '../../components/InfinityPointAmount'
 import { formatInfinityPointAmount } from '../../components/infinityPointFormatting'
-import { formatGameNumber, formatNumber } from '../../i18n/formatters'
+import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { AvotationProgress } from './AvotationProgress'
@@ -75,6 +75,7 @@ const HOLD_TO_PURCHASE_IDS = new Set<QuantumUpgradeId>(
 const HOLD_REPEAT_DELAY_MS = 400
 const HOLD_REPEAT_INTERVAL_MS = 100
 const QUANTUM_AMOUNT_MARKER = '__QUANTUM_SHARD_AMOUNT__'
+const WHOLE_CURRENCY_FORMAT = { wholeBelowHundred: true } as const
 
 export function QuantumSurface({
   locale,
@@ -102,7 +103,7 @@ export function QuantumSurface({
             locale={locale}
             value={resources.availablePoints}
           />
-          <small>{intl.formatMessage(messages.spent, { value: formatGameNumber(locale, resources.pointsSpent) })}</small>
+          <small>{intl.formatMessage(messages.spent, { value: formatGameNumber(locale, resources.pointsSpent, WHOLE_CURRENCY_FORMAT) })}</small>
         </div>
       </header>
 
@@ -337,8 +338,8 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
                   : messages.purchase,
                 {
                   name,
-                  quantity: formatGameNumber(locale, resolvedQuantity),
-                  cost: formatGameNumber(locale, totalCost),
+                  quantity: formatGameNumber(locale, resolvedQuantity, WHOLE_CURRENCY_FORMAT),
+                  cost: formatGameNumber(locale, totalCost, WHOLE_CURRENCY_FORMAT),
                 },
               )}
           onClick={holdHandlers.onClick}
@@ -354,7 +355,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
             : isFreeClaim
               ? intl.formatMessage(messages.claim)
             : repeatable
-              ? intl.formatMessage(messages.purchaseQuantity, { quantity: formatGameNumber(locale, resolvedQuantity) })
+              ? intl.formatMessage(messages.purchaseQuantity, { quantity: formatGameNumber(locale, resolvedQuantity, WHOLE_CURRENCY_FORMAT) })
               : preview.eligible || preview.code === 'insufficient-points'
                 ? null
                 : intl.formatMessage(messages.unavailable)}</span>
@@ -607,7 +608,7 @@ function QuantumLeapCard({ locale, availableInfinityPoints, preview, entangled, 
           variant="primary"
           disabled={disabled}
           aria-label={entangled
-            ? intl.formatMessage(messages.leapFor, { value: formatGameNumber(locale, reward) })
+            ? intl.formatMessage(messages.leapFor, { value: formatGameNumber(locale, reward, WHOLE_CURRENCY_FORMAT) })
             : undefined}
           onClick={() => entangled ? void leap() : setConfirming(true)}
         >
@@ -630,7 +631,7 @@ function QuantumShardAmount({ locale, value }: { readonly locale: EnabledLocale;
     <InlineResourceAmount
       className="quantum-shard-amount"
       leadingSymbol={<QuantumShardSymbol />}
-      value={formatGameNumber(locale, value)}
+      value={formatGameNumber(locale, value, WHOLE_CURRENCY_FORMAT)}
     />
   )
 }
@@ -685,7 +686,7 @@ function revealRequirementMessage(
   if (requirement === null) return ''
   if (requirement.kind === 'points-earned') {
     return intl.formatMessage(messages.revealPoints, {
-      value: formatGameNumber(locale, requirement.value),
+      value: formatGameNumber(locale, requirement.value, WHOLE_CURRENCY_FORMAT),
     })
   }
   return intl.formatMessage(messages.revealUpgrade, {
@@ -704,5 +705,7 @@ function upgradeLevel(locale: EnabledLocale, id: QuantumUpgradeId, resources: Fr
   else if (id === 'InfluenceSpeed') value = resources.influenceSpeedBonus / QUANTUM_CONSTANTS.influenceSpeedPerPurchase
   else if (id === 'CashBonus') value = resources.cashBonusLevels
   else if (id === 'ScienceBonus') value = resources.scienceBonusLevels
-  return value === null ? null : formatNumber(locale, value, { maximumFractionDigits: 0 })
+  return value === null
+    ? null
+    : formatGameNumber(locale, value, WHOLE_CURRENCY_FORMAT)
 }

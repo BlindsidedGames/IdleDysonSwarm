@@ -1,6 +1,6 @@
 import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useIntl, type IntlShape, type MessageDescriptor } from 'react-intl'
-import { formatNumber } from '../../i18n/formatters'
+import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { wikiMessages as messages } from './messages'
 import {
@@ -569,7 +569,11 @@ function SecretsArticle({ locale, revealed }: { readonly locale: EnabledLocale; 
     <>
       <section className="wiki-surface__section wiki-surface__secrets-summary">
         <h3>{intl.formatMessage(messages.secretsOverviewTitle)}</h3>
-        <p>{intl.formatMessage(messages.secretsOverview, { revealed: formatNumber(locale, revealed, { maximumFractionDigits: 0 }) })}</p>
+        <p>{intl.formatMessage(messages.secretsOverview, {
+          revealed: formatGameNumber(locale, revealed, {
+            wholeBelowHundred: true,
+          }),
+        })}</p>
         <strong>{intl.formatMessage(messages.meaningSoFar, { meaning })}</strong>
       </section>
       <ol className="wiki-surface__secret-list">

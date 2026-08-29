@@ -109,6 +109,7 @@ import {
 import {
   advanceRealityWorkers,
   gatherRealityInfluence,
+  realityInfluenceGenerationStarted,
   type RealityWorkerAdvanceStatus,
   type RealityWorkerTuning,
 } from '../simulation/realityWorkers'
@@ -156,6 +157,7 @@ export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
   'avocado',
   'time',
   'settings',
+  'navigation',
   'tinker',
 ] as const)
 
@@ -884,16 +886,17 @@ export interface FrontendGameplayVisibility {
     readonly unlockProgress: {
       readonly currentSecrets: bigint
       readonly requiredSecrets: bigint
-      readonly currentInfinityPoints: bigint
-      readonly requiredInfinityPoints: bigint
-      readonly leadingPath: 'secrets' | 'infinity-points'
       readonly fraction: number
     }
   }
   readonly simulations: {
     readonly routeVisible: boolean
     readonly routeUnlocked: boolean
-    readonly unlockProgress: FrontendGameplayVisibility['reality']['unlockProgress']
+    readonly unlockProgress: {
+      readonly currentInfluence: number
+      readonly requiredInfluence: number
+      readonly fraction: number
+    }
   }
   readonly quantum: {
     readonly routeVisible: boolean
@@ -1233,33 +1236,53 @@ export function selectGameplayVisibility(
       Number(QUANTUM_CONSTANTS.maximumSecrets),
     ),
   )
-  const realityInfinityPointsFraction = Math.min(
-    1,
-    divideContinuous(
-      Number(state.infinity.points),
-      Number(quantumRequiredInfinityPoints),
-    ),
-  )
   const realityUnlockProgress = {
     currentSecrets: state.infinity.secretsOfTheUniverse,
     requiredSecrets: QUANTUM_CONSTANTS.maximumSecrets,
-    currentInfinityPoints: state.infinity.points,
-    requiredInfinityPoints: quantumRequiredInfinityPoints,
-    leadingPath:
-      realitySecretsFraction >= realityInfinityPointsFraction
-        ? 'secrets' as const
-        : 'infinity-points' as const,
-    fraction: Math.max(
-      realitySecretsFraction,
-      realityInfinityPointsFraction,
-    ),
+    fraction: realitySecretsFraction,
   }
-  const totalInfinityPointsHandled =
-    state.infinity.points + state.infinity.spentPoints
   const realityRouteVisible =
     realityUnlocked ||
-    state.infinity.secretsOfTheUniverse >= 21n ||
-    totalInfinityPointsHandled >= 32n
+    state.infinity.secretsOfTheUniverse >= 1n
+  const hasExistingSimulationProgress =
+    state.dream.resetCount > 0n ||
+    state.dream.strangeMatter > 0 ||
+    Object.values(state.dream.upgrades).some(Boolean) ||
+    Object.values(state.dream.education).some(
+      (education) =>
+        education.active ||
+        education.complete ||
+        education.progress > 0,
+    ) ||
+    Object.values(state.dream.purchaseBatches ?? {}).some(
+      (batches) => batches > 0n,
+    ) ||
+    state.dream.resources.hunters > 0n ||
+    state.dream.resources.gatherers > 0n
+  const simulationsRequiredInfluence = 128
+  const simulationsUnlocked =
+    state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence ||
+    hasExistingSimulationProgress
+  const realityVisited = realityInfluenceGenerationStarted(state)
+  const simulationsPendingWorkers = Number(
+    state.reality.workersReady < BigInt(simulationsRequiredInfluence)
+      ? state.reality.workersReady
+      : BigInt(simulationsRequiredInfluence),
+  )
+  const simulationsCurrentInfluence = simulationsUnlocked
+    ? simulationsRequiredInfluence
+    : simulationsPendingWorkers
+  const simulationsProgressFraction = simulationsUnlocked
+    ? 1
+    : Math.min(
+        1,
+        Math.max(
+          0,
+          (simulationsPendingWorkers +
+            state.reality.workerGenerationProgress) /
+            simulationsRequiredInfluence,
+        ),
+      )
 
   return {
     dyson: {
@@ -1305,9 +1328,13 @@ export function selectGameplayVisibility(
       unlockProgress: realityUnlockProgress,
     },
     simulations: {
-      routeVisible: realityRouteVisible,
-      routeUnlocked: realityUnlocked,
-      unlockProgress: realityUnlockProgress,
+      routeVisible: realityVisited || simulationsUnlocked,
+      routeUnlocked: simulationsUnlocked,
+      unlockProgress: {
+        currentInfluence: simulationsCurrentInfluence,
+        requiredInfluence: simulationsRequiredInfluence,
+        fraction: simulationsProgressFraction,
+      },
     },
     quantum: {
       routeVisible:

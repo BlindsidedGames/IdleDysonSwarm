@@ -24,6 +24,7 @@ import {
 import { validateCanonicalGameState } from './validate'
 import {
   normalizeBottomNavigationVisibility,
+  normalizeNavigationRouteDiscovery,
 } from './navigationPreferences'
 import {
   extractDysonCompatibilityTuning,
@@ -238,6 +239,11 @@ export function hydrateGameState(
           wiki: toBoolean(source.wikiButtonToggle),
           statistics: toBoolean(source.statisticsButtonToggle),
         },
+      navigationRouteDiscovery: isRecord(source.bottomNavigationPreferences)
+        ? normalizeNavigationRouteDiscovery(
+            source.bottomNavigationPreferences.routeDiscovery,
+          )
+        : undefined,
     },
     dyson: {
       money: toFiniteNonNegativeNumber(infinityData.money),
@@ -713,6 +719,7 @@ export function dehydrateGameState(
   } = existingBottomNavigationPreferences
   if (
     isRecord(source.bottomNavigationPreferences) ||
+    state.meta.navigationRouteDiscovery !== undefined ||
     visibilityKeys.some((key) =>
       key !== 'story' && key !== 'wiki' && key !== 'statistics'
     )
@@ -726,6 +733,18 @@ export function dehydrateGameState(
         ),
         ...state.meta.navigationVisibility,
       },
+      ...(state.meta.navigationRouteDiscovery === undefined
+        ? {}
+        : {
+            routeDiscovery: {
+              knownRoutes: [
+                ...state.meta.navigationRouteDiscovery.knownRoutes,
+              ],
+              unvisitedRoutes: [
+                ...state.meta.navigationRouteDiscovery.unvisitedRoutes,
+              ],
+            },
+          }),
     }
   }
   infinityData.money = state.dyson.money

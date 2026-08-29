@@ -3437,6 +3437,32 @@
       "value": "Симуляции"
     }
   ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": " — собрано Влияния: "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " из "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " ед."
+    }
+  ],
   "navigation.skills": [
     {
       "type": 0,

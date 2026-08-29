@@ -5,6 +5,7 @@ import type {
   SimulationTotalsState,
   StatisticsWindowState,
 } from '../game-state/types'
+import { hasVisitedNavigationRoute } from '../game-state/navigationPreferences'
 import {
   addContinuous,
   addDiscrete,
@@ -14,6 +15,7 @@ import {
   floorToDiscrete,
   multiplyContinuous,
 } from './numeric'
+import { QUANTUM_CONSTANTS } from './quantumUpgrades'
 
 const REALITY_TUNING_KIND =
   'IdleDysonSwarm.Data.Balance.RealitySystemTuning'
@@ -79,6 +81,9 @@ export function advanceRealityWorkers(
   }
   if (!isValidRealityState(state)) {
     return emptyAdvance('invalid-state', state)
+  }
+  if (!realityInfluenceGenerationStarted(state)) {
+    return pausedAdvance(state)
   }
 
   const generationPerSecond = workerGenerationPerSecond(
@@ -180,6 +185,22 @@ export function advanceRealityWorkers(
     automaticInfluence,
     stalledSeconds,
   }
+}
+
+/**
+ * Fresh saves start Reality generation only after the destination is visited.
+ * Saves from before portable route discovery retain their established Reality
+ * behavior once the canonical Reality unlock had already been reached.
+ */
+export function realityInfluenceGenerationStarted(
+  state: Readonly<CanonicalGameStateV1>,
+): boolean {
+  const discovery = state.meta.navigationRouteDiscovery
+  if (discovery !== undefined) {
+    return hasVisitedNavigationRoute(discovery, 'reality')
+  }
+  return state.quantum.pointsEarned > 0n ||
+    state.infinity.secretsOfTheUniverse >= QUANTUM_CONSTANTS.maximumSecrets
 }
 
 /**
@@ -350,6 +371,19 @@ function emptyAdvance(
 ): RealityWorkerAdvanceResult {
   return {
     status,
+    state,
+    generationPerSecond: 0,
+    workersGenerated: 0n,
+    automaticInfluence: 0,
+    stalledSeconds: 0,
+  }
+}
+
+function pausedAdvance(
+  state: Readonly<CanonicalGameStateV1>,
+): RealityWorkerAdvanceResult {
+  return {
+    status: 'success',
     state,
     generationPerSecond: 0,
     workersGenerated: 0n,

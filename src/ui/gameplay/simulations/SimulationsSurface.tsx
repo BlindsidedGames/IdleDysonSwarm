@@ -49,6 +49,7 @@ import {
   formatGameNumber,
   formatGameNumberParts,
   formatNumber,
+  type GameNumberFormatOptions,
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
@@ -218,16 +219,17 @@ export function SimulationsSurface({
             <div className="simulations-surface__summary">
               <strong>
                 {intl.formatMessage(messages.simulation, {
-                  value: formatNumber(locale, facts.resets.count, {
-                    maximumFractionDigits: 0,
-                    useGrouping: false,
+                  value: formatGameNumber(locale, facts.resets.count, {
+                    wholeBelowHundred: true,
                   }),
                 })}
               </strong>
               <strong
                 className="simulations-surface__influence"
                 aria-label={intl.formatMessage(messages.influence, {
-                  value: formatGameNumber(locale, influence),
+                  value: formatGameNumber(locale, influence, {
+                    wholeBelowHundred: true,
+                  }),
                 })}
               >
                 <InlineImageSymbol
@@ -236,7 +238,11 @@ export function SimulationsSurface({
                   tint
                 />
                 <span>
-                  {renderSimulationText(highlightedNumber(locale, influence))}
+                  {renderSimulationText(highlightedNumber(
+                    locale,
+                    influence,
+                    { wholeBelowHundred: true },
+                  ))}
                 </span>
               </strong>
             </div>
@@ -374,8 +380,9 @@ function simulationTextToString(value: SimulationText): string {
 function highlightedNumber(
   locale: EnabledLocale,
   value: number | bigint,
+  options: GameNumberFormatOptions = {},
 ): SimulationTextModel {
-  const parts = formatGameNumberParts(locale, value)
+  const parts = formatGameNumberParts(locale, value, options)
   return {
     parts: [
       { text: parts.value, highlight: true },
@@ -1018,6 +1025,11 @@ function createPanelModels(input: {
     ? facts.live.production.value
     : null
   const display = (value: number | bigint) => formatGameNumber(locale, value)
+  const displayCurrency = (value: number | bigint) => formatGameNumber(
+    locale,
+    value,
+    { wholeBelowHundred: true },
+  )
   const displayRich = (value: number | bigint) => highlightedNumber(locale, value)
   const displayEnergyRich = (
     value: number,
@@ -1040,7 +1052,7 @@ function createPanelModels(input: {
     const action = foundationalAction(
       id,
       input,
-      display,
+      displayCurrency,
     )
     const progress: SimulationProgressModel[] = []
     if (timer) {
@@ -1142,7 +1154,7 @@ function createPanelModels(input: {
         details: [],
         action: education.complete || education.active
           ? undefined
-          : educationAction(educationId, input, display),
+          : educationAction(educationId, input, displayCurrency),
       })
       continue
     }
@@ -1188,7 +1200,7 @@ function createPanelModels(input: {
               display,
             )
           : [],
-      action: foundationalAction(id, input, display),
+      action: foundationalAction(id, input, displayCurrency),
     })
   }
 
@@ -1347,7 +1359,7 @@ function createPanelModels(input: {
       description: intl.formatMessage(panelDescriptionMessage(id)),
       progress,
       details: [],
-      action: spaceAgeAction(id, input, display),
+      action: spaceAgeAction(id, input, displayCurrency),
     })
   }
 
@@ -1665,7 +1677,7 @@ function formatWholeQuantity(
   locale: EnabledLocale,
   value: number | bigint,
 ): string {
-  return formatNumber(locale, value, { maximumFractionDigits: 0 })
+  return formatGameNumber(locale, value, { wholeBelowHundred: true })
 }
 
 function conversionProgress(
@@ -1678,8 +1690,12 @@ function conversionProgress(
   return {
     label: intl.formatMessage(messages.conversionProgress),
     valueText: intl.formatMessage(messages.countOfTotal, {
-      current: formatGameNumber(locale, remainder),
-      total: formatGameNumber(locale, required),
+      current: formatGameNumber(locale, remainder, {
+        wholeBelowHundred: true,
+      }),
+      total: formatGameNumber(locale, required, {
+        wholeBelowHundred: true,
+      }),
     }),
     fraction: remainder / required,
     animation: {

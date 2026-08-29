@@ -3437,6 +3437,32 @@
       "value": "模拟"
     }
   ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": "，已收集 "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " 影响力"
+    }
+  ],
   "navigation.skills": [
     {
       "type": 0,

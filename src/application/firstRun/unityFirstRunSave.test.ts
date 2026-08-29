@@ -143,6 +143,10 @@ describe('Unity-generated first-run save', () => {
     expect(production.infinityAutomaticReset).toBe(false)
     expect(production.bottomNavigationPreferences).toMatchObject({
       version: 1,
+      routeDiscovery: {
+        knownRoutes: [],
+        unvisitedRoutes: [],
+      },
       visibility: {
         bots: true,
         research: true,

@@ -390,6 +390,7 @@
   "navigation.research": "研究",
   "navigation.settings": "設定",
   "navigation.simulations": "シミュレーション",
+  "navigation.simulations-influence-progress": "{destination}：影響力を{current}/{required}獲得",
   "navigation.skills": "スキル",
   "navigation.statistics": "統計",
   "navigation.store": "ストア",

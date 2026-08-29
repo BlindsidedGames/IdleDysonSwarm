@@ -1,5 +1,6 @@
 import type { CanonicalGameStateV1 } from './types'
 import { isSkillPresetColorId } from './skillPresetColors'
+import { isDiscoverableNavigationDestinationId } from './navigationPreferences'
 
 export interface CanonicalValidationResult {
   readonly valid: boolean
@@ -19,6 +20,27 @@ export function validateCanonicalGameState(
   )) {
     if (id.trim().length === 0 || typeof visible !== 'boolean') {
       errors.push('Bottom navigation visibility entries must use non-blank IDs and boolean values.')
+    }
+  }
+  const routeDiscovery = state.meta.navigationRouteDiscovery
+  if (routeDiscovery !== undefined) {
+    const knownRoutes = new Set(routeDiscovery.knownRoutes)
+    if (
+      knownRoutes.size !== routeDiscovery.knownRoutes.length ||
+      routeDiscovery.knownRoutes.some(
+        (route) => !isDiscoverableNavigationDestinationId(route),
+      )
+    ) {
+      errors.push('Navigation discovery must contain unique supported known routes.')
+    }
+    if (
+      new Set(routeDiscovery.unvisitedRoutes).size !==
+        routeDiscovery.unvisitedRoutes.length ||
+      routeDiscovery.unvisitedRoutes.some(
+        (route) => !knownRoutes.has(route),
+      )
+    ) {
+      errors.push('Unvisited navigation routes must be unique known routes.')
     }
   }
   if (state.skills.presets.length !== 5) {

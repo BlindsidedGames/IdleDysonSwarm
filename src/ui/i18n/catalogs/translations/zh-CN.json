@@ -390,6 +390,7 @@
   "navigation.research": "研究",
   "navigation.settings": "设置",
   "navigation.simulations": "模拟",
+  "navigation.simulations-influence-progress": "{destination}，已收集 {current}/{required} 影响力",
   "navigation.skills": "技能",
   "navigation.statistics": "统计",
   "navigation.store": "商店",

@@ -97,6 +97,11 @@
   font-size: var(--ui-text-control);
 }
 
+.debug-surface input {
+  /* Prevent native iOS WebView focus zoom without shrinking larger text scales. */
+  font-size: max(1rem, var(--ui-text-control));
+}
+
 .debug-surface__button-grid,
 .debug-surface__cap-buttons {
   display: grid;

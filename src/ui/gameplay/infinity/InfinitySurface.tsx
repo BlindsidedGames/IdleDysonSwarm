@@ -49,7 +49,10 @@ import type {
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { infinityMessages as messages } from './messages'
-import { parseInfinityTargetInput } from './parseInfinityTarget'
+import {
+  formatAutoInfinityTargetInput,
+  parseInfinityTargetInput,
+} from './parseInfinityTarget'
 import './infinity.css'
 
 type InfinityCommand = Extract<
@@ -385,7 +388,7 @@ export function InfinitySurface({
           />
           {derived.mode === 'break' ? (
             <>
-              <BreakTargetControl
+              <AutoInfinityTargetControl
                 locale={locale}
                 target={progression.infinity.breakTarget}
                 routeAvailable={
@@ -664,28 +667,32 @@ function InfinityShopCard({
   )
 }
 
-interface BreakTargetControlProps {
+interface AutoInfinityTargetControlProps {
   readonly locale: EnabledLocale
   readonly target: bigint
   readonly routeAvailable: boolean
   readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
 }
 
-function BreakTargetControl({
+function AutoInfinityTargetControl({
   locale,
   target,
   routeAvailable,
   dispatchPlayer,
-}: BreakTargetControlProps) {
+}: AutoInfinityTargetControlProps) {
   const intl = useIntl()
   const pendingRef = useRef(false)
-  const [draft, setDraft] = useState(target.toString())
+  // Editable state stays exact; abbreviated display values are intentionally
+  // lossy and must never become the submitted Auto Infinity target.
+  const [draft, setDraft] = useState(() =>
+    formatAutoInfinityTargetInput(target),
+  )
   const [failed, setFailed] = useState(false)
   const [validationReason, setValidationReason] = useState<string | null>(null)
   const lastSubmitted = useRef<string | null>(null)
 
   useEffect(() => {
-    setDraft(target.toString())
+    setDraft(formatAutoInfinityTargetInput(target))
     lastSubmitted.current = null
   }, [target])
 

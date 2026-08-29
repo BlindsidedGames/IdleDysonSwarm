@@ -90,6 +90,21 @@ describe('native review prompt coordinator', () => {
     expect(harness.requestStoreReview).not.toHaveBeenCalled()
   })
 
+  test('treats an imported session as a new baseline without arming the prompt', async () => {
+    const harness = createHarness(1n)
+    harness.coordinator.start()
+
+    harness.runtime.publish(20n, 2)
+    await vi.advanceTimersByTimeAsync(60_000)
+    expect(harness.requestStoreReview).not.toHaveBeenCalled()
+
+    harness.runtime.publish(21n, 2)
+    await vi.advanceTimersByTimeAsync(
+      NATIVE_REVIEW_IDLE_DELAY_MILLISECONDS,
+    )
+    expect(harness.requestStoreReview).toHaveBeenCalledOnce()
+  })
+
   test('makes at most one request in a running session', async () => {
     const harness = createHarness(1n)
     harness.coordinator.start()
@@ -149,6 +164,7 @@ function createHarness(initialInfinityCount: bigint) {
 
 class FakeReviewRuntime implements NativeReviewRuntimePort {
   private current: ReviewSnapshot
+  private sessionRevision = 1
   private readonly listeners = new Set<(snapshot: ReviewSnapshot) => void>()
 
   constructor(infinityCount: bigint) {
@@ -164,8 +180,12 @@ class FakeReviewRuntime implements NativeReviewRuntimePort {
     return () => this.listeners.delete(listener)
   }
 
-  publish(infinityCount: bigint): void {
-    this.current = reviewSnapshot(infinityCount)
+  publish(
+    infinityCount: bigint,
+    sessionRevision = this.sessionRevision,
+  ): void {
+    this.sessionRevision = sessionRevision
+    this.current = reviewSnapshot(infinityCount, sessionRevision)
     for (const listener of this.listeners) listener(this.current)
   }
 }
@@ -201,12 +221,15 @@ class FakeReviewBridge {
   }
 }
 
-function reviewSnapshot(infinityCount: bigint): ReviewSnapshot {
+function reviewSnapshot(
+  infinityCount: bigint,
+  sessionRevision = 1,
+): ReviewSnapshot {
   return {
     version: 1,
     phase: 'ready',
     source: 'primary',
-    revision: { session: 1, state: 1, durable: 1 },
+    revision: { session: sessionRevision, state: 1, durable: 1 },
     checkpoint: { revision: 1, status: 'clean' },
     operation: { kind: 'idle' },
     gameplay: {

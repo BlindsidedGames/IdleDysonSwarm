@@ -31,6 +31,15 @@ export interface GameEnergyParts {
   readonly unit: string
 }
 
+export interface GameNumberFormatOptions {
+  /**
+   * Rounds values below 100 to a whole number while preserving the normal
+   * three-significant-digit presentation from 100 onward.
+   */
+  readonly wholeBelowHundred?: boolean
+  readonly notation?: NumberNotationMode
+}
+
 const numberFormatters = new Map<string, Intl.NumberFormat>()
 const dateFormatters = new Map<string, Intl.DateTimeFormat>()
 const relativeTimeFormatters = new Map<string, Intl.RelativeTimeFormat>()
@@ -66,42 +75,47 @@ export function formatNumber(
 export function formatGameNumber(
   locale: EnabledLocale,
   value: NumericValue,
-  notation: NumberNotationMode = getActiveNumberNotation(),
+  options: GameNumberFormatOptions = {},
 ): string {
-  const parts = formatGameNumberParts(locale, value, notation)
+  const parts = formatGameNumberParts(locale, value, options)
   return `${parts.value}${parts.suffix}`
 }
 
-/** Formats an integer resource without decimal padding at ordinary scales. */
+/** @deprecated Prefer formatGameNumber with wholeBelowHundred enabled. */
 export function formatWholeGameNumber(
   locale: EnabledLocale,
   value: NumericValue,
   notation: NumberNotationMode = getActiveNumberNotation(),
 ): string {
-  const withinUnabbreviatedRange = typeof value === 'bigint'
-    ? value >= -1000n && value <= 1000n
-    : Number.isFinite(value) && Math.abs(value) <= 1000
-  return withinUnabbreviatedRange
-    ? formatNumber(locale, value, {
-        maximumFractionDigits: 0,
-        useGrouping: false,
-      })
-    : formatGameNumber(locale, value, notation)
+  return formatGameNumber(locale, value, {
+    notation,
+    wholeBelowHundred: true,
+  })
 }
 
 export function formatGameNumberParts(
   locale: EnabledLocale,
   value: NumericValue,
-  notation: NumberNotationMode = getActiveNumberNotation(),
+  options: GameNumberFormatOptions = {},
 ): GameNumberParts {
+  const notation = options.notation ?? getActiveNumberNotation()
   if (typeof value === 'bigint') {
     if (value > 1000n || value < -1000n) {
       return formatLargeGameBigIntParts(locale, value, notation)
     }
-    return formatGameNumberParts(locale, Number(value), notation)
+    return formatGameNumberParts(locale, Number(value), options)
   }
   if (!Number.isFinite(value)) {
     return { value: NON_FINITE_NUMBER_FALLBACK, suffix: '' }
+  }
+  if (options.wholeBelowHundred && Math.abs(value) < 100) {
+    return {
+      value: formatNumber(locale, value, {
+        maximumFractionDigits: 0,
+        useGrouping: false,
+      }),
+      suffix: '',
+    }
   }
   if (value === 0) {
     return {

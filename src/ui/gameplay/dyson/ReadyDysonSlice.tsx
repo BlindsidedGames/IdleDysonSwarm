@@ -81,6 +81,13 @@ import {
 import { DysonSwarmVisual } from './DysonSwarmVisual'
 import { shouldSettleRapidInfinityVisualization } from './rapidInfinityVisualization'
 import {
+  HIGHLIGHTABLE_ROUTES,
+  isHighlightableRoute,
+  reconcileStoredRouteHighlights,
+  type HighlightableRoute,
+  type StoredRouteHighlights,
+} from './routeHighlights'
+import {
   wikiProgressionFromResources,
   type WikiCategoryId,
 } from '../wiki/wikiProjection'
@@ -157,26 +164,6 @@ export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
 export const QUANTUM_HIDE_MAXED_STORAGE_KEY =
   'idle-dyson-swarm.quantum-hide-maxed.v1'
-export const NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY =
-  'idle-dyson-swarm.new-route-highlights.v1'
-
-const HIGHLIGHTABLE_ROUTES = [
-  'research',
-  'skills',
-  'infinity',
-  'reality',
-  'simulations',
-  'quantum',
-] as const
-
-type HighlightableRoute = (typeof HIGHLIGHTABLE_ROUTES)[number]
-
-interface StoredRouteHighlights {
-  readonly saveKey: string
-  readonly unlocked: readonly HighlightableRoute[]
-  readonly newRoutes: readonly HighlightableRoute[]
-}
-
 const SettingsSurface = lazy(async () => {
   const module = await import('../settings')
   return { default: module.SettingsSurface }
@@ -728,14 +715,11 @@ export function ReadyDysonSlice({
     gameplay.visibility.skills.routeUnlocked,
     gameplay.visibility.quantum.routeUnlocked,
   ])
-  const routeDiscoverySaveKey =
-    gameplay.progression.meta?.createdAtLegacyText ?? 'undated-save'
   const { newlyUnlockedRoutes, markVisited } = useNewRouteHighlights(
-    routeDiscoverySaveKey,
+    gameplay.progression.meta?.navigationRouteDiscovery,
     highlightableRouteUnlocks,
     route,
-    gameplay.visibility.infinity.routeUnlocked &&
-      gameplay.progression.meta?.firstInfinityComplete !== true,
+    dispatchPlayer,
   )
   const navigateTo = useCallback((nextRoute: ReadyGameRoute) => {
     markVisited(nextRoute)
@@ -871,17 +855,11 @@ export function ReadyDysonSlice({
     progress: typeof gameplay.visibility.reality.unlockProgress,
   ) => ({
     fraction: progress.fraction,
-    label: progress.leadingPath === 'secrets'
-      ? intl.formatMessage(messages.realitySecretsProgress, {
-          destination,
-          current: display(progress.currentSecrets),
-          required: display(progress.requiredSecrets),
-        })
-      : intl.formatMessage(messages.quantumProgress, {
-          destination,
-          current: display(progress.currentInfinityPoints),
-          required: display(progress.requiredInfinityPoints),
-        }),
+    label: intl.formatMessage(messages.realitySecretsProgress, {
+      destination,
+      current: display(progress.currentSecrets),
+      required: display(progress.requiredSecrets),
+    }),
   })
   const routeHeading = debugActive
     ? messages.debugRoute
@@ -1069,10 +1047,27 @@ export function ReadyDysonSlice({
                         }
                     : {
                         disabled: true,
-                        progress: lateGameUnlockProgress(
-                          intl.formatMessage(messages.simulationsRoute),
-                          gameplay.visibility.simulations.unlockProgress,
-                        ),
+                        progress: {
+                          fraction:
+                            gameplay.visibility.simulations.unlockProgress
+                              .fraction,
+                          label: intl.formatMessage(
+                            messages.simulationsInfluenceProgress,
+                            {
+                              destination: intl.formatMessage(
+                                messages.simulationsRoute,
+                              ),
+                              current: displayWhole(
+                                gameplay.visibility.simulations.unlockProgress
+                                  .currentInfluence,
+                              ),
+                              required: displayWhole(
+                                gameplay.visibility.simulations.unlockProgress
+                                  .requiredInfluence,
+                              ),
+                            },
+                          ),
+                        },
                       }),
                 },
               ]
@@ -2183,153 +2178,59 @@ function readVisualizationPreference(): boolean {
 }
 
 function useNewRouteHighlights(
-  saveKey: string,
+  stored: StoredRouteHighlights | undefined,
   unlockedByRoute: Readonly<Record<HighlightableRoute, boolean>>,
   currentRoute: ReadyGameRoute,
-  firstInfinityNew = false,
+  dispatchPlayer: (
+    command: CanonicalPlayerCommand,
+  ) => Promise<unknown>,
 ) {
-  const unlockedSignature = HIGHLIGHTABLE_ROUTES
-    .filter((routeId) => unlockedByRoute[routeId])
-    .join('|')
-  const [stored, setStored] = useState<StoredRouteHighlights>(() =>
-    readStoredRouteHighlights(
-      saveKey,
+  const derived = useMemo(() => {
+    const baseline = stored ?? {
+      knownRoutes: HIGHLIGHTABLE_ROUTES.filter((routeId) =>
+        unlockedByRoute[routeId],
+      ),
+      unvisitedRoutes: [],
+    }
+    return reconcileStoredRouteHighlights(
+      baseline,
       unlockedByRoute,
-      firstInfinityNew,
       currentRoute,
-    ),
-  )
+    )
+  }, [currentRoute, stored, unlockedByRoute])
 
   useEffect(() => {
-    setStored((current) => {
-      const baseline = current.saveKey === saveKey
-        ? current
-        : readStoredRouteHighlights(
-            saveKey,
-            unlockedByRoute,
-            firstInfinityNew,
-            currentRoute,
-          )
-      const unlocked = new Set(baseline.unlocked)
-      const newRoutes = new Set(baseline.newRoutes)
-
-      for (const routeId of HIGHLIGHTABLE_ROUTES) {
-        if (!unlockedByRoute[routeId] || unlocked.has(routeId)) continue
-        unlocked.add(routeId)
-        if (routeId !== currentRoute) newRoutes.add(routeId)
-      }
-      if (isHighlightableRoute(currentRoute)) {
-        newRoutes.delete(currentRoute)
-      }
-
-      const next: StoredRouteHighlights = {
-        saveKey,
-        unlocked: HIGHLIGHTABLE_ROUTES.filter((routeId) =>
-          unlocked.has(routeId),
-        ),
-        newRoutes: HIGHLIGHTABLE_ROUTES.filter((routeId) =>
-          newRoutes.has(routeId),
-        ),
-      }
-      if (
-        baseline.saveKey === next.saveKey &&
-        baseline.unlocked.join('|') === next.unlocked.join('|') &&
-        baseline.newRoutes.join('|') === next.newRoutes.join('|')
-      ) {
-        return current
-      }
-      writeStoredRouteHighlights(next)
-      return next
+    if (
+      stored !== undefined &&
+      stored.knownRoutes.join('|') === derived.knownRoutes.join('|') &&
+      stored.unvisitedRoutes.join('|') === derived.unvisitedRoutes.join('|')
+    ) return
+    void dispatchPlayer({
+      kind: 'navigation.set-route-discovery',
+      knownRoutes: derived.knownRoutes,
+      unvisitedRoutes: derived.unvisitedRoutes,
     })
   }, [
-    currentRoute,
-    firstInfinityNew,
-    saveKey,
-    unlockedByRoute,
-    unlockedSignature,
+    derived,
+    dispatchPlayer,
+    stored,
   ])
 
   const markVisited = useCallback((routeId: ReadyGameRoute) => {
     if (!isHighlightableRoute(routeId)) return
-    setStored((current) => {
-      if (!current.newRoutes.includes(routeId)) return current
-      const next = {
-        ...current,
-        newRoutes: current.newRoutes.filter((id) => id !== routeId),
-      }
-      writeStoredRouteHighlights(next)
-      return next
+    if (!derived.unvisitedRoutes.includes(routeId)) return
+    void dispatchPlayer({
+      kind: 'navigation.set-route-discovery',
+      knownRoutes: derived.knownRoutes,
+      unvisitedRoutes: derived.unvisitedRoutes.filter(
+        (id) => id !== routeId,
+      ),
     })
-  }, [])
+  }, [derived, dispatchPlayer])
 
   return {
-    newlyUnlockedRoutes: new Set(stored.newRoutes),
+    newlyUnlockedRoutes: new Set(derived.unvisitedRoutes),
     markVisited,
-  }
-}
-
-function isHighlightableRoute(routeId: ReadyGameRoute): routeId is HighlightableRoute {
-  return HIGHLIGHTABLE_ROUTES.includes(routeId as HighlightableRoute)
-}
-
-function readStoredRouteHighlights(
-  saveKey: string,
-  unlockedByRoute: Readonly<Record<HighlightableRoute, boolean>>,
-  firstInfinityNew: boolean,
-  currentRoute: ReadyGameRoute,
-): StoredRouteHighlights {
-  const initialUnlocked = HIGHLIGHTABLE_ROUTES.filter((routeId) =>
-    unlockedByRoute[routeId],
-  )
-  const initialNewRoutes = initialUnlocked.filter(
-    (routeId) =>
-      routeId === 'infinity' &&
-      firstInfinityNew &&
-      routeId !== currentRoute,
-  )
-  try {
-    if (typeof localStorage === 'undefined') {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
-    }
-    const raw = localStorage.getItem(NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY)
-    if (raw === null) {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
-    }
-    const candidate = JSON.parse(raw) as Partial<StoredRouteHighlights>
-    if (
-      candidate.saveKey !== saveKey ||
-      !Array.isArray(candidate.unlocked) ||
-      !Array.isArray(candidate.newRoutes)
-    ) {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
-    }
-    const unlocked = candidate.unlocked.filter(isStoredHighlightableRoute)
-    return {
-      saveKey,
-      unlocked,
-      newRoutes: candidate.newRoutes
-        .filter(isStoredHighlightableRoute)
-        .filter((routeId) => unlocked.includes(routeId)),
-    }
-  } catch {
-    return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
-  }
-}
-
-function isStoredHighlightableRoute(value: unknown): value is HighlightableRoute {
-  return typeof value === 'string' &&
-    HIGHLIGHTABLE_ROUTES.includes(value as HighlightableRoute)
-}
-
-function writeStoredRouteHighlights(value: StoredRouteHighlights): void {
-  try {
-    if (typeof localStorage === 'undefined') return
-    localStorage.setItem(
-      NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY,
-      JSON.stringify(value),
-    )
-  } catch {
-    // A failed presentation preference must not block route navigation.
   }
 }
 

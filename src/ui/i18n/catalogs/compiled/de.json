@@ -3437,6 +3437,32 @@
       "value": "Simulationen"
     }
   ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Einfluss gesammelt"
+    }
+  ],
   "navigation.skills": [
     {
       "type": 0,

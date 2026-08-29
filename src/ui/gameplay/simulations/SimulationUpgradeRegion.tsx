@@ -167,7 +167,9 @@ function SimulationUpgradeCard({
         disabled={disabled}
         aria-label={intl.formatMessage(realityMessages.purchaseAccessible, {
           name,
-          value: formatGameNumber(locale, preview.cost),
+          value: formatGameNumber(locale, preview.cost, {
+            wholeBelowHundred: true,
+          }),
         })}
         onClick={() => void purchase()}
       >
@@ -177,7 +179,9 @@ function SimulationUpgradeCard({
             symbol="strange-matter"
             tint
           />
-          <span>{formatGameNumber(locale, preview.cost)}</span>
+          <span>{formatGameNumber(locale, preview.cost, {
+            wholeBelowHundred: true,
+          })}</span>
         </strong>
       </Button>
       {pending || failed ? (

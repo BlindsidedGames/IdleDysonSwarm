@@ -6461,6 +6461,40 @@
       "value": "‬"
     }
   ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " oɟ "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Iuɟʅnǝuɔǝ ƃɐʇɥǝɹǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "navigation.skills": [
     {
       "type": 0,

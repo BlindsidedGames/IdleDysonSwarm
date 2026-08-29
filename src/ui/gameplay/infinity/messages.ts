@@ -119,27 +119,27 @@ export const infinityMessages = defineMessages({
   breakTarget: {
     id: 'infinity.break-target',
     defaultMessage: 'Infinity Points before reset',
-    description: 'Label for the Break Infinity reset target control.',
+    description: 'Label for the Auto Infinity target control.',
   },
   breakTargetValue: {
     id: 'infinity.break-target.value',
     defaultMessage: 'Target: {value} IP',
-    description: 'Currently selected Break Infinity target.',
+    description: 'Currently selected Auto Infinity target.',
   },
   setBreakTarget: {
     id: 'infinity.break-target.set',
     defaultMessage: 'Set target',
-    description: 'Applies an exact automatic Break Infinity target.',
+    description: 'Applies an exact Auto Infinity target.',
   },
   breakTargetInvalid: {
     id: 'infinity.break-target.invalid',
     defaultMessage: 'Enter a whole number from 1 to 2.14B IP.',
-    description: 'Validation feedback for an invalid exact Break Infinity target.',
+    description: 'Validation feedback for an invalid exact Auto Infinity target.',
   },
   breakTargetFailed: {
     id: 'infinity.break-target.failed',
     defaultMessage: 'The Infinity target was not changed.',
-    description: 'Failure feedback for a rejected Break Infinity target.',
+    description: 'Failure feedback for a rejected Auto Infinity target.',
   },
   secretTitle: {
     id: 'infinity.shop.secret.title',

@@ -1,12 +1,23 @@
 import { describe, expect, test } from 'vitest'
-import { createDeterministicUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
+import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
 import { hydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import {
+  advanceRealityWorkers,
+  gatherRealityInfluence,
+} from '../simulation/realityWorkers'
 import { selectGameplayVisibility } from './frontendSnapshot'
+
+const realityTuning = {
+  workerBatchSize: 128n,
+  baseWorkerGenerationSpeed: 4,
+} as const
 
 function firstRunState(): CanonicalGameStateV1 {
   return hydrateGameState(
-    createDeterministicUnityFirstRunPreparedSave(),
+    createUnityFirstRunPreparedSave({
+      startedAtUtc: '2026-08-29T00:00:00.000Z',
+    }),
   ).state
 }
 
@@ -76,61 +87,193 @@ describe('progression-aware navigation visibility', () => {
     })
   })
 
-  test('reveals Reality and Simulations at the approved late-game thresholds', () => {
+  test('reveals Reality after the first Secret with Secrets-only progress', () => {
     const initial = firstRunState()
-    const nearInfinityPointPath = {
+    const infinityPointsWithoutSecrets = {
       ...initial,
       infinity: {
         ...initial.infinity,
-        points: 20n,
-        spentPoints: 12n,
+        points: 42n,
       },
     }
     const nearSecretsPath = {
       ...initial,
       infinity: {
         ...initial.infinity,
-        secretsOfTheUniverse: 21n,
+        secretsOfTheUniverse: 1n,
       },
     }
 
     expect(selectGameplayVisibility(initial).reality.routeVisible).toBe(false)
-    expect(
-      selectGameplayVisibility(nearInfinityPointPath).reality,
-    ).toMatchObject({
-      routeVisible: true,
+    expect(selectGameplayVisibility(infinityPointsWithoutSecrets).reality).toEqual({
+      routeVisible: false,
       routeUnlocked: false,
-      unlockProgress: { leadingPath: 'infinity-points' },
+      unlockProgress: {
+        currentSecrets: 0n,
+        requiredSecrets: 27n,
+        fraction: 0,
+      },
     })
     expect(selectGameplayVisibility(nearSecretsPath).reality).toMatchObject({
       routeVisible: true,
       routeUnlocked: false,
-      unlockProgress: { leadingPath: 'secrets' },
+      unlockProgress: {
+        currentSecrets: 1n,
+        requiredSecrets: 27n,
+        fraction: 1 / 27,
+      },
     })
-    expect(
-      selectGameplayVisibility(nearSecretsPath).simulations,
-    ).toMatchObject({
-      routeVisible: true,
+    expect(selectGameplayVisibility(nearSecretsPath).simulations).toEqual({
+      routeVisible: false,
       routeUnlocked: false,
-      unlockProgress: { leadingPath: 'secrets' },
+      unlockProgress: {
+        currentInfluence: 0,
+        requiredInfluence: 128,
+        fraction: 0,
+      },
     })
   })
 
-  test('unlocks Reality and Simulations together after a Quantum Leap', () => {
+  test('previews Simulations after Reality is visited and unlocks it at 128 manual Influence', () => {
     const initial = firstRunState()
     const afterQuantumLeap = {
       ...initial,
       quantum: { ...initial.quantum, pointsEarned: 1n },
     }
-    const visibility = selectGameplayVisibility(afterQuantumLeap)
+    const afterRealityVisit = {
+      ...afterQuantumLeap,
+      meta: {
+        ...afterQuantumLeap.meta,
+        navigationRouteDiscovery: {
+          knownRoutes: ['reality'] as const,
+          unvisitedRoutes: [],
+        },
+      },
+    }
+    const generationInProgress = advanceRealityWorkers(
+      afterRealityVisit,
+      31.875,
+      realityTuning,
+    )
+    const readyToGather = advanceRealityWorkers(
+      afterRealityVisit,
+      32,
+      realityTuning,
+    )
+    const afterFirstGather = gatherRealityInfluence(
+      readyToGather.state,
+      realityTuning,
+    )
 
-    expect(visibility.reality).toMatchObject({
+    expect(selectGameplayVisibility(afterQuantumLeap).reality).toMatchObject({
       routeVisible: true,
       routeUnlocked: true,
     })
-    expect(visibility.simulations).toMatchObject({
+    expect(selectGameplayVisibility(afterQuantumLeap).simulations).toEqual({
+      routeVisible: false,
+      routeUnlocked: false,
+      unlockProgress: {
+        currentInfluence: 0,
+        requiredInfluence: 128,
+        fraction: 0,
+      },
+    })
+    expect(selectGameplayVisibility(afterRealityVisit).simulations).toEqual({
+      routeVisible: true,
+      routeUnlocked: false,
+      unlockProgress: {
+        currentInfluence: 0,
+        requiredInfluence: 128,
+        fraction: 0,
+      },
+    })
+    expect(generationInProgress.state.reality).toMatchObject({
+      workersReady: 127n,
+      workerGenerationProgress: 0.5,
+    })
+    expect(
+      selectGameplayVisibility(generationInProgress.state).simulations,
+    ).toEqual({
+      routeVisible: true,
+      routeUnlocked: false,
+      unlockProgress: {
+        currentInfluence: 127,
+        requiredInfluence: 128,
+        fraction: 127.5 / 128,
+      },
+    })
+    expect(selectGameplayVisibility(readyToGather.state).simulations).toEqual({
+      routeVisible: true,
+      routeUnlocked: false,
+      unlockProgress: {
+        currentInfluence: 128,
+        requiredInfluence: 128,
+        fraction: 1,
+      },
+    })
+    expect(afterFirstGather).toMatchObject({
+      status: 'success',
+      gathered: true,
+      amount: 128,
+    })
+    expect(
+      selectGameplayVisibility(afterFirstGather.state).simulations,
+    ).toEqual({
       routeVisible: true,
       routeUnlocked: true,
+      unlockProgress: {
+        currentInfluence: 128,
+        requiredInfluence: 128,
+        fraction: 1,
+      },
+    })
+  })
+
+  test('does not unlock Simulations from automatic Influence', () => {
+    const initial = firstRunState()
+    const automaticInfluenceOnly = {
+      ...initial,
+      statistics: {
+        ...initial.statistics,
+        lifetime: {
+          ...initial.statistics.lifetime,
+          automaticInfluence: 128,
+        },
+      },
+    }
+
+    expect(selectGameplayVisibility(automaticInfluenceOnly).simulations).toEqual({
+      routeVisible: false,
+      routeUnlocked: false,
+      unlockProgress: {
+        currentInfluence: 0,
+        requiredInfluence: 128,
+        fraction: 0,
+      },
+    })
+  })
+
+  test('keeps Simulations unlocked for an existing save with Simulation progress', () => {
+    const initial = firstRunState()
+    const existingSimulationSave = {
+      ...initial,
+      dream: {
+        ...initial.dream,
+        resources: {
+          ...initial.dream.resources,
+          hunters: 1n,
+        },
+      },
+    }
+
+    expect(selectGameplayVisibility(existingSimulationSave).simulations).toEqual({
+      routeVisible: true,
+      routeUnlocked: true,
+      unlockProgress: {
+        currentInfluence: 128,
+        requiredInfluence: 128,
+        fraction: 1,
+      },
     })
   })
 })

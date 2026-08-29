@@ -149,6 +149,31 @@ describe('canonical game-state mapping', () => {
     ).toBe(true)
   })
 
+  test('round-trips per-save navigation discovery while legacy saves remain unset', () => {
+    const original = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const legacy = hydrateGameState(original)
+    expect(legacy.state.meta.navigationRouteDiscovery).toBeUndefined()
+
+    const candidate = {
+      ...legacy.state,
+      meta: {
+        ...legacy.state.meta,
+        navigationRouteDiscovery: {
+          knownRoutes: ['research', 'skills', 'infinity'] as const,
+          unvisitedRoutes: ['infinity'] as const,
+        },
+      },
+    }
+    const rehydrated = hydrateGameState(
+      dehydrateGameState(legacy, candidate),
+    )
+    expect(rehydrated.state.meta.navigationRouteDiscovery).toEqual(
+      candidate.meta.navigationRouteDiscovery,
+    )
+  })
+
   test('round-trips MAX cash and science as finite purchase-capable balances', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),

@@ -11,8 +11,10 @@ import type {
 import type { StoredTimeAccuracyPreset } from '../game-state/types'
 import type {
   BottomNavigationDestinationId,
+  DiscoverableNavigationDestinationId,
 } from '../game-state/navigationPreferences'
 import {
+  DISCOVERABLE_NAVIGATION_DESTINATION_IDS,
   DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
 } from '../game-state/navigationPreferences'
 import {
@@ -290,6 +292,11 @@ export type CanonicalGameCommand =
       readonly item: BottomNavigationDestinationId
       readonly visible: boolean
     }
+  | {
+      readonly kind: 'navigation.set-route-discovery'
+      readonly knownRoutes: readonly DiscoverableNavigationDestinationId[]
+      readonly unvisitedRoutes: readonly DiscoverableNavigationDestinationId[]
+    }
 
 export type CanonicalGameCommandKind = CanonicalGameCommand['kind']
 
@@ -320,6 +327,7 @@ export type CanonicalGameCommandCode =
   | `infinity-automatic-reset:${string}`
   | `infinity-reset:${string}`
   | `infinity-shop:${string}`
+  | `navigation:${string}`
   | `quantum-leap:${string}`
   | `quantum-upgrade:${string}`
   | `reality-gather:${string}`
@@ -733,6 +741,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'canonical persisted menu shortcut preference',
   },
+  'navigation.set-route-discovery': {
+    supported: true,
+    authority: 'canonical persisted per-save navigation discovery',
+  },
 } as const satisfies Readonly<
   Record<CanonicalGameCommandKind, CanonicalGameCommandSupport>
 >)
@@ -778,6 +790,42 @@ export function routeCanonicalGameCommand(
     options.runtimeCarriers ?? EMPTY_RUNTIME_CARRIERS
 
   switch (command.kind) {
+    case 'navigation.set-route-discovery': {
+      const knownRoutes = DISCOVERABLE_NAVIGATION_DESTINATION_IDS.filter(
+        (route) => command.knownRoutes.includes(route),
+      )
+      const unvisitedRoutes = DISCOVERABLE_NAVIGATION_DESTINATION_IDS.filter(
+        (route) =>
+          knownRoutes.includes(route) &&
+          command.unvisitedRoutes.includes(route),
+      )
+      const current = state.meta.navigationRouteDiscovery
+      const changed = current === undefined ||
+        current.knownRoutes.join('|') !== knownRoutes.join('|') ||
+        current.unvisitedRoutes.join('|') !== unvisitedRoutes.join('|')
+      return finalizeAccepted(
+        state,
+        changed
+          ? {
+              ...state,
+              meta: {
+                ...state.meta,
+                navigationRouteDiscovery: {
+                  knownRoutes,
+                  unvisitedRoutes,
+                },
+              },
+            }
+          : state,
+        changed,
+        `navigation:${changed ? 'route-discovery-set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
+      )
+    }
+
     case 'settings.set-navigation-item-visible': {
       const current = state.meta.navigationVisibility ??
         DEFAULT_BOTTOM_NAVIGATION_VISIBILITY

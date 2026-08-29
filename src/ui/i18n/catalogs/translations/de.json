@@ -379,6 +379,7 @@
   "navigation.research": "Forschung",
   "navigation.settings": "Einstellungen",
   "navigation.simulations": "Simulationen",
+  "navigation.simulations-influence-progress": "{destination}, {current} von {required} Einfluss gesammelt",
   "navigation.skills": "Skills",
   "navigation.statistics": "Statistiken",
   "navigation.store": "Shop",

@@ -56,6 +56,10 @@ export function createUnityFirstRunPreparedSave(
   candidate.bottomNavigationPreferences = {
     version: 1,
     visibility: { ...DEFAULT_BOTTOM_NAVIGATION_VISIBILITY },
+    routeDiscovery: {
+      knownRoutes: [],
+      unvisitedRoutes: [],
+    },
   }
   return deterministic.withValidatedState(candidate)
 }

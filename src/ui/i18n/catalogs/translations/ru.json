@@ -379,6 +379,7 @@
   "navigation.research": "Исследования",
   "navigation.settings": "Настройки",
   "navigation.simulations": "Симуляции",
+  "navigation.simulations-influence-progress": "{destination} — собрано Влияния: {current} из {required} ед.",
   "navigation.skills": "Навыки",
   "navigation.statistics": "Статистика",
   "navigation.store": "Магазин",

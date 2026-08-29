@@ -71,6 +71,7 @@ export class NativeReviewPromptCoordinator {
   private unsubscribeLifecycle: (() => void) | undefined
   private timer: unknown
   private lastInfinityCount: bigint | null = null
+  private lastSessionRevision: number | null = null
   private lastActivityMilliseconds = 0
   private eligible = false
   private started = false
@@ -140,8 +141,19 @@ export class NativeReviewPromptCoordinator {
   }
 
   private readonly observeSnapshot = (snapshot: ReviewSnapshot): void => {
+    if (snapshot.phase !== 'ready') return
     const infinityCount = lifetimeInfinityCount(snapshot)
     if (infinityCount === null) return
+    if (
+      this.lastSessionRevision === null ||
+      snapshot.revision.session !== this.lastSessionRevision
+    ) {
+      this.lastSessionRevision = snapshot.revision.session
+      this.lastInfinityCount = infinityCount
+      this.eligible = false
+      this.clearTimer()
+      return
+    }
     const previousInfinityCount = this.lastInfinityCount
     if (previousInfinityCount === null) {
       this.lastInfinityCount = infinityCount
