@@ -169,6 +169,22 @@ export function resolveLocale(value: string | null | undefined): EnabledLocale {
   } catch {
     return 'en'
   }
+  return resolveCanonicalLocale(canonical) ?? 'en'
+}
+
+export function resolvePreferredLocale(
+  requestedLocales: readonly string[],
+): EnabledLocale {
+  for (const requested of requestedLocales) {
+    const canonical = canonicalLocale(requested)
+    if (canonical === null) continue
+    const resolved = resolveCanonicalLocale(canonical)
+    if (resolved !== null) return resolved
+  }
+  return 'en'
+}
+
+function resolveCanonicalLocale(canonical: string): EnabledLocale | null {
   if (isEnabledLocale(canonical)) return canonical
   if (canonical === 'fr' || canonical.startsWith('fr-')) return 'fr'
   if (canonical === 'de' || canonical.startsWith('de-')) return 'de'
@@ -177,25 +193,8 @@ export function resolveLocale(value: string | null | undefined): EnabledLocale {
   if (isSimplifiedChinese(canonical)) return 'zh-CN'
   if (canonical === 'ru' || canonical.startsWith('ru-')) return 'ru'
   if (canonical === 'ja' || canonical.startsWith('ja-')) return 'ja'
-  return 'en'
-}
-
-export function resolvePreferredLocale(
-  requestedLocales: readonly string[],
-): EnabledLocale {
-  for (const requested of requestedLocales) {
-    const canonical = canonicalLocale(requested)
-    if (canonical && isEnabledLocale(canonical)) return canonical
-    if (canonical === 'fr' || canonical?.startsWith('fr-')) return 'fr'
-    if (canonical === 'de' || canonical?.startsWith('de-')) return 'de'
-    if (canonical === 'es' || canonical?.startsWith('es-')) return 'es-419'
-    if (canonical === 'pt' || canonical?.startsWith('pt-')) return 'pt-BR'
-    if (canonical && isSimplifiedChinese(canonical)) return 'zh-CN'
-    if (canonical === 'ru' || canonical?.startsWith('ru-')) return 'ru'
-    if (canonical === 'ja' || canonical?.startsWith('ja-')) return 'ja'
-    if (canonical === 'en' || canonical?.startsWith('en-')) return 'en'
-  }
-  return 'en'
+  if (canonical === 'en' || canonical.startsWith('en-')) return 'en'
+  return null
 }
 
 function isSimplifiedChinese(locale: string): boolean {
