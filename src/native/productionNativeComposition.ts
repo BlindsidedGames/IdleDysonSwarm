@@ -32,6 +32,7 @@ import {
 import { RuntimeEntitlementBridge } from '../store/runtimeEntitlements'
 import {
   createBrowserRuntimeFoundation,
+  prepareRuntimeForSafeReload,
   type BrowserRuntimeFoundationOptions,
   type BrowserUiRuntimeFoundation,
   type UiRuntimeImportResult,
@@ -139,26 +140,7 @@ export function createProductionNativeComposition(
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())
-  const prepareForSafeReload = async (): Promise<void> => {
-    const status = runtime.status()
-    if (status.phase === 'ready') {
-      const checkpointed =
-        await runtime.checkpointBeforeSafeReload()
-      if (!checkpointed) {
-        throw new Error(
-          'Safe reload requires a verified checkpoint.',
-        )
-      }
-    } else if (
-      status.phase !== 'blocked' &&
-      status.phase !== 'ownership-lost'
-    ) {
-      throw new Error(
-        `Safe reload is unavailable while the runtime is ${status.phase}.`,
-      )
-    }
-    await runtime.shutdown()
-  }
+  const prepareForSafeReload = () => prepareRuntimeForSafeReload(runtime)
   environment.installTerminationCheckpoint?.(async () => {
     try {
       const status = runtime.status()
