@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import type { CanonicalFacilityId } from '../game-state/types'
 import {
@@ -486,9 +487,7 @@ function isValidOwnedPair(
   return (
     Array.isArray(pair) &&
     pair.length === 2 &&
-    pair.every(
-      (value) => Number.isFinite(value) && value >= 0,
-    )
+    pair.every(isFiniteNonNegativeNumber)
   )
 }
 

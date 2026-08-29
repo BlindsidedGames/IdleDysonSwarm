@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   addContinuous,
@@ -1269,7 +1270,7 @@ function secondsUntilTimerBoundary(
 }
 
 function safeTimerProgress(value: number): number {
-  return Number.isFinite(value) && value >= 0 ? value : 0
+  return isFiniteNonNegativeNumber(value) ? value : 0
 }
 
 function invalidRailgun(

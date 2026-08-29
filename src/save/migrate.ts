@@ -521,7 +521,7 @@ function migrateContinuousField(record: SaveRecord, key: string): void {
 
   record[key] = parsed === Number.POSITIVE_INFINITY
     ? Number.MAX_VALUE
-    : Number.isFinite(parsed) && parsed >= 0
+    : isFiniteNonNegativeNumber(parsed)
       ? parsed
       : 0
 }

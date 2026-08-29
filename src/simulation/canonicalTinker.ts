@@ -508,7 +508,7 @@ function isManualLabourEffective(
 }
 
 function requireFiniteNonNegative(value: number, field: string): number {
-  if (Number.isFinite(value) && value >= 0) return value
+  if (isFiniteNonNegativeNumber(value)) return value
   throw new RangeError(`${field} must be finite and non-negative.`)
 }
 

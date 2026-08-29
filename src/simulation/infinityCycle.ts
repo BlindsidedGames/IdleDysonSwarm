@@ -1,4 +1,7 @@
-import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import {
   BASIC_DYSON_FACILITY_IDS,
   createEmptyRetainedFacilities,
@@ -323,9 +326,7 @@ export function validateBasicDysonInfinityState(
     infinity.legacyOverflowMultiplier,
   ]
   if (
-    !continuous.every(
-      (value) => Number.isFinite(value) && value >= 0,
-    )
+    !continuous.every(isFiniteNonNegativeNumber)
   ) {
     return 'SIM-DYSON-NON-FINITE'
   }

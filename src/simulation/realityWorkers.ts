@@ -341,7 +341,7 @@ function workerGenerationPerSecond(
 }
 
 function normalizeProgress(value: number): number {
-  return Number.isFinite(value) && value >= 0 ? value % 1 : 0
+  return isFiniteNonNegativeNumber(value) ? value % 1 : 0
 }
 
 function isValidTuning(
@@ -416,8 +416,7 @@ function recordRealitySegment(
   seconds: number,
   summary: Readonly<RealitySegmentSummary>,
 ): SimulationStatisticsState {
-  const safeSeconds =
-    Number.isFinite(seconds) && seconds >= 0 ? seconds : 0
+  const safeSeconds = isFiniteNonNegativeNumber(seconds) ? seconds : 0
   const start = statistics.trackedSimulatedSeconds
   const end = addContinuous(start, safeSeconds)
   const recentBase =

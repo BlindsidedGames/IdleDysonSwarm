@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import {
   addContinuous,
@@ -337,7 +338,7 @@ export class BasicDysonSimulationModel
       ...Object.values(this.state.rates),
       ...Object.values(this.pending),
     ]
-    if (!values.every((value) => Number.isFinite(value) && value >= 0)) {
+    if (!values.every(isFiniteNonNegativeNumber)) {
       return 'SIM-DYSON-NON-FINITE'
     }
     if (

@@ -1,4 +1,7 @@
-import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import { addContinuous } from './numeric'
 
 export const DEFAULT_STORED_TIME_CAPACITY_SECONDS = 86_400
@@ -166,10 +169,9 @@ export function applyAwayTimeGrant(
   request: AwayTimeGrantRequest,
 ): AwayTimeGrantResult {
   const repaired = repairStoredTimeState(request)
-  const awaySeconds =
-    Number.isFinite(request.awaySeconds) && request.awaySeconds >= 0
-      ? request.awaySeconds
-      : 0
+  const awaySeconds = isFiniteNonNegativeNumber(request.awaySeconds)
+    ? request.awaySeconds
+    : 0
   const cheater = repaired.cheater || request.awaySeconds < 0
 
   const availableCapacity = Math.max(

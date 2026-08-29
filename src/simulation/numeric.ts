@@ -1,4 +1,7 @@
-import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 
 export const CONTINUOUS_MAXIMUM = Number.MAX_VALUE
 export const DISCRETE_MAXIMUM = 9_223_372_036_854_775_807n
@@ -7,7 +10,7 @@ const DISCRETE_DOUBLE_UPPER_EXCLUSIVE = 9_223_372_036_854_776_000
 
 export function clampContinuous(value: number): number {
   if (value === Number.POSITIVE_INFINITY) return CONTINUOUS_MAXIMUM
-  return Number.isFinite(value) && value >= 0 ? value : 0
+  return isFiniteNonNegativeNumber(value) ? value : 0
 }
 
 export function addContinuous(left: number, right: number): number {
