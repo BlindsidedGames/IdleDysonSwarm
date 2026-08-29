@@ -870,7 +870,7 @@ function requirePositiveNumber(
   asset: RuntimeGameAsset,
   field: string,
 ): number {
-  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+  if (isFinitePositiveNumber(value)) {
     return value
   }
   throw invalidDefinition(asset, field)

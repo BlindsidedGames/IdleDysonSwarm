@@ -7,6 +7,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
+import { isFinitePositiveNumber } from '../../../core/finiteNonNegativeNumber'
 import {
   useIntl,
   type IntlShape,
@@ -1478,7 +1479,7 @@ function foundationalAction(
     : purchase === 'gatherers'
       ? Number(input.progression.parameters.gathererCost)
       : Number(preview.cost)
-  const baseCost = Number.isFinite(authoredBaseCost) && authoredBaseCost > 0
+  const baseCost = isFinitePositiveNumber(authoredBaseCost)
     ? authoredBaseCost
     : Number(preview.cost)
   const purchasedBatches = scalable
@@ -1595,7 +1596,7 @@ function spaceAgeAction(
       ? input.progression.parameters.solarCost
       : input.progression.parameters.fusionCost,
   )
-  const baseCost = Number.isFinite(authoredBaseCost) && authoredBaseCost > 0
+  const baseCost = isFinitePositiveNumber(authoredBaseCost)
     ? authoredBaseCost
     : Number(preview.cost)
   const quantity = resolveSimulationPurchaseQuantity(

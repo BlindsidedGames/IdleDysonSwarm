@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../../../core/finiteNonNegativeNumber'
 import type { DysonNavigationPresentation } from './contracts'
 
 export interface BottomNavigationLayout {
@@ -23,7 +24,7 @@ export function deriveBottomNavigationLayout(
   const maxItems = selected
   const slotWidth = Math.min(76, width / (selected + 1))
   const iconSize = Math.min(36, Math.max(0, slotWidth - 16))
-  const safeTextScale = Number.isFinite(textScale) && textScale > 0
+  const safeTextScale = isFinitePositiveNumber(textScale)
     ? textScale
     : 1
   const renderedLabelSize = Math.min(

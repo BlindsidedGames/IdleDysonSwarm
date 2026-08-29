@@ -3,6 +3,7 @@ import {
   useRef,
   type RefObject,
 } from 'react'
+import { isFinitePositiveNumber } from '../../../core/finiteNonNegativeNumber'
 import {
   DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS,
 } from '../../runtime/activeTimeDriver'
@@ -227,7 +228,7 @@ function inferProgressRate(
 ): number {
   if (previous === null || direction === undefined) return 0
   const elapsedSeconds = (sampledAt - previous.sampledAt) / 1_000
-  if (!Number.isFinite(elapsedSeconds) || elapsedSeconds <= 0) return 0
+  if (!isFinitePositiveNumber(elapsedSeconds)) return 0
 
   let delta = current - previous.progress
   if (
