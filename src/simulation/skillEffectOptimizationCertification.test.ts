@@ -3,15 +3,15 @@ import {
   createDeterministicMatureDysonFixture,
   DETERMINISTIC_DYSON_SNAPSHOT,
   DETERMINISTIC_DYSON_TUNING,
-} from '../../test/support/deterministicMatureDysonFixture'
-import { resolveReferenceDynamicSkillEffect } from '../../test/support/referenceDynamicSkillEffectResolver'
-import { materializeReferenceSkillEffects } from '../../test/support/referenceSkillEffectMaterializer'
+} from '../../scripts/support/deterministicMatureDysonFixture'
+import { resolveReferenceDynamicSkillEffect } from '../../scripts/support/referenceDynamicSkillEffectResolver'
+import { materializeReferenceSkillEffects } from '../../scripts/support/referenceSkillEffectMaterializer'
 import {
   ALL_EFFECT_DEFINITION_IDS,
   createSkillEffectCertificationScenarios,
   materializeCandidateCertificationTargets,
   materializeCertificationTargets,
-} from '../../test/support/skillEffectCertification'
+} from '../../scripts/support/skillEffectCertification'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import {
   prepareDynamicSkillEffectResolver,

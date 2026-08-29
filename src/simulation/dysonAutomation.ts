@@ -1,6 +1,11 @@
 import { getGameAsset } from '../game-data/catalog'
 import type { CanonicalFacilityId } from '../game-state/types'
-import type { BasicDysonFacilityId } from './dysonFacilities'
+import {
+  DYSON_FACILITY_IDS,
+  isBasicFacility,
+  isMegaStructureFacility,
+  type BasicDysonFacilityId,
+} from './dysonFacilityCatalog'
 import {
   buyModeAmount,
   buyXCost,
@@ -16,16 +21,7 @@ import {
 } from './numeric'
 import type { SimulationAutomationPolicy } from './types'
 
-export const DYSON_AUTOMATION_TARGETS = [
-  'assembly_lines',
-  'ai_managers',
-  'servers',
-  'data_centers',
-  'planets',
-  'matrioshka_brains',
-  'birch_planets',
-  'galactic_brains',
-] as const satisfies readonly CanonicalFacilityId[]
+export const DYSON_AUTOMATION_TARGETS = DYSON_FACILITY_IDS
 
 const AUTOMATION_TARGET_COUNT = DYSON_AUTOMATION_TARGETS.length
 const MAX_MEGA_PURCHASE_QUANTITY = 2_147_483_647n
@@ -59,6 +55,7 @@ export type DysonFacilityPurchasePreviewStatus =
   | DysonAutomationSkipStatus
   | 'definition-gap'
   | 'invalid-state'
+  | 'prerequisite-not-met'
 
 export interface DysonAutomationAttempt {
   readonly facilityId: CanonicalFacilityId
@@ -99,7 +96,7 @@ export interface DysonFacilityPurchaseResult {
 export type DysonFacilityUnlockResolver = (
   facilityId: CanonicalFacilityId,
   currentState: Readonly<DysonAutomationState>,
-) => boolean
+) => boolean | 'locked' | 'prerequisite-not-met'
 
 export type DysonFacilityDefinitionLookup = (
   facilityId: CanonicalFacilityId,
@@ -209,8 +206,12 @@ export function previewDysonFacilityPurchase<
   if (!state.enabledFacilities[facilityId]) {
     return purchasePreview(facilityId, 'facility-disabled')
   }
-  if (!resolveUnlock(facilityId, state)) {
-    return purchasePreview(facilityId, 'locked')
+  const availability = resolveUnlock(facilityId, state)
+  if (availability !== true) {
+    return purchasePreview(
+      facilityId,
+      availability === false ? 'locked' : availability,
+    )
   }
   if (
     !Number.isFinite(state.money) ||
@@ -253,7 +254,7 @@ export function previewDysonFacilityPurchase<
     facilityId,
     manualOwned,
   )
-  const maximumQuantity = isMegaFacility(facilityId)
+  const maximumQuantity = isMegaStructureFacility(facilityId)
     ? MAX_MEGA_PURCHASE_QUANTITY
     : MAX_SAFE_PURCHASE_QUANTITY
   const affordableQuantity = minBigInt(
@@ -382,20 +383,6 @@ function normalizeTargetIndex(targetIndex: number): number {
     (integer % AUTOMATION_TARGET_COUNT) +
     AUTOMATION_TARGET_COUNT
   ) % AUTOMATION_TARGET_COUNT
-}
-
-function isMegaFacility(facilityId: CanonicalFacilityId): boolean {
-  return (
-    facilityId === 'matrioshka_brains' ||
-    facilityId === 'birch_planets' ||
-    facilityId === 'galactic_brains'
-  )
-}
-
-function isBasicFacility(
-  facilityId: CanonicalFacilityId,
-): facilityId is BasicDysonFacilityId {
-  return !isMegaFacility(facilityId)
 }
 
 function facilityCostLevel(

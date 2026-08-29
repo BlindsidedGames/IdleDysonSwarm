@@ -39,7 +39,7 @@ session. Registration failure is non-fatal and never blocks the game.
 
 ```powershell
 npm run pwa:icons
-npm test -- scripts/pwaPackage.test.ts src/pwa
+npm test -- src/browser/productionPackaging.test.ts
 npm run lint
 npm run build
 ```

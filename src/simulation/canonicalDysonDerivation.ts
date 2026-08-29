@@ -24,7 +24,6 @@ import {
   MEGA_STRUCTURE_FACILITY_IDS,
   type MegaStructureRateIssueCode,
   type MegaStructureRates,
-  type MegaStructureProductionFact,
 } from './megaStructureRates'
 import {
   avocadoDysonMultiplier,
@@ -118,26 +117,23 @@ export interface DerivedBasicDysonState {
   readonly planetPricingModifier: number
   readonly rates: Readonly<BasicDysonRates>
   readonly megaRates: Readonly<MegaStructureRates>
-  readonly megaStructureFacts: Readonly<
-    Record<keyof MegaStructureRates, CanonicalMegaStructureProductionFact>
-  >
   readonly productionArrivalRates: Readonly<DysonProductionArrivalRates>
   readonly facilityFacts: Readonly<
-    Record<BasicDysonFacilityId, CanonicalBasicFacilityFacts>
+    Record<CanonicalFacilityId, CanonicalFacilityFacts>
   >
   readonly nextEvaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
   readonly entitlements: DysonEntitlements
 }
 
-export interface CanonicalBasicFacilityFacts {
-  readonly facilityId: BasicDysonFacilityId
+export interface CanonicalFacilityFacts {
+  readonly facilityId: CanonicalFacilityId
   readonly ownership: {
     readonly automatic: number
     readonly manual: number
     readonly total: number
   }
   readonly production: {
-    readonly outputFacilityId: BasicDysonFacilityId | 'bots'
+    readonly outputFacilityId: CanonicalFacilityId | 'bots'
     readonly perSecond: number
     readonly secondsPerUnit: number | null
   }
@@ -160,22 +156,21 @@ export interface CanonicalBasicFacilityFacts {
      * Always populated by canonical derivation; empty when Unity would hide
      * the only gated upstream source.
      */
-    readonly upstreamSources?: readonly {
-      readonly sourceFacilityId: CanonicalFacilityId
-      readonly contributionPerSecond: number
-    }[]
+    readonly upstreamSources?: readonly (
+      | {
+          readonly sourceFacilityId: CanonicalFacilityId
+          readonly contributionPerSecond: number
+        }
+      | {
+          readonly sourceFacilityId: CanonicalFacilityId
+          readonly producedCount: number
+        }
+    )[]
   }
 }
 
-export interface CanonicalMegaStructureProductionFact
-  extends MegaStructureProductionFact {
-  readonly productionProgress: {
-    readonly visible: boolean
-    readonly normalized: number
-  }
-  readonly details: {
-    readonly modifierContributions: readonly CanonicalFacilityContributionRow[]
-  }
+export interface CanonicalBasicFacilityFacts extends CanonicalFacilityFacts {
+  readonly facilityId: BasicDysonFacilityId
 }
 
 export interface CanonicalFacilityContributionRow {
@@ -667,12 +662,21 @@ export function deriveBasicDysonState(
       ),
     }
   }
-  const megaStructureFacts = Object.freeze(
+  const specializedFacilityFacts = Object.freeze(
     Object.fromEntries(
       MEGA_STRUCTURE_FACILITY_IDS.map((facilityId) => [
         facilityId,
         Object.freeze({
-          ...mega.facts[facilityId],
+          facilityId,
+          ownership: mega.facts[facilityId].ownership,
+          production: Object.freeze({
+            outputFacilityId: mega.facts[facilityId].outputFacilityId,
+            perSecond: mega.facts[facilityId].perSecond,
+            secondsPerUnit:
+              mega.facts[facilityId].perSecond > 0
+                ? 1 / mega.facts[facilityId].perSecond
+                : null,
+          }),
           productionProgress: Object.freeze((() => {
             const fact = mega.facts[facilityId]
             const runningOutput =
@@ -691,6 +695,34 @@ export function deriveBasicDysonState(
             }
           })()),
           details: Object.freeze({
+            baseProductionPerSecond:
+              mega.facts[facilityId].baseProductionPerSecond,
+            effectiveProducerCount:
+              mega.facts[facilityId].ownership.total,
+            modifier: mega.facts[facilityId].modifier,
+            contributions: Object.freeze([
+              Object.freeze({
+                sourceId: 'base',
+                displayRole: 'base' as const,
+                operation: 'override' as const,
+                value: mega.facts[facilityId].baseProductionPerSecond,
+                delta: mega.facts[facilityId].baseProductionPerSecond,
+                runningTotal:
+                  mega.facts[facilityId].baseProductionPerSecond,
+              }),
+              Object.freeze({
+                sourceId: `${facilityId}.count`,
+                displayRole: 'producer-count' as const,
+                operation: 'multiply' as const,
+                value: mega.facts[facilityId].ownership.total,
+                delta:
+                  mega.facts[facilityId].baseProductionPerSecond *
+                  (mega.facts[facilityId].ownership.total - 1),
+                runningTotal:
+                  mega.facts[facilityId].baseProductionPerSecond *
+                  mega.facts[facilityId].ownership.total,
+              }),
+            ]),
             modifierContributions: deriveAttributedEffectRows(
               1,
               facilityModifierCalculations[facilityId].effects,
@@ -699,12 +731,25 @@ export function deriveBasicDysonState(
               state,
               evaluationSnapshot,
             ),
+            upstreamSources: facilityId === 'matrioshka_brains'
+              ? Object.freeze([Object.freeze({
+                  sourceFacilityId: 'birch_planets' as const,
+                  producedCount:
+                    mega.facts[facilityId].ownership.automatic,
+                })])
+              : facilityId === 'birch_planets'
+                ? Object.freeze([Object.freeze({
+                    sourceFacilityId: 'galactic_brains' as const,
+                    producedCount:
+                      mega.facts[facilityId].ownership.automatic,
+                  })])
+                : Object.freeze([]),
           }),
         }),
       ]),
     ) as Record<
       keyof MegaStructureRates,
-      CanonicalMegaStructureProductionFact
+      CanonicalFacilityFacts
     >,
   )
   const model = createBasicDysonState({
@@ -775,22 +820,24 @@ export function deriveBasicDysonState(
       planetPricingModifier,
       rates: Object.freeze({ ...model.rates }),
       megaRates: mega.rates,
-      megaStructureFacts,
       productionArrivalRates: combineDysonProductionArrivalRates(
         model.rates,
         mega.rates,
       ),
-      facilityFacts: deriveBasicFacilityFacts(
-        state,
-        model,
-        mega.rates,
-        facilityModifiers,
-        facilityModifierCalculations,
-        research.effects,
-        planetGenerationEffects,
-        evaluationSnapshot,
-        presentationTuning,
-      ),
+      facilityFacts: Object.freeze({
+        ...deriveBasicFacilityFacts(
+          state,
+          model,
+          mega.rates,
+          facilityModifiers,
+          facilityModifierCalculations,
+          research.effects,
+          planetGenerationEffects,
+          evaluationSnapshot,
+          presentationTuning,
+        ),
+        ...specializedFacilityFacts,
+      }) as Readonly<Record<CanonicalFacilityId, CanonicalFacilityFacts>>,
       nextEvaluationSnapshot,
       entitlements: Object.freeze({ ...entitlements }),
     }),

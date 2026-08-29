@@ -12,13 +12,9 @@ import {
   type DysonAutomationState,
   type DysonFacilityPurchasePreview,
 } from './dysonAutomation'
-import type { BasicDysonFacilityId } from './dysonFacilities'
 import {
-  isMegaStructureVisible,
-  tryPurchaseMegaStructure,
-  type MegaStructureId,
-  type MegaStructurePurchaseResult,
-} from './megaStructurePurchases'
+  DYSON_FACILITY_DEFINITIONS,
+} from './dysonFacilityCatalog'
 import type { SimulationAutomationPolicy } from './types'
 
 export interface CanonicalDysonAutomationResult {
@@ -26,27 +22,25 @@ export interface CanonicalDysonAutomationResult {
   readonly attempts: readonly DysonAutomationAttempt[]
 }
 
-export interface CanonicalMegaStructurePurchaseResult
-  extends Omit<MegaStructurePurchaseResult, 'state'> {
-  readonly state: CanonicalGameStateV1
-}
-
-export interface CanonicalBasicFacilityPurchaseResult {
+export interface CanonicalFacilityPurchaseResult {
   readonly state: CanonicalGameStateV1
   readonly attempt: DysonAutomationAttempt
 }
 
-export type CanonicalBasicFacilityPurchasePreview =
-  DysonFacilityPurchasePreview<BasicDysonFacilityId>
+export type CanonicalFacilityPurchasePreview<
+  TFacilityId extends CanonicalFacilityId = CanonicalFacilityId,
+> = DysonFacilityPurchasePreview<TFacilityId>
 
 /**
  * Returns the exact immutable quote used by the canonical purchase path.
  */
-export function previewCanonicalBasicFacilityPurchase(
+export function previewCanonicalFacilityPurchase<
+  TFacilityId extends CanonicalFacilityId,
+>(
   state: CanonicalGameStateV1,
-  facilityId: BasicDysonFacilityId,
+  facilityId: TFacilityId,
   planetModifier = 1,
-): CanonicalBasicFacilityPurchasePreview {
+): CanonicalFacilityPurchasePreview<TFacilityId> {
   const automationState = toDysonAutomationState(state, planetModifier)
   automationState.globalEnabled = true
   automationState.enabledFacilities[facilityId] = true
@@ -61,11 +55,11 @@ export function previewCanonicalBasicFacilityPurchase(
 /**
  * Applies an unlock-aware manual basic-facility purchase to canonical state.
  */
-export function tryPurchaseCanonicalBasicFacility(
+export function tryPurchaseCanonicalFacility(
   state: CanonicalGameStateV1,
-  facilityId: BasicDysonFacilityId,
+  facilityId: CanonicalFacilityId,
   planetModifier = 1,
-): CanonicalBasicFacilityPurchaseResult {
+): CanonicalFacilityPurchaseResult {
   const automationState = toDysonAutomationState(state, planetModifier)
   automationState.globalEnabled = true
   automationState.enabledFacilities[facilityId] = true
@@ -88,60 +82,22 @@ export function tryPurchaseCanonicalBasicFacility(
 }
 
 /**
- * Applies an unlock-aware manual mega purchase to canonical state while
- * retaining the immutable application-command contract.
+ * Projects facility visibility without coupling it to affordability or the
+ * selected purchase quantity. Megastructures remain a presentation group,
+ * but use the same facility catalog and ownership contract as every other
+ * Dyson facility.
  */
-export function tryPurchaseCanonicalMegaStructure(
+export function isCanonicalFacilityVisible(
   state: CanonicalGameStateV1,
-  facilityId: MegaStructureId,
-): CanonicalMegaStructurePurchaseResult {
-  const result = tryPurchaseMegaStructure(
-    {
-      money: state.dyson.money,
-      facilities: state.dyson.facilities,
-      quantumUnlocks: megaUnlocks(state),
-      buyMode: state.dyson.automation.buyMode,
-      roundedBulkBuy: state.dyson.automation.roundedBulkBuy,
-    },
-    facilityId,
-  )
-  if (!result.purchased) return { ...result, state }
-  return {
-    ...result,
-    state: replaceDysonState(
-      state,
-      result.state.money,
-      result.state.facilities,
-      state.timeline.dysonAutomationTargetIndex,
-    ),
-  }
-}
-
-/**
- * Projects Unity's authored mega-structure panel reveal rule from canonical
- * state without coupling visibility to affordability or purchase selection.
- */
-export function isCanonicalMegaStructureVisible(
-  state: CanonicalGameStateV1,
-  facilityId: MegaStructureId,
+  facilityId: CanonicalFacilityId,
 ): boolean {
   const ownership = state.dyson.facilities[facilityId]
   if (ownership[0] + ownership[1] > 0) return true
-  const unlocks = megaUnlocks(state)
-  const permanentlyUnlocked = {
-    matrioshka_brains: unlocks.matrioshkaBrains,
-    birch_planets: unlocks.birchPlanets,
-    galactic_brains: unlocks.galacticBrains,
-  } satisfies Record<MegaStructureId, boolean>
-  if (permanentlyUnlocked[facilityId]) return true
-
-  return isMegaStructureVisible(
-    {
-      facilities: state.dyson.facilities,
-      quantumUnlocks: megaUnlocks(state),
-    },
-    facilityId,
-  )
+  const definition = DYSON_FACILITY_DEFINITIONS[facilityId]
+  if (definition.quantumUnlock !== undefined) {
+    return state.quantum.unlocks[definition.quantumUnlock]
+  }
+  return false
 }
 
 /**
@@ -158,7 +114,7 @@ export function runCanonicalDysonAutomation(
     automationState,
     policy,
     (facilityId, candidate) =>
-      isFacilityUnlocked(state, candidate, facilityId),
+      isFacilityUnlocked(state, candidate, facilityId) === true,
   )
   return {
     state: replaceDysonState(
@@ -211,45 +167,23 @@ function isFacilityUnlocked(
   canonical: CanonicalGameStateV1,
   candidate: Readonly<DysonAutomationState>,
   id: CanonicalFacilityId,
-): boolean {
-  const total = (facilityId: CanonicalFacilityId) =>
-    candidate.facilities[facilityId][0] +
-    candidate.facilities[facilityId][1]
-  switch (id) {
-    case 'assembly_lines':
-      return true
-    case 'ai_managers':
-      return total('assembly_lines') >= 5
-    case 'servers':
-      return total('ai_managers') >= 1
-    case 'data_centers':
-      return total('servers') >= 1
-    case 'planets':
-      return total('data_centers') >= 1
-    case 'matrioshka_brains':
-      return (
-        canonical.quantum.unlocks.matrioshkaBrains &&
-        total('planets') >= 1
-      )
-    case 'birch_planets':
-      return (
-        canonical.quantum.unlocks.birchPlanets &&
-        total('matrioshka_brains') >= 1
-      )
-    case 'galactic_brains':
-      return (
-        canonical.quantum.unlocks.galacticBrains &&
-        total('birch_planets') >= 1
-      )
+): true | 'locked' | 'prerequisite-not-met' {
+  const definition = DYSON_FACILITY_DEFINITIONS[id]
+  if (
+    definition.quantumUnlock !== undefined &&
+    !canonical.quantum.unlocks[definition.quantumUnlock]
+  ) {
+    return 'locked'
   }
-}
-
-function megaUnlocks(state: CanonicalGameStateV1) {
-  return {
-    matrioshkaBrains: state.quantum.unlocks.matrioshkaBrains,
-    birchPlanets: state.quantum.unlocks.birchPlanets,
-    galacticBrains: state.quantum.unlocks.galacticBrains,
-  }
+  const prerequisite = definition.prerequisite
+  if (prerequisite === undefined) return true
+  const pair = candidate.facilities[prerequisite.facilityId]
+  const owned = pair[0] + pair[1]
+  return owned >= prerequisite.owned
+    ? true
+    : definition.group === 'megastructure'
+      ? 'prerequisite-not-met'
+      : 'locked'
 }
 
 function replaceDysonState(

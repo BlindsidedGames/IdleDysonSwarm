@@ -825,25 +825,22 @@ nonzero.
 - TypeScript strict build and lint pass.
 - Architecture test prevents product UI imports from `simulation`, `save`
   implementation modules or internal application facade modules.
-- Unit tests cover formatters, semantic token pairs, responsive selectors,
-  command-envelope construction and presentation-only Tinker gesture state.
-- Catalog tests cover extraction, ICU validity, fallback, pseudo-localization,
-  expansion, plural categories and right-to-left direction.
-- Property/boundary tests cover `bigint`, non-finite display fallbacks, very long
-  localized labels, zero/negative presentation edge cases and revision changes.
+- Retain unit tests where a pure boundary contains meaningful branching or a
+  durable compatibility rule. TypeScript shapes, static catalog contents,
+  pass-through wrappers and private formatting details do not require their own
+  exhaustive suites.
 
 ### Component and integration
 
-- Use Vitest, Testing Library and `user-event` for semantic interaction tests.
-- Use `axe-core` checks for each stable component state.
-- Drive components through a fake unified UI runtime port. It publishes frozen
-  frontend snapshots and records coordinator-backed command and active-time
-  requests without exposing the facade or coordinator directly. Tests assert
-  commands, revisions and coordinator results, not reimplemented economy
-  outcomes.
-- Cover idle, starting, blocked, ready, exclusive-operation, unavailable
-  derivation, route gap, locked, unaffordable, pending, stale, rejected and
-  successful states.
+- Prefer production-boundary and gameplay-flow tests over exhaustive component
+  markup assertions. Add focused semantic interaction coverage when changing a
+  player-visible behavior that is not already protected by a canonical command,
+  application, persistence or packaging contract.
+- Drive any component test through the unified UI runtime port. Assert commands,
+  revisions and coordinator results, not reimplemented economy outcomes.
+- Browser accessibility acceptance remains responsible for representative
+  viewport, keyboard, focus, motion, contrast and overflow evidence. Do not
+  duplicate every stable component state in jsdom.
 - Verify subscription cleanup, one active-time driver and no overlapping
   `advanceActive()` calls under delayed promises.
 - Verify two simultaneous pointer IDs, rapid taps, pointer cancellation, lost

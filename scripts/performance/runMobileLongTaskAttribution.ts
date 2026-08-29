@@ -8,7 +8,7 @@ import {
 } from './chromiumHarness'
 import { importSaveThroughSettings } from './browserFixtureImport'
 import { repositoryRunIdentity } from './reportArtifacts'
-import { loadCheckedInProgressionMatrixFixtures } from '../../test/support/progressionMatrixFixtures'
+import { loadCheckedInProgressionMatrixFixtures } from '../support/progressionMatrixFixtures'
 
 const webRoot = resolve(import.meta.dirname, '..', '..')
 const fixture = loadCheckedInProgressionMatrixFixtures().find((candidate) => candidate.id === 'fresh')

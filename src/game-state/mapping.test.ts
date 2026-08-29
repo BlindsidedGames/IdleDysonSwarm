@@ -10,8 +10,8 @@ import {
   serializeWebSave,
 } from '../save/serialization'
 import {
-  previewCanonicalBasicFacilityPurchase,
-  tryPurchaseCanonicalBasicFacility,
+  previewCanonicalFacilityPurchase,
+  tryPurchaseCanonicalFacility,
 } from '../simulation/canonicalDysonCommands'
 import {
   previewCanonicalResearchPurchase,
@@ -195,11 +195,11 @@ describe('canonical game-state mapping', () => {
     expect(reloaded.state.dyson.money).toBe(Number.MAX_VALUE)
     expect(reloaded.state.dyson.science).toBe(Number.MAX_VALUE)
 
-    const facilityPreview = previewCanonicalBasicFacilityPurchase(
+    const facilityPreview = previewCanonicalFacilityPurchase(
       reloaded.state,
       'assembly_lines',
     )
-    const facilityPurchase = tryPurchaseCanonicalBasicFacility(
+    const facilityPurchase = tryPurchaseCanonicalFacility(
       reloaded.state,
       'assembly_lines',
     )

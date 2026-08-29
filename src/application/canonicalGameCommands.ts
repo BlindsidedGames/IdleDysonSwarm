@@ -33,8 +33,7 @@ import {
 } from '../simulation/canonicalDreamReset'
 import {
   runCanonicalDysonAutomation,
-  tryPurchaseCanonicalBasicFacility,
-  tryPurchaseCanonicalMegaStructure,
+  tryPurchaseCanonicalFacility,
 } from '../simulation/canonicalDysonCommands'
 import {
   purchaseCanonicalInfinityShopItem,
@@ -65,8 +64,6 @@ import {
   purchaseDreamSpaceAge,
   type DreamSpaceAgePurchase,
 } from '../simulation/dreamSpaceAge'
-import type { BasicDysonFacilityId } from '../simulation/dysonFacilities'
-import type { MegaStructureId } from '../simulation/megaStructurePurchases'
 import {
   purchaseQuantumUpgradeBulk,
   type QuantumUpgradeBulkQuantity,
@@ -99,12 +96,8 @@ import type { SimulationAutomationPolicy } from '../simulation/types'
  */
 export type CanonicalGameCommand =
   | {
-      readonly kind: 'dyson.purchase-basic-facility'
-      readonly facilityId: BasicDysonFacilityId
-    }
-  | {
-      readonly kind: 'dyson.purchase-mega-structure'
-      readonly facilityId: MegaStructureId
+      readonly kind: 'dyson.purchase-facility'
+      readonly facilityId: CanonicalFacilityId
     }
   | {
       readonly kind: 'dyson.run-automation'
@@ -320,9 +313,8 @@ export type CanonicalGameCommandCode =
   | `dream-space-age:${string}`
   | `dream-upgrade:${string}`
   | `dyson-automation:${string}`
-  | `dyson-basic:${string}`
+  | `dyson-facility:${string}`
   | `dyson-bot-distribution:${string}`
-  | `dyson-mega:${string}`
   | `dyson-setting:${string}`
   | `infinity-break-target:${string}`
   | `infinity-automatic-reset:${string}`
@@ -498,14 +490,9 @@ export interface CanonicalGameCommandSupport {
 }
 
 export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
-  'dyson.purchase-basic-facility': {
+  'dyson.purchase-facility': {
     supported: true,
-    authority: 'tryPurchaseCanonicalBasicFacility',
-    requires: ['runtime-evaluation-port'],
-  },
-  'dyson.purchase-mega-structure': {
-    supported: true,
-    authority: 'tryPurchaseCanonicalMegaStructure',
+    authority: 'tryPurchaseCanonicalFacility',
     requires: ['runtime-evaluation-port'],
   },
   'dyson.run-automation': {
@@ -818,12 +805,12 @@ export function routeCanonicalGameCommand(
       )
     }
 
-    case 'dyson.purchase-basic-facility': {
+    case 'dyson.purchase-facility': {
       const pricing = options.runtimeEvaluation?.evaluate(
         state,
         carriers.skillEffectEvaluationSnapshot,
       )
-      const result = tryPurchaseCanonicalBasicFacility(
+      const result = tryPurchaseCanonicalFacility(
         state,
         command.facilityId,
         pricing?.accepted === true
@@ -836,7 +823,7 @@ export function routeCanonicalGameCommand(
         return rejectDomain(
           state,
           carriers,
-          `dyson-basic:${result.attempt.status}`,
+          `dyson-facility:${result.attempt.status}`,
           command.kind,
           result.attempt.status,
         )
@@ -845,31 +832,7 @@ export function routeCanonicalGameCommand(
         state,
         result.state,
         true,
-        `dyson-basic:${result.attempt.status}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'dyson.purchase-mega-structure': {
-      const result = tryPurchaseCanonicalMegaStructure(
-        state,
-        command.facilityId,
-      )
-      if (!result.purchased) {
-        return rejectDomain(
-          state,
-          carriers,
-          `dyson-mega:${result.status}`,
-          command.kind,
-          result.status,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        true,
-        `dyson-mega:${result.status}`,
+        `dyson-facility:${result.attempt.status}`,
         carriers,
         options.runtimeEvaluation,
       )

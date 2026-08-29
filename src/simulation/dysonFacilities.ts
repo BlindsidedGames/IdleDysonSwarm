@@ -1,13 +1,9 @@
-export const BASIC_DYSON_FACILITY_IDS = [
-  'assembly_lines',
-  'ai_managers',
-  'servers',
-  'data_centers',
-  'planets',
-] as const
+export {
+  BASIC_DYSON_FACILITY_IDS,
+  type BasicDysonFacilityId,
+} from './dysonFacilityCatalog'
 
-export type BasicDysonFacilityId =
-  (typeof BASIC_DYSON_FACILITY_IDS)[number]
+import type { BasicDysonFacilityId } from './dysonFacilityCatalog'
 
 export type OwnedPair = [automatic: number, manual: number]
 

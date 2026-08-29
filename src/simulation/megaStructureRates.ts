@@ -2,15 +2,14 @@ import { getGameAsset } from '../game-data/catalog'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { multiplyContinuous } from './numeric'
+import {
+  type MegaStructureFacilityId,
+} from './dysonFacilityCatalog'
 
-export const MEGA_STRUCTURE_FACILITY_IDS = [
-  'matrioshka_brains',
-  'birch_planets',
-  'galactic_brains',
-] as const
-
-export type MegaStructureFacilityId =
-  (typeof MEGA_STRUCTURE_FACILITY_IDS)[number]
+export {
+  MEGA_STRUCTURE_FACILITY_IDS,
+  type MegaStructureFacilityId,
+} from './dysonFacilityCatalog'
 
 export interface MegaStructureRates {
   readonly matrioshka_brains: number

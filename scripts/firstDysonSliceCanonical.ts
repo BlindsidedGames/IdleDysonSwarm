@@ -109,7 +109,7 @@ export interface FirstDysonSliceSnapshotFacts {
   readonly visibility: Record<string, unknown>
   readonly tinker: Record<string, unknown>
   readonly commands: Record<string, unknown>
-  readonly basicFacilityPreviews: readonly Record<string, unknown>[]
+  readonly facilityPreviews: readonly Record<string, unknown>[]
 }
 
 /**
@@ -143,7 +143,7 @@ export async function generateFirstDysonSliceFixture(): Promise<FirstDysonSliceF
   const basicFacility = createFrontendCommandEnvelope(
     readFirstSliceFacts(first).revision,
     {
-      kind: 'dyson.purchase-basic-facility',
+      kind: 'dyson.purchase-facility',
       facilityId: 'assembly_lines',
     },
   )
@@ -153,7 +153,7 @@ export async function generateFirstDysonSliceFixture(): Promise<FirstDysonSliceF
   const staleFacility = await firstCoordinator.dispatchPlayer(basicFacility)
   const rejectedFacility = await firstCoordinator.dispatchPlayer(
     createFrontendCommandEnvelope(readFirstSliceFacts(first).revision, {
-      kind: 'dyson.purchase-basic-facility',
+      kind: 'dyson.purchase-facility',
       facilityId: 'servers',
     }),
   )
@@ -292,9 +292,9 @@ function readFirstSliceFacts(
     tinker: snapshot.gameplay.runtime.tinker,
     commands: {
       tinkerStart: snapshot.gameplay.commands.byKind['tinker.start'],
-      basicFacility: snapshot.gameplay.commands.byKind['dyson.purchase-basic-facility'],
+      basicFacility: snapshot.gameplay.commands.byKind['dyson.purchase-facility'],
     },
-    basicFacilityPreviews: snapshot.gameplay.previews.dyson.basicFacilities,
+    facilityPreviews: snapshot.gameplay.previews.dyson.facilities,
   }) as FirstDysonSliceSnapshotFacts
 }
 

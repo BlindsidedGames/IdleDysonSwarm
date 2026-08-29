@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process'
 import {
   loadCheckedInProgressionMatrixFixtures,
   type ProgressionMatrixFixture,
-} from '../../test/support/progressionMatrixFixtures'
+} from '../support/progressionMatrixFixtures'
 import {
   openChromiumPage,
   startProductionPreview,

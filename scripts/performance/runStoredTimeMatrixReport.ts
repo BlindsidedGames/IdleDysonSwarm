@@ -23,12 +23,12 @@ import {
 import type { SimulationPresentationSummary } from '../../src/simulation/types'
 import { StoredTimeSimulation } from '../../src/workers/storedTime/storedTimeSimulation'
 import type { StoredTimeJobProgress } from '../../src/workers/storedTime/storedTimeProtocol'
-import { createDeterministicMatureDysonFixture } from '../../test/support/deterministicMatureDysonFixture'
+import { createDeterministicMatureDysonFixture } from '../support/deterministicMatureDysonFixture'
 import {
   loadCheckedInProgressionMatrixFixtures,
   MAXIMUM_PERSISTED_STORED_TIME_SECONDS,
   type ProgressionMatrixFixture,
-} from '../../test/support/progressionMatrixFixtures'
+} from '../support/progressionMatrixFixtures'
 
 const webRoot = resolve(import.meta.dirname, '..', '..')
 const outputDirectory = resolve(webRoot, 'output', 'performance')

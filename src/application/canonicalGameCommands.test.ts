@@ -99,11 +99,11 @@ function options(
 
 const COMMAND_EXAMPLES = [
   {
-    kind: 'dyson.purchase-basic-facility',
+    kind: 'dyson.purchase-facility',
     facilityId: 'assembly_lines',
   },
   {
-    kind: 'dyson.purchase-mega-structure',
+    kind: 'dyson.purchase-facility',
     facilityId: 'matrioshka_brains',
   },
   { kind: 'dyson.run-automation' },
@@ -322,7 +322,7 @@ describe('canonical game command router', () => {
     const result = routeCanonicalGameCommand(
       original,
       {
-        kind: 'dyson.purchase-mega-structure',
+        kind: 'dyson.purchase-facility',
         facilityId: 'matrioshka_brains',
       },
       {
@@ -334,7 +334,7 @@ describe('canonical game command router', () => {
     expect(result).toMatchObject({
       accepted: true,
       changed: true,
-      code: 'dyson-mega:success',
+      code: 'dyson-facility:success',
     })
     expect(result.state).not.toBe(original)
     expect(result.state.dyson.money).toBeLessThan(
@@ -363,7 +363,7 @@ describe('canonical game command router', () => {
     const result = routeCanonicalGameCommand(
       original,
       {
-        kind: 'dyson.purchase-mega-structure',
+        kind: 'dyson.purchase-facility',
         facilityId: 'matrioshka_brains',
       },
       {
@@ -391,7 +391,7 @@ describe('canonical game command router', () => {
     const result = routeCanonicalGameCommand(
       original,
       {
-        kind: 'dyson.purchase-mega-structure',
+        kind: 'dyson.purchase-facility',
         facilityId: 'galactic_brains',
       },
       options(),
@@ -400,7 +400,7 @@ describe('canonical game command router', () => {
     expect(result).toMatchObject({
       accepted: false,
       changed: false,
-      code: 'dyson-mega:locked',
+      code: 'dyson-facility:locked',
     })
     expect(result.state).toBe(original)
   })
