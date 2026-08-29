@@ -1,5 +1,6 @@
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
   readStringArray,
   readUnityBoolean,
@@ -13,8 +14,6 @@ import {
   deriveManualPurchaseProductionLayer,
 } from './canonicalDysonDerivation'
 import { BASIC_DYSON_FACILITY_IDS } from './dysonFacilities'
-
-const SKILL_KIND = 'GameData.SkillDefinition'
 
 interface SkillDefinition {
   readonly id: string
@@ -741,7 +740,7 @@ export function runCanonicalSkillAutoAssignment(
 
 function loadDefinitions(): ReadonlyMap<string, SkillDefinition> {
   return new Map(
-    getGameAssetsByKind(SKILL_KIND).map((asset) => {
+    getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map((asset) => {
       const definition = parseDefinition(asset)
       return [definition.id, definition]
     }),

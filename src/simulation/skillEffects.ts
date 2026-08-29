@@ -1,4 +1,5 @@
 import { getGameAsset } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import { operationFromUnity, type StatEffect } from './stat'
 
 const SUPPORTED_STATIC_SKILLS = new Set([
@@ -30,7 +31,7 @@ export function staticSkillEffects(
   const effects: StatEffect[] = []
   for (const skillId of ownedSkillIds) {
     requireStaticSkill(skillId)
-    const skill = getGameAsset('GameData.SkillDefinition', skillId)
+    const skill = getGameAsset(SKILL_DEFINITION_ASSET_KIND, skillId)
     if (skill === undefined) {
       throw new Error(`Unknown skill '${skillId}'`)
     }

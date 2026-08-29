@@ -9,6 +9,7 @@ import type {
   SimulationEngineDefinition,
   SimulationTransitionResult,
 } from '../core/contracts'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
   deriveBasicDysonState,
   type DysonEntitlements,
@@ -1357,7 +1358,7 @@ function applyDevelopmentAction(
       for (const [id, skill] of Object.entries(state.skills.byId)) {
         if (!skill.owned) continue
         const definition = context.infinityResetAssetLookup(
-          'GameData.SkillDefinition',
+          SKILL_DEFINITION_ASSET_KIND,
           id,
         )
         const cost = definition?.data.cost

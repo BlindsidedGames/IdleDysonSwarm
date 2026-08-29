@@ -1,4 +1,5 @@
 import { getGameAsset } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import { readStringArray } from '../game-data/runtimeValueGuards'
 import type {
   RuntimeAssetReference,
@@ -80,7 +81,7 @@ export function compileSkillEffectCatalog(
   for (const skillReference of skillReferences) {
     if (skillReference.id === null) continue
     const skillId = skillReference.id
-    const skill = lookup('GameData.SkillDefinition', skillId)
+    const skill = lookup(SKILL_DEFINITION_ASSET_KIND, skillId)
     if (skill === undefined) {
       throw new Error(
         `Exported SkillDatabase references missing skill '${skillId}'.`,

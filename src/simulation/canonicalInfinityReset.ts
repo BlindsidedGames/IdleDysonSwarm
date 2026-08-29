@@ -1,5 +1,6 @@
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
   readStringArray,
   readUnityBoolean,
@@ -25,7 +26,6 @@ import {
 const INT32_MAXIMUM = 2_147_483_647n
 const SKILL_DATABASE_KIND = 'GameData.SkillDatabase'
 const SKILL_DATABASE_ID = 'SkillDatabase'
-const SKILL_DEFINITION_KIND = 'GameData.SkillDefinition'
 
 export interface CanonicalInfinityResetRequest {
   readonly breakInfinity: boolean
@@ -406,7 +406,7 @@ function captureAutoAssignmentRules(
       rules.push(invalidRule(id))
       continue
     }
-    const asset = lookup(SKILL_DEFINITION_KIND, id)
+    const asset = lookup(SKILL_DEFINITION_ASSET_KIND, id)
     if (asset === undefined) {
       issues.push({
         code: 'INFINITY_RESET_SKILL_DEFINITION_MISSING',
@@ -495,7 +495,7 @@ function readSkillRule(
   const exclusiveWithIds = readStringArray(data.exclusiveWithIds)
   const unlock = readSkillUnlock(data)
   if (
-    asset.kind !== SKILL_DEFINITION_KIND ||
+    asset.kind !== SKILL_DEFINITION_ASSET_KIND ||
     asset.id !== id ||
     !isSafeNonNegativeInteger(cost) ||
     cost > 2_147_483_647 ||

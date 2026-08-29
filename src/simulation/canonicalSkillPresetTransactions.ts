@@ -1,4 +1,5 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import { readUnityBoolean } from '../game-data/runtimeValueGuards'
 import type {
   CanonicalGameStateV1,
@@ -11,7 +12,6 @@ import {
 } from '../game-state/skillPresetColors'
 import { normalizeCanonicalBotDistribution } from './botDistribution'
 
-const SKILL_KIND = 'GameData.SkillDefinition'
 const PRESET_FORMAT_VERSION = 1
 
 interface SkillQueueDefinition {
@@ -426,7 +426,7 @@ export function normalizeSkillAssignment(
 
 function loadQueueDefinitions(): ReadonlyMap<string, SkillQueueDefinition> {
   return new Map(
-    getGameAssetsByKind(SKILL_KIND).map((asset) => [
+    getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map((asset) => [
       asset.id,
       Object.freeze({
         required: stringArray(asset.data.requiredSkillIds),
