@@ -16,9 +16,9 @@ import {
   isDiscreteResource,
 } from './numeric'
 import { tryDebitContinuous } from './transactions'
+import { UNITY_INT_MAXIMUM } from './unityNumericLimits'
 
 const REALITY_UPGRADE_LAYER = 1
-const INT_MAXIMUM = 2_147_483_647n
 
 export const REALITY_UPGRADE_IDS = [
   'translation1',
@@ -273,7 +273,7 @@ function loadRealityUpgradeDefinitions(): {
 function parseCost(value: unknown): number | null {
   if (
     !isNonNegativeInteger(value) ||
-    value > Number(INT_MAXIMUM)
+    value > UNITY_INT_MAXIMUM
   ) {
     return null
   }
@@ -358,7 +358,7 @@ function findDefinitionGap(
     typeof definition.cost !== 'number' ||
     !Number.isInteger(definition.cost) ||
     definition.cost <= 0 ||
-    definition.cost > Number(INT_MAXIMUM)
+    definition.cost > UNITY_INT_MAXIMUM
   ) {
     return `invalid_cost:${mapKey}`
   }
