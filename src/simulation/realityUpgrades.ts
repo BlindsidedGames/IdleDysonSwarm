@@ -1,6 +1,4 @@
-import {
-  isFiniteNonNegativeNumber as isSimulationResource,
-} from '../core/finiteNonNegativeNumber'
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { readUnityBoolean } from '../game-data/runtimeValueGuards'
 import {
@@ -10,8 +8,8 @@ import {
 } from '../game-state/types'
 import {
   addDiscrete,
-  DISCRETE_MAXIMUM,
   exactRoundedNonNegativeBigInt,
+  isDiscreteResource,
 } from './numeric'
 import { tryDebitContinuous } from './transactions'
 
@@ -524,19 +522,11 @@ function hasValidPurchaseState(
   definition: RealityUpgradeDefinition,
 ): boolean {
   return (
-    isSimulationResource(state.dream.strangeMatter) &&
+    isFiniteNonNegativeNumber(state.dream.strangeMatter) &&
     (!definition.purchaseEffects.some(
       (effect) => effect.effectType === 2,
     ) ||
-      isDiscrete(state.skills.points))
-  )
-}
-
-function isDiscrete(value: unknown): value is bigint {
-  return (
-    typeof value === 'bigint' &&
-    value >= 0n &&
-    value <= DISCRETE_MAXIMUM
+      isDiscreteResource(state.skills.points))
   )
 }
 

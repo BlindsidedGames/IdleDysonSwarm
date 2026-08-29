@@ -8,6 +8,22 @@ export const DISCRETE_MAXIMUM = 9_223_372_036_854_775_807n
 export const SIMULATION_RESOURCE_MAXIMUM = BigInt(CONTINUOUS_MAXIMUM)
 const DISCRETE_DOUBLE_UPPER_EXCLUSIVE = 9_223_372_036_854_776_000
 
+export function isDiscreteResource(value: unknown): value is bigint {
+  return (
+    typeof value === 'bigint' &&
+    value >= 0n &&
+    value <= DISCRETE_MAXIMUM
+  )
+}
+
+export function isSimulationResource(value: unknown): value is bigint {
+  return (
+    typeof value === 'bigint' &&
+    value >= 0n &&
+    value <= SIMULATION_RESOURCE_MAXIMUM
+  )
+}
+
 export function clampContinuous(value: number): number {
   if (value === Number.POSITIVE_INFINITY) return CONTINUOUS_MAXIMUM
   return isFiniteNonNegativeNumber(value) ? value : 0

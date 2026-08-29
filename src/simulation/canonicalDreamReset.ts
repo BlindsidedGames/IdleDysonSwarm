@@ -1,6 +1,4 @@
-import {
-  isFiniteNonNegativeNumber as isFiniteNonNegative,
-} from '../core/finiteNonNegativeNumber'
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
   CanonicalGameStateV1,
   DreamEducationId,
@@ -24,6 +22,8 @@ import {
   clampContinuous,
   CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
+  isDiscreteResource,
+  isSimulationResource,
 } from './numeric'
 
 export type CanonicalDreamResetCause =
@@ -321,13 +321,13 @@ function validateInputs(
     })
   }
   if (
-    !isDiscrete(state.dream.resetCount) ||
-    !isContinuousResource(state.dream.strangeMatter) ||
-    !isDiscrete(state.dream.disasterStage) ||
+    !isDiscreteResource(state.dream.resetCount) ||
+    !isFiniteNonNegativeNumber(state.dream.strangeMatter) ||
+    !isDiscreteResource(state.dream.disasterStage) ||
     !isSimulationResource(state.dream.resources.swarmPanels) ||
-    !isFiniteNonNegative(state.dream.resources.cities) ||
-    !isFiniteNonNegative(state.dream.resources.bots) ||
-    !isFiniteNonNegative(state.dream.resources.spaceFactories)
+    !isFiniteNonNegativeNumber(state.dream.resources.cities) ||
+    !isFiniteNonNegativeNumber(state.dream.resources.bots) ||
+    !isFiniteNonNegativeNumber(state.dream.resources.spaceFactories)
   ) {
     issues.push({
       code: 'DREAM_RESET_STATE_INVALID',
@@ -624,26 +624,6 @@ function isCause(value: unknown): value is CanonicalDreamResetCause {
     value === 'ArtificialIntelligence' ||
     value === 'GlobalWarming' ||
     value === 'BlackHole'
-  )
-}
-
-function isDiscrete(value: unknown): value is bigint {
-  return (
-    typeof value === 'bigint' &&
-    value >= 0n &&
-    value <= DISCRETE_MAXIMUM
-  )
-}
-
-function isContinuousResource(value: unknown): value is number {
-  return isFiniteNonNegative(value)
-}
-
-function isSimulationResource(value: unknown): value is bigint {
-  return (
-    typeof value === 'bigint' &&
-    value >= 0n &&
-    value <= BigInt(CONTINUOUS_MAXIMUM)
   )
 }
 
