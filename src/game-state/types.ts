@@ -1,18 +1,11 @@
 import type { BuyMode } from '../simulation/transactions'
+import type { CanonicalFacilityId } from './facilityIds'
 import type { SkillPresetColorId } from './skillPresetColors'
 import type { NavigationRouteDiscovery } from './navigationPreferences'
 
-export const CANONICAL_GAME_MODEL_VERSION = 1 as const
+export type { CanonicalFacilityId } from './facilityIds'
 
-export type CanonicalFacilityId =
-  | 'assembly_lines'
-  | 'ai_managers'
-  | 'servers'
-  | 'data_centers'
-  | 'planets'
-  | 'matrioshka_brains'
-  | 'birch_planets'
-  | 'galactic_brains'
+export const CANONICAL_GAME_MODEL_VERSION = 1 as const
 
 export type CanonicalOwnedPair = readonly [
   automatic: number,
