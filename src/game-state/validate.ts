@@ -1,4 +1,7 @@
-import type { CanonicalGameStateV1 } from './types'
+import {
+  isStoredTimeAccuracyPreset,
+  type CanonicalGameStateV1,
+} from './types'
 import { isSkillPresetColorId } from './skillPresetColors'
 import { isDiscoverableNavigationDestinationId } from './navigationPreferences'
 
@@ -88,7 +91,7 @@ export function validateCanonicalGameState(
     errors.push('Game processing interval must be an integer from 33 to 200 milliseconds.')
   }
   if (
-    !['fast', 'balanced', 'accurate'].includes(
+    !isStoredTimeAccuracyPreset(
       state.timeline.processing.storedTimePreset,
     )
   ) {

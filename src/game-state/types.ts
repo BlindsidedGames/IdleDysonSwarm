@@ -224,7 +224,25 @@ export interface TimelineState {
   }
 }
 
-export type StoredTimeAccuracyPreset = 'fast' | 'balanced' | 'accurate'
+export const STORED_TIME_ACCURACY_PRESETS = [
+  'fast',
+  'balanced',
+  'accurate',
+] as const
+
+export type StoredTimeAccuracyPreset =
+  (typeof STORED_TIME_ACCURACY_PRESETS)[number]
+
+export function isStoredTimeAccuracyPreset(
+  value: unknown,
+): value is StoredTimeAccuracyPreset {
+  return (
+    typeof value === 'string' &&
+    (STORED_TIME_ACCURACY_PRESETS as readonly string[]).includes(
+      value,
+    )
+  )
+}
 
 export interface SecretProgressState {
   readonly completed: boolean

@@ -26,6 +26,10 @@ import {
   GameStateSessionV1,
   hydrateGameState,
 } from './mapping'
+import {
+  isStoredTimeAccuracyPreset,
+  STORED_TIME_ACCURACY_PRESETS,
+} from './types'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
@@ -34,6 +38,20 @@ function loadFixture(name: string): string {
 }
 
 describe('canonical game-state mapping', () => {
+  test('keeps Stored Time accuracy identities in save and UI order', () => {
+    expect(STORED_TIME_ACCURACY_PRESETS).toEqual([
+      'fast',
+      'balanced',
+      'accurate',
+    ])
+    expect(
+      STORED_TIME_ACCURACY_PRESETS.every(
+        isStoredTimeAccuracyPreset,
+      ),
+    ).toBe(true)
+    expect(isStoredTimeAccuracyPreset('precise')).toBe(false)
+  })
+
   test.each(parityCases)(
     'round-trips the owned $name slice and preserves unowned state',
     ({ fixture, sourceSchema }) => {

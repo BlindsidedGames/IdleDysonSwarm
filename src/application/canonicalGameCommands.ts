@@ -3,15 +3,16 @@ import { formatUnknownError as errorDetail } from '../core/unknownError'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
-import type {
-  CanonicalFacilityId,
-  CanonicalGameStateV1,
-  CanonicalSkillPresetAutomationSlot,
-  CanonicalSkillPresetSlot,
-  DreamEducationId,
-  DreamUpgradeFlag,
+import {
+  isStoredTimeAccuracyPreset,
+  type CanonicalFacilityId,
+  type CanonicalGameStateV1,
+  type CanonicalSkillPresetAutomationSlot,
+  type CanonicalSkillPresetSlot,
+  type DreamEducationId,
+  type DreamUpgradeFlag,
+  type StoredTimeAccuracyPreset,
 } from '../game-state/types'
-import type { StoredTimeAccuracyPreset } from '../game-state/types'
 import type {
   BottomNavigationDestinationId,
   DiscoverableNavigationDestinationId,
@@ -2411,7 +2412,7 @@ export function routeCanonicalGameCommand(
     }
 
     case 'time.set-stored-time-preset': {
-      if (!['fast', 'balanced', 'accurate'].includes(command.preset)) {
+      if (!isStoredTimeAccuracyPreset(command.preset)) {
         return rejectDomain(
           state,
           carriers,

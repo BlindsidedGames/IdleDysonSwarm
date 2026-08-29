@@ -25,7 +25,10 @@ import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { offlineTimeMessages as messages } from './messages'
 import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
-import type { StoredTimeAccuracyPreset } from '../../../game-state/types'
+import {
+  STORED_TIME_ACCURACY_PRESETS,
+  type StoredTimeAccuracyPreset,
+} from '../../../game-state/types'
 import { basicFacilityMessages } from '../facilities/messages'
 import './offlineTime.css'
 
@@ -517,9 +520,11 @@ export function OfflineTimeSurface({
                   preset: event.currentTarget.value as StoredTimeAccuracyPreset,
                 })}
               >
-                <option value="fast">{intl.formatMessage(messages.fastPreset)}</option>
-                <option value="balanced">{intl.formatMessage(messages.balancedPreset)}</option>
-                <option value="accurate">{intl.formatMessage(messages.accuratePreset)}</option>
+                {STORED_TIME_ACCURACY_PRESETS.map((preset) => (
+                  <option key={preset} value={preset}>
+                    {intl.formatMessage(presetMessage(preset))}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

@@ -13,6 +13,7 @@ import { CONTINUOUS_MAXIMUM, SIMULATION_RESOURCE_MAXIMUM } from '../simulation/n
 import {
   CANONICAL_GAME_MODEL_VERSION,
   DREAM_UPGRADE_FLAGS,
+  isStoredTimeAccuracyPreset,
   type CanonicalFacilityId,
   type CanonicalGameStateV1,
   type CanonicalOwnedPair,
@@ -482,11 +483,11 @@ export function hydrateGameState(
             ),
           ),
         ),
-        storedTimePreset:
-          source.processingStoredTimePreset === 'fast' ||
-          source.processingStoredTimePreset === 'accurate'
-            ? source.processingStoredTimePreset
-            : 'balanced',
+        storedTimePreset: isStoredTimeAccuracyPreset(
+          source.processingStoredTimePreset,
+        )
+          ? source.processingStoredTimePreset
+          : 'balanced',
       },
       doubleTime: {
         unlocked: toBoolean(dreamProgression.doubleTimeOwned),
