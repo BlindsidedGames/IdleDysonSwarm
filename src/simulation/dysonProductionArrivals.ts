@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
@@ -77,7 +78,7 @@ export function applyDysonProductionArrivals(
   rates: Readonly<DysonProductionArrivalRates>,
   seconds: number,
 ): CanonicalGameStateV1 {
-  if (!Number.isFinite(seconds) || seconds < 0) {
+  if (!isFiniteNonNegativeNumber(seconds)) {
     throw new Error(
       'Dyson production arrivals require finite non-negative seconds.',
     )

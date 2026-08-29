@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { clampPreBreakInfinityBots } from './infinityCycle'
 import { addContinuous, multiplyContinuous } from './numeric'
@@ -234,7 +235,7 @@ export function advanceCanonicalTinker(
   stats: Readonly<CanonicalTinkerStats>,
   seconds: number,
 ): CanonicalTinkerAdvanceResult {
-  if (!Number.isFinite(seconds) || seconds < 0) {
+  if (!isFiniteNonNegativeNumber(seconds)) {
     throw new RangeError('Tinker advance seconds must be finite and non-negative.')
   }
   const startingBots = state.dyson.bots

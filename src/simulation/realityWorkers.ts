@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import type {
   CanonicalGameStateV1,
@@ -73,7 +74,7 @@ export function advanceRealityWorkers(
   tuning: Readonly<RealityWorkerTuning> | null | undefined =
     readRealityWorkerTuning(),
 ): RealityWorkerAdvanceResult {
-  if (!Number.isFinite(seconds) || seconds < 0) {
+  if (!isFiniteNonNegativeNumber(seconds)) {
     return emptyAdvance('invalid-input', state)
   }
   if (!isValidTuning(tuning)) {

@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { SimulationTransitionResult } from '../core/contracts'
 import type { DysonEntitlements } from '../simulation/canonicalDysonDerivation'
 import type { LifecycleAdapter, LifecyclePhase } from '../platform/contracts'
@@ -478,7 +479,7 @@ export class CanonicalLifecycleCoordinator {
     milliseconds: number,
     mode: 'ordinary' | 'continuous' = 'ordinary',
   ): Promise<CanonicalCoordinatedActiveResult> {
-    if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    if (!isFiniteNonNegativeNumber(milliseconds)) {
       const transition = rejectedTransition(
         this.application.snapshot(),
         'CANONICAL-ACTIVE-TIME-INVALID',

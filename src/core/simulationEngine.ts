@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from './finiteNonNegativeNumber'
 import type {
   CommandEnvelope,
   DeepReadonly,
@@ -99,7 +100,7 @@ export class TransactionalSimulationEngine<TState, TCommand>
   }
 
   stageAdvance(milliseconds: number): SimulationStageResult<TState> {
-    if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    if (!isFiniteNonNegativeNumber(milliseconds)) {
       return this.rejected(
         'SIM-INVALID-DURATION',
         'Advance duration must be finite and non-negative.',

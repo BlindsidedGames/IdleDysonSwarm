@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
   DeepReadonly,
   DomainTransition,
@@ -1663,7 +1664,7 @@ function advanceActive(
   minimumCycleSeconds: number,
   onAdvance?: CanonicalGameEngineOptions['onActiveAdvance'],
 ): DomainTransition {
-  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+  if (!isFiniteNonNegativeNumber(milliseconds)) {
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }
@@ -1695,7 +1696,7 @@ function advanceActiveContinuous(
   minimumCycleSeconds: number,
   onAdvance?: CanonicalGameEngineOptions['onActiveAdvance'],
 ): DomainTransition {
-  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+  if (!isFiniteNonNegativeNumber(milliseconds)) {
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }

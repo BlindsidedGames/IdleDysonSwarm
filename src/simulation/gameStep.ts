@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalEventTimeContext } from './canonicalEventTimeModel'
 import {
   CanonicalEventTimeModel,
@@ -38,7 +39,7 @@ export function advanceGame(
   context: Readonly<CanonicalEventTimeContext>,
   infinityMinimumCycleSeconds: number,
 ): GameStepResult {
-  if (!Number.isFinite(input.baseSeconds) || input.baseSeconds < 0) {
+  if (!isFiniteNonNegativeNumber(input.baseSeconds)) {
     throw new RangeError('Game-step base seconds must be finite and non-negative.')
   }
   const gameSpeed = state.gameState.timeline.doubleTime.unlocked ? 2 : 1
