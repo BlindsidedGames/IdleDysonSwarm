@@ -23,26 +23,26 @@ linked; this handoff provides the map and the operational context.
 
 ### Source and deployment snapshot
 
-- Latest mobile release source: `1caf56d5961f31344570470cd91f23beff9ce2cb`
-  (`Align Electron 4.1.5 release contract`). Release `2026082901` was built
+- Latest mobile release source: `75258071bf793abae444b2ad3c4e4d4f8ed1a8db`
+  (`Prepare 2026082902 mobile release`). Release `2026082902` was built
   from that exact commit with
   marketing version `4.1.5`.
-- This release includes the app-wide interface and Simulation/Reality
-  progression work from PR #133 and the 4.1.5 patch notes from PR #134. It
-  retains the uncapped Stored Time and Simulation-resource behavior from
-  PR #131. Read `contracts/game-processing-and-offline-time-contract.md` and
-  `contracts/canonical-dream-contract.md` before touching those limits.
-- Release `2026082901` was validated with 203 test files / 2,155 tests, lint,
+- This release adds the first-Infinity progression and presentation polish
+  from PR #135 on top of the app-wide interface and Simulation/Reality work
+  from PR #133 and the 4.1.5 patch notes from PR #134. Read
+  `docs/product/first-infinity-and-secret-research-contract.md` before changing
+  the pre-Break bot cap or secret Research behavior.
+- Release `2026082902` was validated with 203 test files / 2,162 tests, lint,
   localization checks, Web production build, Electron boundary checks,
   signed Android build, and iOS synchronization.
 - Its retained Android artifact is
-  `output/local-release/2026082901/android/idle-dyson-swarm-2026082901.aab`
+  `output/local-release/2026082902/android/idle-dyson-swarm-2026082902.aab`
   with SHA-256
-  `e65ac240d66a8178aef9f865818202796f7915b9ed95c0b7d9e184ae1f7dff37`.
+  `01540b46bd7a0376a93dc6b8b3a29ccb1ed700cb45d8b6468da2cee2e6308f49`.
   Its retained iOS archive is
-  `output/local-release/2026082901/ios/App-2026082901.xcarchive`.
-- Android `4.1.5 (2026082901)` was confirmed **Available to internal testers**.
-- iOS `4.1.5 (2608.29.01)` was archived and accepted by App Store Connect;
+  `output/local-release/2026082902/ios/App-2026082902.xcarchive`.
+- Android `4.1.5 (2026082902)` was confirmed **Available to internal testers**.
+- iOS `4.1.5 (2608.29.02)` was archived and accepted by App Store Connect;
   the last observed state in that deployment was **uploaded and processing**.
   Do not claim current TestFlight availability without checking App Store
   Connect again.
