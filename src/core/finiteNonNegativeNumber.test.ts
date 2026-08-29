@@ -1,5 +1,8 @@
 import { describe, expect, test } from 'vitest'
-import { isFiniteNonNegativeNumber } from './finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from './finiteNonNegativeNumber'
 
 describe('finite non-negative number guard', () => {
   test.each([
@@ -15,5 +18,22 @@ describe('finite non-negative number guard', () => {
     [null, false],
   ])('classifies %o as %s', (source, expected) => {
     expect(isFiniteNonNegativeNumber(source)).toBe(expected)
+  })
+})
+
+describe('finite positive number guard', () => {
+  test.each([
+    [Number.MIN_VALUE, true],
+    [0.5, true],
+    [Number.MAX_VALUE, true],
+    [0, false],
+    [-1, false],
+    [Number.NaN, false],
+    [Number.POSITIVE_INFINITY, false],
+    [0n, false],
+    ['1', false],
+    [null, false],
+  ])('classifies %o as %s', (source, expected) => {
+    expect(isFinitePositiveNumber(source)).toBe(expected)
   })
 })

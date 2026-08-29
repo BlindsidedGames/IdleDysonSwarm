@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import type {
   DeepReadonly,
   DomainTransition,
@@ -587,7 +590,7 @@ export class CanonicalGameApplicationFacade {
       )
     }
     const bank = before.state.gameState.timeline.storedTimeAvailableSeconds
-    if (!Number.isFinite(seconds) || seconds <= 0 || seconds > bank) {
+    if (!isFinitePositiveNumber(seconds) || seconds > bank) {
       return rejectedStoredTimeCommit(
         before,
         seconds,
@@ -1743,8 +1746,7 @@ function advanceStoredTime(
 ): DomainTransition {
   const bank = candidate.gameState.timeline.storedTimeAvailableSeconds
   if (
-    !Number.isFinite(requestedSeconds) ||
-    requestedSeconds <= 0 ||
+    !isFinitePositiveNumber(requestedSeconds) ||
     requestedSeconds > bank
   ) {
     return reject(

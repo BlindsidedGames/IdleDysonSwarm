@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { formatUnknownError as errorDetail } from '../core/unknownError'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
@@ -2373,8 +2374,7 @@ export function routeCanonicalGameCommand(
 
     case 'time.request-stored-time-spend': {
       if (
-        !Number.isFinite(command.requestedSeconds) ||
-        command.requestedSeconds <= 0
+        !isFinitePositiveNumber(command.requestedSeconds)
       ) {
         return rejectDomain(
           state,
@@ -2386,7 +2386,7 @@ export function routeCanonicalGameCommand(
       }
       const available =
         state.timeline.storedTimeAvailableSeconds
-      if (!Number.isFinite(available) || available <= 0) {
+      if (!isFinitePositiveNumber(available)) {
         return rejectDomain(
           state,
           carriers,

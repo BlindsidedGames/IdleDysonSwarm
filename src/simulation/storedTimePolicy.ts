@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import type { StoredTimeAccuracyPreset } from '../game-state/types'
 
 export const STORED_TIME_NOMINAL_STEP_SECONDS = 0.05
@@ -21,7 +22,7 @@ export function planStoredTimePolicy(request: {
   readonly requestedSeconds: number
   readonly preset: StoredTimeAccuracyPreset
 }): Readonly<StoredTimePolicyPlan> {
-  if (!Number.isFinite(request.requestedSeconds) || request.requestedSeconds <= 0) {
+  if (!isFinitePositiveNumber(request.requestedSeconds)) {
     throw new RangeError('Stored Time duration must be finite and positive.')
   }
   const maximumTicks = STORED_TIME_PRESET_MAXIMUM_TICKS[request.preset]

@@ -4,3 +4,8 @@ export function isFiniteNonNegativeNumber(
 ): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0
 }
+
+/** Narrows values to finite numbers greater than zero. */
+export function isFinitePositiveNumber(value: unknown): value is number {
+  return isFiniteNonNegativeNumber(value) && value > 0
+}
