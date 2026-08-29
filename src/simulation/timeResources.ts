@@ -1,4 +1,5 @@
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import { addContinuous } from './numeric'
 
 export const DEFAULT_STORED_TIME_CAPACITY_SECONDS = 86_400
 export const STORED_TIME_MAXIMUM_SECONDS = Number.MAX_VALUE
@@ -237,17 +238,4 @@ function assertFiniteTimestamp(value: number, field: string): void {
   if (!Number.isFinite(value)) {
     throw new RangeError(`${field} must be finite.`)
   }
-}
-
-function addContinuous(left: number, right: number): number {
-  if (
-    !Number.isFinite(left) ||
-    !Number.isFinite(right) ||
-    left < 0 ||
-    right < 0
-  ) {
-    return 0
-  }
-  const result = left + right
-  return result === Number.POSITIVE_INFINITY ? Number.MAX_VALUE : result
 }
