@@ -15,6 +15,10 @@ import type {
   BrowserUiRuntimeFoundation,
 } from '../ui/runtime'
 import {
+  isLifecyclePhase,
+  LIFECYCLE_PHASES,
+} from './contracts'
+import {
   CapacitorNativeHostBridge,
   createNativeHostEnvironment,
   type CapacitorNativeHostPlugin,
@@ -30,6 +34,18 @@ import {
 } from '../simulation/lifecycleAwayTime'
 
 describe('native host bootstrap boundary', () => {
+  test('recognizes only canonical lifecycle phases', () => {
+    expect(LIFECYCLE_PHASES).toEqual([
+      'active',
+      'background',
+      'focus-lost',
+      'terminating',
+    ])
+    expect(LIFECYCLE_PHASES.every(isLifecyclePhase)).toBe(true)
+    expect(isLifecyclePhase('suspended')).toBe(false)
+    expect(isLifecyclePhase(null)).toBe(false)
+  })
+
   test('remains conservatively backgrounded past the bootstrap timeout until reconciliation proves active', async () => {
     vi.useFakeTimers()
     const currentLifecycle = deferred<{ phase: 'active' }>()
