@@ -1,8 +1,8 @@
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
-  SimulationTotalsState,
 } from '../game-state/types'
+import { createEmptySimulationTotals } from './canonicalStatistics'
 import {
   applyCanonicalInfinityReset,
   type CanonicalInfinityResetAssetLookup,
@@ -226,8 +226,8 @@ export function applyCanonicalQuantumReset(
         trackingStartedMarker: state.statistics.trackedSinceUpdate
           ? state.statistics.trackingStartedMarker
           : 'tracked-since-update',
-        currentQuantumRun: emptyStatisticsTotals(),
-        recentProcessedSegment: emptyStatisticsTotals(),
+        currentQuantumRun: createEmptySimulationTotals(),
+        recentProcessedSegment: createEmptySimulationTotals(),
         recentActiveAutomaticInfinityCycles: [],
       },
     },
@@ -250,25 +250,4 @@ function withQuantumResetTimerEntries(
     }
   }
   return byId
-}
-
-function emptyStatisticsTotals(): SimulationTotalsState {
-  return {
-    ordinaryInfinityCount: 0n,
-    breakInfinityCount: 0n,
-    ordinaryInfinityPoints: 0n,
-    breakInfinityPoints: 0n,
-    botCapInfinityPoints: 0n,
-    botCapOverflowRewards: 0n,
-    meteorDreamResets: 0n,
-    aiDreamResets: 0n,
-    globalWarmingDreamResets: 0n,
-    blackHoleDreamResets: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-    automaticInfluence: 0,
-    manualInfluence: 0,
-    realityCapacityStallSeconds: 0,
-    simulatedSeconds: 0,
-  }
 }

@@ -79,11 +79,12 @@ import {
   type CanonicalTinkerRuntimeState,
 } from './canonicalTinker'
 import { withCanonicalBotAllocation } from './canonicalBotAllocation'
-import type {
-  EventTimeSimulationModel,
-  SimulationAutomationPolicy,
-  SimulationPresentationSummary,
-  SimulationQueuedInput,
+import {
+  createSimulationSummary,
+  type EventTimeSimulationModel,
+  type SimulationAutomationPolicy,
+  type SimulationPresentationSummary,
+  type SimulationQueuedInput,
 } from './types'
 
 export const CANONICAL_QUANTUM_LEAP_INPUT = 'quantum-leap'
@@ -573,7 +574,7 @@ export class CanonicalEventTimeModel
         return
       }
       candidate = education.candidate
-      let intervalSummary = emptySummary()
+      let intervalSummary = createSimulationSummary()
       const reality = advanceRealityWorkers(
         candidate,
         seconds,
@@ -705,7 +706,7 @@ export class CanonicalEventTimeModel
       }
       pending = {
         seconds: 0,
-        summary: emptySummary(),
+        summary: createSimulationSummary(),
       }
       this.pendingInterval = pending
       return
@@ -747,7 +748,7 @@ export class CanonicalEventTimeModel
       this.carrier.gameState.statistics,
     )
     this.replaceGameState(deferredState)
-    const event = emptySummary()
+    const event = createSimulationSummary()
     event.strangeMatter = result.rewardGranted
     if (result.cause === 'Meteor') event.meteorDreamResets = 1n
     if (result.cause === 'ArtificialIntelligence') {
@@ -922,7 +923,7 @@ export class CanonicalEventTimeModel
     if (!this.publishEvaluationSnapshot(
       'infinity.evaluationSnapshot',
     )) return
-    const event = emptySummary()
+    const event = createSimulationSummary()
     if (evaluation.breakInfinity) {
       event.breakInfinityCount = 1n
       event.breakInfinityPoints = result.rewardGranted
@@ -1876,30 +1877,10 @@ function createIntervalSummary(
   realityCapacityStallSeconds: number,
 ): SimulationPresentationSummary {
   return {
-    ...emptySummary(),
+    ...createSimulationSummary(),
     realityWorkers,
     automaticInfluence,
     realityCapacityStallSeconds,
-  }
-}
-
-function emptySummary(): SimulationPresentationSummary {
-  return {
-    ordinaryInfinityCount: 0n,
-    breakInfinityCount: 0n,
-    ordinaryInfinityPoints: 0n,
-    breakInfinityPoints: 0n,
-    botCapInfinityPoints: 0n,
-    botCapOverflowRewards: 0n,
-    meteorDreamResets: 0n,
-    aiDreamResets: 0n,
-    globalWarmingDreamResets: 0n,
-    blackHoleDreamResets: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-    automaticInfluence: 0,
-    manualInfluence: 0,
-    realityCapacityStallSeconds: 0,
   }
 }
 
