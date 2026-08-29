@@ -1,3 +1,6 @@
+export const FACILITY_DEFINITION_ASSET_KIND =
+  'GameData.FacilityDefinition' as const
+
 export const SKILL_DEFINITION_ASSET_KIND =
   'GameData.SkillDefinition' as const
 

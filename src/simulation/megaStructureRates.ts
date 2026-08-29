@@ -1,6 +1,7 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import { getGameAsset } from '../game-data/catalog'
+import { FACILITY_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { multiplyContinuous } from './numeric'
@@ -104,7 +105,6 @@ interface MegaStructureSpec {
     | 'birch_planets'
 }
 
-const FACILITY_KIND = 'GameData.FacilityDefinition'
 const UNITY_MULTIPLIER_EPSILON = 1e-12
 
 const MEGA_STRUCTURE_SPECS: readonly MegaStructureSpec[] = [
@@ -257,7 +257,7 @@ function readLegacyBaseProduction(
   lookup: MegaStructureAssetLookup,
   issues: MegaStructureRateIssue[],
 ): number | undefined {
-  const asset = lookup(FACILITY_KIND, spec.id)
+  const asset = lookup(FACILITY_DEFINITION_ASSET_KIND, spec.id)
   const path = `gameData.facilities.${spec.id}`
   if (asset === undefined) {
     issues.push({
@@ -272,7 +272,7 @@ function readLegacyBaseProduction(
     ? asset.data._id.id
     : undefined
   if (
-    asset.kind !== FACILITY_KIND ||
+    asset.kind !== FACILITY_DEFINITION_ASSET_KIND ||
     asset.id !== spec.id ||
     internalId !== spec.id ||
     asset.data.baseProduction !== spec.baseProduction ||

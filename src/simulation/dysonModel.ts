@@ -1,5 +1,6 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import { FACILITY_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
   addContinuous,
   addDiscrete,
@@ -163,7 +164,7 @@ function effectiveCount(pair: OwnedPair): number {
 }
 
 function legacyBaseProduction(id: BasicDysonFacilityId): number {
-  const asset = getGameAsset('GameData.FacilityDefinition', id)
+  const asset = getGameAsset(FACILITY_DEFINITION_ASSET_KIND, id)
   const value = asset?.data.baseProduction
   if (!isFiniteNonNegativeNumber(value)) {
     throw new Error(`Facility '${id}' has no valid baseProduction`)
@@ -184,7 +185,7 @@ export function calculateBasicDysonFacilityRate(
   state: Readonly<BasicDysonState>,
   id: BasicDysonFacilityId,
 ): Readonly<BasicDysonFacilityRateCalculation> {
-  const asset = getGameAsset('GameData.FacilityDefinition', id)
+  const asset = getGameAsset(FACILITY_DEFINITION_ASSET_KIND, id)
   const productionStatId = asset?.data.productionStatId
   if (typeof productionStatId !== 'string') {
     throw new Error(`Facility '${id}' has no productionStatId`)

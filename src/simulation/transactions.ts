@@ -1,4 +1,5 @@
 import { getGameAsset } from '../game-data/catalog'
+import { FACILITY_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
@@ -261,7 +262,7 @@ export function tryPurchaseBasicFacility(
   facilityId: BasicDysonFacilityId,
   policy: SimulationAutomationPolicy,
 ): FacilityPurchaseResult {
-  const definition = getGameAsset('GameData.FacilityDefinition', facilityId)
+  const definition = getGameAsset(FACILITY_DEFINITION_ASSET_KIND, facilityId)
   const baseCost = definition?.data.baseCost
   const exponent = definition?.data.costExponent
   if (

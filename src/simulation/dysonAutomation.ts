@@ -1,5 +1,6 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import { FACILITY_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import type { CanonicalFacilityId } from '../game-state/types'
 import {
   DYSON_FACILITY_IDS,
@@ -496,7 +497,7 @@ function lookupFacilityDefinition(
   facilityId: CanonicalFacilityId,
 ): ReturnType<DysonFacilityDefinitionLookup> {
   const definition = getGameAsset(
-    'GameData.FacilityDefinition',
+    FACILITY_DEFINITION_ASSET_KIND,
     facilityId,
   )
   if (definition === undefined) return undefined
