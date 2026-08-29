@@ -5,9 +5,12 @@ import type {
   CanonicalLifecycleClock,
 } from '../application/canonicalLifecycleCoordinator'
 import {
-  createUnityFirstRunPreparedSave,
   unityFirstRunProvenance,
 } from '../application/firstRun/unityFirstRunSave'
+import {
+  createProductionUnityFirstRunSaveFactory,
+  createUnityFirstRunResetRequest,
+} from '../application/firstRun/productionFirstRun'
 import {
   BrowserLifecycleUtcClock,
   BrowserMonotonicClock,
@@ -24,7 +27,6 @@ import {
 import {
   asAutomaticUnityPurchaseEvidencePromoter,
 } from '../save/automaticPurchaseEvidence'
-import { serializeWebSave } from '../save/serialization'
 import {
   MOBILE_LIFECYCLE_POLICY,
   WEB_LIFECYCLE_POLICY,
@@ -96,11 +98,8 @@ export function createProductionNativeComposition(
         environment.files,
         environment.migration,
       )
-  const createFirstRunSave = () =>
-    createUnityFirstRunPreparedSave({
-      startedAtUtc:
-        lifecycleClock.sample().serializedUtcText,
-    })
+  const createFirstRunSave =
+    createProductionUnityFirstRunSaveFactory(lifecycleClock)
   const createApplication =
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
@@ -172,18 +171,9 @@ export function createProductionNativeComposition(
     saveSchemaVersion: unityFirstRunProvenance.saveSchema,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
-    resetSave: () => {
-      const importedAtUtc =
-        lifecycleClock.sample().serializedUtcText
-      return runtime.importSave({
-        source: 'paste',
-        text: serializeWebSave(
-          createFirstRunSave().copyValidatedState(),
-        ),
-        importedAtUtc,
-        overwriteApproved: true,
-      })
-    },
+    resetSave: () => runtime.importSave(
+      createUnityFirstRunResetRequest(lifecycleClock, createFirstRunSave),
+    ),
     prepareForSafeReload,
     reloadSafely: async () => {
       await prepareForSafeReload()

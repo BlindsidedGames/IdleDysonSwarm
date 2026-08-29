@@ -5,8 +5,9 @@ import type {
   CanonicalLifecycleClock,
 } from '../application/canonicalLifecycleCoordinator'
 import {
-  createUnityFirstRunPreparedSave,
-} from '../application/firstRun/unityFirstRunSave'
+  createProductionUnityFirstRunSaveFactory,
+  createUnityFirstRunResetRequest,
+} from '../application/firstRun/productionFirstRun'
 import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
 import {
   BrowserLifecycleUtcClock,
@@ -43,7 +44,6 @@ export {
   PRODUCTION_BROWSER_SAVE_PATHS,
 } from './productionBrowserStorage'
 import { RuntimeEntitlementBridge } from '../store/runtimeEntitlements'
-import { serializeWebSave } from '../save/serialization'
 import type {
   DysonPresentationTuning,
 } from '../simulation/canonicalDysonDerivation'
@@ -115,11 +115,8 @@ export function createProductionBrowserComposition(
         options.releasePlatformServices.entitlements,
         options.releasePlatformServices.doubleInfinityPointsEffect,
       )
-  const createFirstRunSave = () =>
-    createUnityFirstRunPreparedSave({
-      startedAtUtc:
-        lifecycleClock.sample().serializedUtcText,
-    })
+  const createFirstRunSave =
+    createProductionUnityFirstRunSaveFactory(lifecycleClock)
   const createApplication =
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
@@ -199,19 +196,9 @@ export function createProductionBrowserComposition(
     saveSchemaVersion: CURRENT_SAVE_SCHEMA,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
-    resetSave: () => {
-      const importedAtUtc =
-        lifecycleClock.sample().serializedUtcText
-      const firstRun = createFirstRunSave()
-      return runtime.importSave({
-        source: 'paste',
-        text: serializeWebSave(
-          firstRun.copyValidatedState(),
-        ),
-        importedAtUtc,
-        overwriteApproved: true,
-      })
-    },
+    resetSave: () => runtime.importSave(
+      createUnityFirstRunResetRequest(lifecycleClock, createFirstRunSave),
+    ),
     prepareForUpdateActivation,
     prepareForSafeReload,
     reloadSafely: async () => {
