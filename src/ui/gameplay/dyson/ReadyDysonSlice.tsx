@@ -54,6 +54,10 @@ import {
   reportDevelopmentTelemetry,
   startDevelopmentTelemetry,
 } from '../../runtime/developmentTelemetry'
+import {
+  readBooleanPresentationPreference,
+  writeBooleanPresentationPreference,
+} from '../../presentationPreferences'
 import type { SettingsSurfaceProps } from '../settings'
 import type { DebugSurfaceDraft } from '../debug'
 import type { OfflineTimeSurfaceDraft } from '../offline-time'
@@ -587,10 +591,15 @@ export function ReadyDysonSlice({
   const [quantumPurchaseQuantity, setQuantumPurchaseQuantity] =
     useState<QuantumPurchaseQuantity>(1)
   const [quantumHideMaxed, setQuantumHideMaxed] =
-    useState(readQuantumHideMaxedPreference)
+    useState(() =>
+      readBooleanPresentationPreference(QUANTUM_HIDE_MAXED_STORAGE_KEY),
+    )
   const updateQuantumHideMaxed = useCallback((hideMaxed: boolean) => {
     setQuantumHideMaxed(hideMaxed)
-    writeQuantumHideMaxedPreference(hideMaxed)
+    writeBooleanPresentationPreference(
+      QUANTUM_HIDE_MAXED_STORAGE_KEY,
+      hideMaxed,
+    )
   }, [])
   const debugDraftRef = useRef<DebugSurfaceDraft>({
     amount: '1',
@@ -2244,24 +2253,6 @@ function writeVisualizationPreference(visible: boolean): void {
   } catch {
     // Presentation preference persistence is best effort. Storage failure
     // must not affect gameplay or prevent changing the current view.
-  }
-}
-
-function readQuantumHideMaxedPreference(): boolean {
-  try {
-    return typeof localStorage !== 'undefined' &&
-      localStorage.getItem(QUANTUM_HIDE_MAXED_STORAGE_KEY) === 'true'
-  } catch {
-    return false
-  }
-}
-
-function writeQuantumHideMaxedPreference(hideMaxed: boolean): void {
-  try {
-    if (typeof localStorage === 'undefined') return
-    localStorage.setItem(QUANTUM_HIDE_MAXED_STORAGE_KEY, String(hideMaxed))
-  } catch {
-    // Device-local presentation persistence must never block gameplay.
   }
 }
 
