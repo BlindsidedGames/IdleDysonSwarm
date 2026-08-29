@@ -1,5 +1,6 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { SIMULATION_UPGRADE_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import { readUnityBoolean } from '../game-data/runtimeValueGuards'
 import {
   isDreamUpgradeFlag,
@@ -13,8 +14,6 @@ import {
 } from './numeric'
 import { tryDebitContinuous } from './transactions'
 
-const SIMULATION_UPGRADE_KIND =
-  'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
 const REALITY_UPGRADE_LAYER = 1
 const INT_MAXIMUM = 2_147_483_647n
 
@@ -222,7 +221,7 @@ function loadRealityUpgradeDefinitions(): {
   const seenKeys = new Set<RealityUpgradeId>()
   const rejectedKeys = new Set<RealityUpgradeId>()
 
-  for (const asset of getGameAssetsByKind(SIMULATION_UPGRADE_KIND)) {
+  for (const asset of getGameAssetsByKind(SIMULATION_UPGRADE_ASSET_KIND)) {
     if (asset.data.layer !== REALITY_UPGRADE_LAYER) continue
 
     const key = asset.data.key

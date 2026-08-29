@@ -1,5 +1,6 @@
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { SIMULATION_UPGRADE_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
   DREAM_EDUCATION_IDS,
   isDreamEducationId,
@@ -15,8 +16,6 @@ import {
 } from './numeric'
 import { tryDebitContinuous } from './transactions'
 
-const SIMULATION_UPGRADE_KIND =
-  'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
 const SIMULATION_LAYER = 0
 const MATHEMATICS_SOLAR_GENERATION_MINIMUM = 200n
 
@@ -305,7 +304,7 @@ function loadSimulationUpgradeDefinitions(): ReadonlyMap<
     DreamUpgradeFlag,
     SimulationUpgradeDefinition
   >()
-  for (const asset of getGameAssetsByKind(SIMULATION_UPGRADE_KIND)) {
+  for (const asset of getGameAssetsByKind(SIMULATION_UPGRADE_ASSET_KIND)) {
     if (asset.data.layer !== SIMULATION_LAYER) continue
     const key = asset.data.key
     const cost = asset.data.cost
