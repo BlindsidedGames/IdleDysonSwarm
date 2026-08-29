@@ -1,5 +1,8 @@
 import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import { isRecord, requireRecord, type SaveRecord } from '../save/graph'
 import { PreparedSave } from '../save/prepare'
 import {
@@ -1405,11 +1408,7 @@ function toNonNegativeBigInt(value: unknown, fallback = 0n): bigint {
     if (value >= 0n) return value
     throw new Error(`Expected a non-negative discrete integer, received ${value}.`)
   }
-  if (
-    typeof value === 'number' &&
-    Number.isSafeInteger(value) &&
-    value >= 0
-  ) {
+  if (isSafeNonNegativeInteger(value)) {
     return BigInt(value)
   }
   if (value === undefined || value === null) return fallback

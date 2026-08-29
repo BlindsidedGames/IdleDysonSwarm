@@ -1,5 +1,6 @@
 import {
   isFiniteNonNegativeNumber as isFiniteNonNegative,
+  isSafeNonNegativeInteger,
 } from '../../core/finiteNonNegativeNumber'
 import type { DysonPresentationTuning } from '../../simulation/canonicalDysonDerivation'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
@@ -162,7 +163,5 @@ function optionalFiniteNonNegative(value: unknown): boolean {
 }
 
 function optionalSafeNonNegativeInteger(value: unknown): boolean {
-  return value === undefined || (
-    typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
-  )
+  return value === undefined || isSafeNonNegativeInteger(value)
 }

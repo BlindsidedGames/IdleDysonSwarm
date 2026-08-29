@@ -1,3 +1,4 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import {
   readStringArray,
@@ -950,7 +951,7 @@ function requireNonNegativeInteger(
   asset: RuntimeGameAsset,
   field: string,
 ): number {
-  if (typeof value === 'number' && Number.isSafeInteger(value) && value >= 0) {
+  if (isSafeNonNegativeInteger(value)) {
     return value
   }
   throw invalidDefinition(asset, field)
