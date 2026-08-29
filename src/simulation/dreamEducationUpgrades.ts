@@ -6,6 +6,7 @@ import {
   type DreamUpgradeFlag,
 } from '../game-state/types'
 import {
+  addContinuous,
   addDiscrete,
   exactRoundedNonNegativeBigInt,
 } from './numeric'
@@ -243,7 +244,7 @@ export function advanceDreamEducation(
   for (const id of DREAM_EDUCATION_IDS) {
     const subject = education[id]
     if (!subject.active || subject.complete) continue
-    const progress = unityAddContinuous(subject.progress, increment)
+    const progress = addContinuous(subject.progress, increment)
     const complete = progress >= subject.researchTime
     education = {
       ...education,
@@ -636,19 +637,6 @@ export function dreamEducationIdFromEffectTarget(
   return DREAM_EDUCATION_IDS.includes(id as DreamEducationId)
     ? (id as DreamEducationId)
     : null
-}
-
-function unityAddContinuous(left: number, right: number): number {
-  if (
-    !Number.isFinite(left) ||
-    !Number.isFinite(right) ||
-    left < 0 ||
-    right < 0
-  ) {
-    return 0
-  }
-  const value = left + right
-  return value === Number.POSITIVE_INFINITY ? Number.MAX_VALUE : value
 }
 
 function isDreamUpgradeFlag(value: string): value is DreamUpgradeFlag {
