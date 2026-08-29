@@ -2,7 +2,10 @@ import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
-import type { CanonicalGameStateV1 } from '../game-state/types'
+import type {
+  CanonicalGameStateV1,
+  ProcessingSource,
+} from '../game-state/types'
 import { validateCanonicalGameState } from '../game-state/validate'
 import {
   evaluateCanonicalBotCapCheckpoint,
@@ -114,7 +117,7 @@ export type CanonicalInfinityBoundaryEvaluation =
     }
 
 export interface CanonicalEventTimeContext {
-  readonly mode: 'active' | 'stored-time'
+  readonly mode: ProcessingSource
   readonly automationIntervalSeconds: number
   /**
    * Duration represented by one automation action in this authoritative
@@ -162,7 +165,7 @@ interface ArtifactSkillPointResult {
 }
 
 interface CapturedContext {
-  readonly mode: 'active' | 'stored-time'
+  readonly mode: ProcessingSource
   readonly automationIntervalSeconds: number
   readonly automationActionIntervalSeconds: number
   readonly rateClockMultiplier: number

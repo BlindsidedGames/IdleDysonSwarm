@@ -13,6 +13,7 @@ import { CONTINUOUS_MAXIMUM, SIMULATION_RESOURCE_MAXIMUM } from '../simulation/n
 import {
   CANONICAL_GAME_MODEL_VERSION,
   DREAM_UPGRADE_FLAGS,
+  isProcessingSource,
   isStoredTimeAccuracyPreset,
   type CanonicalFacilityId,
   type CanonicalGameStateV1,
@@ -1169,8 +1170,7 @@ function toRecentInfinityCycles(
       configuredTarget,
       reward,
       durationSeconds,
-      ...(candidate.processingSource === 'active' ||
-      candidate.processingSource === 'stored-time'
+      ...(isProcessingSource(candidate.processingSource)
         ? { processingSource: candidate.processingSource }
         : {}),
       ...(Number.isInteger(candidate.activeIntervalMilliseconds) &&

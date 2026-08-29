@@ -27,7 +27,9 @@ import {
   hydrateGameState,
 } from './mapping'
 import {
+  isProcessingSource,
   isStoredTimeAccuracyPreset,
+  PROCESSING_SOURCES,
   STORED_TIME_ACCURACY_PRESETS,
 } from './types'
 
@@ -38,6 +40,12 @@ function loadFixture(name: string): string {
 }
 
 describe('canonical game-state mapping', () => {
+  test('keeps canonical processing source identities', () => {
+    expect(PROCESSING_SOURCES).toEqual(['active', 'stored-time'])
+    expect(PROCESSING_SOURCES.every(isProcessingSource)).toBe(true)
+    expect(isProcessingSource('offline')).toBe(false)
+  })
+
   test('keeps Stored Time accuracy identities in save and UI order', () => {
     expect(STORED_TIME_ACCURACY_PRESETS).toEqual([
       'fast',

@@ -244,6 +244,19 @@ export function isStoredTimeAccuracyPreset(
   )
 }
 
+export const PROCESSING_SOURCES = ['active', 'stored-time'] as const
+
+export type ProcessingSource = (typeof PROCESSING_SOURCES)[number]
+
+export function isProcessingSource(
+  value: unknown,
+): value is ProcessingSource {
+  return (
+    typeof value === 'string' &&
+    (PROCESSING_SOURCES as readonly string[]).includes(value)
+  )
+}
+
 export interface SecretProgressState {
   readonly completed: boolean
   readonly step: number
@@ -446,7 +459,7 @@ export interface InfinityCycleHistoryEntry {
   readonly reward: bigint
   readonly durationSeconds: number
   /** Processing lane which produced this completed cycle. */
-  readonly processingSource?: 'active' | 'stored-time'
+  readonly processingSource?: ProcessingSource
   /** Active cadence in force when this cycle completed. */
   readonly activeIntervalMilliseconds?: number
 }

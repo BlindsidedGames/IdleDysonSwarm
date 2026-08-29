@@ -8,6 +8,7 @@ import type {
   CanonicalGameStateV1,
   CanonicalFacilityId,
   InfinityCycleHistoryEntry,
+  ProcessingSource,
   SimulationStatisticsState,
   SimulationTotalsState,
   SkillRuntimeState,
@@ -33,7 +34,7 @@ export interface CanonicalInfinityResetRequest {
   /** True only when the event model initiated the reset automatically. */
   readonly automatic?: boolean
   /** Processing lane which produced this reset. */
-  readonly processingSource?: 'active' | 'stored-time'
+  readonly processingSource?: ProcessingSource
   /** Active processing cadence in force when this reset completed. */
   readonly activeIntervalMilliseconds?: number
 }
@@ -670,7 +671,7 @@ function recordInfinityCycle(
   durationSeconds: number,
   automatic: boolean,
   configuredTarget: bigint,
-  processingSource?: 'active' | 'stored-time',
+  processingSource?: ProcessingSource,
   activeIntervalMilliseconds?: number,
   activeAutomaticThroughputCycleEligible = false,
 ): SimulationStatisticsState {

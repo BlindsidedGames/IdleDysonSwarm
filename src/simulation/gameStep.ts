@@ -1,4 +1,5 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import type { ProcessingSource } from '../game-state/types'
 import type { CanonicalEventTimeContext } from './canonicalEventTimeModel'
 import {
   CanonicalEventTimeModel,
@@ -9,7 +10,7 @@ import {
 import { createSimulationSummary, type SimulationPresentationSummary } from './types'
 import { addContinuous } from './numeric'
 
-export type ProcessingSource = 'active' | 'stored-time'
+export type { ProcessingSource } from '../game-state/types'
 export type ProcessingAutomation = 'enabled' | 'suppressed'
 
 export interface GameStepInput {

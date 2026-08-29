@@ -1,4 +1,5 @@
 import {
+  isProcessingSource,
   isStoredTimeAccuracyPreset,
   type CanonicalGameStateV1,
 } from './types'
@@ -193,8 +194,7 @@ export function validateCanonicalGameState(
       !Number.isFinite(cycle.durationSeconds) ||
       cycle.durationSeconds <= 0 ||
       (cycle.processingSource !== undefined &&
-        cycle.processingSource !== 'active' &&
-        cycle.processingSource !== 'stored-time') ||
+        !isProcessingSource(cycle.processingSource)) ||
       (cycle.activeIntervalMilliseconds !== undefined &&
         (!Number.isInteger(cycle.activeIntervalMilliseconds) ||
           cycle.activeIntervalMilliseconds < 33 ||
