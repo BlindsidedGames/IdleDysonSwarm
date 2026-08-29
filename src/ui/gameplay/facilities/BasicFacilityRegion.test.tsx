@@ -221,7 +221,7 @@ describe('BasicFacilityRegion', () => {
       purchase.querySelector(
         '.basic-facility-card__purchase-quantity',
       ),
-    ).toHaveTextContent('+38.0')
+    ).toHaveTextContent('+38')
     expect(
       purchase.querySelector(
         '.basic-facility-card__purchase-cost',
@@ -244,18 +244,34 @@ describe('BasicFacilityRegion', () => {
   it('replaces the quantity label with Auto while facility automation is active', () => {
     renderRegion({
       visibleBasicFacilityIds: ['assembly_lines'],
+      automationUnlocked: true,
       automationEnabledFacilities: { assembly_lines: true },
     })
 
     const purchase = screen.getByRole('button', {
-      name: /^Purchase an Assembly Line:/,
+      name: /^Assembly Lines is purchased automatically/,
     })
     expect(
       purchase.querySelector('.basic-facility-card__purchase-quantity'),
-    ).toHaveTextContent('Auto')
+    ).toHaveTextContent('Auto (38)')
     expect(
       purchase.querySelector('.basic-facility-card__purchase-cost'),
     ).toHaveTextContent('$869K')
+  })
+
+  it('shows the manual quantity while global facility automation is locked', () => {
+    renderRegion({
+      visibleBasicFacilityIds: ['assembly_lines'],
+      automationUnlocked: false,
+      automationEnabledFacilities: { assembly_lines: true },
+    })
+
+    expect(
+      screen.getByRole('button', {
+        name: /^Purchase an Assembly Line:/,
+      }).querySelector('.basic-facility-card__purchase-quantity'),
+    ).toHaveTextContent('+38')
+    expect(screen.queryByText(/Auto/)).not.toBeInTheDocument()
   })
 
   it('preserves checkpoint order and exact canonical card values', () => {
@@ -324,7 +340,7 @@ describe('BasicFacilityRegion', () => {
     expect(facilitiesCss).toMatch(
       /\.basic-facility-card__production-value\s*\{[^}]*color:\s*#56d8ed;/s,
     )
-    expect(assembly.getByText('+38.0').closest('data'))
+    expect(assembly.getByText('+38').closest('data'))
       .toHaveAttribute('value', '38')
     expect(
       assembly.getByText('$869K').closest('data'),
@@ -655,6 +671,90 @@ describe('BasicFacilityRegion', () => {
     expect(
       dialog.querySelector('img[src*="terraFirma"]'),
     ).toBeInTheDocument()
+  })
+
+  it('replaces the effective purchase count with the cumulative production formula', async () => {
+    const user = userEvent.setup()
+    const assemblyFact = facilityFact('assembly_lines', 0, 98, 39.2)
+    renderRegion({
+      visibleBasicFacilityIds: ['assembly_lines'],
+      facilityFacts: {
+        ...facilityFacts,
+        assembly_lines: {
+          ...assemblyFact,
+          details: {
+            ...assemblyFact.details,
+            contributions: [
+              {
+                sourceId: 'base',
+                displayRole: 'base',
+                operation: 'override',
+                value: 0.1,
+                delta: 0.1,
+                runningTotal: 0.1,
+              },
+              {
+                sourceId: 'assembly-lines.count',
+                displayRole: 'producer-count',
+                operation: 'multiply',
+                value: 98,
+                delta: 9.7,
+                runningTotal: 9.8,
+                automaticManualTuple: [0, 98],
+              },
+              {
+                sourceId: 'manual-purchase.avocados-69',
+                displayRole: 'output-adjustments',
+                operation: 'multiply',
+                value: 2,
+                delta: 9.8,
+                runningTotal: 19.6,
+                source: { kind: 'skill', id: 'avocados' },
+              },
+              {
+                sourceId: 'manual-purchase.milestone-50',
+                displayRole: 'output-adjustments',
+                operation: 'multiply',
+                value: 2,
+                delta: 19.6,
+                runningTotal: 39.2,
+                source: { kind: 'system', id: 'milestone-50' },
+              },
+            ],
+            manualPurchaseLayer: {
+              rawManualCount: 98,
+              effectiveManualCount: 98,
+              effectiveManualPlanets: 0,
+              transferredPlanetCount: 0,
+              transferSkillId: undefined,
+              terraIrradiantOwned: false,
+              suppressed: false,
+              avocadosMultiplier: 2,
+              milestone50Multiplier: 2,
+              milestone100Multiplier: 1,
+              scalingThreshold: 100,
+              scalingRate: 0.01,
+              scalingMultiplier: 1,
+              totalMultiplier: 4,
+            },
+          },
+        },
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Details' }))
+    const dialog = screen.getByRole('dialog', { name: 'Assembly Lines' })
+    expect(within(dialog).queryByText(/Effective purchased count/i))
+      .not.toBeInTheDocument()
+    expect(within(dialog).getByText('Avocados')).toBeInTheDocument()
+    expect(within(dialog).queryByText(/^Avocato$/)).not.toBeInTheDocument()
+    expect(
+      within(dialog)
+        .getByText(/0\.10 × 98\.0 × 2\.00 × 2\.00/)
+        .closest('.facility-details-stage__result'),
+    ).toHaveTextContent(
+      '0.10 × 98.0 × 2.00 × 2.00 = 39.2 / game second',
+    )
   })
 
   it('shows independent facility generators with expandable live formulas', async () => {
@@ -1312,6 +1412,7 @@ function regionProps(
       options.purchaseRouteAvailable ?? true,
     automationEnabledFacilities:
       options.automationEnabledFacilities,
+    automationUnlocked: options.automationUnlocked,
     gameSpeed: options.gameSpeed,
     revision: options.revision ?? defaultRevision,
     dispatchPlayer:

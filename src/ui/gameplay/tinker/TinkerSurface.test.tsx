@@ -672,7 +672,7 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(
       screen.getByRole('progressbar', { name: 'Tinker progress' }),
     ).toHaveAttribute('value', '0.125')
-    expect(screen.getByText('0.37s')).toBeInTheDocument()
+    expect(screen.getByText('0.38s')).toBeInTheDocument()
     expect(requestFrame).not.toHaveBeenCalled()
   })
 
@@ -788,18 +788,18 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(
       document.querySelector('.tinker-surface__output'),
     ).toHaveTextContent(
-      'Masterfully made you will produce 37.1K.',
+      'Masterfully made you will produce 37.2K.',
     )
-    expect(screen.getByText('37.1K')).toHaveClass(
+    expect(screen.getByText('37.2K')).toHaveClass(
       'tinker-surface__yield',
     )
-    expect(screen.getByText('0.37s')).toBeInTheDocument()
+    expect(screen.getByText('0.38s')).toBeInTheDocument()
     const progress = screen.getByRole('progressbar', {
       name: 'Tinker progress',
     })
     expect(progress).toHaveAttribute('value', '0.125')
     expect(progress).toHaveAttribute('max', '0.5')
-    expect(progress).toHaveAttribute('aria-valuetext', '0.37s')
+    expect(progress).toHaveAttribute('aria-valuetext', '0.38s')
     expect(
       screen.getByText('Long press to repeat...'),
     ).toBeInTheDocument()

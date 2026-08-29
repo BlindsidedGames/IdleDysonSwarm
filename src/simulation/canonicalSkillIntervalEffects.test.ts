@@ -10,6 +10,7 @@ import {
 } from './canonicalSkillIntervalEffects'
 import {
   createBasicDysonInfinityState,
+  ordinaryInfinityBotThreshold,
   timeToNextInfinityEvent,
 } from './infinityCycle'
 
@@ -160,6 +161,35 @@ describe('canonical skill interval effects', () => {
     })
     expect(grouped.dyson.bots).toBeCloseTo(70, 10)
     expect(grouped.dyson.facilities.planets[0]).toBeCloseTo(0.3, 10)
+  })
+
+  test('clamps interval Bot arrivals at the ordinary cap until Break the Loop', () => {
+    const threshold = ordinaryInfinityBotThreshold(0n)
+    const ordinary = advance(state(threshold), {
+      seconds: 1,
+      botProductionPerSecond: 100,
+      stellarPlanetsPerSecond: 0,
+      stellarBotsPerSecond: 0,
+    })
+    expect(ordinary.dyson.bots).toBe(threshold)
+
+    const source = state(threshold)
+    const afterBreak = advance({
+      ...source,
+      quantum: {
+        ...source.quantum,
+        unlocks: {
+          ...source.quantum.unlocks,
+          breakTheLoop: true,
+        },
+      },
+    }, {
+      seconds: 1,
+      botProductionPerSecond: 100,
+      stellarPlanetsPerSecond: 0,
+      stellarBotsPerSecond: 0,
+    })
+    expect(afterBreak.dyson.bots).toBe(threshold + 100)
   })
 
   test('does not predict a gross-production Infinity that Stellar settlement prevents', () => {

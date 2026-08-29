@@ -145,6 +145,50 @@ function indexOf(id: string): number {
 }
 
 describe('research automation', () => {
+  test('uses Secret research coefficients for presentation and Repeatable Research pricing', () => {
+    const level = 2
+    const base = withLevels(stateWith(Number.MAX_VALUE), {
+      'research.assembly_line_upgrade': level,
+    })
+    const state: CanonicalGameStateV1 = {
+      ...base,
+      infinity: { ...base.infinity, secretsOfTheUniverse: 1n },
+      skills: {
+        ...base.skills,
+        byId: {
+          ...base.skills.byId,
+          repeatableResearch: {
+            ...base.skills.byId.repeatableResearch,
+            owned: true,
+          },
+        },
+      },
+    }
+    const coefficient = Math.fround(0.06)
+    const expectedCost = buyXCost(
+      1n,
+      50_000 / (1 + level * coefficient),
+      1.4,
+      level,
+    )
+
+    expect(selectCanonicalResearchPresentationFacts(
+      state,
+      { ...neutralTuning, assemblyLineUpgradePercent: 0.03 },
+      'research.assembly_line_upgrade',
+      1n,
+    )).toMatchObject({
+      perLevelEffect: coefficient * 100,
+      currentEffect: coefficient * 200,
+      projectedEffect: coefficient * 300,
+    })
+    expect(previewCanonicalResearchPurchase(
+      state,
+      { ...neutralTuning, assemblyLineUpgradePercent: 0.03 },
+      'research.assembly_line_upgrade',
+    ).cost).toBe(expectedCost)
+  })
+
   test('keeps canonical unlock visibility independent from maxed presentation', () => {
     const state = withLevels(stateWith(0), {
       'research.panel_lifetime_1': 1,

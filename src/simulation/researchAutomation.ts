@@ -6,6 +6,10 @@ import type {
   CanonicalGameStateV1,
 } from '../game-state/types'
 import { CONTINUOUS_MAXIMUM, floorToDiscrete } from './numeric'
+import {
+  deriveSecretBuffs,
+  type SecretResearchCoefficientId,
+} from './secretBuffs'
 import type { SimulationAutomationPolicy } from './types'
 import {
   buyModeAmount,
@@ -160,6 +164,10 @@ export function previewCanonicalResearchPurchase(
   state: Readonly<CanonicalGameStateV1>,
   tuning: Readonly<DysonCompatibilityTuning>,
   researchId: string,
+  coefficientOverrides: Readonly<
+    Partial<Record<SecretResearchCoefficientId, number>>
+  > = deriveSecretBuffs(state.infinity.secretsOfTheUniverse)
+    .researchCoefficientOverrides,
 ): CanonicalResearchPurchasePreview {
   let definitions: readonly ResearchDefinition[]
   try {
@@ -184,6 +192,7 @@ export function previewCanonicalResearchPurchase(
       definition,
       state,
       tuning,
+      coefficientOverrides,
       state.dyson.science,
       state.research.levelsById,
       false,
@@ -201,6 +210,10 @@ export function selectCanonicalResearchPresentationFacts(
   tuning: Readonly<DysonCompatibilityTuning>,
   researchId: string,
   projectedQuantity: bigint,
+  coefficientOverrides: Readonly<
+    Partial<Record<SecretResearchCoefficientId, number>>
+  > = deriveSecretBuffs(state.infinity.secretsOfTheUniverse)
+    .researchCoefficientOverrides,
 ): CanonicalResearchPresentationFacts | undefined {
   let definition: ResearchDefinition | undefined
   try {
@@ -232,7 +245,11 @@ export function selectCanonicalResearchPresentationFacts(
     lifetimeSeconds ??
     (coefficientField === undefined
       ? 0
-      : tuning[coefficientField] * 100)
+      : (
+          coefficientOverrides[
+            researchId as SecretResearchCoefficientId
+          ] ?? tuning[coefficientField]
+        ) * 100)
   const projectedLevel =
     currentLevel + Number(projectedQuantity)
 
@@ -261,6 +278,10 @@ export function purchaseCanonicalResearch(
   state: CanonicalGameStateV1,
   tuning: Readonly<DysonCompatibilityTuning>,
   researchId: string,
+  coefficientOverrides: Readonly<
+    Partial<Record<SecretResearchCoefficientId, number>>
+  > = deriveSecretBuffs(state.infinity.secretsOfTheUniverse)
+    .researchCoefficientOverrides,
 ): CanonicalResearchPurchaseResult {
   let definition: ResearchDefinition | undefined
   try {
@@ -288,6 +309,7 @@ export function purchaseCanonicalResearch(
     definition,
     state,
     tuning,
+    coefficientOverrides,
     state.dyson.science,
     state.research.levelsById,
     false,
@@ -346,6 +368,10 @@ export function runResearchAutomationTick(
   state: Readonly<CanonicalGameStateV1>,
   tuning: Readonly<DysonCompatibilityTuning>,
   policy: SimulationAutomationPolicy = 'preserve-configured-mode',
+  coefficientOverrides: Readonly<
+    Partial<Record<SecretResearchCoefficientId, number>>
+  > = deriveSecretBuffs(state.infinity.secretsOfTheUniverse)
+    .researchCoefficientOverrides,
 ): ResearchAutomationTickResult {
   if (!state.infinity.automationUnlocked.research) {
     return {
@@ -385,6 +411,7 @@ export function runResearchAutomationTick(
       definition,
       state,
       tuning,
+      coefficientOverrides,
       science,
       levelsById,
       true,
@@ -429,6 +456,9 @@ function tryPurchase(
   definition: ResearchDefinition,
   state: Readonly<CanonicalGameStateV1>,
   tuning: Readonly<DysonCompatibilityTuning>,
+  coefficientOverrides: Readonly<
+    Partial<Record<SecretResearchCoefficientId, number>>
+  >,
   science: number,
   levelsById: Readonly<Record<string, number>>,
   requireAutomationEnabled: boolean,
@@ -446,6 +476,7 @@ function tryPurchase(
     definition,
     state,
     tuning,
+    coefficientOverrides,
     science,
     levelsById,
     requireAutomationEnabled,
@@ -464,6 +495,9 @@ function previewPurchase(
   definition: ResearchDefinition,
   state: Readonly<CanonicalGameStateV1>,
   tuning: Readonly<DysonCompatibilityTuning>,
+  coefficientOverrides: Readonly<
+    Partial<Record<SecretResearchCoefficientId, number>>
+  >,
   science: number,
   levelsById: Readonly<Record<string, number>>,
   requireAutomationEnabled: boolean,
@@ -519,7 +553,10 @@ function previewPurchase(
   const repeatableOwned =
     state.skills.byId.repeatableResearch?.owned === true
   if (repeatableOwned && coefficientField !== undefined) {
-    const percentPerLevel = tuning[coefficientField]
+    const percentPerLevel =
+      coefficientOverrides[
+        definition.id as SecretResearchCoefficientId
+      ] ?? tuning[coefficientField]
     if (!Number.isFinite(percentPerLevel) || percentPerLevel < 0) {
       return emptyPreview(
         definition.id,

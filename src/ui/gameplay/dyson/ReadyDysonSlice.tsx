@@ -736,6 +736,8 @@ export function ReadyDysonSlice({
     routeDiscoverySaveKey,
     highlightableRouteUnlocks,
     route,
+    gameplay.visibility.infinity.routeUnlocked &&
+      gameplay.progression.meta?.firstInfinityComplete !== true,
   )
   const navigateTo = useCallback((nextRoute: ReadyGameRoute) => {
     markVisited(nextRoute)
@@ -913,6 +915,7 @@ export function ReadyDysonSlice({
       closeMenuLabel={intl.formatMessage(messages.closeMenu)}
       openMenuLabel={intl.formatMessage(messages.openMenu)}
       moreMenuLabel={intl.formatMessage(messages.moreMenu)}
+      moreMenuNewLabel={intl.formatMessage(messages.moreMenuNew)}
       heading={intl.formatMessage(routeHeading)}
       routeTheme={debugActive ? 'statistics' : storeActive ? 'bots' : route}
       routeContentEdgeToEdge={storeActive}
@@ -973,6 +976,9 @@ export function ReadyDysonSlice({
           {
             id: 'infinity',
             label: infinityRouteLabel,
+            ariaLabel: newlyUnlockedRoutes.has('infinity')
+              ? intl.formatMessage(messages.infinityRouteNew)
+              : undefined,
             iconSrc: navigationAssets.infinity,
             bottom: bottomVisible('infinity'),
             newlyUnlocked: newlyUnlockedRoutes.has('infinity'),
@@ -1957,6 +1963,9 @@ export function ReadyDysonSlice({
                 automationEnabledFacilities={
                   gameplay.progression.dyson.automation.enabledFacilities
                 }
+                automationUnlocked={
+                  gameplay.progression.infinity.automationUnlocked.bots
+                }
                 gameSpeed={
                   gameplay.progression.timeline?.doubleTime?.unlocked
                     ? 2
@@ -1982,6 +1991,12 @@ export function ReadyDysonSlice({
                     gameplay.commands.byKind[
                       'dyson.purchase-mega-structure'
                     ].routeAvailable
+                  }
+                  automationUnlocked={
+                    gameplay.progression.infinity.automationUnlocked.bots
+                  }
+                  automationEnabledFacilities={
+                    gameplay.progression.dyson.automation.enabledFacilities
                   }
                   gameSpeed={
                     gameplay.progression.timeline?.doubleTime?.unlocked
@@ -2166,19 +2181,30 @@ function useNewRouteHighlights(
   saveKey: string,
   unlockedByRoute: Readonly<Record<HighlightableRoute, boolean>>,
   currentRoute: ReadyGameRoute,
+  firstInfinityNew = false,
 ) {
   const unlockedSignature = HIGHLIGHTABLE_ROUTES
     .filter((routeId) => unlockedByRoute[routeId])
     .join('|')
   const [stored, setStored] = useState<StoredRouteHighlights>(() =>
-    readStoredRouteHighlights(saveKey, unlockedByRoute),
+    readStoredRouteHighlights(
+      saveKey,
+      unlockedByRoute,
+      firstInfinityNew,
+      currentRoute,
+    ),
   )
 
   useEffect(() => {
     setStored((current) => {
       const baseline = current.saveKey === saveKey
         ? current
-        : readStoredRouteHighlights(saveKey, unlockedByRoute)
+        : readStoredRouteHighlights(
+            saveKey,
+            unlockedByRoute,
+            firstInfinityNew,
+            currentRoute,
+          )
       const unlocked = new Set(baseline.unlocked)
       const newRoutes = new Set(baseline.newRoutes)
 
@@ -2210,7 +2236,13 @@ function useNewRouteHighlights(
       writeStoredRouteHighlights(next)
       return next
     })
-  }, [currentRoute, saveKey, unlockedByRoute, unlockedSignature])
+  }, [
+    currentRoute,
+    firstInfinityNew,
+    saveKey,
+    unlockedByRoute,
+    unlockedSignature,
+  ])
 
   const markVisited = useCallback((routeId: ReadyGameRoute) => {
     if (!isHighlightableRoute(routeId)) return
@@ -2238,17 +2270,25 @@ function isHighlightableRoute(routeId: ReadyGameRoute): routeId is Highlightable
 function readStoredRouteHighlights(
   saveKey: string,
   unlockedByRoute: Readonly<Record<HighlightableRoute, boolean>>,
+  firstInfinityNew: boolean,
+  currentRoute: ReadyGameRoute,
 ): StoredRouteHighlights {
   const initialUnlocked = HIGHLIGHTABLE_ROUTES.filter((routeId) =>
     unlockedByRoute[routeId],
   )
+  const initialNewRoutes = initialUnlocked.filter(
+    (routeId) =>
+      routeId === 'infinity' &&
+      firstInfinityNew &&
+      routeId !== currentRoute,
+  )
   try {
     if (typeof localStorage === 'undefined') {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: [] }
+      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
     }
     const raw = localStorage.getItem(NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY)
     if (raw === null) {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: [] }
+      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
     }
     const candidate = JSON.parse(raw) as Partial<StoredRouteHighlights>
     if (
@@ -2256,7 +2296,7 @@ function readStoredRouteHighlights(
       !Array.isArray(candidate.unlocked) ||
       !Array.isArray(candidate.newRoutes)
     ) {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: [] }
+      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
     }
     const unlocked = candidate.unlocked.filter(isStoredHighlightableRoute)
     return {
@@ -2267,7 +2307,7 @@ function readStoredRouteHighlights(
         .filter((routeId) => unlocked.includes(routeId)),
     }
   } catch {
-    return { saveKey, unlocked: initialUnlocked, newRoutes: [] }
+    return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
   }
 }
 

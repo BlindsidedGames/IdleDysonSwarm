@@ -1,3 +1,5 @@
+import type { DysonNavigationPresentation } from './contracts'
+
 export interface BottomNavigationLayout {
   readonly maxItems: number
   readonly iconSize: number
@@ -36,4 +38,18 @@ export function deriveBottomNavigationLayout(
       )
     : Math.min(76, Math.max(55, iconSize + 18))
   return { maxItems, iconSize, labelSize, slotWidth, barHeight }
+}
+
+export function fitBottomItems(
+  items: readonly DysonNavigationPresentation['items'][number][],
+  maxItems: number,
+) {
+  if (items.length <= maxItems) return items
+  if (maxItems <= 0) return []
+  const visible = items.slice(0, maxItems)
+  const current = items.find((item) => item.current)
+  if (current !== undefined && !visible.includes(current)) {
+    visible[visible.length - 1] = current
+  }
+  return visible
 }

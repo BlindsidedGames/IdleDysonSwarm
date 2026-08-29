@@ -1733,9 +1733,9 @@ describe('frontend gameplay snapshot', () => {
       maxed: false,
       automationActive: true,
       effectKind: 'percentage',
-      perLevelEffect: 7.5,
-      currentEffect: 15,
-      projectedEffect: 22.5,
+      perLevelEffect: Math.fround(0.06) * 100,
+      currentEffect: Math.fround(0.06) * 200,
+      projectedEffect: Math.fround(0.06) * 300,
       passiveProgress: 0.375,
       selectedQuantity: 1n,
     })

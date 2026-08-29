@@ -36,6 +36,18 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'More',
     description: 'Visible label for the bottom navigation drawer affordance.',
   },
+  moreMenuNew: {
+    id: 'dyson.menu.more-new',
+    defaultMessage: 'More, new content',
+    description:
+      'Accessible label when a newly unlocked route is inside the responsive menu.',
+  },
+  infinityRouteNew: {
+    id: 'dyson.navigation.infinity-new',
+    defaultMessage: 'Infinity, new',
+    description:
+      'Accessible label for the newly unlocked Infinity destination.',
+  },
   bottomNavigation: {
     id: 'dyson.navigation.bottom',
     defaultMessage: 'Game tabs',

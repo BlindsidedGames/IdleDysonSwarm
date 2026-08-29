@@ -128,7 +128,7 @@ describe('OfflineTimeSurface', () => {
     expect(within(summary).getByText('125')).toBeInTheDocument()
     expect(within(summary).getByText('2.00')).toBeInTheDocument()
     expect(within(summary).getByText('Balanced (sped up)')).toBeInTheDocument()
-    expect(within(summary).getByText('12.7K')).toBeInTheDocument()
+    expect(within(summary).getByText('12.8K')).toBeInTheDocument()
     await user.click(within(summary).getByRole('button', { name: 'Continue' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 

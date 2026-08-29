@@ -992,6 +992,7 @@
 }
 
 .dyson-shell__bottom-menu {
+  position: relative;
   display: grid;
   min-inline-size: 0;
   min-block-size: var(--target-minimum);
@@ -1004,6 +1005,21 @@
   cursor: pointer;
   font-size: 2.55rem;
   line-height: 1;
+}
+
+.dyson-navigation__item[data-navigation-id="infinity"][data-new="true"]
+  .dyson-navigation__icon::after,
+.dyson-shell__bottom-menu[data-new="true"]::after {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: 0.15rem;
+  inset-inline-end: 0.15rem;
+  inline-size: 0.62rem;
+  block-size: 0.62rem;
+  border: 2px solid #3f3044;
+  border-radius: 999px;
+  background: var(--navigation-item-accent, #f4b8ff);
+  content: '';
 }
 
 .dyson-shell__menu-icon {

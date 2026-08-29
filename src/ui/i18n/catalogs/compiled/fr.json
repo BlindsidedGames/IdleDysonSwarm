@@ -1027,12 +1027,6 @@
       "value": "Production actuelle"
     }
   ],
-  "dyson.facilities.details.effective-manual-count": [
-    {
-      "type": 0,
-      "value": "Nombre d’achats effectif"
-    }
-  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 1,
@@ -1781,6 +1775,42 @@
       "value": "Auto"
     }
   ],
+  "dyson.facilities.purchase.automatic-accessible": [
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " est acheté automatiquement par lots de "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " pour "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "Auto ("
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "dyson.facilities.purchase.cost": [
     {
       "type": 0,
@@ -2527,6 +2557,12 @@
       "value": "Plus"
     }
   ],
+  "dyson.menu.more-new": [
+    {
+      "type": 0,
+      "value": "Plus, nouveau contenu"
+    }
+  ],
   "dyson.menu.open": [
     {
       "type": 0,
@@ -2537,6 +2573,12 @@
     {
       "type": 0,
       "value": "Onglets du jeu"
+    }
+  ],
+  "dyson.navigation.infinity-new": [
+    {
+      "type": 0,
+      "value": "Infini, nouveau"
     }
   ],
   "dyson.navigation.primary": [
@@ -5710,7 +5752,25 @@
     },
     {
       "type": 0,
-      "value": " : achat automatique"
+      "value": " est acheté automatiquement par lots de "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "research.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "Auto ("
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "research.purchase.failed": [

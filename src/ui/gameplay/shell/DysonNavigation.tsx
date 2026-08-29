@@ -1,6 +1,7 @@
 import type {
   DysonNavigationPresentation,
 } from './contracts'
+import { fitBottomItems } from './bottomNavigationLayout'
 
 export interface DysonNavigationProps
   extends DysonNavigationPresentation {
@@ -109,20 +110,6 @@ export function DysonNavigation({
       </ul>
     </nav>
   )
-}
-
-function fitBottomItems(
-  items: readonly DysonNavigationPresentation['items'][number][],
-  maxItems: number,
-) {
-  if (items.length <= maxItems) return items
-  if (maxItems <= 0) return []
-  const visible = items.slice(0, maxItems)
-  const current = items.find((item) => item.current)
-  if (current !== undefined && !visible.includes(current)) {
-    visible[visible.length - 1] = current
-  }
-  return visible
 }
 
 function NavigationItemContent({

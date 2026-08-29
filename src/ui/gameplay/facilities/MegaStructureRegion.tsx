@@ -21,6 +21,7 @@ import {
   formatGameDuration,
   formatGameNumber,
   formatNumber,
+  formatWholeGameNumber,
   type NumericValue,
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -65,6 +66,8 @@ export interface MegaStructureRegionProps {
   readonly purchasePreviews:
     FrontendGameplayPreviews['dyson']['megaStructures']
   readonly purchaseRouteAvailable: boolean
+  readonly automationUnlocked?: boolean
+  readonly automationEnabledFacilities?: Readonly<Record<string, boolean>>
   readonly gameSpeed?: number
   readonly revision: { readonly session: number; readonly state: number }
   readonly dispatchPlayer: (
@@ -152,6 +155,8 @@ export function MegaStructureRegion({
   facts,
   purchasePreviews,
   purchaseRouteAvailable,
+  automationUnlocked = false,
+  automationEnabledFacilities = {},
   gameSpeed = 1,
   revision,
   dispatchPlayer,
@@ -254,6 +259,10 @@ export function MegaStructureRegion({
                 fact={facts[facilityId]}
                 preview={preview}
                 routeAvailable={purchaseRouteAvailable}
+                automationActive={
+                  automationUnlocked &&
+                  automationEnabledFacilities[facilityId] === true
+                }
                 pending={pendingIds.has(facilityId)}
                 feedback={feedbackById[facilityId]}
                 revision={revision}
@@ -303,6 +312,7 @@ function MegaStructureCard({
   fact,
   preview,
   routeAvailable,
+  automationActive,
   pending,
   feedback,
   revision,
@@ -314,6 +324,7 @@ function MegaStructureCard({
   readonly fact: ReadyDyson['megaStructureFacts'][MegaStructureId]
   readonly preview: MegaStructurePreview
   readonly routeAvailable: boolean
+  readonly automationActive: boolean
   readonly pending: boolean
   readonly feedback?: PurchaseFeedback
   readonly revision: Revision
@@ -333,7 +344,7 @@ function MegaStructureCard({
     total: totalDisplay,
     manual: manualDisplay,
   })
-  const quantity = formatGameNumber(locale, preview.selectedQuantity)
+  const quantity = formatWholeGameNumber(locale, preview.selectedQuantity)
   const preciseQuantity = preciseNumber(locale, preview.selectedQuantity)
   const cost = formatGameNumber(locale, preview.cost)
   const preciseCost = preciseNumber(locale, preview.cost)
@@ -425,15 +436,26 @@ function MegaStructureCard({
             state={buttonState(displayFeedback)}
             disabled={disabled}
             aria-describedby={describedBy}
-            aria-label={intl.formatMessage(messages.constructMegaStructureAccessible, {
-              prompt,
-              quantity: preciseQuantity,
-              cost: preciseCost,
-            })}
+            aria-label={intl.formatMessage(
+              automationActive
+                ? messages.automaticPurchaseAccessible
+                : messages.constructMegaStructureAccessible,
+              {
+                facility: intl.formatMessage(presentation.name),
+                prompt,
+                quantity: preciseQuantity,
+                cost: preciseCost,
+              },
+            )}
             onClick={onPurchase}
           >
             <data className="basic-facility-card__purchase-quantity" value={String(preview.selectedQuantity)} title={preciseQuantity}>
-              <bdi>{intl.formatMessage(messages.purchaseQuantity, { quantity })}</bdi>
+              <bdi>{intl.formatMessage(
+                automationActive
+                  ? messages.automaticPurchaseQuantity
+                  : messages.purchaseQuantity,
+                { quantity },
+              )}</bdi>
             </data>
             <data className="basic-facility-card__purchase-cost" value={String(preview.cost)} title={preciseCost}>
               <bdi>{intl.formatMessage(messages.purchaseCost, { cost })}</bdi>

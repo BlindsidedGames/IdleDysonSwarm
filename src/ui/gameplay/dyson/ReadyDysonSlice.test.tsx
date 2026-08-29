@@ -199,6 +199,8 @@ describe('ReadyDysonSlice', () => {
         },
         showNextBasicFacilityTeaser: false,
         showNextMegaStructureTeaser: false,
+        botsAutomationUnlocked: true,
+        enabledFacilities: { matrioshka_brains: true },
       }),
       dispatch,
     )
@@ -222,6 +224,10 @@ describe('ReadyDysonSlice', () => {
         selector: '.basic-facility-card__production-value',
       }),
     ).toBeInTheDocument()
+    const automatedPurchase = within(cards[0]).getByRole('button', {
+      name: /^Matrioshka Brains is purchased automatically in batches of 1/,
+    })
+    expect(automatedPurchase).toHaveTextContent('Auto (1)')
 
     await userEvent.click(within(cards[0]).getByRole('button', {
       name: 'Details',
@@ -762,6 +768,72 @@ describe('ReadyDysonSlice', () => {
     expect(rendered.container.querySelector(
       '[data-navigation-id="skills"] .dyson-navigation__badge',
     )).not.toBeInTheDocument()
+  })
+
+  test('alerts on the first Infinity unlock, falls back to More when hidden, and clears after visiting', async () => {
+    const onRouteChange = vi.fn()
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            infinityRouteUnlocked: true,
+            navigationVisibility: {
+              infinity: false,
+              story: false,
+              wiki: false,
+              statistics: true,
+            },
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="bots"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    const more = await screen.findByRole('button', {
+      name: 'More, new content',
+    })
+    expect(more).toHaveAttribute('data-new', 'true')
+    expect(rendered.container.querySelector(
+      '.dyson-navigation--bottom [data-navigation-id="infinity"]',
+    )).not.toBeInTheDocument()
+
+    fireEvent.click(more)
+    const infinityItem = rendered.container.querySelector(
+      '.dyson-navigation--drawer [data-navigation-id="infinity"]',
+    )
+    expect(infinityItem).toHaveAttribute('data-new', 'true')
+    fireEvent.click(within(infinityItem as HTMLElement).getByRole('button', {
+      name: 'Infinity, new',
+    }))
+
+    expect(onRouteChange).toHaveBeenCalledWith('infinity')
+    await waitFor(() => {
+      expect(infinityItem).not.toHaveAttribute('data-new')
+    })
+
+    rendered.unmount()
+    render(provider(
+      <ReadyDysonSlice
+        snapshot={snapshot({
+          infinityRouteUnlocked: true,
+          navigationVisibility: {
+            infinity: false,
+            story: false,
+            wiki: false,
+            statistics: true,
+          },
+        })}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route="bots"
+        onRouteChange={onRouteChange}
+      />,
+    ))
+    expect(screen.getByRole('button', { name: 'More' }))
+      .not.toHaveAttribute('data-new')
   })
 
   test('does not render a Skills badge when no Skill Points are unassigned', () => {
@@ -2180,9 +2252,18 @@ interface SnapshotOptions {
   readonly avocatoUnlocked?: boolean
   readonly avocatoEntryVisible?: boolean
   readonly navigationVisibility?: {
+    readonly bots?: boolean
+    readonly research?: boolean
+    readonly skills?: boolean
+    readonly infinity?: boolean
+    readonly reality?: boolean
+    readonly simulations?: boolean
+    readonly quantum?: boolean
+    readonly store?: boolean
     readonly story: boolean
     readonly wiki: boolean
     readonly statistics: boolean
+    readonly settings?: boolean
   }
   readonly secretStep?: number
   readonly secretCompleted?: boolean
@@ -2194,7 +2275,9 @@ interface SnapshotOptions {
   readonly birchPlanetsUnlocked?: boolean
   readonly galacticBrainsUnlocked?: boolean
   readonly botMultitasking?: boolean
-  readonly enabledFacilities?: Partial<Record<FacilityId, boolean>>
+  readonly enabledFacilities?: Partial<
+    Record<FacilityId | MegaStructureId, boolean>
+  >
   readonly facilities?: Partial<
     Record<FacilityId | MegaStructureId, readonly [number, number]>
   >

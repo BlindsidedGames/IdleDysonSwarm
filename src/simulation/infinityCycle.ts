@@ -217,6 +217,22 @@ export function ordinaryInfinityBotThreshold(
   return ORDINARY_INFINITY_BOT_REQUIREMENT / Math.pow(10, divisions)
 }
 
+/**
+ * Ordinary Infinity is a hard Bot ceiling until Break the Loop is owned.
+ * Division upgrades move the ceiling together with the reset threshold.
+ */
+export function clampPreBreakInfinityBots(
+  bots: number,
+  breakTheLoop: boolean,
+  divisionsPurchased: bigint,
+): number {
+  if (breakTheLoop) return bots
+  return Math.min(
+    bots,
+    ordinaryInfinityBotThreshold(divisionsPurchased),
+  )
+}
+
 function infinityRewardMultiplier(
   state: BasicDysonInfinityState,
 ): bigint {

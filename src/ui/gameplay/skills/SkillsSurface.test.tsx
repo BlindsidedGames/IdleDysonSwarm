@@ -1126,7 +1126,7 @@ describe('SkillsSurface', () => {
     expect(impact).toHaveTextContent('Skill Points33to▶26')
     expect(impact).toHaveTextContent('Cash & Science×1.00to▶×345M')
     expect(impact).toHaveTextContent('Bots×1.00to▶×3.01M')
-    expect(impact).toHaveTextContent('Everything×1.00to▶×9.10K')
+    expect(impact).toHaveTextContent('Everything×1.00to▶×9.11K')
     expect(impact?.querySelectorAll('.skill-details__impact-row')).toHaveLength(4)
     expect(impact?.querySelectorAll('.skill-details__impact-arrow')).toHaveLength(4)
     expect(impact).not.toHaveTextContent('0680835')

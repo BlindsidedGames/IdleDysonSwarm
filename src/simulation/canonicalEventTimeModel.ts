@@ -22,6 +22,7 @@ import {
 } from './canonicalInfinityReset'
 import { recordCanonicalStatisticsSegment } from './canonicalStatistics'
 import {
+  clampPreBreakInfinityBots,
   createBasicDysonInfinityState,
   infinityPointsForBots,
   infinityPointsPerMinute,
@@ -404,7 +405,17 @@ export class CanonicalEventTimeModel
         tinker: synchronizedTinker.runtime,
       }
     }
-    const infinityHorizon = infinity.automaticResetEnabled
+    const capReachedWithoutAutomation =
+      !this.carrier.gameState.quantum.unlocks.breakTheLoop &&
+      !infinity.automaticResetEnabled &&
+      this.carrier.gameState.dyson.bots >=
+        ordinaryInfinityBotThreshold(
+          this.carrier.gameState.quantum.divisionsPurchased,
+        )
+    const infinityHorizon =
+      (infinity.automaticResetEnabled ||
+        (!this.carrier.gameState.quantum.unlocks.breakTheLoop &&
+          !capReachedWithoutAutomation))
       ? timeToNextInfinityEventAfterStellarSettlement(
           this.carrier.gameState.dyson.bots,
           derived.productionArrivalRates.bots,
@@ -412,7 +423,9 @@ export class CanonicalEventTimeModel
           derived.auxiliary.stellarSacrifice.planetsPerSecond,
           createInfinityCycleState(this.carrier),
           Number.MAX_VALUE,
-          infinityMinimumCycleSeconds,
+          infinity.automaticResetEnabled
+            ? infinityMinimumCycleSeconds
+            : 0,
         )
       : Number.MAX_VALUE
     this.replaceGameState(
@@ -449,9 +462,23 @@ export class CanonicalEventTimeModel
       return
     }
 
-    const startingState = withCanonicalBotAllocation(
-      this.carrier.gameState,
+    const uncappedStartingState = this.carrier.gameState
+    const cappedStartingBots = clampPreBreakInfinityBots(
+      uncappedStartingState.dyson.bots,
+      uncappedStartingState.quantum.unlocks.breakTheLoop,
+      uncappedStartingState.quantum.divisionsPurchased,
     )
+    const cappedStartingState =
+      cappedStartingBots === uncappedStartingState.dyson.bots
+        ? uncappedStartingState
+        : {
+            ...uncappedStartingState,
+            dyson: {
+              ...uncappedStartingState.dyson,
+              bots: cappedStartingBots,
+            },
+          }
+    const startingState = withCanonicalBotAllocation(cappedStartingState)
     this.replaceGameState(startingState)
     try {
       const derived = deriveBasicDysonState(
@@ -1137,7 +1164,15 @@ export class CanonicalEventTimeModel
   private scheduleNextInfinityBoundary(
     minimumCycleSeconds: number,
   ): boolean {
-    if (!this.carrier.gameState.infinity.automaticResetEnabled) {
+    const state = this.carrier.gameState
+    const automaticResetEnabled = state.infinity.automaticResetEnabled
+    const breakTheLoop = state.quantum.unlocks.breakTheLoop
+    const ordinaryCapReached =
+      !breakTheLoop &&
+      state.dyson.bots >= ordinaryInfinityBotThreshold(
+        state.quantum.divisionsPurchased,
+      )
+    if (!automaticResetEnabled && (breakTheLoop || ordinaryCapReached)) {
       this.replaceGameState(
         withNextInfinityBoundary(
           this.carrier.gameState,
@@ -1158,7 +1193,7 @@ export class CanonicalEventTimeModel
       derived.auxiliary.stellarSacrifice.planetsPerSecond,
       createInfinityCycleState(this.carrier),
       Number.MAX_VALUE,
-      minimumCycleSeconds,
+      automaticResetEnabled ? minimumCycleSeconds : 0,
     )
     this.replaceGameState(
       withNextInfinityBoundary(

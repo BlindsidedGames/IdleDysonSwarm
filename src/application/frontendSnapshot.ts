@@ -124,6 +124,7 @@ import {
   UNITY_RESEARCH_PRESENTATION_ORDER,
   type CanonicalResearchPurchasePreview,
 } from '../simulation/researchAutomation'
+import { deriveSecretBuffs } from '../simulation/secretBuffs'
 import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
 import {
   CANONICAL_PLAYER_COMMAND_KINDS,
@@ -2539,9 +2540,17 @@ function previewResearchCatalog(
   state: CanonicalGameStateV1,
   tuning: Readonly<DysonCompatibilityTuning>,
 ): FrontendResearchCatalogPreview {
+  const coefficientOverrides = deriveSecretBuffs(
+    state.infinity.secretsOfTheUniverse,
+  ).researchCoefficientOverrides
   const purchases = UNITY_RESEARCH_PRESENTATION_ORDER
     .map((researchId) =>
-      previewCanonicalResearchPurchase(state, tuning, researchId),
+      previewCanonicalResearchPurchase(
+        state,
+        tuning,
+        researchId,
+        coefficientOverrides,
+      ),
     )
   const dysonVisibility = selectGameplayVisibility(state).dyson
   const visibleFacilities = new Set<CanonicalFacilityId>([
@@ -2555,6 +2564,7 @@ function previewResearchCatalog(
         tuning,
         purchase.researchId,
         purchase.selectedQuantity,
+        coefficientOverrides,
       )
     const facilityId = RESEARCH_FACILITY_BY_ID[purchase.researchId]
     return presentation === undefined
