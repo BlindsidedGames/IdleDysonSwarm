@@ -12,6 +12,7 @@ import type {
 } from '../game-state/types'
 import {
   applyDreamMathematicsCompletionParity,
+  dreamEducationIdFromEffectTarget,
   findSimulationUpgradeCanonicalGaps,
   SIMULATION_UPGRADE_DEFINITIONS,
   type SimulationUpgradeDefinition,
@@ -106,15 +107,6 @@ interface DreamResetOutcome {
   readonly cause: CanonicalDreamResetCause
   readonly requestedReward: number
 }
-
-const DREAM_EDUCATION_IDS = [
-  'engineering',
-  'shipping',
-  'worldTrade',
-  'worldPeace',
-  'mathematics',
-  'advancedPhysics',
-] as const satisfies readonly DreamEducationId[]
 
 const EXPECTED_SIMULATION_DEFINITION_KEYS = [
   'counterMeteor',
@@ -524,7 +516,7 @@ function applyUpgradeEffect(
     }
   }
   if (effect.effectType === 3) {
-    const id = educationTarget(effect.targetKey, 'Complete')
+    const id = dreamEducationIdFromEffectTarget(effect.targetKey, 'Complete')!
     return {
       ...state,
       dream: {
@@ -540,7 +532,7 @@ function applyUpgradeEffect(
     }
   }
   if (effect.effectType === 4) {
-    const id = educationTargetOrNull(
+    const id = dreamEducationIdFromEffectTarget(
       effect.targetKey,
       'ResearchTime',
     )
@@ -774,24 +766,6 @@ function emptyWindow(sequence: bigint): StatisticsWindowState {
     strangeMatter: 0,
     realityWorkers: 0n,
   }
-}
-
-function educationTarget(
-  target: string,
-  suffix: 'Complete' | 'ResearchTime',
-): DreamEducationId {
-  return educationTargetOrNull(target, suffix) as DreamEducationId
-}
-
-function educationTargetOrNull(
-  target: string,
-  suffix: 'Complete' | 'ResearchTime',
-): DreamEducationId | null {
-  if (!target.endsWith(suffix)) return null
-  const id = target.slice(0, -suffix.length)
-  return DREAM_EDUCATION_IDS.includes(id as DreamEducationId)
-    ? (id as DreamEducationId)
-    : null
 }
 
 function roundedDiscrete(value: number): bigint {

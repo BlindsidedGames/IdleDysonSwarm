@@ -390,10 +390,15 @@ function canApplyCanonicalUpgradeEffect(
     case 2:
       return exactRoundedNonNegativeBigInt(effect.numericValue) !== null
     case 3:
-      return educationIdFromTarget(effect.targetKey, 'Complete') !== null
+      return (
+        dreamEducationIdFromEffectTarget(effect.targetKey, 'Complete') !== null
+      )
     case 4:
       return (
-        educationIdFromTarget(effect.targetKey, 'ResearchTime') !== null ||
+        dreamEducationIdFromEffectTarget(
+          effect.targetKey,
+          'ResearchTime',
+        ) !== null ||
         effect.targetKey === 'rocketsPerSpaceFactory'
       )
     case 5:
@@ -443,7 +448,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 3) {
-    const id = educationIdFromTarget(effect.targetKey, 'Complete')!
+    const id = dreamEducationIdFromEffectTarget(effect.targetKey, 'Complete')!
     return {
       ...state,
       dream: {
@@ -459,7 +464,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 4) {
-    const id = educationIdFromTarget(
+    const id = dreamEducationIdFromEffectTarget(
       effect.targetKey,
       'ResearchTime',
     )
@@ -612,7 +617,8 @@ function rejectedEducationStart(
   }
 }
 
-function educationIdFromTarget(
+/** Resolves an authored upgrade-effect target to its canonical education subject. */
+export function dreamEducationIdFromEffectTarget(
   target: string,
   suffix: 'Complete' | 'ResearchTime',
 ): DreamEducationId | null {
