@@ -1,4 +1,5 @@
 import type { DeepReadonly } from '../../core/contracts'
+import { deepFreezePlainGraph } from '../../core/deepFreezePlainGraph'
 import {
   FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
   type FrontendApplicationSnapshot,
@@ -232,17 +233,5 @@ function sameCheckpoint(
 }
 
 function freezeOwned<T>(value: Readonly<T>): DeepReadonly<T> {
-  return deepFreeze(value as T)
-}
-
-function deepFreeze<T>(value: T): DeepReadonly<T> {
-  if (
-    value === null ||
-    typeof value !== 'object' ||
-    Object.isFrozen(value)
-  ) {
-    return value as DeepReadonly<T>
-  }
-  for (const child of Object.values(value)) deepFreeze(child)
-  return Object.freeze(value) as DeepReadonly<T>
+  return deepFreezePlainGraph(value as T)
 }

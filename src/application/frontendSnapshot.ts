@@ -1,4 +1,5 @@
 import type { DeepReadonly } from '../core/contracts'
+import { deepFreezePlainGraph } from '../core/deepFreezePlainGraph'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
@@ -1354,7 +1355,7 @@ export function createFrontendCommandEnvelope(
   if (!hasCommandKind(command.kind)) {
     throw new Error(`Unknown canonical command kind '${command.kind}'.`)
   }
-  return deepFreeze({
+  return deepFreezePlainGraph({
     sessionRevision: revision.session,
     expectedStateRevision: revision.state,
     command: structuredClone(command),
@@ -1388,7 +1389,7 @@ function inspectFrontendDefinitionCoverageOnce():
       findRealityUpgradeCanonicalGaps,
     ),
   }
-  return deepFreeze({
+  return deepFreezePlainGraph({
     complete: Object.values(domains).every(
       (coverage) => coverage.complete,
     ),
@@ -2840,27 +2841,13 @@ function assertRevision(name: string, value: number): void {
   }
 }
 
-function deepFreeze<T>(value: T): DeepReadonly<T> {
-  if (
-    value === null ||
-    typeof value !== 'object' ||
-    Object.isFrozen(value)
-  ) {
-    return value as DeepReadonly<T>
-  }
-  for (const child of Object.values(value)) {
-    deepFreeze(child)
-  }
-  return Object.freeze(value) as DeepReadonly<T>
-}
-
 function freezeFrontendProjection<T>(
   value: T,
   sourceOwnership: 'borrowed' | 'detached-frozen',
 ): DeepReadonly<T> {
   return sourceOwnership === 'detached-frozen' && import.meta.env?.PROD === true
     ? Object.freeze(value) as DeepReadonly<T>
-    : deepFreeze(value)
+    : deepFreezePlainGraph(value)
 }
 
 interface SkillPreviewDependencies {
