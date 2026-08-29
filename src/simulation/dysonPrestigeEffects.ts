@@ -1,4 +1,7 @@
-import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
+import {
+  isSafeNonNegativeInteger,
+  isSafePositiveInteger,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import {
   REALITY_SYSTEM_TUNING_ASSET_ID,
@@ -40,7 +43,7 @@ export function avocadoDysonMultiplier(
   threshold = readAvocadoLogThreshold(),
 ): number {
   if (!avocado.unlocked) return 1
-  if (!Number.isSafeInteger(threshold) || threshold <= 0) {
+  if (!isSafePositiveInteger(threshold)) {
     throw new Error(
       'Avocado logarithm threshold must be a positive safe integer.',
     )
@@ -78,11 +81,7 @@ function readAvocadoLogThreshold(): number {
     REALITY_SYSTEM_TUNING_ASSET_ID,
   )
   const threshold = asset?.data.avocadoLogThreshold
-  if (
-    typeof threshold !== 'number' ||
-    !Number.isSafeInteger(threshold) ||
-    threshold <= 0
-  ) {
+  if (!isSafePositiveInteger(threshold)) {
     throw new Error(
       'Exported RealitySystemTuning has no valid avocadoLogThreshold.',
     )

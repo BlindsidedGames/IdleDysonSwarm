@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isSafePositiveInteger,
+} from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   addContinuous,
@@ -1254,7 +1257,7 @@ function inferActiveMechanicalPayload(
   const inferred = Math.round(
     charge / (shotsRemaining * chargePerBaseShot),
   )
-  return Number.isSafeInteger(inferred) && inferred >= 1
+  return isSafePositiveInteger(inferred)
     ? inferred
     : fallback
 }

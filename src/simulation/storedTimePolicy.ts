@@ -1,4 +1,7 @@
-import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFinitePositiveNumber,
+  isSafePositiveInteger,
+} from '../core/finiteNonNegativeNumber'
 import type { StoredTimeAccuracyPreset } from '../game-state/types'
 
 export const STORED_TIME_NOMINAL_STEP_SECONDS = 0.05
@@ -44,7 +47,7 @@ export function planStoredTimePolicy(request: {
 }
 
 export function speedUpStoredTimeTicks(remainingTicks: number): number {
-  if (!Number.isSafeInteger(remainingTicks) || remainingTicks <= 0) {
+  if (!isSafePositiveInteger(remainingTicks)) {
     throw new RangeError('Remaining Stored Time ticks must be a positive safe integer.')
   }
   return Math.max(

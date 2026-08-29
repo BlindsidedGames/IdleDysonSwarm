@@ -3,6 +3,7 @@ import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
   isSafeNonNegativeInteger,
+  isSafePositiveInteger,
 } from './finiteNonNegativeNumber'
 
 describe('finite non-negative number guard', () => {
@@ -53,5 +54,23 @@ describe('safe non-negative integer guard', () => {
     [null, false],
   ])('classifies %o as %s', (source, expected) => {
     expect(isSafeNonNegativeInteger(source)).toBe(expected)
+  })
+})
+
+describe('safe positive integer guard', () => {
+  test.each([
+    [1, true],
+    [Number.MAX_SAFE_INTEGER, true],
+    [0, false],
+    [0.5, false],
+    [-1, false],
+    [Number.MAX_SAFE_INTEGER + 1, false],
+    [Number.NaN, false],
+    [Number.POSITIVE_INFINITY, false],
+    [1n, false],
+    ['1', false],
+    [null, false],
+  ])('classifies %o as %s', (source, expected) => {
+    expect(isSafePositiveInteger(source)).toBe(expected)
   })
 })

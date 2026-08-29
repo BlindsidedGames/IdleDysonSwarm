@@ -16,3 +16,8 @@ export function isSafeNonNegativeInteger(
 ): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
 }
+
+/** Narrows values to safe integers greater than zero. */
+export function isSafePositiveInteger(value: unknown): value is number {
+  return isSafeNonNegativeInteger(value) && value > 0
+}

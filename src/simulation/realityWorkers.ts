@@ -2,6 +2,7 @@ import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
   isSafeNonNegativeInteger,
+  isSafePositiveInteger,
 } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import {
@@ -318,9 +319,7 @@ export function readRealityWorkerTuning():
   const baseWorkerGenerationSpeed =
     asset?.data.baseWorkerGenerationSpeed
   if (
-    typeof workerBatchSize !== 'number' ||
-    !Number.isSafeInteger(workerBatchSize) ||
-    workerBatchSize <= 0 ||
+    !isSafePositiveInteger(workerBatchSize) ||
     !isSafeNonNegativeInteger(baseWorkerGenerationSpeed)
   ) {
     return undefined
