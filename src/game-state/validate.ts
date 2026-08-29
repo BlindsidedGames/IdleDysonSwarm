@@ -1,3 +1,4 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import {
   isProcessingSource,
   isStoredTimeAccuracyPreset,
@@ -118,8 +119,7 @@ export function validateCanonicalGameState(
   }
   if (
     state.dream.railgun.lastRoundsFired !== undefined &&
-    (!Number.isSafeInteger(state.dream.railgun.lastRoundsFired) ||
-      state.dream.railgun.lastRoundsFired < 0)
+    !isSafeNonNegativeInteger(state.dream.railgun.lastRoundsFired)
   ) {
     errors.push('Railgun rounds fired must be a non-negative safe integer.')
   }

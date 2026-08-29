@@ -1,3 +1,4 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import type { LegacySaveCandidate } from '../save/repository'
 import { requireBrowserCapability } from './browserEnvironment'
 import { WriterAuthorityLostError } from './writerAuthority'
@@ -549,8 +550,7 @@ function storedWriterGeneration(
 ): number {
   if (current === undefined) return 0
   if (
-    !Number.isSafeInteger(current.generation) ||
-    current.generation < 0
+    !isSafeNonNegativeInteger(current.generation)
   ) {
     throw new WriterLeaseMetadataError(
       'Stored browser writer generation must be a nonnegative safe integer.',

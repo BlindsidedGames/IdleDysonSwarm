@@ -1,6 +1,7 @@
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
+  isSafeNonNegativeInteger,
 } from '../core/finiteNonNegativeNumber'
 import type {
   DeepReadonly,
@@ -1361,9 +1362,7 @@ function applyDevelopmentAction(
         )
         const cost = definition?.data.cost
         if (
-          typeof cost !== 'number' ||
-          !Number.isSafeInteger(cost) ||
-          cost < 0
+          !isSafeNonNegativeInteger(cost)
         ) {
           return {
             accepted: false,

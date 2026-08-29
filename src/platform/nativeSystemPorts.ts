@@ -1,3 +1,4 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import type {
   LifecycleAdapter,
   LifecyclePhase,
@@ -272,8 +273,7 @@ function diagnosticInteger<Key extends string>(
 ): Partial<Record<Key, number>> {
   if (
     value === undefined ||
-    !Number.isSafeInteger(value) ||
-    value < 0
+    !isSafeNonNegativeInteger(value)
   ) {
     return {}
   }

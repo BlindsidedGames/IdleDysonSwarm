@@ -1,6 +1,7 @@
 import type { DeepReadonly } from '../core/contracts'
 import { clampUnitInterval } from '../core/clampUnitInterval'
 import { deepFreezePlainGraph } from '../core/deepFreezePlainGraph'
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -2824,7 +2825,7 @@ function hasCommandKind(kind: string): kind is CanonicalPlayerCommandKind {
 }
 
 function assertRevision(name: string, value: number): void {
-  if (!Number.isSafeInteger(value) || value < 0) {
+  if (!isSafeNonNegativeInteger(value)) {
     throw new Error(
       `${name} revision must be a non-negative safe integer.`,
     )
