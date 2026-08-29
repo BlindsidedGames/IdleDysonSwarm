@@ -1,3 +1,5 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+
 export const DEFAULT_STORED_TIME_CAPACITY_SECONDS = 86_400
 export const STORED_TIME_MAXIMUM_SECONDS = Number.MAX_VALUE
 
@@ -119,8 +121,7 @@ export function repairStoredTimeState(
 ): StoredTimeRepairResult {
   const capacityIsPositiveInfinity =
     state.capacitySeconds === Number.POSITIVE_INFINITY
-  const capacityIsValid =
-    Number.isFinite(state.capacitySeconds) && state.capacitySeconds > 0
+  const capacityIsValid = isFinitePositiveNumber(state.capacitySeconds)
   const capacitySeconds = capacityIsPositiveInfinity
     ? STORED_TIME_MAXIMUM_SECONDS
     : capacityIsValid

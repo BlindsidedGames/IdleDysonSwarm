@@ -1,8 +1,9 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import type { StoredTimeCompletionSummary } from '../core/storedTimeCompletionSummary'
 import type {
   CanonicalFacilityId,
   SimulationTotalsState,
 } from '../game-state/types'
-import type { StoredTimeCompletionSummary } from '../core/storedTimeCompletionSummary'
 import type { CanonicalRuntimeState } from './canonicalRuntimeSession'
 
 const FACILITY_IDS = Object.freeze([
@@ -86,7 +87,7 @@ function owned(
 
 function positiveFiniteDelta(after: number, before: number): number {
   const difference = after - before
-  return Number.isFinite(difference) && difference > 0 ? difference : 0
+  return isFinitePositiveNumber(difference) ? difference : 0
 }
 
 function discreteDelta(after: bigint, before: bigint): bigint {
