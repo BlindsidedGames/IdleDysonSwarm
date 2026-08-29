@@ -30,6 +30,7 @@ import type {
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { BUY_MODE_OPTIONS } from '../buyModeOptions'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
 import { readyDysonMessages as messages } from './messages'
 import './dysonControls.css'
@@ -68,14 +69,6 @@ type DysonBuyMode = Extract<
   DysonSettingsCommand,
   { readonly kind: 'dyson.set-buy-mode' }
 >['buyMode']
-
-const BUY_MODE_OPTIONS = Object.freeze([
-  ['buy-1', 'buyOne'],
-  ['buy-10', 'buyTen'],
-  ['buy-50', 'buyFifty'],
-  ['buy-100', 'buyOneHundred'],
-  ['buy-max', 'buyMax'],
-] as const)
 
 export function DysonInfo({
   summary,
