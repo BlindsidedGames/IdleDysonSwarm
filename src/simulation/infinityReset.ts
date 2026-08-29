@@ -1,11 +1,10 @@
 import { addDiscrete, clampContinuous } from './numeric'
+import { UNITY_INT_MAXIMUM_BIGINT } from './unityNumericLimits'
 import {
   BASIC_DYSON_FACILITY_IDS,
   type BasicDysonFacilityId,
   type OwnedPair,
 } from './dysonFacilities'
-
-const INT_MAXIMUM = 2_147_483_647
 
 export interface InfinityStatistics {
   ordinaryCount: bigint
@@ -88,8 +87,8 @@ export function applyInfinityResetTransition(
   state.firstInfinityDone = true
   state.tutorial = true
   state.lastInfinityPointsGained = Number(
-    rewardGranted > BigInt(INT_MAXIMUM)
-      ? BigInt(INT_MAXIMUM)
+    rewardGranted > UNITY_INT_MAXIMUM_BIGINT
+      ? UNITY_INT_MAXIMUM_BIGINT
       : rewardGranted,
   )
   state.points = nextPoints

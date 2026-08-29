@@ -1,3 +1,7 @@
+import {
+  isSafeNonNegativeInteger,
+  isSafePositiveInteger,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { addDiscrete, DISCRETE_MAXIMUM } from './numeric'
@@ -638,13 +642,9 @@ function loadQuantumUpgradeDefinitions(): ReadonlyMap<
     if (
       typeof data.id !== 'string' ||
       !isQuantumUpgradeId(data.id) ||
-      typeof data.baseCost !== 'number' ||
-      !Number.isSafeInteger(data.baseCost) ||
-      data.baseCost <= 0 ||
+      !isSafePositiveInteger(data.baseCost) ||
       (data.costScaling !== 0 && data.costScaling !== 1) ||
-      typeof data.maxPurchases !== 'number' ||
-      !Number.isSafeInteger(data.maxPurchases) ||
-      data.maxPurchases < 0
+      !isSafeNonNegativeInteger(data.maxPurchases)
     ) {
       continue
     }

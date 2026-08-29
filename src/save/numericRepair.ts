@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import {
   asBigInt,
   ensureRecord,
@@ -183,7 +184,7 @@ export function repairNumericSave(settings: SaveRecord): NumericRepairResult {
   const reality = ensureRecord(settings, 'saveData')
   const progress = reality.workerGenerationProgress
   const repairedProgress =
-    typeof progress === 'number' && Number.isFinite(progress) && progress >= 0
+    isFiniteNonNegativeNumber(progress)
       ? progress % 1
       : 0
   if (progress !== undefined && progress !== repairedProgress) {

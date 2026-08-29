@@ -1,14 +1,19 @@
 import type { DeepReadonly } from '../core/contracts'
+import { clampUnitInterval } from '../core/clampUnitInterval'
+import { deepFreezePlainGraph } from '../core/deepFreezePlainGraph'
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
+import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
-import type {
-  CanonicalFacilityId,
-  CanonicalGameStateV1,
-  DreamEducationId,
-  DreamUpgradeFlag,
-  DreamState,
-  InfinityCycleHistoryEntry,
-  TimelineState,
+import {
+  DREAM_EDUCATION_IDS,
+  type CanonicalFacilityId,
+  type CanonicalGameStateV1,
+  type DreamEducationId,
+  type DreamUpgradeFlag,
+  type DreamState,
+  type InfinityCycleHistoryEntry,
+  type TimelineState,
 } from '../game-state/types'
 import {
   deriveAvocadoMultiplier,
@@ -174,15 +179,6 @@ const DREAM_SPACE_AGE_PURCHASES = Object.freeze([
   'solar',
   'fusion',
 ] as const satisfies readonly DreamSpaceAgePurchase[])
-
-const DREAM_EDUCATION_IDS = Object.freeze([
-  'engineering',
-  'shipping',
-  'worldTrade',
-  'worldPeace',
-  'mathematics',
-  'advancedPhysics',
-] as const satisfies readonly DreamEducationId[])
 
 export const FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS =
   Object.freeze([
@@ -1354,7 +1350,7 @@ export function createFrontendCommandEnvelope(
   if (!hasCommandKind(command.kind)) {
     throw new Error(`Unknown canonical command kind '${command.kind}'.`)
   }
-  return deepFreeze({
+  return deepFreezePlainGraph({
     sessionRevision: revision.session,
     expectedStateRevision: revision.state,
     command: structuredClone(command),
@@ -1388,7 +1384,7 @@ function inspectFrontendDefinitionCoverageOnce():
       findRealityUpgradeCanonicalGaps,
     ),
   }
-  return deepFreeze({
+  return deepFreezePlainGraph({
     complete: Object.values(domains).every(
       (coverage) => coverage.complete,
     ),
@@ -2241,10 +2237,6 @@ export function projectDysonSwarmVisualization(
   }
 }
 
-function clampUnitInterval(value: number): number {
-  return Math.min(1, Math.max(0, value))
-}
-
 /**
  * Compresses the post-galaxy display across the baseline range from one
  * engulfed galaxy to the approximate count supported by 1e308 Worker Bots.
@@ -2833,25 +2825,11 @@ function hasCommandKind(kind: string): kind is CanonicalPlayerCommandKind {
 }
 
 function assertRevision(name: string, value: number): void {
-  if (!Number.isSafeInteger(value) || value < 0) {
+  if (!isSafeNonNegativeInteger(value)) {
     throw new Error(
       `${name} revision must be a non-negative safe integer.`,
     )
   }
-}
-
-function deepFreeze<T>(value: T): DeepReadonly<T> {
-  if (
-    value === null ||
-    typeof value !== 'object' ||
-    Object.isFrozen(value)
-  ) {
-    return value as DeepReadonly<T>
-  }
-  for (const child of Object.values(value)) {
-    deepFreeze(child)
-  }
-  return Object.freeze(value) as DeepReadonly<T>
 }
 
 function freezeFrontendProjection<T>(
@@ -2860,7 +2838,7 @@ function freezeFrontendProjection<T>(
 ): DeepReadonly<T> {
   return sourceOwnership === 'detached-frozen' && import.meta.env?.PROD === true
     ? Object.freeze(value) as DeepReadonly<T>
-    : deepFreeze(value)
+    : deepFreezePlainGraph(value)
 }
 
 interface SkillPreviewDependencies {
@@ -2961,15 +2939,15 @@ function reuseSkillCatalogPreview(
   if (
     previous.complete !== next.complete ||
     previous.definitionGap !== next.definitionGap ||
-    !sameStringArray(
+    !sameOrderedStrings(
       previous.reset.refundableSkillIds,
       next.reset.refundableSkillIds,
     ) ||
-    !sameStringArray(
+    !sameOrderedStrings(
       previous.reset.retainedSkillIds,
       next.reset.retainedSkillIds,
     ) ||
-    !sameStringArray(
+    !sameOrderedStrings(
       previous.reset.queuedSkillIds,
       next.reset.queuedSkillIds,
     ) ||
@@ -2991,12 +2969,12 @@ function reuseSkillCatalogPreview(
       before.visualState !== after.visualState ||
       before.fragment !== after.fragment ||
       before.intrinsicallyRefundable !== after.intrinsicallyRefundable ||
-      !sameStringArray(before.requiredSkillIds, after.requiredSkillIds) ||
-      !sameStringArray(
+      !sameOrderedStrings(before.requiredSkillIds, after.requiredSkillIds) ||
+      !sameOrderedStrings(
         before.shadowRequiredSkillIds,
         after.shadowRequiredSkillIds,
       ) ||
-      !sameStringArray(
+      !sameOrderedStrings(
         before.exclusiveWithSkillIds,
         after.exclusiveWithSkillIds,
       ) ||
@@ -3027,16 +3005,6 @@ function sameSkillActionPreview(
   return (
     before.eligible === after.eligible &&
     before.code === after.code &&
-    sameStringArray(before.affectedSkillIds, after.affectedSkillIds)
-  )
-}
-
-function sameStringArray(
-  before: readonly string[],
-  after: readonly string[],
-): boolean {
-  return (
-    before.length === after.length &&
-    before.every((value, index) => value === after[index])
+    sameOrderedStrings(before.affectedSkillIds, after.affectedSkillIds)
   )
 }

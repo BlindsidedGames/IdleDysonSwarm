@@ -43,6 +43,7 @@ import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
 import { useResearchVisibility } from '../../research-visibility'
+import { BUY_MODE_OPTIONS } from '../buyModeOptions'
 import { researchMessages as messages } from './messages'
 import { orderResearchCardsForPresentation } from './researchCardOrdering'
 import {
@@ -78,14 +79,6 @@ type ResearchSettingCommand = Extract<
       | 'skill.set-tab-preset-automation'
   }
 >
-
-const BUY_MODE_OPTIONS = Object.freeze([
-  ['buy-1', 'buyOne'],
-  ['buy-10', 'buyTen'],
-  ['buy-50', 'buyFifty'],
-  ['buy-100', 'buyOneHundred'],
-  ['buy-max', 'buyMax'],
-] as const)
 
 export interface ResearchSurfaceProps {
   readonly locale: EnabledLocale

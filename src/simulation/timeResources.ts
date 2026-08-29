@@ -1,3 +1,9 @@
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
+import { addContinuous } from './numeric'
+
 export const DEFAULT_STORED_TIME_CAPACITY_SECONDS = 86_400
 export const STORED_TIME_MAXIMUM_SECONDS = Number.MAX_VALUE
 
@@ -119,8 +125,7 @@ export function repairStoredTimeState(
 ): StoredTimeRepairResult {
   const capacityIsPositiveInfinity =
     state.capacitySeconds === Number.POSITIVE_INFINITY
-  const capacityIsValid =
-    Number.isFinite(state.capacitySeconds) && state.capacitySeconds > 0
+  const capacityIsValid = isFinitePositiveNumber(state.capacitySeconds)
   const capacitySeconds = capacityIsPositiveInfinity
     ? STORED_TIME_MAXIMUM_SECONDS
     : capacityIsValid
@@ -138,7 +143,7 @@ export function repairStoredTimeState(
     bankSeconds = capacitySeconds
     bankRepaired = true
     cheater = true
-  } else if (!Number.isFinite(bankSeconds) || bankSeconds < 0) {
+  } else if (!isFiniteNonNegativeNumber(bankSeconds)) {
     bankSeconds = 0
     bankRepaired = true
   } else if (bankSeconds > capacitySeconds) {
@@ -164,10 +169,9 @@ export function applyAwayTimeGrant(
   request: AwayTimeGrantRequest,
 ): AwayTimeGrantResult {
   const repaired = repairStoredTimeState(request)
-  const awaySeconds =
-    Number.isFinite(request.awaySeconds) && request.awaySeconds >= 0
-      ? request.awaySeconds
-      : 0
+  const awaySeconds = isFiniteNonNegativeNumber(request.awaySeconds)
+    ? request.awaySeconds
+    : 0
   const cheater = repaired.cheater || request.awaySeconds < 0
 
   const availableCapacity = Math.max(
@@ -236,17 +240,4 @@ function assertFiniteTimestamp(value: number, field: string): void {
   if (!Number.isFinite(value)) {
     throw new RangeError(`${field} must be finite.`)
   }
-}
-
-function addContinuous(left: number, right: number): number {
-  if (
-    !Number.isFinite(left) ||
-    !Number.isFinite(right) ||
-    left < 0 ||
-    right < 0
-  ) {
-    return 0
-  }
-  const result = left + right
-  return result === Number.POSITIVE_INFINITY ? Number.MAX_VALUE : result
 }

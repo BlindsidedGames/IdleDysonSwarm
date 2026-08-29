@@ -1,5 +1,7 @@
 import {
   CANONICAL_STORE_PRODUCTS,
+  createEmptyHostEntitlementOwnership,
+  getCanonicalStoreProduct,
   STORE_PRODUCT_IDS,
   isSupporterProductId,
   resolveEffectiveEntitlementAccess,
@@ -7,7 +9,6 @@ import {
   type EntitlementAuthority,
   type HostEntitlementOwnership,
   type StoreAdapter,
-  type StoreProduct,
   type StoreProductId,
   type StoreProductListing,
 } from './contracts'
@@ -56,11 +57,7 @@ export interface StorefrontControllerOptions {
   readonly onVerifiedOwnershipChanged?: () => Promise<boolean>
 }
 
-const EMPTY_OWNERSHIP = Object.freeze({
-  doubleInfinityPoints: false,
-  developerOptions: false,
-  supporterCatGallery: false,
-})
+const EMPTY_OWNERSHIP = createEmptyHostEntitlementOwnership()
 
 const INITIAL_SNAPSHOT: StorefrontSnapshot = Object.freeze({
   initialized: false,
@@ -352,18 +349,8 @@ function normalizeListings(
   )
 }
 
-function productById(productId: StoreProductId): StoreProduct {
-  const product = CANONICAL_STORE_PRODUCTS.find(
-    (candidate) => candidate.id === productId,
-  )
-  if (product === undefined) {
-    throw new Error(`Unknown Store product: ${productId}`)
-  }
-  return product
-}
-
 function isDurableProductId(productId: StoreProductId): boolean {
-  return productById(productId).durability === 'durable'
+  return getCanonicalStoreProduct(productId).durability === 'durable'
 }
 
 function ownsProduct(

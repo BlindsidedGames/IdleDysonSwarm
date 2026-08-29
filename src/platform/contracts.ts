@@ -11,11 +11,23 @@ export interface PlatformIdentity {
   readonly canDiscoverUnitySaveWithoutPrompt: boolean
 }
 
-export type LifecyclePhase =
-  | 'active'
-  | 'background'
-  | 'focus-lost'
-  | 'terminating'
+export const LIFECYCLE_PHASES = [
+  'active',
+  'background',
+  'focus-lost',
+  'terminating',
+] as const
+
+export type LifecyclePhase = (typeof LIFECYCLE_PHASES)[number]
+
+export function isLifecyclePhase(
+  value: unknown,
+): value is LifecyclePhase {
+  return (
+    typeof value === 'string' &&
+    (LIFECYCLE_PHASES as readonly string[]).includes(value)
+  )
+}
 
 export interface LifecycleAdapter {
   currentPhase(): LifecyclePhase

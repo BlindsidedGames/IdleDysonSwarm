@@ -47,7 +47,12 @@ import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import {
+  readBooleanPresentationPreference,
+  writeBooleanPresentationPreference,
+} from '../../presentationPreferences'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
+import { SECRET_REVEAL_ORDER } from '../secretRevealOrder'
 import { infinityMessages as messages } from './messages'
 import {
   formatAutoInfinityTargetInput,
@@ -112,13 +117,9 @@ export function InfinitySurface({
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [hideMaxed, setHideMaxed] = useState(() => {
-    try {
-      return localStorage.getItem(INFINITY_VISIBILITY_STORAGE_KEY) === 'true'
-    } catch {
-      return false
-    }
-  })
+  const [hideMaxed, setHideMaxed] = useState(() =>
+    readBooleanPresentationPreference(INFINITY_VISIBILITY_STORAGE_KEY),
+  )
   const presentedGuidance = useInfinityRateGuidancePresentation({
     currentIpPerMinute: derived.currentIpPerMinute ?? 0,
     peakIpPerMinute: derived.peakIpPerMinute ?? 0,
@@ -164,11 +165,7 @@ export function InfinitySurface({
 
   const updateHideMaxed = (next: boolean): void => {
     setHideMaxed(next)
-    try {
-      localStorage.setItem(INFINITY_VISIBILITY_STORAGE_KEY, String(next))
-    } catch {
-      // Device-local presentation persistence must never block gameplay.
-    }
+    writeBooleanPresentationPreference(INFINITY_VISIBILITY_STORAGE_KEY, next)
   }
 
   return (
@@ -965,13 +962,6 @@ function useInfinityRateGuidancePresentation(
 
   return presented
 }
-
-const SECRET_REVEAL_ORDER = Object.freeze([
-  0, 1, 2, 3, 4,
-  6, 7, 8, 9, 10, 11, 12,
-  14, 15, 16,
-  29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18,
-] as const)
 
 /**
  * Reproduces Unity's presentation-only letter reveal while the canonical

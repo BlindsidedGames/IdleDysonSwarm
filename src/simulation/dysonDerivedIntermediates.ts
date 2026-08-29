@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { clampContinuous } from './numeric'
 
@@ -124,7 +125,7 @@ function requireFiniteNonNegative(
   value: number,
   path: string,
 ): void {
-  if (!Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     throw new Error(
       `Dyson derived intermediate '${path}' must be finite and non-negative.`,
     )

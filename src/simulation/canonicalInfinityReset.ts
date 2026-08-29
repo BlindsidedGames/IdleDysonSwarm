@@ -1,25 +1,33 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import {
+  SKILL_DATABASE_ASSET_ID,
+  SKILL_DATABASE_ASSET_KIND,
+  SKILL_DEFINITION_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
+import {
+  readStringArray,
+  readUnityBoolean,
+} from '../game-data/runtimeValueGuards'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type {
   CanonicalGameStateV1,
   CanonicalFacilityId,
   InfinityCycleHistoryEntry,
+  ProcessingSource,
   SimulationStatisticsState,
   SimulationTotalsState,
   SkillRuntimeState,
   StatisticsWindowState,
 } from '../game-state/types'
+import { updateStatisticsEventWindow } from './canonicalStatistics'
 import {
   addDiscrete,
   clampContinuous,
   DISCRETE_MAXIMUM,
-  floorToDiscrete,
 } from './numeric'
 
 const INT32_MAXIMUM = 2_147_483_647n
-const SKILL_DATABASE_KIND = 'GameData.SkillDatabase'
-const SKILL_DATABASE_ID = 'SkillDatabase'
-const SKILL_DEFINITION_KIND = 'GameData.SkillDefinition'
 
 export interface CanonicalInfinityResetRequest {
   readonly breakInfinity: boolean
@@ -29,7 +37,7 @@ export interface CanonicalInfinityResetRequest {
   /** True only when the event model initiated the reset automatically. */
   readonly automatic?: boolean
   /** Processing lane which produced this reset. */
-  readonly processingSource?: 'active' | 'stored-time'
+  readonly processingSource?: ProcessingSource
   /** Active processing cadence in force when this reset completed. */
   readonly activeIntervalMilliseconds?: number
 }
@@ -376,7 +384,10 @@ function captureAutoAssignmentRules(
     } {
   if (ids.length === 0) return { ok: true, rules: Object.freeze([]) }
 
-  const database = lookup(SKILL_DATABASE_KIND, SKILL_DATABASE_ID)
+  const database = lookup(
+    SKILL_DATABASE_ASSET_KIND,
+    SKILL_DATABASE_ASSET_ID,
+  )
   if (database === undefined) {
     return {
       ok: false,
@@ -400,7 +411,7 @@ function captureAutoAssignmentRules(
       rules.push(invalidRule(id))
       continue
     }
-    const asset = lookup(SKILL_DEFINITION_KIND, id)
+    const asset = lookup(SKILL_DEFINITION_ASSET_KIND, id)
     if (asset === undefined) {
       issues.push({
         code: 'INFINITY_RESET_SKILL_DEFINITION_MISSING',
@@ -434,8 +445,8 @@ function readSkillDatabaseIds(
     } {
   const references = database.data.skills
   if (
-    database.kind !== SKILL_DATABASE_KIND ||
-    database.id !== SKILL_DATABASE_ID ||
+    database.kind !== SKILL_DATABASE_ASSET_KIND ||
+    database.id !== SKILL_DATABASE_ASSET_ID ||
     !Array.isArray(references)
   ) {
     return invalidSkillDatabase()
@@ -480,8 +491,8 @@ function readSkillRule(
   | { readonly ok: false; readonly issue: CanonicalInfinityResetIssue } {
   const data = asset.data
   const cost = data.cost
-  const refundable = readBooleanFlag(data.refundable)
-  const isFragment = readBooleanFlag(data.isFragment)
+  const refundable = readUnityBoolean(data.refundable)
+  const isFragment = readUnityBoolean(data.isFragment)
   const requiredSkillIds = readStringArray(data.requiredSkillIds)
   const shadowRequirementIds = readStringArray(
     data.shadowRequirementIds,
@@ -489,11 +500,9 @@ function readSkillRule(
   const exclusiveWithIds = readStringArray(data.exclusiveWithIds)
   const unlock = readSkillUnlock(data)
   if (
-    asset.kind !== SKILL_DEFINITION_KIND ||
+    asset.kind !== SKILL_DEFINITION_ASSET_KIND ||
     asset.id !== id ||
-    typeof cost !== 'number' ||
-    !Number.isSafeInteger(cost) ||
-    cost < 0 ||
+    !isSafeNonNegativeInteger(cost) ||
     cost > 2_147_483_647 ||
     refundable === undefined ||
     isFragment === undefined ||
@@ -608,7 +617,7 @@ function readSkillUnlock(
     ['stellarLine', 'stellar'],
   ] as const
   for (const [field, unlock] of candidates) {
-    const value = readBooleanFlag(data[field])
+    const value = readUnityBoolean(data[field])
     if (value === undefined) return undefined
     if (value) return unlock
   }
@@ -666,7 +675,7 @@ function recordInfinityCycle(
   durationSeconds: number,
   automatic: boolean,
   configuredTarget: bigint,
-  processingSource?: 'active' | 'stored-time',
+  processingSource?: ProcessingSource,
   activeIntervalMilliseconds?: number,
   activeAutomaticThroughputCycleEligible = false,
 ): SimulationStatisticsState {
@@ -796,65 +805,23 @@ function recordWindowEvent(
   infinityCount: bigint,
   infinityPoints: bigint,
 ): readonly StatisticsWindowState[] {
-  const windows =
-    source.length === expectedLength
-      ? [...source]
-      : Array.from(
-          { length: expectedLength },
-          () => emptyWindow(0n),
-        )
-  const sequence = floorToDiscrete(
-    clampContinuous(trackedSimulatedSeconds) / widthSeconds,
+  return updateStatisticsEventWindow(
+    source,
+    expectedLength,
+    widthSeconds,
+    trackedSimulatedSeconds,
+    (bucket) => ({
+      ...bucket,
+      infinityCount: addDiscrete(
+        bucket.infinityCount,
+        infinityCount,
+      ),
+      infinityPoints: addDiscrete(
+        bucket.infinityPoints,
+        infinityPoints,
+      ),
+    }),
   )
-  const index = Number(sequence % BigInt(expectedLength))
-  const sourceBucket = windows[index]
-  const bucket =
-    sourceBucket.sequence === sequence
-      ? sourceBucket
-      : emptyWindow(sequence)
-  windows[index] = {
-    ...bucket,
-    infinityCount: addDiscrete(
-      bucket.infinityCount,
-      infinityCount,
-    ),
-    infinityPoints: addDiscrete(
-      bucket.infinityPoints,
-      infinityPoints,
-    ),
-  }
-  return windows
-}
-
-function emptyWindow(sequence: bigint): StatisticsWindowState {
-  return {
-    sequence,
-    simulatedSeconds: 0,
-    infinityCount: 0n,
-    infinityPoints: 0n,
-    dreamResetCount: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-  }
-}
-
-function readBooleanFlag(value: unknown): boolean | undefined {
-  if (typeof value === 'boolean') return value
-  if (value === 0) return false
-  if (value === 1) return true
-  return undefined
-}
-
-function readStringArray(
-  value: unknown,
-): readonly string[] | undefined {
-  if (
-    !Array.isArray(value) ||
-    value.some((entry) => typeof entry !== 'string')
-  ) {
-    return undefined
-  }
-  return value as readonly string[]
 }
 
 function isRecord(

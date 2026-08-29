@@ -5,9 +5,12 @@ import type {
   CanonicalLifecycleClock,
 } from '../application/canonicalLifecycleCoordinator'
 import {
-  createUnityFirstRunPreparedSave,
   unityFirstRunProvenance,
 } from '../application/firstRun/unityFirstRunSave'
+import {
+  createProductionUnityFirstRunSaveFactory,
+  createUnityFirstRunResetRequest,
+} from '../application/firstRun/productionFirstRun'
 import {
   BrowserLifecycleUtcClock,
   BrowserMonotonicClock,
@@ -21,10 +24,9 @@ import {
   ElectronPlatformSaveStorageAdapter,
   NATIVE_WEB_SAVE_PATHS,
 } from '../platform/platformSaveStorage'
-import type {
-  AutomaticUnityPurchaseEvidencePromoter,
+import {
+  asAutomaticUnityPurchaseEvidencePromoter,
 } from '../save/automaticPurchaseEvidence'
-import { serializeWebSave } from '../save/serialization'
 import {
   MOBILE_LIFECYCLE_POLICY,
   WEB_LIFECYCLE_POLICY,
@@ -32,6 +34,7 @@ import {
 import { RuntimeEntitlementBridge } from '../store/runtimeEntitlements'
 import {
   createBrowserRuntimeFoundation,
+  prepareRuntimeForSafeReload,
   type BrowserRuntimeFoundationOptions,
   type BrowserUiRuntimeFoundation,
   type UiRuntimeImportResult,
@@ -95,11 +98,8 @@ export function createProductionNativeComposition(
         environment.files,
         environment.migration,
       )
-  const createFirstRunSave = () =>
-    createUnityFirstRunPreparedSave({
-      startedAtUtc:
-        lifecycleClock.sample().serializedUtcText,
-    })
+  const createFirstRunSave =
+    createProductionUnityFirstRunSaveFactory(lifecycleClock)
   const createApplication =
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
@@ -127,7 +127,7 @@ export function createProductionNativeComposition(
     storageManager: {},
     hostEntitlements: entitlementBridge,
     automaticPurchaseEvidencePromoter:
-      automaticPurchaseEvidencePromoter(
+      asAutomaticUnityPurchaseEvidencePromoter(
         services.entitlements,
       ),
     automaticNumberFormattingAdopter:
@@ -139,26 +139,7 @@ export function createProductionNativeComposition(
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())
-  const prepareForSafeReload = async (): Promise<void> => {
-    const status = runtime.status()
-    if (status.phase === 'ready') {
-      const checkpointed =
-        await runtime.checkpointBeforeSafeReload()
-      if (!checkpointed) {
-        throw new Error(
-          'Safe reload requires a verified checkpoint.',
-        )
-      }
-    } else if (
-      status.phase !== 'blocked' &&
-      status.phase !== 'ownership-lost'
-    ) {
-      throw new Error(
-        `Safe reload is unavailable while the runtime is ${status.phase}.`,
-      )
-    }
-    await runtime.shutdown()
-  }
+  const prepareForSafeReload = () => prepareRuntimeForSafeReload(runtime)
   environment.installTerminationCheckpoint?.(async () => {
     try {
       const status = runtime.status()
@@ -190,38 +171,13 @@ export function createProductionNativeComposition(
     saveSchemaVersion: unityFirstRunProvenance.saveSchema,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
-    resetSave: () => {
-      const importedAtUtc =
-        lifecycleClock.sample().serializedUtcText
-      return runtime.importSave({
-        source: 'paste',
-        text: serializeWebSave(
-          createFirstRunSave().copyValidatedState(),
-        ),
-        importedAtUtc,
-        overwriteApproved: true,
-      })
-    },
+    resetSave: () => runtime.importSave(
+      createUnityFirstRunResetRequest(lifecycleClock, createFirstRunSave),
+    ),
     prepareForSafeReload,
     reloadSafely: async () => {
       await prepareForSafeReload()
       reloadPage()
     },
   })
-}
-
-function automaticPurchaseEvidencePromoter(
-  authority:
-    | NativeHostEnvironment['releasePlatformServices']['entitlements']
-    | undefined,
-): AutomaticUnityPurchaseEvidencePromoter | undefined {
-  if (
-    authority === undefined ||
-    !('promoteAutomaticUnityPurchaseEvidence' in authority) ||
-    typeof authority.promoteAutomaticUnityPurchaseEvidence !== 'function'
-  ) {
-    return undefined
-  }
-  return authority as typeof authority &
-    AutomaticUnityPurchaseEvidencePromoter
 }

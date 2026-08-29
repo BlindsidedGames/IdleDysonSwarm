@@ -1,4 +1,7 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import { getGameAsset } from '../game-data/catalog'
+import { FACILITY_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { multiplyContinuous } from './numeric'
@@ -102,7 +105,6 @@ interface MegaStructureSpec {
     | 'birch_planets'
 }
 
-const FACILITY_KIND = 'GameData.FacilityDefinition'
 const UNITY_MULTIPLIER_EPSILON = 1e-12
 
 const MEGA_STRUCTURE_SPECS: readonly MegaStructureSpec[] = [
@@ -218,7 +220,7 @@ export function deriveMegaStructureRates(
         rate = multiplyContinuous(rate, modifier)
       }
     }
-    if (!Number.isFinite(rate) || rate < 0) {
+    if (!isFiniteNonNegativeNumber(rate)) {
       issues.push({
         code: 'MEGA_STRUCTURE_RATE_NON_FINITE',
         path: `rates.${spec.id}`,
@@ -255,7 +257,7 @@ function readLegacyBaseProduction(
   lookup: MegaStructureAssetLookup,
   issues: MegaStructureRateIssue[],
 ): number | undefined {
-  const asset = lookup(FACILITY_KIND, spec.id)
+  const asset = lookup(FACILITY_DEFINITION_ASSET_KIND, spec.id)
   const path = `gameData.facilities.${spec.id}`
   if (asset === undefined) {
     issues.push({
@@ -270,7 +272,7 @@ function readLegacyBaseProduction(
     ? asset.data._id.id
     : undefined
   if (
-    asset.kind !== FACILITY_KIND ||
+    asset.kind !== FACILITY_DEFINITION_ASSET_KIND ||
     asset.id !== spec.id ||
     internalId !== spec.id ||
     asset.data.baseProduction !== spec.baseProduction ||
@@ -285,7 +287,7 @@ function readLegacyBaseProduction(
   }
 
   const legacyBase = Math.fround(spec.baseProduction)
-  if (!Number.isFinite(legacyBase) || legacyBase < 0) {
+  if (!isFiniteNonNegativeNumber(legacyBase)) {
     issues.push({
       code: 'MEGA_STRUCTURE_DEFINITION_INVALID',
       path: `${path}.baseProduction`,
@@ -333,7 +335,7 @@ function readEffectiveCount(
   if (!valid) return undefined
 
   const effective = pair[0] + pair[1]
-  if (!Number.isFinite(effective) || effective < 0) {
+  if (!isFiniteNonNegativeNumber(effective)) {
     issues.push({
       code: 'MEGA_STRUCTURE_EFFECTIVE_COUNT_NON_FINITE',
       path,
@@ -353,8 +355,4 @@ function failed(
       issues.map((issue) => Object.freeze({ ...issue })),
     ),
   }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
 }

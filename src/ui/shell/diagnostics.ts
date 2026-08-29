@@ -1,3 +1,5 @@
+import { isSafeNonNegativeInteger } from '../../core/finiteNonNegativeNumber'
+
 export type LocalDiagnosticPhase =
   | 'idle'
   | 'starting'
@@ -160,8 +162,7 @@ function safeIntegerField<Key extends string>(
 ): Partial<Record<Key, number>> {
   if (
     value === undefined ||
-    !Number.isSafeInteger(value) ||
-    value < 0
+    !isSafeNonNegativeInteger(value)
   ) {
     return {}
   }

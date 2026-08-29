@@ -1,4 +1,12 @@
+import {
+  isSafeNonNegativeInteger,
+  isSafePositiveInteger,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import {
+  REALITY_SYSTEM_TUNING_ASSET_ID,
+  REALITY_SYSTEM_TUNING_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import type {
   AvocadoState,
   QuantumState,
@@ -35,7 +43,7 @@ export function avocadoDysonMultiplier(
   threshold = readAvocadoLogThreshold(),
 ): number {
   if (!avocado.unlocked) return 1
-  if (!Number.isSafeInteger(threshold) || threshold <= 0) {
+  if (!isSafePositiveInteger(threshold)) {
     throw new Error(
       'Avocado logarithm threshold must be a positive safe integer.',
     )
@@ -59,7 +67,7 @@ export function avocadoDysonMultiplier(
 
 function quantumBonusMultiplier(levels: bigint): number {
   const level = Number(levels)
-  if (!Number.isSafeInteger(level) || level < 0) {
+  if (!isSafeNonNegativeInteger(level)) {
     throw new Error(
       'Quantum bonus levels exceed the characterized numeric range.',
     )
@@ -69,15 +77,11 @@ function quantumBonusMultiplier(levels: bigint): number {
 
 function readAvocadoLogThreshold(): number {
   const asset = getGameAsset(
-    'IdleDysonSwarm.Data.Balance.RealitySystemTuning',
-    'RealitySystemTuning',
+    REALITY_SYSTEM_TUNING_ASSET_KIND,
+    REALITY_SYSTEM_TUNING_ASSET_ID,
   )
   const threshold = asset?.data.avocadoLogThreshold
-  if (
-    typeof threshold !== 'number' ||
-    !Number.isSafeInteger(threshold) ||
-    threshold <= 0
-  ) {
+  if (!isSafePositiveInteger(threshold)) {
     throw new Error(
       'Exported RealitySystemTuning has no valid avocadoLogThreshold.',
     )

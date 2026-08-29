@@ -1,4 +1,14 @@
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+  isSafeNonNegativeInteger,
+  isSafePositiveInteger,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import {
+  REALITY_SYSTEM_TUNING_ASSET_ID,
+  REALITY_SYSTEM_TUNING_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import type {
   CanonicalGameStateV1,
   SimulationStatisticsState,
@@ -6,6 +16,10 @@ import type {
   StatisticsWindowState,
 } from '../game-state/types'
 import { hasVisitedNavigationRoute } from '../game-state/navigationPreferences'
+import {
+  createEmptySimulationTotals,
+  createEmptyStatisticsWindow,
+} from './canonicalStatistics'
 import {
   addContinuous,
   addDiscrete,
@@ -17,9 +31,6 @@ import {
 } from './numeric'
 import { QUANTUM_CONSTANTS } from './quantumUpgrades'
 
-const REALITY_TUNING_KIND =
-  'IdleDysonSwarm.Data.Balance.RealitySystemTuning'
-const REALITY_TUNING_ID = 'RealitySystemTuning'
 const FLOAT32_MAXIMUM = 3.4028234663852886e38
 
 export interface RealityWorkerTuning {
@@ -73,7 +84,7 @@ export function advanceRealityWorkers(
   tuning: Readonly<RealityWorkerTuning> | null | undefined =
     readRealityWorkerTuning(),
 ): RealityWorkerAdvanceResult {
-  if (!Number.isFinite(seconds) || seconds < 0) {
+  if (!isFiniteNonNegativeNumber(seconds)) {
     return emptyAdvance('invalid-input', state)
   }
   if (!isValidTuning(tuning)) {
@@ -277,15 +288,14 @@ function creditGeneratedWorkers(
   if (floorToDiscrete(requestedInfluence) > availableWorkers) {
     requestedInfluence = bitDecrement(requestedInfluence)
   }
-  if (!Number.isFinite(requestedInfluence) || requestedInfluence <= 0) {
+  if (!isFinitePositiveNumber(requestedInfluence)) {
     return { influence, consumedWorkers: 0n }
   }
 
   const nextInfluence = addContinuous(influence, requestedInfluence)
   const creditedInfluence = nextInfluence - influence
   if (
-    !Number.isFinite(creditedInfluence) ||
-    creditedInfluence <= 0 ||
+    !isFinitePositiveNumber(creditedInfluence) ||
     creditedInfluence > requestedInfluence
   ) {
     return { influence, consumedWorkers: 0n }
@@ -302,19 +312,15 @@ export function readRealityWorkerTuning():
   | RealityWorkerTuning
   | undefined {
   const asset = getGameAsset(
-    REALITY_TUNING_KIND,
-    REALITY_TUNING_ID,
+    REALITY_SYSTEM_TUNING_ASSET_KIND,
+    REALITY_SYSTEM_TUNING_ASSET_ID,
   )
   const workerBatchSize = asset?.data.workerBatchSize
   const baseWorkerGenerationSpeed =
     asset?.data.baseWorkerGenerationSpeed
   if (
-    typeof workerBatchSize !== 'number' ||
-    !Number.isSafeInteger(workerBatchSize) ||
-    workerBatchSize <= 0 ||
-    typeof baseWorkerGenerationSpeed !== 'number' ||
-    !Number.isSafeInteger(baseWorkerGenerationSpeed) ||
-    baseWorkerGenerationSpeed < 0
+    !isSafePositiveInteger(workerBatchSize) ||
+    !isSafeNonNegativeInteger(baseWorkerGenerationSpeed)
   ) {
     return undefined
   }
@@ -334,7 +340,7 @@ function workerGenerationPerSecond(
 }
 
 function normalizeProgress(value: number): number {
-  return Number.isFinite(value) && value >= 0 ? value % 1 : 0
+  return isFiniteNonNegativeNumber(value) ? value % 1 : 0
 }
 
 function isValidTuning(
@@ -344,8 +350,7 @@ function isValidTuning(
     tuning != null &&
     tuning.workerBatchSize > 0n &&
     tuning.workerBatchSize <= DISCRETE_MAXIMUM &&
-    Number.isSafeInteger(tuning.baseWorkerGenerationSpeed) &&
-    tuning.baseWorkerGenerationSpeed >= 0
+    isSafeNonNegativeInteger(tuning.baseWorkerGenerationSpeed)
   )
 }
 
@@ -409,13 +414,12 @@ function recordRealitySegment(
   seconds: number,
   summary: Readonly<RealitySegmentSummary>,
 ): SimulationStatisticsState {
-  const safeSeconds =
-    Number.isFinite(seconds) && seconds >= 0 ? seconds : 0
+  const safeSeconds = isFiniteNonNegativeNumber(seconds) ? seconds : 0
   const start = statistics.trackedSimulatedSeconds
   const end = addContinuous(start, safeSeconds)
   const recentBase =
     statistics.recentProcessedSegment.simulatedSeconds > 0
-      ? emptyTotals()
+      ? createEmptySimulationTotals()
       : statistics.recentProcessedSegment
 
   return {
@@ -491,27 +495,6 @@ function addRealityTotals(
       totals.simulatedSeconds,
       seconds,
     ),
-  }
-}
-
-function emptyTotals(): SimulationTotalsState {
-  return {
-    ordinaryInfinityCount: 0n,
-    breakInfinityCount: 0n,
-    ordinaryInfinityPoints: 0n,
-    breakInfinityPoints: 0n,
-    botCapInfinityPoints: 0n,
-    botCapOverflowRewards: 0n,
-    meteorDreamResets: 0n,
-    aiDreamResets: 0n,
-    globalWarmingDreamResets: 0n,
-    blackHoleDreamResets: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-    automaticInfluence: 0,
-    manualInfluence: 0,
-    realityCapacityStallSeconds: 0,
-    simulatedSeconds: 0,
   }
 }
 
@@ -595,13 +578,5 @@ function prepareWindow(
   sequence: bigint,
 ): StatisticsWindowState {
   if (window.sequence === sequence) return window
-  return {
-    sequence,
-    simulatedSeconds: 0,
-    infinityCount: 0n,
-    infinityPoints: 0n,
-    dreamResetCount: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-  }
+  return createEmptyStatisticsWindow(sequence)
 }

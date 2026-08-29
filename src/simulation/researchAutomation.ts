@@ -1,10 +1,17 @@
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { RESEARCH_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import { readStringArray } from '../game-data/runtimeValueGuards'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
 } from '../game-state/types'
+import { isDysonFacilityId } from './dysonFacilityCatalog'
 import { CONTINUOUS_MAXIMUM, floorToDiscrete } from './numeric'
 import {
   deriveSecretBuffs,
@@ -17,8 +24,6 @@ import {
   maxAffordable,
   tryDebitContinuous,
 } from './transactions'
-
-const RESEARCH_KIND = 'GameData.ResearchDefinition'
 
 export const UNITY_RESEARCH_PRESENTATION_ORDER = Object.freeze([
   'research.assembly_line_upgrade',
@@ -557,7 +562,7 @@ function previewPurchase(
       coefficientOverrides[
         definition.id as SecretResearchCoefficientId
       ] ?? tuning[coefficientField]
-    if (!Number.isFinite(percentPerLevel) || percentPerLevel < 0) {
+    if (!isFiniteNonNegativeNumber(percentPerLevel)) {
       return emptyPreview(
         definition.id,
         'invalid-tuning',
@@ -569,7 +574,7 @@ function previewPurchase(
       costBase /= 1 + currentLevel * percentPerLevel
     }
   }
-  if (!Number.isFinite(costBase) || costBase <= 0) {
+  if (!isFinitePositiveNumber(costBase)) {
     return emptyPreview(
       definition.id,
       'invalid-cost',
@@ -805,7 +810,7 @@ function prerequisitesMet(
 }
 
 function loadDefinitions(): readonly ResearchDefinition[] {
-  return getGameAssetsByKind(RESEARCH_KIND)
+  return getGameAssetsByKind(RESEARCH_DEFINITION_ASSET_KIND)
     .map(parseDefinition)
     .sort((left, right) =>
       left.id < right.id ? -1 : left.id > right.id ? 1 : 0,
@@ -822,11 +827,10 @@ function parseDefinition(asset: RuntimeGameAsset): ResearchDefinition {
     throw invalidDefinition(asset)
   }
 
-  const rawPrerequisites = data.prerequisiteResearchIds
-  if (
-    !Array.isArray(rawPrerequisites) ||
-    rawPrerequisites.some((value) => typeof value !== 'string')
-  ) {
+  const prerequisiteResearchIds = readStringArray(
+    data.prerequisiteResearchIds,
+  )
+  if (prerequisiteResearchIds === undefined) {
     throw invalidDefinition(asset)
   }
   const rawFacilityId = data.prerequisiteFacilityId
@@ -849,7 +853,7 @@ function parseDefinition(asset: RuntimeGameAsset): ResearchDefinition {
     baseCost,
     exponent,
     maxLevel,
-    prerequisiteResearchIds: rawPrerequisites as readonly string[],
+    prerequisiteResearchIds,
     prerequisiteFacilityId,
     prerequisiteFacilityOwned,
   }
@@ -869,7 +873,7 @@ function requirePositiveNumber(
   asset: RuntimeGameAsset,
   field: string,
 ): number {
-  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+  if (isFinitePositiveNumber(value)) {
     return value
   }
   throw invalidDefinition(asset, field)
@@ -879,18 +883,7 @@ function requireFacilityId(
   value: unknown,
   asset: RuntimeGameAsset,
 ): CanonicalFacilityId {
-  if (
-    value === 'assembly_lines' ||
-    value === 'ai_managers' ||
-    value === 'servers' ||
-    value === 'data_centers' ||
-    value === 'planets' ||
-    value === 'matrioshka_brains' ||
-    value === 'birch_planets' ||
-    value === 'galactic_brains'
-  ) {
-    return value
-  }
+  if (isDysonFacilityId(value)) return value
   throw invalidDefinition(asset, 'prerequisiteFacilityId')
 }
 

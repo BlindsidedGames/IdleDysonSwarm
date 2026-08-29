@@ -1,4 +1,12 @@
-import type { CanonicalGameStateV1 } from './types'
+import {
+  isNonNegativeInteger,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
+import {
+  isProcessingSource,
+  isStoredTimeAccuracyPreset,
+  type CanonicalGameStateV1,
+} from './types'
 import { isSkillPresetColorId } from './skillPresetColors'
 import { isDiscoverableNavigationDestinationId } from './navigationPreferences'
 
@@ -56,7 +64,7 @@ export function validateCanonicalGameState(
   for (const [tab, slot] of Object.entries(
     state.skills.tabPresetAutomation,
   )) {
-    if (!Number.isInteger(slot) || slot < 0 || slot > 5) {
+    if (!isNonNegativeInteger(slot) || slot > 5) {
       errors.push(
         `Skill preset automation for '${tab}' must be an integer from 0 to 5.`,
       )
@@ -88,7 +96,7 @@ export function validateCanonicalGameState(
     errors.push('Game processing interval must be an integer from 33 to 200 milliseconds.')
   }
   if (
-    !['fast', 'balanced', 'accurate'].includes(
+    !isStoredTimeAccuracyPreset(
       state.timeline.processing.storedTimePreset,
     )
   ) {
@@ -114,8 +122,7 @@ export function validateCanonicalGameState(
   }
   if (
     state.dream.railgun.lastRoundsFired !== undefined &&
-    (!Number.isSafeInteger(state.dream.railgun.lastRoundsFired) ||
-      state.dream.railgun.lastRoundsFired < 0)
+    !isSafeNonNegativeInteger(state.dream.railgun.lastRoundsFired)
   ) {
     errors.push('Railgun rounds fired must be a non-negative safe integer.')
   }
@@ -190,8 +197,7 @@ export function validateCanonicalGameState(
       !Number.isFinite(cycle.durationSeconds) ||
       cycle.durationSeconds <= 0 ||
       (cycle.processingSource !== undefined &&
-        cycle.processingSource !== 'active' &&
-        cycle.processingSource !== 'stored-time') ||
+        !isProcessingSource(cycle.processingSource)) ||
       (cycle.activeIntervalMilliseconds !== undefined &&
         (!Number.isInteger(cycle.activeIntervalMilliseconds) ||
           cycle.activeIntervalMilliseconds < 33 ||

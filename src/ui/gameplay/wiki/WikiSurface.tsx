@@ -2,6 +2,7 @@ import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useIntl, type IntlShape, type MessageDescriptor } from 'react-intl'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
+import { SECRET_REVEAL_ORDER } from '../secretRevealOrder'
 import { wikiMessages as messages } from './messages'
 import {
   WIKI_LORE_SECTIONS,
@@ -591,13 +592,6 @@ function SecretsArticle({ locale, revealed }: { readonly locale: EnabledLocale; 
     </>
   )
 }
-
-const SECRET_REVEAL_ORDER = [
-  0, 1, 2, 3, 4,
-  6, 7, 8, 9, 10, 11, 12,
-  14, 15, 16,
-  29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18,
-] as const
 
 function formatMeaning(phrase: string, revealed: number): string {
   const characters = [...phrase]

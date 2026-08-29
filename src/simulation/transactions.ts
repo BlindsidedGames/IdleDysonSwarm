@@ -1,4 +1,9 @@
 import { getGameAsset } from '../game-data/catalog'
+import { FACILITY_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import {
   addContinuous,
   bitDecrement,
@@ -15,7 +20,31 @@ import type {
 import type { BasicDysonFacilityId } from './dysonFacilities'
 import type { SimulationAutomationPolicy } from './types'
 
-export type BuyMode = 'buy-1' | 'buy-10' | 'buy-50' | 'buy-100' | 'buy-max'
+export const BUY_MODES = [
+  'buy-1',
+  'buy-10',
+  'buy-50',
+  'buy-100',
+  'buy-max',
+] as const
+
+export type BuyMode = (typeof BUY_MODES)[number]
+
+const FIXED_BUY_MODE_AMOUNTS: Readonly<
+  Record<Exclude<BuyMode, 'buy-max'>, bigint>
+> = Object.freeze({
+  'buy-1': 1n,
+  'buy-10': 10n,
+  'buy-50': 50n,
+  'buy-100': 100n,
+})
+
+export function isBuyMode(value: unknown): value is BuyMode {
+  return (
+    typeof value === 'string' &&
+    (BUY_MODES as readonly string[]).includes(value)
+  )
+}
 
 export type TransactionStatus =
   | 'success'
@@ -44,13 +73,13 @@ export function tryDebitContinuous(
   cost: number,
   quantity = 1n,
 ): DebitResult {
-  if (!Number.isFinite(balance) || balance < 0) {
+  if (!isFiniteNonNegativeNumber(balance)) {
     return { balance, charged: 0, status: 'invalid-balance' }
   }
   if (quantity <= 0n) {
     return { balance, charged: 0, status: 'invalid-quantity' }
   }
-  if (!Number.isFinite(cost) || cost < 0) {
+  if (!isFiniteNonNegativeNumber(cost)) {
     return { balance, charged: 0, status: 'invalid-cost' }
   }
   if (cost === CONTINUOUS_MAXIMUM) {
@@ -70,7 +99,7 @@ export function tryDebitContinuous(
     if (next < 0 || !Number.isFinite(next)) next = 0
     charged = balance - next
   }
-  if (!Number.isFinite(next) || next < 0 || charged <= 0) {
+  if (!isFiniteNonNegativeNumber(next) || charged <= 0) {
     return { balance, charged: 0, status: 'invalid-cost' }
   }
   return { balance: next, charged, status: 'success' }
@@ -150,7 +179,7 @@ function logExpm1(value: number): number {
 }
 
 function clampGeometricCost(value: number): number {
-  return Number.isFinite(value) && value > 0 ? value : 0
+  return isFinitePositiveNumber(value) ? value : 0
 }
 
 export function maxAffordable(
@@ -222,15 +251,8 @@ export function buyModeAmount(
   currentOwned: bigint,
   affordable: bigint,
 ): bigint {
-  const target =
-    mode === 'buy-10'
-      ? 10n
-      : mode === 'buy-50'
-        ? 50n
-        : mode === 'buy-100'
-          ? 100n
-          : 1n
   if (mode === 'buy-max') return affordable > 0n ? affordable : 1n
+  const target = FIXED_BUY_MODE_AMOUNTS[mode]
   if (mode === 'buy-1' || !rounded) return target
   return target - (currentOwned % target)
 }
@@ -240,7 +262,7 @@ export function tryPurchaseBasicFacility(
   facilityId: BasicDysonFacilityId,
   policy: SimulationAutomationPolicy,
 ): FacilityPurchaseResult {
-  const definition = getGameAsset('GameData.FacilityDefinition', facilityId)
+  const definition = getGameAsset(FACILITY_DEFINITION_ASSET_KIND, facilityId)
   const baseCost = definition?.data.baseCost
   const exponent = definition?.data.costExponent
   if (

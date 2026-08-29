@@ -19,7 +19,11 @@ import {
   type StorePurchaseResult,
   type StoreRestoreResult,
 } from '../store/contracts'
-import type { LifecyclePhase, RuntimeTarget } from './contracts'
+import {
+  isLifecyclePhase,
+  type LifecyclePhase,
+  type RuntimeTarget,
+} from './contracts'
 import {
   NativeDiagnosticsExporter,
   NativeLifecycleAdapter,
@@ -521,11 +525,4 @@ export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
   requestStoreReview(): Promise<NativeReviewRequestResult> {
     return this.plugin.requestStoreReview()
   }
-}
-
-function isLifecyclePhase(value: string): value is LifecyclePhase {
-  return value === 'active' ||
-    value === 'background' ||
-    value === 'focus-lost' ||
-    value === 'terminating'
 }

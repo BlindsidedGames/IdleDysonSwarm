@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import {
   createSimulationSummary,
   type EventTimeSimulationModel,
@@ -5,8 +6,8 @@ import {
   type SimulationAdvanceResult,
   type SimulationWorkMetrics,
 } from './types'
+import { TIME_EPSILON_SECONDS as TIME_EPSILON } from './timeTolerance'
 
-const TIME_EPSILON = 1e-12
 const MAXIMUM_ZERO_TIME_PASSES = 32
 export const DEFAULT_AUTOMATION_INTERVAL_SECONDS = 0.1
 const DEFAULT_INFINITY_MINIMUM_CYCLE_SECONDS = 1 / 60
@@ -21,10 +22,6 @@ function createWorkMetrics(): SimulationWorkMetrics {
     exactSeconds: 0,
     processingMilliseconds: 0,
   }
-}
-
-function finiteNonNegative(value: number): boolean {
-  return Number.isFinite(value) && value >= 0
 }
 
 function normalizeAutomationRemaining(
@@ -43,7 +40,7 @@ function normalizeAutomationRemaining(
 }
 
 function normalizeHorizon(horizon: number, maximum: number): number {
-  if (!Number.isFinite(horizon) || horizon < 0) return maximum
+  if (!isFiniteNonNegativeNumber(horizon)) return maximum
   return Math.min(maximum, horizon)
 }
 
@@ -97,12 +94,12 @@ export function advanceEventTime<
 
   const validRequest =
     candidateState !== undefined &&
-    finiteNonNegative(request.durationSeconds) &&
+    isFiniteNonNegativeNumber(request.durationSeconds) &&
     Number.isFinite(automationInterval) &&
     automationInterval > 0 &&
     Number.isFinite(infinityMinimumCycle) &&
     infinityMinimumCycle > 0 &&
-    finiteNonNegative(processingBudget)
+    isFiniteNonNegativeNumber(processingBudget)
 
   if (validRequest) {
     diagnosticCode = validateSchedulerState(candidateState)

@@ -1,14 +1,18 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import { formatUnknownError as errorDetail } from '../core/unknownError'
+import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
-import type {
-  CanonicalFacilityId,
-  CanonicalGameStateV1,
-  CanonicalSkillPresetAutomationSlot,
-  CanonicalSkillPresetSlot,
-  DreamEducationId,
-  DreamUpgradeFlag,
+import {
+  isStoredTimeAccuracyPreset,
+  type CanonicalFacilityId,
+  type CanonicalGameStateV1,
+  type CanonicalSkillPresetAutomationSlot,
+  type CanonicalSkillPresetSlot,
+  type DreamEducationId,
+  type DreamUpgradeFlag,
+  type StoredTimeAccuracyPreset,
 } from '../game-state/types'
-import type { StoredTimeAccuracyPreset } from '../game-state/types'
 import type {
   BottomNavigationDestinationId,
   DiscoverableNavigationDestinationId,
@@ -75,6 +79,7 @@ import {
   MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS,
 } from '../simulation/infinityCycle'
 import type { QuantumUpgradeId } from '../simulation/quantumUpgrades'
+import { normalizeCanonicalBotDistribution } from '../simulation/botDistribution'
 import { purchaseRealityUpgrade } from '../simulation/realityUpgrades'
 import type { RealityUpgradeId } from '../simulation/realityUpgrades'
 import { gatherRealityInfluence } from '../simulation/realityWorkers'
@@ -1025,7 +1030,7 @@ export function routeCanonicalGameCommand(
       if (selected === null) {
         return selectedPresetCarrierUnavailable(state, carriers)
       }
-      const distribution = normalizeBotDistribution(
+      const distribution = normalizeCanonicalBotDistribution(
         command.distribution,
       )
       if (distribution === null) {
@@ -1276,11 +1281,11 @@ export function routeCanonicalGameCommand(
       const skillIds = normalizeSkillAssignment(command.skillIds)
       const preset = state.skills.presets[selected - 1]
       const changed =
-        !sameStrings(
+        !sameOrderedStrings(
           state.skills.activeAutoAssignment,
           skillIds,
         ) ||
-        !sameStrings(preset.skillIds, skillIds)
+        !sameOrderedStrings(preset.skillIds, skillIds)
       return finalizeAccepted(
         state,
         changed
@@ -1309,7 +1314,7 @@ export function routeCanonicalGameCommand(
     case 'skill.set-preset-assignment': {
       const skillIds = normalizeSkillAssignment(command.skillIds)
       const preset = state.skills.presets[command.slot - 1]
-      const changed = !sameStrings(preset.skillIds, skillIds)
+      const changed = !sameOrderedStrings(preset.skillIds, skillIds)
       return finalizeAccepted(
         state,
         changed
@@ -1335,7 +1340,7 @@ export function routeCanonicalGameCommand(
     }
 
     case 'skill.set-preset-bot-distribution': {
-      const distribution = normalizeBotDistribution(
+      const distribution = normalizeCanonicalBotDistribution(
         command.distribution,
       )
       if (distribution === null) {
@@ -1465,11 +1470,11 @@ export function routeCanonicalGameCommand(
       }
       const preset = state.skills.presets[selected - 1]
       const changed =
-        !sameStrings(
+        !sameOrderedStrings(
           state.skills.activeAutoAssignment,
           preview.nextSkillIds,
         ) ||
-        !sameStrings(preset.skillIds, preview.nextSkillIds)
+        !sameOrderedStrings(preset.skillIds, preview.nextSkillIds)
       return finalizeAccepted(
         state,
         changed
@@ -2370,8 +2375,7 @@ export function routeCanonicalGameCommand(
 
     case 'time.request-stored-time-spend': {
       if (
-        !Number.isFinite(command.requestedSeconds) ||
-        command.requestedSeconds <= 0
+        !isFinitePositiveNumber(command.requestedSeconds)
       ) {
         return rejectDomain(
           state,
@@ -2383,7 +2387,7 @@ export function routeCanonicalGameCommand(
       }
       const available =
         state.timeline.storedTimeAvailableSeconds
-      if (!Number.isFinite(available) || available <= 0) {
+      if (!isFinitePositiveNumber(available)) {
         return rejectDomain(
           state,
           carriers,
@@ -2408,7 +2412,7 @@ export function routeCanonicalGameCommand(
     }
 
     case 'time.set-stored-time-preset': {
-      if (!['fast', 'balanced', 'accurate'].includes(command.preset)) {
+      if (!isStoredTimeAccuracyPreset(command.preset)) {
         return rejectDomain(
           state,
           carriers,
@@ -2649,10 +2653,6 @@ function freezeIssues(
     : Object.freeze([...issues])
 }
 
-function errorDetail(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
-}
-
 function researchTuningCarrierUnavailable(
   state: CanonicalGameStateV1,
   carriers: Readonly<CanonicalGameRuntimeCarriers>,
@@ -2747,12 +2747,6 @@ function researchAutomationSettingGate(
   return null
 }
 
-function normalizeBotDistribution(value: number): number | null {
-  if (!Number.isFinite(value)) return null
-  const clamped = Math.max(0, Math.min(1, value))
-  return Math.round(clamped * 100) / 100
-}
-
 function replacePreset(
   presets: CanonicalGameStateV1['skills']['presets'],
   slot: CanonicalSkillPresetSlot,
@@ -2761,14 +2755,4 @@ function replacePreset(
   const candidate = [...presets]
   candidate[slot - 1] = preset
   return candidate as unknown as CanonicalGameStateV1['skills']['presets']
-}
-
-function sameStrings(
-  left: readonly string[],
-  right: readonly string[],
-): boolean {
-  return (
-    left.length === right.length &&
-    left.every((value, index) => value === right[index])
-  )
 }

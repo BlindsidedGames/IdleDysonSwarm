@@ -1,5 +1,10 @@
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import { extractDynamicSkillId } from './dynamicEffectId'
 import { DISCRETE_MAXIMUM } from './numeric'
 
 export interface MoneyScienceCanonicalInputs {
@@ -63,7 +68,6 @@ type ReadResult<T> =
 
 const MONEY_SUFFIX = '.money_multiplier'
 const SCIENCE_SUFFIX = '.science_multiplier'
-const EFFECT_PREFIX = 'effect.'
 
 /**
  * Pure port of Unity SkillEffectCatalog.TryResolveMoneyScienceEffects.
@@ -75,12 +79,12 @@ export function resolveMoneyScienceSkillEffect(
   derived: MoneyScienceDerivedInputs,
 ): MoneyScienceSkillEffectResolution {
   if (effectId.endsWith(MONEY_SUFFIX)) {
-    const skillId = extractSkillId(effectId, MONEY_SUFFIX)
+    const skillId = extractDynamicSkillId(effectId, MONEY_SUFFIX)
     if (skillId === undefined) return { handled: false }
     return resolveMoneyEffect(skillId, effectId, state, tuning, derived)
   }
   if (effectId.endsWith(SCIENCE_SUFFIX)) {
-    const skillId = extractSkillId(effectId, SCIENCE_SUFFIX)
+    const skillId = extractDynamicSkillId(effectId, SCIENCE_SUFFIX)
     if (skillId === undefined) return { handled: false }
     return resolveScienceEffect(skillId, effectId, state, tuning, derived)
   }
@@ -515,7 +519,7 @@ function readDerived(
       `Effect '${effectId}' requires derived input '${field}'.`,
     )
   }
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     return failure(
       'DYSON_MONEY_SCIENCE_DERIVED_INPUT_INVALID',
       `derived.${field}`,
@@ -569,10 +573,7 @@ function readResearchLevel(
   }
   const level = state.research.levelsById[researchId]
   if (
-    typeof level !== 'number' ||
-    !Number.isFinite(level) ||
-    !Number.isSafeInteger(level) ||
-    level < 0
+    !isSafeNonNegativeInteger(level)
   ) {
     return failure(
       'DYSON_MONEY_SCIENCE_CANONICAL_INPUT_INVALID',
@@ -588,7 +589,7 @@ function readTuning(
   field: keyof DysonCompatibilityTuning,
   effectId: string,
 ): ReadResult<number> {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     return failure(
       'DYSON_MONEY_SCIENCE_TUNING_INVALID',
       `compatibilityTuning.${field}`,
@@ -622,7 +623,7 @@ function readFiniteNonNegative(
   path: string,
   effectId: string,
 ): ReadResult<number> {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     return failure(
       'DYSON_MONEY_SCIENCE_CANONICAL_INPUT_INVALID',
       path,
@@ -656,19 +657,6 @@ function galaxiesEngulfed(
     20_000 /
     100_000_000_000
   return floored ? Math.floor(raw) : raw
-}
-
-function extractSkillId(
-  effectId: string,
-  suffix: string,
-): string | undefined {
-  if (!effectId.startsWith(EFFECT_PREFIX) || !effectId.endsWith(suffix)) {
-    return undefined
-  }
-  const length = effectId.length - EFFECT_PREFIX.length - suffix.length
-  return length > 0
-    ? effectId.slice(EFFECT_PREFIX.length, EFFECT_PREFIX.length + length)
-    : undefined
 }
 
 function resolved(value: number): MoneyScienceSkillEffectResolution {

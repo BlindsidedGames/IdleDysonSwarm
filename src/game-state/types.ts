@@ -1,18 +1,11 @@
 import type { BuyMode } from '../simulation/transactions'
+import type { CanonicalFacilityId } from './facilityIds'
 import type { SkillPresetColorId } from './skillPresetColors'
 import type { NavigationRouteDiscovery } from './navigationPreferences'
 
-export const CANONICAL_GAME_MODEL_VERSION = 1 as const
+export type { CanonicalFacilityId } from './facilityIds'
 
-export type CanonicalFacilityId =
-  | 'assembly_lines'
-  | 'ai_managers'
-  | 'servers'
-  | 'data_centers'
-  | 'planets'
-  | 'matrioshka_brains'
-  | 'birch_planets'
-  | 'galactic_brains'
+export const CANONICAL_GAME_MODEL_VERSION = 1 as const
 
 export type CanonicalOwnedPair = readonly [
   automatic: number,
@@ -231,7 +224,38 @@ export interface TimelineState {
   }
 }
 
-export type StoredTimeAccuracyPreset = 'fast' | 'balanced' | 'accurate'
+export const STORED_TIME_ACCURACY_PRESETS = [
+  'fast',
+  'balanced',
+  'accurate',
+] as const
+
+export type StoredTimeAccuracyPreset =
+  (typeof STORED_TIME_ACCURACY_PRESETS)[number]
+
+export function isStoredTimeAccuracyPreset(
+  value: unknown,
+): value is StoredTimeAccuracyPreset {
+  return (
+    typeof value === 'string' &&
+    (STORED_TIME_ACCURACY_PRESETS as readonly string[]).includes(
+      value,
+    )
+  )
+}
+
+export const PROCESSING_SOURCES = ['active', 'stored-time'] as const
+
+export type ProcessingSource = (typeof PROCESSING_SOURCES)[number]
+
+export function isProcessingSource(
+  value: unknown,
+): value is ProcessingSource {
+  return (
+    typeof value === 'string' &&
+    (PROCESSING_SOURCES as readonly string[]).includes(value)
+  )
+}
 
 export interface SecretProgressState {
   readonly completed: boolean
@@ -312,13 +336,34 @@ export const DREAM_UPGRADE_FLAGS = [
 
 export type DreamUpgradeFlag = (typeof DREAM_UPGRADE_FLAGS)[number]
 
-export type DreamEducationId =
-  | 'engineering'
-  | 'shipping'
-  | 'worldTrade'
-  | 'worldPeace'
-  | 'mathematics'
-  | 'advancedPhysics'
+export function isDreamUpgradeFlag(
+  value: unknown,
+): value is DreamUpgradeFlag {
+  return (
+    typeof value === 'string' &&
+    (DREAM_UPGRADE_FLAGS as readonly string[]).includes(value)
+  )
+}
+
+export const DREAM_EDUCATION_IDS = Object.freeze([
+  'engineering',
+  'shipping',
+  'worldTrade',
+  'worldPeace',
+  'mathematics',
+  'advancedPhysics',
+] as const)
+
+export type DreamEducationId = (typeof DREAM_EDUCATION_IDS)[number]
+
+export function isDreamEducationId(
+  value: unknown,
+): value is DreamEducationId {
+  return (
+    typeof value === 'string' &&
+    (DREAM_EDUCATION_IDS as readonly string[]).includes(value)
+  )
+}
 
 export interface DreamEducationState {
   readonly active: boolean
@@ -435,7 +480,7 @@ export interface InfinityCycleHistoryEntry {
   readonly reward: bigint
   readonly durationSeconds: number
   /** Processing lane which produced this completed cycle. */
-  readonly processingSource?: 'active' | 'stored-time'
+  readonly processingSource?: ProcessingSource
   /** Active cadence in force when this cycle completed. */
   readonly activeIntervalMilliseconds?: number
 }

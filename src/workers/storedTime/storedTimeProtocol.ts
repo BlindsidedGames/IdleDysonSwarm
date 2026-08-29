@@ -1,3 +1,7 @@
+import {
+  isFiniteNonNegativeNumber as isFiniteNonNegative,
+  isSafeNonNegativeInteger,
+} from '../../core/finiteNonNegativeNumber'
 import type { DysonPresentationTuning } from '../../simulation/canonicalDysonDerivation'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 
@@ -24,6 +28,10 @@ export type StoredTimeJobStatus =
   | ({ readonly kind: 'running' } & StoredTimeJobProgress)
   | ({ readonly kind: 'cancelling' } & StoredTimeJobProgress)
   | ({ readonly kind: 'committing' } & StoredTimeJobProgress)
+
+export function createIdleStoredTimeJobStatus(): StoredTimeJobStatus {
+  return Object.freeze({ kind: 'idle' })
+}
 
 export interface StoredTimeJobStartMessage {
   readonly type: 'start'
@@ -154,16 +162,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object'
 }
 
-function isFiniteNonNegative(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
-}
-
 function optionalFiniteNonNegative(value: unknown): boolean {
   return value === undefined || isFiniteNonNegative(value)
 }
 
 function optionalSafeNonNegativeInteger(value: unknown): boolean {
-  return value === undefined || (
-    typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
-  )
+  return value === undefined || isSafeNonNegativeInteger(value)
 }

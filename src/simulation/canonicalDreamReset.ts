@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
   CanonicalGameStateV1,
   DreamEducationId,
@@ -7,11 +8,13 @@ import type {
   SimulationTotalsState,
   StatisticsWindowState,
 } from '../game-state/types'
+import { updateStatisticsEventWindow } from './canonicalStatistics'
 import {
+  applyDreamMathematicsCompletionParity,
+  applyDreamUpgradeEffect,
   findSimulationUpgradeCanonicalGaps,
   SIMULATION_UPGRADE_DEFINITIONS,
   type SimulationUpgradeDefinition,
-  type SimulationUpgradeEffect,
 } from './dreamEducationUpgrades'
 import {
   addContinuous,
@@ -19,7 +22,8 @@ import {
   clampContinuous,
   CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
-  floorToDiscrete,
+  isDiscreteResource,
+  isSimulationResource,
 } from './numeric'
 
 export type CanonicalDreamResetCause =
@@ -102,17 +106,6 @@ interface DreamResetOutcome {
   readonly cause: CanonicalDreamResetCause
   readonly requestedReward: number
 }
-
-const MATHEMATICS_SOLAR_GENERATION_MINIMUM = 200n
-
-const DREAM_EDUCATION_IDS = [
-  'engineering',
-  'shipping',
-  'worldTrade',
-  'worldPeace',
-  'mathematics',
-  'advancedPhysics',
-] as const satisfies readonly DreamEducationId[]
 
 const EXPECTED_SIMULATION_DEFINITION_KEYS = [
   'counterMeteor',
@@ -218,11 +211,11 @@ export function applyCanonicalDreamReset(
   for (const definition of definitions.values()) {
     if (!candidate.dream.upgrades[definition.key]) continue
     for (const effect of definition.purchaseEffects) {
-      candidate = applyUpgradeEffect(candidate, effect)
+      candidate = applyDreamUpgradeEffect(candidate, effect, roundedDiscrete)
     }
   }
   if (candidate.dream.upgrades.mathematics3) {
-    candidate = applyMathematicsParity(candidate)
+    candidate = applyDreamMathematicsCompletionParity(candidate)
   }
   candidate = {
     ...candidate,
@@ -328,13 +321,13 @@ function validateInputs(
     })
   }
   if (
-    !isDiscrete(state.dream.resetCount) ||
-    !isContinuousResource(state.dream.strangeMatter) ||
-    !isDiscrete(state.dream.disasterStage) ||
+    !isDiscreteResource(state.dream.resetCount) ||
+    !isFiniteNonNegativeNumber(state.dream.strangeMatter) ||
+    !isDiscreteResource(state.dream.disasterStage) ||
     !isSimulationResource(state.dream.resources.swarmPanels) ||
-    !isFiniteNonNegative(state.dream.resources.cities) ||
-    !isFiniteNonNegative(state.dream.resources.bots) ||
-    !isFiniteNonNegative(state.dream.resources.spaceFactories)
+    !isFiniteNonNegativeNumber(state.dream.resources.cities) ||
+    !isFiniteNonNegativeNumber(state.dream.resources.bots) ||
+    !isFiniteNonNegativeNumber(state.dream.resources.spaceFactories)
   ) {
     issues.push({
       code: 'DREAM_RESET_STATE_INVALID',
@@ -492,174 +485,6 @@ function education(
   }
 }
 
-function applyUpgradeEffect(
-  state: CanonicalGameStateV1,
-  effect: Readonly<SimulationUpgradeEffect>,
-): CanonicalGameStateV1 {
-  if (effect.effectType === 0 || effect.effectType === 1) {
-    const key = effect.targetKey as DreamUpgradeFlag
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        upgrades: {
-          ...state.dream.upgrades,
-          [key]: effect.boolValue,
-        },
-      },
-    }
-  }
-  if (effect.effectType === 2) {
-    return {
-      ...state,
-      skills: {
-        ...state.skills,
-        points: addDiscrete(
-          state.skills.points,
-          roundedDiscrete(effect.numericValue),
-        ),
-      },
-    }
-  }
-  if (effect.effectType === 3) {
-    const id = educationTarget(effect.targetKey, 'Complete')
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        education: {
-          ...state.dream.education,
-          [id]: {
-            ...state.dream.education[id],
-            complete: effect.boolValue,
-          },
-        },
-      },
-    }
-  }
-  if (effect.effectType === 4) {
-    const id = educationTargetOrNull(
-      effect.targetKey,
-      'ResearchTime',
-    )
-    if (id !== null) {
-      return {
-        ...state,
-        dream: {
-          ...state.dream,
-          education: {
-            ...state.dream.education,
-            [id]: {
-              ...state.dream.education[id],
-              researchTime: effect.numericValue,
-            },
-          },
-        },
-      }
-    }
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        parameters: {
-          ...state.dream.parameters,
-          rocketsPerSpaceFactory: roundedDiscrete(effect.numericValue),
-        },
-      },
-    }
-  }
-  if (effect.effectType === 5) {
-    const key = effect.targetKey as
-      | 'huntersPerPurchase'
-      | 'gatherersPerPurchase'
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        [key]: roundedDiscrete(effect.numericValue),
-      },
-    }
-  }
-  if (effect.effectType === 6) {
-    const value = roundedDiscrete(effect.numericValue)
-    if (effect.targetKey === 'solarPanelGeneration') {
-      return {
-        ...state,
-        dream: {
-          ...state.dream,
-          parameters: {
-            ...state.dream.parameters,
-            solarPanelGeneration:
-              state.dream.parameters.solarPanelGeneration > value
-                ? state.dream.parameters.solarPanelGeneration
-                : value,
-          },
-        },
-      }
-    }
-    const key = effect.targetKey as 'hunters' | 'gatherers'
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        resources: {
-          ...state.dream.resources,
-          [key]:
-            state.dream.resources[key] > value
-              ? state.dream.resources[key]
-              : value,
-        },
-      },
-    }
-  }
-  if (effect.effectType === 7) {
-    const key = effect.targetKey as
-      | 'huntersPerPurchase'
-      | 'gatherersPerPurchase'
-    const value = roundedDiscrete(effect.numericValue)
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        [key]: state.dream[key] > value ? state.dream[key] : value,
-      },
-    }
-  }
-  return {
-    ...state,
-    dream: {
-      ...state.dream,
-      disasterStage: roundedDiscrete(effect.numericValue),
-    },
-  }
-}
-
-function applyMathematicsParity(
-  state: CanonicalGameStateV1,
-): CanonicalGameStateV1 {
-  return {
-    ...state,
-    dream: {
-      ...state.dream,
-      education: {
-        ...state.dream.education,
-        mathematics: {
-          ...state.dream.education.mathematics,
-          complete: true,
-        },
-      },
-      parameters: {
-        ...state.dream.parameters,
-        solarPanelGeneration:
-          state.dream.parameters.solarPanelGeneration >
-          MATHEMATICS_SOLAR_GENERATION_MINIMUM
-            ? state.dream.parameters.solarPanelGeneration
-            : MATHEMATICS_SOLAR_GENERATION_MINIMUM,
-      },
-    },
-  }
-}
-
 function disasterStageFor(
   upgrades: Readonly<Record<DreamUpgradeFlag, boolean>>,
 ): bigint {
@@ -763,59 +588,20 @@ function addDreamWindow(
   trackedSimulatedSeconds: number,
   requestedReward: number,
 ): readonly StatisticsWindowState[] {
-  const windows =
-    source.length === expectedLength
-      ? [...source]
-      : Array.from(
-          { length: expectedLength },
-          () => emptyWindow(0n),
-        )
-  const sequence = floorToDiscrete(
-    clampContinuous(trackedSimulatedSeconds) / widthSeconds,
+  return updateStatisticsEventWindow(
+    source,
+    expectedLength,
+    widthSeconds,
+    trackedSimulatedSeconds,
+    (bucket) => ({
+      ...bucket,
+      dreamResetCount: addDiscrete(bucket.dreamResetCount, 1n),
+      strangeMatter: addContinuous(
+        bucket.strangeMatter,
+        requestedReward,
+      ),
+    }),
   )
-  const index = Number(sequence % BigInt(expectedLength))
-  const current = windows[index]
-  const bucket =
-    current.sequence === sequence ? current : emptyWindow(sequence)
-  windows[index] = {
-    ...bucket,
-    dreamResetCount: addDiscrete(bucket.dreamResetCount, 1n),
-    strangeMatter: addContinuous(
-      bucket.strangeMatter,
-      requestedReward,
-    ),
-  }
-  return windows
-}
-
-function emptyWindow(sequence: bigint): StatisticsWindowState {
-  return {
-    sequence,
-    simulatedSeconds: 0,
-    infinityCount: 0n,
-    infinityPoints: 0n,
-    dreamResetCount: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-  }
-}
-
-function educationTarget(
-  target: string,
-  suffix: 'Complete' | 'ResearchTime',
-): DreamEducationId {
-  return educationTargetOrNull(target, suffix) as DreamEducationId
-}
-
-function educationTargetOrNull(
-  target: string,
-  suffix: 'Complete' | 'ResearchTime',
-): DreamEducationId | null {
-  if (!target.endsWith(suffix)) return null
-  const id = target.slice(0, -suffix.length)
-  return DREAM_EDUCATION_IDS.includes(id as DreamEducationId)
-    ? (id as DreamEducationId)
-    : null
 }
 
 function roundedDiscrete(value: number): bigint {
@@ -839,30 +625,6 @@ function isCause(value: unknown): value is CanonicalDreamResetCause {
     value === 'GlobalWarming' ||
     value === 'BlackHole'
   )
-}
-
-function isDiscrete(value: unknown): value is bigint {
-  return (
-    typeof value === 'bigint' &&
-    value >= 0n &&
-    value <= DISCRETE_MAXIMUM
-  )
-}
-
-function isContinuousResource(value: unknown): value is number {
-  return isFiniteNonNegative(value)
-}
-
-function isSimulationResource(value: unknown): value is bigint {
-  return (
-    typeof value === 'bigint' &&
-    value >= 0n &&
-    value <= BigInt(CONTINUOUS_MAXIMUM)
-  )
-}
-
-function isFiniteNonNegative(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
 }
 
 function notApplied(

@@ -1,3 +1,7 @@
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { clampPreBreakInfinityBots } from './infinityCycle'
 import { addContinuous, multiplyContinuous } from './numeric'
@@ -78,8 +82,7 @@ export function normalizeCanonicalTinkerRuntimeState(
   runtime: Readonly<CanonicalTinkerRuntimeState>,
 ): CanonicalTinkerRuntimeState {
   if (
-    Number.isSafeInteger(runtime.cycleId) &&
-    runtime.cycleId >= 0
+    isSafeNonNegativeInteger(runtime.cycleId)
   ) {
     return runtime
   }
@@ -207,7 +210,7 @@ export function timeToCanonicalTinkerCompletion(
   runtime: Readonly<CanonicalTinkerRuntimeState>,
   maximumSeconds: number,
 ): number {
-  if (!Number.isFinite(maximumSeconds) || maximumSeconds < 0) {
+  if (!isFiniteNonNegativeNumber(maximumSeconds)) {
     throw new RangeError('maximumSeconds must be finite and non-negative.')
   }
   if (!runtime.running) return maximumSeconds
@@ -234,7 +237,7 @@ export function advanceCanonicalTinker(
   stats: Readonly<CanonicalTinkerStats>,
   seconds: number,
 ): CanonicalTinkerAdvanceResult {
-  if (!Number.isFinite(seconds) || seconds < 0) {
+  if (!isFiniteNonNegativeNumber(seconds)) {
     throw new RangeError('Tinker advance seconds must be finite and non-negative.')
   }
   const startingBots = state.dyson.bots
@@ -493,7 +496,7 @@ function synchronizeRuntime(
 }
 
 function nextCycleId(current: number): number {
-  if (!Number.isSafeInteger(current) || current < 0) return 1
+  if (!isSafeNonNegativeInteger(current)) return 1
   return current >= Number.MAX_SAFE_INTEGER ? 1 : current + 1
 }
 
@@ -507,7 +510,7 @@ function isManualLabourEffective(
 }
 
 function requireFiniteNonNegative(value: number, field: string): number {
-  if (Number.isFinite(value) && value >= 0) return value
+  if (isFiniteNonNegativeNumber(value)) return value
   throw new RangeError(`${field} must be finite and non-negative.`)
 }
 

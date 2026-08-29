@@ -1,4 +1,4 @@
-import { requireBrowserCapability } from './browserEnvironment'
+import { createBrowserOwnerToken } from './browserOwnerToken'
 
 const WRITER_TAB_TOKEN_KEY =
   'idle-dyson-swarm:writer-tab-token'
@@ -46,7 +46,7 @@ export function createBrowserReloadWriterIdentity(
   }
 
   const ownerToken = (
-    options.ownerTokenFactory ?? defaultOwnerTokenFactory
+    options.ownerTokenFactory ?? createBrowserOwnerToken
   )()
   writeToken(storage, ownerToken)
   return Object.freeze({
@@ -99,19 +99,4 @@ function writeToken(
   } catch {
     // Storage denial keeps the ordinary expiry-based lease behavior.
   }
-}
-
-function defaultOwnerTokenFactory(): string {
-  const browserCrypto = requireBrowserCapability(
-    'Crypto',
-    globalThis.crypto,
-  )
-  if (typeof browserCrypto.randomUUID === 'function') {
-    return browserCrypto.randomUUID()
-  }
-  const random = new Uint8Array(16)
-  browserCrypto.getRandomValues(random)
-  return [...random]
-    .map((value) => value.toString(16).padStart(2, '0'))
-    .join('')
 }

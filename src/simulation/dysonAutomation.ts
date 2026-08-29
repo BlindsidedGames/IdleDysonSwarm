@@ -1,4 +1,6 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import { FACILITY_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import type { CanonicalFacilityId } from '../game-state/types'
 import {
   DYSON_FACILITY_IDS,
@@ -9,6 +11,7 @@ import {
 import {
   buyModeAmount,
   buyXCost,
+  isBuyMode,
   maxAffordable,
   tryDebitContinuous,
   type BuyMode,
@@ -486,19 +489,7 @@ function isValidOwnedPair(
   return (
     Array.isArray(pair) &&
     pair.length === 2 &&
-    pair.every(
-      (value) => Number.isFinite(value) && value >= 0,
-    )
-  )
-}
-
-function isBuyMode(value: string): value is BuyMode {
-  return (
-    value === 'buy-1' ||
-    value === 'buy-10' ||
-    value === 'buy-50' ||
-    value === 'buy-100' ||
-    value === 'buy-max'
+    pair.every(isFiniteNonNegativeNumber)
   )
 }
 
@@ -506,7 +497,7 @@ function lookupFacilityDefinition(
   facilityId: CanonicalFacilityId,
 ): ReturnType<DysonFacilityDefinitionLookup> {
   const definition = getGameAsset(
-    'GameData.FacilityDefinition',
+    FACILITY_DEFINITION_ASSET_KIND,
     facilityId,
   )
   if (definition === undefined) return undefined

@@ -7,6 +7,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
+import { isFinitePositiveNumber } from '../../../core/finiteNonNegativeNumber'
 import {
   useIntl,
   type IntlShape,
@@ -54,7 +55,12 @@ import {
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import {
+  readBooleanPresentationPreference,
+  writeBooleanPresentationPreference,
+} from '../../presentationPreferences'
 import { readyDysonMessages } from '../dyson/messages'
+import { clampProgress } from '../progress/clampProgress'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { simulationsMessages as messages } from './messages'
 import './simulations.css'
@@ -142,21 +148,13 @@ export function SimulationsSurface({
   const reducedMotion = usePrefersReducedMotion()
   const purchaseSettingsId = useId()
   const [purchaseSettingsOpen, setPurchaseSettingsOpen] = useState(false)
-  const [showFormulas, setShowFormulas] = useState(() => {
-    try {
-      return localStorage.getItem(SIMULATION_FORMULAS_STORAGE_KEY) === 'true'
-    } catch {
-      return false
-    }
-  })
+  const [showFormulas, setShowFormulas] = useState(() =>
+    readBooleanPresentationPreference(SIMULATION_FORMULAS_STORAGE_KEY),
+  )
 
   const updateShowFormulas = (next: boolean): void => {
     setShowFormulas(next)
-    try {
-      localStorage.setItem(SIMULATION_FORMULAS_STORAGE_KEY, String(next))
-    } catch {
-      // Device-local presentation persistence must never block gameplay.
-    }
+    writeBooleanPresentationPreference(SIMULATION_FORMULAS_STORAGE_KEY, next)
   }
 
   if (!facts.live.production.ok) {
@@ -765,7 +763,7 @@ function SimulationProgress({
           progress.reservoir.formatRate(reservoirRate),
         )
       : baseValueText
-  const fraction = cycleUsesThroughput ? 1 : clampUnit(progress.fraction)
+  const fraction = cycleUsesThroughput ? 1 : clampProgress(progress.fraction)
   const presentation = progress.cycle
     ? cycleMode
     : progress.reservoir
@@ -1036,7 +1034,7 @@ function createPanelModels(input: {
     unit: 'joules' | 'watts',
   ) => highlightedEnergy(locale, value, unit)
   const percentRich = (fraction: number) => highlightedFormattedNumber(
-    formatNumber(locale, clampUnit(fraction) * 100, {
+    formatNumber(locale, clampProgress(fraction) * 100, {
       maximumFractionDigits: 0,
     }),
     '%',
@@ -1477,7 +1475,7 @@ function foundationalAction(
     : purchase === 'gatherers'
       ? Number(input.progression.parameters.gathererCost)
       : Number(preview.cost)
-  const baseCost = Number.isFinite(authoredBaseCost) && authoredBaseCost > 0
+  const baseCost = isFinitePositiveNumber(authoredBaseCost)
     ? authoredBaseCost
     : Number(preview.cost)
   const purchasedBatches = scalable
@@ -1594,7 +1592,7 @@ function spaceAgeAction(
       ? input.progression.parameters.solarCost
       : input.progression.parameters.fusionCost,
   )
-  const baseCost = Number.isFinite(authoredBaseCost) && authoredBaseCost > 0
+  const baseCost = isFinitePositiveNumber(authoredBaseCost)
     ? authoredBaseCost
     : Number(preview.cost)
   const quantity = resolveSimulationPurchaseQuantity(
@@ -1892,9 +1890,4 @@ function panelDescriptionMessage(id: PanelId): MessageDescriptor {
   if (id === 'space-factories') return messages.spaceFactoriesDescription
   if (id === 'railguns') return messages.railgunsDescription
   return messages.swarmStatsDescription
-}
-
-function clampUnit(value: number): number {
-  if (!Number.isFinite(value)) return 0
-  return Math.max(0, Math.min(1, value))
 }

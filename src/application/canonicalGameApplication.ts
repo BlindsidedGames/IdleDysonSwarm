@@ -1,15 +1,22 @@
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import type {
   DeepReadonly,
   DomainTransition,
   SimulationEngineDefinition,
   SimulationTransitionResult,
 } from '../core/contracts'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
   deriveBasicDysonState,
   type DysonEntitlements,
 } from '../simulation/canonicalDysonDerivation'
 import {
   evaluateCanonicalBotCapCheckpoint,
+  selectBotCapCheckpointToPersist,
   type BotCapCheckpointName,
 } from '../simulation/canonicalBotCapCheckpoint'
 import {
@@ -586,7 +593,7 @@ export class CanonicalGameApplicationFacade {
       )
     }
     const bank = before.state.gameState.timeline.storedTimeAvailableSeconds
-    if (!Number.isFinite(seconds) || seconds <= 0 || seconds > bank) {
+    if (!isFinitePositiveNumber(seconds) || seconds > bank) {
       return rejectedStoredTimeCommit(
         before,
         seconds,
@@ -1104,7 +1111,7 @@ function applyDevelopmentDysonBots(
   candidate: CanonicalRuntimeState,
   bots: number,
 ): DomainTransition {
-  if (!Number.isFinite(bots) || bots < 0) {
+  if (!isFiniteNonNegativeNumber(bots)) {
     return {
       accepted: false,
       code: 'CANONICAL-DEVELOPMENT-BOTS-INVALID',
@@ -1173,7 +1180,7 @@ function applyDevelopmentAction(
   const state = candidate.gameState
   switch (action.kind) {
     case 'add-cash': {
-      if (!Number.isFinite(action.amount) || action.amount < 0) {
+      if (!isFiniteNonNegativeNumber(action.amount)) {
         return invalidDevelopmentAction('Cash amount')
       }
       return replaceDevelopmentState(candidate, {
@@ -1188,7 +1195,7 @@ function applyDevelopmentAction(
       })
     }
     case 'add-bots': {
-      if (!Number.isFinite(action.amount) || action.amount < 0) {
+      if (!isFiniteNonNegativeNumber(action.amount)) {
         return invalidDevelopmentAction('Bot amount')
       }
       const bots = Math.min(Number.MAX_VALUE, state.dyson.bots + action.amount)
@@ -1202,7 +1209,7 @@ function applyDevelopmentAction(
         ...state,
         skills: {
           ...state.skills,
-          points: addDevelopmentDiscrete(
+          points: addDiscrete(
             state.skills.points,
             action.amount,
           ),
@@ -1230,7 +1237,7 @@ function applyDevelopmentAction(
         ...state,
         infinity: {
           ...state.infinity,
-          points: addDevelopmentDiscrete(
+          points: addDiscrete(
             state.infinity.points,
             action.amount,
           ),
@@ -1244,14 +1251,14 @@ function applyDevelopmentAction(
         ...state,
         quantum: {
           ...state.quantum,
-          pointsEarned: addDevelopmentDiscrete(
+          pointsEarned: addDiscrete(
             state.quantum.pointsEarned,
             action.amount,
           ),
         },
       })
     case 'add-influence':
-      if (!isDevelopmentContinuousAmount(action.amount)) {
+      if (!isFiniteNonNegativeNumber(action.amount)) {
         return invalidDevelopmentAction('Influence amount')
       }
       return replaceDevelopmentState(candidate, {
@@ -1265,7 +1272,7 @@ function applyDevelopmentAction(
         },
       })
     case 'add-strange-matter':
-      if (!isDevelopmentContinuousAmount(action.amount)) {
+      if (!isFiniteNonNegativeNumber(action.amount)) {
         return invalidDevelopmentAction('Strange Matter amount')
       }
       return replaceDevelopmentState(candidate, {
@@ -1279,7 +1286,7 @@ function applyDevelopmentAction(
         },
       })
     case 'add-offline-time': {
-      if (!Number.isFinite(action.seconds) || action.seconds < 0) {
+      if (!isFiniteNonNegativeNumber(action.seconds)) {
         return invalidDevelopmentAction('Offline-time amount')
       }
       const grant = applyAwayTimeGrant({
@@ -1352,14 +1359,12 @@ function applyDevelopmentAction(
       for (const [id, skill] of Object.entries(state.skills.byId)) {
         if (!skill.owned) continue
         const definition = context.infinityResetAssetLookup(
-          'GameData.SkillDefinition',
+          SKILL_DEFINITION_ASSET_KIND,
           id,
         )
         const cost = definition?.data.cost
         if (
-          typeof cost !== 'number' ||
-          !Number.isSafeInteger(cost) ||
-          cost < 0
+          !isSafeNonNegativeInteger(cost)
         ) {
           return {
             accepted: false,
@@ -1438,16 +1443,8 @@ function applyDevelopmentAction(
   }
 }
 
-function addDevelopmentDiscrete(current: bigint, amount: bigint): bigint {
-  return addDiscrete(current, amount)
-}
-
 function isDevelopmentDiscreteAmount(amount: bigint): boolean {
   return amount >= 0n && amount <= DISCRETE_MAXIMUM
-}
-
-function isDevelopmentContinuousAmount(amount: number): boolean {
-  return Number.isFinite(amount) && amount >= 0
 }
 
 function replaceDevelopmentRuntime(
@@ -1663,7 +1660,7 @@ function advanceActive(
   minimumCycleSeconds: number,
   onAdvance?: CanonicalGameEngineOptions['onActiveAdvance'],
 ): DomainTransition {
-  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+  if (!isFiniteNonNegativeNumber(milliseconds)) {
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }
@@ -1695,7 +1692,7 @@ function advanceActiveContinuous(
   minimumCycleSeconds: number,
   onAdvance?: CanonicalGameEngineOptions['onActiveAdvance'],
 ): DomainTransition {
-  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+  if (!isFiniteNonNegativeNumber(milliseconds)) {
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }
@@ -1746,8 +1743,7 @@ function advanceStoredTime(
 ): DomainTransition {
   const bank = candidate.gameState.timeline.storedTimeAvailableSeconds
   if (
-    !Number.isFinite(requestedSeconds) ||
-    requestedSeconds <= 0 ||
+    !isFinitePositiveNumber(requestedSeconds) ||
     requestedSeconds > bank
   ) {
     return reject(
@@ -2151,9 +2147,7 @@ function requiredBotCapCheckpoint(
   const evaluated = evaluateCanonicalBotCapCheckpoint(
     state as CanonicalRuntimeState['gameState'],
   )
-  return evaluated.action.kind === 'persist'
-    ? evaluated.action.checkpoint
-    : undefined
+  return selectBotCapCheckpointToPersist(evaluated.action)
 }
 
 export function previewCanonicalQuantumLeap(

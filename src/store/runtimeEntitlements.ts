@@ -1,17 +1,14 @@
 import type { DysonEntitlements } from '../simulation/canonicalDysonDerivation'
-import type {
-  EntitlementAuthority,
-  HostEntitlementOwnership,
+import {
+  createEmptyHostEntitlementOwnership,
+  type EntitlementAuthority,
+  type HostEntitlementOwnership,
 } from './contracts'
 import type {
   DoubleInfinityPointsEffectPreference,
 } from './doubleInfinityPointsEffect'
 
-const EMPTY_OWNERSHIP: Readonly<HostEntitlementOwnership> = Object.freeze({
-  doubleInfinityPoints: false,
-  developerOptions: false,
-  supporterCatGallery: false,
-})
+const EMPTY_OWNERSHIP = createEmptyHostEntitlementOwnership()
 
 /**
  * Backend-owned projection between an asynchronous native Store authority and

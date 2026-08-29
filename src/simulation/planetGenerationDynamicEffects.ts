@@ -1,6 +1,7 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import { extractDynamicSkillId } from './dynamicEffectId'
 import { DISCRETE_MAXIMUM } from './numeric'
 
-const EFFECT_PREFIX = 'effect.'
 const PLANETS_PER_SECOND_SUFFIX = '.planets_per_second'
 
 export interface PlanetGenerationDynamicInputs {
@@ -31,7 +32,7 @@ export function tryResolvePlanetGenerationDynamicEffect(
   effectId: string,
   inputs: PlanetGenerationDynamicInputs,
 ): number | undefined {
-  const skillId = extractSkillId(effectId)
+  const skillId = extractDynamicSkillId(effectId, PLANETS_PER_SECOND_SUFFIX)
   if (skillId === undefined || !SUPPORTED_SKILLS.has(skillId)) {
     return undefined
   }
@@ -144,20 +145,6 @@ export function resolveStellarSacrificesRequiredBots(
   return botsNeeded
 }
 
-function extractSkillId(effectId: string): string | undefined {
-  if (
-    !effectId.startsWith(EFFECT_PREFIX) ||
-    !effectId.endsWith(PLANETS_PER_SECOND_SUFFIX)
-  ) {
-    return undefined
-  }
-  const value = effectId.slice(
-    EFFECT_PREFIX.length,
-    -PLANETS_PER_SECOND_SUFFIX.length,
-  )
-  return value.length > 0 ? value : undefined
-}
-
 function logarithm(value: number, base: number): number {
   return Math.log(value) / Math.log(base)
 }
@@ -200,7 +187,7 @@ function requirePair(
 }
 
 function requireNonNegative(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     throw new Error(
       `Planet generation effects require finite non-negative ${label}.`,
     )

@@ -1,4 +1,6 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
+import { FACILITY_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
   addContinuous,
   addDiscrete,
@@ -10,6 +12,7 @@ import {
   type BasicDysonFacilityId,
   type OwnedPair,
 } from './dysonFacilities'
+import { createDysonFacilityModifierStatIds } from './dysonFacilityStatIds'
 import {
   applyFiniteBotCapSpecialReward,
   breakInfinityBotThreshold,
@@ -162,9 +165,9 @@ function effectiveCount(pair: OwnedPair): number {
 }
 
 function legacyBaseProduction(id: BasicDysonFacilityId): number {
-  const asset = getGameAsset('GameData.FacilityDefinition', id)
+  const asset = getGameAsset(FACILITY_DEFINITION_ASSET_KIND, id)
   const value = asset?.data.baseProduction
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     throw new Error(`Facility '${id}' has no valid baseProduction`)
   }
 
@@ -183,7 +186,7 @@ export function calculateBasicDysonFacilityRate(
   state: Readonly<BasicDysonState>,
   id: BasicDysonFacilityId,
 ): Readonly<BasicDysonFacilityRateCalculation> {
-  const asset = getGameAsset('GameData.FacilityDefinition', id)
+  const asset = getGameAsset(FACILITY_DEFINITION_ASSET_KIND, id)
   const productionStatId = asset?.data.productionStatId
   if (typeof productionStatId !== 'string') {
     throw new Error(`Facility '${id}' has no productionStatId`)
@@ -227,13 +230,7 @@ export function calculateBasicDysonFacilityRate(
   })
 }
 
-const FACILITY_MODIFIER_STATS: Record<BasicDysonFacilityId, string> = {
-  assembly_lines: 'Facility.AssemblyLine.Modifier',
-  ai_managers: 'Facility.Manager.Modifier',
-  servers: 'Facility.Server.Modifier',
-  data_centers: 'Facility.DataCenter.Modifier',
-  planets: 'Facility.Planet.Modifier',
-}
+const FACILITY_MODIFIER_STATS = createDysonFacilityModifierStatIds()
 
 export function recalculateBasicDysonRates(
   state: BasicDysonState,
@@ -337,7 +334,7 @@ export class BasicDysonSimulationModel
       ...Object.values(this.state.rates),
       ...Object.values(this.pending),
     ]
-    if (!values.every((value) => Number.isFinite(value) && value >= 0)) {
+    if (!values.every(isFiniteNonNegativeNumber)) {
       return 'SIM-DYSON-NON-FINITE'
     }
     if (

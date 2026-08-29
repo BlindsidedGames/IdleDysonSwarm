@@ -1,27 +1,26 @@
-import { getGameAssetsByKind } from '../game-data/catalog'
 import {
-  DREAM_UPGRADE_FLAGS,
+  isNonNegativeInteger,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
+import { getGameAssetsByKind } from '../game-data/catalog'
+import { SIMULATION_UPGRADE_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import {
+  DREAM_EDUCATION_IDS,
+  isDreamEducationId,
+  isDreamUpgradeFlag,
   type CanonicalGameStateV1,
   type DreamEducationId,
   type DreamUpgradeFlag,
 } from '../game-state/types'
-import { addDiscrete, DISCRETE_MAXIMUM } from './numeric'
+import {
+  addContinuous,
+  addDiscrete,
+  exactRoundedNonNegativeBigInt,
+} from './numeric'
 import { tryDebitContinuous } from './transactions'
 
-const SIMULATION_UPGRADE_KIND =
-  'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
 const SIMULATION_LAYER = 0
 const MATHEMATICS_SOLAR_GENERATION_MINIMUM = 200n
-
-const DREAM_UPGRADE_FLAG_SET = new Set<string>(DREAM_UPGRADE_FLAGS)
-const DREAM_EDUCATION_IDS = [
-  'engineering',
-  'shipping',
-  'worldTrade',
-  'worldPeace',
-  'mathematics',
-  'advancedPhysics',
-] as const satisfies readonly DreamEducationId[]
 
 export interface SimulationUpgradePrerequisite {
   readonly key: DreamUpgradeFlag
@@ -34,6 +33,8 @@ export interface SimulationUpgradeEffect {
   readonly boolValue: boolean
   readonly numericValue: number
 }
+
+export type DreamUpgradeDiscreteConverter = (value: number) => bigint
 
 export interface SimulationUpgradeDefinition {
   readonly key: DreamUpgradeFlag
@@ -134,7 +135,11 @@ export function purchaseSimulationUpgrade(
 
   let candidate = state
   for (const effect of definition.purchaseEffects) {
-    candidate = applyCanonicalUpgradeEffect(candidate, effect)
+    candidate = applyDreamUpgradeEffect(
+      candidate,
+      effect,
+      exactValidatedDreamUpgradeDiscrete,
+    )
   }
   candidate = {
     ...candidate,
@@ -144,7 +149,7 @@ export function purchaseSimulationUpgrade(
     },
   }
   if (key === 'mathematics3') {
-    candidate = applyMathematicsCompletionParity(candidate)
+    candidate = applyDreamMathematicsCompletionParity(candidate)
   }
   return {
     accepted: true,
@@ -168,7 +173,7 @@ export function startDreamEducation(
     return rejectedEducationStart(state, 'already_active')
   }
   const cost = education.cost
-  if (!Number.isFinite(cost) || !Number.isInteger(cost) || cost < 0) {
+  if (!isNonNegativeInteger(cost)) {
     return rejectedEducationStart(state, 'invalid_cost')
   }
   const debit = tryDebitContinuous(state.reality.influence, cost)
@@ -234,7 +239,7 @@ export function advanceDreamEducation(
   for (const id of DREAM_EDUCATION_IDS) {
     const subject = education[id]
     if (!subject.active || subject.complete) continue
-    const progress = unityAddContinuous(subject.progress, increment)
+    const progress = addContinuous(subject.progress, increment)
     const complete = progress >= subject.researchTime
     education = {
       ...education,
@@ -270,7 +275,7 @@ export function advanceDreamEducation(
     },
   }
   if (mathematicsCompleted) {
-    candidate = applyMathematicsCompletionParity(candidate)
+    candidate = applyDreamMathematicsCompletionParity(candidate)
   }
   return {
     accepted: true,
@@ -302,16 +307,14 @@ function loadSimulationUpgradeDefinitions(): ReadonlyMap<
     DreamUpgradeFlag,
     SimulationUpgradeDefinition
   >()
-  for (const asset of getGameAssetsByKind(SIMULATION_UPGRADE_KIND)) {
+  for (const asset of getGameAssetsByKind(SIMULATION_UPGRADE_ASSET_KIND)) {
     if (asset.data.layer !== SIMULATION_LAYER) continue
     const key = asset.data.key
     const cost = asset.data.cost
     if (
       typeof key !== 'string' ||
       !isDreamUpgradeFlag(key) ||
-      typeof cost !== 'number' ||
-      !Number.isSafeInteger(cost) ||
-      cost < 0
+      !isSafeNonNegativeInteger(cost)
     ) {
       continue
     }
@@ -387,10 +390,15 @@ function canApplyCanonicalUpgradeEffect(
     case 2:
       return exactRoundedNonNegativeBigInt(effect.numericValue) !== null
     case 3:
-      return educationIdFromTarget(effect.targetKey, 'Complete') !== null
+      return (
+        dreamEducationIdFromEffectTarget(effect.targetKey, 'Complete') !== null
+      )
     case 4:
       return (
-        educationIdFromTarget(effect.targetKey, 'ResearchTime') !== null ||
+        dreamEducationIdFromEffectTarget(
+          effect.targetKey,
+          'ResearchTime',
+        ) !== null ||
         effect.targetKey === 'rocketsPerSpaceFactory'
       )
     case 5:
@@ -412,9 +420,11 @@ function canApplyCanonicalUpgradeEffect(
   }
 }
 
-function applyCanonicalUpgradeEffect(
+/** Applies one validated authored effect using the caller's discrete conversion contract. */
+export function applyDreamUpgradeEffect(
   state: CanonicalGameStateV1,
-  effect: SimulationUpgradeEffect,
+  effect: Readonly<SimulationUpgradeEffect>,
+  toDiscrete: DreamUpgradeDiscreteConverter,
 ): CanonicalGameStateV1 {
   if (effect.effectType === 0 || effect.effectType === 1) {
     const target = effect.targetKey as DreamUpgradeFlag
@@ -430,7 +440,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 2) {
-    const amount = exactRoundedNonNegativeBigInt(effect.numericValue)!
+    const amount = toDiscrete(effect.numericValue)
     return {
       ...state,
       skills: {
@@ -440,7 +450,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 3) {
-    const id = educationIdFromTarget(effect.targetKey, 'Complete')!
+    const id = dreamEducationIdFromEffectTarget(effect.targetKey, 'Complete')!
     return {
       ...state,
       dream: {
@@ -456,7 +466,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 4) {
-    const id = educationIdFromTarget(
+    const id = dreamEducationIdFromEffectTarget(
       effect.targetKey,
       'ResearchTime',
     )
@@ -481,14 +491,13 @@ function applyCanonicalUpgradeEffect(
         ...state.dream,
         parameters: {
           ...state.dream.parameters,
-          rocketsPerSpaceFactory:
-            exactRoundedNonNegativeBigInt(effect.numericValue)!,
+          rocketsPerSpaceFactory: toDiscrete(effect.numericValue),
         },
       },
     }
   }
   if (effect.effectType === 5) {
-    const value = exactRoundedNonNegativeBigInt(effect.numericValue)!
+    const value = toDiscrete(effect.numericValue)
     return {
       ...state,
       dream: {
@@ -498,7 +507,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 6) {
-    const value = exactRoundedNonNegativeBigInt(effect.numericValue)!
+    const value = toDiscrete(effect.numericValue)
     if (effect.targetKey === 'solarPanelGeneration') {
       return {
         ...state,
@@ -530,7 +539,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 7) {
-    const value = exactRoundedNonNegativeBigInt(effect.numericValue)!
+    const value = toDiscrete(effect.numericValue)
     const target = effect.targetKey as
       | 'huntersPerPurchase'
       | 'gatherersPerPurchase'
@@ -549,14 +558,17 @@ function applyCanonicalUpgradeEffect(
     ...state,
     dream: {
       ...state.dream,
-      disasterStage: exactRoundedNonNegativeBigInt(
-        effect.numericValue,
-      )!,
+      disasterStage: toDiscrete(effect.numericValue),
     },
   }
 }
 
-function applyMathematicsCompletionParity(
+function exactValidatedDreamUpgradeDiscrete(value: number): bigint {
+  return exactRoundedNonNegativeBigInt(value)!
+}
+
+/** Applies the canonical state patch shared by every mathematics completion path. */
+export function applyDreamMathematicsCompletionParity(
   state: CanonicalGameStateV1,
 ): CanonicalGameStateV1 {
   const mathematics = state.dream.education.mathematics
@@ -608,56 +620,12 @@ function rejectedEducationStart(
   }
 }
 
-function educationIdFromTarget(
+/** Resolves an authored upgrade-effect target to its canonical education subject. */
+export function dreamEducationIdFromEffectTarget(
   target: string,
   suffix: 'Complete' | 'ResearchTime',
 ): DreamEducationId | null {
   if (!target.endsWith(suffix)) return null
   const id = target.slice(0, -suffix.length)
-  return DREAM_EDUCATION_IDS.includes(id as DreamEducationId)
-    ? (id as DreamEducationId)
-    : null
-}
-
-function exactNonNegativeBigInt(value: number): bigint | null {
-  if (
-    !Number.isFinite(value) ||
-    !Number.isInteger(value) ||
-    value < 0 ||
-    value >= 9_223_372_036_854_776_000
-  ) {
-    return null
-  }
-  const converted = BigInt(value)
-  return converted <= DISCRETE_MAXIMUM ? converted : null
-}
-
-function exactRoundedNonNegativeBigInt(value: number): bigint | null {
-  if (!Number.isFinite(value) || value < 0) return null
-  return exactNonNegativeBigInt(roundToEven(value))
-}
-
-function roundToEven(value: number): number {
-  const floor = Math.floor(value)
-  const fraction = value - floor
-  if (fraction < 0.5) return floor
-  if (fraction > 0.5) return floor + 1
-  return floor % 2 === 0 ? floor : floor + 1
-}
-
-function unityAddContinuous(left: number, right: number): number {
-  if (
-    !Number.isFinite(left) ||
-    !Number.isFinite(right) ||
-    left < 0 ||
-    right < 0
-  ) {
-    return 0
-  }
-  const value = left + right
-  return value === Number.POSITIVE_INFINITY ? Number.MAX_VALUE : value
-}
-
-function isDreamUpgradeFlag(value: string): value is DreamUpgradeFlag {
-  return DREAM_UPGRADE_FLAG_SET.has(value)
+  return isDreamEducationId(id) ? id : null
 }

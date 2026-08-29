@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   breakInfinityBotThreshold,
@@ -268,7 +269,7 @@ function resolveStellarAggregate(
 
 function validateInputs(inputs: Readonly<CanonicalSkillIntervalInputs>): void {
   for (const [key, value] of Object.entries(inputs)) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       throw new Error(
         `Canonical skill interval '${key}' must be finite and non-negative.`,
       )

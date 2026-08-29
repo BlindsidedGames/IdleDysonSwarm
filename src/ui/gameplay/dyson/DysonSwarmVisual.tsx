@@ -6,6 +6,7 @@ import {
 import type {
   FrontendDysonSwarmVisualizationFacts,
 } from '../../../application/frontendSnapshot'
+import { clampUnitInterval } from '../../../core/clampUnitInterval'
 import galaxyEdgeOn from '../../assets/galaxy-field/galaxy-edge-on.png'
 import galaxyFaceOn from '../../assets/galaxy-field/galaxy-face-on.png'
 import galaxyOblique from '../../assets/galaxy-field/galaxy-oblique.png'
@@ -799,10 +800,6 @@ function galaxyMemberHarvest(
     clampUnitInterval(completion) *
       (GALAXY_FIELD_MEMBER_COUNT - 1)
   return clampUnitInterval(representedGalaxies - dimOrder)
-}
-
-function clampUnitInterval(value: number): number {
-  return Math.min(1, Math.max(0, value))
 }
 
 function deterministicUnit(seed: number): number {

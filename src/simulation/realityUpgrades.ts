@@ -1,20 +1,24 @@
-import { getGameAssetsByKind } from '../game-data/catalog'
 import {
-  DREAM_UPGRADE_FLAGS,
+  isFiniteNonNegativeNumber,
+  isNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
+import { getGameAssetsByKind } from '../game-data/catalog'
+import { SIMULATION_UPGRADE_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import { readUnityBoolean } from '../game-data/runtimeValueGuards'
+import {
+  isDreamUpgradeFlag,
   type CanonicalGameStateV1,
   type DreamUpgradeFlag,
 } from '../game-state/types'
 import {
   addDiscrete,
-  DISCRETE_MAXIMUM,
+  exactRoundedNonNegativeBigInt,
+  isDiscreteResource,
 } from './numeric'
 import { tryDebitContinuous } from './transactions'
+import { UNITY_INT_MAXIMUM } from './unityNumericLimits'
 
-const SIMULATION_UPGRADE_KIND =
-  'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
 const REALITY_UPGRADE_LAYER = 1
-const INT_MAXIMUM = 2_147_483_647n
-const LONG_UPPER_EXCLUSIVE = 9_223_372_036_854_776_000
 
 export const REALITY_UPGRADE_IDS = [
   'translation1',
@@ -82,7 +86,6 @@ export interface RealityUpgradePurchaseResult {
 }
 
 const REALITY_UPGRADE_ID_SET = new Set<string>(REALITY_UPGRADE_IDS)
-const DREAM_UPGRADE_FLAG_SET = new Set<string>(DREAM_UPGRADE_FLAGS)
 
 const loadedRealityUpgradeDefinitions =
   loadRealityUpgradeDefinitions()
@@ -221,7 +224,7 @@ function loadRealityUpgradeDefinitions(): {
   const seenKeys = new Set<RealityUpgradeId>()
   const rejectedKeys = new Set<RealityUpgradeId>()
 
-  for (const asset of getGameAssetsByKind(SIMULATION_UPGRADE_KIND)) {
+  for (const asset of getGameAssetsByKind(SIMULATION_UPGRADE_ASSET_KIND)) {
     if (asset.data.layer !== REALITY_UPGRADE_LAYER) continue
 
     const key = asset.data.key
@@ -269,10 +272,8 @@ function loadRealityUpgradeDefinitions(): {
 
 function parseCost(value: unknown): number | null {
   if (
-    typeof value !== 'number' ||
-    !Number.isInteger(value) ||
-    value < 0 ||
-    value > Number(INT_MAXIMUM)
+    !isNonNegativeInteger(value) ||
+    value > UNITY_INT_MAXIMUM
   ) {
     return null
   }
@@ -343,9 +344,7 @@ function parsePurchaseEffects(
 }
 
 function parseBoolean(value: unknown): boolean | null {
-  if (value === true || value === 1) return true
-  if (value === false || value === 0) return false
-  return null
+  return readUnityBoolean(value) ?? null
 }
 
 function findDefinitionGap(
@@ -359,7 +358,7 @@ function findDefinitionGap(
     typeof definition.cost !== 'number' ||
     !Number.isInteger(definition.cost) ||
     definition.cost <= 0 ||
-    definition.cost > Number(INT_MAXIMUM)
+    definition.cost > UNITY_INT_MAXIMUM
   ) {
     return `invalid_cost:${mapKey}`
   }
@@ -522,48 +521,12 @@ function hasValidPurchaseState(
   definition: RealityUpgradeDefinition,
 ): boolean {
   return (
-    isSimulationResource(state.dream.strangeMatter) &&
+    isFiniteNonNegativeNumber(state.dream.strangeMatter) &&
     (!definition.purchaseEffects.some(
       (effect) => effect.effectType === 2,
     ) ||
-      isDiscrete(state.skills.points))
+      isDiscreteResource(state.skills.points))
   )
-}
-
-function isSimulationResource(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
-}
-
-function isDiscrete(value: unknown): value is bigint {
-  return (
-    typeof value === 'bigint' &&
-    value >= 0n &&
-    value <= DISCRETE_MAXIMUM
-  )
-}
-
-function exactRoundedNonNegativeBigInt(
-  value: number,
-): bigint | null {
-  if (!Number.isFinite(value) || value < 0) return null
-  const rounded = roundToEven(value)
-  if (
-    !Number.isInteger(rounded) ||
-    rounded < 0 ||
-    rounded >= LONG_UPPER_EXCLUSIVE
-  ) {
-    return null
-  }
-  const converted = BigInt(rounded)
-  return converted <= DISCRETE_MAXIMUM ? converted : null
-}
-
-function roundToEven(value: number): number {
-  const floor = Math.floor(value)
-  const fraction = value - floor
-  if (fraction < 0.5) return floor
-  if (fraction > 0.5) return floor + 1
-  return floor % 2 === 0 ? floor : floor + 1
 }
 
 function isRealityUpgradeId(
@@ -576,7 +539,7 @@ function isCanonicalOwnershipKey(
   value: string,
 ): value is CanonicalUpgradeOwnershipKey {
   return (
-    DREAM_UPGRADE_FLAG_SET.has(value) ||
+    isDreamUpgradeFlag(value) ||
     value === 'doubleTimeOwned' ||
     value === 'workerAutoConvert'
   )

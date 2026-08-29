@@ -1,4 +1,10 @@
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import {
+  readStringArray,
+  readUnityBoolean,
+} from '../game-data/runtimeValueGuards'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type {
   CanonicalGameStateV1,
@@ -8,8 +14,6 @@ import {
   deriveManualPurchaseProductionLayer,
 } from './canonicalDysonDerivation'
 import { BASIC_DYSON_FACILITY_IDS } from './dysonFacilities'
-
-const SKILL_KIND = 'GameData.SkillDefinition'
 
 interface SkillDefinition {
   readonly id: string
@@ -736,7 +740,7 @@ export function runCanonicalSkillAutoAssignment(
 
 function loadDefinitions(): ReadonlyMap<string, SkillDefinition> {
   return new Map(
-    getGameAssetsByKind(SKILL_KIND).map((asset) => {
+    getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map((asset) => {
       const definition = parseDefinition(asset)
       return [definition.id, definition]
     }),
@@ -946,7 +950,7 @@ function requireNonNegativeInteger(
   asset: RuntimeGameAsset,
   field: string,
 ): number {
-  if (typeof value === 'number' && Number.isSafeInteger(value) && value >= 0) {
+  if (isSafeNonNegativeInteger(value)) {
     return value
   }
   throw invalidDefinition(asset, field)
@@ -957,8 +961,8 @@ function requireBoolean(
   asset: RuntimeGameAsset,
   field: string,
 ): boolean {
-  if (value === true || value === 1) return true
-  if (value === false || value === 0) return false
+  const parsed = readUnityBoolean(value)
+  if (parsed !== undefined) return parsed
   throw invalidDefinition(asset, field)
 }
 
@@ -966,12 +970,8 @@ function requireStringArray(
   value: unknown,
   asset: RuntimeGameAsset,
 ): readonly string[] {
-  if (
-    Array.isArray(value) &&
-    value.every((entry) => typeof entry === 'string')
-  ) {
-    return value
-  }
+  const parsed = readStringArray(value)
+  if (parsed !== undefined) return parsed
   throw invalidDefinition(asset, 'string array')
 }
 

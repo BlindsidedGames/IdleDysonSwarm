@@ -1,4 +1,8 @@
 import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
+import {
   BASIC_DYSON_FACILITY_IDS,
   createEmptyRetainedFacilities,
   type BasicDysonFacilityId,
@@ -17,11 +21,11 @@ import {
   buyXCost,
   maxAffordable,
 } from './transactions'
+import { UNITY_INT_MAXIMUM_BIGINT } from './unityNumericLimits'
 
 const ORDINARY_INFINITY_BOT_REQUIREMENT = 4.2e19
 const DEFAULT_INFINITY_EXPONENT = 3.9
 const MINIMUM_EVENT_PROGRESS_SECONDS = bitIncrement(1e-12)
-const INT_MAXIMUM = 2_147_483_647n
 export const INFINITY_RATE_MATERIAL_IMPROVEMENT = 0.02
 /**
  * A manual run must be observed for this long before toggling automation may
@@ -273,13 +277,12 @@ export function infinityPointsPerMinute(
 ): number {
   if (
     projectedReward <= 0n ||
-    !Number.isFinite(elapsedSeconds) ||
-    elapsedSeconds <= 0
+    !isFinitePositiveNumber(elapsedSeconds)
   ) {
     return 0
   }
   const rate = Number(projectedReward) * 60 / elapsedSeconds
-  return Number.isFinite(rate) && rate > 0 ? rate : Number.MAX_VALUE
+  return isFinitePositiveNumber(rate) ? rate : Number.MAX_VALUE
 }
 
 export interface InfinityRatePeak {
@@ -323,9 +326,7 @@ export function validateBasicDysonInfinityState(
     infinity.legacyOverflowMultiplier,
   ]
   if (
-    !continuous.every(
-      (value) => Number.isFinite(value) && value >= 0,
-    )
+    !continuous.every(isFiniteNonNegativeNumber)
   ) {
     return 'SIM-DYSON-NON-FINITE'
   }
@@ -347,7 +348,7 @@ export function validateBasicDysonInfinityState(
   if (
     discrete.some((value) => value < 0n) ||
     infinity.breakTarget < 1n ||
-    infinity.breakTarget > INT_MAXIMUM ||
+    infinity.breakTarget > UNITY_INT_MAXIMUM_BIGINT ||
     infinity.divisionsPurchased > 19n ||
     infinity.exponent < 1
   ) {
@@ -393,7 +394,9 @@ export function timeToNextInfinityEvent(
 
 export function clampBreakTarget(target: bigint): bigint {
   if (target < 1n) return 1n
-  return target > INT_MAXIMUM ? INT_MAXIMUM : target
+  return target > UNITY_INT_MAXIMUM_BIGINT
+    ? UNITY_INT_MAXIMUM_BIGINT
+    : target
 }
 
 /**
@@ -412,7 +415,7 @@ export function projectInfinityProgress(
     quantumDoubleIp: input.quantumDoubleIp,
   })
   const bots =
-    Number.isFinite(input.bots) && input.bots > 0
+    isFinitePositiveNumber(input.bots)
       ? input.bots
       : 0
   const currentReward = infinityPointsForBots(bots, infinity)

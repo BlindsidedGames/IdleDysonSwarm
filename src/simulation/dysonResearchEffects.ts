@@ -1,8 +1,20 @@
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
+import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { getGameAsset } from '../game-data/catalog'
+import {
+  EFFECT_DEFINITION_ASSET_KIND,
+  RESEARCH_DEFINITION_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import type { RuntimeGameAsset } from '../game-data/types'
-import type { SecretResearchCoefficientId } from './secretBuffs'
+import {
+  isSecretResearchCoefficientId,
+  type SecretResearchCoefficientId,
+} from './secretBuffs'
 import {
   operationFromUnity,
   type StatEffect,
@@ -214,10 +226,7 @@ export function materializeDysonResearchEffects(
     const researchPath = `research.levelsById.${spec.id}`
     const rawLevel = levelsById[spec.id] ?? 0
     if (
-      typeof rawLevel !== 'number' ||
-      !Number.isFinite(rawLevel) ||
-      !Number.isSafeInteger(rawLevel) ||
-      rawLevel < 0
+      !isSafeNonNegativeInteger(rawLevel)
     ) {
       issues.push({
         code: 'DYSON_RESEARCH_LEVEL_INVALID',
@@ -227,7 +236,7 @@ export function materializeDysonResearchEffects(
       continue
     }
 
-    const definition = lookup('GameData.ResearchDefinition', spec.id)
+    const definition = lookup(RESEARCH_DEFINITION_ASSET_KIND, spec.id)
     if (definition === undefined) {
       issues.push({
         code: 'DYSON_RESEARCH_DEFINITION_MISSING',
@@ -240,7 +249,7 @@ export function materializeDysonResearchEffects(
     const maxLevel = definition.data.maxLevel
     const references = definition.data.effects
     if (
-      definition.kind !== 'GameData.ResearchDefinition' ||
+      definition.kind !== RESEARCH_DEFINITION_ASSET_KIND ||
       definition.id !== spec.id ||
       maxLevel !== spec.maxLevel ||
       !Array.isArray(references) ||
@@ -270,7 +279,7 @@ export function materializeDysonResearchEffects(
         continue
       }
 
-      const effectAsset = lookup('GameData.EffectDefinition', effectId)
+      const effectAsset = lookup(EFFECT_DEFINITION_ASSET_KIND, effectId)
       if (effectAsset === undefined) {
         issues.push({
           code: 'DYSON_RESEARCH_EFFECT_MISSING',
@@ -361,7 +370,7 @@ function parseEffect(
   }
   const expectedPerLevel = spec.panelLifetimePerLevel ?? 0
   if (
-    asset.kind !== 'GameData.EffectDefinition' ||
+    asset.kind !== EFFECT_DEFINITION_ASSET_KIND ||
     asset.id !== spec.effectId ||
     id !== spec.effectId ||
     targetStatId !== spec.targetStatId ||
@@ -401,7 +410,7 @@ function validateTuning(
   )
   for (const field of fields) {
     const value = tuning[field]
-    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+    if (isFiniteNonNegativeNumber(value)) {
       continue
     }
     issues.push({
@@ -443,10 +452,7 @@ function validateActiveResearchIds(
     if (DYSON_RESEARCH_ID_SET.has(id)) continue
     const path = `research.levelsById.${id}`
     if (
-      typeof level !== 'number' ||
-      !Number.isFinite(level) ||
-      !Number.isSafeInteger(level) ||
-      level < 0
+      !isSafeNonNegativeInteger(level)
     ) {
       issues.push({
         code: 'DYSON_RESEARCH_LEVEL_INVALID',
@@ -465,17 +471,6 @@ function validateActiveResearchIds(
   }
 }
 
-function isSecretResearchCoefficientId(
-  id: string,
-): id is SecretResearchCoefficientId {
-  return (
-    id === 'research.assembly_line_upgrade' ||
-    id === 'research.ai_manager_upgrade' ||
-    id === 'research.server_upgrade' ||
-    id === 'research.planet_upgrade'
-  )
-}
-
 function shouldSkipEffect(
   operation: StatOperation,
   value: number,
@@ -490,8 +485,4 @@ function shouldSkipEffect(
     default:
       return false
   }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
 }

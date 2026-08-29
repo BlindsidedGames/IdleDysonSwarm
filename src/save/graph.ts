@@ -1,7 +1,9 @@
+import { isNonArrayRecord } from '../core/nonArrayRecord'
+
 export type SaveRecord = Record<string, unknown>
 
 export function isRecord(value: unknown): value is SaveRecord {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
+  return isNonArrayRecord(value)
 }
 
 export function requireRecord(value: unknown, label = 'value'): SaveRecord {

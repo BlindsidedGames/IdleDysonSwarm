@@ -30,6 +30,7 @@ import type {
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { BUY_MODE_OPTIONS } from '../buyModeOptions'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
 import { readyDysonMessages as messages } from './messages'
 import './dysonControls.css'
@@ -68,14 +69,6 @@ type DysonBuyMode = Extract<
   DysonSettingsCommand,
   { readonly kind: 'dyson.set-buy-mode' }
 >['buyMode']
-
-const BUY_MODE_OPTIONS = Object.freeze([
-  ['buy-1', 'buyOne'],
-  ['buy-10', 'buyTen'],
-  ['buy-50', 'buyFifty'],
-  ['buy-100', 'buyOneHundred'],
-  ['buy-max', 'buyMax'],
-] as const)
 
 export function DysonInfo({
   summary,
@@ -340,7 +333,7 @@ export function DysonRunFacts({
         <FormattedMessage
           {...compactMetricMessage}
           values={{
-            value: formatFact(locale, metric.value),
+            value: formatGameNumber(locale, metric.value),
             emphasis: (chunks) => (
               <span className="dyson-info__value">{chunks}</span>
             ),
@@ -351,7 +344,7 @@ export function DysonRunFacts({
         <FormattedMessage
           {...messages.compactPanelLifetime}
           values={{
-            value: formatFact(locale, panelLifetimeSeconds),
+            value: formatGameNumber(locale, panelLifetimeSeconds),
             emphasis: (chunks) => (
               <span className="dyson-info__value">{chunks}</span>
             ),
@@ -362,7 +355,7 @@ export function DysonRunFacts({
         <FormattedMessage
           {...messages.compactTotalPanelsDecayed}
           values={{
-            value: formatFact(locale, totalPanelsDecayed),
+            value: formatGameNumber(locale, totalPanelsDecayed),
             emphasis: (chunks) => (
               <span className="dyson-info__value">{chunks}</span>
             ),
@@ -593,10 +586,6 @@ export function BotDistribution({
       )}
     </div>
   )
-}
-
-function formatFact(locale: EnabledLocale, value: number): string {
-  return formatGameNumber(locale, value)
 }
 
 function formatPercent(locale: EnabledLocale, value: number): string {

@@ -1,7 +1,15 @@
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
-import type { CanonicalGameStateV1 } from '../game-state/types'
+import type {
+  CanonicalGameStateV1,
+  ProcessingSource,
+} from '../game-state/types'
 import { validateCanonicalGameState } from '../game-state/validate'
 import {
   evaluateCanonicalBotCapCheckpoint,
@@ -78,17 +86,18 @@ import {
   type CanonicalTinkerRuntimeState,
 } from './canonicalTinker'
 import { withCanonicalBotAllocation } from './canonicalBotAllocation'
-import type {
-  EventTimeSimulationModel,
-  SimulationAutomationPolicy,
-  SimulationPresentationSummary,
-  SimulationQueuedInput,
+import {
+  createSimulationSummary,
+  type EventTimeSimulationModel,
+  type SimulationAutomationPolicy,
+  type SimulationPresentationSummary,
+  type SimulationQueuedInput,
 } from './types'
+import { TIME_EPSILON_SECONDS as TIME_EPSILON } from './timeTolerance'
 
 export const CANONICAL_QUANTUM_LEAP_INPUT = 'quantum-leap'
 export const UNITY_QUANTUM_ACTION_INPUT = 'quantum_action'
 const QUANTUM_LEAP_INFINITY_GATE = 42n
-const TIME_EPSILON = 1e-12
 const OWNED_EVENT_TIME_STATE = Symbol('owned-event-time-state')
 
 /**
@@ -112,7 +121,7 @@ export type CanonicalInfinityBoundaryEvaluation =
     }
 
 export interface CanonicalEventTimeContext {
-  readonly mode: 'active' | 'stored-time'
+  readonly mode: ProcessingSource
   readonly automationIntervalSeconds: number
   /**
    * Duration represented by one automation action in this authoritative
@@ -160,7 +169,7 @@ interface ArtifactSkillPointResult {
 }
 
 interface CapturedContext {
-  readonly mode: 'active' | 'stored-time'
+  readonly mode: ProcessingSource
   readonly automationIntervalSeconds: number
   readonly automationActionIntervalSeconds: number
   readonly rateClockMultiplier: number
@@ -572,7 +581,7 @@ export class CanonicalEventTimeModel
         return
       }
       candidate = education.candidate
-      let intervalSummary = emptySummary()
+      let intervalSummary = createSimulationSummary()
       const reality = advanceRealityWorkers(
         candidate,
         seconds,
@@ -704,7 +713,7 @@ export class CanonicalEventTimeModel
       }
       pending = {
         seconds: 0,
-        summary: emptySummary(),
+        summary: createSimulationSummary(),
       }
       this.pendingInterval = pending
       return
@@ -746,7 +755,7 @@ export class CanonicalEventTimeModel
       this.carrier.gameState.statistics,
     )
     this.replaceGameState(deferredState)
-    const event = emptySummary()
+    const event = createSimulationSummary()
     event.strangeMatter = result.rewardGranted
     if (result.cause === 'Meteor') event.meteorDreamResets = 1n
     if (result.cause === 'ArtificialIntelligence') {
@@ -921,7 +930,7 @@ export class CanonicalEventTimeModel
     if (!this.publishEvaluationSnapshot(
       'infinity.evaluationSnapshot',
     )) return
-    const event = emptySummary()
+    const event = createSimulationSummary()
     if (evaluation.breakInfinity) {
       event.breakInfinityCount = 1n
       event.breakInfinityPoints = result.rewardGranted
@@ -1386,12 +1395,11 @@ export function withCanonicalEventTimeAutomationInterval(
   rateClockMultiplier = 1,
 ): Readonly<CanonicalEventTimeContext> {
   if (
-    !Number.isFinite(automationIntervalSeconds) ||
-    automationIntervalSeconds <= 0
+    !isFinitePositiveNumber(automationIntervalSeconds)
   ) {
     throw new RangeError('Automation interval must be finite and positive.')
   }
-  if (!Number.isFinite(rateClockMultiplier) || rateClockMultiplier <= 0) {
+  if (!isFinitePositiveNumber(rateClockMultiplier)) {
     throw new RangeError('Rate clock multiplier must be finite and positive.')
   }
   const prepared = prepareCanonicalEventTimeContext(context)
@@ -1536,7 +1544,7 @@ function validateCarrier(
   for (const [path, value] of Object.entries(
     state.compatibilityTuning,
   )) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       return Object.freeze({
         code: 'CANONICAL_EVENT_TUNING_INVALID',
         path: `compatibilityTuning.${path}`,
@@ -1547,7 +1555,7 @@ function validateCarrier(
   for (const [path, value] of Object.entries(
     context.dysonPresentationTuning,
   )) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       return Object.freeze({
         code: 'CANONICAL_EVENT_PRESENTATION_TUNING_INVALID',
         path: `dysonPresentationTuning.${path}`,
@@ -1559,7 +1567,7 @@ function validateCarrier(
   for (const [path, value] of Object.entries(
     state.evaluationSnapshot,
   )) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       return Object.freeze({
         code: 'CANONICAL_EVENT_EVALUATION_SNAPSHOT_INVALID',
         path: `evaluationSnapshot.${path}`,
@@ -1577,8 +1585,7 @@ function validateCarrier(
   if (
     typeof state.tinker.running !== 'boolean' ||
     typeof state.tinker.repeat !== 'boolean' ||
-    !Number.isSafeInteger(state.tinker.cycleId) ||
-    state.tinker.cycleId < 0 ||
+    !isSafeNonNegativeInteger(state.tinker.cycleId) ||
     typeof state.tinker.effectiveManualLabour !== 'boolean' ||
     !Number.isFinite(state.tinker.elapsedSeconds) ||
     state.tinker.elapsedSeconds < 0 ||
@@ -1876,30 +1883,10 @@ function createIntervalSummary(
   realityCapacityStallSeconds: number,
 ): SimulationPresentationSummary {
   return {
-    ...emptySummary(),
+    ...createSimulationSummary(),
     realityWorkers,
     automaticInfluence,
     realityCapacityStallSeconds,
-  }
-}
-
-function emptySummary(): SimulationPresentationSummary {
-  return {
-    ordinaryInfinityCount: 0n,
-    breakInfinityCount: 0n,
-    ordinaryInfinityPoints: 0n,
-    breakInfinityPoints: 0n,
-    botCapInfinityPoints: 0n,
-    botCapOverflowRewards: 0n,
-    meteorDreamResets: 0n,
-    aiDreamResets: 0n,
-    globalWarmingDreamResets: 0n,
-    blackHoleDreamResets: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-    automaticInfluence: 0,
-    manualInfluence: 0,
-    realityCapacityStallSeconds: 0,
   }
 }
 
@@ -1983,7 +1970,7 @@ function isRealityUpgradeOwned(
 }
 
 function roundedNonNegativeDiscrete(value: number): bigint | null {
-  if (!Number.isFinite(value) || value < 0) return null
+  if (!isFiniteNonNegativeNumber(value)) return null
   const floor = Math.floor(value)
   const fraction = value - floor
   const rounded =
@@ -1995,8 +1982,7 @@ function roundedNonNegativeDiscrete(value: number): bigint | null {
           ? floor
           : floor + 1
   if (
-    !Number.isSafeInteger(rounded) ||
-    rounded < 0
+    !isSafeNonNegativeInteger(rounded)
   ) {
     return null
   }

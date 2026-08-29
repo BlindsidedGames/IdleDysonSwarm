@@ -1,14 +1,14 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
   CanonicalGameStateV1,
   SimulationStatisticsState,
   SimulationTotalsState,
   StatisticsWindowState,
 } from '../game-state/types'
+import { updateStatisticsEventWindow } from './canonicalStatistics'
 import {
   addContinuous,
   addDiscrete,
-  clampContinuous,
-  floorToDiscrete,
 } from './numeric'
 
 export const FINITE_BOT_CAP = Number.MAX_VALUE
@@ -60,6 +60,12 @@ export interface BotCapCheckpointResult {
   readonly appliedReward: BotCapAppliedReward
 }
 
+export function selectBotCapCheckpointToPersist(
+  action: BotCapCheckpointAction,
+): BotCapCheckpointName | undefined {
+  return action.kind === 'persist' ? action.checkpoint : undefined
+}
+
 const NO_REWARD: BotCapAppliedReward = Object.freeze({
   infinityPoints: 0n,
   overflowMultiplier: 0,
@@ -76,7 +82,7 @@ export function evaluateCanonicalBotCapCheckpoint(
   state: Readonly<CanonicalGameStateV1>,
 ): BotCapCheckpointResult {
   const bots = state.dyson.bots
-  if (!Number.isFinite(bots) || bots < 0) {
+  if (!isFiniteNonNegativeNumber(bots)) {
     return persistResult(
       'invalid-bots',
       'invalid-bot-repair',
@@ -292,42 +298,17 @@ function addBotCapWindowPoints(
   trackedSimulatedSeconds: number,
   infinityPoints: bigint,
 ): readonly StatisticsWindowState[] {
-  const windows =
-    source.length === expectedLength
-      ? [...source]
-      : Array.from(
-          { length: expectedLength },
-          () => emptyStatisticsWindow(0n),
-        )
-  const sequence = floorToDiscrete(
-    clampContinuous(trackedSimulatedSeconds) / widthSeconds,
+  return updateStatisticsEventWindow(
+    source,
+    expectedLength,
+    widthSeconds,
+    trackedSimulatedSeconds,
+    (bucket) => ({
+      ...bucket,
+      infinityPoints: addDiscrete(
+        bucket.infinityPoints,
+        infinityPoints,
+      ),
+    }),
   )
-  const index = Number(sequence % BigInt(expectedLength))
-  const current = windows[index]
-  const bucket =
-    current.sequence === sequence
-      ? current
-      : emptyStatisticsWindow(sequence)
-  windows[index] = {
-    ...bucket,
-    infinityPoints: addDiscrete(
-      bucket.infinityPoints,
-      infinityPoints,
-    ),
-  }
-  return windows
-}
-
-function emptyStatisticsWindow(
-  sequence: bigint,
-): StatisticsWindowState {
-  return {
-    sequence,
-    simulatedSeconds: 0,
-    infinityCount: 0n,
-    infinityPoints: 0n,
-    dreamResetCount: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-  }
 }

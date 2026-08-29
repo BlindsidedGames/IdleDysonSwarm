@@ -1,3 +1,9 @@
+import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
+import {
+  isFiniteNonNegativeNumber,
+  isNonNegativeInteger,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import { isRecord, requireRecord, type SaveRecord } from '../save/graph'
 import { PreparedSave } from '../save/prepare'
 import {
@@ -6,11 +12,14 @@ import {
   skillLegacyKeyToId,
 } from '../save/legacyIds'
 import { packSettingsFlags } from '../save/settingsFlags'
-import type { BuyMode } from '../simulation/transactions'
+import { BUY_MODES, type BuyMode } from '../simulation/transactions'
 import { CONTINUOUS_MAXIMUM, SIMULATION_RESOURCE_MAXIMUM } from '../simulation/numeric'
 import {
   CANONICAL_GAME_MODEL_VERSION,
+  DREAM_EDUCATION_IDS,
   DREAM_UPGRADE_FLAGS,
+  isProcessingSource,
+  isStoredTimeAccuracyPreset,
   type CanonicalFacilityId,
   type CanonicalGameStateV1,
   type CanonicalOwnedPair,
@@ -42,15 +51,6 @@ import {
 function recordOrEmpty(value: unknown): SaveRecord {
   return isRecord(value) ? value : {}
 }
-
-const DREAM_EDUCATION_IDS = [
-  'engineering',
-  'shipping',
-  'worldTrade',
-  'worldPeace',
-  'mathematics',
-  'advancedPhysics',
-] as const
 
 const DREAM_TIMER_FIELDS = [
   'hunterTimerProgress',
@@ -480,11 +480,11 @@ export function hydrateGameState(
             ),
           ),
         ),
-        storedTimePreset:
-          source.processingStoredTimePreset === 'fast' ||
-          source.processingStoredTimePreset === 'accurate'
-            ? source.processingStoredTimePreset
-            : 'balanced',
+        storedTimePreset: isStoredTimeAccuracyPreset(
+          source.processingStoredTimePreset,
+        )
+          ? source.processingStoredTimePreset
+          : 'balanced',
       },
       doubleTime: {
         unlocked: toBoolean(dreamProgression.doubleTimeOwned),
@@ -1079,10 +1079,7 @@ function createDreamEducation(
 }
 
 function toSimulationTotals(value: unknown): SimulationTotalsState {
-  const source =
-    value !== null && typeof value === 'object' && !Array.isArray(value)
-      ? (value as SaveRecord)
-      : {}
+  const source = recordOrEmpty(value)
   const discrete = Object.fromEntries(
     STAT_BIGINT_FIELDS.map((field) => [
       field,
@@ -1116,12 +1113,7 @@ function toStatisticsWindows(
 ): StatisticsWindowState[] {
   const source = Array.isArray(value) ? value : []
   return Array.from({ length }, (_, index) => {
-    const bucket =
-      source[index] !== null &&
-      typeof source[index] === 'object' &&
-      !Array.isArray(source[index])
-        ? (source[index] as SaveRecord)
-        : {}
+    const bucket = recordOrEmpty(source[index])
     return {
       sequence: toNonNegativeBigInt(bucket.sequence),
       simulatedSeconds: toFiniteNonNegativeNumber(
@@ -1137,10 +1129,7 @@ function toStatisticsWindows(
 }
 
 function toLastCompletedCycle(value: unknown) {
-  const source =
-    value !== null && typeof value === 'object' && !Array.isArray(value)
-      ? (value as SaveRecord)
-      : {}
+  const source = recordOrEmpty(value)
   const dreamCause =
     typeof source.dreamCause === 'string' && source.dreamCause.length > 0
       ? source.dreamCause
@@ -1177,8 +1166,7 @@ function toRecentInfinityCycles(
       configuredTarget,
       reward,
       durationSeconds,
-      ...(candidate.processingSource === 'active' ||
-      candidate.processingSource === 'stored-time'
+      ...(isProcessingSource(candidate.processingSource)
         ? { processingSource: candidate.processingSource }
         : {}),
       ...(Number.isInteger(candidate.activeIntervalMilliseconds) &&
@@ -1254,10 +1242,7 @@ function overlayRecord(
   value: unknown,
   canonical: object,
 ): SaveRecord {
-  const preserved =
-    value !== null && typeof value === 'object' && !Array.isArray(value)
-      ? (value as SaveRecord)
-      : {}
+  const preserved = recordOrEmpty(value)
   Object.assign(preserved, canonical)
   return preserved
 }
@@ -1375,7 +1360,7 @@ function toFiniteNonNegativeNumber(
   fallback = 0,
 ): number {
   if (value === undefined || value === null) return fallback
-  if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+  if (isFiniteNonNegativeNumber(value)) {
     return value
   }
   throw new Error(`Expected a finite non-negative number, received ${String(value)}.`)
@@ -1424,11 +1409,7 @@ function toNonNegativeBigInt(value: unknown, fallback = 0n): bigint {
     if (value >= 0n) return value
     throw new Error(`Expected a non-negative discrete integer, received ${value}.`)
   }
-  if (
-    typeof value === 'number' &&
-    Number.isSafeInteger(value) &&
-    value >= 0
-  ) {
+  if (isSafeNonNegativeInteger(value)) {
     return BigInt(value)
   }
   if (value === undefined || value === null) return fallback
@@ -1458,19 +1439,15 @@ function toBuyMode(value: unknown): BuyMode {
       : typeof value === 'number'
         ? value
         : 0
-  return (
-    ['buy-1', 'buy-10', 'buy-50', 'buy-100', 'buy-max'] as const
-  )[Number.isInteger(index) && index >= 0 && index <= 4 ? index : 0]
+  return BUY_MODES[
+    isNonNegativeInteger(index) && index < BUY_MODES.length
+      ? index
+      : 0
+  ]
 }
 
 function fromBuyMode(value: BuyMode): number {
-  return ['buy-1', 'buy-10', 'buy-50', 'buy-100', 'buy-max'].indexOf(
-    value,
-  )
-}
-
-function clampUnit(value: number): number {
-  return Math.max(0, Math.min(1, value))
+  return BUY_MODES.indexOf(value)
 }
 
 function minimumBigInt(left: bigint, right: bigint): bigint {

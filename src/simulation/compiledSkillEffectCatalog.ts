@@ -1,4 +1,11 @@
 import { getGameAsset } from '../game-data/catalog'
+import {
+  EFFECT_DEFINITION_ASSET_KIND,
+  SKILL_DATABASE_ASSET_ID,
+  SKILL_DATABASE_ASSET_KIND,
+  SKILL_DEFINITION_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
+import { readStringArray } from '../game-data/runtimeValueGuards'
 import type {
   RuntimeAssetReference,
   RuntimeAssetValue,
@@ -60,8 +67,8 @@ export function compileSkillEffectCatalog(
   lookup: SkillEffectAssetLookup,
 ): Readonly<CompiledSkillEffectCatalog> {
   const database = lookup(
-    'GameData.SkillDatabase',
-    'SkillDatabase',
+    SKILL_DATABASE_ASSET_KIND,
+    SKILL_DATABASE_ASSET_ID,
   )
   if (database === undefined) {
     throw new Error('Exported game data is missing SkillDatabase.')
@@ -79,7 +86,7 @@ export function compileSkillEffectCatalog(
   for (const skillReference of skillReferences) {
     if (skillReference.id === null) continue
     const skillId = skillReference.id
-    const skill = lookup('GameData.SkillDefinition', skillId)
+    const skill = lookup(SKILL_DEFINITION_ASSET_KIND, skillId)
     if (skill === undefined) {
       throw new Error(
         `Exported SkillDatabase references missing skill '${skillId}'.`,
@@ -92,7 +99,7 @@ export function compileSkillEffectCatalog(
     for (const effectReference of effectReferences) {
       if (effectReference.id === null) continue
       const effectId = effectReference.id
-      const asset = lookup('GameData.EffectDefinition', effectId)
+      const asset = lookup(EFFECT_DEFINITION_ASSET_KIND, effectId)
       if (asset === undefined) {
         throw new Error(
           `Skill '${skillId}' references missing effect '${effectId}'.`,
@@ -273,13 +280,11 @@ function requireStrings(
   value: RuntimeAssetValue | undefined,
   path: string,
 ): readonly string[] {
-  if (
-    !Array.isArray(value) ||
-    !value.every((entry) => typeof entry === 'string')
-  ) {
+  const parsed = readStringArray(value)
+  if (parsed === undefined) {
     throw new Error(
       `Exported game data '${path}' must be a string list.`,
     )
   }
-  return value
+  return parsed
 }

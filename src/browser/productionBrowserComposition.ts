@@ -5,8 +5,9 @@ import type {
   CanonicalLifecycleClock,
 } from '../application/canonicalLifecycleCoordinator'
 import {
-  createUnityFirstRunPreparedSave,
-} from '../application/firstRun/unityFirstRunSave'
+  createProductionUnityFirstRunSaveFactory,
+  createUnityFirstRunResetRequest,
+} from '../application/firstRun/productionFirstRun'
 import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
 import {
   BrowserLifecycleUtcClock,
@@ -28,8 +29,8 @@ import {
   WEB_LIFECYCLE_POLICY,
 } from '../simulation/lifecycleAwayTime'
 import type { ReleasePlatformServices } from '../platform/releaseFoundation'
-import type {
-  AutomaticUnityPurchaseEvidencePromoter,
+import {
+  asAutomaticUnityPurchaseEvidencePromoter,
 } from '../save/automaticPurchaseEvidence'
 import {
   PRODUCTION_BROWSER_DATABASE_NAME,
@@ -43,12 +44,12 @@ export {
   PRODUCTION_BROWSER_SAVE_PATHS,
 } from './productionBrowserStorage'
 import { RuntimeEntitlementBridge } from '../store/runtimeEntitlements'
-import { serializeWebSave } from '../save/serialization'
 import type {
   DysonPresentationTuning,
 } from '../simulation/canonicalDysonDerivation'
 import {
   createBrowserRuntimeFoundation,
+  prepareRuntimeForSafeReload,
   type BrowserRuntimeFoundationOptions,
   type BrowserUiRuntimeFoundation,
   type UiRuntimeImportResult,
@@ -114,11 +115,8 @@ export function createProductionBrowserComposition(
         options.releasePlatformServices.entitlements,
         options.releasePlatformServices.doubleInfinityPointsEffect,
       )
-  const createFirstRunSave = () =>
-    createUnityFirstRunPreparedSave({
-      startedAtUtc:
-        lifecycleClock.sample().serializedUtcText,
-    })
+  const createFirstRunSave =
+    createProductionUnityFirstRunSaveFactory(lifecycleClock)
   const createApplication =
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
@@ -160,7 +158,7 @@ export function createProductionBrowserComposition(
     noticeChannel: ownershipNoticeChannel,
     hostEntitlements,
     automaticPurchaseEvidencePromoter:
-      automaticPurchaseEvidencePromoter(
+      asAutomaticUnityPurchaseEvidencePromoter(
         options.releasePlatformServices?.entitlements,
       ),
     automaticNumberFormattingAdopter:
@@ -176,29 +174,7 @@ export function createProductionBrowserComposition(
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())
-  const prepareForSafeReload = async (): Promise<void> => {
-    const status = runtime.status()
-    if (status.phase === 'ready') {
-      const checkpointed =
-        await runtime.checkpointBeforeSafeReload()
-      if (!checkpointed) {
-        throw new Error(
-          'Safe reload requires a verified checkpoint.',
-        )
-      }
-    } else if (
-      status.phase !== 'blocked' &&
-      status.phase !== 'ownership-lost'
-    ) {
-      throw new Error(
-        `Safe reload is unavailable while the runtime is ${status.phase}.`,
-      )
-    }
-    // There is intentionally no await between a non-ready status sample and
-    // shutdown. The production runtime closes new startup, lifecycle, and
-    // command admission synchronously when shutdown() is invoked.
-    await runtime.shutdown()
-  }
+  const prepareForSafeReload = () => prepareRuntimeForSafeReload(runtime)
   const prepareForUpdateActivation = async (): Promise<void> => {
     const status = runtime.status()
     if (status.phase !== 'ready') {
@@ -220,19 +196,9 @@ export function createProductionBrowserComposition(
     saveSchemaVersion: CURRENT_SAVE_SCHEMA,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
-    resetSave: () => {
-      const importedAtUtc =
-        lifecycleClock.sample().serializedUtcText
-      const firstRun = createFirstRunSave()
-      return runtime.importSave({
-        source: 'paste',
-        text: serializeWebSave(
-          firstRun.copyValidatedState(),
-        ),
-        importedAtUtc,
-        overwriteApproved: true,
-      })
-    },
+    resetSave: () => runtime.importSave(
+      createUnityFirstRunResetRequest(lifecycleClock, createFirstRunSave),
+    ),
     prepareForUpdateActivation,
     prepareForSafeReload,
     reloadSafely: async () => {
@@ -240,22 +206,6 @@ export function createProductionBrowserComposition(
       reloadPage()
     },
   })
-}
-
-function automaticPurchaseEvidencePromoter(
-  authority:
-    | Readonly<ReleasePlatformServices>['entitlements']
-    | undefined,
-): AutomaticUnityPurchaseEvidencePromoter | undefined {
-  if (
-    authority === undefined ||
-    !('promoteAutomaticUnityPurchaseEvidence' in authority) ||
-    typeof authority.promoteAutomaticUnityPurchaseEvidence !== 'function'
-  ) {
-    return undefined
-  }
-  return authority as typeof authority &
-    AutomaticUnityPurchaseEvidencePromoter
 }
 
 function createOwnershipNoticeChannel():

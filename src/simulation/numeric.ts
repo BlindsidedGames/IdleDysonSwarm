@@ -1,10 +1,33 @@
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+  isNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
+
 export const CONTINUOUS_MAXIMUM = Number.MAX_VALUE
 export const DISCRETE_MAXIMUM = 9_223_372_036_854_775_807n
 export const SIMULATION_RESOURCE_MAXIMUM = BigInt(CONTINUOUS_MAXIMUM)
+const DISCRETE_DOUBLE_UPPER_EXCLUSIVE = 9_223_372_036_854_776_000
+
+export function isDiscreteResource(value: unknown): value is bigint {
+  return (
+    typeof value === 'bigint' &&
+    value >= 0n &&
+    value <= DISCRETE_MAXIMUM
+  )
+}
+
+export function isSimulationResource(value: unknown): value is bigint {
+  return (
+    typeof value === 'bigint' &&
+    value >= 0n &&
+    value <= SIMULATION_RESOURCE_MAXIMUM
+  )
+}
 
 export function clampContinuous(value: number): number {
   if (value === Number.POSITIVE_INFINITY) return CONTINUOUS_MAXIMUM
-  return Number.isFinite(value) && value >= 0 ? value : 0
+  return isFiniteNonNegativeNumber(value) ? value : 0
 }
 
 export function addContinuous(left: number, right: number): number {
@@ -79,10 +102,32 @@ export function floorToDiscreteAtMost(
   value: number,
   maximum: bigint,
 ): bigint {
-  if (!Number.isFinite(value) || value <= 0) return 0n
+  if (!isFinitePositiveNumber(value)) return 0n
   if (maximum < 0n) return 0n
   if (value >= Number(maximum)) return maximum
   return BigInt(Math.floor(value))
+}
+
+/** Converts a non-negative double using Unity-compatible midpoint-to-even rounding. */
+export function exactRoundedNonNegativeBigInt(value: number): bigint | null {
+  if (!isFiniteNonNegativeNumber(value)) return null
+  const rounded = roundToEven(value)
+  if (
+    !isNonNegativeInteger(rounded) ||
+    rounded >= DISCRETE_DOUBLE_UPPER_EXCLUSIVE
+  ) {
+    return null
+  }
+  const converted = BigInt(rounded)
+  return converted <= DISCRETE_MAXIMUM ? converted : null
+}
+
+function roundToEven(value: number): number {
+  const floor = Math.floor(value)
+  const fraction = value - floor
+  if (fraction < 0.5) return floor
+  if (fraction > 0.5) return floor + 1
+  return floor % 2 === 0 ? floor : floor + 1
 }
 
 export function bitDecrement(value: number): number {

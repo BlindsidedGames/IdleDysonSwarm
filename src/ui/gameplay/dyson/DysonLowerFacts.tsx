@@ -36,8 +36,8 @@ export function DysonProductionSummary({
           />}
         >
           <WorkerProductionMessage
-            workers={formatFact(locale, resources.workers)}
-            panels={formatFact(locale, rates.panels)}
+            workers={formatGameNumber(locale, resources.workers)}
+            panels={formatGameNumber(locale, rates.panels)}
           />
         </StableSingleLineText>
       </p>
@@ -64,11 +64,4 @@ function WorkerProductionMessage({
       }}
     />
   )
-}
-
-function formatFact(
-  locale: EnabledLocale,
-  value: number,
-): string {
-  return formatGameNumber(locale, value)
 }

@@ -1,4 +1,6 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import { readUnityBoolean } from '../game-data/runtimeValueGuards'
 import type {
   CanonicalGameStateV1,
   CanonicalSkillPresetSlot,
@@ -8,8 +10,8 @@ import {
   isSkillPresetColorId,
   type SkillPresetColorId,
 } from '../game-state/skillPresetColors'
+import { normalizeCanonicalBotDistribution } from './botDistribution'
 
-const SKILL_KIND = 'GameData.SkillDefinition'
 const PRESET_FORMAT_VERSION = 1
 
 interface SkillQueueDefinition {
@@ -255,6 +257,10 @@ export function parseCanonicalSkillPreset(
     )
   }
   const source = value as Record<string, unknown>
+  const botDistribution =
+    typeof source.botDistribution === 'number'
+      ? normalizeCanonicalBotDistribution(source.botDistribution)
+      : null
   if (source.version !== PRESET_FORMAT_VERSION) {
     return rejectedImport(
       'unsupported-version',
@@ -263,8 +269,7 @@ export function parseCanonicalSkillPreset(
   }
   if (
     typeof source.presetName !== 'string' ||
-    typeof source.botDistribution !== 'number' ||
-    !Number.isFinite(source.botDistribution) ||
+    botDistribution === null ||
     !Array.isArray(source.skillIds) ||
     !source.skillIds.every((id) => typeof id === 'string') ||
     (source.colorId !== undefined &&
@@ -304,9 +309,7 @@ export function parseCanonicalSkillPreset(
     payload: Object.freeze({
       version: PRESET_FORMAT_VERSION,
       presetName: source.presetName,
-      botDistribution: normalizeBotDistribution(
-        source.botDistribution,
-      ),
+      botDistribution,
       skillIds: Object.freeze(skillIds),
       ...(isSkillPresetColorId(source.colorId)
         ? { colorId: source.colorId }
@@ -423,7 +426,7 @@ export function normalizeSkillAssignment(
 
 function loadQueueDefinitions(): ReadonlyMap<string, SkillQueueDefinition> {
   return new Map(
-    getGameAssetsByKind(SKILL_KIND).map((asset) => [
+    getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map((asset) => [
       asset.id,
       Object.freeze({
         required: stringArray(asset.data.requiredSkillIds),
@@ -449,7 +452,7 @@ function queueSkillUnlock(
     ['paragadeLine', 'paragade'],
     ['stellarLine', 'stellar'],
   ] as const) {
-    if (data[field] === true || data[field] === 1) return unlock
+    if (readUnityBoolean(data[field]) === true) return unlock
   }
   return 'always'
 }
@@ -523,9 +526,4 @@ function stringArray(value: unknown): readonly string[] {
         (entry): entry is string => typeof entry === 'string',
       )
     : []
-}
-
-function normalizeBotDistribution(value: number): number {
-  const clamped = Math.max(0, Math.min(1, value))
-  return Math.round(clamped * 100) / 100
 }

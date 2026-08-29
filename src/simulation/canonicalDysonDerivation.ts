@@ -8,6 +8,8 @@ import {
   BASIC_DYSON_FACILITY_IDS,
   type BasicDysonFacilityId,
 } from './dysonFacilities'
+import { DYSON_FACILITY_IDS } from './dysonFacilityCatalog'
+import { createDysonFacilityModifierStatIds } from './dysonFacilityStatIds'
 import {
   calculateBasicDysonFacilityRate,
   createBasicDysonState,
@@ -280,25 +282,7 @@ export type DysonDerivationResult =
   | { readonly ok: true; readonly value: DerivedBasicDysonState }
   | { readonly ok: false; readonly issues: readonly DysonDerivationIssue[] }
 
-const FACILITY_MODIFIER_STATS: Readonly<
-  Record<CanonicalFacilityId, string>
-> = {
-  assembly_lines: 'Facility.AssemblyLine.Modifier',
-  ai_managers: 'Facility.Manager.Modifier',
-  servers: 'Facility.Server.Modifier',
-  data_centers: 'Facility.DataCenter.Modifier',
-  planets: 'Facility.Planet.Modifier',
-  matrioshka_brains: 'Facility.Matrioshka.Modifier',
-  birch_planets: 'Facility.Birch.Modifier',
-  galactic_brains: 'Facility.Galactic.Modifier',
-}
-
-const CANONICAL_DYSON_FACILITY_IDS = [
-  ...BASIC_DYSON_FACILITY_IDS,
-  'matrioshka_brains',
-  'birch_planets',
-  'galactic_brains',
-] as const satisfies readonly CanonicalFacilityId[]
+const FACILITY_MODIFIER_STATS = createDysonFacilityModifierStatIds()
 
 const BASIC_FACILITY_PRODUCTION_STATS: Readonly<
   Record<BasicDysonFacilityId, string>
@@ -630,7 +614,7 @@ export function deriveBasicDysonState(
     avocadoMultiplier,
   )
   const facilityModifiers = Object.fromEntries(
-    CANONICAL_DYSON_FACILITY_IDS.map((id) => [
+    DYSON_FACILITY_IDS.map((id) => [
       id,
       facilityModifierCalculations[id].value,
     ]),
@@ -1429,7 +1413,7 @@ function deriveFacilityModifiers(
     galactic_brains: 1,
   }
   return Object.fromEntries(
-    CANONICAL_DYSON_FACILITY_IDS.map((id) => {
+    DYSON_FACILITY_IDS.map((id) => {
       const target = FACILITY_MODIFIER_STATS[id]
       const effects: StatEffect[] = [
         ...effectsFor(researchEffects, target),

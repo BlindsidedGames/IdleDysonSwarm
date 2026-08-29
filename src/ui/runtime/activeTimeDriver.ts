@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../../core/finiteNonNegativeNumber'
 import {
   BrowserMonotonicClock,
 } from '../../platform/browserLifecycle'
@@ -311,8 +312,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
           publicationEpoch === this.publicationEpoch
         if (
           driverOwnsResidue &&
-          Number.isFinite(undelivered) &&
-          undelivered > 0
+          isFinitePositiveNumber(undelivered)
         ) {
           this.pendingMilliseconds += Math.min(
             milliseconds,
@@ -323,7 +323,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
         resolveResidue({
           activeMilliseconds:
             !driverOwnsResidue &&
-            Number.isFinite(undelivered) && undelivered > 0
+            isFinitePositiveNumber(undelivered)
               ? Math.min(milliseconds, undelivered)
               : 0,
           hibernationMilliseconds: 0,

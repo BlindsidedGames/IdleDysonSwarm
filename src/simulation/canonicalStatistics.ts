@@ -28,7 +28,7 @@ export function recordCanonicalStatisticsSegment(
   const segmentEnd = addContinuous(segmentStart, safeSeconds)
   const recentBase =
     shaped.recentProcessedSegment.simulatedSeconds > 0
-      ? emptyTotals()
+      ? createEmptySimulationTotals()
       : shaped.recentProcessedSegment
 
   return {
@@ -78,11 +78,11 @@ function ensureShape(
     trackingStartedMarker: statistics.trackedSinceUpdate
       ? statistics.trackingStartedMarker
       : TRACKING_STARTED_MARKER,
-    lifetime: statistics.lifetime ?? emptyTotals(),
+    lifetime: statistics.lifetime ?? createEmptySimulationTotals(),
     currentQuantumRun:
-      statistics.currentQuantumRun ?? emptyTotals(),
+      statistics.currentQuantumRun ?? createEmptySimulationTotals(),
     recentProcessedSegment:
-      statistics.recentProcessedSegment ?? emptyTotals(),
+      statistics.recentProcessedSegment ?? createEmptySimulationTotals(),
     lastCompletedCycle:
       statistics.lastCompletedCycle ?? emptyCycle(),
     minuteWindows: ensureWindows(statistics.minuteWindows, 60),
@@ -305,14 +305,14 @@ function ensureWindows(
   if (!Array.isArray(source) || source.length !== expectedLength) {
     return Array.from(
       { length: expectedLength },
-      () => emptyWindow(0n),
+      () => createEmptyStatisticsWindow(0n),
     )
   }
   let repaired: StatisticsWindowState[] | undefined
   for (let index = 0; index < expectedLength; index += 1) {
     if (source[index] !== null && source[index] !== undefined) continue
     repaired ??= source.slice()
-    repaired[index] = emptyWindow(0n)
+    repaired[index] = createEmptyStatisticsWindow(0n)
   }
   return repaired ?? source
 }
@@ -332,14 +332,14 @@ function prepareWindow(
 ): StatisticsWindowState {
   return window.sequence === sequence
     ? window
-    : emptyWindow(sequence)
+    : createEmptyStatisticsWindow(sequence)
 }
 
 function maximumBigInt(left: bigint, right: bigint): bigint {
   return left > right ? left : right
 }
 
-function emptyTotals(): SimulationTotalsState {
+export function createEmptySimulationTotals(): SimulationTotalsState {
   return {
     ordinaryInfinityCount: 0n,
     breakInfinityCount: 0n,
@@ -360,7 +360,9 @@ function emptyTotals(): SimulationTotalsState {
   }
 }
 
-function emptyWindow(sequence: bigint): StatisticsWindowState {
+export function createEmptyStatisticsWindow(
+  sequence: bigint,
+): StatisticsWindowState {
   return {
     sequence,
     simulatedSeconds: 0,
@@ -370,6 +372,36 @@ function emptyWindow(sequence: bigint): StatisticsWindowState {
     strangeMatter: 0,
     realityWorkers: 0n,
   }
+}
+
+/** Updates the current rolling-window bucket for one instantaneous event. */
+export function updateStatisticsEventWindow(
+  source: readonly StatisticsWindowState[],
+  expectedLength: number,
+  widthSeconds: number,
+  trackedSimulatedSeconds: number,
+  update: (
+    bucket: Readonly<StatisticsWindowState>,
+  ) => StatisticsWindowState,
+): readonly StatisticsWindowState[] {
+  const windows =
+    source.length === expectedLength
+      ? [...source]
+      : Array.from(
+          { length: expectedLength },
+          () => createEmptyStatisticsWindow(0n),
+        )
+  const sequence = floorToDiscrete(
+    clampContinuous(trackedSimulatedSeconds) / widthSeconds,
+  )
+  const index = Number(sequence % BigInt(expectedLength))
+  const current = windows[index]
+  const bucket =
+    current.sequence === sequence
+      ? current
+      : createEmptyStatisticsWindow(sequence)
+  windows[index] = update(bucket)
+  return windows
 }
 
 function emptyCycle(): SimulationStatisticsState['lastCompletedCycle'] {

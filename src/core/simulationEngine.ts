@@ -1,3 +1,7 @@
+import {
+  isFiniteNonNegativeNumber,
+  isSafeNonNegativeInteger,
+} from './finiteNonNegativeNumber'
 import type {
   CommandEnvelope,
   DeepReadonly,
@@ -72,8 +76,7 @@ export class TransactionalSimulationEngine<TState, TCommand>
     envelope: CommandEnvelope<TCommand>,
   ): SimulationStageResult<TState> {
     if (
-      !Number.isSafeInteger(envelope.expectedRevision) ||
-      envelope.expectedRevision < 0
+      !isSafeNonNegativeInteger(envelope.expectedRevision)
     ) {
       return this.rejected(
         'SIM-INVALID-REVISION',
@@ -99,7 +102,7 @@ export class TransactionalSimulationEngine<TState, TCommand>
   }
 
   stageAdvance(milliseconds: number): SimulationStageResult<TState> {
-    if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    if (!isFiniteNonNegativeNumber(milliseconds)) {
       return this.rejected(
         'SIM-INVALID-DURATION',
         'Advance duration must be finite and non-negative.',

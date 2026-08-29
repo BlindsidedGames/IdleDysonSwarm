@@ -7,11 +7,26 @@ export interface SecretBuffMultipliers {
   readonly planets: number
 }
 
+export const SECRET_RESEARCH_COEFFICIENT_IDS = [
+  'research.assembly_line_upgrade',
+  'research.ai_manager_upgrade',
+  'research.server_upgrade',
+  'research.planet_upgrade',
+] as const
+
 export type SecretResearchCoefficientId =
-  | 'research.assembly_line_upgrade'
-  | 'research.ai_manager_upgrade'
-  | 'research.server_upgrade'
-  | 'research.planet_upgrade'
+  (typeof SECRET_RESEARCH_COEFFICIENT_IDS)[number]
+
+export function isSecretResearchCoefficientId(
+  value: unknown,
+): value is SecretResearchCoefficientId {
+  return (
+    typeof value === 'string' &&
+    (SECRET_RESEARCH_COEFFICIENT_IDS as readonly string[]).includes(
+      value,
+    )
+  )
+}
 
 export interface SecretBuffDerivation {
   readonly multipliers: Readonly<SecretBuffMultipliers>

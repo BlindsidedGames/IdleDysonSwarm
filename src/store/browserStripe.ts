@@ -1,4 +1,5 @@
 import {
+  createEmptyHostEntitlementOwnership,
   STORE_PRODUCT_IDS,
   type EntitlementAuthority,
   type HostEntitlementOwnership,
@@ -11,11 +12,7 @@ import {
 
 const STORAGE_KEY = 'idle-dyson-swarm:stripe-device:v1'
 const API_ROOT = '/api/ids/stripe'
-const EMPTY_OWNERSHIP: Readonly<HostEntitlementOwnership> = Object.freeze({
-  doubleInfinityPoints: false,
-  developerOptions: false,
-  supporterCatGallery: false,
-})
+const EMPTY_OWNERSHIP = createEmptyHostEntitlementOwnership()
 
 interface BrowserStripeRecord {
   readonly deviceKey: string

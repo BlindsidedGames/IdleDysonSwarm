@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { SimulationTransitionResult } from '../core/contracts'
 import type { DysonEntitlements } from '../simulation/canonicalDysonDerivation'
 import type { LifecycleAdapter, LifecyclePhase } from '../platform/contracts'
@@ -12,6 +13,7 @@ import {
 } from '../simulation/lifecycleAwayTime'
 import {
   evaluateCanonicalBotCapCheckpoint,
+  selectBotCapCheckpointToPersist,
   type BotCapCheckpointName,
 } from '../simulation/canonicalBotCapCheckpoint'
 import { parseUnityInvariantUtcTimestamp } from '../simulation/unityUtcTimestamp'
@@ -478,7 +480,7 @@ export class CanonicalLifecycleCoordinator {
     milliseconds: number,
     mode: 'ordinary' | 'continuous' = 'ordinary',
   ): Promise<CanonicalCoordinatedActiveResult> {
-    if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    if (!isFiniteNonNegativeNumber(milliseconds)) {
       const transition = rejectedTransition(
         this.application.snapshot(),
         'CANONICAL-ACTIVE-TIME-INVALID',
@@ -558,7 +560,7 @@ export class CanonicalLifecycleCoordinator {
   ): Promise<CommitFirstResult> {
     return this.enqueue(async () => {
       const snapshot = this.application.snapshot()
-      if (!Number.isFinite(bots) || bots < 0) {
+      if (!isFiniteNonNegativeNumber(bots)) {
         return {
           committed: false,
           transition: rejectedTransition(
@@ -1165,9 +1167,7 @@ function requiredBotCapCheckpoint(
     snapshot.state as CanonicalRuntimeState,
   ).gameState
   const evaluated = evaluateCanonicalBotCapCheckpoint(state)
-  return evaluated.action.kind === 'persist'
-    ? evaluated.action.checkpoint
-    : undefined
+  return selectBotCapCheckpointToPersist(evaluated.action)
 }
 
 function unchangedTransition(

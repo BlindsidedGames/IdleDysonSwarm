@@ -1,4 +1,8 @@
 import { getGameAsset } from '../game-data/catalog'
+import {
+  EFFECT_DEFINITION_ASSET_KIND,
+  SKILL_DEFINITION_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import { operationFromUnity, type StatEffect } from './stat'
 
 const SUPPORTED_STATIC_SKILLS = new Set([
@@ -30,7 +34,7 @@ export function staticSkillEffects(
   const effects: StatEffect[] = []
   for (const skillId of ownedSkillIds) {
     requireStaticSkill(skillId)
-    const skill = getGameAsset('GameData.SkillDefinition', skillId)
+    const skill = getGameAsset(SKILL_DEFINITION_ASSET_KIND, skillId)
     if (skill === undefined) {
       throw new Error(`Unknown skill '${skillId}'`)
     }
@@ -39,7 +43,7 @@ export function staticSkillEffects(
 
     for (const reference of references as readonly EffectReference[]) {
       if (typeof reference?.id !== 'string') continue
-      const asset = getGameAsset('GameData.EffectDefinition', reference.id)
+      const asset = getGameAsset(EFFECT_DEFINITION_ASSET_KIND, reference.id)
       if (asset === undefined || asset.data.targetStatId !== targetStatId) {
         continue
       }
