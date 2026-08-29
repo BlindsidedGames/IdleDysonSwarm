@@ -71,6 +71,23 @@ export interface AutomaticUnityPurchaseEvidencePromoter {
   ): Promise<void>
 }
 
+/**
+ * Narrows an optional host entitlement authority to the automatic-migration
+ * capability. Browser and native composition must use the same trust probe.
+ */
+export function asAutomaticUnityPurchaseEvidencePromoter(
+  authority: object | undefined,
+): AutomaticUnityPurchaseEvidencePromoter | undefined {
+  if (
+    authority === undefined ||
+    !('promoteAutomaticUnityPurchaseEvidence' in authority) ||
+    typeof authority.promoteAutomaticUnityPurchaseEvidence !== 'function'
+  ) {
+    return undefined
+  }
+  return authority as AutomaticUnityPurchaseEvidencePromoter
+}
+
 export async function sha256Utf8(value: string): Promise<string> {
   const subtle = globalThis.crypto?.subtle
   if (subtle === undefined) {

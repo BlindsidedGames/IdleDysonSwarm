@@ -28,8 +28,8 @@ import {
   WEB_LIFECYCLE_POLICY,
 } from '../simulation/lifecycleAwayTime'
 import type { ReleasePlatformServices } from '../platform/releaseFoundation'
-import type {
-  AutomaticUnityPurchaseEvidencePromoter,
+import {
+  asAutomaticUnityPurchaseEvidencePromoter,
 } from '../save/automaticPurchaseEvidence'
 import {
   PRODUCTION_BROWSER_DATABASE_NAME,
@@ -160,7 +160,7 @@ export function createProductionBrowserComposition(
     noticeChannel: ownershipNoticeChannel,
     hostEntitlements,
     automaticPurchaseEvidencePromoter:
-      automaticPurchaseEvidencePromoter(
+      asAutomaticUnityPurchaseEvidencePromoter(
         options.releasePlatformServices?.entitlements,
       ),
     automaticNumberFormattingAdopter:
@@ -240,22 +240,6 @@ export function createProductionBrowserComposition(
       reloadPage()
     },
   })
-}
-
-function automaticPurchaseEvidencePromoter(
-  authority:
-    | Readonly<ReleasePlatformServices>['entitlements']
-    | undefined,
-): AutomaticUnityPurchaseEvidencePromoter | undefined {
-  if (
-    authority === undefined ||
-    !('promoteAutomaticUnityPurchaseEvidence' in authority) ||
-    typeof authority.promoteAutomaticUnityPurchaseEvidence !== 'function'
-  ) {
-    return undefined
-  }
-  return authority as typeof authority &
-    AutomaticUnityPurchaseEvidencePromoter
 }
 
 function createOwnershipNoticeChannel():

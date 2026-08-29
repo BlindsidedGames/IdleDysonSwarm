@@ -21,8 +21,8 @@ import {
   ElectronPlatformSaveStorageAdapter,
   NATIVE_WEB_SAVE_PATHS,
 } from '../platform/platformSaveStorage'
-import type {
-  AutomaticUnityPurchaseEvidencePromoter,
+import {
+  asAutomaticUnityPurchaseEvidencePromoter,
 } from '../save/automaticPurchaseEvidence'
 import { serializeWebSave } from '../save/serialization'
 import {
@@ -127,7 +127,7 @@ export function createProductionNativeComposition(
     storageManager: {},
     hostEntitlements: entitlementBridge,
     automaticPurchaseEvidencePromoter:
-      automaticPurchaseEvidencePromoter(
+      asAutomaticUnityPurchaseEvidencePromoter(
         services.entitlements,
       ),
     automaticNumberFormattingAdopter:
@@ -208,20 +208,4 @@ export function createProductionNativeComposition(
       reloadPage()
     },
   })
-}
-
-function automaticPurchaseEvidencePromoter(
-  authority:
-    | NativeHostEnvironment['releasePlatformServices']['entitlements']
-    | undefined,
-): AutomaticUnityPurchaseEvidencePromoter | undefined {
-  if (
-    authority === undefined ||
-    !('promoteAutomaticUnityPurchaseEvidence' in authority) ||
-    typeof authority.promoteAutomaticUnityPurchaseEvidence !== 'function'
-  ) {
-    return undefined
-  }
-  return authority as typeof authority &
-    AutomaticUnityPurchaseEvidencePromoter
 }
