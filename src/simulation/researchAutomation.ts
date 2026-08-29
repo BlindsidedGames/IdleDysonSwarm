@@ -1,5 +1,6 @@
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { readStringArray } from '../game-data/runtimeValueGuards'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type {
@@ -823,11 +824,10 @@ function parseDefinition(asset: RuntimeGameAsset): ResearchDefinition {
     throw invalidDefinition(asset)
   }
 
-  const rawPrerequisites = data.prerequisiteResearchIds
-  if (
-    !Array.isArray(rawPrerequisites) ||
-    rawPrerequisites.some((value) => typeof value !== 'string')
-  ) {
+  const prerequisiteResearchIds = readStringArray(
+    data.prerequisiteResearchIds,
+  )
+  if (prerequisiteResearchIds === undefined) {
     throw invalidDefinition(asset)
   }
   const rawFacilityId = data.prerequisiteFacilityId
@@ -850,7 +850,7 @@ function parseDefinition(asset: RuntimeGameAsset): ResearchDefinition {
     baseCost,
     exponent,
     maxLevel,
-    prerequisiteResearchIds: rawPrerequisites as readonly string[],
+    prerequisiteResearchIds,
     prerequisiteFacilityId,
     prerequisiteFacilityOwned,
   }

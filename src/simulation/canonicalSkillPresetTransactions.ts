@@ -1,4 +1,5 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { readUnityBoolean } from '../game-data/runtimeValueGuards'
 import type {
   CanonicalGameStateV1,
   CanonicalSkillPresetSlot,
@@ -451,7 +452,7 @@ function queueSkillUnlock(
     ['paragadeLine', 'paragade'],
     ['stellarLine', 'stellar'],
   ] as const) {
-    if (data[field] === true || data[field] === 1) return unlock
+    if (readUnityBoolean(data[field]) === true) return unlock
   }
   return 'always'
 }
