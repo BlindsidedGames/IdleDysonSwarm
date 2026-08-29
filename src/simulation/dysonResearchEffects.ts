@@ -4,7 +4,10 @@ import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { getGameAsset } from '../game-data/catalog'
 import type { RuntimeGameAsset } from '../game-data/types'
-import type { SecretResearchCoefficientId } from './secretBuffs'
+import {
+  isSecretResearchCoefficientId,
+  type SecretResearchCoefficientId,
+} from './secretBuffs'
 import {
   operationFromUnity,
   type StatEffect,
@@ -465,17 +468,6 @@ function validateActiveResearchIds(
       })
     }
   }
-}
-
-function isSecretResearchCoefficientId(
-  id: string,
-): id is SecretResearchCoefficientId {
-  return (
-    id === 'research.assembly_line_upgrade' ||
-    id === 'research.ai_manager_upgrade' ||
-    id === 'research.server_upgrade' ||
-    id === 'research.planet_upgrade'
-  )
 }
 
 function shouldSkipEffect(
