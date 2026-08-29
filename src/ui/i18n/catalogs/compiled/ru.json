@@ -1027,12 +1027,6 @@
       "value": "Текущее производство"
     }
   ],
-  "dyson.facilities.details.effective-manual-count": [
-    {
-      "type": 0,
-      "value": "Эффективное число покупок"
-    }
-  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 1,
@@ -1781,6 +1775,42 @@
       "value": "Авто"
     }
   ],
+  "dyson.facilities.purchase.automatic-accessible": [
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " автоматически покупается партиями по "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " за "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "Авто ("
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "dyson.facilities.purchase.cost": [
     {
       "type": 0,
@@ -2527,6 +2557,12 @@
       "value": "Ещё"
     }
   ],
+  "dyson.menu.more-new": [
+    {
+      "type": 0,
+      "value": "Ещё, новый контент"
+    }
+  ],
   "dyson.menu.open": [
     {
       "type": 0,
@@ -2537,6 +2573,12 @@
     {
       "type": 0,
       "value": "Вкладки игры"
+    }
+  ],
+  "dyson.navigation.infinity-new": [
+    {
+      "type": 0,
+      "value": "Бесконечность, новое"
     }
   ],
   "dyson.navigation.primary": [
@@ -5710,7 +5752,25 @@
     },
     {
       "type": 0,
-      "value": ": автопокупка"
+      "value": " автоматически покупается партиями по "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "research.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "Авто ("
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "research.purchase.failed": [

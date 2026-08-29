@@ -1027,12 +1027,6 @@
       "value": "Aktuelle Produktion"
     }
   ],
-  "dyson.facilities.details.effective-manual-count": [
-    {
-      "type": 0,
-      "value": "Effektive Kaufanzahl"
-    }
-  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 1,
@@ -1781,6 +1775,42 @@
       "value": "Auto"
     }
   ],
+  "dyson.facilities.purchase.automatic-accessible": [
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " wird automatisch in Mengen von "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " gekauft für "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "Auto ("
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "dyson.facilities.purchase.cost": [
     {
       "type": 0,
@@ -2527,6 +2557,12 @@
       "value": "Mehr"
     }
   ],
+  "dyson.menu.more-new": [
+    {
+      "type": 0,
+      "value": "Mehr, neue Inhalte"
+    }
+  ],
   "dyson.menu.open": [
     {
       "type": 0,
@@ -2537,6 +2573,12 @@
     {
       "type": 0,
       "value": "Spielregisterkarten"
+    }
+  ],
+  "dyson.navigation.infinity-new": [
+    {
+      "type": 0,
+      "value": "Unendlichkeit, neu"
     }
   ],
   "dyson.navigation.primary": [
@@ -5710,7 +5752,25 @@
     },
     {
       "type": 0,
-      "value": " wird automatisch gekauft"
+      "value": " wird automatisch gekauft in Mengen von "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "research.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "Auto ("
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "research.purchase.failed": [

@@ -7,6 +7,7 @@ import {
   combineDysonProductionArrivalRates,
   type DysonProductionArrivalRates,
 } from './dysonProductionArrivals'
+import { ordinaryInfinityBotThreshold } from './infinityCycle'
 
 const fixture = readFileSync(
   new URL(
@@ -104,6 +105,33 @@ describe('Dyson production arrivals', () => {
     expect(after.dyson.facilities.galactic_brains).toEqual(
       before.dyson.facilities.galactic_brains,
     )
+  })
+
+  test('caps Bots at the Division-aware ordinary Infinity threshold until Break the Loop', () => {
+    const source = state()
+    const threshold = ordinaryInfinityBotThreshold(1n)
+    const preBreak = {
+      ...source,
+      dyson: { ...source.dyson, bots: threshold - 1 },
+      quantum: {
+        ...source.quantum,
+        divisionsPurchased: 1n,
+        unlocks: { ...source.quantum.unlocks, breakTheLoop: false },
+      },
+    }
+
+    expect(applyDysonProductionArrivals(preBreak, rates, 1).dyson.bots)
+      .toBe(threshold)
+
+    const broken = {
+      ...preBreak,
+      quantum: {
+        ...preBreak.quantum,
+        unlocks: { ...preBreak.quantum.unlocks, breakTheLoop: true },
+      },
+    }
+    expect(applyDysonProductionArrivals(broken, rates, 1).dyson.bots)
+      .toBe(threshold + 3)
   })
 
   test('does not mutate the input or invent a same-tick cascade', () => {

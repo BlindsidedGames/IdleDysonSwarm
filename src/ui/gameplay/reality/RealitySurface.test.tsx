@@ -181,7 +181,7 @@ describe('RealitySurface', () => {
     expect(summary).not.toBeNull()
     const summaryQueries = within(summary as HTMLElement)
     const strangeMatterBalance = summaryQueries.getByLabelText(
-      'Strange Matter: 4.09K',
+      'Strange Matter: 4.10K',
     )
     expect(
       strangeMatterBalance.querySelector('[data-symbol="strange-matter"]'),

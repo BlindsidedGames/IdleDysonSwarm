@@ -1027,12 +1027,6 @@
       "value": "現在の生産量"
     }
   ],
-  "dyson.facilities.details.effective-manual-count": [
-    {
-      "type": 0,
-      "value": "有効購入数"
-    }
-  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 1,
@@ -1781,6 +1775,42 @@
       "value": "自動"
     }
   ],
+  "dyson.facilities.purchase.automatic-accessible": [
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "を"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "個ずつ自動購入、価格"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "自動（"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "）"
+    }
+  ],
   "dyson.facilities.purchase.cost": [
     {
       "type": 0,
@@ -2527,6 +2557,12 @@
       "value": "その他"
     }
   ],
+  "dyson.menu.more-new": [
+    {
+      "type": 0,
+      "value": "その他、新しいコンテンツあり"
+    }
+  ],
   "dyson.menu.open": [
     {
       "type": 0,
@@ -2537,6 +2573,12 @@
     {
       "type": 0,
       "value": "ゲームタブ"
+    }
+  ],
+  "dyson.navigation.infinity-new": [
+    {
+      "type": 0,
+      "value": "無限、新着"
     }
   ],
   "dyson.navigation.primary": [
@@ -5710,7 +5752,25 @@
     },
     {
       "type": 0,
-      "value": "：自動購入"
+      "value": "の自動購入レベル："
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "research.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "自動（"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "）"
     }
   ],
   "research.purchase.failed": [

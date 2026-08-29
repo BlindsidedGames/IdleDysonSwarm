@@ -12,7 +12,10 @@ import type {
   DysonGameplayShellProps,
   DysonShellRegion,
 } from './contracts'
-import { deriveBottomNavigationLayout } from './bottomNavigationLayout'
+import {
+  deriveBottomNavigationLayout,
+  fitBottomItems,
+} from './bottomNavigationLayout'
 import { DysonNavigation } from './DysonNavigation'
 import { DysonResourceHeader } from './DysonResourceHeader'
 import './dysonGameplayShell.css'
@@ -33,6 +36,7 @@ export function DysonGameplayShell({
   closeMenuLabel,
   openMenuLabel,
   moreMenuLabel,
+  moreMenuNewLabel,
   heading,
   routeTheme = 'bots',
   routeThemeVariant,
@@ -74,6 +78,15 @@ export function DysonGameplayShell({
   const wideLayout = useMediaQuery(PERMANENT_NAVIGATION_QUERY)
   const compactMenuOpen = menuOpen && !wideLayout
   const drawerUnavailable = !wideLayout && !menuOpen
+  const visibleBottomItemIds = new Set(
+    fitBottomItems(
+      navigation.items.filter((item) => item.bottom !== false),
+      bottomLayout.maxItems,
+    ).map((item) => item.id),
+  )
+  const hasHiddenNewItem = navigation.items.some(
+    (item) => item.newlyUnlocked && !visibleBottomItemIds.has(item.id),
+  )
 
   useEffect(() => {
     const element = bottomNavigationRef.current
@@ -345,7 +358,12 @@ export function DysonGameplayShell({
           ref={openMenuRef}
           type="button"
           className="dyson-shell__bottom-menu"
-          aria-label={moreMenuLabel}
+          aria-label={
+            hasHiddenNewItem
+              ? moreMenuNewLabel ?? moreMenuLabel
+              : moreMenuLabel
+          }
+          data-new={hasHiddenNewItem || undefined}
           title={openMenuLabel}
           aria-controls={menuId}
           aria-expanded={menuOpen}

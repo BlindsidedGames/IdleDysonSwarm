@@ -33,6 +33,7 @@ import {
 import {
   formatGameNumber,
   formatNumber,
+  formatWholeGameNumber,
 } from '../../i18n/formatters'
 import type {
   EnabledLocale,
@@ -556,7 +557,7 @@ function ResearchCard({
       }}
     />
   )
-  const quantity = formatGameNumber(locale, card.selectedQuantity)
+  const quantity = formatWholeGameNumber(locale, card.selectedQuantity)
   const cost = formatGameNumber(locale, card.cost)
   const disabled =
     pending ||
@@ -621,7 +622,9 @@ function ResearchCard({
             {card.maxed
               ? intl.formatMessage(messages.purchased)
               : card.automationActive
-              ? intl.formatMessage(messages.automatic)
+              ? intl.formatMessage(messages.automaticQuantity, {
+                  quantity,
+                })
               : intl.formatMessage(messages.purchaseQuantity, {
                   quantity,
                 })}

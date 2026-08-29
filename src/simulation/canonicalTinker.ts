@@ -1,4 +1,5 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import { clampPreBreakInfinityBots } from './infinityCycle'
 import { addContinuous, multiplyContinuous } from './numeric'
 
 const MINIMUM_TINKER_COOLDOWN_SECONDS = 0.01
@@ -236,6 +237,7 @@ export function advanceCanonicalTinker(
   if (!Number.isFinite(seconds) || seconds < 0) {
     throw new RangeError('Tinker advance seconds must be finite and non-negative.')
   }
+  const startingBots = state.dyson.bots
   let synchronized = synchronizeRuntime(state, runtime, stats)
   if (!synchronized.runtime.running) {
     return unchanged(synchronized.state, synchronized.runtime)
@@ -404,6 +406,19 @@ export function advanceCanonicalTinker(
     }
     if (remaining === 0) break
   }
+
+  const cappedBots = clampPreBreakInfinityBots(
+    candidate.dyson.bots,
+    candidate.quantum.unlocks.breakTheLoop,
+    candidate.quantum.divisionsPurchased,
+  )
+  if (cappedBots !== candidate.dyson.bots) {
+    candidate = {
+      ...candidate,
+      dyson: { ...candidate.dyson, bots: cappedBots },
+    }
+  }
+  botsGranted = Math.max(0, cappedBots - startingBots)
 
   return {
     state: candidate,

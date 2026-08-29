@@ -174,6 +174,12 @@ export const researchMessages = defineMessages({
     defaultMessage: 'Auto',
     description: 'Unity label for an automatically purchased research.',
   },
+  automaticQuantity: {
+    id: 'research.purchase.automatic-quantity',
+    defaultMessage: 'Auto ({quantity})',
+    description:
+      'Automatic Research label showing the configured purchase quantity.',
+  },
   purchased: {
     id: 'research.purchase.purchased',
     defaultMessage: 'Purchased',
@@ -192,7 +198,8 @@ export const researchMessages = defineMessages({
   },
   automaticAccessible: {
     id: 'research.purchase.automatic-accessible',
-    defaultMessage: '{title} is purchased automatically',
+    defaultMessage:
+      '{title} is purchased automatically in batches of {quantity}',
     description: 'Accessible name for an automatic Research card button.',
   },
   purchasedAccessible: {

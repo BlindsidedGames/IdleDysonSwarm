@@ -241,9 +241,10 @@ describe('ResearchSurface', () => {
     )
 
     expect(screen.getByRole('button', {
-      name: 'AI Manager boosts 0.00 is purchased automatically',
+      name:
+        'AI Manager boosts 0.00 is purchased automatically in batches of 1',
     })).toBeDisabled()
-    expect(screen.getByText('Auto')).toBeInTheDocument()
+    expect(screen.getByText('Auto (1)')).toBeInTheDocument()
     expect(
       document.querySelector('.ui-progress-controls-panel__summary p'),
     ).toHaveTextContent('2.00K Researchers producing 22.0/s')

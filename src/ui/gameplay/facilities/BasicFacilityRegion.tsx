@@ -23,6 +23,7 @@ import {
 import {
   formatGameNumber,
   formatNumber,
+  formatWholeGameNumber,
   type NumericValue,
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -83,6 +84,7 @@ export interface BasicFacilityRegionProps {
   readonly automationEnabledFacilities?: Readonly<
     Record<string, boolean>
   >
+  readonly automationUnlocked?: boolean
   readonly gameSpeed?: number
   readonly revision: BasicFacilityPresentationRevision
   readonly dispatchPlayer: (
@@ -195,6 +197,7 @@ export function BasicFacilityRegion({
   purchasePreviews,
   purchaseRouteAvailable,
   automationEnabledFacilities = {},
+  automationUnlocked = false,
   gameSpeed = 1,
   revision,
   dispatchPlayer,
@@ -321,6 +324,7 @@ export function BasicFacilityRegion({
                 revision={revision}
                 reducedMotion={reducedMotion}
                 automationActive={
+                  automationUnlocked &&
                   automationEnabledFacilities[facilityId] === true
                 }
                 onPurchase={() => purchase(facilityId)}
@@ -401,7 +405,7 @@ function BasicFacilityPresentationCard({
   const feedbackId = useId()
   const availabilityId = useId()
   const presentation = facilityMessages[facilityId]
-  const selectedQuantity = formatGameNumber(
+  const selectedQuantity = formatWholeGameNumber(
     locale,
     preview.selectedQuantity,
   )
@@ -509,8 +513,11 @@ function BasicFacilityPresentationCard({
             disabled={disabled}
             aria-describedby={describedBy}
             aria-label={intl.formatMessage(
-              presentation.purchaseAccessible,
+              automationActive
+                ? messages.automaticPurchaseAccessible
+                : presentation.purchaseAccessible,
               {
+                facility: intl.formatMessage(presentation.name),
                 quantity: selectedQuantityPrecise,
                 cost: costPrecise,
               },
@@ -524,7 +531,10 @@ function BasicFacilityPresentationCard({
             >
               <bdi>
                 {automationActive
-                  ? intl.formatMessage(messages.automaticPurchase)
+                  ? intl.formatMessage(
+                      messages.automaticPurchaseQuantity,
+                      { quantity: selectedQuantity },
+                    )
                   : intl.formatMessage(messages.purchaseQuantity, {
                       quantity: selectedQuantity,
                     })}
@@ -672,6 +682,14 @@ function FacilityDetailsContent({
   const generationContributions = details?.generationContributions ?? []
   const facilityName = intl.formatMessage(presentation.name)
   const realRate = fact.production.perSecond * gameSpeed
+  const productionFormula = base && count
+    ? formatProductionFormula(
+        locale,
+        base,
+        count,
+        contributions,
+      )
+    : null
   const hasTerraPurchaseEffects = Boolean(
     details?.manualPurchaseLayer &&
       (details.manualPurchaseLayer.transferredPlanetCount > 0 ||
@@ -758,11 +776,6 @@ function FacilityDetailsContent({
               {purchaseEffects.length > 0 && (
                 <EffectList locale={locale} contributions={purchaseEffects} facilityId={facilityId} />
               )}
-              {details?.manualPurchaseLayer && (
-                <p className="facility-details-stage__result">
-                  {intl.formatMessage(messages.effectiveManualCount)}: {formatGameNumber(locale, details.manualPurchaseLayer.effectiveManualCount)}
-                </p>
-              )}
             </EffectGroup>
           )}
           {researchModifierEffects.length === 0 &&
@@ -772,6 +785,13 @@ function FacilityDetailsContent({
             purchaseEffects.length === 0 && (
               <p className="facility-details-empty">{intl.formatMessage(messages.noActiveEffects)}</p>
             )}
+          {productionFormula && (
+            <p className="facility-details-stage__result">
+              <bdi>{productionFormula}</bdi> = {intl.formatMessage(messages.perGameSecond, {
+                rate: formatGameNumber(locale, fact.production.perSecond),
+              })}
+            </p>
+          )}
         </CalculationStage>
         <CalculationStage number={3} title={intl.formatMessage(messages.timeStage)}>
           <div className="facility-effect-row">
@@ -822,6 +842,52 @@ function FacilityDetailsContent({
 type FacilityContribution = NonNullable<
   BasicFacilityCanonicalFact['details']['contributions']
 >[number]
+
+function formatProductionFormula(
+  locale: EnabledLocale,
+  base: FacilityContribution,
+  count: FacilityContribution,
+  contributions: readonly FacilityContribution[],
+): string {
+  const number = (value: number) => formatGameNumber(locale, value)
+  let formula = `${number(base.value)} × ${number(count.value)}`
+
+  for (const contribution of contributions) {
+    if (
+      contribution.displayRole === 'base' ||
+      contribution.displayRole === 'producer-count'
+    ) {
+      continue
+    }
+
+    const value = number(contribution.value)
+    switch (contribution.operation) {
+      case 'multiply':
+        formula = `${formula} × ${value}`
+        break
+      case 'add':
+        formula = `(${formula}) + ${value}`
+        break
+      case 'power':
+        formula = `(${formula}) ^ ${value}`
+        break
+      case 'clamp-min':
+        formula = `max(${formula}, ${value})`
+        break
+      case 'clamp-max':
+        formula = `min(${formula}, ${value})`
+        break
+      case 'override':
+        formula = value
+        break
+    }
+  }
+
+  // The displayed result beside this expression remains the canonical
+  // production fact. This only explains that ordered pipeline; it never
+  // becomes purchase authority.
+  return formula
+}
 
 function CalculationStage({ number, title, children }: { readonly number: number; readonly title: string; readonly children: ReactNode }) {
   return (

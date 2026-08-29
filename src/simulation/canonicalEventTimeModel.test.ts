@@ -893,6 +893,13 @@ describe('legacy canonical event-time parity adapter', () => {
         ...source.dyson,
         bots: Number.MAX_VALUE,
       },
+      quantum: {
+        ...source.quantum,
+        unlocks: {
+          ...source.quantum.unlocks,
+          breakTheLoop: true,
+        },
+      },
     }
     const model = new CanonicalEventTimeModel(
       carrier(capped),
@@ -1116,9 +1123,12 @@ describe('legacy canonical event-time parity adapter', () => {
             .currentCyclePeakReward,
         ).toBeGreaterThanOrEqual(1n)
       }
-      expect(result.candidateState.state.gameState.dyson.bots).toBeGreaterThanOrEqual(
-        4.2e19,
-      )
+      const finalBots = result.candidateState.state.gameState.dyson.bots
+      if (breakTheLoop) {
+        expect(finalBots).toBeGreaterThanOrEqual(4.2e19)
+      } else {
+        expect(finalBots).toBe(4.2e19)
+      }
     },
   )
 

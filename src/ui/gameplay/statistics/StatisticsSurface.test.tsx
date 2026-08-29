@@ -201,7 +201,7 @@ describe('StatisticsSurface', () => {
     expect(queries.getByText('Automatic runs recorded')).toBeVisible()
     expect(queries.getByText('2/10')).toBeVisible()
     expect(queries.getByText('Average IP/min')).toBeVisible()
-    expect(queries.getByText('42.6')).toBeVisible()
+    expect(queries.getByText('42.7')).toBeVisible()
     expect(queries.getByText('Median IP/min')).toBeVisible()
     expect(queries.getByText('48.0')).toBeVisible()
     expect(queries.getByText('IP/min range')).toBeVisible()

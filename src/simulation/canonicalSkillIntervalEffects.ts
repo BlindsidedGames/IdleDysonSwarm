@@ -1,6 +1,7 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   breakInfinityBotThreshold,
+  clampPreBreakInfinityBots,
   ordinaryInfinityBotThreshold,
   timeToNextInfinityEvent,
   type BasicDysonInfinityState,
@@ -55,7 +56,11 @@ export function applyCanonicalSkillIntervalEffects(
     research,
     dyson: {
       ...stateAfterArrivals.dyson,
-      bots: stellar.bots,
+      bots: clampPreBreakInfinityBots(
+        stellar.bots,
+        stateAfterArrivals.quantum.unlocks.breakTheLoop,
+        stateAfterArrivals.quantum.divisionsPurchased,
+      ),
       facilities: stellar.planetsProduced === 0
         ? stateAfterArrivals.dyson.facilities
         : {

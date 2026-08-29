@@ -6,6 +6,7 @@ import type {
 import { addContinuous, multiplyContinuous } from './numeric'
 import type { BasicDysonRates } from './dysonModel'
 import type { MegaStructureRates } from './megaStructureRates'
+import { clampPreBreakInfinityBots } from './infinityCycle'
 
 /**
  * Tick-start rates committed by Unity ProductionSystem.CalculateProduction.
@@ -104,7 +105,11 @@ export function applyDysonProductionArrivals(
       ...state.dyson,
       money: accumulate(state.dyson.money, rates.money, seconds),
       science: accumulate(state.dyson.science, rates.science, seconds),
-      bots: accumulate(state.dyson.bots, rates.bots, seconds),
+      bots: clampPreBreakInfinityBots(
+        accumulate(state.dyson.bots, rates.bots, seconds),
+        state.quantum.unlocks.breakTheLoop,
+        state.quantum.divisionsPurchased,
+      ),
       totalPanelsDecayed: accumulate(
         state.dyson.totalPanelsDecayed,
         rates.panels,

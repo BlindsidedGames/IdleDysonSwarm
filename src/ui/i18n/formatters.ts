@@ -59,9 +59,9 @@ export function formatNumber(
 }
 
 /**
- * Matches the Unity game's three-digit, truncated mantissa presentation while
- * retaining locale-appropriate decimal digits. This is display formatting
- * only; canonical values and gameplay calculations remain untouched.
+ * Rounds to three significant digits while retaining locale-appropriate
+ * decimal digits. This is display formatting only; canonical values and
+ * gameplay calculations remain untouched.
  */
 export function formatGameNumber(
   locale: EnabledLocale,
@@ -114,11 +114,16 @@ export function formatGameNumberParts(
     }
   }
 
-  if (Math.abs(value) > 1000 && notation !== 'standard') {
-    return formatExponentNumberParts(locale, value, notation)
+  const roundedValue = roundToThreeSignificantDigits(value)
+
+  if (
+    (Math.abs(value) > 1000 || Math.abs(roundedValue) > 1000) &&
+    notation !== 'standard'
+  ) {
+    return formatExponentNumberParts(locale, roundedValue, notation)
   }
 
-  const absolute = Math.abs(value)
+  const absolute = Math.abs(roundedValue)
   const exponentGroup = Math.max(
     Math.floor(Math.log10(absolute) / 3),
     0,
@@ -128,17 +133,14 @@ export function formatGameNumberParts(
   }
 
   const scale = 10 ** (exponentGroup * 3)
-  const mantissa = value / scale
+  const mantissa = roundedValue / scale
   const mantissaAbsolute = Math.abs(mantissa)
   const integerDigits =
     mantissaAbsolute < 1
       ? 1
       : Math.floor(Math.log10(mantissaAbsolute)) + 1
   const fractionDigits = Math.max(0, 3 - integerDigits)
-  const truncationFactor = 10 ** fractionDigits
-  const truncated =
-    Math.trunc(mantissa * truncationFactor) / truncationFactor
-  const formatted = formatNumber(locale, truncated, {
+  const formatted = formatNumber(locale, mantissa, {
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
     useGrouping: false,
@@ -156,13 +158,19 @@ function formatLargeGameBigIntParts(
 ): GameNumberParts {
   const negative = value < 0n
   const digits = (negative ? -value : value).toString()
-  const exponentGroup = Math.floor((digits.length - 1) / 3)
+  let significantDigits = Number(digits.slice(0, 3))
+  if (digits.length > 3 && Number(digits[3]) >= 5) {
+    significantDigits += 1
+  }
+  const carried = significantDigits === 1000
+  if (carried) significantDigits = 100
+  const effectiveLength = digits.length + (carried ? 1 : 0)
+  const exponentGroup = Math.floor((effectiveLength - 1) / 3)
   const exponent = notation === 'scientific'
-    ? digits.length - 1
+    ? effectiveLength - 1
     : exponentGroup * 3
-  const integerDigits = digits.length - exponent
+  const integerDigits = effectiveLength - exponent
   const fractionDigits = Math.max(0, 3 - integerDigits)
-  const significantDigits = Number(digits.slice(0, 3))
   const mantissa = significantDigits / 10 ** fractionDigits
   const formatted = formatNumber(locale, negative ? -mantissa : mantissa, {
     minimumFractionDigits: fractionDigits,
@@ -191,16 +199,19 @@ function formatExponentNumberParts(
   const mantissa = value / 10 ** exponent
   const integerDigits = Math.floor(Math.log10(Math.abs(mantissa))) + 1
   const fractionDigits = Math.max(0, 3 - integerDigits)
-  const factor = 10 ** fractionDigits
-  const truncated = Math.trunc(mantissa * factor) / factor
   return {
-    value: formatNumber(locale, truncated, {
+    value: formatNumber(locale, mantissa, {
       minimumFractionDigits: fractionDigits,
       maximumFractionDigits: fractionDigits,
       useGrouping: false,
     }),
     suffix: `e${exponent}`,
   }
+}
+
+function roundToThreeSignificantDigits(value: number): number {
+  const rounded = Number(value.toPrecision(3))
+  return Number.isFinite(rounded) ? rounded : value
 }
 
 /**

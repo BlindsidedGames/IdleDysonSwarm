@@ -2003,20 +2003,6 @@
       "value": "]"
     }
   ],
-  "dyson.facilities.details.effective-manual-count": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ḗƒƒḗḗƈŧīṽḗḗ ƥŭŭřƈħȧȧşḗḗḓ ƈǿǿŭŭƞŧ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "dyson.facilities.details.facility-count": [
     {
       "type": 0,
@@ -3453,6 +3439,58 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.purchase.automatic-accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " īş ƥŭŭřƈħȧȧşḗḗḓ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ īƞ ƀȧȧŧƈħḗḗş ǿǿƒ "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " ƒǿǿř "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭŧǿǿ ("
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.purchase.cost": [
     {
       "type": 0,
@@ -4711,6 +4749,20 @@
       "value": "]"
     }
   ],
+  "dyson.menu.more-new": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿǿǿřḗḗ, ƞḗḗẇ ƈǿǿƞŧḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.menu.open": [
     {
       "type": 0,
@@ -4733,6 +4785,20 @@
     {
       "type": 0,
       "value": "Ɠȧȧḿḗḗ ŧȧȧƀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.navigation.infinity-new": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒīƞīŧẏ, ƞḗḗẇ"
     },
     {
       "type": 0,
@@ -11282,7 +11348,33 @@
     },
     {
       "type": 0,
-      "value": " īş ƥŭŭřƈħȧȧşḗḗḓ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ"
+      "value": " īş ƥŭŭřƈħȧȧşḗḗḓ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ īƞ ƀȧȧŧƈħḗḗş ǿǿƒ "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "research.purchase.automatic-quantity": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭŧǿǿ ("
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ")"
     },
     {
       "type": 0,

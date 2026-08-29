@@ -53,15 +53,15 @@ describe('cached locale formatters', () => {
       .toBe('—')
   })
 
-  it('matches the Unity three-digit truncated display format', () => {
+  it('rounds game values to three significant digits', () => {
     expect(formatGameNumber('en', 0)).toBe('0.00')
     expect(formatGameNumber('en', 0.8)).toBe('0.80')
     expect(formatGameNumber('en', 10)).toBe('10.0')
     expect(formatGameNumber('en', 14)).toBe('14.0')
-    expect(formatGameNumber('en', 60.79)).toBe('60.7')
-    expect(formatGameNumber('en', 999.9)).toBe('999')
+    expect(formatGameNumber('en', 60.79)).toBe('60.8')
+    expect(formatGameNumber('en', 999.9)).toBe('1.00K')
     expect(formatGameNumber('en', 1234)).toBe('1.23K')
-    expect(formatGameNumber('en', -12.39)).toBe('-12.3')
+    expect(formatGameNumber('en', -12.39)).toBe('-12.4')
     expect(formatGameNumber('en', 12_039_871_001_422_293n)).toBe('12.0Qa')
     expect(formatGameNumber('en', -12_102_296_928_535_773n)).toBe('-12.1Qa')
   })
@@ -76,7 +76,7 @@ describe('cached locale formatters', () => {
   it.each([
     ['standard', 999, '999'],
     ['standard', 1000, '1.00K'],
-    ['standard', 999_999, '999K'],
+    ['standard', 999_999, '1.00M'],
     ['standard', 1_000_000, '1.00M'],
     ['scientific', 999, '999'],
     ['scientific', 1000, '1.00K'],

@@ -6,6 +6,19 @@ export const basicFacilityMessages = defineMessages({
     defaultMessage: 'Auto',
     description: 'Compact facility purchase label while automation is enabled.',
   },
+  automaticPurchaseQuantity: {
+    id: 'dyson.facilities.purchase.automatic-quantity',
+    defaultMessage: 'Auto ({quantity})',
+    description:
+      'Compact facility purchase label showing the quantity used by automation.',
+  },
+  automaticPurchaseAccessible: {
+    id: 'dyson.facilities.purchase.automatic-accessible',
+    defaultMessage:
+      '{facility} is purchased automatically in batches of {quantity} for {cost}',
+    description:
+      'Accessible facility automation label with its configured quantity and cost.',
+  },
   heading: {
     id: 'dyson.facilities.heading',
     defaultMessage: 'Facilities',
@@ -594,11 +607,6 @@ export const basicFacilityMessages = defineMessages({
     id: 'dyson.facilities.details.manually-purchased',
     defaultMessage: 'Manually purchased',
     description: 'Manual facility count label.',
-  },
-  effectiveManualCount: {
-    id: 'dyson.facilities.details.effective-manual-count',
-    defaultMessage: 'Effective purchased count',
-    description: 'Count used by manual-purchase bonuses.',
   },
   terraTransferDescription: {
     id: 'dyson.facilities.details.terra-transfer-description',

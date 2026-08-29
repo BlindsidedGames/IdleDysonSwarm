@@ -487,10 +487,6 @@
     "defaultMessage": "Current production",
     "description": "Heading for the live facility production summary."
   },
-  "dyson.facilities.details.effective-manual-count": {
-    "defaultMessage": "Effective purchased count",
-    "description": "Count used by manual-purchase bonuses."
-  },
   "dyson.facilities.details.facility-count": {
     "defaultMessage": "{facility} Count",
     "description": "Label for the ordered facility-count contribution row."
@@ -835,6 +831,14 @@
     "defaultMessage": "Auto",
     "description": "Compact facility purchase label while automation is enabled."
   },
+  "dyson.facilities.purchase.automatic-accessible": {
+    "defaultMessage": "{facility} is purchased automatically in batches of {quantity} for {cost}",
+    "description": "Accessible facility automation label with its configured quantity and cost."
+  },
+  "dyson.facilities.purchase.automatic-quantity": {
+    "defaultMessage": "Auto ({quantity})",
+    "description": "Compact facility purchase label showing the quantity used by automation."
+  },
   "dyson.facilities.purchase.cost": {
     "defaultMessage": "${cost}",
     "description": "Visible canonical cost on the compact facility purchase control."
@@ -1091,6 +1095,10 @@
     "defaultMessage": "More",
     "description": "Visible label for the bottom navigation drawer affordance."
   },
+  "dyson.menu.more-new": {
+    "defaultMessage": "More, new content",
+    "description": "Accessible label when a newly unlocked route is inside the responsive menu."
+  },
   "dyson.menu.open": {
     "defaultMessage": "Open menu",
     "description": "Opens the compact game menu."
@@ -1098,6 +1106,10 @@
   "dyson.navigation.bottom": {
     "defaultMessage": "Game tabs",
     "description": "Accessible name for the compact bottom navigation."
+  },
+  "dyson.navigation.infinity-new": {
+    "defaultMessage": "Infinity, new",
+    "description": "Accessible label for the newly unlocked Infinity destination."
   },
   "dyson.navigation.primary": {
     "defaultMessage": "Primary",
@@ -2784,8 +2796,12 @@
     "description": "Unity label for an automatically purchased research."
   },
   "research.purchase.automatic-accessible": {
-    "defaultMessage": "{title} is purchased automatically",
+    "defaultMessage": "{title} is purchased automatically in batches of {quantity}",
     "description": "Accessible name for an automatic Research card button."
+  },
+  "research.purchase.automatic-quantity": {
+    "defaultMessage": "Auto ({quantity})",
+    "description": "Automatic Research label showing the configured purchase quantity."
   },
   "research.purchase.failed": {
     "defaultMessage": "Research was not purchased.",

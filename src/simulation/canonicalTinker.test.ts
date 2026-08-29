@@ -13,6 +13,7 @@ import {
   startCanonicalTinker,
   timeToCanonicalTinkerCompletion,
 } from './canonicalTinker'
+import { ordinaryInfinityBotThreshold } from './infinityCycle'
 
 const fixture = readFileSync(
   new URL(
@@ -188,6 +189,30 @@ describe('canonical Tinker runtime', () => {
     expect(completed.state.dyson.bots).toBe(1)
     expect(completed.state.dyson.manualCreationIntervalSeconds).toBe(9)
     expect(completed.runtime.running).toBe(false)
+  })
+
+  test('does not grant Tinker Bots beyond the ordinary pre-Break cap', () => {
+    const threshold = ordinaryInfinityBotThreshold(0n)
+    const canonical = {
+      ...state(0.5),
+      dyson: { ...state(0.5).dyson, bots: threshold },
+    }
+    const stats = deriveCanonicalTinkerStats(canonical, 0)
+    const started = startCanonicalTinker(
+      canonical,
+      createCanonicalTinkerRuntimeState(),
+      stats,
+      false,
+    )
+    const completed = advanceCanonicalTinker(
+      started.state,
+      started.runtime,
+      stats,
+      0.4,
+    )
+
+    expect(completed.state.dyson.bots).toBe(threshold)
+    expect(completed.botsGranted).toBe(0)
   })
 
   test('settles an action that starts exactly on the minimum cooldown boundary', () => {
