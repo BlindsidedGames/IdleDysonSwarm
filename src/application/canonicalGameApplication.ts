@@ -1209,7 +1209,7 @@ function applyDevelopmentAction(
         ...state,
         skills: {
           ...state.skills,
-          points: addDevelopmentDiscrete(
+          points: addDiscrete(
             state.skills.points,
             action.amount,
           ),
@@ -1237,7 +1237,7 @@ function applyDevelopmentAction(
         ...state,
         infinity: {
           ...state.infinity,
-          points: addDevelopmentDiscrete(
+          points: addDiscrete(
             state.infinity.points,
             action.amount,
           ),
@@ -1251,7 +1251,7 @@ function applyDevelopmentAction(
         ...state,
         quantum: {
           ...state.quantum,
-          pointsEarned: addDevelopmentDiscrete(
+          pointsEarned: addDiscrete(
             state.quantum.pointsEarned,
             action.amount,
           ),
@@ -1441,10 +1441,6 @@ function applyDevelopmentAction(
         debugOptionsEnabled: false,
       })
   }
-}
-
-function addDevelopmentDiscrete(current: bigint, amount: bigint): bigint {
-  return addDiscrete(current, amount)
 }
 
 function isDevelopmentDiscreteAmount(amount: bigint): boolean {
