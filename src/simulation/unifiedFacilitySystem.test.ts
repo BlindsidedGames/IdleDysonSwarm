@@ -18,6 +18,7 @@ import {
 import {
   DYSON_FACILITY_DEFINITIONS,
   DYSON_FACILITY_IDS,
+  isDysonFacilityId,
   MEGA_STRUCTURE_FACILITY_IDS,
 } from './dysonFacilityCatalog'
 
@@ -100,6 +101,9 @@ describe('unified Dyson facility system', () => {
       'birch_planets',
       'galactic_brains',
     ])
+    expect(DYSON_FACILITY_IDS.every(isDysonFacilityId)).toBe(true)
+    expect(isDysonFacilityId('unknown_facility')).toBe(false)
+    expect(isDysonFacilityId(0)).toBe(false)
     expect(
       Object.fromEntries(
         DYSON_FACILITY_IDS.map((id) => [

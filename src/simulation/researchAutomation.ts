@@ -7,6 +7,7 @@ import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
 } from '../game-state/types'
+import { isDysonFacilityId } from './dysonFacilityCatalog'
 import { CONTINUOUS_MAXIMUM, floorToDiscrete } from './numeric'
 import {
   deriveSecretBuffs,
@@ -880,18 +881,7 @@ function requireFacilityId(
   value: unknown,
   asset: RuntimeGameAsset,
 ): CanonicalFacilityId {
-  if (
-    value === 'assembly_lines' ||
-    value === 'ai_managers' ||
-    value === 'servers' ||
-    value === 'data_centers' ||
-    value === 'planets' ||
-    value === 'matrioshka_brains' ||
-    value === 'birch_planets' ||
-    value === 'galactic_brains'
-  ) {
-    return value
-  }
+  if (isDysonFacilityId(value)) return value
   throw invalidDefinition(asset, 'prerequisiteFacilityId')
 }
 

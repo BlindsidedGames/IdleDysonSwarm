@@ -3,6 +3,7 @@ import type {
   CanonicalFacilityId,
   CanonicalOwnedPair,
 } from '../game-state/types'
+import { isDysonFacilityId } from './dysonFacilityCatalog'
 import type { SkillEffectConditionReference } from './skillEffectMaterializer'
 
 export interface SkillEffectConditionContext {
@@ -145,18 +146,7 @@ function requireFacilityId(
   value: unknown,
   path: string,
 ): CanonicalFacilityId {
-  if (
-    value === 'assembly_lines' ||
-    value === 'ai_managers' ||
-    value === 'servers' ||
-    value === 'data_centers' ||
-    value === 'planets' ||
-    value === 'matrioshka_brains' ||
-    value === 'birch_planets' ||
-    value === 'galactic_brains'
-  ) {
-    return value
-  }
+  if (isDysonFacilityId(value)) return value
   throw new Error(`Condition data '${path}' has unknown facility '${value}'.`)
 }
 

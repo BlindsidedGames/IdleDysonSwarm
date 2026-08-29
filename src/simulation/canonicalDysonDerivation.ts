@@ -8,6 +8,7 @@ import {
   BASIC_DYSON_FACILITY_IDS,
   type BasicDysonFacilityId,
 } from './dysonFacilities'
+import { DYSON_FACILITY_IDS } from './dysonFacilityCatalog'
 import {
   calculateBasicDysonFacilityRate,
   createBasicDysonState,
@@ -292,13 +293,6 @@ const FACILITY_MODIFIER_STATS: Readonly<
   birch_planets: 'Facility.Birch.Modifier',
   galactic_brains: 'Facility.Galactic.Modifier',
 }
-
-const CANONICAL_DYSON_FACILITY_IDS = [
-  ...BASIC_DYSON_FACILITY_IDS,
-  'matrioshka_brains',
-  'birch_planets',
-  'galactic_brains',
-] as const satisfies readonly CanonicalFacilityId[]
 
 const BASIC_FACILITY_PRODUCTION_STATS: Readonly<
   Record<BasicDysonFacilityId, string>
@@ -630,7 +624,7 @@ export function deriveBasicDysonState(
     avocadoMultiplier,
   )
   const facilityModifiers = Object.fromEntries(
-    CANONICAL_DYSON_FACILITY_IDS.map((id) => [
+    DYSON_FACILITY_IDS.map((id) => [
       id,
       facilityModifierCalculations[id].value,
     ]),
@@ -1429,7 +1423,7 @@ function deriveFacilityModifiers(
     galactic_brains: 1,
   }
   return Object.fromEntries(
-    CANONICAL_DYSON_FACILITY_IDS.map((id) => {
+    DYSON_FACILITY_IDS.map((id) => {
       const target = FACILITY_MODIFIER_STATS[id]
       const effects: StatEffect[] = [
         ...effectsFor(researchEffects, target),

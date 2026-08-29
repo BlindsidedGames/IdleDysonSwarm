@@ -19,6 +19,15 @@ export const DYSON_FACILITY_IDS = [
   ...MEGA_STRUCTURE_FACILITY_IDS,
 ] as const satisfies readonly CanonicalFacilityId[]
 
+export function isDysonFacilityId(
+  value: unknown,
+): value is CanonicalFacilityId {
+  return (
+    typeof value === 'string' &&
+    (DYSON_FACILITY_IDS as readonly string[]).includes(value)
+  )
+}
+
 export type BasicDysonFacilityId =
   (typeof BASIC_DYSON_FACILITY_IDS)[number]
 
