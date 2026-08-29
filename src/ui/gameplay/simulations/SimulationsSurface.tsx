@@ -55,6 +55,10 @@ import {
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import {
+  readBooleanPresentationPreference,
+  writeBooleanPresentationPreference,
+} from '../../presentationPreferences'
 import { readyDysonMessages } from '../dyson/messages'
 import { clampProgress } from '../progress/clampProgress'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
@@ -144,21 +148,13 @@ export function SimulationsSurface({
   const reducedMotion = usePrefersReducedMotion()
   const purchaseSettingsId = useId()
   const [purchaseSettingsOpen, setPurchaseSettingsOpen] = useState(false)
-  const [showFormulas, setShowFormulas] = useState(() => {
-    try {
-      return localStorage.getItem(SIMULATION_FORMULAS_STORAGE_KEY) === 'true'
-    } catch {
-      return false
-    }
-  })
+  const [showFormulas, setShowFormulas] = useState(() =>
+    readBooleanPresentationPreference(SIMULATION_FORMULAS_STORAGE_KEY),
+  )
 
   const updateShowFormulas = (next: boolean): void => {
     setShowFormulas(next)
-    try {
-      localStorage.setItem(SIMULATION_FORMULAS_STORAGE_KEY, String(next))
-    } catch {
-      // Device-local presentation persistence must never block gameplay.
-    }
+    writeBooleanPresentationPreference(SIMULATION_FORMULAS_STORAGE_KEY, next)
   }
 
   if (!facts.live.production.ok) {
