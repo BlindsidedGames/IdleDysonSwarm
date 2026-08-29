@@ -1,4 +1,8 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
+import {
+  readStringArray,
+  readUnityBoolean,
+} from '../game-data/runtimeValueGuards'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type {
   CanonicalGameStateV1,
@@ -957,8 +961,8 @@ function requireBoolean(
   asset: RuntimeGameAsset,
   field: string,
 ): boolean {
-  if (value === true || value === 1) return true
-  if (value === false || value === 0) return false
+  const parsed = readUnityBoolean(value)
+  if (parsed !== undefined) return parsed
   throw invalidDefinition(asset, field)
 }
 
@@ -966,12 +970,8 @@ function requireStringArray(
   value: unknown,
   asset: RuntimeGameAsset,
 ): readonly string[] {
-  if (
-    Array.isArray(value) &&
-    value.every((entry) => typeof entry === 'string')
-  ) {
-    return value
-  }
+  const parsed = readStringArray(value)
+  if (parsed !== undefined) return parsed
   throw invalidDefinition(asset, 'string array')
 }
 

@@ -1,4 +1,5 @@
 import { getGameAsset } from '../game-data/catalog'
+import { readStringArray } from '../game-data/runtimeValueGuards'
 import type {
   RuntimeAssetReference,
   RuntimeAssetValue,
@@ -273,13 +274,11 @@ function requireStrings(
   value: RuntimeAssetValue | undefined,
   path: string,
 ): readonly string[] {
-  if (
-    !Array.isArray(value) ||
-    !value.every((entry) => typeof entry === 'string')
-  ) {
+  const parsed = readStringArray(value)
+  if (parsed === undefined) {
     throw new Error(
       `Exported game data '${path}' must be a string list.`,
     )
   }
-  return value
+  return parsed
 }

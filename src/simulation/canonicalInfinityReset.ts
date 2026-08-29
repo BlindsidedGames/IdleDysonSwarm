@@ -1,4 +1,8 @@
 import { getGameAsset } from '../game-data/catalog'
+import {
+  readStringArray,
+  readUnityBoolean,
+} from '../game-data/runtimeValueGuards'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type {
   CanonicalGameStateV1,
@@ -480,8 +484,8 @@ function readSkillRule(
   | { readonly ok: false; readonly issue: CanonicalInfinityResetIssue } {
   const data = asset.data
   const cost = data.cost
-  const refundable = readBooleanFlag(data.refundable)
-  const isFragment = readBooleanFlag(data.isFragment)
+  const refundable = readUnityBoolean(data.refundable)
+  const isFragment = readUnityBoolean(data.isFragment)
   const requiredSkillIds = readStringArray(data.requiredSkillIds)
   const shadowRequirementIds = readStringArray(
     data.shadowRequirementIds,
@@ -608,7 +612,7 @@ function readSkillUnlock(
     ['stellarLine', 'stellar'],
   ] as const
   for (const [field, unlock] of candidates) {
-    const value = readBooleanFlag(data[field])
+    const value = readUnityBoolean(data[field])
     if (value === undefined) return undefined
     if (value) return unlock
   }
@@ -813,25 +817,6 @@ function recordWindowEvent(
       ),
     }),
   )
-}
-
-function readBooleanFlag(value: unknown): boolean | undefined {
-  if (typeof value === 'boolean') return value
-  if (value === 0) return false
-  if (value === 1) return true
-  return undefined
-}
-
-function readStringArray(
-  value: unknown,
-): readonly string[] | undefined {
-  if (
-    !Array.isArray(value) ||
-    value.some((entry) => typeof entry !== 'string')
-  ) {
-    return undefined
-  }
-  return value as readonly string[]
 }
 
 function isRecord(

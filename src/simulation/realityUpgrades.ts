@@ -2,6 +2,7 @@ import {
   isFiniteNonNegativeNumber as isSimulationResource,
 } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
+import { readUnityBoolean } from '../game-data/runtimeValueGuards'
 import {
   DREAM_UPGRADE_FLAGS,
   type CanonicalGameStateV1,
@@ -346,9 +347,7 @@ function parsePurchaseEffects(
 }
 
 function parseBoolean(value: unknown): boolean | null {
-  if (value === true || value === 1) return true
-  if (value === false || value === 0) return false
-  return null
+  return readUnityBoolean(value) ?? null
 }
 
 function findDefinitionGap(
