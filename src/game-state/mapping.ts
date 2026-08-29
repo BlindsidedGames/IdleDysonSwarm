@@ -1,3 +1,4 @@
+import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
 import { isRecord, requireRecord, type SaveRecord } from '../save/graph'
 import { PreparedSave } from '../save/prepare'
 import {
@@ -1453,10 +1454,6 @@ function fromBuyMode(value: BuyMode): number {
   return ['buy-1', 'buy-10', 'buy-50', 'buy-100', 'buy-max'].indexOf(
     value,
   )
-}
-
-function clampUnit(value: number): number {
-  return Math.max(0, Math.min(1, value))
 }
 
 function minimumBigInt(left: bigint, right: bigint): bigint {

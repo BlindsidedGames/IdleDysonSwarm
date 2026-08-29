@@ -1,4 +1,5 @@
 import type { DeepReadonly } from '../core/contracts'
+import { clampUnitInterval } from '../core/clampUnitInterval'
 import { deepFreezePlainGraph } from '../core/deepFreezePlainGraph'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
@@ -2241,10 +2242,6 @@ export function projectDysonSwarmVisualization(
     completion:
       projectGalaxyGroupVisualCompletion(galaxiesEngulfed),
   }
-}
-
-function clampUnitInterval(value: number): number {
-  return Math.min(1, Math.max(0, value))
 }
 
 /**
