@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   addContinuous,
@@ -554,7 +555,7 @@ export function runDreamFoundationalInformationConversions(
   }
 
   const divisor = Number(state.dream.parameters.rocketsPerSpaceFactory)
-  if (Number.isFinite(divisor) && divisor > 0) {
+  if (isFinitePositiveNumber(divisor)) {
     const conversions = Math.min(
       Math.floor(rockets / divisor),
       Math.floor(factories),
@@ -760,7 +761,7 @@ function advanceProductionTimer(
   const completed = Math.floor(
     accumulated / fact.durationSeconds,
   )
-  if (!Number.isFinite(completed) || completed <= 0) {
+  if (!isFinitePositiveNumber(completed)) {
     return { cycles: 0, progress: accumulated }
   }
   const remainder = accumulated % fact.durationSeconds

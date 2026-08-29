@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   DREAM_HOUSING_TO_VILLAGE_COST,
@@ -184,7 +185,7 @@ function validateInput(
     )
   }
   const maximumCharge = state.dream.parameters.railgunMaxCharge
-  if (!Number.isFinite(maximumCharge) || maximumCharge <= 0) {
+  if (!isFinitePositiveNumber(maximumCharge)) {
     issues.push(
       issue(
         'DREAM_RAILGUN_MAX_CHARGE_INVALID',

@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import type {
   CanonicalGameStateV1,
@@ -278,15 +281,14 @@ function creditGeneratedWorkers(
   if (floorToDiscrete(requestedInfluence) > availableWorkers) {
     requestedInfluence = bitDecrement(requestedInfluence)
   }
-  if (!Number.isFinite(requestedInfluence) || requestedInfluence <= 0) {
+  if (!isFinitePositiveNumber(requestedInfluence)) {
     return { influence, consumedWorkers: 0n }
   }
 
   const nextInfluence = addContinuous(influence, requestedInfluence)
   const creditedInfluence = nextInfluence - influence
   if (
-    !Number.isFinite(creditedInfluence) ||
-    creditedInfluence <= 0 ||
+    !isFinitePositiveNumber(creditedInfluence) ||
     creditedInfluence > requestedInfluence
   ) {
     return { influence, consumedWorkers: 0n }

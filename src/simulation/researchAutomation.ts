@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
@@ -569,7 +570,7 @@ function previewPurchase(
       costBase /= 1 + currentLevel * percentPerLevel
     }
   }
-  if (!Number.isFinite(costBase) || costBase <= 0) {
+  if (!isFinitePositiveNumber(costBase)) {
     return emptyPreview(
       definition.id,
       'invalid-cost',

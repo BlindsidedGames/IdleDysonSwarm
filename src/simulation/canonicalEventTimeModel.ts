@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -1386,12 +1387,11 @@ export function withCanonicalEventTimeAutomationInterval(
   rateClockMultiplier = 1,
 ): Readonly<CanonicalEventTimeContext> {
   if (
-    !Number.isFinite(automationIntervalSeconds) ||
-    automationIntervalSeconds <= 0
+    !isFinitePositiveNumber(automationIntervalSeconds)
   ) {
     throw new RangeError('Automation interval must be finite and positive.')
   }
-  if (!Number.isFinite(rateClockMultiplier) || rateClockMultiplier <= 0) {
+  if (!isFinitePositiveNumber(rateClockMultiplier)) {
     throw new RangeError('Rate clock multiplier must be finite and positive.')
   }
   const prepared = prepareCanonicalEventTimeContext(context)

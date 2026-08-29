@@ -1,3 +1,4 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import {
   BASIC_DYSON_FACILITY_IDS,
   createEmptyRetainedFacilities,
@@ -273,13 +274,12 @@ export function infinityPointsPerMinute(
 ): number {
   if (
     projectedReward <= 0n ||
-    !Number.isFinite(elapsedSeconds) ||
-    elapsedSeconds <= 0
+    !isFinitePositiveNumber(elapsedSeconds)
   ) {
     return 0
   }
   const rate = Number(projectedReward) * 60 / elapsedSeconds
-  return Number.isFinite(rate) && rate > 0 ? rate : Number.MAX_VALUE
+  return isFinitePositiveNumber(rate) ? rate : Number.MAX_VALUE
 }
 
 export interface InfinityRatePeak {
@@ -412,7 +412,7 @@ export function projectInfinityProgress(
     quantumDoubleIp: input.quantumDoubleIp,
   })
   const bots =
-    Number.isFinite(input.bots) && input.bots > 0
+    isFinitePositiveNumber(input.bots)
       ? input.bots
       : 0
   const currentReward = infinityPointsForBots(bots, infinity)

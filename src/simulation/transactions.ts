@@ -1,4 +1,5 @@
 import { getGameAsset } from '../game-data/catalog'
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import {
   addContinuous,
   bitDecrement,
@@ -150,7 +151,7 @@ function logExpm1(value: number): number {
 }
 
 function clampGeometricCost(value: number): number {
-  return Number.isFinite(value) && value > 0 ? value : 0
+  return isFinitePositiveNumber(value) ? value : 0
 }
 
 export function maxAffordable(

@@ -1,3 +1,5 @@
+import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+
 export const CONTINUOUS_MAXIMUM = Number.MAX_VALUE
 export const DISCRETE_MAXIMUM = 9_223_372_036_854_775_807n
 export const SIMULATION_RESOURCE_MAXIMUM = BigInt(CONTINUOUS_MAXIMUM)
@@ -80,7 +82,7 @@ export function floorToDiscreteAtMost(
   value: number,
   maximum: bigint,
 ): bigint {
-  if (!Number.isFinite(value) || value <= 0) return 0n
+  if (!isFinitePositiveNumber(value)) return 0n
   if (maximum < 0n) return 0n
   if (value >= Number(maximum)) return maximum
   return BigInt(Math.floor(value))
