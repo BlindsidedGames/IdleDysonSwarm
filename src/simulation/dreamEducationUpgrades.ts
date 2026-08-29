@@ -1,4 +1,7 @@
-import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
+import {
+  isNonNegativeInteger,
+  isSafeNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { SIMULATION_UPGRADE_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import {
@@ -170,7 +173,7 @@ export function startDreamEducation(
     return rejectedEducationStart(state, 'already_active')
   }
   const cost = education.cost
-  if (!Number.isFinite(cost) || !Number.isInteger(cost) || cost < 0) {
+  if (!isNonNegativeInteger(cost)) {
     return rejectedEducationStart(state, 'invalid_cost')
   }
   const debit = tryDebitContinuous(state.reality.influence, cost)

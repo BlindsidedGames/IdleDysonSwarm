@@ -1,6 +1,7 @@
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
+  isNonNegativeInteger,
 } from '../core/finiteNonNegativeNumber'
 
 export const CONTINUOUS_MAXIMUM = Number.MAX_VALUE
@@ -112,8 +113,7 @@ export function exactRoundedNonNegativeBigInt(value: number): bigint | null {
   if (!isFiniteNonNegativeNumber(value)) return null
   const rounded = roundToEven(value)
   if (
-    !Number.isInteger(rounded) ||
-    rounded < 0 ||
+    !isNonNegativeInteger(rounded) ||
     rounded >= DISCRETE_DOUBLE_UPPER_EXCLUSIVE
   ) {
     return null

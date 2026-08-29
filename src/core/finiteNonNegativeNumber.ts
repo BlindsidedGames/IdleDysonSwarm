@@ -10,6 +10,11 @@ export function isFinitePositiveNumber(value: unknown): value is number {
   return isFiniteNonNegativeNumber(value) && value > 0
 }
 
+/** Narrows values to integer numbers greater than or equal to zero. */
+export function isNonNegativeInteger(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0
+}
+
 /** Narrows values to safe integers greater than or equal to zero. */
 export function isSafeNonNegativeInteger(
   value: unknown,

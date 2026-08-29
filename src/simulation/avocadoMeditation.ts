@@ -1,3 +1,4 @@
+import { isNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   addDiscrete,
@@ -37,8 +38,7 @@ export function completeCanonicalAvocadoMeditationStep(
   requiredStepIndex: number,
 ): AvocadoMeditationResult {
   if (
-    !Number.isInteger(requiredStepIndex) ||
-    requiredStepIndex < 0 ||
+    !isNonNegativeInteger(requiredStepIndex) ||
     requiredStepIndex >= AVOCADO_MEDITATION_TOTAL_STEPS
   ) {
     return rejected(state, 'invalid-step')
@@ -101,8 +101,7 @@ function hasValidMeditationState(
   state: Readonly<CanonicalGameStateV1>,
 ): boolean {
   return (
-    Number.isInteger(state.secretProgress.step) &&
-    state.secretProgress.step >= 0 &&
+    isNonNegativeInteger(state.secretProgress.step) &&
     state.secretProgress.step <=
       AVOCADO_MEDITATION_TOTAL_STEPS &&
     state.skills.points >= 0n &&

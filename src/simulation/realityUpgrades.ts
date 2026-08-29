@@ -1,4 +1,7 @@
-import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isNonNegativeInteger,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { SIMULATION_UPGRADE_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import { readUnityBoolean } from '../game-data/runtimeValueGuards'
@@ -269,9 +272,7 @@ function loadRealityUpgradeDefinitions(): {
 
 function parseCost(value: unknown): number | null {
   if (
-    typeof value !== 'number' ||
-    !Number.isInteger(value) ||
-    value < 0 ||
+    !isNonNegativeInteger(value) ||
     value > Number(INT_MAXIMUM)
   ) {
     return null

@@ -1,6 +1,7 @@
 import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
 import {
   isFiniteNonNegativeNumber,
+  isNonNegativeInteger,
   isSafeNonNegativeInteger,
 } from '../core/finiteNonNegativeNumber'
 import { isRecord, requireRecord, type SaveRecord } from '../save/graph'
@@ -1439,7 +1440,7 @@ function toBuyMode(value: unknown): BuyMode {
         ? value
         : 0
   return BUY_MODES[
-    Number.isInteger(index) && index >= 0 && index < BUY_MODES.length
+    isNonNegativeInteger(index) && index < BUY_MODES.length
       ? index
       : 0
   ]

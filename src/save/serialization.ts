@@ -1,4 +1,5 @@
 import { Gunzip, gzipSync, strToU8 } from 'fflate'
+import { isNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import {
   deepCloneSave,
   isRecord,
@@ -29,7 +30,7 @@ interface EncodedWebSave {
 
 export function serializeWebSave(save: SaveRecord): string {
   const schema = Number(save.saveVersion)
-  if (!Number.isInteger(schema) || schema < 0) {
+  if (!isNonNegativeInteger(schema)) {
     throw new Error('Canonical web saves require a non-negative integer schema.')
   }
   const envelope: EncodedWebSave = {
@@ -96,11 +97,7 @@ export function deserializeWebSaveBounded(
   if (envelope.format !== WEB_SAVE_FORMAT) {
     throw new Error(`Unsupported web save envelope ${String(envelope.format)}.`)
   }
-  if (
-    typeof envelope.schema !== 'number' ||
-    !Number.isInteger(envelope.schema) ||
-    envelope.schema < 0
-  ) {
+  if (!isNonNegativeInteger(envelope.schema)) {
     throw new Error('Canonical web save envelope has an invalid schema.')
   }
   const state = requireRecord(
