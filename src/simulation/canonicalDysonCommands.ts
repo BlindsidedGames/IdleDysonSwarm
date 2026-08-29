@@ -169,6 +169,13 @@ function isFacilityUnlocked(
   id: CanonicalFacilityId,
 ): true | 'locked' | 'prerequisite-not-met' {
   const definition = DYSON_FACILITY_DEFINITIONS[id]
+  const ownership = candidate.facilities[id]
+  if (
+    definition.group === 'megastructure' &&
+    ownership[0] + ownership[1] > 0
+  ) {
+    return true
+  }
   if (
     definition.quantumUnlock !== undefined &&
     !canonical.quantum.unlocks[definition.quantumUnlock]

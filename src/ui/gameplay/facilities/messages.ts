@@ -162,50 +162,56 @@ export const basicFacilityMessages = defineMessages({
     description:
       'Formatted per-second production value in mega-structure details.',
   },
-  unlockCondition: {
-    id: 'dyson.facilities.mega-structure.details.unlock-condition',
-    defaultMessage: 'Unlock condition',
-    description: 'Label for a mega-structure unlock condition.',
-  },
-  megaUnlockRequirement: {
-    id: 'dyson.facilities.mega-structure.details.unlock-requirement',
-    defaultMessage:
-      'Requires the {structure} Quantum unlock and ownership of {prerequisite}.',
-    description:
-      'Canonical sequential visibility condition for a mega-structure.',
-  },
   matrioshkaBrainsProductionPerSecond: {
     id: 'dyson.facilities.matrioshka-brains.production-per-second',
     defaultMessage: 'Synthesizing {rate} Planets /s',
     description: 'Authored Matrioshka Brain production phrase.',
   },
-  matrioshkaBrainsProductionInterval: {
-    id: 'dyson.facilities.matrioshka-brains.production-interval',
-    defaultMessage: 'Synthesizing 1 Planet /{interval}',
+  matrioshkaBrainsProductionSeconds: {
+    id: 'dyson.facilities.matrioshka-brains.production-seconds',
+    defaultMessage: 'Synthesizing 1 Planet /{interval}s',
     description:
-      'Authored Matrioshka Brain production phrase below one unit per second.',
+      'Authored Matrioshka Brain production phrase below one unit per second and under one minute per Planet.',
+  },
+  matrioshkaBrainsProductionMinutes: {
+    id: 'dyson.facilities.matrioshka-brains.production-minutes',
+    defaultMessage: 'Synthesizing 1 Planet /{interval} Min',
+    description:
+      'Authored Matrioshka Brain production phrase at one minute or more per Planet.',
   },
   birchPlanetsProductionPerSecond: {
     id: 'dyson.facilities.birch-planets.production-per-second',
     defaultMessage: 'Assembling {rate} Matrioshka Brains /s',
     description: 'Authored Birch Planet production phrase.',
   },
-  birchPlanetsProductionInterval: {
-    id: 'dyson.facilities.birch-planets.production-interval',
-    defaultMessage: 'Assembling 1 Matrioshka Brain /{interval}',
+  birchPlanetsProductionSeconds: {
+    id: 'dyson.facilities.birch-planets.production-seconds',
+    defaultMessage: 'Assembling 1 Matrioshka Brain /{interval}s',
     description:
-      'Authored Birch Planet production phrase below one unit per second.',
+      'Authored Birch Planet production phrase below one unit per second and under one minute per Matrioshka Brain.',
+  },
+  birchPlanetsProductionMinutes: {
+    id: 'dyson.facilities.birch-planets.production-minutes',
+    defaultMessage: 'Assembling 1 Matrioshka Brain /{interval} Min',
+    description:
+      'Authored Birch Planet production phrase at one minute or more per Matrioshka Brain.',
   },
   galacticBrainsProductionPerSecond: {
     id: 'dyson.facilities.galactic-brains.production-per-second',
     defaultMessage: 'Manifesting {rate} Birch Planets /s',
     description: 'Authored Galactic Brain production phrase.',
   },
-  galacticBrainsProductionInterval: {
-    id: 'dyson.facilities.galactic-brains.production-interval',
-    defaultMessage: 'Manifesting 1 Birch Planet /{interval}',
+  galacticBrainsProductionSeconds: {
+    id: 'dyson.facilities.galactic-brains.production-seconds',
+    defaultMessage: 'Manifesting 1 Birch Planet /{interval}s',
     description:
-      'Authored Galactic Brain production phrase below one unit per second.',
+      'Authored Galactic Brain production phrase below one unit per second and under one minute per Birch Planet.',
+  },
+  galacticBrainsProductionMinutes: {
+    id: 'dyson.facilities.galactic-brains.production-minutes',
+    defaultMessage: 'Manifesting 1 Birch Planet /{interval} Min',
+    description:
+      'Authored Galactic Brain production phrase at one minute or more per Birch Planet.',
   },
   unknownFacility: {
     id: 'dyson.facilities.unknown.name',

@@ -121,11 +121,6 @@ export const infinityMessages = defineMessages({
     defaultMessage: 'Infinity Points before reset',
     description: 'Label for the Auto Infinity target control.',
   },
-  breakTargetValue: {
-    id: 'infinity.break-target.value',
-    defaultMessage: 'Target: {value} IP',
-    description: 'Currently selected Auto Infinity target.',
-  },
   setBreakTarget: {
     id: 'infinity.break-target.set',
     defaultMessage: 'Set target',

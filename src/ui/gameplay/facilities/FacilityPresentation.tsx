@@ -444,20 +444,6 @@ export function FacilityDetailsContent({
         </div>
       </section>
 
-      {presentation.unlockPrerequisite !== undefined && (
-        <section className="facility-details-dialog__unlock">
-          <h3>{intl.formatMessage(messages.unlockCondition)}</h3>
-          <p>
-            {intl.formatMessage(messages.megaUnlockRequirement, {
-              structure: facilityName,
-              prerequisite: intl.formatMessage(
-                presentation.unlockPrerequisite,
-              ),
-            })}
-          </p>
-        </section>
-      )}
-
       <section className="facility-details-pipeline">
         <h3>{intl.formatMessage(messages.calculationHeading)}</h3>
         <CalculationStage number={1} title={intl.formatMessage(messages.baseStage)}>

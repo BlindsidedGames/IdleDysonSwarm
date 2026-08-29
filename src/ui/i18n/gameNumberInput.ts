@@ -1,4 +1,8 @@
 import { GAME_NUMBER_PREFIXES } from './gameNumberMagnitudes'
+import {
+  LOCALE_REGISTRY,
+  type EnabledLocale,
+} from './localeRegistry'
 
 export interface ParsedGameNumberInput {
   readonly coefficient: bigint
@@ -22,7 +26,18 @@ const SUFFIXES = GAME_NUMBER_PREFIXES
   .filter(({ suffix }) => suffix.length > 0)
   .sort((left, right) => right.suffix.length - left.suffix.length)
 
-export function parseGameNumberInput(input: string): GameNumberInputParseResult {
+interface NumberInputCulture {
+  readonly decimal: string
+  readonly group?: string
+  readonly digits: ReadonlyMap<string, string>
+}
+
+const numberInputCultures = new Map<EnabledLocale, NumberInputCulture>()
+
+export function parseGameNumberInput(
+  input: string,
+  locale: EnabledLocale = 'en',
+): GameNumberInputParseResult {
   let numericText = input.trim()
   if (numericText.length === 0) return { ok: false, reason: 'empty' }
   if (numericText.startsWith('-')) return { ok: false, reason: 'negative' }
@@ -40,17 +55,18 @@ export function parseGameNumberInput(input: string): GameNumberInputParseResult 
     }
   }
 
-  const normalized = numericText.replace(/[,_\s]/g, '')
+  const normalized = normalizeLocalizedNumericText(numericText, locale)
   const match = normalized.match(
-    /^\+?(\d+)(?:\.(\d+))?(?:e([+-]?\d+))?$/i,
+    /^\+?(?:(\d+)(?:\.(\d*))?|\.(\d+))(?:e([+-]?\d+))?$/i,
   )
   if (!match) return { ok: false, reason: 'invalid' }
-  const fraction = match[2] ?? ''
-  const authoredExponent = Number(match[3] ?? 0)
+  const whole = match[1] ?? '0'
+  const fraction = match[2] ?? match[3] ?? ''
+  const authoredExponent = Number(match[4] ?? 0)
   if (!Number.isSafeInteger(authoredExponent)) {
     return { ok: false, reason: 'invalid' }
   }
-  const coefficient = BigInt(`${match[1]}${fraction}`)
+  const coefficient = BigInt(`${whole}${fraction}`)
   return {
     ok: true,
     value: {
@@ -58,6 +74,50 @@ export function parseGameNumberInput(input: string): GameNumberInputParseResult 
       exponent: authoredExponent + magnitudeExponent - fraction.length,
     },
   }
+}
+
+/** Converts localized digits and separators to the parser's exact syntax. */
+export function normalizeLocalizedNumericText(
+  input: string,
+  locale: EnabledLocale,
+): string {
+  const culture = numberInputCulture(locale)
+  let normalized = input
+  for (const [localized, ascii] of culture.digits) {
+    normalized = normalized.replaceAll(localized, ascii)
+  }
+  normalized = normalized.replaceAll(/[\u061c\u200e\u200f]/gu, '')
+  if (culture.group !== undefined) {
+    normalized = normalized.replaceAll(culture.group, '')
+  }
+  if (culture.decimal !== '.') {
+    normalized = normalized.replaceAll(culture.decimal, '.')
+  }
+  return normalized.replace(/[_\s]/gu, '')
+}
+
+function numberInputCulture(locale: EnabledLocale): NumberInputCulture {
+  const cached = numberInputCultures.get(locale)
+  if (cached !== undefined) return cached
+
+  const languageTag = LOCALE_REGISTRY[locale].languageTag
+  const formatter = new Intl.NumberFormat(languageTag, {
+    useGrouping: true,
+    maximumFractionDigits: 1,
+  })
+  const parts = formatter.formatToParts(12_345.6)
+  const culture: NumberInputCulture = {
+    decimal: parts.find((part) => part.type === 'decimal')?.value ?? '.',
+    group: parts.find((part) => part.type === 'group')?.value,
+    digits: new Map(
+    Array.from({ length: 10 }, (_, digit) => [
+      new Intl.NumberFormat(languageTag, { useGrouping: false }).format(digit),
+      String(digit),
+    ]),
+    ),
+  }
+  numberInputCultures.set(locale, culture)
+  return culture
 }
 
 export function toContinuousGameNumber(

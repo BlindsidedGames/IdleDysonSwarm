@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
+  assertUniqueWikiAuthoredMessageIds,
   WIKI_LORE_SECTIONS,
   WIKI_PATCH_NOTES,
   wikiLoreChapterBodyMessage,
@@ -21,12 +22,13 @@ const authored: WikiAuthoredMessage[] = [
   ...WIKI_PATCH_NOTES.map(wikiPatchNoteMessage),
   ...WIKI_LORE_SECTIONS.flatMap((section) => [
     wikiLoreSectionTitleMessage(section),
-    ...section.chapters.flatMap((chapter, index) => [
-      wikiLoreChapterTitleMessage(section, chapter, index),
-      wikiLoreChapterBodyMessage(section, chapter, index),
+    ...section.chapters.flatMap((chapter) => [
+      wikiLoreChapterTitleMessage(section, chapter),
+      wikiLoreChapterBodyMessage(section, chapter),
     ]),
   ]),
 ]
+assertUniqueWikiAuthoredMessageIds(authored)
 for (const message of authored) {
   source[message.id] = {
     defaultMessage: message.defaultMessage,

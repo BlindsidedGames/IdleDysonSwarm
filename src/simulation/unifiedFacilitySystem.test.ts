@@ -7,6 +7,7 @@ import type {
 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
 import {
+  isCanonicalFacilityVisible,
   previewCanonicalFacilityPurchase,
   runCanonicalDysonAutomation,
   tryPurchaseCanonicalFacility,
@@ -168,18 +169,24 @@ describe('unified Dyson facility system', () => {
   )
 
   test.each(MEGA_STRUCTURE_FACILITY_IDS)(
-    '%s enforces both its Quantum gate and facility prerequisite',
+    '%s uses only its Quantum unlock before first purchase and stays sticky',
     (facilityId) => {
       const definition = DYSON_FACILITY_DEFINITIONS[facilityId]
-      const prerequisite = definition.prerequisite!
-      const locked = state()
+      const unlocked = state()
       const quantumUnlock = definition.quantumUnlock!
       const withoutQuantum = {
-        ...locked,
+        ...unlocked,
+        dyson: {
+          ...unlocked.dyson,
+          facilities: {
+            ...unlocked.dyson.facilities,
+            [facilityId]: [0, 0] as const,
+          },
+        },
         quantum: {
-          ...locked.quantum,
+          ...unlocked.quantum,
           unlocks: {
-            ...locked.quantum.unlocks,
+            ...unlocked.quantum.unlocks,
             [quantumUnlock]: false,
           },
         },
@@ -187,23 +194,53 @@ describe('unified Dyson facility system', () => {
       expect(
         previewCanonicalFacilityPurchase(withoutQuantum, facilityId).status,
       ).toBe('locked')
+      expect(isCanonicalFacilityVisible(withoutQuantum, facilityId)).toBe(false)
 
-      const withoutPrerequisite = {
-        ...locked,
+      const precedingFacility = facilityId === 'matrioshka_brains'
+        ? 'planets'
+        : facilityId === 'birch_planets'
+          ? 'matrioshka_brains'
+          : 'birch_planets'
+      const withoutPrecedingFacility = {
+        ...unlocked,
         dyson: {
-          ...locked.dyson,
+          ...unlocked.dyson,
           facilities: {
-            ...locked.dyson.facilities,
-            [prerequisite.facilityId]: [0, 0] as const,
+            ...unlocked.dyson.facilities,
+            [facilityId]: [0, 0] as const,
+            [precedingFacility]: [0, 0] as const,
           },
         },
       }
       expect(
         previewCanonicalFacilityPurchase(
-          withoutPrerequisite,
+          withoutPrecedingFacility,
           facilityId,
-        ).status,
-      ).toBe('prerequisite-not-met')
+        ),
+      ).toMatchObject({ eligible: true, status: 'success' })
+      expect(
+        isCanonicalFacilityVisible(withoutPrecedingFacility, facilityId),
+      ).toBe(true)
+      expect(
+        runCanonicalDysonAutomation(withoutPrecedingFacility).attempts.find(
+          (attempt) => attempt.facilityId === facilityId,
+        ),
+      ).toMatchObject({ purchased: true, status: 'success' })
+
+      const stickyOwned = {
+        ...withoutQuantum,
+        dyson: {
+          ...withoutQuantum.dyson,
+          facilities: {
+            ...withoutQuantum.dyson.facilities,
+            [facilityId]: [1, 0] as const,
+          },
+        },
+      }
+      expect(
+        previewCanonicalFacilityPurchase(stickyOwned, facilityId),
+      ).toMatchObject({ eligible: true, status: 'success' })
+      expect(isCanonicalFacilityVisible(stickyOwned, facilityId)).toBe(true)
     },
   )
 

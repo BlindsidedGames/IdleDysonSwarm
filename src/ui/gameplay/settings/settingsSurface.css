@@ -31,14 +31,14 @@
   display: contents;
 }
 
-.settings-surface__panel--audio { order: 1; }
-.settings-surface__panel--language { order: 2; }
-.settings-surface__panel--number-notation { order: 3; }
-.settings-surface__panel--processing { order: 4; }
-.settings-surface__panel--visualization { order: 5; }
-.settings-surface__panel--more { order: 6; }
-.settings-surface__panel--navigation { order: 7; }
-.settings-surface__panel--save { order: 8; }
+.settings-surface__panel--more { order: 1; }
+.settings-surface__panel--audio { order: 2; }
+.settings-surface__panel--language { order: 3; }
+.settings-surface__panel--number-notation { order: 4; }
+.settings-surface__panel--processing { order: 5; }
+.settings-surface__panel--navigation { order: 6; }
+.settings-surface__panel--save { order: 7; }
+.settings-surface__panel--visualization { order: 8; }
 .settings-surface__development-trigger,
 .settings-surface__panel--development { order: 9; }
 .settings-surface__status { order: 10; }
@@ -342,10 +342,16 @@
 
   .settings-surface__panel--navigation,
   .settings-surface__panel--save,
+  .settings-surface__panel--visualization,
+  .settings-surface__panel--more,
   .settings-surface__panel--development,
   .settings-surface__development-trigger,
   .settings-surface__status {
     grid-column: 1 / -1;
+  }
+
+  .settings-surface__panel--more {
+    order: -1;
   }
 
   .settings-surface__panel.settings-surface__panel--navigation {

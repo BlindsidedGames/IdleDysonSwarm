@@ -41,8 +41,11 @@ const BOT_PRESETS = [
   { id: 'deep-field', bots: 2e47 },
 ] as const
 
-function clampAmountDraftToContinuousMaximum(value: string): string {
-  const parsed = parseGameNumberInput(value)
+function clampAmountDraftToContinuousMaximum(
+  value: string,
+  locale: EnabledLocale,
+): string {
+  const parsed = parseGameNumberInput(value, locale)
   return parsed.ok && !toContinuousGameNumber(parsed.value).ok
     ? Number.MAX_VALUE.toString()
     : value
@@ -63,7 +66,7 @@ export function DebugSurface({
   const amountFeedbackId = useId()
   const presetId = useId()
   const [amount, setAmount] = useState(() =>
-    clampAmountDraftToContinuousMaximum(initialDraft?.amount ?? '1'))
+    clampAmountDraftToContinuousMaximum(initialDraft?.amount ?? '1', locale))
   const [preset, setPreset] = useState(() => initialDraft?.preset ?? 'early')
   const [operation, setOperation] = useState<OperationStatus>({
     kind: 'idle',
@@ -92,7 +95,7 @@ export function DebugSurface({
     }
   }
 
-  const parsedAmount = parseGameNumberInput(amount)
+  const parsedAmount = parseGameNumberInput(amount, locale)
   const continuousAmount = parsedAmount.ok
     ? toContinuousGameNumber(parsedAmount.value)
     : { ok: false as const, reason: 'above-maximum' as const }
@@ -187,6 +190,7 @@ export function DebugSurface({
                   onChange={(event) => {
                     const nextAmount = clampAmountDraftToContinuousMaximum(
                       event.currentTarget.value,
+                      locale,
                     )
                     updateAmount(nextAmount)
                   }}

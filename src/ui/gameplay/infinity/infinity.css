@@ -524,17 +524,10 @@
   opacity: 1;
 }
 
-.infinity-break-target__range,
 .infinity-break-target__feedback {
   color: #cfc3df;
   font-size: calc(0.72rem * var(--game-text-scale));
   font-variant-numeric: tabular-nums;
-}
-
-.infinity-break-target__range {
-  grid-column: 2;
-  grid-row: 1;
-  text-align: end;
 }
 
 .infinity-break-target__feedback {

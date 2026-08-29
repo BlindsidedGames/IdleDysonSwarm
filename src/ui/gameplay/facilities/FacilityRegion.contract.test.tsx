@@ -177,6 +177,43 @@ describe('FacilityRegion unified presentation contract', () => {
     expect(modifierResult).not.toContain('/ game second')
     expect(modifierResult).not.toContain('0.10 × 10.0M')
   })
+
+  test('shows seconds and minutes on higher-tier production intervals', () => {
+    const regionProps = props(vi.fn())
+    const facts = {
+      ...regionProps.facts,
+      matrioshka_brains: {
+        ...regionProps.facts.matrioshka_brains,
+        production: {
+          ...regionProps.facts.matrioshka_brains.production,
+          perSecond: 0.1,
+          secondsPerUnit: 10,
+        },
+      },
+      birch_planets: {
+        ...regionProps.facts.birch_planets,
+        production: {
+          ...regionProps.facts.birch_planets.production,
+          perSecond: 0.01,
+          secondsPerUnit: 100,
+        },
+      },
+    } as FacilityRegionProps['facts']
+
+    renderRegionProps({ ...regionProps, facts })
+    const articles = screen.getAllByRole('article')
+
+    expect(
+      articles[5]?.querySelector(
+        '.basic-facility-card__production-line',
+      )?.textContent,
+    ).toBe('Synthesizing 1 Planet /10.0s')
+    expect(
+      articles[6]?.querySelector(
+        '.basic-facility-card__production-line',
+      )?.textContent,
+    ).toBe('Assembling 1 Matrioshka Brain /1.67 Min')
+  })
 })
 
 function renderRegion(

@@ -105,7 +105,10 @@
 .dyson-info__settings {
   display: grid;
   gap: 0.2rem;
-  padding: 0.3rem 0.45rem 0.35rem;
+  padding-block: 0.3rem 0.35rem;
+  padding-inline:
+    max(0.45rem, var(--safe-area-left))
+    max(0.45rem, var(--safe-area-right));
   border: 0;
   background: var(--theme-panel);
 }
