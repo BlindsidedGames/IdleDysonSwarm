@@ -336,13 +336,34 @@ export const DREAM_UPGRADE_FLAGS = [
 
 export type DreamUpgradeFlag = (typeof DREAM_UPGRADE_FLAGS)[number]
 
-export type DreamEducationId =
-  | 'engineering'
-  | 'shipping'
-  | 'worldTrade'
-  | 'worldPeace'
-  | 'mathematics'
-  | 'advancedPhysics'
+export function isDreamUpgradeFlag(
+  value: unknown,
+): value is DreamUpgradeFlag {
+  return (
+    typeof value === 'string' &&
+    (DREAM_UPGRADE_FLAGS as readonly string[]).includes(value)
+  )
+}
+
+export const DREAM_EDUCATION_IDS = Object.freeze([
+  'engineering',
+  'shipping',
+  'worldTrade',
+  'worldPeace',
+  'mathematics',
+  'advancedPhysics',
+] as const)
+
+export type DreamEducationId = (typeof DREAM_EDUCATION_IDS)[number]
+
+export function isDreamEducationId(
+  value: unknown,
+): value is DreamEducationId {
+  return (
+    typeof value === 'string' &&
+    (DREAM_EDUCATION_IDS as readonly string[]).includes(value)
+  )
+}
 
 export interface DreamEducationState {
   readonly active: boolean

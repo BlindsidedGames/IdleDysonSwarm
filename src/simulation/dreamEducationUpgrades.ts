@@ -1,6 +1,8 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
 import {
-  DREAM_UPGRADE_FLAGS,
+  DREAM_EDUCATION_IDS,
+  isDreamEducationId,
+  isDreamUpgradeFlag,
   type CanonicalGameStateV1,
   type DreamEducationId,
   type DreamUpgradeFlag,
@@ -16,16 +18,6 @@ const SIMULATION_UPGRADE_KIND =
   'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
 const SIMULATION_LAYER = 0
 const MATHEMATICS_SOLAR_GENERATION_MINIMUM = 200n
-
-const DREAM_UPGRADE_FLAG_SET = new Set<string>(DREAM_UPGRADE_FLAGS)
-const DREAM_EDUCATION_IDS = [
-  'engineering',
-  'shipping',
-  'worldTrade',
-  'worldPeace',
-  'mathematics',
-  'advancedPhysics',
-] as const satisfies readonly DreamEducationId[]
 
 export interface SimulationUpgradePrerequisite {
   readonly key: DreamUpgradeFlag
@@ -634,11 +626,5 @@ export function dreamEducationIdFromEffectTarget(
 ): DreamEducationId | null {
   if (!target.endsWith(suffix)) return null
   const id = target.slice(0, -suffix.length)
-  return DREAM_EDUCATION_IDS.includes(id as DreamEducationId)
-    ? (id as DreamEducationId)
-    : null
-}
-
-function isDreamUpgradeFlag(value: string): value is DreamUpgradeFlag {
-  return DREAM_UPGRADE_FLAG_SET.has(value)
+  return isDreamEducationId(id) ? id : null
 }

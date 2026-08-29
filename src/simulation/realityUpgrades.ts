@@ -2,7 +2,7 @@ import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { readUnityBoolean } from '../game-data/runtimeValueGuards'
 import {
-  DREAM_UPGRADE_FLAGS,
+  isDreamUpgradeFlag,
   type CanonicalGameStateV1,
   type DreamUpgradeFlag,
 } from '../game-state/types'
@@ -84,7 +84,6 @@ export interface RealityUpgradePurchaseResult {
 }
 
 const REALITY_UPGRADE_ID_SET = new Set<string>(REALITY_UPGRADE_IDS)
-const DREAM_UPGRADE_FLAG_SET = new Set<string>(DREAM_UPGRADE_FLAGS)
 
 const loadedRealityUpgradeDefinitions =
   loadRealityUpgradeDefinitions()
@@ -540,7 +539,7 @@ function isCanonicalOwnershipKey(
   value: string,
 ): value is CanonicalUpgradeOwnershipKey {
   return (
-    DREAM_UPGRADE_FLAG_SET.has(value) ||
+    isDreamUpgradeFlag(value) ||
     value === 'doubleTimeOwned' ||
     value === 'workerAutoConvert'
   )

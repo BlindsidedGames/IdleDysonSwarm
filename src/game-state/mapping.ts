@@ -12,6 +12,7 @@ import { BUY_MODES, type BuyMode } from '../simulation/transactions'
 import { CONTINUOUS_MAXIMUM, SIMULATION_RESOURCE_MAXIMUM } from '../simulation/numeric'
 import {
   CANONICAL_GAME_MODEL_VERSION,
+  DREAM_EDUCATION_IDS,
   DREAM_UPGRADE_FLAGS,
   isProcessingSource,
   isStoredTimeAccuracyPreset,
@@ -46,15 +47,6 @@ import {
 function recordOrEmpty(value: unknown): SaveRecord {
   return isRecord(value) ? value : {}
 }
-
-const DREAM_EDUCATION_IDS = [
-  'engineering',
-  'shipping',
-  'worldTrade',
-  'worldPeace',
-  'mathematics',
-  'advancedPhysics',
-] as const
 
 const DREAM_TIMER_FIELDS = [
   'hunterTimerProgress',

@@ -27,6 +27,9 @@ import {
   hydrateGameState,
 } from './mapping'
 import {
+  DREAM_EDUCATION_IDS,
+  isDreamEducationId,
+  isDreamUpgradeFlag,
   isProcessingSource,
   isStoredTimeAccuracyPreset,
   PROCESSING_SOURCES,
@@ -40,6 +43,22 @@ function loadFixture(name: string): string {
 }
 
 describe('canonical game-state mapping', () => {
+  test('keeps canonical Dream education and upgrade identities', () => {
+    expect(DREAM_EDUCATION_IDS).toEqual([
+      'engineering',
+      'shipping',
+      'worldTrade',
+      'worldPeace',
+      'mathematics',
+      'advancedPhysics',
+    ])
+    expect(Object.isFrozen(DREAM_EDUCATION_IDS)).toBe(true)
+    expect(DREAM_EDUCATION_IDS.every(isDreamEducationId)).toBe(true)
+    expect(isDreamEducationId('history')).toBe(false)
+    expect(isDreamUpgradeFlag('counterMeteor')).toBe(true)
+    expect(isDreamUpgradeFlag('counterHistory')).toBe(false)
+  })
+
   test('keeps canonical processing source identities', () => {
     expect(PROCESSING_SOURCES).toEqual(['active', 'stored-time'])
     expect(PROCESSING_SOURCES.every(isProcessingSource)).toBe(true)

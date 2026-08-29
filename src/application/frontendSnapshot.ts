@@ -4,14 +4,15 @@ import { deepFreezePlainGraph } from '../core/deepFreezePlainGraph'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
-import type {
-  CanonicalFacilityId,
-  CanonicalGameStateV1,
-  DreamEducationId,
-  DreamUpgradeFlag,
-  DreamState,
-  InfinityCycleHistoryEntry,
-  TimelineState,
+import {
+  DREAM_EDUCATION_IDS,
+  type CanonicalFacilityId,
+  type CanonicalGameStateV1,
+  type DreamEducationId,
+  type DreamUpgradeFlag,
+  type DreamState,
+  type InfinityCycleHistoryEntry,
+  type TimelineState,
 } from '../game-state/types'
 import {
   deriveAvocadoMultiplier,
@@ -177,15 +178,6 @@ const DREAM_SPACE_AGE_PURCHASES = Object.freeze([
   'solar',
   'fusion',
 ] as const satisfies readonly DreamSpaceAgePurchase[])
-
-const DREAM_EDUCATION_IDS = Object.freeze([
-  'engineering',
-  'shipping',
-  'worldTrade',
-  'worldPeace',
-  'mathematics',
-  'advancedPhysics',
-] as const satisfies readonly DreamEducationId[])
 
 export const FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS =
   Object.freeze([
