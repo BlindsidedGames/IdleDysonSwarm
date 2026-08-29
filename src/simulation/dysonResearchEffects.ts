@@ -6,7 +6,10 @@ import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { getGameAsset } from '../game-data/catalog'
-import { RESEARCH_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import {
+  EFFECT_DEFINITION_ASSET_KIND,
+  RESEARCH_DEFINITION_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import type { RuntimeGameAsset } from '../game-data/types'
 import {
   isSecretResearchCoefficientId,
@@ -276,7 +279,7 @@ export function materializeDysonResearchEffects(
         continue
       }
 
-      const effectAsset = lookup('GameData.EffectDefinition', effectId)
+      const effectAsset = lookup(EFFECT_DEFINITION_ASSET_KIND, effectId)
       if (effectAsset === undefined) {
         issues.push({
           code: 'DYSON_RESEARCH_EFFECT_MISSING',
@@ -367,7 +370,7 @@ function parseEffect(
   }
   const expectedPerLevel = spec.panelLifetimePerLevel ?? 0
   if (
-    asset.kind !== 'GameData.EffectDefinition' ||
+    asset.kind !== EFFECT_DEFINITION_ASSET_KIND ||
     asset.id !== spec.effectId ||
     id !== spec.effectId ||
     targetStatId !== spec.targetStatId ||

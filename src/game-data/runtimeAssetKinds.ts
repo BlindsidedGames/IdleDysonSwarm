@@ -1,3 +1,6 @@
+export const EFFECT_DEFINITION_ASSET_KIND =
+  'GameData.EffectDefinition' as const
+
 export const FACILITY_DEFINITION_ASSET_KIND =
   'GameData.FacilityDefinition' as const
 

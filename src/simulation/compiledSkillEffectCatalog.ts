@@ -1,5 +1,8 @@
 import { getGameAsset } from '../game-data/catalog'
-import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import {
+  EFFECT_DEFINITION_ASSET_KIND,
+  SKILL_DEFINITION_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import { readStringArray } from '../game-data/runtimeValueGuards'
 import type {
   RuntimeAssetReference,
@@ -94,7 +97,7 @@ export function compileSkillEffectCatalog(
     for (const effectReference of effectReferences) {
       if (effectReference.id === null) continue
       const effectId = effectReference.id
-      const asset = lookup('GameData.EffectDefinition', effectId)
+      const asset = lookup(EFFECT_DEFINITION_ASSET_KIND, effectId)
       if (asset === undefined) {
         throw new Error(
           `Skill '${skillId}' references missing effect '${effectId}'.`,
