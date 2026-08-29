@@ -34,6 +34,16 @@ const researchStyles = readFileSync(
   ),
   'utf8',
 )
+const progressControlsStyles = readFileSync(
+  join(
+    process.cwd(),
+    'src',
+    'ui',
+    'components',
+    'progressControlsPanel.css',
+  ),
+  'utf8',
+)
 const baseResearchStyles = researchStyles.split('@media (max-width: 720px)')[0]
 
 afterEach(cleanup)
@@ -48,6 +58,25 @@ describe('ResearchSurface', () => {
   test('gives the mobile production summary more usable width', () => {
     expect(researchStyles).toMatch(
       /@media \(max-width: 720px\)[\s\S]*\.research-surface__summary p\s*\{[^}]*padding:\s*0\.25rem 0\.1rem;[^}]*font-size:\s*calc\(0\.88rem \* var\(--game-text-scale\)\);/,
+    )
+  })
+
+  test('top-aligns and maximizes the single Research production line', () => {
+    renderSurface([])
+    expect(document.querySelector('.research-surface__summary-line'))
+      .toHaveClass(
+        'research-surface__summary-line--single-production',
+    )
+    expect(document.querySelector('.research-surface__control-panel'))
+      .toHaveClass('ui-progress-controls-panel--production-summary')
+    expect(progressControlsStyles).toMatch(
+      /\.ui-progress-controls-panel--production-summary\s+\.ui-progress-controls-panel__summary\s*\{[^}]*align-content:\s*start;[^}]*padding-block:\s*0\.42rem;[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\)[^}]*0\.35rem;/s,
+    )
+    expect(progressControlsStyles).toMatch(
+      /\.ui-progress-controls-panel--production-summary\s+\.ui-progress-controls-panel__collapsed\s*\{[^}]*padding-inline-end:\s*var\(--safe-area-right\);/,
+    )
+    expect(researchStyles).toMatch(
+      /\.research-surface__summary-line--single-production\s+\.research-surface__production-line\s*\{[^}]*font-size:\s*var\(--ui-text-page-title\);[^}]*line-height:\s*1\.15;/,
     )
   })
 

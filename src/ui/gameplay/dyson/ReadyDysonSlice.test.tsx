@@ -292,6 +292,10 @@ describe('ReadyDysonSlice', () => {
     expect(
       screen.getByRole('region', { name: 'Info' }),
     ).toHaveTextContent('1.00K Worker Bots producing 0.00 Panels /s')
+    expect(document.querySelector('.dyson-info__summary'))
+      .toHaveClass('dyson-info__summary--single-production')
+    expect(document.querySelector('.dyson-info'))
+      .toHaveClass('ui-progress-controls-panel--production-summary')
     expect(
       screen.queryByText(/Science Bots producing/),
     ).not.toBeInTheDocument()
@@ -2051,8 +2055,15 @@ describe('ReadyDysonSlice', () => {
       resolve(process.cwd(), 'src/ui/gameplay/dyson/dysonControls.css'),
       'utf8',
     )
-    expect(stylesheet).toMatch(
-      /\.dyson-info \.ui-progress-controls-panel__summary\s*\{[^}]*padding-block:\s*0\.42rem;[^}]*padding-inline:\s*0\.7rem 0\.35rem;/,
+    const progressControlsStyles = readFileSync(
+      resolve(process.cwd(), 'src/ui/components/progressControlsPanel.css'),
+      'utf8',
+    )
+    expect(progressControlsStyles).toMatch(
+      /\.ui-progress-controls-panel--production-summary\s+\.ui-progress-controls-panel__summary\s*\{[^}]*align-content:\s*start;[^}]*padding-block:\s*0\.42rem;[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\)[^}]*0\.35rem;/s,
+    )
+    expect(progressControlsStyles).toMatch(
+      /\.ui-progress-controls-panel--production-summary\s+\.ui-progress-controls-panel__collapsed\s*\{[^}]*padding-inline-end:\s*var\(--safe-area-right\);/,
     )
     expect(stylesheet).toMatch(
       /\.dyson-info__summary--multitasking\s*\{[^}]*gap:\s*var\(--ui-control-row-gap\);/,
@@ -2062,6 +2073,26 @@ describe('ReadyDysonSlice', () => {
     )
     expect(stylesheet).toMatch(
       /\.dyson-info__summary--multitasking\s+\.bot-distribution--multitasking\s*\{[^}]*padding:\s*0;[^}]*font-size:\s*calc\(0\.72rem \* var\(--game-text-scale\)\);/,
+    )
+  })
+
+  test('top-aligns and maximizes the pre-Multitasking Bots production line', () => {
+    const stylesheet = readFileSync(
+      resolve(process.cwd(), 'src/ui/gameplay/dyson/dysonControls.css'),
+      'utf8',
+    )
+    const shellStylesheet = readFileSync(
+      resolve(process.cwd(), 'src/ui/gameplay/shell/dysonGameplayShell.css'),
+      'utf8',
+    )
+    expect(stylesheet).toMatch(
+      /\.dyson-info__summary--single-production \.dyson-lower-facts p\s*\{[^}]*padding:\s*0;[^}]*font-size:\s*var\(--ui-text-page-title\);[^}]*line-height:\s*1\.15;/,
+    )
+    expect(shellStylesheet).toMatch(
+      /\.dyson-shell\[data-route-theme="bots"\]\s+\.dyson-shell__lower-regions\s*\{[^}]*gap:\s*0;[^}]*padding-block-start:\s*0;[^}]*padding-inline:\s*0;/,
+    )
+    expect(shellStylesheet).toMatch(
+      /\.dyson-shell\[data-route-theme="bots"\]\s+\.dyson-shell__distribution\s*\{[^}]*padding-inline:\s*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\)\s*max\(var\(--game-card-content-inset\), var\(--safe-area-right\)\);/,
     )
   })
 

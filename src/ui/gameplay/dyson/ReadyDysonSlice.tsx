@@ -2026,7 +2026,7 @@ export function ReadyDysonSlice({
                 className={
                   route === 'bots' && botMultitasking
                     ? 'dyson-info__summary dyson-info__summary--multitasking'
-                    : 'dyson-info__summary'
+                    : 'dyson-info__summary dyson-info__summary--single-production'
                 }
               >
                 <DysonProductionSummary

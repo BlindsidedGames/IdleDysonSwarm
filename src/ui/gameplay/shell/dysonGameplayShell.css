@@ -946,6 +946,20 @@
 }
 
 .dyson-shell[data-route-theme="bots"]
+  .dyson-shell__lower-regions {
+  gap: 0;
+  padding-block-start: 0;
+  padding-inline: 0;
+}
+
+.dyson-shell[data-route-theme="bots"]
+  .dyson-shell__distribution {
+  padding-inline:
+    max(var(--game-card-content-inset), var(--safe-area-left))
+    max(var(--game-card-content-inset), var(--safe-area-right));
+}
+
+.dyson-shell[data-route-theme="bots"]
   .dyson-shell__lower-regions:has(
     .dyson-info__summary--multitasking
   ) {
