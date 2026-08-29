@@ -2,8 +2,8 @@ import { Gunzip } from 'fflate'
 import { decodeOdinBinary, type OdinDecodedDocument } from './odinBinary'
 
 const IDB1_PREFIX = 'IDB1:'
-const GZIP_INPUT_CHUNK_BYTES = 64
-const MAXIMUM_GZIP_CALLBACK_BYTES = 128 * 1024
+export const GZIP_INPUT_CHUNK_BYTES = 64
+export const MAXIMUM_GZIP_CALLBACK_BYTES = 128 * 1024
 
 export interface SaveImportLimits {
   readonly suppliedTextBytes: number

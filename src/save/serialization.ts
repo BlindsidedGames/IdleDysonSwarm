@@ -9,6 +9,8 @@ import {
 import {
   assertSuppliedSaveTextLimit,
   DEFAULT_SAVE_IMPORT_LIMITS,
+  GZIP_INPUT_CHUNK_BYTES,
+  MAXIMUM_GZIP_CALLBACK_BYTES,
   SaveImportLimitError,
   type SaveImportLimits,
 } from './decodeIdb1'
@@ -16,8 +18,6 @@ import { packSettingsFlags } from './settingsFlags'
 
 const WEB_SAVE_FORMAT = 'IDSWEB1'
 const WEB_SAVE_PREFIX = `${WEB_SAVE_FORMAT}:`
-const GZIP_INPUT_CHUNK_BYTES = 64
-const MAXIMUM_GZIP_CALLBACK_BYTES = 128 * 1024
 const MAXIMUM_DECODE_DEPTH = 128
 const MAXIMUM_DECODE_CONTAINERS = 100_000
 const MAXIMUM_DECODE_ENTRIES = 250_000
