@@ -10,13 +10,12 @@ import {
   createSimulationSummary,
   type SimulationPresentationSummary,
 } from '../../simulation/types'
+import { TIME_EPSILON_SECONDS as TIME_EPSILON } from '../../simulation/timeTolerance'
 import {
   STORED_TIME_WORKER_PROTOCOL_VERSION,
   type StoredTimeJobProgress,
   type StoredTimeJobTerminalMessage,
 } from './storedTimeProtocol'
-
-const TIME_EPSILON = 1e-12
 
 export interface StoredTimeSimulationOptions {
   readonly jobId: string

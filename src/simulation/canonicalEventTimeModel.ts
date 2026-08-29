@@ -93,11 +93,11 @@ import {
   type SimulationPresentationSummary,
   type SimulationQueuedInput,
 } from './types'
+import { TIME_EPSILON_SECONDS as TIME_EPSILON } from './timeTolerance'
 
 export const CANONICAL_QUANTUM_LEAP_INPUT = 'quantum-leap'
 export const UNITY_QUANTUM_ACTION_INPUT = 'quantum_action'
 const QUANTUM_LEAP_INFINITY_GATE = 42n
-const TIME_EPSILON = 1e-12
 const OWNED_EVENT_TIME_STATE = Symbol('owned-event-time-state')
 
 /**

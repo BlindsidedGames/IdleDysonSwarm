@@ -6,8 +6,8 @@ import {
   type SimulationAdvanceResult,
   type SimulationWorkMetrics,
 } from './types'
+import { TIME_EPSILON_SECONDS as TIME_EPSILON } from './timeTolerance'
 
-const TIME_EPSILON = 1e-12
 const MAXIMUM_ZERO_TIME_PASSES = 32
 export const DEFAULT_AUTOMATION_INTERVAL_SECONDS = 0.1
 const DEFAULT_INFINITY_MINIMUM_CYCLE_SECONDS = 1 / 60
