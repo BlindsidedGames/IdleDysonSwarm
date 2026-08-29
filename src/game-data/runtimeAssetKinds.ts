@@ -7,6 +7,11 @@ export const FACILITY_DEFINITION_ASSET_KIND =
 export const RESEARCH_DEFINITION_ASSET_KIND =
   'GameData.ResearchDefinition' as const
 
+export const SKILL_DATABASE_ASSET_KIND =
+  'GameData.SkillDatabase' as const
+
+export const SKILL_DATABASE_ASSET_ID = 'SkillDatabase' as const
+
 export const SKILL_DEFINITION_ASSET_KIND =
   'GameData.SkillDefinition' as const
 

@@ -1,6 +1,8 @@
 import { getGameAsset } from '../game-data/catalog'
 import {
   EFFECT_DEFINITION_ASSET_KIND,
+  SKILL_DATABASE_ASSET_ID,
+  SKILL_DATABASE_ASSET_KIND,
   SKILL_DEFINITION_ASSET_KIND,
 } from '../game-data/runtimeAssetKinds'
 import { readStringArray } from '../game-data/runtimeValueGuards'
@@ -65,8 +67,8 @@ export function compileSkillEffectCatalog(
   lookup: SkillEffectAssetLookup,
 ): Readonly<CompiledSkillEffectCatalog> {
   const database = lookup(
-    'GameData.SkillDatabase',
-    'SkillDatabase',
+    SKILL_DATABASE_ASSET_KIND,
+    SKILL_DATABASE_ASSET_ID,
   )
   if (database === undefined) {
     throw new Error('Exported game data is missing SkillDatabase.')

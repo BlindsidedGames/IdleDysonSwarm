@@ -1,6 +1,10 @@
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
-import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import {
+  SKILL_DATABASE_ASSET_ID,
+  SKILL_DATABASE_ASSET_KIND,
+  SKILL_DEFINITION_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
 import {
   readStringArray,
   readUnityBoolean,
@@ -24,8 +28,6 @@ import {
 } from './numeric'
 
 const INT32_MAXIMUM = 2_147_483_647n
-const SKILL_DATABASE_KIND = 'GameData.SkillDatabase'
-const SKILL_DATABASE_ID = 'SkillDatabase'
 
 export interface CanonicalInfinityResetRequest {
   readonly breakInfinity: boolean
@@ -382,7 +384,10 @@ function captureAutoAssignmentRules(
     } {
   if (ids.length === 0) return { ok: true, rules: Object.freeze([]) }
 
-  const database = lookup(SKILL_DATABASE_KIND, SKILL_DATABASE_ID)
+  const database = lookup(
+    SKILL_DATABASE_ASSET_KIND,
+    SKILL_DATABASE_ASSET_ID,
+  )
   if (database === undefined) {
     return {
       ok: false,
@@ -440,8 +445,8 @@ function readSkillDatabaseIds(
     } {
   const references = database.data.skills
   if (
-    database.kind !== SKILL_DATABASE_KIND ||
-    database.id !== SKILL_DATABASE_ID ||
+    database.kind !== SKILL_DATABASE_ASSET_KIND ||
+    database.id !== SKILL_DATABASE_ASSET_ID ||
     !Array.isArray(references)
   ) {
     return invalidSkillDatabase()
