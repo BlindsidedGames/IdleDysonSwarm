@@ -12,11 +12,10 @@ import type {
 } from '../game-state/types'
 import {
   applyDreamMathematicsCompletionParity,
-  dreamEducationIdFromEffectTarget,
+  applyDreamUpgradeEffect,
   findSimulationUpgradeCanonicalGaps,
   SIMULATION_UPGRADE_DEFINITIONS,
   type SimulationUpgradeDefinition,
-  type SimulationUpgradeEffect,
 } from './dreamEducationUpgrades'
 import {
   addContinuous,
@@ -212,7 +211,7 @@ export function applyCanonicalDreamReset(
   for (const definition of definitions.values()) {
     if (!candidate.dream.upgrades[definition.key]) continue
     for (const effect of definition.purchaseEffects) {
-      candidate = applyUpgradeEffect(candidate, effect)
+      candidate = applyDreamUpgradeEffect(candidate, effect, roundedDiscrete)
     }
   }
   if (candidate.dream.upgrades.mathematics3) {
@@ -483,148 +482,6 @@ function education(
     progress: 0,
     researchTime,
     cost,
-  }
-}
-
-function applyUpgradeEffect(
-  state: CanonicalGameStateV1,
-  effect: Readonly<SimulationUpgradeEffect>,
-): CanonicalGameStateV1 {
-  if (effect.effectType === 0 || effect.effectType === 1) {
-    const key = effect.targetKey as DreamUpgradeFlag
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        upgrades: {
-          ...state.dream.upgrades,
-          [key]: effect.boolValue,
-        },
-      },
-    }
-  }
-  if (effect.effectType === 2) {
-    return {
-      ...state,
-      skills: {
-        ...state.skills,
-        points: addDiscrete(
-          state.skills.points,
-          roundedDiscrete(effect.numericValue),
-        ),
-      },
-    }
-  }
-  if (effect.effectType === 3) {
-    const id = dreamEducationIdFromEffectTarget(effect.targetKey, 'Complete')!
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        education: {
-          ...state.dream.education,
-          [id]: {
-            ...state.dream.education[id],
-            complete: effect.boolValue,
-          },
-        },
-      },
-    }
-  }
-  if (effect.effectType === 4) {
-    const id = dreamEducationIdFromEffectTarget(
-      effect.targetKey,
-      'ResearchTime',
-    )
-    if (id !== null) {
-      return {
-        ...state,
-        dream: {
-          ...state.dream,
-          education: {
-            ...state.dream.education,
-            [id]: {
-              ...state.dream.education[id],
-              researchTime: effect.numericValue,
-            },
-          },
-        },
-      }
-    }
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        parameters: {
-          ...state.dream.parameters,
-          rocketsPerSpaceFactory: roundedDiscrete(effect.numericValue),
-        },
-      },
-    }
-  }
-  if (effect.effectType === 5) {
-    const key = effect.targetKey as
-      | 'huntersPerPurchase'
-      | 'gatherersPerPurchase'
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        [key]: roundedDiscrete(effect.numericValue),
-      },
-    }
-  }
-  if (effect.effectType === 6) {
-    const value = roundedDiscrete(effect.numericValue)
-    if (effect.targetKey === 'solarPanelGeneration') {
-      return {
-        ...state,
-        dream: {
-          ...state.dream,
-          parameters: {
-            ...state.dream.parameters,
-            solarPanelGeneration:
-              state.dream.parameters.solarPanelGeneration > value
-                ? state.dream.parameters.solarPanelGeneration
-                : value,
-          },
-        },
-      }
-    }
-    const key = effect.targetKey as 'hunters' | 'gatherers'
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        resources: {
-          ...state.dream.resources,
-          [key]:
-            state.dream.resources[key] > value
-              ? state.dream.resources[key]
-              : value,
-        },
-      },
-    }
-  }
-  if (effect.effectType === 7) {
-    const key = effect.targetKey as
-      | 'huntersPerPurchase'
-      | 'gatherersPerPurchase'
-    const value = roundedDiscrete(effect.numericValue)
-    return {
-      ...state,
-      dream: {
-        ...state.dream,
-        [key]: state.dream[key] > value ? state.dream[key] : value,
-      },
-    }
-  }
-  return {
-    ...state,
-    dream: {
-      ...state.dream,
-      disasterStage: roundedDiscrete(effect.numericValue),
-    },
   }
 }
 

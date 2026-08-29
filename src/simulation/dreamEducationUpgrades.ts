@@ -38,6 +38,8 @@ export interface SimulationUpgradeEffect {
   readonly numericValue: number
 }
 
+export type DreamUpgradeDiscreteConverter = (value: number) => bigint
+
 export interface SimulationUpgradeDefinition {
   readonly key: DreamUpgradeFlag
   readonly cost: number
@@ -137,7 +139,11 @@ export function purchaseSimulationUpgrade(
 
   let candidate = state
   for (const effect of definition.purchaseEffects) {
-    candidate = applyCanonicalUpgradeEffect(candidate, effect)
+    candidate = applyDreamUpgradeEffect(
+      candidate,
+      effect,
+      exactValidatedDreamUpgradeDiscrete,
+    )
   }
   candidate = {
     ...candidate,
@@ -420,9 +426,11 @@ function canApplyCanonicalUpgradeEffect(
   }
 }
 
-function applyCanonicalUpgradeEffect(
+/** Applies one validated authored effect using the caller's discrete conversion contract. */
+export function applyDreamUpgradeEffect(
   state: CanonicalGameStateV1,
-  effect: SimulationUpgradeEffect,
+  effect: Readonly<SimulationUpgradeEffect>,
+  toDiscrete: DreamUpgradeDiscreteConverter,
 ): CanonicalGameStateV1 {
   if (effect.effectType === 0 || effect.effectType === 1) {
     const target = effect.targetKey as DreamUpgradeFlag
@@ -438,7 +446,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 2) {
-    const amount = exactRoundedNonNegativeBigInt(effect.numericValue)!
+    const amount = toDiscrete(effect.numericValue)
     return {
       ...state,
       skills: {
@@ -489,14 +497,13 @@ function applyCanonicalUpgradeEffect(
         ...state.dream,
         parameters: {
           ...state.dream.parameters,
-          rocketsPerSpaceFactory:
-            exactRoundedNonNegativeBigInt(effect.numericValue)!,
+          rocketsPerSpaceFactory: toDiscrete(effect.numericValue),
         },
       },
     }
   }
   if (effect.effectType === 5) {
-    const value = exactRoundedNonNegativeBigInt(effect.numericValue)!
+    const value = toDiscrete(effect.numericValue)
     return {
       ...state,
       dream: {
@@ -506,7 +513,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 6) {
-    const value = exactRoundedNonNegativeBigInt(effect.numericValue)!
+    const value = toDiscrete(effect.numericValue)
     if (effect.targetKey === 'solarPanelGeneration') {
       return {
         ...state,
@@ -538,7 +545,7 @@ function applyCanonicalUpgradeEffect(
     }
   }
   if (effect.effectType === 7) {
-    const value = exactRoundedNonNegativeBigInt(effect.numericValue)!
+    const value = toDiscrete(effect.numericValue)
     const target = effect.targetKey as
       | 'huntersPerPurchase'
       | 'gatherersPerPurchase'
@@ -557,11 +564,13 @@ function applyCanonicalUpgradeEffect(
     ...state,
     dream: {
       ...state.dream,
-      disasterStage: exactRoundedNonNegativeBigInt(
-        effect.numericValue,
-      )!,
+      disasterStage: toDiscrete(effect.numericValue),
     },
   }
+}
+
+function exactValidatedDreamUpgradeDiscrete(value: number): bigint {
+  return exactRoundedNonNegativeBigInt(value)!
 }
 
 /** Applies the canonical state patch shared by every mathematics completion path. */
