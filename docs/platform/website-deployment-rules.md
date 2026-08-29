@@ -4,6 +4,12 @@ This is the operational source of truth for publishing the Web game at
 `https://ids.blindsidedgames.com/play/`. It complements the package and
 service-worker details in `pwa-release-foundation.md`.
 
+The Website beta is currently intentionally paused. Do not restore, replace,
+or publish `/play/` as part of a native or routine source release. Website
+promotion requires explicit product approval that names Website as a release
+target and acknowledges that the public game route will be restored or
+changed.
+
 ## Repository boundary
 
 Website releases always cross two repositories:

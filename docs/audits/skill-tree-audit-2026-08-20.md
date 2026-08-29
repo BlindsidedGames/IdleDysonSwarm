@@ -1,5 +1,10 @@
 # Web skill-tree runtime audit — 2026-08-20
 
+> Historical evidence only. The repair findings in this audit were implemented,
+> and its Unity comparisons are not current gameplay authority. Current
+> TypeScript simulation contracts, generated Web catalogs, and executable tests
+> supersede any historical engine behavior recorded below.
+
 > **Timing supersession:** This audit preserves historical evidence, but every adaptive/representative-group, fixed-100-ms, and 4,096-group processing statement below is retired. It is not an implementation requirement. The current authority is `docs/contracts/game-processing-and-offline-time-contract.md`.
 
 ## Outcome

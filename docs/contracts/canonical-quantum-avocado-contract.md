@@ -7,9 +7,9 @@ rules but must not be their authority.
 ## Quantum upgrades
 
 The canonical catalog covers all 20 `QuantumUpgradeType` values. Seventeen
-definitions come from the exported `QuantumUpgradeDatabase`. Matrioshka
-Brains, Birch Planets and Galactic Brains intentionally use the current Unity
-compatibility constants because they have no database assets.
+definitions come from the generated content catalog. Matrioshka Brains, Birch
+Planets, and Galactic Brains use explicit TypeScript compatibility constants
+until those records move into a Web-owned authored catalog.
 
 Purchases debit available Quantum Points (`pointsEarned - pointsSpent`) only
 after proving the effect can be applied. The observable UI access graph is part
@@ -19,17 +19,24 @@ of the command contract:
   current-session Secrets, capped at 27;
 - Division requires both Bot Multitasking and Double IP, costs
   `2 * 2^purchases`, and stops after 19 purchases;
-- mega-structure unlocks are sequential;
+- mega-structure Quantum upgrades are purchased sequentially;
 - Automation also enables both Infinity automation capabilities;
 - Influence Speed adds four, while Cash and Science add one level each.
+
+Each purchased mega-structure unlock is permanent. It reveals and permits
+manual or automated purchase of that structure after a reset even when the
+preceding facility currently has zero ownership. Historical facility
+prerequisites in the deprecated Unity compatibility capsule do not apply to
+the canonical TypeScript runtime. Manual purchase and automation use the same
+eligibility rule and still charge the selected structure's canonical price.
 
 ## Quantum Leap paths
 
 The visible Leap action is gated by total Infinity Points reaching 42.
 Scheduler/command integration owns that gate.
 
-Without Quantum Entanglement, the Leap replaces both Unity DysonVerse
-containers, grants one Quantum Point, clears the Dyson run, research, skill
+Without Quantum Entanglement, the Leap replaces both legacy-compatible Dyson
+run containers, grants one Quantum Point, clears the Dyson run, Research, Skill
 ownership, Infinity currencies and current/recent Quantum-run statistics, then
 restores permanent Secrets, permanent Automation, mega unlocks and explicitly
 supplied artifact skill points before auto-assignment.
@@ -52,7 +59,7 @@ below-threshold components remain `x1`. Overflow contributes `1 + overflow`
 only once overflow reaches one. Transactions fail before debiting when the
 continuous accumulator cannot increase.
 
-Serialization also mirrors `avocado.unlocked` into Unity's legacy
+Serialization also mirrors `avocado.unlocked` into the legacy
 `prestigePlus.avocatoPurchased` field. `QuantumUpgradeCondition` still reads
 that legacy bit even though `AvocadoData` owns the gameplay state.
 
@@ -61,9 +68,8 @@ threshold, but ModifierSystem, facility statistics and `AvocadoService` all
 use neutral components. The canonical backend follows the gameplay pipelines,
 not that presentation-only discrepancy.
 
-## Integration gate
+## Runtime integration
 
-These pure transitions still require registration in the whole-game command
-router and event scheduler. Integration must prove Leap visibility/gating,
-reset collision ordering, commit/reload behavior, and snapshot publication
-without re-implementing rules in the frontend.
+The whole-game command router and scheduler own Leap visibility, reset
+collisions, commit/reload behavior, and snapshot publication. The frontend does
+not reimplement these rules.

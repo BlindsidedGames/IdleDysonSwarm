@@ -1,22 +1,25 @@
 /**
  * Purpose:
- * - Defines the transport-only authored asset fields required by the browser
- *   canonical runtime.
+ * - Defines the transport-only legacy asset fields still required by the
+ *   browser runtime.
  *
  * Runs:
  * - Imported by runtime-catalog contract tests and future data projections.
  * - It is not imported by presentation or canonical gameplay modules.
  *
  * Ownership:
- * - Owns only which authored fields cross the generated runtime-data boundary.
- * - Delegates every value, formula, prerequisite, condition, ordering rule and
- *   state transition to the Web-owned authored data and canonical runtime.
+ * - Owns only which frozen compatibility fields cross the generated-data
+ *   boundary.
+ * - Transport does not make every field in the deprecated handoff
+ *   authoritative. Generated values remain active only where a current module
+ *   explicitly consumes them. Explicit TypeScript rules and documented
+ *   overrides win when they deliberately differ.
  *
  * Change notes:
  * - Adding a canonical consumer field requires adding that field here and
  *   updating `generated/runtime-catalog.json`.
- * - Removing a field or kind requires retained-field equality, reference
- *   closure, semantic parity and full canonical regression evidence.
+ * - Removing a field or kind requires reference closure, legacy-save
+ *   compatibility, and canonical regression evidence.
  */
 export const RUNTIME_CATALOG_FIELDS_BY_KIND = Object.freeze({
   'GameData.EffectDefinition': Object.freeze([

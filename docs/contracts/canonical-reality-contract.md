@@ -1,9 +1,11 @@
 # Canonical Reality contract
 
 Reality is a deterministic worker and Influence domain over canonical player
-state. Unity components, frame callbacks, artifact animation and presentation
+state. Host components, frame callbacks, artifact animation, and presentation
 events are outside this boundary. Current balance values and upgrade
-definitions are exported Unity content, not frontend constants.
+definitions are canonical TypeScript inputs, not frontend constants. Some
+values still originate in the deprecated compatibility capsule, but that
+provenance does not make the capsule runtime authority.
 
 ## Authored inputs
 
@@ -14,8 +16,8 @@ definitions are exported Unity content, not frontend constants.
 - artifact translation rules and speed-display intervals.
 
 Worker generation speed is the authored base plus the permanent
-Influence-speed bonus. Unity narrows that result to a finite `float` before the
-shared Reality simulation receives it. A canonical implementation must retain
+Influence-speed bonus. The legacy source narrowed that result to a finite
+`float` before simulation received it. Compatibility-sensitive calculations retain
 that narrowing rather than silently substituting unrestricted JavaScript
 double precision.
 
@@ -37,11 +39,12 @@ workers, Influence and capacity to zero, and then applies these exact branches:
   leaves ready workers at zero, and reports both completed workers and the
   smaller amount of Influence actually admitted at the finite maximum.
 
-Unity's manual-mode stall estimate is intentionally approximate: when an
+The compatibility-sensitive manual-mode stall estimate is intentionally
+approximate: when an
 interval overfills the batch it uses
 `seconds - acceptedWorkers / generationPerSecond`. It does not account for
-fractional progress that existed at interval start. This quirk is parity, not a
-formula to improve during the port.
+fractional progress that existed at interval start. Change this established
+formula only through an explicit gameplay decision.
 
 Every generated worker increments Universe Designation with saturating
 arithmetic. Automatic conversion may continue generating and counting workers
@@ -57,8 +60,8 @@ The manual gather command is a single atomic exchange:
 3. add exactly one batch-size amount of Influence;
 4. reject without either debit if Influence cannot increase by the full amount.
 
-The whole-balance debit is another Unity quirk. A repaired normal state contains
-at most 128 ready workers, but a direct command against an oversized imported
+The whole-balance debit is an established compatibility behavior. A repaired
+normal state contains at most 128 ready workers, but a direct command against an oversized imported
 balance consumes all of it and still grants only 128 Influence.
 
 A successful manual gather records a zero-duration `manualInfluence` event.
@@ -127,23 +130,13 @@ Recording that segment inside the isolated Reality module would advance
 `trackedSimulatedSeconds` more than once when the other domains are integrated.
 Only the zero-duration manual-gather event belongs directly to the command.
 
-## Integration gate and canonical gaps
+## Runtime integration
 
-The isolated modules do not yet make Reality part of the whole-game engine.
-Completion still requires:
+The whole-game scheduler routes Reality production metrics into the combined
+statistics segment, queues manual gathering and upgrades at command boundaries,
+and owns ordering against Dream and Infinity resets. Candidates publish only
+through the transactional application and verified persistence lane.
 
-- routing Reality production metrics into the single combined scheduler
-  statistics segment;
-- queuing manual gather and upgrade commands at timestamped input boundaries;
-- passing owned Translation/Speed artifact points into canonical Infinity
-  reset reconstruction;
-- proving coincident Reality production, purchases, Dream reset and Infinity
-  reset ordering through partitioned-time fixtures;
-- publishing candidates only through `TransactionalGameApplication` and
-  save/reload verification.
-
-The canonical state already represents worker progress, ready workers,
-Universe Designation, Influence, auto-convert, all permanent Reality upgrade
-flags, Double Time state and statistics totals. No new durable gameplay field
-is required for this checkpoint. Artifact presentation state remains
-intentionally outside canonical gameplay state.
+Canonical state represents worker progress, ready workers, Universe
+Designation, Influence, auto-convert, permanent Reality upgrades, Double Time,
+and statistics totals. Artifact presentation remains outside gameplay state.

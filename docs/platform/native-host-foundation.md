@@ -8,7 +8,10 @@ depends on retaining the production signing identities.
 ## Release identity
 
 `hosts/native-release.json` is the only hand-edited version source. It pins the
-4.0.0 marketing version and a safe local release-candidate default. Run
+current `4.1.5` marketing version and a safe local release-candidate default.
+Routine TestFlight and internal builds advance only the release candidate/build
+identity; do not change the Apple marketing version until an App Store release
+bump is explicitly approved. Run
 `npm run native:release:sync` (automatically included in `build:native`) to
 generate:
 
@@ -17,8 +20,8 @@ generate:
 - Electron marketing and ten-digit build metadata.
 
 CI overrides the default with `IDS_RELEASE_CANDIDATE_ID=YYYYMMDDNN`. The sync
-script rejects malformed dates, build IDs at or below the public Unity build
-328, and values above Android's version-code limit.
+script rejects malformed dates, build IDs at or below the retained legacy
+native-build floor, and values above Android's version-code limit.
 
 ## Signing boundary
 
