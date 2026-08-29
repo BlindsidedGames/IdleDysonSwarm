@@ -56,6 +56,7 @@ import {
 import type {
   ActiveTimeMonotonicClock,
 } from '../ui/runtime/activeTimeDriver'
+import { COMMUNITY_EXTERNAL_ORIGINS } from '../platform/communityLinks'
 
 type BrowserRuntimeFactory = (
   options: Readonly<BrowserRuntimeFoundationOptions>,
@@ -144,7 +145,7 @@ export function createProductionBrowserComposition(
   const runtime = runtimeFactory({
     createApplication,
     lifecyclePolicy: WEB_LIFECYCLE_POLICY,
-    allowedExternalOrigins: [],
+    allowedExternalOrigins: COMMUNITY_EXTERNAL_ORIGINS,
     databaseName: PRODUCTION_BROWSER_DATABASE_NAME,
     profileId: PRODUCTION_BROWSER_PROFILE_ID,
     saveRepositoryPaths: PRODUCTION_BROWSER_SAVE_PATHS,

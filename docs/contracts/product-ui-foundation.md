@@ -226,6 +226,15 @@ remain in one row without scrolling, clipping, overlap, ellipsis, or removal;
 the user controls how dense that row becomes. Unknown
 stored destination IDs are preserved so later routes can adopt them safely.
 
+Route discovery is also portable canonical save state. A newly revealed,
+unvisited destination uses the square highlight in the compact bottom bar and
+a dot in the drawer; the More button uses a dot only while such a destination
+is hidden from the compact bar. Visiting the destination clears its unvisited
+flag. Fresh saves begin with no known destinations, while older saves that
+predate discovery persistence seed every currently available destination as
+known to avoid presenting established progression as new. A save wipe clears
+the discovery record, and export/import carries it between devices.
+
 Locked systems are hidden until their canonical reveal condition unless Unity
 intentionally previews them. A previewed locked destination explains its
 requirement from snapshot data; the UI does not infer unlock rules.
@@ -585,6 +594,14 @@ The application shell owns one active-time driver:
 - Use one locale-aware formatter family with deterministic notation thresholds.
   Preserve enough significant digits to distinguish costs and rates; never
   display an affordable preview as unaffordable because of rounding.
+- The shared game-number formatter may opt currency and discrete-count call
+  sites into whole-number presentation below 100; at 100 and above they return
+  to the normal three-significant-digit notation. Continuous cash, Bots and
+  Science displays retain decimal presentation, formula/detail values retain
+  significant digits throughout, and the Reality universe designation remains
+  the deliberately unabridged integer exception. Editable Auto Infinity Target
+  text also remains exact and round-trippable; its adjacent read-only summary
+  uses the normal abbreviated currency presentation.
 - Pair abbreviated values with an accessible/full-precision representation on
   focus, hover or details.
 - Use `/s` for rates and explicit units for durations. Durations under one
@@ -607,6 +624,9 @@ The application shell owns one active-time driver:
   automatic same-device Unity migration may adopt a valid legacy boolean once
   when the device has no established preference. See
   [implementation evidence](../research-visibility-implementation-evidence.md).
+- Visible Research cards pin Cash Boost first and Science Boost second, retain
+  canonical relative order for the remaining facility upgrades, and place the
+  Durability Upgrade last.
 - Routine digit changes use the shared tabular-digit presentation without
   fixed-width containers. Decimal separators, signs, units, and suffixes keep
   natural spacing, and genuine magnitude/suffix transitions may change width.

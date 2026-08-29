@@ -6227,6 +6227,40 @@
       "value": "]"
     }
   ],
+  "navigation.infinity-bots-progress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " ǿǿƒ "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Ɓǿǿŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "navigation.infinity-gain": [
     {
       "type": 0,
@@ -6309,8 +6343,12 @@
       "value": "["
     },
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Ɋŭŭȧȧƞŧŭŭḿ, "
+      "value": ", "
     },
     {
       "type": 1,
@@ -6353,8 +6391,12 @@
       "value": "["
     },
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Řḗḗȧȧŀīŧẏ, "
+      "value": ", "
     },
     {
       "type": 1,
@@ -6413,6 +6455,40 @@
     {
       "type": 0,
       "value": "Şīḿŭŭŀȧȧŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " ǿǿƒ "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Īƞƒŀŭŭḗḗƞƈḗḗ ɠȧȧŧħḗḗřḗḗḓ"
     },
     {
       "type": 0,
@@ -12323,6 +12399,20 @@
       "value": "]"
     }
   ],
+  "settings.more-by.app-store-action": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƥƥ Şŧǿǿřḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "settings.more-by.description": [
     {
       "type": 0,
@@ -12330,7 +12420,49 @@
     },
     {
       "type": 0,
-      "value": "Ḓīşƈǿǿṽḗḗř ḿǿǿřḗḗ ɠȧȧḿḗḗş ƒřǿǿḿ ŧħḗḗ ḓḗḗṽḗḗŀǿǿƥḗḗř ǿǿƒ Īḓŀḗḗ Ḓẏşǿǿƞ Şẇȧȧřḿ."
+      "value": "Ḓīşƈǿǿṽḗḗř ḿǿǿřḗḗ ɠȧȧḿḗḗş ƀẏ Ɓŀīƞḓşīḓḗḗḓ Ɠȧȧḿḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.more-by.discord-action": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīşƈǿǿřḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.more-by.discord-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħȧȧřḗḗ ƒḗḗḗḗḓƀȧȧƈķ, ɠḗḗŧ ħḗḗŀƥ, ȧȧƞḓ ḓīşƈŭŭşş şŧřȧȧŧḗḗɠīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.more-by.google-play-action": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠǿǿǿǿɠŀḗḗ Ƥŀȧȧẏ"
     },
     {
       "type": 0,
@@ -12345,6 +12477,20 @@
     {
       "type": 0,
       "value": "Ḿǿǿřḗḗ ƀẏ Ɓŀīƞḓşīḓḗḗḓ Ɠȧȧḿḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.more-by.website-action": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿƒƒīƈīȧȧŀ Ẇḗḗƀşīŧḗḗ"
     },
     {
       "type": 0,
@@ -12512,7 +12658,7 @@
     },
     {
       "type": 0,
-      "value": "Şħǿǿẇ Şŧȧȧŧīşŧīƈş şħǿǿřŧƈŭŭŧ"
+      "value": "Şħǿǿẇ Şŧȧȧŧīşŧīƈş"
     },
     {
       "type": 0,
@@ -12540,7 +12686,7 @@
     },
     {
       "type": 0,
-      "value": "Şħǿǿẇ Şŧǿǿřẏ şħǿǿřŧƈŭŭŧ"
+      "value": "Şħǿǿẇ Şŧǿǿřẏ"
     },
     {
       "type": 0,
@@ -12568,7 +12714,7 @@
     },
     {
       "type": 0,
-      "value": "Şħǿǿẇ Ẇīķī şħǿǿřŧƈŭŭŧ"
+      "value": "Şħǿǿẇ Ẇīķī"
     },
     {
       "type": 0,

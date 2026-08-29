@@ -183,7 +183,9 @@ export function RealitySurface({
           <strong
             className="reality-surface__balance"
             aria-label={intl.formatMessage(messages.strangeMatter, {
-              value: formatGameNumber(locale, strangeMatter),
+              value: formatGameNumber(locale, strangeMatter, {
+                wholeBelowHundred: true,
+              }),
             })}
           >
             <InlineImageSymbol
@@ -191,12 +193,16 @@ export function RealitySurface({
               symbol="strange-matter"
               tint
             />
-            <span>{formatGameNumber(locale, strangeMatter)}</span>
+            <span>{formatGameNumber(locale, strangeMatter, {
+              wholeBelowHundred: true,
+            })}</span>
           </strong>
           <strong
             className="reality-surface__balance"
             aria-label={intl.formatMessage(messages.influence, {
-              value: formatGameNumber(locale, resources.influence),
+              value: formatGameNumber(locale, resources.influence, {
+                wholeBelowHundred: true,
+              }),
             })}
           >
             <InlineImageSymbol
@@ -204,7 +210,9 @@ export function RealitySurface({
               symbol="influence"
               tint
             />
-            <span>{formatGameNumber(locale, resources.influence)}</span>
+            <span>{formatGameNumber(locale, resources.influence, {
+              wholeBelowHundred: true,
+            })}</span>
           </strong>
         </div>
       </header>
@@ -299,8 +307,12 @@ export function RealitySurface({
                   valueText={intl.formatMessage(
                     messages.workersReadyValue,
                     {
-                      current: formatGameNumber(locale, resources.workersReady),
-                      total: formatGameNumber(locale, derived.workerBatchSize),
+                      current: formatGameNumber(locale, resources.workersReady, {
+                        wholeBelowHundred: true,
+                      }),
+                      total: formatGameNumber(locale, derived.workerBatchSize, {
+                        wholeBelowHundred: true,
+                      }),
                     },
                   )}
                 />
@@ -308,8 +320,12 @@ export function RealitySurface({
                   aria-label={intl.formatMessage(
                     messages.workersReadyValue,
                     {
-                      current: formatGameNumber(locale, resources.workersReady),
-                      total: formatGameNumber(locale, derived.workerBatchSize),
+                      current: formatGameNumber(locale, resources.workersReady, {
+                        wholeBelowHundred: true,
+                      }),
+                      total: formatGameNumber(locale, derived.workerBatchSize, {
+                        wholeBelowHundred: true,
+                      }),
                     },
                   )}
                 >
@@ -321,8 +337,12 @@ export function RealitySurface({
                   {intl.formatMessage(
                     messages.workersReadyCompact,
                     {
-                      current: formatGameNumber(locale, resources.workersReady),
-                      total: formatGameNumber(locale, derived.workerBatchSize),
+                      current: formatGameNumber(locale, resources.workersReady, {
+                        wholeBelowHundred: true,
+                      }),
+                      total: formatGameNumber(locale, derived.workerBatchSize, {
+                        wholeBelowHundred: true,
+                      }),
                     },
                   )}
                 </strong>
@@ -701,7 +721,9 @@ function RealityUpgradeCard({
           messages.purchaseAccessible,
           {
             name,
-            value: formatGameNumber(locale, preview.cost),
+            value: formatGameNumber(locale, preview.cost, {
+              wholeBelowHundred: true,
+            }),
           },
         )}
         onClick={() => void purchase()}
@@ -713,7 +735,9 @@ function RealityUpgradeCard({
             symbol="strange-matter"
             tint
           />
-          <span>{formatGameNumber(locale, preview.cost)}</span>
+          <span>{formatGameNumber(locale, preview.cost, {
+            wholeBelowHundred: true,
+          })}</span>
         </strong>
       </Button>
       {pending || failed ? (

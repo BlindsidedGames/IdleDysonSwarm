@@ -3291,6 +3291,32 @@
       "value": "Бесконечность"
     }
   ],
+  "navigation.infinity-bots-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " из "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Ботов"
+    }
+  ],
   "navigation.infinity-gain": [
     {
       "type": 0,
@@ -3337,8 +3363,12 @@
   ],
   "navigation.quantum-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Квант — Очки Бесконечности: "
+      "value": " — Очки Бесконечности: "
     },
     {
       "type": 1,
@@ -3365,8 +3395,12 @@
   ],
   "navigation.reality-secrets-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Реальность — Секреты Вселенной: "
+      "value": " — Секреты Вселенной: "
     },
     {
       "type": 1,
@@ -3401,6 +3435,32 @@
     {
       "type": 0,
       "value": "Симуляции"
+    }
+  ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": " — собрано Влияния: "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " из "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " ед."
     }
   ],
   "navigation.skills": [
@@ -6227,16 +6287,46 @@
       "value": "Язык"
     }
   ],
+  "settings.more-by.app-store-action": [
+    {
+      "type": 0,
+      "value": "App Store"
+    }
+  ],
   "settings.more-by.description": [
     {
       "type": 0,
-      "value": "Откройте для себя другие игры от разработчика Idle Dyson Swarm."
+      "value": "Откройте для себя другие игры Blindsided Games."
+    }
+  ],
+  "settings.more-by.discord-action": [
+    {
+      "type": 0,
+      "value": "Discord"
+    }
+  ],
+  "settings.more-by.discord-description": [
+    {
+      "type": 0,
+      "value": "Делитесь отзывами, получайте помощь и обсуждайте стратегии."
+    }
+  ],
+  "settings.more-by.google-play-action": [
+    {
+      "type": 0,
+      "value": "Google Play"
     }
   ],
   "settings.more-by.title": [
     {
       "type": 0,
       "value": "Другие игры Blindsided Games"
+    }
+  ],
+  "settings.more-by.website-action": [
+    {
+      "type": 0,
+      "value": "Официальный сайт"
     }
   ],
   "settings.navigation.bots": [
@@ -6308,7 +6398,7 @@
   "settings.navigation.statistics": [
     {
       "type": 0,
-      "value": "Показывать ярлык Статистики"
+      "value": "Показывать Статистику"
     }
   ],
   "settings.navigation.store": [
@@ -6320,7 +6410,7 @@
   "settings.navigation.story": [
     {
       "type": 0,
-      "value": "Показывать ярлык Истории"
+      "value": "Показывать Историю"
     }
   ],
   "settings.navigation.title": [
@@ -6332,7 +6422,7 @@
   "settings.navigation.wiki": [
     {
       "type": 0,
-      "value": "Показывать ярлык Вики"
+      "value": "Показывать Вики"
     }
   ],
   "settings.number-notation.description": [

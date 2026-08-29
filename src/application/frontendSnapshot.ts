@@ -109,6 +109,7 @@ import {
 import {
   advanceRealityWorkers,
   gatherRealityInfluence,
+  realityInfluenceGenerationStarted,
   type RealityWorkerAdvanceStatus,
   type RealityWorkerTuning,
 } from '../simulation/realityWorkers'
@@ -156,6 +157,7 @@ export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
   'avocado',
   'time',
   'settings',
+  'navigation',
   'tinker',
 ] as const)
 
@@ -862,16 +864,19 @@ export interface FrontendGameplayVisibility {
     readonly routeUnlocked: boolean
   }
   readonly skills: {
+    readonly routeVisible: boolean
     readonly routeUnlocked: boolean
   }
   readonly infinity: {
+    readonly routeVisible: boolean
     readonly routeUnlocked: boolean
+    readonly unlockProgress: {
+      readonly currentBots: number
+      readonly requiredBots: number
+      readonly fraction: number
+    }
   }
   readonly reality: {
-    /**
-     * Unity reveals the disabled Reality navigation panel after the first
-     * Infinity Point, before the route itself is unlocked.
-     */
     readonly routeVisible: boolean
     /**
      * WorkerService is the Unity authority: one Quantum Point or the complete
@@ -885,8 +890,22 @@ export interface FrontendGameplayVisibility {
     }
   }
   readonly simulations: {
-    /** Simulations appears with Reality and uses the same Unity unlock. */
+    readonly routeVisible: boolean
     readonly routeUnlocked: boolean
+    readonly unlockProgress: {
+      readonly currentInfluence: number
+      readonly requiredInfluence: number
+      readonly fraction: number
+    }
+  }
+  readonly quantum: {
+    readonly routeVisible: boolean
+    readonly routeUnlocked: boolean
+    readonly unlockProgress: {
+      readonly currentInfinityPoints: bigint
+      readonly requiredInfinityPoints: bigint
+      readonly fraction: number
+    }
   }
 }
 
@@ -1191,6 +1210,79 @@ export function selectGameplayVisibility(
     state.quantum.pointsEarned > 0n ||
     state.infinity.secretsOfTheUniverse >=
       QUANTUM_CONSTANTS.maximumSecrets
+  const skillPointEarned =
+    state.skills.points > 0n ||
+    state.infinity.permanentSkillPoints > 0n ||
+    state.dyson.goalStage > 0n ||
+    state.meta.firstInfinityComplete ||
+    Object.values(state.skills.byId).some((skill) => skill.owned)
+  const infinityRequiredBots = ordinaryInfinityBotThreshold(
+    state.quantum.divisionsPurchased,
+  )
+  const infinityUnlocked =
+    state.meta.firstInfinityComplete ||
+    state.infinity.points > 0n ||
+    state.quantum.pointsEarned > 0n ||
+    state.dyson.bots >= infinityRequiredBots
+  const quantumRequiredInfinityPoints =
+    QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
+  const quantumUnlocked =
+    state.infinity.points >= quantumRequiredInfinityPoints ||
+    state.quantum.pointsEarned > 0n
+  const realitySecretsFraction = Math.min(
+    1,
+    divideContinuous(
+      Number(state.infinity.secretsOfTheUniverse),
+      Number(QUANTUM_CONSTANTS.maximumSecrets),
+    ),
+  )
+  const realityUnlockProgress = {
+    currentSecrets: state.infinity.secretsOfTheUniverse,
+    requiredSecrets: QUANTUM_CONSTANTS.maximumSecrets,
+    fraction: realitySecretsFraction,
+  }
+  const realityRouteVisible =
+    realityUnlocked ||
+    state.infinity.secretsOfTheUniverse >= 1n
+  const hasExistingSimulationProgress =
+    state.dream.resetCount > 0n ||
+    state.dream.strangeMatter > 0 ||
+    Object.values(state.dream.upgrades).some(Boolean) ||
+    Object.values(state.dream.education).some(
+      (education) =>
+        education.active ||
+        education.complete ||
+        education.progress > 0,
+    ) ||
+    Object.values(state.dream.purchaseBatches ?? {}).some(
+      (batches) => batches > 0n,
+    ) ||
+    state.dream.resources.hunters > 0n ||
+    state.dream.resources.gatherers > 0n
+  const simulationsRequiredInfluence = 128
+  const simulationsUnlocked =
+    state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence ||
+    hasExistingSimulationProgress
+  const realityVisited = realityInfluenceGenerationStarted(state)
+  const simulationsPendingWorkers = Number(
+    state.reality.workersReady < BigInt(simulationsRequiredInfluence)
+      ? state.reality.workersReady
+      : BigInt(simulationsRequiredInfluence),
+  )
+  const simulationsCurrentInfluence = simulationsUnlocked
+    ? simulationsRequiredInfluence
+    : simulationsPendingWorkers
+  const simulationsProgressFraction = simulationsUnlocked
+    ? 1
+    : Math.min(
+        1,
+        Math.max(
+          0,
+          (simulationsPendingWorkers +
+            state.reality.workerGenerationProgress) /
+            simulationsRequiredInfluence,
+        ),
+      )
 
   return {
     dyson: {
@@ -1215,47 +1307,53 @@ export function selectGameplayVisibility(
         ),
     },
     skills: {
-      routeUnlocked:
-        state.dyson.bots >= 10 ||
-        state.dyson.goalStage > 0n ||
-        state.meta.firstInfinityComplete ||
-        state.skills.points > 0n ||
-        state.infinity.permanentSkillPoints > 0n ||
-        state.infinity.points > 0n ||
-        state.infinity.spentPoints > 0n ||
-        Object.values(state.skills.byId).some(
-          (skill) => skill.owned,
-        ),
+      routeVisible: skillPointEarned,
+      routeUnlocked: skillPointEarned,
     },
     infinity: {
-      routeUnlocked:
-        state.meta.firstInfinityComplete ||
-        state.infinity.points > 0n ||
-        state.quantum.pointsEarned > 0n ||
-        state.dyson.bots >=
-          ordinaryInfinityBotThreshold(
-            state.quantum.divisionsPurchased,
-          ),
-    },
-    reality: {
-      routeVisible:
-        state.infinity.points > 0n ||
-        state.quantum.pointsEarned > 0n,
-      routeUnlocked: realityUnlocked,
+      routeVisible: basicVisible.planets || infinityUnlocked,
+      routeUnlocked: infinityUnlocked,
       unlockProgress: {
-        currentSecrets: state.infinity.secretsOfTheUniverse,
-        requiredSecrets: QUANTUM_CONSTANTS.maximumSecrets,
+        currentBots: state.dyson.bots,
+        requiredBots: infinityRequiredBots,
         fraction: Math.min(
           1,
-          divideContinuous(
-            Number(state.infinity.secretsOfTheUniverse),
-            Number(QUANTUM_CONSTANTS.maximumSecrets),
-          ),
+          divideContinuous(state.dyson.bots, infinityRequiredBots),
         ),
       },
     },
-    simulations: {
+    reality: {
+      routeVisible: realityRouteVisible,
       routeUnlocked: realityUnlocked,
+      unlockProgress: realityUnlockProgress,
+    },
+    simulations: {
+      routeVisible: realityVisited || simulationsUnlocked,
+      routeUnlocked: simulationsUnlocked,
+      unlockProgress: {
+        currentInfluence: simulationsCurrentInfluence,
+        requiredInfluence: simulationsRequiredInfluence,
+        fraction: simulationsProgressFraction,
+      },
+    },
+    quantum: {
+      routeVisible:
+        state.meta.firstInfinityComplete ||
+        state.infinity.points > 0n ||
+        state.infinity.spentPoints > 0n ||
+        state.quantum.pointsEarned > 0n,
+      routeUnlocked: quantumUnlocked,
+      unlockProgress: {
+        currentInfinityPoints: state.infinity.points,
+        requiredInfinityPoints: quantumRequiredInfinityPoints,
+        fraction: Math.min(
+          1,
+          divideContinuous(
+            Number(state.infinity.points),
+            Number(quantumRequiredInfinityPoints),
+          ),
+        ),
+      },
     },
   }
 }

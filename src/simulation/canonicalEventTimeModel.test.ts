@@ -654,6 +654,13 @@ describe('legacy canonical event-time parity adapter', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {
       ...source,
+      meta: {
+        ...source.meta,
+        navigationRouteDiscovery: {
+          knownRoutes: ['reality'],
+          unvisitedRoutes: [],
+        },
+      },
       dyson: {
         ...source.dyson,
         bots: 10,

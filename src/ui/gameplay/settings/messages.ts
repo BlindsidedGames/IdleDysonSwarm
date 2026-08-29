@@ -146,9 +146,33 @@ export const settingsSurfaceMessages = defineMessages({
   },
   moreByDescription: {
     id: 'settings.more-by.description',
-    defaultMessage:
-      'Discover more games from the developer of Idle Dyson Swarm.',
-    description: 'Description for the canonical developer area in Settings.',
+    defaultMessage: 'Discover more games by Blindsided Games.',
+    description: 'Description above the developer marketplace action.',
+  },
+  discordDescription: {
+    id: 'settings.more-by.discord-description',
+    defaultMessage: 'Share feedback, get help, and discuss strategies.',
+    description: 'Description above the official Discord action.',
+  },
+  discordAction: {
+    id: 'settings.more-by.discord-action',
+    defaultMessage: 'Discord',
+    description: 'Primary action opening the official game Discord community.',
+  },
+  appStoreAction: {
+    id: 'settings.more-by.app-store-action',
+    defaultMessage: 'App Store',
+    description: 'Action opening the developer page in the Apple App Store.',
+  },
+  googlePlayAction: {
+    id: 'settings.more-by.google-play-action',
+    defaultMessage: 'Google Play',
+    description: 'Action opening the developer page in Google Play.',
+  },
+  websiteAction: {
+    id: 'settings.more-by.website-action',
+    defaultMessage: 'Official Website',
+    description: 'Action opening the Blindsided Games website.',
   },
   visualizationTitle: {
     id: 'settings.visualization.title',
@@ -224,18 +248,18 @@ export const settingsSurfaceMessages = defineMessages({
   },
   storyShortcut: {
     id: 'settings.navigation.story',
-    defaultMessage: 'Show Story shortcut',
-    description: 'Controls the Story bottom navigation shortcut.',
+    defaultMessage: 'Show Story',
+    description: 'Controls the Story bottom navigation destination.',
   },
   wikiShortcut: {
     id: 'settings.navigation.wiki',
-    defaultMessage: 'Show Wiki shortcut',
-    description: 'Controls the Wiki bottom navigation shortcut.',
+    defaultMessage: 'Show Wiki',
+    description: 'Controls the Wiki bottom navigation destination.',
   },
   statisticsShortcut: {
     id: 'settings.navigation.statistics',
-    defaultMessage: 'Show Statistics shortcut',
-    description: 'Controls the Statistics bottom navigation shortcut.',
+    defaultMessage: 'Show Statistics',
+    description: 'Controls the Statistics bottom navigation destination.',
   },
   offlineTimeShortcut: {
     id: 'settings.navigation.offline-time',

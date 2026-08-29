@@ -66,6 +66,28 @@ Automatic intervals return worker, automatic-Influence and capacity-stall
 metrics to the scheduler; they do not independently advance shared statistics
 time.
 
+## Navigation progression
+
+The locked Reality destination is previewed after the first Secrets of the
+Universe purchase. Its progress bar is exclusively `current Secrets / 27`;
+current or spent Infinity Points must not reveal or fill that bar.
+
+Fresh saves do not begin Reality worker or Influence generation until the
+Reality destination has been visited for the first time. That visit is portable
+route-discovery state, so generation remains active across reload, import,
+offline processing and later resets. Legacy saves without route-discovery data
+retain generation after the canonical Reality unlock to preserve established
+progress.
+
+Simulations remains absent until Reality is first visited. It then appears as a
+locked destination whose progress follows the current manual worker batch out
+of 128, including fractional worker-generation progress while its displayed
+value remains whole. The first successful manual Gather Influence transaction
+records 128 lifetime manual Influence, permanently unlocks Simulations and
+creates the new-route highlight. Automatic Influence cannot advance this
+preview or unlock. Existing saves with persisted
+Simulation progress remain grandfathered into the unlocked state.
+
 ## Reality upgrades
 
 The exported Reality layer contains 18 purchases:

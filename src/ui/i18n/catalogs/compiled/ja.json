@@ -3291,6 +3291,32 @@
       "value": "インフィニティ"
     }
   ],
+  "navigation.infinity-bots-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": "："
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " ボット"
+    }
+  ],
   "navigation.infinity-gain": [
     {
       "type": 0,
@@ -3337,8 +3363,12 @@
   ],
   "navigation.quantum-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "量子："
+      "value": "："
     },
     {
       "type": 1,
@@ -3365,8 +3395,12 @@
   ],
   "navigation.reality-secrets-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "リアリティ："
+      "value": "："
     },
     {
       "type": 1,
@@ -3401,6 +3435,32 @@
     {
       "type": 0,
       "value": "シミュレーション"
+    }
+  ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": "：影響力を"
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": "獲得"
     }
   ],
   "navigation.skills": [
@@ -6227,16 +6287,46 @@
       "value": "言語"
     }
   ],
+  "settings.more-by.app-store-action": [
+    {
+      "type": 0,
+      "value": "App Store"
+    }
+  ],
   "settings.more-by.description": [
     {
       "type": 0,
-      "value": "Idle Dyson Swarmの開発者によるほかのゲームを見つけましょう。"
+      "value": "Blindsided Games のゲームをもっと見る。"
+    }
+  ],
+  "settings.more-by.discord-action": [
+    {
+      "type": 0,
+      "value": "Discord"
+    }
+  ],
+  "settings.more-by.discord-description": [
+    {
+      "type": 0,
+      "value": "フィードバックを共有し、助けを求め、戦略について話し合いましょう。"
+    }
+  ],
+  "settings.more-by.google-play-action": [
+    {
+      "type": 0,
+      "value": "Google Play"
     }
   ],
   "settings.more-by.title": [
     {
       "type": 0,
       "value": "Blindsided Games のその他の作品"
+    }
+  ],
+  "settings.more-by.website-action": [
+    {
+      "type": 0,
+      "value": "公式ウェブサイト"
     }
   ],
   "settings.navigation.bots": [
@@ -6308,7 +6398,7 @@
   "settings.navigation.statistics": [
     {
       "type": 0,
-      "value": "統計ショートカットを表示"
+      "value": "統計を表示"
     }
   ],
   "settings.navigation.store": [
@@ -6320,7 +6410,7 @@
   "settings.navigation.story": [
     {
       "type": 0,
-      "value": "ストーリーのショートカットを表示"
+      "value": "ストーリーを表示"
     }
   ],
   "settings.navigation.title": [
@@ -6332,7 +6422,7 @@
   "settings.navigation.wiki": [
     {
       "type": 0,
-      "value": "Wikiショートカットを表示"
+      "value": "Wikiを表示"
     }
   ],
   "settings.number-notation.description": [

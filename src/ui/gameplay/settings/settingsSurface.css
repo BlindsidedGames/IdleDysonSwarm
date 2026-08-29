@@ -371,6 +371,74 @@
   grid-template-columns: minmax(0, 1fr) auto;
 }
 
+.settings-surface__panel--more {
+  container-name: settings-community-panel;
+  container-type: inline-size;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.settings-surface__community-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0.65rem;
+}
+
+@container settings-community-panel (min-width: 36rem) {
+  .settings-surface__community-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.settings-surface__community-card {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 0.5rem;
+  min-inline-size: 0;
+}
+
+.settings-surface__community-card p {
+  margin: 0;
+  color: #91bf8f;
+  font-size: var(--ui-text-body);
+  line-height: 1.35;
+}
+
+.settings-surface__community-action {
+  display: inline-flex;
+  min-block-size: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
+  background: var(--theme-selected);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+}
+
+.settings-surface__community-action--primary {
+  border-color: #5865f2;
+  background: #5865f2;
+}
+
+.settings-surface__community-action:hover {
+  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+}
+
+.settings-surface__community-action--primary:hover {
+  background: color-mix(in srgb, #5865f2 88%, black);
+}
+
+.settings-surface__community-action:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .settings-surface__panel--navigation {
   grid-template-columns: minmax(0, 1fr);
 }
@@ -772,6 +840,26 @@
 
   .settings-surface__panel--visualization {
     grid-template-columns: 1fr;
+  }
+
+  .settings-surface__community-actions {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .settings-surface__community-card {
+    gap: 0.35rem;
+  }
+
+  .settings-surface__community-card p {
+    font-size: calc(0.72rem * var(--game-text-scale));
+    line-height: 1.2;
+  }
+
+  .settings-surface__community-action {
+    min-block-size: var(--target-minimum);
+    padding: 0.4rem 0.7rem;
+    font-size: calc(0.82rem * var(--game-text-scale));
   }
 
   .settings-surface__panel--navigation {

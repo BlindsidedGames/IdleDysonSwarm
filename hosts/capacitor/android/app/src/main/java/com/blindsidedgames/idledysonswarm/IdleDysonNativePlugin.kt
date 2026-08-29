@@ -12,6 +12,7 @@ import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
 import com.getcapacitor.PluginMethod
 import com.getcapacitor.annotation.CapacitorPlugin
+import com.google.android.play.core.review.ReviewManagerFactory
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
@@ -29,6 +30,7 @@ class IdleDysonNativePlugin : Plugin() {
     private lateinit var entitlementCache: NativeEntitlementCache
     private lateinit var googlePlayStore: GooglePlayStore
     private val automaticUnityEvidenceTokens = mutableMapOf<String, NativeBoundUnityEvidence>()
+    private var reviewRequestInFlight = false
 
     override fun load() {
         entitlementCache = NativeEntitlementCache(context)
@@ -88,6 +90,64 @@ class IdleDysonNativePlugin : Plugin() {
     fun currentLifecycle(call: PluginCall) {
         call.resolve(JSObject().apply { put("phase", lifecyclePhase) })
     }
+
+    @PluginMethod
+    fun requestStoreReview(call: PluginCall) {
+        val preferences = context.getSharedPreferences(
+            REVIEW_PREFERENCES_NAME,
+            android.content.Context.MODE_PRIVATE,
+        )
+        if (preferences.getBoolean(REVIEW_REQUESTED_KEY, false)) {
+            call.resolve(reviewResult(false, "already-requested"))
+            return
+        }
+        val hostActivity = activity
+        if (hostActivity == null) {
+            call.reject("The review flow requires an active Activity.", "review-unavailable")
+            return
+        }
+        if (reviewRequestInFlight) {
+            call.reject("A review request is already in progress.", "review-in-flight")
+            return
+        }
+        reviewRequestInFlight = true
+        hostActivity.runOnUiThread {
+            val manager = ReviewManagerFactory.create(context)
+            manager.requestReviewFlow().addOnCompleteListener { request ->
+                if (!request.isSuccessful) {
+                    reviewRequestInFlight = false
+                    call.reject(
+                        "Google Play could not prepare the review flow.",
+                        "review-unavailable",
+                        request.exception,
+                    )
+                    return@addOnCompleteListener
+                }
+                manager.launchReviewFlow(hostActivity, request.result)
+                    .addOnCompleteListener { launch ->
+                        reviewRequestInFlight = false
+                        if (!launch.isSuccessful) {
+                            call.reject(
+                                "Google Play could not launch the review flow.",
+                                "review-unavailable",
+                                launch.exception,
+                            )
+                            return@addOnCompleteListener
+                        }
+                        preferences.edit()
+                            .putBoolean(REVIEW_REQUESTED_KEY, true)
+                            .apply()
+                        call.resolve(reviewResult(true, "requested"))
+                    }
+            }
+        }
+    }
+
+    private fun reviewResult(requested: Boolean, reason: String) =
+        JSObject().apply {
+            put("requested", requested)
+            put("reason", reason)
+        }
 
     private fun systemInsetsPayload(
         view: View,
@@ -450,6 +510,8 @@ class IdleDysonNativePlugin : Plugin() {
     companion object {
         private const val WEB_SAVE_ROOT = "web-runtime-v1"
         private const val UNITY_SAVE_FILE_NAME = "idle_dyson_swarm_save.txt"
+        private const val REVIEW_PREFERENCES_NAME = "idle_dyson_swarm_review"
+        private const val REVIEW_REQUESTED_KEY = "review_requested_v1"
         private const val MAX_FILE_BYTES = 32 * 1024 * 1024
         private const val MAX_DIAGNOSTIC_BYTES = 64 * 1024
         private val DRIVE_PREFIX = Regex("^[a-zA-Z]:")

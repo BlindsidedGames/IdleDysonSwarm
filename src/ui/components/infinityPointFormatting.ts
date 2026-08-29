@@ -1,12 +1,13 @@
-import { formatWholeGameNumber } from '../i18n/formatters'
+import { formatGameNumber } from '../i18n/formatters'
 import type { EnabledLocale } from '../i18n/localeRegistry'
 
 export function formatInfinityPointAmount(
   locale: EnabledLocale,
   value: number | bigint,
 ): string {
-  return formatWholeGameNumber(
+  return formatGameNumber(
     locale,
-    typeof value === 'number' ? Math.round(value) : value,
+    value,
+    { wholeBelowHundred: true },
   )
 }

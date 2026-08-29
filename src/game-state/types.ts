@@ -1,5 +1,6 @@
 import type { BuyMode } from '../simulation/transactions'
 import type { SkillPresetColorId } from './skillPresetColors'
+import type { NavigationRouteDiscovery } from './navigationPreferences'
 
 export const CANONICAL_GAME_MODEL_VERSION = 1 as const
 
@@ -46,6 +47,8 @@ export interface GameMetaState {
     readonly statistics: boolean
     readonly [destinationId: string]: boolean
   }
+  /** Per-save route discovery state used by new-destination navigation cues. */
+  readonly navigationRouteDiscovery?: NavigationRouteDiscovery
 }
 
 export interface DysonState {

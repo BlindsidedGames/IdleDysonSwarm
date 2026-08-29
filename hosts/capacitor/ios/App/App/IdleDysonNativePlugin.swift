@@ -1,6 +1,7 @@
 import Capacitor
 import CryptoKit
 import Foundation
+import StoreKit
 import UIKit
 
 @objc(IdleDysonNativePlugin)
@@ -23,6 +24,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "readEntitlementOwnership", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "refreshEntitlementOwnership", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "promoteAutomaticUnityPurchaseEvidence", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "requestStoreReview", returnType: CAPPluginReturnPromise),
     ]
 
     private var lifecyclePhase = "active"
@@ -93,6 +95,38 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
 
     @objc public func currentLifecycle(_ call: CAPPluginCall) {
         call.resolve(["phase": lifecyclePhase])
+    }
+
+    @objc public func requestStoreReview(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let defaults = UserDefaults.standard
+            if defaults.bool(forKey: Self.reviewRequestedKey) {
+                call.resolve([
+                    "requested": false,
+                    "reason": "already-requested",
+                ])
+                return
+            }
+            guard let scene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first(where: { $0.activationState == .foregroundActive }) else {
+                call.reject(
+                    "The review flow requires an active window scene.",
+                    "review-unavailable"
+                )
+                return
+            }
+            defaults.set(true, forKey: Self.reviewRequestedKey)
+            if #available(iOS 18.0, *) {
+                AppStore.requestReview(in: scene)
+            } else {
+                SKStoreReviewController.requestReview(in: scene)
+            }
+            call.resolve([
+                "requested": true,
+                "reason": "requested",
+            ])
+        }
     }
 
     @objc public func fileExists(_ call: CAPPluginCall) {
@@ -503,6 +537,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
 
     private static let webSaveRootName = "web-runtime-v1"
     private static let unitySaveFileName = "idle_dyson_swarm_save.txt"
+    private static let reviewRequestedKey = "review_requested_v1"
     private static let maxFileBytes = 32 * 1024 * 1024
     private static let maxDiagnosticBytes = 64 * 1024
     private static let diagnosticFileName = try! NSRegularExpression(

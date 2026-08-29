@@ -3291,6 +3291,32 @@
       "value": "Unendlichkeit"
     }
   ],
+  "navigation.infinity-bots-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
   "navigation.infinity-gain": [
     {
       "type": 0,
@@ -3337,8 +3363,12 @@
   ],
   "navigation.quantum-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Quanten, "
+      "value": ", "
     },
     {
       "type": 1,
@@ -3365,8 +3395,12 @@
   ],
   "navigation.reality-secrets-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Realität, "
+      "value": ", "
     },
     {
       "type": 1,
@@ -3401,6 +3435,32 @@
     {
       "type": 0,
       "value": "Simulationen"
+    }
+  ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Einfluss gesammelt"
     }
   ],
   "navigation.skills": [
@@ -6227,16 +6287,46 @@
       "value": "Sprache"
     }
   ],
+  "settings.more-by.app-store-action": [
+    {
+      "type": 0,
+      "value": "App Store"
+    }
+  ],
   "settings.more-by.description": [
     {
       "type": 0,
-      "value": "Entdecke weitere Spiele vom Entwickler von Idle Dyson Swarm."
+      "value": "Entdecke weitere Spiele von Blindsided Games."
+    }
+  ],
+  "settings.more-by.discord-action": [
+    {
+      "type": 0,
+      "value": "Discord"
+    }
+  ],
+  "settings.more-by.discord-description": [
+    {
+      "type": 0,
+      "value": "Teile Feedback, erhalte Hilfe und diskutiere Strategien."
+    }
+  ],
+  "settings.more-by.google-play-action": [
+    {
+      "type": 0,
+      "value": "Google Play"
     }
   ],
   "settings.more-by.title": [
     {
       "type": 0,
       "value": "Mehr von Blindsided Games"
+    }
+  ],
+  "settings.more-by.website-action": [
+    {
+      "type": 0,
+      "value": "Offizielle Website"
     }
   ],
   "settings.navigation.bots": [

@@ -1858,8 +1858,14 @@ function SkillDetails({
                       <>
                         <ProductionImpactRow
                           label={intl.formatMessage(messages.impactSkillPoints)}
-                          before={String(impact.pointsBefore)}
-                          after={String(impact.pointsAfter)}
+                          before={formatWholeGameNumber(
+                            locale,
+                            impact.pointsBefore,
+                          )}
+                          after={formatWholeGameNumber(
+                            locale,
+                            impact.pointsAfter,
+                          )}
                           afterTone={impact.pointsAfter > impact.pointsBefore
                             ? 'gain'
                             : 'loss'}

@@ -1021,7 +1021,8 @@
   line-height: 1;
 }
 
-.dyson-navigation__item[data-navigation-id="infinity"][data-new="true"]
+.dyson-navigation--drawer
+  .dyson-navigation__item[data-new="true"]
   .dyson-navigation__icon::after,
 .dyson-shell__bottom-menu[data-new="true"]::after {
   position: absolute;
@@ -1213,7 +1214,8 @@
   opacity: 1;
 }
 
-.dyson-navigation__item[data-new="true"]
+.dyson-navigation--bottom
+  .dyson-navigation__item[data-new="true"]
   .dyson-navigation__link:not([aria-current="page"]) {
   border-color: var(--navigation-item-accent, #d3c2ff);
   background: color-mix(

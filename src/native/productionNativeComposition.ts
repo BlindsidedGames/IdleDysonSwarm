@@ -39,6 +39,7 @@ import {
 import type {
   ActiveTimeMonotonicClock,
 } from '../ui/runtime/activeTimeDriver'
+import { COMMUNITY_EXTERNAL_ORIGINS } from '../platform/communityLinks'
 
 type NativeRuntimeFactory = (
   options: Readonly<BrowserRuntimeFoundationOptions>,
@@ -113,7 +114,7 @@ export function createProductionNativeComposition(
       environment.target === 'electron'
         ? WEB_LIFECYCLE_POLICY
         : MOBILE_LIFECYCLE_POLICY,
-    allowedExternalOrigins: [],
+    allowedExternalOrigins: COMMUNITY_EXTERNAL_ORIGINS,
     writerAuthority: new SingleHostSessionWriterAuthority(),
     saveStorage: storage,
     saveRepositoryPaths: NATIVE_WEB_SAVE_PATHS,

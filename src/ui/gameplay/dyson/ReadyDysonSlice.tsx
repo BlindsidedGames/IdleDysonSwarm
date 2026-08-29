@@ -81,6 +81,13 @@ import {
 import { DysonSwarmVisual } from './DysonSwarmVisual'
 import { shouldSettleRapidInfinityVisualization } from './rapidInfinityVisualization'
 import {
+  HIGHLIGHTABLE_ROUTES,
+  isHighlightableRoute,
+  reconcileStoredRouteHighlights,
+  type HighlightableRoute,
+  type StoredRouteHighlights,
+} from './routeHighlights'
+import {
   wikiProgressionFromResources,
   type WikiCategoryId,
 } from '../wiki/wikiProjection'
@@ -89,6 +96,8 @@ import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
 import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
+import { Capacitor } from '@capacitor/core'
+import { blindsidedGamesDestination } from '../../../platform/communityLinks'
 import type { GameAudioService } from '../../../audio'
 
 const FacilityRegion = lazy(async () => {
@@ -155,26 +164,6 @@ export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
 export const QUANTUM_HIDE_MAXED_STORAGE_KEY =
   'idle-dyson-swarm.quantum-hide-maxed.v1'
-export const NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY =
-  'idle-dyson-swarm.new-route-highlights.v1'
-
-const HIGHLIGHTABLE_ROUTES = [
-  'research',
-  'skills',
-  'infinity',
-  'reality',
-  'simulations',
-  'quantum',
-] as const
-
-type HighlightableRoute = (typeof HIGHLIGHTABLE_ROUTES)[number]
-
-interface StoredRouteHighlights {
-  readonly saveKey: string
-  readonly unlocked: readonly HighlightableRoute[]
-  readonly newRoutes: readonly HighlightableRoute[]
-}
-
 const SettingsSurface = lazy(async () => {
   const module = await import('../settings')
   return { default: module.SettingsSurface }
@@ -324,6 +313,7 @@ function UnprobedReadyDysonRuntimeHost({
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       audio={audio}
       storedTime={runtime.storedTime}
+      openExternalUrl={runtime.openExternalUrl}
     />
   )
 }
@@ -421,6 +411,7 @@ export function ProbedReadyDysonRuntimeHost({
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       audio={audio}
       storedTime={runtime.storedTime}
+      openExternalUrl={runtime.openExternalUrl}
     />
   )
 }
@@ -459,6 +450,7 @@ export interface ReadyDysonSliceProps {
   readonly localDeveloperOptionsPurchased?: boolean
   readonly storedTime?: UiRuntimeStoredTimeControls
   readonly audio?: GameAudioService
+  readonly openExternalUrl?: SettingsSurfaceProps['openExternalUrl']
 }
 
 export type ReadyGameRoute =
@@ -580,6 +572,7 @@ export function ReadyDysonSlice({
   localDeveloperOptionsPurchased,
   storedTime,
   audio,
+  openExternalUrl,
 }: ReadyDysonSliceProps) {
   const bottomNavigationTextPreference = useBottomNavigationText()
   const intl = useIntl()
@@ -636,12 +629,6 @@ export function ReadyDysonSlice({
     (releasePlatformServices.hostKind !== 'browser' ||
       releasePlatformServices.storeAvailable === true)
   const gameplay = snapshot.gameplay
-  const quantumVisible =
-    gameplay.resources.infinity.points >= 1n ||
-    gameplay.resources.quantum.pointsEarned >= 1n
-  const quantumUnlocked =
-    gameplay.resources.infinity.points >= 42n ||
-    gameplay.resources.quantum.pointsEarned >= 1n
   const requestedRouteUnavailable =
     (requestedRoute === 'research' &&
       !(gameplay.visibility.research?.routeUnlocked ?? true)) ||
@@ -655,8 +642,11 @@ export function ReadyDysonSlice({
         !gameplay.visibility.reality.routeUnlocked ||
         (requestedRoute === 'simulations' &&
           !gameplay.visibility.simulations.routeUnlocked))) ||
-    (requestedRoute === 'quantum' && !quantumUnlocked) ||
+    (requestedRoute === 'quantum' &&
+      !gameplay.visibility.quantum.routeUnlocked) ||
     (requestedRoute === 'store' && !storeVisible) ||
+    (requestedRoute === 'offline-time' &&
+      gameplay.resources.time.storedTimeCapacitySeconds <= 0) ||
     (requestedRoute === 'avocato' &&
       !gameplay.progression.avocado.unlocked) ||
     (requestedRoute === 'debug' && development === undefined)
@@ -716,23 +706,20 @@ export function ReadyDysonSlice({
     infinity: gameplay.visibility.infinity.routeUnlocked,
     reality: gameplay.visibility.reality.routeUnlocked,
     simulations: gameplay.visibility.simulations.routeUnlocked,
-    quantum: quantumUnlocked,
+    quantum: gameplay.visibility.quantum.routeUnlocked,
   }), [
     gameplay.visibility.infinity.routeUnlocked,
     gameplay.visibility.reality.routeUnlocked,
     gameplay.visibility.research?.routeUnlocked,
     gameplay.visibility.simulations.routeUnlocked,
     gameplay.visibility.skills.routeUnlocked,
-    quantumUnlocked,
+    gameplay.visibility.quantum.routeUnlocked,
   ])
-  const routeDiscoverySaveKey =
-    gameplay.progression.meta?.createdAtLegacyText ?? 'undated-save'
   const { newlyUnlockedRoutes, markVisited } = useNewRouteHighlights(
-    routeDiscoverySaveKey,
+    gameplay.progression.meta?.navigationRouteDiscovery,
     highlightableRouteUnlocks,
     route,
-    gameplay.visibility.infinity.routeUnlocked &&
-      gameplay.progression.meta?.firstInfinityComplete !== true,
+    dispatchPlayer,
   )
   const navigateTo = useCallback((nextRoute: ReadyGameRoute) => {
     markVisited(nextRoute)
@@ -835,21 +822,6 @@ export function ReadyDysonSlice({
     bottomNavigationTextPreference.includeText
   const bottomVisible = (id: BottomNavigationDestinationId) =>
     navigationVisibility[id] ?? DEFAULT_BOTTOM_NAVIGATION_VISIBILITY[id]
-  const availableNavigationItems: BottomNavigationDestinationId[] = [
-    'bots',
-    'research',
-    'skills',
-    'infinity',
-    ...(gameplay.visibility.reality.routeVisible ? ['reality' as const] : []),
-    ...(gameplay.visibility.simulations.routeUnlocked ? ['simulations' as const] : []),
-    ...(quantumVisible ? ['quantum' as const] : []),
-    ...(storeVisible ? ['store' as const] : []),
-    'story',
-    'wiki',
-    'offline-time',
-    'statistics',
-    'settings',
-  ]
   const storedTimeCapacitySeconds = Math.max(
     0,
     gameplay.resources.time.storedTimeCapacitySeconds,
@@ -861,6 +833,34 @@ export function ReadyDysonSlice({
       storedTimeCapacitySeconds,
     ),
   )
+  const availableNavigationItems: BottomNavigationDestinationId[] = [
+    'bots',
+    'research',
+    ...(gameplay.visibility.skills.routeVisible ? ['skills' as const] : []),
+    ...(gameplay.visibility.infinity.routeVisible ? ['infinity' as const] : []),
+    ...(gameplay.visibility.quantum.routeVisible ? ['quantum' as const] : []),
+    ...(gameplay.visibility.reality.routeVisible ? ['reality' as const] : []),
+    ...(gameplay.visibility.simulations.routeVisible
+      ? ['simulations' as const]
+      : []),
+    ...(storeVisible ? ['store' as const] : []),
+    'story',
+    'wiki',
+    ...(storedTimeCapacitySeconds > 0 ? ['offline-time' as const] : []),
+    'statistics',
+    'settings',
+  ]
+  const lateGameUnlockProgress = (
+    destination: string,
+    progress: typeof gameplay.visibility.reality.unlockProgress,
+  ) => ({
+    fraction: progress.fraction,
+    label: intl.formatMessage(messages.realitySecretsProgress, {
+      destination,
+      current: display(progress.currentSecrets),
+      required: display(progress.requiredSecrets),
+    }),
+  })
   const routeHeading = debugActive
     ? messages.debugRoute
     : avocatoActive
@@ -942,45 +942,67 @@ export function ReadyDysonSlice({
                 : { onActivate: () => navigateTo('research') }
               : { disabled: true }),
           },
-          {
-            id: 'skills',
-            label: intl.formatMessage(messages.skillsRoute),
-            ariaLabel: skillsActive ||
-              !gameplay.visibility.skills.routeUnlocked ||
-              gameplay.resources.skills.points <= 0n
-              ? intl.formatMessage(messages.skillsRoute)
-              : `${intl.formatMessage(messages.skillsRoute)}: ${displayWhole(
-                gameplay.resources.skills.points,
-              )}`,
-            iconSrc: navigationAssets.skills,
-            bottom: bottomVisible('skills'),
-            badge: skillsActive ||
-              !gameplay.visibility.skills.routeUnlocked ||
-              gameplay.resources.skills.points <= 0n
-              ? undefined
-              : displayWhole(gameplay.resources.skills.points),
-            newlyUnlocked: newlyUnlockedRoutes.has('skills'),
-            ...(gameplay.visibility.skills.routeUnlocked
-              ? skillsActive
-                ? { current: true as const }
-                : { onActivate: () => navigateTo('skills') }
-              : { disabled: true }),
-          },
-          {
-            id: 'infinity',
-            label: infinityRouteLabel,
-            ariaLabel: newlyUnlockedRoutes.has('infinity')
-              ? intl.formatMessage(messages.infinityRouteNew)
-              : undefined,
-            iconSrc: navigationAssets.infinity,
-            bottom: bottomVisible('infinity'),
-            newlyUnlocked: newlyUnlockedRoutes.has('infinity'),
-            ...(gameplay.visibility.infinity.routeUnlocked
-              ? infinityActive
-                ? { current: true as const }
-                : { onActivate: () => navigateTo('infinity') }
-              : { disabled: true }),
-          },
+          ...(gameplay.visibility.skills.routeVisible
+            ? [{
+                id: 'skills',
+                label: intl.formatMessage(messages.skillsRoute),
+                ariaLabel: skillsActive ||
+                  gameplay.resources.skills.points <= 0n
+                  ? intl.formatMessage(messages.skillsRoute)
+                  : `${intl.formatMessage(messages.skillsRoute)}: ${displayWhole(
+                    gameplay.resources.skills.points,
+                  )}`,
+                iconSrc: navigationAssets.skills,
+                bottom: bottomVisible('skills'),
+                badge: skillsActive ||
+                  gameplay.resources.skills.points <= 0n
+                  ? undefined
+                  : displayWhole(gameplay.resources.skills.points),
+                newlyUnlocked: newlyUnlockedRoutes.has('skills'),
+                ...(skillsActive
+                  ? { current: true as const }
+                  : { onActivate: () => navigateTo('skills') }),
+              }]
+            : []),
+          ...(gameplay.visibility.infinity.routeVisible
+            ? [{
+                id: 'infinity',
+                label: infinityRouteLabel,
+                ariaLabel: newlyUnlockedRoutes.has('infinity')
+                  ? intl.formatMessage(messages.infinityRouteNew)
+                  : undefined,
+                iconSrc: navigationAssets.infinity,
+                bottom: bottomVisible('infinity'),
+                newlyUnlocked: newlyUnlockedRoutes.has('infinity'),
+                ...(gameplay.visibility.infinity.routeUnlocked
+                  ? infinityActive
+                    ? { current: true as const }
+                    : { onActivate: () => navigateTo('infinity') }
+                  : {
+                      disabled: true,
+                      progress: {
+                        fraction:
+                          gameplay.visibility.infinity.unlockProgress.fraction,
+                        label: intl.formatMessage(
+                          messages.infinityBotsProgress,
+                          {
+                            destination: intl.formatMessage(
+                              messages.infinityRoute,
+                            ),
+                            current: display(
+                              gameplay.visibility.infinity.unlockProgress
+                                .currentBots,
+                            ),
+                            required: display(
+                              gameplay.visibility.infinity.unlockProgress
+                                .requiredBots,
+                            ),
+                          },
+                        ),
+                      },
+                    }),
+              }]
+            : []),
           ...(gameplay.visibility.reality.routeVisible
             ? [
                 {
@@ -998,29 +1020,15 @@ export function ReadyDysonSlice({
                         }
                     : {
                         disabled: true,
-                        progress: {
-                          fraction:
-                            gameplay.visibility.reality
-                              .unlockProgress.fraction,
-                          label: intl.formatMessage(
-                            messages.realitySecretsProgress,
-                            {
-                              current: display(
-                                gameplay.visibility.reality
-                                  .unlockProgress.currentSecrets,
-                              ),
-                              required: display(
-                                gameplay.visibility.reality
-                                  .unlockProgress.requiredSecrets,
-                              ),
-                            },
-                          ),
-                        },
+                        progress: lateGameUnlockProgress(
+                          intl.formatMessage(messages.realityRoute),
+                          gameplay.visibility.reality.unlockProgress,
+                        ),
                       }),
                 },
               ]
             : []),
-          ...(gameplay.visibility.simulations.routeUnlocked
+          ...(gameplay.visibility.simulations.routeVisible
             ? [
                 {
                   id: 'simulations',
@@ -1030,16 +1038,41 @@ export function ReadyDysonSlice({
                   iconSrc: navigationAssets.simulations,
                   bottom: bottomVisible('simulations'),
                   newlyUnlocked: newlyUnlockedRoutes.has('simulations'),
-                  ...(simulationsActive
-                    ? { current: true as const }
+                  ...(gameplay.visibility.simulations.routeUnlocked
+                    ? simulationsActive
+                      ? { current: true as const }
+                      : {
+                          onActivate: () =>
+                            navigateTo('simulations'),
+                        }
                     : {
-                        onActivate: () =>
-                          navigateTo('simulations'),
+                        disabled: true,
+                        progress: {
+                          fraction:
+                            gameplay.visibility.simulations.unlockProgress
+                              .fraction,
+                          label: intl.formatMessage(
+                            messages.simulationsInfluenceProgress,
+                            {
+                              destination: intl.formatMessage(
+                                messages.simulationsRoute,
+                              ),
+                              current: displayWhole(
+                                gameplay.visibility.simulations.unlockProgress
+                                  .currentInfluence,
+                              ),
+                              required: displayWhole(
+                                gameplay.visibility.simulations.unlockProgress
+                                  .requiredInfluence,
+                              ),
+                            },
+                          ),
+                        },
                       }),
                 },
               ]
             : []),
-          ...(quantumVisible
+          ...(gameplay.visibility.quantum.routeVisible
             ? [
                 {
                   id: 'quantum',
@@ -1047,7 +1080,7 @@ export function ReadyDysonSlice({
                   iconSrc: navigationAssets.quantum,
                   bottom: bottomVisible('quantum'),
                   newlyUnlocked: newlyUnlockedRoutes.has('quantum'),
-                  ...(quantumUnlocked
+                  ...(gameplay.visibility.quantum.routeUnlocked
                     ? quantumNavigationActive
                       ? { current: true as const }
                       : {
@@ -1057,18 +1090,22 @@ export function ReadyDysonSlice({
                     : {
                         disabled: true,
                         progress: {
-                          fraction: Math.min(
-                            1,
-                            Number(gameplay.resources.infinity.points) /
-                              42,
-                          ),
+                          fraction:
+                            gameplay.visibility.quantum.unlockProgress.fraction,
                           label: intl.formatMessage(
                             messages.quantumProgress,
                             {
-                              current: display(
-                                gameplay.resources.infinity.points,
+                              destination: intl.formatMessage(
+                                messages.quantumRoute,
                               ),
-                              required: display(42),
+                              current: display(
+                                gameplay.visibility.quantum.unlockProgress
+                                  .currentInfinityPoints,
+                              ),
+                              required: display(
+                                gameplay.visibility.quantum.unlockProgress
+                                  .requiredInfinityPoints,
+                              ),
                             },
                           ),
                         },
@@ -1107,27 +1144,29 @@ export function ReadyDysonSlice({
               ? { current: true as const }
               : { onActivate: () => onRouteChange('wiki') }),
           },
-          {
-            id: 'offline-time',
-            label: intl.formatMessage(messages.offlineTimeRoute),
-            ariaLabel: intl.formatMessage(messages.offlineTimeProgress, {
-              stored: formatGameDuration(
-                locale,
-                storedTimeAvailableSeconds,
-              ),
-              capacity: formatGameDuration(
-                locale,
-                storedTimeCapacitySeconds,
-              ),
-            }),
-            iconSrc: navigationAssets.offlineTime,
-            bottom: bottomVisible('offline-time'),
-            ...(offlineTimeActive
-              ? { current: true as const }
-              : {
-                  onActivate: () => onRouteChange('offline-time'),
+          ...(storedTimeCapacitySeconds > 0
+            ? [{
+                id: 'offline-time',
+                label: intl.formatMessage(messages.offlineTimeRoute),
+                ariaLabel: intl.formatMessage(messages.offlineTimeProgress, {
+                  stored: formatGameDuration(
+                    locale,
+                    storedTimeAvailableSeconds,
+                  ),
+                  capacity: formatGameDuration(
+                    locale,
+                    storedTimeCapacitySeconds,
+                  ),
                 }),
-          },
+                iconSrc: navigationAssets.offlineTime,
+                bottom: bottomVisible('offline-time'),
+                ...(offlineTimeActive
+                  ? { current: true as const }
+                  : {
+                      onActivate: () => onRouteChange('offline-time'),
+                    }),
+              }]
+            : []),
           {
             id: 'statistics',
             label: intl.formatMessage(messages.statisticsRoute),
@@ -1238,6 +1277,14 @@ export function ReadyDysonSlice({
                   onBottomNavigationIncludeTextChange={(includeText) => {
                     bottomNavigationTextPreference.setIncludeText(includeText)
                   }}
+                  openExternalUrl={openExternalUrl}
+                  developerDestination={blindsidedGamesDestination(
+                    Capacitor.getPlatform() === 'android'
+                      ? 'android'
+                      : Capacitor.getPlatform() === 'ios'
+                        ? 'ios'
+                        : 'web',
+                  )}
                   />
                 </Suspense>
               ),
@@ -2131,153 +2178,59 @@ function readVisualizationPreference(): boolean {
 }
 
 function useNewRouteHighlights(
-  saveKey: string,
+  stored: StoredRouteHighlights | undefined,
   unlockedByRoute: Readonly<Record<HighlightableRoute, boolean>>,
   currentRoute: ReadyGameRoute,
-  firstInfinityNew = false,
+  dispatchPlayer: (
+    command: CanonicalPlayerCommand,
+  ) => Promise<unknown>,
 ) {
-  const unlockedSignature = HIGHLIGHTABLE_ROUTES
-    .filter((routeId) => unlockedByRoute[routeId])
-    .join('|')
-  const [stored, setStored] = useState<StoredRouteHighlights>(() =>
-    readStoredRouteHighlights(
-      saveKey,
+  const derived = useMemo(() => {
+    const baseline = stored ?? {
+      knownRoutes: HIGHLIGHTABLE_ROUTES.filter((routeId) =>
+        unlockedByRoute[routeId],
+      ),
+      unvisitedRoutes: [],
+    }
+    return reconcileStoredRouteHighlights(
+      baseline,
       unlockedByRoute,
-      firstInfinityNew,
       currentRoute,
-    ),
-  )
+    )
+  }, [currentRoute, stored, unlockedByRoute])
 
   useEffect(() => {
-    setStored((current) => {
-      const baseline = current.saveKey === saveKey
-        ? current
-        : readStoredRouteHighlights(
-            saveKey,
-            unlockedByRoute,
-            firstInfinityNew,
-            currentRoute,
-          )
-      const unlocked = new Set(baseline.unlocked)
-      const newRoutes = new Set(baseline.newRoutes)
-
-      for (const routeId of HIGHLIGHTABLE_ROUTES) {
-        if (!unlockedByRoute[routeId] || unlocked.has(routeId)) continue
-        unlocked.add(routeId)
-        if (routeId !== currentRoute) newRoutes.add(routeId)
-      }
-      if (isHighlightableRoute(currentRoute)) {
-        newRoutes.delete(currentRoute)
-      }
-
-      const next: StoredRouteHighlights = {
-        saveKey,
-        unlocked: HIGHLIGHTABLE_ROUTES.filter((routeId) =>
-          unlocked.has(routeId),
-        ),
-        newRoutes: HIGHLIGHTABLE_ROUTES.filter((routeId) =>
-          newRoutes.has(routeId),
-        ),
-      }
-      if (
-        baseline.saveKey === next.saveKey &&
-        baseline.unlocked.join('|') === next.unlocked.join('|') &&
-        baseline.newRoutes.join('|') === next.newRoutes.join('|')
-      ) {
-        return current
-      }
-      writeStoredRouteHighlights(next)
-      return next
+    if (
+      stored !== undefined &&
+      stored.knownRoutes.join('|') === derived.knownRoutes.join('|') &&
+      stored.unvisitedRoutes.join('|') === derived.unvisitedRoutes.join('|')
+    ) return
+    void dispatchPlayer({
+      kind: 'navigation.set-route-discovery',
+      knownRoutes: derived.knownRoutes,
+      unvisitedRoutes: derived.unvisitedRoutes,
     })
   }, [
-    currentRoute,
-    firstInfinityNew,
-    saveKey,
-    unlockedByRoute,
-    unlockedSignature,
+    derived,
+    dispatchPlayer,
+    stored,
   ])
 
   const markVisited = useCallback((routeId: ReadyGameRoute) => {
     if (!isHighlightableRoute(routeId)) return
-    setStored((current) => {
-      if (!current.newRoutes.includes(routeId)) return current
-      const next = {
-        ...current,
-        newRoutes: current.newRoutes.filter((id) => id !== routeId),
-      }
-      writeStoredRouteHighlights(next)
-      return next
+    if (!derived.unvisitedRoutes.includes(routeId)) return
+    void dispatchPlayer({
+      kind: 'navigation.set-route-discovery',
+      knownRoutes: derived.knownRoutes,
+      unvisitedRoutes: derived.unvisitedRoutes.filter(
+        (id) => id !== routeId,
+      ),
     })
-  }, [])
+  }, [derived, dispatchPlayer])
 
   return {
-    newlyUnlockedRoutes: new Set(stored.newRoutes),
+    newlyUnlockedRoutes: new Set(derived.unvisitedRoutes),
     markVisited,
-  }
-}
-
-function isHighlightableRoute(routeId: ReadyGameRoute): routeId is HighlightableRoute {
-  return HIGHLIGHTABLE_ROUTES.includes(routeId as HighlightableRoute)
-}
-
-function readStoredRouteHighlights(
-  saveKey: string,
-  unlockedByRoute: Readonly<Record<HighlightableRoute, boolean>>,
-  firstInfinityNew: boolean,
-  currentRoute: ReadyGameRoute,
-): StoredRouteHighlights {
-  const initialUnlocked = HIGHLIGHTABLE_ROUTES.filter((routeId) =>
-    unlockedByRoute[routeId],
-  )
-  const initialNewRoutes = initialUnlocked.filter(
-    (routeId) =>
-      routeId === 'infinity' &&
-      firstInfinityNew &&
-      routeId !== currentRoute,
-  )
-  try {
-    if (typeof localStorage === 'undefined') {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
-    }
-    const raw = localStorage.getItem(NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY)
-    if (raw === null) {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
-    }
-    const candidate = JSON.parse(raw) as Partial<StoredRouteHighlights>
-    if (
-      candidate.saveKey !== saveKey ||
-      !Array.isArray(candidate.unlocked) ||
-      !Array.isArray(candidate.newRoutes)
-    ) {
-      return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
-    }
-    const unlocked = candidate.unlocked.filter(isStoredHighlightableRoute)
-    return {
-      saveKey,
-      unlocked,
-      newRoutes: candidate.newRoutes
-        .filter(isStoredHighlightableRoute)
-        .filter((routeId) => unlocked.includes(routeId)),
-    }
-  } catch {
-    return { saveKey, unlocked: initialUnlocked, newRoutes: initialNewRoutes }
-  }
-}
-
-function isStoredHighlightableRoute(value: unknown): value is HighlightableRoute {
-  return typeof value === 'string' &&
-    HIGHLIGHTABLE_ROUTES.includes(value as HighlightableRoute)
-}
-
-function writeStoredRouteHighlights(value: StoredRouteHighlights): void {
-  try {
-    if (typeof localStorage === 'undefined') return
-    localStorage.setItem(
-      NEW_ROUTE_HIGHLIGHTS_STORAGE_KEY,
-      JSON.stringify(value),
-    )
-  } catch {
-    // A failed presentation preference must not block route navigation.
   }
 }
 

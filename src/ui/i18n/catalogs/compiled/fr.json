@@ -3291,6 +3291,32 @@
       "value": "Infinité"
     }
   ],
+  "navigation.infinity-bots-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " sur "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
   "navigation.infinity-gain": [
     {
       "type": 0,
@@ -3337,8 +3363,12 @@
   ],
   "navigation.quantum-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Quantique, "
+      "value": ", "
     },
     {
       "type": 1,
@@ -3365,8 +3395,12 @@
   ],
   "navigation.reality-secrets-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Réalité, "
+      "value": ", "
     },
     {
       "type": 1,
@@ -3401,6 +3435,32 @@
     {
       "type": 0,
       "value": "Simulations"
+    }
+  ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " sur "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Influence collectée"
     }
   ],
   "navigation.skills": [
@@ -6227,16 +6287,46 @@
       "value": "Langue"
     }
   ],
+  "settings.more-by.app-store-action": [
+    {
+      "type": 0,
+      "value": "App Store"
+    }
+  ],
   "settings.more-by.description": [
     {
       "type": 0,
-      "value": "Découvrez d’autres jeux du développeur d’Idle Dyson Swarm."
+      "value": "Découvrez plus de jeux de Blindsided Games."
+    }
+  ],
+  "settings.more-by.discord-action": [
+    {
+      "type": 0,
+      "value": "Discord"
+    }
+  ],
+  "settings.more-by.discord-description": [
+    {
+      "type": 0,
+      "value": "Partagez vos commentaires, obtenez de l’aide et discutez de stratégies."
+    }
+  ],
+  "settings.more-by.google-play-action": [
+    {
+      "type": 0,
+      "value": "Google Play"
     }
   ],
   "settings.more-by.title": [
     {
       "type": 0,
       "value": "Autres jeux de Blindsided Games"
+    }
+  ],
+  "settings.more-by.website-action": [
+    {
+      "type": 0,
+      "value": "Site officiel"
     }
   ],
   "settings.navigation.bots": [
@@ -6308,7 +6398,7 @@
   "settings.navigation.statistics": [
     {
       "type": 0,
-      "value": "Afficher le raccourci Statistiques"
+      "value": "Afficher Statistiques"
     }
   ],
   "settings.navigation.store": [
@@ -6320,7 +6410,7 @@
   "settings.navigation.story": [
     {
       "type": 0,
-      "value": "Afficher le raccourci Histoire"
+      "value": "Afficher Histoire"
     }
   ],
   "settings.navigation.title": [
@@ -6332,7 +6422,7 @@
   "settings.navigation.wiki": [
     {
       "type": 0,
-      "value": "Afficher le raccourci Wiki"
+      "value": "Afficher Wiki"
     }
   ],
   "settings.number-notation.description": [

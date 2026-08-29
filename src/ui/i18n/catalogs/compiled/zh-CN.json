@@ -3291,6 +3291,32 @@
       "value": "无限"
     }
   ],
+  "navigation.infinity-bots-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": "，"
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " 个机器人"
+    }
+  ],
   "navigation.infinity-gain": [
     {
       "type": 0,
@@ -3337,8 +3363,12 @@
   ],
   "navigation.quantum-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "量子，"
+      "value": "，"
     },
     {
       "type": 1,
@@ -3365,8 +3395,12 @@
   ],
   "navigation.reality-secrets-progress": [
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "现实，"
+      "value": "，"
     },
     {
       "type": 1,
@@ -3401,6 +3435,32 @@
     {
       "type": 0,
       "value": "模拟"
+    }
+  ],
+  "navigation.simulations-influence-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": "，已收集 "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " 影响力"
     }
   ],
   "navigation.skills": [
@@ -6227,16 +6287,46 @@
       "value": "语言"
     }
   ],
+  "settings.more-by.app-store-action": [
+    {
+      "type": 0,
+      "value": "App Store"
+    }
+  ],
   "settings.more-by.description": [
     {
       "type": 0,
-      "value": "探索 Idle Dyson Swarm 开发者的更多游戏。"
+      "value": "探索 Blindsided Games 的更多游戏。"
+    }
+  ],
+  "settings.more-by.discord-action": [
+    {
+      "type": 0,
+      "value": "Discord"
+    }
+  ],
+  "settings.more-by.discord-description": [
+    {
+      "type": 0,
+      "value": "分享反馈、获取帮助并讨论策略。"
+    }
+  ],
+  "settings.more-by.google-play-action": [
+    {
+      "type": 0,
+      "value": "Google Play"
     }
   ],
   "settings.more-by.title": [
     {
       "type": 0,
       "value": "Blindsided Games 的更多作品"
+    }
+  ],
+  "settings.more-by.website-action": [
+    {
+      "type": 0,
+      "value": "官方网站"
     }
   ],
   "settings.navigation.bots": [
@@ -6308,7 +6398,7 @@
   "settings.navigation.statistics": [
     {
       "type": 0,
-      "value": "显示统计快捷方式"
+      "value": "显示统计"
     }
   ],
   "settings.navigation.store": [
@@ -6320,7 +6410,7 @@
   "settings.navigation.story": [
     {
       "type": 0,
-      "value": "显示故事快捷方式"
+      "value": "显示故事"
     }
   ],
   "settings.navigation.title": [
@@ -6332,7 +6422,7 @@
   "settings.navigation.wiki": [
     {
       "type": 0,
-      "value": "显示百科快捷方式"
+      "value": "显示百科"
     }
   ],
   "settings.number-notation.description": [

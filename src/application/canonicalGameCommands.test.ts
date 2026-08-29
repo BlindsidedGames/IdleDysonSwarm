@@ -221,6 +221,11 @@ const COMMAND_EXAMPLES = [
     item: 'story',
     visible: true,
   },
+  {
+    kind: 'navigation.set-route-discovery',
+    knownRoutes: ['research'],
+    unvisitedRoutes: ['research'],
+  },
 ] as const satisfies readonly CanonicalGameCommand[]
 
 type MissingCommandKind = Exclude<
@@ -231,6 +236,29 @@ const ALL_COMMAND_KINDS_COVERED:
   [MissingCommandKind] extends [never] ? true : never = true
 
 describe('canonical game command router', () => {
+  test('persists known and unvisited navigation routes idempotently', () => {
+    const original = state()
+    const changed = routeCanonicalGameCommand(original, {
+      kind: 'navigation.set-route-discovery',
+      knownRoutes: ['research', 'skills'],
+      unvisitedRoutes: ['research'],
+    })
+
+    expect(changed.accepted).toBe(true)
+    expect(changed.changed).toBe(true)
+    expect(changed.state.meta.navigationRouteDiscovery).toEqual({
+      knownRoutes: ['research', 'skills'],
+      unvisitedRoutes: ['research'],
+    })
+
+    const unchanged = routeCanonicalGameCommand(changed.state, {
+      kind: 'navigation.set-route-discovery',
+      knownRoutes: ['research', 'skills'],
+      unvisitedRoutes: ['research'],
+    })
+    expect(unchanged.changed).toBe(false)
+  })
+
   test('updates a persisted navigation shortcut preference idempotently', () => {
     const original = state()
     const current =

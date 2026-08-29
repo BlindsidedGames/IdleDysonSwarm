@@ -90,9 +90,9 @@ export const readyDysonMessages = defineMessages({
   },
   quantumProgress: {
     id: 'navigation.quantum-progress',
-    defaultMessage: 'Quantum, {current} of {required} Infinity Points',
+    defaultMessage: '{destination}, {current} of {required} Infinity Points',
     description:
-      'Accessible unlock progress for the visible but locked Quantum destination.',
+      'Accessible Infinity Point unlock progress for a visible but locked destination.',
   },
   avocatoRoute: {
     id: 'navigation.avocato',
@@ -112,9 +112,21 @@ export const readyDysonMessages = defineMessages({
   realitySecretsProgress: {
     id: 'navigation.reality-secrets-progress',
     defaultMessage:
-      'Reality, {current} of {required} Secrets of the Universe',
+      '{destination}, {current} of {required} Secrets of the Universe',
     description:
-      'Accessible unlock progress for the visible but locked Reality destination.',
+      'Accessible Secret unlock progress for a visible but locked destination.',
+  },
+  infinityBotsProgress: {
+    id: 'navigation.infinity-bots-progress',
+    defaultMessage: '{destination}, {current} of {required} Bots',
+    description:
+      'Accessible Bot unlock progress for the visible but locked Infinity destination.',
+  },
+  simulationsInfluenceProgress: {
+    id: 'navigation.simulations-influence-progress',
+    defaultMessage: '{destination}, {current} of {required} Influence gathered',
+    description:
+      'Accessible manual Influence unlock progress for the visible but locked Simulations destination.',
   },
   infinityRouteGain: {
     id: 'navigation.infinity-gain',

@@ -1,5 +1,10 @@
 export const MAXIMUM_INFINITY_TARGET = 2_147_483_647n
 
+/** Editable Auto Infinity targets must round-trip without display abbreviation. */
+export function formatAutoInfinityTargetInput(value: bigint): string {
+  return value.toString()
+}
+
 export type InfinityTargetParseResult =
   | { readonly ok: true; readonly value: bigint }
   | {

@@ -44,6 +44,7 @@ import type {
 } from '../../runtime'
 import { useResearchVisibility } from '../../research-visibility'
 import { researchMessages as messages } from './messages'
+import { orderResearchCardsForPresentation } from './researchCardOrdering'
 import {
   researchDescriptionMessage,
   researchNameMessage,
@@ -150,8 +151,10 @@ export function ResearchSurface({
   const emptyState = useRef<HTMLParagraphElement>(null)
   const focusedResearchId = useRef<string | null>(null)
   const canonicalVisibleCards = cards.filter((card) => card.visible)
-  const visibleCards = canonicalVisibleCards.filter(
-    (card) => !hideCompleted || !card.maxed,
+  const visibleCards = orderResearchCardsForPresentation(
+    canonicalVisibleCards.filter(
+      (card) => !hideCompleted || !card.maxed,
+    ),
   )
   const previousVisibleIds = useRef(
     visibleCards.map((card) => card.researchId),

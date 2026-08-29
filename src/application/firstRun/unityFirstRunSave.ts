@@ -1,5 +1,6 @@
 import { prepareIdb1Save, type PreparedSave } from '../../save/prepare'
 import { CURRENT_SAVE_SCHEMA } from '../../save/migrate'
+import { DEFAULT_BOTTOM_NAVIGATION_VISIBILITY } from '../../game-state/navigationPreferences'
 import firstRunSaveText from './generated/first-run-schema-12.idb1.txt?raw'
 import provenance from './generated/first-run-schema-12.provenance.json'
 
@@ -37,6 +38,7 @@ export const unityFirstRunProvenance: UnityFirstRunProvenance = provenance
  */
 export const webFirstRunGameplayOverridePaths = Object.freeze([
   '$.infinityAutomaticReset',
+  '$.bottomNavigationPreferences',
 ] as const)
 
 /**
@@ -51,6 +53,14 @@ export function createUnityFirstRunPreparedSave(
   const candidate = deterministic.copyValidatedState()
   candidate.dateStarted = startedAtUtc
   candidate.infinityAutomaticReset = false
+  candidate.bottomNavigationPreferences = {
+    version: 1,
+    visibility: { ...DEFAULT_BOTTOM_NAVIGATION_VISIBILITY },
+    routeDiscovery: {
+      knownRoutes: [],
+      unvisitedRoutes: [],
+    },
+  }
   return deterministic.withValidatedState(candidate)
 }
 
