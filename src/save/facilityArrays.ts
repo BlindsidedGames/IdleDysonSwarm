@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { type SaveRecord } from './graph'
 
 export const facilityArrayNames = [
@@ -34,7 +35,5 @@ export function normalizeFacilityArrays(infinity: SaveRecord): void {
 }
 
 function finiteNonNegative(value: unknown): number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
-    ? value
-    : 0
+  return isFiniteNonNegativeNumber(value) ? value : 0
 }

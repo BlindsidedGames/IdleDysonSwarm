@@ -1,4 +1,5 @@
 import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { isRecord, requireRecord, type SaveRecord } from '../save/graph'
 import { PreparedSave } from '../save/prepare'
 import {
@@ -1362,7 +1363,7 @@ function toFiniteNonNegativeNumber(
   fallback = 0,
 ): number {
   if (value === undefined || value === null) return fallback
-  if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+  if (isFiniteNonNegativeNumber(value)) {
     return value
   }
   throw new Error(`Expected a finite non-negative number, received ${String(value)}.`)

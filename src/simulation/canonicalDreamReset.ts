@@ -1,3 +1,6 @@
+import {
+  isFiniteNonNegativeNumber as isFiniteNonNegative,
+} from '../core/finiteNonNegativeNumber'
 import type {
   CanonicalGameStateV1,
   DreamEducationId,
@@ -859,10 +862,6 @@ function isSimulationResource(value: unknown): value is bigint {
     value >= 0n &&
     value <= BigInt(CONTINUOUS_MAXIMUM)
   )
-}
-
-function isFiniteNonNegative(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
 }
 
 function notApplied(

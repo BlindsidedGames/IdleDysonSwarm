@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { requireRecord } from '../save/graph'
 import type { PreparedSave } from '../save/prepare'
 
@@ -58,7 +59,7 @@ function requireFiniteNonNegative(
   value: unknown,
   field: keyof DysonCompatibilityTuning,
 ): number {
-  if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+  if (isFiniteNonNegativeNumber(value)) {
     return value
   }
   throw new Error(

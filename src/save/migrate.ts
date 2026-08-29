@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import {
   bitsetToSkillIds,
   dependencySafeSkillOrder,
@@ -577,7 +578,5 @@ function stringArray(value: unknown): string[] {
 
 function toNonNegativeNumber(value: unknown): number {
   if (typeof value === 'bigint') return Number(value < 0n ? 0n : value)
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
-    ? value
-    : 0
+  return isFiniteNonNegativeNumber(value) ? value : 0
 }

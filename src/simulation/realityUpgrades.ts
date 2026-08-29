@@ -1,3 +1,6 @@
+import {
+  isFiniteNonNegativeNumber as isSimulationResource,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import {
   DREAM_UPGRADE_FLAGS,
@@ -528,10 +531,6 @@ function hasValidPurchaseState(
     ) ||
       isDiscrete(state.skills.points))
   )
-}
-
-function isSimulationResource(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
 }
 
 function isDiscrete(value: unknown): value is bigint {

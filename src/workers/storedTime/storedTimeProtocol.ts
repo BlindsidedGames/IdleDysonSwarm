@@ -1,3 +1,6 @@
+import {
+  isFiniteNonNegativeNumber as isFiniteNonNegative,
+} from '../../core/finiteNonNegativeNumber'
 import type { DysonPresentationTuning } from '../../simulation/canonicalDysonDerivation'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 
@@ -152,10 +155,6 @@ function isStoredTimeJobProgress(value: unknown): value is StoredTimeJobProgress
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object'
-}
-
-function isFiniteNonNegative(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
 }
 
 function optionalFiniteNonNegative(value: unknown): boolean {

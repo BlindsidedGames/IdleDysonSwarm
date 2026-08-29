@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -402,7 +403,7 @@ function validateTuning(
   )
   for (const field of fields) {
     const value = tuning[field]
-    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+    if (isFiniteNonNegativeNumber(value)) {
       continue
     }
     issues.push({
