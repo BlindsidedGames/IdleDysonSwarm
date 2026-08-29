@@ -6227,6 +6227,40 @@
       "value": "‬"
     }
   ],
+  "navigation.infinity-bots-progress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " oɟ "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "navigation.infinity-gain": [
     {
       "type": 0,
@@ -6309,8 +6343,12 @@
       "value": "‮"
     },
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "Ònɐuʇnɯ, "
+      "value": ", "
     },
     {
       "type": 1,
@@ -6353,8 +6391,12 @@
       "value": "‮"
     },
     {
+      "type": 1,
+      "value": "destination"
+    },
+    {
       "type": 0,
-      "value": "ᴚǝɐʅıʇʎ, "
+      "value": ", "
     },
     {
       "type": 1,
@@ -12323,6 +12365,20 @@
       "value": "‬"
     }
   ],
+  "settings.more-by.app-store-action": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀dd Sʇoɹǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.more-by.description": [
     {
       "type": 0,
@@ -12330,7 +12386,49 @@
     },
     {
       "type": 0,
-      "value": "ᗡısɔoʌǝɹ ɯoɹǝ ƃɐɯǝs ɟɹoɯ ʇɥǝ pǝʌǝʅodǝɹ oɟ Ipʅǝ ᗡʎsou Sʍɐɹɯ."
+      "value": "ᗡısɔoʌǝɹ ɯoɹǝ ƃɐɯǝs qʎ Ԑʅıupsıpǝp ⅁ɐɯǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.more-by.discord-action": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısɔoɹp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.more-by.discord-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥɐɹǝ ɟǝǝpqɐɔʞ, ƃǝʇ ɥǝʅd, ɐup pısɔnss sʇɹɐʇǝƃıǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.more-by.google-play-action": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ooƃʅǝ Ԁʅɐʎ"
     },
     {
       "type": 0,
@@ -12345,6 +12443,20 @@
     {
       "type": 0,
       "value": "Woɹǝ qʎ Ԑʅıupsıpǝp ⅁ɐɯǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.more-by.website-action": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɟɟıɔıɐʅ Mǝqsıʇǝ"
     },
     {
       "type": 0,
@@ -12512,7 +12624,7 @@
     },
     {
       "type": 0,
-      "value": "Sɥoʍ Sʇɐʇısʇıɔs sɥoɹʇɔnʇ"
+      "value": "Sɥoʍ Sʇɐʇısʇıɔs"
     },
     {
       "type": 0,
@@ -12540,7 +12652,7 @@
     },
     {
       "type": 0,
-      "value": "Sɥoʍ Sʇoɹʎ sɥoɹʇɔnʇ"
+      "value": "Sɥoʍ Sʇoɹʎ"
     },
     {
       "type": 0,
@@ -12568,7 +12680,7 @@
     },
     {
       "type": 0,
-      "value": "Sɥoʍ Mıʞı sɥoɹʇɔnʇ"
+      "value": "Sɥoʍ Mıʞı"
     },
     {
       "type": 0,

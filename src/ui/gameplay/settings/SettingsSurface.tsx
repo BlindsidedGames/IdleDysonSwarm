@@ -42,6 +42,11 @@ import {
   BOTTOM_NAVIGATION_DESTINATION_IDS,
   DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
 } from '../../../game-state/navigationPreferences'
+import {
+  IDLE_DYSON_SWARM_DISCORD_URL,
+  type BlindsidedGamesDestination,
+} from '../../../platform/communityLinks'
+import { DiscordIcon } from '../../components/DiscordIcon'
 
 export interface SettingsSurfaceProps {
   readonly resetSave: () => Promise<UiRuntimeImportResult>
@@ -83,6 +88,8 @@ export interface SettingsSurfaceProps {
   readonly onProcessingIntervalChange?: (
     milliseconds: number,
   ) => void | Promise<UiRuntimePlayerCommandResult | void>
+  readonly openExternalUrl?: (url: string) => Promise<void>
+  readonly developerDestination?: BlindsidedGamesDestination
 }
 
 const NAVIGATION_SHORTCUTS = [
@@ -150,6 +157,8 @@ export function SettingsSurface({
   processingIntervalMilliseconds = 33,
   processingIntervalAvailable = true,
   onProcessingIntervalChange = () => undefined,
+  openExternalUrl = async () => undefined,
+  developerDestination,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
   const language = useLocalePreference()
@@ -685,7 +694,41 @@ export function SettingsSurface({
               <section className="settings-surface__panel settings-surface__panel--more">
                 <div className="settings-surface__copy">
                   <h2>{intl.formatMessage(messages.moreByTitle)}</h2>
-                  <p>{intl.formatMessage(messages.moreByDescription)}</p>
+                </div>
+                <div className="settings-surface__community-actions">
+                  <div className="settings-surface__community-card">
+                    <p>{intl.formatMessage(messages.discordDescription)}</p>
+                    <button
+                      type="button"
+                      className="settings-surface__community-action settings-surface__community-action--primary"
+                      onClick={() => {
+                        void openExternalUrl(IDLE_DYSON_SWARM_DISCORD_URL)
+                      }}
+                    >
+                      <DiscordIcon />
+                      <span>{intl.formatMessage(messages.discordAction)}</span>
+                    </button>
+                  </div>
+                  {developerDestination !== undefined ? (
+                    <div className="settings-surface__community-card">
+                      <p>{intl.formatMessage(messages.moreByDescription)}</p>
+                      <button
+                        type="button"
+                        className="settings-surface__community-action"
+                        onClick={() => {
+                          void openExternalUrl(developerDestination.url)
+                        }}
+                      >
+                        {intl.formatMessage(
+                          developerDestination.kind === 'app-store'
+                            ? messages.appStoreAction
+                            : developerDestination.kind === 'google-play'
+                              ? messages.googlePlayAction
+                              : messages.websiteAction,
+                        )}
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
               </section>
             </div>

@@ -81,6 +81,12 @@ export interface NativeHostBridgeApi {
   readonly promoteAutomaticUnityPurchaseEvidence?: (
     evidence: Readonly<AutomaticUnityPurchaseEvidence>,
   ) => Promise<void>
+  readonly requestStoreReview?: () => Promise<NativeReviewRequestResult>
+}
+
+export interface NativeReviewRequestResult {
+  readonly requested: boolean
+  readonly reason: 'requested' | 'already-requested'
 }
 
 declare global {
@@ -131,6 +137,7 @@ export interface CapacitorNativeHostPlugin {
   promoteAutomaticUnityPurchaseEvidence(
     evidence: Readonly<AutomaticUnityPurchaseEvidence>,
   ): Promise<{ promoted: boolean }>
+  requestStoreReview(): Promise<NativeReviewRequestResult>
   systemInsets(): Promise<NativeSystemInsets>
   addListener(
     eventName: 'lifecycleChanged',
@@ -509,6 +516,10 @@ export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
     evidence: Readonly<AutomaticUnityPurchaseEvidence>,
   ): Promise<void> {
     await this.plugin.promoteAutomaticUnityPurchaseEvidence(evidence)
+  }
+
+  requestStoreReview(): Promise<NativeReviewRequestResult> {
+    return this.plugin.requestStoreReview()
   }
 }
 

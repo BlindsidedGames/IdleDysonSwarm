@@ -32,6 +32,7 @@ import {
   detectNativeHostBridge,
   installNativeSafeAreaInsets,
 } from './platform/nativeHostBridge'
+import { installNativeReviewPrompt } from './platform/nativeReviewPrompt'
 import {
   createNativeLaunchDismissalController,
 } from './platform/nativeLaunchScreen'
@@ -113,6 +114,19 @@ async function bootstrap(): Promise<void> {
       window.dispatchEvent(
         new Event('idle-dyson-swarm-runtime-ready'),
       )
+      if (
+        nativeBridge !== null &&
+        nativeBridge.target !== 'electron' &&
+        nativeBridge.requestStoreReview !== undefined
+      ) {
+        const stopReviewPrompt = installNativeReviewPrompt({
+          runtime: composition.runtime,
+          bridge: nativeBridge,
+        })
+        window.addEventListener('pagehide', stopReviewPrompt, {
+          once: true,
+        })
+      }
     })
     createRoot(rootElement).render(
       <StrictMode>

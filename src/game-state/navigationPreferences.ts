@@ -17,7 +17,7 @@ export const BOTTOM_NAVIGATION_DESTINATION_IDS = [
 export type BottomNavigationDestinationId =
   (typeof BOTTOM_NAVIGATION_DESTINATION_IDS)[number]
 
-/** Matches the bottom bar that shipped before full navigation customization. */
+/** Product defaults for destinations a player has not explicitly configured. */
 export const DEFAULT_BOTTOM_NAVIGATION_VISIBILITY = Object.freeze({
   bots: true,
   research: true,
@@ -26,11 +26,11 @@ export const DEFAULT_BOTTOM_NAVIGATION_VISIBILITY = Object.freeze({
   reality: true,
   simulations: true,
   quantum: true,
-  store: false,
+  store: true,
   story: false,
-  wiki: false,
+  wiki: true,
   'offline-time': false,
-  statistics: true,
+  statistics: false,
   settings: true,
 } satisfies Record<BottomNavigationDestinationId, boolean>)
 

@@ -1467,6 +1467,10 @@
     "defaultMessage": "Infinity",
     "description": "Unity Infinity destination."
   },
+  "navigation.infinity-bots-progress": {
+    "defaultMessage": "{destination}, {current} of {required} Bots",
+    "description": "Accessible Bot unlock progress for the visible but locked Infinity destination."
+  },
   "navigation.infinity-gain": {
     "defaultMessage": "Infinity +{value}",
     "description": "Unity Infinity destination with the canonical projected Break reward."
@@ -1484,16 +1488,16 @@
     "description": "Unity Quantum destination."
   },
   "navigation.quantum-progress": {
-    "defaultMessage": "Quantum, {current} of {required} Infinity Points",
-    "description": "Accessible unlock progress for the visible but locked Quantum destination."
+    "defaultMessage": "{destination}, {current} of {required} Infinity Points",
+    "description": "Accessible Infinity Point unlock progress for a visible but locked destination."
   },
   "navigation.reality": {
     "defaultMessage": "Reality",
     "description": "Unity Reality destination."
   },
   "navigation.reality-secrets-progress": {
-    "defaultMessage": "Reality, {current} of {required} Secrets of the Universe",
-    "description": "Accessible unlock progress for the visible but locked Reality destination."
+    "defaultMessage": "{destination}, {current} of {required} Secrets of the Universe",
+    "description": "Accessible Secret unlock progress for a visible but locked destination."
   },
   "navigation.research": {
     "defaultMessage": "Research",
@@ -3047,13 +3051,33 @@
     "defaultMessage": "Language",
     "description": "Heading for the device-local game language preference."
   },
+  "settings.more-by.app-store-action": {
+    "defaultMessage": "App Store",
+    "description": "Action opening the developer page in the Apple App Store."
+  },
   "settings.more-by.description": {
-    "defaultMessage": "Discover more games from the developer of Idle Dyson Swarm.",
-    "description": "Description for the canonical developer area in Settings."
+    "defaultMessage": "Discover more games by Blindsided Games.",
+    "description": "Description above the developer marketplace action."
+  },
+  "settings.more-by.discord-action": {
+    "defaultMessage": "Discord",
+    "description": "Primary action opening the official game Discord community."
+  },
+  "settings.more-by.discord-description": {
+    "defaultMessage": "Share feedback, get help, and discuss strategies.",
+    "description": "Description above the official Discord action."
+  },
+  "settings.more-by.google-play-action": {
+    "defaultMessage": "Google Play",
+    "description": "Action opening the developer page in Google Play."
   },
   "settings.more-by.title": {
     "defaultMessage": "More by Blindsided Games",
     "description": "Heading for the canonical developer area in Settings."
+  },
+  "settings.more-by.website-action": {
+    "defaultMessage": "Official Website",
+    "description": "Action opening the Blindsided Games website."
   },
   "settings.navigation.bots": {
     "defaultMessage": "Show Bots",
@@ -3100,24 +3124,24 @@
     "description": "Controls the Skills bottom navigation destination."
   },
   "settings.navigation.statistics": {
-    "defaultMessage": "Show Statistics shortcut",
-    "description": "Controls the Statistics bottom navigation shortcut."
+    "defaultMessage": "Show Statistics",
+    "description": "Controls the Statistics bottom navigation destination."
   },
   "settings.navigation.store": {
     "defaultMessage": "Show Store",
     "description": "Controls the Store bottom navigation destination."
   },
   "settings.navigation.story": {
-    "defaultMessage": "Show Story shortcut",
-    "description": "Controls the Story bottom navigation shortcut."
+    "defaultMessage": "Show Story",
+    "description": "Controls the Story bottom navigation destination."
   },
   "settings.navigation.title": {
     "defaultMessage": "Navigation Shortcuts",
     "description": "Heading for optional bottom navigation shortcuts."
   },
   "settings.navigation.wiki": {
-    "defaultMessage": "Show Wiki shortcut",
-    "description": "Controls the Wiki bottom navigation shortcut."
+    "defaultMessage": "Show Wiki",
+    "description": "Controls the Wiki bottom navigation destination."
   },
   "settings.number-notation.description": {
     "defaultMessage": "Choose how large game values are displayed.",

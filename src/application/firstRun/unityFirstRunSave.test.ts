@@ -131,7 +131,7 @@ describe('Unity-generated first-run save', () => {
     expectClassifiedStorageDeltas(storageDifferences)
   })
 
-  test('changes lifecycle metadata and starts the first Infinity in manual mode', () => {
+  test('applies Web lifecycle, Infinity, and navigation defaults only to first-run saves', () => {
     const deterministic =
       createDeterministicUnityFirstRunPreparedSave().copyValidatedState()
     const production = createUnityFirstRunPreparedSave({
@@ -141,6 +141,24 @@ describe('Unity-generated first-run save', () => {
 
     expect(production.dateStarted).toBe(hostFirstRunUtc)
     expect(production.infinityAutomaticReset).toBe(false)
+    expect(production.bottomNavigationPreferences).toMatchObject({
+      version: 1,
+      visibility: {
+        bots: true,
+        research: true,
+        skills: true,
+        infinity: true,
+        reality: true,
+        simulations: true,
+        quantum: true,
+        store: true,
+        story: false,
+        wiki: true,
+        'offline-time': false,
+        statistics: false,
+        settings: true,
+      },
+    })
     expect(differences).toEqual([
       {
         path: '$.dateStarted',
@@ -154,12 +172,21 @@ describe('Unity-generated first-run save', () => {
         actual: false,
         reason: 'value',
       },
+      {
+        path: '$.bottomNavigationPreferences',
+        expected: undefined,
+        actual: production.bottomNavigationPreferences,
+        reason: 'missing',
+      },
     ])
     expect(
       unityFirstRunProvenance.lifecycleMetadataNormalizationPaths,
     ).toContain(differences[0]?.path)
     expect(webFirstRunGameplayOverridePaths).toContain(
       differences[1]?.path,
+    )
+    expect(webFirstRunGameplayOverridePaths).toContain(
+      differences[2]?.path,
     )
     expect([
       ...unityFirstRunProvenance.lifecycleMetadataNormalizationPaths,

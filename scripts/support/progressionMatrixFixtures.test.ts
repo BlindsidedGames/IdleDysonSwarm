@@ -131,9 +131,12 @@ describe('production-valid progression matrix fixtures', () => {
 
   test('certifies navigation immediately before and at authored boundaries', () => {
     const fresh = createProgressionMatrixFixtures()[0].state
-    const withBots = (bots: number) => ({ ...fresh, dyson: { ...fresh.dyson, bots } })
-    expect(deriveProgressionRoutes(withBots(9))).not.toContain('skills')
-    expect(deriveProgressionRoutes(withBots(10))).toContain('skills')
+    const tenBots = { ...fresh, dyson: { ...fresh.dyson, bots: 10 } }
+    expect(deriveProgressionRoutes(tenBots)).not.toContain('skills')
+    expect(deriveProgressionRoutes({
+      ...tenBots,
+      skills: { ...tenBots.skills, points: 1n },
+    })).toContain('skills')
     expect(deriveProgressionRoutes(fresh)).not.toContain('infinity')
     expect(deriveProgressionRoutes({ ...fresh, meta: { ...fresh.meta, firstInfinityComplete: true } })).toContain('infinity')
     const withSecrets = (secrets: bigint) => ({ ...fresh, infinity: { ...fresh.infinity, points: 41n, spentPoints: secrets, secretsOfTheUniverse: secrets } })

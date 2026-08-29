@@ -92,6 +92,7 @@ dependencies {
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
     implementation "com.android.billingclient:billing:9.1.0"
+    implementation "com.google.android.play:review:2.0.2"
     implementation "androidx.media3:media3-exoplayer:1.8.0"
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
