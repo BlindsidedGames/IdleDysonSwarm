@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
-import { createBrowserOwnerToken } from './browserOwnerToken'
+import {
+  createBrowserOwnerToken,
+  createBrowserRandomToken,
+} from './browserOwnerToken'
 
 describe('browser owner token', () => {
   afterEach(() => {
@@ -31,6 +34,19 @@ describe('browser owner token', () => {
 
     expect(createBrowserOwnerToken()).toBe(
       '000102030405060708090a0b0c0d0e0f',
+    )
+  })
+
+  test('preserves the 12-byte legacy identifier fallback width', () => {
+    vi.stubGlobal('crypto', {
+      getRandomValues: (values: Uint8Array) => {
+        values.fill(0xab)
+        return values
+      },
+    })
+
+    expect(createBrowserRandomToken(12)).toBe(
+      'abababababababababababab',
     )
   })
 })

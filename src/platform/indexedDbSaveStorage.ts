@@ -8,7 +8,7 @@ import {
   type WriterLeaseFence,
   WriterLeaseLostError,
 } from './browserSaveDatabase'
-import { requireBrowserCapability } from './browserEnvironment'
+import { createBrowserRandomToken } from './browserOwnerToken'
 
 export type BrowserStorageMutationFailure =
   | 'quota-exceeded'
@@ -179,16 +179,5 @@ function classifyMutationError(
 }
 
 function defaultLegacyIdFactory(): string {
-  const browserCrypto = requireBrowserCapability(
-    'Crypto',
-    globalThis.crypto,
-  )
-  if (typeof browserCrypto.randomUUID === 'function') {
-    return browserCrypto.randomUUID()
-  }
-  const random = new Uint8Array(12)
-  browserCrypto.getRandomValues(random)
-  return [...random]
-    .map((value) => value.toString(16).padStart(2, '0'))
-    .join('')
+  return createBrowserRandomToken(12)
 }
