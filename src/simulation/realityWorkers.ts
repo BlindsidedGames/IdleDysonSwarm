@@ -10,7 +10,10 @@ import type {
   StatisticsWindowState,
 } from '../game-state/types'
 import { hasVisitedNavigationRoute } from '../game-state/navigationPreferences'
-import { createEmptySimulationTotals } from './canonicalStatistics'
+import {
+  createEmptySimulationTotals,
+  createEmptyStatisticsWindow,
+} from './canonicalStatistics'
 import {
   addContinuous,
   addDiscrete,
@@ -578,13 +581,5 @@ function prepareWindow(
   sequence: bigint,
 ): StatisticsWindowState {
   if (window.sequence === sequence) return window
-  return {
-    sequence,
-    simulatedSeconds: 0,
-    infinityCount: 0n,
-    infinityPoints: 0n,
-    dreamResetCount: 0n,
-    strangeMatter: 0,
-    realityWorkers: 0n,
-  }
+  return createEmptyStatisticsWindow(sequence)
 }
