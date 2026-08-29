@@ -197,14 +197,14 @@
 }
 
 .research-surface__control-panel .ui-progress-controls-panel__summary {
-  padding-inline: 0.7rem 0.35rem;
   text-align: start;
 }
 
 .research-surface__summary-line {
   display: grid;
+  block-size: 100%;
   grid-template-columns: minmax(0, 1fr);
-  align-items: start;
+  align-content: start;
   min-inline-size: 0;
   gap: var(--ui-control-row-gap);
 }
@@ -223,6 +223,12 @@
 
 .research-surface__production-line {
   white-space: nowrap;
+}
+
+.research-surface__summary-line--single-production
+  .research-surface__production-line {
+  font-size: var(--ui-text-page-title);
+  line-height: 1.15;
 }
 
 .research-surface__control-panel .ui-progress-controls-panel__body {

@@ -186,7 +186,7 @@ export function DysonInfo({
   return (
     <ProgressControlsPanel
       ariaLabel={intl.formatMessage(messages.purchaseSettings)}
-      className="dyson-info"
+      className="dyson-info ui-progress-controls-panel--production-summary"
       expanded={settingsOpen}
       controlsId={settingsId}
       settingsLabel={intl.formatMessage(messages.purchaseSettings)}

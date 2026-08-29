@@ -13,6 +13,7 @@
   display: inline-block;
   max-inline-size: none;
   font-size: var(--ui-stable-single-line-font-size, 1em);
+  vertical-align: top;
   white-space: nowrap;
 }
 

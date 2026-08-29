@@ -24,7 +24,7 @@ describe('StableSingleLineText', () => {
       /\.ui-stable-single-line-text\s*\{[^}]*overflow:\s*hidden;[^}]*white-space:\s*nowrap;/s,
     )
     expect(componentStyles).toMatch(
-      /\.ui-stable-single-line-text__visible\s*\{[^}]*font-size:\s*var\(--ui-stable-single-line-font-size, 1em\);[^}]*white-space:\s*nowrap;/s,
+      /\.ui-stable-single-line-text__visible\s*\{[^}]*font-size:\s*var\(--ui-stable-single-line-font-size, 1em\);[^}]*vertical-align:\s*top;[^}]*white-space:\s*nowrap;/s,
     )
     expect(componentStyles).toMatch(
       /\.ui-stable-single-line-text__measurement\s*\{[^}]*inline-size:\s*max-content;[^}]*visibility:\s*hidden;/s,
