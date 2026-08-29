@@ -333,7 +333,7 @@ export function DysonRunFacts({
         <FormattedMessage
           {...compactMetricMessage}
           values={{
-            value: formatFact(locale, metric.value),
+            value: formatGameNumber(locale, metric.value),
             emphasis: (chunks) => (
               <span className="dyson-info__value">{chunks}</span>
             ),
@@ -344,7 +344,7 @@ export function DysonRunFacts({
         <FormattedMessage
           {...messages.compactPanelLifetime}
           values={{
-            value: formatFact(locale, panelLifetimeSeconds),
+            value: formatGameNumber(locale, panelLifetimeSeconds),
             emphasis: (chunks) => (
               <span className="dyson-info__value">{chunks}</span>
             ),
@@ -355,7 +355,7 @@ export function DysonRunFacts({
         <FormattedMessage
           {...messages.compactTotalPanelsDecayed}
           values={{
-            value: formatFact(locale, totalPanelsDecayed),
+            value: formatGameNumber(locale, totalPanelsDecayed),
             emphasis: (chunks) => (
               <span className="dyson-info__value">{chunks}</span>
             ),
@@ -586,10 +586,6 @@ export function BotDistribution({
       )}
     </div>
   )
-}
-
-function formatFact(locale: EnabledLocale, value: number): string {
-  return formatGameNumber(locale, value)
 }
 
 function formatPercent(locale: EnabledLocale, value: number): string {
