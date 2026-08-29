@@ -1,5 +1,6 @@
 import {
   CANONICAL_STORE_PRODUCTS,
+  createEmptyHostEntitlementOwnership,
   getCanonicalStoreProduct,
   STORE_PRODUCT_IDS,
   isSupporterProductId,
@@ -56,11 +57,7 @@ export interface StorefrontControllerOptions {
   readonly onVerifiedOwnershipChanged?: () => Promise<boolean>
 }
 
-const EMPTY_OWNERSHIP = Object.freeze({
-  doubleInfinityPoints: false,
-  developerOptions: false,
-  supporterCatGallery: false,
-})
+const EMPTY_OWNERSHIP = createEmptyHostEntitlementOwnership()
 
 const INITIAL_SNAPSHOT: StorefrontSnapshot = Object.freeze({
   initialized: false,

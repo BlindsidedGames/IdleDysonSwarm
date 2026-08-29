@@ -163,6 +163,16 @@ export interface HostEntitlementOwnership {
   readonly supporterCatGallery: boolean
 }
 
+export function createEmptyHostEntitlementOwnership(): Readonly<
+  HostEntitlementOwnership
+> {
+  return Object.freeze({
+    doubleInfinityPoints: false,
+    developerOptions: false,
+    supporterCatGallery: false,
+  })
+}
+
 /**
  * An authenticated host/store owns durable benefits. It is deliberately
  * separate from a shared save, which is untrusted for purchase ownership.

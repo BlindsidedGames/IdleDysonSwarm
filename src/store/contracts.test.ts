@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import {
   CANONICAL_STORE_PRODUCTS,
+  createEmptyHostEntitlementOwnership,
   getCanonicalStoreProduct,
   isSupporterProductId,
   STORE_PRODUCT_IDS,
@@ -39,5 +40,16 @@ describe('canonical Store product catalog', () => {
     expect(
       isSupporterProductId('ids.unknown' as StoreProductId),
     ).toBe(false)
+  })
+
+  test('defines one immutable empty host ownership value', () => {
+    const ownership = createEmptyHostEntitlementOwnership()
+    expect(ownership).toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: false,
+    })
+    expect(Object.isFrozen(ownership)).toBe(true)
+    expect(createEmptyHostEntitlementOwnership()).not.toBe(ownership)
   })
 })
