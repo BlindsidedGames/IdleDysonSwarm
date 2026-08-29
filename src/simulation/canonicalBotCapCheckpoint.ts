@@ -60,6 +60,12 @@ export interface BotCapCheckpointResult {
   readonly appliedReward: BotCapAppliedReward
 }
 
+export function selectBotCapCheckpointToPersist(
+  action: BotCapCheckpointAction,
+): BotCapCheckpointName | undefined {
+  return action.kind === 'persist' ? action.checkpoint : undefined
+}
+
 const NO_REWARD: BotCapAppliedReward = Object.freeze({
   infinityPoints: 0n,
   overflowMultiplier: 0,

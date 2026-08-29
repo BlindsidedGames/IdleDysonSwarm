@@ -13,6 +13,7 @@ import {
 } from '../simulation/lifecycleAwayTime'
 import {
   evaluateCanonicalBotCapCheckpoint,
+  selectBotCapCheckpointToPersist,
   type BotCapCheckpointName,
 } from '../simulation/canonicalBotCapCheckpoint'
 import { parseUnityInvariantUtcTimestamp } from '../simulation/unityUtcTimestamp'
@@ -1166,9 +1167,7 @@ function requiredBotCapCheckpoint(
     snapshot.state as CanonicalRuntimeState,
   ).gameState
   const evaluated = evaluateCanonicalBotCapCheckpoint(state)
-  return evaluated.action.kind === 'persist'
-    ? evaluated.action.checkpoint
-    : undefined
+  return selectBotCapCheckpointToPersist(evaluated.action)
 }
 
 function unchangedTransition(

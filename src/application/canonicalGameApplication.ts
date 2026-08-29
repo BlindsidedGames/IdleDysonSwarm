@@ -16,6 +16,7 @@ import {
 } from '../simulation/canonicalDysonDerivation'
 import {
   evaluateCanonicalBotCapCheckpoint,
+  selectBotCapCheckpointToPersist,
   type BotCapCheckpointName,
 } from '../simulation/canonicalBotCapCheckpoint'
 import {
@@ -2150,9 +2151,7 @@ function requiredBotCapCheckpoint(
   const evaluated = evaluateCanonicalBotCapCheckpoint(
     state as CanonicalRuntimeState['gameState'],
   )
-  return evaluated.action.kind === 'persist'
-    ? evaluated.action.checkpoint
-    : undefined
+  return selectBotCapCheckpointToPersist(evaluated.action)
 }
 
 export function previewCanonicalQuantumLeap(
