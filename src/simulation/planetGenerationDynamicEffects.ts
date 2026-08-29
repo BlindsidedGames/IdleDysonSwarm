@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { DISCRETE_MAXIMUM } from './numeric'
 
 const EFFECT_PREFIX = 'effect.'
@@ -200,7 +201,7 @@ function requirePair(
 }
 
 function requireNonNegative(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     throw new Error(
       `Planet generation effects require finite non-negative ${label}.`,
     )

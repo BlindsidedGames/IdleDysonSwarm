@@ -208,7 +208,7 @@ export function timeToCanonicalTinkerCompletion(
   runtime: Readonly<CanonicalTinkerRuntimeState>,
   maximumSeconds: number,
 ): number {
-  if (!Number.isFinite(maximumSeconds) || maximumSeconds < 0) {
+  if (!isFiniteNonNegativeNumber(maximumSeconds)) {
     throw new RangeError('maximumSeconds must be finite and non-negative.')
   }
   if (!runtime.running) return maximumSeconds

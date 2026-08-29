@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
   CanonicalGameStateV1,
   SimulationStatisticsState,
@@ -75,7 +76,7 @@ export function evaluateCanonicalBotCapCheckpoint(
   state: Readonly<CanonicalGameStateV1>,
 ): BotCapCheckpointResult {
   const bots = state.dyson.bots
-  if (!Number.isFinite(bots) || bots < 0) {
+  if (!isFiniteNonNegativeNumber(bots)) {
     return persistResult(
       'invalid-bots',
       'invalid-bot-repair',

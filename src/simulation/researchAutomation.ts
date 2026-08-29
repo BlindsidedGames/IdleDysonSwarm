@@ -1,4 +1,7 @@
-import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { readStringArray } from '../game-data/runtimeValueGuards'
 import type { RuntimeGameAsset } from '../game-data/types'
@@ -560,7 +563,7 @@ function previewPurchase(
       coefficientOverrides[
         definition.id as SecretResearchCoefficientId
       ] ?? tuning[coefficientField]
-    if (!Number.isFinite(percentPerLevel) || percentPerLevel < 0) {
+    if (!isFiniteNonNegativeNumber(percentPerLevel)) {
       return emptyPreview(
         definition.id,
         'invalid-tuning',

@@ -1,3 +1,5 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+
 const PANEL_LIFETIME_SUFFIX = '.panel_lifetime'
 const PANELS_PER_SECOND_SUFFIX = '.panels_per_second'
 const EFFECT_PREFIX = 'effect.'
@@ -161,7 +163,7 @@ function validateInputs(inputs: PanelDynamicEffectInputs): void {
 }
 
 function requireNonNegative(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     throw new Error(
       `Panel dynamic effects require finite non-negative ${label}.`,
     )
@@ -169,7 +171,7 @@ function requireNonNegative(value: number, label: string): void {
 }
 
 function requireUnitInterval(value: number, label: string): void {
-  if (!Number.isFinite(value) || value < 0 || value > 1) {
+  if (!isFiniteNonNegativeNumber(value) || value > 1) {
     throw new Error(
       `Panel dynamic effects require ${label} between zero and one.`,
     )

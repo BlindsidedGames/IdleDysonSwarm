@@ -40,7 +40,7 @@ function normalizeAutomationRemaining(
 }
 
 function normalizeHorizon(horizon: number, maximum: number): number {
-  if (!Number.isFinite(horizon) || horizon < 0) return maximum
+  if (!isFiniteNonNegativeNumber(horizon)) return maximum
   return Math.min(maximum, horizon)
 }
 

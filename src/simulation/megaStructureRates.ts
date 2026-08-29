@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import { getGameAsset } from '../game-data/catalog'
 import type { RuntimeGameAsset } from '../game-data/types'
@@ -219,7 +220,7 @@ export function deriveMegaStructureRates(
         rate = multiplyContinuous(rate, modifier)
       }
     }
-    if (!Number.isFinite(rate) || rate < 0) {
+    if (!isFiniteNonNegativeNumber(rate)) {
       issues.push({
         code: 'MEGA_STRUCTURE_RATE_NON_FINITE',
         path: `rates.${spec.id}`,
@@ -286,7 +287,7 @@ function readLegacyBaseProduction(
   }
 
   const legacyBase = Math.fround(spec.baseProduction)
-  if (!Number.isFinite(legacyBase) || legacyBase < 0) {
+  if (!isFiniteNonNegativeNumber(legacyBase)) {
     issues.push({
       code: 'MEGA_STRUCTURE_DEFINITION_INVALID',
       path: `${path}.baseProduction`,
@@ -334,7 +335,7 @@ function readEffectiveCount(
   if (!valid) return undefined
 
   const effective = pair[0] + pair[1]
-  if (!Number.isFinite(effective) || effective < 0) {
+  if (!isFiniteNonNegativeNumber(effective)) {
     issues.push({
       code: 'MEGA_STRUCTURE_EFFECTIVE_COUNT_NON_FINITE',
       path,

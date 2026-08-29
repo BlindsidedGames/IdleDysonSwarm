@@ -1,3 +1,5 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+
 const SCIENCE_BOOST_PER_SECOND_SUFFIX =
   '.science_boost_per_second'
 const MONEY_UPGRADE_PER_SECOND_SUFFIX =
@@ -226,7 +228,7 @@ function requireFiniteNonNegative(
   family: string,
   label: string,
 ): void {
-  if (!Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     throw new Error(
       `${family} effects require finite non-negative ${label}.`,
     )

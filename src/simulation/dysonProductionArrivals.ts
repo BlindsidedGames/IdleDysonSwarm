@@ -135,7 +135,7 @@ function validateRates(
   rates: Readonly<DysonProductionArrivalRates>,
 ): void {
   for (const [id, value] of Object.entries(rates)) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       throw new Error(
         `Dyson production rate '${id}' must be finite and non-negative.`,
       )

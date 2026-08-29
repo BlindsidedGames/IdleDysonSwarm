@@ -1,5 +1,8 @@
 import { getGameAsset } from '../game-data/catalog'
-import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import {
   addContinuous,
   bitDecrement,
@@ -69,13 +72,13 @@ export function tryDebitContinuous(
   cost: number,
   quantity = 1n,
 ): DebitResult {
-  if (!Number.isFinite(balance) || balance < 0) {
+  if (!isFiniteNonNegativeNumber(balance)) {
     return { balance, charged: 0, status: 'invalid-balance' }
   }
   if (quantity <= 0n) {
     return { balance, charged: 0, status: 'invalid-quantity' }
   }
-  if (!Number.isFinite(cost) || cost < 0) {
+  if (!isFiniteNonNegativeNumber(cost)) {
     return { balance, charged: 0, status: 'invalid-cost' }
   }
   if (cost === CONTINUOUS_MAXIMUM) {
@@ -95,7 +98,7 @@ export function tryDebitContinuous(
     if (next < 0 || !Number.isFinite(next)) next = 0
     charged = balance - next
   }
-  if (!Number.isFinite(next) || next < 0 || charged <= 0) {
+  if (!isFiniteNonNegativeNumber(next) || charged <= 0) {
     return { balance, charged: 0, status: 'invalid-cost' }
   }
   return { balance: next, charged, status: 'success' }

@@ -109,7 +109,7 @@ export function floorToDiscreteAtMost(
 
 /** Converts a non-negative double using Unity-compatible midpoint-to-even rounding. */
 export function exactRoundedNonNegativeBigInt(value: number): bigint | null {
-  if (!Number.isFinite(value) || value < 0) return null
+  if (!isFiniteNonNegativeNumber(value)) return null
   const rounded = roundToEven(value)
   if (
     !Number.isInteger(rounded) ||

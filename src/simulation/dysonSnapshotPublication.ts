@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { deriveDysonIntermediates } from './dysonDerivedIntermediates'
@@ -20,7 +21,7 @@ export function publishDysonSkillEffectEvaluationSnapshot(
   inputs: Readonly<DysonSnapshotPublicationInputs>,
 ): Readonly<DysonSkillEffectEvaluationSnapshot> {
   for (const [path, value] of Object.entries(inputs)) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       throw new Error(
         `Dyson snapshot publication '${path}' must be finite and non-negative.`,
       )

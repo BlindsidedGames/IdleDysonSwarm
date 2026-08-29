@@ -165,7 +165,7 @@ function effectiveCount(pair: OwnedPair): number {
 function legacyBaseProduction(id: BasicDysonFacilityId): number {
   const asset = getGameAsset('GameData.FacilityDefinition', id)
   const value = asset?.data.baseProduction
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     throw new Error(`Facility '${id}' has no valid baseProduction`)
   }
 

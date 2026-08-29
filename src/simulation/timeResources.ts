@@ -143,7 +143,7 @@ export function repairStoredTimeState(
     bankSeconds = capacitySeconds
     bankRepaired = true
     cheater = true
-  } else if (!Number.isFinite(bankSeconds) || bankSeconds < 0) {
+  } else if (!isFiniteNonNegativeNumber(bankSeconds)) {
     bankSeconds = 0
     bankRepaired = true
   } else if (bankSeconds > capacitySeconds) {

@@ -1,4 +1,7 @@
-import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -1540,7 +1543,7 @@ function validateCarrier(
   for (const [path, value] of Object.entries(
     state.compatibilityTuning,
   )) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       return Object.freeze({
         code: 'CANONICAL_EVENT_TUNING_INVALID',
         path: `compatibilityTuning.${path}`,
@@ -1551,7 +1554,7 @@ function validateCarrier(
   for (const [path, value] of Object.entries(
     context.dysonPresentationTuning,
   )) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       return Object.freeze({
         code: 'CANONICAL_EVENT_PRESENTATION_TUNING_INVALID',
         path: `dysonPresentationTuning.${path}`,
@@ -1563,7 +1566,7 @@ function validateCarrier(
   for (const [path, value] of Object.entries(
     state.evaluationSnapshot,
   )) {
-    if (!Number.isFinite(value) || value < 0) {
+    if (!isFiniteNonNegativeNumber(value)) {
       return Object.freeze({
         code: 'CANONICAL_EVENT_EVALUATION_SNAPSHOT_INVALID',
         path: `evaluationSnapshot.${path}`,
@@ -1967,7 +1970,7 @@ function isRealityUpgradeOwned(
 }
 
 function roundedNonNegativeDiscrete(value: number): bigint | null {
-  if (!Number.isFinite(value) || value < 0) return null
+  if (!isFiniteNonNegativeNumber(value)) return null
   const floor = Math.floor(value)
   const fraction = value - floor
   const rounded =

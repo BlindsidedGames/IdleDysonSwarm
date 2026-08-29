@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { DISCRETE_MAXIMUM } from './numeric'
@@ -515,7 +516,7 @@ function readDerived(
       `Effect '${effectId}' requires derived input '${field}'.`,
     )
   }
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     return failure(
       'DYSON_MONEY_SCIENCE_DERIVED_INPUT_INVALID',
       `derived.${field}`,
@@ -588,7 +589,7 @@ function readTuning(
   field: keyof DysonCompatibilityTuning,
   effectId: string,
 ): ReadResult<number> {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     return failure(
       'DYSON_MONEY_SCIENCE_TUNING_INVALID',
       `compatibilityTuning.${field}`,
@@ -622,7 +623,7 @@ function readFiniteNonNegative(
   path: string,
   effectId: string,
 ): ReadResult<number> {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (!isFiniteNonNegativeNumber(value)) {
     return failure(
       'DYSON_MONEY_SCIENCE_CANONICAL_INPUT_INVALID',
       path,
