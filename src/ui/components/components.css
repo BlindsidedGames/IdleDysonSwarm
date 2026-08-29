@@ -167,6 +167,11 @@
   -webkit-mask-size: contain;
 }
 
+/* The Infinity artwork is optically top-heavy within its transparent bounds. */
+.ui-inline-image-symbol[data-symbol="infinity-point"] {
+  transform: translateY(0.06em);
+}
+
 .ui-settings-icon {
   inline-size: 1.3em;
   block-size: 1.3em;

@@ -24,13 +24,18 @@ import type {
 import {
   type InfinityProgressFacts,
 } from '../../../simulation/infinityCycle'
-import infinitySymbol from '../../assets/nav-infinity.png'
 import {
   Button,
-  InlineImageSymbol,
+  BotsSymbol,
+  InlineResourceAmount,
   ProgressControlsPanel,
   StableSingleLineText,
 } from '../../components'
+import {
+  InfinityPointAmount,
+  InfinityPointSymbol,
+} from '../../components/InfinityPointAmount'
+import { formatInfinityPointAmount } from '../../components/infinityPointFormatting'
 import {
   formatGameNumber,
   formatNumber,
@@ -61,6 +66,8 @@ type InfinityCommand = Extract<
 const INFINITY_GUIDANCE_PRESENTATION_INTERVAL_MILLISECONDS = 250
 const INFINITY_VISIBILITY_STORAGE_KEY =
   'idle-dyson-swarm.infinity-visibility.v1'
+const INFINITY_AMOUNT_MARKER_PREFIX = '__INFINITY_AMOUNT_'
+const BOTS_AMOUNT_MARKER = '__BOTS_AMOUNT__'
 
 export interface InfinityCommandAvailability {
   readonly purchaseShopItem: boolean
@@ -168,9 +175,15 @@ export function InfinitySurface({
     >
       <header className="infinity-surface__summary">
         <p className="infinity-surface__points">
-          <FormattedMessage {...messages.pointsLabel} />
-          <span className="infinity-surface__available">{formatGameNumber(locale, resources.availablePoints)}</span>
-          <span className="infinity-surface__spent"><FormattedMessage {...messages.spentParenthetical} values={{ value: formatGameNumber(locale, resources.spentPoints) }} /></span>
+          <span className="ui-visually-hidden">
+            <FormattedMessage {...messages.pointsLabel} />
+          </span>
+          <InfinityPointAmount
+            className="infinity-surface__available"
+            locale={locale}
+            value={resources.availablePoints}
+          />
+          <span className="infinity-surface__spent"><FormattedMessage {...messages.spentParenthetical} values={{ value: formatInfinityPointAmount(locale, resources.spentPoints) }} /></span>
         </p>
         <p className="infinity-surface__secret">
           <FormattedMessage
@@ -238,12 +251,10 @@ export function InfinitySurface({
                             )}
                           </span>
                           <span aria-hidden="true">
-                            {intl.formatMessage(messages.nextPointIn, {
-                              value: formatGameNumber(
-                                locale,
-                                derived.botsRemainingToNextReward,
-                              ),
-                            })}
+                            <BotsThresholdSentence
+                              locale={locale}
+                              value={derived.botsRemainingToNextReward}
+                            />
                           </span>
                         </span>
                       )
@@ -252,16 +263,10 @@ export function InfinitySurface({
                 <span className="infinity-surface__reward-progress">
                   {derived.mode === 'break'
                     ? (
-                        <>
-                          <InlineImageSymbol
-                            src={infinitySymbol}
-                            symbol="infinity-point"
-                            tint
-                          />
-                          <span>
-                            {formatGameNumber(locale, derived.breakTargetProgress.currentReward)}/{formatGameNumber(locale, derived.breakTargetProgress.targetReward)}
-                          </span>
-                        </>
+                        <InlineResourceAmount
+                          leadingSymbol={<InfinityPointSymbol />}
+                          value={`${formatInfinityPointAmount(locale, derived.breakTargetProgress.currentReward)}/${formatInfinityPointAmount(locale, derived.breakTargetProgress.targetReward)}`}
+                        />
                       )
                     : intl.formatMessage(messages.progressPercent, {
                         value: formatNumber(locale, progress * 100, {
@@ -282,7 +287,7 @@ export function InfinitySurface({
                     ? messages.breakProgressAccessible
                     : messages.ordinaryProgress,
                   {
-                    target: formatGameNumber(
+                    target: formatInfinityPointAmount(
                       locale,
                       progression.infinity.breakTarget,
                     ),
@@ -328,24 +333,51 @@ export function InfinitySurface({
               derived.mode === 'break' ? (
               <div className="infinity-surface__rate-guidance" aria-live="off">
                 <span>
-                  {intl.formatMessage(messages.currentRate, {
-                    value: formatGameNumber(
-                      locale,
-                      presentedGuidance.currentIpPerMinute,
-                    ),
-                  })}
+                  <InfinityCurrencySentence
+                    accessible={intl.formatMessage(messages.currentRate, {
+                      value: formatInfinityPointAmount(
+                        locale,
+                        presentedGuidance.currentIpPerMinute,
+                      ),
+                    })}
+                    amounts={[
+                      formatInfinityPointAmount(
+                        locale,
+                        presentedGuidance.currentIpPerMinute,
+                      ),
+                    ]}
+                    template={intl.formatMessage(messages.currentRate, {
+                      value: infinityAmountMarker(0),
+                    })}
+                  />
                 </span>
                 <span>
-                  {intl.formatMessage(messages.peakRate, {
-                    rate: formatGameNumber(
-                      locale,
-                      presentedGuidance.peakIpPerMinute,
-                    ),
-                    reward: formatGameNumber(
-                      locale,
-                      presentedGuidance.peakReward,
-                    ),
-                  })}
+                  <InfinityCurrencySentence
+                    accessible={intl.formatMessage(messages.peakRate, {
+                      rate: formatInfinityPointAmount(
+                        locale,
+                        presentedGuidance.peakIpPerMinute,
+                      ),
+                      reward: formatInfinityPointAmount(
+                        locale,
+                        presentedGuidance.peakReward,
+                      ),
+                    })}
+                    amounts={[
+                      formatInfinityPointAmount(
+                        locale,
+                        presentedGuidance.peakIpPerMinute,
+                      ),
+                      formatInfinityPointAmount(
+                        locale,
+                        presentedGuidance.peakReward,
+                      ),
+                    ]}
+                    template={intl.formatMessage(messages.peakRate, {
+                      rate: infinityAmountMarker(0),
+                      reward: infinityAmountMarker(1),
+                    })}
+                  />
                 </span>
               </div>
               ) : null
@@ -408,7 +440,7 @@ function ManualInfinityButton({
           reward === null
             ? intl.formatMessage(messages.manualReset)
             : intl.formatMessage(messages.manualResetForReward, {
-                value: formatGameNumber(locale, reward),
+                value: formatInfinityPointAmount(locale, reward),
               })
         }
         disabled={!routeAvailable || !ready || pending}
@@ -423,14 +455,11 @@ function ManualInfinityButton({
           </StableSingleLineText>
         ) : (
           <span>
-                <span className="infinity-manual-reset__reward" aria-hidden="true">
-                  <InlineImageSymbol
-                    src={infinitySymbol}
-                    symbol="infinity-point"
-                    tint
-                  />
-                  <span>{formatGameNumber(locale, reward)}</span>
-                </span>
+            <InlineResourceAmount
+              className="infinity-manual-reset__reward"
+              leadingSymbol={<InfinityPointSymbol />}
+              value={formatInfinityPointAmount(locale, reward)}
+            />
           </span>
         )}
       </button>
@@ -566,7 +595,7 @@ function InfinityShopCard({
         {ownedCount > 0n ? (
           <p className="infinity-shop-card__purchased-count">
             {intl.formatMessage(messages.purchasedCount, {
-              value: formatGameNumber(locale, ownedCount),
+              value: formatInfinityPointAmount(locale, ownedCount),
             })}
           </p>
         ) : null}
@@ -596,7 +625,7 @@ function InfinityShopCard({
               )}`
             : intl.formatMessage(messages.purchaseAccessible, {
                 name,
-                cost: formatGameNumber(locale, preview.cost),
+                cost: formatInfinityPointAmount(locale, preview.cost),
               })
         }
         onClick={() => void purchase()}
@@ -611,14 +640,11 @@ function InfinityShopCard({
             : intl.formatMessage(messages.purchase)}
         </span>
         {completed ? null : (
-          <strong className="infinity-shop-card__cost">
-            <InlineImageSymbol
-              src={infinitySymbol}
-              symbol="infinity-point"
-              tint
-            />
-            <span>{formatGameNumber(locale, preview.cost)}</span>
-          </strong>
+          <InfinityPointAmount
+            className="infinity-shop-card__cost"
+            locale={locale}
+            value={preview.cost}
+          />
         )}
       </Button>
       {pending || failed ? (
@@ -698,32 +724,37 @@ function BreakTargetControl({
   return (
     <div className="infinity-break-target">
       <label htmlFor="infinity-break-target-input">
-        {intl.formatMessage(messages.breakTarget)}
+        <span className="ui-visually-hidden">
+          {intl.formatMessage(messages.breakTarget)}
+        </span>
       </label>
-      <input
-        id="infinity-break-target-input"
-        type="text"
-        inputMode="decimal"
-        enterKeyHint="done"
-        autoComplete="off"
-        value={draft}
-        disabled={!routeAvailable}
-        aria-invalid={validationReason !== null}
-        aria-describedby="infinity-break-target-help"
-        onChange={(event) => {
-          setFailed(false)
-          setValidationReason(null)
-          setDraft(event.currentTarget.value)
-        }}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            event.preventDefault()
-            void submit()
-            event.currentTarget.blur()
-          }
-        }}
-        onBlur={() => void submit()}
-      />
+      <span className="infinity-break-target__input-wrap">
+        <InfinityPointSymbol />
+        <input
+          id="infinity-break-target-input"
+          type="text"
+          inputMode="decimal"
+          enterKeyHint="done"
+          autoComplete="off"
+          value={draft}
+          disabled={!routeAvailable}
+          aria-invalid={validationReason !== null}
+          aria-describedby="infinity-break-target-help"
+          onChange={(event) => {
+            setFailed(false)
+            setValidationReason(null)
+            setDraft(event.currentTarget.value)
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              void submit()
+              event.currentTarget.blur()
+            }
+          }}
+          onBlur={() => void submit()}
+        />
+      </span>
       <Button
         className="infinity-break-target__submit"
         disabled={!routeAvailable || !changed || pendingRef.current}
@@ -732,9 +763,15 @@ function BreakTargetControl({
         {intl.formatMessage(messages.setBreakTarget)}
       </Button>
       <span id="infinity-break-target-help" className="infinity-break-target__range">
-        {intl.formatMessage(messages.breakTargetValue, {
-          value: formatGameNumber(locale, target),
-        })}
+        <InfinityCurrencySentence
+          accessible={intl.formatMessage(messages.breakTargetValue, {
+            value: formatInfinityPointAmount(locale, target),
+          })}
+          amounts={[formatInfinityPointAmount(locale, target)]}
+          template={intl.formatMessage(messages.breakTargetValue, {
+            value: infinityAmountMarker(0),
+          })}
+        />
       </span>
       {validationReason !== null ? (
         <span className="infinity-break-target__feedback" role="alert">
@@ -750,6 +787,71 @@ function BreakTargetControl({
         </span>
       ) : null}
     </div>
+  )
+}
+
+function infinityAmountMarker(index: number): string {
+  return `${INFINITY_AMOUNT_MARKER_PREFIX}${index}__`
+}
+
+function InfinityCurrencySentence({
+  accessible,
+  amounts,
+  template,
+}: {
+  readonly accessible: string
+  readonly amounts: readonly string[]
+  readonly template: string
+}) {
+  const markerPattern = /(__INFINITY_AMOUNT_\d+__)/gu
+  const visibleTemplate = template.replace(
+    /\s+(?:IP|PI)(?=\/|\b)/gu,
+    '',
+  )
+  return (
+    <>
+      <span className="ui-visually-hidden">{accessible}</span>
+      <span aria-hidden="true">
+        {visibleTemplate.split(markerPattern).map((part) => {
+          const match = /^__INFINITY_AMOUNT_(\d+)__$/.exec(part)
+          if (match === null) return part
+          const index = Number(match[1])
+          return (
+            <InlineResourceAmount
+              className="infinity-point-amount"
+              key={part}
+              leadingSymbol={<InfinityPointSymbol />}
+              value={amounts[index]}
+            />
+          )
+        })}
+      </span>
+    </>
+  )
+}
+
+function BotsThresholdSentence({
+  locale,
+  value,
+}: {
+  readonly locale: EnabledLocale
+  readonly value: number
+}) {
+  const intl = useIntl()
+  const template = intl.formatMessage(messages.nextPointIn, {
+    value: BOTS_AMOUNT_MARKER,
+  })
+  const [before = '', after = ''] = template.split(BOTS_AMOUNT_MARKER)
+  return (
+    <>
+      {before}
+      <InlineResourceAmount
+        className="infinity-bots-amount"
+        leadingSymbol={<BotsSymbol />}
+        value={formatGameNumber(locale, value)}
+      />
+      {after}
+    </>
   )
 }
 

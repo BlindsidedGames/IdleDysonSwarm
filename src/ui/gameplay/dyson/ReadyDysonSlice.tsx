@@ -894,7 +894,7 @@ export function ReadyDysonSlice({
     gameplay.derived.infinity.navigationReward === null
       ? intl.formatMessage(messages.infinityRoute)
       : intl.formatMessage(messages.infinityRouteGain, {
-          value: display(
+          value: displayWhole(
             gameplay.derived.infinity.navigationReward,
           ),
         })
