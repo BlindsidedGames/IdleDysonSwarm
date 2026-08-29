@@ -1,3 +1,4 @@
+import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import { getGameAsset } from '../game-data/catalog'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -353,8 +354,4 @@ function failed(
       issues.map((issue) => Object.freeze({ ...issue })),
     ),
   }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
 }

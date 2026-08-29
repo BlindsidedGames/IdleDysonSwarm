@@ -1,3 +1,4 @@
+import { isNonArrayRecord as isRecord } from '../core/nonArrayRecord'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { getGameAsset } from '../game-data/catalog'
@@ -490,8 +491,4 @@ function shouldSkipEffect(
     default:
       return false
   }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
 }
