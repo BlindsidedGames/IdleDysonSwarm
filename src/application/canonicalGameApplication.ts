@@ -1252,7 +1252,7 @@ function applyDevelopmentAction(
         },
       })
     case 'add-influence':
-      if (!isDevelopmentContinuousAmount(action.amount)) {
+      if (!isFiniteNonNegativeNumber(action.amount)) {
         return invalidDevelopmentAction('Influence amount')
       }
       return replaceDevelopmentState(candidate, {
@@ -1266,7 +1266,7 @@ function applyDevelopmentAction(
         },
       })
     case 'add-strange-matter':
-      if (!isDevelopmentContinuousAmount(action.amount)) {
+      if (!isFiniteNonNegativeNumber(action.amount)) {
         return invalidDevelopmentAction('Strange Matter amount')
       }
       return replaceDevelopmentState(candidate, {
@@ -1445,10 +1445,6 @@ function addDevelopmentDiscrete(current: bigint, amount: bigint): bigint {
 
 function isDevelopmentDiscreteAmount(amount: bigint): boolean {
   return amount >= 0n && amount <= DISCRETE_MAXIMUM
-}
-
-function isDevelopmentContinuousAmount(amount: number): boolean {
-  return Number.isFinite(amount) && amount >= 0
 }
 
 function replaceDevelopmentRuntime(

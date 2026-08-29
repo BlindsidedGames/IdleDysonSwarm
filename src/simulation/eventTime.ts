@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import {
   createSimulationSummary,
   type EventTimeSimulationModel,
@@ -21,10 +22,6 @@ function createWorkMetrics(): SimulationWorkMetrics {
     exactSeconds: 0,
     processingMilliseconds: 0,
   }
-}
-
-function finiteNonNegative(value: number): boolean {
-  return Number.isFinite(value) && value >= 0
 }
 
 function normalizeAutomationRemaining(
@@ -97,12 +94,12 @@ export function advanceEventTime<
 
   const validRequest =
     candidateState !== undefined &&
-    finiteNonNegative(request.durationSeconds) &&
+    isFiniteNonNegativeNumber(request.durationSeconds) &&
     Number.isFinite(automationInterval) &&
     automationInterval > 0 &&
     Number.isFinite(infinityMinimumCycle) &&
     infinityMinimumCycle > 0 &&
-    finiteNonNegative(processingBudget)
+    isFiniteNonNegativeNumber(processingBudget)
 
   if (validRequest) {
     diagnosticCode = validateSchedulerState(candidateState)

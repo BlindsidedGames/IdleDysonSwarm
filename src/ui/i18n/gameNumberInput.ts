@@ -1,3 +1,4 @@
+import { isFiniteNonNegativeNumber } from '../../core/finiteNonNegativeNumber'
 import { GAME_NUMBER_PREFIXES } from './gameNumberMagnitudes'
 import {
   LOCALE_REGISTRY,
@@ -125,7 +126,7 @@ export function toContinuousGameNumber(
 ): ContinuousGameNumberResult {
   if (parsed.coefficient === 0n) return { ok: true, value: 0 }
   const value = Number(`${parsed.coefficient}e${parsed.exponent}`)
-  return Number.isFinite(value) && value >= 0
+  return isFiniteNonNegativeNumber(value)
     ? { ok: true, value }
     : { ok: false, reason: 'above-maximum' }
 }
