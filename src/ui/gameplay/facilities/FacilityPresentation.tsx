@@ -26,6 +26,7 @@ import {
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
+import { clampProgress } from '../progress/clampProgress'
 import { basicFacilityMessages as messages } from './messages'
 import {
   FittedProductionLine,
@@ -39,7 +40,6 @@ import {
   researchDescriptionMessage,
   researchNameMessage,
 } from '../research/researchMessageSelectors'
-import { clampProgress } from './progressInterpolation'
 import {
   facilityPresentation,
   type FacilityPresentationMessages,

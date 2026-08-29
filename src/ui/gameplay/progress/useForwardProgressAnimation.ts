@@ -6,6 +6,7 @@ import {
 import {
   DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS,
 } from '../../runtime/activeTimeDriver'
+import { clampProgress } from './clampProgress'
 
 export const FORWARD_PROGRESS_INTERVAL_MILLISECONDS =
   DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS
@@ -36,7 +37,7 @@ export function useForwardProgressAnimation(
     readonly progress: number
     readonly sampledAt: number
   } | null>(null)
-  const canonicalProgress = clampUnit(options.canonicalProgress)
+  const canonicalProgress = clampProgress(options.canonicalProgress)
 
   useLayoutEffect(() => {
     const sampledAt = performance.now()
@@ -109,7 +110,7 @@ export function buildForwardProgressKeyframes(
   normalizedRatePerSecond: number,
   wraps: boolean,
 ): Keyframe[] {
-  const start = clampUnit(canonicalProgress)
+  const start = clampProgress(canonicalProgress)
   const rate = Number.isFinite(normalizedRatePerSecond)
     ? normalizedRatePerSecond
     : 0
@@ -253,10 +254,5 @@ function inferProgressRate(
 }
 
 function progressTransform(progress: number): string {
-  return `scaleX(${clampUnit(progress)})`
-}
-
-function clampUnit(value: number): number {
-  if (!Number.isFinite(value)) return 0
-  return Math.min(1, Math.max(0, value))
+  return `scaleX(${clampProgress(progress)})`
 }

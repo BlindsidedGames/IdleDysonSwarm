@@ -55,6 +55,7 @@ import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { readyDysonMessages } from '../dyson/messages'
+import { clampProgress } from '../progress/clampProgress'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { simulationsMessages as messages } from './messages'
 import './simulations.css'
@@ -765,7 +766,7 @@ function SimulationProgress({
           progress.reservoir.formatRate(reservoirRate),
         )
       : baseValueText
-  const fraction = cycleUsesThroughput ? 1 : clampUnit(progress.fraction)
+  const fraction = cycleUsesThroughput ? 1 : clampProgress(progress.fraction)
   const presentation = progress.cycle
     ? cycleMode
     : progress.reservoir
@@ -1036,7 +1037,7 @@ function createPanelModels(input: {
     unit: 'joules' | 'watts',
   ) => highlightedEnergy(locale, value, unit)
   const percentRich = (fraction: number) => highlightedFormattedNumber(
-    formatNumber(locale, clampUnit(fraction) * 100, {
+    formatNumber(locale, clampProgress(fraction) * 100, {
       maximumFractionDigits: 0,
     }),
     '%',
@@ -1892,9 +1893,4 @@ function panelDescriptionMessage(id: PanelId): MessageDescriptor {
   if (id === 'space-factories') return messages.spaceFactoriesDescription
   if (id === 'railguns') return messages.railgunsDescription
   return messages.swarmStatsDescription
-}
-
-function clampUnit(value: number): number {
-  if (!Number.isFinite(value)) return 0
-  return Math.max(0, Math.min(1, value))
 }
