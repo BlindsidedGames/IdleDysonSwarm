@@ -16,7 +16,31 @@ import type {
 import type { BasicDysonFacilityId } from './dysonFacilities'
 import type { SimulationAutomationPolicy } from './types'
 
-export type BuyMode = 'buy-1' | 'buy-10' | 'buy-50' | 'buy-100' | 'buy-max'
+export const BUY_MODES = [
+  'buy-1',
+  'buy-10',
+  'buy-50',
+  'buy-100',
+  'buy-max',
+] as const
+
+export type BuyMode = (typeof BUY_MODES)[number]
+
+const FIXED_BUY_MODE_AMOUNTS: Readonly<
+  Record<Exclude<BuyMode, 'buy-max'>, bigint>
+> = Object.freeze({
+  'buy-1': 1n,
+  'buy-10': 10n,
+  'buy-50': 50n,
+  'buy-100': 100n,
+})
+
+export function isBuyMode(value: unknown): value is BuyMode {
+  return (
+    typeof value === 'string' &&
+    (BUY_MODES as readonly string[]).includes(value)
+  )
+}
 
 export type TransactionStatus =
   | 'success'
@@ -223,15 +247,8 @@ export function buyModeAmount(
   currentOwned: bigint,
   affordable: bigint,
 ): bigint {
-  const target =
-    mode === 'buy-10'
-      ? 10n
-      : mode === 'buy-50'
-        ? 50n
-        : mode === 'buy-100'
-          ? 100n
-          : 1n
   if (mode === 'buy-max') return affordable > 0n ? affordable : 1n
+  const target = FIXED_BUY_MODE_AMOUNTS[mode]
   if (mode === 'buy-1' || !rounded) return target
   return target - (currentOwned % target)
 }

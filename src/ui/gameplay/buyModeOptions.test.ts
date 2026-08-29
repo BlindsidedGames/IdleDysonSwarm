@@ -1,4 +1,8 @@
 import { describe, expect, test } from 'vitest'
+import {
+  BUY_MODES,
+  isBuyMode,
+} from '../../simulation/transactions'
 import { BUY_MODE_OPTIONS } from './buyModeOptions'
 
 describe('gameplay buy mode options', () => {
@@ -11,5 +15,8 @@ describe('gameplay buy mode options', () => {
       ['buy-max', 'buyMax'],
     ])
     expect(Object.isFrozen(BUY_MODE_OPTIONS)).toBe(true)
+    expect(BUY_MODE_OPTIONS.map(([mode]) => mode)).toEqual(BUY_MODES)
+    expect(BUY_MODES.every(isBuyMode)).toBe(true)
+    expect(isBuyMode('buy-all')).toBe(false)
   })
 })

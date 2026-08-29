@@ -10,6 +10,7 @@ import {
 import {
   buyModeAmount,
   buyXCost,
+  isBuyMode,
   maxAffordable,
   tryDebitContinuous,
   type BuyMode,
@@ -488,16 +489,6 @@ function isValidOwnedPair(
     Array.isArray(pair) &&
     pair.length === 2 &&
     pair.every(isFiniteNonNegativeNumber)
-  )
-}
-
-function isBuyMode(value: string): value is BuyMode {
-  return (
-    value === 'buy-1' ||
-    value === 'buy-10' ||
-    value === 'buy-50' ||
-    value === 'buy-100' ||
-    value === 'buy-max'
   )
 }
 

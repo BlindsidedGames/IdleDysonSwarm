@@ -8,7 +8,7 @@ import {
   skillLegacyKeyToId,
 } from '../save/legacyIds'
 import { packSettingsFlags } from '../save/settingsFlags'
-import type { BuyMode } from '../simulation/transactions'
+import { BUY_MODES, type BuyMode } from '../simulation/transactions'
 import { CONTINUOUS_MAXIMUM, SIMULATION_RESOURCE_MAXIMUM } from '../simulation/numeric'
 import {
   CANONICAL_GAME_MODEL_VERSION,
@@ -1446,15 +1446,15 @@ function toBuyMode(value: unknown): BuyMode {
       : typeof value === 'number'
         ? value
         : 0
-  return (
-    ['buy-1', 'buy-10', 'buy-50', 'buy-100', 'buy-max'] as const
-  )[Number.isInteger(index) && index >= 0 && index <= 4 ? index : 0]
+  return BUY_MODES[
+    Number.isInteger(index) && index >= 0 && index < BUY_MODES.length
+      ? index
+      : 0
+  ]
 }
 
 function fromBuyMode(value: BuyMode): number {
-  return ['buy-1', 'buy-10', 'buy-50', 'buy-100', 'buy-max'].indexOf(
-    value,
-  )
+  return BUY_MODES.indexOf(value)
 }
 
 function minimumBigInt(left: bigint, right: bigint): bigint {
