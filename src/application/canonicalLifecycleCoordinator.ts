@@ -559,7 +559,7 @@ export class CanonicalLifecycleCoordinator {
   ): Promise<CommitFirstResult> {
     return this.enqueue(async () => {
       const snapshot = this.application.snapshot()
-      if (!Number.isFinite(bots) || bots < 0) {
+      if (!isFiniteNonNegativeNumber(bots)) {
         return {
           committed: false,
           transition: rejectedTransition(

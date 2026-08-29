@@ -1105,7 +1105,7 @@ function applyDevelopmentDysonBots(
   candidate: CanonicalRuntimeState,
   bots: number,
 ): DomainTransition {
-  if (!Number.isFinite(bots) || bots < 0) {
+  if (!isFiniteNonNegativeNumber(bots)) {
     return {
       accepted: false,
       code: 'CANONICAL-DEVELOPMENT-BOTS-INVALID',
@@ -1174,7 +1174,7 @@ function applyDevelopmentAction(
   const state = candidate.gameState
   switch (action.kind) {
     case 'add-cash': {
-      if (!Number.isFinite(action.amount) || action.amount < 0) {
+      if (!isFiniteNonNegativeNumber(action.amount)) {
         return invalidDevelopmentAction('Cash amount')
       }
       return replaceDevelopmentState(candidate, {
@@ -1189,7 +1189,7 @@ function applyDevelopmentAction(
       })
     }
     case 'add-bots': {
-      if (!Number.isFinite(action.amount) || action.amount < 0) {
+      if (!isFiniteNonNegativeNumber(action.amount)) {
         return invalidDevelopmentAction('Bot amount')
       }
       const bots = Math.min(Number.MAX_VALUE, state.dyson.bots + action.amount)
@@ -1280,7 +1280,7 @@ function applyDevelopmentAction(
         },
       })
     case 'add-offline-time': {
-      if (!Number.isFinite(action.seconds) || action.seconds < 0) {
+      if (!isFiniteNonNegativeNumber(action.seconds)) {
         return invalidDevelopmentAction('Offline-time amount')
       }
       const grant = applyAwayTimeGrant({
