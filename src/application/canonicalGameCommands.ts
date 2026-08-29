@@ -75,6 +75,7 @@ import {
   MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS,
 } from '../simulation/infinityCycle'
 import type { QuantumUpgradeId } from '../simulation/quantumUpgrades'
+import { normalizeCanonicalBotDistribution } from '../simulation/botDistribution'
 import { purchaseRealityUpgrade } from '../simulation/realityUpgrades'
 import type { RealityUpgradeId } from '../simulation/realityUpgrades'
 import { gatherRealityInfluence } from '../simulation/realityWorkers'
@@ -1025,7 +1026,7 @@ export function routeCanonicalGameCommand(
       if (selected === null) {
         return selectedPresetCarrierUnavailable(state, carriers)
       }
-      const distribution = normalizeBotDistribution(
+      const distribution = normalizeCanonicalBotDistribution(
         command.distribution,
       )
       if (distribution === null) {
@@ -1335,7 +1336,7 @@ export function routeCanonicalGameCommand(
     }
 
     case 'skill.set-preset-bot-distribution': {
-      const distribution = normalizeBotDistribution(
+      const distribution = normalizeCanonicalBotDistribution(
         command.distribution,
       )
       if (distribution === null) {
@@ -2745,12 +2746,6 @@ function researchAutomationSettingGate(
     return 'research-locked'
   }
   return null
-}
-
-function normalizeBotDistribution(value: number): number | null {
-  if (!Number.isFinite(value)) return null
-  const clamped = Math.max(0, Math.min(1, value))
-  return Math.round(clamped * 100) / 100
 }
 
 function replacePreset(
