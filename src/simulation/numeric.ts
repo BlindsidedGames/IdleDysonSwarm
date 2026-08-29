@@ -1,6 +1,7 @@
 export const CONTINUOUS_MAXIMUM = Number.MAX_VALUE
 export const DISCRETE_MAXIMUM = 9_223_372_036_854_775_807n
 export const SIMULATION_RESOURCE_MAXIMUM = BigInt(CONTINUOUS_MAXIMUM)
+const DISCRETE_DOUBLE_UPPER_EXCLUSIVE = 9_223_372_036_854_776_000
 
 export function clampContinuous(value: number): number {
   if (value === Number.POSITIVE_INFINITY) return CONTINUOUS_MAXIMUM
@@ -83,6 +84,29 @@ export function floorToDiscreteAtMost(
   if (maximum < 0n) return 0n
   if (value >= Number(maximum)) return maximum
   return BigInt(Math.floor(value))
+}
+
+/** Converts a non-negative double using Unity-compatible midpoint-to-even rounding. */
+export function exactRoundedNonNegativeBigInt(value: number): bigint | null {
+  if (!Number.isFinite(value) || value < 0) return null
+  const rounded = roundToEven(value)
+  if (
+    !Number.isInteger(rounded) ||
+    rounded < 0 ||
+    rounded >= DISCRETE_DOUBLE_UPPER_EXCLUSIVE
+  ) {
+    return null
+  }
+  const converted = BigInt(rounded)
+  return converted <= DISCRETE_MAXIMUM ? converted : null
+}
+
+function roundToEven(value: number): number {
+  const floor = Math.floor(value)
+  const fraction = value - floor
+  if (fraction < 0.5) return floor
+  if (fraction > 0.5) return floor + 1
+  return floor % 2 === 0 ? floor : floor + 1
 }
 
 export function bitDecrement(value: number): number {

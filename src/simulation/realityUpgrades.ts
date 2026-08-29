@@ -7,6 +7,7 @@ import {
 import {
   addDiscrete,
   DISCRETE_MAXIMUM,
+  exactRoundedNonNegativeBigInt,
 } from './numeric'
 import { tryDebitContinuous } from './transactions'
 
@@ -14,7 +15,6 @@ const SIMULATION_UPGRADE_KIND =
   'IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition'
 const REALITY_UPGRADE_LAYER = 1
 const INT_MAXIMUM = 2_147_483_647n
-const LONG_UPPER_EXCLUSIVE = 9_223_372_036_854_776_000
 
 export const REALITY_UPGRADE_IDS = [
   'translation1',
@@ -540,30 +540,6 @@ function isDiscrete(value: unknown): value is bigint {
     value >= 0n &&
     value <= DISCRETE_MAXIMUM
   )
-}
-
-function exactRoundedNonNegativeBigInt(
-  value: number,
-): bigint | null {
-  if (!Number.isFinite(value) || value < 0) return null
-  const rounded = roundToEven(value)
-  if (
-    !Number.isInteger(rounded) ||
-    rounded < 0 ||
-    rounded >= LONG_UPPER_EXCLUSIVE
-  ) {
-    return null
-  }
-  const converted = BigInt(rounded)
-  return converted <= DISCRETE_MAXIMUM ? converted : null
-}
-
-function roundToEven(value: number): number {
-  const floor = Math.floor(value)
-  const fraction = value - floor
-  if (fraction < 0.5) return floor
-  if (fraction > 0.5) return floor + 1
-  return floor % 2 === 0 ? floor : floor + 1
 }
 
 function isRealityUpgradeId(

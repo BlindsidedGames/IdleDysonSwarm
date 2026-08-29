@@ -5,7 +5,10 @@ import {
   type DreamEducationId,
   type DreamUpgradeFlag,
 } from '../game-state/types'
-import { addDiscrete, DISCRETE_MAXIMUM } from './numeric'
+import {
+  addDiscrete,
+  exactRoundedNonNegativeBigInt,
+} from './numeric'
 import { tryDebitContinuous } from './transactions'
 
 const SIMULATION_UPGRADE_KIND =
@@ -617,32 +620,6 @@ function educationIdFromTarget(
   return DREAM_EDUCATION_IDS.includes(id as DreamEducationId)
     ? (id as DreamEducationId)
     : null
-}
-
-function exactNonNegativeBigInt(value: number): bigint | null {
-  if (
-    !Number.isFinite(value) ||
-    !Number.isInteger(value) ||
-    value < 0 ||
-    value >= 9_223_372_036_854_776_000
-  ) {
-    return null
-  }
-  const converted = BigInt(value)
-  return converted <= DISCRETE_MAXIMUM ? converted : null
-}
-
-function exactRoundedNonNegativeBigInt(value: number): bigint | null {
-  if (!Number.isFinite(value) || value < 0) return null
-  return exactNonNegativeBigInt(roundToEven(value))
-}
-
-function roundToEven(value: number): number {
-  const floor = Math.floor(value)
-  const fraction = value - floor
-  if (fraction < 0.5) return floor
-  if (fraction > 0.5) return floor + 1
-  return floor % 2 === 0 ? floor : floor + 1
 }
 
 function unityAddContinuous(left: number, right: number): number {
