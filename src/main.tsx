@@ -95,6 +95,11 @@ async function bootstrap(): Promise<void> {
         releaseCandidateId: nativeRelease.defaultReleaseCandidateId,
       },
       metadata: composition.releasePlatformServices?.metadata,
+      onMetadataLookupFailure: (failure) => {
+        console.warn(
+          `Native release metadata ${failure}; using packaged release identity.`,
+        )
+      },
       desktopDistribution:
         nativeBridge?.target === 'electron' && !import.meta.env.DEV
           ? desktopDistributionFromBuildValue(
