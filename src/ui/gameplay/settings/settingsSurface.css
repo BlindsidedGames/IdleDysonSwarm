@@ -124,13 +124,13 @@
 }
 
 .settings-surface__audio-controls input[type="range"]:focus-visible::-webkit-slider-thumb {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 2px;
+  outline: none;
+  outline-offset: 0;
 }
 
 .settings-surface__audio-controls input[type="range"]:focus-visible::-moz-range-thumb {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 2px;
+  outline: none;
+  outline-offset: 0;
 }
 
 .settings-surface__dialog-backdrop {
@@ -585,8 +585,8 @@
 }
 
 .settings-surface__toggle:has(input:focus-visible) {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 2px;
+  outline: none;
+  outline-offset: 0;
 }
 
 .settings-surface__development-trigger {
