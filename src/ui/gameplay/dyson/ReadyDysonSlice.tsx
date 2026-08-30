@@ -828,11 +828,6 @@ export function ReadyDysonSlice({
               {chunks}
             </strong>
           ),
-          details: (chunks: ReactNode) => (
-            <strong className="skill-preset-application-banner__details">
-              {chunks}
-            </strong>
-          ),
         })
   const automaticPresetConflictNotice =
     automaticPresetConflictMessage === null

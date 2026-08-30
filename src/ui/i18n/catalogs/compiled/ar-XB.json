@@ -4732,7 +4732,7 @@
     },
     {
       "type": 0,
-      "value": ". Odǝu Sʞıʅʅs ɟoɹ pǝʇɐıʅs."
+      "value": "."
     },
     {
       "type": 0,
@@ -4836,17 +4836,7 @@
     },
     {
       "type": 0,
-      "value": ". "
-    },
-    {
-      "type": 8,
-      "value": "details",
-      "children": [
-        {
-          "type": 0,
-          "value": "Odǝu Sʞıʅʅs ɟoɹ pǝʇɐıʅs."
-        }
-      ]
+      "value": "."
     },
     {
       "type": 0,

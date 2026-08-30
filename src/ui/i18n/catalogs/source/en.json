@@ -1064,12 +1064,12 @@
     "description": "Disables automatic skill preset loading when Bots opens."
   },
   "dyson.info.preset-partially-applied": {
-    "defaultMessage": "{presetName} was partially applied. {retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}, leaving {blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}. Open Skills for details.",
-    "description": "Non-blocking result after an automatic tab preset switch is constrained by retained skills."
+    "defaultMessage": "{presetName} was partially applied. {retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}, leaving {blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}.",
+    "description": "Accessible result for the dismiss-only banner shown when an automatic tab preset switch is constrained by retained skills."
   },
   "dyson.info.preset-partially-applied-banner": {
-    "defaultMessage": "<preset>{presetName}</preset> was partially applied. <retained>{retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}</retained>, leaving <blocked>{blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}</blocked>. <details>Open Skills for details.</details>",
-    "description": "Richly formatted banner after an automatic tab preset switch is constrained by retained skills."
+    "defaultMessage": "<preset>{presetName}</preset> was partially applied. <retained>{retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}</retained>, leaving <blocked>{blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}</blocked>.",
+    "description": "Dismiss-only richly formatted banner after an automatic tab preset switch is constrained by retained skills."
   },
   "dyson.info.purchase-amount": {
     "defaultMessage": "Building purchase amount",
