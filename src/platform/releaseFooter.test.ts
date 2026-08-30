@@ -1,6 +1,7 @@
-import { describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import {
   desktopDistributionFromBuildValue,
+  MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS,
   resolveReleaseFooter,
 } from './releaseFooter'
 
@@ -10,6 +11,10 @@ const source = Object.freeze({
 })
 
 describe('release footer presentation', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('labels local browser builds as Dev', async () => {
     await expect(resolveReleaseFooter({
       target: 'browser',
@@ -107,7 +112,66 @@ describe('release footer presentation', () => {
       .toThrow('Desktop distribution must be desktop or steam.')
   })
 
-  test('formats the checked-in iOS fallback without blocking startup', async () => {
+  test('uses mobile metadata that succeeds before the two-second deadline', async () => {
+    vi.useFakeTimers()
+    const result = resolveReleaseFooter({
+      target: 'android',
+      developmentBuild: false,
+      source,
+      metadata: {
+        metadata: () => new Promise((resolve) => {
+          globalThis.setTimeout(() => resolve({
+            hostKind: 'mobile-native',
+            applicationId: 'com.blindsidedgames.idledysonswarm',
+            applicationVersion: '4.1.6',
+            applicationBuild: '2026083001',
+            supportsNativeFilesystemMigration: true,
+          }), MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS - 1)
+        }),
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(
+      MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS - 1,
+    )
+    await expect(result).resolves.toEqual({
+      platform: 'Android',
+      version: '4.1.6',
+      build: '2026083001',
+    })
+  })
+
+  test('continues with packaged metadata at the two-second deadline', async () => {
+    vi.useFakeTimers()
+    const failures: string[] = []
+    const result = resolveReleaseFooter({
+      target: 'ios',
+      developmentBuild: false,
+      source,
+      metadata: { metadata: () => new Promise(() => undefined) },
+      onMetadataLookupFailure: (failure) => failures.push(failure),
+    })
+    let settled = false
+    void result.then(() => {
+      settled = true
+    })
+
+    await vi.advanceTimersByTimeAsync(
+      MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS - 1,
+    )
+    expect(settled).toBe(false)
+    expect(failures).toEqual([])
+    await vi.advanceTimersByTimeAsync(1)
+    await expect(result).resolves.toEqual({
+      platform: 'iOS',
+      version: '4.1.5',
+      build: '2608.29.04',
+    })
+    expect(failures).toEqual(['timeout'])
+  })
+
+  test('records rejection and formats the checked-in iOS fallback', async () => {
+    const failures: string[] = []
     await expect(resolveReleaseFooter({
       target: 'ios',
       developmentBuild: false,
@@ -117,13 +181,60 @@ describe('release footer presentation', () => {
           throw new Error('unavailable')
         },
       },
+      onMetadataLookupFailure: (failure) => failures.push(failure),
     })).resolves.toEqual({
       platform: 'iOS',
       version: '4.1.5',
       build: '2608.29.04',
     })
+    expect(failures).toEqual(['rejected'])
+  })
+
+  test('ignores metadata that resolves after startup used the fallback', async () => {
+    vi.useFakeTimers()
+    let resolveMetadata: ((metadata: ReturnType<typeof mobileMetadata>) => void)
+      | undefined
+    const failures: string[] = []
+    const result = resolveReleaseFooter({
+      target: 'android',
+      developmentBuild: false,
+      source,
+      metadata: {
+        metadata: () => new Promise((resolve) => {
+          resolveMetadata = resolve
+        }),
+      },
+      onMetadataLookupFailure: (failure) => failures.push(failure),
+    })
+
+    await vi.advanceTimersByTimeAsync(
+      MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS,
+    )
+    await expect(result).resolves.toEqual({
+      platform: 'Android',
+      version: '4.1.5',
+      build: '2026082904',
+    })
+    resolveMetadata?.(mobileMetadata())
+    await Promise.resolve()
+    await expect(result).resolves.toEqual({
+      platform: 'Android',
+      version: '4.1.5',
+      build: '2026082904',
+    })
+    expect(failures).toEqual(['timeout'])
   })
 })
+
+function mobileMetadata() {
+  return {
+    hostKind: 'mobile-native' as const,
+    applicationId: 'com.blindsidedgames.idledysonswarm' as const,
+    applicationVersion: '4.1.6',
+    applicationBuild: '2026083001',
+    supportsNativeFilesystemMigration: true,
+  }
+}
 
 function desktopMetadata() {
   return {

@@ -36,6 +36,13 @@ The label is deliberately subtle support/debug metadata intended to identify
 the exact host version in bug-report screenshots, not ordinary player guidance;
 its presentation uses the product-approved 30% primary-text mix.
 
+Installed-package metadata is nonessential startup information on Android and
+iOS. The renderer waits at most two seconds for the Capacitor bridge, then
+continues with the packaged marketing version and release-candidate identity.
+A timeout or rejection emits only its closed diagnostic category to the native
+WebView console; raw bridge errors are not recorded. A result arriving after
+the deadline is ignored and cannot delay or revise the completed startup.
+
 ## Signing boundary
 
 Debug Android builds require no signing inputs. A Gradle task containing

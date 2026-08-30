@@ -34,7 +34,14 @@ export interface ResolveReleaseFooterOptions {
   readonly source: Readonly<ReleaseFooterSourceIdentity>
   readonly metadata?: PlatformMetadataSource
   readonly desktopDistribution?: DesktopDistribution
+  readonly onMetadataLookupFailure?: (
+    failure: ReleaseMetadataLookupFailure,
+  ) => void
 }
+
+export type ReleaseMetadataLookupFailure = 'timeout' | 'rejected'
+
+export const MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS = 2_000
 
 export function desktopDistributionFromBuildValue(
   value: unknown,
@@ -72,15 +79,12 @@ export async function resolveReleaseFooter(
 
   let version = options.source.marketingVersion
   let build = fallbackNativeBuild(options.target, options.source)
-  try {
-    const metadata = await options.metadata?.metadata()
-    if (metadata !== undefined) {
-      version = metadata.applicationVersion
-      build = metadata.applicationBuild ?? build
-    }
-  } catch {
-    // Optional footer metadata must not prevent startup. The checked-in
-    // identity remains a deterministic fallback for local packages.
+  const metadata = isMobileTarget(options.target)
+    ? await resolveMobileMetadata(options)
+    : await resolveMetadataWithoutDeadline(options.metadata)
+  if (metadata !== undefined) {
+    version = metadata.applicationVersion
+    build = metadata.applicationBuild ?? build
   }
 
   return Object.freeze({
@@ -91,6 +95,81 @@ export async function resolveReleaseFooter(
     version,
     build,
   })
+}
+
+function isMobileTarget(
+  target: Exclude<RuntimeTarget, 'browser'>,
+): target is 'android' | 'ios' {
+  return target === 'android' || target === 'ios'
+}
+
+async function resolveMobileMetadata(
+  options: Readonly<ResolveReleaseFooterOptions>,
+): Promise<Awaited<ReturnType<PlatformMetadataSource['metadata']>> | undefined> {
+  if (options.metadata === undefined) return undefined
+  const result = await metadataWithinDeadline(options.metadata)
+  if (result.status === 'available') return result.metadata
+  reportMetadataLookupFailure(
+    options.onMetadataLookupFailure,
+    result.status,
+  )
+  return undefined
+}
+
+async function resolveMetadataWithoutDeadline(
+  source: PlatformMetadataSource | undefined,
+): Promise<Awaited<ReturnType<PlatformMetadataSource['metadata']>> | undefined> {
+  try {
+    return await source?.metadata()
+  } catch {
+    return undefined
+  }
+}
+
+type MetadataLookupResult =
+  | {
+      readonly status: 'available'
+      readonly metadata: Awaited<
+        ReturnType<PlatformMetadataSource['metadata']>
+      >
+    }
+  | { readonly status: ReleaseMetadataLookupFailure }
+
+function metadataWithinDeadline(
+  source: PlatformMetadataSource,
+): Promise<MetadataLookupResult> {
+  return new Promise((resolve) => {
+    let settled = false
+    const finish = (result: MetadataLookupResult): void => {
+      if (settled) return
+      settled = true
+      globalThis.clearTimeout(timeout)
+      resolve(result)
+    }
+    const timeout = globalThis.setTimeout(
+      () => finish({ status: 'timeout' }),
+      MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS,
+    )
+    try {
+      void source.metadata().then(
+        (metadata) => finish({ status: 'available', metadata }),
+        () => finish({ status: 'rejected' }),
+      )
+    } catch {
+      finish({ status: 'rejected' })
+    }
+  })
+}
+
+function reportMetadataLookupFailure(
+  reporter: ResolveReleaseFooterOptions['onMetadataLookupFailure'],
+  failure: ReleaseMetadataLookupFailure,
+): void {
+  try {
+    reporter?.(failure)
+  } catch {
+    // A nonessential diagnostic sink cannot become a startup prerequisite.
+  }
 }
 
 function platformForTarget(

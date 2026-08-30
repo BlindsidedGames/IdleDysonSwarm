@@ -182,6 +182,11 @@ the exact version in bug-report screenshots, not ordinary player guidance. Its
 exact 30% primary-text mix is an intentional low-prominence treatment and must
 never carry gameplay status, instructions, or required actions.
 
+Android and iOS installed-package metadata is nonessential: startup waits no
+more than two seconds for it, records a closed timeout or rejection diagnostic,
+and then uses the packaged release identity. A late bridge response is ignored
+and cannot re-block startup or replace the already selected footer identity.
+
 Route discovery is also portable canonical save state. A newly revealed,
 unvisited destination uses the square highlight in the compact bottom bar and
 a dot in the drawer; the More button uses a dot only while such a destination
