@@ -70,6 +70,33 @@ describe('transitional production V2 checkpoint recovery', () => {
       recoverTransitionalV2Checkpoint(checkpointText(state, 1), base),
     ).toThrow(/cannot be represented/u)
   })
+
+  test.each([
+    {
+      label: 'owned gameplay section',
+      remove: (state: SaveRecord) => delete state.dyson,
+      expectedPath: '$.dyson',
+    },
+    {
+      label: 'V2-only railgun field',
+      remove: (state: SaveRecord) => {
+        delete ((state.dream as SaveRecord).railgun as SaveRecord)
+          .pendingBaseSeconds
+      },
+      expectedPath: '$.dream.railgun.pendingBaseSeconds',
+    },
+  ])('rejects a checkpoint missing a required $label', ({
+    remove,
+    expectedPath,
+  }) => {
+    const base = createDeterministicUnityFirstRunPreparedSave()
+    const state = encodeState(hydrateGameState(base).state)
+    remove(state)
+
+    expect(() =>
+      recoverTransitionalV2Checkpoint(checkpointText(state, 1), base),
+    ).toThrow(expectedPath)
+  })
 })
 
 function checkpointText(state: SaveRecord, revision: number): string {
@@ -94,7 +121,33 @@ function checkpointText(state: SaveRecord, revision: number): string {
 }
 
 function encodeState(value: unknown): SaveRecord {
-  return encodeValue(value) as SaveRecord
+  const state = encodeValue(value) as SaveRecord
+  const meta = state.meta as SaveRecord
+  meta.navigationVisibility ??= {
+    story: false,
+    wiki: false,
+    statistics: false,
+  }
+  const infinity = state.infinity as SaveRecord
+  infinity.availablePoints ??= '0'
+  infinity.allocatedPoints ??= '0'
+  delete infinity.points
+  delete infinity.spentPoints
+  const quantum = state.quantum as SaveRecord
+  quantum.availableShards ??= '0'
+  quantum.lifetimeEarnedShards ??= '0'
+  delete quantum.pointsEarned
+  delete quantum.pointsSpent
+  ;(state.skills as SaveRecord).selectedPreset ??= 1
+  const railgun = (state.dream as SaveRecord).railgun as SaveRecord
+  railgun.pendingBaseSeconds ??= 0
+  railgun.pendingDreamSeconds ??= 0
+  railgun.activeRailguns ??= 0
+  railgun.reservedPanels ??= '0'
+  railgun.highestStoredPanels ??= '0'
+  railgun.lastRoundsFired ??= 0
+  railgun.lastPanelsLaunched ??= '0'
+  return state
 }
 
 function encodeValue(value: unknown): unknown {

@@ -507,16 +507,23 @@ export class PortableSaveRepository implements SaveRepository {
     if (this.recoverTransitionalCheckpoint === undefined) return null
     for (const sourcePath of this.backupPaths()) {
       if (!(await this.storage.exists(sourcePath))) continue
-      const recovered = this.recoverTransitionalCheckpoint(
-        await this.storage.readText(sourcePath),
-        base,
-      )
+      let recovered: PreparedSave | null
+      try {
+        recovered = this.recoverTransitionalCheckpoint(
+          await this.storage.readText(sourcePath),
+          base,
+        )
+      } catch {
+        // An optional historical backup cannot overrule an already-validated
+        // current save. Continue in case an older checkpoint is still usable.
+        continue
+      }
       if (recovered === null) continue
       try {
         const committed = await this.publish(
           recovered,
           'development',
-          false,
+          true,
         )
         return {
           status: 'recovered-backup',

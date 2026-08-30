@@ -41,6 +41,9 @@ every decimal can be represented exactly by the current field authority. The
 checkpoint revision is recorded in the upgraded save so an older retained
 backup cannot replay over newer progress. Unrepresentable values fail closed;
 they are never clamped, truncated, or replaced with a first-run save.
+An unreadable transitional backup cannot block an already-valid current save.
+Before validated transitional progress replaces that current save, normal
+backup rotation preserves the displaced canonical checkpoint for rollback.
 
 Exact accepted legacy baselines and fixture requirements are defined in
 [`legacy-save-compatibility.md`](legacy-save-compatibility.md).

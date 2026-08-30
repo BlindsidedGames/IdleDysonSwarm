@@ -20,6 +20,36 @@ const PORTABLE_PREFIX = 'IDSWEB1:'
 const MIGRATED_REVISION_FIELD =
   'transitionalProductionV2CheckpointRevision'
 
+const CURRENT_ONLY_STATE_PATHS = new Set([
+  '$.modelVersion',
+  '$.meta.navigationRouteDiscovery',
+  '$.infinity.automaticResetEnabled',
+  '$.infinity.currentCyclePeakIpPerMinute',
+  '$.infinity.currentCyclePeakReward',
+  '$.infinity.manualPeakIpPerMinute',
+  '$.infinity.manualPeakReward',
+  '$.infinity.manualCalibrationObservedActiveSeconds',
+  '$.infinity.activeAutomaticThroughputCycleEligible',
+  '$.timeline.processing',
+  '$.dream.purchaseBatches',
+  '$.statistics.recentInfinityCycles',
+  '$.statistics.recentActiveAutomaticInfinityCycles',
+])
+
+const V2_REQUIRED_PATHS_NOT_GUARANTEED_BY_CURRENT_BASE = Object.freeze([
+  '$.meta.navigationVisibility.story',
+  '$.meta.navigationVisibility.wiki',
+  '$.meta.navigationVisibility.statistics',
+  '$.skills.selectedPreset',
+  '$.dream.railgun.pendingBaseSeconds',
+  '$.dream.railgun.pendingDreamSeconds',
+  '$.dream.railgun.activeRailguns',
+  '$.dream.railgun.reservedPanels',
+  '$.dream.railgun.highestStoredPanels',
+  '$.dream.railgun.lastRoundsFired',
+  '$.dream.railgun.lastPanelsLaunched',
+])
+
 interface TransitionalCheckpoint {
   readonly revision: number
   readonly portableSave: string
@@ -46,6 +76,7 @@ export function recoverTransitionalV2Checkpoint(
   const dto = decodePortableSave(checkpoint.portableSave)
   const state = requireRecord(dto.state, 'schema 13 state')
   const session = hydrateGameState(base)
+  assertV2RequiredPaths(state)
   const compatibleSource = withV1LedgerFields(state)
   const converted = convertCompatibleState(
     compatibleSource,
@@ -188,15 +219,41 @@ function convertLike(source: unknown, base: unknown, path: string): unknown {
   if (base !== null && typeof base === 'object') {
     const sourceRecord = requireRecord(source, path)
     return Object.fromEntries(
-      Object.entries(base).map(([key, baseValue]) => [
-        key,
-        Object.prototype.hasOwnProperty.call(sourceRecord, key)
-          ? convertLike(sourceRecord[key], baseValue, `${path}.${key}`)
-          : baseValue,
-      ]),
+      Object.entries(base).map(([key, baseValue]) => {
+        const propertyPath = `${path}.${key}`
+        if (!Object.prototype.hasOwnProperty.call(sourceRecord, key)) {
+          if (CURRENT_ONLY_STATE_PATHS.has(propertyPath)) {
+            return [key, baseValue]
+          }
+          throw new TypeError(
+            `Transitional V2 save is missing required field ${propertyPath}.`,
+          )
+        }
+        return [
+          key,
+          convertLike(sourceRecord[key], baseValue, propertyPath),
+        ]
+      }),
     )
   }
   return base
+}
+
+function assertV2RequiredPaths(state: SaveRecord): void {
+  for (const path of V2_REQUIRED_PATHS_NOT_GUARANTEED_BY_CURRENT_BASE) {
+    const segments = path.slice(2).split('.')
+    let cursor: SaveRecord = state
+    for (const [index, segment] of segments.entries()) {
+      if (!Object.prototype.hasOwnProperty.call(cursor, segment)) {
+        throw new TypeError(
+          `Transitional V2 save is missing required field ${path}.`,
+        )
+      }
+      if (index < segments.length - 1) {
+        cursor = requireRecord(cursor[segment], path)
+      }
+    }
+  }
 }
 
 function convertStatisticsWindow(
