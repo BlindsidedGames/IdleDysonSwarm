@@ -5,7 +5,10 @@ import type { CanonicalFacilityId, CanonicalGameStateV1 } from '../game-state/ty
 import { feedAllToAvocado } from './avocadoDomain'
 import { purchaseCanonicalInfinityShopItem } from './canonicalInfinityShop'
 import { applyCanonicalSkillIntervalEffects } from './canonicalSkillIntervalEffects'
-import { deriveDreamRailgunReadinessFacts } from './dreamSpaceAge'
+import {
+  deriveDreamRailgunReadinessFacts,
+  purchaseDreamSpaceAge,
+} from './dreamSpaceAge'
 import {
   DYSON_AUTOMATION_TARGETS,
   previewDysonFacilityPurchase,
@@ -27,6 +30,7 @@ import {
 
 const COARSE_BALANCE = 2 ** 56
 const COARSE_ULP = bitIncrement(COARSE_BALANCE) - COARSE_BALANCE
+const ROUND_DOWN_BALANCE = 2 ** 55
 const SUB_ULP_STELLAR_BALANCE = 2 ** 64
 
 function state(): CanonicalGameStateV1 {
@@ -333,6 +337,107 @@ describe('coarse-ULP purchase probes', () => {
     })
     expect(result.state.money).toBe(before.money)
     expect(result.state.facilities.assembly_lines[1]).toBe(COARSE_BALANCE)
+  })
+
+  test.each([
+    ['solar', ROUND_DOWN_BALANCE, 8],
+    ['solar', COARSE_BALANCE, 16],
+    ['fusion', ROUND_DOWN_BALANCE, 8],
+    ['fusion', COARSE_BALANCE, 16],
+  ] as const)(
+    'Dream %s buy-10 rejects a rounded buy-%i output before charging',
+    (command, balance, roundedOutput) => {
+      const initial = state()
+      const resource = command === 'solar' ? 'solarPanels' : 'fusion'
+      const before: CanonicalGameStateV1 = {
+        ...initial,
+        reality: {
+          ...initial.reality,
+          influence: balance,
+        },
+        dream: {
+          ...initial.dream,
+          resources: {
+            ...initial.dream.resources,
+            [resource]: balance,
+          },
+          parameters: {
+            ...initial.dream.parameters,
+            solarCost: 1n,
+            fusionCost: 1n,
+          },
+        },
+      }
+
+      expect(balance + 10 - balance).toBe(roundedOutput)
+      const result = purchaseDreamSpaceAge(before, command, 10)
+
+      expect(result).toMatchObject({
+        purchased: false,
+        status: 'output-maxed',
+        state: before,
+      })
+      expect(result.state.reality.influence).toBe(balance)
+      expect(result.state.dream.resources[resource]).toBe(balance)
+    },
+  )
+
+  test.each(['solar', 'fusion'] as const)(
+    'Dream %s buy-10 grants and charges the exact ordinary quantity',
+    (command) => {
+      const initial = state()
+      const resource = command === 'solar' ? 'solarPanels' : 'fusion'
+      const before: CanonicalGameStateV1 = {
+        ...initial,
+        reality: { ...initial.reality, influence: 1_000 },
+        dream: {
+          ...initial.dream,
+          resources: { ...initial.dream.resources, [resource]: 100 },
+          parameters: {
+            ...initial.dream.parameters,
+            solarCost: 1n,
+            fusionCost: 1n,
+          },
+        },
+      }
+
+      const result = purchaseDreamSpaceAge(before, command, 10)
+      const expectedDebit = tryDebitContinuous(
+        before.reality.influence,
+        result.cost,
+        10n,
+      )
+
+      expect(result).toMatchObject({ purchased: true, status: 'success' })
+      expect(result.state.dream.resources[resource] - 100).toBe(10)
+      expect(result.state.reality.influence).toBe(expectedDebit.balance)
+      expect(expectedDebit.status).toBe('success')
+    },
+  )
+
+  test('Dream purchases reject a saturated output without charging', () => {
+    const initial = state()
+    const before: CanonicalGameStateV1 = {
+      ...initial,
+      reality: { ...initial.reality, influence: 1_000 },
+      dream: {
+        ...initial.dream,
+        resources: {
+          ...initial.dream.resources,
+          solarPanels: CONTINUOUS_MAXIMUM,
+        },
+        parameters: { ...initial.dream.parameters, solarCost: 1n },
+      },
+    }
+
+    const result = purchaseDreamSpaceAge(before, 'solar', 1)
+
+    expect(result).toMatchObject({
+      purchased: false,
+      status: 'output-maxed',
+      state: before,
+    })
+    expect(result.state.reality.influence).toBe(1_000)
   })
 
   test('Infinity Shop rejects an unrepresentable retained-facility quantity before spending', () => {

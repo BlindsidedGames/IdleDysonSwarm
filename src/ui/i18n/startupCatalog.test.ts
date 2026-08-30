@@ -1,3 +1,8 @@
+// @vitest-environment jsdom
+
+import { render, screen } from '@testing-library/react'
+import { createElement, Fragment } from 'react'
+import { useIntl } from 'react-intl'
 import { describe, expect, test, vi } from 'vitest'
 import type { SharedMessageCatalog } from './catalogs/types'
 import {
@@ -6,6 +11,8 @@ import {
   type LocaleStorage,
 } from './localePreference'
 import { loadStartupCatalog } from './startupCatalog'
+import { LocalePreferenceProvider } from './LocalePreferenceProvider'
+import { useLocalePreference } from './localeContext'
 
 const frenchCatalog = Object.freeze({
   greeting: [{ type: 0, value: 'Bonjour' }],
@@ -22,7 +29,7 @@ describe('startup locale catalog loading', () => {
     await expect(loadStartupCatalog('fr', {
       loadCatalog,
       onDiagnostic,
-    })).resolves.toBe(frenchCatalog)
+    })).resolves.toEqual({ locale: 'fr', messages: frenchCatalog })
     expect(loadCatalog).toHaveBeenCalledTimes(1)
     expect(loadCatalog).toHaveBeenCalledWith('fr')
     expect(onDiagnostic).not.toHaveBeenCalled()
@@ -38,7 +45,7 @@ describe('startup locale catalog loading', () => {
     await expect(loadStartupCatalog('fr', {
       loadCatalog,
       onDiagnostic,
-    })).resolves.toBe(englishCatalog)
+    })).resolves.toEqual({ locale: 'en', messages: englishCatalog })
     expect(loadCatalog.mock.calls).toEqual([['fr'], ['en']])
     expect(onDiagnostic).toHaveBeenCalledWith({
       code: 'selected-locale-catalog-unavailable',
@@ -57,12 +64,16 @@ describe('startup locale catalog loading', () => {
       preferredLocales: ['en-AU'],
     })
 
-    await loadStartupCatalog(preference.getSnapshot().locale, {
+    const startupCatalog = await loadStartupCatalog(
+      preference.getSnapshot().locale,
+      {
       loadCatalog: async (locale) => {
         if (locale === 'fr') throw new Error('chunk unavailable')
         return englishCatalog
       },
-    })
+      },
+    )
+    preference.applyEffectiveLocale(startupCatalog.locale)
 
     expect(preference.getSnapshot()).toEqual({
       preference: 'fr',
@@ -91,11 +102,11 @@ describe('startup locale catalog loading', () => {
     await expect(loadStartupCatalog(
       createPreference().getSnapshot().locale,
       { loadCatalog },
-    )).resolves.toBe(englishCatalog)
+    )).resolves.toEqual({ locale: 'en', messages: englishCatalog })
     await expect(loadStartupCatalog(
       createPreference().getSnapshot().locale,
       { loadCatalog },
-    )).resolves.toBe(frenchCatalog)
+    )).resolves.toEqual({ locale: 'fr', messages: frenchCatalog })
     expect(frenchAttempts).toBe(2)
     expect(createPreference().getSnapshot().preference).toBe('fr')
   })
@@ -121,4 +132,63 @@ describe('startup locale catalog loading', () => {
     })).rejects.toThrow('en unavailable')
     expect(onDiagnostic).toHaveBeenCalledOnce()
   })
+
+  test('uses effective English identity after a failed RTL catalog', async () => {
+    const writes: Array<readonly [string, string]> = []
+    const preference = new LocalePreferenceService({
+      document,
+      storage: {
+        getItem: () => 'ar-XB',
+        setItem: (key, value) => writes.push([key, value]),
+      },
+      preferredLocales: ['ar'],
+    })
+    const startupCatalog = await loadStartupCatalog('ar-XB', {
+      loadCatalog: async (locale) => {
+        if (locale === 'ar-XB') throw new Error('RTL chunk unavailable')
+        return englishCatalog
+      },
+    })
+    preference.applyEffectiveLocale(startupCatalog.locale)
+
+    render(createElement(
+      LocalePreferenceProvider,
+      {
+        preference,
+        initialLocale: startupCatalog.locale,
+        initialMessages: startupCatalog.messages,
+      },
+      createElement(EffectiveLocaleProbe),
+    ))
+
+    expect(screen.getByTestId('effective-locale').textContent).toBe('en')
+    expect(screen.getByTestId('selected-preference').textContent).toBe('ar-XB')
+    expect(screen.getByTestId('intl-locale').textContent).toBe('en')
+    expect(screen.getByTestId('formatted-number').textContent).toBe('1,234.5')
+    expect(document.documentElement.lang).toBe('en')
+    expect(document.documentElement.dir).toBe('ltr')
+    expect(document.documentElement.dataset.locale).toBe('en')
+    expect(writes).toEqual([])
+  })
 })
+
+function EffectiveLocaleProbe() {
+  const locale = useLocalePreference()
+  const intl = useIntl()
+  return createElement(
+    Fragment,
+    null,
+    createElement('span', { 'data-testid': 'effective-locale' }, locale.locale),
+    createElement(
+      'span',
+      { 'data-testid': 'selected-preference' },
+      locale.preference,
+    ),
+    createElement('span', { 'data-testid': 'intl-locale' }, intl.locale),
+    createElement(
+      'span',
+      { 'data-testid': 'formatted-number' },
+      intl.formatNumber(1234.5),
+    ),
+  )
+}

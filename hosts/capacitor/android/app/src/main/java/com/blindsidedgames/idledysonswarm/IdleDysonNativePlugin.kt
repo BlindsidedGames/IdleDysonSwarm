@@ -359,11 +359,11 @@ class IdleDysonNativePlugin : Plugin() {
 
     @PluginMethod
     fun refreshEntitlementOwnership(call: PluginCall) {
-        googlePlayStore.refreshDurableOwnership { liveOwnership, providerAvailable ->
+        googlePlayStore.refreshDurableOwnership { refresh ->
             resolveOwnership(
                 call,
-                liveOwnership ?: entitlementCache.read(),
-                providerAvailable,
+                refresh.ownership ?: entitlementCache.read(),
+                refresh.providerAvailable,
             )
         }
     }

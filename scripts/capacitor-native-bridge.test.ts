@@ -130,6 +130,12 @@ describe('Capacitor first-party native bridge', () => {
       'hosts/capacitor/android/app/src/main/java/com/blindsidedgames/idledysonswarm/NativeEntitlementCache.kt',
     )
     const iosStore = read('hosts/capacitor/ios/App/App/IdleDysonStoreKit.swift')
+    const androidSession = read(
+      'hosts/capacitor/android/app/src/main/java/com/blindsidedgames/idledysonswarm/NativeEntitlementSession.kt',
+    )
+    const iosSession = read(
+      'hosts/capacitor/ios/App/NativeEntitlementSession/NativeEntitlementSession.swift',
+    )
     const androidBuild = read('hosts/capacitor/android/app/build.gradle')
     const iosProject = read(
       'hosts/capacitor/ios/App/App.xcodeproj/project.pbxproj',
@@ -155,6 +161,17 @@ describe('Capacitor first-party native bridge', () => {
     expect(iosStore).toContain('kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly')
     expect(iosStore).toContain('kSecAttrSynchronizable as String: false')
     expect(iosProject).toContain('IdleDysonStoreKit.swift in Sources')
+    expect(iosProject).toContain('NativeEntitlementSession.swift in Sources')
+
+    for (const source of [androidSession, iosSession]) {
+      expect(source).toContain('authoritativeOwnership')
+      expect(source).toContain('pendingPersistence')
+      expect(source).toContain('retryPendingPersistence')
+    }
+    expect(androidCache).toContain('session.applyProviderOwnership')
+    expect(androidStore).toContain('providerAvailable = true')
+    expect(iosStore).toContain('session.applyProviderOwnership')
+    expect(iosStore).toContain('ProviderOwnershipRefresh')
 
     for (const source of [android, ios]) {
       expect(source).toContain('promoteAutomaticUnityPurchaseEvidence')

@@ -24,6 +24,7 @@ import {
   maxAffordable,
   tryDebitContinuous,
 } from './transactions'
+import { settleExactContinuousCredit } from './conservativeSettlement'
 
 export const UNITY_RESEARCH_PRESENTATION_ORDER = Object.freeze([
   'research.assembly_line_upgrade',
@@ -673,8 +674,11 @@ function previewPurchase(
       currentLevel,
     )
   }
-  const nextLevel = currentLevel + Number(selected)
-  if (!Number.isFinite(nextLevel) || nextLevel <= currentLevel) {
+  const output = settleExactContinuousCredit(
+    currentLevel,
+    Number(selected),
+  )
+  if (output.settled !== Number(selected)) {
     return ineligiblePreview(
       facts,
       'output-maxed',
@@ -688,7 +692,7 @@ function previewPurchase(
     code: 'purchasable',
     issue: null,
     nextScience: debit.balance,
-    nextLevel,
+    nextLevel: output.balance,
   }
 }
 

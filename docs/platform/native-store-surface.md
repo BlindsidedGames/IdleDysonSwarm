@@ -81,7 +81,11 @@ A resolved provider refresh is authoritative for the current Store account,
 including explicit negative ownership after revocation, account change,
 restore, or sign-out. A rejected or unavailable refresh supplies no ownership
 evidence and therefore retains the latest verified in-session value, then the
-durable cache on a later launch. The device-local Double IP enabled preference
+durable cache on a later launch. If persisting a resolved refresh fails, its
+ownership still becomes authoritative for the active native process and the
+host retries the pending cache write; older disk state cannot re-grant a
+revoked product during that process. New provider transactions remain
+unfinished until verification has also been cached. The device-local Double IP enabled preference
 remains writable offline only when that verified ownership exists; it persists
 independently and is re-applied when the application is opened again.
 

@@ -115,6 +115,11 @@ export class LocalePreferenceService {
     return locale
   }
 
+  /** Applies a loaded catalog's identity without changing saved preference. */
+  applyEffectiveLocale(locale: EnabledLocale): void {
+    this.#applyDocumentLocale(locale)
+  }
+
   #resolvePreference(preference: LocalePreference): EnabledLocale {
     return preference === SYSTEM_LOCALE_PREFERENCE
       ? resolvePreferredLocale(this.#readPreferredLocales())
@@ -126,9 +131,9 @@ export class LocalePreferenceService {
     return isEnabledLocale(value) ? value : SYSTEM_LOCALE_PREFERENCE
   }
 
-  #applyDocumentLocale(): void {
+  #applyDocumentLocale(locale = this.#snapshot.locale): void {
     if (!this.#document) return
-    const definition = LOCALE_REGISTRY[this.#snapshot.locale]
+    const definition = LOCALE_REGISTRY[locale]
     const root = this.#document.documentElement
     root.lang = definition.languageTag
     root.dir = definition.direction

@@ -259,6 +259,9 @@ Internationalization is foundation work, not a later string-replacement pass:
   their route.
 - If a selected non-English startup catalog is unavailable, record only its
   closed failure category and use the bundled English catalog for that launch.
+  English becomes the effective locale for the provider, `Intl` formatting,
+  document language, direction and font identity; messages and locale metadata
+  must never describe different languages.
   Preserve the selected device-local preference so the catalog is attempted
   again on the next launch. Failure of English itself remains a genuine
   bootstrap failure and must reach the existing fail-safe presentation.

@@ -1,11 +1,6 @@
 package com.blindsidedgames.idledysonswarm
 
 import android.content.Context
-internal data class DurableOwnership(
-    val doubleInfinityPoints: Boolean,
-    val developerOptions: Boolean,
-    val supporterCatGallery: Boolean,
-)
 
 internal data class NativeBoundUnityEvidence(
     val opaqueSourceIdentifier: String,
@@ -24,16 +19,27 @@ internal class NativeEntitlementCache(context: Context) {
         "verified-store-entitlements-v1",
         Context.MODE_PRIVATE,
     )
+    private val session = NativeEntitlementSession()
 
-    fun read(): DurableOwnership = DurableOwnership(
-        doubleInfinityPoints =
-            preferences.getBoolean(KEY_PROVIDER_DOUBLE_IP, false) ||
-                preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false),
+    fun read(): DurableOwnership = session.resolve(
+        persistedProviderOwnership = readPersistedProviderOwnership(),
+        legacyDoubleInfinityPoints =
+            preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false),
+    )
+
+    fun writeProviderOwnership(ownership: DurableOwnership): Boolean =
+        session.applyProviderOwnership(ownership, ::persistProviderOwnership)
+
+    fun retryPendingProviderOwnership(): Boolean =
+        session.retryPendingPersistence(::persistProviderOwnership)
+
+    private fun readPersistedProviderOwnership(): DurableOwnership = DurableOwnership(
+        doubleInfinityPoints = preferences.getBoolean(KEY_PROVIDER_DOUBLE_IP, false),
         developerOptions = preferences.getBoolean(KEY_PROVIDER_DEV_OPTIONS, false),
         supporterCatGallery = preferences.getBoolean(KEY_SUPPORTER_CAT_GALLERY, false),
     )
 
-    fun writeProviderOwnership(ownership: DurableOwnership): Boolean =
+    private fun persistProviderOwnership(ownership: DurableOwnership): Boolean =
         preferences.edit()
             .putBoolean(KEY_PROVIDER_DOUBLE_IP, ownership.doubleInfinityPoints)
             .putBoolean(KEY_PROVIDER_DEV_OPTIONS, ownership.developerOptions)
@@ -57,8 +63,8 @@ internal class NativeEntitlementCache(context: Context) {
         if (preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false)) return false
 
         return preferences.edit()
-             .putBoolean(KEY_LEGACY_DOUBLE_IP, true)
-             .putString(KEY_LEGACY_KIND, "automatic-same-device-unity")
+            .putBoolean(KEY_LEGACY_DOUBLE_IP, true)
+            .putString(KEY_LEGACY_KIND, "automatic-same-device-unity")
             .putString(KEY_LEGACY_PLATFORM, "android")
             .putString(KEY_LEGACY_SOURCE_CLASS, "unity-persistent-data-save")
             .putString(KEY_LEGACY_OPAQUE_ID, evidence.opaqueSourceIdentifier)
@@ -73,8 +79,8 @@ internal class NativeEntitlementCache(context: Context) {
         private const val KEY_PROVIDER_DEV_OPTIONS = "provider.developer-options"
         private const val KEY_SUPPORTER_CAT_GALLERY = "provider.supporter-cat-gallery"
         private const val KEY_VERIFIED_AT_UTC_MS = "provider.verified-at-utc-ms"
-         private const val KEY_LEGACY_DOUBLE_IP = "legacy.double-ip"
-         private const val KEY_LEGACY_KIND = "legacy.kind"
+        private const val KEY_LEGACY_DOUBLE_IP = "legacy.double-ip"
+        private const val KEY_LEGACY_KIND = "legacy.kind"
         private const val KEY_LEGACY_PLATFORM = "legacy.platform"
         private const val KEY_LEGACY_SOURCE_CLASS = "legacy.source-class"
         private const val KEY_LEGACY_OPAQUE_ID = "legacy.opaque-source-id"

@@ -2,12 +2,6 @@ import Foundation
 import Security
 import StoreKit
 
-struct DurableOwnership {
-    let doubleInfinityPoints: Bool
-    let developerOptions: Bool
-    let supporterCatGallery: Bool
-}
-
 struct NativeProductListing {
     let productId: String
     let localizedPrice: String?
@@ -27,6 +21,8 @@ struct NativeBoundUnityEvidence {
 
 /** App-private offline continuity. Shared/imported saves never read or write it. */
 final class NativeEntitlementCache {
+    private let session = NativeEntitlementSession()
+
     private struct Record: Codable {
         var providerDoubleIp = false
         var providerDeveloperOptions = false
@@ -43,15 +39,29 @@ final class NativeEntitlementCache {
 
     func read() -> DurableOwnership {
         let record = readRecord()
-        return DurableOwnership(
-            doubleInfinityPoints:
-                record.providerDoubleIp || record.legacyDoubleIp,
-            developerOptions: record.providerDeveloperOptions,
-            supporterCatGallery: record.supporterCatGallery == true
+        return session.resolve(
+            persistedProviderOwnership: DurableOwnership(
+                doubleInfinityPoints: record.providerDoubleIp,
+                developerOptions: record.providerDeveloperOptions,
+                supporterCatGallery: record.supporterCatGallery == true
+            ),
+            legacyDoubleInfinityPoints: record.legacyDoubleIp
         )
     }
 
     func writeProviderOwnership(_ ownership: DurableOwnership) -> Bool {
+        session.applyProviderOwnership(ownership) { [weak self] pending in
+            self?.persistProviderOwnership(pending) == true
+        }
+    }
+
+    func retryPendingProviderOwnership() -> Bool {
+        session.retryPendingPersistence { [weak self] pending in
+            self?.persistProviderOwnership(pending) == true
+        }
+    }
+
+    private func persistProviderOwnership(_ ownership: DurableOwnership) -> Bool {
         var record = readRecord()
         record.providerDoubleIp = ownership.doubleInfinityPoints
         record.providerDeveloperOptions = ownership.developerOptions
@@ -127,6 +137,11 @@ final class NativeEntitlementCache {
     }
 }
 
+struct ProviderOwnershipRefresh {
+    let ownership: DurableOwnership
+    let persisted: Bool
+}
+
 /** First-party StoreKit 2 adapter. Native Store objects never cross the bridge. */
 final class IdleDysonStoreKit {
     private let entitlementCache: NativeEntitlementCache
@@ -141,6 +156,7 @@ final class IdleDysonStoreKit {
 
     func start() {
         guard updatesTask == nil else { return }
+        _ = entitlementCache.retryPendingProviderOwnership()
         updatesTask = Task { [weak self] in
             for await update in Transaction.updates {
                 guard !Task.isCancelled else { return }
@@ -208,7 +224,14 @@ final class IdleDysonStoreKit {
                         )
                     }
                 } else if Self.durableIds.contains(productId) {
-                    _ = try await refreshDurableOwnership()
+                    let refresh = try await refreshDurableOwnership()
+                    guard refresh.persisted else {
+                        return NativePurchaseResult(
+                            accepted: false,
+                            productId: productId,
+                            code: "purchase-failed"
+                        )
+                    }
                 }
                 await transaction.finish()
                 return NativePurchaseResult(
@@ -248,17 +271,17 @@ final class IdleDysonStoreKit {
         do {
             try await AppStore.sync()
             let ownership = try await verifiedDurableProductIds()
-            _ = try writeProviderOwnership(ownership)
+            _ = writeProviderOwnership(ownership)
             return (ownership.sorted(), true)
         } catch {
             return ([], false)
         }
     }
 
-    func refreshDurableOwnership() async throws -> DurableOwnership {
+    func refreshDurableOwnership() async throws -> ProviderOwnershipRefresh {
+        _ = entitlementCache.retryPendingProviderOwnership()
         let productIds = try await verifiedDurableProductIds()
-        let ownership = try writeProviderOwnership(productIds)
-        return ownership
+        return writeProviderOwnership(productIds)
     }
 
     private func verifiedDurableProductIds() async throws -> Set<String> {
@@ -279,17 +302,20 @@ final class IdleDysonStoreKit {
         return productIds
     }
 
-    private func writeProviderOwnership(_ productIds: Set<String>) throws -> DurableOwnership {
+    private func writeProviderOwnership(
+        _ productIds: Set<String>
+    ) -> ProviderOwnershipRefresh {
         let cached = entitlementCache.read()
         let ownership = DurableOwnership(
             doubleInfinityPoints: productIds.contains(Self.doubleIp),
             developerOptions: productIds.contains(Self.developerOptions),
             supporterCatGallery: cached.supporterCatGallery
         )
-        guard entitlementCache.writeProviderOwnership(ownership) else {
-            throw StorePersistenceError.unavailable
-        }
-        return ownership
+        let persisted = entitlementCache.writeProviderOwnership(ownership)
+        return ProviderOwnershipRefresh(
+            ownership: entitlementCache.read(),
+            persisted: persisted
+        )
     }
 
     private func processStoreUpdate(
@@ -299,7 +325,10 @@ final class IdleDysonStoreKit {
         if Self.supporterIds.contains(transaction.productID) {
             guard entitlementCache.grantSupporterCatGallery() else { return }
         } else if Self.durableIds.contains(transaction.productID) {
-            guard (try? await refreshDurableOwnership()) != nil else { return }
+            guard
+                let refresh = try? await refreshDurableOwnership(),
+                refresh.persisted
+            else { return }
         } else {
             return
         }
@@ -319,8 +348,4 @@ final class IdleDysonStoreKit {
         developerOptions,
         doubleIp,
     ]
-}
-
-private enum StorePersistenceError: Error {
-    case unavailable
 }
