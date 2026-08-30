@@ -30,6 +30,12 @@ share the same rounded label, but the enabled or insufficient state remains
 authoritative: presentation rounding never becomes purchase authority and no
 epsilon is introduced into affordability checks.
 
+`Number.MAX_VALUE` is reserved as the saturated continuous-price sentinel.
+Geometric pricing reaches that sentinel only when its reconstructed price is
+non-finite or equals the sentinel; a finite reconstructed price below it stays
+authoritative and purchasable even when its rounded logarithm equals the
+sentinel's logarithm.
+
 ## Newly unlocked navigation
 
 Every newly unlocked destination is marked as new until the player opens that

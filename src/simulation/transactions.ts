@@ -168,9 +168,6 @@ function geometricCostFromLogs(
     logExpm1(count * logExponent) -
     Math.log(exponent - 1)
   if (!Number.isFinite(logCost)) return CONTINUOUS_MAXIMUM
-  if (logCost >= Math.log(CONTINUOUS_MAXIMUM)) {
-    return CONTINUOUS_MAXIMUM
-  }
   return clampGeometricCost(Math.exp(logCost))
 }
 
@@ -179,6 +176,9 @@ function logExpm1(value: number): number {
 }
 
 function clampGeometricCost(value: number): number {
+  if (!Number.isFinite(value) || value >= CONTINUOUS_MAXIMUM) {
+    return CONTINUOUS_MAXIMUM
+  }
   return isFinitePositiveNumber(value) ? value : 0
 }
 
