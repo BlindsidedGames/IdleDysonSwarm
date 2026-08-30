@@ -1490,7 +1490,7 @@
 }
 
 .dyson-shell__release-footer {
-  color: color-mix(in srgb, var(--color-text-primary) 64%, transparent);
+  color: color-mix(in srgb, var(--color-text-primary) 30%, transparent);
   font-family: var(--font-family-body);
   font-size: calc(0.56rem * var(--game-text-scale));
   font-variant-numeric: tabular-nums;

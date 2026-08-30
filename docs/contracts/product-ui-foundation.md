@@ -176,7 +176,11 @@ mobile and portrait-tablet layouts it occupies the existing bottom-navigation
 safe-area/background and must not add a shell row or reduce the gameplay field.
 On layouts with a permanent side rail it sits at the rail's bottom. It shows
 the player-facing platform, marketing version, and truthful host build identity;
-native installed-package metadata outranks checked-in fallback values.
+native installed-package metadata outranks checked-in fallback values. This
+release identity is deliberately subtle support/debug metadata for identifying
+the exact version in bug-report screenshots, not ordinary player guidance. Its
+exact 30% primary-text mix is an intentional low-prominence treatment and must
+never carry gameplay status, instructions, or required actions.
 
 Route discovery is also portable canonical save state. A newly revealed,
 unvisited destination uses the square highlight in the compact bottom bar and
