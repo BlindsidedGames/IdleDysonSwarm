@@ -13332,6 +13332,12 @@
       "value": "Refined Reality and Avocato layouts and made feeding precision-aware, so Feed All leaves behind any amount that cannot be credited safely instead of silently destroying it."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.extreme-values": [
+    {
+      "type": 0,
+      "value": "Hardened purchases, rewards, and resource transfers at extreme values so credited amounts, costs, and remaining balances stay consistent instead of losing or creating progress."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.facilities": [
     {
       "type": 0,
@@ -13368,6 +13374,12 @@
       "value": "Reworked Settings, navigation, Store offers, dialogs, bottom panels, and safe-area handling to use space more cleanly without clipping or oversized controls."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.save-recovery": [
+    {
+      "type": 0,
+      "value": "Improved save upgrading and recovery so progress from the Unity release and earlier Web or native builds carries forward safely, with additional backup protection around interrupted or damaged saves."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
     {
       "type": 0,
@@ -13390,6 +13402,18 @@
     {
       "type": 0,
       "value": "Improved Skill Presets, search controls, dialogs, assignment settings, and navigation badges. Unassigned Skill Points are now shown as whole numbers and empty badges stay hidden."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.startup": [
+    {
+      "type": 0,
+      "value": "Made startup more resilient when device language files or native version information are delayed or unavailable, falling back safely without blocking access to the game."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.store-ownership": [
+    {
+      "type": 0,
+      "value": "Made Double Infinity Points ownership and purchase restoration more reliable on Android and iOS, including offline startup and temporary Store verification failures."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

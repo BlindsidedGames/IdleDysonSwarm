@@ -13332,6 +13332,12 @@
       "value": "Os layouts de Realidade e Avocato foram refinados, e a alimentação agora considera a precisão: Alimentar tudo deixa qualquer valor que não possa ser creditado com segurança em vez de destruí-lo silenciosamente."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.extreme-values": [
+    {
+      "type": 0,
+      "value": "Compras, recompensas e transferências de recursos em valores extremos foram reforçadas para manter quantias creditadas, custos e saldos restantes consistentes, sem perder nem criar progresso."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.facilities": [
     {
       "type": 0,
@@ -13368,6 +13374,12 @@
       "value": "Configurações, navegação, ofertas da Loja, diálogos, painéis inferiores e áreas seguras foram retrabalhados para usar melhor o espaço sem cortes ou controles grandes demais."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.save-recovery": [
+    {
+      "type": 0,
+      "value": "A atualização e a recuperação de salvamentos foram reforçadas para transferir com segurança o progresso da versão Unity e de versões Web ou nativas anteriores, com proteção adicional de backup contra gravações interrompidas ou corrompidas."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
     {
       "type": 0,
@@ -13390,6 +13402,18 @@
     {
       "type": 0,
       "value": "As Predefinições de Habilidades, pesquisa, diálogos, configurações de atribuição e indicadores de navegação foram aprimorados. Pontos de Habilidade não atribuídos agora aparecem como números inteiros e indicadores vazios ficam ocultos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.startup": [
+    {
+      "type": 0,
+      "value": "A inicialização ficou mais resiliente quando os arquivos de idioma do dispositivo ou as informações da versão nativa atrasam ou ficam indisponíveis, usando uma alternativa segura sem bloquear o acesso ao jogo."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.store-ownership": [
+    {
+      "type": 0,
+      "value": "A propriedade de Pontos de Infinito em dobro e a restauração de compras ficaram mais confiáveis no Android e iOS, inclusive ao iniciar offline e durante falhas temporárias de verificação da Loja."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [
