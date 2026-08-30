@@ -4647,7 +4647,7 @@
             },
             {
               "type": 0,
-              "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅ ɹǝɯɐıus ɐssıƃuǝp"
+              "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅ ɔonʅp uoʇ qǝ nuɐssıƃuǝp"
             }
           ]
         },
@@ -4658,7 +4658,7 @@
             },
             {
               "type": 0,
-              "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅs ɹǝɯɐıu ɐssıƃuǝp"
+              "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅs ɔonʅp uoʇ qǝ nuɐssıƃuǝp"
             }
           ]
         }
@@ -4703,6 +4703,120 @@
     {
       "type": 0,
       "value": ". Odǝu Sʞıʅʅs ɟoɹ pǝʇɐıʅs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ʍɐs dɐɹʇıɐʅʅʎ ɐddʅıǝp. "
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅ ɔonʅp uoʇ qǝ nuɐssıƃuǝp"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅs ɔonʅp uoʇ qǝ nuɐssıƃuǝp"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", ʅǝɐʌıuƃ "
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " dɹǝsǝʇ sʞıʅʅ bnǝnǝp ɟoɹ ʅɐʇǝɹ"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " dɹǝsǝʇ sʞıʅʅs bnǝnǝp ɟoɹ ʅɐʇǝɹ"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". "
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "Odǝu Sʞıʅʅs ɟoɹ pǝʇɐıʅs."
+        }
+      ]
     },
     {
       "type": 0,
@@ -15963,6 +16077,20 @@
       "value": "‬"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısɯıss"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -21097,6 +21225,38 @@
       "value": "‬"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uɹǝɟnupɐqʅǝ sʞıʅʅs ɔonʅp uoʇ qǝ nuɐssıƃuǝp. ⊥ɥǝsǝ dɹǝsǝʇ sʞıʅʅs ɐɹǝ qʅoɔʞǝp ɐup ɹǝɯɐıu bnǝnǝp ɟoɹ ʅɐʇǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ıs dɐɹʇıɐʅʅʎ ɐddʅıǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 0,
@@ -21523,6 +21683,20 @@
     {
       "type": 0,
       "value": "Sʞıʅʅ dɹǝsǝʇs ɐup ɹǝsǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ dɐɹʇıɐʅ dɹǝsǝʇ ɐddʅıɔɐʇıou uoʇıɟıɔɐʇıous"
     },
     {
       "type": 0,

@@ -2523,7 +2523,7 @@
             },
             {
               "type": 0,
-              "value": " nicht rückerstattbare Fertigkeit bleibt zugewiesen"
+              "value": " nicht rückerstattbare Fertigkeit konnte nicht zurückgesetzt werden"
             }
           ]
         },
@@ -2534,7 +2534,7 @@
             },
             {
               "type": 0,
-              "value": " nicht rückerstattbare Fertigkeiten bleiben zugewiesen"
+              "value": " nicht rückerstattbare Fertigkeiten konnten nicht zurückgesetzt werden"
             }
           ]
         }
@@ -2579,6 +2579,112 @@
     {
       "type": 0,
       "value": ". Öffne Fertigkeiten für Details."
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " wurde teilweise angewendet. "
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " nicht rückerstattbare Fertigkeit konnte nicht zurückgesetzt werden"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " nicht rückerstattbare Fertigkeiten konnten nicht zurückgesetzt werden"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", dadurch bleiben "
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " Fertigkeit der Voreinstellung für später vorgemerkt"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " Fertigkeiten der Voreinstellung für später vorgemerkt"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". "
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "Öffne Fertigkeiten für Details."
+        }
+      ]
     }
   ],
   "dyson.info.purchase-amount": [
@@ -8027,6 +8133,12 @@
       "value": "Aktuell"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "Ausblenden"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -10337,6 +10449,22 @@
       "value": "Name der Voreinstellung"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "Nicht rückerstattbare Fertigkeiten konnten nicht zurückgesetzt werden. Diese Fertigkeiten der Voreinstellung sind blockiert und bleiben für später vorgemerkt."
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " wurde teilweise angewendet"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 6,
@@ -10567,6 +10695,12 @@
     {
       "type": 0,
       "value": "Skill-Voreinstellungen und Zurücksetzen"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "Benachrichtigungen über teilweise angewendete Voreinstellungen anzeigen"
     }
   ],
   "skills.supernova-restoration-quote": [

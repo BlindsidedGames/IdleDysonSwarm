@@ -2510,7 +2510,7 @@
     },
     {
       "type": 0,
-      "value": " 已部分应用。由于仍有"
+      "value": " 已部分应用。"
     },
     {
       "type": 6,
@@ -2523,7 +2523,7 @@
             },
             {
               "type": 0,
-              "value": " 个不可退还的技能处于已分配状态"
+              "value": " 个不可退还的技能无法取消分配"
             }
           ]
         },
@@ -2534,7 +2534,7 @@
             },
             {
               "type": 0,
-              "value": " 个不可退还的技能处于已分配状态"
+              "value": " 个不可退还的技能无法取消分配"
             }
           ]
         }
@@ -2544,7 +2544,7 @@
     },
     {
       "type": 0,
-      "value": "，预设中有"
+      "value": "，因此预设中有"
     },
     {
       "type": 6,
@@ -2579,6 +2579,112 @@
     {
       "type": 0,
       "value": "。请打开技能界面查看详情。"
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " 已部分应用。"
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " 个不可退还的技能无法取消分配"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " 个不可退还的技能无法取消分配"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，因此预设中有"
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " 个技能已留在队列中等待之后应用"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " 个技能已留在队列中等待之后应用"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。"
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "请打开技能界面查看详情。"
+        }
+      ]
     }
   ],
   "dyson.info.purchase-amount": [
@@ -8027,6 +8133,12 @@
       "value": "当前"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "忽略"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -10337,6 +10449,22 @@
       "value": "预设名称"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "不可退还的技能无法取消分配。这些预设技能被阻止，并会留在队列中等待之后应用。"
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " 已部分应用"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 6,
@@ -10567,6 +10695,12 @@
     {
       "type": 0,
       "value": "技能预设与重置"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "显示预设部分应用通知"
     }
   ],
   "skills.supernova-restoration-quote": [

@@ -58,6 +58,7 @@ import {
   refundCanonicalSkill,
   resetCanonicalSkills,
   runCanonicalSkillAutoAssignment,
+  type CanonicalSkillPresetApplicationResult,
 } from '../simulation/canonicalSkillTransactions'
 import {
   purchaseSimulationUpgrade,
@@ -101,6 +102,15 @@ export type CanonicalRetainedSkillConflictPolicy =
       readonly retainedSkillIds: readonly string[]
       readonly blockedSkillIds: readonly string[]
     }
+
+export interface CanonicalSkillPresetApplicationOutcome {
+  readonly slot: CanonicalSkillPresetSlot
+  readonly trigger: 'automatic' | 'import' | 'manual'
+  readonly retainedSkillIds: readonly string[]
+  readonly assignedSkillIds: readonly string[]
+  readonly pendingSkillIds: readonly string[]
+  readonly blockedByRetainedSkillIds: readonly string[]
+}
 
 /**
  * The application-level player and automation commands whose state changes
@@ -487,6 +497,8 @@ interface CanonicalGameCommandResultFields {
   readonly issues: readonly CanonicalGameCommandIssue[]
   readonly runtimeCarriers: Readonly<CanonicalGameRuntimeCarriers>
   readonly intents: readonly CanonicalGameCommandIntent[]
+  readonly skillPresetApplication?:
+    Readonly<CanonicalSkillPresetApplicationOutcome>
 }
 
 export type CanonicalGameCommandResult =
@@ -1648,13 +1660,20 @@ export function routeCanonicalGameCommand(
           botDistribution: parsed.payload.botDistribution,
         },
       }
-      return finalizeAccepted(
-        state,
-        withCanonicalBotAllocation(loaded),
-        true,
-        'skill:preset-imported-and-loaded',
-        carriers,
-        options.runtimeEvaluation,
+      return withSkillPresetApplication(
+        finalizeAccepted(
+          state,
+          withCanonicalBotAllocation(loaded),
+          true,
+          'skill:preset-imported-and-loaded',
+          carriers,
+          options.runtimeEvaluation,
+        ),
+        createSkillPresetApplicationOutcome(
+          command.slot,
+          'import',
+          application,
+        ),
       )
     }
 
@@ -1673,10 +1692,7 @@ export function routeCanonicalGameCommand(
             },
           }
         : state
-      if (
-        command.slot === 0 ||
-        command.slot === carriers.selectedSkillPresetSlot
-      ) {
+      if (command.slot === 0) {
         return finalizeAccepted(
           state,
           configured,
@@ -1715,10 +1731,7 @@ export function routeCanonicalGameCommand(
 
     case 'skill.apply-tab-preset-automation': {
       const slot = state.skills.tabPresetAutomation[command.tab]
-      if (
-        slot === 0 ||
-        slot === carriers.selectedSkillPresetSlot
-      ) {
+      if (slot === 0) {
         return finalizeAccepted(
           state,
           state,
@@ -1818,13 +1831,22 @@ export function routeCanonicalGameCommand(
       })
       const changed =
         loaded !== state || current !== command.slot
-      return finalizeAccepted(
-        state,
-        withCanonicalBotAllocation(loaded),
-        changed,
-        `skill:${changed ? 'preset-selected' : 'unchanged'}`,
-        nextCarriers,
-        options.runtimeEvaluation,
+      return withSkillPresetApplication(
+        finalizeAccepted(
+          state,
+          withCanonicalBotAllocation(loaded),
+          changed,
+          `skill:${changed ? 'preset-selected' : 'unchanged'}`,
+          nextCarriers,
+          options.runtimeEvaluation,
+        ),
+        createSkillPresetApplicationOutcome(
+          command.slot,
+          command.retainedConflictPolicy?.kind === 'automatic'
+            ? 'automatic'
+            : 'manual',
+          application,
+        ),
       )
     }
 
@@ -2848,6 +2870,40 @@ function synchronizeSelectedPresetQueue(
       }),
     },
   }
+}
+
+type AcceptedSkillPresetApplication = Extract<
+  CanonicalSkillPresetApplicationResult,
+  { readonly accepted: true }
+>
+
+function createSkillPresetApplicationOutcome(
+  slot: CanonicalSkillPresetSlot,
+  trigger: CanonicalSkillPresetApplicationOutcome['trigger'],
+  application: AcceptedSkillPresetApplication,
+): CanonicalSkillPresetApplicationOutcome {
+  return Object.freeze({
+    slot,
+    trigger,
+    retainedSkillIds: Object.freeze([...application.retainedSkillIds]),
+    assignedSkillIds: Object.freeze([...application.assignedSkillIds]),
+    pendingSkillIds: Object.freeze([...application.pendingSkillIds]),
+    blockedByRetainedSkillIds: Object.freeze([
+      ...application.blockedByRetainedSkillIds,
+    ]),
+  })
+}
+
+function withSkillPresetApplication(
+  result: CanonicalGameCommandResult,
+  application: CanonicalSkillPresetApplicationOutcome,
+): CanonicalGameCommandResult {
+  return result.accepted
+    ? Object.freeze({
+        ...result,
+        skillPresetApplication: application,
+      })
+    : result
 }
 
 function retainedPresetConflictReason(

@@ -109,7 +109,21 @@ Preset presentation distinguishes stored intent from current application. At a
 minimum it exposes the selected preset, queued preset Skills, retained Skills,
 and Skills blocked by retained ownership. A partially applied preset must not
 be presented as completely active, and no delayed UI refresh may conceal a
-canonical preset mutation.
+canonical preset mutation. The exact canonical application result is published
+as transient runtime feedback, survives navigation from Bots or Research into
+Skills, and remains available until the player dismisses it or a later preset
+application replaces it. This feedback is not persisted into the save.
+Players may disable these post-application notification panels through a
+device-local presentation preference. Disabling them does not bypass retained
+conflict confirmations or change preset application behavior.
+
+On Bots, an automatic partial application uses a top-of-route banner with the
+preset name, retained count, blocked count, and Skills call to action visually
+emphasized. The banner has a six-second progress track, fades automatically,
+and may be dismissed by tapping it. On Skills, the exact result uses the
+standard dimmed modal treatment and lists only the target preset Skills that
+remain blocked and queued. The player may close it with the standard close
+control, Escape, or a pointer press on the backdrop.
 
 ## Verification requirements
 

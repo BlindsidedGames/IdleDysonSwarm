@@ -1365,6 +1365,7 @@
   "skills.search": "Rechercher des compétences",
   "skills.search-placeholder": "Rechercher dans l’arbre…",
   "skills.settings": "Configurations prédéfinies et réinitialisation des compétences",
+  "skills.show-preset-application-notifications": "Afficher les notifications d’application partielle des préréglages",
   "skills.supernova-restoration-quote": "L’annulation de l’attribution de Supernova restaure toute la couche d’achats manuels : Avocats, les deux paliers 50/100, Montée en puissance de la production et tous les taux des Essaims.",
   "skills.supernova-suppression-quote": "Supernova désactive toute la couche d’achats manuels : Avocats, les deux paliers 50/100, Montée en puissance de la production et tous les taux des Essaims.",
   "skills.switch-preset": "Passer à {name}",
@@ -1764,11 +1765,15 @@
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Sujets du wiki",
   "wiki.topics": "Sujets",
-  "dyson.info.preset-partially-applied": "{presetName} a été partiellement appliqué. {retainedCount, plural, one {# compétence non remboursable reste assignée} other {# compétences non remboursables restent assignées}}, ce qui laisse {blockedCount, plural, one {# compétence du préréglage en attente pour plus tard} other {# compétences du préréglage en attente pour plus tard}}. Ouvrez Compétences pour plus de détails.",
+  "dyson.info.preset-partially-applied": "{presetName} a été partiellement appliqué. {retainedCount, plural, one {# compétence non remboursable n’a pas pu être désassignée} other {# compétences non remboursables n’ont pas pu être désassignées}}, ce qui laisse {blockedCount, plural, one {# compétence du préréglage en attente pour plus tard} other {# compétences du préréglage en attente pour plus tard}}. Ouvrez Compétences pour plus de détails.",
+  "dyson.info.preset-partially-applied-banner": "<preset>{presetName}</preset> a été partiellement appliqué. <retained>{retainedCount, plural, one {# compétence non remboursable n’a pas pu être désassignée} other {# compétences non remboursables n’ont pas pu être désassignées}}</retained>, ce qui laisse <blocked>{blockedCount, plural, one {# compétence du préréglage en attente pour plus tard} other {# compétences du préréglage en attente pour plus tard}}</blocked>. <details>Ouvrez Compétences pour plus de détails.</details>",
   "skills.blocked-skills-heading": "Compétences du préréglage bloquées pour le moment",
   "skills.import-retained-conflict": "{retainedCount, plural, one {# compétence non remboursable restera assignée} other {# compétences non remboursables resteront assignées}} et bloquera {blockedCount, plural, one {# compétence importée pour le moment} other {# compétences importées pour le moment}}. La partie compatible du préréglage sera tout de même appliquée.",
   "skills.retained-skills-heading": "Compétences qui resteront assignées",
   "skills.switch-anyway": "Changer quand même",
   "skills.switch-preset-conflict-title": "Passer à {name} ?",
-  "skills.switch-preset-conflict-warning": "Certaines compétences ne peuvent pas être désassignées pour le moment et bloquent une partie de ce préréglage. Vous pouvez tout de même changer et appliquer tous les éléments compatibles."
+  "skills.switch-preset-conflict-warning": "Certaines compétences ne peuvent pas être désassignées pour le moment et bloquent une partie de ce préréglage. Vous pouvez tout de même changer et appliquer tous les éléments compatibles.",
+  "skills.preset-partially-applied-title": "{name} est partiellement appliqué",
+  "skills.preset-partially-applied-details": "Les compétences non remboursables n’ont pas pu être désassignées. Ces compétences du préréglage sont bloquées et restent en attente pour plus tard.",
+  "skills.dismiss": "Masquer"
 }

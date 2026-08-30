@@ -1365,6 +1365,7 @@
   "skills.search": "搜索技能",
   "skills.search-placeholder": "搜索技能树…",
   "skills.settings": "技能预设与重置",
+  "skills.show-preset-application-notifications": "显示预设部分应用通知",
   "skills.supernova-restoration-quote": "取消分配超新星会恢复完整的手动购买层：牛油果、50/100 两个里程碑、生产规模化以及所有蜂群倍率。",
   "skills.supernova-suppression-quote": "超新星会压制完整的手动购买层：牛油果、50/100 两个里程碑、生产规模化以及所有蜂群倍率。",
   "skills.switch-preset": "切换到{name}",
@@ -1764,11 +1765,15 @@
   "wiki.title": "百科",
   "wiki.topic-navigation": "百科主题导航",
   "wiki.topics": "主题",
-  "dyson.info.preset-partially-applied": "{presetName} 已部分应用。由于仍有{retainedCount, plural, one {# 个不可退还的技能处于已分配状态} other {# 个不可退还的技能处于已分配状态}}，预设中有{blockedCount, plural, one {# 个技能已留在队列中等待之后应用} other {# 个技能已留在队列中等待之后应用}}。请打开技能界面查看详情。",
+  "dyson.info.preset-partially-applied": "{presetName} 已部分应用。{retainedCount, plural, one {# 个不可退还的技能无法取消分配} other {# 个不可退还的技能无法取消分配}}，因此预设中有{blockedCount, plural, one {# 个技能已留在队列中等待之后应用} other {# 个技能已留在队列中等待之后应用}}。请打开技能界面查看详情。",
+  "dyson.info.preset-partially-applied-banner": "<preset>{presetName}</preset> 已部分应用。<retained>{retainedCount, plural, one {# 个不可退还的技能无法取消分配} other {# 个不可退还的技能无法取消分配}}</retained>，因此预设中有<blocked>{blockedCount, plural, one {# 个技能已留在队列中等待之后应用} other {# 个技能已留在队列中等待之后应用}}</blocked>。<details>请打开技能界面查看详情。</details>",
   "skills.blocked-skills-heading": "当前被阻止的预设技能",
   "skills.import-retained-conflict": "{retainedCount, plural, one {# 个不可退还的技能将保持已分配状态} other {# 个不可退还的技能将保持已分配状态}}，并暂时阻止{blockedCount, plural, one {# 个导入的技能} other {# 个导入的技能}}。预设中兼容的部分仍会应用。",
   "skills.retained-skills-heading": "将保持已分配状态的技能",
   "skills.switch-anyway": "仍然切换",
   "skills.switch-preset-conflict-title": "切换到{name}？",
-  "skills.switch-preset-conflict-warning": "有些技能目前无法取消分配，并阻止了此预设的一部分。你仍然可以切换并应用所有兼容的部分。"
+  "skills.switch-preset-conflict-warning": "有些技能目前无法取消分配，并阻止了此预设的一部分。你仍然可以切换并应用所有兼容的部分。",
+  "skills.preset-partially-applied-title": "{name} 已部分应用",
+  "skills.preset-partially-applied-details": "不可退还的技能无法取消分配。这些预设技能被阻止，并会留在队列中等待之后应用。",
+  "skills.dismiss": "忽略"
 }

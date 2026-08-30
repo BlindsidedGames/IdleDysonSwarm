@@ -1365,6 +1365,7 @@
   "skills.search": "スキルを検索",
   "skills.search-placeholder": "スキルツリーを検索…",
   "skills.settings": "スキルプリセットとリセット",
+  "skills.show-preset-application-notifications": "プリセットの部分適用通知を表示",
   "skills.supernova-restoration-quote": "超新星の割り当てを解除すると、アボカド、50/100の節目、生産スケーリング、全スウォーム倍率を含む手動購入レイヤー全体が復元されます。",
   "skills.supernova-suppression-quote": "超新星は、アボカド、50/100の節目、生産スケーリング、全スウォーム倍率を含む手動購入レイヤー全体を抑制します。",
   "skills.switch-preset": "切り替え先：{name}",
@@ -1764,11 +1765,15 @@
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Wikiのトピック",
   "wiki.topics": "トピック",
-  "dyson.info.preset-partially-applied": "{presetName} は一部のみ適用されました。返却できないスキルが{retainedCount, plural, one {# 個割り当てられたままのため} other {# 個割り当てられたままのため}}、プリセットのスキルは{blockedCount, plural, one {# 個が後で適用されるようキューに残っています} other {# 個が後で適用されるようキューに残っています}}。詳細はスキル画面で確認してください。",
+  "dyson.info.preset-partially-applied": "{presetName} は一部のみ適用されました。返却できないスキルが{retainedCount, plural, one {# 個割り当てを解除できなかったため} other {# 個割り当てを解除できなかったため}}、プリセットのスキルは{blockedCount, plural, one {# 個が後で適用されるようキューに残っています} other {# 個が後で適用されるようキューに残っています}}。詳細はスキル画面で確認してください。",
+  "dyson.info.preset-partially-applied-banner": "<preset>{presetName}</preset> は一部のみ適用されました。返却できないスキルが<retained>{retainedCount, plural, one {# 個割り当てを解除できなかった} other {# 個割り当てを解除できなかった}}</retained>ため、プリセットのスキルは<blocked>{blockedCount, plural, one {# 個が後で適用されるようキューに残っています} other {# 個が後で適用されるようキューに残っています}}</blocked>。<details>詳細はスキル画面で確認してください。</details>",
   "skills.blocked-skills-heading": "現在ブロックされているプリセットのスキル",
   "skills.import-retained-conflict": "{retainedCount, plural, one {# 個の返却できないスキルが割り当てられたままになり} other {# 個の返却できないスキルが割り当てられたままになり}}、インポートしたスキルは{blockedCount, plural, one {# 個が現在ブロックされます} other {# 個が現在ブロックされます}}。プリセットの適用可能な部分はそのまま適用されます。",
   "skills.retained-skills-heading": "割り当てられたままになるスキル",
   "skills.switch-anyway": "このまま切り替える",
   "skills.switch-preset-conflict-title": "プリセット {name} に切り替えますか？",
-  "skills.switch-preset-conflict-warning": "現在割り当てを解除できないスキルが、このプリセットの一部をブロックしています。切り替えて、適用可能な部分をすべて適用することはできます。"
+  "skills.switch-preset-conflict-warning": "現在割り当てを解除できないスキルが、このプリセットの一部をブロックしています。切り替えて、適用可能な部分をすべて適用することはできます。",
+  "skills.preset-partially-applied-title": "{name} は一部のみ適用されています",
+  "skills.preset-partially-applied-details": "返却できないスキルは割り当てを解除できませんでした。これらのプリセットのスキルはブロックされ、後で適用されるようキューに残っています。",
+  "skills.dismiss": "閉じる"
 }

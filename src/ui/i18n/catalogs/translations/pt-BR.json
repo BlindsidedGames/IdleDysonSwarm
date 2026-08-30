@@ -1365,6 +1365,7 @@
   "skills.search": "Buscar Habilidades",
   "skills.search-placeholder": "Buscar na árvore…",
   "skills.settings": "Predefinições e reinício de Habilidades",
+  "skills.show-preset-application-notifications": "Mostrar notificações de aplicação parcial de predefinições",
   "skills.supernova-restoration-quote": "Retirar Supernova restaura toda a camada de Compra Manual: Abacates, os dois marcos de 50/100, Escalonamento de Produção e todas as taxas do Enxame.",
   "skills.supernova-suppression-quote": "Supernova suprime toda a camada de Compra Manual: Abacates, os dois marcos de 50/100, Escalonamento de Produção e todas as taxas do Enxame.",
   "skills.switch-preset": "Mudar para {name}",
@@ -1764,11 +1765,15 @@
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Tópicos da Wiki",
   "wiki.topics": "Tópicos",
-  "dyson.info.preset-partially-applied": "{presetName} foi aplicado parcialmente. {retainedCount, plural, one {# habilidade não reembolsável permanece atribuída} other {# habilidades não reembolsáveis permanecem atribuídas}}, deixando {blockedCount, plural, one {# habilidade da predefinição na fila para depois} other {# habilidades da predefinição na fila para depois}}. Abra Habilidades para ver os detalhes.",
+  "dyson.info.preset-partially-applied": "{presetName} foi aplicado parcialmente. {retainedCount, plural, one {# habilidade não reembolsável não pôde ser removida} other {# habilidades não reembolsáveis não puderam ser removidas}}, deixando {blockedCount, plural, one {# habilidade da predefinição na fila para depois} other {# habilidades da predefinição na fila para depois}}. Abra Habilidades para ver os detalhes.",
+  "dyson.info.preset-partially-applied-banner": "<preset>{presetName}</preset> foi aplicado parcialmente. <retained>{retainedCount, plural, one {# habilidade não reembolsável não pôde ser removida} other {# habilidades não reembolsáveis não puderam ser removidas}}</retained>, deixando <blocked>{blockedCount, plural, one {# habilidade da predefinição na fila para depois} other {# habilidades da predefinição na fila para depois}}</blocked>. <details>Abra Habilidades para ver os detalhes.</details>",
   "skills.blocked-skills-heading": "Habilidades da predefinição bloqueadas por enquanto",
   "skills.import-retained-conflict": "{retainedCount, plural, one {# habilidade não reembolsável permanecerá atribuída} other {# habilidades não reembolsáveis permanecerão atribuídas}} e bloqueará {blockedCount, plural, one {# habilidade importada por enquanto} other {# habilidades importadas por enquanto}}. A parte compatível da predefinição ainda será aplicada.",
   "skills.retained-skills-heading": "Habilidades que permanecerão atribuídas",
   "skills.switch-anyway": "Trocar mesmo assim",
   "skills.switch-preset-conflict-title": "Trocar para {name}?",
-  "skills.switch-preset-conflict-warning": "Algumas habilidades não podem ser removidas agora e bloqueiam parte desta predefinição. Você ainda pode trocar e aplicar tudo o que for compatível."
+  "skills.switch-preset-conflict-warning": "Algumas habilidades não podem ser removidas agora e bloqueiam parte desta predefinição. Você ainda pode trocar e aplicar tudo o que for compatível.",
+  "skills.preset-partially-applied-title": "{name} foi aplicada parcialmente",
+  "skills.preset-partially-applied-details": "As habilidades não reembolsáveis não puderam ser removidas. Estas habilidades da predefinição estão bloqueadas e permanecem na fila para depois.",
+  "skills.dismiss": "Dispensar"
 }

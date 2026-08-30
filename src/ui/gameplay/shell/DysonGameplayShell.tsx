@@ -51,6 +51,7 @@ export function DysonGameplayShell({
   productionSummary,
   distribution,
   sidePanelSupplement,
+  routeBanner,
   routeSupplement,
   routeContent,
   routeContentEdgeToEdge = false,
@@ -266,6 +267,13 @@ export function DysonGameplayShell({
               direction={direction}
             />
           ) : null}
+
+          {routeBanner !== undefined && (
+            <ShellRegion
+              className="dyson-shell__route-banner"
+              region={routeBanner}
+            />
+          )}
 
           {routeContent !== undefined ? (
             <ShellRegion

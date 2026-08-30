@@ -57,6 +57,15 @@ describe('CanonicalRuntimeSession', () => {
       },
       storedTimeCheater: !state.storedTimeCheater,
       selectedSkillPresetSlot: 5 as const,
+      lastSkillPresetApplication: {
+        applicationSequence: 7,
+        slot: 5 as const,
+        trigger: 'manual' as const,
+        retainedSkillIds: ['banking'],
+        assignedSkillIds: [],
+        pendingSkillIds: [],
+        blockedByRetainedSkillIds: [],
+      },
     })
 
     const committed = session.prepare(state)
@@ -70,6 +79,7 @@ describe('CanonicalRuntimeSession', () => {
       state.storedTimeCheater,
     )
     expect(reopened.initialState.selectedSkillPresetSlot).toBe(5)
+    expect(reopened.initialState.lastSkillPresetApplication).toBeNull()
     expect(reopened.initialState.tinker.running).toBe(false)
     expect(reopened.initialState.tinker.repeat).toBe(false)
   })

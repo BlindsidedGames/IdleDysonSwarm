@@ -2523,7 +2523,7 @@
             },
             {
               "type": 0,
-              "value": " habilidade não reembolsável permanece atribuída"
+              "value": " habilidade não reembolsável não pôde ser removida"
             }
           ]
         },
@@ -2534,7 +2534,7 @@
             },
             {
               "type": 0,
-              "value": " habilidades não reembolsáveis permanecem atribuídas"
+              "value": " habilidades não reembolsáveis não puderam ser removidas"
             }
           ]
         }
@@ -2579,6 +2579,112 @@
     {
       "type": 0,
       "value": ". Abra Habilidades para ver os detalhes."
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " foi aplicado parcialmente. "
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " habilidade não reembolsável não pôde ser removida"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " habilidades não reembolsáveis não puderam ser removidas"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", deixando "
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " habilidade da predefinição na fila para depois"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " habilidades da predefinição na fila para depois"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". "
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "Abra Habilidades para ver os detalhes."
+        }
+      ]
     }
   ],
   "dyson.info.purchase-amount": [
@@ -8027,6 +8133,12 @@
       "value": "Atual"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "Dispensar"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -10337,6 +10449,22 @@
       "value": "Nome da predefinição"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "As habilidades não reembolsáveis não puderam ser removidas. Estas habilidades da predefinição estão bloqueadas e permanecem na fila para depois."
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " foi aplicada parcialmente"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 6,
@@ -10567,6 +10695,12 @@
     {
       "type": 0,
       "value": "Predefinições e reinício de Habilidades"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "Mostrar notificações de aplicação parcial de predefinições"
     }
   ],
   "skills.supernova-restoration-quote": [

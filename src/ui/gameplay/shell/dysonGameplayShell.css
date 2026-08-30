@@ -599,6 +599,7 @@
 }
 
 .dyson-shell__content {
+  position: relative;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   block-size: 100%;
@@ -635,6 +636,16 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+.dyson-shell__route-banner {
+  position: absolute;
+  z-index: 12;
+  inset-block-start:
+    calc(3.4rem + max(0.5rem, var(--safe-area-top)));
+  inset-inline:
+    max(var(--game-card-content-inset), var(--safe-area-left))
+    max(var(--game-card-content-inset), var(--safe-area-right));
 }
 
 .dyson-resource-header {

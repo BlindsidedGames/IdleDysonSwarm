@@ -2523,7 +2523,7 @@
             },
             {
               "type": 0,
-              "value": " 個割り当てられたままのため"
+              "value": " 個割り当てを解除できなかったため"
             }
           ]
         },
@@ -2534,7 +2534,7 @@
             },
             {
               "type": 0,
-              "value": " 個割り当てられたままのため"
+              "value": " 個割り当てを解除できなかったため"
             }
           ]
         }
@@ -2579,6 +2579,112 @@
     {
       "type": 0,
       "value": "。詳細はスキル画面で確認してください。"
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " は一部のみ適用されました。返却できないスキルが"
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " 個割り当てを解除できなかった"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " 個割り当てを解除できなかった"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "ため、プリセットのスキルは"
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " 個が後で適用されるようキューに残っています"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " 個が後で適用されるようキューに残っています"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。"
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "詳細はスキル画面で確認してください。"
+        }
+      ]
     }
   ],
   "dyson.info.purchase-amount": [
@@ -8027,6 +8133,12 @@
       "value": "現在"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "閉じる"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -10337,6 +10449,22 @@
       "value": "プリセット名"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "返却できないスキルは割り当てを解除できませんでした。これらのプリセットのスキルはブロックされ、後で適用されるようキューに残っています。"
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " は一部のみ適用されています"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 6,
@@ -10567,6 +10695,12 @@
     {
       "type": 0,
       "value": "スキルプリセットとリセット"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "プリセットの部分適用通知を表示"
     }
   ],
   "skills.supernova-restoration-quote": [
