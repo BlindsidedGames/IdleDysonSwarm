@@ -2503,6 +2503,84 @@
       "value": "オフ"
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " は一部のみ適用されました。返却できないスキルが"
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個割り当てられたままのため"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個割り当てられたままのため"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "、プリセットのスキルは"
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個が後で適用されるようキューに残っています"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個が後で適用されるようキューに残っています"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "。詳細はスキル画面で確認してください。"
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -7857,6 +7935,12 @@
       "value": "次の必須スキルも割り当て："
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "現在ブロックされているプリセットのスキル"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -8093,6 +8177,76 @@
     {
       "type": 0,
       "value": "プリセット文字列を貼り付け、現在のプリセットを置き換える前に内容を確認してください。"
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個の返却できないスキルが割り当てられたままになり"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個の返却できないスキルが割り当てられたままになり"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "、インポートしたスキルは"
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個が現在ブロックされます"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個が現在ブロックされます"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "。プリセットの適用可能な部分はそのまま適用されます。"
     }
   ],
   "skills.import-text": [
@@ -10391,6 +10545,12 @@
       "value": "自動割り当てキューから削除"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "割り当てられたままになるスキル"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -10421,6 +10581,12 @@
       "value": "超新星は、アボカド、50/100の節目、生産スケーリング、全スウォーム倍率を含む手動購入レイヤー全体を抑制します。"
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "このまま切り替える"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -10429,6 +10595,26 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "プリセット "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " に切り替えますか？"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "現在割り当てを解除できないスキルが、このプリセットの一部をブロックしています。切り替えて、適用可能な部分をすべて適用することはできます。"
     }
   ],
   "skills.tree": [

@@ -176,6 +176,37 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Switch to {name}',
     description: 'Accessible label for the compact skill preset switcher.',
   },
+  switchPresetConflictTitle: {
+    id: 'skills.switch-preset-conflict-title',
+    defaultMessage: 'Switch to {name}?',
+    description:
+      'Confirmation title when retained skills block part of a target preset.',
+  },
+  switchPresetConflictWarning: {
+    id: 'skills.switch-preset-conflict-warning',
+    defaultMessage:
+      'Some skills can’t be unassigned right now and block part of this preset. You can still switch and apply everything compatible.',
+    description:
+      'Warning before partially applying a preset around retained unrefundable skills.',
+  },
+  retainedSkillsHeading: {
+    id: 'skills.retained-skills-heading',
+    defaultMessage: 'Skills that will remain assigned',
+    description:
+      'Heading above unrefundable skills retained while changing presets.',
+  },
+  blockedSkillsHeading: {
+    id: 'skills.blocked-skills-heading',
+    defaultMessage: 'Preset skills blocked for now',
+    description:
+      'Heading above target preset skills blocked by retained ownership.',
+  },
+  switchAnyway: {
+    id: 'skills.switch-anyway',
+    defaultMessage: 'Switch anyway',
+    description:
+      'Button label for applying every compatible part of a conflicting preset.',
+  },
   currentPreset: {
     id: 'skills.current-preset',
     defaultMessage: 'Current',
@@ -410,6 +441,13 @@ export const skillMessages = defineMessages({
       '{count, plural, one {# locked skill will remain queued until its line unlocks.} other {# locked skills will remain queued until their lines unlock.}}',
     description:
       'Preset import warning explaining that gated skills stay queued without spending points.',
+  },
+  importRetainedConflict: {
+    id: 'skills.import-retained-conflict',
+    defaultMessage:
+      '{retainedCount, plural, one {# unrefundable skill will remain assigned} other {# unrefundable skills will remain assigned}} and block {blockedCount, plural, one {# imported skill for now} other {# imported skills for now}}. The compatible part of the preset will still be applied.',
+    description:
+      'Preset import confirmation warning for conflicts with retained skills.',
   },
   confirmImport: {
     id: 'skills.confirm-import',

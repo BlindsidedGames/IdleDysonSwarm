@@ -2503,6 +2503,84 @@
       "value": "No"
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " se aplicó parcialmente. "
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidad no reembolsable permanece asignada"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidades no reembolsables permanecen asignadas"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ", por lo que "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidad del preajuste queda en cola para después"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidades del preajuste quedan en cola para después"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Abre Habilidades para ver los detalles."
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -7857,6 +7935,12 @@
       "value": "Asignar también estas habilidades necesarias:"
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "Habilidades del preajuste bloqueadas por ahora"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -8093,6 +8177,76 @@
     {
       "type": 0,
       "value": "Pega una cadena de preajuste y revísala antes de reemplazar este preajuste."
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidad no reembolsable permanecerá asignada"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidades no reembolsables permanecerán asignadas"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " y bloqueará "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidad importada por ahora"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidades importadas por ahora"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". La parte compatible del preajuste se aplicará de todos modos."
     }
   ],
   "skills.import-text": [
@@ -10391,6 +10545,12 @@
       "value": "Eliminadas de la asignación automática"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "Habilidades que permanecerán asignadas"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -10421,6 +10581,12 @@
       "value": "Supernova suprime toda la capa de compras manuales: Aguacates, los dos hitos de 50/100, Escalado de producción y todas las tasas de Enjambre."
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "Cambiar de todos modos"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -10429,6 +10595,26 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "¿Cambiar a "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "Algunas habilidades no se pueden desasignar en este momento y bloquean parte de este preajuste. Aun así, puedes cambiar y aplicar todo lo compatible."
     }
   ],
   "skills.tree": [

@@ -1763,5 +1763,12 @@
   "wiki.skills.overview-title": "Fonctionnement des compétences",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Sujets du wiki",
-  "wiki.topics": "Sujets"
+  "wiki.topics": "Sujets",
+  "dyson.info.preset-partially-applied": "{presetName} a été partiellement appliqué. {retainedCount, plural, one {# compétence non remboursable reste assignée} other {# compétences non remboursables restent assignées}}, ce qui laisse {blockedCount, plural, one {# compétence du préréglage en attente pour plus tard} other {# compétences du préréglage en attente pour plus tard}}. Ouvrez Compétences pour plus de détails.",
+  "skills.blocked-skills-heading": "Compétences du préréglage bloquées pour le moment",
+  "skills.import-retained-conflict": "{retainedCount, plural, one {# compétence non remboursable restera assignée} other {# compétences non remboursables resteront assignées}} et bloquera {blockedCount, plural, one {# compétence importée pour le moment} other {# compétences importées pour le moment}}. La partie compatible du préréglage sera tout de même appliquée.",
+  "skills.retained-skills-heading": "Compétences qui resteront assignées",
+  "skills.switch-anyway": "Changer quand même",
+  "skills.switch-preset-conflict-title": "Passer à {name} ?",
+  "skills.switch-preset-conflict-warning": "Certaines compétences ne peuvent pas être désassignées pour le moment et bloquent une partie de ce préréglage. Vous pouvez tout de même changer et appliquer tous les éléments compatibles."
 }

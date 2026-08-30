@@ -1059,6 +1059,10 @@
     "defaultMessage": "Off",
     "description": "Disables automatic skill preset loading when Bots opens."
   },
+  "dyson.info.preset-partially-applied": {
+    "defaultMessage": "{presetName} was partially applied. {retainedCount, plural, one {# unrefundable skill remains assigned} other {# unrefundable skills remain assigned}}, leaving {blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}. Open Skills for details.",
+    "description": "Non-blocking result after an automatic tab preset switch is constrained by retained skills."
+  },
   "dyson.info.purchase-amount": {
     "defaultMessage": "Building purchase amount",
     "description": "Heading for the canonical Dyson building buy mode."
@@ -3907,6 +3911,10 @@
     "defaultMessage": "Also assign these required skills:",
     "description": "Heading for prerequisite skills that will be assigned with the selected skill."
   },
+  "skills.blocked-skills-heading": {
+    "defaultMessage": "Preset skills blocked for now",
+    "description": "Heading above target preset skills blocked by retained ownership."
+  },
   "skills.cancel": {
     "defaultMessage": "Cancel",
     "description": "Button label for cancelling a pending Skills action."
@@ -4026,6 +4034,10 @@
   "skills.import-preset-help": {
     "defaultMessage": "Paste a preset string and review it before replacing this preset.",
     "description": "Explanation of how to import and review a skill preset."
+  },
+  "skills.import-retained-conflict": {
+    "defaultMessage": "{retainedCount, plural, one {# unrefundable skill will remain assigned} other {# unrefundable skills will remain assigned}} and block {blockedCount, plural, one {# imported skill for now} other {# imported skills for now}}. The compatible part of the preset will still be applied.",
+    "description": "Preset import confirmation warning for conflicts with retained skills."
   },
   "skills.import-text": {
     "defaultMessage": "Preset import string",
@@ -5451,6 +5463,10 @@
     "defaultMessage": "Removed from auto-assignment",
     "description": "Heading for queued skills cleared by a skill reset."
   },
+  "skills.retained-skills-heading": {
+    "defaultMessage": "Skills that will remain assigned",
+    "description": "Heading above unrefundable skills retained while changing presets."
+  },
   "skills.search": {
     "defaultMessage": "Search skills",
     "description": "Accessible label for the skill-tree search field."
@@ -5471,9 +5487,21 @@
     "defaultMessage": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.",
     "description": "Exact warning before purchasing Supernova."
   },
+  "skills.switch-anyway": {
+    "defaultMessage": "Switch anyway",
+    "description": "Button label for applying every compatible part of a conflicting preset."
+  },
   "skills.switch-preset": {
     "defaultMessage": "Switch to {name}",
     "description": "Accessible label for the compact skill preset switcher."
+  },
+  "skills.switch-preset-conflict-title": {
+    "defaultMessage": "Switch to {name}?",
+    "description": "Confirmation title when retained skills block part of a target preset."
+  },
+  "skills.switch-preset-conflict-warning": {
+    "defaultMessage": "Some skills can’t be unassigned right now and block part of this preset. You can still switch and apply everything compatible.",
+    "description": "Warning before partially applying a preset around retained unrefundable skills."
   },
   "skills.tree": {
     "defaultMessage": "Skill tree",

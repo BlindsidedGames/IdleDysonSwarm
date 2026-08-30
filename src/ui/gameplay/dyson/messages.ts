@@ -407,6 +407,13 @@ export const readyDysonMessages = defineMessages({
     description:
       'Disables automatic skill preset loading when Bots opens.',
   },
+  presetPartiallyApplied: {
+    id: 'dyson.info.preset-partially-applied',
+    defaultMessage:
+      '{presetName} was partially applied. {retainedCount, plural, one {# unrefundable skill remains assigned} other {# unrefundable skills remain assigned}}, leaving {blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}. Open Skills for details.',
+    description:
+      'Non-blocking result after an automatic tab preset switch is constrained by retained skills.',
+  },
   buyOne: {
     id: 'dyson.info.buy-mode.one',
     defaultMessage: 'x1',

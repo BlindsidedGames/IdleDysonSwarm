@@ -2503,6 +2503,84 @@
       "value": "关闭"
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " 已部分应用。由于仍有"
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个不可退还的技能处于已分配状态"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个不可退还的技能处于已分配状态"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "，预设中有"
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个技能已留在队列中等待之后应用"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个技能已留在队列中等待之后应用"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "。请打开技能界面查看详情。"
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -7857,6 +7935,12 @@
       "value": "同时分配以下必需技能："
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "当前被阻止的预设技能"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -8093,6 +8177,76 @@
     {
       "type": 0,
       "value": "粘贴预设字符串，并在替换此预设前进行检查。"
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个不可退还的技能将保持已分配状态"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个不可退还的技能将保持已分配状态"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "，并暂时阻止"
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个导入的技能"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个导入的技能"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "。预设中兼容的部分仍会应用。"
     }
   ],
   "skills.import-text": [
@@ -10391,6 +10545,12 @@
       "value": "将从自动分配中移除"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "将保持已分配状态的技能"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -10421,6 +10581,12 @@
       "value": "超新星会压制完整的手动购买层：牛油果、50/100 两个里程碑、生产规模化以及所有蜂群倍率。"
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "仍然切换"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -10429,6 +10595,26 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "切换到"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "？"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "有些技能目前无法取消分配，并阻止了此预设的一部分。你仍然可以切换并应用所有兼容的部分。"
     }
   ],
   "skills.tree": [

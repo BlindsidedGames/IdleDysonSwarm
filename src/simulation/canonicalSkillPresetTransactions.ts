@@ -82,6 +82,8 @@ export type CanonicalSkillPresetImportResult =
       readonly accepted: true
       readonly payload: CanonicalSkillPresetPayloadV1
       readonly blockedSkillIds?: readonly string[]
+      readonly retainedSkillIds?: readonly string[]
+      readonly blockedByRetainedSkillIds?: readonly string[]
     }
   | {
       readonly accepted: false

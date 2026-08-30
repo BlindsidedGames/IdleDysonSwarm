@@ -4623,6 +4623,92 @@
       "value": "‬"
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " ʍɐs dɐɹʇıɐʅʅʎ ɐddʅıǝp. "
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅ ɹǝɯɐıus ɐssıƃuǝp"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅs ɹǝɯɐıu ɐssıƃuǝp"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ", ʅǝɐʌıuƃ "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dɹǝsǝʇ sʞıʅʅ bnǝnǝp ɟoɹ ʅɐʇǝɹ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dɹǝsǝʇ sʞıʅʅs bnǝnǝp ɟoɹ ʅɐʇǝɹ"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Odǝu Sʞıʅʅs ɟoɹ pǝʇɐıʅs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -15673,6 +15759,20 @@
       "value": "‬"
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝsǝʇ sʞıʅʅs qʅoɔʞǝp ɟoɹ uoʍ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -16145,6 +16245,84 @@
     {
       "type": 0,
       "value": "Ԁɐsʇǝ ɐ dɹǝsǝʇ sʇɹıuƃ ɐup ɹǝʌıǝʍ ıʇ qǝɟoɹǝ ɹǝdʅɐɔıuƃ ʇɥıs dɹǝsǝʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅ ʍıʅʅ ɹǝɯɐıu ɐssıƃuǝp"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " nuɹǝɟnupɐqʅǝ sʞıʅʅs ʍıʅʅ ɹǝɯɐıu ɐssıƃuǝp"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " ɐup qʅoɔʞ "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ıɯdoɹʇǝp sʞıʅʅ ɟoɹ uoʍ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ıɯdoɹʇǝp sʞıʅʅs ɟoɹ uoʍ"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". ⊥ɥǝ ɔoɯdɐʇıqʅǝ dɐɹʇ oɟ ʇɥǝ dɹǝsǝʇ ʍıʅʅ sʇıʅʅ qǝ ɐddʅıǝp."
     },
     {
       "type": 0,
@@ -21295,6 +21473,20 @@
       "value": "‬"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅs ʇɥɐʇ ʍıʅʅ ɹǝɯɐıu ɐssıƃuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -21365,6 +21557,20 @@
       "value": "‬"
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʍıʇɔɥ ɐuʎʍɐʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -21377,6 +21583,42 @@
     {
       "type": 1,
       "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʍıʇɔɥ ʇo "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Soɯǝ sʞıʅʅs ɔɐu’ʇ qǝ nuɐssıƃuǝp ɹıƃɥʇ uoʍ ɐup qʅoɔʞ dɐɹʇ oɟ ʇɥıs dɹǝsǝʇ. ⅄on ɔɐu sʇıʅʅ sʍıʇɔɥ ɐup ɐddʅʎ ǝʌǝɹʎʇɥıuƃ ɔoɯdɐʇıqʅǝ."
     },
     {
       "type": 0,

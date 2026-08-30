@@ -53,6 +53,7 @@ import {
   replaceCanonicalSkillPreset,
 } from '../simulation/canonicalSkillPresetTransactions'
 import {
+  applyCanonicalSkillPresetLayout,
   purchaseCanonicalSkill,
   refundCanonicalSkill,
   resetCanonicalSkills,
@@ -92,6 +93,14 @@ import type {
   BuyMode,
 } from '../simulation/transactions'
 import type { SimulationAutomationPolicy } from '../simulation/types'
+
+export type CanonicalRetainedSkillConflictPolicy =
+  | { readonly kind: 'automatic' }
+  | {
+      readonly kind: 'confirmed'
+      readonly retainedSkillIds: readonly string[]
+      readonly blockedSkillIds: readonly string[]
+    }
 
 /**
  * The application-level player and automation commands whose state changes
@@ -182,6 +191,7 @@ export type CanonicalGameCommand =
   | {
       readonly kind: 'skill.select-preset'
       readonly slot: CanonicalSkillPresetSlot
+      readonly retainedConflictPolicy?: CanonicalRetainedSkillConflictPolicy
     }
   | {
       readonly kind: 'skill.add-to-current-preset'
@@ -195,6 +205,7 @@ export type CanonicalGameCommand =
       readonly kind: 'skill.import-preset'
       readonly slot: CanonicalSkillPresetSlot
       readonly serialized: string
+      readonly retainedConflictPolicy?: CanonicalRetainedSkillConflictPolicy
     }
   | {
       readonly kind: 'skill.set-tab-preset-automation'
@@ -558,12 +569,18 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
   'skill.purchase': {
     supported: true,
     authority: 'purchaseCanonicalSkill',
-    requires: ['runtime-evaluation-port'],
+    requires: [
+      'selected-skill-preset-carrier',
+      'runtime-evaluation-port',
+    ],
   },
   'skill.refund': {
     supported: true,
     authority: 'refundCanonicalSkill',
-    requires: ['runtime-evaluation-port'],
+    requires: [
+      'selected-skill-preset-carrier',
+      'runtime-evaluation-port',
+    ],
   },
   'skill.set-auto-assignment': {
     supported: true,
@@ -639,7 +656,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
   'skill.reset': {
     supported: true,
     authority: 'resetCanonicalSkills',
-    requires: ['runtime-evaluation-port'],
+    requires: [
+      'selected-skill-preset-carrier',
+      'runtime-evaluation-port',
+    ],
   },
   'skill.run-auto-assignment': {
     supported: true,
@@ -1225,6 +1245,10 @@ export function routeCanonicalGameCommand(
 
     case 'skill.purchase':
     case 'skill.refund': {
+      const selected = carriers.selectedSkillPresetSlot
+      if (selected === null) {
+        return selectedPresetCarrierUnavailable(state, carriers)
+      }
       const result =
         command.kind === 'skill.purchase'
           ? purchaseCanonicalSkill(state, command.skillId)
@@ -1238,22 +1262,67 @@ export function routeCanonicalGameCommand(
           result.reason,
         )
       }
+      const synchronized = synchronizeSelectedPresetQueue(
+        result.state,
+        selected,
+      )
       return finalizeAccepted(
         state,
-        result.state,
-        result.changed,
-        `skill:${result.changed ? 'changed' : 'unchanged'}`,
+        synchronized,
+        result.changed || synchronized !== result.state,
+        `skill:${
+          result.changed || synchronized !== result.state
+            ? 'changed'
+            : 'unchanged'
+        }`,
         carriers,
         options.runtimeEvaluation,
       )
     }
 
-    case 'skill.reset':
+    case 'skill.reset': {
+      const selected = carriers.selectedSkillPresetSlot
+      if (selected === null) {
+        return selectedPresetCarrierUnavailable(state, carriers)
+      }
+      const result = resetCanonicalSkills(state)
+      if (!result.accepted) {
+        return rejectDomain(
+          state,
+          carriers,
+          `skill:${result.code}`,
+          command.kind,
+          result.reason,
+        )
+      }
+      const preset = result.state.skills.presets[selected - 1]
+      const cleared = preset.skillIds.length === 0
+        ? result.state
+        : {
+            ...result.state,
+            skills: {
+              ...result.state.skills,
+              presets: replacePreset(
+                result.state.skills.presets,
+                selected,
+                { ...preset, skillIds: [] },
+              ),
+            },
+          }
+      return finalizeAccepted(
+        state,
+        cleared,
+        result.changed || cleared !== result.state,
+        `skill:${
+          result.changed || cleared !== result.state ? 'changed' : 'unchanged'
+        }`,
+        carriers,
+        options.runtimeEvaluation,
+      )
+    }
+
     case 'skill.run-auto-assignment': {
-      const result =
-        command.kind === 'skill.reset'
-          ? resetCanonicalSkills(state)
-          : runCanonicalSkillAutoAssignment(state)
+      const result = runCanonicalSkillAutoAssignment(state)
       if (!result.accepted) {
         return rejectDomain(
           state,
@@ -1545,40 +1614,43 @@ export function routeCanonicalGameCommand(
         )
       }
 
-      const reset = resetCanonicalSkills(imported)
-      if (!reset.accepted) {
+      const application = applyCanonicalSkillPresetLayout(
+        imported,
+        parsed.payload.skillIds,
+      )
+      if (!application.accepted) {
         return rejectDomain(
           state,
           carriers,
-          `skill:${reset.code}`,
+          `skill:${application.code}`,
           command.kind,
-          reset.reason,
+          application.reason,
+        )
+      }
+      const retainedConflict = retainedPresetConflictPolicyError(
+        command.retainedConflictPolicy,
+        application.retainedSkillIds,
+        application.blockedByRetainedSkillIds,
+      )
+      if (retainedConflict !== null) {
+        return rejectDomain(
+          state,
+          carriers,
+          retainedConflict.code,
+          command.kind,
+          retainedConflict.reason,
         )
       }
       const loaded: CanonicalGameStateV1 = {
-        ...reset.state,
+        ...application.state,
         dyson: {
-          ...reset.state.dyson,
+          ...application.state.dyson,
           botDistribution: parsed.payload.botDistribution,
         },
-        skills: {
-          ...reset.state.skills,
-          activeAutoAssignment: [...parsed.payload.skillIds],
-        },
-      }
-      const assignment = runCanonicalSkillAutoAssignment(loaded)
-      if (!assignment.accepted) {
-        return rejectDomain(
-          state,
-          carriers,
-          `skill:${assignment.code}`,
-          command.kind,
-          assignment.reason,
-        )
       }
       return finalizeAccepted(
         state,
-        withCanonicalBotAllocation(assignment.state),
+        withCanonicalBotAllocation(loaded),
         true,
         'skill:preset-imported-and-loaded',
         carriers,
@@ -1620,7 +1692,11 @@ export function routeCanonicalGameCommand(
       }
       const selected = routeCanonicalGameCommand(
         configured,
-        { kind: 'skill.select-preset', slot: command.slot },
+        {
+          kind: 'skill.select-preset',
+          slot: command.slot,
+          retainedConflictPolicy: { kind: 'automatic' },
+        },
         options,
       )
       if (!selected.accepted) {
@@ -1656,7 +1732,11 @@ export function routeCanonicalGameCommand(
       }
       const applied = routeCanonicalGameCommand(
         state,
-        { kind: 'skill.select-preset', slot },
+        {
+          kind: 'skill.select-preset',
+          slot,
+          retainedConflictPolicy: { kind: 'automatic' },
+        },
         options,
       )
       return applied.accepted
@@ -1697,62 +1777,50 @@ export function routeCanonicalGameCommand(
       if (current === null) {
         return selectedPresetCarrierUnavailable(state, carriers)
       }
-      const savedCurrent = replacePreset(
-        state.skills.presets,
-        current,
-        {
-          ...state.skills.presets[current - 1],
-          skillIds: [...state.skills.activeAutoAssignment],
-          botDistribution: state.dyson.botDistribution,
-        },
+      const target = state.skills.presets[command.slot - 1]
+      const application = applyCanonicalSkillPresetLayout(
+        state,
+        target.skillIds,
       )
-      const target = savedCurrent[command.slot - 1]
-      const reset = resetCanonicalSkills({
-        ...state,
-        skills: {
-          ...state.skills,
-          presets: savedCurrent,
-        },
-      })
-      if (!reset.accepted) {
+      if (!application.accepted) {
         return rejectDomain(
           state,
           carriers,
-          `skill:${reset.code}`,
+          `skill:${application.code}`,
           command.kind,
-          reset.reason,
+          application.reason,
+        )
+      }
+      const retainedConflict = retainedPresetConflictPolicyError(
+        command.retainedConflictPolicy,
+        application.retainedSkillIds,
+        application.blockedByRetainedSkillIds,
+      )
+      if (retainedConflict !== null) {
+        return rejectDomain(
+          state,
+          carriers,
+          retainedConflict.code,
+          command.kind,
+          retainedConflict.reason,
         )
       }
       const loaded: CanonicalGameStateV1 = {
-        ...reset.state,
+        ...application.state,
         dyson: {
-          ...reset.state.dyson,
+          ...application.state.dyson,
           botDistribution: target.botDistribution,
         },
-        skills: {
-          ...reset.state.skills,
-          activeAutoAssignment: [...target.skillIds],
-        },
-      }
-      const assignment = runCanonicalSkillAutoAssignment(loaded)
-      if (!assignment.accepted) {
-        return rejectDomain(
-          state,
-          carriers,
-          `skill:${assignment.code}`,
-          command.kind,
-          assignment.reason,
-        )
       }
       const nextCarriers = Object.freeze({
         ...carriers,
         selectedSkillPresetSlot: command.slot,
       })
       const changed =
-        assignment.state !== state || current !== command.slot
+        loaded !== state || current !== command.slot
       return finalizeAccepted(
         state,
-        withCanonicalBotAllocation(assignment.state),
+        withCanonicalBotAllocation(loaded),
         changed,
         `skill:${changed ? 'preset-selected' : 'unchanged'}`,
         nextCarriers,
@@ -2755,4 +2823,73 @@ function replacePreset(
   const candidate = [...presets]
   candidate[slot - 1] = preset
   return candidate as unknown as CanonicalGameStateV1['skills']['presets']
+}
+
+function synchronizeSelectedPresetQueue(
+  state: CanonicalGameStateV1,
+  slot: CanonicalSkillPresetSlot,
+): CanonicalGameStateV1 {
+  const preset = state.skills.presets[slot - 1]
+  if (
+    sameOrderedStrings(
+      preset.skillIds,
+      state.skills.activeAutoAssignment,
+    )
+  ) {
+    return state
+  }
+  return {
+    ...state,
+    skills: {
+      ...state.skills,
+      presets: replacePreset(state.skills.presets, slot, {
+        ...preset,
+        skillIds: [...state.skills.activeAutoAssignment],
+      }),
+    },
+  }
+}
+
+function retainedPresetConflictReason(
+  retainedSkillIds: readonly string[],
+  blockedSkillIds: readonly string[],
+): string {
+  return (
+    `Retained unrefundable skills (${retainedSkillIds.join(', ')}) block ` +
+    `part of the target preset (${blockedSkillIds.join(', ')}).`
+  )
+}
+
+function retainedPresetConflictPolicyError(
+  policy: CanonicalRetainedSkillConflictPolicy | undefined,
+  retainedSkillIds: readonly string[],
+  blockedSkillIds: readonly string[],
+): {
+  readonly code:
+    | 'skill:preset-retained-conflict'
+    | 'skill:preset-preview-stale'
+  readonly reason: string
+} | null {
+  if (blockedSkillIds.length === 0) return null
+  if (policy === undefined) {
+    return {
+      code: 'skill:preset-retained-conflict',
+      reason: retainedPresetConflictReason(
+        retainedSkillIds,
+        blockedSkillIds,
+      ),
+    }
+  }
+  if (policy.kind === 'automatic') return null
+  if (
+    sameOrderedStrings(policy.retainedSkillIds, retainedSkillIds) &&
+    sameOrderedStrings(policy.blockedSkillIds, blockedSkillIds)
+  ) {
+    return null
+  }
+  return {
+    code: 'skill:preset-preview-stale',
+    reason:
+      'Retained skill conflicts changed after the preset preview. Review the switch again.',
+  }
 }

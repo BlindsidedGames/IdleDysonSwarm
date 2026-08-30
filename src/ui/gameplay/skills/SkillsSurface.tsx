@@ -118,6 +118,14 @@ export interface SkillPresetImportPreview {
   readonly workerPercent: number
   readonly colorId: SkillPresetColorId
   readonly lockedQueuedSkillCount?: number
+  readonly retainedSkillIds?: readonly string[]
+  readonly blockedByRetainedSkillIds?: readonly string[]
+}
+
+export interface SkillPresetSelectionPreview {
+  readonly retainedSkillIds: readonly string[]
+  readonly pendingSkillIds: readonly string[]
+  readonly blockedByRetainedSkillIds: readonly string[]
 }
 
 /**
@@ -126,6 +134,9 @@ export interface SkillPresetImportPreview {
  * replacement; this surface only presents published previews and outcomes.
  */
 export interface SkillPresetActions {
+  readonly previewSelection: (
+    slot: CanonicalSkillPresetSlot,
+  ) => Promise<SkillPresetSelectionPreview>
   readonly previewQueueChange: (
     request: SkillPresetQueueChangeRequest,
   ) => Promise<SkillPresetQueueChangePreview>
@@ -142,6 +153,10 @@ export interface SkillPresetActions {
   readonly importPreset: (
     slot: CanonicalSkillPresetSlot,
     text: string,
+    retainedConflict?: {
+      readonly retainedSkillIds: readonly string[]
+      readonly blockedSkillIds: readonly string[]
+    },
   ) => Promise<boolean>
 }
 
@@ -290,6 +305,12 @@ export function SkillsSurface({
   const [presetsOpen, setPresetsOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
   const [pendingKind, setPendingKind] = useState<string | null>(null)
+  const [presetSelectionPending, setPresetSelectionPending] = useState(false)
+  const [presetSelectionPreview, setPresetSelectionPreview] = useState<{
+    readonly slot: CanonicalSkillPresetSlot
+    readonly retainedSkillIds: readonly string[]
+    readonly blockedByRetainedSkillIds: readonly string[]
+  } | null>(null)
   const [pendingExpectation, setPendingExpectation] =
     useState<PendingExpectation | null>(null)
   const [failed, setFailed] = useState(false)
@@ -407,6 +428,48 @@ export function SkillsSurface({
       dispatchPlayer,
       releasePendingLock,
       skillSignature,
+    ],
+  )
+
+  const requestPresetSelection = useCallback(
+    async (slot: CanonicalSkillPresetSlot) => {
+      if (presetSelectionPending) return
+      if (presetActions === undefined) {
+        await dispatch(
+          { kind: 'skill.select-preset', slot },
+          selectedPresetSlot === slot ? {} : { expectedPresetSlot: slot },
+        )
+        return
+      }
+      setPresetSelectionPending(true)
+      setFailed(false)
+      try {
+        const preview = await presetActions.previewSelection(slot)
+        if (preview.blockedByRetainedSkillIds.length > 0) {
+          setPresetsOpen(false)
+          setPresetSelectionPreview({
+            slot,
+            retainedSkillIds: preview.retainedSkillIds,
+            blockedByRetainedSkillIds:
+              preview.blockedByRetainedSkillIds,
+          })
+          return
+        }
+        await dispatch(
+          { kind: 'skill.select-preset', slot },
+          selectedPresetSlot === slot ? {} : { expectedPresetSlot: slot },
+        )
+      } catch {
+        setFailed(true)
+      } finally {
+        setPresetSelectionPending(false)
+      }
+    },
+    [
+      dispatch,
+      presetActions,
+      presetSelectionPending,
+      selectedPresetSlot,
     ],
   )
 
@@ -534,12 +597,10 @@ export function SkillsSurface({
                     aria-pressed={selectedPresetSlot === slot}
                     disabled={
                       !commandAvailability.selectPreset ||
-                      pendingKind === 'skill.select-preset'
+                      pendingKind === 'skill.select-preset' ||
+                      presetSelectionPending
                     }
-                    onClick={() => void dispatch(
-                      { kind: 'skill.select-preset', slot },
-                      { expectedPresetSlot: slot },
-                    )}
+                    onClick={() => void requestPresetSelection(slot)}
                   >
                     <span>{slot}</span>
                   </button>
@@ -646,8 +707,47 @@ export function SkillsSurface({
           commandAvailability={commandAvailability}
           presetActions={presetActions}
           pendingKind={pendingKind}
+          selectionPending={presetSelectionPending}
+          onSelectPreset={requestPresetSelection}
           dispatch={dispatch}
           onClose={() => setPresetsOpen(false)}
+        />
+      )}
+
+      {presetSelectionPreview !== null && (
+        <SkillPresetSelectionDialog
+          presetName={
+            presets[presetSelectionPreview.slot - 1]?.name ??
+            `Preset ${presetSelectionPreview.slot}`
+          }
+          retainedSkillIds={presetSelectionPreview.retainedSkillIds}
+          blockedSkillIds={
+            presetSelectionPreview.blockedByRetainedSkillIds
+          }
+          nodeById={nodeById}
+          pending={pendingKind === 'skill.select-preset'}
+          onCancel={() => setPresetSelectionPreview(null)}
+          onConfirm={async () => {
+            const slot = presetSelectionPreview.slot
+            const accepted = await dispatch(
+              {
+                kind: 'skill.select-preset',
+                slot,
+                retainedConflictPolicy: {
+                  kind: 'confirmed',
+                  retainedSkillIds:
+                    presetSelectionPreview.retainedSkillIds,
+                  blockedSkillIds:
+                    presetSelectionPreview
+                      .blockedByRetainedSkillIds,
+                },
+              },
+              selectedPresetSlot === slot
+                ? {}
+                : { expectedPresetSlot: slot },
+            )
+            if (accepted) setPresetSelectionPreview(null)
+          }}
         />
       )}
 
@@ -2174,12 +2274,80 @@ function SkillResetDialog({
   )
 }
 
+interface SkillPresetSelectionDialogProps {
+  readonly presetName: string
+  readonly retainedSkillIds: readonly string[]
+  readonly blockedSkillIds: readonly string[]
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly pending: boolean
+  readonly onCancel: () => void
+  readonly onConfirm: () => Promise<void>
+}
+
+function SkillPresetSelectionDialog({
+  presetName,
+  retainedSkillIds,
+  blockedSkillIds,
+  nodeById,
+  pending,
+  onCancel,
+  onConfirm,
+}: SkillPresetSelectionDialogProps) {
+  const intl = useIntl()
+
+  return (
+    <SkillDetailsDialog
+      title={intl.formatMessage(messages.switchPresetConflictTitle, {
+        name: presetName,
+      })}
+      closeLabel={intl.formatMessage(messages.close)}
+      palette="normal"
+      className="skill-reset-dialog"
+      onClose={onCancel}
+    >
+      <p className="skill-reset-dialog__description">
+        {intl.formatMessage(messages.switchPresetConflictWarning)}
+      </p>
+      <section className="skill-reset-dialog__group">
+        <h3>{intl.formatMessage(messages.retainedSkillsHeading)}</h3>
+        <AffectedSkillList
+          skillIds={retainedSkillIds}
+          nodeById={nodeById}
+          label={intl.formatMessage(messages.retainedSkillsHeading)}
+        />
+      </section>
+      <section className="skill-reset-dialog__group">
+        <h3>{intl.formatMessage(messages.blockedSkillsHeading)}</h3>
+        <AffectedSkillList
+          skillIds={blockedSkillIds}
+          nodeById={nodeById}
+          label={intl.formatMessage(messages.blockedSkillsHeading)}
+        />
+      </section>
+      <div className="skill-reset-dialog__actions">
+        <Button onClick={onCancel} disabled={pending}>
+          {intl.formatMessage(messages.cancel)}
+        </Button>
+        <Button
+          variant="primary"
+          state={pending ? 'pending' : 'idle'}
+          onClick={() => void onConfirm()}
+        >
+          {intl.formatMessage(messages.switchAnyway)}
+        </Button>
+      </div>
+    </SkillDetailsDialog>
+  )
+}
+
 interface SkillPresetsDialogProps {
   readonly presets: SkillsSurfaceProps['presets']
   readonly selectedPresetSlot: CanonicalSkillPresetSlot
   readonly commandAvailability: SkillCommandAvailability
   readonly presetActions?: SkillPresetActions
   readonly pendingKind: string | null
+  readonly selectionPending: boolean
+  readonly onSelectPreset: (slot: CanonicalSkillPresetSlot) => void
   readonly dispatch: SkillSettingsProps['dispatch']
   readonly onClose: () => void
 }
@@ -2190,6 +2358,8 @@ function SkillPresetsDialog({
   commandAvailability,
   presetActions,
   pendingKind,
+  selectionPending,
+  onSelectPreset,
   dispatch,
   onClose,
 }: SkillPresetsDialogProps) {
@@ -2223,12 +2393,13 @@ function SkillPresetsDialog({
               <button
                 type="button"
                 className="skill-settings__preset-load"
-                disabled={!commandAvailability.selectPreset || pendingKind === 'skill.select-preset'}
+                disabled={
+                  !commandAvailability.selectPreset ||
+                  pendingKind === 'skill.select-preset' ||
+                  selectionPending
+                }
                 aria-pressed={selectedPresetSlot === slot}
-                onClick={() => void dispatch(
-                  { kind: 'skill.select-preset', slot },
-                  selectedPresetSlot === slot ? {} : { expectedPresetSlot: slot },
-                )}
+                onClick={() => onSelectPreset(slot)}
               >
                 <strong>
                   <span className="skill-preset-color-swatch" aria-hidden="true" />
@@ -2386,8 +2557,22 @@ function PresetManagementDialog({
     setTransferPending('import')
     setTransferFailed(false)
     try {
-      if (await presetActions.importPreset(slot, importText)) onClose()
-      else setTransferFailed(true)
+      const retainedSkillIds = importPreview.retainedSkillIds ?? []
+      const blockedSkillIds =
+        importPreview.blockedByRetainedSkillIds ?? []
+      if (
+        await presetActions.importPreset(
+          slot,
+          importText,
+          blockedSkillIds.length > 0
+            ? { retainedSkillIds, blockedSkillIds }
+            : undefined,
+        )
+      ) {
+        onClose()
+      } else {
+        setTransferFailed(true)
+      }
     } catch {
       setTransferFailed(true)
     } finally {
@@ -2591,6 +2776,16 @@ function PresetManagementDialog({
                 <p>
                   {intl.formatMessage(messages.importLockedQueued, {
                     count: importPreview.lockedQueuedSkillCount,
+                  })}
+                </p>
+              )}
+              {(importPreview.blockedByRetainedSkillIds?.length ?? 0) > 0 && (
+                <p>
+                  {intl.formatMessage(messages.importRetainedConflict, {
+                    blockedCount:
+                      importPreview.blockedByRetainedSkillIds?.length ?? 0,
+                    retainedCount:
+                      importPreview.retainedSkillIds?.length ?? 0,
                   })}
                 </p>
               )}

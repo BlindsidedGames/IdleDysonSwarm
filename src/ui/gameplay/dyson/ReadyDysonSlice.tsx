@@ -65,8 +65,10 @@ import type { DebugSurfaceDraft } from '../debug'
 import type { OfflineTimeSurfaceDraft } from '../offline-time'
 import type {
   SkillPresetActions,
+  SkillPresetSelectionPreview,
   SkillTreeViewState,
 } from '../skills'
+import { StatusFeedback } from '../../components'
 import {
   beginFirstSliceSnapshotSelection,
   isNewCommittedRevision,
@@ -668,37 +670,88 @@ export function ReadyDysonSlice({
         gameplay.progression.statistics?.recentInfinityCycles,
     })
   const tinker = gameplay.runtime.tinker
-  const previousAutomatedRoute = useRef<'bots' | 'research' | null>(
-    null,
-  )
+  const previousAutomatedSelection = useRef<{
+    readonly route: 'bots' | 'research'
+    readonly slot: number
+  } | null>(null)
+  const [automaticPresetApplication, setAutomaticPresetApplication] =
+    useState<SkillPresetSelectionPreview | null>(null)
   const automatedRoute =
     route === 'bots' || route === 'research' ? route : null
+  const automatedPresetSlot = automatedRoute === null
+    ? 0
+    : gameplay.progression.skills.tabPresetAutomation[automatedRoute]
   useEffect(() => {
     if (requestedRouteUnavailable && route !== requestedRoute) {
       onRouteChange('bots')
     }
   }, [onRouteChange, requestedRoute, requestedRouteUnavailable, route])
   useEffect(() => {
+    let cancelled = false
     if (automatedRoute === null) {
-      previousAutomatedRoute.current = null
+      previousAutomatedSelection.current = null
+      setAutomaticPresetApplication(null)
       return
     }
-    if (previousAutomatedRoute.current === automatedRoute) return
-    previousAutomatedRoute.current = automatedRoute
-    const slot =
-      gameplay.progression.skills.tabPresetAutomation[
-        automatedRoute
-      ]
-    if (slot === 0) return
+    if (
+      previousAutomatedSelection.current?.route === automatedRoute &&
+      previousAutomatedSelection.current.slot === automatedPresetSlot
+    ) {
+      return
+    }
+    previousAutomatedSelection.current = {
+      route: automatedRoute,
+      slot: automatedPresetSlot,
+    }
+    setAutomaticPresetApplication(null)
+    if (automatedPresetSlot === 0) return
     void dispatchPlayer({
       kind: 'skill.apply-tab-preset-automation',
       tab: automatedRoute,
+    }).then(async (result) => {
+      if (
+        cancelled ||
+        result.status !== 'accepted' ||
+        presetActions === undefined
+      ) {
+        return
+      }
+      const preview = await presetActions.previewSelection(
+        automatedPresetSlot,
+      )
+      if (!cancelled) setAutomaticPresetApplication(preview)
+    }).catch(() => {
+      if (!cancelled) setAutomaticPresetApplication(null)
     })
+    return () => {
+      cancelled = true
+    }
   }, [
     automatedRoute,
+    automatedPresetSlot,
     dispatchPlayer,
-    gameplay.progression.skills.tabPresetAutomation,
+    presetActions,
   ])
+
+  const automaticPresetConflictNotice =
+    automaticPresetApplication !== null &&
+    automaticPresetApplication.blockedByRetainedSkillIds.length > 0
+      ? (
+          <StatusFeedback tone="warning">
+            {intl.formatMessage(messages.presetPartiallyApplied, {
+              blockedCount:
+                automaticPresetApplication
+                  .blockedByRetainedSkillIds.length,
+              retainedCount:
+                automaticPresetApplication.retainedSkillIds.length,
+              presetName:
+                gameplay.progression.skills.presets[
+                  automatedPresetSlot - 1
+                ]?.name ?? `Preset ${automatedPresetSlot}`,
+            })}
+          </StatusFeedback>
+        )
+      : null
 
   const highlightableRouteUnlocks = useMemo(() => ({
     research: gameplay.visibility.research?.routeUnlocked ?? true,
@@ -1356,17 +1409,26 @@ export function ReadyDysonSlice({
                         ].routeAvailable
                       }
                       summarySupplement={
-                        botMultitasking ? (
-                          <BotDistribution
-                            locale={locale}
-                            distribution={
-                              gameplay.progression.dyson.botDistribution
-                            }
-                            multitasking
-                            routeAvailable={false}
-                            dispatchPlayer={dispatchPlayer}
-                          />
-                        ) : undefined
+                        automaticPresetConflictNotice !== null ||
+                        botMultitasking
+                          ? (
+                              <>
+                                {automaticPresetConflictNotice}
+                                {botMultitasking && (
+                                  <BotDistribution
+                                    locale={locale}
+                                    distribution={
+                                      gameplay.progression.dyson
+                                        .botDistribution
+                                    }
+                                    multitasking
+                                    routeAvailable={false}
+                                    dispatchPlayer={dispatchPlayer}
+                                  />
+                                )}
+                              </>
+                            )
+                          : undefined
                       }
                       dispatchPlayer={dispatchPlayer}
                     />
@@ -2047,16 +2109,19 @@ export function ReadyDysonSlice({
               </div>
             )}
             statusSummary={(
-              <DysonRunFacts
-                locale={locale}
-                metric={dyson.value.presentation.activePanelMetric}
-                panelLifetimeSeconds={
-                  dyson.value.globals.panelLifetimeSeconds
-                }
-                totalPanelsDecayed={
-                  gameplay.progression.dyson.totalPanelsDecayed
-                }
-              />
+              <>
+                {route === 'bots' && automaticPresetConflictNotice}
+                <DysonRunFacts
+                  locale={locale}
+                  metric={dyson.value.presentation.activePanelMetric}
+                  panelLifetimeSeconds={
+                    dyson.value.globals.panelLifetimeSeconds
+                  }
+                  totalPanelsDecayed={
+                    gameplay.progression.dyson.totalPanelsDecayed
+                  }
+                />
+              </>
             )}
             buyMode={
               gameplay.progression.dyson.automation.buyMode
@@ -2281,6 +2346,8 @@ function createSkillPresetActions(
   runtime: BrowserUiRuntimeFoundation,
 ): SkillPresetActions {
   const actions: SkillPresetActions = {
+    previewSelection: async (slot) =>
+      runtime.previewSkillPresetSelection(slot),
     previewQueueChange: async (request) => {
       const preview = runtime.previewSkillPresetQueueChange(request)
       if (!preview.accepted) throw new Error(preview.reason)
@@ -2310,7 +2377,7 @@ function createSkillPresetActions(
     },
     exportPreset: async (slot) => runtime.exportSkillPreset(slot),
     previewImportPreset: async (slot, text) => {
-      const preview = runtime.previewSkillPresetImport(text)
+      const preview = runtime.previewSkillPresetImport(text, slot)
       if (!preview.accepted) throw new Error(preview.reason)
       return {
         name: preview.payload.presetName,
@@ -2322,13 +2389,25 @@ function createSkillPresetActions(
           preview.payload.colorId ??
           defaultSkillPresetColorId(slot),
         lockedQueuedSkillCount: preview.blockedSkillIds?.length ?? 0,
+        retainedSkillIds: preview.retainedSkillIds,
+        blockedByRetainedSkillIds:
+          preview.blockedByRetainedSkillIds,
       }
     },
-    importPreset: async (slot, serialized) => {
+    importPreset: async (slot, serialized, retainedConflict) => {
       const result = await runtime.dispatchPlayer({
         kind: 'skill.import-preset',
         slot,
         serialized,
+        ...(retainedConflict === undefined
+          ? {}
+          : {
+              retainedConflictPolicy: {
+                kind: 'confirmed' as const,
+                retainedSkillIds: retainedConflict.retainedSkillIds,
+                blockedSkillIds: retainedConflict.blockedSkillIds,
+              },
+            }),
       })
       return result.status === 'accepted'
     },

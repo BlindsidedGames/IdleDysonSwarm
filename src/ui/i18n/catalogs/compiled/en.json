@@ -2503,6 +2503,84 @@
       "value": "Off"
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " was partially applied. "
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " unrefundable skill remains assigned"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " unrefundable skills remain assigned"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ", leaving "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " preset skill queued for later"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " preset skills queued for later"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Open Skills for details."
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -7857,6 +7935,12 @@
       "value": "Also assign these required skills:"
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "Preset skills blocked for now"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -8093,6 +8177,76 @@
     {
       "type": 0,
       "value": "Paste a preset string and review it before replacing this preset."
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " unrefundable skill will remain assigned"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " unrefundable skills will remain assigned"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " and block "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " imported skill for now"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " imported skills for now"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". The compatible part of the preset will still be applied."
     }
   ],
   "skills.import-text": [
@@ -10391,6 +10545,12 @@
       "value": "Removed from auto-assignment"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "Skills that will remain assigned"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -10421,6 +10581,12 @@
       "value": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate."
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "Switch anyway"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -10429,6 +10595,26 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "Switch to "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "Some skills can’t be unassigned right now and block part of this preset. You can still switch and apply everything compatible."
     }
   ],
   "skills.tree": [
