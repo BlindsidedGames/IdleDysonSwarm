@@ -5,8 +5,17 @@ export type ReleaseFooterPlatform =
   | 'iOS'
   | 'Android'
   | 'Steam'
+  | 'Desktop'
   | 'Website'
   | 'Dev'
+
+export const DESKTOP_DISTRIBUTIONS = Object.freeze([
+  'desktop',
+  'steam',
+] as const)
+
+export type DesktopDistribution =
+  (typeof DESKTOP_DISTRIBUTIONS)[number]
 
 export interface ReleaseFooterPresentation {
   readonly platform: ReleaseFooterPlatform
@@ -24,6 +33,15 @@ export interface ResolveReleaseFooterOptions {
   readonly developmentBuild: boolean
   readonly source: Readonly<ReleaseFooterSourceIdentity>
   readonly metadata?: PlatformMetadataSource
+  readonly desktopDistribution?: DesktopDistribution
+}
+
+export function desktopDistributionFromBuildValue(
+  value: unknown,
+): DesktopDistribution {
+  if (value === undefined || value === '') return 'desktop'
+  if (value === 'desktop' || value === 'steam') return value
+  throw new Error('Desktop distribution must be desktop or steam.')
 }
 
 /**
@@ -44,6 +62,14 @@ export async function resolveReleaseFooter(
     })
   }
 
+  if (options.target === 'electron' && options.developmentBuild) {
+    return Object.freeze({
+      platform: 'Dev',
+      version: options.source.marketingVersion,
+      build: 'local',
+    })
+  }
+
   let version = options.source.marketingVersion
   let build = fallbackNativeBuild(options.target, options.source)
   try {
@@ -58,7 +84,10 @@ export async function resolveReleaseFooter(
   }
 
   return Object.freeze({
-    platform: platformForTarget(options.target),
+    platform: platformForTarget(
+      options.target,
+      options.desktopDistribution,
+    ),
     version,
     build,
   })
@@ -66,14 +95,18 @@ export async function resolveReleaseFooter(
 
 function platformForTarget(
   target: Exclude<RuntimeTarget, 'browser'>,
-): Extract<ReleaseFooterPlatform, 'iOS' | 'Android' | 'Steam'> {
+  desktopDistribution?: DesktopDistribution,
+): Extract<
+  ReleaseFooterPlatform,
+  'iOS' | 'Android' | 'Steam' | 'Desktop'
+> {
   switch (target) {
     case 'ios':
       return 'iOS'
     case 'android':
       return 'Android'
     case 'electron':
-      return 'Steam'
+      return desktopDistribution === 'steam' ? 'Steam' : 'Desktop'
   }
 }
 

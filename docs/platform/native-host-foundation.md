@@ -25,11 +25,13 @@ native-build floor, and values above Android's version-code limit.
 
 The ready application shell displays a minimal release footer without reducing
 the gameplay field. Android and iOS use their installed package metadata and
-display `Android` or `iOS`; Electron distribution displays `Steam`. Website
-builds use the checked-in marketing/release-candidate identity, while local
-Vite sessions display `Dev` and `local`. Compact layouts place the label inside
-existing bottom-navigation safe-area chrome; permanent-rail layouts place it at
-the rail's bottom.
+display `Android` or `iOS`. Local Electron sessions display `Dev`, generic
+production Electron packages display `Desktop`, and only builds created with
+`VITE_IDS_DESKTOP_DISTRIBUTION=steam` display `Steam`; any other non-empty
+desktop distribution value fails validation. Website builds use the checked-in
+marketing/release-candidate identity, while local Vite sessions display `Dev`
+and `local`. Compact layouts place the label inside existing bottom-navigation
+safe-area chrome; permanent-rail layouts place it at the rail's bottom.
 
 ## Signing boundary
 

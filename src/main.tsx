@@ -49,7 +49,10 @@ import {
   BottomNavigationTextProvider,
 } from './ui/bottom-navigation-text'
 import nativeRelease from '../hosts/native-release.json'
-import { resolveReleaseFooter } from './platform/releaseFooter'
+import {
+  desktopDistributionFromBuildValue,
+  resolveReleaseFooter,
+} from './platform/releaseFooter'
 
 installTextSelectionPolicy()
 void bootstrap()
@@ -92,6 +95,12 @@ async function bootstrap(): Promise<void> {
         releaseCandidateId: nativeRelease.defaultReleaseCandidateId,
       },
       metadata: composition.releasePlatformServices?.metadata,
+      desktopDistribution:
+        nativeBridge?.target === 'electron' && !import.meta.env.DEV
+          ? desktopDistributionFromBuildValue(
+              import.meta.env.VITE_IDS_DESKTOP_DISTRIBUTION,
+            )
+          : undefined,
     })
     void composition.audio.initialize().catch(() => undefined)
     installSemanticAudioCues(document, composition.audio)
