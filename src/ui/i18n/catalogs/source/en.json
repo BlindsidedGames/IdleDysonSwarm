@@ -1064,8 +1064,12 @@
     "description": "Disables automatic skill preset loading when Bots opens."
   },
   "dyson.info.preset-partially-applied": {
-    "defaultMessage": "{presetName} was partially applied. {retainedCount, plural, one {# unrefundable skill remains assigned} other {# unrefundable skills remain assigned}}, leaving {blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}. Open Skills for details.",
+    "defaultMessage": "{presetName} was partially applied. {retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}, leaving {blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}. Open Skills for details.",
     "description": "Non-blocking result after an automatic tab preset switch is constrained by retained skills."
+  },
+  "dyson.info.preset-partially-applied-banner": {
+    "defaultMessage": "<preset>{presetName}</preset> was partially applied. <retained>{retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}</retained>, leaving <blocked>{blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}</blocked>. <details>Open Skills for details.</details>",
+    "description": "Richly formatted banner after an automatic tab preset switch is constrained by retained skills."
   },
   "dyson.info.purchase-amount": {
     "defaultMessage": "Building purchase amount",
@@ -3975,6 +3979,10 @@
     "defaultMessage": "Current",
     "description": "Status marking the currently active skill preset."
   },
+  "skills.dismiss": {
+    "defaultMessage": "Dismiss",
+    "description": "Button label for dismissing a preset application result."
+  },
   "skills.double-click-to-assign": {
     "defaultMessage": "Double-click to assign skills",
     "description": "Optional Skill Tree interaction that delays opening details so a double click or double tap can assign a skill."
@@ -5387,6 +5395,14 @@
     "defaultMessage": "Preset name",
     "description": "Label for the editable skill preset name."
   },
+  "skills.preset-partially-applied-details": {
+    "defaultMessage": "Unrefundable skills could not be unassigned. These preset skills are blocked and remain queued for later.",
+    "description": "Persistent explanation above the named preset skills blocked by retained skills."
+  },
+  "skills.preset-partially-applied-title": {
+    "defaultMessage": "{name} is partially applied",
+    "description": "Persistent status title for a preset constrained by retained skills."
+  },
   "skills.preset-summary": {
     "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}}",
     "description": "Queued-skill summary shown on its own line for one Skill preset."
@@ -5486,6 +5502,10 @@
   "skills.settings": {
     "defaultMessage": "Skill presets and reset",
     "description": "Accessible label for opening skill preset and reset settings."
+  },
+  "skills.show-preset-application-notifications": {
+    "defaultMessage": "Show partial preset application notifications",
+    "description": "Presentation preference controlling post-switch partial preset application notices."
   },
   "skills.supernova-restoration-quote": {
     "defaultMessage": "Refunding Supernova restores the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.",

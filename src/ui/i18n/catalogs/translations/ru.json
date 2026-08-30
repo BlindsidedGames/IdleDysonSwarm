@@ -1367,6 +1367,7 @@
   "skills.search": "Поиск навыков",
   "skills.search-placeholder": "Поиск по древу…",
   "skills.settings": "Наборы и сброс навыков",
+  "skills.show-preset-application-notifications": "Показывать уведомления о частичном применении пресетов",
   "skills.supernova-restoration-quote": "Отмена назначения «Сверхновой» восстанавливает весь слой ручных покупок: Авокадо, оба рубежа 50/100, Масштабирование производства и все скорости Роя.",
   "skills.supernova-suppression-quote": "«Сверхновая» подавляет весь слой ручных покупок: Авокадо, оба рубежа 50/100, Масштабирование производства и все скорости Роя.",
   "skills.switch-preset": "Переключиться на {name}",
@@ -1766,11 +1767,15 @@
   "wiki.title": "Вики",
   "wiki.topic-navigation": "Темы Вики",
   "wiki.topics": "Темы",
-  "dyson.info.preset-partially-applied": "{presetName} применён частично. Назначенными остаются {retainedCount, plural, one {# невозвратный навык} other {# невозвратных навыка}}, поэтому {blockedCount, plural, one {# навык пресета оставлен в очереди на потом} other {# навыка пресета оставлены в очереди на потом}}. Откройте Навыки для подробностей.",
+  "dyson.info.preset-partially-applied": "{presetName} применён частично. {retainedCount, plural, one {# невозвратный навык нельзя было отменить} other {# невозвратных навыка нельзя было отменить}}, поэтому {blockedCount, plural, one {# навык пресета оставлен в очереди на потом} other {# навыка пресета оставлены в очереди на потом}}. Откройте Навыки для подробностей.",
+  "dyson.info.preset-partially-applied-banner": "<preset>{presetName}</preset> применён частично. <retained>{retainedCount, plural, one {# невозвратный навык нельзя было отменить} other {# невозвратных навыка нельзя было отменить}}</retained>, поэтому <blocked>{blockedCount, plural, one {# навык пресета оставлен в очереди на потом} other {# навыка пресета оставлены в очереди на потом}}</blocked>. <details>Откройте Навыки для подробностей.</details>",
   "skills.blocked-skills-heading": "Навыки пресета, заблокированные сейчас",
   "skills.import-retained-conflict": "{retainedCount, plural, one {# невозвратный навык останется назначенным} other {# невозвратных навыка останутся назначенными}} и заблокирует {blockedCount, plural, one {# импортированный навык} other {# импортированных навыка}}. Совместимая часть пресета всё равно будет применена.",
   "skills.retained-skills-heading": "Навыки, которые останутся назначенными",
   "skills.switch-anyway": "Всё равно переключить",
   "skills.switch-preset-conflict-title": "Переключиться на {name}?",
-  "skills.switch-preset-conflict-warning": "Некоторые навыки сейчас нельзя отменить, и они блокируют часть этого пресета. Можно всё равно переключиться и применить всё совместимое."
+  "skills.switch-preset-conflict-warning": "Некоторые навыки сейчас нельзя отменить, и они блокируют часть этого пресета. Можно всё равно переключиться и применить всё совместимое.",
+  "skills.preset-partially-applied-title": "{name}: применено частично",
+  "skills.preset-partially-applied-details": "Невозвратные навыки нельзя было отменить. Эти навыки пресета заблокированы и остаются в очереди на потом.",
+  "skills.dismiss": "Скрыть"
 }

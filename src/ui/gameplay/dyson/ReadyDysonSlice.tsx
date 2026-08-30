@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from 'react'
 import { useIntl } from 'react-intl'
 import type {
@@ -65,10 +66,8 @@ import type { DebugSurfaceDraft } from '../debug'
 import type { OfflineTimeSurfaceDraft } from '../offline-time'
 import type {
   SkillPresetActions,
-  SkillPresetSelectionPreview,
   SkillTreeViewState,
 } from '../skills'
-import { StatusFeedback } from '../../components'
 import {
   beginFirstSliceSnapshotSelection,
   isNewCommittedRevision,
@@ -173,6 +172,8 @@ export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
 export const QUANTUM_HIDE_MAXED_STORAGE_KEY =
   'idle-dyson-swarm.quantum-hide-maxed.v1'
+const SKILL_PRESET_APPLICATION_NOTICES_STORAGE_KEY =
+  'idle-dyson-swarm.skill-preset-application-notices.v1'
 const SettingsSurface = lazy(async () => {
   const module = await import('../settings')
   return { default: module.SettingsSurface }
@@ -595,6 +596,14 @@ export function ReadyDysonSlice({
     useState(() =>
       readBooleanPresentationPreference(QUANTUM_HIDE_MAXED_STORAGE_KEY),
     )
+  const [
+    showSkillPresetApplicationNotices,
+    setShowSkillPresetApplicationNotices,
+  ] = useState(() =>
+    readPresentationPreference(
+      SKILL_PRESET_APPLICATION_NOTICES_STORAGE_KEY,
+    ) !== 'false',
+  )
   const updateQuantumHideMaxed = useCallback((hideMaxed: boolean) => {
     setQuantumHideMaxed(hideMaxed)
     writeBooleanPresentationPreference(
@@ -682,8 +691,52 @@ export function ReadyDysonSlice({
     readonly route: 'bots' | 'research'
     readonly slot: number
   } | null>(null)
-  const [automaticPresetApplication, setAutomaticPresetApplication] =
-    useState<SkillPresetSelectionPreview | null>(null)
+  const lastPresetApplication =
+    gameplay.runtime.lastSkillPresetApplication
+  const [
+    dismissedPresetApplicationSequence,
+    setDismissedPresetApplicationSequence,
+  ] = useState<number | null>(null)
+  const [
+    hiddenAutomaticPresetBannerSequence,
+    setHiddenAutomaticPresetBannerSequence,
+  ] = useState<number | null>(null)
+  const visiblePresetApplication =
+    lastPresetApplication !== null &&
+    lastPresetApplication.blockedByRetainedSkillIds.length > 0 &&
+    lastPresetApplication.applicationSequence !==
+      dismissedPresetApplicationSequence
+      ? lastPresetApplication
+      : undefined
+  const updateShowSkillPresetApplicationNotices = useCallback(
+    (show: boolean) => {
+      setShowSkillPresetApplicationNotices(show)
+      writeBooleanPresentationPreference(
+        SKILL_PRESET_APPLICATION_NOTICES_STORAGE_KEY,
+        show,
+      )
+      if (lastPresetApplication !== null) {
+        setDismissedPresetApplicationSequence(
+          lastPresetApplication.applicationSequence,
+        )
+      }
+    },
+    [lastPresetApplication],
+  )
+  const dismissPresetApplication = useCallback(() => {
+    if (lastPresetApplication !== null) {
+      setDismissedPresetApplicationSequence(
+        lastPresetApplication.applicationSequence,
+      )
+    }
+  }, [lastPresetApplication])
+  const dismissAutomaticPresetBanner = useCallback(() => {
+    if (lastPresetApplication !== null) {
+      setHiddenAutomaticPresetBannerSequence(
+        lastPresetApplication.applicationSequence,
+      )
+    }
+  }, [lastPresetApplication])
   const automatedRoute =
     route === 'bots' || route === 'research' ? route : null
   const automatedPresetSlot = automatedRoute === null
@@ -695,15 +748,14 @@ export function ReadyDysonSlice({
     }
   }, [onRouteChange, requestedRoute, requestedRouteUnavailable, route])
   useEffect(() => {
-    let cancelled = false
     if (automatedRoute === null) {
       previousAutomatedSelection.current = null
-      setAutomaticPresetApplication(null)
       return
     }
+    const previousSelection = previousAutomatedSelection.current
     if (
-      previousAutomatedSelection.current?.route === automatedRoute &&
-      previousAutomatedSelection.current.slot === automatedPresetSlot
+      previousSelection?.route === automatedRoute &&
+      previousSelection.slot === automatedPresetSlot
     ) {
       return
     }
@@ -711,55 +763,88 @@ export function ReadyDysonSlice({
       route: automatedRoute,
       slot: automatedPresetSlot,
     }
-    setAutomaticPresetApplication(null)
     if (automatedPresetSlot === 0) return
+    if (
+      previousSelection?.route === automatedRoute &&
+      lastPresetApplication?.trigger === 'automatic' &&
+      lastPresetApplication.slot === automatedPresetSlot
+    ) {
+      return
+    }
     void dispatchPlayer({
       kind: 'skill.apply-tab-preset-automation',
       tab: automatedRoute,
-    }).then(async (result) => {
-      if (
-        cancelled ||
-        result.status !== 'accepted' ||
-        presetActions === undefined
-      ) {
-        return
-      }
-      const preview = await presetActions.previewSelection(
-        automatedPresetSlot,
-      )
-      if (!cancelled) setAutomaticPresetApplication(preview)
-    }).catch(() => {
-      if (!cancelled) setAutomaticPresetApplication(null)
-    })
-    return () => {
-      cancelled = true
-    }
+    }).catch(() => undefined)
   }, [
     automatedRoute,
     automatedPresetSlot,
     dispatchPlayer,
-    presetActions,
+    lastPresetApplication?.slot,
+    lastPresetApplication?.trigger,
   ])
 
-  const automaticPresetConflictNotice =
-    automaticPresetApplication !== null &&
-    automaticPresetApplication.blockedByRetainedSkillIds.length > 0
-      ? (
-          <StatusFeedback tone="warning">
-            {intl.formatMessage(messages.presetPartiallyApplied, {
-              blockedCount:
-                automaticPresetApplication
-                  .blockedByRetainedSkillIds.length,
-              retainedCount:
-                automaticPresetApplication.retainedSkillIds.length,
-              presetName:
-                gameplay.progression.skills.presets[
-                  automatedPresetSlot - 1
-                ]?.name ?? `Preset ${automatedPresetSlot}`,
-            })}
-          </StatusFeedback>
-        )
+  const automaticPresetConflictMessage =
+    showSkillPresetApplicationNotices &&
+    visiblePresetApplication?.trigger === 'automatic' &&
+    visiblePresetApplication.slot === automatedPresetSlot &&
+    visiblePresetApplication.applicationSequence !==
+      hiddenAutomaticPresetBannerSequence
+      ? intl.formatMessage(messages.presetPartiallyApplied, {
+          blockedCount:
+            visiblePresetApplication.blockedByRetainedSkillIds.length,
+          retainedCount:
+            visiblePresetApplication.retainedSkillIds.length,
+          presetName:
+            gameplay.progression.skills.presets[
+              automatedPresetSlot - 1
+            ]?.name ?? `Preset ${automatedPresetSlot}`,
+        })
       : null
+  const automaticPresetConflictBanner =
+    automaticPresetConflictMessage === null ||
+    visiblePresetApplication === undefined
+      ? null
+      : intl.formatMessage(messages.presetPartiallyAppliedBanner, {
+          blockedCount:
+            visiblePresetApplication.blockedByRetainedSkillIds.length,
+          retainedCount:
+            visiblePresetApplication.retainedSkillIds.length,
+          presetName:
+            gameplay.progression.skills.presets[
+              automatedPresetSlot - 1
+            ]?.name ?? `Preset ${automatedPresetSlot}`,
+          preset: (chunks: ReactNode) => (
+            <strong className="skill-preset-application-banner__preset">
+              {chunks}
+            </strong>
+          ),
+          retained: (chunks: ReactNode) => (
+            <strong className="skill-preset-application-banner__retained">
+              {chunks}
+            </strong>
+          ),
+          blocked: (chunks: ReactNode) => (
+            <strong className="skill-preset-application-banner__blocked">
+              {chunks}
+            </strong>
+          ),
+          details: (chunks: ReactNode) => (
+            <strong className="skill-preset-application-banner__details">
+              {chunks}
+            </strong>
+          ),
+        })
+  const automaticPresetConflictNotice =
+    automaticPresetConflictMessage === null
+      ? null
+      : (
+          <span
+            className="skill-preset-application-summary"
+            role="status"
+          >
+            {automaticPresetConflictMessage}
+          </span>
+        )
 
   const highlightableRouteUnlocks = useMemo(() => ({
     research: gameplay.visibility.research?.routeUnlocked ?? true,
@@ -1502,6 +1587,22 @@ export function ReadyDysonSlice({
                             gameplay.commands.byKind['skill.reset']
                               .routeAvailable,
                         }}
+                        presetApplication={
+                          showSkillPresetApplicationNotices
+                            ? visiblePresetApplication
+                            : undefined
+                        }
+                        onDismissPresetApplication={
+                          lastPresetApplication === null
+                            ? undefined
+                            : dismissPresetApplication
+                        }
+                        showPresetApplicationNotifications={
+                          showSkillPresetApplicationNotices
+                        }
+                        onShowPresetApplicationNotificationsChange={
+                          updateShowSkillPresetApplicationNotices
+                        }
                         presetActions={presetActions}
                         dispatchPlayer={dispatchPlayer}
                         initialTreeView={skillTreeViewRef.current}
@@ -1977,6 +2078,24 @@ export function ReadyDysonSlice({
               }
             : undefined
       }
+      routeBanner={
+        route === 'bots' &&
+        automaticPresetConflictMessage !== null &&
+        automaticPresetConflictBanner !== null &&
+        visiblePresetApplication !== undefined
+          ? {
+              ariaLabel: automaticPresetConflictMessage,
+              content: (
+                <SkillPresetApplicationBanner
+                  key={visiblePresetApplication.applicationSequence}
+                  accessibleLabel={automaticPresetConflictMessage}
+                  message={automaticPresetConflictBanner}
+                  onDismiss={dismissAutomaticPresetBanner}
+                />
+              ),
+            }
+          : undefined
+      }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),
         cash: {
@@ -2121,7 +2240,6 @@ export function ReadyDysonSlice({
             )}
             statusSummary={(
               <>
-                {route === 'bots' && automaticPresetConflictNotice}
                 <DysonRunFacts
                   locale={locale}
                   metric={dyson.value.presentation.activePanelMetric}
@@ -2240,6 +2358,51 @@ export function ReadyDysonSlice({
           />
         </Suspense>
       ) : null}
+    </>
+  )
+}
+
+const SKILL_PRESET_APPLICATION_BANNER_MILLISECONDS = 6_000
+
+function SkillPresetApplicationBanner({
+  accessibleLabel,
+  message,
+  onDismiss,
+}: {
+  readonly accessibleLabel: string
+  readonly message: ReactNode
+  readonly onDismiss: () => void
+}) {
+  useEffect(() => {
+    const timeout = window.setTimeout(
+      onDismiss,
+      SKILL_PRESET_APPLICATION_BANNER_MILLISECONDS,
+    )
+    return () => window.clearTimeout(timeout)
+  }, [onDismiss])
+
+  return (
+    <>
+      <span
+        className="skill-preset-application-banner__announcement"
+        role="status"
+      >
+        {accessibleLabel}
+      </span>
+      <button
+        type="button"
+        className="skill-preset-application-banner"
+        aria-label={accessibleLabel}
+        onClick={onDismiss}
+      >
+        <span className="skill-preset-application-banner__message">
+          {message}
+        </span>
+        <span
+          className="skill-preset-application-banner__progress"
+          aria-hidden="true"
+        />
+      </button>
     </>
   )
 }

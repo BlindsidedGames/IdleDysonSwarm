@@ -1367,6 +1367,7 @@
   "skills.search": "Skills suchen",
   "skills.search-placeholder": "Skill-Baum durchsuchen …",
   "skills.settings": "Skill-Voreinstellungen und Zurücksetzen",
+  "skills.show-preset-application-notifications": "Benachrichtigungen über teilweise angewendete Voreinstellungen anzeigen",
   "skills.supernova-restoration-quote": "Das Aufheben der Supernova-Zuweisung stellt die gesamte Ebene manueller Käufe wieder her: Avocados, beide Meilensteine 50/100, Produktionsskalierung und sämtliche Schwarmraten.",
   "skills.supernova-suppression-quote": "Supernova unterdrückt die gesamte Ebene manueller Käufe: Avocados, beide Meilensteine 50/100, Produktionsskalierung und sämtliche Schwarmraten.",
   "skills.switch-preset": "Wechseln zu {name}",
@@ -1766,11 +1767,15 @@
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Wiki-Themen",
   "wiki.topics": "Themen",
-  "dyson.info.preset-partially-applied": "{presetName} wurde teilweise angewendet. {retainedCount, plural, one {# nicht rückerstattbare Fertigkeit bleibt zugewiesen} other {# nicht rückerstattbare Fertigkeiten bleiben zugewiesen}}, dadurch bleiben {blockedCount, plural, one {# Fertigkeit der Voreinstellung für später vorgemerkt} other {# Fertigkeiten der Voreinstellung für später vorgemerkt}}. Öffne Fertigkeiten für Details.",
+  "dyson.info.preset-partially-applied": "{presetName} wurde teilweise angewendet. {retainedCount, plural, one {# nicht rückerstattbare Fertigkeit konnte nicht zurückgesetzt werden} other {# nicht rückerstattbare Fertigkeiten konnten nicht zurückgesetzt werden}}, dadurch bleiben {blockedCount, plural, one {# Fertigkeit der Voreinstellung für später vorgemerkt} other {# Fertigkeiten der Voreinstellung für später vorgemerkt}}. Öffne Fertigkeiten für Details.",
+  "dyson.info.preset-partially-applied-banner": "<preset>{presetName}</preset> wurde teilweise angewendet. <retained>{retainedCount, plural, one {# nicht rückerstattbare Fertigkeit konnte nicht zurückgesetzt werden} other {# nicht rückerstattbare Fertigkeiten konnten nicht zurückgesetzt werden}}</retained>, dadurch bleiben <blocked>{blockedCount, plural, one {# Fertigkeit der Voreinstellung für später vorgemerkt} other {# Fertigkeiten der Voreinstellung für später vorgemerkt}}</blocked>. <details>Öffne Fertigkeiten für Details.</details>",
   "skills.blocked-skills-heading": "Derzeit blockierte Fertigkeiten der Voreinstellung",
   "skills.import-retained-conflict": "{retainedCount, plural, one {# nicht rückerstattbare Fertigkeit bleibt zugewiesen} other {# nicht rückerstattbare Fertigkeiten bleiben zugewiesen}} und blockiert {blockedCount, plural, one {# importierte Fertigkeit vorerst} other {# importierte Fertigkeiten vorerst}}. Der kompatible Teil der Voreinstellung wird trotzdem angewendet.",
   "skills.retained-skills-heading": "Fertigkeiten, die zugewiesen bleiben",
   "skills.switch-anyway": "Trotzdem wechseln",
   "skills.switch-preset-conflict-title": "Zu {name} wechseln?",
-  "skills.switch-preset-conflict-warning": "Einige Fertigkeiten können derzeit nicht zurückgesetzt werden und blockieren einen Teil dieser Voreinstellung. Du kannst trotzdem wechseln und alle kompatiblen Teile anwenden."
+  "skills.switch-preset-conflict-warning": "Einige Fertigkeiten können derzeit nicht zurückgesetzt werden und blockieren einen Teil dieser Voreinstellung. Du kannst trotzdem wechseln und alle kompatiblen Teile anwenden.",
+  "skills.preset-partially-applied-title": "{name} wurde teilweise angewendet",
+  "skills.preset-partially-applied-details": "Nicht rückerstattbare Fertigkeiten konnten nicht zurückgesetzt werden. Diese Fertigkeiten der Voreinstellung sind blockiert und bleiben für später vorgemerkt.",
+  "skills.dismiss": "Ausblenden"
 }

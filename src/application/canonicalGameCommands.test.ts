@@ -906,6 +906,17 @@ describe('canonical game command router', () => {
       'shouldersOfTheEnlightened',
     ])
     expect(confirmed.state.skills.presets).toBe(input.skills.presets)
+    expect(confirmed.skillPresetApplication).toEqual({
+      slot: 2,
+      trigger: 'manual',
+      retainedSkillIds: [
+        'shouldersOfGiants',
+        'shouldersOfPrecursors',
+      ],
+      assignedSkillIds: [],
+      pendingSkillIds: ['shouldersOfTheEnlightened'],
+      blockedByRetainedSkillIds: ['shouldersOfTheEnlightened'],
+    })
 
     const stale = routeCanonicalGameCommand(
       input,
@@ -1092,7 +1103,7 @@ describe('canonical game command router', () => {
     const presets = [...source.skills.presets]
     presets[1] = {
       ...presets[1]!,
-      skillIds: ['shouldersOfTheEnlightened'],
+      skillIds: ['banking', 'shouldersOfTheEnlightened'],
     }
     const input: CanonicalGameStateV1 = {
       ...source,
@@ -1137,12 +1148,78 @@ describe('canonical game command router', () => {
     expect(result.state.skills.byId.shouldersOfPrecursors?.owned).toBe(
       true,
     )
+    expect(result.state.skills.byId.banking?.owned).toBe(true)
     expect(result.state.skills.byId.shouldersOfTheEnlightened?.owned)
       .not.toBe(true)
     expect(result.state.skills.activeAutoAssignment).toEqual([
+      'banking',
       'shouldersOfTheEnlightened',
     ])
     expect(result.state.skills.presets).toBe(input.skills.presets)
+    expect(result.skillPresetApplication).toEqual({
+      slot: 2,
+      trigger: 'automatic',
+      retainedSkillIds: [
+        'shouldersOfGiants',
+        'shouldersOfPrecursors',
+      ],
+      assignedSkillIds: ['banking'],
+      pendingSkillIds: ['shouldersOfTheEnlightened'],
+      blockedByRetainedSkillIds: ['shouldersOfTheEnlightened'],
+    })
+  })
+
+  test('rebuilds an automatic preset even when it is already selected', () => {
+    const source = state()
+    const presets = [...source.skills.presets]
+    presets[1] = { ...presets[1]!, skillIds: [] }
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        points: 0n,
+        byId: {
+          startHereTree: {
+            owned: true,
+            level: 1,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+        },
+        activeAutoAssignment: [],
+        presets:
+          presets as unknown as CanonicalGameStateV1['skills']['presets'],
+        tabPresetAutomation: {
+          ...source.skills.tabPresetAutomation,
+          bots: 2,
+        },
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      { kind: 'skill.apply-tab-preset-automation', tab: 'bots' },
+      options({
+        runtimeCarriers: {
+          ...carriers(),
+          selectedSkillPresetSlot: 2,
+        },
+      }),
+    )
+
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'skill:tab-preset-applied',
+    })
+    expect(result.state.skills.byId.startHereTree?.owned).toBe(false)
+    expect(result.state.skills.points).toBe(1n)
+    expect(result.skillPresetApplication).toMatchObject({
+      slot: 2,
+      trigger: 'automatic',
+      retainedSkillIds: [],
+      blockedByRetainedSkillIds: [],
+    })
   })
 
   test('delegates Leap gate and branch choice without command-supplied rewards', () => {

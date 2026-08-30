@@ -2545,7 +2545,7 @@
             },
             {
               "type": 0,
-              "value": " unrefundable skill remains assigned"
+              "value": " unrefundable skill could not be unassigned"
             }
           ]
         },
@@ -2556,7 +2556,7 @@
             },
             {
               "type": 0,
-              "value": " unrefundable skills remain assigned"
+              "value": " unrefundable skills could not be unassigned"
             }
           ]
         }
@@ -2601,6 +2601,112 @@
     {
       "type": 0,
       "value": ". Open Skills for details."
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " was partially applied. "
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " unrefundable skill could not be unassigned"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " unrefundable skills could not be unassigned"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", leaving "
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " preset skill queued for later"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " preset skills queued for later"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". "
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "Open Skills for details."
+        }
+      ]
     }
   ],
   "dyson.info.purchase-amount": [
@@ -8055,6 +8161,12 @@
       "value": "Current"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "Dismiss"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -10365,6 +10477,22 @@
       "value": "Preset name"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "Unrefundable skills could not be unassigned. These preset skills are blocked and remain queued for later."
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " is partially applied"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 6,
@@ -10595,6 +10723,12 @@
     {
       "type": 0,
       "value": "Skill presets and reset"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "Show partial preset application notifications"
     }
   ],
   "skills.supernova-restoration-quote": [

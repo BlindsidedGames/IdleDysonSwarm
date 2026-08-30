@@ -2545,7 +2545,7 @@
             },
             {
               "type": 0,
-              "value": " compétence non remboursable reste assignée"
+              "value": " compétence non remboursable n’a pas pu être désassignée"
             }
           ]
         },
@@ -2556,7 +2556,7 @@
             },
             {
               "type": 0,
-              "value": " compétences non remboursables restent assignées"
+              "value": " compétences non remboursables n’ont pas pu être désassignées"
             }
           ]
         }
@@ -2601,6 +2601,112 @@
     {
       "type": 0,
       "value": ". Ouvrez Compétences pour plus de détails."
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " a été partiellement appliqué. "
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " compétence non remboursable n’a pas pu être désassignée"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " compétences non remboursables n’ont pas pu être désassignées"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", ce qui laisse "
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " compétence du préréglage en attente pour plus tard"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " compétences du préréglage en attente pour plus tard"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". "
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ouvrez Compétences pour plus de détails."
+        }
+      ]
     }
   ],
   "dyson.info.purchase-amount": [
@@ -8055,6 +8161,12 @@
       "value": "Actuel"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "Masquer"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -10365,6 +10477,22 @@
       "value": "Nom du préréglage"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "Les compétences non remboursables n’ont pas pu être désassignées. Ces compétences du préréglage sont bloquées et restent en attente pour plus tard."
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " est partiellement appliqué"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 6,
@@ -10595,6 +10723,12 @@
     {
       "type": 0,
       "value": "Configurations prédéfinies et réinitialisation des compétences"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "Afficher les notifications d’application partielle des préréglages"
     }
   ],
   "skills.supernova-restoration-quote": [

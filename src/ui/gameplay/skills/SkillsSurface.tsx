@@ -12,7 +12,10 @@ import {
   type WheelEvent as ReactWheelEvent,
 } from 'react'
 import { useIntl } from 'react-intl'
-import type { CanonicalSkillPresetSlot } from '../../../application/canonicalGameCommands'
+import type {
+  CanonicalSkillPresetApplicationOutcome,
+  CanonicalSkillPresetSlot,
+} from '../../../application/canonicalGameCommands'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { SkillPresetState } from '../../../game-state/types'
 import {
@@ -170,6 +173,13 @@ export interface SkillsSurfaceProps {
   readonly botDistribution: number
   readonly autoAssignNonRefundable: boolean
   readonly commandAvailability: SkillCommandAvailability
+  readonly presetApplication?:
+    Readonly<CanonicalSkillPresetApplicationOutcome>
+  readonly onDismissPresetApplication?: () => void
+  readonly showPresetApplicationNotifications: boolean
+  readonly onShowPresetApplicationNotificationsChange: (
+    show: boolean,
+  ) => void
   readonly presetActions?: SkillPresetActions
   readonly dispatchPlayer: (
     command: SkillCommand,
@@ -282,6 +292,10 @@ export function SkillsSurface({
   botDistribution,
   autoAssignNonRefundable,
   commandAvailability,
+  presetApplication,
+  onDismissPresetApplication,
+  showPresetApplicationNotifications,
+  onShowPresetApplicationNotificationsChange,
   presetActions,
   dispatchPlayer,
   initialTreeView,
@@ -562,6 +576,20 @@ export function SkillsSurface({
       className="skills-surface"
       aria-label={intl.formatMessage(messages.region)}
     >
+      {presetApplication !== undefined &&
+        presetApplication.blockedByRetainedSkillIds.length > 0 && (
+          <SkillPresetApplicationNotice
+            presetName={
+              presets[presetApplication.slot - 1]?.name ??
+              `Preset ${presetApplication.slot}`
+            }
+            blockedSkillIds={
+              presetApplication.blockedByRetainedSkillIds
+            }
+            nodeById={nodeById}
+            onDismiss={onDismissPresetApplication}
+          />
+        )}
       <SkillTreeViewport
         nodes={visibleNodes}
         previews={previewById}
@@ -690,6 +718,12 @@ export function SkillsSurface({
             setDoubleClickToAssign(enabled)
             writeDoubleClickAssignmentPreference(enabled)
           }}
+          showPresetApplicationNotifications={
+            showPresetApplicationNotifications
+          }
+          onShowPresetApplicationNotificationsChange={
+            onShowPresetApplicationNotificationsChange
+          }
           commandAvailability={commandAvailability}
           pendingKind={pendingKind}
           dispatch={dispatch}
@@ -708,6 +742,7 @@ export function SkillsSurface({
           presetActions={presetActions}
           pendingKind={pendingKind}
           selectionPending={presetSelectionPending}
+          nodeById={nodeById}
           onSelectPreset={requestPresetSelection}
           dispatch={dispatch}
           onClose={() => setPresetsOpen(false)}
@@ -2104,6 +2139,10 @@ interface SkillSettingsProps {
   readonly autoAssignNonRefundable: boolean
   readonly doubleClickToAssign: boolean
   readonly onDoubleClickToAssignChange: (enabled: boolean) => void
+  readonly showPresetApplicationNotifications: boolean
+  readonly onShowPresetApplicationNotificationsChange: (
+    show: boolean,
+  ) => void
   readonly commandAvailability: SkillCommandAvailability
   readonly pendingKind: string | null
   readonly dispatch: (
@@ -2119,6 +2158,8 @@ function SkillSettings({
   autoAssignNonRefundable,
   doubleClickToAssign,
   onDoubleClickToAssignChange,
+  showPresetApplicationNotifications,
+  onShowPresetApplicationNotificationsChange,
   commandAvailability,
   pendingKind,
   dispatch,
@@ -2156,6 +2197,22 @@ function SkillSettings({
           }
         />
         <span>{intl.formatMessage(messages.doubleClickToAssign)}</span>
+      </label>
+      <label className="skill-settings__toggle">
+        <input
+          type="checkbox"
+          checked={showPresetApplicationNotifications}
+          onChange={(event) =>
+            onShowPresetApplicationNotificationsChange(
+              event.currentTarget.checked,
+            )
+          }
+        />
+        <span>
+          {intl.formatMessage(
+            messages.showPresetApplicationNotifications,
+          )}
+        </span>
       </label>
       <div className="skill-settings__actions">
         <button
@@ -2284,6 +2341,46 @@ interface SkillPresetSelectionDialogProps {
   readonly onConfirm: () => Promise<void>
 }
 
+function SkillPresetApplicationNotice({
+  presetName,
+  blockedSkillIds,
+  nodeById,
+  onDismiss,
+}: {
+  readonly presetName: string
+  readonly blockedSkillIds: readonly string[]
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly onDismiss?: () => void
+}) {
+  const intl = useIntl()
+  if (onDismiss === undefined) return null
+
+  return (
+    <SkillDetailsDialog
+      title={intl.formatMessage(
+        messages.presetPartiallyAppliedTitle,
+        { name: presetName },
+      )}
+      closeLabel={intl.formatMessage(messages.dismiss)}
+      palette="normal"
+      className="skill-preset-application-dialog"
+      onClose={onDismiss}
+    >
+      <p className="skills-surface__preset-application-details">
+        {intl.formatMessage(messages.presetPartiallyAppliedDetails)}
+      </p>
+      <section className="skill-reset-dialog__group">
+        <h3>{intl.formatMessage(messages.blockedSkillsHeading)}</h3>
+        <AffectedSkillList
+          skillIds={blockedSkillIds}
+          nodeById={nodeById}
+          label={intl.formatMessage(messages.blockedSkillsHeading)}
+        />
+      </section>
+    </SkillDetailsDialog>
+  )
+}
+
 function SkillPresetSelectionDialog({
   presetName,
   retainedSkillIds,
@@ -2347,6 +2444,7 @@ interface SkillPresetsDialogProps {
   readonly presetActions?: SkillPresetActions
   readonly pendingKind: string | null
   readonly selectionPending: boolean
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
   readonly onSelectPreset: (slot: CanonicalSkillPresetSlot) => void
   readonly dispatch: SkillSettingsProps['dispatch']
   readonly onClose: () => void
@@ -2359,6 +2457,7 @@ function SkillPresetsDialog({
   presetActions,
   pendingKind,
   selectionPending,
+  nodeById,
   onSelectPreset,
   dispatch,
   onClose,
@@ -2432,6 +2531,7 @@ function SkillPresetsDialog({
           preset={managedPreset}
           canSetColor={commandAvailability.setPresetColor}
           presetActions={presetActions}
+          nodeById={nodeById}
           pendingKind={pendingKind}
           dispatch={dispatch}
           onClose={() => setManagedSlot(null)}
@@ -2446,6 +2546,7 @@ interface PresetManagementDialogProps {
   readonly preset: SkillPresetState
   readonly canSetColor: boolean
   readonly presetActions?: SkillPresetActions
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
   readonly pendingKind: string | null
   readonly dispatch: (
     command: SkillCommand,
@@ -2459,6 +2560,7 @@ function PresetManagementDialog({
   preset,
   canSetColor,
   presetActions,
+  nodeById,
   pendingKind,
   dispatch,
   onClose,
@@ -2780,14 +2882,42 @@ function PresetManagementDialog({
                 </p>
               )}
               {(importPreview.blockedByRetainedSkillIds?.length ?? 0) > 0 && (
-                <p>
-                  {intl.formatMessage(messages.importRetainedConflict, {
-                    blockedCount:
-                      importPreview.blockedByRetainedSkillIds?.length ?? 0,
-                    retainedCount:
-                      importPreview.retainedSkillIds?.length ?? 0,
-                  })}
-                </p>
+                <>
+                  <p>
+                    {intl.formatMessage(messages.importRetainedConflict, {
+                      blockedCount:
+                        importPreview.blockedByRetainedSkillIds?.length ?? 0,
+                      retainedCount:
+                        importPreview.retainedSkillIds?.length ?? 0,
+                    })}
+                  </p>
+                  <section className="skill-reset-dialog__group">
+                    <h3>
+                      {intl.formatMessage(messages.retainedSkillsHeading)}
+                    </h3>
+                    <AffectedSkillList
+                      skillIds={importPreview.retainedSkillIds ?? []}
+                      nodeById={nodeById}
+                      label={intl.formatMessage(
+                        messages.retainedSkillsHeading,
+                      )}
+                    />
+                  </section>
+                  <section className="skill-reset-dialog__group">
+                    <h3>
+                      {intl.formatMessage(messages.blockedSkillsHeading)}
+                    </h3>
+                    <AffectedSkillList
+                      skillIds={
+                        importPreview.blockedByRetainedSkillIds ?? []
+                      }
+                      nodeById={nodeById}
+                      label={intl.formatMessage(
+                        messages.blockedSkillsHeading,
+                      )}
+                    />
+                  </section>
+                </>
               )}
               <Button
                 variant="primary"
@@ -2796,7 +2926,11 @@ function PresetManagementDialog({
                 }
                 onClick={() => void importPreset()}
               >
-                {intl.formatMessage(messages.confirmImport)}
+                {intl.formatMessage(
+                  (importPreview.blockedByRetainedSkillIds?.length ?? 0) > 0
+                    ? messages.switchAnyway
+                    : messages.confirmImport,
+                )}
               </Button>
               <Button
                 disabled={transferPending !== null}
