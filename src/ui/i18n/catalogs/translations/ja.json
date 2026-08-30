@@ -1765,5 +1765,12 @@
   "wiki.skills.overview-title": "スキルの仕組み",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Wikiのトピック",
-  "wiki.topics": "トピック"
+  "wiki.topics": "トピック",
+  "dyson.info.preset-partially-applied": "{presetName} は一部のみ適用されました。返却できないスキルが{retainedCount, plural, one {# 個割り当てられたままのため} other {# 個割り当てられたままのため}}、プリセットのスキルは{blockedCount, plural, one {# 個が後で適用されるようキューに残っています} other {# 個が後で適用されるようキューに残っています}}。詳細はスキル画面で確認してください。",
+  "skills.blocked-skills-heading": "現在ブロックされているプリセットのスキル",
+  "skills.import-retained-conflict": "{retainedCount, plural, one {# 個の返却できないスキルが割り当てられたままになり} other {# 個の返却できないスキルが割り当てられたままになり}}、インポートしたスキルは{blockedCount, plural, one {# 個が現在ブロックされます} other {# 個が現在ブロックされます}}。プリセットの適用可能な部分はそのまま適用されます。",
+  "skills.retained-skills-heading": "割り当てられたままになるスキル",
+  "skills.switch-anyway": "このまま切り替える",
+  "skills.switch-preset-conflict-title": "プリセット {name} に切り替えますか？",
+  "skills.switch-preset-conflict-warning": "現在割り当てを解除できないスキルが、このプリセットの一部をブロックしています。切り替えて、適用可能な部分をすべて適用することはできます。"
 }

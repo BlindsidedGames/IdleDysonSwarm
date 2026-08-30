@@ -2525,6 +2525,84 @@
       "value": "Aus"
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " wurde teilweise angewendet. "
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " nicht rückerstattbare Fertigkeit bleibt zugewiesen"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " nicht rückerstattbare Fertigkeiten bleiben zugewiesen"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ", dadurch bleiben "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Fertigkeit der Voreinstellung für später vorgemerkt"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Fertigkeiten der Voreinstellung für später vorgemerkt"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Öffne Fertigkeiten für Details."
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -7885,6 +7963,12 @@
       "value": "Diese erforderlichen Skills ebenfalls zuweisen:"
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "Derzeit blockierte Fertigkeiten der Voreinstellung"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -8121,6 +8205,76 @@
     {
       "type": 0,
       "value": "Füge eine Voreinstellungszeichenfolge ein und prüfe sie, bevor du diese Voreinstellung ersetzt."
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " nicht rückerstattbare Fertigkeit bleibt zugewiesen"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " nicht rückerstattbare Fertigkeiten bleiben zugewiesen"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " und blockiert "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " importierte Fertigkeit vorerst"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " importierte Fertigkeiten vorerst"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Der kompatible Teil der Voreinstellung wird trotzdem angewendet."
     }
   ],
   "skills.import-text": [
@@ -10419,6 +10573,12 @@
       "value": "Aus der automatischen Zuweisung entfernt"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "Fertigkeiten, die zugewiesen bleiben"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -10449,6 +10609,12 @@
       "value": "Supernova unterdrückt die gesamte Ebene manueller Käufe: Avocados, beide Meilensteine 50/100, Produktionsskalierung und sämtliche Schwarmraten."
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "Trotzdem wechseln"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -10457,6 +10623,26 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "Zu "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " wechseln?"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "Einige Fertigkeiten können derzeit nicht zurückgesetzt werden und blockieren einen Teil dieser Voreinstellung. Du kannst trotzdem wechseln und alle kompatiblen Teile anwenden."
     }
   ],
   "skills.tree": [

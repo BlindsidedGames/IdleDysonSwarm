@@ -1765,5 +1765,12 @@
   "wiki.skills.overview-title": "Cómo funcionan las habilidades",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Temas de la Wiki",
-  "wiki.topics": "Temas"
+  "wiki.topics": "Temas",
+  "dyson.info.preset-partially-applied": "{presetName} se aplicó parcialmente. {retainedCount, plural, one {# habilidad no reembolsable permanece asignada} other {# habilidades no reembolsables permanecen asignadas}}, por lo que {blockedCount, plural, one {# habilidad del preajuste queda en cola para después} other {# habilidades del preajuste quedan en cola para después}}. Abre Habilidades para ver los detalles.",
+  "skills.blocked-skills-heading": "Habilidades del preajuste bloqueadas por ahora",
+  "skills.import-retained-conflict": "{retainedCount, plural, one {# habilidad no reembolsable permanecerá asignada} other {# habilidades no reembolsables permanecerán asignadas}} y bloqueará {blockedCount, plural, one {# habilidad importada por ahora} other {# habilidades importadas por ahora}}. La parte compatible del preajuste se aplicará de todos modos.",
+  "skills.retained-skills-heading": "Habilidades que permanecerán asignadas",
+  "skills.switch-anyway": "Cambiar de todos modos",
+  "skills.switch-preset-conflict-title": "¿Cambiar a {name}?",
+  "skills.switch-preset-conflict-warning": "Algunas habilidades no se pueden desasignar en este momento y bloquean parte de este preajuste. Aun así, puedes cambiar y aplicar todo lo compatible."
 }

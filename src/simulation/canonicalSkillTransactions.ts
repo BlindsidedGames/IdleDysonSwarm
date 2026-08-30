@@ -125,6 +125,22 @@ export interface CanonicalSkillCatalogPreview {
   }
 }
 
+export type CanonicalSkillPresetApplicationResult =
+  | {
+      readonly accepted: true
+      readonly state: CanonicalGameStateV1
+      readonly retainedSkillIds: readonly string[]
+      readonly assignedSkillIds: readonly string[]
+      readonly pendingSkillIds: readonly string[]
+      readonly blockedByRetainedSkillIds: readonly string[]
+    }
+  | {
+      readonly accepted: false
+      readonly code: string
+      readonly reason: string
+      readonly state: CanonicalGameStateV1
+    }
+
 /**
  * Projects the exact authored skill catalog and current-state purchase/refund
  * eligibility without changing the source. Both actions execute through the
@@ -620,10 +636,6 @@ function refundWithDefinitions(
         activeAutoAssignment: state.skills.activeAutoAssignment.filter(
           (id) => !removeFromQueues.has(id),
         ),
-        presets: mapSelectedPresetQueues(
-          state.skills.presets,
-          removeFromQueues,
-        ),
       },
     },
     true,
@@ -736,6 +748,77 @@ export function runCanonicalSkillAutoAssignment(
     true,
     affected,
   )
+}
+
+/**
+ * Rebuilds live refundable ownership around one independent desired preset
+ * layout. Currently unrefundable ownership is retained as an effective overlay;
+ * it is never copied into the supplied desired layout or another preset.
+ */
+export function applyCanonicalSkillPresetLayout(
+  state: CanonicalGameStateV1,
+  desiredSkillIds: readonly string[],
+): CanonicalSkillPresetApplicationResult {
+  const reset = resetCanonicalSkills(state)
+  if (!reset.accepted) return reset
+
+  const definitions = loadDefinitions()
+  const retainedSkillIds = [...definitions.keys()].filter(
+    (skillId) => reset.state.skills.byId[skillId]?.owned === true,
+  )
+  const loaded: CanonicalGameStateV1 = {
+    ...reset.state,
+    skills: {
+      ...reset.state.skills,
+      activeAutoAssignment: [...desiredSkillIds],
+    },
+  }
+  const assignment = runCanonicalSkillAutoAssignment(loaded)
+  if (!assignment.accepted) return assignment
+
+  const retained = new Set(retainedSkillIds)
+  const blockedByRetained = new Set<string>()
+  for (const skillId of desiredSkillIds) {
+    const definition = definitions.get(skillId)
+    if (
+      definition?.exclusiveWith.some((id) => retained.has(id)) === true
+    ) {
+      blockedByRetained.add(skillId)
+    }
+  }
+
+  let expanded: boolean
+  do {
+    expanded = false
+    for (const skillId of desiredSkillIds) {
+      if (blockedByRetained.has(skillId)) continue
+      const definition = definitions.get(skillId)
+      if (
+        definition !== undefined &&
+        [...definition.required, ...definition.shadowRequired].some((id) =>
+          blockedByRetained.has(id),
+        )
+      ) {
+        blockedByRetained.add(skillId)
+        expanded = true
+      }
+    }
+  } while (expanded)
+
+  return Object.freeze({
+    accepted: true,
+    state: assignment.state,
+    retainedSkillIds: Object.freeze(retainedSkillIds),
+    assignedSkillIds: Object.freeze([...assignment.affectedSkillIds]),
+    pendingSkillIds: Object.freeze(
+      desiredSkillIds.filter(
+        (skillId) => assignment.state.skills.byId[skillId]?.owned !== true,
+      ),
+    ),
+    blockedByRetainedSkillIds: Object.freeze(
+      desiredSkillIds.filter((skillId) => blockedByRetained.has(skillId)),
+    ),
+  })
 }
 
 function loadDefinitions(): ReadonlyMap<string, SkillDefinition> {
@@ -933,16 +1016,6 @@ function emptyRuntime(): SkillRuntimeState {
 
 function appendUnique(ids: readonly string[], id: string): readonly string[] {
   return ids.includes(id) ? ids : [...ids, id]
-}
-
-function mapSelectedPresetQueues(
-  presets: CanonicalGameStateV1['skills']['presets'],
-  remove: ReadonlySet<string>,
-): CanonicalGameStateV1['skills']['presets'] {
-  return presets.map((preset) => ({
-    ...preset,
-    skillIds: preset.skillIds.filter((id) => !remove.has(id)),
-  })) as unknown as CanonicalGameStateV1['skills']['presets']
 }
 
 function requireNonNegativeInteger(

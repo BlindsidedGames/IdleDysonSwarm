@@ -19,15 +19,15 @@ import {
 
 describe('production-valid progression matrix fixtures', () => {
   const expectedSaveSha256 = {
-    fresh: '9d70ad08fa9778e3ae92cd8cb84bcf64bc8bb5d2f2cc829e8e63e4739c2f1107',
-    'mid-swarm': 'a5b47b6b78707f64ab8aca7196edbf4bf4e5fdd16841ca67d80b2dbe816171d2',
-    'first-infinity': 'aa2081f71dae720b53b8ecd178243776c99aa415dbb605c65dae935cc659b910',
-    'mature-infinity': '7757466ec7b55d505cfafff4c1b4b4a6ebae5daadd529602080a1e1eae902e63',
-    'reality-unlock': 'e64743d0e1ef0497d2e806c0bb3fc1a8099d8384765d50ca2c87dc784280e3b6',
-    'mature-simulations': 'a02e78631736ac52e4e5abe9242b0098d2c75f0cdf5ac8bd65cf8a22762c8adc',
-    'quantum-unlock': 'b0fa69638000944be4fb5dd75f364759cf55631cc99dc119ca178950b18aad50',
-    'late-quantum': '40ab29561a1826ff74a2dae9e5ac7cd0cf15ad82d75a9cca5f72f9122ccf3ff2',
-    'maximum-skills': '576febff052c4a23ff76afa894b8e7f9f039356a2a38dc3ecbe9d2ed5e46a552',
+    fresh: '23c373db2bd79900efde31ddc40df0240e30ecf011d8901e6da92e709f4ab934',
+    'mid-swarm': '4c75e7667f2aa069db365f19a468d0d675f5a55cb8e3be460ecef248ed75f063',
+    'first-infinity': '6858f51eb0c72894da613f00dc306d447845cef507ed52cd6b4e2c1381519cd9',
+    'mature-infinity': '55a62ba9115a3a97a4eb6140a8f23ddbd19d5fc9d1094737d9ad79a2c89ce769',
+    'reality-unlock': '7e4e0203a81e55482267b0911eed7d8cd9b5b190cd841db3c25befa538103232',
+    'mature-simulations': '775aa66227cd0639c3efb968856264fe99d4bd0493667ae328ea8f58663a18f0',
+    'quantum-unlock': 'e8a9f300fc00b71f446a62fe9c2ab3eba613b8f88111919c4a9a1ce15d56b943',
+    'late-quantum': 'b0133c60dda7ad2eb55380802ffe01b2e9f85f934b9a1a4f559c20e44de36c98',
+    'maximum-skills': '0169f7b5353d7ba7ef5bb9ad249aecc755cd5306c390beb629c1cfa47b4bb552',
   }
   test('materializes every named deterministic state with stable fingerprints', () => {
     const first = createProgressionMatrixFixtures()

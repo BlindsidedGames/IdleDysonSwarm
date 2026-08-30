@@ -2525,6 +2525,84 @@
       "value": "Désactivé"
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " a été partiellement appliqué. "
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " compétence non remboursable reste assignée"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " compétences non remboursables restent assignées"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ", ce qui laisse "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " compétence du préréglage en attente pour plus tard"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " compétences du préréglage en attente pour plus tard"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Ouvrez Compétences pour plus de détails."
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -7885,6 +7963,12 @@
       "value": "Attribuer également ces compétences requises :"
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "Compétences du préréglage bloquées pour le moment"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -8121,6 +8205,76 @@
     {
       "type": 0,
       "value": "Collez une chaîne de préréglage et vérifiez-la avant de remplacer ce préréglage."
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " compétence non remboursable restera assignée"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " compétences non remboursables resteront assignées"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " et bloquera "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " compétence importée pour le moment"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " compétences importées pour le moment"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". La partie compatible du préréglage sera tout de même appliquée."
     }
   ],
   "skills.import-text": [
@@ -10419,6 +10573,12 @@
       "value": "Retirées de l’attribution automatique"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "Compétences qui resteront assignées"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -10449,6 +10609,12 @@
       "value": "Supernova désactive toute la couche d’achats manuels : Avocats, les deux paliers 50/100, Montée en puissance de la production et tous les taux des Essaims."
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "Changer quand même"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -10457,6 +10623,26 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "Passer à "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ?"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "Certaines compétences ne peuvent pas être désassignées pour le moment et bloquent une partie de ce préréglage. Vous pouvez tout de même changer et appliquer tous les éléments compatibles."
     }
   ],
   "skills.tree": [

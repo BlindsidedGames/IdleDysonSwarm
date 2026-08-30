@@ -20,6 +20,9 @@ an audit finding, release gate, or platform contract.
   persistence, and presentation contracts.
 - [`contracts/state-and-persistence-contract.md`](contracts/state-and-persistence-contract.md)
   defines canonical state ownership and publication.
+- [`contracts/skill-presets-contract.md`](contracts/skill-presets-contract.md)
+  defines independent desired layouts, live assignment synchronization, and
+  preset switching with retained unrefundable Skills.
 - [`contracts/legacy-data-authority.md`](contracts/legacy-data-authority.md)
   explains when a retained generated value remains active and records explicit
   TypeScript overrides.

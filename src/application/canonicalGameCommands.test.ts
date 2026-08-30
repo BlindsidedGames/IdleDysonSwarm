@@ -700,6 +700,269 @@ describe('canonical game command router', () => {
     expect(result.state.skills.presets[0].skillIds).toEqual(expected)
   })
 
+  test('synchronizes manual assignment only into the selected preset', () => {
+    const source = state()
+    const presets = source.skills.presets.map((preset, index) => ({
+      ...preset,
+      skillIds: index === 0 ? ['banking'] : [],
+    })) as unknown as CanonicalGameStateV1['skills']['presets']
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        points: 1n,
+        byId: {},
+        activeAutoAssignment: [],
+        presets,
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      { kind: 'skill.purchase', skillId: 'startHereTree' },
+      options({
+        runtimeCarriers: {
+          ...carriers(),
+          selectedSkillPresetSlot: 2,
+        },
+      }),
+    )
+
+    expect(result).toMatchObject({ accepted: true, changed: true })
+    expect(result.state.skills.activeAutoAssignment).toEqual([
+      'startHereTree',
+    ])
+    expect(result.state.skills.presets[1].skillIds).toEqual([
+      'startHereTree',
+    ])
+    expect(result.state.skills.presets[0]).toBe(presets[0])
+    expect(result.state.skills.presets.slice(2)).toEqual(presets.slice(2))
+  })
+
+  test('unassigns from only the selected preset and preserves the other four', () => {
+    const source = state()
+    const queue = ['startHereTree']
+    const presets = source.skills.presets.map((preset) => ({
+      ...preset,
+      skillIds: queue,
+    })) as unknown as CanonicalGameStateV1['skills']['presets']
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        points: 0n,
+        byId: {
+          startHereTree: {
+            owned: true,
+            level: 1,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+        },
+        activeAutoAssignment: queue,
+        presets,
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      { kind: 'skill.refund', skillId: 'startHereTree' },
+      options({
+        runtimeCarriers: {
+          ...carriers(),
+          selectedSkillPresetSlot: 3,
+        },
+      }),
+    )
+
+    expect(result).toMatchObject({ accepted: true, changed: true })
+    expect(result.state.skills.activeAutoAssignment).toEqual([])
+    expect(result.state.skills.presets[2].skillIds).toEqual([])
+    for (const index of [0, 1, 3, 4]) {
+      expect(result.state.skills.presets[index]).toBe(presets[index])
+      expect(result.state.skills.presets[index].skillIds).toEqual(queue)
+    }
+  })
+
+  test('Reset Skills clears only the selected desired layout', () => {
+    const source = state()
+    const queue = ['startHereTree']
+    const presets = source.skills.presets.map((preset) => ({
+      ...preset,
+      skillIds: queue,
+    })) as unknown as CanonicalGameStateV1['skills']['presets']
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        byId: {
+          startHereTree: {
+            owned: true,
+            level: 1,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+        },
+        activeAutoAssignment: queue,
+        presets,
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      { kind: 'skill.reset' },
+      options({
+        runtimeCarriers: {
+          ...carriers(),
+          selectedSkillPresetSlot: 4,
+        },
+      }),
+    )
+
+    expect(result).toMatchObject({ accepted: true, changed: true })
+    expect(result.state.skills.activeAutoAssignment).toEqual([])
+    expect(result.state.skills.presets[3].skillIds).toEqual([])
+    for (const index of [0, 1, 2, 4]) {
+      expect(result.state.skills.presets[index]).toBe(presets[index])
+    }
+  })
+
+  test('previews retained conflicts and applies compatible preset parts only after confirmation', () => {
+    const source = state()
+    const presets = [...source.skills.presets]
+    presets[1] = {
+      ...presets[1]!,
+      skillIds: ['shouldersOfTheEnlightened'],
+    }
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        points: 10n,
+        byId: {
+          shouldersOfGiants: {
+            owned: true,
+            level: 1,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+          shouldersOfPrecursors: {
+            owned: true,
+            level: 1,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+        },
+        activeAutoAssignment: [],
+        presets:
+          presets as unknown as CanonicalGameStateV1['skills']['presets'],
+      },
+    }
+    const commandOptions = options({
+      runtimeCarriers: {
+        ...carriers(),
+        selectedSkillPresetSlot: 1,
+      },
+    })
+
+    const blocked = routeCanonicalGameCommand(
+      input,
+      { kind: 'skill.select-preset', slot: 2 },
+      commandOptions,
+    )
+    expect(blocked).toMatchObject({
+      accepted: false,
+      changed: false,
+      code: 'skill:preset-retained-conflict',
+    })
+    expect(blocked.state).toBe(input)
+
+    const confirmed = routeCanonicalGameCommand(
+      input,
+      {
+        kind: 'skill.select-preset',
+        slot: 2,
+        retainedConflictPolicy: {
+          kind: 'confirmed',
+          retainedSkillIds: [
+            'shouldersOfGiants',
+            'shouldersOfPrecursors',
+          ],
+          blockedSkillIds: ['shouldersOfTheEnlightened'],
+        },
+      },
+      commandOptions,
+    )
+    expect(confirmed).toMatchObject({
+      accepted: true,
+      changed: true,
+      runtimeCarriers: { selectedSkillPresetSlot: 2 },
+    })
+    expect(confirmed.state.skills.byId.shouldersOfPrecursors?.owned).toBe(true)
+    expect(
+      confirmed.state.skills.byId.shouldersOfTheEnlightened?.owned,
+    ).not.toBe(true)
+    expect(confirmed.state.skills.activeAutoAssignment).toEqual([
+      'shouldersOfTheEnlightened',
+    ])
+    expect(confirmed.state.skills.presets).toBe(input.skills.presets)
+
+    const stale = routeCanonicalGameCommand(
+      input,
+      {
+        kind: 'skill.select-preset',
+        slot: 2,
+        retainedConflictPolicy: {
+          kind: 'confirmed',
+          retainedSkillIds: ['shouldersOfGiants'],
+          blockedSkillIds: ['shouldersOfTheEnlightened'],
+        },
+      },
+      commandOptions,
+    )
+    expect(stale).toMatchObject({
+      accepted: false,
+      changed: false,
+      code: 'skill:preset-preview-stale',
+    })
+    expect(stale.state).toBe(input)
+  })
+
+  test('reselects the stored current preset without copying a divergent live queue', () => {
+    const source = state()
+    const presets = [...source.skills.presets]
+    presets[0] = { ...presets[0]!, skillIds: [] }
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        points: 0n,
+        byId: {
+          startHereTree: {
+            owned: true,
+            level: 1,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+        },
+        activeAutoAssignment: ['startHereTree'],
+        presets:
+          presets as unknown as CanonicalGameStateV1['skills']['presets'],
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      { kind: 'skill.select-preset', slot: 1 },
+      options(),
+    )
+
+    expect(result).toMatchObject({ accepted: true, changed: true })
+    expect(result.state.skills.activeAutoAssignment).toEqual([])
+    expect(result.state.skills.presets[0].skillIds).toEqual([])
+    expect(result.state.skills.byId.startHereTree?.owned).toBe(false)
+  })
+
   test('imports a validated Unity v1 preset atomically and rejects malformed input', () => {
     const source = state()
     const serialized = JSON.stringify({
@@ -822,6 +1085,64 @@ describe('canonical game command router', () => {
         selectedSkillPresetSlot: 2,
       },
     })
+  })
+
+  test('automatically applies compatible preset parts around retained skills', () => {
+    const source = state()
+    const presets = [...source.skills.presets]
+    presets[1] = {
+      ...presets[1]!,
+      skillIds: ['shouldersOfTheEnlightened'],
+    }
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        points: 10n,
+        byId: {
+          shouldersOfGiants: {
+            owned: true,
+            level: 1,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+          shouldersOfPrecursors: {
+            owned: true,
+            level: 1,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+        },
+        presets:
+          presets as unknown as CanonicalGameStateV1['skills']['presets'],
+        tabPresetAutomation: {
+          ...source.skills.tabPresetAutomation,
+          bots: 2,
+        },
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      { kind: 'skill.apply-tab-preset-automation', tab: 'bots' },
+      options(),
+    )
+
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'skill:tab-preset-applied',
+      runtimeCarriers: { selectedSkillPresetSlot: 2 },
+    })
+    expect(result.state.skills.byId.shouldersOfPrecursors?.owned).toBe(
+      true,
+    )
+    expect(result.state.skills.byId.shouldersOfTheEnlightened?.owned)
+      .not.toBe(true)
+    expect(result.state.skills.activeAutoAssignment).toEqual([
+      'shouldersOfTheEnlightened',
+    ])
+    expect(result.state.skills.presets).toBe(input.skills.presets)
   })
 
   test('delegates Leap gate and branch choice without command-supplied rewards', () => {

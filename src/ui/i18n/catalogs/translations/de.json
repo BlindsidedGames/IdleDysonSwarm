@@ -1765,5 +1765,12 @@
   "wiki.skills.overview-title": "So funktionieren Skills",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Wiki-Themen",
-  "wiki.topics": "Themen"
+  "wiki.topics": "Themen",
+  "dyson.info.preset-partially-applied": "{presetName} wurde teilweise angewendet. {retainedCount, plural, one {# nicht rückerstattbare Fertigkeit bleibt zugewiesen} other {# nicht rückerstattbare Fertigkeiten bleiben zugewiesen}}, dadurch bleiben {blockedCount, plural, one {# Fertigkeit der Voreinstellung für später vorgemerkt} other {# Fertigkeiten der Voreinstellung für später vorgemerkt}}. Öffne Fertigkeiten für Details.",
+  "skills.blocked-skills-heading": "Derzeit blockierte Fertigkeiten der Voreinstellung",
+  "skills.import-retained-conflict": "{retainedCount, plural, one {# nicht rückerstattbare Fertigkeit bleibt zugewiesen} other {# nicht rückerstattbare Fertigkeiten bleiben zugewiesen}} und blockiert {blockedCount, plural, one {# importierte Fertigkeit vorerst} other {# importierte Fertigkeiten vorerst}}. Der kompatible Teil der Voreinstellung wird trotzdem angewendet.",
+  "skills.retained-skills-heading": "Fertigkeiten, die zugewiesen bleiben",
+  "skills.switch-anyway": "Trotzdem wechseln",
+  "skills.switch-preset-conflict-title": "Zu {name} wechseln?",
+  "skills.switch-preset-conflict-warning": "Einige Fertigkeiten können derzeit nicht zurückgesetzt werden und blockieren einen Teil dieser Voreinstellung. Du kannst trotzdem wechseln und alle kompatiblen Teile anwenden."
 }
