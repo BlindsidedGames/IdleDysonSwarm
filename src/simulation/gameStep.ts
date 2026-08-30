@@ -78,15 +78,19 @@ export function advanceGame(
   const model = CanonicalEventTimeModel.fromOwnedState(stepState, stepContext)
   const summary = createSimulationSummary()
 
+  // Bot-cap bookkeeping is a mandatory state boundary, not an automated
+  // action. It must settle even when a final active-time residue suppresses
+  // optional automation for cadence preservation.
+  if (input.source === 'stored-time') {
+    model.applyDetachedBotCapTransition(summary)
+  } else {
+    model.applyBotCapTransition(summary)
+  }
+  if (model.issue?.code === 'CANONICAL_EVENT_BOT_CAP_PERSISTENCE_REQUIRED') {
+    return finish(model, 0, 0, gameSpeed, summary, true)
+  }
+
   if (input.automation === 'enabled') {
-    if (input.source === 'stored-time') {
-      model.applyDetachedBotCapTransition(summary)
-    } else {
-      model.applyBotCapTransition(summary)
-    }
-    if (model.issue?.code === 'CANONICAL_EVENT_BOT_CAP_PERSISTENCE_REQUIRED') {
-      return finish(model, 0, 0, gameSpeed, summary, true)
-    }
     model.applyAutomation('preserve-configured-mode', summary)
     model.applyDerivedTimersAndDoubleTime(0, summary)
     model.applyDreamReset(summary)

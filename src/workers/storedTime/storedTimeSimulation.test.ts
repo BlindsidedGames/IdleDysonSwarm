@@ -6,6 +6,7 @@ import { prepareIdb1Save } from '../../save/prepare'
 import { createCapturedInfinityAssetLookup, type CanonicalEventTimeContext } from '../../simulation/canonicalEventTimeModel'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../../simulation/dreamEducationUpgrades'
 import { REALITY_UPGRADE_DEFINITIONS } from '../../simulation/realityUpgrades'
+import { advanceGame } from '../../simulation/gameStep'
 import { StoredTimeSimulation } from './storedTimeSimulation'
 
 const fixture = readFileSync(
@@ -132,6 +133,69 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     expect(terminal).toMatchObject({ type: 'cancelled', jobId: 'cancel' })
     expect(terminal).not.toHaveProperty('candidate')
   })
+
+  test('settles the bot cap during Stored Time without repeating it on active return', () => {
+    const source = runtimeWithStoredTime(1)
+    source.gameState = {
+      ...source.gameState,
+      dyson: {
+        ...source.gameState.dyson,
+        bots: Number.MAX_VALUE,
+      },
+      infinity: {
+        ...source.gameState.infinity,
+        automaticResetEnabled: false,
+        botCapTransitionPending: false,
+        botCapRewardsGranted: false,
+        inProgress: false,
+      },
+    }
+    const pointsBefore = source.gameState.infinity.points
+    const botCapPointsBefore =
+      source.gameState.statistics.lifetime.botCapInfinityPoints
+    const terminal = finish(new StoredTimeSimulation({
+      jobId: 'bot-cap-offline-to-active',
+      state: source,
+      requestedSeconds: 0.05,
+      infinityMinimumCycleSeconds: 1 / 60,
+      eventContext: context(),
+    }), 1_000)
+
+    expect(terminal.type).toBe('completed')
+    if (terminal.type !== 'completed') return
+    expect(terminal.candidate.gameState.infinity).toMatchObject({
+      points: pointsBefore + 1_000n,
+      automaticResetEnabled: false,
+      botCapTransitionPending: false,
+      botCapRewardsGranted: true,
+      inProgress: true,
+    })
+    expect(
+      terminal.candidate.gameState.statistics.lifetime.botCapInfinityPoints,
+    ).toBe(botCapPointsBefore + 1_000n)
+
+    const active = advanceGame(
+      eventCarrier(terminal.candidate),
+      {
+        source: 'active',
+        baseSeconds: 0.033,
+        automation: 'enabled',
+      },
+      context(),
+      1 / 60,
+    )
+    expect(active.botCapPersistenceRequired).toBe(false)
+    expect(active.summary.botCapInfinityPoints).toBe(0n)
+    expect(active.state.gameState.infinity).toMatchObject({
+      points: pointsBefore + 1_000n,
+      automaticResetEnabled: false,
+      botCapTransitionPending: false,
+      botCapRewardsGranted: true,
+    })
+    expect(
+      active.state.gameState.statistics.lifetime.botCapInfinityPoints,
+    ).toBe(botCapPointsBefore + 1_000n)
+  })
 })
 
 function finish(simulation: StoredTimeSimulation, budget: number) {
@@ -153,6 +217,16 @@ function context(): CanonicalEventTimeContext {
     infinityResetAssetLookup: createCapturedInfinityAssetLookup(
       gameDataCatalog.assets,
     ),
+  }
+}
+
+function eventCarrier(state: Readonly<CanonicalRuntimeState>) {
+  return {
+    gameState: state.gameState,
+    compatibilityTuning: state.compatibilityTuning,
+    evaluationSnapshot: state.evaluationSnapshot,
+    entitlements: state.entitlements,
+    tinker: state.tinker,
   }
 }
 
