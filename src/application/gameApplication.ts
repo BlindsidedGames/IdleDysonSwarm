@@ -304,18 +304,44 @@ export class TransactionalGameApplication<TState, TCommand>
             reason: 'Import requires explicit approval to replace the current save.',
           }
         }
-        const receiving =
-          previous.phase === 'ready'
-            ? (displaced = this.requireSession().prepare(
-                this.requireEngine().snapshot().state,
-              ))
-            : await this.options.repository.loadCurrent()
+        let recoveryBase: PreparedSave | undefined
+        const createRecoveryBase = () => {
+          recoveryBase ??=
+            this.options.createTransitionalRecoveryBase?.()
+          if (recoveryBase === undefined) {
+            throw new Error(
+              'Historical schema-13 import requires a compatibility base.',
+            )
+          }
+          return recoveryBase
+        }
+        let receiving: PreparedSave | undefined
+        if (previous.phase === 'ready') {
+          receiving = displaced = this.requireSession().prepare(
+            this.requireEngine().snapshot().state,
+          )
+        } else if (
+          previous.phase === 'blocked' &&
+          previous.outcome !== 'all-candidates-invalid' &&
+          previous.outcome !== 'unsupported-future-version'
+        ) {
+          try {
+            receiving = await this.options.repository.loadCurrent() ??
+              undefined
+          } catch {
+            // A blocked rescue import must still fall back to configured local
+            // defaults when the current slot cannot be decoded now.
+          }
+        }
         prepared = prepareImportedSaveText(
           request.text,
           request.importedAtUtc,
           undefined,
           request.context,
           receiving?.copyValidatedState(),
+          this.options.createTransitionalRecoveryBase === undefined
+            ? undefined
+            : createRecoveryBase,
         )
       } catch (error) {
         this.setSnapshot(previous)

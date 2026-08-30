@@ -168,6 +168,13 @@ function geometricCostFromLogs(
     logExpm1(count * logExponent) -
     Math.log(exponent - 1)
   if (!Number.isFinite(logCost)) return CONTINUOUS_MAXIMUM
+  // The logarithm can round down to the finite boundary even when the exact
+  // geometric price is already larger than Number.MAX_VALUE (for example,
+  // 2^1024). Treat the boundary as saturated rather than reconstructing a
+  // spuriously affordable finite price.
+  if (logCost >= Math.log(CONTINUOUS_MAXIMUM)) {
+    return CONTINUOUS_MAXIMUM
+  }
   return clampGeometricCost(Math.exp(logCost))
 }
 

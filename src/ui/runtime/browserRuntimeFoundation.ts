@@ -261,6 +261,8 @@ export interface BrowserRuntimeFoundationOptions {
     import('../../save/repository').AutomaticUnityResearchVisibilityAdopter
   readonly recoverTransitionalCheckpoint?:
     import('../../save/repository').TransitionalCheckpointRecovery
+  readonly createTransitionalRecoveryBase?: () =>
+    import('../../save/prepare').PreparedSave
   /** Native release hosts expose the locally unlockable debug surface in production. */
   readonly developmentControlsAvailable?: boolean
   /** Native release controls remain gated until Store or gameplay unlock succeeds. */
@@ -1078,9 +1080,41 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   ): Promise<UiRuntimeImportPreviewResult> {
     try {
       const supplied = await this.readSuppliedSave(request)
+      let recoveryBase:
+        | import('../../save/prepare').PreparedSave
+        | undefined
+      const recoveryFactory =
+        this.options.createTransitionalRecoveryBase
+      const createRecoveryBase =
+        recoveryFactory === undefined
+          ? undefined
+          : () => recoveryBase ??=
+              recoveryFactory()
+      const captured =
+        this.graph?.application.captureSaveTransferSnapshot?.()
+      let receiving = captured?.prepared
+      const applicationSnapshot = this.graph?.application.snapshot()
+      if (
+        receiving === undefined &&
+        applicationSnapshot?.phase === 'blocked' &&
+        applicationSnapshot.outcome !== 'all-candidates-invalid' &&
+        applicationSnapshot.outcome !== 'unsupported-future-version'
+      ) {
+        try {
+          receiving = await this.graph?.repository.loadCurrent() ??
+            undefined
+        } catch {
+          // Preview uses configured receiver defaults when the blocked slot is
+          // not currently decodable; supplied text remains independently bounded.
+        }
+      }
       const prepared = prepareImportedSaveText(
         supplied.text,
         request.importedAtUtc,
+        undefined,
+        request.context,
+        receiving?.copyValidatedState(),
+        createRecoveryBase,
       )
       const state = hydrateGameState(prepared).state
       return {
@@ -1532,6 +1566,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       this.options.automaticNumberFormattingAdopter,
       this.options.automaticResearchVisibilityAdopter,
       this.options.recoverTransitionalCheckpoint,
+      this.options.createTransitionalRecoveryBase,
     )
     const initialLifecyclePhase = this.lifecycle.currentPhase()
     const initialLifecycleReceipt =

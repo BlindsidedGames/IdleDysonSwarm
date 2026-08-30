@@ -2,13 +2,13 @@ import Foundation
 import Security
 import StoreKit
 
-struct NativeProductListing {
+struct NativeProductListing: Sendable {
     let productId: String
     let localizedPrice: String?
     let available: Bool
 }
 
-struct NativePurchaseResult {
+struct NativePurchaseResult: Sendable {
     let accepted: Bool
     let productId: String
     let code: String?
@@ -20,7 +20,7 @@ struct NativeBoundUnityEvidence {
 }
 
 /** App-private offline continuity. Shared/imported saves never read or write it. */
-final class NativeEntitlementCache {
+final class NativeEntitlementCache: @unchecked Sendable {
     private let session = NativeEntitlementSession()
 
     private struct Record: Codable {
@@ -38,26 +38,50 @@ final class NativeEntitlementCache {
     }
 
     func read() -> DurableOwnership {
-        let record = readRecord()
-        return session.resolve(
-            persistedProviderOwnership: DurableOwnership(
-                doubleInfinityPoints: record.providerDoubleIp,
-                developerOptions: record.providerDeveloperOptions,
-                supporterCatGallery: record.supporterCatGallery == true
-            ),
-            legacyDoubleInfinityPoints: record.legacyDoubleIp
-        )
+        session.withSerializedAccess {
+            let record = readRecord()
+            return session.resolve(
+                persistedProviderOwnership: DurableOwnership(
+                    doubleInfinityPoints: record.providerDoubleIp,
+                    developerOptions: record.providerDeveloperOptions,
+                    supporterCatGallery: record.supporterCatGallery == true
+                ),
+                legacyDoubleInfinityPoints: record.legacyDoubleIp
+            )
+        }
+    }
+
+    func beginProviderRefresh() -> UInt64 {
+        session.beginProviderRefresh()
     }
 
     func writeProviderOwnership(_ ownership: DurableOwnership) -> Bool {
-        session.applyProviderOwnership(ownership) { [weak self] pending in
-            self?.persistProviderOwnership(pending) == true
+        session.withSerializedAccess {
+            session.applyProviderOwnership(ownership) { [weak self] pending in
+                self?.persistProviderOwnership(pending) == true
+            }
+        }
+    }
+
+    func writeProviderOwnership(
+        _ ownership: DurableOwnership,
+        refreshSequence: UInt64
+    ) -> Bool {
+        session.withSerializedAccess {
+            session.applyProviderOwnership(
+                ownership,
+                refreshSequence: refreshSequence
+            ) { [weak self] pending in
+                self?.persistProviderOwnership(pending) == true
+            }
         }
     }
 
     func retryPendingProviderOwnership() -> Bool {
-        session.retryPendingPersistence { [weak self] pending in
-            self?.persistProviderOwnership(pending) == true
+        session.withSerializedAccess {
+            session.retryPendingPersistence { [weak self] pending in
+                self?.persistProviderOwnership(pending) == true
+            }
         }
     }
 
@@ -72,26 +96,30 @@ final class NativeEntitlementCache {
     }
 
     func grantSupporterCatGallery() -> Bool {
-        var record = readRecord()
-        record.supporterCatGallery = true
-        record.providerVerifiedAtUtc = Date().timeIntervalSince1970
-        return writeRecord(record)
+        session.withSerializedAccess {
+            var record = readRecord()
+            record.supporterCatGallery = true
+            record.providerVerifiedAtUtc = Date().timeIntervalSince1970
+            return writeRecord(record)
+        }
     }
 
     func promoteAutomaticUnityDoubleIpEvidence(
         _ evidence: NativeBoundUnityEvidence
     ) -> Bool {
-        var record = readRecord()
-        if record.legacyDoubleIp { return false }
+        session.withSerializedAccess {
+            var record = readRecord()
+            if record.legacyDoubleIp { return false }
 
-        record.legacyDoubleIp = true
-        record.legacyPlatform = "ios"
-        record.legacySourceClass = "unity-persistent-data-save"
-        record.legacyOpaqueId = evidence.opaqueSourceIdentifier
-        record.legacyPathClass = "capacitor-documents"
-        record.legacyContentSha256 = evidence.contentSha256
-        record.legacyPromotedAtUtc = Date().timeIntervalSince1970
-        return writeRecord(record)
+            record.legacyDoubleIp = true
+            record.legacyPlatform = "ios"
+            record.legacySourceClass = "unity-persistent-data-save"
+            record.legacyOpaqueId = evidence.opaqueSourceIdentifier
+            record.legacyPathClass = "capacitor-documents"
+            record.legacyContentSha256 = evidence.contentSha256
+            record.legacyPromotedAtUtc = Date().timeIntervalSince1970
+            return writeRecord(record)
+        }
     }
 
     private func readRecord() -> Record {
@@ -137,13 +165,13 @@ final class NativeEntitlementCache {
     }
 }
 
-struct ProviderOwnershipRefresh {
+struct ProviderOwnershipRefresh: Sendable {
     let ownership: DurableOwnership
     let persisted: Bool
 }
 
 /** First-party StoreKit 2 adapter. Native Store objects never cross the bridge. */
-final class IdleDysonStoreKit {
+actor IdleDysonStoreKit {
     private let entitlementCache: NativeEntitlementCache
     private var productsById: [String: Product] = [:]
     private var updatesTask: Task<Void, Never>?
@@ -163,7 +191,9 @@ final class IdleDysonStoreKit {
                 await self?.processStoreUpdate(update)
             }
         }
-        Task { _ = try? await refreshDurableOwnership() }
+        Task { [weak self] in
+            _ = try? await self?.refreshDurableOwnership()
+        }
     }
 
     func products() async -> ([NativeProductListing], Bool) {
@@ -270,8 +300,12 @@ final class IdleDysonStoreKit {
     func restore() async -> ([String], Bool) {
         do {
             try await AppStore.sync()
+            let refreshSequence = entitlementCache.beginProviderRefresh()
             let ownership = try await verifiedDurableProductIds()
-            _ = writeProviderOwnership(ownership)
+            _ = writeProviderOwnership(
+                ownership,
+                refreshSequence: refreshSequence
+            )
             return (ownership.sorted(), true)
         } catch {
             return ([], false)
@@ -280,30 +314,37 @@ final class IdleDysonStoreKit {
 
     func refreshDurableOwnership() async throws -> ProviderOwnershipRefresh {
         _ = entitlementCache.retryPendingProviderOwnership()
+        let refreshSequence = entitlementCache.beginProviderRefresh()
         let productIds = try await verifiedDurableProductIds()
-        return writeProviderOwnership(productIds)
+        return writeProviderOwnership(
+            productIds,
+            refreshSequence: refreshSequence
+        )
     }
 
     private func verifiedDurableProductIds() async throws -> Set<String> {
-        var productIds = Set<String>()
+        var snapshot = NativeDurableEntitlementSnapshot(
+            durableProductIds: Self.durableIds
+        )
         for await verification in Transaction.currentEntitlements {
             switch verification {
             case let .verified(transaction):
-                if
-                    Self.durableIds.contains(transaction.productID),
-                    transaction.revocationDate == nil
-                {
-                    productIds.insert(transaction.productID)
-                }
-            case .unverified:
-                continue
+                snapshot.observeVerified(
+                    productId: transaction.productID,
+                    revoked: transaction.revocationDate != nil
+                )
+            case let .unverified(transaction, _):
+                try snapshot.observeUnverified(
+                    productId: transaction.productID
+                )
             }
         }
-        return productIds
+        return snapshot.verifiedProductIds
     }
 
     private func writeProviderOwnership(
-        _ productIds: Set<String>
+        _ productIds: Set<String>,
+        refreshSequence: UInt64
     ) -> ProviderOwnershipRefresh {
         let cached = entitlementCache.read()
         let ownership = DurableOwnership(
@@ -311,7 +352,10 @@ final class IdleDysonStoreKit {
             developerOptions: productIds.contains(Self.developerOptions),
             supporterCatGallery: cached.supporterCatGallery
         )
-        let persisted = entitlementCache.writeProviderOwnership(ownership)
+        let persisted = entitlementCache.writeProviderOwnership(
+            ownership,
+            refreshSequence: refreshSequence
+        )
         return ProviderOwnershipRefresh(
             ownership: entitlementCache.read(),
             persisted: persisted

@@ -59,7 +59,7 @@ import type {
 } from '../ui/runtime/activeTimeDriver'
 import { COMMUNITY_EXTERNAL_ORIGINS } from '../platform/communityLinks'
 import {
-  recoverTransitionalV2Checkpoint,
+  recoverTransitionalV2CheckpointWithMetadata,
 } from '../save/transitionalV2Checkpoint'
 
 type BrowserRuntimeFactory = (
@@ -168,7 +168,9 @@ export function createProductionBrowserComposition(
       options.automaticNumberFormattingAdopter,
     automaticResearchVisibilityAdopter:
       options.automaticResearchVisibilityAdopter,
-    recoverTransitionalCheckpoint: recoverTransitionalV2Checkpoint,
+    recoverTransitionalCheckpoint:
+      recoverTransitionalV2CheckpointWithMetadata,
+    createTransitionalRecoveryBase: createFirstRunSave,
     developmentControlsAvailable:
       developmentBuild || options.releasePlatformServices !== undefined
         ? true

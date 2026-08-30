@@ -12,13 +12,17 @@ Status conventions:
 
 ## Current release certification
 
-1. [ ] **Release blocker — repair Skill preset independence and switching.**
+1. [x] **Release blocker — repair Skill preset independence and switching.**
    Make assignment and unassignment synchronize the selected preset
    immediately without rewriting the other four presets; preserve independent
    desired layouts; and implement visible, switchable retained-unrefundable
    overlays without silent conflict loss. Add multi-preset, reset,
    persistence/reload, browser, and representative native-host regression
    evidence. Source: [Skill preset contract](contracts/skill-presets-contract.md).
+   Certified with five-layout checkpoint/reload and export/import coverage,
+   live 320/390-pixel browser switching through a real checkpoint and reload,
+   and an in-place Android debug upgrade that retained the current save and
+   its recovery rotation.
 2. [ ] Complete the remaining manual Web checks: visible focus paint, complete
    contrast review, 200 percent visual appearance, browser-native 400 percent
    zoom, 320/390-pixel visual reflow, real-touch slider behavior, and screen

@@ -10,9 +10,13 @@ import type {
   StoreProductId,
 } from '../store/contracts'
 import { PortableSaveRepository } from '../save/repository'
-import type {
-  BrowserRuntimeFoundationOptions,
-  BrowserUiRuntimeFoundation,
+import {
+  recoverTransitionalV2CheckpointWithMetadata,
+} from '../save/transitionalV2Checkpoint'
+import {
+  createBrowserRuntimeFoundation,
+  type BrowserRuntimeFoundationOptions,
+  type BrowserUiRuntimeFoundation,
 } from '../ui/runtime'
 import {
   isLifecyclePhase,
@@ -198,6 +202,26 @@ describe('native host bootstrap boundary', () => {
       NATIVE_WEB_SAVE_PATHS,
     )
     expect(captured?.allowCanonicalPlayerWrites).toBe(true)
+    expect(captured?.recoverTransitionalCheckpoint).toBe(
+      recoverTransitionalV2CheckpointWithMetadata,
+    )
+    expect(NATIVE_WEB_SAVE_PATHS.retainedRecoverySources).toEqual([
+      'save/recovery/import-original.idsw',
+      'save/recovery/pre-schema13-original.idsw',
+    ])
+    expect(NATIVE_WEB_SAVE_PATHS.backups).toEqual([
+      'backups/idle_dyson_swarm_web_save.1.idsw',
+      'backups/idle_dyson_swarm_web_save.2.idsw',
+      'backups/idle_dyson_swarm_web_save.3.idsw',
+    ])
+    expect(NATIVE_WEB_SAVE_PATHS.transitionalRecoverySources)
+      .toBeUndefined()
+    expect(NATIVE_WEB_SAVE_PATHS.transitionalStoredTimePolicy).toBe(
+      'save/local/stored-time-policy.json',
+    )
+    expect(NATIVE_WEB_SAVE_PATHS.transitionalStoredTimeJob).toBe(
+      'save/stored-time/job.json',
+    )
     expect(captured?.lifecycle).toBe(environment.lifecycle)
     expect(captured?.lifecyclePolicy).toBe(WEB_LIFECYCLE_POLICY)
     await captured?.saveStorage?.writeText(
@@ -218,6 +242,102 @@ describe('native host bootstrap boundary', () => {
       developerOptions: false,
       supporterCatGallery: false,
     })
+  })
+
+  test('preserves five independent Skill presets through a mobile-native runtime checkpoint, reload, export, and import', async () => {
+    const bridge = {
+      ...fakeBridge(),
+      target: 'android' as const,
+    } satisfies NativeHostBridgeApi
+    const layouts = [
+      ['banking'],
+      ['avocados'],
+      ['startHereTree'],
+      ['manualLabour'],
+      ['fragmentAssembly'],
+    ] as const
+    const createComposition = () =>
+      createProductionNativeComposition(
+        createNativeHostEnvironment(bridge),
+        {
+          lifecycleClock: {
+            sample: () => ({
+              utcMilliseconds: 1_000,
+              serializedUtcText: '1970-01-01T00:00:01.000Z',
+            }),
+          },
+          monotonicClock: { nowMilliseconds: () => 0 },
+          createRuntime: (options) =>
+            createBrowserRuntimeFoundation({
+              ...options,
+              activeTimeScheduler: {
+                requestFrame: () => 1,
+                cancelFrame: () => undefined,
+              },
+              checkpointScheduler: {
+                setInterval: () => 1,
+                clearInterval: () => undefined,
+              },
+              nowUtcMilliseconds: () => 1_000,
+              storageManager: {
+                persisted: async () => true,
+                persist: async () => true,
+                estimate: async () => ({ usage: 1, quota: 1_000 }),
+              },
+            }),
+        },
+      )
+
+    const first = createComposition()
+    await expect(first.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    for (let index = 0; index < layouts.length; index += 1) {
+      await expect(
+        first.runtime.dispatchPlayer({
+          kind: 'skill.set-preset-assignment',
+          slot: (index + 1) as 1 | 2 | 3 | 4 | 5,
+          skillIds: layouts[index],
+        }),
+      ).resolves.toMatchObject({ status: 'accepted' })
+    }
+    await expect(
+      first.runtime.dispatchPlayer({
+        kind: 'skill.select-preset',
+        slot: 4,
+      }),
+    ).resolves.toMatchObject({ status: 'accepted' })
+    await expect(first.runtime.requestCheckpoint()).resolves.toBe(true)
+    const exported = await first.runtime.readCurrentSaveExport()
+    expect(exported).toMatchObject({ basis: 'current' })
+    await first.runtime.shutdown()
+
+    const reconstructed = createComposition()
+    await expect(reconstructed.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+      warnings: [],
+    })
+    assertPersistedSkillPresets(reconstructed.runtime, layouts, 4)
+
+    await expect(
+      reconstructed.runtime.dispatchPlayer({
+        kind: 'skill.set-preset-assignment',
+        slot: 2,
+        skillIds: [],
+      }),
+    ).resolves.toMatchObject({ status: 'accepted' })
+    expect(exported).not.toBeNull()
+    if (exported === null) return
+    await expect(
+      reconstructed.runtime.importSave({
+        source: 'paste',
+        text: exported.text,
+        importedAtUtc: '1970-01-01T00:00:01.000Z',
+        overwriteApproved: true,
+      }),
+    ).resolves.toMatchObject({ imported: true })
+    assertPersistedSkillPresets(reconstructed.runtime, layouts, 4)
+    await reconstructed.runtime.shutdown()
   })
 
   test('uses the mobile checkpoint policy for Android and iOS hosts', () => {
@@ -442,6 +562,27 @@ function fakeBridge() {
     readonly storeProducts: ReturnType<typeof vi.fn>
     readonly writeText: ReturnType<typeof vi.fn>
   }
+}
+
+function assertPersistedSkillPresets(
+  runtime: BrowserUiRuntimeFoundation,
+  layouts: readonly (readonly string[])[],
+  selectedSlot: number,
+): void {
+  const snapshot = runtime.snapshot()
+  expect(snapshot.phase).toBe('ready')
+  if (snapshot.phase !== 'ready') return
+  expect(
+    snapshot.gameplay.progression.skills.presets.map(
+      (preset) => preset.skillIds,
+    ),
+  ).toEqual(layouts)
+  expect(
+    snapshot.gameplay.progression.skills.activeAutoAssignment,
+  ).toEqual(layouts[selectedSlot - 1])
+  expect(snapshot.gameplay.runtime.selectedSkillPresetSlot).toBe(
+    selectedSlot,
+  )
 }
 
 function deferred<T>() {

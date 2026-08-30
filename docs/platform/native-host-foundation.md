@@ -22,6 +22,9 @@ generate:
 CI overrides the default with `IDS_RELEASE_CANDIDATE_ID=YYYYMMDDNN`. The sync
 script rejects malformed dates, build IDs at or below the retained legacy
 native-build floor, and values above Android's version-code limit.
+`build:native` also compiles that same validated effective identity into the
+renderer as its bounded-startup fallback. A metadata timeout or rejection can
+therefore never make an override build display the checked-in default build ID.
 
 Electron Builder and the packaged Electron main process consume the same
 generated `hosts/electron/release-version.json`. That record contains the
@@ -46,7 +49,8 @@ its presentation uses the product-approved 30% primary-text mix.
 
 Installed-package metadata is nonessential startup information on Android and
 iOS. The renderer waits at most two seconds for the Capacitor bridge, then
-continues with the packaged marketing version and release-candidate identity.
+continues with the effective marketing version and release-candidate identity
+compiled into that package.
 A timeout or rejection emits only its closed diagnostic category to the native
 WebView console; raw bridge errors are not recorded. A result arriving after
 the deadline is ignored and cannot delay or revise the completed startup.

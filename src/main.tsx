@@ -49,7 +49,7 @@ import {
   BottomNavigationTextPreferenceService,
   BottomNavigationTextProvider,
 } from './ui/bottom-navigation-text'
-import nativeRelease from '../hosts/native-release.json'
+import { PACKAGED_RELEASE_IDENTITY } from './packagedReleaseIdentity'
 import {
   desktopDistributionFromBuildValue,
   resolveReleaseFooter,
@@ -99,10 +99,7 @@ async function bootstrap(): Promise<void> {
     const releaseFooter = await resolveReleaseFooter({
       target: nativeBridge?.target ?? 'browser',
       developmentBuild: import.meta.env.DEV,
-      source: {
-        marketingVersion: nativeRelease.marketingVersion,
-        releaseCandidateId: nativeRelease.defaultReleaseCandidateId,
-      },
+      source: PACKAGED_RELEASE_IDENTITY,
       metadata: composition.releasePlatformServices?.metadata,
       onMetadataLookupFailure: (failure) => {
         console.warn(

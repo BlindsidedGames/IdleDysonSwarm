@@ -22,6 +22,12 @@ export const NATIVE_WEB_SAVE_PATHS = Object.freeze({
     'backups/idle_dyson_swarm_web_save.2.idsw',
     'backups/idle_dyson_swarm_web_save.3.idsw',
   ]),
+  retainedRecoverySources: Object.freeze([
+    'save/recovery/import-original.idsw',
+    'save/recovery/pre-schema13-original.idsw',
+  ]),
+  transitionalStoredTimePolicy: 'save/local/stored-time-policy.json',
+  transitionalStoredTimeJob: 'save/stored-time/job.json',
 } satisfies SaveRepositoryPaths)
 
 /**

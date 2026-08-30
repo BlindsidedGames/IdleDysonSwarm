@@ -26,6 +26,24 @@ const repositoryPaths = {
 } as const
 
 describe('IndexedDbBrowserSaveDatabase', () => {
+  test('retains the deployed schema-13 browser backup namespace for recovery', () => {
+    expect(PRODUCTION_BROWSER_SAVE_PATHS.retainedRecoverySources).toEqual([
+      '/development-only/development-only-default-profile/recovery/import-original.idsw',
+      '/development-only/development-only-default-profile/recovery/pre-schema13-original.idsw',
+    ])
+    expect(PRODUCTION_BROWSER_SAVE_PATHS.transitionalRecoverySources).toEqual([
+      '/development-only/development-only-default-profile/backups/current.1.idsw',
+      '/development-only/development-only-default-profile/backups/current.2.idsw',
+      '/development-only/development-only-default-profile/backups/current.3.idsw',
+    ])
+    expect(PRODUCTION_BROWSER_SAVE_PATHS.transitionalStoredTimePolicy).toBe(
+      '/development-only/development-only-default-profile/local/stored-time-policy.json',
+    )
+    expect(PRODUCTION_BROWSER_SAVE_PATHS.transitionalStoredTimeJob).toBe(
+      '/development-only/development-only-default-profile/stored-time/job.json',
+    )
+  })
+
   test('serializes simultaneous production lease acquisition to exactly one writer', async () => {
     const harness = new HarnessIndexedDbFactory()
     const database = new IndexedDbBrowserSaveDatabase(
@@ -506,6 +524,28 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     ).resolves.toMatchObject({
       status: 'accepted',
     })
+    const skillPresetLayouts = [
+      ['banking'],
+      ['avocados'],
+      ['startHereTree'],
+      ['manualLabour'],
+      ['fragmentAssembly'],
+    ] as const
+    for (let index = 0; index < skillPresetLayouts.length; index += 1) {
+      await expect(
+        first.runtime.dispatchPlayer({
+          kind: 'skill.set-preset-assignment',
+          slot: (index + 1) as 1 | 2 | 3 | 4 | 5,
+          skillIds: skillPresetLayouts[index],
+        }),
+      ).resolves.toMatchObject({ status: 'accepted' })
+    }
+    await expect(
+      first.runtime.dispatchPlayer({
+        kind: 'skill.select-preset',
+        slot: 5,
+      }),
+    ).resolves.toMatchObject({ status: 'accepted' })
     firstCheckpointScheduler.fire()
     firstCheckpointScheduler.fire()
     await waitUntil(() => checkpointCalls === 1)
@@ -537,6 +577,13 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       } = expected.gameplay.progression.timeline
       return {
         ...structuredClone(expected.gameplay),
+        // Preset-application feedback is intentionally transient. The
+        // selected slot and five durable layouts below must reconstruct,
+        // while a new runtime starts with no stale notification.
+        runtime: {
+          ...structuredClone(expected.gameplay.runtime),
+          lastSkillPresetApplication: null,
+        },
         progression: {
           ...structuredClone(expected.gameplay.progression),
           // This marker is intentionally lifecycle-dependent: startup may
@@ -575,6 +622,22 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       source: 'primary',
       gameplay: expectedGameplay,
     })
+    const reconstructedSnapshot = reconstructed.runtime.snapshot()
+    expect(reconstructedSnapshot.phase).toBe('ready')
+    if (reconstructedSnapshot.phase === 'ready') {
+      expect(
+        reconstructedSnapshot.gameplay.progression.skills.presets.map(
+          (preset) => preset.skillIds,
+        ),
+      ).toEqual(skillPresetLayouts)
+      expect(
+        reconstructedSnapshot.gameplay.progression.skills
+          .activeAutoAssignment,
+      ).toEqual(skillPresetLayouts[4])
+      expect(
+        reconstructedSnapshot.gameplay.runtime.selectedSkillPresetSlot,
+      ).toBe(5)
+    }
     await reconstructed.runtime.shutdown()
 
     const maintenanceLease = await productionDatabase.acquireWriterLease(

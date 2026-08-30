@@ -58,4 +58,21 @@ describe('device-local number notation preference', () => {
     expect(preference.adoptLegacyUnityNumberFormatting(0)).toBe(true)
     expect(preference.getSnapshot()).toBe('standard')
   })
+
+  test('restores a V2 preference over stale device-local state', () => {
+    const storage = new MemoryStorage()
+    storage.setItem(
+      NUMBER_NOTATION_STORAGE_KEY,
+      JSON.stringify({ version: 1, mode: 'standard' }),
+    )
+    const preference = new NumberNotationPreferenceService({ storage })
+
+    expect(preference.restoreTransitionalV2NumberFormatting(2)).toBe(true)
+
+    expect(preference.getSnapshot()).toBe('engineering')
+    expect(JSON.parse(storage.getItem(NUMBER_NOTATION_STORAGE_KEY)!)).toEqual({
+      version: 1,
+      mode: 'engineering',
+    })
+  })
 })

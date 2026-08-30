@@ -26,8 +26,8 @@ export interface NumberNotationPreferenceOptions {
 
 /**
  * Device-local presentation state. Storage is read exactly once at
- * construction and written only for an explicit selection or a trusted,
- * one-time same-device Unity adoption.
+ * construction and written only for an explicit selection, a trusted one-time
+ * same-device Unity adoption, or an authoritative recovered V2 preference.
  */
 export class NumberNotationPreferenceService {
   readonly #storage: NumberNotationStorage | null
@@ -74,6 +74,19 @@ export class NumberNotationPreferenceService {
     setActiveNumberNotation(adopted)
     this.#write()
     this.#publish()
+    return true
+  }
+
+  /** Restores the explicit local preference carried by a V2 checkpoint. */
+  restoreTransitionalV2NumberFormatting(value: unknown): boolean {
+    const restored = numberNotationFromLegacyUnity(value)
+    if (restored === null) return false
+    this.#legacyAdoptionAvailable = false
+    const changed = restored !== this.#mode
+    this.#mode = restored
+    setActiveNumberNotation(restored)
+    this.#write()
+    if (changed) this.#publish()
     return true
   }
 

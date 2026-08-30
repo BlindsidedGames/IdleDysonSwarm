@@ -71,6 +71,7 @@ export function createProductionCanonicalApplicationFactory(
       }),
       engine: { eventContext },
       storedTimeJobRunner: new BrowserStoredTimeJobRunner(),
+      createTransitionalRecoveryBase: options.createFirstRunSave,
     })
   }
 }

@@ -4,11 +4,21 @@ import {
   MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS,
   resolveReleaseFooter,
 } from './releaseFooter'
+import {
+  resolvePackagedReleaseIdentity,
+} from '../../scripts/packaged-release-identity'
 
 const source = Object.freeze({
   marketingVersion: '4.1.5',
   releaseCandidateId: '2026082904',
 })
+
+const overriddenNativeSource = resolvePackagedReleaseIdentity({
+  schemaVersion: 1,
+  marketingVersion: '4.1.5',
+  defaultReleaseCandidateId: '2026082904',
+  unityBuildFloor: 328,
+}, 'native', '2026083007')
 
 describe('release footer presentation', () => {
   afterEach(() => {
@@ -188,6 +198,42 @@ describe('release footer presentation', () => {
       build: '2608.29.04',
     })
     expect(failures).toEqual(['rejected'])
+  })
+
+  test('uses the embedded native override after metadata timeout', async () => {
+    vi.useFakeTimers()
+    const result = resolveReleaseFooter({
+      target: 'android',
+      developmentBuild: false,
+      source: overriddenNativeSource,
+      metadata: { metadata: () => new Promise(() => undefined) },
+    })
+
+    await vi.advanceTimersByTimeAsync(
+      MOBILE_RELEASE_METADATA_TIMEOUT_MILLISECONDS,
+    )
+    await expect(result).resolves.toEqual({
+      platform: 'Android',
+      version: '4.1.5',
+      build: '2026083007',
+    })
+  })
+
+  test('uses the embedded native override after metadata rejection', async () => {
+    await expect(resolveReleaseFooter({
+      target: 'ios',
+      developmentBuild: false,
+      source: overriddenNativeSource,
+      metadata: {
+        metadata: async () => {
+          throw new Error('unavailable')
+        },
+      },
+    })).resolves.toEqual({
+      platform: 'iOS',
+      version: '4.1.5',
+      build: '2608.30.07',
+    })
   })
 
   test('ignores metadata that resolves after startup used the fallback', async () => {

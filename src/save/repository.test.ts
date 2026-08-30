@@ -3,8 +3,14 @@ import { describe, expect, test, vi } from 'vitest'
 import { decodeIdb1SaveRoot } from './decodeIdb1'
 import { prepareImportedSaveText } from './import'
 import { PreparedSave } from './prepare'
-import { PortableSaveRepository, type LegacySaveCandidate, type SaveStorageAdapter } from './repository'
+import {
+  PortableSaveRepository,
+  UnreadableTransitionalCheckpointError,
+  type LegacySaveCandidate,
+  type SaveStorageAdapter,
+} from './repository'
 import { serializeWebSave } from './serialization'
+import { packSettingsFlags } from './settingsFlags'
 import { dehydrateGameState, hydrateGameState } from '../game-state/mapping'
 import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
 
@@ -15,6 +21,8 @@ const fixtureUrl = new URL(
 
 class MemoryStorage implements SaveStorageAdapter {
   readonly files = new Map<string, string>()
+  readonly unprobeablePaths = new Set<string>()
+  readonly unreadablePaths = new Set<string>()
   candidates: readonly LegacySaveCandidate[] = []
   replacements: Array<[string, string]> = []
   copies: Array<[string, string]> = []
@@ -23,10 +31,16 @@ class MemoryStorage implements SaveStorageAdapter {
   substituteTemporaryRead: string | null = null
 
   async exists(path: string): Promise<boolean> {
+    if (this.unprobeablePaths.has(path)) {
+      throw new Error(`Cannot inspect ${path}`)
+    }
     return this.files.has(path)
   }
 
   async readText(path: string): Promise<string> {
+    if (this.unreadablePaths.has(path)) {
+      throw new Error(`Unreadable ${path}`)
+    }
     if (path === '/current.tmp' && this.failAt === 'read-temporary') {
       throw new Error('temporary verification read failed')
     }
@@ -916,7 +930,9 @@ describe('portable transactional save repository', () => {
       undefined,
       undefined,
       () => {
-        throw new Error('damaged transitional checkpoint')
+        throw new UnreadableTransitionalCheckpointError(
+          'damaged transitional checkpoint',
+        )
       },
     )
 
@@ -929,7 +945,539 @@ describe('portable transactional save repository', () => {
     expect(storage.copies).toEqual([])
   })
 
-  test('backs up a valid current save before replacing it with transitional progress', async () => {
+  test('ignores an unreadable optional V2 Stored Time policy sidecar', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set(
+      '/current',
+      serializeWebSave({ saveVersion: 12, slot: 'current' }),
+    )
+    vi.spyOn(storage, 'exists').mockImplementation(async (path) => {
+      if (path === '/local/stored-time-policy.json') {
+        throw new Error('optional sidecar unavailable')
+      }
+      return storage.files.has(path)
+    })
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+        transitionalStoredTimePolicy: '/local/stored-time-policy.json',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'already-migrated' })
+    expect(storage.files.get('/current')).toBeDefined()
+  })
+
+  test('keeps a valid current save when a transitional backup cannot be represented', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set(
+      '/current',
+      serializeWebSave({ saveVersion: 12, slot: 'current' }),
+    )
+    storage.files.set('/current.backup.1', 'recognized-v2-checkpoint')
+    const recover = vi.fn(() => {
+      throw new Error('V2 progress exceeds the current numeric model')
+    })
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      recover,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'already-migrated' })
+    expect(recover).not.toHaveBeenCalled()
+    expect(storage.replacements).toEqual([])
+  })
+
+  test('does not overlay a historical V2 backup onto an unmarked valid current save', async () => {
+    const storage = new MemoryStorage()
+    const current = serializeWebSave({ saveVersion: 12, slot: 'current' })
+    storage.files.set('/current', current)
+    storage.files.set('/historical/backups/current.1.idsw', 'v2-checkpoint')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+        transitionalRecoverySources: [
+          '/historical/backups/current.1.idsw',
+        ],
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text) => text === 'v2-checkpoint'
+        ? PreparedSave.fromDecoded({ saveVersion: 12, slot: 'v2' })
+        : null,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'already-migrated' })
+    expect(storage.files.get('/historical/backups/current.1.idsw'))
+      .toBe('v2-checkpoint')
+    expect(storage.files.get('/current')).toBe(current)
+    expect(storage.copies).toEqual([])
+  })
+
+  test('does not overlay an unclocked V2 backup onto a valid current-format backup', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', 'damaged-v2-current')
+    storage.files.set(
+      '/current.backup.1',
+      serializeWebSave({ saveVersion: 12, slot: 'older-current-backup' }),
+    )
+    storage.files.set('/historical/backups/current.1.idsw', 'valid-v2-backup')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+        transitionalRecoverySources: [
+          '/historical/backups/current.1.idsw',
+        ],
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text, base) => {
+        if (text === 'damaged-v2-current') {
+          throw new UnreadableTransitionalCheckpointError('truncated V2')
+        }
+        if (text !== 'valid-v2-backup') return null
+        const source = base.copyValidatedState()
+        source.slot = 'newer-v2-backup'
+        return base.withValidatedState(source)
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'recovered-backup',
+        sourcePath: '/current.backup.1',
+      })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('older-current-backup')
+    expect(storage.files.get('/recovery/rejected-current.idsw'))
+      .toBe('damaged-v2-current')
+  })
+
+  test('uses a recognized active V2 checkpoint over its older current-format backup', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', 'valid-active-v2')
+    storage.files.set(
+      '/current.backup.1',
+      serializeWebSave({ saveVersion: 12, slot: 'older-current-backup' }),
+    )
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text, base) => {
+        if (text !== 'valid-active-v2') return null
+        const source = base.copyValidatedState()
+        source.slot = 'active-v2'
+        return base.withValidatedState(source)
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'recovered-backup',
+        sourcePath: '/current',
+      })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('active-v2')
+    expect(storage.files.get('/recovery/rejected-current.idsw'))
+      .toBe('valid-active-v2')
+  })
+
+  test('uses a newer V2 slot from the same rotation over its older canonical base', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', 'damaged-current')
+    storage.files.set('/current.backup.1', 'valid-newer-v2')
+    storage.files.set(
+      '/current.backup.2',
+      serializeWebSave({ saveVersion: 12, slot: 'older-canonical-base' }),
+    )
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text, base) => {
+        if (text === 'damaged-current') {
+          throw new UnreadableTransitionalCheckpointError('damaged current')
+        }
+        if (text !== 'valid-newer-v2') return null
+        const source = base.copyValidatedState()
+        source.slot = 'newer-v2-over-canonical-base'
+        return base.withValidatedState(source)
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'recovered-backup',
+        sourcePath: '/current.backup.1',
+      })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('newer-v2-over-canonical-base')
+  })
+
+  test('uses a V2 checkpoint in the shared native backup namespace with a retained base', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', 'damaged-v2-current')
+    storage.files.set('/current.backup.1', 'valid-v2-backup')
+    storage.files.set(
+      '/recovery/pre-schema13.idsw',
+      serializeWebSave({ saveVersion: 12, slot: 'retained-base' }),
+    )
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+        retainedRecoverySources: ['/recovery/pre-schema13.idsw'],
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text, base) => {
+        if (text === 'damaged-v2-current') {
+          throw new UnreadableTransitionalCheckpointError('truncated V2')
+        }
+        if (text !== 'valid-v2-backup') return null
+        const source = base.copyValidatedState()
+        source.slot = 'native-v2-backup'
+        return base.withValidatedState(source)
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'recovered-backup',
+        sourcePath: '/current.backup.1',
+      })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('native-v2-backup')
+  })
+
+  test('recovers a V2 backup from a deterministic base when the current save is absent', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current.backup.1', 'valid-v2-backup')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+      },
+      () => {
+        throw new Error('not a legacy save')
+      },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text, base) => {
+        if (text !== 'valid-v2-backup') return null
+        const source = base.copyValidatedState()
+        source.recoveredV2Progress = 41
+        return base.withValidatedState(source)
+      },
+      () => PreparedSave.fromDecoded({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'recovered-backup',
+        sourcePath: '/current.backup.1',
+      })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState()
+        .recoveredV2Progress,
+    ).toBe(41)
+  })
+
+  test('skips an unreadable transitional artifact and recovers an older V2 checkpoint', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/newest-v2', 'unreadable-v2')
+    storage.files.set('/older-v2', 'valid-v2')
+    storage.unreadablePaths.add('/newest-v2')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+        transitionalRecoverySources: ['/newest-v2', '/older-v2'],
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text, base) => {
+        if (text !== 'valid-v2') return null
+        const source = base.copyValidatedState()
+        source.recoveredV2Progress = 43
+        return base.withValidatedState(source)
+      },
+      () => PreparedSave.fromDecoded({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'recovered-backup',
+        sourcePath: '/older-v2',
+      })
+  })
+
+  test('skips an optional backup whose existence cannot be inspected', async () => {
+    const storage = new MemoryStorage()
+    storage.unprobeablePaths.add('/current.backup.1')
+    storage.files.set('/current.backup.2', serializeWebSave({
+      saveVersion: 12,
+      slot: 'older-readable-backup',
+    }))
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'recovered-backup',
+        sourcePath: '/current.backup.2',
+      })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('older-readable-backup')
+  })
+
+  test('skips an unreadable retained artifact and recovers an older retained save', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/newest-retained', 'unreadable-retained')
+    storage.files.set(
+      '/older-retained',
+      serializeWebSave({ saveVersion: 12, slot: 'older-retained' }),
+    )
+    storage.unreadablePaths.add('/newest-retained')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+        retainedRecoverySources: ['/newest-retained', '/older-retained'],
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'recovered-backup',
+        sourcePath: '/older-retained',
+      })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('older-retained')
+  })
+
+  test('recovers a V2-first player from a deterministic base when no earlier save exists', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', 'schema13-current-only')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+      },
+      () => {
+        throw new Error('not a legacy save')
+      },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text, base) => {
+        if (text !== 'schema13-current-only') return null
+        const source = base.copyValidatedState()
+        source.recoveredV2Progress = 42
+        return base.withValidatedState(source)
+      },
+      () => PreparedSave.fromDecoded({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'recovered-backup',
+      sourcePath: '/current',
+    })
+    expect(storage.files.get('/recovery/rejected-current.idsw'))
+      .toBe('schema13-current-only')
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState()
+        .recoveredV2Progress,
+    ).toBe(42)
+  })
+
+  test('retains rejected V2 bytes and keeps V2 preferences when a legacy base is overlaid', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', 'recognized-v2-current')
+    storage.files.set('/legacy', 'legacy-base')
+    storage.candidates = [verifiedUnityCandidate()]
+    const notationAdopter = {
+      adoptLegacyUnityNumberFormatting: vi.fn(() => true),
+      restoreTransitionalV2NumberFormatting: vi.fn(() => true),
+    }
+    const visibilityAdopter = {
+      adoptLegacyUnityHidePurchased: vi.fn(() => true),
+      restoreTransitionalV2HidePurchased: vi.fn(() => true),
+    }
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+      },
+      () => ({
+        saveVersion: 12,
+        numberFormatting: 2,
+        hidePurchased: false,
+      }),
+      undefined,
+      undefined,
+      notationAdopter,
+      visibilityAdopter,
+      (text, base) => {
+        if (text !== 'recognized-v2-current') return null
+        const source = base.copyValidatedState()
+        source.recoveredV2Progress = 99
+        source.numberFormatting = 1
+        source.hidePurchased = true
+        packSettingsFlags(source)
+        return Object.freeze({
+          save: base.withValidatedState(source),
+          devicePreferences: Object.freeze({
+            numberFormatting: 1,
+            hidePurchased: true,
+          }),
+        })
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'migrated' })
+    expect(storage.files.get('/recovery/rejected-current.idsw'))
+      .toBe('recognized-v2-current')
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState(),
+    ).toMatchObject({
+      recoveredV2Progress: 99,
+      numberFormatting: 1,
+    })
+    expect(notationAdopter.adoptLegacyUnityNumberFormatting)
+      .not.toHaveBeenCalled()
+    expect(visibilityAdopter.adoptLegacyUnityHidePurchased)
+      .not.toHaveBeenCalled()
+    expect(notationAdopter.restoreTransitionalV2NumberFormatting)
+      .toHaveBeenCalledWith(1)
+    expect(visibilityAdopter.restoreTransitionalV2HidePurchased)
+      .toHaveBeenCalledWith(true)
+  })
+
+  test('preserves the durable Dyson evaluation snapshot through commit and reload', async () => {
+    const storage = new MemoryStorage()
+    const base = PreparedSave.fromDecoded({ saveVersion: 12 })
+    const source = base.copyValidatedState()
+    const infinity = (
+      source.dysonVerseSaveData as Record<string, Record<string, unknown>>
+    ).dysonVerseInfinityData
+    Object.assign(infinity, {
+      panelsPerSec: 11,
+      panelLifetime: 12,
+      scienceMulti: 13,
+      rudimentrySingularityProduction: 14,
+      pocketDimensionsProduction: 15,
+      scientificPlanetsProduction: 16,
+      managerAssemblyLineProduction: 17,
+    })
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await repository.commit(base.withValidatedState(source))
+    const reloaded = await repository.loadCurrent()
+
+    expect(reloaded).not.toBeNull()
+    expect(hydrateGameState(reloaded!).skillEffectEvaluationSnapshot).toEqual({
+      panelsPerSecond: 11,
+      panelLifetimeSeconds: 12,
+      scienceMultiplier: 13,
+      rudimentarySingularityProduction: 14,
+      pocketDimensionsProduction: 15,
+      scientificPlanetsProduction: 16,
+      managerAssemblyLineProduction: 17,
+    })
+  })
+
+  test('keeps a valid current save ahead of a readable transitional backup', async () => {
     const storage = new MemoryStorage()
     const current = serializeWebSave({ saveVersion: 12, slot: 'current' })
     storage.files.set('/current', current)
@@ -951,17 +1499,14 @@ describe('portable transactional save repository', () => {
         : null,
     )
 
-    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
-      status: 'recovered-backup',
-      sourcePath: '/current.backup.1',
-    })
-    expect(storage.files.get('/current.backup.1')).toBe(current)
-    expect(storage.files.get('/current.backup.2')).toBe(
-      'transitional-checkpoint',
-    )
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'already-migrated' })
+    expect(storage.files.get('/current.backup.1'))
+      .toBe('transitional-checkpoint')
     expect(
       (await repository.loadCurrent())?.copyValidatedState().slot,
-    ).toBe('recovered-v2')
+    ).toBe('current')
+    expect(storage.copies).toEqual([])
   })
 
   test('does not replace current when backup rotation fails', async () => {
@@ -1007,7 +1552,8 @@ describe('portable transactional save repository', () => {
 
     const result = await repository.migrateLegacyOnFirstLaunch()
     expect(result.status).toBe('migrated')
-    expect(storage.files.get('/recovery/original-idb1.txt')).toBe('good')
+    expect(storage.files.get('/recovery/original-idb1.txt')).toBe('{')
+    expect(storage.files.get('/legacy')).toBe('good')
     expect(await repository.loadCurrent()).not.toBeNull()
   })
 
@@ -1156,6 +1702,31 @@ describe('portable transactional save repository', () => {
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
       status: 'current-invalid',
     })
+  })
+
+  test('retains a legacy source when only an invalid backup caused the startup error', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current.backup.1', 'invalid backup')
+    storage.files.set('/legacy', 'IDB1:legacy')
+    storage.candidates = [{
+      id: 'legacy',
+      sourcePath: '/legacy',
+      text: 'IDB1:legacy',
+    }]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'migrated' })
+    expect(storage.files.get('/recovery/original-idb1.txt'))
+      .toBe('IDB1:legacy')
   })
 
   test('treats publication failure during valid backup recovery as terminal', async () => {

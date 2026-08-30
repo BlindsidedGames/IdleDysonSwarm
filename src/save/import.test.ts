@@ -5,6 +5,10 @@ import { PreparedSave } from './prepare'
 import { prepareImportedSaveText } from './import'
 import { RECEIVING_DEVICE_PREFERENCE_FIELDS } from './importContext'
 import { mappingCoverageManifest } from '../game-state/mappingCoverage'
+import {
+  TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
+  TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
+} from './transitionalV2Retirement'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
@@ -93,6 +97,10 @@ describe('save import text preparation', () => {
         doubleIp: true,
         debugOptions: true,
         debugEverEnabled: true,
+        cheater: true,
+        unlockAllTabs: true,
+        [TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD]: 99,
+        [TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD]: 'a'.repeat(64),
       }).copyValidatedState(),
     )
 
@@ -104,7 +112,69 @@ describe('save import text preparation', () => {
     expect(imported.doubleIp).toBe(false)
     expect(imported.debugOptions).toBe(false)
     expect(imported.debugEverEnabled).toBe(false)
+    expect(imported.cheater).toBe(false)
+    expect(imported.unlockAllTabs).toBe(false)
+    expect(imported).not.toHaveProperty(
+      TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
+    )
+    expect(imported).not.toHaveProperty(
+      TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
+    )
     expect((imported.packedSettingsFlags as bigint) & 0b1100n).toBe(0n)
+  })
+
+  test('preserves only the receiving installation retirement proof', () => {
+    const receiving = PreparedSave.fromDecoded({ saveVersion: 12 })
+      .copyValidatedState()
+    receiving[TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD] = 7
+    receiving[TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD] = 'b'.repeat(64)
+    const sender = PreparedSave.fromDecoded({
+      saveVersion: 12,
+      [TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD]: 99,
+      [TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD]: 'a'.repeat(64),
+    }).copyValidatedState()
+
+    const imported = prepareImportedSaveText(
+      serializeWebSave(sender),
+      '2026-07-29T05:00:00Z',
+      undefined,
+      {
+        kind: 'manual-shared-import',
+        importedAtUtc: '2026-07-29T05:00:00Z',
+      },
+      receiving,
+    ).copyValidatedState()
+
+    expect(imported[TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD]).toBe(7)
+    expect(imported[TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD])
+      .toBe('b'.repeat(64))
+  })
+
+  test('strips an incomplete receiving retirement proof pair', () => {
+    const receiving = PreparedSave.fromDecoded({ saveVersion: 12 })
+      .copyValidatedState()
+    receiving[TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD] = 7
+    receiving[TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD] = 'not-a-hash'
+
+    const imported = prepareImportedSaveText(
+      serializeWebSave(
+        PreparedSave.fromDecoded({ saveVersion: 12 }).copyValidatedState(),
+      ),
+      '2026-07-29T05:00:00Z',
+      undefined,
+      {
+        kind: 'manual-shared-import',
+        importedAtUtc: '2026-07-29T05:00:00Z',
+      },
+      receiving,
+    ).copyValidatedState()
+
+    expect(imported).not.toHaveProperty(
+      TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
+    )
+    expect(imported).not.toHaveProperty(
+      TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
+    )
   })
 
   test('retains receiving-device presentation preferences on manual imports', () => {
@@ -173,6 +243,8 @@ describe('save import text preparation', () => {
       doubleIp: false,
       debugOptions: true,
       debugEverEnabled: true,
+      cheater: true,
+      unlockAllTabs: true,
     }).copyValidatedState()
 
     const imported = prepareImportedSaveText(
@@ -189,6 +261,8 @@ describe('save import text preparation', () => {
     expect(imported.doubleIp).toBe(false)
     expect(imported.debugEverEnabled).toBe(true)
     expect(imported.debugOptions).toBe(true)
+    expect(imported.cheater).toBe(true)
+    expect(imported.unlockAllTabs).toBe(true)
   })
 
   test('manual shared import cannot introduce a sender Developer Options claim', () => {

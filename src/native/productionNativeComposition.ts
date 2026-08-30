@@ -28,6 +28,9 @@ import {
   asAutomaticUnityPurchaseEvidencePromoter,
 } from '../save/automaticPurchaseEvidence'
 import {
+  recoverTransitionalV2CheckpointWithMetadata,
+} from '../save/transitionalV2Checkpoint'
+import {
   MOBILE_LIFECYCLE_POLICY,
   WEB_LIFECYCLE_POLICY,
 } from '../simulation/lifecycleAwayTime'
@@ -134,6 +137,9 @@ export function createProductionNativeComposition(
       options.automaticNumberFormattingAdopter,
     automaticResearchVisibilityAdopter:
       options.automaticResearchVisibilityAdopter,
+    recoverTransitionalCheckpoint:
+      recoverTransitionalV2CheckpointWithMetadata,
+    createTransitionalRecoveryBase: createFirstRunSave,
     developmentControlsAvailable: true,
     developmentControlsRequireEntitlement: true,
   })

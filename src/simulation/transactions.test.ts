@@ -21,7 +21,7 @@ const RECONSTRUCTED_NEAR_MAXIMUM = Math.exp(
 )
 
 describe('extreme geometric purchase pricing', () => {
-  test('keeps a finite reconstructed price when its rounded log equals the maximum log', () => {
+  test('fails closed when an overflowing exact price rounds to the maximum log', () => {
     const roundedLogCost =
       Math.log(LOG_EQUAL_BASE_COST) +
       FALLBACK_LEVEL * Math.log(FALLBACK_EXPONENT)
@@ -35,8 +35,7 @@ describe('extreme geometric purchase pricing', () => {
       FALLBACK_LEVEL,
     )
 
-    expect(cost).toBe(RECONSTRUCTED_NEAR_MAXIMUM)
-    expect(cost).toBeLessThan(CONTINUOUS_MAXIMUM)
+    expect(cost).toBe(CONTINUOUS_MAXIMUM)
   })
 
   test('keeps the reserved boundary distinct from the adjacent finite price and overflow', () => {
@@ -78,7 +77,7 @@ describe('extreme geometric purchase pricing', () => {
     ).toMatchObject({ status: 'invalid-balance', charged: 0 })
   })
 
-  test('corrects buy-max to the one finite purchase below saturation', () => {
+  test('corrects buy-max to zero purchases at the rounded overflow boundary', () => {
     expect(
       maxAffordable(
         RECONSTRUCTED_NEAR_MAXIMUM,
@@ -86,7 +85,7 @@ describe('extreme geometric purchase pricing', () => {
         FALLBACK_EXPONENT,
         FALLBACK_LEVEL,
       ),
-    ).toBe(1n)
+    ).toBe(0n)
     expect(
       buyXCost(
         2n,
@@ -100,29 +99,28 @@ describe('extreme geometric purchase pricing', () => {
 
 describe('Assembly Megalines extreme pricing', () => {
   test.each(['buy-1', 'buy-max'] as const)(
-    '%s can purchase the finite price immediately below saturation',
+    '%s fails closed when the exact price exceeds finite authority',
     (buyMode) => {
       const before = assemblyMegalinesBoundaryState(buyMode)
       const quote = previewDysonFacilityPurchase(before, 'assembly_lines')
       const result = tryPurchaseDysonFacility(before, 'assembly_lines')
 
       expect(quote).toMatchObject({
-        eligible: true,
+        eligible: false,
         selectedQuantity: 1n,
-        affordableQuantity: 1n,
-        status: 'success',
+        affordableQuantity: 0n,
+        status: 'maxed',
       })
-      expect(quote.cost).toBe(RECONSTRUCTED_NEAR_MAXIMUM)
-      expect(quote.cost).toBeLessThan(CONTINUOUS_MAXIMUM)
+      expect(quote.cost).toBe(CONTINUOUS_MAXIMUM)
       expect(result.attempt).toEqual({
         facilityId: 'assembly_lines',
-        purchased: true,
-        quantity: 1n,
-        cost: quote.cost,
-        status: 'success',
+        purchased: false,
+        quantity: 0n,
+        cost: CONTINUOUS_MAXIMUM,
+        status: 'maxed',
       })
-      expect(result.state.facilities.assembly_lines[1]).toBe(3571)
-      expect(result.state.money).toBe(0)
+      expect(result.state.facilities.assembly_lines[1]).toBe(3570)
+      expect(result.state.money).toBe(RECONSTRUCTED_NEAR_MAXIMUM)
       expect(before.facilities.assembly_lines[1]).toBe(3570)
       expect(before.money).toBe(RECONSTRUCTED_NEAR_MAXIMUM)
     },

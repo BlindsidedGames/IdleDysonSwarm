@@ -1,4 +1,4 @@
-import { deepCloneSave, type SaveRecord } from './graph'
+import { deepCloneSave, isRecord, type SaveRecord } from './graph'
 
 export type ImportContext =
   | {
@@ -50,11 +50,38 @@ export function retainReceivingDevicePreferences(
   receiving: SaveRecord | undefined,
 ): SaveRecord {
   const result = deepCloneSave(imported)
+  if (isRecord(result.bottomNavigationPreferences)) {
+    delete result.bottomNavigationPreferences.size
+  }
   if (receiving === undefined) return result
   for (const field of RECEIVING_DEVICE_PREFERENCE_FIELDS) {
     if (Object.prototype.hasOwnProperty.call(receiving, field)) {
       result[field] = receiving[field]
     }
+  }
+  const importedBottomNavigation = isRecord(
+    result.bottomNavigationPreferences,
+  )
+    ? result.bottomNavigationPreferences
+    : {}
+  const receivingBottomNavigation = isRecord(
+    receiving.bottomNavigationPreferences,
+  )
+    ? receiving.bottomNavigationPreferences
+    : undefined
+  const receivingVisibility = isRecord(
+    receivingBottomNavigation?.visibility,
+  )
+    ? deepCloneSave(receivingBottomNavigation.visibility)
+    : {
+        story: receiving.storyButtonToggle === true,
+        wiki: receiving.wikiButtonToggle === true,
+        statistics: receiving.statisticsButtonToggle === true,
+      }
+  result.bottomNavigationPreferences = {
+    ...importedBottomNavigation,
+    version: 1,
+    visibility: receivingVisibility,
   }
   return result
 }
@@ -64,7 +91,7 @@ export function retainReceivingDevicePreferences(
  * in-game unlock is local progression, however, and must survive replacement.
  * Store ownership remains outside the save graph and is reapplied by the host.
  */
-export function retainReceivingLocalDeveloperOptions(
+export function retainReceivingLocalPlatformState(
   imported: SaveRecord,
   receiving: SaveRecord | undefined,
 ): SaveRecord {
@@ -73,5 +100,7 @@ export function retainReceivingLocalDeveloperOptions(
   result.debugEverEnabled = locallyUnlocked
   result.debugOptions =
     locallyUnlocked && receiving?.debugOptions === true
+  result.cheater = receiving?.cheater === true
+  result.unlockAllTabs = receiving?.unlockAllTabs === true
   return result
 }
