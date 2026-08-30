@@ -178,6 +178,113 @@
   padding-block-start: 0.2rem;
 }
 
+.skill-preset-application-summary {
+  display: block;
+  color: var(--theme-accent);
+  font-size: calc(0.78rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+}
+
+.skill-preset-application-banner {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  min-block-size: var(--target-minimum);
+  padding: 0.6rem 0.75rem 0.72rem;
+  overflow: hidden;
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.32rem;
+  background: var(--theme-panel);
+  box-shadow: 0 0.3rem 0.7rem rgb(0 0 0 / 32%);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: calc(0.82rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  text-align: start;
+  touch-action: manipulation;
+  animation:
+    skill-preset-application-banner-fade 0.35s ease 5.65s forwards;
+}
+
+.skill-preset-application-banner:focus-visible {
+  outline: none;
+  background: var(--theme-selected);
+}
+
+.skill-preset-application-banner__message {
+  display: block;
+}
+
+.skill-preset-application-banner__announcement {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skill-preset-application-banner__message strong {
+  font-weight: var(--font-weight-bold);
+}
+
+.skill-preset-application-banner__preset,
+.skill-preset-application-banner__details {
+  color: var(--theme-accent);
+}
+
+.skill-preset-application-banner__blocked {
+  color: #ffb8dc;
+}
+
+.skill-preset-application-banner__retained {
+  color: #f3e8ff;
+}
+
+.skill-preset-application-banner__progress {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: 0.2rem;
+  background: var(--theme-accent);
+  transform-origin: left;
+  animation:
+    skill-preset-application-banner-progress 6s linear forwards;
+}
+
+[dir="rtl"] .skill-preset-application-banner__progress {
+  transform-origin: right;
+}
+
+@keyframes skill-preset-application-banner-progress {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes skill-preset-application-banner-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-preset-application-banner,
+  .skill-preset-application-banner__progress {
+    animation: none;
+  }
+
+  .skill-preset-application-banner__progress {
+    display: none;
+  }
+}
+
 .dyson-info__run-facts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

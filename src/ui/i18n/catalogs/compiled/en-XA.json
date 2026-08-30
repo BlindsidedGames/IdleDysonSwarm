@@ -4677,7 +4677,7 @@
             },
             {
               "type": 0,
-              "value": " ŭŭƞřḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀ řḗḗḿȧȧīƞş ȧȧşşīɠƞḗḗḓ"
+              "value": " ŭŭƞřḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ ŭŭƞȧȧşşīɠƞḗḗḓ"
             }
           ]
         },
@@ -4688,7 +4688,7 @@
             },
             {
               "type": 0,
-              "value": " ŭŭƞřḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş řḗḗḿȧȧīƞ ȧȧşşīɠƞḗḗḓ"
+              "value": " ŭŭƞřḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ ŭŭƞȧȧşşīɠƞḗḗḓ"
             }
           ]
         }
@@ -4733,6 +4733,120 @@
     {
       "type": 0,
       "value": ". Ǿƥḗḗƞ Şķīŀŀş ƒǿǿř ḓḗḗŧȧȧīŀş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ẇȧȧş ƥȧȧřŧīȧȧŀŀẏ ȧȧƥƥŀīḗḗḓ. "
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " ŭŭƞřḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ ŭŭƞȧȧşşīɠƞḗḗḓ"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " ŭŭƞřḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ ŭŭƞȧȧşşīɠƞḗḗḓ"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", ŀḗḗȧȧṽīƞɠ "
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " ƥřḗḗşḗḗŧ şķīŀŀ ɋŭŭḗḗŭŭḗḗḓ ƒǿǿř ŀȧȧŧḗḗř"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " ƥřḗḗşḗḗŧ şķīŀŀş ɋŭŭḗḗŭŭḗḗḓ ƒǿǿř ŀȧȧŧḗḗř"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". "
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ǿƥḗḗƞ Şķīŀŀş ƒǿǿř ḓḗḗŧȧȧīŀş."
+        }
+      ]
     },
     {
       "type": 0,
@@ -16007,6 +16121,20 @@
       "value": "]"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīşḿīşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -21141,6 +21269,38 @@
       "value": "]"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞřḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ ŭŭƞȧȧşşīɠƞḗḗḓ. Ŧħḗḗşḗḗ ƥřḗḗşḗḗŧ şķīŀŀş ȧȧřḗḗ ƀŀǿǿƈķḗḗḓ ȧȧƞḓ řḗḗḿȧȧīƞ ɋŭŭḗḗŭŭḗḗḓ ƒǿǿř ŀȧȧŧḗḗř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " īş ƥȧȧřŧīȧȧŀŀẏ ȧȧƥƥŀīḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 0,
@@ -21567,6 +21727,20 @@
     {
       "type": 0,
       "value": "Şķīŀŀ ƥřḗḗşḗḗŧş ȧȧƞḓ řḗḗşḗḗŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿẇ ƥȧȧřŧīȧȧŀ ƥřḗḗşḗḗŧ ȧȧƥƥŀīƈȧȧŧīǿǿƞ ƞǿǿŧīƒīƈȧȧŧīǿǿƞş"
     },
     {
       "type": 0,

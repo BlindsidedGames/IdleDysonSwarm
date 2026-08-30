@@ -2532,7 +2532,7 @@
     },
     {
       "type": 0,
-      "value": " применён частично. Назначенными остаются "
+      "value": " применён частично. "
     },
     {
       "type": 6,
@@ -2545,7 +2545,7 @@
             },
             {
               "type": 0,
-              "value": " невозвратный навык"
+              "value": " невозвратный навык нельзя было отменить"
             }
           ]
         },
@@ -2556,7 +2556,7 @@
             },
             {
               "type": 0,
-              "value": " невозвратных навыка"
+              "value": " невозвратных навыка нельзя было отменить"
             }
           ]
         }
@@ -2601,6 +2601,112 @@
     {
       "type": 0,
       "value": ". Откройте Навыки для подробностей."
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " применён частично. "
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " невозвратный навык нельзя было отменить"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " невозвратных навыка нельзя было отменить"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", поэтому "
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " навык пресета оставлен в очереди на потом"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " навыка пресета оставлены в очереди на потом"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". "
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "Откройте Навыки для подробностей."
+        }
+      ]
     }
   ],
   "dyson.info.purchase-amount": [
@@ -8055,6 +8161,12 @@
       "value": "Текущий"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "Скрыть"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -10365,6 +10477,22 @@
       "value": "Название набора"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "Невозвратные навыки нельзя было отменить. Эти навыки пресета заблокированы и остаются в очереди на потом."
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": применено частично"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 6,
@@ -10595,6 +10723,12 @@
     {
       "type": 0,
       "value": "Наборы и сброс навыков"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "Показывать уведомления о частичном применении пресетов"
     }
   ],
   "skills.supernova-restoration-quote": [

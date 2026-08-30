@@ -357,6 +357,37 @@ describe('canonical game application engine', () => {
     expect(state.gameState.skills.points).toBe(0n)
   })
 
+  test('publishes the exact skill preset application outcome as transient runtime state', () => {
+    const state = runtime()
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'skill.select-preset',
+        slot: 2,
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.lastSkillPresetApplication).toMatchObject({
+      applicationSequence: 1,
+      slot: 2,
+      trigger: 'manual',
+      retainedSkillIds: expect.any(Array),
+      assignedSkillIds: expect.any(Array),
+      pendingSkillIds: expect.any(Array),
+      blockedByRetainedSkillIds: expect.any(Array),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'skill.select-preset',
+        slot: 2,
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.lastSkillPresetApplication?.applicationSequence).toBe(2)
+  })
+
   test('restores the development cash action without changing player commands', () => {
     const state = runtime()
     const before = state.gameState.dyson.money

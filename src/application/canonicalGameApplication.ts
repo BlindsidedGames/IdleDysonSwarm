@@ -1600,7 +1600,24 @@ function applyPlayerCommand(
       reason: 'Stored-time intent must be dispatched through dispatchPlayer.',
     }
   }
-  if (!result.changed) return { accepted: true, changed: false }
+  if (
+    !result.changed &&
+    result.skillPresetApplication === undefined
+  ) {
+    return { accepted: true, changed: false }
+  }
+  const previousApplicationSequence =
+    candidate.lastSkillPresetApplication?.applicationSequence ?? 0
+  const nextSkillPresetApplication =
+    result.skillPresetApplication === undefined
+      ? undefined
+      : Object.freeze({
+          ...result.skillPresetApplication,
+          applicationSequence:
+            previousApplicationSequence >= Number.MAX_SAFE_INTEGER
+              ? 1
+              : previousApplicationSequence + 1,
+        })
   Object.assign(candidate, {
     gameState: result.state,
     compatibilityTuning:
@@ -1611,6 +1628,12 @@ function applyPlayerCommand(
       result.runtimeCarriers.storedTimeCheater!,
     selectedSkillPresetSlot:
       result.runtimeCarriers.selectedSkillPresetSlot!,
+    ...(nextSkillPresetApplication === undefined
+      ? {}
+      : {
+          lastSkillPresetApplication:
+            nextSkillPresetApplication,
+        }),
   })
   return { accepted: true, changed: true }
 }
@@ -1976,6 +1999,10 @@ function validateStoredTimeJobCandidate(
   }
   if (
     !sameCapturedValue(candidate.tinker, before.tinker) ||
+    !sameCapturedValue(
+      candidate.lastSkillPresetApplication,
+      before.lastSkillPresetApplication,
+    ) ||
     !sameCapturedValue(candidate.entitlements, before.entitlements) ||
     !sameCapturedValue(
       candidate.compatibilityTuning,
@@ -2029,6 +2056,36 @@ function sameCapturedValue(left: unknown, right: unknown): boolean {
       sameCapturedValue(leftRecord[key], rightRecord[key]))
 }
 
+function validateSkillPresetApplicationOutcome(
+  outcome: CanonicalRuntimeState['lastSkillPresetApplication'],
+): string | undefined {
+  if (outcome === null) return undefined
+  if (
+    !Number.isInteger(outcome.slot) ||
+    outcome.slot < 1 ||
+    outcome.slot > 5 ||
+    !Number.isSafeInteger(outcome.applicationSequence) ||
+    outcome.applicationSequence < 1 ||
+    !['automatic', 'import', 'manual'].includes(outcome.trigger)
+  ) {
+    return 'CANONICAL-SKILL-PRESET-APPLICATION-INVALID'
+  }
+  for (const skillIds of [
+    outcome.retainedSkillIds,
+    outcome.assignedSkillIds,
+    outcome.pendingSkillIds,
+    outcome.blockedByRetainedSkillIds,
+  ]) {
+    if (
+      !Array.isArray(skillIds) ||
+      skillIds.some((skillId) => typeof skillId !== 'string')
+    ) {
+      return 'CANONICAL-SKILL-PRESET-APPLICATION-INVALID'
+    }
+  }
+  return undefined
+}
+
 function validateRuntimeState(
   state: CanonicalRuntimeState,
   context: Readonly<CanonicalEventTimeContext>,
@@ -2043,6 +2100,10 @@ function validateRuntimeState(
   ) {
     return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
   }
+  const presetApplicationIssue = validateSkillPresetApplicationOutcome(
+    state.lastSkillPresetApplication,
+  )
+  if (presetApplicationIssue !== undefined) return presetApplicationIssue
   return CanonicalEventTimeModel.fromOwnedState(
     eventCarrier(state),
     context,
@@ -2129,6 +2190,10 @@ function validateRuntimeTransitionState(
   ) {
     return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
   }
+  const presetApplicationIssue = validateSkillPresetApplicationOutcome(
+    state.lastSkillPresetApplication,
+  )
+  if (presetApplicationIssue !== undefined) return presetApplicationIssue
   const model = CanonicalEventTimeModel.fromOwnedState(
     eventCarrier(state),
     context,

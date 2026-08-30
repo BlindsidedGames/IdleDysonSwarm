@@ -189,6 +189,24 @@ export const skillMessages = defineMessages({
     description:
       'Warning before partially applying a preset around retained unrefundable skills.',
   },
+  presetPartiallyAppliedTitle: {
+    id: 'skills.preset-partially-applied-title',
+    defaultMessage: '{name} is partially applied',
+    description:
+      'Persistent status title for a preset constrained by retained skills.',
+  },
+  presetPartiallyAppliedDetails: {
+    id: 'skills.preset-partially-applied-details',
+    defaultMessage:
+      'Unrefundable skills could not be unassigned. These preset skills are blocked and remain queued for later.',
+    description:
+      'Persistent explanation above the named preset skills blocked by retained skills.',
+  },
+  dismiss: {
+    id: 'skills.dismiss',
+    defaultMessage: 'Dismiss',
+    description: 'Button label for dismissing a preset application result.',
+  },
   retainedSkillsHeading: {
     id: 'skills.retained-skills-heading',
     defaultMessage: 'Skills that will remain assigned',
@@ -469,6 +487,12 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Double-click to assign skills',
     description:
       'Optional Skill Tree interaction that delays opening details so a double click or double tap can assign a skill.',
+  },
+  showPresetApplicationNotifications: {
+    id: 'skills.show-preset-application-notifications',
+    defaultMessage: 'Show partial preset application notifications',
+    description:
+      'Presentation preference controlling post-switch partial preset application notices.',
   },
   reset: {
     id: 'skills.reset',

@@ -208,6 +208,15 @@
   inset-inline: 0.75rem;
 }
 
+.skills-surface__preset-application-details {
+  margin: 0;
+  color: #e4d9f1;
+}
+
+.skill-preset-application-dialog {
+  inline-size: min(34rem, 100%);
+}
+
 .skill-tree-viewport {
   position: relative;
   grid-row: 1;

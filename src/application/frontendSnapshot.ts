@@ -488,6 +488,8 @@ export interface FrontendSnapshotContext {
   readonly storedTimeCheater: boolean
   readonly selectedSkillPresetSlot:
     CanonicalRuntimeState['selectedSkillPresetSlot']
+  readonly lastSkillPresetApplication:
+    CanonicalRuntimeState['lastSkillPresetApplication']
   readonly previewDemand?: FrontendGameplayPreviewDemand
   readonly previousPreviews?: DeepReadonly<FrontendGameplayPreviews>
   /**
@@ -913,6 +915,8 @@ export interface FrontendRuntimeFacts {
   readonly storedTimeCheater: boolean
   readonly selectedSkillPresetSlot:
     CanonicalRuntimeState['selectedSkillPresetSlot']
+  readonly lastSkillPresetApplication:
+    CanonicalRuntimeState['lastSkillPresetApplication']
 }
 
 export interface FrontendGameplayPreviews {
@@ -1075,6 +1079,8 @@ export function selectFrontendApplicationSnapshot(
               application.state.storedTimeCheater,
             selectedSkillPresetSlot:
               application.state.selectedSkillPresetSlot,
+            lastSkillPresetApplication:
+              application.state.lastSkillPresetApplication,
             previewDemand: context.previewDemand,
             previousPreviews: context.previousPreviews,
             previousGameplay: context.previousGameplay,
@@ -2294,6 +2300,8 @@ function selectRuntimeFacts(
   return {
     storedTimeCheater: context.storedTimeCheater,
     selectedSkillPresetSlot: context.selectedSkillPresetSlot,
+    lastSkillPresetApplication:
+      context.lastSkillPresetApplication,
     tinker:
       derived.dyson.status === 'ready'
         ? {

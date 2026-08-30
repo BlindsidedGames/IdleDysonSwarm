@@ -2545,7 +2545,7 @@
             },
             {
               "type": 0,
-              "value": " habilidad no reembolsable permanece asignada"
+              "value": " habilidad no reembolsable no se pudo desasignar"
             }
           ]
         },
@@ -2556,7 +2556,7 @@
             },
             {
               "type": 0,
-              "value": " habilidades no reembolsables permanecen asignadas"
+              "value": " habilidades no reembolsables no se pudieron desasignar"
             }
           ]
         }
@@ -2601,6 +2601,112 @@
     {
       "type": 0,
       "value": ". Abre Habilidades para ver los detalles."
+    }
+  ],
+  "dyson.info.preset-partially-applied-banner": [
+    {
+      "type": 8,
+      "value": "preset",
+      "children": [
+        {
+          "type": 1,
+          "value": "presetName"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " se aplicó parcialmente. "
+    },
+    {
+      "type": 8,
+      "value": "retained",
+      "children": [
+        {
+          "type": 6,
+          "value": "retainedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " habilidad no reembolsable no se pudo desasignar"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " habilidades no reembolsables no se pudieron desasignar"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", por lo que "
+    },
+    {
+      "type": 8,
+      "value": "blocked",
+      "children": [
+        {
+          "type": 6,
+          "value": "blockedCount",
+          "options": {
+            "one": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " habilidad del preajuste queda en cola para después"
+                }
+              ]
+            },
+            "other": {
+              "value": [
+                {
+                  "type": 7
+                },
+                {
+                  "type": 0,
+                  "value": " habilidades del preajuste quedan en cola para después"
+                }
+              ]
+            }
+          },
+          "offset": 0,
+          "pluralType": "cardinal"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". "
+    },
+    {
+      "type": 8,
+      "value": "details",
+      "children": [
+        {
+          "type": 0,
+          "value": "Abre Habilidades para ver los detalles."
+        }
+      ]
     }
   ],
   "dyson.info.purchase-amount": [
@@ -8055,6 +8161,12 @@
       "value": "Actual"
     }
   ],
+  "skills.dismiss": [
+    {
+      "type": 0,
+      "value": "Descartar"
+    }
+  ],
   "skills.double-click-to-assign": [
     {
       "type": 0,
@@ -10365,6 +10477,22 @@
       "value": "Nombre del preajuste"
     }
   ],
+  "skills.preset-partially-applied-details": [
+    {
+      "type": 0,
+      "value": "Las habilidades no reembolsables no se pudieron desasignar. Estas habilidades del preajuste están bloqueadas y quedan en cola para después."
+    }
+  ],
+  "skills.preset-partially-applied-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " se aplicó parcialmente"
+    }
+  ],
   "skills.preset-summary": [
     {
       "type": 6,
@@ -10595,6 +10723,12 @@
     {
       "type": 0,
       "value": "Preajustes y reinicio de habilidades"
+    }
+  ],
+  "skills.show-preset-application-notifications": [
+    {
+      "type": 0,
+      "value": "Mostrar notificaciones de aplicación parcial de preajustes"
     }
   ],
   "skills.supernova-restoration-quote": [

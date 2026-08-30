@@ -15,6 +15,7 @@ import {
   withDysonSkillEffectEvaluationSnapshot,
 } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
+  CanonicalSkillPresetApplicationOutcome,
   CanonicalSkillPresetSlot,
 } from './canonicalGameCommands'
 import type {
@@ -22,9 +23,19 @@ import type {
   GameStateSessionFactory,
 } from './contracts'
 
+export interface CanonicalRuntimeSkillPresetApplicationOutcome
+  extends CanonicalSkillPresetApplicationOutcome {
+  /** Stable within a runtime session, including across state clones. */
+  readonly applicationSequence: number
+}
+
 export interface CanonicalRuntimeState extends CanonicalEventTimeState {
   readonly storedTimeCheater: boolean
   readonly selectedSkillPresetSlot: CanonicalSkillPresetSlot
+  /** Last exact preset rebuild result for transient player feedback. */
+  readonly lastSkillPresetApplication:
+    | Readonly<CanonicalRuntimeSkillPresetApplicationOutcome>
+    | null
   readonly debugOptionsEnabled?: boolean
   readonly debugEntitlementPurchased?: boolean
 }
@@ -62,6 +73,7 @@ export class CanonicalRuntimeSession
       storedTimeCheater: extractStoredTimeCheater(source),
       selectedSkillPresetSlot:
         extractSelectedSkillPresetSlot(source),
+      lastSkillPresetApplication: null,
       debugOptionsEnabled: extractBoolean(source, 'debugOptions'),
       debugEntitlementPurchased: extractBoolean(
         source,
