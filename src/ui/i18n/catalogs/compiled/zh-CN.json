@@ -2600,7 +2600,7 @@
     },
     {
       "type": 0,
-      "value": "。请打开技能界面查看详情。"
+      "value": "。"
     }
   ],
   "dyson.info.preset-partially-applied-banner": [
@@ -2697,16 +2697,6 @@
     {
       "type": 0,
       "value": "。"
-    },
-    {
-      "type": 8,
-      "value": "details",
-      "children": [
-        {
-          "type": 0,
-          "value": "请打开技能界面查看详情。"
-        }
-      ]
     }
   ],
   "dyson.info.purchase-amount": [

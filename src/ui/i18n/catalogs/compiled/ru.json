@@ -2600,7 +2600,7 @@
     },
     {
       "type": 0,
-      "value": ". Откройте Навыки для подробностей."
+      "value": "."
     }
   ],
   "dyson.info.preset-partially-applied-banner": [
@@ -2696,17 +2696,7 @@
     },
     {
       "type": 0,
-      "value": ". "
-    },
-    {
-      "type": 8,
-      "value": "details",
-      "children": [
-        {
-          "type": 0,
-          "value": "Откройте Навыки для подробностей."
-        }
-      ]
+      "value": "."
     }
   ],
   "dyson.info.purchase-amount": [

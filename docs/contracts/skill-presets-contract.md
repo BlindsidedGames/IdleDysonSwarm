@@ -118,12 +118,12 @@ device-local presentation preference. Disabling them does not bypass retained
 conflict confirmations or change preset application behavior.
 
 On Bots, an automatic partial application uses a top-of-route banner with the
-preset name, retained count, blocked count, and Skills call to action visually
-emphasized. The banner has a six-second progress track, fades automatically,
-and may be dismissed by tapping it. On Skills, the exact result uses the
-standard dimmed modal treatment and lists only the target preset Skills that
-remain blocked and queued. The player may close it with the standard close
-control, Escape, or a pointer press on the backdrop.
+preset name, retained count, and blocked count visually emphasized. The banner
+does not promise navigation: it has a six-second progress track, fades
+automatically, and may be dismissed by tapping it. On Skills, the exact result
+uses the standard dimmed modal treatment and lists only the target preset
+Skills that remain blocked and queued. The player may close it with the
+standard close control, Escape, or a pointer press on the backdrop.
 
 ## Verification requirements
 

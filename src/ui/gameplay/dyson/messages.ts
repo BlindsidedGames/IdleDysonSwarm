@@ -416,16 +416,16 @@ export const readyDysonMessages = defineMessages({
   presetPartiallyApplied: {
     id: 'dyson.info.preset-partially-applied',
     defaultMessage:
-      '{presetName} was partially applied. {retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}, leaving {blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}. Open Skills for details.',
+      '{presetName} was partially applied. {retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}, leaving {blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}.',
     description:
-      'Non-blocking result after an automatic tab preset switch is constrained by retained skills.',
+      'Accessible result for the dismiss-only banner shown when an automatic tab preset switch is constrained by retained skills.',
   },
   presetPartiallyAppliedBanner: {
     id: 'dyson.info.preset-partially-applied-banner',
     defaultMessage:
-      '<preset>{presetName}</preset> was partially applied. <retained>{retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}</retained>, leaving <blocked>{blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}</blocked>. <details>Open Skills for details.</details>',
+      '<preset>{presetName}</preset> was partially applied. <retained>{retainedCount, plural, one {# unrefundable skill could not be unassigned} other {# unrefundable skills could not be unassigned}}</retained>, leaving <blocked>{blockedCount, plural, one {# preset skill queued for later} other {# preset skills queued for later}}</blocked>.',
     description:
-      'Richly formatted banner after an automatic tab preset switch is constrained by retained skills.',
+      'Dismiss-only richly formatted banner after an automatic tab preset switch is constrained by retained skills.',
   },
   buyOne: {
     id: 'dyson.info.buy-mode.one',

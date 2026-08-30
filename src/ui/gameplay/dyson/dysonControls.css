@@ -234,8 +234,7 @@
   font-weight: var(--font-weight-bold);
 }
 
-.skill-preset-application-banner__preset,
-.skill-preset-application-banner__details {
+.skill-preset-application-banner__preset {
   color: var(--theme-accent);
 }
 
