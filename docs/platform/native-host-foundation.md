@@ -32,6 +32,9 @@ desktop distribution value fails validation. Website builds use the checked-in
 marketing/release-candidate identity, while local Vite sessions display `Dev`
 and `local`. Compact layouts place the label inside existing bottom-navigation
 safe-area chrome; permanent-rail layouts place it at the rail's bottom.
+The label is deliberately subtle support/debug metadata intended to identify
+the exact host version in bug-report screenshots, not ordinary player guidance;
+its presentation uses the product-approved 30% primary-text mix.
 
 ## Signing boundary
 
