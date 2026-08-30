@@ -37,6 +37,12 @@ suppressed. That residue still uses the canonical bot-cap continuation: any
 required checkpoint is persisted and the exact remaining tail resumes before
 the lifecycle save is admitted.
 
+Bot-cap bookkeeping is mandatory regardless of automation eligibility. Reaching
+the finite cap records and persists each required checkpoint exactly once;
+automatic settings and temporary suppression control only whether the optional
+automated action runs afterward. They cannot skip settlement, manufacture an
+automatic Infinity, or repeat the special reward.
+
 Break Infinity guidance separates manual calibration from realized automatic
 throughput. With Auto Infinity off, active updates sample projected IP/min and
 track the best reward in the current manual run. Rates within two percent are
