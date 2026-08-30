@@ -102,6 +102,7 @@ import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
 import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
+import type { ReleaseFooterPresentation } from '../../../platform/releaseFooter'
 import { Capacitor } from '@capacitor/core'
 import { blindsidedGamesDestination } from '../../../platform/communityLinks'
 import type { GameAudioService } from '../../../audio'
@@ -218,6 +219,7 @@ export interface ReadyDysonRuntimeHostProps {
   readonly downloadSaveText?: SettingsSurfaceProps['downloadSaveText']
   readonly copySaveText?: (text: string) => Promise<void>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
+  readonly releaseFooter?: Readonly<ReleaseFooterPresentation>
   readonly localDeveloperOptionsPurchased?: boolean
   readonly audio?: GameAudioService
 }
@@ -238,6 +240,7 @@ function UnprobedReadyDysonRuntimeHost({
   downloadSaveText = unavailableDownloadSaveText,
   copySaveText = unavailableCopy,
   releasePlatformServices,
+  releaseFooter,
   localDeveloperOptionsPurchased,
   audio,
 }: ReadyDysonRuntimeHostProps) {
@@ -316,6 +319,7 @@ function UnprobedReadyDysonRuntimeHost({
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
+      releaseFooter={releaseFooter}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       audio={audio}
       storedTime={runtime.storedTime}
@@ -336,6 +340,7 @@ export function ProbedReadyDysonRuntimeHost({
   downloadSaveText = unavailableDownloadSaveText,
   copySaveText = unavailableCopy,
   releasePlatformServices,
+  releaseFooter,
   localDeveloperOptionsPurchased,
   audio,
 }: ReadyDysonRuntimeHostProps) {
@@ -414,6 +419,7 @@ export function ProbedReadyDysonRuntimeHost({
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
+      releaseFooter={releaseFooter}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       audio={audio}
       storedTime={runtime.storedTime}
@@ -453,6 +459,7 @@ export interface ReadyDysonSliceProps {
   readonly development?: UiRuntimeDevelopmentControls
   readonly synchronizeHostEntitlements?: () => Promise<boolean>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
+  readonly releaseFooter?: Readonly<ReleaseFooterPresentation>
   readonly localDeveloperOptionsPurchased?: boolean
   readonly storedTime?: UiRuntimeStoredTimeControls
   readonly audio?: GameAudioService
@@ -564,6 +571,7 @@ export function ReadyDysonSlice({
   development,
   synchronizeHostEntitlements,
   releasePlatformServices,
+  releaseFooter,
   localDeveloperOptionsPurchased,
   storedTime,
   audio,
@@ -909,6 +917,9 @@ export function ReadyDysonSlice({
       openMenuLabel={intl.formatMessage(messages.openMenu)}
       moreMenuLabel={intl.formatMessage(messages.moreMenu)}
       moreMenuNewLabel={intl.formatMessage(messages.moreMenuNew)}
+      releaseFooter={releaseFooter === undefined
+        ? undefined
+        : intl.formatMessage(messages.releaseFooter, releaseFooter)}
       heading={intl.formatMessage(routeHeading)}
       routeTheme={debugActive ? 'statistics' : storeActive ? 'bots' : route}
       routeContentEdgeToEdge={storeActive}

@@ -79,6 +79,12 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Large number notation',
     description: 'Accessible label for the number notation select.',
   },
+  numberNotationMixed: {
+    id: 'settings.number-notation.mixed',
+    defaultMessage: 'Mixed',
+    description:
+      'Mixed notation option using Standard through Quintillion and Scientific above it.',
+  },
   numberNotationStandard: {
     id: 'settings.number-notation.standard',
     defaultMessage: 'Standard',

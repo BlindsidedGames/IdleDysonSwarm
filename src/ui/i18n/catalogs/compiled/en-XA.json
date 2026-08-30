@@ -3929,6 +3929,36 @@
       "value": "]"
     }
   ],
+  "dyson.footer.release": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "platform"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "version"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "build"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.info.active-panels": [
     {
       "type": 0,
@@ -12769,6 +12799,20 @@
     {
       "type": 0,
       "value": "Ŀȧȧřɠḗḗ ƞŭŭḿƀḗḗř ƞǿǿŧȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.number-notation.mixed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿīẋḗḗḓ"
     },
     {
       "type": 0,

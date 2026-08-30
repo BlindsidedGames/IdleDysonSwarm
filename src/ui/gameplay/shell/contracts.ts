@@ -95,6 +95,7 @@ export interface DysonGameplayShellProps {
   readonly openMenuLabel: string
   readonly moreMenuLabel: string
   readonly moreMenuNewLabel?: string
+  readonly releaseFooter?: ReactNode
   readonly heading: ReactNode
   readonly routeTheme?:
     | 'bots'

@@ -980,6 +980,7 @@
 }
 
 .dyson-shell__bottom-navigation {
+  position: relative;
   z-index: 30;
   grid-row: 2;
   display: grid;
@@ -1377,7 +1378,7 @@
   inset-inline-start: 0;
   display: grid;
   inline-size: min(78vw, 16rem);
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   overflow-y: auto;
   scrollbar-color:
     var(--menu-scrollbar-thumb)
@@ -1486,6 +1487,37 @@
   color: white;
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.dyson-shell__release-footer {
+  color: color-mix(in srgb, var(--color-text-primary) 30%, transparent);
+  font-family: var(--font-family-body);
+  font-size: calc(0.56rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0.015em;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dyson-shell__release-footer--side {
+  display: none;
+  grid-row: 4;
+}
+
+.dyson-shell__release-footer--compact {
+  position: absolute;
+  z-index: 0;
+  inset-inline: max(0.25rem, var(--safe-area-left))
+    max(0.25rem, var(--safe-area-right));
+  inset-block-end: max(
+    0.06rem,
+    calc((var(--safe-area-bottom) - 0.56rem) / 2)
+  );
+  overflow: hidden;
+  pointer-events: none;
+  text-overflow: clip;
 }
 
 @media (max-width: 720px) {
@@ -1668,7 +1700,7 @@
     grid-column: 1;
     grid-row: 1;
     inline-size: auto;
-    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
     padding: max(0.4rem, var(--safe-area-top)) 0.45rem
       max(0.55rem, var(--safe-area-bottom));
     transform: none;
@@ -1687,6 +1719,16 @@
 
   .dyson-shell__main {
     grid-column: 2;
+  }
+
+  .dyson-shell__release-footer--side {
+    display: block;
+    min-block-size: 0.56rem;
+    padding: 0.18rem 0.1rem 0;
+  }
+
+  .dyson-shell__release-footer--compact {
+    display: none;
   }
 
   .dyson-shell__lower-regions {

@@ -8,6 +8,9 @@ import { GAME_NUMBER_PREFIXES } from './gameNumberMagnitudes'
 export type NumericValue = number | bigint
 export const NON_FINITE_NUMBER_FALLBACK = '—'
 export const CAPPED_GAME_DURATION_LABEL = 'MAX'
+export const MIXED_NOTATION_SCIENTIFIC_THRESHOLD = 1e21
+
+const MIXED_NOTATION_SCIENTIFIC_BIGINT_THRESHOLD = 10n ** 21n
 
 const GAME_ENERGY_PREFIXES = Object.freeze({
   joules: Object.freeze([
@@ -130,12 +133,13 @@ export function formatGameNumberParts(
   }
 
   const roundedValue = roundToThreeSignificantDigits(value)
+  const resolvedNotation = resolveNumberNotation(notation, Math.abs(value))
 
   if (
     (Math.abs(value) > 1000 || Math.abs(roundedValue) > 1000) &&
-    notation !== 'standard'
+    resolvedNotation !== 'standard'
   ) {
-    return formatExponentNumberParts(locale, roundedValue, notation)
+    return formatExponentNumberParts(locale, roundedValue, resolvedNotation)
   }
 
   const absolute = Math.abs(roundedValue)
@@ -172,7 +176,8 @@ function formatLargeGameBigIntParts(
   notation: NumberNotationMode,
 ): GameNumberParts {
   const negative = value < 0n
-  const digits = (negative ? -value : value).toString()
+  const absoluteValue = negative ? -value : value
+  const digits = absoluteValue.toString()
   let significantDigits = Number(digits.slice(0, 3))
   if (digits.length > 3 && Number(digits[3]) >= 5) {
     significantDigits += 1
@@ -180,8 +185,12 @@ function formatLargeGameBigIntParts(
   const carried = significantDigits === 1000
   if (carried) significantDigits = 100
   const effectiveLength = digits.length + (carried ? 1 : 0)
+  const resolvedNotation = resolveBigIntNumberNotation(
+    notation,
+    absoluteValue,
+  )
   const exponentGroup = Math.floor((effectiveLength - 1) / 3)
-  const exponent = notation === 'scientific'
+  const exponent = resolvedNotation === 'scientific'
     ? effectiveLength - 1
     : exponentGroup * 3
   const integerDigits = effectiveLength - exponent
@@ -193,12 +202,34 @@ function formatLargeGameBigIntParts(
     useGrouping: false,
   })
 
-  if (notation !== 'standard') {
+  if (resolvedNotation !== 'standard') {
     return { value: formatted, suffix: `e${exponent}` }
   }
   return exponentGroup < GAME_NUMBER_PREFIXES.length
     ? { value: formatted, suffix: GAME_NUMBER_PREFIXES[exponentGroup] }
     : { value: `${formatted}e${exponentGroup * 3}`, suffix: '' }
+}
+
+type ResolvedNumberNotation = Exclude<NumberNotationMode, 'mixed'>
+
+function resolveNumberNotation(
+  notation: NumberNotationMode,
+  absoluteValue: number,
+): ResolvedNumberNotation {
+  if (notation !== 'mixed') return notation
+  return absoluteValue >= MIXED_NOTATION_SCIENTIFIC_THRESHOLD
+    ? 'scientific'
+    : 'standard'
+}
+
+function resolveBigIntNumberNotation(
+  notation: NumberNotationMode,
+  absoluteValue: bigint,
+): ResolvedNumberNotation {
+  if (notation !== 'mixed') return notation
+  return absoluteValue >= MIXED_NOTATION_SCIENTIFIC_BIGINT_THRESHOLD
+    ? 'scientific'
+    : 'standard'
 }
 
 function formatExponentNumberParts(
@@ -256,8 +287,9 @@ export function formatGameEnergyParts(
   }
   if (value === 0) return { value: '0.00', unit: prefixes[0] }
 
-  if (value > 1000 && notation !== 'standard') {
-    const parts = formatExponentNumberParts(locale, value, notation)
+  const resolvedNotation = resolveNumberNotation(notation, value)
+  if (value > 1000 && resolvedNotation !== 'standard') {
+    const parts = formatExponentNumberParts(locale, value, resolvedNotation)
     return { value: `${parts.value}${parts.suffix}`, unit: prefixes[0] }
   }
 

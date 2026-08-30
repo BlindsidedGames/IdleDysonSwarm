@@ -37,6 +37,7 @@ export function DysonGameplayShell({
   openMenuLabel,
   moreMenuLabel,
   moreMenuNewLabel,
+  releaseFooter,
   heading,
   routeTheme = 'bots',
   routeThemeVariant,
@@ -249,6 +250,15 @@ export function DysonGameplayShell({
             {sidePanelSupplement}
           </div>
         )}
+        {releaseFooter !== undefined && (
+          <footer
+            className="dyson-shell__release-footer dyson-shell__release-footer--side"
+            aria-hidden={!wideLayout || undefined}
+            dir="ltr"
+          >
+            {releaseFooter}
+          </footer>
+        )}
       </aside>
 
       <main
@@ -384,6 +394,15 @@ export function DysonGameplayShell({
           maxItems={bottomLayout.maxItems}
           interactive={!compactMenuOpen && !wideLayout}
         />
+        {releaseFooter !== undefined && (
+          <footer
+            className="dyson-shell__release-footer dyson-shell__release-footer--compact"
+            aria-hidden={wideLayout || undefined}
+            dir="ltr"
+          >
+            {releaseFooter}
+          </footer>
+        )}
       </div>
     </div>
   )
