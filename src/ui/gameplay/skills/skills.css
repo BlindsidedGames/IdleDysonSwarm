@@ -160,7 +160,7 @@
 
 .skill-tree-viewport__controls
   .skills-surface__search-clear:focus-visible {
-  outline: 2px solid #f7e766;
+  outline: 2px solid var(--color-focus);
   outline-offset: 0;
 }
 
@@ -197,7 +197,7 @@
 
 .skill-tree-viewport__controls button:focus-visible,
 .skill-tree-node:focus-visible {
-  outline: 3px solid #f7e766;
+  outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
 
@@ -549,7 +549,7 @@
 }
 
 .skill-settings__actions > button:focus-visible {
-  outline: 3px solid #f7e766;
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -634,8 +634,8 @@
 
 .skill-settings__preset-row:has(button:focus-visible),
 .skill-settings__toggle:has(input:focus-visible) {
-  outline: 3px solid #f7e766;
-  outline-offset: 3px;
+  outline: none;
+  outline-offset: 0;
 }
 
 .skill-settings__preset-load:disabled {
@@ -893,7 +893,7 @@
 }
 
 .skill-details__preset-toggle input:focus-visible {
-  outline: 3px solid #f7e766;
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -1117,7 +1117,7 @@
 
 .skill-preset-management input:focus-visible,
 .skill-preset-management textarea:focus-visible {
-  outline: 3px solid #f7e766;
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -1159,12 +1159,12 @@
 }
 
 .skill-preset-color-picker[open] summary {
-  outline: 3px solid #f7e766;
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
 .skill-preset-color-picker summary:focus-visible {
-  outline: 3px solid #f7e766;
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -1203,7 +1203,7 @@
 }
 
 .skill-preset-color-picker__options button:focus-visible {
-  outline: 3px solid #f7e766;
+  outline: 3px solid var(--color-focus);
   outline-offset: 1px;
 }
 
@@ -1323,7 +1323,7 @@
 }
 
 .skill-details-dialog__close:focus-visible {
-  outline: 3px solid #f7e766;
+  outline: 3px solid var(--color-focus);
   outline-offset: 1px;
 }
 

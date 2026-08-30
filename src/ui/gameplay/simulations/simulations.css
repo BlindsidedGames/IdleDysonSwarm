@@ -624,8 +624,8 @@
 
 .simulation-panel-card .ui-button:focus-visible,
 .simulations-surface__show-formulas:has(input:focus-visible) {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 2px;
+  outline: none;
+  outline-offset: 0;
 }
 
 .simulation-panel-card__progress-content,
