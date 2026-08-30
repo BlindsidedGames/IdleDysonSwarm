@@ -33,12 +33,19 @@ describe('native host scaffold', () => {
       releaseCandidateId?.slice(8, 10)
     expect(read('hosts/capacitor/ios/release-version.xcconfig'))
       .toContain(`CURRENT_PROJECT_VERSION = ${appleBuildNumber}`)
-    const electron = read('hosts/electron/release-version.yml')
-    expect(electron).toContain(
-      `buildVersion: "${releaseCandidateId}"`,
-    )
-    expect(electron)
-      .toContain('version: "4.1.5"')
+    const electron = JSON.parse(
+      read('hosts/electron/release-version.json'),
+    ) as {
+      buildVersion: string
+      extraMetadata: { version: string; buildVersion: string }
+    }
+    expect(electron).toEqual({
+      buildVersion: releaseCandidateId,
+      extraMetadata: {
+        version: '4.1.5',
+        buildVersion: releaseCandidateId,
+      },
+    })
   })
 
   it('keeps debug builds open, Android fail-closed, and Xcode locally managed', () => {
