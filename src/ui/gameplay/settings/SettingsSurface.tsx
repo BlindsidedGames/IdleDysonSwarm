@@ -614,6 +614,9 @@ export function SettingsSurface({
                       if (isNumberNotationMode(mode)) numberNotation.setMode(mode)
                     }}
                   >
+                    <option value="mixed">
+                      {intl.formatMessage(messages.numberNotationMixed)}
+                    </option>
                     <option value="standard">
                       {intl.formatMessage(messages.numberNotationStandard)}
                     </option>

@@ -1,4 +1,5 @@
 export const NUMBER_NOTATION_MODES = Object.freeze([
+  'mixed',
   'standard',
   'scientific',
   'engineering',
@@ -7,7 +8,7 @@ export const NUMBER_NOTATION_MODES = Object.freeze([
 export type NumberNotationMode =
   (typeof NUMBER_NOTATION_MODES)[number]
 
-export const DEFAULT_NUMBER_NOTATION: NumberNotationMode = 'standard'
+export const DEFAULT_NUMBER_NOTATION: NumberNotationMode = 'mixed'
 
 let activeNumberNotation: NumberNotationMode = DEFAULT_NUMBER_NOTATION
 

@@ -939,6 +939,10 @@
     "defaultMessage": "Unknown facility",
     "description": "Safe fallback when an unrecognized canonical upstream source is projected."
   },
+  "dyson.footer.release": {
+    "defaultMessage": "{platform} · {version} · {build}",
+    "description": "Compact persistent platform, marketing version, and build identity."
+  },
   "dyson.info.active-panels": {
     "defaultMessage": "Active panels: <emphasis>{value}</emphasis>",
     "description": "Unity active panel metric below the first scale threshold."
@@ -3158,6 +3162,10 @@
   "settings.number-notation.label": {
     "defaultMessage": "Large number notation",
     "description": "Accessible label for the number notation select."
+  },
+  "settings.number-notation.mixed": {
+    "defaultMessage": "Mixed",
+    "description": "Mixed notation option using Standard through Quintillion and Scientific above it."
   },
   "settings.number-notation.scientific": {
     "defaultMessage": "Scientific",

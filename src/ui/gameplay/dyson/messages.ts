@@ -42,6 +42,12 @@ export const readyDysonMessages = defineMessages({
     description:
       'Accessible label when a newly unlocked route is inside the responsive menu.',
   },
+  releaseFooter: {
+    id: 'dyson.footer.release',
+    defaultMessage: '{platform} · {version} · {build}',
+    description:
+      'Compact persistent platform, marketing version, and build identity.',
+  },
   infinityRouteNew: {
     id: 'dyson.navigation.infinity-new',
     defaultMessage: 'Infinity, new',

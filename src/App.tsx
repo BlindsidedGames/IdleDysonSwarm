@@ -29,6 +29,7 @@ import { StatusFeedback } from './ui/components'
 import type { GameAudioService } from './audio'
 import { useNumberNotation } from './ui/number-notation'
 import type { HostKind } from './platform/releaseFoundation'
+import type { ReleaseFooterPresentation } from './platform/releaseFooter'
 
 export interface AppProps {
   readonly runtime: BrowserUiRuntimeFoundation
@@ -41,6 +42,7 @@ export interface AppProps {
   readonly confirmOverwrite?: (message: string) => boolean
   readonly buildId?: string
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
+  readonly releaseFooter?: Readonly<ReleaseFooterPresentation>
   readonly localDeveloperOptionsPurchased?: boolean
   readonly audio?: GameAudioService
 }
@@ -56,6 +58,7 @@ function App({
   confirmOverwrite = (message) => window.confirm(message),
   buildId,
   releasePlatformServices,
+  releaseFooter,
   localDeveloperOptionsPurchased,
   audio,
 }: AppProps) {
@@ -195,6 +198,7 @@ function App({
           copySaveText={(text: string) =>
             runtime.writeClipboardText(text)}
           releasePlatformServices={releasePlatformServices}
+          releaseFooter={releaseFooter}
           localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
           audio={audio}
         />

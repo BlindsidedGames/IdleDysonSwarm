@@ -48,6 +48,8 @@ import {
   BottomNavigationTextPreferenceService,
   BottomNavigationTextProvider,
 } from './ui/bottom-navigation-text'
+import nativeRelease from '../hosts/native-release.json'
+import { resolveReleaseFooter } from './platform/releaseFooter'
 
 installTextSelectionPolicy()
 void bootstrap()
@@ -81,6 +83,15 @@ async function bootstrap(): Promise<void> {
       detectNativeBridge: () => nativeBridge,
       automaticNumberFormattingAdopter: numberNotationPreference,
       automaticResearchVisibilityAdopter: researchVisibilityPreference,
+    })
+    const releaseFooter = await resolveReleaseFooter({
+      target: nativeBridge?.target ?? 'browser',
+      developmentBuild: import.meta.env.DEV,
+      source: {
+        marketingVersion: nativeRelease.marketingVersion,
+        releaseCandidateId: nativeRelease.defaultReleaseCandidateId,
+      },
+      metadata: composition.releasePlatformServices?.metadata,
     })
     void composition.audio.initialize().catch(() => undefined)
     installSemanticAudioCues(document, composition.audio)
@@ -177,6 +188,7 @@ async function bootstrap(): Promise<void> {
                     releasePlatformServices={
                       composition.releasePlatformServices
                     }
+                    releaseFooter={releaseFooter}
                     audio={composition.audio}
                   />
                   {pwaUpdateController === undefined ? null : (

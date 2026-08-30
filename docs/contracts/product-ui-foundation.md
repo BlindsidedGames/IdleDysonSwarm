@@ -171,6 +171,13 @@ remain in one row without scrolling, clipping, overlap, ellipsis, or removal;
 the user controls how dense that row becomes. Unknown
 stored destination IDs are preserved so later routes can adopt them safely.
 
+A compact release footer remains visible across ready gameplay routes. On
+mobile and portrait-tablet layouts it occupies the existing bottom-navigation
+safe-area/background and must not add a shell row or reduce the gameplay field.
+On layouts with a permanent side rail it sits at the rail's bottom. It shows
+the player-facing platform, marketing version, and truthful host build identity;
+native installed-package metadata outranks checked-in fallback values.
+
 Route discovery is also portable canonical save state. A newly revealed,
 unvisited destination uses the square highlight in the compact bottom bar and
 a dot in the drawer; the More button uses a dot only while such a destination
@@ -501,8 +508,10 @@ The application shell owns one active-time driver:
   minute may use decimals only when the distinction affects interaction.
 - `bigint` values remain `bigint` until string formatting. Never coerce them to
   `number`.
-- Number notation is a versioned device-local preference with Standard,
-  Scientific, and Engineering choices. Portable saves exclude it; manual
+- Number notation is a versioned device-local preference with Mixed, Standard,
+  Scientific, and Engineering choices. Mixed is the default: it uses Standard
+  through the complete Quintillion range and normalized Scientific notation
+  from `1e21` upward. Portable saves exclude it; manual
   imports retain the receiving device's choice. Automatic same-device legacy
   migration may adopt a valid source choice once when no device preference is
   established, but only when the native provenance identity matches both the

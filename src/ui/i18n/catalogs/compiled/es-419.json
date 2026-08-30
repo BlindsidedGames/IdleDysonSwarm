@@ -2049,6 +2049,28 @@
       "value": "Instalación desconocida"
     }
   ],
+  "dyson.footer.release": [
+    {
+      "type": 1,
+      "value": "platform"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "version"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "build"
+    }
+  ],
   "dyson.info.active-panels": [
     {
       "type": 0,
@@ -6453,6 +6475,12 @@
     {
       "type": 0,
       "value": "Notación de números grandes"
+    }
+  ],
+  "settings.number-notation.mixed": [
+    {
+      "type": 0,
+      "value": "Mixta"
     }
   ],
   "settings.number-notation.scientific": [

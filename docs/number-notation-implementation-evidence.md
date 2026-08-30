@@ -2,8 +2,8 @@
 
 ## Decision and boundaries
 
-Idle Dyson Swarm exposes one Settings select with Standard, Scientific, and
-Engineering modes. `src/ui/i18n/formatters.ts` remains the only game-number
+Idle Dyson Swarm exposes one Settings select with Mixed, Standard, Scientific,
+and Engineering modes. `src/ui/i18n/formatters.ts` remains the only game-number
 formatter family; notation selects an output policy without changing canonical
 values, commands, saves, active-time delivery, or the configured gameplay
 update cadence.
@@ -11,9 +11,10 @@ update cadence.
 The preference is validated version-1 state under
 `idle-dyson-swarm.number-notation.v1`. It is read once when the presentation
 root is created and written only after an explicit selection. Missing, corrupt,
-future-version, and unknown values fall back to Standard. The React context is
-stable between explicit preference changes, so ordinary snapshot publication
-does not churn it.
+future-version, and unknown values fall back to Mixed. Existing valid stored
+choices remain unchanged; changing the fallback does not rewrite them. The
+React context is stable between explicit preference changes, so ordinary
+snapshot publication does not churn it.
 
 Portable `IDSWEB1` exports remove the legacy `numberFormatting` graph field.
 Manual/shared imports cannot write the device preference. After—and only
@@ -32,6 +33,10 @@ evidence promotion share the same trust predicate.
 
 ## Formatting contract
 
+- Mixed is the default. It retains Standard suffix presentation below `1e21`,
+  covering `1.00Qi` through `999Qi`, then uses normalized Scientific notation
+  at `1.00e21` and above. The boundary is sign-symmetric and applies equally to
+  `number`, `bigint`, and energy presentation.
 - Standard retains the existing suffix table and three-significant-digit
   truncation, including fallback exponent output after the suffix table.
 - Scientific and Engineering retain Standard presentation at absolute values
@@ -149,8 +154,9 @@ inside the shared formatter.
 
 ## Validation record
 
-Automated coverage includes all three notation modes, zero, negatives, exact
-1000 and suffix boundaries, values beyond the suffix table, huge positive and
+Automated coverage includes all four notation modes, the Mixed `1e21` boundary,
+zero, negatives, exact 1000 and suffix boundaries, values beyond the suffix
+table, huge positive and
 negative `bigint`, non-finite fallbacks, W/J semantics, storage corruption and
 version fallback, reload, trusted automatic migration success/failure,
 browser-retained and identity/path mismatch rejection, portable-export

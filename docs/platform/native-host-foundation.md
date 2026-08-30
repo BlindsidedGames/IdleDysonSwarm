@@ -23,6 +23,14 @@ CI overrides the default with `IDS_RELEASE_CANDIDATE_ID=YYYYMMDDNN`. The sync
 script rejects malformed dates, build IDs at or below the retained legacy
 native-build floor, and values above Android's version-code limit.
 
+The ready application shell displays a minimal release footer without reducing
+the gameplay field. Android and iOS use their installed package metadata and
+display `Android` or `iOS`; Electron distribution displays `Steam`. Website
+builds use the checked-in marketing/release-candidate identity, while local
+Vite sessions display `Dev` and `local`. Compact layouts place the label inside
+existing bottom-navigation safe-area chrome; permanent-rail layouts place it at
+the rail's bottom.
+
 ## Signing boundary
 
 Debug Android builds require no signing inputs. A Gradle task containing
