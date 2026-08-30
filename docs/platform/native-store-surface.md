@@ -77,6 +77,14 @@ belongs to the native host, outside the shared save, so game resets do not erase
 store ownership. Existing gameplay reset semantics continue to control the
 local in-game Developer Options path.
 
+A resolved provider refresh is authoritative for the current Store account,
+including explicit negative ownership after revocation, account change,
+restore, or sign-out. A rejected or unavailable refresh supplies no ownership
+evidence and therefore retains the latest verified in-session value, then the
+durable cache on a later launch. The device-local Double IP enabled preference
+remains writable offline only when that verified ownership exists; it persists
+independently and is re-applied when the application is opened again.
+
 Consumable-derived supporter ownership is affirmative and sticky: a later
 provider refresh that omits consumed transaction history must not erase it.
 Android commits the supporter flag before calling Play consumption, including

@@ -66,6 +66,11 @@ storage so a previously verified benefit remains available offline. That cache
 is not transferable and is never included in game exports. Android automatic
 app-data backup is disabled; iOS uses a non-synchronizing, this-device-only
 Keychain record. Live provider state is authoritative when available.
+An unavailable or rejected refresh retains the latest verified ownership; it
+is not negative evidence. A successful provider response that omits a durable
+product is authoritative revocation or account-change evidence and updates the
+cache. Double IP's separate enabled preference remains device-local and can be
+toggled offline only while verified ownership is retained.
 Developer Options' existing in-game unlock is a separate gameplay route and is
 neither replaced nor written by the Store.
 

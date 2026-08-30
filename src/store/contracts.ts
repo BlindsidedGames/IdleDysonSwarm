@@ -262,6 +262,10 @@ implements EntitlementAuthority, AutomaticUnityPurchaseEvidencePromoter {
           cached?.ownership.supporterCatGallery === true,
       })
     } catch (error: unknown) {
+      // A failed refresh carries no negative evidence. The last verified
+      // in-session value may be newer than a stale cache when persistence of
+      // an authoritative account change or revocation was unavailable.
+      if (this.current !== null) return this.current
       if (cached === null) throw error
       ownership = freezeOwnership(cached.ownership)
       this.current = ownership
