@@ -12,6 +12,7 @@ import {
 } from './numeric'
 import { clampDoubleTimeRate } from './timeResources'
 import { buyXCost, tryDebitContinuous } from './transactions'
+import { settleContinuousTransfer } from './conservativeSettlement'
 
 export const DREAM_SPACE_AGE_COST_EXPONENT = 1.01
 
@@ -1012,15 +1013,15 @@ function deriveRailgunChargeTransfer(
   }
   if (energy > 0 && charge < maximumCharge) {
     const requested = Math.min(maximumCharge - charge, energy)
-    const debit = tryDebitContinuous(energy, requested)
-    if (debit.status === 'success') {
-      const nextCharge = addContinuous(charge, debit.charged)
-      if (nextCharge > charge) {
-        energy = debit.balance
-        charge = Math.min(maximumCharge, nextCharge)
-        transferred = debit.charged
-      }
-    }
+    const transfer = settleContinuousTransfer(
+      energy,
+      charge,
+      requested,
+      maximumCharge,
+    )
+    energy = transfer.sourceBalance
+    charge = transfer.destinationBalance
+    transferred = transfer.settled
   }
   return { energy, charge, transferred }
 }

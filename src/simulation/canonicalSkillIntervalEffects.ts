@@ -8,6 +8,7 @@ import {
   type BasicDysonInfinityState,
 } from './infinityCycle'
 import { addContinuous, clampContinuous, multiplyContinuous } from './numeric'
+import { settleContinuousDebit } from './conservativeSettlement'
 
 export interface CanonicalSkillIntervalInputs {
   readonly seconds: number
@@ -258,11 +259,16 @@ function resolveStellarAggregate(
     botsPerSecond,
     affordableSeconds,
   )
+  const debit = settleContinuousDebit(startingBots, totalDebited)
+  const fundedSeconds = debit.settled / botsPerSecond
   return {
-    bots: Math.max(0, ordinaryEndingBots - totalDebited),
+    bots: addContinuous(
+      debit.balance,
+      multiplyContinuous(botProductionPerSecond, seconds),
+    ),
     planetsProduced: multiplyContinuous(
       planetsPerSecond,
-      affordableSeconds,
+      fundedSeconds,
     ),
   }
 }

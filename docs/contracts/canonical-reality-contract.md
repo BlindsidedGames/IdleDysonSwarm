@@ -35,9 +35,10 @@ workers, Influence and capacity to zero, and then applies these exact branches:
 - manual mode accepts only the remaining batch capacity, discards overflow,
   clears fractional progress when capacity is reached, and reports only
   accepted workers as generated;
-- automatic mode converts every completed worker directly into Influence,
-  leaves ready workers at zero, and reports both completed workers and the
-  smaller amount of Influence actually admitted at the finite maximum.
+- automatic mode offers every completed worker for direct conversion to
+  Influence, consumes only the exact whole-worker delta represented by that
+  continuous balance, and retains every uncredited worker in `workersReady`
+  for a later interval;
 
 The compatibility-sensitive manual-mode stall estimate is intentionally
 approximate: when an
@@ -48,8 +49,9 @@ formula only through an explicit gameplay decision.
 
 Every generated worker increments Universe Designation with saturating
 arithmetic. Automatic conversion may continue generating and counting workers
-after Influence is full; those workers are discarded, and this branch reports
-no capacity stall.
+after Influence is full; those workers remain in `workersReady` up to its
+discrete ceiling. Overflow past that ceiling retains the existing saturation
+and capacity-stall reporting behavior.
 
 ## Gather Influence transaction
 

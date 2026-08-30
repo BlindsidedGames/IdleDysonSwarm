@@ -2,7 +2,7 @@ import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
 } from '../core/finiteNonNegativeNumber'
-import { addContinuous } from './numeric'
+import { settleContinuousCredit } from './conservativeSettlement'
 
 export const DEFAULT_STORED_TIME_CAPACITY_SECONDS = 86_400
 export const STORED_TIME_MAXIMUM_SECONDS = Number.MAX_VALUE
@@ -174,24 +174,17 @@ export function applyAwayTimeGrant(
     : 0
   const cheater = repaired.cheater || request.awaySeconds < 0
 
-  const availableCapacity = Math.max(
-    0,
-    repaired.capacitySeconds - repaired.bankSeconds,
-  )
-  const storedTimeCreditedSeconds = Math.min(
+  const credit = settleContinuousCredit(
+    repaired.bankSeconds,
     awaySeconds,
-    availableCapacity,
+    repaired.capacitySeconds,
   )
-  const bankSeconds =
-    storedTimeCreditedSeconds >= availableCapacity
-      ? repaired.capacitySeconds
-      : addContinuous(repaired.bankSeconds, storedTimeCreditedSeconds)
 
   return {
     ...repaired,
-    bankSeconds,
+    bankSeconds: credit.balance,
     cheater,
-    storedTimeCreditedSeconds,
+    storedTimeCreditedSeconds: credit.settled,
     dreamDoubleTimeBankSeconds: 0,
   }
 }

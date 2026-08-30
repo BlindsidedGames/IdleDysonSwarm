@@ -1,6 +1,5 @@
 import {
   isFiniteNonNegativeNumber,
-  isFinitePositiveNumber,
   isSafeNonNegativeInteger,
   isSafePositiveInteger,
 } from '../core/finiteNonNegativeNumber'
@@ -23,12 +22,12 @@ import {
 import {
   addContinuous,
   addDiscrete,
-  bitDecrement,
   CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
   floorToDiscrete,
   multiplyContinuous,
 } from './numeric'
+import { settleDiscreteToContinuousTransfer } from './conservativeSettlement'
 import { QUANTUM_CONSTANTS } from './quantumUpgrades'
 
 const FLOAT32_MAXIMUM = 3.4028234663852886e38
@@ -283,29 +282,14 @@ function creditGeneratedWorkers(
   if (availableWorkers <= 0n || influence >= CONTINUOUS_MAXIMUM) {
     return { influence, consumedWorkers: 0n }
   }
-
-  let requestedInfluence = Number(availableWorkers)
-  if (floorToDiscrete(requestedInfluence) > availableWorkers) {
-    requestedInfluence = bitDecrement(requestedInfluence)
+  const transfer = settleDiscreteToContinuousTransfer(
+    availableWorkers,
+    influence,
+  )
+  return {
+    influence: transfer.destinationBalance,
+    consumedWorkers: transfer.settled,
   }
-  if (!isFinitePositiveNumber(requestedInfluence)) {
-    return { influence, consumedWorkers: 0n }
-  }
-
-  const nextInfluence = addContinuous(influence, requestedInfluence)
-  const creditedInfluence = nextInfluence - influence
-  if (
-    !isFinitePositiveNumber(creditedInfluence) ||
-    creditedInfluence > requestedInfluence
-  ) {
-    return { influence, consumedWorkers: 0n }
-  }
-
-  const consumedWorkers = floorToDiscrete(creditedInfluence)
-  if (consumedWorkers <= 0n || consumedWorkers > availableWorkers) {
-    return { influence, consumedWorkers: 0n }
-  }
-  return { influence: nextInfluence, consumedWorkers }
 }
 
 export function readRealityWorkerTuning():

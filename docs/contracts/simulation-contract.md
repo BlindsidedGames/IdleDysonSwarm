@@ -28,6 +28,15 @@ Swarm. Update cadence, active play and Offline Time are defined by
   invalid; gameplay Overflow is a separate mechanic.
 - Saturating numeric helpers must be used where large finite inputs can exceed
   JavaScript's finite range.
+- Source-conserving conversions use the opt-in conservative settlement
+  boundary. The source debit and destination credit must be the same positive
+  representable delta, never exceed the request, and leave every unrepresented
+  remainder with the source. A discrete source is debited only by the exact
+  whole units represented in its continuous destination.
+- Fixed-price purchases retain their separate minimum-one-ULP debit policy so
+  an affordable purchase cannot become free. Purchase output must still be
+  proven before that debit and cannot round above or below its authored
+  quantity.
 
 ## Update invariants
 
@@ -43,6 +52,9 @@ Swarm. Update cadence, active play and Offline Time are defined by
   Stored Time.
 - Game speed affects gameplay time, not UI, input, persistence, worker budgets
   or rate-clock time.
+- Stellar Sacrifice rewards are derived from the Bot debit actually represented
+  at the interval boundary. An unrepresentable debit grants no reward, while a
+  partially represented debit grants only its proportionally funded reward.
 
 ## Persistence boundary
 

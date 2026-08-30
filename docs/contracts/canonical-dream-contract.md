@@ -76,7 +76,8 @@ Space production and reset behavior must preserve the same separation:
 - energy production reads Solar, Fusion and launched Swarm panels;
 - Space Factories create Dyson panels through their saved timer;
 - railgun charging and volleys occur only on automation boundaries and retain
-  durable firing progress;
+  durable firing progress; an energy-to-charge transfer debits exactly the
+  delta represented by charge and retains every uncredited energy remainder;
 - Meteor, Artificial Intelligence, Global Warming and Black Hole transitions
   classify their exact Strange Matter rewards before resetting the run;
 - permanent upgrades and Strange Matter survive while per-run Dream state is

@@ -47,11 +47,17 @@ bookkeeping and the unconverted remainder remain.
 
 ## Avocado
 
-The feed commands drain the complete currently available source balance:
+The feed commands move the complete currently representable portion of the
+available source balance:
 
 - unspent Infinity Points;
 - Influence;
 - Strange Matter.
+
+Influence and Strange Matter use one identical represented debit and credit;
+any coarse-precision remainder stays in its source. Infinity Points are debited
+only by the exact whole units admitted by the continuous accumulator. A
+sub-ULP feed rejects without changing either side.
 
 The production multiplier is neutral while locked. Once unlocked, each
 accumulator contributes `log10(value)` only at the authored threshold of ten;
