@@ -38,6 +38,13 @@ game. The document `lang`, `dir`, locale data attribute, and cached `Intl`
 formatters follow the active catalog. The change is announced politely without
 moving focus.
 
+If the selected non-English catalog cannot load during startup, the application
+records a closed catalog-unavailable diagnostic and renders with the bundled
+English catalog for that launch. It does not rewrite the device-local language
+preference, so the selected catalog is attempted again on the next launch.
+English is the essential fallback; if it is also unavailable, startup follows
+the existing fail-safe path instead of presenting a false ready state.
+
 Android and iOS packages declare every production language as a supported
 application localization so the operating systems can expose their per-app
 language controls. Physical-device validation must confirm that WebView ordered
