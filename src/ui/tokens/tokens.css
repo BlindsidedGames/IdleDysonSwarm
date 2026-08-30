@@ -159,6 +159,17 @@
   --breakpoint-navigation-rail-min: 1080px;
 }
 
+/*
+ * IDS communicates focus inside the control with a neutral light lift.
+ * Browser-style external focus rectangles do not belong to the game's visual
+ * language, and the focus treatment must not replace state-specific filters.
+ */
+:focus-visible {
+  box-shadow: inset 0 0 0.7rem rgb(255 255 255 / 24%) !important;
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+
 :root:lang(ja) {
   --font-family-body: var(--font-family-japanese);
   --line-height-body: 1.65;
@@ -212,5 +223,12 @@
     --color-text-primary: CanvasText;
     --color-text-secondary: CanvasText;
     --color-focus: Highlight;
+  }
+
+  :focus-visible {
+    filter: none;
+    box-shadow: none !important;
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px !important;
   }
 }

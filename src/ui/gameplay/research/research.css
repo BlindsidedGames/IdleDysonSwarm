@@ -287,8 +287,8 @@
 .research-surface__hide-completed:has(input:focus-visible),
 .research-surface__automation input:focus-visible,
 .research-surface__automation-toggle-all:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: -3px;
+  outline: none;
+  outline-offset: 0;
 }
 
 .research-surface__settings {

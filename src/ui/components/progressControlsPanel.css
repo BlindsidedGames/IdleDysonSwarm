@@ -82,8 +82,16 @@
 }
 
 .ui-progress-controls-panel__settings:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 0.18rem;
+  outline: none;
+}
+
+.ui-progress-controls-panel__settings:focus-visible::before {
+  background: color-mix(
+    in srgb,
+    var(--theme-accent) 48%,
+    var(--theme-panel)
+  );
+  filter: brightness(1.12);
 }
 
 .ui-progress-controls-panel__body {

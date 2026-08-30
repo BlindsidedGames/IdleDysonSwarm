@@ -74,12 +74,12 @@
   cursor: pointer;
 }
 .quantum-control-panel__hide-maxed input { inline-size: 1.25rem; block-size: 1.25rem; }
-.quantum-control-panel__hide-maxed:has(input:focus-visible) { outline: 3px solid var(--color-focus); outline-offset: -3px; }
+.quantum-control-panel__hide-maxed:has(input:focus-visible) { outline: none; outline-offset: 0; }
 .quantum-control-panel__purchase-settings { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.25rem; padding-block-start: 0.2rem; }
 .quantum-control-panel__purchase-settings button { min-block-size: var(--target-minimum); border: 1px solid var(--theme-divider); border-radius: 0.2rem; background: var(--theme-page); color: white; font: inherit; font-size: 0.78rem; }
 .quantum-control-panel__purchase-settings button[aria-pressed="true"] { border-color: var(--quantum-accent); background: var(--theme-selected); }
 .quantum-control-panel__settings-toggle:focus-visible,
-.quantum-control-panel__purchase-settings button:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 0.18rem; }
+.quantum-control-panel__purchase-settings button:focus-visible { outline: none; outline-offset: 0; }
 
 .quantum-surface__content,
 .avocato-surface__content {

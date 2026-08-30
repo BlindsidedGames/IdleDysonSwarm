@@ -630,7 +630,9 @@ Requirements:
 
 WCAG 2.2 AA is the release baseline.
 
-- Full keyboard operation with a persistent, high-contrast focus indicator.
+- Full keyboard operation with a persistent, visibly brightened in-control
+  focus state. External browser-style rectangular focus outlines are not part
+  of the game's visual language.
 - Skip link, one `main` landmark, meaningful headings and named navigation.
 - Contrast of at least 4.5:1 for normal text, 3:1 for large text and essential
   UI boundaries. Adjust semantic token foreground/background pairs when a
