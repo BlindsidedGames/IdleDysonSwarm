@@ -23,11 +23,9 @@ export interface NumericRepairResult {
 }
 
 const derivedProductionFields = [
-  'panelsPerSec',
   'botProduction',
   'assemblyLineBotProduction',
   'assemblyLineProduction',
-  'managerAssemblyLineProduction',
   'managerProduction',
   'serverManagerProduction',
   'serverProduction',
@@ -37,17 +35,25 @@ const derivedProductionFields = [
   'matrioshkaBrainPlanetProduction',
   'birchPlanetMatrioshkaProduction',
   'galacticBrainBirchProduction',
-  'pocketDimensionsProduction',
   'quantumComputingProduction',
   'pocketDimensionsWithoutAnythingElseProduction',
   'pocketProtectorsProduction',
   'pocketMultiverseProduction',
   'totalPlanetProduction',
-  'scientificPlanetsProduction',
   'stellarSacrificesProduction',
-  'rudimentrySingularityProduction',
   'planetAssemblyProduction',
   'shellWorldsProduction',
+] as const
+
+// These five derived values are also the durable recurrence carriers used to
+// seed dynamic Skill effects after reload. Preserve valid publications while
+// still repairing missing, negative, or non-finite legacy values below.
+const durableEvaluationSnapshotFields = [
+  'panelsPerSec',
+  'rudimentrySingularityProduction',
+  'pocketDimensionsProduction',
+  'scientificPlanetsProduction',
+  'managerAssemblyLineProduction',
 ] as const
 
 const authoredStructuralDefaults: Readonly<Record<string, number>> = {
@@ -99,6 +105,9 @@ export function repairNumericSave(settings: SaveRecord): NumericRepairResult {
   const infinity = ensureRecord(dyson, 'dysonVerseInfinityData')
   repairBots(settings, infinity, add)
   repairResearchLevels(infinity, add)
+  for (const field of durableEvaluationSnapshotFields) {
+    if (!isFiniteNonNegativeNumber(infinity[field])) infinity[field] = 0
+  }
   for (const field of derivedProductionFields) infinity[field] = 0
 
   clampTimeBank(settings, 'offlineTime', add)

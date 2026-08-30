@@ -66,6 +66,17 @@ export class ResearchVisibilityPreferenceService {
     return true
   }
 
+  /** Restores the explicit local preference carried by a V2 checkpoint. */
+  restoreTransitionalV2HidePurchased(value: unknown): boolean {
+    if (typeof value !== 'boolean') return false
+    this.#legacyAdoptionAvailable = false
+    const changed = value !== this.#hideCompleted
+    this.#hideCompleted = value
+    this.#write()
+    if (changed) this.#publish()
+    return true
+  }
+
   #readOnce(): StoredResearchVisibilityPreference | null {
     try {
       const text = this.#storage?.getItem(RESEARCH_VISIBILITY_STORAGE_KEY)

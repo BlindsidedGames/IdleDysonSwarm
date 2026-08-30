@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import {
@@ -12,6 +13,19 @@ import {
   PWA_BASE_PATH,
   pwaPackagePlugin,
 } from './scripts/pwaPackage.js'
+import {
+  resolvePackagedReleaseIdentity,
+} from './scripts/packaged-release-identity.js'
+import type {
+  NativeReleaseSource,
+} from './scripts/sync-native-release.js'
+
+const NATIVE_RELEASE_SOURCE = JSON.parse(
+  readFileSync(
+    new URL('./hosts/native-release.json', import.meta.url),
+    'utf8',
+  ),
+) as NativeReleaseSource
 
 function nativeRelativeHtmlPlugin(): Plugin {
   return {
@@ -63,8 +77,18 @@ function developmentTelemetryPlugin(): Plugin {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const nativeBuild = mode === 'native'
+  const packagedReleaseIdentity = resolvePackagedReleaseIdentity(
+    NATIVE_RELEASE_SOURCE,
+    mode,
+    process.env.IDS_RELEASE_CANDIDATE_ID,
+  )
   return {
     base: nativeBuild ? './' : PWA_BASE_PATH,
+    define: {
+      __IDS_PACKAGED_RELEASE_IDENTITY__: JSON.stringify(
+        packagedReleaseIdentity,
+      ),
+    },
     plugins: [
       developmentTelemetryPlugin(),
       stripMessageAuthoringMetadataPlugin(),

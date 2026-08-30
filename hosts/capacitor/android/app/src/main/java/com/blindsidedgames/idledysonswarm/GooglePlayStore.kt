@@ -2,6 +2,8 @@ package com.blindsidedgames.idledysonswarm
 
 import android.app.Activity
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
@@ -38,6 +40,7 @@ internal class GooglePlayStore(
     context: Context,
     private val entitlementCache: NativeEntitlementCache,
 ) : PurchasesUpdatedListener {
+    private val storeHandler = Handler(Looper.getMainLooper())
     private val productDetails = mutableMapOf<String, ProductDetails>()
     private val connectionWaiters = mutableListOf<(Boolean) -> Unit>()
     private var connectionStarting = false
@@ -51,7 +54,7 @@ internal class GooglePlayStore(
         .enableAutoServiceReconnection()
         .build()
 
-    fun warmUp() {
+    fun warmUp() = runOnStoreThread {
         entitlementCache.retryPendingProviderOwnership()
         ensureConnected { available ->
             if (!available) return@ensureConnected
@@ -62,7 +65,9 @@ internal class GooglePlayStore(
 
     fun providerAvailable(): Boolean = billingClient.isReady
 
-    fun products(callback: (List<NativeProductListing>, Boolean) -> Unit) {
+    fun products(
+        callback: (List<NativeProductListing>, Boolean) -> Unit,
+    ) = runOnStoreThread {
         queryProductDetails { details, available ->
             if (!available) {
                 callback(PRODUCT_IDS.map { NativeProductListing(it, null, false) }, false)
@@ -85,10 +90,10 @@ internal class GooglePlayStore(
         activity: Activity,
         productId: String,
         callback: (NativePurchaseResult) -> Unit,
-    ) {
+    ) = runOnStoreThread {
         if (pendingPurchase != null) {
             callback(NativePurchaseResult(false, productId, "purchase-failed"))
-            return
+            return@runOnStoreThread
         }
         queryProductDetails { _, available ->
             val detail = productDetails[productId]
@@ -114,7 +119,10 @@ internal class GooglePlayStore(
         }
     }
 
-    fun restore(callback: (List<String>, Boolean) -> Unit) {
+    fun restore(
+        callback: (List<String>, Boolean) -> Unit,
+    ) = runOnStoreThread {
+        val refreshSequence = entitlementCache.beginProviderRefresh()
         queryOwnedPurchases { purchases, available ->
             if (!available) {
                 callback(emptyList(), false)
@@ -126,7 +134,7 @@ internal class GooglePlayStore(
                 .filter { DURABLE_IDS.contains(it) }
                 .distinct()
                 .toList()
-            val persisted = writeProviderOwnership(durableIds)
+            val persisted = writeProviderOwnership(durableIds, refreshSequence)
             if (persisted) processDurablePurchases(purchases)
             callback(durableIds, true)
         }
@@ -135,8 +143,9 @@ internal class GooglePlayStore(
     fun refreshDurableOwnership(
         acknowledgeVerifiedPurchases: Boolean = true,
         callback: (NativeOwnershipRefreshResult) -> Unit,
-    ) {
+    ) = runOnStoreThread {
         entitlementCache.retryPendingProviderOwnership()
+        val refreshSequence = entitlementCache.beginProviderRefresh()
         queryOwnedPurchases { purchases, available ->
             if (!available) {
                 callback(NativeOwnershipRefreshResult(null, false, false))
@@ -152,7 +161,10 @@ internal class GooglePlayStore(
                 developerOptions = durableIds.contains(DEV_OPTIONS),
                 supporterCatGallery = entitlementCache.read().supporterCatGallery,
             )
-            val persisted = entitlementCache.writeProviderOwnership(ownership)
+            val persisted = entitlementCache.writeProviderOwnership(
+                ownership,
+                refreshSequence,
+            )
             if (persisted && acknowledgeVerifiedPurchases) {
                 processDurablePurchases(purchases)
             }
@@ -168,16 +180,26 @@ internal class GooglePlayStore(
         billingResult: BillingResult,
         purchases: MutableList<Purchase>?,
     ) {
-        if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-            resolvePending(false, mapBillingFailure(billingResult.responseCode))
+        val responseCode = billingResult.responseCode
+        val updatedPurchases = purchases.orEmpty().toList()
+        runOnStoreThread {
+            handlePurchasesUpdated(responseCode, updatedPurchases)
+        }
+    }
+
+    private fun handlePurchasesUpdated(
+        responseCode: Int,
+        purchases: List<Purchase>,
+    ) {
+        if (responseCode != BillingClient.BillingResponseCode.OK) {
+            resolvePending(false, mapBillingFailure(responseCode))
             return
         }
-        val updatedPurchases = purchases.orEmpty()
-        if (updatedPurchases.isEmpty()) {
+        if (purchases.isEmpty()) {
             resolvePending(false, "purchase-failed")
             return
         }
-        updatedPurchases.forEach { purchase ->
+        purchases.forEach { purchase ->
             val requestedProduct = pendingPurchase?.first
                 ?.takeIf(purchase.products::contains)
             when (purchase.purchaseState) {
@@ -377,12 +399,23 @@ internal class GooglePlayStore(
         }
     }
 
-    private fun writeProviderOwnership(productIds: Collection<String>): Boolean =
+    private fun writeProviderOwnership(
+        productIds: Collection<String>,
+        refreshSequence: Long,
+    ): Boolean =
         entitlementCache.writeProviderOwnership(DurableOwnership(
             doubleInfinityPoints = productIds.contains(DOUBLE_IP),
             developerOptions = productIds.contains(DEV_OPTIONS),
             supporterCatGallery = entitlementCache.read().supporterCatGallery,
-        ))
+        ), refreshSequence)
+
+    private fun runOnStoreThread(operation: () -> Unit) {
+        if (Looper.myLooper() === storeHandler.looper) {
+            operation()
+        } else {
+            storeHandler.post { operation() }
+        }
+    }
 
     private fun resolvePending(accepted: Boolean, code: String?) {
         val pending = pendingPurchase ?: return

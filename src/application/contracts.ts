@@ -106,6 +106,8 @@ export interface GameApplicationOptions<TState, TCommand> {
   readonly sessionFactory: GameStateSessionFactory<TState>
   readonly engineDefinition: SimulationEngineDefinition<TState, TCommand>
   readonly repository: SaveRepository
+  /** Deterministic graph beneath historical schema-13 portable progress. */
+  readonly createTransitionalRecoveryBase?: () => PreparedSave
 }
 
 export type CheckpointResult =

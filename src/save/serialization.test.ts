@@ -1,11 +1,16 @@
 import { gzipSync } from 'fflate'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import {
+  decodeWebSaveTextBounded,
   deserializeWebSave,
   serializeSharedWebSave,
   serializeWebSave,
 } from './serialization'
 import type { SaveRecord } from './graph'
+import {
+  TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
+  TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
+} from './transitionalV2Retirement'
 
 describe('canonical web save serialization', () => {
   afterEach(() => {
@@ -27,6 +32,19 @@ describe('canonical web save serialization', () => {
     expect(serializeWebSave(decoded)).toBe(encoded)
   })
 
+  test('rejects a canonical IDSWEB1 payload with a corrupted gzip checksum', () => {
+    const encoded = serializeWebSave({ saveVersion: 12, cash: 42 })
+    const compressed = Buffer.from(
+      encoded.slice('IDSWEB1:'.length),
+      'base64',
+    )
+    compressed[compressed.length - 8] = compressed[compressed.length - 8]! ^ 1
+
+    expect(() => deserializeWebSave(
+      `IDSWEB1:${compressed.toString('base64')}`,
+    )).toThrow(/gzip checksum does not match/u)
+  })
+
   test('excludes device-local presentation preferences from portable saves', () => {
     const exported = serializeSharedWebSave({
       saveVersion: 12,
@@ -38,11 +56,19 @@ describe('canonical web save serialization', () => {
         visibility: { settings: false },
       },
       bots: 42,
+      [TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD]: 7,
+      [TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD]: 'a'.repeat(64),
     })
     const decoded = deserializeWebSave(exported)
     expect(decoded).not.toHaveProperty('numberFormatting')
     expect(decoded).not.toHaveProperty('hidePurchased')
     expect(decoded).not.toHaveProperty('bottomNavigationPreferences.size')
+    expect(decoded).not.toHaveProperty(
+      TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
+    )
+    expect(decoded).not.toHaveProperty(
+      TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
+    )
     expect(decoded).toHaveProperty(
       'bottomNavigationPreferences.visibility.settings',
       false,
@@ -106,6 +132,37 @@ describe('canonical web save serialization', () => {
     expect(() => deserializeWebSave(mismatched)).toThrow(
       'does not match state schema',
     )
+  })
+
+  test('rejects direct duplicate JSON object keys before they collapse', () => {
+    const duplicate =
+      '{"format":"IDSWEB1","schema":12,"schema":12,"state":{"saveVersion":12}}'
+
+    expect(() => deserializeWebSave(duplicate)).toThrow(
+      'duplicate-equivalent object key',
+    )
+  })
+
+  test('rejects escaped-equivalent duplicate JSON object keys', () => {
+    const duplicate = String.raw`{"format":"IDSWEB1","\u0066ormat":"IDSWEB1","schema":12,"state":{"saveVersion":12}}`
+
+    expect(() => deserializeWebSave(duplicate)).toThrow(
+      'duplicate-equivalent object key',
+    )
+  })
+
+  test('enforces the raw JSON entry budget before envelope classification', () => {
+    const entries = Array.from(
+      { length: 250_001 },
+      (_, index) => `"entry${index}":0`,
+    ).join(',')
+    const unsupported = `{"schemaVersion":13,${entries}}`
+
+    expect(() => decodeWebSaveTextBounded(unsupported, {
+      suppliedTextBytes: 8 * 1024 * 1024,
+      decodedPayloadBytes: 8 * 1024 * 1024,
+      inflatedBinaryBytes: 8 * 1024 * 1024,
+    })).toThrow('maximum entry count')
   })
 
   test('produces stable text regardless of the current wall clock', () => {

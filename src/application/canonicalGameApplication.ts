@@ -184,6 +184,7 @@ export interface CanonicalGameApplicationOptions {
   readonly sessionFactory: GameStateSessionFactory<CanonicalRuntimeState>
   readonly engine: Readonly<CanonicalGameEngineOptions>
   readonly storedTimeJobRunner?: StoredTimeJobRunner
+  readonly createTransitionalRecoveryBase?: () => PreparedSave
 }
 
 export type StoredTimeJobListener = (
@@ -283,6 +284,8 @@ export class CanonicalGameApplicationFacade {
           this.lastActiveAdvanceMeasurement = measurement
         },
       }),
+      createTransitionalRecoveryBase:
+        options.createTransitionalRecoveryBase,
     })
   }
 

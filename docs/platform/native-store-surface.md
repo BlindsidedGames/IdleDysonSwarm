@@ -84,10 +84,18 @@ evidence and therefore retains the latest verified in-session value, then the
 durable cache on a later launch. If persisting a resolved refresh fails, its
 ownership still becomes authoritative for the active native process and the
 host retries the pending cache write; older disk state cannot re-grant a
-revoked product during that process. New provider transactions remain
+revoked product during that process. Provider refreshes are sequenced when they
+start, so an older asynchronous completion cannot overwrite newer ownership;
+each host also serializes the session and durable-cache read-modify-write path,
+including pending retries and sticky supporter grants. New provider transactions remain
 unfinished until verification has also been cached. The device-local Double IP enabled preference
 remains writable offline only when that verified ownership exists; it persists
 independently and is re-applied when the application is opened again.
+
+An unverified durable StoreKit transaction makes the whole ownership snapshot
+unavailable. It is never interpreted as negative ownership, written over the
+last verified cache, or finished as a delivered transaction. Unverified
+consumable-tip history does not affect the durable-product snapshot.
 
 Consumable-derived supporter ownership is affirmative and sticky: a later
 provider refresh that omits consumed transaction history must not erase it.

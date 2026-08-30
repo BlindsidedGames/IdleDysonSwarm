@@ -7,6 +7,9 @@ import {
   type NativeReleaseSource,
 } from './sync-native-release'
 import { validateReleaseMetadata } from '../hosts/electron/releaseMetadata.mjs'
+import {
+  resolvePackagedReleaseIdentity,
+} from './packaged-release-identity'
 
 const source: NativeReleaseSource = Object.freeze({
   schemaVersion: 1,
@@ -53,6 +56,25 @@ describe('native release metadata', () => {
     expect(validateReleaseMetadata(generated)).toEqual({
       marketingVersion: '4.0.0',
       releaseCandidateId: '2026083007',
+    })
+  })
+
+  it('embeds the effective override only in native renderer bundles', () => {
+    expect(resolvePackagedReleaseIdentity(
+      source,
+      'native',
+      '2026083007',
+    )).toEqual({
+      marketingVersion: '4.0.0',
+      releaseCandidateId: '2026083007',
+    })
+    expect(resolvePackagedReleaseIdentity(
+      source,
+      'production',
+      '2026083007',
+    )).toEqual({
+      marketingVersion: '4.0.0',
+      releaseCandidateId: '2026080200',
     })
   })
 

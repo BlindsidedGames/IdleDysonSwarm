@@ -4,6 +4,90 @@ import Foundation
 import StoreKit
 import UIKit
 
+private final class NativeStoreComponents: @unchecked Sendable {
+    let entitlementCache: NativeEntitlementCache
+    let storeKit: IdleDysonStoreKit
+
+    init() {
+        let entitlementCache = NativeEntitlementCache()
+        self.entitlementCache = entitlementCache
+        storeKit = IdleDysonStoreKit(entitlementCache: entitlementCache)
+    }
+
+    func refreshOwnership() async -> NativeOwnershipResponse {
+        do {
+            let refresh = try await storeKit.refreshDurableOwnership()
+            return NativeOwnershipResponse(
+                ownership: refresh.ownership,
+                providerAvailable: true
+            )
+        } catch {
+            return NativeOwnershipResponse(
+                ownership: entitlementCache.read(),
+                providerAvailable: false
+            )
+        }
+    }
+
+    func refreshOwnership(reply: SendablePluginCall) {
+        Task { [self, reply] in
+            let refresh = await refreshOwnership()
+            await reply.resolveOwnership(refresh)
+        }
+    }
+}
+
+private struct NativeOwnershipResponse: Sendable {
+    let ownership: DurableOwnership
+    let providerAvailable: Bool
+}
+
+private final class SendablePluginCall: @unchecked Sendable {
+    private let value: CAPPluginCall
+
+    init(_ value: CAPPluginCall) {
+        self.value = value
+    }
+
+    @MainActor
+    func resolveProducts(_ products: [NativeProductListing]) {
+        value.resolve([
+            "listings": products.map { product in
+                [
+                    "productId": product.productId,
+                    "localizedPrice": product.localizedPrice ?? NSNull(),
+                    "available": product.available,
+                ] as [String: Any]
+            },
+        ])
+    }
+
+    @MainActor
+    func resolvePurchase(_ result: NativePurchaseResult) {
+        var response: [String: Any] = [
+            "accepted": result.accepted,
+            "productId": result.productId,
+        ]
+        if let code = result.code { response["code"] = code }
+        value.resolve(response)
+    }
+
+    @MainActor
+    func resolveRestore(_ productIds: [String]) {
+        value.resolve(["restoredProductIds": productIds])
+    }
+
+    @MainActor
+    func resolveOwnership(_ response: NativeOwnershipResponse) {
+        value.resolve([
+            "doubleInfinityPoints": response.ownership.doubleInfinityPoints,
+            "developerOptions": response.ownership.developerOptions,
+            "supporterCatGallery": response.ownership.supporterCatGallery,
+            "providerAvailable": response.providerAvailable,
+        ])
+    }
+}
+
 @objc(IdleDysonNativePlugin)
 public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "IdleDysonNativePlugin"
@@ -29,8 +113,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
 
     private var lifecyclePhase = "active"
     private var lifecycleObservers: [NSObjectProtocol] = []
-    private let entitlementCache = NativeEntitlementCache()
-    private lazy var storeKit = IdleDysonStoreKit(entitlementCache: entitlementCache)
+    private let nativeStore = NativeStoreComponents()
     private var automaticUnityEvidenceTokens: [String: NativeBoundUnityEvidence] = [:]
 
     @objc override public func load() {
@@ -67,7 +150,8 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
                 queue: .main
             ) { [weak self] _ in self?.publishLifecycle("terminating") },
         ]
-        Task { @MainActor [weak self] in self?.storeKit.start() }
+        let storeKit = nativeStore.storeKit
+        Task { await storeKit.start() }
     }
 
     deinit {
@@ -315,18 +399,11 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @objc public func getStoreProducts(_ call: CAPPluginCall) {
-        Task { @MainActor [weak self] in
-            guard let self else { return }
+        let storeKit = nativeStore.storeKit
+        let response = SendablePluginCall(call)
+        Task { [storeKit, response] in
             let (products, _) = await storeKit.products()
-            call.resolve([
-                "listings": products.map { product in
-                    [
-                        "productId": product.productId,
-                        "localizedPrice": product.localizedPrice ?? NSNull(),
-                        "available": product.available,
-                    ] as [String: Any]
-                },
-            ])
+            await response.resolveProducts(products)
         }
     }
 
@@ -338,48 +415,33 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("Unknown Store product.", "unknown-product")
             return
         }
-        Task { @MainActor [weak self] in
-            guard let self else { return }
+        let storeKit = nativeStore.storeKit
+        let responseCall = SendablePluginCall(call)
+        Task {
             let result = await storeKit.purchase(productId: productId)
-            var response: [String: Any] = [
-                "accepted": result.accepted,
-                "productId": result.productId,
-            ]
-            if let code = result.code { response["code"] = code }
-            call.resolve(response)
+            await responseCall.resolvePurchase(result)
         }
     }
 
     @objc public func restoreStorePurchases(_ call: CAPPluginCall) {
-        Task { @MainActor [weak self] in
-            guard let self else { return }
+        let storeKit = nativeStore.storeKit
+        let response = SendablePluginCall(call)
+        Task {
             let (productIds, _) = await storeKit.restore()
-            call.resolve(["restoredProductIds": productIds])
+            await response.resolveRestore(productIds)
         }
     }
 
     @objc public func readEntitlementOwnership(_ call: CAPPluginCall) {
-        resolveOwnership(call, ownership: entitlementCache.read(), providerAvailable: false)
+        resolveOwnership(
+            call,
+            ownership: nativeStore.entitlementCache.read(),
+            providerAvailable: false
+        )
     }
 
     @objc public func refreshEntitlementOwnership(_ call: CAPPluginCall) {
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            do {
-                let refresh = try await storeKit.refreshDurableOwnership()
-                resolveOwnership(
-                    call,
-                    ownership: refresh.ownership,
-                    providerAvailable: true
-                )
-            } catch {
-                resolveOwnership(
-                    call,
-                    ownership: entitlementCache.read(),
-                    providerAvailable: false
-                )
-            }
-        }
+        nativeStore.refreshOwnership(reply: SendablePluginCall(call))
     }
 
     @objc public func promoteAutomaticUnityPurchaseEvidence(_ call: CAPPluginCall) {
@@ -389,11 +451,11 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
         let token = call.getString("opaqueSourceIdentifier")
         let evidence = token.flatMap { automaticUnityEvidenceTokens.removeValue(forKey: $0) }
         let promoted = evidence.map {
-            entitlementCache.promoteAutomaticUnityDoubleIpEvidence($0)
+            nativeStore.entitlementCache.promoteAutomaticUnityDoubleIpEvidence($0)
         } ?? false
         call.resolve([
             "promoted": promoted,
-            "doubleInfinityPoints": entitlementCache.read().doubleInfinityPoints,
+            "doubleInfinityPoints": nativeStore.entitlementCache.read().doubleInfinityPoints,
         ])
     }
 

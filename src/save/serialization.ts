@@ -14,7 +14,12 @@ import {
   SaveImportLimitError,
   type SaveImportLimits,
 } from './decodeIdb1'
+import { assertGzipTrailerIntegrity } from './gzipIntegrity'
 import { packSettingsFlags } from './settingsFlags'
+import {
+  TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
+  TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
+} from './transitionalV2Retirement'
 
 const WEB_SAVE_FORMAT = 'IDSWEB1'
 const WEB_SAVE_PREFIX = `${WEB_SAVE_FORMAT}:`
@@ -27,6 +32,17 @@ interface EncodedWebSave {
   readonly schema: number
   readonly state: unknown
 }
+
+export type DecodedWebSaveText =
+  | Readonly<{
+      kind: 'canonical'
+      state: SaveRecord
+    }>
+  | Readonly<{
+      kind: 'unsupported-envelope'
+      envelope: SaveRecord
+      canonicalError: Error
+    }>
 
 export function serializeWebSave(save: SaveRecord): string {
   const schema = Number(save.saveVersion)
@@ -61,11 +77,17 @@ export function stripNonShareableEntitlementClaims(
   shareable.doubleIp = false
   shareable.debugOptions = false
   shareable.debugEverEnabled = false
+  shareable.cheater = false
+  shareable.unlockAllTabs = false
   // Number notation is versioned device-local presentation state. Legacy
   // Unity/Web graph data may still contain this field for migration input,
   // but a portable share must never carry the sender's selection.
   delete shareable.numberFormatting
   delete shareable.hidePurchased
+  // These local recovery proofs refer to retired files on the exporting
+  // device. A receiver must never authorize its sidecar from sender claims.
+  delete shareable[TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD]
+  delete shareable[TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD]
   if (isRecord(shareable.bottomNavigationPreferences)) {
     delete shareable.bottomNavigationPreferences.size
   }
@@ -84,6 +106,23 @@ export function deserializeWebSaveBounded(
   text: string,
   limits: Readonly<SaveImportLimits>,
 ): SaveRecord {
+  const decoded = decodeWebSaveTextBounded(text, limits)
+  if (decoded.kind === 'unsupported-envelope') {
+    throw decoded.canonicalError
+  }
+  return decoded.state
+}
+
+/**
+ * Performs the bounded IDSWEB1 transport decode exactly once and classifies
+ * the parsed envelope before applying the canonical value codec. Historical
+ * schema adapters can consume the unsupported parsed envelope without a
+ * second synchronous base64/gzip/CRC/JSON pass.
+ */
+export function decodeWebSaveTextBounded(
+  text: string,
+  limits: Readonly<SaveImportLimits>,
+): DecodedWebSaveText {
   assertSuppliedSaveTextLimit(text, limits)
   const trimmed = text.trim()
   const json = trimmed.toUpperCase().startsWith(WEB_SAVE_PREFIX)
@@ -92,10 +131,16 @@ export function deserializeWebSaveBounded(
         limits,
       )
     : trimmed
-  const parsed = JSON.parse(json) as unknown
+  const parsed = parseBoundedJsonText(json)
   const envelope = requireRecord(parsed, 'web save envelope')
   if (envelope.format !== WEB_SAVE_FORMAT) {
-    throw new Error(`Unsupported web save envelope ${String(envelope.format)}.`)
+    return Object.freeze({
+      kind: 'unsupported-envelope',
+      envelope,
+      canonicalError: new Error(
+        `Unsupported web save envelope ${String(envelope.format)}.`,
+      ),
+    })
   }
   if (!isNonNegativeInteger(envelope.schema)) {
     throw new Error('Canonical web save envelope has an invalid schema.')
@@ -118,7 +163,7 @@ export function deserializeWebSaveBounded(
       `Web save envelope schema ${envelope.schema} does not match state schema ${String(state.saveVersion)}.`,
     )
   }
-  return state
+  return Object.freeze({ kind: 'canonical', state })
 }
 
 function decodeCompressedEnvelope(
@@ -141,6 +186,219 @@ function decodeCompressedEnvelope(
   } catch {
     throw new Error('Canonical web save contains invalid UTF-8 JSON.')
   }
+}
+
+interface JsonParseBudget {
+  containers: number
+  entries: number
+}
+
+/**
+ * Parses the transport JSON while retaining evidence that JSON.parse would
+ * discard, notably duplicate-equivalent object keys. The raw syntax tree uses
+ * the same structural budgets as reconstructed canonical values so an
+ * unsupported historical envelope cannot bypass them before classification.
+ */
+export function parseBoundedJsonText(text: string): unknown {
+  let index = 0
+  const budget: JsonParseBudget = { containers: 0, entries: 0 }
+  const numberPattern =
+    /-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?/y
+
+  function skipWhitespace(): void {
+    while (
+      text[index] === ' ' ||
+      text[index] === '\n' ||
+      text[index] === '\r' ||
+      text[index] === '\t'
+    ) {
+      index += 1
+    }
+  }
+
+  function parseString(): string {
+    const start = index
+    let containsEscape = false
+    index += 1
+    while (index < text.length) {
+      const code = text.charCodeAt(index)
+      if (text[index] === '"') {
+        index += 1
+        if (!containsEscape) {
+          return text.slice(start + 1, index - 1)
+        }
+        try {
+          return JSON.parse(text.slice(start, index)) as string
+        } catch {
+          throw new Error(
+            'Canonical web save contains invalid JSON string syntax.',
+          )
+        }
+      }
+      if (text[index] === '\\') {
+        containsEscape = true
+        index += 2
+        continue
+      }
+      if (code <= 0x1f) {
+        throw new Error(
+          'Canonical web save contains invalid JSON string syntax.',
+        )
+      }
+      index += 1
+    }
+    throw new Error('Canonical web save contains an unterminated JSON string.')
+  }
+
+  function parseNumber(): number {
+    numberPattern.lastIndex = index
+    const match = numberPattern.exec(text)
+    if (match === null) {
+      throw new Error('Canonical web save contains invalid JSON number syntax.')
+    }
+    index = numberPattern.lastIndex
+    const value = Number(match[0])
+    if (!Number.isFinite(value)) {
+      throw new Error('Canonical web save JSON numbers must be finite.')
+    }
+    return value
+  }
+
+  function parseArray(depth: number): unknown[] {
+    consumeJsonContainerBudget(budget)
+    index += 1
+    skipWhitespace()
+    const output: unknown[] = []
+    if (text[index] === ']') {
+      index += 1
+      return output
+    }
+    while (true) {
+      consumeJsonEntryBudget(budget)
+      output.push(parseValue(depth + 1))
+      skipWhitespace()
+      if (text[index] === ']') {
+        index += 1
+        return output
+      }
+      if (text[index] !== ',') {
+        throw new Error('Canonical web save contains invalid JSON array syntax.')
+      }
+      index += 1
+      skipWhitespace()
+    }
+  }
+
+  function parseObject(depth: number): Record<string, unknown> {
+    consumeJsonContainerBudget(budget)
+    index += 1
+    skipWhitespace()
+    const output = Object.create(null) as Record<string, unknown>
+    const keys = new Set<string>()
+    if (text[index] === '}') {
+      index += 1
+      return output
+    }
+    while (true) {
+      if (text[index] !== '"') {
+        throw new Error(
+          'Canonical web save contains an invalid JSON object key.',
+        )
+      }
+      const key = parseString()
+      if (keys.has(key)) {
+        throw new Error(
+          'Canonical web save contains a duplicate-equivalent object key.',
+        )
+      }
+      if (isPrototypePollutingKey(key)) {
+        throw new Error('Canonical web save contains a forbidden object key.')
+      }
+      keys.add(key)
+      consumeJsonEntryBudget(budget)
+      skipWhitespace()
+      if (text[index] !== ':') {
+        throw new Error('Canonical web save contains invalid JSON object syntax.')
+      }
+      index += 1
+      output[key] = parseValue(depth + 1)
+      skipWhitespace()
+      if (text[index] === '}') {
+        index += 1
+        return output
+      }
+      if (text[index] !== ',') {
+        throw new Error('Canonical web save contains invalid JSON object syntax.')
+      }
+      index += 1
+      skipWhitespace()
+    }
+  }
+
+  function parseValue(depth: number): unknown {
+    if (depth > MAXIMUM_DECODE_DEPTH) {
+      throw new Error(
+        `Canonical web save exceeds the maximum decode depth of ${MAXIMUM_DECODE_DEPTH}.`,
+      )
+    }
+    skipWhitespace()
+    const token = text[index]
+    if (token === '"') return parseString()
+    if (token === '{') return parseObject(depth)
+    if (token === '[') return parseArray(depth)
+    if (text.startsWith('true', index)) {
+      index += 4
+      return true
+    }
+    if (text.startsWith('false', index)) {
+      index += 5
+      return false
+    }
+    if (text.startsWith('null', index)) {
+      index += 4
+      return null
+    }
+    if (
+      token === '-' ||
+      (token !== undefined && token >= '0' && token <= '9')
+    ) {
+      return parseNumber()
+    }
+    throw new Error('Canonical web save contains invalid JSON syntax.')
+  }
+
+  const result = parseValue(0)
+  skipWhitespace()
+  if (index !== text.length) {
+    throw new Error('Canonical web save contains trailing JSON content.')
+  }
+  return result
+}
+
+function consumeJsonContainerBudget(budget: JsonParseBudget): void {
+  budget.containers += 1
+  if (budget.containers > MAXIMUM_DECODE_CONTAINERS) {
+    throw new Error(
+      `Canonical web save exceeds the maximum container count of ${MAXIMUM_DECODE_CONTAINERS}.`,
+    )
+  }
+}
+
+function consumeJsonEntryBudget(budget: JsonParseBudget): void {
+  budget.entries += 1
+  if (budget.entries > MAXIMUM_DECODE_ENTRIES) {
+    throw new Error(
+      `Canonical web save exceeds the maximum entry count of ${MAXIMUM_DECODE_ENTRIES}.`,
+    )
+  }
+}
+
+function isPrototypePollutingKey(value: string): boolean {
+  return (
+    value === '__proto__' ||
+    value === 'constructor' ||
+    value === 'prototype'
+  )
 }
 
 function decodeBase64Payload(value: string, limitBytes: number): Uint8Array {
@@ -211,6 +469,7 @@ function gunzipBounded(compressed: Uint8Array, limitBytes: number): Uint8Array {
       'Canonical web save gzip output does not match its advertised size.',
     )
   }
+  assertGzipTrailerIntegrity(compressed, output, 'IDSWEB1 payload')
   return output
 }
 

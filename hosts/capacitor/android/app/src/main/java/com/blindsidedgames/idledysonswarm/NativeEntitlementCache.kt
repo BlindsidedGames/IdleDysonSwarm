@@ -21,17 +21,36 @@ internal class NativeEntitlementCache(context: Context) {
     )
     private val session = NativeEntitlementSession()
 
-    fun read(): DurableOwnership = session.resolve(
-        persistedProviderOwnership = readPersistedProviderOwnership(),
-        legacyDoubleInfinityPoints =
-            preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false),
-    )
+    fun read(): DurableOwnership = session.serialized {
+        session.resolve(
+            persistedProviderOwnership = readPersistedProviderOwnership(),
+            legacyDoubleInfinityPoints =
+                preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false),
+        )
+    }
+
+    fun beginProviderRefresh(): Long = session.beginProviderRefresh()
 
     fun writeProviderOwnership(ownership: DurableOwnership): Boolean =
-        session.applyProviderOwnership(ownership, ::persistProviderOwnership)
+        session.serialized {
+            session.applyProviderOwnership(ownership, ::persistProviderOwnership)
+        }
+
+    fun writeProviderOwnership(
+        ownership: DurableOwnership,
+        refreshSequence: Long,
+    ): Boolean = session.serialized {
+        session.applyProviderOwnership(
+            ownership,
+            refreshSequence,
+            ::persistProviderOwnership,
+        )
+    }
 
     fun retryPendingProviderOwnership(): Boolean =
-        session.retryPendingPersistence(::persistProviderOwnership)
+        session.serialized {
+            session.retryPendingPersistence(::persistProviderOwnership)
+        }
 
     private fun readPersistedProviderOwnership(): DurableOwnership = DurableOwnership(
         doubleInfinityPoints = preferences.getBoolean(KEY_PROVIDER_DOUBLE_IP, false),
@@ -51,18 +70,21 @@ internal class NativeEntitlementCache(context: Context) {
             .putLong(KEY_VERIFIED_AT_UTC_MS, System.currentTimeMillis())
             .commit()
 
-    fun grantSupporterCatGallery(): Boolean =
+    fun grantSupporterCatGallery(): Boolean = session.serialized {
         preferences.edit()
             .putBoolean(KEY_SUPPORTER_CAT_GALLERY, true)
             .putLong(KEY_VERIFIED_AT_UTC_MS, System.currentTimeMillis())
             .commit()
+    }
 
     fun promoteAutomaticUnityDoubleIpEvidence(
         evidence: NativeBoundUnityEvidence,
-    ): Boolean {
-        if (preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false)) return false
+    ): Boolean = session.serialized {
+        if (preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false)) {
+            return@serialized false
+        }
 
-        return preferences.edit()
+        preferences.edit()
             .putBoolean(KEY_LEGACY_DOUBLE_IP, true)
             .putString(KEY_LEGACY_KIND, "automatic-same-device-unity")
             .putString(KEY_LEGACY_PLATFORM, "android")
