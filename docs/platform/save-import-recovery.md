@@ -33,5 +33,14 @@ startup remains blocked, the recovery surface provides Retry, Copy Original,
 and Start Fresh. Starting fresh records the choice locally; neither that action
 nor any migration path overwrites or deletes a legacy source save.
 
+The short-lived production V2 checkpoint format
+`ids-web-production-v2-checkpoint-v1` is an explicit browser compatibility
+source. Startup first uses its retained pre-migration canonical source as the
+preserved Unity graph, then restores the latest V2 gameplay values only when
+every decimal can be represented exactly by the current field authority. The
+checkpoint revision is recorded in the upgraded save so an older retained
+backup cannot replay over newer progress. Unrepresentable values fail closed;
+they are never clamped, truncated, or replaced with a first-run save.
+
 Exact accepted legacy baselines and fixture requirements are defined in
 [`legacy-save-compatibility.md`](legacy-save-compatibility.md).

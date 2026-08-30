@@ -31,6 +31,9 @@ surface, not a claim that no earlier save can be imported.
   supersede historical behavior.
 - The original source save is never overwritten or deleted by migration.
 - Existing authentic fixtures remain executable release evidence.
+- Retained canonical Web exports are valid recovery candidates alongside raw
+  Unity `IDB1` text; a failure in an unrelated retained candidate must not mask
+  the current Web save's actual error.
 
 The implementation pins are `src/game-state/mappingCoverageSchema11.ts`, the
 mapping coverage manifest, and `test/parity/save-migration-cases.json`. Any

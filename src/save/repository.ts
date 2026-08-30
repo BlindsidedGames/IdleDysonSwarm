@@ -40,6 +40,12 @@ export interface SaveRepositoryPaths {
   readonly legacyRecovery: string
   /** Latest-to-oldest publication history rotated before each replacement. */
   readonly backups?: readonly [latest: string, previous: string, oldest: string]
+  /**
+   * Exact canonical sources retained by an earlier persistence migration.
+   * These are considered only after the current slot and ordinary backups
+   * fail, and are never overwritten by this repository.
+   */
+  readonly retainedRecoverySources?: readonly string[]
 }
 
 export interface SaveRepository {
@@ -91,6 +97,10 @@ export type FirstLaunchMigrationResult =
     }
 
 export type LegacySaveDecoder = (text: string) => unknown
+export type TransitionalCheckpointRecovery = (
+  text: string,
+  base: PreparedSave,
+) => PreparedSave | null
 
 export interface AutomaticUnityNumberFormattingAdopter {
   adoptLegacyUnityNumberFormatting(value: unknown): boolean
@@ -120,6 +130,8 @@ export class PortableSaveRepository implements SaveRepository {
     AutomaticUnityNumberFormattingAdopter
   private readonly automaticResearchVisibilityAdopter?:
     AutomaticUnityResearchVisibilityAdopter
+  private readonly recoverTransitionalCheckpoint?:
+    TransitionalCheckpointRecovery
 
   constructor(
     storage: SaveStorageAdapter,
@@ -134,6 +146,7 @@ export class PortableSaveRepository implements SaveRepository {
       AutomaticUnityNumberFormattingAdopter,
     automaticResearchVisibilityAdopter?:
       AutomaticUnityResearchVisibilityAdopter,
+    recoverTransitionalCheckpoint?: TransitionalCheckpointRecovery,
   ) {
     this.storage = storage
     this.paths = paths
@@ -145,6 +158,7 @@ export class PortableSaveRepository implements SaveRepository {
       automaticNumberFormattingAdopter
     this.automaticResearchVisibilityAdopter =
       automaticResearchVisibilityAdopter
+    this.recoverTransitionalCheckpoint = recoverTransitionalCheckpoint
   }
 
   async hasCurrent(): Promise<boolean> {
@@ -162,6 +176,7 @@ export class PortableSaveRepository implements SaveRepository {
   async migrateLegacyOnFirstLaunch(): Promise<FirstLaunchMigrationResult> {
     let current: PreparedSave | null = null
     let currentError: string | undefined
+    let rejectedCurrentText: string | undefined
     try {
       current = await this.loadCurrent()
     } catch (error) {
@@ -173,8 +188,16 @@ export class PortableSaveRepository implements SaveRepository {
         }
       }
       currentError = error instanceof Error ? error.message : String(error)
+      try {
+        rejectedCurrentText = await this.storage.readText(this.paths.current)
+      } catch {
+        // The original load error remains the authoritative startup failure.
+      }
     }
-    if (current) return { status: 'already-migrated', save: current }
+    if (current) {
+      const recovered = await this.recoverTransitionalBackup(current)
+      return recovered ?? { status: 'already-migrated', save: current }
+    }
     if (currentError !== undefined) {
       try {
         await this.storage.copy(this.paths.current, this.paths.legacyRecovery)
@@ -199,6 +222,11 @@ export class PortableSaveRepository implements SaveRepository {
     }
     currentError ??= backupRecovery?.error
 
+    const retainedRecovery = await this.recoverRetainedCanonicalSource(
+      rejectedCurrentText,
+    )
+    if (retainedRecovery !== null) return retainedRecovery
+
     const candidates = await this.storage.discoverLegacyCandidates()
     if (candidates.length === 0) {
       return currentError
@@ -218,11 +246,13 @@ export class PortableSaveRepository implements SaveRepository {
       let prepared: PreparedSave
       let devicePreferences: Readonly<ExplicitLegacyDevicePreferences>
       try {
-        const decoded = this.decodeLegacy(source.text)
+        const { decoded, preparation } = this.prepareRecoveryText(source.text)
         devicePreferences = extractExplicitLegacyDevicePreferences(decoded)
-        const preparation = PreparedSave.prepareDecoded(decoded)
         migration = preparation.migration
-        prepared = preparation.prepared
+        prepared = this.applyTransitionalRecovery(
+          rejectedCurrentText,
+          preparation.prepared,
+        )
         if (!migration.validation.valid) {
           lastFailure = {
             status: 'legacy-invalid',
@@ -263,6 +293,9 @@ export class PortableSaveRepository implements SaveRepository {
       }
     }
     if (lastFailure !== undefined) {
+      if (currentError !== undefined) {
+        return { status: 'current-invalid', error: currentError }
+      }
       try {
         await this.storage.copy(
           lastFailure.source.sourcePath,
@@ -418,6 +451,120 @@ export class PortableSaveRepository implements SaveRepository {
     return lastInvalidError === undefined
       ? null
       : { status: 'backup-invalid', error: lastInvalidError }
+  }
+
+  private async recoverRetainedCanonicalSource(
+    rejectedCurrentText: string | undefined,
+  ): Promise<
+    FirstLaunchMigrationResult | null
+  > {
+    for (const sourcePath of this.paths.retainedRecoverySources ?? []) {
+      if (!(await this.storage.exists(sourcePath))) continue
+      const text = await this.storage.readText(sourcePath)
+      let prepared: PreparedSave
+      try {
+        const { preparation } = this.prepareRecoveryText(text)
+        if (!preparation.migration.validation.valid) continue
+        prepared = this.applyTransitionalRecovery(
+          rejectedCurrentText,
+          preparation.prepared,
+        )
+      } catch (error) {
+        if (error instanceof UnsupportedFutureSaveSchemaError) {
+          return {
+            status: 'unsupported-future-version',
+            source: 'backup',
+            error: error.message,
+          }
+        }
+        continue
+      }
+      try {
+        const committed = await this.publish(
+          prepared,
+          'development',
+          false,
+        )
+        return {
+          status: 'recovered-backup',
+          sourcePath,
+          save: committed,
+        }
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
+          source: { id: 'web-backup', sourcePath },
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+    }
+    return null
+  }
+
+  private async recoverTransitionalBackup(
+    base: PreparedSave,
+  ): Promise<FirstLaunchMigrationResult | null> {
+    if (this.recoverTransitionalCheckpoint === undefined) return null
+    for (const sourcePath of this.backupPaths()) {
+      if (!(await this.storage.exists(sourcePath))) continue
+      const recovered = this.recoverTransitionalCheckpoint(
+        await this.storage.readText(sourcePath),
+        base,
+      )
+      if (recovered === null) continue
+      try {
+        const committed = await this.publish(
+          recovered,
+          'development',
+          false,
+        )
+        return {
+          status: 'recovered-backup',
+          sourcePath,
+          save: committed,
+        }
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
+          source: { id: 'web-backup', sourcePath },
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+    }
+    return null
+  }
+
+  private applyTransitionalRecovery(
+    rejectedCurrentText: string | undefined,
+    base: PreparedSave,
+  ): PreparedSave {
+    if (
+      rejectedCurrentText === undefined ||
+      this.recoverTransitionalCheckpoint === undefined
+    ) return base
+    return this.recoverTransitionalCheckpoint(
+      rejectedCurrentText,
+      base,
+    ) ?? base
+  }
+
+  private prepareRecoveryText(text: string): Readonly<{
+    decoded: unknown
+    preparation: ReturnType<typeof PreparedSave.prepareDecoded>
+  }> {
+    let decoded: unknown
+    try {
+      decoded = deserializeWebSave(text)
+    } catch (webError) {
+      if (webError instanceof UnsupportedFutureSaveSchemaError) {
+        throw webError
+      }
+      decoded = this.decodeLegacy(text)
+    }
+    return Object.freeze({
+      decoded,
+      preparation: PreparedSave.prepareDecoded(decoded),
+    })
   }
 
   private async rotateBackups(): Promise<void> {

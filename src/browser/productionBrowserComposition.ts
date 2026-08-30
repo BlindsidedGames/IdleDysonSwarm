@@ -58,6 +58,9 @@ import type {
   ActiveTimeMonotonicClock,
 } from '../ui/runtime/activeTimeDriver'
 import { COMMUNITY_EXTERNAL_ORIGINS } from '../platform/communityLinks'
+import {
+  recoverTransitionalV2Checkpoint,
+} from '../save/transitionalV2Checkpoint'
 
 type BrowserRuntimeFactory = (
   options: Readonly<BrowserRuntimeFoundationOptions>,
@@ -165,6 +168,7 @@ export function createProductionBrowserComposition(
       options.automaticNumberFormattingAdopter,
     automaticResearchVisibilityAdopter:
       options.automaticResearchVisibilityAdopter,
+    recoverTransitionalCheckpoint: recoverTransitionalV2Checkpoint,
     developmentControlsAvailable:
       developmentBuild || options.releasePlatformServices !== undefined
         ? true
