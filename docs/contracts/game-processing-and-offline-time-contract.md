@@ -89,6 +89,12 @@ across checkpoint, export, import and reload. Arithmetic overflow saturates only
 at JavaScript's largest finite number so persisted state never contains
 infinity.
 
+Returned-time reporting uses the bank's actual represented increase. At a
+coarse floating-point boundary, only the positive delta no greater than the
+returned duration and remaining capacity is credited and reported. A sub-ULP
+duration that cannot change the bank reports zero; no hidden or persisted carry
+is introduced.
+
 Every coarse update calls the same gameplay transition and sees all permanent
 state changes from the preceding update. Automation is offered once per coarse
 update; skipped fine-grained automation is not reconstructed and no IP

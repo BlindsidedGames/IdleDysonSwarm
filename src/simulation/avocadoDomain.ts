@@ -1,11 +1,12 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
   addContinuous,
-  clampContinuous,
-  CONTINUOUS_MAXIMUM,
-  floorToDiscrete,
   multiplyContinuous,
 } from './numeric'
+import {
+  settleContinuousTransfer,
+  settleDiscreteToContinuousTransfer,
+} from './conservativeSettlement'
 
 export const AVOCADO_LOG_THRESHOLD = 10
 
@@ -87,44 +88,62 @@ export function feedAllToAvocado(
   if (source === 'infinity-points') {
     const available = state.infinity.points - state.infinity.spentPoints
     if (available <= 0n) return rejected(state, source, 'empty')
-    const capacity = floorToDiscrete(CONTINUOUS_MAXIMUM - current)
-    const accepted = available < capacity ? available : capacity
-    if (accepted <= 0n) return rejected(state, source, 'output-maxed')
-    amount = Number(accepted)
-    const next = addContinuous(current, amount)
-    const credited = next - current
-    if (next <= current || credited > amount) {
+    const transfer = settleDiscreteToContinuousTransfer(
+      available,
+      current,
+    )
+    if (transfer.settled <= 0n) {
       return rejected(state, source, 'output-maxed')
     }
+    amount = Number(transfer.settled)
     candidate = {
       ...state,
       infinity: {
         ...state.infinity,
-        points: state.infinity.points - accepted,
+        points: state.infinity.points - transfer.settled,
       },
-      avocado: { ...state.avocado, infinityPoints: next },
+      avocado: {
+        ...state.avocado,
+        infinityPoints: transfer.destinationBalance,
+      },
     }
   } else if (source === 'influence') {
     amount = state.reality.influence
     if (amount <= 0) return rejected(state, source, 'empty')
-    const transfer = continuousTransfer(current, amount)
-    if (transfer === null) return rejected(state, source, 'output-maxed')
-    amount = transfer.credited
+    const transfer = settleContinuousTransfer(amount, current, amount)
+    if (transfer.settled <= 0) {
+      return rejected(state, source, 'output-maxed')
+    }
+    amount = transfer.settled
     candidate = {
       ...state,
-      reality: { ...state.reality, influence: transfer.remaining },
-      avocado: { ...state.avocado, influence: transfer.next },
+      reality: {
+        ...state.reality,
+        influence: transfer.sourceBalance,
+      },
+      avocado: {
+        ...state.avocado,
+        influence: transfer.destinationBalance,
+      },
     }
   } else {
     amount = state.dream.strangeMatter
     if (amount <= 0) return rejected(state, source, 'empty')
-    const transfer = continuousTransfer(current, amount)
-    if (transfer === null) return rejected(state, source, 'output-maxed')
-    amount = transfer.credited
+    const transfer = settleContinuousTransfer(amount, current, amount)
+    if (transfer.settled <= 0) {
+      return rejected(state, source, 'output-maxed')
+    }
+    amount = transfer.settled
     candidate = {
       ...state,
-      dream: { ...state.dream, strangeMatter: transfer.remaining },
-      avocado: { ...state.avocado, strangeMatter: transfer.next },
+      dream: {
+        ...state.dream,
+        strangeMatter: transfer.sourceBalance,
+      },
+      avocado: {
+        ...state.avocado,
+        strangeMatter: transfer.destinationBalance,
+      },
     }
   }
   return {
@@ -135,27 +154,6 @@ export function feedAllToAvocado(
     amount,
     state: candidate,
   }
-}
-
-function continuousTransfer(
-  current: number,
-  available: number,
-): {
-  readonly credited: number
-  readonly next: number
-  readonly remaining: number
-} | null {
-  const requested = Math.min(
-    available,
-    Math.max(0, CONTINUOUS_MAXIMUM - current),
-  )
-  if (requested <= 0) return null
-  const next = addContinuous(current, requested)
-  const credited = next - current
-  if (credited <= 0 || credited > requested) return null
-  const remaining = clampContinuous(available - credited)
-  if (remaining === available) return null
-  return { credited, next, remaining }
 }
 
 function avocadoBalance(

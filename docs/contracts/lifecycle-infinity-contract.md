@@ -79,6 +79,11 @@ The pure reset must:
 - clear Infinity and bot-cap transition flags and mark the tutorial/first
   Infinity metadata complete.
 
+Infinity Shop retention purchases prove that exactly ten manual facility units
+are representable before spending the discrete Infinity Point. An extreme or
+imported ownership value that would round that output above or below ten fails
+closed without changing ownership, retention, or spent-point state.
+
 The event-time coordinator, not the pure reset, owns automation phases,
 Infinity-boundary phase, run clock and starting-point rollover. This separation
 prevents an internal reset helper from silently disturbing deterministic

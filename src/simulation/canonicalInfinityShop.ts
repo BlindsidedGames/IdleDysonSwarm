@@ -6,10 +6,10 @@ import {
   runCanonicalSkillAutoAssignment,
 } from './canonicalSkillTransactions'
 import {
-  addContinuous,
   addDiscrete,
   DISCRETE_MAXIMUM,
 } from './numeric'
+import { settleContinuousCredit } from './conservativeSettlement'
 import { QUANTUM_CONSTANTS } from './quantumUpgrades'
 
 export const CANONICAL_INFINITY_SHOP_ITEM_IDS = [
@@ -290,11 +290,14 @@ function purchaseRetainedFacility(
   ) {
     return rejected(state, 'invalid-state', cost)
   }
-  const nextManual = addContinuous(
+  const output = settleContinuousCredit(
     owned[1],
     CANONICAL_INFINITY_SHOP_CONSTANTS.retainedFacilityQuantity,
   )
-  if (nextManual <= owned[1]) {
+  if (
+    output.settled !==
+    CANONICAL_INFINITY_SHOP_CONSTANTS.retainedFacilityQuantity
+  ) {
     return rejected(state, 'output-maxed', cost)
   }
   const nextSpent = trySpend(state, cost)
@@ -315,7 +318,7 @@ function purchaseRetainedFacility(
           ...state.dyson.facilities,
           [definition.facilityId]: [
             owned[0],
-            nextManual,
+            output.balance,
           ] as const,
         },
       },
