@@ -24,11 +24,13 @@ import {
 
 export function LocalePreferenceProvider({
   preference,
+  initialLocale,
   initialMessages,
   children,
   onError,
 }: {
   readonly preference: LocalePreferenceService
+  readonly initialLocale: EnabledLocale
   readonly initialMessages: SharedMessageCatalog
   readonly children: ReactNode
   readonly onError?: ComponentProps<typeof IntlProvider>['onError']
@@ -39,27 +41,36 @@ export function LocalePreferenceProvider({
     preference.getSnapshot,
   )
   const [catalog, setCatalog] = useState(() => ({
-    locale: snapshot.locale,
+    locale: initialLocale,
+    requestedLocale: snapshot.locale,
     messages: initialMessages,
   }))
   const [announcedLocale, setAnnouncedLocale] =
     useState<EnabledLocale | null>(null)
 
   useEffect(() => {
-    if (catalog.locale === snapshot.locale) return undefined
+    if (catalog.requestedLocale === snapshot.locale) return undefined
     let active = true
     void LOCALE_REGISTRY[snapshot.locale]
       .loadSharedCatalog()
       .then((messages) => {
         if (active) {
-          setCatalog({ locale: snapshot.locale, messages })
+          setCatalog({
+            locale: snapshot.locale,
+            requestedLocale: snapshot.locale,
+            messages,
+          })
           setAnnouncedLocale(snapshot.locale)
         }
       })
     return () => {
       active = false
     }
-  }, [catalog.locale, snapshot.locale])
+  }, [catalog.requestedLocale, snapshot.locale])
+
+  useEffect(() => {
+    preference.applyEffectiveLocale(catalog.locale)
+  }, [catalog.locale, preference])
 
   useEffect(() => {
     const refresh = () => preference.refreshPreferredLocales()

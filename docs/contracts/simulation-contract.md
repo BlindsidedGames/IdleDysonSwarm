@@ -36,7 +36,9 @@ Swarm. Update cadence, active play and Offline Time are defined by
 - Fixed-price purchases retain their separate minimum-one-ULP debit policy so
   an affordable purchase cannot become free. Purchase output must still be
   proven before that debit and cannot round above or below its authored
-  quantity.
+  quantity. This all-or-nothing output rule applies to direct Dream Solar and
+  Fusion purchases, manual and automated Dyson facility purchases, Research,
+  retained-facility purchases and source-debiting Dream conversions.
 
 ## Update invariants
 

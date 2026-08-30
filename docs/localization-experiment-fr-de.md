@@ -42,6 +42,9 @@ If the selected non-English catalog cannot load during startup, the application
 records a closed catalog-unavailable diagnostic and renders with the bundled
 English catalog for that launch. It does not rewrite the device-local language
 preference, so the selected catalog is attempted again on the next launch.
+The provider locale, `Intl` formatting, document `lang`/`dir` and font identity
+all follow effective English during that launch, including after an RTL catalog
+failure; the unloaded selection is not exposed as the active locale.
 English is the essential fallback; if it is also unavailable, startup follows
 the existing fail-safe path instead of presenting a false ready state.
 

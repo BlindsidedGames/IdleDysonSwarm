@@ -28,6 +28,7 @@ test/private-fixtures/
 hosts/capacitor/android/.gradle/
 hosts/capacitor/android/**/build/
 hosts/capacitor/ios/DerivedData/
+hosts/capacitor/ios/App/.build/
 hosts/capacitor/ios/**/*.xcarchive
 hosts/capacitor/ios/**/*.ipa
 *.apk

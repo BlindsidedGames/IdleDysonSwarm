@@ -75,13 +75,16 @@ async function bootstrap(): Promise<void> {
     ])
     const localePreference = new LocalePreferenceService()
     const locale = localePreference.getSnapshot().locale
-    const messages = await loadStartupCatalog(locale, {
+    const startupCatalog = await loadStartupCatalog(locale, {
       onDiagnostic: (diagnostic) => {
         console.warn(
           `Startup locale diagnostic ${diagnostic.code} for ${diagnostic.locale}; using bundled English catalog.`,
         )
       },
     })
+    const effectiveLocale = startupCatalog.locale
+    const messages = startupCatalog.messages
+    localePreference.applyEffectiveLocale(effectiveLocale)
     const numberNotationPreference =
       new NumberNotationPreferenceService()
     const researchVisibilityPreference =
@@ -122,7 +125,7 @@ async function bootstrap(): Promise<void> {
     void pwaUpdateController?.start()
     const boundaryIntl = createIntl(
       {
-        locale: LOCALE_REGISTRY[locale].languageTag,
+        locale: LOCALE_REGISTRY[effectiveLocale].languageTag,
         defaultLocale: 'en',
         messages: messages as IntlShape['messages'],
       },
@@ -172,13 +175,14 @@ async function bootstrap(): Promise<void> {
           actions={boundaryActions}
           diagnosticContext={{
             hostKind: composition.hostKind,
-            locale,
+            locale: effectiveLocale,
             saveSchemaVersion:
               composition.saveSchemaVersion,
           }}
         >
           <LocalePreferenceProvider
             preference={localePreference}
+            initialLocale={effectiveLocale}
             initialMessages={messages}
           >
             <ReactiveStartupErrorBoundary

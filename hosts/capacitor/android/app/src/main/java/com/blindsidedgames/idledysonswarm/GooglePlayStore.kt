@@ -27,6 +27,12 @@ internal data class NativePurchaseResult(
     val code: String? = null,
 )
 
+internal data class NativeOwnershipRefreshResult(
+    val ownership: DurableOwnership?,
+    val providerAvailable: Boolean,
+    val persisted: Boolean,
+)
+
 /** First-party Google Play Billing adapter. No receipt or purchase token crosses the bridge. */
 internal class GooglePlayStore(
     context: Context,
@@ -46,9 +52,10 @@ internal class GooglePlayStore(
         .build()
 
     fun warmUp() {
+        entitlementCache.retryPendingProviderOwnership()
         ensureConnected { available ->
             if (!available) return@ensureConnected
-            refreshDurableOwnership { _, _ -> }
+            refreshDurableOwnership { }
             drainUnfinishedTips()
         }
     }
@@ -119,16 +126,20 @@ internal class GooglePlayStore(
                 .filter { DURABLE_IDS.contains(it) }
                 .distinct()
                 .toList()
-            processDurablePurchases(purchases)
             val persisted = writeProviderOwnership(durableIds)
-            callback(if (persisted) durableIds else emptyList(), persisted)
+            if (persisted) processDurablePurchases(purchases)
+            callback(durableIds, true)
         }
     }
 
-    fun refreshDurableOwnership(callback: (DurableOwnership?, Boolean) -> Unit) {
+    fun refreshDurableOwnership(
+        acknowledgeVerifiedPurchases: Boolean = true,
+        callback: (NativeOwnershipRefreshResult) -> Unit,
+    ) {
+        entitlementCache.retryPendingProviderOwnership()
         queryOwnedPurchases { purchases, available ->
             if (!available) {
-                callback(null, false)
+                callback(NativeOwnershipRefreshResult(null, false, false))
                 return@queryOwnedPurchases
             }
             val durableIds = purchases.asSequence()
@@ -136,14 +147,20 @@ internal class GooglePlayStore(
                 .flatMap { it.products.asSequence() }
                 .filter { DURABLE_IDS.contains(it) }
                 .toSet()
-            processDurablePurchases(purchases)
             val ownership = DurableOwnership(
                 doubleInfinityPoints = durableIds.contains(DOUBLE_IP),
                 developerOptions = durableIds.contains(DEV_OPTIONS),
                 supporterCatGallery = entitlementCache.read().supporterCatGallery,
             )
             val persisted = entitlementCache.writeProviderOwnership(ownership)
-            callback(if (persisted) entitlementCache.read() else null, persisted)
+            if (persisted && acknowledgeVerifiedPurchases) {
+                processDurablePurchases(purchases)
+            }
+            callback(NativeOwnershipRefreshResult(
+                ownership = entitlementCache.read(),
+                providerAvailable = true,
+                persisted = persisted,
+            ))
         }
     }
 
@@ -199,17 +216,13 @@ internal class GooglePlayStore(
             return
         }
         if (!purchase.products.any(DURABLE_IDS::contains)) return
-        val refresh = { refreshDurableOwnership { _, _ -> } }
-        if (purchase.isAcknowledged) {
-            refresh()
-            return
-        }
-        billingClient.acknowledgePurchase(
-            AcknowledgePurchaseParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build(),
-        ) { result ->
-            if (result.responseCode == BillingClient.BillingResponseCode.OK) refresh()
+        refreshDurableOwnership(acknowledgeVerifiedPurchases = false) { refresh ->
+            if (!refresh.persisted || purchase.isAcknowledged) return@refreshDurableOwnership
+            billingClient.acknowledgePurchase(
+                AcknowledgePurchaseParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build(),
+            ) { }
         }
     }
 
@@ -230,23 +243,25 @@ internal class GooglePlayStore(
             }
             return
         }
-        if (purchase.isAcknowledged) {
-            refreshDurableOwnership { _, available ->
-                resolvePending(available, if (available) null else "purchase-failed")
-            }
-            return
-        }
-        billingClient.acknowledgePurchase(
-            AcknowledgePurchaseParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build(),
-        ) { result ->
-            if (result.responseCode != BillingClient.BillingResponseCode.OK) {
+        refreshDurableOwnership(acknowledgeVerifiedPurchases = false) { refresh ->
+            if (!refresh.persisted) {
                 resolvePending(false, "purchase-failed")
-                return@acknowledgePurchase
+                return@refreshDurableOwnership
             }
-            refreshDurableOwnership { _, available ->
-                resolvePending(available, if (available) null else "purchase-failed")
+            if (purchase.isAcknowledged) {
+                resolvePending(true, null)
+                return@refreshDurableOwnership
+            }
+            billingClient.acknowledgePurchase(
+                AcknowledgePurchaseParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build(),
+            ) { result ->
+                resolvePending(
+                    result.responseCode == BillingClient.BillingResponseCode.OK,
+                    if (result.responseCode == BillingClient.BillingResponseCode.OK) null
+                    else "purchase-failed",
+                )
             }
         }
     }

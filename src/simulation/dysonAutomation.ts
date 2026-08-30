@@ -23,6 +23,7 @@ import {
   floorToDiscrete,
 } from './numeric'
 import type { SimulationAutomationPolicy } from './types'
+import { settleExactContinuousCredit } from './conservativeSettlement'
 
 export const DYSON_AUTOMATION_TARGETS = DYSON_FACILITY_IDS
 
@@ -295,11 +296,11 @@ export function previewDysonFacilityPurchase<
     exponent,
     costLevel,
   )
-  const nextOwned = addContinuous(
+  const output = settleExactContinuousCredit(
     manualOwned,
     Number(selectedQuantity),
   )
-  if (nextOwned <= manualOwned) {
+  if (output.settled !== Number(selectedQuantity)) {
     return purchasePreview(
       facilityId,
       'output-maxed',
@@ -358,11 +359,19 @@ function attemptFacilityPurchase(
     }
   }
 
-  state.money = debit.balance
-  state.facilities[facilityId][1] = addContinuous(
+  const output = settleExactContinuousCredit(
     owned,
     Number(preview.selectedQuantity),
   )
+  if (output.settled !== Number(preview.selectedQuantity)) {
+    return {
+      ...failedAttempt(facilityId, 'output-maxed'),
+      cost: preview.cost,
+    }
+  }
+
+  state.money = debit.balance
+  state.facilities[facilityId][1] = output.balance
   return {
     facilityId,
     purchased: true,

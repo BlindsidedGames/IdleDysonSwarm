@@ -12,7 +12,10 @@ import {
 } from './numeric'
 import { clampDoubleTimeRate } from './timeResources'
 import { buyXCost, tryDebitContinuous } from './transactions'
-import { settleContinuousTransfer } from './conservativeSettlement'
+import {
+  settleContinuousTransfer,
+  settleExactContinuousCredit,
+} from './conservativeSettlement'
 
 export const DREAM_SPACE_AGE_COST_EXPONENT = 1.01
 
@@ -946,13 +949,8 @@ export function purchaseDreamSpaceAge(
   }
   const resource = command === 'solar' ? 'solarPanels' : 'fusion'
   const current = state.dream.resources[resource]
-  const next = current + quantity
-  if (
-    !Number.isFinite(current) ||
-    current < 0 ||
-    !Number.isFinite(next) ||
-    next <= current
-  ) {
+  const output = settleExactContinuousCredit(current, quantity)
+  if (output.settled !== quantity) {
     return purchaseFailure(
       state,
       command,
@@ -982,7 +980,7 @@ export function purchaseDreamSpaceAge(
         ...state.dream,
         resources: {
           ...state.dream.resources,
-          [resource]: next,
+          [resource]: output.balance,
         },
         purchaseBatches: {
           ...previousBatches,

@@ -10,6 +10,7 @@ import {
   multiplyContinuous,
 } from './numeric'
 import { buyXCost, tryDebitContinuous } from './transactions'
+import { settleExactContinuousCredit } from './conservativeSettlement'
 
 export const DREAM_PRODUCER_COST_EXPONENT = 1.01
 
@@ -1053,12 +1054,11 @@ function canAddTransactionOutput(
   ) {
     return false
   }
-  const next = current + quantity
-  return (
-    Number.isFinite(next) &&
-    next <= CONTINUOUS_MAXIMUM &&
-    next > current
-  )
+  return settleExactContinuousCredit(
+    current,
+    quantity,
+    CONTINUOUS_MAXIMUM,
+  ).settled === quantity
 }
 
 function zeroCycles(): Readonly<Record<DreamTimerId, number>> {

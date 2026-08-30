@@ -366,8 +366,12 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                let ownership = try await storeKit.refreshDurableOwnership()
-                resolveOwnership(call, ownership: ownership, providerAvailable: true)
+                let refresh = try await storeKit.refreshDurableOwnership()
+                resolveOwnership(
+                    call,
+                    ownership: refresh.ownership,
+                    providerAvailable: true
+                )
             } catch {
                 resolveOwnership(
                     call,

@@ -5,7 +5,6 @@ import {
   isFinitePositiveNumber,
 } from '../core/finiteNonNegativeNumber'
 import {
-  addContinuous,
   bitDecrement,
   CONTINUOUS_MAXIMUM,
   DISCRETE_MAXIMUM,
@@ -19,6 +18,7 @@ import type {
 } from './dysonModel'
 import type { BasicDysonFacilityId } from './dysonFacilities'
 import type { SimulationAutomationPolicy } from './types'
+import { settleExactContinuousCredit } from './conservativeSettlement'
 
 export const BUY_MODES = [
   'buy-1',
@@ -309,8 +309,8 @@ export function tryPurchaseBasicFacility(
   }
 
   const cost = buyXCost(selected, baseCost, exponent, owned)
-  const nextOwned = addContinuous(owned, Number(selected))
-  if (nextOwned <= owned) {
+  const output = settleExactContinuousCredit(owned, Number(selected))
+  if (output.settled !== Number(selected)) {
     return {
       purchased: false,
       quantity: 0n,
@@ -329,7 +329,7 @@ export function tryPurchaseBasicFacility(
   }
 
   state.money = debit.balance
-  state.facilities[facilityId][1] = nextOwned
+  state.facilities[facilityId][1] = output.balance
   return {
     purchased: true,
     quantity: selected,

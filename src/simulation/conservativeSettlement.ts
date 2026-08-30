@@ -69,6 +69,21 @@ export function settleContinuousCredit(
 }
 
 /**
+ * Represents an all-or-nothing authored purchase output. Unlike production
+ * transfers, a purchase may not silently settle a smaller or larger delta.
+ */
+export function settleExactContinuousCredit(
+  balance: number,
+  requested: number,
+  maximum = CONTINUOUS_MAXIMUM,
+): ConservativeContinuousSettlement {
+  const settlement = settleContinuousCredit(balance, requested, maximum)
+  return settlement.settled === requested
+    ? settlement
+    : { balance, settled: 0 }
+}
+
+/**
  * Debits only a positive delta no greater than the request. Unlike purchase
  * charging, an unrepresentable sub-ULP request is retained rather than being
  * rounded up to a minimum one-ULP charge.

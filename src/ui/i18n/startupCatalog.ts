@@ -18,6 +18,11 @@ export interface LoadStartupCatalogOptions {
   ) => void
 }
 
+export interface StartupCatalog {
+  readonly locale: EnabledLocale
+  readonly messages: SharedMessageCatalog
+}
+
 /**
  * Loads the selected startup catalog without mutating locale preference state.
  * A non-English catalog may fail open to bundled English messages; English is
@@ -26,18 +31,24 @@ export interface LoadStartupCatalogOptions {
 export async function loadStartupCatalog(
   locale: EnabledLocale,
   options: Readonly<LoadStartupCatalogOptions> = {},
-): Promise<SharedMessageCatalog> {
+): Promise<Readonly<StartupCatalog>> {
   const loadCatalog = options.loadCatalog ?? ((requested) =>
     LOCALE_REGISTRY[requested].loadSharedCatalog())
   try {
-    return await loadCatalog(locale)
+    return Object.freeze({
+      locale,
+      messages: await loadCatalog(locale),
+    })
   } catch (error) {
     if (locale === 'en') throw error
     reportDiagnostic(options.onDiagnostic, {
       code: 'selected-locale-catalog-unavailable',
       locale,
     })
-    return loadCatalog('en')
+    return Object.freeze({
+      locale: 'en',
+      messages: await loadCatalog('en'),
+    })
   }
 }
 
