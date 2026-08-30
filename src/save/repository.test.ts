@@ -898,6 +898,72 @@ describe('portable transactional save repository', () => {
     ).toBe(5)
   })
 
+  test('keeps a valid current save when a transitional backup is damaged', async () => {
+    const storage = new MemoryStorage()
+    const current = serializeWebSave({ saveVersion: 12, slot: 'current' })
+    storage.files.set('/current', current)
+    storage.files.set('/current.backup.1', 'damaged-v2-checkpoint')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      () => {
+        throw new Error('damaged transitional checkpoint')
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'already-migrated',
+      save: expect.any(PreparedSave),
+    })
+    expect(storage.files.get('/current')).toBe(current)
+    expect(storage.replacements).toEqual([])
+    expect(storage.copies).toEqual([])
+  })
+
+  test('backs up a valid current save before replacing it with transitional progress', async () => {
+    const storage = new MemoryStorage()
+    const current = serializeWebSave({ saveVersion: 12, slot: 'current' })
+    storage.files.set('/current', current)
+    storage.files.set('/current.backup.1', 'transitional-checkpoint')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      (text) => text === 'transitional-checkpoint'
+        ? PreparedSave.fromDecoded({ saveVersion: 12, slot: 'recovered-v2' })
+        : null,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'recovered-backup',
+      sourcePath: '/current.backup.1',
+    })
+    expect(storage.files.get('/current.backup.1')).toBe(current)
+    expect(storage.files.get('/current.backup.2')).toBe(
+      'transitional-checkpoint',
+    )
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('recovered-v2')
+  })
+
   test('does not replace current when backup rotation fails', async () => {
     const storage = new MemoryStorage()
     const current = serializeWebSave({ saveVersion: 12, slot: 'current' })
