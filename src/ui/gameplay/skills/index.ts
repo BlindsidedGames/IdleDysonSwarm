@@ -4,6 +4,7 @@ export type {
   SkillPresetImportPreview,
   SkillPresetQueueChangePreview,
   SkillPresetQueueChangeRequest,
+  SkillPresetSelectionPreview,
   SkillTreeViewState,
   SkillsSurfaceProps,
 } from './SkillsSurface'

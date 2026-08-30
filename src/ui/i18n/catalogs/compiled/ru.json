@@ -2525,6 +2525,84 @@
       "value": "Выкл."
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " применён частично. Назначенными остаются "
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " невозвратный навык"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " невозвратных навыка"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ", поэтому "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " навык пресета оставлен в очереди на потом"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " навыка пресета оставлены в очереди на потом"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Откройте Навыки для подробностей."
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -7885,6 +7963,12 @@
       "value": "Также назначить необходимые навыки:"
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "Навыки пресета, заблокированные сейчас"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -8121,6 +8205,76 @@
     {
       "type": 0,
       "value": "Вставьте строку набора и проверьте её перед заменой текущего набора."
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " невозвратный навык останется назначенным"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " невозвратных навыка останутся назначенными"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " и заблокирует "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " импортированный навык"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " импортированных навыка"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Совместимая часть пресета всё равно будет применена."
     }
   ],
   "skills.import-text": [
@@ -10419,6 +10573,12 @@
       "value": "Удалено из автоназначения"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "Навыки, которые останутся назначенными"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -10449,6 +10609,12 @@
       "value": "«Сверхновая» подавляет весь слой ручных покупок: Авокадо, оба рубежа 50/100, Масштабирование производства и все скорости Роя."
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "Всё равно переключить"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -10457,6 +10623,26 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "Переключиться на "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "Некоторые навыки сейчас нельзя отменить, и они блокируют часть этого пресета. Можно всё равно переключиться и применить всё совместимое."
     }
   ],
   "skills.tree": [

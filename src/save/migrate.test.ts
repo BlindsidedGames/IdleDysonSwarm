@@ -24,7 +24,7 @@ describe('Unity save migration pipeline', () => {
       expect(before).toBe(sourceSchema)
       expect(getSavePath(decoded.root, 'saveVersion')).toBe(sourceSchema)
       expect(migrated.sourceSchema).toBe(sourceSchema)
-      expect(migrated.save.saveVersion).toBe(13)
+      expect(migrated.save.saveVersion).toBe(14)
       expect(migrated.save.infinityAutomaticReset).toBe(true)
       expect(migrated.validation).toEqual({ valid: true, error: null })
       expect(
@@ -48,6 +48,7 @@ describe('Unity save migration pipeline', () => {
         avocatoOverflow: 4,
       },
       dysonVerseSaveData: {
+        skillAutoAssignmentList: [2, 1],
         skillAutoAssignmentList1: [2, 1],
         dysonVerseInfinityData: {
           SkillTreeSaveData: { 1: true },
@@ -77,8 +78,8 @@ describe('Unity save migration pipeline', () => {
     ).toBe(4)
     expect(infinity.assemblyLines).toEqual([0, 42])
     expect(dyson.skillAutoAssignmentIds1).toEqual([
-      'startHereTree',
       'assemblyLineTree',
+      'startHereTree',
     ])
     expect(avocado).toMatchObject({
       unlocked: true,
@@ -191,7 +192,7 @@ describe('Unity save migration pipeline', () => {
     const dailyWindows = statistics.dailyWindows as Record<string, unknown>[]
 
     expect(migrated.sourceSchema).toBe(12)
-    expect(migrated.targetSchema).toBe(13)
+    expect(migrated.targetSchema).toBe(14)
     expect(migrated.appliedSteps).toContain(
       'continuous-influence-and-strange-matter',
     )
@@ -225,7 +226,7 @@ describe('Unity save migration pipeline', () => {
     expect(source.saveData.influence).toBe(42n)
   })
 
-  test('accepts schema 13 without rerunning its versioned resource migration', () => {
+  test('migrates schema 13 without rerunning its resource migration', () => {
     const migrated = migrateDecodedSave({
       saveVersion: 13,
       saveData: { influence: Number.MAX_VALUE },
@@ -233,7 +234,7 @@ describe('Unity save migration pipeline', () => {
     })
 
     expect(migrated.sourceSchema).toBe(13)
-    expect(migrated.targetSchema).toBe(13)
+    expect(migrated.targetSchema).toBe(14)
     expect(migrated.appliedSteps).not.toContain(
       'continuous-influence-and-strange-matter',
     )
@@ -243,10 +244,62 @@ describe('Unity save migration pipeline', () => {
       .toBe(Number.MAX_VALUE)
   })
 
+  test('copies the legacy live queue into only the selected preset once', () => {
+    const migrated = migrateDecodedSave({
+      saveVersion: 13,
+      dysonVerseSaveData: {
+        selectedPreset: 3,
+        skillAutoAssignmentIds: [
+          'startHereTree',
+          'assemblyLineTree',
+        ],
+        skillAutoAssignmentIds1: ['banking'],
+        skillAutoAssignmentIds2: ['investmentPortfolio'],
+        skillAutoAssignmentIds3: ['scientificRevolution'],
+        skillAutoAssignmentIds4: ['economicRevolution'],
+        skillAutoAssignmentIds5: ['renewableEnergy'],
+      },
+    })
+    const dyson = requireRecord(migrated.save.dysonVerseSaveData)
+
+    expect(migrated.appliedSteps).toContain(
+      'selected-skill-preset-intent',
+    )
+    expect(dyson.skillAutoAssignmentIds1).toEqual(['banking'])
+    expect(dyson.skillAutoAssignmentIds2).toEqual([
+      'investmentPortfolio',
+    ])
+    expect(dyson.skillAutoAssignmentIds3).toEqual([
+      'startHereTree',
+      'assemblyLineTree',
+    ])
+    expect(dyson.skillAutoAssignmentIds4).toEqual([
+      'economicRevolution',
+    ])
+    expect(dyson.skillAutoAssignmentIds5).toEqual(['renewableEnergy'])
+
+    const current = migrateDecodedSave({
+      ...migrated.save,
+      dysonVerseSaveData: {
+        ...dyson,
+        skillAutoAssignmentIds: ['banking'],
+      },
+    })
+    const currentDyson = requireRecord(current.save.dysonVerseSaveData)
+    expect(current.appliedSteps).not.toContain(
+      'selected-skill-preset-intent',
+    )
+    expect(currentDyson.skillAutoAssignmentIds3).toEqual([
+      'startHereTree',
+      'assemblyLineTree',
+    ])
+  })
+
   test('preserves schema-12 skill preset order during the schema-13 resource migration', () => {
     const migrated = migrateDecodedSave({
       saveVersion: 12,
       dysonVerseSaveData: {
+        selectedPreset: 2,
         skillAutoAssignmentIds1: [
           'assemblyLineTree',
           'startHereTree',
@@ -262,7 +315,7 @@ describe('Unity save migration pipeline', () => {
   })
 
   test('validator rejects future schema and non-finite prepared state', () => {
-    expect(() => migrateDecodedSave({ saveVersion: 14 })).toThrow(
+    expect(() => migrateDecodedSave({ saveVersion: 15 })).toThrow(
       'newer than supported',
     )
     const migrated = migrateDecodedSave({ saveVersion: 12 })
@@ -271,7 +324,7 @@ describe('Unity save migration pipeline', () => {
         migrated.save.dysonVerseSaveData as Record<string, unknown>
       ).dysonVerseInfinityData as Record<string, unknown>
     ).money = Number.NaN
-    expect(validatePreparedSave(migrated.save, 13)).toEqual({
+    expect(validatePreparedSave(migrated.save, 14)).toEqual({
       valid: false,
       error:
         'saveSettings.dysonVerseSaveData.dysonVerseInfinityData.money contains a non-finite number.',

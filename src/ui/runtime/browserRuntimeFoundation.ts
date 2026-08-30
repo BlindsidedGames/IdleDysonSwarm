@@ -19,6 +19,9 @@ import type {
   CanonicalAwayReplayResult,
 } from '../../application/canonicalLifecycleCoordinator'
 import {
+  applyCanonicalSkillPresetLayout,
+} from '../../simulation/canonicalSkillTransactions'
+import {
   CanonicalLifecycleCoordinator,
 } from '../../application/canonicalLifecycleCoordinator'
 import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
@@ -288,7 +291,13 @@ export interface BrowserSkillPresetQueryPort {
   exportSkillPreset(slot: CanonicalSkillPresetSlot): string
   previewSkillPresetImport(
     serialized: string,
+    slot: CanonicalSkillPresetSlot,
   ): CanonicalSkillPresetImportResult
+  previewSkillPresetSelection(slot: CanonicalSkillPresetSlot): {
+    readonly retainedSkillIds: readonly string[]
+    readonly pendingSkillIds: readonly string[]
+    readonly blockedByRetainedSkillIds: readonly string[]
+  }
 }
 
 export interface BrowserFrontendDemandPort {
@@ -346,8 +355,10 @@ export function createBrowserRuntimeFoundation(
       implementation.previewSkillPresetQueueChange(request),
     exportSkillPreset: (slot) =>
       implementation.exportSkillPreset(slot),
-    previewSkillPresetImport: (serialized) =>
-      implementation.previewSkillPresetImport(serialized),
+    previewSkillPresetImport: (serialized, slot) =>
+      implementation.previewSkillPresetImport(serialized, slot),
+    previewSkillPresetSelection: (slot) =>
+      implementation.previewSkillPresetSelection(slot),
     ...(developmentControlsAvailable
       ? {
           development: Object.freeze({
@@ -726,8 +737,48 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   previewSkillPresetImport(
     serialized: string,
+    slot: CanonicalSkillPresetSlot,
   ): CanonicalSkillPresetImportResult {
-    return parseCanonicalSkillPreset(serialized, this.readyCanonicalState())
+    const state = this.readyCanonicalState() as CanonicalGameStateV1
+    const parsed = parseCanonicalSkillPreset(serialized, state)
+    if (!parsed.accepted) return parsed
+    const snapshot = this.graph?.application.snapshot()
+    if (
+      snapshot?.phase !== 'ready' ||
+      snapshot.state.selectedSkillPresetSlot !== slot
+    ) {
+      return parsed
+    }
+    const application = applyCanonicalSkillPresetLayout(
+      state,
+      parsed.payload.skillIds,
+    )
+    if (!application.accepted) {
+      throw new Error(application.reason)
+    }
+    return Object.freeze({
+      ...parsed,
+      retainedSkillIds: application.retainedSkillIds,
+      blockedByRetainedSkillIds:
+        application.blockedByRetainedSkillIds,
+    })
+  }
+
+  previewSkillPresetSelection(slot: CanonicalSkillPresetSlot) {
+    const state = this.readyCanonicalState() as CanonicalGameStateV1
+    const application = applyCanonicalSkillPresetLayout(
+      state,
+      state.skills.presets[slot - 1].skillIds,
+    )
+    if (!application.accepted) {
+      throw new Error(application.reason)
+    }
+    return Object.freeze({
+      retainedSkillIds: application.retainedSkillIds,
+      pendingSkillIds: application.pendingSkillIds,
+      blockedByRetainedSkillIds:
+        application.blockedByRetainedSkillIds,
+    })
   }
 
   private readyCanonicalState(): DeepReadonly<CanonicalGameStateV1> {

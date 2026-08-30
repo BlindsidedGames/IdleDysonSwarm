@@ -21,7 +21,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 13
+export const CURRENT_SAVE_SCHEMA = 14
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -40,7 +40,7 @@ export class UnsupportedFutureSaveSchemaError extends Error {
 export interface SaveMigrationResult {
   readonly save: SaveRecord
   readonly sourceSchema: number
-  readonly targetSchema: 13
+  readonly targetSchema: 14
   readonly appliedSteps: readonly string[]
   readonly numericRepair: NumericRepairResult
   readonly validation: SaveValidationResult
@@ -69,6 +69,10 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   // upgrading only its continuous resources must retain the player's order.
   migrateSkills(save, sourceSchema < 12)
   appliedSteps.push('stable-skill-ids-and-bitsets')
+  if (sourceSchema < 14) {
+    migrateSelectedSkillPresetIntent(save)
+    appliedSteps.push('selected-skill-preset-intent')
+  }
   migrateResearch(save)
   appliedSteps.push('stable-research-ids')
   migrateAvocado(save)
@@ -370,6 +374,25 @@ function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {
       dyson[base64Key] = null
     }
   }
+}
+
+/**
+ * Before schema 14, direct assignment changed the live queue without updating
+ * the selected stored preset. Preserve the newest player intent once, without
+ * reconciling or rewriting any of the other four presets.
+ */
+function migrateSelectedSkillPresetIntent(save: SaveRecord): void {
+  const dyson = ensureRecord(save, 'dysonVerseSaveData')
+  const selectedPreset = Math.max(
+    1,
+    Math.min(5, Math.trunc(asFiniteNumber(dyson.selectedPreset) || 1)),
+  )
+  const skillIds = stringArray(dyson.skillAutoAssignmentIds)
+  dyson[`skillAutoAssignmentIds${selectedPreset}`] = [...skillIds]
+  dyson[`skillAutoAssignmentList${selectedPreset}`] =
+    skillIdsToLegacyKeys(skillIds)
+  dyson[`skillAutoAssignmentBits${selectedPreset}`] = null
+  dyson[`skillAutoAssignmentBitsBase64_${selectedPreset}`] = null
 }
 
 const skillIdsToLegacyKeysMap = Object.fromEntries(

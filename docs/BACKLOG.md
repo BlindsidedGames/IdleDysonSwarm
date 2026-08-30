@@ -12,7 +12,14 @@ Status conventions:
 
 ## Current release certification
 
-1. [ ] Complete the remaining manual Web checks: visible focus paint, complete
+1. [ ] **Release blocker — repair Skill preset independence and switching.**
+   Make assignment and unassignment synchronize the selected preset
+   immediately without rewriting the other four presets; preserve independent
+   desired layouts; and implement visible, switchable retained-unrefundable
+   overlays without silent conflict loss. Add multi-preset, reset,
+   persistence/reload, browser, and representative native-host regression
+   evidence. Source: [Skill preset contract](contracts/skill-presets-contract.md).
+2. [ ] Complete the remaining manual Web checks: visible focus paint, complete
    contrast review, 200 percent visual appearance, browser-native 400 percent
    zoom, 320/390-pixel visual reflow, real-touch slider behavior, and screen
    reader behavior. Source: [accessibility review](release/web-accessibility-review-2026-08-19.md).
@@ -23,7 +30,7 @@ Status conventions:
    and its
    [adaptive-navigation follow-up](release/adaptive-bottom-navigation-validation-2026-08-23.md);
    this does not close the broader physical-device and assistive-technology gate.
-2. [ ] Complete native Store and device certification. On physical devices and
+3. [ ] Complete native Store and device certification. On physical devices and
    platform sandboxes, certify purchase success, cancellation,
    pending/interrupted transactions, durable ownership restore, account
    switching, reinstall, offline verified-cache behavior, and entitlement

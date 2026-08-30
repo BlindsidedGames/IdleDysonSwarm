@@ -2525,6 +2525,84 @@
       "value": "Desativado"
     }
   ],
+  "dyson.info.preset-partially-applied": [
+    {
+      "type": 1,
+      "value": "presetName"
+    },
+    {
+      "type": 0,
+      "value": " foi aplicado parcialmente. "
+    },
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidade não reembolsável permanece atribuída"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidades não reembolsáveis permanecem atribuídas"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ", deixando "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidade da predefinição na fila para depois"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidades da predefinição na fila para depois"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Abra Habilidades para ver os detalhes."
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -7885,6 +7963,12 @@
       "value": "Atribuir também estas Habilidades necessárias:"
     }
   ],
+  "skills.blocked-skills-heading": [
+    {
+      "type": 0,
+      "value": "Habilidades da predefinição bloqueadas por enquanto"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -8121,6 +8205,76 @@
     {
       "type": 0,
       "value": "Cole o texto de uma predefinição e revise-o antes de substituir esta predefinição."
+    }
+  ],
+  "skills.import-retained-conflict": [
+    {
+      "type": 6,
+      "value": "retainedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidade não reembolsável permanecerá atribuída"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidades não reembolsáveis permanecerão atribuídas"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " e bloqueará "
+    },
+    {
+      "type": 6,
+      "value": "blockedCount",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidade importada por enquanto"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habilidades importadas por enquanto"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". A parte compatível da predefinição ainda será aplicada."
     }
   ],
   "skills.import-text": [
@@ -10419,6 +10573,12 @@
       "value": "Removidas da atribuição automática"
     }
   ],
+  "skills.retained-skills-heading": [
+    {
+      "type": 0,
+      "value": "Habilidades que permanecerão atribuídas"
+    }
+  ],
   "skills.search": [
     {
       "type": 0,
@@ -10449,6 +10609,12 @@
       "value": "Supernova suprime toda a camada de Compra Manual: Abacates, os dois marcos de 50/100, Escalonamento de Produção e todas as taxas do Enxame."
     }
   ],
+  "skills.switch-anyway": [
+    {
+      "type": 0,
+      "value": "Trocar mesmo assim"
+    }
+  ],
   "skills.switch-preset": [
     {
       "type": 0,
@@ -10457,6 +10623,26 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "skills.switch-preset-conflict-title": [
+    {
+      "type": 0,
+      "value": "Trocar para "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "skills.switch-preset-conflict-warning": [
+    {
+      "type": 0,
+      "value": "Algumas habilidades não podem ser removidas agora e bloqueiam parte desta predefinição. Você ainda pode trocar e aplicar tudo o que for compatível."
     }
   ],
   "skills.tree": [
