@@ -12,6 +12,7 @@ import {
   LOCALE_REGISTRY,
   LocalePreferenceProvider,
   LocalePreferenceService,
+  loadStartupCatalog,
 } from './ui/i18n'
 import {
   createProductionPwaUpdateController,
@@ -74,8 +75,13 @@ async function bootstrap(): Promise<void> {
     ])
     const localePreference = new LocalePreferenceService()
     const locale = localePreference.getSnapshot().locale
-    const messages =
-      await LOCALE_REGISTRY[locale].loadSharedCatalog()
+    const messages = await loadStartupCatalog(locale, {
+      onDiagnostic: (diagnostic) => {
+        console.warn(
+          `Startup locale diagnostic ${diagnostic.code} for ${diagnostic.locale}; using bundled English catalog.`,
+        )
+      },
+    })
     const numberNotationPreference =
       new NumberNotationPreferenceService()
     const researchVisibilityPreference =

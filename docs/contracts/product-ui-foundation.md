@@ -257,6 +257,11 @@ Internationalization is foundation work, not a later string-replacement pass:
 - Organize catalogs by gameplay destination and shared UI. Load the active
   locale's shared catalog at startup and lazy-load destination catalogs with
   their route.
+- If a selected non-English startup catalog is unavailable, record only its
+  closed failure category and use the bundled English catalog for that launch.
+  Preserve the selected device-local preference so the catalog is attempted
+  again on the next launch. Failure of English itself remains a genuine
+  bootstrap failure and must reach the existing fail-safe presentation.
 - Keep gameplay IDs, save keys, command kinds, diagnostic codes and canonical
   enum values language-neutral. Translate them only through presentation
   metadata.
