@@ -15,6 +15,8 @@ export const PRODUCTION_BROWSER_PROFILE_ID =
   'development-only-default-profile'
 const PRODUCTION_BROWSER_SAVE_PREFIX =
   `/development-only/${PRODUCTION_BROWSER_PROFILE_ID}`
+const PRE_SCHEMA_13_RECOVERY_PATH =
+  `${PRODUCTION_BROWSER_SAVE_PREFIX}/recovery/pre-schema13-original.idsw`
 export const PRODUCTION_BROWSER_SAVE_PATHS = Object.freeze({
   current: `${PRODUCTION_BROWSER_SAVE_PREFIX}/current.idsw`,
   temporary: `${PRODUCTION_BROWSER_SAVE_PREFIX}/current.idsw.tmp`,
@@ -24,5 +26,8 @@ export const PRODUCTION_BROWSER_SAVE_PATHS = Object.freeze({
     `${PRODUCTION_BROWSER_SAVE_PREFIX}/current.idsw.backup.1`,
     `${PRODUCTION_BROWSER_SAVE_PREFIX}/current.idsw.backup.2`,
     `${PRODUCTION_BROWSER_SAVE_PREFIX}/current.idsw.backup.3`,
+  ]),
+  retainedRecoverySources: Object.freeze([
+    PRE_SCHEMA_13_RECOVERY_PATH,
   ]),
 } satisfies SaveRepositoryPaths)

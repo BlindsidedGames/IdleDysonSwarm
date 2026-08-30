@@ -819,6 +819,39 @@ describe('portable transactional save repository', () => {
     expect(promote).not.toHaveBeenCalled()
   })
 
+  test('recovers a retained canonical Web export as well as Unity IDB1 text', async () => {
+    const storage = new MemoryStorage()
+    const retained = serializeWebSave({
+      saveVersion: 12,
+      slot: 'retained-web-export',
+    })
+    storage.files.set('/retained-web', retained)
+    storage.candidates = [{
+      id: 'retained-web',
+      sourcePath: '/retained-web',
+      text: retained,
+      provenance: { kind: 'browser-retained-import' },
+    }]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original.idsw',
+      },
+      decodeIdb1SaveRoot,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'migrated',
+      source: { id: 'retained-web' },
+    })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('retained-web-export')
+    expect(storage.files.get('/recovery/original.idsw')).toBe(retained)
+  })
+
   test('rotates three verified backups before publishing a replacement', async () => {
     const storage = new MemoryStorage()
     storage.files.set(
@@ -945,6 +978,72 @@ describe('portable transactional save repository', () => {
       ['/current', '/recovery/original-idb1.txt'],
     ])
     expect(storage.replacements).toEqual([['/current.tmp', '/current']])
+  })
+
+  test('recovers an exact source retained by an earlier canonical migration', async () => {
+    const storage = new MemoryStorage()
+    const rejectedCheckpoint = JSON.stringify({
+      format: 'ids-web-production-v2-checkpoint-v1',
+      portableSave: 'IDSWEB1:experimental-v2',
+    })
+    const retained = serializeWebSave({
+      saveVersion: 12,
+      slot: 'before-schema-13',
+    })
+    storage.files.set('/current', rejectedCheckpoint)
+    storage.files.set('/recovery/pre-schema13.idsw', retained)
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+        retainedRecoverySources: ['/recovery/pre-schema13.idsw'],
+      },
+      decodeIdb1SaveRoot,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'recovered-backup',
+      sourcePath: '/recovery/pre-schema13.idsw',
+    })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('before-schema-13')
+    expect(storage.files.get('/recovery/rejected-current.idsw')).toBe(
+      rejectedCheckpoint,
+    )
+    expect(storage.files.get('/recovery/pre-schema13.idsw')).toBe(retained)
+  })
+
+  test('reports the rejected current save instead of masking it with an unrelated legacy failure', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', JSON.stringify({
+      format: 'ids-web-production-v2-checkpoint-v1',
+    }))
+    storage.files.set('/legacy', 'not-idb1')
+    storage.candidates = [{
+      id: 'unrelated-import',
+      sourcePath: '/legacy',
+      text: 'not-idb1',
+    }]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/rejected-current.idsw',
+      },
+      decodeIdb1SaveRoot,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toEqual({
+      status: 'current-invalid',
+      error: 'Unsupported web save envelope ids-web-production-v2-checkpoint-v1.',
+    })
+    expect(storage.files.get('/recovery/rejected-current.idsw')).toBe(
+      storage.files.get('/current'),
+    )
   })
 
   test('blocks downgrade recovery when the newest readable backup has a future schema', async () => {
