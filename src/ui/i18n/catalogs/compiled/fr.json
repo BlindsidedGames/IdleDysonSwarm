@@ -13332,6 +13332,12 @@
       "value": "Amélioration de la mise en page de Réalité et d’Avocato, et alimentation tenant compte de la précision : Tout donner conserve désormais toute quantité qui ne peut pas être créditée sans risque au lieu de la détruire silencieusement."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.extreme-values": [
+    {
+      "type": 0,
+      "value": "Renforcement des achats, récompenses et transferts de ressources aux valeurs extrêmes afin que les montants crédités, les coûts et les soldes restants restent cohérents sans perdre ni créer de progression."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.facilities": [
     {
       "type": 0,
@@ -13368,6 +13374,12 @@
       "value": "Refonte des Paramètres, de la navigation, des offres de la Boutique, des fenêtres, des panneaux inférieurs et des zones de sécurité afin de mieux utiliser l’espace sans contenu tronqué ni commandes surdimensionnées."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.save-recovery": [
+    {
+      "type": 0,
+      "value": "Renforcement des mises à niveau et de la récupération des sauvegardes afin que la progression issue de la version Unity et des versions Web ou natives antérieures soit transférée en toute sécurité, avec une protection supplémentaire des copies de secours en cas d’écriture interrompue ou endommagée."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
     {
       "type": 0,
@@ -13390,6 +13402,18 @@
     {
       "type": 0,
       "value": "Amélioration des Préréglages de Compétences, de la recherche, des fenêtres, des paramètres d’attribution et des badges de navigation. Les Points de Compétence non attribués sont désormais affichés en nombres entiers et les badges vides restent masqués."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.startup": [
+    {
+      "type": 0,
+      "value": "Démarrage plus robuste lorsque les fichiers de langue de l’appareil ou les informations de version native sont retardés ou indisponibles, avec un repli sûr qui ne bloque pas l’accès au jeu."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.store-ownership": [
+    {
+      "type": 0,
+      "value": "Fiabilisation de la possession du bonus Points d’Infini ×2 et de la restauration des achats sur Android et iOS, y compris au démarrage hors ligne et lors d’échecs temporaires de vérification de la Boutique."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

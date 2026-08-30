@@ -13332,6 +13332,12 @@
       "value": "优化了现实与 Avocato 的布局，并让喂养正确处理数值精度。“全部喂养”现在会保留无法安全计入的余量，而不是悄悄将其销毁。"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.extreme-values": [
+    {
+      "type": 0,
+      "value": "强化了极大数值下的购买、奖励和资源转移，确保入账数量、花费和剩余余额保持一致，不会丢失或凭空增加进度。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.facilities": [
     {
       "type": 0,
@@ -13368,6 +13374,12 @@
       "value": "重新调整了设置、导航、商店商品、对话框、底部面板和安全区域，让空间利用更整洁，同时避免内容裁切或控件过大。"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.save-recovery": [
+    {
+      "type": 0,
+      "value": "强化了存档升级与恢复功能，可安全继承 Unity 版本及早期 Web 或原生版本的进度，并在写入中断或存档损坏时提供额外的备份保护。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
     {
       "type": 0,
@@ -13390,6 +13402,18 @@
     {
       "type": 0,
       "value": "改进了技能预设、搜索控件、对话框、分配设置和导航徽章。未分配技能点现在以整数显示，数量为零时不会显示徽章。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.startup": [
+    {
+      "type": 0,
+      "value": "当设备语言文件或原生版本信息延迟或不可用时，启动流程现在会安全回退，不再阻止进入游戏。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.store-ownership": [
+    {
+      "type": 0,
+      "value": "提高了 Android 和 iOS 上双倍无限点所有权及购买恢复的可靠性，包括离线启动和商店临时验证失败的情况。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

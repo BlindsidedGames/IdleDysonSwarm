@@ -13332,6 +13332,12 @@
       "value": "Die Layouts von Realität und Avocato wurden verfeinert und das Füttern berücksichtigt nun die Zahlengenauigkeit. Alles füttern lässt Beträge übrig, die nicht sicher gutgeschrieben werden können, statt sie unbemerkt zu vernichten."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.extreme-values": [
+    {
+      "type": 0,
+      "value": "Käufe, Belohnungen und Ressourcentransfers bei extremen Werten wurden abgesichert, damit gutgeschriebene Beträge, Kosten und Restbestände konsistent bleiben, ohne Fortschritt zu verlieren oder zu erzeugen."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.facilities": [
     {
       "type": 0,
@@ -13368,6 +13374,12 @@
       "value": "Einstellungen, Navigation, Ladenangebote, Dialoge, untere Leisten und Sicherheitsabstände wurden überarbeitet, um den Platz ohne abgeschnittene Inhalte oder übergroße Bedienelemente sauberer zu nutzen."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.save-recovery": [
+    {
+      "type": 0,
+      "value": "Die Aktualisierung und Wiederherstellung von Spielständen wurde verbessert, damit Fortschritt aus der Unity-Version und früheren Web- oder nativen Versionen sicher übernommen wird. Zusätzliche Sicherungen schützen bei unterbrochenen oder beschädigten Schreibvorgängen."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
     {
       "type": 0,
@@ -13390,6 +13402,18 @@
     {
       "type": 0,
       "value": "Fähigkeitsvorlagen, Suche, Dialoge, Zuweisungseinstellungen und Navigationsmarkierungen wurden verbessert. Nicht zugewiesene Fähigkeitspunkte erscheinen nun als ganze Zahlen und leere Markierungen bleiben ausgeblendet."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.startup": [
+    {
+      "type": 0,
+      "value": "Der Start ist jetzt robuster, wenn Sprachdateien des Geräts oder native Versionsinformationen verzögert oder nicht verfügbar sind, und weicht sicher aus, ohne den Spielzugang zu blockieren."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.store-ownership": [
+    {
+      "type": 0,
+      "value": "Der Besitz von Doppelten Unendlichkeitspunkten und die Wiederherstellung von Käufen unter Android und iOS wurden zuverlässiger, auch beim Offline-Start und bei vorübergehenden Prüfungsfehlern des Shops."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [
