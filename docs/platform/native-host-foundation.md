@@ -23,6 +23,14 @@ CI overrides the default with `IDS_RELEASE_CANDIDATE_ID=YYYYMMDDNN`. The sync
 script rejects malformed dates, build IDs at or below the retained legacy
 native-build floor, and values above Android's version-code limit.
 
+Electron Builder and the packaged Electron main process consume the same
+generated `hosts/electron/release-version.json`. That record contains the
+effective marketing version and release-candidate identity after any local or
+CI override, so packaging configuration and the runtime footer cannot select
+different builds. The package fails closed at startup if the generated record
+is missing, malformed, internally inconsistent, or disagrees with Electron's
+packaged application version.
+
 The ready application shell displays a minimal release footer without reducing
 the gameplay field. Android and iOS use their installed package metadata and
 display `Android` or `iOS`. Local Electron sessions display `Dev`, generic

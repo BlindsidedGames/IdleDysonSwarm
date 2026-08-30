@@ -44,7 +44,7 @@ import {
 
 const hostDirectory = dirname(fileURLToPath(import.meta.url))
 const rendererEntry = join(hostDirectory, '../../dist-native/index.html')
-const releaseMetadataPath = join(hostDirectory, '../native-release.json')
+const releaseMetadataPath = join(hostDirectory, 'release-version.json')
 const steamInventoryConfigPath = join(
   hostDirectory,
   'steam-inventory.json',

@@ -6,6 +6,7 @@ import {
   resolveNativeReleaseMetadata,
   type NativeReleaseSource,
 } from './sync-native-release'
+import { validateReleaseMetadata } from '../hosts/electron/releaseMetadata.mjs'
 
 const source: NativeReleaseSource = Object.freeze({
   schemaVersion: 1,
@@ -30,9 +31,29 @@ describe('native release metadata', () => {
     expect(renderAppleReleaseVersion(metadata)).toContain(
       'CURRENT_PROJECT_VERSION = 2608.02.00',
     )
-    expect(renderElectronReleaseVersion(metadata)).toContain(
-      'buildVersion: "2026080200"',
-    )
+    expect(validateReleaseMetadata(
+      JSON.parse(renderElectronReleaseVersion(metadata)),
+    )).toEqual({
+      marketingVersion: '4.0.0',
+      releaseCandidateId: '2026080200',
+    })
+  })
+
+  it('renders an override as one Electron packaging and runtime identity', () => {
+    const metadata = resolveNativeReleaseMetadata(source, '2026083007')
+    const generated = JSON.parse(renderElectronReleaseVersion(metadata))
+
+    expect(generated).toEqual({
+      buildVersion: '2026083007',
+      extraMetadata: {
+        version: '4.0.0',
+        buildVersion: '2026083007',
+      },
+    })
+    expect(validateReleaseMetadata(generated)).toEqual({
+      marketingVersion: '4.0.0',
+      releaseCandidateId: '2026083007',
+    })
   })
 
   it.each([

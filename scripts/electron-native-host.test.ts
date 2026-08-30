@@ -1,6 +1,10 @@
 import { readFileSync } from 'node:fs'
+import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
+  readPackagedReleaseMetadata,
   runtimeMetadata,
   validateReleaseMetadata,
 } from '../hosts/electron/releaseMetadata.mjs'
@@ -12,7 +16,7 @@ function read(relativePath: string): string {
 
 describe('Electron native host hardening', () => {
   it('packages and validates runtime release metadata', () => {
-    const source = JSON.parse(read('hosts/native-release.json'))
+    const source = JSON.parse(read('hosts/electron/release-version.json'))
     const release = validateReleaseMetadata(source)
 
     expect(runtimeMetadata('4.1.5', release)).toEqual({
@@ -23,12 +27,46 @@ describe('Electron native host hardening', () => {
       'does not match',
     )
     const builder = read('hosts/electron/electron-builder.yml')
-    expect(builder).toContain('hosts/native-release.json')
+    expect(builder).toContain(
+      'extends: hosts/electron/release-version.json',
+    )
+    expect(builder).toContain('hosts/electron/release-version.json')
+    expect(builder).not.toContain('hosts/native-release.json')
     expect(builder).toContain('hosts/electron/releaseMetadata.mjs')
     expect(builder).toContain('hosts/electron/smokeMode.mjs')
     expect(builder).toContain('hosts/electron/steamInventoryBinding.mjs')
     expect(builder).toContain('hosts/electron/steamInventoryStore.mjs')
     expect(builder).toContain('hosts/electron/steam-inventory.json')
+    expect(JSON.parse(read('hosts/electron/host.config.json')))
+      .toMatchObject({ releaseMetadata: 'release-version.json' })
+  })
+
+  it('rejects missing, malformed, and internally inconsistent packaged metadata', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'ids-electron-release-'))
+    try {
+      await expect(readPackagedReleaseMetadata(
+        join(directory, 'missing.json'),
+      )).rejects.toThrow()
+      const malformed = join(directory, 'malformed.json')
+      await writeFile(malformed, '{', 'utf8')
+      await expect(readPackagedReleaseMetadata(malformed)).rejects.toThrow()
+      expect(() => validateReleaseMetadata({
+        buildVersion: '2026083007',
+        extraMetadata: {
+          version: '4.1.5',
+          buildVersion: '2026083006',
+        },
+      })).toThrow('Electron release metadata is invalid.')
+      expect(() => validateReleaseMetadata({
+        buildVersion: '2026023000',
+        extraMetadata: {
+          version: '4.1.5',
+          buildVersion: '2026023000',
+        },
+      })).toThrow('Electron release metadata is invalid.')
+    } finally {
+      await rm(directory, { recursive: true, force: true })
+    }
   })
 
   it('selects ordinary and suspend/resume smoke modes from explicit arguments', () => {
