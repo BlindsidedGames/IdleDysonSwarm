@@ -13347,7 +13347,7 @@
   "wiki.patch-notes.version-4-1-5.number-input": [
     {
       "type": 0,
-      "value": "调试金额输入框现在支持游戏完整的标准后缀体系，包括 100 Qi、100xQi 和 100 × qi 等灵活写法，并分别采用连续数值与整数数值上限。"
+      "value": "开发者选项的金额输入框现在支持正负调整，可增加资源或将其扣减至不低于零；同时支持游戏全部标准后缀与指数写法，并在 iOS 上调用可输入文本的键盘。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.persistence": [
@@ -13377,7 +13377,7 @@
   "wiki.patch-notes.version-4-1-5.save-recovery": [
     {
       "type": 0,
-      "value": "强化了存档升级与恢复功能，可安全继承 Unity 版本及早期 Web 或原生版本的进度，并在写入中断或存档损坏时提供额外的备份保护。"
+      "value": "强化了存档升级与恢复功能，可安全继承 Unity 版本及早期 Web 或原生版本的进度，包括受极端恒星生产数值影响的存档，并在写入中断或存档损坏时提供额外的备份保护。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
@@ -13389,7 +13389,7 @@
   "wiki.patch-notes.version-4-1-5.simulation-fixes": [
     {
       "type": 0,
-      "value": "恢复了轨道炮和太空工厂的成长，修正了齐射与已完成研究的显示，让黑洞重置在资源达到上限时仍可使用，并修复了可能让游戏处理停止的计时器边界问题。"
+      "value": "恢复了轨道炮和太空工厂的成长，修正了齐射与已完成研究的显示，让黑洞重置在资源达到上限时仍可使用，在储存时间的最后一次更新达到机器人上限时正确结算奖励，并修复了可能让游戏处理停止的计时器边界问题。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulations-ui": [

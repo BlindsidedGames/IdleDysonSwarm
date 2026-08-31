@@ -6772,8 +6772,8 @@
     "description": "Version 4.1.5 release note for facility and Research progression."
   },
   "wiki.patch-notes.version-4-1-5.number-input": {
-    "defaultMessage": "Debug amount fields now understand the game’s full Standard suffix vocabulary, including flexible forms such as 100 Qi, 100xQi, and 100 × qi, with separate continuous and whole-number caps.",
-    "description": "Version 4.1.5 release note for game-number input and caps."
+    "defaultMessage": "Developer amount fields now accept signed adjustments that add or remove resources without going below zero, understand the game’s full Standard suffixes and exponents, and request a text-capable keyboard on iOS.",
+    "description": "Version 4.1.5 release note for signed Developer game-number input and iOS keyboard support."
   },
   "wiki.patch-notes.version-4-1-5.persistence": {
     "defaultMessage": "Fixed route restoration and progression boundaries so reloads return to the correct available tab without exposing locked Skills, Infinity, Debug, or late-game content.",
@@ -6792,15 +6792,15 @@
     "description": "Version 4.1.5 release note for responsive layout and navigation improvements."
   },
   "wiki.patch-notes.version-4-1-5.save-recovery": {
-    "defaultMessage": "Improved save upgrading and recovery so progress from the Unity release and earlier Web or native builds carries forward safely, with additional backup protection around interrupted or damaged saves.",
-    "description": "Version 4.1.5 release note for existing-player save continuity and recovery."
+    "defaultMessage": "Improved save upgrading and recovery so progress from the Unity release and earlier Web or native builds—including saves affected by extreme Stellar production values—carries forward safely, with additional backup protection around interrupted or damaged saves.",
+    "description": "Version 4.1.5 release note for existing-player save continuity and recovery, including extreme Stellar values."
   },
   "wiki.patch-notes.version-4-1-5.simulation-balance": {
     "defaultMessage": "Added shallow batch-based cost scaling to Hunters, Gatherers, Solar Panels, and Fusion Generators so Buy Max remains useful at extreme values without creating effectively unlimited purchases.",
     "description": "Version 4.1.5 release note for Simulation purchase scaling."
   },
   "wiki.patch-notes.version-4-1-5.simulation-fixes": {
-    "defaultMessage": "Restored Railgun and Space Factory scaling, corrected volley and completed-research displays, kept Black Hole resets usable at the resource cap, and fixed a timer edge case that could stop game processing.",
+    "defaultMessage": "Restored Railgun and Space Factory scaling, corrected volley and completed-research displays, kept Black Hole resets usable at the resource cap, settled bot-cap rewards on Stored Time’s final update, and fixed a timer edge case that could stop game processing.",
     "description": "Version 4.1.5 release note for Simulation progression and processing fixes."
   },
   "wiki.patch-notes.version-4-1-5.simulations-ui": {

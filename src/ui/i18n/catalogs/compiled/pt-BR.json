@@ -13347,7 +13347,7 @@
   "wiki.patch-notes.version-4-1-5.number-input": [
     {
       "type": 0,
-      "value": "Os campos de valor de Depuração agora entendem todo o vocabulário de sufixos Padrão do jogo, incluindo formas flexíveis como 100 Qi, 100xQi e 100 × qi, com limites separados para valores contínuos e inteiros."
+      "value": "Os campos de valor das Opções de Desenvolvedor agora aceitam ajustes positivos e negativos para adicionar ou remover recursos sem baixar de zero, entendem todos os sufixos Padrão e expoentes do jogo e solicitam um teclado compatível com texto no iOS."
     }
   ],
   "wiki.patch-notes.version-4-1-5.persistence": [
@@ -13377,7 +13377,7 @@
   "wiki.patch-notes.version-4-1-5.save-recovery": [
     {
       "type": 0,
-      "value": "A atualização e a recuperação de salvamentos foram reforçadas para transferir com segurança o progresso da versão Unity e de versões Web ou nativas anteriores, com proteção adicional de backup contra gravações interrompidas ou corrompidas."
+      "value": "A atualização e a recuperação de salvamentos foram reforçadas para transferir com segurança o progresso da versão Unity e de versões Web ou nativas anteriores, incluindo salvamentos afetados por valores extremos de produção Estelar, com proteção adicional de backup contra gravações interrompidas ou corrompidas."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
@@ -13389,7 +13389,7 @@
   "wiki.patch-notes.version-4-1-5.simulation-fixes": [
     {
       "type": 0,
-      "value": "O escalonamento de Canhões Eletromagnéticos e Fábricas Espaciais foi restaurado, as exibições de rajada e Pesquisa concluída foram corrigidas, os reinícios de Buraco Negro continuam utilizáveis no limite de recursos e um caso extremo do temporizador que podia parar o processamento do jogo foi resolvido."
+      "value": "O escalonamento de Canhões Eletromagnéticos e Fábricas Espaciais foi restaurado, as exibições de rajada e Pesquisa concluída foram corrigidas, os reinícios de Buraco Negro continuam utilizáveis no limite de recursos, as recompensas do limite de Bots são concedidas corretamente na atualização final do Tempo Armazenado e um caso extremo do temporizador que podia parar o processamento do jogo foi resolvido."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulations-ui": [

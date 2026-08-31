@@ -13347,7 +13347,7 @@
   "wiki.patch-notes.version-4-1-5.number-input": [
     {
       "type": 0,
-      "value": "Debug amount fields now understand the game’s full Standard suffix vocabulary, including flexible forms such as 100 Qi, 100xQi, and 100 × qi, with separate continuous and whole-number caps."
+      "value": "Developer amount fields now accept signed adjustments that add or remove resources without going below zero, understand the game’s full Standard suffixes and exponents, and request a text-capable keyboard on iOS."
     }
   ],
   "wiki.patch-notes.version-4-1-5.persistence": [
@@ -13377,7 +13377,7 @@
   "wiki.patch-notes.version-4-1-5.save-recovery": [
     {
       "type": 0,
-      "value": "Improved save upgrading and recovery so progress from the Unity release and earlier Web or native builds carries forward safely, with additional backup protection around interrupted or damaged saves."
+      "value": "Improved save upgrading and recovery so progress from the Unity release and earlier Web or native builds—including saves affected by extreme Stellar production values—carries forward safely, with additional backup protection around interrupted or damaged saves."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
@@ -13389,7 +13389,7 @@
   "wiki.patch-notes.version-4-1-5.simulation-fixes": [
     {
       "type": 0,
-      "value": "Restored Railgun and Space Factory scaling, corrected volley and completed-research displays, kept Black Hole resets usable at the resource cap, and fixed a timer edge case that could stop game processing."
+      "value": "Restored Railgun and Space Factory scaling, corrected volley and completed-research displays, kept Black Hole resets usable at the resource cap, settled bot-cap rewards on Stored Time’s final update, and fixed a timer edge case that could stop game processing."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulations-ui": [
