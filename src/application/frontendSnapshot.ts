@@ -1616,6 +1616,7 @@ function selectDerivedFacts(
           value: projectDysonDerivedFacts(
             dyson.value,
             state.dyson.goalStage,
+            state.quantum.divisionsPurchased,
           ),
         }
         : {
@@ -1877,6 +1878,7 @@ export function projectFrontendStoryDerivedFacts(
 function projectDysonDerivedFacts(
   source: Readonly<DerivedBasicDysonState>,
   goalStage: bigint,
+  divisionsPurchased: bigint,
 ): Omit<
   DerivedBasicDysonState,
   'nextEvaluationSnapshot' | 'megaRates'
@@ -1922,7 +1924,10 @@ function projectDysonDerivedFacts(
       swarmScale,
       activePanelMetric,
       swarmVisualization,
-      currentGoal: projectDysonGoal(goalStage),
+      currentGoal: projectDysonGoal(
+        goalStage,
+        divisionsPurchased,
+      ),
       facilities: source.facilityFacts,
     },
     entitlements: source.entitlements,
@@ -2265,6 +2270,7 @@ function projectGalaxyGroupVisualCompletion(
 
 function projectDysonGoal(
   goalStage: bigint,
+  divisionsPurchased: bigint,
 ): FrontendDysonPresentationFacts['currentGoal'] {
   switch (goalStage) {
     case 0n:
@@ -2288,7 +2294,10 @@ function projectDysonGoal(
     case 9n:
       return { kind: 'engulf-galaxies', target: 100 }
     default:
-      return { kind: 'reach-bots', target: 42_000_000_000_000_000_000 }
+      return {
+        kind: 'reach-bots',
+        target: ordinaryInfinityBotThreshold(divisionsPurchased),
+      }
   }
 }
 
