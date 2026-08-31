@@ -330,7 +330,7 @@
   "debug.amount-continuous-maximum": [
     {
       "type": 0,
-      "value": "連続リソースは"
+      "value": "連続リソースの絶対量は"
     },
     {
       "type": 1,
@@ -364,13 +364,13 @@
   "debug.amount-help": [
     {
       "type": 0,
-      "value": "100 Qi、100xqi、100 x qiのような標準サフィックスを使用できます。"
+      "value": "標準サフィックスまたは指数を使用できます（100 Qi、100xqi、e14 = 1e14）。負の量はリソースを0まで減らします。"
     }
   ],
   "debug.amount-invalid": [
     {
       "type": 0,
-      "value": "数字、科学表記、またはゲームの標準サフィックスを使って0以上の数を入力してください。"
+      "value": "数字、科学表記、またはゲームの標準サフィックスを使って量を入力してください。"
     }
   ],
   "debug.apply-preset": [

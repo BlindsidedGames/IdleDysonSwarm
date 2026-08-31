@@ -737,9 +737,12 @@ function AutoInfinityTargetControl({
         <input
           id="infinity-break-target-input"
           type="text"
-          inputMode="decimal"
+          inputMode="text"
           enterKeyHint="done"
           autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
           value={draft}
           disabled={!routeAvailable}
           aria-invalid={validationReason !== null}

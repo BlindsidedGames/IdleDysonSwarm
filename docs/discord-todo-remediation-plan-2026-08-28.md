@@ -81,6 +81,8 @@ Debug accepts the game's player-visible Standard magnitude vocabulary as
 input, independently of the currently selected display notation.
 
 - Accept exact integers, decimals, grouped digits and scientific notation.
+- Treat an exponent without a coefficient as coefficient one: `e14` is
+  equivalent to `1e14`.
 - Accept every Standard suffix emitted by the canonical formatter, including
   `K`, `M`, `B`, `T`, `Qa`, `Qi`, `Sx`, `Sp`, `Oc` and all later compound
   suffixes through the end of the authored suffix table.
@@ -93,6 +95,12 @@ input, independently of the currently selected display notation.
 - Continuous resources and discrete resources retain their different domain
   limits. Above-limit input reports the relevant limit instead of silently
   applying an unintended value.
+- Request a text-capable mobile keyboard so digits, signs, suffix letters and
+  exponent notation are all authorable.
+- Accept negative Developer resource adjustments and clamp the available
+  resource at zero. Preserve the spent-total floors for Infinity Points and
+  Quantum Shards. Negative Offline Time removes available Stored Time down to
+  zero without reversing simulation.
 - Resource-specific **Set to cap** actions supplement the shared amount field.
 
 ## Implementation workstreams
@@ -366,8 +374,9 @@ input, independently of the currently selected display notation.
 - Support the fixed input contract above, including optional `x`/`×` separators.
 - Convert to `number` only at the continuous Cash, Bots and Offline Time
   boundary after finite-range validation.
-- Keep Skill Points, Infinity Points, Quantum Shards, Influence and Strange
-  Matter exact through their bigint boundary.
+- Keep Skill Points, Infinity Points and Quantum Shards exact through their
+  bigint boundary. Validate Influence and Strange Matter at their finite
+  continuous-number boundary.
 - Give each action resource-specific validation and cap feedback. Do not mark
   the shared field globally valid when the chosen action cannot accept it.
 - Add explicit Set to cap actions for relevant resources.

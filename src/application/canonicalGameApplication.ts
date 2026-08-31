@@ -1186,25 +1186,28 @@ function applyDevelopmentAction(
   const state = candidate.gameState
   switch (action.kind) {
     case 'add-cash': {
-      if (!isFiniteNonNegativeNumber(action.amount)) {
+      if (!Number.isFinite(action.amount)) {
         return invalidDevelopmentAction('Cash amount')
       }
       return replaceDevelopmentState(candidate, {
         ...state,
         dyson: {
           ...state.dyson,
-          money: Math.min(
-            Number.MAX_VALUE,
-            state.dyson.money + action.amount,
+          money: adjustDevelopmentContinuous(
+            state.dyson.money,
+            action.amount,
           ),
         },
       })
     }
     case 'add-bots': {
-      if (!isFiniteNonNegativeNumber(action.amount)) {
+      if (!Number.isFinite(action.amount)) {
         return invalidDevelopmentAction('Bot amount')
       }
-      const bots = Math.min(Number.MAX_VALUE, state.dyson.bots + action.amount)
+      const bots = adjustDevelopmentContinuous(
+        state.dyson.bots,
+        action.amount,
+      )
       return applyDevelopmentDysonBots(candidate, bots)
     }
     case 'add-skill-points':
@@ -1215,11 +1218,14 @@ function applyDevelopmentAction(
         ...state,
         skills: {
           ...state.skills,
-          points: addDiscrete(
+          points: adjustDevelopmentDiscrete(
             state.skills.points,
             action.amount,
           ),
         },
+      }
+      if (action.amount < 0n) {
+        return replaceDevelopmentState(candidate, awardedSkillState)
       }
       const assignment = runCanonicalSkillAutoAssignment(
         awardedSkillState,
@@ -1243,9 +1249,10 @@ function applyDevelopmentAction(
         ...state,
         infinity: {
           ...state.infinity,
-          points: addDiscrete(
+          points: adjustDevelopmentDiscrete(
             state.infinity.points,
             action.amount,
+            state.infinity.spentPoints,
           ),
         },
       })
@@ -1257,43 +1264,56 @@ function applyDevelopmentAction(
         ...state,
         quantum: {
           ...state.quantum,
-          pointsEarned: addDiscrete(
+          pointsEarned: adjustDevelopmentDiscrete(
             state.quantum.pointsEarned,
             action.amount,
+            state.quantum.pointsSpent,
           ),
         },
       })
     case 'add-influence':
-      if (!isFiniteNonNegativeNumber(action.amount)) {
+      if (!Number.isFinite(action.amount)) {
         return invalidDevelopmentAction('Influence amount')
       }
       return replaceDevelopmentState(candidate, {
         ...state,
         reality: {
           ...state.reality,
-          influence: addContinuous(
+          influence: adjustDevelopmentContinuous(
             state.reality.influence,
             action.amount,
           ),
         },
       })
     case 'add-strange-matter':
-      if (!isFiniteNonNegativeNumber(action.amount)) {
+      if (!Number.isFinite(action.amount)) {
         return invalidDevelopmentAction('Strange Matter amount')
       }
       return replaceDevelopmentState(candidate, {
         ...state,
         dream: {
           ...state.dream,
-          strangeMatter: addContinuous(
+          strangeMatter: adjustDevelopmentContinuous(
             state.dream.strangeMatter,
             action.amount,
           ),
         },
       })
     case 'add-offline-time': {
-      if (!isFiniteNonNegativeNumber(action.seconds)) {
+      if (!Number.isFinite(action.seconds)) {
         return invalidDevelopmentAction('Offline-time amount')
+      }
+      if (action.seconds < 0) {
+        return replaceDevelopmentState(candidate, {
+          ...state,
+          timeline: {
+            ...state.timeline,
+            storedTimeAvailableSeconds: adjustDevelopmentContinuous(
+              state.timeline.storedTimeAvailableSeconds,
+              action.seconds,
+            ),
+          },
+        })
       }
       const grant = applyAwayTimeGrant({
         awaySeconds: action.seconds,
@@ -1450,7 +1470,26 @@ function applyDevelopmentAction(
 }
 
 function isDevelopmentDiscreteAmount(amount: bigint): boolean {
-  return amount >= 0n && amount <= DISCRETE_MAXIMUM
+  return amount >= -DISCRETE_MAXIMUM && amount <= DISCRETE_MAXIMUM
+}
+
+function adjustDevelopmentContinuous(
+  current: number,
+  amount: number,
+): number {
+  if (amount >= 0) return addContinuous(current, amount)
+  return -amount >= current ? 0 : current + amount
+}
+
+function adjustDevelopmentDiscrete(
+  current: bigint,
+  amount: bigint,
+  minimum: bigint = 0n,
+): bigint {
+  if (amount >= 0n) return addDiscrete(current, amount)
+  const removable = current > minimum ? current - minimum : 0n
+  const requested = -amount
+  return requested >= removable ? minimum : current - requested
 }
 
 function replaceDevelopmentRuntime(
@@ -1483,7 +1522,7 @@ function invalidDevelopmentAction(label: string): DomainTransition {
   return {
     accepted: false,
     code: 'CANONICAL-DEVELOPMENT-ACTION-INVALID',
-    reason: `${label} must be finite and non-negative.`,
+    reason: `${label} must be finite and within the supported range.`,
   }
 }
 

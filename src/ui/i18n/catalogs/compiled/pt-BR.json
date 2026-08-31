@@ -330,7 +330,7 @@
   "debug.amount-continuous-maximum": [
     {
       "type": 0,
-      "value": "Recursos contínuos não podem ultrapassar "
+      "value": "O valor absoluto para recursos contínuos não pode ultrapassar "
     },
     {
       "type": 1,
@@ -364,13 +364,13 @@
   "debug.amount-help": [
     {
       "type": 0,
-      "value": "Sufixos padrão são aceitos, incluindo formas como 100 Qi, 100xqi e 100 x qi."
+      "value": "Use sufixos padrão ou expoentes (100 Qi, 100xqi, e14 = 1e14). Quantidades negativas reduzem os recursos até zero."
     }
   ],
   "debug.amount-invalid": [
     {
       "type": 0,
-      "value": "Insira um número não negativo usando algarismos, notação científica ou um sufixo padrão do jogo."
+      "value": "Insira uma quantidade usando algarismos, notação científica ou um sufixo padrão do jogo."
     }
   ],
   "debug.apply-preset": [

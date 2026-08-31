@@ -6,7 +6,7 @@ import type {
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
 import {
-  parseGameNumberInput,
+  parseSignedGameNumberInput,
   toContinuousGameNumber,
   toDiscreteGameNumber,
 } from '../../i18n/gameNumberInput'
@@ -45,9 +45,9 @@ function clampAmountDraftToContinuousMaximum(
   value: string,
   locale: EnabledLocale,
 ): string {
-  const parsed = parseGameNumberInput(value, locale)
+  const parsed = parseSignedGameNumberInput(value, locale)
   return parsed.ok && !toContinuousGameNumber(parsed.value).ok
-    ? Number.MAX_VALUE.toString()
+    ? `${parsed.value.coefficient < 0n ? '-' : ''}${Number.MAX_VALUE.toString()}`
     : value
 }
 
@@ -95,7 +95,7 @@ export function DebugSurface({
     }
   }
 
-  const parsedAmount = parseGameNumberInput(amount, locale)
+  const parsedAmount = parseSignedGameNumberInput(amount, locale)
   const continuousAmount = parsedAmount.ok
     ? toContinuousGameNumber(parsedAmount.value)
     : { ok: false as const, reason: 'above-maximum' as const }
@@ -183,7 +183,12 @@ export function DebugSurface({
                 <label htmlFor={amountId}>{intl.formatMessage(messages.amount)}</label>
                 <input
                   id={amountId}
-                  inputMode="decimal"
+                  type="text"
+                  inputMode="text"
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                   value={amount}
                   aria-invalid={!parsedAmount.ok || !continuousAmount.ok}
                   aria-describedby={amountFeedbackId}

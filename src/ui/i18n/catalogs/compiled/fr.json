@@ -330,7 +330,7 @@
   "debug.amount-continuous-maximum": [
     {
       "type": 0,
-      "value": "Les ressources continues ne peuvent pas dépasser "
+      "value": "La valeur absolue des ressources continues ne peut pas dépasser "
     },
     {
       "type": 1,
@@ -364,13 +364,13 @@
   "debug.amount-help": [
     {
       "type": 0,
-      "value": "Les suffixes standard sont acceptés, notamment 100 Qi, 100xqi et 100 x qi."
+      "value": "Utilisez des suffixes standard ou des exposants (100 Qi, 100xqi, e14 = 1e14). Les montants négatifs réduisent les ressources jusqu’à zéro."
     }
   ],
   "debug.amount-invalid": [
     {
       "type": 0,
-      "value": "Saisissez un nombre positif ou nul avec des chiffres, une notation scientifique ou un suffixe standard du jeu."
+      "value": "Saisissez un montant avec des chiffres, une notation scientifique ou un suffixe standard du jeu."
     }
   ],
   "debug.apply-preset": [
