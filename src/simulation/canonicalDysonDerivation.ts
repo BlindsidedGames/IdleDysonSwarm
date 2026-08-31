@@ -55,9 +55,12 @@ import {
   type SkillEffectMaterializationContext,
 } from './skillEffectMaterializer'
 import { publishDysonSkillEffectEvaluationSnapshot } from './dysonSnapshotPublication'
-import { resolveStellarSacrificesRequiredBots } from './planetGenerationDynamicEffects'
 import { multiplyContinuous } from './numeric'
 import { getCompiledSkillEffectCatalog } from './compiledSkillEffectCatalog'
+import {
+  resolvePanelArea,
+  resolveStellarSacrificesRequiredBots,
+} from './stellarArithmetic'
 
 export interface DysonEntitlements {
   readonly permanentDoubleIp: boolean
@@ -1183,7 +1186,10 @@ function dynamicFacilityEffectCalculation(
   const servers = state.dyson.facilities.servers
   const dataCenters = state.dyson.facilities.data_centers
   const planets = state.dyson.facilities.planets
-  const panelArea = snapshot.panelsPerSecond * snapshot.panelLifetimeSeconds
+  const panelArea = resolvePanelArea(
+    snapshot.panelsPerSecond,
+    snapshot.panelLifetimeSeconds,
+  )
   return Object.freeze({
     kind: 'dynamic-facility-effect',
     effectId,

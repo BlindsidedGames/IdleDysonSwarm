@@ -5,7 +5,13 @@ import {
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { extractDynamicSkillId } from './dynamicEffectId'
-import { DISCRETE_MAXIMUM } from './numeric'
+import { DISCRETE_MAXIMUM, multiplyContinuous } from './numeric'
+import {
+  resolveGalaxiesEngulfed,
+  resolvePanelArea,
+  resolveStarsSurrounded,
+  resolveStellarSacrificesRequiredBots,
+} from './stellarArithmetic'
 
 export interface MoneyScienceCanonicalInputs {
   readonly dyson: Pick<
@@ -277,9 +283,13 @@ function resolveScienceEffect(
       const production = readPanelDerivedInputs(derived, effectId)
       if (!production.ok) return blocked(production.issue)
       const value =
-        (0.01 *
-          (production.value.panelsPerSecond *
-            production.value.panelLifetimeSeconds)) /
+        multiplyContinuous(
+          resolvePanelArea(
+            production.value.panelsPerSecond,
+            production.value.panelLifetimeSeconds,
+          ),
+          0.01,
+        ) /
         100_000_000
       return resolvedFinite(value, effectId)
     }
@@ -376,8 +386,16 @@ function resolveStellarObliteration(
   if (!production.ok) return blocked(production.issue)
   const supernova = readSkillOwned(state, 'supernova', effectId)
   if (!supernova.ok) return blocked(supernova.issue)
-  const stellarGalaxies = galaxiesEngulfed(production.value, false) *
-    1_000 * (supernova.value ? 1_000 : 1)
+  let stellarGalaxies = multiplyContinuous(
+    resolveGalaxiesEngulfed(
+      production.value.panelsPerSecond,
+      production.value.panelLifetimeSeconds,
+    ),
+    1_000,
+  )
+  if (supernova.value) {
+    stellarGalaxies = multiplyContinuous(stellarGalaxies, 1_000)
+  }
   return resolvedFinite(
     stellarGalaxies >= 1 ? 1 / stellarGalaxies : 1,
     effectId,
@@ -408,22 +426,16 @@ function resolveStellarDominance(
   )
   if (!stellarImprovements.ok) return blocked(stellarImprovements.issue)
 
-  const stars = starsSurrounded(production.value, false)
-  let required = supernova.value
-    ? stars * 1_000_000
-    : stellarObliteration.value
-      ? stars * 1_000
-      : stars
-  if (required < 1) required = 1
-  required *= 100
-  if (stellarImprovements.value) required /= 1_000
-  if (!Number.isFinite(required)) {
-    return blocked({
-      code: 'DYSON_MONEY_SCIENCE_RESULT_NON_FINITE',
-      path: `effects.${effectId}`,
-      detail: `Effect '${effectId}' produced a non-finite stellar requirement.`,
-    })
-  }
+  const required = resolveStellarSacrificesRequiredBots(
+    new Set([
+      'stellarDominance',
+      ...(supernova.value ? ['supernova'] : []),
+      ...(stellarObliteration.value ? ['stellarObliteration'] : []),
+      ...(stellarImprovements.value ? ['stellarImprovements'] : []),
+    ]),
+    production.value.panelsPerSecond,
+    production.value.panelLifetimeSeconds,
+  )
   return resolved(bots.value >= required ? 0.01 : 1)
 }
 
@@ -640,8 +652,10 @@ function starsSurrounded(
   },
   floored: boolean,
 ): number {
-  const raw =
-    (input.panelsPerSecond * input.panelLifetimeSeconds) / 20_000
+  const raw = resolveStarsSurrounded(
+    input.panelsPerSecond,
+    input.panelLifetimeSeconds,
+  )
   return floored ? Math.floor(raw) : raw
 }
 
@@ -652,10 +666,10 @@ function galaxiesEngulfed(
   },
   floored: boolean,
 ): number {
-  const raw =
-    (input.panelsPerSecond * input.panelLifetimeSeconds) /
-    20_000 /
-    100_000_000_000
+  const raw = resolveGalaxiesEngulfed(
+    input.panelsPerSecond,
+    input.panelLifetimeSeconds,
+  )
   return floored ? Math.floor(raw) : raw
 }
 

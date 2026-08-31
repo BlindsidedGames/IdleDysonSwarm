@@ -1,6 +1,7 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { addDiscrete } from './numeric'
 import { runCanonicalSkillAutoAssignment } from './canonicalSkillTransactions'
+import { resolvePanelArea } from './stellarArithmetic'
 
 const FINAL_REWARDED_GOAL_STAGE = 10n
 const PANEL_COUNT_PER_STAR = 20_000
@@ -135,7 +136,10 @@ function panelArea(
 ): number {
   const facts = deriveDysonFacts(state)
   validateFacts(facts)
-  return facts.panelsPerSecond * facts.panelLifetimeSeconds
+  return resolvePanelArea(
+    facts.panelsPerSecond,
+    facts.panelLifetimeSeconds,
+  )
 }
 
 function starsSurrounded(
