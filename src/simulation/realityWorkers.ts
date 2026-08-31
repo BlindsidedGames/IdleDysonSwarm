@@ -177,7 +177,7 @@ export function advanceRealityWorkers(
     ...state,
     reality: {
       ...state.reality,
-      universeDesignationCount: addDiscrete(
+      universeDesignationCount: advanceUniverseDesignation(
         state.reality.universeDesignationCount,
         workersGenerated,
       ),
@@ -211,6 +211,18 @@ export function realityInfluenceGenerationStarted(
   }
   return state.quantum.pointsEarned > 0n ||
     state.infinity.secretsOfTheUniverse >= QUANTUM_CONSTANTS.maximumSecrets
+}
+
+/**
+ * Universe designations are ordinal identity labels, not bounded resources.
+ * Each generated worker advances the label exactly, including beyond the
+ * signed 64-bit ceiling used by discrete currencies and counters.
+ */
+export function advanceUniverseDesignation(
+  current: bigint,
+  generatedWorkers: bigint,
+): bigint {
+  return current + generatedWorkers
 }
 
 /**
@@ -344,7 +356,6 @@ function isValidRealityState(
   const reality = state.reality
   return (
     reality.universeDesignationCount >= 0n &&
-    reality.universeDesignationCount <= DISCRETE_MAXIMUM &&
     reality.workersReady >= 0n &&
     reality.workersReady <= DISCRETE_MAXIMUM &&
     Number.isFinite(reality.influence) &&

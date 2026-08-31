@@ -79,7 +79,6 @@ import {
   MEGA_STRUCTURE_FACILITY_IDS,
 } from '../simulation/dysonFacilityCatalog'
 import {
-  addDiscrete,
   divideContinuous,
   multiplyContinuous,
 } from '../simulation/numeric'
@@ -111,6 +110,7 @@ import {
   type RealityUpgradeId,
 } from '../simulation/realityUpgrades'
 import {
+  advanceUniverseDesignation,
   advanceRealityWorkers,
   gatherRealityInfluence,
   realityInfluenceGenerationStarted,
@@ -1673,7 +1673,7 @@ function selectDerivedFacts(
                     )
                 : 0,
             workerBatchSize: context.realityWorkerTuning.workerBatchSize,
-            nextUniverseDesignation: addDiscrete(
+            nextUniverseDesignation: advanceUniverseDesignation(
               state.reality.universeDesignationCount,
               1n,
             ),

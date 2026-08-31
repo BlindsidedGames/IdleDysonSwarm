@@ -21,7 +21,9 @@ Swarm. Update cadence, active play and Offline Time are defined by
 - JavaScript `number` stores continuous/high-scale resources, rates,
   multipliers, timers and durations.
 - `bigint` stores genuinely discrete currencies, counters, ownership counts and
-  reset totals.
+  reset totals. Reality universe designations also use exact `bigint` storage,
+  but as ordinal identity labels they are not capped by the signed 64-bit
+  discrete-resource ceiling.
 - Bounded enums, indices, authored settings and versions use `number` only
   after integer/range validation.
 - Gameplay state must remain finite. Technical `NaN` and infinities are

@@ -3074,7 +3074,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     expect(recovered.infinity.breakTarget).toBe(2_147_483_647n)
     expect(recovered.skills.points).toBe(DISCRETE_MAXIMUM)
     expect(recovered.reality.universeDesignationCount)
-      .toBe(DISCRETE_MAXIMUM)
+      .toBe(SIMULATION_RESOURCE_MAXIMUM)
     expect(recovered.quantum.pointsEarned).toBe(DISCRETE_MAXIMUM)
     expect(recovered.quantum.influenceSpeedBonus)
       .toBe(DISCRETE_MAXIMUM)
@@ -3096,6 +3096,20 @@ describe('transitional production V2 checkpoint recovery', () => {
       .toBe(DISCRETE_MAXIMUM)
     expect(advanceRealityWorkers(recovered, 0).status)
       .not.toBe('invalid-state')
+  })
+
+  test('preserves a schema-13 universe designation beyond the discrete ceiling', () => {
+    const base = createDeterministicUnityFirstRunPreparedSave()
+    const state = encodeState(hydrateGameState(base).state)
+    const designation = 9_223_372_036_854_776_000n
+    ;(state.reality as SaveRecord).universeDesignationCount =
+      '9.223372036854776e18'
+
+    const recovered = hydrateGameState(roundTrip(
+      recoverTransitionalV2Checkpoint(checkpointText(state, 1), base)!,
+    )).state
+
+    expect(recovered.reality.universeDesignationCount).toBe(designation)
   })
 
   test('preserves spendable balance when saturating oversized V2 ledgers', () => {
