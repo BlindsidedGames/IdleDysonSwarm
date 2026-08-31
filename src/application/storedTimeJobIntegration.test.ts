@@ -15,7 +15,10 @@ import { REALITY_UPGRADE_DEFINITIONS } from '../simulation/realityUpgrades'
 import {
   createCanonicalGameApplication,
 } from './canonicalGameApplication'
-import { createCanonicalRuntimeSessionFactory } from './canonicalRuntimeSession'
+import {
+  createCanonicalRuntimeSessionFactory,
+  type CanonicalRuntimeState,
+} from './canonicalRuntimeSession'
 import type {
   StoredTimeJobRunner,
 } from '../workers/storedTime/storedTimeJobRunner'
@@ -537,6 +540,76 @@ describe('Stored Time job application integration', () => {
     }
   })
 
+  test('commits a final-update skill-driven bot cap and preserves it across reload', async () => {
+    const repository = new MemoryRepository()
+    const application = createApplication(repository, simulationRunner())
+    await application.start()
+    await installFinalTickBotCap(application, 0.1)
+    const before = application.snapshot()
+    expect(before.phase).toBe('ready')
+    if (before.phase !== 'ready') return
+    const pointsBefore = before.state.gameState.infinity.points
+    const overflowBefore = before.state.gameState.avocado.overflowMultiplier
+    const botCapPointsBefore =
+      before.state.gameState.statistics.lifetime.botCapInfinityPoints
+    const commitsBefore = repository.commits
+
+    const result = await application.commitStoredTime({
+      sessionRevision: before.revision.session,
+      expectedStateRevision: before.revision.state,
+    }, 0.1)
+
+    expect(result).toMatchObject({
+      committed: true,
+      consumedSeconds: 0.1,
+      remainingSeconds: 0,
+      summary: {
+        simulationUpdates: 2,
+        remainingBankSeconds: 0,
+        infinityCount: 0n,
+        infinityPoints: 1_000n,
+      },
+    })
+    expect(repository.commits).toBe(commitsBefore + 1)
+    const committed = application.snapshot()
+    expect(committed.phase).toBe('ready')
+    if (committed.phase !== 'ready') return
+    expect(committed.state.gameState.infinity).toMatchObject({
+      points: pointsBefore + 1_000n,
+      botCapTransitionPending: false,
+      botCapRewardsGranted: true,
+      inProgress: true,
+    })
+    expect(committed.state.gameState.avocado.overflowMultiplier)
+      .toBe(overflowBefore + 1)
+    expect(
+      committed.state.gameState.statistics.lifetime.botCapInfinityPoints,
+    ).toBe(botCapPointsBefore + 1_000n)
+
+    const reopened = createApplication(repository, simulationRunner())
+    await reopened.start()
+    const durable = reopened.snapshot()
+    expect(durable.phase).toBe('ready')
+    if (durable.phase !== 'ready') return
+    expect(durable.state.gameState.infinity).toMatchObject({
+      points: pointsBefore + 1_000n,
+      botCapTransitionPending: false,
+      botCapRewardsGranted: true,
+      inProgress: true,
+    })
+    expect(durable.state.gameState.timeline.storedTimeAvailableSeconds).toBe(0)
+
+    const active = reopened.advanceActive(33)
+    expect(active.accepted).toBe(true)
+    const resumed = reopened.snapshot()
+    expect(resumed.phase).toBe('ready')
+    if (resumed.phase !== 'ready') return
+    expect(resumed.state.gameState.infinity.points).toBe(pointsBefore + 1_000n)
+    expect(
+      resumed.state.gameState.statistics.lifetime.botCapInfinityPoints,
+    ).toBe(botCapPointsBefore + 1_000n)
+  })
+
   test('rejects an unsettled bot-cap candidate before persistence', async () => {
     const repository = new MemoryRepository()
     const runner = transformingSimulationRunner((terminal) => ({
@@ -648,6 +721,74 @@ async function installStoredBank(
         eventClockInitialized: true,
         automationTimeUntilNextEvent: 1,
         storedTimeAvailableSeconds: seconds,
+      },
+    },
+  })
+  await expect(application.commitAwayReplacement(
+    {
+      sessionRevision: snapshot.revision.session,
+      expectedStateRevision: snapshot.revision.state,
+    },
+    candidate,
+  )).resolves.toMatchObject({ committed: true })
+}
+
+async function installFinalTickBotCap(
+  application: ReturnType<typeof createApplication>,
+  seconds: number,
+): Promise<void> {
+  const snapshot = application.snapshot()
+  expect(snapshot.phase).toBe('ready')
+  if (snapshot.phase !== 'ready') return
+  const candidate = structuredClone(snapshot.state)
+  const byId = Object.fromEntries(
+    Object.entries(candidate.gameState.skills.byId).map(([id, skill]) => [
+      id,
+      {
+        ...skill,
+        owned: id === 'worthySacrifice',
+      },
+    ]),
+  ) as CanonicalRuntimeState['gameState']['skills']['byId']
+  Object.assign(candidate, {
+    gameState: {
+      ...candidate.gameState,
+      dyson: {
+        ...candidate.gameState.dyson,
+        bots: Number.MAX_VALUE - 3e293,
+        facilities: {
+          ...candidate.gameState.dyson.facilities,
+          assembly_lines: [1e294, 0],
+        },
+      },
+      skills: {
+        ...candidate.gameState.skills,
+        byId,
+      },
+      infinity: {
+        ...candidate.gameState.infinity,
+        automaticResetEnabled: false,
+        botCapTransitionPending: false,
+        botCapRewardsGranted: false,
+        inProgress: false,
+      },
+      quantum: {
+        ...candidate.gameState.quantum,
+        unlocks: {
+          ...candidate.gameState.quantum.unlocks,
+          breakTheLoop: true,
+        },
+      },
+      timeline: {
+        ...candidate.gameState.timeline,
+        eventClockInitialized: true,
+        automationTimeUntilNextEvent: 0.05,
+        infinityCycleSeconds: 1,
+        storedTimeAvailableSeconds: seconds,
+        processing: {
+          ...candidate.gameState.timeline.processing,
+          storedTimePreset: 'fast',
+        },
       },
     },
   })

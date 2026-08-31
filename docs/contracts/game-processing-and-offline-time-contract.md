@@ -107,9 +107,11 @@ reduced. There is no Skip action.
 
 The entire replay operates on one detached candidate under one total update
 budget. Bot-cap transitions settle inside that candidate before the update's
-ordinary automation. Cancellation or any failure returns no candidate. A
-successful result deducts the consumed bank and becomes visible only after one
-verified commit.
+ordinary automation. A cap reached by the final production interval settles at
+replay completion without manufacturing another gameplay update or automation
+opportunity. Cancellation or any failure returns no candidate. A successful
+result deducts the consumed bank and becomes visible only after one verified
+commit.
 
 The processing and completion dialog inherits the Offline Time route palette
 and remains open through the commit handoff. Completion is dismissed by the

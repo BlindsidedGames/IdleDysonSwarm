@@ -1,6 +1,9 @@
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 import type { CanonicalEventTimeContext } from '../../simulation/canonicalEventTimeModel'
-import { advanceGame } from '../../simulation/gameStep'
+import {
+  advanceGame,
+  settleStoredTimeReplayCompletion,
+} from '../../simulation/gameStep'
 import {
   planStoredTimePolicy,
   speedUpStoredTimeTicks,
@@ -167,6 +170,18 @@ export class StoredTimeSimulation {
   }
 
   private finishCompleted(): StoredTimeJobTerminalMessage {
+    const settlement = settleStoredTimeReplayCompletion(
+      eventCarrier(this.state),
+      this.context,
+    )
+    this.state = { ...this.state, ...settlement.state }
+    mergeSummary(this.summary, settlement.summary)
+    if (settlement.issue !== undefined) {
+      return this.finishFailed(
+        settlement.issue,
+        `Stored Time completion boundary failed as ${settlement.issue}.`,
+      )
+    }
     this.state = {
       ...this.state,
       gameState: {
