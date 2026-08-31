@@ -13332,6 +13332,12 @@
       "value": "优化了现实与 Avocato 的布局，并让喂养正确处理数值精度。“全部喂养”现在会保留无法安全计入的余量，而不是悄悄将其销毁。"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+    {
+      "type": 0,
+      "value": "4,200 京个机器人目标现在会随“除法”变化，并与当前的无限要求保持一致。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
     {
       "type": 0,
@@ -13350,6 +13356,12 @@
       "value": "开发者选项的金额输入框现在支持正负调整，可增加资源或将其扣减至不低于零；同时支持游戏全部标准后缀与指数写法，并在 iOS 上调用可输入文本的键盘。"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "轻触待确认的离线时间操作之外的区域现在会将其取消；正在进行的处理仍受保护，不会被意外关闭。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,
@@ -13360,6 +13372,12 @@
     {
       "type": 0,
       "value": "统一了无限与量子升级卡片、购买状态和设置。两间商店都可以隐藏已满级升级，并且首次重置可用时就会解锁无限。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.purity-maximum": [
+    {
+      "type": 0,
+      "value": "在“纯净”生效时达到技能点上限不再导致游戏无法游玩，受影响的存档现在也可正常重新打开。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13414,6 +13432,12 @@
     {
       "type": 0,
       "value": "提高了 Android 和 iOS 上双倍无限点所有权及购买恢复的可靠性，包括离线启动和商店临时验证失败的情况。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.universe-designations": [
+    {
+      "type": 0,
+      "value": "宇宙编号现在可继续增长，突破原先的 64 位上限。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

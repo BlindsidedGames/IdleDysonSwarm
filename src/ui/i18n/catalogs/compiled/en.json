@@ -13332,6 +13332,12 @@
       "value": "Refined Reality and Avocato layouts and made feeding precision-aware, so Feed All leaves behind any amount that cannot be credited safely instead of silently destroying it."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+    {
+      "type": 0,
+      "value": "The 42 Qi Bot goal now follows Division and stays aligned with the current Infinity requirement."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
     {
       "type": 0,
@@ -13350,6 +13356,12 @@
       "value": "Developer amount fields now accept signed adjustments that add or remove resources without going below zero, understand the game’s full Standard suffixes and exponents, and request a text-capable keyboard on iOS."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "Tapping outside a pending Offline Time confirmation now dismisses it, while active processing remains protected."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,
@@ -13360,6 +13372,12 @@
     {
       "type": 0,
       "value": "Standardized Infinity and Quantum upgrade cards, purchase states, and settings. Both shops can hide maxed upgrades, and Infinity unlocks as soon as the first reset becomes available."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.purity-maximum": [
+    {
+      "type": 0,
+      "value": "Having maximum Skill Points with Purity no longer makes gameplay unavailable, and affected saves reopen normally."
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13414,6 +13432,12 @@
     {
       "type": 0,
       "value": "Made Double Infinity Points ownership and purchase restoration more reliable on Android and iOS, including offline startup and temporary Store verification failures."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.universe-designations": [
+    {
+      "type": 0,
+      "value": "Universe designations now continue beyond the former 64-bit ceiling."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [
