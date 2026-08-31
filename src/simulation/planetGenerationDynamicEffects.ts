@@ -1,6 +1,13 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { extractDynamicSkillId } from './dynamicEffectId'
 import { DISCRETE_MAXIMUM } from './numeric'
+import {
+  resolveStellarSacrificePlanetsPerSecond,
+} from './stellarArithmetic'
+
+export {
+  resolveStellarSacrificesRequiredBots,
+} from './stellarArithmetic'
 
 const PLANETS_PER_SECOND_SUFFIX = '.planets_per_second'
 
@@ -104,45 +111,11 @@ function shellWorldsProduction(
 function stellarSacrificesProduction(
   inputs: PlanetGenerationDynamicInputs,
 ): number {
-  const panelArea =
-    inputs.panelsPerSecond * inputs.panelLifetimeSeconds
-  const galaxiesEngulfed =
-    panelArea / 20_000 / 100_000_000_000
-  const stellarGalaxies = resolveStellarGalaxies(
-    inputs,
-    galaxiesEngulfed,
+  return resolveStellarSacrificePlanetsPerSecond(
+    inputs.ownedSkills,
+    inputs.panelsPerSecond,
+    inputs.panelLifetimeSeconds,
   )
-  return inputs.ownedSkills.has('stellarSacrifices')
-    ? stellarGalaxies
-    : 0
-}
-
-function resolveStellarGalaxies(
-  inputs: PlanetGenerationDynamicInputs,
-  galaxiesEngulfed: number,
-): number {
-  let galaxies = galaxiesEngulfed
-  if (inputs.ownedSkills.has('stellarObliteration')) galaxies *= 1_000
-  if (inputs.ownedSkills.has('supernova')) galaxies *= 1_000
-  return Math.pow(Math.max(0, Math.log10(galaxies)), 2)
-}
-
-export function resolveStellarSacrificesRequiredBots(
-  ownedSkills: ReadonlySet<string>,
-  panelsPerSecond: number,
-  panelLifetimeSeconds: number,
-): number {
-  const starsSurrounded =
-    panelsPerSecond * panelLifetimeSeconds / 20_000
-  let botsNeeded = ownedSkills.has('supernova')
-    ? starsSurrounded * 1_000_000
-    : ownedSkills.has('stellarObliteration')
-      ? starsSurrounded * 1_000
-      : starsSurrounded
-  if (botsNeeded < 1) botsNeeded = 1
-  if (ownedSkills.has('stellarDominance')) botsNeeded *= 100
-  if (ownedSkills.has('stellarImprovements')) botsNeeded /= 1_000
-  return botsNeeded
 }
 
 function logarithm(value: number, base: number): number {

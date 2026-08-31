@@ -1,5 +1,6 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { extractDynamicSkillId } from './dynamicEffectId'
+import { resolveStellarSacrificesRequiredBots } from './stellarArithmetic'
 
 const PANEL_LIFETIME_SUFFIX = '.panel_lifetime'
 const PANELS_PER_SECOND_SUFFIX = '.panels_per_second'
@@ -63,7 +64,13 @@ export function tryResolvePanelLifetimeDynamicEffect(
       )
     case 'stellarDominance':
       if (!inputs.ownedSkills.has(skillId)) return 1
-      return inputs.bots >= stellarSacrificesRequiredBots(inputs) ? 10 : 1
+      return inputs.bots >= resolveStellarSacrificesRequiredBots(
+        inputs.ownedSkills,
+        inputs.panelsPerSecond,
+        inputs.panelLifetimeSeconds,
+      )
+        ? 10
+        : 1
   }
 }
 
@@ -105,23 +112,6 @@ const PANELS_PER_SECOND_SKILLS = new Set([
   'reapers',
   'rocketMania',
 ])
-
-function stellarSacrificesRequiredBots(
-  inputs: PanelDynamicEffectInputs,
-): number {
-  const stars =
-    inputs.panelsPerSecond * inputs.panelLifetimeSeconds / 20_000
-  let botsNeeded = inputs.ownedSkills.has('supernova')
-    ? stars * 1_000_000
-    : inputs.ownedSkills.has('stellarObliteration')
-      ? stars * 1_000
-      : stars
-  if (botsNeeded < 1) botsNeeded = 1
-  // This resolver is reached only for the owned stellarDominance skill.
-  botsNeeded *= 100
-  if (inputs.ownedSkills.has('stellarImprovements')) botsNeeded /= 1_000
-  return botsNeeded
-}
 
 function logarithm(value: number, base: number): number {
   return Math.log(value) / Math.log(base)

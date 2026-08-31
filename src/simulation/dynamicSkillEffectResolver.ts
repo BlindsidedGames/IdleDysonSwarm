@@ -26,6 +26,9 @@ import {
   tryResolveShouldersAccrualDynamicEffect,
   tryResolveTinkerDynamicEffect,
 } from './shouldersTinkerDynamicEffects'
+import {
+  resolvePanelArea,
+} from './stellarArithmetic'
 
 export type DynamicSkillEffectIssue =
   | MoneyScienceSkillEffectIssue
@@ -105,9 +108,10 @@ function prepareDynamicSkillEffectInputs(
   const planets = state.dyson.facilities.planets
   const scienceBoostLevel =
     state.research.levelsById['research.science_boost'] ?? 0
-  const panelArea =
-    snapshot.panelsPerSecond * snapshot.panelLifetimeSeconds
-
+  const panelArea = resolvePanelArea(
+    snapshot.panelsPerSecond,
+    snapshot.panelLifetimeSeconds,
+  )
   const moneyScienceState: MoneyScienceCanonicalInputs = {
     dyson: state.dyson,
     skills: state.skills,
