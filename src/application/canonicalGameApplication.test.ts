@@ -7,6 +7,7 @@ import {
   createCapturedInfinityAssetLookup,
   type CanonicalEventTimeContext,
 } from '../simulation/canonicalEventTimeModel'
+import { deriveBasicDysonState } from '../simulation/canonicalDysonDerivation'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../simulation/dreamEducationUpgrades'
 import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
 import { bitDecrement, DISCRETE_MAXIMUM } from '../simulation/numeric'
@@ -51,6 +52,62 @@ function runtime() {
       },
     ).initialState,
   )
+}
+
+function enablePurity(
+  state: ReturnType<typeof runtime>,
+): void {
+  const owned = (id: string) => ({
+    ...(state.gameState.skills.byId[id] ?? {
+      level: 0,
+      timerSeconds: 0,
+      secondaryTimerSeconds: 0,
+    }),
+    owned: true,
+  })
+  Object.assign(state, {
+    gameState: {
+      ...state.gameState,
+      skills: {
+        ...state.gameState.skills,
+        activeAutoAssignment: [],
+        byId: {
+          ...state.gameState.skills.byId,
+          purityOfMind: owned('purityOfMind'),
+          purityOfBody: owned('purityOfBody'),
+          purityOfSEssence: owned('purityOfSEssence'),
+        },
+      },
+      quantum: {
+        ...state.gameState.quantum,
+        unlocks: {
+          ...state.gameState.quantum.unlocks,
+          purity: true,
+        },
+      },
+    },
+  })
+}
+
+function expectDysonDerivationReady(
+  state: ReturnType<typeof runtime>,
+): void {
+  const derived = deriveBasicDysonState(
+    state.gameState,
+    state.compatibilityTuning,
+    state.entitlements,
+    state.evaluationSnapshot,
+  )
+  expect(derived.ok).toBe(true)
+  if (!derived.ok) return
+  expect(Object.values(derived.value.globals).every(Number.isFinite)).toBe(true)
+  expect(Object.values(derived.value.rates).every(Number.isFinite)).toBe(true)
+  expect(
+    Object.values(derived.value.facilityModifiers).every(Number.isFinite),
+  ).toBe(true)
+  expect(
+    Object.values(derived.value.nextEvaluationSnapshot).every(Number.isFinite),
+  ).toBe(true)
 }
 
 describe('canonical game application engine', () => {
@@ -355,6 +412,72 @@ describe('canonical game application engine', () => {
     ).toEqual({ accepted: true, changed: true })
     expect(state.gameState.skills.byId.assemblyLineTree?.owned).toBe(true)
     expect(state.gameState.skills.points).toBe(0n)
+  })
+
+  test('keeps a maximum Skill Point developer grant playable with Purity', () => {
+    const state = runtime()
+    enablePurity(state)
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        skills: {
+          ...state.gameState.skills,
+          points: 0n,
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: {
+          kind: 'add-skill-points',
+          amount: DISCRETE_MAXIMUM,
+        },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.skills.points).toBe(DISCRETE_MAXIMUM)
+    expectDysonDerivationReady(state)
+  })
+
+  test('reopens an affected maximum Skill Point Purity save', () => {
+    const prepared = prepareIdb1Save(fixture).prepared
+    const sourceSession = new CanonicalRuntimeSession(prepared, {
+      entitlements: {
+        extraAnalysisPower: false,
+        permanentDoubleIp: false,
+      },
+    })
+    const affected = structuredClone(sourceSession.initialState)
+    enablePurity(affected)
+    Object.assign(affected, {
+      gameState: {
+        ...affected.gameState,
+        skills: {
+          ...affected.gameState.skills,
+          points: DISCRETE_MAXIMUM,
+        },
+      },
+    })
+
+    const reopened = new CanonicalRuntimeSession(
+      sourceSession.prepare(affected),
+      {
+        entitlements: {
+          extraAnalysisPower: false,
+          permanentDoubleIp: false,
+        },
+      },
+    ).initialState
+
+    expect(reopened.gameState.skills.points).toBe(DISCRETE_MAXIMUM)
+    expect(reopened.gameState.skills.byId.purityOfMind?.owned).toBe(true)
+    expect(reopened.gameState.skills.byId.purityOfBody?.owned).toBe(true)
+    expect(reopened.gameState.skills.byId.purityOfSEssence?.owned).toBe(true)
+    expectDysonDerivationReady(reopened)
   })
 
   test('retains zero-point development auto-assignment behavior', () => {

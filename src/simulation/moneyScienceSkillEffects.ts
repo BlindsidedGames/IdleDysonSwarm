@@ -5,7 +5,11 @@ import {
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { extractDynamicSkillId } from './dynamicEffectId'
-import { DISCRETE_MAXIMUM, multiplyContinuous } from './numeric'
+import {
+  DISCRETE_MAXIMUM,
+  multiplyContinuous,
+  powerContinuous,
+} from './numeric'
 import {
   resolveGalaxiesEngulfed,
   resolvePanelArea,
@@ -362,7 +366,10 @@ function resolveSkillPointMultiplier(
     effectId,
   )
   if (!points.ok) return blocked(points.issue)
-  return resolvedFinite(Math.pow(coefficient, points.value), effectId)
+  return resolvedFinite(
+    powerContinuous(coefficient, points.value),
+    effectId,
+  )
 }
 
 function resolveTasteOfPower(

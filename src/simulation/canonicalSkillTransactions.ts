@@ -14,6 +14,7 @@ import {
   deriveManualPurchaseProductionLayer,
 } from './canonicalDysonDerivation'
 import { BASIC_DYSON_FACILITY_IDS } from './dysonFacilities'
+import { multiplyContinuous, powerContinuous } from './numeric'
 
 interface SkillDefinition {
   readonly id: string
@@ -342,22 +343,22 @@ function previewProductionImpact(
 
 function purityEssenceMultiplier(state: CanonicalGameStateV1): number {
   return state.skills.byId.purityOfSEssence?.owned === true
-    ? Math.pow(1.42, Number(state.skills.points))
+    ? powerContinuous(1.42, Number(state.skills.points))
     : 1
 }
 
 function purityCashScienceMultiplier(state: CanonicalGameStateV1): number {
   const mind = state.skills.byId.purityOfMind?.owned === true
-    ? Math.pow(1.5, Number(state.skills.points))
+    ? powerContinuous(1.5, Number(state.skills.points))
     : 1
-  return mind * purityEssenceMultiplier(state)
+  return multiplyContinuous(mind, purityEssenceMultiplier(state))
 }
 
 function purityBotsMultiplier(state: CanonicalGameStateV1): number {
   const body = state.skills.byId.purityOfBody?.owned === true
-    ? Math.pow(1.25, Number(state.skills.points))
+    ? powerContinuous(1.25, Number(state.skills.points))
     : 1
-  return body * purityEssenceMultiplier(state)
+  return multiplyContinuous(body, purityEssenceMultiplier(state))
 }
 
 /**
