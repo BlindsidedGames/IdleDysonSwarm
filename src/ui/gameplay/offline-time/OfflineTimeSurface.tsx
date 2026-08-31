@@ -177,6 +177,7 @@ export function OfflineTimeSurface({
     if (node === null || typeof document === 'undefined') return
     setPortalHost(node.closest('.dyson-shell') ?? document.body)
   }, [])
+  const spendActionsRef = useRef<HTMLDivElement | null>(null)
   const jobDialogRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -201,6 +202,32 @@ export function OfflineTimeSurface({
       armed: nextArmed,
     })
   }
+
+  const disarmConfirmation = useCallback((): void => {
+    setArmed(false)
+    onDraftChange?.({
+      selectedSeconds,
+      repeatSeconds,
+      armed: false,
+    })
+  }, [onDraftChange, repeatSeconds, selectedSeconds])
+
+  useEffect(() => {
+    if (!armed) return undefined
+    const disarmOnOutsidePointer = (event: PointerEvent): void => {
+      const target = event.target
+      if (
+        target instanceof Node &&
+        !spendActionsRef.current?.contains(target)
+      ) {
+        disarmConfirmation()
+      }
+    }
+    document.addEventListener('pointerdown', disarmOnOutsidePointer, true)
+    return () => {
+      document.removeEventListener('pointerdown', disarmOnOutsidePointer, true)
+    }
+  }, [armed, disarmConfirmation])
 
   const select = (seconds: number): void => {
     const nextSelectedSeconds = clampSelection(seconds, bankSeconds)
@@ -529,7 +556,10 @@ export function OfflineTimeSurface({
           <p className="offline-time-card__note">
             {intl.formatMessage(messages.largeSpendDisclosure)}
           </p>
-          <div className="offline-time-spend-actions">
+          <div
+            ref={spendActionsRef}
+            className="offline-time-spend-actions"
+          >
             <Button
               className="offline-time-spend-button"
               variant="primary"
@@ -552,10 +582,7 @@ export function OfflineTimeSurface({
             {armed ? (
               <Button
                 variant="secondary"
-                onClick={() => {
-                  setArmed(false)
-                  publishDraft(selectedSeconds, repeatSeconds, false)
-                }}
+                onClick={disarmConfirmation}
               >
                 {intl.formatMessage(messages.cancelConfirmation)}
               </Button>
