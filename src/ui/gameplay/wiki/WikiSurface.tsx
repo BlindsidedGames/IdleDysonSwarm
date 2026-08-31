@@ -205,6 +205,10 @@ const version415PatchNoteMessages = [
   messages.patchNotesVersion415StoreOwnership,
   messages.patchNotesVersion415ExtremeValues,
   messages.patchNotesVersion415Startup,
+  messages.patchNotesVersion415UniverseDesignations,
+  messages.patchNotesVersion415DivisionBotGoal,
+  messages.patchNotesVersion415PurityMaximum,
+  messages.patchNotesVersion415OfflineConfirmation,
 ] as const
 
 const version412PatchNoteMessages = [

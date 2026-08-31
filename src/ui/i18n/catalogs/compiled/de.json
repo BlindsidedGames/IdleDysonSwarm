@@ -13332,6 +13332,12 @@
       "value": "Die Layouts von Realität und Avocato wurden verfeinert und das Füttern berücksichtigt nun die Zahlengenauigkeit. Alles füttern lässt Beträge übrig, die nicht sicher gutgeschrieben werden können, statt sie unbemerkt zu vernichten."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+    {
+      "type": 0,
+      "value": "Das 42-Qi-Bot-Ziel folgt nun Division und bleibt mit der aktuellen Unendlichkeitsanforderung abgestimmt."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
     {
       "type": 0,
@@ -13350,6 +13356,12 @@
       "value": "Mengenfelder der Entwickleroptionen akzeptieren jetzt positive und negative Anpassungen, die Ressourcen hinzufügen oder bis auf null entfernen, verstehen alle Standard-Suffixe und Exponenten des Spiels und öffnen unter iOS eine textfähige Tastatur."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "Ein Tippen außerhalb einer ausstehenden Offline-Zeit-Bestätigung verwirft sie nun, während die aktive Verarbeitung vor versehentlichem Schließen geschützt bleibt."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,
@@ -13360,6 +13372,12 @@
     {
       "type": 0,
       "value": "Upgrade-Karten, Kaufzustände und Einstellungen für Unendlichkeit und Quanten wurden vereinheitlicht. Beide Läden können maximierte Upgrades ausblenden, und Unendlichkeit wird freigeschaltet, sobald der erste Reset verfügbar ist."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.purity-maximum": [
+    {
+      "type": 0,
+      "value": "Die maximale Anzahl an Fähigkeitspunkten mit Purity macht das Spiel nicht mehr unzugänglich; betroffene Spielstände lassen sich wieder normal öffnen."
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13414,6 +13432,12 @@
     {
       "type": 0,
       "value": "Der Besitz von Doppelten Unendlichkeitspunkten und die Wiederherstellung von Käufen unter Android und iOS wurden zuverlässiger, auch beim Offline-Start und bei vorübergehenden Prüfungsfehlern des Shops."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.universe-designations": [
+    {
+      "type": 0,
+      "value": "Universumsbezeichnungen werden nun über die frühere 64-Bit-Grenze hinaus fortgesetzt."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

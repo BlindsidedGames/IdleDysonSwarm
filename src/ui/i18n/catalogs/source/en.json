@@ -6763,6 +6763,10 @@
     "defaultMessage": "Refined Reality and Avocato layouts and made feeding precision-aware, so Feed All leaves behind any amount that cannot be credited safely instead of silently destroying it.",
     "description": "Version 4.1.5 release note for Avocato layout and precision-safe feeding."
   },
+  "wiki.patch-notes.version-4-1-5.division-bot-goal": {
+    "defaultMessage": "The 42 Qi Bot goal now follows Division and stays aligned with the current Infinity requirement.",
+    "description": "Version 4.1.5 release note for the Division-adjusted final Bot goal."
+  },
   "wiki.patch-notes.version-4-1-5.extreme-values": {
     "defaultMessage": "Hardened purchases, rewards, and resource transfers at extreme values so credited amounts, costs, and remaining balances stay consistent instead of losing or creating progress.",
     "description": "Version 4.1.5 release note for conservative large-number transactions."
@@ -6775,6 +6779,10 @@
     "defaultMessage": "Developer amount fields now accept signed adjustments that add or remove resources without going below zero, understand the game’s full Standard suffixes and exponents, and request a text-capable keyboard on iOS.",
     "description": "Version 4.1.5 release note for signed Developer game-number input and iOS keyboard support."
   },
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": {
+    "defaultMessage": "Tapping outside a pending Offline Time confirmation now dismisses it, while active processing remains protected.",
+    "description": "Version 4.1.5 release note for dismissing only pending Offline Time confirmation."
+  },
   "wiki.patch-notes.version-4-1-5.persistence": {
     "defaultMessage": "Fixed route restoration and progression boundaries so reloads return to the correct available tab without exposing locked Skills, Infinity, Debug, or late-game content.",
     "description": "Version 4.1.5 release note for route restoration and progression guards."
@@ -6782,6 +6790,10 @@
   "wiki.patch-notes.version-4-1-5.prestige-shops": {
     "defaultMessage": "Standardized Infinity and Quantum upgrade cards, purchase states, and settings. Both shops can hide maxed upgrades, and Infinity unlocks as soon as the first reset becomes available.",
     "description": "Version 4.1.5 release note for Infinity and Quantum shop improvements."
+  },
+  "wiki.patch-notes.version-4-1-5.purity-maximum": {
+    "defaultMessage": "Having maximum Skill Points with Purity no longer makes gameplay unavailable, and affected saves reopen normally.",
+    "description": "Version 4.1.5 release note for playable maximum Skill Point saves with Purity."
   },
   "wiki.patch-notes.version-4-1-5.reality": {
     "defaultMessage": "Influence and Strange Matter now use the same expanded continuous-number system as other large resources. Automatic Influence gathering is continuous and preserves generated workers when floating-point precision becomes limited.",
@@ -6818,6 +6830,10 @@
   "wiki.patch-notes.version-4-1-5.store-ownership": {
     "defaultMessage": "Made Double Infinity Points ownership and purchase restoration more reliable on Android and iOS, including offline startup and temporary Store verification failures.",
     "description": "Version 4.1.5 release note for durable Store ownership and purchase restoration."
+  },
+  "wiki.patch-notes.version-4-1-5.universe-designations": {
+    "defaultMessage": "Universe designations now continue beyond the former 64-bit ceiling.",
+    "description": "Version 4.1.5 release note for exact universe designations beyond the former signed 64-bit ceiling."
   },
   "wiki.patch-notes.version-4-1-5.visual-system": {
     "defaultMessage": "Refined the entire interface with more consistent text sizes, spacing, borders, panel density, and route colours across phones, tablets, and wide screens.",
