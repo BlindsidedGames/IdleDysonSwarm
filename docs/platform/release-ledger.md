@@ -39,7 +39,7 @@ The archived `App` executable SHA-256 is `51309cc256f70bfe4c71098beffd70acaf41e4
 | Platform | Store identity | Timestamp | Verified state |
 | --- | --- | --- | --- |
 | Android | `4.1.5` (`2026090101`) | 1 Sep 2026 09:29 AEST | Google Play Internal testing: **Available to internal testers**. |
-| iOS | `4.1.5` (`2609.01.01`) | 1 Sep 2026 09:34 AEST | Xcode Organizer: **Uploaded to Apple**. App Store Connect Build Uploads: **Processing**. |
+| iOS | `4.1.5` (`2609.01.01`) | 1 Sep 2026 09:34 AEST | Xcode Organizer: **Uploaded to Apple**. App Store Connect Build Uploads: **Complete**. |
 | Website | Frozen source unchanged | — | **Untouched**. |
 
-Google Play emitted non-blocking warnings for a missing deobfuscation file and native debug symbols. Xcode reported the upload complete without an upload error. Apple processing and any later tester-group assignment remain separate follow-up states.
+Google Play emitted non-blocking warnings for a missing deobfuscation file and native debug symbols. Xcode reported the upload complete without an upload error. Any later tester-group assignment remains a separate follow-up state.
