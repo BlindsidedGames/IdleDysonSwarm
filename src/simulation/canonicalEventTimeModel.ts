@@ -837,6 +837,26 @@ export class CanonicalEventTimeModel
     )
   }
 
+  /**
+   * Settles mandatory bot-cap bookkeeping produced by the final time-bearing
+   * Stored Time update without manufacturing another gameplay update or
+   * optional automation/reset opportunity.
+   */
+  settleDetachedBotCapAtReplayCompletion(
+    summary: SimulationPresentationSummary,
+  ): void {
+    if (this.currentIssue !== undefined) return
+    const required = evaluateCanonicalBotCapCheckpoint(
+      this.carrier.gameState,
+    )
+    if (required.action.kind !== 'persist') return
+    this.applyDetachedBotCapTransition(summary)
+    if (this.currentIssue !== undefined) return
+    this.publishEvaluationSnapshot(
+      'infinity.botCap.replayCompletionEvaluationSnapshot',
+    )
+  }
+
   applyInfinityReset(
     minimumCycleSeconds: number,
     summary: SimulationPresentationSummary,

@@ -7,6 +7,7 @@ import {
   withCanonicalEventTimeAutomationInterval,
   type CanonicalEventTimeState,
 } from './canonicalEventTimeModel'
+import { evaluateCanonicalBotCapCheckpoint } from './canonicalBotCapCheckpoint'
 import { createSimulationSummary, type SimulationPresentationSummary } from './types'
 import { addContinuous } from './numeric'
 
@@ -27,6 +28,62 @@ export interface GameStepResult {
   readonly summary: Readonly<SimulationPresentationSummary>
   readonly issue?: string
   readonly botCapPersistenceRequired: boolean
+}
+
+export interface StoredTimeReplayCompletionResult {
+  readonly state: CanonicalEventTimeState
+  readonly summary: Readonly<SimulationPresentationSummary>
+  readonly issue?: string
+}
+
+/**
+ * Settles bookkeeping caused by the final Stored Time production interval.
+ * This is deliberately not a gameplay update: it advances no clocks, offers
+ * no automation or prestige opportunity, and consumes no Stored Time.
+ */
+export function settleStoredTimeReplayCompletion(
+  state: CanonicalEventTimeState,
+  context: Readonly<CanonicalEventTimeContext>,
+): StoredTimeReplayCompletionResult {
+  const summary = createSimulationSummary()
+  if (
+    evaluateCanonicalBotCapCheckpoint(state.gameState).action.kind !== 'persist'
+  ) {
+    return {
+      state,
+      summary: Object.freeze({ ...summary }),
+    }
+  }
+  const automationTimeUntilNextEvent =
+    state.gameState.timeline.automationTimeUntilNextEvent
+  const storedTimeContext =
+    prepareCanonicalEventTimeContextVariants(context).storedTime
+  const model = CanonicalEventTimeModel.fromOwnedState(
+    state,
+    storedTimeContext,
+  )
+  model.settleDetachedBotCapAtReplayCompletion(summary)
+  const issue = model.issue?.code
+  const settledState = model.takeState()
+  const phasePreservedState =
+    settledState.gameState.timeline.automationTimeUntilNextEvent ===
+      automationTimeUntilNextEvent
+      ? settledState
+      : {
+          ...settledState,
+          gameState: {
+            ...settledState.gameState,
+            timeline: {
+              ...settledState.gameState.timeline,
+              automationTimeUntilNextEvent,
+            },
+          },
+        }
+  return {
+    state: phasePreservedState,
+    summary: Object.freeze({ ...summary }),
+    issue,
+  }
 }
 
 /**

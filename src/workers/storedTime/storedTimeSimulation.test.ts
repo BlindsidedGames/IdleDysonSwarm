@@ -34,6 +34,9 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     })
     expect(small.consumedSeconds).toBe(2)
     expect(small.candidate.gameState.timeline.storedTimeAvailableSeconds).toBe(8)
+    expect(
+      small.candidate.gameState.timeline.automationTimeUntilNextEvent,
+    ).toBe(0)
     expect(small.progress.completedTicks).toBe(40)
   })
 
@@ -196,6 +199,97 @@ describe('StoredTimeSimulation shared game-step replay', () => {
       active.state.gameState.statistics.lifetime.botCapInfinityPoints,
     ).toBe(botCapPointsBefore + 1_000n)
   })
+
+  test('settles a skill-driven bot cap reached during the final Stored Time update', () => {
+    const withoutSkill = finish(new StoredTimeSimulation({
+      jobId: 'final-cap-without-skill',
+      state: runtimeForFinalTickBotCap(false, 0.1),
+      requestedSeconds: 0.1,
+      infinityMinimumCycleSeconds: 1 / 60,
+      eventContext: context(),
+    }), 1_000)
+    expect(withoutSkill.type).toBe('completed')
+    if (withoutSkill.type !== 'completed') return
+    expect(withoutSkill.progress.completedTicks).toBe(2)
+    expect(withoutSkill.candidate.gameState.dyson.bots)
+      .toBeLessThan(Number.MAX_VALUE)
+
+    const source = runtimeForFinalTickBotCap(true, 0.1)
+    const pointsBefore = source.gameState.infinity.points
+    const overflowBefore = source.gameState.avocado.overflowMultiplier
+    const botCapPointsBefore =
+      source.gameState.statistics.lifetime.botCapInfinityPoints
+    const terminal = finish(new StoredTimeSimulation({
+      jobId: 'final-cap-with-skill',
+      state: source,
+      requestedSeconds: 0.1,
+      infinityMinimumCycleSeconds: 1 / 60,
+      eventContext: context(),
+    }), 1_000)
+
+    expect(terminal.type).toBe('completed')
+    if (terminal.type !== 'completed') return
+    expect(terminal.progress.completedTicks).toBe(2)
+    expect(terminal.candidate.gameState.dyson.bots).toBe(Number.MAX_VALUE)
+    expect(terminal.candidate.gameState.infinity).toMatchObject({
+      points: pointsBefore + 1_000n,
+      botCapTransitionPending: false,
+      botCapRewardsGranted: true,
+      inProgress: true,
+    })
+    expect(terminal.candidate.gameState.avocado.overflowMultiplier)
+      .toBe(overflowBefore + 1)
+    expect(
+      terminal.candidate.gameState.statistics.lifetime.botCapInfinityPoints,
+    ).toBe(botCapPointsBefore + 1_000n)
+    expect(terminal.candidate.gameState.timeline.storedTimeAvailableSeconds)
+      .toBe(0)
+    expect(
+      terminal.candidate.gameState.timeline.automationTimeUntilNextEvent,
+    ).toBe(0)
+  })
+
+  test('does not manufacture an automatic Infinity while settling the final boundary', () => {
+    const source = runtimeForFinalTickBotCap(true, 0.01, 1e295)
+    source.gameState = {
+      ...source.gameState,
+      infinity: {
+        ...source.gameState.infinity,
+        automaticResetEnabled: true,
+      },
+      timeline: {
+        ...source.gameState.timeline,
+        infinityCycleSeconds: 0,
+      },
+    }
+    const ordinaryBefore =
+      source.gameState.statistics.lifetime.ordinaryInfinityCount
+    const breakBefore =
+      source.gameState.statistics.lifetime.breakInfinityCount
+    const terminal = finish(new StoredTimeSimulation({
+      jobId: 'final-cap-no-extra-automation',
+      state: source,
+      requestedSeconds: 0.01,
+      infinityMinimumCycleSeconds: 1 / 60,
+      eventContext: context(),
+    }), 1_000)
+
+    expect(terminal.type).toBe('completed')
+    if (terminal.type !== 'completed') return
+    expect(terminal.progress.completedTicks).toBe(1)
+    expect(terminal.candidate.gameState.infinity).toMatchObject({
+      automaticResetEnabled: true,
+      botCapTransitionPending: false,
+      botCapRewardsGranted: true,
+      inProgress: true,
+    })
+    expect(
+      terminal.candidate.gameState.statistics.lifetime.ordinaryInfinityCount,
+    ).toBe(ordinaryBefore)
+    expect(
+      terminal.candidate.gameState.statistics.lifetime.breakInfinityCount,
+    ).toBe(breakBefore)
+  })
 })
 
 function finish(simulation: StoredTimeSimulation, budget: number) {
@@ -247,6 +341,63 @@ function runtimeWithStoredTime(seconds: number): CanonicalRuntimeState {
         automationTimeUntilNextEvent: 0.033,
         storedTimeAvailableSeconds: seconds,
         storedTimeCapacitySeconds: Math.max(seconds, 86_400),
+      },
+    },
+  }
+}
+
+function runtimeForFinalTickBotCap(
+  skillOwned: boolean,
+  seconds: number,
+  assemblyLines = 1e294,
+): CanonicalRuntimeState {
+  const state = runtimeWithStoredTime(seconds)
+  const byId = Object.fromEntries(
+    Object.entries(state.gameState.skills.byId).map(([id, skill]) => [
+      id,
+      {
+        ...skill,
+        owned: id === 'worthySacrifice' && skillOwned,
+      },
+    ]),
+  ) as CanonicalRuntimeState['gameState']['skills']['byId']
+  return {
+    ...state,
+    gameState: {
+      ...state.gameState,
+      dyson: {
+        ...state.gameState.dyson,
+        bots: Number.MAX_VALUE - 3e293,
+        facilities: {
+          ...state.gameState.dyson.facilities,
+          assembly_lines: [assemblyLines, 0],
+        },
+      },
+      skills: {
+        ...state.gameState.skills,
+        byId,
+      },
+      infinity: {
+        ...state.gameState.infinity,
+        automaticResetEnabled: false,
+        botCapTransitionPending: false,
+        botCapRewardsGranted: false,
+        inProgress: false,
+      },
+      quantum: {
+        ...state.gameState.quantum,
+        unlocks: {
+          ...state.gameState.quantum.unlocks,
+          breakTheLoop: true,
+        },
+      },
+      timeline: {
+        ...state.gameState.timeline,
+        infinityCycleSeconds: 1,
+        processing: {
+          ...state.gameState.timeline.processing,
+          storedTimePreset: 'fast',
+        },
       },
     },
   }

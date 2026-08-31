@@ -622,6 +622,87 @@ describe('canonical game application engine', () => {
       .toBeCloseTo(9.99, 12)
   })
 
+  test('settles a final-update bot cap in synchronous Stored Time replay', () => {
+    const state = runtime()
+    const byId = Object.fromEntries(
+      Object.entries(state.gameState.skills.byId).map(([id, skill]) => [
+        id,
+        {
+          ...skill,
+          owned: id === 'worthySacrifice',
+        },
+      ]),
+    ) as typeof state.gameState.skills.byId
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        dyson: {
+          ...state.gameState.dyson,
+          bots: Number.MAX_VALUE - 3e293,
+          facilities: {
+            ...state.gameState.dyson.facilities,
+            assembly_lines: [1e294, 0],
+          },
+        },
+        skills: {
+          ...state.gameState.skills,
+          byId,
+        },
+        infinity: {
+          ...state.gameState.infinity,
+          automaticResetEnabled: false,
+          botCapTransitionPending: false,
+          botCapRewardsGranted: false,
+          inProgress: false,
+        },
+        quantum: {
+          ...state.gameState.quantum,
+          unlocks: {
+            ...state.gameState.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+        timeline: {
+          ...state.gameState.timeline,
+          eventClockInitialized: true,
+          automationTimeUntilNextEvent: 0.05,
+          infinityCycleSeconds: 1,
+          storedTimeAvailableSeconds: 0.1,
+          processing: {
+            ...state.gameState.timeline.processing,
+            storedTimePreset: 'fast',
+          },
+        },
+      },
+    })
+    const pointsBefore = state.gameState.infinity.points
+    const overflowBefore = state.gameState.avocado.overflowMultiplier
+    const botCapPointsBefore =
+      state.gameState.statistics.lifetime.botCapInfinityPoints
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    const result = definition.applyCommand(state, {
+      kind: 'internal.advance-stored-time',
+      seconds: 0.1,
+    })
+
+    expect(result).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.timeline.storedTimeAvailableSeconds).toBe(0)
+    expect(state.gameState.timeline.automationTimeUntilNextEvent).toBe(0)
+    expect(state.gameState.infinity).toMatchObject({
+      points: pointsBefore + 1_000n,
+      botCapTransitionPending: false,
+      botCapRewardsGranted: true,
+      inProgress: true,
+    })
+    expect(state.gameState.avocado.overflowMultiplier)
+      .toBe(overflowBefore + 1)
+    expect(state.gameState.statistics.lifetime.botCapInfinityPoints)
+      .toBe(botCapPointsBefore + 1_000n)
+  })
+
   test('forces Buy Max for stored-time automation without changing the configured mode', () => {
     const configured = runtime()
     Object.assign(configured, {

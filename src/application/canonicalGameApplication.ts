@@ -43,7 +43,10 @@ import { runCanonicalSkillAutoAssignment } from '../simulation/canonicalSkillTra
 import {
   createSimulationSummary,
 } from '../simulation/types'
-import { advanceGame } from '../simulation/gameStep'
+import {
+  advanceGame,
+  settleStoredTimeReplayCompletion,
+} from '../simulation/gameStep'
 import { planStoredTimePolicy } from '../simulation/storedTimePolicy'
 import {
   normalizeCanonicalTinkerRuntimeState,
@@ -1820,6 +1823,17 @@ function advanceStoredTime(
     return reject(
       'CANONICAL-STORED-TIME-NO-PROGRESS',
       'Stored Time replay made no durable progress.',
+    )
+  }
+  const settlement = settleStoredTimeReplayCompletion(
+    eventCarrier(working),
+    context,
+  )
+  replaceEventCarrier(working, settlement.state)
+  if (settlement.issue !== undefined) {
+    return reject(
+      settlement.issue,
+      `Stored Time completion boundary failed as ${settlement.issue}.`,
     )
   }
   Object.assign(working, { gameState: {
