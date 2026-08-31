@@ -13347,7 +13347,7 @@
   "wiki.patch-notes.version-4-1-5.number-input": [
     {
       "type": 0,
-      "value": "Les champs de montant du Débogage comprennent désormais tout le vocabulaire de suffixes Standard du jeu, y compris des formes souples comme 100 Qi, 100xQi et 100 × qi, avec des plafonds distincts pour les valeurs continues et entières."
+      "value": "Les champs de montant des Options de développement acceptent désormais les ajustements positifs et négatifs pour ajouter ou retirer des ressources sans descendre sous zéro, comprennent tous les suffixes Standard et les exposants du jeu, et demandent un clavier compatible avec la saisie de texte sur iOS."
     }
   ],
   "wiki.patch-notes.version-4-1-5.persistence": [
@@ -13377,7 +13377,7 @@
   "wiki.patch-notes.version-4-1-5.save-recovery": [
     {
       "type": 0,
-      "value": "Renforcement des mises à niveau et de la récupération des sauvegardes afin que la progression issue de la version Unity et des versions Web ou natives antérieures soit transférée en toute sécurité, avec une protection supplémentaire des copies de secours en cas d’écriture interrompue ou endommagée."
+      "value": "Renforcement des mises à niveau et de la récupération des sauvegardes afin que la progression issue de la version Unity et des versions Web ou natives antérieures, y compris les sauvegardes affectées par des valeurs extrêmes de production Stellaire, soit transférée en toute sécurité, avec une protection supplémentaire des copies de secours en cas d’écriture interrompue ou endommagée."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
@@ -13389,7 +13389,7 @@
   "wiki.patch-notes.version-4-1-5.simulation-fixes": [
     {
       "type": 0,
-      "value": "Restauration de la progression des Canons électromagnétiques et des Usines spatiales, correction de l’affichage des salves et des Recherches terminées, maintien des réinitialisations du Trou noir au plafond de ressources et correction d’un cas limite de minuterie pouvant arrêter le traitement du jeu."
+      "value": "Restauration de la progression des Canons électromagnétiques et des Usines spatiales, correction de l’affichage des salves et des Recherches terminées, maintien des réinitialisations du Trou noir au plafond de ressources, attribution correcte des récompenses de plafond de Bots lors de la dernière mise à jour du Temps stocké et correction d’un cas limite de minuterie pouvant arrêter le traitement du jeu."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulations-ui": [

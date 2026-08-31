@@ -13347,7 +13347,7 @@
   "wiki.patch-notes.version-4-1-5.number-input": [
     {
       "type": 0,
-      "value": "Los campos de cantidad de Depuración ahora reconocen todo el vocabulario de sufijos Estándar del juego, incluidas formas flexibles como 100 Qi, 100xQi y 100 × qi, con límites separados para valores continuos y enteros."
+      "value": "Los campos de cantidad de las Opciones de desarrollo ahora aceptan ajustes positivos y negativos para añadir o retirar recursos sin bajar de cero, reconocen todos los sufijos Estándar y exponentes del juego y solicitan un teclado apto para texto en iOS."
     }
   ],
   "wiki.patch-notes.version-4-1-5.persistence": [
@@ -13377,7 +13377,7 @@
   "wiki.patch-notes.version-4-1-5.save-recovery": [
     {
       "type": 0,
-      "value": "Se reforzaron la actualización y la recuperación de partidas para transferir de forma segura el progreso de la versión de Unity y de versiones web o nativas anteriores, con protección adicional de copias de seguridad ante escrituras interrumpidas o dañadas."
+      "value": "Se reforzaron la actualización y la recuperación de partidas para transferir de forma segura el progreso de la versión de Unity y de versiones web o nativas anteriores, incluidas las partidas afectadas por valores extremos de producción Estelar, con protección adicional de copias de seguridad ante escrituras interrumpidas o dañadas."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
@@ -13389,7 +13389,7 @@
   "wiki.patch-notes.version-4-1-5.simulation-fixes": [
     {
       "type": 0,
-      "value": "Se restauró el escalado de Cañones de riel y Fábricas Espaciales, se corrigieron las salvas y la Investigación completada, se mantuvieron utilizables los reinicios de Agujero Negro en el límite de recursos y se arregló un caso límite del temporizador que podía detener el procesamiento del juego."
+      "value": "Se restauró el escalado de Cañones de riel y Fábricas Espaciales, se corrigieron las salvas y la Investigación completada, los reinicios de Agujero Negro siguen disponibles en el límite de recursos, las recompensas por alcanzar el límite de Bots se acreditan correctamente en la última actualización de Tiempo almacenado y se arregló un caso límite del temporizador que podía detener el procesamiento del juego."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulations-ui": [

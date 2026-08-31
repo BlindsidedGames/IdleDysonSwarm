@@ -13347,7 +13347,7 @@
   "wiki.patch-notes.version-4-1-5.number-input": [
     {
       "type": 0,
-      "value": "Mengenfelder der Debug-Optionen verstehen jetzt das vollständige Standard-Suffixsystem des Spiels, einschließlich flexibler Formen wie 100 Qi, 100xQi und 100 × qi, mit getrennten Obergrenzen für kontinuierliche und ganzzahlige Werte."
+      "value": "Mengenfelder der Entwickleroptionen akzeptieren jetzt positive und negative Anpassungen, die Ressourcen hinzufügen oder bis auf null entfernen, verstehen alle Standard-Suffixe und Exponenten des Spiels und öffnen unter iOS eine textfähige Tastatur."
     }
   ],
   "wiki.patch-notes.version-4-1-5.persistence": [
@@ -13377,7 +13377,7 @@
   "wiki.patch-notes.version-4-1-5.save-recovery": [
     {
       "type": 0,
-      "value": "Die Aktualisierung und Wiederherstellung von Spielständen wurde verbessert, damit Fortschritt aus der Unity-Version und früheren Web- oder nativen Versionen sicher übernommen wird. Zusätzliche Sicherungen schützen bei unterbrochenen oder beschädigten Schreibvorgängen."
+      "value": "Die Aktualisierung und Wiederherstellung von Spielständen wurde verbessert, damit Fortschritt aus der Unity-Version und früheren Web- oder nativen Versionen – einschließlich Spielständen mit extremen Stellar-Produktionswerten – sicher übernommen wird. Zusätzliche Sicherungen schützen bei unterbrochenen oder beschädigten Schreibvorgängen."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulation-balance": [
@@ -13389,7 +13389,7 @@
   "wiki.patch-notes.version-4-1-5.simulation-fixes": [
     {
       "type": 0,
-      "value": "Die Skalierung von Railguns und Weltraumfabriken wurde wiederhergestellt, Salven- und abgeschlossene Forschungsanzeigen wurden korrigiert, Schwarzes-Loch-Resets bleiben an der Ressourcenobergrenze nutzbar und ein Zeitgeber-Randfall, der die Spielverarbeitung stoppen konnte, wurde behoben."
+      "value": "Die Skalierung von Railguns und Weltraumfabriken wurde wiederhergestellt, Salven- und abgeschlossene Forschungsanzeigen wurden korrigiert, Schwarzes-Loch-Resets bleiben an der Ressourcenobergrenze nutzbar, Bot-Limit-Belohnungen werden beim letzten Update der Gespeicherten Zeit korrekt abgerechnet und ein Zeitgeber-Randfall, der die Spielverarbeitung stoppen konnte, wurde behoben."
     }
   ],
   "wiki.patch-notes.version-4-1-5.simulations-ui": [
