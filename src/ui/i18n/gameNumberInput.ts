@@ -1,4 +1,3 @@
-import { isFiniteNonNegativeNumber } from '../../core/finiteNonNegativeNumber'
 import { GAME_NUMBER_PREFIXES } from './gameNumberMagnitudes'
 import {
   LOCALE_REGISTRY,
@@ -39,9 +38,31 @@ export function parseGameNumberInput(
   input: string,
   locale: EnabledLocale = 'en',
 ): GameNumberInputParseResult {
+  return parseGameNumberInputWithSign(input, locale, false)
+}
+
+/** Parses a signed resource adjustment while retaining the shared exact grammar. */
+export function parseSignedGameNumberInput(
+  input: string,
+  locale: EnabledLocale = 'en',
+): GameNumberInputParseResult {
+  return parseGameNumberInputWithSign(input, locale, true)
+}
+
+function parseGameNumberInputWithSign(
+  input: string,
+  locale: EnabledLocale,
+  allowNegative: boolean,
+): GameNumberInputParseResult {
   let numericText = input.trim()
   if (numericText.length === 0) return { ok: false, reason: 'empty' }
-  if (numericText.startsWith('-')) return { ok: false, reason: 'negative' }
+  let sign = 1n
+  if (numericText.startsWith('-')) {
+    if (!allowNegative) return { ok: false, reason: 'negative' }
+    sign = -1n
+    numericText = numericText.slice(1).trimStart()
+    if (numericText.length === 0) return { ok: false, reason: 'invalid' }
+  }
 
   let magnitudeExponent = 0
   for (const { suffix, index } of SUFFIXES) {
@@ -56,7 +77,11 @@ export function parseGameNumberInput(
     }
   }
 
-  const normalized = normalizeLocalizedNumericText(numericText, locale)
+  let normalized = normalizeLocalizedNumericText(numericText, locale)
+  normalized = normalized.replace(
+    /^(\+?)e(?=[+-]?\d+$)/i,
+    (_match, plus: string) => `${plus}1e`,
+  )
   const match = normalized.match(
     /^\+?(?:(\d+)(?:\.(\d*))?|\.(\d+))(?:e([+-]?\d+))?$/i,
   )
@@ -67,7 +92,7 @@ export function parseGameNumberInput(
   if (!Number.isSafeInteger(authoredExponent)) {
     return { ok: false, reason: 'invalid' }
   }
-  const coefficient = BigInt(`${whole}${fraction}`)
+  const coefficient = BigInt(`${whole}${fraction}`) * sign
   return {
     ok: true,
     value: {
@@ -111,10 +136,10 @@ function numberInputCulture(locale: EnabledLocale): NumberInputCulture {
     decimal: parts.find((part) => part.type === 'decimal')?.value ?? '.',
     group: parts.find((part) => part.type === 'group')?.value,
     digits: new Map(
-    Array.from({ length: 10 }, (_, digit) => [
-      new Intl.NumberFormat(languageTag, { useGrouping: false }).format(digit),
-      String(digit),
-    ]),
+      Array.from({ length: 10 }, (_, digit) => [
+        new Intl.NumberFormat(languageTag, { useGrouping: false }).format(digit),
+        String(digit),
+      ]),
     ),
   }
   numberInputCultures.set(locale, culture)
@@ -126,7 +151,7 @@ export function toContinuousGameNumber(
 ): ContinuousGameNumberResult {
   if (parsed.coefficient === 0n) return { ok: true, value: 0 }
   const value = Number(`${parsed.coefficient}e${parsed.exponent}`)
-  return isFiniteNonNegativeNumber(value)
+  return Number.isFinite(value)
     ? { ok: true, value }
     : { ok: false, reason: 'above-maximum' }
 }
@@ -136,27 +161,30 @@ export function toDiscreteGameNumber(
   maximum: bigint,
 ): DiscreteGameNumberResult {
   if (parsed.coefficient === 0n) return { ok: true, value: 0n }
+  if (maximum < 0n) return { ok: false, reason: 'above-maximum' }
+  const negative = parsed.coefficient < 0n
+  const magnitude = negative ? -parsed.coefficient : parsed.coefficient
   if (parsed.exponent >= 0) {
     const maximumDigits = maximum.toString().length
-    const resultDigits = parsed.coefficient.toString().length + parsed.exponent
+    const resultDigits = magnitude.toString().length + parsed.exponent
     if (resultDigits > maximumDigits) {
       return { ok: false, reason: 'above-maximum' }
     }
-    const value = parsed.coefficient * 10n ** BigInt(parsed.exponent)
-    return value <= maximum
-      ? { ok: true, value }
+    const magnitudeValue = magnitude * 10n ** BigInt(parsed.exponent)
+    return magnitudeValue <= maximum
+      ? { ok: true, value: negative ? -magnitudeValue : magnitudeValue }
       : { ok: false, reason: 'above-maximum' }
   }
   const divisorExponent = -parsed.exponent
-  if (divisorExponent > parsed.coefficient.toString().length) {
+  if (divisorExponent > magnitude.toString().length) {
     return { ok: false, reason: 'non-integer' }
   }
   const divisor = 10n ** BigInt(divisorExponent)
-  if (parsed.coefficient % divisor !== 0n) {
+  if (magnitude % divisor !== 0n) {
     return { ok: false, reason: 'non-integer' }
   }
-  const value = parsed.coefficient / divisor
-  return value <= maximum
-    ? { ok: true, value }
+  const magnitudeValue = magnitude / divisor
+  return magnitudeValue <= maximum
+    ? { ok: true, value: negative ? -magnitudeValue : magnitudeValue }
     : { ok: false, reason: 'above-maximum' }
 }

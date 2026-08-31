@@ -192,8 +192,8 @@
     "description": "Label for the developer resource amount input."
   },
   "debug.amount-continuous-maximum": {
-    "defaultMessage": "Continuous resources cannot exceed {maximum}.",
-    "description": "Validation error for developer values above the continuous resource cap."
+    "defaultMessage": "The absolute amount for continuous resources cannot exceed {maximum}.",
+    "description": "Validation error for signed developer values whose magnitude exceeds the continuous resource cap."
   },
   "debug.amount-discrete-maximum": {
     "defaultMessage": "Whole-number resources cannot exceed {maximum}. Continuous resources may still accept this amount.",
@@ -204,11 +204,11 @@
     "description": "Validation guidance when developer input is fractional."
   },
   "debug.amount-help": {
-    "defaultMessage": "Standard suffixes are accepted, including forms such as 100 Qi, 100xqi and 100 x qi.",
-    "description": "Help for entering game-formatted numbers in Developer Options."
+    "defaultMessage": "Use Standard suffixes or exponents (100 Qi, 100xqi, e14 = 1e14). Negative amounts remove resources down to zero.",
+    "description": "Help for entering signed game-formatted resource adjustments in Developer Options."
   },
   "debug.amount-invalid": {
-    "defaultMessage": "Enter a non-negative number using digits, scientific notation or a Standard game suffix.",
+    "defaultMessage": "Enter an amount using digits, scientific notation or a Standard game suffix.",
     "description": "Validation error for malformed developer resource input."
   },
   "debug.apply-preset": {

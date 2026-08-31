@@ -330,7 +330,7 @@
   "debug.amount-continuous-maximum": [
     {
       "type": 0,
-      "value": "Los recursos continuos no pueden superar "
+      "value": "El valor absoluto para recursos continuos no puede superar "
     },
     {
       "type": 1,
@@ -364,13 +364,13 @@
   "debug.amount-help": [
     {
       "type": 0,
-      "value": "Se aceptan sufijos estándar, incluidas formas como 100 Qi, 100xqi y 100 x qi."
+      "value": "Usa sufijos estándar o exponentes (100 Qi, 100xqi, e14 = 1e14). Las cantidades negativas reducen los recursos hasta cero."
     }
   ],
   "debug.amount-invalid": [
     {
       "type": 0,
-      "value": "Ingresa un número no negativo con dígitos, notación científica o un sufijo estándar del juego."
+      "value": "Ingresa una cantidad con dígitos, notación científica o un sufijo estándar del juego."
     }
   ],
   "debug.apply-preset": [

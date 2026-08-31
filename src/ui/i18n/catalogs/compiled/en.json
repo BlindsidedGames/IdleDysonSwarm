@@ -330,7 +330,7 @@
   "debug.amount-continuous-maximum": [
     {
       "type": 0,
-      "value": "Continuous resources cannot exceed "
+      "value": "The absolute amount for continuous resources cannot exceed "
     },
     {
       "type": 1,
@@ -364,13 +364,13 @@
   "debug.amount-help": [
     {
       "type": 0,
-      "value": "Standard suffixes are accepted, including forms such as 100 Qi, 100xqi and 100 x qi."
+      "value": "Use Standard suffixes or exponents (100 Qi, 100xqi, e14 = 1e14). Negative amounts remove resources down to zero."
     }
   ],
   "debug.amount-invalid": [
     {
       "type": 0,
-      "value": "Enter a non-negative number using digits, scientific notation or a Standard game suffix."
+      "value": "Enter an amount using digits, scientific notation or a Standard game suffix."
     }
   ],
   "debug.apply-preset": [

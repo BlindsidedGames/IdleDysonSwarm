@@ -4,7 +4,6 @@ import type {
   CommitFirstResult,
 } from '../../application/contracts'
 import type { DeepReadonly } from '../../core/contracts'
-import { isFiniteNonNegativeNumber } from '../../core/finiteNonNegativeNumber'
 import { formatUnknownError as errorMessage } from '../../core/unknownError'
 import type {
   FrontendApplicationSnapshot,
@@ -901,11 +900,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       this.developmentControlsRequireEntitlement &&
       !this.developmentStatus().enabled
     ) return developmentNotEnabled()
-    if (!isFiniteNonNegativeNumber(seconds)) {
+    if (!Number.isFinite(seconds)) {
       return {
         applied: false,
         code: 'RUNTIME-DEVELOPMENT-TIME-INVALID',
-        reason: 'Offline-time seconds must be finite and non-negative.',
+        reason: 'Offline-time seconds must be finite.',
       }
     }
     const graph = this.graph

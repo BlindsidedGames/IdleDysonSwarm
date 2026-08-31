@@ -519,8 +519,15 @@ The application shell owns one active-time driver:
   abbreviation retains its exact canonical value rather than being reparsed
   through display rounding. Player-edited numeric text follows the active
   locale's digits and decimal/grouping separators, is parsed exactly, and
-  clamps only above the canonical maximum target. Developer numeric inputs use
-  the same locale-aware coefficient parsing while retaining game suffixes.
+  clamps only above the canonical maximum target. Game-number fields request a
+  text-capable virtual keyboard so suffixes and scientific notation remain
+  authorable on mobile. Developer numeric inputs use the same locale-aware
+  coefficient parsing while retaining game suffixes. An exponent without an
+  authored coefficient implies one (`e14` is `1e14`). Developer resource
+  adjustments may be signed: negative amounts remove from the available
+  resource and clamp at zero without invalidating already-spent Infinity or
+  Quantum totals. A negative Offline Time adjustment removes only available
+  Stored Time and clamps it at zero; it never runs reverse simulation.
 - Pair abbreviated values with an accessible/full-precision representation on
   focus, hover or details.
 - Use `/s` for rates and explicit units for durations. Durations under one

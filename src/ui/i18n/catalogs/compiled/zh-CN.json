@@ -330,7 +330,7 @@
   "debug.amount-continuous-maximum": [
     {
       "type": 0,
-      "value": "连续资源不能超过 "
+      "value": "连续资源的绝对值不能超过 "
     },
     {
       "type": 1,
@@ -364,13 +364,13 @@
   "debug.amount-help": [
     {
       "type": 0,
-      "value": "支持标准后缀，包括 100 Qi、100xqi 和 100 x qi 等形式。"
+      "value": "可使用标准后缀或指数（100 Qi、100xqi、e14 = 1e14）。负数会将资源减少至最低为零。"
     }
   ],
   "debug.amount-invalid": [
     {
       "type": 0,
-      "value": "请使用数字、科学计数法或游戏标准后缀输入非负数。"
+      "value": "请使用数字、科学计数法或游戏标准后缀输入数量。"
     }
   ],
   "debug.apply-preset": [

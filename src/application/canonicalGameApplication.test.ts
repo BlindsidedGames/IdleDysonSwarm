@@ -9,7 +9,7 @@ import {
 } from '../simulation/canonicalEventTimeModel'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../simulation/dreamEducationUpgrades'
 import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
-import { bitDecrement } from '../simulation/numeric'
+import { bitDecrement, DISCRETE_MAXIMUM } from '../simulation/numeric'
 import { REALITY_UPGRADE_DEFINITIONS } from '../simulation/realityUpgrades'
 import {
   createCanonicalGameEngineDefinition,
@@ -357,6 +357,32 @@ describe('canonical game application engine', () => {
     expect(state.gameState.skills.points).toBe(0n)
   })
 
+  test('retains zero-point development auto-assignment behavior', () => {
+    const state = runtime()
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        skills: {
+          ...state.gameState.skills,
+          points: 1n,
+          activeAutoAssignment: ['assemblyLineTree'],
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind: 'add-skill-points', amount: 0n },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.skills.byId.assemblyLineTree?.owned).toBe(true)
+    expect(state.gameState.skills.points).toBe(0n)
+  })
+
   test('publishes the exact skill preset application outcome as transient runtime state', () => {
     const state = runtime()
     const definition = createCanonicalGameEngineDefinition({
@@ -402,6 +428,141 @@ describe('canonical game application engine', () => {
       }),
     ).toEqual({ accepted: true, changed: true })
     expect(state.gameState.dyson.money).toBe(before + 125)
+  })
+
+  test('applies signed development resource adjustments with canonical floors', () => {
+    const state = runtime()
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        dyson: {
+          ...state.gameState.dyson,
+          money: 100,
+          bots: 75,
+          workers: 0,
+          researchers: 0,
+        },
+        skills: {
+          ...state.gameState.skills,
+          points: 5n,
+          activeAutoAssignment: ['assemblyLineTree'],
+        },
+        infinity: {
+          ...state.gameState.infinity,
+          points: 12n,
+          spentPoints: 7n,
+        },
+        quantum: {
+          ...state.gameState.quantum,
+          pointsEarned: 20n,
+          pointsSpent: 11n,
+        },
+        reality: {
+          ...state.gameState.reality,
+          influence: 9,
+        },
+        dream: {
+          ...state.gameState.dream,
+          strangeMatter: 8,
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    for (const action of [
+      { kind: 'add-cash', amount: -150 },
+      { kind: 'add-bots', amount: -25 },
+      { kind: 'add-skill-points', amount: -50n },
+      { kind: 'add-infinity-points', amount: -50n },
+      { kind: 'add-quantum-shards', amount: -50n },
+      { kind: 'add-influence', amount: -50 },
+      { kind: 'add-strange-matter', amount: -50 },
+    ] as const) {
+      expect(
+        definition.applyCommand(state, {
+          kind: 'internal.development-apply-action',
+          action,
+        }),
+      ).toEqual({ accepted: true, changed: true })
+    }
+
+    expect(state.gameState.dyson.money).toBe(0)
+    expect(state.gameState.dyson.bots).toBe(50)
+    expect(state.gameState.skills.points).toBe(0n)
+    expect(state.gameState.skills.byId.assemblyLineTree?.owned).toBe(false)
+    expect(state.gameState.infinity.points).toBe(7n)
+    expect(state.gameState.quantum.pointsEarned).toBe(11n)
+    expect(state.gameState.reality.influence).toBe(0)
+    expect(state.gameState.dream.strangeMatter).toBe(0)
+  })
+
+  test('applies signed Stored Time adjustments without advancing gameplay', () => {
+    const state = runtime()
+    state.gameState.timeline = {
+      ...state.gameState.timeline,
+      storedTimeAvailableSeconds: 10,
+      storedTimeCapacitySeconds: 100,
+      doubleTime: {
+        ...state.gameState.timeline.doubleTime,
+        bankSeconds: 5,
+      },
+    }
+    const dysonBefore = structuredClone(state.gameState.dyson)
+    const statisticsBefore = structuredClone(state.gameState.statistics)
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind: 'add-offline-time', seconds: -1 },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.timeline).toMatchObject({
+      storedTimeAvailableSeconds: 9,
+      storedTimeCapacitySeconds: 100,
+      doubleTime: { bankSeconds: 5 },
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind: 'add-offline-time', seconds: -1_000 },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.timeline.storedTimeAvailableSeconds).toBe(0)
+    expect(state.gameState.dyson).toEqual(dysonBefore)
+    expect(state.gameState.statistics).toEqual(statisticsBefore)
+  })
+
+  test('rejects non-finite and out-of-range signed development amounts atomically', () => {
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    for (const action of [
+      { kind: 'add-cash', amount: Number.NaN },
+      { kind: 'add-influence', amount: Number.NEGATIVE_INFINITY },
+      { kind: 'add-offline-time', seconds: Number.POSITIVE_INFINITY },
+      { kind: 'add-skill-points', amount: DISCRETE_MAXIMUM + 1n },
+      { kind: 'add-quantum-shards', amount: -DISCRETE_MAXIMUM - 1n },
+    ] as const) {
+      const state = runtime()
+      const before = structuredClone(state)
+      expect(
+        definition.applyCommand(state, {
+          kind: 'internal.development-apply-action',
+          action,
+        }),
+      ).toMatchObject({
+        accepted: false,
+        code: 'CANONICAL-DEVELOPMENT-ACTION-INVALID',
+      })
+      expect(state).toEqual(before)
+    }
   })
 
   test('credits debug offline time without advancing active gameplay', () => {

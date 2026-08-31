@@ -71,6 +71,26 @@ describe('progression currency presentation contract', () => {
       ok: true,
       value: 2_140_000_000n,
     })
+    expect(parseInfinityTargetInput('e6')).toEqual({
+      ok: true,
+      value: 1_000_000n,
+    })
+    expect(parseInfinityTargetInput('-e6')).toEqual({
+      ok: false,
+      reason: 'non-positive',
+    })
+  })
+
+  test('requests a text-capable mobile keyboard for game-number inputs', () => {
+    const debug = source('src/ui/gameplay/debug/DebugSurface.tsx')
+    const infinity = source('src/ui/gameplay/infinity/InfinitySurface.tsx')
+
+    for (const numericInputSource of [debug, infinity]) {
+      expect(numericInputSource).toContain('type="text"')
+      expect(numericInputSource).toContain('inputMode="text"')
+      expect(numericInputSource).toContain('autoCorrect="off"')
+      expect(numericInputSource).not.toContain('inputMode="decimal"')
+    }
   })
 
   test.each([
