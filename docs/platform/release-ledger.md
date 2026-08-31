@@ -28,9 +28,9 @@ Release performed on 1 September 2026 (AEST, UTC+10).
 
 | Platform | Local artifact | Size | SHA-256 |
 | --- | --- | ---: | --- |
-| Android | `/Users/matthewrushworth/.codex/worktrees/5c68/Idle Dyson Swarm/output/local-release/2026090101/android/idle-dyson-swarm-2026090101.aab` | 17,147,835 bytes | `37ecd58ee20aad659ed0c308991a9a73fad72b49d913f2883d823158164ceda0` |
-| iOS archive bundle | `/Users/matthewrushworth/.codex/worktrees/5c68/Idle Dyson Swarm/output/local-release/2026090101/ios/App-2026090101.xcarchive` | directory | Companion zip below |
-| iOS archive zip | `/Users/matthewrushworth/.codex/worktrees/5c68/Idle Dyson Swarm/output/local-release/2026090101/ios/App-2026090101.xcarchive.zip` | 18,701,495 bytes | `a27871f31330328ab165a65583275241a935da98e6858d4d6b1d38e4918428ec` |
+| Android | `/Users/matthewrushworth/Projects/Idle Dyson Swarm/output/local-release/2026090101/android/idle-dyson-swarm-2026090101.aab` | 17,147,835 bytes | `37ecd58ee20aad659ed0c308991a9a73fad72b49d913f2883d823158164ceda0` |
+| iOS archive bundle | `/Users/matthewrushworth/Projects/Idle Dyson Swarm/output/local-release/2026090101/ios/App-2026090101.xcarchive` | directory | Companion zip below |
+| iOS archive zip | `/Users/matthewrushworth/Projects/Idle Dyson Swarm/output/local-release/2026090101/ios/App-2026090101.xcarchive.zip` | 18,701,495 bytes | `a27871f31330328ab165a65583275241a935da98e6858d4d6b1d38e4918428ec` |
 
 The archived `App` executable SHA-256 is `51309cc256f70bfe4c71098beffd70acaf41e498931657ff308735ee242c7fa4`. Xcode Organizer also has the archive at `/Users/matthewrushworth/Library/Developer/Xcode/Archives/2026-09-01/App-2026090101.xcarchive`.
 
