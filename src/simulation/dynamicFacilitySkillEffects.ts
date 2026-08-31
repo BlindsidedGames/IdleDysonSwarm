@@ -1,3 +1,5 @@
+import { powerContinuous } from './numeric'
+
 /**
  * Canonical inputs consumed by Unity's dynamic facility production and
  * facility-modifier skill effects. Values such as starsSurrounded are derived
@@ -63,7 +65,7 @@ export function resolveDynamicFacilitySkillEffect(
     case 'dysonSubsidies':
       return context.starsSurrounded >= 1 ? 2 : 1
     case 'purityOfBody':
-      return Math.pow(1.25, context.assignedSkillPoints)
+      return powerContinuous(1.25, context.assignedSkillPoints)
     case 'clusterNetworking':
       return context.serversTotal > 1
         ? 1 + UNITY_FLOAT_005 * Math.log10(context.serversTotal)
@@ -81,7 +83,7 @@ export function resolveDynamicFacilitySkillEffect(
     case 'galacticPradigmShift':
       return context.galaxiesEngulfed >= 1 ? 3 : 1.5
     case 'purityOfSEssence':
-      return Math.pow(1.42, context.assignedSkillPoints)
+      return powerContinuous(1.42, context.assignedSkillPoints)
     case 'superRadiantScattering':
       return (
         1 + 0.01 * context.superRadiantScatteringTimerSeconds

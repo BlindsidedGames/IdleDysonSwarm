@@ -1,3 +1,9 @@
+import {
+  addContinuous,
+  multiplyContinuous,
+  powerContinuous,
+} from './numeric'
+
 export type StatOperation =
   | 'add'
   | 'multiply'
@@ -32,11 +38,20 @@ export function applyStatEffect(
 ): number {
   switch (effect.operation) {
     case 'add':
-      return current + effect.value
+      return canUseNonNegativeContinuousArithmetic(current, effect.value)
+        ? addContinuous(current, effect.value)
+        : current + effect.value
     case 'multiply':
-      return current * effect.value
+      return canUseNonNegativeContinuousArithmetic(current, effect.value)
+        ? multiplyContinuous(current, effect.value)
+        : current * effect.value
     case 'power':
-      return Math.pow(current, effect.value)
+      return Number.isFinite(current) &&
+        current >= 0 &&
+        Number.isFinite(effect.value) &&
+        !(current === 0 && effect.value < 0)
+        ? powerContinuous(current, effect.value)
+        : Math.pow(current, effect.value)
     case 'override':
       return effect.value
     case 'clamp-min':
@@ -44,6 +59,18 @@ export function applyStatEffect(
     case 'clamp-max':
       return Math.min(current, effect.value)
   }
+}
+
+function canUseNonNegativeContinuousArithmetic(
+  left: number,
+  right: number,
+): boolean {
+  return (
+    Number.isFinite(left) &&
+    left >= 0 &&
+    Number.isFinite(right) &&
+    right >= 0
+  )
 }
 
 export function operationFromUnity(value: number): StatOperation {
