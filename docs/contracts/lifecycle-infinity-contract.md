@@ -55,6 +55,11 @@ either checkpoint resumes the next phase without granting the special reward
 twice. Invalid bot values produce a separate repair candidate that zeros bots
 and clears all transition flags before any further simulation.
 
+After the reward checkpoint commits, `botCapRewardsGranted` remains latched if
+later production or Stellar Sacrifices lowers Bots below the cap. The latch
+survives checkpoint and reload, so returning to the cap cannot grant another
+special reward; only a successful Infinity reset clears it for a later run.
+
 Bot-cap statistics are recorded by the subsequent normal Infinity transition,
 after the reward checkpoint is known to be durable.
 

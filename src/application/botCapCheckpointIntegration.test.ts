@@ -149,6 +149,144 @@ describe('bot-cap checkpoint coordination', () => {
       afterResume.gameState.statistics.lifetime.botCapInfinityPoints,
     ).toBe(botCapBefore + 1_000n)
   })
+
+  test.each([
+    {
+      name: 'pending checkpoint',
+      failureAttempt: 2,
+      committedCheckpoints: [] as const,
+      retryCheckpoints: ['pending', 'rewards'] as const,
+    },
+    {
+      name: 'reward checkpoint',
+      failureAttempt: 3,
+      committedCheckpoints: ['pending'] as const,
+      retryCheckpoints: ['rewards'] as const,
+    },
+  ])('retries a failed $name without duplicating its reward', async ({
+    failureAttempt,
+    committedCheckpoints,
+    retryCheckpoints,
+  }) => {
+    const repository = new MemoryRepository(failureAttempt)
+    const application = createApplication(repository)
+    await application.start()
+    await installBotCap(application, false)
+    const coordinator = createCoordinator(application)
+    const before = readyState(application)
+    const pointsBefore = before.gameState.infinity.points
+    const overflowBefore = before.gameState.avocado.overflowMultiplier
+    const botCapPointsBefore =
+      before.gameState.statistics.lifetime.botCapInfinityPoints
+    const botCapOverflowBefore =
+      before.gameState.statistics.lifetime.botCapOverflowRewards
+
+    const failed = await coordinator.advanceActive(100)
+
+    expect(failed.transition).toMatchObject({
+      accepted: false,
+      code: 'APP-COMMIT-FIRST-FAILED',
+    })
+    expect(failed.checkpoints).toEqual(committedCheckpoints)
+    const afterFailure = readyState(application)
+    expect(afterFailure.gameState.infinity.points).toBe(pointsBefore)
+    expect(afterFailure.gameState.avocado.overflowMultiplier).toBe(
+      overflowBefore,
+    )
+    expect(
+      afterFailure.gameState.statistics.lifetime.botCapInfinityPoints,
+    ).toBe(botCapPointsBefore)
+    expect(
+      afterFailure.gameState.statistics.lifetime.botCapOverflowRewards,
+    ).toBe(botCapOverflowBefore)
+
+    repository.failureAttempt = undefined
+    const retried = await coordinator.advanceActive(100)
+
+    expect(retried.transition.accepted).toBe(true)
+    expect(retried.checkpoints).toEqual(retryCheckpoints)
+    const afterRetry = readyState(application)
+    expect(afterRetry.gameState.infinity.points).toBe(
+      pointsBefore + 1_000n,
+    )
+    expect(afterRetry.gameState.avocado.overflowMultiplier).toBe(
+      overflowBefore + 1,
+    )
+    expect(
+      afterRetry.gameState.statistics.lifetime.botCapInfinityPoints,
+    ).toBe(botCapPointsBefore + 1_000n)
+    expect(
+      afterRetry.gameState.statistics.lifetime.botCapOverflowRewards,
+    ).toBe(botCapOverflowBefore + 1n)
+
+    const repeated = await coordinator.advanceActive(100)
+    expect(repeated.checkpoints).toEqual([])
+    expect(readyState(application).gameState.infinity.points).toBe(
+      pointsBefore + 1_000n,
+    )
+    expect(
+      readyState(application).gameState.avocado.overflowMultiplier,
+    ).toBe(overflowBefore + 1)
+    expect(
+      readyState(application).gameState.statistics.lifetime
+        .botCapInfinityPoints,
+    ).toBe(botCapPointsBefore + 1_000n)
+    expect(
+      readyState(application).gameState.statistics.lifetime
+        .botCapOverflowRewards,
+    ).toBe(botCapOverflowBefore + 1n)
+  })
+
+  test('preserves the reward latch across a reduced-state checkpoint, reload, and return to cap', async () => {
+    const repository = new MemoryRepository()
+    const application = createApplication(repository)
+    await application.start()
+    await installBotCap(application, false)
+    const coordinator = createCoordinator(application)
+    await coordinator.advanceActive(100)
+    const rewarded = readyState(application)
+    const points = rewarded.gameState.infinity.points
+    const overflow = rewarded.gameState.avocado.overflowMultiplier
+    expect(rewarded.gameState.dyson.bots).toBeLessThan(Number.MAX_VALUE)
+    expect(rewarded.gameState.infinity.botCapRewardsGranted).toBe(true)
+
+    await expect(application.commitAwayReplacement(
+      revisionEnvelope(application),
+      structuredClone(rewarded),
+    )).resolves.toMatchObject({ committed: true })
+
+    const reopened = createApplication(repository)
+    await reopened.start()
+    expect(
+      readyState(reopened).gameState.infinity.botCapRewardsGranted,
+    ).toBe(true)
+    const returnedToCap = structuredClone(readyState(reopened))
+    returnedToCap.gameState = {
+      ...returnedToCap.gameState,
+      dyson: {
+        ...returnedToCap.gameState.dyson,
+        bots: Number.MAX_VALUE,
+      },
+      quantum: {
+        ...returnedToCap.gameState.quantum,
+        unlocks: {
+          ...returnedToCap.gameState.quantum.unlocks,
+          breakTheLoop: true,
+        },
+      },
+    }
+    await expect(reopened.commitAwayReplacement(
+      revisionEnvelope(reopened),
+      returnedToCap,
+    )).resolves.toMatchObject({ committed: true })
+
+    const repeated = await createCoordinator(reopened).advanceActive(100)
+    expect(repeated.checkpoints).toEqual([])
+    expect(readyState(reopened).gameState.infinity.points).toBe(points)
+    expect(readyState(reopened).gameState.avocado.overflowMultiplier).toBe(
+      overflow,
+    )
+  })
 })
 
 function createApplication(repository: SaveRepository) {
@@ -234,6 +372,18 @@ function readyState(
   return snapshot.state as Readonly<CanonicalRuntimeState>
 }
 
+function revisionEnvelope(application: CanonicalGameApplicationFacade) {
+  const snapshot = application.snapshot()
+  expect(snapshot.phase).toBe('ready')
+  if (snapshot.phase !== 'ready') {
+    throw new Error('Expected a ready canonical application.')
+  }
+  return {
+    sessionRevision: snapshot.revision.session,
+    expectedStateRevision: snapshot.revision.state,
+  }
+}
+
 function context(): CanonicalEventTimeContext {
   return {
     mode: 'active',
@@ -253,6 +403,9 @@ function context(): CanonicalEventTimeContext {
 class MemoryRepository implements SaveRepository {
   readonly commits: PreparedSave[] = []
   private current = prepared
+  private commitAttempts = 0
+
+  constructor(public failureAttempt?: number) {}
 
   async hasCurrent(): Promise<boolean> {
     return true
@@ -267,6 +420,12 @@ class MemoryRepository implements SaveRepository {
   }
 
   async commit(save: PreparedSave): Promise<PreparedSave> {
+    this.commitAttempts += 1
+    if (this.commitAttempts === this.failureAttempt) {
+      throw new Error(
+        `Deliberate bot-cap commit failure ${this.commitAttempts}.`,
+      )
+    }
     this.commits.push(save)
     this.current = save
     return save

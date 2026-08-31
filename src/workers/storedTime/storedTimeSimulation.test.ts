@@ -137,8 +137,13 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     expect(terminal).not.toHaveProperty('candidate')
   })
 
-  test('settles the bot cap during Stored Time without repeating it on active return', () => {
+  test('settles the bot cap during Stored Time without repeating after Stellar reduction and active return', () => {
     const source = runtimeWithStoredTime(1)
+    source.evaluationSnapshot = {
+      ...source.evaluationSnapshot,
+      panelsPerSecond: 1e150,
+      panelLifetimeSeconds: 1e150,
+    }
     source.gameState = {
       ...source.gameState,
       dyson: {
@@ -151,6 +156,28 @@ describe('StoredTimeSimulation shared game-step replay', () => {
         botCapTransitionPending: false,
         botCapRewardsGranted: false,
         inProgress: false,
+      },
+      quantum: {
+        ...source.gameState.quantum,
+        unlocks: {
+          ...source.gameState.quantum.unlocks,
+          breakTheLoop: true,
+          stellar: true,
+        },
+      },
+      skills: {
+        ...source.gameState.skills,
+        byId: {
+          ...source.gameState.skills.byId,
+          stellarSacrifices: {
+            ...source.gameState.skills.byId.stellarSacrifices,
+            owned: true,
+          },
+          stellarDominance: {
+            ...source.gameState.skills.byId.stellarDominance,
+            owned: true,
+          },
+        },
       },
     }
     const pointsBefore = source.gameState.infinity.points
@@ -176,9 +203,20 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     expect(
       terminal.candidate.gameState.statistics.lifetime.botCapInfinityPoints,
     ).toBe(botCapPointsBefore + 1_000n)
+    expect(terminal.candidate.gameState.dyson.bots).toBeLessThan(
+      Number.MAX_VALUE,
+    )
 
+    const returnedToCap = structuredClone(terminal.candidate)
+    returnedToCap.gameState = {
+      ...returnedToCap.gameState,
+      dyson: {
+        ...returnedToCap.gameState.dyson,
+        bots: Number.MAX_VALUE,
+      },
+    }
     const active = advanceGame(
-      eventCarrier(terminal.candidate),
+      eventCarrier(returnedToCap),
       {
         source: 'active',
         baseSeconds: 0.033,
@@ -189,6 +227,7 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     )
     expect(active.botCapPersistenceRequired).toBe(false)
     expect(active.summary.botCapInfinityPoints).toBe(0n)
+    expect(active.summary.botCapOverflowRewards).toBe(0n)
     expect(active.state.gameState.infinity).toMatchObject({
       points: pointsBefore + 1_000n,
       automaticResetEnabled: false,
