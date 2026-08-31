@@ -19,8 +19,10 @@ import {
   type CanonicalEventTimeContext,
   type CanonicalEventTimeState,
 } from './canonicalEventTimeModel'
+import { evaluateCanonicalBotCapCheckpoint } from './canonicalBotCapCheckpoint'
 import { SIMULATION_UPGRADE_DEFINITIONS } from './dreamEducationUpgrades'
 import { advanceEventTime } from './eventTime'
+import { advanceGame } from './gameStep'
 import {
   REALITY_UPGRADE_DEFINITIONS,
   type RealityUpgradeDefinition,
@@ -1185,6 +1187,102 @@ describe('legacy canonical event-time parity adapter', () => {
     )
 
     expect(model.timeToNextMaterialEvent(10, 1)).toBeGreaterThan(0)
+  })
+
+  test('keeps the bot-cap reward latched when Stellar Sacrifices reduces Bots and they return to cap', () => {
+    const source = baseState()
+    const capped = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: Number.MAX_VALUE,
+      },
+      infinity: {
+        ...source.infinity,
+        automaticResetEnabled: false,
+        inProgress: false,
+        botCapTransitionPending: false,
+        botCapRewardsGranted: false,
+      },
+      quantum: {
+        ...source.quantum,
+        unlocks: {
+          ...source.quantum.unlocks,
+          breakTheLoop: true,
+          stellar: true,
+        },
+      },
+      skills: {
+        ...source.skills,
+        byId: {
+          ...source.skills.byId,
+          stellarSacrifices: {
+            ...source.skills.byId.stellarSacrifices,
+            owned: true,
+          },
+          stellarDominance: {
+            ...source.skills.byId.stellarDominance,
+            owned: true,
+          },
+        },
+      },
+    }
+    const pending = evaluateCanonicalBotCapCheckpoint(capped)
+    expect(pending.action).toMatchObject({
+      kind: 'persist',
+      checkpoint: 'pending',
+    })
+    const reward = evaluateCanonicalBotCapCheckpoint(
+      pending.candidateState,
+    )
+    expect(reward.appliedReward).toEqual({
+      infinityPoints: 1_000n,
+      overflowMultiplier: 1,
+    })
+    const points = reward.candidateState.infinity.points
+    const overflow = reward.candidateState.avocado.overflowMultiplier
+
+    const active = advanceGame(
+      carrier(reward.candidateState, {
+        ...hydrated.skillEffectEvaluationSnapshot,
+        panelsPerSecond: 1e150,
+        panelLifetimeSeconds: 1e150,
+      }),
+      {
+        source: 'active',
+        baseSeconds: 0.1,
+        automation: 'enabled',
+      },
+      context(),
+      1 / 60,
+    )
+
+    expect(active.issue).toBeUndefined()
+    expect(active.state.gameState.dyson.bots).toBeLessThan(Number.MAX_VALUE)
+    expect(active.state.gameState.dyson.bots).toBeGreaterThan(0)
+    expect(active.state.gameState.infinity).toMatchObject({
+      points,
+      automaticResetEnabled: false,
+      botCapTransitionPending: false,
+      botCapRewardsGranted: true,
+    })
+    expect(active.state.gameState.avocado.overflowMultiplier).toBe(overflow)
+    expect(active.summary.botCapInfinityPoints).toBe(0n)
+    expect(active.summary.botCapOverflowRewards).toBe(0n)
+
+    const returnedToCap = {
+      ...active.state.gameState,
+      dyson: {
+        ...active.state.gameState.dyson,
+        bots: Number.MAX_VALUE,
+      },
+    }
+    const repeated = evaluateCanonicalBotCapCheckpoint(returnedToCap)
+    expect(repeated.action).toEqual({ kind: 'prestige' })
+    expect(repeated.appliedReward).toEqual({
+      infinityPoints: 0n,
+      overflowMultiplier: 0,
+    })
   })
 
   test('fails closed when an owned Reality artifact definition is absent', () => {
