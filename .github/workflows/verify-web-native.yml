@@ -2,6 +2,8 @@ name: Verify Web and native foundations
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 permissions:
