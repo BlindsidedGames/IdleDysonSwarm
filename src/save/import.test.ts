@@ -9,6 +9,7 @@ import {
   TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
   TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
 } from './transitionalV2Retirement'
+import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
@@ -88,6 +89,25 @@ describe('save import text preparation', () => {
 
     expect(imported.offlineTime).toBe(seconds)
     expect(imported.maxOfflineTime).toBe(seconds)
+  })
+
+  test('manual export and import preserve a universe designation beyond the discrete ceiling', () => {
+    const designation = DISCRETE_MAXIMUM + 42n
+    const text = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        saveData: { universesConsumed: designation },
+      }).copyValidatedState(),
+    )
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+    ).copyValidatedState()
+
+    expect(
+      (imported.saveData as Record<string, unknown>).universesConsumed,
+    ).toBe(designation)
   })
 
   test('does not accept device entitlement claims from a shared Web save', () => {

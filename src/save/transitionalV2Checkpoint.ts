@@ -57,6 +57,8 @@ import type {
 
 const CHECKPOINT_FORMAT = 'ids-web-production-v2-checkpoint-v1'
 const PORTABLE_PREFIX = 'IDSWEB1:'
+const V2_UNIVERSE_DESIGNATION_PATH =
+  '$.reality.universeDesignationCount'
 const CHECKPOINT_SCANNER_MAXIMUM_DEPTH = 128
 const CHECKPOINT_FORMAT_KEY_TOKEN_BYTES = 2 + ('format'.length * 6)
 const CHECKPOINT_FORMAT_VALUE_TOKEN_BYTES =
@@ -1550,6 +1552,7 @@ function boundedExactIntegerNumber(value: unknown, path: string): number {
 function cappedCanonicalInteger(value: unknown, path: string): bigint {
   const authoredMaximum = V2_AUTHORED_BIGINT_MAXIMUMS.get(path)
   const maximum = authoredMaximum ?? (
+    path === V2_UNIVERSE_DESIGNATION_PATH ||
     V2_CAPPED_SIMULATION_RESOURCE_PATHS.has(path)
       ? SIMULATION_RESOURCE_MAXIMUM
       : DISCRETE_MAXIMUM

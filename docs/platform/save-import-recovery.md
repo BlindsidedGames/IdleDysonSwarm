@@ -64,6 +64,13 @@ number-formatting and Research-visibility values authoritatively refresh their
 device-local services after the replacement save is published, including when
 an older local preference value already exists.
 
+The Reality universe designation is an ordinal identity label rather than a
+currency or gameplay counter. Canonical exports and imports preserve every
+non-negative designation exactly beyond the signed 64-bit discrete ceiling.
+Transitional V2's exponent-bearing Decimal representation narrows only at the
+larger simulation-resource maximum so hostile exponents remain bounded without
+reintroducing the former reachable ceiling.
+
 Schema 13 allowed a Quantum available balance to exceed its recorded lifetime
 total. Compatibility therefore preserves the available balance and raises only
 the narrowed lifetime total enough to keep current spent progress non-negative.

@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { hydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import { addDiscrete, DISCRETE_MAXIMUM } from './numeric'
 import {
   advanceRealityWorkers,
   realityInfluenceGenerationStarted,
@@ -75,5 +76,37 @@ describe('Reality Influence generation activation', () => {
 
     expect(realityInfluenceGenerationStarted(legacy)).toBe(true)
     expect(advanceRealityWorkers(legacy, 1, tuning).workersGenerated).toBe(4n)
+  })
+
+  test('continues ordinal universe designations beyond the bounded resource ceiling', () => {
+    const state = realityUnlockedState()
+    const atLegacyCeiling = {
+      ...state,
+      meta: {
+        ...state.meta,
+        navigationRouteDiscovery: {
+          knownRoutes: ['reality'] as const,
+          unvisitedRoutes: [],
+        },
+      },
+      reality: {
+        ...state.reality,
+        universeDesignationCount: DISCRETE_MAXIMUM,
+      },
+    }
+
+    const first = advanceRealityWorkers(atLegacyCeiling, 1, tuning)
+    expect(first.status).toBe('success')
+    expect(first.workersGenerated).toBe(4n)
+    expect(first.state.reality.universeDesignationCount)
+      .toBe(DISCRETE_MAXIMUM + 4n)
+
+    const second = advanceRealityWorkers(first.state, 1, tuning)
+    expect(second.status).toBe('success')
+    expect(second.state.reality.universeDesignationCount)
+      .toBe(DISCRETE_MAXIMUM + 8n)
+
+    expect(addDiscrete(DISCRETE_MAXIMUM, 1n))
+      .toBe(DISCRETE_MAXIMUM)
   })
 })

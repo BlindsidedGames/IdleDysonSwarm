@@ -804,6 +804,37 @@ describe('canonical game-state mapping', () => {
     ).toEqual(session.prepare(session.state).copyValidatedState())
   })
 
+  test('round-trips an ordinal universe designation beyond the discrete ceiling', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+    const designation = DISCRETE_MAXIMUM + 42n
+    const candidate = {
+      ...session.state,
+      reality: {
+        ...session.state.reality,
+        universeDesignationCount: designation,
+        workersReady: DISCRETE_MAXIMUM,
+      },
+      skills: {
+        ...session.state.skills,
+        points: DISCRETE_MAXIMUM,
+      },
+    }
+
+    const encoded = serializeWebSave(
+      session.prepare(candidate).copyValidatedState(),
+    )
+    const reloaded = hydrateGameState(
+      PreparedSave.fromDecoded(deserializeWebSave(encoded)),
+    ).state
+
+    expect(reloaded.reality.universeDesignationCount).toBe(designation)
+    expect(reloaded.reality.workersReady).toBe(DISCRETE_MAXIMUM)
+    expect(reloaded.skills.points).toBe(DISCRETE_MAXIMUM)
+  })
+
   test('round-trips Simulation resources above the legacy Int64 ceiling', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),
