@@ -1501,7 +1501,10 @@ function foundationalAction(
         purchasedBatches,
       )
     : preview.cost
-  const free = purchase === 'community-boost' && preview.cost === 0
+  const free =
+    purchase === 'community-boost' &&
+    input.progression.parameters.communityBoostIsFree &&
+    preview.cost === 0
   const label = input.intl.formatMessage(
     free ? messages.freeBoost : isBoost ? messages.boost : messages.purchase,
     {
@@ -1526,7 +1529,7 @@ function foundationalAction(
     },
     disabled:
       batches < 1 ||
-      totalCost <= 0 ||
+      (!free && totalCost <= 0) ||
       totalCost > input.influence ||
       !preview.eligible ||
       !input.commandAvailability.purchaseFoundational,
