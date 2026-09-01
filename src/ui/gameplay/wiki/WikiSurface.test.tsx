@@ -16,7 +16,7 @@ const progression = Object.freeze({
 })
 
 describe('Wiki patch-note content', () => {
-  test('keeps the four merged fixes in the existing 4.1.5 section', () => {
+  test('keeps the 1 September campaign notes factual and grouped under 4.1.5', () => {
     render(
       <IntlProvider locale="en" messages={{}} onError={() => undefined}>
         <WikiSurface
@@ -34,18 +34,19 @@ describe('Wiki patch-note content', () => {
     expect(releaseSection).not.toBeNull()
     const release = within(releaseSection!)
 
+    expect(release.getByRole('heading', { name: '1 September 2026' }))
+      .not.toBeNull()
     expect(release.getByText(
-      'Universe designations now continue beyond the former 64-bit ceiling.',
+      'The free Community boost can now be activated even at zero Influence, without spending any Influence.',
     )).not.toBeNull()
     expect(release.getByText(
-      'The 42 Qi Bot goal now follows Division and stays aligned with the current Infinity requirement.',
+      'Completed Offline Time summaries now close reliably with Continue or a tap outside the dialog, prevent that tap from reaching the page underneath, and return focus to an available Offline Time control.',
     )).not.toBeNull()
     expect(release.getByText(
-      'Having maximum Skill Points with Purity no longer makes gameplay unavailable, and affected saves reopen normally.',
+      'Added durable compatibility checks for universe designations beyond the signed 64-bit range, Purity at maximum Skill Points through Stored Time and save reloads, and Division-adjusted final Bot goals.',
     )).not.toBeNull()
-    expect(release.getByText(
-      'Tapping outside a pending Offline Time confirmation now dismisses it, while active processing remains protected.',
-    )).not.toBeNull()
+    expect(release.getByRole('heading', { name: 'Earlier 4.1.5 updates' }))
+      .not.toBeNull()
     expect(screen.queryByText('Version 4.1.6')).toBeNull()
   })
 })

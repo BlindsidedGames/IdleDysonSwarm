@@ -13326,16 +13326,40 @@
       "value": "バージョン4.1.5"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01": [
+    {
+      "type": 0,
+      "value": "2026年9月1日"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.community-free-boost": [
+    {
+      "type": 0,
+      "value": "無料のコミュニティブーストを、影響力が0でも影響力を消費せず有効化できるようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.compatibility": [
+    {
+      "type": 0,
+      "value": "符号付き64ビット範囲を超える宇宙識別番号、最大スキルポイントで純化が有効な状態での保存時間処理とセーブ再読み込み、除算に応じた最終ボット目標を対象とする、長期的な互換性チェックを追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.offline-completion": [
+    {
+      "type": 0,
+      "value": "完了したオフライン時間の概要は、「続ける」またはダイアログの外側をタップして確実に閉じられるようになりました。そのタップは背後の画面に伝わらず、フォーカスは利用可能なオフライン時間の操作部へ戻ります。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.avocato": [
     {
       "type": 0,
       "value": "リアリティとAvocatoのレイアウトを改善し、数値精度を考慮して供給するようにしました。「すべて供給」は、安全に加算できない残量を消失させず手元に残します。"
     }
   ],
-  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+  "wiki.patch-notes.version-4-1-5.earlier": [
     {
       "type": 0,
-      "value": "4200京体のボット目標が「除算」に追従し、現在のインフィニティ条件と一致するようになりました。"
+      "value": "以前のバージョン4.1.5更新"
     }
   ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
@@ -13356,12 +13380,6 @@
       "value": "開発者オプションの数量欄が、資源を追加したり0まで減らしたりできる正負の調整値、ゲームの標準サフィックスと指数表記に対応し、iOSでは文字入力可能なキーボードを使用するようになりました。"
     }
   ],
-  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
-    {
-      "type": 0,
-      "value": "保留中のオフライン時間確認は外側をタップすると閉じるようになりました。処理中の操作は引き続き保護され、誤って閉じることはありません。"
-    }
-  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,
@@ -13372,12 +13390,6 @@
     {
       "type": 0,
       "value": "インフィニティとクォンタムのアップグレードカード、購入状態、設定を統一しました。どちらのショップでも最大化済みアップグレードを非表示にでき、最初のリセットが可能になった時点でインフィニティが解放されます。"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.purity-maximum": [
-    {
-      "type": 0,
-      "value": "「純化」が有効な状態でスキルポイントが上限に達してもゲームを利用できなくなることはなくなり、影響を受けたセーブも正常に再開できるようになりました。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13432,12 +13444,6 @@
     {
       "type": 0,
       "value": "AndroidとiOSで、インフィニティポイント2倍の所有状態と購入復元の信頼性を向上しました。オフライン起動時やストアの一時的な検証失敗時にも対応します。"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.universe-designations": [
-    {
-      "type": 0,
-      "value": "宇宙の識別名が、従来の64ビット上限を超えても続くようになりました。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

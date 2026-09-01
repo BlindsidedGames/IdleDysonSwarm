@@ -13326,16 +13326,40 @@
       "value": "版本 4.1.5"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01": [
+    {
+      "type": 0,
+      "value": "2026年9月1日"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.community-free-boost": [
+    {
+      "type": 0,
+      "value": "现在即使影响力为 0，也可启用免费的社区增幅，且不会消耗影响力。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.compatibility": [
+    {
+      "type": 0,
+      "value": "新增长期兼容性检查，涵盖超出有符号 64 位范围的宇宙编号、最大技能点下纯净效果经过储存时间处理和存档重载的情况，以及随除法调整的最终机器人目标。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.offline-completion": [
+    {
+      "type": 0,
+      "value": "已完成的离线时间结算现在可通过“继续”或点击对话框外部可靠关闭；该点击不会传递到下方页面，焦点也会返回到可用的离线时间控件。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.avocato": [
     {
       "type": 0,
       "value": "优化了现实与 Avocato 的布局，并让喂养正确处理数值精度。“全部喂养”现在会保留无法安全计入的余量，而不是悄悄将其销毁。"
     }
   ],
-  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+  "wiki.patch-notes.version-4-1-5.earlier": [
     {
       "type": 0,
-      "value": "4,200 京个机器人目标现在会随“除法”变化，并与当前的无限要求保持一致。"
+      "value": "4.1.5 的早期更新"
     }
   ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
@@ -13356,12 +13380,6 @@
       "value": "开发者选项的金额输入框现在支持正负调整，可增加资源或将其扣减至不低于零；同时支持游戏全部标准后缀与指数写法，并在 iOS 上调用可输入文本的键盘。"
     }
   ],
-  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
-    {
-      "type": 0,
-      "value": "轻触待确认的离线时间操作之外的区域现在会将其取消；正在进行的处理仍受保护，不会被意外关闭。"
-    }
-  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,
@@ -13372,12 +13390,6 @@
     {
       "type": 0,
       "value": "统一了无限与量子升级卡片、购买状态和设置。两间商店都可以隐藏已满级升级，并且首次重置可用时就会解锁无限。"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.purity-maximum": [
-    {
-      "type": 0,
-      "value": "在“纯净”生效时达到技能点上限不再导致游戏无法游玩，受影响的存档现在也可正常重新打开。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13432,12 +13444,6 @@
     {
       "type": 0,
       "value": "提高了 Android 和 iOS 上双倍无限点所有权及购买恢复的可靠性，包括离线启动和商店临时验证失败的情况。"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.universe-designations": [
-    {
-      "type": 0,
-      "value": "宇宙编号现在可继续增长，突破原先的 64 位上限。"
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

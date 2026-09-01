@@ -26846,6 +26846,62 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1 Sǝdʇǝɯqǝɹ 2026"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.community-free-boost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɟɹǝǝ Ↄoɯɯnuıʇʎ qoosʇ ɔɐu uoʍ qǝ ɐɔʇıʌɐʇǝp ǝʌǝu ɐʇ zǝɹo Iuɟʅnǝuɔǝ, ʍıʇɥonʇ sdǝupıuƃ ɐuʎ Iuɟʅnǝuɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.compatibility": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp pnɹɐqʅǝ ɔoɯdɐʇıqıʅıʇʎ ɔɥǝɔʞs ɟoɹ nuıʌǝɹsǝ pǝsıƃuɐʇıous qǝʎoup ʇɥǝ sıƃuǝp 64-qıʇ ɹɐuƃǝ, Ԁnɹıʇʎ ɐʇ ɯɐxıɯnɯ Sʞıʅʅ Ԁoıuʇs ʇɥɹonƃɥ Sʇoɹǝp ⊥ıɯǝ ɐup sɐʌǝ ɹǝʅoɐps, ɐup ᗡıʌısıou-ɐpɾnsʇǝp ɟıuɐʅ Ԑoʇ ƃoɐʅs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.offline-completion": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝp Oɟɟʅıuǝ ⊥ıɯǝ snɯɯɐɹıǝs uoʍ ɔʅosǝ ɹǝʅıɐqʅʎ ʍıʇɥ Ↄouʇıunǝ oɹ ɐ ʇɐd onʇsıpǝ ʇɥǝ pıɐʅoƃ, dɹǝʌǝuʇ ʇɥɐʇ ʇɐd ɟɹoɯ ɹǝɐɔɥıuƃ ʇɥǝ dɐƃǝ nupǝɹuǝɐʇɥ, ɐup ɹǝʇnɹu ɟoɔns ʇo ɐu ɐʌɐıʅɐqʅǝ Oɟɟʅıuǝ ⊥ıɯǝ ɔouʇɹoʅ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.avocato": [
     {
       "type": 0,
@@ -26860,14 +26916,14 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+  "wiki.patch-notes.version-4-1-5.earlier": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "⊥ɥǝ 42 Òı Ԑoʇ ƃoɐʅ uoʍ ɟoʅʅoʍs ᗡıʌısıou ɐup sʇɐʎs ɐʅıƃuǝp ʍıʇɥ ʇɥǝ ɔnɹɹǝuʇ Iuɟıuıʇʎ ɹǝbnıɹǝɯǝuʇ."
+      "value": "Ǝɐɹʅıǝɹ 4.1.5 ndpɐʇǝs"
     },
     {
       "type": 0,
@@ -26916,20 +26972,6 @@
       "value": "‬"
     }
   ],
-  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "⊥ɐddıuƃ onʇsıpǝ ɐ dǝupıuƃ Oɟɟʅıuǝ ⊥ıɯǝ ɔouɟıɹɯɐʇıou uoʍ pısɯıssǝs ıʇ, ʍɥıʅǝ ɐɔʇıʌǝ dɹoɔǝssıuƃ ɹǝɯɐıus dɹoʇǝɔʇǝp."
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,
@@ -26952,20 +26994,6 @@
     {
       "type": 0,
       "value": "Sʇɐupɐɹpızǝp Iuɟıuıʇʎ ɐup Ònɐuʇnɯ ndƃɹɐpǝ ɔɐɹps, dnɹɔɥɐsǝ sʇɐʇǝs, ɐup sǝʇʇıuƃs. Ԑoʇɥ sɥods ɔɐu ɥıpǝ ɯɐxǝp ndƃɹɐpǝs, ɐup Iuɟıuıʇʎ nuʅoɔʞs ɐs soou ɐs ʇɥǝ ɟıɹsʇ ɹǝsǝʇ qǝɔoɯǝs ɐʌɐıʅɐqʅǝ."
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.purity-maximum": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Hɐʌıuƃ ɯɐxıɯnɯ Sʞıʅʅ Ԁoıuʇs ʍıʇɥ Ԁnɹıʇʎ uo ʅouƃǝɹ ɯɐʞǝs ƃɐɯǝdʅɐʎ nuɐʌɐıʅɐqʅǝ, ɐup ɐɟɟǝɔʇǝp sɐʌǝs ɹǝodǝu uoɹɯɐʅʅʎ."
     },
     {
       "type": 0,
@@ -27092,20 +27120,6 @@
     {
       "type": 0,
       "value": "Wɐpǝ ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs oʍuǝɹsɥıd ɐup dnɹɔɥɐsǝ ɹǝsʇoɹɐʇıou ɯoɹǝ ɹǝʅıɐqʅǝ ou ∀upɹoıp ɐup ıOS, ıuɔʅnpıuƃ oɟɟʅıuǝ sʇɐɹʇnd ɐup ʇǝɯdoɹɐɹʎ Sʇoɹǝ ʌǝɹıɟıɔɐʇıou ɟɐıʅnɹǝs."
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.universe-designations": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "∩uıʌǝɹsǝ pǝsıƃuɐʇıous uoʍ ɔouʇıunǝ qǝʎoup ʇɥǝ ɟoɹɯǝɹ 64-qıʇ ɔǝıʅıuƃ."
     },
     {
       "type": 0,
