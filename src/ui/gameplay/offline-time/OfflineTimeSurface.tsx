@@ -259,9 +259,28 @@ export function OfflineTimeSurface({
     : Math.min(100, Math.floor(jobStatus.fraction * 10) * 10)
 
   useEffect(() => {
-    if (jobDialogOpen) return
-    activeCompletionPointersRef.current.clear()
-    completionBackdropGestureRef.current = null
+    const clearCompletionPointerState = (): void => {
+      activeCompletionPointersRef.current.clear()
+      completionBackdropGestureRef.current = null
+    }
+    if (!jobDialogOpen) {
+      clearCompletionPointerState()
+      return undefined
+    }
+    const clearWhenHidden = (): void => {
+      if (document.visibilityState === 'hidden') {
+        clearCompletionPointerState()
+      }
+    }
+    window.addEventListener('blur', clearCompletionPointerState)
+    window.addEventListener('pagehide', clearCompletionPointerState)
+    document.addEventListener('visibilitychange', clearWhenHidden)
+    return () => {
+      window.removeEventListener('blur', clearCompletionPointerState)
+      window.removeEventListener('pagehide', clearCompletionPointerState)
+      document.removeEventListener('visibilitychange', clearWhenHidden)
+      clearCompletionPointerState()
+    }
   }, [jobDialogOpen])
 
   useEffect(() => {

@@ -193,9 +193,12 @@ describe('Offline Time completion boundary through the UI runtime', () => {
     expect(capturedPointerIds).toEqual([5, 6, 7])
     fireEvent.lostPointerCapture(completionDialog, { pointerId: 7 })
 
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 8 })
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 8 })
-    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 8 })
+    fireEvent.pointerDown(completionDialog, { pointerId: 8 })
+    window.dispatchEvent(new Event('blur'))
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 9 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 9 })
+    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 9 })
     fireEvent.click(completionBackdrop)
 
     await waitFor(() => {
