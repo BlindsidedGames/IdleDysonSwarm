@@ -87,6 +87,11 @@ describe('Offline Time completion boundary through the UI runtime', () => {
     const bankBefore =
       before.gameplay.resources.time.storedTimeAvailableSeconds
 
+    const accuracy = screen.getByRole('combobox', {
+      name: 'Simulation accuracy',
+    })
+    accuracy.focus()
+    expect(document.activeElement).toBe(accuracy)
     await beginStoredTimeSpend()
 
     const processingDialog = await screen.findByRole('dialog', {

@@ -338,7 +338,7 @@ export function OfflineTimeSurface({
     setCompletionSummary(null)
   }, [completionSummary, jobActive])
 
-  const spend = async (): Promise<void> => {
+  const spend = async (returnFocus: HTMLElement): Promise<void> => {
     const requestedSeconds =
       repeatAvailable && repeatSeconds !== null
         ? repeatSeconds
@@ -359,13 +359,7 @@ export function OfflineTimeSurface({
       return
     }
 
-    const activeElement = document.activeElement
-    jobReturnFocusRef.current =
-      activeElement instanceof HTMLElement && activeElement !== document.body
-        ? activeElement
-        : spendActionsRef.current?.querySelector<HTMLButtonElement>(
-            '.offline-time-spend-button',
-          ) ?? null
+    jobReturnFocusRef.current = returnFocus
     pendingRef.current = true
     setPendingAction('spend')
     setArmed(false)
@@ -600,7 +594,7 @@ export function OfflineTimeSurface({
               variant="primary"
               state={pendingAction === 'spend' ? 'pending' : 'idle'}
               disabled={spendDisabled}
-              onClick={() => void spend()}
+              onClick={(event) => void spend(event.currentTarget)}
             >
               {pendingAction === 'spend'
                 ? intl.formatMessage(messages.processing)
