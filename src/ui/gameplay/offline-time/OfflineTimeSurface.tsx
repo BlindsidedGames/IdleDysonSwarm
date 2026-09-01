@@ -179,6 +179,7 @@ export function OfflineTimeSurface({
   }, [])
   const spendActionsRef = useRef<HTMLDivElement | null>(null)
   const jobDialogRef = useRef<HTMLDivElement | null>(null)
+  const jobReturnFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     setSelectedSeconds((current) =>
@@ -254,7 +255,9 @@ export function OfflineTimeSurface({
     const dialog = jobDialogRef.current
     const backdrop = dialog?.parentElement
     if (!dialog || !backdrop) return undefined
-    const returnFocus = document.activeElement as HTMLElement | null
+    const returnFocus =
+      jobReturnFocusRef.current ??
+      (document.activeElement as HTMLElement | null)
     const modalParent = backdrop.parentElement
     if (!modalParent) return undefined
     const background = [...modalParent.children]
@@ -297,6 +300,7 @@ export function OfflineTimeSurface({
       document.removeEventListener('keydown', trapFocus)
       for (const entry of background) entry.element.inert = entry.wasInert
       if (returnFocus?.isConnected) returnFocus.focus()
+      jobReturnFocusRef.current = null
     }
   }, [jobDialogOpen, portalHost])
 
@@ -309,6 +313,11 @@ export function OfflineTimeSurface({
     )
     ;(continueControl ?? dialog).focus()
   }, [completionSummary])
+
+  const dismissCompletionSummary = useCallback((): void => {
+    if (completionSummary === null || jobActive) return
+    setCompletionSummary(null)
+  }, [completionSummary, jobActive])
 
   const spend = async (): Promise<void> => {
     const requestedSeconds =
@@ -331,6 +340,13 @@ export function OfflineTimeSurface({
       return
     }
 
+    const activeElement = document.activeElement
+    jobReturnFocusRef.current =
+      activeElement instanceof HTMLElement && activeElement !== document.body
+        ? activeElement
+        : spendActionsRef.current?.querySelector<HTMLButtonElement>(
+            '.offline-time-spend-button',
+          ) ?? null
     pendingRef.current = true
     setPendingAction('spend')
     setArmed(false)
@@ -590,7 +606,14 @@ export function OfflineTimeSurface({
           </div>
 
           {jobDialogOpen && portalHost !== null ? (
-            createPortal(<div className="offline-time-job__backdrop">
+            createPortal(<div
+              className="offline-time-job__backdrop"
+              onClick={(event) => {
+                if (event.target === event.currentTarget) {
+                  dismissCompletionSummary()
+                }
+              }}
+            >
             <div
               ref={jobDialogRef}
               className="offline-time-job"
@@ -771,7 +794,7 @@ export function OfflineTimeSurface({
                 <Button
                   className="offline-time-job__continue"
                   variant="primary"
-                  onClick={() => setCompletionSummary(null)}
+                  onClick={dismissCompletionSummary}
                 >
                   {intl.formatMessage(messages.closeSummary)}
                 </Button>
