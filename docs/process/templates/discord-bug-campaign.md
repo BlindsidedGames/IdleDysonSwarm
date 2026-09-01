@@ -60,7 +60,7 @@ Repeat this block for every selected report.
 
 ## Combined candidate
 
-- Exact merged `main` SHA including patch notes/translations:
+- Exact merged `main` SHA including notes, translations, and native identity:
 - Combined local validation:
 - Native candidate workflow/run:
 - Android result:

@@ -133,7 +133,10 @@ After every accepted task is merged:
    update every supported translation, assign the intended release ID in
    `hosts/native-release.json`, and run `npm run native:release:sync` to
    materialize the tracked host metadata.
-2. Review and merge the rendered/player-facing wording, translations, native
+2. Process this task through the same test-retention, repeated local review,
+   orchestrator audit, lightweight PR CI, and exact-final-head Connector rules
+   used for report tasks.
+3. Review and merge the rendered/player-facing wording, translations, native
    release identity, and synchronized metadata. These are bundled application
    source, so they must all be present before the release candidate SHA is
    frozen.
@@ -141,7 +144,8 @@ After every accepted task is merged:
 ### 7. Combined candidate validation and release approval
 
 1. Fetch and verify a clean `main`; record the exact combined candidate SHA,
-   including the merged patch notes and translations.
+   including the merged patch notes, translations, native release identity, and
+   synchronized host metadata.
 2. Run the repository's final combined local validation, including all required
    shared checks, translation checks, and any cross-feature scenarios created
    by the campaign.
