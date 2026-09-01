@@ -180,6 +180,11 @@ export function OfflineTimeSurface({
   const spendActionsRef = useRef<HTMLDivElement | null>(null)
   const jobDialogRef = useRef<HTMLDivElement | null>(null)
   const jobReturnFocusRef = useRef<HTMLElement | null>(null)
+  const completionBackdropGestureRef = useRef<{
+    readonly pointerId: number
+    readonly startedOnBackdrop: boolean
+    readonly endedOnBackdrop: boolean
+  } | null>(null)
 
   useEffect(() => {
     setSelectedSeconds((current) =>
@@ -608,8 +613,40 @@ export function OfflineTimeSurface({
           {jobDialogOpen && portalHost !== null ? (
             createPortal(<div
               className="offline-time-job__backdrop"
+              onPointerDown={(event) => {
+                completionBackdropGestureRef.current = {
+                  pointerId: event.pointerId,
+                  startedOnBackdrop:
+                    completionSummary !== null &&
+                    !jobActive &&
+                    event.target === event.currentTarget,
+                  endedOnBackdrop: false,
+                }
+              }}
+              onPointerUp={(event) => {
+                const gesture = completionBackdropGestureRef.current
+                if (gesture?.pointerId !== event.pointerId) return
+                completionBackdropGestureRef.current = {
+                  ...gesture,
+                  endedOnBackdrop: event.target === event.currentTarget,
+                }
+              }}
+              onPointerCancel={(event) => {
+                if (
+                  completionBackdropGestureRef.current?.pointerId ===
+                  event.pointerId
+                ) {
+                  completionBackdropGestureRef.current = null
+                }
+              }}
               onClick={(event) => {
-                if (event.target === event.currentTarget) {
+                const gesture = completionBackdropGestureRef.current
+                completionBackdropGestureRef.current = null
+                if (
+                  gesture?.startedOnBackdrop === true &&
+                  gesture.endedOnBackdrop &&
+                  event.target === event.currentTarget
+                ) {
                   dismissCompletionSummary()
                 }
               }}

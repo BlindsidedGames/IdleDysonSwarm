@@ -95,6 +95,8 @@ describe('Offline Time completion boundary through the UI runtime', () => {
     const processingBackdrop = processingDialog.parentElement
     expect(processingBackdrop).not.toBeNull()
 
+    fireEvent.pointerDown(processingBackdrop!, { pointerId: 1 })
+    fireEvent.pointerUp(processingBackdrop!, { pointerId: 1 })
     fireEvent.click(processingBackdrop!)
 
     expect(runtime.storedTime?.status().kind).toBe('running')
@@ -125,7 +127,24 @@ describe('Offline Time completion boundary through the UI runtime', () => {
       screen.getByRole('dialog', { name: 'Offline Time Complete' }),
     ).not.toBeNull()
 
-    fireEvent.click(completionDialog.parentElement!)
+    const completionBackdrop = completionDialog.parentElement!
+    fireEvent.pointerDown(completionDialog, { pointerId: 2 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 2 })
+    fireEvent.click(completionBackdrop)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 3 })
+    fireEvent.pointerUp(completionDialog, { pointerId: 3 })
+    fireEvent.click(completionBackdrop)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 4 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 4 })
+    fireEvent.click(completionBackdrop)
 
     await waitFor(() => {
       expect(
