@@ -48,19 +48,24 @@ Repeat this block for every selected report.
 | Task | Classification | Pull request | Reviewed head SHA | Merged SHA | Status |
 | --- | --- | --- | --- | --- | --- |
 
+## Patch notes and source finalization
+
+- Patch-note task/pull request:
+- Marketing version:
+- Translation validation:
+- Patch-note merged SHA:
+- Release ID:
+
 ## Combined candidate
 
-- Exact merged `main` SHA:
+- Exact merged `main` SHA including patch notes/translations:
 - Combined local validation:
 - Native candidate workflow/run:
 - Android result:
 - iOS result:
 
-## Patch notes and release plan
+## Release plan
 
-- Patch-note task/pull request:
-- Translation validation:
-- Release ID:
 - Android plan:
 - iOS plan:
 - Website plan or explicitly untouched state:
