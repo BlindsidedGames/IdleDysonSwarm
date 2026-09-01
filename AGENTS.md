@@ -4,6 +4,10 @@ Idle Dyson Swarm's TypeScript/React product and native hosts are canonical.
 Use this file as a map to the owning implementation and living contracts, not
 as a second product specification.
 
+For Discord bug campaigns, follow
+`docs/process/discord-bug-campaign-workflow.md`. It owns the campaign gates,
+task handoff, review order, CI use, release-note approval, and cleanup rules.
+
 ## Read before changing behavior-adjacent code
 
 - Repository and documentation map: `README.md`, `STRUCTURE.md`, and

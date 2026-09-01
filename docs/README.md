@@ -33,6 +33,8 @@ an audit finding, release gate, or platform contract.
   authority.
 - [`product/`](product/) contains current product direction that is not an
   implementation contract.
+- [`process/`](process/) contains maintained contributor workflows, including
+  the gated Discord bug-campaign procedure and its reusable templates.
 
 ## Historical material
 
