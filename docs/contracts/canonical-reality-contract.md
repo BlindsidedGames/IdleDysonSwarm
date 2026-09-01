@@ -47,11 +47,12 @@ interval overfills the batch it uses
 fractional progress that existed at interval start. Change this established
 formula only through an explicit gameplay decision.
 
-Every generated worker increments Universe Designation with saturating
-arithmetic. Automatic conversion may continue generating and counting workers
-after Influence is full; those workers remain in `workersReady` up to its
-discrete ceiling. Overflow past that ceiling retains the existing saturation
-and capacity-stall reporting behavior.
+Every generated worker advances Universe Designation exactly. The designation
+is an unbounded non-negative ordinal identity label, not a discrete resource,
+so it continues beyond the signed 64-bit discrete ceiling. Automatic conversion
+may continue generating and counting workers after Influence is full; those
+workers remain in `workersReady` up to its discrete ceiling. Overflow past that
+ceiling retains the existing saturation and capacity-stall reporting behavior.
 
 ## Gather Influence transaction
 

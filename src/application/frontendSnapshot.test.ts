@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
+import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 import { CanonicalRuntimeSession } from './canonicalRuntimeSession'
 import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
 import { selectFrontendGameplaySnapshot } from './frontendSnapshot'
@@ -18,18 +19,9 @@ const runtime = structuredClone(
   ).initialState,
 )
 
-function gameplaySnapshotAtDivision(divisionsPurchased: bigint) {
-  const gameState = {
-    ...runtime.gameState,
-    dyson: {
-      ...runtime.gameState.dyson,
-      goalStage: 10n,
-    },
-    quantum: {
-      ...runtime.gameState.quantum,
-      divisionsPurchased,
-    },
-  }
+function gameplaySnapshot(
+  gameState: typeof runtime.gameState = runtime.gameState,
+) {
   return selectFrontendGameplaySnapshot(gameState, {
     compatibilityTuning: runtime.compatibilityTuning,
     evaluationSnapshot: runtime.evaluationSnapshot,
@@ -52,6 +44,20 @@ function gameplaySnapshotAtDivision(divisionsPurchased: bigint) {
   })
 }
 
+function gameplaySnapshotAtDivision(divisionsPurchased: bigint) {
+  return gameplaySnapshot({
+    ...runtime.gameState,
+    dyson: {
+      ...runtime.gameState.dyson,
+      goalStage: 10n,
+    },
+    quantum: {
+      ...runtime.gameState.quantum,
+      divisionsPurchased,
+    },
+  })
+}
+
 describe('frontend gameplay snapshot', () => {
   test('uses the Division-adjusted ordinary Infinity threshold for the final Dyson goal', () => {
     for (let division = 0n; division <= 19n; division += 1n) {
@@ -70,5 +76,21 @@ describe('frontend gameplay snapshot', () => {
         resetThresholdBots: threshold,
       })
     }
+  })
+
+  test('projects an exact next Universe Designation beyond the discrete ceiling', () => {
+    const designation = DISCRETE_MAXIMUM + 42n
+    const snapshot = gameplaySnapshot({
+      ...runtime.gameState,
+      reality: {
+        ...runtime.gameState.reality,
+        universeDesignationCount: designation,
+      },
+    })
+
+    expect(snapshot.resources.reality.universeDesignationCount)
+      .toBe(designation)
+    expect(snapshot.derived.reality.nextUniverseDesignation)
+      .toBe(designation + 1n)
   })
 })
