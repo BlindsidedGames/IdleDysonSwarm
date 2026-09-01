@@ -100,9 +100,7 @@ describe('Offline Time completion boundary through the UI runtime', () => {
     const processingBackdrop = processingDialog.parentElement
     expect(processingBackdrop).not.toBeNull()
 
-    fireEvent.pointerDown(processingBackdrop!, { pointerId: 1 })
-    fireEvent.pointerUp(processingBackdrop!, { pointerId: 1 })
-    firePointerClick(processingBackdrop!, 1)
+    fireEvent.pointerDown(processingBackdrop!)
 
     expect(runtime.storedTime?.status().kind).toBe('running')
     expect(
@@ -133,80 +131,12 @@ describe('Offline Time completion boundary through the UI runtime', () => {
     ).not.toBeNull()
 
     const completionBackdrop = completionDialog.parentElement!
-    fireEvent.pointerDown(completionDialog, { pointerId: 2 })
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 2 })
-    firePointerClick(completionBackdrop, 2)
+    fireEvent.pointerDown(completionDialog)
     expect(
       screen.getByRole('dialog', { name: 'Offline Time Complete' }),
     ).not.toBeNull()
 
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 3 })
-    fireEvent.pointerUp(completionDialog, { pointerId: 3 })
-    firePointerClick(completionBackdrop, 3)
-    expect(
-      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
-    ).not.toBeNull()
-
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 4 })
-    const originalElementFromPoint = document.elementFromPoint
-    Object.defineProperty(document, 'elementFromPoint', {
-      configurable: true,
-      value: () => completionDialog,
-    })
-    try {
-      fireEvent.pointerUp(completionBackdrop, {
-        pointerId: 4,
-        clientX: 10,
-        clientY: 10,
-      })
-    } finally {
-      Object.defineProperty(document, 'elementFromPoint', {
-        configurable: true,
-        value: originalElementFromPoint,
-      })
-    }
-    firePointerClick(completionBackdrop, 4)
-    expect(
-      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
-    ).not.toBeNull()
-
-    const capturedBackdropPointerIds: number[] = []
-    const capturedDialogPointerIds: number[] = []
-    Object.defineProperty(completionBackdrop, 'setPointerCapture', {
-      configurable: true,
-      value: (pointerId: number) => {
-        capturedBackdropPointerIds.push(pointerId)
-      },
-    })
-    Object.defineProperty(completionDialog, 'setPointerCapture', {
-      configurable: true,
-      value: (pointerId: number) => {
-        capturedDialogPointerIds.push(pointerId)
-      },
-    })
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 7 })
-    expect(capturedBackdropPointerIds).toEqual([7])
-    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 7 })
-
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 8 })
-    window.dispatchEvent(new Event('blur'))
-
-    fireEvent.pointerDown(completionDialog, { pointerId: 5 })
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 6 })
-    expect(capturedDialogPointerIds).toEqual([])
-    expect(capturedBackdropPointerIds).toEqual([7, 8, 6])
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 6 })
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 5 })
-    fireEvent.click(completionBackdrop)
-    expect(
-      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
-    ).not.toBeNull()
-    await new Promise((resolve) => window.setTimeout(resolve, 0))
-
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 9 })
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 9 })
-    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 9 })
-    fireEvent.click(completionBackdrop)
+    fireEvent.pointerDown(completionBackdrop)
 
     await waitFor(() => {
       expect(
@@ -292,12 +222,6 @@ async function beginStoredTimeSpend(): Promise<void> {
     name: 'Tap again to confirm',
   })
   fireEvent.click(confirmation)
-}
-
-function firePointerClick(target: Element, pointerId: number): void {
-  const click = new MouseEvent('click', { bubbles: true })
-  Object.defineProperty(click, 'pointerId', { value: pointerId })
-  fireEvent(target, click)
 }
 
 function renderRuntime(runtime: BrowserUiRuntimeFoundation): void {

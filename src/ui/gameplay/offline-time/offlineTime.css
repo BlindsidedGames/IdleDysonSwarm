@@ -337,6 +337,7 @@
   place-items: center;
   padding: 1rem;
   background: rgb(0 0 0 / 72%);
+  touch-action: manipulation;
 }
 
 .offline-time-job {
