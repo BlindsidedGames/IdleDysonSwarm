@@ -13326,16 +13326,40 @@
       "value": "Version 4.1.5"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01": [
+    {
+      "type": 0,
+      "value": "1 September 2026"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.community-free-boost": [
+    {
+      "type": 0,
+      "value": "The free Community boost can now be activated even at zero Influence, without spending any Influence."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.compatibility": [
+    {
+      "type": 0,
+      "value": "Added durable compatibility checks for universe designations beyond the signed 64-bit range, Purity at maximum Skill Points through Stored Time and save reloads, and Division-adjusted final Bot goals."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.offline-completion": [
+    {
+      "type": 0,
+      "value": "Completed Offline Time summaries now close reliably with Continue or a tap outside the dialog, prevent that tap from reaching the page underneath, and return focus to an available Offline Time control."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.avocato": [
     {
       "type": 0,
       "value": "Refined Reality and Avocato layouts and made feeding precision-aware, so Feed All leaves behind any amount that cannot be credited safely instead of silently destroying it."
     }
   ],
-  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+  "wiki.patch-notes.version-4-1-5.earlier": [
     {
       "type": 0,
-      "value": "The 42 Qi Bot goal now follows Division and stays aligned with the current Infinity requirement."
+      "value": "Earlier 4.1.5 updates"
     }
   ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
@@ -13372,12 +13396,6 @@
     {
       "type": 0,
       "value": "Standardized Infinity and Quantum upgrade cards, purchase states, and settings. Both shops can hide maxed upgrades, and Infinity unlocks as soon as the first reset becomes available."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.purity-maximum": [
-    {
-      "type": 0,
-      "value": "Having maximum Skill Points with Purity no longer makes gameplay unavailable, and affected saves reopen normally."
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13432,12 +13450,6 @@
     {
       "type": 0,
       "value": "Made Double Infinity Points ownership and purchase restoration more reliable on Android and iOS, including offline startup and temporary Store verification failures."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.universe-designations": [
-    {
-      "type": 0,
-      "value": "Universe designations now continue beyond the former 64-bit ceiling."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

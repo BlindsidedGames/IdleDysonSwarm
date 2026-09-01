@@ -13326,16 +13326,40 @@
       "value": "Version 4.1.5"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01": [
+    {
+      "type": 0,
+      "value": "1. September 2026"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.community-free-boost": [
+    {
+      "type": 0,
+      "value": "Der kostenlose Gemeinschafts-Boost kann nun auch bei null Einfluss aktiviert werden, ohne Einfluss zu verbrauchen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.compatibility": [
+    {
+      "type": 0,
+      "value": "Dauerhafte Kompatibilitätsprüfungen wurden ergänzt für Universumsbezeichnungen jenseits des vorzeichenbehafteten 64-Bit-Bereichs, Purity bei maximalen Fähigkeitspunkten beim Verarbeiten Gespeicherter Zeit und nach dem Neuladen eines Spielstands sowie durch Division angepasste letzte Bot-Ziele."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.offline-completion": [
+    {
+      "type": 0,
+      "value": "Abgeschlossene Offline-Zeit-Zusammenfassungen lassen sich nun zuverlässig mit Weiter oder durch Tippen außerhalb des Dialogs schließen, ohne dass dieser Tipp die darunterliegende Seite aktiviert; anschließend kehrt der Fokus zu einem verfügbaren Offline-Zeit-Steuerelement zurück."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.avocato": [
     {
       "type": 0,
       "value": "Die Layouts von Realität und Avocato wurden verfeinert und das Füttern berücksichtigt nun die Zahlengenauigkeit. Alles füttern lässt Beträge übrig, die nicht sicher gutgeschrieben werden können, statt sie unbemerkt zu vernichten."
     }
   ],
-  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+  "wiki.patch-notes.version-4-1-5.earlier": [
     {
       "type": 0,
-      "value": "Das 42-Qi-Bot-Ziel folgt nun Division und bleibt mit der aktuellen Unendlichkeitsanforderung abgestimmt."
+      "value": "Frühere Aktualisierungen für Version 4.1.5"
     }
   ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
@@ -13372,12 +13396,6 @@
     {
       "type": 0,
       "value": "Upgrade-Karten, Kaufzustände und Einstellungen für Unendlichkeit und Quanten wurden vereinheitlicht. Beide Läden können maximierte Upgrades ausblenden, und Unendlichkeit wird freigeschaltet, sobald der erste Reset verfügbar ist."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.purity-maximum": [
-    {
-      "type": 0,
-      "value": "Die maximale Anzahl an Fähigkeitspunkten mit Purity macht das Spiel nicht mehr unzugänglich; betroffene Spielstände lassen sich wieder normal öffnen."
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13432,12 +13450,6 @@
     {
       "type": 0,
       "value": "Der Besitz von Doppelten Unendlichkeitspunkten und die Wiederherstellung von Käufen unter Android und iOS wurden zuverlässiger, auch beim Offline-Start und bei vorübergehenden Prüfungsfehlern des Shops."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.universe-designations": [
-    {
-      "type": 0,
-      "value": "Universumsbezeichnungen werden nun über die frühere 64-Bit-Grenze hinaus fortgesetzt."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

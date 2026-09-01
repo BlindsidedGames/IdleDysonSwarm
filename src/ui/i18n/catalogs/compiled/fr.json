@@ -13326,16 +13326,40 @@
       "value": "Version 4.1.5"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01": [
+    {
+      "type": 0,
+      "value": "1er septembre 2026"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.community-free-boost": [
+    {
+      "type": 0,
+      "value": "Le boost gratuit de Communauté peut désormais être activé même avec zéro Influence, sans dépenser d’Influence."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.compatibility": [
+    {
+      "type": 0,
+      "value": "Ajout de contrôles de compatibilité durables pour les désignations d’univers au-delà de la plage signée sur 64 bits, la Pureté au maximum de Points de compétence lors du traitement du Temps stocké et du rechargement des sauvegardes, ainsi que les objectifs finaux de Bots ajustés par Division."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.offline-completion": [
+    {
+      "type": 0,
+      "value": "Les résumés de Temps hors ligne terminés se ferment désormais correctement avec Continuer ou en touchant en dehors de la fenêtre, sans transmettre ce toucher à la page située derrière, puis le focus revient sur une commande de Temps hors ligne disponible."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.avocato": [
     {
       "type": 0,
       "value": "Amélioration de la mise en page de Réalité et d’Avocato, et alimentation tenant compte de la précision : Tout donner conserve désormais toute quantité qui ne peut pas être créditée sans risque au lieu de la détruire silencieusement."
     }
   ],
-  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+  "wiki.patch-notes.version-4-1-5.earlier": [
     {
       "type": 0,
-      "value": "L’objectif des 42 Qi Bots suit désormais Division et reste aligné sur l’exigence actuelle d’Infinité."
+      "value": "Mises à jour précédentes de la version 4.1.5"
     }
   ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
@@ -13372,12 +13396,6 @@
     {
       "type": 0,
       "value": "Uniformisation des cartes d’amélioration, des états d’achat et des paramètres de l’Infini et du Quantique. Les deux boutiques peuvent masquer les améliorations maximisées, et l’Infini se débloque dès que la première réinitialisation devient disponible."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.purity-maximum": [
-    {
-      "type": 0,
-      "value": "Le maximum de Points de compétence avec Pureté ne rend plus le jeu inaccessible, et les sauvegardes concernées s’ouvrent à nouveau normalement."
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13432,12 +13450,6 @@
     {
       "type": 0,
       "value": "Fiabilisation de la possession du bonus Points d’Infini ×2 et de la restauration des achats sur Android et iOS, y compris au démarrage hors ligne et lors d’échecs temporaires de vérification de la Boutique."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.universe-designations": [
-    {
-      "type": 0,
-      "value": "Les désignations d’univers continuent désormais au-delà de l’ancienne limite de 64 bits."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [

@@ -205,10 +205,13 @@ const version415PatchNoteMessages = [
   messages.patchNotesVersion415StoreOwnership,
   messages.patchNotesVersion415ExtremeValues,
   messages.patchNotesVersion415Startup,
-  messages.patchNotesVersion415UniverseDesignations,
-  messages.patchNotesVersion415DivisionBotGoal,
-  messages.patchNotesVersion415PurityMaximum,
   messages.patchNotesVersion415OfflineConfirmation,
+] as const
+
+const version415September1PatchNoteMessages = [
+  messages.patchNotesVersion415September1Community,
+  messages.patchNotesVersion415September1OfflineCompletion,
+  messages.patchNotesVersion415September1Compatibility,
 ] as const
 
 const version412PatchNoteMessages = [
@@ -406,6 +409,13 @@ function PatchNotesArticle() {
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion415)}</h4>
+          <h5>{intl.formatMessage(messages.patchNotesVersion415September1)}</h5>
+          <ul className="wiki-surface__patch-note-list">
+            {version415September1PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
+          <h5>{intl.formatMessage(messages.patchNotesVersion415Earlier)}</h5>
           <ul className="wiki-surface__patch-note-list">
             {version415PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>

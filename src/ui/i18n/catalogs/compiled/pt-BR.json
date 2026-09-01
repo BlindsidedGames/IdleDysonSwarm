@@ -13326,16 +13326,40 @@
       "value": "Versão 4.1.5"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01": [
+    {
+      "type": 0,
+      "value": "1 de setembro de 2026"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.community-free-boost": [
+    {
+      "type": 0,
+      "value": "O impulso gratuito de Comunidade agora pode ser ativado mesmo com zero de Influência, sem gastar Influência."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.compatibility": [
+    {
+      "type": 0,
+      "value": "Foram adicionadas verificações duradouras de compatibilidade para designações de universo além do intervalo de 64 bits com sinal, Pureza com o máximo de Pontos de Habilidade durante o uso de Tempo Armazenado e recarregamentos de jogo salvo, e objetivos finais de Bots ajustados por Divisão."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-5.2026-09-01.offline-completion": [
+    {
+      "type": 0,
+      "value": "Os resumos concluídos de Tempo Offline agora podem ser fechados de forma confiável com Continuar ou tocando fora da janela, sem repassar esse toque à página por trás, e o foco volta para um controle disponível de Tempo Offline."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.avocato": [
     {
       "type": 0,
       "value": "Os layouts de Realidade e Avocato foram refinados, e a alimentação agora considera a precisão: Alimentar tudo deixa qualquer valor que não possa ser creditado com segurança em vez de destruí-lo silenciosamente."
     }
   ],
-  "wiki.patch-notes.version-4-1-5.division-bot-goal": [
+  "wiki.patch-notes.version-4-1-5.earlier": [
     {
       "type": 0,
-      "value": "A meta de 42 Qi Robôs agora acompanha Divisão e permanece alinhada ao requisito atual de Infinito."
+      "value": "Atualizações anteriores da versão 4.1.5"
     }
   ],
   "wiki.patch-notes.version-4-1-5.extreme-values": [
@@ -13372,12 +13396,6 @@
     {
       "type": 0,
       "value": "Os cartões de melhoria, estados de compra e configurações de Infinito e Quântico foram padronizados. As duas lojas podem ocultar melhorias maximizadas, e Infinito é desbloqueado assim que o primeiro reinício fica disponível."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.purity-maximum": [
-    {
-      "type": 0,
-      "value": "Alcançar o máximo de Pontos de Habilidade com Pureza não deixa mais o jogo indisponível, e os saves afetados voltam a abrir normalmente."
     }
   ],
   "wiki.patch-notes.version-4-1-5.reality": [
@@ -13432,12 +13450,6 @@
     {
       "type": 0,
       "value": "A propriedade de Pontos de Infinito em dobro e a restauração de compras ficaram mais confiáveis no Android e iOS, inclusive ao iniciar offline e durante falhas temporárias de verificação da Loja."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-5.universe-designations": [
-    {
-      "type": 0,
-      "value": "As designações de universo agora continuam além do antigo limite de 64 bits."
     }
   ],
   "wiki.patch-notes.version-4-1-5.visual-system": [
