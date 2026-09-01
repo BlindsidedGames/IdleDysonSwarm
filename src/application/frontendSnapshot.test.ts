@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest'
-import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
 import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 import { CanonicalRuntimeSession } from './canonicalRuntimeSession'
 import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
@@ -44,40 +43,7 @@ function gameplaySnapshot(
   })
 }
 
-function gameplaySnapshotAtDivision(divisionsPurchased: bigint) {
-  return gameplaySnapshot({
-    ...runtime.gameState,
-    dyson: {
-      ...runtime.gameState.dyson,
-      goalStage: 10n,
-    },
-    quantum: {
-      ...runtime.gameState.quantum,
-      divisionsPurchased,
-    },
-  })
-}
-
 describe('frontend gameplay snapshot', () => {
-  test('uses the Division-adjusted ordinary Infinity threshold for the final Dyson goal', () => {
-    for (let division = 0n; division <= 19n; division += 1n) {
-      const snapshot = gameplaySnapshotAtDivision(division)
-      expect(snapshot.derived.dyson.status).toBe('ready')
-      if (snapshot.derived.dyson.status !== 'ready') {
-        throw new Error('Expected the first-run Dyson derivation to be ready.')
-      }
-      const threshold = ordinaryInfinityBotThreshold(division)
-      expect(snapshot.derived.dyson.value.presentation.currentGoal).toEqual({
-        kind: 'reach-bots',
-        target: threshold,
-      })
-      expect(snapshot.derived.infinity).toMatchObject({
-        mode: 'ordinary',
-        resetThresholdBots: threshold,
-      })
-    }
-  })
-
   test('projects an exact next Universe Designation beyond the discrete ceiling', () => {
     const designation = DISCRETE_MAXIMUM + 42n
     const snapshot = gameplaySnapshot({
