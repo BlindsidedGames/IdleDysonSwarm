@@ -5,190 +5,468 @@ import {
   fireEvent,
   render,
   screen,
+  waitFor,
 } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
-import { afterEach, describe, expect, test, vi } from 'vitest'
-import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
-import type { UiRuntimeStoredTimeControls } from '../../runtime'
+import { afterEach, describe, expect, test } from 'vitest'
 import {
-  OfflineTimeSurface,
-  type OfflineTimeSurfaceProps,
-} from './OfflineTimeSurface'
+  createCanonicalGameApplication,
+} from '../../../application/canonicalGameApplication'
+import {
+  createCanonicalRuntimeSessionFactory,
+} from '../../../application/canonicalRuntimeSession'
+import {
+  dehydrateGameState,
+  hydrateGameState,
+} from '../../../game-state/mapping'
+import { SingleHostSessionWriterAuthority } from '../../../platform/singleHostSessionWriterAuthority'
+import { prepareIdb1Save } from '../../../save/prepare'
+import type {
+  LegacySaveCandidate,
+  SaveStorageAdapter,
+} from '../../../save/repository'
+import type { CanonicalEventTimeContext } from '../../../simulation/canonicalEventTimeModel'
+import {
+  createProductionEventContext,
+} from '../../../simulation/productionEventContext'
+import type {
+  StoredTimeJobRequest,
+  StoredTimeJobRunner,
+  StoredTimeJobRunOptions,
+} from '../../../workers/storedTime/storedTimeJobRunner'
+import { StoredTimeSimulation } from '../../../workers/storedTime/storedTimeSimulation'
+import type { StoredTimeJobTerminalMessage } from '../../../workers/storedTime/storedTimeProtocol'
+import {
+  createBrowserRuntimeFoundation,
+  type BrowserUiRuntimeFoundation,
+} from '../../runtime'
+import {
+  GAMEPLAY_ROUTE_STORAGE_KEY,
+  ReadyDysonRuntimeHost,
+} from '../dyson/ReadyDysonSlice'
+import fixtureText from '../../../../test/fixtures/schema-08-canonical-idb1-main-save.txt?raw'
 
-afterEach(() => cleanup())
+const preparedFixture = prepareIdb1Save(fixtureText).prepared
 
-describe('OfflineTimeSurface confirmation boundary', () => {
-  test('disarms only the pending confirmation on an outside pointer interaction', () => {
-    const onDraftChange = vi.fn()
-    renderSurface({ onDraftChange })
+const activeRuntimes: BrowserUiRuntimeFoundation[] = []
 
-    fireEvent.click(screen.getByRole('button', { name: 'Spend 1m 0s' }))
-    const confirmation = screen.getByRole('button', {
-      name: 'Tap again to confirm',
-    })
-    expect(screen.getByRole('button', { name: 'Cancel' })).not.toBeNull()
+afterEach(async () => {
+  cleanup()
+  localStorage.clear()
+  await Promise.all(
+    activeRuntimes.splice(0).map((runtime) => runtime.shutdown()),
+  )
+})
 
-    fireEvent.pointerDown(confirmation)
+describe('Offline Time completion boundary through the UI runtime', () => {
+  test('keeps pending confirmation dismissal separate from active processing', async () => {
+    const { runtime } = await createRuntimeHarness()
+    renderRuntime(runtime)
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Spend 1m 0s' }),
+    )
     expect(
       screen.getByRole('button', { name: 'Tap again to confirm' }),
     ).not.toBeNull()
 
     fireEvent.pointerDown(
       screen.getByRole('heading', { name: 'Stored Offline Time' }),
-      { pointerId: 1, pointerType: 'touch' },
     )
 
     expect(screen.getByRole('button', { name: 'Spend 1m 0s' })).not.toBeNull()
-    expect(screen.queryByRole('button', { name: 'Cancel' })).toBeNull()
-    expect(onDraftChange).toHaveBeenLastCalledWith({
-      selectedSeconds: 60,
-      repeatSeconds: null,
-      armed: false,
-    })
+    expect(runtime.storedTime?.status().kind).toBe('idle')
   })
 
-  test('keeps the explicit keyboard and screen-reader cancellation control', () => {
-    renderSurface()
+  test('dismisses only the committed completion when its backdrop is activated', async () => {
+    const { runtime, runner } = await createRuntimeHarness()
+    renderRuntime(runtime)
+    const before = runtime.snapshot()
+    expect(before.phase).toBe('ready')
+    if (before.phase !== 'ready') return
+    const bankBefore =
+      before.gameplay.resources.time.storedTimeAvailableSeconds
 
-    fireEvent.click(screen.getByRole('button', { name: 'Spend 1m 0s' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
-
-    expect(screen.getByRole('button', { name: 'Spend 1m 0s' })).not.toBeNull()
-  })
-
-  test('does not cancel active processing when its backdrop is activated', () => {
-    const cancel = vi.fn()
-    renderSurface({
-      storedTime: storedTimeControls({
-        kind: 'running',
-        jobId: 'job-1',
-        requestedSeconds: 60,
-        computedSeconds: 30,
-        fraction: 0.5,
-        elapsedMilliseconds: 100,
-        estimatedRemainingMilliseconds: 100,
-        maximumChunkMilliseconds: 10,
-        canSpeedUp: false,
-      }, cancel),
+    const accuracy = screen.getByRole('combobox', {
+      name: 'Simulation accuracy',
     })
+    accuracy.focus()
+    expect(document.activeElement).toBe(accuracy)
+    await beginStoredTimeSpend()
 
-    const dialog = screen.getByRole('dialog', {
+    const processingDialog = await screen.findByRole('dialog', {
       name: 'Offline Time simulation progress',
     })
-    const backdrop = dialog.parentElement
-    expect(backdrop).not.toBeNull()
+    const processingBackdrop = processingDialog.parentElement
+    expect(processingBackdrop).not.toBeNull()
 
-    fireEvent.pointerDown(backdrop!)
-    fireEvent.click(backdrop!)
+    fireEvent.pointerDown(processingBackdrop!, { pointerId: 1 })
+    fireEvent.pointerUp(processingBackdrop!, { pointerId: 1 })
+    firePointerClick(processingBackdrop!, 1)
 
-    expect(cancel).not.toHaveBeenCalled()
+    expect(runtime.storedTime?.status().kind).toBe('running')
     expect(
       screen.getByRole('dialog', {
         name: 'Offline Time simulation progress',
       }),
     ).not.toBeNull()
-  })
 
-  test('does not dismiss a completion summary through its backdrop', async () => {
-    const dispatchPlayer = vi.fn<OfflineTimeSurfaceProps['dispatchPlayer']>()
-      .mockResolvedValue({
-        status: 'accepted',
-        kind: 'stored-time',
-        admittedSeconds: 60,
-        consumedSeconds: 60,
-        remainingSeconds: 0,
-        durableRevision: 1,
-        summary: {
-          preset: 'balanced',
-          simulationUpdates: 1_200,
-          accuracyReduced: false,
-          remainingBankSeconds: 540,
-          infinityCount: 0n,
-          infinityPoints: 0n,
-          dreamResetCount: 0n,
-          strangeMatter: 0,
-          realityWorkers: 0n,
-          influence: 0,
-          botGain: 0,
-          facilityGains: [],
-        },
-        stateRevision: 2,
-        activationRevision: { session: 1, state: 1 },
-      })
-    renderSurface({ dispatchPlayer })
+    runner.finish()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Spend 1m 0s' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Tap again to confirm' }))
-
-    const dialog = await screen.findByRole('dialog', {
+    const completionDialog = await screen.findByRole('dialog', {
       name: 'Offline Time Complete',
     })
-    fireEvent.pointerDown(dialog.parentElement!)
-    fireEvent.click(dialog.parentElement!)
+    await waitFor(() => expect(runtime.storedTime?.status().kind).toBe('idle'))
+    const snapshot = runtime.snapshot()
+    expect(snapshot.phase).toBe('ready')
+    if (snapshot.phase !== 'ready') return
+    expect(snapshot.gameplay.resources.time.storedTimeAvailableSeconds).toBe(
+      bankBefore - 60,
+    )
 
+    const continueButton = screen.getByRole('button', { name: 'Continue' })
+    expect(document.activeElement).toBe(continueButton)
+
+    fireEvent.click(completionDialog)
     expect(
       screen.getByRole('dialog', { name: 'Offline Time Complete' }),
     ).not.toBeNull()
-    expect(screen.getByRole('button', { name: 'Continue' })).not.toBeNull()
-    expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+
+    const completionBackdrop = completionDialog.parentElement!
+    fireEvent.pointerDown(completionDialog, { pointerId: 2 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 2 })
+    firePointerClick(completionBackdrop, 2)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 3 })
+    fireEvent.pointerUp(completionDialog, { pointerId: 3 })
+    firePointerClick(completionBackdrop, 3)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 4 })
+    const originalElementFromPoint = document.elementFromPoint
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: () => completionDialog,
+    })
+    try {
+      fireEvent.pointerUp(completionBackdrop, {
+        pointerId: 4,
+        clientX: 10,
+        clientY: 10,
+      })
+    } finally {
+      Object.defineProperty(document, 'elementFromPoint', {
+        configurable: true,
+        value: originalElementFromPoint,
+      })
+    }
+    firePointerClick(completionBackdrop, 4)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+
+    const capturedBackdropPointerIds: number[] = []
+    const capturedDialogPointerIds: number[] = []
+    Object.defineProperty(completionBackdrop, 'setPointerCapture', {
+      configurable: true,
+      value: (pointerId: number) => {
+        capturedBackdropPointerIds.push(pointerId)
+      },
+    })
+    Object.defineProperty(completionDialog, 'setPointerCapture', {
+      configurable: true,
+      value: (pointerId: number) => {
+        capturedDialogPointerIds.push(pointerId)
+      },
+    })
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 7 })
+    expect(capturedBackdropPointerIds).toEqual([7])
+    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 7 })
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 8 })
+    window.dispatchEvent(new Event('blur'))
+
+    fireEvent.pointerDown(completionDialog, { pointerId: 5 })
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 6 })
+    expect(capturedDialogPointerIds).toEqual([])
+    expect(capturedBackdropPointerIds).toEqual([7, 8, 6])
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 6 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 5 })
+    fireEvent.click(completionBackdrop)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+    await new Promise((resolve) => window.setTimeout(resolve, 0))
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 9 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 9 })
+    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 9 })
+    fireEvent.click(completionBackdrop)
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Offline Time Complete' }),
+      ).toBeNull()
+    })
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'Spend Again: 1m 0s' }),
+    )
+  })
+
+  test('retains the explicit keyboard and screen-reader completion control', async () => {
+    const { runtime, runner } = await createRuntimeHarness()
+    renderRuntime(runtime)
+
+    await beginStoredTimeSpend()
+    await screen.findByRole('dialog', {
+      name: 'Offline Time simulation progress',
+    })
+    runner.finish()
+
+    const continueButton = await screen.findByRole('button', {
+      name: 'Continue',
+    })
+    await waitFor(() => expect(document.activeElement).toBe(continueButton))
+    fireEvent.click(continueButton)
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Offline Time Complete' }),
+      ).toBeNull()
+    })
+  })
+
+  test('restores focus to an enabled control after spending the full bank', async () => {
+    const { runtime, runner } = await createRuntimeHarness(
+      60,
+      Date.UTC(2026, 1, 2, 23, 4, 43),
+    )
+    renderRuntime(runtime)
+
+    await beginStoredTimeSpend()
+    await screen.findByRole('dialog', {
+      name: 'Offline Time simulation progress',
+    })
+    runner.finish()
+
+    const continueButton = await screen.findByRole('button', {
+      name: 'Continue',
+    })
+    await waitFor(() => expect(document.activeElement).toBe(continueButton))
+    await waitFor(() => {
+      const snapshot = runtime.snapshot()
+      expect(snapshot.phase).toBe('ready')
+      if (snapshot.phase !== 'ready') return
+      expect(
+        snapshot.gameplay.resources.time.storedTimeAvailableSeconds,
+      ).toBe(0)
+    })
+    await waitFor(() => {
+      const spendControl = document.querySelector<HTMLButtonElement>(
+        '.offline-time-spend-button',
+      )
+      expect(spendControl?.disabled).toBe(true)
+    })
+    fireEvent.click(continueButton)
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Offline Time Complete' }),
+      ).toBeNull()
+    })
+    expect(document.activeElement).toBe(
+      screen.getByRole('combobox', { name: 'Simulation accuracy' }),
+    )
   })
 })
 
-function renderSurface(
-  overrides: Partial<OfflineTimeSurfaceProps> = {},
-): void {
-  const props: OfflineTimeSurfaceProps = {
-    locale: 'en',
-    resources: {
-      storedTimeAvailableSeconds: 600,
-      storedTimeCapacitySeconds: 86_400,
-    },
-    previews: {
-      storedCapacity: {
-        eligible: false,
-        code: 'bank-not-full',
-        currentCapacitySeconds: 86_400,
-        nextCapacitySeconds: 172_800,
-        consumesStoredSeconds: 0,
-      },
-      storedSpend: {
-        maximumSeconds: 600,
-        commitFirstRequired: true,
-      },
-    },
-    storedTimeCheater: false,
-    commandAvailability: {
-      upgradeStoredCapacity: true,
-      requestStoredTimeSpend: true,
-      setStoredTimePreset: true,
-    },
-    dispatchPlayer: vi.fn().mockResolvedValue({
-      status: 'rejected',
-      kind: 'stored-time',
-      code: 'test',
-      reason: 'not used',
-      stale: false,
-      stateRevision: 1,
-      activationRevision: { session: 1, state: 1 },
-    }),
-    ...overrides,
-  }
+async function beginStoredTimeSpend(): Promise<void> {
+  const spend = await screen.findByRole('button', { name: 'Spend 1m 0s' })
+  fireEvent.click(spend)
+  const confirmation = screen.getByRole('button', {
+    name: 'Tap again to confirm',
+  })
+  fireEvent.click(confirmation)
+}
 
+function firePointerClick(target: Element, pointerId: number): void {
+  const click = new MouseEvent('click', { bubbles: true })
+  Object.defineProperty(click, 'pointerId', { value: pointerId })
+  fireEvent(target, click)
+}
+
+function renderRuntime(runtime: BrowserUiRuntimeFoundation): void {
+  localStorage.setItem(GAMEPLAY_ROUTE_STORAGE_KEY, 'offline-time')
   render(
     <IntlProvider locale="en" messages={{}} onError={() => undefined}>
-      <OfflineTimeSurface {...props} />
+      <ReadyDysonRuntimeHost runtime={runtime} locale="en" />
     </IntlProvider>,
   )
 }
 
-function storedTimeControls(
-  status: StoredTimeJobStatus,
-  cancel: () => void,
-): UiRuntimeStoredTimeControls {
-  return {
-    status: () => status,
-    subscribe: () => () => undefined,
-    cancel,
-    speedUp: () => undefined,
+async function createRuntimeHarness(
+  storedTimeAvailableSeconds = 600,
+  lifecycleUtcMilliseconds = Date.UTC(2026, 8, 1),
+): Promise<{
+  readonly runtime: BrowserUiRuntimeFoundation
+  readonly runner: ControlledStoredTimeJobRunner
+}> {
+  const hydrated = hydrateGameState(preparedFixture)
+  const candidate = {
+    ...structuredClone(hydrated.state),
+    timeline: {
+      ...hydrated.state.timeline,
+      eventClockInitialized: true,
+      automationTimeUntilNextEvent: 1,
+      storedTimeAvailableSeconds,
+      storedTimeCapacitySeconds: 86_400,
+    },
+  }
+  const dehydrated = dehydrateGameState(hydrated, candidate)
+  const startingRecord = dehydrated.copyValidatedState()
+  startingRecord.cheater = false
+  const startingSave = dehydrated.withValidatedState(startingRecord)
+  const storage = new MemorySaveStorage()
+  const eventContext = createProductionEventContext()
+  const runner = new ControlledStoredTimeJobRunner(eventContext)
+  const runtime = createBrowserRuntimeFoundation({
+    createApplication: (repository) => createCanonicalGameApplication({
+      repository,
+      startupResolver: {
+        resolve: async () => ({
+          kind: 'ready',
+          source: 'primary',
+          save: startingSave,
+        }),
+      },
+      sessionFactory: createCanonicalRuntimeSessionFactory({
+        entitlements: { permanentDoubleIp: false },
+      }),
+      engine: { eventContext },
+      storedTimeJobRunner: runner,
+    }),
+    lifecyclePolicy: {
+      saveOnPause: false,
+      saveOnFocusLoss: false,
+      replayOnFocusGain: false,
+    },
+    allowedExternalOrigins: [],
+    saveStorage: storage,
+    saveRepositoryPaths: {
+      current: '/current',
+      temporary: '/current.tmp',
+      legacyRecovery: '/recovery/original.idsw',
+    },
+    allowCanonicalPlayerWrites: true,
+    writerAuthority: new SingleHostSessionWriterAuthority({
+      sessionId: 'offline-time-completion-test',
+    }),
+    lifecycle: {
+      currentPhase: () => 'background',
+      subscribe: () => () => undefined,
+    },
+    lifecycleClock: {
+      sample: () => ({
+        utcMilliseconds: lifecycleUtcMilliseconds,
+        serializedUtcText: new Date(lifecycleUtcMilliseconds).toISOString(),
+      }),
+    },
+  })
+  activeRuntimes.push(runtime)
+  await expect(runtime.start()).resolves.toMatchObject({ phase: 'ready' })
+  return { runtime, runner }
+}
+
+class ControlledStoredTimeJobRunner implements StoredTimeJobRunner {
+  private readonly eventContext: Readonly<CanonicalEventTimeContext>
+  private finishPending: (() => void) | undefined
+
+  constructor(eventContext: Readonly<CanonicalEventTimeContext>) {
+    this.eventContext = eventContext
+  }
+
+  run(
+    request: Readonly<StoredTimeJobRequest>,
+    options: Readonly<StoredTimeJobRunOptions> = {},
+  ): Promise<StoredTimeJobTerminalMessage> {
+    const simulation = new StoredTimeSimulation({
+      jobId: request.jobId,
+      state: request.state,
+      requestedSeconds: request.requestedSeconds,
+      infinityMinimumCycleSeconds: request.infinityMinimumCycleSeconds,
+      eventContext: this.eventContext,
+    })
+    options.onProgress?.(simulation.progress())
+    return new Promise((resolve) => {
+      this.finishPending = () => {
+        const terminal = simulation.step(Number.POSITIVE_INFINITY, false)
+        if (terminal === null) {
+          throw new Error('Controlled Stored Time simulation did not finish.')
+        }
+        options.onProgress?.(simulation.progress())
+        resolve(terminal)
+      }
+    })
+  }
+
+  finish(): void {
+    const finish = this.finishPending
+    if (finish === undefined) {
+      throw new Error('No Stored Time job is waiting to finish.')
+    }
+    this.finishPending = undefined
+    finish()
+  }
+
+  dispose(): void {
+    this.finishPending = undefined
+  }
+}
+
+class MemorySaveStorage implements SaveStorageAdapter {
+  private readonly files = new Map<string, string>()
+
+  async exists(path: string): Promise<boolean> {
+    return this.files.has(path)
+  }
+
+  async readText(path: string): Promise<string> {
+    const value = this.files.get(path)
+    if (value === undefined) throw new Error(`Missing ${path}`)
+    return value
+  }
+
+  async writeText(path: string, contents: string): Promise<void> {
+    this.files.set(path, contents)
+  }
+
+  async replaceAtomically(
+    temporaryPath: string,
+    destinationPath: string,
+  ): Promise<void> {
+    this.files.set(destinationPath, await this.readText(temporaryPath))
+    this.files.delete(temporaryPath)
+  }
+
+  async copy(sourcePath: string, destinationPath: string): Promise<void> {
+    this.files.set(destinationPath, await this.readText(sourcePath))
+  }
+
+  async discoverLegacyCandidates(): Promise<readonly LegacySaveCandidate[]> {
+    return []
+  }
+
+  async retainLegacyCandidate(
+    text: string,
+    id = `manual-${this.files.size}`,
+  ): Promise<LegacySaveCandidate> {
+    const sourcePath = `/recovery/${id}.idsw`
+    this.files.set(sourcePath, text)
+    return { id, sourcePath, text }
   }
 }

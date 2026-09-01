@@ -173,12 +173,22 @@ export function OfflineTimeSurface({
   } | null>(null)
   const pendingRef = useRef(false)
   const [portalHost, setPortalHost] = useState<HTMLElement | null>(null)
+  const surfaceRef = useRef<HTMLDivElement | null>(null)
   const attachSurface = useCallback((node: HTMLDivElement | null) => {
+    surfaceRef.current = node
     if (node === null || typeof document === 'undefined') return
     setPortalHost(node.closest('.dyson-shell') ?? document.body)
   }, [])
   const spendActionsRef = useRef<HTMLDivElement | null>(null)
   const jobDialogRef = useRef<HTMLDivElement | null>(null)
+  const jobReturnFocusRef = useRef<HTMLElement | null>(null)
+  const completionBackdropGesturesRef = useRef(
+    new Map<number, {
+      readonly endedOnBackdrop: boolean
+      readonly active: boolean
+    }>(),
+  )
+  const completionBackdropClickPointerRef = useRef<number | null>(null)
 
   useEffect(() => {
     setSelectedSeconds((current) =>
@@ -250,11 +260,38 @@ export function OfflineTimeSurface({
     : Math.min(100, Math.floor(jobStatus.fraction * 10) * 10)
 
   useEffect(() => {
+    const clearCompletionPointerState = (): void => {
+      completionBackdropGesturesRef.current.clear()
+      completionBackdropClickPointerRef.current = null
+    }
+    if (!jobDialogOpen) {
+      clearCompletionPointerState()
+      return undefined
+    }
+    const clearWhenHidden = (): void => {
+      if (document.visibilityState === 'hidden') {
+        clearCompletionPointerState()
+      }
+    }
+    window.addEventListener('blur', clearCompletionPointerState)
+    window.addEventListener('pagehide', clearCompletionPointerState)
+    document.addEventListener('visibilitychange', clearWhenHidden)
+    return () => {
+      window.removeEventListener('blur', clearCompletionPointerState)
+      window.removeEventListener('pagehide', clearCompletionPointerState)
+      document.removeEventListener('visibilitychange', clearWhenHidden)
+      clearCompletionPointerState()
+    }
+  }, [jobDialogOpen])
+
+  useEffect(() => {
     if (!jobDialogOpen) return undefined
     const dialog = jobDialogRef.current
     const backdrop = dialog?.parentElement
     if (!dialog || !backdrop) return undefined
-    const returnFocus = document.activeElement as HTMLElement | null
+    const returnFocus =
+      jobReturnFocusRef.current ??
+      (document.activeElement as HTMLElement | null)
     const modalParent = backdrop.parentElement
     if (!modalParent) return undefined
     const background = [...modalParent.children]
@@ -296,7 +333,20 @@ export function OfflineTimeSurface({
     return () => {
       document.removeEventListener('keydown', trapFocus)
       for (const entry of background) entry.element.inert = entry.wasInert
-      if (returnFocus?.isConnected) returnFocus.focus()
+      let focusRestored = false
+      if (
+        returnFocus?.isConnected &&
+        !returnFocus.matches(':disabled, [aria-disabled="true"]')
+      ) {
+        returnFocus.focus()
+        focusRestored = document.activeElement === returnFocus
+      }
+      if (!focusRestored) {
+        surfaceRef.current?.querySelector<HTMLElement>(
+          'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])',
+        )?.focus()
+      }
+      jobReturnFocusRef.current = null
     }
   }, [jobDialogOpen, portalHost])
 
@@ -310,7 +360,12 @@ export function OfflineTimeSurface({
     ;(continueControl ?? dialog).focus()
   }, [completionSummary])
 
-  const spend = async (): Promise<void> => {
+  const dismissCompletionSummary = useCallback((): void => {
+    if (completionSummary === null || jobActive) return
+    setCompletionSummary(null)
+  }, [completionSummary, jobActive])
+
+  const spend = async (returnFocus: HTMLElement): Promise<void> => {
     const requestedSeconds =
       repeatAvailable && repeatSeconds !== null
         ? repeatSeconds
@@ -331,6 +386,7 @@ export function OfflineTimeSurface({
       return
     }
 
+    jobReturnFocusRef.current = returnFocus
     pendingRef.current = true
     setPendingAction('spend')
     setArmed(false)
@@ -565,7 +621,7 @@ export function OfflineTimeSurface({
               variant="primary"
               state={pendingAction === 'spend' ? 'pending' : 'idle'}
               disabled={spendDisabled}
-              onClick={() => void spend()}
+              onClick={(event) => void spend(event.currentTarget)}
             >
               {pendingAction === 'spend'
                 ? intl.formatMessage(messages.processing)
@@ -590,7 +646,93 @@ export function OfflineTimeSurface({
           </div>
 
           {jobDialogOpen && portalHost !== null ? (
-            createPortal(<div className="offline-time-job__backdrop">
+            createPortal(<div
+              className="offline-time-job__backdrop"
+              onPointerDown={(event) => {
+                const startedOnBackdrop =
+                  completionSummary !== null &&
+                  !jobActive &&
+                  event.target === event.currentTarget
+                if (!startedOnBackdrop) return
+                if (
+                  typeof event.currentTarget.setPointerCapture === 'function'
+                ) {
+                  event.currentTarget.setPointerCapture(event.pointerId)
+                }
+                completionBackdropGesturesRef.current.set(event.pointerId, {
+                  endedOnBackdrop: false,
+                  active: true,
+                })
+              }}
+              onPointerUp={(event) => {
+                const gestures = completionBackdropGesturesRef.current
+                const pointerId = event.pointerId
+                const gesture = gestures.get(pointerId)
+                completionBackdropClickPointerRef.current =
+                  gesture === undefined ? null : pointerId
+                if (gesture === undefined) return
+                const releasedOver =
+                  typeof document.elementFromPoint === 'function'
+                    ? document.elementFromPoint(event.clientX, event.clientY)
+                    : event.target
+                const completedGesture = {
+                  ...gesture,
+                  endedOnBackdrop: releasedOver === event.currentTarget,
+                  active: false,
+                }
+                gestures.set(pointerId, completedGesture)
+                window.setTimeout(() => {
+                  if (gestures.get(pointerId) === completedGesture) {
+                    gestures.delete(pointerId)
+                  }
+                  if (
+                    completionBackdropClickPointerRef.current === pointerId
+                  ) {
+                    completionBackdropClickPointerRef.current = null
+                  }
+                }, 0)
+              }}
+              onPointerCancel={(event) => {
+                completionBackdropGesturesRef.current.delete(event.pointerId)
+                if (
+                  completionBackdropClickPointerRef.current === event.pointerId
+                ) {
+                  completionBackdropClickPointerRef.current = null
+                }
+              }}
+              onLostPointerCapture={(event) => {
+                const gestures = completionBackdropGesturesRef.current
+                if (gestures.get(event.pointerId)?.active) {
+                  gestures.delete(event.pointerId)
+                  if (
+                    completionBackdropClickPointerRef.current ===
+                    event.pointerId
+                  ) {
+                    completionBackdropClickPointerRef.current = null
+                  }
+                }
+              }}
+              onClick={(event) => {
+                const gestures = completionBackdropGesturesRef.current
+                const nativePointerId = 'pointerId' in event.nativeEvent &&
+                  typeof event.nativeEvent.pointerId === 'number'
+                  ? event.nativeEvent.pointerId
+                  : undefined
+                const pointerId = nativePointerId ??
+                  completionBackdropClickPointerRef.current ?? undefined
+                completionBackdropClickPointerRef.current = null
+                const gesture = pointerId === undefined
+                  ? undefined
+                  : gestures.get(pointerId)
+                if (pointerId !== undefined) gestures.delete(pointerId)
+                if (
+                  gesture?.endedOnBackdrop === true &&
+                  event.target === event.currentTarget
+                ) {
+                  dismissCompletionSummary()
+                }
+              }}
+            >
             <div
               ref={jobDialogRef}
               className="offline-time-job"
@@ -771,7 +913,7 @@ export function OfflineTimeSurface({
                 <Button
                   className="offline-time-job__continue"
                   variant="primary"
-                  onClick={() => setCompletionSummary(null)}
+                  onClick={dismissCompletionSummary}
                 >
                   {intl.formatMessage(messages.closeSummary)}
                 </Button>
