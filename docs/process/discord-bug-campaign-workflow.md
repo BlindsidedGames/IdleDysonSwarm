@@ -152,13 +152,19 @@ After every accepted task is merged:
 3. Dispatch the manual native candidate workflow exactly once with that full
    SHA. It may compile Android and iOS in parallel within one workflow run. Do
    not rerun it for documentation-only changes or each intermediate pull
-   request. A failed native job must be investigated; any corrective code change
-   creates a new combined SHA and therefore a new candidate run.
+   request. A failed native job must be investigated. Any later change to
+   bundled source or synchronized host metadata creates a new combined SHA and
+   therefore requires a new candidate run.
 
 **Human approval gate B:** stop after presenting the final patch notes,
 translations, candidate SHA, native workflow result, release ID, and per-platform
 deployment plan. Do not build for upload, upload, publish, or deploy until the
 maintainer explicitly approves this release candidate.
+
+If gate B requests changes to patch notes, translations, release identity, or
+other bundled source, return to source finalization, merge the reviewed change,
+and repeat combined and native candidate validation before presenting the new
+SHA for approval.
 
 ### 8. Internal deployment and closeout
 
