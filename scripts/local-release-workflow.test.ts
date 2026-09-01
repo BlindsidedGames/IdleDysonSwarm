@@ -12,9 +12,13 @@ import {
 } from './run-local-release'
 
 const repositoryRoot = resolve(import.meta.dirname, '..')
-const verificationWorkflowPath = resolve(
+const sharedVerificationWorkflowPath = resolve(
   repositoryRoot,
-  '.github/workflows/verify-web-native.yml',
+  '.github/workflows/verify-pr.yml',
+)
+const nativeCandidateWorkflowPath = resolve(
+  repositoryRoot,
+  '.github/workflows/verify-native-candidate.yml',
 )
 
 describe('local-first release workflow', () => {
@@ -59,15 +63,37 @@ describe('local-first release workflow', () => {
     )).toBe('/protected/local/java-home')
   })
 
-  it('keeps GitHub verification-only and credential-free', () => {
-    const source = readFileSync(verificationWorkflowPath, 'utf8')
+  it('keeps automatic GitHub verification shared-only and credential-free', () => {
+    const source = readFileSync(sharedVerificationWorkflowPath, 'utf8')
     const workflow = parse(source) as {
       readonly on: Record<string, unknown>
       readonly jobs: Record<string, { readonly steps: readonly Record<string, unknown>[] }>
     }
     expect(Object.keys(workflow.on).sort()).toEqual(['pull_request', 'push'])
+    expect(Object.keys(workflow.jobs)).toEqual(['verify'])
     expect(source).not.toContain('secrets.')
     expect(source).not.toContain('workflow_dispatch')
+    expect(source).not.toContain('bundleRelease')
+    for (const job of Object.values(workflow.jobs)) {
+      for (const step of job.steps) {
+        const uses = typeof step.uses === 'string' ? step.uses : undefined
+        if (uses !== undefined) expect(uses).toMatch(/@[0-9a-f]{40}$/)
+      }
+    }
+  })
+
+  it('runs native host verification only for an exact manual candidate', () => {
+    const source = readFileSync(nativeCandidateWorkflowPath, 'utf8')
+    const workflow = parse(source) as {
+      readonly on: Record<string, unknown>
+      readonly jobs: Record<string, { readonly steps: readonly Record<string, unknown>[] }>
+    }
+    expect(Object.keys(workflow.on)).toEqual(['workflow_dispatch'])
+    expect(Object.keys(workflow.jobs).sort()).toEqual(['android', 'ios'])
+    expect(source).toContain('inputs.source_sha')
+    expect(source).toContain('refs/remotes/origin/main')
+    expect(source).not.toContain('secrets.')
+    expect(source).not.toContain('pull_request')
     expect(source).not.toContain('bundleRelease')
     for (const job of Object.values(workflow.jobs)) {
       for (const step of job.steps) {

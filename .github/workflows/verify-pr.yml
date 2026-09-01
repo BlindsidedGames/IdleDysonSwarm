@@ -1,0 +1,60 @@
+name: Verify shared runtime
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-shared-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Test, lint, data, localization, and builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          lfs: true
+
+      - name: Use the repository Node version
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run deterministic tests
+        run: npm test -- --maxWorkers=1
+
+      - name: Lint sources
+        run: npm run lint
+
+      - name: Validate generated gameplay data
+        run: npm run data:check
+
+      - name: Validate localization catalogs
+        run: npm run i18n:check
+
+      - name: Require generated localization files to be committed
+        run: git diff --exit-code
+
+      - name: Build the /play/ PWA
+        run: npm run build
+
+      - name: Build native-relative assets
+        run: npm run build:native
+
+      - name: Validate the Electron process boundary
+        run: npm run native:electron:check

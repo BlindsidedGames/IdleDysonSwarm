@@ -1,9 +1,11 @@
 # Local release workflow
 
 Idle Dyson Swarm releases are built and signed on the release Mac. GitHub
-Actions verifies committed source on pushes and pull requests; it does not
-hold store credentials, sign native packages, upload to Apple or Google, or
-prepare website promotion pull requests.
+Actions runs shared, credential-free verification on pushes to `main` and pull
+requests. Android host assembly and iOS simulator compilation run only in the
+manually dispatched final native candidate workflow against an exact merged
+commit. GitHub does not hold store credentials, sign native packages, upload to
+Apple or Google, or prepare website promotion pull requests.
 
 ## Release targeting and reporting
 
@@ -133,12 +135,24 @@ counts, then report every target independently:
 Finish with the local Git status and the observed `origin/main` commit so the
 report distinguishes released source from uncommitted or unpublished work.
 
-## GitHub's remaining job
+## GitHub verification boundaries
 
-`.github/workflows/verify-web-native.yml` remains automatic and
-credential-free. It runs shared tests/builds plus unsigned Android debug and
-unsigned iOS simulator compilation. It answers whether committed source is
-healthy; it has no release authority and produces no store upload.
+`.github/workflows/verify-pr.yml` runs automatically for pull requests and
+pushes to `main`. It covers deterministic tests, lint, generated gameplay data,
+localization catalogs, Web/native-relative builds, and the Electron process
+boundary. It intentionally does not assemble Android or compile iOS.
+
+After all intended changes are merged and final combined local validation is
+clean, manually dispatch `.github/workflows/verify-native-candidate.yml` once
+with the exact lowercase 40-character merged `main` SHA. The workflow rejects a
+moving branch name, checks that the commit is contained in `main`, and runs the
+unsigned Android and iOS host jobs in parallel. Documentation-only follow-ups do
+not require another native run. Any corrective code change creates a new
+candidate SHA and requires a new run.
+
+Both workflows are credential-free. They answer whether committed source and a
+chosen native candidate compile successfully; neither has release authority or
+produces a store upload.
 
 Old workflow runs remain in GitHub history for audit purposes. The obsolete
 `native-release-signing` and `website-promotion` Environments were removed on
