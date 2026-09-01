@@ -182,12 +182,12 @@ export function OfflineTimeSurface({
   const spendActionsRef = useRef<HTMLDivElement | null>(null)
   const jobDialogRef = useRef<HTMLDivElement | null>(null)
   const jobReturnFocusRef = useRef<HTMLElement | null>(null)
-  const activeCompletionPointersRef = useRef(new Set<number>())
-  const completionBackdropGestureRef = useRef<{
-    readonly pointerId: number
-    readonly startedOnBackdrop: boolean
-    readonly endedOnBackdrop: boolean
-  } | null>(null)
+  const completionBackdropGesturesRef = useRef(
+    new Map<number, {
+      readonly endedOnBackdrop: boolean
+      readonly active: boolean
+    }>(),
+  )
 
   useEffect(() => {
     setSelectedSeconds((current) =>
@@ -260,8 +260,7 @@ export function OfflineTimeSurface({
 
   useEffect(() => {
     const clearCompletionPointerState = (): void => {
-      activeCompletionPointersRef.current.clear()
-      completionBackdropGestureRef.current = null
+      completionBackdropGesturesRef.current.clear()
     }
     if (!jobDialogOpen) {
       clearCompletionPointerState()
@@ -648,69 +647,60 @@ export function OfflineTimeSurface({
             createPortal(<div
               className="offline-time-job__backdrop"
               onPointerDown={(event) => {
-                const activePointers = activeCompletionPointersRef.current
-                activePointers.add(event.pointerId)
-                const captureTarget = event.target
-                if (
-                  captureTarget instanceof Element &&
-                  typeof captureTarget.setPointerCapture === 'function'
-                ) {
-                  captureTarget.setPointerCapture(event.pointerId)
-                }
-                if (activePointers.size !== 1) {
-                  completionBackdropGestureRef.current = null
-                  return
-                }
                 const startedOnBackdrop =
                   completionSummary !== null &&
                   !jobActive &&
                   event.target === event.currentTarget
-                completionBackdropGestureRef.current = {
-                  pointerId: event.pointerId,
-                  startedOnBackdrop,
-                  endedOnBackdrop: false,
+                if (!startedOnBackdrop) return
+                if (
+                  typeof event.currentTarget.setPointerCapture === 'function'
+                ) {
+                  event.currentTarget.setPointerCapture(event.pointerId)
                 }
+                completionBackdropGesturesRef.current.set(event.pointerId, {
+                  endedOnBackdrop: false,
+                  active: true,
+                })
               }}
               onPointerUp={(event) => {
-                activeCompletionPointersRef.current.delete(event.pointerId)
-                const gesture = completionBackdropGestureRef.current
-                if (gesture?.pointerId !== event.pointerId) return
+                const gestures = completionBackdropGesturesRef.current
+                const gesture = gestures.get(event.pointerId)
+                if (gesture === undefined) return
                 const releasedOver =
                   typeof document.elementFromPoint === 'function'
                     ? document.elementFromPoint(event.clientX, event.clientY)
                     : event.target
-                completionBackdropGestureRef.current = {
+                gestures.set(event.pointerId, {
                   ...gesture,
                   endedOnBackdrop: releasedOver === event.currentTarget,
-                }
+                  active: false,
+                })
               }}
               onPointerCancel={(event) => {
-                activeCompletionPointersRef.current.delete(event.pointerId)
-                if (
-                  completionBackdropGestureRef.current?.pointerId ===
-                  event.pointerId
-                ) {
-                  completionBackdropGestureRef.current = null
-                }
+                completionBackdropGesturesRef.current.delete(event.pointerId)
               }}
               onLostPointerCapture={(event) => {
-                const wasActive = activeCompletionPointersRef.current.delete(
-                  event.pointerId,
-                )
-                if (
-                  wasActive &&
-                  completionBackdropGestureRef.current?.pointerId ===
-                  event.pointerId
-                ) {
-                  completionBackdropGestureRef.current = null
+                const gestures = completionBackdropGesturesRef.current
+                if (gestures.get(event.pointerId)?.active) {
+                  gestures.delete(event.pointerId)
                 }
               }}
               onClick={(event) => {
-                const gesture = completionBackdropGestureRef.current
-                completionBackdropGestureRef.current = null
+                const gestures = completionBackdropGesturesRef.current
+                const nativePointerId = 'pointerId' in event.nativeEvent &&
+                  typeof event.nativeEvent.pointerId === 'number'
+                  ? event.nativeEvent.pointerId
+                  : undefined
+                const fallbackPointerId = gestures.size === 1
+                  ? gestures.keys().next().value
+                  : undefined
+                const pointerId = nativePointerId ?? fallbackPointerId
+                const gesture = pointerId === undefined
+                  ? undefined
+                  : gestures.get(pointerId)
+                if (pointerId !== undefined) gestures.delete(pointerId)
                 if (
-                  gesture?.startedOnBackdrop === true &&
-                  gesture.endedOnBackdrop &&
+                  gesture?.endedOnBackdrop === true &&
                   event.target === event.currentTarget
                 ) {
                   dismissCompletionSummary()
