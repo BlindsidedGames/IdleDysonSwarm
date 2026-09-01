@@ -53,8 +53,10 @@ Repeat this block for every selected report.
 - Patch-note task/pull request:
 - Marketing version:
 - Translation validation:
-- Patch-note merged SHA:
 - Release ID:
+- `hosts/native-release.json` identity:
+- Native metadata synchronization/validation:
+- Source-finalization merged SHA:
 
 ## Combined candidate
 

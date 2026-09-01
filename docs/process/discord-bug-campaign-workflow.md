@@ -127,14 +127,16 @@ Choose an overlap-aware order. For each accepted task in that order:
 
 After every accepted task is merged:
 
-1. Create one final documentation task from the verified merged changes. It
-   must consolidate existing notes rather than append repetitive fragments,
+1. Create one final source-finalization task from the verified merged changes.
+   It must consolidate existing notes rather than append repetitive fragments,
    keep the current marketing version unless a version change was authorized,
-   update every supported translation, and tie the release plan to the intended
-   release ID.
-2. Review and merge the rendered/player-facing wording and translation changes.
-   Patch notes are bundled application source, so they must be present before
-   the release candidate SHA is frozen.
+   update every supported translation, assign the intended release ID in
+   `hosts/native-release.json`, and run `npm run native:release:sync` to
+   materialize the tracked host metadata.
+2. Review and merge the rendered/player-facing wording, translations, native
+   release identity, and synchronized metadata. These are bundled application
+   source, so they must all be present before the release candidate SHA is
+   frozen.
 
 ### 7. Combined candidate validation and release approval
 
