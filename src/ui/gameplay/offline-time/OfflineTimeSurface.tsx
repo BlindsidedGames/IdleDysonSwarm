@@ -182,6 +182,7 @@ export function OfflineTimeSurface({
   const spendActionsRef = useRef<HTMLDivElement | null>(null)
   const jobDialogRef = useRef<HTMLDivElement | null>(null)
   const jobReturnFocusRef = useRef<HTMLElement | null>(null)
+  const activeCompletionPointersRef = useRef(new Set<number>())
   const completionBackdropGestureRef = useRef<{
     readonly pointerId: number
     readonly startedOnBackdrop: boolean
@@ -256,6 +257,12 @@ export function OfflineTimeSurface({
   const announcedProgressPercent = jobStatus.kind === 'idle'
     ? 0
     : Math.min(100, Math.floor(jobStatus.fraction * 10) * 10)
+
+  useEffect(() => {
+    if (jobDialogOpen) return
+    activeCompletionPointersRef.current.clear()
+    completionBackdropGestureRef.current = null
+  }, [jobDialogOpen])
 
   useEffect(() => {
     if (!jobDialogOpen) return undefined
@@ -622,6 +629,12 @@ export function OfflineTimeSurface({
             createPortal(<div
               className="offline-time-job__backdrop"
               onPointerDown={(event) => {
+                const activePointers = activeCompletionPointersRef.current
+                activePointers.add(event.pointerId)
+                if (activePointers.size !== 1) {
+                  completionBackdropGestureRef.current = null
+                  return
+                }
                 completionBackdropGestureRef.current = {
                   pointerId: event.pointerId,
                   startedOnBackdrop:
@@ -632,6 +645,7 @@ export function OfflineTimeSurface({
                 }
               }}
               onPointerUp={(event) => {
+                activeCompletionPointersRef.current.delete(event.pointerId)
                 const gesture = completionBackdropGestureRef.current
                 if (gesture?.pointerId !== event.pointerId) return
                 const releasedOver =
@@ -644,6 +658,7 @@ export function OfflineTimeSurface({
                 }
               }}
               onPointerCancel={(event) => {
+                activeCompletionPointersRef.current.delete(event.pointerId)
                 if (
                   completionBackdropGestureRef.current?.pointerId ===
                   event.pointerId

@@ -170,8 +170,17 @@ describe('Offline Time completion boundary through the UI runtime', () => {
       screen.getByRole('dialog', { name: 'Offline Time Complete' }),
     ).not.toBeNull()
 
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 5 })
+    fireEvent.pointerDown(completionDialog, { pointerId: 5 })
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 6 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 6 })
     fireEvent.pointerUp(completionBackdrop, { pointerId: 5 })
+    fireEvent.click(completionBackdrop)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 7 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 7 })
     fireEvent.click(completionBackdrop)
 
     await waitFor(() => {
