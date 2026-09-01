@@ -173,7 +173,9 @@ export function OfflineTimeSurface({
   } | null>(null)
   const pendingRef = useRef(false)
   const [portalHost, setPortalHost] = useState<HTMLElement | null>(null)
+  const surfaceRef = useRef<HTMLDivElement | null>(null)
   const attachSurface = useCallback((node: HTMLDivElement | null) => {
+    surfaceRef.current = node
     if (node === null || typeof document === 'undefined') return
     setPortalHost(node.closest('.dyson-shell') ?? document.body)
   }, [])
@@ -304,7 +306,19 @@ export function OfflineTimeSurface({
     return () => {
       document.removeEventListener('keydown', trapFocus)
       for (const entry of background) entry.element.inert = entry.wasInert
-      if (returnFocus?.isConnected) returnFocus.focus()
+      let focusRestored = false
+      if (
+        returnFocus?.isConnected &&
+        !returnFocus.matches(':disabled, [aria-disabled="true"]')
+      ) {
+        returnFocus.focus()
+        focusRestored = document.activeElement === returnFocus
+      }
+      if (!focusRestored) {
+        surfaceRef.current?.querySelector<HTMLElement>(
+          'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])',
+        )?.focus()
+      }
       jobReturnFocusRef.current = null
     }
   }, [jobDialogOpen, portalHost])

@@ -178,6 +178,49 @@ describe('Offline Time completion boundary through the UI runtime', () => {
       ).toBeNull()
     })
   })
+
+  test('restores focus to an enabled control after spending the full bank', async () => {
+    const { runtime, runner } = await createRuntimeHarness(
+      60,
+      Date.UTC(2026, 1, 2, 23, 4, 43),
+    )
+    renderRuntime(runtime)
+
+    await beginStoredTimeSpend()
+    await screen.findByRole('dialog', {
+      name: 'Offline Time simulation progress',
+    })
+    runner.finish()
+
+    const continueButton = await screen.findByRole('button', {
+      name: 'Continue',
+    })
+    await waitFor(() => expect(document.activeElement).toBe(continueButton))
+    await waitFor(() => {
+      const snapshot = runtime.snapshot()
+      expect(snapshot.phase).toBe('ready')
+      if (snapshot.phase !== 'ready') return
+      expect(
+        snapshot.gameplay.resources.time.storedTimeAvailableSeconds,
+      ).toBe(0)
+    })
+    await waitFor(() => {
+      const spendControl = document.querySelector<HTMLButtonElement>(
+        '.offline-time-spend-button',
+      )
+      expect(spendControl?.disabled).toBe(true)
+    })
+    fireEvent.click(continueButton)
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Offline Time Complete' }),
+      ).toBeNull()
+    })
+    expect(document.activeElement).toBe(
+      screen.getByRole('combobox', { name: 'Simulation accuracy' }),
+    )
+  })
 })
 
 async function beginStoredTimeSpend(): Promise<void> {
@@ -198,7 +241,10 @@ function renderRuntime(runtime: BrowserUiRuntimeFoundation): void {
   )
 }
 
-async function createRuntimeHarness(): Promise<{
+async function createRuntimeHarness(
+  storedTimeAvailableSeconds = 600,
+  lifecycleUtcMilliseconds = Date.UTC(2026, 8, 1),
+): Promise<{
   readonly runtime: BrowserUiRuntimeFoundation
   readonly runner: ControlledStoredTimeJobRunner
 }> {
@@ -209,7 +255,7 @@ async function createRuntimeHarness(): Promise<{
       ...hydrated.state.timeline,
       eventClockInitialized: true,
       automationTimeUntilNextEvent: 1,
-      storedTimeAvailableSeconds: 600,
+      storedTimeAvailableSeconds,
       storedTimeCapacitySeconds: 86_400,
     },
   }
@@ -258,8 +304,8 @@ async function createRuntimeHarness(): Promise<{
     },
     lifecycleClock: {
       sample: () => ({
-        utcMilliseconds: Date.UTC(2026, 8, 1),
-        serializedUtcText: '2026-09-01T00:00:00.000Z',
+        utcMilliseconds: lifecycleUtcMilliseconds,
+        serializedUtcText: new Date(lifecycleUtcMilliseconds).toISOString(),
       }),
     },
   })
