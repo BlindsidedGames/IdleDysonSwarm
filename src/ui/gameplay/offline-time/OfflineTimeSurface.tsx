@@ -635,12 +635,19 @@ export function OfflineTimeSurface({
                   completionBackdropGestureRef.current = null
                   return
                 }
+                const startedOnBackdrop =
+                  completionSummary !== null &&
+                  !jobActive &&
+                  event.target === event.currentTarget
+                if (
+                  startedOnBackdrop &&
+                  typeof event.currentTarget.setPointerCapture === 'function'
+                ) {
+                  event.currentTarget.setPointerCapture(event.pointerId)
+                }
                 completionBackdropGestureRef.current = {
                   pointerId: event.pointerId,
-                  startedOnBackdrop:
-                    completionSummary !== null &&
-                    !jobActive &&
-                    event.target === event.currentTarget,
+                  startedOnBackdrop,
                   endedOnBackdrop: false,
                 }
               }}
@@ -660,6 +667,18 @@ export function OfflineTimeSurface({
               onPointerCancel={(event) => {
                 activeCompletionPointersRef.current.delete(event.pointerId)
                 if (
+                  completionBackdropGestureRef.current?.pointerId ===
+                  event.pointerId
+                ) {
+                  completionBackdropGestureRef.current = null
+                }
+              }}
+              onLostPointerCapture={(event) => {
+                const wasActive = activeCompletionPointersRef.current.delete(
+                  event.pointerId,
+                )
+                if (
+                  wasActive &&
                   completionBackdropGestureRef.current?.pointerId ===
                   event.pointerId
                 ) {

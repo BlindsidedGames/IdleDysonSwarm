@@ -180,7 +180,11 @@ describe('Offline Time completion boundary through the UI runtime', () => {
     ).not.toBeNull()
 
     fireEvent.pointerDown(completionBackdrop, { pointerId: 7 })
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 7 })
+    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 7 })
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 8 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 8 })
+    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 8 })
     fireEvent.click(completionBackdrop)
 
     await waitFor(() => {
