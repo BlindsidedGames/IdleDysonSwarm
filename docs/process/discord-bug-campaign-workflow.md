@@ -123,26 +123,31 @@ Choose an overlap-aware order. For each accepted task in that order:
 7. Merge, verify the resulting `main`, and use that merged state as the base for
    the next overlapping task.
 
-### 6. Combined candidate validation
+### 6. Patch notes and source finalization
 
 After every accepted task is merged:
 
-1. Fetch and verify a clean `main`; record the exact combined candidate SHA.
+1. Create one final documentation task from the verified merged changes. It
+   must consolidate existing notes rather than append repetitive fragments,
+   keep the current marketing version unless a version change was authorized,
+   update every supported translation, and tie the release plan to the intended
+   release ID.
+2. Review and merge the rendered/player-facing wording and translation changes.
+   Patch notes are bundled application source, so they must be present before
+   the release candidate SHA is frozen.
+
+### 7. Combined candidate validation and release approval
+
+1. Fetch and verify a clean `main`; record the exact combined candidate SHA,
+   including the merged patch notes and translations.
 2. Run the repository's final combined local validation, including all required
-   shared checks and any cross-feature scenarios created by the campaign.
+   shared checks, translation checks, and any cross-feature scenarios created
+   by the campaign.
 3. Dispatch the manual native candidate workflow exactly once with that full
    SHA. It may compile Android and iOS in parallel within one workflow run. Do
    not rerun it for documentation-only changes or each intermediate pull
    request. A failed native job must be investigated; any corrective code change
    creates a new combined SHA and therefore a new candidate run.
-
-### 7. Patch notes and release approval
-
-Create one final documentation task from the verified merged changes. It must
-consolidate existing notes rather than append repetitive fragments, keep the
-current marketing version unless a version change was authorized, update every
-supported translation, and tie the release plan to the exact candidate SHA and
-release ID. Review the rendered/player-facing wording and translation checks.
 
 **Human approval gate B:** stop after presenting the final patch notes,
 translations, candidate SHA, native workflow result, release ID, and per-platform
