@@ -184,28 +184,29 @@ describe('Offline Time completion boundary through the UI runtime', () => {
         capturedDialogPointerIds.push(pointerId)
       },
     })
-    fireEvent.pointerDown(completionDialog, { pointerId: 5 })
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 6 })
-    expect(capturedDialogPointerIds).toEqual([])
-    expect(capturedBackdropPointerIds).toEqual([6])
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 6 })
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 5 })
-    firePointerClick(completionBackdrop, 5)
-    expect(
-      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
-    ).not.toBeNull()
-
     fireEvent.pointerDown(completionBackdrop, { pointerId: 7 })
-    expect(capturedBackdropPointerIds).toEqual([6, 7])
+    expect(capturedBackdropPointerIds).toEqual([7])
     fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 7 })
 
     fireEvent.pointerDown(completionBackdrop, { pointerId: 8 })
     window.dispatchEvent(new Event('blur'))
 
+    fireEvent.pointerDown(completionDialog, { pointerId: 5 })
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 6 })
+    expect(capturedDialogPointerIds).toEqual([])
+    expect(capturedBackdropPointerIds).toEqual([7, 8, 6])
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 6 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 5 })
+    fireEvent.click(completionBackdrop)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+    await new Promise((resolve) => window.setTimeout(resolve, 0))
+
     fireEvent.pointerDown(completionBackdrop, { pointerId: 9 })
     fireEvent.pointerUp(completionBackdrop, { pointerId: 9 })
     fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 9 })
-    firePointerClick(completionBackdrop, 9)
+    fireEvent.click(completionBackdrop)
 
     await waitFor(() => {
       expect(

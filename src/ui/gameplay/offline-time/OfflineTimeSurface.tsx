@@ -188,6 +188,7 @@ export function OfflineTimeSurface({
       readonly active: boolean
     }>(),
   )
+  const completionBackdropClickPointerRef = useRef<number | null>(null)
 
   useEffect(() => {
     setSelectedSeconds((current) =>
@@ -261,6 +262,7 @@ export function OfflineTimeSurface({
   useEffect(() => {
     const clearCompletionPointerState = (): void => {
       completionBackdropGesturesRef.current.clear()
+      completionBackdropClickPointerRef.current = null
     }
     if (!jobDialogOpen) {
       clearCompletionPointerState()
@@ -664,25 +666,50 @@ export function OfflineTimeSurface({
               }}
               onPointerUp={(event) => {
                 const gestures = completionBackdropGesturesRef.current
-                const gesture = gestures.get(event.pointerId)
+                const pointerId = event.pointerId
+                const gesture = gestures.get(pointerId)
+                completionBackdropClickPointerRef.current =
+                  gesture === undefined ? null : pointerId
                 if (gesture === undefined) return
                 const releasedOver =
                   typeof document.elementFromPoint === 'function'
                     ? document.elementFromPoint(event.clientX, event.clientY)
                     : event.target
-                gestures.set(event.pointerId, {
+                const completedGesture = {
                   ...gesture,
                   endedOnBackdrop: releasedOver === event.currentTarget,
                   active: false,
-                })
+                }
+                gestures.set(pointerId, completedGesture)
+                window.setTimeout(() => {
+                  if (gestures.get(pointerId) === completedGesture) {
+                    gestures.delete(pointerId)
+                  }
+                  if (
+                    completionBackdropClickPointerRef.current === pointerId
+                  ) {
+                    completionBackdropClickPointerRef.current = null
+                  }
+                }, 0)
               }}
               onPointerCancel={(event) => {
                 completionBackdropGesturesRef.current.delete(event.pointerId)
+                if (
+                  completionBackdropClickPointerRef.current === event.pointerId
+                ) {
+                  completionBackdropClickPointerRef.current = null
+                }
               }}
               onLostPointerCapture={(event) => {
                 const gestures = completionBackdropGesturesRef.current
                 if (gestures.get(event.pointerId)?.active) {
                   gestures.delete(event.pointerId)
+                  if (
+                    completionBackdropClickPointerRef.current ===
+                    event.pointerId
+                  ) {
+                    completionBackdropClickPointerRef.current = null
+                  }
                 }
               }}
               onClick={(event) => {
@@ -691,10 +718,9 @@ export function OfflineTimeSurface({
                   typeof event.nativeEvent.pointerId === 'number'
                   ? event.nativeEvent.pointerId
                   : undefined
-                const fallbackPointerId = gestures.size === 1
-                  ? gestures.keys().next().value
-                  : undefined
-                const pointerId = nativePointerId ?? fallbackPointerId
+                const pointerId = nativePointerId ??
+                  completionBackdropClickPointerRef.current ?? undefined
+                completionBackdropClickPointerRef.current = null
                 const gesture = pointerId === undefined
                   ? undefined
                   : gestures.get(pointerId)
