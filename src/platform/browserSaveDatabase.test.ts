@@ -1,18 +1,24 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { CanonicalRuntimeSession } from '../application/canonicalRuntimeSession'
+import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import {
   createProductionBrowserComposition,
   PRODUCTION_BROWSER_DATABASE_NAME,
   PRODUCTION_BROWSER_SAVE_PATHS,
 } from '../browser/productionBrowserComposition'
 import { PreparedSave, prepareIdb1Save } from '../save/prepare'
+import {
+  dehydrateGameState,
+  hydrateGameState,
+} from '../game-state/mapping'
 import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
 import { PortableSaveRepository } from '../save/repository'
 import {
   deserializeWebSave,
   serializeWebSave,
 } from '../save/serialization'
+import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
 import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 import {
   createBrowserRuntimeFoundation,
@@ -781,6 +787,135 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     expectPuritySnapshotReady(reopened.runtime.snapshot())
     await reopened.runtime.shutdown()
   })
+
+  test('updates the final Dyson goal after every Division purchase and reconstructs it from the production save', async () => {
+    const harness = new HarnessIndexedDbFactory()
+    const database = new IndexedDbBrowserSaveDatabase(
+      PRODUCTION_BROWSER_DATABASE_NAME,
+      harness.asFactory(),
+    )
+    const seedLease = await database.acquireWriterLease(
+      'division-goal-seed',
+      1_000,
+      15_000,
+    )
+    if (!seedLease.acquired) {
+      throw new Error('Expected the Division-goal seed writer lease.')
+    }
+    const seedRepository = new PortableSaveRepository(
+      storageFor(database, seedLease.fence, 1_000),
+      PRODUCTION_BROWSER_SAVE_PATHS,
+      () => ({ saveVersion: CURRENT_SAVE_SCHEMA }),
+    )
+    const hydrated = hydrateGameState(
+      createUnityFirstRunPreparedSave({
+        startedAtUtc: '2026-09-01T00:00:00.000Z',
+      }),
+    )
+    await seedRepository.commit(
+      dehydrateGameState(hydrated, {
+        ...hydrated.state,
+        dyson: {
+          ...hydrated.state.dyson,
+          goalStage: 10n,
+        },
+        quantum: {
+          ...hydrated.state.quantum,
+          pointsEarned: 2_000_000n,
+          pointsSpent: 0n,
+          divisionsPurchased: 0n,
+        },
+      }),
+    )
+    await database.releaseWriterLease(seedLease.fence)
+
+    const createComposition = (ownerToken: string) =>
+      createProductionBrowserComposition({
+        entitlementDocument: {
+          querySelectorAll: () => [
+            { getAttribute: () => 'false' },
+          ],
+        },
+        lifecycleClock: fixedLifecycleClock(),
+        monotonicClock: { nowMilliseconds: () => 0 },
+        createRuntime: (options) =>
+          createBrowserRuntimeFoundation({
+            ...options,
+            indexedDbFactory: harness.asFactory(),
+            ownerToken,
+            autoHeartbeat: false,
+            nowUtcMilliseconds: () => 1_000,
+            lifecycle: backgroundLifecycle(),
+            activeTimeScheduler: idleFrameScheduler,
+            storageManager: durableStorageManager,
+            checkpointScheduler: new ManualIntervalScheduler(),
+          }),
+      })
+
+    const first = createComposition('division-goal-player')
+    await expect(first.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    expectDivisionGoal(first.runtime.snapshot(), 0n)
+
+    const observedDivisions: bigint[] = []
+    const unsubscribe = first.runtime.subscribeSnapshot((snapshot) => {
+      if (
+        snapshot.phase === 'ready' &&
+        snapshot.gameplay.derived.dyson.status === 'ready'
+      ) {
+        observedDivisions.push(
+          snapshot.gameplay.progression.quantum.divisionsPurchased,
+        )
+      }
+    })
+
+    for (let division = 1n; division <= 19n; division += 1n) {
+      const observationsBeforePurchase = observedDivisions.length
+      await expect(
+        first.runtime.dispatchPlayer({
+          kind: 'quantum.purchase-upgrade',
+          upgradeId: 'Division',
+        }),
+      ).resolves.toMatchObject({
+        status: 'accepted',
+      })
+      await waitUntil(
+        () => observedDivisions.length > observationsBeforePurchase,
+      )
+      expect(observedDivisions.at(-1)).toBe(division)
+      expectDivisionGoal(first.runtime.snapshot(), division)
+    }
+
+    const maximumSnapshot = first.runtime.snapshot()
+    const maximumRevision = maximumSnapshot.phase === 'ready'
+      ? maximumSnapshot.revision.state
+      : -1
+    await expect(
+      first.runtime.dispatchPlayer({
+        kind: 'quantum.purchase-upgrade',
+        upgradeId: 'Division',
+      }),
+    ).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'quantum-upgrade:already-maxed',
+      stateRevision: maximumRevision,
+    })
+    expectDivisionGoal(first.runtime.snapshot(), 19n)
+
+    unsubscribe()
+    await expect(first.runtime.requestCheckpoint()).resolves.toBe(true)
+    await first.runtime.shutdown()
+
+    const reconstructed = createComposition(
+      'division-goal-reconstructed-player',
+    )
+    await expect(reconstructed.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    expectDivisionGoal(reconstructed.runtime.snapshot(), 19n)
+    await reconstructed.runtime.shutdown()
+  })
 })
 
 function createPurityDevelopmentSave(): PreparedSave {
@@ -868,6 +1003,36 @@ function invalidNumberPaths(
   return Object.entries(value).flatMap(([key, entry]) =>
     invalidNumberPaths(entry, `${path}.${key}`, seen),
   )
+}
+
+function expectDivisionGoal(
+  snapshot: ReturnType<
+    ReturnType<typeof createProductionBrowserComposition>['runtime']['snapshot']
+  >,
+  divisionsPurchased: bigint,
+): void {
+  expect(snapshot.phase).toBe('ready')
+  if (snapshot.phase !== 'ready') {
+    throw new Error('Expected a ready player-facing runtime snapshot.')
+  }
+  expect(
+    snapshot.gameplay.progression.quantum.divisionsPurchased,
+  ).toBe(divisionsPurchased)
+  expect(snapshot.gameplay.derived.dyson.status).toBe('ready')
+  if (snapshot.gameplay.derived.dyson.status !== 'ready') {
+    throw new Error('Expected ready Dyson presentation facts.')
+  }
+  const threshold = ordinaryInfinityBotThreshold(divisionsPurchased)
+  expect(
+    snapshot.gameplay.derived.dyson.value.presentation.currentGoal,
+  ).toEqual({
+    kind: 'reach-bots',
+    target: threshold,
+  })
+  expect(snapshot.gameplay.derived.infinity).toMatchObject({
+    mode: 'ordinary',
+    resetThresholdBots: threshold,
+  })
 }
 
 function repositoryFor(
