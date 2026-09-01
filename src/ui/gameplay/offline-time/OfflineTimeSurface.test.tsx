@@ -148,7 +148,30 @@ describe('Offline Time completion boundary through the UI runtime', () => {
     ).not.toBeNull()
 
     fireEvent.pointerDown(completionBackdrop, { pointerId: 4 })
-    fireEvent.pointerUp(completionBackdrop, { pointerId: 4 })
+    const originalElementFromPoint = document.elementFromPoint
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: () => completionDialog,
+    })
+    try {
+      fireEvent.pointerUp(completionBackdrop, {
+        pointerId: 4,
+        clientX: 10,
+        clientY: 10,
+      })
+    } finally {
+      Object.defineProperty(document, 'elementFromPoint', {
+        configurable: true,
+        value: originalElementFromPoint,
+      })
+    }
+    fireEvent.click(completionBackdrop)
+    expect(
+      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
+    ).not.toBeNull()
+
+    fireEvent.pointerDown(completionBackdrop, { pointerId: 5 })
+    fireEvent.pointerUp(completionBackdrop, { pointerId: 5 })
     fireEvent.click(completionBackdrop)
 
     await waitFor(() => {

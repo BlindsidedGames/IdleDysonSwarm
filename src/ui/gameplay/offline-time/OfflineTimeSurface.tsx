@@ -634,9 +634,13 @@ export function OfflineTimeSurface({
               onPointerUp={(event) => {
                 const gesture = completionBackdropGestureRef.current
                 if (gesture?.pointerId !== event.pointerId) return
+                const releasedOver =
+                  typeof document.elementFromPoint === 'function'
+                    ? document.elementFromPoint(event.clientX, event.clientY)
+                    : event.target
                 completionBackdropGestureRef.current = {
                   ...gesture,
-                  endedOnBackdrop: event.target === event.currentTarget,
+                  endedOnBackdrop: releasedOver === event.currentTarget,
                 }
               }}
               onPointerCancel={(event) => {
