@@ -179,8 +179,16 @@ describe('Offline Time completion boundary through the UI runtime', () => {
       screen.getByRole('dialog', { name: 'Offline Time Complete' }),
     ).not.toBeNull()
 
-    fireEvent.pointerDown(completionBackdrop, { pointerId: 7 })
-    fireEvent.lostPointerCapture(completionBackdrop, { pointerId: 7 })
+    let capturedPointerId: number | null = null
+    Object.defineProperty(completionDialog, 'setPointerCapture', {
+      configurable: true,
+      value: (pointerId: number) => {
+        capturedPointerId = pointerId
+      },
+    })
+    fireEvent.pointerDown(completionDialog, { pointerId: 7 })
+    expect(capturedPointerId).toBe(7)
+    fireEvent.lostPointerCapture(completionDialog, { pointerId: 7 })
 
     fireEvent.pointerDown(completionBackdrop, { pointerId: 8 })
     fireEvent.pointerUp(completionBackdrop, { pointerId: 8 })

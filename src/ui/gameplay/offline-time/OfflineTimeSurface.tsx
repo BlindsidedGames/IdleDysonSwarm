@@ -639,11 +639,12 @@ export function OfflineTimeSurface({
                   completionSummary !== null &&
                   !jobActive &&
                   event.target === event.currentTarget
+                const captureTarget = event.target
                 if (
-                  startedOnBackdrop &&
-                  typeof event.currentTarget.setPointerCapture === 'function'
+                  captureTarget instanceof Element &&
+                  typeof captureTarget.setPointerCapture === 'function'
                 ) {
-                  event.currentTarget.setPointerCapture(event.pointerId)
+                  captureTarget.setPointerCapture(event.pointerId)
                 }
                 completionBackdropGestureRef.current = {
                   pointerId: event.pointerId,
