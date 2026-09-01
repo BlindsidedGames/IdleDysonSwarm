@@ -170,8 +170,18 @@ describe('Offline Time completion boundary through the UI runtime', () => {
       screen.getByRole('dialog', { name: 'Offline Time Complete' }),
     ).not.toBeNull()
 
+    const capturedPointerIds: number[] = []
+    for (const captureTarget of [completionDialog, completionBackdrop]) {
+      Object.defineProperty(captureTarget, 'setPointerCapture', {
+        configurable: true,
+        value: (pointerId: number) => {
+          capturedPointerIds.push(pointerId)
+        },
+      })
+    }
     fireEvent.pointerDown(completionDialog, { pointerId: 5 })
     fireEvent.pointerDown(completionBackdrop, { pointerId: 6 })
+    expect(capturedPointerIds).toEqual([5, 6])
     fireEvent.pointerUp(completionBackdrop, { pointerId: 6 })
     fireEvent.pointerUp(completionBackdrop, { pointerId: 5 })
     fireEvent.click(completionBackdrop)
@@ -179,15 +189,8 @@ describe('Offline Time completion boundary through the UI runtime', () => {
       screen.getByRole('dialog', { name: 'Offline Time Complete' }),
     ).not.toBeNull()
 
-    let capturedPointerId: number | null = null
-    Object.defineProperty(completionDialog, 'setPointerCapture', {
-      configurable: true,
-      value: (pointerId: number) => {
-        capturedPointerId = pointerId
-      },
-    })
     fireEvent.pointerDown(completionDialog, { pointerId: 7 })
-    expect(capturedPointerId).toBe(7)
+    expect(capturedPointerIds).toEqual([5, 6, 7])
     fireEvent.lostPointerCapture(completionDialog, { pointerId: 7 })
 
     fireEvent.pointerDown(completionBackdrop, { pointerId: 8 })

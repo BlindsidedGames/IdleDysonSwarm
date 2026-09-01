@@ -631,6 +631,13 @@ export function OfflineTimeSurface({
               onPointerDown={(event) => {
                 const activePointers = activeCompletionPointersRef.current
                 activePointers.add(event.pointerId)
+                const captureTarget = event.target
+                if (
+                  captureTarget instanceof Element &&
+                  typeof captureTarget.setPointerCapture === 'function'
+                ) {
+                  captureTarget.setPointerCapture(event.pointerId)
+                }
                 if (activePointers.size !== 1) {
                   completionBackdropGestureRef.current = null
                   return
@@ -639,13 +646,6 @@ export function OfflineTimeSurface({
                   completionSummary !== null &&
                   !jobActive &&
                   event.target === event.currentTarget
-                const captureTarget = event.target
-                if (
-                  captureTarget instanceof Element &&
-                  typeof captureTarget.setPointerCapture === 'function'
-                ) {
-                  captureTarget.setPointerCapture(event.pointerId)
-                }
                 completionBackdropGestureRef.current = {
                   pointerId: event.pointerId,
                   startedOnBackdrop,
