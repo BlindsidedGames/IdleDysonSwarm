@@ -1,13 +1,19 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
+import { CanonicalRuntimeSession } from '../application/canonicalRuntimeSession'
 import {
   createProductionBrowserComposition,
   PRODUCTION_BROWSER_DATABASE_NAME,
   PRODUCTION_BROWSER_SAVE_PATHS,
 } from '../browser/productionBrowserComposition'
-import { PreparedSave } from '../save/prepare'
+import { PreparedSave, prepareIdb1Save } from '../save/prepare'
 import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
 import { PortableSaveRepository } from '../save/repository'
-import { serializeWebSave } from '../save/serialization'
+import {
+  deserializeWebSave,
+  serializeWebSave,
+} from '../save/serialization'
+import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 import {
   createBrowserRuntimeFoundation,
 } from '../ui/runtime'
@@ -676,7 +682,193 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     ).resolves.toBe('corrupted-current-save')
     await recovered.runtime.shutdown()
   })
+
+  test('keeps a maximum Skill Point Purity save finite through the production runtime, Stored Time, and reopen', async () => {
+    const harness = new HarnessIndexedDbFactory()
+    const database = new IndexedDbBrowserSaveDatabase(
+      PRODUCTION_BROWSER_DATABASE_NAME,
+      harness.asFactory(),
+    )
+    const seedLease = await database.acquireWriterLease(
+      'purity-seed-owner',
+      1_000,
+      15_000,
+    )
+    expect(seedLease.acquired).toBe(true)
+    if (!seedLease.acquired) {
+      throw new Error('Expected Purity fixture writer ownership.')
+    }
+    await database.mutateFiles(
+      {
+        kind: 'write',
+        path: PRODUCTION_BROWSER_SAVE_PATHS.current,
+        contents: serializeWebSave(
+          createPurityDevelopmentSave().copyValidatedState(),
+        ),
+      },
+      seedLease.fence,
+      1_000,
+    )
+    await database.releaseWriterLease(seedLease.fence)
+
+    const createComposition = (ownerToken: string) =>
+      createProductionBrowserComposition({
+        entitlementDocument: {
+          querySelectorAll: () => [
+            { getAttribute: () => 'false' },
+          ],
+        },
+        lifecycleClock: fixedLifecycleClock(),
+        monotonicClock: { nowMilliseconds: () => 0 },
+        developmentBuild: true,
+        createRuntime: (options) =>
+          createBrowserRuntimeFoundation({
+            ...options,
+            indexedDbFactory: harness.asFactory(),
+            ownerToken,
+            autoHeartbeat: false,
+            nowUtcMilliseconds: () => 1_000,
+            lifecycle: backgroundLifecycle(),
+            activeTimeScheduler: idleFrameScheduler,
+            storageManager: durableStorageManager,
+          }),
+      })
+
+    const first = createComposition('purity-runtime-owner')
+    await expect(first.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    const development = first.runtime.development
+    expect(development).toBeDefined()
+    if (development === undefined) {
+      throw new Error('Expected production development controls.')
+    }
+
+    await expect(development.apply({
+      kind: 'add-skill-points',
+      amount: DISCRETE_MAXIMUM,
+    })).resolves.toMatchObject({ applied: true })
+    expectPuritySnapshotReady(first.runtime.snapshot())
+
+    await expect(
+      development.simulateOfflineTime(10),
+    ).resolves.toMatchObject({ applied: true })
+    await expect(first.runtime.dispatchPlayer({
+      kind: 'time.request-stored-time-spend',
+      requestedSeconds: 10,
+    })).resolves.toMatchObject({
+      status: 'accepted',
+      kind: 'stored-time',
+      admittedSeconds: 10,
+      consumedSeconds: 10,
+      remainingSeconds: 0,
+    })
+    expectPuritySnapshotReady(first.runtime.snapshot())
+    await expect(first.runtime.requestCheckpoint()).resolves.toBe(true)
+
+    const savedText = await first.runtime.readCurrentSaveText()
+    expect(savedText).not.toBeNull()
+    if (savedText !== null) {
+      expect(invalidNumberPaths(deserializeWebSave(savedText))).toEqual([])
+    }
+    await first.runtime.shutdown()
+
+    const reopened = createComposition('purity-reopen-owner')
+    await expect(reopened.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    expect(reopened.runtime.snapshot()).toMatchObject({ source: 'primary' })
+    expectPuritySnapshotReady(reopened.runtime.snapshot())
+    await reopened.runtime.shutdown()
+  })
 })
+
+function createPurityDevelopmentSave(): PreparedSave {
+  const prepared = prepareIdb1Save(readFileSync(
+    new URL(
+      '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
+      import.meta.url,
+    ),
+    'utf8',
+  )).prepared
+  const session = new CanonicalRuntimeSession(prepared, {
+    entitlements: { permanentDoubleIp: false },
+  })
+  const candidate = structuredClone(session.initialState)
+  const owned = (id: string) => ({
+    ...(candidate.gameState.skills.byId[id] ?? {
+      level: 0,
+      timerSeconds: 0,
+      secondaryTimerSeconds: 0,
+    }),
+    owned: true,
+  })
+  candidate.gameState = {
+    ...candidate.gameState,
+    skills: {
+      ...candidate.gameState.skills,
+      points: 0n,
+      activeAutoAssignment: [],
+      byId: {
+        ...candidate.gameState.skills.byId,
+        purityOfMind: owned('purityOfMind'),
+        purityOfBody: owned('purityOfBody'),
+        purityOfSEssence: owned('purityOfSEssence'),
+      },
+    },
+    infinity: {
+      ...candidate.gameState.infinity,
+      automaticResetEnabled: false,
+    },
+    quantum: {
+      ...candidate.gameState.quantum,
+      unlocks: {
+        ...candidate.gameState.quantum.unlocks,
+        purity: true,
+      },
+    },
+    timeline: {
+      ...candidate.gameState.timeline,
+      storedTimeAvailableSeconds: 0,
+    },
+  }
+  candidate.debugOptionsEnabled = true
+  candidate.debugEntitlementPurchased = true
+  return session.prepare(candidate)
+}
+
+function expectPuritySnapshotReady(
+  snapshot: ReturnType<
+    ReturnType<typeof createProductionBrowserComposition>['runtime']['snapshot']
+  >,
+): void {
+  expect(snapshot.phase).toBe('ready')
+  if (snapshot.phase !== 'ready') return
+  expect(snapshot.gameplay.resources.skills.points).toBe(DISCRETE_MAXIMUM)
+  expect(snapshot.gameplay.progression.quantum.unlocks.purity).toBe(true)
+  expect(snapshot.gameplay.progression.skills.byId.purityOfMind?.owned).toBe(true)
+  expect(snapshot.gameplay.progression.skills.byId.purityOfBody?.owned).toBe(true)
+  expect(snapshot.gameplay.progression.skills.byId.purityOfSEssence?.owned).toBe(true)
+  expect(snapshot.gameplay.derived.dyson.status).toBe('ready')
+  expect(invalidNumberPaths(snapshot)).toEqual([])
+}
+
+function invalidNumberPaths(
+  value: unknown,
+  path = '$',
+  seen = new WeakSet<object>(),
+): string[] {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? [] : [path]
+  }
+  if (value === null || typeof value !== 'object' || seen.has(value)) {
+    return []
+  }
+  seen.add(value)
+  return Object.entries(value).flatMap(([key, entry]) =>
+    invalidNumberPaths(entry, `${path}.${key}`, seen),
+  )
+}
 
 function repositoryFor(
   database: IndexedDbBrowserSaveDatabase,
