@@ -13380,6 +13380,12 @@
       "value": "开发者选项的金额输入框现在支持正负调整，可增加资源或将其扣减至不低于零；同时支持游戏全部标准后缀与指数写法，并在 iOS 上调用可输入文本的键盘。"
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "轻触待确认的离线时间操作之外的区域现在会将其取消；正在进行的处理仍受保护，不会被意外关闭。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,

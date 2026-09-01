@@ -34,19 +34,30 @@ describe('Wiki patch-note content', () => {
     expect(releaseSection).not.toBeNull()
     const release = within(releaseSection!)
 
-    expect(release.getByRole('heading', { name: '1 September 2026' }))
-      .not.toBeNull()
-    expect(release.getByText(
+    const datedHeading = release.getByRole('heading', {
+      name: '1 September 2026',
+    })
+    const datedList = datedHeading.nextElementSibling
+    expect(datedList).toBeInstanceOf(HTMLUListElement)
+    const datedNotes = within(datedList as HTMLElement)
+    expect(datedNotes.getByText(
       'The free Community boost can now be activated even at zero Influence, without spending any Influence.',
     )).not.toBeNull()
-    expect(release.getByText(
+    expect(datedNotes.getByText(
       'Completed Offline Time summaries now close reliably with Continue or a tap outside the dialog, prevent that tap from reaching the page underneath, and return focus to an available Offline Time control.',
     )).not.toBeNull()
-    expect(release.getByText(
+    expect(datedNotes.getByText(
       'Added durable compatibility checks for universe designations beyond the signed 64-bit range, Purity at maximum Skill Points through Stored Time and save reloads, and Division-adjusted final Bot goals.',
     )).not.toBeNull()
-    expect(release.getByRole('heading', { name: 'Earlier 4.1.5 updates' }))
-      .not.toBeNull()
+    const earlierHeading = release.getByRole('heading', {
+      name: 'Earlier 4.1.5 updates',
+    })
+    const earlierList = earlierHeading.nextElementSibling
+    expect(earlierList).toBeInstanceOf(HTMLUListElement)
+    const earlierNotes = within(earlierList as HTMLElement)
+    expect(earlierNotes.getByText(
+      'Tapping outside a pending Offline Time confirmation now dismisses it, while active processing remains protected.',
+    )).not.toBeNull()
     expect(screen.queryByText('Version 4.1.6')).toBeNull()
   })
 })

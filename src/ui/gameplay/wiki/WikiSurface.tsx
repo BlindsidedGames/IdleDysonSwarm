@@ -205,6 +205,7 @@ const version415PatchNoteMessages = [
   messages.patchNotesVersion415StoreOwnership,
   messages.patchNotesVersion415ExtremeValues,
   messages.patchNotesVersion415Startup,
+  messages.patchNotesVersion415OfflineConfirmation,
 ] as const
 
 const version415September1PatchNoteMessages = [

@@ -13380,6 +13380,12 @@
       "value": "Os campos de valor das Opções de Desenvolvedor agora aceitam ajustes positivos e negativos para adicionar ou remover recursos sem baixar de zero, entendem todos os sufixos Padrão e expoentes do jogo e solicitam um teclado compatível com texto no iOS."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "Tocar fora de uma confirmação pendente de Tempo Offline agora a dispensa, enquanto o processamento ativo continua protegido contra fechamentos acidentais."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,

@@ -1687,6 +1687,7 @@
   "wiki.patch-notes.version-4-1-5.extreme-values": "强化了极大数值下的购买、奖励和资源转移，确保入账数量、花费和剩余余额保持一致，不会丢失或凭空增加进度。",
   "wiki.patch-notes.version-4-1-5.facilities": "设施及其研究现在遵循永久进度解锁。巨型结构会接续普通设施网格，显示生产进度，并在逐一解锁时显示对应的自动化和研究。",
   "wiki.patch-notes.version-4-1-5.number-input": "开发者选项的金额输入框现在支持正负调整，可增加资源或将其扣减至不低于零；同时支持游戏全部标准后缀与指数写法，并在 iOS 上调用可输入文本的键盘。",
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": "轻触待确认的离线时间操作之外的区域现在会将其取消；正在进行的处理仍受保护，不会被意外关闭。",
   "wiki.patch-notes.version-4-1-5.persistence": "修复了页面恢复和进度边界。重新载入后会回到正确且可用的页面，不会提前显示尚未解锁的技能、无限、调试或后期内容。",
   "wiki.patch-notes.version-4-1-5.prestige-shops": "统一了无限与量子升级卡片、购买状态和设置。两间商店都可以隐藏已满级升级，并且首次重置可用时就会解锁无限。",
   "wiki.patch-notes.version-4-1-5.reality": "影响力与奇异物质现在和其他大型资源一样使用扩展的连续数值系统。自动收集影响力会持续进行，并会在浮点精度受限时保留已生成的工人。",

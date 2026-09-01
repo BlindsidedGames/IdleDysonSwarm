@@ -13380,6 +13380,12 @@
       "value": "Les champs de montant des Options de développement acceptent désormais les ajustements positifs et négatifs pour ajouter ou retirer des ressources sans descendre sous zéro, comprennent tous les suffixes Standard et les exposants du jeu, et demandent un clavier compatible avec la saisie de texte sur iOS."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "Toucher en dehors d’une confirmation de Temps hors ligne en attente l’annule désormais, tandis que le traitement actif reste protégé contre toute fermeture accidentelle."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,

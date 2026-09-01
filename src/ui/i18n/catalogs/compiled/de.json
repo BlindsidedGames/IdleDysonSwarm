@@ -13380,6 +13380,12 @@
       "value": "Mengenfelder der Entwickleroptionen akzeptieren jetzt positive und negative Anpassungen, die Ressourcen hinzufügen oder bis auf null entfernen, verstehen alle Standard-Suffixe und Exponenten des Spiels und öffnen unter iOS eine textfähige Tastatur."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "Ein Tippen außerhalb einer ausstehenden Offline-Zeit-Bestätigung verwirft sie nun, während die aktive Verarbeitung vor versehentlichem Schließen geschützt bleibt."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,

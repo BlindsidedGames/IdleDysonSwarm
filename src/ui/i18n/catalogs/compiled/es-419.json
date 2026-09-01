@@ -13380,6 +13380,12 @@
       "value": "Los campos de cantidad de las Opciones de desarrollo ahora aceptan ajustes positivos y negativos para añadir o retirar recursos sin bajar de cero, reconocen todos los sufijos Estándar y exponentes del juego y solicitan un teclado apto para texto en iOS."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "Tocar fuera de una confirmación pendiente de Tiempo sin conexión ahora la descarta, mientras el procesamiento activo sigue protegido contra cierres accidentales."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,

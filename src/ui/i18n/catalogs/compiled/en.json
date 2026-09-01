@@ -13380,6 +13380,12 @@
       "value": "Developer amount fields now accept signed adjustments that add or remove resources without going below zero, understand the game’s full Standard suffixes and exponents, and request a text-capable keyboard on iOS."
     }
   ],
+  "wiki.patch-notes.version-4-1-5.offline-confirmation": [
+    {
+      "type": 0,
+      "value": "Tapping outside a pending Offline Time confirmation now dismisses it, while active processing remains protected."
+    }
+  ],
   "wiki.patch-notes.version-4-1-5.persistence": [
     {
       "type": 0,
