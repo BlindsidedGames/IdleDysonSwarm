@@ -25,14 +25,30 @@ describe('Stored Time worker protocol', () => {
   test('accepts complete typed frames', () => {
     expect(isStoredTimeWorkerOutboundMessage({
       type: 'ready',
-      protocolVersion: 2,
+      protocolVersion: 3,
       buildId: null,
     })).toBe(true)
     expect(isStoredTimeWorkerOutboundMessage({
       type: 'completed',
-      protocolVersion: 2,
+      protocolVersion: 3,
       jobId: 'job',
       candidate: {},
+      firstDisasterOccurrences: [{
+        cause: 'Meteor',
+        strangeMatterGranted: 1,
+        resetCount: 1n,
+        preResetEra: 'information',
+      }],
+      consumedSeconds: 10,
+      remainingSeconds: 0,
+      progress,
+    })).toBe(true)
+    expect(isStoredTimeWorkerOutboundMessage({
+      type: 'completed',
+      protocolVersion: 3,
+      jobId: 'job',
+      candidate: {},
+      firstDisasterOccurrences: [],
       consumedSeconds: 10,
       remainingSeconds: 0,
       progress,
@@ -41,33 +57,35 @@ describe('Stored Time worker protocol', () => {
 
   test.each([
     { type: 'ready', protocolVersion: 1, buildId: null },
-    { type: 'progress', protocolVersion: 2 },
+    { type: 'progress', protocolVersion: 3 },
     {
       type: 'progress',
-      protocolVersion: 2,
+      protocolVersion: 3,
       progress: { ...progress, fraction: 2 },
     },
     {
       type: 'completed',
-      protocolVersion: 2,
+      protocolVersion: 3,
       jobId: 'job',
       candidate: {},
+      firstDisasterOccurrences: [],
       consumedSeconds: 5,
       remainingSeconds: 5,
       progress,
     },
     {
       type: 'completed',
-      protocolVersion: 2,
+      protocolVersion: 3,
       jobId: 'job',
       candidate: {},
+      firstDisasterOccurrences: [],
       consumedSeconds: Number.NaN,
       remainingSeconds: 0,
       progress,
     },
     {
       type: 'failed',
-      protocolVersion: 2,
+      protocolVersion: 3,
       jobId: 'job',
       progress,
     },

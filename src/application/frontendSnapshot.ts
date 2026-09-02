@@ -490,6 +490,8 @@ export interface FrontendSnapshotContext {
     CanonicalRuntimeState['selectedSkillPresetSlot']
   readonly lastSkillPresetApplication:
     CanonicalRuntimeState['lastSkillPresetApplication']
+  readonly presentationEvents:
+    CanonicalRuntimeState['presentationEvents']
   readonly previewDemand?: FrontendGameplayPreviewDemand
   readonly previousPreviews?: DeepReadonly<FrontendGameplayPreviews>
   /**
@@ -917,6 +919,8 @@ export interface FrontendRuntimeFacts {
     CanonicalRuntimeState['selectedSkillPresetSlot']
   readonly lastSkillPresetApplication:
     CanonicalRuntimeState['lastSkillPresetApplication']
+  readonly presentationEvents:
+    CanonicalRuntimeState['presentationEvents']
 }
 
 export interface FrontendGameplayPreviews {
@@ -1081,6 +1085,8 @@ export function selectFrontendApplicationSnapshot(
               application.state.selectedSkillPresetSlot,
             lastSkillPresetApplication:
               application.state.lastSkillPresetApplication,
+            presentationEvents:
+              application.state.presentationEvents,
             previewDemand: context.previewDemand,
             previousPreviews: context.previousPreviews,
             previousGameplay: context.previousGameplay,
@@ -2310,6 +2316,7 @@ function selectRuntimeFacts(
     selectedSkillPresetSlot: context.selectedSkillPresetSlot,
     lastSkillPresetApplication:
       context.lastSkillPresetApplication,
+    presentationEvents: context.presentationEvents,
     tinker:
       derived.dyson.status === 'ready'
         ? {

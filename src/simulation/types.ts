@@ -32,7 +32,30 @@ export interface SimulationEvent {
   readonly id?: string
 }
 
+export type SimulationEra = 'foundational' | 'information' | 'space-age'
+
+export type AutomaticDreamDisasterCause =
+  | 'Meteor'
+  | 'ArtificialIntelligence'
+  | 'GlobalWarming'
+
+/** Exact presentation facts captured at the automatic-reset boundary. */
+export interface SimulationDisasterPresentationEvent {
+  readonly cause: AutomaticDreamDisasterCause
+  readonly strangeMatterGranted: number
+  readonly resetCount: bigint
+  readonly firstLifetimeOccurrence: boolean
+  readonly preResetEra: SimulationEra
+}
+
 export interface SimulationPresentationSummary {
+  /** Foreground events presented as first dialogs or repeat banners. */
+  disasterEvents: SimulationDisasterPresentationEvent[]
+  /**
+   * First lifetime discoveries made by a Stored Time candidate. This list is
+   * capped naturally at one event per cause and is never used for banners.
+   */
+  storedTimeFirstDisasterEvents: SimulationDisasterPresentationEvent[]
   ordinaryInfinityCount: bigint
   breakInfinityCount: bigint
   ordinaryInfinityPoints: bigint
@@ -52,6 +75,8 @@ export interface SimulationPresentationSummary {
 
 export function createSimulationSummary(): SimulationPresentationSummary {
   return {
+    disasterEvents: [],
+    storedTimeFirstDisasterEvents: [],
     ordinaryInfinityCount: 0n,
     breakInfinityCount: 0n,
     ordinaryInfinityPoints: 0n,

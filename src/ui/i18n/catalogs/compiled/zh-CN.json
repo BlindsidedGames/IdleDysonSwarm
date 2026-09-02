@@ -3067,6 +3067,122 @@
       "value": "在车库里手工组装"
     }
   ],
+  "gameplay.notifications.continue": [
+    {
+      "type": 0,
+      "value": "继续"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.dialog": [
+    {
+      "type": 0,
+      "value": "模拟世界被 AI 霸主占领。模拟进度已重置，你获得了 "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " 奇异物质。请在“现实”选项卡中购买“反制 AI 霸主”，以便幸存。"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.title": [
+    {
+      "type": 0,
+      "value": "AI 霸主"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.dialog": [
+    {
+      "type": 0,
+      "value": "模拟世界被全球变暖摧毁。模拟进度已重置，你获得了 "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " 奇异物质。请在“现实”选项卡中购买“反制全球变暖”，以便幸存。"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.title": [
+    {
+      "type": 0,
+      "value": "全球变暖"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.dialog": [
+    {
+      "type": 0,
+      "value": "模拟世界被流星风暴摧毁。模拟进度已重置，你获得了 "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " 奇异物质。请在“现实”选项卡中购买“反制流星风暴”，以便幸存。"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.title": [
+    {
+      "type": 0,
+      "value": "流星风暴"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": "重置了模拟 · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " 奇异物质"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat-multiple": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": "重置了 "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " 个模拟 · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " 奇异物质"
+    }
+  ],
+  "gameplay.notifications.view-countermeasures": [
+    {
+      "type": 0,
+      "value": "查看反制措施"
+    }
+  ],
   "infinity.automatic-reset": [
     {
       "type": 0,
@@ -13462,6 +13578,36 @@
     {
       "type": 0,
       "value": "全面优化了界面，在手机、平板和宽屏上统一了文字大小、间距、边框、面板密度和页面配色。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6": [
+    {
+      "type": 0,
+      "value": "版本 4.1.6"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.bots-summary": [
+    {
+      "type": 0,
+      "value": "新增默认开启的机器人设置：控制面板收起时，仍会以独占整行的方式显示活跃、累计和衰变面板统计。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.disasters": [
+    {
+      "type": 0,
+      "value": "模拟中的自动灾难首次发生时，现在会显示对应主题的说明对话框；之后在前台发生的重置会作为定时提示显示在所有游戏选项卡上。离线时间中首次遇到的灾难会在完成摘要关闭后显示，而重复灾难仍只在摘要中汇总。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.facilities": [
+    {
+      "type": 0,
+      "value": "修复了设施卡片在部分设备上挤成狭窄列的问题，并会在首个设施可用前显示已锁定的下一设施预览。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.shared-notices": [
+    {
+      "type": 0,
+      "value": "游戏提示现已使用共享通知队列，因此自动应用技能预设时的冲突提示会在切换选项卡后继续显示，不再仅限于机器人选项卡。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

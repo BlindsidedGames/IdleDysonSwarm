@@ -1,5 +1,8 @@
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
-import type { StoredTimeCompletionSummary } from '../core/storedTimeCompletionSummary'
+import type {
+  StoredTimeCompletionSummary,
+  StoredTimeFirstDisasterOccurrence,
+} from '../core/storedTimeCompletionSummary'
 import { DYSON_FACILITY_IDS } from '../game-state/facilityIds'
 import type {
   CanonicalFacilityId,
@@ -15,6 +18,7 @@ export function summarizeStoredTimeCompletion(
     readonly simulationUpdates: number
     readonly initiallyPlannedUpdates: number
   },
+  firstDisasterOccurrences: readonly Readonly<StoredTimeFirstDisasterOccurrence>[] = [],
 ): StoredTimeCompletionSummary {
   const beforeTotals = before.gameState.statistics.lifetime
   const afterTotals = after.gameState.statistics.lifetime
@@ -42,6 +46,9 @@ export function summarizeStoredTimeCompletion(
     strangeMatter: positiveFiniteDelta(
       afterTotals.strangeMatter,
       beforeTotals.strangeMatter,
+    ),
+    firstDisasterOccurrences: Object.freeze(
+      firstDisasterOccurrences.map((event) => Object.freeze({ ...event })),
     ),
     realityWorkers: discreteDelta(
       afterTotals.realityWorkers,

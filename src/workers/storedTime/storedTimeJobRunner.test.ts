@@ -127,7 +127,7 @@ class FakeWorker {
     this.buildId = buildId
     queueMicrotask(() => this.emit({
       type: 'ready',
-      protocolVersion: 2,
+      protocolVersion: 3,
       buildId: this.buildId,
     }))
   }
@@ -167,12 +167,13 @@ class FakeWorker {
       maximumChunkMilliseconds: 1,
     }
     queueMicrotask(() => {
-      this.emit({ type: 'progress', protocolVersion: 2, progress })
+      this.emit({ type: 'progress', protocolVersion: 3, progress })
       this.emit({
         type: 'completed',
-        protocolVersion: 2,
+        protocolVersion: 3,
         jobId: start.jobId,
         candidate: start.state,
+        firstDisasterOccurrences: [],
         consumedSeconds: 0.1,
         remainingSeconds: 0,
         progress,

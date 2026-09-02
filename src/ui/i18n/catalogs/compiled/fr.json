@@ -3067,6 +3067,122 @@
       "value": "Bricolez dans votre garage"
     }
   ],
+  "gameplay.notifications.continue": [
+    {
+      "type": 0,
+      "value": "Continuer"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.dialog": [
+    {
+      "type": 0,
+      "value": "Le monde simulé a été pris par les Suzerains IA. La progression de la Simulation a été réinitialisée et vous avez gagné "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Matière étrange. Achetez Contrer les Suzerains IA dans l’onglet Réalité pour y survivre."
+    }
+  ],
+  "gameplay.notifications.disaster.ai.title": [
+    {
+      "type": 0,
+      "value": "Suzerains IA"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.dialog": [
+    {
+      "type": 0,
+      "value": "Le monde simulé a été détruit par le réchauffement climatique. La progression de la Simulation a été réinitialisée et vous avez gagné "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Matière étrange. Achetez Contrer le réchauffement climatique dans l’onglet Réalité pour y survivre."
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.title": [
+    {
+      "type": 0,
+      "value": "Réchauffement climatique"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.dialog": [
+    {
+      "type": 0,
+      "value": "Le monde simulé a été détruit par une tempête de météores. La progression de la Simulation a été réinitialisée et vous avez gagné "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Matière étrange. Achetez Contrer la tempête de météores dans l’onglet Réalité pour y survivre."
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.title": [
+    {
+      "type": 0,
+      "value": "Tempête de météores"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " a réinitialisé la Simulation · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Matière étrange"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat-multiple": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " a réinitialisé "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Simulations · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Matière étrange"
+    }
+  ],
+  "gameplay.notifications.view-countermeasures": [
+    {
+      "type": 0,
+      "value": "Voir les contre-mesures"
+    }
+  ],
   "infinity.automatic-reset": [
     {
       "type": 0,
@@ -13462,6 +13578,36 @@
     {
       "type": 0,
       "value": "Affinement de toute l’interface avec des tailles de texte, espacements, bordures, densités de panneaux et couleurs d’onglet plus cohérents sur téléphones, tablettes et écrans larges."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6": [
+    {
+      "type": 0,
+      "value": "Version 4.1.6"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.bots-summary": [
+    {
+      "type": 0,
+      "value": "Ajout d’un réglage des Bots activé par défaut qui conserve les statistiques de Panneaux Actifs, Cumulés et Désintégrés dans une ligne pleine largeur lorsque les commandes sont repliées."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.disasters": [
+    {
+      "type": 0,
+      "value": "Les catastrophes automatiques des Simulations expliquent désormais leur première occurrence dans une boîte de dialogue thématique, puis affichent les réinitialisations suivantes au premier plan sous forme de notifications temporisées dans tous les onglets de jeu. Les premières catastrophes atteintes pendant le Temps hors ligne apparaissent après son résumé, tandis que les répétitions restent regroupées dans celui-ci."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.facilities": [
+    {
+      "type": 0,
+      "value": "Correction des cartes d’Installations qui se réduisaient en colonnes étroites sur certains appareils, et ajout de l’aperçu verrouillé de la prochaine Installation avant que la première ne soit disponible."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.shared-notices": [
+    {
+      "type": 0,
+      "value": "Les notifications de jeu utilisent désormais une file partagée : les avertissements de conflit lors de l’application automatique d’un Préréglage de Compétences restent visibles lorsque vous changez d’onglet au lieu d’être limités aux Bots."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

@@ -3067,6 +3067,122 @@
       "value": "Faça uma gambiarra na garagem"
     }
   ],
+  "gameplay.notifications.continue": [
+    {
+      "type": 0,
+      "value": "Continuar"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.dialog": [
+    {
+      "type": 0,
+      "value": "O mundo simulado foi dominado pelos Senhores Supremos da IA. O progresso da Simulação foi reiniciado e você ganhou "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Matéria Estranha. Compre Neutralizar Senhores Supremos da IA na aba Realidade para sobreviver."
+    }
+  ],
+  "gameplay.notifications.disaster.ai.title": [
+    {
+      "type": 0,
+      "value": "Senhores Supremos da IA"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.dialog": [
+    {
+      "type": 0,
+      "value": "O mundo simulado foi destruído pelo aquecimento global. O progresso da Simulação foi reiniciado e você ganhou "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Matéria Estranha. Compre Neutralizar Aquecimento Global na aba Realidade para sobreviver."
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.title": [
+    {
+      "type": 0,
+      "value": "Aquecimento Global"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.dialog": [
+    {
+      "type": 0,
+      "value": "O mundo simulado foi destruído por uma tempestade de meteoros. O progresso da Simulação foi reiniciado e você ganhou "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Matéria Estranha. Compre Neutralizar Tempestade de Meteoros na aba Realidade para sobreviver."
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.title": [
+    {
+      "type": 0,
+      "value": "Tempestade de Meteoros"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " reiniciou a Simulação · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Matéria Estranha"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat-multiple": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " reiniciou "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Simulações · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Matéria Estranha"
+    }
+  ],
+  "gameplay.notifications.view-countermeasures": [
+    {
+      "type": 0,
+      "value": "Ver contramedidas"
+    }
+  ],
   "infinity.automatic-reset": [
     {
       "type": 0,
@@ -13462,6 +13578,36 @@
     {
       "type": 0,
       "value": "Toda a interface foi refinada com tamanhos de texto, espaçamentos, bordas, densidade de painéis e cores de abas mais consistentes em celulares, tablets e telas largas."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6": [
+    {
+      "type": 0,
+      "value": "Versão 4.1.6"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.bots-summary": [
+    {
+      "type": 0,
+      "value": "Adicionamos uma configuração de Bots, ativada por padrão, que mantém as estatísticas de Painéis Ativos, Totais e Decaídos visíveis em uma linha de largura total quando os controles estão recolhidos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.disasters": [
+    {
+      "type": 0,
+      "value": "Os desastres automáticos das Simulações agora explicam a primeira ocorrência em uma janela temática e mostram reinícios posteriores durante o jogo ativo como avisos temporizados em todas as abas. Os primeiros desastres alcançados durante o Tempo Offline aparecem após o resumo final, enquanto as repetições continuam apenas resumidas nele."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.facilities": [
+    {
+      "type": 0,
+      "value": "Corrigimos os cartões de Instalações que se comprimiam em colunas estreitas em alguns dispositivos e adicionamos a prévia bloqueada da próxima Instalação antes de a primeira ficar disponível."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.shared-notices": [
+    {
+      "type": 0,
+      "value": "Os avisos do jogo agora usam uma fila de notificações compartilhada, então os avisos de conflito ao aplicar automaticamente uma Predefinição de Habilidades continuam visíveis ao trocar de aba em vez de ficarem limitados aos Bots."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

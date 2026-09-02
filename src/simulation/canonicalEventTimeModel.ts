@@ -734,8 +734,9 @@ export class CanonicalEventTimeModel
 
   applyDreamReset(summary: SimulationPresentationSummary): void {
     if (this.currentIssue !== undefined) return
+    const preResetState = this.carrier.gameState
     const result = applyCanonicalDreamReset(
-      this.carrier.gameState,
+      preResetState,
       { kind: 'automatic' },
       this.context.dreamResetDefinitions,
     )
@@ -749,6 +750,31 @@ export class CanonicalEventTimeModel
       return
     }
     if (!result.applied) return
+
+    if (result.cause !== 'BlackHole') {
+      const lifetime = preResetState.statistics.lifetime
+      const previousLifetimeCount =
+        result.cause === 'Meteor'
+          ? lifetime.meteorDreamResets
+          : result.cause === 'ArtificialIntelligence'
+            ? lifetime.aiDreamResets
+            : lifetime.globalWarmingDreamResets
+      const presentationEvent = Object.freeze({
+        cause: result.cause,
+        strangeMatterGranted: result.rewardGranted,
+        resetCount: 1n,
+        firstLifetimeOccurrence: previousLifetimeCount === 0n,
+        preResetEra: simulationEraBeforeReset(preResetState),
+      })
+      if (this.context.mode === 'active') {
+        summary.disasterEvents.push(presentationEvent)
+      } else if (
+        this.context.mode === 'stored-time' &&
+        presentationEvent.firstLifetimeOccurrence
+      ) {
+        summary.storedTimeFirstDisasterEvents.push(presentationEvent)
+      }
+    }
 
     const deferredState = withDeferredEventStatistics(
       result.state,
@@ -1914,6 +1940,10 @@ function mergeSummary(
   target: SimulationPresentationSummary,
   source: Readonly<SimulationPresentationSummary>,
 ): void {
+  target.disasterEvents.push(...source.disasterEvents)
+  target.storedTimeFirstDisasterEvents.push(
+    ...source.storedTimeFirstDisasterEvents,
+  )
   target.ordinaryInfinityCount = addDiscrete(
     target.ordinaryInfinityCount,
     source.ordinaryInfinityCount,
@@ -1974,6 +2004,14 @@ function mergeSummary(
     target.realityCapacityStallSeconds,
     source.realityCapacityStallSeconds,
   )
+}
+
+function simulationEraBeforeReset(
+  state: Readonly<CanonicalGameStateV1>,
+): 'foundational' | 'information' | 'space-age' {
+  if (state.dream.resources.spaceFactories >= 1) return 'space-age'
+  if (state.dream.resources.cities >= 1) return 'information'
+  return 'foundational'
 }
 
 function isRealityUpgradeOwned(

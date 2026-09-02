@@ -12,7 +12,10 @@ import type {
   FrontendCanonicalResources,
   FrontendGameplayPreviews,
 } from '../../../application/frontendSnapshot'
-import type { StoredTimeCompletionSummary } from '../../../core/storedTimeCompletionSummary'
+import type {
+  StoredTimeCompletionSummary,
+  StoredTimeFirstDisasterOccurrence,
+} from '../../../core/storedTimeCompletionSummary'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import { Button } from '../../components'
 import { formatGameDuration, formatGameNumber } from '../../i18n/formatters'
@@ -54,6 +57,13 @@ export interface OfflineTimeSurfaceDraft {
   readonly armed: boolean
 }
 
+export interface StoredTimeFirstDisasterDialogBatch {
+  /** Stable committed application revision for this Stored Time result. */
+  readonly completionSequence: number
+  readonly occurrences:
+    readonly Readonly<StoredTimeFirstDisasterOccurrence>[]
+}
+
 export interface OfflineTimeSurfaceProps {
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['time']
@@ -70,6 +80,9 @@ export interface OfflineTimeSurfaceProps {
   readonly initialDraft?: Readonly<OfflineTimeSurfaceDraft>
   readonly onDraftChange?: (
     draft: Readonly<OfflineTimeSurfaceDraft>,
+  ) => void
+  readonly onFirstDisasterDialogsReady?: (
+    batch: Readonly<StoredTimeFirstDisasterDialogBatch>,
   ) => void
 }
 
@@ -118,6 +131,7 @@ export function OfflineTimeSurface({
   },
   initialDraft,
   onDraftChange,
+  onFirstDisasterDialogsReady,
 }: OfflineTimeSurfaceProps) {
   const intl = useIntl()
   const subscribeToJob = useCallback(
@@ -168,6 +182,7 @@ export function OfflineTimeSurface({
   >(null)
   const [feedback, setFeedback] = useState<'failure' | null>(null)
   const [completionSummary, setCompletionSummary] = useState<{
+    readonly completionSequence: number
     readonly consumedSeconds: number
     readonly result: StoredTimeCompletionSummary
   } | null>(null)
@@ -330,8 +345,14 @@ export function OfflineTimeSurface({
 
   const dismissCompletionSummary = useCallback((): void => {
     if (completionSummary === null || jobActive) return
+    if (completionSummary.result.firstDisasterOccurrences.length > 0) {
+      onFirstDisasterDialogsReady?.({
+        completionSequence: completionSummary.completionSequence,
+        occurrences: completionSummary.result.firstDisasterOccurrences,
+      })
+    }
     setCompletionSummary(null)
-  }, [completionSummary, jobActive])
+  }, [completionSummary, jobActive, onFirstDisasterDialogsReady])
 
   const spend = async (returnFocus: HTMLElement): Promise<void> => {
     const requestedSeconds =
@@ -371,6 +392,7 @@ export function OfflineTimeSurface({
       ) {
         setFeedback(null)
         setCompletionSummary({
+          completionSequence: result.stateRevision,
           consumedSeconds: result.consumedSeconds,
           result: result.summary,
         })

@@ -197,6 +197,16 @@ export class StoredTimeSimulation {
       protocolVersion: STORED_TIME_WORKER_PROTOCOL_VERSION,
       jobId: this.jobId,
       candidate: this.state,
+      firstDisasterOccurrences: Object.freeze(
+        this.summary.storedTimeFirstDisasterEvents.map((event) =>
+          Object.freeze({
+            cause: event.cause,
+            strangeMatterGranted: event.strangeMatterGranted,
+            resetCount: event.resetCount,
+            preResetEra: event.preResetEra,
+          }),
+        ),
+      ),
       consumedSeconds: this.requestedSeconds,
       remainingSeconds: 0,
       progress: this.progress(),
@@ -250,7 +260,14 @@ function mergeSummary(
   target: SimulationPresentationSummary,
   source: Readonly<SimulationPresentationSummary>,
 ): void {
+  target.disasterEvents.push(...source.disasterEvents)
+  target.storedTimeFirstDisasterEvents.push(
+    ...source.storedTimeFirstDisasterEvents,
+  )
   for (const key of Object.keys(target) as (keyof SimulationPresentationSummary)[]) {
+    if (key === 'disasterEvents' || key === 'storedTimeFirstDisasterEvents') {
+      continue
+    }
     const value = source[key]
     if (typeof value === 'bigint') {
       ;(target[key] as bigint) += value

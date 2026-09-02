@@ -131,8 +131,8 @@ export interface DysonGameplayShellProps {
   readonly productionSummary?: DysonShellRegion
   readonly distribution?: DysonShellRegion
   readonly sidePanelSupplement?: ReactNode
-  /** Temporary route-owned status shown above the active playfield. */
-  readonly routeBanner?: DysonShellRegion
+  /** Persistent gameplay notification host above route-owned content. */
+  readonly notifications?: ReactNode
   readonly routeSupplement?: DysonShellRegion
   readonly routeContent?: DysonShellRegion
   /** Lets a route-owned scrolling surface meet the shell edges without a

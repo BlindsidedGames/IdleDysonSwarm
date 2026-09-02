@@ -4,8 +4,9 @@ import {
 } from '../../core/finiteNonNegativeNumber'
 import type { DysonPresentationTuning } from '../../simulation/canonicalDysonDerivation'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
+import type { StoredTimeFirstDisasterOccurrence } from '../../core/storedTimeCompletionSummary'
 
-export const STORED_TIME_WORKER_PROTOCOL_VERSION = 2 as const
+export const STORED_TIME_WORKER_PROTOCOL_VERSION = 3 as const
 
 export interface StoredTimeJobProgress {
   readonly jobId: string
@@ -76,6 +77,8 @@ export type StoredTimeWorkerOutboundMessage =
       readonly protocolVersion: typeof STORED_TIME_WORKER_PROTOCOL_VERSION
       readonly jobId: string
       readonly candidate: CanonicalRuntimeState
+      readonly firstDisasterOccurrences:
+        readonly Readonly<StoredTimeFirstDisasterOccurrence>[]
       readonly consumedSeconds: number
       readonly remainingSeconds: number
       readonly progress: StoredTimeJobProgress
@@ -128,6 +131,7 @@ export function isStoredTimeWorkerOutboundMessage(
     candidate.type !== 'completed' ||
     typeof candidate.jobId !== 'string' ||
     !isRecord(candidate.candidate) ||
+    !isStoredTimeFirstDisasterOccurrences(candidate.firstDisasterOccurrences) ||
     !isFiniteNonNegative(candidate.consumedSeconds) ||
     !isFiniteNonNegative(candidate.remainingSeconds) ||
     !isStoredTimeJobProgress(candidate.progress)
@@ -138,6 +142,32 @@ export function isStoredTimeWorkerOutboundMessage(
     Math.abs(
       candidate.consumedSeconds - candidate.progress.requestedSeconds,
     ) <= 1e-8
+}
+
+function isStoredTimeFirstDisasterOccurrences(
+  value: unknown,
+): value is readonly Readonly<StoredTimeFirstDisasterOccurrence>[] {
+  if (!Array.isArray(value) || value.length > 3) return false
+  const causes = new Set<string>()
+  for (const item of value) {
+    if (!isRecord(item)) return false
+    if (
+      !['Meteor', 'ArtificialIntelligence', 'GlobalWarming'].includes(
+        String(item.cause),
+      ) ||
+      !isFiniteNonNegative(item.strangeMatterGranted) ||
+      typeof item.resetCount !== 'bigint' ||
+      item.resetCount < 1n ||
+      !['foundational', 'information', 'space-age'].includes(
+        String(item.preResetEra),
+      ) ||
+      causes.has(String(item.cause))
+    ) {
+      return false
+    }
+    causes.add(String(item.cause))
+  }
+  return true
 }
 
 function isStoredTimeJobProgress(value: unknown): value is StoredTimeJobProgress {

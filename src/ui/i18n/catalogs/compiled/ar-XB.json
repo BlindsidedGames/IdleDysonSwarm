@@ -5579,6 +5579,202 @@
       "value": "‬"
     }
   ],
+  "gameplay.notifications.continue": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouʇıunǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.dialog": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ sıɯnʅɐʇǝp ʍoɹʅp ʍɐs ʇɐʞǝu oʌǝɹ qʎ ∀I Oʌǝɹʅoɹps. Sıɯnʅɐʇıou dɹoƃɹǝss ɥɐs ɹǝsǝʇ ɐup ʎon ƃɐıuǝp "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Sʇɹɐuƃǝ Wɐʇʇǝɹ. Ԁnɹɔɥɐsǝ Ↄonuʇǝɹɐɔʇ ∀I Oʌǝɹʅoɹps ıu ʇɥǝ ᴚǝɐʅıʇʎ ʇɐq ʇo snɹʌıʌıʌǝ ıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀I Oʌǝɹʅoɹps"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.dialog": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ sıɯnʅɐʇǝp ʍoɹʅp ʍɐs pǝsʇɹoʎǝp qʎ ƃʅoqɐʅ ʍɐɹɯıuƃ. Sıɯnʅɐʇıou dɹoƃɹǝss ɥɐs ɹǝsǝʇ ɐup ʎon ƃɐıuǝp "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Sʇɹɐuƃǝ Wɐʇʇǝɹ. Ԁnɹɔɥɐsǝ Ↄonuʇǝɹɐɔʇ ⅁ʅoqɐʅ Mɐɹɯıuƃ ıu ʇɥǝ ᴚǝɐʅıʇʎ ʇɐq ʇo snɹʌıʌıʌǝ ıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ʅoqɐʅ Mɐɹɯıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.dialog": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ sıɯnʅɐʇǝp ʍoɹʅp ʍɐs pǝsʇɹoʎǝp qʎ ɐ ɯǝʇǝoɹ sʇoɹɯ. Sıɯnʅɐʇıou dɹoƃɹǝss ɥɐs ɹǝsǝʇ ɐup ʎon ƃɐıuǝp "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Sʇɹɐuƃǝ Wɐʇʇǝɹ. Ԁnɹɔɥɐsǝ Ↄonuʇǝɹɐɔʇ Wǝʇǝoɹ Sʇoɹɯ ıu ʇɥǝ ᴚǝɐʅıʇʎ ʇɐq ʇo snɹʌıʌıʌǝ ıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wǝʇǝoɹ Sʇoɹɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " ɹǝsǝʇ ʇɥǝ Sıɯnʅɐʇıou · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Sʇɹɐuƃǝ Wɐʇʇǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat-multiple": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " ɹǝsǝʇ "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Sıɯnʅɐʇıous · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Sʇɹɐuƃǝ Wɐʇʇǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.view-countermeasures": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıǝʍ Ↄonuʇǝɹɯǝɐsnɹǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "infinity.automatic-reset": [
     {
       "type": 0,
@@ -27162,6 +27358,76 @@
     {
       "type": 0,
       "value": "ᴚǝɟıuǝp ʇɥǝ ǝuʇıɹǝ ıuʇǝɹɟɐɔǝ ʍıʇɥ ɯoɹǝ ɔousısʇǝuʇ ʇǝxʇ sızǝs, sdɐɔıuƃ, qoɹpǝɹs, dɐuǝʅ pǝusıʇʎ, ɐup ɹonʇǝ ɔoʅonɹs ɐɔɹoss dɥouǝs, ʇɐqʅǝʇs, ɐup ʍıpǝ sɔɹǝǝus."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌǝɹsıou 4.1.6"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.bots-summary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɐu ou-qʎ-pǝɟɐnʅʇ Ԑoʇs sǝʇʇıuƃ ʇɥɐʇ ʞǝǝds ∀ɔʇıʌǝ, ⅂ıɟǝʇıɯǝ, ɐup ᗡǝɔɐʎǝp dɐuǝʅ sʇɐʇısʇıɔs ʌısıqʅǝ ıu ɐ ɟnʅʅ-ʍıpʇɥ ɹoʍ ʍɥıʅǝ ʇɥǝ ɔouʇɹoʅs ɐɹǝ ɔoʅʅɐdsǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.disasters": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇoɯɐʇıɔ Sıɯnʅɐʇıou pısɐsʇǝɹs uoʍ ǝxdʅɐıu ʇɥǝıɹ ɟıɹsʇ oɔɔnɹɹǝuɔǝ ʍıʇɥ ɐ ʇɥǝɯǝp pıɐʅoƃ ɐup sɥoʍ ʅɐʇǝɹ ɟoɹǝƃɹonup ɹǝsǝʇs ɐs ʇıɯǝp uoʇıɔǝs ɐɔɹoss ƃɐɯǝdʅɐʎ ʇɐqs. Ⅎıɹsʇ pısɐsʇǝɹs ɹǝɐɔɥǝp pnɹıuƃ Oɟɟʅıuǝ ⊥ıɯǝ ɐddǝɐɹ ɐɟʇǝɹ ıʇs ɔoɯdʅǝʇıou snɯɯɐɹʎ, ʍɥıʅǝ ɹǝdǝɐʇ Oɟɟʅıuǝ ⊥ıɯǝ pısɐsʇǝɹs ɹǝɯɐıu snɯɯɐɹızǝp ʇɥǝɹǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.facilities": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp Ⅎɐɔıʅıʇʎ ɔɐɹps ɔoʅʅɐdsıuƃ ıuʇo uɐɹɹoʍ ɔoʅnɯus ou soɯǝ pǝʌıɔǝs, ɐup ɐppǝp ʇɥǝ ʅoɔʞǝp uǝxʇ-Ⅎɐɔıʅıʇʎ dɹǝʌıǝʍ qǝɟoɹǝ ʇɥǝ ɟıɹsʇ Ⅎɐɔıʅıʇʎ ıs ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.shared-notices": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woʌǝp ƃɐɯǝdʅɐʎ uoʇıɔǝs ıuʇo ɐ sɥɐɹǝp uoʇıɟıɔɐʇıou bnǝnǝ, so ɐnʇoɯɐʇıɔ Sʞıʅʅ Ԁɹǝsǝʇ ɔouɟʅıɔʇ uoʇıɔǝs ɹǝɯɐıu ʌısıqʅǝ ʍɥǝu ɔɥɐuƃıuƃ ʇɐqs ıusʇǝɐp oɟ qǝıuƃ ʅıɯıʇǝp ʇo Ԑoʇs."
     },
     {
       "type": 0,
