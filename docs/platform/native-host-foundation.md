@@ -8,7 +8,7 @@ depends on retaining the production signing identities.
 ## Release identity
 
 `hosts/native-release.json` is the only hand-edited version source. It pins the
-current `4.1.5` marketing version and a safe local release-candidate default.
+current `4.1.6` marketing version and a safe local release-candidate default.
 Routine TestFlight and internal builds advance only the release candidate/build
 identity; do not change the Apple marketing version until an App Store release
 bump is explicitly approved. Run
