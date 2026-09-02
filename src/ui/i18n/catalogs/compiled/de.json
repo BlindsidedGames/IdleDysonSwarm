@@ -2723,6 +2723,12 @@
       "value": "Massenkäufe auf den nächsten Meilenstein aufrunden"
     }
   ],
+  "dyson.info.show-run-facts-when-collapsed": [
+    {
+      "type": 0,
+      "value": "Aktiv, Lebensdauer und Zerfallen immer anzeigen"
+    }
+  ],
   "dyson.info.stars-surrounded": [
     {
       "type": 0,
@@ -3059,6 +3065,122 @@
     {
       "type": 0,
       "value": "Bastle in deiner Garage"
+    }
+  ],
+  "gameplay.notifications.continue": [
+    {
+      "type": 0,
+      "value": "Weiter"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.dialog": [
+    {
+      "type": 0,
+      "value": "Die simulierte Welt wurde von KI-Overlords übernommen. Der Simulationsfortschritt wurde zurückgesetzt und du hast "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Seltsame Materie erhalten. Kaufe KI-Overlords abwehren im Realität-Tab, um sie zu überstehen."
+    }
+  ],
+  "gameplay.notifications.disaster.ai.title": [
+    {
+      "type": 0,
+      "value": "KI-Overlords"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.dialog": [
+    {
+      "type": 0,
+      "value": "Die simulierte Welt wurde durch globale Erwärmung zerstört. Der Simulationsfortschritt wurde zurückgesetzt und du hast "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Seltsame Materie erhalten. Kaufe Globale Erwärmung abwehren im Realität-Tab, um sie zu überstehen."
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.title": [
+    {
+      "type": 0,
+      "value": "Globale Erwärmung"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.dialog": [
+    {
+      "type": 0,
+      "value": "Die simulierte Welt wurde durch einen Meteorsturm zerstört. Der Simulationsfortschritt wurde zurückgesetzt und du hast "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Seltsame Materie erhalten. Kaufe Meteorsturm abwehren im Realität-Tab, um ihn zu überstehen."
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.title": [
+    {
+      "type": 0,
+      "value": "Meteorsturm"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " hat die Simulation zurückgesetzt · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Seltsame Materie"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat-multiple": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " hat "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Simulationen zurückgesetzt · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Seltsame Materie"
+    }
+  ],
+  "gameplay.notifications.view-countermeasures": [
+    {
+      "type": 0,
+      "value": "Gegenmaßnahmen ansehen"
     }
   ],
   "infinity.automatic-reset": [
@@ -13456,6 +13578,36 @@
     {
       "type": 0,
       "value": "Die gesamte Oberfläche wurde mit einheitlicheren Textgrößen, Abständen, Rahmen, Paneldichten und Seitenfarben für Smartphones, Tablets und breite Bildschirme verfeinert."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6": [
+    {
+      "type": 0,
+      "value": "Version 4.1.6"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.bots-summary": [
+    {
+      "type": 0,
+      "value": "Eine standardmäßig aktivierte Bots-Einstellung hält die Panelstatistiken Aktiv, Gesamt und Zerfallen in einer Zeile über die volle Breite sichtbar, wenn die Bedienelemente eingeklappt sind."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.disasters": [
+    {
+      "type": 0,
+      "value": "Automatische Simulationskatastrophen erklären ihr erstes Auftreten jetzt in einem thematisch passenden Dialog; spätere Zurücksetzungen im aktiven Spiel erscheinen als zeitlich begrenzte Hinweise in allen Spiel-Tabs. Erste Katastrophen während der Offline-Zeit erscheinen nach der Abschlussübersicht, während Wiederholungen weiterhin nur dort zusammengefasst werden."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.facilities": [
+    {
+      "type": 0,
+      "value": "Anlagenkarten, die auf manchen Geräten zu schmalen Spalten zusammenfielen, wurden korrigiert. Außerdem erscheint die gesperrte Vorschau auf die nächste Anlage jetzt schon, bevor die erste Anlage verfügbar ist."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.shared-notices": [
+    {
+      "type": 0,
+      "value": "Spielhinweise verwenden jetzt eine gemeinsame Benachrichtigungswarteschlange. Konflikthinweise bei automatisch angewendeten Skill-Voreinstellungen bleiben dadurch beim Wechseln des Tabs sichtbar und sind nicht mehr auf Bots beschränkt."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

@@ -51,7 +51,7 @@ export function settleStoredTimeReplayCompletion(
   ) {
     return {
       state,
-      summary: Object.freeze({ ...summary }),
+      summary: freezeSummary(summary),
     }
   }
   const automationTimeUntilNextEvent =
@@ -81,7 +81,7 @@ export function settleStoredTimeReplayCompletion(
         }
   return {
     state: phasePreservedState,
-    summary: Object.freeze({ ...summary }),
+    summary: freezeSummary(summary),
     issue,
   }
 }
@@ -208,8 +208,21 @@ function finish(
     baseSecondsConsumed,
     gameSecondsAdvanced,
     gameSpeed,
-    summary: Object.freeze({ ...summary }),
+    summary: freezeSummary(summary),
     issue,
     botCapPersistenceRequired,
   }
+}
+
+function freezeSummary(
+  summary: SimulationPresentationSummary,
+): Readonly<SimulationPresentationSummary> {
+  return Object.freeze({
+    ...summary,
+    disasterEvents: Object.freeze([...summary.disasterEvents]) as unknown as
+      SimulationPresentationSummary['disasterEvents'],
+    storedTimeFirstDisasterEvents: Object.freeze([
+      ...summary.storedTimeFirstDisasterEvents,
+    ]) as unknown as SimulationPresentationSummary['storedTimeFirstDisasterEvents'],
+  })
 }

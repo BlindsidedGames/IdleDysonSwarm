@@ -16,6 +16,38 @@ const progression = Object.freeze({
 })
 
 describe('Wiki patch-note content', () => {
+  test('shows the pending player-facing changes under 4.1.6', () => {
+    render(
+      <IntlProvider locale="en" messages={{}} onError={() => undefined}>
+        <WikiSurface
+          locale="en"
+          progression={progression}
+          initialCategory="patch-notes"
+        />
+      </IntlProvider>,
+    )
+
+    const releaseHeading = screen.getByRole('heading', {
+      name: 'Version 4.1.6',
+    })
+    const releaseSection = releaseHeading.closest('section')
+    expect(releaseSection).not.toBeNull()
+    const release = within(releaseSection!)
+
+    expect(release.getByText(
+      'Fixed Facility cards collapsing into narrow columns on some devices, and added the locked next-Facility preview before the first Facility is available.',
+    )).not.toBeNull()
+    expect(release.getByText(
+      'Added an on-by-default Bots setting that keeps Active, Lifetime, and Decayed panel statistics visible in a full-width row while the controls are collapsed.',
+    )).not.toBeNull()
+    expect(release.getByText(
+      'Moved gameplay notices into a shared notification queue, so automatic Skill Preset conflict notices remain visible when changing tabs instead of being limited to Bots.',
+    )).not.toBeNull()
+    expect(release.getByText(
+      'Automatic Simulation disasters now explain their first occurrence with a themed dialog and show later foreground resets as timed notices across gameplay tabs. First disasters reached during Offline Time appear after its completion summary, while repeat Offline Time disasters remain summarized there.',
+    )).not.toBeNull()
+  })
+
   test('keeps the 1 September campaign notes factual and grouped under 4.1.5', () => {
     render(
       <IntlProvider locale="en" messages={{}} onError={() => undefined}>
@@ -58,6 +90,5 @@ describe('Wiki patch-note content', () => {
     expect(earlierNotes.getByText(
       'Tapping outside a pending Offline Time confirmation now dismisses it, while active processing remains protected.',
     )).not.toBeNull()
-    expect(screen.queryByText('Version 4.1.6')).toBeNull()
   })
 })

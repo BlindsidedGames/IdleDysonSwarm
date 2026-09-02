@@ -27,6 +27,10 @@ import {
 import type {
   EnabledLocale,
 } from '../../i18n/localeRegistry'
+import {
+  readPresentationPreference,
+  writeBooleanPresentationPreference,
+} from '../../presentationPreferences'
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
@@ -70,6 +74,9 @@ type DysonBuyMode = Extract<
   { readonly kind: 'dyson.set-buy-mode' }
 >['buyMode']
 
+const SHOW_RUN_FACTS_WHEN_COLLAPSED_KEY =
+  'idle-dyson-swarm.bots.show-run-facts-when-collapsed.v1'
+
 export function DysonInfo({
   summary,
   statusSummary,
@@ -88,6 +95,12 @@ export function DysonInfo({
 }: DysonInfoProps) {
   const intl = useIntl()
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [showRunFactsWhenCollapsed, setShowRunFactsWhenCollapsed] =
+    useState(
+      () => readPresentationPreference(
+        SHOW_RUN_FACTS_WHEN_COLLAPSED_KEY,
+      ) !== 'false',
+    )
   const [settingPending, setSettingPending] = useState(false)
   const [settingFailed, setSettingFailed] = useState(false)
   const [automationOverrides, setAutomationOverrides] = useState<
@@ -184,6 +197,11 @@ export function DysonInfo({
       controlsId={settingsId}
       settingsLabel={intl.formatMessage(messages.purchaseSettings)}
       onExpandedChange={setSettingsOpen}
+      aboveSummary={
+        !settingsOpen && showRunFactsWhenCollapsed
+          ? statusSummary
+          : undefined
+      }
       summary={summary}
     >
         <div className="dyson-info__settings">
@@ -229,6 +247,23 @@ export function DysonInfo({
               }
             />
             <span>{intl.formatMessage(messages.roundedBulkBuy)}</span>
+          </label>
+          <label className="dyson-info__collapsed-facts-toggle">
+            <input
+              type="checkbox"
+              checked={showRunFactsWhenCollapsed}
+              onChange={(event) => {
+                const enabled = event.currentTarget.checked
+                setShowRunFactsWhenCollapsed(enabled)
+                writeBooleanPresentationPreference(
+                  SHOW_RUN_FACTS_WHEN_COLLAPSED_KEY,
+                  enabled,
+                )
+              }}
+            />
+            <span>
+              {intl.formatMessage(messages.showRunFactsWhenCollapsed)}
+            </span>
           </label>
           <PresetAutomationSelect
             label={intl.formatMessage(messages.presetAutomation)}

@@ -8,6 +8,21 @@
 }
 
 .dyson-shell {
+  --simulation-foundational-page: #152337;
+  --simulation-foundational-panel: #29435f;
+  --simulation-foundational-selected: #3a6384;
+  --simulation-foundational-divider: #7b9fbe;
+  --simulation-foundational-accent: #b9ddf7;
+  --simulation-information-page: #1c1427;
+  --simulation-information-panel: #30244f;
+  --simulation-information-selected: #483563;
+  --simulation-information-divider: #5b4674;
+  --simulation-information-accent: #d3c2ff;
+  --simulation-space-age-page: #121a12;
+  --simulation-space-age-panel: #243324;
+  --simulation-space-age-selected: #3f7042;
+  --simulation-space-age-divider: #364d36;
+  --simulation-space-age-accent: #b9dfb7;
   --theme-page: #1d151f;
   --theme-panel: #443148;
   --theme-selected: #513b56;
@@ -50,11 +65,11 @@
 }
 
 .dyson-shell[data-route-theme="simulations"] {
-  --theme-page: #152337;
-  --theme-panel: #29435f;
-  --theme-selected: #3a6384;
-  --theme-divider: #7b9fbe;
-  --theme-accent: #b9ddf7;
+  --theme-page: var(--simulation-foundational-page);
+  --theme-panel: var(--simulation-foundational-panel);
+  --theme-selected: var(--simulation-foundational-selected);
+  --theme-divider: var(--simulation-foundational-divider);
+  --theme-accent: var(--simulation-foundational-accent);
 }
 
 .dyson-shell[data-route-theme="skills"],
@@ -80,19 +95,19 @@
 }
 
 .dyson-shell[data-route-theme="simulations"][data-route-theme-variant="information"] {
-  --theme-page: #1c1427;
-  --theme-panel: #30244f;
-  --theme-selected: #483563;
-  --theme-divider: #5b4674;
-  --theme-accent: #d3c2ff;
+  --theme-page: var(--simulation-information-page);
+  --theme-panel: var(--simulation-information-panel);
+  --theme-selected: var(--simulation-information-selected);
+  --theme-divider: var(--simulation-information-divider);
+  --theme-accent: var(--simulation-information-accent);
 }
 
 .dyson-shell[data-route-theme="simulations"][data-route-theme-variant="space-age"] {
-  --theme-page: #121a12;
-  --theme-panel: #243324;
-  --theme-selected: #3f7042;
-  --theme-divider: #364d36;
-  --theme-accent: #b9dfb7;
+  --theme-page: var(--simulation-space-age-page);
+  --theme-panel: var(--simulation-space-age-panel);
+  --theme-selected: var(--simulation-space-age-selected);
+  --theme-divider: var(--simulation-space-age-divider);
+  --theme-accent: var(--simulation-space-age-accent);
 }
 
 .dyson-shell input[type="text"],
@@ -638,7 +653,7 @@
   border: 0;
 }
 
-.dyson-shell__route-banner {
+.dyson-shell__notifications {
   position: absolute;
   z-index: 12;
   inset-block-start:

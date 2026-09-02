@@ -125,6 +125,13 @@ gains are shown only when no Infinity occurred, because reset and
 rebuild activity makes a start-to-end facility delta misleading. Per-Infinity
 Offline Time usage belongs to Statistics rather than the spending screen.
 
+If committed Stored Time contains the first lifetime occurrence of an automatic
+disaster, the candidate carries at most one exact presentation fact per disaster
+cause. After the player dismisses the completion summary, those discoveries use
+the shared first-occurrence disaster dialog in event order. Repeated disasters
+during Stored Time never create timed banners, and cancelled, failed, or
+uncommitted candidates publish no disaster presentation facts.
+
 ## Compatibility and acceptance
 
 Existing saves retain Double Time ownership. On first migration, any legacy

@@ -8,6 +8,13 @@ export interface StoredTimeFacilityGain {
   readonly quantity: number
 }
 
+export interface StoredTimeFirstDisasterOccurrence {
+  readonly cause: 'Meteor' | 'ArtificialIntelligence' | 'GlobalWarming'
+  readonly strangeMatterGranted: number
+  readonly resetCount: bigint
+  readonly preResetEra: 'foundational' | 'information' | 'space-age'
+}
+
 export interface StoredTimeCompletionSummary {
   readonly preset: StoredTimeAccuracyPreset
   /** Number of authoritative gameplay updates actually executed. */
@@ -19,6 +26,9 @@ export interface StoredTimeCompletionSummary {
   readonly infinityPoints: bigint
   readonly dreamResetCount: bigint
   readonly strangeMatter: number
+  /** Newly encountered disasters eligible for a dialog after this summary. */
+  readonly firstDisasterOccurrences:
+    readonly Readonly<StoredTimeFirstDisasterOccurrence>[]
   readonly realityWorkers: bigint
   readonly influence: number
   readonly botGain: number

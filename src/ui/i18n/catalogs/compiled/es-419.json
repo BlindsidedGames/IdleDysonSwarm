@@ -2723,6 +2723,12 @@
       "value": "Redondear las compras masivas al siguiente hito"
     }
   ],
+  "dyson.info.show-run-facts-when-collapsed": [
+    {
+      "type": 0,
+      "value": "Mostrar siempre Activos, Vida útil y Deteriorados"
+    }
+  ],
   "dyson.info.stars-surrounded": [
     {
       "type": 0,
@@ -3059,6 +3065,122 @@
     {
       "type": 0,
       "value": "Experimentar en tu garaje"
+    }
+  ],
+  "gameplay.notifications.continue": [
+    {
+      "type": 0,
+      "value": "Continuar"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.dialog": [
+    {
+      "type": 0,
+      "value": "Los Señores Supremos de la IA tomaron el mundo simulado. El progreso de la Simulación se reinició y obtuviste "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Materia Extraña. Compra Contrarrestar Señores Supremos de la IA en la pestaña Realidad para sobrevivir."
+    }
+  ],
+  "gameplay.notifications.disaster.ai.title": [
+    {
+      "type": 0,
+      "value": "Señores Supremos de la IA"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.dialog": [
+    {
+      "type": 0,
+      "value": "El calentamiento global destruyó el mundo simulado. El progreso de la Simulación se reinició y obtuviste "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Materia Extraña. Compra Contrarrestar Calentamiento Global en la pestaña Realidad para sobrevivir."
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.title": [
+    {
+      "type": 0,
+      "value": "Calentamiento Global"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.dialog": [
+    {
+      "type": 0,
+      "value": "Una tormenta de meteoritos destruyó el mundo simulado. El progreso de la Simulación se reinició y obtuviste "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Materia Extraña. Compra Contrarrestar Tormenta de Meteoritos en la pestaña Realidad para sobrevivir."
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.title": [
+    {
+      "type": 0,
+      "value": "Tormenta de Meteoritos"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " reinició la Simulación · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Materia Extraña"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat-multiple": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": " reinició "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Simulaciones · +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " de Materia Extraña"
+    }
+  ],
+  "gameplay.notifications.view-countermeasures": [
+    {
+      "type": 0,
+      "value": "Ver contramedidas"
     }
   ],
   "infinity.automatic-reset": [
@@ -13456,6 +13578,36 @@
     {
       "type": 0,
       "value": "Se refinó toda la interfaz con tamaños de texto, espacios, bordes, densidad de paneles y colores de pestaña más consistentes en teléfonos, tabletas y pantallas anchas."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6": [
+    {
+      "type": 0,
+      "value": "Versión 4.1.6"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.bots-summary": [
+    {
+      "type": 0,
+      "value": "Se agregó una opción de Bots, activada de forma predeterminada, que mantiene visibles las estadísticas de Paneles Activos, Totales y Deteriorados en una fila de ancho completo cuando los controles están contraídos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.disasters": [
+    {
+      "type": 0,
+      "value": "Los desastres automáticos de Simulaciones ahora explican su primera aparición con un diálogo temático y muestran los reinicios posteriores en primer plano como avisos temporizados en todas las pestañas del juego. Los primeros desastres alcanzados durante el Tiempo sin Conexión aparecen después de su resumen final, mientras que los repetidos permanecen resumidos allí."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.facilities": [
+    {
+      "type": 0,
+      "value": "Se corrigieron las tarjetas de Instalaciones que se comprimían en columnas angostas en algunos dispositivos, y se agregó la vista previa bloqueada de la siguiente Instalación antes de que esté disponible la primera."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.shared-notices": [
+    {
+      "type": 0,
+      "value": "Los avisos del juego ahora usan una cola de notificaciones compartida, por lo que los avisos de conflicto al aplicar automáticamente un Preajuste de Habilidades siguen visibles al cambiar de pestaña en vez de limitarse a Bots."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

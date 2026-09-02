@@ -42,6 +42,7 @@ import { tryDebitContinuous } from '../simulation/transactions'
 import { runCanonicalSkillAutoAssignment } from '../simulation/canonicalSkillTransactions'
 import {
   createSimulationSummary,
+  type SimulationDisasterPresentationEvent,
 } from '../simulation/types'
 import {
   advanceGame,
@@ -81,12 +82,16 @@ import {
 import type { CanonicalPlayerCommand } from './canonicalPlayerCommands'
 import {
   cloneCanonicalRuntimeState,
+  type CanonicalRuntimePresentationEvent,
   type CanonicalRuntimeState,
 } from './canonicalRuntimeSession'
 import {
   summarizeStoredTimeCompletion,
 } from './storedTimeCompletionSummary'
-import type { StoredTimeCompletionSummary } from '../core/storedTimeCompletionSummary'
+import type {
+  StoredTimeCompletionSummary,
+  StoredTimeFirstDisasterOccurrence,
+} from '../core/storedTimeCompletionSummary'
 import {
   type StoredTimeJobProgress,
   type StoredTimeJobStatus,
@@ -118,6 +123,9 @@ type CanonicalInternalCommand =
       readonly kind: 'internal.advance-stored-time'
       readonly seconds: number
       readonly cancelRequested?: () => boolean
+      readonly captureFirstDisasterOccurrences?: (
+        events: readonly Readonly<StoredTimeFirstDisasterOccurrence>[],
+      ) => void
     }
   | {
       readonly kind: 'internal.replace-away-state'
@@ -718,6 +726,7 @@ export class CanonicalGameApplicationFacade {
             seconds,
             terminal.progress.completedTicks,
           ),
+          terminal.firstDisasterOccurrences,
         ),
       }
     } catch (error) {
@@ -754,6 +763,8 @@ export class CanonicalGameApplicationFacade {
         'Stored Time requires a ready application.',
       )
     }
+    let firstDisasterOccurrences:
+      readonly Readonly<StoredTimeFirstDisasterOccurrence>[] = []
     const result = await this.application.dispatchCommitFirst(
       {
         ...envelope,
@@ -761,6 +772,9 @@ export class CanonicalGameApplicationFacade {
           kind: 'internal.advance-stored-time',
           seconds,
           cancelRequested,
+          captureFirstDisasterOccurrences: (events) => {
+            firstDisasterOccurrences = events
+          },
         },
       },
       'stored-time',
@@ -788,6 +802,7 @@ export class CanonicalGameApplicationFacade {
           before.state as CanonicalRuntimeState,
           seconds,
         ),
+        firstDisasterOccurrences,
       ),
     }
   }
@@ -1093,6 +1108,7 @@ export function createCanonicalGameEngineDefinition(
           eventContexts.storedTime,
           minimumCycleSeconds,
           command.cancelRequested,
+          command.captureFirstDisasterOccurrences,
         )
       }
       return applyPlayerCommand(
@@ -1680,6 +1696,19 @@ function applyPlayerCommand(
             nextSkillPresetApplication,
         }),
   })
+  if (
+    nextSkillPresetApplication?.trigger === 'automatic' &&
+    nextSkillPresetApplication.blockedByRetainedSkillIds.length > 0
+  ) {
+    appendPresentationEvent(candidate, (sequence) => ({
+      kind: 'skill-preset-conflict',
+      sequence,
+      presetName:
+        result.state.skills.presets[nextSkillPresetApplication.slot - 1]
+          .name,
+      application: nextSkillPresetApplication,
+    }))
+  }
   return { accepted: true, changed: true }
 }
 
@@ -1750,6 +1779,7 @@ function advanceActive(
     )
   }
   replaceEventCarrier(candidate, result.state)
+  appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
   return { accepted: true, changed: true }
 }
 
@@ -1779,6 +1809,7 @@ function advanceActiveContinuous(
     return reject(result.issue, `Continuous active step ended as ${result.issue}.`)
   }
   replaceEventCarrier(candidate, result.state)
+  appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
   return { accepted: true, changed: true }
 }
 
@@ -1802,12 +1833,42 @@ function activeAdvanceMeasurement(
   }
 }
 
+function appendDisasterPresentationEvents(
+  state: CanonicalRuntimeState,
+  events: Readonly<import('../simulation/types').SimulationDisasterPresentationEvent>[],
+): void {
+  for (const event of events) {
+    appendPresentationEvent(state, (sequence) => ({
+      kind: 'automatic-dream-disaster',
+      sequence,
+      ...event,
+    }))
+  }
+}
+
+function appendPresentationEvent(
+  state: CanonicalRuntimeState,
+  create: (sequence: number) => CanonicalRuntimePresentationEvent,
+): void {
+  const previous = state.presentationEvents.at(-1)?.sequence ?? 0
+  if (previous >= Number.MAX_SAFE_INTEGER) {
+    throw new Error('Canonical presentation event sequence exhausted.')
+  }
+  const events = [...state.presentationEvents, Object.freeze(create(previous + 1))]
+  Object.assign(state, {
+    presentationEvents: Object.freeze(events),
+  })
+}
+
 function advanceStoredTime(
   candidate: CanonicalRuntimeState,
   requestedSeconds: number,
   context: Readonly<CanonicalEventTimeContext>,
   minimumCycleSeconds: number,
   cancelRequested?: () => boolean,
+  captureFirstDisasterOccurrences?: (
+    events: readonly Readonly<StoredTimeFirstDisasterOccurrence>[],
+  ) => void,
 ): DomainTransition {
   const bank = candidate.gameState.timeline.storedTimeAvailableSeconds
   if (
@@ -1826,6 +1887,7 @@ function advanceStoredTime(
   })
   let remainingSeconds = requestedSeconds
   let remainingTicks = plan.plannedTicks
+  const firstDisasterEvents: SimulationDisasterPresentationEvent[] = []
   while (remainingTicks > 0 && remainingSeconds > 0) {
     if (cancelRequested?.() === true) {
       return reject(
@@ -1845,6 +1907,9 @@ function advanceStoredTime(
       minimumCycleSeconds,
     )
     replaceEventCarrier(working, result.state)
+    firstDisasterEvents.push(
+      ...result.summary.storedTimeFirstDisasterEvents,
+    )
     if (result.botCapPersistenceRequired) {
       return reject(
         'CANONICAL-STORED-TIME-BOT-CAP-UNSETTLED',
@@ -1869,6 +1934,9 @@ function advanceStoredTime(
     context,
   )
   replaceEventCarrier(working, settlement.state)
+  firstDisasterEvents.push(
+    ...settlement.summary.storedTimeFirstDisasterEvents,
+  )
   if (settlement.issue !== undefined) {
     return reject(
       settlement.issue,
@@ -1885,6 +1953,14 @@ function advanceStoredTime(
       ),
     },
   } })
+  captureFirstDisasterOccurrences?.(
+    Object.freeze(firstDisasterEvents.map((event) => Object.freeze({
+      cause: event.cause,
+      strangeMatterGranted: event.strangeMatterGranted,
+      resetCount: event.resetCount,
+      preResetEra: event.preResetEra,
+    }))),
+  )
   Object.assign(candidate, working)
   return { accepted: true, changed: true }
 }
@@ -2059,6 +2135,10 @@ function validateStoredTimeJobCandidate(
       candidate.lastSkillPresetApplication,
       before.lastSkillPresetApplication,
     ) ||
+    !sameCapturedValue(
+      candidate.presentationEvents,
+      before.presentationEvents,
+    ) ||
     !sameCapturedValue(candidate.entitlements, before.entitlements) ||
     !sameCapturedValue(
       candidate.compatibilityTuning,
@@ -2160,6 +2240,10 @@ function validateRuntimeState(
     state.lastSkillPresetApplication,
   )
   if (presetApplicationIssue !== undefined) return presetApplicationIssue
+  const presentationIssue = validatePresentationEvents(
+    state.presentationEvents,
+  )
+  if (presentationIssue !== undefined) return presentationIssue
   return CanonicalEventTimeModel.fromOwnedState(
     eventCarrier(state),
     context,
@@ -2250,6 +2334,10 @@ function validateRuntimeTransitionState(
     state.lastSkillPresetApplication,
   )
   if (presetApplicationIssue !== undefined) return presetApplicationIssue
+  const presentationIssue = validatePresentationEvents(
+    state.presentationEvents,
+  )
+  if (presentationIssue !== undefined) return presentationIssue
   const model = CanonicalEventTimeModel.fromOwnedState(
     eventCarrier(state),
     context,
@@ -2257,6 +2345,46 @@ function validateRuntimeTransitionState(
   const incrementalIssue = model.validateIncremental()
   if (incrementalIssue !== undefined) return incrementalIssue
   return import.meta.env?.DEV === false ? undefined : model.validate()
+}
+
+function validatePresentationEvents(
+  events: CanonicalRuntimeState['presentationEvents'],
+): string | undefined {
+  if (!Array.isArray(events)) {
+    return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+  }
+  let previousSequence = 0
+  for (const event of events) {
+    if (
+      !Number.isSafeInteger(event.sequence) ||
+      event.sequence <= previousSequence
+    ) {
+      return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+    }
+    previousSequence = event.sequence
+    if (event.kind === 'skill-preset-conflict') {
+      if (
+        typeof event.presetName !== 'string' ||
+        validateSkillPresetApplicationOutcome(event.application) !== undefined ||
+        event.application.trigger !== 'automatic' ||
+        event.application.blockedByRetainedSkillIds.length === 0
+      ) {
+        return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+      }
+      continue
+    }
+    if (
+      event.kind !== 'automatic-dream-disaster' ||
+      !['Meteor', 'ArtificialIntelligence', 'GlobalWarming'].includes(event.cause) ||
+      !isFiniteNonNegativeNumber(event.strangeMatterGranted) ||
+      event.resetCount < 1n ||
+      typeof event.firstLifetimeOccurrence !== 'boolean' ||
+      !['foundational', 'information', 'space-age'].includes(event.preResetEra)
+    ) {
+      return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+    }
+  }
+  return undefined
 }
 
 function requiredBotCapCheckpoint(

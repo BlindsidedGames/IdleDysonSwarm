@@ -62,7 +62,7 @@
     "visibility": {
       "showTinker": true,
       "visibleFacilityIds": [],
-      "showNextFacilityTeaser": false
+      "showNextFacilityTeaser": true
     },
     "tinker": {
       "status": "ready",

@@ -73,6 +73,58 @@ describe('Stored Time job application integration', () => {
     expect(statuses.at(-1)).toBe('idle')
   })
 
+  test('returns committed first-disaster discoveries without publishing banner events', async () => {
+    const repository = new MemoryRepository()
+    const delegated = simulationRunner()
+    const runner: StoredTimeJobRunner = {
+      async run(request, options) {
+        const terminal = await delegated.run(request, options)
+        if (terminal.type !== 'completed') return terminal
+        return {
+          ...terminal,
+          firstDisasterOccurrences: [{
+            cause: 'Meteor',
+            strangeMatterGranted: 1,
+            resetCount: 1n,
+            preResetEra: 'information',
+          }],
+        }
+      },
+      dispose() {
+        delegated.dispose()
+      },
+    }
+    const application = createApplication(repository, runner)
+    await application.start()
+    await installStoredBank(application, 10)
+    const before = application.snapshot()
+    expect(before.phase).toBe('ready')
+    if (before.phase !== 'ready') return
+
+    const result = await application.commitStoredTime({
+      sessionRevision: before.revision.session,
+      expectedStateRevision: before.revision.state,
+    }, 2)
+
+    expect(result).toMatchObject({
+      committed: true,
+      summary: {
+        firstDisasterOccurrences: [{
+          cause: 'Meteor',
+          strangeMatterGranted: 1,
+          resetCount: 1n,
+          preResetEra: 'information',
+        }],
+      },
+    })
+    const after = application.snapshot()
+    expect(after.phase).toBe('ready')
+    if (after.phase !== 'ready') return
+    expect(after.state.presentationEvents).toEqual(
+      before.state.presentationEvents,
+    )
+  })
+
   test('reports the actual update count after repeated Speed Ups', async () => {
     const repository = new MemoryRepository()
     const runner: StoredTimeJobRunner = {
@@ -238,7 +290,7 @@ describe('Stored Time job application integration', () => {
         options?.onProgress?.(progress)
         return {
           type: 'cancelled',
-          protocolVersion: 2,
+          protocolVersion: 3,
           jobId: request.jobId,
           progress,
         }
@@ -395,7 +447,7 @@ describe('Stored Time job application integration', () => {
         return new Promise((resolve) => {
           finish = () => resolve({
             type: 'cancelled',
-            protocolVersion: 2,
+            protocolVersion: 3,
             jobId: request.jobId,
             progress,
           })

@@ -19,6 +19,9 @@ import {
   dehydrateGameState,
   hydrateGameState,
 } from '../../../game-state/mapping'
+import type {
+  StoredTimeFirstDisasterOccurrence,
+} from '../../../core/storedTimeCompletionSummary'
 import { SingleHostSessionWriterAuthority } from '../../../platform/singleHostSessionWriterAuthority'
 import { prepareIdb1Save } from '../../../save/prepare'
 import type {
@@ -171,6 +174,44 @@ describe('Offline Time completion boundary through the UI runtime', () => {
     })
   })
 
+  test('shows a committed first-disaster dialog only after dismissing the completion summary', async () => {
+    const { runtime, runner } = await createRuntimeHarness(
+      600,
+      Date.UTC(2026, 8, 1),
+      [{
+        cause: 'Meteor',
+        strangeMatterGranted: 1,
+        resetCount: 1n,
+        preResetEra: 'information',
+      }],
+    )
+    renderRuntime(runtime)
+
+    await beginStoredTimeSpend()
+    await screen.findByRole('dialog', {
+      name: 'Offline Time simulation progress',
+    })
+    runner.finish()
+
+    const continueButton = await screen.findByRole('button', {
+      name: 'Continue',
+    })
+    expect(screen.queryByRole('dialog', { name: 'Meteor Storm' })).toBeNull()
+    expect(document.querySelector(
+      '.gameplay-timed-notification__announcement',
+    )).toBeNull()
+    fireEvent.click(continueButton)
+
+    const disasterDialog = await screen.findByRole('dialog', {
+      name: 'Meteor Storm',
+    })
+    expect(disasterDialog.getAttribute('data-simulation-era'))
+      .toBe('information')
+    expect(document.querySelector(
+      '.gameplay-timed-notification__announcement',
+    )).toBeNull()
+  })
+
   test('restores focus to an enabled control after spending the full bank', async () => {
     const { runtime, runner } = await createRuntimeHarness(
       60,
@@ -236,6 +277,8 @@ function renderRuntime(runtime: BrowserUiRuntimeFoundation): void {
 async function createRuntimeHarness(
   storedTimeAvailableSeconds = 600,
   lifecycleUtcMilliseconds = Date.UTC(2026, 8, 1),
+  firstDisasterOccurrences:
+    readonly Readonly<StoredTimeFirstDisasterOccurrence>[] = [],
 ): Promise<{
   readonly runtime: BrowserUiRuntimeFoundation
   readonly runner: ControlledStoredTimeJobRunner
@@ -257,7 +300,10 @@ async function createRuntimeHarness(
   const startingSave = dehydrated.withValidatedState(startingRecord)
   const storage = new MemorySaveStorage()
   const eventContext = createProductionEventContext()
-  const runner = new ControlledStoredTimeJobRunner(eventContext)
+  const runner = new ControlledStoredTimeJobRunner(
+    eventContext,
+    firstDisasterOccurrences,
+  )
   const runtime = createBrowserRuntimeFoundation({
     createApplication: (repository) => createCanonicalGameApplication({
       repository,
@@ -308,10 +354,17 @@ async function createRuntimeHarness(
 
 class ControlledStoredTimeJobRunner implements StoredTimeJobRunner {
   private readonly eventContext: Readonly<CanonicalEventTimeContext>
+  private readonly firstDisasterOccurrences:
+    readonly Readonly<StoredTimeFirstDisasterOccurrence>[]
   private finishPending: (() => void) | undefined
 
-  constructor(eventContext: Readonly<CanonicalEventTimeContext>) {
+  constructor(
+    eventContext: Readonly<CanonicalEventTimeContext>,
+    firstDisasterOccurrences:
+      readonly Readonly<StoredTimeFirstDisasterOccurrence>[] = [],
+  ) {
     this.eventContext = eventContext
+    this.firstDisasterOccurrences = firstDisasterOccurrences
   }
 
   run(
@@ -333,7 +386,12 @@ class ControlledStoredTimeJobRunner implements StoredTimeJobRunner {
           throw new Error('Controlled Stored Time simulation did not finish.')
         }
         options.onProgress?.(simulation.progress())
-        resolve(terminal)
+        resolve(terminal.type === 'completed'
+          ? {
+              ...terminal,
+              firstDisasterOccurrences: this.firstDisasterOccurrences,
+            }
+          : terminal)
       }
     })
   }

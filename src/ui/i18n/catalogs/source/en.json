@@ -1087,6 +1087,10 @@
     "defaultMessage": "Round bulk purchases to the next milestone",
     "description": "Unity building rounded-bulk setting controlled by the canonical command."
   },
+  "dyson.info.show-run-facts-when-collapsed": {
+    "defaultMessage": "Always show Active, Lifetime, and Deayed",
+    "description": "Device-local preference for persistently displaying Bots run facts."
+  },
   "dyson.info.stars-surrounded": {
     "defaultMessage": "Stars Surrounded: <emphasis>{value}</emphasis>",
     "description": "Unity active panel metric at stellar scale."
@@ -1250,6 +1254,46 @@
   "dyson.tinker.title": {
     "defaultMessage": "Tinker in your garage",
     "description": "Visible primary title for the Unity manual-creation action."
+  },
+  "gameplay.notifications.continue": {
+    "defaultMessage": "Continue",
+    "description": "Primary action dismissing a first-disaster dialog."
+  },
+  "gameplay.notifications.disaster.ai.dialog": {
+    "defaultMessage": "The simulated world was taken over by AI Overlords. Simulation progress has reset and you gained {reward} Strange Matter. Purchase Counteract AI Overlords in the Reality tab to survivive it.",
+    "description": "First AI Overlords disaster explanation."
+  },
+  "gameplay.notifications.disaster.ai.title": {
+    "defaultMessage": "AI Overlords",
+    "description": "Title for an AI Overlords disaster notification."
+  },
+  "gameplay.notifications.disaster.global-warming.dialog": {
+    "defaultMessage": "The simulated world was destroyed by global warming. Simulation progress has reset and you gained {reward} Strange Matter. Purchase Counteract Global Warming in the Reality tab to survivive it.",
+    "description": "First Global Warming disaster explanation."
+  },
+  "gameplay.notifications.disaster.global-warming.title": {
+    "defaultMessage": "Global Warming",
+    "description": "Title for a Global Warming disaster notification."
+  },
+  "gameplay.notifications.disaster.meteor.dialog": {
+    "defaultMessage": "The simulated world was destroyed by a meteor storm. Simulation progress has reset and you gained {reward} Strange Matter. Purchase Counteract Meteor Storm in the Reality tab to survivive it.",
+    "description": "First Meteor Storm disaster explanation."
+  },
+  "gameplay.notifications.disaster.meteor.title": {
+    "defaultMessage": "Meteor Storm",
+    "description": "Title for a Meteor Storm disaster notification."
+  },
+  "gameplay.notifications.disaster.repeat": {
+    "defaultMessage": "{cause} reset the Simulation · +{reward} Strange Matter",
+    "description": "Timed notification for one repeat automatic disaster."
+  },
+  "gameplay.notifications.disaster.repeat-multiple": {
+    "defaultMessage": "{cause} reset {count} Simulations · +{reward} Strange Matter",
+    "description": "Timed notification for coalesced repeat automatic disasters."
+  },
+  "gameplay.notifications.view-countermeasures": {
+    "defaultMessage": "View Countermeasures",
+    "description": "Dismisses a disaster dialog and opens the Reality tab."
   },
   "infinity.automatic-reset": {
     "defaultMessage": "Auto Infinity",
@@ -6757,7 +6801,7 @@
   },
   "wiki.patch-notes.version-4-1-5": {
     "defaultMessage": "Version 4.1.5",
-    "description": "Version label for the latest Wiki patch notes."
+    "description": "Version label for the previous Wiki patch notes."
   },
   "wiki.patch-notes.version-4-1-5.2026-09-01": {
     "defaultMessage": "1 September 2026",
@@ -6846,6 +6890,26 @@
   "wiki.patch-notes.version-4-1-5.visual-system": {
     "defaultMessage": "Refined the entire interface with more consistent text sizes, spacing, borders, panel density, and route colours across phones, tablets, and wide screens.",
     "description": "Version 4.1.5 release note for the app-wide visual consistency pass."
+  },
+  "wiki.patch-notes.version-4-1-6": {
+    "defaultMessage": "Version 4.1.6",
+    "description": "Version label for the latest Wiki patch notes."
+  },
+  "wiki.patch-notes.version-4-1-6.bots-summary": {
+    "defaultMessage": "Added an on-by-default Bots setting that keeps Active, Lifetime, and Decayed panel statistics visible in a full-width row while the controls are collapsed.",
+    "description": "Version 4.1.6 release note for the persistent collapsed Bots statistics row."
+  },
+  "wiki.patch-notes.version-4-1-6.disasters": {
+    "defaultMessage": "Automatic Simulation disasters now explain their first occurrence with a themed dialog and show later foreground resets as timed notices across gameplay tabs. First disasters reached during Offline Time appear after its completion summary, while repeat Offline Time disasters remain summarized there.",
+    "description": "Version 4.1.6 release note for first and repeat automatic disaster notifications in foreground and Offline Time processing."
+  },
+  "wiki.patch-notes.version-4-1-6.facilities": {
+    "defaultMessage": "Fixed Facility cards collapsing into narrow columns on some devices, and added the locked next-Facility preview before the first Facility is available.",
+    "description": "Version 4.1.6 release note for the compact-device Facility layout and first locked Facility preview."
+  },
+  "wiki.patch-notes.version-4-1-6.shared-notices": {
+    "defaultMessage": "Moved gameplay notices into a shared notification queue, so automatic Skill Preset conflict notices remain visible when changing tabs instead of being limited to Bots.",
+    "description": "Version 4.1.6 release note for shared cross-tab gameplay notices."
   },
   "wiki.patch-notes.version-4-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

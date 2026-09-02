@@ -644,6 +644,7 @@ describe('legacy canonical event-time parity adapter', () => {
 
     expect(result.completed).toBe(true)
     expect(result.diagnosticCode).toBeUndefined()
+    expect(result.summary.disasterEvents).toEqual([])
     for (const id of educationIds) {
       expect(
         result.candidateState.state.gameState.dream.education[id]
@@ -755,6 +756,39 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(next.research.levelsById).not.toEqual(
       gameState.research.levelsById,
     )
+    expect(result.summary.disasterEvents).toEqual([])
+    expect(result.summary.storedTimeFirstDisasterEvents).toEqual([
+      {
+        cause: 'Meteor',
+        strangeMatterGranted: 1,
+        resetCount: 1n,
+        firstLifetimeOccurrence: true,
+        preResetEra: 'space-age',
+      },
+    ])
+    const repeatState: CanonicalGameStateV1 = {
+      ...gameState,
+      statistics: {
+        ...gameState.statistics,
+        lifetime: {
+          ...gameState.statistics.lifetime,
+          meteorDreamResets: 1n,
+        },
+      },
+    }
+    const repeatResult = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier(repeatState),
+        storedContext,
+      ),
+      durationSeconds: 1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+    expect(repeatResult.summary.disasterEvents).toEqual([])
+    expect(repeatResult.summary.storedTimeFirstDisasterEvents).toEqual([])
     const activeResult = advanceEventTime({
       startingState: new CanonicalEventTimeModel(
         carrier(gameState),
@@ -785,6 +819,15 @@ describe('legacy canonical event-time parity adapter', () => {
       strangeMatter: 1,
       realityWorkers: 4n,
     })
+    expect(activeResult.summary.disasterEvents).toEqual([
+      {
+        cause: 'Meteor',
+        strangeMatterGranted: 1,
+        resetCount: 1n,
+        firstLifetimeOccurrence: true,
+        preResetEra: 'space-age',
+      },
+    ])
     expect(
       activeNext.statistics.lifetime.meteorDreamResets,
     ).toBe(1n)

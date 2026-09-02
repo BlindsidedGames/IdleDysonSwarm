@@ -188,6 +188,13 @@ const version414PatchNoteMessages = [
   messages.patchNotesVersion414SimulationResources,
 ] as const
 
+const version416PatchNoteMessages = [
+  messages.patchNotesVersion416Facilities,
+  messages.patchNotesVersion416BotsSummary,
+  messages.patchNotesVersion416SharedNotices,
+  messages.patchNotesVersion416Disasters,
+] as const
+
 const version415PatchNoteMessages = [
   messages.patchNotesVersion415VisualSystem,
   messages.patchNotesVersion415ResponsiveLayouts,
@@ -408,6 +415,15 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion416)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version416PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
+        </section>
+        <section className="wiki-surface__section">
+          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion415)}</h4>
           <h5>{intl.formatMessage(messages.patchNotesVersion415September1)}</h5>
           <ul className="wiki-surface__patch-note-list">
@@ -421,9 +437,6 @@ function PatchNotesArticle() {
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
-        </section>
-        <section className="wiki-surface__section">
-          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion414)}</h4>
           <ul className="wiki-surface__patch-note-list">
             {version414PatchNoteMessages.map((message) => (

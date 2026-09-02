@@ -13,7 +13,6 @@
     repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
   gap: var(--game-card-grid-gap);
   align-items: stretch;
-  container-type: inline-size;
 }
 
 .dyson-facility-flow > .basic-facility-region,

@@ -19,6 +19,10 @@ import type {
   CanonicalSkillPresetSlot,
 } from './canonicalGameCommands'
 import type {
+  AutomaticDreamDisasterCause,
+  SimulationEra,
+} from '../simulation/types'
+import type {
   GameStateSession,
   GameStateSessionFactory,
 } from './contracts'
@@ -29,6 +33,23 @@ export interface CanonicalRuntimeSkillPresetApplicationOutcome
   readonly applicationSequence: number
 }
 
+export type CanonicalRuntimePresentationEvent =
+  | {
+      readonly kind: 'skill-preset-conflict'
+      readonly sequence: number
+      readonly presetName: string
+      readonly application: Readonly<CanonicalRuntimeSkillPresetApplicationOutcome>
+    }
+  | {
+      readonly kind: 'automatic-dream-disaster'
+      readonly sequence: number
+      readonly cause: AutomaticDreamDisasterCause
+      readonly strangeMatterGranted: number
+      readonly resetCount: bigint
+      readonly firstLifetimeOccurrence: boolean
+      readonly preResetEra: SimulationEra
+    }
+
 export interface CanonicalRuntimeState extends CanonicalEventTimeState {
   readonly storedTimeCheater: boolean
   readonly selectedSkillPresetSlot: CanonicalSkillPresetSlot
@@ -36,6 +57,8 @@ export interface CanonicalRuntimeState extends CanonicalEventTimeState {
   readonly lastSkillPresetApplication:
     | Readonly<CanonicalRuntimeSkillPresetApplicationOutcome>
     | null
+  /** Sequenced session facts retained across ordinary snapshot publication. */
+  readonly presentationEvents: readonly Readonly<CanonicalRuntimePresentationEvent>[]
   readonly debugOptionsEnabled?: boolean
   readonly debugEntitlementPurchased?: boolean
 }
@@ -74,6 +97,7 @@ export class CanonicalRuntimeSession
       selectedSkillPresetSlot:
         extractSelectedSkillPresetSlot(source),
       lastSkillPresetApplication: null,
+      presentationEvents: [],
       debugOptionsEnabled: extractBoolean(source, 'debugOptions'),
       debugEntitlementPurchased: extractBoolean(
         source,

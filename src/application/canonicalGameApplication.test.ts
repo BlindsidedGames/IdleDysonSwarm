@@ -537,6 +537,124 @@ describe('canonical game application engine', () => {
     expect(state.lastSkillPresetApplication?.applicationSequence).toBe(2)
   })
 
+  test('routes an automatic partial preset result through sequenced presentation events', () => {
+    const state = runtime()
+    const source = state.gameState
+    const presets = structuredClone(source.skills.presets)
+    Object.assign(presets[1], {
+      name: 'Conflict preset',
+      skillIds: ['banking', 'shouldersOfTheEnlightened'],
+    })
+    Object.assign(state, {
+      gameState: {
+        ...source,
+        skills: {
+          ...source.skills,
+          points: 10n,
+          byId: {
+            shouldersOfGiants: {
+              owned: true,
+              level: 1,
+              timerSeconds: 0,
+              secondaryTimerSeconds: 0,
+            },
+            shouldersOfPrecursors: {
+              owned: true,
+              level: 1,
+              timerSeconds: 0,
+              secondaryTimerSeconds: 0,
+            },
+          },
+          presets,
+          tabPresetAutomation: {
+            ...source.skills.tabPresetAutomation,
+            bots: 2,
+          },
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: {
+        ...context(),
+        infinityResetAssetLookup: getGameAsset,
+      },
+    })
+
+    expect(definition.applyCommand(state, {
+      kind: 'skill.apply-tab-preset-automation',
+      tab: 'bots',
+    })).toEqual({ accepted: true, changed: true })
+    expect(state.presentationEvents).toEqual([
+      expect.objectContaining({
+        kind: 'skill-preset-conflict',
+        sequence: 1,
+        presetName: 'Conflict preset',
+        application: expect.objectContaining({
+          trigger: 'automatic',
+          blockedByRetainedSkillIds: ['shouldersOfTheEnlightened'],
+        }),
+      }),
+    ])
+  })
+
+  test('publishes a sequenced automatic-disaster event with pre-reset facts', () => {
+    const state = runtime()
+    const source = state.gameState
+    Object.assign(state, {
+      gameState: {
+        ...source,
+        dream: {
+          ...source.dream,
+          disasterStage: 0n,
+          resources: {
+            ...source.dream.resources,
+            cities: 1,
+            spaceFactories: 0,
+          },
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(definition.advance(state, 1_000)).toEqual({
+      accepted: true,
+      changed: true,
+    })
+    expect(state.presentationEvents).toEqual([
+      expect.objectContaining({
+        kind: 'automatic-dream-disaster',
+        sequence: 1,
+        cause: 'Meteor',
+        strangeMatterGranted: 1,
+        resetCount: 1n,
+        firstLifetimeOccurrence: true,
+        preResetEra: 'information',
+      }),
+    ])
+
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        dream: {
+          ...state.gameState.dream,
+          disasterStage: 0n,
+          resources: {
+            ...state.gameState.dream.resources,
+            cities: 1,
+          },
+        },
+      },
+    })
+    expect(definition.advance(state, 1_000).accepted).toBe(true)
+    expect(state.presentationEvents.at(-1)).toMatchObject({
+      sequence: 2,
+      cause: 'Meteor',
+      firstLifetimeOccurrence: false,
+    })
+  })
+
   test('restores the development cash action without changing player commands', () => {
     const state = runtime()
     const before = state.gameState.dyson.money
@@ -865,6 +983,15 @@ describe('canonical game application engine', () => {
   test('keeps Tinker outside a stored-time candidate', () => {
     const state = runtime()
     Object.assign(state, {
+      presentationEvents: [{
+        kind: 'automatic-dream-disaster',
+        sequence: 1,
+        cause: 'Meteor',
+        strangeMatterGranted: 1,
+        resetCount: 1n,
+        firstLifetimeOccurrence: false,
+        preResetEra: 'foundational',
+      }],
       gameState: {
         ...state.gameState,
         timeline: {
@@ -885,6 +1012,9 @@ describe('canonical game application engine', () => {
     })
     expect(started.accepted).toBe(true)
     const tinkerBefore = structuredClone(state.tinker)
+    const presentationEventsBefore = structuredClone(
+      state.presentationEvents,
+    )
 
     const result = definition.applyCommand(state, {
       kind: 'internal.advance-stored-time',
@@ -898,6 +1028,7 @@ describe('canonical game application engine', () => {
     expect(result.accepted).toBe(true)
     expect(idleResult.accepted).toBe(true)
     expect(state.tinker).toEqual(tinkerBefore)
+    expect(state.presentationEvents).toEqual(presentationEventsBefore)
     expect(state.gameState.dyson.bots)
       .toBe(idleReference.gameState.dyson.bots)
     expect(state.gameState.dyson.facilities.assembly_lines)

@@ -2723,6 +2723,12 @@
       "value": "一括購入数を次の節目に丸める"
     }
   ],
+  "dyson.info.show-run-facts-when-collapsed": [
+    {
+      "type": 0,
+      "value": "稼働中、寿命、崩壊済みを常に表示"
+    }
+  ],
   "dyson.info.stars-surrounded": [
     {
       "type": 0,
@@ -3059,6 +3065,122 @@
     {
       "type": 0,
       "value": "ガレージで工作"
+    }
+  ],
+  "gameplay.notifications.continue": [
+    {
+      "type": 0,
+      "value": "続ける"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.dialog": [
+    {
+      "type": 0,
+      "value": "シミュレーション世界はAI支配者に乗っ取られました。シミュレーションの進行状況がリセットされ、"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": "のストレンジマターを獲得しました。生き残るには、リアリティタブで「AI支配者への対抗策」を購入してください。"
+    }
+  ],
+  "gameplay.notifications.disaster.ai.title": [
+    {
+      "type": 0,
+      "value": "AI支配者"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.dialog": [
+    {
+      "type": 0,
+      "value": "シミュレーション世界は地球温暖化によって滅びました。シミュレーションの進行状況がリセットされ、"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": "のストレンジマターを獲得しました。生き残るには、リアリティタブで「地球温暖化への対抗策」を購入してください。"
+    }
+  ],
+  "gameplay.notifications.disaster.global-warming.title": [
+    {
+      "type": 0,
+      "value": "地球温暖化"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.dialog": [
+    {
+      "type": 0,
+      "value": "シミュレーション世界は隕石嵐によって滅びました。シミュレーションの進行状況がリセットされ、"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": "のストレンジマターを獲得しました。生き残るには、リアリティタブで「隕石嵐への対抗策」を購入してください。"
+    }
+  ],
+  "gameplay.notifications.disaster.meteor.title": [
+    {
+      "type": 0,
+      "value": "隕石嵐"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": "がシミュレーションをリセット · ストレンジマター +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " を獲得"
+    }
+  ],
+  "gameplay.notifications.disaster.repeat-multiple": [
+    {
+      "type": 1,
+      "value": "cause"
+    },
+    {
+      "type": 0,
+      "value": "が"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": "件のシミュレーションをリセット · ストレンジマター +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " を獲得"
+    }
+  ],
+  "gameplay.notifications.view-countermeasures": [
+    {
+      "type": 0,
+      "value": "対抗策を見る"
     }
   ],
   "infinity.automatic-reset": [
@@ -13456,6 +13578,36 @@
     {
       "type": 0,
       "value": "スマートフォン、タブレット、ワイド画面の全体で、文字サイズ、余白、枠線、パネル密度、画面カラーをより一貫したものにしました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6": [
+    {
+      "type": 0,
+      "value": "バージョン4.1.6"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.bots-summary": [
+    {
+      "type": 0,
+      "value": "ボット設定に、操作パネルを折りたたんでいる間も「稼働中」「累計」「崩壊済み」のパネル統計を全幅の行に表示する、初期状態でオンの設定を追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.disasters": [
+    {
+      "type": 0,
+      "value": "シミュレーションの自動災害は、初回発生時に各時代をテーマにしたダイアログで説明され、その後フォアグラウンドで発生したリセットはすべてのゲームタブに時間制のお知らせとして表示されます。オフライン時間中に初めて発生した災害は完了サマリーの後に表示され、繰り返し発生した災害は引き続きサマリー内だけにまとめられます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.facilities": [
+    {
+      "type": 0,
+      "value": "一部の端末で施設カードが細い列に押しつぶされる問題を修正し、最初の施設が利用可能になる前からロック中の次の施設のプレビューを表示するようにしました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-6.shared-notices": [
+    {
+      "type": 0,
+      "value": "ゲーム内のお知らせを共有通知キューへ移行しました。これにより、スキルプリセットの自動適用時に競合が発生した場合のお知らせは、ボットタブだけに限定されず、タブを切り替えても表示され続けます。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

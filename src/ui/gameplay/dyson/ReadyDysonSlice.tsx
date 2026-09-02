@@ -7,7 +7,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type ReactNode,
 } from 'react'
 import { useIntl } from 'react-intl'
 import type {
@@ -17,6 +16,9 @@ import type {
 import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
+import type {
+  CanonicalRuntimePresentationEvent,
+} from '../../../application/canonicalRuntimeSession'
 import type { DeepReadonly } from '../../../core/contracts'
 import { defaultSkillPresetColorId } from '../../../game-state/skillPresetColors'
 import type { CanonicalFacilityId } from '../../../game-state/types'
@@ -31,6 +33,7 @@ import {
   navigationAssets,
 } from '../shell'
 import { TinkerSurface } from '../tinker'
+import { GameplayNotificationHost } from '../notifications'
 import {
   formatGameDuration,
   formatGameNumber,
@@ -63,7 +66,10 @@ import {
 } from '../../presentationPreferences'
 import type { SettingsSurfaceProps } from '../settings'
 import type { DebugSurfaceDraft } from '../debug'
-import type { OfflineTimeSurfaceDraft } from '../offline-time'
+import type {
+  OfflineTimeSurfaceDraft,
+  StoredTimeFirstDisasterDialogBatch,
+} from '../offline-time'
 import type {
   SkillPresetActions,
   SkillTreeViewState,
@@ -604,6 +610,16 @@ export function ReadyDysonSlice({
       SKILL_PRESET_APPLICATION_NOTICES_STORAGE_KEY,
     ) !== 'false',
   )
+  const [storedTimeDisasterDialogs, setStoredTimeDisasterDialogs] = useState<{
+    readonly sessionRevision: number
+    readonly events: readonly Extract<
+      CanonicalRuntimePresentationEvent,
+      { readonly kind: 'automatic-dream-disaster' }
+    >[]
+  }>({
+    sessionRevision: snapshot.revision.session,
+    events: [],
+  })
   const updateQuantumHideMaxed = useCallback((hideMaxed: boolean) => {
     setQuantumHideMaxed(hideMaxed)
     writeBooleanPresentationPreference(
@@ -634,6 +650,24 @@ export function ReadyDysonSlice({
     },
     [],
   )
+  const presentStoredTimeFirstDisasters = useCallback((
+    batch: Readonly<StoredTimeFirstDisasterDialogBatch>,
+  ) => {
+    const sessionRevision = snapshot.revision.session
+    const events = batch.occurrences.map((occurrence, index) => ({
+      kind: 'automatic-dream-disaster' as const,
+      sequence: -(batch.completionSequence * 4 + index + 1),
+      ...occurrence,
+      firstLifetimeOccurrence: true,
+    }))
+    setStoredTimeDisasterDialogs((current) => ({
+      sessionRevision,
+      events: [
+        ...(current.sessionRevision === sessionRevision ? current.events : []),
+        ...events,
+      ],
+    }))
+  }, [snapshot.revision.session])
   const rememberWikiTopic = useCallback((topic: WikiCategoryId) => {
     wikiTopicRef.current = topic
   }, [])
@@ -697,10 +731,6 @@ export function ReadyDysonSlice({
     dismissedPresetApplicationSequence,
     setDismissedPresetApplicationSequence,
   ] = useState<number | null>(null)
-  const [
-    hiddenAutomaticPresetBannerSequence,
-    setHiddenAutomaticPresetBannerSequence,
-  ] = useState<number | null>(null)
   const visiblePresetApplication =
     lastPresetApplication !== null &&
     lastPresetApplication.blockedByRetainedSkillIds.length > 0 &&
@@ -726,13 +756,6 @@ export function ReadyDysonSlice({
   const dismissPresetApplication = useCallback(() => {
     if (lastPresetApplication !== null) {
       setDismissedPresetApplicationSequence(
-        lastPresetApplication.applicationSequence,
-      )
-    }
-  }, [lastPresetApplication])
-  const dismissAutomaticPresetBanner = useCallback(() => {
-    if (lastPresetApplication !== null) {
-      setHiddenAutomaticPresetBannerSequence(
         lastPresetApplication.applicationSequence,
       )
     }
@@ -782,64 +805,6 @@ export function ReadyDysonSlice({
     lastPresetApplication?.slot,
     lastPresetApplication?.trigger,
   ])
-
-  const automaticPresetConflictMessage =
-    showSkillPresetApplicationNotices &&
-    visiblePresetApplication?.trigger === 'automatic' &&
-    visiblePresetApplication.slot === automatedPresetSlot &&
-    visiblePresetApplication.applicationSequence !==
-      hiddenAutomaticPresetBannerSequence
-      ? intl.formatMessage(messages.presetPartiallyApplied, {
-          blockedCount:
-            visiblePresetApplication.blockedByRetainedSkillIds.length,
-          retainedCount:
-            visiblePresetApplication.retainedSkillIds.length,
-          presetName:
-            gameplay.progression.skills.presets[
-              automatedPresetSlot - 1
-            ]?.name ?? `Preset ${automatedPresetSlot}`,
-        })
-      : null
-  const automaticPresetConflictBanner =
-    automaticPresetConflictMessage === null ||
-    visiblePresetApplication === undefined
-      ? null
-      : intl.formatMessage(messages.presetPartiallyAppliedBanner, {
-          blockedCount:
-            visiblePresetApplication.blockedByRetainedSkillIds.length,
-          retainedCount:
-            visiblePresetApplication.retainedSkillIds.length,
-          presetName:
-            gameplay.progression.skills.presets[
-              automatedPresetSlot - 1
-            ]?.name ?? `Preset ${automatedPresetSlot}`,
-          preset: (chunks: ReactNode) => (
-            <strong className="skill-preset-application-banner__preset">
-              {chunks}
-            </strong>
-          ),
-          retained: (chunks: ReactNode) => (
-            <strong className="skill-preset-application-banner__retained">
-              {chunks}
-            </strong>
-          ),
-          blocked: (chunks: ReactNode) => (
-            <strong className="skill-preset-application-banner__blocked">
-              {chunks}
-            </strong>
-          ),
-        })
-  const automaticPresetConflictNotice =
-    automaticPresetConflictMessage === null
-      ? null
-      : (
-          <span
-            className="skill-preset-application-summary"
-            role="status"
-          >
-            {automaticPresetConflictMessage}
-          </span>
-        )
 
   const highlightableRouteUnlocks = useMemo(() => ({
     research: gameplay.visibility.research?.routeUnlocked ?? true,
@@ -1500,11 +1465,9 @@ export function ReadyDysonSlice({
                         ].routeAvailable
                       }
                       summarySupplement={
-                        automaticPresetConflictNotice !== null ||
                         botMultitasking
                           ? (
                               <>
-                                {automaticPresetConflictNotice}
                                 {botMultitasking && (
                                   <BotDistribution
                                     locale={locale}
@@ -1583,7 +1546,8 @@ export function ReadyDysonSlice({
                               .routeAvailable,
                         }}
                         presetApplication={
-                          showSkillPresetApplicationNotices
+                          showSkillPresetApplicationNotices &&
+                          visiblePresetApplication?.trigger !== 'automatic'
                             ? visiblePresetApplication
                             : undefined
                         }
@@ -1975,6 +1939,9 @@ export function ReadyDysonSlice({
                                         onDraftChange={
                                           rememberOfflineTimeDraft
                                         }
+                                        onFirstDisasterDialogsReady={
+                                          presentStoredTimeFirstDisasters
+                                        }
                                       />
                                     </Suspense>
                                   ),
@@ -2073,23 +2040,20 @@ export function ReadyDysonSlice({
               }
             : undefined
       }
-      routeBanner={
-        route === 'bots' &&
-        automaticPresetConflictMessage !== null &&
-        automaticPresetConflictBanner !== null &&
-        visiblePresetApplication !== undefined
-          ? {
-              ariaLabel: automaticPresetConflictMessage,
-              content: (
-                <SkillPresetApplicationBanner
-                  key={visiblePresetApplication.applicationSequence}
-                  accessibleLabel={automaticPresetConflictMessage}
-                  message={automaticPresetConflictBanner}
-                  onDismiss={dismissAutomaticPresetBanner}
-                />
-              ),
-            }
-          : undefined
+      notifications={
+        <GameplayNotificationHost
+          sessionRevision={snapshot.revision.session}
+          events={gameplay.runtime.presentationEvents}
+          storedTimeFirstDisasterEvents={
+            storedTimeDisasterDialogs.sessionRevision ===
+                snapshot.revision.session
+              ? storedTimeDisasterDialogs.events
+              : []
+          }
+          locale={locale}
+          showPresetApplicationNotices={showSkillPresetApplicationNotices}
+          onViewReality={() => navigateTo('reality')}
+        />
       }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),
@@ -2353,51 +2317,6 @@ export function ReadyDysonSlice({
           />
         </Suspense>
       ) : null}
-    </>
-  )
-}
-
-const SKILL_PRESET_APPLICATION_BANNER_MILLISECONDS = 6_000
-
-function SkillPresetApplicationBanner({
-  accessibleLabel,
-  message,
-  onDismiss,
-}: {
-  readonly accessibleLabel: string
-  readonly message: ReactNode
-  readonly onDismiss: () => void
-}) {
-  useEffect(() => {
-    const timeout = window.setTimeout(
-      onDismiss,
-      SKILL_PRESET_APPLICATION_BANNER_MILLISECONDS,
-    )
-    return () => window.clearTimeout(timeout)
-  }, [onDismiss])
-
-  return (
-    <>
-      <span
-        className="skill-preset-application-banner__announcement"
-        role="status"
-      >
-        {accessibleLabel}
-      </span>
-      <button
-        type="button"
-        className="skill-preset-application-banner"
-        aria-label={accessibleLabel}
-        onClick={onDismiss}
-      >
-        <span className="skill-preset-application-banner__message">
-          {message}
-        </span>
-        <span
-          className="skill-preset-application-banner__progress"
-          aria-hidden="true"
-        />
-      </button>
     </>
   )
 }
