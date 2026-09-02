@@ -458,6 +458,12 @@ export const readyDysonMessages = defineMessages({
     description:
       'Unity building rounded-bulk setting controlled by the canonical command.',
   },
+  showRunFactsWhenCollapsed: {
+    id: 'dyson.info.show-run-facts-when-collapsed',
+    defaultMessage: 'Always show Active, Lifetime, and Deayed',
+    description:
+      'Device-local preference for persistently displaying Bots run facts.',
+  },
   purchaseSettingsFailed: {
     id: 'dyson.info.purchase-settings-failed',
     defaultMessage: 'Purchase settings were not changed.',

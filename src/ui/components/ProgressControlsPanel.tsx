@@ -5,6 +5,7 @@ import './progressControlsPanel.css'
 export interface ProgressControlsPanelProps {
   readonly ariaLabel: string
   readonly className?: string
+  readonly aboveSummary?: ReactNode
   readonly summary: ReactNode
   readonly expanded: boolean
   readonly controlsId: string
@@ -20,6 +21,7 @@ export interface ProgressControlsPanelProps {
 export function ProgressControlsPanel({
   ariaLabel,
   className,
+  aboveSummary,
   summary,
   expanded,
   controlsId,
@@ -39,7 +41,20 @@ export function ProgressControlsPanel({
       data-expanded={controlsExpanded || undefined}
       data-settings-available={settingsAvailable || undefined}
     >
-      <div className="ui-progress-controls-panel__collapsed">
+      <div
+        className={
+          `ui-progress-controls-panel__collapsed${
+            aboveSummary !== undefined
+              ? ' ui-progress-controls-panel__collapsed--with-above-summary'
+              : ''
+          }`
+        }
+      >
+        {aboveSummary !== undefined ? (
+          <div className="ui-progress-controls-panel__above-summary">
+            {aboveSummary}
+          </div>
+        ) : null}
         <div className="ui-progress-controls-panel__summary">{summary}</div>
         {settingsAvailable ? (
           <button

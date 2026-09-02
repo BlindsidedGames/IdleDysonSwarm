@@ -1278,7 +1278,6 @@ export function selectGameplayVisibility(
         ...visibleMegaStructureIds,
       ],
       showNextFacilityTeaser:
-        visibleBasicFacilityIds.length > 0 &&
         !visibleBasicFacilityIds.includes('planets'),
     },
     research: {

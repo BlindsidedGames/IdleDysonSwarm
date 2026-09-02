@@ -2723,6 +2723,12 @@
       "value": "Massenkäufe auf den nächsten Meilenstein aufrunden"
     }
   ],
+  "dyson.info.show-run-facts-when-collapsed": [
+    {
+      "type": 0,
+      "value": "Aktiv, Lebensdauer und Zerfallen immer anzeigen"
+    }
+  ],
   "dyson.info.stars-surrounded": [
     {
       "type": 0,

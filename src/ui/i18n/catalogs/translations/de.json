@@ -269,6 +269,7 @@
   "dyson.info.purchase-settings": "Kaufeinstellungen",
   "dyson.info.purchase-settings-failed": "Die Kaufeinstellungen wurden nicht geändert.",
   "dyson.info.rounded-bulk-buy": "Massenkäufe auf den nächsten Meilenstein aufrunden",
+  "dyson.info.show-run-facts-when-collapsed": "Aktiv, Lebensdauer und Zerfallen immer anzeigen",
   "dyson.info.stars-surrounded": "Umschlossene Sterne: <emphasis>{value}</emphasis>",
   "dyson.info.title": "Info",
   "dyson.info.total-panels-decayed": "Insgesamt zerfallene Paneele: <emphasis>{value}</emphasis>",

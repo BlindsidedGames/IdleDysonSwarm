@@ -2723,6 +2723,12 @@
       "value": "批量购买时凑整至下一里程碑"
     }
   ],
+  "dyson.info.show-run-facts-when-collapsed": [
+    {
+      "type": 0,
+      "value": "始终显示活跃、寿命和已衰变"
+    }
+  ],
   "dyson.info.stars-surrounded": [
     {
       "type": 0,

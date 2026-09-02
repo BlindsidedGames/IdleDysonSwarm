@@ -2723,6 +2723,12 @@
       "value": "Arrondir les achats groupés au prochain palier"
     }
   ],
+  "dyson.info.show-run-facts-when-collapsed": [
+    {
+      "type": 0,
+      "value": "Toujours afficher Actifs, Durée de vie et Désintégrés"
+    }
+  ],
   "dyson.info.stars-surrounded": [
     {
       "type": 0,

@@ -269,6 +269,7 @@
   "dyson.info.purchase-settings": "Ajustes de compra",
   "dyson.info.purchase-settings-failed": "No se modificaron los ajustes de compra.",
   "dyson.info.rounded-bulk-buy": "Redondear las compras masivas al siguiente hito",
+  "dyson.info.show-run-facts-when-collapsed": "Mostrar siempre Activos, Vida útil y Deteriorados",
   "dyson.info.stars-surrounded": "Estrellas rodeadas: <emphasis>{value}</emphasis>",
   "dyson.info.title": "Información",
   "dyson.info.total-panels-decayed": "Total de paneles degradados: <emphasis>{value}</emphasis>",

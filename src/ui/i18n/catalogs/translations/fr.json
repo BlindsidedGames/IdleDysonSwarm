@@ -269,6 +269,7 @@
   "dyson.info.purchase-settings": "Paramètres d’achat",
   "dyson.info.purchase-settings-failed": "Les paramètres d’achat n’ont pas été modifiés.",
   "dyson.info.rounded-bulk-buy": "Arrondir les achats groupés au prochain palier",
+  "dyson.info.show-run-facts-when-collapsed": "Toujours afficher Actifs, Durée de vie et Désintégrés",
   "dyson.info.stars-surrounded": "Étoiles entourées : <emphasis>{value}</emphasis>",
   "dyson.info.title": "Infos",
   "dyson.info.total-panels-decayed": "Total de panneaux désintégrés : <emphasis>{value}</emphasis>",

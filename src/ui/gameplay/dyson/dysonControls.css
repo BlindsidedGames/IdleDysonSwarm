@@ -71,6 +71,7 @@
 .dyson-info__settings-toggle:focus-visible,
 .dyson-info__buy-modes button:focus-visible,
 .dyson-info__rounded-bulk input:focus-visible,
+.dyson-info__collapsed-facts-toggle input:focus-visible,
 .dyson-info__automation input:focus-visible,
 .dyson-info__automation-toggle-all:focus-visible {
   outline: 3px solid var(--color-focus);
@@ -164,6 +165,22 @@
 }
 
 .dyson-info__rounded-bulk input {
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+}
+
+.dyson-info__collapsed-facts-toggle {
+  display: inline-flex;
+  min-block-size: var(--target-minimum);
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.dyson-info__collapsed-facts-toggle input {
   inline-size: 1.2rem;
   block-size: 1.2rem;
 }

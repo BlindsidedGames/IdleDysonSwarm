@@ -37,7 +37,7 @@ describe('frozen first-Dyson canonical fixture', () => {
     expect(fixture.initial.visibility).toEqual({
       showTinker: true,
       visibleFacilityIds: [],
-      showNextFacilityTeaser: false,
+      showNextFacilityTeaser: true,
     })
     expect(fixture.initial.facilityPreviews).toHaveLength(8)
     expect(fixture.initial.facilityPreviews[0]).toMatchObject({

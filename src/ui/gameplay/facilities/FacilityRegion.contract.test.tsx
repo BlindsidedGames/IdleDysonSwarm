@@ -78,6 +78,22 @@ function props(
 }
 
 describe('FacilityRegion unified presentation contract', () => {
+  test('renders the unlock teaser before any facility is visible', () => {
+    const regionProps = props(vi.fn())
+
+    renderRegionProps({
+      ...regionProps,
+      visibility: {
+        ...regionProps.visibility,
+        visibleFacilityIds: [],
+        showNextFacilityTeaser: true,
+      },
+    })
+
+    expect(screen.getByText('????')).not.toBeNull()
+    expect(screen.queryAllByRole('article')).toHaveLength(0)
+  })
+
   test('renders one ordered facility flow with two data-driven headings', () => {
     renderRegion(vi.fn())
 

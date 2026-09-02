@@ -2723,6 +2723,12 @@
       "value": "Redondear las compras masivas al siguiente hito"
     }
   ],
+  "dyson.info.show-run-facts-when-collapsed": [
+    {
+      "type": 0,
+      "value": "Mostrar siempre Activos, Vida útil y Deteriorados"
+    }
+  ],
   "dyson.info.stars-surrounded": [
     {
       "type": 0,

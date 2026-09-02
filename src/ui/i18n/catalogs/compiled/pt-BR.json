@@ -2723,6 +2723,12 @@
       "value": "Arredondar compras em massa para o próximo marco"
     }
   ],
+  "dyson.info.show-run-facts-when-collapsed": [
+    {
+      "type": 0,
+      "value": "Sempre mostrar Ativos, Vida útil e Decaídos"
+    }
+  ],
   "dyson.info.stars-surrounded": [
     {
       "type": 0,

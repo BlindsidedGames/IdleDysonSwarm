@@ -1087,6 +1087,10 @@
     "defaultMessage": "Round bulk purchases to the next milestone",
     "description": "Unity building rounded-bulk setting controlled by the canonical command."
   },
+  "dyson.info.show-run-facts-when-collapsed": {
+    "defaultMessage": "Always show Active, Lifetime, and Deayed",
+    "description": "Device-local preference for persistently displaying Bots run facts."
+  },
   "dyson.info.stars-surrounded": {
     "defaultMessage": "Stars Surrounded: <emphasis>{value}</emphasis>",
     "description": "Unity active panel metric at stellar scale."

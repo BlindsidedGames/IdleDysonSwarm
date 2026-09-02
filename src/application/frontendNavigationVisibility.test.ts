@@ -22,6 +22,15 @@ function firstRunState(): CanonicalGameStateV1 {
 }
 
 describe('progression-aware navigation visibility', () => {
+  test('teases the first facility before it is visible', () => {
+    const initial = firstRunState()
+
+    expect(selectGameplayVisibility(initial).dyson).toMatchObject({
+      visibleFacilityIds: [],
+      showNextFacilityTeaser: true,
+    })
+  })
+
   test('keeps Skills hidden until a Skill Point has actually been earned', () => {
     const initial = firstRunState()
     const tenBots = {

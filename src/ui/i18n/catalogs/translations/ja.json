@@ -269,6 +269,7 @@
   "dyson.info.purchase-settings": "購入設定",
   "dyson.info.purchase-settings-failed": "購入設定は変更されませんでした。",
   "dyson.info.rounded-bulk-buy": "一括購入数を次の節目に丸める",
+  "dyson.info.show-run-facts-when-collapsed": "稼働中、寿命、崩壊済みを常に表示",
   "dyson.info.stars-surrounded": "包囲した恒星：<emphasis>{value}</emphasis>",
   "dyson.info.title": "情報",
   "dyson.info.total-panels-decayed": "崩壊したパネル総数：<emphasis>{value}</emphasis>",

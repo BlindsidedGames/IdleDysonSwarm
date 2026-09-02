@@ -269,6 +269,7 @@
   "dyson.info.purchase-settings": "Настройки покупки",
   "dyson.info.purchase-settings-failed": "Настройки покупки не изменены.",
   "dyson.info.rounded-bulk-buy": "Округлять пакетные покупки до следующего рубежа",
+  "dyson.info.show-run-facts-when-collapsed": "Всегда показывать активные, срок службы и распавшиеся",
   "dyson.info.stars-surrounded": "Окружено звёзд: <emphasis>{value}</emphasis>",
   "dyson.info.title": "Информация",
   "dyson.info.total-panels-decayed": "Всего распалось панелей: <emphasis>{value}</emphasis>",

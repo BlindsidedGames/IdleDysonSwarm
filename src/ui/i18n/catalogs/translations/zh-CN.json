@@ -269,6 +269,7 @@
   "dyson.info.purchase-settings": "购买设置",
   "dyson.info.purchase-settings-failed": "购买设置未更改。",
   "dyson.info.rounded-bulk-buy": "批量购买时凑整至下一里程碑",
+  "dyson.info.show-run-facts-when-collapsed": "始终显示活跃、寿命和已衰变",
   "dyson.info.stars-surrounded": "已包围恒星：<emphasis>{value}</emphasis>",
   "dyson.info.title": "信息",
   "dyson.info.total-panels-decayed": "累计衰变面板：<emphasis>{value}</emphasis>",
