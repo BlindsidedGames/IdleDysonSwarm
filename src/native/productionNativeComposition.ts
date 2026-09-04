@@ -106,6 +106,9 @@ export function createProductionNativeComposition(
   const createApplication =
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
+      achievements: environment.achievements,
+      cloud: environment.cloud,
+      readDeveloperOptions: () => entitlementBridge.currentOwnership().developerOptions,
       readHostEntitlements: () =>
         entitlementBridge.currentDysonEntitlements(),
     })

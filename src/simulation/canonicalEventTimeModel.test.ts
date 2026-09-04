@@ -1027,6 +1027,20 @@ describe('legacy canonical event-time parity adapter', () => {
     )
   })
 
+  test('captures a bot milestone before reset only when the host enables evidence', () => {
+    const source = baseState()
+    const resetState = {...source, dyson:{...source.dyson,bots:4.2e19},timeline:{...source.timeline,infinityCycleSeconds:1}}
+    const ordinary = new CanonicalEventTimeModel(carrier(resetState),context())
+    const reporting = new CanonicalEventTimeModel({...carrier(resetState),achievementEvidence:{unlocked:[],statistics:{},presence:''}},context())
+    ordinary.applyInfinityReset(1,createSimulationSummary())
+    reporting.applyInfinityReset(1,createSimulationSummary())
+    expect(reporting.issue).toBeUndefined()
+    expect(reporting.state.gameState.dyson.bots).toBeLessThan(4.2e19)
+    expect(reporting.state.achievementEvidence?.unlocked).toContain('achievement.bots_42qi')
+    expect(ordinary.state.achievementEvidence).toBeUndefined()
+    expect(reporting.state.gameState).toEqual(ordinary.state.gameState)
+  })
+
   test('derives artifact points internally and preserves only owned AddSkillPoints effects across Infinity and Quantum', () => {
     const source = withRealityArtifacts(baseState())
     const derived = deriveCanonicalArtifactSkillPoints(

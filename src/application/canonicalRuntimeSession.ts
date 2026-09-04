@@ -64,6 +64,7 @@ export interface CanonicalRuntimeState extends CanonicalEventTimeState {
 }
 
 export interface CanonicalRuntimeSessionOptions {
+  readonly captureAchievements?: boolean
   readonly entitlements: Readonly<DysonEntitlements>
 }
 
@@ -87,6 +88,7 @@ export class CanonicalRuntimeSession
     this.hydrated = hydrateGameState(prepared)
     const source = prepared.copyValidatedState()
     this.initialState = cloneCanonicalRuntimeState({
+      ...(options.captureAchievements ? {achievementEvidence:{unlocked:[],statistics:{},presence:''}} : {}),
       gameState: this.hydrated.state,
       compatibilityTuning: this.hydrated.compatibilityTuning,
       evaluationSnapshot:
@@ -145,6 +147,7 @@ export function createCanonicalRuntimeSessionFactory(
   options: Readonly<CanonicalRuntimeSessionOptions>,
 ): GameStateSessionFactory<CanonicalRuntimeState> {
   const captured = Object.freeze({
+    captureAchievements: options.captureAchievements,
     entitlements: Object.freeze({ ...options.entitlements }),
   })
   return Object.freeze({

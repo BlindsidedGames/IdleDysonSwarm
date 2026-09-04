@@ -1568,11 +1568,13 @@ function applyPlayerCommand(
           )
           const outcome = model.lastQueuedInputOutcome
           if (outcome?.accepted) {
+            const afterLeap=model.takeState()
+            if(afterLeap.achievementEvidence !== undefined) Object.assign(candidate,{achievementEvidence:afterLeap.achievementEvidence})
             return {
               accepted: true,
               changed: outcome.changed,
               code: outcome.code,
-              state: model.takeState().gameState,
+              state: afterLeap.gameState,
             }
           }
           return {
@@ -1629,7 +1631,9 @@ function applyPlayerCommand(
               issues: [issue],
             }
           }
-          const next = model.takeState().gameState
+          const carrierAfterReset = model.takeState()
+          if (carrierAfterReset.achievementEvidence !== undefined) Object.assign(candidate,{achievementEvidence:carrierAfterReset.achievementEvidence})
+          const next = carrierAfterReset.gameState
           return {
             accepted: true,
             changed: true,
@@ -2018,6 +2022,7 @@ function applyTinker(
 
 function eventCarrier(state: Readonly<CanonicalRuntimeState>) {
   return {
+    ...(state.achievementEvidence === undefined ? {} : {achievementEvidence:state.achievementEvidence}),
     gameState: state.gameState,
     compatibilityTuning: state.compatibilityTuning,
     evaluationSnapshot: state.evaluationSnapshot,
@@ -2031,6 +2036,7 @@ function replaceEventCarrier(
   carrier: Readonly<CanonicalEventTimeState>,
 ): void {
   Object.assign(target, {
+    ...(carrier.achievementEvidence === undefined ? {} : {achievementEvidence:carrier.achievementEvidence}),
     gameState: carrier.gameState,
     compatibilityTuning: carrier.compatibilityTuning,
     evaluationSnapshot: carrier.evaluationSnapshot,

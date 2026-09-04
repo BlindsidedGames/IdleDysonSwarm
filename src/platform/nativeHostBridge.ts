@@ -1,3 +1,5 @@
+import type { PortableCloud } from './portableCloud'
+import type { AchievementPublication } from '../achievements/contracts'
 import {
   Capacitor,
   registerPlugin,
@@ -51,6 +53,8 @@ export interface NativeUnitySaveCandidate {
 
 export interface NativeHostBridgeApi {
   readonly target: Exclude<RuntimeTarget, 'browser'>
+  readonly achievements?: AchievementPublication
+  readonly cloud?: PortableCloud
   /** Resolves after native lifecycle events are subscribed and reconciled. */
   readonly ready?: () => Promise<void>
   exists(relativePath: string): Promise<boolean>
@@ -232,6 +236,8 @@ export function detectNativeHostBridge(): NativeHostBridgeApi | null {
 
 export interface NativeHostEnvironment {
   readonly target: Exclude<RuntimeTarget, 'browser'>
+  readonly achievements?: AchievementPublication
+  readonly cloud?: PortableCloud
   readonly files: RootedNativeFileBridge
   readonly migration: NativeMigrationSource
   readonly lifecycle: NativeLifecycleAdapter
@@ -265,6 +271,8 @@ export function createNativeHostEnvironment(
   }) satisfies Readonly<ReleasePlatformServices>
   return Object.freeze({
     target: bridge.target,
+    ...(bridge.target === 'electron' && bridge.cloud !== undefined ? { cloud: bridge.cloud } : {}),
+    ...(bridge.target === 'electron' && bridge.achievements !== undefined ? { achievements: bridge.achievements } : {}),
     files: bridge,
     migration,
     lifecycle: new NativeLifecycleAdapter({

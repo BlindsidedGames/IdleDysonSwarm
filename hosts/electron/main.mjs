@@ -1,5 +1,8 @@
+import { SteamCloud } from './steam/cloud.mjs'
+import { loadSteamClient, createSteamPublication } from './steam/client.mjs'
 import {
   app,
+  dialog,
   BrowserWindow,
   ipcMain,
   safeStorage,
@@ -87,6 +90,10 @@ let closeRequestSequence = 0
 let packagedRuntimeMetadata
 let smokeCleanupScheduled = false
 let steamInventoryStore
+let steamCloud = null
+let steamClient = null
+let steamPublication = null
+let steamDistribution = false
 
 if (smokeTest) scheduleOwnedSmokeCleanup()
 
@@ -98,7 +105,7 @@ function denyRendererPermissions(electronSession) {
 }
 
 function webSaveRoot() {
-  return join(app.getPath('userData'), webSaveRootName)
+  return steamCloud === null ? join(app.getPath('userData'), ...(steamDistribution ? ['steam-offline'] : []), webSaveRootName) : join(steamCloud.localDirectory,webSaveRootName)
 }
 
 function rootedPath(relativePath) {
@@ -272,6 +279,14 @@ function registerNativeHandlers() {
       await syncDirectory(dirname(destination))
     },
   )
+  ipcMain.handle('ids:cloud:backups', () => steamCloud?.readBackups() ?? [])
+  ipcMain.handle('ids:cloud:read', () => steamCloud?.read() ?? null)
+  ipcMain.handle('ids:cloud:choose', (_event, local, remote) => steamCloud?.choose(local,remote))
+  ipcMain.handle('ids:cloud:acknowledge', (_event, text) => steamCloud?.acknowledge(text))
+  ipcMain.handle('ids:cloud:publish', (_event, text) => steamCloud?.publish(text))
+  ipcMain.handle('ids:achievements:available', () => steamPublication?.available() ?? false)
+  ipcMain.handle('ids:achievements:submit', async (_event, facts) => { await steamPublication?.submit(facts) })
+  ipcMain.handle('ids:achievements:flush', async () => { await steamPublication?.flush() })
   ipcMain.handle(channels.discoverUnity, discoverUnitySaves)
   ipcMain.handle(channels.metadata, async () => {
     return packagedRuntimeMetadata ?? loadRuntimeMetadata()
@@ -347,6 +362,7 @@ async function createElectronSteamInventoryStore() {
   if (config.enabled) {
     try {
       binding = await loadSteamInventoryBinding({
+        client: steamClient,
         steamAppId,
         itemDefIds: config.products,
       })
@@ -363,6 +379,18 @@ async function createElectronSteamInventoryStore() {
 }
 
 async function discoverUnitySaves() {
+  if (steamDistribution) {
+    if (steamCloud === null) return Object.freeze([])
+    steamCloud.ensureIdentity()
+    // Unity saves were device-scoped. Claim automatic migration once, without
+    // touching those original files or allowing another Steam account to adopt them.
+    const claim = join(app.getPath('userData'), 'steam-unity-migration-account.txt')
+    try {
+      const handle = await open(claim, 'wx', 0o600)
+      try { await handle.writeFile(steamCloud.account); await handle.sync() } finally { await handle.close() }
+    } catch (error) { if (error.code !== 'EEXIST') throw error }
+    if ((await readFile(claim, 'utf8')) !== steamCloud.account) return Object.freeze([])
+  }
   const definitions = unitySaveDefinitions()
   const candidates = []
   for (const definition of definitions) {
@@ -572,6 +600,10 @@ function requestRendererCheckpoint(window) {
 
 async function closeAfterCheckpoint(window) {
   const result = await requestRendererCheckpoint(window)
+  await Promise.race([
+    Promise.allSettled([steamCloud?.queue, steamPublication?.flush()]),
+    new Promise(resolve => setTimeout(resolve, 2000)),
+  ])
   if (!result.checkpointed) {
     console.warn(
       `Closing with the last durable save after ${result.reason}.`,
@@ -588,6 +620,7 @@ function createMainWindow() {
     backgroundColor: '#2f1738',
     show: false,
     webPreferences: {
+      additionalArguments: [...(steamDistribution ? ['--ids-steam'] : []), ...(steamCloud ? ['--ids-steam-cloud'] : [])],
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
@@ -668,7 +701,20 @@ if (!singleInstanceAcquired) {
   })
   app.whenReady().then(async () => {
     await loadRuntimeMetadata()
+    const packageInfo = JSON.parse(await readFile(join(app.getAppPath(), 'package.json'), 'utf8'))
+    steamDistribution = packageInfo.idsDesktopDistribution === 'steam' || (!app.isPackaged && process.env.VITE_IDS_DESKTOP_DISTRIBUTION === 'steam')
+    steamClient = loadSteamClient({ distribution: steamDistribution ? 'steam' : 'desktop', ...(app.isPackaged ? { runtimeDirectory: join(process.resourcesPath, 'steam') } : {}) })
+    if (steamClient !== null) {
+      const account = steamClient.native.identity()
+      if (/^\d{17}$/.test(account)) steamCloud = new SteamCloud({ userData: app.getPath('userData'),account,identity: () => steamClient.native.identity(),choose: async () => {
+        const result = await dialog.showMessageBox({type:'question',title:'Choose your save',message:'Local and Steam Cloud saves differ. Both copies have been preserved.',buttons:['Use local save','Use Steam Cloud save'],defaultId:0,cancelId:0})
+        return result.response === 1 ? 'cloud' : 'local'
+      } })
+    }
     steamInventoryStore = await createElectronSteamInventoryStore()
+    if (steamDistribution) steamPublication = await createSteamPublication(steamClient, {
+      readDeveloperOptions: async () => (await steamInventoryStore.readEntitlements()).developerOptions,
+    })
     registerNativeHandlers()
     denyRendererPermissions(session.defaultSession)
     createMainWindow()
@@ -684,3 +730,5 @@ if (!singleInstanceAcquired) {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
+
+app.on('will-quit', () => { steamPublication?.close(); steamClient?.close() })

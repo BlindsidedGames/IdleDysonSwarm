@@ -17,6 +17,8 @@ files:
   - hosts/electron/steamInventoryBinding.mjs
   - hosts/electron/steamInventoryStore.mjs
   - hosts/electron/steam-inventory.json
+  - hosts/electron/steam/*.mjs
+  - hosts/electron/steam/achievement-map.json
   - package.json
 win:
   target:
@@ -29,3 +31,8 @@ linux:
   category: Game
   target:
     - AppImage
+
+extraResources:
+  - from: hosts/electron/steam/runtime
+    to: steam
+    filter: ["*.node", "*.dylib", "*.dll", "*.so"]

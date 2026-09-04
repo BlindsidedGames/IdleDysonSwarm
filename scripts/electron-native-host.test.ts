@@ -1,3 +1,4 @@
+import { inventoryBinding } from '../hosts/electron/steam/client.mjs'
 import { readFileSync } from 'node:fs'
 import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -159,7 +160,7 @@ describe('Electron native host hardening', () => {
     expect(main).toContain('steamInventoryStore.readEntitlements')
     expect(main).toContain('createSafeStorageProtector(safeStorage)')
     expect(preload).not.toContain('itemDefId')
-    expect(binding).toContain('return null')
+    expect(inventoryBinding(null)).toBe(null)
     expect(binding).not.toContain("from 'steamworks.js'")
     expect(config.enabled).toBe(false)
     expect(Object.values(config.products).every((value) => value === null))

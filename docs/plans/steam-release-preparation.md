@@ -138,3 +138,24 @@ Record evidence and external blockers below after every milestone. Never mark pr
 ### Evidence
 
 - Starting main/origin/main: 3ee99f4d5310c079ff02b15a39df9a3f2e181230, clean; existing worktrees preserved.
+
+### Implementation checkpoint — 2026-09-04
+
+Implemented (provider acceptance still outstanding):
+- Pure 27-achievement evaluator with canonical IDs; exact 42Qi threshold and coverage of 59 applicable simulation upgrade flags. Optional Electron capability leaves mobile publication dormant.
+- Transient milestone evidence captured before automatic Infinity/Dream/Quantum resets, carried with candidate state and published only after committed state. This adds no save-format fields. Imported/replaced sessions get fresh observers/evidence.
+- Official SDK 1.65 Node-API addon compiled for macOS arm64. Startup failures are nonfatal; callbacks are pumped; services are pinned to launch account; bounded shutdown; absolute stat/playtime retries. Historical formatted rich presence retained in Electron.
+- Retained/stacking supporter ownership, no consumption, durable ownership refresh/revocation, repeat permanent purchases prevented. ItemDef JSON prepared; mappings remain disabled pending authoritative provider schema verification.
+- Account-scoped Cloud files with fsynced replacement/three backups, downloaded originals/conflicts preserved locally, validated startup recovery, and no publication after unreadable Cloud startup. Valid portable saves precede automatic Unity migration. Unity originals remain untouched; automatic same-device migration is claimed by one Steam account; other accounts do not inherit it.
+
+Evidence:
+- Full repository suite: 111 files / 1,171 tests passed before final currency test addition; lint, TypeScript and data checks pass. Tests include reset parity, ambiguous stat acknowledgement, account switches, retained stacked supporters, cancellation/revocation and Cloud recovery.
+- First macOS arm64 development package built with Electron 43.2.0. Missing Steam client smoke test reached renderer ready and exited 0. Native addon and matching dylib are outside ASAR; no Steam binaries inside ASAR. This is a development smoke package, NOT an uploaded candidate.
+- Website AUD baseline matches item catalog. Steam prices use hundredths for all currencies (including JPY/KWD), verified against https://partner.steamgames.com/doc/store/pricing/currencies .
+- Official SDK archive SHA-256: 8c42792e09100988e31e3dc069de2eb1bc60702a0445bb37298ba0c54067c202. SDK is local outside repo at /Users/matthewrushworth/Builds/steamworks-1.65/sdk.
+
+External gates and next steps:
+1. Steam desktop client stopped after a successful initial native identity probe. Await running signed-in client; Steamworks browser authentication is separate. Recheck definition-ready callback before treating the empty ItemDef list as authoritative. Do NOT publish reserved IDs until that succeeds.
+2. No Steam settings/catalog/build mutations have been made. Unrelated pending `policies` change exists; inspect diff again and isolate it before publishing the bot-progress/Cloud settings. No public build promotion authorized.
+3. Complete metadata/catalog provider checks, mobile artifact and simulator/emulator QA, signed macOS and Windows/Linux builds, Cloud cross-machine testing and private beta upload. Record exact source commit, hashes, depot manifests and BuildID; currently no uploaded BuildID.
+4. Matthew performs real transactions and accepts beta. Capture final trailer only from accepted candidate. Storyboard can be prepared before acceptance.

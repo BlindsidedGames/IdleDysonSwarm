@@ -64,3 +64,8 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# External Steam SDK build artifacts
+hosts/electron/steam/runtime/
+
+/node_modules

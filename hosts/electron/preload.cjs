@@ -45,6 +45,18 @@ contextBridge.exposeInMainWorld(
   'idleDysonSwarmNativeHost',
   Object.freeze({
     target: 'electron',
+    ...(process.argv.includes('--ids-steam-cloud') ? { cloud: Object.freeze({
+      read: () => ipcRenderer.invoke('ids:cloud:read'),
+      readBackups: () => ipcRenderer.invoke('ids:cloud:backups'),
+      choose: (local,remote) => ipcRenderer.invoke('ids:cloud:choose',local,remote),
+      acknowledge: text => ipcRenderer.invoke('ids:cloud:acknowledge',text),
+      publish: text => ipcRenderer.invoke('ids:cloud:publish',text),
+    }) } : {}),
+    ...(process.argv.includes('--ids-steam') ? { achievements: Object.freeze({
+      available: () => ipcRenderer.invoke('ids:achievements:available'),
+      submit: facts => ipcRenderer.invoke('ids:achievements:submit', facts),
+      flush: () => ipcRenderer.invoke('ids:achievements:flush'),
+    }) } : {}),
     exists: (relativePath) =>
       ipcRenderer.invoke(channels.exists, relativePath),
     readText: (relativePath) =>

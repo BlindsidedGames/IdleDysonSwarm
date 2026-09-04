@@ -1,3 +1,7 @@
+import { CloudStartupResolver, type PortableCloud } from '../platform/portableCloud'
+import { serializeSharedWebSave } from '../save/serialization'
+import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
+import type { AchievementPublication } from '../achievements/contracts'
 import type { SaveRepository } from '../save/repository'
 import {
   RepositoryStartupSaveResolver,
@@ -26,6 +30,9 @@ export interface ProductionCanonicalApplicationFactoryOptions {
    * The factory is invoked only after the repository proves first launch.
    */
   readonly createFirstRunSave: FirstRunSaveFactory
+  readonly achievements?: AchievementPublication
+  readonly cloud?: PortableCloud
+  readonly readDeveloperOptions?: () => boolean
   /**
    * Reads the current host-owned entitlement snapshot when a writable
    * application graph is constructed. The UI never supplies entitlement
@@ -59,20 +66,42 @@ export function createProductionCanonicalApplicationFactory(
     const entitlements = readEntitlements(
       options.readHostEntitlements,
     )
-    return createCanonicalGameApplication({
+    const localResolver = new RepositoryStartupSaveResolver(repository, options.createFirstRunSave, 'development')
+    const application = createCanonicalGameApplication({
       repository,
-      startupResolver: new RepositoryStartupSaveResolver(
-        repository,
-        options.createFirstRunSave,
-        'development',
-      ),
+      startupResolver: options.cloud === undefined ? localResolver : new CloudStartupResolver(localResolver,repository,options.cloud),
       sessionFactory: createCanonicalRuntimeSessionFactory({
         entitlements,
+        captureAchievements: options.achievements !== undefined,
       }),
       engine: { eventContext },
       storedTimeJobRunner: new BrowserStoredTimeJobRunner(),
       createTransitionalRecoveryBase: options.createFirstRunSave,
     })
+    if (options.achievements !== undefined) {
+      const publication = options.achievements
+      application.subscribe(snapshot => {
+        if (snapshot.phase !== 'ready') return
+        try {
+          const facts = mergeAchievementFacts(snapshot.state.achievementEvidence, evaluateAchievements(snapshot.state.gameState, options.readDeveloperOptions?.() === true))
+          void publication.submit(facts).catch(() => undefined)
+        } catch { /* Optional platform reporting cannot affect committed state. */ }
+      })
+    }
+    if (options.cloud !== undefined) {
+      const cloud = options.cloud
+      let lastCheckpoint = ''
+      application.subscribe(snapshot => {
+        if (snapshot.phase !== 'ready' || snapshot.checkpoint.kind !== 'clean' || snapshot.revision.state !== snapshot.revision.durable) return
+        const revision = `${snapshot.revision.session}:${snapshot.revision.durable}`
+        if (revision === lastCheckpoint) return
+        const captured = application.captureSaveTransferSnapshot()
+        if (captured?.basis !== 'current') return
+        lastCheckpoint=revision
+        void cloud.publish(serializeSharedWebSave(captured.prepared.copyValidatedState())).catch(() => { lastCheckpoint='' })
+      })
+    }
+    return application
   }
 }
 
