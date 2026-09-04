@@ -260,3 +260,11 @@ Matthew reports missing Steam overlay, Windows update failure “missing downloa
 - Upgraded the previously downloaded Windows beta through SteamCMD successfully; all 76 files match and old Android build intermediates were removed. This runs the Windows depot download on macOS, not a native Windows runtime test.
 - Mac universal packaged --close-smoke passed with exit 0 and no checkpoint fallback warning. Also launched normal packaged game, clicked native close button through CUA and observed process exit 0; reopening installed game retained progress. Development suspend/resume smoke and 9 host tests plus lint passed.
 - Overlay remains unverified: direct candidate launch shows game but no Shift+Tab overlay. Steam-launched verification still picked installed old BuildID 25123023 before the local client refreshed its update; quit that old build. Steam client GUI access is blocked by ScreenCaptureKit capture failure. Matthew should retest overlay after updating to 25123535; do not claim this issue resolved until visible evidence exists. If overlay still fails, investigate native render presentation rather than assuming SDK initialization proves overlay support.
+
+
+### Installed-client verification — 2026-09-05
+
+- Steam client was still running old 25123023 in a windowless process. After its close checkpoint, terminated that exact old process. Requested Steam file verification via steam://validate/4348570; content_log confirms successful client update to 25123535, Mac manifest 1317556955101604223, 2,400 removed obsolete files, result No Error.
+- Launched 25123535 using steam://rungameid/4348570. Saved progress and localized Steam prices loaded. Clicked native close button; process exited and Steam gameprocess_log removed app from running list. This supersedes the earlier Steam-launch verification blocker for shutdown.
+- All 111 test files / 1,172 tests passed; log public-beta-repair/regression-tests.log.
+- Overlay library gameoverlayrenderer.dylib is mapped into the actual Steam-launched game process (private steam-launched-vmmap.txt). No overlay appeared with computer-control Shift+Tab; synthetic input may not traverse Steam's global shortcut hook. Physical shortcut confirmation is still required before attributing the remaining failure entirely to rendering. No purchase performed.
