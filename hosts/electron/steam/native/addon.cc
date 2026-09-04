@@ -8,9 +8,12 @@
 static bool initialized = false;
 static int storedResult = 0;
 static bool definitionsReady = false;
+static bool overlayActive = false;
 class StatsCallbacks {
  public:
-  StatsCallbacks() : callback(this, &StatsCallbacks::stored), definitions(this, &StatsCallbacks::loaded) {}
+  StatsCallbacks() : callback(this, &StatsCallbacks::stored), definitions(this, &StatsCallbacks::loaded), overlay(this, &StatsCallbacks::overlayChanged) {}
+  void overlayChanged(GameOverlayActivated_t* value) { overlayActive = value->m_bActive != 0; }
+  CCallback<StatsCallbacks, GameOverlayActivated_t> overlay;
   void loaded(SteamInventoryDefinitionUpdate_t*) { definitionsReady=true; }
   CCallback<StatsCallbacks, SteamInventoryDefinitionUpdate_t> definitions;
   void stored(UserStatsStored_t* value) { storedResult = static_cast<int>(value->m_eResult); }
@@ -35,6 +38,8 @@ static napi_value invoke(napi_env e,napi_callback_info info) {
   }
   if(!initialized) throw std::runtime_error("Steam unavailable");
   if(op=="pump") {SteamAPI_RunCallbacks(); return boolean(e,true);}
+  if(op=="overlayStatus") {auto v=object(e);set(e,v,"enabled",boolean(e,SteamUtils()->IsOverlayEnabled()));set(e,v,"active",boolean(e,overlayActive));set(e,v,"needsPresent",boolean(e,SteamUtils()->BOverlayNeedsPresent()));return v;}
+  if(op=="activateOverlay") {SteamFriends()->ActivateGameOverlay("Friends");return boolean(e,true);}
   if(op=="identity") return str(e,std::to_string(SteamUser()->GetSteamID().ConvertToUint64()));
   if(op=="shutdown") {delete callbacks; callbacks=nullptr; SteamAPI_Shutdown(); initialized=false;return boolean(e,true);}
   if(op=="stat") {auto key=text(e,arg(0)); if(text(e,arg(1))=="float") {float v;if(!SteamUserStats()->GetStat(key.c_str(),&v))throw std::runtime_error("Stat unavailable");return num(e,v);} int32 v;if(!SteamUserStats()->GetStat(key.c_str(),&v))throw std::runtime_error("Stat unavailable");return num(e,v);}
@@ -60,6 +65,6 @@ static napi_value invoke(napi_env e,napi_callback_info info) {
  } catch(const std::exception& error) {napi_throw_error(e,nullptr,error.what());return nullptr;}
 }
 static napi_value init(napi_env e,napi_value exports){
- for(const char* name:{"initialize","pump","identity","shutdown","stat","setStat","achievement","unlock","storeStats","storedResult","presence","clearPresence","loadDefinitions","definitionsReady","definitions","definitionProperty","inventory","inventoryResult","destroyResult","requestPrices","price","startPurchase","callResult"}) {napi_value fn;napi_create_function(e,name,NAPI_AUTO_LENGTH,invoke,const_cast<char*>(name),&fn);set(e,exports,name,fn);}return exports;
+ for(const char* name:{"initialize","pump","overlayStatus","activateOverlay","identity","shutdown","stat","setStat","achievement","unlock","storeStats","storedResult","presence","clearPresence","loadDefinitions","definitionsReady","definitions","definitionProperty","inventory","inventoryResult","destroyResult","requestPrices","price","startPurchase","callResult"}) {napi_value fn;napi_create_function(e,name,NAPI_AUTO_LENGTH,invoke,const_cast<char*>(name),&fn);set(e,exports,name,fn);}return exports;
 }
 NAPI_MODULE(NODE_GYP_MODULE_NAME,init)

@@ -658,6 +658,22 @@ function createMainWindow() {
     repaint.unref()
     window.once('closed', () => clearInterval(repaint))
   }
+  if (steamDistribution && process.argv.includes('--overlay-diagnostic')) {
+    window.webContents.once('did-finish-load', () => {
+      const diagnostic = setInterval(() => {
+        try { console.log('Steam overlay status:', JSON.stringify(steamClient?.native.overlayStatus())) }
+        catch (error) { console.warn('Steam overlay diagnostic:', error.message) }
+      }, 1000)
+      diagnostic.unref()
+      window.once('closed', () => clearInterval(diagnostic))
+    })
+    window.webContents.on('before-input-event', (_event, input) => {
+      if (input.type === 'keyDown' && input.key === 'F8') {
+        try { steamClient?.native.activateOverlay() }
+        catch (error) { console.warn('Steam overlay activation:', error.message) }
+      }
+    })
+  }
   mainWindow = window
   let closeAllowed = false
   let closePending = false

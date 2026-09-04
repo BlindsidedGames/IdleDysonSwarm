@@ -268,3 +268,12 @@ Matthew reports missing Steam overlay, Windows update failure “missing downloa
 - Launched 25123535 using steam://rungameid/4348570. Saved progress and localized Steam prices loaded. Clicked native close button; process exited and Steam gameprocess_log removed app from running list. This supersedes the earlier Steam-launch verification blocker for shutdown.
 - All 111 test files / 1,172 tests passed; log public-beta-repair/regression-tests.log.
 - Overlay library gameoverlayrenderer.dylib is mapped into the actual Steam-launched game process (private steam-launched-vmmap.txt). No overlay appeared with computer-control Shift+Tab; synthetic input may not traverse Steam's global shortcut hook. Physical shortcut confirmation is still required before attributing the remaining failure entirely to rendering. No purchase performed.
+
+
+### Overlay diagnosis after physical shortcut confirmation
+
+Matthew confirms physical Tab/Shift+Tab moves page focus; automated-key uncertainty is resolved. Do not suppress page navigation as an overlay fix.
+
+Added opt-in --overlay-diagnostic host logging for IsOverlayEnabled, GameOverlayActivated callback state, and BOverlayNeedsPresent, plus diagnostic-only F8 calling ActivateGameOverlay("Friends") directly. Kept these APIs in Electron/official-SDK addon; no renderer or mobile capability added.
+
+Local arm64 diagnostic, with the official Steam overlay dylib injected, reports enabled=false and active=false. Direct native activation briefly requests presentation (needsPresent=true) but produces no active callback or visible overlay. This points beyond keyboard routing; native presentation integration remains unresolved. Not uploaded: public-beta remains 25123535. Official API references: https://partner.steamgames.com/doc/api/ISteamUtils and https://partner.steamgames.com/doc/api/ISteamFriends . Nine host tests and lint pass; native arm64 addon compiled against pinned SDK1.65. Rebuild other native targets before packaging these new diagnostic APIs.
