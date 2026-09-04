@@ -289,3 +289,14 @@ Local arm64 diagnostic, with the official Steam overlay dylib injected, reports 
 
 - Packaged universal overlay acceptance passed: Steam enabled=true/active=true, visible screenshot, Shift+Tab returned to gameplay, real window close exited 0. Screenshot steam-overlay-lab/packaged-overlay-open.png. Capture capped at 30 FPS; native drawable presents continuously for overlay.
 - Found compiler default was embedding macOS 26 minimum in native addon although Electron package minimum is 12. Explicitly target macOS 12 for both native slices, verify Mach-O deployment targets before upload.
+
+
+### Steam-installed overlay accepted — Public Beta 25133321
+
+- Uploaded all three desktop depots from source 993eab06 with the native Metal presentation fix and macOS 12 deployment target. Steamworks branch table/history verified public-beta **25133321**; default remains **22353758**.
+- Manifests: Windows 4348571 = 8663979863029922673; Linux 4348572 = 431210039147248582; macOS 4348573 = 2694046461517416028. Private upload log and candidate hashes: steam-overlay-lab/upload/.
+- Matthew confirmed the purchase test could be closed. Steam still tracked completed local diagnostic sessions; used Steam Stop to clear those, then its Update button. Installed appmanifest now confirms build **25133321** and Mac manifest **2694046461517416028**.
+- Launched using Steam Library Play. **Shift+Tab visibly opened the real Steam overlay**, including Game Overview and Friends. Shift+Tab closed it; clicking Bots navigated correctly and production continued. Screenshot evidence: steam-overlay-lab/steam-installed-overlay-open.png and steam-installed-overlay-closed.png.
+- Clicked the native window close button. Main PID 11853 exited; Steam gameprocess_log removed AppID 4348570 from running list at 08:25:51 on 2026-09-05. Library returned to green Play with Cloud up to date. Screenshot: steam-installed-closed-play.png.
+- Validation: full suite 112 files / 1176 tests passed; focused presentation/native host suite 13 tests passed after smoke changes; lint and TypeScript passed. Packaged close, overlay activation, and suspend/resume smoke passed. Both Mac native slices target macOS 12; all platform packages rebuilt.
+- Mac overlay and shutdown are now verified on the Steam-installed public beta. Windows download packaging repair remains included; Windows/Linux actual runtime and overlay checks still require those platforms. Cross-machine Cloud and purchase lifecycle acceptance remain separate pending checks.
