@@ -22,7 +22,7 @@ const target=join(output,'ids_steam.node')
 const includes=[`-I${headers}`,`-I${join(sdk,'public')}`]
 if(platform==='darwin' && process.platform==='darwin' && ['arm64','x64'].includes(arch)){
  const lib=join(sdk,'redistributable_bin/osx')
- execFileSync('clang++',['-arch',arch==='x64'?'x86_64':'arm64','-std=c++17','-shared','-undefined','dynamic_lookup',...includes,source,resolve('hosts/electron/steam/native/metal-presentation.mm'),'-fobjc-arc','-framework','Cocoa','-framework','Metal','-framework','MetalKit',`-L${lib}`,'-lsteam_api','-Wl,-rpath,@loader_path','-o',target],{stdio:'inherit'})
+ execFileSync('clang++',['-arch',arch==='x64'?'x86_64':'arm64','-std=c++17','-mmacosx-version-min=12.0','-shared','-undefined','dynamic_lookup',...includes,source,resolve('hosts/electron/steam/native/metal-presentation.mm'),'-fobjc-arc','-framework','Cocoa','-framework','Metal','-framework','MetalKit',`-L${lib}`,'-lsteam_api','-Wl,-rpath,@loader_path','-o',target],{stdio:'inherit'})
  await copyFile(join(lib,'libsteam_api.dylib'),join(output,'libsteam_api.dylib'))
 }else if(platform==='linux'&&arch==='x64'){
  const lib=join(sdk,'redistributable_bin/linux64')

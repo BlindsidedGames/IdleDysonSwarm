@@ -286,3 +286,6 @@ Local arm64 diagnostic, with the official Steam overlay dylib injected, reports 
 - Added pause/minimize, capture failure fallback, pending-frame cancellation, and cleanup tests (13 tests across presentation and native host pass; lint passes). Cleanup remains allowed after account changes because it cannot publish account data.
 - Removing Chromium in-process-GPU override on Mac now that native Metal owns presentation; performance recheck pending. Windows/Linux retain their existing Electron graphics configuration.
 - Matthew appears to be testing a supporter transaction in the open game. Requested clarification and left that window untouched while rebuilding/testing independently. Do not close it while his purchase is in progress.
+
+- Packaged universal overlay acceptance passed: Steam enabled=true/active=true, visible screenshot, Shift+Tab returned to gameplay, real window close exited 0. Screenshot steam-overlay-lab/packaged-overlay-open.png. Capture capped at 30 FPS; native drawable presents continuously for overlay.
+- Found compiler default was embedding macOS 26 minimum in native addon although Electron package minimum is 12. Explicitly target macOS 12 for both native slices, verify Mach-O deployment targets before upload.
