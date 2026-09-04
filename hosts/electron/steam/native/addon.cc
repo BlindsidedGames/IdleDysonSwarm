@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include "windows-node-api.h"
 
 static bool initialized = false;
 static int storedResult = 0;
