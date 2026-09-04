@@ -77,7 +77,7 @@ export class SteamCloud {
       this.ensureIdentity()
       if(!this.readSucceeded) throw new Error('Cloud startup read failed; publication disabled')
       const current=join(this.directory,'current.idsw')
-      if(await read(current)===text)return
+      if(await read(current)===text){await this.acknowledge(text);return}
       for(let i=3;i>=1;i--){const source=i===1?current:join(this.directory,`backup-${i-1}.idsw`);const previous=await read(source);if(previous!==null)await write(join(this.directory,`backup-${i}.idsw`),previous)}
       await write(current,text);await this.acknowledge(text)
     })

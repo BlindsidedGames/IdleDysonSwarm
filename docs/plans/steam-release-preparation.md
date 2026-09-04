@@ -170,3 +170,10 @@ External gates and next steps:
 - Cloud disk root is explicitly pinned to OS AppData / `Idle Dyson Swarm`, independent of Electron package-name metadata. Prepared provider settings are in `hosts/electron/steam/cloud-settings.json`; four 32 MiB snapshots fit within 256 MiB/16 files. Nothing has been applied to Steamworks.
 - Playtime pauses for OS suspension and window background independently. Final trailer storyboard is in `docs/plans/steam-trailer-storyboard.md`; no final footage captured or published.
 - Private evidence directory: `/Users/matthewrushworth/Builds/steam-readiness-2026-09-04/`. Includes mobile checkpoint copies and iOS screenshots; raw provider exports remain outside repo.
+
+### Latest packaged smoke evidence
+
+- Package source commit: `29a77cd375bed794ec46d57388c1b5276a970772`; version 4.1.6 / build metadata 2026090201; macOS arm64, unsigned development package. Exact component SHA-256 hashes are recorded in the private `macos-development-build.json` manifest. This package is not a Steam candidate and has no Steam BuildID.
+- Latest packaged missing-client + minimize/restore regression completed with exit 0. Steam initialization failure left the renderer playable; native libraries were confirmed outside ASAR. This does not substitute for Steam-client/overlay or OS-sleep testing.
+- Catalog before-upload gate was run and failed closed because the Steam desktop client is not running. No upload or metadata publication attempted. Steamworks browser login alone does not satisfy this gate.
+- Cloud retry follow-up: if checkpoint bytes were written but the acknowledgement marker failed, publishing the same checkpoint retries that marker instead of silently skipping it.
