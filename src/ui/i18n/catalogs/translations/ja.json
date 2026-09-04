@@ -817,7 +817,7 @@
   "settings.save-data.download-file": "ファイルを保存",
   "settings.save-data.export": "エクスポート",
   "settings.save-data.export-copied": "セーブ文字列をコピーしました。",
-  "settings.save-data.export-description": "セーブ文字列を安全な場所へコピーするか、ファイルとしてダウンロードします。",
+  "settings.save-data.export-description": "このセーブのコピーを安全な場所に保管してください。",
   "settings.save-data.export-dialog-title": "セーブをエクスポート",
   "settings.save-data.export-failed": "セーブをエクスポートできませんでした。もう一度お試しください。",
   "settings.save-data.export-loading": "セーブ文字列を準備中…",

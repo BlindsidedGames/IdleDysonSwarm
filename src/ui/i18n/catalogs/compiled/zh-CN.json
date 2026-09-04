@@ -6924,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "将此存档字符串复制到安全的位置，或下载为文件。"
+      "value": "请将此存档的副本保存在安全的地方。"
     }
   ],
   "settings.save-data.export-dialog-title": [

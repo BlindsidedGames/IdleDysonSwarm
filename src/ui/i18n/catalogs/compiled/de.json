@@ -6924,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "Kopiere diese Spielstand-Zeichenfolge an einen sicheren Ort oder lade sie als Datei herunter."
+      "value": "Bewahre eine Kopie dieses Spielstands an einem sicheren Ort auf."
     }
   ],
   "settings.save-data.export-dialog-title": [

@@ -6924,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "Copia esta cadena de guardado en un lugar seguro o descárgala como archivo."
+      "value": "Guarda una copia de esta partida en un lugar seguro."
     }
   ],
   "settings.save-data.export-dialog-title": [

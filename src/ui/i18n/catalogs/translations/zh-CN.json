@@ -817,7 +817,7 @@
   "settings.save-data.download-file": "保存文件",
   "settings.save-data.export": "导出",
   "settings.save-data.export-copied": "存档字符串已复制。",
-  "settings.save-data.export-description": "将此存档字符串复制到安全的位置，或下载为文件。",
+  "settings.save-data.export-description": "请将此存档的副本保存在安全的地方。",
   "settings.save-data.export-dialog-title": "导出存档",
   "settings.save-data.export-failed": "无法导出存档，请重试。",
   "settings.save-data.export-loading": "正在准备存档字符串…",

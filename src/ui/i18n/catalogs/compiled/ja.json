@@ -6924,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "セーブ文字列を安全な場所へコピーするか、ファイルとしてダウンロードします。"
+      "value": "このセーブのコピーを安全な場所に保管してください。"
     }
   ],
   "settings.save-data.export-dialog-title": [

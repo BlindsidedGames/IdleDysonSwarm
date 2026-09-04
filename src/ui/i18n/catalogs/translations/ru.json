@@ -817,7 +817,7 @@
   "settings.save-data.download-file": "Сохранить файл",
   "settings.save-data.export": "Экспорт",
   "settings.save-data.export-copied": "Строка сохранения скопирована.",
-  "settings.save-data.export-description": "Скопируйте строку сохранения в безопасное место или скачайте её как файл.",
+  "settings.save-data.export-description": "Храните копию этого сохранения в надёжном месте.",
   "settings.save-data.export-dialog-title": "Экспорт сохранения",
   "settings.save-data.export-failed": "Не удалось экспортировать сохранение. Повторите попытку.",
   "settings.save-data.export-loading": "Подготовка строки сохранения…",

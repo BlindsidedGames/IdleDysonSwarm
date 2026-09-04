@@ -817,7 +817,7 @@
   "settings.save-data.download-file": "Datei speichern",
   "settings.save-data.export": "Exportieren",
   "settings.save-data.export-copied": "Spielstand-Zeichenfolge kopiert.",
-  "settings.save-data.export-description": "Kopiere diese Spielstand-Zeichenfolge an einen sicheren Ort oder lade sie als Datei herunter.",
+  "settings.save-data.export-description": "Bewahre eine Kopie dieses Spielstands an einem sicheren Ort auf.",
   "settings.save-data.export-dialog-title": "Spielstand exportieren",
   "settings.save-data.export-failed": "Der Spielstand konnte nicht exportiert werden. Bitte versuche es erneut.",
   "settings.save-data.export-loading": "Spielstand-Zeichenfolge wird vorbereitet…",

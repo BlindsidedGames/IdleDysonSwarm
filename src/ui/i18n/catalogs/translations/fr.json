@@ -817,7 +817,7 @@
   "settings.save-data.download-file": "Enregistrer le fichier",
   "settings.save-data.export": "Exporter",
   "settings.save-data.export-copied": "Chaîne de sauvegarde copiée.",
-  "settings.save-data.export-description": "Copiez cette chaîne de sauvegarde dans un endroit sûr ou téléchargez-la sous forme de fichier.",
+  "settings.save-data.export-description": "Conservez une copie de cette sauvegarde en lieu sûr.",
   "settings.save-data.export-dialog-title": "Exporter la sauvegarde",
   "settings.save-data.export-failed": "La sauvegarde n’a pas pu être exportée. Veuillez réessayer.",
   "settings.save-data.export-loading": "Préparation de la chaîne de sauvegarde…",

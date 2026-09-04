@@ -817,7 +817,7 @@
   "settings.save-data.download-file": "Salvar arquivo",
   "settings.save-data.export": "Exportar",
   "settings.save-data.export-copied": "Texto do jogo salvo copiado.",
-  "settings.save-data.export-description": "Copie este texto do jogo salvo para um local seguro ou baixe-o como arquivo.",
+  "settings.save-data.export-description": "Guarde uma cópia deste salvamento em um lugar seguro.",
   "settings.save-data.export-dialog-title": "Exportar jogo salvo",
   "settings.save-data.export-failed": "Não foi possível exportar o jogo salvo. Tente novamente.",
   "settings.save-data.export-loading": "Preparando o texto do jogo salvo…",

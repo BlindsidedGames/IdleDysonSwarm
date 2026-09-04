@@ -6924,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "Copie este texto do jogo salvo para um local seguro ou baixe-o como arquivo."
+      "value": "Guarde uma cópia deste salvamento em um lugar seguro."
     }
   ],
   "settings.save-data.export-dialog-title": [

@@ -817,7 +817,7 @@
   "settings.save-data.download-file": "Guardar archivo",
   "settings.save-data.export": "Exportar",
   "settings.save-data.export-copied": "Cadena de guardado copiada.",
-  "settings.save-data.export-description": "Copia esta cadena de guardado en un lugar seguro o descárgala como archivo.",
+  "settings.save-data.export-description": "Guarda una copia de esta partida en un lugar seguro.",
   "settings.save-data.export-dialog-title": "Exportar partida",
   "settings.save-data.export-failed": "No se pudo exportar la partida. Inténtalo de nuevo.",
   "settings.save-data.export-loading": "Preparando cadena de guardado…",

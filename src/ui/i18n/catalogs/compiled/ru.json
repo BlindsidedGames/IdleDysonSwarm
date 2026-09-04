@@ -6924,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "Скопируйте строку сохранения в безопасное место или скачайте её как файл."
+      "value": "Храните копию этого сохранения в надёжном месте."
     }
   ],
   "settings.save-data.export-dialog-title": [

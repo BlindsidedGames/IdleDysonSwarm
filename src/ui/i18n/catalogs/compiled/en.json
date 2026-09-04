@@ -6924,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "Copy this save string somewhere safe, or download it as a file."
+      "value": "Keep a copy of this save somewhere safe."
     }
   ],
   "settings.save-data.export-dialog-title": [

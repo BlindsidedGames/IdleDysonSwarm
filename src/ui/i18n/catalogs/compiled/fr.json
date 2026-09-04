@@ -6924,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "Copiez cette chaîne de sauvegarde dans un endroit sûr ou téléchargez-la sous forme de fichier."
+      "value": "Conservez une copie de cette sauvegarde en lieu sûr."
     }
   ],
   "settings.save-data.export-dialog-title": [
