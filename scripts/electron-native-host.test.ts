@@ -71,6 +71,7 @@ describe('Electron native host hardening', () => {
   })
 
   it('selects ordinary and suspend/resume smoke modes from explicit arguments', () => {
+    expect(selectElectronSmokeMode(['--overlay-smoke']).smokeTest).toBe(true)
     expect(selectElectronSmokeMode(['--close-smoke'])).toEqual({
       smokeTest: true, suspendResumeSmoke: false, closeSmoke: true,
     })

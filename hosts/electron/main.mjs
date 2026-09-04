@@ -508,6 +508,26 @@ async function waitForRendererReady(window) {
       await exitHost(1)
       return
     }
+    if (process.argv.includes('--overlay-smoke')) {
+      const deadline = Date.now() + 10_000
+      while (!steamClient?.native.overlayStatus().enabled && Date.now() < deadline) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+      if (!steamClient?.native.overlayStatus().enabled) {
+        console.error('Overlay smoke: Steam overlay unavailable')
+        await exitHost(1)
+        return
+      }
+      steamClient.native.activateOverlay()
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      const status = steamClient.native.overlayStatus()
+      console.log('Overlay smoke:', JSON.stringify(status))
+      if (!status.active) { await exitHost(1); return }
+      // Leave the isolated test window available briefly for visual verification.
+      await new Promise(resolve => setTimeout(resolve, 20_000))
+      window.close()
+      return
+    }
     if (closeSmoke) {
       // Exercise the real window-close/checkpoint/quit path, not app.exit().
       setTimeout(() => {
