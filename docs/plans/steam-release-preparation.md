@@ -250,3 +250,13 @@ Matthew reports missing Steam overlay, Windows update failure “missing downloa
 - References: https://github.com/ceifa/steamworks.js/blob/main/index.js and https://partner.steamgames.com/doc/features/overlay .
 
 - Further Windows packaging inspection found Android Gradle intermediates auto-included by electron-builder through production @capacitor/android dependencies. Maximum relative path 271 characters, before Steam library prefix: a concrete Windows MAX_PATH compatibility hazard. Exclude all node_modules from desktop artifacts (Vite bundles renderer dependencies; main host uses only built-ins/local files), and fail Windows packaging on relative paths >160 characters or leaked node_modules. This is the likely update failure; affected Windows client must still confirm.
+
+
+### Repair candidate live: 25123535
+
+- Source ff8067f93702b3bf34a23be3c2f03214f3a0c3af, desktop version 4.1.6/build metadata 2026090201. Uploaded all three depots and auto-set only public-beta; Steamworks branch table/history verified Public Beta 25123535 and unchanged default 22353758.
+- Manifests: Windows 4348571 = 8379148027259965851; Linux 4348572 = 3529454255836770338; macOS 4348573 = 1317556955101604223. Exact file hashes and upload logs: private steam-readiness-2026-09-04/public-beta-repair/.
+- Windows package now 76 regular files, longest relative path 31 characters, no node_modules. Linux 75 regular files. Desktop dependencies are bundled in renderer; SDK/addon remains external resources.
+- Upgraded the previously downloaded Windows beta through SteamCMD successfully; all 76 files match and old Android build intermediates were removed. This runs the Windows depot download on macOS, not a native Windows runtime test.
+- Mac universal packaged --close-smoke passed with exit 0 and no checkpoint fallback warning. Also launched normal packaged game, clicked native close button through CUA and observed process exit 0; reopening installed game retained progress. Development suspend/resume smoke and 9 host tests plus lint passed.
+- Overlay remains unverified: direct candidate launch shows game but no Shift+Tab overlay. Steam-launched verification still picked installed old BuildID 25123023 before the local client refreshed its update; quit that old build. Steam client GUI access is blocked by ScreenCaptureKit capture failure. Matthew should retest overlay after updating to 25123535; do not claim this issue resolved until visible evidence exists. If overlay still fails, investigate native render presentation rather than assuming SDK initialization proves overlay support.
