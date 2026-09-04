@@ -1,3 +1,4 @@
+import type { SaveFileExportRequest, SaveFileExportResult } from '../../platform/saveFileExport'
 import type {
   ApplicationSnapshot,
   CheckpointResult,
@@ -198,6 +199,7 @@ export interface BrowserRuntimeLifecyclePolicy {
 }
 
 export interface BrowserRuntimeFoundationOptions {
+  readonly exportSaveFile?: (request: SaveFileExportRequest) => Promise<SaveFileExportResult>
   /**
    * Required backend-owned factory. Production gameplay configuration and the
    * authoritative first-run save factory are Wave 2/backend prerequisites.
@@ -1267,10 +1269,16 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   async exportCurrentSave(): Promise<boolean> {
     const exported = await this.readCurrentSaveExport()
     if (exported === null) return false
-    return this.downloadSaveText(exported.text)
+    return (await this.downloadSaveText(exported.text)) ?? false
   }
 
-  async downloadSaveText(text: string): Promise<boolean> {
+  async downloadSaveText(text: string): Promise<boolean | null> {
+    if (this.options.exportSaveFile !== undefined) {
+      const result = await this.options.exportSaveFile({
+        fileName: 'idle-dyson-swarm-save.idsw', text,
+      })
+      return result === 'cancelled' ? null : result === 'saved'
+    }
     this.downloads.downloadText(
       'idle-dyson-swarm-save.idsw',
       text,

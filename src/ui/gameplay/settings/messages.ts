@@ -445,7 +445,7 @@ export const settingsSurfaceMessages = defineMessages({
   },
   downloadFile: {
     id: 'settings.save-data.download-file',
-    defaultMessage: 'Download File',
+    defaultMessage: 'Save File',
     description: 'Downloads the exported save as a file.',
   },
   exportSucceeded: {

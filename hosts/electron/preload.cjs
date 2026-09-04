@@ -9,6 +9,7 @@ const channels = Object.freeze({
   discoverUnity: 'ids:native:unity:discover',
   metadata: 'ids:native:metadata',
   diagnostics: 'ids:native:diagnostics:export',
+  exportSave: 'ids:native:save:export',
   storeProducts: 'ids:native:store:products',
   storePurchase: 'ids:native:store:purchase',
   storeRestore: 'ids:native:store:restore',
@@ -89,6 +90,7 @@ contextBridge.exposeInMainWorld(
       }
     },
     metadata: () => ipcRenderer.invoke(channels.metadata),
+    exportSaveFile: (request) => ipcRenderer.invoke(channels.exportSave, request),
     exportDiagnostics: (request) =>
       ipcRenderer.invoke(channels.diagnostics, request),
     storeProducts: () =>
