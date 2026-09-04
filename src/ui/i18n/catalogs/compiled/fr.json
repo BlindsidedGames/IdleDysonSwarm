@@ -1353,6 +1353,34 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "Progression des bâtiments achetés"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% de production par bâtiment acheté au-delà de "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -2720,7 +2748,7 @@
   "dyson.info.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Arrondir les achats groupés au prochain palier"
+      "value": "Arrondir les achats groupés"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -6294,7 +6322,7 @@
   "research.settings.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Arrondir les achats groupés au prochain palier"
+      "value": "Arrondir les achats groupés"
     }
   ],
   "settings.audio.description": [
@@ -13608,6 +13636,24 @@
     {
       "type": 0,
       "value": "Les notifications de jeu utilisent désormais une file partagée : les avertissements de conflit lors de l’application automatique d’un Préréglage de Compétences restent visibles lorsque vous changez d’onglet au lieu d’être limités aux Bots."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "Version 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "Rétablissement du libellé Arrondir les achats groupés dans les paramètres des Bots et de la Recherche."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "Les détails des bâtiments distinguent désormais la progression des bâtiments achetés de la compétence Montée en puissance de la production attribuée, et affichent le pourcentage du bonus et le seuil d’achat actuels."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

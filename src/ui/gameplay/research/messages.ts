@@ -270,7 +270,7 @@ export const researchMessages = defineMessages({
   },
   roundedBulkBuy: {
     id: 'research.settings.rounded-bulk-buy',
-    defaultMessage: 'Round bulk purchases to the next milestone',
+    defaultMessage: 'Round bulk purchases',
     description: 'Unity Research rounded-bulk setting.',
   },
   hideCompleted: {

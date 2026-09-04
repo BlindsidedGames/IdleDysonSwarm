@@ -1353,6 +1353,34 @@
       "value": "）"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "已购建筑增长加成"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% 产量加成，适用于购买数量超过 "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": " 的每座建筑。"
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -2720,7 +2748,7 @@
   "dyson.info.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "批量购买时凑整至下一里程碑"
+      "value": "批量购买取整"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -6294,7 +6322,7 @@
   "research.settings.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "批量购买时凑整至下一里程碑"
+      "value": "批量购买取整"
     }
   ],
   "settings.audio.description": [
@@ -13608,6 +13636,24 @@
     {
       "type": 0,
       "value": "游戏提示现已使用共享通知队列，因此自动应用技能预设时的冲突提示会在切换选项卡后继续显示，不再仅限于机器人选项卡。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "版本 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "恢复了机器人和研究设置中的“批量购买取整”措辞。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "建筑详情现在会区分已购建筑增长加成与已分配的“生产规模化”技能，并显示当前加成百分比和购买数量门槛。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

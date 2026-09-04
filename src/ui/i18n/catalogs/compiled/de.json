@@ -1353,6 +1353,34 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "Skalierung gekaufter Gebäude"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% Produktion pro gekauftem Gebäude über "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -2720,7 +2748,7 @@
   "dyson.info.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Massenkäufe auf den nächsten Meilenstein aufrunden"
+      "value": "Sammelkäufe runden"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -6294,7 +6322,7 @@
   "research.settings.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Massenkäufe auf den nächsten Meilenstein aufrunden"
+      "value": "Sammelkäufe runden"
     }
   ],
   "settings.audio.description": [
@@ -13608,6 +13636,24 @@
     {
       "type": 0,
       "value": "Spielhinweise verwenden jetzt eine gemeinsame Benachrichtigungswarteschlange. Konflikthinweise bei automatisch angewendeten Skill-Voreinstellungen bleiben dadurch beim Wechseln des Tabs sichtbar und sind nicht mehr auf Bots beschränkt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "Version 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "Die Bezeichnung Sammelkäufe runden wurde in den Bot- und Forschungseinstellungen wiederhergestellt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "Gebäudedetails unterscheiden jetzt die Skalierung gekaufter Gebäude vom zugewiesenen Skill Produktionsskalierung und zeigen den aktuellen Bonusprozentsatz und die Kaufschwelle an."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

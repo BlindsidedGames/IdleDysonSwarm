@@ -1353,6 +1353,34 @@
       "value": "）"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "購入建物の生産スケーリング"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% の生産ボーナス（購入数 "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": " を超えた建物1つにつき）。"
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -2720,7 +2748,7 @@
   "dyson.info.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "一括購入数を次の節目に丸める"
+      "value": "一括購入数を切りのよい数に調整"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -6294,7 +6322,7 @@
   "research.settings.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "一括購入数を次の節目に丸める"
+      "value": "一括購入数を切りのよい数に調整"
     }
   ],
   "settings.audio.description": [
@@ -13608,6 +13636,24 @@
     {
       "type": 0,
       "value": "ゲーム内のお知らせを共有通知キューへ移行しました。これにより、スキルプリセットの自動適用時に競合が発生した場合のお知らせは、ボットタブだけに限定されず、タブを切り替えても表示され続けます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "バージョン 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "ボットと研究の設定で、一括購入数の丸めを示す以前の表記を復元しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "建物の詳細で、購入建物の生産スケーリングと割り当て済みの「生産スケーリング」スキルを区別し、現在のボーナス率と購入数のしきい値を表示するようになりました。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

@@ -2673,6 +2673,50 @@
       "value": "‬"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝp Ԑnıʅpıuƃ Sɔɐʅıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% dɹopnɔʇıou dǝɹ dnɹɔɥɐsǝp qnıʅpıuƃ qǝʎoup "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": "."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -4892,7 +4936,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚonup qnʅʞ dnɹɔɥɐsǝs ʇo ʇɥǝ uǝxʇ ɯıʅǝsʇouǝ"
+      "value": "ᴚonup qnʅʞ dnɹɔɥɐsǝs"
     },
     {
       "type": 0,
@@ -12194,7 +12238,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚonup qnʅʞ dnɹɔɥɐsǝs ʇo ʇɥǝ uǝxʇ ɯıʅǝsʇouǝ"
+      "value": "ᴚonup qnʅʞ dnɹɔɥɐsǝs"
     },
     {
       "type": 0,
@@ -27428,6 +27472,48 @@
     {
       "type": 0,
       "value": "Woʌǝp ƃɐɯǝdʅɐʎ uoʇıɔǝs ıuʇo ɐ sɥɐɹǝp uoʇıɟıɔɐʇıou bnǝnǝ, so ɐnʇoɯɐʇıɔ Sʞıʅʅ Ԁɹǝsǝʇ ɔouɟʅıɔʇ uoʇıɔǝs ɹǝɯɐıu ʌısıqʅǝ ʍɥǝu ɔɥɐuƃıuƃ ʇɐqs ıusʇǝɐp oɟ qǝıuƃ ʅıɯıʇǝp ʇo Ԑoʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌǝɹsıou 4.1.7"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹǝp ʇɥǝ ᴚonup qnʅʞ dnɹɔɥɐsǝs ʍoɹpıuƃ ıu Ԑoʇs ɐup ᴚǝsǝɐɹɔɥ sǝʇʇıuƃs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅpıuƃ pǝʇɐıʅs uoʍ pısʇıuƃnısɥ Ԁnɹɔɥɐsǝp Ԑnıʅpıuƃ Sɔɐʅıuƃ ɟɹoɯ ʇɥǝ ɐssıƃuǝp Ԁɹopnɔʇıou Sɔɐʅıuƃ sʞıʅʅ ɐup sɥoʍ ʇɥǝ ɔnɹɹǝuʇ qouns dǝɹɔǝuʇɐƃǝ ɐup dnɹɔɥɐsǝ ʇɥɹǝsɥoʅp."
     },
     {
       "type": 0,

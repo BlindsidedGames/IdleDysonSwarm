@@ -1353,6 +1353,34 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "Purchased Building Scaling"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% production per purchased building beyond "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -2720,7 +2748,7 @@
   "dyson.info.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Round bulk purchases to the next milestone"
+      "value": "Round bulk purchases"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -6294,7 +6322,7 @@
   "research.settings.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Round bulk purchases to the next milestone"
+      "value": "Round bulk purchases"
     }
   ],
   "settings.audio.description": [
@@ -13608,6 +13636,24 @@
     {
       "type": 0,
       "value": "Moved gameplay notices into a shared notification queue, so automatic Skill Preset conflict notices remain visible when changing tabs instead of being limited to Bots."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "Version 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "Restored the Round bulk purchases wording in Bots and Research settings."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "Building details now distinguish Purchased Building Scaling from the assigned Production Scaling skill and show the current bonus percentage and purchase threshold."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

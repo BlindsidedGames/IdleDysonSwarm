@@ -268,7 +268,7 @@
   "dyson.info.purchase-amount": "Cantidad de compra de edificios",
   "dyson.info.purchase-settings": "Ajustes de compra",
   "dyson.info.purchase-settings-failed": "No se modificaron los ajustes de compra.",
-  "dyson.info.rounded-bulk-buy": "Redondear las compras masivas al siguiente hito",
+  "dyson.info.rounded-bulk-buy": "Redondear compras en lote",
   "dyson.info.show-run-facts-when-collapsed": "Mostrar siempre Activos, Vida útil y Deteriorados",
   "dyson.info.stars-surrounded": "Estrellas rodeadas: <emphasis>{value}</emphasis>",
   "dyson.info.title": "Información",
@@ -734,7 +734,7 @@
   "research.settings.preset-automation": "Preajuste de habilidades al abrir Investigación",
   "research.settings.preset-automation-off": "No",
   "research.settings.purchase-amount": "Cantidad de compra de Investigación",
-  "research.settings.rounded-bulk-buy": "Redondear las compras masivas al siguiente hito",
+  "research.settings.rounded-bulk-buy": "Redondear compras en lote",
   "settings.audio.description": "Ajusta la música y los efectos de sonido.",
   "settings.audio.effects-volume": "Volumen de efectos",
   "settings.audio.music-volume": "Volumen de música",
@@ -1803,5 +1803,10 @@
   "skills.switch-preset-conflict-warning": "Algunas habilidades no se pueden desasignar en este momento y bloquean parte de este preajuste. Aun así, puedes cambiar y aplicar todo lo compatible.",
   "skills.preset-partially-applied-title": "{name} se aplicó parcialmente",
   "skills.preset-partially-applied-details": "Las habilidades no reembolsables no se pudieron desasignar. Estas habilidades del preajuste están bloqueadas y quedan en cola para después.",
-  "skills.dismiss": "Descartar"
+  "skills.dismiss": "Descartar",
+  "dyson.facilities.details.purchased-building-scaling": "Escalado de edificios comprados",
+  "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% de producción por edificio comprado por encima de {threshold}.",
+  "wiki.patch-notes.version-4-1-7": "Versión 4.1.7",
+  "wiki.patch-notes.version-4-1-7.rounding": "Se restauró el texto Redondear compras en lote en los ajustes de Bots e Investigación.",
+  "wiki.patch-notes.version-4-1-7.scaling": "Los detalles de los edificios ahora distinguen el escalado de edificios comprados de la habilidad Escalado de producción asignada y muestran el porcentaje de bonificación y el umbral de compras actuales."
 }
