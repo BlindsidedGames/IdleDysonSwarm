@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -22,6 +23,7 @@ import {
 import type {
   StoredTimeFirstDisasterOccurrence,
 } from '../../../core/storedTimeCompletionSummary'
+import type { LifecyclePhase } from '../../../platform/contracts'
 import { SingleHostSessionWriterAuthority } from '../../../platform/singleHostSessionWriterAuthority'
 import { prepareIdb1Save } from '../../../save/prepare'
 import type {
@@ -38,7 +40,10 @@ import type {
   StoredTimeJobRunOptions,
 } from '../../../workers/storedTime/storedTimeJobRunner'
 import { StoredTimeSimulation } from '../../../workers/storedTime/storedTimeSimulation'
-import type { StoredTimeJobTerminalMessage } from '../../../workers/storedTime/storedTimeProtocol'
+import {
+  STORED_TIME_WORKER_PROTOCOL_VERSION,
+  type StoredTimeJobTerminalMessage,
+} from '../../../workers/storedTime/storedTimeProtocol'
 import {
   createBrowserRuntimeFoundation,
   type BrowserUiRuntimeFoundation,
@@ -62,6 +67,40 @@ afterEach(async () => {
 })
 
 describe('Offline Time completion boundary through the UI runtime', () => {
+  test.each([
+    ['background', 'CANONICAL-STORED-TIME-BACKGROUNDED', true],
+    ['terminating', 'CANONICAL-STORED-TIME-LIFECYCLE-CANCELLED', false],
+    ['user', 'CANONICAL-STORED-TIME-CANCELLED', false],
+    ['failure', 'SIM-RESEARCH-INVALID', false],
+  ] as const)('shows the correct error and preserves the bank after %s cancellation', async (origin, code, backgrounded) => {
+    const { runtime, runner, emitLifecycle } = await createRuntimeHarness()
+    const before = runtime.snapshot()
+    expect(before.phase).toBe('ready')
+    if (before.phase !== 'ready') return
+    const bankBefore = before.gameplay.resources.time.storedTimeAvailableSeconds
+    renderRuntime(runtime)
+    await beginStoredTimeSpend()
+    await screen.findByRole('dialog', { name: 'Offline Time simulation progress' })
+    await act(async () => {
+      if (origin === 'failure') {
+        runner.fail('SIM-RESEARCH-INVALID')
+      } else {
+        if (origin === 'user') runtime.storedTime?.cancel()
+        else emitLifecycle(origin)
+        runner.finish()
+      }
+    })
+    const alert = await screen.findByRole('alert')
+    expect(alert.textContent).toContain(`(Error code: ${code})`)
+    expect(alert.textContent).toContain(backgrounded
+      ? 'App was backgrounded processing cancelled'
+      : 'That action was not completed. Try again.')
+    const after = runtime.snapshot()
+    expect(after.phase).toBe('ready')
+    if (after.phase !== 'ready') return
+    expect(after.gameplay.resources.time.storedTimeAvailableSeconds).toBe(bankBefore)
+  })
+
   test('keeps pending confirmation dismissal separate from active processing', async () => {
     const { runtime } = await createRuntimeHarness()
     renderRuntime(runtime)
@@ -282,6 +321,7 @@ async function createRuntimeHarness(
 ): Promise<{
   readonly runtime: BrowserUiRuntimeFoundation
   readonly runner: ControlledStoredTimeJobRunner
+  readonly emitLifecycle: (phase: LifecyclePhase) => void
 }> {
   const hydrated = hydrateGameState(preparedFixture)
   const candidate = {
@@ -304,6 +344,7 @@ async function createRuntimeHarness(
     eventContext,
     firstDisasterOccurrences,
   )
+  let lifecycleListener: ((phase: LifecyclePhase) => void) | undefined
   const runtime = createBrowserRuntimeFoundation({
     createApplication: (repository) => createCanonicalGameApplication({
       repository,
@@ -338,7 +379,10 @@ async function createRuntimeHarness(
     }),
     lifecycle: {
       currentPhase: () => 'background',
-      subscribe: () => () => undefined,
+      subscribe: (listener) => {
+        lifecycleListener = listener
+        return () => { lifecycleListener = undefined }
+      },
     },
     lifecycleClock: {
       sample: () => ({
@@ -349,13 +393,14 @@ async function createRuntimeHarness(
   })
   activeRuntimes.push(runtime)
   await expect(runtime.start()).resolves.toMatchObject({ phase: 'ready' })
-  return { runtime, runner }
+  return { runtime, runner, emitLifecycle: (phase) => lifecycleListener?.(phase) }
 }
 
 class ControlledStoredTimeJobRunner implements StoredTimeJobRunner {
   private readonly eventContext: Readonly<CanonicalEventTimeContext>
   private readonly firstDisasterOccurrences:
     readonly Readonly<StoredTimeFirstDisasterOccurrence>[]
+  private failPending: ((code: string) => void) | undefined
   private finishPending: (() => void) | undefined
 
   constructor(
@@ -380,6 +425,14 @@ class ControlledStoredTimeJobRunner implements StoredTimeJobRunner {
     })
     options.onProgress?.(simulation.progress())
     return new Promise((resolve) => {
+      this.failPending = (code) => resolve({
+        type: 'failed',
+        protocolVersion: STORED_TIME_WORKER_PROTOCOL_VERSION,
+        jobId: request.jobId,
+        code,
+        reason: 'Simulated processing failure.',
+        progress: simulation.progress(),
+      })
       this.finishPending = () => {
         const terminal = simulation.step(Number.POSITIVE_INFINITY, false)
         if (terminal === null) {
@@ -394,6 +447,10 @@ class ControlledStoredTimeJobRunner implements StoredTimeJobRunner {
           : terminal)
       }
     })
+  }
+
+  fail(code: string): void {
+    this.failPending?.(code)
   }
 
   finish(): void {

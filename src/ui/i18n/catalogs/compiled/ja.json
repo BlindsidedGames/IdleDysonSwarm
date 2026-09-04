@@ -3875,6 +3875,12 @@
       "value": "すべて"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "アプリがバックグラウンドに移動したため、処理がキャンセルされました"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "まで増やします。"
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "（エラーコード: "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": "）"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "ファイルをダウンロード"
+      "value": "ファイルを保存"
     }
   ],
   "settings.save-data.export": [
@@ -6904,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "セーブ文字列を安全な場所へコピーするか、ファイルとしてダウンロードします。"
+      "value": "このセーブのコピーを安全な場所に保管してください。"
     }
   ],
   "settings.save-data.export-dialog-title": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "各研究は表示値の分だけ自身のコストも下げます（サイエンスブースト300%、キャッシュブースト250%なら、コストはそれぞれ1/4と1/3.5）。"
+      "value": "割合でボーナスを与える研究は、アップグレードするほど安くなります。コストは、その研究の現在の合計生産倍率で割られます。たとえば、+300%のボーナスは生産量4倍を意味するため、その研究のコストは4分の1になります。耐久アップグレードには適用されません。"
     }
   ],
   "skills.node.rocketMania.description": [
@@ -13650,16 +13670,58 @@
       "value": "バージョン 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "ボット配分スライダーのバーをタップすると、最新の選択ではなく前の配分が適用される問題を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "オフライン時間の処理失敗時に異なるエラーコードを表示し、アプリがバックグラウンドに移動したため処理がキャンセルされた場合は、明確なメッセージを表示するようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "反復可能研究 は研究コストを現在の合計生産倍率で割り、耐久性 には影響しないことを明記しました。+300% のボーナスでは通常コストの4分の1になります。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "Infinity と Quantum のリセット後に、統制された学術界 または 革命の肩 が原因で進行やオフライン時間の処理に失敗する問題を修正しました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "ボットと研究の設定で、一括購入数の丸めを示す以前の表記を復元しました。"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Android とデスクトップのセーブデータ出力に「ファイルを保存」を追加しました。Android アプリとデスクトップアプリでは、システムの「名前を付けて保存」ダイアログを使用します。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "建物の詳細で、購入建物の生産スケーリングと割り当て済みの「生産スケーリング」スキルを区別し、現在のボーナス率と購入数のしきい値を表示するようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "Terra Firma と Terra Irradient によって、購入した惑星が 来るべき未来 の効果にカウントされるようになりました。表示される計算にも反映されます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.workers": [
+    {
+      "type": 0,
+      "value": "新規ゲームと Quantum リセットの初期配分を作業員100%に変更しました。新規ゲームのスキルプリセットも作業員100%で開始します。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

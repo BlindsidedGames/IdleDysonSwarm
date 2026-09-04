@@ -72,7 +72,9 @@ export function resolveReferenceDynamicSkillEffect(
       fragments: Number(state.skills.fragments),
       assignedSkillPoints: Number(state.skills.points),
       serversTotal: servers[0] + servers[1],
-      manualDataCenters: dataCenters[1],
+      // Intentional Terra purchase-count rule; keep the reference arithmetic independent.
+      manualDataCenters: dataCenters[1] + (ownedSkills.has('terraFirma')
+        ? planets[1] * (ownedSkills.has('terraIrradiant') ? 12 : 1) : 0),
       effectivePlanets:
         planets[0] +
         planets[1] * (ownedSkills.has('terraIrradiant') ? 12 : 1),

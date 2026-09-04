@@ -189,6 +189,8 @@ interface CanonicalActiveAdvanceMeasurement {
   readonly consumedMilliseconds: number
 }
 
+export type StoredTimeCancellationReason = 'user' | 'background' | 'lifecycle' | 'import'
+
 export interface CanonicalGameApplicationOptions {
   readonly startupResolver: StartupSaveResolver
   readonly repository: SaveRepository
@@ -266,6 +268,7 @@ export class CanonicalGameApplicationFacade {
   })
   private activeStoredTimeJobId: string | null = null
   private storedTimeCancellationRequested = false
+  private storedTimeCancellationReason: StoredTimeCancellationReason = 'user'
   private storedTimeExportSnapshot: PreparedSave | null = null
   private cachedFrontendSnapshot:
     | DeepReadonly<FrontendApplicationSnapshot>
@@ -477,16 +480,28 @@ export class CanonicalGameApplicationFacade {
     return () => this.storedTimeJobListeners.delete(listener)
   }
 
-  cancelStoredTimeJob(): void {
+  cancelStoredTimeJob(reason: StoredTimeCancellationReason = 'user'): void {
     if (
       this.storedTimeJobStatusValue.kind === 'idle' ||
       this.storedTimeJobStatusValue.kind === 'committing'
     ) return
+    if (!this.storedTimeCancellationRequested) {
+      this.storedTimeCancellationReason = reason
+    }
     this.storedTimeCancellationRequested = true
     this.publishStoredTimeJobStatus({
       ...this.storedTimeJobStatusValue,
       kind: 'cancelling',
     })
+  }
+
+  private storedTimeCancellationCode(): string {
+    switch (this.storedTimeCancellationReason) {
+      case 'background': return 'CANONICAL-STORED-TIME-BACKGROUNDED'
+      case 'import': return 'CANONICAL-STORED-TIME-IMPORT-CANCELLED'
+      case 'lifecycle': return 'CANONICAL-STORED-TIME-LIFECYCLE-CANCELLED'
+      case 'user': return 'CANONICAL-STORED-TIME-CANCELLED'
+    }
   }
 
   speedUpStoredTimeJob(): void {
@@ -621,6 +636,7 @@ export class CanonicalGameApplicationFacade {
       this.application.capturePreparedSave()
     this.activeStoredTimeJobId = jobId
     this.storedTimeCancellationRequested = false
+    this.storedTimeCancellationReason = 'user'
     this.publishStoredTimeProgress({
       jobId,
       requestedSeconds: seconds,
@@ -654,7 +670,7 @@ export class CanonicalGameApplicationFacade {
         return rejectedStoredTimeCommit(
           this.snapshot(),
           seconds,
-          'CANONICAL-STORED-TIME-CANCELLED',
+          this.storedTimeCancellationCode(),
           'Cancelled Stored Time work was discarded without charging the bank.',
         )
       }
@@ -662,7 +678,7 @@ export class CanonicalGameApplicationFacade {
         return rejectedStoredTimeCommit(
           this.snapshot(),
           seconds,
-          'CANONICAL-STORED-TIME-CANCELLED',
+          this.storedTimeCancellationCode(),
           'Cancelled Stored Time work was discarded without charging the bank.',
         )
       }

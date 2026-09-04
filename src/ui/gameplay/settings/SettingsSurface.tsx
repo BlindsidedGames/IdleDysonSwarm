@@ -48,7 +48,10 @@ import {
 } from '../../../platform/communityLinks'
 import { DiscordIcon } from '../../components/DiscordIcon'
 
+import { canExportSaveFile } from '../../../platform/saveFileExport'
+
 export interface SettingsSurfaceProps {
+  readonly saveFileExportAvailable?: boolean
   readonly resetSave: () => Promise<UiRuntimeImportResult>
   readonly importSaveFile: (
     file: UiRuntimeSuppliedFile,
@@ -63,7 +66,7 @@ export interface SettingsSurfaceProps {
     text: string,
   ) => Promise<UiRuntimeImportPreviewResult>
   readonly readSaveExport: () => Promise<UiRuntimeSaveExportSnapshot | null>
-  readonly downloadSaveText: (text: string) => Promise<boolean>
+  readonly downloadSaveText: (text: string) => Promise<boolean | null>
   readonly copySaveText: (text: string) => Promise<void>
   readonly storedTime?: UiRuntimeStoredTimeControls
   readonly development?: UiRuntimeDevelopmentControls
@@ -142,6 +145,7 @@ export function SettingsSurface({
   previewImportSaveText,
   readSaveExport,
   downloadSaveText,
+  saveFileExportAvailable = canExportSaveFile(),
   copySaveText,
   storedTime,
   development,
@@ -486,8 +490,9 @@ export function SettingsSurface({
     if (operationPending || exportText.length === 0) return
     setExportStatus('pending')
     try {
+      const result = await downloadSaveText(exportText)
       setExportStatus(
-        (await downloadSaveText(exportText)) ? 'downloaded' : 'failed',
+        result === null ? 'ready' : result ? 'downloaded' : 'failed',
       )
     } catch {
       setExportStatus('failed')
@@ -1212,6 +1217,7 @@ export function SettingsSurface({
                   >
                     {intl.formatMessage(messages.copyString)}
                   </button>
+                  {saveFileExportAvailable && (
                   <button
                     ref={confirmRef}
                     type="button"
@@ -1220,6 +1226,7 @@ export function SettingsSurface({
                   >
                     {intl.formatMessage(messages.downloadFile)}
                   </button>
+                  )}
                 </>
               ) : (
                 <button

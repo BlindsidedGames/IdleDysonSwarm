@@ -1,4 +1,5 @@
 import { prepareIdb1Save, type PreparedSave } from '../../save/prepare'
+import { requireRecord } from '../../save/graph'
 import { CURRENT_SAVE_SCHEMA } from '../../save/migrate'
 import { DEFAULT_BOTTOM_NAVIGATION_VISIBILITY } from '../../game-state/navigationPreferences'
 import firstRunSaveText from './generated/first-run-schema-12.idb1.txt?raw'
@@ -39,6 +40,8 @@ export const unityFirstRunProvenance: UnityFirstRunProvenance = provenance
 export const webFirstRunGameplayOverridePaths = Object.freeze([
   '$.infinityAutomaticReset',
   '$.bottomNavigationPreferences',
+  '$.dysonVerseSaveData.dysonVersePrestigeData.botDistribution',
+  ...Array.from({ length: 5 }, (_, index) => `$.dysonVerseSaveData.botDistPreset${index + 1}`),
 ] as const)
 
 /**
@@ -51,6 +54,11 @@ export function createUnityFirstRunPreparedSave(
   const startedAtUtc = normalizeUtc(options.startedAtUtc)
   const deterministic = createDeterministicUnityFirstRunPreparedSave()
   const candidate = deterministic.copyValidatedState()
+  const dyson = requireRecord(candidate.dysonVerseSaveData)
+  requireRecord(dyson.dysonVersePrestigeData).botDistribution = 0
+  for (let preset = 1; preset <= 5; preset += 1) {
+    dyson[`botDistPreset${preset}`] = 0
+  }
   candidate.dateStarted = startedAtUtc
   candidate.infinityAutomaticReset = false
   candidate.bottomNavigationPreferences = {

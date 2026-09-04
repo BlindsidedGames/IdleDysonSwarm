@@ -85,6 +85,7 @@ const channels = Object.freeze({
   discoverUnity: 'ids:native:unity:discover',
   metadata: 'ids:native:metadata',
   diagnostics: 'ids:native:diagnostics:export',
+  exportSave: 'ids:native:save:export',
   storeProducts: 'ids:native:store:products',
   storePurchase: 'ids:native:store:purchase',
   storeRestore: 'ids:native:store:restore',
@@ -302,6 +303,22 @@ function registerNativeHandlers() {
   ipcMain.handle(channels.discoverUnity, discoverUnitySaves)
   ipcMain.handle(channels.metadata, async () => {
     return packagedRuntimeMetadata ?? loadRuntimeMetadata()
+  })
+  ipcMain.handle(channels.exportSave, async (event, request) => {
+    if (request?.fileName !== 'idle-dyson-swarm-save.idsw' ||
+        typeof request.text !== 'string' || request.text.length === 0 ||
+        Buffer.byteLength(request.text, 'utf8') > 32 * 1024 * 1024) {
+      throw new Error('Invalid save export request.')
+    }
+    const owner = BrowserWindow.fromWebContents(event.sender)
+    if (owner === null) throw new Error('Save export window unavailable.')
+    const result = await dialog.showSaveDialog(owner, {
+      defaultPath: request.fileName,
+      filters: [{ name: 'Idle Dyson Swarm Save', extensions: ['idsw'] }],
+    })
+    if (result.canceled || !result.filePath) return 'cancelled'
+    await durableWriteText(result.filePath, request.text)
+    return 'saved'
   })
   ipcMain.handle(channels.diagnostics, async (_event, request) => {
     if (

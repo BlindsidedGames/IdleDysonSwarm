@@ -123,7 +123,7 @@ function unityQuantumResetReferenceWithoutAssignment(
       facilities,
       totalPanelsDecayed: 0,
       goalStage: 0n,
-      botDistribution: 0.5,
+      botDistribution: 0,
     },
     infinity: {
       ...state.infinity,

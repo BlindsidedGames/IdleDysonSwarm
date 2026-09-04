@@ -121,7 +121,6 @@ function resolveMoneyEffect(
       const research = readResearchLevel(
         state,
         'research.money_multiplier',
-        effectId,
       )
       if (!research.ok) return blocked(research.issue)
       const coefficient = readTuning(
@@ -178,7 +177,6 @@ function resolveMoneyEffect(
       const research = readResearchLevel(
         state,
         'research.science_boost',
-        effectId,
       )
       if (!research.ok) return blocked(research.issue)
       return resolvedFinite(1 + 0.01 * research.value, effectId)
@@ -249,7 +247,6 @@ function resolveScienceEffect(
       const research = readResearchLevel(
         state,
         'research.science_boost',
-        effectId,
       )
       if (!research.ok) return blocked(research.issue)
       const coefficient = readTuning(
@@ -581,14 +578,10 @@ function missingSkillIssue(
 function readResearchLevel(
   state: MoneyScienceCanonicalInputs,
   researchId: string,
-  effectId: string,
 ): ReadResult<number> {
   if (!Object.hasOwn(state.research.levelsById, researchId)) {
-    return failure(
-      'DYSON_MONEY_SCIENCE_CANONICAL_INPUT_INVALID',
-      `research.levelsById.${researchId}`,
-      `Effect '${effectId}' requires canonical research '${researchId}'.`,
-    )
+    // Research maps are sparse: resets remove entries for unpurchased levels.
+    return { ok: true, value: 0 }
   }
   const level = state.research.levelsById[researchId]
   if (

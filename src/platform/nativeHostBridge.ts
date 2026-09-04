@@ -43,6 +43,8 @@ import type {
   RootedNativeFileBridge,
 } from './platformSaveStorage'
 
+import type { SaveFileExportRequest, SaveFileExportResult } from './saveFileExport'
+
 export interface NativeUnitySaveCandidate {
   readonly id: string
   readonly text: string
@@ -52,6 +54,7 @@ export interface NativeUnitySaveCandidate {
 }
 
 export interface NativeHostBridgeApi {
+  readonly exportSaveFile?: (request: SaveFileExportRequest) => Promise<SaveFileExportResult>
   readonly target: Exclude<RuntimeTarget, 'browser'>
   readonly achievements?: AchievementPublication
   readonly cloud?: PortableCloud
@@ -111,6 +114,7 @@ export interface NativeSystemInsets {
 }
 
 export interface CapacitorNativeHostPlugin {
+  exportSaveFile(request: SaveFileExportRequest): Promise<{ result: SaveFileExportResult }>
   fileExists(request: { relativePath: string }): Promise<{ exists: boolean }>
   readText(request: { relativePath: string }): Promise<{ text: string }>
   writeText(request: {
@@ -235,6 +239,7 @@ export function detectNativeHostBridge(): NativeHostBridgeApi | null {
 }
 
 export interface NativeHostEnvironment {
+  readonly exportSaveFile?: (request: SaveFileExportRequest) => Promise<SaveFileExportResult>
   readonly target: Exclude<RuntimeTarget, 'browser'>
   readonly achievements?: AchievementPublication
   readonly cloud?: PortableCloud
@@ -274,6 +279,7 @@ export function createNativeHostEnvironment(
     ...(bridge.target === 'electron' && bridge.cloud !== undefined ? { cloud: bridge.cloud } : {}),
     ...(bridge.target === 'electron' && bridge.achievements !== undefined ? { achievements: bridge.achievements } : {}),
     files: bridge,
+    exportSaveFile: bridge.exportSaveFile?.bind(bridge),
     migration,
     lifecycle: new NativeLifecycleAdapter({
       currentPhase: () => bridge.currentLifecyclePhase(),
@@ -492,6 +498,11 @@ export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
         // A renderer listener cannot suppress native lifecycle delivery.
       }
     }
+  }
+
+  async exportSaveFile(request: SaveFileExportRequest): Promise<SaveFileExportResult> {
+    if (this.target !== 'android') throw new Error('Save file export unavailable.')
+    return (await this.plugin.exportSaveFile(request)).result
   }
 
   metadata(): Promise<Readonly<NativeApplicationMetadata>> {

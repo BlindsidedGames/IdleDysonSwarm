@@ -3875,6 +3875,12 @@
       "value": "Todo"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "La aplicación pasó a segundo plano, procesamiento cancelado"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "(Código de error: "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "Descargar archivo"
+      "value": "Guardar archivo"
     }
   ],
   "settings.save-data.export": [
@@ -6904,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "Copia esta cadena de guardado en un lugar seguro o descárgala como archivo."
+      "value": "Guarda una copia de esta partida en un lugar seguro."
     }
   ],
   "settings.save-data.export-dialog-title": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "Cada investigación también reduce su propio costo en el valor indicado. Por ejemplo, con una Bonificación de Ciencia del 300% y una Bonificación de Dinero del 250%, sus costos pasan a ser una cuarta parte y 1/3.5 del original, respectivamente."
+      "value": "La investigación con bonificaciones porcentuales se vuelve más barata a medida que la mejoras. Su costo se divide entre su multiplicador total de producción actual. Por ejemplo, una bonificación de +300% significa una producción 4 veces mayor, así que esa investigación cuesta una cuarta parte. No afecta a la Mejora de durabilidad."
     }
   ],
   "skills.node.rocketMania.description": [
@@ -13650,16 +13670,58 @@
       "value": "Versión 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "Se corrigió que tocar la barra de distribución de Bots aplicara la distribución anterior en lugar de la última selección."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "Los fallos del Tiempo sin conexión ahora incluyen códigos de error distintos y un mensaje claro cuando el procesamiento se cancela porque la aplicación pasó a segundo plano."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "Se aclaró que Investigación repetible divide los costos de investigación entre el multiplicador total de producción actual y no afecta a Durabilidad. Una bonificación de +300 % significa una cuarta parte del costo normal."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "Se corrigieron fallos de progreso y del procesamiento del Tiempo sin conexión causados por Academia regulada o Hombros de la Revolución después de reinicios de Infinity y Quantum."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "Se restauró el texto Redondear compras en lote en los ajustes de Bots e Investigación."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Se agregó Guardar archivo a la exportación de partidas en Android y escritorio, con diálogos nativos de Guardar como en las aplicaciones de Android y escritorio."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "Los detalles de los edificios ahora distinguen el escalado de edificios comprados de la habilidad Escalado de producción asignada y muestran el porcentaje de bonificación y el umbral de compras actuales."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "Los planetas comprados ahora cuentan para Lo que sucederá mediante Terra Firma y Terra Irradient, incluso en el cálculo mostrado."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.workers": [
+    {
+      "type": 0,
+      "value": "Las partidas nuevas y los reinicios de Quantum ahora usan 100% de trabajadores de forma predeterminada. Los ajustes de habilidades de partidas nuevas también comienzan con 100% de trabajadores."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

@@ -326,7 +326,12 @@ describe('Stored Time job application integration', () => {
     expect(after.state.gameState.timeline.storedTimeAvailableSeconds).toBe(10)
   })
 
-  test('discards a completed candidate when cancellation wins before worker settlement', async () => {
+  test.each([
+    ['user', 'CANONICAL-STORED-TIME-CANCELLED'],
+    ['background', 'CANONICAL-STORED-TIME-BACKGROUNDED'],
+    ['import', 'CANONICAL-STORED-TIME-IMPORT-CANCELLED'],
+    ['lifecycle', 'CANONICAL-STORED-TIME-LIFECYCLE-CANCELLED'],
+  ] as const)('discards completed work after %s cancellation without charging the bank', async (reason, code) => {
     const repository = new MemoryRepository()
     let finish: (() => void) | undefined
     const runner: StoredTimeJobRunner = {
@@ -362,14 +367,16 @@ describe('Stored Time job application integration', () => {
       sessionRevision: before.revision.session,
       expectedStateRevision: before.revision.state,
     }, 2)
-    application.cancelStoredTimeJob()
+    application.cancelStoredTimeJob(reason)
+    // A subsequent lifecycle event must not relabel the original cancellation.
+    application.cancelStoredTimeJob('background')
     finish?.()
 
     await expect(processing).resolves.toMatchObject({
       committed: false,
       consumedSeconds: 0,
       remainingSeconds: 2,
-      code: 'CANONICAL-STORED-TIME-CANCELLED',
+      code,
     })
     expect(repository.commits).toBe(beforeCommits)
     const after = application.snapshot()
