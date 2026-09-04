@@ -206,3 +206,14 @@ External gates and next steps:
 - SteamCMD cached uploader authentication succeeded (exit 0). It reports a cached token expiry on 5 September; recheck authentication before upload. Desktop Steam login and SteamCMD uploader are separate accounts/sessions.
 - No Developer ID Application signing identity is installed (only Apple Development identities). Windows/Linux native compilation environments are not configured locally. These and platform runtime evidence remain delivery gates; do not label the unsigned arm64 development package a validated multi-platform candidate.
 - TypeScript, lint, translation completeness/compilation and focused Electron host tests passed after the copy change. Full baseline/mobile evidence remains recorded above; no mobile release performed.
+
+### Updated delivery decision — public opt-in beta
+
+Matthew explicitly requests **Public Beta**, branch `public-beta`, on existing App ID 4348570. No password, separate App ID, or private-beta access flow. It must support Windows x64, macOS Intel/Apple Silicon, and Linux x64/SteamOS. Default public branch remains BuildID 22353758 until separate release approval. Existing platform depots can carry beta-specific manifests. Finish platform packaging and runtime checks, then upload one recorded candidate and set only public-beta live. This supersedes earlier private steam-refresh-test wording.
+
+Immediate execution checklist:
+- [ ] Build and verify Windows x64 and Linux x64 native addons and packaged runtimes.
+- [ ] Build macOS Intel and Apple Silicon packages with matching addons.
+- [ ] Check launcher names, Steam libraries outside ASAR, and exact commit provenance.
+- [ ] Create Public Beta branch, upload all three platform depots, record manifests and BuildID.
+- [ ] Install beta through Steam and verify launch/store/save behavior; Matthew performs real purchases and cross-machine acceptance.
