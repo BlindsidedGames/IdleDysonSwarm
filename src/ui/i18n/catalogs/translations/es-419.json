@@ -1209,7 +1209,7 @@
   "skills.node.renewableEnergy.technical": "A partir de 10 millones de Bots trabajadores, la duración de los paneles aumenta un 10%. Aumenta otro 10% cada vez que multiplicas por 10 tus Trabajadores.\n\nduración *= 1 + 0.1 * log10(Trabajadores / 1e6)",
   "skills.node.repeatableResearch.description": "Repite, repite, repite, repite, repite, repite, repite, repite, repite, repite, repite, repite, repite, repite, repite, repite.",
   "skills.node.repeatableResearch.name": "Investigación repetible",
-  "skills.node.repeatableResearch.technical": "Cada investigación también reduce su propio costo en el valor indicado. Por ejemplo, con una Bonificación de Ciencia del 300% y una Bonificación de Dinero del 250%, sus costos pasan a ser una cuarta parte y 1/3.5 del original, respectivamente.",
+  "skills.node.repeatableResearch.technical": "La investigación con bonificaciones porcentuales se vuelve más barata a medida que la mejoras. Su costo se divide entre su multiplicador total de producción actual. Por ejemplo, una bonificación de +300% significa una producción 4 veces mayor, así que esa investigación cuesta una cuarta parte. No afecta a la Mejora de durabilidad.",
   "skills.node.rocketMania.description": "¡Pilota tu Cohete de plataforma en plataforma e intenta no estrellarte!",
   "skills.node.rocketMania.name": "Locura de cohetes",
   "skills.node.rocketMania.technical": "Los Paneles por segundo se multiplican por Log20(Paneles por segundo).",

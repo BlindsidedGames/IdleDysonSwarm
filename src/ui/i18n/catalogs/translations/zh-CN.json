@@ -1209,7 +1209,7 @@
   "skills.node.renewableEnergy.technical": "从 1000 万个工人机器人开始，面板寿命提高 10%。工人数量每变为 10 倍，加成再提高 10%。\n\nlifetime *= 1 + 0.1 * log10(工人 / 1e6)",
   "skills.node.repeatableResearch.description": "重复、重复、重复、重复、重复、重复、重复、重复、重复、重复、重复、重复、重复、重复、重复、重复。",
   "skills.node.repeatableResearch.name": "可重复研究",
-  "skills.node.repeatableResearch.technical": "每项研究还会按列出的数值降低自身成本（例如科学增幅 300%、现金增幅 250%，意味着科学增幅成本降低至 1/4，现金增幅成本降低至 1/3.5）。",
+  "skills.node.repeatableResearch.technical": "提供百分比加成的研究会随着升级而变得更便宜。其成本会除以该研究当前的总产量倍率。例如，+300%的加成意味着产量为4倍，因此该研究的成本为原来的四分之一。不影响耐久升级。",
   "skills.node.rocketMania.description": "驾驶火箭在发射台之间穿梭，尽量别坠毁！",
   "skills.node.rocketMania.name": "火箭狂热",
   "skills.node.rocketMania.technical": "每秒面板产量乘以 Log20（每秒面板产量）。",

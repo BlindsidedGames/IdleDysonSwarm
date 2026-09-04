@@ -1209,7 +1209,7 @@
   "skills.node.renewableEnergy.technical": "À partir de 10 millions de Bots ouvriers, la durée de vie des Panneaux augmente de 10%. Elle augmente encore de 10% chaque fois que vous multipliez vos Ouvriers par 10.\n\ndurée de vie *= 1 + 0.1 * log10(Ouvriers / 1e6)",
   "skills.node.repeatableResearch.description": "Répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez, répétez.",
   "skills.node.repeatableResearch.name": "Recherche répétable",
-  "skills.node.repeatableResearch.technical": "Chaque recherche réduit également son propre coût de la valeur indiquée (ainsi, un Bonus de Science de 300% et un Bonus d’Argent de 250% signifient que le Bonus de Science coûte quatre fois moins cher et le Bonus d’Argent 3,5 fois moins cher).",
+  "skills.node.repeatableResearch.technical": "Les recherches à bonus en pourcentage deviennent moins chères à mesure que vous les améliorez. Leur coût est divisé par leur multiplicateur total de production actuel. Par exemple, un bonus de +300% correspond à une production multipliée par 4 : la recherche coûte donc un quart de son prix. Ne s’applique pas à l’Amélioration de durabilité.",
   "skills.node.rocketMania.description": "Faites voler votre Fusée d’une plateforme à l’autre et essayez de ne pas vous écraser !",
   "skills.node.rocketMania.name": "Folie des fusées",
   "skills.node.rocketMania.technical": "Le nombre de Panneaux par seconde est multiplié par Log20(Panneaux par seconde)",

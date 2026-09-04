@@ -1209,7 +1209,7 @@
   "skills.node.renewableEnergy.technical": "A partir de 10 milhões de Robôs Operários, a vida útil dos Painéis aumenta em 10%. O bônus aumenta mais 10% sempre que a quantidade de Operários é multiplicada por 10.\n\nvida útil *= 1 + 0.1 * log10(Operários / 1e6)",
   "skills.node.repeatableResearch.description": "Repita, repita, repita, repita, repita, repita, repita, repita, repita, repita, repita, repita, repita, repita, repita, repita.",
   "skills.node.repeatableResearch.name": "Pesquisa Repetível",
-  "skills.node.repeatableResearch.technical": "Cada Pesquisa também reduz o próprio custo pelo valor indicado. Assim, com Bônus de Ciência de 300% e Bônus de Dinheiro de 250%, os custos passam a um quarto e a 1/3,5 do valor original, respectivamente.",
+  "skills.node.repeatableResearch.technical": "Pesquisas com bônus percentuais ficam mais baratas conforme você as aprimora. O custo é dividido pelo multiplicador total de produção atual da pesquisa. Por exemplo, um bônus de +300% significa produção multiplicada por 4, então essa pesquisa custa um quarto do valor. Não afeta a Melhoria de Durabilidade.",
   "skills.node.rocketMania.description": "Pilote seu Foguete de plataforma em plataforma e tente não bater!",
   "skills.node.rocketMania.name": "Mania de Foguetes",
   "skills.node.rocketMania.technical": "Os Painéis por segundo são multiplicados por log20(Painéis por Segundo).",

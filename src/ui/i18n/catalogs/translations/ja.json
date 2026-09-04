@@ -1209,7 +1209,7 @@
   "skills.node.renewableEnergy.technical": "ワーカーボット1,000万体からパネル寿命が10%増加し、ワーカーが10倍になるたびさらに10%増加します。\n\nlifetime *= 1 + 0.1 * log10(ワーカー / 1e6)",
   "skills.node.repeatableResearch.description": "反復、反復、反復、反復、反復、反復、反復、反復、反復、反復、反復、反復、反復、反復、反復、反復。",
   "skills.node.repeatableResearch.name": "反復可能研究",
-  "skills.node.repeatableResearch.technical": "各研究は表示値の分だけ自身のコストも下げます（サイエンスブースト300%、キャッシュブースト250%なら、コストはそれぞれ1/4と1/3.5）。",
+  "skills.node.repeatableResearch.technical": "割合でボーナスを与える研究は、アップグレードするほど安くなります。コストは、その研究の現在の合計生産倍率で割られます。たとえば、+300%のボーナスは生産量4倍を意味するため、その研究のコストは4分の1になります。耐久アップグレードには適用されません。",
   "skills.node.rocketMania.description": "発射台の間をロケットで飛び回り、墜落しないようにしましょう！",
   "skills.node.rocketMania.name": "ロケットマニア",
   "skills.node.rocketMania.technical": "毎秒パネル生産量にlog20（毎秒パネル生産量）を乗算します。",
