@@ -1,0 +1,17 @@
+{
+  "status": "prepared-not-published",
+  "appId": 4348570,
+  "quotaBytes": 268435456,
+  "quotaFiles": 16,
+  "maximumSnapshotBytes": 33554432,
+  "dynamicSync": false,
+  "logicalRoot": "WinAppDataRoaming",
+  "path": "Idle Dyson Swarm/steam-cloud/{64BitSteamID}",
+  "patterns": ["current.idsw", "backup-1.idsw", "backup-2.idsw", "backup-3.idsw"],
+  "recursive": false,
+  "overrides": {
+    "macOS": {"root": "MacAppSupport", "path": ""},
+    "Linux": {"root": "LinuxXdgConfigHome", "path": ""}
+  },
+  "notes": "Confirm provider root names and relative OS override semantics in Steamworks before saving. Same logical filenames on every OS. No temporary files, caches, device preferences, Unity originals or local bookkeeping."
+}

@@ -159,3 +159,14 @@ External gates and next steps:
 2. No Steam settings/catalog/build mutations have been made. Unrelated pending `policies` change exists; inspect diff again and isolate it before publishing the bot-progress/Cloud settings. No public build promotion authorized.
 3. Complete metadata/catalog provider checks, mobile artifact and simulator/emulator QA, signed macOS and Windows/Linux builds, Cloud cross-machine testing and private beta upload. Record exact source commit, hashes, depot manifests and BuildID; currently no uploaded BuildID.
 4. Matthew performs real transactions and accepts beta. Capture final trailer only from accepted candidate. Storyboard can be prepared before acceptance.
+
+### Mobile and packaging checkpoint — 2026-09-04
+
+- Full suite now 111 files / 1,172 tests passing; production web build, TypeScript, lint and data checks pass.
+- iOS Simulator compilation passed; scanned the complete `.app` (229 files) for Steam provider leakage. Existing 13-bot QA save survived background/resume and force termination/relaunch; saved checkpoint validates through the production preparation/hydration pipeline. Store screen loads mobile copy, with products unavailable in this unsigned Simulator context; no transaction attempted.
+- Android debug APK assembled successfully; scanned the extracted artifact (704 files). The existing Google billing constant named `DEV_OPTIONS` is explicitly distinguished from Steam mappings; its value remains `ids.devoptions`. A dedicated API 35 arm64 emulator was created and the debug package launched. Canonical checkpoints validate before/after process restart (fresh zero-bot state). Full Android interactive store/background QA is still pending: CUA cannot select the emulator's unbundled Qt process.
+- Mobile source/metadata remain unchanged. Capacitor synchronization temporarily generated worktree-specific dependency paths; these were restored after successful builds.
+- SDK build script now verifies hashes of the pinned 1.65 headers and redistributables before compilation. `scripts/verify-steam-catalog.mjs` validates local schema and provides explicit read-only before/after provider gates; `scripts/check-steam-mobile-boundary.mjs` scans native artifacts.
+- Cloud disk root is explicitly pinned to OS AppData / `Idle Dyson Swarm`, independent of Electron package-name metadata. Prepared provider settings are in `hosts/electron/steam/cloud-settings.json`; four 32 MiB snapshots fit within 256 MiB/16 files. Nothing has been applied to Steamworks.
+- Playtime pauses for OS suspension and window background independently. Final trailer storyboard is in `docs/plans/steam-trailer-storyboard.md`; no final footage captured or published.
+- Private evidence directory: `/Users/matthewrushworth/Builds/steam-readiness-2026-09-04/`. Includes mobile checkpoint copies and iOS screenshots; raw provider exports remain outside repo.

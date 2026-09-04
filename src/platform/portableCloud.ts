@@ -31,7 +31,8 @@ export class CloudStartupResolver implements StartupSaveResolver {
       const decoded = prepareImportedSaveText(candidate, now, undefined, {kind:'transitional-web-upgrade',upgradedAtUtc:now})
       return prepareImportedSaveText(serializeSharedWebSave(decoded.copyValidatedState()),now,undefined,{kind:'transitional-web-upgrade',upgradedAtUtc:now})
     }
-    try { remote = prepare(text) } catch {
+    try { remote = prepare(text) } catch(error) {
+      if (error instanceof UnsupportedFutureSaveSchemaError) return {kind:'blocked',reason:'unsupported-future-version',error:'This Steam Cloud save needs a newer game version. Its original file has been preserved.'}
       for (const candidate of await this.cloud.readBackups?.().catch(() => []) ?? []) {
         try { remote=prepare(candidate);break } catch { /* Try the next preserved backup. */ }
       }

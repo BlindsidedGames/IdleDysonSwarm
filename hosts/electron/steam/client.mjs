@@ -10,14 +10,15 @@ export async function until(read, done, timeout = 10000) {
 }
 export function loadSteamClient({ distribution, runtimeDirectory = fileURLToPath(new URL('./runtime/', import.meta.url)) }) {
   if (distribution !== 'steam') return null
+  let native
   try {
-    const native = require(`${runtimeDirectory}/ids_steam.node`)
+    native = require(`${runtimeDirectory}/ids_steam.node`)
     native.initialize()
     const boundNative = bindSteamAccount(native)
     const timer = setInterval(() => { try { native.pump() } catch { /* Operation reports failure. */ } }, 50)
     timer.unref()
-    return { native: boundNative, close() { clearInterval(timer); native.clearPresence(); native.shutdown() } }
-  } catch (error) { console.warn('Steam services unavailable:', error.message); return null }
+    return { native: boundNative, close() { clearInterval(timer); try { native.clearPresence() } catch {} try { native.shutdown() } catch {} } }
+  } catch (error) { try { native?.shutdown() } catch {} console.warn('Steam services unavailable:', error.message); return null }
 }
 /** A running game never publishes the previous player's state to a new account. */
 export function bindSteamAccount(native) {
@@ -44,6 +45,7 @@ const statMap = Object.freeze({
   'stat.secrets_of_universe': 'SECRETE_OF_THE_UNIVERSE',
 })
 export async function createSteamPublication(client, { readDeveloperOptions = async () => false } = {}) {
+  if (!client) return null
   const map = JSON.parse(await readFile(new URL('./achievement-map.json', import.meta.url), 'utf8'))
   return new SteamPublication(client?.native ?? null, map, readDeveloperOptions)
 }
@@ -51,10 +53,11 @@ export class SteamPublication {
   constructor(native, map, readDeveloperOptions = async () => false) {
     this.native = native; this.map = map; this.readDeveloperOptions = readDeveloperOptions
     this.scheduled = false; this.sessionSeconds = 0; this.playBase = null; this.lastClock = performance.now();
-    this.clock = setInterval(() => { const now = performance.now(); const elapsed = (now-this.lastClock)/1000; this.lastClock=now; if (elapsed > 0 && elapsed < 5) this.sessionSeconds += elapsed },1000); this.clock.unref();
+    this.clock = setInterval(() => { const now = performance.now(); const elapsed = (now-this.lastClock)/1000; this.lastClock=now; if (!this.suspended && elapsed > 0 && elapsed < 5) this.sessionSeconds += elapsed },1000); this.clock.unref();
     this.account = null; this.pending = new Set(); this.statistics = {}; this.presence = ''; this.queue = Promise.resolve(); this.dirty = false
     this.timer = setInterval(() => { void this.flush().catch(() => undefined) }, 30000); this.timer.unref()
   }
+  setSuspended(value, reason = 'system') { this.pauseReasons ??= new Set(); if(value) this.pauseReasons.add(reason); else this.pauseReasons.delete(reason); this.suspended = this.pauseReasons.size > 0; this.lastClock = performance.now() }
   async available() { try { return this.native !== null && Boolean(this.identity()) } catch { return false } }
   validate(facts) {
     if (!facts || !Array.isArray(facts.unlocked) || facts.unlocked.length > 27 || !facts.statistics || typeof facts.statistics !== 'object' || typeof facts.presence !== 'string' || facts.presence.length > 100) throw new Error('Invalid achievement facts')

@@ -5,6 +5,7 @@ import {
   dialog,
   BrowserWindow,
   ipcMain,
+  powerMonitor,
   safeStorage,
   session,
   shell,
@@ -555,6 +556,7 @@ function scheduleOwnedSmokeCleanup() {
 }
 
 function sendLifecycle(window, phase) {
+  steamPublication?.setSuspended(phase === 'background', 'window')
   if (!window.isDestroyed()) {
     window.webContents.send(channels.lifecycle, phase)
   }
@@ -620,7 +622,7 @@ function createMainWindow() {
     backgroundColor: '#2f1738',
     show: false,
     webPreferences: {
-      additionalArguments: [...(steamDistribution ? ['--ids-steam'] : []), ...(steamCloud ? ['--ids-steam-cloud'] : [])],
+      additionalArguments: [...(steamPublication ? ['--ids-steam'] : []), ...(steamCloud ? ['--ids-steam-cloud'] : [])],
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
@@ -704,17 +706,19 @@ if (!singleInstanceAcquired) {
     const packageInfo = JSON.parse(await readFile(join(app.getAppPath(), 'package.json'), 'utf8'))
     steamDistribution = packageInfo.idsDesktopDistribution === 'steam' || (!app.isPackaged && process.env.VITE_IDS_DESKTOP_DISTRIBUTION === 'steam')
     steamClient = loadSteamClient({ distribution: steamDistribution ? 'steam' : 'desktop', ...(app.isPackaged ? { runtimeDirectory: join(process.resourcesPath, 'steam') } : {}) })
+    try {
     if (steamClient !== null) {
       const account = steamClient.native.identity()
-      if (/^\d{17}$/.test(account)) steamCloud = new SteamCloud({ userData: app.getPath('userData'),account,identity: () => steamClient.native.identity(),choose: async () => {
+      if (/^\d{17}$/.test(account)) steamCloud = new SteamCloud({ userData: smokeUserData ?? join(app.getPath('appData'), 'Idle Dyson Swarm'),account,identity: () => steamClient.native.identity(),choose: async () => {
         const result = await dialog.showMessageBox({type:'question',title:'Choose your save',message:'Local and Steam Cloud saves differ. Both copies have been preserved.',buttons:['Use local save','Use Steam Cloud save'],defaultId:0,cancelId:0})
         return result.response === 1 ? 'cloud' : 'local'
       } })
     }
+    } catch(error) { steamCloud = null; console.warn('Steam Cloud unavailable:', error.message) }
     steamInventoryStore = await createElectronSteamInventoryStore()
     if (steamDistribution) steamPublication = await createSteamPublication(steamClient, {
       readDeveloperOptions: async () => (await steamInventoryStore.readEntitlements()).developerOptions,
-    })
+    }).catch(error => { console.warn('Steam achievements unavailable:',error.message);return null })
     registerNativeHandlers()
     denyRendererPermissions(session.defaultSession)
     createMainWindow()
@@ -731,4 +735,6 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
 
+powerMonitor.on('suspend', () => steamPublication?.setSuspended(true))
+powerMonitor.on('resume', () => steamPublication?.setSuspended(false))
 app.on('will-quit', () => { steamPublication?.close(); steamClient?.close() })
