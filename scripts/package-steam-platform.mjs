@@ -1,4 +1,4 @@
-import { readFile, access, writeFile, mkdir, rename } from 'node:fs/promises'
+import { readFile, access, writeFile, mkdir, rename, readdir } from 'node:fs/promises'
 import { execFileSync } from 'node:child_process'
 import { resolve, join } from 'node:path'
 import { parse } from 'yaml'
@@ -30,3 +30,11 @@ if(target === 'linux') {
 }
 await mkdir(config.directories.output, { recursive: true })
 await writeFile(join(config.directories.output, 'provenance.json'), JSON.stringify({ sourceCommit: commit, target, nativeTarget, builtAt: new Date().toISOString(), steamBuildId: null }, null, 2)+'\n')
+
+// Leave room for the Steam library directory on clients using Win32 MAX_PATH.
+if (target === 'windows') {
+  const root = join(config.directories.output, 'win-unpacked')
+  const entries = await readdir(root, { recursive: true })
+  const unsafe = entries.filter(path => path.length > 160 || path.includes('node_modules'))
+  if (unsafe.length) throw new Error(`Unsafe Windows depot paths: ${unsafe.slice(0, 5).join(', ')}`)
+}

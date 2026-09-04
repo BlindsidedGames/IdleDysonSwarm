@@ -8,6 +8,8 @@ directories:
   output: release/electron
 icon: public/icons/pwa-icon-512.png
 files:
+  # Renderer dependencies are bundled by Vite; host imports only Node/Electron.
+  - "!**/node_modules/**/*"
   - dist-native/**/*
   - hosts/electron/main.mjs
   - hosts/electron/preload.cjs
