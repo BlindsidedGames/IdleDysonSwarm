@@ -6963,6 +6963,10 @@
     "defaultMessage": "Purchased Planets now count toward What Will Come to Pass through Terra Firma and Terra Irradient, including in the displayed calculation.",
     "description": "Version 4.1.7 release note for terra."
   },
+  "wiki.patch-notes.version-4-1-7.workers": {
+    "defaultMessage": "New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers.",
+    "description": "Version 4.1.7 release note for the worker allocation default."
+  },
   "wiki.patch-notes.version-4-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",
     "description": "Version 4.1 release note for game audio."

@@ -1816,5 +1816,6 @@
   "wiki.patch-notes.version-4-1-7.offline-errors": "Fehler bei der Offline-Zeit enthalten jetzt eindeutige Fehlercodes und eine klare Meldung, wenn die Verarbeitung abgebrochen wird, weil die App in den Hintergrund gewechselt ist.",
   "wiki.patch-notes.version-4-1-7.save-file": "Datei speichern wurde zum Speicherexport auf Android und Desktop hinzugefügt, mit nativen Speichern-unter-Dialogen in den Android- und Desktop-Apps.",
   "wiki.patch-notes.version-4-1-7.research-reset": "Fortschritts- und Offline-Zeit-Verarbeitungsfehler durch Regulierte Akademie oder Schultern der Revolution nach Infinity- und Quantum-Resets wurden behoben.",
-  "wiki.patch-notes.version-4-1-7.repeatable-research": "Die Beschreibung von Wiederholbare Forschung stellt jetzt klar, dass Forschungskosten durch den aktuellen gesamten Produktionsmultiplikator geteilt werden und Haltbarkeit nicht betroffen ist. Ein Bonus von +300 % bedeutet ein Viertel der normalen Kosten."
+  "wiki.patch-notes.version-4-1-7.repeatable-research": "Die Beschreibung von Wiederholbare Forschung stellt jetzt klar, dass Forschungskosten durch den aktuellen gesamten Produktionsmultiplikator geteilt werden und Haltbarkeit nicht betroffen ist. Ein Bonus von +300 % bedeutet ein Viertel der normalen Kosten.",
+  "wiki.patch-notes.version-4-1-7.workers": "Neue Spiele und Quantum-Resets starten jetzt standardmäßig mit 100 % Arbeitern. Auch die Fertigkeitsvorlagen neuer Spiele beginnen mit 100 % Arbeitern."
 }

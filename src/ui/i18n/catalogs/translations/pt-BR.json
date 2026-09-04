@@ -1816,5 +1816,6 @@
   "wiki.patch-notes.version-4-1-7.offline-errors": "Falhas no Tempo offline agora incluem códigos de erro distintos e uma mensagem clara quando o processamento é cancelado porque o aplicativo foi para segundo plano.",
   "wiki.patch-notes.version-4-1-7.save-file": "Adicionada a opção Salvar arquivo à exportação de partidas no Android e no desktop, com caixas de diálogo nativas de Salvar como nos aplicativos Android e desktop.",
   "wiki.patch-notes.version-4-1-7.research-reset": "Corrigidas falhas de progresso e de processamento do Tempo offline causadas por Academia Regulamentada ou Ombros da Revolução após reinícios de Infinity e Quantum.",
-  "wiki.patch-notes.version-4-1-7.repeatable-research": "A descrição de Pesquisa Repetível agora esclarece que os custos de pesquisa são divididos pelo multiplicador total de produção atual e que Durabilidade não é afetada. Um bônus de +300% significa um quarto do custo normal."
+  "wiki.patch-notes.version-4-1-7.repeatable-research": "A descrição de Pesquisa Repetível agora esclarece que os custos de pesquisa são divididos pelo multiplicador total de produção atual e que Durabilidade não é afetada. Um bônus de +300% significa um quarto do custo normal.",
+  "wiki.patch-notes.version-4-1-7.workers": "Novas partidas e reinícios de Quantum agora usam 100% de trabalhadores por padrão. As predefinições de habilidades de novas partidas também começam com 100% de trabalhadores."
 }

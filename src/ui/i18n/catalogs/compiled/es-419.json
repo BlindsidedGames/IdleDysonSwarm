@@ -13712,6 +13712,12 @@
       "value": "Los planetas comprados ahora cuentan para Lo que sucederá mediante Terra Firma y Terra Irradient, incluso en el cálculo mostrado."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.workers": [
+    {
+      "type": 0,
+      "value": "Las partidas nuevas y los reinicios de Quantum ahora usan 100% de trabajadores de forma predeterminada. Los ajustes de habilidades de partidas nuevas también comienzan con 100% de trabajadores."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

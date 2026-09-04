@@ -13712,6 +13712,12 @@
       "value": "Purchased Planets now count toward What Will Come to Pass through Terra Firma and Terra Irradient, including in the displayed calculation."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.workers": [
+    {
+      "type": 0,
+      "value": "New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

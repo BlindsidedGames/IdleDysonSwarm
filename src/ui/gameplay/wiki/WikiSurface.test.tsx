@@ -32,6 +32,7 @@ describe('Wiki patch-note content', () => {
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       'Restored the Round bulk purchases wording in Bots and Research settings.',
       'Building details now distinguish Purchased Building Scaling from the assigned Production Scaling skill and show the current bonus percentage and purchase threshold.',
+      'New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers.',
       'Purchased Planets now count toward What Will Come to Pass through Terra Firma and Terra Irradient, including in the displayed calculation.',
       'Fixed taps on the Bot distribution slider applying the previous allocation instead of the latest selection.',
       'Offline Time failures now include distinct error codes, with a clear message when processing is cancelled because the app was backgrounded.',

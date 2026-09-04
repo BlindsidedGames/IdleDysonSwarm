@@ -1816,5 +1816,6 @@
   "wiki.patch-notes.version-4-1-7.offline-errors": "离线时间处理失败时现在会显示不同的错误代码；因应用切换到后台而取消处理时，会显示明确的提示。",
   "wiki.patch-notes.version-4-1-7.save-file": "Android 和桌面端的存档导出新增“保存文件”选项，Android 和桌面应用会使用系统原生的“另存为”对话框。",
   "wiki.patch-notes.version-4-1-7.research-reset": "修复了 Infinity 和 Quantum 重置后，规范学术界 或 革命者之肩 导致游戏进度和离线时间处理失败的问题。",
-  "wiki.patch-notes.version-4-1-7.repeatable-research": "明确了 可重复研究 会将研究费用除以当前的总产量倍率，且不影响 耐久度。+300% 加成意味着费用为正常费用的四分之一。"
+  "wiki.patch-notes.version-4-1-7.repeatable-research": "明确了 可重复研究 会将研究费用除以当前的总产量倍率，且不影响 耐久度。+300% 加成意味着费用为正常费用的四分之一。",
+  "wiki.patch-notes.version-4-1-7.workers": "新游戏和 Quantum 重置现在默认分配为 100% 工人。新游戏的技能预设也以 100% 工人开始。"
 }

@@ -13712,6 +13712,12 @@
       "value": "Les planètes achetées comptent désormais pour Ce qui adviendra grâce à Terra Firma et Terra Irradient, y compris dans le calcul affiché."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.workers": [
+    {
+      "type": 0,
+      "value": "Les nouvelles parties et les réinitialisations Quantum utilisent désormais 100 % de travailleurs par défaut. Les préréglages de compétences des nouvelles parties commencent également avec 100 % de travailleurs."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

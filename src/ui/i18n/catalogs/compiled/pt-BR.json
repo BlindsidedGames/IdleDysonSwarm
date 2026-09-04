@@ -13712,6 +13712,12 @@
       "value": "Planetas comprados agora contam para O Que Está por Vir por meio de Terra Firma e Terra Irradient, inclusive no cálculo exibido."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.workers": [
+    {
+      "type": 0,
+      "value": "Novas partidas e reinícios de Quantum agora usam 100% de trabalhadores por padrão. As predefinições de habilidades de novas partidas também começam com 100% de trabalhadores."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

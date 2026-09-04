@@ -1816,5 +1816,6 @@
   "wiki.patch-notes.version-4-1-7.offline-errors": "Los fallos del Tiempo sin conexión ahora incluyen códigos de error distintos y un mensaje claro cuando el procesamiento se cancela porque la aplicación pasó a segundo plano.",
   "wiki.patch-notes.version-4-1-7.save-file": "Se agregó Guardar archivo a la exportación de partidas en Android y escritorio, con diálogos nativos de Guardar como en las aplicaciones de Android y escritorio.",
   "wiki.patch-notes.version-4-1-7.research-reset": "Se corrigieron fallos de progreso y del procesamiento del Tiempo sin conexión causados por Academia regulada o Hombros de la Revolución después de reinicios de Infinity y Quantum.",
-  "wiki.patch-notes.version-4-1-7.repeatable-research": "Se aclaró que Investigación repetible divide los costos de investigación entre el multiplicador total de producción actual y no afecta a Durabilidad. Una bonificación de +300 % significa una cuarta parte del costo normal."
+  "wiki.patch-notes.version-4-1-7.repeatable-research": "Se aclaró que Investigación repetible divide los costos de investigación entre el multiplicador total de producción actual y no afecta a Durabilidad. Una bonificación de +300 % significa una cuarta parte del costo normal.",
+  "wiki.patch-notes.version-4-1-7.workers": "Las partidas nuevas y los reinicios de Quantum ahora usan 100% de trabajadores de forma predeterminada. Los ajustes de habilidades de partidas nuevas también comienzan con 100% de trabajadores."
 }

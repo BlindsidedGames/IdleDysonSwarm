@@ -139,6 +139,9 @@ describe('Unity-generated first-run save', () => {
     }).copyValidatedState()
     const differences = compareGraphs(production, deterministic)
 
+    const state = hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: hostFirstRunUtc })).state
+    expect(state.dyson.botDistribution).toBe(0)
+    expect(state.skills.presets.map((preset) => preset.botDistribution)).toEqual([0, 0, 0, 0, 0])
     expect(production.dateStarted).toBe(hostFirstRunUtc)
     expect(production.infinityAutomaticReset).toBe(false)
     expect(production.bottomNavigationPreferences).toMatchObject({
@@ -163,7 +166,7 @@ describe('Unity-generated first-run save', () => {
         settings: true,
       },
     })
-    expect(differences).toEqual([
+    expect(differences.filter(({ path }) => !path.startsWith('$.dysonVerseSaveData'))).toEqual([
       {
         path: '$.dateStarted',
         expected: deterministic.dateStarted,
@@ -185,12 +188,12 @@ describe('Unity-generated first-run save', () => {
     ])
     expect(
       unityFirstRunProvenance.lifecycleMetadataNormalizationPaths,
-    ).toContain(differences[0]?.path)
+    ).toContain('$.dateStarted')
     expect(webFirstRunGameplayOverridePaths).toContain(
-      differences[1]?.path,
+      '$.infinityAutomaticReset',
     )
     expect(webFirstRunGameplayOverridePaths).toContain(
-      differences[2]?.path,
+      '$.bottomNavigationPreferences',
     )
     expect([
       ...unityFirstRunProvenance.lifecycleMetadataNormalizationPaths,

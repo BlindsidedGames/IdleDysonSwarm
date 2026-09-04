@@ -13712,6 +13712,12 @@
       "value": "通过 Terra Firma 和 Terra Irradient，购买的行星现在会计入 必将发生，显示的计算过程也已同步更新。"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.workers": [
+    {
+      "type": 0,
+      "value": "新游戏和 Quantum 重置现在默认分配为 100% 工人。新游戏的技能预设也以 100% 工人开始。"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
