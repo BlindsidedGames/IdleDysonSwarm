@@ -300,3 +300,13 @@ Local arm64 diagnostic, with the official Steam overlay dylib injected, reports 
 - Clicked the native window close button. Main PID 11853 exited; Steam gameprocess_log removed AppID 4348570 from running list at 08:25:51 on 2026-09-05. Library returned to green Play with Cloud up to date. Screenshot: steam-installed-closed-play.png.
 - Validation: full suite 112 files / 1176 tests passed; focused presentation/native host suite 13 tests passed after smoke changes; lint and TypeScript passed. Packaged close, overlay activation, and suspend/resume smoke passed. Both Mac native slices target macOS 12; all platform packages rebuilt.
 - Mac overlay and shutdown are now verified on the Steam-installed public beta. Windows download packaging repair remains included; Windows/Linux actual runtime and overlay checks still require those platforms. Cross-machine Cloud and purchase lifecycle acceptance remain separate pending checks.
+
+
+### Windows store and branding follow-up — 2026-09-05
+
+Matthew confirms Windows now installs and Shift+Tab opens its overlay using the same Steam account. Remaining reports: Electron title-bar icon, all purchases unavailable, and purchase labels escaping the fixed-width buttons.
+
+- Native ABI defect: Windows addon is compiled with MinGW ABI against Valve's MSVC DLL. The old virtual GetSteamID returns a CSteamID class; a compiler probe confirms MinGW expects a register return while MSVC uses an output pointer. This invalidates the authenticated identity used to enable the store. All SDK interface calls now use Valve's flat C exports, including scalar Steam IDs, inventory ownership checks and explicit integer/float stat APIs. No client ownership bypass.
+- Add explicit BrowserWindow IDS icon and include its asset in desktop packages. Windows packaging now edits executable icon/version resources with resedit instead of leaving Electron branding; each generated icon size is read back and hash-verified.
+- Reuse StableSingleLineText for purchase/status labels so fixed-width desktop buttons shrink their text. Verified five Unavailable labels fit at desktop width and grow back to normal size at 390px mobile width. Screenshots outside repo in steam-windows-store-fix/.
+- Recompiled all native targets. Live Mac binding verifies authenticated identity, all five localized prices, inventory ownership read and integer/float stats. Full suite 112 files / 1176 tests passes; lint, TypeScript and native renderer build pass. Compiler and live results support the repair; actual Windows store retest is still required after upload.

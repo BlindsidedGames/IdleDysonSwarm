@@ -13,6 +13,7 @@ import {
 } from '../../../store/storefront'
 import { storeMessages as messages } from './messages'
 import { SUPPORTER_CAT_GALLERY_URL } from '../../../store/supporterCatGallery'
+import { StableSingleLineText } from '../../components/StableSingleLineText'
 import './store.css'
 
 export interface StoreSurfaceProps {
@@ -242,6 +243,19 @@ function StoreProductCard({
     ? snapshot.operation.kind !== 'idle'
     : !canPurchase
 
+  const actionLabel = isDoubleIpToggle
+    ? intl.formatMessage(doubleIpEnabled ? messages.enabled : messages.disabled)
+    : !isTip && owned
+      ? intl.formatMessage(unlockedInGame ? messages.unlockedInGame : messages.owned)
+      : purchasing
+        ? intl.formatMessage(messages.purchasing)
+        : listing?.localizedPrice === null || !listing?.available
+          ? intl.formatMessage(messages.unavailable)
+          : intl.formatMessage(
+              isTip ? messages.supportAction : messages.purchaseAction,
+              { price: listing.localizedPrice },
+            )
+
   return (
     <article className="store-product-card">
       <div>
@@ -277,24 +291,9 @@ function StoreProductCard({
             : controller.purchase(product.id)
         )}
       >
-        {isDoubleIpToggle
-          ? intl.formatMessage(
-              doubleIpEnabled
-                  ? messages.enabled
-                  : messages.disabled,
-            )
-          : !isTip && owned
-          ? intl.formatMessage(
-              unlockedInGame ? messages.unlockedInGame : messages.owned,
-            )
-          : purchasing
-            ? intl.formatMessage(messages.purchasing)
-            : listing?.localizedPrice === null || !listing?.available
-              ? intl.formatMessage(messages.unavailable)
-              : intl.formatMessage(
-                  isTip ? messages.supportAction : messages.purchaseAction,
-                  { price: listing.localizedPrice },
-                )}
+        <StableSingleLineText measurement={actionLabel} minimumScale={0.35}>
+          {actionLabel}
+        </StableSingleLineText>
       </button>
     </article>
   )

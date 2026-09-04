@@ -155,6 +155,9 @@
 
 .store-surface__purchase-action {
   inline-size: 6.5rem;
+  min-inline-size: 0;
+  box-sizing: border-box;
+  text-align: center;
   min-block-size: 2.75rem;
   justify-self: end;
   padding: 0.45rem 0.65rem;

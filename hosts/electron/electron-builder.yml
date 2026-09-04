@@ -11,6 +11,7 @@ files:
   # Renderer dependencies are bundled by Vite; host imports only Node/Electron.
   - "!**/node_modules/**/*"
   - dist-native/**/*
+  - public/icons/pwa-icon-512.png
   - hosts/electron/main.mjs
   - hosts/electron/preload.cjs
   - hosts/electron/releaseMetadata.mjs

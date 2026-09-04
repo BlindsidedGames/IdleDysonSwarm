@@ -660,6 +660,7 @@ function createMainWindow() {
     minWidth: 360,
     minHeight: 640,
     backgroundColor: '#2f1738',
+    icon: join(hostDirectory, '../../public/icons/pwa-icon-512.png'),
     show: false,
     webPreferences: {
       additionalArguments: [...(steamPublication ? ['--ids-steam'] : []), ...(steamCloud ? ['--ids-steam-cloud'] : [])],

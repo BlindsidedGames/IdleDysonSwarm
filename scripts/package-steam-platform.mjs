@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process'
 import { resolve, join } from 'node:path'
 import { parse } from 'yaml'
 import { build, Platform, Arch } from 'electron-builder'
+import { brandWindowsExecutable } from './brand-windows-executable.mjs'
 const target = process.argv[2]
 const targets = { windows: [Platform.WINDOWS, Arch.x64, 'win32-x64'], linux: [Platform.LINUX, Arch.x64, 'linux-x64'], macos: [Platform.MAC, Arch.universal, 'darwin-universal'] }
 if (!targets[target]) throw new Error('Specify windows, linux or macos')
@@ -25,8 +26,13 @@ if(target === 'macos') {
   // Public beta has no Developer ID certificate; do not auto-pick mobile identities.
   config.mac.identity = null
 }
+// Cross-host executable branding is applied below using the PE resource editor.
 if(target === 'windows') config.win.signAndEditExecutable = false
 await build({ targets: platform.createTarget('dir', arch), config, publish: 'never' })
+if(target === 'windows') {
+  const release = JSON.parse(await readFile('hosts/electron/release-version.json', 'utf8'))
+  await brandWindowsExecutable(join(config.directories.output, 'win-unpacked/Idle Dyson Swarm.exe'), resolve('public/icons/pwa-icon-512.png'), release.extraMetadata.version)
+}
 if(target === 'linux') {
   const packageInfo = JSON.parse(await readFile('package.json', 'utf8'))
   const unpacked = join(config.directories.output, 'linux-unpacked')
