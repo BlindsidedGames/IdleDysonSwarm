@@ -262,6 +262,16 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'That action was not completed. Try again.',
     description: 'Failure feedback for Offline Time actions.',
   },
+  appBackgrounded: {
+    id: 'offline-time.app-backgrounded',
+    defaultMessage: 'App was backgrounded processing cancelled',
+    description: 'Stored Time cancellation feedback only when the app entered the background.',
+  },
+  errorCode: {
+    id: 'offline-time.error-code',
+    defaultMessage: '(Error code: {code})',
+    description: 'Stable technical error code appended to Offline Time feedback for support.',
+  },
   noStoredTime: {
     id: 'offline-time.no-stored-time',
     defaultMessage: 'Return after time away to build up this bank.',

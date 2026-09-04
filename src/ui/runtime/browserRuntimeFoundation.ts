@@ -26,7 +26,7 @@ import {
 import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
 import type { CanonicalDevelopmentAction } from '../../application/canonicalGameApplication'
 import type { CanonicalSaveTransferSnapshot } from '../../application/canonicalGameApplication'
-import type { StoredTimeJobListener } from '../../application/canonicalGameApplication'
+import type { StoredTimeCancellationReason, StoredTimeJobListener } from '../../application/canonicalGameApplication'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 import type {
   CanonicalSkillPresetSlot,
@@ -168,7 +168,7 @@ interface BrowserRuntimeApplicationPort
   ): DeepReadonly<FrontendApplicationSnapshot>
   storedTimeJobStatus?(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
   subscribeStoredTimeJob?(listener: StoredTimeJobListener): () => void
-  cancelStoredTimeJob?(): void
+  cancelStoredTimeJob?(reason?: StoredTimeCancellationReason): void
   speedUpStoredTimeJob?(): void
   captureSaveTransferSnapshot?(): CanonicalSaveTransferSnapshot | null
   disposeStoredTimeJobRunner?(): void
@@ -1141,7 +1141,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     // confirmation. Cancellation is deliberately out-of-band because the
     // active worker owns the router lane that the replacement must await.
     if (request.overwriteApproved) {
-      graph.application.cancelStoredTimeJob?.()
+      graph.application.cancelStoredTimeJob?.('import')
     }
     const admittedLifecycleIntentEpoch =
       this.lifecycleIntentEpoch
@@ -2235,7 +2235,9 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       // Lifecycle work is queued behind the active authority operation. Send
       // cancellation out-of-band so a detached Stored Time candidate reaches
       // a safe terminal state before the platform suspends this page.
-      this.graph?.application.cancelStoredTimeJob?.()
+      this.graph?.application.cancelStoredTimeJob?.(
+        phase === 'background' ? 'background' : 'lifecycle',
+      )
     }
     const intentEpoch = this.captureLifecycleIntent(phase)
     try {

@@ -180,7 +180,7 @@ export function OfflineTimeSurface({
   const [pendingAction, setPendingAction] = useState<
     'spend' | 'upgrade' | null
   >(null)
-  const [feedback, setFeedback] = useState<'failure' | null>(null)
+  const [feedback, setFeedback] = useState<string | null>(null)
   const [completionSummary, setCompletionSummary] = useState<{
     readonly completionSequence: number
     readonly consumedSeconds: number
@@ -399,10 +399,10 @@ export function OfflineTimeSurface({
         setRepeatSeconds(requestedSeconds)
         publishDraft(selectedSeconds, requestedSeconds, false)
       } else {
-        setFeedback('failure')
+        setFeedback('code' in result ? result.code : 'OFFLINE-TIME-UNEXPECTED-RESULT')
       }
     } catch {
-      setFeedback('failure')
+      setFeedback('OFFLINE-TIME-UNEXPECTED-ERROR')
     } finally {
       pendingRef.current = false
       setPendingAction(null)
@@ -427,10 +427,10 @@ export function OfflineTimeSurface({
         kind: 'time.upgrade-stored-capacity',
       })
       if (result.status !== 'accepted') {
-        setFeedback('failure')
+        setFeedback('code' in result ? result.code : 'OFFLINE-TIME-UNEXPECTED-RESULT')
       }
     } catch {
-      setFeedback('failure')
+      setFeedback('OFFLINE-TIME-UNEXPECTED-ERROR')
     } finally {
       pendingRef.current = false
       setPendingAction(null)
@@ -447,9 +447,9 @@ export function OfflineTimeSurface({
     setFeedback(null)
     try {
       const result = await dispatchPlayer(command)
-      if (result.status !== 'accepted') setFeedback('failure')
+      if (result.status !== 'accepted') setFeedback('code' in result ? result.code : 'OFFLINE-TIME-UNEXPECTED-RESULT')
     } catch {
-      setFeedback('failure')
+      setFeedback('OFFLINE-TIME-UNEXPECTED-ERROR')
     }
   }
 
@@ -842,7 +842,10 @@ export function OfflineTimeSurface({
               className="offline-time-feedback offline-time-feedback--failure"
               role="alert"
             >
-              {intl.formatMessage(messages.actionFailed)}
+              {intl.formatMessage(feedback === 'CANONICAL-STORED-TIME-BACKGROUNDED'
+                ? messages.appBackgrounded
+                : messages.actionFailed)}{' '}
+              {intl.formatMessage(messages.errorCode, { code: feedback })}
             </p>
           ) : null}
         </article>
