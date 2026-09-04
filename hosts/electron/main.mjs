@@ -11,6 +11,7 @@ import {
   shell,
 } from 'electron'
 import { spawn } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 import {
   access,
   copyFile,
@@ -47,6 +48,13 @@ import {
 } from './steamInventoryStore.mjs'
 
 const hostDirectory = dirname(fileURLToPath(import.meta.url))
+const packageInfo = JSON.parse(readFileSync(join(app.isPackaged ? app.getAppPath() : join(hostDirectory, '../..'), 'package.json'), 'utf8'))
+const steamDistribution = packageInfo.idsDesktopDistribution === 'steam' || (!app.isPackaged && process.env.VITE_IDS_DESKTOP_DISTRIBUTION === 'steam')
+if (steamDistribution) {
+  // Steam hooks the graphics device in the SDK process. Configure before ready.
+  app.commandLine.appendSwitch('in-process-gpu')
+  app.commandLine.appendSwitch('disable-direct-composition')
+}
 const rendererEntry = join(hostDirectory, '../../dist-native/index.html')
 const releaseMetadataPath = join(hostDirectory, 'release-version.json')
 const steamInventoryConfigPath = join(
@@ -56,6 +64,7 @@ const steamInventoryConfigPath = join(
 const {
   smokeTest,
   suspendResumeSmoke,
+  closeSmoke,
 } = selectElectronSmokeMode(process.argv)
 const smokeUserData = smokeTest
   ? await mkdtemp(join(tmpdir(), 'idle-dyson-swarm-smoke-'))
@@ -94,7 +103,8 @@ let steamInventoryStore
 let steamCloud = null
 let steamClient = null
 let steamPublication = null
-let steamDistribution = false
+
+if (singleInstanceAcquired) steamClient = loadSteamClient({ distribution: steamDistribution ? 'steam' : 'desktop', ...(app.isPackaged ? { runtimeDirectory: join(process.resourcesPath, 'steam') } : {}) })
 
 if (smokeTest) scheduleOwnedSmokeCleanup()
 
@@ -497,6 +507,15 @@ async function waitForRendererReady(window) {
       await exitHost(1)
       return
     }
+    if (closeSmoke) {
+      // Exercise the real window-close/checkpoint/quit path, not app.exit().
+      setTimeout(() => {
+        console.error("Window close failed to terminate the application.")
+        void exitHost(1)
+      }, 12_000).unref()
+      window.close()
+      return
+    }
     if (suspendResumeSmoke) {
       window.minimize()
       await new Promise((resolve) => setTimeout(resolve, 20_000))
@@ -629,6 +648,16 @@ function createMainWindow() {
       preload: join(hostDirectory, 'preload.cjs'),
     },
   })
+  if (steamDistribution) {
+    // Chromium otherwise stops presenting unchanged frames while the overlay draws.
+    const repaint = setInterval(() => {
+      if (!window.isDestroyed() && window.isVisible() && !window.isMinimized()) {
+        window.webContents.invalidate()
+      }
+    }, 1000 / 60)
+    repaint.unref()
+    window.once('closed', () => clearInterval(repaint))
+  }
   mainWindow = window
   let closeAllowed = false
   let closePending = false
@@ -703,9 +732,6 @@ if (!singleInstanceAcquired) {
   })
   app.whenReady().then(async () => {
     await loadRuntimeMetadata()
-    const packageInfo = JSON.parse(await readFile(join(app.getAppPath(), 'package.json'), 'utf8'))
-    steamDistribution = packageInfo.idsDesktopDistribution === 'steam' || (!app.isPackaged && process.env.VITE_IDS_DESKTOP_DISTRIBUTION === 'steam')
-    steamClient = loadSteamClient({ distribution: steamDistribution ? 'steam' : 'desktop', ...(app.isPackaged ? { runtimeDirectory: join(process.resourcesPath, 'steam') } : {}) })
     try {
     if (steamClient !== null) {
       const account = steamClient.native.identity()
@@ -732,7 +758,7 @@ if (!singleInstanceAcquired) {
 }
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
+  if (steamDistribution || process.platform !== 'darwin') app.quit()
 })
 
 powerMonitor.on('suspend', () => steamPublication?.setSuspended(true))

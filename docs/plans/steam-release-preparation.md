@@ -238,3 +238,13 @@ Immediate execution checklist:
 - SteamCMD installed public-beta successfully into a separate directory. All **1,854** regular-file hashes in downloaded macOS depot match the recorded candidate manifest. Downloaded app initialized Steam, reached renderer-ready and exited 0 in smoke mode.
 - Public Beta is live at **25123023**. Default remains **22353758**. Final package source is **e72304e48f23c6de3353e8d1e979f6975bde96f8**; later commits record evidence and automate the already-applied Linux launcher rename, without changing uploaded gameplay code.
 - Matthew can now select Public Beta in Game Versions & Betas. No password or separate App ID. Remaining acceptance: actual Windows/Linux launches, purchases/cancellation/restoration with owned items, Cloud transfer/conflicts across machines, and final trailer after acceptance. Do not represent cross-compilation or package checks as real Windows/Linux runtime testing.
+
+
+### Public Beta field failures — 2026-09-04
+
+Matthew reports missing Steam overlay, Windows update failure “missing downloaded files”, and macOS close leaving Steam running. Candidate 25123023 is not accepted.
+
+- Confirmed macOS last-window policy only quit non-Mac hosts. Steam distributions now quit after the existing bounded renderer checkpoint and Steam flush. Added `--close-smoke` to exercise real close/quit instead of bypassing it with app.exit. Development close smoke passed (exit 0); packaged verification pending. Also corrected development package metadata lookup.
+- Overlay candidate: initialize SDK before app ready; configure in-process GPU and disable direct composition before ready; invalidate visible, non-minimized Steam windows at 60 Hz. Based on upstream steamworks.js Electron integration and Valve overlay rendering requirements. This is a candidate fix until visibly tested from Steam; no claim of Windows/Linux runtime validation. Non-Steam/mobile rendering untouched.
+- Downloaded Windows public-beta from Steam with forced Windows platform. SteamCMD reported fully installed; all 1,669 regular files matched source SHA256, no missing/different files or symlinks. Evidence outside repo: public-beta-upload/download-windows.log and windows-download-verification.json. This does not reproduce an existing Windows installation transition; need affected client content_log.txt to diagnose that failure if it persists.
+- References: https://github.com/ceifa/steamworks.js/blob/main/index.js and https://partner.steamgames.com/doc/features/overlay .

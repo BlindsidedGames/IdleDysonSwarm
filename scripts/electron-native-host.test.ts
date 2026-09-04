@@ -71,17 +71,23 @@ describe('Electron native host hardening', () => {
   })
 
   it('selects ordinary and suspend/resume smoke modes from explicit arguments', () => {
+    expect(selectElectronSmokeMode(['--close-smoke'])).toEqual({
+      smokeTest: true, suspendResumeSmoke: false, closeSmoke: true,
+    })
     expect(selectElectronSmokeMode([])).toEqual({
       smokeTest: false,
       suspendResumeSmoke: false,
+      closeSmoke: false,
     })
     expect(selectElectronSmokeMode(['--smoke-test'])).toEqual({
       smokeTest: true,
       suspendResumeSmoke: false,
+      closeSmoke: false,
     })
     expect(selectElectronSmokeMode(['--suspend-resume-smoke'])).toEqual({
       smokeTest: true,
       suspendResumeSmoke: true,
+      closeSmoke: false,
     })
     expect(selectElectronSmokeMode([
       '--smoke-test',
@@ -89,10 +95,12 @@ describe('Electron native host hardening', () => {
     ])).toEqual({
       smokeTest: true,
       suspendResumeSmoke: true,
+      closeSmoke: false,
     })
     expect(selectElectronSmokeMode(['--smoke-test-disabled'])).toEqual({
       smokeTest: false,
       suspendResumeSmoke: false,
+      closeSmoke: false,
     })
   })
 

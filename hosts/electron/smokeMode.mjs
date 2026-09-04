@@ -5,8 +5,10 @@ export function selectElectronSmokeMode(argumentsList) {
   const suspendResumeSmoke = argumentsList.includes(
     suspendResumeSmokeArgument,
   )
+  const closeSmoke = argumentsList.includes('--close-smoke')
   return Object.freeze({
-    smokeTest: suspendResumeSmoke || argumentsList.includes(smokeTestArgument),
+    smokeTest: closeSmoke || suspendResumeSmoke || argumentsList.includes(smokeTestArgument),
     suspendResumeSmoke,
+    closeSmoke,
   })
 }
