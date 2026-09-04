@@ -335,7 +335,9 @@ function withCanonicalQuantumPurchases(source: CanonicalGameStateV1): CanonicalG
     }
     if (!changed) break
   }
-  return state
+  // Historical profiling fixtures keep their explicit 50/50 allocation,
+  // independently of the player-facing Quantum reset default.
+  return withCanonicalBotAllocation({ ...state, dyson: { ...state.dyson, botDistribution: 0.5 } })
 }
 
 function withMaximumCanonicalSkills(source: CanonicalGameStateV1): CanonicalGameStateV1 {
