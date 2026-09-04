@@ -19,6 +19,8 @@ config.extraResources = [{ from: nativeRoot, to: 'steam', filter: ['ids_steam.no
 config.directories.output = `release/steam/${target}`
 const commit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
 config.extraMetadata = { idsDesktopDistribution: 'steam', idsSourceCommit: commit }
+// Renderer ASAR is architecture-neutral; native binaries live in extraResources.
+if(target === 'macos') config.mac.mergeASARs = false
 if(target === 'windows') config.win.signAndEditExecutable = false
 await build({ targets: platform.createTarget('dir', arch), config, publish: 'never' })
 await mkdir(config.directories.output, { recursive: true })

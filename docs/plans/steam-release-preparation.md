@@ -217,3 +217,18 @@ Immediate execution checklist:
 - [ ] Check launcher names, Steam libraries outside ASAR, and exact commit provenance.
 - [ ] Create Public Beta branch, upload all three platform depots, record manifests and BuildID.
 - [ ] Install beta through Steam and verify launch/store/save behavior; Matthew performs real purchases and cross-machine acceptance.
+
+### Three-platform Public Beta candidate uploaded
+
+- Public branch `public-beta` / description Public Beta created without a password. Codex browser cannot display Steam's prompt() for creating branches; used already-authenticated Safari UI.
+- Candidate source e72304e48f23c6de3353e8d1e979f6975bde96f8, version 4.1.6 / build 2026090201. Windows x64 and Linux x64 packages built; macOS universal package has Intel and Apple Silicon architectures. Correct platform Electron runtimes downloaded rather than copying local Mac runtime.
+- Pinned Zig 0.15.2 downloaded from official distribution with verified SHA-256; builds Windows/Linux addons locally against the pinned SDK. Windows resolves Node-API from current Electron process via GetProcAddress, removing hard dependency on node.exe. Native library format/import checks passed. Mac universal renderer ASARs are byte-identical; skip redundant ASAR merge (upstream merge otherwise fails with pattern is too long). Native libraries remain outside ASAR.
+- Corrected StoreRouteSurface host kind to desktop-native; previous checkpoint's TypeScript claim was premature. Actual rerun now passed TypeScript/lint/9 host tests. Full suite passed 111 files / 1172 tests.
+- Universal Mac authenticated smoke passed for arm64 and x86_64 via Rosetta. Intel first launch was slow; did eventually reach renderer-ready and exit 0. Windows/Linux native runtime launch remains unverified on this Mac.
+- Linux executable staged as Idle Dyson Swarm.x86_64 to preserve existing Steam launch configuration. Windows Idle Dyson Swarm.exe and macOS Idle Dyson Swarm.app already match configured launch paths.
+- Uploaded BuildID **25123023**, with Windows manifest **1018312718083049240**, Linux **8825404052260497693**, macOS **1298483979878478106**. Private candidate-manifest.json records file hashes for all depots.
+- Published UFS revision 2 removing only developer-only Cloud restriction, so public beta testers can use configured Cloud. Default public game build not intentionally changed.
+- Clicked Set Build Live Now on preview explicitly targeting public-beta / 25123023. Browser click timed out; activation outcome must be independently verified before retrying or reporting live.
+
+- ACTIVATION VERIFIED in independent Safari session: public-beta now points to **25123023**; default remains **22353758**. History explicitly records Set live BuildID 25123023 for branch public-beta. The in-app browser blocked on Steam's confirmation dialog; Safari confirmation completed successfully.
+- Steam client UI automation is currently unavailable: nested Steam bundle capture fails with ScreenCaptureKit -3811, launcher bundle reports running application not found. Downloading beta through SteamCMD into a separate evidence directory for an independent depot installation check instead; do not claim GUI selector was observed.
