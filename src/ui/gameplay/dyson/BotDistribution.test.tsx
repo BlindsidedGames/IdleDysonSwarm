@@ -2,6 +2,7 @@
 
 import fixture from '../../../../test/fixtures/schema-08-canonical-idb1-main-save.txt?raw'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { IntlProvider } from 'react-intl'
 import { afterEach, expect, test, vi } from 'vitest'
 import { hydrateGameState } from '../../../game-state/mapping'
@@ -21,17 +22,20 @@ function setup(dispatchPlayer = vi.fn<BotDistributionProps['dispatchPlayer']>()
   .mockResolvedValue(accepted)) {
   function component(distribution: number, routeAvailable = true) {
     return (
-      <IntlProvider locale="en" messages={{}} onError={() => undefined}>
-        <BotDistribution locale="en" distribution={distribution}
-          multitasking={false} routeAvailable={routeAvailable}
-          dispatchPlayer={dispatchPlayer} />
-      </IntlProvider>
+      <StrictMode>
+        <IntlProvider locale="en" messages={{}} onError={() => undefined}>
+          <BotDistribution locale="en" distribution={distribution}
+            multitasking={false} routeAvailable={routeAvailable}
+            dispatchPlayer={dispatchPlayer} />
+        </IntlProvider>
+      </StrictMode>
     )
   }
   const view = render(component(0.5))
   return {
     slider: screen.getByRole('slider') as HTMLInputElement,
     dispatchPlayer,
+    unmount: view.unmount,
     publish: (distribution: number, routeAvailable = true) =>
       view.rerender(component(distribution, routeAvailable)),
   }
@@ -188,4 +192,19 @@ test('losing the route drops a queued value while the current command finishes',
   publish(0.5, false)
   await act(async () => resolveFirst(accepted))
   expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+})
+
+
+test('unmount discards the queued selection when an in-flight command completes', async () => {
+  let resolveFirst!: (result: Result) => void
+  const dispatchPlayer = vi.fn<BotDistributionProps['dispatchPlayer']>()
+    .mockImplementationOnce(() => new Promise((resolve) => { resolveFirst = resolve }))
+    .mockResolvedValue(accepted)
+  const { slider, unmount } = setup(dispatchPlayer)
+  tapAfterRelease(slider, '100')
+  tapAfterRelease(slider, '0')
+  expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+  unmount()
+  await act(async () => resolveFirst(accepted))
+  expect(dispatchPlayer.mock.calls.map(([command]) => command.distribution)).toEqual([1])
 })

@@ -511,6 +511,11 @@ export function BotDistribution({
       pointerActive.current = false
       queued.current = null
     }
+    return () => {
+      available.current = false
+      pointerActive.current = false
+      queued.current = null
+    }
   }, [routeAvailable, multitasking])
 
   useEffect(() => {
