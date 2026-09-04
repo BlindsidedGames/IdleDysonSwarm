@@ -670,6 +670,8 @@ function createMainWindow() {
       preload: join(hostDirectory, 'preload.cjs'),
     },
   })
+  // Desktop game navigation lives inside the renderer.
+  if (process.platform !== 'darwin') window.removeMenu()
   if (steamDistribution && process.platform !== 'darwin') {
     // Chromium otherwise stops presenting unchanged frames while the overlay draws.
     const repaint = setInterval(() => {

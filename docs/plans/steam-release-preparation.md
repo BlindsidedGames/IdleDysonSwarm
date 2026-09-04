@@ -314,3 +314,8 @@ Matthew confirms Windows now installs and Shift+Tab opens its overlay using the 
 - Public Beta **25133767** uploaded from source **3541bb0cf838d14db8930ac7c4aabb5244d2e6ed**. Steamworks branch table and history confirm activation; default remains **22353758**. Manifests: Windows **5705587130461681892**, Linux **4345693010510814203**, macOS **6788675287931996205**.
 - Final Windows resource read-back confirms IDS ProductName/FileDescription, seven icon sizes (16–256), and matching packaged BrowserWindow asset. Windows still has 76 files / maximum relative path 31 characters. Packaged Mac overlay smoke with flat calls passes enabled/active, visible screenshot, Shift+Tab return and exit 0.
 - Requested Windows retest on 25133767 for prices and branding. Actual Windows purchase lifecycle remains unverified; no purchases made by the agent. Private complete verification, compile probes, screenshots, upload logs and hashes: steam-windows-store-fix/.
+
+
+### Desktop menu bar removal — 2026-09-05
+
+- Matthew requests hiding the File/Edit/View/Window menu bar. Remove the native window menu on Windows/Linux when each game window is created; it cannot reappear when Alt is pressed. Keep the window title and controls. macOS uses its separate system menu bar.
