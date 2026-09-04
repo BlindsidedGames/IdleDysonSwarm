@@ -268,7 +268,7 @@
   "dyson.info.purchase-amount": "Количество строений для покупки",
   "dyson.info.purchase-settings": "Настройки покупки",
   "dyson.info.purchase-settings-failed": "Настройки покупки не изменены.",
-  "dyson.info.rounded-bulk-buy": "Округлять пакетные покупки до следующего рубежа",
+  "dyson.info.rounded-bulk-buy": "Округлять массовые покупки",
   "dyson.info.show-run-facts-when-collapsed": "Всегда показывать активные, срок службы и распавшиеся",
   "dyson.info.stars-surrounded": "Окружено звёзд: <emphasis>{value}</emphasis>",
   "dyson.info.title": "Информация",
@@ -734,7 +734,7 @@
   "research.settings.preset-automation": "Набор навыков при открытии Исследований",
   "research.settings.preset-automation-off": "Выкл.",
   "research.settings.purchase-amount": "Количество уровней для покупки",
-  "research.settings.rounded-bulk-buy": "Округлять пакетные покупки до следующего рубежа",
+  "research.settings.rounded-bulk-buy": "Округлять массовые покупки",
   "settings.audio.description": "Настройте музыку и звуковые эффекты.",
   "settings.audio.effects-volume": "Громкость эффектов",
   "settings.audio.music-volume": "Громкость музыки",
@@ -1803,5 +1803,10 @@
   "skills.switch-preset-conflict-warning": "Некоторые навыки сейчас нельзя отменить, и они блокируют часть этого пресета. Можно всё равно переключиться и применить всё совместимое.",
   "skills.preset-partially-applied-title": "{name}: применено частично",
   "skills.preset-partially-applied-details": "Невозвратные навыки нельзя было отменить. Эти навыки пресета заблокированы и остаются в очереди на потом.",
-  "skills.dismiss": "Скрыть"
+  "skills.dismiss": "Скрыть",
+  "dyson.facilities.details.purchased-building-scaling": "Масштабирование купленных строений",
+  "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% к производству за каждое купленное строение сверх {threshold}.",
+  "wiki.patch-notes.version-4-1-7": "Версия 4.1.7",
+  "wiki.patch-notes.version-4-1-7.rounding": "В настройках ботов и исследований восстановлена формулировка «Округлять массовые покупки».",
+  "wiki.patch-notes.version-4-1-7.scaling": "В сведениях о строениях теперь различаются масштабирование купленных строений и назначенный навык «Масштабирование производства», а также отображаются текущий процент бонуса и порог покупок."
 }

@@ -1353,6 +1353,34 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "Escalado de edificios comprados"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% de producción por edificio comprado por encima de "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -2720,7 +2748,7 @@
   "dyson.info.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Redondear las compras masivas al siguiente hito"
+      "value": "Redondear compras en lote"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -6294,7 +6322,7 @@
   "research.settings.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Redondear las compras masivas al siguiente hito"
+      "value": "Redondear compras en lote"
     }
   ],
   "settings.audio.description": [
@@ -13608,6 +13636,24 @@
     {
       "type": 0,
       "value": "Los avisos del juego ahora usan una cola de notificaciones compartida, por lo que los avisos de conflicto al aplicar automáticamente un Preajuste de Habilidades siguen visibles al cambiar de pestaña en vez de limitarse a Bots."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "Versión 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "Se restauró el texto Redondear compras en lote en los ajustes de Bots e Investigación."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "Los detalles de los edificios ahora distinguen el escalado de edificios comprados de la habilidad Escalado de producción asignada y muestran el porcentaje de bonificación y el umbral de compras actuales."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

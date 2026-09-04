@@ -16,7 +16,7 @@ const progression = Object.freeze({
 })
 
 describe('Wiki patch-note content', () => {
-  test('shows the pending player-facing changes under 4.1.6', () => {
+  test('shows 4.1.7 first and retains the 4.1.6 notes', () => {
     render(
       <IntlProvider locale="en" messages={{}} onError={() => undefined}>
         <WikiSurface
@@ -26,6 +26,13 @@ describe('Wiki patch-note content', () => {
         />
       </IntlProvider>,
     )
+
+    const latest = screen.getByRole('heading', { name: 'Version 4.1.7' }).closest('section')!
+    expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
+    expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
+      'Restored the Round bulk purchases wording in Bots and Research settings.',
+      'Building details now distinguish Purchased Building Scaling from the assigned Production Scaling skill and show the current bonus percentage and purchase threshold.',
+    ])
 
     const releaseHeading = screen.getByRole('heading', {
       name: 'Version 4.1.6',

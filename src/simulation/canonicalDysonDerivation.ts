@@ -997,7 +997,7 @@ function deriveFacilityContributionRows(
         operation: effect.operation,
         value: effect.value,
         order: effect.order,
-        source: sourceForEffect(effect.id, researchEffects),
+        source: sourceForEffect(effect.id, researchEffects, state),
         calculation: sourceCalculationForEffect(
           effect.id,
           state,
@@ -1227,7 +1227,7 @@ function deriveAttributedEffectRows(
         delta: next - runningTotal,
         runningTotal: next,
         order: effect.order,
-        source: sourceForEffect(effect.id, researchEffects),
+        source: sourceForEffect(effect.id, researchEffects, state),
         ...(state === undefined || evaluationSnapshot === undefined
           ? {}
           : {
@@ -1250,6 +1250,7 @@ function deriveAttributedEffectRows(
 function sourceForEffect(
   effectId: string,
   researchEffects: readonly MaterializedDysonResearchEffect[],
+  state?: CanonicalGameStateV1,
 ): CanonicalFacilityContributionRow['source'] {
   const research = researchEffects.find((effect) => effect.id === effectId)
   if (research) return {
@@ -1260,6 +1261,11 @@ function sourceForEffect(
   }
   const skillId = getCompiledSkillEffectCatalog().skillIdForEffect(effectId)
   if (skillId) return { kind: 'skill', id: skillId }
+  if (effectId.startsWith('manual-purchase.scaling-')) {
+    return state?.skills.byId.productionScaling?.owned === true
+      ? { kind: 'skill', id: 'productionScaling' }
+      : { kind: 'system', id: 'purchased-building-scaling' }
+  }
   if (effectId.startsWith('manual-purchase.')) {
     const manualSkill: Readonly<Record<string, string>> = {
       'manual-purchase.avocados-69': 'avocados',
@@ -1267,10 +1273,7 @@ function sourceForEffect(
       'manual-purchase.milestone-50': 'milestone-50',
       'manual-purchase.milestone-100': 'milestone-100',
     }
-    const id = manualSkill[effectId] ??
-      (effectId.startsWith('manual-purchase.scaling-')
-        ? 'productionScaling'
-        : effectId)
+    const id = manualSkill[effectId] ?? effectId
     return { kind: id.startsWith('milestone-') ? 'system' : 'skill', id }
   }
   if (effectId.startsWith('prestige.infinity')) {

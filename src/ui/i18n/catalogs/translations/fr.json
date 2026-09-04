@@ -268,7 +268,7 @@
   "dyson.info.purchase-amount": "Quantité d’installations à acheter",
   "dyson.info.purchase-settings": "Paramètres d’achat",
   "dyson.info.purchase-settings-failed": "Les paramètres d’achat n’ont pas été modifiés.",
-  "dyson.info.rounded-bulk-buy": "Arrondir les achats groupés au prochain palier",
+  "dyson.info.rounded-bulk-buy": "Arrondir les achats groupés",
   "dyson.info.show-run-facts-when-collapsed": "Toujours afficher Actifs, Durée de vie et Désintégrés",
   "dyson.info.stars-surrounded": "Étoiles entourées : <emphasis>{value}</emphasis>",
   "dyson.info.title": "Infos",
@@ -734,7 +734,7 @@
   "research.settings.preset-automation": "Préréglage de compétences à l’ouverture de Recherche",
   "research.settings.preset-automation-off": "Désactivé",
   "research.settings.purchase-amount": "Quantité de recherches à acheter",
-  "research.settings.rounded-bulk-buy": "Arrondir les achats groupés au prochain palier",
+  "research.settings.rounded-bulk-buy": "Arrondir les achats groupés",
   "settings.audio.description": "Réglez la musique et les effets sonores.",
   "settings.audio.effects-volume": "Volume des effets",
   "settings.audio.music-volume": "Volume de la musique",
@@ -1803,5 +1803,10 @@
   "skills.switch-preset-conflict-warning": "Certaines compétences ne peuvent pas être désassignées pour le moment et bloquent une partie de ce préréglage. Vous pouvez tout de même changer et appliquer tous les éléments compatibles.",
   "skills.preset-partially-applied-title": "{name} est partiellement appliqué",
   "skills.preset-partially-applied-details": "Les compétences non remboursables n’ont pas pu être désassignées. Ces compétences du préréglage sont bloquées et restent en attente pour plus tard.",
-  "skills.dismiss": "Masquer"
+  "skills.dismiss": "Masquer",
+  "dyson.facilities.details.purchased-building-scaling": "Progression des bâtiments achetés",
+  "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% de production par bâtiment acheté au-delà de {threshold}.",
+  "wiki.patch-notes.version-4-1-7": "Version 4.1.7",
+  "wiki.patch-notes.version-4-1-7.rounding": "Rétablissement du libellé Arrondir les achats groupés dans les paramètres des Bots et de la Recherche.",
+  "wiki.patch-notes.version-4-1-7.scaling": "Les détails des bâtiments distinguent désormais la progression des bâtiments achetés de la compétence Montée en puissance de la production attribuée, et affichent le pourcentage du bonus et le seuil d’achat actuels."
 }

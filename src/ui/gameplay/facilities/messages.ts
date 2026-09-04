@@ -749,6 +749,16 @@ export const basicFacilityMessages = defineMessages({
     defaultMessage: 'Avocato',
     description: 'Avocato prestige contribution name.',
   },
+  purchasedBuildingScaling: {
+    id: 'dyson.facilities.details.purchased-building-scaling',
+    defaultMessage: 'Purchased Building Scaling',
+    description: 'Name of the normal purchased-building production scaling bonus when Production Scaling is not assigned.',
+  },
+  purchasedBuildingScalingDescription: {
+    id: 'dyson.facilities.details.purchased-building-scaling-description',
+    defaultMessage: '+{rate}% production per purchased building beyond {threshold}.',
+    description: 'Current purchased-building scaling rate and threshold, including assigned Skills.',
+  },
   milestone50: {
     id: 'dyson.facilities.details.milestone-50',
     defaultMessage: '50 purchased milestone',

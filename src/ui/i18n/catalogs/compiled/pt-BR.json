@@ -1353,6 +1353,34 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "Escalonamento de construções compradas"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% de produção por construção comprada além de "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -2720,7 +2748,7 @@
   "dyson.info.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Arredondar compras em massa para o próximo marco"
+      "value": "Arredondar compras em lote"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -6294,7 +6322,7 @@
   "research.settings.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Arredondar compras em massa para o próximo marco"
+      "value": "Arredondar compras em lote"
     }
   ],
   "settings.audio.description": [
@@ -13608,6 +13636,24 @@
     {
       "type": 0,
       "value": "Os avisos do jogo agora usam uma fila de notificações compartilhada, então os avisos de conflito ao aplicar automaticamente uma Predefinição de Habilidades continuam visíveis ao trocar de aba em vez de ficarem limitados aos Bots."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "Versão 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "Restaurado o texto Arredondar compras em lote nas configurações de Bots e Pesquisa."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "Os detalhes das construções agora distinguem o escalonamento de construções compradas da habilidade Escalonamento de Produção atribuída e mostram a porcentagem de bônus e o limite de compras atuais."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

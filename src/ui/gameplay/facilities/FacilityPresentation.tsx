@@ -496,7 +496,7 @@ export function FacilityDetailsContent({
                 <TerraRows locale={locale} layer={details.manualPurchaseLayer} />
               ) : null}
               {purchaseEffects.length > 0 && (
-                <EffectList locale={locale} contributions={purchaseEffects} facilityId={facilityId} />
+                <EffectList locale={locale} contributions={purchaseEffects} facilityId={facilityId} manualPurchaseLayer={details?.manualPurchaseLayer} />
               )}
             </EffectGroup>
           )}
@@ -641,11 +641,11 @@ function EffectGroup({ title, children }: { readonly title: string; readonly chi
   )
 }
 
-function EffectList({ locale, contributions, facilityId }: { readonly locale: EnabledLocale; readonly contributions: readonly FacilityContribution[]; readonly facilityId: DysonFacilityId }) {
+function EffectList({ locale, contributions, facilityId, manualPurchaseLayer }: { readonly locale: EnabledLocale; readonly contributions: readonly FacilityContribution[]; readonly facilityId: DysonFacilityId; readonly manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer'] }) {
   const intl = useIntl()
   if (contributions.length === 0) return <p className="facility-details-empty">{intl.formatMessage(messages.noActiveEffects)}</p>
   return <>{contributions.map((contribution) => {
-    const presentation = effectPresentation(contribution, facilityId, intl)
+    const presentation = effectPresentation(contribution, facilityId, intl, manualPurchaseLayer)
     return <EffectRow key={`${contribution.sourceId}-${contribution.order ?? 0}`} locale={locale} contribution={contribution} {...presentation} />
   })}</>
 }
@@ -932,8 +932,19 @@ function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly
   ))}</>
 }
 
-function effectPresentation(contribution: FacilityContribution, facilityId: DysonFacilityId, intl: IntlShape): { icon: string; name: string; description: string } {
+function effectPresentation(contribution: FacilityContribution, facilityId: DysonFacilityId, intl: IntlShape, manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer']): { icon: string; name: string; description: string } {
   const source = contribution.source
+  if (contribution.sourceId.startsWith('manual-purchase.scaling-') && manualPurchaseLayer) {
+    const skillAssigned = source?.kind === 'skill' && source.id === 'productionScaling'
+    return {
+      icon: skillAssigned ? skillIcons.productionScaling : facilityIcon(facilityId),
+      name: skillAssigned ? skillName('productionScaling', intl) : intl.formatMessage(messages.purchasedBuildingScaling),
+      description: intl.formatMessage(messages.purchasedBuildingScalingDescription, {
+        rate: intl.formatNumber(manualPurchaseLayer.scalingRate * 100),
+        threshold: intl.formatNumber(manualPurchaseLayer.scalingThreshold),
+      }),
+    }
+  }
   if (source?.kind === 'skill') return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: skillName(source.id, intl), description: skillTechnical(source.id, intl) }
   if (source?.kind === 'research') return { icon: navigationAssets.research, name: intl.formatMessage(researchNameMessage(source.id)), description: intl.formatMessage(researchDescriptionMessage(source.id)) }
   if (source?.kind === 'infinity') return { icon: navigationAssets.infinity, name: intl.formatMessage(messages.infinityPower), description: intl.formatMessage(messages.infinityPower) }

@@ -454,7 +454,7 @@ export const readyDysonMessages = defineMessages({
   },
   roundedBulkBuy: {
     id: 'dyson.info.rounded-bulk-buy',
-    defaultMessage: 'Round bulk purchases to the next milestone',
+    defaultMessage: 'Round bulk purchases',
     description:
       'Unity building rounded-bulk setting controlled by the canonical command.',
   },

@@ -1353,6 +1353,34 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.details.purchased-building-scaling": [
+    {
+      "type": 0,
+      "value": "Масштабирование купленных строений"
+    }
+  ],
+  "dyson.facilities.details.purchased-building-scaling-description": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": "% к производству за каждое купленное строение сверх "
+    },
+    {
+      "type": 1,
+      "value": "threshold"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dyson.facilities.details.secrets-power": [
     {
       "type": 0,
@@ -2720,7 +2748,7 @@
   "dyson.info.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Округлять пакетные покупки до следующего рубежа"
+      "value": "Округлять массовые покупки"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -6294,7 +6322,7 @@
   "research.settings.rounded-bulk-buy": [
     {
       "type": 0,
-      "value": "Округлять пакетные покупки до следующего рубежа"
+      "value": "Округлять массовые покупки"
     }
   ],
   "settings.audio.description": [
@@ -13608,6 +13636,24 @@
     {
       "type": 0,
       "value": "Игровые уведомления теперь используют общую очередь, поэтому предупреждения о конфликтах при автоматическом применении Набора навыков остаются видимыми при переключении вкладок, а не ограничиваются вкладкой Ботов."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7": [
+    {
+      "type": 0,
+      "value": "Версия 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.rounding": [
+    {
+      "type": 0,
+      "value": "В настройках ботов и исследований восстановлена формулировка «Округлять массовые покупки»."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.scaling": [
+    {
+      "type": 0,
+      "value": "В сведениях о строениях теперь различаются масштабирование купленных строений и назначенный навык «Масштабирование производства», а также отображаются текущий процент бонуса и порог покупок."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [
