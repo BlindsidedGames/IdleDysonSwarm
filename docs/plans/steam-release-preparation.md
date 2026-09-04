@@ -319,3 +319,5 @@ Matthew confirms Windows now installs and Shift+Tab opens its overlay using the 
 ### Desktop menu bar removal — 2026-09-05
 
 - Matthew requests hiding the File/Edit/View/Window menu bar. Remove the native window menu on Windows/Linux when each game window is created; it cannot reappear when Alt is pressed. Keep the window title and controls. macOS uses its separate system menu bar.
+
+- Live on Public Beta **25133846**, source **30e1b1881e9622f05030aafbc9530ddf50699e72**. Steamworks branch table/history verified; default remains **22353758**. Packaged host source checked for all three depots; nine host tests and lint pass. Windows manifest **3731595785356323512**, Linux **7643815618784112396**, macOS **1455413815582061205**. Private upload evidence: steam-menu-bar-fix/upload/.
