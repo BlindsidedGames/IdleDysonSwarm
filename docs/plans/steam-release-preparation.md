@@ -326,3 +326,9 @@ Matthew confirms Windows now installs and Shift+Tab opens its overlay using the 
 ### Windows acceptance confirmed — 2026-09-05
 
 - Matthew confirms prices, IDS icon, fitted purchase-button text and hidden menu bar on Public Beta **25133846**. These Windows acceptance checks are complete. Earlier installation and overlay confirmation also stand. This does not establish completed payments, restoration with owned items, cross-machine Cloud transfer or Linux/SteamOS acceptance.
+
+### Save recovery review and Android artifact — 2026-09-05
+
+- Reviewed Cloud recovery with real temporary files, the canonical codec and PortableSaveRepository. Fixed conflict selection receiving a corrupt primary instead of the validated backup; acknowledgment now accepts the preserved damaged download's exact bytes. Future-version backups stop recovery rather than falling through to an older snapshot.
+- Six filesystem scenarios cover local/cloud conflict choices with damaged headers and preserved originals, interrupted canonical replacement/retry, changed accounts, unreadable primary publication blocking, and future-backup downgrade prevention. Focused Cloud/inventory/publication suite: 20 tests pass. These are local failure/recovery checks, not proof of Steam transfer between machines.
+- Android debug APK assembled with Java 21 and installed on dedicated emulator-5554. Extracted APK scan passes across 706 files. Interactive Store/background/restart QA awaits permission to control the unbundled emulator using ADB; desktop CUA cannot access it. Connected physical phone is untouched.

@@ -63,7 +63,12 @@ export class SteamCloud {
     }
     return texts
   }
-  async acknowledge(text){validateSnapshot(text);this.ensureIdentity();await write(this.marker,hash(text))}
+  async acknowledge(text){
+    // A recovered download may have a damaged header. Acknowledge its exact
+    // bytes after recovery, without treating them as a publishable snapshot.
+    if(typeof text !== 'string' || Buffer.byteLength(text)>maximumBytes) throw new Error('Invalid Cloud acknowledgement')
+    this.ensureIdentity();await write(this.marker,hash(text))
+  }
   async choose(local,remote){
     validateSnapshot(local);validateSnapshot(remote)
     this.ensureIdentity()

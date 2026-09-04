@@ -24,6 +24,7 @@ export class CloudStartupResolver implements StartupSaveResolver {
     try { text = await this.cloud.read() } catch { return this.local.resolve() }
     if (text === null) return this.local.resolve()
     let remote: PreparedSave | undefined
+    let remoteText = text
     const prepare = (candidate: string) => {
       const now = new Date().toISOString()
       // Re-serialize through the portable boundary before preparing, keeping
@@ -34,7 +35,10 @@ export class CloudStartupResolver implements StartupSaveResolver {
     try { remote = prepare(text) } catch(error) {
       if (error instanceof UnsupportedFutureSaveSchemaError) return {kind:'blocked',reason:'unsupported-future-version',error:'This Steam Cloud save needs a newer game version. Its original file has been preserved.'}
       for (const candidate of await this.cloud.readBackups?.().catch(() => []) ?? []) {
-        try { remote=prepare(candidate);break } catch { /* Try the next preserved backup. */ }
+        try { remote=prepare(candidate);remoteText=candidate;break } catch (error) {
+          if (error instanceof UnsupportedFutureSaveSchemaError) return {kind:'blocked',reason:'unsupported-future-version',error:'This Steam Cloud backup needs a newer game version. Its original file has been preserved.'}
+          // Try the next preserved backup only when this one is damaged.
+        }
       }
     }
     if (remote === undefined) {
@@ -50,7 +54,7 @@ export class CloudStartupResolver implements StartupSaveResolver {
       }
       if (current !== null) {
         const localText = serializeSharedWebSave(current.copyValidatedState())
-        if (localText !== text && await this.cloud.choose(localText,text) === 'local') {
+        if (localText !== remoteText && await this.cloud.choose(localText,remoteText) === 'local') {
           await this.cloud.acknowledge(text)
           return this.local.resolve()
         }
