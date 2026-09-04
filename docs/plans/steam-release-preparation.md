@@ -2,7 +2,7 @@
 
 Implementation authorized 2026-09-04. Starting baseline 3ee99f4d. Worktree: /Users/matthewrushworth/Projects/ids-steam-release; branch codex/steam-release-preparation. Raw partner exports remain outside the repository.
 
-## Verified configuration
+## Initial captured configuration (historical; see current checkpoint below)
 
 - App ID: 4348570; released game, Windows/macOS/Linux.
 - 27 client-set achievements; DEV_OPTIONS is the only hidden achievement. English copy, localization tokens and both icon references are captured in steam-schema.json and the original VDF.
@@ -177,3 +177,21 @@ External gates and next steps:
 - Latest packaged missing-client + minimize/restore regression completed with exit 0. Steam initialization failure left the renderer playable; native libraries were confirmed outside ASAR. This does not substitute for Steam-client/overlay or OS-sleep testing.
 - Catalog before-upload gate was run and failed closed because the Steam desktop client is not running. No upload or metadata publication attempted. Steamworks browser login alone does not satisfy this gate.
 - Cloud retry follow-up: if checkpoint bytes were written but the acknowledgement marker failed, publishing the same checkpoint retries that marker instead of silently skipping it.
+
+### Live catalog setup — desktop client now signed in
+
+- The before-upload native gate received the definition-ready callback and confirmed an empty catalog: reserved IDs 1001–1005 unused.
+- Uploaded the approved `itemdefs.json` through Steamworks Inventory Service. Server response: `Modified 5/5 item definitions. Flushed Econ caches: no.` This is an app-wide catalog change, not a beta-only change.
+- First post-upload native definition refresh timed out; application mappings remain disabled pending verified provider readback. Do not upload again blindly. Inspect provider/cache propagation and complete the after-upload gate.
+
+### Current provider checkpoint — 2026-09-04 21:12 AEST
+
+- Desktop client authentication verified. All five uploaded definitions pass the authoritative after-upload SDK gate, including IDs, copy, prices, stacking/purchase limits and non-tradable/non-marketable flags. Enabled Electron mappings 1001–1005 only after this passed.
+- Native Steam-returned AUD prices exactly match the website baseline: A$1.49 / A$6.99 / A$30.99 / A$15.99 / A$4.99. No transaction initiated.
+- Corrected catalog verification for Steam's cached-definition behavior: LoadItemDefinitions requests refresh, but update callbacks are not emitted for every cached read. Pre-upload empty catalogs still require a callback; after-upload requires acknowledged prices and every expected concrete definition/property.
+- Inspected the pending policies revision in full: it activates Inventory Service/economy, so it is required for this scope rather than an unrelated policy edit. No policy values changed manually.
+- Published reviewed policies revision 1, stats revision 4 and UFS revision 1. Steamworks reports Publishing successful / changes now live. Stats diff removes only BOTS_42QI's HIGHEST_BOT_EXPONENT 0–19 progress association. Existing IDs and earned unlocks remain intact.
+- Published Auto-Cloud: 268435456 bytes / 16 files, developer-only ON, dynamic sync OFF; four exact checkpoint/backup patterns, nonrecursive, All OSes, account-scoped subdirectory. WinAppDataRoaming maps to MacAppSupport and LinuxXdgConfigHome with empty added paths and replacement OFF. Developer-only is retained during testing; broader Cloud availability requires beta acceptance.
+- Native verified inventory read succeeded with zero items after policy publication (previous result was EResultFail before activation). No purchase or achievement/stat mutation made by these probes.
+- Focused Electron host tests: 9 passed after enabling verified mappings. No new Steam build uploaded; public branch and mobile releases unchanged.
+- Remaining: packaged authenticated desktop/store QA, signed/cross-platform packages, updated Electron upload tooling (existing local uploader still validates old Unity payload names), private beta BuildID, cross-machine Cloud/transaction acceptance, final footage/trailer.

@@ -17,7 +17,16 @@ if(!client)throw new Error('A signed-in Steam desktop client is required. No cat
 try {
  const native=client.native
  native.loadDefinitions()
- await until(()=>native.definitionsReady(),Boolean,15000)
+ // RequestPrices also refreshes purchasable definitions in the running client.
+ // Cached definitions need not produce another update callback. Verify concrete
+ // expected IDs after upload; an empty pre-upload result still needs a callback.
+ if(mode==='--after-upload') {
+  const call=native.requestPrices()
+  const result=await until(()=>native.callResult(call,'prices'),value=>!value.pending,15000)
+  if(result.result!==1)throw new Error('Steam price refresh failed')
+ }
+ if(mode==='--before-upload') await until(()=>native.definitionsReady(),Boolean,15000)
+ else await until(()=>native.definitions(),ids=>schema.items.every(item=>ids.includes(item.itemdefid)),15000)
  const existing=native.definitions()
  if(mode==='--before-upload') {
   if(existing.length)throw new Error(`Existing definitions require reconciliation before uploading: ${existing.join(',')}`)

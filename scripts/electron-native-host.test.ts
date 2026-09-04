@@ -149,7 +149,7 @@ describe('Electron native host hardening', () => {
     expect(preload).not.toContain('promoteAutomaticUnityPurchaseEvidence')
   })
 
-  it('keeps Steam Inventory authority in main and fails closed by default', () => {
+  it('keeps verified Steam Inventory mappings in main and requires the native provider', () => {
     const main = read('hosts/electron/main.mjs')
     const preload = read('hosts/electron/preload.cjs')
     const binding = read('hosts/electron/steamInventoryBinding.mjs')
@@ -162,8 +162,10 @@ describe('Electron native host hardening', () => {
     expect(preload).not.toContain('itemDefId')
     expect(inventoryBinding(null)).toBe(null)
     expect(binding).not.toContain("from 'steamworks.js'")
-    expect(config.enabled).toBe(false)
-    expect(Object.values(config.products).every((value) => value === null))
-      .toBe(true)
+    expect(config.enabled).toBe(true)
+    expect(config.products).toEqual({
+      'ids.tiptier1': 1001, 'ids.tiptier2': 1002, 'ids.tiptier3': 1003,
+      'ids.devoptions': 1004, 'ids.doubleip': 1005,
+    })
   })
 })
