@@ -63,7 +63,7 @@ export function StoreRouteSurface({
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       deviceOnlyPurchases={deviceOnlyPurchases}
       restoreAvailable={restoreAvailable}
-      restoreIncludesSupporters={releasePlatformServices.hostKind === 'electron'}
+      restoreIncludesSupporters={releasePlatformServices.hostKind === 'desktop-native'}
     />
   )
 }
