@@ -13664,16 +13664,52 @@
       "value": "Version 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "Correction des pressions sur la barre de répartition des Bots qui appliquaient la répartition précédente au lieu du dernier choix."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "Les échecs du Temps hors ligne affichent désormais des codes d’erreur distincts et un message clair lorsque le traitement est annulé parce que l’application est passée en arrière-plan."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "La description de Recherche répétable précise désormais que les coûts de recherche sont divisés par le multiplicateur de production total actuel, sans effet sur Durabilité. Un bonus de +300 % signifie un quart du coût normal."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "Correction des échecs de progression et de traitement du Temps hors ligne causés par Académie réglementée ou Épaules de la Révolution après les réinitialisations Infinity et Quantum."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "Rétablissement du libellé Arrondir les achats groupés dans les paramètres des Bots et de la Recherche."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Ajout de l’option Enregistrer le fichier aux exports de sauvegarde sur Android et ordinateur, avec une boîte de dialogue native Enregistrer sous dans les applications Android et de bureau."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "Les détails des bâtiments distinguent désormais la progression des bâtiments achetés de la compétence Montée en puissance de la production attribuée, et affichent le pourcentage du bonus et le seuil d’achat actuels."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "Les planètes achetées comptent désormais pour Ce qui adviendra grâce à Terra Firma et Terra Irradient, y compris dans le calcul affiché."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

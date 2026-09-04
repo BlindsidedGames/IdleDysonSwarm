@@ -1810,5 +1810,11 @@
   "wiki.patch-notes.version-4-1-7.rounding": "Se restauró el texto Redondear compras en lote en los ajustes de Bots e Investigación.",
   "wiki.patch-notes.version-4-1-7.scaling": "Los detalles de los edificios ahora distinguen el escalado de edificios comprados de la habilidad Escalado de producción asignada y muestran el porcentaje de bonificación y el umbral de compras actuales.",
   "offline-time.app-backgrounded": "La aplicación pasó a segundo plano, procesamiento cancelado",
-  "offline-time.error-code": "(Código de error: {code})"
+  "offline-time.error-code": "(Código de error: {code})",
+  "wiki.patch-notes.version-4-1-7.terra": "Los planetas comprados ahora cuentan para Lo que sucederá mediante Terra Firma y Terra Irradient, incluso en el cálculo mostrado.",
+  "wiki.patch-notes.version-4-1-7.allocation": "Se corrigió que tocar la barra de distribución de Bots aplicara la distribución anterior en lugar de la última selección.",
+  "wiki.patch-notes.version-4-1-7.offline-errors": "Los fallos del Tiempo sin conexión ahora incluyen códigos de error distintos y un mensaje claro cuando el procesamiento se cancela porque la aplicación pasó a segundo plano.",
+  "wiki.patch-notes.version-4-1-7.save-file": "Se agregó Guardar archivo a la exportación de partidas en Android y escritorio, con diálogos nativos de Guardar como en las aplicaciones de Android y escritorio.",
+  "wiki.patch-notes.version-4-1-7.research-reset": "Se corrigieron fallos de progreso y del procesamiento del Tiempo sin conexión causados por Academia regulada o Hombros de la Revolución después de reinicios de Infinity y Quantum.",
+  "wiki.patch-notes.version-4-1-7.repeatable-research": "Se aclaró que Investigación repetible divide los costos de investigación entre el multiplicador total de producción actual y no afecta a Durabilidad. Una bonificación de +300 % significa una cuarta parte del costo normal."
 }

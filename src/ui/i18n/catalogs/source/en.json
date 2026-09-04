@@ -6931,13 +6931,37 @@
     "defaultMessage": "Version 4.1.7",
     "description": "Version label for the latest Wiki patch notes."
   },
+  "wiki.patch-notes.version-4-1-7.allocation": {
+    "defaultMessage": "Fixed taps on the Bot distribution slider applying the previous allocation instead of the latest selection.",
+    "description": "Version 4.1.7 release note for allocation."
+  },
+  "wiki.patch-notes.version-4-1-7.offline-errors": {
+    "defaultMessage": "Offline Time failures now include distinct error codes, with a clear message when processing is cancelled because the app was backgrounded.",
+    "description": "Version 4.1.7 release note for offline-errors."
+  },
+  "wiki.patch-notes.version-4-1-7.repeatable-research": {
+    "defaultMessage": "Clarified that Repeatable Research divides research costs by the current total production multiplier and does not affect Durability. A +300% bonus means one quarter of the normal cost.",
+    "description": "Version 4.1.7 release note for repeatable-research."
+  },
+  "wiki.patch-notes.version-4-1-7.research-reset": {
+    "defaultMessage": "Fixed progression and Offline Time processing failures caused by Regulated Academia or Shoulders of the Revolution after Infinity and Quantum resets.",
+    "description": "Version 4.1.7 release note for research-reset."
+  },
   "wiki.patch-notes.version-4-1-7.rounding": {
     "defaultMessage": "Restored the Round bulk purchases wording in Bots and Research settings.",
     "description": "Version 4.1.7 release note for restored purchase-rounding wording."
   },
+  "wiki.patch-notes.version-4-1-7.save-file": {
+    "defaultMessage": "Added Save File to save exports on Android and desktop, with native Save As dialogs in the Android and desktop apps.",
+    "description": "Version 4.1.7 release note for save-file."
+  },
   "wiki.patch-notes.version-4-1-7.scaling": {
     "defaultMessage": "Building details now distinguish Purchased Building Scaling from the assigned Production Scaling skill and show the current bonus percentage and purchase threshold.",
     "description": "Version 4.1.7 release note for accurate purchased-building scaling attribution and descriptions."
+  },
+  "wiki.patch-notes.version-4-1-7.terra": {
+    "defaultMessage": "Purchased Planets now count toward What Will Come to Pass through Terra Firma and Terra Irradient, including in the displayed calculation.",
+    "description": "Version 4.1.7 release note for terra."
   },
   "wiki.patch-notes.version-4-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

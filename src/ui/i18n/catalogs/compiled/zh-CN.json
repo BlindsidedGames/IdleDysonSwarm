@@ -13664,16 +13664,52 @@
       "value": "版本 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "修复了点击机器人分配滑动条时应用上一次分配而非最新选择的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "离线时间处理失败时现在会显示不同的错误代码；因应用切换到后台而取消处理时，会显示明确的提示。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "明确了 可重复研究 会将研究费用除以当前的总产量倍率，且不影响 耐久度。+300% 加成意味着费用为正常费用的四分之一。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "修复了 Infinity 和 Quantum 重置后，规范学术界 或 革命者之肩 导致游戏进度和离线时间处理失败的问题。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "恢复了机器人和研究设置中的“批量购买取整”措辞。"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Android 和桌面端的存档导出新增“保存文件”选项，Android 和桌面应用会使用系统原生的“另存为”对话框。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "建筑详情现在会区分已购建筑增长加成与已分配的“生产规模化”技能，并显示当前加成百分比和购买数量门槛。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "通过 Terra Firma 和 Terra Irradient，购买的行星现在会计入 必将发生，显示的计算过程也已同步更新。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

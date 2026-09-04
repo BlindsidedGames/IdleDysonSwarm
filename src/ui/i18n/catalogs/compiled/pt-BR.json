@@ -13664,16 +13664,52 @@
       "value": "Versão 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "Corrigido um problema em que tocar na barra de distribuição de Bots aplicava a distribuição anterior em vez da seleção mais recente."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "Falhas no Tempo offline agora incluem códigos de erro distintos e uma mensagem clara quando o processamento é cancelado porque o aplicativo foi para segundo plano."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "A descrição de Pesquisa Repetível agora esclarece que os custos de pesquisa são divididos pelo multiplicador total de produção atual e que Durabilidade não é afetada. Um bônus de +300% significa um quarto do custo normal."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "Corrigidas falhas de progresso e de processamento do Tempo offline causadas por Academia Regulamentada ou Ombros da Revolução após reinícios de Infinity e Quantum."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "Restaurado o texto Arredondar compras em lote nas configurações de Bots e Pesquisa."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Adicionada a opção Salvar arquivo à exportação de partidas no Android e no desktop, com caixas de diálogo nativas de Salvar como nos aplicativos Android e desktop."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "Os detalhes das construções agora distinguem o escalonamento de construções compradas da habilidade Escalonamento de Produção atribuída e mostram a porcentagem de bônus e o limite de compras atuais."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "Planetas comprados agora contam para O Que Está por Vir por meio de Terra Firma e Terra Irradient, inclusive no cálculo exibido."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

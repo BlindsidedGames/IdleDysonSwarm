@@ -1810,5 +1810,11 @@
   "wiki.patch-notes.version-4-1-7.rounding": "Restaurado o texto Arredondar compras em lote nas configurações de Bots e Pesquisa.",
   "wiki.patch-notes.version-4-1-7.scaling": "Os detalhes das construções agora distinguem o escalonamento de construções compradas da habilidade Escalonamento de Produção atribuída e mostram a porcentagem de bônus e o limite de compras atuais.",
   "offline-time.app-backgrounded": "O aplicativo foi para segundo plano, processamento cancelado",
-  "offline-time.error-code": "(Código de erro: {code})"
+  "offline-time.error-code": "(Código de erro: {code})",
+  "wiki.patch-notes.version-4-1-7.terra": "Planetas comprados agora contam para O Que Está por Vir por meio de Terra Firma e Terra Irradient, inclusive no cálculo exibido.",
+  "wiki.patch-notes.version-4-1-7.allocation": "Corrigido um problema em que tocar na barra de distribuição de Bots aplicava a distribuição anterior em vez da seleção mais recente.",
+  "wiki.patch-notes.version-4-1-7.offline-errors": "Falhas no Tempo offline agora incluem códigos de erro distintos e uma mensagem clara quando o processamento é cancelado porque o aplicativo foi para segundo plano.",
+  "wiki.patch-notes.version-4-1-7.save-file": "Adicionada a opção Salvar arquivo à exportação de partidas no Android e no desktop, com caixas de diálogo nativas de Salvar como nos aplicativos Android e desktop.",
+  "wiki.patch-notes.version-4-1-7.research-reset": "Corrigidas falhas de progresso e de processamento do Tempo offline causadas por Academia Regulamentada ou Ombros da Revolução após reinícios de Infinity e Quantum.",
+  "wiki.patch-notes.version-4-1-7.repeatable-research": "A descrição de Pesquisa Repetível agora esclarece que os custos de pesquisa são divididos pelo multiplicador total de produção atual e que Durabilidade não é afetada. Um bônus de +300% significa um quarto do custo normal."
 }

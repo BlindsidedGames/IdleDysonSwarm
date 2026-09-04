@@ -13664,16 +13664,52 @@
       "value": "Version 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "Behoben: Beim Tippen auf den Bot-Verteilungsregler wurde die vorherige statt der zuletzt gewählten Verteilung angewendet."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "Fehler bei der Offline-Zeit enthalten jetzt eindeutige Fehlercodes und eine klare Meldung, wenn die Verarbeitung abgebrochen wird, weil die App in den Hintergrund gewechselt ist."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "Die Beschreibung von Wiederholbare Forschung stellt jetzt klar, dass Forschungskosten durch den aktuellen gesamten Produktionsmultiplikator geteilt werden und Haltbarkeit nicht betroffen ist. Ein Bonus von +300 % bedeutet ein Viertel der normalen Kosten."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "Fortschritts- und Offline-Zeit-Verarbeitungsfehler durch Regulierte Akademie oder Schultern der Revolution nach Infinity- und Quantum-Resets wurden behoben."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "Die Bezeichnung Sammelkäufe runden wurde in den Bot- und Forschungseinstellungen wiederhergestellt."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Datei speichern wurde zum Speicherexport auf Android und Desktop hinzugefügt, mit nativen Speichern-unter-Dialogen in den Android- und Desktop-Apps."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "Gebäudedetails unterscheiden jetzt die Skalierung gekaufter Gebäude vom zugewiesenen Skill Produktionsskalierung und zeigen den aktuellen Bonusprozentsatz und die Kaufschwelle an."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "Gekaufte Planeten zählen durch Terra Firma und Terra Irradient jetzt für Was kommen wird, auch in der angezeigten Berechnung."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

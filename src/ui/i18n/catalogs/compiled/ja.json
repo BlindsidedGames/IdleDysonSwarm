@@ -13664,16 +13664,52 @@
       "value": "バージョン 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "ボット配分スライダーのバーをタップすると、最新の選択ではなく前の配分が適用される問題を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "オフライン時間の処理失敗時に異なるエラーコードを表示し、アプリがバックグラウンドに移動したため処理がキャンセルされた場合は、明確なメッセージを表示するようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "反復可能研究 は研究コストを現在の合計生産倍率で割り、耐久性 には影響しないことを明記しました。+300% のボーナスでは通常コストの4分の1になります。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "Infinity と Quantum のリセット後に、統制された学術界 または 革命の肩 が原因で進行やオフライン時間の処理に失敗する問題を修正しました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "ボットと研究の設定で、一括購入数の丸めを示す以前の表記を復元しました。"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Android とデスクトップのセーブデータ出力に「ファイルを保存」を追加しました。Android アプリとデスクトップアプリでは、システムの「名前を付けて保存」ダイアログを使用します。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "建物の詳細で、購入建物の生産スケーリングと割り当て済みの「生産スケーリング」スキルを区別し、現在のボーナス率と購入数のしきい値を表示するようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "Terra Firma と Terra Irradient によって、購入した惑星が 来るべき未来 の効果にカウントされるようになりました。表示される計算にも反映されます。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

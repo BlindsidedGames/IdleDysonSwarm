@@ -13664,16 +13664,52 @@
       "value": "Version 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "Fixed taps on the Bot distribution slider applying the previous allocation instead of the latest selection."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "Offline Time failures now include distinct error codes, with a clear message when processing is cancelled because the app was backgrounded."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "Clarified that Repeatable Research divides research costs by the current total production multiplier and does not affect Durability. A +300% bonus means one quarter of the normal cost."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "Fixed progression and Offline Time processing failures caused by Regulated Academia or Shoulders of the Revolution after Infinity and Quantum resets."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "Restored the Round bulk purchases wording in Bots and Research settings."
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Added Save File to save exports on Android and desktop, with native Save As dialogs in the Android and desktop apps."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "Building details now distinguish Purchased Building Scaling from the assigned Production Scaling skill and show the current bonus percentage and purchase threshold."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "Purchased Planets now count toward What Will Come to Pass through Terra Firma and Terra Irradient, including in the displayed calculation."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [
