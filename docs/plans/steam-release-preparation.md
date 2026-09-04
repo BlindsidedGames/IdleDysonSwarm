@@ -212,10 +212,10 @@ External gates and next steps:
 Matthew explicitly requests **Public Beta**, branch `public-beta`, on existing App ID 4348570. No password, separate App ID, or private-beta access flow. It must support Windows x64, macOS Intel/Apple Silicon, and Linux x64/SteamOS. Default public branch remains BuildID 22353758 until separate release approval. Existing platform depots can carry beta-specific manifests. Finish platform packaging and runtime checks, then upload one recorded candidate and set only public-beta live. This supersedes earlier private steam-refresh-test wording.
 
 Immediate execution checklist:
-- [ ] Build and verify Windows x64 and Linux x64 native addons and packaged runtimes.
-- [ ] Build macOS Intel and Apple Silicon packages with matching addons.
-- [ ] Check launcher names, Steam libraries outside ASAR, and exact commit provenance.
-- [ ] Create Public Beta branch, upload all three platform depots, record manifests and BuildID.
+- [x] Build Windows x64 and Linux x64 native addons and packages; binary/package checks passed. Native OS launch acceptance remains pending.
+- [x] Build universal macOS Intel and Apple Silicon package with matching addons; both architecture smoke checks passed.
+- [x] Check launcher names, Steam libraries outside ASAR, and exact commit provenance.
+- [x] Create Public Beta branch, upload all three platform depots, record manifests and BuildID.
 - [ ] Install beta through Steam and verify launch/store/save behavior; Matthew performs real purchases and cross-machine acceptance.
 
 ### Three-platform Public Beta candidate uploaded
@@ -232,3 +232,9 @@ Immediate execution checklist:
 
 - ACTIVATION VERIFIED in independent Safari session: public-beta now points to **25123023**; default remains **22353758**. History explicitly records Set live BuildID 25123023 for branch public-beta. The in-app browser blocked on Steam's confirmation dialog; Safari confirmation completed successfully.
 - Steam client UI automation is currently unavailable: nested Steam bundle capture fails with ScreenCaptureKit -3811, launcher bundle reports running application not found. Downloading beta through SteamCMD into a separate evidence directory for an independent depot installation check instead; do not claim GUI selector was observed.
+
+### Download verification and handoff
+
+- SteamCMD installed public-beta successfully into a separate directory. All **1,854** regular-file hashes in downloaded macOS depot match the recorded candidate manifest. Downloaded app initialized Steam, reached renderer-ready and exited 0 in smoke mode.
+- Public Beta is live at **25123023**. Default remains **22353758**. Final package source is **e72304e48f23c6de3353e8d1e979f6975bde96f8**; later commits record evidence and automate the already-applied Linux launcher rename, without changing uploaded gameplay code.
+- Matthew can now select Public Beta in Game Versions & Betas. No password or separate App ID. Remaining acceptance: actual Windows/Linux launches, purchases/cancellation/restoration with owned items, Cloud transfer/conflicts across machines, and final trailer after acceptance. Do not represent cross-compilation or package checks as real Windows/Linux runtime testing.

@@ -1,4 +1,4 @@
-import { readFile, access, writeFile, mkdir } from 'node:fs/promises'
+import { readFile, access, writeFile, mkdir, rename } from 'node:fs/promises'
 import { execFileSync } from 'node:child_process'
 import { resolve, join } from 'node:path'
 import { parse } from 'yaml'
@@ -23,5 +23,10 @@ config.extraMetadata = { idsDesktopDistribution: 'steam', idsSourceCommit: commi
 if(target === 'macos') config.mac.mergeASARs = false
 if(target === 'windows') config.win.signAndEditExecutable = false
 await build({ targets: platform.createTarget('dir', arch), config, publish: 'never' })
+if(target === 'linux') {
+  const packageInfo = JSON.parse(await readFile('package.json', 'utf8'))
+  const unpacked = join(config.directories.output, 'linux-unpacked')
+  await rename(join(unpacked, packageInfo.name), join(unpacked, 'Idle Dyson Swarm.x86_64'))
+}
 await mkdir(config.directories.output, { recursive: true })
 await writeFile(join(config.directories.output, 'provenance.json'), JSON.stringify({ sourceCommit: commit, target, nativeTarget, builtAt: new Date().toISOString(), steamBuildId: null }, null, 2)+'\n')
