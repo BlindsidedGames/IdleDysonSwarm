@@ -1,3 +1,4 @@
+import { attachSteamPresentation } from './steam/presentation.mjs'
 import { SteamCloud } from './steam/cloud.mjs'
 import { loadSteamClient, createSteamPublication } from './steam/client.mjs'
 import {
@@ -50,7 +51,7 @@ import {
 const hostDirectory = dirname(fileURLToPath(import.meta.url))
 const packageInfo = JSON.parse(readFileSync(join(app.isPackaged ? app.getAppPath() : join(hostDirectory, '../..'), 'package.json'), 'utf8'))
 const steamDistribution = packageInfo.idsDesktopDistribution === 'steam' || (!app.isPackaged && process.env.VITE_IDS_DESKTOP_DISTRIBUTION === 'steam')
-if (steamDistribution) {
+if (steamDistribution && process.platform !== 'darwin') {
   // Steam hooks the graphics device in the SDK process. Configure before ready.
   app.commandLine.appendSwitch('in-process-gpu')
   app.commandLine.appendSwitch('disable-direct-composition')
@@ -648,7 +649,7 @@ function createMainWindow() {
       preload: join(hostDirectory, 'preload.cjs'),
     },
   })
-  if (steamDistribution) {
+  if (steamDistribution && process.platform !== 'darwin') {
     // Chromium otherwise stops presenting unchanged frames while the overlay draws.
     const repaint = setInterval(() => {
       if (!window.isDestroyed() && window.isVisible() && !window.isMinimized()) {
@@ -673,6 +674,9 @@ function createMainWindow() {
         catch (error) { console.warn('Steam overlay activation:', error.message) }
       }
     })
+  }
+  if (steamDistribution && steamClient) {
+    window.webContents.once('did-finish-load', () => attachSteamPresentation(window, steamClient.native))
   }
   mainWindow = window
   let closeAllowed = false

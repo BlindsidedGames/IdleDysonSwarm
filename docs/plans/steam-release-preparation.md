@@ -277,3 +277,12 @@ Matthew confirms physical Tab/Shift+Tab moves page focus; automated-key uncertai
 Added opt-in --overlay-diagnostic host logging for IsOverlayEnabled, GameOverlayActivated callback state, and BOverlayNeedsPresent, plus diagnostic-only F8 calling ActivateGameOverlay("Friends") directly. Kept these APIs in Electron/official-SDK addon; no renderer or mobile capability added.
 
 Local arm64 diagnostic, with the official Steam overlay dylib injected, reports enabled=false and active=false. Direct native activation briefly requests presentation (needsPresent=true) but produces no active callback or visible overlay. This points beyond keyboard routing; native presentation integration remains unresolved. Not uploaded: public-beta remains 25123535. Official API references: https://partner.steamgames.com/doc/api/ISteamUtils and https://partner.steamgames.com/doc/api/ISteamFriends . Nine host tests and lint pass; native arm64 addon compiled against pinned SDK1.65. Rebuild other native targets before packaging these new diagnostic APIs.
+
+
+### Native presentation fix — working local proof
+
+- Isolated Metal drawable test displayed Steam overlay, then returned to its native surface using Shift+Tab. Integrated a Metal child view in the existing Electron window. Chromium continues to own input and accessibility; host captures renderer pixels with at most one capture outstanding, while Metal presents for Steam. No second window or mobile/gameplay changes.
+- Actual game opened Steam overlay with Shift+Tab; clicked Steam Back to Game successfully. SDK enabled=true; screenshots outside repo at steam-overlay-lab/game-overlay-open.png. Native presence and restored progress visible. This is local proof, not yet deployed.
+- Added pause/minimize, capture failure fallback, pending-frame cancellation, and cleanup tests (13 tests across presentation and native host pass; lint passes). Cleanup remains allowed after account changes because it cannot publish account data.
+- Removing Chromium in-process-GPU override on Mac now that native Metal owns presentation; performance recheck pending. Windows/Linux retain their existing Electron graphics configuration.
+- Matthew appears to be testing a supporter transaction in the open game. Requested clarification and left that window untouched while rebuilding/testing independently. Do not close it while his purchase is in progress.

@@ -29,6 +29,8 @@ export function bindSteamAccount(native) {
     get(target, key) {
       const method = target[key]
       if (typeof method !== 'function') return method
+      // Cleanup cannot publish account data and must remain possible after switching accounts.
+      if (key === 'metalDetach') return method.bind(target)
       return (...args) => {
         if (target.identity() !== account) changed = true
         if (changed) throw new Error('Steam account changed; restart the game')

@@ -5,6 +5,12 @@
 #include <stdexcept>
 #include "windows-node-api.h"
 
+#ifdef __APPLE__
+napi_value idsMetalAttach(napi_env,napi_callback_info);
+napi_value idsMetalFrame(napi_env,napi_callback_info);
+napi_value idsMetalPaused(napi_env,napi_callback_info);
+napi_value idsMetalDetach(napi_env,napi_callback_info);
+#endif
 static bool initialized = false;
 static int storedResult = 0;
 static bool definitionsReady = false;
@@ -65,6 +71,9 @@ static napi_value invoke(napi_env e,napi_callback_info info) {
  } catch(const std::exception& error) {napi_throw_error(e,nullptr,error.what());return nullptr;}
 }
 static napi_value init(napi_env e,napi_value exports){
+#ifdef __APPLE__
+ for(auto entry : {std::pair<const char*,napi_callback>{"metalAttach",idsMetalAttach},{"metalFrame",idsMetalFrame},{"metalPaused",idsMetalPaused},{"metalDetach",idsMetalDetach}}){napi_value fn;napi_create_function(e,entry.first,NAPI_AUTO_LENGTH,entry.second,nullptr,&fn);set(e,exports,entry.first,fn);}
+#endif
  for(const char* name:{"initialize","pump","overlayStatus","activateOverlay","identity","shutdown","stat","setStat","achievement","unlock","storeStats","storedResult","presence","clearPresence","loadDefinitions","definitionsReady","definitions","definitionProperty","inventory","inventoryResult","destroyResult","requestPrices","price","startPurchase","callResult"}) {napi_value fn;napi_create_function(e,name,NAPI_AUTO_LENGTH,invoke,const_cast<char*>(name),&fn);set(e,exports,name,fn);}return exports;
 }
 NAPI_MODULE(NODE_GYP_MODULE_NAME,init)
