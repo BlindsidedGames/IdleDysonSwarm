@@ -3875,6 +3875,12 @@
       "value": "Tudo"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "O aplicativo foi para segundo plano, processamento cancelado"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "(Código de erro: "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "Baixar arquivo"
+      "value": "Salvar arquivo"
     }
   ],
   "settings.save-data.export": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "Cada Pesquisa também reduz o próprio custo pelo valor indicado. Assim, com Bônus de Ciência de 300% e Bônus de Dinheiro de 250%, os custos passam a um quarto e a 1/3,5 do valor original, respectivamente."
+      "value": "Pesquisas com bônus percentuais ficam mais baratas conforme você as aprimora. O custo é dividido pelo multiplicador total de produção atual da pesquisa. Por exemplo, um bônus de +300% significa produção multiplicada por 4, então essa pesquisa custa um quarto do valor. Não afeta a Melhoria de Durabilidade."
     }
   ],
   "skills.node.rocketMania.description": [

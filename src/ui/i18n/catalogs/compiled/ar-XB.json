@@ -7107,6 +7107,20 @@
       "value": "‬"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀dd ʍɐs qɐɔʞƃɹonupǝp dɹoɔǝssıuƃ ɔɐuɔǝʅʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -7271,6 +7285,28 @@
     {
       "type": 0,
       "value": "."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "(Ǝɹɹoɹ ɔopǝ: "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": ")"
     },
     {
       "type": 0,
@@ -13442,7 +13478,7 @@
     },
     {
       "type": 0,
-      "value": "ᗡoʍuʅoɐp Ⅎıʅǝ"
+      "value": "Sɐʌǝ Ⅎıʅǝ"
     },
     {
       "type": 0,
@@ -19458,7 +19494,7 @@
     },
     {
       "type": 0,
-      "value": "Ǝʌǝɹʎ ɹǝsǝɐɹɔɥ ɐʅso ɹǝpnɔǝs ʇɥǝ ɔosʇ oɟ ʇɥǝ ɹǝsǝɐɹɔɥ qʎ ʇɥǝ ʅısʇǝp ʌɐʅnǝ (so Sɔıǝuɔǝ Ԑoosʇ 300% ɐup Ↄɐsɥ Ԑoosʇ 250% ɯǝɐus Sɔıǝuɔǝ Ԑoosʇ ɔosʇs 4x ʅǝss ɐup Ↄɐsɥ Ԑoosʇ ɔosʇs 3.5x ʅǝss)."
+      "value": "Ԁǝɹɔǝuʇɐƃǝ-qɐsǝp ɹǝsǝɐɹɔɥ qǝɔoɯǝs ɔɥǝɐdǝɹ ɐs ʎon ndƃɹɐpǝ ıʇ. Iʇs ɔosʇ ıs pıʌıpǝp qʎ ıʇs ɔnɹɹǝuʇ ʇoʇɐʅ dɹopnɔʇıou ɯnʅʇıdʅıǝɹ. Ⅎoɹ ǝxɐɯdʅǝ, ɐ +300% qouns ɯǝɐus 4× dɹopnɔʇıou, so ʇɥɐʇ ɹǝsǝɐɹɔɥ ɔosʇs ouǝ bnɐɹʇǝɹ ɐs ɯnɔɥ. ᗡoǝs uoʇ ɐɟɟǝɔʇ ᗡnɹɐqıʅıʇʎ."
     },
     {
       "type": 0,

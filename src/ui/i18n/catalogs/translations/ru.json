@@ -814,7 +814,7 @@
   "settings.save-data.close": "Закрыть",
   "settings.save-data.copy-string": "Копировать строку",
   "settings.save-data.description": "Прогресс сохраняется автоматически.",
-  "settings.save-data.download-file": "Скачать файл",
+  "settings.save-data.download-file": "Сохранить файл",
   "settings.save-data.export": "Экспорт",
   "settings.save-data.export-copied": "Строка сохранения скопирована.",
   "settings.save-data.export-description": "Скопируйте строку сохранения в безопасное место или скачайте её как файл.",
@@ -1808,5 +1808,7 @@
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% к производству за каждое купленное строение сверх {threshold}.",
   "wiki.patch-notes.version-4-1-7": "Версия 4.1.7",
   "wiki.patch-notes.version-4-1-7.rounding": "В настройках ботов и исследований восстановлена формулировка «Округлять массовые покупки».",
-  "wiki.patch-notes.version-4-1-7.scaling": "В сведениях о строениях теперь различаются масштабирование купленных строений и назначенный навык «Масштабирование производства», а также отображаются текущий процент бонуса и порог покупок."
+  "wiki.patch-notes.version-4-1-7.scaling": "В сведениях о строениях теперь различаются масштабирование купленных строений и назначенный навык «Масштабирование производства», а также отображаются текущий процент бонуса и порог покупок.",
+  "offline-time.app-backgrounded": "Приложение перешло в фоновый режим, обработка отменена",
+  "offline-time.error-code": "(Код ошибки: {code})"
 }

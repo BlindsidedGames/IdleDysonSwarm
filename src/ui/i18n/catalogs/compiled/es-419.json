@@ -3875,6 +3875,12 @@
       "value": "Todo"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "La aplicación pasó a segundo plano, procesamiento cancelado"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "(Código de error: "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "Descargar archivo"
+      "value": "Guardar archivo"
     }
   ],
   "settings.save-data.export": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "Cada investigación también reduce su propio costo en el valor indicado. Por ejemplo, con una Bonificación de Ciencia del 300% y una Bonificación de Dinero del 250%, sus costos pasan a ser una cuarta parte y 1/3.5 del original, respectivamente."
+      "value": "La investigación con bonificaciones porcentuales se vuelve más barata a medida que la mejoras. Su costo se divide entre su multiplicador total de producción actual. Por ejemplo, una bonificación de +300% significa una producción 4 veces mayor, así que esa investigación cuesta una cuarta parte. No afecta a la Mejora de durabilidad."
     }
   ],
   "skills.node.rocketMania.description": [

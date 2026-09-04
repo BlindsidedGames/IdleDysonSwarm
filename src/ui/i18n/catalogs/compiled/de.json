@@ -3875,6 +3875,12 @@
       "value": "Alles"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "App wurde in den Hintergrund versetzt, Verarbeitung abgebrochen"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": " zu erhöhen."
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "(Fehlercode: "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "Datei herunterladen"
+      "value": "Datei speichern"
     }
   ],
   "settings.save-data.export": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "Jede Forschung verringert außerdem ihre eigenen Kosten um den angegebenen Wert (Wissenschaftsschub 300% und Geldschub 250% bedeuten also, dass die Kosten für Wissenschaftsschub auf ein Viertel und für Geldschub auf 1/3,5 der ursprünglichen Kosten sinken)."
+      "value": "Forschung mit prozentualem Bonus wird mit jeder Verbesserung günstiger. Ihre Kosten werden durch ihren aktuellen gesamten Produktionsmultiplikator geteilt. Ein Bonus von +300% bedeutet beispielsweise 4-fache Produktion, sodass diese Forschung nur ein Viertel so viel kostet. Gilt nicht für das Haltbarkeits-Upgrade."
     }
   ],
   "skills.node.rocketMania.description": [

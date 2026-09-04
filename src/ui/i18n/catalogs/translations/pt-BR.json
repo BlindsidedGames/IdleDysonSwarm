@@ -814,7 +814,7 @@
   "settings.save-data.close": "Fechar",
   "settings.save-data.copy-string": "Copiar texto",
   "settings.save-data.description": "Seu progresso é salvo automaticamente.",
-  "settings.save-data.download-file": "Baixar arquivo",
+  "settings.save-data.download-file": "Salvar arquivo",
   "settings.save-data.export": "Exportar",
   "settings.save-data.export-copied": "Texto do jogo salvo copiado.",
   "settings.save-data.export-description": "Copie este texto do jogo salvo para um local seguro ou baixe-o como arquivo.",
@@ -1808,5 +1808,7 @@
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% de produção por construção comprada além de {threshold}.",
   "wiki.patch-notes.version-4-1-7": "Versão 4.1.7",
   "wiki.patch-notes.version-4-1-7.rounding": "Restaurado o texto Arredondar compras em lote nas configurações de Bots e Pesquisa.",
-  "wiki.patch-notes.version-4-1-7.scaling": "Os detalhes das construções agora distinguem o escalonamento de construções compradas da habilidade Escalonamento de Produção atribuída e mostram a porcentagem de bônus e o limite de compras atuais."
+  "wiki.patch-notes.version-4-1-7.scaling": "Os detalhes das construções agora distinguem o escalonamento de construções compradas da habilidade Escalonamento de Produção atribuída e mostram a porcentagem de bônus e o limite de compras atuais.",
+  "offline-time.app-backgrounded": "O aplicativo foi para segundo plano, processamento cancelado",
+  "offline-time.error-code": "(Código de erro: {code})"
 }

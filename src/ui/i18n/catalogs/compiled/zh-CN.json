@@ -3875,6 +3875,12 @@
       "value": "全部"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "应用已切换到后台，处理已取消"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "。"
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "（错误代码："
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": "）"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "下载文件"
+      "value": "保存文件"
     }
   ],
   "settings.save-data.export": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "每项研究还会按列出的数值降低自身成本（例如科学增幅 300%、现金增幅 250%，意味着科学增幅成本降低至 1/4，现金增幅成本降低至 1/3.5）。"
+      "value": "提供百分比加成的研究会随着升级而变得更便宜。其成本会除以该研究当前的总产量倍率。例如，+300%的加成意味着产量为4倍，因此该研究的成本为原来的四分之一。不影响耐久升级。"
     }
   ],
   "skills.node.rocketMania.description": [

@@ -814,7 +814,7 @@
   "settings.save-data.close": "閉じる",
   "settings.save-data.copy-string": "文字列をコピー",
   "settings.save-data.description": "進捗は自動的に保存されます。",
-  "settings.save-data.download-file": "ファイルをダウンロード",
+  "settings.save-data.download-file": "ファイルを保存",
   "settings.save-data.export": "エクスポート",
   "settings.save-data.export-copied": "セーブ文字列をコピーしました。",
   "settings.save-data.export-description": "セーブ文字列を安全な場所へコピーするか、ファイルとしてダウンロードします。",
@@ -1808,5 +1808,7 @@
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% の生産ボーナス（購入数 {threshold} を超えた建物1つにつき）。",
   "wiki.patch-notes.version-4-1-7": "バージョン 4.1.7",
   "wiki.patch-notes.version-4-1-7.rounding": "ボットと研究の設定で、一括購入数の丸めを示す以前の表記を復元しました。",
-  "wiki.patch-notes.version-4-1-7.scaling": "建物の詳細で、購入建物の生産スケーリングと割り当て済みの「生産スケーリング」スキルを区別し、現在のボーナス率と購入数のしきい値を表示するようになりました。"
+  "wiki.patch-notes.version-4-1-7.scaling": "建物の詳細で、購入建物の生産スケーリングと割り当て済みの「生産スケーリング」スキルを区別し、現在のボーナス率と購入数のしきい値を表示するようになりました。",
+  "offline-time.app-backgrounded": "アプリがバックグラウンドに移動したため、処理がキャンセルされました",
+  "offline-time.error-code": "（エラーコード: {code}）"
 }

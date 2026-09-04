@@ -3875,6 +3875,12 @@
       "value": "すべて"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "アプリがバックグラウンドに移動したため、処理がキャンセルされました"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "まで増やします。"
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "（エラーコード: "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": "）"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "ファイルをダウンロード"
+      "value": "ファイルを保存"
     }
   ],
   "settings.save-data.export": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "各研究は表示値の分だけ自身のコストも下げます（サイエンスブースト300%、キャッシュブースト250%なら、コストはそれぞれ1/4と1/3.5）。"
+      "value": "割合でボーナスを与える研究は、アップグレードするほど安くなります。コストは、その研究の現在の合計生産倍率で割られます。たとえば、+300%のボーナスは生産量4倍を意味するため、その研究のコストは4分の1になります。耐久アップグレードには適用されません。"
     }
   ],
   "skills.node.rocketMania.description": [

@@ -1615,6 +1615,10 @@
     "defaultMessage": "All",
     "description": "Quick selection for all stored time."
   },
+  "offline-time.app-backgrounded": {
+    "defaultMessage": "App was backgrounded processing cancelled",
+    "description": "Stored Time cancellation feedback only when the app entered the background."
+  },
   "offline-time.balanced-preset": {
     "defaultMessage": "Balanced",
     "description": "Default Stored Time accuracy preset."
@@ -1658,6 +1662,10 @@
   "offline-time.double-storage-description": {
     "defaultMessage": "Consume the full bank to increase capacity to {capacity}.",
     "description": "Explains the Unity Offline Time capacity upgrade."
+  },
+  "offline-time.error-code": {
+    "defaultMessage": "(Error code: {code})",
+    "description": "Stable technical error code appended to Offline Time feedback for support."
   },
   "offline-time.explanation": {
     "defaultMessage": "Offline Time is stored while you are away. Choose when to spend it to advance the game.",
@@ -3276,7 +3284,7 @@
     "description": "Explains automatic local browser persistence."
   },
   "settings.save-data.download-file": {
-    "defaultMessage": "Download File",
+    "defaultMessage": "Save File",
     "description": "Downloads the exported save as a file."
   },
   "settings.save-data.export": {
@@ -4868,7 +4876,7 @@
     "description": "Display name for the Repeatable Research Skill node."
   },
   "skills.node.repeatableResearch.technical": {
-    "defaultMessage": "Every research also reduces the cost of the research by the listed value (so Science Boost 300% and Cash Boost 250% means Science Boost costs 4x less and Cash Boost costs 3.5x less).",
+    "defaultMessage": "Percentage-based research becomes cheaper as you upgrade it. Its cost is divided by its current total production multiplier. For example, a +300% bonus means 4× production, so that research costs one quarter as much. Does not affect Durability.",
     "description": "Technical gameplay-effect description for the Repeatable Research Skill node."
   },
   "skills.node.rocketMania.description": {

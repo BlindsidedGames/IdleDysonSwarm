@@ -814,7 +814,7 @@
   "settings.save-data.close": "Fermer",
   "settings.save-data.copy-string": "Copier la chaîne",
   "settings.save-data.description": "Votre progression est sauvegardée automatiquement.",
-  "settings.save-data.download-file": "Télécharger le fichier",
+  "settings.save-data.download-file": "Enregistrer le fichier",
   "settings.save-data.export": "Exporter",
   "settings.save-data.export-copied": "Chaîne de sauvegarde copiée.",
   "settings.save-data.export-description": "Copiez cette chaîne de sauvegarde dans un endroit sûr ou téléchargez-la sous forme de fichier.",
@@ -1808,5 +1808,7 @@
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% de production par bâtiment acheté au-delà de {threshold}.",
   "wiki.patch-notes.version-4-1-7": "Version 4.1.7",
   "wiki.patch-notes.version-4-1-7.rounding": "Rétablissement du libellé Arrondir les achats groupés dans les paramètres des Bots et de la Recherche.",
-  "wiki.patch-notes.version-4-1-7.scaling": "Les détails des bâtiments distinguent désormais la progression des bâtiments achetés de la compétence Montée en puissance de la production attribuée, et affichent le pourcentage du bonus et le seuil d’achat actuels."
+  "wiki.patch-notes.version-4-1-7.scaling": "Les détails des bâtiments distinguent désormais la progression des bâtiments achetés de la compétence Montée en puissance de la production attribuée, et affichent le pourcentage du bonus et le seuil d’achat actuels.",
+  "offline-time.app-backgrounded": "L’application est passée en arrière-plan, traitement annulé",
+  "offline-time.error-code": "(Code d’erreur : {code})"
 }

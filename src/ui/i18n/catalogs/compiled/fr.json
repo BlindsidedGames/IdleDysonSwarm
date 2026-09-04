@@ -3875,6 +3875,12 @@
       "value": "Tout"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "L’application est passée en arrière-plan, traitement annulé"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "(Code d’erreur : "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "Télécharger le fichier"
+      "value": "Enregistrer le fichier"
     }
   ],
   "settings.save-data.export": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "Chaque recherche réduit également son propre coût de la valeur indiquée (ainsi, un Bonus de Science de 300% et un Bonus d’Argent de 250% signifient que le Bonus de Science coûte quatre fois moins cher et le Bonus d’Argent 3,5 fois moins cher)."
+      "value": "Les recherches à bonus en pourcentage deviennent moins chères à mesure que vous les améliorez. Leur coût est divisé par leur multiplicateur total de production actuel. Par exemple, un bonus de +300% correspond à une production multipliée par 4 : la recherche coûte donc un quart de son prix. Ne s’applique pas à l’Amélioration de durabilité."
     }
   ],
   "skills.node.rocketMania.description": [

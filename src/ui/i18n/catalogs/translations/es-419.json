@@ -814,7 +814,7 @@
   "settings.save-data.close": "Cerrar",
   "settings.save-data.copy-string": "Copiar cadena",
   "settings.save-data.description": "El progreso se guarda automáticamente.",
-  "settings.save-data.download-file": "Descargar archivo",
+  "settings.save-data.download-file": "Guardar archivo",
   "settings.save-data.export": "Exportar",
   "settings.save-data.export-copied": "Cadena de guardado copiada.",
   "settings.save-data.export-description": "Copia esta cadena de guardado en un lugar seguro o descárgala como archivo.",
@@ -1808,5 +1808,7 @@
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% de producción por edificio comprado por encima de {threshold}.",
   "wiki.patch-notes.version-4-1-7": "Versión 4.1.7",
   "wiki.patch-notes.version-4-1-7.rounding": "Se restauró el texto Redondear compras en lote en los ajustes de Bots e Investigación.",
-  "wiki.patch-notes.version-4-1-7.scaling": "Los detalles de los edificios ahora distinguen el escalado de edificios comprados de la habilidad Escalado de producción asignada y muestran el porcentaje de bonificación y el umbral de compras actuales."
+  "wiki.patch-notes.version-4-1-7.scaling": "Los detalles de los edificios ahora distinguen el escalado de edificios comprados de la habilidad Escalado de producción asignada y muestran el porcentaje de bonificación y el umbral de compras actuales.",
+  "offline-time.app-backgrounded": "La aplicación pasó a segundo plano, procesamiento cancelado",
+  "offline-time.error-code": "(Código de error: {code})"
 }

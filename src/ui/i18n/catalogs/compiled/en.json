@@ -3875,6 +3875,12 @@
       "value": "All"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "App was backgrounded processing cancelled"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "(Error code: "
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "Download File"
+      "value": "Save File"
     }
   ],
   "settings.save-data.export": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "Every research also reduces the cost of the research by the listed value (so Science Boost 300% and Cash Boost 250% means Science Boost costs 4x less and Cash Boost costs 3.5x less)."
+      "value": "Percentage-based research becomes cheaper as you upgrade it. Its cost is divided by its current total production multiplier. For example, a +300% bonus means 4× production, so that research costs one quarter as much. Does not affect Durability."
     }
   ],
   "skills.node.rocketMania.description": [
