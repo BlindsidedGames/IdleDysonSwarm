@@ -1537,6 +1537,7 @@
   "store.product.tip-tier-3.title": "Apoio: Família",
   "store.region": "Loja",
   "store.restore.description": "A restauração verifica somente o Dobro de Pontos de Infinito e as Opções de Desenvolvedor. As categorias de apoio são consumíveis e geralmente não podem ser restauradas sem um registro vinculado à conta.",
+  "store.restore.inventory-description": "A restauração verifica seu inventário Steam para recuperar compras de apoio, Opções de desenvolvedor e Pontos de infinito em dobro. Os itens de apoio permanecem no seu inventário e podem ser comprados novamente.",
   "store.status.loading": "Carregando Loja…",
   "store.status.owned": "Adquirido",
   "store.status.unavailable": "Indisponível",

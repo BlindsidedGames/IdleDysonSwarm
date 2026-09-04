@@ -1537,6 +1537,7 @@
   "store.product.tip-tier-3.title": "ファミリー・サポーターティア",
   "store.region": "ストア",
   "store.restore.description": "復元対象はインフィニティポイント2倍と開発者オプションのみです。サポーターティアは消費型商品のため、アカウント連携台帳がなければ通常は復元できません。",
+  "store.restore.inventory-description": "購入の復元では、Steamインベントリ内のサポーター購入、開発者オプション、無限ポイント2倍を確認します。サポーターアイテムはインベントリに残り、繰り返し購入できます。",
   "store.status.loading": "ストアを読み込み中…",
   "store.status.owned": "購入済み",
   "store.status.unavailable": "利用不可",

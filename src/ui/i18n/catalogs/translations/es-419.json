@@ -1537,6 +1537,7 @@
   "store.product.tip-tier-3.title": "Nivel de colaborador Familia",
   "store.region": "Tienda",
   "store.restore.description": "Restaurar solo comprueba Duplicar Puntos de Infinidad y las Opciones de desarrollo. Los niveles de colaborador son consumibles y, por lo general, no se pueden restaurar sin un registro vinculado a una cuenta.",
+  "store.restore.inventory-description": "La restauración revisa tu inventario de Steam para recuperar compras de apoyo, Opciones de desarrollador y Puntos de infinito dobles. Los artículos de apoyo permanecen en tu inventario y puedes volver a comprarlos.",
   "store.status.loading": "Cargando Tienda…",
   "store.status.owned": "Adquirido",
   "store.status.unavailable": "No disponible",

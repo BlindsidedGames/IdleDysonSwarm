@@ -11900,6 +11900,12 @@
       "value": "Restaurar solo comprueba Duplicar Puntos de Infinidad y las Opciones de desarrollo. Los niveles de colaborador son consumibles y, por lo general, no se pueden restaurar sin un registro vinculado a una cuenta."
     }
   ],
+  "store.restore.inventory-description": [
+    {
+      "type": 0,
+      "value": "La restauración revisa tu inventario de Steam para recuperar compras de apoyo, Opciones de desarrollador y Puntos de infinito dobles. Los artículos de apoyo permanecen en tu inventario y puedes volver a comprarlos."
+    }
+  ],
   "store.status.loading": [
     {
       "type": 0,

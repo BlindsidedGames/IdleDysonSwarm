@@ -11900,6 +11900,12 @@
       "value": "Restore checks only Double Infinity Points and Developer Options. Supporter tiers are consumable and are not generally restorable without an account-backed ledger."
     }
   ],
+  "store.restore.inventory-description": [
+    {
+      "type": 0,
+      "value": "Restore checks your Steam inventory for supporter purchases, Developer Options and Double Infinity Points. Supporter items stay in your inventory and can be purchased again."
+    }
+  ],
   "store.status.loading": [
     {
       "type": 0,

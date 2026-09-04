@@ -11900,6 +11900,12 @@
       "value": "La restauration vérifie uniquement les Points d’Infinité doublés et les Options de développement. Les niveaux de soutien sont consommables et ne peuvent généralement pas être restaurés sans registre associé à un compte."
     }
   ],
+  "store.restore.inventory-description": [
+    {
+      "type": 0,
+      "value": "La restauration vérifie votre inventaire Steam pour les achats de soutien, les Options développeur et le Doublement des points d’infini. Les objets de soutien restent dans votre inventaire et peuvent être achetés à nouveau."
+    }
+  ],
   "store.status.loading": [
     {
       "type": 0,

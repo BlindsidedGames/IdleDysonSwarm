@@ -195,3 +195,14 @@ External gates and next steps:
 - Native verified inventory read succeeded with zero items after policy publication (previous result was EResultFail before activation). No purchase or achievement/stat mutation made by these probes.
 - Focused Electron host tests: 9 passed after enabling verified mappings. No new Steam build uploaded; public branch and mobile releases unchanged.
 - Remaining: packaged authenticated desktop/store QA, signed/cross-platform packages, updated Electron upload tooling (existing local uploader still validates old Unity payload names), private beta BuildID, cross-machine Cloud/transaction acceptance, final footage/trailer.
+
+### Authenticated packaged UI and upload preflight checkpoint
+
+- Source 77a0113b rebuilt into macOS arm64 development package, version 4.1.6 / 2026090201. Private manifest `macos-catalog-build.json` records exact source hash and ASAR/native-library hashes. No uploaded BuildID.
+- Authenticated packaged smoke: SDK initialized; renderer ready; 20-second minimize/restore passed with exit 0. Interactive launch loaded existing Unity progress through migration; verified Steam prices visible and Restore Purchases completed against empty inventory. Normal close completed. No transaction initiated, no synthetic achievement fixture used. Existing progress may publish legitimately proven milestones through normal application behavior.
+- Screenshots: `authenticated-store.png` and `authenticated-store-restored.png` in the private evidence directory. SDK probe logs and packaged logs remain there too.
+- UI inspection found mobile restore copy incorrectly describing retained Steam supporters as consumable. Added Electron-only restore wording in all supported locales; mobile continues selecting its original message. This copy correction is newer than the tested package and needs inclusion in the next candidate.
+- Live depot assignments confirmed: Windows 4348571, Linux 4348572, macOS 4348573. Public default BuildID remains 22353758; no beta branch/build exists yet.
+- SteamCMD cached uploader authentication succeeded (exit 0). It reports a cached token expiry on 5 September; recheck authentication before upload. Desktop Steam login and SteamCMD uploader are separate accounts/sessions.
+- No Developer ID Application signing identity is installed (only Apple Development identities). Windows/Linux native compilation environments are not configured locally. These and platform runtime evidence remain delivery gates; do not label the unsigned arm64 development package a validated multi-platform candidate.
+- TypeScript, lint, translation completeness/compilation and focused Electron host tests passed after the copy change. Full baseline/mobile evidence remains recorded above; no mobile release performed.

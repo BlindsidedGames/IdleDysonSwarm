@@ -24308,6 +24308,20 @@
       "value": "‬"
     }
   ],
+  "store.restore.inventory-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹǝ ɔɥǝɔʞs ʎonɹ Sʇǝɐɯ ıuʌǝuʇoɹʎ ɟoɹ snddoɹʇǝɹ dnɹɔɥɐsǝs, ᗡǝʌǝʅodǝɹ Odʇıous ɐup ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs. Snddoɹʇǝɹ ıʇǝɯs sʇɐʎ ıu ʎonɹ ıuʌǝuʇoɹʎ ɐup ɔɐu qǝ dnɹɔɥɐsǝp ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "store.status.loading": [
     {
       "type": 0,

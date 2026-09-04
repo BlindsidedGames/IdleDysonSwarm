@@ -1537,6 +1537,7 @@
   "store.product.tip-tier-3.title": "Unterstützerstufe Familie",
   "store.region": "Shop",
   "store.restore.description": "Die Wiederherstellung prüft nur doppelte Unendlichkeitspunkte und Entwickleroptionen. Unterstützerstufen sind Verbrauchsartikel und können ohne ein kontogestütztes Verzeichnis im Allgemeinen nicht wiederhergestellt werden.",
+  "store.restore.inventory-description": "Die Wiederherstellung prüft dein Steam-Inventar auf Unterstützerkäufe, Entwickleroptionen und doppelte Unendlichkeitspunkte. Unterstützerobjekte bleiben in deinem Inventar und können erneut gekauft werden.",
   "store.status.loading": "Shop wird geladen…",
   "store.status.owned": "Im Besitz",
   "store.status.unavailable": "Nicht verfügbar",

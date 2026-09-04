@@ -11900,6 +11900,12 @@
       "value": "Die Wiederherstellung prüft nur doppelte Unendlichkeitspunkte und Entwickleroptionen. Unterstützerstufen sind Verbrauchsartikel und können ohne ein kontogestütztes Verzeichnis im Allgemeinen nicht wiederhergestellt werden."
     }
   ],
+  "store.restore.inventory-description": [
+    {
+      "type": 0,
+      "value": "Die Wiederherstellung prüft dein Steam-Inventar auf Unterstützerkäufe, Entwickleroptionen und doppelte Unendlichkeitspunkte. Unterstützerobjekte bleiben in deinem Inventar und können erneut gekauft werden."
+    }
+  ],
   "store.status.loading": [
     {
       "type": 0,

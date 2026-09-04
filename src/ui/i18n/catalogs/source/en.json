@@ -6203,6 +6203,10 @@
     "defaultMessage": "Restore checks only Double Infinity Points and Developer Options. Supporter tiers are consumable and are not generally restorable without an account-backed ledger.",
     "description": "Explains restore scope."
   },
+  "store.restore.inventory-description": {
+    "defaultMessage": "Restore checks your Steam inventory for supporter purchases, Developer Options and Double Infinity Points. Supporter items stay in your inventory and can be purchased again.",
+    "description": "Steam inventory restore includes retained supporter items."
+  },
   "store.status.loading": {
     "defaultMessage": "Loading Store…",
     "description": "Store catalog loading state."

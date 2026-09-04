@@ -11900,6 +11900,12 @@
       "value": "A restauração verifica somente o Dobro de Pontos de Infinito e as Opções de Desenvolvedor. As categorias de apoio são consumíveis e geralmente não podem ser restauradas sem um registro vinculado à conta."
     }
   ],
+  "store.restore.inventory-description": [
+    {
+      "type": 0,
+      "value": "A restauração verifica seu inventário Steam para recuperar compras de apoio, Opções de desenvolvedor e Pontos de infinito em dobro. Os itens de apoio permanecem no seu inventário e podem ser comprados novamente."
+    }
+  ],
   "store.status.loading": [
     {
       "type": 0,

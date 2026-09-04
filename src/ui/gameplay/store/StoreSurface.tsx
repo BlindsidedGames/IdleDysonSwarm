@@ -20,6 +20,7 @@ export interface StoreSurfaceProps {
   readonly localDeveloperOptionsPurchased: boolean
   readonly deviceOnlyPurchases?: boolean
   readonly restoreAvailable?: boolean
+  readonly restoreIncludesSupporters?: boolean
 }
 
 const TIP_IDS = new Set<StoreProductId>([
@@ -33,6 +34,7 @@ export function StoreSurface({
   localDeveloperOptionsPurchased,
   deviceOnlyPurchases = false,
   restoreAvailable = !deviceOnlyPurchases,
+  restoreIncludesSupporters = false,
 }: StoreSurfaceProps) {
   const intl = useIntl()
   const snapshot = useSyncExternalStore(
@@ -135,7 +137,9 @@ export function StoreSurface({
                 <h2 id="store-restore-heading">
                   {intl.formatMessage(messages.restoreAction)}
                 </h2>
-                <p>{intl.formatMessage(messages.restoreDescription)}</p>
+                <p>{intl.formatMessage(restoreIncludesSupporters
+                  ? messages.inventoryRestoreDescription
+                  : messages.restoreDescription)}</p>
               </div>
               <button
                 type="button"

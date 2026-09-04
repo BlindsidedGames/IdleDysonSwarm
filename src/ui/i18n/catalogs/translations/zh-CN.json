@@ -1537,6 +1537,7 @@
   "store.product.tip-tier-3.title": "家庭支持档位",
   "store.region": "商店",
   "store.restore.description": "恢复功能只检查双倍无限点与开发者选项。支持者档位属于消耗品，没有账号支持的记录通常无法恢复。",
+  "store.restore.inventory-description": "恢复购买会检查你的 Steam 库存中的支持者购买、开发者选项和双倍无限点数。支持者物品会保留在库存中，并且可以重复购买。",
   "store.status.loading": "正在加载商店…",
   "store.status.owned": "已拥有",
   "store.status.unavailable": "不可用",
