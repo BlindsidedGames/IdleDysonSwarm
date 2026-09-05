@@ -1,5 +1,6 @@
 import { CloudStartupResolver, type PortableCloud } from '../platform/portableCloud'
 import { serializeSharedWebSave } from '../save/serialization'
+import { PreparedSave } from '../save/prepare'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementPublication } from '../achievements/contracts'
 import type { SaveRepository } from '../save/repository'
@@ -98,7 +99,10 @@ export function createProductionCanonicalApplicationFactory(
         const captured = application.captureSaveTransferSnapshot()
         if (captured?.basis !== 'current') return
         lastCheckpoint=revision
-        void cloud.publish(serializeSharedWebSave(captured.prepared.copyValidatedState())).catch(() => { lastCheckpoint='' })
+        // Match the repository's durable normalization so the next launch can
+        // prove this device has not changed since its last Cloud publication.
+        const normalized = PreparedSave.fromDecoded(captured.prepared.copyValidatedState())
+        void cloud.publish(serializeSharedWebSave(normalized.copyValidatedState())).catch(() => { lastCheckpoint='' })
       })
     }
     return application

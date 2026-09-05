@@ -6,7 +6,7 @@ import { afterEach, expect, test, vi } from 'vitest'
 import { SteamCloud } from '../../hosts/electron/steam/cloud.mjs'
 import { CloudStartupResolver } from './portableCloud'
 import { PortableSaveRepository, type SaveStorageAdapter } from '../save/repository'
-import { prepareIdb1Save } from '../save/prepare'
+import { PreparedSave, prepareIdb1Save } from '../save/prepare'
 import { serializeSharedWebSave } from '../save/serialization'
 
 const original = prepareIdb1Save(readFileSync(new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url), 'utf8')).prepared
@@ -102,16 +102,38 @@ test('healthy checkpoints transferred in both directions load as Cloud saves, no
   const b = await fixture()
   await a.repository.commit(original)
   await a.cloud.read()
-  await a.cloud.publish(portable)
+  await a.cloud.publish(serializeSharedWebSave(PreparedSave.fromDecoded(original.copyValidatedState()).copyValidatedState()))
   await copyFile(join(a.cloud.directory, 'current.idsw'), join(b.cloud.directory, 'current.idsw'))
   expect(await b.resolver.resolve()).toMatchObject({ kind: 'ready', source: 'cloud' })
   const state = (await b.repository.loadCurrent())!.copyValidatedState()
   state.dateQuitString = '2026-09-05T04:00:00Z'
-  const changed = serializeSharedWebSave(state)
+  const committed = await b.repository.commit(PreparedSave.fromDecoded(state))
+  const changed = serializeSharedWebSave(committed.copyValidatedState())
   await b.cloud.publish(changed)
   await copyFile(join(b.cloud.directory, 'current.idsw'), join(a.cloud.directory, 'current.idsw'))
   expect(await a.resolver.resolve()).toMatchObject({ kind: 'ready', source: 'cloud' })
   expect((await a.repository.loadCurrent())?.copyValidatedState().dateQuitString).toBe(state.dateQuitString)
-  expect(a.prompt).toHaveBeenCalledOnce()
+  expect(a.prompt).not.toHaveBeenCalled()
   expect(b.prompt).not.toHaveBeenCalled()
+  const next = (await a.repository.loadCurrent())!.copyValidatedState()
+  next.dateQuitString = '2026-09-05T05:00:00Z'
+  await a.cloud.publish(serializeSharedWebSave(next))
+  await copyFile(join(a.cloud.directory, 'current.idsw'), join(b.cloud.directory, 'current.idsw'))
+  expect(await b.resolver.resolve()).toMatchObject({ kind: 'ready', source: 'cloud' })
+  expect(b.prompt).not.toHaveBeenCalled()
+})
+
+test('independent local progress after a successful sync still requires a preserved conflict choice', async () => {
+  const f = await fixture('local')
+  await f.repository.commit(original)
+  await f.cloud.read(); await f.cloud.publish(portable)
+  const local = original.copyValidatedState(); local.dateQuitString = '2026-09-05T06:00:00Z'
+  const remote = original.copyValidatedState(); remote.dateQuitString = '2026-09-05T07:00:00Z'
+  const localText = serializeSharedWebSave(local)
+  await writeFile(join(f.cloud.directory, 'current.idsw'), serializeSharedWebSave(remote))
+  await f.cloud.read()
+  expect(await f.cloud.choose(localText, serializeSharedWebSave(remote))).toBe('local')
+  expect(f.prompt).toHaveBeenCalledOnce()
+  const [conflict] = await readdir(join(f.cloud.localDirectory, 'conflicts'))
+  expect(await readFile(join(f.cloud.localDirectory, 'conflicts', conflict, 'local.idsw'), 'utf8')).toBe(localText)
 })

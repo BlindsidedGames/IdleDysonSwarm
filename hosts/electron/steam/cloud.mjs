@@ -47,10 +47,12 @@ export class SteamCloud {
   ensureIdentity(){if(this.identity()!==this.account)throw new Error('Steam account changed; restart before saving to Cloud')}
   async read(){
     this.readSucceeded = false
+    this.downloadedHash = null
     this.ensureIdentity()
     const text=await read(join(this.directory,'current.idsw'))
     const changed=text!==null&&hash(text)!==await read(this.marker)
     if(changed) await write(join(this.localDirectory,'downloads',`${hash(text)}.idsw`),text)
+    this.downloadedHash = changed ? hash(text) : null
     this.readSucceeded = true
     return changed?text:null
   }
@@ -74,6 +76,10 @@ export class SteamCloud {
     this.ensureIdentity()
     const folder=join(this.localDirectory,'conflicts',randomUUID())
     await write(join(folder,'local.idsw'),local);await write(join(folder,'cloud.idsw'),remote)
+    // A normal handoff changes only the remote branch of the last synced
+    // snapshot. Unknown baselines, local progress, and backup recovery still
+    // require a choice; never infer recency from device clocks.
+    if (this.readSucceeded && hash(remote) === this.downloadedHash && hash(local) === await read(this.marker)) return 'cloud'
     return this.prompt()
   }
   publish(text){
