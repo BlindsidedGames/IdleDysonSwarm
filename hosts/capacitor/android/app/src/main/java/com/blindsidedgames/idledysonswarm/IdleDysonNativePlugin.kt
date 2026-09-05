@@ -1,5 +1,8 @@
 package com.blindsidedgames.idledysonswarm
 
+import android.app.Activity
+import androidx.activity.result.ActivityResult
+import com.getcapacitor.annotation.ActivityCallback
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.View
@@ -269,6 +272,49 @@ class IdleDysonNativePlugin : Plugin() {
             })
         }
         call.resolve(JSObject().apply { put("candidates", candidates) })
+    }
+
+    @PluginMethod
+    fun exportSaveFile(call: PluginCall) = withNativeFailure(call) {
+        val fileName = call.getString("fileName")
+        val text = call.getString("text")
+        require(fileName == "idle-dyson-swarm-save.idsw" && !text.isNullOrEmpty()) {
+            "Invalid save export request."
+        }
+        require(text.toByteArray(StandardCharsets.UTF_8).size <= MAX_FILE_BYTES) {
+            "Save export exceeds supported size."
+        }
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/x-idle-dyson-swarm-save"
+            putExtra(Intent.EXTRA_TITLE, fileName)
+        }
+        startActivityForResult(call, intent, "saveFileCreated")
+    }
+
+    @ActivityCallback
+    private fun saveFileCreated(call: PluginCall?, result: ActivityResult) {
+        if (call == null) return
+        if (result.resultCode != Activity.RESULT_OK) {
+            call.resolve(JSObject().apply { put("result", "cancelled") })
+            return
+        }
+        val uri = result.data?.data
+        val text = call.getString("text")
+        if (uri == null || text == null) {
+            call.reject("Save export destination unavailable.")
+            return
+        }
+        bridge.execute {
+            try {
+                val output = context.contentResolver.openOutputStream(uri, "w")
+                    ?: throw IllegalStateException("Save export destination unavailable.")
+                output.use { it.write(text.toByteArray(StandardCharsets.UTF_8)) }
+                call.resolve(JSObject().apply { put("result", "saved") })
+            } catch (_: Exception) {
+                call.reject("Save export could not be written.")
+            }
+        }
     }
 
     @PluginMethod

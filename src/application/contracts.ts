@@ -16,6 +16,7 @@ export const APPLICATION_SNAPSHOT_VERSION = 1 as const
 export type ReadySource =
   | 'first-run'
   | 'primary'
+  | 'cloud'
   | 'recovered-canonical'
   | 'recovered-legacy'
   | 'import'

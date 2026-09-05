@@ -73,7 +73,9 @@
     "i18n:check": "npm run i18n:extract && npm run i18n:translations:check && npm run i18n:compile",
     "lint": "oxlint",
     "test": "vitest run",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "native:steam:build": "node scripts/build-steam-native.mjs",
+    "native:steam:package:macos": "VITE_IDS_DESKTOP_DISTRIBUTION=steam npm run build:native && electron-builder --config hosts/electron/electron-builder.yml --mac --config.extraMetadata.idsDesktopDistribution=steam"
   },
   "dependencies": {
     "@capacitor/android": "8.5.0",

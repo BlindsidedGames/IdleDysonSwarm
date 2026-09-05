@@ -1,3 +1,4 @@
+import { deriveEffectivePurchaseCounts } from './effectivePurchaseCounts'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
@@ -319,30 +320,13 @@ export function deriveManualPurchaseProductionLayer(
   facilityId: BasicDysonFacilityId,
 ): Readonly<ManualPurchaseProductionLayer> {
   const owned = (id: string) => state.skills.byId[id]?.owned === true
-  const rawManualCount = state.dyson.facilities[facilityId][1]
-  const effectiveManualPlanets = state.dyson.facilities.planets[1] *
-    (owned('terraIrradiant') ? 12 : 1)
-  const terraSkillByFacility: Readonly<
-    Partial<Record<BasicDysonFacilityId, string>>
-  > = {
-    assembly_lines: 'terraNullius',
-    ai_managers: 'terraInfirma',
-    servers: 'terraEculeo',
-    data_centers: 'terraFirma',
-  }
-  const terraSkill = terraSkillByFacility[facilityId]
-  const effectiveManualCount = facilityId === 'planets'
-    ? effectiveManualPlanets
-    : rawManualCount +
-      (terraSkill !== undefined && owned(terraSkill)
-        ? effectiveManualPlanets
-        : 0)
-  const transferredPlanetCount =
-    facilityId !== 'planets' &&
-    terraSkill !== undefined &&
-    owned(terraSkill)
-      ? effectiveManualPlanets
-      : 0
+  const {
+    rawManualCount,
+    effectiveManualCount,
+    effectiveManualPlanets,
+    transferredPlanetCount,
+    terraSkill,
+  } = deriveEffectivePurchaseCounts(state, facilityId)
   const scalingThreshold = owned('productionScaling')
     ? Math.max(
         0,
@@ -1184,7 +1168,6 @@ function dynamicFacilityEffectCalculation(
   ) return undefined
 
   const servers = state.dyson.facilities.servers
-  const dataCenters = state.dyson.facilities.data_centers
   const planets = state.dyson.facilities.planets
   const panelArea = resolvePanelArea(
     snapshot.panelsPerSecond,
@@ -1197,7 +1180,7 @@ function dynamicFacilityEffectCalculation(
     fragments: Number(state.skills.fragments),
     assignedSkillPoints: Number(state.skills.points),
     servers: servers[0] + servers[1],
-    manualDataCenters: dataCenters[1],
+    manualDataCenters: deriveEffectivePurchaseCounts(state, 'data_centers').effectiveManualCount,
     effectivePlanets:
       planets[0] + planets[1] * (state.skills.byId.terraIrradiant?.owned ? 12 : 1),
     starsSurrounded: Math.floor(panelArea / 20_000),

@@ -32,6 +32,13 @@ describe('Wiki patch-note content', () => {
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       'Restored the Round bulk purchases wording in Bots and Research settings.',
       'Building details now distinguish Purchased Building Scaling from the assigned Production Scaling skill and show the current bonus percentage and purchase threshold.',
+      'New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers.',
+      'Purchased Planets now count toward What Will Come to Pass through Terra Firma and Terra Irradient, including in the displayed calculation.',
+      'Fixed taps on the Bot distribution slider applying the previous allocation instead of the latest selection.',
+      'Offline Time failures now include distinct error codes, with a clear message when processing is cancelled because the app was backgrounded.',
+      'Added Save File to save exports on Android and desktop, with native Save As dialogs in the Android and desktop apps.',
+      'Fixed progression and Offline Time processing failures caused by Regulated Academia or Shoulders of the Revolution after Infinity and Quantum resets.',
+      'Clarified that Repeatable Research divides research costs by the current total production multiplier and does not affect Durability. A +300% bonus means one quarter of the normal cost.',
     ])
 
     const releaseHeading = screen.getByRole('heading', {

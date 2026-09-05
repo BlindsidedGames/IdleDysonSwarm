@@ -1,3 +1,4 @@
+import { deriveEffectivePurchaseCounts } from './effectivePurchaseCounts'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -104,7 +105,6 @@ function prepareDynamicSkillEffectInputs(
   const assemblyLines = state.dyson.facilities.assembly_lines
   const managers = state.dyson.facilities.ai_managers
   const servers = state.dyson.facilities.servers
-  const dataCenters = state.dyson.facilities.data_centers
   const planets = state.dyson.facilities.planets
   const scienceBoostLevel =
     state.research.levelsById['research.science_boost'] ?? 0
@@ -146,7 +146,7 @@ function prepareDynamicSkillEffectInputs(
       fragments: Number(state.skills.fragments),
       assignedSkillPoints: Number(state.skills.points),
       serversTotal: servers[0] + servers[1],
-      manualDataCenters: dataCenters[1],
+      manualDataCenters: deriveEffectivePurchaseCounts(state, 'data_centers').effectiveManualCount,
       effectivePlanets:
         planets[0] +
         planets[1] * (ownedSkills.has('terraIrradiant') ? 12 : 1),

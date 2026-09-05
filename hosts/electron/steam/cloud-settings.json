@@ -1,0 +1,29 @@
+{
+  "status": "published",
+  "appId": 4348570,
+  "quotaBytes": 268435456,
+  "quotaFiles": 16,
+  "maximumSnapshotBytes": 33554432,
+  "dynamicSync": false,
+  "developersOnly": false,
+  "logicalRoot": "WinAppDataRoaming",
+  "path": "Idle Dyson Swarm/steam-cloud/{64BitSteamID}",
+  "patterns": [
+    "current.idsw",
+    "backup-1.idsw",
+    "backup-2.idsw",
+    "backup-3.idsw"
+  ],
+  "recursive": false,
+  "overrides": {
+    "macOS": {
+      "root": "MacAppSupport",
+      "path": ""
+    },
+    "Linux": {
+      "root": "LinuxXdgConfigHome",
+      "path": ""
+    }
+  },
+  "notes": "Root names and unchanged relative subdirectory verified in Steamworks. Four nonrecursive All OSes paths, with macOS/Linux root overrides and empty add/replace paths. Cloud available to public beta testers. No temporary files, caches, device preferences, Unity originals or local bookkeeping."
+}

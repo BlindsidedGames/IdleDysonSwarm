@@ -1,0 +1,80 @@
+{
+  "appid": 4348570,
+  "items": [
+    {
+      "itemdefid": 1001,
+      "type": "item",
+      "name": "Cat Treat Supporter Tier",
+      "name_english": "Cat Treat Supporter Tier",
+      "description": "Unlocks the Supporter Cat Gallery for your Steam account. Repeat purchases provide additional support, with no additional gameplay benefit.",
+      "description_english": "Unlocks the Supporter Cat Gallery for your Steam account. Repeat purchases provide additional support, with no additional gameplay benefit.",
+      "tradable": false,
+      "marketable": false,
+      "price": "1;AUD149",
+      "icon_url": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "icon_url_large": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "ids_product_id": "ids.tiptier1",
+      "auto_stack": true
+    },
+    {
+      "itemdefid": 1002,
+      "type": "item",
+      "name": "Coffee Supporter Tier",
+      "name_english": "Coffee Supporter Tier",
+      "description": "Unlocks the Supporter Cat Gallery for your Steam account. Repeat purchases provide additional support, with no additional gameplay benefit.",
+      "description_english": "Unlocks the Supporter Cat Gallery for your Steam account. Repeat purchases provide additional support, with no additional gameplay benefit.",
+      "tradable": false,
+      "marketable": false,
+      "price": "1;AUD699",
+      "icon_url": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "icon_url_large": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "ids_product_id": "ids.tiptier2",
+      "auto_stack": true
+    },
+    {
+      "itemdefid": 1003,
+      "type": "item",
+      "name": "Family Supporter Tier",
+      "name_english": "Family Supporter Tier",
+      "description": "Unlocks the Supporter Cat Gallery for your Steam account. Repeat purchases provide additional support, with no additional gameplay benefit.",
+      "description_english": "Unlocks the Supporter Cat Gallery for your Steam account. Repeat purchases provide additional support, with no additional gameplay benefit.",
+      "tradable": false,
+      "marketable": false,
+      "price": "1;AUD3099",
+      "icon_url": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "icon_url_large": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "ids_product_id": "ids.tiptier3",
+      "auto_stack": true
+    },
+    {
+      "itemdefid": 1004,
+      "type": "item",
+      "name": "Access Developer Options",
+      "name_english": "Access Developer Options",
+      "description": "Allows access to the debug menu.",
+      "description_english": "Allows access to the debug menu.",
+      "tradable": false,
+      "marketable": false,
+      "price": "1;AUD1599",
+      "icon_url": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "icon_url_large": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "ids_product_id": "ids.devoptions",
+      "purchase_limit": 1
+    },
+    {
+      "itemdefid": 1005,
+      "type": "item",
+      "name": "Double Infinity Points",
+      "name_english": "Double Infinity Points",
+      "description": "Grants a togglable option to earn double Infinity Points.",
+      "description_english": "Grants a togglable option to earn double Infinity Points.",
+      "tradable": false,
+      "marketable": false,
+      "price": "1;AUD499",
+      "icon_url": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "icon_url_large": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "ids_product_id": "ids.doubleip",
+      "purchase_limit": 1
+    }
+  ]
+}

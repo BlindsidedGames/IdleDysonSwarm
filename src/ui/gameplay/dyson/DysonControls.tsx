@@ -499,11 +499,32 @@ export function BotDistribution({
   const [draft, setDraft] = useState(distribution)
   const [failed, setFailed] = useState(false)
   const pending = useRef(false)
-  const lastSubmitted = useRef<number | null>(null)
+  const latestDraft = useRef(distribution)
+  const confirmed = useRef(distribution)
+  const pointerActive = useRef(false)
+  const queued = useRef<number | null>(null)
+  const available = useRef(routeAvailable && !multitasking)
 
   useEffect(() => {
-    setDraft(distribution)
-    lastSubmitted.current = null
+    available.current = routeAvailable && !multitasking
+    if (!available.current) {
+      pointerActive.current = false
+      queued.current = null
+    }
+    return () => {
+      available.current = false
+      pointerActive.current = false
+      queued.current = null
+    }
+  }, [routeAvailable, multitasking])
+
+  useEffect(() => {
+    confirmed.current = distribution
+    // A completed command can publish while a newer gesture is still pending.
+    if (!pending.current && !pointerActive.current && queued.current === null) {
+      latestDraft.current = distribution
+      setDraft(distribution)
+    }
   }, [distribution])
 
   if (multitasking) {
@@ -528,31 +549,37 @@ export function BotDistribution({
     )
   }
 
-  const commit = async (): Promise<void> => {
-    if (
-      !routeAvailable ||
-      draft === distribution ||
-      pending.current ||
-      lastSubmitted.current === draft
-    ) {
-      return
-    }
+  const commit = async (value = latestDraft.current): Promise<void> => {
+    if (!available.current) return
+    queued.current = value
+    if (pending.current) return
+
     pending.current = true
-    lastSubmitted.current = draft
     try {
-      const result = await dispatchPlayer({
-        kind: 'dyson.set-bot-distribution',
-        distribution: draft,
-      })
-      const rejected = result.status !== 'accepted'
-      setFailed(rejected)
-      if (rejected) lastSubmitted.current = null
-    } catch {
-      lastSubmitted.current = null
-      setFailed(true)
+      while (available.current && queued.current !== null) {
+        const next = queued.current
+        queued.current = null
+        if (next === confirmed.current) continue
+        try {
+          const result = await dispatchPlayer({
+            kind: 'dyson.set-bot-distribution',
+            distribution: next,
+          })
+          const rejected = result.status !== 'accepted'
+          if (!rejected) confirmed.current = next
+          setFailed(rejected)
+        } catch {
+          setFailed(true)
+        }
+      }
     } finally {
       pending.current = false
     }
+  }
+
+  const finishPointer = (): void => {
+    pointerActive.current = false
+    void commit()
   }
 
   const sliderPercent = Math.round(
@@ -608,11 +635,17 @@ export function BotDistribution({
         )}
         onChange={(event) => {
           setFailed(false)
-          setDraft(Number(event.currentTarget.value) / 100)
+          const next = Number(event.currentTarget.value) / 100
+          latestDraft.current = next
+          setDraft(next)
+          // Track taps can emit their value change after pointerup on iOS.
+          if (!pointerActive.current) void commit(next)
         }}
-        onPointerUp={() => void commit()}
+        onPointerDown={() => { pointerActive.current = true }}
+        onPointerUp={finishPointer}
+        onPointerCancel={finishPointer}
         onKeyUp={() => void commit()}
-        onBlur={() => void commit()}
+        onBlur={finishPointer}
       />
       {failed && (
         <span className="bot-distribution__failure" role="alert">

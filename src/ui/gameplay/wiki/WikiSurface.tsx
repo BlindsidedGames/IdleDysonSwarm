@@ -191,6 +191,13 @@ const version414PatchNoteMessages = [
 const version417PatchNoteMessages = [
   messages.patchNotesVersion417Rounding,
   messages.patchNotesVersion417Scaling,
+  messages.patchNotesVersion417Workers,
+  messages.patchNotesVersion417Terra,
+  messages.patchNotesVersion417Allocation,
+  messages.patchNotesVersion417OfflineErrors,
+  messages.patchNotesVersion417SaveFile,
+  messages.patchNotesVersion417ResearchReset,
+  messages.patchNotesVersion417RepeatableResearch,
 ] as const
 
 const version416PatchNoteMessages = [

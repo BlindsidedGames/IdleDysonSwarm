@@ -8,7 +8,10 @@ directories:
   output: release/electron
 icon: public/icons/pwa-icon-512.png
 files:
+  # Renderer dependencies are bundled by Vite; host imports only Node/Electron.
+  - "!**/node_modules/**/*"
   - dist-native/**/*
+  - public/icons/pwa-icon-512.png
   - hosts/electron/main.mjs
   - hosts/electron/preload.cjs
   - hosts/electron/releaseMetadata.mjs
@@ -17,6 +20,8 @@ files:
   - hosts/electron/steamInventoryBinding.mjs
   - hosts/electron/steamInventoryStore.mjs
   - hosts/electron/steam-inventory.json
+  - hosts/electron/steam/*.mjs
+  - hosts/electron/steam/achievement-map.json
   - package.json
 win:
   target:
@@ -29,3 +34,8 @@ linux:
   category: Game
   target:
     - AppImage
+
+extraResources:
+  - from: hosts/electron/steam/runtime
+    to: steam
+    filter: ["*.node", "*.dylib", "*.dll", "*.so"]

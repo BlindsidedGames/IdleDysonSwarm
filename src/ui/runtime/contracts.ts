@@ -293,7 +293,8 @@ export interface UiRuntimeFoundation<
   recoveryExportAvailable(): boolean
   readCurrentSaveExport(): Promise<UiRuntimeSaveExportSnapshot | null>
   readCurrentSaveText(): Promise<string | null>
-  downloadSaveText(text: string): Promise<boolean>
+  /** null means the user cancelled native Save As; no error or success notice. */
+  downloadSaveText(text: string): Promise<boolean | null>
   exportCurrentSave(): Promise<boolean>
   exportLastRecovery(): Promise<boolean>
   copyLastRecovery(): Promise<boolean>

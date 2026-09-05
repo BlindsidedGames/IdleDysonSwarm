@@ -1,3 +1,4 @@
+import type { SaveFileExportRequest, SaveFileExportResult } from '../../platform/saveFileExport'
 import type {
   ApplicationSnapshot,
   CheckpointResult,
@@ -26,7 +27,7 @@ import {
 import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
 import type { CanonicalDevelopmentAction } from '../../application/canonicalGameApplication'
 import type { CanonicalSaveTransferSnapshot } from '../../application/canonicalGameApplication'
-import type { StoredTimeJobListener } from '../../application/canonicalGameApplication'
+import type { StoredTimeCancellationReason, StoredTimeJobListener } from '../../application/canonicalGameApplication'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 import type {
   CanonicalSkillPresetSlot,
@@ -168,7 +169,7 @@ interface BrowserRuntimeApplicationPort
   ): DeepReadonly<FrontendApplicationSnapshot>
   storedTimeJobStatus?(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
   subscribeStoredTimeJob?(listener: StoredTimeJobListener): () => void
-  cancelStoredTimeJob?(): void
+  cancelStoredTimeJob?(reason?: StoredTimeCancellationReason): void
   speedUpStoredTimeJob?(): void
   captureSaveTransferSnapshot?(): CanonicalSaveTransferSnapshot | null
   disposeStoredTimeJobRunner?(): void
@@ -198,6 +199,7 @@ export interface BrowserRuntimeLifecyclePolicy {
 }
 
 export interface BrowserRuntimeFoundationOptions {
+  readonly exportSaveFile?: (request: SaveFileExportRequest) => Promise<SaveFileExportResult>
   /**
    * Required backend-owned factory. Production gameplay configuration and the
    * authoritative first-run save factory are Wave 2/backend prerequisites.
@@ -1141,7 +1143,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     // confirmation. Cancellation is deliberately out-of-band because the
     // active worker owns the router lane that the replacement must await.
     if (request.overwriteApproved) {
-      graph.application.cancelStoredTimeJob?.()
+      graph.application.cancelStoredTimeJob?.('import')
     }
     const admittedLifecycleIntentEpoch =
       this.lifecycleIntentEpoch
@@ -1267,10 +1269,16 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   async exportCurrentSave(): Promise<boolean> {
     const exported = await this.readCurrentSaveExport()
     if (exported === null) return false
-    return this.downloadSaveText(exported.text)
+    return (await this.downloadSaveText(exported.text)) ?? false
   }
 
-  async downloadSaveText(text: string): Promise<boolean> {
+  async downloadSaveText(text: string): Promise<boolean | null> {
+    if (this.options.exportSaveFile !== undefined) {
+      const result = await this.options.exportSaveFile({
+        fileName: 'idle-dyson-swarm-save.idsw', text,
+      })
+      return result === 'cancelled' ? null : result === 'saved'
+    }
     this.downloads.downloadText(
       'idle-dyson-swarm-save.idsw',
       text,
@@ -2235,7 +2243,9 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       // Lifecycle work is queued behind the active authority operation. Send
       // cancellation out-of-band so a detached Stored Time candidate reaches
       // a safe terminal state before the platform suspends this page.
-      this.graph?.application.cancelStoredTimeJob?.()
+      this.graph?.application.cancelStoredTimeJob?.(
+        phase === 'background' ? 'background' : 'lifecycle',
+      )
     }
     const intentEpoch = this.captureLifecycleIntent(phase)
     try {

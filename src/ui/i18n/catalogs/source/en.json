@@ -1615,6 +1615,10 @@
     "defaultMessage": "All",
     "description": "Quick selection for all stored time."
   },
+  "offline-time.app-backgrounded": {
+    "defaultMessage": "App was backgrounded processing cancelled",
+    "description": "Stored Time cancellation feedback only when the app entered the background."
+  },
   "offline-time.balanced-preset": {
     "defaultMessage": "Balanced",
     "description": "Default Stored Time accuracy preset."
@@ -1658,6 +1662,10 @@
   "offline-time.double-storage-description": {
     "defaultMessage": "Consume the full bank to increase capacity to {capacity}.",
     "description": "Explains the Unity Offline Time capacity upgrade."
+  },
+  "offline-time.error-code": {
+    "defaultMessage": "(Error code: {code})",
+    "description": "Stable technical error code appended to Offline Time feedback for support."
   },
   "offline-time.explanation": {
     "defaultMessage": "Offline Time is stored while you are away. Choose when to spend it to advance the game.",
@@ -3276,7 +3284,7 @@
     "description": "Explains automatic local browser persistence."
   },
   "settings.save-data.download-file": {
-    "defaultMessage": "Download File",
+    "defaultMessage": "Save File",
     "description": "Downloads the exported save as a file."
   },
   "settings.save-data.export": {
@@ -3288,8 +3296,8 @@
     "description": "Successful save-string clipboard feedback."
   },
   "settings.save-data.export-description": {
-    "defaultMessage": "Copy this save string somewhere safe, or download it as a file.",
-    "description": "Explains the available save export formats."
+    "defaultMessage": "Keep a copy of this save somewhere safe.",
+    "description": "Explains why to keep an exported save."
   },
   "settings.save-data.export-dialog-title": {
     "defaultMessage": "Export Save",
@@ -4868,7 +4876,7 @@
     "description": "Display name for the Repeatable Research Skill node."
   },
   "skills.node.repeatableResearch.technical": {
-    "defaultMessage": "Every research also reduces the cost of the research by the listed value (so Science Boost 300% and Cash Boost 250% means Science Boost costs 4x less and Cash Boost costs 3.5x less).",
+    "defaultMessage": "Percentage-based research becomes cheaper as you upgrade it. Its cost is divided by its current total production multiplier. For example, a +300% bonus means 4× production, so that research costs one quarter as much. Does not affect Durability.",
     "description": "Technical gameplay-effect description for the Repeatable Research Skill node."
   },
   "skills.node.rocketMania.description": {
@@ -6203,6 +6211,10 @@
     "defaultMessage": "Restore checks only Double Infinity Points and Developer Options. Supporter tiers are consumable and are not generally restorable without an account-backed ledger.",
     "description": "Explains restore scope."
   },
+  "store.restore.inventory-description": {
+    "defaultMessage": "Restore checks your Steam inventory for supporter purchases, Developer Options and Double Infinity Points. Supporter items stay in your inventory and can be purchased again.",
+    "description": "Steam inventory restore includes retained supporter items."
+  },
   "store.status.loading": {
     "defaultMessage": "Loading Store…",
     "description": "Store catalog loading state."
@@ -6923,13 +6935,41 @@
     "defaultMessage": "Version 4.1.7",
     "description": "Version label for the latest Wiki patch notes."
   },
+  "wiki.patch-notes.version-4-1-7.allocation": {
+    "defaultMessage": "Fixed taps on the Bot distribution slider applying the previous allocation instead of the latest selection.",
+    "description": "Version 4.1.7 release note for allocation."
+  },
+  "wiki.patch-notes.version-4-1-7.offline-errors": {
+    "defaultMessage": "Offline Time failures now include distinct error codes, with a clear message when processing is cancelled because the app was backgrounded.",
+    "description": "Version 4.1.7 release note for offline-errors."
+  },
+  "wiki.patch-notes.version-4-1-7.repeatable-research": {
+    "defaultMessage": "Clarified that Repeatable Research divides research costs by the current total production multiplier and does not affect Durability. A +300% bonus means one quarter of the normal cost.",
+    "description": "Version 4.1.7 release note for repeatable-research."
+  },
+  "wiki.patch-notes.version-4-1-7.research-reset": {
+    "defaultMessage": "Fixed progression and Offline Time processing failures caused by Regulated Academia or Shoulders of the Revolution after Infinity and Quantum resets.",
+    "description": "Version 4.1.7 release note for research-reset."
+  },
   "wiki.patch-notes.version-4-1-7.rounding": {
     "defaultMessage": "Restored the Round bulk purchases wording in Bots and Research settings.",
     "description": "Version 4.1.7 release note for restored purchase-rounding wording."
   },
+  "wiki.patch-notes.version-4-1-7.save-file": {
+    "defaultMessage": "Added Save File to save exports on Android and desktop, with native Save As dialogs in the Android and desktop apps.",
+    "description": "Version 4.1.7 release note for save-file."
+  },
   "wiki.patch-notes.version-4-1-7.scaling": {
     "defaultMessage": "Building details now distinguish Purchased Building Scaling from the assigned Production Scaling skill and show the current bonus percentage and purchase threshold.",
     "description": "Version 4.1.7 release note for accurate purchased-building scaling attribution and descriptions."
+  },
+  "wiki.patch-notes.version-4-1-7.terra": {
+    "defaultMessage": "Purchased Planets now count toward What Will Come to Pass through Terra Firma and Terra Irradient, including in the displayed calculation.",
+    "description": "Version 4.1.7 release note for terra."
+  },
+  "wiki.patch-notes.version-4-1-7.workers": {
+    "defaultMessage": "New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers.",
+    "description": "Version 4.1.7 release note for the worker allocation default."
   },
   "wiki.patch-notes.version-4-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

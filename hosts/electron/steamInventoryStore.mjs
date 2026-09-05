@@ -314,6 +314,8 @@ export class SteamInventoryStore {
       try {
         await this.ensureIdentity()
         const itemDefId = this.config.products[productId]
+        const current = await this.refreshAuthoritativeState()
+        if (durableProductIds.includes(productId) && ownershipForProduct(current.ownership, productId)) return Object.freeze({ accepted: true, productId })
         const before = tipProductIds.has(productId)
           ? validateInventoryItems(await this.binding.getAllItems())
           : null
@@ -332,34 +334,7 @@ export class SteamInventoryStore {
           if (delivered === null) {
             return failedPurchase(productId, 'purchase-failed')
           }
-          const state = await this.currentCacheState(ownership)
-          const supporterOwnership = freezeOwnership({
-            ...ownership,
-            supporterCatGallery: true,
-          })
-          const pending = this.reconcilePendingTipConsumptions(
-            state.pendingConsumptions,
-            after,
-            delivered,
-          )
-          const persisted = await this.publishVerifiedState({
-            ownership: supporterOwnership,
-            pendingConsumptions: pending,
-          })
-          const consumed = persisted && await this.consumePendingItem(
-            pending.find((item) =>
-              item.instanceId === delivered.instanceId &&
-              item.itemDefId === delivered.itemDefId),
-            after,
-          )
-          if (consumed) {
-            await this.publishVerifiedState({
-              ownership: supporterOwnership,
-              pendingConsumptions: pending.filter(
-                (item) => item.instanceId !== delivered.instanceId,
-              ),
-            })
-          }
+          await this.publishVerifiedState({ ownership, pendingConsumptions: [] })
         } else {
           if (!ownershipForProduct(ownership, productId)) {
             return failedPurchase(productId, 'purchase-failed')
@@ -433,44 +408,7 @@ export class SteamInventoryStore {
     await this.ensureIdentity()
     const items = validateInventoryItems(await this.binding.getAllItems())
     const providerOwnership = ownershipFromItems(items, this.config.products)
-    const cached = await this.currentCacheState(providerOwnership)
-    const pendingConsumptions = this.reconcilePendingTipConsumptions(
-      cached.pendingConsumptions,
-      items,
-    )
-    const ownership = freezeOwnership({
-      ...providerOwnership,
-      supporterCatGallery:
-        cached.ownership.supporterCatGallery ||
-        pendingConsumptions.length > 0,
-    })
-    if (pendingConsumptions.length === 0) {
-      const state = freezeCacheState({ ownership, pendingConsumptions })
-      await this.publishVerifiedState(state)
-      return state
-    }
-    const persisted = await this.publishVerifiedState(
-      { ownership, pendingConsumptions },
-    )
-    if (!persisted) {
-      return freezeCacheState({ ownership, pendingConsumptions })
-    }
-    const remaining = []
-    for (const pending of pendingConsumptions) {
-      const instance = items.find((item) =>
-        item.instanceId === pending.instanceId &&
-        item.itemDefId === pending.itemDefId &&
-        item.quantity >= pending.quantity)
-      if (instance === undefined) {
-        remaining.push(pending)
-      } else if (!(await this.consumePendingItem(pending, items))) {
-        remaining.push(pending)
-      }
-    }
-    const state = freezeCacheState({
-      ownership,
-      pendingConsumptions: remaining,
-    })
+    const state = freezeCacheState({ ownership: providerOwnership, pendingConsumptions: [] })
     await this.publishVerifiedState(state)
     return state
   }
@@ -543,62 +481,6 @@ export class SteamInventoryStore {
     }
   }
 
-  async consumePendingItem(item, inventoryItems) {
-    if (
-      item === undefined ||
-      !this.isConfiguredTipItemDef(item.itemDefId) ||
-      !inventoryItems.some((inventoryItem) =>
-        inventoryItem.instanceId === item.instanceId &&
-        inventoryItem.itemDefId === item.itemDefId &&
-        inventoryItem.quantity >= item.quantity)
-    ) return false
-    try {
-      return await this.binding.consumeItem(item.instanceId, item.quantity) === true
-    } catch {
-      return false
-    }
-  }
-
-  isConfiguredTipItemDef(itemDefId) {
-    return tipProductIds.has(productIdForItemDef(
-      itemDefId,
-      this.config.products,
-    ))
-  }
-
-  reconcilePendingTipConsumptions(
-    cachedConsumptions,
-    inventoryItems,
-    deliveredIncrease = null,
-  ) {
-    const cachedByInstance = new Map(cachedConsumptions
-      .filter((item) => this.isConfiguredTipItemDef(item.itemDefId))
-      .map((item) => [item.instanceId, item]))
-    const reconciled = inventoryItems
-      .filter((item) => this.isConfiguredTipItemDef(item.itemDefId))
-      .map((item) => {
-        const cached = cachedByInstance.get(item.instanceId)
-        const cachedQuantity = cached?.itemDefId === item.itemDefId
-          ? cached.quantity
-          : 0
-        const deliveredQuantity =
-          deliveredIncrease?.instanceId === item.instanceId &&
-          deliveredIncrease.itemDefId === item.itemDefId
-            ? deliveredIncrease.quantity
-            : 0
-        const knownQuantity = checkedSteamQuantitySum(
-          cachedQuantity,
-          deliveredQuantity,
-        )
-        return {
-          itemDefId: item.itemDefId,
-          instanceId: item.instanceId,
-          quantity: Math.max(item.quantity, knownQuantity),
-        }
-      })
-    return freezePendingConsumptions(reconciled)
-  }
-
   async ensureIdentity() {
     const current = await this.readAuthenticatedSteamId()
     if (this.steamId !== null && current !== this.steamId) {
@@ -641,8 +523,7 @@ function isInventoryBinding(value) {
     typeof value.requestLocalizedPrices === 'function' &&
     typeof value.getAuthenticatedSteamId === 'function' &&
     typeof value.getAllItems === 'function' &&
-    typeof value.startPurchase === 'function' &&
-    typeof value.consumeItem === 'function'
+    typeof value.startPurchase === 'function'
 }
 
 function unavailableProducts() {
@@ -668,11 +549,11 @@ function failedPurchase(productId, code) {
 }
 
 function ownershipFromItems(items, products) {
-  const ownedItemDefs = new Set(items.map((item) => item.itemDefId))
+  const ownedItemDefs = new Set(items.filter(item => item.quantity > 0).map((item) => item.itemDefId))
   return freezeOwnership({
     developerOptions: ownedItemDefs.has(products['ids.devoptions']),
     doubleInfinityPoints: ownedItemDefs.has(products['ids.doubleip']),
-    supporterCatGallery: false,
+    supporterCatGallery: [...tipProductIds].some(id => ownedItemDefs.has(products[id])),
   })
 }
 
@@ -735,12 +616,6 @@ function ownershipForProduct(ownership, productId) {
   return false
 }
 
-function productIdForItemDef(itemDefId, products) {
-  return STEAM_STORE_PRODUCT_IDS.find(
-    (productId) => products[productId] === itemDefId,
-  ) ?? null
-}
-
 function findDeliveredItem(before, after, itemDefId) {
   const beforeItems = new Map(before.map((item) => [item.instanceId, item]))
   const delivered = after.find((item) => {
@@ -757,15 +632,6 @@ function findDeliveredItem(before, after, itemDefId) {
     instanceId: delivered.instanceId,
     quantity: delivered.quantity - (prior?.quantity ?? 0),
   })
-}
-
-function checkedSteamQuantitySum(left, right) {
-  const sum = left + right
-  if (!Number.isSafeInteger(sum) || sum <= 0) {
-    if (left === 0 && right === 0) return 0
-    throw new Error('Steam pending consumption quantity is invalid.')
-  }
-  return sum
 }
 
 function emptyOwnership() {

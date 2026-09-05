@@ -106,6 +106,9 @@ export function createProductionNativeComposition(
   const createApplication =
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
+      achievements: environment.achievements,
+      cloud: environment.cloud,
+      readDeveloperOptions: () => entitlementBridge.currentOwnership().developerOptions,
       readHostEntitlements: () =>
         entitlementBridge.currentDysonEntitlements(),
     })
@@ -120,6 +123,9 @@ export function createProductionNativeComposition(
     allowedExternalOrigins: COMMUNITY_EXTERNAL_ORIGINS,
     writerAuthority: new SingleHostSessionWriterAuthority(),
     saveStorage: storage,
+    exportSaveFile: environment.exportSaveFile ?? (async () => {
+      throw new Error('Native save file export unavailable.')
+    }),
     saveRepositoryPaths: NATIVE_WEB_SAVE_PATHS,
     allowCanonicalPlayerWrites: true,
     lifecycle: environment.lifecycle,

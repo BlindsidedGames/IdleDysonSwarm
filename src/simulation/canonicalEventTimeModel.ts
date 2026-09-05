@@ -1,3 +1,5 @@
+import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
+import type { AchievementFacts } from '../achievements/contracts'
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
@@ -105,6 +107,8 @@ const OWNED_EVENT_TIME_STATE = Symbol('owned-event-time-state')
  * snapshot are save/session-specific and therefore travel with game state.
  */
 export interface CanonicalEventTimeState {
+  /** Optional transient evidence; absent on mobile and never serialized into saves. */
+  readonly achievementEvidence?: AchievementFacts
   readonly gameState: CanonicalGameStateV1
   readonly compatibilityTuning: Readonly<DysonCompatibilityTuning>
   readonly evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
@@ -732,8 +736,14 @@ export class CanonicalEventTimeModel
     mergeSummary(summary, pending.summary)
   }
 
+  private captureAchievementMilestones(): void {
+    if (this.carrier.achievementEvidence === undefined) return
+    this.carrier = {...this.carrier, achievementEvidence: mergeAchievementFacts(this.carrier.achievementEvidence,evaluateAchievements(this.carrier.gameState,false))}
+  }
+
   applyDreamReset(summary: SimulationPresentationSummary): void {
     if (this.currentIssue !== undefined) return
+    this.captureAchievementMilestones()
     const preResetState = this.carrier.gameState
     const result = applyCanonicalDreamReset(
       preResetState,
@@ -925,6 +935,7 @@ export class CanonicalEventTimeModel
       return
     }
 
+    this.captureAchievementMilestones()
     const artifact = deriveCanonicalArtifactSkillPoints(
       this.carrier.gameState,
       this.context.realityUpgradeDefinitions,
@@ -1068,6 +1079,7 @@ export class CanonicalEventTimeModel
   }
 
   private applyQuantumLeap(): void {
+    this.captureAchievementMilestones()
     const state = this.carrier.gameState
     if (state.infinity.points < QUANTUM_LEAP_INFINITY_GATE) {
       this.queuedInputOutcome = {
@@ -1089,6 +1101,7 @@ export class CanonicalEventTimeModel
       return
     }
 
+    this.captureAchievementMilestones()
     const artifact = deriveCanonicalArtifactSkillPoints(
       state,
       this.context.realityUpgradeDefinitions,

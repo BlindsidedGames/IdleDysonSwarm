@@ -1,12 +1,18 @@
+import { attachSteamPresentation } from './steam/presentation.mjs'
+import { SteamCloud } from './steam/cloud.mjs'
+import { loadSteamClient, createSteamPublication } from './steam/client.mjs'
 import {
   app,
+  dialog,
   BrowserWindow,
   ipcMain,
+  powerMonitor,
   safeStorage,
   session,
   shell,
 } from 'electron'
 import { spawn } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 import {
   access,
   copyFile,
@@ -43,6 +49,13 @@ import {
 } from './steamInventoryStore.mjs'
 
 const hostDirectory = dirname(fileURLToPath(import.meta.url))
+const packageInfo = JSON.parse(readFileSync(join(app.isPackaged ? app.getAppPath() : join(hostDirectory, '../..'), 'package.json'), 'utf8'))
+const steamDistribution = packageInfo.idsDesktopDistribution === 'steam' || (!app.isPackaged && process.env.VITE_IDS_DESKTOP_DISTRIBUTION === 'steam')
+if (steamDistribution && process.platform !== 'darwin') {
+  // Steam hooks the graphics device in the SDK process. Configure before ready.
+  app.commandLine.appendSwitch('in-process-gpu')
+  app.commandLine.appendSwitch('disable-direct-composition')
+}
 const rendererEntry = join(hostDirectory, '../../dist-native/index.html')
 const releaseMetadataPath = join(hostDirectory, 'release-version.json')
 const steamInventoryConfigPath = join(
@@ -52,6 +65,7 @@ const steamInventoryConfigPath = join(
 const {
   smokeTest,
   suspendResumeSmoke,
+  closeSmoke,
 } = selectElectronSmokeMode(process.argv)
 const smokeUserData = smokeTest
   ? await mkdtemp(join(tmpdir(), 'idle-dyson-swarm-smoke-'))
@@ -71,6 +85,7 @@ const channels = Object.freeze({
   discoverUnity: 'ids:native:unity:discover',
   metadata: 'ids:native:metadata',
   diagnostics: 'ids:native:diagnostics:export',
+  exportSave: 'ids:native:save:export',
   storeProducts: 'ids:native:store:products',
   storePurchase: 'ids:native:store:purchase',
   storeRestore: 'ids:native:store:restore',
@@ -87,6 +102,11 @@ let closeRequestSequence = 0
 let packagedRuntimeMetadata
 let smokeCleanupScheduled = false
 let steamInventoryStore
+let steamCloud = null
+let steamClient = null
+let steamPublication = null
+
+if (singleInstanceAcquired) steamClient = loadSteamClient({ distribution: steamDistribution ? 'steam' : 'desktop', ...(app.isPackaged ? { runtimeDirectory: join(process.resourcesPath, 'steam') } : {}) })
 
 if (smokeTest) scheduleOwnedSmokeCleanup()
 
@@ -98,7 +118,7 @@ function denyRendererPermissions(electronSession) {
 }
 
 function webSaveRoot() {
-  return join(app.getPath('userData'), webSaveRootName)
+  return steamCloud === null ? join(app.getPath('userData'), ...(steamDistribution ? ['steam-offline'] : []), webSaveRootName) : join(steamCloud.localDirectory,webSaveRootName)
 }
 
 function rootedPath(relativePath) {
@@ -272,9 +292,33 @@ function registerNativeHandlers() {
       await syncDirectory(dirname(destination))
     },
   )
+  ipcMain.handle('ids:cloud:backups', () => steamCloud?.readBackups() ?? [])
+  ipcMain.handle('ids:cloud:read', () => steamCloud?.read() ?? null)
+  ipcMain.handle('ids:cloud:choose', (_event, local, remote) => steamCloud?.choose(local,remote))
+  ipcMain.handle('ids:cloud:acknowledge', (_event, text) => steamCloud?.acknowledge(text))
+  ipcMain.handle('ids:cloud:publish', (_event, text) => steamCloud?.publish(text))
+  ipcMain.handle('ids:achievements:available', () => steamPublication?.available() ?? false)
+  ipcMain.handle('ids:achievements:submit', async (_event, facts) => { await steamPublication?.submit(facts) })
+  ipcMain.handle('ids:achievements:flush', async () => { await steamPublication?.flush() })
   ipcMain.handle(channels.discoverUnity, discoverUnitySaves)
   ipcMain.handle(channels.metadata, async () => {
     return packagedRuntimeMetadata ?? loadRuntimeMetadata()
+  })
+  ipcMain.handle(channels.exportSave, async (event, request) => {
+    if (request?.fileName !== 'idle-dyson-swarm-save.idsw' ||
+        typeof request.text !== 'string' || request.text.length === 0 ||
+        Buffer.byteLength(request.text, 'utf8') > 32 * 1024 * 1024) {
+      throw new Error('Invalid save export request.')
+    }
+    const owner = BrowserWindow.fromWebContents(event.sender)
+    if (owner === null) throw new Error('Save export window unavailable.')
+    const result = await dialog.showSaveDialog(owner, {
+      defaultPath: request.fileName,
+      filters: [{ name: 'Idle Dyson Swarm Save', extensions: ['idsw'] }],
+    })
+    if (result.canceled || !result.filePath) return 'cancelled'
+    await durableWriteText(result.filePath, request.text)
+    return 'saved'
   })
   ipcMain.handle(channels.diagnostics, async (_event, request) => {
     if (
@@ -347,6 +391,7 @@ async function createElectronSteamInventoryStore() {
   if (config.enabled) {
     try {
       binding = await loadSteamInventoryBinding({
+        client: steamClient,
         steamAppId,
         itemDefIds: config.products,
       })
@@ -363,6 +408,18 @@ async function createElectronSteamInventoryStore() {
 }
 
 async function discoverUnitySaves() {
+  if (steamDistribution) {
+    if (steamCloud === null) return Object.freeze([])
+    steamCloud.ensureIdentity()
+    // Unity saves were device-scoped. Claim automatic migration once, without
+    // touching those original files or allowing another Steam account to adopt them.
+    const claim = join(app.getPath('userData'), 'steam-unity-migration-account.txt')
+    try {
+      const handle = await open(claim, 'wx', 0o600)
+      try { await handle.writeFile(steamCloud.account); await handle.sync() } finally { await handle.close() }
+    } catch (error) { if (error.code !== 'EEXIST') throw error }
+    if ((await readFile(claim, 'utf8')) !== steamCloud.account) return Object.freeze([])
+  }
   const definitions = unitySaveDefinitions()
   const candidates = []
   for (const definition of definitions) {
@@ -468,6 +525,35 @@ async function waitForRendererReady(window) {
       await exitHost(1)
       return
     }
+    if (process.argv.includes('--overlay-smoke')) {
+      const deadline = Date.now() + 10_000
+      while (!steamClient?.native.overlayStatus().enabled && Date.now() < deadline) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+      if (!steamClient?.native.overlayStatus().enabled) {
+        console.error('Overlay smoke: Steam overlay unavailable')
+        await exitHost(1)
+        return
+      }
+      steamClient.native.activateOverlay()
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      const status = steamClient.native.overlayStatus()
+      console.log('Overlay smoke:', JSON.stringify(status))
+      if (!status.active) { await exitHost(1); return }
+      // Leave the isolated test window available briefly for visual verification.
+      await new Promise(resolve => setTimeout(resolve, 20_000))
+      window.close()
+      return
+    }
+    if (closeSmoke) {
+      // Exercise the real window-close/checkpoint/quit path, not app.exit().
+      setTimeout(() => {
+        console.error("Window close failed to terminate the application.")
+        void exitHost(1)
+      }, 12_000).unref()
+      window.close()
+      return
+    }
     if (suspendResumeSmoke) {
       window.minimize()
       await new Promise((resolve) => setTimeout(resolve, 20_000))
@@ -527,6 +613,7 @@ function scheduleOwnedSmokeCleanup() {
 }
 
 function sendLifecycle(window, phase) {
+  steamPublication?.setSuspended(phase === 'background', 'window')
   if (!window.isDestroyed()) {
     window.webContents.send(channels.lifecycle, phase)
   }
@@ -572,6 +659,10 @@ function requestRendererCheckpoint(window) {
 
 async function closeAfterCheckpoint(window) {
   const result = await requestRendererCheckpoint(window)
+  await Promise.race([
+    Promise.allSettled([steamCloud?.queue, steamPublication?.flush()]),
+    new Promise(resolve => setTimeout(resolve, 2000)),
+  ])
   if (!result.checkpointed) {
     console.warn(
       `Closing with the last durable save after ${result.reason}.`,
@@ -586,14 +677,47 @@ function createMainWindow() {
     minWidth: 360,
     minHeight: 640,
     backgroundColor: '#2f1738',
+    icon: join(hostDirectory, '../../public/icons/pwa-icon-512.png'),
     show: false,
     webPreferences: {
+      additionalArguments: [...(steamPublication ? ['--ids-steam'] : []), ...(steamCloud ? ['--ids-steam-cloud'] : [])],
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
       preload: join(hostDirectory, 'preload.cjs'),
     },
   })
+  // Desktop game navigation lives inside the renderer.
+  if (process.platform !== 'darwin') window.removeMenu()
+  if (steamDistribution && process.platform !== 'darwin') {
+    // Chromium otherwise stops presenting unchanged frames while the overlay draws.
+    const repaint = setInterval(() => {
+      if (!window.isDestroyed() && window.isVisible() && !window.isMinimized()) {
+        window.webContents.invalidate()
+      }
+    }, 1000 / 60)
+    repaint.unref()
+    window.once('closed', () => clearInterval(repaint))
+  }
+  if (steamDistribution && process.argv.includes('--overlay-diagnostic')) {
+    window.webContents.once('did-finish-load', () => {
+      const diagnostic = setInterval(() => {
+        try { console.log('Steam overlay status:', JSON.stringify(steamClient?.native.overlayStatus())) }
+        catch (error) { console.warn('Steam overlay diagnostic:', error.message) }
+      }, 1000)
+      diagnostic.unref()
+      window.once('closed', () => clearInterval(diagnostic))
+    })
+    window.webContents.on('before-input-event', (_event, input) => {
+      if (input.type === 'keyDown' && input.key === 'F8') {
+        try { steamClient?.native.activateOverlay() }
+        catch (error) { console.warn('Steam overlay activation:', error.message) }
+      }
+    })
+  }
+  if (steamDistribution && steamClient) {
+    window.webContents.once('did-finish-load', () => attachSteamPresentation(window, steamClient.native))
+  }
   mainWindow = window
   let closeAllowed = false
   let closePending = false
@@ -668,7 +792,19 @@ if (!singleInstanceAcquired) {
   })
   app.whenReady().then(async () => {
     await loadRuntimeMetadata()
+    try {
+    if (steamClient !== null) {
+      const account = steamClient.native.identity()
+      if (/^\d{17}$/.test(account)) steamCloud = new SteamCloud({ userData: smokeUserData ?? join(app.getPath('appData'), 'Idle Dyson Swarm'),account,identity: () => steamClient.native.identity(),choose: async () => {
+        const result = await dialog.showMessageBox({type:'question',title:'Choose your save',message:'Local and Steam Cloud saves differ. Both copies have been preserved.',buttons:['Use local save','Use Steam Cloud save'],defaultId:0,cancelId:0})
+        return result.response === 1 ? 'cloud' : 'local'
+      } })
+    }
+    } catch(error) { steamCloud = null; console.warn('Steam Cloud unavailable:', error.message) }
     steamInventoryStore = await createElectronSteamInventoryStore()
+    if (steamDistribution) steamPublication = await createSteamPublication(steamClient, {
+      readDeveloperOptions: async () => (await steamInventoryStore.readEntitlements()).developerOptions,
+    }).catch(error => { console.warn('Steam achievements unavailable:',error.message);return null })
     registerNativeHandlers()
     denyRendererPermissions(session.defaultSession)
     createMainWindow()
@@ -682,5 +818,9 @@ if (!singleInstanceAcquired) {
 }
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
+  if (steamDistribution || process.platform !== 'darwin') app.quit()
 })
+
+powerMonitor.on('suspend', () => steamPublication?.setSuspended(true))
+powerMonitor.on('resume', () => steamPublication?.setSuspended(false))
+app.on('will-quit', () => { steamPublication?.close(); steamClient?.close() })

@@ -1,13 +1,5 @@
-/**
- * Native binding boundary for Steam Inventory.
- *
- * This deliberately does not import stock steamworks.js: its current public
- * client has no ISteamInventory purchase or ownership API. A future supported
- * binding must implement getAuthenticatedSteamId, requestLocalizedPrices,
- * getAllItems, startPurchase and consumeItem entirely in the Electron main
- * process. Until then, returning null keeps the Store and entitlement
- * authority fail-closed.
- */
-export async function loadSteamInventoryBinding(_options) {
-  return null
+import { inventoryBinding } from './steam/client.mjs'
+/** Only the Electron main process owns the initialized SDK client. */
+export async function loadSteamInventoryBinding({ client }) {
+  return inventoryBinding(client)
 }

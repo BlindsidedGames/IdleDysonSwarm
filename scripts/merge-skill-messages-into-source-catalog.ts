@@ -48,6 +48,8 @@ const WEB_SKILL_COPY_OVERRIDES: Readonly<Record<string, string>> = {
     'Assembly Lines produce 1.5x as much. Increase this bonus by 0.5x for every other assigned Fragment Skill.',
   'skills.node.regulatedAcademia.technical':
     'Science and Cash Boost base is increased by 20%. Increase the base by 10% for every other assigned Fragment Skill.',
+  'skills.node.repeatableResearch.technical':
+    'Percentage-based research becomes cheaper as you upgrade it. Its cost is divided by its current total production multiplier. For example, a +300% bonus means 4× production, so that research costs one quarter as much. Does not affect Durability.',
   'skills.node.supernova.technical':
     'Stellar Sacrifices Galaxies are 1000x better. While Supernova is assigned, manually purchased buildings lose every production bonus including Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Unassigning Supernova restores the complete manual-purchase layer.',
   'skills.node.terraformingProtocols.technical':

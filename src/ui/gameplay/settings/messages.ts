@@ -413,8 +413,8 @@ export const settingsSurfaceMessages = defineMessages({
   exportDescription: {
     id: 'settings.save-data.export-description',
     defaultMessage:
-      'Copy this save string somewhere safe, or download it as a file.',
-    description: 'Explains the available save export formats.',
+      'Keep a copy of this save somewhere safe.',
+    description: 'Explains why to keep an exported save.',
   },
   exportPreStoredTime: {
     id: 'settings.save-data.export-pre-stored-time',
@@ -445,7 +445,7 @@ export const settingsSurfaceMessages = defineMessages({
   },
   downloadFile: {
     id: 'settings.save-data.download-file',
-    defaultMessage: 'Download File',
+    defaultMessage: 'Save File',
     description: 'Downloads the exported save as a file.',
   },
   exportSucceeded: {

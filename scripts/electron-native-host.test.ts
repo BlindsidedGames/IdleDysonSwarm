@@ -1,3 +1,4 @@
+import { inventoryBinding } from '../hosts/electron/steam/client.mjs'
 import { readFileSync } from 'node:fs'
 import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -70,17 +71,24 @@ describe('Electron native host hardening', () => {
   })
 
   it('selects ordinary and suspend/resume smoke modes from explicit arguments', () => {
+    expect(selectElectronSmokeMode(['--overlay-smoke']).smokeTest).toBe(true)
+    expect(selectElectronSmokeMode(['--close-smoke'])).toEqual({
+      smokeTest: true, suspendResumeSmoke: false, closeSmoke: true,
+    })
     expect(selectElectronSmokeMode([])).toEqual({
       smokeTest: false,
       suspendResumeSmoke: false,
+      closeSmoke: false,
     })
     expect(selectElectronSmokeMode(['--smoke-test'])).toEqual({
       smokeTest: true,
       suspendResumeSmoke: false,
+      closeSmoke: false,
     })
     expect(selectElectronSmokeMode(['--suspend-resume-smoke'])).toEqual({
       smokeTest: true,
       suspendResumeSmoke: true,
+      closeSmoke: false,
     })
     expect(selectElectronSmokeMode([
       '--smoke-test',
@@ -88,10 +96,12 @@ describe('Electron native host hardening', () => {
     ])).toEqual({
       smokeTest: true,
       suspendResumeSmoke: true,
+      closeSmoke: false,
     })
     expect(selectElectronSmokeMode(['--smoke-test-disabled'])).toEqual({
       smokeTest: false,
       suspendResumeSmoke: false,
+      closeSmoke: false,
     })
   })
 
@@ -148,7 +158,7 @@ describe('Electron native host hardening', () => {
     expect(preload).not.toContain('promoteAutomaticUnityPurchaseEvidence')
   })
 
-  it('keeps Steam Inventory authority in main and fails closed by default', () => {
+  it('keeps verified Steam Inventory mappings in main and requires the native provider', () => {
     const main = read('hosts/electron/main.mjs')
     const preload = read('hosts/electron/preload.cjs')
     const binding = read('hosts/electron/steamInventoryBinding.mjs')
@@ -159,10 +169,12 @@ describe('Electron native host hardening', () => {
     expect(main).toContain('steamInventoryStore.readEntitlements')
     expect(main).toContain('createSafeStorageProtector(safeStorage)')
     expect(preload).not.toContain('itemDefId')
-    expect(binding).toContain('return null')
+    expect(inventoryBinding(null)).toBe(null)
     expect(binding).not.toContain("from 'steamworks.js'")
-    expect(config.enabled).toBe(false)
-    expect(Object.values(config.products).every((value) => value === null))
-      .toBe(true)
+    expect(config.enabled).toBe(true)
+    expect(config.products).toEqual({
+      'ids.tiptier1': 1001, 'ids.tiptier2': 1002, 'ids.tiptier3': 1003,
+      'ids.devoptions': 1004, 'ids.doubleip': 1005,
+    })
   })
 })

@@ -3875,6 +3875,12 @@
       "value": "全部"
     }
   ],
+  "offline-time.app-backgrounded": [
+    {
+      "type": 0,
+      "value": "应用已切换到后台，处理已取消"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -3955,6 +3961,20 @@
     {
       "type": 0,
       "value": "。"
+    }
+  ],
+  "offline-time.error-code": [
+    {
+      "type": 0,
+      "value": "（错误代码："
+    },
+    {
+      "type": 1,
+      "value": "code"
+    },
+    {
+      "type": 0,
+      "value": "）"
     }
   ],
   "offline-time.explanation": [
@@ -6886,7 +6906,7 @@
   "settings.save-data.download-file": [
     {
       "type": 0,
-      "value": "下载文件"
+      "value": "保存文件"
     }
   ],
   "settings.save-data.export": [
@@ -6904,7 +6924,7 @@
   "settings.save-data.export-description": [
     {
       "type": 0,
-      "value": "将此存档字符串复制到安全的位置，或下载为文件。"
+      "value": "请将此存档的副本保存在安全的地方。"
     }
   ],
   "settings.save-data.export-dialog-title": [
@@ -9718,7 +9738,7 @@
   "skills.node.repeatableResearch.technical": [
     {
       "type": 0,
-      "value": "每项研究还会按列出的数值降低自身成本（例如科学增幅 300%、现金增幅 250%，意味着科学增幅成本降低至 1/4，现金增幅成本降低至 1/3.5）。"
+      "value": "提供百分比加成的研究会随着升级而变得更便宜。其成本会除以该研究当前的总产量倍率。例如，+300%的加成意味着产量为4倍，因此该研究的成本为原来的四分之一。不影响耐久升级。"
     }
   ],
   "skills.node.rocketMania.description": [
@@ -11900,6 +11920,12 @@
       "value": "恢复功能只检查双倍无限点与开发者选项。支持者档位属于消耗品，没有账号支持的记录通常无法恢复。"
     }
   ],
+  "store.restore.inventory-description": [
+    {
+      "type": 0,
+      "value": "恢复购买会检查你的 Steam 库存中的支持者购买、开发者选项和双倍无限点数。支持者物品会保留在库存中，并且可以重复购买。"
+    }
+  ],
   "store.status.loading": [
     {
       "type": 0,
@@ -13644,16 +13670,58 @@
       "value": "版本 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.allocation": [
+    {
+      "type": 0,
+      "value": "修复了点击机器人分配滑动条时应用上一次分配而非最新选择的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.offline-errors": [
+    {
+      "type": 0,
+      "value": "离线时间处理失败时现在会显示不同的错误代码；因应用切换到后台而取消处理时，会显示明确的提示。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.repeatable-research": [
+    {
+      "type": 0,
+      "value": "明确了 可重复研究 会将研究费用除以当前的总产量倍率，且不影响 耐久度。+300% 加成意味着费用为正常费用的四分之一。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.research-reset": [
+    {
+      "type": 0,
+      "value": "修复了 Infinity 和 Quantum 重置后，规范学术界 或 革命者之肩 导致游戏进度和离线时间处理失败的问题。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.rounding": [
     {
       "type": 0,
       "value": "恢复了机器人和研究设置中的“批量购买取整”措辞。"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.save-file": [
+    {
+      "type": 0,
+      "value": "Android 和桌面端的存档导出新增“保存文件”选项，Android 和桌面应用会使用系统原生的“另存为”对话框。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.scaling": [
     {
       "type": 0,
       "value": "建筑详情现在会区分已购建筑增长加成与已分配的“生产规模化”技能，并显示当前加成百分比和购买数量门槛。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.terra": [
+    {
+      "type": 0,
+      "value": "通过 Terra Firma 和 Terra Irradient，购买的行星现在会计入 必将发生，显示的计算过程也已同步更新。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.workers": [
+    {
+      "type": 0,
+      "value": "新游戏和 Quantum 重置现在默认分配为 100% 工人。新游戏的技能预设也以 100% 工人开始。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [
