@@ -336,3 +336,7 @@ Matthew confirms Windows now installs and Shift+Tab opens its overlay using the 
 ### Android combined-baseline acceptance — 2026-09-05
 
 Matthew authorized ADB control of dedicated emulator-5554. The integrated 4.1.7 baseline passed Store rendering/restore busy-state recovery, background/resume, native Android Save As to Downloads, and force-stop/cold-launch persistence. The exported save and before/after checkpoints validate through the canonical codec; one earned bot, currency and 79% scientist allocation persist. No application fixes were required. Live billing is not certified by the debug APK. See `4.1.7-baseline-review.md` for evidence and remaining provider/platform acceptance.
+
+### Store grants and healthy Cloud warning fixed — Public Beta 25134805
+
+Real Steam publisher inventory grants verified all ownership flags and localized prices, repeated supporters and fresh-process restoration without any checkout. Healthy Cloud loads now have a distinct startup source instead of being misclassified as backup recovery. The current Mac Cloud primary and all three preserved backups validate. Source 021f9dbe is live on Public Beta 25134805 across all three desktop depots; default remains 22353758. Full suite: 1,222 tests; lint/build and packaged Mac overlay/close pass. Matthew should retest Cloud in both directions after updating both machines. Detailed evidence and manifest IDs are in 4.1.7-baseline-review.md.
