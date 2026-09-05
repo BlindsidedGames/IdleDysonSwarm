@@ -12281,6 +12281,34 @@
       "value": "‬"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔɥıǝʌǝɯǝuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔɥıǝʌǝɯǝuʇs ɐɹǝ nuɐʌɐıʅɐqʅǝ. Ↄɥǝɔʞ ʎonɹ ƃɐɯǝ ɐɔɔonuʇ ɐup ɔouuǝɔʇıou, ʇɥǝu ʇɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,
@@ -27536,6 +27564,20 @@
     {
       "type": 0,
       "value": "Ʌǝɹsıou 4.1.7"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp 27 ɐɔɥıǝʌǝɯǝuʇs ou ∀upɹoıp ɐup ıOS, ɯɐʇɔɥıuƃ Sʇǝɐɯ. Odǝu ∀ɔɥıǝʌǝɯǝuʇs ıu Sǝʇʇıuƃs ʇo ʌıǝʍ ʇɥǝɯ. ∀ɔɥıǝʌǝɯǝuʇs ǝɐɹuǝp oɟɟʅıuǝ ɐɹǝ sɐʌǝp ɐup sʎuɔǝp ʍɥǝu ʎon ɹǝɔouuǝɔʇ."
     },
     {
       "type": 0,

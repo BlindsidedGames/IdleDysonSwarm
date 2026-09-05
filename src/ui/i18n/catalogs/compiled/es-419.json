@@ -6345,6 +6345,18 @@
       "value": "Redondear compras en lote"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "Logros"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "Los logros no están disponibles. Revisa tu cuenta de juego y tu conexión e inténtalo de nuevo."
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,
@@ -13668,6 +13680,12 @@
     {
       "type": 0,
       "value": "Versión 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Se agregaron 27 logros en Android e iOS, como en Steam. Abre Logros en Ajustes para verlos. Los logros obtenidos sin conexión se guardan y sincronizan cuando te vuelves a conectar."
     }
   ],
   "wiki.patch-notes.version-4-1-7.allocation": [

@@ -32,6 +32,7 @@
 }
 
 .settings-surface__panel--more { order: 1; }
+.settings-surface__panel--achievements { order: 1; grid-column: 1 / -1; }
 .settings-surface__panel--audio { order: 2; }
 .settings-surface__panel--language { order: 3; }
 .settings-surface__panel--number-notation { order: 4; }
@@ -1025,4 +1026,11 @@
     margin-block-start: 0.15rem;
     line-height: 1.2;
   }
+}
+
+.settings-surface__achievement-icon {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  object-fit: contain;
+  flex-shrink: 0;
 }

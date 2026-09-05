@@ -6345,6 +6345,18 @@
       "value": "Round bulk purchases"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "Achievements"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "Achievements are unavailable. Check your game account and connection, then try again."
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,
@@ -13668,6 +13680,12 @@
     {
       "type": 0,
       "value": "Version 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Added 27 achievements on Android and iOS, matching Steam. Open Achievements in Settings to view them. Achievements earned offline are saved and synced when you reconnect."
     }
   ],
   "wiki.patch-notes.version-4-1-7.allocation": [

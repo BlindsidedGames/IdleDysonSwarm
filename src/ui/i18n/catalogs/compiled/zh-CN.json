@@ -6345,6 +6345,18 @@
       "value": "批量购买取整"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "成就"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "成就暂时不可用。请检查你的游戏账号和网络连接，然后重试。"
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,
@@ -13668,6 +13680,12 @@
     {
       "type": 0,
       "value": "版本 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Android 和 iOS 新增 27 项成就，与 Steam 一致。在设置中打开“成就”即可查看。离线获得的成就会保存，并在重新联网后同步。"
     }
   ],
   "wiki.patch-notes.version-4-1-7.allocation": [

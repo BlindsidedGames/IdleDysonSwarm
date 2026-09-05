@@ -1,7 +1,8 @@
+import { serializeSharedWebSave, deserializeWebSave } from '../save/serialization'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { requireRecord } from '../save/graph'
-import { prepareIdb1Save } from '../save/prepare'
+import { prepareIdb1Save, PreparedSave } from '../save/prepare'
 import {
   startCanonicalTinker,
 } from '../simulation/canonicalTinker'
@@ -24,6 +25,30 @@ const entitlements = Object.freeze({
 })
 
 describe('CanonicalRuntimeSession', () => {
+  test('mobile evidence survives save/reopen and does not leak into a different imported save', () => {
+    const prepared = prepareIdb1Save(fixture).prepared
+    const options = {entitlements, captureAchievements:true, persistAchievements:true}
+    const session = new CanonicalRuntimeSession(prepared, options)
+    const state = structuredClone(session.initialState)
+    state.achievementEvidence = {unlocked:['achievement.first_bot', 'achievement.first_influence'], statistics:{}, presence:''}
+    const saved = session.prepare(state)
+    const reopened = new CanonicalRuntimeSession(PreparedSave.fromDecoded(deserializeWebSave(serializeSharedWebSave(saved.copyValidatedState()))), options)
+    expect(reopened.initialState.achievementEvidence?.unlocked).toEqual(expect.arrayContaining(['achievement.first_bot','achievement.first_influence']))
+    const imported = new CanonicalRuntimeSession(prepared, options)
+    expect(imported.initialState.achievementEvidence?.unlocked).toEqual([])
+    expect(prepared.copyValidatedState().idsAchievementEvidence).toBeUndefined()
+  })
+
+  test('malformed optional achievement evidence cannot block a save or submit unknown IDs', () => {
+    const prepared = prepareIdb1Save(fixture).prepared
+    const source = prepared.copyValidatedState()
+    source.idsAchievementEvidence = ['achievement.first_bot', 'achievement.first_bot', 'bad', 123]
+    const session = new CanonicalRuntimeSession(prepared.withValidatedState(source), {
+      entitlements, captureAchievements:true, persistAchievements:true,
+    })
+    expect(session.initialState.achievementEvidence?.unlocked).toEqual(['achievement.first_bot'])
+  })
+
   test('persists state, evaluation and out-of-model fields atomically but not Tinker', () => {
     const prepared = prepareIdb1Save(fixture).prepared
     const session = new CanonicalRuntimeSession(prepared, {

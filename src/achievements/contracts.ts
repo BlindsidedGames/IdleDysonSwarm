@@ -6,6 +6,7 @@ export interface AchievementFacts {
   readonly progression?: { readonly bots: number; readonly infinityPoints: string; readonly quantumPoints: string; readonly avocadoMultiplier: number; readonly realityUnlocked: boolean; readonly avocadoUnlocked: boolean }
 }
 export interface AchievementPublication {
+  readonly persistEvidence?: boolean
   available(): Promise<boolean>
   submit(facts: Readonly<AchievementFacts>): Promise<void>
   flush(): Promise<void>

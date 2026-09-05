@@ -189,6 +189,7 @@ const version414PatchNoteMessages = [
 ] as const
 
 const version417PatchNoteMessages = [
+  messages.patchNotesVersion417Achievements,
   messages.patchNotesVersion417Rounding,
   messages.patchNotesVersion417Scaling,
   messages.patchNotesVersion417Workers,

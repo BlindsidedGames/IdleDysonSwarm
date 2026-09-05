@@ -51,6 +51,8 @@ import { DiscordIcon } from '../../components/DiscordIcon'
 import { canExportSaveFile } from '../../../platform/saveFileExport'
 
 export interface SettingsSurfaceProps {
+  readonly achievementProvider?: 'play-games' | 'game-center'
+  readonly showAchievements?: () => Promise<void>
   readonly saveFileExportAvailable?: boolean
   readonly resetSave: () => Promise<UiRuntimeImportResult>
   readonly importSaveFile: (
@@ -138,6 +140,8 @@ type ImportPreviewStatus = 'idle' | 'pending' | 'failed'
  * Presents host settings while delegating save replacement to the runtime.
  */
 export function SettingsSurface({
+  achievementProvider,
+  showAchievements,
   resetSave,
   importSaveFile,
   importSaveText,
@@ -164,6 +168,7 @@ export function SettingsSurface({
   openExternalUrl = async () => undefined,
   developerDestination,
 }: SettingsSurfaceProps) {
+  const [achievementStatus, setAchievementStatus] = useState<'idle' | 'pending' | 'failed'>('idle')
   const intl = useIntl()
   const language = useLocalePreference()
   const numberNotation = useNumberNotation()
@@ -603,6 +608,17 @@ export function SettingsSurface({
                 ) : null}
               </div>
             </section>
+            {showAchievements !== undefined ? <section className="settings-surface__panel settings-surface__panel--achievements">
+                <button type="button" className="settings-surface__community-action" disabled={achievementStatus === 'pending'} onClick={async () => {
+                  setAchievementStatus('pending')
+                  try { await showAchievements(); setAchievementStatus('idle') }
+                  catch { setAchievementStatus('failed') }
+                }}>
+                  {achievementProvider === 'play-games' ? <img className="settings-surface__achievement-icon" src={`${import.meta.env.BASE_URL}platform/play-games-white.png`} alt="" aria-hidden="true" /> : null}
+                  <span>{intl.formatMessage(messages.achievementsAction)}</span>
+                </button>
+                {achievementStatus === 'failed' ? <p role="status">{intl.formatMessage(messages.achievementsUnavailable)}</p> : null}
+            </section> : null}
             <div className="settings-surface__column settings-surface__column--primary">
               {audio !== undefined ? <AudioSettingsPanel audio={audio} /> : null}
               <section className="settings-surface__panel settings-surface__panel--number-notation">

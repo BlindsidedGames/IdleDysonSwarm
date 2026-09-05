@@ -91,6 +91,8 @@ export interface DiagnosticsExporter {
 }
 
 export interface ReleasePlatformServices {
+  readonly achievementProvider?: 'play-games' | 'game-center'
+  readonly showAchievements?: () => Promise<void>
   readonly hostKind: HostKind
   readonly storeAvailable?: boolean
   readonly storeRestoreAvailable?: boolean

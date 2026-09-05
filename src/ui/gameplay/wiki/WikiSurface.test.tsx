@@ -30,6 +30,7 @@ describe('Wiki patch-note content', () => {
     const latest = screen.getByRole('heading', { name: 'Version 4.1.7' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
+      'Added 27 achievements on Android and iOS, matching Steam. Open Achievements in Settings to view them. Achievements earned offline are saved and synced when you reconnect.',
       'Restored the Round bulk purchases wording in Bots and Research settings.',
       'Building details now distinguish Purchased Building Scaling from the assigned Production Scaling skill and show the current bonus percentage and purchase threshold.',
       'New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers.',

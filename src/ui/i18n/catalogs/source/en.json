@@ -2967,6 +2967,14 @@
     "defaultMessage": "Round bulk purchases",
     "description": "Unity Research rounded-bulk setting."
   },
+  "settings.achievements.action": {
+    "defaultMessage": "Achievements",
+    "description": "Opens the native platform achievement list and sign-in when needed."
+  },
+  "settings.achievements.unavailable": {
+    "defaultMessage": "Achievements are unavailable. Check your game account and connection, then try again.",
+    "description": "Native achievements could not open or sign-in was cancelled."
+  },
   "settings.audio.description": {
     "defaultMessage": "Adjust music and sound effects.",
     "description": "Explains the available audio controls."
@@ -6934,6 +6942,10 @@
   "wiki.patch-notes.version-4-1-7": {
     "defaultMessage": "Version 4.1.7",
     "description": "Version label for the latest Wiki patch notes."
+  },
+  "wiki.patch-notes.version-4-1-7.achievements": {
+    "defaultMessage": "Added 27 achievements on Android and iOS, matching Steam. Open Achievements in Settings to view them. Achievements earned offline are saved and synced when you reconnect.",
+    "description": "Version 4.1.7 release note for native mobile achievements and offline persistence."
   },
   "wiki.patch-notes.version-4-1-7.allocation": {
     "defaultMessage": "Fixed taps on the Bot distribution slider applying the previous allocation instead of the latest selection.",

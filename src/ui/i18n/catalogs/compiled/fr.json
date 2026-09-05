@@ -6345,6 +6345,18 @@
       "value": "Arrondir les achats groupés"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "Succès"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "Les succès sont indisponibles. Vérifiez votre compte de jeu et votre connexion, puis réessayez."
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,
@@ -13668,6 +13680,12 @@
     {
       "type": 0,
       "value": "Version 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Ajout de 27 succès sur Android et iOS, comme sur Steam. Ouvrez Succès dans les paramètres pour les consulter. Les succès obtenus hors ligne sont enregistrés et synchronisés à la reconnexion."
     }
   ],
   "wiki.patch-notes.version-4-1-7.allocation": [

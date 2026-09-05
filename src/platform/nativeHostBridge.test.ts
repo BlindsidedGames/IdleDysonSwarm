@@ -592,3 +592,24 @@ function deferred<T>() {
   })
   return { promise, resolve }
 }
+
+
+test.each(['android','ios'] as const)('exposes %s achievement reporting and Settings UI through the native composition', async target => {
+  const submitAchievements = vi.fn(async () => undefined)
+  const showAchievements = vi.fn(async () => undefined)
+  const plugin = {
+    currentLifecycle: async () => ({phase:'active'}),
+    addListener: async () => ({remove: async () => undefined}),
+    achievementStatus: async () => ({available:true}),
+    submitAchievements, showAchievements,
+  } as unknown as CapacitorNativeHostPlugin
+  const bridge = new CapacitorNativeHostBridge(target, plugin)
+  await bridge.ready()
+  const environment = createNativeHostEnvironment(bridge)
+  expect(environment.achievements?.persistEvidence).toBe(true)
+  expect(environment.releasePlatformServices.achievementProvider).toBe(target === 'android' ? 'play-games' : 'game-center')
+  await environment.achievements?.submit({unlocked:['achievement.first_bot'], statistics:{},presence:''})
+  expect(submitAchievements).toHaveBeenCalledWith({unlocked:['achievement.first_bot']})
+  await environment.releasePlatformServices.showAchievements?.()
+  expect(showAchievements).toHaveBeenCalledOnce()
+})

@@ -1,0 +1,110 @@
+{
+  "achievement.first_bot": {
+    "android": "CgkIkpjJyrENEAIQAg",
+    "ios": "ids.first_bot"
+  },
+  "achievement.first_assembly_line": {
+    "android": "CgkIkpjJyrENEAIQAw",
+    "ios": "ids.first_assembly_line"
+  },
+  "achievement.first_data_center": {
+    "android": "CgkIkpjJyrENEAIQBw",
+    "ios": "ids.first_data_center"
+  },
+  "achievement.first_planet": {
+    "android": "CgkIkpjJyrENEAIQBQ",
+    "ios": "ids.first_planet"
+  },
+  "achievement.first_influence": {
+    "android": "CgkIkpjJyrENEAIQCA",
+    "ios": "ids.first_influence"
+  },
+  "achievement.first_infinity_point": {
+    "android": "CgkIkpjJyrENEAIQGw",
+    "ios": "ids.first_infinity_point"
+  },
+  "achievement.first_quantum_shard": {
+    "android": "CgkIkpjJyrENEAIQGA",
+    "ios": "ids.first_quantum_shard"
+  },
+  "achievement.first_strange_matter": {
+    "android": "CgkIkpjJyrENEAIQEw",
+    "ios": "ids.first_strange_matter"
+  },
+  "achievement.first_ai_manager": {
+    "android": "CgkIkpjJyrENEAIQBA",
+    "ios": "ids.first_ai_manager"
+  },
+  "achievement.first_server": {
+    "android": "CgkIkpjJyrENEAIQBg",
+    "ios": "ids.first_server"
+  },
+  "achievement.secrets_of_universe_maxed": {
+    "android": "CgkIkpjJyrENEAIQDA",
+    "ios": "ids.secrets_maxed"
+  },
+  "achievement.divisions_complete": {
+    "android": "CgkIkpjJyrENEAIQHw",
+    "ios": "ids.divisions_complete"
+  },
+  "achievement.unlock_terra": {
+    "android": "CgkIkpjJyrENEAIQHg",
+    "ios": "ids.unlock_terra"
+  },
+  "achievement.unlock_purity": {
+    "android": "CgkIkpjJyrENEAIQFA",
+    "ios": "ids.unlock_purity"
+  },
+  "achievement.unlock_power": {
+    "android": "CgkIkpjJyrENEAIQFQ",
+    "ios": "ids.unlock_power"
+  },
+  "achievement.unlock_stellar": {
+    "android": "CgkIkpjJyrENEAIQGQ",
+    "ios": "ids.unlock_stellar"
+  },
+  "achievement.unlock_paragade": {
+    "android": "CgkIkpjJyrENEAIQDg",
+    "ios": "ids.unlock_paragade"
+  },
+  "achievement.unlock_avocato": {
+    "android": "CgkIkpjJyrENEAIQFg",
+    "ios": "ids.unlock_avocato"
+  },
+  "achievement.counteractions_complete": {
+    "android": "CgkIkpjJyrENEAIQDQ",
+    "ios": "ids.all_counteractions"
+  },
+  "achievement.speed_upgrades_complete": {
+    "android": "CgkIkpjJyrENEAIQEQ",
+    "ios": "ids.all_speed_upgrades"
+  },
+  "achievement.translation_upgrades_complete": {
+    "android": "CgkIkpjJyrENEAIQHA",
+    "ios": "ids.all_translation_upgrades"
+  },
+  "achievement.simulation_upgrades_complete": {
+    "android": "CgkIkpjJyrENEAIQIw",
+    "ios": "ids.all_simulation_upgrades"
+  },
+  "achievement.developer_options": {
+    "android": "CgkIkpjJyrENEAIQFw",
+    "ios": "ids.dev_options"
+  },
+  "achievement.avotation_secrets_complete": {
+    "android": "CgkIkpjJyrENEAIQIg",
+    "ios": "ids.easter_secrets"
+  },
+  "achievement.avocados_skill": {
+    "android": "CgkIkpjJyrENEAIQEA",
+    "ios": "ids.easter_avocados"
+  },
+  "achievement.bots_42qi": {
+    "android": "CgkIkpjJyrENEAIQJA",
+    "ios": "ids.bots_42qi"
+  },
+  "achievement.skill_points_42": {
+    "android": "CgkIkpjJyrENEAIQGg",
+    "ios": "ids.skills_assigned"
+  }
+}

@@ -6345,6 +6345,18 @@
       "value": "Arredondar compras em lote"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "Conquistas"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "As conquistas estão indisponíveis. Verifique sua conta de jogo e sua conexão e tente novamente."
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,
@@ -13668,6 +13680,12 @@
     {
       "type": 0,
       "value": "Versão 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Adicionadas 27 conquistas no Android e iOS, como no Steam. Abra Conquistas nas Configurações para vê-las. As conquistas obtidas offline são salvas e sincronizadas quando você se reconecta."
     }
   ],
   "wiki.patch-notes.version-4-1-7.allocation": [

@@ -1,5 +1,7 @@
 package com.blindsidedgames.idledysonswarm
 
+import com.google.android.gms.games.PlayGames
+import com.google.android.gms.tasks.Tasks
 import android.app.Activity
 import androidx.activity.result.ActivityResult
 import com.getcapacitor.annotation.ActivityCallback
@@ -51,6 +53,123 @@ class IdleDysonNativePlugin : Plugin() {
             }
             ViewCompat.requestApplyInsets(decorView)
         }
+    }
+
+
+    // Mirrors hosts/capacitor/achievement-map.json; IDs never leave the native host.
+    private val achievementIds = mapOf(
+        "achievement.first_bot" to "CgkIkpjJyrENEAIQAg",
+        "achievement.first_assembly_line" to "CgkIkpjJyrENEAIQAw",
+        "achievement.first_data_center" to "CgkIkpjJyrENEAIQBw",
+        "achievement.first_planet" to "CgkIkpjJyrENEAIQBQ",
+        "achievement.first_influence" to "CgkIkpjJyrENEAIQCA",
+        "achievement.first_infinity_point" to "CgkIkpjJyrENEAIQGw",
+        "achievement.first_quantum_shard" to "CgkIkpjJyrENEAIQGA",
+        "achievement.first_strange_matter" to "CgkIkpjJyrENEAIQEw",
+        "achievement.first_ai_manager" to "CgkIkpjJyrENEAIQBA",
+        "achievement.first_server" to "CgkIkpjJyrENEAIQBg",
+        "achievement.secrets_of_universe_maxed" to "CgkIkpjJyrENEAIQDA",
+        "achievement.divisions_complete" to "CgkIkpjJyrENEAIQHw",
+        "achievement.unlock_terra" to "CgkIkpjJyrENEAIQHg",
+        "achievement.unlock_purity" to "CgkIkpjJyrENEAIQFA",
+        "achievement.unlock_power" to "CgkIkpjJyrENEAIQFQ",
+        "achievement.unlock_stellar" to "CgkIkpjJyrENEAIQGQ",
+        "achievement.unlock_paragade" to "CgkIkpjJyrENEAIQDg",
+        "achievement.unlock_avocato" to "CgkIkpjJyrENEAIQFg",
+        "achievement.counteractions_complete" to "CgkIkpjJyrENEAIQDQ",
+        "achievement.speed_upgrades_complete" to "CgkIkpjJyrENEAIQEQ",
+        "achievement.translation_upgrades_complete" to "CgkIkpjJyrENEAIQHA",
+        "achievement.simulation_upgrades_complete" to "CgkIkpjJyrENEAIQIw",
+        "achievement.developer_options" to "CgkIkpjJyrENEAIQFw",
+        "achievement.avotation_secrets_complete" to "CgkIkpjJyrENEAIQIg",
+        "achievement.avocados_skill" to "CgkIkpjJyrENEAIQEA",
+        "achievement.bots_42qi" to "CgkIkpjJyrENEAIQJA",
+        "achievement.skill_points_42" to "CgkIkpjJyrENEAIQGg",
+    )
+    private var achievementPlayer: String? = null
+    private val reportedAchievements = mutableSetOf<String>()
+
+    @PluginMethod
+    fun showAchievements(call: PluginCall) {
+        val hostActivity = activity
+        fun openList() {
+            PlayGames.getAchievementsClient(hostActivity).achievementsIntent
+                .addOnSuccessListener { intent ->
+                    hostActivity.startActivityForResult(intent, 9011)
+                    call.resolve()
+                }
+                .addOnFailureListener { call.reject("Achievements unavailable.", "achievement-unavailable") }
+        }
+        PlayGames.getGamesSignInClient(hostActivity).isAuthenticated
+            .addOnSuccessListener { authentication ->
+                if (authentication.isAuthenticated) openList()
+                else PlayGames.getGamesSignInClient(hostActivity).signIn()
+                    .addOnSuccessListener { result ->
+                        if (result.isAuthenticated) openList()
+                        else call.reject("Play Games sign-in cancelled.", "achievement-unavailable")
+                    }
+                    .addOnFailureListener { call.reject("Play Games sign-in unavailable.", "achievement-unavailable") }
+            }
+            .addOnFailureListener { call.reject("Play Games unavailable.", "achievement-unavailable") }
+    }
+
+    @PluginMethod
+    fun achievementStatus(call: PluginCall) {
+        PlayGames.getGamesSignInClient(activity).isAuthenticated
+            .addOnSuccessListener { result ->
+                call.resolve(JSObject().put("available", result.isAuthenticated))
+            }
+            .addOnFailureListener { call.resolve(JSObject().put("available", false)) }
+    }
+
+    @PluginMethod
+    fun submitAchievements(call: PluginCall) {
+        val evidence = call.getArray("unlocked")
+        if (evidence == null || evidence.length() > achievementIds.size) {
+            call.reject("Invalid achievement evidence.", "achievement-invalid")
+            return
+        }
+        val ids = mutableSetOf<String>()
+        for (index in 0 until evidence.length()) {
+            val id = achievementIds[evidence.optString(index)]
+            if (id == null) {
+                call.reject("Unknown achievement.", "achievement-invalid")
+                return
+            }
+            ids.add(id)
+        }
+        val hostActivity = activity
+        PlayGames.getGamesSignInClient(hostActivity).isAuthenticated
+            .addOnSuccessListener { authentication ->
+                if (!authentication.isAuthenticated) {
+                    achievementPlayer = null
+                    reportedAchievements.clear()
+                    call.reject("Play Games unavailable.", "achievement-unavailable")
+                    return@addOnSuccessListener
+                }
+                PlayGames.getPlayersClient(hostActivity).currentPlayer
+                    .addOnSuccessListener { player ->
+                        val account = player.playerId
+                        if (achievementPlayer != account) {
+                            achievementPlayer = account
+                            reportedAchievements.clear()
+                        }
+                        val pending = ids.filterNot { reportedAchievements.contains(it) }
+                        val client = PlayGames.getAchievementsClient(hostActivity)
+                        // Immediate tasks acknowledge server success. Failed/offline requests
+                        // stay retryable through evidence in the game's own save.
+                        val tasks = pending.map { id ->
+                            client.unlockImmediate(id).addOnSuccessListener {
+                                if (achievementPlayer == account) reportedAchievements.add(id)
+                            }
+                        }
+                        Tasks.whenAll(tasks)
+                            .addOnSuccessListener { call.resolve() }
+                            .addOnFailureListener { call.reject("Achievement reporting unavailable.", "achievement-unavailable") }
+                    }
+                    .addOnFailureListener { call.reject("Play Games player unavailable.", "achievement-unavailable") }
+            }
+            .addOnFailureListener { call.reject("Play Games unavailable.", "achievement-unavailable") }
     }
 
     @PluginMethod

@@ -1,3 +1,5 @@
+import { achievementIds } from '../achievements/ids'
+import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { DeepReadonly } from '../core/contracts'
 import { requireRecord } from '../save/graph'
 import type { PreparedSave } from '../save/prepare'
@@ -65,6 +67,7 @@ export interface CanonicalRuntimeState extends CanonicalEventTimeState {
 
 export interface CanonicalRuntimeSessionOptions {
   readonly captureAchievements?: boolean
+  readonly persistAchievements?: boolean
   readonly entitlements: Readonly<DysonEntitlements>
 }
 
@@ -79,16 +82,18 @@ export class CanonicalRuntimeSession
   implements GameStateSession<CanonicalRuntimeState>
 {
   readonly initialState: CanonicalRuntimeState
+  private readonly persistAchievements: boolean
   private readonly hydrated: HydratedGameStateV1
 
   constructor(
     prepared: PreparedSave,
     options: Readonly<CanonicalRuntimeSessionOptions>,
   ) {
+    this.persistAchievements = options.persistAchievements === true
     this.hydrated = hydrateGameState(prepared)
     const source = prepared.copyValidatedState()
     this.initialState = cloneCanonicalRuntimeState({
-      ...(options.captureAchievements ? {achievementEvidence:{unlocked:[],statistics:{},presence:''}} : {}),
+      ...(options.captureAchievements ? {achievementEvidence:{unlocked: this.persistAchievements ? readSavedAchievements(source.idsAchievementEvidence) : [],statistics:{},presence:''}} : {}),
       gameState: this.hydrated.state,
       compatibilityTuning: this.hydrated.compatibilityTuning,
       evaluationSnapshot:
@@ -122,6 +127,10 @@ export class CanonicalRuntimeSession
       candidate.evaluationSnapshot,
     )
     const source = prepared.copyValidatedState()
+    if (this.persistAchievements) {
+      const facts = mergeAchievementFacts(candidate.achievementEvidence, evaluateAchievements(candidate.gameState, false))
+      source.idsAchievementEvidence = readSavedAchievements(facts.unlocked)
+    }
     source.cheater = candidate.storedTimeCheater
     source.debugOptions = candidate.debugOptionsEnabled
     source.debugEverEnabled = candidate.debugEntitlementPurchased
@@ -148,6 +157,7 @@ export function createCanonicalRuntimeSessionFactory(
 ): GameStateSessionFactory<CanonicalRuntimeState> {
   const captured = Object.freeze({
     captureAchievements: options.captureAchievements,
+    persistAchievements: options.persistAchievements,
     entitlements: Object.freeze({ ...options.entitlements }),
   })
   return Object.freeze({
@@ -190,4 +200,11 @@ function extractSelectedSkillPresetSlot(
     )
   }
   return value as CanonicalSkillPresetSlot
+}
+
+/** Optional bounded evidence. Invalid metadata must never prevent loading a save. */
+function readSavedAchievements(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  const allowed = new Set<string>(achievementIds)
+  return [...new Set(value.filter((id): id is string => typeof id === 'string' && allowed.has(id)))].sort()
 }

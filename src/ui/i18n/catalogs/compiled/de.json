@@ -6345,6 +6345,18 @@
       "value": "Sammelkäufe runden"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "Erfolge"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "Erfolge sind nicht verfügbar. Prüfe dein Spielkonto und deine Verbindung und versuche es erneut."
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,
@@ -13668,6 +13680,12 @@
     {
       "type": 0,
       "value": "Version 4.1.7"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "27 Erfolge für Android und iOS hinzugefügt, passend zu Steam. Öffne Erfolge in den Einstellungen, um sie anzusehen. Offline verdiente Erfolge werden gespeichert und beim erneuten Verbinden synchronisiert."
     }
   ],
   "wiki.patch-notes.version-4-1-7.allocation": [

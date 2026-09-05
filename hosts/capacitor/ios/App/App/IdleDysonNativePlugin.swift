@@ -1,6 +1,7 @@
 import Capacitor
 import CryptoKit
 import Foundation
+import GameKit
 import StoreKit
 import UIKit
 
@@ -89,10 +90,13 @@ private final class SendablePluginCall: @unchecked Sendable {
 }
 
 @objc(IdleDysonNativePlugin)
-public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
+public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCenterControllerDelegate {
     public let identifier = "IdleDysonNativePlugin"
     public let jsName = "IdleDysonNative"
     public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "showAchievements", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "achievementStatus", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "submitAchievements", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "metadata", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "currentLifecycle", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "fileExists", returnType: CAPPluginReturnPromise),
@@ -150,6 +154,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
                 queue: .main
             ) { [weak self] _ in self?.publishLifecycle("terminating") },
         ]
+        authenticateGameCenter()
         let storeKit = nativeStore.storeKit
         Task { await storeKit.start() }
     }
@@ -157,6 +162,148 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
     deinit {
         for observer in lifecycleObservers {
             NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+
+    // Mirrors hosts/capacitor/achievement-map.json; account identity stays native.
+    private let achievementIds: [String: String] = [
+        "achievement.first_bot": "ids.first_bot",
+        "achievement.first_assembly_line": "ids.first_assembly_line",
+        "achievement.first_data_center": "ids.first_data_center",
+        "achievement.first_planet": "ids.first_planet",
+        "achievement.first_influence": "ids.first_influence",
+        "achievement.first_infinity_point": "ids.first_infinity_point",
+        "achievement.first_quantum_shard": "ids.first_quantum_shard",
+        "achievement.first_strange_matter": "ids.first_strange_matter",
+        "achievement.first_ai_manager": "ids.first_ai_manager",
+        "achievement.first_server": "ids.first_server",
+        "achievement.secrets_of_universe_maxed": "ids.secrets_maxed",
+        "achievement.divisions_complete": "ids.divisions_complete",
+        "achievement.unlock_terra": "ids.unlock_terra",
+        "achievement.unlock_purity": "ids.unlock_purity",
+        "achievement.unlock_power": "ids.unlock_power",
+        "achievement.unlock_stellar": "ids.unlock_stellar",
+        "achievement.unlock_paragade": "ids.unlock_paragade",
+        "achievement.unlock_avocato": "ids.unlock_avocato",
+        "achievement.counteractions_complete": "ids.all_counteractions",
+        "achievement.speed_upgrades_complete": "ids.all_speed_upgrades",
+        "achievement.translation_upgrades_complete": "ids.all_translation_upgrades",
+        "achievement.simulation_upgrades_complete": "ids.all_simulation_upgrades",
+        "achievement.developer_options": "ids.dev_options",
+        "achievement.avotation_secrets_complete": "ids.easter_secrets",
+        "achievement.avocados_skill": "ids.easter_avocados",
+        "achievement.bots_42qi": "ids.bots_42qi",
+        "achievement.skill_points_42": "ids.skills_assigned",
+    ]
+    private var achievementPresentationCall: CAPPluginCall?
+    private var achievementPlayer: String?
+    private var reportedAchievements = Set<String>()
+
+    private func authenticateGameCenter() {
+        GKLocalPlayer.local.authenticateHandler = { [weak self] controller, _ in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if let controller, let presenter = self.bridge?.viewController,
+                   presenter.presentedViewController == nil {
+                    presenter.present(controller, animated: true)
+                    return
+                }
+                let account = GKLocalPlayer.local.isAuthenticated ? GKLocalPlayer.local.gamePlayerID : nil
+                if self.achievementPlayer != account {
+                    self.achievementPlayer = account
+                    self.reportedAchievements.removeAll()
+                }
+                if let call = self.achievementPresentationCall {
+                    self.achievementPresentationCall = nil
+                    if account != nil { self.presentAchievements(call) }
+                    else { call.reject("Game Center sign-in unavailable.", "achievement-unavailable") }
+                }
+            }
+        }
+    }
+
+    @objc public func showAchievements(_ call: CAPPluginCall) {
+        DispatchQueue.main.async { [self] in
+            if GKLocalPlayer.local.isAuthenticated { presentAchievements(call) }
+            else {
+                guard achievementPresentationCall == nil else {
+                    call.reject("Game Center is already opening.", "achievement-unavailable")
+                    return
+                }
+                achievementPresentationCall = call
+                DispatchQueue.main.asyncAfter(deadline: .now() + 15) { [weak self] in
+                    if self?.achievementPresentationCall === call {
+                        self?.achievementPresentationCall = nil
+                        call.reject("Game Center sign-in unavailable.", "achievement-unavailable")
+                    }
+                }
+                authenticateGameCenter()
+            }
+        }
+    }
+
+    private func presentAchievements(_ call: CAPPluginCall) {
+        guard let presenter = bridge?.viewController, presenter.presentedViewController == nil else {
+            call.reject("Game Center cannot open right now.", "achievement-unavailable")
+            return
+        }
+        let controller = GKGameCenterViewController(state: .achievements)
+        controller.gameCenterDelegate = self
+        presenter.present(controller, animated: true) { call.resolve() }
+    }
+
+    public func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
+        gameCenterViewController.dismiss(animated: true)
+    }
+
+    @objc public func achievementStatus(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve(["available": GKLocalPlayer.local.isAuthenticated])
+        }
+    }
+
+    @objc public func submitAchievements(_ call: CAPPluginCall) {
+        guard let evidence = call.getArray("unlocked", String.self), evidence.count <= achievementIds.count,
+              evidence.allSatisfy({ achievementIds[$0] != nil }) else {
+            call.reject("Invalid achievement evidence.", "achievement-invalid")
+            return
+        }
+        DispatchQueue.main.async { [self] in
+            let player = GKLocalPlayer.local
+            guard player.isAuthenticated else {
+                achievementPlayer = nil
+                reportedAchievements.removeAll()
+                call.reject("Game Center unavailable.", "achievement-unavailable")
+                return
+            }
+            let account = player.gamePlayerID
+            if achievementPlayer != account {
+                achievementPlayer = account
+                reportedAchievements.removeAll()
+            }
+            let pending = Set(evidence.compactMap { achievementIds[$0] }).subtracting(reportedAchievements)
+            if pending.isEmpty { call.resolve(); return }
+            let achievements = pending.map { id in
+                let achievement = GKAchievement(identifier: id)
+                achievement.percentComplete = 100
+                achievement.showsCompletionBanner = true
+                return achievement
+            }
+            GKAchievement.report(achievements) { [weak self] error in
+                DispatchQueue.main.async {
+                    guard error == nil else {
+                        call.reject("Achievement reporting unavailable.", "achievement-unavailable")
+                        return
+                    }
+                    if GKLocalPlayer.local.isAuthenticated,
+                       GKLocalPlayer.local.gamePlayerID == account,
+                       self?.achievementPlayer == account {
+                        self?.reportedAchievements.formUnion(pending)
+                    }
+                    call.resolve()
+                }
+            }
         }
     }
 
