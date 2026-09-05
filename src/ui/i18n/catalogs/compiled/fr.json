@@ -13682,6 +13682,12 @@
       "value": "Version 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Ajout de 27 succès sur Android et iOS, comme sur Steam. Ouvrez Succès dans les paramètres pour les consulter. Les succès obtenus hors ligne sont enregistrés et synchronisés à la reconnexion."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.allocation": [
     {
       "type": 0,

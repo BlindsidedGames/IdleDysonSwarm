@@ -1027,3 +1027,10 @@
     line-height: 1.2;
   }
 }
+
+.settings-surface__achievement-icon {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}

@@ -13682,6 +13682,12 @@
       "value": "Versão 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Adicionadas 27 conquistas no Android e iOS, como no Steam. Abra Conquistas nas Configurações para vê-las. As conquistas obtidas offline são salvas e sincronizadas quando você se reconecta."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.allocation": [
     {
       "type": 0,

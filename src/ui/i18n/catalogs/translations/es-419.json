@@ -1815,6 +1815,7 @@
   "offline-time.app-backgrounded": "La aplicación pasó a segundo plano, procesamiento cancelado",
   "offline-time.error-code": "(Código de error: {code})",
   "wiki.patch-notes.version-4-1-7.terra": "Los planetas comprados ahora cuentan para Lo que sucederá mediante Terra Firma y Terra Irradient, incluso en el cálculo mostrado.",
+  "wiki.patch-notes.version-4-1-7.achievements": "Se agregaron 27 logros en Android e iOS, como en Steam. Abre Logros en Ajustes para verlos. Los logros obtenidos sin conexión se guardan y sincronizan cuando te vuelves a conectar.",
   "wiki.patch-notes.version-4-1-7.allocation": "Se corrigió que tocar la barra de distribución de Bots aplicara la distribución anterior en lugar de la última selección.",
   "wiki.patch-notes.version-4-1-7.offline-errors": "Los fallos del Tiempo sin conexión ahora incluyen códigos de error distintos y un mensaje claro cuando el procesamiento se cancela porque la aplicación pasó a segundo plano.",
   "wiki.patch-notes.version-4-1-7.save-file": "Se agregó Guardar archivo a la exportación de partidas en Android y escritorio, con diálogos nativos de Guardar como en las aplicaciones de Android y escritorio.",

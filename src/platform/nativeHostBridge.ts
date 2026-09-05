@@ -269,6 +269,7 @@ export function createNativeHostEnvironment(
   })
   const releasePlatformServices = Object.freeze({
     hostKind,
+    achievementProvider: bridge.target === 'android' ? 'play-games' : bridge.target === 'ios' ? 'game-center' : undefined,
     showAchievements: bridge.showAchievements?.bind(bridge),
     metadata: new NativePlatformMetadataSource(hostKind, bridge),
     nativeFilesystemMigration: migration,

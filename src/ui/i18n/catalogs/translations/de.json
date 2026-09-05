@@ -1815,6 +1815,7 @@
   "offline-time.app-backgrounded": "App wurde in den Hintergrund versetzt, Verarbeitung abgebrochen",
   "offline-time.error-code": "(Fehlercode: {code})",
   "wiki.patch-notes.version-4-1-7.terra": "Gekaufte Planeten zählen durch Terra Firma und Terra Irradient jetzt für Was kommen wird, auch in der angezeigten Berechnung.",
+  "wiki.patch-notes.version-4-1-7.achievements": "27 Erfolge für Android und iOS hinzugefügt, passend zu Steam. Öffne Erfolge in den Einstellungen, um sie anzusehen. Offline verdiente Erfolge werden gespeichert und beim erneuten Verbinden synchronisiert.",
   "wiki.patch-notes.version-4-1-7.allocation": "Behoben: Beim Tippen auf den Bot-Verteilungsregler wurde die vorherige statt der zuletzt gewählten Verteilung angewendet.",
   "wiki.patch-notes.version-4-1-7.offline-errors": "Fehler bei der Offline-Zeit enthalten jetzt eindeutige Fehlercodes und eine klare Meldung, wenn die Verarbeitung abgebrochen wird, weil die App in den Hintergrund gewechselt ist.",
   "wiki.patch-notes.version-4-1-7.save-file": "Datei speichern wurde zum Speicherexport auf Android und Desktop hinzugefügt, mit nativen Speichern-unter-Dialogen in den Android- und Desktop-Apps.",

@@ -13682,6 +13682,12 @@
       "value": "Version 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Added 27 achievements on Android and iOS, matching Steam. Open Achievements in Settings to view them. Achievements earned offline are saved and synced when you reconnect."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.allocation": [
     {
       "type": 0,

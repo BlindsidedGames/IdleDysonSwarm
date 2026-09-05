@@ -1340,6 +1340,7 @@ export function ReadyDysonSlice({
                 >
                   <SettingsSurface
                   showAchievements={releasePlatformServices?.showAchievements}
+                  achievementProvider={releasePlatformServices?.achievementProvider}
                   resetSave={resetSave}
                   previewImportSaveFile={previewImportSaveFile}
                   previewImportSaveText={previewImportSaveText}

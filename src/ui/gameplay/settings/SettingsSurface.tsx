@@ -51,6 +51,7 @@ import { DiscordIcon } from '../../components/DiscordIcon'
 import { canExportSaveFile } from '../../../platform/saveFileExport'
 
 export interface SettingsSurfaceProps {
+  readonly achievementProvider?: 'play-games' | 'game-center'
   readonly showAchievements?: () => Promise<void>
   readonly saveFileExportAvailable?: boolean
   readonly resetSave: () => Promise<UiRuntimeImportResult>
@@ -139,6 +140,7 @@ type ImportPreviewStatus = 'idle' | 'pending' | 'failed'
  * Presents host settings while delegating save replacement to the runtime.
  */
 export function SettingsSurface({
+  achievementProvider,
   showAchievements,
   resetSave,
   importSaveFile,
@@ -611,7 +613,10 @@ export function SettingsSurface({
                   setAchievementStatus('pending')
                   try { await showAchievements(); setAchievementStatus('idle') }
                   catch { setAchievementStatus('failed') }
-                }}>{intl.formatMessage(messages.achievementsAction)}</button>
+                }}>
+                  {achievementProvider === 'play-games' ? <img className="settings-surface__achievement-icon" src={`${import.meta.env.BASE_URL}platform/play-games-white.png`} alt="" aria-hidden="true" /> : null}
+                  <span>{intl.formatMessage(messages.achievementsAction)}</span>
+                </button>
                 {achievementStatus === 'failed' ? <p role="status">{intl.formatMessage(messages.achievementsUnavailable)}</p> : null}
             </section> : null}
             <div className="settings-surface__column settings-surface__column--primary">

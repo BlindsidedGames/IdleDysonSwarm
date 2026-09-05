@@ -13682,6 +13682,12 @@
       "value": "Versión 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Se agregaron 27 logros en Android e iOS, como en Steam. Abre Logros en Ajustes para verlos. Los logros obtenidos sin conexión se guardan y sincronizan cuando te vuelves a conectar."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.allocation": [
     {
       "type": 0,

@@ -13682,6 +13682,12 @@
       "value": "Version 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "27 Erfolge für Android und iOS hinzugefügt, passend zu Steam. Öffne Erfolge in den Einstellungen, um sie anzusehen. Offline verdiente Erfolge werden gespeichert und beim erneuten Verbinden synchronisiert."
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.allocation": [
     {
       "type": 0,

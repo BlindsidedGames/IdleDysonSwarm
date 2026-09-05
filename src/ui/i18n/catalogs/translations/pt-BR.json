@@ -1815,6 +1815,7 @@
   "offline-time.app-backgrounded": "O aplicativo foi para segundo plano, processamento cancelado",
   "offline-time.error-code": "(Código de erro: {code})",
   "wiki.patch-notes.version-4-1-7.terra": "Planetas comprados agora contam para O Que Está por Vir por meio de Terra Firma e Terra Irradient, inclusive no cálculo exibido.",
+  "wiki.patch-notes.version-4-1-7.achievements": "Adicionadas 27 conquistas no Android e iOS, como no Steam. Abra Conquistas nas Configurações para vê-las. As conquistas obtidas offline são salvas e sincronizadas quando você se reconecta.",
   "wiki.patch-notes.version-4-1-7.allocation": "Corrigido um problema em que tocar na barra de distribuição de Bots aplicava a distribuição anterior em vez da seleção mais recente.",
   "wiki.patch-notes.version-4-1-7.offline-errors": "Falhas no Tempo offline agora incluem códigos de erro distintos e uma mensagem clara quando o processamento é cancelado porque o aplicativo foi para segundo plano.",
   "wiki.patch-notes.version-4-1-7.save-file": "Adicionada a opção Salvar arquivo à exportação de partidas no Android e no desktop, com caixas de diálogo nativas de Salvar como nos aplicativos Android e desktop.",

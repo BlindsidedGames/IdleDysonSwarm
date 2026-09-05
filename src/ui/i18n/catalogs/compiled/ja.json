@@ -13682,6 +13682,12 @@
       "value": "バージョン 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "AndroidとiOSに、Steamと同じ27個の実績を追加しました。設定の「実績」から確認できます。オフラインで獲得した実績は保存され、再接続時に同期されます。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.allocation": [
     {
       "type": 0,

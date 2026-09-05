@@ -13682,6 +13682,12 @@
       "value": "版本 4.1.7"
     }
   ],
+  "wiki.patch-notes.version-4-1-7.achievements": [
+    {
+      "type": 0,
+      "value": "Android 和 iOS 新增 27 项成就，与 Steam 一致。在设置中打开“成就”即可查看。离线获得的成就会保存，并在重新联网后同步。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-7.allocation": [
     {
       "type": 0,

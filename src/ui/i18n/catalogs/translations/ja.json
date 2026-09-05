@@ -1815,6 +1815,7 @@
   "offline-time.app-backgrounded": "アプリがバックグラウンドに移動したため、処理がキャンセルされました",
   "offline-time.error-code": "（エラーコード: {code}）",
   "wiki.patch-notes.version-4-1-7.terra": "Terra Firma と Terra Irradient によって、購入した惑星が 来るべき未来 の効果にカウントされるようになりました。表示される計算にも反映されます。",
+  "wiki.patch-notes.version-4-1-7.achievements": "AndroidとiOSに、Steamと同じ27個の実績を追加しました。設定の「実績」から確認できます。オフラインで獲得した実績は保存され、再接続時に同期されます。",
   "wiki.patch-notes.version-4-1-7.allocation": "ボット配分スライダーのバーをタップすると、最新の選択ではなく前の配分が適用される問題を修正しました。",
   "wiki.patch-notes.version-4-1-7.offline-errors": "オフライン時間の処理失敗時に異なるエラーコードを表示し、アプリがバックグラウンドに移動したため処理がキャンセルされた場合は、明確なメッセージを表示するようになりました。",
   "wiki.patch-notes.version-4-1-7.save-file": "Android とデスクトップのセーブデータ出力に「ファイルを保存」を追加しました。Android アプリとデスクトップアプリでは、システムの「名前を付けて保存」ダイアログを使用します。",

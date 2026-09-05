@@ -607,6 +607,7 @@ test.each(['android','ios'] as const)('exposes %s achievement reporting and Sett
   await bridge.ready()
   const environment = createNativeHostEnvironment(bridge)
   expect(environment.achievements?.persistEvidence).toBe(true)
+  expect(environment.releasePlatformServices.achievementProvider).toBe(target === 'android' ? 'play-games' : 'game-center')
   await environment.achievements?.submit({unlocked:['achievement.first_bot'], statistics:{},presence:''})
   expect(submitAchievements).toHaveBeenCalledWith({unlocked:['achievement.first_bot']})
   await environment.releasePlatformServices.showAchievements?.()
