@@ -1,6 +1,8 @@
 import { defineMessages } from 'react-intl'
 
 export const settingsSurfaceMessages = defineMessages({
+  achievementsAction: { id: 'settings.achievements.action', defaultMessage: 'Achievements', description: 'Opens the native platform achievement list and sign-in when needed.' },
+  achievementsUnavailable: { id: 'settings.achievements.unavailable', defaultMessage: 'Achievements are unavailable. Check your game account and connection, then try again.', description: 'Native achievements could not open or sign-in was cancelled.' },
   languageTitle: {
     id: 'settings.language.title',
     defaultMessage: 'Language',

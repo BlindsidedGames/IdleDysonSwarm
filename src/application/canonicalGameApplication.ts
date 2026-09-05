@@ -1,3 +1,4 @@
+import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
@@ -176,6 +177,7 @@ type CanonicalApplicationCommand =
   | CanonicalInternalCommand
 
 export interface CanonicalGameEngineOptions {
+  readonly retainAchievementEvidence?: boolean
   readonly eventContext: Readonly<CanonicalEventTimeContext>
   readonly infinityMinimumCycleSeconds?: number
   /** Internal observation seam for authoritative active-step consumption. */
@@ -1042,7 +1044,12 @@ export function createCanonicalGameEngineDefinition(
   return {
     schema: CANONICAL_GAME_APPLICATION_SCHEMA,
     cloneState: cloneCanonicalRuntimeState,
-    forkState: (state) => ({ ...state }),
+    forkState: (state) => ({
+      ...state,
+      ...(options.retainAchievementEvidence && state.achievementEvidence !== undefined
+        ? { achievementEvidence: mergeAchievementFacts(state.achievementEvidence, evaluateAchievements(state.gameState, false)) }
+        : {}),
+    }),
     publishImmutableState: true,
     validateState: (state) =>
       validateRuntimeState(state, eventContext),

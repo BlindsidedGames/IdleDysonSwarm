@@ -91,6 +91,7 @@ export interface DiagnosticsExporter {
 }
 
 export interface ReleasePlatformServices {
+  readonly showAchievements?: () => Promise<void>
   readonly hostKind: HostKind
   readonly storeAvailable?: boolean
   readonly storeRestoreAvailable?: boolean

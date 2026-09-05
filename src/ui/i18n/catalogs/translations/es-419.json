@@ -735,6 +735,8 @@
   "research.settings.preset-automation-off": "No",
   "research.settings.purchase-amount": "Cantidad de compra de Investigación",
   "research.settings.rounded-bulk-buy": "Redondear compras en lote",
+  "settings.achievements.action": "Logros",
+  "settings.achievements.unavailable": "Los logros no están disponibles. Revisa tu cuenta de juego y tu conexión e inténtalo de nuevo.",
   "settings.audio.description": "Ajusta la música y los efectos de sonido.",
   "settings.audio.effects-volume": "Volumen de efectos",
   "settings.audio.music-volume": "Volumen de música",

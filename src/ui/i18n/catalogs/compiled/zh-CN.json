@@ -6345,6 +6345,18 @@
       "value": "批量购买取整"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "成就"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "成就暂时不可用。请检查你的游戏账号和网络连接，然后重试。"
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,

@@ -6345,6 +6345,18 @@
       "value": "Округлять массовые покупки"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "Достижения"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "Достижения недоступны. Проверьте игровую учётную запись и подключение, затем повторите попытку."
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,

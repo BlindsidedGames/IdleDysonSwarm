@@ -735,6 +735,8 @@
   "research.settings.preset-automation-off": "オフ",
   "research.settings.purchase-amount": "研究購入数",
   "research.settings.rounded-bulk-buy": "一括購入数を切りのよい数に調整",
+  "settings.achievements.action": "実績",
+  "settings.achievements.unavailable": "実績を表示できません。ゲームアカウントと接続を確認して、もう一度お試しください。",
   "settings.audio.description": "BGMと効果音を調整します。",
   "settings.audio.effects-volume": "効果音音量",
   "settings.audio.music-volume": "音楽音量",

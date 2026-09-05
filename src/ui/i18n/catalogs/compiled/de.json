@@ -6345,6 +6345,18 @@
       "value": "Sammelkäufe runden"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "Erfolge"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "Erfolge sind nicht verfügbar. Prüfe dein Spielkonto und deine Verbindung und versuche es erneut."
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,

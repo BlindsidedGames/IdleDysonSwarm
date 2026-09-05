@@ -735,6 +735,8 @@
   "research.settings.preset-automation-off": "Выкл.",
   "research.settings.purchase-amount": "Количество уровней для покупки",
   "research.settings.rounded-bulk-buy": "Округлять массовые покупки",
+  "settings.achievements.action": "Достижения",
+  "settings.achievements.unavailable": "Достижения недоступны. Проверьте игровую учётную запись и подключение, затем повторите попытку.",
   "settings.audio.description": "Настройте музыку и звуковые эффекты.",
   "settings.audio.effects-volume": "Громкость эффектов",
   "settings.audio.music-volume": "Громкость музыки",

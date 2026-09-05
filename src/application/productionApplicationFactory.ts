@@ -74,8 +74,9 @@ export function createProductionCanonicalApplicationFactory(
       sessionFactory: createCanonicalRuntimeSessionFactory({
         entitlements,
         captureAchievements: options.achievements !== undefined,
+        persistAchievements: options.achievements?.persistEvidence === true,
       }),
-      engine: { eventContext },
+      engine: { eventContext, retainAchievementEvidence: options.achievements?.persistEvidence === true },
       storedTimeJobRunner: new BrowserStoredTimeJobRunner(),
       createTransitionalRecoveryBase: options.createFirstRunSave,
     })

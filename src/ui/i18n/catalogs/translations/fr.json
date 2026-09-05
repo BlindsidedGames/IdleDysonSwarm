@@ -735,6 +735,8 @@
   "research.settings.preset-automation-off": "Désactivé",
   "research.settings.purchase-amount": "Quantité de recherches à acheter",
   "research.settings.rounded-bulk-buy": "Arrondir les achats groupés",
+  "settings.achievements.action": "Succès",
+  "settings.achievements.unavailable": "Les succès sont indisponibles. Vérifiez votre compte de jeu et votre connexion, puis réessayez.",
   "settings.audio.description": "Réglez la musique et les effets sonores.",
   "settings.audio.effects-volume": "Volume des effets",
   "settings.audio.music-volume": "Volume de la musique",

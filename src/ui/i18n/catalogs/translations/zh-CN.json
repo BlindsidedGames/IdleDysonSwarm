@@ -735,6 +735,8 @@
   "research.settings.preset-automation-off": "关闭",
   "research.settings.purchase-amount": "研究购买数量",
   "research.settings.rounded-bulk-buy": "批量购买取整",
+  "settings.achievements.action": "成就",
+  "settings.achievements.unavailable": "成就暂时不可用。请检查你的游戏账号和网络连接，然后重试。",
   "settings.audio.description": "调整音乐与音效。",
   "settings.audio.effects-volume": "音效音量",
   "settings.audio.music-volume": "音乐音量",

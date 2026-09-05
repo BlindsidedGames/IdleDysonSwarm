@@ -2967,6 +2967,14 @@
     "defaultMessage": "Round bulk purchases",
     "description": "Unity Research rounded-bulk setting."
   },
+  "settings.achievements.action": {
+    "defaultMessage": "Achievements",
+    "description": "Opens the native platform achievement list and sign-in when needed."
+  },
+  "settings.achievements.unavailable": {
+    "defaultMessage": "Achievements are unavailable. Check your game account and connection, then try again.",
+    "description": "Native achievements could not open or sign-in was cancelled."
+  },
   "settings.audio.description": {
     "defaultMessage": "Adjust music and sound effects.",
     "description": "Explains the available audio controls."

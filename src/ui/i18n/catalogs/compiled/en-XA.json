@@ -12281,6 +12281,34 @@
       "value": "]"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƈħīḗḗṽḗḗḿḗḗƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƈħīḗḗṽḗḗḿḗḗƞŧş ȧȧřḗḗ ŭŭƞȧȧṽȧȧīŀȧȧƀŀḗḗ. Ƈħḗḗƈķ ẏǿǿŭŭř ɠȧȧḿḗḗ ȧȧƈƈǿǿŭŭƞŧ ȧȧƞḓ ƈǿǿƞƞḗḗƈŧīǿǿƞ, ŧħḗḗƞ ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,

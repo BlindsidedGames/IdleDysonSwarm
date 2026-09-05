@@ -1297,3 +1297,18 @@ describe('canonical game application engine', () => {
     expect(state).toEqual(entangled)
   })
 })
+
+
+test('mobile candidates retain a proven milestone before a later command removes its condition', () => {
+  const state = runtime()
+  state.achievementEvidence = {unlocked:[], statistics:{}, presence:''}
+  state.gameState.dyson.bots = 4.2e19
+  const definition = createCanonicalGameEngineDefinition({eventContext: context(), retainAchievementEvidence:true})
+  const candidate = definition.forkState!(state)
+  expect(candidate.achievementEvidence?.unlocked).toContain('achievement.bots_42qi')
+  // A command can reduce progress after the transaction forks. Its evidence
+  // must survive, while a rejected candidate cannot mutate the source.
+  expect(state.achievementEvidence.unlocked).toEqual([])
+  const reduced = {...candidate, gameState:{...candidate.gameState, dyson:{...candidate.gameState.dyson,bots:0}}}
+  expect(definition.forkState!(reduced).achievementEvidence?.unlocked).toContain('achievement.bots_42qi')
+})

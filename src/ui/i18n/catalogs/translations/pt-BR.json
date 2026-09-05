@@ -735,6 +735,8 @@
   "research.settings.preset-automation-off": "Desativado",
   "research.settings.purchase-amount": "Quantidade de pesquisas por compra",
   "research.settings.rounded-bulk-buy": "Arredondar compras em lote",
+  "settings.achievements.action": "Conquistas",
+  "settings.achievements.unavailable": "As conquistas estão indisponíveis. Verifique sua conta de jogo e sua conexão e tente novamente.",
   "settings.audio.description": "Ajuste a música e os efeitos sonoros.",
   "settings.audio.effects-volume": "Volume dos efeitos",
   "settings.audio.music-volume": "Volume da música",

@@ -6345,6 +6345,18 @@
       "value": "一括購入数を切りのよい数に調整"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "実績"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "実績を表示できません。ゲームアカウントと接続を確認して、もう一度お試しください。"
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,

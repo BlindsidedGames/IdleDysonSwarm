@@ -6345,6 +6345,18 @@
       "value": "Arredondar compras em lote"
     }
   ],
+  "settings.achievements.action": [
+    {
+      "type": 0,
+      "value": "Conquistas"
+    }
+  ],
+  "settings.achievements.unavailable": [
+    {
+      "type": 0,
+      "value": "As conquistas estão indisponíveis. Verifique sua conta de jogo e sua conexão e tente novamente."
+    }
+  ],
   "settings.audio.description": [
     {
       "type": 0,

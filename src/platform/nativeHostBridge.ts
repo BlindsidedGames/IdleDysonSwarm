@@ -1,3 +1,4 @@
+import { MobileAchievementPublication, type MobileAchievementPlugin } from '../achievements/mobilePublication'
 import type { PortableCloud } from './portableCloud'
 import type { AchievementPublication } from '../achievements/contracts'
 import {
@@ -54,6 +55,7 @@ export interface NativeUnitySaveCandidate {
 }
 
 export interface NativeHostBridgeApi {
+  readonly showAchievements?: () => Promise<void>
   readonly exportSaveFile?: (request: SaveFileExportRequest) => Promise<SaveFileExportResult>
   readonly target: Exclude<RuntimeTarget, 'browser'>
   readonly achievements?: AchievementPublication
@@ -113,7 +115,8 @@ export interface NativeSystemInsets {
   readonly left: number
 }
 
-export interface CapacitorNativeHostPlugin {
+export interface CapacitorNativeHostPlugin extends Partial<MobileAchievementPlugin> {
+  showAchievements?(): Promise<void>
   exportSaveFile(request: SaveFileExportRequest): Promise<{ result: SaveFileExportResult }>
   fileExists(request: { relativePath: string }): Promise<{ exists: boolean }>
   readText(request: { relativePath: string }): Promise<{ text: string }>
@@ -266,6 +269,7 @@ export function createNativeHostEnvironment(
   })
   const releasePlatformServices = Object.freeze({
     hostKind,
+    showAchievements: bridge.showAchievements?.bind(bridge),
     metadata: new NativePlatformMetadataSource(hostKind, bridge),
     nativeFilesystemMigration: migration,
     entitlements,
@@ -277,7 +281,7 @@ export function createNativeHostEnvironment(
   return Object.freeze({
     target: bridge.target,
     ...(bridge.target === 'electron' && bridge.cloud !== undefined ? { cloud: bridge.cloud } : {}),
-    ...(bridge.target === 'electron' && bridge.achievements !== undefined ? { achievements: bridge.achievements } : {}),
+    ...(bridge.achievements !== undefined ? { achievements: bridge.achievements } : {}),
     files: bridge,
     exportSaveFile: bridge.exportSaveFile?.bind(bridge),
     migration,
@@ -385,6 +389,8 @@ function normalizeHostOwnership(
 }
 
 export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
+  readonly showAchievements?: () => Promise<void>
+  readonly achievements?: MobileAchievementPublication
   readonly target: 'android' | 'ios'
   private readonly plugin: CapacitorNativeHostPlugin
   // Stay conservatively suspended until a subscribed event or the reconciled
@@ -401,6 +407,10 @@ export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
   ) {
     this.target = target
     this.plugin = plugin
+    this.showAchievements = plugin.showAchievements?.bind(plugin)
+    if (plugin.achievementStatus && plugin.submitAchievements) {
+      this.achievements = new MobileAchievementPublication(plugin as MobileAchievementPlugin)
+    }
     this.lifecycleReady = this.initializeLifecycle()
   }
 
@@ -491,6 +501,7 @@ export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
   private publishReconciledLifecycle(phase: LifecyclePhase): void {
     if (phase === this.phase) return
     this.phase = phase
+    if (phase === 'active') void this.achievements?.flush().catch(() => undefined)
     for (const listener of [...this.lifecycleListeners]) {
       try {
         listener(phase)

@@ -1339,6 +1339,7 @@ export function ReadyDysonSlice({
                   fallback={<LazySurfacePending />}
                 >
                   <SettingsSurface
+                  showAchievements={releasePlatformServices?.showAchievements}
                   resetSave={resetSave}
                   previewImportSaveFile={previewImportSaveFile}
                   previewImportSaveText={previewImportSaveText}
