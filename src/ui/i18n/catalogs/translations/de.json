@@ -1810,6 +1810,7 @@
   "dyson.facilities.details.purchased-building-scaling": "Skalierung gekaufter Gebäude",
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% Produktion pro gekauftem Gebäude über {threshold}.",
   "wiki.patch-notes.version-4-1-7": "Version 4.1.7",
+  "wiki.patch-notes.version-4-1-8": "Version 4.1.8",
   "wiki.patch-notes.version-4-1-7.rounding": "Die Bezeichnung Sammelkäufe runden wurde in den Bot- und Forschungseinstellungen wiederhergestellt.",
   "wiki.patch-notes.version-4-1-7.scaling": "Gebäudedetails unterscheiden jetzt die Skalierung gekaufter Gebäude vom zugewiesenen Skill Produktionsskalierung und zeigen den aktuellen Bonusprozentsatz und die Kaufschwelle an.",
   "offline-time.app-backgrounded": "App wurde in den Hintergrund versetzt, Verarbeitung abgebrochen",

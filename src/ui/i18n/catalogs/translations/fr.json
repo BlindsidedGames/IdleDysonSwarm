@@ -1810,6 +1810,7 @@
   "dyson.facilities.details.purchased-building-scaling": "Progression des bâtiments achetés",
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% de production par bâtiment acheté au-delà de {threshold}.",
   "wiki.patch-notes.version-4-1-7": "Version 4.1.7",
+  "wiki.patch-notes.version-4-1-8": "Version 4.1.8",
   "wiki.patch-notes.version-4-1-7.rounding": "Rétablissement du libellé Arrondir les achats groupés dans les paramètres des Bots et de la Recherche.",
   "wiki.patch-notes.version-4-1-7.scaling": "Les détails des bâtiments distinguent désormais la progression des bâtiments achetés de la compétence Montée en puissance de la production attribuée, et affichent le pourcentage du bonus et le seuil d’achat actuels.",
   "offline-time.app-backgrounded": "L’application est passée en arrière-plan, traitement annulé",

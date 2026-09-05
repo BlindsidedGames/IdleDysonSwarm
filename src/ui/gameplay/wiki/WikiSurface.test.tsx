@@ -16,7 +16,7 @@ const progression = Object.freeze({
 })
 
 describe('Wiki patch-note content', () => {
-  test('shows 4.1.7 first and retains the 4.1.6 notes', () => {
+  test('reserves an empty 4.1.8 section and retains the previous release notes', () => {
     render(
       <IntlProvider locale="en" messages={{}} onError={() => undefined}>
         <WikiSurface
@@ -27,8 +27,11 @@ describe('Wiki patch-note content', () => {
       </IntlProvider>,
     )
 
+    const upcoming = screen.getByRole('heading', { name: 'Version 4.1.8' }).closest('section')!
+    expect(within(upcoming).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
+    expect(within(upcoming).queryAllByRole('listitem')).toHaveLength(0)
     const latest = screen.getByRole('heading', { name: 'Version 4.1.7' }).closest('section')!
-    expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
+    expect(within(latest).getByRole('heading', { name: 'Older' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       'Added 27 achievements on Android and iOS, matching Steam. Open Achievements in Settings to view them. Achievements earned offline are saved and synced when you reconnect.',
       'Restored the Round bulk purchases wording in Bots and Research settings.',

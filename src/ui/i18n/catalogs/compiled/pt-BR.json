@@ -13846,6 +13846,12 @@
       "value": "Novas partidas e reinícios de Quantum agora usam 100% de trabalhadores por padrão. As predefinições de habilidades de novas partidas também começam com 100% de trabalhadores."
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Versão 4.1.8"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
