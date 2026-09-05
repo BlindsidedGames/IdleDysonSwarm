@@ -615,6 +615,7 @@ export function SettingsSurface({
                   catch { setAchievementStatus('failed') }
                 }}>
                   {achievementProvider === 'play-games' ? <img className="settings-surface__achievement-icon" src={`${import.meta.env.BASE_URL}platform/play-games-white.png`} alt="" aria-hidden="true" /> : null}
+                  {achievementProvider === 'game-center' ? <img className="settings-surface__achievement-icon" src={`${import.meta.env.BASE_URL}platform/game-center-white.svg`} alt="" aria-hidden="true" /> : null}
                   <span>{intl.formatMessage(messages.achievementsAction)}</span>
                 </button>
                 {achievementStatus === 'failed' ? <p role="status">{intl.formatMessage(messages.achievementsUnavailable)}</p> : null}

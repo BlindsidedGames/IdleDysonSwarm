@@ -8,6 +8,7 @@
   "scripts": {
     "sync": "capacitor sync",
     "sync:android": "capacitor sync android",
-    "sync:ios": "capacitor sync ios"
+    "sync:ios": "capacitor sync ios",
+    "capacitor:sync:after": "node sync-platform-artwork.mjs"
   }
 }
