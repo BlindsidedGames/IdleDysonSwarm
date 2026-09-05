@@ -1,0 +1,218 @@
+[
+  {
+    "id": "FIRST_BOT",
+    "title": "Hello, World!",
+    "group": "First milestones",
+    "note": "Approved example using the actual in-game symbol.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_ASSEMBLY_LINE",
+    "title": "Assembly Required",
+    "group": "First milestones",
+    "note": "Uses the existing in-game assemblyLineTree.webp silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_AI_MANAGER",
+    "title": "AI Assisted",
+    "group": "First milestones",
+    "note": "Uses the existing in-game aiManagerTree.webp silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_SERVER",
+    "title": "Server Room",
+    "group": "First milestones",
+    "note": "Uses the existing in-game serverTree.webp silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_DATA_CENTER",
+    "title": "Data Driven",
+    "group": "First milestones",
+    "note": "Uses the existing in-game dataCenterTree.webp silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_PLANET",
+    "title": "Planetary Expansion",
+    "group": "First milestones",
+    "note": "Approved planet drawing; rear ring is occluded by the globe.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_INFLUENCE",
+    "title": "Influential",
+    "group": "First milestones",
+    "note": "Uses the existing in-game symbol-influence.png silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_INFINITY_POINT",
+    "title": "Infinity and Beyond",
+    "group": "First milestones",
+    "note": "Approved example using the actual in-game symbol.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_QUANTUM_SHARD",
+    "title": "Quantum Leap",
+    "group": "First milestones",
+    "note": "Uses the existing in-game quantum-shards.png silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "FIRST_STRANGE_MATTER",
+    "title": "Strange New Worlds",
+    "group": "Progression",
+    "note": "Uses the existing in-game symbol-strange-matter.png silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "SECRETS_MAXED",
+    "title": "Master of Secrets",
+    "group": "Progression",
+    "note": "Redrawn lock motif from the original, with uniform geometry.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "DIVISIONS_COMPLETE",
+    "title": "Division Master",
+    "group": "Progression",
+    "note": "Original completed-grid motif, with consistent spacing and a legible check.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "UNLOCK_TERRA",
+    "title": "Terrific",
+    "group": "Quantum",
+    "note": "Uses the existing in-game terraFirma.webp silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "UNLOCK_PURITY",
+    "title": "Pureness",
+    "group": "Quantum",
+    "note": "Original purity droplet motif, redrawn with a single clean highlight.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "UNLOCK_POWER",
+    "title": "Unlimited Power",
+    "group": "Quantum",
+    "note": "Original battery-and-lightning motif with uniform rounded edges.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "UNLOCK_STELLAR",
+    "title": "Stellar Job",
+    "group": "Quantum",
+    "note": "Retains the stellar star motif; removes the ambiguous orbit crossing.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "UNLOCK_PARAGADE",
+    "title": "Paragon of Quantum",
+    "group": "Quantum",
+    "note": "Original crown motif, with balanced points and a simple inset diamond.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "UNLOCK_AVOCATO",
+    "title": "Avocato Unlocked",
+    "group": "Quantum",
+    "note": "Uses the existing in-game avocados.webp silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "ALL_COUNTERACTIONS",
+    "title": "Crisis Averted",
+    "group": "Simulation",
+    "note": "Original shield theme with a completion check and three marks for the three counteractions.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "ALL_SPEED_UPGRADES",
+    "title": "Maximum Speed",
+    "group": "Simulation",
+    "note": "Original fast-forward motif scaled to match the set.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "ALL_TRANSLATION_UPGRADES",
+    "title": "Lost in Translation",
+    "group": "Simulation",
+    "note": "Original paired speech bubbles and exchange arrows, redrawn with clear separation.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "ALL_SIMULATION_UPGRADES",
+    "title": "Simulation Complete",
+    "group": "Simulation",
+    "note": "The in-game Simulations headset plus a completion mark.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "DEV_OPTIONS",
+    "title": "Developer Mode",
+    "group": "Special",
+    "note": "Uses the existing in-game nav-debug.png silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "EASTER_SECRETS",
+    "title": "Secret Hunter",
+    "group": "Special",
+    "note": "Original secret-button magnifier, with consistent stroke widths.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "EASTER_AVOCADOS",
+    "title": "Avocados!",
+    "group": "Special",
+    "note": "The actual Avocados skill artwork, with skill-tree nodes to distinguish it from unlocking Avocato.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "BOTS_42QI",
+    "title": "The Answer",
+    "group": "Special",
+    "note": "A swarm assembled from the real game bot silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  },
+  {
+    "id": "SKILLS_ASSIGNED",
+    "title": "Point Blank",
+    "group": "Special",
+    "note": "Uses the existing in-game nav-skills.png silhouette.",
+    "background": "#10101A",
+    "foreground": "#C9A5F5"
+  }
+]
