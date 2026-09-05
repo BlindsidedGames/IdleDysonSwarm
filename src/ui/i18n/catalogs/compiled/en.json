@@ -5654,7 +5654,7 @@
   "reality.upgrades.speed8.description": [
     {
       "type": 0,
-      "value": "10% ▸ 0% - Comprehention. Gain 1 skill point."
+      "value": "10% ▸ 0% - Comprehension. Gain 1 skill point."
     }
   ],
   "reality.upgrades.speed8.title": [
@@ -5940,21 +5940,107 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "Increases Panel Lifetime by "
+      "value": "Panel Lifetime from this upgrade: "
     },
     {
       "type": 8,
       "value": "value",
       "children": [
         {
+          "type": 0,
+          "value": "+"
+        },
+        {
           "type": 1,
-          "value": "seconds"
+          "value": "current"
         },
         {
           "type": 0,
           "value": "s"
         }
       ]
+    }
+  ],
+  "research.card.lifetime-projected": [
+    {
+      "type": 0,
+      "value": "Panel Lifetime from this upgrade: "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    }
+  ],
+  "research.card.lifetime-projected-accessible": [
+    {
+      "type": 0,
+      "value": "Panel Lifetime from this upgrade: "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " seconds, increasing to "
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": " seconds."
     }
   ],
   "research.card.purchase-boost": [
@@ -6877,6 +6963,12 @@
     {
       "type": 0,
       "value": " ms"
+    }
+  ],
+  "settings.processing.restore-default": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "settings.processing.title": [
@@ -9684,7 +9776,7 @@
   "skills.node.regulatedAcademia.description": [
     {
       "type": 0,
-      "value": "You find a fragment of another universe. You use this knowledge to improve your Bots, I wonder what other parts of this universe you can find?"
+      "value": "You find a fragment of another universe. Its knowledge improves your Cash and Science research. What other discoveries might this universe hold?"
     }
   ],
   "skills.node.regulatedAcademia.name": [
@@ -12740,6 +12832,18 @@
       "value": "Breaking reality"
     }
   ],
+  "wiki.infinity.recommendation": [
+    {
+      "type": 0,
+      "value": "With Auto Infinity off, Recommended shows the best observed IP per minute in your current run and the IP reward at that point. Similar rates favor the lower reward. With Auto Infinity on, it shows your saved manual-run recommendation. It is guidance, not a guarantee or an automatically applied target: enter your chosen target yourself. Revisit it as your production changes."
+    }
+  ],
+  "wiki.infinity.recommendation-title": [
+    {
+      "type": 0,
+      "value": "Understanding Recommended"
+    }
+  ],
   "wiki.infinity.scaling": [
     {
       "type": 0,
@@ -14044,6 +14148,22 @@
       "value": "Anomaly"
     }
   ],
+  "wiki.reality.city-booster": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "City Booster"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " makes each city production cycle create 10 Factories instead of 1 after Engineering is completed. It does not increase the 5 Workers produced per cycle."
+    }
+  ],
   "wiki.reality.countermeasures": [
     {
       "type": 8,
@@ -14204,6 +14324,28 @@
     {
       "type": 0,
       "value": "The Reality layer"
+    }
+  ],
+  "wiki.reality.simulation-upgrades": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Log10 Workers"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " speeds up workers’ Housing production by 1 + log10(workers). For example, 100 workers give a 3× multiplier, while 1,000 give 4×. It does not directly create more workers."
+    }
+  ],
+  "wiki.reality.simulation-upgrades-title": [
+    {
+      "type": 0,
+      "value": "Simulation upgrades"
     }
   ],
   "wiki.region": [
@@ -14392,6 +14534,18 @@
     {
       "type": 0,
       "value": "Auto-assign and presets"
+    }
+  ],
+  "wiki.skills.badges": [
+    {
+      "type": 0,
+      "value": "Bottom right: Skill Point cost; its badge turns green when assigned. Top right: completed/required prerequisites, shown for unassigned skills with multiple requirements. Bottom left: a + means the skill is included in the current auto-assignment queue, not that it is already assigned."
+    }
+  ],
+  "wiki.skills.badges-title": [
+    {
+      "type": 0,
+      "value": "Node badges"
     }
   ],
   "wiki.skills.goal-1": [
@@ -14614,6 +14768,18 @@
       "value": "Goals"
     }
   ],
+  "wiki.skills.legend": [
+    {
+      "type": 0,
+      "value": "Arrows point from a prerequisite to the skill that needs it. A dashed connection means the prerequisite is not assigned; a solid connection means it is assigned. Selecting a skill highlights its incoming connections."
+    }
+  ],
+  "wiki.skills.legend-title": [
+    {
+      "type": 0,
+      "value": "Skill tree legend"
+    }
+  ],
   "wiki.skills.overview": [
     {
       "type": 8,
@@ -14690,6 +14856,18 @@
     {
       "type": 0,
       "value": "How skills work"
+    }
+  ],
+  "wiki.skills.preset-safety": [
+    {
+      "type": 0,
+      "value": "Skills enter the auto-assignment queue in the order you add them. Check Included in Preset in a skill’s details to change its membership. Turn off Allow automatic assignment of non-refundable skills in Skill settings if you want to avoid committing points to those nodes automatically. This does not prevent manual purchases or refund already assigned skills."
+    }
+  ],
+  "wiki.skills.preset-safety-title": [
+    {
+      "type": 0,
+      "value": "Planning a preset"
     }
   ],
   "wiki.title": [

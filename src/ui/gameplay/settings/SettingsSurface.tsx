@@ -6,6 +6,7 @@ import {
 } from 'react'
 import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
+import { DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS } from '../../runtime/activeTimeDriver'
 import { useIntl } from 'react-intl'
 import type {
   UiRuntimeDevelopmentControls,
@@ -162,7 +163,7 @@ export function SettingsSurface({
   bottomNavigationIncludeText = false,
   onBottomNavigationIncludeTextChange = () => undefined,
   audio,
-  processingIntervalMilliseconds = 33,
+  processingIntervalMilliseconds = DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS,
   processingIntervalAvailable = true,
   onProcessingIntervalChange = () => undefined,
   openExternalUrl = async () => undefined,
@@ -687,7 +688,7 @@ export function SettingsSurface({
                   <h2>{intl.formatMessage(messages.processingTitle)}</h2>
                   <p>{intl.formatMessage(messages.processingDescription)}</p>
                 </div>
-                <label className="settings-surface__processing-control">
+                <div className="settings-surface__processing-control">
                   <span className="settings-surface__processing-label">
                     {intl.formatMessage(messages.processingInterval)}
                   </span>
@@ -738,7 +739,19 @@ export function SettingsSurface({
                       commitProcessingInterval()
                     }}
                   />
-                </label>
+                  <button
+                    type="button"
+                    className="settings-surface__processing-default"
+                    disabled={!processingIntervalAvailable}
+                    onClick={() => {
+                      processingIntervalInteractionRef.current = false
+                      previewProcessingInterval(DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS)
+                      commitProcessingInterval()
+                    }}
+                  >
+                    {intl.formatMessage(messages.restoreProcessingDefault)}
+                  </button>
+                </div>
               </section>
             </div>
           </>

@@ -5940,21 +5940,107 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "面板寿命增加 "
+      "value": "此升级提供的面板寿命："
     },
     {
       "type": 8,
       "value": "value",
       "children": [
         {
+          "type": 0,
+          "value": "+"
+        },
+        {
           "type": 1,
-          "value": "seconds"
+          "value": "current"
         },
         {
           "type": 0,
-          "value": " 秒"
+          "value": "秒"
         }
       ]
+    }
+  ],
+  "research.card.lifetime-projected": [
+    {
+      "type": 0,
+      "value": "此升级提供的面板寿命："
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "秒"
+        }
+      ]
+    }
+  ],
+  "research.card.lifetime-projected-accessible": [
+    {
+      "type": 0,
+      "value": "此升级提供的面板寿命："
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "秒，将提升至"
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": "秒。"
     }
   ],
   "research.card.purchase-boost": [
@@ -6877,6 +6963,12 @@
     {
       "type": 0,
       "value": " 毫秒"
+    }
+  ],
+  "settings.processing.restore-default": [
+    {
+      "type": 0,
+      "value": "默认"
     }
   ],
   "settings.processing.title": [
@@ -9684,7 +9776,7 @@
   "skills.node.regulatedAcademia.description": [
     {
       "type": 0,
-      "value": "你发现了另一个宇宙的碎片，并利用其中的知识改进机器人。不知还能找到这个宇宙的哪些部分？"
+      "value": "你发现了另一个宇宙的碎片。其中的知识改进了你的现金与科学研究。这个宇宙还藏着哪些发现？"
     }
   ],
   "skills.node.regulatedAcademia.name": [
@@ -12740,6 +12832,18 @@
       "value": "突破现实"
     }
   ],
+  "wiki.infinity.recommendation": [
+    {
+      "type": 0,
+      "value": "关闭自动无限时，推荐值显示本轮观察到的最佳每分钟无限点数，以及当时的无限点数奖励。速率相近时，优先选择较低的奖励值。开启自动无限时，显示的是已保存的手动轮次推荐值。这只是参考，不保证收益，也不会自动设置目标：请自行输入目标值，并在产量变化时重新评估。"
+    }
+  ],
+  "wiki.infinity.recommendation-title": [
+    {
+      "type": 0,
+      "value": "理解推荐值"
+    }
+  ],
   "wiki.infinity.scaling": [
     {
       "type": 0,
@@ -14044,6 +14148,22 @@
       "value": "异常体"
     }
   ],
+  "wiki.reality.city-booster": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "城市增幅"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "在完成工程学后，使城市每个生产周期产出的工厂从1座增加到10座，但不会增加每周期产出的5名工人。"
+    }
+  ],
   "wiki.reality.countermeasures": [
     {
       "type": 8,
@@ -14204,6 +14324,28 @@
     {
       "type": 0,
       "value": "现实层级"
+    }
+  ],
+  "wiki.reality.simulation-upgrades": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "工人 Log10 增幅"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "将工人生产住房的速度乘以1 + log10(工人数)。例如，100名工人提供3倍倍率，1,000名工人提供4倍倍率。它不会直接增加工人数。"
+    }
+  ],
+  "wiki.reality.simulation-upgrades-title": [
+    {
+      "type": 0,
+      "value": "模拟升级"
     }
   ],
   "wiki.region": [
@@ -14392,6 +14534,18 @@
     {
       "type": 0,
       "value": "自动分配与预设"
+    }
+  ],
+  "wiki.skills.badges": [
+    {
+      "type": 0,
+      "value": "右下角：技能点消耗，分配后标记变绿。右上角：已满足/所需前置条件数，仅显示在有多个前置条件的未分配技能上。左下角：+表示技能已加入当前自动分配队列，并不表示已经分配。"
+    }
+  ],
+  "wiki.skills.badges-title": [
+    {
+      "type": 0,
+      "value": "节点标记"
     }
   ],
   "wiki.skills.goal-1": [
@@ -14614,6 +14768,18 @@
       "value": "目标"
     }
   ],
+  "wiki.skills.legend": [
+    {
+      "type": 0,
+      "value": "箭头从前置技能指向需要它的技能。虚线表示前置技能尚未分配；实线表示已经分配。选择一个技能会高亮指向它的连线。"
+    }
+  ],
+  "wiki.skills.legend-title": [
+    {
+      "type": 0,
+      "value": "技能树图例"
+    }
+  ],
   "wiki.skills.overview": [
     {
       "type": 8,
@@ -14690,6 +14856,18 @@
     {
       "type": 0,
       "value": "技能运作方式"
+    }
+  ],
+  "wiki.skills.preset-safety": [
+    {
+      "type": 0,
+      "value": "技能按照添加顺序进入自动分配队列。可在技能详情中通过预设包含选项决定是否将其纳入预设。如果不想自动将点数投入不可返还的节点，请在技能设置中关闭“允许自动分配无法返还技能点的技能”。这不会阻止手动购买，也不会返还已分配技能的点数。"
+    }
+  ],
+  "wiki.skills.preset-safety-title": [
+    {
+      "type": 0,
+      "value": "规划预设"
     }
   ],
   "wiki.title": [

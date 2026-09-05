@@ -54,3 +54,33 @@ test('write failure shows failure and keeps Copy String available', async () => 
   expect(await screen.findByText('The save could not be exported. Please try again.')).toBeTruthy()
   expect((screen.getByRole('button', {name: 'Copy String'}) as HTMLButtonElement).disabled).toBe(false)
 })
+
+test('restoring the default wins over a slider update still being saved', async () => {
+  let finishSlider!: () => void
+  const change = vi.fn()
+    .mockImplementationOnce(() => new Promise<void>(resolve => { finishSlider = resolve }))
+    .mockResolvedValue(undefined)
+  const unused = vi.fn()
+  render(<IntlProvider locale="en" messages={{}}>
+    <LocalePreferenceContext.Provider value={{ locale: 'en', preference: 'en', setPreference: unused }}>
+      <SettingsSurface
+        resetSave={unused} importSaveFile={unused} importSaveText={unused}
+        previewImportSaveFile={unused} previewImportSaveText={unused}
+        readSaveExport={unused} downloadSaveText={unused} copySaveText={unused}
+        processingIntervalMilliseconds={100} onProcessingIntervalChange={change}
+      />
+    </LocalePreferenceContext.Provider>
+  </IntlProvider>)
+  const slider = screen.getByRole('slider', { name: 'Update interval' }) as HTMLInputElement
+  fireEvent.pointerDown(slider)
+  fireEvent.change(slider, { target: { value: '150' } })
+  fireEvent.pointerUp(slider)
+  expect(change).toHaveBeenCalledWith(150)
+  fireEvent.click(screen.getByRole('button', { name: 'Default' }))
+  expect(slider.value).toBe('33')
+  expect(change).toHaveBeenCalledTimes(1)
+  finishSlider()
+  await waitFor(() => expect(change).toHaveBeenLastCalledWith(33))
+  expect(change).toHaveBeenCalledTimes(2)
+  expect(slider.value).toBe('33')
+})

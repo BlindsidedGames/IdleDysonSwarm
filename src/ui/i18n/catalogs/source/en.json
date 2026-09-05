@@ -2656,7 +2656,7 @@
     "description": "Unity Reality upgrade title."
   },
   "reality.upgrades.speed8.description": {
-    "defaultMessage": "10% ▸ 0% - Comprehention. Gain 1 skill point.",
+    "defaultMessage": "10% ▸ 0% - Comprehension. Gain 1 skill point.",
     "description": "Unity Reality upgrade description."
   },
   "reality.upgrades.speed8.title": {
@@ -2768,8 +2768,16 @@
     "description": "Accessible text for a Research boost changing after purchase."
   },
   "research.card.lifetime-effect": {
-    "defaultMessage": "Increases Panel Lifetime by <value>{seconds}s</value>",
-    "description": "Effect line for a Unity Panel Lifetime upgrade."
+    "defaultMessage": "Panel Lifetime from this upgrade: <value>+{current}s</value>",
+    "description": "Current lifetime contribution from this research card only, excluding other upgrades and skills."
+  },
+  "research.card.lifetime-projected": {
+    "defaultMessage": "Panel Lifetime from this upgrade: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
+    "description": "Current and projected lifetime contribution from this research card only for the quoted purchase."
+  },
+  "research.card.lifetime-projected-accessible": {
+    "defaultMessage": "Panel Lifetime from this upgrade: {current} seconds, increasing to {projected} seconds.",
+    "description": "Accessible current and projected lifetime contribution from this research card only."
   },
   "research.card.purchase-boost": {
     "defaultMessage": "Purchase for a boost! (<value>{perLevel}%</value> per level)",
@@ -3266,6 +3274,10 @@
   "settings.processing.interval-value": {
     "defaultMessage": "{milliseconds} ms",
     "description": "Current active game update interval."
+  },
+  "settings.processing.restore-default": {
+    "defaultMessage": "Default",
+    "description": "Button restoring the standard game update interval."
   },
   "settings.processing.title": {
     "defaultMessage": "Game processing",
@@ -4840,7 +4852,7 @@
     "description": "Technical gameplay-effect description for the Reapers Skill node."
   },
   "skills.node.regulatedAcademia.description": {
-    "defaultMessage": "You find a fragment of another universe. You use this knowledge to improve your Bots, I wonder what other parts of this universe you can find?",
+    "defaultMessage": "You find a fragment of another universe. Its knowledge improves your Cash and Science research. What other discoveries might this universe hold?",
     "description": "Flavour description for the Regulated Academia Skill node."
   },
   "skills.node.regulatedAcademia.name": {
@@ -6483,6 +6495,14 @@
     "defaultMessage": "Breaking reality",
     "description": "Heading for the Infinity Wiki overview."
   },
+  "wiki.infinity.recommendation": {
+    "defaultMessage": "With Auto Infinity off, Recommended shows the best observed IP per minute in your current run and the IP reward at that point. Similar rates favor the lower reward. With Auto Infinity on, it shows your saved manual-run recommendation. It is guidance, not a guarantee or an automatically applied target: enter your chosen target yourself. Revisit it as your production changes.",
+    "description": "Explains current-run versus saved manual Infinity guidance and manual target selection."
+  },
+  "wiki.infinity.recommendation-title": {
+    "defaultMessage": "Understanding Recommended",
+    "description": "Heading for the Auto Infinity recommendation explanation."
+  },
   "wiki.infinity.scaling": {
     "defaultMessage": "Every earned <value>Infinity Point</value> adds <value>100% of base production</value> to the facilities affected by your completed breaks. <value>Five total points</value> add <value>500%</value>, producing <value>six times the base output</value>. Shop upgrades spend points without removing their contribution to that total.",
     "description": "Infinity point effect explanation adapted to the canonical Web model."
@@ -7115,6 +7135,10 @@
     "defaultMessage": "Anomaly",
     "description": "Heading for Anomaly notes."
   },
+  "wiki.reality.city-booster": {
+    "defaultMessage": "<value>City Booster</value> makes each city production cycle create 10 Factories instead of 1 after Engineering is completed. It does not increase the 5 Workers produced per cycle.",
+    "description": "Explains city factory yield after Engineering and the unchanged worker yield."
+  },
   "wiki.reality.countermeasures": {
     "defaultMessage": "<value>Countermeasures</value> in Research let simulations survive later disasters and increase the <value>Strange Matter</value> earned from a reset.",
     "description": "Countermeasure explanation adapted from the Unity WikiContent prefab."
@@ -7146,6 +7170,14 @@
   "wiki.reality.overview-title": {
     "defaultMessage": "The Reality layer",
     "description": "Heading for the Reality Wiki overview."
+  },
+  "wiki.reality.simulation-upgrades": {
+    "defaultMessage": "<value>Log10 Workers</value> speeds up workers’ Housing production by 1 + log10(workers). For example, 100 workers give a 3× multiplier, while 1,000 give 4×. It does not directly create more workers.",
+    "description": "Explains the verified worker-rate multiplier and Engineering-dependent factory yield from cities."
+  },
+  "wiki.reality.simulation-upgrades-title": {
+    "defaultMessage": "Simulation upgrades",
+    "description": "Heading for Reality worker and city upgrade explanations."
   },
   "wiki.region": {
     "defaultMessage": "Wiki",
@@ -7227,6 +7259,14 @@
     "defaultMessage": "Auto-assign and presets",
     "description": "Heading for skill auto-assignment notes."
   },
+  "wiki.skills.badges": {
+    "defaultMessage": "Bottom right: Skill Point cost; its badge turns green when assigned. Top right: completed/required prerequisites, shown for unassigned skills with multiple requirements. Bottom left: a + means the skill is included in the current auto-assignment queue, not that it is already assigned.",
+    "description": "Explains all three corner indicators on Skill nodes."
+  },
+  "wiki.skills.badges-title": {
+    "defaultMessage": "Node badges",
+    "description": "Heading for the Skill node badge legend."
+  },
   "wiki.skills.goal-1": {
     "defaultMessage": "Create <value>10 Bots</value>.",
     "description": "First canonical Dyson goal."
@@ -7271,6 +7311,14 @@
     "defaultMessage": "Goals",
     "description": "Heading for the canonical goal list."
   },
+  "wiki.skills.legend": {
+    "defaultMessage": "Arrows point from a prerequisite to the skill that needs it. A dashed connection means the prerequisite is not assigned; a solid connection means it is assigned. Selecting a skill highlights its incoming connections.",
+    "description": "Explains prerequisite arrows and assigned versus unassigned connectors."
+  },
+  "wiki.skills.legend-title": {
+    "defaultMessage": "Skill tree legend",
+    "description": "Heading for the visual Skill tree legend."
+  },
   "wiki.skills.overview": {
     "defaultMessage": "<value>Skill Points</value> are awarded by completing goals, with further sources unlocked later. The tree contains <value>104 skills</value> and <value>three exclusivity areas</value>, where choosing one skill disables its alternatives. <value>Fragment skills</value> grow with assigned <value>Fragments</value>, and some mechanically dependent skills cannot be refunded.",
     "description": "Skill types explanation adapted from the Unity WikiContent prefab."
@@ -7278,6 +7326,14 @@
   "wiki.skills.overview-title": {
     "defaultMessage": "How skills work",
     "description": "Heading for the Skill Tree Wiki overview."
+  },
+  "wiki.skills.preset-safety": {
+    "defaultMessage": "Skills enter the auto-assignment queue in the order you add them. Check Included in Preset in a skill’s details to change its membership. Turn off Allow automatic assignment of non-refundable skills in Skill settings if you want to avoid committing points to those nodes automatically. This does not prevent manual purchases or refund already assigned skills.",
+    "description": "Explains existing ordering, membership and non-refundable automation controls without implying a manual purchase block."
+  },
+  "wiki.skills.preset-safety-title": {
+    "defaultMessage": "Planning a preset",
+    "description": "Heading for safe preset and non-refundable skill guidance."
   },
   "wiki.title": {
     "defaultMessage": "Wiki",

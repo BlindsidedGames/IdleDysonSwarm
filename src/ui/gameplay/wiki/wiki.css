@@ -209,6 +209,10 @@
   margin-block-start: 0.75rem;
 }
 
+.wiki-surface__copy h3 {
+  margin-block: 1rem 0.35rem;
+}
+
 .wiki-surface__topic-link {
   display: inline;
   padding: 0;

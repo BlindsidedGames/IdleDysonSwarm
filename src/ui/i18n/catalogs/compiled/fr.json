@@ -5940,21 +5940,107 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "Augmente la durée de vie du Panneau de "
+      "value": "Durée de vie des panneaux apportée par cette amélioration : "
     },
     {
       "type": 8,
       "value": "value",
       "children": [
         {
+          "type": 0,
+          "value": "+"
+        },
+        {
           "type": 1,
-          "value": "seconds"
+          "value": "current"
         },
         {
           "type": 0,
           "value": "s"
         }
       ]
+    }
+  ],
+  "research.card.lifetime-projected": [
+    {
+      "type": 0,
+      "value": "Durée de vie des panneaux apportée par cette amélioration : "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    }
+  ],
+  "research.card.lifetime-projected-accessible": [
+    {
+      "type": 0,
+      "value": "Durée de vie des panneaux apportée par cette amélioration : "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " secondes, passant à "
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": " secondes."
     }
   ],
   "research.card.purchase-boost": [
@@ -6877,6 +6963,12 @@
     {
       "type": 0,
       "value": " ms"
+    }
+  ],
+  "settings.processing.restore-default": [
+    {
+      "type": 0,
+      "value": "Par défaut"
     }
   ],
   "settings.processing.title": [
@@ -9684,7 +9776,7 @@
   "skills.node.regulatedAcademia.description": [
     {
       "type": 0,
-      "value": "Vous trouvez un fragment d’un autre univers. Vous exploitez ces connaissances pour améliorer vos Bots. Quelles autres parties de cet univers pourriez-vous bien trouver ?"
+      "value": "Vous découvrez un fragment d’un autre univers. Ses connaissances améliorent vos recherches en Argent et en Science. Quelles autres découvertes cet univers vous réserve-t-il ?"
     }
   ],
   "skills.node.regulatedAcademia.name": [
@@ -12740,6 +12832,18 @@
       "value": "Briser la réalité"
     }
   ],
+  "wiki.infinity.recommendation": [
+    {
+      "type": 0,
+      "value": "Lorsque l’Infini automatique est désactivé, la recommandation indique le meilleur taux de PI par minute observé pendant le cycle actuel et la récompense en PI correspondante. Pour des taux similaires, la récompense la plus faible est privilégiée. Lorsque l’Infini automatique est activé, la recommandation enregistrée lors d’un cycle manuel reste affichée. Ce conseil ne garantit pas un résultat et ne définit pas automatiquement votre cible : saisissez-la vous-même. Réévaluez-la lorsque votre production change."
+    }
+  ],
+  "wiki.infinity.recommendation-title": [
+    {
+      "type": 0,
+      "value": "Comprendre la recommandation"
+    }
+  ],
   "wiki.infinity.scaling": [
     {
       "type": 0,
@@ -14044,6 +14148,22 @@
       "value": "Anomalie"
     }
   ],
+  "wiki.reality.city-booster": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Amplificateur de villes"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " permet à chaque cycle de production des villes de créer 10 Usines au lieu de 1 après avoir terminé Ingénierie. Les 5 Ouvriers produits par cycle ne sont pas augmentés."
+    }
+  ],
   "wiki.reality.countermeasures": [
     {
       "type": 8,
@@ -14204,6 +14324,28 @@
     {
       "type": 0,
       "value": "La couche de Réalité"
+    }
+  ],
+  "wiki.reality.simulation-upgrades": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Log10 des ouvriers"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " accélère la production de Logements des ouvriers selon le multiplicateur 1 + log10(ouvriers). Par exemple, 100 ouvriers donnent un multiplicateur de 3× et 1 000 donnent 4×. Cette amélioration ne crée pas directement d’ouvriers."
+    }
+  ],
+  "wiki.reality.simulation-upgrades-title": [
+    {
+      "type": 0,
+      "value": "Améliorations de simulation"
     }
   ],
   "wiki.region": [
@@ -14392,6 +14534,18 @@
     {
       "type": 0,
       "value": "Attribution automatique et préréglages"
+    }
+  ],
+  "wiki.skills.badges": [
+    {
+      "type": 0,
+      "value": "En bas à droite : le coût en Points de compétence ; l’indicateur devient vert lorsque la compétence est attribuée. En haut à droite : les prérequis remplis/requis, affichés pour les compétences non attribuées ayant plusieurs prérequis. En bas à gauche : un + indique que la compétence figure dans la file d’attribution automatique actuelle, pas qu’elle est déjà attribuée."
+    }
+  ],
+  "wiki.skills.badges-title": [
+    {
+      "type": 0,
+      "value": "Indicateurs des compétences"
     }
   ],
   "wiki.skills.goal-1": [
@@ -14614,6 +14768,18 @@
       "value": "Objectifs"
     }
   ],
+  "wiki.skills.legend": [
+    {
+      "type": 0,
+      "value": "Les flèches vont d’un prérequis vers la compétence qui en dépend. Une liaison en pointillés indique que le prérequis n’est pas attribué ; une liaison continue indique qu’il l’est. Sélectionner une compétence met en évidence les liaisons qui y mènent."
+    }
+  ],
+  "wiki.skills.legend-title": [
+    {
+      "type": 0,
+      "value": "Légende de l’arbre de compétences"
+    }
+  ],
   "wiki.skills.overview": [
     {
       "type": 8,
@@ -14690,6 +14856,18 @@
     {
       "type": 0,
       "value": "Fonctionnement des compétences"
+    }
+  ],
+  "wiki.skills.preset-safety": [
+    {
+      "type": 0,
+      "value": "Les compétences entrent dans la file d’attribution automatique dans l’ordre où vous les ajoutez. Dans les détails d’une compétence, utilisez l’option d’inclusion dans le préréglage pour modifier son appartenance. Désactivez « Autoriser l’attribution automatique des compétences dont les Points de compétence ne sont pas restituables » dans les paramètres des compétences pour éviter d’y engager automatiquement vos points. Cela ne bloque pas les achats manuels et ne rembourse pas les compétences déjà attribuées."
+    }
+  ],
+  "wiki.skills.preset-safety-title": [
+    {
+      "type": 0,
+      "value": "Préparer un préréglage"
     }
   ],
   "wiki.title": [

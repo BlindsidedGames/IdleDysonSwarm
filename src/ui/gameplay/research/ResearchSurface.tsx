@@ -671,16 +671,24 @@ function effectText(
   intl: IntlShape,
 ): ReactNode {
   if (card.effectKind === 'panel-lifetime-seconds') {
+    const current = formatNumber(locale, card.currentEffect, { maximumFractionDigits: 2 })
+    const projected = formatNumber(locale, card.projectedEffect, { maximumFractionDigits: 2 })
+    if (card.currentEffect === card.projectedEffect) {
+      return <FormattedMessage {...messages.lifetimeEffect} values={{ current, value: researchValue }} />
+    }
     return (
-      <FormattedMessage
-        {...messages.lifetimeEffect}
-        values={{
-          seconds: formatNumber(locale, card.perLevelEffect, {
-            maximumFractionDigits: 2,
-          }),
-          value: researchValue,
-        }}
-      />
+      <span aria-label={intl.formatMessage(messages.lifetimeProjectedAccessible, { current, projected })}>
+        <FormattedMessage
+          {...messages.lifetimeProjected}
+          values={{
+            current,
+            projected,
+            value: researchValue,
+            arrowMark: '\u25b6',
+            arrow: (chunks: ReactNode) => <span className="research-card__effect-arrow" aria-hidden="true">{chunks}</span>,
+          }}
+        />
+      </span>
     )
   }
   if (card.currentLevel === 0) {
