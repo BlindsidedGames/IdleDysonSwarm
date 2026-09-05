@@ -8,6 +8,7 @@ import type {
 
 export type StartupReadySource =
   | 'primary'
+  | 'cloud'
   | 'recovered-canonical'
   | 'recovered-legacy'
 

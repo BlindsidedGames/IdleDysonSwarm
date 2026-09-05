@@ -25,6 +25,7 @@ export class CloudStartupResolver implements StartupSaveResolver {
     if (text === null) return this.local.resolve()
     let remote: PreparedSave | undefined
     let remoteText = text
+    let recoveredBackup = false
     const prepare = (candidate: string) => {
       const now = new Date().toISOString()
       // Re-serialize through the portable boundary before preparing, keeping
@@ -35,7 +36,7 @@ export class CloudStartupResolver implements StartupSaveResolver {
     try { remote = prepare(text) } catch(error) {
       if (error instanceof UnsupportedFutureSaveSchemaError) return {kind:'blocked',reason:'unsupported-future-version',error:'This Steam Cloud save needs a newer game version. Its original file has been preserved.'}
       for (const candidate of await this.cloud.readBackups?.().catch(() => []) ?? []) {
-        try { remote=prepare(candidate);remoteText=candidate;break } catch (error) {
+        try { remote=prepare(candidate);remoteText=candidate;recoveredBackup=true;break } catch (error) {
           if (error instanceof UnsupportedFutureSaveSchemaError) return {kind:'blocked',reason:'unsupported-future-version',error:'This Steam Cloud backup needs a newer game version. Its original file has been preserved.'}
           // Try the next preserved backup only when this one is damaged.
         }
@@ -61,7 +62,7 @@ export class CloudStartupResolver implements StartupSaveResolver {
       }
       const committed = await this.repository.commit(remote)
       await this.cloud.acknowledge(text)
-      return {kind:'ready',source:'recovered-canonical',save:committed}
+      return {kind:'ready',source:recoveredBackup?'recovered-canonical':'cloud',save:committed}
     } catch (error) {
       return {kind:'blocked',reason:'recovery-write-failed',error:error instanceof Error?error.message:String(error)}
     }

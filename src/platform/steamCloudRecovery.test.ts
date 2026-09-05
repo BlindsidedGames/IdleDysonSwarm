@@ -96,3 +96,22 @@ test('unreadable downloaded primary permits local play but disables Cloud public
   expect(await readFile(join(f.cloud.directory, 'backup-1.idsw'), 'utf8')).toBe(future)
   expect(await f.cloud.read()).toBe('IDSWEB1:broken')
 })
+
+test('healthy checkpoints transferred in both directions load as Cloud saves, not backup recovery', async () => {
+  const a = await fixture()
+  const b = await fixture()
+  await a.repository.commit(original)
+  await a.cloud.read()
+  await a.cloud.publish(portable)
+  await copyFile(join(a.cloud.directory, 'current.idsw'), join(b.cloud.directory, 'current.idsw'))
+  expect(await b.resolver.resolve()).toMatchObject({ kind: 'ready', source: 'cloud' })
+  const state = (await b.repository.loadCurrent())!.copyValidatedState()
+  state.dateQuitString = '2026-09-05T04:00:00Z'
+  const changed = serializeSharedWebSave(state)
+  await b.cloud.publish(changed)
+  await copyFile(join(b.cloud.directory, 'current.idsw'), join(a.cloud.directory, 'current.idsw'))
+  expect(await a.resolver.resolve()).toMatchObject({ kind: 'ready', source: 'cloud' })
+  expect((await a.repository.loadCurrent())?.copyValidatedState().dateQuitString).toBe(state.dateQuitString)
+  expect(a.prompt).toHaveBeenCalledOnce()
+  expect(b.prompt).not.toHaveBeenCalled()
+})

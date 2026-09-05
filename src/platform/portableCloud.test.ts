@@ -16,7 +16,7 @@ describe('Cloud startup preparation', () => {
     const data=original.copyValidatedState();data.dateQuitString='2026-09-04T01:00:00Z';data.debugOptions=true
     const f=fixture(serializeSharedWebSave(original.withValidatedState(data).copyValidatedState()))
     const result=await f.resolver.resolve()
-    expect(result.kind).toBe('ready');expect(f.local.resolve).not.toHaveBeenCalled()
+    expect(result).toMatchObject({kind:'ready',source:'cloud'});expect(f.local.resolve).not.toHaveBeenCalled()
     if(result.kind==='ready') expect(result.save.copyValidatedState()).toMatchObject({dateQuitString:data.dateQuitString,debugOptions:false})
   })
   test('conflicting valid local progress requires a choice and remains local when selected', async () => {
@@ -32,7 +32,7 @@ describe('Cloud startup preparation', () => {
   })
   test('valid Cloud backup recovers a corrupt primary through preparation', async () => {
     const f=fixture('IDSWEB1:broken');f.cloud.readBackups=async()=>['also broken',serializeSharedWebSave(original.copyValidatedState())]
-    expect(await f.resolver.resolve()).toMatchObject({kind:'ready'})
+    expect(await f.resolver.resolve()).toMatchObject({kind:'ready',source:'recovered-canonical'})
     expect(f.repository.commit).toHaveBeenCalledOnce()
   })
   test('absent or unreadable Cloud allows local startup',async()=>{
