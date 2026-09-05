@@ -13846,6 +13846,12 @@
       "value": "Neue Spiele und Quantum-Resets starten jetzt standardmäßig mit 100 % Arbeitern. Auch die Fertigkeitsvorlagen neuer Spiele beginnen mit 100 % Arbeitern."
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Version 4.1.8"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

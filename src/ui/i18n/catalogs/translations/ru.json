@@ -1810,6 +1810,7 @@
   "dyson.facilities.details.purchased-building-scaling": "Масштабирование купленных строений",
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% к производству за каждое купленное строение сверх {threshold}.",
   "wiki.patch-notes.version-4-1-7": "Версия 4.1.7",
+  "wiki.patch-notes.version-4-1-8": "Версия 4.1.8",
   "wiki.patch-notes.version-4-1-7.rounding": "В настройках ботов и исследований восстановлена формулировка «Округлять массовые покупки».",
   "wiki.patch-notes.version-4-1-7.scaling": "В сведениях о строениях теперь различаются масштабирование купленных строений и назначенный навык «Масштабирование производства», а также отображаются текущий процент бонуса и порог покупок.",
   "offline-time.app-backgrounded": "Приложение перешло в фоновый режим, обработка отменена",

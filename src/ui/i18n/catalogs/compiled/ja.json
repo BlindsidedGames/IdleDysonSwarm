@@ -13846,6 +13846,12 @@
       "value": "新規ゲームと Quantum リセットの初期配分を作業員100%に変更しました。新規ゲームのスキルプリセットも作業員100%で開始します。"
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "バージョン 4.1.8"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

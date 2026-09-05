@@ -13846,6 +13846,12 @@
       "value": "New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers."
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Version 4.1.8"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

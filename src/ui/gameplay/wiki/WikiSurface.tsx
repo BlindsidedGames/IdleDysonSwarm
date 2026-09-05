@@ -435,6 +435,10 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion418)}</h4>
+        </section>
+        <section className="wiki-surface__section">
+          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion417)}</h4>
           <ul className="wiki-surface__patch-note-list">
             {version417PatchNoteMessages.map((message) => (
@@ -443,7 +447,6 @@ function PatchNotesArticle() {
           </ul>
         </section>
         <section className="wiki-surface__section">
-          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion416)}</h4>
           <ul className="wiki-surface__patch-note-list">
             {version416PatchNoteMessages.map((message) => (

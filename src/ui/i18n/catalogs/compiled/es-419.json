@@ -13846,6 +13846,12 @@
       "value": "Las partidas nuevas y los reinicios de Quantum ahora usan 100% de trabajadores de forma predeterminada. Los ajustes de habilidades de partidas nuevas también comienzan con 100% de trabajadores."
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Versión 4.1.8"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

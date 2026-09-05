@@ -94,6 +94,7 @@ export const wikiMessages = defineMessages({
   quantumAdvice: { id: 'wiki.quantum.advice', defaultMessage: '<value>Quantum</value> upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset.', description: 'Web-appropriate Quantum Leap planning guidance based on Unity Wiki intent.' },
 
   patchNotesMostRecent: { id: 'wiki.patch-notes.most-recent', defaultMessage: 'Most Recent', description: 'Heading for the latest Wiki patch notes.' },
+  patchNotesVersion418: { id: 'wiki.patch-notes.version-4-1-8', defaultMessage: 'Version 4.1.8', description: 'Version label for the next Wiki patch notes.' },
   patchNotesVersion417: { id: 'wiki.patch-notes.version-4-1-7', defaultMessage: 'Version 4.1.7', description: 'Version label for the latest Wiki patch notes.' },
   patchNotesVersion417Achievements: { id: 'wiki.patch-notes.version-4-1-7.achievements', defaultMessage: 'Added 27 achievements on Android and iOS, matching Steam. Open Achievements in Settings to view them. Achievements earned offline are saved and synced when you reconnect.', description: 'Version 4.1.7 release note for native mobile achievements and offline persistence.' },
   patchNotesVersion417Rounding: { id: 'wiki.patch-notes.version-4-1-7.rounding', defaultMessage: 'Restored the Round bulk purchases wording in Bots and Research settings.', description: 'Version 4.1.7 release note for restored purchase-rounding wording.' },

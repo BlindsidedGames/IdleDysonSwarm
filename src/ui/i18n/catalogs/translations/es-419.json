@@ -1810,6 +1810,7 @@
   "dyson.facilities.details.purchased-building-scaling": "Escalado de edificios comprados",
   "dyson.facilities.details.purchased-building-scaling-description": "+{rate}% de producción por edificio comprado por encima de {threshold}.",
   "wiki.patch-notes.version-4-1-7": "Versión 4.1.7",
+  "wiki.patch-notes.version-4-1-8": "Versión 4.1.8",
   "wiki.patch-notes.version-4-1-7.rounding": "Se restauró el texto Redondear compras en lote en los ajustes de Bots e Investigación.",
   "wiki.patch-notes.version-4-1-7.scaling": "Los detalles de los edificios ahora distinguen el escalado de edificios comprados de la habilidad Escalado de producción asignada y muestran el porcentaje de bonificación y el umbral de compras actuales.",
   "offline-time.app-backgrounded": "La aplicación pasó a segundo plano, procesamiento cancelado",

@@ -262,12 +262,21 @@ export function SettingsSurface({
     const request = processingIntervalRequestRef.current + 1
     processingIntervalRequestRef.current = request
     processingIntervalPendingValueRef.current = milliseconds
+    const recoverFailedCommit = (): void => {
+      processingIntervalPendingValueRef.current = null
+      if (processingIntervalDraftRef.current !== milliseconds) {
+        // A newer user choice supersedes this failed request. Retry only that
+        // choice, never the value that failed (which could otherwise loop).
+        if (!processingIntervalInteractionRef.current) commitProcessingInterval()
+      } else {
+        previewProcessingInterval(processingIntervalPropRef.current)
+      }
+    }
     let dispatched: void | Promise<UiRuntimePlayerCommandResult | void>
     try {
       dispatched = onProcessingIntervalChange(milliseconds)
     } catch {
-      processingIntervalPendingValueRef.current = null
-      previewProcessingInterval(processingIntervalPropRef.current)
+      recoverFailedCommit()
       return
     }
     void Promise.resolve(dispatched)
@@ -281,7 +290,7 @@ export function SettingsSurface({
           result !== undefined &&
           result.status !== 'accepted'
         ) {
-          previewProcessingInterval(processingIntervalPropRef.current)
+          recoverFailedCommit()
           return
         }
         processingIntervalPropRef.current = milliseconds
@@ -297,8 +306,7 @@ export function SettingsSurface({
           !processingIntervalMountedRef.current ||
           processingIntervalRequestRef.current !== request
         ) return
-        processingIntervalPendingValueRef.current = null
-        previewProcessingInterval(processingIntervalPropRef.current)
+        recoverFailedCommit()
       })
   }
 
