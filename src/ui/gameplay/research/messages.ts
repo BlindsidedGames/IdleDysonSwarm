@@ -111,8 +111,18 @@ export const researchMessages = defineMessages({
   lifetimeEffect: {
     id: 'research.card.lifetime-effect',
     defaultMessage:
-      'Increases Panel Lifetime by <value>{seconds}s</value>',
-    description: 'Effect line for a Unity Panel Lifetime upgrade.',
+      'Panel Lifetime from this upgrade: <value>+{current}s</value>',
+    description: 'Current lifetime contribution from this research card only, excluding other upgrades and skills.',
+  },
+  lifetimeProjected: {
+    id: 'research.card.lifetime-projected',
+    defaultMessage: 'Panel Lifetime from this upgrade: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>',
+    description: 'Current and projected lifetime contribution from this research card only for the quoted purchase.',
+  },
+  lifetimeProjectedAccessible: {
+    id: 'research.card.lifetime-projected-accessible',
+    defaultMessage: 'Panel Lifetime from this upgrade: {current} seconds, increasing to {projected} seconds.',
+    description: 'Accessible current and projected lifetime contribution from this research card only.',
   },
   assemblyDescription: {
     id: 'research.description.assembly-line',

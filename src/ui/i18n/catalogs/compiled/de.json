@@ -5940,21 +5940,107 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "Erhöht die Paneel-Lebensdauer um "
+      "value": "Panel-Lebensdauer durch dieses Upgrade: "
     },
     {
       "type": 8,
       "value": "value",
       "children": [
         {
+          "type": 0,
+          "value": "+"
+        },
+        {
           "type": 1,
-          "value": "seconds"
+          "value": "current"
         },
         {
           "type": 0,
           "value": "s"
         }
       ]
+    }
+  ],
+  "research.card.lifetime-projected": [
+    {
+      "type": 0,
+      "value": "Panel-Lebensdauer durch dieses Upgrade: "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    }
+  ],
+  "research.card.lifetime-projected-accessible": [
+    {
+      "type": 0,
+      "value": "Panel-Lebensdauer durch dieses Upgrade: "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " Sekunden, steigt auf "
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": " Sekunden."
     }
   ],
   "research.card.purchase-boost": [
@@ -6877,6 +6963,12 @@
     {
       "type": 0,
       "value": " ms"
+    }
+  ],
+  "settings.processing.restore-default": [
+    {
+      "type": 0,
+      "value": "Standard"
     }
   ],
   "settings.processing.title": [
@@ -9684,7 +9776,7 @@
   "skills.node.regulatedAcademia.description": [
     {
       "type": 0,
-      "value": "Du findest ein Fragment eines anderen Universums. Mit diesem Wissen verbesserst du deine Bots. Welche anderen Teile dieses Universums du wohl noch finden kannst?"
+      "value": "Du entdeckst ein Fragment eines anderen Universums. Sein Wissen verbessert deine Geld- und Wissenschaftsforschung. Welche weiteren Entdeckungen hält dieses Universum bereit?"
     }
   ],
   "skills.node.regulatedAcademia.name": [
@@ -12740,6 +12832,18 @@
       "value": "Die Realität durchbrechen"
     }
   ],
+  "wiki.infinity.recommendation": [
+    {
+      "type": 0,
+      "value": "Bei deaktiviertem Auto-Infinity zeigt die Empfehlung die beste beobachtete IP-Rate pro Minute im aktuellen Durchlauf und die zugehörige IP-Belohnung. Bei ähnlichen Raten wird die niedrigere Belohnung bevorzugt. Bei aktiviertem Auto-Infinity bleibt die gespeicherte Empfehlung aus einem manuellen Durchlauf sichtbar. Sie ist ein Hinweis, keine Garantie und kein automatisch angewendetes Ziel: Trage dein Ziel selbst ein. Überprüfe es erneut, wenn sich deine Produktion ändert."
+    }
+  ],
+  "wiki.infinity.recommendation-title": [
+    {
+      "type": 0,
+      "value": "Die Empfehlung verstehen"
+    }
+  ],
   "wiki.infinity.scaling": [
     {
       "type": 0,
@@ -14044,6 +14148,22 @@
       "value": "Anomalie"
     }
   ],
+  "wiki.reality.city-booster": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Stadtverstärker"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " lässt jeden Produktionszyklus der Städte nach Abschluss von Ingenieurwesen 10 Fabriken statt 1 erzeugen. Die 5 Arbeiter pro Zyklus werden dadurch nicht erhöht."
+    }
+  ],
   "wiki.reality.countermeasures": [
     {
       "type": 8,
@@ -14204,6 +14324,28 @@
     {
       "type": 0,
       "value": "Die Realitätsebene"
+    }
+  ],
+  "wiki.reality.simulation-upgrades": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Log10 Arbeiter"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " beschleunigt die Wohnungsproduktion der Arbeiter um den Faktor 1 + log10(Arbeiter). Beispielsweise ergeben 100 Arbeiter einen Multiplikator von 3× und 1.000 einen von 4×. Das Upgrade erzeugt nicht direkt mehr Arbeiter."
+    }
+  ],
+  "wiki.reality.simulation-upgrades-title": [
+    {
+      "type": 0,
+      "value": "Simulations-Upgrades"
     }
   ],
   "wiki.region": [
@@ -14392,6 +14534,18 @@
     {
       "type": 0,
       "value": "Automatische Zuweisung und Voreinstellungen"
+    }
+  ],
+  "wiki.skills.badges": [
+    {
+      "type": 0,
+      "value": "Unten rechts: Kosten in Skill-Punkten; die Anzeige wird bei Zuweisung grün. Oben rechts: erfüllte/benötigte Voraussetzungen bei nicht zugewiesenen Skills mit mehreren Voraussetzungen. Unten links: Ein + bedeutet, dass der Skill in der aktuellen Warteschlange für automatische Zuweisung enthalten ist, nicht, dass er bereits zugewiesen wurde."
+    }
+  ],
+  "wiki.skills.badges-title": [
+    {
+      "type": 0,
+      "value": "Anzeigen an den Skill-Knoten"
     }
   ],
   "wiki.skills.goal-1": [
@@ -14614,6 +14768,18 @@
       "value": "Ziele"
     }
   ],
+  "wiki.skills.legend": [
+    {
+      "type": 0,
+      "value": "Pfeile zeigen von einer Voraussetzung zum davon abhängigen Skill. Eine gestrichelte Verbindung bedeutet, dass die Voraussetzung nicht zugewiesen ist; eine durchgezogene Verbindung bedeutet, dass sie zugewiesen ist. Wenn du einen Skill auswählst, werden seine eingehenden Verbindungen hervorgehoben."
+    }
+  ],
+  "wiki.skills.legend-title": [
+    {
+      "type": 0,
+      "value": "Legende des Skill-Baums"
+    }
+  ],
   "wiki.skills.overview": [
     {
       "type": 8,
@@ -14690,6 +14856,18 @@
     {
       "type": 0,
       "value": "So funktionieren Skills"
+    }
+  ],
+  "wiki.skills.preset-safety": [
+    {
+      "type": 0,
+      "value": "Skills werden in der Reihenfolge, in der du sie hinzufügst, in die Warteschlange für automatische Zuweisung aufgenommen. In den Skill-Details kannst du die Aufnahme ins Preset ändern. Deaktiviere „Automatische Zuweisung von Skills ohne Skill-Punkt-Rückgabe zulassen“ in den Skill-Einstellungen, wenn du dort nicht automatisch Punkte binden möchtest. Manuelle Käufe werden dadurch nicht verhindert, und bereits zugewiesene Skills werden nicht erstattet."
+    }
+  ],
+  "wiki.skills.preset-safety-title": [
+    {
+      "type": 0,
+      "value": "Ein Preset planen"
     }
   ],
   "wiki.title": [

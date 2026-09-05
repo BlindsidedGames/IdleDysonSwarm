@@ -1,4 +1,4 @@
-import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { Fragment, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useIntl, type IntlShape, type MessageDescriptor } from 'react-intl'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -30,6 +30,8 @@ export interface WikiSurfaceProps {
 interface WikiSection {
   readonly title: MessageDescriptor
   readonly body: MessageDescriptor
+  readonly additionalBody?: MessageDescriptor
+  readonly showTitle?: boolean
 }
 
 interface WikiCategory {
@@ -62,6 +64,9 @@ const baseCategories: readonly WikiCategory[] = [
     sections: [
       { title: messages.skillsOverviewTitle, body: messages.skillsOverview },
       { title: messages.autoAssignTitle, body: messages.autoAssign },
+      { title: messages.skillLegendTitle, body: messages.skillLegend, showTitle: true },
+      { title: messages.skillBadgesTitle, body: messages.skillBadges, showTitle: true },
+      { title: messages.presetSafetyTitle, body: messages.presetSafety, showTitle: true },
     ],
   },
   {
@@ -71,6 +76,7 @@ const baseCategories: readonly WikiCategory[] = [
       { title: messages.infinityOverviewTitle, body: messages.infinityOverview },
       { title: messages.infinityScalingTitle, body: messages.infinityScaling },
       { title: messages.infinitySecretsTitle, body: messages.infinitySecrets },
+      { title: messages.infinityRecommendationTitle, body: messages.infinityRecommendation, showTitle: true },
     ],
   },
   {
@@ -94,6 +100,7 @@ const baseCategories: readonly WikiCategory[] = [
       { title: messages.disastersTitle, body: messages.disasters },
       { title: messages.countermeasuresTitle, body: messages.countermeasures },
       { title: messages.anomalyTitle, body: messages.anomaly },
+      { title: messages.simulationUpgradesTitle, body: messages.simulationUpgrades, additionalBody: messages.cityBooster },
     ],
   },
   {
@@ -544,14 +551,17 @@ function WikiSections({
     return (
       <div className="wiki-surface__section wiki-surface__copy">
         {sections.map((section) => (
-          <p key={section.body.id}>
-            {formatWikiMessage(
-              intl,
-              section.body,
-              onSelectCategory,
-              visibleCategoryIds,
-            )}
-          </p>
+          <Fragment key={section.body.id}>
+            {section.showTitle ? <h3>{intl.formatMessage(section.title)}</h3> : null}
+            <p>
+              {formatWikiMessage(
+                intl,
+                section.body,
+                onSelectCategory,
+                visibleCategoryIds,
+              )}
+            </p>
+          </Fragment>
         ))}
       </div>
     )
@@ -567,6 +577,11 @@ function WikiSections({
           visibleCategoryIds,
         )}
       </p>
+      {section.additionalBody ? (
+        <p>
+          {formatWikiMessage(intl, section.additionalBody, onSelectCategory, visibleCategoryIds)}
+        </p>
+      ) : null}
     </section>
   ))
 }

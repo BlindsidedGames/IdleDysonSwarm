@@ -483,7 +483,7 @@
 
 .settings-surface__processing-control {
   display: grid;
-  grid-template-columns: auto minmax(10rem, 15rem);
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
   align-items: center;
   min-inline-size: min(18rem, 100%);
   gap: 0 0.3rem;
@@ -492,6 +492,31 @@
 
 .settings-surface__processing-label {
   grid-column: 1 / -1;
+}
+
+.settings-surface__processing-default {
+  padding: 0.35rem 0.6rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
+  background: var(--theme-selected);
+  color: #eff8ef;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.settings-surface__processing-default:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+}
+
+.settings-surface__processing-default:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.settings-surface__processing-default:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .settings-surface__processing-control input {

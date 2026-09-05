@@ -5940,21 +5940,107 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "パネル寿命増加 "
+      "value": "このアップグレードによるパネル寿命："
     },
     {
       "type": 8,
       "value": "value",
       "children": [
         {
+          "type": 0,
+          "value": "+"
+        },
+        {
           "type": 1,
-          "value": "seconds"
+          "value": "current"
         },
         {
           "type": 0,
-          "value": " 秒"
+          "value": "秒"
         }
       ]
+    }
+  ],
+  "research.card.lifetime-projected": [
+    {
+      "type": 0,
+      "value": "このアップグレードによるパネル寿命："
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "秒"
+        }
+      ]
+    }
+  ],
+  "research.card.lifetime-projected-accessible": [
+    {
+      "type": 0,
+      "value": "このアップグレードによるパネル寿命："
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "秒から"
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": "秒に増加します。"
     }
   ],
   "research.card.purchase-boost": [
@@ -6877,6 +6963,12 @@
     {
       "type": 0,
       "value": " ms"
+    }
+  ],
+  "settings.processing.restore-default": [
+    {
+      "type": 0,
+      "value": "デフォルト"
     }
   ],
   "settings.processing.title": [
@@ -9684,7 +9776,7 @@
   "skills.node.regulatedAcademia.description": [
     {
       "type": 0,
-      "value": "別の宇宙のフラグメントを発見し、内包された知識でボットを改良します。この宇宙のほかの断片には何があるのでしょう？"
+      "value": "別の宇宙の断片を発見しました。その知識がキャッシュとサイエンスの研究を改善します。この宇宙には、ほかにどんな発見が待っているのでしょう？"
     }
   ],
   "skills.node.regulatedAcademia.name": [
@@ -12740,6 +12832,18 @@
       "value": "リアリティを破る"
     }
   ],
+  "wiki.infinity.recommendation": [
+    {
+      "type": 0,
+      "value": "自動インフィニティがオフの場合、推奨値には現在の周回で観測した最良の毎分IPと、その時点のIP報酬が表示されます。毎分IPが近い場合は、報酬が少ない方を優先します。自動インフィニティがオンの場合は、手動周回で保存した推奨値が表示されます。これは目安であり、結果を保証したり目標を自動設定したりするものではありません。目標は自分で入力し、生産量が変わったら見直しましょう。"
+    }
+  ],
+  "wiki.infinity.recommendation-title": [
+    {
+      "type": 0,
+      "value": "推奨値の見方"
+    }
+  ],
   "wiki.infinity.scaling": [
     {
       "type": 0,
@@ -14044,6 +14148,22 @@
       "value": "アノマリー"
     }
   ],
+  "wiki.reality.city-booster": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "都市ブースト"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "は、工学の完了後、都市の生産サイクルごとに作られる工場を1から10に増やします。同じサイクルで生産される5人のワーカーは増えません。"
+    }
+  ],
   "wiki.reality.countermeasures": [
     {
       "type": 8,
@@ -14204,6 +14324,28 @@
     {
       "type": 0,
       "value": "リアリティレイヤー"
+    }
+  ],
+  "wiki.reality.simulation-upgrades": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "ワーカー Log10 ブースト"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "は、ワーカーによる住宅の生産速度を1 + log10(ワーカー数)倍にします。たとえば100人で3倍、1,000人で4倍です。ワーカーの数を直接増やす効果ではありません。"
+    }
+  ],
+  "wiki.reality.simulation-upgrades-title": [
+    {
+      "type": 0,
+      "value": "シミュレーションのアップグレード"
     }
   ],
   "wiki.region": [
@@ -14392,6 +14534,18 @@
     {
       "type": 0,
       "value": "自動割り当てとプリセット"
+    }
+  ],
+  "wiki.skills.badges": [
+    {
+      "type": 0,
+      "value": "右下はスキルポイントのコストで、割り当てると緑色になります。右上は満たした前提条件数/必要な前提条件数で、複数の前提条件がある未割り当てスキルに表示されます。左下の+は現在の自動割り当てキューに含まれていることを表し、割り当て済みという意味ではありません。"
+    }
+  ],
+  "wiki.skills.badges-title": [
+    {
+      "type": 0,
+      "value": "ノードのバッジ"
     }
   ],
   "wiki.skills.goal-1": [
@@ -14614,6 +14768,18 @@
       "value": "目標"
     }
   ],
+  "wiki.skills.legend": [
+    {
+      "type": 0,
+      "value": "矢印は前提スキルから、それを必要とするスキルへ向かいます。破線は前提スキルが未割り当て、実線は割り当て済みであることを表します。スキルを選ぶと、そのスキルへ向かう接続が強調表示されます。"
+    }
+  ],
+  "wiki.skills.legend-title": [
+    {
+      "type": 0,
+      "value": "スキルツリーの凡例"
+    }
+  ],
   "wiki.skills.overview": [
     {
       "type": 8,
@@ -14690,6 +14856,18 @@
     {
       "type": 0,
       "value": "スキルの仕組み"
+    }
+  ],
+  "wiki.skills.preset-safety": [
+    {
+      "type": 0,
+      "value": "スキルは追加した順に自動割り当てキューへ入ります。スキル詳細のプリセットに含める設定で、対象に含めるか変更できます。返還できないノードへ自動的にポイントを使いたくない場合は、スキル設定の「スキルポイントを返還できないスキルの自動割り当てを許可」をオフにしてください。手動購入は禁止されず、すでに割り当てたスキルのポイントも返還されません。"
+    }
+  ],
+  "wiki.skills.preset-safety-title": [
+    {
+      "type": 0,
+      "value": "プリセットの計画"
     }
   ],
   "wiki.title": [

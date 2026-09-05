@@ -46,6 +46,8 @@ const WEB_SKILL_COPY_OVERRIDES: Readonly<Record<string, string>> = {
     'Start the 1% bonus with the first purchased building after 90. Reduce that threshold by another 5 for every other assigned Fragment Skill.',
   'skills.node.progressiveAssembly.technical':
     'Assembly Lines produce 1.5x as much. Increase this bonus by 0.5x for every other assigned Fragment Skill.',
+  'skills.node.regulatedAcademia.description':
+    'You find a fragment of another universe. Its knowledge improves your Cash and Science research. What other discoveries might this universe hold?',
   'skills.node.regulatedAcademia.technical':
     'Science and Cash Boost base is increased by 20%. Increase the base by 10% for every other assigned Fragment Skill.',
   'skills.node.repeatableResearch.technical':
@@ -127,7 +129,7 @@ export function buildSkillMessages(
       messages,
       node.messageIds.description,
       `skills.node.${node.skillId}.description`,
-      node.description,
+      WEB_SKILL_COPY_OVERRIDES[node.messageIds.description] ?? node.description,
       `Flavour description for the ${node.displayName} Skill node.`,
     )
     addMessage(

@@ -102,6 +102,11 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Engineering',
     description: 'Engineering number notation option.',
   },
+  restoreProcessingDefault: {
+    id: 'settings.processing.restore-default',
+    defaultMessage: 'Default',
+    description: 'Button restoring the standard game update interval.',
+  },
   processingTitle: {
     id: 'settings.processing.title',
     defaultMessage: 'Game processing',

@@ -367,7 +367,7 @@ export const realityUpgradeMessages = defineMessages({
   speed8Description: {
     id: 'reality.upgrades.speed8.description',
     defaultMessage:
-      '10% ▸ 0% - Comprehention.\nGain 1 skill point.',
+      '10% ▸ 0% - Comprehension.\nGain 1 skill point.',
     description: 'Unity Reality upgrade description.',
   },
   doubleTimeOwnedTitle: {

@@ -10970,7 +10970,7 @@
     },
     {
       "type": 0,
-      "value": "10% ▸ 0% - Ↄoɯdɹǝɥǝuʇıou. ⅁ɐıu 1 sʞıʅʅ doıuʇ."
+      "value": "10% ▸ 0% - Ↄoɯdɹǝɥǝusıou. ⅁ɐıu 1 sʞıʅʅ doıuʇ."
     },
     {
       "type": 0,
@@ -11480,21 +11480,123 @@
     },
     {
       "type": 0,
-      "value": "Iuɔɹǝɐsǝs Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ qʎ "
+      "value": "Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ ɟɹoɯ ʇɥıs ndƃɹɐpǝ: "
     },
     {
       "type": 8,
       "value": "value",
       "children": [
         {
+          "type": 0,
+          "value": "+"
+        },
+        {
           "type": 1,
-          "value": "seconds"
+          "value": "current"
         },
         {
           "type": 0,
           "value": "s"
         }
       ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.lifetime-projected": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ ɟɹoɯ ʇɥıs ndƃɹɐpǝ: "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.lifetime-projected-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ ɟɹoɯ ʇɥıs ndƃɹɐpǝ: "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " sǝɔoups, ıuɔɹǝɐsıuƃ ʇo "
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": " sǝɔoups."
     },
     {
       "type": 0,
@@ -13409,6 +13511,20 @@
     {
       "type": 0,
       "value": " ɯs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.processing.restore-default": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝɟɐnʅʇ"
     },
     {
       "type": 0,
@@ -19368,7 +19484,7 @@
     },
     {
       "type": 0,
-      "value": "⅄on ɟıup ɐ ɟɹɐƃɯǝuʇ oɟ ɐuoʇɥǝɹ nuıʌǝɹsǝ. ⅄on nsǝ ʇɥıs ʞuoʍʅǝpƃǝ ʇo ıɯdɹoʌǝ ʎonɹ Ԑoʇs, I ʍoupǝɹ ʍɥɐʇ oʇɥǝɹ dɐɹʇs oɟ ʇɥıs nuıʌǝɹsǝ ʎon ɔɐu ɟıup?"
+      "value": "⅄on ɟıup ɐ ɟɹɐƃɯǝuʇ oɟ ɐuoʇɥǝɹ nuıʌǝɹsǝ. Iʇs ʞuoʍʅǝpƃǝ ıɯdɹoʌǝs ʎonɹ Ↄɐsɥ ɐup Sɔıǝuɔǝ ɹǝsǝɐɹɔɥ. Mɥɐʇ oʇɥǝɹ pısɔoʌǝɹıǝs ɯıƃɥʇ ʇɥıs nuıʌǝɹsǝ ɥoʅp?"
     },
     {
       "type": 0,
@@ -25708,6 +25824,34 @@
       "value": "‬"
     }
   ],
+  "wiki.infinity.recommendation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mıʇɥ ∀nʇo Iuɟıuıʇʎ oɟɟ, ᴚǝɔoɯɯǝupǝp sɥoʍs ʇɥǝ qǝsʇ oqsǝɹʌǝp IԀ dǝɹ ɯıunʇǝ ıu ʎonɹ ɔnɹɹǝuʇ ɹnu ɐup ʇɥǝ IԀ ɹǝʍɐɹp ɐʇ ʇɥɐʇ doıuʇ. Sıɯıʅɐɹ ɹɐʇǝs ɟɐʌoɹ ʇɥǝ ʅoʍǝɹ ɹǝʍɐɹp. Mıʇɥ ∀nʇo Iuɟıuıʇʎ ou, ıʇ sɥoʍs ʎonɹ sɐʌǝp ɯɐunɐʅ-ɹnu ɹǝɔoɯɯǝupɐʇıou. Iʇ ıs ƃnıpɐuɔǝ, uoʇ ɐ ƃnɐɹɐuʇǝǝ oɹ ɐu ɐnʇoɯɐʇıɔɐʅʅʎ ɐddʅıǝp ʇɐɹƃǝʇ: ǝuʇǝɹ ʎonɹ ɔɥosǝu ʇɐɹƃǝʇ ʎonɹsǝʅɟ. ᴚǝʌısıʇ ıʇ ɐs ʎonɹ dɹopnɔʇıou ɔɥɐuƃǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.infinity.recommendation-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩upǝɹsʇɐupıuƃ ᴚǝɔoɯɯǝupǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.infinity.scaling": [
     {
       "type": 0,
@@ -28276,6 +28420,30 @@
       "value": "‬"
     }
   ],
+  "wiki.reality.city-booster": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ↄıʇʎ Ԑoosʇǝɹ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ɯɐʞǝs ǝɐɔɥ ɔıʇʎ dɹopnɔʇıou ɔʎɔʅǝ ɔɹǝɐʇǝ 10 Ⅎɐɔʇoɹıǝs ıusʇǝɐp oɟ 1 ɐɟʇǝɹ Ǝuƃıuǝǝɹıuƃ ıs ɔoɯdʅǝʇǝp. Iʇ poǝs uoʇ ıuɔɹǝɐsǝ ʇɥǝ 5 Moɹʞǝɹs dɹopnɔǝp dǝɹ ɔʎɔʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.reality.countermeasures": [
     {
       "type": 0,
@@ -28496,6 +28664,44 @@
     {
       "type": 0,
       "value": "⊥ɥǝ ᴚǝɐʅıʇʎ ʅɐʎǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.reality.simulation-upgrades": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "⅂oƃ10 Moɹʞǝɹs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " sdǝǝps nd ʍoɹʞǝɹs’ Honsıuƃ dɹopnɔʇıou qʎ 1 + ʅoƃ10(ʍoɹʞǝɹs). Ⅎoɹ ǝxɐɯdʅǝ, 100 ʍoɹʞǝɹs ƃıʌǝ ɐ 3× ɯnʅʇıdʅıǝɹ, ʍɥıʅǝ 1,000 ƃıʌǝ 4×. Iʇ poǝs uoʇ pıɹǝɔʇʅʎ ɔɹǝɐʇǝ ɯoɹǝ ʍoɹʞǝɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.reality.simulation-upgrades-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sıɯnʅɐʇıou ndƃɹɐpǝs"
     },
     {
       "type": 0,
@@ -28850,6 +29056,34 @@
       "value": "‬"
     }
   ],
+  "wiki.skills.badges": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoʇʇoɯ ɹıƃɥʇ: Sʞıʅʅ Ԁoıuʇ ɔosʇ; ıʇs qɐpƃǝ ʇnɹus ƃɹǝǝu ʍɥǝu ɐssıƃuǝp. ⊥od ɹıƃɥʇ: ɔoɯdʅǝʇǝp/ɹǝbnıɹǝp dɹǝɹǝbnısıʇǝs, sɥoʍu ɟoɹ nuɐssıƃuǝp sʞıʅʅs ʍıʇɥ ɯnʅʇıdʅǝ ɹǝbnıɹǝɯǝuʇs. Ԑoʇʇoɯ ʅǝɟʇ: ɐ + ɯǝɐus ʇɥǝ sʞıʅʅ ıs ıuɔʅnpǝp ıu ʇɥǝ ɔnɹɹǝuʇ ɐnʇo-ɐssıƃuɯǝuʇ bnǝnǝ, uoʇ ʇɥɐʇ ıʇ ıs ɐʅɹǝɐpʎ ɐssıƃuǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.skills.badges-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nopǝ qɐpƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.skills.goal-1": [
     {
       "type": 0,
@@ -29158,6 +29392,34 @@
       "value": "‬"
     }
   ],
+  "wiki.skills.legend": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɹɹoʍs doıuʇ ɟɹoɯ ɐ dɹǝɹǝbnısıʇǝ ʇo ʇɥǝ sʞıʅʅ ʇɥɐʇ uǝǝps ıʇ. ∀ pɐsɥǝp ɔouuǝɔʇıou ɯǝɐus ʇɥǝ dɹǝɹǝbnısıʇǝ ıs uoʇ ɐssıƃuǝp; ɐ soʅıp ɔouuǝɔʇıou ɯǝɐus ıʇ ıs ɐssıƃuǝp. Sǝʅǝɔʇıuƃ ɐ sʞıʅʅ ɥıƃɥʅıƃɥʇs ıʇs ıuɔoɯıuƃ ɔouuǝɔʇıous."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.skills.legend-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅ ʇɹǝǝ ʅǝƃǝup"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.skills.overview": [
     {
       "type": 0,
@@ -29246,6 +29508,34 @@
     {
       "type": 0,
       "value": "Hoʍ sʞıʅʅs ʍoɹʞ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.skills.preset-safety": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅs ǝuʇǝɹ ʇɥǝ ɐnʇo-ɐssıƃuɯǝuʇ bnǝnǝ ıu ʇɥǝ oɹpǝɹ ʎon ɐpp ʇɥǝɯ. Ↄɥǝɔʞ Iuɔʅnpǝp ıu Ԁɹǝsǝʇ ıu ɐ sʞıʅʅ’s pǝʇɐıʅs ʇo ɔɥɐuƃǝ ıʇs ɯǝɯqǝɹsɥıd. ⊥nɹu oɟɟ ∀ʅʅoʍ ɐnʇoɯɐʇıɔ ɐssıƃuɯǝuʇ oɟ uou-ɹǝɟnupɐqʅǝ sʞıʅʅs ıu Sʞıʅʅ sǝʇʇıuƃs ıɟ ʎon ʍɐuʇ ʇo ɐʌoıp ɔoɯɯıʇʇıuƃ doıuʇs ʇo ʇɥosǝ uopǝs ɐnʇoɯɐʇıɔɐʅʅʎ. ⊥ɥıs poǝs uoʇ dɹǝʌǝuʇ ɯɐunɐʅ dnɹɔɥɐsǝs oɹ ɹǝɟnup ɐʅɹǝɐpʎ ɐssıƃuǝp sʞıʅʅs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.skills.preset-safety-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁʅɐuuıuƃ ɐ dɹǝsǝʇ"
     },
     {
       "type": 0,

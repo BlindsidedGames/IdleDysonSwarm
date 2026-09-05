@@ -5940,21 +5940,107 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "Aumenta a vida útil dos Painéis em "
+      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
     },
     {
       "type": 8,
       "value": "value",
       "children": [
         {
+          "type": 0,
+          "value": "+"
+        },
+        {
           "type": 1,
-          "value": "seconds"
+          "value": "current"
         },
         {
           "type": 0,
           "value": "s"
         }
       ]
+    }
+  ],
+  "research.card.lifetime-projected": [
+    {
+      "type": 0,
+      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "+"
+        },
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    }
+  ],
+  "research.card.lifetime-projected-accessible": [
+    {
+      "type": 0,
+      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " segundos, aumentando para "
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": " segundos."
     }
   ],
   "research.card.purchase-boost": [
@@ -6877,6 +6963,12 @@
     {
       "type": 0,
       "value": " ms"
+    }
+  ],
+  "settings.processing.restore-default": [
+    {
+      "type": 0,
+      "value": "Padrão"
     }
   ],
   "settings.processing.title": [
@@ -9684,7 +9776,7 @@
   "skills.node.regulatedAcademia.description": [
     {
       "type": 0,
-      "value": "Você encontra um fragmento de outro universo e usa esse conhecimento para aprimorar seus Robôs. Que outras partes desse universo ainda poderá encontrar?"
+      "value": "Você encontra um fragmento de outro universo. Seus conhecimentos melhoram suas pesquisas de Dinheiro e Ciência. Que outras descobertas esse universo guarda?"
     }
   ],
   "skills.node.regulatedAcademia.name": [
@@ -12740,6 +12832,18 @@
       "value": "Ruptura da Realidade"
     }
   ],
+  "wiki.infinity.recommendation": [
+    {
+      "type": 0,
+      "value": "Com o Infinito automático desativado, a recomendação mostra a melhor taxa de PI por minuto observada no ciclo atual e a recompensa de PI correspondente. Para taxas semelhantes, a menor recompensa é preferida. Com o Infinito automático ativado, a recomendação salva de um ciclo manual é exibida. É uma orientação, não uma garantia nem uma meta aplicada automaticamente: insira a meta desejada. Reavalie-a quando sua produção mudar."
+    }
+  ],
+  "wiki.infinity.recommendation-title": [
+    {
+      "type": 0,
+      "value": "Entenda a recomendação"
+    }
+  ],
   "wiki.infinity.scaling": [
     {
       "type": 0,
@@ -14044,6 +14148,22 @@
       "value": "Anomalia"
     }
   ],
+  "wiki.reality.city-booster": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Impulso Urbano"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " faz cada ciclo de produção das cidades criar 10 Fábricas em vez de 1 após concluir Engenharia. Não aumenta os 5 Operários produzidos por ciclo."
+    }
+  ],
   "wiki.reality.countermeasures": [
     {
       "type": 8,
@@ -14204,6 +14324,28 @@
     {
       "type": 0,
       "value": "A camada da Realidade"
+    }
+  ],
+  "wiki.reality.simulation-upgrades": [
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Log10 Operários"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " acelera a produção de Moradias dos operários pelo fator 1 + log10(operários). Por exemplo, 100 operários dão um multiplicador de 3× e 1.000 dão 4×. Isso não cria mais operários diretamente."
+    }
+  ],
+  "wiki.reality.simulation-upgrades-title": [
+    {
+      "type": 0,
+      "value": "Melhorias de Simulação"
     }
   ],
   "wiki.region": [
@@ -14392,6 +14534,18 @@
     {
       "type": 0,
       "value": "Atribuição automática e Predefinições"
+    }
+  ],
+  "wiki.skills.badges": [
+    {
+      "type": 0,
+      "value": "Embaixo à direita: custo em Pontos de Habilidade; o indicador fica verde quando a Habilidade é atribuída. Em cima à direita: pré-requisitos concluídos/necessários, exibidos em Habilidades não atribuídas com vários pré-requisitos. Embaixo à esquerda: um + indica que a Habilidade está na fila atual de atribuição automática, não que já esteja atribuída."
+    }
+  ],
+  "wiki.skills.badges-title": [
+    {
+      "type": 0,
+      "value": "Indicadores dos nós"
     }
   ],
   "wiki.skills.goal-1": [
@@ -14614,6 +14768,18 @@
       "value": "Objetivos"
     }
   ],
+  "wiki.skills.legend": [
+    {
+      "type": 0,
+      "value": "As setas vão de um pré-requisito até a Habilidade que depende dele. Uma conexão tracejada indica que o pré-requisito não está atribuído; uma contínua indica que está. Selecionar uma Habilidade destaca as conexões que chegam até ela."
+    }
+  ],
+  "wiki.skills.legend-title": [
+    {
+      "type": 0,
+      "value": "Legenda da árvore de Habilidades"
+    }
+  ],
   "wiki.skills.overview": [
     {
       "type": 8,
@@ -14690,6 +14856,18 @@
     {
       "type": 0,
       "value": "Como funcionam as Habilidades"
+    }
+  ],
+  "wiki.skills.preset-safety": [
+    {
+      "type": 0,
+      "value": "As Habilidades entram na fila de atribuição automática na ordem em que são adicionadas. Use a opção de inclusão na predefinição nos detalhes de uma Habilidade para alterar sua participação. Desative «Permitir atribuição automática de Habilidades sem devolução de Pontos» nas configurações de Habilidades para evitar comprometer pontos automaticamente nesses nós. Isso não impede compras manuais nem devolve pontos de Habilidades já atribuídas."
+    }
+  ],
+  "wiki.skills.preset-safety-title": [
+    {
+      "type": 0,
+      "value": "Planeje uma predefinição"
     }
   ],
   "wiki.title": [
