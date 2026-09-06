@@ -191,13 +191,13 @@
     "defaultMessage": "Abandon challenge"
   },
   "challenges.active": {
-    "defaultMessage": "Blank Slate active · Skills disabled"
+    "defaultMessage": "Blank Slate active · Skill assignment disabled"
   },
   "challenges.blankSlate": {
     "defaultMessage": "Blank Slate"
   },
   "challenges.blankSlate.description": {
-    "defaultMessage": "Complete a normal Infinity with all skills disabled. Bots, buildings and research remain available."
+    "defaultMessage": "Complete a normal Infinity without assigning ordinary skills. Galvanized base skills stay active. Bots, buildings and research remain available."
   },
   "challenges.cancel": {
     "defaultMessage": "Cancel"
@@ -215,7 +215,7 @@
     "defaultMessage": "Galvanizers: {value}"
   },
   "challenges.galvanizers.future": {
-    "defaultMessage": "Galvanizers are saved for permanently enhancing skills in a future update. They cannot be spent yet and survive Overflow."
+    "defaultMessage": "Spend 1 Galvanizer in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Galvanization cannot be undone and survives Overflow."
   },
   "challenges.replay": {
     "defaultMessage": "Replay Blank Slate"
@@ -4105,6 +4105,14 @@
     "defaultMessage": "Also assign these required skills:",
     "description": "Heading for prerequisite skills that will be assigned with the selected skill."
   },
+  "skills.augments-assigned": {
+    "defaultMessage": "Assigned augments: {complete}/{total}",
+    "description": "Owned optional augments out of the total available on a galvanized skill."
+  },
+  "skills.back-to-presets": {
+    "defaultMessage": "Back to presets",
+    "description": "Skill priority editor and subskill controls."
+  },
   "skills.blocked-skills-heading": {
     "defaultMessage": "Preset skills blocked for now",
     "description": "Heading above target preset skills blocked by retained ownership."
@@ -4128,6 +4136,10 @@
   "skills.confirm": {
     "defaultMessage": "Confirm",
     "description": "Button label for confirming a pending skill preset change."
+  },
+  "skills.confirm-galvanize": {
+    "defaultMessage": "Spend 1 Galvanizer",
+    "description": "Galvanization skill details interface."
   },
   "skills.confirm-import": {
     "defaultMessage": "Replace preset",
@@ -4169,6 +4181,10 @@
     "defaultMessage": "Double-click to assign skills",
     "description": "Optional Skill Tree interaction that delays opening details so a double click or double tap can assign a skill."
   },
+  "skills.edit-priority": {
+    "defaultMessage": "Edit priority",
+    "description": "Skill priority editor and subskill controls."
+  },
   "skills.effect": {
     "defaultMessage": "Effect:",
     "description": "Label introducing the mechanical effect of a skill."
@@ -4196,6 +4212,98 @@
   "skills.fragments-context": {
     "defaultMessage": "Fragments owned: {value} ({delta})",
     "description": "Skill fragment total and its recent change shown in skill details."
+  },
+  "skills.galvAlgorithms": {
+    "defaultMessage": "Servers, AI Managers and Assembly Lines are 3× stronger.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvBurnout": {
+    "defaultMessage": "Triple panel production.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvCables": {
+    "defaultMessage": "5× as many Data Centers from Pocket Dimensions.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvColdFusion": {
+    "defaultMessage": "10× Science production.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvEconomic": {
+    "defaultMessage": "20× Cash production.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvEndLine": {
+    "defaultMessage": "5× Bot production from Assembly Lines.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvEnlightened": {
+    "defaultMessage": "Scientific Planets also produce Cash Boosts.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvFusion": {
+    "defaultMessage": "5× Panel production.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvPowerAddiction": {
+    "defaultMessage": "Assembly Lines, AI Managers, Servers, Data Centers and Planets are 200% stronger.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvPowerIndulging": {
+    "defaultMessage": "Assembly Lines, AI Managers, Servers, Data Centers and Planets are 100% stronger.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvPowerTaste": {
+    "defaultMessage": "Assembly Lines, AI Managers, Servers, Data Centers and Planets are 50% stronger.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvPrecursors": {
+    "defaultMessage": "Science multipliers also multiply Cash production, alongside existing Cash multipliers.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvSacrifices": {
+    "defaultMessage": "Create Planets each second equal to log10(Stellar Galaxies Engulfed)², without consuming or requiring Bots.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvScientific": {
+    "defaultMessage": "20× Science production.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvStellarDominance": {
+    "defaultMessage": "10× Panel Lifetime while the normal Bot requirement is met, without the extra sacrifice cost or Cash penalty.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvStellarObliteration": {
+    "defaultMessage": "Stellar Sacrifices Galaxies are 1000× better.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvSupernova": {
+    "defaultMessage": "Stellar Sacrifices Galaxies are 1000× better. All manual-purchase production bonuses remain active.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvWorthy": {
+    "defaultMessage": "Assembly Lines are 5× as effective.",
+    "description": "Effective skill benefit after galvanization."
+  },
+  "skills.galvanize-action": {
+    "defaultMessage": "Galvanize · {currency}",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.galvanize-warning": {
+    "defaultMessage": "Permanently galvanize {name} for 1 Galvanizer? Any Skill Points invested in this base skill are returned. This cannot be undone.",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.galvanized": {
+    "defaultMessage": "Galvanized",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.galvanized-help": {
+    "defaultMessage": "This base skill is permanently active and costs no Skill Points. Its penalties and exclusions are removed. Normal conditions and timer resets still apply.",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.galvanized-permanent": {
+    "defaultMessage": "Galvanized · permanently active",
+    "description": "Galvanization skill details interface."
   },
   "skills.impact.bots": {
     "defaultMessage": "Bots",
@@ -5533,6 +5641,10 @@
     "defaultMessage": "Paste",
     "description": "Button label for pasting a skill preset import string."
   },
+  "skills.permanent-preset-help": {
+    "defaultMessage": "Always active in every preset. These base skills spend no points.",
+    "description": "Skill priority editor and subskill controls."
+  },
   "skills.points": {
     "defaultMessage": "Skill Points: {value}",
     "description": "Current number of skill points available to spend."
@@ -5600,6 +5712,30 @@
   "skills.preview-import": {
     "defaultMessage": "Preview import",
     "description": "Button label for validating and previewing an imported preset."
+  },
+  "skills.priority-empty": {
+    "defaultMessage": "No skills queued for spending.",
+    "description": "Skill priority editor and subskill controls."
+  },
+  "skills.priority-move-down": {
+    "defaultMessage": "Move {name} down",
+    "description": "Accessible button label to lower a skill spending priority."
+  },
+  "skills.priority-move-up": {
+    "defaultMessage": "Move {name} up",
+    "description": "Accessible button label to raise a skill spending priority."
+  },
+  "skills.priority-non-refundable": {
+    "defaultMessage": "Non-refundable",
+    "description": "Skill priority editor and subskill controls."
+  },
+  "skills.priority-remove": {
+    "defaultMessage": "Remove {name} from preset",
+    "description": "Remove a queued skill and its dependent skills from the preset."
+  },
+  "skills.priority-title": {
+    "defaultMessage": "Priority · {name}",
+    "description": "Skill priority editor and subskill controls."
   },
   "skills.purchase": {
     "defaultMessage": "Assign Skill",
@@ -5688,6 +5824,58 @@
   "skills.show-preset-application-notifications": {
     "defaultMessage": "Show partial preset application notifications",
     "description": "Presentation preference controlling post-switch partial preset application notices."
+  },
+  "skills.spending-priority": {
+    "defaultMessage": "Spending priority",
+    "description": "Expandable ordered skill list inside each preset."
+  },
+  "skills.spending-priority-help": {
+    "defaultMessage": "Drag to reorder or use the arrows. Required skills are bought first. Points are saved until the next skill can be afforded.",
+    "description": "Explains strict skill preset purchase priority."
+  },
+  "skills.subskill-assign": {
+    "defaultMessage": "Assign {name} for 1 Skill Point",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.subskill-assign-short": {
+    "defaultMessage": "Assign",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.subskill-cost": {
+    "defaultMessage": "1 Skill Point",
+    "description": "Skill priority editor and subskill controls."
+  },
+  "skills.subskill-decay": {
+    "defaultMessage": "Each decayed panel counts as 10",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.subskill-include": {
+    "defaultMessage": "Include {name} in {preset}",
+    "description": "Accessible subskill preset checkbox label."
+  },
+  "skills.subskill-lifetime": {
+    "defaultMessage": "+5 seconds Panel Lifetime",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.subskill-production": {
+    "defaultMessage": "2× Cash and Science production",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.subskill-refund": {
+    "defaultMessage": "Refund {name} for 1 Skill Point",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.subskill-refund-short": {
+    "defaultMessage": "Refund",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.subskills": {
+    "defaultMessage": "Augments",
+    "description": "Galvanization skill details interface."
+  },
+  "skills.subskills-help": {
+    "defaultMessage": "Each costs 1 Skill Point; you can take all three. Checkboxes add them to the preset. Augments reset and refund normally.",
+    "description": "Galvanization skill details interface."
   },
   "skills.supernova-restoration-quote": {
     "defaultMessage": "Refunding Supernova restores the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.",

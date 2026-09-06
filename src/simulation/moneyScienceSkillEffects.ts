@@ -1,3 +1,4 @@
+import { galvanizedSkillIds } from './galvanization'
 import {
   isFiniteNonNegativeNumber,
   isSafeNonNegativeInteger,
@@ -18,6 +19,7 @@ import {
 } from './stellarArithmetic'
 
 export interface MoneyScienceCanonicalInputs {
+  readonly challenges?: CanonicalGameStateV1['challenges']
   readonly dyson: Pick<
     CanonicalGameStateV1['dyson'],
     'bots' | 'botDistribution'
@@ -439,6 +441,7 @@ function resolveStellarDominance(
     ]),
     production.value.panelsPerSecond,
     production.value.panelLifetimeSeconds,
+    new Set(galvanizedSkillIds(state)),
   )
   return resolved(bots.value >= required ? 0.01 : 1)
 }

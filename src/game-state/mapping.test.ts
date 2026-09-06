@@ -349,7 +349,7 @@ describe('canonical game-state mapping', () => {
     expect(roundTrip.dream.railgun.lastPanelsLaunched).toBe(0n)
   })
 
-  test('accepts a prepared schema-16 entry without rerunning migration', () => {
+  test('accepts a prepared schema-17 entry without rerunning migration', () => {
     const historical = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),
     ).prepared
@@ -359,7 +359,7 @@ describe('canonical game-state mapping', () => {
     const hydrated = hydrateGameState(current)
     const dehydrated = dehydrateGameState(hydrated)
 
-    expect(current.sourceSchema).toBe(16)
+    expect(current.sourceSchema).toBe(17)
     expect(current.appliedSteps).toEqual([])
     expect(current.numericRepair.repairCount).toBe(0)
     expect(hydrateGameState(dehydrated).state).toEqual(hydrated.state)

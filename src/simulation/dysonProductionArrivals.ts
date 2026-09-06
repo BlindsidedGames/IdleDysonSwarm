@@ -1,3 +1,4 @@
+import { hasCashScienceSubskill } from './skillSubskills'
 import { isBreakInfinityEnabled } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
@@ -114,7 +115,7 @@ export function applyDysonProductionArrivals(
       ),
       totalPanelsDecayed: accumulate(
         state.dyson.totalPanelsDecayed,
-        rates.panels,
+        hasCashScienceSubskill(state, 'decay') ? multiplyContinuous(rates.panels, 10) : rates.panels,
         seconds,
       ),
       facilities: facilities as Readonly<

@@ -1,3 +1,6 @@
+import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
+import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
+import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
 import { infinityChallenges, isBlankSlateActive } from './infinityChallenges'
 import { ordinaryInfinityBotThreshold } from './infinityCycle'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
@@ -146,6 +149,7 @@ export function applyCanonicalInfinityReset(
   const rulesResult = captureAutoAssignmentRules(
     state.skills.activeAutoAssignment,
     lookup,
+    state,
   )
   if (!rulesResult.ok) return failed(state, rulesResult.issues)
 
@@ -396,6 +400,7 @@ function owned(
 function captureAutoAssignmentRules(
   ids: readonly string[],
   lookup: CanonicalInfinityResetAssetLookup,
+  state: Readonly<CanonicalGameStateV1>,
 ):
   | {
       readonly ok: true
@@ -429,12 +434,16 @@ function captureAutoAssignmentRules(
 
   const rules: SkillAutoAssignmentRule[] = []
   const issues: CanonicalInfinityResetIssue[] = []
-  for (const id of ids) {
-    if (id.length === 0 || !databaseIds.ids.has(id)) {
+  const pending = [...ids]
+  const visited = new Set<string>()
+  for (const id of pending) {
+    if (visited.has(id)) continue
+    visited.add(id)
+    if (id.length === 0 || (!databaseIds.ids.has(id) && !isSubskill(id))) {
       rules.push(invalidRule(id))
       continue
     }
-    const asset = lookup(SKILL_DEFINITION_ASSET_KIND, id)
+    const asset = SUBSKILL_ASSETS.find((asset) => asset.id === id) ?? lookup(SKILL_DEFINITION_ASSET_KIND, id)
     if (asset === undefined) {
       issues.push({
         code: 'INFINITY_RESET_SKILL_DEFINITION_MISSING',
@@ -448,7 +457,14 @@ function captureAutoAssignmentRules(
       issues.push(parsed.issue)
       continue
     }
-    rules.push(parsed.rule)
+    const permanent = isGalvanized(state, id)
+    const rule = { ...parsed.rule,
+      requiredSkillIds: permanent ? [] : parsed.rule.requiredSkillIds,
+      shadowRequirementIds: permanent ? [] : parsed.rule.shadowRequirementIds,
+      exclusiveWithIds: permanent ? [] : parsed.rule.exclusiveWithIds.filter((other) => !isGalvanized(state, other)),
+    }
+    rules.push(rule)
+    pending.push(...rule.requiredSkillIds, ...rule.shadowRequirementIds)
   }
   return issues.length > 0
     ? { ok: false, issues: Object.freeze(issues) }
@@ -580,44 +596,33 @@ function applyAutoAssignment(
   state: Readonly<CanonicalGameStateV1>,
 ): AutoAssignmentOutcome {
   let points = initialPoints
-  let fragments = 0n
-  const byId: Record<string, SkillRuntimeState> = {}
+  let fragments = permanentFragmentCount(state)
+  const byId: Record<string, SkillRuntimeState> = permanentSkillRuntime(state)
   const assignedIds: string[] = []
-  let passesRemaining = rules.length
-  let assignedAny: boolean
-  do {
-    assignedAny = false
-    for (const rule of rules) {
-      if (
-        !rule.valid ||
-        !isRuleUnlocked(rule, state) ||
-        rule.id.length === 0 ||
-        isOwned(byId, rule.id) ||
-        points < rule.cost ||
-        !allOwned(byId, rule.requiredSkillIds) ||
-        !allOwned(byId, rule.shadowRequirementIds) ||
-        anyOwned(byId, rule.exclusiveWithIds) ||
-        (!assignNonRefundable && !rule.refundable)
-      ) {
-        continue
-      }
-
-      points -= rule.cost
-      byId[rule.id] = {
-        owned: true,
-        level: 1,
-        timerSeconds: 0,
-        secondaryTimerSeconds: 0,
-      }
-      if (rule.isFragment) {
-        fragments = addDiscrete(fragments, 1n)
-      }
-      assignedIds.push(rule.id)
-      assignedAny = true
-      if (points <= 0n) break
+  const rulesById = new Map(rules.map((rule) => [rule.id, rule]))
+  const dependencies = new Map(rules.map((rule) => [rule.id, {
+    required: rule.requiredSkillIds,
+    shadowRequired: rule.shadowRequirementIds,
+  }]))
+  for (const id of resolveSkillPurchaseOrder(state.skills.activeAutoAssignment, new Set(galvanizedSkillIds(state)), dependencies)) {
+    const rule = rulesById.get(id)
+    if (rule === undefined || !rule.valid || !isRuleUnlocked(rule, state) ||
+      (isSubskill(id) && !isSubskillUnlocked(state, id)) ||
+      rule.id.length === 0 || isOwned(byId, rule.id) ||
+      anyOwned(byId, rule.exclusiveWithIds) ||
+      (!assignNonRefundable && !rule.refundable)) continue
+    if (points < rule.cost || !allOwned(byId, rule.requiredSkillIds) ||
+      !allOwned(byId, rule.shadowRequirementIds)) break
+    points -= rule.cost
+    byId[rule.id] = {
+      owned: true,
+      level: 1,
+      timerSeconds: 0,
+      secondaryTimerSeconds: 0,
     }
-    passesRemaining -= 1
-  } while (assignedAny && points > 0n && passesRemaining > 0)
+    if (rule.isFragment) fragments = addDiscrete(fragments, 1n)
+    assignedIds.push(rule.id)
+  }
 
   return {
     points,

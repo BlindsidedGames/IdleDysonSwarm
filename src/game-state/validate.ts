@@ -1,3 +1,5 @@
+import { isSubskill, isSubskillUnlocked } from '../simulation/skillSubskills'
+import { isGalvanized, validateGalvanizedSkills } from '../simulation/galvanization'
 import { validateInfinityChallenges } from '../simulation/infinityChallenges'
 import {
   isNonNegativeInteger,
@@ -22,8 +24,12 @@ export function validateCanonicalGameState(
   const errors: string[] = []
   const challengeError = validateInfinityChallenges(state.challenges)
   if (challengeError) errors.push(challengeError)
-  if (state.challenges?.active === 'blank-slate' && Object.values(state.skills.byId).some(skill => skill.owned)) {
-    errors.push('Blank Slate cannot contain owned skills.')
+  errors.push(...validateGalvanizedSkills(state))
+  for (const [id, skill] of Object.entries(state.skills.byId)) {
+    if (skill.owned && isSubskill(id) && !isSubskillUnlocked(state, id)) errors.push(`Subskill '${id}' requires its galvanized base.`)
+  }
+  if (state.challenges?.active === 'blank-slate' && Object.entries(state.skills.byId).some(([id, skill]) => skill.owned && !isGalvanized(state, id))) {
+    errors.push('Blank Slate cannot contain ordinary assigned skills.')
   }
   const overflowPoints = state.avocado.overflowPoints
   if (overflowPoints !== undefined &&

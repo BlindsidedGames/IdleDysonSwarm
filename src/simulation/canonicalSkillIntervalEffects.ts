@@ -252,8 +252,9 @@ function resolveStellarAggregate(
     startingBots,
     multiplyContinuous(botProductionPerSecond, seconds),
   )
-  if (botsPerSecond <= 0 || planetsPerSecond <= 0) {
-    return { bots: ordinaryEndingBots, planetsProduced: 0 }
+  if (planetsPerSecond <= 0) return { bots: ordinaryEndingBots, planetsProduced: 0 }
+  if (botsPerSecond <= 0) {
+    return { bots: ordinaryEndingBots, planetsProduced: multiplyContinuous(planetsPerSecond, seconds) }
   }
 
   const affordableSeconds = Math.min(

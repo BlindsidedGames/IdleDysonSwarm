@@ -46,7 +46,9 @@ export function resolveStellarSacrificesRequiredBots(
   ownedSkills: ReadonlySet<string>,
   panelsPerSecond: number,
   panelLifetimeSeconds: number,
+  galvanizedSkills: ReadonlySet<string> = new Set(),
 ): number {
+  if (galvanizedSkills.has('stellarSacrifices')) return 0
   const stars = resolveStarsSurrounded(
     panelsPerSecond,
     panelLifetimeSeconds,
@@ -61,13 +63,13 @@ export function resolveStellarSacrificesRequiredBots(
   // recompute as one composed multiplication if that order overflows.
   let required = stars * stellarMultiplier
   if (required < 1) required = 1
-  if (ownedSkills.has('stellarDominance')) required *= 100
+  if ((ownedSkills.has('stellarDominance') && !galvanizedSkills.has('stellarDominance'))) required *= 100
   if (ownedSkills.has('stellarImprovements')) required /= 1_000
   if (Number.isFinite(required)) return required
 
   const composedMultiplier =
     stellarMultiplier *
-    (ownedSkills.has('stellarDominance') ? 100 : 1) /
+    ((ownedSkills.has('stellarDominance') && !galvanizedSkills.has('stellarDominance')) ? 100 : 1) /
     (ownedSkills.has('stellarImprovements') ? 1_000 : 1)
   return multiplyContinuous(stars, composedMultiplier)
 }

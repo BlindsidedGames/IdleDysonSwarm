@@ -540,16 +540,19 @@ export class CanonicalGameApplicationFacade {
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalPlayerDispatchResult> {
-    if (envelope.command.kind === 'avocado.request-overflow-reset' ||
+    const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
+      envelope.command.kind === 'skill.set-preset-assignment'
+    if (presetPriorityChange || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
         envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
-      const result = await this.application.dispatchCommitFirst(envelope, 'bot-cap')
+      const result = await this.application.dispatchCommitFirst(envelope,
+        presetPriorityChange ? 'skill-preset' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
       return {
         kind: 'transition',
         transition: result.committed ? result.transition : {
           accepted: false,
           revision: result.transition.revision,
           code: result.code ?? 'OVERFLOW_COMMIT_FAILED',
-          reason: result.reason ?? 'The reset could not be saved. Your run has been preserved.',
+          reason: result.reason ?? 'The change could not be saved. Your progress has been preserved.',
         },
       }
     }

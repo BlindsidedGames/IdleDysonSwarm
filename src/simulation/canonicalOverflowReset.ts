@@ -1,3 +1,4 @@
+import { permanentSkillRuntime, permanentFragmentCount } from './galvanization'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { resetCanonicalDreamProgress } from './canonicalDreamReset'
 import { createEmptySimulationTotals } from './canonicalStatistics'
@@ -70,8 +71,8 @@ export function applyCanonicalOverflowReset(
       skills: {
         ...state.skills,
         points: state.secretProgress.completed ? AVOCADO_MEDITATION_SKILL_POINT_REWARD : 0n,
-        fragments: 0n,
-        byId: {},
+        fragments: permanentFragmentCount(state),
+        byId: permanentSkillRuntime(state),
       },
       research: { ...state.research, levelsById: {}, progressById: {} },
       reality: {

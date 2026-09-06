@@ -1,3 +1,4 @@
+import { galvanizedSkillSet } from './galvanizedSkillEffects'
 import { deriveEffectivePurchaseCounts } from './effectivePurchaseCounts'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -113,6 +114,7 @@ function prepareDynamicSkillEffectInputs(
     snapshot.panelLifetimeSeconds,
   )
   const moneyScienceState: MoneyScienceCanonicalInputs = {
+    challenges: state.challenges,
     dyson: state.dyson,
     skills: state.skills,
     research: state.research,
@@ -124,6 +126,7 @@ function prepareDynamicSkillEffectInputs(
     scienceMultiplier: snapshot.scienceMultiplier,
   })
   const panel: PanelDynamicEffectInputs = Object.freeze({
+    galvanizedSkills: galvanizedSkillSet(state),
     ownedSkills,
     botMultitasking: state.quantum.unlocks.botMultitasking,
     botDistribution: state.dyson.botDistribution,

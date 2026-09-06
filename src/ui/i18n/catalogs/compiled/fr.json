@@ -346,7 +346,7 @@
   "challenges.active": [
     {
       "type": 0,
-      "value": "Table rase en cours · Compétences désactivées"
+      "value": "Page blanche active · Attribution de compétences désactivée"
     }
   ],
   "challenges.blankSlate": [
@@ -358,7 +358,7 @@
   "challenges.blankSlate.description": [
     {
       "type": 0,
-      "value": "Terminez un Infini normal avec toutes les compétences désactivées. Les robots, bâtiments et recherches restent disponibles."
+      "value": "Terminez une Infinité normale sans attribuer de compétences ordinaires. Les compétences de base galvanisées restent actives. Bots, bâtiments et recherches restent disponibles."
     }
   ],
   "challenges.cancel": [
@@ -398,7 +398,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "Les galvaniseurs sont conservés pour améliorer les compétences de façon permanente dans une future mise à jour. Ils ne peuvent pas encore être dépensés et survivent au Débordement."
+      "value": "Dépensez 1 Galvaniseur dans les détails d’une compétence révélée pour rendre son effet de base permanent et supprimer ses pénalités et exclusions. La galvanisation est irréversible et survit au Débordement."
     }
   ],
   "challenges.replay": [
@@ -8533,6 +8533,30 @@
       "value": "Attribuer également ces compétences requises :"
     }
   ],
+  "skills.augments-assigned": [
+    {
+      "type": 0,
+      "value": "Augmentations attribuées : "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "skills.back-to-presets": [
+    {
+      "type": 0,
+      "value": "Retour aux préréglages"
+    }
+  ],
   "skills.blocked-skills-heading": [
     {
       "type": 0,
@@ -8567,6 +8591,12 @@
     {
       "type": 0,
       "value": "Confirmer"
+    }
+  ],
+  "skills.confirm-galvanize": [
+    {
+      "type": 0,
+      "value": "Dépenser 1 Galvaniseur"
     }
   ],
   "skills.confirm-import": [
@@ -8637,6 +8667,12 @@
       "value": "Double-cliquer pour attribuer des compétences"
     }
   ],
+  "skills.edit-priority": [
+    {
+      "type": 0,
+      "value": "Modifier la priorité"
+    }
+  ],
   "skills.effect": [
     {
       "type": 0,
@@ -8701,6 +8737,156 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "skills.galvAlgorithms": [
+    {
+      "type": 0,
+      "value": "Les Serveurs, Gestionnaires IA et Chaînes de montage sont 3× plus puissants."
+    }
+  ],
+  "skills.galvBurnout": [
+    {
+      "type": 0,
+      "value": "Triple la production de panneaux."
+    }
+  ],
+  "skills.galvCables": [
+    {
+      "type": 0,
+      "value": "5× plus de Centres de données grâce aux Dimensions de poche."
+    }
+  ],
+  "skills.galvColdFusion": [
+    {
+      "type": 0,
+      "value": "Production de Science ×10."
+    }
+  ],
+  "skills.galvEconomic": [
+    {
+      "type": 0,
+      "value": "Production d’Argent ×20."
+    }
+  ],
+  "skills.galvEndLine": [
+    {
+      "type": 0,
+      "value": "Production de Bots des Chaînes de montage ×5."
+    }
+  ],
+  "skills.galvEnlightened": [
+    {
+      "type": 0,
+      "value": "Les Planètes scientifiques produisent aussi des bonus d’Argent."
+    }
+  ],
+  "skills.galvFusion": [
+    {
+      "type": 0,
+      "value": "Production de panneaux ×5."
+    }
+  ],
+  "skills.galvPowerAddiction": [
+    {
+      "type": 0,
+      "value": "Les Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes sont 200 % plus puissants."
+    }
+  ],
+  "skills.galvPowerIndulging": [
+    {
+      "type": 0,
+      "value": "Les Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes sont 100 % plus puissants."
+    }
+  ],
+  "skills.galvPowerTaste": [
+    {
+      "type": 0,
+      "value": "Les Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes sont 50 % plus puissants."
+    }
+  ],
+  "skills.galvPrecursors": [
+    {
+      "type": 0,
+      "value": "Les multiplicateurs de Science multiplient aussi la production d’Argent, en plus des multiplicateurs d’Argent existants."
+    }
+  ],
+  "skills.galvSacrifices": [
+    {
+      "type": 0,
+      "value": "Crée chaque seconde un nombre de Planètes égal à log10(Galaxies stellaires englouties)², sans consommer ni nécessiter de Bots."
+    }
+  ],
+  "skills.galvScientific": [
+    {
+      "type": 0,
+      "value": "Production de Science ×20."
+    }
+  ],
+  "skills.galvStellarDominance": [
+    {
+      "type": 0,
+      "value": "Durée de vie des panneaux ×10 lorsque le besoin normal en Bots est satisfait, sans coût de sacrifice supplémentaire ni pénalité d’Argent."
+    }
+  ],
+  "skills.galvStellarObliteration": [
+    {
+      "type": 0,
+      "value": "Les Galaxies des Sacrifices stellaires sont 1000× plus efficaces."
+    }
+  ],
+  "skills.galvSupernova": [
+    {
+      "type": 0,
+      "value": "Les Galaxies des Sacrifices stellaires sont 1000× plus efficaces. Tous les bonus de production des achats manuels restent actifs."
+    }
+  ],
+  "skills.galvWorthy": [
+    {
+      "type": 0,
+      "value": "Les Chaînes de montage sont 5× plus efficaces."
+    }
+  ],
+  "skills.galvanize-action": [
+    {
+      "type": 0,
+      "value": "Galvaniser · "
+    },
+    {
+      "type": 1,
+      "value": "currency"
+    }
+  ],
+  "skills.galvanize-warning": [
+    {
+      "type": 0,
+      "value": "Galvaniser définitivement "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " pour 1 Galvaniseur ? Les points de compétence investis dans cette compétence de base seront rendus. Cette action est irréversible."
+    }
+  ],
+  "skills.galvanized": [
+    {
+      "type": 0,
+      "value": "Galvanisée"
+    }
+  ],
+  "skills.galvanized-help": [
+    {
+      "type": 0,
+      "value": "Cette compétence de base est active en permanence et ne coûte aucun point de compétence. Ses pénalités et exclusions sont supprimées. Les conditions normales et les réinitialisations des minuteurs s’appliquent toujours."
+    }
+  ],
+  "skills.galvanized-permanent": [
+    {
+      "type": 0,
+      "value": "Galvanisée · active en permanence"
     }
   ],
   "skills.impact.bots": [
@@ -10843,6 +11029,12 @@
       "value": "Coller"
     }
   ],
+  "skills.permanent-preset-help": [
+    {
+      "type": 0,
+      "value": "Toujours actives dans tous les préréglages. Ces compétences de base ne dépensent aucun point."
+    }
+  ],
   "skills.points": [
     {
       "type": 0,
@@ -11005,6 +11197,70 @@
     {
       "type": 0,
       "value": "Aperçu de l’importation"
+    }
+  ],
+  "skills.priority-empty": [
+    {
+      "type": 0,
+      "value": "Aucune compétence en attente de points."
+    }
+  ],
+  "skills.priority-move-down": [
+    {
+      "type": 0,
+      "value": "Descendre "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " dans la liste"
+    }
+  ],
+  "skills.priority-move-up": [
+    {
+      "type": 0,
+      "value": "Monter "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " dans la liste"
+    }
+  ],
+  "skills.priority-non-refundable": [
+    {
+      "type": 0,
+      "value": "Non remboursable"
+    }
+  ],
+  "skills.priority-remove": [
+    {
+      "type": 0,
+      "value": "Retirer "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " du préréglage"
+    }
+  ],
+  "skills.priority-title": [
+    {
+      "type": 0,
+      "value": "Priorité · "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.purchase": [
@@ -11193,6 +11449,112 @@
     {
       "type": 0,
       "value": "Afficher les notifications d’application partielle des préréglages"
+    }
+  ],
+  "skills.spending-priority": [
+    {
+      "type": 0,
+      "value": "Priorité de dépense"
+    }
+  ],
+  "skills.spending-priority-help": [
+    {
+      "type": 0,
+      "value": "Faites glisser pour réordonner ou utilisez les flèches. Les prérequis sont achetés en premier. Les points sont conservés jusqu’à pouvoir acheter la compétence suivante."
+    }
+  ],
+  "skills.subskill-assign": [
+    {
+      "type": 0,
+      "value": "Attribuer "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " pour 1 point de compétence"
+    }
+  ],
+  "skills.subskill-assign-short": [
+    {
+      "type": 0,
+      "value": "Attribuer"
+    }
+  ],
+  "skills.subskill-cost": [
+    {
+      "type": 0,
+      "value": "1 point de compétence"
+    }
+  ],
+  "skills.subskill-decay": [
+    {
+      "type": 0,
+      "value": "Chaque panneau dégradé compte pour 10"
+    }
+  ],
+  "skills.subskill-include": [
+    {
+      "type": 0,
+      "value": "Inclure "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " dans "
+    },
+    {
+      "type": 1,
+      "value": "preset"
+    }
+  ],
+  "skills.subskill-lifetime": [
+    {
+      "type": 0,
+      "value": "+5 secondes de durée de vie des panneaux"
+    }
+  ],
+  "skills.subskill-production": [
+    {
+      "type": 0,
+      "value": "Production d’Argent et de Science ×2"
+    }
+  ],
+  "skills.subskill-refund": [
+    {
+      "type": 0,
+      "value": "Rembourser "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " pour 1 point de compétence"
+    }
+  ],
+  "skills.subskill-refund-short": [
+    {
+      "type": 0,
+      "value": "Rembourser"
+    }
+  ],
+  "skills.subskills": [
+    {
+      "type": 0,
+      "value": "Augmentations"
+    }
+  ],
+  "skills.subskills-help": [
+    {
+      "type": 0,
+      "value": "Chaque augmentation coûte 1 point de compétence ; vous pouvez prendre les trois. Les cases les ajoutent au préréglage. Elles se réinitialisent et se remboursent normalement."
     }
   ],
   "skills.supernova-restoration-quote": [

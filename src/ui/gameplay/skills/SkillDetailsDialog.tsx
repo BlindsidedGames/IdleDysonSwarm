@@ -13,11 +13,14 @@ export type SkillDetailsPalette =
 
 export interface SkillDetailsDialogProps {
   readonly title: ReactNode
+  readonly description?: ReactNode
   readonly closeLabel: string
   readonly palette: SkillDetailsPalette
   readonly className?: string
   readonly children: ReactNode
   readonly onClose: () => void
+  readonly onBack?: () => void
+  readonly backLabel?: string
 }
 
 /**
@@ -27,11 +30,14 @@ export interface SkillDetailsDialogProps {
  */
 export function SkillDetailsDialog({
   title,
+  description,
   closeLabel,
   palette,
   className,
   children,
   onClose,
+  onBack,
+  backLabel,
 }: SkillDetailsDialogProps) {
   const titleId = useId()
   const dialogRef = useRef<HTMLElement>(null)
@@ -39,7 +45,11 @@ export function SkillDetailsDialog({
   const closeRef = useRef<HTMLButtonElement>(null)
   const returnFocusRef = useRef<HTMLElement | null>(null)
   const onCloseRef = useRef(onClose)
-  onCloseRef.current = onClose
+  onCloseRef.current = onBack ?? onClose
+  const showingBack = onBack !== undefined
+  useEffect(() => {
+    if (showingBack) closeRef.current?.focus({ preventScroll: true })
+  }, [showingBack])
 
   useEffect(() => {
     returnFocusRef.current =
@@ -114,7 +124,7 @@ export function SkillDetailsDialog({
       ref={backdropRef}
       className="skill-details-dialog__backdrop"
       onPointerDown={(event) => {
-        if (event.target === event.currentTarget) onClose()
+        if (event.target === event.currentTarget) onCloseRef.current()
       }}
     >
       <section
@@ -130,9 +140,10 @@ export function SkillDetailsDialog({
         aria-modal="true"
         aria-labelledby={titleId}
       >
-        <header className="skill-details-dialog__header">
-          <h2 id={titleId}>{title}</h2>
-          <button
+        <header className="skill-details-dialog__header" data-description={description !== undefined || undefined} data-back={onBack !== undefined || undefined}>
+          {onBack && <button ref={closeRef} type="button" className="skill-details-dialog__close"
+            aria-label={backLabel ?? closeLabel} onClick={onBack}><span aria-hidden="true">←</span></button>}
+          {!onBack && <button
             ref={closeRef}
             type="button"
             className="skill-details-dialog__close"
@@ -140,7 +151,9 @@ export function SkillDetailsDialog({
             onClick={onClose}
           >
             <span aria-hidden="true">{'×'}</span>
-          </button>
+          </button>}
+          <h2 id={titleId}>{title}</h2>
+          {description !== undefined && <p className="skill-details__description">{description}</p>}
         </header>
         <div className="skill-details-dialog__content">
           {children}

@@ -346,7 +346,7 @@
   "challenges.active": [
     {
       "type": 0,
-      "value": "Blank Slate active · Skills disabled"
+      "value": "Blank Slate active · Skill assignment disabled"
     }
   ],
   "challenges.blankSlate": [
@@ -358,7 +358,7 @@
   "challenges.blankSlate.description": [
     {
       "type": 0,
-      "value": "Complete a normal Infinity with all skills disabled. Bots, buildings and research remain available."
+      "value": "Complete a normal Infinity without assigning ordinary skills. Galvanized base skills stay active. Bots, buildings and research remain available."
     }
   ],
   "challenges.cancel": [
@@ -398,7 +398,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "Galvanizers are saved for permanently enhancing skills in a future update. They cannot be spent yet and survive Overflow."
+      "value": "Spend 1 Galvanizer in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Galvanization cannot be undone and survives Overflow."
     }
   ],
   "challenges.replay": [
@@ -8533,6 +8533,30 @@
       "value": "Also assign these required skills:"
     }
   ],
+  "skills.augments-assigned": [
+    {
+      "type": 0,
+      "value": "Assigned augments: "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "skills.back-to-presets": [
+    {
+      "type": 0,
+      "value": "Back to presets"
+    }
+  ],
   "skills.blocked-skills-heading": [
     {
       "type": 0,
@@ -8567,6 +8591,12 @@
     {
       "type": 0,
       "value": "Confirm"
+    }
+  ],
+  "skills.confirm-galvanize": [
+    {
+      "type": 0,
+      "value": "Spend 1 Galvanizer"
     }
   ],
   "skills.confirm-import": [
@@ -8637,6 +8667,12 @@
       "value": "Double-click to assign skills"
     }
   ],
+  "skills.edit-priority": [
+    {
+      "type": 0,
+      "value": "Edit priority"
+    }
+  ],
   "skills.effect": [
     {
       "type": 0,
@@ -8701,6 +8737,156 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "skills.galvAlgorithms": [
+    {
+      "type": 0,
+      "value": "Servers, AI Managers and Assembly Lines are 3× stronger."
+    }
+  ],
+  "skills.galvBurnout": [
+    {
+      "type": 0,
+      "value": "Triple panel production."
+    }
+  ],
+  "skills.galvCables": [
+    {
+      "type": 0,
+      "value": "5× as many Data Centers from Pocket Dimensions."
+    }
+  ],
+  "skills.galvColdFusion": [
+    {
+      "type": 0,
+      "value": "10× Science production."
+    }
+  ],
+  "skills.galvEconomic": [
+    {
+      "type": 0,
+      "value": "20× Cash production."
+    }
+  ],
+  "skills.galvEndLine": [
+    {
+      "type": 0,
+      "value": "5× Bot production from Assembly Lines."
+    }
+  ],
+  "skills.galvEnlightened": [
+    {
+      "type": 0,
+      "value": "Scientific Planets also produce Cash Boosts."
+    }
+  ],
+  "skills.galvFusion": [
+    {
+      "type": 0,
+      "value": "5× Panel production."
+    }
+  ],
+  "skills.galvPowerAddiction": [
+    {
+      "type": 0,
+      "value": "Assembly Lines, AI Managers, Servers, Data Centers and Planets are 200% stronger."
+    }
+  ],
+  "skills.galvPowerIndulging": [
+    {
+      "type": 0,
+      "value": "Assembly Lines, AI Managers, Servers, Data Centers and Planets are 100% stronger."
+    }
+  ],
+  "skills.galvPowerTaste": [
+    {
+      "type": 0,
+      "value": "Assembly Lines, AI Managers, Servers, Data Centers and Planets are 50% stronger."
+    }
+  ],
+  "skills.galvPrecursors": [
+    {
+      "type": 0,
+      "value": "Science multipliers also multiply Cash production, alongside existing Cash multipliers."
+    }
+  ],
+  "skills.galvSacrifices": [
+    {
+      "type": 0,
+      "value": "Create Planets each second equal to log10(Stellar Galaxies Engulfed)², without consuming or requiring Bots."
+    }
+  ],
+  "skills.galvScientific": [
+    {
+      "type": 0,
+      "value": "20× Science production."
+    }
+  ],
+  "skills.galvStellarDominance": [
+    {
+      "type": 0,
+      "value": "10× Panel Lifetime while the normal Bot requirement is met, without the extra sacrifice cost or Cash penalty."
+    }
+  ],
+  "skills.galvStellarObliteration": [
+    {
+      "type": 0,
+      "value": "Stellar Sacrifices Galaxies are 1000× better."
+    }
+  ],
+  "skills.galvSupernova": [
+    {
+      "type": 0,
+      "value": "Stellar Sacrifices Galaxies are 1000× better. All manual-purchase production bonuses remain active."
+    }
+  ],
+  "skills.galvWorthy": [
+    {
+      "type": 0,
+      "value": "Assembly Lines are 5× as effective."
+    }
+  ],
+  "skills.galvanize-action": [
+    {
+      "type": 0,
+      "value": "Galvanize · "
+    },
+    {
+      "type": 1,
+      "value": "currency"
+    }
+  ],
+  "skills.galvanize-warning": [
+    {
+      "type": 0,
+      "value": "Permanently galvanize "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " for 1 Galvanizer? Any Skill Points invested in this base skill are returned. This cannot be undone."
+    }
+  ],
+  "skills.galvanized": [
+    {
+      "type": 0,
+      "value": "Galvanized"
+    }
+  ],
+  "skills.galvanized-help": [
+    {
+      "type": 0,
+      "value": "This base skill is permanently active and costs no Skill Points. Its penalties and exclusions are removed. Normal conditions and timer resets still apply."
+    }
+  ],
+  "skills.galvanized-permanent": [
+    {
+      "type": 0,
+      "value": "Galvanized · permanently active"
     }
   ],
   "skills.impact.bots": [
@@ -10843,6 +11029,12 @@
       "value": "Paste"
     }
   ],
+  "skills.permanent-preset-help": [
+    {
+      "type": 0,
+      "value": "Always active in every preset. These base skills spend no points."
+    }
+  ],
   "skills.points": [
     {
       "type": 0,
@@ -11005,6 +11197,70 @@
     {
       "type": 0,
       "value": "Preview import"
+    }
+  ],
+  "skills.priority-empty": [
+    {
+      "type": 0,
+      "value": "No skills queued for spending."
+    }
+  ],
+  "skills.priority-move-down": [
+    {
+      "type": 0,
+      "value": "Move "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " down"
+    }
+  ],
+  "skills.priority-move-up": [
+    {
+      "type": 0,
+      "value": "Move "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " up"
+    }
+  ],
+  "skills.priority-non-refundable": [
+    {
+      "type": 0,
+      "value": "Non-refundable"
+    }
+  ],
+  "skills.priority-remove": [
+    {
+      "type": 0,
+      "value": "Remove "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " from preset"
+    }
+  ],
+  "skills.priority-title": [
+    {
+      "type": 0,
+      "value": "Priority · "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.purchase": [
@@ -11193,6 +11449,112 @@
     {
       "type": 0,
       "value": "Show partial preset application notifications"
+    }
+  ],
+  "skills.spending-priority": [
+    {
+      "type": 0,
+      "value": "Spending priority"
+    }
+  ],
+  "skills.spending-priority-help": [
+    {
+      "type": 0,
+      "value": "Drag to reorder or use the arrows. Required skills are bought first. Points are saved until the next skill can be afforded."
+    }
+  ],
+  "skills.subskill-assign": [
+    {
+      "type": 0,
+      "value": "Assign "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " for 1 Skill Point"
+    }
+  ],
+  "skills.subskill-assign-short": [
+    {
+      "type": 0,
+      "value": "Assign"
+    }
+  ],
+  "skills.subskill-cost": [
+    {
+      "type": 0,
+      "value": "1 Skill Point"
+    }
+  ],
+  "skills.subskill-decay": [
+    {
+      "type": 0,
+      "value": "Each decayed panel counts as 10"
+    }
+  ],
+  "skills.subskill-include": [
+    {
+      "type": 0,
+      "value": "Include "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " in "
+    },
+    {
+      "type": 1,
+      "value": "preset"
+    }
+  ],
+  "skills.subskill-lifetime": [
+    {
+      "type": 0,
+      "value": "+5 seconds Panel Lifetime"
+    }
+  ],
+  "skills.subskill-production": [
+    {
+      "type": 0,
+      "value": "2× Cash and Science production"
+    }
+  ],
+  "skills.subskill-refund": [
+    {
+      "type": 0,
+      "value": "Refund "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " for 1 Skill Point"
+    }
+  ],
+  "skills.subskill-refund-short": [
+    {
+      "type": 0,
+      "value": "Refund"
+    }
+  ],
+  "skills.subskills": [
+    {
+      "type": 0,
+      "value": "Augments"
+    }
+  ],
+  "skills.subskills-help": [
+    {
+      "type": 0,
+      "value": "Each costs 1 Skill Point; you can take all three. Checkboxes add them to the preset. Augments reset and refund normally."
     }
   ],
   "skills.supernova-restoration-quote": [

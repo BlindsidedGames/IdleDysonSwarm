@@ -1,3 +1,4 @@
+import { isSubskill } from '../simulation/skillSubskills'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
@@ -23,7 +24,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 16
+export const CURRENT_SAVE_SCHEMA = 17
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -86,6 +87,7 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   if (save.firstInfinityDone === true || challenges.blankSlateCompleted === true ||
       (typeof challenges.galvanizers === 'bigint' && challenges.galvanizers > 0n)) challenges.unlocked = true
   if (typeof challenges.galvanizers === 'bigint' && challenges.galvanizers > 0n) challenges.hasEarnedGalvanizer = true
+  if (sourceSchema < 17) appliedSteps.push('permanent-galvanized-skills')
   if (sourceSchema < 16) appliedSteps.push('infinity-challenges-and-galvanizers')
   const avocado = ensureRecord(save, 'avocadoData')
   if (avocado.overflowPoints === undefined) avocado.overflowPoints = 0n
@@ -376,7 +378,7 @@ function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {
       ids = bitsetToSkillIds(decodeBitset(dyson[bitsKey], dyson[base64Key]))
       rebuiltFromBits = ids.length > 0
     }
-    ids = [...new Set(ids.filter((id) => id in skillIdsToLegacyKeysMap))]
+    ids = [...new Set(ids.filter((id) => (id in skillIdsToLegacyKeysMap || isSubskill(id))))]
     if (
       preset > 0 &&
       (runVersionedReorder || (!idsWerePresent && rebuiltFromBits))

@@ -514,6 +514,7 @@ export interface SimulationStatisticsState {
 }
 
 export interface InfinityChallengeState {
+  readonly galvanizedSkillIds?: readonly string[]
   readonly unlocked: boolean
   readonly active: 'blank-slate' | null
   readonly blankSlateCompleted: boolean

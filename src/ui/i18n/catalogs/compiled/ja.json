@@ -346,7 +346,7 @@
   "challenges.active": [
     {
       "type": 0,
-      "value": "白紙の出発に挑戦中 · スキル無効"
+      "value": "白紙の状態に挑戦中 · スキル割り当て無効"
     }
   ],
   "challenges.blankSlate": [
@@ -358,7 +358,7 @@
   "challenges.blankSlate.description": [
     {
       "type": 0,
-      "value": "すべてのスキルを無効にして通常のインフィニティを達成します。ボット、建物、研究は利用できます。"
+      "value": "通常スキルを割り当てずに通常のインフィニティを達成します。永久強化済みの基本スキルは有効なままです。ボット、建物、研究は利用できます。"
     }
   ],
   "challenges.cancel": [
@@ -398,7 +398,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "強化器は今後の更新でスキルを永久強化するために保存されます。現在は使用できず、オーバーフロー後も保持されます。"
+      "value": "表示済みスキルの詳細で強化器を1個消費すると、基本効果が永続化され、ペナルティと排他制限が解除されます。永久強化は取り消せず、オーバーフロー後も維持されます。"
     }
   ],
   "challenges.replay": [
@@ -8533,6 +8533,30 @@
       "value": "次の必須スキルも割り当て："
     }
   ],
+  "skills.augments-assigned": [
+    {
+      "type": 0,
+      "value": "割り当て済みの強化："
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "skills.back-to-presets": [
+    {
+      "type": 0,
+      "value": "プリセットに戻る"
+    }
+  ],
   "skills.blocked-skills-heading": [
     {
       "type": 0,
@@ -8567,6 +8591,12 @@
     {
       "type": 0,
       "value": "確認"
+    }
+  ],
+  "skills.confirm-galvanize": [
+    {
+      "type": 0,
+      "value": "強化器を1個消費"
     }
   ],
   "skills.confirm-import": [
@@ -8637,6 +8667,12 @@
       "value": "ダブルクリックでスキルを割り当て"
     }
   ],
+  "skills.edit-priority": [
+    {
+      "type": 0,
+      "value": "優先順位を編集"
+    }
+  ],
   "skills.effect": [
     {
       "type": 0,
@@ -8701,6 +8737,156 @@
     {
       "type": 0,
       "value": "）"
+    }
+  ],
+  "skills.galvAlgorithms": [
+    {
+      "type": 0,
+      "value": "サーバー、AIマネージャー、組立ラインの効果が3倍になります。"
+    }
+  ],
+  "skills.galvBurnout": [
+    {
+      "type": 0,
+      "value": "パネル生産量が3倍になります。"
+    }
+  ],
+  "skills.galvCables": [
+    {
+      "type": 0,
+      "value": "ポケット次元からのデータセンター生産量が5倍になります。"
+    }
+  ],
+  "skills.galvColdFusion": [
+    {
+      "type": 0,
+      "value": "サイエンス生産量が10倍になります。"
+    }
+  ],
+  "skills.galvEconomic": [
+    {
+      "type": 0,
+      "value": "資金生産量が20倍になります。"
+    }
+  ],
+  "skills.galvEndLine": [
+    {
+      "type": 0,
+      "value": "組立ラインのボット生産量が5倍になります。"
+    }
+  ],
+  "skills.galvEnlightened": [
+    {
+      "type": 0,
+      "value": "科学惑星が資金ブーストも生産します。"
+    }
+  ],
+  "skills.galvFusion": [
+    {
+      "type": 0,
+      "value": "パネル生産量が5倍になります。"
+    }
+  ],
+  "skills.galvPowerAddiction": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の効果が200%増加します。"
+    }
+  ],
+  "skills.galvPowerIndulging": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の効果が100%増加します。"
+    }
+  ],
+  "skills.galvPowerTaste": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の効果が50%増加します。"
+    }
+  ],
+  "skills.galvPrecursors": [
+    {
+      "type": 0,
+      "value": "既存の資金倍率に加えて、サイエンス倍率も資金生産量に乗算されます。"
+    }
+  ],
+  "skills.galvSacrifices": [
+    {
+      "type": 0,
+      "value": "毎秒log10（飲み込んだ恒星銀河）²に等しい数の惑星を生成します。ボットの消費も必要数もありません。"
+    }
+  ],
+  "skills.galvScientific": [
+    {
+      "type": 0,
+      "value": "サイエンス生産量が20倍になります。"
+    }
+  ],
+  "skills.galvStellarDominance": [
+    {
+      "type": 0,
+      "value": "通常のボット必要数を満たす間、パネル寿命が10倍になります。追加の犠牲コストや資金へのペナルティはありません。"
+    }
+  ],
+  "skills.galvStellarObliteration": [
+    {
+      "type": 0,
+      "value": "恒星の犠牲の銀河効果が1000倍になります。"
+    }
+  ],
+  "skills.galvSupernova": [
+    {
+      "type": 0,
+      "value": "恒星の犠牲の銀河効果が1000倍になります。手動購入による生産ボーナスはすべて有効なままです。"
+    }
+  ],
+  "skills.galvWorthy": [
+    {
+      "type": 0,
+      "value": "組立ラインの効果が5倍になります。"
+    }
+  ],
+  "skills.galvanize-action": [
+    {
+      "type": 0,
+      "value": "永久強化 · "
+    },
+    {
+      "type": 1,
+      "value": "currency"
+    }
+  ],
+  "skills.galvanize-warning": [
+    {
+      "type": 0,
+      "value": "強化器1個で"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "を永久強化しますか？この基本スキルに使用したスキルポイントは返還されます。この操作は取り消せません。"
+    }
+  ],
+  "skills.galvanized": [
+    {
+      "type": 0,
+      "value": "永久強化済み"
+    }
+  ],
+  "skills.galvanized-help": [
+    {
+      "type": 0,
+      "value": "この基本スキルは永続的に有効となり、スキルポイントを消費しません。ペナルティと排他制限は解除されます。通常の条件とタイマーのリセットは引き続き適用されます。"
+    }
+  ],
+  "skills.galvanized-permanent": [
+    {
+      "type": 0,
+      "value": "永久強化済み · 永続的に有効"
     }
   ],
   "skills.impact.bots": [
@@ -10843,6 +11029,12 @@
       "value": "貼り付け"
     }
   ],
+  "skills.permanent-preset-help": [
+    {
+      "type": 0,
+      "value": "すべてのプリセットで常に有効です。これらの基本スキルはポイントを消費しません。"
+    }
+  ],
   "skills.points": [
     {
       "type": 0,
@@ -11005,6 +11197,70 @@
     {
       "type": 0,
       "value": "インポート内容をプレビュー"
+    }
+  ],
+  "skills.priority-empty": [
+    {
+      "type": 0,
+      "value": "ポイントを割り当てるスキルはありません。"
+    }
+  ],
+  "skills.priority-move-down": [
+    {
+      "type": 0,
+      "value": "スキル"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "を下に移動"
+    }
+  ],
+  "skills.priority-move-up": [
+    {
+      "type": 0,
+      "value": "スキル"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "を上に移動"
+    }
+  ],
+  "skills.priority-non-refundable": [
+    {
+      "type": 0,
+      "value": "返還不可"
+    }
+  ],
+  "skills.priority-remove": [
+    {
+      "type": 0,
+      "value": "プリセットから "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " を除外"
+    }
+  ],
+  "skills.priority-title": [
+    {
+      "type": 0,
+      "value": "優先順位 · "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.purchase": [
@@ -11193,6 +11449,112 @@
     {
       "type": 0,
       "value": "プリセットの部分適用通知を表示"
+    }
+  ],
+  "skills.spending-priority": [
+    {
+      "type": 0,
+      "value": "消費の優先順位"
+    }
+  ],
+  "skills.spending-priority-help": [
+    {
+      "type": 0,
+      "value": "ドラッグまたは矢印で並べ替えます。前提スキルを先に購入し、次のスキルを購入できるまでポイントを貯めます。"
+    }
+  ],
+  "skills.subskill-assign": [
+    {
+      "type": 0,
+      "value": "スキル"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "をスキルポイント1で割り当てる"
+    }
+  ],
+  "skills.subskill-assign-short": [
+    {
+      "type": 0,
+      "value": "割り当て"
+    }
+  ],
+  "skills.subskill-cost": [
+    {
+      "type": 0,
+      "value": "1 スキルポイント"
+    }
+  ],
+  "skills.subskill-decay": [
+    {
+      "type": 0,
+      "value": "崩壊したパネル1枚を10枚として数える"
+    }
+  ],
+  "skills.subskill-include": [
+    {
+      "type": 0,
+      "value": "含めるスキル："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "、プリセット："
+    },
+    {
+      "type": 1,
+      "value": "preset"
+    }
+  ],
+  "skills.subskill-lifetime": [
+    {
+      "type": 0,
+      "value": "パネル寿命+5秒"
+    }
+  ],
+  "skills.subskill-production": [
+    {
+      "type": 0,
+      "value": "資金とサイエンスの生産量が2倍"
+    }
+  ],
+  "skills.subskill-refund": [
+    {
+      "type": 0,
+      "value": "スキル"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "を払い戻してスキルポイント1を得る"
+    }
+  ],
+  "skills.subskill-refund-short": [
+    {
+      "type": 0,
+      "value": "返還"
+    }
+  ],
+  "skills.subskills": [
+    {
+      "type": 0,
+      "value": "強化"
+    }
+  ],
+  "skills.subskills-help": [
+    {
+      "type": 0,
+      "value": "各強化は1スキルポイントで、3つすべて取得できます。チェックするとプリセットに追加されます。強化は通常どおりリセット・返還されます。"
     }
   ],
   "skills.supernova-restoration-quote": [

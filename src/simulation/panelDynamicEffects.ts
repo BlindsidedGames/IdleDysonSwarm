@@ -7,6 +7,7 @@ const PANELS_PER_SECOND_SUFFIX = '.panels_per_second'
 
 export interface PanelDynamicEffectInputs {
   readonly ownedSkills: ReadonlySet<string>
+  readonly galvanizedSkills?: ReadonlySet<string>
   readonly botMultitasking: boolean
   readonly botDistribution: number
   readonly fragments: bigint
@@ -68,6 +69,7 @@ export function tryResolvePanelLifetimeDynamicEffect(
         inputs.ownedSkills,
         inputs.panelsPerSecond,
         inputs.panelLifetimeSeconds,
+        inputs.galvanizedSkills,
       )
         ? 10
         : 1

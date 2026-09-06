@@ -29,7 +29,7 @@ describe('schema 15 Overflow migration', () => {
     const migrated = migrateDecodedSave(source)
     expect(source).toEqual(original)
     expect(migrated.validation.valid).toBe(true)
-    expect(migrated.targetSchema).toBe(16)
+    expect(migrated.targetSchema).toBe(17)
     const prepared = PreparedSave.fromDecoded(migrated.save)
     const state = hydrateGameState(prepared).state
     expect(state.dyson.bots).toBe(OVERFLOW_BOT_CAP)

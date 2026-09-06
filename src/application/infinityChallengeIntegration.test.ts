@@ -72,6 +72,60 @@ describe('Blank Slate application integration', () => {
     expect(await reopened.dispatchPlayer({ ...revisionEnvelope(reopened), command: { kind: 'challenge.abandon' } })).toMatchObject({ transition: { accepted: true } })
     expect(readyState(reopened).gameState.challenges?.galvanizers).toBe(0n)
   })
+  test('galvanization publishes only after currency and ownership are durably saved', async () => {
+    const { app, repository } = await setup()
+    const candidate = structuredClone(readyState(app))
+    candidate.gameState = { ...candidate.gameState, challenges: {
+      ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true,
+      hasEarnedGalvanizer: true, galvanizers: 1n,
+    } }
+    expect(await app.commitAwayReplacement(revisionEnvelope(app), candidate)).toMatchObject({ committed: true })
+    const before = readyState(app).gameState
+    repository.beforeCommit = async () => { throw new Error('deliberate galvanization save failure') }
+    expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'skill.galvanize', skillId: 'startHereTree' } })).toMatchObject({ transition: { accepted: false } })
+    expect(readyState(app).gameState).toEqual(before)
+    let release!: () => void
+    let entered!: () => void
+    const enteredPromise = new Promise<void>(resolve => { entered = resolve })
+    const releasePromise = new Promise<void>(resolve => { release = resolve })
+    repository.beforeCommit = async () => { entered(); await releasePromise }
+    const pending = app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'skill.galvanize', skillId: 'startHereTree' } })
+    await enteredPromise
+    expect(readyState(app).gameState).toEqual(before)
+    release()
+    expect(await pending).toMatchObject({ transition: { accepted: true } })
+    repository.beforeCommit = undefined
+    const reopened = createApplication(repository)
+    await reopened.start()
+    expect(readyState(reopened).gameState.challenges).toMatchObject({ galvanizers: 0n, galvanizedSkillIds: ['startHereTree'] })
+    expect(readyState(reopened).gameState.skills.byId.startHereTree.owned).toBe(true)
+  })
+  test.each(['active', 'saved'] as const)('saves %s preset priority before publishing it and preserves it on immediate reopen', async mode => {
+    const { app, repository } = await setup()
+    const before = readyState(app).gameState
+    const skillIds = ['banking', 'startHereTree']
+    const command = mode === 'active'
+      ? { kind: 'skill.set-auto-assignment' as const, skillIds }
+      : { kind: 'skill.set-preset-assignment' as const, slot: 5 as const, skillIds }
+    repository.beforeCommit = async () => { throw new Error('deliberate priority save failure') }
+    expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command })).toMatchObject({ transition: { accepted: false } })
+    expect(readyState(app).gameState).toEqual(before)
+    let entered!: () => void
+    let release!: () => void
+    const enteredPromise = new Promise<void>(resolve => { entered = resolve })
+    const releasePromise = new Promise<void>(resolve => { release = resolve })
+    repository.beforeCommit = async () => { entered(); await releasePromise }
+    const pending = app.dispatchPlayer({ ...revisionEnvelope(app), command })
+    await enteredPromise
+    expect(readyState(app).gameState).toEqual(before)
+    release()
+    expect(await pending).toMatchObject({ transition: { accepted: true } })
+    repository.beforeCommit = undefined
+    const reopened = createApplication(repository)
+    await reopened.start()
+    const skills = readyState(reopened).gameState.skills
+    expect(mode === 'active' ? skills.activeAutoAssignment : skills.presets[4].skillIds).toEqual(skillIds)
+  })
   test.each(['manual', 'automatic', 'stored-time'])('completes at the ordinary boundary with Break unlocked, mode=%s', async mode => {
     const automatic = mode !== 'manual'
     const { app, repository } = await setup()

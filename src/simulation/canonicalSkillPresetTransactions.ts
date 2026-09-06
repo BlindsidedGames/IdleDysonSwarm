@@ -1,7 +1,10 @@
+import { SUBSKILL_ASSETS } from './skillSubskills'
+import { galvanizationDefinition, isGalvanized } from './galvanization'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import { readUnityBoolean } from '../game-data/runtimeValueGuards'
 import type {
+  InfinityChallengeState,
   CanonicalGameStateV1,
   CanonicalSkillPresetSlot,
   SkillPresetState,
@@ -20,6 +23,7 @@ interface SkillQueueDefinition {
   readonly exclusiveWith: readonly string[]
   readonly unlock:
     | 'always'
+    | 'galvanized-cash-science'
     | 'first-infinity'
     | 'fragments'
     | 'purity'
@@ -30,12 +34,14 @@ interface SkillQueueDefinition {
 }
 
 export interface CanonicalSkillPresetQueueSource {
+  readonly challenges?: Readonly<InfinityChallengeState>
   readonly skills: {
     readonly presets: readonly Readonly<SkillPresetState>[]
   }
 }
 
 interface SkillUnlockState {
+  readonly challenges?: Readonly<InfinityChallengeState>
   readonly meta: { readonly firstInfinityComplete: boolean }
   readonly quantum: {
     readonly unlocks: {
@@ -107,7 +113,7 @@ export function previewAddSkillToPreset(
   skillId: string,
 ): CanonicalSkillPresetQueuePreview {
   const current = state.skills.presets[slot - 1].skillIds
-  const definitions = loadQueueDefinitions()
+  const definitions = loadQueueDefinitions(state)
   const target = definitions.get(skillId)
   if (target === undefined) {
     return rejectedPreview(
@@ -121,6 +127,7 @@ export function previewAddSkillToPreset(
   const visited = new Set<string>()
   const visiting = new Set<string>()
   const appendClosure = (id: string): boolean => {
+    if (isGalvanized(state, id)) return true
     if (visited.has(id)) return true
     if (visiting.has(id)) return false
     const definition = definitions.get(id)
@@ -179,7 +186,7 @@ export function previewRemoveSkillFromPreset(
   skillId: string,
 ): CanonicalSkillPresetQueuePreview {
   const current = state.skills.presets[slot - 1].skillIds
-  const definitions = loadQueueDefinitions()
+  const definitions = loadQueueDefinitions(state)
   if (!definitions.has(skillId)) {
     return rejectedPreview(
       current,
@@ -199,7 +206,7 @@ export function previewRemoveSkillFromPreset(
       if (definition === undefined) continue
       if (
         [...definition.required, ...definition.shadowRequired].some(
-          (dependency) => remove.has(dependency),
+          (dependency) => remove.has(dependency) && !isGalvanized(state, dependency),
         )
       ) {
         remove.add(id)
@@ -283,7 +290,7 @@ export function parseCanonicalSkillPreset(
     )
   }
 
-  const definitions = loadQueueDefinitions()
+  const definitions = loadQueueDefinitions(state)
   const unique = stableUnique(source.skillIds)
   const unknown = unique.find((id) => !definitions.has(id))
   if (unknown !== undefined) {
@@ -358,59 +365,21 @@ export function replaceCanonicalSkillPreset(
 }
 
 /**
- * Preserves Unity's low-level queue normalization for legacy setter commands:
- * stable de-duplication, dependency ordering for selected entries, and
- * first-entry-wins exclusive filtering.
+ * Preserves player priority with stable de-duplication and first-entry-wins
+ * exclusive filtering. Purchase dependency order is resolved separately.
  */
 export function normalizeSkillAssignment(
   source: readonly string[],
   providedDefinitions?: ReadonlyMap<string, SkillQueueDefinition>,
+  state?: { readonly challenges?: Readonly<InfinityChallengeState> },
 ): readonly string[] {
   if (source.length <= 1) return [...source]
   const orderedInput = stableUnique(source)
   if (orderedInput.length <= 1) return orderedInput
-  const definitions = providedDefinitions ?? loadQueueDefinitions()
-  const selected = new Set(orderedInput)
-  const indegree = new Map(orderedInput.map((id) => [id, 0]))
-  const adjacency = new Map(
-    orderedInput.map((id) => [id, [] as string[]]),
-  )
-  for (const id of orderedInput) {
-    const definition = definitions.get(id)
-    if (definition === undefined) continue
-    for (const dependency of [
-      ...definition.required,
-      ...definition.shadowRequired,
-    ]) {
-      if (!selected.has(dependency)) continue
-      adjacency.get(dependency)!.push(id)
-      indegree.set(id, indegree.get(id)! + 1)
-    }
-  }
-
-  const remaining = new Set(orderedInput)
-  const topological: string[] = []
-  while (remaining.size > 0) {
-    let progressed = false
-    for (const id of orderedInput) {
-      if (!remaining.has(id) || indegree.get(id) !== 0) continue
-      remaining.delete(id)
-      topological.push(id)
-      for (const neighbor of adjacency.get(id)!) {
-        indegree.set(neighbor, indegree.get(neighbor)! - 1)
-      }
-      progressed = true
-    }
-    if (progressed) continue
-    for (const id of orderedInput) {
-      if (remaining.has(id)) topological.push(id)
-    }
-    break
-  }
-
+  const definitions = providedDefinitions ?? loadQueueDefinitions(state)
   const accepted: string[] = []
   const acceptedSet = new Set<string>()
-  for (const id of topological) {
+  for (const id of orderedInput) {
     const definition = definitions.get(id)
     if (
       definition !== undefined &&
@@ -426,18 +395,44 @@ export function normalizeSkillAssignment(
   return accepted
 }
 
-function loadQueueDefinitions(): ReadonlyMap<string, SkillQueueDefinition> {
+/** Resolves each priority target's prerequisites before moving to the next target. */
+export function resolveSkillPurchaseOrder(
+  priority: readonly string[],
+  owned: ReadonlySet<string> = new Set(),
+  definitions: ReadonlyMap<string, Pick<SkillQueueDefinition, 'required' | 'shadowRequired'>> = loadQueueDefinitions(),
+): readonly string[] {
+  const result: string[] = []
+  const visited = new Set(owned)
+  const visiting = new Set<string>()
+  const visit = (id: string): void => {
+    if (visited.has(id) || visiting.has(id)) return
+    visiting.add(id)
+    const definition = definitions.get(id)
+    if (definition !== undefined) {
+      for (const dependency of [...definition.required, ...definition.shadowRequired]) {
+        visit(dependency)
+      }
+    }
+    visiting.delete(id)
+    visited.add(id)
+    result.push(id)
+  }
+  for (const id of priority) visit(id)
+  return result
+}
+
+function loadQueueDefinitions(state: { readonly challenges?: Readonly<InfinityChallengeState> } = {}): ReadonlyMap<string, SkillQueueDefinition> {
   return new Map(
-    getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map((asset) => [
+    [...getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND), ...SUBSKILL_ASSETS].map((asset) => [
       asset.id,
-      Object.freeze({
+      Object.freeze(galvanizationDefinition({
         required: stringArray(asset.data.requiredSkillIds),
         shadowRequired: stringArray(
           asset.data.shadowRequirementIds,
         ),
         exclusiveWith: stringArray(asset.data.exclusiveWithIds),
-        unlock: queueSkillUnlock(asset.data),
-      }),
+        unlock: SUBSKILL_ASSETS.some((subskill) => subskill.id === asset.id) ? 'galvanized-cash-science' as const : queueSkillUnlock(asset.data),
+      }, asset.id, state)),
     ]),
   )
 }
@@ -464,6 +459,8 @@ function isQueueSkillUnlocked(
   state: Readonly<SkillUnlockState>,
 ): boolean {
   switch (definition.unlock) {
+    case 'galvanized-cash-science':
+      return isGalvanized(state, 'startHereTree')
     case 'always':
       return true
     case 'first-infinity':
