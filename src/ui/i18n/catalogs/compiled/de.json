@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Danke, dass du Idle Dyson Swarm spielst. Dies ist die letzte Funktion, die du freischaltest. Wenn du möchtest, kannst du weiterspielen, um Entwickleroptionen zu verdienen. Diese Verstärkungen werden miteinander multipliziert und ergeben so den Gesamtbonus. Sie wirken sich nicht auf die Währungen aus, die du für ihre Erhöhung ausgibst."
+      "value": "Danke, dass du Idle Dyson Swarm spielst. Avocatos Boni werden miteinander multipliziert und wirken sich nicht auf die Währungen aus, die du für ihre Erhöhung ausgibst. Überlaufpunkte werden für die nächste Spielebene gespeichert."
     }
   ],
   "avocato.developer-note.title": [
@@ -223,6 +223,88 @@
     {
       "type": 0,
       "value": "Multiplikator für Seltsame Materie"
+    }
+  ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "Überlauf bestätigen"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "Setze deine Bots, deinen Fortschritt in Unendlichkeit, Quanten, Realität und Simulation sowie alle Avocato-Boni für 1 Überlaufpunkt zurück. Deine Käufe, Einstellungen, Offline-Zeit und abgeschlossenen Geheimnisse bleiben erhalten."
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "Der Überlauf konnte nicht gespeichert werden. Dein aktueller Durchlauf bleibt erhalten. Versuche es erneut."
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "Überlaufpunkte werden für eine zukünftige Spielebene gespeichert. Sie steigern die Produktion noch nicht."
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "Bisheriger Überlaufbonus: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "Überlauf-Zurücksetzung ansehen"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "Überlaufpunkte: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "Überlauf erreicht"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "Überlauf für 1 Punkt"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "Erreiche "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots für einen Überlauf."
     }
   ],
   "avocato.region": [

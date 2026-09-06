@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import {
   asBigInt,
@@ -224,12 +225,17 @@ function repairBots(
   add: (path: string, original: unknown, replacement: unknown, rule: string) => void,
 ): void {
   const bots = infinity.bots
-  if (bots === CONTINUOUS_MAXIMUM) {
-    if (!settings.botCapTransitionPending && !settings.botCapRewardsGranted) {
-      settings.botCapTransitionPending = true
+  if (typeof bots === 'number' && Number.isFinite(bots) && bots >= OVERFLOW_BOT_CAP) {
+    if (bots > OVERFLOW_BOT_CAP) {
+      infinity.bots = OVERFLOW_BOT_CAP
+      add('dysonVerseSaveData.dysonVerseInfinityData.bots', bots, OVERFLOW_BOT_CAP,
+        'overflow_gameplay_boundary_preserve_reset_choice')
     }
-    settings.infinityInProgress = settings.botCapRewardsGranted === true
-    settings.botCapTransitionPending = settings.botCapRewardsGranted !== true
+    settings.botCapTransitionPending = true
+    settings.botCapRewardsGranted = false
+    settings.infinityInProgress = false
+    const avocado = settings.avocadoData
+    if (avocado && typeof avocado === 'object' && !Array.isArray(avocado)) (avocado as SaveRecord).unlocked = true
     return
   }
   if (typeof bots !== 'number' || !Number.isFinite(bots) || bots < 0) {

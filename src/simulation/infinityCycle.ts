@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from './overflowBoundary'
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
@@ -13,7 +14,6 @@ import {
   type InfinityStatistics,
 } from './infinityReset'
 import {
-  addContinuous,
   addDiscrete,
   bitIncrement,
 } from './numeric'
@@ -230,7 +230,7 @@ export function clampPreBreakInfinityBots(
   breakTheLoop: boolean,
   divisionsPurchased: bigint,
 ): number {
-  if (breakTheLoop) return bots
+  if (breakTheLoop) return Math.min(bots, OVERFLOW_BOT_CAP)
   return Math.min(
     bots,
     ordinaryInfinityBotThreshold(divisionsPurchased),
@@ -363,10 +363,11 @@ export function timeToNextInfinityEvent(
   infinity: BasicDysonInfinityState,
   maximumSeconds: number,
   minimumCycleSeconds: number,
+  targetBots?: number,
 ): number {
-  const threshold = infinity.breakTheLoop
+  const threshold = targetBots ?? (infinity.breakTheLoop
     ? breakInfinityBotThreshold(infinity)
-    : ordinaryInfinityBotThreshold(infinity.divisionsPurchased)
+    : ordinaryInfinityBotThreshold(infinity.divisionsPurchased))
   const minimumRemaining = Math.max(
     0,
     minimumCycleSeconds - infinity.secondsInCurrentCycle,
@@ -582,44 +583,15 @@ function clampUnitInterval(value: number): number {
 export function applyFiniteBotCapSpecialReward(
   state: DysonInfinityRunState,
 ): AppliedBotCapReward {
-  const infinity = state.infinity
-  if (state.bots !== Number.MAX_VALUE) {
-    return {
-      specialRewardGranted: false,
-      infinityPointsGranted: 0n,
-    }
+  // The legacy parity adapter may observe the boundary, but cannot grant the
+  // retired automatic reward or perform the canonical voluntary reset.
+  if (Number.isFinite(state.bots) && state.bots >= OVERFLOW_BOT_CAP) {
+    state.bots = OVERFLOW_BOT_CAP
+    state.infinity.botCapTransitionPending = true
+    state.infinity.botCapRewardsGranted = false
+    state.infinity.infinityInProgress = false
   }
-
-  if (infinity.botCapRewardsGranted) {
-    infinity.botCapTransitionPending = false
-    infinity.infinityInProgress = true
-    return {
-      specialRewardGranted: false,
-      infinityPointsGranted: 0n,
-    }
-  }
-
-  // The web runtime commits the isolated candidate atomically. Keeping the
-  // Unity checkpoint flags in the candidate still allows imports from either
-  // historical checkpoint to resume without duplicating the special reward.
-  infinity.botCapTransitionPending = true
-  const previousPoints = infinity.points
-  infinity.points = addDiscrete(infinity.points, 1_000n)
-  infinity.overflowMultiplier = addContinuous(
-    infinity.overflowMultiplier,
-    1,
-  )
-  infinity.legacyOverflowMultiplier = addContinuous(
-    infinity.legacyOverflowMultiplier,
-    1,
-  )
-  infinity.botCapTransitionPending = false
-  infinity.botCapRewardsGranted = true
-  infinity.infinityInProgress = true
-  return {
-    specialRewardGranted: true,
-    infinityPointsGranted: infinity.points - previousPoints,
-  }
+  return { specialRewardGranted: false, infinityPointsGranted: 0n }
 }
 
 export function tryApplyBasicDysonInfinityReset(
@@ -627,11 +599,9 @@ export function tryApplyBasicDysonInfinityReset(
   minimumCycleSeconds: number,
 ): AppliedInfinityReset | undefined {
   const infinity = state.infinity
-  const botCapTransition = infinity.botCapRewardsGranted
-  if (
-    !botCapTransition &&
-    infinity.secondsInCurrentCycle < minimumCycleSeconds
-  ) {
+  if (infinity.botCapTransitionPending || state.bots >= OVERFLOW_BOT_CAP) return
+  const botCapTransition = false
+  if (infinity.secondsInCurrentCycle < minimumCycleSeconds) {
     return
   }
 
@@ -640,7 +610,6 @@ export function tryApplyBasicDysonInfinityReset(
   )
   const breakReward = infinityPointsForBots(state.bots, infinity)
   if (
-    !botCapTransition &&
     (infinity.breakTheLoop
       ? breakReward < infinity.breakTarget
       : state.bots < ordinaryThreshold)

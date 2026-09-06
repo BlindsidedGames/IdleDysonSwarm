@@ -10,7 +10,6 @@ describe('selectBotCapCheckpointToPersist', () => {
   it.each<BotCapCheckpointName>([
     'invalid-bot-repair',
     'pending',
-    'rewards',
   ])('selects the %s persistence checkpoint', (checkpoint) => {
     const action: BotCapCheckpointAction = {
       kind: 'persist',
@@ -22,8 +21,7 @@ describe('selectBotCapCheckpointToPersist', () => {
   })
 
   it.each<BotCapCheckpointAction>([
-    { kind: 'continue-normal-prestige' },
-    { kind: 'prestige' },
+    { kind: 'continue' },
   ])('does not select a checkpoint for $kind', (action) => {
     expect(selectBotCapCheckpointToPersist(action)).toBeUndefined()
   })

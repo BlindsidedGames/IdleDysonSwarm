@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Thank you for playing Idle Dyson Swarm. This is the final feature you will unlock; you can go on to earn Developer Options if you like. These buffs multiply with each other to form the total boost, and do not affect the currencies you spend to increase them."
+      "value": "Thank you for playing Idle Dyson Swarm. Avocato’s boosts multiply with each other and do not affect the currencies you spend to increase them. Overflow Points are being saved for the next stage of the game."
     }
   ],
   "avocato.developer-note.title": [
@@ -223,6 +223,88 @@
     {
       "type": 0,
       "value": "Strange Matter Multiplier"
+    }
+  ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "Confirm Overflow"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "Reset your Bots, Infinity, Quantum, Reality and Simulation progress, and all Avocato boosts, for 1 Overflow Point. Your purchases, settings, Offline Time and completed Secrets are kept."
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "Overflow could not be saved. Your current run has been kept. Try again."
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "Overflow Points are saved for a future layer. They do not boost production yet."
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "Previous Overflow boost: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "View Overflow reset"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "Overflow Points: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "Overflow reached"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "Overflow for 1 point"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "Reach "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots to Overflow."
     }
   ],
   "avocato.region": [

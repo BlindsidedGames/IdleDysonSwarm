@@ -245,3 +245,16 @@
   .avocato-surface__hero { grid-template-columns: 3rem minmax(0, 1fr); }
   .avocato-surface__hero img { inline-size: 3rem; block-size: 3rem; }
 }
+
+.avocato-overflow-card { margin-block-start: var(--ui-card-gap); }
+.avocato-overflow-card > .ui-button,
+.avocato-overflow-card .quantum-leap-card__confirm .ui-button {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 35rem) {
+  .avocato-overflow-card { grid-template-columns: minmax(0, 1fr); }
+  .avocato-overflow-card .quantum-leap-card__confirm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

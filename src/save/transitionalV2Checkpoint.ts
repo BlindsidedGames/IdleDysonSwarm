@@ -1,3 +1,4 @@
+import { repairNumericSave } from './numericRepair'
 import {
   assertSuppliedSaveTextLimit,
   DEFAULT_SAVE_IMPORT_LIMITS,
@@ -134,6 +135,7 @@ const V2_DREAM_RESET_CAUSES = new Set([
 ])
 
 const CURRENT_ONLY_STATE_PATHS = new Set([
+  '$.avocado.overflowPoints',
   '$.modelVersion',
   '$.meta.navigationRouteDiscovery',
   '$.infinity.automaticResetEnabled',
@@ -336,6 +338,11 @@ function recoverDecodedTransitionalV2Checkpoint(
         checkpoint.platform,
       )
     }
+    // Retire V2's automatic reward flags and apply the current gameplay cap.
+    source.botCapTransitionPending = false
+    source.botCapRewardsGranted = false
+    source.infinityInProgress = false
+    repairNumericSave(source)
     packSettingsFlags(source)
     const recovered = prepared.withValidatedState(source)
     return Object.freeze({
@@ -1047,6 +1054,7 @@ function convertCompatibleState(
 }
 
 function convertLike(source: unknown, base: unknown, path: string): unknown {
+  if (path === '$.avocado.overflowPoints') return 0n
   if (CURRENT_ONLY_STATE_PATHS.has(path)) return base
   if (V2_NULLABLE_TEXT_PATHS.has(path)) {
     if (source !== null && typeof source !== 'string') {
@@ -1108,7 +1116,9 @@ function convertLike(source: unknown, base: unknown, path: string): unknown {
       Object.entries(base).map(([key, baseValue]) => {
         const propertyPath = `${path}.${key}`
         if (CURRENT_ONLY_STATE_PATHS.has(propertyPath)) {
-          return [key, baseValue]
+          // Historical V2 never owned Overflow Points; importing it must not
+          // inherit the receiver's currency from the compatibility base.
+          return [key, propertyPath === '$.avocado.overflowPoints' ? 0n : baseValue]
         }
         if (!Object.prototype.hasOwnProperty.call(sourceRecord, key)) {
           throw new TypeError(

@@ -4,7 +4,7 @@
     "description": "Resource currently available to feed Avocato."
   },
   "avocato.developer-note": {
-    "defaultMessage": "Thank you for playing Idle Dyson Swarm. This is the final feature you will unlock; you can go on to earn Developer Options if you like. These buffs multiply with each other to form the total boost, and do not affect the currencies you spend to increase them.",
+    "defaultMessage": "Thank you for playing Idle Dyson Swarm. Avocato’s boosts multiply with each other and do not affect the currencies you spend to increase them. Overflow Points are being saved for the next stage of the game.",
     "description": "Condensed authored Unity Avocato developer note."
   },
   "avocato.developer-note.title": {
@@ -122,6 +122,50 @@
   "avocato.multiplier.strange-matter": {
     "defaultMessage": "Strange Matter Multiplier",
     "description": "Unity Avocato multiplier label."
+  },
+  "avocato.overflow.cancel": {
+    "defaultMessage": "Cancel",
+    "description": "Leaves the current run intact."
+  },
+  "avocato.overflow.confirm": {
+    "defaultMessage": "Confirm Overflow",
+    "description": "Confirms the reset and grants one Overflow Point."
+  },
+  "avocato.overflow.description": {
+    "defaultMessage": "Reset your Bots, Infinity, Quantum, Reality and Simulation progress, and all Avocato boosts, for 1 Overflow Point. Your purchases, settings, Offline Time and completed Secrets are kept.",
+    "description": "Explains the complete scope of the voluntary Overflow reset."
+  },
+  "avocato.overflow.failed": {
+    "defaultMessage": "Overflow could not be saved. Your current run has been kept. Try again.",
+    "description": "Commit-first reset failure feedback."
+  },
+  "avocato.overflow.future": {
+    "defaultMessage": "Overflow Points are saved for a future layer. They do not boost production yet.",
+    "description": "Explains the current purpose of Overflow Points."
+  },
+  "avocato.overflow.legacy": {
+    "defaultMessage": "Previous Overflow boost: ×{value}",
+    "description": "Historical Overflow multiplier retained until the next Overflow reset."
+  },
+  "avocato.overflow.open": {
+    "defaultMessage": "View Overflow reset",
+    "description": "Opens the voluntary reset in Avocato."
+  },
+  "avocato.overflow.points": {
+    "defaultMessage": "Overflow Points: {value}",
+    "description": "Balance reserved for the future Overflow layer."
+  },
+  "avocato.overflow.reached": {
+    "defaultMessage": "Overflow reached",
+    "description": "Durable Overflow eligibility status."
+  },
+  "avocato.overflow.reset": {
+    "defaultMessage": "Overflow for 1 point",
+    "description": "Starts confirmation for an Overflow reset."
+  },
+  "avocato.overflow.threshold": {
+    "defaultMessage": "Reach {value} Bots to Overflow.",
+    "description": "Bot threshold for a voluntary Overflow reset."
   },
   "avocato.region": {
     "defaultMessage": "Avocato",

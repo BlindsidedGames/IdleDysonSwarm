@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "感谢你游玩 Idle Dyson Swarm。这是你将解锁的最后一项功能；如果愿意，你还可以继续获取开发者选项。这些增益彼此相乘，形成总增益，并且不会影响用于提升它们的货币。"
+      "value": "感谢你游玩 Idle Dyson Swarm。Avocato 的增益彼此相乘，不会影响用于提升它们的货币。溢出点数将保留供下一阶段的游戏使用。"
     }
   ],
   "avocato.developer-note.title": [
@@ -223,6 +223,88 @@
     {
       "type": 0,
       "value": "奇异物质倍率"
+    }
+  ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "确认溢出"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "重置你的机器人、无限、量子、现实和模拟进度，以及 Avocato 的所有增益，换取 1 个溢出点数。购买项目、设置、离线时间和已完成的秘密将保留。"
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "无法保存溢出。当前进度已保留，请重试。"
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "溢出点数将保留供未来的游戏阶段使用，目前不会提高产量。"
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "之前的溢出增益：×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "查看溢出重置"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "溢出点数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "已达到溢出"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "溢出并获得 1 点"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "达到 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 个机器人即可溢出。"
     }
   ],
   "avocato.region": [

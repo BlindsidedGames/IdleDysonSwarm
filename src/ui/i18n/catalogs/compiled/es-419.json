@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Gracias por jugar Idle Dyson Swarm. Esta es la última función que desbloquearás; después podrás conseguir las Opciones de desarrollo si quieres. Estas bonificaciones se multiplican entre sí para formar la bonificación total y no afectan las monedas que gastas para aumentarlas."
+      "value": "Gracias por jugar Idle Dyson Swarm. Las bonificaciones de Avocato se multiplican entre sí y no afectan las monedas que gastas para aumentarlas. Los Puntos de Desbordamiento se guardan para la siguiente etapa del juego."
     }
   ],
   "avocato.developer-note.title": [
@@ -223,6 +223,88 @@
     {
       "type": 0,
       "value": "Multiplicador de Materia extraña"
+    }
+  ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmar Desbordamiento"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "Reinicia tus Bots, tu progreso de Infinidad, Cuántico, Realidad y Simulación, y todas las bonificaciones de Avocato, a cambio de 1 Punto de Desbordamiento. Conservas tus compras, ajustes, Tiempo sin conexión y Secretos completados."
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "No se pudo guardar el Desbordamiento. Se conservó tu partida actual. Inténtalo de nuevo."
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "Los Puntos de Desbordamiento se guardan para una futura etapa del juego. Todavía no aumentan la producción."
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "Bonificación anterior de Desbordamiento: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "Ver reinicio de Desbordamiento"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "Puntos de Desbordamiento: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "Desbordamiento alcanzado"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "Desbordar por 1 punto"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "Alcanza "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots para Desbordar."
     }
   ],
   "avocato.region": [

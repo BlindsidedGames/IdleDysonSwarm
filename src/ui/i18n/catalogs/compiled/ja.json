@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Idle Dyson Swarmをプレイしていただきありがとうございます。これが最後にアンロックされる機能です。希望すれば、この先で開発者オプションも獲得できます。各ブーストは互いに乗算されて合計ブーストとなり、強化に使用する通貨の量には影響しません。"
+      "value": "Idle Dyson Swarmをプレイしていただきありがとうございます。Avocatoのブーストは互いに乗算され、強化に使用する通貨には影響しません。オーバーフローポイントは次のゲーム段階に向けて保存されます。"
     }
   ],
   "avocato.developer-note.title": [
@@ -223,6 +223,88 @@
     {
       "type": 0,
       "value": "ストレンジマター倍率"
+    }
+  ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "オーバーフローを確定"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "ボット、インフィニティ、量子、現実、シミュレーションの進行状況とAvocatoの全ブーストをリセットし、オーバーフローポイントを1獲得します。購入内容、設定、オフライン時間、完了した秘密は保持されます。"
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "オーバーフローを保存できませんでした。現在の進行状況は保持されています。もう一度お試しください。"
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "オーバーフローポイントは今後のゲーム段階に向けて保存されます。現時点では生産量を増やしません。"
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "以前のオーバーフローブースト：×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "オーバーフローリセットを表示"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "オーバーフローポイント："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "オーバーフローに到達"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "リセットして1ポイント獲得"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "ボットが "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 体に到達するとオーバーフローできます。"
     }
   ],
   "avocato.region": [

@@ -9,16 +9,17 @@ import type { CanonicalPlayerCommand } from '../../../application/canonicalPlaye
 import type { AvocadoFeedSource } from '../../../simulation/avocadoDomain'
 import avocatoIcon from '../../assets/skill-icons/avocados.webp'
 import { Button } from '../../components'
-import { formatGameNumber } from '../../i18n/formatters'
+import { formatGameNumber, formatWholeGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { avocatoMessages as messages } from './messages'
 import './quantum.css'
 
-type AvocatoCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'avocado.feed' }>
+type AvocatoCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'avocado.feed' | 'avocado.request-overflow-reset' }>
 
 export interface AvocatoCommandAvailability {
   readonly feed: boolean
+  readonly overflowReset: boolean
 }
 
 export interface AvocatoSurfaceProps {
@@ -81,13 +82,13 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
               dispatchPlayer={dispatchPlayer}
             />
           ))}
-          <article className="avocato-feed-card avocato-feed-card--overflow">
-            <div><h2>{intl.formatMessage(messages.overflowMultiplier)}</h2><p>{intl.formatMessage(messages.invested, { value: formatGameNumber(locale, resources.overflowMultiplier) })}</p></div>
-            <strong>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, derived.overflow) })}</strong>
-          </article>
+
         </div>
           </>
         ) : null}
+
+        <OverflowCard locale={locale} resources={resources} preview={previews.overflow}
+          routeAvailable={commandAvailability.overflowReset} dispatchPlayer={dispatchPlayer} />
 
         <details className="avocato-developer-note">
           <summary>{intl.formatMessage(messages.developerNoteTitle)}</summary>
@@ -95,6 +96,62 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
         </details>
       </div>
     </div>
+  )
+}
+
+function OverflowCard({ locale, resources, preview, routeAvailable, dispatchPlayer }: {
+  readonly locale: EnabledLocale
+  readonly resources: AvocatoSurfaceProps['resources']
+  readonly preview: AvocatoSurfaceProps['previews']['overflow']
+  readonly routeAvailable: boolean
+  readonly dispatchPlayer: AvocatoSurfaceProps['dispatchPlayer']
+}) {
+  const intl = useIntl()
+  const pendingRef = useRef(false)
+  const [confirming, setConfirming] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [failed, setFailed] = useState(false)
+  const disabled = pending || !preview.eligible || !routeAvailable
+  const reset = async () => {
+    if (disabled || pendingRef.current) return
+    pendingRef.current = true
+    setPending(true)
+    setFailed(false)
+    try {
+      const result = await dispatchPlayer({ kind: 'avocado.request-overflow-reset' })
+      setFailed(result.status !== 'accepted')
+      if (result.status === 'accepted') setConfirming(false)
+    } catch {
+      setFailed(true)
+    } finally {
+      pendingRef.current = false
+      setPending(false)
+    }
+  }
+  return (
+    <article className="quantum-leap-card avocato-overflow-card">
+      <div>
+        <h2>{intl.formatMessage(messages.overflowPoints, { value: formatWholeGameNumber(locale, resources.overflowPoints) })}</h2>
+        <p>{intl.formatMessage(preview.eligible ? messages.overflowReached : messages.overflowThreshold,
+          { value: formatGameNumber(locale, preview.threshold) })}</p>
+        <p>{intl.formatMessage(messages.overflowDescription)}</p>
+        <p>{intl.formatMessage(messages.overflowFuture)}</p>
+        {resources.overflowMultiplier > 0 && <p>{intl.formatMessage(messages.legacyOverflow,
+          { value: formatGameNumber(locale, 1 + resources.overflowMultiplier) })}</p>}
+      </div>
+      {confirming ? (
+        <div className="quantum-leap-card__confirm">
+          <Button variant="primary" state={pending ? 'pending' : failed ? 'failure' : 'idle'}
+            disabled={disabled} onClick={() => void reset()}>{intl.formatMessage(messages.overflowConfirm)}</Button>
+          <Button disabled={pending} onClick={() => setConfirming(false)}>{intl.formatMessage(messages.overflowCancel)}</Button>
+        </div>
+      ) : (
+        <Button variant="primary" disabled={disabled} onClick={() => setConfirming(true)}>
+          {intl.formatMessage(messages.overflowReset)}
+        </Button>
+      )}
+      {failed && <p className="quantum-leap-card__feedback" role="alert">{intl.formatMessage(messages.overflowFailed)}</p>}
+    </article>
   )
 }
 

@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Merci d’avoir joué à Idle Dyson Swarm. Il s’agit de la dernière fonctionnalité que vous débloquerez ; vous pouvez ensuite continuer pour obtenir les Options de développement si vous le souhaitez. Ces bonus se multiplient entre eux pour former le bonus total et n’affectent pas les monnaies que vous dépensez pour les augmenter."
+      "value": "Merci de jouer à Idle Dyson Swarm. Les bonus d’Avocato se multiplient entre eux et n’affectent pas les monnaies dépensées pour les augmenter. Les points de Débordement sont conservés pour la prochaine étape du jeu."
     }
   ],
   "avocato.developer-note.title": [
@@ -223,6 +223,88 @@
     {
       "type": 0,
       "value": "Multiplicateur de Matière étrange"
+    }
+  ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "Annuler"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmer le Débordement"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "Réinitialisez vos Bots, votre progression en Infinité, Quantique, Réalité et Simulation, ainsi que tous les bonus d’Avocato, pour 1 point de Débordement. Vos achats, paramètres, Temps hors ligne et Secrets terminés sont conservés."
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "Le Débordement n’a pas pu être sauvegardé. Votre partie actuelle a été conservée. Réessayez."
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "Les points de Débordement sont conservés pour une future étape du jeu. Ils n’augmentent pas encore la production."
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "Ancien bonus de Débordement : ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "Voir la réinitialisation de Débordement"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "Points de Débordement : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "Débordement atteint"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "Déborder pour 1 point"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "Atteignez "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots pour Déborder."
     }
   ],
   "avocato.region": [

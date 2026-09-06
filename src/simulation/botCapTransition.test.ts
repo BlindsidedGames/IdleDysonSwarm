@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
@@ -92,7 +93,7 @@ function advanceCap(state: BasicDysonState) {
   })
 }
 
-describe('finite bot-cap transition parity', () => {
+describe('legacy bot-cap adapter no longer awards automatic rewards', () => {
   test.each(fixture.ordinaryCases)('$name', (entry) => {
     const result = advanceCap(
       createBotCapState({
@@ -107,25 +108,25 @@ describe('finite bot-cap transition parity', () => {
     const state = result.candidateState.state
 
     expect(result.completed).toBe(true)
-    expect(state.infinity.points).toBe(BigInt(entry.expectedPoints))
-    expect(state.infinity.overflowMultiplier).toBe(10)
-    expect(state.infinity.legacyOverflowMultiplier).toBe(5)
-    expect(state.bots).toBe(1)
-    expect(state.infinity.botCapTransitionPending).toBe(false)
+    expect(state.infinity.points).toBe(BigInt(entry.startingPoints))
+    expect(state.infinity.overflowMultiplier).toBe(entry.startingOverflow)
+    expect(state.infinity.legacyOverflowMultiplier).toBe(entry.startingLegacyOverflow)
+    expect(state.bots).toBe(OVERFLOW_BOT_CAP)
+    expect(state.infinity.botCapTransitionPending).toBe(true)
     expect(state.infinity.botCapRewardsGranted).toBe(false)
     expect(state.infinity.infinityInProgress).toBe(false)
     expect(result.summary.botCapInfinityPoints).toBe(
-      BigInt(entry.expectedSpecialPoints),
+      0n,
     )
     expect(result.summary.botCapOverflowRewards).toBe(
-      entry.rewardsGranted ? 0n : 1n,
+      0n,
     )
-    expect(result.summary.ordinaryInfinityCount).toBe(1n)
-    expect(result.summary.ordinaryInfinityPoints).toBe(1n)
-    expect(state.infinity.statistics.botCapRewards).toBe(1n)
+    expect(result.summary.ordinaryInfinityCount).toBe(0n)
+    expect(result.summary.ordinaryInfinityPoints).toBe(0n)
+    expect(state.infinity.statistics.botCapRewards).toBe(0n)
   })
 
-  test('adds the actual Break reward after the special bot-cap reward', () => {
+  test('does not combine a Break reward with Overflow', () => {
     const entry = fixture.breakCase
     const result = advanceCap(
       createBotCapState({
@@ -138,18 +139,18 @@ describe('finite bot-cap transition parity', () => {
     )
 
     expect(result.completed).toBe(true)
-    expect(result.summary.botCapInfinityPoints).toBe(1_000n)
-    expect(result.summary.botCapOverflowRewards).toBe(1n)
-    expect(result.summary.breakInfinityCount).toBe(1n)
+    expect(result.summary.botCapInfinityPoints).toBe(0n)
+    expect(result.summary.botCapOverflowRewards).toBe(0n)
+    expect(result.summary.breakInfinityCount).toBe(0n)
     expect(result.summary.breakInfinityPoints).toBe(
-      BigInt(entry.expectedBreakReward),
+      0n,
     )
     expect(result.candidateState.state.infinity.points).toBe(
-      BigInt(entry.expectedPoints),
+      BigInt(entry.startingPoints),
     )
   })
 
-  test('keeps capped reward values finite while recording the logical event', () => {
+  test('preserves old finite balances without recording a new reward', () => {
     const result = advanceCap(
       createBotCapState({
         points: 9_223_372_036_854_775_807n,
@@ -166,23 +167,21 @@ describe('finite bot-cap transition parity', () => {
       result.candidateState.state.infinity.overflowMultiplier,
     ).toBe(Number.MAX_VALUE)
     expect(result.summary.botCapInfinityPoints).toBe(0n)
-    expect(result.summary.botCapOverflowRewards).toBe(1n)
+    expect(result.summary.botCapOverflowRewards).toBe(0n)
     expect(
       result.candidateState.state.infinity.statistics.botCapRewards,
-    ).toBe(1n)
+    ).toBe(0n)
   })
 
-  test('rejects a stale checkpoint that is not paired with finite-max bots', () => {
+  test('preserves pending eligibility after bot spending', () => {
     const state = createBotCapState({
       botCapTransitionPending: true,
     })
     state.bots = 42
     const result = advanceCap(state)
 
-    expect(result.validationStatus).toBe('invalid-state')
-    expect(result.diagnosticCode).toBe(
-      'SIM-BOT-CAP-CHECKPOINT-INVALID',
-    )
-    expect(result.consumedSeconds).toBe(0)
+    expect(result.completed).toBe(true)
+    expect(result.candidateState.state.infinity.botCapTransitionPending).toBe(true)
+    expect(result.summary.botCapOverflowRewards).toBe(0n)
   })
 })

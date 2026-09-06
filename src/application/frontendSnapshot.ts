@@ -1,3 +1,4 @@
+import { hasReachedOverflow, OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import type { DeepReadonly } from '../core/contracts'
 import { clampUnitInterval } from '../core/clampUnitInterval'
 import { deepFreezePlainGraph } from '../core/deepFreezePlainGraph'
@@ -410,6 +411,7 @@ export interface FrontendCanonicalResources {
     readonly influence: number
     readonly strangeMatter: number
     readonly overflowMultiplier: number
+    readonly overflowPoints: bigint
   }
   readonly dream: DeepReadonly<DreamState['resources']> & {
     readonly strangeMatter: number
@@ -957,6 +959,7 @@ export interface FrontendGameplayPreviews {
     readonly breakTarget: BreakInfinityPresentationControl
   }
   readonly avocado: {
+    readonly overflow: { readonly eligible: boolean; readonly threshold: number }
     readonly feeds: readonly FrontendAvocadoFeedPreview[]
     readonly meditation: {
       readonly eligible: boolean
@@ -1453,6 +1456,7 @@ function selectResources(
       influence: state.avocado.influence,
       strangeMatter: state.avocado.strangeMatter,
       overflowMultiplier: state.avocado.overflowMultiplier,
+      overflowPoints: state.avocado.overflowPoints ?? 0n,
     }),
     dream: reuseShallowDomain(previous?.dream, {
       ...state.dream.resources,
@@ -2547,6 +2551,7 @@ function selectAvocadoPreviews(
     state.secretProgress.step,
   )
   return {
+    overflow: { eligible: hasReachedOverflow(state), threshold: OVERFLOW_BOT_CAP },
     feeds: AVOCADO_FEED_SOURCES.map((source) => {
       const result = feedAllToAvocado(state, source)
       return {

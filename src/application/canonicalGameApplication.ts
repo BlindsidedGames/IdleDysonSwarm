@@ -1,3 +1,5 @@
+import { applyCanonicalOverflowReset } from '../simulation/canonicalOverflowReset'
+import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import {
   isFiniteNonNegativeNumber,
@@ -537,6 +539,18 @@ export class CanonicalGameApplicationFacade {
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalPlayerDispatchResult> {
+    if (envelope.command.kind === 'avocado.request-overflow-reset') {
+      const result = await this.application.dispatchCommitFirst(envelope, 'bot-cap')
+      return {
+        kind: 'transition',
+        transition: result.committed ? result.transition : {
+          accepted: false,
+          revision: result.transition.revision,
+          code: result.code ?? 'OVERFLOW_COMMIT_FAILED',
+          reason: result.reason ?? 'Overflow could not be saved. Your run has been preserved.',
+        },
+      }
+    }
     if (envelope.command.kind !== 'time.request-stored-time-spend') {
       return {
         kind: 'transition',
@@ -1056,6 +1070,26 @@ export function createCanonicalGameEngineDefinition(
     validateTransitionState: (state) =>
       validateRuntimeTransitionState(state, eventContext),
     applyCommand: (candidate, command) => {
+      if (command.kind === 'avocado.request-overflow-reset') {
+        const reset = applyCanonicalOverflowReset(candidate.gameState)
+        if (!reset.ok) return reject(reset.code, 'Reach Overflow before choosing this reset.')
+        const evidence = candidate.achievementEvidence === undefined ? undefined
+          : mergeAchievementFacts(candidate.achievementEvidence, evaluateAchievements(candidate.gameState, false))
+        const derived = deriveBasicDysonState(
+          reset.state, candidate.compatibilityTuning, candidate.entitlements,
+          candidate.evaluationSnapshot, eventContext.dysonPresentationTuning,
+        )
+        if (!derived.ok) return reject('OVERFLOW_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Overflow reset could not be derived.')
+        Object.assign(candidate, {
+          gameState: reset.state,
+          evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+          tinker: createCanonicalTinkerRuntimeState(),
+          lastSkillPresetApplication: null,
+          presentationEvents: [],
+          ...(evidence === undefined ? {} : { achievementEvidence: evidence }),
+        })
+        return { accepted: true, changed: true }
+      }
       if (command.kind === 'tinker.start') {
         return applyTinker(candidate, eventContext, (model) =>
           model.startTinker(command.repeat))

@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import {
@@ -127,7 +128,7 @@ describe('Stellar overflow recovery', () => {
     expectEveryNumberFinite(recalculation.value)
   })
 
-  test('reopens an affected canonical save without migration or repair', () => {
+  test('reopens an affected save with a bounded bot migration and finite derived values', () => {
     const source = prepareIdb1Save(fixtureText).prepared
     const session = new CanonicalRuntimeSession(source, {
       entitlements: { permanentDoubleIp: false },
@@ -152,7 +153,9 @@ describe('Stellar overflow recovery', () => {
       entitlements: { permanentDoubleIp: false },
     })
 
-    expect(reopenedPrepared.numericRepair.repairCount).toBe(0)
+    expect(reopenedPrepared.numericRepair.repairCount).toBe(1)
+    expect(reopened.initialState.gameState.dyson.bots).toBe(OVERFLOW_BOT_CAP)
+    expect(reopened.initialState.gameState.infinity.botCapTransitionPending).toBe(true)
     expect(
       Object.values(
         reopened.initialState.evaluationSnapshot,

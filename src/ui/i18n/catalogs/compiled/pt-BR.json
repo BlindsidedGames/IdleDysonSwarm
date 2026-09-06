@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Obrigado por jogar Idle Dyson Swarm. Este é o último recurso que você desbloqueará; depois, poderá conquistar as Opções de Desenvolvedor se quiser. Esses bônus se multiplicam entre si para formar o bônus total e não afetam as moedas gastas para aumentá-los."
+      "value": "Obrigado por jogar Idle Dyson Swarm. Os bônus de Avocato se multiplicam entre si e não afetam as moedas gastas para aumentá-los. Os Pontos de Excedente ficam guardados para a próxima etapa do jogo."
     }
   ],
   "avocato.developer-note.title": [
@@ -223,6 +223,88 @@
     {
       "type": 0,
       "value": "Multiplicador de Matéria Estranha"
+    }
+  ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmar Excedente"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "Reinicie seus Bots, seu progresso de Infinito, Quântico, Realidade e Simulação, e todos os bônus de Avocato, em troca de 1 Ponto de Excedente. Suas compras, configurações, Tempo Offline e Segredos concluídos são mantidos."
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "Não foi possível salvar o Excedente. Sua partida atual foi mantida. Tente novamente."
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "Os Pontos de Excedente ficam guardados para uma futura etapa do jogo. Eles ainda não aumentam a produção."
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "Bônus anterior de Excedente: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "Ver reinício de Excedente"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "Pontos de Excedente: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "Excedente alcançado"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "Reiniciar por 1 ponto"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "Alcance "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots para obter Excedente."
     }
   ],
   "avocato.region": [

@@ -19,6 +19,11 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  const overflowPoints = state.avocado.overflowPoints
+  if (overflowPoints !== undefined &&
+    (typeof overflowPoints !== 'bigint' || overflowPoints < 0n || overflowPoints > 9_223_372_036_854_775_807n)) {
+    errors.push('Overflow Points must be a non-negative Int64 balance.')
+  }
   validateNumericGraph(state, '$', errors, new Set())
   if (state.modelVersion !== 1) {
     errors.push(`Unsupported canonical model version ${state.modelVersion}.`)

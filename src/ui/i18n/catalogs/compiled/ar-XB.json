@@ -24,7 +24,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥɐuʞ ʎon ɟoɹ dʅɐʎıuƃ Ipʅǝ ᗡʎsou Sʍɐɹɯ. ⊥ɥıs ıs ʇɥǝ ɟıuɐʅ ɟǝɐʇnɹǝ ʎon ʍıʅʅ nuʅoɔʞ; ʎon ɔɐu ƃo ou ʇo ǝɐɹu ᗡǝʌǝʅodǝɹ Odʇıous ıɟ ʎon ʅıʞǝ. ⊥ɥǝsǝ qnɟɟs ɯnʅʇıdʅʎ ʍıʇɥ ǝɐɔɥ oʇɥǝɹ ʇo ɟoɹɯ ʇɥǝ ʇoʇɐʅ qoosʇ, ɐup po uoʇ ɐɟɟǝɔʇ ʇɥǝ ɔnɹɹǝuɔıǝs ʎon sdǝup ʇo ıuɔɹǝɐsǝ ʇɥǝɯ."
+      "value": "⊥ɥɐuʞ ʎon ɟoɹ dʅɐʎıuƃ Ipʅǝ ᗡʎsou Sʍɐɹɯ. ∀ʌoɔɐʇo’s qoosʇs ɯnʅʇıdʅʎ ʍıʇɥ ǝɐɔɥ oʇɥǝɹ ɐup po uoʇ ɐɟɟǝɔʇ ʇɥǝ ɔnɹɹǝuɔıǝs ʎon sdǝup ʇo ıuɔɹǝɐsǝ ʇɥǝɯ. Oʌǝɹɟʅoʍ Ԁoıuʇs ɐɹǝ qǝıuƃ sɐʌǝp ɟoɹ ʇɥǝ uǝxʇ sʇɐƃǝ oɟ ʇɥǝ ƃɐɯǝ."
     },
     {
       "type": 0,
@@ -467,6 +467,176 @@
     {
       "type": 0,
       "value": "Sʇɹɐuƃǝ Wɐʇʇǝɹ Wnʅʇıdʅıǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıɹɯ Oʌǝɹɟʅoʍ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇ ʎonɹ Ԑoʇs, Iuɟıuıʇʎ, Ònɐuʇnɯ, ᴚǝɐʅıʇʎ ɐup Sıɯnʅɐʇıou dɹoƃɹǝss, ɐup ɐʅʅ ∀ʌoɔɐʇo qoosʇs, ɟoɹ 1 Oʌǝɹɟʅoʍ Ԁoıuʇ. ⅄onɹ dnɹɔɥɐsǝs, sǝʇʇıuƃs, Oɟɟʅıuǝ ⊥ıɯǝ ɐup ɔoɯdʅǝʇǝp Sǝɔɹǝʇs ɐɹǝ ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ ɔonʅp uoʇ qǝ sɐʌǝp. ⅄onɹ ɔnɹɹǝuʇ ɹnu ɥɐs qǝǝu ʞǝdʇ. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ Ԁoıuʇs ɐɹǝ sɐʌǝp ɟoɹ ɐ ɟnʇnɹǝ ʅɐʎǝɹ. ⊥ɥǝʎ po uoʇ qoosʇ dɹopnɔʇıou ʎǝʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝʌıons Oʌǝɹɟʅoʍ qoosʇ: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıǝʍ Oʌǝɹɟʅoʍ ɹǝsǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ Ԁoıuʇs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ ɹǝɐɔɥǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ ɟoɹ 1 doıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐɔɥ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs ʇo Oʌǝɹɟʅoʍ."
     },
     {
       "type": 0,

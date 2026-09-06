@@ -96,6 +96,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
   infinity: Readonly<BasicDysonInfinityState>,
   maximumSeconds: number,
   minimumCycleSeconds: number,
+  targetBots?: number,
 ): number {
   const ordinaryHorizon = timeToNextInfinityEvent(
     startingBots,
@@ -103,6 +104,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
     infinity,
     maximumSeconds,
     minimumCycleSeconds,
+    targetBots,
   )
   if (
     startingBots <= 0 ||
@@ -114,9 +116,9 @@ export function timeToNextInfinityEventAfterStellarSettlement(
 
   const affordableSeconds = startingBots / stellarBotsPerSecond
   const fundedNetRate = botProductionPerSecond - stellarBotsPerSecond
-  const threshold = infinity.breakTheLoop
+  const threshold = targetBots ?? (infinity.breakTheLoop
     ? breakInfinityBotThreshold(infinity)
-    : ordinaryInfinityBotThreshold(infinity.divisionsPurchased)
+    : ordinaryInfinityBotThreshold(infinity.divisionsPurchased))
   if (startingBots >= threshold) {
     const minimumRemaining = Math.max(
       0,
@@ -144,6 +146,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
       infinity,
       maximumSeconds,
       minimumCycleSeconds,
+    targetBots,
     )
     if (fundedHorizon <= affordableSeconds) return fundedHorizon
   }
@@ -157,6 +160,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
     infinity,
     maximumSeconds,
     minimumCycleSeconds,
+    targetBots,
   )
 }
 

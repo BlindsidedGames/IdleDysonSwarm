@@ -1,3 +1,4 @@
+import { avocatoMessages } from '../quantum/messages'
 import {
   lazy,
   Suspense,
@@ -902,7 +903,9 @@ export function ReadyDysonSlice({
   const simulationsActive = route === 'simulations'
   const quantumRouteActive = route === 'quantum'
   const avocatoActive = route === 'avocato'
-  const quantumNavigationActive = quantumRouteActive || avocatoActive
+  const overflowEntryVisible = gameplay.progression.infinity.botCapTransitionPending ||
+    gameplay.resources.avocado.overflowPoints > 0n
+  const quantumNavigationActive = quantumRouteActive || (avocatoActive && !overflowEntryVisible)
   const storyActive = route === 'story'
   const wikiActive = route === 'wiki'
   const offlineTimeActive = route === 'offline-time'
@@ -1222,6 +1225,14 @@ export function ReadyDysonSlice({
                 },
               ]
             : []),
+          ...(overflowEntryVisible ? [{
+            id: 'avocato', label: intl.formatMessage(messages.avocatoRoute),
+            iconSrc: navigationAssets.quantum, bottom: false,
+            badge: gameplay.progression.infinity.botCapTransitionPending
+              ? '!' : displayWhole(gameplay.resources.avocado.overflowPoints),
+            ...(avocatoActive ? { current: true as const }
+              : { onActivate: () => onRouteChange('avocato') }),
+          }] : []),
           ...(storeVisible
             ? [
                 {
@@ -1611,9 +1622,10 @@ export function ReadyDysonSlice({
                                 'infinity.set-automatic-reset'
                               ].routeAvailable,
                             requestReset:
-                              gameplay.commands.byKind[
+                              !gameplay.progression.infinity.botCapTransitionPending &&
+                              (gameplay.commands.byKind[
                                 'infinity.request-reset'
-                              ]?.routeAvailable ?? false,
+                              ]?.routeAvailable ?? false),
                           }}
                           dispatchPlayer={dispatchPlayer}
                         />
@@ -1833,6 +1845,7 @@ export function ReadyDysonSlice({
                                   derived={gameplay.derived.avocado}
                                   previews={gameplay.previews.avocado}
                                   commandAvailability={{
+                                    overflowReset: gameplay.commands.byKind['avocado.request-overflow-reset'].routeAvailable,
                                     feed:
                                       gameplay.commands.byKind[
                                         'avocado.feed'
@@ -2043,6 +2056,15 @@ export function ReadyDysonSlice({
             : undefined
       }
       notifications={
+        <>
+        {gameplay.progression.infinity.botCapTransitionPending && !avocatoActive && (
+          <div className="dyson-overflow-notice" role="status">
+            <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
+            <button type="button" onClick={() => onRouteChange('avocato')}>
+              {intl.formatMessage(avocatoMessages.overflowOpen)}
+            </button>
+          </div>
+        )}
         <GameplayNotificationHost
           sessionRevision={snapshot.revision.session}
           events={gameplay.runtime.presentationEvents}
@@ -2056,6 +2078,7 @@ export function ReadyDysonSlice({
           showPresetApplicationNotices={showSkillPresetApplicationNotices}
           onViewReality={() => navigateTo('reality')}
         />
+        </>
       }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),

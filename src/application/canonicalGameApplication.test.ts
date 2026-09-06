@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
 import { TransactionalSimulationEngine } from '../core/simulationEngine'
@@ -192,7 +193,7 @@ describe('canonical game application engine', () => {
     })
   })
 
-  test('executes a checkpointed manual Infinity while keeping automatic resets off', () => {
+  test('rejects normal Infinity at a checkpointed Overflow boundary', () => {
     const state = runtime()
     const beforePoints = state.gameState.infinity.points
     Object.assign(state, {
@@ -206,7 +207,8 @@ describe('canonical game application engine', () => {
           ...state.gameState.infinity,
           points: beforePoints + 1_000n,
           automaticResetEnabled: false,
-          botCapRewardsGranted: true,
+          botCapRewardsGranted: false,
+          botCapTransitionPending: true,
         },
         timeline: {
           ...state.gameState.timeline,
@@ -223,12 +225,12 @@ describe('canonical game application engine', () => {
 
     expect(definition.applyCommand(state, {
       kind: 'infinity.request-reset',
-    })).toEqual({ accepted: true, changed: true })
+    })).toMatchObject({ accepted: false })
     expect(state.gameState.infinity).toMatchObject({
       automaticResetEnabled: false,
-      points: beforePoints + 1_001n,
+      points: beforePoints + 1_000n,
     })
-    expect(state.gameState.dyson.bots).toBeLessThan(Number.MAX_VALUE)
+    expect(state.gameState.dyson.bots).toBe(Number.MAX_VALUE)
   })
 
   test('allows manual Break Infinity below the configured automatic target', () => {
@@ -1053,10 +1055,10 @@ describe('canonical game application engine', () => {
         ...state.gameState,
         dyson: {
           ...state.gameState.dyson,
-          bots: Number.MAX_VALUE - 3e293,
+          bots: OVERFLOW_BOT_CAP - 3e228,
           facilities: {
             ...state.gameState.dyson.facilities,
-            assembly_lines: [1e294, 0],
+            assembly_lines: [1e229, 0],
           },
         },
         skills: {
@@ -1107,15 +1109,15 @@ describe('canonical game application engine', () => {
     expect(state.gameState.timeline.storedTimeAvailableSeconds).toBe(0)
     expect(state.gameState.timeline.automationTimeUntilNextEvent).toBe(0)
     expect(state.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
-      inProgress: true,
+      points: pointsBefore,
+      botCapTransitionPending: true,
+      botCapRewardsGranted: false,
+      inProgress: false,
     })
     expect(state.gameState.avocado.overflowMultiplier)
-      .toBe(overflowBefore + 1)
+      .toBe(overflowBefore)
     expect(state.gameState.statistics.lifetime.botCapInfinityPoints)
-      .toBe(botCapPointsBefore + 1_000n)
+      .toBe(botCapPointsBefore)
   })
 
   test('forces Buy Max for stored-time automation without changing the configured mode', () => {

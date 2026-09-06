@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import {
   bitsetToSkillIds,
@@ -21,7 +22,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 14
+export const CURRENT_SAVE_SCHEMA = 15
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -40,7 +41,7 @@ export class UnsupportedFutureSaveSchemaError extends Error {
 export interface SaveMigrationResult {
   readonly save: SaveRecord
   readonly sourceSchema: number
-  readonly targetSchema: 14
+  readonly targetSchema: typeof CURRENT_SAVE_SCHEMA
   readonly appliedSteps: readonly string[]
   readonly numericRepair: NumericRepairResult
   readonly validation: SaveValidationResult
@@ -77,6 +78,16 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   appliedSteps.push('stable-research-ids')
   migrateAvocado(save)
   appliedSteps.push('avocado-container')
+  const avocado = ensureRecord(save, 'avocadoData')
+  if (avocado.overflowPoints === undefined) avocado.overflowPoints = 0n
+  if (sourceSchema < 15) {
+    // Old checkpoint flags describe an automatic reward, not consent to reset.
+    const bots = ensureRecord(ensureRecord(save, 'dysonVerseSaveData'), 'dysonVerseInfinityData').bots
+    save.botCapTransitionPending = typeof bots === 'number' && Number.isFinite(bots) && bots >= OVERFLOW_BOT_CAP
+    save.botCapRewardsGranted = false
+    save.infinityInProgress = false
+    appliedSteps.push('voluntary-overflow-boundary')
+  }
   if (sourceSchema < 13) {
     migrateContinuousRealityResources(save)
     appliedSteps.push('continuous-influence-and-strange-matter')

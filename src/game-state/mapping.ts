@@ -415,6 +415,7 @@ export function hydrateGameState(
       },
     },
     avocado: {
+      overflowPoints: toNonNegativeBigInt(avocado.overflowPoints),
       unlocked: toBoolean(avocado.unlocked),
       infinityPoints: toFiniteNonNegativeNumber(
         avocado.infinityPoints,
@@ -930,6 +931,7 @@ export function dehydrateGameState(
   prestige.unlockedGalacticBrains =
     state.quantum.unlocks.galacticBrains
 
+  avocado.overflowPoints = state.avocado.overflowPoints ?? 0n
   avocado.unlocked = state.avocado.unlocked
   avocado.infinityPoints = state.avocado.infinityPoints
   avocado.influence = state.avocado.influence

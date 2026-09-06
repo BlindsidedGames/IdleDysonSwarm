@@ -84,6 +84,7 @@ export interface InfinityState {
   /** True only when this entire cycle has used active automatic processing. */
   readonly activeAutomaticThroughputCycleEligible?: boolean
   readonly inProgress: boolean
+  /** Durable Overflow eligibility; cleared only by the voluntary reset. */
   readonly botCapTransitionPending: boolean
   readonly botCapRewardsGranted: boolean
   readonly lastCycleDurationSeconds: number
@@ -196,7 +197,10 @@ export interface AvocadoState {
   readonly infinityPoints: number
   readonly influence: number
   readonly strangeMatter: number
+  /** Legacy production bonus, cleared by an Overflow reset. */
   readonly overflowMultiplier: number
+  /** Spendable currency reserved for the future Overflow layer. */
+  readonly overflowPoints?: bigint
 }
 
 export interface TimelineState {
