@@ -1,0 +1,21 @@
+import { defineMessages } from 'react-intl'
+export const challengeMessages = defineMessages({
+  route: { id: 'challenges.route', defaultMessage: 'Challenges' },
+  shortcut: { id: 'challenges.shortcut', defaultMessage: 'Show Challenges' },
+  title: { id: 'challenges.title', defaultMessage: 'Infinity Challenges' },
+  blankSlate: { id: 'challenges.blankSlate', defaultMessage: 'Blank Slate' },
+  description: { id: 'challenges.blankSlate.description', defaultMessage: 'Complete a normal Infinity with all skills disabled. Bots, buildings and research remain available.' },
+  reward: { id: 'challenges.reward', defaultMessage: 'First completion: 1 galvanizer. Your reward and completion survive Overflow.' },
+  completed: { id: 'challenges.completed', defaultMessage: 'Completed · Galvanizer earned' },
+  active: { id: 'challenges.active', defaultMessage: 'Blank Slate active · Skills disabled' },
+  start: { id: 'challenges.start', defaultMessage: 'Start Blank Slate' },
+  replay: { id: 'challenges.replay', defaultMessage: 'Replay Blank Slate' },
+  abandon: { id: 'challenges.abandon', defaultMessage: 'Abandon challenge' },
+  confirm: { id: 'challenges.confirm', defaultMessage: 'Confirm restart' },
+  cancel: { id: 'challenges.cancel', defaultMessage: 'Cancel' },
+  restart: { id: 'challenges.restart', defaultMessage: 'This starts a fresh Infinity run without awarding IP. Infinity upgrades and later layers are kept. Abandoning also starts a fresh normal run.' },
+  failure: { id: 'challenges.failure', defaultMessage: 'The restart could not be saved. Your current run has been kept. Try again.' },
+  view: { id: 'challenges.view', defaultMessage: 'View challenge' },
+  galvanizers: { id: 'challenges.galvanizers', defaultMessage: 'Galvanizers: {value}' },
+  future: { id: 'challenges.galvanizers.future', defaultMessage: 'Galvanizers are saved for permanently enhancing skills in a future update. They cannot be spent yet and survive Overflow.' },
+})

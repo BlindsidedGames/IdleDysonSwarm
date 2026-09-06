@@ -21,6 +21,7 @@ export interface CanonicalGameStateV1 {
   readonly research: ResearchState
   readonly reality: RealityState
   readonly quantum: QuantumState
+  readonly challenges?: InfinityChallengeState
   readonly avocado: AvocadoState
   readonly timeline: TimelineState
   readonly secretProgress: SecretProgressState
@@ -510,4 +511,12 @@ export interface SimulationStatisticsState {
   readonly minuteWindows: readonly StatisticsWindowState[]
   readonly halfHourWindows: readonly StatisticsWindowState[]
   readonly dailyWindows: readonly StatisticsWindowState[]
+}
+
+export interface InfinityChallengeState {
+  readonly unlocked: boolean
+  readonly active: 'blank-slate' | null
+  readonly blankSlateCompleted: boolean
+  readonly galvanizers: bigint
+  readonly hasEarnedGalvanizer: boolean
 }

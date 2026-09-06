@@ -37,6 +37,7 @@ export type DysonNavigationItem =
       readonly ariaLabel?: string
       readonly icon?: ReactNode
       readonly iconSrc?: string
+      readonly iconMaskMode?: 'alpha' | 'luminance'
       /** Compact value shown on the icon in bottom navigation and beside the label in the drawer. */
       readonly badge?: string
       /** Highlights a newly unlocked destination until it is first visited. */
@@ -56,6 +57,7 @@ export type DysonNavigationItem =
       readonly ariaLabel?: string
       readonly icon?: ReactNode
       readonly iconSrc?: string
+      readonly iconMaskMode?: 'alpha' | 'luminance'
       /** Compact value shown on the icon in bottom navigation and beside the label in the drawer. */
       readonly badge?: string
       /** Highlights a newly unlocked destination until it is first visited. */

@@ -713,6 +713,262 @@
       "value": "]"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƀȧȧƞḓǿǿƞ ƈħȧȧŀŀḗḗƞɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŀȧȧƞķ Şŀȧȧŧḗḗ ȧȧƈŧīṽḗḗ · Şķīŀŀş ḓīşȧȧƀŀḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŀȧȧƞķ Şŀȧȧŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗ ȧȧ ƞǿǿřḿȧȧŀ Īƞƒīƞīŧẏ ẇīŧħ ȧȧŀŀ şķīŀŀş ḓīşȧȧƀŀḗḗḓ. Ɓǿǿŧş, ƀŭŭīŀḓīƞɠş ȧȧƞḓ řḗḗşḗḗȧȧřƈħ řḗḗḿȧȧīƞ ȧȧṽȧȧīŀȧȧƀŀḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗḓ · Ɠȧȧŀṽȧȧƞīẑḗḗř ḗḗȧȧřƞḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞƒīřḿ řḗḗşŧȧȧřŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ řḗḗşŧȧȧřŧ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ şȧȧṽḗḗḓ. Ẏǿǿŭŭř ƈŭŭřřḗḗƞŧ řŭŭƞ ħȧȧş ƀḗḗḗḗƞ ķḗḗƥŧ. Ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŀṽȧȧƞīẑḗḗřş: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŀṽȧȧƞīẑḗḗřş ȧȧřḗḗ şȧȧṽḗḗḓ ƒǿǿř ƥḗḗřḿȧȧƞḗḗƞŧŀẏ ḗḗƞħȧȧƞƈīƞɠ şķīŀŀş īƞ ȧȧ ƒŭŭŧŭŭřḗḗ ŭŭƥḓȧȧŧḗḗ. Ŧħḗḗẏ ƈȧȧƞƞǿǿŧ ƀḗḗ şƥḗḗƞŧ ẏḗḗŧ ȧȧƞḓ şŭŭřṽīṽḗḗ Ǿṽḗḗřƒŀǿǿẇ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƥŀȧȧẏ Ɓŀȧȧƞķ Şŀȧȧŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħīş şŧȧȧřŧş ȧȧ ƒřḗḗşħ Īƞƒīƞīŧẏ řŭŭƞ ẇīŧħǿǿŭŭŧ ȧȧẇȧȧřḓīƞɠ ĪƤ. Īƞƒīƞīŧẏ ŭŭƥɠřȧȧḓḗḗş ȧȧƞḓ ŀȧȧŧḗḗř ŀȧȧẏḗḗřş ȧȧřḗḗ ķḗḗƥŧ. Ȧƀȧȧƞḓǿǿƞīƞɠ ȧȧŀşǿǿ şŧȧȧřŧş ȧȧ ƒřḗḗşħ ƞǿǿřḿȧȧŀ řŭŭƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīřşŧ ƈǿǿḿƥŀḗḗŧīǿǿƞ: 1 ɠȧȧŀṽȧȧƞīẑḗḗř. Ẏǿǿŭŭř řḗḗẇȧȧřḓ ȧȧƞḓ ƈǿǿḿƥŀḗḗŧīǿǿƞ şŭŭřṽīṽḗḗ Ǿṽḗḗřƒŀǿǿẇ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħȧȧŀŀḗḗƞɠḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿẇ Ƈħȧȧŀŀḗḗƞɠḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ Ɓŀȧȧƞķ Şŀȧȧŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒīƞīŧẏ Ƈħȧȧŀŀḗḗƞɠḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīḗḗẇ ƈħȧȧŀŀḗḗƞɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -13313,6 +13569,20 @@
     {
       "type": 0,
       "value": "Ǿƒƒīƈīȧȧŀ Ẇḗḗƀşīŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿẇ Ȧṽǿǿƈȧȧŧǿǿ"
     },
     {
       "type": 0,

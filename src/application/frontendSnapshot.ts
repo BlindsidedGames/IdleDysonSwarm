@@ -1,3 +1,4 @@
+import { isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import type { DeepReadonly } from '../core/contracts'
 import { clampUnitInterval } from '../core/clampUnitInterval'
@@ -158,6 +159,7 @@ export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
   'dream',
   'reality',
   'quantum',
+  'challenge',
   'infinity',
   'avocado',
   'time',
@@ -430,6 +432,7 @@ type TimelineProgression = Pick<
 }
 
 export interface FrontendCanonicalProgression {
+  readonly challenges?: Readonly<import('../game-state/types').InfinityChallengeState>
   readonly meta: DeepReadonly<CanonicalGameStateV1['meta']>
   readonly dyson: DeepReadonly<
     Omit<
@@ -1204,6 +1207,7 @@ export function selectGameplayVisibility(
     state.infinity.secretsOfTheUniverse >=
       QUANTUM_CONSTANTS.maximumSecrets
   const skillPointEarned =
+    infinityChallenges(state).hasEarnedGalvanizer ||
     state.skills.points > 0n ||
     state.infinity.permanentSkillPoints > 0n ||
     state.dyson.goalStage > 0n ||
@@ -1213,6 +1217,7 @@ export function selectGameplayVisibility(
     state.quantum.divisionsPurchased,
   )
   const infinityUnlocked =
+    infinityChallenges(state).unlocked ||
     state.meta.firstInfinityComplete ||
     state.infinity.points > 0n ||
     state.quantum.pointsEarned > 0n ||
@@ -1476,6 +1481,7 @@ function selectProgression(
   previous?: DeepReadonly<FrontendCanonicalProgression>,
 ): FrontendCanonicalProgression {
   return {
+    challenges: reuseShallowDomain(previous?.challenges, infinityChallenges(state)),
     meta: reuseShallowDomain(previous?.meta, state.meta),
     dyson: reuseShallowDomain(previous?.dyson, {
       facilities: state.dyson.facilities,
@@ -1597,7 +1603,7 @@ function selectDerivedFacts(
     bots: state.dyson.bots,
     totalInfinityPoints: state.infinity.points,
     divisionsPurchased: state.quantum.divisionsPurchased,
-    breakTheLoop: state.quantum.unlocks.breakTheLoop,
+    breakTheLoop: isBreakInfinityEnabled(state),
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: context.entitlements.permanentDoubleIp,
     quantumDoubleIp: state.quantum.unlocks.doubleInfinityPoints,

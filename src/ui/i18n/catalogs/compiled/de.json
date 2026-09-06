@@ -337,6 +337,118 @@
       "value": "Gesamtbonus auf Geld, Wissenschaft und Gebäude"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "Herausforderung abbrechen"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt aktiv · Fähigkeiten deaktiviert"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "Schließe eine normale Unendlichkeit mit deaktivierten Fähigkeiten ab. Bots, Gebäude und Forschung bleiben verfügbar."
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "Abgeschlossen · Galvanisierer erhalten"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "Neustart bestätigen"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "Der Neustart konnte nicht gespeichert werden. Dein aktueller Durchlauf wurde beibehalten. Versuche es erneut."
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "Galvanisierer: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "Galvanisierer werden für dauerhafte Fähigkeitsverbesserungen in einem zukünftigen Update gespeichert. Sie können noch nicht ausgegeben werden und bleiben nach Overflow erhalten."
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt wiederholen"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "Dies beginnt einen neuen Unendlichkeitsdurchlauf ohne IP-Belohnung. Unendlichkeitsverbesserungen und spätere Ebenen bleiben erhalten. Ein Abbruch startet ebenfalls einen neuen normalen Durchlauf."
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "Erster Abschluss: 1 Galvanisierer. Belohnung und Abschluss bleiben nach einem Overflow erhalten."
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "Herausforderungen"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "Herausforderungen anzeigen"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt starten"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "Unendlichkeitsherausforderungen"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "Herausforderung ansehen"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -6885,6 +6997,12 @@
     {
       "type": 0,
       "value": "Offizielle Website"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Avocato anzeigen"
     }
   ],
   "settings.navigation.bots": [

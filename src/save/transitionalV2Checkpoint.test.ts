@@ -188,7 +188,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     expect(storage.files.get('/recovery/rejected-current.idsw'))
       .toBe('IDSWEB1:not-a-valid-current-save')
 
-    const future = serializeWebSave({ saveVersion: 16 })
+    const future = serializeWebSave({ saveVersion: 17 })
     await expect(application.importSave({
       text: future,
       importedAtUtc: '2026-08-30T02:00:00.000Z',
@@ -249,7 +249,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     ;(state.dyson as SaveRecord).money = '98765'
-    const futureCurrent = serializeWebSave({ saveVersion: 16 })
+    const futureCurrent = serializeWebSave({ saveVersion: 17 })
     const storage = new TransitionalMemoryStorage()
     storage.files.set('/current', futureCurrent)
     const repository = new PortableSaveRepository(
@@ -2013,7 +2013,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   test('does not reinterpret a future canonical save as schema 13', () => {
     const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
     let recoveryBaseCalls = 0
-    const future = serializeWebSave({ saveVersion: 16 })
+    const future = serializeWebSave({ saveVersion: 17 })
 
     expect(() => prepareImportedSaveText(
       future,
@@ -3458,6 +3458,7 @@ function roundTrip(save: PreparedSave): PreparedSave {
 
 function encodeState(value: unknown): SaveRecord {
   const state = encodeValue(value) as SaveRecord
+  delete state.challenges
   delete state.modelVersion
   delete (state.avocado as SaveRecord).overflowPoints
   const meta = state.meta as SaveRecord

@@ -713,6 +713,262 @@
       "value": "‬"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀qɐupou ɔɥɐʅʅǝuƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑʅɐuʞ Sʅɐʇǝ ɐɔʇıʌǝ · Sʞıʅʅs pısɐqʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑʅɐuʞ Sʅɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ uoɹɯɐʅ Iuɟıuıʇʎ ʍıʇɥ ɐʅʅ sʞıʅʅs pısɐqʅǝp. Ԑoʇs, qnıʅpıuƃs ɐup ɹǝsǝɐɹɔɥ ɹǝɯɐıu ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝp · ⅁ɐʅʌɐuızǝɹ ǝɐɹuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıɹɯ ɹǝsʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɹǝsʇɐɹʇ ɔonʅp uoʇ qǝ sɐʌǝp. ⅄onɹ ɔnɹɹǝuʇ ɹnu ɥɐs qǝǝu ʞǝdʇ. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅʌɐuızǝɹs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅʌɐuızǝɹs ɐɹǝ sɐʌǝp ɟoɹ dǝɹɯɐuǝuʇʅʎ ǝuɥɐuɔıuƃ sʞıʅʅs ıu ɐ ɟnʇnɹǝ ndpɐʇǝ. ⊥ɥǝʎ ɔɐuuoʇ qǝ sdǝuʇ ʎǝʇ ɐup snɹʌıʌǝ Oʌǝɹɟʅoʍ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝdʅɐʎ Ԑʅɐuʞ Sʅɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs sʇɐɹʇs ɐ ɟɹǝsɥ Iuɟıuıʇʎ ɹnu ʍıʇɥonʇ ɐʍɐɹpıuƃ IԀ. Iuɟıuıʇʎ ndƃɹɐpǝs ɐup ʅɐʇǝɹ ʅɐʎǝɹs ɐɹǝ ʞǝdʇ. ∀qɐupouıuƃ ɐʅso sʇɐɹʇs ɐ ɟɹǝsɥ uoɹɯɐʅ ɹnu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ ɔoɯdʅǝʇıou: 1 ƃɐʅʌɐuızǝɹ. ⅄onɹ ɹǝʍɐɹp ɐup ɔoɯdʅǝʇıou snɹʌıʌǝ Oʌǝɹɟʅoʍ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ Ԑʅɐuʞ Sʅɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıǝʍ ɔɥɐʅʅǝuƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -13313,6 +13569,20 @@
     {
       "type": 0,
       "value": "Oɟɟıɔıɐʅ Mǝqsıʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ ∀ʌoɔɐʇo"
     },
     {
       "type": 0,

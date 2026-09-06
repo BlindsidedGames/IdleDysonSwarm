@@ -187,6 +187,60 @@
     "defaultMessage": "Total boost to Cash, Science, and Buildings",
     "description": "Unity Avocato total multiplier label."
   },
+  "challenges.abandon": {
+    "defaultMessage": "Abandon challenge"
+  },
+  "challenges.active": {
+    "defaultMessage": "Blank Slate active · Skills disabled"
+  },
+  "challenges.blankSlate": {
+    "defaultMessage": "Blank Slate"
+  },
+  "challenges.blankSlate.description": {
+    "defaultMessage": "Complete a normal Infinity with all skills disabled. Bots, buildings and research remain available."
+  },
+  "challenges.cancel": {
+    "defaultMessage": "Cancel"
+  },
+  "challenges.completed": {
+    "defaultMessage": "Completed · Galvanizer earned"
+  },
+  "challenges.confirm": {
+    "defaultMessage": "Confirm restart"
+  },
+  "challenges.failure": {
+    "defaultMessage": "The restart could not be saved. Your current run has been kept. Try again."
+  },
+  "challenges.galvanizers": {
+    "defaultMessage": "Galvanizers: {value}"
+  },
+  "challenges.galvanizers.future": {
+    "defaultMessage": "Galvanizers are saved for permanently enhancing skills in a future update. They cannot be spent yet and survive Overflow."
+  },
+  "challenges.replay": {
+    "defaultMessage": "Replay Blank Slate"
+  },
+  "challenges.restart": {
+    "defaultMessage": "This starts a fresh Infinity run without awarding IP. Infinity upgrades and later layers are kept. Abandoning also starts a fresh normal run."
+  },
+  "challenges.reward": {
+    "defaultMessage": "First completion: 1 galvanizer. Your reward and completion survive Overflow."
+  },
+  "challenges.route": {
+    "defaultMessage": "Challenges"
+  },
+  "challenges.shortcut": {
+    "defaultMessage": "Show Challenges"
+  },
+  "challenges.start": {
+    "defaultMessage": "Start Blank Slate"
+  },
+  "challenges.title": {
+    "defaultMessage": "Infinity Challenges"
+  },
+  "challenges.view": {
+    "defaultMessage": "View challenge"
+  },
   "debug.access-description": {
     "defaultMessage": "Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free.",
     "description": "Explains how developer tools are unlocked and retained."
@@ -3214,6 +3268,10 @@
   "settings.more-by.website-action": {
     "defaultMessage": "Official Website",
     "description": "Action opening the Blindsided Games website."
+  },
+  "settings.navigation.avocato": {
+    "defaultMessage": "Show Avocato",
+    "description": "Controls the Avocato bottom navigation destination."
   },
   "settings.navigation.bots": {
     "defaultMessage": "Show Bots",

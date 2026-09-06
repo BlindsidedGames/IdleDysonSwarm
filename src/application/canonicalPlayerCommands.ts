@@ -10,6 +10,8 @@ import {
  */
 export type CanonicalPlayerCommand =
   | CanonicalGameCommand
+  | { readonly kind: 'challenge.enter-blank-slate' }
+  | { readonly kind: 'challenge.abandon' }
   | { readonly kind: 'avocado.request-overflow-reset' }
   | { readonly kind: 'tinker.start'; readonly repeat: boolean }
   | { readonly kind: 'tinker.set-repeat'; readonly enabled: boolean }
@@ -19,6 +21,8 @@ export type CanonicalPlayerCommandKind =
 
 export const CANONICAL_PLAYER_COMMAND_SUPPORT = Object.freeze({
   ...CANONICAL_GAME_COMMAND_SUPPORT,
+  'challenge.enter-blank-slate': { supported: true, authority: 'restartInfinityChallenge' },
+  'challenge.abandon': { supported: true, authority: 'restartInfinityChallenge' },
   'avocado.request-overflow-reset': Object.freeze({
     supported: true,
     authority: 'applyCanonicalOverflowReset',
@@ -44,6 +48,8 @@ export const CANONICAL_PLAYER_COMMAND_SUPPORT = Object.freeze({
 
 export const CANONICAL_PLAYER_COMMAND_KINDS = Object.freeze([
   ...CANONICAL_GAME_COMMAND_KINDS,
+  'challenge.enter-blank-slate',
+  'challenge.abandon',
   'avocado.request-overflow-reset',
   'tinker.start',
   'tinker.set-repeat',

@@ -1,3 +1,4 @@
+import { restartInfinityChallenge } from '../simulation/canonicalInfinityChallengeRestart'
 import { applyCanonicalOverflowReset } from '../simulation/canonicalOverflowReset'
 import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
@@ -539,7 +540,8 @@ export class CanonicalGameApplicationFacade {
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalPlayerDispatchResult> {
-    if (envelope.command.kind === 'avocado.request-overflow-reset') {
+    if (envelope.command.kind === 'avocado.request-overflow-reset' ||
+        envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
       const result = await this.application.dispatchCommitFirst(envelope, 'bot-cap')
       return {
         kind: 'transition',
@@ -547,7 +549,7 @@ export class CanonicalGameApplicationFacade {
           accepted: false,
           revision: result.transition.revision,
           code: result.code ?? 'OVERFLOW_COMMIT_FAILED',
-          reason: result.reason ?? 'Overflow could not be saved. Your run has been preserved.',
+          reason: result.reason ?? 'The reset could not be saved. Your run has been preserved.',
         },
       }
     }
@@ -1070,6 +1072,19 @@ export function createCanonicalGameEngineDefinition(
     validateTransitionState: (state) =>
       validateRuntimeTransitionState(state, eventContext),
     applyCommand: (candidate, command) => {
+      if (command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
+        const artifact = deriveCanonicalArtifactSkillPoints(candidate.gameState, eventContext.realityUpgradeDefinitions)
+        if (!artifact.ok) return reject('CHALLENGE_RESET_FAILED', artifact.issue?.detail ?? 'Artifact skill points unavailable.')
+        const reset = restartInfinityChallenge(candidate.gameState,
+          command.kind === 'challenge.enter-blank-slate' ? 'enter' : 'abandon', artifact.value)
+        if (!reset.ok) return reject(reset.code, 'The challenge could not be started or abandoned.')
+        const derived = deriveBasicDysonState(reset.state, candidate.compatibilityTuning,
+          candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)
+        if (!derived.ok) return reject('CHALLENGE_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Challenge reset could not be derived.')
+        Object.assign(candidate, { gameState: reset.state, evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+          tinker: createCanonicalTinkerRuntimeState(), lastSkillPresetApplication: null, presentationEvents: [] })
+        return { accepted: true, changed: true }
+      }
       if (command.kind === 'avocado.request-overflow-reset') {
         const reset = applyCanonicalOverflowReset(candidate.gameState)
         if (!reset.ok) return reject(reset.code, 'Reach Overflow before choosing this reset.')

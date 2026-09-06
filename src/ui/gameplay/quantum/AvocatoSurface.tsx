@@ -7,8 +7,8 @@ import type {
 } from '../../../application/frontendSnapshot'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { AvocadoFeedSource } from '../../../simulation/avocadoDomain'
-import avocatoIcon from '../../assets/skill-icons/avocados.webp'
-import { Button } from '../../components'
+import avocatoIcon from '../../assets/nav-avocato.png'
+import { Button, InlineImageSymbol } from '../../components'
 import { formatGameNumber, formatWholeGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
@@ -49,9 +49,11 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
   return (
     <div className="avocato-surface">
       <header className="avocato-surface__hero">
-        <img
+        <InlineImageSymbol
+          className="avocato-surface__portrait"
           src={avocatoIcon}
-          alt={intl.formatMessage(messages.iconAlt)}
+          label={intl.formatMessage(messages.iconAlt)}
+          tint maskMode="luminance"
         />
         <div>
           <div className="avocato-surface__title" aria-hidden="true">

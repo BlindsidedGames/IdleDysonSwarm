@@ -1,3 +1,4 @@
+import { isBreakInfinityEnabled } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
   CanonicalFacilityId,
@@ -108,7 +109,7 @@ export function applyDysonProductionArrivals(
       science: accumulate(state.dyson.science, rates.science, seconds),
       bots: clampPreBreakInfinityBots(
         accumulate(state.dyson.bots, rates.bots, seconds),
-        state.quantum.unlocks.breakTheLoop,
+        isBreakInfinityEnabled(state),
         state.quantum.divisionsPurchased,
       ),
       totalPanelsDecayed: accumulate(

@@ -1,3 +1,6 @@
+import galvanizerIcon from '../../assets/currency-galvanizer.png'
+import { InlineImageSymbol, InlineResourceAmount } from '../../components'
+import { challengeMessages } from '../infinity/challengeMessages'
 import {
   memo,
   useCallback,
@@ -164,6 +167,9 @@ export interface SkillPresetActions {
 }
 
 export interface SkillsSurfaceProps {
+  readonly galvanizers?: bigint
+  readonly hasEarnedGalvanizer?: boolean
+  readonly skillsDisabled?: boolean
   readonly locale: EnabledLocale
   readonly points: bigint
   readonly fragments: bigint
@@ -283,6 +289,9 @@ function graphPosition(node: SkillPresentationNode) {
  * exclusively from the supplied canonical catalog.
  */
 export function SkillsSurface({
+  galvanizers = 0n,
+  hasEarnedGalvanizer = false,
+  skillsDisabled = false,
   locale,
   points,
   fragments,
@@ -291,7 +300,7 @@ export function SkillsSurface({
   selectedPresetSlot,
   botDistribution,
   autoAssignNonRefundable,
-  commandAvailability,
+  commandAvailability: suppliedCommandAvailability,
   presetApplication,
   onDismissPresetApplication,
   showPresetApplicationNotifications,
@@ -302,6 +311,10 @@ export function SkillsSurface({
   onTreeViewChange,
 }: SkillsSurfaceProps) {
   const intl = useIntl()
+  const [showGalvanizerHelp, setShowGalvanizerHelp] = useState(false)
+  const commandAvailability = skillsDisabled
+    ? Object.fromEntries(Object.keys(suppliedCommandAvailability).map(key => [key, false])) as unknown as SkillCommandAvailability
+    : suppliedCommandAvailability
   const searchId = useId()
   const searchStatusId = useId()
   const settingsId = useId()
@@ -591,6 +604,7 @@ export function SkillsSurface({
           />
         )}
       <SkillTreeViewport
+        skillsDisabled={skillsDisabled}
         nodes={visibleNodes}
         previews={previewById}
         nodeById={nodeById}
@@ -707,6 +721,14 @@ export function SkillsSurface({
               {intl.formatMessage(messages.pointsLabel)}
             </span>
             <strong>{formatWholeGameNumber(locale, points)}</strong>
+            {hasEarnedGalvanizer && <button type="button"
+              className="skills-surface__currency" aria-haspopup="dialog"
+              aria-label={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+              title={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+              onClick={() => setShowGalvanizerHelp(true)}>
+              <InlineResourceAmount leadingSymbol={<InlineImageSymbol src={galvanizerIcon} tint maskMode="luminance" />}
+                value={formatWholeGameNumber(locale, galvanizers)} />
+            </button>}
           </div>
         )}
       >
@@ -733,6 +755,17 @@ export function SkillsSurface({
           }}
         />
       </ProgressControlsPanel>
+
+      {hasEarnedGalvanizer && showGalvanizerHelp && (
+        <SkillDetailsDialog
+          title={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+          closeLabel={intl.formatMessage(messages.close)}
+          palette="normal"
+          onClose={() => setShowGalvanizerHelp(false)}
+        >
+          <p>{intl.formatMessage(challengeMessages.future)}</p>
+        </SkillDetailsDialog>
+      )}
 
       {presetsOpen && (
         <SkillPresetsDialog
@@ -839,6 +872,7 @@ export function SkillsSurface({
 }
 
 interface SkillTreeViewportProps {
+  readonly skillsDisabled: boolean
   readonly nodes: readonly SkillPresentationNode[]
   readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
   readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
@@ -856,6 +890,7 @@ interface SkillTreeViewportProps {
 }
 
 const SkillTreeViewport = memo(function SkillTreeViewport({
+  skillsDisabled,
   nodes,
   previews,
   nodeById,
@@ -1377,7 +1412,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               type="button"
               className="skill-tree-node"
               data-state={preview.visualState}
-              data-affordable={preview.purchase.eligible || undefined}
+              data-affordable={(!skillsDisabled && preview.purchase.eligible) || undefined}
               data-owned={preview.owned || undefined}
               data-queued={preview.queued || undefined}
               data-match={matched || undefined}
@@ -1398,7 +1433,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
                 preview.queued
                   ? intl.formatMessage(messages.queued)
                   : null,
-                !preview.owned && !preview.purchase.eligible
+                !preview.owned && (skillsDisabled || !preview.purchase.eligible)
                   ? intl.formatMessage(messages.unavailable)
                   : null,
               ]

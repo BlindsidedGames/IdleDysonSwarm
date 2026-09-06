@@ -337,6 +337,118 @@
       "value": "对现金、科学与建筑的总增益"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "放弃挑战"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "白纸起步进行中 · 技能已禁用"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "白纸起步"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "在禁用所有技能的情况下完成一次普通无限。机器人、建筑和研究仍然可用。"
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "已完成 · 已获得强化器"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "确认重新开始"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "无法保存重新开始的状态。当前轮次已保留，请重试。"
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "强化器："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "强化器将用于未来更新中永久强化技能。目前无法使用，且在溢出后保留。"
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "重玩白纸起步"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "这将开始新的无限轮次，不会获得无限点。无限升级和后续层级会保留。放弃挑战也会开始新的普通轮次。"
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "首次完成：1个强化器。奖励和完成记录在溢出后保留。"
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "挑战"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "显示挑战"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "开始白纸起步"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "无限挑战"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "查看挑战"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -6885,6 +6997,12 @@
     {
       "type": 0,
       "value": "官方网站"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "显示 Avocato"
     }
   ],
   "settings.navigation.bots": [

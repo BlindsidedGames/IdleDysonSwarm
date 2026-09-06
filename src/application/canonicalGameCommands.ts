@@ -1,3 +1,4 @@
+import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { formatUnknownError as errorDetail } from '../core/unknownError'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
@@ -825,6 +826,10 @@ export function routeCanonicalGameCommand(
 ): CanonicalGameCommandResult {
   const carriers =
     options.runtimeCarriers ?? EMPTY_RUNTIME_CARRIERS
+
+  if (isBlankSlateActive(state) && command.kind.startsWith('skill.')) {
+    return rejectDomain(state, carriers, 'skill:challenge-active', 'skills', 'Skills are disabled during Blank Slate.')
+  }
 
   switch (command.kind) {
     case 'navigation.set-route-discovery': {

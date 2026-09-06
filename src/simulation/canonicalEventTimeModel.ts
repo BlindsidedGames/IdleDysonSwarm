@@ -1,3 +1,4 @@
+import { isBreakInfinityEnabled, isBlankSlateActive } from './infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementFacts } from '../achievements/contracts'
@@ -418,7 +419,7 @@ export class CanonicalEventTimeModel
       }
     }
     const capReachedWithoutAutomation =
-      !this.carrier.gameState.quantum.unlocks.breakTheLoop &&
+      !isBreakInfinityEnabled(this.carrier.gameState) &&
       !infinity.automaticResetEnabled &&
       this.carrier.gameState.dyson.bots >=
         ordinaryInfinityBotThreshold(
@@ -427,7 +428,7 @@ export class CanonicalEventTimeModel
     const infinityHorizon =
       !hasReachedOverflow(this.carrier.gameState) &&
       (infinity.automaticResetEnabled ||
-        (!this.carrier.gameState.quantum.unlocks.breakTheLoop &&
+        (!isBreakInfinityEnabled(this.carrier.gameState) &&
           !capReachedWithoutAutomation))
       ? timeToNextInfinityEventAfterStellarSettlement(
           this.carrier.gameState.dyson.bots,
@@ -442,7 +443,7 @@ export class CanonicalEventTimeModel
         )
       : Number.MAX_VALUE
     const overflowHorizon = !hasReachedOverflow(this.carrier.gameState) &&
-      this.carrier.gameState.quantum.unlocks.breakTheLoop
+      isBreakInfinityEnabled(this.carrier.gameState)
       ? timeToNextInfinityEventAfterStellarSettlement(
           this.carrier.gameState.dyson.bots,
           derived.productionArrivalRates.bots,
@@ -487,7 +488,7 @@ export class CanonicalEventTimeModel
     const uncappedStartingState = this.carrier.gameState
     const cappedStartingBots = clampPreBreakInfinityBots(
       uncappedStartingState.dyson.bots,
-      uncappedStartingState.quantum.unlocks.breakTheLoop,
+      isBreakInfinityEnabled(uncappedStartingState),
       uncappedStartingState.quantum.divisionsPurchased,
     )
     const cappedStartingState =
@@ -1066,7 +1067,7 @@ export class CanonicalEventTimeModel
   private applyQuantumLeap(): void {
     this.captureAchievementMilestones()
     const state = this.carrier.gameState
-    if (hasReachedOverflow(state)) {
+    if (hasReachedOverflow(state) || isBlankSlateActive(state)) {
       this.queuedInputOutcome = { accepted: false, changed: false, code: 'OVERFLOW_RESET_REQUIRED' }
       return
     }
@@ -1223,7 +1224,7 @@ export class CanonicalEventTimeModel
   ): boolean {
     const state = this.carrier.gameState
     const automaticResetEnabled = state.infinity.automaticResetEnabled
-    const breakTheLoop = state.quantum.unlocks.breakTheLoop
+    const breakTheLoop = isBreakInfinityEnabled(state)
     const ordinaryCapReached =
       !breakTheLoop &&
       state.dyson.bots >= ordinaryInfinityBotThreshold(
@@ -1715,7 +1716,7 @@ function withUpdatedInfinityRatePeak(
   const infinity = createBasicDysonInfinityState({
     points: state.infinity.points,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
-    breakTheLoop: state.quantum.unlocks.breakTheLoop,
+    breakTheLoop: isBreakInfinityEnabled(state),
     divisionsPurchased: state.quantum.divisionsPurchased,
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: entitlements.permanentDoubleIp,
@@ -1831,7 +1832,7 @@ export function evaluateCanonicalInfinityBoundary(
     return { status: 'not-ready' }
   }
 
-  const breakInfinity = state.quantum.unlocks.breakTheLoop
+  const breakInfinity = isBreakInfinityEnabled(state)
   const breakReward = infinityPointsForBots(
     state.dyson.bots,
     infinity,
@@ -1869,7 +1870,7 @@ function createInfinityCycleState(
   return createBasicDysonInfinityState({
     points: state.infinity.points,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
-    breakTheLoop: state.quantum.unlocks.breakTheLoop,
+    breakTheLoop: isBreakInfinityEnabled(state),
     divisionsPurchased: state.quantum.divisionsPurchased,
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: carrier.entitlements.permanentDoubleIp,

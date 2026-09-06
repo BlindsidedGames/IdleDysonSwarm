@@ -337,6 +337,118 @@
       "value": "Bonificación total al Dinero, la Ciencia y los Edificios"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "Abandonar desafío"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "Borrón y cuenta nueva activo · Habilidades desactivadas"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "Borrón y cuenta nueva"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "Completa un Infinito normal con todas las habilidades desactivadas. Los bots, edificios e investigaciones siguen disponibles."
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "Completado · Galvanizador obtenido"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmar reinicio"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "No se pudo guardar el reinicio. Tu partida actual se conservó. Inténtalo de nuevo."
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "Galvanizadores: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "Los galvanizadores se guardan para mejorar habilidades de forma permanente en una futura actualización. Aún no se pueden gastar y se conservan tras un Desbordamiento."
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "Repetir Borrón y cuenta nueva"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "Esto inicia una nueva partida de Infinito sin otorgar PI. Conservas las mejoras de Infinito y las capas posteriores. Abandonar también inicia una nueva partida normal."
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "Primera victoria: 1 galvanizador. La recompensa y la victoria se conservan tras un Desbordamiento."
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "Desafíos"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "Mostrar desafíos"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "Iniciar Borrón y cuenta nueva"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "Desafíos de Infinito"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "Ver desafío"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -6885,6 +6997,12 @@
     {
       "type": 0,
       "value": "Sitio web oficial"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Mostrar Avocato"
     }
   ],
   "settings.navigation.bots": [

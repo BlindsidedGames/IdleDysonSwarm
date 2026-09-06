@@ -1,6 +1,7 @@
 @import "../../tokens/tokens.css";
 
-.infinity-surface {
+.infinity-surface,
+.challenges-surface {
   --infinity-panel: var(--theme-panel);
   --infinity-panel-raised: var(--theme-selected);
   --infinity-accent: var(--theme-accent);
@@ -9,6 +10,9 @@
   --infinity-control-disabled: color-mix(in srgb, var(--theme-panel) 72%, var(--theme-page));
   --infinity-available: #ffa45e;
   --infinity-spent: #91dd8f;
+}
+
+.infinity-surface {
   display: grid;
   block-size: 100%;
   min-block-size: 0;
@@ -595,3 +599,21 @@
   padding: 0.5rem 0.7rem;
   font-size: var(--ui-text-meta);
 }
+
+.infinity-surface__shop > .ui-collapsible-section { margin-block-end: var(--ui-card-gap, 0.5rem); }
+.infinity-challenge-card { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ui-card-gap, 0.5rem); }
+.infinity-challenge-card > div:first-child { flex: 1 1 15rem; min-inline-size: 0; }
+.infinity-challenge-card h3 { margin: 0; font-size: var(--ui-text-body); }
+.infinity-challenge-card p { margin: 0.3rem 0; font-size: var(--ui-text-meta); }
+.infinity-challenge-card__confirmation { flex: 1 1 100%; }
+.infinity-challenge-card__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.infinity-challenges > .ui-collapsible-section__heading { font-size: var(--ui-text-body); }
+
+.challenges-surface {
+  padding-block: calc(var(--ui-page-gutter) + var(--safe-area-top)) var(--ui-page-gutter);
+  padding-inline: max(var(--ui-page-gutter), var(--safe-area-left)) max(var(--ui-page-gutter), var(--safe-area-right));
+  min-inline-size: 0;
+  overflow-y: auto;
+}
+
+.infinity-challenge-card > .ui-button { align-self: center; padding-inline: 0.7rem; }

@@ -337,6 +337,118 @@
       "value": "キャッシュ、サイエンス、建物への合計ブースト"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "チャレンジを放棄"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "白紙の出発に挑戦中 · スキル無効"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "白紙の出発"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "すべてのスキルを無効にして通常のインフィニティを達成します。ボット、建物、研究は利用できます。"
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "クリア済み · 強化器獲得"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "再スタートを確定"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "再スタートを保存できませんでした。現在の周回は保持されています。もう一度お試しください。"
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "強化器："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "強化器は今後の更新でスキルを永久強化するために保存されます。現在は使用できず、オーバーフロー後も保持されます。"
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "白紙の出発を再プレイ"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "IP報酬なしで新しいインフィニティ周回を開始します。インフィニティ強化と後続の階層は保持されます。放棄した場合も通常の新しい周回を開始します。"
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "初回クリア報酬：強化器1個。報酬とクリア記録はオーバーフロー後も保持されます。"
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "チャレンジ"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "チャレンジを表示"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "白紙の出発を開始"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "インフィニティチャレンジ"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "チャレンジを見る"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -6885,6 +6997,12 @@
     {
       "type": 0,
       "value": "公式ウェブサイト"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "アボカトを表示"
     }
   ],
   "settings.navigation.bots": [

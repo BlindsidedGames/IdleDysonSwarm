@@ -1,3 +1,4 @@
+import { isBreakInfinityEnabled } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
@@ -60,7 +61,7 @@ export function applyCanonicalSkillIntervalEffects(
       ...stateAfterArrivals.dyson,
       bots: clampPreBreakInfinityBots(
         stellar.bots,
-        stateAfterArrivals.quantum.unlocks.breakTheLoop,
+        isBreakInfinityEnabled(stateAfterArrivals),
         stateAfterArrivals.quantum.divisionsPurchased,
       ),
       facilities: stellar.planetsProduced === 0

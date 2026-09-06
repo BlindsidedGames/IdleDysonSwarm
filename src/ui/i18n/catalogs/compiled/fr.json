@@ -337,6 +337,118 @@
       "value": "Bonus total pour l’Argent, la Science et les bâtiments"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "Abandonner le défi"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "Table rase en cours · Compétences désactivées"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "Table rase"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "Terminez un Infini normal avec toutes les compétences désactivées. Les robots, bâtiments et recherches restent disponibles."
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "Annuler"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "Terminé · Galvaniseur obtenu"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmer le redémarrage"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "Le redémarrage n’a pas pu être sauvegardé. Votre cycle actuel a été conservé. Réessayez."
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "Galvaniseurs : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "Les galvaniseurs sont conservés pour améliorer les compétences de façon permanente dans une future mise à jour. Ils ne peuvent pas encore être dépensés et survivent au Débordement."
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "Rejouer Table rase"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "Cette action commence un nouveau cycle d’Infini sans accorder de PI. Les améliorations d’Infini et les couches suivantes sont conservées. Abandonner commence également un nouveau cycle normal."
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "Première réussite : 1 galvaniseur. Votre récompense et votre réussite survivent au Débordement."
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "Défis"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "Afficher les défis"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "Commencer Table rase"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "Défis d’Infini"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "Voir le défi"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -6885,6 +6997,12 @@
     {
       "type": 0,
       "value": "Site officiel"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Afficher Avocato"
     }
   ],
   "settings.navigation.bots": [

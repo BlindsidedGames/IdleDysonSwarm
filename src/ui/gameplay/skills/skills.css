@@ -1404,3 +1404,34 @@
     block-size: 4rem;
   }
 }
+
+.skills-surface__resources { flex-wrap: wrap; }
+
+.skills-surface__currency {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  margin-inline-start: 0.6rem;
+  padding: 0 0.2rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.skills-surface__currency .ui-inline-image-symbol {
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+  /* Compensate for the generated artwork’s canvas padding. */
+  mask-size: 150%;
+  -webkit-mask-size: 150%;
+}
+.skills-surface__currency:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.skills-surface__currency:hover { color: #fff; }
+.skills-surface__currency .ui-resource-value__content {
+  align-items: center;
+  gap: 0.45rem;
+  line-height: 1;
+}

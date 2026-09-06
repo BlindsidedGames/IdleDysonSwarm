@@ -9,12 +9,24 @@ const lockedRoutes: Readonly<Record<HighlightableRoute, boolean>> = {
   research: false,
   skills: false,
   infinity: false,
+  challenges: false,
   reality: false,
   simulations: false,
   quantum: false,
 }
 
 describe('new route highlight save identity', () => {
+  test('announces Challenges on unlock and clears its highlight after visiting', () => {
+    const discovered = reconcileStoredRouteHighlights(
+      { knownRoutes: [], unvisitedRoutes: [] },
+      { ...lockedRoutes, challenges: true }, 'bots',
+    )
+    expect(discovered).toEqual({ knownRoutes: ['challenges'], unvisitedRoutes: ['challenges'] })
+    expect(reconcileStoredRouteHighlights(discovered,
+      { ...lockedRoutes, challenges: true }, 'challenges')).toEqual({
+      knownRoutes: ['challenges'], unvisitedRoutes: [],
+    })
+  })
   test('marks a route newly unvisited after it unlocks in a fresh save', () => {
     const freshSave: StoredRouteHighlights = {
       knownRoutes: [],

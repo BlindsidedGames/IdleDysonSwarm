@@ -63,8 +63,9 @@ It clears progression-derived skill points, ownership, timers and Research.
 Completed Secrets and their four-point reward survive, as do skill presets,
 automation preferences, host purchases and achievements, lifetime statistics,
 Offline Time and its capacity. Reality's Double Time upgrade is reset.
-There are no galvanized skills or challenges in the current model; their
-future permanent rewards belong outside the slices cleared here.
+Blank Slate completion, its unlock, and the Galvanizer wallet survive Overflow.
+Galvanized skill effects and Galvanizer spending are not implemented. See
+`infinity-challenges-contract.md` for challenge reset and reward rules.
 
 Overflow Points currently have no production effect or spending action. The
 balance and reset confirmation live in Avocato. A failed save preserves the

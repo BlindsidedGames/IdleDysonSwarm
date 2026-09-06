@@ -1,3 +1,4 @@
+import { validateInfinityChallenges } from '../simulation/infinityChallenges'
 import {
   isNonNegativeInteger,
   isSafeNonNegativeInteger,
@@ -19,6 +20,11 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  const challengeError = validateInfinityChallenges(state.challenges)
+  if (challengeError) errors.push(challengeError)
+  if (state.challenges?.active === 'blank-slate' && Object.values(state.skills.byId).some(skill => skill.owned)) {
+    errors.push('Blank Slate cannot contain owned skills.')
+  }
   const overflowPoints = state.avocado.overflowPoints
   if (overflowPoints !== undefined &&
     (typeof overflowPoints !== 'bigint' || overflowPoints < 0n || overflowPoints > 9_223_372_036_854_775_807n)) {

@@ -337,6 +337,118 @@
       "value": "Total boost to Cash, Science, and Buildings"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "Abandon challenge"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "Blank Slate active · Skills disabled"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "Blank Slate"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "Complete a normal Infinity with all skills disabled. Bots, buildings and research remain available."
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "Completed · Galvanizer earned"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "Confirm restart"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "The restart could not be saved. Your current run has been kept. Try again."
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "Galvanizers: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "Galvanizers are saved for permanently enhancing skills in a future update. They cannot be spent yet and survive Overflow."
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "Replay Blank Slate"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "This starts a fresh Infinity run without awarding IP. Infinity upgrades and later layers are kept. Abandoning also starts a fresh normal run."
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "First completion: 1 galvanizer. Your reward and completion survive Overflow."
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "Challenges"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "Show Challenges"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "Start Blank Slate"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "Infinity Challenges"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "View challenge"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -6885,6 +6997,12 @@
     {
       "type": 0,
       "value": "Official Website"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Show Avocato"
     }
   ],
   "settings.navigation.bots": [

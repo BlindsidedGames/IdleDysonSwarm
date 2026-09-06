@@ -337,6 +337,118 @@
       "value": "Bônus total de Dinheiro, Ciência e Edifícios"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "Abandonar desafio"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "Do zero ativo · Habilidades desativadas"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "Do zero"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "Conclua um Infinito normal com todas as habilidades desativadas. Bots, construções e pesquisas continuam disponíveis."
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "Concluído · Galvanizador recebido"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmar reinício"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "Não foi possível salvar o reinício. Sua rodada atual foi mantida. Tente novamente."
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "Galvanizadores: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "Os galvanizadores são guardados para melhorar habilidades permanentemente em uma atualização futura. Ainda não podem ser gastos e são mantidos após o Transbordamento."
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "Repetir Do zero"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "Isso inicia uma nova rodada de Infinito sem conceder PI. As melhorias de Infinito e as camadas posteriores são mantidas. Abandonar também inicia uma nova rodada normal."
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "Primeira conclusão: 1 galvanizador. A recompensa e a conclusão são mantidas após o Transbordamento."
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "Desafios"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "Mostrar desafios"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "Iniciar Do zero"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "Desafios do Infinito"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "Ver desafio"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -6885,6 +6997,12 @@
     {
       "type": 0,
       "value": "Site oficial"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Mostrar Avocato"
     }
   ],
   "settings.navigation.bots": [

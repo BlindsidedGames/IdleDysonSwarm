@@ -337,6 +337,118 @@
       "value": "Общий бонус к Деньгам, Науке и строениям"
     }
   ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "Покинуть испытание"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "Чистый лист активно · Навыки отключены"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "Чистый лист"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "Завершите обычную Бесконечность со всеми отключёнными навыками. Боты, здания и исследования остаются доступны."
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "Завершено · Гальванизатор получен"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "Подтвердить перезапуск"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "Не удалось сохранить перезапуск. Текущий цикл сохранён. Попробуйте снова."
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "Гальванизаторы: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "Гальванизаторы сохраняются для постоянного усиления навыков в будущем обновлении. Пока их нельзя потратить, и они сохраняются после Переполнения."
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "Повторить Чистый лист"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "Это начинает новый цикл Бесконечности без награды в ОБ. Улучшения Бесконечности и последующие слои сохраняются. Выход также начинает новый обычный цикл."
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "Первое прохождение: 1 гальванизатор. Награда и прохождение сохраняются после Переполнения."
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "Испытания"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "Показывать испытания"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "Начать Чистый лист"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "Испытания Бесконечности"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "Открыть испытание"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -6885,6 +6997,12 @@
     {
       "type": 0,
       "value": "Официальный сайт"
+    }
+  ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Показывать Авокато"
     }
   ],
   "settings.navigation.bots": [

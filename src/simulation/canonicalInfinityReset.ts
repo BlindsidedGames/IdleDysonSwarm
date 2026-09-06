@@ -1,3 +1,5 @@
+import { infinityChallenges, isBlankSlateActive } from './infinityChallenges'
+import { ordinaryInfinityBotThreshold } from './infinityCycle'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import {
@@ -30,6 +32,8 @@ import {
 const INT32_MAXIMUM = 2_147_483_647n
 
 export interface CanonicalInfinityResetRequest {
+  /** Challenge entry/abandonment restarts the run without a prestige reward. */
+  readonly restartOnly?: boolean
   readonly breakInfinity: boolean
   readonly requestedReward: bigint
   /** Platform/achievement contribution derived outside player state. */
@@ -145,13 +149,31 @@ export function applyCanonicalInfinityReset(
   )
   if (!rulesResult.ok) return failed(state, rulesResult.issues)
 
+  const challenge = infinityChallenges(state)
+  const challengeWon = !request.restartOnly && isBlankSlateActive(state) &&
+    !request.breakInfinity && state.dyson.bots >= ordinaryInfinityBotThreshold(state.quantum.divisionsPurchased)
+  if (!request.restartOnly && isBlankSlateActive(state) && !challengeWon) {
+    return failed(state, [{ code: 'INFINITY_RESET_REQUEST_INVALID', path: 'request', detail: 'Blank Slate requires the ordinary Infinity boundary.' }])
+  }
+  if (challengeWon && !challenge.blankSlateCompleted && challenge.galvanizers >= DISCRETE_MAXIMUM) {
+    return failed(state, [{ code: 'INFINITY_RESET_STATE_INVALID', path: 'challenges.galvanizers', detail: 'Galvanizer balance is full.' }])
+  }
+  const nextChallenges = request.restartOnly ? challenge : {
+    ...challenge, unlocked: true,
+    ...(challengeWon ? {
+      active: null,
+      blankSlateCompleted: true,
+      hasEarnedGalvanizer: true,
+      galvanizers: challenge.blankSlateCompleted ? challenge.galvanizers : addDiscrete(challenge.galvanizers, 1n),
+    } : {}),
+  }
   const previousPoints = state.infinity.points
   const nextPoints = addDiscrete(
     previousPoints,
     request.requestedReward,
   )
   const rewardGranted = nextPoints - previousPoints
-  const bankedSkillPoints =
+  const bankedSkillPoints = request.restartOnly ? 0n :
     owned(state.skills.byId, 'banking') +
     owned(state.skills.byId, 'investmentPortfolio')
   const initialSkillPoints = addDiscrete(
@@ -164,7 +186,7 @@ export function applyCanonicalInfinityReset(
   const assignment = applyAutoAssignment(
     initialSkillPoints,
     state.skills.autoAssignNonRefundable,
-    rulesResult.rules,
+    request.restartOnly && isBlankSlateActive(state) ? [] : rulesResult.rules,
     state,
   )
   const resetSkillStates = materializeResetSkillStates(
@@ -172,7 +194,7 @@ export function applyCanonicalInfinityReset(
     assignment.byId,
   )
   const facilities = retainedFacilities(state)
-  const statistics = recordInfinityCycle(
+  const statistics = request.restartOnly ? state.statistics : recordInfinityCycle(
     state.statistics,
     request.breakInfinity,
     rewardGranted,
@@ -190,10 +212,11 @@ export function applyCanonicalInfinityReset(
     ok: true,
     state: {
       ...state,
+      challenges: nextChallenges,
       meta: {
         ...state.meta,
         tutorialComplete: true,
-        firstInfinityComplete: true,
+        firstInfinityComplete: request.restartOnly ? state.meta.firstInfinityComplete : true,
       },
       dyson: {
         ...state.dyson,

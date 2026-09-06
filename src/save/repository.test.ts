@@ -161,7 +161,7 @@ describe('portable transactional save repository', () => {
       lowercase,
     )
     expect(storage.files.get('/current')).toMatch(/^IDSWEB1:/)
-    expect((await repository.loadCurrent())?.targetSchema).toBe(15)
+    expect((await repository.loadCurrent())?.targetSchema).toBe(16)
   })
 
   test('migrates once, atomically promotes, and preserves the Odin source', async () => {
@@ -519,15 +519,15 @@ describe('portable transactional save repository', () => {
 
     const prepared = await repository.loadCurrent()
     expect(prepared).not.toBeNull()
-    expect(prepared?.targetSchema).toBe(15)
-    expect(prepared?.copyState().saveVersion).toBe(15)
+    expect(prepared?.targetSchema).toBe(16)
+    expect(prepared?.copyState().saveVersion).toBe(16)
   })
 
   test('rejects a future-schema current save before publication', async () => {
     const storage = new MemoryStorage()
     storage.files.set(
       '/current',
-      serializeWebSave({ saveVersion: 16 }),
+      serializeWebSave({ saveVersion: 17 }),
     )
     const repository = new PortableSaveRepository(
       storage,
@@ -763,7 +763,7 @@ describe('portable transactional save repository', () => {
       sourceClass: 'unity-persistent-data-save',
       opaqueSourceIdentifier: 'canonical-unity',
       pathClass: 'unity-local-low',
-      saveSchemaVersion: 15,
+      saveSchemaVersion: 16,
       contentSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
     })])
   })
@@ -1663,7 +1663,7 @@ describe('portable transactional save repository', () => {
     storage.files.set('/current', '{')
     storage.files.set(
       '/current.backup.1',
-      serializeWebSave({ saveVersion: 16 }),
+      serializeWebSave({ saveVersion: 17 }),
     )
     storage.files.set(
       '/current.backup.2',
@@ -1759,7 +1759,7 @@ describe('portable transactional save repository', () => {
 
   test('stops fallback when the current save has a future schema', async () => {
     const storage = new MemoryStorage()
-    storage.files.set('/current', serializeWebSave({ saveVersion: 16 }))
+    storage.files.set('/current', serializeWebSave({ saveVersion: 17 }))
     storage.files.set('/legacy', 'good')
     storage.candidates = [
       { id: 'legacy', sourcePath: '/legacy', text: 'good' },
@@ -1797,7 +1797,7 @@ describe('portable transactional save repository', () => {
         temporary: '/current.tmp',
         legacyRecovery: '/recovery/original-idb1.txt',
       },
-      (text) => ({ saveVersion: text === 'future' ? 16 : 12 }),
+      (text) => ({ saveVersion: text === 'future' ? 17 : 12 }),
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({

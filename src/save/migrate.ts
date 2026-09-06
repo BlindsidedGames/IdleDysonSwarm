@@ -1,3 +1,4 @@
+import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import {
@@ -22,7 +23,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 15
+export const CURRENT_SAVE_SCHEMA = 16
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -78,6 +79,14 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   appliedSteps.push('stable-research-ids')
   migrateAvocado(save)
   appliedSteps.push('avocado-container')
+  const challenges = ensureRecord(save, 'infinityChallengeData')
+  for (const [key, value] of Object.entries(EMPTY_INFINITY_CHALLENGES)) {
+    if (challenges[key] === undefined) challenges[key] = value
+  }
+  if (save.firstInfinityDone === true || challenges.blankSlateCompleted === true ||
+      (typeof challenges.galvanizers === 'bigint' && challenges.galvanizers > 0n)) challenges.unlocked = true
+  if (typeof challenges.galvanizers === 'bigint' && challenges.galvanizers > 0n) challenges.hasEarnedGalvanizer = true
+  if (sourceSchema < 16) appliedSteps.push('infinity-challenges-and-galvanizers')
   const avocado = ensureRecord(save, 'avocadoData')
   if (avocado.overflowPoints === undefined) avocado.overflowPoints = 0n
   if (sourceSchema < 15) {

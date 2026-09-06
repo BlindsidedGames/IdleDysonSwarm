@@ -1,3 +1,4 @@
+import { isBreakInfinityEnabled } from './infinityChallenges'
 import {
   isFiniteNonNegativeNumber,
   isSafeNonNegativeInteger,
@@ -412,7 +413,7 @@ export function advanceCanonicalTinker(
 
   const cappedBots = clampPreBreakInfinityBots(
     candidate.dyson.bots,
-    candidate.quantum.unlocks.breakTheLoop,
+    isBreakInfinityEnabled(candidate),
     candidate.quantum.divisionsPurchased,
   )
   if (cappedBots !== candidate.dyson.bots) {

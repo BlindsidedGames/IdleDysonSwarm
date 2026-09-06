@@ -1,3 +1,4 @@
+import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
 import {
   isFiniteNonNegativeNumber,
@@ -220,6 +221,10 @@ export function hydrateGameState(
 
   const state: CanonicalGameStateV1 = {
     modelVersion: CANONICAL_GAME_MODEL_VERSION,
+    challenges: {
+      ...EMPTY_INFINITY_CHALLENGES,
+      ...recordOrEmpty(source.infinityChallengeData),
+    } as CanonicalGameStateV1['challenges'],
     meta: {
       createdAtLegacyText:
         nonBlankStringOrNull(source.dateStarted),
@@ -821,7 +826,8 @@ export function dehydrateGameState(
     infinityData.skillStateById,
     'Preserved skill states',
   )
-  for (const [id, skill] of Object.entries(state.skills.byId)) {
+  for (const id of new Set([...Object.keys(preservedSkillStates), ...Object.keys(state.skills.byId)])) {
+    const skill = state.skills.byId[id] ?? { owned: false, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 }
     const preserved =
       preservedSkillStates[id] !== null &&
       typeof preservedSkillStates[id] === 'object' &&
@@ -931,6 +937,7 @@ export function dehydrateGameState(
   prestige.unlockedGalacticBrains =
     state.quantum.unlocks.galacticBrains
 
+  source.infinityChallengeData = { ...EMPTY_INFINITY_CHALLENGES, ...state.challenges }
   avocado.overflowPoints = state.avocado.overflowPoints ?? 0n
   avocado.unlocked = state.avocado.unlocked
   avocado.infinityPoints = state.avocado.infinityPoints

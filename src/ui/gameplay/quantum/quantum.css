@@ -183,7 +183,7 @@
 .quantum-upgrade-card--mystery { min-block-size: var(--target-minimum); grid-template-columns: minmax(0, 1fr); background: #28223a; color: #c9bddb; }
 
 .avocato-surface__hero { grid-template-columns: 3.25rem minmax(0, 1fr); align-items: center; }
-.avocato-surface__hero img { inline-size: 3.25rem; block-size: 3.25rem; object-fit: contain; filter: drop-shadow(0 0.2rem 0.3rem rgb(0 0 0 / 30%)); }
+.avocato-surface__hero .avocato-surface__portrait { inline-size: 3.25rem; block-size: 3.25rem; object-fit: contain; filter: drop-shadow(0 0.2rem 0.3rem rgb(0 0 0 / 30%)); }
 .avocato-surface__title,
 .avocato-surface__hero p { margin: 0; }
 .avocato-surface__title { font-size: var(--ui-text-page-title); font-weight: var(--font-weight-bold); line-height: 1.15; }
@@ -243,7 +243,7 @@
 @media (max-width: 35rem) {
   .avocato-feed-card { grid-template-columns: minmax(0, 1fr) 7rem; }
   .avocato-surface__hero { grid-template-columns: 3rem minmax(0, 1fr); }
-  .avocato-surface__hero img { inline-size: 3rem; block-size: 3rem; }
+  .avocato-surface__hero .avocato-surface__portrait { inline-size: 3rem; block-size: 3rem; }
 }
 
 .avocato-overflow-card { margin-block-start: var(--ui-card-gap); }

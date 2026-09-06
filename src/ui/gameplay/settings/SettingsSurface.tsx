@@ -1,3 +1,4 @@
+import { challengeMessages } from '../infinity/challengeMessages'
 import {
   useEffect,
   useId,
@@ -103,9 +104,11 @@ const NAVIGATION_SHORTCUTS = [
   ['research', messages.researchShortcut] as const,
   ['skills', messages.skillsShortcut] as const,
   ['infinity', messages.infinityShortcut] as const,
+  ['challenges', challengeMessages.shortcut] as const,
   ['reality', messages.realityShortcut] as const,
   ['simulations', messages.simulationsShortcut] as const,
   ['quantum', messages.quantumShortcut] as const,
+  ['avocato', messages.avocatoShortcut] as const,
   ['store', messages.storeShortcut] as const,
   ['story', messages.storyShortcut] as const,
   ['wiki', messages.wikiShortcut] as const,
