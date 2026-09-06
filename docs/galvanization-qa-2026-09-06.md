@@ -1,7 +1,8 @@
 # Galvanization QA — 6 September 2026
 
 Worktree: `ids-infinity-challenges`, branch `codex/blank-slate`, baseline
-`825a1b07`. The user requested a local checkpoint followed by an extensive QA pass. It has not been released.
+`825a1b07`. Initial implementation checkpoint: `2398d12d`. Extensive follow-up QA and fixes
+are recorded below. No merge, push, native release or store submission occurred.
 
 ## Implemented behavior
 
@@ -46,7 +47,7 @@ normal 837×940 browser viewport. No clipping was observed in the changed dialog
 
 ## Automated checks
 
-- `npm test`: 129 files, 1,303 tests passed.
+- `npm test` (final follow-up): 129 files, 1,407 tests passed.
 - `npm run build`: passed, including TypeScript and production-store boundary.
 - `npm run lint`, `npm run data:check`, `npm run i18n:check`: passed.
 - `npm run parity:first-dyson:check`: passed.
@@ -115,4 +116,73 @@ device run, store submission or release was performed for this follow-up.
 - Galvanize is hidden with no Galvanizers available. Its visible cost uses
   the currency icon, with a complete text label for assistive technology.
 - These details were inspected in the live browser, including narrow widths.
-  An extensive follow-up QA pass is pending after this checkpoint.
+  These changes were included in the extensive follow-up below.
+
+## Extensive checkpoint QA
+
+Performed after `2398d12d`, using a separate local origin at
+`http://127.0.0.1:58506/play/` and generated, validated QA saves. The player's
+existing `58505` save was not imported over or reset. Temporary viewport and
+reduced-motion overrides were cleared afterward.
+
+### Issues found and fixed
+
+1. Moving the skill icon into the dialog header disconnected its state-based
+   palette selectors. Moved the visual state onto the icon itself; ordinary
+   owned and galvanized skills retain green, with root/fragment/non-refundable
+   states retaining their existing palettes.
+2. The Galvanize button's padded currency artwork rendered too small to read.
+   Applied the same artwork-padding compensation used by the currency wallet.
+3. Overflow retained only owned permanent runtime records. Stellar Dominance,
+   Stellar Obliteration and Taste of Power could then block production
+   derivation when querying absent sibling skill records. Permanent reset
+   state now includes explicit unowned base records, with fresh timers and
+   no additional ownership. Added a parameterized regression for all 104
+   authored bases: galvanization, save/reload, Infinity, Quantum, Blank Slate,
+   Overflow, canonical validation and production derivation.
+
+### Current browser results
+
+- Cancelled Galvanization without spending, assigned Cash & Science normally,
+  then galvanized it: its invested point was returned, the balance fell by
+  one, and an immediate reload preserved both changes.
+- Assigned all three Augments, refunded and repurchased decay, and reloaded.
+  Ownership, badge count, ordinary points and preset choices were consistent.
+- Dragged the third priority item to first at phone width, used an arrow, then
+  immediately reloaded and confirmed the resulting order. Removing a leaf
+  from the preset left it currently owned and only cleared its preset checkbox.
+- Verified the priority Back button layout and Escape returning focus to the
+  originating priority button. Skill dialog Shift-Tab/Tab cycled between the
+  close button and last Augment action.
+- Replayed Blank Slate: bases remained active, all Augments cleared, and their
+  assignment and preset controls were disabled. The active challenge persisted
+  after reload. Abandonment restored normal play without another Galvanizer.
+- Galvanized unowned Servers with zero ordinary points and without buying its
+  ancestors. Galvanized Economic Dominance and verified the effective benefit
+  text and absence of its Science penalty and exclusivity text. Bases without
+  Augments did not acquire an Augment badge. At zero Galvanizers the action
+  was absent from another ordinary skill.
+- Inspected the final detail layout at 320x720, 390x844, 768x1024, 1024x768,
+  and desktop 1280px width. German and Japanese Augments were also inspected
+  at 390x844. No clipping was observed.
+- Verified the ten-second fracture pulse, paused tree animation behind the
+  dialog, and static reduced-motion mode.
+- Imported a separate regression save containing the three affected permanent
+  bases, performed Overflow through its real confirmation and immediately
+  reloaded. Exactly one Overflow point was retained, all three bases stayed
+  permanent with their Quantum reveal gates reset, and normal Bots gameplay
+  resumed. Tinkering created a bot and panel production advanced.
+
+### Final gates and remaining scope
+
+Full tests: 1,407 passed across 129 files. Production build, lint, data, first
+Dyson parity, localization extraction/validation/compilation, Electron syntax
+checks and diff checks passed. The build retains its existing large-chunk
+advisory. There are no unresolved functional failures from this pass.
+
+This does not establish progression balance over a complete natural playthrough
+or signed native/device behavior. Before release, perform representative
+iOS/Android/Electron playtests (including real save/reload and backgrounding),
+review and integrate the branch, then build and submit each platform through
+the release process. No further gameplay decision or console configuration is
+required to continue testing this local implementation.

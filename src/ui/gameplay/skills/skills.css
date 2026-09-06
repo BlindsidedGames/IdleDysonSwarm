@@ -814,19 +814,19 @@
   object-fit: contain;
 }
 
-.skill-details[data-state="root"] .skill-details__icon {
+.skill-details__icon[data-state="root"] {
   background: #54a2ab;
 }
 
-.skill-details[data-state="fragment"] .skill-details__icon {
+.skill-details__icon[data-state="fragment"] {
   background: #ab547d;
 }
 
-.skill-details[data-state="owned"] .skill-details__icon {
+.skill-details__icon[data-state="owned"] {
   background: #54ab54;
 }
 
-.skill-details[data-state^="non-refundable"] .skill-details__icon {
+.skill-details__icon[data-state^="non-refundable"] {
   background: #8e3030;
 }
 
@@ -1486,6 +1486,7 @@
   border-color: rgb(9 7 13 / 78%);
 }
 .skill-details__galvanization { margin-block: 0.65rem; }
+.skill-details__galvanizer-currency { inline-size: 1.25rem; block-size: 1.25rem; mask-size: 150%; }
 .skill-details__permanent { color: #e4d5ff; }
 .skill-subskills { margin-block-start: -0.5rem; }
 .skill-subskills h3 { margin: 0; }

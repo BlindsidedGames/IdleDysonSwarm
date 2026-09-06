@@ -60,9 +60,9 @@ touch targets.
 
 Implementation authorization does not include merging or releasing.
 
-Implementation and the initial verification are complete in this worktree; see
-`galvanization-qa-2026-09-06.md`. The user requested a local checkpoint and an
-extensive follow-up QA pass.
+Implementation and extensive local verification are complete in this worktree;
+see `galvanization-qa-2026-09-06.md` for the checkpoint, QA fixes, 1,407 passing
+tests and remaining native/release scope.
 
 ## Confirmed implementation decisions
 

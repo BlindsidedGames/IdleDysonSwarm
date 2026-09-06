@@ -1867,7 +1867,7 @@ function SkillDetails({
 
   return (
     <SkillDetailsDialog
-      title={<><span className="skill-details__icon" data-galvanized={preview.galvanized || undefined}>
+      title={<><span className="skill-details__icon" data-state={preview.visualState} data-galvanized={preview.galvanized || undefined}>
         <img src={iconByFileName.get(node.icon.fileName)} alt="" />
       </span><span>{node.displayName}</span></>}
       description={preview.galvanized && galvanizedEffectMessages[node.skillId] ? intl.formatMessage(messages.galvanizedPermanent) : node.description}
@@ -1892,7 +1892,7 @@ function SkillDetails({
             <Button disabled={!preview.canGalvanize || pendingKind !== null}
               aria-label={intl.formatMessage(messages.galvanizeAction, { currency: intl.formatMessage(challengeMessages.galvanizers, { value: '1' }) })}
               onClick={() => setGalvanizeConfirmation(true)}>
-              {intl.formatMessage(messages.galvanizeAction, { currency: <InlineResourceAmount leadingSymbol={<InlineImageSymbol src={galvanizerIcon} tint maskMode="luminance" />} value="1" /> })}
+              {intl.formatMessage(messages.galvanizeAction, { currency: <InlineResourceAmount leadingSymbol={<InlineImageSymbol className="skill-details__galvanizer-currency" src={galvanizerIcon} tint maskMode="luminance" />} value="1" /> })}
             </Button>
             {galvanizeConfirmation && (
               <div className="skill-confirmation">

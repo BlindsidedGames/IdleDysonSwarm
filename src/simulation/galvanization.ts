@@ -14,8 +14,13 @@ export function isGalvanized(state: GalvanizationSource, id: string): boolean {
 
 /** New run runtime values; permanent ownership never retains a previous run's timers. */
 export function permanentSkillRuntime(state: GalvanizationSource): Record<string, SkillRuntimeState> {
-  return Object.fromEntries(galvanizedSkillIds(state).map((id) => [id, {
-    owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0,
+  const permanent = new Set(galvanizedSkillIds(state))
+  if (permanent.size === 0) return {}
+  // Permanent skills may evaluate sibling skills after their reveal gate resets.
+  // Keep explicit unowned records so those dynamic effects can still resolve.
+  return Object.fromEntries(getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map(({ id }) => [id, {
+    owned: permanent.has(id), level: permanent.has(id) ? 1 : 0,
+    timerSeconds: 0, secondaryTimerSeconds: 0,
   }]))
 }
 

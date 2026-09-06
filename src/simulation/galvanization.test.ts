@@ -16,6 +16,8 @@ import { previewAddSkillToPreset, previewRemoveSkillFromPreset } from './canonic
 import { adjustGalvanizedEffects } from './galvanizedSkillEffects'
 import { resolveStellarSacrificesRequiredBots } from './stellarArithmetic'
 import { applyCanonicalSkillIntervalEffects } from './canonicalSkillIntervalEffects'
+import { getGameAssetsByKind } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 
 const base = hydrateGameState(prepareIdb1Save(readFileSync(new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url), 'utf8')).prepared)
 const runtime = { owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0 }
@@ -201,3 +203,33 @@ test('Overflow preserves permanent bases even after their Quantum reveal gate re
   expect(overflow.state.skills.byId.supernova.owned).toBe(true)
   expect(overflow.state.challenges?.galvanizedSkillIds).toContain('supernova')
 })
+
+test.each(getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map(asset => asset.id))(
+  'permanent base %s remains valid through save and every reset boundary', skillId => {
+    const source = state()
+    const unlocked = { ...source, quantum: { ...source.quantum,
+      unlocks: Object.fromEntries(Object.keys(source.quantum.unlocks).map(key => [key, true])) as typeof source.quantum.unlocks,
+    } }
+    const permanent = galvanize(unlocked, skillId)
+    const loaded = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(
+      serializeWebSave(dehydrateGameState(base, permanent).copyValidatedState()),
+    ))).state
+    expect(loaded.challenges?.galvanizedSkillIds).toContain(skillId)
+    const resets = [
+      applyCanonicalInfinityReset(loaded, { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 0n }),
+      applyCanonicalQuantumReset(loaded, 0n),
+      restartInfinityChallenge(loaded, 'enter', 0n),
+      applyCanonicalOverflowReset({ ...loaded, dyson: { ...loaded.dyson, bots: 4e242 } }),
+    ]
+    for (const result of resets) {
+      expect(result.ok).toBe(true)
+      if (!result.ok) continue
+      expect(result.state.skills.byId[skillId]).toMatchObject({ owned: true, timerSeconds: 0, secondaryTimerSeconds: 0 })
+      expect(result.state.challenges?.galvanizedSkillIds).toContain(skillId)
+      expect(validateCanonicalGameState(result.state)).toEqual({ valid: true, errors: [] })
+      const derived = deriveBasicDysonState(result.state, base.compatibilityTuning,
+        { permanentDoubleIp: false }, base.skillEffectEvaluationSnapshot)
+      expect(derived.ok, derived.ok ? '' : JSON.stringify(derived.issues)).toBe(true)
+    }
+  },
+)
