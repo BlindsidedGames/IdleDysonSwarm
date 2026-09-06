@@ -6,6 +6,7 @@ import {
   advanceRealityWorkers,
   gatherRealityInfluence,
 } from '../simulation/realityWorkers'
+import { applyCanonicalOverflowReset } from '../simulation/canonicalOverflowReset'
 import { selectGameplayVisibility } from './frontendSnapshot'
 
 const realityTuning = {
@@ -22,6 +23,28 @@ function firstRunState(): CanonicalGameStateV1 {
 }
 
 describe('progression-aware navigation visibility', () => {
+  test('does not advertise Simulation access from lifetime Influence after Overflow', () => {
+    const initial = firstRunState()
+    const before = {
+      ...initial,
+      dyson: { ...initial.dyson, bots: 4e242 },
+      quantum: { ...initial.quantum, pointsEarned: 1n },
+      statistics: { ...initial.statistics, lifetime: { ...initial.statistics.lifetime, manualInfluence: 128 } },
+    }
+    expect(selectGameplayVisibility(before).simulations.routeUnlocked).toBe(true)
+    const reset = applyCanonicalOverflowReset(before)
+    if (!reset.ok) throw new Error(reset.code)
+    expect(reset.state.statistics.lifetime.manualInfluence).toBe(128)
+    expect(selectGameplayVisibility(reset.state).simulations).toMatchObject({
+      routeVisible: false, routeUnlocked: false,
+      unlockProgress: { currentInfluence: 0, fraction: 0 },
+    })
+    // Keep the existing lifetime unlock once the Reality prerequisite returns.
+    expect(selectGameplayVisibility({ ...reset.state,
+      quantum: { ...reset.state.quantum, pointsEarned: 1n },
+    }).simulations.routeUnlocked).toBe(true)
+  })
+
   test('teases the first facility before it is visible', () => {
     const initial = firstRunState()
 

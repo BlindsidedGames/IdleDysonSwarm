@@ -132,6 +132,7 @@ export interface DysonGameplayShellProps {
   readonly distribution?: DysonShellRegion
   readonly sidePanelSupplement?: ReactNode
   /** Persistent gameplay notification host above route-owned content. */
+  readonly persistentNotice?: ReactNode
   readonly notifications?: ReactNode
   readonly routeSupplement?: DysonShellRegion
   readonly routeContent?: DysonShellRegion

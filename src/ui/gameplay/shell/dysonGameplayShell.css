@@ -653,6 +653,11 @@
   border: 0;
 }
 
+.dyson-shell__header {
+  grid-row: 1;
+  min-inline-size: 0;
+}
+
 .dyson-shell__notifications {
   position: absolute;
   z-index: 12;

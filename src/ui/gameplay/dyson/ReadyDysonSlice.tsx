@@ -1000,6 +1000,7 @@ export function ReadyDysonSlice({
               ? messages.simulationsRoute
             : messages.route
   const infinityRouteLabel =
+    gameplay.progression.infinity.botCapTransitionPending ||
     gameplay.derived.infinity.navigationReward === null
       ? intl.formatMessage(messages.infinityRoute)
       : intl.formatMessage(messages.infinityRouteGain, {
@@ -1600,6 +1601,7 @@ export function ReadyDysonSlice({
                         }
                       >
                         <InfinitySurface
+                          onViewOverflow={() => navigateTo('avocato')}
                           locale={locale}
                           resources={gameplay.resources.infinity}
                           progression={{
@@ -2055,16 +2057,17 @@ export function ReadyDysonSlice({
               }
             : undefined
       }
-      notifications={
-        <>
-        {gameplay.progression.infinity.botCapTransitionPending && !avocatoActive && (
+      persistentNotice={
+        gameplay.progression.infinity.botCapTransitionPending && !avocatoActive && !infinityActive ? (
           <div className="dyson-overflow-notice" role="status">
             <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
             <button type="button" onClick={() => onRouteChange('avocato')}>
               {intl.formatMessage(avocatoMessages.overflowOpen)}
             </button>
           </div>
-        )}
+        ) : undefined
+      }
+      notifications={
         <GameplayNotificationHost
           sessionRevision={snapshot.revision.session}
           events={gameplay.runtime.presentationEvents}
@@ -2078,7 +2081,6 @@ export function ReadyDysonSlice({
           showPresetApplicationNotices={showSkillPresetApplicationNotices}
           onViewReality={() => navigateTo('reality')}
         />
-        </>
       }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),

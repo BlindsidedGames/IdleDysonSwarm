@@ -1254,7 +1254,7 @@ export function selectGameplayVisibility(
     state.dream.resources.gatherers > 0n
   const simulationsRequiredInfluence = 128
   const simulationsUnlocked =
-    state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence ||
+    (realityUnlocked && state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence) ||
     hasExistingSimulationProgress
   const realityVisited = realityInfluenceGenerationStarted(state)
   const simulationsPendingWorkers = Number(
@@ -1320,7 +1320,7 @@ export function selectGameplayVisibility(
       unlockProgress: realityUnlockProgress,
     },
     simulations: {
-      routeVisible: realityVisited || simulationsUnlocked,
+      routeVisible: (realityUnlocked && realityVisited) || simulationsUnlocked,
       routeUnlocked: simulationsUnlocked,
       unlockProgress: {
         currentInfluence: simulationsCurrentInfluence,

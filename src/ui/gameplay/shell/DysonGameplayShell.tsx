@@ -52,6 +52,7 @@ export function DysonGameplayShell({
   productionSummary,
   distribution,
   sidePanelSupplement,
+  persistentNotice,
   notifications,
   routeSupplement,
   routeContent,
@@ -271,12 +272,15 @@ export function DysonGameplayShell({
         <div className="dyson-shell__content">
           <h1 className="dyson-shell__route-heading">{heading}</h1>
 
-          {showResourceHeader ? (
-            <DysonResourceHeader
-              {...resources}
-              direction={direction}
-            />
-          ) : null}
+          {(showResourceHeader || persistentNotice != null) && (
+            <div className="dyson-shell__header">
+              {showResourceHeader && <DysonResourceHeader
+                {...resources}
+                direction={direction}
+              />}
+              {persistentNotice}
+            </div>
+          )}
 
           {notifications !== undefined && (
             <div className="dyson-shell__notifications">
