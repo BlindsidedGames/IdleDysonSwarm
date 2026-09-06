@@ -166,7 +166,8 @@ export function settleContinuousTransfer(
 
 /**
  * Converts only the whole discrete units a continuous destination represents
- * exactly. Unrepresented units remain in the bigint source.
+ * exactly, allowing sub-unit floating-point noise when adding whole units to
+ * a fractional balance. Unrepresented units remain in the bigint source.
  */
 export function settleDiscreteToContinuousTransfer(
   sourceBalance: bigint,
@@ -192,6 +193,31 @@ export function settleDiscreteToContinuousTransfer(
     return { sourceBalance, destinationBalance, settled: 0n }
   }
   if (BigInt(limit) > admittedRequest) limit = bitDecrement(limit)
+
+  // Subtracting the rounded sum from a fractional balance can report, for
+  // example, 127.99999999999999 for a requested 128 workers. Settle the
+  // authored whole units in that case, rather than retrying smaller batches.
+  // Allow roundoff at the sum's precision, but never a discrepancy of even
+  // half a source unit. Integer/coarse deltas still use exact settlement.
+  const next = destinationBalance + limit
+  const delta = next - destinationBalance
+  const roundingError = Math.abs(delta - limit)
+  if (
+    Number.isSafeInteger(limit) &&
+    Number.isFinite(next) &&
+    next <= destinationMaximum &&
+    delta > 0 &&
+    !Number.isInteger(delta) &&
+    roundingError < 0.5 &&
+    roundingError <= Number.EPSILON * next
+  ) {
+    const settled = BigInt(limit)
+    return {
+      sourceBalance: sourceBalance - settled,
+      destinationBalance: next,
+      settled,
+    }
+  }
 
   for (let attempt = 0; attempt < 8 && limit > 0; attempt += 1) {
     const credit = settleContinuousCredit(

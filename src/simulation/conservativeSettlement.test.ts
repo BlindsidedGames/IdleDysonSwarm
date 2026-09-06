@@ -123,3 +123,30 @@ describe('conservative discrete-to-continuous settlement', () => {
     },
   )
 })
+
+describe('fractional discrete destination rounding', () => {
+  test.each([44.08023375117979, 0.1, 0.3, 127.99999999999999])(
+    'credits the full batch at fractional balance %s', (balance) => {
+      const result = settleDiscreteToContinuousTransfer(128n, balance)
+      expect(result.settled).toBe(128n)
+      expect(result.sourceBalance).toBe(0n)
+      expect(result.destinationBalance).toBe(balance + 128)
+    },
+  )
+
+  test('does not mistake a capacity limit for rounding noise', () => {
+    const balance = 44.08023375117979
+    const maximum = bitDecrement(balance + 128)
+    const result = settleDiscreteToContinuousTransfer(128n, balance, 128n, maximum)
+    expect(result.destinationBalance).toBeLessThanOrEqual(maximum)
+    expect(result.settled).toBeLessThan(128n)
+    expect(result.sourceBalance + result.settled).toBe(128n)
+  })
+
+  test('does not excuse a half-unit discrepancy on a large request', () => {
+    const requested = 2n ** 51n
+    const result = settleDiscreteToContinuousTransfer(requested, Number(requested) + 0.5)
+    expect(result.settled).not.toBe(requested)
+    expect(result.sourceBalance + result.settled).toBe(requested)
+  })
+})
