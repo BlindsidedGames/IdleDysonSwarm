@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": " выполнено"
     }
   ],
   "skills.reset": [
@@ -14406,6 +14402,72 @@
     {
       "type": 0,
       "value": "Новые игры и сбросы Quantum теперь по умолчанию выделяют 100% ботов в рабочие. Наборы навыков в новых играх также начинают со 100% рабочих."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Версия 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Cash & Science стал первым навыком с улучшениями."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Добавлено первое испытание Бесконечности — Blank Slate."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Исправлены проблемы с достижением за первую Странную материю и интервалом обновления."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Добавлены гальванизаторы, делающие навыки постоянными."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Исправлена блокировка сбора Влияния."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Улучшены сведения о навыках и исправлены касания сквозь их окна."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "Добавлены добровольный сброс Переполнения и очки Переполнения."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Исправлена остановка производства некоторыми гальванизированными навыками после Переполнения."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Добавлены приоритет расходов и изменение порядка в наборах навыков."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "Улучшено восстановление сохранений."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

@@ -11372,7 +11372,7 @@
   "skills.requirements-progress": [
     {
       "type": 0,
-      "value": "Requisitos concluídos: "
+      "value": "Requisitos: "
     },
     {
       "type": 1,
@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "skills.reset": [
@@ -14406,6 +14402,72 @@
     {
       "type": 0,
       "value": "Novas partidas e reinícios de Quantum agora usam 100% de trabalhadores por padrão. As predefinições de habilidades de novas partidas também começam com 100% de trabalhadores."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Versão 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Adicionado Cash & Science como a primeira habilidade com aprimoramentos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Adicionado Blank Slate como o primeiro desafio de Infinito."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Corrigidos problemas com a conquista de primeira Matéria Estranha e o intervalo de atualização."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Adicionados Galvanizadores para tornar habilidades permanentes."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Corrigido o travamento da coleta de Influência."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Melhorados os detalhes de habilidades e corrigidos toques que atravessavam suas janelas."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "Adicionados o reinício voluntário de Overflow e pontos de Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Corrigidas habilidades galvanizadas que paravam a produção após Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Adicionadas prioridades de gastos e reordenação às predefinições de habilidades."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "Melhorada a recuperação de partidas."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": " complete"
     }
   ],
   "skills.reset": [
@@ -14406,6 +14402,72 @@
     {
       "type": 0,
       "value": "New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Version 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Added Cash & Science as the first augmentable skill."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Added Blank Slate as the first Infinity Challenge."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Fixed First Strange Matter achievement and update-interval issues."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Added Galvanizers to make skills permanent."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Fixed Influence gathering getting stuck."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Improved skill details and fixed taps passing through skill popups."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "Added a voluntary Overflow reset and Overflow Points."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Fixed some Galvanized skills stopping production after Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Added spending priority and reordering to Skill Presets."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "Improved save recovery."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

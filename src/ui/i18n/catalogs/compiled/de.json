@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": " erfüllt"
     }
   ],
   "skills.reset": [
@@ -14406,6 +14402,72 @@
     {
       "type": 0,
       "value": "Neue Spiele und Quantum-Resets starten jetzt standardmäßig mit 100 % Arbeitern. Auch die Fertigkeitsvorlagen neuer Spiele beginnen mit 100 % Arbeitern."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Version 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Cash & Science als erste erweiterbare Fähigkeit hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Blank Slate als erste Unendlichkeitsherausforderung hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Probleme beim Erfolg für die erste Seltsame Materie und beim Aktualisierungsintervall behoben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Galvanisierer hinzugefügt, die Fähigkeiten dauerhaft machen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Blockierte Einflussabholung behoben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Fähigkeitsdetails verbessert und Durchtippen durch Fähigkeitsfenster behoben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "Freiwilligen Overflow-Reset und Overflow-Punkte hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Produktionsstillstand durch einige galvanisierte Fähigkeiten nach Overflow behoben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Ausgabenpriorität und Sortierung für Fähigkeitsvorlagen hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "Spielstandwiederherstellung verbessert."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

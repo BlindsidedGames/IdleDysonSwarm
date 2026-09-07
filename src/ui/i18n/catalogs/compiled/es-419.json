@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": " completos"
     }
   ],
   "skills.reset": [
@@ -14406,6 +14402,72 @@
     {
       "type": 0,
       "value": "Las partidas nuevas y los reinicios de Quantum ahora usan 100% de trabajadores de forma predeterminada. Los ajustes de habilidades de partidas nuevas también comienzan con 100% de trabajadores."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Versión 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Se agregó Cash & Science como la primera habilidad con aumentos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Se agregó Blank Slate como el primer desafío de Infinito."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Se corrigieron problemas con el logro de primera Materia Extraña y el intervalo de actualización."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Se agregaron Galvanizadores para hacer permanentes las habilidades."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Se corrigió el bloqueo de la recolección de Influencia."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Se mejoraron los detalles de habilidades y se corrigieron los toques que atravesaban sus ventanas."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "Se agregaron el reinicio voluntario de Overflow y los puntos de Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Se corrigieron habilidades galvanizadas que detenían la producción después de Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Se agregaron prioridades de gasto y reordenamiento a los preajustes de habilidades."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "Se mejoró la recuperación de partidas."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

@@ -123,8 +123,13 @@ export function SkillDetailsDialog({
     <div
       ref={backdropRef}
       className="skill-details-dialog__backdrop"
-      onPointerDown={(event) => {
-        if (event.target === event.currentTarget) onCloseRef.current()
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return
+        // Keep the backdrop and inert background through the whole touch gesture.
+        // Closing on pointerdown can expose controls to the tap's later click.
+        event.preventDefault()
+        event.stopPropagation()
+        onCloseRef.current()
       }}
     >
       <section

@@ -11372,7 +11372,7 @@
   "skills.requirements-progress": [
     {
       "type": 0,
-      "value": "Prérequis remplis : "
+      "value": "Prérequis : "
     },
     {
       "type": 1,
@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "skills.reset": [
@@ -14406,6 +14402,72 @@
     {
       "type": 0,
       "value": "Les nouvelles parties et les réinitialisations Quantum utilisent désormais 100 % de travailleurs par défaut. Les préréglages de compétences des nouvelles parties commencent également avec 100 % de travailleurs."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Version 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Cash & Science est la première compétence pouvant recevoir des augmentations."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Ajout de Blank Slate, le premier défi d’Infini."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Correction du succès de première Matière étrange et de problèmes d’intervalle de mise à jour."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Ajout des Galvaniseurs pour rendre les compétences permanentes."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Correction du blocage de la collecte d’Influence."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Amélioration des détails des compétences et correction des touchers traversant leurs fenêtres."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "Ajout d’une réinitialisation Overflow volontaire et de points d’Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Correction de compétences galvanisées bloquant la production après un Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Ajout de priorités de dépense et du réordonnancement des préréglages de compétences."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "Amélioration de la récupération des sauvegardes."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

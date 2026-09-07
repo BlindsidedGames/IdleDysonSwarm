@@ -22992,10 +22992,6 @@
     },
     {
       "type": 0,
-      "value": " ɔoɯdʅǝʇǝ"
-    },
-    {
-      "type": 0,
       "value": "‬"
     }
   ],
@@ -29026,6 +29022,160 @@
     {
       "type": 0,
       "value": "Nǝʍ ƃɐɯǝs ɐup Ònɐuʇnɯ ɹǝsǝʇs uoʍ pǝɟɐnʅʇ ʇo 100% ʍoɹʞǝɹs. Nǝʍ-ƃɐɯǝ Sʞıʅʅ Ԁɹǝsǝʇs ɐʅso sʇɐɹʇ ɐʇ 100% ʍoɹʞǝɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌǝɹsıou 4.1.8"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp Ↄɐsɥ & Sɔıǝuɔǝ ɐs ʇɥǝ ɟıɹsʇ ɐnƃɯǝuʇɐqʅǝ sʞıʅʅ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp Ԑʅɐuʞ Sʅɐʇǝ ɐs ʇɥǝ ɟıɹsʇ Iuɟıuıʇʎ Ↄɥɐʅʅǝuƃǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp Ⅎıɹsʇ Sʇɹɐuƃǝ Wɐʇʇǝɹ ɐɔɥıǝʌǝɯǝuʇ ɐup ndpɐʇǝ-ıuʇǝɹʌɐʅ ıssnǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ⅁ɐʅʌɐuızǝɹs ʇo ɯɐʞǝ sʞıʅʅs dǝɹɯɐuǝuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp Iuɟʅnǝuɔǝ ƃɐʇɥǝɹıuƃ ƃǝʇʇıuƃ sʇnɔʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdɹoʌǝp sʞıʅʅ pǝʇɐıʅs ɐup ɟıxǝp ʇɐds dɐssıuƃ ʇɥɹonƃɥ sʞıʅʅ dodnds."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɐ ʌoʅnuʇɐɹʎ Oʌǝɹɟʅoʍ ɹǝsǝʇ ɐup Oʌǝɹɟʅoʍ Ԁoıuʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp soɯǝ ⅁ɐʅʌɐuızǝp sʞıʅʅs sʇoddıuƃ dɹopnɔʇıou ɐɟʇǝɹ Oʌǝɹɟʅoʍ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp sdǝupıuƃ dɹıoɹıʇʎ ɐup ɹǝoɹpǝɹıuƃ ʇo Sʞıʅʅ Ԁɹǝsǝʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdɹoʌǝp sɐʌǝ ɹǝɔoʌǝɹʎ."
     },
     {
       "type": 0,

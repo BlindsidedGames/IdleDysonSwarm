@@ -169,7 +169,7 @@ export const skillMessages = defineMessages({
   },
   requirementsProgress: {
     id: 'skills.requirements-progress',
-    defaultMessage: 'Requirements: {complete}/{total} complete',
+    defaultMessage: 'Requirements: {complete}/{total}',
     description: 'Number of prerequisite skills completed for the selected skill.',
   },
   missingRequirements: {

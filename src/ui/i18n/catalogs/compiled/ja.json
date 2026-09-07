@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": "完了"
     }
   ],
   "skills.reset": [
@@ -14406,6 +14402,72 @@
     {
       "type": 0,
       "value": "新規ゲームと Quantum リセットの初期配分を作業員100%に変更しました。新規ゲームのスキルプリセットも作業員100%で開始します。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "バージョン 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "最初の拡張可能スキルとして Cash & Science を追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "最初のインフィニティチャレンジとして Blank Slate を追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "初回の奇妙な物質の実績と更新間隔の問題を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "スキルを永久化するガルバナイザーを追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "影響力の回収が止まる問題を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "スキル詳細を改善し、タップがスキル画面をすり抜ける問題を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "任意のオーバーフローリセットとオーバーフローポイントを追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "一部のガルバナイズしたスキルでオーバーフロー後に生産が止まる問題を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "スキルプリセットに支出優先順位と並べ替えを追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "セーブの復元を改善しました。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

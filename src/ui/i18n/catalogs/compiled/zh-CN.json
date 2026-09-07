@@ -11372,7 +11372,7 @@
   "skills.requirements-progress": [
     {
       "type": 0,
-      "value": "要求：已完成 "
+      "value": "要求："
     },
     {
       "type": 1,
@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": " 项"
     }
   ],
   "skills.reset": [
@@ -14406,6 +14402,72 @@
     {
       "type": 0,
       "value": "新游戏和 Quantum 重置现在默认分配为 100% 工人。新游戏的技能预设也以 100% 工人开始。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "版本 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Cash & Science 成为首个可添加强化的技能。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "新增首个无限挑战 Blank Slate。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "修复首次奇异物质成就和更新间隔的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "新增镀层器，可使技能永久生效。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "修复影响力收集卡住的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "优化技能详情，修复点击穿透技能弹窗的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "新增自主溢出重置和溢出点。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "修复部分镀层技能导致溢出后停止生产的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "技能预设新增支出优先级和排序功能。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.recovery": [
+    {
+      "type": 0,
+      "value": "改进存档恢复。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [
