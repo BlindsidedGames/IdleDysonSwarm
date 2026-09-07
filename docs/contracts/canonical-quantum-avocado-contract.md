@@ -23,7 +23,8 @@ of the command contract:
 - Automation also enables both Infinity automation capabilities;
 - Influence Speed adds four, while Cash and Science add one level each.
 
-Each purchased mega-structure unlock is permanent. It reveals and permits
+Each purchased mega-structure unlock survives Infinity and Quantum resets.
+An Overflow reset clears it. It reveals and permits
 manual or automated purchase of that structure after a reset even when the
 preceding facility currently has zero ownership. Historical facility
 prerequisites in the deprecated Unity compatibility capsule do not apply to
@@ -62,7 +63,14 @@ sub-ULP feed rejects without changing either side.
 The production multiplier is neutral while locked. Once unlocked, each
 accumulator contributes `log10(value)` only at the authored threshold of ten;
 below-threshold components remain `x1`. Overflow contributes `1 + overflow`
-only once overflow reaches one. Transactions fail before debiting when the
+only once the historical overflow bonus reaches one. New Overflow Points
+are a separate whole-unit balance with no production effect. Reaching `4e242`
+Bots unlocks a voluntary Overflow reset in Avocato; the commit-first reset
+clears all feed balances and historical bonuses, resets Infinity, Quantum and
+Reality/Simulation progression, and adds exactly one point. The complete reset
+retention rules live in `lifecycle-infinity-contract.md`.
+
+Feed transactions fail before debiting when the
 continuous accumulator cannot increase.
 
 Serialization also mirrors `avocado.unlocked` into the legacy

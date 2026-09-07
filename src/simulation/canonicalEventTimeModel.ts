@@ -1,3 +1,5 @@
+import { isBreakInfinityEnabled, isBlankSlateActive } from './infinityChallenges'
+import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementFacts } from '../achievements/contracts'
 import {
@@ -157,6 +159,7 @@ export interface CanonicalQueuedInputOutcome {
     | 'QUANTUM_LEAP_APPLIED'
     | 'QUANTUM_ENTANGLEMENT_APPLIED'
     | 'QUANTUM_LEAP_REQUIRES_42_TOTAL_INFINITY_POINTS'
+    | 'OVERFLOW_RESET_REQUIRED'
     | 'CANONICAL_EVENT_INPUT_UNSUPPORTED'
     | 'CANONICAL_EVENT_QUANTUM_RESET_REJECTED'
 }
@@ -377,11 +380,8 @@ export class CanonicalEventTimeModel
     const infinity = this.carrier.gameState.infinity
     if (
       (
-        this.carrier.gameState.dyson.bots === Number.MAX_VALUE &&
-        (
-          infinity.automaticResetEnabled ||
-          !infinity.botCapRewardsGranted
-        )
+        this.carrier.gameState.dyson.bots >= OVERFLOW_BOT_CAP &&
+        !infinity.botCapTransitionPending
       ) ||
       (
         this.context.mode === 'active' &&
@@ -419,15 +419,16 @@ export class CanonicalEventTimeModel
       }
     }
     const capReachedWithoutAutomation =
-      !this.carrier.gameState.quantum.unlocks.breakTheLoop &&
+      !isBreakInfinityEnabled(this.carrier.gameState) &&
       !infinity.automaticResetEnabled &&
       this.carrier.gameState.dyson.bots >=
         ordinaryInfinityBotThreshold(
           this.carrier.gameState.quantum.divisionsPurchased,
         )
     const infinityHorizon =
+      !hasReachedOverflow(this.carrier.gameState) &&
       (infinity.automaticResetEnabled ||
-        (!this.carrier.gameState.quantum.unlocks.breakTheLoop &&
+        (!isBreakInfinityEnabled(this.carrier.gameState) &&
           !capReachedWithoutAutomation))
       ? timeToNextInfinityEventAfterStellarSettlement(
           this.carrier.gameState.dyson.bots,
@@ -441,11 +442,20 @@ export class CanonicalEventTimeModel
             : 0,
         )
       : Number.MAX_VALUE
+    const overflowHorizon = !hasReachedOverflow(this.carrier.gameState) &&
+      isBreakInfinityEnabled(this.carrier.gameState)
+      ? timeToNextInfinityEventAfterStellarSettlement(
+          this.carrier.gameState.dyson.bots,
+          derived.productionArrivalRates.bots,
+          derived.auxiliary.stellarSacrifice.botsPerSecond,
+          derived.auxiliary.stellarSacrifice.planetsPerSecond,
+          createInfinityCycleState(this.carrier),
+          Number.MAX_VALUE, 0, OVERFLOW_BOT_CAP,
+        )
+      : Number.MAX_VALUE
+    const nextHorizon = Math.min(infinityHorizon, overflowHorizon)
     this.replaceGameState(
-      withNextInfinityBoundary(
-        this.carrier.gameState,
-        infinityHorizon,
-      ),
+      withNextInfinityBoundary(this.carrier.gameState, nextHorizon),
     )
     const tinkerHorizon = this.context.mode === 'active'
       ? timeToCanonicalTinkerCompletion(
@@ -455,7 +465,7 @@ export class CanonicalEventTimeModel
       : maximumSeconds
     return Math.min(
       maximumSeconds,
-      infinityHorizon,
+      nextHorizon,
       tinkerHorizon,
     )
   }
@@ -478,7 +488,7 @@ export class CanonicalEventTimeModel
     const uncappedStartingState = this.carrier.gameState
     const cappedStartingBots = clampPreBreakInfinityBots(
       uncappedStartingState.dyson.bots,
-      uncappedStartingState.quantum.unlocks.breakTheLoop,
+      isBreakInfinityEnabled(uncappedStartingState),
       uncappedStartingState.quantum.divisionsPurchased,
     )
     const cappedStartingState =
@@ -838,39 +848,15 @@ export class CanonicalEventTimeModel
       )
       return
     }
-    if (result.action.kind === 'prestige') {
-      this.replaceGameState(result.candidateState)
-    }
   }
 
-  /** Settles bot-cap checkpoints inside an unpublished Stored Time candidate. */
+  /** Settles eligibility inside an unpublished Stored Time candidate. */
   applyDetachedBotCapTransition(
-    summary: SimulationPresentationSummary,
+    _summary: SimulationPresentationSummary,
   ): void {
     if (this.currentIssue !== undefined) return
-    for (let pass = 0; pass < 3; pass += 1) {
-      const result = evaluateCanonicalBotCapCheckpoint(
-        this.carrier.gameState,
-      )
-      if (result.action.kind === 'continue-normal-prestige') return
-      this.replaceGameState(result.candidateState)
-      if (
-        result.appliedReward.infinityPoints > 0n ||
-        result.appliedReward.overflowMultiplier > 0
-      ) {
-        summary.botCapInfinityPoints +=
-          result.appliedReward.infinityPoints
-        summary.botCapOverflowRewards += BigInt(
-          Math.trunc(result.appliedReward.overflowMultiplier),
-        )
-      }
-      if (result.action.kind === 'prestige') return
-    }
-    this.fail(
-      'CANONICAL_EVENT_BOT_CAP_CHECKPOINT_LOOP',
-      'infinity.botCap',
-      'Detached bot-cap settlement exceeded its finite checkpoint sequence.',
-    )
+    const result = evaluateCanonicalBotCapCheckpoint(this.carrier.gameState)
+    if (result.action.kind === 'persist') this.replaceGameState(result.candidateState)
   }
 
   /**
@@ -1081,6 +1067,10 @@ export class CanonicalEventTimeModel
   private applyQuantumLeap(): void {
     this.captureAchievementMilestones()
     const state = this.carrier.gameState
+    if (hasReachedOverflow(state) || isBlankSlateActive(state)) {
+      this.queuedInputOutcome = { accepted: false, changed: false, code: 'OVERFLOW_RESET_REQUIRED' }
+      return
+    }
     if (state.infinity.points < QUANTUM_LEAP_INFINITY_GATE) {
       this.queuedInputOutcome = {
         accepted: false,
@@ -1234,13 +1224,13 @@ export class CanonicalEventTimeModel
   ): boolean {
     const state = this.carrier.gameState
     const automaticResetEnabled = state.infinity.automaticResetEnabled
-    const breakTheLoop = state.quantum.unlocks.breakTheLoop
+    const breakTheLoop = isBreakInfinityEnabled(state)
     const ordinaryCapReached =
       !breakTheLoop &&
       state.dyson.bots >= ordinaryInfinityBotThreshold(
         state.quantum.divisionsPurchased,
       )
-    if (!automaticResetEnabled && (breakTheLoop || ordinaryCapReached)) {
+    if (hasReachedOverflow(state) || (!automaticResetEnabled && (breakTheLoop || ordinaryCapReached))) {
       this.replaceGameState(
         withNextInfinityBoundary(
           this.carrier.gameState,
@@ -1726,7 +1716,7 @@ function withUpdatedInfinityRatePeak(
   const infinity = createBasicDysonInfinityState({
     points: state.infinity.points,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
-    breakTheLoop: state.quantum.unlocks.breakTheLoop,
+    breakTheLoop: isBreakInfinityEnabled(state),
     divisionsPurchased: state.quantum.divisionsPurchased,
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: entitlements.permanentDoubleIp,
@@ -1830,6 +1820,7 @@ export function evaluateCanonicalInfinityBoundary(
   ignoreBreakTarget = false,
 ): CanonicalInfinityBoundaryEvaluation {
   const state = carrier.gameState
+  if (hasReachedOverflow(state)) return { status: 'not-ready' }
   if (
     !ignoreAutomaticResetPreference &&
     !state.infinity.automaticResetEnabled
@@ -1837,21 +1828,16 @@ export function evaluateCanonicalInfinityBoundary(
     return { status: 'not-ready' }
   }
   const infinity = createInfinityCycleState(carrier)
-  const botCapTransition = state.infinity.botCapRewardsGranted
-  if (
-    !botCapTransition &&
-    state.timeline.infinityCycleSeconds < minimumCycleSeconds
-  ) {
+  if (state.timeline.infinityCycleSeconds < minimumCycleSeconds) {
     return { status: 'not-ready' }
   }
 
-  const breakInfinity = state.quantum.unlocks.breakTheLoop
+  const breakInfinity = isBreakInfinityEnabled(state)
   const breakReward = infinityPointsForBots(
     state.dyson.bots,
     infinity,
   )
   if (
-    !botCapTransition &&
     (breakInfinity
       ? breakReward < (ignoreBreakTarget ? 1n : state.infinity.breakTarget)
       : state.dyson.bots <
@@ -1884,7 +1870,7 @@ function createInfinityCycleState(
   return createBasicDysonInfinityState({
     points: state.infinity.points,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
-    breakTheLoop: state.quantum.unlocks.breakTheLoop,
+    breakTheLoop: isBreakInfinityEnabled(state),
     divisionsPurchased: state.quantum.divisionsPurchased,
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: carrier.entitlements.permanentDoubleIp,

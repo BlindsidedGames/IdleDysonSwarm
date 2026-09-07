@@ -1,3 +1,4 @@
+import { isBreakInfinityEnabled } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
@@ -60,7 +61,7 @@ export function applyCanonicalSkillIntervalEffects(
       ...stateAfterArrivals.dyson,
       bots: clampPreBreakInfinityBots(
         stellar.bots,
-        stateAfterArrivals.quantum.unlocks.breakTheLoop,
+        isBreakInfinityEnabled(stateAfterArrivals),
         stateAfterArrivals.quantum.divisionsPurchased,
       ),
       facilities: stellar.planetsProduced === 0
@@ -96,6 +97,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
   infinity: Readonly<BasicDysonInfinityState>,
   maximumSeconds: number,
   minimumCycleSeconds: number,
+  targetBots?: number,
 ): number {
   const ordinaryHorizon = timeToNextInfinityEvent(
     startingBots,
@@ -103,6 +105,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
     infinity,
     maximumSeconds,
     minimumCycleSeconds,
+    targetBots,
   )
   if (
     startingBots <= 0 ||
@@ -114,9 +117,9 @@ export function timeToNextInfinityEventAfterStellarSettlement(
 
   const affordableSeconds = startingBots / stellarBotsPerSecond
   const fundedNetRate = botProductionPerSecond - stellarBotsPerSecond
-  const threshold = infinity.breakTheLoop
+  const threshold = targetBots ?? (infinity.breakTheLoop
     ? breakInfinityBotThreshold(infinity)
-    : ordinaryInfinityBotThreshold(infinity.divisionsPurchased)
+    : ordinaryInfinityBotThreshold(infinity.divisionsPurchased))
   if (startingBots >= threshold) {
     const minimumRemaining = Math.max(
       0,
@@ -144,6 +147,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
       infinity,
       maximumSeconds,
       minimumCycleSeconds,
+    targetBots,
     )
     if (fundedHorizon <= affordableSeconds) return fundedHorizon
   }
@@ -157,6 +161,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
     infinity,
     maximumSeconds,
     minimumCycleSeconds,
+    targetBots,
   )
 }
 
@@ -247,8 +252,9 @@ function resolveStellarAggregate(
     startingBots,
     multiplyContinuous(botProductionPerSecond, seconds),
   )
-  if (botsPerSecond <= 0 || planetsPerSecond <= 0) {
-    return { bots: ordinaryEndingBots, planetsProduced: 0 }
+  if (planetsPerSecond <= 0) return { bots: ordinaryEndingBots, planetsProduced: 0 }
+  if (botsPerSecond <= 0) {
+    return { bots: ordinaryEndingBots, planetsProduced: multiplyContinuous(planetsPerSecond, seconds) }
   }
 
   const affordableSeconds = Math.min(

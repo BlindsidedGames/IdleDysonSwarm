@@ -337,13 +337,6 @@ export class BasicDysonSimulationModel
     if (!values.every(isFiniteNonNegativeNumber)) {
       return 'SIM-DYSON-NON-FINITE'
     }
-    if (
-      (this.state.infinity.botCapTransitionPending ||
-        this.state.infinity.botCapRewardsGranted) &&
-      this.state.bots !== Number.MAX_VALUE
-    ) {
-      return 'SIM-BOT-CAP-CHECKPOINT-INVALID'
-    }
     return validateBasicDysonInfinityState(this.state.infinity)
   }
 

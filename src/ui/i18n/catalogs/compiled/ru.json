@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Спасибо, что играете в Idle Dyson Swarm. Это последняя функция, которую вы откроете; после неё при желании можно заработать Параметры разработчика. Эти бонусы перемножаются, образуя общий множитель, и не влияют на валюты, которые вы тратите на их увеличение."
+      "value": "Спасибо, что играете в Idle Dyson Swarm. Бонусы Авокато перемножаются и не влияют на валюты, которые вы тратите на их увеличение. Очки Переполнения сохраняются для следующего этапа игры."
     }
   ],
   "avocato.developer-note.title": [
@@ -225,6 +225,88 @@
       "value": "Множитель Странной материи"
     }
   ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "Подтвердить Переполнение"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "Сбросьте Ботов, прогресс Бесконечности, Кванта, Реальности и Симуляции, а также все бонусы Авокато, чтобы получить 1 очко Переполнения. Покупки, настройки, Офлайн-время и завершённые Секреты сохраняются."
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "Не удалось сохранить Переполнение. Текущий забег сохранён. Попробуйте ещё раз."
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "Очки Переполнения сохраняются для будущего этапа игры. Пока они не увеличивают производство."
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "Прежний бонус Переполнения: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "Открыть сброс Переполнения"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "Очки Переполнения: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "Переполнение достигнуто"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "Переполнение за 1 очко"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "Достигните "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Ботов для Переполнения."
+    }
+  ],
   "avocato.region": [
     {
       "type": 0,
@@ -253,6 +335,118 @@
     {
       "type": 0,
       "value": "Общий бонус к Деньгам, Науке и строениям"
+    }
+  ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "Покинуть испытание"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "Чистый лист активен · Назначение навыков отключено"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "Чистый лист"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "Завершите обычную Бесконечность, не назначая обычные навыки. Гальванизированные базовые навыки остаются активными. Боты, здания и исследования доступны."
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "Завершено · Гальванизатор получен"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "Подтвердить перезапуск"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "Не удалось сохранить перезапуск. Текущий цикл сохранён. Попробуйте снова."
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "Гальванизаторы: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "Потратьте 1 Гальванизатор в описании открытого навыка, чтобы сделать его базовый эффект постоянным и убрать штрафы и несовместимости. Гальванизацию нельзя отменить; она сохраняется после Переполнения."
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "Повторить Чистый лист"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "Это начинает новый цикл Бесконечности без награды в ОБ. Улучшения Бесконечности и последующие слои сохраняются. Выход также начинает новый обычный цикл."
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "Первое прохождение: 1 гальванизатор. Награда и прохождение сохраняются после Переполнения."
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "Испытания"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "Показывать испытания"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "Начать Чистый лист"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "Испытания Бесконечности"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "Открыть испытание"
     }
   ],
   "debug.access-description": [
@@ -6805,6 +6999,12 @@
       "value": "Официальный сайт"
     }
   ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Показывать Авокато"
+    }
+  ],
   "settings.navigation.bots": [
     {
       "type": 0,
@@ -8333,6 +8533,30 @@
       "value": "Также назначить необходимые навыки:"
     }
   ],
+  "skills.augments-assigned": [
+    {
+      "type": 0,
+      "value": "Назначенные усиления: "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "skills.back-to-presets": [
+    {
+      "type": 0,
+      "value": "Назад к наборам"
+    }
+  ],
   "skills.blocked-skills-heading": [
     {
       "type": 0,
@@ -8367,6 +8591,12 @@
     {
       "type": 0,
       "value": "Подтвердить"
+    }
+  ],
+  "skills.confirm-galvanize": [
+    {
+      "type": 0,
+      "value": "Потратить 1 Гальванизатор"
     }
   ],
   "skills.confirm-import": [
@@ -8437,6 +8667,12 @@
       "value": "Назначать навыки двойным щелчком"
     }
   ],
+  "skills.edit-priority": [
+    {
+      "type": 0,
+      "value": "Изменить приоритет"
+    }
+  ],
   "skills.effect": [
     {
       "type": 0,
@@ -8501,6 +8737,156 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "skills.galvAlgorithms": [
+    {
+      "type": 0,
+      "value": "Серверы, ИИ-менеджеры и Сборочные линии становятся в 3 раза мощнее."
+    }
+  ],
+  "skills.galvBurnout": [
+    {
+      "type": 0,
+      "value": "Утраивает производство панелей."
+    }
+  ],
+  "skills.galvCables": [
+    {
+      "type": 0,
+      "value": "В 5 раз больше Центров данных из Карманных измерений."
+    }
+  ],
+  "skills.galvColdFusion": [
+    {
+      "type": 0,
+      "value": "Производство Науки ×10."
+    }
+  ],
+  "skills.galvEconomic": [
+    {
+      "type": 0,
+      "value": "Производство Денег ×20."
+    }
+  ],
+  "skills.galvEndLine": [
+    {
+      "type": 0,
+      "value": "Производство Ботов Сборочными линиями ×5."
+    }
+  ],
+  "skills.galvEnlightened": [
+    {
+      "type": 0,
+      "value": "Научные планеты также производят усиления Денег."
+    }
+  ],
+  "skills.galvFusion": [
+    {
+      "type": 0,
+      "value": "Производство панелей ×5."
+    }
+  ],
+  "skills.galvPowerAddiction": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, Серверы, Центры данных и Планеты на 200% мощнее."
+    }
+  ],
+  "skills.galvPowerIndulging": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, Серверы, Центры данных и Планеты на 100% мощнее."
+    }
+  ],
+  "skills.galvPowerTaste": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, Серверы, Центры данных и Планеты на 50% мощнее."
+    }
+  ],
+  "skills.galvPrecursors": [
+    {
+      "type": 0,
+      "value": "Множители Науки также умножают производство Денег вместе с существующими множителями Денег."
+    }
+  ],
+  "skills.galvSacrifices": [
+    {
+      "type": 0,
+      "value": "Каждую секунду создаёт Планеты в количестве log10(Поглощённые звёздные галактики)², не расходуя и не требуя Ботов."
+    }
+  ],
+  "skills.galvScientific": [
+    {
+      "type": 0,
+      "value": "Производство Науки ×20."
+    }
+  ],
+  "skills.galvStellarDominance": [
+    {
+      "type": 0,
+      "value": "Срок службы панелей ×10 при выполнении обычного требования к Ботам, без дополнительной цены жертвоприношения и штрафа к Деньгам."
+    }
+  ],
+  "skills.galvStellarObliteration": [
+    {
+      "type": 0,
+      "value": "Галактики Звёздных жертвоприношений в 1000 раз эффективнее."
+    }
+  ],
+  "skills.galvSupernova": [
+    {
+      "type": 0,
+      "value": "Галактики Звёздных жертвоприношений в 1000 раз эффективнее. Все бонусы производства от ручных покупок остаются активными."
+    }
+  ],
+  "skills.galvWorthy": [
+    {
+      "type": 0,
+      "value": "Сборочные линии в 5 раз эффективнее."
+    }
+  ],
+  "skills.galvanize-action": [
+    {
+      "type": 0,
+      "value": "Гальванизировать · "
+    },
+    {
+      "type": 1,
+      "value": "currency"
+    }
+  ],
+  "skills.galvanize-warning": [
+    {
+      "type": 0,
+      "value": "Навсегда гальванизировать "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " за 1 Гальванизатор? Очки навыков, вложенные в этот базовый навык, будут возвращены. Это действие нельзя отменить."
+    }
+  ],
+  "skills.galvanized": [
+    {
+      "type": 0,
+      "value": "Гальванизировано"
+    }
+  ],
+  "skills.galvanized-help": [
+    {
+      "type": 0,
+      "value": "Этот базовый навык активен постоянно и не требует очков навыков. Его штрафы и несовместимости устранены. Обычные условия и сбросы таймеров сохраняются."
+    }
+  ],
+  "skills.galvanized-permanent": [
+    {
+      "type": 0,
+      "value": "Гальванизировано · активно постоянно"
     }
   ],
   "skills.impact.bots": [
@@ -10643,6 +11029,12 @@
       "value": "Вставить"
     }
   ],
+  "skills.permanent-preset-help": [
+    {
+      "type": 0,
+      "value": "Всегда активны во всех наборах. Эти базовые навыки не тратят очки."
+    }
+  ],
   "skills.points": [
     {
       "type": 0,
@@ -10805,6 +11197,70 @@
     {
       "type": 0,
       "value": "Предпросмотр импорта"
+    }
+  ],
+  "skills.priority-empty": [
+    {
+      "type": 0,
+      "value": "Нет навыков в очереди на покупку."
+    }
+  ],
+  "skills.priority-move-down": [
+    {
+      "type": 0,
+      "value": "Переместить "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " вниз"
+    }
+  ],
+  "skills.priority-move-up": [
+    {
+      "type": 0,
+      "value": "Переместить "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " вверх"
+    }
+  ],
+  "skills.priority-non-refundable": [
+    {
+      "type": 0,
+      "value": "Без возврата"
+    }
+  ],
+  "skills.priority-remove": [
+    {
+      "type": 0,
+      "value": "Удалить "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " из набора"
+    }
+  ],
+  "skills.priority-title": [
+    {
+      "type": 0,
+      "value": "Приоритет · "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.purchase": [
@@ -10993,6 +11449,112 @@
     {
       "type": 0,
       "value": "Показывать уведомления о частичном применении пресетов"
+    }
+  ],
+  "skills.spending-priority": [
+    {
+      "type": 0,
+      "value": "Приоритет расходов"
+    }
+  ],
+  "skills.spending-priority-help": [
+    {
+      "type": 0,
+      "value": "Перетаскивайте для сортировки или используйте стрелки. Сначала покупаются необходимые навыки. Очки копятся до покупки следующего навыка."
+    }
+  ],
+  "skills.subskill-assign": [
+    {
+      "type": 0,
+      "value": "Назначить "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " за 1 очко навыков"
+    }
+  ],
+  "skills.subskill-assign-short": [
+    {
+      "type": 0,
+      "value": "Назначить"
+    }
+  ],
+  "skills.subskill-cost": [
+    {
+      "type": 0,
+      "value": "1 очко навыка"
+    }
+  ],
+  "skills.subskill-decay": [
+    {
+      "type": 0,
+      "value": "Каждая распавшаяся панель считается за 10"
+    }
+  ],
+  "skills.subskill-include": [
+    {
+      "type": 0,
+      "value": "Включить "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " в "
+    },
+    {
+      "type": 1,
+      "value": "preset"
+    }
+  ],
+  "skills.subskill-lifetime": [
+    {
+      "type": 0,
+      "value": "+5 секунд к сроку службы панелей"
+    }
+  ],
+  "skills.subskill-production": [
+    {
+      "type": 0,
+      "value": "Производство Денег и Науки ×2"
+    }
+  ],
+  "skills.subskill-refund": [
+    {
+      "type": 0,
+      "value": "Вернуть "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " за 1 очко навыков"
+    }
+  ],
+  "skills.subskill-refund-short": [
+    {
+      "type": 0,
+      "value": "Вернуть"
+    }
+  ],
+  "skills.subskills": [
+    {
+      "type": 0,
+      "value": "Усиления"
+    }
+  ],
+  "skills.subskills-help": [
+    {
+      "type": 0,
+      "value": "Каждое стоит 1 очко навыка; можно выбрать все три. Флажки добавляют их в набор. Усиления сбрасываются и возвращают очки по обычным правилам."
     }
   ],
   "skills.supernova-restoration-quote": [

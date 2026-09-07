@@ -653,6 +653,11 @@
   border: 0;
 }
 
+.dyson-shell__header {
+  grid-row: 1;
+  min-inline-size: 0;
+}
+
 .dyson-shell__notifications {
   position: absolute;
   z-index: 12;
@@ -1871,4 +1876,28 @@
   .dyson-shell__menu-close {
     forced-color-adjust: auto;
   }
+}
+
+.dyson-overflow-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: var(--game-card-content-inset);
+  border: 1px solid var(--ui-border, #695784);
+  border-radius: var(--ui-radius-card, 0.5rem);
+  background: #20172d;
+  color: #eee2ff;
+  font-size: var(--ui-text-meta);
+}
+.dyson-overflow-notice button {
+  min-height: var(--target-minimum);
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #b597d9;
+  border-radius: 0.35rem;
+  color: inherit;
+  background: #43305e;
+  font: inherit;
+  cursor: pointer;
 }

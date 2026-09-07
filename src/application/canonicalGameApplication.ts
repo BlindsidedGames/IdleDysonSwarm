@@ -1,3 +1,6 @@
+import { restartInfinityChallenge } from '../simulation/canonicalInfinityChallengeRestart'
+import { applyCanonicalOverflowReset } from '../simulation/canonicalOverflowReset'
+import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import {
   isFiniteNonNegativeNumber,
@@ -537,6 +540,22 @@ export class CanonicalGameApplicationFacade {
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalPlayerDispatchResult> {
+    const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
+      envelope.command.kind === 'skill.set-preset-assignment'
+    if (presetPriorityChange || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
+        envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
+      const result = await this.application.dispatchCommitFirst(envelope,
+        presetPriorityChange ? 'skill-preset' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
+      return {
+        kind: 'transition',
+        transition: result.committed ? result.transition : {
+          accepted: false,
+          revision: result.transition.revision,
+          code: result.code ?? 'OVERFLOW_COMMIT_FAILED',
+          reason: result.reason ?? 'The change could not be saved. Your progress has been preserved.',
+        },
+      }
+    }
     if (envelope.command.kind !== 'time.request-stored-time-spend') {
       return {
         kind: 'transition',
@@ -1056,6 +1075,39 @@ export function createCanonicalGameEngineDefinition(
     validateTransitionState: (state) =>
       validateRuntimeTransitionState(state, eventContext),
     applyCommand: (candidate, command) => {
+      if (command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
+        const artifact = deriveCanonicalArtifactSkillPoints(candidate.gameState, eventContext.realityUpgradeDefinitions)
+        if (!artifact.ok) return reject('CHALLENGE_RESET_FAILED', artifact.issue?.detail ?? 'Artifact skill points unavailable.')
+        const reset = restartInfinityChallenge(candidate.gameState,
+          command.kind === 'challenge.enter-blank-slate' ? 'enter' : 'abandon', artifact.value)
+        if (!reset.ok) return reject(reset.code, 'The challenge could not be started or abandoned.')
+        const derived = deriveBasicDysonState(reset.state, candidate.compatibilityTuning,
+          candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)
+        if (!derived.ok) return reject('CHALLENGE_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Challenge reset could not be derived.')
+        Object.assign(candidate, { gameState: reset.state, evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+          tinker: createCanonicalTinkerRuntimeState(), lastSkillPresetApplication: null, presentationEvents: [] })
+        return { accepted: true, changed: true }
+      }
+      if (command.kind === 'avocado.request-overflow-reset') {
+        const reset = applyCanonicalOverflowReset(candidate.gameState)
+        if (!reset.ok) return reject(reset.code, 'Reach Overflow before choosing this reset.')
+        const evidence = candidate.achievementEvidence === undefined ? undefined
+          : mergeAchievementFacts(candidate.achievementEvidence, evaluateAchievements(candidate.gameState, false))
+        const derived = deriveBasicDysonState(
+          reset.state, candidate.compatibilityTuning, candidate.entitlements,
+          candidate.evaluationSnapshot, eventContext.dysonPresentationTuning,
+        )
+        if (!derived.ok) return reject('OVERFLOW_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Overflow reset could not be derived.')
+        Object.assign(candidate, {
+          gameState: reset.state,
+          evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+          tinker: createCanonicalTinkerRuntimeState(),
+          lastSkillPresetApplication: null,
+          presentationEvents: [],
+          ...(evidence === undefined ? {} : { achievementEvidence: evidence }),
+        })
+        return { accepted: true, changed: true }
+      }
       if (command.kind === 'tinker.start') {
         return applyTinker(candidate, eventContext, (model) =>
           model.startTinker(command.repeat))

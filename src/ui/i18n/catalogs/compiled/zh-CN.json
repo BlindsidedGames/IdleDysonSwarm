@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "感谢你游玩 Idle Dyson Swarm。这是你将解锁的最后一项功能；如果愿意，你还可以继续获取开发者选项。这些增益彼此相乘，形成总增益，并且不会影响用于提升它们的货币。"
+      "value": "感谢你游玩 Idle Dyson Swarm。Avocato 的增益彼此相乘，不会影响用于提升它们的货币。溢出点数将保留供下一阶段的游戏使用。"
     }
   ],
   "avocato.developer-note.title": [
@@ -225,6 +225,88 @@
       "value": "奇异物质倍率"
     }
   ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "确认溢出"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "重置你的机器人、无限、量子、现实和模拟进度，以及 Avocato 的所有增益，换取 1 个溢出点数。购买项目、设置、离线时间和已完成的秘密将保留。"
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "无法保存溢出。当前进度已保留，请重试。"
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "溢出点数将保留供未来的游戏阶段使用，目前不会提高产量。"
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "之前的溢出增益：×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "查看溢出重置"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "溢出点数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "已达到溢出"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "溢出并获得 1 点"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "达到 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 个机器人即可溢出。"
+    }
+  ],
   "avocato.region": [
     {
       "type": 0,
@@ -253,6 +335,118 @@
     {
       "type": 0,
       "value": "对现金、科学与建筑的总增益"
+    }
+  ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "放弃挑战"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "白纸挑战进行中 · 无法分配技能"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "白纸起步"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "不分配普通技能，完成一次正常无限。已永久强化的基础技能仍然生效。机器人、建筑和研究仍可使用。"
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "已完成 · 已获得强化器"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "确认重新开始"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "无法保存重新开始的状态。当前轮次已保留，请重试。"
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "强化器："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "在已显示技能的详情中消耗1个强化器，使基础效果永久生效并移除负面效果和互斥限制。永久强化无法撤销，且在溢出后保留。"
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "重玩白纸起步"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "这将开始新的无限轮次，不会获得无限点。无限升级和后续层级会保留。放弃挑战也会开始新的普通轮次。"
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "首次完成：1个强化器。奖励和完成记录在溢出后保留。"
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "挑战"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "显示挑战"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "开始白纸起步"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "无限挑战"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "查看挑战"
     }
   ],
   "debug.access-description": [
@@ -6805,6 +6999,12 @@
       "value": "官方网站"
     }
   ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "显示 Avocato"
+    }
+  ],
   "settings.navigation.bots": [
     {
       "type": 0,
@@ -8333,6 +8533,30 @@
       "value": "同时分配以下必需技能："
     }
   ],
+  "skills.augments-assigned": [
+    {
+      "type": 0,
+      "value": "已分配强化："
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "skills.back-to-presets": [
+    {
+      "type": 0,
+      "value": "返回预设"
+    }
+  ],
   "skills.blocked-skills-heading": [
     {
       "type": 0,
@@ -8367,6 +8591,12 @@
     {
       "type": 0,
       "value": "确认"
+    }
+  ],
+  "skills.confirm-galvanize": [
+    {
+      "type": 0,
+      "value": "消耗1个强化器"
     }
   ],
   "skills.confirm-import": [
@@ -8437,6 +8667,12 @@
       "value": "双击分配技能"
     }
   ],
+  "skills.edit-priority": [
+    {
+      "type": 0,
+      "value": "编辑优先级"
+    }
+  ],
   "skills.effect": [
     {
       "type": 0,
@@ -8501,6 +8737,156 @@
     {
       "type": 0,
       "value": "）"
+    }
+  ],
+  "skills.galvAlgorithms": [
+    {
+      "type": 0,
+      "value": "服务器、AI管理器和装配线的效能提高至3倍。"
+    }
+  ],
+  "skills.galvBurnout": [
+    {
+      "type": 0,
+      "value": "面板产量提高至3倍。"
+    }
+  ],
+  "skills.galvCables": [
+    {
+      "type": 0,
+      "value": "口袋维度产生的数据中心数量提高至5倍。"
+    }
+  ],
+  "skills.galvColdFusion": [
+    {
+      "type": 0,
+      "value": "科学产量提高至10倍。"
+    }
+  ],
+  "skills.galvEconomic": [
+    {
+      "type": 0,
+      "value": "现金产量提高至20倍。"
+    }
+  ],
+  "skills.galvEndLine": [
+    {
+      "type": 0,
+      "value": "装配线的机器人产量提高至5倍。"
+    }
+  ],
+  "skills.galvEnlightened": [
+    {
+      "type": 0,
+      "value": "科学行星也会产生现金增益。"
+    }
+  ],
+  "skills.galvFusion": [
+    {
+      "type": 0,
+      "value": "面板产量提高至5倍。"
+    }
+  ],
+  "skills.galvPowerAddiction": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高200%。"
+    }
+  ],
+  "skills.galvPowerIndulging": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高100%。"
+    }
+  ],
+  "skills.galvPowerTaste": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高50%。"
+    }
+  ],
+  "skills.galvPrecursors": [
+    {
+      "type": 0,
+      "value": "科学倍率也会乘算现金产量，并保留原有的现金倍率。"
+    }
+  ],
+  "skills.galvSacrifices": [
+    {
+      "type": 0,
+      "value": "每秒产生的行星数量等于log10（已吞噬的恒星星系）²，不消耗也不需要机器人。"
+    }
+  ],
+  "skills.galvScientific": [
+    {
+      "type": 0,
+      "value": "科学产量提高至20倍。"
+    }
+  ],
+  "skills.galvStellarDominance": [
+    {
+      "type": 0,
+      "value": "满足正常机器人数量要求时，面板寿命提高至10倍，且没有额外献祭消耗或现金惩罚。"
+    }
+  ],
+  "skills.galvStellarObliteration": [
+    {
+      "type": 0,
+      "value": "恒星献祭的星系效果提高至1000倍。"
+    }
+  ],
+  "skills.galvSupernova": [
+    {
+      "type": 0,
+      "value": "恒星献祭的星系效果提高至1000倍。所有手动购买的生产加成仍然有效。"
+    }
+  ],
+  "skills.galvWorthy": [
+    {
+      "type": 0,
+      "value": "装配线的效能提高至5倍。"
+    }
+  ],
+  "skills.galvanize-action": [
+    {
+      "type": 0,
+      "value": "永久强化 · "
+    },
+    {
+      "type": 1,
+      "value": "currency"
+    }
+  ],
+  "skills.galvanize-warning": [
+    {
+      "type": 0,
+      "value": "消耗1个强化器永久强化"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "？已投入该基础技能的技能点将返还。此操作无法撤销。"
+    }
+  ],
+  "skills.galvanized": [
+    {
+      "type": 0,
+      "value": "已永久强化"
+    }
+  ],
+  "skills.galvanized-help": [
+    {
+      "type": 0,
+      "value": "该基础技能永久生效，且不消耗技能点。其负面效果和互斥限制已移除。正常生效条件和计时器重置仍然适用。"
+    }
+  ],
+  "skills.galvanized-permanent": [
+    {
+      "type": 0,
+      "value": "已永久强化 · 永久生效"
     }
   ],
   "skills.impact.bots": [
@@ -10643,6 +11029,12 @@
       "value": "粘贴"
     }
   ],
+  "skills.permanent-preset-help": [
+    {
+      "type": 0,
+      "value": "在所有预设中始终生效。这些基础技能不消耗点数。"
+    }
+  ],
   "skills.points": [
     {
       "type": 0,
@@ -10805,6 +11197,70 @@
     {
       "type": 0,
       "value": "预览导入内容"
+    }
+  ],
+  "skills.priority-empty": [
+    {
+      "type": 0,
+      "value": "没有等待分配点数的技能。"
+    }
+  ],
+  "skills.priority-move-down": [
+    {
+      "type": 0,
+      "value": "将"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "下移一位"
+    }
+  ],
+  "skills.priority-move-up": [
+    {
+      "type": 0,
+      "value": "将"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "上移一位"
+    }
+  ],
+  "skills.priority-non-refundable": [
+    {
+      "type": 0,
+      "value": "不可返还"
+    }
+  ],
+  "skills.priority-remove": [
+    {
+      "type": 0,
+      "value": "从预设中移除 "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " 技能"
+    }
+  ],
+  "skills.priority-title": [
+    {
+      "type": 0,
+      "value": "优先级 · "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.purchase": [
@@ -10993,6 +11449,112 @@
     {
       "type": 0,
       "value": "显示预设部分应用通知"
+    }
+  ],
+  "skills.spending-priority": [
+    {
+      "type": 0,
+      "value": "消耗优先级"
+    }
+  ],
+  "skills.spending-priority-help": [
+    {
+      "type": 0,
+      "value": "拖动排序或使用箭头。先购买前置技能，点数会保留到足够购买下一个技能。"
+    }
+  ],
+  "skills.subskill-assign": [
+    {
+      "type": 0,
+      "value": "分配"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "，消耗1技能点"
+    }
+  ],
+  "skills.subskill-assign-short": [
+    {
+      "type": 0,
+      "value": "分配"
+    }
+  ],
+  "skills.subskill-cost": [
+    {
+      "type": 0,
+      "value": "1 技能点"
+    }
+  ],
+  "skills.subskill-decay": [
+    {
+      "type": 0,
+      "value": "每个衰变面板计为10个"
+    }
+  ],
+  "skills.subskill-include": [
+    {
+      "type": 0,
+      "value": "将"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "加入"
+    },
+    {
+      "type": 1,
+      "value": "preset"
+    }
+  ],
+  "skills.subskill-lifetime": [
+    {
+      "type": 0,
+      "value": "面板寿命+5秒"
+    }
+  ],
+  "skills.subskill-production": [
+    {
+      "type": 0,
+      "value": "现金和科学产量提高至2倍"
+    }
+  ],
+  "skills.subskill-refund": [
+    {
+      "type": 0,
+      "value": "退还"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "并获得1技能点"
+    }
+  ],
+  "skills.subskill-refund-short": [
+    {
+      "type": 0,
+      "value": "返还"
+    }
+  ],
+  "skills.subskills": [
+    {
+      "type": 0,
+      "value": "强化"
+    }
+  ],
+  "skills.subskills-help": [
+    {
+      "type": 0,
+      "value": "每项消耗 1 技能点，可同时选择三项。勾选复选框可将其加入预设。强化会正常重置并返还点数。"
     }
   ],
   "skills.supernova-restoration-quote": [

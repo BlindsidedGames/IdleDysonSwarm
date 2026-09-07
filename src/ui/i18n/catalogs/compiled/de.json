@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Danke, dass du Idle Dyson Swarm spielst. Dies ist die letzte Funktion, die du freischaltest. Wenn du möchtest, kannst du weiterspielen, um Entwickleroptionen zu verdienen. Diese Verstärkungen werden miteinander multipliziert und ergeben so den Gesamtbonus. Sie wirken sich nicht auf die Währungen aus, die du für ihre Erhöhung ausgibst."
+      "value": "Danke, dass du Idle Dyson Swarm spielst. Avocatos Boni werden miteinander multipliziert und wirken sich nicht auf die Währungen aus, die du für ihre Erhöhung ausgibst. Überlaufpunkte werden für die nächste Spielebene gespeichert."
     }
   ],
   "avocato.developer-note.title": [
@@ -225,6 +225,88 @@
       "value": "Multiplikator für Seltsame Materie"
     }
   ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "Überlauf bestätigen"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "Setze deine Bots, deinen Fortschritt in Unendlichkeit, Quanten, Realität und Simulation sowie alle Avocato-Boni für 1 Überlaufpunkt zurück. Deine Käufe, Einstellungen, Offline-Zeit und abgeschlossenen Geheimnisse bleiben erhalten."
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "Der Überlauf konnte nicht gespeichert werden. Dein aktueller Durchlauf bleibt erhalten. Versuche es erneut."
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "Überlaufpunkte werden für eine zukünftige Spielebene gespeichert. Sie steigern die Produktion noch nicht."
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "Bisheriger Überlaufbonus: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "Überlauf-Zurücksetzung ansehen"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "Überlaufpunkte: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "Überlauf erreicht"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "Überlauf für 1 Punkt"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "Erreiche "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots für einen Überlauf."
+    }
+  ],
   "avocato.region": [
     {
       "type": 0,
@@ -253,6 +335,118 @@
     {
       "type": 0,
       "value": "Gesamtbonus auf Geld, Wissenschaft und Gebäude"
+    }
+  ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "Herausforderung abbrechen"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt aktiv · Skill-Zuweisung deaktiviert"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "Schließe eine normale Unendlichkeit ab, ohne normale Skills zuzuweisen. Galvanisierte Basisskills bleiben aktiv. Bots, Gebäude und Forschung bleiben verfügbar."
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "Abgeschlossen · Galvanisierer erhalten"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "Neustart bestätigen"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "Der Neustart konnte nicht gespeichert werden. Dein aktueller Durchlauf wurde beibehalten. Versuche es erneut."
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "Galvanisierer: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "Gib in den Details eines aufgedeckten Skills 1 Galvanisierer aus, um seinen Basiseffekt dauerhaft zu aktivieren und Nachteile sowie Ausschlüsse zu entfernen. Galvanisierung ist unumkehrbar und bleibt nach einem Überlauf erhalten."
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt wiederholen"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "Dies beginnt einen neuen Unendlichkeitsdurchlauf ohne IP-Belohnung. Unendlichkeitsverbesserungen und spätere Ebenen bleiben erhalten. Ein Abbruch startet ebenfalls einen neuen normalen Durchlauf."
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "Erster Abschluss: 1 Galvanisierer. Belohnung und Abschluss bleiben nach einem Overflow erhalten."
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "Herausforderungen"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "Herausforderungen anzeigen"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt starten"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "Unendlichkeitsherausforderungen"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "Herausforderung ansehen"
     }
   ],
   "debug.access-description": [
@@ -6805,6 +6999,12 @@
       "value": "Offizielle Website"
     }
   ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Avocato anzeigen"
+    }
+  ],
   "settings.navigation.bots": [
     {
       "type": 0,
@@ -8333,6 +8533,30 @@
       "value": "Diese erforderlichen Skills ebenfalls zuweisen:"
     }
   ],
+  "skills.augments-assigned": [
+    {
+      "type": 0,
+      "value": "Zugewiesene Erweiterungen: "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "skills.back-to-presets": [
+    {
+      "type": 0,
+      "value": "Zurück zu Vorlagen"
+    }
+  ],
   "skills.blocked-skills-heading": [
     {
       "type": 0,
@@ -8367,6 +8591,12 @@
     {
       "type": 0,
       "value": "Bestätigen"
+    }
+  ],
+  "skills.confirm-galvanize": [
+    {
+      "type": 0,
+      "value": "1 Galvanisierer ausgeben"
     }
   ],
   "skills.confirm-import": [
@@ -8437,6 +8667,12 @@
       "value": "Skills per Doppelklick zuweisen"
     }
   ],
+  "skills.edit-priority": [
+    {
+      "type": 0,
+      "value": "Priorität bearbeiten"
+    }
+  ],
   "skills.effect": [
     {
       "type": 0,
@@ -8501,6 +8737,156 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "skills.galvAlgorithms": [
+    {
+      "type": 0,
+      "value": "Server, KI-Manager und Montagelinien sind 3× stärker."
+    }
+  ],
+  "skills.galvBurnout": [
+    {
+      "type": 0,
+      "value": "Verdreifacht die Panelproduktion."
+    }
+  ],
+  "skills.galvCables": [
+    {
+      "type": 0,
+      "value": "5× so viele Rechenzentren durch Taschendimensionen."
+    }
+  ],
+  "skills.galvColdFusion": [
+    {
+      "type": 0,
+      "value": "10× Wissenschaftsproduktion."
+    }
+  ],
+  "skills.galvEconomic": [
+    {
+      "type": 0,
+      "value": "20× Geldproduktion."
+    }
+  ],
+  "skills.galvEndLine": [
+    {
+      "type": 0,
+      "value": "5× Bot-Produktion durch Montagelinien."
+    }
+  ],
+  "skills.galvEnlightened": [
+    {
+      "type": 0,
+      "value": "Wissenschaftliche Planeten erzeugen auch Geld-Boosts."
+    }
+  ],
+  "skills.galvFusion": [
+    {
+      "type": 0,
+      "value": "5× Panelproduktion."
+    }
+  ],
+  "skills.galvPowerAddiction": [
+    {
+      "type": 0,
+      "value": "Montagelinien, KI-Manager, Server, Rechenzentren und Planeten sind 200 % stärker."
+    }
+  ],
+  "skills.galvPowerIndulging": [
+    {
+      "type": 0,
+      "value": "Montagelinien, KI-Manager, Server, Rechenzentren und Planeten sind 100 % stärker."
+    }
+  ],
+  "skills.galvPowerTaste": [
+    {
+      "type": 0,
+      "value": "Montagelinien, KI-Manager, Server, Rechenzentren und Planeten sind 50 % stärker."
+    }
+  ],
+  "skills.galvPrecursors": [
+    {
+      "type": 0,
+      "value": "Wissenschaftsmultiplikatoren multiplizieren zusätzlich zu bestehenden Geldmultiplikatoren auch die Geldproduktion."
+    }
+  ],
+  "skills.galvSacrifices": [
+    {
+      "type": 0,
+      "value": "Erzeugt pro Sekunde Planeten in Höhe von log10(Verschlungene stellare Galaxien)², ohne Bots zu verbrauchen oder vorauszusetzen."
+    }
+  ],
+  "skills.galvScientific": [
+    {
+      "type": 0,
+      "value": "20× Wissenschaftsproduktion."
+    }
+  ],
+  "skills.galvStellarDominance": [
+    {
+      "type": 0,
+      "value": "10× Panellebensdauer, solange die normale Bot-Anforderung erfüllt ist, ohne zusätzliche Opferkosten oder Geldabzug."
+    }
+  ],
+  "skills.galvStellarObliteration": [
+    {
+      "type": 0,
+      "value": "Galaxien für Stellare Opfer sind 1000× wirksamer."
+    }
+  ],
+  "skills.galvSupernova": [
+    {
+      "type": 0,
+      "value": "Galaxien für Stellare Opfer sind 1000× wirksamer. Alle Produktionsboni manueller Käufe bleiben aktiv."
+    }
+  ],
+  "skills.galvWorthy": [
+    {
+      "type": 0,
+      "value": "Montagelinien sind 5× so effektiv."
+    }
+  ],
+  "skills.galvanize-action": [
+    {
+      "type": 0,
+      "value": "Galvanisieren · "
+    },
+    {
+      "type": 1,
+      "value": "currency"
+    }
+  ],
+  "skills.galvanize-warning": [
+    {
+      "type": 0,
+      "value": "Soll "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " für 1 Galvanisierer dauerhaft galvanisiert werden? In diesen Basisskill investierte Skill-Punkte werden zurückgegeben. Dies kann nicht rückgängig gemacht werden."
+    }
+  ],
+  "skills.galvanized": [
+    {
+      "type": 0,
+      "value": "Galvanisiert"
+    }
+  ],
+  "skills.galvanized-help": [
+    {
+      "type": 0,
+      "value": "Dieser Basisskill ist dauerhaft aktiv und kostet keine Skill-Punkte. Seine Nachteile und Ausschlüsse entfallen. Normale Bedingungen und Timer-Rücksetzungen gelten weiterhin."
+    }
+  ],
+  "skills.galvanized-permanent": [
+    {
+      "type": 0,
+      "value": "Galvanisiert · dauerhaft aktiv"
     }
   ],
   "skills.impact.bots": [
@@ -10643,6 +11029,12 @@
       "value": "Einfügen"
     }
   ],
+  "skills.permanent-preset-help": [
+    {
+      "type": 0,
+      "value": "In jeder Vorlage immer aktiv. Diese Basisfähigkeiten verbrauchen keine Punkte."
+    }
+  ],
   "skills.points": [
     {
       "type": 0,
@@ -10805,6 +11197,70 @@
     {
       "type": 0,
       "value": "Importvorschau"
+    }
+  ],
+  "skills.priority-empty": [
+    {
+      "type": 0,
+      "value": "Keine Fähigkeiten für Punkte vorgemerkt."
+    }
+  ],
+  "skills.priority-move-down": [
+    {
+      "type": 0,
+      "value": "Skill "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " nach unten verschieben"
+    }
+  ],
+  "skills.priority-move-up": [
+    {
+      "type": 0,
+      "value": "Skill "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " nach oben verschieben"
+    }
+  ],
+  "skills.priority-non-refundable": [
+    {
+      "type": 0,
+      "value": "Nicht erstattbar"
+    }
+  ],
+  "skills.priority-remove": [
+    {
+      "type": 0,
+      "value": "Entferne "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " aus der Vorlage"
+    }
+  ],
+  "skills.priority-title": [
+    {
+      "type": 0,
+      "value": "Priorität · "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "skills.purchase": [
@@ -10993,6 +11449,112 @@
     {
       "type": 0,
       "value": "Benachrichtigungen über teilweise angewendete Voreinstellungen anzeigen"
+    }
+  ],
+  "skills.spending-priority": [
+    {
+      "type": 0,
+      "value": "Ausgabepriorität"
+    }
+  ],
+  "skills.spending-priority-help": [
+    {
+      "type": 0,
+      "value": "Zum Sortieren ziehen oder die Pfeile verwenden. Voraussetzungen werden zuerst gekauft. Punkte werden gespart, bis die nächste Fähigkeit bezahlbar ist."
+    }
+  ],
+  "skills.subskill-assign": [
+    {
+      "type": 0,
+      "value": "Skill "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " für 1 Skill-Punkt zuweisen"
+    }
+  ],
+  "skills.subskill-assign-short": [
+    {
+      "type": 0,
+      "value": "Zuweisen"
+    }
+  ],
+  "skills.subskill-cost": [
+    {
+      "type": 0,
+      "value": "1 Fähigkeitspunkt"
+    }
+  ],
+  "skills.subskill-decay": [
+    {
+      "type": 0,
+      "value": "Jedes zerfallene Panel zählt als 10"
+    }
+  ],
+  "skills.subskill-include": [
+    {
+      "type": 0,
+      "value": "Skill "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " aufnehmen in "
+    },
+    {
+      "type": 1,
+      "value": "preset"
+    }
+  ],
+  "skills.subskill-lifetime": [
+    {
+      "type": 0,
+      "value": "+5 Sekunden Panellebensdauer"
+    }
+  ],
+  "skills.subskill-production": [
+    {
+      "type": 0,
+      "value": "2× Geld- und Wissenschaftsproduktion"
+    }
+  ],
+  "skills.subskill-refund": [
+    {
+      "type": 0,
+      "value": "Skill "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " für 1 Skill-Punkt erstatten"
+    }
+  ],
+  "skills.subskill-refund-short": [
+    {
+      "type": 0,
+      "value": "Erstatten"
+    }
+  ],
+  "skills.subskills": [
+    {
+      "type": 0,
+      "value": "Erweiterungen"
+    }
+  ],
+  "skills.subskills-help": [
+    {
+      "type": 0,
+      "value": "Jede kostet 1 Fähigkeitspunkt; alle drei können gewählt werden. Kontrollkästchen fügen sie der Vorlage hinzu. Erweiterungen werden normal zurückgesetzt und erstattet."
     }
   ],
   "skills.supernova-restoration-quote": [

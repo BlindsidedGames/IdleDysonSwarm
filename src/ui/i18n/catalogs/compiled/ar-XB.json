@@ -24,7 +24,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥɐuʞ ʎon ɟoɹ dʅɐʎıuƃ Ipʅǝ ᗡʎsou Sʍɐɹɯ. ⊥ɥıs ıs ʇɥǝ ɟıuɐʅ ɟǝɐʇnɹǝ ʎon ʍıʅʅ nuʅoɔʞ; ʎon ɔɐu ƃo ou ʇo ǝɐɹu ᗡǝʌǝʅodǝɹ Odʇıous ıɟ ʎon ʅıʞǝ. ⊥ɥǝsǝ qnɟɟs ɯnʅʇıdʅʎ ʍıʇɥ ǝɐɔɥ oʇɥǝɹ ʇo ɟoɹɯ ʇɥǝ ʇoʇɐʅ qoosʇ, ɐup po uoʇ ɐɟɟǝɔʇ ʇɥǝ ɔnɹɹǝuɔıǝs ʎon sdǝup ʇo ıuɔɹǝɐsǝ ʇɥǝɯ."
+      "value": "⊥ɥɐuʞ ʎon ɟoɹ dʅɐʎıuƃ Ipʅǝ ᗡʎsou Sʍɐɹɯ. ∀ʌoɔɐʇo’s qoosʇs ɯnʅʇıdʅʎ ʍıʇɥ ǝɐɔɥ oʇɥǝɹ ɐup po uoʇ ɐɟɟǝɔʇ ʇɥǝ ɔnɹɹǝuɔıǝs ʎon sdǝup ʇo ıuɔɹǝɐsǝ ʇɥǝɯ. Oʌǝɹɟʅoʍ Ԁoıuʇs ɐɹǝ qǝıuƃ sɐʌǝp ɟoɹ ʇɥǝ uǝxʇ sʇɐƃǝ oɟ ʇɥǝ ƃɐɯǝ."
     },
     {
       "type": 0,
@@ -473,6 +473,176 @@
       "value": "‬"
     }
   ],
+  "avocato.overflow.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.confirm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıɹɯ Oʌǝɹɟʅoʍ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇ ʎonɹ Ԑoʇs, Iuɟıuıʇʎ, Ònɐuʇnɯ, ᴚǝɐʅıʇʎ ɐup Sıɯnʅɐʇıou dɹoƃɹǝss, ɐup ɐʅʅ ∀ʌoɔɐʇo qoosʇs, ɟoɹ 1 Oʌǝɹɟʅoʍ Ԁoıuʇ. ⅄onɹ dnɹɔɥɐsǝs, sǝʇʇıuƃs, Oɟɟʅıuǝ ⊥ıɯǝ ɐup ɔoɯdʅǝʇǝp Sǝɔɹǝʇs ɐɹǝ ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ ɔonʅp uoʇ qǝ sɐʌǝp. ⅄onɹ ɔnɹɹǝuʇ ɹnu ɥɐs qǝǝu ʞǝdʇ. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.future": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ Ԁoıuʇs ɐɹǝ sɐʌǝp ɟoɹ ɐ ɟnʇnɹǝ ʅɐʎǝɹ. ⊥ɥǝʎ po uoʇ qoosʇ dɹopnɔʇıou ʎǝʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.legacy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝʌıons Oʌǝɹɟʅoʍ qoosʇ: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.open": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıǝʍ Oʌǝɹɟʅoʍ ɹǝsǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ Ԁoıuʇs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.reached": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ ɹǝɐɔɥǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.reset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ ɟoɹ 1 doıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.overflow.threshold": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐɔɥ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs ʇo Oʌǝɹɟʅoʍ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "avocato.region": [
     {
       "type": 0,
@@ -537,6 +707,262 @@
     {
       "type": 0,
       "value": "⊥oʇɐʅ qoosʇ ʇo Ↄɐsɥ, Sɔıǝuɔǝ, ɐup Ԑnıʅpıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.abandon": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀qɐupou ɔɥɐʅʅǝuƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.active": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑʅɐuʞ Sʅɐʇǝ ɐɔʇıʌǝ · Sʞıʅʅ ɐssıƃuɯǝuʇ pısɐqʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.blankSlate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑʅɐuʞ Sʅɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.blankSlate.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ uoɹɯɐʅ Iuɟıuıʇʎ ʍıʇɥonʇ ɐssıƃuıuƃ oɹpıuɐɹʎ sʞıʅʅs. ⅁ɐʅʌɐuızǝp qɐsǝ sʞıʅʅs sʇɐʎ ɐɔʇıʌǝ. Ԑoʇs, qnıʅpıuƃs ɐup ɹǝsǝɐɹɔɥ ɹǝɯɐıu ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.completed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝp · ⅁ɐʅʌɐuızǝɹ ǝɐɹuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.confirm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıɹɯ ɹǝsʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.failure": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɹǝsʇɐɹʇ ɔonʅp uoʇ qǝ sɐʌǝp. ⅄onɹ ɔnɹɹǝuʇ ɹnu ɥɐs qǝǝu ʞǝdʇ. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.galvanizers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅʌɐuızǝɹs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.galvanizers.future": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sdǝup 1 ⅁ɐʅʌɐuızǝɹ ıu ɐ ɹǝʌǝɐʅǝp sʞıʅʅ’s pǝʇɐıʅs ʇo ɯɐʞǝ ıʇs qɐsǝ ǝɟɟǝɔʇ dǝɹɯɐuǝuʇ ɐup ɹǝɯoʌǝ ıʇs dǝuɐʅʇıǝs ɐup ǝxɔʅnsıous. ⅁ɐʅʌɐuızɐʇıou ɔɐuuoʇ qǝ nupouǝ ɐup snɹʌıʌǝs Oʌǝɹɟʅoʍ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.replay": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝdʅɐʎ Ԑʅɐuʞ Sʅɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.restart": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs sʇɐɹʇs ɐ ɟɹǝsɥ Iuɟıuıʇʎ ɹnu ʍıʇɥonʇ ɐʍɐɹpıuƃ IԀ. Iuɟıuıʇʎ ndƃɹɐpǝs ɐup ʅɐʇǝɹ ʅɐʎǝɹs ɐɹǝ ʞǝdʇ. ∀qɐupouıuƃ ɐʅso sʇɐɹʇs ɐ ɟɹǝsɥ uoɹɯɐʅ ɹnu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ ɔoɯdʅǝʇıou: 1 ƃɐʅʌɐuızǝɹ. ⅄onɹ ɹǝʍɐɹp ɐup ɔoɯdʅǝʇıou snɹʌıʌǝ Oʌǝɹɟʅoʍ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.route": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.shortcut": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.start": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ Ԑʅɐuʞ Sʅɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.view": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıǝʍ ɔɥɐʅʅǝuƃǝ"
     },
     {
       "type": 0,
@@ -13149,6 +13575,20 @@
       "value": "‬"
     }
   ],
+  "settings.navigation.avocato": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ ∀ʌoɔɐʇo"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.navigation.bots": [
     {
       "type": 0,
@@ -16341,6 +16781,46 @@
       "value": "‬"
     }
   ],
+  "skills.augments-assigned": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssıƃuǝp ɐnƃɯǝuʇs: "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.back-to-presets": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐɔʞ ʇo dɹǝsǝʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.blocked-skills-heading": [
     {
       "type": 0,
@@ -16419,6 +16899,20 @@
     {
       "type": 0,
       "value": "Ↄouɟıɹɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.confirm-galvanize": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sdǝup 1 ⅁ɐʅʌɐuızǝɹ"
     },
     {
       "type": 0,
@@ -16573,6 +17067,20 @@
       "value": "‬"
     }
   ],
+  "skills.edit-priority": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝpıʇ dɹıoɹıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.effect": [
     {
       "type": 0,
@@ -16689,6 +17197,340 @@
     {
       "type": 0,
       "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvAlgorithms": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝɹʌǝɹs, ∀I Wɐuɐƃǝɹs ɐup ∀ssǝɯqʅʎ ⅂ıuǝs ɐɹǝ 3× sʇɹouƃǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvBurnout": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹıdʅǝ dɐuǝʅ dɹopnɔʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvCables": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "5× ɐs ɯɐuʎ ᗡɐʇɐ Ↄǝuʇǝɹs ɟɹoɯ Ԁoɔʞǝʇ ᗡıɯǝusıous."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvColdFusion": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "10× Sɔıǝuɔǝ dɹopnɔʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvEconomic": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "20× Ↄɐsɥ dɹopnɔʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvEndLine": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "5× Ԑoʇ dɹopnɔʇıou ɟɹoɯ ∀ssǝɯqʅʎ ⅂ıuǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvEnlightened": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɔıǝuʇıɟıɔ Ԁʅɐuǝʇs ɐʅso dɹopnɔǝ Ↄɐsɥ Ԑoosʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvFusion": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "5× Ԁɐuǝʅ dɹopnɔʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvPowerAddiction": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssǝɯqʅʎ ⅂ıuǝs, ∀I Wɐuɐƃǝɹs, Sǝɹʌǝɹs, ᗡɐʇɐ Ↄǝuʇǝɹs ɐup Ԁʅɐuǝʇs ɐɹǝ 200% sʇɹouƃǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvPowerIndulging": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssǝɯqʅʎ ⅂ıuǝs, ∀I Wɐuɐƃǝɹs, Sǝɹʌǝɹs, ᗡɐʇɐ Ↄǝuʇǝɹs ɐup Ԁʅɐuǝʇs ɐɹǝ 100% sʇɹouƃǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvPowerTaste": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssǝɯqʅʎ ⅂ıuǝs, ∀I Wɐuɐƃǝɹs, Sǝɹʌǝɹs, ᗡɐʇɐ Ↄǝuʇǝɹs ɐup Ԁʅɐuǝʇs ɐɹǝ 50% sʇɹouƃǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvPrecursors": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɔıǝuɔǝ ɯnʅʇıdʅıǝɹs ɐʅso ɯnʅʇıdʅʎ Ↄɐsɥ dɹopnɔʇıou, ɐʅouƃsıpǝ ǝxısʇıuƃ Ↄɐsɥ ɯnʅʇıdʅıǝɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvSacrifices": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɹǝɐʇǝ Ԁʅɐuǝʇs ǝɐɔɥ sǝɔoup ǝbnɐʅ ʇo ʅoƃ10(Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs Ǝuƃnʅɟǝp)², ʍıʇɥonʇ ɔousnɯıuƃ oɹ ɹǝbnıɹıuƃ Ԑoʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvScientific": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "20× Sɔıǝuɔǝ dɹopnɔʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvStellarDominance": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "10× Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ ʍɥıʅǝ ʇɥǝ uoɹɯɐʅ Ԑoʇ ɹǝbnıɹǝɯǝuʇ ıs ɯǝʇ, ʍıʇɥonʇ ʇɥǝ ǝxʇɹɐ sɐɔɹıɟıɔǝ ɔosʇ oɹ Ↄɐsɥ dǝuɐʅʇʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvStellarObliteration": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs ⅁ɐʅɐxıǝs ɐɹǝ 1000× qǝʇʇǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvSupernova": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs ⅁ɐʅɐxıǝs ɐɹǝ 1000× qǝʇʇǝɹ. ∀ʅʅ ɯɐunɐʅ-dnɹɔɥɐsǝ dɹopnɔʇıou qounsǝs ɹǝɯɐıu ɐɔʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvWorthy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssǝɯqʅʎ ⅂ıuǝs ɐɹǝ 5× ɐs ǝɟɟǝɔʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvanize-action": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅʌɐuızǝ · "
+    },
+    {
+      "type": 1,
+      "value": "currency"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvanize-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɹɯɐuǝuʇʅʎ ƃɐʅʌɐuızǝ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ɟoɹ 1 ⅁ɐʅʌɐuızǝɹ? ∀uʎ Sʞıʅʅ Ԁoıuʇs ıuʌǝsʇǝp ıu ʇɥıs qɐsǝ sʞıʅʅ ɐɹǝ ɹǝʇnɹuǝp. ⊥ɥıs ɔɐuuoʇ qǝ nupouǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvanized": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅʌɐuızǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvanized-help": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs qɐsǝ sʞıʅʅ ıs dǝɹɯɐuǝuʇʅʎ ɐɔʇıʌǝ ɐup ɔosʇs uo Sʞıʅʅ Ԁoıuʇs. Iʇs dǝuɐʅʇıǝs ɐup ǝxɔʅnsıous ɐɹǝ ɹǝɯoʌǝp. Noɹɯɐʅ ɔoupıʇıous ɐup ʇıɯǝɹ ɹǝsǝʇs sʇıʅʅ ɐddʅʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.galvanized-permanent": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅʌɐuızǝp · dǝɹɯɐuǝuʇʅʎ ɐɔʇıʌǝ"
     },
     {
       "type": 0,
@@ -21507,6 +22349,20 @@
       "value": "‬"
     }
   ],
+  "skills.permanent-preset-help": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʅʍɐʎs ɐɔʇıʌǝ ıu ǝʌǝɹʎ dɹǝsǝʇ. ⊥ɥǝsǝ qɐsǝ sʞıʅʅs sdǝup uo doıuʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.points": [
     {
       "type": 0,
@@ -21801,6 +22657,118 @@
     {
       "type": 0,
       "value": "Ԁɹǝʌıǝʍ ıɯdoɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.priority-empty": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "No sʞıʅʅs bnǝnǝp ɟoɹ sdǝupıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.priority-move-down": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woʌǝ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " poʍu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.priority-move-up": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woʌǝ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " nd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.priority-non-refundable": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nou-ɹǝɟnupɐqʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.priority-remove": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɯoʌǝ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ɟɹoɯ dɹǝsǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.priority-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹıoɹıʇʎ · "
+    },
+    {
+      "type": 1,
+      "value": "name"
     },
     {
       "type": 0,
@@ -22165,6 +23133,216 @@
     {
       "type": 0,
       "value": "Sɥoʍ dɐɹʇıɐʅ dɹǝsǝʇ ɐddʅıɔɐʇıou uoʇıɟıɔɐʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.spending-priority": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sdǝupıuƃ dɹıoɹıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.spending-priority-help": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡɹɐƃ ʇo ɹǝoɹpǝɹ oɹ nsǝ ʇɥǝ ɐɹɹoʍs. ᴚǝbnıɹǝp sʞıʅʅs ɐɹǝ qonƃɥʇ ɟıɹsʇ. Ԁoıuʇs ɐɹǝ sɐʌǝp nuʇıʅ ʇɥǝ uǝxʇ sʞıʅʅ ɔɐu qǝ ɐɟɟoɹpǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-assign": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssıƃu "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ɟoɹ 1 Sʞıʅʅ Ԁoıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-assign-short": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssıƃu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-cost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1 Sʞıʅʅ Ԁoıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-decay": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ pǝɔɐʎǝp dɐuǝʅ ɔonuʇs ɐs 10"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-include": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔʅnpǝ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ıu "
+    },
+    {
+      "type": 1,
+      "value": "preset"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-lifetime": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+5 sǝɔoups Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-production": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "2× Ↄɐsɥ ɐup Sɔıǝuɔǝ dɹopnɔʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-refund": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɟnup "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ɟoɹ 1 Sʞıʅʅ Ԁoıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-refund-short": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɟnup"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskills": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nƃɯǝuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskills-help": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ ɔosʇs 1 Sʞıʅʅ Ԁoıuʇ; ʎon ɔɐu ʇɐʞǝ ɐʅʅ ʇɥɹǝǝ. Ↄɥǝɔʞqoxǝs ɐpp ʇɥǝɯ ʇo ʇɥǝ dɹǝsǝʇ. ∀nƃɯǝuʇs ɹǝsǝʇ ɐup ɹǝɟnup uoɹɯɐʅʅʎ."
     },
     {
       "type": 0,

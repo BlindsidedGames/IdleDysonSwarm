@@ -1,3 +1,5 @@
+import { isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
+import { hasReachedOverflow, OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import type { DeepReadonly } from '../core/contracts'
 import { clampUnitInterval } from '../core/clampUnitInterval'
 import { deepFreezePlainGraph } from '../core/deepFreezePlainGraph'
@@ -157,6 +159,7 @@ export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
   'dream',
   'reality',
   'quantum',
+  'challenge',
   'infinity',
   'avocado',
   'time',
@@ -410,6 +413,7 @@ export interface FrontendCanonicalResources {
     readonly influence: number
     readonly strangeMatter: number
     readonly overflowMultiplier: number
+    readonly overflowPoints: bigint
   }
   readonly dream: DeepReadonly<DreamState['resources']> & {
     readonly strangeMatter: number
@@ -428,6 +432,7 @@ type TimelineProgression = Pick<
 }
 
 export interface FrontendCanonicalProgression {
+  readonly challenges?: Readonly<import('../game-state/types').InfinityChallengeState>
   readonly meta: DeepReadonly<CanonicalGameStateV1['meta']>
   readonly dyson: DeepReadonly<
     Omit<
@@ -957,6 +962,7 @@ export interface FrontendGameplayPreviews {
     readonly breakTarget: BreakInfinityPresentationControl
   }
   readonly avocado: {
+    readonly overflow: { readonly eligible: boolean; readonly threshold: number }
     readonly feeds: readonly FrontendAvocadoFeedPreview[]
     readonly meditation: {
       readonly eligible: boolean
@@ -1201,6 +1207,7 @@ export function selectGameplayVisibility(
     state.infinity.secretsOfTheUniverse >=
       QUANTUM_CONSTANTS.maximumSecrets
   const skillPointEarned =
+    infinityChallenges(state).hasEarnedGalvanizer ||
     state.skills.points > 0n ||
     state.infinity.permanentSkillPoints > 0n ||
     state.dyson.goalStage > 0n ||
@@ -1210,6 +1217,7 @@ export function selectGameplayVisibility(
     state.quantum.divisionsPurchased,
   )
   const infinityUnlocked =
+    infinityChallenges(state).unlocked ||
     state.meta.firstInfinityComplete ||
     state.infinity.points > 0n ||
     state.quantum.pointsEarned > 0n ||
@@ -1251,7 +1259,7 @@ export function selectGameplayVisibility(
     state.dream.resources.gatherers > 0n
   const simulationsRequiredInfluence = 128
   const simulationsUnlocked =
-    state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence ||
+    (realityUnlocked && state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence) ||
     hasExistingSimulationProgress
   const realityVisited = realityInfluenceGenerationStarted(state)
   const simulationsPendingWorkers = Number(
@@ -1317,7 +1325,7 @@ export function selectGameplayVisibility(
       unlockProgress: realityUnlockProgress,
     },
     simulations: {
-      routeVisible: realityVisited || simulationsUnlocked,
+      routeVisible: (realityUnlocked && realityVisited) || simulationsUnlocked,
       routeUnlocked: simulationsUnlocked,
       unlockProgress: {
         currentInfluence: simulationsCurrentInfluence,
@@ -1453,6 +1461,7 @@ function selectResources(
       influence: state.avocado.influence,
       strangeMatter: state.avocado.strangeMatter,
       overflowMultiplier: state.avocado.overflowMultiplier,
+      overflowPoints: state.avocado.overflowPoints ?? 0n,
     }),
     dream: reuseShallowDomain(previous?.dream, {
       ...state.dream.resources,
@@ -1472,6 +1481,7 @@ function selectProgression(
   previous?: DeepReadonly<FrontendCanonicalProgression>,
 ): FrontendCanonicalProgression {
   return {
+    challenges: reuseShallowDomain(previous?.challenges, infinityChallenges(state)),
     meta: reuseShallowDomain(previous?.meta, state.meta),
     dyson: reuseShallowDomain(previous?.dyson, {
       facilities: state.dyson.facilities,
@@ -1593,7 +1603,7 @@ function selectDerivedFacts(
     bots: state.dyson.bots,
     totalInfinityPoints: state.infinity.points,
     divisionsPurchased: state.quantum.divisionsPurchased,
-    breakTheLoop: state.quantum.unlocks.breakTheLoop,
+    breakTheLoop: isBreakInfinityEnabled(state),
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: context.entitlements.permanentDoubleIp,
     quantumDoubleIp: state.quantum.unlocks.doubleInfinityPoints,
@@ -2547,6 +2557,7 @@ function selectAvocadoPreviews(
     state.secretProgress.step,
   )
   return {
+    overflow: { eligible: hasReachedOverflow(state), threshold: OVERFLOW_BOT_CAP },
     feeds: AVOCADO_FEED_SOURCES.map((source) => {
       const result = feedAllToAvocado(state, source)
       return {

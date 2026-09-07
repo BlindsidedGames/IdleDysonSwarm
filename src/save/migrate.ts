@@ -1,3 +1,6 @@
+import { isSubskill } from '../simulation/skillSubskills'
+import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
+import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import {
   bitsetToSkillIds,
@@ -21,7 +24,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 14
+export const CURRENT_SAVE_SCHEMA = 17
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -40,7 +43,7 @@ export class UnsupportedFutureSaveSchemaError extends Error {
 export interface SaveMigrationResult {
   readonly save: SaveRecord
   readonly sourceSchema: number
-  readonly targetSchema: 14
+  readonly targetSchema: typeof CURRENT_SAVE_SCHEMA
   readonly appliedSteps: readonly string[]
   readonly numericRepair: NumericRepairResult
   readonly validation: SaveValidationResult
@@ -77,6 +80,25 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   appliedSteps.push('stable-research-ids')
   migrateAvocado(save)
   appliedSteps.push('avocado-container')
+  const challenges = ensureRecord(save, 'infinityChallengeData')
+  for (const [key, value] of Object.entries(EMPTY_INFINITY_CHALLENGES)) {
+    if (challenges[key] === undefined) challenges[key] = value
+  }
+  if (save.firstInfinityDone === true || challenges.blankSlateCompleted === true ||
+      (typeof challenges.galvanizers === 'bigint' && challenges.galvanizers > 0n)) challenges.unlocked = true
+  if (typeof challenges.galvanizers === 'bigint' && challenges.galvanizers > 0n) challenges.hasEarnedGalvanizer = true
+  if (sourceSchema < 17) appliedSteps.push('permanent-galvanized-skills')
+  if (sourceSchema < 16) appliedSteps.push('infinity-challenges-and-galvanizers')
+  const avocado = ensureRecord(save, 'avocadoData')
+  if (avocado.overflowPoints === undefined) avocado.overflowPoints = 0n
+  if (sourceSchema < 15) {
+    // Old checkpoint flags describe an automatic reward, not consent to reset.
+    const bots = ensureRecord(ensureRecord(save, 'dysonVerseSaveData'), 'dysonVerseInfinityData').bots
+    save.botCapTransitionPending = typeof bots === 'number' && Number.isFinite(bots) && bots >= OVERFLOW_BOT_CAP
+    save.botCapRewardsGranted = false
+    save.infinityInProgress = false
+    appliedSteps.push('voluntary-overflow-boundary')
+  }
   if (sourceSchema < 13) {
     migrateContinuousRealityResources(save)
     appliedSteps.push('continuous-influence-and-strange-matter')
@@ -356,7 +378,7 @@ function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {
       ids = bitsetToSkillIds(decodeBitset(dyson[bitsKey], dyson[base64Key]))
       rebuiltFromBits = ids.length > 0
     }
-    ids = [...new Set(ids.filter((id) => id in skillIdsToLegacyKeysMap))]
+    ids = [...new Set(ids.filter((id) => (id in skillIdsToLegacyKeysMap || isSubskill(id))))]
     if (
       preset > 0 &&
       (runVersionedReorder || (!idsWerePresent && rebuiltFromBits))

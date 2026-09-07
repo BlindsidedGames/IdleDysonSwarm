@@ -384,6 +384,18 @@ function validateDefinitions(
   return issues
 }
 
+/** Clears Reality/Simulation progression for an Overflow reset. */
+export function resetCanonicalDreamProgress(source: Readonly<DreamState>): DreamState {
+  return createResetDream({
+    ...source,
+    upgrades: Object.fromEntries(
+      Object.keys(source.upgrades).map((id) => [id, false]),
+    ) as DreamState['upgrades'],
+    huntersPerPurchase: 1n,
+    gatherersPerPurchase: 1n,
+  }, 0n, 0)
+}
+
 function createResetDream(
   source: Readonly<DreamState>,
   resetCount: bigint,

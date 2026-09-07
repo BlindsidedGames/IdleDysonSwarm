@@ -4,6 +4,7 @@ export interface InlineImageSymbolProps {
   readonly className?: string
   readonly symbol?: string
   readonly tint?: boolean
+  readonly maskMode?: 'alpha' | 'luminance'
 }
 
 /**
@@ -20,6 +21,7 @@ export function InlineImageSymbol({
   className,
   symbol,
   tint = false,
+  maskMode,
 }: InlineImageSymbolProps) {
   const classes = [
     'ui-inline-image-symbol',
@@ -39,6 +41,7 @@ export function InlineImageSymbol({
         data-symbol={symbol}
         style={{
           maskImage: `url("${src}")`,
+          maskMode,
           WebkitMaskImage: `url("${src}")`,
         }}
       />

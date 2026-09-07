@@ -1,3 +1,4 @@
+import { avocatoMessages } from '../quantum/messages'
 import {
   useEffect,
   useId,
@@ -85,6 +86,7 @@ export interface InfinityCommandAvailability {
 }
 
 export interface InfinitySurfaceProps {
+  readonly onViewOverflow?: () => void
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['infinity']
   readonly progression: Pick<FrontendCanonicalProgression, 'infinity'>
@@ -113,6 +115,7 @@ export function InfinitySurface({
   previews,
   commandAvailability,
   dispatchPlayer,
+  onViewOverflow,
 }: InfinitySurfaceProps) {
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
@@ -221,7 +224,14 @@ export function InfinitySurface({
             {intl.formatMessage(messages.realityWarning)}
           </p>
         ) : null}
-        <ProgressControlsPanel
+        {progression.infinity.botCapTransitionPending ? (
+          <div className="infinity-surface__overflow">
+            <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
+            {onViewOverflow && <Button onClick={onViewOverflow}>
+              {intl.formatMessage(avocatoMessages.overflowOpen)}
+            </Button>}
+          </div>
+        ) : <ProgressControlsPanel
           ariaLabel={intl.formatMessage(messages.ordinaryProgress)}
           className="infinity-surface__control-panel"
           expanded={settingsOpen}
@@ -395,7 +405,7 @@ export function InfinitySurface({
               />
             </>
           ) : null}
-        </ProgressControlsPanel>
+        </ProgressControlsPanel>}
       </div>
     </section>
   )

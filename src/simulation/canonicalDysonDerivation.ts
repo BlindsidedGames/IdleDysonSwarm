@@ -1,3 +1,5 @@
+import { isGalvanized } from './galvanization'
+import { adjustGalvanizedEffects, galvanizedSkillSet } from './galvanizedSkillEffects'
 import { deriveEffectivePurchaseCounts } from './effectivePurchaseCounts'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -340,7 +342,7 @@ export function deriveManualPurchaseProductionLayer(
       : owned('superSwarm')
         ? 0.02
         : 0.01
-  const suppressed = owned('supernova')
+  const suppressed = owned('supernova') && !isGalvanized(state, 'supernova')
   const avocadosMultiplier =
     !suppressed && owned('avocados') && rawManualCount >= 69 ? 2 : 1
   const milestone50Multiplier =
@@ -568,6 +570,7 @@ export function deriveBasicDysonState(
           ownedSkillSet,
           evaluationSnapshot.panelsPerSecond,
           evaluationSnapshot.panelLifetimeSeconds,
+          galvanizedSkillSet(state),
         )
       : 0
   const scientificPlanetsProduction = calculateStat(
@@ -1508,7 +1511,7 @@ function materializeCanonicalSkillEffects(
     )
     const effectGroups = materializeSkillEffectsForContexts(contexts)
     const entries = MATERIALIZED_SKILL_STATS.map(
-      (statId, index) => [statId, effectGroups[index] ?? []] as const,
+      (statId, index) => [statId, adjustGalvanizedEffects(state, statId, effectGroups[index] ?? [])] as const,
     )
     return {
       ok: true,

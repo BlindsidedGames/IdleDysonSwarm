@@ -124,6 +124,7 @@ const COMMAND_EXAMPLES = [
     researchId: 'research.science_boost',
     enabled: true,
   },
+  { kind: 'skill.galvanize', skillId: 'startHereTree' },
   { kind: 'skill.purchase', skillId: 'startHereTree' },
   { kind: 'skill.refund', skillId: 'startHereTree' },
   {

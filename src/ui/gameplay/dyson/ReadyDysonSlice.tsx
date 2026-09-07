@@ -1,3 +1,6 @@
+import { InfinityChallenges } from '../infinity/InfinityChallenges'
+import { challengeMessages } from '../infinity/challengeMessages'
+import { avocatoMessages } from '../quantum/messages'
 import {
   lazy,
   Suspense,
@@ -480,6 +483,7 @@ export type ReadyGameRoute =
   | 'research'
   | 'skills'
   | 'infinity'
+  | 'challenges'
   | 'reality'
   | 'simulations'
   | 'quantum'
@@ -499,6 +503,7 @@ const READY_GAME_ROUTES = new Set<ReadyGameRoute>([
   'research',
   'skills',
   'infinity',
+  'challenges',
   'reality',
   'simulations',
   'quantum',
@@ -527,6 +532,8 @@ function gameplayPreviewDemandForRoute(
   route: ReadyGameRoute,
 ): FrontendGameplayPreviewDemand {
   switch (route) {
+    case 'challenges':
+      return 'infinity'
     case 'bots':
     case 'research':
     case 'skills':
@@ -683,6 +690,7 @@ export function ReadyDysonSlice({
       releasePlatformServices.storeAvailable === true)
   const gameplay = snapshot.gameplay
   const requestedRouteUnavailable =
+    (requestedRoute === 'challenges' && !gameplay.progression.challenges?.unlocked) ||
     (requestedRoute === 'research' &&
       !(gameplay.visibility.research?.routeUnlocked ?? true)) ||
     (requestedRoute === 'skills' &&
@@ -810,11 +818,13 @@ export function ReadyDysonSlice({
     research: gameplay.visibility.research?.routeUnlocked ?? true,
     skills: gameplay.visibility.skills.routeUnlocked,
     infinity: gameplay.visibility.infinity.routeUnlocked,
+    challenges: gameplay.progression.challenges?.unlocked ?? false,
     reality: gameplay.visibility.reality.routeUnlocked,
     simulations: gameplay.visibility.simulations.routeUnlocked,
     quantum: gameplay.visibility.quantum.routeUnlocked,
   }), [
     gameplay.visibility.infinity.routeUnlocked,
+    gameplay.progression.challenges?.unlocked,
     gameplay.visibility.reality.routeUnlocked,
     gameplay.visibility.research?.routeUnlocked,
     gameplay.visibility.simulations.routeUnlocked,
@@ -898,11 +908,14 @@ export function ReadyDysonSlice({
     gameplay.progression.quantum.unlocks.botMultitasking
   const skillsActive = route === 'skills'
   const infinityActive = route === 'infinity'
+  const challengesActive = route === 'challenges'
   const realityActive = route === 'reality'
   const simulationsActive = route === 'simulations'
   const quantumRouteActive = route === 'quantum'
   const avocatoActive = route === 'avocato'
-  const quantumNavigationActive = quantumRouteActive || avocatoActive
+  const overflowEntryVisible = gameplay.progression.infinity.botCapTransitionPending ||
+    gameplay.resources.avocado.overflowPoints > 0n
+  const quantumNavigationActive = quantumRouteActive || (avocatoActive && !overflowEntryVisible)
   const storyActive = route === 'story'
   const wikiActive = route === 'wiki'
   const offlineTimeActive = route === 'offline-time'
@@ -911,6 +924,7 @@ export function ReadyDysonSlice({
   const debugActive = route === 'debug'
   const showSharedResourceHeader = !(
     skillsActive ||
+    challengesActive ||
     infinityActive ||
     realityActive ||
     simulationsActive ||
@@ -944,6 +958,8 @@ export function ReadyDysonSlice({
     'research',
     ...(gameplay.visibility.skills.routeVisible ? ['skills' as const] : []),
     ...(gameplay.visibility.infinity.routeVisible ? ['infinity' as const] : []),
+    ...(gameplay.progression.challenges?.unlocked ? ['challenges' as const] : []),
+    ...(overflowEntryVisible ? ['avocato' as const] : []),
     ...(gameplay.visibility.quantum.routeVisible ? ['quantum' as const] : []),
     ...(gameplay.visibility.reality.routeVisible ? ['reality' as const] : []),
     ...(gameplay.visibility.simulations.routeVisible
@@ -967,7 +983,9 @@ export function ReadyDysonSlice({
       required: display(progress.requiredSecrets),
     }),
   })
-  const routeHeading = debugActive
+  const routeHeading = challengesActive
+    ? challengeMessages.route
+    : debugActive
     ? messages.debugRoute
     : avocatoActive
       ? messages.avocatoRoute
@@ -997,6 +1015,7 @@ export function ReadyDysonSlice({
               ? messages.simulationsRoute
             : messages.route
   const infinityRouteLabel =
+    gameplay.progression.infinity.botCapTransitionPending ||
     gameplay.derived.infinity.navigationReward === null
       ? intl.formatMessage(messages.infinityRoute)
       : intl.formatMessage(messages.infinityRouteGain, {
@@ -1019,7 +1038,7 @@ export function ReadyDysonSlice({
         ? undefined
         : intl.formatMessage(messages.releaseFooter, releaseFooter)}
       heading={intl.formatMessage(routeHeading)}
-      routeTheme={debugActive ? 'statistics' : storeActive ? 'bots' : route}
+      routeTheme={challengesActive ? 'infinity' : debugActive ? 'statistics' : storeActive ? 'bots' : route}
       routeContentEdgeToEdge={storeActive}
       routeThemeVariant={
         gameplay.derived.simulations?.currentEra ?? 'foundational'
@@ -1112,6 +1131,16 @@ export function ReadyDysonSlice({
                     }),
               }]
             : []),
+          ...(gameplay.progression.challenges?.unlocked ? [{
+            id: 'challenges',
+            label: intl.formatMessage(challengeMessages.route),
+            iconSrc: navigationAssets.challenges,
+            iconMaskMode: 'luminance' as const,
+            bottom: bottomVisible('challenges'),
+            newlyUnlocked: newlyUnlockedRoutes.has('challenges'),
+            ...(challengesActive ? { current: true as const }
+              : { onActivate: () => navigateTo('challenges') }),
+          }] : []),
           ...(gameplay.visibility.reality.routeVisible
             ? [
                 {
@@ -1222,6 +1251,14 @@ export function ReadyDysonSlice({
                 },
               ]
             : []),
+          ...(overflowEntryVisible ? [{
+            id: 'avocato', label: intl.formatMessage(messages.avocatoRoute),
+            iconSrc: navigationAssets.avocato, iconMaskMode: 'luminance' as const, bottom: bottomVisible('avocato'),
+            badge: gameplay.progression.infinity.botCapTransitionPending
+              ? '!' : displayWhole(gameplay.resources.avocado.overflowPoints),
+            ...(avocatoActive ? { current: true as const }
+              : { onActivate: () => onRouteChange('avocato') }),
+          }] : []),
           ...(storeVisible
             ? [
                 {
@@ -1506,6 +1543,9 @@ export function ReadyDysonSlice({
                       }
                     >
                       <SkillsSurface
+                        galvanizers={gameplay.progression.challenges?.galvanizers ?? 0n}
+                        hasEarnedGalvanizer={gameplay.progression.challenges?.hasEarnedGalvanizer ?? false}
+                        skillsDisabled={gameplay.progression.challenges?.active === 'blank-slate'}
                         locale={locale}
                         points={gameplay.resources.skills.points}
                         fragments={
@@ -1572,6 +1612,17 @@ export function ReadyDysonSlice({
                     </Suspense>
                   ),
                 }
+              : challengesActive
+                ? {
+                    ariaLabel: intl.formatMessage(challengeMessages.route),
+                    content: <div className="challenges-surface">
+                      {gameplay.progression.challenges && <InfinityChallenges
+                        progress={gameplay.progression.challenges}
+                        overflowReached={gameplay.progression.infinity.botCapTransitionPending}
+                        dispatchPlayer={dispatchPlayer}
+                      />}
+                    </div>,
+                  }
               : infinityActive
                 ? {
                     ariaLabel: intl.formatMessage(
@@ -1589,6 +1640,7 @@ export function ReadyDysonSlice({
                         }
                       >
                         <InfinitySurface
+                          onViewOverflow={() => navigateTo('avocato')}
                           locale={locale}
                           resources={gameplay.resources.infinity}
                           progression={{
@@ -1611,9 +1663,10 @@ export function ReadyDysonSlice({
                                 'infinity.set-automatic-reset'
                               ].routeAvailable,
                             requestReset:
-                              gameplay.commands.byKind[
+                              !gameplay.progression.infinity.botCapTransitionPending &&
+                              (gameplay.commands.byKind[
                                 'infinity.request-reset'
-                              ]?.routeAvailable ?? false,
+                              ]?.routeAvailable ?? false),
                           }}
                           dispatchPlayer={dispatchPlayer}
                         />
@@ -1833,6 +1886,7 @@ export function ReadyDysonSlice({
                                   derived={gameplay.derived.avocado}
                                   previews={gameplay.previews.avocado}
                                   commandAvailability={{
+                                    overflowReset: gameplay.commands.byKind['avocado.request-overflow-reset'].routeAvailable,
                                     feed:
                                       gameplay.commands.byKind[
                                         'avocado.feed'
@@ -2041,6 +2095,23 @@ export function ReadyDysonSlice({
                 ),
               }
             : undefined
+      }
+      persistentNotice={
+        gameplay.progression.infinity.botCapTransitionPending && !avocatoActive && !infinityActive ? (
+          <div className="dyson-overflow-notice" role="status">
+            <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
+            <button type="button" onClick={() => onRouteChange('avocato')}>
+              {intl.formatMessage(avocatoMessages.overflowOpen)}
+            </button>
+          </div>
+        ) : gameplay.progression.challenges?.active === 'blank-slate' && !challengesActive ? (
+          <div className="dyson-overflow-notice" role="status">
+            <strong>{intl.formatMessage(challengeMessages.active)}</strong>
+            <button type="button" onClick={() => navigateTo('challenges')}>
+              {intl.formatMessage(challengeMessages.view)}
+            </button>
+          </div>
+        ) : undefined
       }
       notifications={
         <GameplayNotificationHost

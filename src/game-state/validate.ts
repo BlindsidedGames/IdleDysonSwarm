@@ -1,3 +1,6 @@
+import { isSubskill, isSubskillUnlocked } from '../simulation/skillSubskills'
+import { isGalvanized, validateGalvanizedSkills } from '../simulation/galvanization'
+import { validateInfinityChallenges } from '../simulation/infinityChallenges'
 import {
   isNonNegativeInteger,
   isSafeNonNegativeInteger,
@@ -19,6 +22,20 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  const challengeError = validateInfinityChallenges(state.challenges)
+  if (challengeError) errors.push(challengeError)
+  errors.push(...validateGalvanizedSkills(state))
+  for (const [id, skill] of Object.entries(state.skills.byId)) {
+    if (skill.owned && isSubskill(id) && !isSubskillUnlocked(state, id)) errors.push(`Subskill '${id}' requires its galvanized base.`)
+  }
+  if (state.challenges?.active === 'blank-slate' && Object.entries(state.skills.byId).some(([id, skill]) => skill.owned && !isGalvanized(state, id))) {
+    errors.push('Blank Slate cannot contain ordinary assigned skills.')
+  }
+  const overflowPoints = state.avocado.overflowPoints
+  if (overflowPoints !== undefined &&
+    (typeof overflowPoints !== 'bigint' || overflowPoints < 0n || overflowPoints > 9_223_372_036_854_775_807n)) {
+    errors.push('Overflow Points must be a non-negative Int64 balance.')
+  }
   validateNumericGraph(state, '$', errors, new Set())
   if (state.modelVersion !== 1) {
     errors.push(`Unsupported canonical model version ${state.modelVersion}.`)

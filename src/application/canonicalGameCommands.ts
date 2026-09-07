@@ -1,3 +1,4 @@
+import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { formatUnknownError as errorDetail } from '../core/unknownError'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
@@ -55,6 +56,7 @@ import {
 import {
   applyCanonicalSkillPresetLayout,
   purchaseCanonicalSkill,
+  galvanizeCanonicalSkill,
   refundCanonicalSkill,
   resetCanonicalSkills,
   runCanonicalSkillAutoAssignment,
@@ -167,7 +169,7 @@ export type CanonicalGameCommand =
       readonly enabled: boolean
     }
   | {
-      readonly kind: 'skill.purchase'
+      readonly kind: 'skill.purchase' | 'skill.galvanize'
       readonly skillId: string
     }
   | {
@@ -578,6 +580,7 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'canonical unlock-aware research automation setting',
   },
+  'skill.galvanize': { supported: true, authority: 'galvanizeCanonicalSkill', requires: ['selected-skill-preset-carrier', 'runtime-evaluation-port'] },
   'skill.purchase': {
     supported: true,
     authority: 'purchaseCanonicalSkill',
@@ -825,6 +828,10 @@ export function routeCanonicalGameCommand(
 ): CanonicalGameCommandResult {
   const carriers =
     options.runtimeCarriers ?? EMPTY_RUNTIME_CARRIERS
+
+  if (isBlankSlateActive(state) && command.kind.startsWith('skill.')) {
+    return rejectDomain(state, carriers, 'skill:challenge-active', 'skills', 'Skills are disabled during Blank Slate.')
+  }
 
   switch (command.kind) {
     case 'navigation.set-route-discovery': {
@@ -1255,6 +1262,7 @@ export function routeCanonicalGameCommand(
       )
     }
 
+    case 'skill.galvanize':
     case 'skill.purchase':
     case 'skill.refund': {
       const selected = carriers.selectedSkillPresetSlot
@@ -1262,7 +1270,9 @@ export function routeCanonicalGameCommand(
         return selectedPresetCarrierUnavailable(state, carriers)
       }
       const result =
-        command.kind === 'skill.purchase'
+        command.kind === 'skill.galvanize'
+          ? galvanizeCanonicalSkill(state, command.skillId)
+          : command.kind === 'skill.purchase'
           ? purchaseCanonicalSkill(state, command.skillId)
           : refundCanonicalSkill(state, command.skillId)
       if (!result.accepted) {
@@ -1359,7 +1369,7 @@ export function routeCanonicalGameCommand(
       if (selected === null) {
         return selectedPresetCarrierUnavailable(state, carriers)
       }
-      const skillIds = normalizeSkillAssignment(command.skillIds)
+      const skillIds = normalizeSkillAssignment(command.skillIds, undefined, state)
       const preset = state.skills.presets[selected - 1]
       const changed =
         !sameOrderedStrings(
@@ -1393,7 +1403,7 @@ export function routeCanonicalGameCommand(
     }
 
     case 'skill.set-preset-assignment': {
-      const skillIds = normalizeSkillAssignment(command.skillIds)
+      const skillIds = normalizeSkillAssignment(command.skillIds, undefined, state)
       const preset = state.skills.presets[command.slot - 1]
       const changed = !sameOrderedStrings(preset.skillIds, skillIds)
       return finalizeAccepted(

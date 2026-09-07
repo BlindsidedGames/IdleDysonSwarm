@@ -13,7 +13,7 @@ import {
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../simulation/dreamEducationUpgrades'
 import { DESKTOP_LIFECYCLE_POLICY } from '../simulation/lifecycleAwayTime'
 import { REALITY_UPGRADE_DEFINITIONS } from '../simulation/realityUpgrades'
-import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
+import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import {
   createCanonicalGameApplication,
   type CanonicalGameApplicationFacade,
@@ -32,262 +32,167 @@ const prepared = prepareIdb1Save(readFileSync(
   'utf8',
 )).prepared
 
-describe('bot-cap checkpoint coordination', () => {
-  test('settles exactly once with automatic Infinity disabled', async () => {
+describe('voluntary Overflow coordination', () => {
+  test.each([
+    { automatic: false, continuous: false },
+    { automatic: true, continuous: false },
+    { automatic: false, continuous: true },
+    { automatic: true, continuous: true },
+  ])('holds at Overflow without rewards or a reset (auto=$automatic, continuous=$continuous)', async ({ automatic, continuous }) => {
     const repository = new MemoryRepository()
     const application = createApplication(repository)
     await application.start()
-    await installBotCap(application, false)
-    const coordinator = createCoordinator(application)
+    await installBotCap(application, automatic)
     const before = readyState(application)
-    const commitsBefore = repository.commits.length
-    const pointsBefore = before.gameState.infinity.points
-    const ordinaryBefore =
-      before.gameState.statistics.lifetime.ordinaryInfinityCount
-    const botCapBefore =
-      before.gameState.statistics.lifetime.botCapInfinityPoints
-
-    const result = await coordinator.advanceActive(100)
-
+    const coordinator = createCoordinator(application)
+    const result = await (continuous ? coordinator.advanceActiveContinuous(100) : coordinator.advanceActive(100))
     expect(result).toMatchObject({
-      requestedMilliseconds: 100,
-      consumedMilliseconds: 100,
-      remainingMilliseconds: 0,
-      checkpoints: ['pending', 'rewards'],
-      transition: { accepted: true },
+      consumedMilliseconds: 100, remainingMilliseconds: 0,
+      checkpoints: ['pending'], transition: { accepted: true },
     })
-    expect(repository.commits).toHaveLength(commitsBefore + 2)
-    const settled = readyState(application)
-    expect(settled.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
-      automaticResetEnabled: false,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
+    const held = readyState(application).gameState
+    expect(held.infinity).toMatchObject({
+      points: before.gameState.infinity.points,
+      automaticResetEnabled: automatic,
+      botCapTransitionPending: true, botCapRewardsGranted: false, inProgress: false,
     })
-    expect(settled.gameState.dyson.bots).toBe(
-      ordinaryInfinityBotThreshold(
-        settled.gameState.quantum.divisionsPurchased,
-      ),
-    )
-    expect(
-      settled.gameState.statistics.lifetime.ordinaryInfinityCount,
-    ).toBe(ordinaryBefore)
-    expect(
-      settled.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapBefore + 1_000n)
-
-    const repeated = await coordinator.advanceActive(100)
-    expect(repeated.checkpoints).toEqual([])
-    expect(
-      readyState(application).gameState.statistics.lifetime
-        .botCapInfinityPoints,
-    ).toBe(botCapBefore + 1_000n)
-  })
-
-  test('settles during suppressed active processing and defers the enabled automatic action across reload', async () => {
-    const repository = new MemoryRepository()
-    const application = createApplication(repository)
-    await application.start()
-    await installBotCap(application, true)
-    const coordinator = createCoordinator(application)
-    const before = readyState(application)
-    const commitsBefore = repository.commits.length
-    const pointsBefore = before.gameState.infinity.points
-    const ordinaryBefore =
-      before.gameState.statistics.lifetime.ordinaryInfinityCount
-    const botCapBefore =
-      before.gameState.statistics.lifetime.botCapInfinityPoints
-
-    const suppressed = await coordinator.advanceActiveContinuous(50)
-
-    expect(suppressed).toMatchObject({
-      requestedMilliseconds: 50,
-      consumedMilliseconds: 50,
-      remainingMilliseconds: 0,
-      checkpoints: ['pending', 'rewards'],
-      transition: { accepted: true },
-    })
-    expect(repository.commits).toHaveLength(commitsBefore + 2)
-    const settled = readyState(application)
-    expect(settled.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
-      automaticResetEnabled: true,
-      botCapRewardsGranted: true,
-    })
-    expect(settled.gameState.dyson.bots).toBe(
-      ordinaryInfinityBotThreshold(
-        settled.gameState.quantum.divisionsPurchased,
-      ),
-    )
-    expect(
-      settled.gameState.statistics.lifetime.ordinaryInfinityCount,
-    ).toBe(ordinaryBefore)
+    expect(held.dyson.bots).toBe(OVERFLOW_BOT_CAP)
+    expect(held.avocado.overflowPoints).toBe(before.gameState.avocado.overflowPoints)
+    expect(held.avocado.overflowMultiplier).toBe(before.gameState.avocado.overflowMultiplier)
+    expect(held.statistics.lifetime.botCapInfinityPoints).toBe(before.gameState.statistics.lifetime.botCapInfinityPoints)
+    expect(held.statistics.lifetime.ordinaryInfinityCount).toBe(before.gameState.statistics.lifetime.ordinaryInfinityCount)
+    expect((await coordinator.advanceActive(100)).checkpoints).toEqual([])
 
     const reopened = createApplication(repository)
     await reopened.start()
-    const durable = readyState(reopened)
-    expect(durable.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
-      automaticResetEnabled: true,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
-    })
-    expect(durable.gameState.dyson.bots).toBe(Number.MAX_VALUE)
-    expect(
-      durable.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapBefore + 1_000n)
-
     const resumed = await createCoordinator(reopened).advanceActive(100)
     expect(resumed.checkpoints).toEqual([])
-    const afterResume = readyState(reopened)
-    expect(afterResume.gameState.dyson.bots).toBeLessThan(Number.MAX_VALUE)
-    expect(afterResume.gameState.infinity.botCapRewardsGranted).toBe(false)
-    expect(
-      afterResume.gameState.statistics.lifetime.ordinaryInfinityCount,
-    ).toBe(ordinaryBefore + 1n)
-    expect(
-      afterResume.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapBefore + 1_000n)
+    expect(readyState(reopened).gameState.infinity.botCapTransitionPending).toBe(true)
+    expect(readyState(reopened).gameState.avocado.overflowPoints).toBe(0n)
+    for (const kind of ['infinity.request-reset', 'quantum.request-leap'] as const) {
+      const rejected = await reopened.dispatchPlayer({ ...revisionEnvelope(reopened), command: { kind } })
+      expect(rejected).toMatchObject({ kind: 'transition', transition: { accepted: false } })
+    }
   })
 
-  test.each([
-    {
-      name: 'pending checkpoint',
-      failureAttempt: 2,
-      committedCheckpoints: [] as const,
-      retryCheckpoints: ['pending', 'rewards'] as const,
-    },
-    {
-      name: 'reward checkpoint',
-      failureAttempt: 3,
-      committedCheckpoints: ['pending'] as const,
-      retryCheckpoints: ['rewards'] as const,
-    },
-  ])('retries a failed $name without duplicating its reward', async ({
-    failureAttempt,
-    committedCheckpoints,
-    retryCheckpoints,
-  }) => {
-    const repository = new MemoryRepository(failureAttempt)
+  test('retries an eligibility checkpoint failure without granting anything', async () => {
+    const repository = new MemoryRepository(2)
     const application = createApplication(repository)
     await application.start()
     await installBotCap(application, false)
+    const before = readyState(application).gameState
     const coordinator = createCoordinator(application)
-    const before = readyState(application)
-    const pointsBefore = before.gameState.infinity.points
-    const overflowBefore = before.gameState.avocado.overflowMultiplier
-    const botCapPointsBefore =
-      before.gameState.statistics.lifetime.botCapInfinityPoints
-    const botCapOverflowBefore =
-      before.gameState.statistics.lifetime.botCapOverflowRewards
-
     const failed = await coordinator.advanceActive(100)
-
-    expect(failed.transition).toMatchObject({
-      accepted: false,
-      code: 'APP-COMMIT-FIRST-FAILED',
-    })
-    expect(failed.checkpoints).toEqual(committedCheckpoints)
-    const afterFailure = readyState(application)
-    expect(afterFailure.gameState.infinity.points).toBe(pointsBefore)
-    expect(afterFailure.gameState.avocado.overflowMultiplier).toBe(
-      overflowBefore,
-    )
-    expect(
-      afterFailure.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapPointsBefore)
-    expect(
-      afterFailure.gameState.statistics.lifetime.botCapOverflowRewards,
-    ).toBe(botCapOverflowBefore)
-
+    expect(failed.transition).toMatchObject({ accepted: false, code: 'APP-COMMIT-FIRST-FAILED' })
+    expect(failed.checkpoints).toEqual([])
+    expect(readyState(application).gameState.avocado).toEqual(before.avocado)
     repository.failureAttempt = undefined
     const retried = await coordinator.advanceActive(100)
-
-    expect(retried.transition.accepted).toBe(true)
-    expect(retried.checkpoints).toEqual(retryCheckpoints)
-    const afterRetry = readyState(application)
-    expect(afterRetry.gameState.infinity.points).toBe(
-      pointsBefore + 1_000n,
-    )
-    expect(afterRetry.gameState.avocado.overflowMultiplier).toBe(
-      overflowBefore + 1,
-    )
-    expect(
-      afterRetry.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapPointsBefore + 1_000n)
-    expect(
-      afterRetry.gameState.statistics.lifetime.botCapOverflowRewards,
-    ).toBe(botCapOverflowBefore + 1n)
-
-    const repeated = await coordinator.advanceActive(100)
-    expect(repeated.checkpoints).toEqual([])
-    expect(readyState(application).gameState.infinity.points).toBe(
-      pointsBefore + 1_000n,
-    )
-    expect(
-      readyState(application).gameState.avocado.overflowMultiplier,
-    ).toBe(overflowBefore + 1)
-    expect(
-      readyState(application).gameState.statistics.lifetime
-        .botCapInfinityPoints,
-    ).toBe(botCapPointsBefore + 1_000n)
-    expect(
-      readyState(application).gameState.statistics.lifetime
-        .botCapOverflowRewards,
-    ).toBe(botCapOverflowBefore + 1n)
+    expect(retried.checkpoints).toEqual(['pending'])
+    expect(readyState(application).gameState.infinity.points).toBe(before.infinity.points)
+    expect(readyState(application).gameState.avocado.overflowPoints).toBe(0n)
   })
 
-  test('preserves the reward latch across a reduced-state checkpoint, reload, and return to cap', async () => {
+  test('publishes a single full reset only after its save succeeds, and reopens the point balance', async () => {
     const repository = new MemoryRepository()
     const application = createApplication(repository)
     await application.start()
     await installBotCap(application, false)
-    const coordinator = createCoordinator(application)
-    await coordinator.advanceActive(100)
-    const rewarded = readyState(application)
-    const points = rewarded.gameState.infinity.points
-    const overflow = rewarded.gameState.avocado.overflowMultiplier
-    expect(rewarded.gameState.dyson.bots).toBeLessThan(Number.MAX_VALUE)
-    expect(rewarded.gameState.infinity.botCapRewardsGranted).toBe(true)
-
-    await expect(application.commitAwayReplacement(
-      revisionEnvelope(application),
-      structuredClone(rewarded),
-    )).resolves.toMatchObject({ committed: true })
+    await createCoordinator(application).advanceActive(100)
+    const before = readyState(application)
+    let release!: () => void
+    let entered!: () => void
+    const enteredPromise = new Promise<void>((resolve) => { entered = resolve })
+    const releasePromise = new Promise<void>((resolve) => { release = resolve })
+    repository.beforeCommit = async () => { entered(); await releasePromise }
+    const envelope = { ...revisionEnvelope(application), command: { kind: 'avocado.request-overflow-reset' as const } }
+    const pending = application.dispatchPlayer(envelope)
+    await enteredPromise
+    expect(readyState(application).gameState).toEqual(before.gameState)
+    release()
+    expect(await pending).toMatchObject({ kind: 'transition', transition: { accepted: true, changed: true } })
+    repository.beforeCommit = undefined
+    const reset = readyState(application)
+    expect(reset.gameState.dyson.bots).toBe(0)
+    expect(reset.gameState.infinity.points).toBe(0n)
+    expect(reset.gameState.quantum.pointsEarned).toBe(0n)
+    expect(Object.values(reset.gameState.quantum.unlocks).every((value) => !value)).toBe(true)
+    expect(reset.gameState.reality.influence).toBe(0)
+    expect(reset.gameState.dream.strangeMatter).toBe(0)
+    expect(reset.gameState.avocado).toEqual({
+      unlocked: true, infinityPoints: 0, influence: 0, strangeMatter: 0,
+      overflowMultiplier: 0, overflowPoints: 1n,
+    })
+    expect(reset.gameState.statistics.lifetime.botCapInfinityPoints).toBe(before.gameState.statistics.lifetime.botCapInfinityPoints)
+    expect(reset.gameState.statistics.lifetime.botCapOverflowRewards).toBe(before.gameState.statistics.lifetime.botCapOverflowRewards + 1n)
+    expect(reset.gameState.skills.presets).toEqual(before.gameState.skills.presets)
+    expect(reset.gameState.secretProgress).toEqual(before.gameState.secretProgress)
+    expect(reset.entitlements).toEqual(before.entitlements)
+    expect(reset.tinker.running).toBe(false)
+    expect(await application.dispatchPlayer(envelope)).toMatchObject({ transition: { accepted: false } })
+    expect(await requestOverflow(application)).toMatchObject({ transition: { accepted: false } })
+    expect(readyState(application).gameState.avocado.overflowPoints).toBe(1n)
 
     const reopened = createApplication(repository)
     await reopened.start()
-    expect(
-      readyState(reopened).gameState.infinity.botCapRewardsGranted,
-    ).toBe(true)
-    const returnedToCap = structuredClone(readyState(reopened))
-    returnedToCap.gameState = {
-      ...returnedToCap.gameState,
-      dyson: {
-        ...returnedToCap.gameState.dyson,
-        bots: Number.MAX_VALUE,
-      },
-      quantum: {
-        ...returnedToCap.gameState.quantum,
-        unlocks: {
-          ...returnedToCap.gameState.quantum.unlocks,
-          breakTheLoop: true,
-        },
-      },
-    }
-    await expect(reopened.commitAwayReplacement(
-      revisionEnvelope(reopened),
-      returnedToCap,
-    )).resolves.toMatchObject({ committed: true })
+    expect(readyState(reopened).gameState.avocado.overflowPoints).toBe(1n)
+    expect(readyState(reopened).gameState.infinity.botCapTransitionPending).toBe(false)
+    const start = await reopened.dispatchPlayer({ ...revisionEnvelope(reopened), command: { kind: 'tinker.start', repeat: false } })
+    expect(start).toMatchObject({ transition: { accepted: true } })
+    expect((await createCoordinator(reopened).advanceActive(10_000)).transition.accepted).toBe(true)
+    expect(readyState(reopened).gameState.dyson.bots).toBeGreaterThan(0)
+  })
 
-    const repeated = await createCoordinator(reopened).advanceActive(100)
-    expect(repeated.checkpoints).toEqual([])
-    expect(readyState(reopened).gameState.infinity.points).toBe(points)
-    expect(readyState(reopened).gameState.avocado.overflowMultiplier).toBe(
-      overflow,
-    )
+  test('failed reset persistence preserves the run and retries for exactly one point', async () => {
+    const repository = new MemoryRepository()
+    const application = createApplication(repository)
+    await application.start()
+    await installBotCap(application, false)
+    await createCoordinator(application).advanceActive(100)
+    const before = readyState(application)
+    repository.failureAttempt = 3
+    expect(await requestOverflow(application)).toMatchObject({ transition: { accepted: false } })
+    expect(readyState(application)).toEqual(before)
+    const reopened = createApplication(repository)
+    await reopened.start()
+    expect(readyState(reopened).gameState.infinity.botCapTransitionPending).toBe(true)
+    expect(readyState(reopened).gameState.avocado.overflowPoints).toBe(0n)
+    repository.failureAttempt = undefined
+    expect(await requestOverflow(reopened)).toMatchObject({ transition: { accepted: true } })
+    expect(readyState(reopened).gameState.avocado.overflowPoints).toBe(1n)
+    expect(await requestOverflow(reopened)).toMatchObject({ transition: { accepted: false } })
+  })
+
+  test('a premature reset does not write or change progression', async () => {
+    const repository = new MemoryRepository()
+    const application = createApplication(repository)
+    await application.start()
+    const before = readyState(application)
+    expect(await requestOverflow(application)).toMatchObject({ transition: { accepted: false } })
+    expect(readyState(application)).toEqual(before)
+    expect(repository.commits).toHaveLength(0)
+  })
+
+  test('eligibility survives Stellar spending and reload without another reward', async () => {
+    const repository = new MemoryRepository()
+    const application = createApplication(repository)
+    await application.start()
+    await installBotCap(application, false)
+    await createCoordinator(application).advanceActive(100)
+    const reduced = structuredClone(readyState(application))
+    reduced.gameState = { ...reduced.gameState, dyson: { ...reduced.gameState.dyson, bots: 1e200 } }
+    expect(await application.commitAwayReplacement(revisionEnvelope(application), reduced)).toMatchObject({ committed: true })
+    const reopened = createApplication(repository)
+    await reopened.start()
+    expect(readyState(reopened).gameState.infinity.botCapTransitionPending).toBe(true)
+    expect(await requestOverflow(reopened)).toMatchObject({ transition: { accepted: true } })
+    expect(readyState(reopened).gameState.avocado.overflowPoints).toBe(1n)
   })
 })
+
+function requestOverflow(application: CanonicalGameApplicationFacade) {
+  return application.dispatchPlayer({ ...revisionEnvelope(application), command: { kind: 'avocado.request-overflow-reset' } })
+}
 
 function createApplication(repository: SaveRepository) {
   return createCanonicalGameApplication({
@@ -336,7 +241,7 @@ async function installBotCap(
     ...candidate.gameState,
     dyson: {
       ...candidate.gameState.dyson,
-      bots: Number.MAX_VALUE,
+      bots: OVERFLOW_BOT_CAP,
     },
     infinity: {
       ...candidate.gameState.infinity,
@@ -345,6 +250,7 @@ async function installBotCap(
       botCapRewardsGranted: false,
       inProgress: false,
     },
+    quantum: { ...candidate.gameState.quantum, unlocks: { ...candidate.gameState.quantum.unlocks, breakTheLoop: true } },
     timeline: {
       ...candidate.gameState.timeline,
       eventClockInitialized: true,
@@ -402,6 +308,7 @@ function context(): CanonicalEventTimeContext {
 
 class MemoryRepository implements SaveRepository {
   readonly commits: PreparedSave[] = []
+  beforeCommit?: () => Promise<void>
   private current = prepared
   private commitAttempts = 0
 
@@ -420,6 +327,7 @@ class MemoryRepository implements SaveRepository {
   }
 
   async commit(save: PreparedSave): Promise<PreparedSave> {
+    await this.beforeCommit?.()
     this.commitAttempts += 1
     if (this.commitAttempts === this.failureAttempt) {
       throw new Error(

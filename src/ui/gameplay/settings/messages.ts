@@ -254,6 +254,11 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Show Quantum',
     description: 'Controls the Quantum bottom navigation destination.',
   },
+  avocatoShortcut: {
+    id: 'settings.navigation.avocato',
+    defaultMessage: 'Show Avocato',
+    description: 'Controls the Avocato bottom navigation destination.',
+  },
   storeShortcut: {
     id: 'settings.navigation.store',
     defaultMessage: 'Show Store',

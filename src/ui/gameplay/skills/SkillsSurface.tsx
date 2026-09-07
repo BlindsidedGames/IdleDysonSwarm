@@ -1,3 +1,7 @@
+import { CASH_SCIENCE_SUBSKILLS } from '../../../simulation/skillSubskills'
+import galvanizerIcon from '../../assets/currency-galvanizer.png'
+import { InlineImageSymbol, InlineResourceAmount } from '../../components'
+import { challengeMessages } from '../infinity/challengeMessages'
 import {
   memo,
   useCallback,
@@ -164,6 +168,9 @@ export interface SkillPresetActions {
 }
 
 export interface SkillsSurfaceProps {
+  readonly galvanizers?: bigint
+  readonly hasEarnedGalvanizer?: boolean
+  readonly skillsDisabled?: boolean
   readonly locale: EnabledLocale
   readonly points: bigint
   readonly fragments: bigint
@@ -283,6 +290,9 @@ function graphPosition(node: SkillPresentationNode) {
  * exclusively from the supplied canonical catalog.
  */
 export function SkillsSurface({
+  galvanizers = 0n,
+  hasEarnedGalvanizer = false,
+  skillsDisabled = false,
   locale,
   points,
   fragments,
@@ -291,7 +301,7 @@ export function SkillsSurface({
   selectedPresetSlot,
   botDistribution,
   autoAssignNonRefundable,
-  commandAvailability,
+  commandAvailability: suppliedCommandAvailability,
   presetApplication,
   onDismissPresetApplication,
   showPresetApplicationNotifications,
@@ -302,6 +312,10 @@ export function SkillsSurface({
   onTreeViewChange,
 }: SkillsSurfaceProps) {
   const intl = useIntl()
+  const [showGalvanizerHelp, setShowGalvanizerHelp] = useState(false)
+  const commandAvailability = skillsDisabled
+    ? Object.fromEntries(Object.keys(suppliedCommandAvailability).map(key => [key, false])) as unknown as SkillCommandAvailability
+    : suppliedCommandAvailability
   const searchId = useId()
   const searchStatusId = useId()
   const settingsId = useId()
@@ -348,8 +362,17 @@ export function SkillsSurface({
     [intl],
   )
   const nodeById = useMemo(
-    () => new Map(localizedNodes.map((node) => [node.skillId, node])),
-    [localizedNodes],
+    () => {
+      const nodes = new Map(localizedNodes.map((node) => [node.skillId, node]))
+      const parent = nodes.get('startHereTree')!
+      for (const [id, message] of [
+        [CASH_SCIENCE_SUBSKILLS.lifetime, messages.subskillLifetime],
+        [CASH_SCIENCE_SUBSKILLS.decay, messages.subskillDecay],
+        [CASH_SCIENCE_SUBSKILLS.production, messages.subskillProduction],
+      ] as const) nodes.set(id, { ...parent, skillId: id, displayName: intl.formatMessage(message), cost: 1 })
+      return nodes
+    },
+    [intl, localizedNodes],
   )
   const visibleNodes = useMemo(
     () =>
@@ -382,7 +405,7 @@ export function SkillsSurface({
     catalog.skills
       .map(
         (skill) =>
-          `${skill.skillId}:${Number(skill.owned)}:${Number(skill.queued)}`,
+          `${skill.skillId}:${Number(skill.owned)}:${Number(skill.queued)}:${Number(skill.galvanized)}`,
       )
       .join('|'),
     presets
@@ -591,6 +614,7 @@ export function SkillsSurface({
           />
         )}
       <SkillTreeViewport
+        skillsDisabled={skillsDisabled}
         nodes={visibleNodes}
         previews={previewById}
         nodeById={nodeById}
@@ -707,6 +731,14 @@ export function SkillsSurface({
               {intl.formatMessage(messages.pointsLabel)}
             </span>
             <strong>{formatWholeGameNumber(locale, points)}</strong>
+            {hasEarnedGalvanizer && <button type="button"
+              className="skills-surface__currency" aria-haspopup="dialog"
+              aria-label={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+              title={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+              onClick={() => setShowGalvanizerHelp(true)}>
+              <InlineResourceAmount leadingSymbol={<InlineImageSymbol src={galvanizerIcon} tint maskMode="luminance" />}
+                value={formatWholeGameNumber(locale, galvanizers)} />
+            </button>}
           </div>
         )}
       >
@@ -734,12 +766,24 @@ export function SkillsSurface({
         />
       </ProgressControlsPanel>
 
+      {hasEarnedGalvanizer && showGalvanizerHelp && (
+        <SkillDetailsDialog
+          title={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+          closeLabel={intl.formatMessage(messages.close)}
+          palette="normal"
+          onClose={() => setShowGalvanizerHelp(false)}
+        >
+          <p>{intl.formatMessage(challengeMessages.future)}</p>
+        </SkillDetailsDialog>
+      )}
+
       {presetsOpen && (
         <SkillPresetsDialog
           presets={presets}
+          previews={previewById}
           selectedPresetSlot={selectedPresetSlot}
           commandAvailability={commandAvailability}
-          presetActions={presetActions}
+          presetActions={skillsDisabled ? undefined : presetActions}
           pendingKind={pendingKind}
           selectionPending={presetSelectionPending}
           nodeById={nodeById}
@@ -813,6 +857,7 @@ export function SkillsSurface({
           locale={locale}
           fragments={fragments}
           node={selectedNode}
+          galvanizers={galvanizers}
           preview={selectedPreview}
           previews={previewById}
           nodeById={nodeById}
@@ -822,7 +867,7 @@ export function SkillsSurface({
             presets[selectedPresetSlot - 1]?.name ??
             `Preset ${selectedPresetSlot}`
           }
-          presetActions={presetActions}
+          presetActions={skillsDisabled ? undefined : presetActions}
           pendingKind={pendingKind}
           initialPurchaseConfirmation={
             quickPurchaseSkillId === selectedSkillId
@@ -839,6 +884,7 @@ export function SkillsSurface({
 }
 
 interface SkillTreeViewportProps {
+  readonly skillsDisabled: boolean
   readonly nodes: readonly SkillPresentationNode[]
   readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
   readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
@@ -856,6 +902,7 @@ interface SkillTreeViewportProps {
 }
 
 const SkillTreeViewport = memo(function SkillTreeViewport({
+  skillsDisabled,
   nodes,
   previews,
   nodeById,
@@ -1360,6 +1407,12 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
           const position = graphPosition(node)
           const matched = matchingIds.has(node.skillId)
           const requiredCount = preview.requiredSkillIds.length
+          const augmentIds = preview.galvanized && node.skillId === 'startHereTree'
+            ? Object.values(CASH_SCIENCE_SUBSKILLS) : []
+          const assignedAugments = augmentIds.filter(id => previews.get(id)?.owned).length
+          const augmentLabel = augmentIds.length > 0
+            ? intl.formatMessage(messages.augmentsAssigned, { complete: assignedAugments, total: augmentIds.length })
+            : null
           const completedRequirementCount =
             preview.requiredSkillIds.filter(
               (requiredId) => previews.get(requiredId)?.owned,
@@ -1377,7 +1430,8 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               type="button"
               className="skill-tree-node"
               data-state={preview.visualState}
-              data-affordable={preview.purchase.eligible || undefined}
+              data-affordable={(!skillsDisabled && preview.purchase.eligible) || undefined}
+              data-galvanized={preview.galvanized || undefined}
               data-owned={preview.owned || undefined}
               data-queued={preview.queued || undefined}
               data-match={matched || undefined}
@@ -1390,15 +1444,17 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               }
               aria-label={[
                 node.displayName,
+                preview.galvanized ? intl.formatMessage(messages.galvanized) : null,
+                augmentLabel,
                 preview.owned
                   ? intl.formatMessage(messages.owned)
                   : intl.formatMessage(messages.cost, {
                       value: node.cost,
                     }),
-                preview.queued
+                preview.queued && !preview.galvanized
                   ? intl.formatMessage(messages.queued)
                   : null,
-                !preview.owned && !preview.purchase.eligible
+                !preview.owned && (skillsDisabled || !preview.purchase.eligible)
                   ? intl.formatMessage(messages.unavailable)
                   : null,
               ]
@@ -1442,8 +1498,16 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
                 alt=""
                 draggable="false"
               />
-              <span className="skill-tree-node__cost">{node.cost}</span>
-              {preview.queued && (
+              {!preview.galvanized && <span className="skill-tree-node__cost">{node.cost}</span>}
+              {augmentIds.length > 0 && <span
+                className="skill-tree-node__requirements skill-tree-node__augments"
+                data-progress={assignedAugments === augmentIds.length ? 'complete' : assignedAugments > 0 ? 'partial' : 'none'}
+                aria-label={augmentLabel ?? undefined}
+              >
+                <InlineImageSymbol className="skill-tree-node__augment-currency" src={galvanizerIcon} tint maskMode="luminance" />
+                <span>{assignedAugments}/{augmentIds.length}</span>
+              </span>}
+              {preview.queued && !preview.galvanized && (
                 <i
                   className="skill-tree-node__queue"
                   aria-label={intl.formatMessage(messages.queued)}
@@ -1598,6 +1662,7 @@ function prepareSkillConnectors(
 }
 
 interface SkillDetailsProps {
+  readonly galvanizers: bigint
   readonly locale: EnabledLocale
   readonly fragments: bigint
   readonly node: SkillPresentationNode
@@ -1648,7 +1713,29 @@ function AffectedSkillList({
   )
 }
 
+const galvanizedEffectMessages: Readonly<Record<string, typeof messages.galvEconomic>> = {
+  tasteOfPower: messages.galvPowerTaste,
+  indulgingInPower: messages.galvPowerIndulging,
+  addictionToPower: messages.galvPowerAddiction,
+  agressiveAlgorithms: messages.galvAlgorithms,
+  burnOut: messages.galvBurnout,
+  coldFusion: messages.galvColdFusion,
+  dimensionalCatCables: messages.galvCables,
+  economicDominance: messages.galvEconomic,
+  endOfTheLine: messages.galvEndLine,
+  fusionReactors: messages.galvFusion,
+  scientificDominance: messages.galvScientific,
+  shouldersOfPrecursors: messages.galvPrecursors,
+  stellarDominance: messages.galvStellarDominance,
+  stellarObliteration: messages.galvStellarObliteration,
+  supernova: messages.galvSupernova,
+  worthySacrifice: messages.galvWorthy,
+  stellarSacrifices: messages.galvSacrifices,
+  shouldersOfTheEnlightened: messages.galvEnlightened,
+}
+
 function SkillDetails({
+  galvanizers,
   locale,
   fragments,
   node,
@@ -1678,6 +1765,7 @@ function SkillDetails({
         affectedSkillIds: preview.purchase.affectedSkillIds,
       }
     : null)
+  const [galvanizeConfirmation, setGalvanizeConfirmation] = useState(false)
   const [queuePending, setQueuePending] = useState(false)
   const [queueFailed, setQueueFailed] = useState(false)
   const names = (ids: readonly string[]) =>
@@ -1779,7 +1867,10 @@ function SkillDetails({
 
   return (
     <SkillDetailsDialog
-      title={node.displayName}
+      title={<><span className="skill-details__icon" data-state={preview.visualState} data-galvanized={preview.galvanized || undefined}>
+        <img src={iconByFileName.get(node.icon.fileName)} alt="" />
+      </span><span>{node.displayName}</span></>}
+      description={preview.galvanized && galvanizedEffectMessages[node.skillId] ? intl.formatMessage(messages.galvanizedPermanent) : node.description}
       closeLabel={intl.formatMessage(messages.close)}
       palette={palette}
       onClose={onClose}
@@ -1788,23 +1879,67 @@ function SkillDetails({
         className="skill-details"
         data-state={preview.visualState}
       >
-        <div className="skill-details__intro">
-          <img
-            src={iconByFileName.get(node.icon.fileName)}
-            alt=""
-            className="skill-details__icon"
-          />
-          <p className="skill-details__description">
-            {node.description}
-          </p>
-        </div>
         <p className="skill-details__technical">
           <strong>{intl.formatMessage(messages.effect)}</strong>{' '}
-          {node.technicalDescription}
+          {preview.galvanized && galvanizedEffectMessages[node.skillId]
+            ? intl.formatMessage(galvanizedEffectMessages[node.skillId])
+            : node.skillId === 'shouldersOfTheEnlightened'
+              ? intl.formatMessage(messages.galvEnlightened)
+              : node.technicalDescription}
         </p>
-        <div className="skill-details__metadata">
+        {preview.galvanizationUnlocked && galvanizers > 0n && !preview.galvanized && (
+          <div className="skill-details__galvanization">
+            <Button disabled={!preview.canGalvanize || pendingKind !== null}
+              aria-label={intl.formatMessage(messages.galvanizeAction, { currency: intl.formatMessage(challengeMessages.galvanizers, { value: '1' }) })}
+              onClick={() => setGalvanizeConfirmation(true)}>
+              {intl.formatMessage(messages.galvanizeAction, { currency: <InlineResourceAmount leadingSymbol={<InlineImageSymbol className="skill-details__galvanizer-currency" src={galvanizerIcon} tint maskMode="luminance" />} value="1" /> })}
+            </Button>
+            {galvanizeConfirmation && (
+              <div className="skill-confirmation">
+                <p>{intl.formatMessage(messages.galvanizeWarning, { name: node.displayName })}</p>
+                <Button variant="primary" disabled={!preview.canGalvanize || pendingKind !== null}
+                  onClick={async () => {
+                    if (await dispatch({ kind: 'skill.galvanize', skillId: node.skillId })) setGalvanizeConfirmation(false)
+                  }}>{intl.formatMessage(messages.confirmGalvanize)}</Button>
+                <Button disabled={pendingKind !== null} onClick={() => setGalvanizeConfirmation(false)}>{intl.formatMessage(messages.cancel)}</Button>
+              </div>
+            )}
+          </div>
+        )}
+        {preview.galvanized && node.skillId === 'startHereTree' && (
+          <section className="skill-subskills">
+            <h3>{intl.formatMessage(messages.subskills)}</h3>
+            <p>{intl.formatMessage(messages.subskillsHelp)}</p>
+            {([
+              [CASH_SCIENCE_SUBSKILLS.lifetime, messages.subskillLifetime],
+              [CASH_SCIENCE_SUBSKILLS.decay, messages.subskillDecay],
+              [CASH_SCIENCE_SUBSKILLS.production, messages.subskillProduction],
+            ] as const).map(([id, label]) => {
+              const subskill = previews.get(id)
+              if (!subskill) return null
+              return (
+                <div className="skill-subskills__row" key={id}>
+                  <label>
+                    <input type="checkbox" checked={subskill.queued}
+                      disabled={presetActions === undefined || queuePending}
+                      aria-label={intl.formatMessage(messages.subskillInclude, { name: intl.formatMessage(label), preset: selectedPresetName })}
+                      onChange={(event) => void applyQueueChange({ slot: selectedPresetSlot, skillId: id, included: event.currentTarget.checked })} />
+                    <span>{intl.formatMessage(label)}<small className="skill-subskills__cost">{intl.formatMessage(messages.subskillCost)}</small></span>
+                  </label>
+                  <Button disabled={pendingKind !== null || (subskill.owned ? !commandAvailability.refund || !subskill.refund.eligible : !commandAvailability.purchase || !subskill.purchase.eligible)}
+                    aria-label={intl.formatMessage(subskill.owned ? messages.subskillRefund : messages.subskillAssign, { name: intl.formatMessage(label) })}
+                    onClick={() => void dispatch({ kind: subskill.owned ? 'skill.refund' : 'skill.purchase', skillId: id })}>
+                    {intl.formatMessage(subskill.owned ? messages.subskillRefundShort : messages.subskillAssignShort)}
+                  </Button>
+                </div>
+              )
+            })}
+          </section>
+        )}
+        {preview.galvanized && <p className="skill-details__permanent">{intl.formatMessage(messages.galvanizedHelp)}</p>}
+        {!preview.galvanized && <div className="skill-details__metadata">
           <strong>
-            {intl.formatMessage(messages.cost, {
+            {preview.galvanized ? intl.formatMessage(messages.galvanizedPermanent) : intl.formatMessage(messages.cost, {
               value: formatWholeGameNumber(locale, preview.cost),
             })}
           </strong>
@@ -1837,7 +1972,7 @@ function SkillDetails({
             </p>
           )}
           {preview.owned && <p>{intl.formatMessage(messages.owned)}</p>}
-          {preview.queued && <p>{intl.formatMessage(messages.queued)}</p>}
+          {preview.queued && !preview.galvanized && <p>{intl.formatMessage(messages.queued)}</p>}
           {preview.exclusiveWithSkillIds.length > 0 && (
             <p>
               {intl.formatMessage(messages.exclusive, {
@@ -1845,9 +1980,9 @@ function SkillDetails({
               })}
             </p>
           )}
-        </div>
+        </div>}
         <div className="skill-details__actions">
-          <label className="skill-details__preset-toggle">
+          {!preview.galvanized && <label className="skill-details__preset-toggle">
             <input
               type="checkbox"
               checked={preview.queued}
@@ -1861,8 +1996,8 @@ function SkillDetails({
                 name: selectedPresetName,
               })}
             </span>
-          </label>
-          {!preview.owned ? (
+          </label>}
+          {preview.galvanized ? null : !preview.owned ? (
             <Button
               variant="primary"
               className="skill-details__point-action"
@@ -2438,6 +2573,7 @@ function SkillPresetSelectionDialog({
 }
 
 interface SkillPresetsDialogProps {
+  readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
   readonly presets: SkillsSurfaceProps['presets']
   readonly selectedPresetSlot: CanonicalSkillPresetSlot
   readonly commandAvailability: SkillCommandAvailability
@@ -2452,6 +2588,7 @@ interface SkillPresetsDialogProps {
 
 function SkillPresetsDialog({
   presets,
+  previews,
   selectedPresetSlot,
   commandAvailability,
   presetActions,
@@ -2465,6 +2602,8 @@ function SkillPresetsDialog({
   const intl = useIntl()
   const [managedSlot, setManagedSlot] =
     useState<CanonicalSkillPresetSlot | null>(null)
+  const [prioritySlot, setPrioritySlot] = useState<CanonicalSkillPresetSlot | null>(null)
+  const priorityButtonRefs = useRef(new Map<number, HTMLButtonElement>())
   const managedPreset = managedSlot === null
     ? undefined
     : presets[managedSlot - 1]
@@ -2472,13 +2611,26 @@ function SkillPresetsDialog({
   return (
     <>
       <SkillDetailsDialog
-        title={intl.formatMessage(messages.presets)}
+        title={prioritySlot === null ? intl.formatMessage(messages.presets) : intl.formatMessage(messages.priorityTitle, { name: presets[prioritySlot - 1].name })}
         closeLabel={intl.formatMessage(messages.close)}
         palette="normal"
-        className="skill-presets-dialog"
+        className={`skill-presets-dialog${prioritySlot === null ? "" : " skill-presets-dialog--priority"}`}
+        onBack={prioritySlot === null ? undefined : () => {
+          const slot = prioritySlot
+          setPrioritySlot(null)
+          requestAnimationFrame(() => priorityButtonRefs.current.get(slot)?.focus())
+        }}
+        backLabel={intl.formatMessage(messages.backToPresets)}
         onClose={onClose}
       >
-        <div className="skill-settings__presets">
+        {prioritySlot !== null ? <>
+          <SkillPresetPriority preset={presets[prioritySlot - 1]} nodeById={nodeById} previews={previews}
+            presetActions={presetActions} slot={prioritySlot}
+            pending={pendingKind !== null || selectionPending || !commandAvailability.selectPreset}
+            onReorder={(skillIds) => dispatch(selectedPresetSlot === prioritySlot
+              ? { kind: 'skill.set-auto-assignment', skillIds }
+              : { kind: 'skill.set-preset-assignment', slot: prioritySlot, skillIds })} />
+        </> : <div className="skill-settings__presets">
           {presets.slice(0, 5).map((preset, index) => {
           const slot = (index + 1) as CanonicalSkillPresetSlot
           const workers = Math.round((1 - preset.botDistribution) * 100)
@@ -2505,24 +2657,28 @@ function SkillPresetsDialog({
                   {intl.formatMessage(messages.loadPreset, { name: preset.name })}
                 </strong>
                 {selectedPresetSlot === slot && (
-                  <em className="skill-settings__current">
-                    {intl.formatMessage(messages.currentPreset)}
-                  </em>
+                  <em className="skill-settings__current">{intl.formatMessage(messages.currentPreset)}</em>
                 )}
-                <PresetSummary count={preset.skillIds.length} workers={workers} />
+                <PresetSummary count={preset.skillIds.filter(id => !previews.get(id)?.galvanized).length} workers={workers} />
               </button>
+              <div className="skill-settings__preset-icon-actions">
+                <button type="button" className="skill-settings__preset-priority"
+                  ref={(element) => { if (element) priorityButtonRefs.current.set(slot, element); else priorityButtonRefs.current.delete(slot) }}
+                  aria-label={`${intl.formatMessage(messages.editPriority)}: ${preset.name}`}
+                  title={intl.formatMessage(messages.editPriority)} onClick={() => setPrioritySlot(slot)}>
+                  <span aria-hidden="true">⇅</span>
+                </button>
               <button
                 type="button"
                 className="skill-settings__preset-manage"
                 aria-label={intl.formatMessage(messages.managePreset, { name: preset.name })}
                 onClick={() => setManagedSlot(slot)}
-              >
-                <span aria-hidden="true">⋯</span>
-              </button>
+              ><span aria-hidden="true">⋯</span></button>
+              </div>
             </div>
           )
           })}
-        </div>
+        </div>}
       </SkillDetailsDialog>
       {managedSlot !== null && managedPreset !== undefined ? (
         <PresetManagementDialog
@@ -2539,6 +2695,160 @@ function SkillPresetsDialog({
       ) : null}
     </>
   )
+}
+
+function SkillPresetPriority({ preset, nodeById, previews, pending, onReorder, presetActions, slot }: {
+  readonly presetActions?: SkillPresetActions
+  readonly slot: CanonicalSkillPresetSlot
+  readonly preset: SkillPresetState
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
+  readonly pending: boolean
+  readonly onReorder: (skillIds: readonly string[]) => Promise<boolean>
+}) {
+  const intl = useIntl()
+  const [dragged, setDragged] = useState<string | null>(null)
+  const [dropIndex, setDropIndex] = useState<number | null>(null)
+  const [reorderFailed, setReorderFailed] = useState(false)
+  const [removalPending, setRemovalPending] = useState(false)
+  const [removal, setRemoval] = useState<{ skillId: string; affectedSkillIds: readonly string[] } | null>(null)
+  const controlsDisabled = pending || removalPending || removal !== null
+  const applyRemoval = async (skillId: string) => {
+    if (!presetActions || pending || removalPending) return
+    setRemovalPending(true); setReorderFailed(false)
+    try {
+      const preview = await presetActions.previewQueueChange({ slot, skillId, included: false })
+      const affected = new Set(preview.affectedSkillIds)
+      const changed = await onReorder(preset.skillIds.filter(id => !affected.has(id)))
+      setReorderFailed(!changed)
+      if (changed) setRemoval(null)
+    } catch { setReorderFailed(true) }
+    finally { setRemovalPending(false) }
+  }
+  const requestRemoval = async (skillId: string) => {
+    if (!presetActions || controlsDisabled) return
+    setRemovalPending(true); setReorderFailed(false)
+    try {
+      const preview = await presetActions.previewQueueChange({ slot, skillId, included: false })
+      if (preview.confirmationRequired) setRemoval({ skillId, affectedSkillIds: preview.affectedSkillIds })
+      else {
+        const affected = new Set(preview.affectedSkillIds)
+        setReorderFailed(!await onReorder(preset.skillIds.filter(id => !affected.has(id))))
+      }
+    } catch { setReorderFailed(true) }
+    finally { setRemovalPending(false) }
+  }
+  const priorityListRef = useRef<HTMLOListElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const pointerY = useRef(0)
+  const spendingIds = preset.skillIds.filter(id => !previews.get(id)?.galvanized)
+  const permanentIds = [...previews.values()].filter(preview => preview.galvanized).map(preview => preview.skillId)
+  const targetIndex = (clientY: number) => {
+    const rows = Array.from(priorityListRef.current?.children ?? [])
+    const index = rows.findIndex((row) => clientY < row.getBoundingClientRect().bottom)
+    return index < 0 ? rows.length - 1 : index
+  }
+  useEffect(() => {
+    if (dragged === null) return
+    let frame: number
+    const tick = () => {
+      const scroller = scrollRef.current
+      if (scroller) {
+        const rect = scroller.getBoundingClientRect()
+        const y = pointerY.current
+        const speed = y < rect.top + 48 ? -Math.min(12, (rect.top + 48 - y) / 4)
+          : y > rect.bottom - 48 ? Math.min(12, (y - rect.bottom + 48) / 4) : 0
+        if (speed) { scroller.scrollTop += speed; setDropIndex(targetIndex(y)) }
+      }
+      frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [dragged])
+  const move = async (from: number, to: number) => {
+    if (controlsDisabled || from === to || from < 0 || to < 0 || to >= spendingIds.length) return
+    const next = [...spendingIds]
+    const [id] = next.splice(from, 1)
+    next.splice(to, 0, id)
+    // Keep permanent entries in the saved preset, outside its spending order.
+    setReorderFailed(false)
+    const changed = await onReorder([...next, ...preset.skillIds.filter(id => previews.get(id)?.galvanized)])
+    setReorderFailed(!changed)
+  }
+  return <section className="skill-preset-priority">
+    <p>{intl.formatMessage(messages.spendingPriorityHelp)}</p>
+    {reorderFailed && <StatusFeedback tone="error">{intl.formatMessage(messages.presetChangeFailed)}</StatusFeedback>}
+    <div ref={scrollRef} className="skill-preset-priority__scroll">
+      <ol ref={priorityListRef}>
+        {spendingIds.map((id, index) => {
+          const node = nodeById.get(id)
+          const name = node?.displayName ?? id
+          const nonRefundable = previews.get(id)?.visualState.startsWith('non-refundable') === true
+          return <li key={id} data-non-refundable={nonRefundable || undefined}
+            data-dragging={dragged === id || undefined}
+            data-drop-target={dragged !== null && dropIndex === index || undefined}>
+            <span className="skill-preset-priority__handle" aria-hidden="true"
+              onPointerDown={(event) => {
+                if (controlsDisabled || event.button !== 0) return
+                event.preventDefault()
+                pointerY.current = event.clientY
+                event.currentTarget.setPointerCapture(event.pointerId)
+                setDragged(id); setDropIndex(index)
+              }}
+              onPointerMove={(event) => {
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                  pointerY.current = event.clientY; setDropIndex(targetIndex(event.clientY))
+                }
+              }}
+              onPointerUp={(event) => {
+                if (!event.currentTarget.hasPointerCapture(event.pointerId)) return
+                event.currentTarget.releasePointerCapture(event.pointerId)
+                move(index, targetIndex(event.clientY)); setDragged(null); setDropIndex(null)
+              }}
+              onLostPointerCapture={() => { setDragged(null); setDropIndex(null) }}
+              onPointerCancel={() => { setDragged(null); setDropIndex(null) }}>⠿</span>
+            <span className="skill-preset-priority__number">{index + 1}</span>
+            {node && (nonRefundable
+              ? <span className="skill-preset-priority__non-refundable-icon" aria-hidden="true"
+                  style={{ maskImage: `url("${iconByFileName.get(node.icon.fileName)}")`, WebkitMaskImage: `url("${iconByFileName.get(node.icon.fileName)}")` }} />
+              : <img src={iconByFileName.get(node.icon.fileName)} alt="" />)}
+            <span className="skill-preset-priority__name">{name}
+              {nonRefundable && <small>{intl.formatMessage(messages.priorityNonRefundable)}</small>}
+            </span>
+            <button type="button" disabled={controlsDisabled || index === 0}
+              aria-label={intl.formatMessage(messages.priorityMoveUp, { name })}
+              onClick={() => move(index, index - 1)}>↑</button>
+            <button type="button" disabled={controlsDisabled || index === spendingIds.length - 1}
+              aria-label={intl.formatMessage(messages.priorityMoveDown, { name })}
+              onClick={() => move(index, index + 1)}>↓</button>
+            <button type="button" disabled={controlsDisabled || !presetActions}
+              aria-label={intl.formatMessage(messages.priorityRemove, { name })}
+              onClick={() => void requestRemoval(id)}>−</button>
+            {removal?.skillId === id && <div className="skill-priority-removal" role="group"
+              aria-label={intl.formatMessage(messages.confirmPresetChange)}>
+              <p>{intl.formatMessage(messages.removeDependants)}</p>
+              <AffectedSkillList skillIds={removal.affectedSkillIds.filter(affected => affected !== id)}
+                nodeById={nodeById} label={intl.formatMessage(messages.affectedSkills)} />
+              <Button disabled={pending || removalPending} onClick={() => void applyRemoval(id)}>{intl.formatMessage(messages.confirm)}</Button>
+              <Button disabled={removalPending} onClick={() => setRemoval(null)}>{intl.formatMessage(messages.cancel)}</Button>
+            </div>}
+          </li>
+        })}
+      </ol>
+      {spendingIds.length === 0 && <p>{intl.formatMessage(messages.priorityEmpty)}</p>}
+      {permanentIds.length > 0 && <section className="skill-preset-priority__permanent">
+        <h3>{intl.formatMessage(messages.galvanized)}</h3>
+        <p>{intl.formatMessage(messages.permanentPresetHelp)}</p>
+        <ul>{permanentIds.map(id => {
+          const node = nodeById.get(id)
+          return <li key={id}>
+            {node && <span className="skill-priority-permanent-icon"><img src={iconByFileName.get(node.icon.fileName)} alt="" /></span>}
+            <span>{node?.displayName ?? id}</span>
+          </li>
+        })}</ul>
+      </section>}
+    </div>
+  </section>
 }
 
 interface PresetManagementDialogProps {

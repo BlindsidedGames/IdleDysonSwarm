@@ -135,6 +135,7 @@ function NavigationItemContent({
                     style={{
                       WebkitMaskImage: `url("${item.iconSrc}")`,
                       maskImage: `url("${item.iconSrc}")`,
+                      maskMode: item.iconMaskMode,
                     }}
                   />
                 </>

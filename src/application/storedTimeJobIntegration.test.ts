@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
 import { gameDataCatalog } from '../game-data/catalog'
@@ -626,7 +627,7 @@ describe('Stored Time job application integration', () => {
         simulationUpdates: 2,
         remainingBankSeconds: 0,
         infinityCount: 0n,
-        infinityPoints: 1_000n,
+        infinityPoints: 0n,
       },
     })
     expect(repository.commits).toBe(commitsBefore + 1)
@@ -634,16 +635,16 @@ describe('Stored Time job application integration', () => {
     expect(committed.phase).toBe('ready')
     if (committed.phase !== 'ready') return
     expect(committed.state.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
-      inProgress: true,
+      points: pointsBefore,
+      botCapTransitionPending: true,
+      botCapRewardsGranted: false,
+      inProgress: false,
     })
     expect(committed.state.gameState.avocado.overflowMultiplier)
-      .toBe(overflowBefore + 1)
+      .toBe(overflowBefore)
     expect(
       committed.state.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapPointsBefore + 1_000n)
+    ).toBe(botCapPointsBefore)
 
     const reopened = createApplication(repository, simulationRunner())
     await reopened.start()
@@ -651,10 +652,10 @@ describe('Stored Time job application integration', () => {
     expect(durable.phase).toBe('ready')
     if (durable.phase !== 'ready') return
     expect(durable.state.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
-      inProgress: true,
+      points: pointsBefore,
+      botCapTransitionPending: true,
+      botCapRewardsGranted: false,
+      inProgress: false,
     })
     expect(durable.state.gameState.timeline.storedTimeAvailableSeconds).toBe(0)
 
@@ -663,10 +664,10 @@ describe('Stored Time job application integration', () => {
     const resumed = reopened.snapshot()
     expect(resumed.phase).toBe('ready')
     if (resumed.phase !== 'ready') return
-    expect(resumed.state.gameState.infinity.points).toBe(pointsBefore + 1_000n)
+    expect(resumed.state.gameState.infinity.points).toBe(pointsBefore)
     expect(
       resumed.state.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapPointsBefore + 1_000n)
+    ).toBe(botCapPointsBefore)
   })
 
   test('rejects an unsettled bot-cap candidate before persistence', async () => {
@@ -814,10 +815,10 @@ async function installFinalTickBotCap(
       ...candidate.gameState,
       dyson: {
         ...candidate.gameState.dyson,
-        bots: Number.MAX_VALUE - 3e293,
+        bots: OVERFLOW_BOT_CAP - 3e228,
         facilities: {
           ...candidate.gameState.dyson.facilities,
-          assembly_lines: [1e294, 0],
+          assembly_lines: [1e229, 0],
         },
       },
       skills: {

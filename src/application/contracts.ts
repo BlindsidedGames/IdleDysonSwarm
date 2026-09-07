@@ -55,6 +55,8 @@ export type CommitFirstPurpose =
   | 'stored-time'
   | 'away-time'
   | 'bot-cap'
+  | 'galvanization'
+  | 'skill-preset'
   | 'development'
 
 export type ExclusiveOperation =

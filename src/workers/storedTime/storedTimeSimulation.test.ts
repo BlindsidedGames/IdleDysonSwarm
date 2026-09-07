@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from '../../simulation/overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { CanonicalRuntimeSession, type CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
@@ -148,7 +149,7 @@ describe('StoredTimeSimulation shared game-step replay', () => {
       ...source.gameState,
       dyson: {
         ...source.gameState.dyson,
-        bots: Number.MAX_VALUE,
+        bots: OVERFLOW_BOT_CAP,
       },
       infinity: {
         ...source.gameState.infinity,
@@ -194,17 +195,17 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     expect(terminal.type).toBe('completed')
     if (terminal.type !== 'completed') return
     expect(terminal.candidate.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
+      points: pointsBefore,
       automaticResetEnabled: false,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
-      inProgress: true,
+      botCapTransitionPending: true,
+      botCapRewardsGranted: false,
+      inProgress: false,
     })
     expect(
       terminal.candidate.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapPointsBefore + 1_000n)
+    ).toBe(botCapPointsBefore)
     expect(terminal.candidate.gameState.dyson.bots).toBeLessThan(
-      Number.MAX_VALUE,
+      OVERFLOW_BOT_CAP,
     )
 
     const returnedToCap = structuredClone(terminal.candidate)
@@ -212,7 +213,7 @@ describe('StoredTimeSimulation shared game-step replay', () => {
       ...returnedToCap.gameState,
       dyson: {
         ...returnedToCap.gameState.dyson,
-        bots: Number.MAX_VALUE,
+        bots: OVERFLOW_BOT_CAP,
       },
     }
     const active = advanceGame(
@@ -229,14 +230,14 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     expect(active.summary.botCapInfinityPoints).toBe(0n)
     expect(active.summary.botCapOverflowRewards).toBe(0n)
     expect(active.state.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
+      points: pointsBefore,
       automaticResetEnabled: false,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
+      botCapTransitionPending: true,
+      botCapRewardsGranted: false,
     })
     expect(
       active.state.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapPointsBefore + 1_000n)
+    ).toBe(botCapPointsBefore)
   })
 
   test('settles a skill-driven bot cap reached during the final Stored Time update', () => {
@@ -251,7 +252,7 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     if (withoutSkill.type !== 'completed') return
     expect(withoutSkill.progress.completedTicks).toBe(2)
     expect(withoutSkill.candidate.gameState.dyson.bots)
-      .toBeLessThan(Number.MAX_VALUE)
+      .toBeLessThan(OVERFLOW_BOT_CAP)
 
     const source = runtimeForFinalTickBotCap(true, 0.1)
     const pointsBefore = source.gameState.infinity.points
@@ -269,18 +270,18 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     expect(terminal.type).toBe('completed')
     if (terminal.type !== 'completed') return
     expect(terminal.progress.completedTicks).toBe(2)
-    expect(terminal.candidate.gameState.dyson.bots).toBe(Number.MAX_VALUE)
+    expect(terminal.candidate.gameState.dyson.bots).toBe(OVERFLOW_BOT_CAP)
     expect(terminal.candidate.gameState.infinity).toMatchObject({
-      points: pointsBefore + 1_000n,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
-      inProgress: true,
+      points: pointsBefore,
+      botCapTransitionPending: true,
+      botCapRewardsGranted: false,
+      inProgress: false,
     })
     expect(terminal.candidate.gameState.avocado.overflowMultiplier)
-      .toBe(overflowBefore + 1)
+      .toBe(overflowBefore)
     expect(
       terminal.candidate.gameState.statistics.lifetime.botCapInfinityPoints,
-    ).toBe(botCapPointsBefore + 1_000n)
+    ).toBe(botCapPointsBefore)
     expect(terminal.candidate.gameState.timeline.storedTimeAvailableSeconds)
       .toBe(0)
     expect(
@@ -289,7 +290,7 @@ describe('StoredTimeSimulation shared game-step replay', () => {
   })
 
   test('does not manufacture an automatic Infinity while settling the final boundary', () => {
-    const source = runtimeForFinalTickBotCap(true, 0.01, 1e295)
+    const source = runtimeForFinalTickBotCap(true, 0.01, 1e230)
     source.gameState = {
       ...source.gameState,
       infinity: {
@@ -318,9 +319,9 @@ describe('StoredTimeSimulation shared game-step replay', () => {
     expect(terminal.progress.completedTicks).toBe(1)
     expect(terminal.candidate.gameState.infinity).toMatchObject({
       automaticResetEnabled: true,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
-      inProgress: true,
+      botCapTransitionPending: true,
+      botCapRewardsGranted: false,
+      inProgress: false,
     })
     expect(
       terminal.candidate.gameState.statistics.lifetime.ordinaryInfinityCount,
@@ -388,7 +389,7 @@ function runtimeWithStoredTime(seconds: number): CanonicalRuntimeState {
 function runtimeForFinalTickBotCap(
   skillOwned: boolean,
   seconds: number,
-  assemblyLines = 1e294,
+  assemblyLines = 1e229,
 ): CanonicalRuntimeState {
   const state = runtimeWithStoredTime(seconds)
   const byId = Object.fromEntries(
@@ -406,7 +407,7 @@ function runtimeForFinalTickBotCap(
       ...state.gameState,
       dyson: {
         ...state.gameState.dyson,
-        bots: Number.MAX_VALUE - 3e293,
+        bots: OVERFLOW_BOT_CAP - 3e228,
         facilities: {
           ...state.gameState.dyson.facilities,
           assembly_lines: [assemblyLines, 0],

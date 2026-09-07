@@ -1,3 +1,4 @@
+import { validateInfinityChallenges } from '../simulation/infinityChallenges'
 import { facilityArrayNames } from './facilityArrays'
 import { isRecord, type SaveRecord } from './graph'
 
@@ -27,6 +28,16 @@ export function validatePreparedSave(
   ]
   for (const key of requiredRootContainers) {
     if (!isRecord(value[key])) return invalid(`Required root container ${key} is null.`)
+  }
+
+  const challengeError = validateInfinityChallenges(value.infinityChallengeData)
+  if (challengeError) return invalid(challengeError)
+
+  if (expectedSchema >= 15) {
+    const points = (value.avocadoData as SaveRecord).overflowPoints
+    if (typeof points !== 'bigint' || points < 0n || points > 9_223_372_036_854_775_807n) {
+      return invalid('Overflow Points must be a non-negative Int64 balance.')
+    }
   }
 
   const dyson = value.dysonVerseSaveData as SaveRecord

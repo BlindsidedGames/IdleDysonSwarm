@@ -21,6 +21,7 @@ export interface CanonicalGameStateV1 {
   readonly research: ResearchState
   readonly reality: RealityState
   readonly quantum: QuantumState
+  readonly challenges?: InfinityChallengeState
   readonly avocado: AvocadoState
   readonly timeline: TimelineState
   readonly secretProgress: SecretProgressState
@@ -84,6 +85,7 @@ export interface InfinityState {
   /** True only when this entire cycle has used active automatic processing. */
   readonly activeAutomaticThroughputCycleEligible?: boolean
   readonly inProgress: boolean
+  /** Durable Overflow eligibility; cleared only by the voluntary reset. */
   readonly botCapTransitionPending: boolean
   readonly botCapRewardsGranted: boolean
   readonly lastCycleDurationSeconds: number
@@ -196,7 +198,10 @@ export interface AvocadoState {
   readonly infinityPoints: number
   readonly influence: number
   readonly strangeMatter: number
+  /** Legacy production bonus, cleared by an Overflow reset. */
   readonly overflowMultiplier: number
+  /** Spendable currency reserved for the future Overflow layer. */
+  readonly overflowPoints?: bigint
 }
 
 export interface TimelineState {
@@ -506,4 +511,13 @@ export interface SimulationStatisticsState {
   readonly minuteWindows: readonly StatisticsWindowState[]
   readonly halfHourWindows: readonly StatisticsWindowState[]
   readonly dailyWindows: readonly StatisticsWindowState[]
+}
+
+export interface InfinityChallengeState {
+  readonly galvanizedSkillIds?: readonly string[]
+  readonly unlocked: boolean
+  readonly active: 'blank-slate' | null
+  readonly blankSlateCompleted: boolean
+  readonly galvanizers: bigint
+  readonly hasEarnedGalvanizer: boolean
 }

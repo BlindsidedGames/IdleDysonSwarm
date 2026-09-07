@@ -1,3 +1,7 @@
+import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
+import { isGalvanized, galvanizationDefinition } from './galvanization'
+import { infinityChallenges, isBlankSlateActive } from './infinityChallenges'
+import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
@@ -92,6 +96,9 @@ export type CanonicalSkillVisualState =
 
 export interface CanonicalSkillAvailabilityPreview {
   readonly skillId: string
+  readonly galvanized: boolean
+  readonly canGalvanize: boolean
+  readonly galvanizationUnlocked: boolean
   readonly cost: bigint
   readonly owned: boolean
   readonly visible: boolean
@@ -142,6 +149,28 @@ export type CanonicalSkillPresetApplicationResult =
       readonly state: CanonicalGameStateV1
     }
 
+/** Atomic irreversible currency spend. Ordinary points already invested are returned. */
+export function galvanizeCanonicalSkill(state: CanonicalGameStateV1, skillId: string): CanonicalSkillTransactionResult {
+  const definition = isSubskill(skillId) ? undefined : loadDefinitions(state).get(skillId)
+  const challenges = infinityChallenges(state)
+  if (!definition) return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)
+  if (!challenges.blankSlateCompleted || isBlankSlateActive(state) || !isUnlocked(definition, state)) {
+    return rejected(state, 'GALVANIZATION-LOCKED', 'Galvanization is not available for this skill.')
+  }
+  if (isGalvanized(state, skillId)) return rejected(state, 'ALREADY-GALVANIZED', 'This skill is already galvanized.')
+  if (challenges.galvanizers < 1n) return rejected(state, 'GALVANIZER-REQUIRED', 'A Galvanizer is required.')
+  const wasOwned = state.skills.byId[skillId]?.owned === true
+  return accepted({ ...state,
+    challenges: { ...challenges, galvanizers: challenges.galvanizers - 1n,
+      galvanizedSkillIds: [...(challenges.galvanizedSkillIds ?? []), skillId] },
+    skills: { ...state.skills,
+      points: state.skills.points + (wasOwned ? definition.cost : 0n),
+      fragments: state.skills.fragments + (!wasOwned && definition.fragment ? 1n : 0n),
+      byId: { ...state.skills.byId, [skillId]: { ...(state.skills.byId[skillId] ?? emptyRuntime()), owned: true } },
+    },
+  }, true, [skillId])
+}
+
 /**
  * Projects the exact authored skill catalog and current-state purchase/refund
  * eligibility without changing the source. Both actions execute through the
@@ -152,7 +181,7 @@ export function previewCanonicalSkillCatalog(
 ): CanonicalSkillCatalogPreview {
   let definitions: ReadonlyMap<string, SkillDefinition>
   try {
-    definitions = loadDefinitions()
+    definitions = loadDefinitions(state)
   } catch (error) {
     return Object.freeze({
       complete: false,
@@ -171,7 +200,7 @@ export function previewCanonicalSkillCatalog(
     selectEffectivelyNotRefundableSkillIds(state, definitions)
   const skills = [...definitions.values()].map((definition) => {
     const owned = state.skills.byId[definition.id]?.owned === true
-    const unlocked = isUnlocked(definition, state)
+    const unlocked = isGalvanized(state, definition.id) || isUnlocked(definition, state)
     const purchase = planPurchaseWithDefinitions(
       state,
       definition.id,
@@ -219,6 +248,9 @@ export function previewCanonicalSkillCatalog(
     return Object.freeze({
       skillId: definition.id,
       cost: definition.cost,
+      galvanized: isGalvanized(state, definition.id),
+      galvanizationUnlocked: !isSubskill(definition.id) && infinityChallenges(state).blankSlateCompleted,
+      canGalvanize: !isSubskill(definition.id) && infinityChallenges(state).blankSlateCompleted && !isBlankSlateActive(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
       owned,
       visible: unlocked,
       unlocked,
@@ -372,7 +404,7 @@ export function purchaseCanonicalSkill(
 ): CanonicalSkillTransactionResult {
   let definitions: ReadonlyMap<string, SkillDefinition>
   try {
-    definitions = loadDefinitions()
+    definitions = loadDefinitions(state)
   } catch (error) {
     return rejected(
       state,
@@ -435,6 +467,7 @@ function planPurchaseWithDefinitions(
   skillId: string,
   definitions: ReadonlyMap<string, SkillDefinition>,
 ): CanonicalSkillPurchasePlan {
+  if (isBlankSlateActive(state)) return purchasePlanRejected('SKILL-CHALLENGE-ACTIVE', 'Ordinary skills cannot be assigned during Blank Slate.')
   if (!definitions.has(skillId)) {
     return purchasePlanRejected(
       'SKILL-UNKNOWN',
@@ -562,7 +595,7 @@ export function refundCanonicalSkill(
 ): CanonicalSkillTransactionResult {
   let definitions: ReadonlyMap<string, SkillDefinition>
   try {
-    definitions = loadDefinitions()
+    definitions = loadDefinitions(state)
   } catch (error) {
     return rejected(
       state,
@@ -651,7 +684,7 @@ function refundWithDefinitions(
 export function resetCanonicalSkills(
   state: CanonicalGameStateV1,
 ): CanonicalSkillTransactionResult {
-  const definitions = loadDefinitions()
+  const definitions = loadDefinitions(state)
   let points = state.skills.points
   let fragments = state.skills.fragments
   let changed = false
@@ -690,13 +723,14 @@ export function resetCanonicalSkills(
 }
 
 /**
- * Executes Unity's skip-blocked, multi-pass auto-assignment queue.
+ * Executes preset priority, resolving prerequisites and waiting for the next purchase.
  */
 export function runCanonicalSkillAutoAssignment(
   state: CanonicalGameStateV1,
 ): CanonicalSkillTransactionResult {
-  const definitions = loadDefinitions()
+  const definitions = loadDefinitions(state)
   if (
+    isBlankSlateActive(state) ||
     state.skills.activeAutoAssignment.length === 0 ||
     state.skills.points <= 0n
   ) {
@@ -706,34 +740,20 @@ export function runCanonicalSkillAutoAssignment(
   let fragments = state.skills.fragments
   const byId = { ...state.skills.byId }
   const affected: string[] = []
-  let passesRemaining = state.skills.activeAutoAssignment.length
-  let assignedAny: boolean
-
-  do {
-    assignedAny = false
-    for (const id of state.skills.activeAutoAssignment) {
-      const definition = definitions.get(id)
-      if (
-        definition === undefined ||
-        byId[id]?.owned === true ||
-        points < definition.cost ||
-        !isUnlocked(definition, state) ||
-        !requirementsMet(definition.required, byId) ||
-        !requirementsMet(definition.shadowRequired, byId) ||
-        hasOwned(definition.exclusiveWith, byId) ||
-        (!state.skills.autoAssignNonRefundable && !definition.refundable)
-      ) {
-        continue
-      }
-      points -= definition.cost
-      fragments += definition.fragment ? 1n : 0n
-      byId[id] = { ...(byId[id] ?? emptyRuntime()), owned: true }
-      affected.push(id)
-      assignedAny = true
-      if (points <= 0n) break
-    }
-    passesRemaining -= 1
-  } while (assignedAny && points > 0n && passesRemaining > 0)
+  const owned = new Set(Object.keys(byId).filter((id) => byId[id]?.owned === true))
+  for (const id of resolveSkillPurchaseOrder(state.skills.activeAutoAssignment, owned, definitions)) {
+    const definition = definitions.get(id)
+    if (definition === undefined || !isUnlocked(definition, state) ||
+      hasOwned(definition.exclusiveWith, byId) ||
+      (!state.skills.autoAssignNonRefundable && !definition.refundable)) continue
+    if (points < definition.cost ||
+      !requirementsMet(definition.required, byId) ||
+      !requirementsMet(definition.shadowRequired, byId)) break
+    points -= definition.cost
+    fragments += definition.fragment ? 1n : 0n
+    byId[id] = { ...(byId[id] ?? emptyRuntime()), owned: true }
+    affected.push(id)
+  }
 
   if (affected.length === 0) return accepted(state, false, [])
   return accepted(
@@ -763,7 +783,7 @@ export function applyCanonicalSkillPresetLayout(
   const reset = resetCanonicalSkills(state)
   if (!reset.accepted) return reset
 
-  const definitions = loadDefinitions()
+  const definitions = loadDefinitions(state)
   const retainedSkillIds = [...definitions.keys()].filter(
     (skillId) => reset.state.skills.byId[skillId]?.owned === true,
   )
@@ -822,10 +842,14 @@ export function applyCanonicalSkillPresetLayout(
   })
 }
 
-function loadDefinitions(): ReadonlyMap<string, SkillDefinition> {
+function loadDefinitions(state: CanonicalGameStateV1): ReadonlyMap<string, SkillDefinition> {
   return new Map(
-    getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map((asset) => {
-      const definition = parseDefinition(asset)
+    [...getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND), ...SUBSKILL_ASSETS].map((asset) => {
+      const base = parseDefinition(asset)
+      const definition = { ...galvanizationDefinition(base, base.id, state),
+        refundable: isGalvanized(state, base.id) ? false : base.refundable,
+        unrefundableWith: base.unrefundableWith.filter((id) => !isGalvanized(state, id)),
+      }
       return [definition.id, definition]
     }),
   )
@@ -880,7 +904,7 @@ function isUnlocked(
 ): boolean {
   switch (definition.unlock) {
     case 'always':
-      return true
+      return !isSubskill(definition.id) || isSubskillUnlocked(state, definition.id)
     case 'first-infinity':
       return state.meta.firstInfinityComplete
     case 'fragments':
@@ -914,6 +938,7 @@ function resolveVisualState(
   effectivelyNotRefundableIds: ReadonlySet<string>,
   owned: boolean,
 ): CanonicalSkillVisualState {
+  if (isGalvanized(state, definition.id)) return 'owned'
   if (hasOwned(definition.exclusiveWith, state.skills.byId)) {
     return 'exclusive'
   }

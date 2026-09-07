@@ -40,28 +40,44 @@ commit-first application operation: one detached candidate is persisted before
 it is published. Cancellation, failure, import or reset discards the complete
 uncommitted candidate without charging the bank.
 
-## Finite bot-cap recovery
+## Overflow boundary and reset
 
-The special finite cap is not one atomic in-memory reset. It is a durable
-three-step state machine:
+Bots have a gameplay ceiling of `4e242` after Break the Loop. Before that
+upgrade, the ordinary Infinity threshold remains the ceiling. General numeric
+saturation remains `Number.MAX_VALUE` for other resources and intermediate
+calculations. Passive production, Stellar settlement, Tinker and event-time
+prediction share the bot boundary.
 
-1. persist `botCapTransitionPending` before classifying rewards;
-2. from a durable pending state, persist +1,000 Infinity Points, +1 Avocado
-   Overflow, `botCapRewardsGranted` and `inProgress` together;
-3. only a rewards-granted state may enter normal ordinary or Break Infinity.
+Reaching the boundary persists `botCapTransitionPending` as voluntary Overflow
+eligibility. It grants no Infinity Points, Avocato boost or Overflow Point.
+Invalid bot values produce a separate repair candidate that zeros bots and
+clears the transition flags. Eligibility survives bot spending and reload.
+Automatic and manual Infinity and Quantum resets cannot consume a reached
+Overflow boundary.
 
-A failed reward write rolls back to the pending candidate. Restarting from
-either checkpoint resumes the next phase without granting the special reward
-twice. Invalid bot values produce a separate repair candidate that zeros bots
-and clears all transition flags before any further simulation.
+`avocado.request-overflow-reset` stages one immutable reset candidate and
+persists it before publication. It grants exactly one `avocado.overflowPoints`
+and clears Dyson, Infinity, Quantum, Reality and Simulation progression,
+including all Avocato accumulators and the historical Overflow multiplier.
+It clears progression-derived skill points, ownership, timers and Research.
+Completed Secrets and their four-point reward survive, as do skill presets,
+automation preferences, host purchases and achievements, lifetime statistics,
+Offline Time and its capacity. Reality's Double Time upgrade is reset.
+Blank Slate completion, its unlock, and the Galvanizer wallet survive Overflow.
+Galvanized skill effects and Galvanizer spending are not implemented. See
+`infinity-challenges-contract.md` for challenge reset and reward rules.
 
-After the reward checkpoint commits, `botCapRewardsGranted` remains latched if
-later production or Stellar Sacrifices lowers Bots below the cap. The latch
-survives checkpoint and reload, so returning to the cap cannot grant another
-special reward; only a successful Infinity reset clears it for a later run.
+Overflow Points currently have no production effect or spending action. The
+balance and reset confirmation live in Avocato. A failed save preserves the
+entire old run. The successful reset clears eligibility and bots in the same
+write as the point increment, making retries and reloads idempotent.
 
-Bot-cap statistics are recorded by the subsequent normal Infinity transition,
-after the reward checkpoint is known to be durable.
+Schema 15 adds the point balance. Legacy finite bot balances above `4e242`
+are capped with a numeric-repair notice; existing currencies and historical
+Avocato bonuses are preserved until the player chooses Overflow. Historical
+automatic-reward flags do not count as consent or grant new currency.
+Transitional V2 imports start with zero Overflow Points and cannot inherit
+that balance from the receiving save's compatibility base.
 
 ## Infinity reset ownership
 

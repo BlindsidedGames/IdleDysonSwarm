@@ -1,3 +1,4 @@
+import { OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { hydrateGameState } from '../game-state/mapping'
@@ -1224,20 +1225,21 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(summary.meteorDreamResets).toBe(1n)
   })
 
-  test('does not force a zero-time bot-cap prestige after rewards when automatic Infinity is disabled', () => {
+  test('does not force a zero-time bot-cap prestige after eligibility is saved when automatic Infinity is disabled', () => {
     const source = baseState()
     const model = new CanonicalEventTimeModel(
       carrier({
         ...source,
         dyson: {
           ...source.dyson,
-          bots: Number.MAX_VALUE,
+          bots: OVERFLOW_BOT_CAP,
         },
         infinity: {
           ...source.infinity,
           automaticResetEnabled: false,
-          inProgress: true,
-          botCapRewardsGranted: true,
+          inProgress: false,
+          botCapTransitionPending: true,
+          botCapRewardsGranted: false,
         },
       }),
       context(),
@@ -1246,13 +1248,13 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(model.timeToNextMaterialEvent(10, 1)).toBeGreaterThan(0)
   })
 
-  test('keeps the bot-cap reward latched when Stellar Sacrifices reduces Bots and they return to cap', () => {
+  test('keeps Overflow eligibility latched when Stellar Sacrifices reduces Bots and they return to cap', () => {
     const source = baseState()
     const capped = {
       ...source,
       dyson: {
         ...source.dyson,
-        bots: Number.MAX_VALUE,
+        bots: OVERFLOW_BOT_CAP,
       },
       infinity: {
         ...source.infinity,
@@ -1292,18 +1294,16 @@ describe('legacy canonical event-time parity adapter', () => {
     const reward = evaluateCanonicalBotCapCheckpoint(
       pending.candidateState,
     )
-    expect(reward.appliedReward).toEqual({
-      infinityPoints: 1_000n,
-      overflowMultiplier: 1,
-    })
+    expect(reward.candidateState.infinity.points).toBe(capped.infinity.points)
+    expect(reward.candidateState.avocado).toEqual(pending.candidateState.avocado)
     const points = reward.candidateState.infinity.points
     const overflow = reward.candidateState.avocado.overflowMultiplier
 
     const active = advanceGame(
       carrier(reward.candidateState, {
         ...hydrated.skillEffectEvaluationSnapshot,
-        panelsPerSecond: 1e150,
-        panelLifetimeSeconds: 1e150,
+        panelsPerSecond: 1e120,
+        panelLifetimeSeconds: 1e120,
       }),
       {
         source: 'active',
@@ -1315,13 +1315,13 @@ describe('legacy canonical event-time parity adapter', () => {
     )
 
     expect(active.issue).toBeUndefined()
-    expect(active.state.gameState.dyson.bots).toBeLessThan(Number.MAX_VALUE)
+    expect(active.state.gameState.dyson.bots).toBeLessThan(OVERFLOW_BOT_CAP)
     expect(active.state.gameState.dyson.bots).toBeGreaterThan(0)
     expect(active.state.gameState.infinity).toMatchObject({
       points,
       automaticResetEnabled: false,
-      botCapTransitionPending: false,
-      botCapRewardsGranted: true,
+      botCapTransitionPending: true,
+      botCapRewardsGranted: false,
     })
     expect(active.state.gameState.avocado.overflowMultiplier).toBe(overflow)
     expect(active.summary.botCapInfinityPoints).toBe(0n)
@@ -1331,15 +1331,13 @@ describe('legacy canonical event-time parity adapter', () => {
       ...active.state.gameState,
       dyson: {
         ...active.state.gameState.dyson,
-        bots: Number.MAX_VALUE,
+        bots: OVERFLOW_BOT_CAP,
       },
     }
     const repeated = evaluateCanonicalBotCapCheckpoint(returnedToCap)
-    expect(repeated.action).toEqual({ kind: 'prestige' })
-    expect(repeated.appliedReward).toEqual({
-      infinityPoints: 0n,
-      overflowMultiplier: 0,
-    })
+    expect(repeated.action).toEqual({ kind: 'continue' })
+    expect(repeated.candidateState.infinity.points).toBe(points)
+    expect(repeated.candidateState.avocado.overflowMultiplier).toBe(overflow)
   })
 
   test('fails closed when an owned Reality artifact definition is absent', () => {
