@@ -16,7 +16,7 @@ const progression = Object.freeze({
 })
 
 describe('Wiki patch-note content', () => {
-  test('shows the 4.1.8 draft first and retains older notes', () => {
+  test('shows 4.1.8 first and retains older notes', () => {
     render(
       <IntlProvider locale="en" messages={{}} onError={() => undefined}>
         <WikiSurface
@@ -29,7 +29,6 @@ describe('Wiki patch-note content', () => {
 
     const latest = screen.getByRole('heading', { name: 'Version 4.1.8' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
-    expect(within(latest).getByText(/In development/)).not.toBeNull()
     expect(within(latest).getAllByRole('listitem')).toHaveLength(10)
     const older = screen.getByRole('heading', { name: 'Version 4.1.7' }).closest('section')!
     expect(within(older).getByRole('heading', { name: 'Older' })).not.toBeNull()

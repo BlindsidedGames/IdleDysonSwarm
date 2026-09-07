@@ -14413,67 +14413,61 @@
   "wiki.patch-notes.version-4-1-8.augments": [
     {
       "type": 0,
-      "value": "Galvanisiertes Cash & Science erhält drei Erweiterungen: +5 Sekunden Panel-Lebensdauer, jedes zerfallene Panel zählt zehnfach und doppelte Geld- und Wissenschaftsproduktion. Jede kostet 1 Fähigkeitspunkt; alle drei können gleichzeitig aktiv sein und normal erstattet werden."
+      "value": "Cash & Science als erste erweiterbare Fähigkeit hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-8.challenge": [
     {
       "type": 0,
-      "value": "Blank Slate ist die erste Unendlichkeitsherausforderung. Schließe eine Unendlichkeit ohne gewöhnliche Fähigkeiten ab, um einen Galvanisierer zu erhalten. Nach der ersten Unendlichkeit verfügbar; die Belohnung gibt es einmalig."
+      "value": "Blank Slate als erste Unendlichkeitsherausforderung hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-8.fixes": [
     {
       "type": 0,
-      "value": "Der Erfolg für die erste Seltsame Materie wird auch nach Ausgabe bereits verdienter Materie freigeschaltet. Fehlgeschlagene Änderungen des Aktualisierungsintervalls verwerfen keine neuere Auswahl mehr, auch nicht den Standardwert."
+      "value": "Probleme beim Erfolg für die erste Seltsame Materie und beim Aktualisierungsintervall behoben."
     }
   ],
   "wiki.patch-notes.version-4-1-8.galvanization": [
     {
       "type": 0,
-      "value": "Galvanisierer aktivieren aufgedeckte Basisfähigkeiten dauerhaft ohne Fähigkeitspunkte. Investierte Punkte werden erstattet, Nachteile und Ausschlüsse entfernt, und die Fähigkeit bleibt bei allen Zurücksetzungen erhalten. Normale Aktivierungsbedingungen und Timer-Zurücksetzungen gelten weiterhin."
+      "value": "Galvanisierer hinzugefügt, die Fähigkeiten dauerhaft machen."
     }
   ],
   "wiki.patch-notes.version-4-1-8.influence": [
     {
       "type": 0,
-      "value": "Ein Fehler bei der Einflussabholung mit vollem Arbeitervorrat und bestimmten Guthaben wurde behoben. Manuelle und automatische Abholung funktionieren auch mit betroffenen Spielständen."
+      "value": "Blockierte Einflussabholung behoben."
     }
   ],
   "wiki.patch-notes.version-4-1-8.interface": [
     {
       "type": 0,
-      "value": "Fähigkeitsdetails, Voraussetzungenzähler, Navigationssymbole und galvanisierte Fähigkeitssymbole wurden überarbeitet. Zuweisen und Entfernen behalten auf schmalen Bildschirmen dieselbe Größe. Tippen außerhalb eines Fähigkeitsfensters aktiviert keine dahinterliegenden Bedienelemente mehr."
+      "value": "Fähigkeitsdetails verbessert und Durchtippen durch Fähigkeitsfenster behoben."
     }
   ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
-      "value": "Bei 4e242 Bots bestimmst du in Avocato den Zeitpunkt für Overflow. Dabei wird der Fortschritt zurückgesetzt und 1 Overflow-Punkt vergeben. Galvanisierte Fähigkeiten, Galvanisierer und abgeschlossene Herausforderungen bleiben erhalten. Neuer Herausforderungen-Tab und klarere Overflow-Hinweise."
+      "value": "Freiwilligen Overflow-Reset und Overflow-Punkte hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-8.persistence": [
     {
       "type": 0,
-      "value": "Prioritätsänderungen werden sofort gespeichert; die Galvanisierung wird erst nach erfolgreichem Speichern abgeschlossen. Einige galvanisierte Fähigkeiten blockieren nach Overflow nicht mehr die Produktion."
+      "value": "Produktionsstillstand durch einige galvanisierte Fähigkeiten nach Overflow behoben."
     }
   ],
   "wiki.patch-notes.version-4-1-8.presets": [
     {
       "type": 0,
-      "value": "Fähigkeitsvorlagen folgen jetzt deiner Ausgabenpriorität: Voraussetzungen werden zuerst gekauft, dann werden Punkte für die nächste Fähigkeit gespart. Sortiere per Ziehen oder Pfeiltasten; galvanisierte Fähigkeiten werden separat angezeigt."
+      "value": "Ausgabenpriorität und Sortierung für Fähigkeitsvorlagen hinzugefügt."
     }
   ],
-  "wiki.patch-notes.version-4-1-8.status": [
+  "wiki.patch-notes.version-4-1-8.recovery": [
     {
       "type": 0,
-      "value": "In Entwicklung — weitere Änderungen folgen."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-8.steam": [
-    {
-      "type": 0,
-      "value": "Steam-Spielstände können jetzt wiederhergestellt werden, wenn Fortschritt bei nicht verfügbarer Steam-Integration erzielt wurde. Die ursprünglichen Spielstände bleiben erhalten."
+      "value": "Spielstandwiederherstellung verbessert."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

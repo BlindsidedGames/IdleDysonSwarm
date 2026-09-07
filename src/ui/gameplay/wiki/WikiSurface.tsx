@@ -204,7 +204,7 @@ const version418PatchNoteMessages = [
   messages.patchNotesVersion418Interface,
   messages.patchNotesVersion418Persistence,
   messages.patchNotesVersion418Influence,
-  messages.patchNotesVersion418Steam,
+  messages.patchNotesVersion418Recovery,
   messages.patchNotesVersion418Fixes,
 ] as const
 
@@ -449,7 +449,6 @@ function PatchNotesArticle() {
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion418)}</h4>
-          <p>{intl.formatMessage(messages.patchNotesVersion418Status)}</p>
           <ul className="wiki-surface__patch-note-list">
             {version418PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
