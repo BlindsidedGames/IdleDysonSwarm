@@ -1441,7 +1441,7 @@
   "skills.remove-dependants": "同时移除以下依赖技能：",
   "skills.rename": "重命名",
   "skills.replace-preset": "替换{name}？",
-  "skills.requirements-progress": "要求：已完成 {complete}/{total} 项",
+  "skills.requirements-progress": "要求：{complete}/{total}",
   "skills.reset": "重置技能",
   "skills.reset-refunded-heading": "将返还技能点的技能",
   "skills.reset-retained-heading": "不会返还技能点的技能",

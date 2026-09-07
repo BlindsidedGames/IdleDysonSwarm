@@ -1997,63 +1997,31 @@ function SkillDetails({
               })}
             </span>
           </label>}
-          {preview.galvanized ? null : !preview.owned ? (
+          {!preview.galvanized && (
             <Button
-              variant="primary"
+              variant={preview.owned ? 'danger' : 'primary'}
               className="skill-details__point-action"
               aria-label={intl.formatMessage(
-                messages.purchasePointAction,
-                {
-                  value: formatWholeGameNumber(
-                    locale,
-                    preview.purchase.pointsRequired,
-                  ),
-                },
+                preview.owned ? messages.refundPointAction : messages.purchasePointAction,
+                { value: formatWholeGameNumber(locale, preview.owned ? preview.refund.pointsReturned : preview.purchase.pointsRequired) },
               )}
-              state={
-                pendingKind === 'skill.purchase' ? 'pending' : 'idle'
-              }
-              disabled={!canPurchase}
-              onClick={() => requestSkillAction('purchase')}
+              state={pendingKind === (preview.owned ? 'skill.refund' : 'skill.purchase') ? 'pending' : 'idle'}
+              disabled={preview.owned ? !canRefund : !canPurchase}
+              onClick={() => requestSkillAction(preview.owned ? 'refund' : 'purchase')}
             >
-              <span>{intl.formatMessage(messages.purchase)}</span>
-              <small>
-                {intl.formatMessage(messages.purchasePointImpact, {
-                  value: formatWholeGameNumber(
-                    locale,
-                    preview.purchase.pointsRequired,
-                  ),
-                })}
-              </small>
-            </Button>
-          ) : (
-            <Button
-              variant="danger"
-              className="skill-details__point-action"
-              aria-label={intl.formatMessage(
-                messages.refundPointAction,
-                {
-                  value: formatWholeGameNumber(
-                    locale,
-                    preview.refund.pointsReturned,
-                  ),
-                },
-              )}
-              state={
-                pendingKind === 'skill.refund' ? 'pending' : 'idle'
-              }
-              disabled={!canRefund}
-              onClick={() => requestSkillAction('refund')}
-            >
-              <span>{intl.formatMessage(messages.refund)}</span>
-              <small>
-                {intl.formatMessage(messages.refundPointImpact, {
-                  value: formatWholeGameNumber(
-                    locale,
-                    preview.refund.pointsReturned,
-                  ),
-                })}
-              </small>
+              {/* Both labels reserve space so changing ownership cannot resize the action. */}
+              <span className="skill-details__point-action-label" aria-hidden={preview.owned} data-active={!preview.owned}>
+                <span>{intl.formatMessage(messages.purchase)}</span>
+                <small>{intl.formatMessage(messages.purchasePointImpact, {
+                  value: formatWholeGameNumber(locale, preview.purchase.pointsRequired),
+                })}</small>
+              </span>
+              <span className="skill-details__point-action-label" aria-hidden={!preview.owned} data-active={preview.owned}>
+                <span>{intl.formatMessage(messages.refund)}</span>
+                <small>{intl.formatMessage(messages.refundPointImpact, {
+                  value: formatWholeGameNumber(locale, preview.refund.pointsReturned),
+                })}</small>
+              </span>
             </Button>
           )}
           {queuePreview && (

@@ -1441,7 +1441,7 @@
   "skills.remove-dependants": "次の依存スキルも同時に解除：",
   "skills.rename": "名前を変更",
   "skills.replace-preset": "「{name}」を置き換えますか？",
-  "skills.requirements-progress": "要件：{complete}/{total}完了",
+  "skills.requirements-progress": "要件：{complete}/{total}",
   "skills.reset": "スキルをリセット",
   "skills.reset-refunded-heading": "スキルポイントが返還されるスキル",
   "skills.reset-retained-heading": "スキルポイントが返還されないスキル",

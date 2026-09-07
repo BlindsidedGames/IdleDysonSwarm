@@ -1441,7 +1441,7 @@
   "skills.remove-dependants": "Retirar também estas Habilidades dependentes:",
   "skills.rename": "Renomear",
   "skills.replace-preset": "Substituir {name}?",
-  "skills.requirements-progress": "Requisitos concluídos: {complete}/{total}.",
+  "skills.requirements-progress": "Requisitos: {complete}/{total}",
   "skills.reset": "Reiniciar Habilidades",
   "skills.reset-refunded-heading": "Habilidades retiradas com devolução dos Pontos",
   "skills.reset-retained-heading": "Habilidades mantidas sem devolução dos Pontos",

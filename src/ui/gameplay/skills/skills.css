@@ -783,6 +783,7 @@
 }
 
 .skill-details {
+  container-type: inline-size;
   display: grid;
   gap: 0.5rem;
   font-size: calc(0.78rem * var(--game-text-scale, 1));
@@ -884,10 +885,33 @@
   min-block-size: 2.75rem;
 }
 
-.skill-details__point-action {
-  flex-direction: column;
+.skill-details__actions > .skill-details__point-action {
+  display: grid;
+  flex: 0 0 12rem;
+  min-block-size: 3.25rem;
+}
+
+.skill-details__point-action-label {
+  display: grid;
+  grid-area: 1 / 1;
   gap: 0.05rem;
   line-height: 1.05;
+}
+
+.skill-details__point-action-label[data-active="false"] {
+  visibility: hidden;
+}
+
+@container (max-width: 26rem) {
+  .skill-details__actions {
+    flex-direction: column;
+  }
+
+  .skill-details__actions > .skill-details__point-action,
+  .skill-details__actions > .skill-details__preset-toggle {
+    flex-basis: auto;
+    inline-size: 100%;
+  }
 }
 
 .skill-details__point-action small {

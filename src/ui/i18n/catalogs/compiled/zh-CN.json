@@ -11372,7 +11372,7 @@
   "skills.requirements-progress": [
     {
       "type": 0,
-      "value": "要求：已完成 "
+      "value": "要求："
     },
     {
       "type": 1,
@@ -11385,10 +11385,6 @@
     {
       "type": 1,
       "value": "total"
-    },
-    {
-      "type": 0,
-      "value": " 项"
     }
   ],
   "skills.reset": [

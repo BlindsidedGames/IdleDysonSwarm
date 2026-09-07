@@ -1441,7 +1441,7 @@
   "skills.remove-dependants": "Также удалить зависимые навыки:",
   "skills.rename": "Переименовать",
   "skills.replace-preset": "Заменить «{name}»?",
-  "skills.requirements-progress": "Требования: {complete}/{total} выполнено",
+  "skills.requirements-progress": "Требования: {complete}/{total}",
   "skills.reset": "Сбросить навыки",
   "skills.reset-refunded-heading": "Навыки, за которые вернутся очки навыка",
   "skills.reset-retained-heading": "Навыки, за которые очки навыка не вернутся",

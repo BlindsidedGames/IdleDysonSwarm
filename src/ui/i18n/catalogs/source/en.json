@@ -5782,7 +5782,7 @@
     "description": "Confirmation heading before replacing a named skill preset."
   },
   "skills.requirements-progress": {
-    "defaultMessage": "Requirements: {complete}/{total} complete",
+    "defaultMessage": "Requirements: {complete}/{total}",
     "description": "Number of prerequisite skills completed for the selected skill."
   },
   "skills.reset": {

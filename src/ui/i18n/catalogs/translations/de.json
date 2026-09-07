@@ -1441,7 +1441,7 @@
   "skills.remove-dependants": "Diese abhängigen Skills ebenfalls entfernen:",
   "skills.rename": "Umbenennen",
   "skills.replace-preset": "Ersetzen: {name}?",
-  "skills.requirements-progress": "Voraussetzungen: {complete}/{total} erfüllt",
+  "skills.requirements-progress": "Voraussetzungen: {complete}/{total}",
   "skills.reset": "Skills zurücksetzen",
   "skills.reset-refunded-heading": "Entfernte Skills mit Skill-Punkt-Rückgabe",
   "skills.reset-retained-heading": "Beibehaltene Skills ohne Skill-Punkt-Rückgabe",
