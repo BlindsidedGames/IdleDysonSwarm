@@ -14404,6 +14404,78 @@
       "value": "Novas partidas e reinícios de Quantum agora usam 100% de trabalhadores por padrão. As predefinições de habilidades de novas partidas também começam com 100% de trabalhadores."
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Versão 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Cash & Science galvanizada tem três aprimoramentos: +5 segundos de duração dos painéis, cada painel deteriorado conta como 10 e produção dobrada de dinheiro e ciência. Cada um custa 1 ponto de habilidade; os três podem ser atribuídos juntos e reembolsados normalmente."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Adicionado Blank Slate, o primeiro desafio de Infinito. Complete um Infinito sem habilidades comuns para ganhar um Galvanizador. Disponível após seu primeiro Infinito; a recompensa só pode ser obtida uma vez."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Corrigida a conquista de primeira Matéria Estranha após gastar a matéria já obtida. Falhas ao alterar o intervalo de atualização não descartam mais uma seleção mais recente, incluindo o padrão."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Galvanizadores ativam permanentemente habilidades base reveladas sem gastar pontos de habilidade. Os pontos investidos são devolvidos, penalidades e exclusões são removidas, e a habilidade permanece após todos os reinícios. Condições de ativação e reinícios de temporizadores continuam valendo."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Corrigida a coleta de Influência indisponível com trabalhadores no máximo em certos saldos. A coleta manual e automática funciona nas partidas afetadas."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Melhorados os detalhes de habilidades, contadores de requisitos, ícones de navegação e visual das habilidades galvanizadas. Atribuir e Remover mantêm tamanho consistente em telas estreitas. Tocar fora de uma janela de habilidade não ativa mais controles atrás dela."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "Ao atingir 4e242 bots, escolha quando realizar Overflow pelo Avocato. Isso reinicia o progresso e concede 1 ponto de Overflow, preservando habilidades galvanizadas, Galvanizadores e desafios concluídos. Nova aba de desafios e orientações mais claras para Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Alterações de prioridade são salvas imediatamente, e a galvanização só termina após salvar com sucesso. Corrigidas habilidades galvanizadas que paravam a produção após Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Predefinições de habilidades seguem sua prioridade de gastos: compram os pré-requisitos primeiro e aguardam pontos suficientes para a próxima habilidade. Reordene arrastando ou usando as setas; habilidades galvanizadas aparecem separadamente."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.status": [
+    {
+      "type": 0,
+      "value": "Em desenvolvimento — mais mudanças estão a caminho."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.steam": [
+    {
+      "type": 0,
+      "value": "Adicionada recuperação de partidas do Steam para progresso feito quando a integração estava indisponível, preservando os arquivos originais."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

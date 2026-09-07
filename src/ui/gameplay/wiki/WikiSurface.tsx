@@ -195,6 +195,19 @@ const version414PatchNoteMessages = [
   messages.patchNotesVersion414SimulationResources,
 ] as const
 
+const version418PatchNoteMessages = [
+  messages.patchNotesVersion418Challenge,
+  messages.patchNotesVersion418Galvanization,
+  messages.patchNotesVersion418Augments,
+  messages.patchNotesVersion418Overflow,
+  messages.patchNotesVersion418Presets,
+  messages.patchNotesVersion418Interface,
+  messages.patchNotesVersion418Persistence,
+  messages.patchNotesVersion418Influence,
+  messages.patchNotesVersion418Steam,
+  messages.patchNotesVersion418Fixes,
+] as const
+
 const version417PatchNoteMessages = [
   messages.patchNotesVersion417Achievements,
   messages.patchNotesVersion417Rounding,
@@ -435,15 +448,22 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion417)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion418)}</h4>
+          <p>{intl.formatMessage(messages.patchNotesVersion418Status)}</p>
           <ul className="wiki-surface__patch-note-list">
-            {version417PatchNoteMessages.map((message) => (
+            {version418PatchNoteMessages.map((message) => (
               <li key={message.id}>{intl.formatMessage(message)}</li>
             ))}
           </ul>
         </section>
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion417)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version417PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
           <h4>{intl.formatMessage(messages.patchNotesVersion416)}</h4>
           <ul className="wiki-surface__patch-note-list">
             {version416PatchNoteMessages.map((message) => (

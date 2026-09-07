@@ -14404,6 +14404,78 @@
       "value": "New games and Quantum resets now default to 100% workers. New-game Skill Presets also start at 100% workers."
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Version 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Galvanized Cash & Science has three Augments: +5 seconds of Panel Lifetime, each decayed panel counts as 10, and double Cash and Science production. Each costs 1 Skill Point; all three can be assigned together and refunded normally."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Added Blank Slate, the first Infinity Challenge. Complete an Infinity without ordinary skills to earn a Galvanizer. Unlocks after your first Infinity; the reward can be earned once."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Fixed First Strange Matter not unlocking after previously earned Strange Matter was spent. Fixed failed update-interval changes discarding a newer selection, including Default."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Galvanizers make revealed base skills permanently active without costing Skill Points. Invested points are returned, penalties and exclusions are removed, and the skill survives all resets. Normal activation conditions and timer resets still apply."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Fixed Influence gathering becoming unavailable with a full worker pool at certain balances. Manual and automatic gathering now work with affected saves."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Updated skill details, requirement counts, navigation icons, and Galvanized skill artwork. Assign and Unassign buttons keep a consistent size on narrow screens. Fixed outside taps on skill popups activating controls underneath."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "At 4e242 Bots, choose when to Overflow from Avocato. This resets progression and awards 1 Overflow Point while keeping Galvanized skills, Galvanizers, and completed challenges. Added a Challenges tab and clearer Overflow guidance."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Preset priority changes save immediately, and Galvanization only completes after a successful save. Fixed some Galvanized skills stopping production after Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Skill Presets now follow your spending priority, buying prerequisites first and waiting until the next skill is affordable. Reorder skills by dragging or using arrow buttons; Galvanized skills appear separately."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.status": [
+    {
+      "type": 0,
+      "value": "In development — more changes are on the way."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.steam": [
+    {
+      "type": 0,
+      "value": "Added Steam save recovery for progress made while Steam integration was unavailable, preserving the original saves."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

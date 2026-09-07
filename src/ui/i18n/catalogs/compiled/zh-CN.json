@@ -14404,6 +14404,78 @@
       "value": "新游戏和 Quantum 重置现在默认分配为 100% 工人。新游戏的技能预设也以 100% 工人开始。"
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "版本 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "镀层后的 Cash & Science 新增三项强化：面板寿命增加5秒、每个衰减面板按10个计算，以及现金和科学产量翻倍。每项消耗1技能点，可同时分配全部三项，并可正常退还。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "新增首个无限挑战 Blank Slate。完成一次不分配普通技能的无限，即可获得一个镀层器。首次无限后解锁，奖励只能领取一次。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "修复已花掉之前获得的奇异物质后无法解锁首次奇异物质成就的问题。修复更新间隔修改失败时丢弃较新选择的问题，包括默认值。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "镀层器可使已揭示的基础技能永久生效，无需技能点。已投入的技能点会退还，负面效果和互斥限制会移除，技能在所有重置后保留。正常的激活条件和计时器重置规则仍然适用。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "修复某些影响力余额下工人已满却无法收集影响力的问题。受影响的存档现在可正常手动和自动收集。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "更新技能详情、需求计数、导航图标和镀层技能外观。窄屏上的分配与取消分配按钮保持一致尺寸。修复点击技能弹窗外侧时触发后方控件的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "达到4e242机器人后，可在 Avocato 中自行选择何时进行溢出。溢出会重置进度并奖励1溢出点，同时保留镀层技能、镀层器和已完成的挑战。新增挑战页面和更清晰的溢出提示。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "预设优先级修改会立即保存，镀层操作只会在保存成功后完成。修复部分镀层技能导致溢出后停止生产的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "技能预设现在按你的支出优先级执行：先购买前置技能，再等待足够点数购买下一项。可拖动或使用箭头排序；镀层技能单独显示。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.status": [
+    {
+      "type": 0,
+      "value": "开发中——后续还将加入更多改动。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.steam": [
+    {
+      "type": 0,
+      "value": "新增 Steam 存档恢复选项，可恢复 Steam 集成不可用期间取得的进度，同时保留原始存档。"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

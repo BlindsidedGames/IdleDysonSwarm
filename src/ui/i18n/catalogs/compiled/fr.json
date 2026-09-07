@@ -14404,6 +14404,78 @@
       "value": "Les nouvelles parties et les réinitialisations Quantum utilisent désormais 100 % de travailleurs par défaut. Les préréglages de compétences des nouvelles parties commencent également avec 100 % de travailleurs."
     }
   ],
+  "wiki.patch-notes.version-4-1-8": [
+    {
+      "type": 0,
+      "value": "Version 4.1.8"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.augments": [
+    {
+      "type": 0,
+      "value": "Cash & Science galvanisée propose trois augmentations : +5 secondes de durée de vie des panneaux, chaque panneau dégradé compte pour 10, et production d’argent et de science doublée. Chacune coûte 1 point de compétence ; les trois peuvent être actives ensemble et remboursées normalement."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.challenge": [
+    {
+      "type": 0,
+      "value": "Ajout de Blank Slate, le premier défi d’Infini. Terminez un Infini sans compétences ordinaires pour gagner un Galvaniseur. Disponible après votre premier Infini ; la récompense ne peut être obtenue qu’une fois."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.fixes": [
+    {
+      "type": 0,
+      "value": "Correction du succès de première Matière étrange après dépense de la matière déjà gagnée. Un échec de modification de l’intervalle de mise à jour ne supprime plus un choix plus récent, y compris la valeur par défaut."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.galvanization": [
+    {
+      "type": 0,
+      "value": "Les Galvaniseurs activent définitivement les compétences de base révélées sans coûter de points de compétence. Les points investis sont rendus, les pénalités et exclusions supprimées, et la compétence survit à toutes les réinitialisations. Les conditions d’activation et réinitialisations des minuteries restent applicables."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.influence": [
+    {
+      "type": 0,
+      "value": "Correction de la collecte d’Influence indisponible avec une réserve pleine d’ouvriers à certains soldes. Les collectes manuelle et automatique fonctionnent désormais avec les sauvegardes concernées."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.interface": [
+    {
+      "type": 0,
+      "value": "Amélioration des détails des compétences, des compteurs de prérequis, des icônes de navigation et de l’apparence des compétences galvanisées. Les boutons d’attribution gardent une taille constante sur les écrans étroits. Toucher hors d’une fenêtre de compétence n’active plus les commandes derrière elle."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.overflow": [
+    {
+      "type": 0,
+      "value": "À 4e242 robots, choisissez quand effectuer un Overflow depuis Avocato. Il réinitialise la progression et accorde 1 point d’Overflow tout en conservant les compétences galvanisées, les Galvaniseurs et les défis terminés. Ajout d’un onglet Défis et d’indications plus claires pour l’Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.persistence": [
+    {
+      "type": 0,
+      "value": "Les changements de priorité sont enregistrés immédiatement et la galvanisation ne se termine qu’après une sauvegarde réussie. Correction de compétences galvanisées bloquant la production après un Overflow."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.presets": [
+    {
+      "type": 0,
+      "value": "Les préréglages de compétences suivent désormais votre priorité de dépense, achetant les prérequis avant d’attendre de pouvoir payer la compétence suivante. Réorganisez les compétences par glissement ou avec les flèches ; les compétences galvanisées sont affichées séparément."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.status": [
+    {
+      "type": 0,
+      "value": "En développement — d’autres changements sont à venir."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.steam": [
+    {
+      "type": 0,
+      "value": "Ajout de la récupération des sauvegardes Steam pour la progression effectuée lorsque l’intégration Steam était indisponible, en conservant les sauvegardes originales."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,
