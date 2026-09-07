@@ -1785,9 +1785,6 @@ function SkillDetails({
   const completedRequirementIds = preview.requiredSkillIds.filter(
     (skillId) => previews.get(skillId)?.owned,
   )
-  const missingRequirementIds = preview.requiredSkillIds.filter(
-    (skillId) => !previews.get(skillId)?.owned,
-  )
   const applyQueueChange = async (
     request: SkillPresetQueueChangeRequest,
   ) => {
@@ -1951,13 +1948,6 @@ function SkillDetails({
                   total: preview.requiredSkillIds.length,
                 })}
               </strong>
-              {missingRequirementIds.length > 0 && (
-                <span>
-                  {intl.formatMessage(messages.missingRequirements, {
-                    names: names(missingRequirementIds),
-                  })}
-                </span>
-              )}
             </p>
           )}
           {preview.fragment && (
