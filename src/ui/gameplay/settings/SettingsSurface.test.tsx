@@ -84,3 +84,37 @@ test('restoring the default wins over a slider update still being saved', async 
   expect(change).toHaveBeenCalledTimes(2)
   expect(slider.value).toBe('33')
 })
+
+
+test.each([
+  ['rejected', false], ['non-accepted', false], ['rejected', true], ['non-accepted', true],
+] as const)('Default survives an earlier %s slider request (Default also fails: %s)', async (failure, defaultFails) => {
+  let finishSlider!: () => void
+  const change = vi.fn()
+    .mockImplementationOnce(() => new Promise((resolve, reject) => {
+      finishSlider = () => failure === 'rejected'
+        ? reject(new Error('earlier request failed'))
+        : resolve({ status: 'rejected' })
+    }))
+    .mockImplementation(() => defaultFails ? Promise.reject(new Error('Default failed too')) : Promise.resolve())
+  const unused = vi.fn()
+  render(<IntlProvider locale="en" messages={{}}>
+    <LocalePreferenceContext.Provider value={{ locale: 'en', preference: 'en', setPreference: unused }}>
+      <SettingsSurface
+        resetSave={unused} importSaveFile={unused} importSaveText={unused}
+        previewImportSaveFile={unused} previewImportSaveText={unused}
+        readSaveExport={unused} downloadSaveText={unused} copySaveText={unused}
+        processingIntervalMilliseconds={100} onProcessingIntervalChange={change}
+      />
+    </LocalePreferenceContext.Provider>
+  </IntlProvider>)
+  const slider = screen.getByRole('slider', { name: 'Update interval' }) as HTMLInputElement
+  fireEvent.pointerDown(slider)
+  fireEvent.change(slider, { target: { value: '150' } })
+  fireEvent.pointerUp(slider)
+  fireEvent.click(screen.getByRole('button', { name: 'Default' }))
+  finishSlider()
+  await waitFor(() => expect(change).toHaveBeenLastCalledWith(33))
+  await waitFor(() => expect(slider.value).toBe(defaultFails ? '100' : '33'))
+  expect(change.mock.calls).toEqual([[150], [33]])
+})

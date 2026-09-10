@@ -67,3 +67,19 @@ describe('provider-neutral achievement rules',()=>{
    for(const missing of COMPLETION_UPGRADES){Object.assign(s.dream.upgrades,{[missing]:false});expect(evaluateAchievements(s,false).unlocked).not.toContain('achievement.simulation_upgrades_complete');Object.assign(s.dream.upgrades,{[missing]:true})}
  })
 })
+
+
+test.each(['lifetime', 'avocado'] as const)('spent Strange Matter still earns the first milestone from %s evidence', evidence => {
+  const state = empty()
+  Object.assign(state.statistics.lifetime, { strangeMatter: evidence === 'lifetime' ? 10 : 0 })
+  Object.assign(state.avocado, { strangeMatter: evidence === 'avocado' ? 10 : 0 })
+  expect(state.dream.strangeMatter).toBe(0)
+  expect(evaluateAchievements(state, false).unlocked).toContain('achievement.first_strange_matter')
+})
+
+test('no Strange Matter evidence does not grant the milestone', () => {
+  const state = empty()
+  Object.assign(state.statistics.lifetime, { strangeMatter: 0 })
+  Object.assign(state.avocado, { strangeMatter: 0 })
+  expect(evaluateAchievements(state, false).unlocked).not.toContain('achievement.first_strange_matter')
+})

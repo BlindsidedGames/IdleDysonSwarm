@@ -1,5 +1,6 @@
 import { attachSteamPresentation } from './steam/presentation.mjs'
 import { SteamCloud } from './steam/cloud.mjs'
+import { selectSteamSaveRoot } from './steam/offlineProfile.mjs'
 import { loadSteamClient, createSteamPublication } from './steam/client.mjs'
 import {
   app,
@@ -21,6 +22,7 @@ import {
   mkdir,
   open,
   readFile,
+  realpath,
   rename,
   stat,
 } from 'node:fs/promises'
@@ -103,6 +105,7 @@ let packagedRuntimeMetadata
 let smokeCleanupScheduled = false
 let steamInventoryStore
 let steamCloud = null
+let steamSaveRoot = null
 let steamClient = null
 let steamPublication = null
 
@@ -118,7 +121,7 @@ function denyRendererPermissions(electronSession) {
 }
 
 function webSaveRoot() {
-  return steamCloud === null ? join(app.getPath('userData'), ...(steamDistribution ? ['steam-offline'] : []), webSaveRootName) : join(steamCloud.localDirectory,webSaveRootName)
+  return steamCloud === null ? join(app.getPath('userData'), ...(steamDistribution ? ['steam-offline'] : []), webSaveRootName) : steamSaveRoot ?? join(steamCloud.localDirectory,webSaveRootName)
 }
 
 function rootedPath(relativePath) {
@@ -801,6 +804,31 @@ if (!singleInstanceAcquired) {
       } })
     }
     } catch(error) { steamCloud = null; console.warn('Steam Cloud unavailable:', error.message) }
+    if (steamCloud !== null) {
+      try {
+        await mkdir(app.getPath('userData'), { recursive: true })
+        steamSaveRoot = await selectSteamSaveRoot({
+          offlineRoot: join(await realpath(app.getPath('userData')), 'steam-offline', webSaveRootName),
+          accountDirectory: steamCloud.localDirectory,
+          ensureIdentity: () => steamCloud.ensureIdentity(),
+          choose: async () => {
+            const { response } = await dialog.showMessageBox({
+              type: 'question', title: 'Offline progress found',
+              message: 'A save was created while Steam was unavailable. Use that progress for the signed-in Steam account?',
+              detail: 'Both saves will be kept. If Steam Cloud contains different progress, you will be able to choose which save to continue.',
+              buttons: ['Use offline progress', 'Keep account save', 'Decide next launch'],
+              defaultId: 2, cancelId: 2,
+            })
+            return ['offline', 'account', 'later'][response]
+          },
+        })
+      } catch (error) {
+        console.error('Steam offline save recovery failed.', error)
+        dialog.showErrorBox('Save recovery could not finish', 'Your existing saves have been kept. Restart the game to try again.')
+        app.quit()
+        return
+      }
+    }
     steamInventoryStore = await createElectronSteamInventoryStore()
     if (steamDistribution) steamPublication = await createSteamPublication(steamClient, {
       readDeveloperOptions: async () => (await steamInventoryStore.readEntitlements()).developerOptions,

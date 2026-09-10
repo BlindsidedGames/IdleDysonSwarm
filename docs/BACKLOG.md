@@ -19,18 +19,19 @@ or an investigation records an evidence-backed disposition. **Confirmed** means
 reproduced or established in current code; **Investigate** means the cause is
 still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
 
-- [x] **B02 · Implemented / automated QA passed · Quantum Cash/Science Buy Max.**
+- [x] **B02 · Implemented / automated and browser QA passed · Quantum Cash/Science Buy Max.**
   Exact signed 64-bit ownership now works through production derivation, full-cap
   purchases, and save/reload. Existing level caps and the 5%-per-level rate remain.
-- [x] **B03 · Implemented / automated QA passed · Quantum Shard replenishment.**
+- [x] **B03 · Implemented / automated and browser QA passed · Quantum Shard replenishment.**
   The existing cap now applies to the wallet, with exact cumulative earned/spent
   totals retained in the existing save format. Spending frees capacity; partial
   conversion preserves unused IP. Reset grants and serialized reload are covered.
-- [x] **B04 · Implemented / automated QA passed · Quantum Max preview.**
+- [x] **B04 · Implemented / automated and browser QA passed · Quantum Max preview.**
   UI and transaction share the executable maximum; oversized fixed batches are
   disabled/rejected without charge. Influence retains its final partial purchase.
-  Rendered component tests cover labels and click dispatch. Live browser/device
-  verification remains part of release certification; see
+  Browser checks cover exact Max quantities, purchases, replenishment, and
+  autosave/reload at phone/tablet/desktop sizes. Physical-device certification
+  remains separate; see
   [Quantum fix verification](audits/quantum-cap-fixes-2026-09-10.md).
 - [ ] **B05 · Investigate · Only seconds of Stored Time after a capacity upgrade.**
   Normal capacity math and a browser departure/return passed; the reported

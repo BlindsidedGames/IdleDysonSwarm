@@ -1,8 +1,9 @@
 # Quantum cap fixes — 10 September 2026
 
-B02, B03, and B04 are implemented and reviewed in the working tree based on
-`4a56278d`. Automated verification is complete. Live browser/device verification
-is not complete; no merge, upload, or release is claimed.
+B02, B03, and B04 are implemented in `a894fc24` and reviewed together with
+the recovered 4.1.8 fixes from `e65cbc3e`. Automated and live browser
+verification are complete for the scoped changes. Device/store certification
+and release delivery remain separate.
 
 ## Result
 
@@ -42,7 +43,7 @@ checks exact balances/ownership/previews, and advances the simulation again.
 
 Automated gates:
 
-- Full suite: 134 files, 1,451 tests passed.
+- Combined full suite: 135 files, 1,470 tests passed on Node 22 and Node 24.
 - TypeScript project build and lint passed.
 - Production Web and native-mode Web bundles built successfully.
 - Production Store boundary check passed.
@@ -53,16 +54,44 @@ Automated gates:
 - `git diff --check` passed.
 
 The builds retain the existing large-chunk advisory; no new bundle architecture
-was introduced. The `tsx` command wrapper could not create its IPC socket under
-this host's restrictions, so equivalent check scripts were successfully run with
-`node --import tsx` (no IPC listener).
+was introduced. Earlier sandbox restrictions were lifted for integration verification; the
+standard npm check scripts now pass.
 
-## Verification boundary
+## Live integration verification
 
-Starting a local HTTP preview failed with `listen EPERM`. A local-file preview
-was also explicitly blocked by browser URL policy; that restriction was not
-worked around. Rendered React component tests verify quantity labels, disabled
-states, Maxed state, and click dispatch, but do not establish live-browser or
-physical-device visual acceptance. Native-mode bundle success is not a native
-archive or installed-device test. Remaining manual release checks stay in the
-backlog's release-certification section.
+The game ran at a local HTTP origin with the original preview save backed up
+before testing and restored afterwards. A prepared canonical fixture started
+with cumulative earned/spent Shards above signed 64-bit and two/three remaining
+Cash/Science levels plus one partial Influence purchase.
+
+- Buy 10 was disabled for all three boosters. Max displayed exactly 1/2/3.
+- Buying those quantities charged six Shards and reached all three ownership caps.
+- Entanglement then credited 100 Shards for exactly 4,200 unspent IP.
+- After the normal automatic checkpoint and browser reload, the wallet was 194
+  and all three boosters remained Maxed. The exported save was decoded outside
+  the browser and checked against exact bigint values: earned MAX + 200,
+  spent MAX + 6, three ownership values MAX, and IP total/spent both 7.
+- Settings was changed to 200 ms, restored to Default (33 ms), and reloaded;
+  the saved value remained 33 ms. Injected request-failure cases pass in the
+  component regression suite.
+- Quantum was visually inspected at 390x844, 768x1024, and 1366x900. Settings
+  was also inspected at 390x844. No clipped purchase controls or horizontal
+  document overflow were observed. The console had no warnings or errors.
+- Electron startup and suspend/resume smoke tests exited successfully.
+- Steam mobile boundary scan passed for all 214 native renderer files.
+
+Screenshots and decoded-export evidence are local QA artifacts under
+`/tmp/ids-integration-qa`; they are not distributable game assets.
+
+## Remaining boundaries
+
+An immediate browser reload before the periodic checkpoint reproduced the
+existing unsaved-progress window. A later reload after autosave preserved the
+changes. This is consistent with the separately documented, deferred B01
+investigation; this integration does not change the 30-second checkpoint policy
+or establish the cause of players' unexpected process restarts.
+
+Steam offline-profile recovery has filesystem-backed account-isolation,
+interrupted-copy, save-preservation, and Cloud conflict tests. Electron smoke
+success does not establish signed-in Steam account-switching acceptance or
+physical iOS/Android device certification. No upload or store release is claimed.

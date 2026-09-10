@@ -36,7 +36,8 @@ export function evaluateAchievements(state: DeepReadonly<CanonicalGameStateV1>, 
   reach('first_influence', state.reality.influence >= 1)
   reach('first_infinity_point', state.infinity.points + state.infinity.spentPoints >= 1n)
   reach('first_quantum_shard', state.quantum.pointsEarned >= 1n)
-  reach('first_strange_matter', state.dream.strangeMatter >= 1)
+  reach('first_strange_matter', state.dream.strangeMatter >= 1 ||
+    state.statistics.lifetime.strangeMatter >= 1 || state.avocado.strangeMatter >= 1)
   reach('secrets_of_universe_maxed', state.infinity.secretsOfTheUniverse >= QUANTUM_CONSTANTS.maximumSecrets)
   reach('divisions_complete', state.quantum.divisionsPurchased >= QUANTUM_CONSTANTS.maximumDivisions)
   for (const line of ['terra', 'purity', 'power', 'stellar', 'paragade'] as const) reach(`unlock_${line}`, state.quantum.unlocks[line])
