@@ -1766,6 +1766,11 @@ function SkillDetails({
       }
     : null)
   const [galvanizeConfirmation, setGalvanizeConfirmation] = useState(false)
+  const confirmationRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    // Bring the dependency review into view without focusing its commit button.
+    confirmationRef.current?.focus()
+  }, [queuePreview, actionPreview])
   const [queuePending, setQueuePending] = useState(false)
   const [queueFailed, setQueueFailed] = useState(false)
   const names = (ids: readonly string[]) =>
@@ -2016,6 +2021,8 @@ function SkillDetails({
           )}
           {queuePreview && (
             <div
+              ref={confirmationRef}
+              tabIndex={-1}
               className="skill-confirmation skill-details__queue-confirmation"
               role="group"
               aria-label={intl.formatMessage(
@@ -2055,6 +2062,8 @@ function SkillDetails({
           )}
           {actionPreview && (
             <div
+              ref={confirmationRef}
+              tabIndex={-1}
               className="skill-confirmation skill-details__action-confirmation"
               role="group"
               aria-label={intl.formatMessage(
