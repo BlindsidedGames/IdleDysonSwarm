@@ -1837,6 +1837,7 @@
   "wiki.patch-notes.version-4-1-8.overflow": "Freiwilligen Overflow-Reset und Overflow-Punkte hinzugefügt.",
   "wiki.patch-notes.version-4-1-8.persistence": "Produktionsstillstand durch einige galvanisierte Fähigkeiten nach Overflow behoben.",
   "wiki.patch-notes.version-4-1-8.presets": "Ausgabenpriorität und Sortierung für Fähigkeitsvorlagen hinzugefügt.",
+  "wiki.patch-notes.version-4-1-8.quantum": "Der Erhalt und das Ausgeben von Quantensplittern sowie die Mengen beim Maximalkauf funktionieren jetzt auch bei sehr hohen Guthaben korrekt.",
   "wiki.patch-notes.version-4-1-8.recovery": "Spielstandwiederherstellung verbessert.",
   "wiki.patch-notes.version-4-1.audio": "Ein Soundtrack und Klänge der Benutzeroberfläche wurden auf unterstützten Plattformen hinzugefügt, mit getrennter Lautstärkeregelung für Musik und Effekte, einer vollständigen Stummschaltung und zuverlässigerer Wiedergabe beim Wechsel zwischen Apps oder Browserfenstern.",
   "wiki.patch-notes.version-4-1.dyson-visualization": "Verbesserte Leistung der Dyson-Visualisierung bei extrem schneller automatischer Unendlichkeit: Die Anzeige stabilisiert sich beim endgültigen Galaxienfeld, während die dichte Spirale, der helle Kern und die ausgewogene mobile Platzierung der wachsenden Galaxie wiederhergestellt wurden.",

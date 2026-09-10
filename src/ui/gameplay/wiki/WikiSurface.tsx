@@ -206,6 +206,7 @@ const version418PatchNoteMessages = [
   messages.patchNotesVersion418Influence,
   messages.patchNotesVersion418Recovery,
   messages.patchNotesVersion418Fixes,
+  messages.patchNotesVersion418Quantum,
 ] as const
 
 const version417PatchNoteMessages = [

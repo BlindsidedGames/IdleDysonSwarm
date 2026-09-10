@@ -168,6 +168,7 @@ export interface RealityState {
 }
 
 export interface QuantumState {
+  // Cumulative bigint counters; the Int64 cap applies to earned minus spent.
   readonly pointsEarned: bigint
   readonly pointsSpent: bigint
   readonly divisionsPurchased: bigint

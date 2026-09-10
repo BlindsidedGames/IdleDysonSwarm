@@ -96,6 +96,7 @@ import {
   availableQuantumPoints,
   findQuantumUpgradeCanonicalGaps,
   previewQuantumUpgradeSections,
+  maximumQuantumUpgradeQuantity,
   purchaseQuantumUpgrade,
   QUANTUM_CONSTANTS,
   QUANTUM_UPGRADE_DEFINITIONS,
@@ -596,6 +597,7 @@ export interface FrontendRealityUpgradePreview {
 }
 
 export interface FrontendQuantumUpgradePreview {
+  readonly maximumQuantity: bigint | null
   readonly upgradeId: QuantumUpgradeId
   readonly eligible: boolean
   readonly cost: bigint
@@ -2517,6 +2519,7 @@ function selectQuantumPreviews(
         upgradeId,
         eligible: result.accepted && result.changed,
         cost: quantumUpgradeCost(state, upgradeId),
+        maximumQuantity: maximumQuantumUpgradeQuantity(state, upgradeId),
         code: result.code,
         definitionGap: QUANTUM_UPGRADE_DEFINITIONS.has(upgradeId)
           ? null

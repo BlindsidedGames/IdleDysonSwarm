@@ -334,6 +334,7 @@ function emptyStatisticsTotals(): SimulationTotalsState {
   }
 }
 
+// Saturated-output behavior deliberately differs: see quantumShardLedger.test.ts.
 describe('Unity Quantum Entanglement crosscheck', () => {
   test.each([
     {
@@ -365,12 +366,6 @@ describe('Unity Quantum Entanglement crosscheck', () => {
       infinityPoints: 84n,
       spentInfinityPoints: 0n,
       quantumPoints: DISCRETE_MAXIMUM - 2n,
-    },
-    {
-      label: 'rejects the whole purchase on output saturation',
-      infinityPoints: 84n,
-      spentInfinityPoints: 0n,
-      quantumPoints: DISCRETE_MAXIMUM - 1n,
     },
   ])(
     'matches the transaction model for $label',

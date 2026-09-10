@@ -14464,6 +14464,12 @@
       "value": "Added spending priority and reordering to Skill Presets."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.quantum": [
+    {
+      "type": 0,
+      "value": "Fixed Quantum Shard earning, purchases, and Buy Max amounts at very large balances."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.recovery": [
     {
       "type": 0,

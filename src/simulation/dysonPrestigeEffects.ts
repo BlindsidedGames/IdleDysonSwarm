@@ -1,5 +1,4 @@
 import {
-  isSafeNonNegativeInteger,
   isSafePositiveInteger,
 } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
@@ -11,6 +10,7 @@ import type {
   AvocadoState,
   QuantumState,
 } from '../game-state/types'
+import { isDiscreteResource } from './numeric'
 
 export const DYSON_INFINITY_MULTIPLIER_CAP = 1e44
 
@@ -66,13 +66,14 @@ export function avocadoDysonMultiplier(
 }
 
 function quantumBonusMultiplier(levels: bigint): number {
-  const level = Number(levels)
-  if (!isSafeNonNegativeInteger(level)) {
+  if (!isDiscreteResource(levels)) {
     throw new Error(
       'Quantum bonus levels exceed the characterized numeric range.',
     )
   }
-  return 1 + level * 0.05
+  // Ownership and spending stay exact bigint values. Production is already
+  // floating point; the full signed64 level range yields a finite multiplier.
+  return 1 + Number(levels) * 0.05
 }
 
 function readAvocadoLogThreshold(): number {

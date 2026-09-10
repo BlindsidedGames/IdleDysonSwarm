@@ -14464,6 +14464,12 @@
       "value": "Ausgabenpriorität und Sortierung für Fähigkeitsvorlagen hinzugefügt."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.quantum": [
+    {
+      "type": 0,
+      "value": "Der Erhalt und das Ausgeben von Quantensplittern sowie die Mengen beim Maximalkauf funktionieren jetzt auch bei sehr hohen Guthaben korrekt."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.recovery": [
     {
       "type": 0,

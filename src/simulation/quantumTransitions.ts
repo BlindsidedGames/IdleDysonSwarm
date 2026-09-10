@@ -8,7 +8,7 @@ import {
   type CanonicalInfinityResetAssetLookup,
   type CanonicalInfinityResetIssue,
 } from './canonicalInfinityReset'
-import { addDiscrete } from './numeric'
+import { DISCRETE_MAXIMUM } from './numeric'
 import { QUANTUM_CONSTANTS } from './quantumUpgrades'
 
 export interface QuantumEntanglementResult {
@@ -46,20 +46,15 @@ export function applyQuantumEntanglementConversion(
   const requestedQuantumPoints =
     availableInfinityPoints /
     QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
-  const infinityPointsConsumed =
-    requestedQuantumPoints *
+  // Earned/spent are cumulative counters; only the spendable wallet has a cap.
+  const headroom = DISCRETE_MAXIMUM -
+    (state.quantum.pointsEarned - state.quantum.pointsSpent)
+  const quantumPointsGranted = headroom > 0n
+    ? (requestedQuantumPoints < headroom ? requestedQuantumPoints : headroom)
+    : 0n
+  const infinityPointsConsumed = quantumPointsGranted *
     QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
-  const nextQuantumPoints = addDiscrete(
-    state.quantum.pointsEarned,
-    requestedQuantumPoints,
-  )
-  const quantumPointsGranted =
-    nextQuantumPoints - state.quantum.pointsEarned
-
-  // EconomyTransaction rejects a saturated output before debiting the source.
-  const conversionAccepted =
-    requestedQuantumPoints > 0n &&
-    quantumPointsGranted === requestedQuantumPoints
+  const conversionAccepted = quantumPointsGranted > 0n
   return {
     state: {
       ...state,
@@ -77,17 +72,13 @@ export function applyQuantumEntanglementConversion(
       quantum: conversionAccepted
         ? {
             ...state.quantum,
-            pointsEarned: nextQuantumPoints,
+            pointsEarned: state.quantum.pointsEarned + quantumPointsGranted,
           }
         : state.quantum,
     },
     availableInfinityPoints,
-    infinityPointsConsumed: conversionAccepted
-      ? infinityPointsConsumed
-      : 0n,
-    quantumPointsGranted: conversionAccepted
-      ? quantumPointsGranted
-      : 0n,
+    infinityPointsConsumed,
+    quantumPointsGranted,
   }
 }
 
@@ -132,12 +123,10 @@ export function applyCanonicalQuantumReset(
     }
   }
 
-  const nextQuantumPoints = addDiscrete(
-    state.quantum.pointsEarned,
-    1n,
-  )
   const quantumPointGranted =
-    nextQuantumPoints - state.quantum.pointsEarned
+    state.quantum.pointsEarned - state.quantum.pointsSpent < DISCRETE_MAXIMUM
+      ? 1n
+      : 0n
   const emptyFacilities = Object.fromEntries(
     (
       [
@@ -218,7 +207,7 @@ export function applyCanonicalQuantumReset(
       },
       quantum: {
         ...state.quantum,
-        pointsEarned: nextQuantumPoints,
+        pointsEarned: state.quantum.pointsEarned + quantumPointGranted,
       },
       statistics: {
         ...state.statistics,

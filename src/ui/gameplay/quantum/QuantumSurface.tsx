@@ -272,12 +272,12 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
   const repeatable = HOLD_TO_PURCHASE_IDS.has(preview.upgradeId)
   const resolvedQuantity = repeatable
     ? purchaseQuantity === 'max'
-      ? preview.cost > 0n ? resources.availablePoints / preview.cost : 0n
+      ? preview.maximumQuantity ?? 0n
       : BigInt(purchaseQuantity)
     : 1n
   const totalCost = preview.cost * resolvedQuantity
   const bulkAffordable = !repeatable || (
-    resolvedQuantity > 0n && totalCost <= resources.availablePoints
+    resolvedQuantity > 0n && resolvedQuantity <= (preview.maximumQuantity ?? 0n)
   )
   const unavailable = completed || !preview.eligible || !routeAvailable || !bulkAffordable
   const disabled = pending || unavailable

@@ -14464,6 +14464,12 @@
       "value": "Ajout de priorités de dépense et du réordonnancement des préréglages de compétences."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.quantum": [
+    {
+      "type": 0,
+      "value": "Correction des gains et des achats d’éclats quantiques, ainsi que des quantités d’achat maximal pour les soldes très élevés."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.recovery": [
     {
       "type": 0,

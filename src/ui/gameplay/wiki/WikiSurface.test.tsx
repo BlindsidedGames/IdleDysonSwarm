@@ -29,7 +29,10 @@ describe('Wiki patch-note content', () => {
 
     const latest = screen.getByRole('heading', { name: 'Version 4.1.8' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
-    expect(within(latest).getAllByRole('listitem')).toHaveLength(10)
+    expect(within(latest).getAllByRole('listitem')).toHaveLength(11)
+    expect(within(latest).getByText(
+      'Fixed Quantum Shard earning, purchases, and Buy Max amounts at very large balances.',
+    )).not.toBeNull()
     const older = screen.getByRole('heading', { name: 'Version 4.1.7' }).closest('section')!
     expect(within(older).getByRole('heading', { name: 'Older' })).not.toBeNull()
     expect(within(older).getAllByRole('listitem').slice(0, 10).map((item) => item.textContent)).toEqual([

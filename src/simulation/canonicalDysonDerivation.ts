@@ -58,7 +58,7 @@ import {
   type SkillEffectMaterializationContext,
 } from './skillEffectMaterializer'
 import { publishDysonSkillEffectEvaluationSnapshot } from './dysonSnapshotPublication'
-import { multiplyContinuous } from './numeric'
+import { isDiscreteResource, multiplyContinuous } from './numeric'
 import { getCompiledSkillEffectCatalog } from './compiledSkillEffectCatalog'
 import {
   resolvePanelArea,
@@ -1332,7 +1332,7 @@ function findUnsupportedDependencies(
     ['cashBonusLevels', state.quantum.cashBonusLevels],
     ['scienceBonusLevels', state.quantum.scienceBonusLevels],
   ] as const) {
-    if (levels > BigInt(Number.MAX_SAFE_INTEGER)) {
+    if (!isDiscreteResource(levels)) {
       issues.push({
         code: 'DYSON_QUANTUM_LEVEL_UNSUPPORTED',
         path: `quantum.${id}`,

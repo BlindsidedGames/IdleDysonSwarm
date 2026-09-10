@@ -12,8 +12,10 @@ Planets, and Galactic Brains use explicit TypeScript compatibility constants
 until those records move into a Web-owned authored catalog.
 
 Purchases debit available Quantum Points (`pointsEarned - pointsSpent`) only
-after proving the effect can be applied. The observable UI access graph is part
-of the command contract:
+after proving the effect can be applied. Earned and spent are exact cumulative
+bigint counters; their difference is the wallet, capped at `2^63 - 1`. Cumulative
+counters can exceed that cap and retain their values in the existing save format.
+The observable UI access graph is part of the command contract:
 
 - Secrets requires Bot Multitasking or Double IP and adds three permanent and
   current-session Secrets, capped at 27;
@@ -22,6 +24,13 @@ of the command contract:
 - mega-structure Quantum upgrades are purchased sequentially;
 - Automation also enables both Infinity automation capabilities;
 - Influence Speed adds four, while Cash and Science add one level each.
+
+The three boosters retain their signed 64-bit effect bounds. Ownership and costs
+stay exact bigint values; Cash/Science convert only their final 5%-per-level
+production multiplier to floating point. Max uses the same affordable quantity
+and remaining effect capacity in the command and UI. Fixed batches exceeding
+capacity fail without charging. Influence's final purchase can add fewer than
+four units to reach its cap, matching repeated single purchases.
 
 Each purchased mega-structure unlock survives Infinity and Quantum resets.
 An Overflow reset clears it. It reveals and permits
@@ -44,7 +53,10 @@ supplied artifact skill points before auto-assignment.
 
 With Quantum Entanglement, no reset occurs. Complete groups of 42 unspent
 Infinity Points are atomically converted to Quantum Points; spent Infinity
-bookkeeping and the unconverted remainder remain.
+bookkeeping and the unconverted remainder remain. Conversion credits only the
+available wallet capacity and consumes exactly 42 IP per credited Shard; a full
+wallet consumes no IP. Spending frees wallet capacity even after lifetime earned
+or spent totals exceed the wallet cap.
 
 ## Avocado
 

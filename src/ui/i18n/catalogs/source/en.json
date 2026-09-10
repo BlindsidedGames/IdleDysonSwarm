@@ -7333,6 +7333,10 @@
     "defaultMessage": "Added spending priority and reordering to Skill Presets.",
     "description": "Version 4.1.8 release notes."
   },
+  "wiki.patch-notes.version-4-1-8.quantum": {
+    "defaultMessage": "Fixed Quantum Shard earning, purchases, and Buy Max amounts at very large balances.",
+    "description": "Version 4.1.8 release notes."
+  },
   "wiki.patch-notes.version-4-1-8.recovery": {
     "defaultMessage": "Improved save recovery.",
     "description": "Version 4.1.8 release notes."

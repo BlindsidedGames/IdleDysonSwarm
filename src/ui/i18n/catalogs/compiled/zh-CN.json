@@ -14464,6 +14464,12 @@
       "value": "技能预设新增支出优先级和排序功能。"
     }
   ],
+  "wiki.patch-notes.version-4-1-8.quantum": [
+    {
+      "type": 0,
+      "value": "修复了余额极高时量子碎片的获取、购买及最大购买数量问题。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.recovery": [
     {
       "type": 0,

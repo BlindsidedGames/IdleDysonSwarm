@@ -14464,6 +14464,12 @@
       "value": "Adicionadas prioridades de gastos e reordenação às predefinições de habilidades."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.quantum": [
+    {
+      "type": 0,
+      "value": "Corrigidos o ganho e as compras de fragmentos quânticos, além das quantidades de compra máxima com saldos muito altos."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.recovery": [
     {
       "type": 0,

@@ -1837,6 +1837,7 @@
   "wiki.patch-notes.version-4-1-8.overflow": "Adicionados o reinício voluntário de Overflow e pontos de Overflow.",
   "wiki.patch-notes.version-4-1-8.persistence": "Corrigidas habilidades galvanizadas que paravam a produção após Overflow.",
   "wiki.patch-notes.version-4-1-8.presets": "Adicionadas prioridades de gastos e reordenação às predefinições de habilidades.",
+  "wiki.patch-notes.version-4-1-8.quantum": "Corrigidos o ganho e as compras de fragmentos quânticos, além das quantidades de compra máxima com saldos muito altos.",
   "wiki.patch-notes.version-4-1-8.recovery": "Melhorada a recuperação de partidas.",
   "wiki.patch-notes.version-4-1.audio": "Adicionamos trilha sonora e sons da interface às plataformas compatíveis, com controles separados de Música e Efeitos, opção para silenciar todo o áudio e reprodução mais confiável ao alternar entre aplicativos ou janelas do navegador.",
   "wiki.patch-notes.version-4-1.dyson-visualization": "Melhoramos o desempenho da Visualização de Dyson em ciclos extremamente rápidos de Infinito Automático, estabilizando o campo final de Galáxias e restaurando a espiral densa, o núcleo brilhante e o posicionamento equilibrado da Galáxia em crescimento nos dispositivos móveis.",

@@ -1837,6 +1837,7 @@
   "wiki.patch-notes.version-4-1-8.overflow": "Ajout d’une réinitialisation Overflow volontaire et de points d’Overflow.",
   "wiki.patch-notes.version-4-1-8.persistence": "Correction de compétences galvanisées bloquant la production après un Overflow.",
   "wiki.patch-notes.version-4-1-8.presets": "Ajout de priorités de dépense et du réordonnancement des préréglages de compétences.",
+  "wiki.patch-notes.version-4-1-8.quantum": "Correction des gains et des achats d’éclats quantiques, ainsi que des quantités d’achat maximal pour les soldes très élevés.",
   "wiki.patch-notes.version-4-1-8.recovery": "Amélioration de la récupération des sauvegardes.",
   "wiki.patch-notes.version-4-1.audio": "Ajout d’une bande-son et de sons d’interface sur les plateformes compatibles, avec des réglages de volume distincts pour la Musique et les Effets, une option Couper tous les sons et une lecture plus fiable lors du passage d’une application ou d’une fenêtre de navigateur à une autre.",
   "wiki.patch-notes.version-4-1.dyson-visualization": "Amélioration des performances de la visualisation de Dyson pendant les cycles automatiques d’Infinité extrêmement rapides, en affichant directement le champ galactique final, tout en rétablissant la spirale dense, le noyau lumineux et le positionnement équilibré sur mobile de la galaxie en expansion.",

@@ -259,6 +259,10 @@ export function purchaseQuantumUpgrade(
     return rejected(state, 'prerequisites-not-met', 0n)
   }
 
+  if (isQuantumBulkUpgradeId(id) && quantumUpgradeStateHeadroom(state, id) === 0n) {
+    return rejected(state, 'already-maxed', 0n)
+  }
+
   const cost = quantumUpgradeCost(state, id, definitions)
   if (
     cost < 0n ||
@@ -267,12 +271,7 @@ export function purchaseQuantumUpgrade(
   ) {
     return rejected(state, 'insufficient-points', cost)
   }
-  const nextSpent = cost === 0n
-    ? state.quantum.pointsSpent
-    : addDiscrete(state.quantum.pointsSpent, cost)
-  if (cost > 0n && nextSpent <= state.quantum.pointsSpent) {
-    return rejected(state, 'state-saturated', cost)
-  }
+  const nextSpent = state.quantum.pointsSpent + cost
 
   const effected = applyQuantumUpgradeEffect(state, id)
   if (effected === null) {
@@ -334,19 +333,14 @@ export function purchaseQuantumUpgradeBulk(
 
   const affordableQuantity = availableQuantumPoints(state) / unitCost
   const stateQuantity = quantumUpgradeStateHeadroom(state, id)
-  const spentQuantity =
-    (DISCRETE_MAXIMUM - state.quantum.pointsSpent) / unitCost
-  const maximumQuantity = minimum(
-    affordableQuantity,
-    minimum(stateQuantity, spentQuantity),
-  )
+  const maximumQuantity = maximumQuantumUpgradeQuantity(state, id, definitions)!
   const quantity =
     requestedQuantity === 'max' ? maximumQuantity : requestedQuantity
   const totalCost = unitCost * quantity
   if (quantity <= 0n || quantity > affordableQuantity) {
     return rejected(state, 'insufficient-points', totalCost)
   }
-  if (quantity > stateQuantity || quantity > spentQuantity) {
+  if (quantity > stateQuantity) {
     return rejected(state, 'state-saturated', totalCost)
   }
 
@@ -367,6 +361,22 @@ export function purchaseQuantumUpgradeBulk(
       },
     },
   }
+}
+
+/** Maximum executable flat-cost booster quantity, shared by commands and UI. */
+export function maximumQuantumUpgradeQuantity(
+  state: Readonly<CanonicalGameStateV1>,
+  id: QuantumUpgradeId,
+  definitions = QUANTUM_UPGRADE_DEFINITIONS,
+): bigint | null {
+  if (!isQuantumBulkUpgradeId(id)) return null
+  const definition = definitions.get(id)
+  const cost = quantumUpgradeCost(state, id, definitions)
+  if (definition?.costScaling !== 'flat' || cost <= 0n || cost === DISCRETE_MAXIMUM) {
+    return 0n
+  }
+  const headroom = quantumUpgradeStateHeadroom(state, id)
+  return minimum(availableQuantumPoints(state) / cost, headroom)
 }
 
 /**
@@ -550,8 +560,10 @@ function quantumUpgradeStateHeadroom(
   id: (typeof QUANTUM_BULK_UPGRADE_IDS)[number],
 ): bigint {
   if (id === 'InfluenceSpeed') {
+    // Match Buy 1: the final purchase may saturate with fewer than four units.
     return (
-      (DISCRETE_MAXIMUM - state.quantum.influenceSpeedBonus) /
+      (DISCRETE_MAXIMUM - state.quantum.influenceSpeedBonus +
+        QUANTUM_CONSTANTS.influenceSpeedPerPurchase - 1n) /
       QUANTUM_CONSTANTS.influenceSpeedPerPurchase
     )
   }
@@ -568,8 +580,7 @@ function applyQuantumUpgradeBulkEffect(
 ): CanonicalGameStateV1 | null {
   if (id === 'InfluenceSpeed') {
     const increase = quantity * QUANTUM_CONSTANTS.influenceSpeedPerPurchase
-    const value = state.quantum.influenceSpeedBonus + increase
-    if (value > DISCRETE_MAXIMUM) return null
+    const value = addDiscrete(state.quantum.influenceSpeedBonus, increase)
     return {
       ...state,
       quantum: { ...state.quantum, influenceSpeedBonus: value },
