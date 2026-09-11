@@ -746,10 +746,13 @@ export function SkillsSurface({
             onChange={(event) => setQuery(event.currentTarget.value)}
             onKeyDown={(event) => {
               if (event.key !== 'Enter') return
+              // Opening a dialog moves focus to its Back/Close button. Do not
+              // let this same Enter gesture activate that button.
+              event.preventDefault()
               const first = rankedMatchingIds[0]
               if (typeof first === 'string') {
                 focusNodeRef.current(first)
-                setSelectedSkillId(first)
+                selectSkill(first)
               }
             }}
           />

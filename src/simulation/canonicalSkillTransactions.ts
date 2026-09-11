@@ -746,9 +746,11 @@ export function runCanonicalSkillAutoAssignment(
     if (definition === undefined || !isUnlocked(definition, state) ||
       hasOwned(definition.exclusiveWith, byId) ||
       (!state.skills.autoAssignNonRefundable && !definition.refundable)) continue
-    if (points < definition.cost ||
-      !requirementsMet(definition.required, byId) ||
-      !requirementsMet(definition.shadowRequired, byId)) break
+    // Dependencies precede their targets. A missing dependency was skipped
+    // as unavailable; only an eligible target should wait on point income.
+    if (!requirementsMet(definition.required, byId) ||
+      !requirementsMet(definition.shadowRequired, byId)) continue
+    if (points < definition.cost) break
     points -= definition.cost
     fragments += definition.fragment ? 1n : 0n
     byId[id] = { ...(byId[id] ?? emptyRuntime()), owned: true }

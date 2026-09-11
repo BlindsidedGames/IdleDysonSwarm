@@ -122,3 +122,22 @@ test('ordinary skills still open their details without an augment tree', () => {
   expect(screen.getByRole('dialog', { name: 'Cash & Science' })).toBeTruthy()
   expect(screen.queryByRole('button', { name: 'Back to skill tree' })).toBeNull()
 })
+
+
+test('Enter follows node navigation into augments and back to ordinary skills', () => {
+  setup()
+  const search = screen.getByRole('searchbox', { name: 'Search skills' })
+  const enter = (value: string) => {
+    fireEvent.change(search, { target: { value } })
+    expect(fireEvent.keyDown(search, { key: 'Enter' })).toBe(false)
+  }
+  enter('Extended Warranty')
+  expect(screen.getByRole('button', { name: 'Back to skill tree' })).toBeTruthy()
+  expect(screen.queryByRole('dialog')).toBeNull()
+  enter('Extended Warranty')
+  expect(screen.getByRole('dialog', { name: 'Extended Warranty' })).toBeTruthy()
+  fireEvent.click(screen.getByRole('button', { name: 'Back to augments' }))
+  enter('Higgs Boson')
+  expect(screen.getByRole('dialog', { name: 'Higgs Boson' })).toBeTruthy()
+  expect(screen.queryByRole('button', { name: 'Back to skill tree' })).toBeNull()
+})
