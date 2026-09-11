@@ -385,10 +385,10 @@ export function SkillsSurface({
   const nodeById = useMemo(
     () => {
       const nodes = new Map(localizedNodes.map((node) => [node.skillId, node]))
-      const augmentPresentation = new Map<string, { message: typeof messages.subskillLifetime; description?: typeof messages.subskillLifetime; effect?: typeof messages.subskillLifetime; x: number; y: number; anchorSkillId?: string }>([
-        [CASH_SCIENCE_SUBSKILLS.lifetime, { message: messages.subskillLifetimeName, description: messages.subskillLifetimeDescription, effect: messages.subskillLifetime, x: 0, y: 0, anchorSkillId: 'higgsBoson' }],
-        [CASH_SCIENCE_SUBSKILLS.decay, { message: messages.subskillDecayName, description: messages.subskillDecayDescription, effect: messages.subskillDecay, x: 0, y: 0, anchorSkillId: 'panelLifetime20Tree' }],
-        [CASH_SCIENCE_SUBSKILLS.production, { message: messages.subskillProductionName, description: messages.subskillProductionDescription, effect: messages.subskillProduction, x: 0, y: -230 }],
+      const augmentPresentation = new Map<string, { message: typeof messages.subskillLifetime; description?: typeof messages.subskillLifetime; effect?: typeof messages.subskillLifetime; iconFileName: string; x: number; y: number; anchorSkillId?: string }>([
+        [CASH_SCIENCE_SUBSKILLS.lifetime, { message: messages.subskillLifetimeName, description: messages.subskillLifetimeDescription, effect: messages.subskillLifetime, iconFileName: 'panelWarranty.webp', x: 0, y: 0, anchorSkillId: 'higgsBoson' }],
+        [CASH_SCIENCE_SUBSKILLS.decay, { message: messages.subskillDecayName, description: messages.subskillDecayDescription, effect: messages.subskillDecay, iconFileName: 'supermassivePanels.webp', x: 0, y: 0, anchorSkillId: 'panelLifetime20Tree' }],
+        [CASH_SCIENCE_SUBSKILLS.production, { message: messages.subskillProductionName, description: messages.subskillProductionDescription, effect: messages.subskillProduction, iconFileName: 'startHereTree.webp', x: 0, y: -230 }],
       ])
       for (const augment of SKILL_AUGMENTS) {
         const parent = nodes.get(augment.parentSkillId)
@@ -398,6 +398,7 @@ export function SkillsSurface({
         const label = intl.formatMessage(authored.message)
         nodes.set(augment.id, {
           ...parent, skillId: augment.id, displayName: label,
+          icon: { fileName: authored.iconFileName },
           description: authored.description ? intl.formatMessage(authored.description) : '',
           technicalDescription: authored.effect ? intl.formatMessage(authored.effect) : label, cost: 1,
           x: anchor.x + authored.x, y: anchor.y + authored.y,

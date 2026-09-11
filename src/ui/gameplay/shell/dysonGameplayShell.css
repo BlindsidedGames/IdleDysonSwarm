@@ -658,6 +658,12 @@
   min-inline-size: 0;
 }
 
+/* Skills draws edge to edge, so a notice above its canvas owns the top inset. */
+.dyson-shell[data-resource-header="false"][data-route-theme="skills"]
+  .dyson-shell__header {
+  padding-block-start: var(--safe-area-top);
+}
+
 .dyson-shell__notifications {
   position: absolute;
   z-index: 12;
@@ -1885,6 +1891,8 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: var(--game-card-content-inset);
+  padding-inline: max(var(--game-card-content-inset), var(--safe-area-left))
+    max(var(--game-card-content-inset), var(--safe-area-right));
   border: 1px solid var(--theme-divider);
   border-radius: var(--ui-radius-card, 0.5rem);
   background: var(--theme-panel);
