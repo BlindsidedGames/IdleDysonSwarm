@@ -113,7 +113,9 @@ export class TransactionalGameApplication<TState, TCommand>
 
       let committed: PreparedSave
       try {
-        const prepared = this.requireSession().prepare(target.state)
+        const session = this.requireSession()
+        const prepared = session.prepareForPersistence?.(target.state)
+          ?? session.prepare(target.state)
         committed = await this.options.repository.commit(prepared)
       } catch (error) {
         const message = errorMessage(error)
@@ -210,9 +212,11 @@ export class TransactionalGameApplication<TState, TCommand>
         return { committed: false, transition: staged }
       }
 
-      const prepared = staged.staged.readCandidate((candidate) =>
-        this.requireSession().prepare(candidate),
-      )
+      const prepared = staged.staged.readCandidate((candidate) => {
+        const session = this.requireSession()
+        return session.prepareForPersistence?.(candidate)
+          ?? session.prepare(candidate)
+      })
       let committed: PreparedSave
       try {
         committed = await this.options.repository.commit(prepared)

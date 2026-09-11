@@ -333,6 +333,17 @@ describe('canonical game application engine', () => {
     expect(state).toEqual(before)
   })
 
+  test('unlocks tabs without altering progression and accepts repeated requests unchanged', () => {
+    const state = runtime()
+    const before = structuredClone(state.gameState)
+    const definition = createCanonicalGameEngineDefinition({ eventContext: context() })
+    const command = { kind: 'internal.development-apply-action', action: { kind: 'unlock-all-tabs' } } as const
+    expect(definition.applyCommand(state, command)).toEqual({ accepted: true, changed: true })
+    expect(state.unlockAllTabs).toBe(true)
+    expect(state.gameState).toEqual(before)
+    expect(definition.applyCommand(state, command)).toEqual({ accepted: true, changed: false })
+  })
+
   test('applies a coherent development Reality unlock state', () => {
     const state = runtime()
     Object.assign(state, {

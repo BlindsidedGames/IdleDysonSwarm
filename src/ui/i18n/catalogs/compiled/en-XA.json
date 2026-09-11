@@ -7781,6 +7781,20 @@
       "value": "]"
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧẋ Şŧǿǿřȧȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -7917,6 +7931,28 @@
     {
       "type": 0,
       "value": "% ƈǿǿḿƥŀḗḗŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗƞḓ "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": " ǿǿƒ Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ"
     },
     {
       "type": 0,

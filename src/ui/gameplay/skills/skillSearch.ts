@@ -4,6 +4,7 @@ export interface SkillSearchDocument {
   readonly displayName: string
   readonly description: string
   readonly technicalDescription: string
+  readonly augmentSearchText?: string
 }
 
 interface PreparedSkillSearchQuery {
@@ -133,6 +134,7 @@ export function scoreSkillSearchMatch(
   const literalMetadata = [
     skill.description,
     skill.technicalDescription,
+    skill.augmentSearchText ?? '',
     skill.skillId,
     String(skill.legacySkillKey),
   ]

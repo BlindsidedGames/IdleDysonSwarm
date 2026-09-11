@@ -479,6 +479,7 @@ export interface FrontendCanonicalProgression {
 }
 
 export interface FrontendSnapshotContext {
+  readonly unlockAllTabs?: boolean
   readonly runtimeRequirements?: FrontendCommandRequirementReadiness
   readonly dysonPresentationTuning?: Readonly<DysonPresentationTuning>
   readonly compatibilityTuning: Readonly<DysonCompatibilityTuning>
@@ -859,6 +860,7 @@ export interface FrontendDysonVisibility {
 }
 
 export interface FrontendGameplayVisibility {
+  readonly allTabsUnlocked?: boolean
   readonly dyson: FrontendDysonVisibility
   readonly research: {
     readonly routeUnlocked: boolean
@@ -1076,6 +1078,7 @@ export function selectFrontendApplicationSnapshot(
         gameplay: selectFrontendGameplaySnapshot(
           application.state.gameState as unknown as Readonly<CanonicalGameStateV1>,
           {
+            unlockAllTabs: application.state.unlockAllTabs,
             runtimeRequirements: context.runtimeRequirements,
             compatibilityTuning:
               application.state.compatibilityTuning,
@@ -1129,7 +1132,7 @@ export function selectFrontendGameplaySnapshot(
   )
   const resources = selectResources(state, derived, previous?.resources)
   const progression = selectProgression(state, previous?.progression)
-  const visibility = selectGameplayVisibility(state)
+  const visibility = selectGameplayVisibility(state, context.unlockAllTabs)
   const runtime = selectRuntimeFacts(state, context, derived)
   const requirements = {
     ...context.runtimeRequirements,
@@ -1165,6 +1168,7 @@ export function selectFrontendGameplaySnapshot(
 
 export function selectGameplayVisibility(
   state: CanonicalGameStateV1,
+  unlockAllTabs = false,
 ): FrontendGameplayVisibility {
   const total = (facilityId: CanonicalFacilityId) => {
     const owned = state.dyson.facilities[facilityId]
@@ -1204,11 +1208,11 @@ export function selectGameplayVisibility(
   const visibleBasicFacilityIds = BASIC_DYSON_FACILITY_IDS.filter(
     (facilityId) => basicVisible[facilityId],
   )
-  const realityUnlocked =
+  const realityUnlocked = unlockAllTabs ||
     state.quantum.pointsEarned > 0n ||
     state.infinity.secretsOfTheUniverse >=
       QUANTUM_CONSTANTS.maximumSecrets
-  const skillPointEarned =
+  const skillPointEarned = unlockAllTabs ||
     infinityChallenges(state).hasEarnedGalvanizer ||
     state.skills.points > 0n ||
     state.infinity.permanentSkillPoints > 0n ||
@@ -1218,7 +1222,7 @@ export function selectGameplayVisibility(
   const infinityRequiredBots = ordinaryInfinityBotThreshold(
     state.quantum.divisionsPurchased,
   )
-  const infinityUnlocked =
+  const infinityUnlocked = unlockAllTabs ||
     infinityChallenges(state).unlocked ||
     state.meta.firstInfinityComplete ||
     state.infinity.points > 0n ||
@@ -1226,7 +1230,7 @@ export function selectGameplayVisibility(
     state.dyson.bots >= infinityRequiredBots
   const quantumRequiredInfinityPoints =
     QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
-  const quantumUnlocked =
+  const quantumUnlocked = unlockAllTabs ||
     state.infinity.points >= quantumRequiredInfinityPoints ||
     state.quantum.pointsEarned > 0n
   const realitySecretsFraction = Math.min(
@@ -1260,7 +1264,7 @@ export function selectGameplayVisibility(
     state.dream.resources.hunters > 0n ||
     state.dream.resources.gatherers > 0n
   const simulationsRequiredInfluence = 128
-  const simulationsUnlocked =
+  const simulationsUnlocked = unlockAllTabs ||
     (realityUnlocked && state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence) ||
     hasExistingSimulationProgress
   const realityVisited = realityInfluenceGenerationStarted(state)
@@ -1285,6 +1289,7 @@ export function selectGameplayVisibility(
       )
 
   return {
+    allTabsUnlocked: unlockAllTabs,
     dyson: {
       showTinker:
         (earlyTinkerVisible && !hasDataCenters) ||
@@ -1297,7 +1302,7 @@ export function selectGameplayVisibility(
         !visibleBasicFacilityIds.includes('planets'),
     },
     research: {
-      routeUnlocked:
+      routeUnlocked: unlockAllTabs ||
         visibleBasicFacilityIds.length > 0 ||
         visibleMegaStructureIds.length > 0 ||
         state.meta.firstInfinityComplete ||
@@ -1336,7 +1341,7 @@ export function selectGameplayVisibility(
       },
     },
     quantum: {
-      routeVisible:
+      routeVisible: unlockAllTabs ||
         state.meta.firstInfinityComplete ||
         state.infinity.points > 0n ||
         state.infinity.spentPoints > 0n ||

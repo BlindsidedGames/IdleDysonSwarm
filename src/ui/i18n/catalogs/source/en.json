@@ -1777,6 +1777,10 @@
     "defaultMessage": "Simulation becomes less accurate at larger time steps.",
     "description": "Concise Stored Time accuracy disclosure."
   },
+  "offline-time.max-storage": {
+    "defaultMessage": "Max Storage",
+    "description": "Label for maximum bank capacity beneath the storage bar."
+  },
   "offline-time.maximum-storage": {
     "defaultMessage": "Maximum storage reached",
     "description": "Status shown after the permanent Offline Time capacity ceiling is reached."
@@ -1812,6 +1816,10 @@
   "offline-time.progress-announcement": {
     "defaultMessage": "{percent}% complete",
     "description": "Coarsened screen-reader progress announcement for a Stored Time job."
+  },
+  "offline-time.quick-spend": {
+    "defaultMessage": "Spend {duration} of Offline Time",
+    "description": "Accessible label for a sidebar quick-spend button."
   },
   "offline-time.region": {
     "defaultMessage": "Offline Time",

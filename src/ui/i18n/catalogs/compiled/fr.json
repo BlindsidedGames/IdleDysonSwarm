@@ -4189,6 +4189,12 @@
       "value": "La simulation devient moins précise avec des pas de temps plus grands."
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "Stockage max."
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4257,6 +4263,20 @@
     {
       "type": 0,
       "value": "% terminé"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "Utiliser "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": " de temps hors ligne"
     }
   ],
   "offline-time.region": [

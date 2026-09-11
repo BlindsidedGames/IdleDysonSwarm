@@ -25,6 +25,14 @@ const entitlements = Object.freeze({
 })
 
 describe('CanonicalRuntimeSession', () => {
+  test('keeps the tab override across a local checkpoint and reopen', () => {
+    const session = new CanonicalRuntimeSession(prepareIdb1Save(fixture).prepared, { entitlements })
+    const state = { ...session.initialState, unlockAllTabs: true }
+    const reopened = new CanonicalRuntimeSession(session.prepare(state), { entitlements })
+    expect(reopened.initialState.unlockAllTabs).toBe(true)
+    expect(reopened.initialState.gameState).toEqual(session.initialState.gameState)
+  })
+
   test('mobile evidence survives save/reopen and does not leak into a different imported save', () => {
     const prepared = prepareIdb1Save(fixture).prepared
     const options = {entitlements, captureAchievements:true, persistAchievements:true}

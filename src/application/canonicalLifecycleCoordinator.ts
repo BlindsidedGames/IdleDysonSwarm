@@ -276,6 +276,7 @@ export class CanonicalLifecycleCoordinator {
   private operationTail: Promise<void> = Promise.resolve()
   private shutdownPromise: Promise<void> | undefined
   private suppressImportedAwayReplay = false
+  private pendingColdStartTimestamp: ParsedUtcTimestamp | undefined
   private disposed = false
 
   constructor(options: Readonly<CanonicalLifecycleCoordinatorOptions>) {
@@ -324,6 +325,7 @@ export class CanonicalLifecycleCoordinator {
         createLifecycleState(snapshot, false),
         true,
       )
+      this.pendingColdStartTimestamp = undefined
       return this.replayAwayTime(
         admittedClockSample,
         pendingDepartureTimestamp ??
@@ -742,6 +744,7 @@ export class CanonicalLifecycleCoordinator {
         request.context?.kind === undefined ||
         request.context.kind === 'manual-shared-import'
       this.suppressImportedAwayReplay = suppressAwayReplay
+      this.pendingColdStartTimestamp = undefined
       const snapshot = this.application.snapshot()
       if (snapshot.phase === 'ready') {
         const importedBaseline = createLifecycleState(
@@ -872,13 +875,21 @@ export class CanonicalLifecycleCoordinator {
     const persistedQuitTimestamp = parseUnityInvariantUtcTimestamp(
       runtime.gameState.timeline.lastSuspendedAtLegacyText,
     )
+    const departureTimestamp = earliestValidDepartureTimestamp(
+      earliestValidDepartureTimestamp(persistedQuitTimestamp, pendingQuitTimestamp),
+      this.pendingColdStartTimestamp,
+    )
+    const checkpointTimestamp = parseUnityInvariantUtcTimestamp(
+      runtime.coldStartCheckpointAtUtc ?? null,
+    )
     const replay = applyAwayTimeReplay({
       state: current,
       clock: clockSample,
-      parsedQuitTimestamp: earliestValidDepartureTimestamp(
-        persistedQuitTimestamp,
-        pendingQuitTimestamp,
-      ),
+      parsedQuitTimestamp:
+        current.coldStartReplayPending &&
+        departureTimestamp.status === 'missing' &&
+        checkpointTimestamp.status === 'valid'
+          ? checkpointTimestamp : departureTimestamp,
       parsedStartedTimestamp: parseUnityInvariantUtcTimestamp(
         runtime.gameState.meta.createdAtLegacyText,
       ),
@@ -895,6 +906,8 @@ export class CanonicalLifecycleCoordinator {
 
     const candidate = cloneCanonicalRuntimeState(runtime)
     Object.assign(candidate, {
+      ...(runtime.coldStartCheckpointAtUtc === undefined
+        ? {} : { coldStartCheckpointAtUtc: null }),
       gameState: replay.state.canonical,
       storedTimeCheater:
         candidate.storedTimeCheater ||
@@ -905,10 +918,16 @@ export class CanonicalLifecycleCoordinator {
       candidate,
     )
     if (!committed.committed) {
+      if (current.coldStartReplayPending) {
+        this.pendingColdStartTimestamp = {
+          status: 'valid',
+          utcMilliseconds: replay.resolution.resolvedStartUtcMilliseconds,
+        }
+      }
       this.lifecycleState = {
         ...current,
         saveReady: true,
-        coldStartReplayPending: false,
+        coldStartReplayPending: current.coldStartReplayPending,
         coldStartGateSaveUsed: false,
         departureTimestampRecorded:
           runtime.gameState.timeline
@@ -921,6 +940,7 @@ export class CanonicalLifecycleCoordinator {
         reason: committed.reason,
       }
     }
+    this.pendingColdStartTimestamp = undefined
     this.lifecycleState = replay.state
     if (pendingQuitTimestamp?.status === 'valid') {
       this.clearPendingDepartureTimestamp?.(

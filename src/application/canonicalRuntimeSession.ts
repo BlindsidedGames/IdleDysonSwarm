@@ -54,6 +54,8 @@ export type CanonicalRuntimePresentationEvent =
 
 export interface CanonicalRuntimeState extends CanonicalEventTimeState {
   readonly storedTimeCheater: boolean
+  /** Loaded checkpoint baseline, pending the first successful startup replay. */
+  readonly coldStartCheckpointAtUtc?: string | null
   readonly selectedSkillPresetSlot: CanonicalSkillPresetSlot
   /** Last exact preset rebuild result for transient player feedback. */
   readonly lastSkillPresetApplication:
@@ -61,11 +63,13 @@ export interface CanonicalRuntimeState extends CanonicalEventTimeState {
     | null
   /** Sequenced session facts retained across ordinary snapshot publication. */
   readonly presentationEvents: readonly Readonly<CanonicalRuntimePresentationEvent>[]
+  readonly unlockAllTabs?: boolean
   readonly debugOptionsEnabled?: boolean
   readonly debugEntitlementPurchased?: boolean
 }
 
 export interface CanonicalRuntimeSessionOptions {
+  readonly nowUtcMilliseconds?: () => number
   readonly captureAchievements?: boolean
   readonly persistAchievements?: boolean
   readonly entitlements: Readonly<DysonEntitlements>
@@ -84,12 +88,14 @@ export class CanonicalRuntimeSession
   readonly initialState: CanonicalRuntimeState
   private readonly persistAchievements: boolean
   private readonly hydrated: HydratedGameStateV1
+  private readonly nowUtcMilliseconds: (() => number) | undefined
 
   constructor(
     prepared: PreparedSave,
     options: Readonly<CanonicalRuntimeSessionOptions>,
   ) {
     this.persistAchievements = options.persistAchievements === true
+    this.nowUtcMilliseconds = options.nowUtcMilliseconds
     this.hydrated = hydrateGameState(prepared)
     const source = prepared.copyValidatedState()
     this.initialState = cloneCanonicalRuntimeState({
@@ -101,10 +107,16 @@ export class CanonicalRuntimeSession
       entitlements: options.entitlements,
       tinker: createCanonicalTinkerRuntimeState(),
       storedTimeCheater: extractStoredTimeCheater(source),
+      ...(
+        typeof source.idsLastActiveAtUtc === 'string' &&
+        Number.isFinite(Date.parse(source.idsLastActiveAtUtc))
+          ? { coldStartCheckpointAtUtc: source.idsLastActiveAtUtc } : {}
+      ),
       selectedSkillPresetSlot:
         extractSelectedSkillPresetSlot(source),
       lastSkillPresetApplication: null,
       presentationEvents: [],
+      unlockAllTabs: extractBoolean(source, 'unlockAllTabs'),
       debugOptionsEnabled: extractBoolean(source, 'debugOptions'),
       debugEntitlementPurchased: extractBoolean(
         source,
@@ -132,6 +144,7 @@ export class CanonicalRuntimeSession
       source.idsAchievementEvidence = readSavedAchievements(facts.unlocked)
     }
     source.cheater = candidate.storedTimeCheater
+    source.unlockAllTabs = candidate.unlockAllTabs === true
     source.debugOptions = candidate.debugOptionsEnabled
     source.debugEverEnabled = candidate.debugEntitlementPurchased
     packSettingsFlags(source)
@@ -140,6 +153,24 @@ export class CanonicalRuntimeSession
       'Dyson save',
     )
     dyson.selectedPreset = candidate.selectedSkillPresetSlot
+    return prepared.withValidatedState(source)
+  }
+
+  prepareForPersistence(
+    state: CanonicalRuntimeState | DeepReadonly<CanonicalRuntimeState>,
+  ): PreparedSave {
+    const prepared = this.prepare(state)
+    if (this.nowUtcMilliseconds === undefined) return prepared
+    const source = prepared.copyValidatedState()
+    // Retain an unconsumed startup baseline if replay failed. After successful
+    // replay, the credited bank and fresh baseline commit in the same save.
+    source.idsLastActiveAtUtc = state.coldStartCheckpointAtUtc
+      ?? new Date(this.nowUtcMilliseconds()).toISOString()
+    if (state.coldStartCheckpointAtUtc != null) {
+      // A failed startup replay must also survive a subsequent departure
+      // marker, whose newer time must not hide the still-uncredited interval.
+      source.dateQuitString = state.coldStartCheckpointAtUtc
+    }
     return prepared.withValidatedState(source)
   }
 }
@@ -156,6 +187,7 @@ export function createCanonicalRuntimeSessionFactory(
   options: Readonly<CanonicalRuntimeSessionOptions>,
 ): GameStateSessionFactory<CanonicalRuntimeState> {
   const captured = Object.freeze({
+    nowUtcMilliseconds: options.nowUtcMilliseconds,
     captureAchievements: options.captureAchievements,
     persistAchievements: options.persistAchievements,
     entitlements: Object.freeze({ ...options.entitlements }),

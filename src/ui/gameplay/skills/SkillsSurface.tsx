@@ -382,12 +382,23 @@ export function SkillsSurface({
     [localizedNodes, previewById],
   )
   const normalizedQuery = query.trim().toLocaleLowerCase(locale)
+  const searchableNodes = useMemo(
+    () => visibleNodes.map((node) => ({
+      ...node,
+      augmentSearchText: node.skillId === 'startHereTree' && previewById.get(node.skillId)?.galvanized
+        ? Object.values(CASH_SCIENCE_SUBSKILLS)
+          .map((id) => nodeById.get(id)?.displayName ?? '')
+          .join(' ')
+        : '',
+    })),
+    [nodeById, previewById, visibleNodes],
+  )
   const rankedMatchingIds = useMemo(
     () =>
-      rankSkillSearchResults(visibleNodes, query, locale).map(
+      rankSkillSearchResults(searchableNodes, query, locale).map(
         (node) => node.skillId,
       ),
-    [locale, query, visibleNodes],
+    [locale, query, searchableNodes],
   )
   const matchingIds = useMemo(() => {
     return new Set(rankedMatchingIds)

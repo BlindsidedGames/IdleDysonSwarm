@@ -4189,6 +4189,12 @@
       "value": "La simulación pierde precisión con intervalos de tiempo más grandes."
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "Almacenamiento máx."
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4257,6 +4263,20 @@
     {
       "type": 0,
       "value": "% completado"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "Usar "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": " de tiempo sin conexión"
     }
   ],
   "offline-time.region": [

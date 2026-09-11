@@ -103,8 +103,7 @@
 .quantum-upgrade-card,
 .avocato-feed-card,
 .avocato-total,
-.avocato-meditation,
-.avocato-developer-note {
+.avocato-meditation {
   border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
   background: var(--quantum-panel);
@@ -227,9 +226,6 @@
   line-height: 1.2;
 }
 .avocato-meditation > .ui-button { min-block-size: var(--target-minimum); padding: 0.28rem; font-size: calc(0.72rem * var(--game-text-scale)); }
-.avocato-developer-note { padding: var(--ui-panel-inset); font-size: var(--ui-text-body); }
-.avocato-developer-note summary { cursor: pointer; font-weight: var(--font-weight-bold); }
-.avocato-developer-note p { margin: 0.55rem 0 0; color: #e8def6; line-height: 1.35; }
 
 @container (min-width: 42rem) {
   .quantum-surface__grid,

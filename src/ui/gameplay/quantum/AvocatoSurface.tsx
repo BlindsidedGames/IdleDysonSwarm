@@ -92,10 +92,6 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
         <OverflowCard locale={locale} resources={resources} preview={previews.overflow}
           routeAvailable={commandAvailability.overflowReset} dispatchPlayer={dispatchPlayer} />
 
-        <details className="avocato-developer-note">
-          <summary>{intl.formatMessage(messages.developerNoteTitle)}</summary>
-          <p>{intl.formatMessage(messages.developerNote)}</p>
-        </details>
       </div>
     </div>
   )

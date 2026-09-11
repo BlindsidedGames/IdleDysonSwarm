@@ -83,7 +83,9 @@ export function DebugSurface({
     try {
       const result = await request()
       setOperation(
-        result.applied
+        !result.applied && result.unchanged
+          ? { kind: 'idle' }
+          : result.applied
           ? { kind: 'success', message: label }
           : { kind: 'failure', message: intl.formatMessage(messages.actionFailure) },
       )
@@ -257,12 +259,7 @@ export function DebugSurface({
                   })
                 }} />
               </div>
-              <ActionButton label={intl.formatMessage(messages.unlockTabs)} disabled={pending} onClick={() => void run(intl.formatMessage(messages.actionSuccess), async () => {
-                const result = await development.unlockReality()
-                return result.applied
-                  ? { applied: true, stateRevision: result.stateRevision, durableRevision: result.durableRevision }
-                  : result
-              })} />
+              <ActionButton label={intl.formatMessage(messages.unlockTabs)} disabled={pending} onClick={() => apply({ kind: 'unlock-all-tabs' }, intl.formatMessage(messages.actionSuccess))} />
             </section>
 
             <section className="debug-surface__panel">

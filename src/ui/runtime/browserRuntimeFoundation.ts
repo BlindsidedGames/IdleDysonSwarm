@@ -2611,6 +2611,9 @@ function developmentCommitResult(
   result: CommitFirstResult,
 ): UiRuntimeDevelopmentActionResult {
   if (!result.committed) {
+    if (result.transition.accepted && !result.transition.changed && !result.code) {
+      return { applied: false, unchanged: true, code: 'RUNTIME-DEVELOPMENT-UNCHANGED', reason: 'The requested state is already active.' }
+    }
     return {
       applied: false,
       code:

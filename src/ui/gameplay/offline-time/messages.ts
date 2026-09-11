@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const offlineTimeMessages = defineMessages({
+  maxStorage: {
+    id: 'offline-time.max-storage', defaultMessage: 'Max Storage',
+    description: 'Label for maximum bank capacity beneath the storage bar.',
+  },
+  quickSpend: {
+    id: 'offline-time.quick-spend', defaultMessage: 'Spend {duration} of Offline Time',
+    description: 'Accessible label for a sidebar quick-spend button.',
+  },
   region: {
     id: 'offline-time.region',
     defaultMessage: 'Offline Time',

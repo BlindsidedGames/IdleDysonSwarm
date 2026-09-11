@@ -141,6 +141,17 @@
   background: var(--theme-selected);
 }
 
+/* Both localized variants contribute their width while only one is visible. */
+.story-alternating-word {
+  display: inline-grid;
+  vertical-align: baseline;
+  max-inline-size: 100%;
+}
+
+.story-alternating-word > span {
+  grid-area: 1 / 1;
+}
+
 .story-avocato-entry h3 {
   color: var(--story-accent);
   font-size: calc(1rem * var(--game-text-scale));

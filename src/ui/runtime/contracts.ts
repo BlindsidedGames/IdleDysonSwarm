@@ -206,6 +206,7 @@ export type UiRuntimeDevelopmentAction =
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
+  | { readonly kind: 'unlock-all-tabs' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'disable-debug-options' }
 
@@ -226,6 +227,7 @@ export type UiRuntimeDevelopmentActionResult =
     }
   | {
       readonly applied: false
+      readonly unchanged?: boolean
       readonly code: string
       readonly reason: string
     }
