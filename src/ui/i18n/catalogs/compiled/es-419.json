@@ -8571,10 +8571,22 @@
       "value": "total"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "Volver a las mejoras"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
       "value": "Volver a preajustes"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "Volver al árbol de habilidades"
     }
   ],
   "skills.blocked-skills-heading": [
@@ -11467,6 +11479,12 @@
       "value": "Mostrar notificaciones de aplicación parcial de preajustes"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "Mostrar nombres de habilidades"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -11511,6 +11529,18 @@
       "value": "Cada panel deteriorado cuenta como 10"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "Te preguntas: «¿Y si simplemente hiciera los paneles más grandes?». ¡Ahora tus paneles son tan grandes que cada uno cuenta como diez paneles deteriorados!"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "Paneles supermasivos"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -11535,10 +11565,34 @@
       "value": "+5 segundos de vida útil de paneles"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "Les pides a tus ingenieros que los paneles duren más. Te ofrecen cinco segundos adicionales y te aseguran que la garantía definitivamente cubre la exposición solar."
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "Garantía extendida"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
       "value": "Producción de Dinero y Ciencia ×2"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "Elevas tus estándares y les dices a tus bots que produzcan el doble. ¡Al parecer, solo tenías que pedirlo!"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "Doble estándar"
     }
   ],
   "skills.subskill-refund": [
@@ -14466,6 +14520,18 @@
       "value": "Se mejoraron los detalles de habilidades y se corrigieron los toques que atravesaban sus ventanas."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "Se aplicó una corrección tentativa para el problema que impedía recibir tiempo sin conexión al volver al juego."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "Se agregaron botones rápidos para gastar 1 minuto, 10 minutos o 1 hora de tiempo sin conexión."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -14494,6 +14560,12 @@
     {
       "type": 0,
       "value": "Se mejoró la recuperación de partidas."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "Se agregaron etiquetas opcionales al árbol de habilidades."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

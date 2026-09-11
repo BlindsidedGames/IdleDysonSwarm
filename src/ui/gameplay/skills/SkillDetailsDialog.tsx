@@ -47,9 +47,6 @@ export function SkillDetailsDialog({
   const onCloseRef = useRef(onClose)
   onCloseRef.current = onBack ?? onClose
   const showingBack = onBack !== undefined
-  useEffect(() => {
-    if (showingBack) closeRef.current?.focus({ preventScroll: true })
-  }, [showingBack])
 
   useEffect(() => {
     returnFocusRef.current =
@@ -118,6 +115,10 @@ export function SkillDetailsDialog({
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (showingBack) closeRef.current?.focus({ preventScroll: true })
+  }, [showingBack])
 
   return createPortal(
     <div

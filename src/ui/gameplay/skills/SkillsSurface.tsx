@@ -1,4 +1,4 @@
-import { CASH_SCIENCE_SUBSKILLS } from '../../../simulation/skillSubskills'
+import { CASH_SCIENCE_SUBSKILLS, SKILL_AUGMENTS, skillAugments } from '../../../simulation/skillSubskills'
 import galvanizerIcon from '../../assets/currency-galvanizer.png'
 import { InlineImageSymbol, InlineResourceAmount } from '../../components'
 import { challengeMessages } from '../infinity/challengeMessages'
@@ -232,6 +232,25 @@ const SKILL_DOUBLE_ACTIVATION_MILLISECONDS = 360
 const SKILL_DOUBLE_CLICK_STORAGE_KEY =
   'idle-dyson-swarm:skill-double-click-assignment'
 
+const SKILL_LABELS_STORAGE_KEY = 'idle-dyson-swarm:show-skill-labels'
+
+function readSkillLabelsPreference(): boolean {
+  try {
+    return typeof window === 'undefined' ||
+      window.localStorage.getItem(SKILL_LABELS_STORAGE_KEY) !== 'false'
+  } catch {
+    return true
+  }
+}
+
+function writeSkillLabelsPreference(enabled: boolean): void {
+  try {
+    window.localStorage.setItem(SKILL_LABELS_STORAGE_KEY, String(enabled))
+  } catch {
+    // Labels remain usable when preference storage is unavailable.
+  }
+}
+
 function readDoubleClickAssignmentPreference(): boolean {
   try {
     return typeof window !== 'undefined' &&
@@ -324,9 +343,11 @@ export function SkillsSurface({
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(
     null,
   )
+  const [augmentRootId, setAugmentRootId] = useState<string | null>(null)
   const [quickPurchaseSkillId, setQuickPurchaseSkillId] =
     useState<string | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [showSkillLabels, setShowSkillLabels] = useState(readSkillLabelsPreference)
   const [doubleClickToAssign, setDoubleClickToAssign] = useState(
     readDoubleClickAssignmentPreference,
   )
@@ -364,12 +385,24 @@ export function SkillsSurface({
   const nodeById = useMemo(
     () => {
       const nodes = new Map(localizedNodes.map((node) => [node.skillId, node]))
-      const parent = nodes.get('startHereTree')!
-      for (const [id, message] of [
-        [CASH_SCIENCE_SUBSKILLS.lifetime, messages.subskillLifetime],
-        [CASH_SCIENCE_SUBSKILLS.decay, messages.subskillDecay],
-        [CASH_SCIENCE_SUBSKILLS.production, messages.subskillProduction],
-      ] as const) nodes.set(id, { ...parent, skillId: id, displayName: intl.formatMessage(message), cost: 1 })
+      const augmentPresentation = new Map<string, { message: typeof messages.subskillLifetime; description?: typeof messages.subskillLifetime; effect?: typeof messages.subskillLifetime; x: number; y: number; anchorSkillId?: string }>([
+        [CASH_SCIENCE_SUBSKILLS.lifetime, { message: messages.subskillLifetimeName, description: messages.subskillLifetimeDescription, effect: messages.subskillLifetime, x: 0, y: 0, anchorSkillId: 'higgsBoson' }],
+        [CASH_SCIENCE_SUBSKILLS.decay, { message: messages.subskillDecayName, description: messages.subskillDecayDescription, effect: messages.subskillDecay, x: 0, y: 0, anchorSkillId: 'panelLifetime20Tree' }],
+        [CASH_SCIENCE_SUBSKILLS.production, { message: messages.subskillProductionName, description: messages.subskillProductionDescription, effect: messages.subskillProduction, x: 0, y: -230 }],
+      ])
+      for (const augment of SKILL_AUGMENTS) {
+        const parent = nodes.get(augment.parentSkillId)
+        const authored = augmentPresentation.get(augment.id)
+        if (!parent || !authored) continue
+        const anchor = authored.anchorSkillId ? nodes.get(authored.anchorSkillId) ?? parent : parent
+        const label = intl.formatMessage(authored.message)
+        nodes.set(augment.id, {
+          ...parent, skillId: augment.id, displayName: label,
+          description: authored.description ? intl.formatMessage(authored.description) : '',
+          technicalDescription: authored.effect ? intl.formatMessage(authored.effect) : label, cost: 1,
+          x: anchor.x + authored.x, y: anchor.y + authored.y,
+        })
+      }
       return nodes
     },
     [intl, localizedNodes],
@@ -383,15 +416,22 @@ export function SkillsSurface({
   )
   const normalizedQuery = query.trim().toLocaleLowerCase(locale)
   const searchableNodes = useMemo(
-    () => visibleNodes.map((node) => ({
+    () => [...visibleNodes, ...(augmentRootId && previewById.get(augmentRootId)?.galvanized
+      ? skillAugments(augmentRootId).flatMap(({ id }) => {
+        const node = nodeById.get(id)
+        return node ? [node] : []
+      }) : [])].map((node) => ({
       ...node,
-      augmentSearchText: node.skillId === 'startHereTree' && previewById.get(node.skillId)?.galvanized
-        ? Object.values(CASH_SCIENCE_SUBSKILLS)
-          .map((id) => nodeById.get(id)?.displayName ?? '')
+      augmentSearchText: previewById.get(node.skillId)?.galvanized
+        ? skillAugments(node.skillId)
+          .map(({ id }) => {
+            const augment = nodeById.get(id)
+            return augment ? [augment.displayName, augment.description, augment.technicalDescription].join(' ') : ''
+          })
           .join(' ')
         : '',
     })),
-    [nodeById, previewById, visibleNodes],
+    [augmentRootId, nodeById, previewById, visibleNodes],
   )
   const rankedMatchingIds = useMemo(
     () =>
@@ -403,6 +443,8 @@ export function SkillsSurface({
   const matchingIds = useMemo(() => {
     return new Set(rankedMatchingIds)
   }, [rankedMatchingIds])
+  const augmentRoot = augmentRootId !== null && previewById.get(augmentRootId)?.galvanized
+    ? nodeById.get(augmentRootId) : undefined
   const selectedNode =
     selectedSkillId === null ? undefined : nodeById.get(selectedSkillId)
   const selectedPreview =
@@ -556,8 +598,17 @@ export function SkillsSurface({
 
   const selectSkill = useCallback((skillId: string) => {
     setQuickPurchaseSkillId(null)
-    setSelectedSkillId(skillId)
-  }, [])
+    if (skillId !== augmentRootId && previewById.get(skillId)?.galvanized && skillAugments(skillId).length > 0) {
+      setAugmentRootId(skillId)
+      setSelectedSkillId(null)
+    } else {
+      if (augmentRootId && skillId !== augmentRootId &&
+        !skillAugments(augmentRootId).some(({ id }) => id === skillId)) {
+        setAugmentRootId(null)
+      }
+      setSelectedSkillId(skillId)
+    }
+  }, [augmentRootId, previewById])
 
   const quickAssignSkill = useCallback((skillId: string) => {
     const preview = previewById.get(skillId)
@@ -627,6 +678,8 @@ export function SkillsSurface({
       <SkillTreeViewport
         skillsDisabled={skillsDisabled}
         nodes={visibleNodes}
+        augmentRootId={augmentRoot?.skillId ?? null}
+        onExitAugments={() => { setSelectedSkillId(null); setAugmentRootId(null) }}
         previews={previewById}
         nodeById={nodeById}
         selectedSkillId={selectedSkillId}
@@ -636,6 +689,7 @@ export function SkillsSurface({
         onSelect={selectSkill}
         onDoubleActivate={quickAssignSkill}
         doubleClickToAssign={doubleClickToAssign}
+        showSkillLabels={showSkillLabels}
         registerFocus={registerTreeFocus}
         initialView={initialTreeView}
         onViewChange={onTreeViewChange}
@@ -757,6 +811,11 @@ export function SkillsSurface({
           id={`${settingsId}-content`}
           autoAssignNonRefundable={autoAssignNonRefundable}
           doubleClickToAssign={doubleClickToAssign}
+          showSkillLabels={showSkillLabels}
+          onShowSkillLabelsChange={(enabled) => {
+            setShowSkillLabels(enabled)
+            writeSkillLabelsPreference(enabled)
+          }}
           onDoubleClickToAssignChange={(enabled) => {
             setDoubleClickToAssign(enabled)
             writeDoubleClickAssignmentPreference(enabled)
@@ -883,6 +942,7 @@ export function SkillsSurface({
           initialPurchaseConfirmation={
             quickPurchaseSkillId === selectedSkillId
           }
+          onBack={augmentRoot ? () => setSelectedSkillId(null) : undefined}
           onClose={() => {
             setQuickPurchaseSkillId(null)
             setSelectedSkillId(null)
@@ -895,6 +955,8 @@ export function SkillsSurface({
 }
 
 interface SkillTreeViewportProps {
+  readonly augmentRootId: string | null
+  readonly onExitAugments: () => void
   readonly skillsDisabled: boolean
   readonly nodes: readonly SkillPresentationNode[]
   readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
@@ -907,12 +969,15 @@ interface SkillTreeViewportProps {
   readonly onSelect: (skillId: string) => void
   readonly onDoubleActivate: (skillId: string) => void
   readonly doubleClickToAssign: boolean
+  readonly showSkillLabels: boolean
   readonly registerFocus: (focus: (skillId: string) => void) => void
   readonly initialView?: SkillTreeViewState | null
   readonly onViewChange?: (view: SkillTreeViewState) => void
 }
 
 const SkillTreeViewport = memo(function SkillTreeViewport({
+  augmentRootId,
+  onExitAugments,
   skillsDisabled,
   nodes,
   previews,
@@ -925,6 +990,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   onSelect,
   onDoubleActivate,
   doubleClickToAssign,
+  showSkillLabels,
   registerFocus,
   initialView,
   onViewChange,
@@ -1311,9 +1377,18 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
     releasePointer(event, false)
   }
 
+  const augmentIds = useMemo(() => new Set(augmentRootId === null
+    ? [] : skillAugments(augmentRootId).map(({ id }) => id)), [augmentRootId])
+  const displayedNodes = useMemo(() => [
+    ...nodes,
+    ...[...augmentIds].flatMap(id => {
+      const node = nodeById.get(id)
+      return node ? [node] : []
+    }),
+  ], [augmentIds, nodeById, nodes])
   const connectors = useMemo(
-    () => prepareSkillConnectors(nodes, previews, nodeById),
-    [nodeById, nodes, previews],
+    () => prepareSkillConnectors(displayedNodes, previews, nodeById),
+    [nodeById, displayedNodes, previews],
   )
   const selectedPreview =
     selectedSkillId === null ? undefined : previews.get(selectedSkillId)
@@ -1321,11 +1396,22 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
     selectedPreview?.requiredSkillIds ?? [],
   )
   const hasSelection = selectedPreview !== undefined
+  const exitAugments = () => {
+    onExitAugments()
+    if (augmentRootId) nodeRefs.current.get(augmentRootId)?.focus({ preventScroll: true })
+  }
 
   return (
     <div
       ref={viewportRef}
       className="skill-tree-viewport"
+      data-augment-root={augmentRootId ?? undefined}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape' && augmentRootId !== null && selectedSkillId === null) {
+          event.preventDefault()
+          exitAugments()
+        }
+      }}
       role="region"
       aria-label={intl.formatMessage(messages.tree)}
       aria-describedby={instructionsId}
@@ -1375,6 +1461,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               : connector.unownedSourcePaths
             const selectedPath = to.skillId === selectedSkillId
             const sharedAttributes = {
+              'data-augment-background': augmentRootId !== null && !augmentIds.has(to.skillId) || undefined,
               'data-owned': sourceOwned && targetOwned,
               'data-source-owned': sourceOwned || undefined,
               'data-state': targetPreview?.visualState,
@@ -1412,17 +1499,19 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
             )
           })}
         </svg>
-        {nodes.map((node) => {
+        {displayedNodes.map((node) => {
+          const background = augmentRootId !== null && node.skillId !== augmentRootId && !augmentIds.has(node.skillId)
+          const isAugment = augmentIds.has(node.skillId)
           const preview = previews.get(node.skillId)
           if (!preview) return null
           const position = graphPosition(node)
           const matched = matchingIds.has(node.skillId)
           const requiredCount = preview.requiredSkillIds.length
-          const augmentIds = preview.galvanized && node.skillId === 'startHereTree'
-            ? Object.values(CASH_SCIENCE_SUBSKILLS) : []
-          const assignedAugments = augmentIds.filter(id => previews.get(id)?.owned).length
-          const augmentLabel = augmentIds.length > 0
-            ? intl.formatMessage(messages.augmentsAssigned, { complete: assignedAugments, total: augmentIds.length })
+          const childIds = preview.galvanized
+            ? skillAugments(node.skillId).map(({ id }) => id) : []
+          const assignedAugments = childIds.filter(id => previews.get(id)?.owned).length
+          const augmentLabel = childIds.length > 0
+            ? intl.formatMessage(messages.augmentsAssigned, { complete: assignedAugments, total: childIds.length })
             : null
           const completedRequirementCount =
             preview.requiredSkillIds.filter(
@@ -1440,6 +1529,10 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               }}
               type="button"
               className="skill-tree-node"
+              data-augment-background={background || undefined}
+              data-augment-node={isAugment || undefined}
+              aria-hidden={background || undefined}
+              tabIndex={background ? -1 : 0}
               data-state={preview.visualState}
               data-affordable={(!skillsDisabled && preview.purchase.eligible) || undefined}
               data-galvanized={preview.galvanized || undefined}
@@ -1476,6 +1569,8 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
                 top: position.y,
               }}
               onClick={(event) => {
+                if (background) return
+                event.currentTarget.focus({ preventScroll: true })
                 if (
                   event.detail > 0 &&
                   suppressedSkillClick.current === node.skillId
@@ -1510,13 +1605,14 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
                 draggable="false"
               />
               {!preview.galvanized && <span className="skill-tree-node__cost">{node.cost}</span>}
-              {augmentIds.length > 0 && <span
+              {showSkillLabels && !background && <span className="skill-tree-node__label" aria-hidden="true">{node.displayName}</span>}
+              {childIds.length > 0 && <span
                 className="skill-tree-node__requirements skill-tree-node__augments"
-                data-progress={assignedAugments === augmentIds.length ? 'complete' : assignedAugments > 0 ? 'partial' : 'none'}
+                data-progress={assignedAugments === childIds.length ? 'complete' : assignedAugments > 0 ? 'partial' : 'none'}
                 aria-label={augmentLabel ?? undefined}
               >
                 <InlineImageSymbol className="skill-tree-node__augment-currency" src={galvanizerIcon} tint maskMode="luminance" />
-                <span>{assignedAugments}/{augmentIds.length}</span>
+                <span>{assignedAugments}/{childIds.length}</span>
               </span>}
               {preview.queued && !preview.galvanized && (
                 <i
@@ -1552,6 +1648,14 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
           )
         })}
       </div>
+      {augmentRootId !== null && (
+        <div className="skill-tree-viewport__augment-controls">
+          <span>{nodeById.get(augmentRootId)?.displayName} · {intl.formatMessage(messages.subskills)}</span>
+          <button type="button" onClick={exitAugments}>
+            <span aria-hidden="true">← </span>{intl.formatMessage(messages.backToTree)}
+          </button>
+        </div>
+      )}
       <div className="skill-tree-viewport__controls">
         {controlsStart}
         <button
@@ -1564,7 +1668,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
         <button
           type="button"
           aria-label={intl.formatMessage(messages.centreTree)}
-          onClick={() => startNode && centreOn(startNode.skillId, false)}
+          onClick={() => centreOn(augmentRootId ?? startNode.skillId, false)}
         >
           ◎
         </button>
@@ -1686,6 +1790,7 @@ interface SkillDetailsProps {
   readonly presetActions?: SkillPresetActions
   readonly pendingKind: string | null
   readonly initialPurchaseConfirmation: boolean
+  readonly onBack?: () => void
   readonly onClose: () => void
   readonly dispatch: (
     command: SkillCommand,
@@ -1759,6 +1864,7 @@ function SkillDetails({
   presetActions,
   pendingKind,
   initialPurchaseConfirmation,
+  onBack,
   onClose,
   dispatch,
 }: SkillDetailsProps) {
@@ -1887,6 +1993,8 @@ function SkillDetails({
       closeLabel={intl.formatMessage(messages.close)}
       palette={palette}
       onClose={onClose}
+      onBack={onBack}
+      backLabel={intl.formatMessage(messages.backToAugments)}
     >
       <div
         className="skill-details"
@@ -1918,36 +2026,6 @@ function SkillDetails({
               </div>
             )}
           </div>
-        )}
-        {preview.galvanized && node.skillId === 'startHereTree' && (
-          <section className="skill-subskills">
-            <h3>{intl.formatMessage(messages.subskills)}</h3>
-            <p>{intl.formatMessage(messages.subskillsHelp)}</p>
-            {([
-              [CASH_SCIENCE_SUBSKILLS.lifetime, messages.subskillLifetime],
-              [CASH_SCIENCE_SUBSKILLS.decay, messages.subskillDecay],
-              [CASH_SCIENCE_SUBSKILLS.production, messages.subskillProduction],
-            ] as const).map(([id, label]) => {
-              const subskill = previews.get(id)
-              if (!subskill) return null
-              return (
-                <div className="skill-subskills__row" key={id}>
-                  <label>
-                    <input type="checkbox" checked={subskill.queued}
-                      disabled={presetActions === undefined || queuePending}
-                      aria-label={intl.formatMessage(messages.subskillInclude, { name: intl.formatMessage(label), preset: selectedPresetName })}
-                      onChange={(event) => void applyQueueChange({ slot: selectedPresetSlot, skillId: id, included: event.currentTarget.checked })} />
-                    <span>{intl.formatMessage(label)}<small className="skill-subskills__cost">{intl.formatMessage(messages.subskillCost)}</small></span>
-                  </label>
-                  <Button disabled={pendingKind !== null || (subskill.owned ? !commandAvailability.refund || !subskill.refund.eligible : !commandAvailability.purchase || !subskill.purchase.eligible)}
-                    aria-label={intl.formatMessage(subskill.owned ? messages.subskillRefund : messages.subskillAssign, { name: intl.formatMessage(label) })}
-                    onClick={() => void dispatch({ kind: subskill.owned ? 'skill.refund' : 'skill.purchase', skillId: id })}>
-                    {intl.formatMessage(subskill.owned ? messages.subskillRefundShort : messages.subskillAssignShort)}
-                  </Button>
-                </div>
-              )
-            })}
-          </section>
         )}
         {preview.galvanized && <p className="skill-details__permanent">{intl.formatMessage(messages.galvanizedHelp)}</p>}
         {!preview.galvanized && <div className="skill-details__metadata">
@@ -2251,6 +2329,8 @@ interface SkillSettingsProps {
   readonly id: string
   readonly autoAssignNonRefundable: boolean
   readonly doubleClickToAssign: boolean
+  readonly showSkillLabels: boolean
+  readonly onShowSkillLabelsChange: (enabled: boolean) => void
   readonly onDoubleClickToAssignChange: (enabled: boolean) => void
   readonly showPresetApplicationNotifications: boolean
   readonly onShowPresetApplicationNotificationsChange: (
@@ -2270,6 +2350,8 @@ function SkillSettings({
   id,
   autoAssignNonRefundable,
   doubleClickToAssign,
+  showSkillLabels,
+  onShowSkillLabelsChange,
   onDoubleClickToAssignChange,
   showPresetApplicationNotifications,
   onShowPresetApplicationNotificationsChange,
@@ -2300,6 +2382,11 @@ function SkillSettings({
           }
         />
         <span>{intl.formatMessage(messages.nonRefundable)}</span>
+      </label>
+      <label className="skill-settings__toggle">
+        <input type="checkbox" checked={showSkillLabels}
+          onChange={(event) => onShowSkillLabelsChange(event.currentTarget.checked)} />
+        <span>{intl.formatMessage(messages.showSkillLabels)}</span>
       </label>
       <label className="skill-settings__toggle">
         <input

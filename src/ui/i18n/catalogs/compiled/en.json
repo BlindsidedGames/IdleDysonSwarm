@@ -8571,10 +8571,22 @@
       "value": "total"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "Back to augments"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
       "value": "Back to presets"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "Back to skill tree"
     }
   ],
   "skills.blocked-skills-heading": [
@@ -11467,6 +11479,12 @@
       "value": "Show partial preset application notifications"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "Show skill labels"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -11511,6 +11529,18 @@
       "value": "Each decayed panel counts as 10"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "You ask yourself, “What if I just made the panels bigger?” Now your panels are so big that they count towards decayed panels tenfold!"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "Supermassive Panels"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -11535,10 +11565,34 @@
       "value": "+5 seconds Panel Lifetime"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "You ask your engineers to make the panels last longer. They offer you another five seconds and assure you that the warranty definitely covers solar exposure."
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "Extended Warranty"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
       "value": "2× Cash and Science production"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "You raise your standards and tell your bots to produce twice as much. Apparently, all you had to do was ask!"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "Double Standards"
     }
   ],
   "skills.subskill-refund": [
@@ -14466,6 +14520,18 @@
       "value": "Improved skill details and fixed taps passing through skill popups."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "Tentatively fixed Offline Time not being awarded after returning to the game."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "Added quick buttons to spend 1 minute, 10 minutes, or 1 hour of Offline Time."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -14494,6 +14560,12 @@
     {
       "type": 0,
       "value": "Improved save recovery."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "Added optional skill labels to the skill tree."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

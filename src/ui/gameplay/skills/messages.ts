@@ -1,6 +1,8 @@
 import { defineMessages } from 'react-intl'
 
 export const skillMessages = defineMessages({
+  backToTree: { id: 'skills.back-to-tree', defaultMessage: 'Back to skill tree', description: 'Return from an augment tree to the main skill tree.' },
+  backToAugments: { id: 'skills.back-to-augments', defaultMessage: 'Back to augments', description: 'Return from an augment description to its tree.' },
   augmentsAssigned: { id: "skills.augments-assigned", defaultMessage: "Assigned augments: {complete}/{total}", description: "Owned optional augments out of the total available on a galvanized skill." },
   priorityRemove: { id: "skills.priority-remove", defaultMessage: "Remove {name} from preset", description: "Remove a queued skill and its dependent skills from the preset." },
   editPriority: { id: "skills.edit-priority", defaultMessage: "Edit priority", description: "Skill priority editor and subskill controls." },
@@ -38,7 +40,13 @@ export const skillMessages = defineMessages({
   confirmGalvanize: { id: "skills.confirm-galvanize", defaultMessage: "Spend 1 Galvanizer", description: "Galvanization skill details interface." },
   subskills: { id: "skills.subskills", defaultMessage: "Augments", description: "Galvanization skill details interface." },
   subskillsHelp: { id: "skills.subskills-help", defaultMessage: "Each costs 1 Skill Point; you can take all three. Checkboxes add them to the preset. Augments reset and refund normally.", description: "Galvanization skill details interface." },
+  subskillLifetimeName: { id: 'skills.subskill-lifetime-name', defaultMessage: 'Extended Warranty', description: 'Name of the extra panel lifetime augment.' },
+  subskillLifetimeDescription: { id: 'skills.subskill-lifetime-description', defaultMessage: 'You ask your engineers to make the panels last longer. They offer you another five seconds and assure you that the warranty definitely covers solar exposure.', description: 'Flavor description of Extended Warranty.' },
+  subskillProductionName: { id: 'skills.subskill-production-name', defaultMessage: 'Double Standards', description: 'Name of the double Cash and Science augment.' },
+  subskillProductionDescription: { id: 'skills.subskill-production-description', defaultMessage: 'You raise your standards and tell your bots to produce twice as much. Apparently, all you had to do was ask!', description: 'Flavor description of Double Standards.' },
   subskillLifetime: { id: "skills.subskill-lifetime", defaultMessage: "+5 seconds Panel Lifetime", description: "Galvanization skill details interface." },
+  subskillDecayName: { id: 'skills.subskill-decay-name', defaultMessage: 'Supermassive Panels', description: 'Name of the augment that increases decayed panel credit tenfold.' },
+  subskillDecayDescription: { id: 'skills.subskill-decay-description', defaultMessage: 'You ask yourself, “What if I just made the panels bigger?” Now your panels are so big that they count towards decayed panels tenfold!', description: 'Flavor description of the Supermassive Panels augment.' },
   subskillDecay: { id: "skills.subskill-decay", defaultMessage: "Each decayed panel counts as 10", description: "Galvanization skill details interface." },
   subskillProduction: { id: "skills.subskill-production", defaultMessage: "2\u00d7 Cash and Science production", description: "Galvanization skill details interface." },
   subskillAssign: { id: "skills.subskill-assign", defaultMessage: "Assign {name} for 1 Skill Point", description: "Galvanization skill details interface." },
@@ -547,6 +555,7 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Allow automatic assignment of non-refundable skills',
     description: 'Toggle allowing presets to assign skills that cannot be refunded.',
   },
+  showSkillLabels: { id: 'skills.show-skill-labels', defaultMessage: 'Show skill labels', description: 'Toggle names below nodes on the main skill tree and augment trees.' },
   doubleClickToAssign: {
     id: 'skills.double-click-to-assign',
     defaultMessage: 'Double-click to assign skills',

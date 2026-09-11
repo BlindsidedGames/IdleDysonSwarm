@@ -16843,6 +16843,20 @@
       "value": "‬"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐɔʞ ʇo ɐnƃɯǝuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
@@ -16851,6 +16865,20 @@
     {
       "type": 0,
       "value": "Ԑɐɔʞ ʇo dɹǝsǝʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐɔʞ ʇo sʞıʅʅ ʇɹǝǝ"
     },
     {
       "type": 0,
@@ -23171,6 +23199,20 @@
       "value": "‬"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ sʞıʅʅ ʅɐqǝʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -23263,6 +23305,34 @@
       "value": "‬"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on ɐsʞ ʎonɹsǝʅɟ, “Mɥɐʇ ıɟ I ɾnsʇ ɯɐpǝ ʇɥǝ dɐuǝʅs qıƃƃǝɹ?” Noʍ ʎonɹ dɐuǝʅs ɐɹǝ so qıƃ ʇɥɐʇ ʇɥǝʎ ɔonuʇ ʇoʍɐɹps pǝɔɐʎǝp dɐuǝʅs ʇǝuɟoʅp!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sndǝɹɯɐssıʌǝ Ԁɐuǝʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -23303,6 +23373,34 @@
       "value": "‬"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on ɐsʞ ʎonɹ ǝuƃıuǝǝɹs ʇo ɯɐʞǝ ʇɥǝ dɐuǝʅs ʅɐsʇ ʅouƃǝɹ. ⊥ɥǝʎ oɟɟǝɹ ʎon ɐuoʇɥǝɹ ɟıʌǝ sǝɔoups ɐup ɐssnɹǝ ʎon ʇɥɐʇ ʇɥǝ ʍɐɹɹɐuʇʎ pǝɟıuıʇǝʅʎ ɔoʌǝɹs soʅɐɹ ǝxdosnɹǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxʇǝupǝp Mɐɹɹɐuʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
@@ -23311,6 +23409,34 @@
     {
       "type": 0,
       "value": "2× Ↄɐsɥ ɐup Sɔıǝuɔǝ dɹopnɔʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on ɹɐısǝ ʎonɹ sʇɐupɐɹps ɐup ʇǝʅʅ ʎonɹ qoʇs ʇo dɹopnɔǝ ʇʍıɔǝ ɐs ɯnɔɥ. ∀ddɐɹǝuʇʅʎ, ɐʅʅ ʎon ɥɐp ʇo po ʍɐs ɐsʞ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Sʇɐupɐɹps"
     },
     {
       "type": 0,
@@ -29162,6 +29288,34 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ǝuʇɐʇıʌǝʅʎ ɟıxǝp Oɟɟʅıuǝ ⊥ıɯǝ uoʇ qǝıuƃ ɐʍɐɹpǝp ɐɟʇǝɹ ɹǝʇnɹuıuƃ ʇo ʇɥǝ ƃɐɯǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp bnıɔʞ qnʇʇous ʇo sdǝup 1 ɯıunʇǝ, 10 ɯıunʇǝs, oɹ 1 ɥonɹ oɟ Oɟɟʅıuǝ ⊥ıɯǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -29226,6 +29380,20 @@
     {
       "type": 0,
       "value": "Iɯdɹoʌǝp sɐʌǝ ɹǝɔoʌǝɹʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp odʇıouɐʅ sʞıʅʅ ʅɐqǝʅs ʇo ʇɥǝ sʞıʅʅ ʇɹǝǝ."
     },
     {
       "type": 0,

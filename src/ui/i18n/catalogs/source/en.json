@@ -4117,9 +4117,17 @@
     "defaultMessage": "Assigned augments: {complete}/{total}",
     "description": "Owned optional augments out of the total available on a galvanized skill."
   },
+  "skills.back-to-augments": {
+    "defaultMessage": "Back to augments",
+    "description": "Return from an augment description to its tree."
+  },
   "skills.back-to-presets": {
     "defaultMessage": "Back to presets",
     "description": "Skill priority editor and subskill controls."
+  },
+  "skills.back-to-tree": {
+    "defaultMessage": "Back to skill tree",
+    "description": "Return from an augment tree to the main skill tree."
   },
   "skills.blocked-skills-heading": {
     "defaultMessage": "Preset skills blocked for now",
@@ -5833,6 +5841,10 @@
     "defaultMessage": "Show partial preset application notifications",
     "description": "Presentation preference controlling post-switch partial preset application notices."
   },
+  "skills.show-skill-labels": {
+    "defaultMessage": "Show skill labels",
+    "description": "Toggle names below nodes on the main skill tree and augment trees."
+  },
   "skills.spending-priority": {
     "defaultMessage": "Spending priority",
     "description": "Expandable ordered skill list inside each preset."
@@ -5857,6 +5869,14 @@
     "defaultMessage": "Each decayed panel counts as 10",
     "description": "Galvanization skill details interface."
   },
+  "skills.subskill-decay-description": {
+    "defaultMessage": "You ask yourself, “What if I just made the panels bigger?” Now your panels are so big that they count towards decayed panels tenfold!",
+    "description": "Flavor description of the Supermassive Panels augment."
+  },
+  "skills.subskill-decay-name": {
+    "defaultMessage": "Supermassive Panels",
+    "description": "Name of the augment that increases decayed panel credit tenfold."
+  },
   "skills.subskill-include": {
     "defaultMessage": "Include {name} in {preset}",
     "description": "Accessible subskill preset checkbox label."
@@ -5865,9 +5885,25 @@
     "defaultMessage": "+5 seconds Panel Lifetime",
     "description": "Galvanization skill details interface."
   },
+  "skills.subskill-lifetime-description": {
+    "defaultMessage": "You ask your engineers to make the panels last longer. They offer you another five seconds and assure you that the warranty definitely covers solar exposure.",
+    "description": "Flavor description of Extended Warranty."
+  },
+  "skills.subskill-lifetime-name": {
+    "defaultMessage": "Extended Warranty",
+    "description": "Name of the extra panel lifetime augment."
+  },
   "skills.subskill-production": {
     "defaultMessage": "2× Cash and Science production",
     "description": "Galvanization skill details interface."
+  },
+  "skills.subskill-production-description": {
+    "defaultMessage": "You raise your standards and tell your bots to produce twice as much. Apparently, all you had to do was ask!",
+    "description": "Flavor description of Double Standards."
+  },
+  "skills.subskill-production-name": {
+    "defaultMessage": "Double Standards",
+    "description": "Name of the double Cash and Science augment."
   },
   "skills.subskill-refund": {
     "defaultMessage": "Refund {name} for 1 Skill Point",
@@ -7329,6 +7365,14 @@
     "defaultMessage": "Improved skill details and fixed taps passing through skill popups.",
     "description": "Version 4.1.8 release notes."
   },
+  "wiki.patch-notes.version-4-1-8.offline-earning": {
+    "defaultMessage": "Tentatively fixed Offline Time not being awarded after returning to the game.",
+    "description": "Version 4.1.8 release notes."
+  },
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": {
+    "defaultMessage": "Added quick buttons to spend 1 minute, 10 minutes, or 1 hour of Offline Time.",
+    "description": "Version 4.1.8 release notes."
+  },
   "wiki.patch-notes.version-4-1-8.overflow": {
     "defaultMessage": "Added a voluntary Overflow reset and Overflow Points.",
     "description": "Version 4.1.8 release notes."
@@ -7347,6 +7391,10 @@
   },
   "wiki.patch-notes.version-4-1-8.recovery": {
     "defaultMessage": "Improved save recovery.",
+    "description": "Version 4.1.8 release notes."
+  },
+  "wiki.patch-notes.version-4-1-8.skill-labels": {
+    "defaultMessage": "Added optional skill labels to the skill tree.",
     "description": "Version 4.1.8 release notes."
   },
   "wiki.patch-notes.version-4-1.audio": {

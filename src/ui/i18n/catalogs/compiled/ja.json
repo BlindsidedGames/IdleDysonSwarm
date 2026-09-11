@@ -8571,10 +8571,22 @@
       "value": "total"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "拡張に戻る"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
       "value": "プリセットに戻る"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "スキルツリーに戻る"
     }
   ],
   "skills.blocked-skills-heading": [
@@ -11467,6 +11479,12 @@
       "value": "プリセットの部分適用通知を表示"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "スキル名を表示"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -11511,6 +11529,18 @@
       "value": "崩壊したパネル1枚を10枚として数える"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "「パネルをもっと大きくしたらどうだろう？」そう考えたあなたのパネルは今やとても巨大になり、1枚で劣化パネル10枚分として数えられます！"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "超巨大パネル"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -11535,10 +11565,34 @@
       "value": "パネル寿命+5秒"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "エンジニアにパネルを長持ちさせるよう頼みます。彼らは寿命をあと5秒延ばし、太陽光への曝露も間違いなく保証の対象だと請け合います。"
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "延長保証"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
       "value": "資金とサイエンスの生産量が2倍"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "基準を引き上げ、ボットたちに生産量を倍にするよう伝えます。どうやら、頼むだけでよかったようです！"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "ダブルスタンダード"
     }
   ],
   "skills.subskill-refund": [
@@ -14466,6 +14520,18 @@
       "value": "スキル詳細を改善し、タップがスキル画面をすり抜ける問題を修正しました。"
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "ゲームに戻った際にオフライン時間が付与されない問題に対する暫定的な修正を実施。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "オフライン時間を1分、10分、1時間消費するクイックボタンを追加。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -14494,6 +14560,12 @@
     {
       "type": 0,
       "value": "セーブの復元を改善しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "スキルツリーにスキル名の表示を切り替える機能を追加。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

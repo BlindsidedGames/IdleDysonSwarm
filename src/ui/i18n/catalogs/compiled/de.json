@@ -8571,10 +8571,22 @@
       "value": "total"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "Zurück zu den Erweiterungen"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
       "value": "Zurück zu Vorlagen"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "Zurück zum Fähigkeitenbaum"
     }
   ],
   "skills.blocked-skills-heading": [
@@ -11467,6 +11479,12 @@
       "value": "Benachrichtigungen über teilweise angewendete Voreinstellungen anzeigen"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "Fähigkeitsnamen anzeigen"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -11511,6 +11529,18 @@
       "value": "Jedes zerfallene Panel zählt als 10"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "Du fragst dich: „Was wäre, wenn ich die Paneele einfach größer machen würde?“ Jetzt sind deine Paneele so groß, dass jedes als zehn zerfallene Paneele zählt!"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "Supermassive Paneele"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -11535,10 +11565,34 @@
       "value": "+5 Sekunden Panellebensdauer"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "Du bittest deine Ingenieure, die Paneele haltbarer zu machen. Sie bieten dir weitere fünf Sekunden an und versichern dir, dass die Garantie Sonneneinstrahlung ganz bestimmt abdeckt."
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "Garantieverlängerung"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
       "value": "2× Geld- und Wissenschaftsproduktion"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "Du legst höhere Maßstäbe an und sagst deinen Bots, sie sollen doppelt so viel produzieren. Anscheinend musste man nur fragen!"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "Doppelte Maßstäbe"
     }
   ],
   "skills.subskill-refund": [
@@ -14466,6 +14520,18 @@
       "value": "Fähigkeitsdetails verbessert und Durchtippen durch Fähigkeitsfenster behoben."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "Vorläufige Behebung eines Problems, bei dem nach der Rückkehr ins Spiel keine Offline-Zeit gutgeschrieben wurde."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "Schnelltasten zum Ausgeben von 1 Minute, 10 Minuten oder 1 Stunde Offline-Zeit hinzugefügt."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -14494,6 +14560,12 @@
     {
       "type": 0,
       "value": "Spielstandwiederherstellung verbessert."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "Optionale Beschriftungen im Fähigkeitenbaum hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

@@ -8571,10 +8571,22 @@
       "value": "total"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "返回强化项"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
       "value": "返回预设"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "返回技能树"
     }
   ],
   "skills.blocked-skills-heading": [
@@ -11467,6 +11479,12 @@
       "value": "显示预设部分应用通知"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "显示技能名称"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -11511,6 +11529,18 @@
       "value": "每个衰变面板计为10个"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "你问自己：“要是我把面板做大一点呢？”现在你的面板大得惊人，每块都算作十块衰变面板！"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "超巨型面板"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -11535,10 +11565,34 @@
       "value": "面板寿命+5秒"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "你请工程师让面板更耐用。他们给你多加了五秒，并向你保证，保修绝对涵盖日晒。"
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "延长保修"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
       "value": "现金和科学产量提高至2倍"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "你提高标准，要求机器人把产量翻倍。看来，你只需要开口就行了！"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "双重标准"
     }
   ],
   "skills.subskill-refund": [
@@ -14466,6 +14520,18 @@
       "value": "优化技能详情，修复点击穿透技能弹窗的问题。"
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "尝试修复了返回游戏后未获得离线时间的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "添加了快捷按钮，可消耗1分钟、10分钟或1小时的离线时间。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -14494,6 +14560,12 @@
     {
       "type": 0,
       "value": "改进存档恢复。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "为技能树添加了可选的技能名称标签。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [
