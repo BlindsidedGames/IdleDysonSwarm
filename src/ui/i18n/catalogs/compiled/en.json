@@ -4189,6 +4189,12 @@
       "value": "Simulation becomes less accurate at larger time steps."
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "Max Storage"
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4257,6 +4263,20 @@
     {
       "type": 0,
       "value": "% complete"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "Spend "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": " of Offline Time"
     }
   ],
   "offline-time.region": [

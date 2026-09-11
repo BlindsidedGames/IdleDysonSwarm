@@ -552,3 +552,12 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+.offline-time-max-storage {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ui-control-gap);
+  font-size: var(--ui-text-body);
+  color: #eee7f8;
+}
+.offline-time-max-storage > :last-child { text-align: end; font-family: var(--font-family-numeric); }

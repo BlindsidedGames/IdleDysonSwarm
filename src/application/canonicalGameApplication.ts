@@ -171,6 +171,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
+  | { readonly kind: 'unlock-all-tabs' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'enable-host-debug-options' }
   | { readonly kind: 'disable-debug-options' }
@@ -1276,6 +1277,8 @@ function applyDevelopmentAction(
 ): DomainTransition {
   const state = candidate.gameState
   switch (action.kind) {
+    case 'unlock-all-tabs':
+      return replaceDevelopmentRuntime(candidate, { unlockAllTabs: true })
     case 'add-cash': {
       if (!Number.isFinite(action.amount)) {
         return invalidDevelopmentAction('Cash amount')
@@ -1588,7 +1591,7 @@ function replaceDevelopmentRuntime(
   replacement: Partial<
     Pick<
       CanonicalRuntimeState,
-      'debugOptionsEnabled' | 'debugEntitlementPurchased'
+      'debugOptionsEnabled' | 'debugEntitlementPurchased' | 'unlockAllTabs'
     >
   >,
 ): DomainTransition {
@@ -2204,7 +2207,9 @@ function validateStoredTimeJobCandidate(
   }
   if (
     candidate.storedTimeCheater !== before.storedTimeCheater ||
+    candidate.coldStartCheckpointAtUtc !== before.coldStartCheckpointAtUtc ||
     candidate.selectedSkillPresetSlot !== before.selectedSkillPresetSlot ||
+    candidate.unlockAllTabs !== before.unlockAllTabs ||
     candidate.debugOptionsEnabled !== before.debugOptionsEnabled ||
     candidate.debugEntitlementPurchased !== before.debugEntitlementPurchased
   ) {

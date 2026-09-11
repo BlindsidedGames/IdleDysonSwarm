@@ -16,7 +16,6 @@
   animation: dyson-scene-enter 700ms ease-out both;
 }
 
-.dyson-swarm-visual__collector-field,
 .dyson-swarm-visual__galaxy {
   position: absolute;
   z-index: 2;
@@ -26,60 +25,24 @@
   overflow: visible;
 }
 
-.dyson-swarm-visual__collector-track {
-  animation: dyson-orbit-track 34s linear infinite;
+.dyson-swarm-visual__single-ring {
+  position: absolute;
+  z-index: 2;
+  inline-size: clamp(6.08rem, 16vw, 9.2rem);
+  aspect-ratio: 1;
+  overflow: visible;
+  transform-origin: center;
+  animation: dyson-ring-orbit 24s linear infinite;
 }
 
-.dyson-swarm-visual__collector-track--1 {
-  animation-direction: reverse;
-  animation-duration: 47s;
+@keyframes dyson-ring-orbit {
+  to { transform: rotate(360deg); }
 }
 
-.dyson-swarm-visual__collector-track--2 {
-  animation-duration: 63s;
-}
-
-.dyson-swarm-visual__collector-track--3 {
-  animation-direction: reverse;
-  animation-duration: 79s;
-}
-
-.dyson-swarm-visual__orbit-guide {
-  fill: none;
-  stroke: rgb(238 218 242 / 12%);
-  stroke-width: 0.55;
-}
-
-.dyson-swarm-visual__orbit-depth {
-  pointer-events: none;
-}
-
-.dyson-swarm-visual__collector-plane {
-  fill: #c89ad4;
-  opacity: 0;
+.dyson-swarm-visual__ring-segment {
+  stroke: #c89ad4;
+  stroke-width: 4;
   transition: opacity 650ms ease-out;
-}
-
-.dyson-swarm-visual__collector-plane--exact {
-  opacity: 1;
-}
-
-.dyson-swarm-visual__collector-plane[data-visible="true"] {
-  opacity: 0.86;
-}
-
-.dyson-swarm-visual__collector {
-  opacity: 0;
-  transition: opacity 450ms ease-out;
-}
-
-.dyson-swarm-visual__collector[data-visible="true"] {
-  opacity: 1;
-}
-
-.dyson-swarm-visual__collector-plane[data-visible="true"]
-  .dyson-swarm-visual__collector {
-  opacity: 1;
 }
 
 .dyson-swarm-visual__thermal-glow {
@@ -90,9 +53,9 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgb(255 179 66 / 34%) 0 18%,
-    rgb(234 111 43 / 20%) 32%,
-    rgb(185 79 121 / 9%) 54%,
+    rgb(255 179 66 / 20%) 0 18%,
+    rgb(234 111 43 / 11%) 32%,
+    rgb(185 79 121 / 5%) 54%,
     transparent 74%
   );
   opacity: calc(0.55 + var(--swarm-completion) * 0.35);
@@ -121,8 +84,8 @@
       transparent 83%
     );
   box-shadow:
-    0 0 1.2rem rgb(255 204 66 / 92%),
-    0 0 2.8rem rgb(255 145 20 / 36%);
+    0 0 0.65rem rgb(255 204 66 / 48%),
+    0 0 1.6rem rgb(255 145 20 / 16%);
   opacity: calc(1 - var(--swarm-completion) * 0.38);
   transition: opacity 900ms ease, box-shadow 900ms ease;
 }
@@ -281,12 +244,6 @@
   pointer-events: none;
 }
 
-@keyframes dyson-orbit-track {
-  to {
-    transform: rotate(1turn);
-  }
-}
-
 @keyframes dyson-origin-star-zoom-out {
   from {
     opacity: 1;
@@ -340,8 +297,7 @@
     inset: -6%;
   }
 
-  .dyson-swarm-visual__collector-field,
-  .dyson-swarm-visual__galaxy {
+    .dyson-swarm-visual__galaxy {
     inline-size: min(112%, 20rem);
   }
 
@@ -349,12 +305,13 @@
     inset: -9% -7%;
   }
 
+  .dyson-swarm-visual__single-ring { inline-size: clamp(5.76rem, 27.2vw, 7.44rem); }
+
   .dyson-swarm-visual__sun {
     inline-size: clamp(3.6rem, 17vw, 4.65rem);
   }
 
   .dyson-swarm-visual__scene,
-  .dyson-swarm-visual__collector-track,
   .dyson-swarm-visual__galaxy-light--origin,
   .dyson-swarm-visual__field-member-entry {
     animation: none;
@@ -363,7 +320,6 @@
 
 @media (pointer: coarse) {
   .dyson-swarm-visual__scene,
-  .dyson-swarm-visual__collector-track,
   .dyson-swarm-visual__galaxy-light--origin,
   .dyson-swarm-visual__field-member-entry {
     animation: none;
@@ -371,16 +327,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .dyson-swarm-visual__single-ring,
   .dyson-swarm-visual__scene,
-  .dyson-swarm-visual__collector-track,
   .dyson-swarm-visual__galaxy-light--origin,
   .dyson-swarm-visual__field-member-entry,
   .dyson-swarm-visual__field-member-spin {
     animation: none;
   }
 
-  .dyson-swarm-visual__collector,
-  .dyson-swarm-visual__collector-plane,
+  .dyson-swarm-visual__ring-segment,
   .dyson-swarm-visual__galaxy-light,
   .dyson-swarm-visual__galaxy-bulge,
   .dyson-swarm-visual__field-depth,

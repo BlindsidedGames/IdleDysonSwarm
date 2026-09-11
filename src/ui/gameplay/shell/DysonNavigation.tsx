@@ -105,6 +105,7 @@ export function DysonNavigation({
                 <NavigationItemContent item={item} placement={placement} />
               </button>
             )}
+            {placement === 'drawer' && item.drawerContent ? <div inert={!interactive}>{item.drawerContent}</div> : null}
           </li>
         ))}
       </ul>
@@ -154,6 +155,7 @@ function NavigationItemContent({
           {item.badge}
         </span>
       ) : null}
+      {placement === 'drawer' ? item.drawerIndicator : null}
       {item.progress !== undefined ? (
         <span
           className="dyson-navigation__progress"

@@ -33,13 +33,15 @@ still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
   autosave/reload at phone/tablet/desktop sizes. Physical-device certification
   remains separate; see
   [Quantum fix verification](audits/quantum-cap-fixes-2026-09-10.md).
-- [ ] **B05 · Investigate · Only seconds of Stored Time after a capacity upgrade.**
-  Normal capacity math and a browser departure/return passed; the reported
-  failure remains unreproduced. Capture the affected build/platform, save,
-  departure/resume markers, and checkpoint outcomes. Compare backgrounding,
-  termination, and cold launch; repair lost markers only if demonstrated,
-  with duplicate-credit prevention. The upgrade draining the old bank is
-  intentional and does not explain missing accrual the following day.
+- [x] **B05 · Implemented / automated and Android emulator QA passed · Missing Stored Time.**
+  Shared production saves now retain an active checkpoint timestamp. Cold launch
+  uses it only when a departure timestamp is missing, and credits the bank and
+  advances the baseline in one commit. Imports clear the sender's baseline;
+  failed replay preserves it for retry. Android abrupt-stop recovery was verified.
+  The shared fix also ships in iOS builds; iOS device verification remains separate.
+  This repairs the demonstrated loss path; the players' exact closing sequence
+  remains unknown. See
+  [offline-time investigation](audits/offline-time-loss-investigation-2026-09-11.md).
 - [ ] **B06 · UX issue · Auto Infinity recommendation becomes stale or zero.**
   Recommended uses a saved manual-run peak while Current uses recent automatic
   throughput; changing the interval clears calibration. Show an uncalibrated
@@ -79,12 +81,14 @@ still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
   touch pointers on a supported host. If needed, fix per-control activation
   with pointer matching, cancellation, and synthetic-click deduplication;
   verify both actions work without double activation.
-- [ ] **B13 · Requested UI · Show Max Storage beneath the Stored Time bar.**
+- [x] **B13 · Implemented locally · Show Max Storage beneath the Stored Time bar.**
   Add a row directly under the storage bar with **Max Storage** aligned left
   and the current maximum duration aligned right. Use the description font
   size of “Choose how much time to simulate now”, rather than the “Stored
   Offline Time” heading size. Localize the label and duration, update it after
   capacity upgrades, and check alignment/readability on narrow screens.
+  Implemented with localized capacity text and sidebar quick spends (1 M,
+  10 M, 1 HR); verified desktop/phone layout and spending from Bots.
 - [ ] **B14 · New / Investigate · Excessive Android top and bottom safe-area gaps.**
   Latest screenshots show large blank insets; duplicate native/web inset
   application is a lead, not a proven cause. Reproduce on the reported Samsung

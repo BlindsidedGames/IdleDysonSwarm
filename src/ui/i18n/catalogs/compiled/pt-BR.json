@@ -4189,6 +4189,12 @@
       "value": "A simulação fica menos precisa com intervalos de tempo maiores."
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "Armazenamento máx."
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4257,6 +4263,20 @@
     {
       "type": 0,
       "value": "% concluído"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "Usar "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": " de tempo offline"
     }
   ],
   "offline-time.region": [

@@ -1701,7 +1701,7 @@
 .dyson-shell[data-route-theme]
   .dyson-navigation--drawer
   .dyson-navigation__link {
-  border-color: color-mix(in srgb, var(--theme-page) 72%, black);
+  border-color: var(--theme-divider);
   background: var(--theme-panel);
   color: #f4eff5;
 }
@@ -1885,19 +1885,45 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: var(--game-card-content-inset);
-  border: 1px solid var(--ui-border, #695784);
+  border: 1px solid var(--theme-divider);
   border-radius: var(--ui-radius-card, 0.5rem);
-  background: #20172d;
-  color: #eee2ff;
+  background: var(--theme-panel);
+  color: #f4eff5;
   font-size: var(--ui-text-meta);
 }
 .dyson-overflow-notice button {
   min-height: var(--target-minimum);
   padding: 0.4rem 0.75rem;
-  border: 1px solid #b597d9;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
   color: inherit;
-  background: #43305e;
+  background: var(--theme-selected);
   font: inherit;
   cursor: pointer;
 }
+
+.offline-time-quick-spend { padding-block-start: 0.15rem; }
+.offline-time-quick-spend__buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.25rem; }
+.offline-time-quick-spend button { min-block-size: 2.25rem; border: 1px solid var(--theme-divider); border-radius: 0.25rem; color: #f4eff5; background: var(--theme-panel); font: inherit; font-size: var(--ui-text-body); cursor: pointer; }
+.offline-time-quick-spend button:disabled { opacity: 0.4; cursor: default; }
+.offline-time-quick-spend button:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 2px; }
+.offline-time-quick-spend__status { display: grid; gap: 0.25rem; margin-block-start: 0.25rem; font-size: var(--ui-text-body); }
+.offline-time-quick-spend p { margin: 0.25rem 0 0; font-size: var(--ui-text-body); }
+
+.offline-time-navigation-progress {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 3px;
+  overflow: hidden;
+  border-radius: 0 0 0.25rem 0.25rem;
+  background: var(--theme-page);
+  pointer-events: none;
+}
+.offline-time-navigation-progress > span {
+  display: block;
+  block-size: 100%;
+  background: var(--theme-accent);
+  transform-origin: left center;
+}
+[dir="rtl"] .offline-time-navigation-progress > span { transform-origin: right center; }

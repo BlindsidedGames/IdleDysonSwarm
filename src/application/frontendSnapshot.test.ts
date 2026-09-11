@@ -3,7 +3,7 @@ import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 import { purchaseQuantumUpgrade, purchaseQuantumUpgradeBulk } from '../simulation/quantumUpgrades'
 import { CanonicalRuntimeSession } from './canonicalRuntimeSession'
 import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
-import { selectFrontendGameplaySnapshot } from './frontendSnapshot'
+import { selectFrontendGameplaySnapshot, selectGameplayVisibility } from './frontendSnapshot'
 
 const entitlements = Object.freeze({
   extraAnalysisPower: false,
@@ -120,4 +120,16 @@ test.each([1n, 2n, 3n, 4n])('Influence Max preserves the final single-purchase s
   expect(exhausted.code).toBe('already-maxed')
   expect(exhausted.cost).toBe(0n)
   expect(exhausted.state).toBe(max.state)
+})
+
+ test('the developer override unlocks all progression routes without changing their resources', () => {
+  const before = structuredClone(runtime.gameState)
+  const visibility = selectGameplayVisibility(runtime.gameState, true)
+  expect(visibility.allTabsUnlocked).toBe(true)
+  for (const route of ['research', 'skills', 'infinity', 'reality', 'simulations', 'quantum'] as const) {
+    expect(visibility[route].routeUnlocked).toBe(true)
+    if ('routeVisible' in visibility[route]) expect(visibility[route].routeVisible).toBe(true)
+  }
+  expect(runtime.gameState).toEqual(before)
+  expect(selectGameplayVisibility(runtime.gameState).allTabsUnlocked).toBe(false)
 })

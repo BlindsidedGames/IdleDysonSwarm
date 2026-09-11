@@ -1,7 +1,6 @@
 import {
   memo,
   type CSSProperties,
-  type ReactNode,
 } from 'react'
 import type {
   FrontendDysonSwarmVisualizationFacts,
@@ -13,9 +12,6 @@ import galaxyOblique from '../../assets/galaxy-field/galaxy-oblique.png'
 import galaxyShallowInclined from '../../assets/galaxy-field/galaxy-shallow-inclined.png'
 import './dysonSwarmVisual.css'
 
-const EXACT_COLLECTOR_LIMIT = 64
-const DENSE_COLLECTOR_LAYER_COUNT = 8
-const COLLECTORS_PER_DENSE_LAYER = 24
 const GALAXY_LIGHT_COUNT = 420
 const GALAXY_CORE_LIGHT_COUNT = 36
 const ORIGIN_STAR_INDEX = 173
@@ -23,7 +19,6 @@ const GALAXY_FIELD_MEMBER_COUNT = 32
 const GALAXY_FIELD_DUST_COUNT = 48
 const GALAXY_FIELD_ANCHOR_X = -8
 const GALAXY_FIELD_ANCHOR_Y = -44
-const ORBIT_COUNT = 4
 
 const GALAXY_FIELD_VARIANT_IDS = [
   '#dyson-field-galaxy-face-on',
@@ -33,13 +28,6 @@ const GALAXY_FIELD_VARIANT_IDS = [
 ] as const
 
 type GalaxyFieldVariant = 0 | 1 | 2 | 3
-
-const ORBIT_SPECS = [
-  { radius: 62, projectedRadius: 18, rotation: 12 },
-  { radius: 76, projectedRadius: 30, rotation: -18 },
-  { radius: 90, projectedRadius: 42, rotation: 34 },
-  { radius: 104, projectedRadius: 54, rotation: -37 },
-] as const
 
 interface DysonSwarmVisualProps {
   readonly facts: FrontendDysonSwarmVisualizationFacts
@@ -142,7 +130,7 @@ function DysonSwarmVisualComponent({
         />
       )}
       {facts.phase === 'galaxy' && (
-        <GalaxyScene completion={facts.completion} />
+        <GalaxyScene completion={facts.completion} starsSurrounded={facts.starsSurrounded} />
       )}
       {facts.phase === 'galaxy-group' && (
         <GalaxyGroupScene
@@ -202,23 +190,8 @@ function StellarSwarmScene({
   activePanels,
   completion,
 }: StellarSwarmSceneProps) {
-  const exactCollectorCount = Math.min(
-    EXACT_COLLECTOR_LIMIT,
-    Math.ceil(activePanels),
-  )
-  const denseCollectorLayers =
-    activePanels <= EXACT_COLLECTOR_LIMIT
-      ? 0
-      : Math.min(
-          DENSE_COLLECTOR_LAYER_COUNT,
-          Math.max(
-            1,
-            Math.ceil(
-              Math.pow(completion, 0.55) *
-                DENSE_COLLECTOR_LAYER_COUNT,
-            ),
-          ),
-        )
+  const collectorCount = activePanels <= 0 ? 0 : Math.min(Math.floor(activePanels), 128, Math.ceil(
+    Math.min(8, Math.sqrt(activePanels)) + 120 * Math.pow(completion, 0.55)))
   const style: VisualStyle = {
     '--swarm-completion': completion,
   }
@@ -228,122 +201,41 @@ function StellarSwarmScene({
       className="dyson-swarm-visual__scene dyson-swarm-visual__scene--stellar"
       style={style}
     >
-      <StarCollectorField
-        exactCollectorCount={exactCollectorCount}
-        denseCollectorLayers={denseCollectorLayers}
-      />
+      <StarCollectorField collectorCount={collectorCount} />
       <div className="dyson-swarm-visual__thermal-glow" />
       <div className="dyson-swarm-visual__sun" />
     </div>
   )
 }
 
-interface StarCollectorFieldProps {
-  readonly exactCollectorCount: number
-  readonly denseCollectorLayers: number
-}
-
-const StarCollectorField = memo(function StarCollectorField({
-  exactCollectorCount,
-  denseCollectorLayers,
-}: StarCollectorFieldProps) {
-  return (
-    <svg
-      className="dyson-swarm-visual__collector-field"
-      viewBox="-120 -80 240 160"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      <defs>
-        {ORBIT_SPECS.map((orbit, index) => (
-          <linearGradient
-            id={`dyson-orbit-depth-${index}`}
-            x1="0"
-            y1={-orbit.projectedRadius}
-            x2="0"
-            y2={orbit.projectedRadius}
-            gradientUnits="userSpaceOnUse"
-            key={`depth-${index}`}
-          >
-            <stop
-              offset="0"
-              stopColor="#1c1420"
-              stopOpacity="0.5"
-            />
-            <stop
-              offset="0.46"
-              stopColor="#1c1420"
-              stopOpacity="0.1"
-            />
-            <stop
-              offset="0.56"
-              stopColor="#1c1420"
-              stopOpacity="0"
-            />
-          </linearGradient>
-        ))}
-      </defs>
-      {ORBIT_SPECS.map((orbit, orbitIndex) => (
-        <g
-          className={`dyson-swarm-visual__orbit-plane dyson-swarm-visual__orbit-plane--${orbitIndex}`}
-          transform={`rotate(${orbit.rotation})`}
-          key={`orbit-${orbitIndex}`}
-        >
-          <g
-            transform={`scale(1 ${orbit.projectedRadius / orbit.radius})`}
-          >
-            <g
-              className={`dyson-swarm-visual__collector-track dyson-swarm-visual__collector-track--${orbitIndex}`}
-            >
-              <g className="dyson-swarm-visual__collector-plane dyson-swarm-visual__collector-plane--exact">
-                {EXACT_COLLECTORS_BY_ORBIT[orbitIndex]
-                  .filter(({ index }) => index < exactCollectorCount)
-                  .map(({ collector, index }) =>
-                    renderCollector(
-                      collector,
-                      true,
-                      `exact-${index}`,
-                    ),
-                  )}
-              </g>
-              {DENSE_COLLECTOR_LAYERS_BY_ORBIT[
-                orbitIndex
-              ].slice(0, denseCollectorLayers).map((collectors, layer) => (
-                <g
-                  className="dyson-swarm-visual__collector-plane"
-                  data-visible="true"
-                  key={`dense-${orbitIndex}-${layer}`}
-                >
-                  {collectors}
-                </g>
-              ))}
-            </g>
-          </g>
-          <ellipse
-            className="dyson-swarm-visual__orbit-depth"
-            rx={orbit.radius}
-            ry={orbit.projectedRadius}
-            fill={`url(#dyson-orbit-depth-${orbitIndex})`}
-          />
-          <ellipse
-            className="dyson-swarm-visual__orbit-guide"
-            rx={orbit.radius}
-            ry={orbit.projectedRadius}
-          />
-        </g>
-      ))}
-    </svg>
-  )
+const StarCollectorField = memo(function StarCollectorField({ collectorCount }: { readonly collectorCount: number }) {
+  return <svg className="dyson-swarm-visual__single-ring" viewBox="-60 -60 120 120" aria-hidden="true">
+    {Array.from({ length: 128 }, (_, index) => {
+      // A coprime stride spreads new collectors evenly around one fixed ring.
+      const rank = (index * 49) % 128
+      const visible = clampUnitInterval(collectorCount - rank)
+      return <circle key={index} cx="0" cy="0" r="46" fill="none" pathLength="128"
+        strokeDasharray="0.96 127.04" strokeDashoffset={-index}
+        className="dyson-swarm-visual__ring-segment" style={{ opacity: visible }} />
+    })}
+  </svg>
 })
 
 interface GalaxySceneProps {
+  readonly starsSurrounded: number
   readonly completion: number
 }
 
-function GalaxyScene({ completion }: GalaxySceneProps) {
-  const visualCompletion = Math.pow(completion, 0.88)
+function GalaxyScene({ completion, starsSurrounded }: GalaxySceneProps) {
+  // Give each order of magnitude visible movement, including the first few
+  // stars. Derive the full-galaxy scale from canonical facts rather than
+  // duplicating a gameplay threshold in the renderer.
+  const visualCompletion = completion <= 0 ? 0 : clampUnitInterval(
+    Math.log1p(starsSurrounded) / Math.log1p(starsSurrounded / completion),
+  )
   const extinction = visualCompletion * GALAXY_LIGHT_COUNT
   const style: VisualStyle = {
-    '--galaxy-completion': completion,
+    '--galaxy-completion': visualCompletion,
   }
 
   return (
@@ -371,7 +263,7 @@ function GalaxyScene({ completion }: GalaxySceneProps) {
               <g
                 className="dyson-swarm-visual__galaxy-bulge"
                 style={{
-                  opacity: 1 - completion * 0.9,
+                  opacity: 1 - visualCompletion * 0.9,
                 }}
               >
                 {GALAXY_CORE_LIGHTS.map((light) => (
@@ -579,46 +471,6 @@ function GalaxyGroupScene({
   )
 }
 
-interface Collector {
-  readonly orbit: number
-  readonly x: number
-  readonly y: number
-  readonly radius: number
-}
-
-function renderCollector(
-  collector: Collector,
-  visible: boolean,
-  key: string,
-): ReactNode {
-  return (
-    <circle
-      className="dyson-swarm-visual__collector"
-      cx={collector.x}
-      cy={collector.y}
-      r={collector.radius}
-      data-visible={visible || undefined}
-      key={key}
-    />
-  )
-}
-
-function createCollector(index: number): Collector {
-  const orbit = index % ORBIT_COUNT
-  const orbitalIndex = Math.floor(index / ORBIT_COUNT)
-  const phase =
-    orbitalIndex * 2.399963229728653 +
-    orbit * 0.83
-  const orbitRadius = ORBIT_SPECS[orbit].radius
-
-  return {
-    orbit,
-    x: Math.cos(phase) * orbitRadius,
-    y: Math.sin(phase) * orbitRadius,
-    radius: 0.72 + deterministicUnit(index + 19) * 0.55,
-  }
-}
-
 function createGalaxyLight(
   index: number,
   dimOrder: number,
@@ -807,60 +659,13 @@ function deterministicUnit(seed: number): number {
   return value - Math.floor(value)
 }
 
-const EXACT_COLLECTORS = Array.from(
-  { length: EXACT_COLLECTOR_LIMIT },
-  (_, index) => createCollector(index),
-)
-
-const EXACT_COLLECTORS_BY_ORBIT = Array.from(
-  { length: ORBIT_COUNT },
-  (_, orbit) =>
-    EXACT_COLLECTORS.flatMap((collector, index) =>
-      collector.orbit === orbit
-        ? [{ collector, index }]
-        : [],
-    ),
-)
-
-const DENSE_COLLECTOR_LAYERS = Array.from(
-  { length: DENSE_COLLECTOR_LAYER_COUNT },
-  (_, layer) =>
-    Array.from(
-      { length: COLLECTORS_PER_DENSE_LAYER },
-      (_, offset) => {
-        const index =
-          EXACT_COLLECTOR_LIMIT +
-          layer * COLLECTORS_PER_DENSE_LAYER +
-          offset
-        return renderCollector(
-          createCollector(index),
-          false,
-          `collector-${index}`,
-        )
-      },
-    ),
-)
-
-const DENSE_COLLECTOR_LAYERS_BY_ORBIT = Array.from(
-  { length: ORBIT_COUNT },
-  (_, orbit) =>
-    DENSE_COLLECTOR_LAYERS.map((collectors) =>
-      collectors.filter(
-        (_, index) =>
-          (EXACT_COLLECTOR_LIMIT + index) %
-            ORBIT_COUNT === orbit,
-      ),
-    ),
-)
-
-const GALAXY_DIM_ORDER = Array.from(
-  { length: GALAXY_LIGHT_COUNT },
-  (_, index) => index,
-).sort(
-  (left, right) =>
-    deterministicUnit(left + 3701) -
-    deterministicUnit(right + 3701),
-)
+const GALAXY_DIM_ORIGIN = createGalaxyLight(ORIGIN_STAR_INDEX, 0)
+const galaxyDistanceFromOrigin = (index: number) => {
+  const light = createGalaxyLight(index, 0)
+  return Math.hypot(light.x - GALAXY_DIM_ORIGIN.x, (light.y - GALAXY_DIM_ORIGIN.y) * 0.38)
+}
+const GALAXY_DIM_ORDER = Array.from({ length: GALAXY_LIGHT_COUNT }, (_, index) => index)
+  .sort((left, right) => galaxyDistanceFromOrigin(left) - galaxyDistanceFromOrigin(right))
 
 const GALAXY_DIM_RANK = new Map(
   GALAXY_DIM_ORDER.map((index, rank) => [index, rank]),

@@ -72,6 +72,7 @@ export function createProductionCanonicalApplicationFactory(
       repository,
       startupResolver: options.cloud === undefined ? localResolver : new CloudStartupResolver(localResolver,repository,options.cloud),
       sessionFactory: createCanonicalRuntimeSessionFactory({
+        nowUtcMilliseconds: Date.now,
         entitlements,
         captureAchievements: options.achievements !== undefined,
         persistAchievements: options.achievements?.persistEvidence === true,

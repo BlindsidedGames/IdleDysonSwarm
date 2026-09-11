@@ -4189,6 +4189,12 @@
       "value": "タイムステップが大きいほど、シミュレーションの精度は低下します。"
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "最大保存時間"
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4257,6 +4263,20 @@
     {
       "type": 0,
       "value": "%完了"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "オフライン時間を"
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": "使用"
     }
   ],
   "offline-time.region": [

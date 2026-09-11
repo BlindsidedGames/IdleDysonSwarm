@@ -4189,6 +4189,12 @@
       "value": "Die Simulation wird bei größeren Zeitschritten ungenauer."
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "Max. Speicher"
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4257,6 +4263,20 @@
     {
       "type": 0,
       "value": "% abgeschlossen"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "Verbrauche "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": " Offline-Zeit"
     }
   ],
   "offline-time.region": [

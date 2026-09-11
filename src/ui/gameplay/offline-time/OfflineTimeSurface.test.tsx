@@ -67,6 +67,44 @@ afterEach(async () => {
 })
 
 describe('Offline Time completion boundary through the UI runtime', () => {
+  test.each([[60, '1 M'], [600, '10 M'], [3600, '1 HR']] as const)('quick-spends %s seconds from Bots without navigating', async (seconds, label) => {
+    const { runtime, runner } = await createRuntimeHarness(4000)
+    localStorage.setItem(GAMEPLAY_ROUTE_STORAGE_KEY, 'bots')
+    render(<IntlProvider locale="en" messages={{}} onError={() => undefined}>
+      <ReadyDysonRuntimeHost runtime={runtime} locale="en" />
+    </IntlProvider>)
+    const before = runtime.snapshot()
+    if (before.phase !== 'ready') throw new Error('Not ready')
+    const button = await screen.findByRole('button', { name: `Spend ${label} of Offline Time`, hidden: true })
+    fireEvent.click(button)
+    fireEvent.click(button)
+    await waitFor(() => expect(runtime.storedTime?.status().kind).toBe('running'))
+    expect(button.hasAttribute('disabled')).toBe(true)
+    await act(async () => runner.finish())
+    await waitFor(() => expect(runtime.storedTime?.status().kind).toBe('idle'))
+    const after = runtime.snapshot()
+    if (after.phase !== 'ready') throw new Error('Not ready')
+    expect(after.gameplay.resources.time.storedTimeAvailableSeconds).toBeCloseTo(before.gameplay.resources.time.storedTimeAvailableSeconds - seconds)
+    expect(screen.getByRole('heading', { name: 'Bots', level: 1 })).toBeTruthy()
+    expect(screen.queryByRole('dialog', { name: 'Offline Time Complete' })).toBeNull()
+  }, 30000)
+
+  test('updates Max Storage after a capacity upgrade', async () => {
+    const { runtime } = await createRuntimeHarness(86400)
+    renderRuntime(runtime)
+    expect((await screen.findByText('Max Storage')).parentElement!.textContent).toContain('1d')
+    fireEvent.click(await screen.findByRole('button', { name: 'Double Storage' }))
+    await waitFor(() => expect(screen.getByText('Max Storage').parentElement!.textContent).toContain('2d'))
+  })
+
+  test('shows maximum capacity beneath the storage bar', async () => {
+    const { runtime } = await createRuntimeHarness(59)
+    renderRuntime(runtime)
+    const row = (await screen.findByText('Max Storage')).parentElement!
+    expect(row.textContent).toContain('1d')
+
+  })
+
   test.each([
     ['background', 'CANONICAL-STORED-TIME-BACKGROUNDED', true],
     ['terminating', 'CANONICAL-STORED-TIME-LIFECYCLE-CANCELLED', false],

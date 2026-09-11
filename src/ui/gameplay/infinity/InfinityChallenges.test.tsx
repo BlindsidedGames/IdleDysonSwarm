@@ -26,3 +26,14 @@ test('blocks challenge restart while Overflow is pending', () => {
     overflowReached dispatchPlayer={vi.fn()} /></IntlProvider>)
   expect(screen.getByRole('button', { name: 'Abandon challenge' }).hasAttribute('disabled')).toBe(true)
 })
+
+test('developer tab visibility shows the challenge without granting its progression unlock', () => {
+  const dispatch = vi.fn()
+  render(<IntlProvider locale="en" messages={{}}><InfinityChallenges
+    progress={EMPTY_INFINITY_CHALLENGES} developmentVisible
+    overflowReached={false} dispatchPlayer={dispatch} /></IntlProvider>)
+  const start = screen.getByRole('button', { name: 'Start Blank Slate' })
+  expect(start.hasAttribute('disabled')).toBe(true)
+  fireEvent.click(start)
+  expect(dispatch).not.toHaveBeenCalled()
+})

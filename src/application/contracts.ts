@@ -92,6 +92,8 @@ export type { StartupSaveResolver }
 export interface GameStateSession<TState> {
   readonly initialState: TState
   prepare(state: TState | DeepReadonly<TState>): PreparedSave
+  /** Captures persistence-only metadata without changing read-only exports. */
+  prepareForPersistence?(state: TState | DeepReadonly<TState>): PreparedSave
 }
 
 export interface GameStateSessionFactory<TState> {

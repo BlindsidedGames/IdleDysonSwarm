@@ -2,7 +2,7 @@ import {
   useIntl,
   type MessageDescriptor,
 } from 'react-intl'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type {
   FrontendStoryChapterId,
   FrontendStoryDerivedFacts,
@@ -187,6 +187,24 @@ export function StorySurface({
 function AlternatingAvocatoPassage() {
   const intl = useIntl()
   const [staring, setStaring] = useState(false)
+  const wording = useMemo(() => {
+    const segmenter = new Intl.Segmenter(intl.locale, { granularity: 'word' })
+    const variants = [messages.chapter3Part2, messages.chapter3Part2Stare]
+      .map((message) => Array.from(segmenter.segment(intl.formatMessage(message)),
+        ({ segment }) => segment))
+    const [avocado, stare] = variants
+    let start = 0
+    while (start < Math.min(avocado.length, stare.length) && avocado[start] === stare[start]) start++
+    let end = 0
+    while (end < Math.min(avocado.length, stare.length) - start &&
+      avocado[avocado.length - end - 1] === stare[stare.length - end - 1]) end++
+    return {
+      before: avocado.slice(0, start).join(''),
+      avocado: avocado.slice(start, avocado.length - end).join(''),
+      stare: stare.slice(start, stare.length - end).join(''),
+      after: end === 0 ? '' : avocado.slice(-end).join(''),
+    }
+  }, [intl])
 
   useEffect(() => {
     if (
@@ -203,9 +221,12 @@ function AlternatingAvocatoPassage() {
 
   return (
     <p>
-      {intl.formatMessage(
-        staring ? messages.chapter3Part2Stare : messages.chapter3Part2,
-      )}
+      {wording.before}
+      <span className="story-alternating-word">
+        <span aria-hidden={staring} style={{ visibility: staring ? 'hidden' : 'visible' }}>{wording.avocado}</span>
+        <span aria-hidden={!staring} style={{ visibility: staring ? 'visible' : 'hidden' }}>{wording.stare}</span>
+      </span>
+      {wording.after}
     </p>
   )
 }

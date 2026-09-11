@@ -495,6 +495,10 @@ export function OfflineTimeSurface({
               style={{ transform: `scaleX(${fill})` }}
             />
           </div>
+          <div className="offline-time-max-storage">
+            <span>{intl.formatMessage(messages.maxStorage)}</span>
+            <span>{formatGameDuration(locale, capacitySeconds)}</span>
+          </div>
           {bankSeconds <= 0 ? (
             <p className="offline-time-card__note">
               {intl.formatMessage(messages.noStoredTime)}

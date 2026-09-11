@@ -107,6 +107,9 @@ export function prepareImportedSave(
 
   const candidate = source.copyValidatedState()
   candidate.dateQuitString = ''
+  // A shared/imported checkpoint belongs to the source device's clock.
+  // Establish this device's fallback on its next normal persistence commit.
+  delete candidate.idsLastActiveAtUtc
   candidate.lastSuccessfulLoadUtc = importedAtUtc
   return source.withValidatedState(candidate)
 }

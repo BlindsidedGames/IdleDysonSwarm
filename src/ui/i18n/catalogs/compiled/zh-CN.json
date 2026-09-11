@@ -4189,6 +4189,12 @@
       "value": "时间步长越大，模拟精度越低。"
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "存储上限"
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4257,6 +4263,20 @@
     {
       "type": 0,
       "value": "% 已完成"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "使用 "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": " 离线时间"
     }
   ],
   "offline-time.region": [

@@ -4189,6 +4189,12 @@
       "value": "При больших шагах времени точность симуляции снижается."
     }
   ],
+  "offline-time.max-storage": [
+    {
+      "type": 0,
+      "value": "Макс. запас"
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4257,6 +4263,20 @@
     {
       "type": 0,
       "value": "% готово"
+    }
+  ],
+  "offline-time.quick-spend": [
+    {
+      "type": 0,
+      "value": "Использовать "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": " офлайн-времени"
     }
   ],
   "offline-time.region": [

@@ -32,6 +32,8 @@ export interface DysonResourceHeaderPresentation {
  */
 export type DysonNavigationItem =
   | {
+      readonly drawerContent?: ReactNode
+      readonly drawerIndicator?: ReactNode
       readonly id: string
       readonly label: ReactNode
       readonly ariaLabel?: string
@@ -52,6 +54,8 @@ export type DysonNavigationItem =
       readonly disabled?: never
     }
   | {
+      readonly drawerContent?: ReactNode
+      readonly drawerIndicator?: ReactNode
       readonly id: string
       readonly label: ReactNode
       readonly ariaLabel?: string

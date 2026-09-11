@@ -8,9 +8,10 @@ import { Button, CollapsibleSection, StatusFeedback } from '../../components'
 import { challengeMessages as messages } from './challengeMessages'
 
 type ChallengeCommand = Extract<CanonicalPlayerCommand, { kind: `challenge.${string}` }>
-export function InfinityChallenges({ progress, overflowReached, dispatchPlayer }: {
+export function InfinityChallenges({ progress, overflowReached, developmentVisible = false, dispatchPlayer }: {
   readonly progress: Readonly<InfinityChallengeState>
   readonly overflowReached: boolean
+  readonly developmentVisible?: boolean
   readonly dispatchPlayer: (command: ChallengeCommand) => Promise<UiRuntimePlayerCommandResult>
 }) {
   const intl = useIntl()
@@ -20,7 +21,7 @@ export function InfinityChallenges({ progress, overflowReached, dispatchPlayer }
   const [failed, setFailed] = useState(false)
   const pendingRef = useRef(false)
   useEffect(() => { setConfirming(false); setFailed(false) }, [active])
-  if (!progress.unlocked) return null
+  if (!progress.unlocked && !developmentVisible) return null
   const restart = async () => {
     if (pendingRef.current || overflowReached) return
     pendingRef.current = true; setPending(true); setFailed(false)
@@ -43,11 +44,11 @@ export function InfinityChallenges({ progress, overflowReached, dispatchPlayer }
       {confirming ? <div className="infinity-challenge-card__confirmation">
         <p>{intl.formatMessage(messages.restart)}</p>
         <div className="infinity-challenge-card__actions">
-          <Button variant="danger" state={pending ? 'pending' : failed ? 'failure' : 'idle'} disabled={overflowReached}
+          <Button variant="danger" state={pending ? 'pending' : failed ? 'failure' : 'idle'} disabled={overflowReached || !progress.unlocked}
             onClick={() => void restart()}>{intl.formatMessage(messages.confirm)}</Button>
           <Button disabled={pending} onClick={() => setConfirming(false)}>{intl.formatMessage(messages.cancel)}</Button>
         </div>
-      </div> : <Button disabled={overflowReached} onClick={() => setConfirming(true)}>
+      </div> : <Button disabled={overflowReached || !progress.unlocked} onClick={() => setConfirming(true)}>
         {intl.formatMessage(active ? messages.abandon : progress.blankSlateCompleted ? messages.replay : messages.start)}
       </Button>}
       {failed && <StatusFeedback tone="error">{intl.formatMessage(messages.failure)}</StatusFeedback>}
