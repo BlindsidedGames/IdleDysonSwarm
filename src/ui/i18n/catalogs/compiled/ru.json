@@ -8571,10 +8571,22 @@
       "value": "total"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "Назад к улучшениям"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
       "value": "Назад к наборам"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "Назад к дереву навыков"
     }
   ],
   "skills.blocked-skills-heading": [
@@ -11467,6 +11479,12 @@
       "value": "Показывать уведомления о частичном применении пресетов"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "Показывать названия навыков"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -11511,6 +11529,18 @@
       "value": "Каждая распавшаяся панель считается за 10"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "Вы спрашиваете себя: «А что, если просто сделать панели побольше?» Теперь ваши панели настолько огромны, что каждая засчитывается как десять разрушившихся панелей!"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "Сверхмассивные панели"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -11535,10 +11565,34 @@
       "value": "+5 секунд к сроку службы панелей"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "Вы просите инженеров сделать панели долговечнее. Они предлагают ещё пять секунд и уверяют, что гарантия точно покрывает воздействие солнечного света."
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "Расширенная гарантия"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
       "value": "Производство Денег и Науки ×2"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "Вы повышаете требования и велите ботам производить вдвое больше. Оказывается, достаточно было просто попросить!"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "Двойные стандарты"
     }
   ],
   "skills.subskill-refund": [
@@ -14466,6 +14520,18 @@
       "value": "Улучшены сведения о навыках и исправлены касания сквозь их окна."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "Предварительно исправлена ошибка, из-за которой офлайн-время не начислялось после возвращения в игру."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "Добавлены быстрые кнопки для расходования 1 минуты, 10 минут или 1 часа офлайн-времени."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -14494,6 +14560,12 @@
     {
       "type": 0,
       "value": "Улучшено восстановление сохранений."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "Добавлены необязательные подписи навыков в дереве навыков."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

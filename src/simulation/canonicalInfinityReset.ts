@@ -611,8 +611,11 @@ function applyAutoAssignment(
       rule.id.length === 0 || isOwned(byId, rule.id) ||
       anyOwned(byId, rule.exclusiveWithIds) ||
       (!assignNonRefundable && !rule.refundable)) continue
-    if (points < rule.cost || !allOwned(byId, rule.requiredSkillIds) ||
-      !allOwned(byId, rule.shadowRequirementIds)) break
+    // Match live assignment: skip targets whose prerequisites were unavailable,
+    // but preserve priority when the next eligible target needs more points.
+    if (!allOwned(byId, rule.requiredSkillIds) ||
+      !allOwned(byId, rule.shadowRequirementIds)) continue
+    if (points < rule.cost) break
     points -= rule.cost
     byId[rule.id] = {
       owned: true,

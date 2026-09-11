@@ -57,3 +57,35 @@ test('live and Infinity assignment resolve the same priority closure', () => {
   expect(reset.autoAssignedSkillIds).toEqual(live.affectedSkillIds)
   expect(reset.state.skills.points).toBe(live.state.skills.points)
 })
+
+
+test('live and Infinity assignment skip disabled non-refundable prerequisites and their dependants', () => {
+  const base = priorityState()
+  const state = { ...base,
+    infinity: { ...base.infinity, permanentSkillPoints: 100n },
+    skills: { ...base.skills, points: 100n, autoAssignNonRefundable: false,
+      activeAutoAssignment: ['startHereTree', 'whatCouldHaveBeen', 'higgsBoson'] },
+  }
+  const live = runCanonicalSkillAutoAssignment(state)
+  const reset = applyCanonicalInfinityReset(state, { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 0n })
+  expect(live.accepted).toBe(true)
+  expect(reset.ok).toBe(true)
+  if (!live.accepted || !reset.ok) return
+  for (const result of [live, reset]) {
+    expect(result.state.skills.byId.shouldersOfGiants?.owned).not.toBe(true)
+    expect(result.state.skills.byId.whatCouldHaveBeen?.owned).not.toBe(true)
+    expect(result.state.skills.byId.higgsBoson?.owned).toBe(true)
+  }
+  expect(reset.autoAssignedSkillIds).toEqual(live.affectedSkillIds)
+  expect(reset.state.skills.points).toBe(live.state.skills.points)
+})
+
+test('Infinity assignment also waits for an eligible priority that needs more points', () => {
+  const base = priorityState()
+  const state = { ...base, infinity: { ...base.infinity, permanentSkillPoints: 1n } }
+  const result = applyCanonicalInfinityReset(state, { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 0n })
+  expect(result.ok).toBe(true)
+  if (!result.ok) return
+  expect(result.state.skills.points).toBe(1n)
+  expect(result.state.skills.byId.banking?.owned).not.toBe(true)
+})

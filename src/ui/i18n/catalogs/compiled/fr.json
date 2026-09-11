@@ -8571,10 +8571,22 @@
       "value": "total"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "Retour aux améliorations"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
       "value": "Retour aux préréglages"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "Retour à l’arbre de compétences"
     }
   ],
   "skills.blocked-skills-heading": [
@@ -11467,6 +11479,12 @@
       "value": "Afficher les notifications d’application partielle des préréglages"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "Afficher les noms des compétences"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -11511,6 +11529,18 @@
       "value": "Chaque panneau dégradé compte pour 10"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "Vous vous demandez : « Et si je fabriquais simplement des panneaux plus grands ? » Vos panneaux sont maintenant si grands que chacun compte comme dix panneaux dégradés !"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "Panneaux supermassifs"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -11535,10 +11565,34 @@
       "value": "+5 secondes de durée de vie des panneaux"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "Vous demandez à vos ingénieurs de faire durer les panneaux plus longtemps. Ils vous offrent cinq secondes de plus et vous assurent que la garantie couvre bien l’exposition au soleil."
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "Garantie prolongée"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
       "value": "Production d’Argent et de Science ×2"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "Vous relevez vos exigences et demandez à vos robots de produire deux fois plus. Apparemment, il suffisait de demander !"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "Deux poids, deux mesures"
     }
   ],
   "skills.subskill-refund": [
@@ -14466,6 +14520,18 @@
       "value": "Amélioration des détails des compétences et correction des touchers traversant leurs fenêtres."
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "Correction provisoire du problème empêchant l’attribution de temps hors ligne au retour dans le jeu."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "Ajout de boutons rapides pour dépenser 1 minute, 10 minutes ou 1 heure de temps hors ligne."
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -14494,6 +14560,12 @@
     {
       "type": 0,
       "value": "Amélioration de la récupération des sauvegardes."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "Ajout de libellés facultatifs dans l’arbre de compétences."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

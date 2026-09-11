@@ -1640,3 +1640,80 @@
 .skill-details-dialog__header[data-description="true"] h2 { display: block; margin-inline-start: 4.3rem; margin-block-end: 0.25rem; }
 .skill-details-dialog__header[data-description="true"] .skill-details__icon { position: absolute; inset-inline-start: 0; inset-block-start: 0; inline-size: 3.5rem; block-size: 3.5rem; padding: 0.35rem; }
 .skill-details-dialog__header[data-description="true"] .skill-details__description { margin: 0; margin-inline-start: 4.3rem; font-size: calc(0.78rem * var(--game-text-scale, 1)); line-height: 1.35; }
+
+/* Augments share the main graph's coordinates, camera and pointer handling. */
+.skill-tree-node[data-augment-background="true"] {
+  opacity: 0.1;
+  filter: grayscale(1) blur(1px);
+  pointer-events: none;
+}
+
+.skill-tree-viewport[data-augment-root] .skill-tree-viewport__connections
+  .skill-tree-connection[data-augment-background="true"] {
+  display: none;
+}
+
+.skill-tree-node[data-augment-node="true"] {
+  z-index: 1;
+}
+
+.skill-tree-node__label {
+  position: absolute;
+  inset-block-start: calc(100% + 1rem);
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  inline-size: max-content;
+  max-inline-size: 156px;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.2rem;
+  background: var(--theme-page);
+  color: #f5efff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  text-shadow: 0 2px 4px #17121f;
+  pointer-events: none;
+}
+
+.skill-tree-viewport__augment-controls {
+  position: absolute;
+  /* Keep fixed controls above the tree edge fade (z-index: 4). */
+  z-index: 5;
+  inset-block-start: max(0.75rem, var(--safe-area-top));
+  inset-inline-end: max(0.75rem, var(--safe-area-right));
+  inset-inline-start: max(0.75rem, var(--safe-area-left));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.skill-tree-viewport__augment-controls > span {
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.2rem;
+  background: var(--theme-page);
+  color: #ddc9ee;
+  font-size: 0.85rem;
+  text-shadow: 0 2px 5px #17121f;
+}
+
+.skill-tree-viewport__augment-controls button {
+  flex-shrink: 0;
+  min-block-size: 44px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #a58abd;
+  border-radius: 0.4rem;
+  background: #382747;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+@media (max-width: 480px) {
+  .skill-tree-viewport__augment-controls { align-items: flex-start; }
+  .skill-tree-viewport__augment-controls > span { max-inline-size: 40%; }
+  .skill-tree-viewport__augment-controls button { font-size: 0.8rem; }
+}

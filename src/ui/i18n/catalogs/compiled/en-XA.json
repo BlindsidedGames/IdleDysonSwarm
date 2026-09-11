@@ -16843,6 +16843,20 @@
       "value": "]"
     }
   ],
+  "skills.back-to-augments": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧƈķ ŧǿǿ ȧȧŭŭɠḿḗḗƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.back-to-presets": [
     {
       "type": 0,
@@ -16851,6 +16865,20 @@
     {
       "type": 0,
       "value": "Ɓȧȧƈķ ŧǿǿ ƥřḗḗşḗḗŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.back-to-tree": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧƈķ ŧǿǿ şķīŀŀ ŧřḗḗḗḗ"
     },
     {
       "type": 0,
@@ -23171,6 +23199,20 @@
       "value": "]"
     }
   ],
+  "skills.show-skill-labels": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿẇ şķīŀŀ ŀȧȧƀḗḗŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.spending-priority": [
     {
       "type": 0,
@@ -23263,6 +23305,34 @@
       "value": "]"
     }
   ],
+  "skills.subskill-decay-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẏǿǿŭŭ ȧȧşķ ẏǿǿŭŭřşḗḗŀƒ, “Ẇħȧȧŧ īƒ Ī ĵŭŭşŧ ḿȧȧḓḗḗ ŧħḗḗ ƥȧȧƞḗḗŀş ƀīɠɠḗḗř?” Ƞǿǿẇ ẏǿǿŭŭř ƥȧȧƞḗḗŀş ȧȧřḗḗ şǿǿ ƀīɠ ŧħȧȧŧ ŧħḗḗẏ ƈǿǿŭŭƞŧ ŧǿǿẇȧȧřḓş ḓḗḗƈȧȧẏḗḗḓ ƥȧȧƞḗḗŀş ŧḗḗƞƒǿǿŀḓ!"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.subskill-decay-name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥḗḗřḿȧȧşşīṽḗḗ Ƥȧȧƞḗḗŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.subskill-include": [
     {
       "type": 0,
@@ -23303,6 +23373,34 @@
       "value": "]"
     }
   ],
+  "skills.subskill-lifetime-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẏǿǿŭŭ ȧȧşķ ẏǿǿŭŭř ḗḗƞɠīƞḗḗḗḗřş ŧǿǿ ḿȧȧķḗḗ ŧħḗḗ ƥȧȧƞḗḗŀş ŀȧȧşŧ ŀǿǿƞɠḗḗř. Ŧħḗḗẏ ǿǿƒƒḗḗř ẏǿǿŭŭ ȧȧƞǿǿŧħḗḗř ƒīṽḗḗ şḗḗƈǿǿƞḓş ȧȧƞḓ ȧȧşşŭŭřḗḗ ẏǿǿŭŭ ŧħȧȧŧ ŧħḗḗ ẇȧȧřřȧȧƞŧẏ ḓḗḗƒīƞīŧḗḗŀẏ ƈǿǿṽḗḗřş şǿǿŀȧȧř ḗḗẋƥǿǿşŭŭřḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.subskill-lifetime-name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗẋŧḗḗƞḓḗḗḓ Ẇȧȧřřȧȧƞŧẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.subskill-production": [
     {
       "type": 0,
@@ -23311,6 +23409,34 @@
     {
       "type": 0,
       "value": "2× Ƈȧȧşħ ȧȧƞḓ Şƈīḗḗƞƈḗḗ ƥřǿǿḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.subskill-production-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẏǿǿŭŭ řȧȧīşḗḗ ẏǿǿŭŭř şŧȧȧƞḓȧȧřḓş ȧȧƞḓ ŧḗḗŀŀ ẏǿǿŭŭř ƀǿǿŧş ŧǿǿ ƥřǿǿḓŭŭƈḗḗ ŧẇīƈḗḗ ȧȧş ḿŭŭƈħ. Ȧƥƥȧȧřḗḗƞŧŀẏ, ȧȧŀŀ ẏǿǿŭŭ ħȧȧḓ ŧǿǿ ḓǿǿ ẇȧȧş ȧȧşķ!"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.subskill-production-name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ Şŧȧȧƞḓȧȧřḓş"
     },
     {
       "type": 0,
@@ -29162,6 +29288,34 @@
       "value": "]"
     }
   ],
+  "wiki.patch-notes.version-4-1-8.offline-earning": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧḗḗƞŧȧȧŧīṽḗḗŀẏ ƒīẋḗḗḓ Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ ƞǿǿŧ ƀḗḗīƞɠ ȧȧẇȧȧřḓḗḗḓ ȧȧƒŧḗḗř řḗḗŧŭŭřƞīƞɠ ŧǿǿ ŧħḗḗ ɠȧȧḿḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.offline-quick-buttons": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓḗḗḓ ɋŭŭīƈķ ƀŭŭŧŧǿǿƞş ŧǿǿ şƥḗḗƞḓ 1 ḿīƞŭŭŧḗḗ, 10 ḿīƞŭŭŧḗḗş, ǿǿř 1 ħǿǿŭŭř ǿǿƒ Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "wiki.patch-notes.version-4-1-8.overflow": [
     {
       "type": 0,
@@ -29226,6 +29380,20 @@
     {
       "type": 0,
       "value": "Īḿƥřǿǿṽḗḗḓ şȧȧṽḗḗ řḗḗƈǿǿṽḗḗřẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-8.skill-labels": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓḗḗḓ ǿǿƥŧīǿǿƞȧȧŀ şķīŀŀ ŀȧȧƀḗḗŀş ŧǿǿ ŧħḗḗ şķīŀŀ ŧřḗḗḗḗ."
     },
     {
       "type": 0,
