@@ -510,13 +510,10 @@ function encodeValue(value: unknown, seen: Set<object>): unknown {
   seen.add(value)
   const encoded = Array.isArray(value)
     ? Array.from(value, (entry) => encodeValue(entry, seen))
-    : sortObject(
-        Object.fromEntries(
-          Object.entries(value).map(([key, entry]) => [
-            key,
-            encodeValue(entry, seen),
-          ]),
-        ),
+    : Object.fromEntries(
+        Object.entries(value)
+          .map(([key, entry]) => [key, encodeValue(entry, seen)] as const)
+          .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0),
       )
   seen.delete(value)
   return encoded
