@@ -339,3 +339,37 @@ measurements: canonical derivation constructs this state once, so this report
 **does not establish a canonical gameplay speedup**. No timing gate was added.
 TypeScript, targeted lint, whitespace and focused mutation/bot-cap/conservation
 checks passed.
+
+## Within-call manual purchase layer reuse
+
+`canonicalDysonDerivation.ts` retains the five frozen manual-purchase layer
+objects created while assembling effective skill effects and uses them for the
+same derivation's facility facts. Layer creation stays in the original loop and
+evaluation phase. There is no cross-call cache, and mutable state changes remain
+visible on the next call. This removes five duplicate layer computations per
+successful derivation, along with their result objects and ownership closures,
+at the cost of one private map and one helper result wrapper.
+
+The historical reference is checkpoint `5050e5448c51397b0d17c39c73ecb054be5698e7`.
+Before and after the change, all 18 complete progression/entitlement outputs and
+144 focused Terra, Galvanization and unified-facility tests passed. The report
+also compares 288 complete outputs around counts 49/50, 68/69, 89/90 and
+99/100/101 with Avocados, scaling, swarm tiers, Terra/Irradiant and
+Supernova/Galvanization. It mutates the same state between calls to check that
+new counts, fragments and permanent ownership remain visible. Every comparison
+passes. TypeScript, targeted lint and whitespace checks pass.
+
+Run `npx tsx scripts/performance/runManualPurchaseLayerReuseReport.ts` for the
+measurement, or add `--parity-only` for exact comparisons without timing batches.
+Seven alternating warmed rounds of 500 complete derivations per fixture show
+3.2–13.4% lower median time in this run. Fresh: 0.059527 → 0.053535 ms;
+maximum skills: 0.179290 → 0.173536 ms. These are full-derivation measurements,
+not evidence of a browser or whole-game speedup. No timing gate was introduced.
+Raw measurements are in
+[`manual-purchase-layer-reuse-2026-09-12.json`](manual-purchase-layer-reuse-2026-09-12.json).
+
+Parent review also identified platform-dependent historical-module imports in
+three report scripts. Manual-layer, derivation-allocation and model-clone reports
+now rewrite relative imports to quoted file URLs, preserving Windows paths and
+paths with apostrophes. The manual-layer report runs successfully through that
+loader; the two existing reports use the same corrected expression.

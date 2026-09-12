@@ -10,7 +10,9 @@ import { prepareImportedSaveText } from '../../src/save/import'
 import { extractDysonCompatibilityTuning } from '../../src/game-state/compatibilityTuning'
 import { extractDysonSkillEffectEvaluationSnapshot } from '../../src/game-state/skillEffectEvaluationSnapshot'
 
-const referenceCommit = '878f5bffecd59c699712103172e668d12853d16a'
+import { createDeterministicMatureDysonFixture, DETERMINISTIC_DYSON_TUNING, DETERMINISTIC_DYSON_SNAPSHOT } from '../support/deterministicMatureDysonFixture'
+
+const referenceCommit = '5050e5448c51397b0d17c39c73ecb054be5698e7'
 const root = resolve(import.meta.dirname, '../..')
 const source = execFileSync('git', [
   'show', `${referenceCommit}:src/simulation/canonicalDysonDerivation.ts`,
@@ -27,6 +29,33 @@ try {
   const { deriveBasicDysonState: reference } = await import(pathToFileURL(referencePath).href) as {
     deriveBasicDysonState: typeof deriveBasicDysonState
   }
+  let boundaryOutputCases = 0
+  const boundaryCounts = [49, 50, 68, 69, 89, 90, 99, 100, 101]
+  for (const skills of [
+    [], ['avocados'], ['productionScaling'], ['superSwarm'],
+    ['megaSwarm'], ['ultimateSwarm'], ['terraFirma', 'terraIrradiant'],
+    ['avocados', 'supernova'],
+  ]) {
+    // Mutate the same state across calls so stale cross-call reuse would fail.
+    const state = createDeterministicMatureDysonFixture({ ownedSkillIds: skills })
+    for (const galvanized of [false, true]) {
+      state.challenges = { ...state.challenges, galvanizedSkillIds: galvanized ? ['supernova'] : [] }
+      for (const count of boundaryCounts) {
+        for (const pair of Object.values(state.dyson.facilities)) pair[1] = count
+        state.skills.fragments = count > 90 ? 3n : 1n
+        for (const permanentDoubleIp of [false, true]) {
+          const args = [state, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp }, DETERMINISTIC_DYSON_SNAPSHOT] as const
+          const before = reference(...args)
+          const after = deriveBasicDysonState(...args)
+          if (!before.ok || !after.ok || !isDeepStrictEqual(before, after)) {
+            throw new Error(`Boundary mismatch: ${skills.join(',')}, ${count}, galvanized=${galvanized}`)
+          }
+          boundaryOutputCases += 1
+        }
+      }
+    }
+  }
+  const parityOnly = process.argv.includes('--parity-only')
   let checksum = 0
   const batchSize = 500
   const rows = []
@@ -39,6 +68,10 @@ try {
         reference(fixture.state, tuning, { permanentDoubleIp }, snapshot),
         deriveBasicDysonState(fixture.state, tuning, { permanentDoubleIp }, snapshot),
       )) throw new Error(`Derivation mismatch for ${fixture.id}.`)
+    }
+    if (parityOnly) {
+      rows.push({ fixture: fixture.id })
+      continue
     }
     const run = (derive: typeof deriveBasicDysonState) => {
       const result = derive(fixture.state, tuning, { permanentDoubleIp: false }, snapshot)
@@ -71,8 +104,9 @@ try {
   console.log(JSON.stringify({
     node: process.version,
     referenceCommit,
-    note: 'Historical derivation algorithm with current dependencies. Differences near measurement noise are not speedup evidence; no timing gate.',
+    note: 'Checkpoint derivation with current dependencies, isolating within-call manual purchase layer reuse. Differences near measurement noise are not speedup evidence; no timing gate.',
     exactOutputCases: rows.length * 2,
+    boundaryOutputCases,
     batchSize,
     rounds: 7,
     rows,

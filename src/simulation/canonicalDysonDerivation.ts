@@ -376,10 +376,20 @@ export function deriveManualPurchaseProductionLayer(
   })
 }
 
+type ManualPurchaseProductionLayers = Readonly<
+  Record<BasicDysonFacilityId, Readonly<ManualPurchaseProductionLayer>>
+>
+
 function withManualPurchaseProductionLayer(
   state: CanonicalGameStateV1,
   source: Readonly<Record<string, readonly StatEffect[]>>,
-): Readonly<Record<string, readonly StatEffect[]>> {
+): {
+  readonly byStat: Readonly<Record<string, readonly StatEffect[]>>
+  readonly manualPurchaseLayers: ManualPurchaseProductionLayers
+} {
+  const manualPurchaseLayers = {} as Record<
+    BasicDysonFacilityId, Readonly<ManualPurchaseProductionLayer>
+  >
   const byStat = Object.fromEntries(
     Object.entries(source).map(([stat, effects]) => [
       stat,
@@ -389,6 +399,7 @@ function withManualPurchaseProductionLayer(
 
   for (const facilityId of BASIC_DYSON_FACILITY_IDS) {
     const layer = deriveManualPurchaseProductionLayer(state, facilityId)
+    manualPurchaseLayers[facilityId] = layer
     const effects: StatEffect[] = [
       ...(byStat[BASIC_FACILITY_PRODUCTION_STATS[facilityId]] ?? []),
     ]
@@ -436,7 +447,7 @@ function withManualPurchaseProductionLayer(
     byStat[BASIC_FACILITY_PRODUCTION_STATS[facilityId]] =
       Object.freeze(effects)
   }
-  return Object.freeze(byStat)
+  return { byStat: Object.freeze(byStat), manualPurchaseLayers }
 }
 
 /**
@@ -481,7 +492,7 @@ export function deriveBasicDysonState(
   if (!skillEffects.ok) {
     return { ok: false, issues: Object.freeze([skillEffects.issue]) }
   }
-  const effectiveSkillEffectsByStat =
+  const { byStat: effectiveSkillEffectsByStat, manualPurchaseLayers } =
     withManualPurchaseProductionLayer(
       state,
       skillEffects.byStat,
@@ -801,6 +812,7 @@ export function deriveBasicDysonState(
       facilityFacts: Object.freeze({
         ...deriveBasicFacilityFacts(
           state,
+          manualPurchaseLayers,
           model,
           mega.rates,
           facilityModifiers,
@@ -840,6 +852,7 @@ const BASIC_FACILITY_OUTPUT_RATES: Readonly<
 
 function deriveBasicFacilityFacts(
   state: CanonicalGameStateV1,
+  manualPurchaseLayers: ManualPurchaseProductionLayers,
   model: Readonly<BasicDysonState>,
   megaRates: Readonly<MegaStructureRates>,
   modifiers: Readonly<Record<CanonicalFacilityId, number>>,
@@ -935,8 +948,7 @@ function deriveBasicFacilityFacts(
                       state,
                       evaluationSnapshot,
                     ),
-              manualPurchaseLayer:
-                deriveManualPurchaseProductionLayer(state, facilityId),
+              manualPurchaseLayer: manualPurchaseLayers[facilityId],
               upstreamSources: deriveBasicFacilityUpstreamSources(
                 state,
                 facilityId,

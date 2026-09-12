@@ -12,7 +12,8 @@ const referenceCommit = '878f5bffecd59c699712103172e668d12853d16a'
 const root = resolve(import.meta.dirname, '../..')
 const source = execFileSync('git', ['show', `${referenceCommit}:src/simulation/dysonModel.ts`], { cwd: root, encoding: 'utf8' }).replace(
   /from '([.][^']+)'/g,
-  (_match, specifier: string) => `from '${resolve(root, 'src/simulation', specifier)}'`,
+  (_match, specifier: string) =>
+    `from ${JSON.stringify(pathToFileURL(resolve(root, 'src/simulation', specifier)).href)}`,
 )
 const directory = mkdtempSync(resolve(tmpdir(), 'ids-clone-reference-'))
 const referencePath = resolve(directory, 'reference.mts')
