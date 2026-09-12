@@ -10,6 +10,9 @@ import {
   stripMessageAuthoringMetadataPlugin,
 } from './scripts/stripMessageAuthoringMetadata.js'
 import {
+  omitDuplicatedEnglishWikiMessagesPlugin,
+} from './scripts/omitDuplicatedEnglishWikiMessages.js'
+import {
   PWA_BASE_PATH,
   pwaPackagePlugin,
 } from './scripts/pwaPackage.js'
@@ -92,6 +95,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       developmentTelemetryPlugin(),
       stripMessageAuthoringMetadataPlugin(),
+      omitDuplicatedEnglishWikiMessagesPlugin(),
       react(),
       ...(nativeBuild
         ? [nativeRelativeHtmlPlugin()]
