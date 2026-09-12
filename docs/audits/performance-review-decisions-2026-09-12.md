@@ -13,15 +13,18 @@ The coordinating agent reviews semantics and evidence after each change, and a
 non-author agent independently reviews each batch before a checkpoint or further
 production changes. Resolve actionable findings and rerun affected checks before
 accepting the batch. Tests and builds supplement review; they do not establish
-visual, native, or gameplay equivalence by themselves. The first batch passed
-independent review and 1,521 integration tests. Further batches follow the same
-review requirement before acceptance.
+visual, native, or gameplay equivalence by themselves. The latest v6 integration snapshot passed
+1,553 tests and the required automated gates, with independent batch review.
+Accepted production is checkpointed through `b9b47d65` and provenance tooling
+through `7bc88cd7`. Further prototypes follow the same review requirement before
+acceptance.
 
 ## Pending review / separate design work
 
 - **Initial locale payload:** all destinations currently share one locale
-  catalog. The English catalog is 72.95 KiB gzip against the existing 30 KiB
-  budget; Wiki messages account for approximately 38 KiB gzip on their own.
+  catalog. English Wiki deduplication reduced the catalog from 72.95 to 45.77 KiB gzip
+  against the existing 30 KiB budget. Exact authored defaults remain available
+  in the unchanged Wiki chunk; all other locales are retained.
   Route catalog splitting needs explicit loading/fallback/error and locale-switch
   behavior. Investigate safe implementation separately; do not remove messages
   or weaken the budget to claim success.
@@ -51,6 +54,14 @@ review requirement before acceptance.
 - Remove only demonstrably redundant tests; retain unique scenarios and reduce
   repeated expensive progression-fixture generation.
 - Repair stale checkpoint instrumentation and isolate profiling ports.
+- Reuse manual purchase layers within one canonical derivation, with 306 exact
+  historical fixture/boundary comparisons.
+- Remove only exact duplicated English Wiki literals at build time; verify
+  fallback/error semantics, unchanged other locales and browser rendering.
+- Reuse five construction-time facility calculations within the same derivation;
+  both historical modules produce the same 306 fixture/boundary outputs.
+- Capture report checkout identity before measurement and fingerprint the exact
+  served build at both endpoints; do not infer build ancestry from checkout HEAD.
 - Keep skill icon bytes in image assets instead of eager JavaScript icon maps.
 
 Detailed review scope, evidence and remaining findings live in the companion

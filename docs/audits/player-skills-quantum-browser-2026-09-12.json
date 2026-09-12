@@ -1,0 +1,1161 @@
+{
+  "schemaVersion": 1,
+  "scope": "Player-perspective Skills and Quantum browser checks",
+  "baselineDist": "output/visual-qa-4.1.8/baseline-web",
+  "candidateDist": "output/performance/candidate-v6-dist",
+  "widths": [
+    1440,
+    390
+  ],
+  "height": 1000,
+  "skillsCheckpointsPerBuildPerWidth": 37,
+  "quantumCheckpointsPerBuild": 19,
+  "checks": [
+    {
+      "name": "skills-quantum baseline/candidate exact checkpoint sequence",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum preset export exact equality",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline no harness/page/console errors",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline no-match search",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline assignment cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline assignment committed with prerequisite",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline refund committed",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline dependency cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline dependency purchase committed",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline reset cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline invalid preset import visible error",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline priority down then up restores order",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline preset switch 2 then 1",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline reset removes refundable ownership",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum baseline checkpointed full skills/presets survive reload",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate no harness/page/console errors",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate no-match search",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate assignment cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate assignment committed with prerequisite",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate refund committed",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate dependency cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate dependency purchase committed",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate reset cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate invalid preset import visible error",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate priority down then up restores order",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate preset switch 2 then 1",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate reset removes refundable ownership",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum candidate checkpointed full skills/presets survive reload",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline/candidate exact checkpoint sequence",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile preset export exact equality",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline no harness/page/console errors",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline no-match search",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline assignment cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline assignment committed with prerequisite",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline refund committed",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline dependency cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline dependency purchase committed",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline reset cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline invalid preset import visible error",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline priority down then up restores order",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline preset switch 2 then 1",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline reset removes refundable ownership",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile baseline checkpointed full skills/presets survive reload",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate no harness/page/console errors",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate no-match search",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate assignment cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate assignment committed with prerequisite",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate refund committed",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate dependency cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate dependency purchase committed",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate reset cancellation unchanged",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate invalid preset import visible error",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate priority down then up restores order",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate preset switch 2 then 1",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate reset removes refundable ownership",
+      "passed": true
+    },
+    {
+      "name": "skills-quantum-mobile candidate checkpointed full skills/presets survive reload",
+      "passed": true
+    },
+    {
+      "name": "durable nonempty positive control baseline",
+      "passed": true
+    },
+    {
+      "name": "automatic checkpoint without Export baseline",
+      "passed": true
+    },
+    {
+      "name": "direct IDB before/after automatic checkpoint baseline",
+      "passed": true
+    },
+    {
+      "name": "durable nonempty positive control candidate",
+      "passed": true
+    },
+    {
+      "name": "automatic checkpoint without Export candidate",
+      "passed": true
+    },
+    {
+      "name": "direct IDB before/after automatic checkpoint candidate",
+      "passed": true
+    },
+    {
+      "name": "Quantum baseline no errors",
+      "passed": true
+    },
+    {
+      "name": "Quantum baseline single purchase increments one",
+      "passed": true
+    },
+    {
+      "name": "Quantum baseline hold repeats and release stops",
+      "passed": true
+    },
+    {
+      "name": "Quantum baseline hide maxed filters and restores",
+      "passed": true
+    },
+    {
+      "name": "Quantum baseline bulk increments 1/10/50/100",
+      "passed": true
+    },
+    {
+      "name": "Quantum baseline max spends exactly available ledger",
+      "passed": true
+    },
+    {
+      "name": "Quantum baseline full Quantum survives checkpoint/reload",
+      "passed": true
+    },
+    {
+      "name": "Quantum candidate no errors",
+      "passed": true
+    },
+    {
+      "name": "Quantum candidate single purchase increments one",
+      "passed": true
+    },
+    {
+      "name": "Quantum candidate hold repeats and release stops",
+      "passed": true
+    },
+    {
+      "name": "Quantum candidate hide maxed filters and restores",
+      "passed": true
+    },
+    {
+      "name": "Quantum candidate bulk increments 1/10/50/100",
+      "passed": true
+    },
+    {
+      "name": "Quantum candidate max spends exactly available ledger",
+      "passed": true
+    },
+    {
+      "name": "Quantum candidate full Quantum survives checkpoint/reload",
+      "passed": true
+    },
+    {
+      "name": "Quantum deterministic bulk section matches builds",
+      "passed": true
+    },
+    {
+      "name": "Quantum final canonical states match after fresh bulk fixture",
+      "passed": true
+    }
+  ],
+  "allChecksPassed": false,
+  "observationAssertionsPassed": true,
+  "findings": [
+    {
+      "scope": "pre-existing in baseline and candidate",
+      "issue": "Reset clears owned skills durably, but cleared active assignment queue is already present again in the durable checkpoint before reload, with legacy queue data retained.",
+      "ownershipDurabilityPassed": true,
+      "queueClearingDurabilityPassed": false
+    }
+  ],
+  "automaticCheckpointWithoutExport": [
+    {
+      "build": "baseline",
+      "errors": [],
+      "assigned": [
+        "burnOut",
+        "coldFusion",
+        "fusionReactors",
+        "manualLabour"
+      ],
+      "sentinelQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "sentinelPresets": [
+        {
+          "name": "Preset 1",
+          "skillIds": [
+            "manualLabour",
+            "burnOut",
+            "fusionReactors",
+            "coldFusion"
+          ],
+          "botDistribution": 0,
+          "colorId": "cyan"
+        },
+        {
+          "name": "Preset 2",
+          "skillIds": [],
+          "botDistribution": 0,
+          "colorId": "orange"
+        },
+        {
+          "name": "Preset 3",
+          "skillIds": [],
+          "botDistribution": 0,
+          "colorId": "gold"
+        },
+        {
+          "name": "Preset 4",
+          "skillIds": [],
+          "botDistribution": 0,
+          "colorId": "rose"
+        },
+        {
+          "name": "Preset 5",
+          "skillIds": [],
+          "botDistribution": 0,
+          "colorId": "pink"
+        }
+      ],
+      "durableNonemptySentinel": [
+        "burnOut",
+        "coldFusion",
+        "fusionReactors",
+        "manualLabour"
+      ],
+      "sentinelReloadOwned": [
+        "burnOut",
+        "coldFusion",
+        "fusionReactors",
+        "manualLabour"
+      ],
+      "afterReset": [],
+      "directBeforeWait": {
+        "visibility": "visible",
+        "focused": true,
+        "utc": "2026-09-12T05:27:13.721Z",
+        "files": [
+          {
+            "path": "/development-only/development-only-default-profile/current.idsw",
+            "rawSkillAutoAssignment": {
+              "skillAutoAssignmentBits": {
+                "0": 0,
+                "1": 128,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 128,
+                "7": 0,
+                "8": 6,
+                "9": 0,
+                "10": 0,
+                "11": 0,
+                "12": 0
+              },
+              "skillAutoAssignmentBits1": null,
+              "skillAutoAssignmentBits2": null,
+              "skillAutoAssignmentBits3": null,
+              "skillAutoAssignmentBits4": null,
+              "skillAutoAssignmentBits5": null,
+              "skillAutoAssignmentBitsBase64": "AIAAAAAAgAAGAAAAAA==",
+              "skillAutoAssignmentBitsBase64_1": null,
+              "skillAutoAssignmentBitsBase64_2": null,
+              "skillAutoAssignmentBitsBase64_3": null,
+              "skillAutoAssignmentBitsBase64_4": null,
+              "skillAutoAssignmentBitsBase64_5": null,
+              "skillAutoAssignmentIds": [
+                "manualLabour",
+                "burnOut",
+                "fusionReactors",
+                "coldFusion"
+              ],
+              "skillAutoAssignmentIds1": [
+                "manualLabour",
+                "burnOut",
+                "fusionReactors",
+                "coldFusion"
+              ],
+              "skillAutoAssignmentIds2": [],
+              "skillAutoAssignmentIds3": [],
+              "skillAutoAssignmentIds4": [],
+              "skillAutoAssignmentIds5": [],
+              "skillAutoAssignmentList": [
+                56,
+                16,
+                66,
+                67
+              ],
+              "skillAutoAssignmentList1": [
+                56,
+                16,
+                66,
+                67
+              ],
+              "skillAutoAssignmentList2": [],
+              "skillAutoAssignmentList3": [],
+              "skillAutoAssignmentList4": [],
+              "skillAutoAssignmentList5": []
+            },
+            "directActiveAutoAssignment": [
+              "manualLabour",
+              "burnOut",
+              "fusionReactors",
+              "coldFusion"
+            ],
+            "owned": [
+              "burnOut",
+              "coldFusion",
+              "fusionReactors",
+              "manualLabour"
+            ],
+            "activeAutoAssignment": [
+              "manualLabour",
+              "burnOut",
+              "fusionReactors",
+              "coldFusion"
+            ],
+            "presets": [
+              {
+                "name": "Preset 1",
+                "skillIds": [
+                  "manualLabour",
+                  "burnOut",
+                  "fusionReactors",
+                  "coldFusion"
+                ],
+                "botDistribution": 0,
+                "colorId": "cyan"
+              },
+              {
+                "name": "Preset 2",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "orange"
+              },
+              {
+                "name": "Preset 3",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "gold"
+              },
+              {
+                "name": "Preset 4",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "rose"
+              },
+              {
+                "name": "Preset 5",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "pink"
+              }
+            ]
+          }
+        ]
+      },
+      "waitStartedUtc": "2026-09-12T05:27:13.761Z",
+      "waitEndedUtc": "2026-09-12T05:27:45.264Z",
+      "directAfterWait": {
+        "visibility": "visible",
+        "focused": true,
+        "utc": "2026-09-12T05:27:45.265Z",
+        "files": [
+          {
+            "path": "/development-only/development-only-default-profile/current.idsw",
+            "rawSkillAutoAssignment": {
+              "skillAutoAssignmentBits": {
+                "0": 0,
+                "1": 128,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 128,
+                "7": 0,
+                "8": 6,
+                "9": 0,
+                "10": 0,
+                "11": 0,
+                "12": 0
+              },
+              "skillAutoAssignmentBits1": null,
+              "skillAutoAssignmentBits2": null,
+              "skillAutoAssignmentBits3": null,
+              "skillAutoAssignmentBits4": null,
+              "skillAutoAssignmentBits5": null,
+              "skillAutoAssignmentBitsBase64": "AIAAAAAAgAAGAAAAAA==",
+              "skillAutoAssignmentBitsBase64_1": null,
+              "skillAutoAssignmentBitsBase64_2": null,
+              "skillAutoAssignmentBitsBase64_3": null,
+              "skillAutoAssignmentBitsBase64_4": null,
+              "skillAutoAssignmentBitsBase64_5": null,
+              "skillAutoAssignmentIds": [
+                "manualLabour",
+                "burnOut",
+                "fusionReactors",
+                "coldFusion"
+              ],
+              "skillAutoAssignmentIds1": [
+                "manualLabour",
+                "burnOut",
+                "fusionReactors",
+                "coldFusion"
+              ],
+              "skillAutoAssignmentIds2": [],
+              "skillAutoAssignmentIds3": [],
+              "skillAutoAssignmentIds4": [],
+              "skillAutoAssignmentIds5": [],
+              "skillAutoAssignmentList": [
+                56,
+                16,
+                66,
+                67
+              ],
+              "skillAutoAssignmentList1": [
+                56,
+                16,
+                66,
+                67
+              ],
+              "skillAutoAssignmentList2": [],
+              "skillAutoAssignmentList3": [],
+              "skillAutoAssignmentList4": [],
+              "skillAutoAssignmentList5": []
+            },
+            "directActiveAutoAssignment": [
+              "manualLabour",
+              "burnOut",
+              "fusionReactors",
+              "coldFusion"
+            ],
+            "owned": [],
+            "activeAutoAssignment": [
+              "manualLabour",
+              "burnOut",
+              "fusionReactors",
+              "coldFusion"
+            ],
+            "presets": [
+              {
+                "name": "Preset 1",
+                "skillIds": [
+                  "manualLabour",
+                  "burnOut",
+                  "fusionReactors",
+                  "coldFusion"
+                ],
+                "botDistribution": 0,
+                "colorId": "cyan"
+              },
+              {
+                "name": "Preset 2",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "orange"
+              },
+              {
+                "name": "Preset 3",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "gold"
+              },
+              {
+                "name": "Preset 4",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "rose"
+              },
+              {
+                "name": "Preset 5",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "pink"
+              }
+            ]
+          }
+        ]
+      },
+      "beforeReload": [],
+      "afterReload": [],
+      "rawExportSkillAutoAssignment": {
+        "skillAutoAssignmentBits": {
+          "0": 0,
+          "1": 128,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 128,
+          "7": 0,
+          "8": 6,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0
+        },
+        "skillAutoAssignmentBits1": null,
+        "skillAutoAssignmentBits2": null,
+        "skillAutoAssignmentBits3": null,
+        "skillAutoAssignmentBits4": null,
+        "skillAutoAssignmentBits5": null,
+        "skillAutoAssignmentBitsBase64": "AIAAAAAAgAAGAAAAAA==",
+        "skillAutoAssignmentBitsBase64_1": null,
+        "skillAutoAssignmentBitsBase64_2": null,
+        "skillAutoAssignmentBitsBase64_3": null,
+        "skillAutoAssignmentBitsBase64_4": null,
+        "skillAutoAssignmentBitsBase64_5": null,
+        "skillAutoAssignmentIds": [
+          "manualLabour",
+          "burnOut",
+          "fusionReactors",
+          "coldFusion"
+        ],
+        "skillAutoAssignmentIds1": [
+          "manualLabour",
+          "burnOut",
+          "fusionReactors",
+          "coldFusion"
+        ],
+        "skillAutoAssignmentIds2": [],
+        "skillAutoAssignmentIds3": [],
+        "skillAutoAssignmentIds4": [],
+        "skillAutoAssignmentIds5": [],
+        "skillAutoAssignmentList": [
+          56,
+          16,
+          66,
+          67
+        ],
+        "skillAutoAssignmentList1": [
+          56,
+          16,
+          66,
+          67
+        ],
+        "skillAutoAssignmentList2": [],
+        "skillAutoAssignmentList3": [],
+        "skillAutoAssignmentList4": [],
+        "skillAutoAssignmentList5": []
+      },
+      "directExportQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "persistedOwned": [],
+      "persistedQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "persistedPresetQueues": [
+        [
+          "manualLabour",
+          "burnOut",
+          "fusionReactors",
+          "coldFusion"
+        ],
+        [],
+        [],
+        [],
+        []
+      ],
+      "passed": false,
+      "ownershipDurabilityPassed": true,
+      "queueClearingDurabilityPassed": false
+    },
+    {
+      "build": "candidate",
+      "errors": [],
+      "assigned": [
+        "burnOut",
+        "coldFusion",
+        "fusionReactors",
+        "manualLabour"
+      ],
+      "sentinelQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "sentinelPresets": [
+        {
+          "name": "Preset 1",
+          "skillIds": [
+            "manualLabour",
+            "burnOut",
+            "fusionReactors",
+            "coldFusion"
+          ],
+          "botDistribution": 0,
+          "colorId": "cyan"
+        },
+        {
+          "name": "Preset 2",
+          "skillIds": [],
+          "botDistribution": 0,
+          "colorId": "orange"
+        },
+        {
+          "name": "Preset 3",
+          "skillIds": [],
+          "botDistribution": 0,
+          "colorId": "gold"
+        },
+        {
+          "name": "Preset 4",
+          "skillIds": [],
+          "botDistribution": 0,
+          "colorId": "rose"
+        },
+        {
+          "name": "Preset 5",
+          "skillIds": [],
+          "botDistribution": 0,
+          "colorId": "pink"
+        }
+      ],
+      "durableNonemptySentinel": [
+        "burnOut",
+        "coldFusion",
+        "fusionReactors",
+        "manualLabour"
+      ],
+      "sentinelReloadOwned": [
+        "burnOut",
+        "coldFusion",
+        "fusionReactors",
+        "manualLabour"
+      ],
+      "afterReset": [],
+      "directBeforeWait": {
+        "visibility": "visible",
+        "focused": true,
+        "utc": "2026-09-12T05:27:49.897Z",
+        "files": [
+          {
+            "path": "/development-only/development-only-default-profile/current.idsw",
+            "rawSkillAutoAssignment": {
+              "skillAutoAssignmentBits": {
+                "0": 0,
+                "1": 128,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 128,
+                "7": 0,
+                "8": 6,
+                "9": 0,
+                "10": 0,
+                "11": 0,
+                "12": 0
+              },
+              "skillAutoAssignmentBits1": null,
+              "skillAutoAssignmentBits2": null,
+              "skillAutoAssignmentBits3": null,
+              "skillAutoAssignmentBits4": null,
+              "skillAutoAssignmentBits5": null,
+              "skillAutoAssignmentBitsBase64": "AIAAAAAAgAAGAAAAAA==",
+              "skillAutoAssignmentBitsBase64_1": null,
+              "skillAutoAssignmentBitsBase64_2": null,
+              "skillAutoAssignmentBitsBase64_3": null,
+              "skillAutoAssignmentBitsBase64_4": null,
+              "skillAutoAssignmentBitsBase64_5": null,
+              "skillAutoAssignmentIds": [
+                "manualLabour",
+                "burnOut",
+                "fusionReactors",
+                "coldFusion"
+              ],
+              "skillAutoAssignmentIds1": [
+                "manualLabour",
+                "burnOut",
+                "fusionReactors",
+                "coldFusion"
+              ],
+              "skillAutoAssignmentIds2": [],
+              "skillAutoAssignmentIds3": [],
+              "skillAutoAssignmentIds4": [],
+              "skillAutoAssignmentIds5": [],
+              "skillAutoAssignmentList": [
+                56,
+                16,
+                66,
+                67
+              ],
+              "skillAutoAssignmentList1": [
+                56,
+                16,
+                66,
+                67
+              ],
+              "skillAutoAssignmentList2": [],
+              "skillAutoAssignmentList3": [],
+              "skillAutoAssignmentList4": [],
+              "skillAutoAssignmentList5": []
+            },
+            "directActiveAutoAssignment": [
+              "manualLabour",
+              "burnOut",
+              "fusionReactors",
+              "coldFusion"
+            ],
+            "owned": [
+              "burnOut",
+              "coldFusion",
+              "fusionReactors",
+              "manualLabour"
+            ],
+            "activeAutoAssignment": [
+              "manualLabour",
+              "burnOut",
+              "fusionReactors",
+              "coldFusion"
+            ],
+            "presets": [
+              {
+                "name": "Preset 1",
+                "skillIds": [
+                  "manualLabour",
+                  "burnOut",
+                  "fusionReactors",
+                  "coldFusion"
+                ],
+                "botDistribution": 0,
+                "colorId": "cyan"
+              },
+              {
+                "name": "Preset 2",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "orange"
+              },
+              {
+                "name": "Preset 3",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "gold"
+              },
+              {
+                "name": "Preset 4",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "rose"
+              },
+              {
+                "name": "Preset 5",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "pink"
+              }
+            ]
+          }
+        ]
+      },
+      "waitStartedUtc": "2026-09-12T05:27:49.920Z",
+      "waitEndedUtc": "2026-09-12T05:28:21.421Z",
+      "directAfterWait": {
+        "visibility": "visible",
+        "focused": true,
+        "utc": "2026-09-12T05:28:21.422Z",
+        "files": [
+          {
+            "path": "/development-only/development-only-default-profile/current.idsw",
+            "rawSkillAutoAssignment": {
+              "skillAutoAssignmentBits": {
+                "0": 0,
+                "1": 128,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 128,
+                "7": 0,
+                "8": 6,
+                "9": 0,
+                "10": 0,
+                "11": 0,
+                "12": 0
+              },
+              "skillAutoAssignmentBits1": null,
+              "skillAutoAssignmentBits2": null,
+              "skillAutoAssignmentBits3": null,
+              "skillAutoAssignmentBits4": null,
+              "skillAutoAssignmentBits5": null,
+              "skillAutoAssignmentBitsBase64": "AIAAAAAAgAAGAAAAAA==",
+              "skillAutoAssignmentBitsBase64_1": null,
+              "skillAutoAssignmentBitsBase64_2": null,
+              "skillAutoAssignmentBitsBase64_3": null,
+              "skillAutoAssignmentBitsBase64_4": null,
+              "skillAutoAssignmentBitsBase64_5": null,
+              "skillAutoAssignmentIds": [
+                "manualLabour",
+                "burnOut",
+                "fusionReactors",
+                "coldFusion"
+              ],
+              "skillAutoAssignmentIds1": [
+                "manualLabour",
+                "burnOut",
+                "fusionReactors",
+                "coldFusion"
+              ],
+              "skillAutoAssignmentIds2": [],
+              "skillAutoAssignmentIds3": [],
+              "skillAutoAssignmentIds4": [],
+              "skillAutoAssignmentIds5": [],
+              "skillAutoAssignmentList": [
+                56,
+                16,
+                66,
+                67
+              ],
+              "skillAutoAssignmentList1": [
+                56,
+                16,
+                66,
+                67
+              ],
+              "skillAutoAssignmentList2": [],
+              "skillAutoAssignmentList3": [],
+              "skillAutoAssignmentList4": [],
+              "skillAutoAssignmentList5": []
+            },
+            "directActiveAutoAssignment": [
+              "manualLabour",
+              "burnOut",
+              "fusionReactors",
+              "coldFusion"
+            ],
+            "owned": [],
+            "activeAutoAssignment": [
+              "manualLabour",
+              "burnOut",
+              "fusionReactors",
+              "coldFusion"
+            ],
+            "presets": [
+              {
+                "name": "Preset 1",
+                "skillIds": [
+                  "manualLabour",
+                  "burnOut",
+                  "fusionReactors",
+                  "coldFusion"
+                ],
+                "botDistribution": 0,
+                "colorId": "cyan"
+              },
+              {
+                "name": "Preset 2",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "orange"
+              },
+              {
+                "name": "Preset 3",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "gold"
+              },
+              {
+                "name": "Preset 4",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "rose"
+              },
+              {
+                "name": "Preset 5",
+                "skillIds": [],
+                "botDistribution": 0,
+                "colorId": "pink"
+              }
+            ]
+          }
+        ]
+      },
+      "beforeReload": [],
+      "afterReload": [],
+      "rawExportSkillAutoAssignment": {
+        "skillAutoAssignmentBits": {
+          "0": 0,
+          "1": 128,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 128,
+          "7": 0,
+          "8": 6,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0
+        },
+        "skillAutoAssignmentBits1": null,
+        "skillAutoAssignmentBits2": null,
+        "skillAutoAssignmentBits3": null,
+        "skillAutoAssignmentBits4": null,
+        "skillAutoAssignmentBits5": null,
+        "skillAutoAssignmentBitsBase64": "AIAAAAAAgAAGAAAAAA==",
+        "skillAutoAssignmentBitsBase64_1": null,
+        "skillAutoAssignmentBitsBase64_2": null,
+        "skillAutoAssignmentBitsBase64_3": null,
+        "skillAutoAssignmentBitsBase64_4": null,
+        "skillAutoAssignmentBitsBase64_5": null,
+        "skillAutoAssignmentIds": [
+          "manualLabour",
+          "burnOut",
+          "fusionReactors",
+          "coldFusion"
+        ],
+        "skillAutoAssignmentIds1": [
+          "manualLabour",
+          "burnOut",
+          "fusionReactors",
+          "coldFusion"
+        ],
+        "skillAutoAssignmentIds2": [],
+        "skillAutoAssignmentIds3": [],
+        "skillAutoAssignmentIds4": [],
+        "skillAutoAssignmentIds5": [],
+        "skillAutoAssignmentList": [
+          56,
+          16,
+          66,
+          67
+        ],
+        "skillAutoAssignmentList1": [
+          56,
+          16,
+          66,
+          67
+        ],
+        "skillAutoAssignmentList2": [],
+        "skillAutoAssignmentList3": [],
+        "skillAutoAssignmentList4": [],
+        "skillAutoAssignmentList5": []
+      },
+      "directExportQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "persistedOwned": [],
+      "persistedQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "persistedPresetQueues": [
+        [
+          "manualLabour",
+          "burnOut",
+          "fusionReactors",
+          "coldFusion"
+        ],
+        [],
+        [],
+        [],
+        []
+      ],
+      "passed": false,
+      "ownershipDurabilityPassed": true,
+      "queueClearingDurabilityPassed": false
+    }
+  ],
+  "timedHoldAcceptedLevels": {
+    "baseline": "Cash BoosterLevel 24Gain a stacking additive 5% boost to Cash.+11",
+    "candidate": "Cash BoosterLevel 24Gain a stacking additive 5% boost to Cash.+11"
+  },
+  "evidenceRoots": [
+    "output/player-review/skills-quantum",
+    "output/player-review/skills-quantum-mobile"
+  ],
+  "limitations": [
+    "Fixture setup and route selection use existing UI navigation/import helper; action controls use actual CDP pointer/keyboard. Text fills dispatch normal input events.",
+    "Synthetic funding is explicit and does not prove natural progression reachability.",
+    "Timed hold count is scheduler-sensitive; compare repeated purchase plus stopped-after-release behavior, not exact duration throughput. Bulk starts with a fresh identical fixture.",
+    "390px is Chromium mobile emulation with mouse/keyboard actions, not physical touchscreen or native device acceptance.",
+    "Galvanization has separate follow-up evidence. No retained non-refundable conflict, augment navigation, tree pinch/drag, clipboard permission, Quantum leap or one-off purchase coverage is claimed here.",
+    "Immediate forced reload can recover the last durable checkpoint before an uncheckpointed reset in both versions; checkpointed and >30-second automatic checkpoint paths were verified separately."
+  ]
+}

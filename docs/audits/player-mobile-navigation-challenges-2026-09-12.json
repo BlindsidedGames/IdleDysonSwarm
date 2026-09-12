@@ -1,0 +1,4636 @@
+{
+  "schemaVersion": 1,
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "baseline": "output/visual-qa-4.1.8/baseline-web",
+  "candidate": "output/performance/candidate-v6-dist",
+  "exactCheckpointEquality": true,
+  "checkpointsPerBuild": 11,
+  "routesPerBuild": 16,
+  "allChecksPassed": true,
+  "runs": [
+    {
+      "build": "baseline",
+      "navigation": [
+        {
+          "id": "research",
+          "exists": true,
+          "disabled": false,
+          "label": "Research",
+          "actual": "research",
+          "pointerNavigated": true
+        },
+        {
+          "id": "skills",
+          "exists": true,
+          "disabled": false,
+          "label": "Skills1.00K",
+          "actual": "skills",
+          "pointerNavigated": true
+        },
+        {
+          "id": "infinity",
+          "exists": true,
+          "disabled": false,
+          "label": "Infinity +0",
+          "actual": "infinity",
+          "pointerNavigated": true
+        },
+        {
+          "id": "challenges",
+          "exists": true,
+          "disabled": false,
+          "label": "Challenges",
+          "actual": "challenges",
+          "pointerNavigated": true
+        },
+        {
+          "id": "reality",
+          "exists": true,
+          "disabled": false,
+          "label": "Reality",
+          "actual": "reality",
+          "pointerNavigated": true
+        },
+        {
+          "id": "simulations",
+          "exists": true,
+          "disabled": false,
+          "label": "Simulations",
+          "actual": "simulations",
+          "pointerNavigated": true
+        },
+        {
+          "id": "quantum",
+          "exists": true,
+          "disabled": false,
+          "label": "Quantum",
+          "actual": "quantum",
+          "pointerNavigated": true
+        },
+        {
+          "id": "avocato",
+          "exists": true,
+          "disabled": false,
+          "label": "Avocato0",
+          "actual": "avocato",
+          "pointerNavigated": true
+        },
+        {
+          "id": "story",
+          "exists": true,
+          "disabled": false,
+          "label": "Story",
+          "actual": "story",
+          "pointerNavigated": true
+        },
+        {
+          "id": "wiki",
+          "exists": true,
+          "disabled": false,
+          "label": "Wiki",
+          "actual": "wiki",
+          "pointerNavigated": true
+        },
+        {
+          "id": "offline-time",
+          "exists": true,
+          "disabled": false,
+          "label": "Offline Time",
+          "actual": "offline-time",
+          "pointerNavigated": true
+        },
+        {
+          "id": "statistics",
+          "exists": true,
+          "disabled": false,
+          "label": "Statistics",
+          "actual": "statistics",
+          "pointerNavigated": true
+        },
+        {
+          "id": "store",
+          "exists": true,
+          "disabled": false,
+          "label": "Store",
+          "actual": "store",
+          "pointerNavigated": true
+        },
+        {
+          "id": "debug",
+          "exists": true,
+          "disabled": false,
+          "label": "Debug Options",
+          "actual": "debug",
+          "pointerNavigated": true
+        },
+        {
+          "id": "settings",
+          "exists": true,
+          "disabled": false,
+          "label": "Settings",
+          "actual": "settings",
+          "pointerNavigated": true
+        },
+        {
+          "id": "bots",
+          "exists": true,
+          "disabled": false,
+          "label": "Bots",
+          "actual": "bots",
+          "pointerNavigated": true
+        }
+      ],
+      "checks": [
+        {
+          "name": "drawer-escape",
+          "passed": true
+        },
+        {
+          "name": "drawer-close",
+          "passed": true
+        },
+        {
+          "name": "challenge-start-cancel",
+          "text": "Infinity ChallengesBlank SlateComplete a normal Infinity without assigning ordinary skills. Galvanized base skills stay active. Bots, buildings and research remain available.First completion: 1 galvanizer. Your reward and completion survive Overflow.Start Blank Slate"
+        },
+        {
+          "name": "challenge-start",
+          "state": {
+            "challenges": {
+              "galvanizedSkillIds": [],
+              "unlocked": true,
+              "active": "blank-slate",
+              "blankSlateCompleted": false,
+              "galvanizers": "0",
+              "hasEarnedGalvanizer": false
+            },
+            "ip": "1000000",
+            "spent": "0",
+            "quantum": {
+              "pointsEarned": "1000420",
+              "pointsSpent": "420",
+              "divisionsPurchased": "7",
+              "permanentSecrets": "27",
+              "influenceSpeedBonus": "64",
+              "cashBonusLevels": "15",
+              "scienceBonusLevels": "15",
+              "unlocks": {
+                "botMultitasking": true,
+                "doubleInfinityPoints": true,
+                "breakTheLoop": true,
+                "quantumEntanglement": true,
+                "automation": true,
+                "fragments": true,
+                "purity": true,
+                "terra": true,
+                "power": true,
+                "paragade": true,
+                "stellar": true,
+                "matrioshkaBrains": true,
+                "birchPlanets": true,
+                "galacticBrains": true
+              }
+            },
+            "skills": {
+              "points": "0",
+              "fragments": "0",
+              "byId": {
+                "addictionToPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "agressiveAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "aiManagerTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "androids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "artificiallyEnhancedPanels": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyLineTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyMegaLines": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "avocados": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "banking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "burnOut": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "citadelCouncil": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "clusterNetworking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "coldFusion": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dataCenterTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dimensionalCatCables": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "doubleScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dysonSubsidies": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "endOfTheLine": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fragmentAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fusionReactors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "galacticPradigmShift": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "higgsBoson": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hubbleTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hypercubeNetworks": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleElectricSheep": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleSpaceFlight": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "indulgingInPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "investmentPortfolio": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "jamesWebbTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "manualLabour": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "megaSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "monetaryPolicy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "oneMinutePlan": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelLifetime20Tree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelMaintenance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelWarranty": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "paragon": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelComputation": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelProcessing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetsTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketAndroids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketDimensions": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketMultiverse": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketProtectors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerOverwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerUnderwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "producedAsScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "productionScaling": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "progressiveAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfBody": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfMind": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfSEssence": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "quantumComputing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "reapers": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "regulatedAcademia": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renegade": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renewableEnergy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "repeatableResearch": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rocketMania": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rudimentarySingularity": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "saren": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificPlanets": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "serverTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shellWorlds": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shepherd": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shoulderSurgery": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfGiants": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfPrecursors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheEnlightened": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheFallen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "solarBubbles": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "startHereTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stayingPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarImprovements": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarObliteration": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarSacrifices": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superRadiantScattering": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superchargedPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "supernova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "tasteOfPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraEculeo": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraFirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraGloriae": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraInfirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraIrradiant": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNullius": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraformingProtocols": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "ultimateSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "unsuspiciousAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "versatileProductionTactics": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatCouldHaveBeen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatWillComeToPass": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerBoost": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerEfficiencyTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "worthySacrifice": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                }
+              },
+              "activeAutoAssignment": [],
+              "presets": [
+                {
+                  "name": "Preset 1",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "cyan"
+                },
+                {
+                  "name": "Preset 2",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "orange"
+                },
+                {
+                  "name": "Preset 3",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "gold"
+                },
+                {
+                  "name": "Preset 4",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "rose"
+                },
+                {
+                  "name": "Preset 5",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "pink"
+                }
+              ],
+              "autoAssignNonRefundable": true,
+              "tabPresetAutomation": {
+                "bots": 0,
+                "research": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "active-challenge-skills",
+          "unavailableNodes": 104,
+          "text": "h & Science2Staying Power3Stellar Dominance3Stellar Improvements2Stellar Obliteration2Stellar Sacrifices3Super-Radiant Scattering2Super Swarm1Supercharged Power4Supernova1Taste of Power1Terra Eculeo1Terra Firma1Terra Gloriae1Terra Infirma1Terra Irradient0/21Terra Nova1Terra Nullius1Terraforming Protocols3Ultimate Swarm1Unsuspicious Algorithms1Versatile Production Tactics1What could\u2019ve been0/21What Will Come to Pass1Worker Boost1Worker Efficiency1Worthy Sacrifice12345Search skills\u2212\u25ce+Skill Points0"
+        },
+        {
+          "name": "abandon-cancel",
+          "passed": true
+        },
+        {
+          "name": "challenge-abandon",
+          "state": {
+            "challenges": {
+              "galvanizedSkillIds": [],
+              "unlocked": true,
+              "active": null,
+              "blankSlateCompleted": false,
+              "galvanizers": "0",
+              "hasEarnedGalvanizer": false
+            },
+            "ip": "1000000",
+            "spent": "0",
+            "quantum": {
+              "pointsEarned": "1000420",
+              "pointsSpent": "420",
+              "divisionsPurchased": "7",
+              "permanentSecrets": "27",
+              "influenceSpeedBonus": "64",
+              "cashBonusLevels": "15",
+              "scienceBonusLevels": "15",
+              "unlocks": {
+                "botMultitasking": true,
+                "doubleInfinityPoints": true,
+                "breakTheLoop": true,
+                "quantumEntanglement": true,
+                "automation": true,
+                "fragments": true,
+                "purity": true,
+                "terra": true,
+                "power": true,
+                "paragade": true,
+                "stellar": true,
+                "matrioshkaBrains": true,
+                "birchPlanets": true,
+                "galacticBrains": true
+              }
+            },
+            "skills": {
+              "points": "0",
+              "fragments": "0",
+              "byId": {
+                "addictionToPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "agressiveAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "aiManagerTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "androids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "artificiallyEnhancedPanels": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyLineTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyMegaLines": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "avocados": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "banking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "burnOut": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "citadelCouncil": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "clusterNetworking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "coldFusion": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dataCenterTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dimensionalCatCables": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "doubleScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dysonSubsidies": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "endOfTheLine": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fragmentAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fusionReactors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "galacticPradigmShift": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "higgsBoson": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hubbleTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hypercubeNetworks": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleElectricSheep": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleSpaceFlight": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "indulgingInPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "investmentPortfolio": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "jamesWebbTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "manualLabour": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "megaSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "monetaryPolicy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "oneMinutePlan": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelLifetime20Tree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelMaintenance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelWarranty": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "paragon": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelComputation": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelProcessing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetsTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketAndroids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketDimensions": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketMultiverse": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketProtectors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerOverwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerUnderwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "producedAsScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "productionScaling": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "progressiveAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfBody": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfMind": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfSEssence": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "quantumComputing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "reapers": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "regulatedAcademia": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renegade": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renewableEnergy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "repeatableResearch": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rocketMania": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rudimentarySingularity": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "saren": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificPlanets": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "serverTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shellWorlds": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shepherd": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shoulderSurgery": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfGiants": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfPrecursors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheEnlightened": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheFallen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "solarBubbles": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "startHereTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stayingPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarImprovements": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarObliteration": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarSacrifices": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superRadiantScattering": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superchargedPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "supernova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "tasteOfPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraEculeo": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraFirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraGloriae": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraInfirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraIrradiant": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNullius": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraformingProtocols": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "ultimateSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "unsuspiciousAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "versatileProductionTactics": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatCouldHaveBeen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatWillComeToPass": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerBoost": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerEfficiencyTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "worthySacrifice": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                }
+              },
+              "activeAutoAssignment": [],
+              "presets": [
+                {
+                  "name": "Preset 1",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "cyan"
+                },
+                {
+                  "name": "Preset 2",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "orange"
+                },
+                {
+                  "name": "Preset 3",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "gold"
+                },
+                {
+                  "name": "Preset 4",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "rose"
+                },
+                {
+                  "name": "Preset 5",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "pink"
+                }
+              ],
+              "autoAssignNonRefundable": true,
+              "tabPresetAutomation": {
+                "bots": 0,
+                "research": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "challenge-replay-cancel",
+          "passed": true
+        },
+        {
+          "name": "galvanize-cancel",
+          "passed": true
+        },
+        {
+          "name": "galvanize-commit",
+          "state": {
+            "challenges": {
+              "galvanizedSkillIds": [
+                "startHereTree"
+              ],
+              "unlocked": true,
+              "active": null,
+              "blankSlateCompleted": true,
+              "galvanizers": "0",
+              "hasEarnedGalvanizer": true
+            },
+            "ip": "1000000",
+            "spent": "0",
+            "quantum": {
+              "pointsEarned": "1000420",
+              "pointsSpent": "420",
+              "divisionsPurchased": "7",
+              "permanentSecrets": "27",
+              "influenceSpeedBonus": "64",
+              "cashBonusLevels": "15",
+              "scienceBonusLevels": "15",
+              "unlocks": {
+                "botMultitasking": true,
+                "doubleInfinityPoints": true,
+                "breakTheLoop": true,
+                "quantumEntanglement": true,
+                "automation": true,
+                "fragments": true,
+                "purity": true,
+                "terra": true,
+                "power": true,
+                "paragade": true,
+                "stellar": true,
+                "matrioshkaBrains": true,
+                "birchPlanets": true,
+                "galacticBrains": true
+              }
+            },
+            "skills": {
+              "points": "1001",
+              "fragments": "1000",
+              "byId": {
+                "addictionToPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "agressiveAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "aiManagerTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "androids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "artificiallyEnhancedPanels": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyLineTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyMegaLines": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "avocados": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "banking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "burnOut": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "citadelCouncil": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "clusterNetworking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "coldFusion": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dataCenterTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dimensionalCatCables": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "doubleScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dysonSubsidies": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "endOfTheLine": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fragmentAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fusionReactors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "galacticPradigmShift": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "higgsBoson": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hubbleTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hypercubeNetworks": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleElectricSheep": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleSpaceFlight": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "indulgingInPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "investmentPortfolio": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "jamesWebbTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "manualLabour": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "megaSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "monetaryPolicy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "oneMinutePlan": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelLifetime20Tree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelMaintenance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelWarranty": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "paragon": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelComputation": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelProcessing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetsTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketAndroids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketDimensions": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketMultiverse": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketProtectors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerOverwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerUnderwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "producedAsScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "productionScaling": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "progressiveAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfBody": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfMind": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfSEssence": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "quantumComputing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "reapers": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "regulatedAcademia": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renegade": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renewableEnergy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "repeatableResearch": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rocketMania": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rudimentarySingularity": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "saren": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificPlanets": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "serverTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shellWorlds": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shepherd": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shoulderSurgery": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfGiants": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfPrecursors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheEnlightened": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheFallen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "solarBubbles": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "startHereTree": {
+                  "owned": true,
+                  "level": 1,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stayingPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarImprovements": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarObliteration": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarSacrifices": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superRadiantScattering": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superchargedPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "supernova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "tasteOfPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraEculeo": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraFirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraGloriae": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraInfirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraIrradiant": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNullius": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraformingProtocols": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "ultimateSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "unsuspiciousAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "versatileProductionTactics": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatCouldHaveBeen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatWillComeToPass": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerBoost": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerEfficiencyTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "worthySacrifice": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                }
+              },
+              "activeAutoAssignment": [],
+              "presets": [
+                {
+                  "name": "Preset 1",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "cyan"
+                },
+                {
+                  "name": "Preset 2",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "orange"
+                },
+                {
+                  "name": "Preset 3",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "gold"
+                },
+                {
+                  "name": "Preset 4",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "rose"
+                },
+                {
+                  "name": "Preset 5",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "pink"
+                }
+              ],
+              "autoAssignNonRefundable": true,
+              "tabPresetAutomation": {
+                "bots": 0,
+                "research": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "galvanize-reload",
+          "passed": true,
+          "state": {
+            "galvanizedSkillIds": [
+              "startHereTree"
+            ],
+            "unlocked": true,
+            "active": null,
+            "blankSlateCompleted": true,
+            "galvanizers": "0",
+            "hasEarnedGalvanizer": true
+          }
+        }
+      ],
+      "errors": [],
+      "pageErrors": [],
+      "consoleErrors": [],
+      "passed": true
+    },
+    {
+      "build": "candidate",
+      "navigation": [
+        {
+          "id": "research",
+          "exists": true,
+          "disabled": false,
+          "label": "Research",
+          "actual": "research",
+          "pointerNavigated": true
+        },
+        {
+          "id": "skills",
+          "exists": true,
+          "disabled": false,
+          "label": "Skills1.00K",
+          "actual": "skills",
+          "pointerNavigated": true
+        },
+        {
+          "id": "infinity",
+          "exists": true,
+          "disabled": false,
+          "label": "Infinity +0",
+          "actual": "infinity",
+          "pointerNavigated": true
+        },
+        {
+          "id": "challenges",
+          "exists": true,
+          "disabled": false,
+          "label": "Challenges",
+          "actual": "challenges",
+          "pointerNavigated": true
+        },
+        {
+          "id": "reality",
+          "exists": true,
+          "disabled": false,
+          "label": "Reality",
+          "actual": "reality",
+          "pointerNavigated": true
+        },
+        {
+          "id": "simulations",
+          "exists": true,
+          "disabled": false,
+          "label": "Simulations",
+          "actual": "simulations",
+          "pointerNavigated": true
+        },
+        {
+          "id": "quantum",
+          "exists": true,
+          "disabled": false,
+          "label": "Quantum",
+          "actual": "quantum",
+          "pointerNavigated": true
+        },
+        {
+          "id": "avocato",
+          "exists": true,
+          "disabled": false,
+          "label": "Avocato0",
+          "actual": "avocato",
+          "pointerNavigated": true
+        },
+        {
+          "id": "story",
+          "exists": true,
+          "disabled": false,
+          "label": "Story",
+          "actual": "story",
+          "pointerNavigated": true
+        },
+        {
+          "id": "wiki",
+          "exists": true,
+          "disabled": false,
+          "label": "Wiki",
+          "actual": "wiki",
+          "pointerNavigated": true
+        },
+        {
+          "id": "offline-time",
+          "exists": true,
+          "disabled": false,
+          "label": "Offline Time",
+          "actual": "offline-time",
+          "pointerNavigated": true
+        },
+        {
+          "id": "statistics",
+          "exists": true,
+          "disabled": false,
+          "label": "Statistics",
+          "actual": "statistics",
+          "pointerNavigated": true
+        },
+        {
+          "id": "store",
+          "exists": true,
+          "disabled": false,
+          "label": "Store",
+          "actual": "store",
+          "pointerNavigated": true
+        },
+        {
+          "id": "debug",
+          "exists": true,
+          "disabled": false,
+          "label": "Debug Options",
+          "actual": "debug",
+          "pointerNavigated": true
+        },
+        {
+          "id": "settings",
+          "exists": true,
+          "disabled": false,
+          "label": "Settings",
+          "actual": "settings",
+          "pointerNavigated": true
+        },
+        {
+          "id": "bots",
+          "exists": true,
+          "disabled": false,
+          "label": "Bots",
+          "actual": "bots",
+          "pointerNavigated": true
+        }
+      ],
+      "checks": [
+        {
+          "name": "drawer-escape",
+          "passed": true
+        },
+        {
+          "name": "drawer-close",
+          "passed": true
+        },
+        {
+          "name": "challenge-start-cancel",
+          "text": "Infinity ChallengesBlank SlateComplete a normal Infinity without assigning ordinary skills. Galvanized base skills stay active. Bots, buildings and research remain available.First completion: 1 galvanizer. Your reward and completion survive Overflow.Start Blank Slate"
+        },
+        {
+          "name": "challenge-start",
+          "state": {
+            "challenges": {
+              "galvanizedSkillIds": [],
+              "unlocked": true,
+              "active": "blank-slate",
+              "blankSlateCompleted": false,
+              "galvanizers": "0",
+              "hasEarnedGalvanizer": false
+            },
+            "ip": "1000000",
+            "spent": "0",
+            "quantum": {
+              "pointsEarned": "1000420",
+              "pointsSpent": "420",
+              "divisionsPurchased": "7",
+              "permanentSecrets": "27",
+              "influenceSpeedBonus": "64",
+              "cashBonusLevels": "15",
+              "scienceBonusLevels": "15",
+              "unlocks": {
+                "botMultitasking": true,
+                "doubleInfinityPoints": true,
+                "breakTheLoop": true,
+                "quantumEntanglement": true,
+                "automation": true,
+                "fragments": true,
+                "purity": true,
+                "terra": true,
+                "power": true,
+                "paragade": true,
+                "stellar": true,
+                "matrioshkaBrains": true,
+                "birchPlanets": true,
+                "galacticBrains": true
+              }
+            },
+            "skills": {
+              "points": "0",
+              "fragments": "0",
+              "byId": {
+                "addictionToPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "agressiveAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "aiManagerTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "androids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "artificiallyEnhancedPanels": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyLineTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyMegaLines": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "avocados": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "banking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "burnOut": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "citadelCouncil": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "clusterNetworking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "coldFusion": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dataCenterTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dimensionalCatCables": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "doubleScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dysonSubsidies": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "endOfTheLine": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fragmentAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fusionReactors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "galacticPradigmShift": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "higgsBoson": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hubbleTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hypercubeNetworks": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleElectricSheep": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleSpaceFlight": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "indulgingInPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "investmentPortfolio": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "jamesWebbTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "manualLabour": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "megaSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "monetaryPolicy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "oneMinutePlan": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelLifetime20Tree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelMaintenance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelWarranty": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "paragon": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelComputation": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelProcessing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetsTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketAndroids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketDimensions": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketMultiverse": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketProtectors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerOverwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerUnderwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "producedAsScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "productionScaling": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "progressiveAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfBody": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfMind": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfSEssence": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "quantumComputing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "reapers": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "regulatedAcademia": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renegade": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renewableEnergy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "repeatableResearch": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rocketMania": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rudimentarySingularity": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "saren": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificPlanets": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "serverTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shellWorlds": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shepherd": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shoulderSurgery": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfGiants": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfPrecursors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheEnlightened": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheFallen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "solarBubbles": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "startHereTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stayingPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarImprovements": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarObliteration": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarSacrifices": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superRadiantScattering": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superchargedPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "supernova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "tasteOfPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraEculeo": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraFirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraGloriae": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraInfirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraIrradiant": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNullius": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraformingProtocols": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "ultimateSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "unsuspiciousAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "versatileProductionTactics": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatCouldHaveBeen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatWillComeToPass": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerBoost": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerEfficiencyTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "worthySacrifice": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                }
+              },
+              "activeAutoAssignment": [],
+              "presets": [
+                {
+                  "name": "Preset 1",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "cyan"
+                },
+                {
+                  "name": "Preset 2",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "orange"
+                },
+                {
+                  "name": "Preset 3",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "gold"
+                },
+                {
+                  "name": "Preset 4",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "rose"
+                },
+                {
+                  "name": "Preset 5",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "pink"
+                }
+              ],
+              "autoAssignNonRefundable": true,
+              "tabPresetAutomation": {
+                "bots": 0,
+                "research": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "active-challenge-skills",
+          "unavailableNodes": 104,
+          "text": "h & Science2Staying Power3Stellar Dominance3Stellar Improvements2Stellar Obliteration2Stellar Sacrifices3Super-Radiant Scattering2Super Swarm1Supercharged Power4Supernova1Taste of Power1Terra Eculeo1Terra Firma1Terra Gloriae1Terra Infirma1Terra Irradient0/21Terra Nova1Terra Nullius1Terraforming Protocols3Ultimate Swarm1Unsuspicious Algorithms1Versatile Production Tactics1What could\u2019ve been0/21What Will Come to Pass1Worker Boost1Worker Efficiency1Worthy Sacrifice12345Search skills\u2212\u25ce+Skill Points0"
+        },
+        {
+          "name": "abandon-cancel",
+          "passed": true
+        },
+        {
+          "name": "challenge-abandon",
+          "state": {
+            "challenges": {
+              "galvanizedSkillIds": [],
+              "unlocked": true,
+              "active": null,
+              "blankSlateCompleted": false,
+              "galvanizers": "0",
+              "hasEarnedGalvanizer": false
+            },
+            "ip": "1000000",
+            "spent": "0",
+            "quantum": {
+              "pointsEarned": "1000420",
+              "pointsSpent": "420",
+              "divisionsPurchased": "7",
+              "permanentSecrets": "27",
+              "influenceSpeedBonus": "64",
+              "cashBonusLevels": "15",
+              "scienceBonusLevels": "15",
+              "unlocks": {
+                "botMultitasking": true,
+                "doubleInfinityPoints": true,
+                "breakTheLoop": true,
+                "quantumEntanglement": true,
+                "automation": true,
+                "fragments": true,
+                "purity": true,
+                "terra": true,
+                "power": true,
+                "paragade": true,
+                "stellar": true,
+                "matrioshkaBrains": true,
+                "birchPlanets": true,
+                "galacticBrains": true
+              }
+            },
+            "skills": {
+              "points": "0",
+              "fragments": "0",
+              "byId": {
+                "addictionToPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "agressiveAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "aiManagerTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "androids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "artificiallyEnhancedPanels": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyLineTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyMegaLines": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "avocados": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "banking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "burnOut": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "citadelCouncil": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "clusterNetworking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "coldFusion": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dataCenterTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dimensionalCatCables": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "doubleScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dysonSubsidies": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "endOfTheLine": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fragmentAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fusionReactors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "galacticPradigmShift": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "higgsBoson": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hubbleTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hypercubeNetworks": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleElectricSheep": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleSpaceFlight": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "indulgingInPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "investmentPortfolio": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "jamesWebbTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "manualLabour": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "megaSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "monetaryPolicy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "oneMinutePlan": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelLifetime20Tree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelMaintenance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelWarranty": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "paragon": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelComputation": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelProcessing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetsTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketAndroids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketDimensions": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketMultiverse": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketProtectors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerOverwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerUnderwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "producedAsScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "productionScaling": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "progressiveAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfBody": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfMind": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfSEssence": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "quantumComputing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "reapers": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "regulatedAcademia": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renegade": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renewableEnergy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "repeatableResearch": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rocketMania": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rudimentarySingularity": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "saren": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificPlanets": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "serverTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shellWorlds": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shepherd": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shoulderSurgery": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfGiants": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfPrecursors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheEnlightened": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheFallen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "solarBubbles": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "startHereTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stayingPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarImprovements": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarObliteration": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarSacrifices": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superRadiantScattering": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superchargedPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "supernova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "tasteOfPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraEculeo": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraFirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraGloriae": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraInfirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraIrradiant": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNullius": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraformingProtocols": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "ultimateSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "unsuspiciousAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "versatileProductionTactics": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatCouldHaveBeen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatWillComeToPass": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerBoost": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerEfficiencyTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "worthySacrifice": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                }
+              },
+              "activeAutoAssignment": [],
+              "presets": [
+                {
+                  "name": "Preset 1",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "cyan"
+                },
+                {
+                  "name": "Preset 2",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "orange"
+                },
+                {
+                  "name": "Preset 3",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "gold"
+                },
+                {
+                  "name": "Preset 4",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "rose"
+                },
+                {
+                  "name": "Preset 5",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "pink"
+                }
+              ],
+              "autoAssignNonRefundable": true,
+              "tabPresetAutomation": {
+                "bots": 0,
+                "research": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "challenge-replay-cancel",
+          "passed": true
+        },
+        {
+          "name": "galvanize-cancel",
+          "passed": true
+        },
+        {
+          "name": "galvanize-commit",
+          "state": {
+            "challenges": {
+              "galvanizedSkillIds": [
+                "startHereTree"
+              ],
+              "unlocked": true,
+              "active": null,
+              "blankSlateCompleted": true,
+              "galvanizers": "0",
+              "hasEarnedGalvanizer": true
+            },
+            "ip": "1000000",
+            "spent": "0",
+            "quantum": {
+              "pointsEarned": "1000420",
+              "pointsSpent": "420",
+              "divisionsPurchased": "7",
+              "permanentSecrets": "27",
+              "influenceSpeedBonus": "64",
+              "cashBonusLevels": "15",
+              "scienceBonusLevels": "15",
+              "unlocks": {
+                "botMultitasking": true,
+                "doubleInfinityPoints": true,
+                "breakTheLoop": true,
+                "quantumEntanglement": true,
+                "automation": true,
+                "fragments": true,
+                "purity": true,
+                "terra": true,
+                "power": true,
+                "paragade": true,
+                "stellar": true,
+                "matrioshkaBrains": true,
+                "birchPlanets": true,
+                "galacticBrains": true
+              }
+            },
+            "skills": {
+              "points": "1001",
+              "fragments": "1000",
+              "byId": {
+                "addictionToPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "agressiveAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "aiManagerTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "androids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "artificiallyEnhancedPanels": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyLineTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "assemblyMegaLines": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "avocados": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "banking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "burnOut": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "citadelCouncil": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "clusterNetworking": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "coldFusion": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dataCenterTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dimensionalCatCables": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "doubleScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "dysonSubsidies": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "economicRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "endOfTheLine": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fragmentAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "fusionReactors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "galacticPradigmShift": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "higgsBoson": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hubbleTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "hypercubeNetworks": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleElectricSheep": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "idleSpaceFlight": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "indulgingInPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "investmentPortfolio": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "jamesWebbTelescope": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "manualLabour": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "megaSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "monetaryPolicy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "oneMinutePlan": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelLifetime20Tree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelMaintenance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "panelWarranty": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "paragon": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelComputation": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "parallelProcessing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "planetsTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketAndroids": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketDimensions": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketMultiverse": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "pocketProtectors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerOverwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "powerUnderwhelming": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "producedAsScienceTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "productionScaling": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "progressiveAssembly": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfBody": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfMind": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "purityOfSEssence": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "quantumComputing": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "reapers": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "regulatedAcademia": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renegade": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "renewableEnergy": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "repeatableResearch": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rocketMania": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "rudimentarySingularity": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "saren": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificPlanets": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "scientificRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "serverTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shellWorlds": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shepherd": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shoulderSurgery": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfGiants": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfPrecursors": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheEnlightened": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheFallen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "shouldersOfTheRevolution": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "solarBubbles": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "startHereTree": {
+                  "owned": true,
+                  "level": 1,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stayingPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarDominance": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarImprovements": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarObliteration": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "stellarSacrifices": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superRadiantScattering": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "superchargedPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "supernova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "tasteOfPower": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraEculeo": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraFirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraGloriae": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraInfirma": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraIrradiant": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNova": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraNullius": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "terraformingProtocols": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "ultimateSwarm": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "unsuspiciousAlgorithms": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "versatileProductionTactics": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatCouldHaveBeen": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "whatWillComeToPass": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerBoost": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "workerEfficiencyTree": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                },
+                "worthySacrifice": {
+                  "owned": false,
+                  "level": 0,
+                  "timerSeconds": 0,
+                  "secondaryTimerSeconds": 0
+                }
+              },
+              "activeAutoAssignment": [],
+              "presets": [
+                {
+                  "name": "Preset 1",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "cyan"
+                },
+                {
+                  "name": "Preset 2",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "orange"
+                },
+                {
+                  "name": "Preset 3",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "gold"
+                },
+                {
+                  "name": "Preset 4",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "rose"
+                },
+                {
+                  "name": "Preset 5",
+                  "skillIds": [],
+                  "botDistribution": 0,
+                  "colorId": "pink"
+                }
+              ],
+              "autoAssignNonRefundable": true,
+              "tabPresetAutomation": {
+                "bots": 0,
+                "research": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "galvanize-reload",
+          "passed": true,
+          "state": {
+            "galvanizedSkillIds": [
+              "startHereTree"
+            ],
+            "unlocked": true,
+            "active": null,
+            "blankSlateCompleted": true,
+            "galvanizers": "0",
+            "hasEarnedGalvanizer": true
+          }
+        }
+      ],
+      "errors": [],
+      "pageErrors": [],
+      "consoleErrors": [],
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Synthetic funded late-quantum fixture establishes UI eligibility, not natural progression.",
+    "Completed-challenge seed explicitly grants one earned Galvanizer; no natural challenge completion is claimed.",
+    "Chromium mobile viewport uses pointer/keyboard, not physical touch or native overlays."
+  ]
+}

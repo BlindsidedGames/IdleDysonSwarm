@@ -1,0 +1,3844 @@
+{
+  "baseline": "878f5bffecd59c699712103172e668d12853d16a",
+  "candidate": "7bc88cd7c8045e48675e343ed2374a0cfd8706d7",
+  "introducedRegressionsFound": 0,
+  "overallAcceptancePassed": false,
+  "preexistingFindings": [
+    "Skills reset live queue revival",
+    "Legacy IDB1 CRC32 not validated"
+  ],
+  "productionChangesMadeDuringReview": false,
+  "evidence": {
+    "save-browser": [
+      {
+        "build": "baseline",
+        "fixture": "fresh",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "baseline",
+        "fixture": "mid-swarm",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "baseline",
+        "fixture": "first-infinity",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "baseline",
+        "fixture": "mature-infinity",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "baseline",
+        "fixture": "reality-unlock",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "baseline",
+        "fixture": "mature-simulations",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "baseline",
+        "fixture": "quantum-unlock",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "baseline",
+        "fixture": "late-quantum",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "baseline",
+        "fixture": "maximum-skills",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "fresh",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "mid-swarm",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "first-infinity",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "mature-infinity",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "reality-unlock",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "mature-simulations",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "quantum-unlock",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "late-quantum",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      },
+      {
+        "build": "candidate",
+        "fixture": "maximum-skills",
+        "passed": true,
+        "checks": [
+          "import",
+          "export",
+          "reload",
+          "corrupt import rejects and retains",
+          "reset cancel retains",
+          "reset confirm fresh",
+          "export reimport restores"
+        ]
+      }
+    ],
+    "save-transfer-browser": [
+      {
+        "build": "baseline",
+        "checks": [
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "fresh",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "mid-swarm",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "first-infinity",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "mature-infinity",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "reality-unlock",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "mature-simulations",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "quantum-unlock",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "late-quantum",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "maximum-skills",
+            "passed": true
+          },
+          {
+            "kind": "download-file-exact-bytes",
+            "passed": true
+          },
+          {
+            "kind": "copy-string-exact-bytes",
+            "passed": true
+          },
+          {
+            "kind": "choose-downloaded-file-review-import",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      {
+        "build": "candidate",
+        "checks": [
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "fresh",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "mid-swarm",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "first-infinity",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "mature-infinity",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "reality-unlock",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "mature-simulations",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "quantum-unlock",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "late-quantum",
+            "passed": true
+          },
+          {
+            "kind": "opposite-build-export-import",
+            "fixture": "maximum-skills",
+            "passed": true
+          },
+          {
+            "kind": "download-file-exact-bytes",
+            "passed": true
+          },
+          {
+            "kind": "copy-string-exact-bytes",
+            "passed": true
+          },
+          {
+            "kind": "choose-downloaded-file-review-import",
+            "passed": true
+          }
+        ],
+        "passed": true
+      }
+    ],
+    "storage-browser": [
+      {
+        "build": "baseline",
+        "checks": [
+          "second-tab takeover preserves progression",
+          "previous tab loses writable UI",
+          "corrupt primary recovers complete selected progression from valid backup",
+          "future primary blocks startup and retains exact bytes despite valid backup"
+        ],
+        "pageErrors": [],
+        "passed": true
+      },
+      {
+        "build": "candidate",
+        "checks": [
+          "second-tab takeover preserves progression",
+          "previous tab loses writable UI",
+          "corrupt primary recovers complete selected progression from valid backup",
+          "future primary blocks startup and retains exact bytes despite valid backup"
+        ],
+        "pageErrors": [],
+        "passed": true
+      }
+    ],
+    "offline-browser": [
+      {
+        "build": "baseline",
+        "checks": [
+          "arm and cancel preserves bank",
+          "confirm completes and charges exactly 60 seconds",
+          "repeat completes and charges exactly once",
+          "running cancel preserves unspent bank",
+          "speed up completes and consumes remaining bank"
+        ],
+        "passed": true
+      },
+      {
+        "build": "candidate",
+        "checks": [
+          "arm and cancel preserves bank",
+          "confirm completes and charges exactly 60 seconds",
+          "repeat completes and charges exactly once",
+          "running cancel preserves unspent bank",
+          "speed up completes and consumes remaining bank"
+        ],
+        "passed": true
+      }
+    ],
+    "offline-durable-browser": [
+      {
+        "build": "baseline",
+        "checks": [
+          "arm and cancel preserves bank",
+          "confirmed job completed; no Export before reload",
+          "completed-job bank survives reload within two seconds legitimate offline accrual",
+          "cancelled-job bank survives reload without spending"
+        ],
+        "reloadedAfterCompletedJob": 3540.078,
+        "reloadedAfterCancelledJob": 3540.1459999999997,
+        "passed": true
+      },
+      {
+        "build": "candidate",
+        "checks": [
+          "arm and cancel preserves bank",
+          "confirmed job completed; no Export before reload",
+          "completed-job bank survives reload within two seconds legitimate offline accrual",
+          "cancelled-job bank survives reload without spending"
+        ],
+        "reloadedAfterCompletedJob": 3540.084,
+        "reloadedAfterCancelledJob": 3540.144,
+        "passed": true
+      }
+    ],
+    "debug-browser": [
+      {
+        "build": "baseline",
+        "actions": [
+          {
+            "label": "Purchase Developer Options with in-game currencies",
+            "passed": true
+          },
+          {
+            "kind": "amount-input",
+            "value": "nonsense",
+            "controls": [
+              {
+                "label": "Double cap",
+                "disabled": false
+              },
+              {
+                "label": "Whole cap",
+                "disabled": false
+              },
+              {
+                "label": "Add Cash",
+                "disabled": true
+              },
+              {
+                "label": "Add Bots",
+                "disabled": true
+              },
+              {
+                "label": "Add Skill Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Infinity Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Quantum Shards",
+                "disabled": true
+              },
+              {
+                "label": "Add Influence",
+                "disabled": true
+              },
+              {
+                "label": "Add Strange Matter",
+                "disabled": true
+              },
+              {
+                "label": "Add Offline Time",
+                "disabled": true
+              },
+              {
+                "label": "Apply",
+                "disabled": false
+              },
+              {
+                "label": "Unlock all tabs",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to 1 second",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to instant",
+                "disabled": false
+              },
+              {
+                "label": "Recalculate Skill Points",
+                "disabled": false
+              },
+              {
+                "label": "Reset Secret Progress",
+                "disabled": false
+              },
+              {
+                "label": "Disable Developer Options",
+                "disabled": false
+              }
+            ],
+            "feedback": "Enter an amount using digits, scientific notation or a Standard game suffix."
+          },
+          {
+            "kind": "amount-input",
+            "value": "-1",
+            "controls": [
+              {
+                "label": "Double cap",
+                "disabled": false
+              },
+              {
+                "label": "Whole cap",
+                "disabled": false
+              },
+              {
+                "label": "Add Cash",
+                "disabled": true
+              },
+              {
+                "label": "Add Bots",
+                "disabled": true
+              },
+              {
+                "label": "Add Skill Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Infinity Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Quantum Shards",
+                "disabled": true
+              },
+              {
+                "label": "Add Influence",
+                "disabled": true
+              },
+              {
+                "label": "Add Strange Matter",
+                "disabled": true
+              },
+              {
+                "label": "Add Offline Time",
+                "disabled": true
+              },
+              {
+                "label": "Apply",
+                "disabled": false
+              },
+              {
+                "label": "Unlock all tabs",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to 1 second",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to instant",
+                "disabled": false
+              },
+              {
+                "label": "Recalculate Skill Points",
+                "disabled": false
+              },
+              {
+                "label": "Reset Secret Progress",
+                "disabled": false
+              },
+              {
+                "label": "Disable Developer Options",
+                "disabled": false
+              }
+            ],
+            "feedback": "Enter an amount using digits, scientific notation or a Standard game suffix."
+          },
+          {
+            "kind": "amount-input",
+            "value": "1.5",
+            "controls": [
+              {
+                "label": "Double cap",
+                "disabled": false
+              },
+              {
+                "label": "Whole cap",
+                "disabled": false
+              },
+              {
+                "label": "Add Cash",
+                "disabled": true
+              },
+              {
+                "label": "Add Bots",
+                "disabled": true
+              },
+              {
+                "label": "Add Skill Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Infinity Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Quantum Shards",
+                "disabled": true
+              },
+              {
+                "label": "Add Influence",
+                "disabled": true
+              },
+              {
+                "label": "Add Strange Matter",
+                "disabled": true
+              },
+              {
+                "label": "Add Offline Time",
+                "disabled": true
+              },
+              {
+                "label": "Apply",
+                "disabled": false
+              },
+              {
+                "label": "Unlock all tabs",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to 1 second",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to instant",
+                "disabled": false
+              },
+              {
+                "label": "Recalculate Skill Points",
+                "disabled": false
+              },
+              {
+                "label": "Reset Secret Progress",
+                "disabled": false
+              },
+              {
+                "label": "Disable Developer Options",
+                "disabled": false
+              }
+            ],
+            "feedback": "Enter an amount using digits, scientific notation or a Standard game suffix."
+          },
+          {
+            "kind": "amount-input",
+            "value": "1",
+            "controls": [
+              {
+                "label": "Double cap",
+                "disabled": false
+              },
+              {
+                "label": "Whole cap",
+                "disabled": false
+              },
+              {
+                "label": "Add Cash",
+                "disabled": true
+              },
+              {
+                "label": "Add Bots",
+                "disabled": true
+              },
+              {
+                "label": "Add Skill Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Infinity Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Quantum Shards",
+                "disabled": true
+              },
+              {
+                "label": "Add Influence",
+                "disabled": true
+              },
+              {
+                "label": "Add Strange Matter",
+                "disabled": true
+              },
+              {
+                "label": "Add Offline Time",
+                "disabled": true
+              },
+              {
+                "label": "Apply",
+                "disabled": false
+              },
+              {
+                "label": "Unlock all tabs",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to 1 second",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to instant",
+                "disabled": false
+              },
+              {
+                "label": "Recalculate Skill Points",
+                "disabled": false
+              },
+              {
+                "label": "Reset Secret Progress",
+                "disabled": false
+              },
+              {
+                "label": "Disable Developer Options",
+                "disabled": false
+              }
+            ],
+            "feedback": "Enter an amount using digits, scientific notation or a Standard game suffix."
+          },
+          {
+            "kind": "button",
+            "label": "Double cap",
+            "status": "Developer Options unlocked.",
+            "amount": "1.7976931348623157e+308"
+          },
+          {
+            "kind": "button",
+            "label": "Whole cap",
+            "status": "Developer Options unlocked.",
+            "amount": "9223372036854775807"
+          },
+          {
+            "kind": "button",
+            "label": "Add Cash",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071"
+          },
+          {
+            "kind": "button",
+            "label": "Add Bots",
+            "status": "Development change saved.",
+            "amount": "922337203685477580711"
+          },
+          {
+            "kind": "button",
+            "label": "Add Skill Points",
+            "status": "Development change saved.",
+            "amount": "9223372036854775807111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Infinity Points",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Quantum Shards",
+            "status": "Development change saved.",
+            "amount": "922337203685477580711111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Influence",
+            "status": "Development change saved.",
+            "amount": "9223372036854775807111111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Strange Matter",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071111111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Offline Time",
+            "status": "Development change saved.",
+            "amount": "922337203685477580711111111"
+          },
+          {
+            "kind": "button",
+            "label": "Apply",
+            "status": "Development change saved.",
+            "amount": "9223372036854775807111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Unlock all tabs",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Set Tinker to 1 second",
+            "status": "Development change saved.",
+            "amount": "922337203685477580711111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Set Tinker to instant",
+            "status": "Development change saved.",
+            "amount": "9223372036854775807111111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Recalculate Skill Points",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071111111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Reset Secret Progress",
+            "status": "Secret progress reset.",
+            "amount": "922337203685477580711111111111111"
+          },
+          {
+            "kind": "preset",
+            "value": "early",
+            "status": "That development change could not be applied."
+          },
+          {
+            "kind": "preset",
+            "value": "facilities",
+            "status": "Development change saved."
+          },
+          {
+            "kind": "preset",
+            "value": "star",
+            "status": "Development change saved."
+          },
+          {
+            "kind": "preset",
+            "value": "galaxy",
+            "status": "Development change saved."
+          },
+          {
+            "kind": "preset",
+            "value": "deep-field",
+            "status": "Development change saved."
+          },
+          {
+            "kind": "disable-and-reenable",
+            "reenable": "Enable for free",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      {
+        "build": "candidate",
+        "actions": [
+          {
+            "label": "Purchase Developer Options with in-game currencies",
+            "passed": true
+          },
+          {
+            "kind": "amount-input",
+            "value": "nonsense",
+            "controls": [
+              {
+                "label": "Double cap",
+                "disabled": false
+              },
+              {
+                "label": "Whole cap",
+                "disabled": false
+              },
+              {
+                "label": "Add Cash",
+                "disabled": true
+              },
+              {
+                "label": "Add Bots",
+                "disabled": true
+              },
+              {
+                "label": "Add Skill Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Infinity Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Quantum Shards",
+                "disabled": true
+              },
+              {
+                "label": "Add Influence",
+                "disabled": true
+              },
+              {
+                "label": "Add Strange Matter",
+                "disabled": true
+              },
+              {
+                "label": "Add Offline Time",
+                "disabled": true
+              },
+              {
+                "label": "Apply",
+                "disabled": false
+              },
+              {
+                "label": "Unlock all tabs",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to 1 second",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to instant",
+                "disabled": false
+              },
+              {
+                "label": "Recalculate Skill Points",
+                "disabled": false
+              },
+              {
+                "label": "Reset Secret Progress",
+                "disabled": false
+              },
+              {
+                "label": "Disable Developer Options",
+                "disabled": false
+              }
+            ],
+            "feedback": "Enter an amount using digits, scientific notation or a Standard game suffix."
+          },
+          {
+            "kind": "amount-input",
+            "value": "-1",
+            "controls": [
+              {
+                "label": "Double cap",
+                "disabled": false
+              },
+              {
+                "label": "Whole cap",
+                "disabled": false
+              },
+              {
+                "label": "Add Cash",
+                "disabled": true
+              },
+              {
+                "label": "Add Bots",
+                "disabled": true
+              },
+              {
+                "label": "Add Skill Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Infinity Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Quantum Shards",
+                "disabled": true
+              },
+              {
+                "label": "Add Influence",
+                "disabled": true
+              },
+              {
+                "label": "Add Strange Matter",
+                "disabled": true
+              },
+              {
+                "label": "Add Offline Time",
+                "disabled": true
+              },
+              {
+                "label": "Apply",
+                "disabled": false
+              },
+              {
+                "label": "Unlock all tabs",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to 1 second",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to instant",
+                "disabled": false
+              },
+              {
+                "label": "Recalculate Skill Points",
+                "disabled": false
+              },
+              {
+                "label": "Reset Secret Progress",
+                "disabled": false
+              },
+              {
+                "label": "Disable Developer Options",
+                "disabled": false
+              }
+            ],
+            "feedback": "Enter an amount using digits, scientific notation or a Standard game suffix."
+          },
+          {
+            "kind": "amount-input",
+            "value": "1.5",
+            "controls": [
+              {
+                "label": "Double cap",
+                "disabled": false
+              },
+              {
+                "label": "Whole cap",
+                "disabled": false
+              },
+              {
+                "label": "Add Cash",
+                "disabled": true
+              },
+              {
+                "label": "Add Bots",
+                "disabled": true
+              },
+              {
+                "label": "Add Skill Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Infinity Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Quantum Shards",
+                "disabled": true
+              },
+              {
+                "label": "Add Influence",
+                "disabled": true
+              },
+              {
+                "label": "Add Strange Matter",
+                "disabled": true
+              },
+              {
+                "label": "Add Offline Time",
+                "disabled": true
+              },
+              {
+                "label": "Apply",
+                "disabled": false
+              },
+              {
+                "label": "Unlock all tabs",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to 1 second",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to instant",
+                "disabled": false
+              },
+              {
+                "label": "Recalculate Skill Points",
+                "disabled": false
+              },
+              {
+                "label": "Reset Secret Progress",
+                "disabled": false
+              },
+              {
+                "label": "Disable Developer Options",
+                "disabled": false
+              }
+            ],
+            "feedback": "Enter an amount using digits, scientific notation or a Standard game suffix."
+          },
+          {
+            "kind": "amount-input",
+            "value": "1",
+            "controls": [
+              {
+                "label": "Double cap",
+                "disabled": false
+              },
+              {
+                "label": "Whole cap",
+                "disabled": false
+              },
+              {
+                "label": "Add Cash",
+                "disabled": true
+              },
+              {
+                "label": "Add Bots",
+                "disabled": true
+              },
+              {
+                "label": "Add Skill Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Infinity Points",
+                "disabled": true
+              },
+              {
+                "label": "Add Quantum Shards",
+                "disabled": true
+              },
+              {
+                "label": "Add Influence",
+                "disabled": true
+              },
+              {
+                "label": "Add Strange Matter",
+                "disabled": true
+              },
+              {
+                "label": "Add Offline Time",
+                "disabled": true
+              },
+              {
+                "label": "Apply",
+                "disabled": false
+              },
+              {
+                "label": "Unlock all tabs",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to 1 second",
+                "disabled": false
+              },
+              {
+                "label": "Set Tinker to instant",
+                "disabled": false
+              },
+              {
+                "label": "Recalculate Skill Points",
+                "disabled": false
+              },
+              {
+                "label": "Reset Secret Progress",
+                "disabled": false
+              },
+              {
+                "label": "Disable Developer Options",
+                "disabled": false
+              }
+            ],
+            "feedback": "Enter an amount using digits, scientific notation or a Standard game suffix."
+          },
+          {
+            "kind": "button",
+            "label": "Double cap",
+            "status": "Developer Options unlocked.",
+            "amount": "1.7976931348623157e+308"
+          },
+          {
+            "kind": "button",
+            "label": "Whole cap",
+            "status": "Developer Options unlocked.",
+            "amount": "9223372036854775807"
+          },
+          {
+            "kind": "button",
+            "label": "Add Cash",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071"
+          },
+          {
+            "kind": "button",
+            "label": "Add Bots",
+            "status": "Development change saved.",
+            "amount": "922337203685477580711"
+          },
+          {
+            "kind": "button",
+            "label": "Add Skill Points",
+            "status": "Development change saved.",
+            "amount": "9223372036854775807111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Infinity Points",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Quantum Shards",
+            "status": "Development change saved.",
+            "amount": "922337203685477580711111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Influence",
+            "status": "Development change saved.",
+            "amount": "9223372036854775807111111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Strange Matter",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071111111"
+          },
+          {
+            "kind": "button",
+            "label": "Add Offline Time",
+            "status": "Development change saved.",
+            "amount": "922337203685477580711111111"
+          },
+          {
+            "kind": "button",
+            "label": "Apply",
+            "status": "Development change saved.",
+            "amount": "9223372036854775807111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Unlock all tabs",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Set Tinker to 1 second",
+            "status": "Development change saved.",
+            "amount": "922337203685477580711111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Set Tinker to instant",
+            "status": "Development change saved.",
+            "amount": "9223372036854775807111111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Recalculate Skill Points",
+            "status": "Development change saved.",
+            "amount": "92233720368547758071111111111111"
+          },
+          {
+            "kind": "button",
+            "label": "Reset Secret Progress",
+            "status": "Secret progress reset.",
+            "amount": "922337203685477580711111111111111"
+          },
+          {
+            "kind": "preset",
+            "value": "early",
+            "status": "That development change could not be applied."
+          },
+          {
+            "kind": "preset",
+            "value": "facilities",
+            "status": "Development change saved."
+          },
+          {
+            "kind": "preset",
+            "value": "star",
+            "status": "Development change saved."
+          },
+          {
+            "kind": "preset",
+            "value": "galaxy",
+            "status": "Development change saved."
+          },
+          {
+            "kind": "preset",
+            "value": "deep-field",
+            "status": "Development change saved."
+          },
+          {
+            "kind": "disable-and-reenable",
+            "reenable": "Enable for free",
+            "passed": true
+          }
+        ],
+        "passed": true
+      }
+    ],
+    "surface-sweep": [
+      {
+        "build": "baseline",
+        "fixtureId": "mature-infinity",
+        "route": "bots",
+        "actions": [
+          {
+            "label": "Purchase settings",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(3)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(4)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(5)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "0",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "1",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "2",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "3",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "4",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "5",
+            "passed": true
+          },
+          {
+            "label": "Purchase an Assembly Line: +1, $201,496,561.43871814",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Assembly Lines\nBuild assembly lines that create bots for you, that way you don't have to work so hard!\n\u00d7\n\nCurrent production\n\n2.01e25 / second\n\n2.01e25 / game second\n\nHow this is calculated\n1\nBase Output\nBase\nProducing 1 Bot /10.0s\n=0.10\nWorking facilities\n37.0Qi Produced\n74.0 Manually purchased\n\u00d737.0Qi\n\n0.10 \u00d7 37.0Qi = 3.70Qi\n\n2\nProduction Modifiers\nResearch\nAssembly Line\nTraining algorithms make your Assembly Lines more efficient, thus producing more bots!\n+0.36\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nSecrets of the Universe\nSecrets of the Universe\n\u00d72.00\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (3.70Qi) \u00d7 2.72M \u00d7 2.00 = 2.01e25\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Assembly Lines\nAI Managers\nProduced by AI Managers (53.4Qi)\nManual Purchases\n74.0 Assembly Lines purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Purchase an AI Manager: +1, $14,864,079,791.204021",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "AI Managers\nPurchase AI Managers which automatically handle Assembly Line Creation!\n\u00d7\n\nCurrent production\n\n84.0Qi / second\n\n84.0Qi / game second\n\nHow this is calculated\n1\nBase Output\nBase\nGenerating 1 Assembly Line /60.0s\n=0.02\nWorking facilities\n1.85Qa Produced\n73.0 Manually purchased\n\u00d71.85Qa\n\n0.02 \u00d7 1.85Qa = 30.9T\n\n2\nProduction Modifiers\nResearch\nAI Manager\nRefactoring code makes your AI Managers more efficient, thus producing more Assembly Lines!\n+0.36\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (30.9T) \u00d7 1.36M \u00d7 2.00 = 84.0Qi\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain AI Managers\nServers\nProduced by Servers (1.70Qa)\nManual Purchases\n73.0 AI Managers purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Purchase a Server: +1, $33,018,171,667,670.504",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Servers\nAcquire more server space so you can run more Managers. Totally worth it!\n\u00d7\n\nCurrent production\n\n2.17Qa / second\n\n2.17Qa / game second\n\nHow this is calculated\n1\nBase Output\nBase\nTraining 1 AI Manager /10.0 Min\n=0.00\nWorking facilities\n224B Produced\n74.0 Manually purchased\n\u00d7224B\n\n0.00 \u00d7 224B = 374M\n\n2\nProduction Modifiers\nResearch\nServer\nUpgrade to the latest Server Technology, allows your servers to run more AI Managers!\n+0.45\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nSecrets of the Universe\nSecrets of the Universe\n\u00d72.00\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (374M) \u00d7 2.90M \u00d7 2.00 = 2.17Qa\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Servers\nData Centers\nProduced by Data Centers (120B)\nManual Purchases\n74.0 Servers purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Purchase a Data Center: +1, $1,096,969,088,590,856.8",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Data Centers\nMore Data Centers mean more Servers, more Servers mean more Bots, Bots are good.\n\u00d7\n\nCurrent production\n\n134B / second\n\n134B / game second\n\nHow this is calculated\n1\nBase Output\nBase\nDeploying 1 Server /15.0 Min\n=0.00\nWorking facilities\n51.2M Produced\n74.0 Manually purchased\n\u00d751.2M\n\n0.00 \u00d7 51.2M = 56.8K\n\n2\nProduction Modifiers\nResearch\nData Center\nEfficiency protocols allow you to improve the efficiency of your Data Centers.\n+0.18\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (56.8K) \u00d7 1.18M \u00d7 2.00 = 134B\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Data Centers\nPlanets\nProduced by Planets (12.2M)\nManual Purchases\n74.0 Data Centers purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Purchase a Planet: +1, $9,495,567,745,759,798",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Planets\nDiscover and settle on new Planets and Cover them with Data Centers!\n\u00d7\n\nCurrent production\n\n12.2M / second\n\n12.2M / game second\n\nHow this is calculated\n1\nBase Output\nBase\nCreating 1 Data Center /60.0 Min\n=0.00\nWorking facilities\n2.63K Produced\n73.0 Manually purchased\n\u00d72.70K\n\n0.00 \u00d7 2.70K = 0.75\n\n2\nProduction Modifiers\nResearch\nPlanet\nTerraform some of your planets. Machine worlds allow more room for Servers!\n+0.63\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nSecrets of the Universe\nSecrets of the Universe\n\u00d75.00\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (0.75) \u00d7 8.15M \u00d7 2.00 = 12.2M\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Planets\nManual Purchases\n73.0 Planets purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Construct a Matrioshka Brain: +1, $54,763,699,237.49309",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Matrioshka Brains\nMassive stellar computing structures that consume planets to produce more planets.\n\u00d7\n\nCurrent production\n\n0.00 / second\n\n0.00 / game second\n\nHow this is calculated\n1\nBase Output\nBase\nSynthesizing 1.00 Planets /s\n=1.00\nWorking facilities\n420 Produced\n43.0 Manually purchased\n\u00d7463\n\n1.00 \u00d7 463 = 463\n\n2\nProduction Modifiers\nResearch\nMatrioshka Brains\nTerraform some of your planets. Machine worlds allow more room for Servers!\n+0.06\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\n\nBase (463) = 0.00\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Matrioshka Brains\nBirch Planets\n420 produced by Birch Planets\n+420\nManual Purchases\n43.0 Matrioshka Brains purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Construct a Birch Planet: +1, $4,600,511,990,936.967",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Birch Planets\nSupermassive planetary shells that consume Matrioshka Brains to produce more Matrioshka Brains.\n\u00d7\n\nCurrent production\n\n0.00 / second\n\n0.00 / game second\n\nHow this is calculated\n1\nBase Output\nBase\nAssembling 1 Matrioshka Brain /1.67 Min\n=0.01\nWorking facilities\n69.0 Produced\n22.0 Manually purchased\n\u00d791.0\n\n0.01 \u00d7 91.0 = 0.91\n\n2\nProduction Modifiers\nResearch\nBirch Planets\nTerraform some of your planets. Machine worlds allow more room for Servers!\n+0.09\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\n\nBase (0.91) = 0.00\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Birch Planets\nGalactic Brains\n69.0 produced by Galactic Brains\n+69.0\nManual Purchases\n22.0 Birch Planets purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Construct a Galactic Brain: +1, $15,208,749,999.999998",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Galactic Brains\nThe ultimate mega-structure requiring both Matrioshka Brains and Birch Planets. Produces Birch Planets.\n\u00d7\n\nCurrent production\n\n0.00 / second\n\n0.00 / game second\n\nHow this is calculated\n1\nBase Output\nBase\nManifesting 1 Birch Planet /10.0s\n=0.10\nWorking facilities\n7.00 Produced\n4.00 Manually purchased\n\u00d711.0\n\n0.10 \u00d7 11.0 = 1.10\n\n2\nProduction Modifiers\nResearch\nGalactic Brains\nTerraform some of your planets. Machine worlds allow more room for Servers!\n+0.12\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\n\nBase (1.10) = 0.00\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Galactic Brains\nManual Purchases\n4.00 Galactic Brains purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "x1",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x10",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x50",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x100",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Max",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Toggle All",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "mature-infinity",
+        "route": "research",
+        "actions": [
+          {
+            "label": "Research purchase settings",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(3)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(4)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(5)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(6)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(7)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "0",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "1",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "2",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "3",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "4",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "5",
+            "passed": true
+          },
+          {
+            "label": "Purchase Cash boosts 370: 1 levels for 2.81e95 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Science boosts 485: 1 levels for 2.05e96 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Assembly Line boosts 649: 1 levels for 3.44e99 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase AI Manager boosts 527: 1 levels for 6.31e98 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Server boosts 440: 1 levels for 6.50e97 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Data Center boosts 383: 1 levels for 1.83e97 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Planet boosts 343: 1 levels for 7.24e96 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Matrioshka Brains boosts 2.00: 328 levels for 2.17e94 Science",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Birch Planets boosts 3.00: 318 levels for 1.85e94 Science",
+            "kind": "button",
+            "skipped": "Control changed after earlier transaction; retained for targeted follow-up"
+          },
+          {
+            "label": "Purchase Galactic Brains boosts 4.00: 306 levels for 1.96e94 Science",
+            "kind": "button",
+            "skipped": "Control changed after earlier transaction; retained for targeted follow-up"
+          },
+          {
+            "label": "Durability Upgrade is purchased",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Durability Upgrade is purchased",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Durability Upgrade is purchased",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Durability Upgrade is purchased",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x1",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x10",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x50",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x100",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Max",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Toggle All",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "mature-infinity",
+        "route": "infinity",
+        "actions": [
+          {
+            "label": "Infinity settings",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>section:nth-of-type(1)>div:nth-of-type(2)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "Purchase Secret of the Universe for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Permanent Skill Point for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Automate Research: Maxed",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Automate Bots: Maxed",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 Assembly Lines for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 AI Managers for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 Servers for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 Data Centers for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 Planets for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Infinity",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Auto Infinity: Off",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "mature-infinity",
+        "route": "challenges",
+        "actions": [
+          {
+            "label": "Infinity Challenges",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Start Blank Slate",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "mature-simulations",
+        "route": "reality",
+        "actions": [
+          {
+            "label": "Simulation Upgrades",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Reality Upgrades",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Countermeasures",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Foundational Era",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Education",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Anomaly",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Quality of Life",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Translation",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Speed Reduction",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Simulation Upgrades",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Countermeasures",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Foundational Era",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Education",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Reality Upgrades",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Anomaly",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Translation",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Speed Reduction",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Quality of Life",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Gather 0.00 Influence",
+            "kind": "disabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Counteract AI Overlords for 42 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 1 Hunter for 2 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 1 Gatherer for 2 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Log10 Workers for 42 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase City Booster for 1.34K Strange Matter",
+            "kind": "button",
+            "skipped": "Control changed after earlier transaction; retained for targeted follow-up"
+          },
+          {
+            "label": "Purchase Engineering I for 2 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Translation I for 8 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Speed Reduction I for 2.05K Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Enable Time Multiplier for 5 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Automate Gather Influence for 10 Strange Matter",
+            "kind": "button",
+            "skipped": "Control changed after earlier transaction; retained for targeted follow-up"
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "mature-simulations",
+        "route": "simulations",
+        "actions": [
+          {
+            "label": "Foundational Era",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Purchase settings",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Foundational Era",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>section:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "+1 101 Influence",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "+1 101 Influence",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Boost Free",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy 1",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy 10",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy 50",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy 100",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy Max",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "late-quantum",
+        "route": "avocato",
+        "actions": [
+          {
+            "label": "Feed all Infinity Points to Avocato",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Feed all Influence to Avocato",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Feed all Strange Matter to Avocato",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Overflow for 1 point",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "late-quantum",
+        "route": "story",
+        "actions": [
+          {
+            "label": "Chapter 1",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Chapter 2",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Chapter 3",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Chapter 4",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Chapter 5",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "late-quantum",
+        "route": "statistics",
+        "actions": [],
+        "pageErrors": []
+      },
+      {
+        "build": "baseline",
+        "fixtureId": "late-quantum",
+        "route": "settings",
+        "actions": [
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>label:nth-of-type(3)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(3)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(4)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(5)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(6)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(7)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(8)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(9)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(10)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(11)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(12)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(13)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(14)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(15)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(4)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "MixedStandardScientificEngineering",
+            "kind": "select-option-DOM",
+            "value": "mixed",
+            "passed": true
+          },
+          {
+            "label": "MixedStandardScientificEngineering",
+            "kind": "select-option-DOM",
+            "value": "standard",
+            "passed": true
+          },
+          {
+            "label": "MixedStandardScientificEngineering",
+            "kind": "select-option-DOM",
+            "value": "scientific",
+            "passed": true
+          },
+          {
+            "label": "MixedStandardScientificEngineering",
+            "kind": "select-option-DOM",
+            "value": "engineering",
+            "passed": true
+          },
+          {
+            "label": "Use device languageEnglishFran\u00e7aisDeutschEspa\u00f1ol (Latinoam\u00e9rica)Portugu\u00eas (Brasil)\u7b80\u4f53\u4e2d\u6587\u0420\u0443\u0441\u0441\u043a\u0438\u0439\u65e5\u672c\u8a9e",
+            "kind": "select",
+            "skipped": "Locale switching separately verified; preserve English action identifiers"
+          },
+          {
+            "label": "Import",
+            "kind": "button",
+            "skipped": "Dedicated save lifecycle suite"
+          },
+          {
+            "label": "Export",
+            "kind": "button",
+            "skipped": "Dedicated save lifecycle suite"
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "mature-infinity",
+        "route": "bots",
+        "actions": [
+          {
+            "label": "Purchase settings",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(3)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(4)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(4)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(5)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "0",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "1",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "2",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "3",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "4",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "5",
+            "passed": true
+          },
+          {
+            "label": "Purchase an Assembly Line: +1, $201,496,561.43871814",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Assembly Lines\nBuild assembly lines that create bots for you, that way you don't have to work so hard!\n\u00d7\n\nCurrent production\n\n1.92e25 / second\n\n1.92e25 / game second\n\nHow this is calculated\n1\nBase Output\nBase\nProducing 1 Bot /10.0s\n=0.10\nWorking facilities\n35.3Qi Produced\n74.0 Manually purchased\n\u00d735.3Qi\n\n0.10 \u00d7 35.3Qi = 3.53Qi\n\n2\nProduction Modifiers\nResearch\nAssembly Line\nTraining algorithms make your Assembly Lines more efficient, thus producing more bots!\n+0.36\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nSecrets of the Universe\nSecrets of the Universe\n\u00d72.00\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (3.53Qi) \u00d7 2.72M \u00d7 2.00 = 1.92e25\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Assembly Lines\nAI Managers\nProduced by AI Managers (51.6Qi)\nManual Purchases\n74.0 Assembly Lines purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Purchase an AI Manager: +1, $18,282,818,143.180946",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "AI Managers\nPurchase AI Managers which automatically handle Assembly Line Creation!\n\u00d7\n\nCurrent production\n\n79.0Qi / second\n\n79.0Qi / game second\n\nHow this is calculated\n1\nBase Output\nBase\nGenerating 1 Assembly Line /60.0s\n=0.02\nWorking facilities\n1.74Qa Produced\n74.0 Manually purchased\n\u00d71.74Qa\n\n0.02 \u00d7 1.74Qa = 29.1T\n\n2\nProduction Modifiers\nResearch\nAI Manager\nRefactoring code makes your AI Managers more efficient, thus producing more Assembly Lines!\n+0.36\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (29.1T) \u00d7 1.36M \u00d7 2.00 = 79.0Qi\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain AI Managers\nServers\nProduced by Servers (1.63Qa)\nManual Purchases\n74.0 AI Managers purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Purchase a Server: +1, $26,627,557,796,508.473",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Servers\nAcquire more server space so you can run more Managers. Totally worth it!\n\u00d7\n\nCurrent production\n\n2.13Qa / second\n\n2.13Qa / game second\n\nHow this is calculated\n1\nBase Output\nBase\nTraining 1 AI Manager /10.0 Min\n=0.00\nWorking facilities\n221B Produced\n73.0 Manually purchased\n\u00d7221B\n\n0.00 \u00d7 221B = 368M\n\n2\nProduction Modifiers\nResearch\nServer\nUpgrade to the latest Server Technology, allows your servers to run more AI Managers!\n+0.45\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nSecrets of the Universe\nSecrets of the Universe\n\u00d72.00\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (368M) \u00d7 2.90M \u00d7 2.00 = 2.13Qa\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Servers\nData Centers\nProduced by Data Centers (119B)\nManual Purchases\n73.0 Servers purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Purchase a Data Center: +1, $1,096,969,088,590,856.8",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Data Centers\nMore Data Centers mean more Servers, more Servers mean more Bots, Bots are good.\n\u00d7\n\nCurrent production\n\n133B / second\n\n133B / game second\n\nHow this is calculated\n1\nBase Output\nBase\nDeploying 1 Server /15.0 Min\n=0.00\nWorking facilities\n50.8M Produced\n74.0 Manually purchased\n\u00d750.8M\n\n0.00 \u00d7 50.8M = 56.4K\n\n2\nProduction Modifiers\nResearch\nData Center\nEfficiency protocols allow you to improve the efficiency of your Data Centers.\n+0.18\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (56.4K) \u00d7 1.18M \u00d7 2.00 = 133B\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Data Centers\nPlanets\nProduced by Planets (12.2M)\nManual Purchases\n74.0 Data Centers purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Purchase a Planet: +1, $9,495,567,745,759,798",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Planets\nDiscover and settle on new Planets and Cover them with Data Centers!\n\u00d7\n\nCurrent production\n\n12.2M / second\n\n12.2M / game second\n\nHow this is calculated\n1\nBase Output\nBase\nCreating 1 Data Center /60.0 Min\n=0.00\nWorking facilities\n2.63K Produced\n73.0 Manually purchased\n\u00d72.70K\n\n0.00 \u00d7 2.70K = 0.75\n\n2\nProduction Modifiers\nResearch\nPlanet\nTerraform some of your planets. Machine worlds allow more room for Servers!\n+0.63\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\nSecrets of the Universe\nSecrets of the Universe\n\u00d75.00\nPurchase Bonuses\n50 purchased milestone\n50 purchased milestone\n\u00d72.00\n\nBase (0.75) \u00d7 8.15M \u00d7 2.00 = 12.2M\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Planets\nManual Purchases\n73.0 Planets purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Construct a Matrioshka Brain: +1, $54,763,699,237.49309",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Matrioshka Brains\nMassive stellar computing structures that consume planets to produce more planets.\n\u00d7\n\nCurrent production\n\n0.00 / second\n\n0.00 / game second\n\nHow this is calculated\n1\nBase Output\nBase\nSynthesizing 1.00 Planets /s\n=1.00\nWorking facilities\n420 Produced\n43.0 Manually purchased\n\u00d7463\n\n1.00 \u00d7 463 = 463\n\n2\nProduction Modifiers\nResearch\nMatrioshka Brains\nTerraform some of your planets. Machine worlds allow more room for Servers!\n+0.06\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\n\nBase (463) = 0.00\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Matrioshka Brains\nBirch Planets\n420 produced by Birch Planets\n+420\nManual Purchases\n43.0 Matrioshka Brains purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Construct a Birch Planet: +1, $4,600,511,990,936.967",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Birch Planets\nSupermassive planetary shells that consume Matrioshka Brains to produce more Matrioshka Brains.\n\u00d7\n\nCurrent production\n\n0.00 / second\n\n0.00 / game second\n\nHow this is calculated\n1\nBase Output\nBase\nAssembling 1 Matrioshka Brain /1.67 Min\n=0.01\nWorking facilities\n69.0 Produced\n22.0 Manually purchased\n\u00d791.0\n\n0.01 \u00d7 91.0 = 0.91\n\n2\nProduction Modifiers\nResearch\nBirch Planets\nTerraform some of your planets. Machine worlds allow more room for Servers!\n+0.09\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\n\nBase (0.91) = 0.00\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Birch Planets\nGalactic Brains\n69.0 produced by Galactic Brains\n+69.0\nManual Purchases\n22.0 Birch Planets purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "Construct a Galactic Brain: +1, $15,208,749,999.999998",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Details",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": {
+              "text": "Galactic Brains\nThe ultimate mega-structure requiring both Matrioshka Brains and Birch Planets. Produces Birch Planets.\n\u00d7\n\nCurrent production\n\n0.00 / second\n\n0.00 / game second\n\nHow this is calculated\n1\nBase Output\nBase\nManifesting 1 Birch Planet /10.0s\n=0.10\nWorking facilities\n7.00 Produced\n4.00 Manually purchased\n\u00d711.0\n\n0.10 \u00d7 11.0 = 1.10\n\n2\nProduction Modifiers\nResearch\nGalactic Brains\nTerraform some of your planets. Machine worlds allow more room for Servers!\n+0.12\nFormula\nOther Bonuses\nInfinity\nInfinity\n\u00d71.00M\n\nBase (1.10) = 0.00\n\n3\nTime\nGame speed\nEach real second advances 1.00 game seconds\n\u00d71.00\nHow you gain Galactic Brains\nManual Purchases\n4.00 Galactic Brains purchased directly",
+              "buttons": [
+                {
+                  "text": "\u00d7",
+                  "disabled": false
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "label": "x1",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x10",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x50",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x100",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Max",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Toggle All",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "mature-infinity",
+        "route": "research",
+        "actions": [
+          {
+            "label": "Research purchase settings",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(3)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(4)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(5)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(6)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>fieldset:nth-of-type(1)>div:nth-of-type(1)>label:nth-of-type(7)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "0",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "1",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "2",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "3",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "4",
+            "passed": true
+          },
+          {
+            "label": "OffPreset 1Preset 2Preset 3Preset 4Preset 5",
+            "kind": "select-option-DOM",
+            "value": "5",
+            "passed": true
+          },
+          {
+            "label": "Purchase Cash boosts 370: 1 levels for 2.81e95 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Science boosts 485: 1 levels for 2.05e96 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Assembly Line boosts 649: 1 levels for 3.44e99 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase AI Manager boosts 527: 1 levels for 6.31e98 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Server boosts 440: 1 levels for 6.50e97 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Data Center boosts 383: 1 levels for 1.83e97 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Planet boosts 343: 1 levels for 7.24e96 Science",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Matrioshka Brains boosts 2.00: 328 levels for 2.17e94 Science",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Birch Planets boosts 3.00: 318 levels for 1.85e94 Science",
+            "kind": "button",
+            "skipped": "Control changed after earlier transaction; retained for targeted follow-up"
+          },
+          {
+            "label": "Purchase Galactic Brains boosts 4.00: 306 levels for 1.96e94 Science",
+            "kind": "button",
+            "skipped": "Control changed after earlier transaction; retained for targeted follow-up"
+          },
+          {
+            "label": "Durability Upgrade is purchased",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Durability Upgrade is purchased",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Durability Upgrade is purchased",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Durability Upgrade is purchased",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x1",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x10",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x50",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "x100",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Max",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Toggle All",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "mature-infinity",
+        "route": "infinity",
+        "actions": [
+          {
+            "label": "Infinity settings",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>section:nth-of-type(1)>div:nth-of-type(2)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "Purchase Secret of the Universe for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Permanent Skill Point for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Automate Research: Maxed",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Automate Bots: Maxed",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 Assembly Lines for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 AI Managers for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 Servers for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 Data Centers for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 10 Planets for 1 Infinity Points",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Infinity",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Auto Infinity: Off",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "mature-infinity",
+        "route": "challenges",
+        "actions": [
+          {
+            "label": "Infinity Challenges",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Start Blank Slate",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "mature-simulations",
+        "route": "reality",
+        "actions": [
+          {
+            "label": "Simulation Upgrades",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Reality Upgrades",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Countermeasures",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Foundational Era",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Education",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Anomaly",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Quality of Life",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Translation",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Speed Reduction",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Simulation Upgrades",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Countermeasures",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Foundational Era",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Education",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Reality Upgrades",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Anomaly",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Translation",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Speed Reduction",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Quality of Life",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Gather 0.00 Influence",
+            "kind": "disabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Counteract AI Overlords for 42 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 1 Hunter for 2 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Start with 1 Gatherer for 2 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Log10 Workers for 42 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase City Booster for 1.34K Strange Matter",
+            "kind": "button",
+            "skipped": "Control changed after earlier transaction; retained for targeted follow-up"
+          },
+          {
+            "label": "Purchase Engineering I for 2 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Translation I for 8 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Speed Reduction I for 2.05K Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Enable Time Multiplier for 5 Strange Matter",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Purchase Automate Gather Influence for 10 Strange Matter",
+            "kind": "button",
+            "skipped": "Control changed after earlier transaction; retained for targeted follow-up"
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "mature-simulations",
+        "route": "simulations",
+        "actions": [
+          {
+            "label": "Foundational Era",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Purchase settings",
+            "kind": "expand",
+            "passed": true
+          },
+          {
+            "label": "Foundational Era",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>section:nth-of-type(1)>footer:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>div:nth-of-type(1)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "+1 101 Influence",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "+1 101 Influence",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Boost Free",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy 1",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy 10",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy 50",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy 100",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Buy Max",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "late-quantum",
+        "route": "avocato",
+        "actions": [
+          {
+            "label": "Feed all Infinity Points to Avocato",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Feed all Influence to Avocato",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Feed all Strange Matter to Avocato",
+            "kind": "enabled-pointer",
+            "changed": true,
+            "dialog": null,
+            "passed": true
+          },
+          {
+            "label": "Overflow for 1 point",
+            "kind": "disabled-pointer",
+            "changed": false,
+            "dialog": null,
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "late-quantum",
+        "route": "story",
+        "actions": [
+          {
+            "label": "Chapter 1",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Chapter 2",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Chapter 3",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Chapter 4",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          },
+          {
+            "label": "Chapter 5",
+            "kind": "collapse-and-reopen",
+            "passed": true
+          }
+        ],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "late-quantum",
+        "route": "statistics",
+        "actions": [],
+        "pageErrors": []
+      },
+      {
+        "build": "candidate",
+        "fixtureId": "late-quantum",
+        "route": "settings",
+        "actions": [
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(2)>label:nth-of-type(3)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(2)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(3)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(4)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(5)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(6)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(7)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(8)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(9)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(10)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(11)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(12)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(13)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(14)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(2)>div:nth-of-type(2)>label:nth-of-type(15)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "",
+            "selector": "body>div:nth-of-type(1)>div:nth-of-type(1)>main:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(1)>div:nth-of-type(1)>div:nth-of-type(1)>section:nth-of-type(4)>label:nth-of-type(1)>input:nth-of-type(1)",
+            "kind": "checkbox-toggle-and-restore",
+            "passed": true
+          },
+          {
+            "label": "MixedStandardScientificEngineering",
+            "kind": "select-option-DOM",
+            "value": "mixed",
+            "passed": true
+          },
+          {
+            "label": "MixedStandardScientificEngineering",
+            "kind": "select-option-DOM",
+            "value": "standard",
+            "passed": true
+          },
+          {
+            "label": "MixedStandardScientificEngineering",
+            "kind": "select-option-DOM",
+            "value": "scientific",
+            "passed": true
+          },
+          {
+            "label": "MixedStandardScientificEngineering",
+            "kind": "select-option-DOM",
+            "value": "engineering",
+            "passed": true
+          },
+          {
+            "label": "Use device languageEnglishFran\u00e7aisDeutschEspa\u00f1ol (Latinoam\u00e9rica)Portugu\u00eas (Brasil)\u7b80\u4f53\u4e2d\u6587\u0420\u0443\u0441\u0441\u043a\u0438\u0439\u65e5\u672c\u8a9e",
+            "kind": "select",
+            "skipped": "Locale switching separately verified; preserve English action identifiers"
+          },
+          {
+            "label": "Import",
+            "kind": "button",
+            "skipped": "Dedicated save lifecycle suite"
+          },
+          {
+            "label": "Export",
+            "kind": "button",
+            "skipped": "Dedicated save lifecycle suite"
+          }
+        ],
+        "pageErrors": []
+      }
+    ]
+  },
+  "renderedInventory": {
+    "pairs": 144,
+    "mismatches": [],
+    "normalization": "Numeric text omitted for live counters; tags/classes/disabled/checked/options retained."
+  },
+  "targetedPurchases": [
+    {
+      "build": "baseline",
+      "id": "research",
+      "prefix": "Purchase Birch Planets boosts",
+      "before": "Purchase Birch Planets boosts 3.00: 340 levels for 9.76e99 Science",
+      "after": "Purchase Birch Planets boosts 343: 1 levels for 8.01e99 Science",
+      "disabled": false,
+      "delivered": true,
+      "changed": true
+    },
+    {
+      "build": "baseline",
+      "id": "research",
+      "prefix": "Purchase Galactic Brains boosts",
+      "before": "Purchase Galactic Brains boosts 4.00: 321 levels for 1.99e98 Science",
+      "after": "Purchase Galactic Brains boosts 325: 1 levels for 1.69e98 Science",
+      "disabled": false,
+      "delivered": true,
+      "changed": true
+    },
+    {
+      "build": "baseline",
+      "id": "reality",
+      "prefix": "Purchase City Booster",
+      "before": "Purchase City Booster for 1.34K Strange Matter",
+      "after": null,
+      "disabled": false,
+      "delivered": true,
+      "changed": true
+    },
+    {
+      "build": "baseline",
+      "id": "reality",
+      "prefix": "Purchase Automate Gather Influence",
+      "before": "Purchase Automate Gather Influence for 10 Strange Matter",
+      "disabled": false,
+      "delivered": true,
+      "changed": true
+    },
+    {
+      "build": "candidate",
+      "id": "research",
+      "prefix": "Purchase Birch Planets boosts",
+      "before": "Purchase Birch Planets boosts 3.00: 340 levels for 9.76e99 Science",
+      "after": "Purchase Birch Planets boosts 343: 1 levels for 8.01e99 Science",
+      "disabled": false,
+      "delivered": true,
+      "changed": true
+    },
+    {
+      "build": "candidate",
+      "id": "research",
+      "prefix": "Purchase Galactic Brains boosts",
+      "before": "Purchase Galactic Brains boosts 4.00: 321 levels for 1.99e98 Science",
+      "after": "Purchase Galactic Brains boosts 325: 1 levels for 1.69e98 Science",
+      "disabled": false,
+      "delivered": true,
+      "changed": true
+    },
+    {
+      "build": "candidate",
+      "id": "reality",
+      "prefix": "Purchase City Booster",
+      "before": "Purchase City Booster for 1.34K Strange Matter",
+      "after": null,
+      "disabled": false,
+      "delivered": true,
+      "changed": true
+    },
+    {
+      "build": "candidate",
+      "id": "reality",
+      "prefix": "Purchase Automate Gather Influence",
+      "before": "Purchase Automate Gather Influence for 10 Strange Matter",
+      "disabled": false,
+      "delivered": true,
+      "changed": true
+    }
+  ],
+  "legacyBrowser": [
+    {
+      "build": "baseline",
+      "file": "src/application/firstRun/generated/first-run-schema-12.idb1.txt",
+      "passed": true,
+      "pageErrors": []
+    },
+    {
+      "build": "baseline",
+      "file": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
+      "passed": true,
+      "pageErrors": []
+    },
+    {
+      "build": "baseline",
+      "file": "test/fixtures/support-case-01-attached-idb1.txt",
+      "error": "Expected values to be strictly equal:"
+    },
+    {
+      "build": "baseline",
+      "file": "test/fixtures/support-case-02-inline-idb1.txt",
+      "passed": true,
+      "pageErrors": []
+    },
+    {
+      "build": "baseline",
+      "file": "test/fixtures/support-case-03-inline-idb1.txt",
+      "passed": true,
+      "pageErrors": []
+    },
+    {
+      "build": "candidate",
+      "file": "src/application/firstRun/generated/first-run-schema-12.idb1.txt",
+      "passed": true,
+      "pageErrors": []
+    },
+    {
+      "build": "candidate",
+      "file": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
+      "passed": true,
+      "pageErrors": []
+    },
+    {
+      "build": "candidate",
+      "file": "test/fixtures/support-case-01-attached-idb1.txt",
+      "error": "Expected values to be strictly equal:"
+    },
+    {
+      "build": "candidate",
+      "file": "test/fixtures/support-case-02-inline-idb1.txt",
+      "passed": true,
+      "pageErrors": []
+    },
+    {
+      "build": "candidate",
+      "file": "test/fixtures/support-case-03-inline-idb1.txt",
+      "passed": true,
+      "pageErrors": []
+    }
+  ],
+  "legacyGoalCatchup": [
+    {
+      "build": "baseline",
+      "file": "test/fixtures/support-case-01-attached-idb1.txt",
+      "before": {
+        "points": "0",
+        "goalStage": "2",
+        "bots": 504582404.7966871,
+        "manualAssemblyLines": 140,
+        "facts": {
+          "panelsPerSecond": 5045725.34,
+          "panelLifetimeSeconds": 51.38901110187627
+        }
+      },
+      "completedStages": [
+        "2",
+        "3"
+      ],
+      "awardedSkillPoints": "2",
+      "after": {
+        "points": "2",
+        "goalStage": "4"
+      },
+      "secondPassAwards": "0",
+      "ownedSkillsUnchanged": true
+    },
+    {
+      "build": "candidate",
+      "file": "test/fixtures/support-case-01-attached-idb1.txt",
+      "before": {
+        "points": "0",
+        "goalStage": "2",
+        "bots": 504582404.7966871,
+        "manualAssemblyLines": 140,
+        "facts": {
+          "panelsPerSecond": 5045725.34,
+          "panelLifetimeSeconds": 51.38901110187627
+        }
+      },
+      "completedStages": [
+        "2",
+        "3"
+      ],
+      "awardedSkillPoints": "2",
+      "after": {
+        "points": "2",
+        "goalStage": "4"
+      },
+      "secondPassAwards": "0",
+      "ownedSkillsUnchanged": true
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "baselineRevision": "878f5bffecd59c699712103172e668d12853d16a",
+  "candidateRevision": "7bc88cd7",
+  "fixtureFiles": [
+    {
+      "path": "test/fixtures/schema-07-raw-json-20260202-045325.json",
+      "sha256": "412e857e1a6f3960b7903f3dfdbbc61900bd697f80051f1c8268134c3889d8da"
+    },
+    {
+      "path": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
+      "sha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78"
+    },
+    {
+      "path": "test/fixtures/schema-08-debug-dto-20260202-060115.json",
+      "sha256": "5b45d17740162d4e49785415bea63d8cc9e03fa42dfe5b00894eb3373e1a8dfe"
+    },
+    {
+      "path": "test/fixtures/support-case-01-attached-idb1.txt",
+      "sha256": "341450a13e25b60000674f5e1c0a3f56d2511ccebddaf6c138596e8ab0423219"
+    },
+    {
+      "path": "test/fixtures/support-case-02-inline-idb1.txt",
+      "sha256": "1453170946da5fb204a098ae4bec40a14d30640acad6c98bbb0d78fdd0ba2ee4"
+    },
+    {
+      "path": "test/fixtures/support-case-03-inline-idb1.txt",
+      "sha256": "341747c7adae709990d93c028aa08345409985214fe8ee49314777abb3d6827a"
+    },
+    {
+      "path": "test/fixtures/support-case-04-cross-platform-import-idb1.txt",
+      "sha256": "29c53565a5072fcf548a909ed11f5b62af7d692188499b59a7dca46115fb4ce1"
+    },
+    {
+      "path": "test/fixtures/progression/first-infinity.idsweb1.txt",
+      "sha256": "de4dd71c7644804dee75a90dbf0a9858f12285e7e9987919fc752066a21af6bd"
+    },
+    {
+      "path": "test/fixtures/progression/fresh.idsweb1.txt",
+      "sha256": "4ffa4e0d4fcfa3099457901570994463eb3111b161b7994eb59a3ea0997f355c"
+    },
+    {
+      "path": "test/fixtures/progression/late-quantum.idsweb1.txt",
+      "sha256": "f4c6bdb6d4d0b6c9976d0ff0ece3643812d4d5fb2da08abff18e4d9e72b914fc"
+    },
+    {
+      "path": "test/fixtures/progression/mature-infinity.idsweb1.txt",
+      "sha256": "7dd0bda9c61fe49d52676ba7edd6258130c813889feebb0ff3a0e58a14204ef2"
+    },
+    {
+      "path": "test/fixtures/progression/mature-simulations.idsweb1.txt",
+      "sha256": "0ee5e496b264bf52251a9baaf73121820bf9dfa17cf69bcdef2fb3fa984c50b8"
+    },
+    {
+      "path": "test/fixtures/progression/maximum-skills.idsweb1.txt",
+      "sha256": "281348cfb9449acefd7d6fb0710a932478a226af9a3f97856b0f2620c4da443b"
+    },
+    {
+      "path": "test/fixtures/progression/mid-swarm.idsweb1.txt",
+      "sha256": "c8cc1a280e10b2b5a9f91eec45f580b71771b443b62672599b19731b37f2f8d7"
+    },
+    {
+      "path": "test/fixtures/progression/quantum-unlock.idsweb1.txt",
+      "sha256": "c7c4603160a12e5ec01f0b2f4919ff560f760409949cb47e3cd2291dac52434b"
+    },
+    {
+      "path": "test/fixtures/progression/reality-unlock.idsweb1.txt",
+      "sha256": "c6791b35022910e831589d125073b3f793ead3fa42bd4c3cbb7fd6fda9167d36"
+    }
+  ],
+  "checks": 474,
+  "byCategory": {
+    "decode": {
+      "checks": 16,
+      "returnedWithoutThrow": 15,
+      "threw": 1
+    },
+    "prepare": {
+      "checks": 15,
+      "returnedWithoutThrow": 14,
+      "threw": 1
+    },
+    "hydrate-dehydrate-serialize": {
+      "checks": 15,
+      "returnedWithoutThrow": 14,
+      "threw": 1
+    },
+    "import-context": {
+      "checks": 45,
+      "returnedWithoutThrow": 42,
+      "threw": 3
+    },
+    "exact-export-bytes": {
+      "checks": 28,
+      "returnedWithoutThrow": 28,
+      "threw": 0
+    },
+    "cross-version-export-import": {
+      "checks": 28,
+      "returnedWithoutThrow": 28,
+      "threw": 0
+    },
+    "transport-boundary": {
+      "checks": 60,
+      "returnedWithoutThrow": 19,
+      "threw": 41
+    },
+    "resource-boundary": {
+      "checks": 45,
+      "returnedWithoutThrow": 0,
+      "threw": 45
+    },
+    "schema-boundary": {
+      "checks": 5,
+      "returnedWithoutThrow": 2,
+      "threw": 3
+    },
+    "schema-import": {
+      "checks": 2,
+      "returnedWithoutThrow": 0,
+      "threw": 2
+    },
+    "structural-default-numeric-repair": {
+      "checks": 176,
+      "returnedWithoutThrow": 176,
+      "threw": 0
+    },
+    "serialization-boundary": {
+      "checks": 5,
+      "returnedWithoutThrow": 2,
+      "threw": 3
+    },
+    "cloud-startup-trace": {
+      "checks": 17,
+      "returnedWithoutThrow": 17,
+      "threw": 0
+    },
+    "repository-operation-trace": {
+      "checks": 17,
+      "returnedWithoutThrow": 17,
+      "threw": 0
+    }
+  },
+  "limitations": [
+    "Finite checked-in/synthetic corpus, not every possible player save.",
+    "Cloud services simulated with full operation traces; no external account or player storage.",
+    "Browser persistence, UI preview/confirmation and host SDK acceptance are separate."
+  ],
+  "testSuites": {
+    "save-recovery-suite.json": {
+      "numTotalTests": 351,
+      "numPassedTests": 351,
+      "numFailedTests": 0,
+      "success": true
+    },
+    "candidate-mapping-suite.json": {
+      "numTotalTests": 31,
+      "numPassedTests": 31,
+      "numFailedTests": 0,
+      "success": true
+    },
+    "baseline-save-recovery-suite.json": {
+      "numTotalTests": 379,
+      "numPassedTests": 379,
+      "numFailedTests": 0,
+      "success": true
+    }
+  },
+  "preExistingLegacyIntegrityFinding": {
+    "baselineAndCandidatePreparedImportAccepted": true,
+    "preparedDateStarted": "12/01/2026 01:56:16",
+    "fixture": "schema-08-canonical-idb1-main-save.txt",
+    "mutation": "One decoded Odin dateStarted byte changed, recompressed, original CRC32 trailer retained; ISIZE unchanged.",
+    "encoding": "utf16le",
+    "offset": 828,
+    "baselineAccepted": true,
+    "candidateAccepted": true,
+    "nodeZlibRejectedChecksum": true,
+    "onlyDecodedChange": {
+      "field": "dateStarted",
+      "before": "02/01/2026 01:56:16",
+      "after": "12/01/2026 01:56:16"
+    },
+    "limitation": "Controlled semantic mutation with stale checksum, not evidence of spontaneous data loss. No repository or player file writes."
+  },
+  "preExistingSkillResetQueueFinding": [
+    {
+      "build": "baseline",
+      "assignedOwned": [
+        "burnOut",
+        "coldFusion",
+        "fusionReactors",
+        "manualLabour"
+      ],
+      "checkpointQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "checkpointLegacyQueue": [],
+      "reloadedPreservedLegacyQueue": [
+        56,
+        16,
+        66,
+        67
+      ],
+      "resetSerializedLegacyQueue": [
+        56,
+        16,
+        66,
+        67
+      ],
+      "immediateResetOwned": [],
+      "immediateResetQueue": [],
+      "afterDehydrateQueue": [],
+      "afterReloadOwned": [],
+      "afterReloadQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "savedPresetsRetained": true
+    },
+    {
+      "build": "candidate",
+      "assignedOwned": [
+        "burnOut",
+        "coldFusion",
+        "fusionReactors",
+        "manualLabour"
+      ],
+      "checkpointQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "checkpointLegacyQueue": [],
+      "reloadedPreservedLegacyQueue": [
+        56,
+        16,
+        66,
+        67
+      ],
+      "resetSerializedLegacyQueue": [
+        56,
+        16,
+        66,
+        67
+      ],
+      "immediateResetOwned": [],
+      "immediateResetQueue": [],
+      "afterDehydrateQueue": [],
+      "afterReloadOwned": [],
+      "afterReloadQueue": [
+        "manualLabour",
+        "burnOut",
+        "fusionReactors",
+        "coldFusion"
+      ],
+      "savedPresetsRetained": true
+    }
+  ],
+  "legacyBrowserGoalCatchup": [
+    {
+      "build": "baseline",
+      "file": "test/fixtures/support-case-01-attached-idb1.txt",
+      "before": {
+        "points": "0",
+        "goalStage": "2",
+        "bots": 504582404.7966871,
+        "manualAssemblyLines": 140,
+        "facts": {
+          "panelsPerSecond": 5045725.34,
+          "panelLifetimeSeconds": 51.38901110187627
+        }
+      },
+      "completedStages": [
+        "2",
+        "3"
+      ],
+      "awardedSkillPoints": "2",
+      "after": {
+        "points": "2",
+        "goalStage": "4"
+      },
+      "secondPassAwards": "0",
+      "ownedSkillsUnchanged": true
+    },
+    {
+      "build": "candidate",
+      "file": "test/fixtures/support-case-01-attached-idb1.txt",
+      "before": {
+        "points": "0",
+        "goalStage": "2",
+        "bots": 504582404.7966871,
+        "manualAssemblyLines": 140,
+        "facts": {
+          "panelsPerSecond": 5045725.34,
+          "panelLifetimeSeconds": 51.38901110187627
+        }
+      },
+      "completedStages": [
+        "2",
+        "3"
+      ],
+      "awardedSkillPoints": "2",
+      "after": {
+        "points": "2",
+        "goalStage": "4"
+      },
+      "secondPassAwards": "0",
+      "ownedSkillsUnchanged": true
+    }
+  ]
+}

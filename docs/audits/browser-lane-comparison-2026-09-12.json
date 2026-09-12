@@ -1,0 +1,167 @@
+{
+  "baselineSource": "878f5bffecd59c699712103172e668d12853d16a",
+  "candidateSourceCheckpoint": "5050e544",
+  "note": "Sequential baseline/candidate/baseline, 5s samples at4x CPU throttle. Candidate source precedes manual layer reuse. Concurrent candidate-v1 soak ran throughout; other machine work may affect timings. No statistical significance or universal performance claim.",
+  "rows": [
+    {
+      "profile": "desktop-1440x900-throttled",
+      "stage": "fresh",
+      "route": "bots",
+      "gameStepMeanMs": {
+        "baselineBefore": 1.6739999993642172,
+        "candidate": 1.3927631621298038,
+        "baselineAfter": 1.7152317849216083
+      },
+      "projectionMeanMs": {
+        "baselineBefore": 0.553333330154419,
+        "candidate": 0.42171052176701396,
+        "baselineAfter": 0.5079470209728013
+      },
+      "commitP95Ms": {
+        "baselineBefore": 2.700000047683716,
+        "candidate": 2.399999976158142,
+        "baselineAfter": 2.899999976158142
+      }
+    },
+    {
+      "profile": "desktop-1440x900-throttled",
+      "stage": "mature",
+      "route": "bots",
+      "gameStepMeanMs": {
+        "baselineBefore": 2.1973509962195594,
+        "candidate": 1.9361842164867802,
+        "baselineAfter": 2.252631574869156
+      },
+      "projectionMeanMs": {
+        "baselineBefore": 0.7390728486294778,
+        "candidate": 0.5953947431162784,
+        "baselineAfter": 0.7177631588358628
+      },
+      "commitP95Ms": {
+        "baselineBefore": 4.5,
+        "candidate": 4.100000023841858,
+        "baselineAfter": 4.400000095367432
+      }
+    },
+    {
+      "profile": "desktop-1440x900-throttled",
+      "stage": "mature",
+      "route": "skills",
+      "gameStepMeanMs": {
+        "baselineBefore": 2.1695364192621596,
+        "candidate": 1.9256578919134641,
+        "baselineAfter": 2.1585526246773568
+      },
+      "projectionMeanMs": {
+        "baselineBefore": 0.5549668847330359,
+        "candidate": 0.5243421094982248,
+        "baselineAfter": 0.6236842102126071
+      },
+      "commitP95Ms": {
+        "baselineBefore": 3.799999952316284,
+        "candidate": 3.899999976158142,
+        "baselineAfter": 3.899999976158142
+      }
+    },
+    {
+      "profile": "desktop-1440x900-throttled",
+      "stage": "mature",
+      "route": "settings",
+      "gameStepMeanMs": {
+        "baselineBefore": 2.094078952544614,
+        "candidate": 1.7754966896890805,
+        "baselineAfter": 2.066225167141845
+      },
+      "projectionMeanMs": {
+        "baselineBefore": 0.5026315787905141,
+        "candidate": 0.44039735020391196,
+        "baselineAfter": 0.5384105941317728
+      },
+      "commitP95Ms": {
+        "baselineBefore": 2.600000023841858,
+        "candidate": 2.299999952316284,
+        "baselineAfter": 2.5
+      }
+    },
+    {
+      "profile": "mobile-390x844-throttled",
+      "stage": "fresh",
+      "route": "bots",
+      "gameStepMeanMs": {
+        "baselineBefore": 1.4072847674224551,
+        "candidate": 1.3842105238061202,
+        "baselineAfter": 1.5410596045437237
+      },
+      "projectionMeanMs": {
+        "baselineBefore": 0.4410596020174342,
+        "candidate": 0.41842105670979146,
+        "baselineAfter": 0.48410595963332825
+      },
+      "commitP95Ms": {
+        "baselineBefore": 2.600000023841858,
+        "candidate": 2.799999952316284,
+        "baselineAfter": 2.8000000715255737
+      }
+    },
+    {
+      "profile": "mobile-390x844-throttled",
+      "stage": "mature",
+      "route": "bots",
+      "gameStepMeanMs": {
+        "baselineBefore": 1.975000001882252,
+        "candidate": 1.9602648919781311,
+        "baselineAfter": 2.1401315809864747
+      },
+      "projectionMeanMs": {
+        "baselineBefore": 0.5763157872777236,
+        "candidate": 0.6635761592561835,
+        "baselineAfter": 0.6914473677936354
+      },
+      "commitP95Ms": {
+        "baselineBefore": 4.399999976158142,
+        "candidate": 4.299999952316284,
+        "baselineAfter": 4.599999904632568
+      }
+    },
+    {
+      "profile": "mobile-390x844-throttled",
+      "stage": "mature",
+      "route": "skills",
+      "gameStepMeanMs": {
+        "baselineBefore": 1.9437086076925922,
+        "candidate": 1.922368419797797,
+        "baselineAfter": 2.117105265197001
+      },
+      "projectionMeanMs": {
+        "baselineBefore": 0.5529801379765896,
+        "candidate": 0.5723684265425331,
+        "baselineAfter": 0.47960525986395386
+      },
+      "commitP95Ms": {
+        "baselineBefore": 3.5,
+        "candidate": 3.5,
+        "baselineAfter": 3.700000047683716
+      }
+    },
+    {
+      "profile": "mobile-390x844-throttled",
+      "stage": "mature",
+      "route": "settings",
+      "gameStepMeanMs": {
+        "baselineBefore": 1.8756578995993263,
+        "candidate": 1.8894736806028767,
+        "baselineAfter": 2.0618421058905754
+      },
+      "projectionMeanMs": {
+        "baselineBefore": 0.46644736591138336,
+        "candidate": 0.46513157926107707,
+        "baselineAfter": 0.5111842045658513
+      },
+      "commitP95Ms": {
+        "baselineBefore": 2.5,
+        "candidate": 2.299999952316284,
+        "baselineAfter": 2.600000023841858
+      }
+    }
+  ]
+}

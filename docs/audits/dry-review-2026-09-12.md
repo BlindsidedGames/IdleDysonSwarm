@@ -409,3 +409,61 @@ across nine fixtures. Fresh: 0.055265 → 0.051342 ms; maximum skills:
 gate was added. Run `npx tsx scripts/performance/runFacilityCalculationReuseReport.ts`
 (or `--parity-only`). Raw measurements are in
 [`facility-calculation-reuse-2026-09-12.json`](facility-calculation-reuse-2026-09-12.json).
+
+## Measured residual candidates retained
+
+Two isolated temporary-module prototypes were compared with checkpoint
+`b9b47d653a35dabf4023d73027e3a9cb42b4a6ce`, without production edits.
+Copy-on-change filtering scanned for Avocados effects and reused the private
+source array when none were removed. Those arrays are not all frozen, but their
+private consumers only read or copy them, and production-effect pushes target
+new arrays. The prototype preserved all 306 complete derivation outputs.
+Its full-derivation timings ranged from 2.9% slower to 2.3% faster across the nine
+fixtures, with no consistent benefit. Retain the simpler unconditional filter.
+
+A second prototype skipped the repeated facility-effect sort only when every
+order was finite, applying the ordered array directly; non-finite orders kept
+the original `calculateStat` fallback. Besides the 306 full outputs, 20 rotated
+basic-state cases covered NaN, infinities, extreme finite values and equal-order
+ties. Timings ranged from 2.8% slower to 2.5% faster, again without consistent
+benefit. Retain the existing sort rather than adding the guard and a second
+application path. The constructor accepts non-finite orders before later model
+validation rejects them, so an unconditional shortcut is not a safe substitute.
+
+Both measurements used seven alternating warmed rounds. These are measured
+low-value candidates, not unresolved correctness fixes. Raw samples and
+per-fixture medians are in
+[`residual-dry-prototypes-2026-09-12.json`](residual-dry-prototypes-2026-09-12.json).
+
+### Final contribution-row experiment and scope closure
+
+A final isolated lazy lookup built each producer's contribution rows at its
+first existing evaluation site, then reused them within the derivation.
+Direct-generation results retained their own filtered row and source objects:
+although outer rows are frozen, nested source metadata is not, so blindly
+sharing the row objects would introduce observable aliasing. Reusing the
+calculation/source inputs while cloning only the retained direct rows avoids
+that aliasing and two full producer-row rebuilds.
+
+All 306 standard full outputs matched. Two additional cases explicitly enabled
+Pocket Dimensions and Rudimentary Singularity; all four direct rows and their
+source metadata remained detached. This matters because the nine benchmark
+fixtures did not themselves produce these direct-generation rows. Both timing
+runs improved the full-derivation medians, but modestly: 0.4–3.5% in the first
+run and 0.2–5.3% in the confirming run. Both raw runs are retained in the residual
+JSON rather than selecting the more favorable run.
+
+The user then closed this optimization round and requested extensive review
+and visual comparison. The prototype was not adopted: it adds a lazy map,
+closure and explicit detachment work for small measured gains. It is a measured
+optional future optimization, not a correctness fix or an unprofiled lead.
+No production files were changed for any residual experiment.
+
+This completes the bounded DRY sweep. No identified correctness defect remains
+open in this lane. Remaining broader options—splitting simulation from rich
+presentation derivation, destination catalog loading, parser-free fallback
+policy, host-specific composition and cross-tick caching—require new contracts
+or redesign. They are not partially implemented work. The earlier boot figures
+in this audit describe their specific intermediate experiment; the parent
+performance audit contains final build measurements, including subsequent
+English Wiki literal omission at `e7157119` without route splitting.

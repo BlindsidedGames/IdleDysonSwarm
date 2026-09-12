@@ -1,0 +1,122 @@
+[
+  {
+    "width": 390,
+    "route": "bots",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 390,
+    "route": "research",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 390,
+    "route": "skills",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 390,
+    "route": "wiki",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 390,
+    "route": "settings",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 768,
+    "route": "bots",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 768,
+    "route": "research",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 768,
+    "route": "skills",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 768,
+    "route": "wiki",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 768,
+    "route": "settings",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "route": "bots",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "route": "research",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "route": "skills",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "route": "wiki",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  {
+    "width": 1440,
+    "route": "settings",
+    "landmarksEqual": true,
+    "buttonsEqual": true,
+    "overflow": false,
+    "brokenImages": 0
+  }
+]

@@ -35862,17 +35862,311 @@
       "rationale": "Missing positive per-trial measurements fail with explicit trial IDs despite a low aggregate; fully measured passing and over-budget outcomes retain the existing gate.",
       "focusedStatus": "passed",
       "integrationStatus": "passed"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication removes only exact runtime-authored entries without mutating authoring inputs",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Omission removes only the 43 exact authored entries, keeps neighboring Wiki/Skill messages, and leaves source catalog entries intact.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves en formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves fr formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves de formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves es-419 formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves pt-BR formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves zh-CN formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves ru formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves ja formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves en-XA formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves ar-XB formatting and missing-ID error paths",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "All 43 authored descriptor outputs and missing-ID callbacks match for this locale; English silence and non-English diagnostics are distinct fallback contracts.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected fr startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected de startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected es-419 startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected pt-BR startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected zh-CN startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected ru startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected ja startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected en-XA startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication preserves selected ar-XB startup failure and effective English fallback",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Selected locale loading failure falls back to effective English with identical authored text and diagnostic behavior; each selected locale is a separate loader route.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication fails closed for stale source, changed text or structured compiled messages",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Source mismatch, stale or missing compiled data and structured AST values reject omission rather than silently changing runtime fallback semantics.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/omitDuplicatedEnglishWikiMessages.test.ts",
+      "name": "English authored Wiki catalog deduplication transforms only the exact build-time English compiled module",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Build-only pre-transform acts only on the exact compiled English module, preserving every non-English and source/content module.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed-before-final-literal-guard-delta"
+    },
+    {
+      "file": "scripts/performance/reportArtifacts.test.ts",
+      "name": "performance report provenance keeps the starting checkout after HEAD changes and selects the explicit build snapshot",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "A real temporary Git HEAD advance does not rewrite starting identity; explicit alternate build selection and unchanged-tree finalization retain correct report provenance.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "scripts/performance/reportArtifacts.test.ts",
+      "name": "performance report provenance invalidates a passing measurement when a dependency changes without a manifest or HTML change",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "A changed dependency invalidates pass and acceptance eligibility even when HTML and manifest are unchanged, proving coverage beyond entry files.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "scripts/performance/reportArtifacts.test.ts",
+      "name": "performance report provenance invalidates removed public assets and unavailable builds",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Deleted public assets outside the manifest and unavailable build directories both fail final integrity verification.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "src/simulation/facilityCalculationConstruction.test.ts",
+      "name": "facility calculation construction snapshots preserves modifier cutoff at 1",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Explicit modifier expectation distinguishes unity and each side of the 1e-12 inclusion cutoff; captured rate also equals constructed state rate.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "src/simulation/facilityCalculationConstruction.test.ts",
+      "name": "facility calculation construction snapshots preserves modifier cutoff at 1.0000000000005",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Explicit modifier expectation distinguishes unity and each side of the 1e-12 inclusion cutoff; captured rate also equals constructed state rate.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "src/simulation/facilityCalculationConstruction.test.ts",
+      "name": "facility calculation construction snapshots preserves modifier cutoff at 1.000000000002",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Explicit modifier expectation distinguishes unity and each side of the 1e-12 inclusion cutoff; captured rate also equals constructed state rate.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "src/simulation/facilityCalculationConstruction.test.ts",
+      "name": "facility calculation construction snapshots preserves modifier cutoff at 0.9999999999995",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Explicit modifier expectation distinguishes unity and each side of the 1e-12 inclusion cutoff; captured rate also equals constructed state rate.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "src/simulation/facilityCalculationConstruction.test.ts",
+      "name": "facility calculation construction snapshots preserves modifier cutoff at 0.999999999998",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Explicit modifier expectation distinguishes unity and each side of the 1e-12 inclusion cutoff; captured rate also equals constructed state rate.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "src/simulation/facilityCalculationConstruction.test.ts",
+      "name": "facility calculation construction snapshots retains equal-order effects and their clamped result",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "Equal-order override then multiplication preserves authored ordering and saturated Number.MAX_VALUE output in both captured and model rates.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
+    },
+    {
+      "file": "src/simulation/facilityCalculationConstruction.test.ts",
+      "name": "facility calculation construction snapshots recalculation observes state changes without altering captured construction results",
+      "decision": "keep",
+      "review": "manual-body-setup-input-and-assertion-review",
+      "rationale": "State mutation affects later recalculation without changing frozen construction results or adding fields to the original public state shape.",
+      "focusedStatus": "passed",
+      "integrationStatus": "passed"
     }
   ],
   "finalCandidateValidation": {
-    "snapshot": "Current source full integration suite on 12 September 2026",
-    "cases": 1521,
-    "passed": 1521,
+    "snapshot": "v6 full integration; production facility batch checkpoint b9b47d65",
+    "cases": 1553,
+    "passed": 1553,
     "failed": 0,
     "baselineCases": 1502,
     "removedBaselineCases": 2,
-    "addedRegressionCases": 21,
-    "report": "/tmp/ids-performance-candidate-v3-tests.json",
+    "addedRegressionCases": 53,
+    "report": "/tmp/ids-performance-candidate-v6-tests.json",
+    "subsequentTestOnlyDelta": {
+      "description": "Temporary test Git commands disable signing and use an unused hooks path; production unaffected.",
+      "independentFocusedCases": 3,
+      "passed": 3,
+      "report": "/tmp/ids-independent-git-isolation-tests.json"
+    },
     "fixtureIsolation": {
       "cases": 157,
       "passed": 157,

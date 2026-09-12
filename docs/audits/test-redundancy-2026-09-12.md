@@ -33,7 +33,7 @@ The decision ledger describes baseline cases. The first candidate full-suite run
 
 Five subsequent regressions were also manually reviewed and passed in an independent focused run: catalog lookup identity (one), localized formatter precision/cache semantics (two), and fitted production text observer/measurement behavior (two). They are listed under `postCandidateRegressions`.
 
-Six final regressions were independently reviewed and passed: out-of-order Cloud checkpoint failures and retry ownership (one), external effect-map detachment and clone ownership (three expanded cases), and interaction-report missing-data and budget semantics (two). The ledger appends each identity and rationale. The final current-source integration run passed **1,521/1,521**: 1,502 baseline cases minus two removals plus 21 regressions. Its JSON report is `/tmp/ids-performance-candidate-v3-tests.json`.
+Six final regressions were independently reviewed and passed: out-of-order Cloud checkpoint failures and retry ownership (one), external effect-map detachment and clone ownership (three expanded cases), and interaction-report missing-data and budget semantics (two). The ledger appends each identity and rationale. The pre-Wiki integration run passed **1,521/1,521**: 1,502 baseline cases minus two removals plus 21 regressions. Its JSON report is `/tmp/ids-performance-candidate-v3-tests.json`.
 
 A separate reviewer inspected the two removals against surviving assertions and checked shared fixture cloning and `PreparedSave` defensive-copy usage. A shuffled fixture-isolation run passed **157/157**, seed **912** (`/tmp/ids-performance-fixture-isolation-tests.json`). See the [independent review record](independent-review-2026-09-12.md) for production-review scope and limits.
 
@@ -64,3 +64,11 @@ These baseline case-duration sums help locate investigation targets. They exclud
 - **Core numeric guards:** NaN, infinity, zero, fractional values, bigint/string inputs and integer ceilings cover distinct accepted/rejected partitions and cost almost nothing individually.
 
 For future local iteration, use targeted Vitest file selection while keeping the full suite as the integration gate. Further speed work should profile shared fixture construction, import/transform cost and UI setup, then preserve assertions as this fixture change does. No global isolation disable, relaxed timeouts, skipped tests or weaker numerical assertions were introduced.
+
+## Wiki packaging follow-up
+
+The 22 expanded Wiki packaging regression cases were individually reviewed and appended to the ledger: exact omission and neighboring-message preservation (one), formatting and missing-ID errors across ten locales (ten), selected-language startup failure and effective English fallback (nine), stale/structured-data rejection (one), and build/module targeting (one). The v5 integration snapshot passed **1,543/1,543**: 1,502 baseline cases minus two removals plus 43 new regressions. That full run preceded the final equivalent literal-guard simplification; the reviewer independently reran all **22/22** new cases afterward and byte-compared emitted English modules across both guard versions for Web and native builds.
+
+## Facility calculation and report provenance follow-up
+
+Ten further expanded cases were independently reviewed and appended: five explicit modifier-cutoff boundaries, equal-order/clamped effects, recalculation without stale construction snapshots, starting-checkout/selected-build identity, dependency mutation without manifest changes, and public-asset deletion/unavailable builds. The v6 full suite passed **1,553/1,553**: 1,502 baseline cases minus two removals plus 53 regressions (`/tmp/ids-performance-candidate-v6-tests.json`). The production facility batch is checkpointed at `b9b47d65`. A subsequent test-only Git isolation change disables signing and hooks per command; independent rerun passed **3/3**, with production unchanged.
