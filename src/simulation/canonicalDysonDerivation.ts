@@ -471,11 +471,12 @@ export function deriveBasicDysonState(
   const ownedSkills = Object.entries(state.skills.byId)
     .filter(([, skill]) => skill.owned)
     .map(([id]) => id)
+  const ownedSkillSet = new Set(ownedSkills)
   const skillEffects = materializeCanonicalSkillEffects(
     state,
     tuning,
     evaluationSnapshot,
-    ownedSkills,
+    ownedSkillSet,
   )
   if (!skillEffects.ok) {
     return { ok: false, issues: Object.freeze([skillEffects.issue]) }
@@ -563,7 +564,6 @@ export function deriveBasicDysonState(
     0,
     stellarSacrificeEffects,
   )
-  const ownedSkillSet = new Set(ownedSkills)
   const stellarSacrificeBotsPerSecond =
     stellarSacrificePlanetsPerSecond > 0
       ? resolveStellarSacrificesRequiredBots(
@@ -1369,6 +1369,19 @@ interface FacilityModifierCalculation {
   readonly effects: readonly StatEffect[]
 }
 
+const INFINITY_FACILITY_THRESHOLDS: Readonly<
+  Record<CanonicalFacilityId, bigint>
+> = Object.freeze({
+  assembly_lines: 0n,
+  ai_managers: 2n,
+  servers: 3n,
+  data_centers: 4n,
+  planets: 5n,
+  matrioshka_brains: 5n,
+  birch_planets: 10n,
+  galactic_brains: 20n,
+})
+
 function deriveFacilityModifiers(
   state: CanonicalGameStateV1,
   researchEffects: readonly MaterializedDysonResearchEffect[],
@@ -1383,18 +1396,6 @@ function deriveFacilityModifiers(
   }>,
   avocadoMultiplier: number,
 ): Record<CanonicalFacilityId, FacilityModifierCalculation> {
-  const infinityThresholds: Readonly<
-    Record<CanonicalFacilityId, bigint>
-  > = {
-    assembly_lines: 0n,
-    ai_managers: 2n,
-    servers: 3n,
-    data_centers: 4n,
-    planets: 5n,
-    matrioshka_brains: 5n,
-    birch_planets: 10n,
-    galactic_brains: 20n,
-  }
   const secretMultipliers: Readonly<
     Record<CanonicalFacilityId, number>
   > = {
@@ -1416,7 +1417,7 @@ function deriveFacilityModifiers(
       ]
       const infinity = infinityFacilityMultiplier(
         state.infinity.points,
-        infinityThresholds[id],
+        INFINITY_FACILITY_THRESHOLDS[id],
       )
       const later = [
         multiplierEffect('prestige.infinity', infinity, 88),
@@ -1462,7 +1463,7 @@ function materializeCanonicalSkillEffects(
   state: CanonicalGameStateV1,
   tuning: Readonly<DysonCompatibilityTuning>,
   snapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
-  ownedSkillIds: readonly string[],
+  ownedSkillIds: ReadonlySet<string>,
 ):
   | {
       readonly ok: true
@@ -1471,7 +1472,6 @@ function materializeCanonicalSkillEffects(
       >
     }
   | { readonly ok: false; readonly issue: DysonDerivationIssue } {
-  const owned = new Set(ownedSkillIds)
   let dynamicIssue: DynamicSkillEffectIssue | undefined
   try {
     const dynamicEffects = prepareDynamicSkillEffectResolver(
@@ -1483,7 +1483,7 @@ function materializeCanonicalSkillEffects(
       (statId): SkillEffectMaterializationContext => {
         const facilityId = facilityForStat(statId)
         return {
-          ownedSkillIds: owned,
+          ownedSkillIds,
           targetStatId: statId,
           facility:
             facilityId === undefined

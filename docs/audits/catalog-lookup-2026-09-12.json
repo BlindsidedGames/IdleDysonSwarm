@@ -1,0 +1,39 @@
+{
+  "kind": "catalog-lookups",
+  "node": "v22.20.0",
+  "casesPerSweep": 374,
+  "exactReferenceParity": true,
+  "note": "Advisory time per full catalog sweep, including missing lookups.",
+  "byKindAndId": {
+    "samples": 300,
+    "batchSize": 20,
+    "warmupIterations": 100,
+    "before": {
+      "medianMilliseconds": 0.06775625000000218,
+      "p95Milliseconds": 0.08060834999999997
+    },
+    "after": {
+      "medianMilliseconds": 0.006906250000000114,
+      "p95Milliseconds": 0.008020849999999769
+    },
+    "medianReduction": 0.8980721335670158,
+    "p95Reduction": 0.9004960404226141,
+    "checksum": 4526200
+  },
+  "byId": {
+    "samples": 300,
+    "batchSize": 20,
+    "warmupIterations": 100,
+    "before": {
+      "medianMilliseconds": 0.053918749999996865,
+      "p95Milliseconds": 0.06227289999999926
+    },
+    "after": {
+      "medianMilliseconds": 0.0036770499999988714,
+      "p95Milliseconds": 0.004916650000001255
+    },
+    "medianReduction": 0.9318038715660306,
+    "p95Reduction": 0.921046715344856,
+    "checksum": 4538400
+  }
+}

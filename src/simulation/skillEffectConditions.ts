@@ -1,4 +1,4 @@
-import { gameDataCatalog } from '../game-data/catalog'
+import { getGameAssetById } from '../game-data/catalog'
 import type {
   CanonicalFacilityId,
   CanonicalOwnedPair,
@@ -26,9 +26,7 @@ export function evaluateSkillEffectCondition(
   context: Readonly<SkillEffectConditionContext>,
 ): boolean {
   if (reference.assetId !== null) {
-    const asset = gameDataCatalog.assets.find(
-      (candidate) => candidate.id === reference.assetId,
-    )
+    const asset = getGameAssetById(reference.assetId)
     if (asset === undefined) {
       throw new Error(
         `Skill effect references missing condition '${reference.assetId}'.`,
@@ -97,18 +95,19 @@ function evaluateFacilityState(
   return compareDouble(operator, value, threshold, id)
 }
 
+const MANUAL_69_FACILITIES: Readonly<Record<string, CanonicalFacilityId>> = Object.freeze({
+  assembly_lines_69: 'assembly_lines',
+  ai_managers_69: 'ai_managers',
+  servers_69: 'servers',
+  data_centers_69: 'data_centers',
+  planets_69: 'planets',
+})
+
 function evaluateLegacyCondition(
   id: string,
   context: Readonly<SkillEffectConditionContext>,
 ): boolean {
-  const manual69: Readonly<Record<string, CanonicalFacilityId>> = {
-    assembly_lines_69: 'assembly_lines',
-    ai_managers_69: 'ai_managers',
-    servers_69: 'servers',
-    data_centers_69: 'data_centers',
-    planets_69: 'planets',
-  }
-  const facilityId = manual69[id]
+  const facilityId = MANUAL_69_FACILITIES[id]
   if (facilityId !== undefined) {
     return context.facilities[facilityId][1] >= 69
   }
