@@ -160,3 +160,32 @@ count is not acceptance evidence. Keep the focused differential Vitest suite
 alongside the timing report because timing alone cannot certify ordering,
 condition, dynamic dependency, ownership-change, Infinity-reset, or
 Quantum-reset semantics.
+
+## Event Timing evidence limits
+
+Synthetic INP still requires a positive interaction latency in every trial and
+P75 at or below 200 ms. A missing trial fails even when the displayed aggregate
+is below budget. JSON budget entries and text output now identify those trial
+numbers explicitly; the legacy zero returned for an empty interaction set is a
+missing-data sentinel, not measured zero latency.
+
+The [W3C Event Timing specification](https://www.w3.org/TR/event-timing/#sec-should-add-performanceeventtiming)
+clamps the event observer's duration threshold to at least 16 ms. `first-input`
+bypasses that threshold only for the first input of a window. Fixture import
+and warm-up already interact with the page, so observing `first-input` cannot
+recover fast interactions later in the measured interval.
+
+New trials record whether the event observer was installed, its threshold,
+trusted pointerdown count, total event entries and entries with interaction IDs.
+These diagnose absent instrumentation or input separately from an installed
+observer receiving no qualifying entries. They do not prove an exact latency
+for omitted entries and do not relax the acceptance gate. A future measurement
+architecture would need independently validated browser paint tracing or a
+separately specified censored-data bound; requestAnimationFrame timing, command
+feedback time, artificial slowdowns and zero substitution are not INP samples.
+
+The 12 September desktop run had missing-positive-measurement trials 1 and 2,
+with 54 command feedback samples each, followed by 24/24/16 ms trials; its
+24 ms P75 still fails. Mobile reported 24 ms in all five trials. The original
+run predates observer diagnostics, so its absent entries cannot be conclusively
+attributed to threshold filtering from that artifact alone.

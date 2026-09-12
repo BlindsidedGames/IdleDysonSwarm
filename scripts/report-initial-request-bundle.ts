@@ -12,7 +12,8 @@ import {
 } from './initialRequestBundleReport.ts'
 
 const webRoot = resolve(import.meta.dirname, '..')
-const distRoot = resolve(webRoot, 'dist')
+const distArgument = process.argv.find((argument) => argument.startsWith('--dist='))
+const distRoot = resolve(webRoot, distArgument?.slice('--dist='.length) ?? 'dist')
 const manifestPath = resolve(distRoot, '.vite', 'manifest.json')
 const reportRoot = resolve(webRoot, 'reports', 'initial-request-bundle')
 

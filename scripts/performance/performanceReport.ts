@@ -28,6 +28,15 @@ export interface PerformanceBudgetResult {
   readonly actual: number
   readonly limit: number
   readonly passed: boolean
+  readonly failureReason?: string
+}
+
+export interface EventTimingDiagnostics {
+  readonly observerInstalled: boolean
+  readonly durationThresholdMilliseconds: number
+  readonly trustedPointerDownCount: number
+  readonly eventEntryCount: number
+  readonly interactionEntryCount: number
 }
 
 export interface InteractionTrialMeasurement {
@@ -44,6 +53,7 @@ export interface InteractionTrialMeasurement {
     readonly durationMilliseconds: number
   }[]
   readonly interactionToNextPaintMilliseconds: number
+  readonly eventTiming?: EventTimingDiagnostics
   readonly cumulativeLayoutShift: number
   readonly largestContentfulPaintMilliseconds: number
 }
@@ -264,6 +274,9 @@ export function createInteractionReport(input: {
       ),
       0.75,
     )
+    const trialsWithoutPositiveInteractionMeasurement = profile.trials
+      .filter((trial) => !(trial.interactionToNextPaintMilliseconds > 0))
+      .map((trial) => trial.trial)
     const cumulativeLayoutShiftP75 = percentile(
       profile.trials.map((trial) => trial.cumulativeLayoutShift),
       0.75,
@@ -334,10 +347,10 @@ export function createInteractionReport(input: {
         FIRST_SLICE_PERFORMANCE_BUDGETS
           .interactionToNextPaintP75Milliseconds,
         'at-most',
-        profile.trials.every(
-          (trial) =>
-            trial.interactionToNextPaintMilliseconds > 0,
-        ),
+        trialsWithoutPositiveInteractionMeasurement.length === 0,
+        trialsWithoutPositiveInteractionMeasurement.length === 0
+          ? undefined
+          : `No positive interaction latency measurement in trial(s) ${trialsWithoutPositiveInteractionMeasurement.join(', ')}. Event Timing omits entries below its 16 ms threshold; missing entries are not measured zero latency. The displayed percentile does not satisfy the per-trial evidence requirement.`,
       ),
       budget(
         'Synthetic CLS P75',
@@ -564,6 +577,7 @@ function budget(
   limit: number,
   threshold: PerformanceBudgetResult['threshold'] = 'at-most',
   additionalCondition = true,
+  failureReason?: string,
 ): PerformanceBudgetResult {
   return {
     name,
@@ -571,6 +585,9 @@ function budget(
     threshold,
     actual,
     limit,
+    ...(!additionalCondition && failureReason !== undefined
+      ? { failureReason }
+      : {}),
     passed:
       additionalCondition &&
       Number.isFinite(actual) &&
@@ -580,7 +597,7 @@ function budget(
 
 function formatBudget(entry: PerformanceBudgetResult): string {
   const operator = entry.threshold === 'at-most' ? '<=' : '>='
-  return `${entry.passed ? 'PASS' : 'FAIL'} ${entry.name}: ${entry.actual} ${operator} ${entry.limit} ${entry.unit}`
+  return `${entry.passed ? 'PASS' : 'FAIL'} ${entry.name}: ${entry.actual} ${operator} ${entry.limit} ${entry.unit}${entry.failureReason === undefined ? '' : ` — ${entry.failureReason}`}`
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

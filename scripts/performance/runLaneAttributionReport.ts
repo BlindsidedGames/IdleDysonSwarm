@@ -41,8 +41,8 @@ type MetricMap = Record<string, number>
 
 const preview = await startProductionPreview(
   webRoot,
-  4_187,
-  'output/performance/lane-dist',
+  Number(process.env.IDS_PERFORMANCE_PORT ?? 4_187),
+  process.env.IDS_PERFORMANCE_DIST ?? 'output/performance/lane-dist',
 )
 const measurements = []
 try {

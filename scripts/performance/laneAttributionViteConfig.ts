@@ -39,17 +39,18 @@ function laneProbePlugin(): Plugin {
           .replace(previewsPattern, previewsReplacement)
       }
       if (id.endsWith('/src/application/gameApplication.ts')) {
-        const preparePattern = /const prepared = this\.requireSession\(\)\.prepare\(target\.state\)\s*committed = await this\.options\.repository\.commit\(prepared\)/
-        const prepareReplacement = `const checkpointPrepareStartedAt = performance.now()
-        const prepared = this.requireSession().prepare(target.state)
-        globalThis.__idleDysonLaneProbeV1?.record('checkpoint-prepare', performance.now() - checkpointPrepareStartedAt)
-        const checkpointCommitStartedAt = performance.now()
-        committed = await this.options.repository.commit(prepared)
-        globalThis.__idleDysonLaneProbeV1?.record('checkpoint-commit', performance.now() - checkpointCommitStartedAt)`
+        const preparePattern = /(const session = this\.requireSession\(\)\s*const prepared = session\.prepareForPersistence\?\.\(target\.state\)\s*\?\? session\.prepare\(target\.state\))\s*(committed = await this\.options\.repository\.commit\(prepared\))/
         if (!preparePattern.test(code)) {
           throw new Error('Checkpoint application probe anchor missing.')
         }
-        return code.replace(preparePattern, prepareReplacement)
+        return code.replace(preparePattern, (_match, prepare, commit) =>
+          `const checkpointPrepareStartedAt = performance.now()
+        ${prepare}
+        globalThis.__idleDysonLaneProbeV1?.record('checkpoint-prepare', performance.now() - checkpointPrepareStartedAt)
+        const checkpointCommitStartedAt = performance.now()
+        ${commit}
+        globalThis.__idleDysonLaneProbeV1?.record('checkpoint-commit', performance.now() - checkpointCommitStartedAt)`,
+        )
       }
       if (id.endsWith('/src/save/repository.ts')) {
         const encodePattern = /const normalized = PreparedSave\.fromDecoded\(\s*save\.copyValidatedState\(\),\s*\)\s*const encoded = serializeWebSave\(normalized\.copyValidatedState\(\)\)/

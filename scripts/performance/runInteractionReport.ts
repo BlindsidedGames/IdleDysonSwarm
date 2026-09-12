@@ -115,6 +115,7 @@ try {
             entries.snapshotSelectionThroughReactCommit,
           interactionToNextPaintMilliseconds:
             interactionToNextPaint(entries.events),
+          eventTiming: entries.eventTiming,
           cumulativeLayoutShift: cumulativeLayoutShift(
             entries.layoutShifts,
           ),
