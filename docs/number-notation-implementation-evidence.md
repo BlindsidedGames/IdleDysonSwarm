@@ -197,3 +197,51 @@ Manual release review still required on physical iOS and Android devices:
 - inspect mobile resource headers and dense facility/research rows in all three
   modes, including legitimate suffix transitions and large exponents;
 - exercise the native select with touch and external/switch keyboard input.
+
+## Lossless proportional WOFF2 packaging — 12 September 2026
+
+The proportional Lexend Regular, SemiBold and Bold faces are now served as
+WOFF2. Their authored TTF sources remain available to the tabular-digit
+generator, and the digit-only faces remain unchanged TTF assets.
+`scripts/generate_lexend_web_fonts.py` uses FontTools 4.59.1 and Brotli 1.2.0,
+checks the authored source hashes, disables optional glyph/location transforms,
+and verifies every decoded table byte. The only accepted differences are the
+container checksum and the WOFF2 lossless-compression flag in `head`.
+`--check` independently regenerated all three files and matched their bytes.
+
+| Weight | Source TTF bytes | WOFF2 bytes |
+| --- | ---: | ---: |
+| Regular (400) | 78,360 | 32,256 |
+| SemiBold (600) | 78,744 | 33,452 |
+| Bold (700) | 78,632 | 33,440 |
+
+A separate Chromium 148.0.7778.96 run on macOS arm64 loaded baseline TTF and
+candidate WOFF2 under separate family names from the same development server.
+All 685 Unicode characters in each source cmap were compared at 16, 32 and
+48 CSS pixels. Eight additional strings, including `111.11`, `888.88`, `853T`,
+`854T`, `$90.0T`, `$90.1T`, scientific notation and a kerning/ligature/accent
+sample, were compared at 12, 16, 24 and 40 pixels with the digit-only family
+first and the proportional baseline/candidate as fallback.
+
+All 6,261 comparisons produced identical canvas RGBA pixels and seven text
+metrics (width, actual bounding-box extents and font ascent/descent). All nine
+explicitly requested faces loaded. The three numeric pairs above kept identical
+widths at each weight. CDP painted-font inspection of `$90.1T` attributed three
+glyphs to the appropriate `IDSLexendTabularDigits` face and three to the
+appropriate proportional Lexend face for both containers at all three weights.
+The application's own proportional faces also reported loaded at every weight.
+
+Local reproduction artifacts are
+`output/performance/font-packaging/validate.ts` and `report.json`; the validation
+uses `startDevelopmentServer` on isolated port 4296 and closes its browser and
+server when finished. Reproduction commands from the repository root:
+
+```sh
+output/font-tools-venv/bin/python scripts/generate_lexend_web_fonts.py --check
+IDS_CHROMIUM_PATH=/path/to/chromium npx tsx output/performance/font-packaging/validate.ts
+```
+
+This establishes desktop Chromium raster/metric equivalence for the sampled
+sizes and complete Unicode cmap, backed by decoded font-table equality. It does
+not constitute native WebView/device acceptance or a claim about every possible
+shaping sequence, viewport or rasterizer.
