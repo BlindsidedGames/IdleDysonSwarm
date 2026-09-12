@@ -1,0 +1,92 @@
+{
+  "kind": "stat-ordering",
+  "node": "v22.20.0",
+  "exactReferenceParity": true,
+  "measurements": [
+    {
+      "count": 0,
+      "samples": 300,
+      "batchSize": 1000,
+      "warmupIterations": 10000,
+      "before": {
+        "medianMilliseconds": 0.00002454099999999926,
+        "p95Milliseconds": 0.00008374999999999488
+      },
+      "after": {
+        "medianMilliseconds": 0.0000175830000000019,
+        "p95Milliseconds": 0.00003495800000000315
+      },
+      "medianReduction": 0.28352552870696257,
+      "p95Reduction": 0.5825910447760563,
+      "checksum": 0
+    },
+    {
+      "count": 1,
+      "samples": 300,
+      "batchSize": 1000,
+      "warmupIterations": 10000,
+      "before": {
+        "medianMilliseconds": 0.000036083000000019184,
+        "p95Milliseconds": 0.00009695800000000076
+      },
+      "after": {
+        "medianMilliseconds": 0.00001970899999997755,
+        "p95Milliseconds": 0.0000590829999999869
+      },
+      "medianReduction": 0.45378710196028404,
+      "p95Reduction": 0.3906330576127144,
+      "checksum": 620000
+    },
+    {
+      "count": 4,
+      "samples": 300,
+      "batchSize": 1000,
+      "warmupIterations": 10000,
+      "before": {
+        "medianMilliseconds": 0.00018829099999999243,
+        "p95Milliseconds": 0.0004174580000000105
+      },
+      "after": {
+        "medianMilliseconds": 0.00014083300000001487,
+        "p95Milliseconds": 0.0002848329999999919
+      },
+      "medianReduction": 0.2520460351263707,
+      "p95Reduction": 0.31769663055927855,
+      "checksum": 2480000
+    },
+    {
+      "count": 16,
+      "samples": 300,
+      "batchSize": 1000,
+      "warmupIterations": 10000,
+      "before": {
+        "medianMilliseconds": 0.0006754170000000386,
+        "p95Milliseconds": 0.000799874999999929
+      },
+      "after": {
+        "medianMilliseconds": 0.00048374999999998636,
+        "p95Milliseconds": 0.0005700420000000009
+      },
+      "medianReduction": 0.28377580072761166,
+      "p95Reduction": 0.2873361462727908,
+      "checksum": 9920000
+    },
+    {
+      "count": 64,
+      "samples": 300,
+      "batchSize": 1000,
+      "warmupIterations": 10000,
+      "before": {
+        "medianMilliseconds": 0.0036460000000001856,
+        "p95Milliseconds": 0.003940333000000009
+      },
+      "after": {
+        "medianMilliseconds": 0.002798624999999902,
+        "p95Milliseconds": 0.003045875000000024
+      },
+      "medianReduction": 0.23241223258371935,
+      "p95Reduction": 0.227000611369644,
+      "checksum": 39680000
+    }
+  ]
+}

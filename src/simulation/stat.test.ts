@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { calculateStat } from './stat'
+import { calculateStat, orderStatEffects, type StatEffect } from './stat'
 
 describe('canonical stat arithmetic', () => {
   test('saturates composed positive multipliers at the continuous maximum', () => {
@@ -33,4 +33,24 @@ describe('canonical stat arithmetic', () => {
       ]),
     ).toBe(5)
   })
+})
+
+
+test('effect ordering preserves source ties and never mutates the input', () => {
+  const orders = [3, 1, 1, -2, 0, Number.POSITIVE_INFINITY, Number.NaN]
+  for (let offset = 0; offset < orders.length; offset += 1) {
+    const effects: readonly StatEffect[] = Object.freeze(
+      [...orders.slice(offset), ...orders.slice(0, offset)].map((order, index) =>
+        Object.freeze({ id: String(index), operation: 'add' as const, value: index, order }),
+      ),
+    )
+    const reference = effects
+      .map((effect, index) => ({ effect, index }))
+      .sort((left, right) => left.effect.order - right.effect.order || left.index - right.index)
+      .map(({ effect }) => effect)
+    const sorted = orderStatEffects(effects)
+    expect(sorted).toEqual(reference)
+    expect(sorted).not.toBe(effects)
+  }
+  expect(orderStatEffects([])).toEqual([])
 })
