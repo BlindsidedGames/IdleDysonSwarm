@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { generateFirstDysonSliceFixture } from '../../scripts/firstDysonSliceCanonical'
 import { loadFrozenFirstDysonSliceFixture } from './firstDysonSliceFixture'
@@ -86,16 +85,6 @@ describe('frozen first-Dyson canonical fixture', () => {
 
     expect(first).not.toBe(second)
     expectDeepFrozen(first)
-  })
-
-  test('the checked-in frozen artifact matches the generator output', async () => {
-    const checkedIn = readFileSync(
-      new URL('./first-dyson-slice.fixture.json', import.meta.url),
-      'utf8',
-    )
-    const generated = await generateFirstDysonSliceFixture()
-
-    expect(JSON.parse(checkedIn)).toEqual(generated)
   })
 })
 

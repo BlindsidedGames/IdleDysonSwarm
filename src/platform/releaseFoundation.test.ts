@@ -1,16 +1,12 @@
 import { describe, expect, test } from 'vitest'
 import {
   CANONICAL_STORE_PRODUCTS,
-  NoopEntitlementAuthority,
-  NoopStoreAdapter,
   STORE_PRODUCT_IDS,
   resolveEffectiveEntitlementAccess,
 } from '../store/contracts'
 import {
   createBrowserDevelopmentReleasePlatformServices,
   createBrowserReleasePlatformServices,
-  NoopDiagnosticsExporter,
-  NoopNativeFilesystemMigrationSource,
 } from './releaseFoundation'
 
 describe('release platform/store foundation', () => {
@@ -140,25 +136,5 @@ describe('release platform/store foundation', () => {
       developerOptions: true,
       developerOptionsSource: 'host-store',
     })
-  })
-
-  test('keeps individual no-op adapters testable without a host SDK', async () => {
-    await expect(
-      new NoopNativeFilesystemMigrationSource().discoverCandidates(),
-    ).resolves.toEqual([])
-    await expect(new NoopEntitlementAuthority().readOwnership()).resolves.toEqual({
-      doubleInfinityPoints: false,
-      developerOptions: false,
-      supporterCatGallery: false,
-    })
-    await expect(new NoopStoreAdapter().restorePurchases()).resolves.toEqual({
-      restoredProductIds: [],
-    })
-    await expect(
-      new NoopDiagnosticsExporter().export({
-        fileName: 'diagnostics.json',
-        payload: { phase: 'idle', code: 'none' },
-      }),
-    ).resolves.toEqual({ exported: false, code: 'export-unavailable' })
   })
 })

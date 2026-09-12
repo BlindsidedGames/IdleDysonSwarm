@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { hydrateGameState } from '../../src/game-state/mapping'
 import { validateCanonicalGameState } from '../../src/game-state/validate'
 import { prepareImportedSaveText } from '../../src/save/import'
@@ -18,6 +18,18 @@ import {
 } from './progressionMatrixFixtures'
 
 describe('production-valid progression matrix fixtures', () => {
+  let builtFixtures: ReturnType<typeof createProgressionMatrixFixtures>
+  let fixtures: ReturnType<typeof createProgressionMatrixFixtures>
+
+  beforeAll(() => {
+    builtFixtures = createProgressionMatrixFixtures()
+  })
+
+  beforeEach(() => {
+    // Keep each test isolated without replaying the 420 Quantum cycles again.
+    fixtures = structuredClone(builtFixtures)
+  })
+
   const expectedSaveSha256 = {
     fresh: 'c3a8710c30778df50a1f1dde5bcbe2d891ce5fd60232a2cdd47ef095ed9845bc',
     'mid-swarm': 'fac4d652b979a38cf1c45130e22ad5607c07e93d713e78af2bf206d90edf507f',
@@ -30,7 +42,7 @@ describe('production-valid progression matrix fixtures', () => {
     'maximum-skills': '8309b9cc0340dbe36b55275628941c61b945535a09fc76a860ae0c0e73a339b1',
   }
   test('materializes every named deterministic state with stable fingerprints', () => {
-    const first = createProgressionMatrixFixtures()
+    const first = fixtures
     const second = createProgressionMatrixFixtures()
     expect(first.map((fixture) => fixture.id)).toEqual(PROGRESSION_FIXTURE_IDS)
     expect(first.map((fixture) => fixture.fingerprint)).toEqual(
@@ -57,7 +69,7 @@ describe('production-valid progression matrix fixtures', () => {
   })
 
   test('canonical builders exactly reproduce the immutable profiling artifacts', () => {
-    const built = createProgressionMatrixFixtures()
+    const built = fixtures
     const checkedIn = loadCheckedInProgressionMatrixFixtures()
     expect(checkedIn.map((fixture) => fixture.id)).toEqual(PROGRESSION_FIXTURE_IDS)
     expect(checkedIn.map((fixture) => fixture.saveSha256)).toEqual(built.map((fixture) => fixture.saveSha256))
@@ -89,7 +101,7 @@ describe('production-valid progression matrix fixtures', () => {
   })
 
   test('certifies exact Infinity accounting and populated Simulation progression', () => {
-    const byId = Object.fromEntries(createProgressionMatrixFixtures().map((fixture) => [fixture.id, fixture]))
+    const byId = Object.fromEntries(fixtures.map((fixture) => [fixture.id, fixture]))
     expect(byId['first-infinity'].state.infinity).toMatchObject({ points: 1n, spentPoints: 0n })
     expect(byId['mature-infinity'].state.infinity).toMatchObject({ points: 41n, spentPoints: 26n, secretsOfTheUniverse: 20n })
     expect(byId['mature-infinity'].state.infinity.automationUnlocked).toEqual({ research: true, bots: true })
@@ -106,7 +118,7 @@ describe('production-valid progression matrix fixtures', () => {
 
   test('records exact route growth at the authored progression boundaries', () => {
     const byId = Object.fromEntries(
-      createProgressionMatrixFixtures().map((fixture) => [fixture.id, fixture]),
+      fixtures.map((fixture) => [fixture.id, fixture]),
     )
     expect(byId.fresh.reachableRoutes).toEqual([
       'bots', 'research', 'story', 'wiki', 'offline-time', 'statistics', 'settings',
@@ -130,7 +142,7 @@ describe('production-valid progression matrix fixtures', () => {
   })
 
   test('certifies navigation immediately before and at authored boundaries', () => {
-    const fresh = createProgressionMatrixFixtures()[0].state
+    const fresh = fixtures[0].state
     const tenBots = { ...fresh, dyson: { ...fresh.dyson, bots: 10 } }
     expect(deriveProgressionRoutes(tenBots)).not.toContain('skills')
     expect(deriveProgressionRoutes({
