@@ -1,15 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import {
-  assertUniqueWikiAuthoredMessageIds,
-  WIKI_LORE_SECTIONS,
-  WIKI_PATCH_NOTES,
-  wikiLoreChapterBodyMessage,
-  wikiLoreChapterTitleMessage,
-  wikiLoreSectionTitleMessage,
-  wikiPatchNoteMessage,
-  type WikiAuthoredMessage,
-} from '../src/ui/gameplay/wiki/content'
+import { collectWikiAuthoredMessages } from './wikiAuthoredMessages'
 
 const root = resolve(import.meta.dirname, '..')
 const path = resolve(root, 'src/ui/i18n/catalogs/source/en.json')
@@ -18,17 +9,7 @@ const source = JSON.parse(readFileSync(path, 'utf8')) as Record<
   string,
   { readonly defaultMessage: string; readonly description: string }
 >
-const authored: WikiAuthoredMessage[] = [
-  ...WIKI_PATCH_NOTES.map(wikiPatchNoteMessage),
-  ...WIKI_LORE_SECTIONS.flatMap((section) => [
-    wikiLoreSectionTitleMessage(section),
-    ...section.chapters.flatMap((chapter) => [
-      wikiLoreChapterTitleMessage(section, chapter),
-      wikiLoreChapterBodyMessage(section, chapter),
-    ]),
-  ]),
-]
-assertUniqueWikiAuthoredMessageIds(authored)
+const authored = collectWikiAuthoredMessages()
 for (const message of authored) {
   source[message.id] = {
     defaultMessage: message.defaultMessage,

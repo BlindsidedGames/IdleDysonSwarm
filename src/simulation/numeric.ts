@@ -130,11 +130,15 @@ function roundToEven(value: number): number {
   return floor % 2 === 0 ? floor : floor + 1
 }
 
+// Numeric neighbor operations are synchronous and invoke no callbacks. Reuse
+// one scratch buffer per JS realm instead of allocating it for each settlement.
+const numericNeighborView = new DataView(new ArrayBuffer(8))
+
 export function bitDecrement(value: number): number {
   if (Number.isNaN(value) || value === Number.NEGATIVE_INFINITY) return value
   if (value === 0) return -Number.MIN_VALUE
 
-  const view = new DataView(new ArrayBuffer(8))
+  const view = numericNeighborView
   view.setFloat64(0, value, false)
   let bits = view.getBigUint64(0, false)
   bits += value > 0 ? -1n : 1n
@@ -146,7 +150,7 @@ export function bitIncrement(value: number): number {
   if (Number.isNaN(value) || value === Number.POSITIVE_INFINITY) return value
   if (value === 0) return Number.MIN_VALUE
 
-  const view = new DataView(new ArrayBuffer(8))
+  const view = numericNeighborView
   view.setFloat64(0, value, false)
   let bits = view.getBigUint64(0, false)
   bits += value > 0 ? 1n : -1n

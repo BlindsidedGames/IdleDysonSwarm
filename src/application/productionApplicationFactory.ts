@@ -67,51 +67,96 @@ export function createProductionCanonicalApplicationFactory(
     const entitlements = readEntitlements(
       options.readHostEntitlements,
     )
-    const localResolver = new RepositoryStartupSaveResolver(repository, options.createFirstRunSave, 'development')
+    const localResolver = new RepositoryStartupSaveResolver(
+      repository,
+      options.createFirstRunSave,
+      'development',
+    )
+    const startupResolver = options.cloud === undefined
+      ? localResolver
+      : new CloudStartupResolver(localResolver, repository, options.cloud)
     const application = createCanonicalGameApplication({
       repository,
-      startupResolver: options.cloud === undefined ? localResolver : new CloudStartupResolver(localResolver,repository,options.cloud),
+      startupResolver,
       sessionFactory: createCanonicalRuntimeSessionFactory({
         nowUtcMilliseconds: Date.now,
         entitlements,
         captureAchievements: options.achievements !== undefined,
         persistAchievements: options.achievements?.persistEvidence === true,
       }),
-      engine: { eventContext, retainAchievementEvidence: options.achievements?.persistEvidence === true },
+      engine: {
+        eventContext,
+        retainAchievementEvidence: options.achievements?.persistEvidence === true,
+      },
       storedTimeJobRunner: new BrowserStoredTimeJobRunner(),
       createTransitionalRecoveryBase: options.createFirstRunSave,
     })
     if (options.achievements !== undefined) {
-      const publication = options.achievements
-      application.subscribe(snapshot => {
-        if (snapshot.phase !== 'ready') return
-        try {
-          const facts = mergeAchievementFacts(snapshot.state.achievementEvidence, evaluateAchievements(snapshot.state.gameState, options.readDeveloperOptions?.() === true))
-          void publication.submit(facts).catch(() => undefined)
-        } catch { /* Optional platform reporting cannot affect committed state. */ }
-      })
+      subscribeAchievementPublication(
+        application,
+        options.achievements,
+        () => options.readDeveloperOptions?.() === true,
+      )
     }
     if (options.cloud !== undefined) {
-      const cloud = options.cloud
-      let lastCheckpoint = ''
-      application.subscribe(snapshot => {
-        if (snapshot.phase !== 'ready' || snapshot.checkpoint.kind !== 'clean' || snapshot.revision.state !== snapshot.revision.durable) return
-        const revision = `${snapshot.revision.session}:${snapshot.revision.durable}`
-        if (revision === lastCheckpoint) return
-        const captured = application.captureSaveTransferSnapshot()
-        if (captured?.basis !== 'current') return
-        lastCheckpoint=revision
-        // Match the repository's durable normalization so the next launch can
-        // prove this device has not changed since its last Cloud publication.
-        const normalized = PreparedSave.fromDecoded(captured.prepared.copyValidatedState())
-        void cloud.publish(serializeSharedWebSave(normalized.copyValidatedState())).catch(() => { lastCheckpoint='' })
-      })
+      subscribeCloudPublication(application, options.cloud)
     }
     return application
   }
 }
 
 export { createProductionEventContext } from '../simulation/productionEventContext'
+
+/** Optional reporting observes published state without owning its publication. */
+function subscribeAchievementPublication(
+  application: CanonicalGameApplicationFacade,
+  publication: AchievementPublication,
+  readDeveloperOptions: () => boolean,
+): void {
+  application.subscribe((snapshot) => {
+    if (snapshot.phase !== 'ready') return
+    try {
+      const facts = mergeAchievementFacts(
+        snapshot.state.achievementEvidence,
+        evaluateAchievements(snapshot.state.gameState, readDeveloperOptions()),
+      )
+      void publication.submit(facts).catch(() => undefined)
+    } catch {
+      // Optional platform reporting cannot affect committed state.
+    }
+  })
+}
+
+/** Cloud receives verified, clean checkpoints and suppresses unchanged revisions. */
+function subscribeCloudPublication(
+  application: CanonicalGameApplicationFacade,
+  cloud: PortableCloud,
+): void {
+  let lastCheckpoint = ''
+  application.subscribe((snapshot) => {
+    if (
+      snapshot.phase !== 'ready' ||
+      snapshot.checkpoint.kind !== 'clean' ||
+      snapshot.revision.state !== snapshot.revision.durable
+    ) return
+
+    const revision = `${snapshot.revision.session}:${snapshot.revision.durable}`
+    if (revision === lastCheckpoint) return
+    const captured = application.captureSaveTransferSnapshot()
+    if (captured?.basis !== 'current') return
+    lastCheckpoint = revision
+
+    // Match the repository's durable normalization so the next launch can
+    // prove this device has not changed since its last Cloud publication.
+    const normalized = PreparedSave.fromDecoded(captured.prepared.copyValidatedState())
+    void cloud.publish(serializeSharedWebSave(normalized.copyValidatedState()))
+      .catch(() => {
+        // A failed older request cannot invalidate a newer checkpoint's
+        // publication. Only the latest request owns its retry marker.
+        if (lastCheckpoint === revision) lastCheckpoint = ''
+      })
+  })
+}
 
 function readEntitlements(
   readHostEntitlements: () => Readonly<DysonEntitlements>,

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
+import { createDeferred, type Deferred } from './deferred.test-helper'
 import { gameDataCatalog } from '../game-data/catalog'
 import { prepareIdb1Save } from '../save/prepare'
 import type {
@@ -28,6 +29,49 @@ const fixtureUrl = new URL(
 )
 
 describe('production canonical application factory', () => {
+  test('retains a newer Cloud checkpoint after an older failure and retries the latest failure', async () => {
+    const prepared = prepareIdb1Save(readFileSync(fixtureUrl, 'utf8')).prepared
+    const pending: Deferred<void>[] = []
+    const publish = vi.fn(() => {
+      const delivery = createDeferred<void>()
+      pending.push(delivery)
+      return delivery.promise
+    })
+    const application = createProductionCanonicalApplicationFactory({
+      createFirstRunSave: () => prepared,
+      readHostEntitlements: () => ({ permanentDoubleIp: false }),
+      cloud: {
+        read: async () => null,
+        choose: async () => 'local',
+        acknowledge: async () => undefined,
+        publish,
+      },
+    })(new FirstRunRepository())
+
+    await application.start()
+    expect(publish).toHaveBeenCalledTimes(1)
+    expect(application.advanceActive(33).accepted).toBe(true)
+    await application.checkpoint()
+    expect(publish).toHaveBeenCalledTimes(2)
+
+    pending[1].resolve()
+    await pending[1].promise
+    pending[0].reject(new Error('older publication failed'))
+    await expect(pending[0].promise).rejects.toThrow('older publication failed')
+    await application.checkpoint()
+    expect(publish).toHaveBeenCalledTimes(2)
+
+    expect(application.advanceActive(33).accepted).toBe(true)
+    await application.checkpoint()
+    expect(publish).toHaveBeenCalledTimes(3)
+    pending[2].reject(new Error('latest publication failed'))
+    await expect(pending[2].promise).rejects.toThrow('latest publication failed')
+    await application.checkpoint()
+    expect(publish).toHaveBeenCalledTimes(4)
+    pending[3].resolve()
+    await pending[3].promise
+  })
+
   test('captures existing generated authorities without frontend defaults', () => {
     const context = createProductionEventContext()
     const asset = gameDataCatalog.assets[0]

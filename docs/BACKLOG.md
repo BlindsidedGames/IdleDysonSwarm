@@ -10,6 +10,18 @@ Status conventions:
 - **In progress** means another isolated task currently owns implementation.
 - **Deferred** means the work is intentionally outside the current release.
 
+## Performance and maintainability — 12 September 2026
+
+- [ ] **In progress:** measured performance, clean-code, duplication and complete
+  individual-test review on `codex/performance-maintainability`; see the
+  [decision log](audits/performance-review-decisions-2026-09-12.md). Keep gameplay
+  decisions pending user approval while continuing independent improvements.
+- [ ] **Investigate:** full interaction report's missing Event Timing samples for
+  very fast desktop interactions; retain the existing gate until evidence is sound.
+- **Deferred design:** destination locale splitting and larger startup bundle
+  architecture. Baseline already exceeds JavaScript and shared-English ceilings;
+  do not raise those ceilings to claim success.
+
 ## Next few days — Discord follow-up and Stored Time UI
 
 Updated 10 September 2026; this list was collected from Discord on

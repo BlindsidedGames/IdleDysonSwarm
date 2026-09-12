@@ -2,6 +2,7 @@ import { isSubskill } from '../simulation/skillSubskills'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import { LEGACY_INFINITY_STRUCTURAL_DEFAULTS } from './legacyStructuralDefaults'
 import {
   bitsetToSkillIds,
   dependencySafeSkillOrder,
@@ -215,30 +216,7 @@ function ensureSaveShape(save: SaveRecord): void {
   ensureArray(save, 'lastNumericRepairLog')
 
   const infinity = ensureRecord(dyson, 'dysonVerseInfinityData')
-  applyDefaults(infinity, {
-    moneyMulti: 1,
-    scienceMulti: 1,
-    panelsPerSecMulti: 1,
-    panelLifetime: 10,
-    assemblyLineModifier: 1,
-    managerModifier: 1,
-    serverModifier: 1,
-    dataCenterModifier: 1,
-    planetModifier: 1,
-    matrioshkaBrainModifier: 1,
-    birchPlanetModifier: 1,
-    galacticBrainModifier: 1,
-    scienceBoostPercent: 0.05,
-    moneyMultiUpgradePercent: 0.05,
-    assemblyLineUpgradePercent: 0.03,
-    aiManagerUpgradePercent: 0.03,
-    serverUpgradePercent: 0.03,
-    dataCenterUpgradePercent: 0.03,
-    planetUpgradePercent: 0.03,
-    matrioshkaUpgradePercent: 0.03,
-    birchUpgradePercent: 0.03,
-    galacticUpgradePercent: 0.03,
-  })
+  applyDefaults(infinity, LEGACY_INFINITY_STRUCTURAL_DEFAULTS)
   const prestige = ensureRecord(dyson, 'dysonVersePrestigeData')
   applyDefaults(prestige, { botDistribution: 0.5 })
   ensureRecord(dyson, 'dysonVerseSkillTreeData')

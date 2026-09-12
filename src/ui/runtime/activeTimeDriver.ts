@@ -16,6 +16,7 @@ export interface ActiveTimeMonotonicClock {
 export interface ActiveTimeFrameScheduler {
   requestFrame(callback: () => void): unknown
   cancelFrame(handle: unknown): void
+  setDelayMilliseconds?(milliseconds: number): void
 }
 
 export interface SuspendedActiveTime {
@@ -109,10 +110,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
   setDeliveryIntervalMilliseconds(milliseconds: number): void {
     validateDeliveryInterval(milliseconds)
     this.minimumDeliveryMilliseconds = milliseconds
-    if ('setDelayMilliseconds' in this.scheduler) {
-      ;(this.scheduler as BrowserActiveTimeFrameScheduler)
-        .setDelayMilliseconds(milliseconds)
-    }
+    this.scheduler.setDelayMilliseconds?.(milliseconds)
   }
 
   deliveryIntervalMilliseconds(): number {

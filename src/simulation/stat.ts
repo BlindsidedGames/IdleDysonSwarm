@@ -23,13 +23,9 @@ export interface StatEffect {
 export function orderStatEffects(
   effects: readonly StatEffect[],
 ): readonly StatEffect[] {
-  return effects
-    .map((effect, index) => ({ effect, index }))
-    .sort(
-      (left, right) =>
-        left.effect.order - right.effect.order || left.index - right.index,
-    )
-    .map(({ effect }) => effect)
+  // Array#sort is stable on every supported runtime. Copy first so callers'
+  // authored effect arrays remain unchanged, including equal-order entries.
+  return [...effects].sort((left, right) => left.order - right.order)
 }
 
 export function applyStatEffect(

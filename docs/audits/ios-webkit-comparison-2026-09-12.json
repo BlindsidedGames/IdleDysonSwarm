@@ -1,0 +1,195 @@
+{
+  "baselineSource": "878f5bffecd59c699712103172e668d12853d16a",
+  "candidateProductionCheckpoint": "b9b47d653a35dabf4023d73027e3a9cb42b4a6ce",
+  "baseline": {
+    "directory": "/Users/matthewrushworth/Projects/ids-performance-maintainability/output/performance/ios-ui-baseline-native",
+    "files": 215,
+    "treeSha256": "19fc3c3ef174fc91ab2ac34768193313d4ee09fe5db5756f0e466ad0cf4e2159",
+    "manifestSha256": "d31f4d62452b33f02009c1aca1762cc3e53e446db553f7b4d71cda78bff54346"
+  },
+  "candidate": {
+    "directory": "/Users/matthewrushworth/Projects/ids-performance-maintainability/output/performance/candidate-v6-native-dist",
+    "files": 235,
+    "treeSha256": "1998e9cb264536c5096bbce6350f640920c6cdbdd472ef2a9793f0fb7398ae0d",
+    "manifestSha256": "10defdc0f15bed8a7ad7c9ee8a54cb54ac80d1627374e83c91920fe411dc2c57"
+  },
+  "engine": "WKWebView on iOS 17.5 simulator",
+  "device": "Dedicated disposable iPhone 15 Pro",
+  "viewport": {
+    "width": 393,
+    "height": 852,
+    "scale": 3
+  },
+  "actionsEqual": true,
+  "actions": [
+    {
+      "importStatus": "Save imported successfully."
+    },
+    {
+      "route": "bots",
+      "before": true,
+      "changed": false,
+      "after": true,
+      "invalid": null
+    },
+    {
+      "route": "research",
+      "before": true,
+      "changed": false,
+      "after": true,
+      "invalid": null
+    }
+  ],
+  "baselineErrors": [],
+  "candidateErrors": [],
+  "snapshots": [
+    {
+      "name": "fresh-bots",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 0,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 1053,
+      "differenceBounds": [
+        1077,
+        2033,
+        1146,
+        2102
+      ]
+    },
+    {
+      "name": "maximum-bots",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 0,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 4240,
+      "differenceBounds": [
+        48,
+        214,
+        1119,
+        258
+      ]
+    },
+    {
+      "name": "maximum-research",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 11,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 4707,
+      "differenceBounds": [
+        73,
+        213,
+        1151,
+        260
+      ]
+    },
+    {
+      "name": "maximum-skills",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 105,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 157,
+      "differenceBounds": [
+        140,
+        36,
+        1029,
+        522
+      ]
+    },
+    {
+      "name": "wiki-4-en-patch-notes",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 0,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 0,
+      "differenceBounds": null
+    },
+    {
+      "name": "wiki-5-en-lore",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 0,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 0,
+      "differenceBounds": null
+    },
+    {
+      "name": "wiki-6-fr-patch-notes",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 0,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 0,
+      "differenceBounds": null
+    },
+    {
+      "name": "wiki-7-fr-lore",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 0,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 0,
+      "differenceBounds": null
+    },
+    {
+      "name": "wiki-8-en-patch-notes",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 0,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 0,
+      "differenceBounds": null
+    },
+    {
+      "name": "wiki-9-en-lore",
+      "textEqual": true,
+      "rectangleEqual": true,
+      "controlsEqual": true,
+      "imagesEqual": true,
+      "mountedImages": 0,
+      "brokenImages": 0,
+      "overflow": false,
+      "differentPixels": 0,
+      "differenceBounds": null
+    }
+  ],
+  "deviceDeleted": true,
+  "isolatedServersStopped": true,
+  "limits": [
+    "Native-mode web output in standalone WKWebView, not a signed Capacitor app or physical device.",
+    "DOM-triggered controls exercise application handlers, not physical touch hit testing.",
+    "Fresh and maximum-skills fixtures only; all-screen and native service acceptance not claimed.",
+    "HTTPS localhost trust was restricted to the disposable QA app; build CSP and output were unchanged."
+  ]
+}

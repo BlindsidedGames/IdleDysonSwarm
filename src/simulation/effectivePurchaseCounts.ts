@@ -1,6 +1,15 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import type { BasicDysonFacilityId } from './dysonFacilities'
 
+const TERRA_SKILL_BY_FACILITY: Readonly<
+  Partial<Record<BasicDysonFacilityId, string>>
+> = Object.freeze({
+  assembly_lines: 'terraNullius',
+  ai_managers: 'terraInfirma',
+  servers: 'terraEculeo',
+  data_centers: 'terraFirma',
+})
+
 /** Bought counts include Terra transfers, but never automatically produced facilities. */
 export function deriveEffectivePurchaseCounts(
   state: Readonly<CanonicalGameStateV1>,
@@ -10,15 +19,7 @@ export function deriveEffectivePurchaseCounts(
   const rawManualCount = state.dyson.facilities[facilityId][1]
   const effectiveManualPlanets = state.dyson.facilities.planets[1] *
     (owned('terraIrradiant') ? 12 : 1)
-  const terraSkillByFacility: Readonly<
-    Partial<Record<BasicDysonFacilityId, string>>
-  > = {
-    assembly_lines: 'terraNullius',
-    ai_managers: 'terraInfirma',
-    servers: 'terraEculeo',
-    data_centers: 'terraFirma',
-  }
-  const terraSkill = terraSkillByFacility[facilityId]
+  const terraSkill = TERRA_SKILL_BY_FACILITY[facilityId]
   const effectiveManualCount = facilityId === 'planets'
     ? effectiveManualPlanets
     : rawManualCount +

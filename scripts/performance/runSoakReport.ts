@@ -16,7 +16,8 @@ import {
 import {
   hasFlag,
   integerArgument,
-  repositoryRunIdentity,
+  capturePerformanceRunProvenance,
+  finalizePerformanceRunReport,
   writePerformanceReport,
 } from './reportArtifacts'
 import {
@@ -55,7 +56,8 @@ if (soakFixture === undefined) {
   throw new Error('The checked-in mid-swarm performance fixture is missing.')
 }
 
-const preview = await startProductionPreview(webRoot, port)
+const provenance = capturePerformanceRunProvenance(webRoot)
+const preview = await startProductionPreview(webRoot, port, provenance.servedBuild.distRoot)
 let page: ChromiumPage | undefined
 try {
   page = await openChromiumPage(profile, preview.url)
@@ -89,7 +91,7 @@ try {
   }
   await delay(1_000)
   const final = await collectSnapshot(page)
-  const report = {
+  const report = finalizePerformanceRunReport({
     ...createSoakReport({
     mode: smoke ? 'smoke' : 'acceptance',
     createdAtUtc: new Date().toISOString(),
@@ -107,8 +109,7 @@ try {
       fingerprint: soakFixture.fingerprint,
       saveSha256: soakFixture.saveSha256,
     },
-    runIdentity: repositoryRunIdentity(webRoot),
-  }
+  }, provenance)
   const paths = writePerformanceReport(
     webRoot,
     'first-slice-retained-heap',

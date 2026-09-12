@@ -10,6 +10,9 @@ import {
   stripMessageAuthoringMetadataPlugin,
 } from './scripts/stripMessageAuthoringMetadata.js'
 import {
+  omitDuplicatedEnglishWikiMessagesPlugin,
+} from './scripts/omitDuplicatedEnglishWikiMessages.js'
+import {
   PWA_BASE_PATH,
   pwaPackagePlugin,
 } from './scripts/pwaPackage.js'
@@ -92,6 +95,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       developmentTelemetryPlugin(),
       stripMessageAuthoringMetadataPlugin(),
+      omitDuplicatedEnglishWikiMessagesPlugin(),
       react(),
       ...(nativeBuild
         ? [nativeRelativeHtmlPlugin()]
@@ -130,8 +134,11 @@ export default defineConfig(({ mode }) => {
       sourcemap: false,
       // Keep the tiny tabular faces as real assets. A CSS query suffix avoids
       // build inlining but breaks Vite development URL rewriting under /play/.
+      // Skill icon maps are eager: keep their bytes in image files so loading
+      // a facility's details does not download every small skill icon as JS.
       assetsInlineLimit: (filePath) =>
-        filePath.includes('IDS-LexendTabularDigits-')
+        filePath.includes('IDS-LexendTabularDigits-') ||
+        filePath.replaceAll('\\', '/').includes('/skill-icons/')
           ? false
           : undefined,
     },

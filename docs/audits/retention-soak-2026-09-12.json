@@ -1,0 +1,169 @@
+{
+  "artifact": {
+    "directory": "output/performance/candidate-v1-dist",
+    "manifestSha256": "36f026397a004a324e659754419e672cc2d921eab926e9d73f298647e0df9e75",
+    "note": "Frozen candidate v1 built before later catalog, formatter, font, clone-ownership and within-call reuse changes. The embedded runIdentity was captured at report completion and is NOT this build source identity."
+  },
+  "report": {
+    "version": 1,
+    "kind": "first-slice-retained-heap",
+    "mode": "acceptance",
+    "acceptanceEligible": true,
+    "createdAtUtc": "2026-09-12T04:13:59.512Z",
+    "environment": {
+      "browser": "HeadlessChrome",
+      "browserVersion": "148.0.7778.96",
+      "platform": "darwin-arm64",
+      "productionUrl": "http://127.0.0.1:4294/play/"
+    },
+    "configuration": {
+      "durationMilliseconds": 1800000,
+      "warmupMilliseconds": 30000,
+      "explicitGarbageCollections": 4
+    },
+    "baseline": {
+      "heapUsedBytes": 11128980,
+      "resources": {
+        "documents": 3,
+        "nodes": 581,
+        "jsEventListeners": 489,
+        "documentNodes": 333,
+        "activeEventListeners": 368,
+        "activeTimeouts": 1,
+        "activeIntervals": 3,
+        "activeAnimationFrames": 0,
+        "activePointers": 0,
+        "callbackSubscriptionSets": 13,
+        "callbackSubscriptionMembers": 14
+      }
+    },
+    "final": {
+      "heapUsedBytes": 16334784,
+      "resources": {
+        "documents": 3,
+        "nodes": 583,
+        "jsEventListeners": 517,
+        "documentNodes": 333,
+        "activeEventListeners": 368,
+        "activeTimeouts": 1,
+        "activeIntervals": 3,
+        "activeAnimationFrames": 0,
+        "activePointers": 0,
+        "callbackSubscriptionSets": 13,
+        "callbackSubscriptionMembers": 14
+      }
+    },
+    "consoleErrors": [],
+    "pageErrors": [],
+    "retainedHeapGrowthBytes": 5205804,
+    "retainedHeapAllowanceBytes": 10485760,
+    "budgets": [
+      {
+        "name": "Console errors",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 0,
+        "limit": 0,
+        "passed": true
+      },
+      {
+        "name": "Page errors",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 0,
+        "limit": 0,
+        "passed": true
+      },
+      {
+        "name": "Retained JavaScript heap growth",
+        "unit": "bytes",
+        "threshold": "at-most",
+        "actual": 5205804,
+        "limit": 10485760,
+        "passed": true
+      },
+      {
+        "name": "Post-soak documents",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 3,
+        "limit": 3,
+        "passed": true
+      },
+      {
+        "name": "Post-soak documentNodes",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 333,
+        "limit": 333,
+        "passed": true
+      },
+      {
+        "name": "Post-soak activeEventListeners",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 368,
+        "limit": 368,
+        "passed": true
+      },
+      {
+        "name": "Post-soak activeTimeouts",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 1,
+        "limit": 1,
+        "passed": true
+      },
+      {
+        "name": "Post-soak activeIntervals",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 3,
+        "limit": 3,
+        "passed": true
+      },
+      {
+        "name": "Post-soak activeAnimationFrames",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 0,
+        "limit": 0,
+        "passed": true
+      },
+      {
+        "name": "Post-soak activePointers",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 0,
+        "limit": 0,
+        "passed": true
+      },
+      {
+        "name": "Post-soak callbackSubscriptionSets",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 13,
+        "limit": 13,
+        "passed": true
+      },
+      {
+        "name": "Post-soak callbackSubscriptionMembers",
+        "unit": "count",
+        "threshold": "at-most",
+        "actual": 14,
+        "limit": 14,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "fixture": {
+      "id": "mid-swarm",
+      "fingerprint": "de31a4a843a992a0656ff4d3498722f89413c2174bfe47ad1ee7fb6f70ecea84",
+      "saveSha256": "fac4d652b979a38cf1c45130e22ad5607c07e93d713e78af2bf206d90edf507f"
+    },
+    "runIdentity": {
+      "revision": "656457c8b9eff78fe57c2854e96d091d2d931908",
+      "workingTreeDirty": true
+    }
+  }
+}

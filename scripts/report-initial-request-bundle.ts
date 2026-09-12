@@ -12,7 +12,8 @@ import {
 } from './initialRequestBundleReport.ts'
 
 const webRoot = resolve(import.meta.dirname, '..')
-const distRoot = resolve(webRoot, 'dist')
+const distArgument = process.argv.find((argument) => argument.startsWith('--dist='))
+const distRoot = resolve(webRoot, distArgument?.slice('--dist='.length) ?? 'dist')
 const manifestPath = resolve(distRoot, '.vite', 'manifest.json')
 const reportRoot = resolve(webRoot, 'reports', 'initial-request-bundle')
 
@@ -119,7 +120,7 @@ writeFileSync(resolve(reportRoot, 'initial-request-bundle.txt'), `${lines.join('
 console.log(lines.join('\n'))
 if (warnings.length > 0) {
   console.warn(
-    'The provisional JavaScript target was exceeded; the report remains successful so enforced packaging checks can continue.',
+    'The provisional JavaScript target was exceeded; enforced budgets determine the report’s exit status.',
   )
 }
 if (failures.length > 0) {

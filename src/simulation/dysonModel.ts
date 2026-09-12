@@ -120,6 +120,30 @@ function cloneRates(rates: BasicDysonRates): BasicDysonRates {
   return { ...rates }
 }
 
+type SkillEffectsByStat = NonNullable<BasicDysonState['skillEffectsByStat']>
+
+// Only graphs detached and frozen here are safe to share between model copies.
+// A caller's frozen outer map may still contain mutable arrays or effects.
+const ownedSkillEffectMaps = new WeakSet<SkillEffectsByStat>()
+
+function cloneSkillEffects(
+  effectsByStat: BasicDysonState['skillEffectsByStat'],
+): BasicDysonState['skillEffectsByStat'] {
+  if (effectsByStat === undefined || ownedSkillEffectMaps.has(effectsByStat)) {
+    return effectsByStat
+  }
+  const detached = Object.freeze(
+    Object.fromEntries(
+      Object.entries(effectsByStat).map(([statId, effects]) => [
+        statId,
+        Object.freeze(effects.map((effect) => Object.freeze({ ...effect }))),
+      ]),
+    ),
+  )
+  ownedSkillEffectMaps.add(detached)
+  return detached
+}
+
 function cloneState(state: BasicDysonState): BasicDysonState {
   return {
     ...state,
@@ -133,23 +157,7 @@ function cloneState(state: BasicDysonState): BasicDysonState {
     modifiers: { ...state.modifiers },
     modifierEffectsApplied: state.modifierEffectsApplied ?? false,
     ownedSkills: [...state.ownedSkills],
-    skillEffectsByStat:
-      state.skillEffectsByStat === undefined
-        ? undefined
-        : Object.freeze(
-            Object.fromEntries(
-              Object.entries(state.skillEffectsByStat).map(
-                ([statId, effects]) => [
-                  statId,
-                  Object.freeze(
-                    effects.map((effect) =>
-                      Object.freeze({ ...effect }),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+    skillEffectsByStat: cloneSkillEffects(state.skillEffectsByStat),
     rates: cloneRates(state.rates),
     automation: {
       enabledFacilities: [...state.automation.enabledFacilities],
@@ -232,8 +240,33 @@ export function calculateBasicDysonFacilityRate(
 
 const FACILITY_MODIFIER_STATS = createDysonFacilityModifierStatIds()
 
+export type BasicDysonFacilityCalculations = Readonly<
+  Record<BasicDysonFacilityId, Readonly<BasicDysonFacilityRateCalculation>>
+>
+
+type FacilityCalculationCollector = Partial<
+  Record<BasicDysonFacilityId, Readonly<BasicDysonFacilityRateCalculation>>
+>
+
+function facilityRate(
+  state: BasicDysonState,
+  id: BasicDysonFacilityId,
+  calculations: FacilityCalculationCollector | undefined,
+): number {
+  const calculation = calculateBasicDysonFacilityRate(state, id)
+  if (calculations !== undefined) calculations[id] = calculation
+  return calculation.rate
+}
+
 export function recalculateBasicDysonRates(
   state: BasicDysonState,
+): BasicDysonRates {
+  return calculateRates(state)
+}
+
+function calculateRates(
+  state: BasicDysonState,
+  calculations?: FacilityCalculationCollector,
 ): BasicDysonRates {
   const panels = clampContinuous(
     calculateStat(
@@ -261,15 +294,15 @@ export function recalculateBasicDysonRates(
         skillEffectsFor(state, 'Global.SciencePerSecond'),
       ),
     ),
-    bots: calculateBasicDysonFacilityRate(state, 'assembly_lines').rate,
+    bots: facilityRate(state, 'assembly_lines', calculations),
     assembly_lines:
-      calculateBasicDysonFacilityRate(state, 'ai_managers').rate,
+      facilityRate(state, 'ai_managers', calculations),
     ai_managers:
-      calculateBasicDysonFacilityRate(state, 'servers').rate,
+      facilityRate(state, 'servers', calculations),
     servers:
-      calculateBasicDysonFacilityRate(state, 'data_centers').rate,
+      facilityRate(state, 'data_centers', calculations),
     data_centers:
-      calculateBasicDysonFacilityRate(state, 'planets').rate,
+      facilityRate(state, 'planets', calculations),
     planets: clampContinuous(state.planetGenerationPerSecond ?? 0),
   }
 }
@@ -287,12 +320,31 @@ function skillEffectsFor(
 export function createBasicDysonState(
   state: BasicDysonStateInput,
 ): BasicDysonState {
+  return createState(state)
+}
+
+/** Captures the five calculations from this construction pass only. */
+export function createBasicDysonStateWithFacilityCalculations(
+  state: BasicDysonStateInput,
+): { readonly state: BasicDysonState; readonly facilityCalculations: BasicDysonFacilityCalculations } {
+  const calculations: FacilityCalculationCollector = {}
+  const created = createState(state, calculations)
+  return {
+    state: created,
+    facilityCalculations: Object.freeze(calculations) as BasicDysonFacilityCalculations,
+  }
+}
+
+function createState(
+  state: BasicDysonStateInput,
+  calculations?: FacilityCalculationCollector,
+): BasicDysonState {
   const created = cloneState({
     ...state,
     rates: state.rates ?? ZERO_RATES,
     infinity: createBasicDysonInfinityState(state.infinity),
   })
-  created.rates = recalculateBasicDysonRates(created)
+  created.rates = calculateRates(created, calculations)
   return created
 }
 

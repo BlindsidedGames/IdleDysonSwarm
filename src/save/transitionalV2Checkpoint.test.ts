@@ -69,9 +69,13 @@ import {
   TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
 } from './transitionalV2Retirement'
 
+// PreparedSave exposes defensive copies; every test creates its own mutable state.
+// Decode the same immutable Unity artifact once instead of once per input row.
+const recoveryBase = createDeterministicUnityFirstRunPreparedSave()
+
 describe('transitional production V2 checkpoint recovery', () => {
   test('previews a raw schema-13 export with receiver-owned preferences and round-trips it', () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const receiver = compatibilityBase.copyValidatedState()
     receiver.globalMute = true
     receiver.hidePurchased = false
@@ -145,7 +149,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('confirms a raw schema-13 replacement from blocked startup and reloads it', async () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     ;(state.dyson as SaveRecord).money = '54321'
     ;(state.timeline as SaveRecord).lastSuspendedAtLegacyText =
@@ -246,7 +250,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('requires approval and rotates an unsupported future current before raw schema-13 recovery', async () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     ;(state.dyson as SaveRecord).money = '98765'
     const futureCurrent = serializeWebSave({ saveVersion: 18 })
@@ -313,7 +317,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('retains decodable receiver-local state during a non-schema blocked rescue import', async () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const receiverSession = hydrateGameState(compatibilityBase)
     const receiverPrepared = dehydrateGameState(receiverSession, {
       ...receiverSession.state,
@@ -393,7 +397,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('keeps blocked browser preview and confirm on receiver-local state without leaking receiver gameplay', async () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const receiverSession = hydrateGameState(compatibilityBase)
     const receiverPrepared = dehydrateGameState(receiverSession, {
       ...receiverSession.state,
@@ -472,7 +476,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('previews, confirms, and reloads a raw schema-13 paste through the browser runtime', async () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     const infinity = state.infinity as SaveRecord
     infinity.availablePoints = '7'
@@ -510,7 +514,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('uses the ready receiver platform state for raw schema-13 file preview and import', async () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const receiver = compatibilityBase.copyValidatedState()
     receiver.globalMute = true
     receiver.debugOptions = true
@@ -563,7 +567,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('recovers a blocked browser runtime from a raw schema-13 paste', async () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     ;(state.dyson as SaveRecord).money = '13579'
     const storage = new TransitionalMemoryStorage()
@@ -612,7 +616,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     stage,
     limits,
   }) => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
 
     try {
@@ -632,7 +636,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('accepts every released schema-13 authored boundary', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const dyson = state.dyson as SaveRecord
     dyson.manualCreationIntervalSeconds = Number.MIN_VALUE
@@ -795,7 +799,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     _label,
     mutate,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     mutate(state)
 
@@ -834,7 +838,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     _label,
     mutate,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -848,7 +852,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('rejects numeric enum negative zero before constructing a base', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -877,7 +881,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     _label,
     mutate,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
 
     expect(() => recoverTransitionalV2Checkpoint(
@@ -907,7 +911,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     _label,
     checkpoint,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
 
     expect(() => recoverTransitionalV2Checkpoint(checkpoint, base))
       .toThrow(/duplicate-equivalent/u)
@@ -918,7 +922,7 @@ describe('transitional production V2 checkpoint recovery', () => {
 
     expect(recoverTransitionalV2Checkpoint(
       unrelated,
-      createDeterministicUnityFirstRunPreparedSave(),
+      recoveryBase,
     )).toBeNull()
   })
 
@@ -928,7 +932,7 @@ describe('transitional production V2 checkpoint recovery', () => {
 
     expect(recoverTransitionalV2Checkpoint(
       unrelated,
-      createDeterministicUnityFirstRunPreparedSave(),
+      recoveryBase,
     )).toBeNull()
   })
 
@@ -943,7 +947,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     try {
       expect(() => recoverTransitionalV2Checkpoint(
         checkpoint,
-        createDeterministicUnityFirstRunPreparedSave(),
+        recoveryBase,
       )).toThrow(/maximum entry count/u)
       expect(parse.mock.calls.some(([source]) => source === checkpoint))
         .toBe(false)
@@ -959,7 +963,7 @@ describe('transitional production V2 checkpoint recovery', () => {
 
     expect(() => recoverTransitionalV2Checkpoint(
       checkpoint,
-      createDeterministicUnityFirstRunPreparedSave(),
+      recoveryBase,
     )).toThrow(/maximum decode depth/u)
   })
 
@@ -980,7 +984,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     try {
       expect(() => recoverTransitionalV2Checkpoint(
         checkpoint,
-        createDeterministicUnityFirstRunPreparedSave(),
+        recoveryBase,
       )).toThrow(/duplicate-equivalent/u)
       expect(parse.mock.calls.every(([source]) =>
         typeof source !== 'string' || source.length < 1_024,
@@ -991,7 +995,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('fails fast on the largest valid Decimal exponent for an exact current level', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     ;((state.research as SaveRecord).levelsById as SaveRecord)
       ['research.money_multiplier'] = '1e8999999999999999'
@@ -1003,7 +1007,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('preserves a schema-13 available Quantum balance above lifetime progress', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const quantum = state.quantum as SaveRecord
     quantum.availableShards = '2e0'
@@ -1025,7 +1029,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('accepts cleared and authentic redundant V2 Stored Time job sidecars', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1108,7 +1112,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     mutate,
     expected,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1157,7 +1161,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     _label,
     mutate,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1203,7 +1207,7 @@ describe('transitional production V2 checkpoint recovery', () => {
       expected: /duplicate-equivalent/u,
     },
   ])('fails closed for a $label Stored Time sidecar', ({ job, expected }) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1218,7 +1222,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('recovers the newer outer checkpoint over an older valid V2 job', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const outerState = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1301,7 +1305,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('rejects changed V2 job bytes that do not match a canonical recovery proof', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1354,7 +1358,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('does not accept a retirement proof from an arbitrary recovery candidate', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1401,7 +1405,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('carries a host backup proof through blocked replacement and later rotations', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1463,7 +1467,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('retains host proof in the temporary slot across three failed replacements', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1531,7 +1535,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('does not accept a corrupt temporary slot as host retirement proof', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1569,7 +1573,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('does not bootstrap revision-only evidence from the temporary slot', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1604,7 +1608,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('does not re-read a sidecar when the candidate already carries proof', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1639,7 +1643,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('bootstraps a revision-only host migration on commit and recovers it later', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1698,7 +1702,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('recovers a damaged current directly from a revision-only canonical backup', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1750,7 +1754,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   test.each(['newer-job', 'malformed-job'] as const)(
     'does not bootstrap revision-only host evidence for a %s',
     async (failure) => {
-      const base = createDeterministicUnityFirstRunPreparedSave()
+      const base = recoveryBase
       const state = encodeAuthenticSchema13NumericLeaves(
         encodeState(hydrateGameState(base).state),
         '$',
@@ -1807,7 +1811,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   test.each(['hash-mismatch', 'newer-job'] as const)(
     'blocks commit when the host proof has a %s',
     async (failure) => {
-      const base = createDeterministicUnityFirstRunPreparedSave()
+      const base = recoveryBase
       const state = encodeAuthenticSchema13NumericLeaves(
         encodeState(hydrateGameState(base).state),
         '$',
@@ -1855,7 +1859,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   )
 
   test('does not publish a retirement proof before canonical replacement succeeds', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1895,7 +1899,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('blocks a newer durable V2 job while retaining both exact source files', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1934,7 +1938,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('does not start fresh when an active V2 job has no outer checkpoint', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -1968,7 +1972,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('blocks an unreadable V2 job without discarding its outer checkpoint', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const current = checkpointText(state, 7)
     const storage = new TransitionalMemoryStorage()
@@ -2011,7 +2015,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('does not reinterpret a future canonical save as schema 13', () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     let recoveryBaseCalls = 0
     const future = serializeWebSave({ saveVersion: 18 })
 
@@ -2048,7 +2052,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   ])('rejects raw schema-13 $label before constructing its compatibility base', ({
     createText,
   }) => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     let recoveryBaseCalls = 0
 
@@ -2067,7 +2071,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('decodes one raw schema-13 transport once before constructing one compatibility base', () => {
-    const compatibilityBase = createDeterministicUnityFirstRunPreparedSave()
+    const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     const text = portableText(state)
     let recoveryBaseCalls = 0
@@ -2093,7 +2097,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('restores gameplay progress into the retained Unity graph exactly once', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const dyson = state.dyson as SaveRecord
     dyson.money = '12345'
@@ -2141,7 +2145,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('accepts the historical 32 MiB outer checkpoint boundary while retaining the portable limit', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     ;(state.dyson as SaveRecord).money = '314159'
     const checkpoint = checkpointText(state, 1)
@@ -2160,7 +2164,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('normalizes the authentic inactive V2 zero Break target sentinel', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     ;(state.infinity as SaveRecord).breakTarget = '0'
     ;((state.quantum as SaveRecord).unlocks as SaveRecord).breakTheLoop = false
@@ -2174,7 +2178,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('rejects an active V2 Break target of zero', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     ;(state.infinity as SaveRecord).breakTarget = '0'
     ;((state.quantum as SaveRecord).unlocks as SaveRecord).breakTheLoop = true
@@ -2185,7 +2189,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('recovers an authentic V2-first current slot with no older save source', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     ;(state.dyson as SaveRecord).money = '54321'
     const storage = new TransitionalMemoryStorage()
@@ -2205,7 +2209,7 @@ describe('transitional production V2 checkpoint recovery', () => {
       undefined,
       undefined,
       recoverTransitionalV2CheckpointWithMetadata,
-      () => createDeterministicUnityFirstRunPreparedSave(),
+      () => recoveryBase,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
@@ -2220,7 +2224,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('restores V2 local preferences over stale pre-recovery device values', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const storage = new TransitionalMemoryStorage()
     storage.files.set('/current', checkpointText(state, 8, {
@@ -2260,7 +2264,7 @@ describe('transitional production V2 checkpoint recovery', () => {
       notation,
       visibility,
       recoverTransitionalV2CheckpointWithMetadata,
-      () => createDeterministicUnityFirstRunPreparedSave(),
+      () => recoveryBase,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
@@ -2277,7 +2281,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('recovers a retained schema-13 portable import and overlays a newer V2 checkpoint', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const importedState = encodeState(hydrateGameState(base).state)
     ;(importedState.dyson as SaveRecord).money = '12345'
     const importedPortable = portableText(importedState)
@@ -2302,7 +2306,7 @@ describe('transitional production V2 checkpoint recovery', () => {
       undefined,
       undefined,
       recoverTransitionalV2CheckpointWithMetadata,
-      () => createDeterministicUnityFirstRunPreparedSave(),
+      () => recoveryBase,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
@@ -2316,7 +2320,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('uses a retained schema-13 portable import when the current slot is unreadable', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const importedState = encodeState(hydrateGameState(base).state)
     ;(importedState.dyson as SaveRecord).money = '24680'
     const storage = new TransitionalMemoryStorage()
@@ -2356,7 +2360,7 @@ describe('transitional production V2 checkpoint recovery', () => {
       notation,
       visibility,
       recoverTransitionalV2CheckpointWithMetadata,
-      () => createDeterministicUnityFirstRunPreparedSave(),
+      () => recoveryBase,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
@@ -2372,7 +2376,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('does not bootstrap revision-only evidence from a retained canonical import', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeAuthenticSchema13NumericLeaves(
       encodeState(hydrateGameState(base).state),
       '$',
@@ -2413,7 +2417,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('skips a checkpoint with a damaged gzip checksum and recovers the older V2 backup', async () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const damagedState = encodeState(hydrateGameState(base).state)
     ;(damagedState.dyson as SaveRecord).money = '99999'
     const backupState = encodeState(hydrateGameState(base).state)
@@ -2439,7 +2443,7 @@ describe('transitional production V2 checkpoint recovery', () => {
       undefined,
       undefined,
       recoverTransitionalV2CheckpointWithMetadata,
-      () => createDeterministicUnityFirstRunPreparedSave(),
+      () => recoveryBase,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
@@ -2456,7 +2460,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('restores the durable runtime snapshot and local checkpoint state', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const recovered = recoverTransitionalV2Checkpoint(
       checkpointText(state, 3, {
@@ -2511,7 +2515,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('settles a valid pending V2 railgun interval instead of rejecting the save', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const dream = state.dream as SaveRecord
     const railgun = dream.railgun as SaveRecord
@@ -2524,7 +2528,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('settles every volley in the maximum authentic V2 pending interval', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const dream = state.dream as SaveRecord
     const resources = dream.resources as SaveRecord
@@ -2573,7 +2577,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('retains authentic fractional progress after a pending V2 round', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const dream = state.dream as SaveRecord
     const resources = dream.resources as SaveRecord
@@ -2623,7 +2627,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     policyId,
     expected,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const recovered = recoverTransitionalV2Checkpoint(
       checkpointText(state, 4),
@@ -2642,7 +2646,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('consolidates the retired V2 Double Time bank into Stored Time', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const timeline = state.timeline as SaveRecord
     timeline.storedTimeAvailableSeconds = 100
@@ -2692,7 +2696,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     mutate,
     expected,
   }) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     mutate(state)
 
@@ -2728,7 +2732,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     mutate,
     expected,
   }) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     mutate(state)
 
@@ -2739,7 +2743,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('does not accept a current-base-only dynamic key as schema-13 state', () => {
-    const initial = createDeterministicUnityFirstRunPreparedSave()
+    const initial = recoveryBase
     const widened = initial.copyValidatedState()
     const infinityData = (
       widened.dysonVerseSaveData as SaveRecord
@@ -2801,7 +2805,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     mutate,
     expected,
   }) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     mutate(state)
 
@@ -2812,7 +2816,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('accepts schema-13 nullable text independently of the retained base value', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     ;(state.meta as SaveRecord).createdAtLegacyText = null
     ;(state.timeline as SaveRecord).lastSuspendedAtLegacyText = null
@@ -2826,7 +2830,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('uses the V2 cycle cause to saturate a large Infinity reward at discrete authority', () => {
-    const initial = createDeterministicUnityFirstRunPreparedSave()
+    const initial = recoveryBase
     const initialSession = hydrateGameState(initial)
     const base = dehydrateGameState(initialSession, {
       ...initialSession.state,
@@ -2862,7 +2866,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('uses the V2 cycle cause to restore a Dream reward as a saturated continuous value', () => {
-    const initial = createDeterministicUnityFirstRunPreparedSave()
+    const initial = recoveryBase
     const initialSession = hydrateGameState(initial)
     const base = dehydrateGameState(initialSession, {
       ...initialSession.state,
@@ -2898,7 +2902,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('saturates an overflowing continuous decimal instead of rejecting the save', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     ;(state.dyson as SaveRecord).money = '1e400'
     const infinity = state.infinity as SaveRecord
@@ -2928,7 +2932,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     field,
   ) => {
     const recoverAt = (value: string) => {
-      const base = createDeterministicUnityFirstRunPreparedSave()
+      const base = recoveryBase
       const state = encodeState(hydrateGameState(base).state)
       const dream = state.dream as SaveRecord
       const target = dream[section] as SaveRecord
@@ -2956,7 +2960,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   ])('saturates V2 Infinity Break target %s at its current authored ceiling', (
     value,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     ;(state.infinity as SaveRecord).breakTarget = value
 
@@ -2975,7 +2979,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   ] as const)(
     'rounds authentic ordinary Dream generation Decimal %s half-up into bigint',
     (value, expected) => {
-      const base = createDeterministicUnityFirstRunPreparedSave()
+      const base = recoveryBase
       const state = encodeState(hydrateGameState(base).state)
       const parameters = (state.dream as SaveRecord).parameters as SaveRecord
       parameters.solarPanelGeneration = value
@@ -2993,7 +2997,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   )
 
   test('saturates schema-13 unbounded integer progress at current gameplay authority', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const hugeDecimal = '1e8999999999999999'
     const hugeBigInt = `1${'0'.repeat(1_000)}`
@@ -3099,7 +3103,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('preserves a schema-13 universe designation beyond the discrete ceiling', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const designation = 9_223_372_036_854_776_000n
     ;(state.reality as SaveRecord).universeDesignationCount =
@@ -3113,7 +3117,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('preserves spendable balance when saturating oversized V2 ledgers', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const available = 5_000_000_000_000_000_000n
     const huge = '1e8999999999999999'
@@ -3141,7 +3145,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('preserves exact V2 Skill and unbounded Research levels through the safe-integer ceiling', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const skills = (state.skills as SaveRecord).byId as SaveRecord
     const skillId = Object.keys(skills)[0]!
@@ -3178,7 +3182,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     _label,
     mutate,
   ) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     mutate(state)
 
@@ -3188,7 +3192,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   })
 
   test('rejects a capped V2 Research level above its authored maximum', () => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     const research = state.research as SaveRecord
     ;(research.levelsById as SaveRecord)['research.panel_lifetime_1'] = '2'
@@ -3216,7 +3220,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     remove,
     expectedPath,
   }) => {
-    const base = createDeterministicUnityFirstRunPreparedSave()
+    const base = recoveryBase
     const state = encodeState(hydrateGameState(base).state)
     remove(state)
 

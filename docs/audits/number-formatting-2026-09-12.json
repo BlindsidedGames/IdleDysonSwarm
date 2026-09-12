@@ -1,0 +1,27 @@
+{
+  "node": "v22.20.0",
+  "referenceCommit": "878f5bffecd59c699712103172e668d12853d16a",
+  "note": "Advisory full formatGameNumber timings; exact output parity gates only, no timing thresholds.",
+  "parityCases": 3520,
+  "batchSize": 50000,
+  "referenceMedianMs": 48.631167000000005,
+  "optimizedMedianMs": 21.454833000000008,
+  "medianReduction": 0.5588254544662684,
+  "samplesMs": {
+    "reference": [
+      60.531375,
+      51.51974999999999,
+      48.631167000000005,
+      48.39254199999999,
+      47.74937500000004
+    ],
+    "optimized": [
+      27.463458000000003,
+      23.247374999999977,
+      20.951292000000024,
+      21.454833000000008,
+      20.948417000000063
+    ]
+  },
+  "checksum": 2420000
+}

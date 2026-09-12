@@ -1,7 +1,7 @@
 import ts from 'typescript'
 import type { Plugin } from 'vite'
 
-const UI_MESSAGE_MODULE = /\/src\/ui\/.*\/messages\.ts$/
+const MESSAGE_MODULE = /\/src\/(?:ui\/.*\/messages|ui\/gameplay\/infinity\/challengeMessages|pwa\/messages)\.ts$/
 
 /**
  * Keeps translator descriptions and fallback copy available to FormatJS
@@ -16,7 +16,7 @@ export function stripMessageAuthoringMetadataPlugin(): Plugin {
     enforce: 'pre',
     transform(source, id) {
       const normalizedId = id.replaceAll('\\', '/')
-      if (!UI_MESSAGE_MODULE.test(normalizedId)) return null
+      if (!MESSAGE_MODULE.test(normalizedId)) return null
       return {
         code: stripMessageAuthoringMetadata(source, normalizedId),
         map: null,
@@ -45,6 +45,16 @@ export function stripMessageAuthoringMetadata(
             visit,
             context,
           ) as ts.ObjectLiteralExpression
+          // A defineMessages map may itself contain a message named
+          // "description". Only descriptors with a static string ID own
+          // translator metadata; never remove ordinary object properties.
+          const isDescriptor = visited.properties.some((property) =>
+            ts.isPropertyAssignment(property) &&
+            ts.isIdentifier(property.name) &&
+            property.name.text === 'id' &&
+            ts.isStringLiteral(property.initializer),
+          )
+          if (!isDescriptor) return visited
           return context.factory.updateObjectLiteralExpression(
             visited,
             visited.properties.filter(

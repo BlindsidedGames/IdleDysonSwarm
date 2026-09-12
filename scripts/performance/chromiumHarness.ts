@@ -14,6 +14,7 @@ import {
   FIRST_SLICE_COMMIT_PROBE_MARKER,
   type FirstSliceCommitProbeSample,
 } from '../../src/ui/performance/firstSliceCommitProbe'
+import type { EventTimingDiagnostics } from './performanceReport'
 
 export interface ViewportProfile {
   readonly id: string
@@ -31,6 +32,7 @@ export interface BrowserMeasurementEnvironment {
 }
 
 export interface BrowserPerformanceEntries {
+  readonly eventTiming: EventTimingDiagnostics
   readonly longTasks: readonly {
     readonly startTime: number
     readonly duration: number
@@ -260,7 +262,7 @@ export class CdpSession {
 export async function startProductionPreview(
   webRoot: string,
   port: number,
-  outDir?: string,
+  outDir: string | undefined = process.env.IDS_PERFORMANCE_DIST,
 ): Promise<ProductionPreview> {
   const url = `http://127.0.0.1:${port}/play/`
   if (await isReachable(url)) {
@@ -802,13 +804,18 @@ function stopChild(child: ChildProcess): void {
 }
 
 async function waitForExit(child: ChildProcess): Promise<void> {
-  if (child.exitCode !== null) return
-  await Promise.race([
-    new Promise<void>((resolvePromise) => {
-      child.once('exit', () => resolvePromise())
-    }),
-    delay(5_000).then(() => stopChild(child)),
-  ])
+  if (child.exitCode !== null || child.signalCode !== null) return
+  await new Promise<void>((resolvePromise) => {
+    const timeout = setTimeout(() => {
+      // `killed` means a signal was sent, not that the process exited. A stuck
+      // browser must not survive a failed measurement after ignoring SIGTERM.
+      if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL')
+    }, 5_000)
+    child.once('exit', () => {
+      clearTimeout(timeout)
+      resolvePromise()
+    })
+  })
 }
 
 async function isReachable(url: string): Promise<boolean> {
@@ -861,6 +868,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
   let largestContentfulPaint = 0
   let measurementStartedAt = 0
   let activeTinkerStart = null
+  let trustedPointerDownCount = 0
   const timeouts = new Set()
   const intervals = new Set()
   const animationFrames = new Set()
@@ -1035,12 +1043,13 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
       typeof PerformanceObserver !== 'function' ||
       !PerformanceObserver.supportedEntryTypes.includes(type)
     ) {
-      return
+      return false
     }
     const observer = new PerformanceObserver((list) => {
       callback(list.getEntries())
     })
     observer.observe({ type, buffered: true, ...options })
+    return true
   }
   observe('longtask', (entries) => {
     for (const entry of entries) {
@@ -1051,7 +1060,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
       })
     }
   })
-  observe(
+  const eventTimingObserverInstalled = observe(
     'event',
     (entries) => {
       for (const entry of entries) {
@@ -1092,6 +1101,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
     'pointerdown',
     (event) => {
       pointers.add(event.pointerId)
+      if (event.isTrusted) trustedPointerDownCount += 1
       if (
         event.target instanceof Element &&
         event.target.closest('.tinker-surface__control')
@@ -1159,6 +1169,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
       commandFeedback.length = 0
       snapshotSelectionThroughReactCommit.length = 0
       events.length = 0
+      trustedPointerDownCount = 0
       activeTinkerStart = null
     },
     readPerformance() {
@@ -1173,6 +1184,13 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
             endTime: sample.endTime,
           })),
         events: [...events],
+        eventTiming: {
+          observerInstalled: eventTimingObserverInstalled,
+          durationThresholdMilliseconds: 16,
+          trustedPointerDownCount,
+          eventEntryCount: events.length,
+          interactionEntryCount: events.filter((entry) => entry.interactionId > 0).length,
+        },
         layoutShifts: [...layoutShifts],
         largestContentfulPaintMilliseconds: largestContentfulPaint,
       }

@@ -45,9 +45,7 @@ export interface GameNumberFormatOptions {
 }
 
 const numberFormatters = new Map<string, Intl.NumberFormat>()
-const dateFormatters = new Map<string, Intl.DateTimeFormat>()
-const relativeTimeFormatters = new Map<string, Intl.RelativeTimeFormat>()
-const pluralRulesFormatters = new Map<string, Intl.PluralRules>()
+const fixedFractionNumberFormatters = new Map<string, Intl.NumberFormat>()
 
 export function getNumberFormatter(
   locale: EnabledLocale,
@@ -58,6 +56,26 @@ export function getNumberFormatter(
     cacheKey(locale, options),
     () => new Intl.NumberFormat(locale, options),
   )
+}
+
+/** Avoids sorting/stringifying the same display options for every live value. */
+function formatFixedFractionNumber(
+  locale: EnabledLocale,
+  value: NumericValue,
+  fractionDigits: number,
+): string {
+  if (typeof value === 'number' && !Number.isFinite(value)) {
+    return NON_FINITE_NUMBER_FALLBACK
+  }
+  return cached(
+    fixedFractionNumberFormatters,
+    `${locale}:${fractionDigits}`,
+    () => new Intl.NumberFormat(locale, {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+      useGrouping: false,
+    }),
+  ).format(value)
 }
 
 export function formatNumber(
@@ -123,11 +141,7 @@ export function formatGameNumberParts(
   }
   if (value === 0) {
     return {
-      value: formatNumber(locale, 0, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-        useGrouping: false,
-      }),
+      value: formatFixedFractionNumber(locale, 0, 2),
       suffix: '',
     }
   }
@@ -159,11 +173,7 @@ export function formatGameNumberParts(
       ? 1
       : Math.floor(Math.log10(mantissaAbsolute)) + 1
   const fractionDigits = Math.max(0, 3 - integerDigits)
-  const formatted = formatNumber(locale, mantissa, {
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
-    useGrouping: false,
-  })
+  const formatted = formatFixedFractionNumber(locale, mantissa, fractionDigits)
   return {
     value: formatted,
     suffix: GAME_NUMBER_PREFIXES[exponentGroup],
@@ -196,11 +206,7 @@ function formatLargeGameBigIntParts(
   const integerDigits = effectiveLength - exponent
   const fractionDigits = Math.max(0, 3 - integerDigits)
   const mantissa = significantDigits / 10 ** fractionDigits
-  const formatted = formatNumber(locale, negative ? -mantissa : mantissa, {
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
-    useGrouping: false,
-  })
+  const formatted = formatFixedFractionNumber(locale, negative ? -mantissa : mantissa, fractionDigits)
 
   if (resolvedNotation !== 'standard') {
     return { value: formatted, suffix: `e${exponent}` }
@@ -246,11 +252,7 @@ function formatExponentNumberParts(
   const integerDigits = Math.floor(Math.log10(Math.abs(mantissa))) + 1
   const fractionDigits = Math.max(0, 3 - integerDigits)
   return {
-    value: formatNumber(locale, mantissa, {
-      minimumFractionDigits: fractionDigits,
-      maximumFractionDigits: fractionDigits,
-      useGrouping: false,
-    }),
+    value: formatFixedFractionNumber(locale, mantissa, fractionDigits),
     suffix: `e${exponent}`,
   }
 }
@@ -306,11 +308,7 @@ export function formatGameEnergyParts(
   const fractionDigits = Math.max(0, 3 - integerDigits)
   const truncationFactor = 10 ** fractionDigits
   const truncated = Math.trunc(mantissa * truncationFactor) / truncationFactor
-  const formatted = formatNumber(locale, truncated, {
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
-    useGrouping: false,
-  })
+  const formatted = formatFixedFractionNumber(locale, truncated, fractionDigits)
 
   return exponentGroup < prefixes.length
     ? { value: formatted, unit: prefixes[exponentGroup] }
@@ -383,70 +381,9 @@ export function formatGameDuration(
   return components.join(' ')
 }
 
-export function getDateTimeFormatter(
-  locale: EnabledLocale,
-  options: Intl.DateTimeFormatOptions = {},
-): Intl.DateTimeFormat {
-  return cached(
-    dateFormatters,
-    cacheKey(locale, options),
-    () => new Intl.DateTimeFormat(locale, options),
-  )
-}
-
-export function formatDateTime(
-  locale: EnabledLocale,
-  value: Date | number,
-  options: Intl.DateTimeFormatOptions = {},
-): string {
-  return getDateTimeFormatter(locale, options).format(value)
-}
-
-export function getRelativeTimeFormatter(
-  locale: EnabledLocale,
-  options: Intl.RelativeTimeFormatOptions = {},
-): Intl.RelativeTimeFormat {
-  return cached(
-    relativeTimeFormatters,
-    cacheKey(locale, options),
-    () => new Intl.RelativeTimeFormat(locale, options),
-  )
-}
-
-export function formatRelativeTime(
-  locale: EnabledLocale,
-  value: number,
-  unit: Intl.RelativeTimeFormatUnit,
-  options: Intl.RelativeTimeFormatOptions = {},
-): string {
-  if (!Number.isFinite(value)) return NON_FINITE_NUMBER_FALLBACK
-  return getRelativeTimeFormatter(locale, options).format(value, unit)
-}
-
-export function getPluralRules(
-  locale: EnabledLocale,
-  options: Intl.PluralRulesOptions = {},
-): Intl.PluralRules {
-  return cached(
-    pluralRulesFormatters,
-    cacheKey(locale, options),
-    () => new Intl.PluralRules(locale, options),
-  )
-}
-
-export function selectPlural(
-  locale: EnabledLocale,
-  value: number,
-  options: Intl.PluralRulesOptions = {},
-): Intl.LDMLPluralRule {
-  return getPluralRules(locale, options).select(value)
-}
-
 export function clearFormatterCachesForTests(): void {
   numberFormatters.clear()
-  dateFormatters.clear()
-  relativeTimeFormatters.clear()
-  pluralRulesFormatters.clear()
+  fixedFractionNumberFormatters.clear()
 }
 
 function cached<T>(

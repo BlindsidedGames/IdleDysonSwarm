@@ -18,7 +18,8 @@ import {
 import {
   hasFlag,
   integerArgument,
-  repositoryRunIdentity,
+  capturePerformanceRunProvenance,
+  finalizePerformanceRunReport,
   writePerformanceReport,
 } from './reportArtifacts'
 import {
@@ -68,7 +69,8 @@ if (freshFixture === undefined) {
   throw new Error('The checked-in fresh performance fixture is missing.')
 }
 
-const preview = await startProductionPreview(webRoot, port)
+const provenance = capturePerformanceRunProvenance(webRoot)
+const preview = await startProductionPreview(webRoot, port, provenance.servedBuild.distRoot)
 let environment: PerformanceEnvironment | undefined
 try {
   const measurements = []
@@ -115,6 +117,7 @@ try {
             entries.snapshotSelectionThroughReactCommit,
           interactionToNextPaintMilliseconds:
             interactionToNextPaint(entries.events),
+          eventTiming: entries.eventTiming,
           cumulativeLayoutShift: cumulativeLayoutShift(
             entries.layoutShifts,
           ),
@@ -139,7 +142,7 @@ try {
   if (environment === undefined) {
     throw new Error('No browser environment was measured.')
   }
-  const report = {
+  const report = finalizePerformanceRunReport({
     ...createInteractionReport({
     mode,
     createdAtUtc: new Date().toISOString(),
@@ -152,8 +155,7 @@ try {
       fingerprint: freshFixture.fingerprint,
       saveSha256: freshFixture.saveSha256,
     },
-    runIdentity: repositoryRunIdentity(webRoot),
-  }
+  }, provenance)
   const paths = writePerformanceReport(
     webRoot,
     'first-slice-interaction',

@@ -1,5 +1,6 @@
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import { LEGACY_INFINITY_STRUCTURAL_DEFAULTS } from './legacyStructuralDefaults'
 import {
   asBigInt,
   ensureRecord,
@@ -62,28 +63,7 @@ const authoredStructuralDefaults: Readonly<Record<string, number>> = {
   simulationAutomationTimeUntilNextEvent: 0.1,
   simulationInfinityBoundaryRemaining: 1 / 60,
   manualCreationTime: 10,
-  moneyMulti: 1,
-  scienceMulti: 1,
-  panelsPerSecMulti: 1,
-  panelLifetime: 10,
-  assemblyLineModifier: 1,
-  managerModifier: 1,
-  serverModifier: 1,
-  dataCenterModifier: 1,
-  planetModifier: 1,
-  matrioshkaBrainModifier: 1,
-  birchPlanetModifier: 1,
-  galacticBrainModifier: 1,
-  scienceBoostPercent: 0.05,
-  moneyMultiUpgradePercent: 0.05,
-  assemblyLineUpgradePercent: 0.03,
-  aiManagerUpgradePercent: 0.03,
-  serverUpgradePercent: 0.03,
-  dataCenterUpgradePercent: 0.03,
-  planetUpgradePercent: 0.03,
-  matrioshkaUpgradePercent: 0.03,
-  birchUpgradePercent: 0.03,
-  galacticUpgradePercent: 0.03,
+  ...LEGACY_INFINITY_STRUCTURAL_DEFAULTS,
 }
 
 export function repairNumericSave(settings: SaveRecord): NumericRepairResult {

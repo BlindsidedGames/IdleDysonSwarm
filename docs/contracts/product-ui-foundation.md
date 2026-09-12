@@ -256,9 +256,12 @@ Internationalization is foundation work, not a later string-replacement pass:
 - Use FormatJS extraction and compiled ICU MessageFormat catalogs for plurals,
   select rules, interpolation, number/date/time formatting and translator-safe
   sentence structure. Do not concatenate translated fragments.
-- Organize catalogs by gameplay destination and shared UI. Load the active
-  locale's shared catalog at startup and lazy-load destination catalogs with
-  their route.
+- The current runtime loads one complete compiled catalog for the active locale
+  at startup; all gameplay destinations use that catalog. Destination-split
+  catalogs remain future loading work, tracked in
+  [`../audits/dry-review-2026-09-12.md`](../audits/dry-review-2026-09-12.md).
+  That change must define route readiness, locale-switch fallback and offline
+  behavior before introducing asynchronous destination loading.
 - If a selected non-English startup catalog is unavailable, record only its
   closed failure category and use the bundled English catalog for that launch.
   English becomes the effective locale for the provider, `Intl` formatting,
@@ -283,10 +286,10 @@ Internationalization is foundation work, not a later string-replacement pass:
   `ar-XB` test different failure modes and are not selectable production
   translations.
 - Production locales and their font assets are enabled only through the typed
-  locale registry and must ship complete shared and destination catalogs.
+  locale registry and must ship a complete compiled catalog for every route.
 - Each enabled locale registry entry declares its language tag, direction, font
-  family, shared catalog and destination chunks. An unavailable browser locale
-  falls back to English without exposing a partially translated route.
+  family and complete catalog loader. An unavailable browser locale falls back
+  to English without exposing a partially translated route.
 - Translation completeness, ICU syntax, missing/orphaned keys and unsupported
   rich-text markup fail CI for a release locale.
 
