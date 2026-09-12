@@ -373,3 +373,39 @@ three report scripts. Manual-layer, derivation-allocation and model-clone report
 now rewrite relative imports to quoted file URLs, preserving Windows paths and
 paths with apostrophes. The manual-layer report runs successfully through that
 loader; the two existing reports use the same corrected expression.
+
+## Within-call facility calculation reuse
+
+`dysonModel.ts` exposes an opt-in constructor returning the ordinary state and a
+separate frozen table of its five facility calculations. A private collector
+captures results at the existing evaluation sites, preserving global and
+facility calculation order. Existing constructors and recalculation signatures
+and the state/save shape remain unchanged. Canonical derivation uses that table
+for facility facts and direct-generation contributions, reducing calculations
+from twelve to five per derivation. Contribution rows are still constructed by
+the existing code. No table is attached to state or retained across calls.
+
+Seven avoided calculations remove at least 28 temporary arrays, 14 sorts,
+14 catalog lookups, seven calculation result objects and their cloned effect
+objects per derivation, offset by the new table and constructor return wrapper.
+These counts follow from source inspection, not heap measurements.
+
+Reference checkpoint: `e71571199117ef4bc2e0c044b788cf21f9af65ab`.
+Independent review identified that the initial comparison imported the changed
+model through current dependencies. The final report now loads both historical
+`dysonModel.ts` and `canonicalDysonDerivation.ts`; unchanged dependencies remain
+current. All 18 progression/entitlement and 288 boundary complete outputs match.
+The initial single-module timing run is superseded by this stronger comparison.
+
+71 focused tests pass, including seven new checks for modifier cutoff on both
+sides of 1e-12, equal-order effect application with saturation, preserved state
+shape and immutable construction results after live model recalculation.
+Existing coverage includes large-number conservation, bot-cap transitions,
+Terra and facility facts. TypeScript, targeted lint and whitespace checks pass.
+
+Seven alternating warmed batches show 2.9–7.9% lower full-derivation median time
+across nine fixtures. Fresh: 0.055265 → 0.051342 ms; maximum skills:
+0.183645 → 0.169906 ms. No browser or whole-game speedup is claimed, and no timing
+gate was added. Run `npx tsx scripts/performance/runFacilityCalculationReuseReport.ts`
+(or `--parity-only`). Raw measurements are in
+[`facility-calculation-reuse-2026-09-12.json`](facility-calculation-reuse-2026-09-12.json).

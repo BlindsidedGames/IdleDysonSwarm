@@ -14,8 +14,8 @@ import {
 import { DYSON_FACILITY_IDS } from './dysonFacilityCatalog'
 import { createDysonFacilityModifierStatIds } from './dysonFacilityStatIds'
 import {
-  calculateBasicDysonFacilityRate,
-  createBasicDysonState,
+  createBasicDysonStateWithFacilityCalculations,
+  type BasicDysonFacilityCalculations,
   type BasicDysonFacilityRateCalculation,
   type BasicDysonRates,
   type BasicDysonState,
@@ -737,7 +737,7 @@ export function deriveBasicDysonState(
       CanonicalFacilityFacts
     >,
   )
-  const model = createBasicDysonState({
+  const { state: model, facilityCalculations } = createBasicDysonStateWithFacilityCalculations({
     money: state.dyson.money,
     science: state.dyson.science,
     bots: state.dyson.bots,
@@ -813,6 +813,7 @@ export function deriveBasicDysonState(
         ...deriveBasicFacilityFacts(
           state,
           manualPurchaseLayers,
+          facilityCalculations,
           model,
           mega.rates,
           facilityModifiers,
@@ -853,6 +854,7 @@ const BASIC_FACILITY_OUTPUT_RATES: Readonly<
 function deriveBasicFacilityFacts(
   state: CanonicalGameStateV1,
   manualPurchaseLayers: ManualPurchaseProductionLayers,
+  facilityCalculations: BasicDysonFacilityCalculations,
   model: Readonly<BasicDysonState>,
   megaRates: Readonly<MegaStructureRates>,
   modifiers: Readonly<Record<CanonicalFacilityId, number>>,
@@ -880,10 +882,7 @@ function deriveBasicFacilityFacts(
                   facilityId
                 ] as BasicDysonFacilityId
               ][0]
-        const rateCalculation = calculateBasicDysonFacilityRate(
-          model,
-          facilityId,
-        )
+        const rateCalculation = facilityCalculations[facilityId]
         const visible = perSecond > 0
         const fractionalProgress =
           runningOutput - Math.floor(runningOutput)
@@ -942,7 +941,7 @@ function deriveBasicFacilityFacts(
                       evaluationSnapshot,
                     )
                   : deriveDirectFacilityGenerationContributions(
-                      model,
+                      facilityCalculations,
                       facilityId,
                       researchEffects,
                       state,
@@ -1052,7 +1051,7 @@ const DIRECT_GENERATION_PRODUCER: Readonly<
 })
 
 function deriveDirectFacilityGenerationContributions(
-  model: Readonly<BasicDysonState>,
+  facilityCalculations: BasicDysonFacilityCalculations,
   outputFacilityId: BasicDysonFacilityId,
   researchEffects: readonly MaterializedDysonResearchEffect[],
   state: CanonicalGameStateV1,
@@ -1060,7 +1059,7 @@ function deriveDirectFacilityGenerationContributions(
 ): readonly CanonicalFacilityContributionRow[] {
   const producerId = DIRECT_GENERATION_PRODUCER[outputFacilityId]
   if (producerId === undefined) return Object.freeze([])
-  const calculation = calculateBasicDysonFacilityRate(model, producerId)
+  const calculation = facilityCalculations[producerId]
   return Object.freeze(
     deriveFacilityContributionRows(
       calculation,
