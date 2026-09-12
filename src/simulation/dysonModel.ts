@@ -120,6 +120,30 @@ function cloneRates(rates: BasicDysonRates): BasicDysonRates {
   return { ...rates }
 }
 
+type SkillEffectsByStat = NonNullable<BasicDysonState['skillEffectsByStat']>
+
+// Only graphs detached and frozen here are safe to share between model copies.
+// A caller's frozen outer map may still contain mutable arrays or effects.
+const ownedSkillEffectMaps = new WeakSet<SkillEffectsByStat>()
+
+function cloneSkillEffects(
+  effectsByStat: BasicDysonState['skillEffectsByStat'],
+): BasicDysonState['skillEffectsByStat'] {
+  if (effectsByStat === undefined || ownedSkillEffectMaps.has(effectsByStat)) {
+    return effectsByStat
+  }
+  const detached = Object.freeze(
+    Object.fromEntries(
+      Object.entries(effectsByStat).map(([statId, effects]) => [
+        statId,
+        Object.freeze(effects.map((effect) => Object.freeze({ ...effect }))),
+      ]),
+    ),
+  )
+  ownedSkillEffectMaps.add(detached)
+  return detached
+}
+
 function cloneState(state: BasicDysonState): BasicDysonState {
   return {
     ...state,
@@ -133,23 +157,7 @@ function cloneState(state: BasicDysonState): BasicDysonState {
     modifiers: { ...state.modifiers },
     modifierEffectsApplied: state.modifierEffectsApplied ?? false,
     ownedSkills: [...state.ownedSkills],
-    skillEffectsByStat:
-      state.skillEffectsByStat === undefined
-        ? undefined
-        : Object.freeze(
-            Object.fromEntries(
-              Object.entries(state.skillEffectsByStat).map(
-                ([statId, effects]) => [
-                  statId,
-                  Object.freeze(
-                    effects.map((effect) =>
-                      Object.freeze({ ...effect }),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+    skillEffectsByStat: cloneSkillEffects(state.skillEffectsByStat),
     rates: cloneRates(state.rates),
     automation: {
       enabledFacilities: [...state.automation.enabledFacilities],
