@@ -5,6 +5,15 @@ an audit finding, release gate, or platform contract.
 
 ## Active work
 
+- [Performance and maintainability review](audits/performance-maintainability-2026-09-12.md)
+  tracks the ongoing measured optimization campaign and decisions awaiting review.
+  Companion [test audit](audits/test-redundancy-2026-09-12.md),
+  [clean-code review](audits/clean-code-2026-09-12.md), and
+  [DRY review](audits/dry-review-2026-09-12.md) record reviewed scope and evidence.
+  The [decision log](audits/performance-review-decisions-2026-09-12.md) and
+  [independent review](audits/independent-review-2026-09-12.md) track open choices
+  and the required non-author review pass.
+
 - [`BACKLOG.md`](BACKLOG.md) is the root-level list of accepted, deferred, and
   decision-pending work.
 - [`audits/`](audits/) contains active evidence-led reviews. Findings remain in
