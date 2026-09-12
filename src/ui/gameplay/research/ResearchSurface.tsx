@@ -43,6 +43,8 @@ import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
 import { useResearchVisibility } from '../../research-visibility'
+import { useAutomationToggle } from '../useAutomationToggle'
+import { usePlayerSettingsCommands } from '../usePlayerSettingsCommands'
 import { BUY_MODE_OPTIONS } from '../buyModeOptions'
 import { researchMessages as messages } from './messages'
 import { orderResearchCardsForPresentation } from './researchCardOrdering'
@@ -131,15 +133,17 @@ export function ResearchSurface({
   const { hideCompleted, setHideCompleted } = useResearchVisibility()
   const settingsId = useId()
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [settingPending, setSettingPending] = useState(false)
-  const [settingFailed, setSettingFailed] = useState(false)
-  const [automationOverrides, setAutomationOverrides] = useState<
-    Readonly<Record<string, boolean>>
-  >({})
-  const [automationFailures, setAutomationFailures] = useState<
-    ReadonlySet<string>
-  >(new Set())
-  const automationVersions = useRef(new Map<string, number>())
+  const { settingPending, settingFailed, applySetting } =
+    usePlayerSettingsCommands<ResearchSettingCommand>(dispatchPlayer)
+  const {
+    overrides: automationOverrides,
+    failures: automationFailures,
+    setAutomation: setResearchAutomation,
+  } = useAutomationToggle<string>((id, enabled) => dispatchPlayer({
+    kind: 'research.set-automation',
+    researchId: id,
+    enabled,
+  }))
   const cardItems = useRef(new Map<string, HTMLLIElement>())
   const emptyState = useRef<HTMLParagraphElement>(null)
   const focusedResearchId = useRef<string | null>(null)
@@ -186,82 +190,10 @@ export function ResearchSurface({
     }
   }, [visibleCards])
 
-  const applySetting = async (
-    command: ResearchSettingCommand,
-  ): Promise<void> => applySettings([command])
-
-  const applySettings = async (
-    commands: readonly ResearchSettingCommand[],
-  ): Promise<void> => {
-    if (settingPending) return
-    setSettingPending(true)
-    setSettingFailed(false)
-    try {
-      const results = await Promise.all(
-        commands.map((command) => dispatchPlayer(command)),
-      )
-      setSettingFailed(
-        results.some((result) => result.status !== 'accepted'),
-      )
-    } catch {
-      setSettingFailed(true)
-    } finally {
-      setSettingPending(false)
-    }
-  }
-
   const automationEnabled = (researchId: string) =>
     automationOverrides[researchId] ??
     automationEnabledById[researchId] ??
     false
-
-  const setResearchAutomation = (
-    researchId: string,
-    enabled: boolean,
-  ): void => {
-    const version = (automationVersions.current.get(researchId) ?? 0) + 1
-    automationVersions.current.set(researchId, version)
-    setAutomationOverrides((current) => ({
-      ...current,
-      [researchId]: enabled,
-    }))
-    setAutomationFailures((current) => {
-      if (!current.has(researchId)) return current
-      const next = new Set(current)
-      next.delete(researchId)
-      return next
-    })
-
-    void dispatchPlayer({
-      kind: 'research.set-automation',
-      researchId,
-      enabled,
-    })
-      .then((result) => {
-        if (automationVersions.current.get(researchId) !== version) return
-        setAutomationOverrides((current) => {
-          const next = { ...current }
-          delete next[researchId]
-          return next
-        })
-        if (result.status !== 'accepted') {
-          setAutomationFailures((current) =>
-            new Set(current).add(researchId),
-          )
-        }
-      })
-      .catch(() => {
-        if (automationVersions.current.get(researchId) !== version) return
-        setAutomationOverrides((current) => {
-          const next = { ...current }
-          delete next[researchId]
-          return next
-        })
-        setAutomationFailures((current) =>
-          new Set(current).add(researchId),
-        )
-      })
-  }
 
   return (
     <div className="research-surface">

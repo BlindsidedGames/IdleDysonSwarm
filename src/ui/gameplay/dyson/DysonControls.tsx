@@ -34,6 +34,8 @@ import {
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { useAutomationToggle } from '../useAutomationToggle'
+import { usePlayerSettingsCommands } from '../usePlayerSettingsCommands'
 import { BUY_MODE_OPTIONS } from '../buyModeOptions'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
 import { readyDysonMessages as messages } from './messages'
@@ -101,93 +103,21 @@ export function DysonInfo({
         SHOW_RUN_FACTS_WHEN_COLLAPSED_KEY,
       ) !== 'false',
     )
-  const [settingPending, setSettingPending] = useState(false)
-  const [settingFailed, setSettingFailed] = useState(false)
-  const [automationOverrides, setAutomationOverrides] = useState<
-    Partial<Record<CanonicalFacilityId, boolean>>
-  >({})
-  const [automationFailures, setAutomationFailures] = useState<
-    ReadonlySet<CanonicalFacilityId>
-  >(new Set())
-  const automationVersions = useRef(
-    new Map<CanonicalFacilityId, number>(),
-  )
+  const { settingPending, settingFailed, applySetting } =
+    usePlayerSettingsCommands(dispatchPlayer)
+  const {
+    overrides: automationOverrides,
+    failures: automationFailures,
+    setAutomation: setFacilityAutomation,
+  } = useAutomationToggle<CanonicalFacilityId>((id, enabled) => dispatchPlayer({
+    kind: 'dyson.set-facility-automation',
+    facilityId: id,
+    enabled,
+  }))
   const settingsId = useId()
-  const applySetting = async (
-    command: DysonSettingsCommand,
-  ): Promise<void> => applySettings([command])
-
-  const applySettings = async (
-    commands: readonly DysonSettingsCommand[],
-  ): Promise<void> => {
-    if (settingPending) return
-    setSettingPending(true)
-    setSettingFailed(false)
-    try {
-      const results = await Promise.all(
-        commands.map((command) => dispatchPlayer(command)),
-      )
-      setSettingFailed(
-        results.some((result) => result.status !== 'accepted'),
-      )
-    } catch {
-      setSettingFailed(true)
-    } finally {
-      setSettingPending(false)
-    }
-  }
-
   const automationEnabled = (facilityId: CanonicalFacilityId) =>
     automationOverrides[facilityId] ??
     automationEnabledFacilities[facilityId]
-
-  const setFacilityAutomation = (
-    facilityId: CanonicalFacilityId,
-    enabled: boolean,
-  ): void => {
-    const version = (automationVersions.current.get(facilityId) ?? 0) + 1
-    automationVersions.current.set(facilityId, version)
-    setAutomationOverrides((current) => ({
-      ...current,
-      [facilityId]: enabled,
-    }))
-    setAutomationFailures((current) => {
-      if (!current.has(facilityId)) return current
-      const next = new Set(current)
-      next.delete(facilityId)
-      return next
-    })
-
-    void dispatchPlayer({
-      kind: 'dyson.set-facility-automation',
-      facilityId,
-      enabled,
-    })
-      .then((result) => {
-        if (automationVersions.current.get(facilityId) !== version) return
-        setAutomationOverrides((current) => {
-          const next = { ...current }
-          delete next[facilityId]
-          return next
-        })
-        if (result.status !== 'accepted') {
-          setAutomationFailures((current) =>
-            new Set(current).add(facilityId),
-          )
-        }
-      })
-      .catch(() => {
-        if (automationVersions.current.get(facilityId) !== version) return
-        setAutomationOverrides((current) => {
-          const next = { ...current }
-          delete next[facilityId]
-          return next
-        })
-        setAutomationFailures((current) =>
-          new Set(current).add(facilityId),
-        )
-      })
-  }
 
   return (
     <ProgressControlsPanel
