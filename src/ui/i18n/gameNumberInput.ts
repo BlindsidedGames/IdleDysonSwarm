@@ -132,12 +132,13 @@ function numberInputCulture(locale: EnabledLocale): NumberInputCulture {
     maximumFractionDigits: 1,
   })
   const parts = formatter.formatToParts(12_345.6)
+  const digitFormatter = new Intl.NumberFormat(languageTag, { useGrouping: false })
   const culture: NumberInputCulture = {
     decimal: parts.find((part) => part.type === 'decimal')?.value ?? '.',
     group: parts.find((part) => part.type === 'group')?.value,
     digits: new Map(
       Array.from({ length: 10 }, (_, digit) => [
-        new Intl.NumberFormat(languageTag, { useGrouping: false }).format(digit),
+        digitFormatter.format(digit),
         String(digit),
       ]),
     ),

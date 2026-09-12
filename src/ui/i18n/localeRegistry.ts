@@ -1,9 +1,4 @@
-import type {
-  DestinationCatalogLoader,
-  DestinationMessageCatalog,
-  DestinationId,
-  SharedMessageCatalog,
-} from './catalogs/types'
+import type { SharedMessageCatalog } from './catalogs/types'
 
 export const ENABLED_LOCALES = [
   'en',
@@ -37,9 +32,6 @@ export interface LocaleDefinition {
   readonly fontFamily: 'latin' | 'cjk'
   readonly productionSelectable: boolean
   readonly loadSharedCatalog: () => Promise<SharedMessageCatalog>
-  readonly destinationCatalogs: Readonly<
-    Partial<Record<DestinationId, DestinationCatalogLoader>>
-  >
 }
 
 async function loadCompiledSharedCatalog(
@@ -60,10 +52,6 @@ async function loadCompiledSharedCatalog(
   return module.default as SharedMessageCatalog
 }
 
-const noDestinationCatalogs: Readonly<
-  Partial<Record<DestinationId, DestinationCatalogLoader>>
-> = Object.freeze({})
-
 export const LOCALE_REGISTRY = Object.freeze({
   en: Object.freeze({
     id: 'en',
@@ -72,7 +60,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'latin',
     productionSelectable: true,
     loadSharedCatalog: () => loadCompiledSharedCatalog('en'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   fr: Object.freeze({
     id: 'fr',
@@ -81,7 +68,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'latin',
     productionSelectable: true,
     loadSharedCatalog: () => loadCompiledSharedCatalog('fr'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   de: Object.freeze({
     id: 'de',
@@ -90,7 +76,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'latin',
     productionSelectable: true,
     loadSharedCatalog: () => loadCompiledSharedCatalog('de'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   'es-419': Object.freeze({
     id: 'es-419',
@@ -99,7 +84,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'latin',
     productionSelectable: true,
     loadSharedCatalog: () => loadCompiledSharedCatalog('es-419'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   'pt-BR': Object.freeze({
     id: 'pt-BR',
@@ -108,7 +92,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'latin',
     productionSelectable: true,
     loadSharedCatalog: () => loadCompiledSharedCatalog('pt-BR'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   'zh-CN': Object.freeze({
     id: 'zh-CN',
@@ -117,7 +100,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'cjk',
     productionSelectable: true,
     loadSharedCatalog: () => loadCompiledSharedCatalog('zh-CN'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   ru: Object.freeze({
     id: 'ru',
@@ -126,7 +108,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'latin',
     productionSelectable: true,
     loadSharedCatalog: () => loadCompiledSharedCatalog('ru'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   ja: Object.freeze({
     id: 'ja',
@@ -135,7 +116,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'cjk',
     productionSelectable: true,
     loadSharedCatalog: () => loadCompiledSharedCatalog('ja'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   'en-XA': Object.freeze({
     id: 'en-XA',
@@ -144,7 +124,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'latin',
     productionSelectable: false,
     loadSharedCatalog: () => loadCompiledSharedCatalog('en-XA'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
   'ar-XB': Object.freeze({
     id: 'ar-XB',
@@ -153,7 +132,6 @@ export const LOCALE_REGISTRY = Object.freeze({
     fontFamily: 'latin',
     productionSelectable: false,
     loadSharedCatalog: () => loadCompiledSharedCatalog('ar-XB'),
-    destinationCatalogs: noDestinationCatalogs,
   }),
 } as const satisfies Record<EnabledLocale, LocaleDefinition>)
 
@@ -208,12 +186,4 @@ function canonicalLocale(value: string): string | null {
   } catch {
     return null
   }
-}
-
-export async function loadDestinationCatalog(
-  locale: EnabledLocale,
-  destination: DestinationId,
-): Promise<DestinationMessageCatalog | null> {
-  const loader = LOCALE_REGISTRY[locale].destinationCatalogs[destination]
-  return loader ? loader() : null
 }
