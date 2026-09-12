@@ -120,7 +120,7 @@ writeFileSync(resolve(reportRoot, 'initial-request-bundle.txt'), `${lines.join('
 console.log(lines.join('\n'))
 if (warnings.length > 0) {
   console.warn(
-    'The provisional JavaScript target was exceeded; the report remains successful so enforced packaging checks can continue.',
+    'The provisional JavaScript target was exceeded; enforced budgets determine the report’s exit status.',
   )
 }
 if (failures.length > 0) {

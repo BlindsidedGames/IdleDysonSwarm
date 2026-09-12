@@ -1,3 +1,5 @@
+import type { PerformanceRunProvenance, ServedBuildIntegrity } from './reportArtifacts'
+
 export const PERFORMANCE_REPORT_VERSION = 1
 
 export const FIRST_SLICE_PERFORMANCE_BUDGETS = Object.freeze({
@@ -80,6 +82,8 @@ export interface InteractionProfileMeasurement {
 }
 
 export interface InteractionPerformanceReport {
+  readonly provenance?: PerformanceRunProvenance
+  readonly buildIntegrity?: ServedBuildIntegrity
   readonly version: typeof PERFORMANCE_REPORT_VERSION
   readonly kind: 'first-slice-interaction'
   readonly mode: PerformanceRunMode
@@ -114,6 +118,8 @@ export interface SoakSnapshot {
 }
 
 export interface SoakPerformanceReport {
+  readonly provenance?: PerformanceRunProvenance
+  readonly buildIntegrity?: ServedBuildIntegrity
   readonly version: typeof PERFORMANCE_REPORT_VERSION
   readonly kind: 'first-slice-retained-heap'
   readonly mode: PerformanceRunMode
@@ -548,6 +554,17 @@ export function performanceReportText(
     `Acceptance eligible: ${report.acceptanceEligible}`,
     `Observed budgets passed: ${report.passed}`,
     `Browser: ${report.environment.browser} ${report.environment.browserVersion}`,
+    ...(report.provenance === undefined ? [] : [
+      `Run started: ${report.provenance.startedAtUtc}`,
+      `Checkout at run start (not build source): ${report.provenance.checkoutAtStart.revision}${report.provenance.checkoutAtStart.workingTreeDirty ? ' (dirty)' : ''}`,
+      `Served build directory: ${report.provenance.servedBuild.distRoot}`,
+      `Served build tree SHA-256: ${report.provenance.servedBuild.treeSha256}`,
+    ]),
+    ...(report.buildIntegrity === undefined ? [] : [
+      report.buildIntegrity.unchanged
+        ? 'PASS Served build integrity: unchanged at completion'
+        : `FAIL Served build integrity: ${report.buildIntegrity.failureReason}`,
+    ]),
     '',
   ]
   if (report.kind === 'first-slice-interaction') {

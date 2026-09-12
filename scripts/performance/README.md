@@ -189,3 +189,39 @@ with 54 command feedback samples each, followed by 24/24/16 ms trials; its
 24 ms P75 still fails. Mobile reported 24 ms in all five trials. The original
 run predates observer diagnostics, so its absent entries cannot be conclusively
 attributed to threshold filtering from that artifact alone.
+
+## Soak and interaction build provenance
+
+These runners resolve `IDS_PERFORMANCE_DIST` once (default `dist`), capture its
+absolute directory and pass that exact directory to the preview. Report
+`provenance.checkoutAtStart` identifies the measurement checkout before launch,
+including whether it was dirty. It is explicitly not the source revision of a
+previously built snapshot. `startedAtUtc` is separate from report completion.
+
+`provenance.servedBuild` records the manifest and HTML hashes plus a sorted
+path/size/SHA-256 inventory and combined hash of the complete build directory,
+including lazy chunks, CSS, fonts and public files. Completion rechecks the
+complete tree. Changed, removed or unreadable files set `passed` and
+`acceptanceEligible` false and produce an explicit integrity failure in JSON and
+text. Matching endpoint hashes establish start/end equality, not continuous
+monitoring against a transient edit later reverted. Use a frozen output directory
+for long runs. Snapshot capture requires ordinary files/directories and rejects
+symlink entries rather than silently omitting their contents.
+
+Existing reports without these additive provenance fields remain readable.
+Earlier `runIdentity` values are not retroactive build ancestry evidence; see
+`docs/audits/retention-soak-2026-09-12.json` for the historical frozen-build run.
+The existing helper remains in other diagnostic runners outside this change;
+only soak and interaction runs use the new provenance contract.
+
+Validation on 12 September used the frozen `candidate-v4-dist` override on
+isolated port 4296 with the normal 30-second warm-up and a 10-second smoke
+measurement. All observed resource budgets passed; all 237 build files had
+matching endpoint fingerprints, tree SHA-256
+`559512a4ccc868c6de5c9e840a2bf71ec412029a5c0fa6a8673941abd2387193`.
+The report explicitly remains `acceptanceEligible: false`. Local artifacts are
+`output/performance/provenance-soak-candidate-v4.json` and `.txt`; the original
+30-minute report was preserved. An earlier 5-second warm-up probe stopped before
+baseline because Settings was unavailable; no measurement result was produced.
+The bundle reporter was also exercised against this snapshot: enforced failures
+retained exit code 1 and the provisional warning made no success claim.
