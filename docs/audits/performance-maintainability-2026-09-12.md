@@ -23,9 +23,9 @@ relevant verification. Passing tests do not replace code or visual review.
 | Stable stat sorting without decorated objects | Exact historical ordering comparison; roughly 23–28% lower median time for 4–64 effects | Local operation benchmark, not whole-game speed |
 | Catalog indices by kind/id and authored-first id | All 371 assets and misses preserve object identity; 90%/93% lower median catalog-sweep time | Local lookup workload |
 | Reused numeric scratch buffer and direct sorted save serialization | IEEE-754 neighbor boundaries and exact serialized-byte comparisons | See allocation report; save semantics unchanged |
-| Fixed-fraction formatter cache | 3,520 exact output comparisons; 59% lower median full formatter call workload | Local Node workload, not browser frame time |
+| Fixed-fraction formatter cache | 3,520 exact output comparisons; 56% lower median full formatter call workload in the linked report | Local Node workload, not browser frame time |
 | Stable facility resize observer | Text changes still measure; observer count and shrink/resize behavior covered | Removes observer churn; no layout redesign |
-| Owned immutable basic-model effect maps | External and shallow-frozen input detaches; mutable state remains independent; historical events match | Synthetic basic adapter events improve 9–16%; no canonical tick claim |
+| Owned immutable basic-model effect maps | External and shallow-frozen input detaches; mutable state remains independent; historical events match | Synthetic basic adapter events with 10/100 effect targets improve 9–16%; no canonical tick claim |
 | Lossless proportional WOFF2 fonts | Raw font bytes 238.19 to 104.80 KiB; decoded tables preserved; Chromium and iOS 17.5 WebKit each pass 6,261 pixel/metric comparisons | Isolated font rendering, not full native game acceptance |
 | External skill icons | Approximately 63.5 KiB gzip removed from eager Skills JavaScript; all 133 mounted images load at 390/1440 widths | Images still transfer when required |
 | Message metadata stripping | Preserves outer description messages; includes PWA/challenge descriptors | About 719 gzip bytes saved; complete catalog remains |
@@ -41,7 +41,7 @@ Timings are advisory and machine-dependent; correctness comparisons are gates.
 
 ## Verification and provenance
 
-The current source batch passed **1,521/1,521 tests**, lint, TypeScript and the
+The source batch checkpointed through `5050e544` passed **1,521/1,521 tests**, lint, TypeScript and the
 production Vite build, production Store-boundary inspection, generated-data
 validation and whitespace checks. The two shared-fixture suites also passed all
 157 cases with shuffled ordering (seed 912), supporting their isolation.
