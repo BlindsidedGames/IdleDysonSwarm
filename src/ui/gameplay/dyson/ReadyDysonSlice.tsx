@@ -111,7 +111,7 @@ import {
 } from '../wiki/wikiProjection'
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
-import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
+import { quantumQuantityFromBuyMode } from '../quantum/quantumPurchaseQuantities'
 import { simulationPurchaseQuantity } from '../simulations/simulationPurchaseQuantity'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import type { ReleaseFooterPresentation } from '../../../platform/releaseFooter'
@@ -603,8 +603,6 @@ export function ReadyDysonSlice({
     useState(false)
   const [avotationCompletionVisible, setAvotationCompletionVisible] =
     useState(false)
-  const [quantumPurchaseQuantity, setQuantumPurchaseQuantity] =
-    useState<QuantumPurchaseQuantity>(1)
   const [quantumHideMaxed, setQuantumHideMaxed] =
     useState(() =>
       readBooleanPresentationPreference(QUANTUM_HIDE_MAXED_STORAGE_KEY),
@@ -689,6 +687,7 @@ export function ReadyDysonSlice({
     (releasePlatformServices.hostKind !== 'browser' ||
       releasePlatformServices.storeAvailable === true)
   const gameplay = snapshot.gameplay
+  const quantumPurchaseQuantity = quantumQuantityFromBuyMode(gameplay.progression.quantum.buyMode)
   const allTabsUnlocked = gameplay.visibility.allTabsUnlocked === true
   const avocatoRouteUnlocked = isAvocatoRouteUnlocked({
     purchased: gameplay.progression.avocado.unlocked,
@@ -2107,7 +2106,8 @@ export function ReadyDysonSlice({
                     purchaseQuantity={quantumPurchaseQuantity}
                     hideMaxed={quantumHideMaxed}
                     onPurchaseSettingsOpenChange={setQuantumPurchaseSettingsOpen}
-                    onPurchaseQuantityChange={setQuantumPurchaseQuantity}
+                    dispatchPlayer={dispatchPlayer}
+                    buyModeRouteAvailable={gameplay.commands.byKind['quantum.set-buy-mode'].routeAvailable}
                     onHideMaxedChange={updateQuantumHideMaxed}
                     />
                   </Suspense>

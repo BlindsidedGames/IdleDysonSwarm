@@ -150,6 +150,8 @@ const CURRENT_ONLY_STATE_PATHS = new Set([
   '$.timeline.processing',
   '$.dream.purchaseBatches',
   '$.dream.buyMode',
+  // Historical V2 did not persist Quantum purchase preferences.
+  '$.quantum.buyMode',
   '$.statistics.recentInfinityCycles',
   '$.statistics.recentActiveAutomaticInfinityCycles',
 ])

@@ -460,7 +460,7 @@ export interface FrontendCanonicalProgression {
   readonly quantum: DeepReadonly<
     Pick<
       CanonicalGameStateV1['quantum'],
-      'divisionsPurchased' | 'unlocks'
+      'divisionsPurchased' | 'unlocks' | 'buyMode'
     >
   >
   readonly avocado: DeepReadonly<
@@ -1532,6 +1532,7 @@ function selectProgression(
     }),
     quantum: reuseShallowDomain(previous?.quantum, {
       divisionsPurchased: state.quantum.divisionsPurchased,
+      buyMode: state.quantum.buyMode ?? 'buy-1',
       unlocks: state.quantum.unlocks,
     }),
     avocado: reuseShallowDomain(previous?.avocado, {

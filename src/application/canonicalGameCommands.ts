@@ -275,6 +275,10 @@ export type CanonicalGameCommand =
       readonly kind: 'reality.gather-influence'
     }
   | {
+      readonly kind: 'quantum.set-buy-mode'
+      readonly buyMode: BuyMode
+    }
+  | {
       readonly kind: 'quantum.purchase-upgrade'
       readonly upgradeId: QuantumUpgradeId
       readonly quantity?: QuantumUpgradeBulkQuantity
@@ -363,6 +367,7 @@ export type CanonicalGameCommandCode =
   | `navigation:${string}`
   | `quantum-leap:${string}`
   | `quantum-upgrade:${string}`
+  | `quantum-setting:${string}`
   | `reality-gather:${string}`
   | `reality-upgrade:${string}`
   | `research-automation:${string}`
@@ -730,6 +735,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'gatherRealityInfluence',
     requires: ['runtime-evaluation-port'],
+  },
+  'quantum.set-buy-mode': {
+    supported: true,
+    authority: 'canonical Quantum buy-mode setting transaction',
   },
   'quantum.purchase-upgrade': {
     supported: true,
@@ -2132,6 +2141,17 @@ export function routeCanonicalGameCommand(
       )
     }
 
+    case 'quantum.set-buy-mode':
+      return finalizeAccepted(
+        state,
+        { ...state, quantum: { ...state.quantum, buyMode: command.buyMode } },
+        (state.quantum.buyMode ?? 'buy-1') !== command.buyMode,
+        'quantum-setting:buy-mode-set',
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
+      )
     case 'quantum.purchase-upgrade': {
       const result = purchaseQuantumUpgradeBulk(
         state,

@@ -391,6 +391,7 @@ export function hydrateGameState(
       autoGather: toBoolean(reality.workerAutoConvert),
     },
     quantum: {
+      ...(source.quantumBuyMode === undefined ? {} : { buyMode: toBuyMode(source.quantumBuyMode) }),
       pointsEarned: toNonNegativeBigInt(quantum.points),
       pointsSpent: toNonNegativeBigInt(quantum.spentPoints),
       divisionsPurchased: toNonNegativeBigInt(
@@ -917,6 +918,11 @@ export function dehydrateGameState(
   reality.influence = state.reality.influence
   reality.workerAutoConvert = state.reality.autoGather
 
+  if (state.quantum.buyMode !== undefined) {
+    source.quantumBuyMode = fromBuyMode(state.quantum.buyMode)
+  } else {
+    delete source.quantumBuyMode
+  }
   quantum.points = state.quantum.pointsEarned
   quantum.spentPoints = state.quantum.pointsSpent
   quantum.divisionsPurchased = state.quantum.divisionsPurchased
