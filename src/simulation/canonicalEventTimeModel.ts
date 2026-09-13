@@ -1,3 +1,4 @@
+import { observeSpeedruns } from './speedrunStatistics'
 import { isBreakInfinityEnabled, isBlankSlateActive } from './infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
@@ -1126,7 +1127,7 @@ export class CanonicalEventTimeModel
     }
     this.replaceGameState(
       withResetInfinityClock(
-        result.state,
+        observeSpeedruns(result.state, Date.now(), false, true),
         Math.max(
           TIME_EPSILON,
           state.timeline.infinityBoundaryRemaining,
@@ -1143,7 +1144,7 @@ export class CanonicalEventTimeModel
   private replaceGameState(state: CanonicalGameStateV1): void {
     this.carrier = {
       ...this.carrier,
-      gameState: state,
+      gameState: observeSpeedruns(state),
     }
   }
 

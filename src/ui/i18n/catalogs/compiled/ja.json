@@ -452,7 +452,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "終盤の通貨を使って開発者ツールをアンロックします。一度購入すれば、以後は無料で再有効化できます。"
+      "value": "オーバーフローポイント10を消費して開発者ツールを解放します。購入後は無料で再び有効にできます。"
     }
   ],
   "debug.action-failure": [
@@ -609,6 +609,12 @@
       "value": "メンテナンス"
     }
   ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "オーバーフローポイント"
+    }
+  ],
   "debug.progression": [
     {
       "type": 0,
@@ -667,6 +673,12 @@
     {
       "type": 0,
       "value": "整数上限"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "進行を変更するツールを使うと、このセーブはスピードランの対象外になります。開発者オプションの解放や画面を開くだけでは影響しません。"
     }
   ],
   "debug.strange-matter": [
@@ -12347,6 +12359,138 @@
     {
       "type": 0,
       "value": "現在の量子周回"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "記録について"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "このセーブの開始からの実時間です。ゲームを閉じていた時間も含みます。進行リセットでもランは継続します。貯蔵時間は使用可能で、ゲーム速度2倍も変わりません。"
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "現在のセーブのラン"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "デバッグの使用"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "デバッグ解放条件 · オーバーフローポイント10"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "ゲーム速度2倍の解放"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "セーブ経過時間 / ラン時間"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "記録の資格"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "有効"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "初めての無限"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "初めての量子跳躍"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "各節目の使用表示は、その達成時点までの状態です。進行を変更するデバッグ操作を使うとランは無効になります。古いセーブの時間や使用履歴は不明な場合があります。"
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "無効 — デバッグ使用"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "なし"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "未記録"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "現実の解放"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "貯蔵時間の使用"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "達成時間"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "不明"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "未確認"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "あり"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "スピードラン"
     }
   ],
   "statistics.tracked-time": [

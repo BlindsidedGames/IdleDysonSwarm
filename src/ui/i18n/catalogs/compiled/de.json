@@ -452,7 +452,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "Schalte die Entwicklerwerkzeuge mit Währungen aus dem späten Spielverlauf frei. Nach dem Kauf kannst du sie kostenlos wieder aktivieren."
+      "value": "Gib 10 Überlaufpunkte aus, um die Entwicklerwerkzeuge freizuschalten. Nach dem Kauf lassen sie sich kostenlos wieder aktivieren."
     }
   ],
   "debug.action-failure": [
@@ -609,6 +609,12 @@
       "value": "Wartung"
     }
   ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "Überlaufpunkte"
+    }
+  ],
   "debug.progression": [
     {
       "type": 0,
@@ -667,6 +673,12 @@
     {
       "type": 0,
       "value": "Ganzzahl-Grenze"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "Fortschrittswerkzeuge schließen diesen Spielstand von Speedruns aus. Das Freischalten oder Öffnen der Entwickleroptionen tut dies nicht."
     }
   ],
   "debug.strange-matter": [
@@ -12347,6 +12359,138 @@
     {
       "type": 0,
       "value": "Aktueller Quantendurchlauf"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "Über diese Aufzeichnungen"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "Reale Zeit seit Beginn dieses Spielstands, einschließlich Abwesenheit. Fortschrittsresets behalten diesen Lauf bei. Gespeicherte Zeit ist erlaubt; das 2× Spieltempo bleibt unverändert."
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "Aktueller Spielstand"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "Debug verwendet"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "Debug-Voraussetzung · 10 Überlaufpunkte"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "2× Spieltempo freigeschaltet"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "Spielstandalter / Laufzeit"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "Wertungsstatus"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "Zugelassen"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "Erste Unendlichkeit"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "Erster Quantensprung"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "Die Meilensteinangaben gelten bis zum jeweiligen Zeitpunkt. Debug-Eingriffe in den Spielfortschritt schließen den Lauf von der Wertung aus. Bei älteren Spielständen können Zeiten oder Nutzungsdaten unbekannt sein."
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "Nicht zugelassen — Debug verwendet"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "Nein"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "Nicht erfasst"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "Realität freigeschaltet"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "Gespeicherte Zeit verwendet"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "Erreichte Zeit"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "Unbekannt"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "Ungeprüft"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "Ja"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "Speedruns"
     }
   ],
   "statistics.tracked-time": [

@@ -215,6 +215,7 @@ export interface UiRuntimeDevelopmentStatus {
   readonly entitled: boolean
   /** Canonical save ownership, independent of free development-build access. */
   readonly purchasedInGame: boolean
+  readonly overflowPoints?: bigint
   readonly quantumShards: bigint
   readonly strangeMatter: number
 }

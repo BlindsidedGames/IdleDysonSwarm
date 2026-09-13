@@ -452,7 +452,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "Débloquez les outils de développement avec des monnaies de fin de partie. Une fois achetés, ils peuvent être réactivés gratuitement."
+      "value": "Dépensez 10 points de Débordement pour débloquer les outils de développement. Une fois achetés, ils peuvent être réactivés gratuitement."
     }
   ],
   "debug.action-failure": [
@@ -609,6 +609,12 @@
       "value": "Maintenance"
     }
   ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "Points de Débordement"
+    }
+  ],
   "debug.progression": [
     {
       "type": 0,
@@ -667,6 +673,12 @@
     {
       "type": 0,
       "value": "Plafond entier"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "Les outils de progression rendent cette sauvegarde inéligible aux speedruns. Débloquer ou ouvrir les options de développement ne le fait pas."
     }
   ],
   "debug.strange-matter": [
@@ -12347,6 +12359,138 @@
     {
       "type": 0,
       "value": "Partie quantique actuelle"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "À propos de ces records"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "Temps réel écoulé depuis le début de cette sauvegarde, absences comprises. Les réinitialisations de progression conservent cette partie. Le Temps stocké est autorisé ; la vitesse ×2 reste inchangée."
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "Partie actuelle"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "Debug utilisé"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "Accès au Debug · 10 points de Débordement"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "Vitesse ×2 débloquée"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "Âge de la sauvegarde / durée"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "Éligibilité"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "Éligible"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "Première Infinité"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "Premier Saut quantique"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "Les indicateurs des étapes décrivent la partie jusqu’à cet instant. Les actions de progression du Debug rendent la partie inéligible. Les anciennes sauvegardes peuvent avoir des temps ou un historique inconnus."
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "Inéligible — Debug utilisé"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "Non"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "Non enregistré"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "Réalité débloquée"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "Temps stocké utilisé"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "Temps atteint"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "Inconnu"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "Non vérifiée"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "Oui"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "Speedruns"
     }
   ],
   "statistics.tracked-time": [

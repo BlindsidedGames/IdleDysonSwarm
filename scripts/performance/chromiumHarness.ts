@@ -336,6 +336,7 @@ export async function openChromiumPage(
     executable,
     [
       '--headless=new',
+      '--use-mock-keychain',
       '--remote-debugging-port=0',
       `--user-data-dir=${profileRoot}`,
       '--no-first-run',

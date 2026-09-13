@@ -976,7 +976,7 @@
     },
     {
       "type": 0,
-      "value": "∩uʅoɔʞ ʇɥǝ pǝʌǝʅodǝɹ ʇooʅs ʍıʇɥ ʅɐʇǝ-ƃɐɯǝ ɔnɹɹǝuɔıǝs. Ouɔǝ dnɹɔɥɐsǝp, ʇɥǝʎ ɔɐu qǝ ɹǝ-ǝuɐqʅǝp ɟoɹ ɟɹǝǝ."
+      "value": "Sdǝup 10 Oʌǝɹɟʅoʍ Ԁoıuʇs ʇo nuʅoɔʞ ʇɥǝ pǝʌǝʅodǝɹ ʇooʅs. Ouɔǝ dnɹɔɥɐsǝp, ʇɥǝʎ ɔɐu qǝ ɹǝ-ǝuɐqʅǝp ɟoɹ ɟɹǝǝ."
     },
     {
       "type": 0,
@@ -1321,6 +1321,20 @@
       "value": "‬"
     }
   ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "debug.progression": [
     {
       "type": 0,
@@ -1455,6 +1469,20 @@
     {
       "type": 0,
       "value": "Mɥoʅǝ ɔɐd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩sıuƃ ƃɐɯǝdʅɐʎ ʇooʅs ɯɐʞǝs ʇɥıs sɐʌǝ ıuǝʅıƃıqʅǝ ɟoɹ sdǝǝpɹnus. ∩uʅoɔʞıuƃ oɹ odǝuıuƃ ᗡǝʌǝʅodǝɹ Odʇıous poǝs uoʇ."
     },
     {
       "type": 0,
@@ -25143,6 +25171,314 @@
     {
       "type": 0,
       "value": "Ↄnɹɹǝuʇ Ònɐuʇnɯ ɹnu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀qonʇ ʇɥǝsǝ ɹǝɔoɹps"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐʅ ǝʅɐdsǝp ʇıɯǝ sıuɔǝ ʇɥıs sɐʌǝ qǝƃɐu, ıuɔʅnpıuƃ ʇıɯǝ ɐʍɐʎ. ⅁ɐɯǝdʅɐʎ ɹǝsǝʇs ɹǝʇɐıu ʇɥıs ɹnu. Sʇoɹǝp ⊥ıɯǝ ıs ɐʅʅoʍǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ sɐʌǝ ɹnu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝqnƃ nsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝqnƃ bnɐʅıɟıɔɐʇıou · 10 Oʌǝɹɟʅoʍ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "2× ƃɐɯǝ sdǝǝp nuʅoɔʞǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ɐƃǝ / ɹnu ǝʅɐdsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚnu ǝʅıƃıqıʅıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝʅıƃıqʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ Ònɐuʇnɯ ⅂ǝɐd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wıʅǝsʇouǝ nsɐƃǝ ʅɐqǝʅs pǝsɔɹıqǝ ʇɥǝ ɹnu nd ʇo ʇɥɐʇ doıuʇ. ᗡǝqnƃ ƃɐɯǝdʅɐʎ ɐɔʇıous ɯɐʞǝ ʇɥǝ ɹnu ıuǝʅıƃıqʅǝ. Oʅpǝɹ sɐʌǝs ɯɐʎ ɥɐʌǝ nuʞuoʍu ʇıɯǝs oɹ nsɐƃǝ ɥısʇoɹʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuǝʅıƃıqʅǝ — ᗡǝqnƃ nsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "No"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Noʇ ɹǝɔoɹpǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐʅıʇʎ nuʅoɔʞǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹǝp ⊥ıɯǝ nsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝ ɹǝɐɔɥǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʞuoʍu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʌǝɹıɟıǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄ǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sdǝǝpɹnus"
     },
     {
       "type": 0,

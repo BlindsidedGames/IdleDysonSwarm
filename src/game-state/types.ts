@@ -1,3 +1,4 @@
+import type { SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import type { BuyMode } from '../simulation/transactions'
 import type { CanonicalFacilityId } from './facilityIds'
 import type { SkillPresetColorId } from './skillPresetColors'
@@ -492,6 +493,7 @@ export interface InfinityCycleHistoryEntry {
 }
 
 export interface SimulationStatisticsState {
+  readonly speedruns?: SpeedrunStatistics
   readonly trackedSinceUpdate: boolean
   readonly trackingStartedMarker: string
   readonly trackedSimulatedSeconds: number

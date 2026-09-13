@@ -1,3 +1,4 @@
+import { DEBUG_OVERFLOW_COST } from '../../../simulation/speedrunStatistics'
 import { useId, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type {
@@ -121,8 +122,7 @@ export function DebugSurface({
           : intl.formatMessage(messages.amountHelp)
   const canPurchase =
     status.entitled ||
-    (status.quantumShards >= 100_000n &&
-      status.strangeMatter >= 500_000)
+    (status.overflowPoints ?? 0n) >= DEBUG_OVERFLOW_COST
 
   const apply = (
     action: UiRuntimeDevelopmentAction,
@@ -137,6 +137,7 @@ export function DebugSurface({
   return (
     <section className="debug-surface" aria-label={intl.formatMessage(messages.title)}>
       <div className="debug-surface__scroll-region">
+        <p className="debug-surface__panel">{intl.formatMessage(messages.speedrunWarning)}</p>
         {!status.enabled ? (
           <section className="debug-surface__panel debug-surface__access">
             <div>
@@ -144,20 +145,10 @@ export function DebugSurface({
               <p>{intl.formatMessage(messages.accessDescription)}</p>
             </div>
             <dl className="debug-surface__costs">
-                <div>
-                  <dt>{intl.formatMessage(messages.quantumShards)}</dt>
-                  <dd>
-                    {formatGameNumber(locale, status.quantumShards)} /{' '}
-                    {formatGameNumber(locale, 100_000)}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{intl.formatMessage(messages.strangeMatter)}</dt>
-                  <dd>
-                    {formatGameNumber(locale, status.strangeMatter)} /{' '}
-                    {formatGameNumber(locale, 500_000)}
-                  </dd>
-                </div>
+              <div>
+                <dt>{intl.formatMessage(messages.overflowPoints)}</dt>
+                <dd>{formatGameNumber(locale, status.overflowPoints ?? 0n)} / {formatGameNumber(locale, DEBUG_OVERFLOW_COST)}</dd>
+              </div>
             </dl>
             <button
               type="button"

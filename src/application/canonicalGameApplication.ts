@@ -1,3 +1,4 @@
+import { markSpeedrunUsage, observeSpeedruns } from '../simulation/speedrunStatistics'
 import {
   applyDevelopmentAction,
   applyDevelopmentDysonBots,
@@ -1038,7 +1039,7 @@ export function createCanonicalGameEngineDefinition(
     options.eventContext,
   )
   const eventContext = eventContexts.active
-  return {
+  const engine: SimulationEngineDefinition<CanonicalRuntimeState, CanonicalApplicationCommand> = {
     schema: CANONICAL_GAME_APPLICATION_SCHEMA,
     cloneState: cloneCanonicalRuntimeState,
     forkState: (state) => ({
@@ -1180,6 +1181,31 @@ export function createCanonicalGameEngineDefinition(
         options.onActiveAdvance,
       ),
   }
+  return { ...engine,
+    applyCommand(candidate, command) {
+      const before = candidate.gameState
+      const previousTabs = candidate.unlockAllTabs
+      const previousTinker = candidate.tinker
+      Object.assign(candidate, { gameState: observeSpeedruns(before) })
+      const debugAction = command.kind === 'internal.development-set-dyson-bots' ||
+        command.kind === 'internal.development-unlock-reality' ||
+        (command.kind === 'internal.development-apply-action' &&
+          !['purchase-debug-options', 'enable-host-debug-options', 'disable-debug-options'].includes(command.action.kind))
+      if (debugAction) Object.assign(candidate, { gameState: markSpeedrunUsage(candidate.gameState, 'debug') })
+      const result = engine.applyCommand(candidate, command)
+      if (debugAction && result.accepted && result.changed && previousTabs === candidate.unlockAllTabs &&
+        sameCapturedValue(previousTinker, candidate.tinker) &&
+        sameCapturedValue({ ...before, statistics: { ...before.statistics, speedruns: undefined } },
+          { ...candidate.gameState, statistics: { ...candidate.gameState.statistics, speedruns: undefined } })) {
+        Object.assign(candidate, { gameState: before })
+        return { accepted: true, changed: false }
+      }
+      if (result.accepted && result.changed) Object.assign(candidate, { gameState: observeSpeedruns(candidate.gameState) })
+      else Object.assign(candidate, { gameState: before })
+      return result
+    },
+  }
+
 }
 
 function applyPlayerCommand(

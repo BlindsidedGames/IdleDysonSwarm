@@ -1,3 +1,4 @@
+import { markSpeedrunUsage } from './speedrunStatistics'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { ProcessingSource } from '../game-state/types'
 import type { CanonicalEventTimeContext } from './canonicalEventTimeModel'
@@ -118,7 +119,8 @@ export function advanceGame(
   const stepState = {
     ...state,
     gameState: {
-      ...state.gameState,
+      ...(input.source === 'stored-time' && input.baseSeconds > 0
+        ? markSpeedrunUsage(state.gameState, 'storedTime') : state.gameState),
       infinity: input.source === 'stored-time'
         ? {
             ...state.gameState.infinity,
@@ -144,7 +146,10 @@ export function advanceGame(
     model.applyBotCapTransition(summary)
   }
   if (model.issue?.code === 'CANONICAL_EVENT_BOT_CAP_PERSISTENCE_REQUIRED') {
-    return finish(model, 0, 0, gameSpeed, summary, true)
+    const stopped = finish(model, 0, 0, gameSpeed, summary, true)
+    return { ...stopped, state: { ...stopped.state, gameState: { ...stopped.state.gameState,
+      statistics: { ...stopped.state.gameState.statistics, speedruns: state.gameState.statistics.speedruns },
+    } } }
   }
 
   if (input.automation === 'enabled') {

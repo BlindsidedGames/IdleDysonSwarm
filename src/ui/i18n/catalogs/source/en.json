@@ -242,7 +242,7 @@
     "defaultMessage": "View challenge"
   },
   "debug.access-description": {
-    "defaultMessage": "Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free.",
+    "defaultMessage": "Spend 10 Overflow Points to unlock the developer tools. Once purchased, they can be re-enabled for free.",
     "description": "Explains how developer tools are unlocked and retained."
   },
   "debug.action-failure": {
@@ -337,6 +337,10 @@
     "defaultMessage": "Maintenance",
     "description": "Heading for developer maintenance controls."
   },
+  "debug.overflow-points": {
+    "defaultMessage": "Overflow Points",
+    "description": "Debug purchase currency."
+  },
   "debug.progression": {
     "defaultMessage": "Progression tools",
     "description": "Heading for developer progression controls."
@@ -376,6 +380,10 @@
   "debug.set-whole-cap": {
     "defaultMessage": "Whole cap",
     "description": "Button that fills the developer amount field with the maximum supported whole-number value."
+  },
+  "debug.speedrun-warning": {
+    "defaultMessage": "Using gameplay tools makes this save ineligible for speedruns. Unlocking or opening Developer Options does not.",
+    "description": "Explains persistent Debug usage for speedruns."
   },
   "debug.strange-matter": {
     "defaultMessage": "Strange Matter",
@@ -6380,6 +6388,94 @@
   "statistics.scope.quantum-run": {
     "defaultMessage": "Current Quantum run",
     "description": "Statistics accumulated since the latest Quantum Leap."
+  },
+  "statistics.speedruns.details": {
+    "defaultMessage": "About these records",
+    "description": "Disclosure explaining speedrun timing and eligibility."
+  },
+  "statistics.speedruns.speedrunBasis": {
+    "defaultMessage": "Real elapsed time since this save began, including time away. Gameplay resets retain this run. Stored Time is allowed.",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunCurrentSave": {
+    "defaultMessage": "Current save run",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunDebug": {
+    "defaultMessage": "Debug used",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunDebugQualification": {
+    "defaultMessage": "Debug qualification · 10 Overflow Points",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunDoubleSpeed": {
+    "defaultMessage": "2× game speed unlocked",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunElapsed": {
+    "defaultMessage": "Save age / run elapsed",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunEligibility": {
+    "defaultMessage": "Run eligibility",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunEligible": {
+    "defaultMessage": "Eligible",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunFirstInfinity": {
+    "defaultMessage": "First Infinity",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunFirstQuantum": {
+    "defaultMessage": "First Quantum Leap",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunHistory": {
+    "defaultMessage": "Milestone usage labels describe the run up to that point. Debug gameplay actions make the run ineligible. Older saves may have unknown times or usage history.",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunIneligible": {
+    "defaultMessage": "Ineligible — Debug used",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunNo": {
+    "defaultMessage": "No",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunNotRecorded": {
+    "defaultMessage": "Not recorded",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunReality": {
+    "defaultMessage": "Reality unlocked",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunStored": {
+    "defaultMessage": "Stored Time used",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunTime": {
+    "defaultMessage": "Time reached",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunUnknown": {
+    "defaultMessage": "Unknown",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunUnverified": {
+    "defaultMessage": "Unverified",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedrunYes": {
+    "defaultMessage": "Yes",
+    "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.speedruns": {
+    "defaultMessage": "Speedruns",
+    "description": "Speedrun statistics label or explanation."
   },
   "statistics.tracked-time": {
     "defaultMessage": "Tracked simulation time",

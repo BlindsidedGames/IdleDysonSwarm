@@ -1,3 +1,4 @@
+import { type SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
 import {
@@ -635,6 +636,7 @@ export function hydrateGameState(
       },
     },
     statistics: {
+      ...(source.idsSpeedruns === undefined ? {} : { speedruns: source.idsSpeedruns as SpeedrunStatistics }),
       trackedSinceUpdate: toBoolean(statistics.trackedSinceUpdate),
       trackingStartedMarker:
         typeof statistics.trackingStartedUtc === 'string'
@@ -690,6 +692,8 @@ export function dehydrateGameState(
 ): PreparedSave {
   const source = hydrated.copyPreservedSource()
   const state = candidate
+  if (state.statistics.speedruns !== undefined) source.idsSpeedruns = state.statistics.speedruns
+  else delete source.idsSpeedruns
   const canonicalValidation = validateCanonicalGameState(state)
   if (!canonicalValidation.valid) {
     throw new Error(

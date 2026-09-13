@@ -1,3 +1,4 @@
+import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { isSubskill, isSubskillUnlocked } from '../simulation/skillSubskills'
 import { isGalvanized, validateGalvanizedSkills } from '../simulation/galvanization'
 import { validateInfinityChallenges } from '../simulation/infinityChallenges'
@@ -22,6 +23,8 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  const speedrunError = validateSpeedrunStatistics(state.statistics.speedruns)
+  if (speedrunError) errors.push(speedrunError)
   const challengeError = validateInfinityChallenges(state.challenges)
   if (challengeError) errors.push(challengeError)
   errors.push(...validateGalvanizedSkills(state))
