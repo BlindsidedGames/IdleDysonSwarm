@@ -1853,6 +1853,8 @@
   "wiki.patch-notes.version-4-1-8.quantum": "Se corrigieron la obtención y las compras de fragmentos cuánticos, así como las cantidades de compra máxima con saldos muy elevados.",
   "wiki.patch-notes.version-4-1-8.recovery": "Se mejoró la recuperación de partidas.",
   "wiki.patch-notes.version-4-1-8.skill-labels": "Se agregaron etiquetas opcionales al árbol de habilidades.",
+  "wiki.patch-notes.version-4-1-9": "Versión 4.1.9",
+  "wiki.patch-notes.version-4-1-9.scaling": "Se mejoraron el escalado del texto y la distribución en pantallas pequeñas.",
   "wiki.patch-notes.version-4-1.audio": "Se añadió música y sonidos de interfaz en las plataformas compatibles, con controles de volumen separados para Música y Efectos, la opción Silenciar todo el audio y una reproducción más fiable al cambiar de aplicación o ventana del navegador.",
   "wiki.patch-notes.version-4-1.dyson-visualization": "Se mejoró el rendimiento de la visualización Dyson durante ejecuciones automáticas de Infinidad extremadamente rápidas al fijarla en el campo galáctico final, y se restauraron la espiral densa, el núcleo brillante y la posición móvil equilibrada de la galaxia en crecimiento.",
   "wiki.patch-notes.version-4-1.economy": "Se corrigieron las compras con los mayores valores de recursos compatibles y se evitó que los precios extremos de Megalíneas de montaje quedaran atascados en un valor reutilizable.",

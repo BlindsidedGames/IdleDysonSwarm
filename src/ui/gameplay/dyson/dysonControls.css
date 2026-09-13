@@ -9,7 +9,6 @@
 .dyson-info__summary {
   display: grid;
   min-inline-size: 0;
-  block-size: 100%;
   align-content: start;
 }
 
@@ -37,11 +36,9 @@
   .bot-distribution--multitasking {
   min-inline-size: 0;
   padding: 0;
-  overflow: hidden;
   font-size: calc(0.72rem * var(--game-text-scale));
   text-align: start;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .dyson-info__overview {
@@ -89,6 +86,7 @@
 .dyson-info__fact {
   min-inline-size: 0;
   line-height: 1.15;
+  text-wrap: balance;
 }
 
 .dyson-info__goal {
@@ -97,6 +95,7 @@
 
 .dyson-info__value {
   color: #ffac63;
+  display: inline-block;
 }
 
 .dyson-info__goal-value {
@@ -200,6 +199,15 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.45rem;
   font-size: 0.82rem;
+}
+
+.dyson-info__run-facts .dyson-info__fact {
+  white-space: nowrap;
+  text-wrap: nowrap;
+}
+
+.dyson-info__run-facts-measurement {
+  display: grid;
 }
 
 .dyson-info__run-facts .dyson-info__fact:nth-child(2) {

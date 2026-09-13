@@ -27,6 +27,10 @@
   white-space: nowrap;
 }
 
+.ui-purchase-quantity-label__measurement {
+  display: grid;
+}
+
 .ui-button {
   display: inline-flex;
   min-block-size: var(--target-minimum);
