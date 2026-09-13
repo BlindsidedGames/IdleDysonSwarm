@@ -603,6 +603,12 @@
       "value": "無料で有効化"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "タブをロック"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,

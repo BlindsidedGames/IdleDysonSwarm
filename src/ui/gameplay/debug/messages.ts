@@ -30,6 +30,7 @@ export const debugSurfaceMessages = defineMessages({
   bots: { id: 'debug.bots', defaultMessage: 'Bots', description: 'Bots resource label in developer tools.' },
   applyPreset: { id: 'debug.apply-preset', defaultMessage: 'Apply', description: 'Action that applies a developer progression preset.' },
   unlockTabs: { id: 'debug.unlock-tabs', defaultMessage: 'Unlock all tabs', description: 'Developer action that unlocks every navigation tab.' },
+  lockTabs: { id: 'debug.lock-tabs', defaultMessage: 'Lock tabs', description: 'Removes the developer tab override; progression unlocks remain available.' },
   timing: { id: 'debug.timing', defaultMessage: 'Tinker timing', description: 'Heading for developer Tinker timing controls.' },
   tinkerOneSecond: { id: 'debug.tinker-one-second', defaultMessage: 'Set Tinker to 1 second', description: 'Developer action that sets Tinker duration to one second.' },
   tinkerInstant: { id: 'debug.tinker-instant', defaultMessage: 'Set Tinker to instant', description: 'Developer action that makes Tinker complete instantly.' },

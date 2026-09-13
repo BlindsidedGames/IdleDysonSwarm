@@ -103,6 +103,7 @@
   "debug.tinker-instant": "Basteln auf sofort einstellen",
   "debug.tinker-one-second": "Basteln auf 1 Sekunde einstellen",
   "debug.title": "Entwickleroptionen",
+  "debug.lock-tabs": "Registerkarten sperren",
   "debug.unlock-tabs": "Alle Registerkarten freischalten",
   "dyson.bot-distribution.accessible-value": "{workers} – Arbeiteranzahl, {scientists} – Wissenschaftleranzahl",
   "dyson.bot-distribution.failed": "Die Verteilung wurde nicht geändert.",

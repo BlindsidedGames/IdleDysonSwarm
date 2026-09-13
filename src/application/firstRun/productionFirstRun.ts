@@ -27,5 +27,6 @@ export function createUnityFirstRunResetRequest(
     text: serializeWebSave(firstRun.copyValidatedState()),
     importedAtUtc,
     overwriteApproved: true,
+    context: { kind: 'manual-shared-import', importedAtUtc, intent: 'save-reset' },
   }
 }

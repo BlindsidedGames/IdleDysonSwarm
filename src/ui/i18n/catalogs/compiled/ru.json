@@ -603,6 +603,12 @@
       "value": "Включить бесплатно"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "Заблокировать вкладки"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,

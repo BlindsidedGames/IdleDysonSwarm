@@ -603,6 +603,12 @@
       "value": "Activer gratuitement"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "Verrouiller les onglets"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,

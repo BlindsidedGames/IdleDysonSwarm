@@ -333,6 +333,10 @@
     "defaultMessage": "Enable for free",
     "description": "Action that re-enables previously purchased developer tools."
   },
+  "debug.lock-tabs": {
+    "defaultMessage": "Lock tabs",
+    "description": "Removes the developer tab override; progression unlocks remain available."
+  },
   "debug.maintenance": {
     "defaultMessage": "Maintenance",
     "description": "Heading for developer maintenance controls."

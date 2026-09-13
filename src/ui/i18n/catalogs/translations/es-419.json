@@ -103,6 +103,7 @@
   "debug.tinker-instant": "Hacer que Experimentar sea instantáneo",
   "debug.tinker-one-second": "Ajustar Experimentar a 1 segundo",
   "debug.title": "Opciones de desarrollo",
+  "debug.lock-tabs": "Bloquear pestañas",
   "debug.unlock-tabs": "Desbloquear todas las pestañas",
   "dyson.bot-distribution.accessible-value": "{workers} — cantidad de trabajadores, {scientists} — cantidad de científicos",
   "dyson.bot-distribution.failed": "No se modificó la distribución.",

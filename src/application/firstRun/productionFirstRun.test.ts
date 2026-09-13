@@ -43,6 +43,7 @@ describe('production first-run composition', () => {
       source: 'paste',
       importedAtUtc: '2026-08-30T00:00:00.000Z',
       overwriteApproved: true,
+      context: { kind: 'manual-shared-import', importedAtUtc: '2026-08-30T00:00:00.000Z', intent: 'save-reset' },
     })
     expect(replacement.dateStarted).toBe('2026-08-30T00:00:01.000Z')
   })

@@ -603,6 +603,12 @@
       "value": "Enable for free"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "Lock tabs"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,

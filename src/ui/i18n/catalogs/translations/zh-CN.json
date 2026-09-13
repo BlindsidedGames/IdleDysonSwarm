@@ -103,6 +103,7 @@
   "debug.tinker-instant": "将手工组装设为瞬间完成",
   "debug.tinker-one-second": "将手工组装设为 1 秒",
   "debug.title": "开发者选项",
+  "debug.lock-tabs": "锁定标签页",
   "debug.unlock-tabs": "解锁所有标签页",
   "dyson.bot-distribution.accessible-value": "{workers} 个工人，{scientists} 个科学家",
   "dyson.bot-distribution.failed": "分配未更改。",
