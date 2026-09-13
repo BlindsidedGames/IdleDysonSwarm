@@ -1,3 +1,4 @@
+import { prepareImportedSaveText } from '../save/import'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import parityCases from '../../test/parity/save-migration-cases.json'
@@ -128,6 +129,31 @@ describe('canonical game-state mapping', () => {
     expect(hydrated.state.quantum.pointsEarned).toBeTypeOf('bigint')
     expect(hydrated.state.statistics.minuteWindows).toHaveLength(60)
   })
+
+  test.each(['buy-1', 'buy-10', 'buy-50', 'buy-100', 'buy-max'] as const)(
+    'round-trips Simulation %s through a portable save without changing Bots or Research',
+    (buyMode) => {
+      const baseline = hydrateGameState(prepareIdb1Save(
+        loadFixture('schema-08-canonical-idb1-main-save.txt'),
+      ).prepared)
+      const candidate = { ...baseline.state, dream: { ...baseline.state.dream, buyMode } }
+      const portable = serializeWebSave(dehydrateGameState(baseline, candidate).copyValidatedState())
+      const restored = hydrateGameState(prepareImportedSaveText(portable, '2026-09-13T00:00:00.000Z')).state
+      expect(restored.dream.buyMode).toBe(buyMode)
+      expect(restored.dyson.automation).toEqual(baseline.state.dyson.automation)
+      expect(restored.research.automation).toEqual(baseline.state.research.automation)
+    },
+  )
+
+  test.each([undefined, -1, 5, 1.5, 'buy-max', null])(
+    'defaults a missing or invalid Simulation preference (%s) to Buy 1',
+    (value) => {
+      const raw = prepareIdb1Save(loadFixture('schema-08-canonical-idb1-main-save.txt')).prepared.copyValidatedState()
+      if (value === undefined) delete raw.simulationBuyMode
+      else raw.simulationBuyMode = value
+      expect(hydrateGameState(prepareImportedSaveText(serializeWebSave(raw), '2026-09-13T00:00:00.000Z')).state.dream.buyMode ?? 'buy-1').toBe('buy-1')
+    },
+  )
 
   test('round-trips Simulation producer batch counts independently of owned quantities', () => {
     const hydrated = hydrateGameState(prepareIdb1Save(

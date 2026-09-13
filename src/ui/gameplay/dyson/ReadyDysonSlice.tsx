@@ -112,7 +112,7 @@ import {
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
-import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
+import { simulationPurchaseQuantity } from '../simulations/simulationPurchaseQuantity'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import type { ReleaseFooterPresentation } from '../../../platform/releaseFooter'
 import { Capacitor } from '@capacitor/core'
@@ -601,8 +601,6 @@ export function ReadyDysonSlice({
     useState(readVisualizationPreference)
   const [quantumPurchaseSettingsOpen, setQuantumPurchaseSettingsOpen] =
     useState(false)
-  const [spaceAgePurchaseQuantity, setSpaceAgePurchaseQuantity] =
-    useState<SpaceAgePurchaseQuantity>(1)
   const [avotationCompletionVisible, setAvotationCompletionVisible] =
     useState(false)
   const [quantumPurchaseQuantity, setQuantumPurchaseQuantity] =
@@ -1784,11 +1782,9 @@ export function ReadyDysonSlice({
                               activeDoubleTimeRate={
                                 0
                               }
-                              spaceAgePurchaseQuantity={spaceAgePurchaseQuantity}
-                              onSpaceAgePurchaseQuantityChange={
-                                setSpaceAgePurchaseQuantity
-                              }
+                              spaceAgePurchaseQuantity={simulationPurchaseQuantity(gameplay.progression.dream.buyMode ?? 'buy-1')}
                               commandAvailability={{
+                                setBuyMode: gameplay.commands.byKind['dream.set-buy-mode'].routeAvailable,
                                 purchaseFoundational:
                                   gameplay.commands.byKind[
                                     'dream.purchase-foundational'

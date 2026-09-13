@@ -98,6 +98,7 @@ function options(
 }
 
 const COMMAND_EXAMPLES = [
+  { kind: 'dream.set-buy-mode', buyMode: 'buy-50' },
   {
     kind: 'dyson.purchase-facility',
     facilityId: 'assembly_lines',
@@ -1657,3 +1658,19 @@ function deepFreeze<T>(value: T): T {
   }
   return value
 }
+
+
+describe('Simulation purchase preference', () => {
+  test('sets, repeats and validates the canonical buy mode without changing progression', () => {
+    const before = state()
+    const result = routeCanonicalGameCommand(before, { kind: 'dream.set-buy-mode', buyMode: 'buy-max' }, options())
+    expect(result.state.dream.buyMode).toBe('buy-max')
+    expect(result.state.dream.resources).toEqual(before.dream.resources)
+    expect(result.state.reality.influence).toBe(before.reality.influence)
+    const unchanged = routeCanonicalGameCommand(result.state, { kind: 'dream.set-buy-mode', buyMode: 'buy-max' }, options())
+    expect(unchanged.state).toBe(result.state)
+    const invalid = routeCanonicalGameCommand(before, { kind: 'dream.set-buy-mode', buyMode: 'bad' } as unknown as CanonicalGameCommand, options())
+    expect(invalid.state).toBe(before)
+    expect(invalid.code).toBe('dream-setting:invalid-buy-mode')
+  })
+})

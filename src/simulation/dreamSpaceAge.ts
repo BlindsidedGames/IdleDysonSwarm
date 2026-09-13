@@ -60,6 +60,8 @@ export interface DreamSpaceAgeEnergyProductionFacts {
 }
 
 export interface DreamSpaceFactoryProductionFacts {
+  readonly sourceCount: number
+  readonly globalMultiplier: number
   readonly active: boolean
   readonly currentProgress: number
   readonly durationSeconds: number
@@ -221,8 +223,8 @@ export function deriveDreamSpaceAgeProductionFacts(
     hasSpaceFactories &&
     resources.dysonPanels < SIMULATION_RESOURCE_MAXIMUM
   let potentialBaseProgressPerSecond = 0
+  let globalMultiplier = doubleTimeMultiplier
   if (hasSpaceFactories) {
-    let globalMultiplier = doubleTimeMultiplier
     if (state.dream.upgrades.sfActivator1) {
       globalMultiplier = multiplyContinuous(globalMultiplier, 2)
     }
@@ -276,6 +278,8 @@ export function deriveDreamSpaceAgeProductionFacts(
         totalPerSecond,
       }),
       spaceFactory: Object.freeze({
+        sourceCount: resources.spaceFactories,
+        globalMultiplier,
         active,
         currentProgress,
         durationSeconds:

@@ -149,6 +149,7 @@ const CURRENT_ONLY_STATE_PATHS = new Set([
   '$.infinity.activeAutomaticThroughputCycleEligible',
   '$.timeline.processing',
   '$.dream.purchaseBatches',
+  '$.dream.buyMode',
   '$.statistics.recentInfinityCycles',
   '$.statistics.recentActiveAutomaticInfinityCycles',
 ])

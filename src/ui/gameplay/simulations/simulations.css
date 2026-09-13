@@ -649,8 +649,8 @@
 }
 
 .simulation-panel-card__formulae > div {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.45rem;
 }
 
@@ -659,6 +659,8 @@
 }
 
 .simulation-panel-card__formulae dd {
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
   min-inline-size: 0;
   margin: 0;
   text-align: end;
@@ -667,8 +669,8 @@
 
 .simulation-progress {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.1rem 0.4rem;
   align-items: baseline;
   color: #d9e2e8;
@@ -679,7 +681,22 @@
   );
 }
 
+.simulation-progress__label,
+.simulation-panel-card__formulae dt {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+.simulation-progress__value {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  text-align: end;
+}
+
 .simulation-progress__track {
+  flex: 0 0 100%;
   inline-size: 100%;
   block-size: 0.36rem;
   grid-column: 1 / -1;

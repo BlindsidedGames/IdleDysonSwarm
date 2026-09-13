@@ -1,3 +1,4 @@
+import { isBuyMode } from '../simulation/transactions'
 import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { formatUnknownError as errorDetail } from '../core/unknownError'
@@ -239,6 +240,10 @@ export type CanonicalGameCommand =
       readonly kind: 'skill.run-auto-assignment'
     }
   | {
+      readonly kind: 'dream.set-buy-mode'
+      readonly buyMode: BuyMode
+    }
+  | {
       readonly kind: 'dream.purchase-foundational'
       readonly purchase: DreamPurchaseCommand
       readonly quantity?: number
@@ -365,6 +370,7 @@ export type CanonicalGameCommandCode =
   | `time-stored-preset:${string}`
   | `settings-processing-interval:${string}`
   | `research-setting:${string}`
+  | `dream-setting:${string}`
   | `settings:${string}`
   | `skill:${string}`
   | `time-double-rate:${string}`
@@ -680,6 +686,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'runCanonicalSkillAutoAssignment',
     requires: ['runtime-evaluation-port'],
+  },
+  'dream.set-buy-mode': {
+    supported: true,
+    authority: 'canonical Simulation buy-mode setting transaction',
   },
   'dream.purchase-foundational': {
     supported: true,
@@ -1857,6 +1867,21 @@ export function routeCanonicalGameCommand(
             : 'manual',
           application,
         ),
+      )
+    }
+
+    case 'dream.set-buy-mode': {
+      if (!isBuyMode(command.buyMode)) {
+        return rejectDomain(state, carriers, 'dream-setting:invalid-buy-mode', command.kind, 'Unsupported Simulation purchase mode.')
+      }
+      const changed = (state.dream.buyMode ?? 'buy-1') !== command.buyMode
+      return finalizeAccepted(
+        state,
+        changed ? { ...state, dream: { ...state.dream, buyMode: command.buyMode } } : state,
+        changed,
+        `dream-setting:${changed ? 'buy-mode-set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
       )
     }
 

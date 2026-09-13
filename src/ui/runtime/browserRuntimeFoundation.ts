@@ -660,6 +660,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           prepareForDispatch,
         )
       } else if (
+        command.kind === 'dream.set-buy-mode' ||
         command.kind === 'research.set-buy-mode' ||
         command.kind === 'research.set-rounded-bulk-buy' ||
         command.kind === 'research.set-automation'

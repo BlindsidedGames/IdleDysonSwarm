@@ -33,6 +33,7 @@ import type { CanonicalDreamDerivedFacts } from '../../../simulation/canonicalDr
 import {
   DREAM_SPACE_AGE_COST_EXPONENT,
   type DreamSpaceAgePurchase,
+  type DreamSpaceFactoryProductionFacts,
 } from '../../../simulation/dreamSpaceAge'
 import { buyXCost, maxAffordable } from '../../../simulation/transactions'
 import {
@@ -64,12 +65,15 @@ import { readyDysonMessages } from '../dyson/messages'
 import { clampProgress } from '../progress/clampProgress'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { simulationsMessages as messages } from './messages'
+import { usePlayerSettingsCommands } from '../usePlayerSettingsCommands'
+import { simulationBuyMode, type SimulationPurchaseQuantity } from './simulationPurchaseQuantity'
 import './simulations.css'
 
 type SimulationsCommand = Extract<
   CanonicalPlayerCommand,
   {
     readonly kind:
+      | 'dream.set-buy-mode'
       | 'dream.purchase-foundational'
       | 'dream.purchase-space-age'
       | 'dream.start-education'
@@ -89,7 +93,7 @@ type CategoryId =
   | 'energy'
   | 'space-age'
 
-export type SpaceAgePurchaseQuantity = 1 | 10 | 50 | 100 | 'max'
+export type SpaceAgePurchaseQuantity = SimulationPurchaseQuantity
 
 const SPACE_AGE_PURCHASE_QUANTITIES = Object.freeze([
   1,
@@ -105,6 +109,7 @@ export const SIMULATION_FORMULAS_STORAGE_KEY =
   'idle-dyson-swarm.simulations.show-formulas'
 
 export interface SimulationsCommandAvailability {
+  readonly setBuyMode: boolean
   readonly purchaseFoundational: boolean
   readonly purchaseSpaceAge: boolean
   readonly startEducation: boolean
@@ -119,9 +124,6 @@ export interface SimulationsSurfaceProps {
   readonly influence: number
   readonly activeDoubleTimeRate: number
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
-  readonly onSpaceAgePurchaseQuantityChange?: (
-    quantity: SpaceAgePurchaseQuantity,
-  ) => void
   readonly commandAvailability: SimulationsCommandAvailability
   readonly dispatchPlayer: (
     command: SimulationsCommand,
@@ -141,7 +143,6 @@ export function SimulationsSurface({
   influence,
   activeDoubleTimeRate,
   spaceAgePurchaseQuantity,
-  onSpaceAgePurchaseQuantityChange = () => undefined,
   commandAvailability,
   dispatchPlayer,
 }: SimulationsSurfaceProps) {
@@ -149,6 +150,10 @@ export function SimulationsSurface({
   const reducedMotion = usePrefersReducedMotion()
   const purchaseSettingsId = useId()
   const [purchaseSettingsOpen, setPurchaseSettingsOpen] = useState(false)
+  const { settingPending, settingFailed, applySetting } =
+    usePlayerSettingsCommands<Extract<
+      SimulationsCommand, { readonly kind: 'dream.set-buy-mode' }
+    >>(dispatchPlayer)
   const [showFormulas, setShowFormulas] = useState(() =>
     readBooleanPresentationPreference(SIMULATION_FORMULAS_STORAGE_KEY),
   )
@@ -261,7 +266,11 @@ export function SimulationsSurface({
                   key={quantity}
                   type="button"
                   aria-pressed={spaceAgePurchaseQuantity === quantity}
-                  onClick={() => onSpaceAgePurchaseQuantityChange(quantity)}
+                  disabled={settingPending || !commandAvailability.setBuyMode}
+                  onClick={() => void applySetting({
+                    kind: 'dream.set-buy-mode',
+                    buyMode: simulationBuyMode(quantity),
+                  })}
                 >
                   <PurchaseQuantityLabel
                     label={quantity === 'max'
@@ -275,6 +284,9 @@ export function SimulationsSurface({
                 </button>
               ))}
             </div>
+            {settingFailed ? (
+              <span role="alert">{intl.formatMessage(messages.actionFailed)}</span>
+            ) : null}
             <label className="simulations-surface__show-formulas">
               <input
                 type="checkbox"
@@ -1365,7 +1377,9 @@ function createPanelModels(input: {
       status,
       description: intl.formatMessage(panelDescriptionMessage(id)),
       progress,
-      details: [],
+      details: id === 'space-factories' && production
+        ? spaceFactoryDetailRows(production.spaceAge.production.spaceFactory, intl, display)
+        : [],
       action: spaceAgeAction(id, input, displayCurrency),
     })
   }
@@ -1435,6 +1449,25 @@ function timerDetailRows(
       value: speedMultiplier,
     },
   ]
+}
+
+function spaceFactoryDetailRows(
+  factory: DreamSpaceFactoryProductionFacts,
+  intl: IntlShape,
+  display: (value: number | bigint) => string,
+): readonly SimulationDetailRowModel[] {
+  return [{
+    label: intl.formatMessage(messages.detailSpeedMultiplier),
+    value: factory.active
+      ? intl.formatMessage(messages.detailLogarithmicMultiplier, {
+          count: display(factory.sourceCount),
+          global: `${display(factory.globalMultiplier)} × ${display(factory.overdriveMultiplier)}`,
+          effective: display(factory.progressPerSecond),
+        })
+      : intl.formatMessage(factory.sourceCount >= 1
+          ? messages.cappedLabel
+          : messages.detailInactiveMultiplier),
+  }]
 }
 
 function rocketConversionDetailRows(

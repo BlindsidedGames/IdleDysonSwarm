@@ -1558,6 +1558,7 @@ function selectProgression(
       upgrades: state.dream.upgrades,
       huntersPerPurchase: state.dream.huntersPerPurchase,
       gatherersPerPurchase: state.dream.gatherersPerPurchase,
+      ...(state.dream.buyMode === undefined ? {} : { buyMode: state.dream.buyMode }),
       purchaseBatches: state.dream.purchaseBatches ?? {
         hunters: 0n,
         gatherers: 0n,
