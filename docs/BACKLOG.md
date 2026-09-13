@@ -60,11 +60,14 @@ still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
   state, identify stale production/preset/interval context, and suppress stale
   warnings or provide recalibration. Verify interval and preset changes;
   the current rate calculation already uses the configured interval.
-- [ ] **B07 · Confirmed · Round bulk purchases is ignored by Buy Max.**
-  The quantity resolver returns affordability before applying rounding.
-  Define the intended milestone rule, including above 100, then share it
-  across preview, manual purchase, and automation. Verify 49 → 50,
-  50 → 100, 99 → 100, above-100, and insufficient-funds cases.
+- [x] **B07 · Intended behavior confirmed · Buy Max ignores rounding.**
+  Matthew confirmed on 13 September that Max buys every affordable unit once;
+  it neither rounds nor repeats while held. Rounding applies only to fixed
+  quantities: Buy 10 targets multiples of 10, Buy 50 multiples of 50, and
+  Buy 100 multiples of 100, continuing above 100. An unaffordable next
+  milestone waits without spending. The existing shared quantity resolver
+  already implements this rule; regression tests cover boundary quantities,
+  insufficient funds, and preview/manual/automation agreement.
 - [ ] **B08 · Confirmed · Compact Bots run facts wrap on narrow screens.**
   Equal-width cells cannot fit long label/value pairs; reproduced at 320px.
   Fit or abbreviate the compact summary while keeping each pair together

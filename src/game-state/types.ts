@@ -168,6 +168,8 @@ export interface RealityState {
 }
 
 export interface QuantumState {
+  /** Optional for older canonical snapshots; defaults to Buy 1. */
+  readonly buyMode?: BuyMode
   // Cumulative bigint counters; the Int64 cap applies to earned minus spent.
   readonly pointsEarned: bigint
   readonly pointsSpent: bigint

@@ -83,6 +83,7 @@ export function applyCanonicalOverflowReset(
         autoGather: false,
       },
       quantum: {
+        ...(state.quantum.buyMode === undefined ? {} : { buyMode: state.quantum.buyMode }),
         pointsEarned: 0n,
         pointsSpent: 0n,
         divisionsPurchased: 0n,

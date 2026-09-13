@@ -193,6 +193,7 @@ const COMMAND_EXAMPLES = [
     upgradeId: 'translation1',
   },
   { kind: 'reality.gather-influence' },
+  { kind: 'quantum.set-buy-mode', buyMode: 'buy-10' },
   {
     kind: 'quantum.purchase-upgrade',
     upgradeId: 'BotMultitasking',

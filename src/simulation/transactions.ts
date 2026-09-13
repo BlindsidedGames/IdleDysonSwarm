@@ -258,6 +258,7 @@ export function buyModeAmount(
   currentOwned: bigint,
   affordable: bigint,
 ): bigint {
+  // Max buys every affordable unit; rounding applies only to fixed batches.
   if (mode === 'buy-max') return affordable > 0n ? affordable : 1n
   const target = FIXED_BUY_MODE_AMOUNTS[mode]
   if (mode === 'buy-1' || !rounded) return target
