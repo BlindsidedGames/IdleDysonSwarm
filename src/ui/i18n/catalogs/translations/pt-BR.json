@@ -723,9 +723,9 @@
   "research.card.boosting": "Aumento de <value>{current}%</value>",
   "research.card.boosting-projected": "Aumento de <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>",
   "research.card.boosting-projected-accessible": "O aumento passa de {current}% para {projected}%",
-  "research.card.lifetime-effect": "Vida Útil dos Painéis adicionada por esta melhoria: <value>+{current}s</value>",
-  "research.card.lifetime-projected": "Vida Útil dos Painéis adicionada por esta melhoria: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
-  "research.card.lifetime-projected-accessible": "Vida Útil dos Painéis adicionada por esta melhoria: {current} segundos, aumentando para {projected} segundos.",
+  "research.card.lifetime-effect": "Vida Útil dos Painéis: <value>+{current}s</value>",
+  "research.card.lifetime-projected": "Vida Útil dos Painéis: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
+  "research.card.lifetime-projected-accessible": "Vida Útil dos Painéis: {current} segundos, aumentando para {projected} segundos.",
   "research.card.purchase-boost": "Compre para obter um bônus! (<value>{perLevel}%</value> por Nível)",
   "research.completed-hidden": "Todas as Pesquisas disponíveis no momento foram concluídas e ocultadas.",
   "research.description.ai-manager": "Refatorar o código torna seus Gerentes de IA mais eficientes, fazendo com que produzam mais Linhas de Montagem!",
@@ -1941,5 +1941,6 @@
   "wiki.skills.preset-safety-title": "Planeje uma predefinição",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Tópicos da Wiki",
-  "wiki.topics": "Tópicos"
+  "wiki.topics": "Tópicos",
+  "research.purchase.durability-maxed": "No máximo"
 }

@@ -723,9 +723,9 @@
   "research.card.boosting": "Amélioration de <value>{current}%</value>",
   "research.card.boosting-projected": "Amélioration de <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>",
   "research.card.boosting-projected-accessible": "L’amélioration passe de {current}% à {projected}%",
-  "research.card.lifetime-effect": "Durée de vie des panneaux apportée par cette amélioration : <value>+{current}s</value>",
-  "research.card.lifetime-projected": "Durée de vie des panneaux apportée par cette amélioration : <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
-  "research.card.lifetime-projected-accessible": "Durée de vie des panneaux apportée par cette amélioration : {current} secondes, passant à {projected} secondes.",
+  "research.card.lifetime-effect": "Durée de vie des panneaux : <value>+{current}s</value>",
+  "research.card.lifetime-projected": "Durée de vie des panneaux : <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
+  "research.card.lifetime-projected-accessible": "Durée de vie des panneaux : {current} secondes, passant à {projected} secondes.",
   "research.card.purchase-boost": "Achetez pour obtenir une amélioration ! (<value>{perLevel}%</value> par niveau)",
   "research.completed-hidden": "Toutes les Recherches actuellement disponibles sont terminées et masquées.",
   "research.description.ai-manager": "La refactorisation du code améliore l’efficacité de vos Gestionnaires d’IA, qui produisent ainsi davantage de Chaînes d’assemblage !",
@@ -1941,5 +1941,6 @@
   "wiki.skills.preset-safety-title": "Préparer un préréglage",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Sujets du wiki",
-  "wiki.topics": "Sujets"
+  "wiki.topics": "Sujets",
+  "research.purchase.durability-maxed": "Au maximum"
 }

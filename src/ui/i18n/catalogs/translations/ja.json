@@ -723,9 +723,9 @@
   "research.card.boosting": "ブースト <value>{current}%</value>",
   "research.card.boosting-projected": "ブースト <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>",
   "research.card.boosting-projected-accessible": "ブーストが{current}%から{projected}%に上昇",
-  "research.card.lifetime-effect": "このアップグレードによるパネル寿命：<value>+{current}秒</value>",
-  "research.card.lifetime-projected": "このアップグレードによるパネル寿命：<value>+{current}秒</value> <arrow>{arrowMark}</arrow> <value>+{projected}秒</value>",
-  "research.card.lifetime-projected-accessible": "このアップグレードによるパネル寿命：{current}秒から{projected}秒に増加します。",
+  "research.card.lifetime-effect": "パネル寿命：<value>+{current}秒</value>",
+  "research.card.lifetime-projected": "パネル寿命：<value>+{current}秒</value> <arrow>{arrowMark}</arrow> <value>+{projected}秒</value>",
+  "research.card.lifetime-projected-accessible": "パネル寿命：{current}秒から{projected}秒に増加します。",
   "research.card.purchase-boost": "購入してブースト！（1レベルごとに<value>{perLevel}%</value>）",
   "research.completed-hidden": "現在利用できる研究はすべて完了し、非表示になっています。",
   "research.description.ai-manager": "コードのリファクタリングでAIマネージャーの効率を高め、組立ラインの生産量を増やします！",
@@ -1941,5 +1941,6 @@
   "wiki.skills.preset-safety-title": "プリセットの計画",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Wikiのトピック",
-  "wiki.topics": "トピック"
+  "wiki.topics": "トピック",
+  "research.purchase.durability-maxed": "最大"
 }

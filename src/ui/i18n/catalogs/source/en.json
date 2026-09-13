@@ -2878,15 +2878,15 @@
     "description": "Accessible text for a Research boost changing after purchase."
   },
   "research.card.lifetime-effect": {
-    "defaultMessage": "Panel Lifetime from this upgrade: <value>+{current}s</value>",
+    "defaultMessage": "Panel Lifetime: <value>+{current}s</value>",
     "description": "Current lifetime contribution from this research card only, excluding other upgrades and skills."
   },
   "research.card.lifetime-projected": {
-    "defaultMessage": "Panel Lifetime from this upgrade: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
+    "defaultMessage": "Panel Lifetime: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
     "description": "Current and projected lifetime contribution from this research card only for the quoted purchase."
   },
   "research.card.lifetime-projected-accessible": {
-    "defaultMessage": "Panel Lifetime from this upgrade: {current} seconds, increasing to {projected} seconds.",
+    "defaultMessage": "Panel Lifetime: {current} seconds, increasing to {projected} seconds.",
     "description": "Accessible current and projected lifetime contribution from this research card only."
   },
   "research.card.purchase-boost": {
@@ -3000,6 +3000,10 @@
   "research.purchase.automatic-quantity": {
     "defaultMessage": "Auto ({quantity})",
     "description": "Automatic Research label showing the configured purchase quantity."
+  },
+  "research.purchase.durability-maxed": {
+    "defaultMessage": "Maxed",
+    "description": "Completed stacking Durability upgrade; all four stages are purchased."
   },
   "research.purchase.failed": {
     "defaultMessage": "Research was not purchased.",

@@ -45,12 +45,15 @@ still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
   autosave/reload at phone/tablet/desktop sizes. Physical-device certification
   remains separate; see
   [Quantum fix verification](audits/quantum-cap-fixes-2026-09-10.md).
-- [ ] **B06 · UX issue · Auto Infinity recommendation becomes stale or zero.**
-  Recommended uses a saved manual-run peak while Current uses recent automatic
-  throughput; changing the interval clears calibration. Show an uncalibrated
-  state, identify stale production/preset/interval context, and suppress stale
-  warnings or provide recalibration. Verify interval and preset changes;
-  the current rate calculation already uses the configured interval.
+- [ ] **B06 · Deferred by Matthew (2026-09-13) · Auto Infinity recommendation becomes stale or zero.**
+  Await more evidence and Matthew's decision before changing the estimator,
+  warning, Infinity reset flicker, or reset timing. The separately approved
+  stacking Durability card is outside this deferral. Recommended retains a manual-run peak;
+  changing the interval clears it and automatic play does not rebuild it. The
+  warning compares target sizes rather than actual throughput. The reported
+  large rate discrepancy remains unverified without the affected save and units.
+  The current rate calculation already uses the configured interval. A forecast
+  based on complete cycles is a proposal only, not an approved implementation.
 - [x] **B07 · Intended behavior confirmed · Buy Max ignores rounding.**
   Matthew confirmed on 13 September that Max buys every affordable unit once;
   it neither rounds nor repeats while held. Rounding applies only to fixed

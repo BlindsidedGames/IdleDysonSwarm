@@ -723,9 +723,9 @@
   "research.card.boosting": "增幅 <value>{current}%</value>",
   "research.card.boosting-projected": "增幅 <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>",
   "research.card.boosting-projected-accessible": "增幅从 {current}% 提高至 {projected}%",
-  "research.card.lifetime-effect": "此升级提供的面板寿命：<value>+{current}秒</value>",
-  "research.card.lifetime-projected": "此升级提供的面板寿命：<value>+{current}秒</value> <arrow>{arrowMark}</arrow> <value>+{projected}秒</value>",
-  "research.card.lifetime-projected-accessible": "此升级提供的面板寿命：{current}秒，将提升至{projected}秒。",
+  "research.card.lifetime-effect": "面板寿命：<value>+{current}秒</value>",
+  "research.card.lifetime-projected": "面板寿命：<value>+{current}秒</value> <arrow>{arrowMark}</arrow> <value>+{projected}秒</value>",
+  "research.card.lifetime-projected-accessible": "面板寿命：{current}秒，将提升至{projected}秒。",
   "research.card.purchase-boost": "购买即可增幅！（每级 <value>{perLevel}%</value>）",
   "research.completed-hidden": "当前所有可用研究均已完成并隐藏。",
   "research.description.ai-manager": "重构代码可提高 AI 管理器效率，从而生产更多装配线！",
@@ -1941,5 +1941,6 @@
   "wiki.skills.preset-safety-title": "规划预设",
   "wiki.title": "百科",
   "wiki.topic-navigation": "百科主题导航",
-  "wiki.topics": "主题"
+  "wiki.topics": "主题",
+  "research.purchase.durability-maxed": "已满级"
 }

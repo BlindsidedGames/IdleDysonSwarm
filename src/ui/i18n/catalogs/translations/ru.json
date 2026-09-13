@@ -723,9 +723,9 @@
   "research.card.boosting": "Бонус: <value>{current}%</value>",
   "research.card.boosting-projected": "Бонус: <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>",
   "research.card.boosting-projected-accessible": "Бонус увеличится с {current}% до {projected}%",
-  "research.card.lifetime-effect": "Срок службы панелей от этого улучшения: <value>+{current}с</value>",
-  "research.card.lifetime-projected": "Срок службы панелей от этого улучшения: <value>+{current}с</value> <arrow>{arrowMark}</arrow> <value>+{projected}с</value>",
-  "research.card.lifetime-projected-accessible": "Срок службы панелей от этого улучшения: {current} секунд, увеличится до {projected} секунд.",
+  "research.card.lifetime-effect": "Срок службы панелей: <value>+{current}с</value>",
+  "research.card.lifetime-projected": "Срок службы панелей: <value>+{current}с</value> <arrow>{arrowMark}</arrow> <value>+{projected}с</value>",
+  "research.card.lifetime-projected-accessible": "Срок службы панелей: {current} секунд, увеличится до {projected} секунд.",
   "research.card.purchase-boost": "Купите усиление! (<value>{perLevel}%</value> за уровень)",
   "research.completed-hidden": "Все доступные исследования завершены и скрыты.",
   "research.description.ai-manager": "Переработка кода повышает эффективность ИИ-менеджеров, и они производят больше сборочных линий!",
@@ -1941,5 +1941,6 @@
   "wiki.skills.preset-safety-title": "Планирование пресета",
   "wiki.title": "Вики",
   "wiki.topic-navigation": "Темы Вики",
-  "wiki.topics": "Темы"
+  "wiki.topics": "Темы",
+  "research.purchase.durability-maxed": "Максимум"
 }

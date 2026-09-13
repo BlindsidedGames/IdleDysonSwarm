@@ -6160,7 +6160,7 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
+      "value": "Vida Útil dos Painéis: "
     },
     {
       "type": 8,
@@ -6184,7 +6184,7 @@
   "research.card.lifetime-projected": [
     {
       "type": 0,
-      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
+      "value": "Vida Útil dos Painéis: "
     },
     {
       "type": 8,
@@ -6244,7 +6244,7 @@
   "research.card.lifetime-projected-accessible": [
     {
       "type": 0,
-      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
+      "value": "Vida Útil dos Painéis: "
     },
     {
       "type": 1,
@@ -6515,6 +6515,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "research.purchase.durability-maxed": [
+    {
+      "type": 0,
+      "value": "No máximo"
     }
   ],
   "research.purchase.failed": [
