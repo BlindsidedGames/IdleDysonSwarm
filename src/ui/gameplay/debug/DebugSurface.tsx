@@ -17,6 +17,7 @@ import './debugSurface.css'
 
 export interface DebugSurfaceProps {
   readonly development: UiRuntimeDevelopmentControls
+  readonly allTabsUnlocked?: boolean
   readonly locale: EnabledLocale
   readonly initialDraft?: Readonly<DebugSurfaceDraft>
   readonly onDraftChange?: (draft: Readonly<DebugSurfaceDraft>) => void
@@ -57,6 +58,7 @@ function clampAmountDraftToContinuousMaximum(
  */
 export function DebugSurface({
   development,
+  allTabsUnlocked = false,
   locale,
   initialDraft,
   onDraftChange,
@@ -259,7 +261,7 @@ export function DebugSurface({
                   })
                 }} />
               </div>
-              <ActionButton label={intl.formatMessage(messages.unlockTabs)} disabled={pending} onClick={() => apply({ kind: 'unlock-all-tabs' }, intl.formatMessage(messages.actionSuccess))} />
+              <ActionButton label={intl.formatMessage(allTabsUnlocked ? messages.lockTabs : messages.unlockTabs)} disabled={pending} onClick={() => apply({ kind: allTabsUnlocked ? 'lock-tabs' : 'unlock-all-tabs' }, intl.formatMessage(messages.actionSuccess))} />
             </section>
 
             <section className="debug-surface__panel">

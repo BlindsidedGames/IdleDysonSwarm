@@ -34,6 +34,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'unlock-all-tabs' }
+  | { readonly kind: 'lock-tabs' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'enable-host-debug-options' }
   | { readonly kind: 'disable-debug-options' }
@@ -112,6 +113,8 @@ export function applyDevelopmentAction(
   switch (action.kind) {
     case 'unlock-all-tabs':
       return replaceDevelopmentRuntime(candidate, { unlockAllTabs: true })
+    case 'lock-tabs':
+      return replaceDevelopmentRuntime(candidate, { unlockAllTabs: false })
     case 'add-cash': {
       if (!Number.isFinite(action.amount)) {
         return invalidDevelopmentAction('Cash amount')
@@ -392,6 +395,7 @@ export function applyDevelopmentAction(
     case 'disable-debug-options':
       return replaceDevelopmentRuntime(candidate, {
         debugOptionsEnabled: false,
+        unlockAllTabs: false,
       })
   }
 }

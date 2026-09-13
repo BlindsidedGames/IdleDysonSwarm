@@ -603,6 +603,12 @@
       "value": "Kostenlos aktivieren"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "Registerkarten sperren"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,

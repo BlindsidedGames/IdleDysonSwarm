@@ -116,7 +116,8 @@ export class CanonicalRuntimeSession
         extractSelectedSkillPresetSlot(source),
       lastSkillPresetApplication: null,
       presentationEvents: [],
-      unlockAllTabs: extractBoolean(source, 'unlockAllTabs'),
+      unlockAllTabs: extractBoolean(source, 'debugOptions') &&
+        extractBoolean(source, 'unlockAllTabs'),
       debugOptionsEnabled: extractBoolean(source, 'debugOptions'),
       debugEntitlementPurchased: extractBoolean(
         source,

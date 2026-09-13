@@ -207,6 +207,7 @@ export type UiRuntimeDevelopmentAction =
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'unlock-all-tabs' }
+  | { readonly kind: 'lock-tabs' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'disable-debug-options' }
 

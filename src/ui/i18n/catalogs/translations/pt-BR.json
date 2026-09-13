@@ -103,6 +103,7 @@
   "debug.tinker-instant": "Tornar a Gambiarra instantânea",
   "debug.tinker-one-second": "Definir a Gambiarra para 1 segundo",
   "debug.title": "Opções de Desenvolvedor",
+  "debug.lock-tabs": "Bloquear abas",
   "debug.unlock-tabs": "Desbloquear todas as abas",
   "dyson.bot-distribution.accessible-value": "{workers} — Operários; {scientists} — Cientistas",
   "dyson.bot-distribution.failed": "A distribuição não foi alterada.",

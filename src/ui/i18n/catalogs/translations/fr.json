@@ -103,6 +103,7 @@
   "debug.tinker-instant": "Rendre le Tinker instantané",
   "debug.tinker-one-second": "Régler le Tinker sur 1 seconde",
   "debug.title": "Options de développement",
+  "debug.lock-tabs": "Verrouiller les onglets",
   "debug.unlock-tabs": "Débloquer tous les onglets",
   "dyson.bot-distribution.accessible-value": "{workers} — nombre d’ouvriers, {scientists} — nombre de scientifiques",
   "dyson.bot-distribution.failed": "La répartition n’a pas été modifiée.",

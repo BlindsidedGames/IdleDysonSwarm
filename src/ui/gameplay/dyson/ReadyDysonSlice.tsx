@@ -1377,6 +1377,7 @@ export function ReadyDysonSlice({
                 >
                   <DebugSurface
                     development={development}
+                    allTabsUnlocked={allTabsUnlocked}
                     locale={locale}
                     initialDraft={debugDraftRef.current}
                     onDraftChange={rememberDebugDraft}

@@ -103,6 +103,7 @@
   "debug.tinker-instant": "Сделать Tinker мгновенным",
   "debug.tinker-one-second": "Установить время Tinker: 1 секунда",
   "debug.title": "Параметры разработчика",
+  "debug.lock-tabs": "Заблокировать вкладки",
   "debug.unlock-tabs": "Открыть все вкладки",
   "dyson.bot-distribution.accessible-value": "{workers} — рабочие; {scientists} — учёные",
   "dyson.bot-distribution.failed": "Распределение не изменено.",

@@ -603,6 +603,12 @@
       "value": "Activar gratis"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "Bloquear pestañas"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,

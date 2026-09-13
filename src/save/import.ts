@@ -93,6 +93,7 @@ export function prepareImportedSaveText(
         transferred,
         effectiveReceivingState,
       )
+      if (context.intent === 'save-reset') transferred.unlockAllTabs = false
       // Repack after receiver-owned flags are restored. Sender ownership was
       // already stripped and cannot be recovered from packed flags.
       packSettingsFlags(transferred)

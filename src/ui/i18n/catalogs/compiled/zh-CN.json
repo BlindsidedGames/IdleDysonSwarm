@@ -603,6 +603,12 @@
       "value": "免费启用"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "锁定标签页"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,

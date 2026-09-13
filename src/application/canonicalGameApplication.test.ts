@@ -342,6 +342,19 @@ describe('canonical game application engine', () => {
     expect(state.unlockAllTabs).toBe(true)
     expect(state.gameState).toEqual(before)
     expect(definition.applyCommand(state, command)).toEqual({ accepted: true, changed: false })
+    const lock = { kind: 'internal.development-apply-action', action: { kind: 'lock-tabs' } } as const
+    expect(definition.applyCommand(state, lock)).toEqual({ accepted: true, changed: true })
+    expect(state.unlockAllTabs).toBe(false)
+    expect(state.gameState).toEqual(before)
+    expect(definition.applyCommand(state, lock)).toEqual({ accepted: true, changed: false })
+    state.unlockAllTabs = true
+    state.debugOptionsEnabled = true
+    state.debugEntitlementPurchased = true
+    definition.applyCommand(state, { kind: 'internal.development-apply-action', action: { kind: 'disable-debug-options' } })
+    expect(state.unlockAllTabs).toBe(false)
+    expect(state.debugOptionsEnabled).toBe(false)
+    expect(state.debugEntitlementPurchased).toBe(true)
+    expect(state.gameState).toEqual(before)
   })
 
   test('applies a coherent development Reality unlock state', () => {

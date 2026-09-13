@@ -340,6 +340,75 @@ describe('native host bootstrap boundary', () => {
     await reconstructed.runtime.shutdown()
   })
 
+  test.each(['android', 'ios'] as const)('%s tab override is durable, resettable, and retained on a failed write', async (target) => {
+    const bridge = { ...fakeBridge(), target }
+    const createComposition = () =>
+      createProductionNativeComposition(
+        createNativeHostEnvironment(bridge),
+        {
+          lifecycleClock: {
+            sample: () => ({
+              utcMilliseconds: 1_000,
+              serializedUtcText: '1970-01-01T00:00:01.000Z',
+            }),
+          },
+          monotonicClock: { nowMilliseconds: () => 0 },
+          createRuntime: (options) =>
+            createBrowserRuntimeFoundation({
+              ...options,
+              developmentControlsAvailable: true,
+              developmentControlsRequireEntitlement: false,
+              activeTimeScheduler: {
+                requestFrame: () => 1,
+                cancelFrame: () => undefined,
+              },
+              checkpointScheduler: {
+                setInterval: () => 1,
+                clearInterval: () => undefined,
+              },
+              nowUtcMilliseconds: () => 1_000,
+              storageManager: {
+                persisted: async () => true,
+                persist: async () => true,
+                estimate: async () => ({ usage: 1, quota: 1_000 }),
+              },
+            }),
+        },
+      )
+
+    const first = createComposition()
+    await first.runtime.start()
+    const controls = first.runtime.development!
+    await expect(controls.apply({ kind: 'purchase-debug-options' })).resolves.toMatchObject({ applied: true })
+    await expect(controls.apply({ kind: 'unlock-all-tabs' })).resolves.toMatchObject({ applied: true })
+    const visible = (composition: ReturnType<typeof createComposition>) => {
+      const snapshot = composition.runtime.snapshot()
+      if (snapshot.phase !== 'ready') throw new Error('Expected ready runtime')
+      return snapshot.gameplay.visibility.allTabsUnlocked
+    }
+    expect(visible(first)).toBe(true)
+    bridge.writeText.mockRejectedValueOnce(new Error('Injected write failure'))
+    await expect(controls.apply({ kind: 'lock-tabs' })).resolves.toMatchObject({ applied: false })
+    expect(visible(first)).toBe(true)
+    await first.runtime.shutdown()
+    const reopened = createComposition()
+    await reopened.runtime.start()
+    expect(visible(reopened)).toBe(true)
+    await expect(reopened.runtime.development!.apply({ kind: 'lock-tabs' })).resolves.toMatchObject({ applied: true })
+    expect(visible(reopened)).toBe(false)
+    await reopened.runtime.development!.apply({ kind: 'unlock-all-tabs' })
+    bridge.writeText.mockRejectedValueOnce(new Error('Injected reset write failure'))
+    await expect(reopened.resetSave()).resolves.toMatchObject({ imported: false })
+    expect(visible(reopened)).toBe(true)
+    await expect(reopened.resetSave()).resolves.toMatchObject({ imported: true })
+    expect(visible(reopened)).toBe(false)
+    await reopened.runtime.shutdown()
+    const resetReopened = createComposition()
+    await resetReopened.runtime.start()
+    expect(visible(resetReopened)).toBe(false)
+    await resetReopened.runtime.shutdown()
+  })
+
   test('uses the mobile checkpoint policy for Android and iOS hosts', () => {
     for (const target of ['android', 'ios'] as const) {
       const bridge = { ...fakeBridge(), target }

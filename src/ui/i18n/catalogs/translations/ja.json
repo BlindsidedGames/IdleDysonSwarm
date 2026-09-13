@@ -103,6 +103,7 @@
   "debug.tinker-instant": "工作を即時完了に設定",
   "debug.tinker-one-second": "工作を1秒に設定",
   "debug.title": "開発者オプション",
+  "debug.lock-tabs": "タブをロック",
   "debug.unlock-tabs": "すべてのタブをアンロック",
   "dyson.bot-distribution.accessible-value": "{workers}体のワーカー、{scientists}体のサイエンティスト",
   "dyson.bot-distribution.failed": "配分は変更されませんでした。",

@@ -8,6 +8,8 @@ export type ImportContext =
   | {
       readonly kind: 'manual-shared-import'
       readonly importedAtUtc: string
+      /** Explicit local reset keeps import protections but clears the tab override. */
+      readonly intent?: 'save-reset'
     }
   | {
       readonly kind: 'transitional-web-upgrade'

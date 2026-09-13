@@ -603,6 +603,12 @@
       "value": "Ativar gratuitamente"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "Bloquear abas"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,

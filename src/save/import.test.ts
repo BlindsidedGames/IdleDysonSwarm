@@ -283,6 +283,14 @@ describe('save import text preparation', () => {
     expect(imported.debugOptions).toBe(true)
     expect(imported.cheater).toBe(true)
     expect(imported.unlockAllTabs).toBe(true)
+    const reset = prepareImportedSaveText(sender, '2026-07-29T05:00:00Z', undefined,
+      { kind: 'manual-shared-import', importedAtUtc: '2026-07-29T05:00:00Z', intent: 'save-reset' }, receiver,
+    ).copyValidatedState()
+    expect(reset.unlockAllTabs).toBe(false)
+    expect(reset.debugEverEnabled).toBe(true)
+    expect(reset.debugOptions).toBe(true)
+    expect(reset.cheater).toBe(true)
+    expect(reset.doubleIp).toBe(false)
   })
 
   test('manual shared import cannot introduce a sender Developer Options claim', () => {
