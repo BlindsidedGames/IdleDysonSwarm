@@ -55,4 +55,11 @@ The native long-press coverage limitation is accepted for this PR; it is not an 
 
 ## PR integration
 
+Independent review found that recovering a V2 checkpoint against a modern base
+with a saved Quantum buy mode incorrectly required that field in the historical
+payload. Registering `$.quantum.buyMode` as current-only preserves the base's
+preference while restoring historical progress. Five regression cases cover all
+buy modes through recovery and serialization; all five failed before the fix.
+Future-version rejection and strict historical schema validation remain intact.
+
 Integrated `main` at `62842fcd`. The Quantum quantity-button conflict was resolved by retaining the responsive `PurchaseQuantityLabel` from main and this change's canonical command dispatch and pending state. Full tests passed again: 158 files / 1,613 tests. TypeScript, production build, lint, data, parity, translation checks, and diff checks passed again. Phone and desktop purchase interactions and screenshots were rechecked with the combined implementation; evidence is under `/tmp/ids-purchase-qa/integration-*`. The direct native evidence above predates this label integration; no additional native acceptance is claimed.
