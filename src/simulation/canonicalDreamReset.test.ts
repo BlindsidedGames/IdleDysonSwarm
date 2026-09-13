@@ -92,6 +92,7 @@ describe('canonical Dream reset', () => {
         ...source,
         dream: {
           ...source.dream,
+          buyMode: 'buy-50',
           disasterStage: stage,
           resources: {
             ...source.dream.resources,
@@ -104,6 +105,7 @@ describe('canonical Dream reset', () => {
         applyCanonicalDreamReset(state, { kind: 'automatic' }),
       )
 
+      expect(result.state.dream.buyMode).toBe('buy-50')
       expect(result.cause).toBe(cause)
       expect(result.requestedReward).toBe(reward)
       expect(result.rewardGranted).toBe(reward)

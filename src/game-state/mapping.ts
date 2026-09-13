@@ -627,6 +627,9 @@ export function hydrateGameState(
         reality.gatherersPerPurchase,
         1n,
       ),
+      ...(source.simulationBuyMode === undefined
+        ? {}
+        : { buyMode: toBuyMode(source.simulationBuyMode) }),
       purchaseBatches: {
         hunters: toNonNegativeBigInt(reality.hunterPurchaseBatches),
         gatherers: toNonNegativeBigInt(reality.gathererPurchaseBatches),
@@ -894,6 +897,11 @@ export function dehydrateGameState(
     ...state.research.progressById,
   }
   source.researchBuyMode = fromBuyMode(state.research.automation.buyMode)
+  if (state.dream.buyMode !== undefined) {
+    source.simulationBuyMode = fromBuyMode(state.dream.buyMode)
+  } else {
+    delete source.simulationBuyMode
+  }
   source.researchRoundedBulkBuy =
     state.research.automation.roundedBulkBuy
   for (const [id, sourceKey] of Object.entries(

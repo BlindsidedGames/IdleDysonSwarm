@@ -473,6 +473,7 @@ function createResetDream(
     strangeMatter,
     disasterStage: 0n,
     upgrades: source.upgrades,
+    ...(source.buyMode === undefined ? {} : { buyMode: source.buyMode }),
     huntersPerPurchase: source.huntersPerPurchase,
     gatherersPerPurchase: source.gatherersPerPurchase,
     purchaseBatches: {

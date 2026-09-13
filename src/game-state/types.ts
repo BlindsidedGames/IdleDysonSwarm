@@ -441,6 +441,8 @@ export interface DreamState {
   readonly upgrades: Readonly<Record<DreamUpgradeFlag, boolean>>
   readonly huntersPerPurchase: bigint
   readonly gatherersPerPurchase: bigint
+  /** Persisted Simulation purchase preference, independent of run progress. */
+  readonly buyMode?: BuyMode
   /** Number of paid batches in the current Simulation run. */
   readonly purchaseBatches?: {
     readonly hunters: bigint
