@@ -66,7 +66,10 @@ import { clampProgress } from '../progress/clampProgress'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { simulationsMessages as messages } from './messages'
 import { usePlayerSettingsCommands } from '../usePlayerSettingsCommands'
-import { simulationBuyMode, type SimulationPurchaseQuantity } from './simulationPurchaseQuantity'
+import {
+  simulationBuyMode,
+  type SimulationPurchaseQuantity,
+} from './simulationPurchaseQuantity'
 import './simulations.css'
 
 type SimulationsCommand = Extract<
@@ -1378,7 +1381,9 @@ function createPanelModels(input: {
       description: intl.formatMessage(panelDescriptionMessage(id)),
       progress,
       details: id === 'space-factories' && production
-        ? spaceFactoryDetailRows(production.spaceAge.production.spaceFactory, intl, display)
+        ? spaceFactoryDetailRows(
+            production.spaceAge.production.spaceFactory, intl, display,
+          )
         : [],
       action: spaceAgeAction(id, input, displayCurrency),
     })

@@ -16,7 +16,7 @@ describe('Space Factory formula operands', () => {
       ...baseline,
       dream: {
         ...baseline.dream,
-        resources: { ...baseline.dream.resources, spaceFactories: 100, dysonPanels: 0n, energy: energyAvailable ? 1e15 : 0 },
+        resources: { ...baseline.dream.resources, spaceFactories: 100, dysonPanels: 0n, energy: 0, solarPanels: energyAvailable ? 1e9 : 0, fusion: 0, swarmPanels: 0n },
         upgrades: { ...baseline.dream.upgrades, sfActivator1: true, sfActivator2: true, sfActivator3: false },
       },
     }
@@ -24,6 +24,9 @@ describe('Space Factory formula operands', () => {
     expect(result.status).toBe('success')
     if (result.status !== 'success') throw new Error('Invalid fixture')
     const factory = result.facts.spaceFactory
+    expect(factory.overdriveActive).toBe(energyAvailable)
+    if (energyAvailable) expect(factory.overdriveMultiplier).toBeGreaterThan(1)
+    else expect(factory.overdriveMultiplier).toBe(1)
     expect(factory.sourceCount).toBe(100)
     expect(factory.globalMultiplier).toBe(8)
     expect(factory.baseProgressPerSecond).toBe(24)

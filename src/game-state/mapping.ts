@@ -627,7 +627,9 @@ export function hydrateGameState(
         reality.gatherersPerPurchase,
         1n,
       ),
-      ...(source.simulationBuyMode === undefined ? {} : { buyMode: toBuyMode(source.simulationBuyMode) }),
+      ...(source.simulationBuyMode === undefined
+        ? {}
+        : { buyMode: toBuyMode(source.simulationBuyMode) }),
       purchaseBatches: {
         hunters: toNonNegativeBigInt(reality.hunterPurchaseBatches),
         gatherers: toNonNegativeBigInt(reality.gathererPurchaseBatches),

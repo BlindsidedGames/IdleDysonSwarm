@@ -1782,9 +1782,14 @@ export function ReadyDysonSlice({
                               activeDoubleTimeRate={
                                 0
                               }
-                              spaceAgePurchaseQuantity={simulationPurchaseQuantity(gameplay.progression.dream.buyMode ?? 'buy-1')}
+                              spaceAgePurchaseQuantity={simulationPurchaseQuantity(
+                                gameplay.progression.dream.buyMode ?? 'buy-1',
+                              )}
                               commandAvailability={{
-                                setBuyMode: gameplay.commands.byKind['dream.set-buy-mode'].routeAvailable,
+                                setBuyMode:
+                                  gameplay.commands.byKind[
+                                    'dream.set-buy-mode'
+                                  ].routeAvailable,
                                 purchaseFoundational:
                                   gameplay.commands.byKind[
                                     'dream.purchase-foundational'

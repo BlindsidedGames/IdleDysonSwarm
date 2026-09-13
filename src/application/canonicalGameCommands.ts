@@ -1,4 +1,3 @@
-import { isBuyMode } from '../simulation/transactions'
 import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { formatUnknownError as errorDetail } from '../core/unknownError'
@@ -93,8 +92,9 @@ import {
   runResearchAutomationTick,
 } from '../simulation/researchAutomation'
 import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
-import type {
-  BuyMode,
+import {
+  type BuyMode,
+  isBuyMode,
 } from '../simulation/transactions'
 import type { SimulationAutomationPolicy } from '../simulation/types'
 
@@ -1872,12 +1872,17 @@ export function routeCanonicalGameCommand(
 
     case 'dream.set-buy-mode': {
       if (!isBuyMode(command.buyMode)) {
-        return rejectDomain(state, carriers, 'dream-setting:invalid-buy-mode', command.kind, 'Unsupported Simulation purchase mode.')
+        return rejectDomain(
+          state, carriers, 'dream-setting:invalid-buy-mode', command.kind,
+          'Unsupported Simulation purchase mode.',
+        )
       }
       const changed = (state.dream.buyMode ?? 'buy-1') !== command.buyMode
       return finalizeAccepted(
         state,
-        changed ? { ...state, dream: { ...state.dream, buyMode: command.buyMode } } : state,
+        changed
+          ? { ...state, dream: { ...state.dream, buyMode: command.buyMode } }
+          : state,
         changed,
         `dream-setting:${changed ? 'buy-mode-set' : 'unchanged'}`,
         carriers,
