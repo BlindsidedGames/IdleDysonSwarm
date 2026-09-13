@@ -37,6 +37,7 @@ import {
   Button,
   ProgressControlsPanel,
   StatusFeedback,
+  StableSingleLineText,
 } from '../../components'
 import {
   formatGameNumber,
@@ -3348,20 +3349,22 @@ function PresetSummary({
       </span>
       <span className="skills-surface__visually-hidden"> · </span>
       <span className="skill-preset-summary__distribution">
-        {intl.formatMessage(messages.presetDistribution, {
-          workers: workerPercent,
-          scientists: scientistPercent,
-          workerValue: (chunks: ReactNode) => (
-            <span className="skill-preset-summary__workers">
-              {chunks}
-            </span>
-          ),
-          scientistValue: (chunks: ReactNode) => (
-            <span className="skill-preset-summary__scientists">
-              {chunks}
-            </span>
-          ),
-        })}
+        <StableSingleLineText minimumScale={1}>
+          {intl.formatMessage(messages.presetDistribution, {
+            workers: workerPercent,
+            scientists: scientistPercent,
+            workerValue: (chunks: ReactNode) => (
+              <span className="skill-preset-summary__workers">
+                {chunks}
+              </span>
+            ),
+            scientistValue: (chunks: ReactNode) => (
+              <span className="skill-preset-summary__scientists">
+                {chunks}
+              </span>
+            ),
+          })}
+        </StableSingleLineText>
       </span>
     </span>
   )

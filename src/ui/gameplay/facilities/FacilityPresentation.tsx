@@ -154,6 +154,7 @@ export function FacilityPresentationCard({
   return (
     <FacilityCard
       className="basic-facility-card"
+      fitTitle
       title={
         <FacilityIdentity
           locale={locale}

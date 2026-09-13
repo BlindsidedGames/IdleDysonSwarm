@@ -14568,6 +14568,18 @@
       "value": "为技能树添加了可选的技能名称标签。"
     }
   ],
+  "wiki.patch-notes.version-4-1-9": [
+    {
+      "type": 0,
+      "value": "版本 4.1.9"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.scaling": [
+    {
+      "type": 0,
+      "value": "改进了小屏幕上的文字缩放和布局。"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

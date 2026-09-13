@@ -7397,6 +7397,14 @@
     "defaultMessage": "Added optional skill labels to the skill tree.",
     "description": "Version 4.1.8 release notes."
   },
+  "wiki.patch-notes.version-4-1-9": {
+    "defaultMessage": "Version 4.1.9",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.scaling": {
+    "defaultMessage": "Improved text scaling and layouts on smaller screens.",
+    "description": "Version 4.1.9 release notes."
+  },
   "wiki.patch-notes.version-4-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",
     "description": "Version 4.1 release note for game audio."

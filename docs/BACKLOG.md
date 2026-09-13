@@ -104,20 +104,23 @@ still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
   capacity upgrades, and check alignment/readability on narrow screens.
   Implemented with localized capacity text and sidebar quick spends (1 M,
   10 M, 1 HR); verified desktop/phone layout and spending from Bots.
-- [ ] **B14 · New / Investigate · Excessive Android top and bottom safe-area gaps.**
-  Latest screenshots show large blank insets; duplicate native/web inset
-  application is a lead, not a proven cause. Reproduce on the reported Samsung
-  S20-family device configuration (exact model still needed), trace inset
-  ownership, and apply each inset once. Verify gesture and button navigation,
-  portrait/landscape, and unobscured controls. Navigation buttons becoming
-  smaller with more pinned tabs is expected and is not a separate confirmed bug.
-- [ ] **B15 · New / Investigate · Stored Time All does not reach the slider end.**
-  Latest report shows All selected with the thumb short of the endpoint and
-  a possible one-second difference. The range combines a potentially fractional
-  bank maximum with whole-second steps; investigate rounding and browser range
-  normalization before claiming time loss. Verify fractional and whole-second
-  banks, dragging to the end, All, and spending: the selected amount and thumb
-  must agree, with no unintended remainder or extra time deducted.
+- [x] **B14 · Implemented / Android emulator QA passed · Excessive safe-area gaps.**
+  Reproduced duplicate native/WebView spacing on Android 15 with WebView 124.
+  The bridge now reports only system-bar/cutout overlap remaining inside the
+  measured WebView. Before/after QA covered gesture/button navigation and both
+  orientations; a separate edge-to-edge control retained necessary insets.
+  The exact reported S20 configuration remains unavailable, and the control
+  does not substitute for testing a newer WebView version. See
+  [mobile/Stored Time QA](audits/mobile-stored-time-2026-09-13.md).
+- [x] **B15 · Implemented / browser and Android QA passed · Stored Time All endpoint.**
+  Confirmed browser normalization of fractional maxima with whole-second steps;
+  this did not establish time loss. The last slider position now maps to the
+  exact bank, and amount/result labels retain up to three fractional digits.
+  Verified All, dragging, keyboard endpoints, route return, confirmation,
+  cancellation/retry, repeated spends, empty/fractional/integral banks, and
+  exported/reloaded balances. Max Storage and sidebar quick spends received
+  adjacent regression coverage; no timing or save policy changed. See the
+  [QA record](audits/mobile-stored-time-2026-09-13.md).
 - [ ] **B16 · New / Product decision · Completed avocado secrets remain visible.**
   Current code deliberately retains discovered/completed icons. Decide whether
   to hide completed secrets or offer a visibility setting, then implement the

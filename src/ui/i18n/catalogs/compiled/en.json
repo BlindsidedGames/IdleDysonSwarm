@@ -14568,6 +14568,18 @@
       "value": "Added optional skill labels to the skill tree."
     }
   ],
+  "wiki.patch-notes.version-4-1-9": [
+    {
+      "type": 0,
+      "value": "Version 4.1.9"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.scaling": [
+    {
+      "type": 0,
+      "value": "Improved text scaling and layouts on smaller screens."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

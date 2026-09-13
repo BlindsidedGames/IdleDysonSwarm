@@ -326,6 +326,7 @@
 
 .statistics-infinity-performance__runs span {
   min-inline-size: 0;
+  white-space: nowrap;
 }
 
 .statistics-infinity-performance__rate {
@@ -428,6 +429,20 @@
 }
 
 @media (max-width: 30rem) {
+  .statistics-infinity-performance__runs li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+
+  .statistics-infinity-performance__runs li > :nth-child(2) {
+    flex: 1 0 calc(100% - 5rem);
+  }
+
+  .statistics-infinity-performance__rate {
+    margin-inline-start: auto;
+  }
+
   .statistics-surface__summary {
     display: grid;
   }

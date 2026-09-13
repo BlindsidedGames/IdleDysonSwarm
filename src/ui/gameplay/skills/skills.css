@@ -589,8 +589,11 @@
 }
 
 .skill-settings__preset-load {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  align-items: baseline;
+  min-inline-size: 0;
   gap: 0.18rem 0.55rem;
   min-block-size: 4.2rem;
   padding: 0.65rem;
@@ -604,12 +607,11 @@
 
 .skill-settings__preset-load > strong {
   display: flex;
+  flex: 1 0 auto;
   gap: 0.45rem;
   align-items: center;
-  min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
 }
 
 .skill-preset-color-swatch {
@@ -632,6 +634,7 @@
 }
 
 .skill-settings__current {
+  flex: 0 0 auto;
   align-self: start;
   padding: 0.15rem 0.4rem;
   border: 1px solid var(--theme-divider);
@@ -662,7 +665,8 @@
 }
 
 .skill-settings__preset-load > .skill-preset-summary {
-  grid-column: 1 / -1;
+  flex-basis: 100%;
+  min-inline-size: 0;
   color: #c8bddc;
   font-size: 0.85rem;
 }
@@ -678,7 +682,7 @@
 }
 
 .skill-preset-summary__distribution {
-  white-space: nowrap;
+  text-wrap: balance;
 }
 
 .skill-preset-summary__workers {

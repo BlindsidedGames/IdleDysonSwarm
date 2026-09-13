@@ -202,7 +202,6 @@
 
 .research-surface__summary-line {
   display: grid;
-  block-size: 100%;
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
   min-inline-size: 0;
@@ -218,7 +217,7 @@
   padding: 0;
   font-size: calc(0.72rem * var(--game-text-scale));
   text-align: start;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .research-surface__production-line {

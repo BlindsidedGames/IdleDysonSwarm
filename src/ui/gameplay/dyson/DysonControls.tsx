@@ -20,6 +20,7 @@ import type {
 import {
   PresetAutomationSelect,
   ProgressControlsPanel,
+  StableSingleLineText,
 } from '../../components'
 import {
   formatGameNumber,
@@ -292,41 +293,40 @@ export function DysonRunFacts({
         ? messages.compactStarsSurrounded
         : messages.compactGalaxiesEngulfed
 
+  const facts = [
+    { message: compactMetricMessage, value: metric.value },
+    { message: messages.compactPanelLifetime, value: panelLifetimeSeconds },
+    { message: messages.compactTotalPanelsDecayed, value: totalPanelsDecayed },
+  ].map(({ message, value }) => (
+    <FormattedMessage
+      key={message.id}
+      {...message}
+      values={{
+        value: formatGameNumber(locale, value),
+        emphasis: (chunks) => (
+          <span className="dyson-info__value">{chunks}</span>
+        ),
+      }}
+    />
+  ))
+  const measurement = (
+    <span className="dyson-info__run-facts-measurement">
+      {facts.map((fact) => <span key={fact.key}>{fact}</span>)}
+    </span>
+  )
+
   return (
     <div className="dyson-info__run-facts">
-      <span className="dyson-info__fact">
-        <FormattedMessage
-          {...compactMetricMessage}
-          values={{
-            value: formatGameNumber(locale, metric.value),
-            emphasis: (chunks) => (
-              <span className="dyson-info__value">{chunks}</span>
-            ),
-          }}
-        />
-      </span>
-      <span className="dyson-info__fact">
-        <FormattedMessage
-          {...messages.compactPanelLifetime}
-          values={{
-            value: formatGameNumber(locale, panelLifetimeSeconds),
-            emphasis: (chunks) => (
-              <span className="dyson-info__value">{chunks}</span>
-            ),
-          }}
-        />
-      </span>
-      <span className="dyson-info__fact">
-        <FormattedMessage
-          {...messages.compactTotalPanelsDecayed}
-          values={{
-            value: formatGameNumber(locale, totalPanelsDecayed),
-            emphasis: (chunks) => (
-              <span className="dyson-info__value">{chunks}</span>
-            ),
-          }}
-        />
-      </span>
+      {facts.map((fact) => (
+        <StableSingleLineText
+          key={fact.key}
+          className="dyson-info__fact"
+          minimumScale={0}
+          measurement={measurement}
+        >
+          {fact}
+        </StableSingleLineText>
+      ))}
     </div>
   )
 }
@@ -460,21 +460,23 @@ export function BotDistribution({
   if (multitasking) {
     return (
       <div className="bot-distribution bot-distribution--multitasking">
-        <FormattedMessage
-          {...messages.botMultitaskingEfficiency}
-          values={{
-            workers: (chunks) => (
-              <span className="bot-distribution__multitasking-workers">
-                {chunks}
-              </span>
-            ),
-            science: (chunks) => (
-              <span className="bot-distribution__multitasking-science">
-                {chunks}
-              </span>
-            ),
-          }}
-        />
+        <StableSingleLineText minimumScale={1}>
+          <FormattedMessage
+            {...messages.botMultitaskingEfficiency}
+            values={{
+              workers: (chunks) => (
+                <span className="bot-distribution__multitasking-workers">
+                  {chunks}
+                </span>
+              ),
+              science: (chunks) => (
+                <span className="bot-distribution__multitasking-science">
+                  {chunks}
+                </span>
+              ),
+            }}
+          />
+        </StableSingleLineText>
       </div>
     )
   }

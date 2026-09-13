@@ -14568,6 +14568,18 @@
       "value": "スキルツリーにスキル名の表示を切り替える機能を追加。"
     }
   ],
+  "wiki.patch-notes.version-4-1-9": [
+    {
+      "type": 0,
+      "value": "バージョン 4.1.9"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.scaling": [
+    {
+      "type": 0,
+      "value": "小さな画面での文字の拡大縮小とレイアウトを改善しました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

@@ -1853,6 +1853,8 @@
   "wiki.patch-notes.version-4-1-8.quantum": "修复了余额极高时量子碎片的获取、购买及最大购买数量问题。",
   "wiki.patch-notes.version-4-1-8.recovery": "改进存档恢复。",
   "wiki.patch-notes.version-4-1-8.skill-labels": "为技能树添加了可选的技能名称标签。",
+  "wiki.patch-notes.version-4-1-9": "版本 4.1.9",
+  "wiki.patch-notes.version-4-1-9.scaling": "改进了小屏幕上的文字缩放和布局。",
   "wiki.patch-notes.version-4-1.audio": "在支持的平台上加入背景音乐和界面音效，提供独立的音乐与音效音量控制、全部静音，并提高切换应用或浏览器窗口时的播放可靠性。",
   "wiki.patch-notes.version-4-1.dyson-visualization": "在极快的自动无限运行中固定显示最终星系场，提高戴森可视化性能；同时恢复成长中星系的密集旋臂、明亮核心与均衡的移动端布局。",
   "wiki.patch-notes.version-4-1.economy": "修复资源达到支持的最大值时的购买问题，并防止超巨型装配线的极端价格卡在可重复利用的平台值。",

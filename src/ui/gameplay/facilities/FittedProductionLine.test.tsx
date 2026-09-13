@@ -56,5 +56,5 @@ test('still measures text changes when ResizeObserver is unavailable', () => {
   Object.defineProperty(container, 'clientWidth', { value: 50 })
   Object.defineProperty(line, 'scrollWidth', { value: 100 })
   view.rerender(<FittedProductionLine display={splitProductionDisplay('longer')} />)
-  expect(line.style.transform).toBe('scale(0.62)')
+  expect(line.style.transform).toBe('scale(0.5)')
 })
