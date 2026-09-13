@@ -452,7 +452,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free."
+      "value": "Spend 10 Overflow Points to unlock the developer tools. Once purchased, they can be re-enabled for free."
     }
   ],
   "debug.action-failure": [
@@ -603,10 +603,22 @@
       "value": "Enable for free"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "Lock tabs"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,
       "value": "Maintenance"
+    }
+  ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "Overflow Points"
     }
   ],
   "debug.progression": [
@@ -667,6 +679,12 @@
     {
       "type": 0,
       "value": "Whole cap"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "Using gameplay tools makes this save ineligible for speedruns. Unlocking or opening Developer Options does not."
     }
   ],
   "debug.strange-matter": [
@@ -6154,7 +6172,7 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "Panel Lifetime from this upgrade: "
+      "value": "Panel Lifetime: "
     },
     {
       "type": 8,
@@ -6178,7 +6196,7 @@
   "research.card.lifetime-projected": [
     {
       "type": 0,
-      "value": "Panel Lifetime from this upgrade: "
+      "value": "Panel Lifetime: "
     },
     {
       "type": 8,
@@ -6238,7 +6256,7 @@
   "research.card.lifetime-projected-accessible": [
     {
       "type": 0,
-      "value": "Panel Lifetime from this upgrade: "
+      "value": "Panel Lifetime: "
     },
     {
       "type": 1,
@@ -6509,6 +6527,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "research.purchase.durability-maxed": [
+    {
+      "type": 0,
+      "value": "Maxed"
     }
   ],
   "research.purchase.failed": [
@@ -12347,6 +12371,138 @@
     {
       "type": 0,
       "value": "Current Quantum run"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "About these records"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "Real elapsed time since this save began, including time away. Gameplay resets retain this run. Stored Time is allowed."
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "Current save run"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "Debug used"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "Debug qualification · 10 Overflow Points"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "2× game speed unlocked"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "Save age / run elapsed"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "Run eligibility"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "Eligible"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "First Infinity"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "First Quantum Leap"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "Milestone usage labels describe the run up to that point. Debug gameplay actions make the run ineligible. Older saves may have unknown times or usage history."
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "Ineligible — Debug used"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "No"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "Not recorded"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "Reality unlocked"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "Stored Time used"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "Time reached"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "Unknown"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "Unverified"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "Speedruns"
     }
   ],
   "statistics.tracked-time": [

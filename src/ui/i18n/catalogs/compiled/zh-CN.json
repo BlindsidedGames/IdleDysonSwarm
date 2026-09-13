@@ -452,7 +452,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "使用后期货币解锁开发者工具。购买后可免费重新启用。"
+      "value": "花费10溢出点解锁开发者工具。购买后可免费重新启用。"
     }
   ],
   "debug.action-failure": [
@@ -603,10 +603,22 @@
       "value": "免费启用"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "锁定标签页"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,
       "value": "维护"
+    }
+  ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "溢出点"
     }
   ],
   "debug.progression": [
@@ -667,6 +679,12 @@
     {
       "type": 0,
       "value": "整数上限"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "使用改变游戏进度的工具会使此存档失去速通资格。仅解锁或打开开发者选项不会影响资格。"
     }
   ],
   "debug.strange-matter": [
@@ -6154,7 +6172,7 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "此升级提供的面板寿命："
+      "value": "面板寿命："
     },
     {
       "type": 8,
@@ -6178,7 +6196,7 @@
   "research.card.lifetime-projected": [
     {
       "type": 0,
-      "value": "此升级提供的面板寿命："
+      "value": "面板寿命："
     },
     {
       "type": 8,
@@ -6238,7 +6256,7 @@
   "research.card.lifetime-projected-accessible": [
     {
       "type": 0,
-      "value": "此升级提供的面板寿命："
+      "value": "面板寿命："
     },
     {
       "type": 1,
@@ -6509,6 +6527,12 @@
     {
       "type": 0,
       "value": "）"
+    }
+  ],
+  "research.purchase.durability-maxed": [
+    {
+      "type": 0,
+      "value": "已满级"
     }
   ],
   "research.purchase.failed": [
@@ -12347,6 +12371,138 @@
     {
       "type": 0,
       "value": "当前量子运行"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "关于这些记录"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "自本存档开始以来的真实时间，包括离线时间。进度重置不会开始新流程。允许使用储存时间；2倍游戏速度保持不变。"
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "当前存档流程"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "使用过调试"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "达到调试解锁条件 · 10溢出点"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "解锁2倍游戏速度"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "存档时长 / 流程耗时"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "成绩资格"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "有效"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "首次无限"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "首次量子跃迁"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "里程碑的使用标签描述达成时的流程状态。使用改变游戏进度的调试功能将使本流程失去资格。旧存档的时间或使用历史可能未知。"
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "无效 — 使用过调试"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "否"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "未记录"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "解锁现实"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "使用过储存时间"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "达成耗时"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "未知"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "未验证"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "是"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "速通"
     }
   ],
   "statistics.tracked-time": [

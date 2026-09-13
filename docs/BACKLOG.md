@@ -45,26 +45,23 @@ still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
   autosave/reload at phone/tablet/desktop sizes. Physical-device certification
   remains separate; see
   [Quantum fix verification](audits/quantum-cap-fixes-2026-09-10.md).
-- [x] **B05 · Implemented / automated and Android emulator QA passed · Missing Stored Time.**
-  Shared production saves now retain an active checkpoint timestamp. Cold launch
-  uses it only when a departure timestamp is missing, and credits the bank and
-  advances the baseline in one commit. Imports clear the sender's baseline;
-  failed replay preserves it for retry. Android abrupt-stop recovery was verified.
-  The shared fix also ships in iOS builds; iOS device verification remains separate.
-  This repairs the demonstrated loss path; the players' exact closing sequence
-  remains unknown. See
-  [offline-time investigation](audits/offline-time-loss-investigation-2026-09-11.md).
-- [ ] **B06 · UX issue · Auto Infinity recommendation becomes stale or zero.**
-  Recommended uses a saved manual-run peak while Current uses recent automatic
-  throughput; changing the interval clears calibration. Show an uncalibrated
-  state, identify stale production/preset/interval context, and suppress stale
-  warnings or provide recalibration. Verify interval and preset changes;
-  the current rate calculation already uses the configured interval.
-- [ ] **B07 · Confirmed · Round bulk purchases is ignored by Buy Max.**
-  The quantity resolver returns affordability before applying rounding.
-  Define the intended milestone rule, including above 100, then share it
-  across preview, manual purchase, and automation. Verify 49 → 50,
-  50 → 100, 99 → 100, above-100, and insufficient-funds cases.
+- [ ] **B06 · Deferred by Matthew (2026-09-13) · Auto Infinity recommendation becomes stale or zero.**
+  Await more evidence and Matthew's decision before changing the estimator,
+  warning, Infinity reset flicker, or reset timing. The separately approved
+  stacking Durability card is outside this deferral. Recommended retains a manual-run peak;
+  changing the interval clears it and automatic play does not rebuild it. The
+  warning compares target sizes rather than actual throughput. The reported
+  large rate discrepancy remains unverified without the affected save and units.
+  The current rate calculation already uses the configured interval. A forecast
+  based on complete cycles is a proposal only, not an approved implementation.
+- [x] **B07 · Intended behavior confirmed · Buy Max ignores rounding.**
+  Matthew confirmed on 13 September that Max buys every affordable unit once;
+  it neither rounds nor repeats while held. Rounding applies only to fixed
+  quantities: Buy 10 targets multiples of 10, Buy 50 multiples of 50, and
+  Buy 100 multiples of 100, continuing above 100. An unaffordable next
+  milestone waits without spending. The existing shared quantity resolver
+  already implements this rule; regression tests cover boundary quantities,
+  insufficient funds, and preview/manual/automation agreement.
 - [ ] **B08 · Confirmed · Compact Bots run facts wrap on narrow screens.**
   Equal-width cells cannot fit long label/value pairs; reproduced at 320px.
   Fit or abbreviate the compact summary while keeping each pair together
@@ -75,18 +72,6 @@ still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
   boost. Name the actual affected systems and relevant panel exclusions in
   localized technical copy. Verify copy against the effect catalog; any
   additional gameplay effect needs a separate balance decision.
-- [ ] **B10 · Investigate · Intermittent Skills/preset halt or spontaneous reload.**
-  The specific sparse-research preset failure is fixed, but generic reports
-  remain unexplained. Capture the first rejected update, lifecycle phase,
-  checkpoint result, writer ownership, and skill queue from a failing save.
-  Reproduce the failure and verify recovery preserves the last good save.
-  The related post-Infinity research/whole-state rollback investigation is
-  deferred under B01 below.
-- [ ] **B11 · Investigate · Progress lost after updating an older installation.**
-  Original build/save provenance is missing. Obtain a preserved pre-update
-  save or backup and reproduce the exact in-place upgrade path. Check legacy
-  discovery and migration; verify unreadable saves retain recovery options
-  and cannot be overwritten by a new game.
 - [ ] **B12 · Investigate · Holding Tinker prevents a second-finger purchase.**
   Current code has no confirmed global pointer restriction; true simultaneous
   touch was not available in the earlier browser check. Reproduce with two
@@ -158,6 +143,11 @@ still unknown. These are actionable follow-ups, not fifteen confirmed bugs.
    release workflow contracts.
 
 ## Deferred investigations
+
+- [ ] **B11 · Deferred · Progress lost after updating an older installation.**
+  Reported loss was not reproduced; the original build and pre-update save are
+  unavailable. Revisit if new reports provide build/save evidence for an exact
+  in-place upgrade reproduction. Preserve existing recovery protections.
 
 - [ ] **B01 · Deferred · Research returns after Infinity / simulation rollback on reload.**
   Players reported research returning after an unexpected reload, with a newly

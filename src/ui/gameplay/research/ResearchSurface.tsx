@@ -49,6 +49,11 @@ import { BUY_MODE_OPTIONS } from '../buyModeOptions'
 import { researchMessages as messages } from './messages'
 import { orderResearchCardsForPresentation } from './researchCardOrdering'
 import {
+  researchCardPresentationKey,
+  stackDurabilityCard,
+  type PresentedResearchCard,
+} from './durabilityCard'
+import {
   researchDescriptionMessage,
   researchNameMessage,
 } from './researchMessageSelectors'
@@ -147,14 +152,16 @@ export function ResearchSurface({
   const cardItems = useRef(new Map<string, HTMLLIElement>())
   const emptyState = useRef<HTMLParagraphElement>(null)
   const focusedResearchId = useRef<string | null>(null)
-  const canonicalVisibleCards = cards.filter((card) => card.visible)
+  const canonicalVisibleCards = stackDurabilityCard(cards).filter(
+    (card) => card.visible,
+  )
   const visibleCards = orderResearchCardsForPresentation(
     canonicalVisibleCards.filter(
-      (card) => !hideCompleted || !card.maxed,
+      (card) => card.stackedDurability || !hideCompleted || !card.maxed,
     ),
   )
   const previousVisibleIds = useRef(
-    visibleCards.map((card) => card.researchId),
+    visibleCards.map(researchCardPresentationKey),
   )
   const automatableCards = cards.filter((card) =>
     AUTOMATABLE_RESEARCH_IDS.has(card.researchId) &&
@@ -163,7 +170,7 @@ export function ResearchSurface({
 
   useLayoutEffect(() => {
     const previous = previousVisibleIds.current
-    const current = visibleCards.map((card) => card.researchId)
+    const current = visibleCards.map(researchCardPresentationKey)
     const removedFocusedId = focusedResearchId.current
     previousVisibleIds.current = current
     if (
@@ -203,16 +210,16 @@ export function ResearchSurface({
             {visibleCards.map((card) => (
               <li
                 className="research-surface__item"
-                key={card.researchId}
+                key={researchCardPresentationKey(card)}
                 ref={(element) => {
                   if (element === null) {
-                    cardItems.current.delete(card.researchId)
+                    cardItems.current.delete(researchCardPresentationKey(card))
                   } else {
-                    cardItems.current.set(card.researchId, element)
+                    cardItems.current.set(researchCardPresentationKey(card), element)
                   }
                 }}
                 onFocusCapture={() => {
-                  focusedResearchId.current = card.researchId
+                  focusedResearchId.current = researchCardPresentationKey(card)
                 }}
                 tabIndex={-1}
               >
@@ -458,7 +465,7 @@ const AUTOMATABLE_RESEARCH_IDS = new Set([
 ])
 
 interface ResearchCardProps {
-  readonly card: FrontendResearchCardPreview
+  readonly card: PresentedResearchCard
   readonly locale: EnabledLocale
   readonly routeAvailable: boolean
   readonly dispatchPlayer: ResearchSurfaceProps['dispatchPlayer']
@@ -538,7 +545,9 @@ function ResearchCard({
         </span>
       }
       description={intl.formatMessage(
-        researchDescriptionMessage(card.researchId),
+        researchDescriptionMessage(
+          card.stackedDurability ? 'research.panel_lifetime_1' : card.researchId,
+        ),
       )}
       progress={null}
       action={
@@ -563,7 +572,9 @@ function ResearchCard({
         >
           <span className="research-card__purchase-quantity">
             {card.maxed
-              ? intl.formatMessage(messages.purchased)
+              ? intl.formatMessage(
+                  card.stackedDurability ? messages.durabilityMaxed : messages.purchased,
+                )
               : card.automationActive
               ? intl.formatMessage(messages.automaticQuantity, {
                   quantity,

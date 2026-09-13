@@ -660,6 +660,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           prepareForDispatch,
         )
       } else if (
+        command.kind === 'dream.set-buy-mode' ||
         command.kind === 'research.set-buy-mode' ||
         command.kind === 'research.set-rounded-bulk-buy' ||
         command.kind === 'research.set-automation'
@@ -803,6 +804,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         enabled: false,
         entitled: false,
         purchasedInGame: false,
+        overflowPoints: 0n,
         quantumShards: 0n,
         strangeMatter: 0,
       }
@@ -818,6 +820,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       entitled,
       purchasedInGame:
         snapshot.state.debugEntitlementPurchased === true,
+      overflowPoints: snapshot.state.gameState.avocado.overflowPoints ?? 0n,
       quantumShards:
         snapshot.state.gameState.quantum.pointsEarned >
         snapshot.state.gameState.quantum.pointsSpent

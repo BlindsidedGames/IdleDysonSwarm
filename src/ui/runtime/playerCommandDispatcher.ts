@@ -32,6 +32,7 @@ type LatestIdempotentCommand =
       CanonicalPlayerCommand,
       {
         readonly kind:
+          | 'dream.set-buy-mode'
           | 'research.set-buy-mode'
           | 'research.set-rounded-bulk-buy'
           | 'research.set-automation'

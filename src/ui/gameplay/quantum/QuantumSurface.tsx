@@ -41,8 +41,10 @@ import {
 } from './messages'
 import {
   QUANTUM_PURCHASE_QUANTITIES,
+  quantumQuantityBuyMode,
   type QuantumPurchaseQuantity,
 } from './quantumPurchaseQuantities'
+import { usePlayerSettingsCommands } from '../usePlayerSettingsCommands'
 import './quantum.css'
 
 type QuantumCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'quantum.purchase-upgrade' | 'quantum.request-leap' | 'avocado.complete-meditation-step' }>
@@ -285,7 +287,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
   const level = upgradeLevel(locale, preview.upgradeId, resources, progression)
 
   const purchase = async () => {
-    if (unavailable || pendingRef.current) return
+    if (unavailable || pendingRef.current) return false
     pendingRef.current = true
     setPending(true)
     setFailed(false)
@@ -300,16 +302,19 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
         } : {}),
       })
       setFailed(result.status !== 'accepted')
+      return result.status === 'accepted'
     } catch {
       setFailed(true)
+      return false
     } finally {
       pendingRef.current = false
       setPending(false)
     }
   }
   const holdHandlers = usePressAndHoldRepeat(
-    repeatable && purchaseQuantity === 1 && !unavailable,
+    repeatable && purchaseQuantity !== 'max' && !unavailable,
     purchase,
+    purchaseQuantity,
   )
 
   return (
@@ -379,7 +384,8 @@ export interface QuantumControlPanelProps {
   readonly purchaseQuantity: QuantumPurchaseQuantity
   readonly hideMaxed: boolean
   readonly onPurchaseSettingsOpenChange: (open: boolean) => void
-  readonly onPurchaseQuantityChange: (quantity: QuantumPurchaseQuantity) => void
+  readonly dispatchPlayer: (command: Extract<CanonicalPlayerCommand, { kind: 'quantum.set-buy-mode' }>) => Promise<UiRuntimePlayerCommandResult>
+  readonly buyModeRouteAvailable: boolean
   readonly onHideMaxedChange: (hideMaxed: boolean) => void
 }
 
@@ -390,10 +396,12 @@ export function QuantumControlPanel({
   purchaseQuantity,
   hideMaxed,
   onPurchaseSettingsOpenChange,
-  onPurchaseQuantityChange,
+  dispatchPlayer,
+  buyModeRouteAvailable,
   onHideMaxedChange,
 }: QuantumControlPanelProps) {
   const intl = useIntl()
+  const { settingPending, settingFailed, applySetting } = usePlayerSettingsCommands(dispatchPlayer)
   const required = QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
   const current = infinityPoints < required ? infinityPoints : required
   const progress = Number(current) / Number(required)
@@ -451,7 +459,8 @@ export function QuantumControlPanel({
               key={quantity}
               type="button"
               aria-pressed={purchaseQuantity === quantity}
-              onClick={() => onPurchaseQuantityChange(quantity)}
+              disabled={settingPending || !buyModeRouteAvailable}
+              onClick={() => void applySetting({ kind: 'quantum.set-buy-mode', buyMode: quantumQuantityBuyMode(quantity) })}
             >
               <PurchaseQuantityLabel
                 label={quantity === 'max'
@@ -465,13 +474,15 @@ export function QuantumControlPanel({
             </button>
           ))}
         </div>
+        {settingFailed && <p role="alert">{intl.formatMessage(messages.failed)}</p>}
     </ProgressControlsPanel>
   )
 }
 
 function usePressAndHoldRepeat(
   enabled: boolean,
-  action: () => Promise<void>,
+  action: () => Promise<boolean>,
+  quantity: QuantumPurchaseQuantity,
 ) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const holdingRef = useRef(false)
@@ -479,6 +490,8 @@ function usePressAndHoldRepeat(
   const suppressClickRef = useRef(false)
   const enabledRef = useRef(enabled)
   const actionRef = useRef(action)
+  const generationRef = useRef(0)
+  const heldKeyRef = useRef<string | null>(null)
   enabledRef.current = enabled
   actionRef.current = action
 
@@ -494,7 +507,14 @@ function usePressAndHoldRepeat(
       timerRef.current = null
       if (!holdingRef.current || !enabledRef.current) return
       repeatedRef.current = true
-      await actionRef.current()
+      // A completed command from an earlier press cannot restart a newer hold.
+      const generation = generationRef.current
+      const accepted = await actionRef.current()
+      if (generation !== generationRef.current) return
+      if (!accepted) {
+        end()
+        return
+      }
       if (holdingRef.current && enabledRef.current) {
         schedule(HOLD_REPEAT_INTERVAL_MS)
       }
@@ -504,17 +524,24 @@ function usePressAndHoldRepeat(
   const begin = () => {
     if (!enabledRef.current || holdingRef.current) return
     holdingRef.current = true
+    generationRef.current += 1
     repeatedRef.current = false
     suppressClickRef.current = false
     schedule(HOLD_REPEAT_DELAY_MS)
   }
 
   const end = () => {
+    heldKeyRef.current = null
     if (!holdingRef.current) return
     holdingRef.current = false
+    generationRef.current += 1
     clearTimer()
     if (repeatedRef.current) suppressClickRef.current = true
   }
+
+  useEffect(() => {
+    end()
+  }, [quantity, enabled])
 
   useEffect(() => {
     // A pending purchase disables the button. Browsers are not required to
@@ -522,8 +549,10 @@ function usePressAndHoldRepeat(
     // release outside the control to prevent a completed dispatch from
     // restarting a hold the player has already ended.
     const endGlobalHold = () => {
+      heldKeyRef.current = null
       if (!holdingRef.current) return
       holdingRef.current = false
+      generationRef.current += 1
       if (timerRef.current !== null) {
         clearTimeout(timerRef.current)
         timerRef.current = null
@@ -533,11 +562,30 @@ function usePressAndHoldRepeat(
     window.addEventListener('pointerup', endGlobalHold)
     window.addEventListener('pointercancel', endGlobalHold)
     window.addEventListener('blur', endGlobalHold)
+    // Disabling a pending purchase can remove keyboard focus. Release must
+    // still finish the press even when its keyup targets the document body.
+    const onGlobalKeyUp = (event: KeyboardEvent) => {
+      if (event.key !== heldKeyRef.current) return
+      event.preventDefault()
+      const activate = !repeatedRef.current
+      endGlobalHold()
+      suppressClickRef.current = false
+      if (activate) void actionRef.current()
+    }
+    window.addEventListener('keyup', onGlobalKeyUp)
+    const onVisibilityChange = () => {
+      if (document.hidden) endGlobalHold()
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
     return () => {
       window.removeEventListener('pointerup', endGlobalHold)
       window.removeEventListener('pointercancel', endGlobalHold)
       window.removeEventListener('blur', endGlobalHold)
+      window.removeEventListener('keyup', onGlobalKeyUp)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
       holdingRef.current = false
+      heldKeyRef.current = null
+      generationRef.current += 1
       if (timerRef.current !== null) {
         clearTimeout(timerRef.current)
         timerRef.current = null
@@ -553,15 +601,25 @@ function usePressAndHoldRepeat(
       }
       void actionRef.current()
     },
-    onPointerDown: begin,
+    onPointerDown: () => {
+      suppressClickRef.current = false
+      begin()
+    },
     onPointerUp: end,
     onPointerCancel: end,
     onPointerLeave: end,
     onKeyDown: (event: ReactKeyboardEvent<HTMLButtonElement>) => {
-      if ((event.key === 'Enter' || event.key === ' ') && !event.repeat) begin()
+      if (event.key !== 'Enter' && event.key !== ' ') return
+      // The timer (or keyup for a tap/Max) owns activation, not browser repeat.
+      event.preventDefault()
+      if (event.repeat || heldKeyRef.current !== null) return
+      heldKeyRef.current = event.key
+      repeatedRef.current = false
+      suppressClickRef.current = false
+      begin()
     },
     onKeyUp: (event: ReactKeyboardEvent<HTMLButtonElement>) => {
-      if (event.key === 'Enter' || event.key === ' ') end()
+      if (event.key === 'Enter' || event.key === ' ') event.preventDefault()
     },
   }
 }

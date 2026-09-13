@@ -1,3 +1,5 @@
+import { createSpeedrunStatistics } from '../simulation/speedrunStatistics'
+import { CanonicalRuntimeSession } from '../application/canonicalRuntimeSession'
 import { gzipSync, strToU8 } from 'fflate'
 import { describe, expect, test, vi } from 'vitest'
 import {
@@ -74,6 +76,43 @@ import {
 const recoveryBase = createDeterministicUnityFirstRunPreparedSave()
 
 describe('transitional production V2 checkpoint recovery', () => {
+  test.each([
+    [0, 'buy-1'],
+    [1, 'buy-10'],
+    [2, 'buy-50'],
+    [3, 'buy-100'],
+    [4, 'buy-max'],
+  ] as const)('recovers V2 progress with modern Quantum buy mode %s', (savedMode, buyMode) => {
+    const state = encodeState(hydrateGameState(recoveryBase).state)
+    ;(state.dyson as SaveRecord).money = '12345'
+    const modern = recoveryBase.copyValidatedState()
+    modern.quantumBuyMode = savedMode
+    const modernBase = PreparedSave.fromDecoded(modern)
+
+    const recovered = recoverDecodedTransitionalV2PortableSave({
+      schemaVersion: 13,
+      modelVersion: 2,
+      savedAtUtc: '2026-08-30T00:00:00.000Z',
+      state: encodeAuthenticSchema13NumericLeaves(state, '$'),
+      runtime: encodeAuthenticSchema13NumericLeaves(defaultRuntime(), '$.runtime'),
+    }, modernBase)
+    const restored = hydrateGameState(roundTrip(recovered)).state
+
+    expect(restored.dyson.money).toBe(12_345)
+    expect(restored.quantum.buyMode).toBe(buyMode)
+  })
+
+  test('does not certify schema-13 imports using a fresh recovery template speedrun record', () => {
+    const source = recoveryBase.copyValidatedState()
+    source.idsSpeedruns = createSpeedrunStatistics('2026-09-13T00:00:00.000Z', true, Date.parse('2026-09-13T00:00:00.000Z'))
+    const template = recoveryBase.withValidatedState(source)
+    const imported = prepareImportedSaveText(portableText(encodeState(hydrateGameState(recoveryBase).state)),
+      '2026-09-13T01:00:00.000Z', undefined, undefined, undefined, () => template)
+    const runtime = new CanonicalRuntimeSession(imported, { entitlements: { permanentDoubleIp: false } })
+    expect(runtime.initialState.gameState.statistics.speedruns?.debug).toBe('unknown')
+    expect(runtime.initialState.gameState.statistics.speedruns?.storedTime).toBe('unknown')
+  })
+
   test('previews a raw schema-13 export with receiver-owned preferences and round-trips it', () => {
     const compatibilityBase = recoveryBase
     const receiver = compatibilityBase.copyValidatedState()

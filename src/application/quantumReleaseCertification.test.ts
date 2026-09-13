@@ -80,6 +80,9 @@ test('full-cap purchase, earn again, capped preview, checkpoint and restart pres
   })
   const app = create()
   await app.start()
+  expect(await app.dispatchPlayer({ ...envelope(app), command: {
+    kind: 'quantum.set-buy-mode', buyMode: 'buy-50',
+  } })).toMatchObject({ kind: 'transition', transition: { accepted: true, changed: true } })
   expect(preview(app, 'CashBonus').maximumQuantity).toBe(DISCRETE_MAXIMUM)
   expect(await app.dispatchPlayer({ ...envelope(app), command: {
     kind: 'quantum.purchase-upgrade', upgradeId: 'CashBonus', quantity: 'max',
@@ -110,6 +113,7 @@ test('full-cap purchase, earn again, capped preview, checkpoint and restart pres
   const restarted = create()
   await restarted.start()
   expect(snapshot(restarted).state.gameState.quantum).toEqual(expected)
+  expect(snapshot(restarted).state.gameState.quantum.buyMode).toBe('buy-50')
   expect(preview(restarted, 'ScienceBonus').maximumQuantity).toBe(89n)
   expect(preview(restarted, 'InfluenceSpeed')).toMatchObject({ maximumQuantity: 0n, eligible: false })
   expect(restarted.advanceActive(100)).toMatchObject({ accepted: true })

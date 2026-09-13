@@ -42,6 +42,15 @@ function lateGame(bots = OVERFLOW_BOT_CAP): CanonicalGameStateV1 {
 }
 
 describe('Overflow reset ownership', () => {
+  test('retains Quantum purchase mode just like Bots and Research purchase modes', () => {
+    const source = lateGame()
+    const result = applyCanonicalOverflowReset({ ...source, quantum: { ...source.quantum, buyMode: 'buy-50' } })
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.state.quantum.buyMode).toBe('buy-50')
+    expect(result.state.dyson.automation.buyMode).toBe(source.dyson.automation.buyMode)
+    expect(result.state.research.automation.buyMode).toBe(source.research.automation.buyMode)
+  })
   test('clears all three progression stages and bonuses while retaining the promised durable state', () => {
     const source = lateGame()
     const original = structuredClone(source)

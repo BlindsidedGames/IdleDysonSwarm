@@ -1,3 +1,4 @@
+import { DEBUG_OVERFLOW_COST, qualifiesForDebug } from '../simulation/speedrunStatistics'
 import type { DomainTransition } from '../core/contracts'
 import {
   isFiniteNonNegativeNumber,
@@ -17,7 +18,6 @@ import {
 } from '../simulation/numeric'
 import { QUANTUM_CONSTANTS } from '../simulation/quantumUpgrades'
 import { applyAwayTimeGrant } from '../simulation/timeResources'
-import { tryDebitContinuous } from '../simulation/transactions'
 import type { CanonicalRuntimeState } from './canonicalRuntimeSession'
 
 /** Developer Options mutations; the application still owns admission and publication. */
@@ -34,6 +34,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'unlock-all-tabs' }
+  | { readonly kind: 'lock-tabs' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'enable-host-debug-options' }
   | { readonly kind: 'disable-debug-options' }
@@ -112,6 +113,8 @@ export function applyDevelopmentAction(
   switch (action.kind) {
     case 'unlock-all-tabs':
       return replaceDevelopmentRuntime(candidate, { unlockAllTabs: true })
+    case 'lock-tabs':
+      return replaceDevelopmentRuntime(candidate, { unlockAllTabs: false })
     case 'add-cash': {
       if (!Number.isFinite(action.amount)) {
         return invalidDevelopmentAction('Cash amount')
@@ -347,38 +350,14 @@ export function applyDevelopmentAction(
           debugOptionsEnabled: true,
         })
       }
-      const quantumCost = 100_000n
-      const strangeMatterCost = 500_000
-      const availableQuantum =
-        state.quantum.pointsEarned > state.quantum.pointsSpent
-          ? state.quantum.pointsEarned - state.quantum.pointsSpent
-          : 0n
-      const strangeMatterDebit = tryDebitContinuous(
-        state.dream.strangeMatter,
-        strangeMatterCost,
-      )
-      if (
-        availableQuantum < quantumCost ||
-        strangeMatterDebit.status !== 'success'
-      ) {
-        return {
-          accepted: false,
-          code: 'CANONICAL-DEVELOPMENT-PURCHASE-UNAFFORDABLE',
-          reason:
-            'Developer Options require 100K Quantum Shards and 500K Strange Matter.',
-        }
+      if (!qualifiesForDebug(state)) {
+        return { accepted: false, code: 'CANONICAL-DEVELOPMENT-PURCHASE-UNAFFORDABLE',
+          reason: 'Developer Options require 10 Overflow Points.' }
       }
       Object.assign(candidate, {
         gameState: {
           ...state,
-          quantum: {
-            ...state.quantum,
-            pointsEarned: state.quantum.pointsEarned - quantumCost,
-          },
-          dream: {
-            ...state.dream,
-            strangeMatter: strangeMatterDebit.balance,
-          },
+          avocado: { ...state.avocado, overflowPoints: (state.avocado.overflowPoints ?? 0n) - DEBUG_OVERFLOW_COST },
         },
         debugOptionsEnabled: true,
         debugEntitlementPurchased: true,
@@ -392,6 +371,7 @@ export function applyDevelopmentAction(
     case 'disable-debug-options':
       return replaceDevelopmentRuntime(candidate, {
         debugOptionsEnabled: false,
+        unlockAllTabs: false,
       })
   }
 }

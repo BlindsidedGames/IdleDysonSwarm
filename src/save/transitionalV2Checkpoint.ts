@@ -136,6 +136,7 @@ const V2_DREAM_RESET_CAUSES = new Set([
 ])
 
 const CURRENT_ONLY_STATE_PATHS = new Set([
+  '$.statistics.speedruns',
   '$.challenges',
   '$.avocado.overflowPoints',
   '$.modelVersion',
@@ -149,6 +150,9 @@ const CURRENT_ONLY_STATE_PATHS = new Set([
   '$.infinity.activeAutomaticThroughputCycleEligible',
   '$.timeline.processing',
   '$.dream.purchaseBatches',
+  '$.dream.buyMode',
+  // Historical V2 did not persist Quantum purchase preferences.
+  '$.quantum.buyMode',
   '$.statistics.recentInfinityCycles',
   '$.statistics.recentActiveAutomaticInfinityCycles',
 ])
@@ -1052,7 +1056,11 @@ function convertCompatibleState(
   source: SaveRecord,
   base: CanonicalGameStateV1,
 ): CanonicalGameStateV1 {
-  return convertLike(source, base, '$') as CanonicalGameStateV1
+  const converted = convertLike(source, base, '$') as CanonicalGameStateV1
+  // Schema 13 never recorded speedruns. A fresh recovery template must not
+  // certify the imported run as clean or supply a fabricated run origin.
+  const { speedruns: _templateSpeedruns, ...statistics } = converted.statistics
+  return { ...converted, statistics }
 }
 
 function convertLike(source: unknown, base: unknown, path: string): unknown {

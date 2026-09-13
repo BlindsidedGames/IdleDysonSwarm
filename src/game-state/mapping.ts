@@ -1,3 +1,4 @@
+import { type SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
 import {
@@ -391,6 +392,7 @@ export function hydrateGameState(
       autoGather: toBoolean(reality.workerAutoConvert),
     },
     quantum: {
+      ...(source.quantumBuyMode === undefined ? {} : { buyMode: toBuyMode(source.quantumBuyMode) }),
       pointsEarned: toNonNegativeBigInt(quantum.points),
       pointsSpent: toNonNegativeBigInt(quantum.spentPoints),
       divisionsPurchased: toNonNegativeBigInt(
@@ -627,6 +629,9 @@ export function hydrateGameState(
         reality.gatherersPerPurchase,
         1n,
       ),
+      ...(source.simulationBuyMode === undefined
+        ? {}
+        : { buyMode: toBuyMode(source.simulationBuyMode) }),
       purchaseBatches: {
         hunters: toNonNegativeBigInt(reality.hunterPurchaseBatches),
         gatherers: toNonNegativeBigInt(reality.gathererPurchaseBatches),
@@ -635,6 +640,7 @@ export function hydrateGameState(
       },
     },
     statistics: {
+      ...(source.idsSpeedruns === undefined ? {} : { speedruns: source.idsSpeedruns as SpeedrunStatistics }),
       trackedSinceUpdate: toBoolean(statistics.trackedSinceUpdate),
       trackingStartedMarker:
         typeof statistics.trackingStartedUtc === 'string'
@@ -690,6 +696,8 @@ export function dehydrateGameState(
 ): PreparedSave {
   const source = hydrated.copyPreservedSource()
   const state = candidate
+  if (state.statistics.speedruns !== undefined) source.idsSpeedruns = state.statistics.speedruns
+  else delete source.idsSpeedruns
   const canonicalValidation = validateCanonicalGameState(state)
   if (!canonicalValidation.valid) {
     throw new Error(
@@ -894,6 +902,11 @@ export function dehydrateGameState(
     ...state.research.progressById,
   }
   source.researchBuyMode = fromBuyMode(state.research.automation.buyMode)
+  if (state.dream.buyMode !== undefined) {
+    source.simulationBuyMode = fromBuyMode(state.dream.buyMode)
+  } else {
+    delete source.simulationBuyMode
+  }
   source.researchRoundedBulkBuy =
     state.research.automation.roundedBulkBuy
   for (const [id, sourceKey] of Object.entries(
@@ -909,6 +922,11 @@ export function dehydrateGameState(
   reality.influence = state.reality.influence
   reality.workerAutoConvert = state.reality.autoGather
 
+  if (state.quantum.buyMode !== undefined) {
+    source.quantumBuyMode = fromBuyMode(state.quantum.buyMode)
+  } else {
+    delete source.quantumBuyMode
+  }
   quantum.points = state.quantum.pointsEarned
   quantum.spentPoints = state.quantum.pointsSpent
   quantum.divisionsPurchased = state.quantum.divisionsPurchased

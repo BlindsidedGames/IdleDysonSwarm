@@ -92,8 +92,9 @@ import {
   runResearchAutomationTick,
 } from '../simulation/researchAutomation'
 import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
-import type {
-  BuyMode,
+import {
+  type BuyMode,
+  isBuyMode,
 } from '../simulation/transactions'
 import type { SimulationAutomationPolicy } from '../simulation/types'
 
@@ -239,6 +240,10 @@ export type CanonicalGameCommand =
       readonly kind: 'skill.run-auto-assignment'
     }
   | {
+      readonly kind: 'dream.set-buy-mode'
+      readonly buyMode: BuyMode
+    }
+  | {
       readonly kind: 'dream.purchase-foundational'
       readonly purchase: DreamPurchaseCommand
       readonly quantity?: number
@@ -268,6 +273,10 @@ export type CanonicalGameCommand =
     }
   | {
       readonly kind: 'reality.gather-influence'
+    }
+  | {
+      readonly kind: 'quantum.set-buy-mode'
+      readonly buyMode: BuyMode
     }
   | {
       readonly kind: 'quantum.purchase-upgrade'
@@ -358,6 +367,7 @@ export type CanonicalGameCommandCode =
   | `navigation:${string}`
   | `quantum-leap:${string}`
   | `quantum-upgrade:${string}`
+  | `quantum-setting:${string}`
   | `reality-gather:${string}`
   | `reality-upgrade:${string}`
   | `research-automation:${string}`
@@ -365,6 +375,7 @@ export type CanonicalGameCommandCode =
   | `time-stored-preset:${string}`
   | `settings-processing-interval:${string}`
   | `research-setting:${string}`
+  | `dream-setting:${string}`
   | `settings:${string}`
   | `skill:${string}`
   | `time-double-rate:${string}`
@@ -681,6 +692,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     authority: 'runCanonicalSkillAutoAssignment',
     requires: ['runtime-evaluation-port'],
   },
+  'dream.set-buy-mode': {
+    supported: true,
+    authority: 'canonical Simulation buy-mode setting transaction',
+  },
   'dream.purchase-foundational': {
     supported: true,
     authority: 'purchaseDreamFoundationalInformation',
@@ -720,6 +735,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'gatherRealityInfluence',
     requires: ['runtime-evaluation-port'],
+  },
+  'quantum.set-buy-mode': {
+    supported: true,
+    authority: 'canonical Quantum buy-mode setting transaction',
   },
   'quantum.purchase-upgrade': {
     supported: true,
@@ -1860,6 +1879,26 @@ export function routeCanonicalGameCommand(
       )
     }
 
+    case 'dream.set-buy-mode': {
+      if (!isBuyMode(command.buyMode)) {
+        return rejectDomain(
+          state, carriers, 'dream-setting:invalid-buy-mode', command.kind,
+          'Unsupported Simulation purchase mode.',
+        )
+      }
+      const changed = (state.dream.buyMode ?? 'buy-1') !== command.buyMode
+      return finalizeAccepted(
+        state,
+        changed
+          ? { ...state, dream: { ...state.dream, buyMode: command.buyMode } }
+          : state,
+        changed,
+        `dream-setting:${changed ? 'buy-mode-set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
+      )
+    }
+
     case 'dream.purchase-foundational': {
       const result = purchaseDreamFoundationalInformation(
         state,
@@ -2102,6 +2141,17 @@ export function routeCanonicalGameCommand(
       )
     }
 
+    case 'quantum.set-buy-mode':
+      return finalizeAccepted(
+        state,
+        { ...state, quantum: { ...state.quantum, buyMode: command.buyMode } },
+        (state.quantum.buyMode ?? 'buy-1') !== command.buyMode,
+        'quantum-setting:buy-mode-set',
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
+      )
     case 'quantum.purchase-upgrade': {
       const result = purchaseQuantumUpgradeBulk(
         state,

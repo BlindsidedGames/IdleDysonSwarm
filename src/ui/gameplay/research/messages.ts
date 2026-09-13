@@ -111,17 +111,17 @@ export const researchMessages = defineMessages({
   lifetimeEffect: {
     id: 'research.card.lifetime-effect',
     defaultMessage:
-      'Panel Lifetime from this upgrade: <value>+{current}s</value>',
+      'Panel Lifetime: <value>+{current}s</value>',
     description: 'Current lifetime contribution from this research card only, excluding other upgrades and skills.',
   },
   lifetimeProjected: {
     id: 'research.card.lifetime-projected',
-    defaultMessage: 'Panel Lifetime from this upgrade: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>',
+    defaultMessage: 'Panel Lifetime: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>',
     description: 'Current and projected lifetime contribution from this research card only for the quoted purchase.',
   },
   lifetimeProjectedAccessible: {
     id: 'research.card.lifetime-projected-accessible',
-    defaultMessage: 'Panel Lifetime from this upgrade: {current} seconds, increasing to {projected} seconds.',
+    defaultMessage: 'Panel Lifetime: {current} seconds, increasing to {projected} seconds.',
     description: 'Accessible current and projected lifetime contribution from this research card only.',
   },
   assemblyDescription: {
@@ -194,6 +194,11 @@ export const researchMessages = defineMessages({
     id: 'research.purchase.purchased',
     defaultMessage: 'Purchased',
     description: 'Unity label for a completed one-time Research card.',
+  },
+  durabilityMaxed: {
+    id: 'research.purchase.durability-maxed',
+    defaultMessage: 'Maxed',
+    description: 'Completed stacking Durability upgrade; all four stages are purchased.',
   },
   purchaseQuantity: {
     id: 'research.purchase.quantity',

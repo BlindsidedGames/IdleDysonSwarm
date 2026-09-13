@@ -452,7 +452,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "Desbloqueie as ferramentas de desenvolvedor com moedas do fim do jogo. Depois de compradas, elas podem ser reativadas gratuitamente."
+      "value": "Gaste 10 pontos de Transbordamento para desbloquear as ferramentas de desenvolvimento. Após a compra, você pode reativá-las de graça."
     }
   ],
   "debug.action-failure": [
@@ -603,10 +603,22 @@
       "value": "Ativar gratuitamente"
     }
   ],
+  "debug.lock-tabs": [
+    {
+      "type": 0,
+      "value": "Bloquear abas"
+    }
+  ],
   "debug.maintenance": [
     {
       "type": 0,
       "value": "Manutenção"
+    }
+  ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "Pontos de Transbordamento"
     }
   ],
   "debug.progression": [
@@ -667,6 +679,12 @@
     {
       "type": 0,
       "value": "Limite inteiro"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "Usar ferramentas de progresso torna este save inelegível para speedruns. Desbloquear ou abrir as opções de desenvolvimento não afeta a elegibilidade."
     }
   ],
   "debug.strange-matter": [
@@ -6154,7 +6172,7 @@
   "research.card.lifetime-effect": [
     {
       "type": 0,
-      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
+      "value": "Vida Útil dos Painéis: "
     },
     {
       "type": 8,
@@ -6178,7 +6196,7 @@
   "research.card.lifetime-projected": [
     {
       "type": 0,
-      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
+      "value": "Vida Útil dos Painéis: "
     },
     {
       "type": 8,
@@ -6238,7 +6256,7 @@
   "research.card.lifetime-projected-accessible": [
     {
       "type": 0,
-      "value": "Vida Útil dos Painéis adicionada por esta melhoria: "
+      "value": "Vida Útil dos Painéis: "
     },
     {
       "type": 1,
@@ -6509,6 +6527,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "research.purchase.durability-maxed": [
+    {
+      "type": 0,
+      "value": "No máximo"
     }
   ],
   "research.purchase.failed": [
@@ -12347,6 +12371,138 @@
     {
       "type": 0,
       "value": "Ciclo Quântico atual"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "Sobre estes registros"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "Tempo real desde o início deste save, incluindo o tempo ausente. Reinícios de progresso mantêm esta partida. Tempo armazenado é permitido; a velocidade ×2 permanece igual."
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "Partida atual"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "Debug usado"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "Requisito de Debug · 10 pontos de Transbordamento"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "Velocidade ×2 desbloqueada"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "Idade do save / duração"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "Elegibilidade"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "Elegível"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "Primeiro Infinito"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "Primeiro salto quântico"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "As etiquetas dos marcos descrevem a partida até aquele momento. Ações de progresso do Debug tornam a partida inelegível. Saves antigos podem ter tempos ou histórico desconhecidos."
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "Inelegível — Debug usado"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "Não"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "Não registrado"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "Realidade desbloqueada"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "Tempo armazenado usado"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "Tempo atingido"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "Desconhecido"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "Não verificado"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "Sim"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "Speedruns"
     }
   ],
   "statistics.tracked-time": [

@@ -1,8 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const debugSurfaceMessages = defineMessages({
+  overflowPoints: { id: 'debug.overflow-points', defaultMessage: 'Overflow Points', description: 'Debug purchase currency.' },
+  speedrunWarning: { id: 'debug.speedrun-warning', defaultMessage: 'Using gameplay tools makes this save ineligible for speedruns. Unlocking or opening Developer Options does not.', description: 'Explains persistent Debug usage for speedruns.' },
   title: { id: 'debug.title', defaultMessage: 'Developer Options', description: 'Heading for the developer tools screen.' },
-  accessDescription: { id: 'debug.access-description', defaultMessage: 'Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free.', description: 'Explains how developer tools are unlocked and retained.' },
+  accessDescription: { id: 'debug.access-description', defaultMessage: 'Spend 10 Overflow Points to unlock the developer tools. Once purchased, they can be re-enabled for free.', description: 'Explains how developer tools are unlocked and retained.' },
   quantumShards: { id: 'debug.quantum-shards', defaultMessage: 'Quantum Shards', description: 'Quantum Shards resource label in developer tools.' },
   strangeMatter: { id: 'debug.strange-matter', defaultMessage: 'Strange Matter', description: 'Strange Matter resource label in developer tools.' },
   purchase: { id: 'debug.purchase', defaultMessage: 'Purchase Developer Options', description: 'Action that purchases access to developer tools.' },
@@ -30,6 +32,7 @@ export const debugSurfaceMessages = defineMessages({
   bots: { id: 'debug.bots', defaultMessage: 'Bots', description: 'Bots resource label in developer tools.' },
   applyPreset: { id: 'debug.apply-preset', defaultMessage: 'Apply', description: 'Action that applies a developer progression preset.' },
   unlockTabs: { id: 'debug.unlock-tabs', defaultMessage: 'Unlock all tabs', description: 'Developer action that unlocks every navigation tab.' },
+  lockTabs: { id: 'debug.lock-tabs', defaultMessage: 'Lock tabs', description: 'Removes the developer tab override; progression unlocks remain available.' },
   timing: { id: 'debug.timing', defaultMessage: 'Tinker timing', description: 'Heading for developer Tinker timing controls.' },
   tinkerOneSecond: { id: 'debug.tinker-one-second', defaultMessage: 'Set Tinker to 1 second', description: 'Developer action that sets Tinker duration to one second.' },
   tinkerInstant: { id: 'debug.tinker-instant', defaultMessage: 'Set Tinker to instant', description: 'Developer action that makes Tinker complete instantly.' },

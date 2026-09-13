@@ -1,3 +1,4 @@
+import type { SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import type { BuyMode } from '../simulation/transactions'
 import type { CanonicalFacilityId } from './facilityIds'
 import type { SkillPresetColorId } from './skillPresetColors'
@@ -168,6 +169,8 @@ export interface RealityState {
 }
 
 export interface QuantumState {
+  /** Optional for older canonical snapshots; defaults to Buy 1. */
+  readonly buyMode?: BuyMode
   // Cumulative bigint counters; the Int64 cap applies to earned minus spent.
   readonly pointsEarned: bigint
   readonly pointsSpent: bigint
@@ -441,6 +444,8 @@ export interface DreamState {
   readonly upgrades: Readonly<Record<DreamUpgradeFlag, boolean>>
   readonly huntersPerPurchase: bigint
   readonly gatherersPerPurchase: bigint
+  /** Persisted Simulation purchase preference, independent of run progress. */
+  readonly buyMode?: BuyMode
   /** Number of paid batches in the current Simulation run. */
   readonly purchaseBatches?: {
     readonly hunters: bigint
@@ -492,6 +497,7 @@ export interface InfinityCycleHistoryEntry {
 }
 
 export interface SimulationStatisticsState {
+  readonly speedruns?: SpeedrunStatistics
   readonly trackedSinceUpdate: boolean
   readonly trackingStartedMarker: string
   readonly trackedSimulatedSeconds: number

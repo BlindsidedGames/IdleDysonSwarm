@@ -6,6 +6,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
 import { afterEach, describe, expect, test } from 'vitest'
@@ -30,10 +31,12 @@ import type {
 } from '../../../save/repository'
 import { DESKTOP_LIFECYCLE_POLICY } from '../../../simulation/lifecycleAwayTime'
 import { RevisionedPlayerCommandDispatcher } from '../../runtime/playerCommandDispatcher'
+import { SIMULATION_RESOURCE_MAXIMUM } from '../../../simulation/numeric'
+import { simulationPurchaseQuantity } from './simulationPurchaseQuantity'
 import { SimulationsSurface } from './SimulationsSurface'
 import matureSimulationsSaveText from '../../../../test/fixtures/progression/mature-simulations.idsweb1.txt?raw'
 
-afterEach(() => cleanup())
+afterEach(() => { cleanup(); localStorage.clear() })
 
 const matureSimulationsSave = prepareImportedSaveText(
   matureSimulationsSaveText,
@@ -58,6 +61,7 @@ describe('SimulationsSurface command availability', () => {
           activeDoubleTimeRate={0}
           spaceAgePurchaseQuantity={1}
           commandAvailability={{
+            setBuyMode: true,
             purchaseFoundational:
               before.gameplay.commands.byKind['dream.purchase-foundational']
                 .routeAvailable,
@@ -106,11 +110,11 @@ describe('SimulationsSurface command availability', () => {
   })
 })
 
-async function createApplication(): Promise<CanonicalGameApplicationFacade> {
+async function createApplication(repository = new MemoryRepository(matureSimulationsSave)): Promise<CanonicalGameApplicationFacade> {
   const application = createProductionCanonicalApplicationFactory({
     createFirstRunSave: () => matureSimulationsSave,
     readHostEntitlements: () => ({ permanentDoubleIp: false }),
-  })(new MemoryRepository(matureSimulationsSave))
+  })(repository)
   await application.start()
   return application
 }
@@ -231,3 +235,105 @@ class MemoryRepository implements SaveRepository {
     return save
   }
 }
+
+
+function surface(application: CanonicalGameApplicationFacade) {
+  const { gameplay } = readyGameplay(application)
+  return <IntlProvider locale="en" messages={{}} onError={() => undefined}>
+    <SimulationsSurface
+      locale="en" facts={gameplay.derived.simulations}
+      progression={gameplay.progression.dream} previews={gameplay.previews.dream}
+      influence={gameplay.resources.reality.influence} activeDoubleTimeRate={0}
+      spaceAgePurchaseQuantity={simulationPurchaseQuantity(gameplay.progression.dream.buyMode ?? 'buy-1')}
+      commandAvailability={{setBuyMode:true,purchaseFoundational:true,purchaseSpaceAge:true,startEducation:true,blackHoleReset:true}}
+      dispatchPlayer={command => createDispatcher(application).dispatch(command)}
+    />
+  </IntlProvider>
+}
+
+async function installPurchaseScenario(application: CanonicalGameApplicationFacade, fullStorage = false) {
+  const snapshot = application.snapshot()
+  if (snapshot.phase !== 'ready') throw new Error('Not ready')
+  const current = cloneCanonicalRuntimeState(snapshot.state as CanonicalRuntimeState)
+  const dream = current.gameState.dream
+  const result = await application.commitAwayReplacement({sessionRevision:snapshot.revision.session,expectedStateRevision:snapshot.revision.state}, {
+    ...current,
+    gameState: {...current.gameState, reality:{...current.gameState.reality,influence:1e8},dream:{...dream,
+      resources:{...dream.resources,cities:1,spaceFactories:100,energy:0,solarPanels:0,fusion:0,dysonPanels:fullStorage ? BigInt(SIMULATION_RESOURCE_MAXIMUM) : 0n,swarmPanels:0n},
+      purchaseBatches:{hunters:0n,gatherers:0n,solar:0n,fusion:0n},
+      education:{...dream.education,advancedPhysics:{...dream.education.advancedPhysics,complete:true}},
+    }},
+  })
+  if (!result.committed) throw new Error(result.reason)
+}
+
+function expandSimulationPanels(container: HTMLElement) {
+  container.querySelectorAll<HTMLButtonElement>('.ui-collapsible-section__trigger[aria-expanded="false"]').forEach(button => fireEvent.click(button))
+}
+
+describe('Simulation saved purchase controls and formulas', () => {
+  test.each(['buy-1','buy-10','buy-50','buy-100','buy-max'] as const)('purchases each producer with %s and reloads the selection and ownership', async mode => {
+    const repository = new MemoryRepository(matureSimulationsSave)
+    const application = await createApplication(repository)
+    await installPurchaseScenario(application)
+    const view = render(surface(application))
+    expandSimulationPanels(view.container)
+    fireEvent.click(view.container.querySelector('.ui-progress-controls-panel__settings')!)
+    const quantity = simulationPurchaseQuantity(mode)
+    const buttons = within(view.container.querySelector('.simulations-purchase-quantity') as HTMLElement).getAllByRole('button')
+    fireEvent.click(buttons[['buy-1','buy-10','buy-50','buy-100','buy-max'].indexOf(mode)])
+    await waitFor(() => expect(readyGameplay(application).gameplay.progression.dream.buyMode ?? 'buy-1').toBe(mode))
+    view.rerender(surface(application))
+    expect(buttons[['buy-1','buy-10','buy-50','buy-100','buy-max'].indexOf(mode)].getAttribute('aria-pressed')).toBe('true')
+    for (const [title, resource] of [['Hunters','hunters'],['Gatherers','gatherers'],['Solar Panels','solarPanels'],['Fusion Generators','fusion']] as const) {
+      // Refill Influence between families so Max exercises every command.
+      if (title !== 'Hunters') await installPurchaseScenario(application)
+      view.rerender(surface(application))
+      const before = readyGameplay(application).gameplay
+      const card = screen.getByRole('article', {name:new RegExp('^'+title)})
+      const button = within(card).getByRole('button')
+      expect((button as HTMLButtonElement).disabled).toBe(false)
+      fireEvent.click(button)
+      await waitFor(() => expect(Number(readyGameplay(application).gameplay.resources.dream[resource])).toBeGreaterThan(Number(before.resources.dream[resource])))
+      const after = readyGameplay(application).gameplay
+      expect(after.resources.reality.influence).toBeLessThan(before.resources.reality.influence)
+      if (quantity !== 'max') {
+        const batch = resource === 'hunters' ? before.progression.dream.huntersPerPurchase : resource === 'gatherers' ? before.progression.dream.gatherersPerPurchase : 1
+        expect(Number(after.resources.dream[resource])-Number(before.resources.dream[resource])).toBe(quantity*Number(batch))
+      }
+      await application.checkpoint()
+      const restored = readyGameplay(await createApplication(repository)).gameplay
+      expect(restored.progression.dream.buyMode ?? 'buy-1').toBe(mode)
+      expect(restored.resources.dream[resource]).toBe(after.resources.dream[resource])
+    }
+  })
+
+  test('shows the existing logarithmic formula style and retains the visibility toggle on remount', async () => {
+    const application = await createApplication()
+    await installPurchaseScenario(application)
+    const view = render(surface(application))
+    expandSimulationPanels(view.container)
+    fireEvent.click(view.container.querySelector('.ui-progress-controls-panel__settings')!)
+    const checkbox = screen.getByRole('checkbox', {name:'Show formulas inline'})
+    fireEvent.click(checkbox)
+    const card = screen.getByRole('article', {name:/^Space Factories/})
+    const factory = readyGameplay(application).gameplay.derived.simulations.live.production
+    expect(factory.ok).toBe(true)
+    expect(card.querySelector('dt')?.textContent).toBe('Speed multiplier')
+    expect(card.querySelector('dd')?.textContent).toMatch(/^\(1 \+ Log₁₀\(100\)\) × .+ × .+ = /)
+    view.unmount()
+    const remount = render(surface(application))
+    expandSimulationPanels(remount.container)
+    expect(screen.getByRole('article', {name:/^Space Factories/}).querySelector('dd')).not.toBeNull()
+  })
+})
+
+
+test('shows a capped Space Factory instead of a false active formula or no-producers claim', async () => {
+  const application = await createApplication()
+  await installPurchaseScenario(application, true)
+  localStorage.setItem('idle-dyson-swarm.simulations.show-formulas', 'true')
+  const view = render(surface(application))
+  expandSimulationPanels(view.container)
+  expect(screen.getByRole('article', {name:/^Space Factories/}).querySelector('dd')?.textContent).toBe('Capped')
+})

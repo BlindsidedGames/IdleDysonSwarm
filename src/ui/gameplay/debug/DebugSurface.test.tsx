@@ -19,7 +19,7 @@ test('Unlock all tabs uses the dedicated action and clears feedback for an uncha
     setDysonBots: vi.fn(),
     simulateOfflineTime: vi.fn(),
   }
-  render(<IntlProvider locale="en" messages={{}}><DebugSurface development={development} locale="en" /></IntlProvider>)
+  const { rerender } = render(<IntlProvider locale="en" messages={{}}><DebugSurface development={development} locale="en" /></IntlProvider>)
   const button = screen.getByRole('button', { name: 'Unlock all tabs' })
   fireEvent.click(button)
   await waitFor(() => expect(button.hasAttribute('disabled')).toBe(false))
@@ -29,6 +29,9 @@ test('Unlock all tabs uses the dedicated action and clears feedback for an uncha
   await waitFor(() => expect(button.hasAttribute('disabled')).toBe(false))
   expect(screen.queryByRole('status')).toBeNull()
   expect(screen.queryByText('That development change could not be applied.')).toBeNull()
-  fireEvent.click(button)
+  rerender(<IntlProvider locale="en" messages={{}}><DebugSurface development={development} locale="en" allTabsUnlocked /></IntlProvider>)
+  const lock = screen.getByRole('button', { name: 'Lock tabs' })
+  fireEvent.click(lock)
+  expect(apply).toHaveBeenLastCalledWith({ kind: 'lock-tabs' })
   expect(await screen.findByText('That development change could not be applied.')).toBeTruthy()
 })

@@ -1,3 +1,4 @@
+import { createSpeedrunStatistics } from '../../simulation/speedrunStatistics'
 import { prepareIdb1Save, type PreparedSave } from '../../save/prepare'
 import { requireRecord } from '../../save/graph'
 import { CURRENT_SAVE_SCHEMA } from '../../save/migrate'
@@ -38,6 +39,7 @@ export const unityFirstRunProvenance: UnityFirstRunProvenance = provenance
  * override authored by the Web host remains explicit and testable.
  */
 export const webFirstRunGameplayOverridePaths = Object.freeze([
+  '$.idsSpeedruns',
   '$.infinityAutomaticReset',
   '$.bottomNavigationPreferences',
   '$.dysonVerseSaveData.dysonVersePrestigeData.botDistribution',
@@ -60,6 +62,7 @@ export function createUnityFirstRunPreparedSave(
     dyson[`botDistPreset${preset}`] = 0
   }
   candidate.dateStarted = startedAtUtc
+  candidate.idsSpeedruns = createSpeedrunStatistics(startedAtUtc, true, Date.parse(startedAtUtc))
   candidate.infinityAutomaticReset = false
   candidate.bottomNavigationPreferences = {
     version: 1,

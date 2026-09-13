@@ -1,3 +1,4 @@
+import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { validateInfinityChallenges } from '../simulation/infinityChallenges'
 import { facilityArrayNames } from './facilityArrays'
 import { isRecord, type SaveRecord } from './graph'
@@ -29,6 +30,9 @@ export function validatePreparedSave(
   for (const key of requiredRootContainers) {
     if (!isRecord(value[key])) return invalid(`Required root container ${key} is null.`)
   }
+
+  const speedrunError = validateSpeedrunStatistics(value.idsSpeedruns)
+  if (speedrunError) return invalid(speedrunError)
 
   const challengeError = validateInfinityChallenges(value.infinityChallengeData)
   if (challengeError) return invalid(challengeError)

@@ -207,6 +207,7 @@ export type UiRuntimeDevelopmentAction =
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'unlock-all-tabs' }
+  | { readonly kind: 'lock-tabs' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'disable-debug-options' }
 
@@ -215,6 +216,7 @@ export interface UiRuntimeDevelopmentStatus {
   readonly entitled: boolean
   /** Canonical save ownership, independent of free development-build access. */
   readonly purchasedInGame: boolean
+  readonly overflowPoints?: bigint
   readonly quantumShards: bigint
   readonly strangeMatter: number
 }
