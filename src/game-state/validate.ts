@@ -1,3 +1,4 @@
+import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { isSubskill, isSubskillUnlocked } from '../simulation/skillSubskills'
 import { isGalvanized, validateGalvanizedSkills } from '../simulation/galvanization'
 import { validateInfinityChallenges } from '../simulation/infinityChallenges'
@@ -26,6 +27,8 @@ export function validateCanonicalGameState(
   if (state.quantum.buyMode !== undefined && !isBuyMode(state.quantum.buyMode)) {
     errors.push('Quantum purchase mode must be a supported buy mode.')
   }
+  const speedrunError = validateSpeedrunStatistics(state.statistics.speedruns)
+  if (speedrunError) errors.push(speedrunError)
   const challengeError = validateInfinityChallenges(state.challenges)
   if (challengeError) errors.push(challengeError)
   errors.push(...validateGalvanizedSkills(state))

@@ -1,3 +1,4 @@
+import { SpeedrunsSection } from './SpeedrunsSection'
 import {
   useIntl,
   type MessageDescriptor,
@@ -201,6 +202,7 @@ export function StatisticsSurface({
         </div>
       </header>
       <div className="statistics-surface__content">
+        <SpeedrunsSection run={statistics.speedruns} locale={locale} />
         <div className="statistics-surface__scope-grid">
           {scopes.map((scope) => (
             <ScopeCard

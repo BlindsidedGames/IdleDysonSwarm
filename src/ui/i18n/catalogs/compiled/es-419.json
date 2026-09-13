@@ -452,7 +452,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "Desbloquea las herramientas de desarrollo con monedas de la fase final del juego. Después de comprarlas, podrás volver a activarlas gratis."
+      "value": "Gasta 10 puntos de Desbordamiento para desbloquear las herramientas de desarrollo. Después puedes reactivarlas gratis."
     }
   ],
   "debug.action-failure": [
@@ -615,6 +615,12 @@
       "value": "Mantenimiento"
     }
   ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "Puntos de Desbordamiento"
+    }
+  ],
   "debug.progression": [
     {
       "type": 0,
@@ -673,6 +679,12 @@
     {
       "type": 0,
       "value": "Tope entero"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "Usar herramientas de progreso invalida este guardado para speedruns. Desbloquear o abrir las opciones de desarrollo no lo invalida."
     }
   ],
   "debug.strange-matter": [
@@ -12359,6 +12371,138 @@
     {
       "type": 0,
       "value": "Ejecución cuántica actual"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "Acerca de estos registros"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "Tiempo real desde el inicio de este guardado, incluido el tiempo ausente. Los reinicios de progreso conservan esta partida. Se permite el Tiempo almacenado; la velocidad ×2 no cambia."
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "Partida actual"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "Debug usado"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "Requisito de Debug · 10 puntos de Desbordamiento"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "Velocidad ×2 desbloqueada"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "Edad del guardado / duración"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "Elegibilidad"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "Elegible"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "Primer Infinito"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "Primer salto cuántico"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "Las etiquetas de cada hito describen la partida hasta ese momento. Usar herramientas de progreso de Debug invalida la partida. Los guardados antiguos pueden tener tiempos o historial desconocidos."
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "No elegible — Debug usado"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "No"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "Sin registrar"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "Realidad desbloqueada"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "Tiempo almacenado usado"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "Tiempo alcanzado"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "Desconocido"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "Sin verificar"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "Sí"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "Speedruns"
     }
   ],
   "statistics.tracked-time": [

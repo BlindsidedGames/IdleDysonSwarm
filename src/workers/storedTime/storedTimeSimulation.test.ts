@@ -1,6 +1,7 @@
+import { createSpeedrunStatistics } from '../../simulation/speedrunStatistics'
 import { OVERFLOW_BOT_CAP } from '../../simulation/overflowBoundary'
 import { readFileSync } from 'node:fs'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { CanonicalRuntimeSession, type CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 import { gameDataCatalog } from '../../game-data/catalog'
 import { prepareIdb1Save } from '../../save/prepare'
@@ -16,6 +17,27 @@ const fixture = readFileSync(
 )
 
 describe('StoredTimeSimulation shared game-step replay', () => {
+  test('committed replay records usage while cancellation preserves the original clean record', () => {
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(1_800_000_001_000)
+    try {
+      const source = runtimeWithStoredTime(10)
+      source.gameState = { ...source.gameState, statistics: { ...source.gameState.statistics,
+        speedruns: createSpeedrunStatistics(new Date(1_800_000_000_000).toISOString(), true, 1_800_000_000_000) } }
+      const options = { jobId: 'speedrun-usage', state: source, requestedSeconds: 2,
+        infinityMinimumCycleSeconds: 1 / 60, eventContext: context() }
+      const replay = new StoredTimeSimulation(options)
+      const completed = finish(replay, 1000)
+      expect(completed.type).toBe('completed')
+      if (completed.type === 'completed') {
+        expect(completed.candidate.gameState.statistics.speedruns?.storedTime).toBe('yes')
+        expect(completed.candidate.gameState.statistics.speedruns?.debug).toBe('no')
+      }
+      const cancelled = new StoredTimeSimulation(options).step(1000, true)
+      expect(cancelled?.type).toBe('cancelled')
+      expect(source.gameState.statistics.speedruns?.storedTime).toBe('no')
+    } finally { clock.mockRestore() }
+  })
+
   test('is deterministic across worker chunking and conserves the requested bank', () => {
     const run = (budget: number) => finish(new StoredTimeSimulation({
       jobId: `chunk-${budget}`,

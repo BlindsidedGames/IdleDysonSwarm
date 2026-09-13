@@ -179,6 +179,7 @@ describe('Unity-generated first-run save', () => {
         actual: false,
         reason: 'value',
       },
+      { path: '$.idsSpeedruns', expected: undefined, actual: production.idsSpeedruns, reason: 'missing' },
       {
         path: '$.bottomNavigationPreferences',
         expected: undefined,

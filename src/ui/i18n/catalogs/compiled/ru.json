@@ -452,7 +452,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "Откройте инструменты разработчика за валюты поздней игры. После покупки их можно повторно включать бесплатно."
+      "value": "Потратьте 10 очков переполнения, чтобы открыть инструменты разработчика. После покупки их можно включать бесплатно."
     }
   ],
   "debug.action-failure": [
@@ -615,6 +615,12 @@
       "value": "Обслуживание"
     }
   ],
+  "debug.overflow-points": [
+    {
+      "type": 0,
+      "value": "Очки переполнения"
+    }
+  ],
   "debug.progression": [
     {
       "type": 0,
@@ -673,6 +679,12 @@
     {
       "type": 0,
       "value": "Целый предел"
+    }
+  ],
+  "debug.speedrun-warning": [
+    {
+      "type": 0,
+      "value": "Использование инструментов изменения прогресса лишает сохранение права на спидран. Открытие меню или покупка доступа к инструментам этого не делает."
     }
   ],
   "debug.strange-matter": [
@@ -12359,6 +12371,138 @@
     {
       "type": 0,
       "value": "Текущий Квантовый цикл"
+    }
+  ],
+  "statistics.speedruns.details": [
+    {
+      "type": 0,
+      "value": "Об этих записях"
+    }
+  ],
+  "statistics.speedruns.speedrunBasis": [
+    {
+      "type": 0,
+      "value": "Реальное время с начала сохранения, включая время вне игры. Сбросы прогресса сохраняют забег. Запасённое время разрешено; скорость ×2 не меняется."
+    }
+  ],
+  "statistics.speedruns.speedrunCurrentSave": [
+    {
+      "type": 0,
+      "value": "Текущее сохранение"
+    }
+  ],
+  "statistics.speedruns.speedrunDebug": [
+    {
+      "type": 0,
+      "value": "Использована отладка"
+    }
+  ],
+  "statistics.speedruns.speedrunDebugQualification": [
+    {
+      "type": 0,
+      "value": "Условие отладки · 10 очков переполнения"
+    }
+  ],
+  "statistics.speedruns.speedrunDoubleSpeed": [
+    {
+      "type": 0,
+      "value": "Открыта скорость игры ×2"
+    }
+  ],
+  "statistics.speedruns.speedrunElapsed": [
+    {
+      "type": 0,
+      "value": "Возраст сохранения / время забега"
+    }
+  ],
+  "statistics.speedruns.speedrunEligibility": [
+    {
+      "type": 0,
+      "value": "Статус зачёта"
+    }
+  ],
+  "statistics.speedruns.speedrunEligible": [
+    {
+      "type": 0,
+      "value": "Допущен"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstInfinity": [
+    {
+      "type": 0,
+      "value": "Первая Бесконечность"
+    }
+  ],
+  "statistics.speedruns.speedrunFirstQuantum": [
+    {
+      "type": 0,
+      "value": "Первый квантовый скачок"
+    }
+  ],
+  "statistics.speedruns.speedrunHistory": [
+    {
+      "type": 0,
+      "value": "Метки этапов описывают забег на момент достижения. Отладочные действия, меняющие игровой прогресс, исключают забег из зачёта. В старых сохранениях время или история использования могут быть неизвестны."
+    }
+  ],
+  "statistics.speedruns.speedrunIneligible": [
+    {
+      "type": 0,
+      "value": "Не допущен — использована отладка"
+    }
+  ],
+  "statistics.speedruns.speedrunNo": [
+    {
+      "type": 0,
+      "value": "Нет"
+    }
+  ],
+  "statistics.speedruns.speedrunNotRecorded": [
+    {
+      "type": 0,
+      "value": "Не записано"
+    }
+  ],
+  "statistics.speedruns.speedrunReality": [
+    {
+      "type": 0,
+      "value": "Реальность открыта"
+    }
+  ],
+  "statistics.speedruns.speedrunStored": [
+    {
+      "type": 0,
+      "value": "Использовано запасённое время"
+    }
+  ],
+  "statistics.speedruns.speedrunTime": [
+    {
+      "type": 0,
+      "value": "Время достижения"
+    }
+  ],
+  "statistics.speedruns.speedrunUnknown": [
+    {
+      "type": 0,
+      "value": "Неизвестно"
+    }
+  ],
+  "statistics.speedruns.speedrunUnverified": [
+    {
+      "type": 0,
+      "value": "Не проверен"
+    }
+  ],
+  "statistics.speedruns.speedrunYes": [
+    {
+      "type": 0,
+      "value": "Да"
+    }
+  ],
+  "statistics.speedruns.speedruns": [
+    {
+      "type": 0,
+      "value": "Спидраны"
     }
   ],
   "statistics.tracked-time": [

@@ -602,6 +602,13 @@ describe('IndexedDbBrowserSaveDatabase', () => {
           // consume it for one-time elapsed-time accounting or backgrounding
           // may refresh it. The persistence assertion covers durable gameplay.
           timeline: expectedTimeline,
+          statistics: { ...structuredClone(expected.gameplay.progression.statistics),
+            speedruns: { ...structuredClone(expected.gameplay.progression.statistics.speedruns),
+              // Wall-clock observation advances across lifecycle transitions; all
+              // usage flags, identity and milestone records must still survive.
+              observedAtMilliseconds: expect.any(Number),
+            },
+          },
         },
       }
     })()

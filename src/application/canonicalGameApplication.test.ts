@@ -1,3 +1,4 @@
+import { createSpeedrunStatistics, markSpeedrunUsage } from '../simulation/speedrunStatistics'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
@@ -11,7 +12,7 @@ import {
 import { deriveBasicDysonState } from '../simulation/canonicalDysonDerivation'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../simulation/dreamEducationUpgrades'
 import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
-import { bitDecrement, DISCRETE_MAXIMUM } from '../simulation/numeric'
+import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 import { REALITY_UPGRADE_DEFINITIONS } from '../simulation/realityUpgrades'
 import {
   createCanonicalGameEngineDefinition,
@@ -340,12 +341,12 @@ describe('canonical game application engine', () => {
     const command = { kind: 'internal.development-apply-action', action: { kind: 'unlock-all-tabs' } } as const
     expect(definition.applyCommand(state, command)).toEqual({ accepted: true, changed: true })
     expect(state.unlockAllTabs).toBe(true)
-    expect(state.gameState).toEqual(before)
+    expect(state.gameState).toEqual(markSpeedrunUsage(before, 'debug'))
     expect(definition.applyCommand(state, command)).toEqual({ accepted: true, changed: false })
     const lock = { kind: 'internal.development-apply-action', action: { kind: 'lock-tabs' } } as const
     expect(definition.applyCommand(state, lock)).toEqual({ accepted: true, changed: true })
     expect(state.unlockAllTabs).toBe(false)
-    expect(state.gameState).toEqual(before)
+    expect(state.gameState).toEqual(markSpeedrunUsage(before, 'debug'))
     expect(definition.applyCommand(state, lock)).toEqual({ accepted: true, changed: false })
     state.unlockAllTabs = true
     state.debugOptionsEnabled = true
@@ -354,7 +355,7 @@ describe('canonical game application engine', () => {
     expect(state.unlockAllTabs).toBe(false)
     expect(state.debugOptionsEnabled).toBe(false)
     expect(state.debugEntitlementPurchased).toBe(true)
-    expect(state.gameState).toEqual(before)
+    expect(state.gameState).toEqual(markSpeedrunUsage(before, 'debug'))
   })
 
   test('applies a coherent development Reality unlock state', () => {
@@ -802,7 +803,7 @@ describe('canonical game application engine', () => {
     ).toEqual({ accepted: true, changed: true })
     expect(state.gameState.timeline.storedTimeAvailableSeconds).toBe(0)
     expect(state.gameState.dyson).toEqual(dysonBefore)
-    expect(state.gameState.statistics).toEqual(statisticsBefore)
+    expect(state.gameState.statistics).toEqual({ ...statisticsBefore, speedruns: { ...statisticsBefore.speedruns, debug: 'yes' } })
   })
 
   test('rejects non-finite and out-of-range signed development amounts atomically', () => {
@@ -861,7 +862,7 @@ describe('canonical game application engine', () => {
       doubleTime: { bankSeconds: 0 },
     })
     expect(state.gameState.dyson).toEqual(dysonBefore)
-    expect(state.gameState.statistics).toEqual(statisticsBefore)
+    expect(state.gameState.statistics).toEqual({ ...statisticsBefore, speedruns: { ...statisticsBefore.speedruns, debug: 'yes' } })
   })
 
   test('resets Avotation secret progress through Developer Options', () => {
@@ -888,6 +889,42 @@ describe('canonical game application engine', () => {
     })
   })
 
+  test('rejects nine Overflow Points and tracks qualification before the ten-point debit without flagging Debug use', () => {
+    const state = runtime()
+    state.gameState = { ...state.gameState, avocado: { ...state.gameState.avocado, overflowPoints: 9n },
+      statistics: { ...state.gameState.statistics, speedruns: createSpeedrunStatistics(new Date().toISOString(), true) } }
+    state.debugEntitlementPurchased = false
+    const definition = createCanonicalGameEngineDefinition({ eventContext: context() })
+    const purchase = { kind: 'internal.development-apply-action', action: { kind: 'purchase-debug-options' } } as const
+    expect(definition.applyCommand(state, purchase).accepted).toBe(false)
+    expect(state.gameState.avocado.overflowPoints).toBe(9n)
+    expect(state.gameState.statistics.speedruns?.debug).toBe('no')
+    state.gameState = { ...state.gameState, avocado: { ...state.gameState.avocado, overflowPoints: 10n } }
+    expect(definition.applyCommand(state, purchase).accepted).toBe(true)
+    expect(state.gameState.avocado.overflowPoints).toBe(0n)
+    expect(state.gameState.statistics.speedruns?.milestones.debugQualification).toBeDefined()
+    expect(state.gameState.statistics.speedruns?.debug).toBe('no')
+    expect(definition.applyCommand(state, { kind: 'internal.development-apply-action', action: { kind: 'add-cash', amount: 0 } }).changed).toBe(false)
+    expect(state.gameState.statistics.speedruns?.debug).toBe('no')
+    expect(definition.applyCommand(state, { kind: 'internal.development-apply-action', action: { kind: 'add-cash', amount: 1e100 } }).accepted).toBe(true)
+    expect(state.gameState.statistics.speedruns?.debug).toBe('yes')
+    definition.applyCommand(state, { kind: 'internal.development-apply-action', action: { kind: 'disable-debug-options' } })
+    expect(state.gameState.statistics.speedruns?.debug).toBe('yes')
+  })
+
+  test('captures Debug qualification even with existing ownership and does not charge again', () => {
+    const state = runtime()
+    state.debugEntitlementPurchased = true
+    state.debugOptionsEnabled = false
+    state.gameState = { ...state.gameState, avocado: { ...state.gameState.avocado, overflowPoints: 10n },
+      statistics: { ...state.gameState.statistics, speedruns: createSpeedrunStatistics(new Date().toISOString(), true) } }
+    const definition = createCanonicalGameEngineDefinition({ eventContext: context() })
+    expect(definition.applyCommand(state, { kind: 'internal.development-apply-action', action: { kind: 'purchase-debug-options' } }).accepted).toBe(true)
+    expect(state.gameState.avocado.overflowPoints).toBe(10n)
+    expect(state.gameState.statistics.speedruns?.milestones.debugQualification).toBeDefined()
+    expect(state.gameState.statistics.speedruns?.debug).toBe('no')
+  })
+
   test('purchases, disables, and freely re-enables Developer Options', () => {
     const state = runtime()
     Object.assign(state, {
@@ -895,6 +932,7 @@ describe('canonical game application engine', () => {
       debugEntitlementPurchased: false,
       gameState: {
         ...state.gameState,
+        avocado: { ...state.gameState.avocado, overflowPoints: 10n },
         quantum: {
           ...state.gameState.quantum,
           pointsEarned: 100_000n,
@@ -923,8 +961,9 @@ describe('canonical game application engine', () => {
       debugOptionsEnabled: true,
       debugEntitlementPurchased: true,
     })
-    expect(state.gameState.quantum.pointsEarned).toBe(0n)
-    expect(state.gameState.dream.strangeMatter).toBe(0)
+    expect(state.gameState.avocado.overflowPoints).toBe(0n)
+    expect(state.gameState.quantum.pointsEarned).toBe(100_000n)
+    expect(state.gameState.dream.strangeMatter).toBe(500_000)
 
     expect(dispatch('disable-debug-options')).toEqual({
       accepted: true,
@@ -938,13 +977,14 @@ describe('canonical game application engine', () => {
     expect(state.debugOptionsEnabled).toBe(true)
   })
 
-  test('charges a representable Strange Matter step for Developer Options at the double cap', () => {
+  test('preserves Strange Matter at the double cap when buying Developer Options', () => {
     const state = runtime()
     Object.assign(state, {
       debugOptionsEnabled: false,
       debugEntitlementPurchased: false,
       gameState: {
         ...state.gameState,
+        avocado: { ...state.gameState.avocado, overflowPoints: 10n },
         quantum: {
           ...state.gameState.quantum,
           pointsEarned: 100_000n,
@@ -965,7 +1005,7 @@ describe('canonical game application engine', () => {
       action: { kind: 'purchase-debug-options' },
     })).toEqual({ accepted: true, changed: true })
     expect(state.gameState.dream.strangeMatter)
-      .toBe(bitDecrement(Number.MAX_VALUE))
+      .toBe(Number.MAX_VALUE)
   })
 
   test('applies trusted host entitlements without persisting a paid save claim', () => {
