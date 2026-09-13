@@ -26,6 +26,7 @@ import type {
 import type { LifecyclePhase } from '../../../platform/contracts'
 import { SingleHostSessionWriterAuthority } from '../../../platform/singleHostSessionWriterAuthority'
 import { prepareIdb1Save } from '../../../save/prepare'
+import { prepareImportedSaveText } from '../../../save/import'
 import type {
   LegacySaveCandidate,
   SaveStorageAdapter,
@@ -67,6 +68,60 @@ afterEach(async () => {
 })
 
 describe('Offline Time completion boundary through the UI runtime', () => {
+  test.each([0.5, 1, 1.5, 59.9, 60, 60.5])(
+    'All reaches the endpoint and commits the full %s-second bank', async (bank) => {
+      const { runtime, runner } = await createRuntimeHarness(bank, Date.UTC(2026, 1, 2, 23, 4, 43))
+      renderRuntime(runtime)
+      fireEvent.click(await screen.findByRole('button', { name: 'All' }))
+      const slider = screen.getByRole('slider', { name: 'Spend Offline Time' }) as HTMLInputElement
+      expect(slider.valueAsNumber).toBe(Number(slider.max))
+      expect(Number(slider.getAttribute('aria-valuenow'))).toBe(bank)
+      if (bank === 0.5) expect(slider.getAttribute('aria-valuetext')).toBe('0.5s')
+      if (bank === 60.5) expect(slider.getAttribute('aria-valuetext')).toBe('1m 0.5s')
+      fireEvent.click(document.querySelector('.offline-time-spend-button')!)
+      fireEvent.click(screen.getByRole('button', { name: 'Tap again to confirm' }))
+      await screen.findByRole('dialog', { name: 'Offline Time simulation progress' })
+      runner.finish()
+      await screen.findByRole('dialog', { name: 'Offline Time Complete' })
+      const after = runtime.snapshot()
+      expect(after.phase).toBe('ready')
+      if (after.phase !== 'ready') throw new Error('Expected ready runtime')
+      expect(after.gameplay.resources.time.storedTimeAvailableSeconds).toBe(0)
+      const exported = await runtime.readCurrentSaveExport()
+      expect(exported).not.toBeNull()
+      const reloaded = hydrateGameState(prepareImportedSaveText(
+        exported!.text, '2026-02-02T23:04:43Z',
+      ))
+      expect(reloaded.state.timeline.storedTimeAvailableSeconds).toBe(0)
+      fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+      expect((document.querySelector('.offline-time-spend-button') as HTMLButtonElement).disabled).toBe(true)
+      expect(runtime.storedTime?.status().kind).toBe('idle')
+    },
+  )
+
+  test('dragging off All disarms confirmation and preserves the fractional remainder', async () => {
+    const { runtime, runner } = await createRuntimeHarness(60.5, Date.UTC(2026, 1, 2, 23, 4, 43))
+    renderRuntime(runtime)
+    fireEvent.click(await screen.findByRole('button', { name: 'All' }))
+    fireEvent.click(document.querySelector('.offline-time-spend-button')!)
+    const slider = screen.getByRole('slider', { name: 'Spend Offline Time' })
+    fireEvent.change(slider, { target: { value: '60' } })
+    expect(screen.queryByRole('button', { name: 'Tap again to confirm' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('false')
+    await beginStoredTimeSpend()
+    await screen.findByRole('dialog', { name: 'Offline Time simulation progress' })
+    runner.finish()
+    await screen.findByRole('dialog', { name: 'Offline Time Complete' })
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    fireEvent.change(slider, { target: { value: '0' } })
+    fireEvent.change(slider, { target: { value: '1' } })
+    expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('true')
+    expect(slider.getAttribute('aria-valuenow')).toBe('0.5')
+    const snapshot = runtime.snapshot()
+    if (snapshot.phase !== 'ready') throw new Error('Expected ready runtime')
+    expect(snapshot.gameplay.resources.time.storedTimeAvailableSeconds).toBe(0.5)
+  })
+
   test('updates Max Storage after a capacity upgrade', async () => {
     const { runtime } = await createRuntimeHarness(86400)
     renderRuntime(runtime)
