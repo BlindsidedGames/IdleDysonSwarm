@@ -344,7 +344,7 @@ export function deriveManualPurchaseProductionLayer(
         : 0.01
   const suppressed = owned('supernova') && !isGalvanized(state, 'supernova')
   const avocadosMultiplier =
-    !suppressed && owned('avocados') && rawManualCount >= 69 ? 2 : 1
+    !suppressed && owned('avocados') && effectiveManualCount >= 69 ? 2 : 1
   const milestone50Multiplier =
     !suppressed && effectiveManualCount >= 50 ? 2 : 1
   const milestone100Multiplier =
