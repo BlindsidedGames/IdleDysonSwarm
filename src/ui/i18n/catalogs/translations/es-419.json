@@ -722,9 +722,9 @@
   "research.card.boosting": "Bonificación de <value>{current}%</value>",
   "research.card.boosting-projected": "Bonificación de <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>",
   "research.card.boosting-projected-accessible": "La bonificación aumenta del {current}% al {projected}%",
-  "research.card.lifetime-effect": "Vida útil de los Paneles aportada por esta mejora: <value>+{current}s</value>",
-  "research.card.lifetime-projected": "Vida útil de los Paneles aportada por esta mejora: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
-  "research.card.lifetime-projected-accessible": "Vida útil de los Paneles aportada por esta mejora: {current} segundos, aumentando a {projected} segundos.",
+  "research.card.lifetime-effect": "Vida útil de los Paneles: <value>+{current}s</value>",
+  "research.card.lifetime-projected": "Vida útil de los Paneles: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
+  "research.card.lifetime-projected-accessible": "Vida útil de los Paneles: {current} segundos, aumentando a {projected} segundos.",
   "research.card.purchase-boost": "¡Compra para obtener una bonificación! (<value>{perLevel}%</value> por nivel)",
   "research.completed-hidden": "Todas las Investigaciones disponibles están completadas y ocultas.",
   "research.description.ai-manager": "Refactorizar el código aumenta la eficiencia de tus Gestores de IA, ¡que producen más Líneas de montaje!",
@@ -1940,5 +1940,6 @@
   "wiki.skills.preset-safety-title": "Planear un preajuste",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Temas de la Wiki",
-  "wiki.topics": "Temas"
+  "wiki.topics": "Temas",
+  "research.purchase.durability-maxed": "Al máximo"
 }

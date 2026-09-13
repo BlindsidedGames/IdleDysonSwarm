@@ -722,9 +722,9 @@
   "research.card.boosting": "Verstärkung um <value>{current}%</value>",
   "research.card.boosting-projected": "Verstärkung um <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>",
   "research.card.boosting-projected-accessible": "Verstärkung steigt von {current}% auf {projected}%",
-  "research.card.lifetime-effect": "Panel-Lebensdauer durch dieses Upgrade: <value>+{current}s</value>",
-  "research.card.lifetime-projected": "Panel-Lebensdauer durch dieses Upgrade: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
-  "research.card.lifetime-projected-accessible": "Panel-Lebensdauer durch dieses Upgrade: {current} Sekunden, steigt auf {projected} Sekunden.",
+  "research.card.lifetime-effect": "Panel-Lebensdauer: <value>+{current}s</value>",
+  "research.card.lifetime-projected": "Panel-Lebensdauer: <value>+{current}s</value> <arrow>{arrowMark}</arrow> <value>+{projected}s</value>",
+  "research.card.lifetime-projected-accessible": "Panel-Lebensdauer: {current} Sekunden, steigt auf {projected} Sekunden.",
   "research.card.purchase-boost": "Kaufe für einen Bonus! (<value>{perLevel}%</value> pro Stufe)",
   "research.completed-hidden": "Alle derzeit verfügbaren Forschungen sind abgeschlossen und ausgeblendet.",
   "research.description.ai-manager": "Überarbeiteter Code macht deine KI-Manager effizienter, sodass sie mehr Fließbänder produzieren!",
@@ -1940,5 +1940,6 @@
   "wiki.skills.preset-safety-title": "Ein Preset planen",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Wiki-Themen",
-  "wiki.topics": "Themen"
+  "wiki.topics": "Themen",
+  "research.purchase.durability-maxed": "Maximal"
 }
