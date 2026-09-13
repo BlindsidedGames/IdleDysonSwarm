@@ -256,10 +256,20 @@ export function OfflineTimeSurface({
     setFeedback(null)
   }
 
+  const formatStoredDuration = (seconds: number) => formatGameDuration(
+    locale, seconds, { maximumFractionDigits: 3 },
+  )
+
   const repeatAvailable =
     repeatSeconds !== null &&
     repeatSeconds > 0 &&
     repeatSeconds <= bankSeconds
+  // The last slider position represents the exact bank, including its fraction.
+  // A fractional native max with step=1 is rounded down by the browser.
+  const sliderMaximum = Math.ceil(bankSeconds)
+  const sliderValue = selectedSeconds === bankSeconds
+    ? sliderMaximum
+    : Math.min(selectedSeconds, bankSeconds)
   const jobActive = jobStatus.kind !== 'idle'
   const jobDialogOpen =
     jobActive || pendingAction === 'spend' || completionSummary !== null
@@ -479,7 +489,7 @@ export function OfflineTimeSurface({
         <article className="offline-time-card offline-time-card--storage">
           <div className="offline-time-card__heading">
             <h2>{intl.formatMessage(messages.stored)}</h2>
-            <strong>{formatGameDuration(locale, bankSeconds)}</strong>
+            <strong>{formatStoredDuration(bankSeconds)}</strong>
           </div>
           <div
             className="offline-time-storage-progress"
@@ -540,21 +550,27 @@ export function OfflineTimeSurface({
           <div className="offline-time-card__heading">
             <h2>{intl.formatMessage(messages.spendHeading)}</h2>
             <output htmlFor="offline-time-amount">
-              {formatGameDuration(locale, selectedSeconds)}
+              {formatStoredDuration(selectedSeconds)}
             </output>
           </div>
           <p>{intl.formatMessage(messages.spendDescription)}</p>
           <input
             id="offline-time-amount"
             type="range"
-            min={bankSeconds > 0 ? Math.min(1, bankSeconds) : 0}
-            max={bankSeconds}
-            step={bankSeconds < 1 ? 'any' : 1}
-            value={Math.min(selectedSeconds, bankSeconds)}
+            min={bankSeconds > 1 ? 1 : 0}
+            max={sliderMaximum}
+            step={Number.isInteger(sliderValue) ? 1 : 'any'}
+            value={sliderValue}
             disabled={bankSeconds <= 0 || pendingAction !== null || jobActive || storedTimeCheater}
             aria-label={intl.formatMessage(messages.spendHeading)}
-            aria-valuetext={formatGameDuration(locale, selectedSeconds)}
-            onChange={(event) => select(event.currentTarget.valueAsNumber)}
+            aria-valuemin={bankSeconds > 1 ? 1 : 0}
+            aria-valuemax={bankSeconds}
+            aria-valuenow={Math.min(selectedSeconds, bankSeconds)}
+            aria-valuetext={formatStoredDuration(selectedSeconds)}
+            onChange={(event) => select(Math.min(
+              Math.round(event.currentTarget.valueAsNumber),
+              bankSeconds,
+            ))}
           />
           <div
             className="offline-time-quick-select"
@@ -621,12 +637,12 @@ export function OfflineTimeSurface({
                 ? intl.formatMessage(messages.processing)
                 : repeatAvailable
                   ? intl.formatMessage(messages.spendAgain, {
-                      duration: formatGameDuration(locale, repeatSeconds),
+                      duration: formatStoredDuration(repeatSeconds),
                     })
                   : armed
                   ? intl.formatMessage(messages.confirmSpend)
                   : intl.formatMessage(messages.spend, {
-                      duration: formatGameDuration(locale, selectedSeconds),
+                      duration: formatStoredDuration(selectedSeconds),
                     })}
             </Button>
             {armed ? (
@@ -739,11 +755,11 @@ export function OfflineTimeSurface({
                   }`}>
                     <CompletionFact
                       label={intl.formatMessage(messages.timeSimulated)}
-                      value={formatGameDuration(locale, completionSummary.consumedSeconds)}
+                      value={formatStoredDuration(completionSummary.consumedSeconds)}
                     />
                     <CompletionFact
                       label={intl.formatMessage(messages.timeRemaining)}
-                      value={formatGameDuration(locale, completionSummary.result.remainingBankSeconds)}
+                      value={formatStoredDuration(completionSummary.result.remainingBankSeconds)}
                     />
                     <CompletionFact
                       label={intl.formatMessage(messages.accuracyPreset)}

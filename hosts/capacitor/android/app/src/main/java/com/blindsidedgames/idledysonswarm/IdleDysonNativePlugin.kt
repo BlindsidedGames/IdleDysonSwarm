@@ -8,6 +8,7 @@ import com.getcapacitor.annotation.ActivityCallback
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -36,6 +37,8 @@ class IdleDysonNativePlugin : Plugin() {
     private lateinit var googlePlayStore: GooglePlayStore
     private val automaticUnityEvidenceTokens = mutableMapOf<String, NativeBoundUnityEvidence>()
     private var reviewRequestInFlight = false
+    private var lastSystemInsets: String? = null
+    private var insetLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
 
     override fun load() {
         entitlementCache = NativeEntitlementCache(context)
@@ -44,11 +47,21 @@ class IdleDysonNativePlugin : Plugin() {
         val hostActivity = activity ?: return
         hostActivity.runOnUiThread {
             val decorView = hostActivity.window.decorView
-            ViewCompat.setOnApplyWindowInsetsListener(decorView) { view, insets ->
-                notifyListeners(
-                    "systemInsetsChanged",
-                    systemInsetsPayload(view, insets),
-                )
+            val publishInsets = Runnable {
+                val payload = systemInsetsPayload(decorView)
+                val signature = payload.toString()
+                if (signature != lastSystemInsets) {
+                    lastSystemInsets = signature
+                    notifyListeners("systemInsetsChanged", payload)
+                }
+            }
+            // Capacitor may inset the WebView's parent. Measure after that layout,
+            // including rotations and keyboard/navigation-mode changes.
+            insetLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+                publishInsets.run()
+            }.also { decorView.viewTreeObserver.addOnGlobalLayoutListener(it) }
+            ViewCompat.setOnApplyWindowInsetsListener(decorView) { _, insets ->
+                decorView.post(publishInsets)
                 insets
             }
             ViewCompat.requestApplyInsets(decorView)
@@ -281,11 +294,27 @@ class IdleDysonNativePlugin : Plugin() {
         )
         val density = view.resources.displayMetrics.density
             .takeIf { it > 0f } ?: 1f
+        val system = SafeAreaEdges(
+            insets?.left ?: 0, insets?.top ?: 0,
+            insets?.right ?: 0, insets?.bottom ?: 0,
+        )
+        val webView = bridge.webView
+        val remaining = if (view.width > 0 && view.height > 0 && webView.width > 0 && webView.height > 0) {
+            val windowLocation = IntArray(2)
+            val webViewLocation = IntArray(2)
+            view.getLocationOnScreen(windowLocation)
+            webView.getLocationOnScreen(webViewLocation)
+            webViewSafeArea(
+                system,
+                SafeAreaEdges(windowLocation[0], windowLocation[1], windowLocation[0] + view.width, windowLocation[1] + view.height),
+                SafeAreaEdges(webViewLocation[0], webViewLocation[1], webViewLocation[0] + webView.width, webViewLocation[1] + webView.height),
+            )
+        } else system
         return JSObject().apply {
-            put("top", (insets?.top ?: 0) / density)
-            put("right", (insets?.right ?: 0) / density)
-            put("bottom", (insets?.bottom ?: 0) / density)
-            put("left", (insets?.left ?: 0) / density)
+            put("top", remaining.top / density)
+            put("right", remaining.right / density)
+            put("bottom", remaining.bottom / density)
+            put("left", remaining.left / density)
         }
     }
 
@@ -555,6 +584,9 @@ class IdleDysonNativePlugin : Plugin() {
     override fun handleOnStop() = publishLifecycle("background")
 
     override fun handleOnDestroy() {
+        val decorView = activity?.window?.decorView
+        insetLayoutListener?.let { decorView?.viewTreeObserver?.removeOnGlobalLayoutListener(it) }
+        insetLayoutListener = null
         // Activity recreation is not application termination. Android does not
         // promise a final process callback, so durable checkpoints belong to
         // focus-lost/background; terminating is best-effort for a real finish.
