@@ -14568,6 +14568,18 @@
       "value": "Ajout de libellés facultatifs dans l’arbre de compétences."
     }
   ],
+  "wiki.patch-notes.version-4-1-9": [
+    {
+      "type": 0,
+      "value": "Version 4.1.9"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.scaling": [
+    {
+      "type": 0,
+      "value": "Amélioration de la mise à l’échelle du texte et de la disposition sur les petits écrans."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

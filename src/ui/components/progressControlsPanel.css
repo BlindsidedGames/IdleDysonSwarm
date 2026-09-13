@@ -8,7 +8,7 @@
 
 .ui-progress-controls-panel__collapsed {
   display: grid;
-  block-size: 2.875rem;
+  min-block-size: 2.875rem;
   min-inline-size: 0;
   grid-template-columns: minmax(0, 1fr) 2.8rem;
   align-items: stretch;
@@ -16,8 +16,8 @@
 }
 
 .ui-progress-controls-panel__collapsed--with-above-summary {
-  block-size: 4.15rem;
-  grid-template-rows: 1.275rem 2.875rem;
+  min-block-size: 4.15rem;
+  grid-template-rows: minmax(1.275rem, auto) minmax(2.875rem, auto);
 }
 
 .ui-progress-controls-panel__above-summary {
@@ -27,7 +27,6 @@
   grid-row: 1;
   align-content: center;
   padding: 0.16rem 0.7rem 0;
-  overflow: hidden;
   line-height: 1.15;
 }
 
@@ -162,6 +161,12 @@
   padding-inline:
     max(var(--game-card-content-inset), var(--safe-area-left))
     max(var(--game-card-content-inset), var(--safe-area-right));
+}
+
+/* Two fitted lines need less padding to retain the ordinary dock footprint. */
+.ui-progress-controls-panel--production-summary
+  .ui-progress-controls-panel__summary:has(.bot-distribution--multitasking) {
+  padding-block: 0.3rem;
 }
 
 @media (max-width: 720px) {

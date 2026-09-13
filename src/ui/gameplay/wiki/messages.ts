@@ -94,6 +94,8 @@ export const wikiMessages = defineMessages({
   quantumAdvice: { id: 'wiki.quantum.advice', defaultMessage: '<value>Quantum</value> upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset.', description: 'Web-appropriate Quantum Leap planning guidance based on Unity Wiki intent.' },
 
   patchNotesMostRecent: { id: 'wiki.patch-notes.most-recent', defaultMessage: 'Most Recent', description: 'Heading for the latest Wiki patch notes.' },
+  patchNotesVersion419: { id: 'wiki.patch-notes.version-4-1-9', defaultMessage: 'Version 4.1.9', description: 'Version 4.1.9 release notes.' },
+  patchNotesVersion419Scaling: { id: 'wiki.patch-notes.version-4-1-9.scaling', defaultMessage: 'Improved text scaling and layouts on smaller screens.', description: 'Version 4.1.9 release notes.' },
   patchNotesVersion418: { id: "wiki.patch-notes.version-4-1-8", defaultMessage: "Version 4.1.8", description: "Version 4.1.8 release notes." },
   patchNotesVersion418Challenge: { id: "wiki.patch-notes.version-4-1-8.challenge", defaultMessage: "Added Blank Slate as the first Infinity Challenge.", description: "Version 4.1.8 release notes." },
   patchNotesVersion418Galvanization: { id: "wiki.patch-notes.version-4-1-8.galvanization", defaultMessage: "Added Galvanizers to make skills permanent.", description: "Version 4.1.8 release notes." },

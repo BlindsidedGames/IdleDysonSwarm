@@ -14,6 +14,7 @@
 
 .infinity-surface {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   block-size: 100%;
   min-block-size: 0;
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -25,6 +26,7 @@
 .infinity-surface__summary {
   z-index: 2;
   display: grid;
+  min-inline-size: 0;
   gap: var(--ui-card-gap);
   padding-block:
     calc(var(--ui-panel-inset-roomy) + var(--safe-area-top))
@@ -199,7 +201,8 @@
     calc(0.92rem * var(--game-text-scale))
   );
   line-height: 1.25;
-  white-space: nowrap;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .infinity-surface__hide-maxed {

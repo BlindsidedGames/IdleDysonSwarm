@@ -23,10 +23,7 @@ export function FittedProductionLine({
     const availableWidth = container.clientWidth
     const naturalWidth = line.scrollWidth
     if (availableWidth <= 0 || naturalWidth <= 0) return
-    const nextScale = Math.max(
-      0.62,
-      Math.min(1, availableWidth / naturalWidth),
-    )
+    const nextScale = Math.min(1, availableWidth / naturalWidth)
     const widthChanged = lastWidthRef.current !== availableWidth
     lastWidthRef.current = availableWidth
     setScale((current) => widthChanged

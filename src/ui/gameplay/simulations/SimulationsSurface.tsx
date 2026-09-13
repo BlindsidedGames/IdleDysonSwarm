@@ -41,6 +41,7 @@ import {
   FacilityCard,
   InlineImageSymbol,
   ProgressControlsPanel,
+  PurchaseQuantityLabel,
 } from '../../components'
 import influenceSymbol from '../../assets/symbol-influence.png'
 import strangeMatterSymbol from '../../assets/symbol-strange-matter.png'
@@ -262,9 +263,15 @@ export function SimulationsSurface({
                   aria-pressed={spaceAgePurchaseQuantity === quantity}
                   onClick={() => onSpaceAgePurchaseQuantityChange(quantity)}
                 >
-                  {quantity === 'max'
-                    ? intl.formatMessage(messages.buyMax)
-                    : intl.formatMessage(messages.buyQuantity, { quantity })}
+                  <PurchaseQuantityLabel
+                    label={quantity === 'max'
+                      ? intl.formatMessage(messages.buyMax)
+                      : intl.formatMessage(messages.buyQuantity, { quantity })}
+                    referenceLabels={[
+                      intl.formatMessage(messages.buyQuantity, { quantity: 100 }),
+                      intl.formatMessage(messages.buyMax),
+                    ]}
+                  />
                 </button>
               ))}
             </div>
@@ -699,6 +706,8 @@ function SimulationPanelCard({
 
   return (
       <FacilityCard
+        fitTitle={!statusInline}
+        fitProduction
         className={`simulation-panel-card simulation-panel-card--${panel.era}${statusInline ? ' simulation-panel-card--inline-status' : ''}${panel.complete ? ' simulation-panel-card--complete' : ''}${panel.action ? '' : ' simulation-panel-card--no-action'}`}
         headingLevel={headingLevel}
         title={

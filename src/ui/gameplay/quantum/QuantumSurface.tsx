@@ -25,6 +25,7 @@ import {
   InlineResourceAmount,
   ProgressControlsPanel,
   QuantumShardSymbol,
+  PurchaseQuantityLabel,
 } from '../../components'
 import {
   InfinityPointSymbol,
@@ -451,9 +452,17 @@ export function QuantumControlPanel({
               type="button"
               aria-pressed={purchaseQuantity === quantity}
               onClick={() => onPurchaseQuantityChange(quantity)}
-            >{quantity === 'max'
-              ? intl.formatMessage(messages.buyMax)
-              : intl.formatMessage(messages.buyQuantity, { quantity })}</button>
+            >
+              <PurchaseQuantityLabel
+                label={quantity === 'max'
+                  ? intl.formatMessage(messages.buyMax)
+                  : intl.formatMessage(messages.buyQuantity, { quantity })}
+                referenceLabels={[
+                  intl.formatMessage(messages.buyQuantity, { quantity: 100 }),
+                  intl.formatMessage(messages.buyMax),
+                ]}
+              />
+            </button>
           ))}
         </div>
     </ProgressControlsPanel>

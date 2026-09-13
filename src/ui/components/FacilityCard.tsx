@@ -4,6 +4,7 @@ import {
   type ReactNode,
 } from 'react'
 import './components.css'
+import { StableSingleLineText } from './StableSingleLineText'
 
 export interface FacilityCardProps {
   readonly title: ReactNode
@@ -14,6 +15,8 @@ export interface FacilityCardProps {
   readonly feedback?: ReactNode
   readonly headingLevel?: 'h2' | 'h3' | 'h4'
   readonly className?: string
+  readonly fitTitle?: boolean
+  readonly fitProduction?: boolean
 }
 
 export function FacilityCard({
@@ -25,6 +28,8 @@ export function FacilityCard({
   feedback,
   headingLevel = 'h3',
   className,
+  fitTitle = false,
+  fitProduction = false,
 }: FacilityCardProps) {
   const titleId = useId()
   const Heading = headingLevel as ElementType
@@ -37,10 +42,16 @@ export function FacilityCard({
     >
       <header className="ui-facility-card__header">
         <Heading id={titleId} className="ui-facility-card__title">
-          {title}
+          {fitTitle ? (
+            <StableSingleLineText minimumScale={1}>{title}</StableSingleLineText>
+          ) : title}
         </Heading>
       </header>
-      <div className="ui-facility-card__production">{production}</div>
+      <div className="ui-facility-card__production">
+        {fitProduction && production ? (
+          <StableSingleLineText minimumScale={1}>{production}</StableSingleLineText>
+        ) : production}
+      </div>
       <div className="ui-facility-card__description">{description}</div>
       <div className="ui-facility-card__progress">{progress}</div>
       {feedback && (

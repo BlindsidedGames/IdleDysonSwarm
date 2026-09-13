@@ -14568,6 +14568,18 @@
       "value": "Добавлены необязательные подписи навыков в дереве навыков."
     }
   ],
+  "wiki.patch-notes.version-4-1-9": [
+    {
+      "type": 0,
+      "value": "Версия 4.1.9"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.scaling": [
+    {
+      "type": 0,
+      "value": "Улучшены масштабирование текста и компоновка на небольших экранах."
+    }
+  ],
   "wiki.patch-notes.version-4-1.audio": [
     {
       "type": 0,

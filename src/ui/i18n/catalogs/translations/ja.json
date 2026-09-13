@@ -1853,6 +1853,8 @@
   "wiki.patch-notes.version-4-1-8.quantum": "残高が非常に大きい場合の量子シャードの獲得・購入と、最大購入数の不具合を修正しました。",
   "wiki.patch-notes.version-4-1-8.recovery": "セーブの復元を改善しました。",
   "wiki.patch-notes.version-4-1-8.skill-labels": "スキルツリーにスキル名の表示を切り替える機能を追加。",
+  "wiki.patch-notes.version-4-1-9": "バージョン 4.1.9",
+  "wiki.patch-notes.version-4-1-9.scaling": "小さな画面での文字の拡大縮小とレイアウトを改善しました。",
   "wiki.patch-notes.version-4-1.audio": "対応プラットフォームへBGMと操作音を追加。音楽・効果音の個別音量、全ミュート、アプリやブラウザ切り替え時の再生安定性を改善しました。",
   "wiki.patch-notes.version-4-1.dyson-visualization": "高速な自動インフィニティ時は最終銀河フィールドに固定して描画性能を改善し、成長する銀河の密な渦、明るい中心、モバイル配置を復元しました。",
   "wiki.patch-notes.version-4-1.economy": "対応上限付近の資源量で購入できない問題と、極端なメガ組立ライン価格が再利用可能な一定値に留まる問題を修正しました。",

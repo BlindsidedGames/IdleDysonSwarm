@@ -530,6 +530,8 @@ function ResearchCard({
     <FacilityCard
       className="research-card"
       title={title}
+      fitTitle
+      fitProduction
       production={
         <span className="research-card__effect">
           {effectText(card, locale, intl)}
