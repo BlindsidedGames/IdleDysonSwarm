@@ -358,7 +358,7 @@
   "challenges.blankSlate.description": [
     {
       "type": 0,
-      "value": "不分配普通技能，完成一次正常无限。已永久强化的基础技能仍然生效。机器人、建筑和研究仍可使用。"
+      "value": "不使用技能点，完成一次普通无限。"
     }
   ],
   "challenges.cancel": [
@@ -370,7 +370,11 @@
   "challenges.completed": [
     {
       "type": 0,
-      "value": "已完成 · 已获得强化器"
+      "value": "完成用时："
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "challenges.confirm": [
@@ -404,7 +408,7 @@
   "challenges.replay": [
     {
       "type": 0,
-      "value": "重玩白纸起步"
+      "value": "重玩"
     }
   ],
   "challenges.restart": [
@@ -416,7 +420,21 @@
   "challenges.reward": [
     {
       "type": 0,
-      "value": "首次完成：1个强化器。奖励和完成记录在溢出后保留。"
+      "value": "奖励 "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    }
+  ],
+  "challenges.rewarded": [
+    {
+      "type": 0,
+      "value": "已获得 "
+    },
+    {
+      "type": 1,
+      "value": "reward"
     }
   ],
   "challenges.route": [
@@ -434,13 +452,49 @@
   "challenges.start": [
     {
       "type": 0,
-      "value": "开始白纸起步"
+      "value": "开始"
+    }
+  ],
+  "challenges.timeUnknown": [
+    {
+      "type": 0,
+      "value": "未知"
     }
   ],
   "challenges.title": [
     {
       "type": 0,
       "value": "无限挑战"
+    }
+  ],
+  "challenges.trialAndError": [
+    {
+      "type": 0,
+      "value": "试错"
+    }
+  ],
+  "challenges.trialAndError.active": [
+    {
+      "type": 0,
+      "value": "试错挑战进行中 · 研究购买已禁用"
+    }
+  ],
+  "challenges.trialAndError.description": [
+    {
+      "type": 0,
+      "value": "不进行研究，完成一次普通无限。"
+    }
+  ],
+  "challenges.trialAndError.replay": [
+    {
+      "type": 0,
+      "value": "重玩"
+    }
+  ],
+  "challenges.trialAndError.start": [
+    {
+      "type": 0,
+      "value": "开始"
     }
   ],
   "challenges.view": [
@@ -6297,6 +6351,18 @@
     {
       "type": 0,
       "value": "）"
+    }
+  ],
+  "research.challengeActive": [
+    {
+      "type": 0,
+      "value": "试错挑战进行中 · 手动和自动研究购买均已禁用。"
+    }
+  ],
+  "research.challengeDisabled": [
+    {
+      "type": 0,
+      "value": "已禁用"
     }
   ],
   "research.completed-hidden": [
@@ -14812,6 +14878,12 @@
     {
       "type": 0,
       "value": "修复了Terra购买未计入Avocados生产加成的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.trial": [
+    {
+      "type": 0,
+      "value": "新增挑战：试错"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

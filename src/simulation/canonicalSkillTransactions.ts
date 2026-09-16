@@ -1,6 +1,6 @@
 import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, galvanizationDefinition } from './galvanization'
-import { infinityChallenges, isBlankSlateActive } from './infinityChallenges'
+import { infinityChallenges, hasCompletedInfinityChallenge, isBlankSlateActive } from './infinityChallenges'
 import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAssetsByKind } from '../game-data/catalog'
@@ -154,7 +154,7 @@ export function galvanizeCanonicalSkill(state: CanonicalGameStateV1, skillId: st
   const definition = isSubskill(skillId) ? undefined : loadDefinitions(state).get(skillId)
   const challenges = infinityChallenges(state)
   if (!definition) return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)
-  if (!challenges.blankSlateCompleted || isBlankSlateActive(state) || !isUnlocked(definition, state)) {
+  if (!hasCompletedInfinityChallenge(state) || isBlankSlateActive(state) || !isUnlocked(definition, state)) {
     return rejected(state, 'GALVANIZATION-LOCKED', 'Galvanization is not available for this skill.')
   }
   if (isGalvanized(state, skillId)) return rejected(state, 'ALREADY-GALVANIZED', 'This skill is already galvanized.')
@@ -249,8 +249,8 @@ export function previewCanonicalSkillCatalog(
       skillId: definition.id,
       cost: definition.cost,
       galvanized: isGalvanized(state, definition.id),
-      galvanizationUnlocked: !isSubskill(definition.id) && infinityChallenges(state).blankSlateCompleted,
-      canGalvanize: !isSubskill(definition.id) && infinityChallenges(state).blankSlateCompleted && !isBlankSlateActive(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
+      galvanizationUnlocked: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state),
+      canGalvanize: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state) && !isBlankSlateActive(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
       owned,
       visible: unlocked,
       unlocked,

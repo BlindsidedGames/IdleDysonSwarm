@@ -32,6 +32,7 @@ describe('Wiki patch-note content', () => {
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       'Improved text scaling and layouts on smaller screens.',
       "Added a Speedrun tab to Statistics.",
+      "Added a new challenge: Trial & Error",
       "Developer Options can now be unlocked with 10 Overflow Points.",
       "Quantum and Simulation purchase amounts now persist after reloading.",
       "Fixed holding Quantum purchase buttons when buying fixed quantities.",

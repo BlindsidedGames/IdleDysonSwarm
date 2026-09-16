@@ -762,7 +762,7 @@
     },
     {
       "type": 0,
-      "value": "Ↄoɯdʅǝʇǝ ɐ uoɹɯɐʅ Iuɟıuıʇʎ ʍıʇɥonʇ ɐssıƃuıuƃ oɹpıuɐɹʎ sʞıʅʅs. ⅁ɐʅʌɐuızǝp qɐsǝ sʞıʅʅs sʇɐʎ ɐɔʇıʌǝ. Ԑoʇs, qnıʅpıuƃs ɐup ɹǝsǝɐɹɔɥ ɹǝɯɐıu ɐʌɐıʅɐqʅǝ."
+      "value": "Ↄoɯdʅǝʇǝ ɐ uoɹɯɐʅ Iuɟıuıʇʎ ʍıʇɥonʇ nsıuƃ sʞıʅʅ doıuʇs."
     },
     {
       "type": 0,
@@ -790,7 +790,11 @@
     },
     {
       "type": 0,
-      "value": "Ↄoɯdʅǝʇǝp · ⅁ɐʅʌɐuızǝɹ ǝɐɹuǝp"
+      "value": "Ↄoɯdʅǝʇǝp ıu: "
+    },
+    {
+      "type": 1,
+      "value": "time"
     },
     {
       "type": 0,
@@ -864,7 +868,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝdʅɐʎ Ԑʅɐuʞ Sʅɐʇǝ"
+      "value": "ᴚǝdʅɐʎ"
     },
     {
       "type": 0,
@@ -892,7 +896,29 @@
     },
     {
       "type": 0,
-      "value": "Ⅎıɹsʇ ɔoɯdʅǝʇıou: 1 ƃɐʅʌɐuızǝɹ. ⅄onɹ ɹǝʍɐɹp ɐup ɔoɯdʅǝʇıou snɹʌıʌǝ Oʌǝɹɟʅoʍ."
+      "value": "ᴚǝʍɐɹp "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.rewarded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹuǝp "
+    },
+    {
+      "type": 1,
+      "value": "reward"
     },
     {
       "type": 0,
@@ -934,7 +960,21 @@
     },
     {
       "type": 0,
-      "value": "Sʇɐɹʇ Ԑʅɐuʞ Sʅɐʇǝ"
+      "value": "Sʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.timeUnknown": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʞuoʍu"
     },
     {
       "type": 0,
@@ -949,6 +989,76 @@
     {
       "type": 0,
       "value": "Iuɟıuıʇʎ Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.trialAndError": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹıɐʅ & Ǝɹɹoɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.trialAndError.active": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹıɐʅ & Ǝɹɹoɹ ɐɔʇıʌǝ · ᴚǝsǝɐɹɔɥ dnɹɔɥɐsǝs pısɐqʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.trialAndError.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ uoɹɯɐʅ Iuɟıuıʇʎ ʍıʇɥonʇ ɹǝsǝɐɹɔɥ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.trialAndError.replay": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝdʅɐʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.trialAndError.start": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ"
     },
     {
       "type": 0,
@@ -12133,6 +12243,34 @@
     {
       "type": 0,
       "value": " dǝɹ ʅǝʌǝʅ)"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.challengeActive": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹıɐʅ & Ǝɹɹoɹ ɐɔʇıʌǝ · Wɐunɐʅ ɐup ɐnʇoɯɐʇıɔ ɹǝsǝɐɹɔɥ dnɹɔɥɐsǝs ɐɹǝ pısɐqʅǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.challengeDisabled": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısɐqʅǝp"
     },
     {
       "type": 0,
@@ -29968,6 +30106,20 @@
     {
       "type": 0,
       "value": "Ⅎıxǝp ⊥ǝɹɹɐ dnɹɔɥɐsǝs uoʇ ɔonuʇıuƃ ʇoʍɐɹp ʇɥǝ ∀ʌoɔɐpos dɹopnɔʇıou qouns."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.trial": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɐ uǝʍ ɔɥɐʅʅǝuƃǝ: ⊥ɹıɐʅ & Ǝɹɹoɹ"
     },
     {
       "type": 0,

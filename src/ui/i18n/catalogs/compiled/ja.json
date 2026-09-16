@@ -358,7 +358,7 @@
   "challenges.blankSlate.description": [
     {
       "type": 0,
-      "value": "通常スキルを割り当てずに通常のインフィニティを達成します。永久強化済みの基本スキルは有効なままです。ボット、建物、研究は利用できます。"
+      "value": "スキルポイントを使わずに通常のインフィニティを達成します。"
     }
   ],
   "challenges.cancel": [
@@ -370,7 +370,11 @@
   "challenges.completed": [
     {
       "type": 0,
-      "value": "クリア済み · 強化器獲得"
+      "value": "クリア時間："
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "challenges.confirm": [
@@ -404,7 +408,7 @@
   "challenges.replay": [
     {
       "type": 0,
-      "value": "白紙の出発を再プレイ"
+      "value": "再挑戦"
     }
   ],
   "challenges.restart": [
@@ -416,7 +420,21 @@
   "challenges.reward": [
     {
       "type": 0,
-      "value": "初回クリア報酬：強化器1個。報酬とクリア記録はオーバーフロー後も保持されます。"
+      "value": "報酬 "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    }
+  ],
+  "challenges.rewarded": [
+    {
+      "type": 0,
+      "value": "獲得済み "
+    },
+    {
+      "type": 1,
+      "value": "reward"
     }
   ],
   "challenges.route": [
@@ -434,13 +452,49 @@
   "challenges.start": [
     {
       "type": 0,
-      "value": "白紙の出発を開始"
+      "value": "開始"
+    }
+  ],
+  "challenges.timeUnknown": [
+    {
+      "type": 0,
+      "value": "不明"
     }
   ],
   "challenges.title": [
     {
       "type": 0,
       "value": "インフィニティチャレンジ"
+    }
+  ],
+  "challenges.trialAndError": [
+    {
+      "type": 0,
+      "value": "試行錯誤"
+    }
+  ],
+  "challenges.trialAndError.active": [
+    {
+      "type": 0,
+      "value": "試行錯誤に挑戦中 · 研究購入は無効"
+    }
+  ],
+  "challenges.trialAndError.description": [
+    {
+      "type": 0,
+      "value": "研究なしで通常のインフィニティを達成します。"
+    }
+  ],
+  "challenges.trialAndError.replay": [
+    {
+      "type": 0,
+      "value": "再挑戦"
+    }
+  ],
+  "challenges.trialAndError.start": [
+    {
+      "type": 0,
+      "value": "開始"
     }
   ],
   "challenges.view": [
@@ -6297,6 +6351,18 @@
     {
       "type": 0,
       "value": "）"
+    }
+  ],
+  "research.challengeActive": [
+    {
+      "type": 0,
+      "value": "試行錯誤に挑戦中 · 研究の手動購入と自動購入は無効です。"
+    }
+  ],
+  "research.challengeDisabled": [
+    {
+      "type": 0,
+      "value": "無効"
     }
   ],
   "research.completed-hidden": [
@@ -14812,6 +14878,12 @@
     {
       "type": 0,
       "value": "Terraによる購入がAvocadosの生産ボーナスに反映されない問題を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.trial": [
+    {
+      "type": 0,
+      "value": "新チャレンジ「試行錯誤」を追加"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

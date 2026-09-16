@@ -358,7 +358,7 @@
   "challenges.blankSlate.description": [
     {
       "type": 0,
-      "value": "Завершите обычную Бесконечность, не назначая обычные навыки. Гальванизированные базовые навыки остаются активными. Боты, здания и исследования доступны."
+      "value": "Завершите обычную Бесконечность без использования очков навыков."
     }
   ],
   "challenges.cancel": [
@@ -370,7 +370,11 @@
   "challenges.completed": [
     {
       "type": 0,
-      "value": "Завершено · Гальванизатор получен"
+      "value": "Время прохождения: "
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "challenges.confirm": [
@@ -404,7 +408,7 @@
   "challenges.replay": [
     {
       "type": 0,
-      "value": "Повторить Чистый лист"
+      "value": "Повторить"
     }
   ],
   "challenges.restart": [
@@ -416,7 +420,21 @@
   "challenges.reward": [
     {
       "type": 0,
-      "value": "Первое прохождение: 1 гальванизатор. Награда и прохождение сохраняются после Переполнения."
+      "value": "Награда "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    }
+  ],
+  "challenges.rewarded": [
+    {
+      "type": 0,
+      "value": "Получено "
+    },
+    {
+      "type": 1,
+      "value": "reward"
     }
   ],
   "challenges.route": [
@@ -434,13 +452,49 @@
   "challenges.start": [
     {
       "type": 0,
-      "value": "Начать Чистый лист"
+      "value": "Начать"
+    }
+  ],
+  "challenges.timeUnknown": [
+    {
+      "type": 0,
+      "value": "Неизвестно"
     }
   ],
   "challenges.title": [
     {
       "type": 0,
       "value": "Испытания Бесконечности"
+    }
+  ],
+  "challenges.trialAndError": [
+    {
+      "type": 0,
+      "value": "Метод проб и ошибок"
+    }
+  ],
+  "challenges.trialAndError.active": [
+    {
+      "type": 0,
+      "value": "Метод проб и ошибок активен · Покупка исследований отключена"
+    }
+  ],
+  "challenges.trialAndError.description": [
+    {
+      "type": 0,
+      "value": "Завершите обычную Бесконечность без исследований."
+    }
+  ],
+  "challenges.trialAndError.replay": [
+    {
+      "type": 0,
+      "value": "Повторить"
+    }
+  ],
+  "challenges.trialAndError.start": [
+    {
+      "type": 0,
+      "value": "Начать"
     }
   ],
   "challenges.view": [
@@ -6297,6 +6351,18 @@
     {
       "type": 0,
       "value": " за уровень)"
+    }
+  ],
+  "research.challengeActive": [
+    {
+      "type": 0,
+      "value": "Метод проб и ошибок активен · Ручная и автоматическая покупка исследований отключена."
+    }
+  ],
+  "research.challengeDisabled": [
+    {
+      "type": 0,
+      "value": "Отключено"
     }
   ],
   "research.completed-hidden": [
@@ -14812,6 +14878,12 @@
     {
       "type": 0,
       "value": "Исправлен учёт покупок Terra в бонусе производства Avocados."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.trial": [
+    {
+      "type": 0,
+      "value": "Добавлено новое испытание: Метод проб и ошибок"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

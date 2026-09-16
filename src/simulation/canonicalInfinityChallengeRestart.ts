@@ -8,6 +8,7 @@ export function restartInfinityChallenge(
   state: Readonly<CanonicalGameStateV1>,
   action: 'enter' | 'abandon',
   artifactSkillPoints: bigint,
+  challengeId: NonNullable<NonNullable<CanonicalGameStateV1['challenges']>['active']> = 'blank-slate',
 ) {
   const challenges = infinityChallenges(state)
   if (hasReachedOverflow(state)) return { ok: false as const, code: 'OVERFLOW_RESET_REQUIRED' }
@@ -17,7 +18,7 @@ export function restartInfinityChallenge(
   if (action === 'abandon' && challenges.active === null) return { ok: false as const, code: 'NO_ACTIVE_CHALLENGE' }
   const seed = {
     ...state,
-    challenges: { ...challenges, active: action === 'enter' ? 'blank-slate' as const : null },
+    challenges: { ...challenges, active: action === 'enter' ? challengeId : null },
     skills: { ...state.skills, byId: {} },
   }
   const reset = applyCanonicalInfinityReset(seed, {
