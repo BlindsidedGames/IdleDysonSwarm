@@ -1494,8 +1494,8 @@
     "description": "Unity warning near the first ordinary Infinity boundary."
   },
   "infinity.rate.current": {
-    "defaultMessage": "Current: {value} IP/min",
-    "description": "Current projected Infinity Point reward rate for this run."
+    "defaultMessage": "Last Infinity: {value} IP/min",
+    "description": "Infinity Point reward rate from the last completed Infinity."
   },
   "infinity.rate.peak": {
     "defaultMessage": "Recommended: {rate} IP/min at {reward} IP",
@@ -6389,6 +6389,18 @@
     "defaultMessage": "Statistics",
     "description": "Accessible name for the Statistics route."
   },
+  "statistics.save.activeElapsed": {
+    "defaultMessage": "Time played",
+    "description": "Unaccelerated active runtime, excluding away time."
+  },
+  "statistics.save.created": {
+    "defaultMessage": "Save created",
+    "description": "Exact save creation date and time."
+  },
+  "statistics.save.createdWith": {
+    "defaultMessage": "Save created with",
+    "description": "Game version originally used to create this save."
+  },
   "statistics.scope.lifetime": {
     "defaultMessage": "Lifetime",
     "description": "Statistics accumulated across the entire save."
@@ -6396,14 +6408,6 @@
   "statistics.scope.quantum-run": {
     "defaultMessage": "Current Quantum run",
     "description": "Statistics accumulated since the latest Quantum Leap."
-  },
-  "statistics.speedruns.details": {
-    "defaultMessage": "About these records",
-    "description": "Disclosure explaining speedrun timing and eligibility."
-  },
-  "statistics.speedruns.speedrunBasis": {
-    "defaultMessage": "Real elapsed time since this save began, including time away. Gameplay resets retain this run. Stored Time is allowed.",
-    "description": "Speedrun statistics label or explanation."
   },
   "statistics.speedruns.speedrunCurrentSave": {
     "defaultMessage": "Current save run",
@@ -6414,15 +6418,15 @@
     "description": "Speedrun statistics label or explanation."
   },
   "statistics.speedruns.speedrunDebugQualification": {
-    "defaultMessage": "Debug qualification · 10 Overflow Points",
+    "defaultMessage": "Debug Reached",
     "description": "Speedrun statistics label or explanation."
   },
   "statistics.speedruns.speedrunDoubleSpeed": {
-    "defaultMessage": "2× game speed unlocked",
+    "defaultMessage": "Reality 2x Speed",
     "description": "Speedrun statistics label or explanation."
   },
   "statistics.speedruns.speedrunElapsed": {
-    "defaultMessage": "Save age / run elapsed",
+    "defaultMessage": "Total elapsed time",
     "description": "Speedrun statistics label or explanation."
   },
   "statistics.speedruns.speedrunEligibility": {
@@ -6441,10 +6445,6 @@
     "defaultMessage": "First Quantum Leap",
     "description": "Speedrun statistics label or explanation."
   },
-  "statistics.speedruns.speedrunHistory": {
-    "defaultMessage": "Milestone usage labels describe the run up to that point. Debug gameplay actions make the run ineligible. Older saves may have unknown times or usage history.",
-    "description": "Speedrun statistics label or explanation."
-  },
   "statistics.speedruns.speedrunIneligible": {
     "defaultMessage": "Ineligible — Debug used",
     "description": "Speedrun statistics label or explanation."
@@ -6458,7 +6458,7 @@
     "description": "Speedrun statistics label or explanation."
   },
   "statistics.speedruns.speedrunReality": {
-    "defaultMessage": "Reality unlocked",
+    "defaultMessage": "Reality Unlocked",
     "description": "Speedrun statistics label or explanation."
   },
   "statistics.speedruns.speedrunStored": {
@@ -6484,6 +6484,10 @@
   "statistics.speedruns.speedruns": {
     "defaultMessage": "Speedruns",
     "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.tab.general": {
+    "defaultMessage": "General",
+    "description": "General statistics tab."
   },
   "statistics.tracked-time": {
     "defaultMessage": "Tracked simulation time",
@@ -7505,8 +7509,56 @@
     "defaultMessage": "Version 4.1.9",
     "description": "Version 4.1.9 release notes."
   },
+  "wiki.patch-notes.version-4-1-9.androidspacing": {
+    "defaultMessage": "Fixed excess spacing around system bars on Android.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.debugtabs": {
+    "defaultMessage": "Debug tab unlocking can now be reversed and is cleared when resetting the save.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.debugunlock": {
+    "defaultMessage": "Developer Options can now be unlocked with 10 Overflow Points.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.durability": {
+    "defaultMessage": "Combined Durability research into one card showing cumulative panel lifetime upgrades.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.headers": {
+    "defaultMessage": "Removed redundant Store, Story, and Wiki header panels and corrected the Infinity target-field icon alignment.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.infinityrate": {
+    "defaultMessage": "Auto Infinity now shows the last completed Infinity’s IP-per-minute rate instead of current and recommended estimates.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.offlineall": {
+    "defaultMessage": "Fixed the Offline Time slider’s All option to select the full stored amount.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.purchasepersistence": {
+    "defaultMessage": "Quantum and Simulation purchase amounts now persist after reloading.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.quantumhold": {
+    "defaultMessage": "Fixed holding Quantum purchase buttons when buying fixed quantities.",
+    "description": "Version 4.1.9 release notes."
+  },
   "wiki.patch-notes.version-4-1-9.scaling": {
     "defaultMessage": "Improved text scaling and layouts on smaller screens.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.simulations": {
+    "defaultMessage": "Improved Simulation formulas, progress displays, and compact layouts.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.speedrun": {
+    "defaultMessage": "Added a Speedrun tab to Statistics.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.terra": {
+    "defaultMessage": "Fixed Terra purchases not counting toward the Avocados production bonus.",
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1.audio": {

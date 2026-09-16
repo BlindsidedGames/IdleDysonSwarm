@@ -487,11 +487,9 @@
 .statistics-speedruns__facts dt, .statistics-speedruns__facts dd { min-width: 0; overflow-wrap: anywhere; }
 .statistics-speedruns__facts dd { margin: 0; color: cyan; font-variant-numeric: tabular-nums; }
 .statistics-speedruns__note { margin: 0; padding: 0 var(--ui-panel-inset) var(--ui-panel-inset); color: #c2d4c1; }
-.statistics-speedruns__details summary {
-  cursor: pointer;
-  min-block-size: 44px;
-  padding: var(--ui-panel-inset);
-  box-sizing: border-box;
-  color: #c2d4c1;
-}
-.statistics-speedruns__details summary:focus-visible { outline: 2px solid cyan; outline-offset: -3px; }
+
+.statistics-tabs { display: flex; gap: var(--ui-section-gap); inline-size: 100%; }
+.statistics-tabs [role="tab"] { flex: 1; min-block-size: 44px; padding: 0.65rem; border: 1px solid var(--theme-divider); border-radius: 0.35rem; background: var(--theme-panel); color: inherit; font: inherit; font-weight: 700; cursor: pointer; }
+.statistics-tabs [aria-selected="true"] { background: var(--theme-selected); border-color: var(--theme-accent); }
+.statistics-tabs [role="tab"]:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 2px; }
+.statistics-speedruns__facts dd { overflow-wrap: anywhere; }

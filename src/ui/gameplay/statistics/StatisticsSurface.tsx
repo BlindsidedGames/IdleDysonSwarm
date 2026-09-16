@@ -1,3 +1,4 @@
+import { useId, useState } from 'react'
 import { SpeedrunsSection } from './SpeedrunsSection'
 import {
   useIntl,
@@ -155,6 +156,8 @@ export function StatisticsSurface({
   visibility,
 }: StatisticsSurfaceProps) {
   const intl = useIntl()
+  const [tab, setTab] = useState<'general' | 'speedruns'>('general')
+  const id = useId()
   const scopes = [
     {
       title: messages.lifetime,
@@ -197,12 +200,22 @@ export function StatisticsSurface({
   return (
     <div className="statistics-surface">
       <header className="statistics-surface__summary">
-        <div className="statistics-surface__title" aria-hidden="true">
-          {intl.formatMessage(messages.region)}
+        <div className="statistics-tabs" role="tablist" aria-label={intl.formatMessage(messages.region)}>
+          {(['general', 'speedruns'] as const).map(name => <button
+            key={name} id={`${id}-${name}`} role="tab" aria-selected={tab === name}
+            aria-controls={`${id}-panel`} tabIndex={tab === name ? 0 : -1}
+            onClick={() => setTab(name)} onKeyDown={event => {
+              if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+                event.preventDefault()
+                const next = event.key === 'Home' ? 'general' : event.key === 'End' ? 'speedruns' : tab === 'general' ? 'speedruns' : 'general'
+                setTab(next)
+                document.getElementById(`${id}-${next}`)?.focus()
+              }
+            }}>{intl.formatMessage(name === 'general' ? messages.general : messages.speedruns)}</button>)}
         </div>
       </header>
-      <div className="statistics-surface__content">
-        <SpeedrunsSection run={statistics.speedruns} locale={locale} />
+      <div className="statistics-surface__content" role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${tab}`} key={tab}>
+        {tab === 'speedruns' ? <SpeedrunsSection run={statistics.speedruns} locale={locale} /> : <>
         <div className="statistics-surface__scope-grid">
           {scopes.map((scope) => (
             <ScopeCard
@@ -247,6 +260,7 @@ export function StatisticsSurface({
           locale={locale}
           swarmScale={swarmScale}
         />
+        </>}
       </div>
     </div>
   )

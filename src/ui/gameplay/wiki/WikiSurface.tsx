@@ -339,13 +339,6 @@ export function WikiSurface({
 
   return (
     <div className="wiki-surface">
-      <header className="wiki-surface__summary">
-        <div>
-          <div className="wiki-surface__title" aria-hidden="true">
-            {intl.formatMessage(messages.title)}
-          </div>
-        </div>
-      </header>
 
       <div className="wiki-surface__layout">
         <nav className="wiki-surface__navigation" aria-label={intl.formatMessage(messages.topicNavigation)}>
@@ -455,6 +448,18 @@ function PatchNotesArticle() {
           <h4>{intl.formatMessage(messages.patchNotesVersion419)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion419Scaling)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Speedrun)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419DebugUnlock)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419PurchasePersistence)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419QuantumHold)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Durability)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Terra)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Simulations)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419AndroidSpacing)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419OfflineAll)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419DebugTabs)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419InfinityRate)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Headers)}</li>
           </ul>
         </section>
         <section className="wiki-surface__section">

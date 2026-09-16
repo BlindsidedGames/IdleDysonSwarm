@@ -469,7 +469,7 @@
   color: white;
 }
 
-.infinity-break-target__input-wrap .ui-inline-image-symbol {
+.infinity-break-target__input-wrap .ui-inline-image-symbol[data-symbol="infinity-point"] {
   position: absolute;
   z-index: 1;
   inset-inline-start: 0.65rem;

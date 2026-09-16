@@ -5,7 +5,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { CanonicalRuntimeSession } from '../application/canonicalRuntimeSession'
 import { hydrateGameState } from '../game-state/mapping'
-import { createSpeedrunStatistics, elapsedSpeedrunSeconds, markSpeedrunUsage, observeSpeedruns, qualifiesForDebug, speedrunEligible, validateSpeedrunStatistics } from './speedrunStatistics'
+import { recordActiveSpeedrunTime, createSpeedrunStatistics, elapsedSpeedrunSeconds, markSpeedrunUsage, observeSpeedruns, qualifiesForDebug, speedrunEligible, validateSpeedrunStatistics } from './speedrunStatistics'
 import { serializeWebSave, deserializeWebSave } from '../save/serialization'
 import { PreparedSave } from '../save/prepare'
 import { applyCanonicalOverflowReset } from './canonicalOverflowReset'
@@ -70,10 +70,11 @@ describe('whole-save speedruns', () => {
   })
   test('records survive serialization/reload and Overflow resets; new saves start clean', () => {
     const session = new CanonicalRuntimeSession(createUnityFirstRunPreparedSave({ startedAtUtc: start }), { entitlements: { permanentDoubleIp: false } })
-    let state = markSpeedrunUsage(markSpeedrunUsage(session.initialState.gameState, 'debug'), 'storedTime')
+    let state = recordActiveSpeedrunTime(markSpeedrunUsage(markSpeedrunUsage(session.initialState.gameState, 'debug'), 'storedTime'), 123)
     state = { ...state, dyson: { ...state.dyson, bots: OVERFLOW_BOT_CAP }, infinity: { ...state.infinity, overflowEligible: true } }
     const prepared = session.prepare({ ...session.initialState, gameState: state })
     const loaded = new CanonicalRuntimeSession(PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(prepared.copyValidatedState()))), { entitlements: { permanentDoubleIp: false } }).initialState.gameState
+    expect(state.statistics.speedruns?.createdWithVersion).toEqual(expect.any(String))
     expect(loaded.statistics.speedruns).toEqual(state.statistics.speedruns)
     const imported = prepareImportedSaveText(serializeWebSave(prepared.copyValidatedState()), '2026-09-14T00:00:00.000Z', undefined, undefined,
       createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-14T00:00:00.000Z' }).copyValidatedState())
@@ -83,4 +84,30 @@ describe('whole-save speedruns', () => {
     if (reset.ok) expect(reset.state.statistics.speedruns).toEqual(state.statistics.speedruns)
     expect(fresh().statistics.speedruns!.debug).toBe('no')
   })
+})
+
+test('active time survives resets without counting wall time', () => {
+  const state = recordActiveSpeedrunTime(fresh(), 12.5)
+  expect(state.statistics.speedruns?.activeSeconds).toBe(12.5)
+  expect(observeSpeedruns(state, origin + 86400000).statistics.speedruns?.activeSeconds).toBe(12.5)
+  const reset = applyCanonicalQuantumReset(state, 0n)
+  expect(reset.ok).toBe(true)
+  if (reset.ok) expect(reset.state.statistics.speedruns?.activeSeconds).toBe(12.5)
+})
+test('legacy active time is explicitly incomplete and malformed counters are rejected', () => {
+  const original = fresh()
+  const { activeSeconds: _seconds, activeTimeComplete: _complete, ...legacy } = original.statistics.speedruns!
+  const state = recordActiveSpeedrunTime({ ...original, statistics: { ...original.statistics, speedruns: legacy } }, 5)
+  expect(state.statistics.speedruns).toMatchObject({ activeSeconds: 5, activeTimeComplete: false })
+  expect(validateSpeedrunStatistics({ ...legacy, activeSeconds: -1 })).toBeTruthy()
+  expect(validateSpeedrunStatistics(legacy)).toBeNull()
+})
+
+test('old saves retain unknown creation versions and malformed versions are rejected', () => {
+  const legacy = createSpeedrunStatistics(start, false, origin)
+  expect(legacy.createdWithVersion).toBeUndefined()
+  expect(validateSpeedrunStatistics(legacy)).toBeNull()
+  expect(validateSpeedrunStatistics({ ...legacy, createdWithVersion: 419 })).toBeTruthy()
+  expect(validateSpeedrunStatistics({ ...legacy, createdWithVersion: '' })).toBeTruthy()
+  expect(validateSpeedrunStatistics({ ...legacy, createdWithVersion: '4.1.7' })).toBeNull()
 })

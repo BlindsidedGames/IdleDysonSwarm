@@ -60,16 +60,6 @@ export function StoreSurface({
   return (
     <div className="store-surface">
       <div className="store-surface__content">
-        <header className="store-surface__summary">
-          <h2>{intl.formatMessage(messages.region)}</h2>
-          <p>
-            {intl.formatMessage(
-              deviceOnlyPurchases
-                ? messages.browserIntroduction
-                : messages.introduction,
-            )}
-          </p>
-        </header>
 
         {!snapshot.initialized ? (
           <p className="store-surface__loading" role="status">

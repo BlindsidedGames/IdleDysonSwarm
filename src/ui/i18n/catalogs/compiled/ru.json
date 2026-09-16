@@ -3582,7 +3582,7 @@
   "infinity.rate.current": [
     {
       "type": 0,
-      "value": "Сейчас: "
+      "value": "Последняя Бесконечность: "
     },
     {
       "type": 1,
@@ -12361,6 +12361,24 @@
       "value": "Статистика"
     }
   ],
+  "statistics.save.activeElapsed": [
+    {
+      "type": 0,
+      "value": "Время игры"
+    }
+  ],
+  "statistics.save.created": [
+    {
+      "type": 0,
+      "value": "Сохранение создано"
+    }
+  ],
+  "statistics.save.createdWith": [
+    {
+      "type": 0,
+      "value": "Версия при создании сохранения"
+    }
+  ],
   "statistics.scope.lifetime": [
     {
       "type": 0,
@@ -12371,18 +12389,6 @@
     {
       "type": 0,
       "value": "Текущий Квантовый цикл"
-    }
-  ],
-  "statistics.speedruns.details": [
-    {
-      "type": 0,
-      "value": "Об этих записях"
-    }
-  ],
-  "statistics.speedruns.speedrunBasis": [
-    {
-      "type": 0,
-      "value": "Реальное время с начала сохранения, включая время вне игры. Сбросы прогресса сохраняют забег. Запасённое время разрешено; скорость ×2 не меняется."
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -12400,19 +12406,19 @@
   "statistics.speedruns.speedrunDebugQualification": [
     {
       "type": 0,
-      "value": "Условие отладки · 10 очков переполнения"
+      "value": "Debug достигнут"
     }
   ],
   "statistics.speedruns.speedrunDoubleSpeed": [
     {
       "type": 0,
-      "value": "Открыта скорость игры ×2"
+      "value": "Реальность: скорость 2x"
     }
   ],
   "statistics.speedruns.speedrunElapsed": [
     {
       "type": 0,
-      "value": "Возраст сохранения / время забега"
+      "value": "Общее прошедшее время"
     }
   ],
   "statistics.speedruns.speedrunEligibility": [
@@ -12437,12 +12443,6 @@
     {
       "type": 0,
       "value": "Первый квантовый скачок"
-    }
-  ],
-  "statistics.speedruns.speedrunHistory": [
-    {
-      "type": 0,
-      "value": "Метки этапов описывают забег на момент достижения. Отладочные действия, меняющие игровой прогресс, исключают забег из зачёта. В старых сохранениях время или история использования могут быть неизвестны."
     }
   ],
   "statistics.speedruns.speedrunIneligible": [
@@ -12503,6 +12503,12 @@
     {
       "type": 0,
       "value": "Спидраны"
+    }
+  ],
+  "statistics.tab.general": [
+    {
+      "type": 0,
+      "value": "Общие"
     }
   ],
   "statistics.tracked-time": [
@@ -14730,10 +14736,82 @@
       "value": "Версия 4.1.9"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.androidspacing": [
+    {
+      "type": 0,
+      "value": "Убраны излишние отступы вокруг системных панелей Android."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugtabs": [
+    {
+      "type": 0,
+      "value": "Открытие вкладок через Debug теперь можно отменить; при сбросе сохранения оно также отменяется."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugunlock": [
+    {
+      "type": 0,
+      "value": "Параметры разработчика теперь можно открыть за 10 очков Переполнения."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.durability": [
+    {
+      "type": 0,
+      "value": "Исследования Прочности объединены в одну карточку с суммарным увеличением срока службы панелей."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.headers": [
+    {
+      "type": 0,
+      "value": "Убраны лишние панели заголовков Магазина, Истории и Вики; исправлено выравнивание значка в поле цели Бесконечности."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.infinityrate": [
+    {
+      "type": 0,
+      "value": "Автобесконечность теперь показывает ОБ в минуту последней завершённой Бесконечности вместо текущей и рекомендуемой оценок."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.offlineall": [
+    {
+      "type": 0,
+      "value": "Пункт «Всё» ползунка офлайн-времени теперь выбирает весь накопленный запас."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purchasepersistence": [
+    {
+      "type": 0,
+      "value": "Количество покупок в Quantum и Симуляциях теперь сохраняется после перезагрузки."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.quantumhold": [
+    {
+      "type": 0,
+      "value": "Исправлена покупка фиксированных количеств при удержании кнопок Quantum."
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.scaling": [
     {
       "type": 0,
       "value": "Улучшены масштабирование текста и компоновка на небольших экранах."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.simulations": [
+    {
+      "type": 0,
+      "value": "Улучшены формулы, индикаторы прогресса и компактные макеты Симуляций."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.speedrun": [
+    {
+      "type": 0,
+      "value": "В Статистику добавлена вкладка «Спидран»."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.terra": [
+    {
+      "type": 0,
+      "value": "Исправлен учёт покупок Terra в бонусе производства Avocados."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

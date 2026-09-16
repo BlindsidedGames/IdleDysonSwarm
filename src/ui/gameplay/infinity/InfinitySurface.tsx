@@ -1,3 +1,5 @@
+import type { InfinityCycleHistoryEntry } from '../../../game-state/types'
+import { infinityRunIpPerMinute } from '../statistics/statisticsProjection'
 import { avocatoMessages } from '../quantum/messages'
 import {
   useEffect,
@@ -72,7 +74,6 @@ type InfinityCommand = Extract<
   }
 >
 
-const INFINITY_GUIDANCE_PRESENTATION_INTERVAL_MILLISECONDS = 250
 const INFINITY_VISIBILITY_STORAGE_KEY =
   'idle-dyson-swarm.infinity-visibility.v1'
 const INFINITY_AMOUNT_MARKER_PREFIX = '__INFINITY_AMOUNT_'
@@ -86,6 +87,7 @@ export interface InfinityCommandAvailability {
 }
 
 export interface InfinitySurfaceProps {
+  readonly lastInfinityCycle?: Readonly<InfinityCycleHistoryEntry>
   readonly onViewOverflow?: () => void
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['infinity']
@@ -116,6 +118,7 @@ export function InfinitySurface({
   commandAvailability,
   dispatchPlayer,
   onViewOverflow,
+  lastInfinityCycle,
 }: InfinitySurfaceProps) {
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
@@ -123,11 +126,7 @@ export function InfinitySurface({
   const [hideMaxed, setHideMaxed] = useState(() =>
     readBooleanPresentationPreference(INFINITY_VISIBILITY_STORAGE_KEY),
   )
-  const presentedGuidance = useInfinityRateGuidancePresentation({
-    currentIpPerMinute: derived.currentIpPerMinute ?? 0,
-    peakIpPerMinute: derived.peakIpPerMinute ?? 0,
-    peakReward: derived.peakReward ?? 0n,
-  })
+  const lastInfinityRate = lastInfinityCycle ? formatInfinityPointAmount(locale, infinityRunIpPerMinute(lastInfinityCycle)) : '—'
   const settingsId = useId()
   const progressFillRef = useRef<HTMLSpanElement>(null)
   const progress = Math.max(
@@ -345,47 +344,13 @@ export function InfinitySurface({
                 <span>
                   <InfinityCurrencySentence
                     accessible={intl.formatMessage(messages.currentRate, {
-                      value: formatInfinityPointAmount(
-                        locale,
-                        presentedGuidance.currentIpPerMinute,
-                      ),
+                      value: lastInfinityRate,
                     })}
                     amounts={[
-                      formatInfinityPointAmount(
-                        locale,
-                        presentedGuidance.currentIpPerMinute,
-                      ),
+                      lastInfinityRate,
                     ]}
                     template={intl.formatMessage(messages.currentRate, {
                       value: infinityAmountMarker(0),
-                    })}
-                  />
-                </span>
-                <span>
-                  <InfinityCurrencySentence
-                    accessible={intl.formatMessage(messages.peakRate, {
-                      rate: formatInfinityPointAmount(
-                        locale,
-                        presentedGuidance.peakIpPerMinute,
-                      ),
-                      reward: formatInfinityPointAmount(
-                        locale,
-                        presentedGuidance.peakReward,
-                      ),
-                    })}
-                    amounts={[
-                      formatInfinityPointAmount(
-                        locale,
-                        presentedGuidance.peakIpPerMinute,
-                      ),
-                      formatInfinityPointAmount(
-                        locale,
-                        presentedGuidance.peakReward,
-                      ),
-                    ]}
-                    template={intl.formatMessage(messages.peakRate, {
-                      rate: infinityAmountMarker(0),
-                      reward: infinityAmountMarker(1),
                     })}
                   />
                 </span>
@@ -944,36 +909,6 @@ function prerequisiteName(
     default:
       return null
   }
-}
-
-interface InfinityRateGuidancePresentation {
-  readonly currentIpPerMinute: number
-  readonly peakIpPerMinute: number
-  readonly peakReward: bigint
-}
-
-function useInfinityRateGuidancePresentation(
-  guidance: Readonly<InfinityRateGuidancePresentation>,
-): InfinityRateGuidancePresentation {
-  const latestRef = useRef(guidance)
-  latestRef.current = guidance
-  const [presented, setPresented] = useState(guidance)
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      const latest = latestRef.current
-      setPresented((current) =>
-        current.currentIpPerMinute === latest.currentIpPerMinute &&
-        current.peakIpPerMinute === latest.peakIpPerMinute &&
-        current.peakReward === latest.peakReward
-          ? current
-          : latest,
-      )
-    }, INFINITY_GUIDANCE_PRESENTATION_INTERVAL_MILLISECONDS)
-    return () => window.clearInterval(interval)
-  }, [])
-
-  return presented
 }
 
 /**

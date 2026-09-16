@@ -3582,7 +3582,7 @@
   "infinity.rate.current": [
     {
       "type": 0,
-      "value": "Current: "
+      "value": "Last Infinity: "
     },
     {
       "type": 1,
@@ -12361,6 +12361,24 @@
       "value": "Statistics"
     }
   ],
+  "statistics.save.activeElapsed": [
+    {
+      "type": 0,
+      "value": "Time played"
+    }
+  ],
+  "statistics.save.created": [
+    {
+      "type": 0,
+      "value": "Save created"
+    }
+  ],
+  "statistics.save.createdWith": [
+    {
+      "type": 0,
+      "value": "Save created with"
+    }
+  ],
   "statistics.scope.lifetime": [
     {
       "type": 0,
@@ -12371,18 +12389,6 @@
     {
       "type": 0,
       "value": "Current Quantum run"
-    }
-  ],
-  "statistics.speedruns.details": [
-    {
-      "type": 0,
-      "value": "About these records"
-    }
-  ],
-  "statistics.speedruns.speedrunBasis": [
-    {
-      "type": 0,
-      "value": "Real elapsed time since this save began, including time away. Gameplay resets retain this run. Stored Time is allowed."
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -12400,19 +12406,19 @@
   "statistics.speedruns.speedrunDebugQualification": [
     {
       "type": 0,
-      "value": "Debug qualification · 10 Overflow Points"
+      "value": "Debug Reached"
     }
   ],
   "statistics.speedruns.speedrunDoubleSpeed": [
     {
       "type": 0,
-      "value": "2× game speed unlocked"
+      "value": "Reality 2x Speed"
     }
   ],
   "statistics.speedruns.speedrunElapsed": [
     {
       "type": 0,
-      "value": "Save age / run elapsed"
+      "value": "Total elapsed time"
     }
   ],
   "statistics.speedruns.speedrunEligibility": [
@@ -12439,12 +12445,6 @@
       "value": "First Quantum Leap"
     }
   ],
-  "statistics.speedruns.speedrunHistory": [
-    {
-      "type": 0,
-      "value": "Milestone usage labels describe the run up to that point. Debug gameplay actions make the run ineligible. Older saves may have unknown times or usage history."
-    }
-  ],
   "statistics.speedruns.speedrunIneligible": [
     {
       "type": 0,
@@ -12466,7 +12466,7 @@
   "statistics.speedruns.speedrunReality": [
     {
       "type": 0,
-      "value": "Reality unlocked"
+      "value": "Reality Unlocked"
     }
   ],
   "statistics.speedruns.speedrunStored": [
@@ -12503,6 +12503,12 @@
     {
       "type": 0,
       "value": "Speedruns"
+    }
+  ],
+  "statistics.tab.general": [
+    {
+      "type": 0,
+      "value": "General"
     }
   ],
   "statistics.tracked-time": [
@@ -14730,10 +14736,82 @@
       "value": "Version 4.1.9"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.androidspacing": [
+    {
+      "type": 0,
+      "value": "Fixed excess spacing around system bars on Android."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugtabs": [
+    {
+      "type": 0,
+      "value": "Debug tab unlocking can now be reversed and is cleared when resetting the save."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugunlock": [
+    {
+      "type": 0,
+      "value": "Developer Options can now be unlocked with 10 Overflow Points."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.durability": [
+    {
+      "type": 0,
+      "value": "Combined Durability research into one card showing cumulative panel lifetime upgrades."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.headers": [
+    {
+      "type": 0,
+      "value": "Removed redundant Store, Story, and Wiki header panels and corrected the Infinity target-field icon alignment."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.infinityrate": [
+    {
+      "type": 0,
+      "value": "Auto Infinity now shows the last completed Infinity’s IP-per-minute rate instead of current and recommended estimates."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.offlineall": [
+    {
+      "type": 0,
+      "value": "Fixed the Offline Time slider’s All option to select the full stored amount."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purchasepersistence": [
+    {
+      "type": 0,
+      "value": "Quantum and Simulation purchase amounts now persist after reloading."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.quantumhold": [
+    {
+      "type": 0,
+      "value": "Fixed holding Quantum purchase buttons when buying fixed quantities."
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.scaling": [
     {
       "type": 0,
       "value": "Improved text scaling and layouts on smaller screens."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.simulations": [
+    {
+      "type": 0,
+      "value": "Improved Simulation formulas, progress displays, and compact layouts."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.speedrun": [
+    {
+      "type": 0,
+      "value": "Added a Speedrun tab to Statistics."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.terra": [
+    {
+      "type": 0,
+      "value": "Fixed Terra purchases not counting toward the Avocados production bonus."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

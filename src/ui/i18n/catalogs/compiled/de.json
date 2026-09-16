@@ -3582,7 +3582,7 @@
   "infinity.rate.current": [
     {
       "type": 0,
-      "value": "Aktuell: "
+      "value": "Letzte Unendlichkeit: "
     },
     {
       "type": 1,
@@ -12361,6 +12361,24 @@
       "value": "Statistiken"
     }
   ],
+  "statistics.save.activeElapsed": [
+    {
+      "type": 0,
+      "value": "Spielzeit"
+    }
+  ],
+  "statistics.save.created": [
+    {
+      "type": 0,
+      "value": "Spielstand erstellt"
+    }
+  ],
+  "statistics.save.createdWith": [
+    {
+      "type": 0,
+      "value": "Spielstand erstellt mit"
+    }
+  ],
   "statistics.scope.lifetime": [
     {
       "type": 0,
@@ -12371,18 +12389,6 @@
     {
       "type": 0,
       "value": "Aktueller Quantendurchlauf"
-    }
-  ],
-  "statistics.speedruns.details": [
-    {
-      "type": 0,
-      "value": "Über diese Aufzeichnungen"
-    }
-  ],
-  "statistics.speedruns.speedrunBasis": [
-    {
-      "type": 0,
-      "value": "Reale Zeit seit Beginn dieses Spielstands, einschließlich Abwesenheit. Fortschrittsresets behalten diesen Lauf bei. Gespeicherte Zeit ist erlaubt; das 2× Spieltempo bleibt unverändert."
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -12400,19 +12406,19 @@
   "statistics.speedruns.speedrunDebugQualification": [
     {
       "type": 0,
-      "value": "Debug-Voraussetzung · 10 Überlaufpunkte"
+      "value": "Debug erreicht"
     }
   ],
   "statistics.speedruns.speedrunDoubleSpeed": [
     {
       "type": 0,
-      "value": "2× Spieltempo freigeschaltet"
+      "value": "Realität: 2x Geschwindigkeit"
     }
   ],
   "statistics.speedruns.speedrunElapsed": [
     {
       "type": 0,
-      "value": "Spielstandalter / Laufzeit"
+      "value": "Gesamte verstrichene Zeit"
     }
   ],
   "statistics.speedruns.speedrunEligibility": [
@@ -12437,12 +12443,6 @@
     {
       "type": 0,
       "value": "Erster Quantensprung"
-    }
-  ],
-  "statistics.speedruns.speedrunHistory": [
-    {
-      "type": 0,
-      "value": "Die Meilensteinangaben gelten bis zum jeweiligen Zeitpunkt. Debug-Eingriffe in den Spielfortschritt schließen den Lauf von der Wertung aus. Bei älteren Spielständen können Zeiten oder Nutzungsdaten unbekannt sein."
     }
   ],
   "statistics.speedruns.speedrunIneligible": [
@@ -12503,6 +12503,12 @@
     {
       "type": 0,
       "value": "Speedruns"
+    }
+  ],
+  "statistics.tab.general": [
+    {
+      "type": 0,
+      "value": "Allgemein"
     }
   ],
   "statistics.tracked-time": [
@@ -14730,10 +14736,82 @@
       "value": "Version 4.1.9"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.androidspacing": [
+    {
+      "type": 0,
+      "value": "Übermäßige Abstände an den Systemleisten unter Android wurden korrigiert."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugtabs": [
+    {
+      "type": 0,
+      "value": "Die Debug-Freischaltung von Tabs kann jetzt rückgängig gemacht werden und wird beim Zurücksetzen des Spielstands gelöscht."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugunlock": [
+    {
+      "type": 0,
+      "value": "Entwickleroptionen können jetzt mit 10 Überlaufpunkten freigeschaltet werden."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.durability": [
+    {
+      "type": 0,
+      "value": "Die Haltbarkeitsforschung wurde zu einer Karte zusammengefasst, die kumulierte Verbesserungen der Paneellebensdauer zeigt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.headers": [
+    {
+      "type": 0,
+      "value": "Überflüssige Kopfbereiche in Shop, Geschichte und Wiki wurden entfernt und das Symbol im Unendlichkeitszielfeld wurde ausgerichtet."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.infinityrate": [
+    {
+      "type": 0,
+      "value": "Auto Infinity zeigt jetzt die IP pro Minute der letzten abgeschlossenen Unendlichkeit statt der aktuellen und empfohlenen Schätzwerte."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.offlineall": [
+    {
+      "type": 0,
+      "value": "Die Option Alles am Offline-Zeit-Regler wählt jetzt die gesamte gespeicherte Menge aus."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purchasepersistence": [
+    {
+      "type": 0,
+      "value": "Die Kaufmengen für Quantum und Simulationen bleiben jetzt nach dem Neuladen erhalten."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.quantumhold": [
+    {
+      "type": 0,
+      "value": "Das Gedrückthalten der Quantum-Kauftasten bei festen Mengen wurde korrigiert."
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.scaling": [
     {
       "type": 0,
       "value": "Textskalierung und Layouts auf kleineren Bildschirmen verbessert."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.simulations": [
+    {
+      "type": 0,
+      "value": "Formeln, Fortschrittsanzeigen und kompakte Layouts der Simulationen wurden verbessert."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.speedrun": [
+    {
+      "type": 0,
+      "value": "Den Statistiken wurde ein Speedrun-Tab hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.terra": [
+    {
+      "type": 0,
+      "value": "Terra-Käufe zählen jetzt korrekt für den Produktionsbonus von Avocados."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

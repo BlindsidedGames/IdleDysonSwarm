@@ -103,8 +103,8 @@ export const infinityMessages = defineMessages({
   },
   currentRate: {
     id: 'infinity.rate.current',
-    defaultMessage: 'Current: {value} IP/min',
-    description: 'Current projected Infinity Point reward rate for this run.',
+    defaultMessage: 'Last Infinity: {value} IP/min',
+    description: 'Infinity Point reward rate from the last completed Infinity.',
   },
   peakRate: {
     id: 'infinity.rate.peak',

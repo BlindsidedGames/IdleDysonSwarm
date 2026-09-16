@@ -134,14 +134,6 @@ export function StorySurface({
 
   return (
     <div className="story-surface">
-      <header className="story-surface__summary">
-        <div>
-          <div className="story-surface__title" aria-hidden="true">
-            {intl.formatMessage(messages.region)}
-          </div>
-          <p>{intl.formatMessage(messages.introduction)}</p>
-        </div>
-      </header>
 
       <div className="story-surface__content">
         <div className="story-surface__chapters">
