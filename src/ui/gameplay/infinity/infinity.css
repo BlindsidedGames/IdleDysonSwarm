@@ -269,8 +269,7 @@
       var(--infinity-action-edge-safety) -
       var(--infinity-summary-inline-padding)
     );
-  /* Preserve centering when the shared symbol optical adjustment loads later. */
-  transform: translateY(calc(-50% + 0.06em));
+  transform: translateY(-50%);
 }
 
 .infinity-surface__progress-heading {
