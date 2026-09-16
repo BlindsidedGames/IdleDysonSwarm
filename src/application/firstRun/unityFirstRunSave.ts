@@ -1,3 +1,4 @@
+import releaseIdentity from '../../../hosts/native-release.json'
 import { createSpeedrunStatistics } from '../../simulation/speedrunStatistics'
 import { prepareIdb1Save, type PreparedSave } from '../../save/prepare'
 import { requireRecord } from '../../save/graph'
@@ -62,7 +63,12 @@ export function createUnityFirstRunPreparedSave(
     dyson[`botDistPreset${preset}`] = 0
   }
   candidate.dateStarted = startedAtUtc
-  candidate.idsSpeedruns = createSpeedrunStatistics(startedAtUtc, true, Date.parse(startedAtUtc))
+  candidate.idsSpeedruns = {
+    ...createSpeedrunStatistics(startedAtUtc, true, Date.parse(startedAtUtc)),
+    createdWithVersion: typeof __IDS_PACKAGED_RELEASE_IDENTITY__ === 'undefined'
+      ? releaseIdentity.marketingVersion
+      : __IDS_PACKAGED_RELEASE_IDENTITY__.marketingVersion,
+  }
   candidate.infinityAutomaticReset = false
   candidate.bottomNavigationPreferences = {
     version: 1,

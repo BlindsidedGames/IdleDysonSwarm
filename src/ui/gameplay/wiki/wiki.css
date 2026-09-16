@@ -10,7 +10,7 @@
   display: grid;
   block-size: 100%;
   min-block-size: 0;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   overflow: hidden;
   background:
     radial-gradient(circle at 72% 10%, rgb(201 165 238 / 9%), transparent 30rem),

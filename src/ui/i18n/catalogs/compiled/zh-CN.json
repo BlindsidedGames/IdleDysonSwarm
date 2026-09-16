@@ -3582,7 +3582,7 @@
   "infinity.rate.current": [
     {
       "type": 0,
-      "value": "当前："
+      "value": "上次无限: "
     },
     {
       "type": 1,
@@ -12361,6 +12361,24 @@
       "value": "统计"
     }
   ],
+  "statistics.save.activeElapsed": [
+    {
+      "type": 0,
+      "value": "游玩时间"
+    }
+  ],
+  "statistics.save.created": [
+    {
+      "type": 0,
+      "value": "存档创建时间"
+    }
+  ],
+  "statistics.save.createdWith": [
+    {
+      "type": 0,
+      "value": "存档创建时的版本"
+    }
+  ],
   "statistics.scope.lifetime": [
     {
       "type": 0,
@@ -12371,18 +12389,6 @@
     {
       "type": 0,
       "value": "当前量子运行"
-    }
-  ],
-  "statistics.speedruns.details": [
-    {
-      "type": 0,
-      "value": "关于这些记录"
-    }
-  ],
-  "statistics.speedruns.speedrunBasis": [
-    {
-      "type": 0,
-      "value": "自本存档开始以来的真实时间，包括离线时间。进度重置不会开始新流程。允许使用储存时间；2倍游戏速度保持不变。"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -12400,19 +12406,19 @@
   "statistics.speedruns.speedrunDebugQualification": [
     {
       "type": 0,
-      "value": "达到调试解锁条件 · 10溢出点"
+      "value": "已达到调试条件"
     }
   ],
   "statistics.speedruns.speedrunDoubleSpeed": [
     {
       "type": 0,
-      "value": "解锁2倍游戏速度"
+      "value": "现实2倍速度"
     }
   ],
   "statistics.speedruns.speedrunElapsed": [
     {
       "type": 0,
-      "value": "存档时长 / 流程耗时"
+      "value": "总经过时间"
     }
   ],
   "statistics.speedruns.speedrunEligibility": [
@@ -12437,12 +12443,6 @@
     {
       "type": 0,
       "value": "首次量子跃迁"
-    }
-  ],
-  "statistics.speedruns.speedrunHistory": [
-    {
-      "type": 0,
-      "value": "里程碑的使用标签描述达成时的流程状态。使用改变游戏进度的调试功能将使本流程失去资格。旧存档的时间或使用历史可能未知。"
     }
   ],
   "statistics.speedruns.speedrunIneligible": [
@@ -12503,6 +12503,12 @@
     {
       "type": 0,
       "value": "速通"
+    }
+  ],
+  "statistics.tab.general": [
+    {
+      "type": 0,
+      "value": "常规"
     }
   ],
   "statistics.tracked-time": [
@@ -14730,10 +14736,82 @@
       "value": "版本 4.1.9"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.androidspacing": [
+    {
+      "type": 0,
+      "value": "修复了Android系统栏周围间距过大的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugtabs": [
+    {
+      "type": 0,
+      "value": "现在可撤销Debug的标签页解锁，重置存档时也会清除该状态。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugunlock": [
+    {
+      "type": 0,
+      "value": "现在可花费10点溢出点数解锁开发者选项。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.durability": [
+    {
+      "type": 0,
+      "value": "将耐久度研究合并为一张卡片，显示太阳能板寿命的累计提升。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.headers": [
+    {
+      "type": 0,
+      "value": "移除了商店、故事和Wiki中多余的标题面板，并修正了无限目标输入框内的图标对齐。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.infinityrate": [
+    {
+      "type": 0,
+      "value": "自动无限现在显示上一次完成无限的每分钟无限点数，不再显示当前及推荐估算值。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.offlineall": [
+    {
+      "type": 0,
+      "value": "离线时间滑块的“全部”选项现在会选中所有已储存时间。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purchasepersistence": [
+    {
+      "type": 0,
+      "value": "量子和模拟的购买数量设置现在会在重新加载后保留。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.quantumhold": [
+    {
+      "type": 0,
+      "value": "修复了购买固定数量时长按量子购买按钮的问题。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.scaling": [
     {
       "type": 0,
       "value": "改进了小屏幕上的文字缩放和布局。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.simulations": [
+    {
+      "type": 0,
+      "value": "改进了模拟公式、进度显示和紧凑布局。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.speedrun": [
+    {
+      "type": 0,
+      "value": "在统计中添加了速通标签页。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.terra": [
+    {
+      "type": 0,
+      "value": "修复了Terra购买未计入Avocados生产加成的问题。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

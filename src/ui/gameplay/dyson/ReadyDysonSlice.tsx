@@ -1655,6 +1655,7 @@ export function ReadyDysonSlice({
                         }
                       >
                         <InfinitySurface
+                          lastInfinityCycle={gameplay.progression.statistics.recentInfinityCycles?.[0]}
                           onViewOverflow={() => navigateTo('avocato')}
                           locale={locale}
                           resources={gameplay.resources.infinity}

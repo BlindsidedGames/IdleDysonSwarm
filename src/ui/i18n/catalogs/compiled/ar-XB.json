@@ -6610,7 +6610,7 @@
     },
     {
       "type": 0,
-      "value": "Ↄnɹɹǝuʇ: "
+      "value": "⅂ɐsʇ Iuɟıuıʇʎ: "
     },
     {
       "type": 1,
@@ -25177,6 +25177,48 @@
       "value": "‬"
     }
   ],
+  "statistics.save.activeElapsed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝ dʅɐʎǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.save.created": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ɔɹǝɐʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.save.createdWith": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ɔɹǝɐʇǝp ʍıʇɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "statistics.scope.lifetime": [
     {
       "type": 0,
@@ -25199,34 +25241,6 @@
     {
       "type": 0,
       "value": "Ↄnɹɹǝuʇ Ònɐuʇnɯ ɹnu"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "statistics.speedruns.details": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "∀qonʇ ʇɥǝsǝ ɹǝɔoɹps"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "statistics.speedruns.speedrunBasis": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "ᴚǝɐʅ ǝʅɐdsǝp ʇıɯǝ sıuɔǝ ʇɥıs sɐʌǝ qǝƃɐu, ıuɔʅnpıuƃ ʇıɯǝ ɐʍɐʎ. ⅁ɐɯǝdʅɐʎ ɹǝsǝʇs ɹǝʇɐıu ʇɥıs ɹnu. Sʇoɹǝp ⊥ıɯǝ ıs ɐʅʅoʍǝp."
     },
     {
       "type": 0,
@@ -25268,7 +25282,7 @@
     },
     {
       "type": 0,
-      "value": "ᗡǝqnƃ bnɐʅıɟıɔɐʇıou · 10 Oʌǝɹɟʅoʍ Ԁoıuʇs"
+      "value": "ᗡǝqnƃ ᴚǝɐɔɥǝp"
     },
     {
       "type": 0,
@@ -25282,7 +25296,7 @@
     },
     {
       "type": 0,
-      "value": "2× ƃɐɯǝ sdǝǝp nuʅoɔʞǝp"
+      "value": "ᴚǝɐʅıʇʎ 2x Sdǝǝp"
     },
     {
       "type": 0,
@@ -25296,7 +25310,7 @@
     },
     {
       "type": 0,
-      "value": "Sɐʌǝ ɐƃǝ / ɹnu ǝʅɐdsǝp"
+      "value": "⊥oʇɐʅ ǝʅɐdsǝp ʇıɯǝ"
     },
     {
       "type": 0,
@@ -25359,20 +25373,6 @@
       "value": "‬"
     }
   ],
-  "statistics.speedruns.speedrunHistory": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "Wıʅǝsʇouǝ nsɐƃǝ ʅɐqǝʅs pǝsɔɹıqǝ ʇɥǝ ɹnu nd ʇo ʇɥɐʇ doıuʇ. ᗡǝqnƃ ƃɐɯǝdʅɐʎ ɐɔʇıous ɯɐʞǝ ʇɥǝ ɹnu ıuǝʅıƃıqʅǝ. Oʅpǝɹ sɐʌǝs ɯɐʎ ɥɐʌǝ nuʞuoʍu ʇıɯǝs oɹ nsɐƃǝ ɥısʇoɹʎ."
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
   "statistics.speedruns.speedrunIneligible": [
     {
       "type": 0,
@@ -25422,7 +25422,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝɐʅıʇʎ nuʅoɔʞǝp"
+      "value": "ᴚǝɐʅıʇʎ ∩uʅoɔʞǝp"
     },
     {
       "type": 0,
@@ -25507,6 +25507,20 @@
     {
       "type": 0,
       "value": "Sdǝǝpɹnus"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.tab.general": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ǝuǝɹɐʅ"
     },
     {
       "type": 0,
@@ -29778,6 +29792,132 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.androidspacing": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp ǝxɔǝss sdɐɔıuƃ ɐɹonup sʎsʇǝɯ qɐɹs ou ∀upɹoıp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugtabs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝqnƃ ʇɐq nuʅoɔʞıuƃ ɔɐu uoʍ qǝ ɹǝʌǝɹsǝp ɐup ıs ɔʅǝɐɹǝp ʍɥǝu ɹǝsǝʇʇıuƃ ʇɥǝ sɐʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugunlock": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝʌǝʅodǝɹ Odʇıous ɔɐu uoʍ qǝ nuʅoɔʞǝp ʍıʇɥ 10 Oʌǝɹɟʅoʍ Ԁoıuʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.durability": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯqıuǝp ᗡnɹɐqıʅıʇʎ ɹǝsǝɐɹɔɥ ıuʇo ouǝ ɔɐɹp sɥoʍıuƃ ɔnɯnʅɐʇıʌǝ dɐuǝʅ ʅıɟǝʇıɯǝ ndƃɹɐpǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.headers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɯoʌǝp ɹǝpnupɐuʇ Sʇoɹǝ, Sʇoɹʎ, ɐup Mıʞı ɥǝɐpǝɹ dɐuǝʅs ɐup ɔoɹɹǝɔʇǝp ʇɥǝ Iuɟıuıʇʎ ʇɐɹƃǝʇ-ɟıǝʅp ıɔou ɐʅıƃuɯǝuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.infinityrate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇo Iuɟıuıʇʎ uoʍ sɥoʍs ʇɥǝ ʅɐsʇ ɔoɯdʅǝʇǝp Iuɟıuıʇʎ’s IԀ-dǝɹ-ɯıunʇǝ ɹɐʇǝ ıusʇǝɐp oɟ ɔnɹɹǝuʇ ɐup ɹǝɔoɯɯǝupǝp ǝsʇıɯɐʇǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.offlineall": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp ʇɥǝ Oɟɟʅıuǝ ⊥ıɯǝ sʅıpǝɹ’s ∀ʅʅ odʇıou ʇo sǝʅǝɔʇ ʇɥǝ ɟnʅʅ sʇoɹǝp ɐɯonuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purchasepersistence": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ònɐuʇnɯ ɐup Sıɯnʅɐʇıou dnɹɔɥɐsǝ ɐɯonuʇs uoʍ dǝɹsısʇ ɐɟʇǝɹ ɹǝʅoɐpıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.quantumhold": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp ɥoʅpıuƃ Ònɐuʇnɯ dnɹɔɥɐsǝ qnʇʇous ʍɥǝu qnʎıuƃ ɟıxǝp bnɐuʇıʇıǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.scaling": [
     {
       "type": 0,
@@ -29786,6 +29926,48 @@
     {
       "type": 0,
       "value": "Iɯdɹoʌǝp ʇǝxʇ sɔɐʅıuƃ ɐup ʅɐʎonʇs ou sɯɐʅʅǝɹ sɔɹǝǝus."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.simulations": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdɹoʌǝp Sıɯnʅɐʇıou ɟoɹɯnʅɐs, dɹoƃɹǝss pısdʅɐʎs, ɐup ɔoɯdɐɔʇ ʅɐʎonʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.speedrun": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɐ Sdǝǝpɹnu ʇɐq ʇo Sʇɐʇısʇıɔs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.terra": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp ⊥ǝɹɹɐ dnɹɔɥɐsǝs uoʇ ɔonuʇıuƃ ʇoʍɐɹp ʇɥǝ ∀ʌoɔɐpos dɹopnɔʇıou qouns."
     },
     {
       "type": 0,

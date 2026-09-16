@@ -1,10 +1,13 @@
 import { defineMessages } from 'react-intl'
 
 export const statisticsMessages = defineMessages({
-  speedrunDetails: { id: 'statistics.speedruns.details', defaultMessage: 'About these records', description: 'Disclosure explaining speedrun timing and eligibility.' },
+  general: { id: 'statistics.tab.general', defaultMessage: 'General', description: 'General statistics tab.' },
+  saveCreatedWith: { id: 'statistics.save.createdWith', defaultMessage: 'Save created with', description: 'Game version originally used to create this save.' },
+  saveCreated: { id: 'statistics.save.created', defaultMessage: 'Save created', description: 'Exact save creation date and time.' },
+  activeElapsed: { id: 'statistics.save.activeElapsed', defaultMessage: 'Time played', description: 'Unaccelerated active runtime, excluding away time.' },
   speedruns: { id: 'statistics.speedruns.speedruns', defaultMessage: "Speedruns", description: 'Speedrun statistics label or explanation.' },
   speedrunCurrentSave: { id: 'statistics.speedruns.speedrunCurrentSave', defaultMessage: "Current save run", description: 'Speedrun statistics label or explanation.' },
-  speedrunElapsed: { id: 'statistics.speedruns.speedrunElapsed', defaultMessage: "Save age / run elapsed", description: 'Speedrun statistics label or explanation.' },
+  speedrunElapsed: { id: 'statistics.speedruns.speedrunElapsed', defaultMessage: "Total elapsed time", description: 'Speedrun statistics label or explanation.' },
   speedrunStored: { id: 'statistics.speedruns.speedrunStored', defaultMessage: "Stored Time used", description: 'Speedrun statistics label or explanation.' },
   speedrunDebug: { id: 'statistics.speedruns.speedrunDebug', defaultMessage: "Debug used", description: 'Speedrun statistics label or explanation.' },
   speedrunEligibility: { id: 'statistics.speedruns.speedrunEligibility', defaultMessage: "Run eligibility", description: 'Speedrun statistics label or explanation.' },
@@ -16,13 +19,11 @@ export const statisticsMessages = defineMessages({
   speedrunUnknown: { id: 'statistics.speedruns.speedrunUnknown', defaultMessage: "Unknown", description: 'Speedrun statistics label or explanation.' },
   speedrunFirstInfinity: { id: 'statistics.speedruns.speedrunFirstInfinity', defaultMessage: "First Infinity", description: 'Speedrun statistics label or explanation.' },
   speedrunFirstQuantum: { id: 'statistics.speedruns.speedrunFirstQuantum', defaultMessage: "First Quantum Leap", description: 'Speedrun statistics label or explanation.' },
-  speedrunReality: { id: 'statistics.speedruns.speedrunReality', defaultMessage: "Reality unlocked", description: 'Speedrun statistics label or explanation.' },
-  speedrunDoubleSpeed: { id: 'statistics.speedruns.speedrunDoubleSpeed', defaultMessage: "2× game speed unlocked", description: 'Speedrun statistics label or explanation.' },
-  speedrunDebugQualification: { id: 'statistics.speedruns.speedrunDebugQualification', defaultMessage: "Debug qualification · 10 Overflow Points", description: 'Speedrun statistics label or explanation.' },
+  speedrunReality: { id: 'statistics.speedruns.speedrunReality', defaultMessage: "Reality Unlocked", description: 'Speedrun statistics label or explanation.' },
+  speedrunDoubleSpeed: { id: 'statistics.speedruns.speedrunDoubleSpeed', defaultMessage: "Reality 2x Speed", description: 'Speedrun statistics label or explanation.' },
+  speedrunDebugQualification: { id: 'statistics.speedruns.speedrunDebugQualification', defaultMessage: "Debug Reached", description: 'Speedrun statistics label or explanation.' },
   speedrunTime: { id: 'statistics.speedruns.speedrunTime', defaultMessage: "Time reached", description: 'Speedrun statistics label or explanation.' },
   speedrunNotRecorded: { id: 'statistics.speedruns.speedrunNotRecorded', defaultMessage: "Not recorded", description: 'Speedrun statistics label or explanation.' },
-  speedrunBasis: { id: 'statistics.speedruns.speedrunBasis', defaultMessage: "Real elapsed time since this save began, including time away. Gameplay resets retain this run. Stored Time is allowed.", description: 'Speedrun statistics label or explanation.' },
-  speedrunHistory: { id: 'statistics.speedruns.speedrunHistory', defaultMessage: "Milestone usage labels describe the run up to that point. Debug gameplay actions make the run ineligible. Older saves may have unknown times or usage history.", description: 'Speedrun statistics label or explanation.' },
   region: {
     id: 'statistics.region',
     defaultMessage: 'Statistics',

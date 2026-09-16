@@ -1257,6 +1257,8 @@ describe('canonical game application engine', () => {
       eventContext: context(),
     })
 
+    const activeBefore = active.gameState.statistics.speedruns?.activeSeconds ?? 0
+    const storedBefore = stored.gameState.statistics.speedruns?.activeSeconds
     const activeResult = definition.advance(active, 1_000)
     const storedResult = definition.applyCommand(stored, {
       kind: 'internal.advance-stored-time',
@@ -1271,6 +1273,8 @@ describe('canonical game application engine', () => {
       accepted: true,
       changed: true,
     })
+    expect(active.gameState.statistics.speedruns?.activeSeconds).toBeCloseTo(activeBefore + 1)
+    expect(stored.gameState.statistics.speedruns?.activeSeconds).toBe(storedBefore)
     expect(active.gameState.dyson.facilities.assembly_lines[1]).toBe(1)
     expect(
       stored.gameState.dyson.facilities.assembly_lines[1],
@@ -1377,4 +1381,15 @@ test('mobile candidates retain a proven milestone before a later command removes
   expect(state.achievementEvidence.unlocked).toEqual([])
   const reduced = {...candidate, gameState:{...candidate.gameState, dyson:{...candidate.gameState.dyson,bots:0}}}
   expect(definition.forkState!(reduced).achievementEvidence?.unlocked).toContain('achievement.bots_42qi')
+})
+
+test('continuous active runtime is unaccelerated even with double game speed', () => {
+  const state = runtime()
+  Object.assign(state, { gameState: { ...state.gameState,
+    statistics: { ...state.gameState.statistics, speedruns: createSpeedrunStatistics(new Date().toISOString(), true) },
+    timeline: { ...state.gameState.timeline, doubleTime: { ...state.gameState.timeline.doubleTime, unlocked: true } },
+  } })
+  const definition = createCanonicalGameEngineDefinition({ eventContext: context() })
+  expect(definition.applyCommand(state, { kind: 'internal.advance-active-continuous', milliseconds: 1000 }).accepted).toBe(true)
+  expect(state.gameState.statistics.speedruns?.activeSeconds).toBeCloseTo(1)
 })

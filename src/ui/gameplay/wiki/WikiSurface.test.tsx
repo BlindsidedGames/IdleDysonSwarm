@@ -31,6 +31,18 @@ describe('Wiki patch-note content', () => {
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       'Improved text scaling and layouts on smaller screens.',
+      "Added a Speedrun tab to Statistics.",
+      "Developer Options can now be unlocked with 10 Overflow Points.",
+      "Quantum and Simulation purchase amounts now persist after reloading.",
+      "Fixed holding Quantum purchase buttons when buying fixed quantities.",
+      "Combined Durability research into one card showing cumulative panel lifetime upgrades.",
+      "Fixed Terra purchases not counting toward the Avocados production bonus.",
+      "Improved Simulation formulas, progress displays, and compact layouts.",
+      "Fixed excess spacing around system bars on Android.",
+      "Fixed the Offline Time slider’s All option to select the full stored amount.",
+      "Debug tab unlocking can now be reversed and is cleared when resetting the save.",
+      "Auto Infinity now shows the last completed Infinity’s IP-per-minute rate instead of current and recommended estimates.",
+      "Removed redundant Store, Story, and Wiki header panels and corrected the Infinity target-field icon alignment.",
     ])
     const previousList = screen.getByRole('heading', { name: 'Version 4.1.8' }).nextElementSibling as HTMLElement
     expect(within(previousList).getAllByRole('listitem')).toHaveLength(14)

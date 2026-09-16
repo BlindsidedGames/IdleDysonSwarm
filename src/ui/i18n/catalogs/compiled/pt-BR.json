@@ -3582,7 +3582,7 @@
   "infinity.rate.current": [
     {
       "type": 0,
-      "value": "Atual: "
+      "value": "Último Infinito: "
     },
     {
       "type": 1,
@@ -12361,6 +12361,24 @@
       "value": "Estatísticas"
     }
   ],
+  "statistics.save.activeElapsed": [
+    {
+      "type": 0,
+      "value": "Tempo jogado"
+    }
+  ],
+  "statistics.save.created": [
+    {
+      "type": 0,
+      "value": "Save criado em"
+    }
+  ],
+  "statistics.save.createdWith": [
+    {
+      "type": 0,
+      "value": "Jogo salvo criado com"
+    }
+  ],
   "statistics.scope.lifetime": [
     {
       "type": 0,
@@ -12371,18 +12389,6 @@
     {
       "type": 0,
       "value": "Ciclo Quântico atual"
-    }
-  ],
-  "statistics.speedruns.details": [
-    {
-      "type": 0,
-      "value": "Sobre estes registros"
-    }
-  ],
-  "statistics.speedruns.speedrunBasis": [
-    {
-      "type": 0,
-      "value": "Tempo real desde o início deste save, incluindo o tempo ausente. Reinícios de progresso mantêm esta partida. Tempo armazenado é permitido; a velocidade ×2 permanece igual."
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -12400,19 +12406,19 @@
   "statistics.speedruns.speedrunDebugQualification": [
     {
       "type": 0,
-      "value": "Requisito de Debug · 10 pontos de Transbordamento"
+      "value": "Debug alcançado"
     }
   ],
   "statistics.speedruns.speedrunDoubleSpeed": [
     {
       "type": 0,
-      "value": "Velocidade ×2 desbloqueada"
+      "value": "Realidade: velocidade 2x"
     }
   ],
   "statistics.speedruns.speedrunElapsed": [
     {
       "type": 0,
-      "value": "Idade do save / duração"
+      "value": "Tempo total decorrido"
     }
   ],
   "statistics.speedruns.speedrunEligibility": [
@@ -12437,12 +12443,6 @@
     {
       "type": 0,
       "value": "Primeiro salto quântico"
-    }
-  ],
-  "statistics.speedruns.speedrunHistory": [
-    {
-      "type": 0,
-      "value": "As etiquetas dos marcos descrevem a partida até aquele momento. Ações de progresso do Debug tornam a partida inelegível. Saves antigos podem ter tempos ou histórico desconhecidos."
     }
   ],
   "statistics.speedruns.speedrunIneligible": [
@@ -12503,6 +12503,12 @@
     {
       "type": 0,
       "value": "Speedruns"
+    }
+  ],
+  "statistics.tab.general": [
+    {
+      "type": 0,
+      "value": "Geral"
     }
   ],
   "statistics.tracked-time": [
@@ -14730,10 +14736,82 @@
       "value": "Versão 4.1.9"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.androidspacing": [
+    {
+      "type": 0,
+      "value": "Corrigidos os espaços excessivos ao redor das barras do sistema no Android."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugtabs": [
+    {
+      "type": 0,
+      "value": "O desbloqueio de abas pelo Debug agora pode ser revertido e é removido ao redefinir o save."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.debugunlock": [
+    {
+      "type": 0,
+      "value": "As Opções de desenvolvedor agora podem ser desbloqueadas com 10 pontos de Transbordamento."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.durability": [
+    {
+      "type": 0,
+      "value": "A pesquisa de Durabilidade foi reunida em um cartão que mostra as melhorias acumuladas da vida útil dos painéis."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.headers": [
+    {
+      "type": 0,
+      "value": "Removidos os cabeçalhos redundantes da Loja, História e Wiki e corrigido o alinhamento do ícone no campo de meta de Infinito."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.infinityrate": [
+    {
+      "type": 0,
+      "value": "Auto Infinity agora mostra os PI por minuto do último Infinito concluído em vez das estimativas atuais e recomendadas."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.offlineall": [
+    {
+      "type": 0,
+      "value": "A opção Tudo do controle de Tempo offline agora seleciona toda a quantidade armazenada."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purchasepersistence": [
+    {
+      "type": 0,
+      "value": "As quantidades de compra de Quantum e Simulações agora são mantidas após recarregar."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.quantumhold": [
+    {
+      "type": 0,
+      "value": "Corrigidas as compras de quantidades fixas ao segurar os botões de compra de Quantum."
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.scaling": [
     {
       "type": 0,
       "value": "Melhoramos o dimensionamento do texto e os layouts em telas menores."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.simulations": [
+    {
+      "type": 0,
+      "value": "Melhoradas as fórmulas, as indicações de progresso e os layouts compactos das Simulações."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.speedrun": [
+    {
+      "type": 0,
+      "value": "Adicionada uma aba Speedrun às Estatísticas."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.terra": [
+    {
+      "type": 0,
+      "value": "Corrigidas as compras de Terra que não contavam para o bônus de produção de Avocados."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

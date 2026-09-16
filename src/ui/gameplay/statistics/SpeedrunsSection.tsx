@@ -14,20 +14,17 @@ export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStati
   const labels = { firstInfinity: messages.speedrunFirstInfinity, firstQuantumLeap: messages.speedrunFirstQuantum,
     reality: messages.speedrunReality, doubleSpeed: messages.speedrunDoubleSpeed, debugQualification: messages.speedrunDebugQualification }
   return <section className="statistics-speedruns" aria-label={intl.formatMessage(messages.speedruns)}>
-    <h2>{intl.formatMessage(messages.speedruns)}</h2>
     <article className="statistics-card">
       <h3>{intl.formatMessage(messages.speedrunCurrentSave)}</h3>
       <dl className="statistics-speedruns__facts">
+        <div><dt>{intl.formatMessage(messages.saveCreated)}</dt><dd>{run?.startedAtMilliseconds == null ? intl.formatMessage(messages.speedrunUnknown) : intl.formatDate(run.startedAtMilliseconds, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' })}</dd></div>
+        <div><dt>{intl.formatMessage(messages.saveCreatedWith)}</dt><dd>{run?.createdWithVersion ?? intl.formatMessage(messages.speedrunUnknown)}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunElapsed)}</dt><dd>{elapsed === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, elapsed)}</dd></div>
+        <div><dt>{intl.formatMessage(messages.activeElapsed)}</dt><dd>{run?.activeSeconds === undefined ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, run.activeSeconds)}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunStored)}</dt><dd>{usage(run?.storedTime ?? 'unknown')}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunDebug)}</dt><dd>{usage(run?.debug ?? 'unknown')}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunEligibility)}</dt><dd>{intl.formatMessage(run?.debug === 'yes' ? messages.speedrunIneligible : run && speedrunEligible(run) ? messages.speedrunEligible : messages.speedrunUnverified)}</dd></div>
       </dl>
-      <details className="statistics-speedruns__details">
-        <summary>{intl.formatMessage(messages.speedrunDetails)}</summary>
-        <p className="statistics-speedruns__note">{intl.formatMessage(messages.speedrunBasis)}</p>
-      <p className="statistics-speedruns__note">{intl.formatMessage(messages.speedrunHistory)}</p>
-      </details>
     </article>
     <div className="statistics-speedruns__milestones">
       {SPEEDRUN_MILESTONES.map(id => {
