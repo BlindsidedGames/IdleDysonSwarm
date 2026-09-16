@@ -1,7 +1,7 @@
 import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
 import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
-import { infinityChallenges, isBlankSlateActive } from './infinityChallenges'
+import { infinityChallenges, isInfinityChallengeActive, isBlankSlateActive } from './infinityChallenges'
 import { ordinaryInfinityBotThreshold } from './infinityCycle'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
@@ -154,21 +154,26 @@ export function applyCanonicalInfinityReset(
   if (!rulesResult.ok) return failed(state, rulesResult.issues)
 
   const challenge = infinityChallenges(state)
-  const challengeWon = !request.restartOnly && isBlankSlateActive(state) &&
+  const completionKey = challenge.active === 'trial-and-error' ? 'trialAndErrorCompleted' : 'blankSlateCompleted'
+  const challengeWon = !request.restartOnly && isInfinityChallengeActive(state) &&
     !request.breakInfinity && state.dyson.bots >= ordinaryInfinityBotThreshold(state.quantum.divisionsPurchased)
-  if (!request.restartOnly && isBlankSlateActive(state) && !challengeWon) {
-    return failed(state, [{ code: 'INFINITY_RESET_REQUEST_INVALID', path: 'request', detail: 'Blank Slate requires the ordinary Infinity boundary.' }])
+  if (!request.restartOnly && isInfinityChallengeActive(state) && !challengeWon) {
+    return failed(state, [{ code: 'INFINITY_RESET_REQUEST_INVALID', path: 'request', detail: 'The challenge requires the ordinary Infinity boundary.' }])
   }
-  if (challengeWon && !challenge.blankSlateCompleted && challenge.galvanizers >= DISCRETE_MAXIMUM) {
+  if (challengeWon && !challenge[completionKey] && challenge.galvanizers >= DISCRETE_MAXIMUM) {
     return failed(state, [{ code: 'INFINITY_RESET_STATE_INVALID', path: 'challenges.galvanizers', detail: 'Galvanizer balance is full.' }])
   }
   const nextChallenges = request.restartOnly ? challenge : {
     ...challenge, unlocked: true,
     ...(challengeWon ? {
       active: null,
-      blankSlateCompleted: true,
+      [completionKey]: true,
+      completionSeconds: {
+        ...challenge.completionSeconds,
+        [challenge.active!]: Math.min(challenge.completionSeconds?.[challenge.active!] ?? Infinity, state.infinity.lastCycleDurationSeconds),
+      },
       hasEarnedGalvanizer: true,
-      galvanizers: challenge.blankSlateCompleted ? challenge.galvanizers : addDiscrete(challenge.galvanizers, 1n),
+      galvanizers: challenge[completionKey] ? challenge.galvanizers : addDiscrete(challenge.galvanizers, 1n),
     } : {}),
   }
   const previousPoints = state.infinity.points

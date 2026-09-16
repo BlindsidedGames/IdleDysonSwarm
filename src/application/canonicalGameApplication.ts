@@ -522,7 +522,7 @@ export class CanonicalGameApplicationFacade {
     const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
       envelope.command.kind === 'skill.set-preset-assignment'
     if (presetPriorityChange || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
-        envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
+        envelope.command.kind === 'challenge.enter-trial-and-error' || envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
       const result = await this.application.dispatchCommitFirst(envelope,
         presetPriorityChange ? 'skill-preset' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
       return {
@@ -1054,11 +1054,11 @@ export function createCanonicalGameEngineDefinition(
     validateTransitionState: (state) =>
       validateRuntimeTransitionState(state, eventContext),
     applyCommand: (candidate, command) => {
-      if (command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
+      if (command.kind === 'challenge.enter-trial-and-error' || command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
         const artifact = deriveCanonicalArtifactSkillPoints(candidate.gameState, eventContext.realityUpgradeDefinitions)
         if (!artifact.ok) return reject('CHALLENGE_RESET_FAILED', artifact.issue?.detail ?? 'Artifact skill points unavailable.')
         const reset = restartInfinityChallenge(candidate.gameState,
-          command.kind === 'challenge.enter-blank-slate' ? 'enter' : 'abandon', artifact.value)
+          command.kind === 'challenge.abandon' ? 'abandon' : 'enter', artifact.value, command.kind === 'challenge.enter-trial-and-error' ? 'trial-and-error' : 'blank-slate')
         if (!reset.ok) return reject(reset.code, 'The challenge could not be started or abandoned.')
         const derived = deriveBasicDysonState(reset.state, candidate.compatibilityTuning,
           candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)

@@ -449,6 +449,7 @@ function PatchNotesArticle() {
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion419Scaling)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419Speedrun)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Trial)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419DebugUnlock)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419PurchasePersistence)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419QuantumHold)}</li>

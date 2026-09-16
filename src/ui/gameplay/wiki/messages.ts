@@ -96,6 +96,7 @@ export const wikiMessages = defineMessages({
   patchNotesMostRecent: { id: 'wiki.patch-notes.most-recent', defaultMessage: 'Most Recent', description: 'Heading for the latest Wiki patch notes.' },
   patchNotesVersion419: { id: 'wiki.patch-notes.version-4-1-9', defaultMessage: 'Version 4.1.9', description: 'Version 4.1.9 release notes.' },
   patchNotesVersion419Scaling: { id: 'wiki.patch-notes.version-4-1-9.scaling', defaultMessage: 'Improved text scaling and layouts on smaller screens.', description: 'Version 4.1.9 release notes.' },
+  patchNotesVersion419Trial: { id: 'wiki.patch-notes.version-4-1-9.trial', defaultMessage: 'Added a new challenge: Trial & Error' },
   patchNotesVersion419Speedrun: { id: "wiki.patch-notes.version-4-1-9.speedrun", defaultMessage: "Added a Speedrun tab to Statistics.", description: 'Version 4.1.9 release notes.' },
   patchNotesVersion419DebugUnlock: { id: "wiki.patch-notes.version-4-1-9.debugunlock", defaultMessage: "Developer Options can now be unlocked with 10 Overflow Points.", description: 'Version 4.1.9 release notes.' },
   patchNotesVersion419PurchasePersistence: { id: "wiki.patch-notes.version-4-1-9.purchasepersistence", defaultMessage: "Quantum and Simulation purchase amounts now persist after reloading.", description: 'Version 4.1.9 release notes.' },

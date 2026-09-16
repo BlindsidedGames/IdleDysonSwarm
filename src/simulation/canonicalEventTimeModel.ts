@@ -1,5 +1,5 @@
 import { observeSpeedruns } from './speedrunStatistics'
-import { isBreakInfinityEnabled, isBlankSlateActive } from './infinityChallenges'
+import { isBreakInfinityEnabled, isInfinityChallengeActive } from './infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementFacts } from '../achievements/contracts'
@@ -1068,7 +1068,7 @@ export class CanonicalEventTimeModel
   private applyQuantumLeap(): void {
     this.captureAchievementMilestones()
     const state = this.carrier.gameState
-    if (hasReachedOverflow(state) || isBlankSlateActive(state)) {
+    if (hasReachedOverflow(state) || isInfinityChallengeActive(state)) {
       this.queuedInputOutcome = { accepted: false, changed: false, code: 'OVERFLOW_RESET_REQUIRED' }
       return
     }

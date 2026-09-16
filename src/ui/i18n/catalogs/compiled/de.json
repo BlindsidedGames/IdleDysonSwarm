@@ -358,7 +358,7 @@
   "challenges.blankSlate.description": [
     {
       "type": 0,
-      "value": "Schließe eine normale Unendlichkeit ab, ohne normale Skills zuzuweisen. Galvanisierte Basisskills bleiben aktiv. Bots, Gebäude und Forschung bleiben verfügbar."
+      "value": "Schließe eine normale Unendlichkeit ab, ohne Skillpunkte zu verwenden."
     }
   ],
   "challenges.cancel": [
@@ -370,7 +370,11 @@
   "challenges.completed": [
     {
       "type": 0,
-      "value": "Abgeschlossen · Galvanisierer erhalten"
+      "value": "Abgeschlossen in: "
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "challenges.confirm": [
@@ -404,7 +408,7 @@
   "challenges.replay": [
     {
       "type": 0,
-      "value": "Unbeschriebenes Blatt wiederholen"
+      "value": "Wiederholen"
     }
   ],
   "challenges.restart": [
@@ -416,7 +420,21 @@
   "challenges.reward": [
     {
       "type": 0,
-      "value": "Erster Abschluss: 1 Galvanisierer. Belohnung und Abschluss bleiben nach einem Overflow erhalten."
+      "value": "Belohnung "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    }
+  ],
+  "challenges.rewarded": [
+    {
+      "type": 0,
+      "value": "Erhalten "
+    },
+    {
+      "type": 1,
+      "value": "reward"
     }
   ],
   "challenges.route": [
@@ -434,13 +452,49 @@
   "challenges.start": [
     {
       "type": 0,
-      "value": "Unbeschriebenes Blatt starten"
+      "value": "Starten"
+    }
+  ],
+  "challenges.timeUnknown": [
+    {
+      "type": 0,
+      "value": "Unbekannt"
     }
   ],
   "challenges.title": [
     {
       "type": 0,
       "value": "Unendlichkeitsherausforderungen"
+    }
+  ],
+  "challenges.trialAndError": [
+    {
+      "type": 0,
+      "value": "Versuch & Irrtum"
+    }
+  ],
+  "challenges.trialAndError.active": [
+    {
+      "type": 0,
+      "value": "Versuch & Irrtum aktiv · Forschungskäufe deaktiviert"
+    }
+  ],
+  "challenges.trialAndError.description": [
+    {
+      "type": 0,
+      "value": "Schließe eine normale Unendlichkeit ohne Forschung ab."
+    }
+  ],
+  "challenges.trialAndError.replay": [
+    {
+      "type": 0,
+      "value": "Wiederholen"
+    }
+  ],
+  "challenges.trialAndError.start": [
+    {
+      "type": 0,
+      "value": "Starten"
     }
   ],
   "challenges.view": [
@@ -6297,6 +6351,18 @@
     {
       "type": 0,
       "value": " pro Stufe)"
+    }
+  ],
+  "research.challengeActive": [
+    {
+      "type": 0,
+      "value": "Versuch & Irrtum aktiv · Manuelle und automatische Forschungskäufe sind deaktiviert."
+    }
+  ],
+  "research.challengeDisabled": [
+    {
+      "type": 0,
+      "value": "Deaktiviert"
     }
   ],
   "research.completed-hidden": [
@@ -14812,6 +14878,12 @@
     {
       "type": 0,
       "value": "Terra-Käufe zählen jetzt korrekt für den Produktionsbonus von Avocados."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.trial": [
+    {
+      "type": 0,
+      "value": "Neue Herausforderung hinzugefügt: Versuch & Irrtum"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

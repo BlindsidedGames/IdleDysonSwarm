@@ -197,13 +197,13 @@
     "defaultMessage": "Blank Slate"
   },
   "challenges.blankSlate.description": {
-    "defaultMessage": "Complete a normal Infinity without assigning ordinary skills. Galvanized base skills stay active. Bots, buildings and research remain available."
+    "defaultMessage": "Complete a normal Infinity without using skill points."
   },
   "challenges.cancel": {
     "defaultMessage": "Cancel"
   },
   "challenges.completed": {
-    "defaultMessage": "Completed · Galvanizer earned"
+    "defaultMessage": "Completed in: {time}"
   },
   "challenges.confirm": {
     "defaultMessage": "Confirm restart"
@@ -218,13 +218,16 @@
     "defaultMessage": "Spend 1 Galvanizer in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Galvanization cannot be undone and survives Overflow."
   },
   "challenges.replay": {
-    "defaultMessage": "Replay Blank Slate"
+    "defaultMessage": "Replay"
   },
   "challenges.restart": {
     "defaultMessage": "This starts a fresh Infinity run without awarding IP. Infinity upgrades and later layers are kept. Abandoning also starts a fresh normal run."
   },
   "challenges.reward": {
-    "defaultMessage": "First completion: 1 galvanizer. Your reward and completion survive Overflow."
+    "defaultMessage": "Reward {reward}"
+  },
+  "challenges.rewarded": {
+    "defaultMessage": "Earned {reward}"
   },
   "challenges.route": {
     "defaultMessage": "Challenges"
@@ -233,10 +236,28 @@
     "defaultMessage": "Show Challenges"
   },
   "challenges.start": {
-    "defaultMessage": "Start Blank Slate"
+    "defaultMessage": "Start"
+  },
+  "challenges.timeUnknown": {
+    "defaultMessage": "Unknown"
   },
   "challenges.title": {
     "defaultMessage": "Infinity Challenges"
+  },
+  "challenges.trialAndError": {
+    "defaultMessage": "Trial & Error"
+  },
+  "challenges.trialAndError.active": {
+    "defaultMessage": "Trial & Error active · Research purchases disabled"
+  },
+  "challenges.trialAndError.description": {
+    "defaultMessage": "Complete a normal Infinity without research."
+  },
+  "challenges.trialAndError.replay": {
+    "defaultMessage": "Replay"
+  },
+  "challenges.trialAndError.start": {
+    "defaultMessage": "Start"
   },
   "challenges.view": {
     "defaultMessage": "View challenge"
@@ -2900,6 +2921,12 @@
   "research.card.purchase-boost": {
     "defaultMessage": "Purchase for a boost! (<value>{perLevel}%</value> per level)",
     "description": "Research effect line before its first purchase."
+  },
+  "research.challengeActive": {
+    "defaultMessage": "Trial & Error active · Manual and automatic research purchases are disabled."
+  },
+  "research.challengeDisabled": {
+    "defaultMessage": "Disabled"
   },
   "research.completed-hidden": {
     "defaultMessage": "All currently available Research is completed and hidden.",
@@ -7560,6 +7587,9 @@
   "wiki.patch-notes.version-4-1-9.terra": {
     "defaultMessage": "Fixed Terra purchases not counting toward the Avocados production bonus.",
     "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.trial": {
+    "defaultMessage": "Added a new challenge: Trial & Error"
   },
   "wiki.patch-notes.version-4-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

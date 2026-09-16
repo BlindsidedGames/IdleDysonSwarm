@@ -1,3 +1,4 @@
+import { isTrialAndErrorActive } from './infinityChallenges'
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
@@ -118,6 +119,7 @@ export type CanonicalResearchPurchaseResult =
     }
 
 export type CanonicalResearchPurchasePreviewCode =
+  | 'challenge-active'
   | 'purchasable'
   | 'unknown-research'
   | 'definition-gap'
@@ -264,7 +266,7 @@ export function selectCanonicalResearchPresentationFacts(
     visible: meetsPrerequisites || currentLevel > 0,
     maxed,
     automationActive:
-      state.infinity.automationUnlocked.research &&
+      !isTrialAndErrorActive(state) && state.infinity.automationUnlocked.research &&
       isAutomationEnabled(definition, state),
     effectKind,
     perLevelEffect,
@@ -379,7 +381,7 @@ export function runResearchAutomationTick(
   > = deriveSecretBuffs(state.infinity.secretsOfTheUniverse)
     .researchCoefficientOverrides,
 ): ResearchAutomationTickResult {
-  if (!state.infinity.automationUnlocked.research) {
+  if (isTrialAndErrorActive(state) || !state.infinity.automationUnlocked.research) {
     return {
       state,
       visitedResearchIds: Object.freeze([]),
@@ -510,6 +512,7 @@ function previewPurchase(
   policy: SimulationAutomationPolicy =
     'preserve-configured-mode',
 ): InternalResearchPurchasePreview {
+  if (isTrialAndErrorActive(state)) return emptyPreview(definition.id, 'challenge-active')
   const currentLevel = levelsById[definition.id] ?? 0
   const maximumLevel =
     definition.maxLevel >= 0 ? definition.maxLevel : null

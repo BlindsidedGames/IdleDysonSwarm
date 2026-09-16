@@ -1,3 +1,8 @@
+import { getGameAssetsByKind } from '../game-data/catalog'
+import { RESEARCH_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import { galvanizeCanonicalSkill } from './canonicalSkillTransactions'
+import { validateInfinityChallenges } from './infinityChallenges'
+import { previewCanonicalResearchPurchase, purchaseCanonicalResearch, runResearchAutomationTick } from './researchAutomation'
 import { describe, expect, test } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { routeCanonicalGameCommand } from '../application/canonicalGameCommands'
@@ -86,4 +91,83 @@ describe('Blank Slate', () => {
     expect(resumed.challenges).toEqual(state.challenges)
     expect(isBreakInfinityEnabled(resumed)).toBe(false)
   })
+})
+
+describe('Trial and Error', () => {
+  function trial() {
+    const before = unlocked()
+    const result = restartInfinityChallenge({ ...before,
+      infinity: { ...before.infinity, permanentSkillPoints: 10n },
+      skills: { ...before.skills, activeAutoAssignment: ['startHereTree'] },
+      research: { ...before.research, levelsById: { 'research.panel_lifetime_1': 1 } },
+      quantum: { ...before.quantum, unlocks: { ...before.quantum.unlocks, breakTheLoop: true } },
+    }, 'enter', 0n, 'trial-and-error')
+    if (!result.ok) throw new Error(result.code)
+    return result.state
+  }
+  test('starts clean, keeps skills available, and requires the ordinary Infinity boundary', () => {
+    const state = trial()
+    expect(state.challenges?.trialAndErrorCompleted ?? false).toBe(false)
+    expect(state.research.levelsById).toEqual({})
+    expect(state.skills.byId.startHereTree?.owned).toBe(true)
+    expect(isBreakInfinityEnabled(state)).toBe(false)
+    expect(restartInfinityChallenge(state, 'enter', 0n)).toMatchObject({ ok: false })
+    expect(applyCanonicalInfinityReset(state, request)).toMatchObject({ ok: false })
+    expect(applyCanonicalInfinityReset({ ...state, dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(0n) } }, { ...request, breakInfinity: true })).toMatchObject({ ok: false })
+    const restored = hydrateGameState(dehydrateGameState(hydrate(), state)).state
+    expect(restored.challenges?.active).toBe('trial-and-error')
+    const abandoned = restartInfinityChallenge(restored, 'abandon', 0n)
+    expect(abandoned.ok && abandoned.state.challenges).toMatchObject({ active: null, galvanizers: 0n })
+  })
+  test('awards once, persists through Overflow, and unlocks Galvanization independently', () => {
+    const state = trial()
+    const win = applyCanonicalInfinityReset({ ...state, dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(0n) } }, request)
+    if (!win.ok) throw new Error('completion failed')
+    expect(win.state.challenges).toMatchObject({ active: null, trialAndErrorCompleted: true, blankSlateCompleted: false, galvanizers: 1n })
+    const galvanized = galvanizeCanonicalSkill(win.state, 'startHereTree')
+    expect(galvanized.accepted).toBe(true)
+    if (galvanized.accepted) expect(validateInfinityChallenges(galvanized.state.challenges)).toBeNull()
+    const replay = restartInfinityChallenge(win.state, 'enter', 0n, 'trial-and-error')
+    if (!replay.ok) throw new Error(replay.code)
+    const again = applyCanonicalInfinityReset({ ...replay.state, dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(0n) } }, request)
+    expect(again.ok && again.state.challenges?.galvanizers).toBe(1n)
+    const overflow = applyCanonicalOverflowReset({ ...win.state, dyson: { ...win.state.dyson, bots: 4e242 } })
+    expect(overflow.ok && overflow.state.challenges?.trialAndErrorCompleted).toBe(true)
+  })
+  test('blocks every research purchase and automation without changing preferences', () => {
+    const initial = trial()
+    const state = { ...initial, dyson: { ...initial.dyson, science: 1e30 },
+      infinity: { ...initial.infinity, automationUnlocked: { ...initial.infinity.automationUnlocked, research: true } } }
+    const tuning = hydrate().compatibilityTuning
+    for (const asset of getGameAssetsByKind(RESEARCH_DEFINITION_ASSET_KIND)) {
+      expect(previewCanonicalResearchPurchase(state, tuning, asset.id)).toMatchObject({ eligible: false, code: 'challenge-active' })
+      expect(purchaseCanonicalResearch(state, tuning, asset.id)).toMatchObject({ accepted: false, state })
+    }
+    expect(runResearchAutomationTick(state, tuning)).toMatchObject({ state, purchases: [] })
+    const abandoned = restartInfinityChallenge(state, 'abandon', 0n)
+    if (!abandoned.ok) throw new Error(abandoned.code)
+    expect(abandoned.state.research.automation).toEqual(state.research.automation)
+    const normal = { ...abandoned.state, dyson: { ...abandoned.state.dyson, science: 1e30 } }
+    expect(purchaseCanonicalResearch(normal, tuning, 'research.panel_lifetime_1').accepted).toBe(true)
+  })
+})
+
+test.each(['blank-slate', 'trial-and-error'] as const)('%s retains its best completion time through replays and saving', challengeId => {
+  let state = unlocked() as ReturnType<typeof enter>
+  for (const seconds of [75, 90, 62.5]) {
+    const started = restartInfinityChallenge(state, 'enter', 0n, challengeId)
+    if (!started.ok) throw new Error(started.code)
+    const reset = applyCanonicalInfinityReset({ ...started.state,
+      infinity: { ...started.state.infinity, lastCycleDurationSeconds: seconds },
+      dyson: { ...started.state.dyson, bots: ordinaryInfinityBotThreshold(0n) },
+    }, request)
+    if (!reset.ok) throw new Error('completion failed')
+    state = reset.state
+    expect(state.challenges?.completionSeconds?.[challengeId]).toBe(Math.min(75, seconds))
+    expect(state.challenges?.galvanizers).toBe(1n)
+  }
+  const loaded = hydrateGameState(dehydrateGameState(hydrate(), state)).state
+  expect(loaded.challenges?.completionSeconds?.[challengeId]).toBe(62.5)
+  expect(validateInfinityChallenges({ ...state.challenges, completionSeconds: { [challengeId]: -1 } })).not.toBeNull()
+  expect(validateInfinityChallenges({ ...state.challenges, completionSeconds: { [challengeId]: NaN } })).not.toBeNull()
 })

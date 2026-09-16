@@ -88,6 +88,7 @@ type ResearchSettingCommand = Extract<
 >
 
 export interface ResearchSurfaceProps {
+  readonly researchDisabled?: boolean
   readonly locale: EnabledLocale
   readonly cards: readonly FrontendResearchCardPreview[]
   readonly researchers: number
@@ -115,6 +116,7 @@ export interface ResearchSurfaceProps {
  * effects, automation and command execution to canonical application facts.
  */
 export function ResearchSurface({
+  researchDisabled = false,
   locale,
   cards,
   researchers,
@@ -205,6 +207,7 @@ export function ResearchSurface({
   return (
     <div className="research-surface">
       <div className="research-surface__scroll-region">
+        {researchDisabled && <p role="status">{intl.formatMessage(messages.challengeActive)}</p>}
         {visibleCards.length > 0 ? (
           <ol className="research-surface__grid">
             {visibleCards.map((card) => (
@@ -557,7 +560,9 @@ function ResearchCard({
           state={pending ? 'pending' : failed ? 'failure' : 'idle'}
           disabled={disabled}
           aria-label={intl.formatMessage(
-            card.maxed
+            card.code === 'challenge-active'
+              ? messages.challengeActive
+              : card.maxed
               ? messages.purchasedAccessible
               : card.automationActive
                 ? messages.automaticAccessible
@@ -571,7 +576,9 @@ function ResearchCard({
           onClick={() => void purchase()}
         >
           <span className="research-card__purchase-quantity">
-            {card.maxed
+            {card.code === 'challenge-active'
+              ? intl.formatMessage(messages.challengeDisabled)
+              : card.maxed
               ? intl.formatMessage(
                   card.stackedDurability ? messages.durabilityMaxed : messages.purchased,
                 )
@@ -583,7 +590,7 @@ function ResearchCard({
                   quantity,
                 })}
           </span>
-          {card.maxed ? null : (
+          {card.maxed || card.code === 'challenge-active' ? null : (
             <span className="research-card__purchase-cost">
               <ResearchCostSymbol />
               <bdi>{cost}</bdi>

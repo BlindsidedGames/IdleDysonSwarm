@@ -1466,6 +1466,7 @@ export function ReadyDysonSlice({
                     }
                   >
                     <ResearchSurface
+                      researchDisabled={gameplay.progression.challenges?.active === 'trial-and-error'}
                       locale={locale}
                       cards={gameplay.previews.research.cards}
                       researchers={resources.researchers}

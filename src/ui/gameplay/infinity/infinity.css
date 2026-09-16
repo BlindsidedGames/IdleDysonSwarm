@@ -620,3 +620,17 @@
 }
 
 .infinity-challenge-card > .ui-button { align-self: center; padding-inline: 0.7rem; }
+
+.infinity-challenges > .ui-collapsible-section__content {
+  display: grid;
+  gap: var(--ui-section-gap);
+}
+
+.infinity-challenge-card .infinity-challenge-card__galvanizer {
+  /* The masked artwork sits above the surrounding text baseline. */
+  transform: translateY(0.1em);
+  inline-size: 1em;
+  block-size: 1em;
+  mask-size: 150%;
+  -webkit-mask-size: 150%;
+}
