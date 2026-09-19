@@ -69,3 +69,6 @@ Thumbs.db
 hosts/electron/steam/runtime/
 
 /node_modules
+
+# Locally preserved soundtrack master; delivery audio lives in public/audio.
+/source-assets/audio/IDS-master.wav
