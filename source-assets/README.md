@@ -3,8 +3,11 @@
 These are Web-owned masters and platform reference assets. They are not copied
 into the shipped browser bundle unless a build step explicitly consumes them.
 
-- `audio/IDS-master.wav` is the lossless soundtrack master, SHA-256
+- `audio/IDS-master.wav` is an optional, ignored local lossless soundtrack master, SHA-256
   `2ab4636ee5970a729ece6106dfbb8b8252ae44a8b1fa89a780f224b4e4296602`.
+  It is preserved separately by the maintainer and is no longer tracked in new
+  checkouts. Older commits can still reference the historical Git LFS object. Builds and tests do not require it; all app targets use the tracked
+  `public/audio/ids-soundtrack.m4a`.
 - `branding/unity-app-icon.png` is the 1024x1024 application icon assigned to
   the archived Unity iOS and Android builds. It is the canonical source for
   current Web, mobile, and desktop launcher icons, SHA-256
