@@ -31,6 +31,7 @@ export interface CanonicalGameStateV1 {
 }
 
 export interface GameMetaState {
+  readonly botBoost?: import('../simulation/botBoost').BotBoostState
   /** The culture-formatted Unity value is preserved until date parity is characterized. */
   readonly createdAtLegacyText: string | null
   readonly tutorialComplete: boolean

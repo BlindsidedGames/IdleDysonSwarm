@@ -6,11 +6,13 @@ export const SPEEDRUN_MILESTONES = ['firstInfinity', 'firstQuantumLeap', 'realit
 export type SpeedrunMilestoneId = typeof SPEEDRUN_MILESTONES[number]
 export type RunUsage = 'yes' | 'no' | 'unknown'
 export interface SpeedrunMilestone {
+  readonly botBoostUsed?: boolean
   readonly elapsedSeconds: number | null
   readonly storedTime: RunUsage
   readonly debug: RunUsage
 }
 export interface SpeedrunStatistics {
+  readonly botBoostUsed?: boolean
   readonly createdWithVersion?: string
   readonly activeSeconds?: number
   readonly activeTimeComplete?: boolean
@@ -60,7 +62,7 @@ export function observeSpeedruns(state: CanonicalGameStateV1, now = Date.now(), 
   const milestones = { ...run.milestones }
   for (const id of SPEEDRUN_MILESTONES) {
     if (reached[id] && !milestones[id]) milestones[id] = {
-      elapsedSeconds: historical ? null : elapsedSpeedrunSeconds(run, now), storedTime: run.storedTime, debug: run.debug,
+      elapsedSeconds: historical ? null : elapsedSpeedrunSeconds(run, now), storedTime: run.storedTime, debug: run.debug, botBoostUsed: run.botBoostUsed === true,
     }
   }
   return { ...state, statistics: { ...state.statistics, speedruns: { ...run, milestones } } }
@@ -88,6 +90,7 @@ export function validateSpeedrunStatistics(value: unknown): string | null {
   const seconds = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0
   const usage = (v: unknown) => v === 'yes' || v === 'no' || v === 'unknown'
   if (!record(value) || value.version !== 1 ||
+    (value.botBoostUsed !== undefined && typeof value.botBoostUsed !== 'boolean') ||
     !(value.startedAtMilliseconds === null || seconds(value.startedAtMilliseconds)) ||
     !seconds(value.observedAtMilliseconds) || typeof value.clockUncertain !== 'boolean' ||
     !usage(value.storedTime) || !usage(value.debug) || !record(value.milestones)) return 'Invalid speedrun statistics.'
@@ -97,6 +100,7 @@ export function validateSpeedrunStatistics(value: unknown): string | null {
   if (typeof value.startedAtMilliseconds === 'number' && value.startedAtMilliseconds > Number(value.observedAtMilliseconds)) return 'Invalid speedrun clock.'
   for (const [id, milestone] of Object.entries(value.milestones)) {
     if (!SPEEDRUN_MILESTONES.includes(id as SpeedrunMilestoneId) || !record(milestone) ||
+      (milestone.botBoostUsed !== undefined && typeof milestone.botBoostUsed !== 'boolean') ||
       !(milestone.elapsedSeconds === null || seconds(milestone.elapsedSeconds)) ||
       !usage(milestone.storedTime) || !usage(milestone.debug)) return 'Invalid speedrun milestone.'
   }

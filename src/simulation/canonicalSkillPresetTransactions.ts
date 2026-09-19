@@ -1,4 +1,4 @@
-import { SUBSKILL_ASSETS } from './skillSubskills'
+import { SUBSKILL_ASSETS, SKILL_AUGMENTS } from './skillSubskills'
 import { galvanizationDefinition, isGalvanized } from './galvanization'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
@@ -18,12 +18,13 @@ import { normalizeCanonicalBotDistribution } from './botDistribution'
 const PRESET_FORMAT_VERSION = 1
 
 interface SkillQueueDefinition {
+  readonly augmentParent?: string
   readonly required: readonly string[]
   readonly shadowRequired: readonly string[]
   readonly exclusiveWith: readonly string[]
   readonly unlock:
     | 'always'
-    | 'galvanized-cash-science'
+    | 'galvanized-parent'
     | 'first-infinity'
     | 'fragments'
     | 'purity'
@@ -431,7 +432,8 @@ function loadQueueDefinitions(state: { readonly challenges?: Readonly<InfinityCh
           asset.data.shadowRequirementIds,
         ),
         exclusiveWith: stringArray(asset.data.exclusiveWithIds),
-        unlock: SUBSKILL_ASSETS.some((subskill) => subskill.id === asset.id) ? 'galvanized-cash-science' as const : queueSkillUnlock(asset.data),
+        augmentParent: SKILL_AUGMENTS.find(augment => augment.id === asset.id)?.parentSkillId,
+        unlock: SUBSKILL_ASSETS.some((subskill) => subskill.id === asset.id) ? 'galvanized-parent' as const : queueSkillUnlock(asset.data),
       }, asset.id, state)),
     ]),
   )
@@ -459,8 +461,8 @@ function isQueueSkillUnlocked(
   state: Readonly<SkillUnlockState>,
 ): boolean {
   switch (definition.unlock) {
-    case 'galvanized-cash-science':
-      return isGalvanized(state, 'startHereTree')
+    case 'galvanized-parent':
+      return definition.augmentParent !== undefined && isGalvanized(state, definition.augmentParent)
     case 'always':
       return true
     case 'first-infinity':

@@ -1330,7 +1330,7 @@
   "dyson.facilities.details.formula.assigned-skill-points": [
     {
       "type": 0,
-      "value": "Assigned Skill Points"
+      "value": "Unspent Skill Points"
     }
   ],
   "dyson.facilities.details.formula.effective-planets": [
@@ -10206,7 +10206,7 @@
   "skills.node.purityOfBody.technical": [
     {
       "type": 0,
-      "value": "Multiply Bots by 1.25x for each unspent Skill Point, compounding exponentially."
+      "value": "Increase Bot production by 25% per unspent Skill Point. Bonuses are additive."
     }
   ],
   "skills.node.purityOfMind.description": [
@@ -10224,7 +10224,7 @@
   "skills.node.purityOfMind.technical": [
     {
       "type": 0,
-      "value": "Multiply Cash/Science by 1.5x for each unspent Skill Point, compounding exponentially."
+      "value": "Increase Cash and Science production by 50% per unspent Skill Point. Bonuses are additive."
     }
   ],
   "skills.node.purityOfSEssence.description": [
@@ -10242,7 +10242,7 @@
   "skills.node.purityOfSEssence.technical": [
     {
       "type": 0,
-      "value": "Multiply Everything by 1.42x for each unspent Skill Point, compounding exponentially."
+      "value": "Increase Cash, Science, Bot, and all facility production based on unspent Skill Points. Starts at 1.42× with 1 point, with increasing gains per point, reaching 256× at 42 points."
     }
   ],
   "skills.node.quantumComputing.description": [
@@ -10764,7 +10764,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "For each second this skill is assigned and the app is running, all production increases by 1% this scales additively, and resets on Infinity/Quantum Leap."
+      "value": "Increase Cash, Science, Bot, and all facility production by 1% per second while assigned. Bonuses are additive. Charges during Stored Time simulation and resets on Infinity or Quantum Leap."
     }
   ],
   "skills.node.superSwarm.description": [
@@ -11385,6 +11385,24 @@
       "value": "name"
     }
   ],
+  "skills.production-cash": [
+    {
+      "type": 0,
+      "value": "Cash"
+    }
+  ],
+  "skills.production-panels": [
+    {
+      "type": 0,
+      "value": "Panels"
+    }
+  ],
+  "skills.production-science": [
+    {
+      "type": 0,
+      "value": "Science"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -11569,6 +11587,12 @@
       "value": "Show partial preset application notifications"
     }
   ],
+  "skills.show-production-comparisons": [
+    {
+      "type": 0,
+      "value": "Show production comparisons"
+    }
+  ],
   "skills.show-skill-labels": [
     {
       "type": 0,
@@ -11585,6 +11609,132 @@
     {
       "type": 0,
       "value": "Drag to reorder or use the arrows. Required skills are bought first. Points are saved until the next skill can be afforded."
+    }
+  ],
+  "skills.srs.afterglow.description": [
+    {
+      "type": 0,
+      "value": "The last universe is gone, but some of its particles haven’t taken the hint."
+    }
+  ],
+  "skills.srs.afterglow.effect": [
+    {
+      "type": 0,
+      "value": "Retain 10% of SRS charge through Infinity, with no cap. Adds to Hot Start. Quantum Leap clears retained charge."
+    }
+  ],
+  "skills.srs.afterglow.name": [
+    {
+      "type": 0,
+      "value": "Afterglow"
+    }
+  ],
+  "skills.srs.deepExposure.description": [
+    {
+      "type": 0,
+      "value": "Your scientists recommend prolonged exposure. From behind a very thick window."
+    }
+  ],
+  "skills.srs.deepExposure.effect": [
+    {
+      "type": 0,
+      "value": "Increase SRS charging speed by 10% per minute this augment is assigned, up to 200% after 20 minutes. Resets on Infinity or Quantum Leap. Bonuses are additive."
+    }
+  ],
+  "skills.srs.deepExposure.name": [
+    {
+      "type": 0,
+      "value": "Deep Exposure"
+    }
+  ],
+  "skills.srs.focusedBeam.description": [
+    {
+      "type": 0,
+      "value": "You ask the particles to form an orderly queue. Nobody expected that to work."
+    }
+  ],
+  "skills.srs.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "Increase the SRS bonus above 1× by 50% for Cash or Science, whichever has more Bots assigned, and halve it for the other. Equal allocation leaves both unchanged."
+    }
+  ],
+  "skills.srs.focusedBeam.name": [
+    {
+      "type": 0,
+      "value": "Focused Beam"
+    }
+  ],
+  "skills.srs.hotStart.description": [
+    {
+      "type": 0,
+      "value": "Your scientists preheated the equipment. They used the pizza setting, but it seems to have worked."
+    }
+  ],
+  "skills.srs.hotStart.effect": [
+    {
+      "type": 0,
+      "value": "Gain 30 minutes of SRS charge on first assignment each Infinity."
+    }
+  ],
+  "skills.srs.hotStart.name": [
+    {
+      "type": 0,
+      "value": "Hot Start"
+    }
+  ],
+  "skills.srs.researchActivity.description": [
+    {
+      "type": 0,
+      "value": "Every breakthrough gets a celebratory button press. Nobody remembers what the button was originally for."
+    }
+  ],
+  "skills.srs.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "Gaining a research level increases SRS charging speed by 150% for 30 seconds. Generated levels count. Further gains refresh the duration. Bonuses are additive."
+    }
+  ],
+  "skills.srs.researchActivity.name": [
+    {
+      "type": 0,
+      "value": "Research Activity"
+    }
+  ],
+  "skills.srs.researchConversion.description": [
+    {
+      "type": 0,
+      "value": "You plug the research department into the reactor. Peer review is now a fire hazard."
+    }
+  ],
+  "skills.srs.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "Reduce Science production by 50%. Increase SRS charging speed by 100%. Bonuses are additive."
+    }
+  ],
+  "skills.srs.researchConversion.name": [
+    {
+      "type": 0,
+      "value": "Research Conversion"
+    }
+  ],
+  "skills.srs.stellarMemory.description": [
+    {
+      "type": 0,
+      "value": "Your scientists keep their notes between universes. Most of them say “try not to do that again.”"
+    }
+  ],
+  "skills.srs.stellarMemory.effect": [
+    {
+      "type": 0,
+      "value": "Increase SRS charging speed by 10% × log10(total seconds spent with SRS assigned). Time accumulates across resets and includes Stored Time simulation, but excludes bonus charge. Bonuses are additive."
+    }
+  ],
+  "skills.srs.stellarMemory.name": [
+    {
+      "type": 0,
+      "value": "Stellar Memory"
     }
   ],
   "skills.subskill-assign": [
@@ -12087,6 +12237,12 @@
     {
       "type": 0,
       "value": "Another tab is using this game"
+    }
+  ],
+  "statistics.bot-boost-used": [
+    {
+      "type": 0,
+      "value": "Bot Boost Used"
     }
   ],
   "statistics.cause.artificial-intelligence": [
@@ -12673,6 +12829,120 @@
       "value": "price"
     }
   ],
+  "store.boost.activate": [
+    {
+      "type": 0,
+      "value": "Activate"
+    }
+  ],
+  "store.boost.active": [
+    {
+      "type": 1,
+      "value": "time"
+    },
+    {
+      "type": 0,
+      "value": " remaining"
+    }
+  ],
+  "store.boost.add": [
+    {
+      "type": 0,
+      "value": "Add 5 min"
+    }
+  ],
+  "store.boost.claim": [
+    {
+      "type": 0,
+      "value": "Claim 5 min"
+    }
+  ],
+  "store.boost.close": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
+  "store.boost.description": [
+    {
+      "type": 0,
+      "value": "Double Bot gains for 5 minutes. Stack up to 10 minutes."
+    }
+  ],
+  "store.boost.failed": [
+    {
+      "type": 0,
+      "value": "The boost could not be updated. Try again."
+    }
+  ],
+  "store.boost.games": [
+    {
+      "type": 0,
+      "value": "More games"
+    }
+  ],
+  "store.boost.navigation": [
+    {
+      "type": 0,
+      "value": "Store: 2× Bots, "
+    },
+    {
+      "type": 1,
+      "value": "status"
+    }
+  ],
+  "store.boost.permanent": [
+    {
+      "type": 0,
+      "value": "Permanent"
+    }
+  ],
+  "store.boost.permanent-description": [
+    {
+      "type": 0,
+      "value": "Double Bot gains without promotions. Can be switched off."
+    }
+  ],
+  "store.boost.permanent-title": [
+    {
+      "type": 0,
+      "value": "Permanent 2× Bots"
+    }
+  ],
+  "store.boost.play": [
+    {
+      "type": 0,
+      "value": "Play "
+    },
+    {
+      "type": 1,
+      "value": "game"
+    }
+  ],
+  "store.boost.promotion": [
+    {
+      "type": 0,
+      "value": "Game promotion"
+    }
+  ],
+  "store.boost.ready": [
+    {
+      "type": 0,
+      "value": "Ready"
+    }
+  ],
+  "store.boost.title": [
+    {
+      "type": 0,
+      "value": "2× Bots"
+    }
+  ],
+  "store.boost.wait": [
+    {
+      "type": 0,
+      "value": "Top up at 5:00"
+    }
+  ],
   "store.browser-introduction": [
     {
       "type": 0,
@@ -12872,6 +13142,36 @@
       "value": "Family Supporter Tier"
     }
   ],
+  "store.promo.echoes": [
+    {
+      "type": 0,
+      "value": "Explore a fantasy world and grow stronger through combat and upgrades."
+    }
+  ],
+  "store.promo.eternum": [
+    {
+      "type": 0,
+      "value": "Build an idle empire through upgrades and permanent progress."
+    }
+  ],
+  "store.promo.nanite": [
+    {
+      "type": 0,
+      "value": "Grow a nanite swarm through compounding production."
+    }
+  ],
+  "store.promo.pulse": [
+    {
+      "type": 0,
+      "value": "Build your citadel and survive escalating waves."
+    }
+  ],
+  "store.promo.whitecell": [
+    {
+      "type": 0,
+      "value": "Build a virus, draft mutations and evolve across new hosts."
+    }
+  ],
   "store.region": [
     {
       "type": 0,
@@ -12881,13 +13181,13 @@
   "store.restore.description": [
     {
       "type": 0,
-      "value": "Restore checks only Double Infinity Points and Developer Options. Supporter tiers are consumable and are not generally restorable without an account-backed ledger."
+      "value": "Restore checks permanent upgrades. Supporter tiers are consumable and cannot be restored."
     }
   ],
   "store.restore.inventory-description": [
     {
       "type": 0,
-      "value": "Restore checks your Steam inventory for supporter purchases, Developer Options and Double Infinity Points. Supporter items stay in your inventory and can be purchased again."
+      "value": "Restore checks your Steam inventory for permanent upgrades and supporter purchases. Supporter items stay in your inventory and can be purchased again."
     }
   ],
   "store.status.loading": [
@@ -14805,13 +15105,31 @@
   "wiki.patch-notes.version-4-1-9.androidspacing": [
     {
       "type": 0,
-      "value": "Fixed excess spacing around system bars on Android."
+      "value": "Fixed excess spacing around system bars."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.augments": [
+    {
+      "type": 0,
+      "value": "Added seven augments for Super-Radiant Scattering."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.bot-boost": [
+    {
+      "type": 0,
+      "value": "Added a temporary 2× Bot boost in the Store, with up to 10 minutes banked."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.comparisons": [
+    {
+      "type": 0,
+      "value": "Added live production comparisons when assigning or unassigning skills, with an option to hide them."
     }
   ],
   "wiki.patch-notes.version-4-1-9.debugtabs": [
     {
       "type": 0,
-      "value": "Debug tab unlocking can now be reversed and is cleared when resetting the save."
+      "value": "Debug tab unlocking can now be reversed and clears when resetting the save."
     }
   ],
   "wiki.patch-notes.version-4-1-9.debugunlock": [
@@ -14829,13 +15147,19 @@
   "wiki.patch-notes.version-4-1-9.headers": [
     {
       "type": 0,
-      "value": "Removed redundant Store, Story, and Wiki header panels and corrected the Infinity target-field icon alignment."
+      "value": "Removed redundant Store, Story, and Wiki headers and improved Infinity input alignment."
     }
   ],
   "wiki.patch-notes.version-4-1-9.infinityrate": [
     {
       "type": 0,
-      "value": "Auto Infinity now shows the last completed Infinity’s IP-per-minute rate instead of current and recommended estimates."
+      "value": "Auto Infinity now shows the last completed Infinity’s IP-per-minute rate."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.megastructures": [
+    {
+      "type": 0,
+      "value": "Purity of Essence and Super-Radiant Scattering now also boost Megastructure production."
     }
   ],
   "wiki.patch-notes.version-4-1-9.offlineall": [
@@ -14844,10 +15168,22 @@
       "value": "Fixed the Offline Time slider’s All option to select the full stored amount."
     }
   ],
+  "wiki.patch-notes.version-4-1-9.permanent-boost": [
+    {
+      "type": 0,
+      "value": "Added an optional permanent 2× Bot boost purchase, which can be switched on or off."
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.purchasepersistence": [
     {
       "type": 0,
       "value": "Quantum and Simulation purchase amounts now persist after reloading."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purity": [
+    {
+      "type": 0,
+      "value": "Rebalanced Purity scaling. Body and Mind bonuses are now additive."
     }
   ],
   "wiki.patch-notes.version-4-1-9.quantumhold": [
@@ -14865,13 +15201,19 @@
   "wiki.patch-notes.version-4-1-9.simulations": [
     {
       "type": 0,
-      "value": "Improved Simulation formulas, progress displays, and compact layouts."
+      "value": "Improved Simulation formulas and progress displays."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.skill-tree": [
+    {
+      "type": 0,
+      "value": "Improved skill-tree spacing and added distinct connections for Galvanized skills."
     }
   ],
   "wiki.patch-notes.version-4-1-9.speedrun": [
     {
       "type": 0,
-      "value": "Added a Speedrun tab to Statistics."
+      "value": "Added a Speedrun tab to Statistics, including Bot boost usage."
     }
   ],
   "wiki.patch-notes.version-4-1-9.terra": [
@@ -14883,7 +15225,7 @@
   "wiki.patch-notes.version-4-1-9.trial": [
     {
       "type": 0,
-      "value": "Added a new challenge: Trial & Error"
+      "value": "Added a new challenge: Trial & Error."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

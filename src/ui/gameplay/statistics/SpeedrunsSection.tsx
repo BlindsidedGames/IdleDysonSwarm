@@ -4,6 +4,7 @@ import { elapsedSpeedrunSeconds, SPEEDRUN_MILESTONES, speedrunEligible, type Run
 import { formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { statisticsMessages as messages } from './messages'
+import { boostMessages } from '../store/boostMessages'
 
 export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStatistics; readonly locale: EnabledLocale }) {
   const intl = useIntl()
@@ -23,6 +24,7 @@ export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStati
         <div><dt>{intl.formatMessage(messages.activeElapsed)}</dt><dd>{run?.activeSeconds === undefined ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, run.activeSeconds)}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunStored)}</dt><dd>{usage(run?.storedTime ?? 'unknown')}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunDebug)}</dt><dd>{usage(run?.debug ?? 'unknown')}</dd></div>
+        <div><dt>{intl.formatMessage(boostMessages.used)}</dt><dd>{usage(run?.botBoostUsed ? 'yes' : 'no')}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunEligibility)}</dt><dd>{intl.formatMessage(run?.debug === 'yes' ? messages.speedrunIneligible : run && speedrunEligible(run) ? messages.speedrunEligible : messages.speedrunUnverified)}</dd></div>
       </dl>
     </article>
@@ -36,6 +38,7 @@ export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStati
             {milestone && <>
               <div><dt>{intl.formatMessage(messages.speedrunStored)}</dt><dd>{usage(milestone.storedTime)}</dd></div>
               <div><dt>{intl.formatMessage(messages.speedrunDebug)}</dt><dd>{usage(milestone.debug)}</dd></div>
+              <div><dt>{intl.formatMessage(boostMessages.used)}</dt><dd>{usage(milestone.botBoostUsed ? 'yes' : 'no')}</dd></div>
             </>}
           </dl>
         </article>

@@ -384,6 +384,7 @@ function normalizeHostOwnership(
 ): Readonly<HostEntitlementOwnership> {
   return Object.freeze({
     doubleInfinityPoints: ownership?.doubleInfinityPoints === true,
+    ...(ownership?.botBoost === undefined ? {} : { botBoost: ownership.botBoost === true }),
     developerOptions: ownership?.developerOptions === true,
     supporterCatGallery: ownership?.supporterCatGallery === true,
   })

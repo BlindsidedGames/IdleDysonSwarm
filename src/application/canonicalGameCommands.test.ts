@@ -213,6 +213,8 @@ const COMMAND_EXAMPLES = [
     requiredStepIndex: 0,
   },
   { kind: 'time.upgrade-stored-capacity' },
+  { kind: 'boost.claim' },
+  { kind: 'boost.set-enabled', enabled: false },
   {
     kind: 'time.request-stored-time-spend',
     requestedSeconds: 120,

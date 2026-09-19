@@ -574,6 +574,7 @@ class IdleDysonNativePlugin : Plugin() {
         call.resolve(JSObject().apply {
             put("promoted", promoted)
             put("doubleInfinityPoints", entitlementCache.read().doubleInfinityPoints)
+            put("botBoost", entitlementCache.read().botBoost)
         })
     }
 
@@ -600,6 +601,7 @@ class IdleDysonNativePlugin : Plugin() {
     ) {
         call.resolve(JSObject().apply {
             put("doubleInfinityPoints", ownership.doubleInfinityPoints)
+            put("botBoost", ownership.botBoost)
             put("developerOptions", ownership.developerOptions)
             put("supporterCatGallery", ownership.supporterCatGallery)
             put("providerAvailable", providerAvailable)
@@ -730,6 +732,7 @@ class IdleDysonNativePlugin : Plugin() {
             "ids.tiptier3",
             "ids.devoptions",
             "ids.doubleip",
+            "ids.botboost",
         )
     }
 }

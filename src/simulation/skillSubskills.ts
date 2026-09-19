@@ -9,18 +9,41 @@ export const CASH_SCIENCE_SUBSKILLS = Object.freeze({
   production: 'subskill.cashScience.production',
 } as const)
 
+export const SRS_AUGMENTS = Object.freeze({
+  hotStart: 'subskill.srs.hotStart',
+  afterglow: 'subskill.srs.afterglow',
+  deepExposure: 'subskill.srs.deepExposure',
+  focusedBeam: 'subskill.srs.focusedBeam',
+  researchConversion: 'subskill.srs.researchConversion',
+  researchActivity: 'subskill.srs.researchActivity',
+  stellarMemory: 'subskill.srs.stellarMemory',
+} as const)
+
 export interface SkillAugmentDefinition {
   readonly id: string
   readonly parentSkillId: string
+  readonly cost: number
   readonly requiredSkillIds: readonly string[]
 }
 
 export const SKILL_AUGMENTS: readonly SkillAugmentDefinition[] = Object.freeze(
-  Object.values(CASH_SCIENCE_SUBSKILLS).map((id) => Object.freeze({
+  [...Object.values(CASH_SCIENCE_SUBSKILLS).map((id) => Object.freeze({
     id,
     parentSkillId: 'startHereTree',
+    cost: 1,
     requiredSkillIds: Object.freeze(['startHereTree']),
   })),
+  ...Object.entries(SRS_AUGMENTS).map(([key, id]) => Object.freeze({
+    id, parentSkillId: 'superRadiantScattering',
+    cost: key === 'hotStart' || key === 'deepExposure' ? 3
+      : key === 'researchActivity' || key === 'stellarMemory' ? 2 : 1,
+    requiredSkillIds: Object.freeze(
+      key === 'stellarMemory' ? [SRS_AUGMENTS.researchActivity, SRS_AUGMENTS.researchConversion] :
+      key === 'afterglow' ? [SRS_AUGMENTS.hotStart] :
+      key === 'researchConversion' ? [SRS_AUGMENTS.focusedBeam] :
+      key === 'researchActivity' ? [SRS_AUGMENTS.deepExposure, SRS_AUGMENTS.focusedBeam] :
+      ['superRadiantScattering']),
+  }))],
 )
 
 export function skillAugments(parentSkillId: string): readonly SkillAugmentDefinition[] {
@@ -28,10 +51,10 @@ export function skillAugments(parentSkillId: string): readonly SkillAugmentDefin
 }
 
 export const SUBSKILL_ASSETS: readonly RuntimeGameAsset[] = Object.freeze(
-  SKILL_AUGMENTS.map(({ id, requiredSkillIds }) => ({
+  SKILL_AUGMENTS.map(({ id, cost, requiredSkillIds }) => ({
     id, kind: SKILL_DEFINITION_ASSET_KIND,
     data: {
-      cost: 1, refundable: true, isFragment: false,
+      cost, refundable: true, isFragment: false,
       requiredSkillIds: [...requiredSkillIds], shadowRequirementIds: [],
       exclusiveWithIds: [], unrefundableWithIds: [], effects: [],
       firstRunBlocked: false, purityLine: false, terraLine: false,
@@ -51,4 +74,10 @@ export function isSubskillUnlocked(state: Readonly<CanonicalGameStateV1>, id: st
 
 export function hasCashScienceSubskill(state: Readonly<CanonicalGameStateV1>, bonus: keyof typeof CASH_SCIENCE_SUBSKILLS): boolean {
   return isGalvanized(state, 'startHereTree') && state.skills.byId[CASH_SCIENCE_SUBSKILLS[bonus]]?.owned === true
+}
+
+export function hasSrsAugment(state: Pick<CanonicalGameStateV1, 'skills' | 'challenges'>, bonus: keyof typeof SRS_AUGMENTS): boolean {
+  return isGalvanized(state, 'superRadiantScattering') &&
+    state.skills.byId.superRadiantScattering?.owned === true &&
+    state.skills.byId[SRS_AUGMENTS[bonus]]?.owned === true
 }

@@ -1,4 +1,4 @@
-import { powerContinuous } from './numeric'
+import { purityBodyMultiplier, purityEssenceMultiplier } from './purityMultipliers'
 
 /**
  * Canonical inputs consumed by Unity's dynamic facility production and
@@ -65,7 +65,7 @@ export function resolveDynamicFacilitySkillEffect(
     case 'dysonSubsidies':
       return context.starsSurrounded >= 1 ? 2 : 1
     case 'purityOfBody':
-      return powerContinuous(1.25, context.assignedSkillPoints)
+      return purityBodyMultiplier(context.assignedSkillPoints)
     case 'clusterNetworking':
       return context.serversTotal > 1
         ? 1 + UNITY_FLOAT_005 * Math.log10(context.serversTotal)
@@ -83,7 +83,7 @@ export function resolveDynamicFacilitySkillEffect(
     case 'galacticPradigmShift':
       return context.galaxiesEngulfed >= 1 ? 3 : 1.5
     case 'purityOfSEssence':
-      return powerContinuous(1.42, context.assignedSkillPoints)
+      return purityEssenceMultiplier(context.assignedSkillPoints)
     case 'superRadiantScattering':
       return (
         1 + 0.01 * context.superRadiantScatteringTimerSeconds

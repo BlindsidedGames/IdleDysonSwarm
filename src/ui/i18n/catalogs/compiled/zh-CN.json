@@ -1330,7 +1330,7 @@
   "dyson.facilities.details.formula.assigned-skill-points": [
     {
       "type": 0,
-      "value": "已分配技能点"
+      "value": "未使用技能点"
     }
   ],
   "dyson.facilities.details.formula.effective-planets": [
@@ -10206,7 +10206,7 @@
   "skills.node.purityOfBody.technical": [
     {
       "type": 0,
-      "value": "每个未使用技能点使机器人数量乘以 1.25，指数复合叠加。"
+      "value": "每个未使用技能点使机器人产量提高25%。加成为加法叠加。"
     }
   ],
   "skills.node.purityOfMind.description": [
@@ -10224,7 +10224,7 @@
   "skills.node.purityOfMind.technical": [
     {
       "type": 0,
-      "value": "每个未使用技能点使现金/科学乘以 1.5，指数复合叠加。"
+      "value": "每个未使用技能点使现金和科学产量提高50%。加成为加法叠加。"
     }
   ],
   "skills.node.purityOfSEssence.description": [
@@ -10242,7 +10242,7 @@
   "skills.node.purityOfSEssence.technical": [
     {
       "type": 0,
-      "value": "每个未使用技能点使一切产出乘以 1.42，指数复合叠加。"
+      "value": "根据未使用技能点提高现金、科学、机器人和所有设施的产量。1点时为1.42倍，每点带来的增益逐渐增加，42点时达到256倍。"
     }
   ],
   "skills.node.quantumComputing.description": [
@@ -10764,7 +10764,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "分配此技能且应用运行时，每秒使全部产量以加法提高 1%；无限/量子跃迁时重置。"
+      "value": "分配此技能期间，每秒使现金、科学、机器人和所有设施的产量提高1%。加成为加法叠加。在储存时间模拟期间也会累积，并在无限或量子跃迁时重置。"
     }
   ],
   "skills.node.superSwarm.description": [
@@ -11385,6 +11385,24 @@
       "value": "name"
     }
   ],
+  "skills.production-cash": [
+    {
+      "type": 0,
+      "value": "现金"
+    }
+  ],
+  "skills.production-panels": [
+    {
+      "type": 0,
+      "value": "面板"
+    }
+  ],
+  "skills.production-science": [
+    {
+      "type": 0,
+      "value": "科学"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -11569,6 +11587,12 @@
       "value": "显示预设部分应用通知"
     }
   ],
+  "skills.show-production-comparisons": [
+    {
+      "type": 0,
+      "value": "显示产量对比"
+    }
+  ],
   "skills.show-skill-labels": [
     {
       "type": 0,
@@ -11585,6 +11609,132 @@
     {
       "type": 0,
       "value": "拖动排序或使用箭头。先购买前置技能，点数会保留到足够购买下一个技能。"
+    }
+  ],
+  "skills.srs.afterglow.description": [
+    {
+      "type": 0,
+      "value": "上一个宇宙已经没了，但有些粒子似乎还没领会到该走了。"
+    }
+  ],
+  "skills.srs.afterglow.effect": [
+    {
+      "type": 0,
+      "value": "无限时保留10%的SRS充能，无上限。与热启动叠加。量子跃迁会清除保留的充能。"
+    }
+  ],
+  "skills.srs.afterglow.name": [
+    {
+      "type": 0,
+      "value": "余辉"
+    }
+  ],
+  "skills.srs.deepExposure.description": [
+    {
+      "type": 0,
+      "value": "科学家们建议延长照射时间。他们是隔着一扇非常厚的窗户说的。"
+    }
+  ],
+  "skills.srs.deepExposure.effect": [
+    {
+      "type": 0,
+      "value": "此强化每分配一分钟，SRS充能速度提高10%，20分钟后达到200%上限。无限或量子跃迁时重置。加成为加法叠加。"
+    }
+  ],
+  "skills.srs.deepExposure.name": [
+    {
+      "type": 0,
+      "value": "深度曝光"
+    }
+  ],
+  "skills.srs.focusedBeam.description": [
+    {
+      "type": 0,
+      "value": "你让粒子们排好队。谁也没想到这招居然管用。"
+    }
+  ],
+  "skills.srs.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "现金或科学中分配机器人较多的一方，其SRS超出1倍的加成提高50%，另一方的加成减半。分配相等时双方不变。"
+    }
+  ],
+  "skills.srs.focusedBeam.name": [
+    {
+      "type": 0,
+      "value": "聚焦光束"
+    }
+  ],
+  "skills.srs.hotStart.description": [
+    {
+      "type": 0,
+      "value": "科学家们提前预热了设备。他们用的是披萨模式，不过好像还真管用。"
+    }
+  ],
+  "skills.srs.hotStart.effect": [
+    {
+      "type": 0,
+      "value": "每次无限期间首次分配时，获得30分钟的SRS充能。"
+    }
+  ],
+  "skills.srs.hotStart.name": [
+    {
+      "type": 0,
+      "value": "热启动"
+    }
+  ],
+  "skills.srs.researchActivity.description": [
+    {
+      "type": 0,
+      "value": "每次取得突破，大家都会按一下按钮庆祝。已经没人记得这个按钮原本是干什么的了。"
+    }
+  ],
+  "skills.srs.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "获得一个研究等级后，SRS充能速度提高150%，持续30秒。自动生成的等级也计入。再次获得等级会刷新持续时间。加成为加法叠加。"
+    }
+  ],
+  "skills.srs.researchActivity.name": [
+    {
+      "type": 0,
+      "value": "研究活跃"
+    }
+  ],
+  "skills.srs.researchConversion.description": [
+    {
+      "type": 0,
+      "value": "你把研究部门接到了反应堆上。现在，同行评审成了火灾隐患。"
+    }
+  ],
+  "skills.srs.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "科学产量降低50%。SRS充能速度提高100%。加成为加法叠加。"
+    }
+  ],
+  "skills.srs.researchConversion.name": [
+    {
+      "type": 0,
+      "value": "研究转化"
+    }
+  ],
+  "skills.srs.stellarMemory.description": [
+    {
+      "type": 0,
+      "value": "科学家们会把笔记带到下一个宇宙。大部分写的都是“下次尽量别再这么干了”。"
+    }
+  ],
+  "skills.srs.stellarMemory.effect": [
+    {
+      "type": 0,
+      "value": "SRS充能速度提高10% × log10（分配SRS的累计秒数）。时间跨重置累积，包括储存时间模拟，但不包括额外充能。加成为加法叠加。"
+    }
+  ],
+  "skills.srs.stellarMemory.name": [
+    {
+      "type": 0,
+      "value": "星辰记忆"
     }
   ],
   "skills.subskill-assign": [
@@ -12087,6 +12237,12 @@
     {
       "type": 0,
       "value": "另一个标签页正在使用此游戏"
+    }
+  ],
+  "statistics.bot-boost-used": [
+    {
+      "type": 0,
+      "value": "使用过机器人加成"
     }
   ],
   "statistics.cause.artificial-intelligence": [
@@ -12673,6 +12829,120 @@
       "value": "price"
     }
   ],
+  "store.boost.activate": [
+    {
+      "type": 0,
+      "value": "激活"
+    }
+  ],
+  "store.boost.active": [
+    {
+      "type": 1,
+      "value": "time"
+    },
+    {
+      "type": 0,
+      "value": "后结束"
+    }
+  ],
+  "store.boost.add": [
+    {
+      "type": 0,
+      "value": "增加5分钟"
+    }
+  ],
+  "store.boost.claim": [
+    {
+      "type": 0,
+      "value": "领取5分钟"
+    }
+  ],
+  "store.boost.close": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "store.boost.description": [
+    {
+      "type": 0,
+      "value": "机器人获取量翻倍，持续5分钟。最多可累积10分钟。"
+    }
+  ],
+  "store.boost.failed": [
+    {
+      "type": 0,
+      "value": "无法更新加成，请重试。"
+    }
+  ],
+  "store.boost.games": [
+    {
+      "type": 0,
+      "value": "更多游戏"
+    }
+  ],
+  "store.boost.navigation": [
+    {
+      "type": 0,
+      "value": "商店：2倍机器人，"
+    },
+    {
+      "type": 1,
+      "value": "status"
+    }
+  ],
+  "store.boost.permanent": [
+    {
+      "type": 0,
+      "value": "永久"
+    }
+  ],
+  "store.boost.permanent-description": [
+    {
+      "type": 0,
+      "value": "无需查看游戏推广即可使机器人获取量翻倍。可随时关闭。"
+    }
+  ],
+  "store.boost.permanent-title": [
+    {
+      "type": 0,
+      "value": "永久2倍机器人"
+    }
+  ],
+  "store.boost.play": [
+    {
+      "type": 0,
+      "value": "游玩"
+    },
+    {
+      "type": 1,
+      "value": "game"
+    }
+  ],
+  "store.boost.promotion": [
+    {
+      "type": 0,
+      "value": "游戏推广"
+    }
+  ],
+  "store.boost.ready": [
+    {
+      "type": 0,
+      "value": "可用"
+    }
+  ],
+  "store.boost.title": [
+    {
+      "type": 0,
+      "value": "2倍机器人"
+    }
+  ],
+  "store.boost.wait": [
+    {
+      "type": 0,
+      "value": "剩余5:00时可延长"
+    }
+  ],
   "store.browser-introduction": [
     {
       "type": 0,
@@ -12872,6 +13142,36 @@
       "value": "家庭支持档位"
     }
   ],
+  "store.promo.echoes": [
+    {
+      "type": 0,
+      "value": "探索奇幻世界，通过战斗和升级变得更强。"
+    }
+  ],
+  "store.promo.eternum": [
+    {
+      "type": 0,
+      "value": "通过升级和永久进度打造放置帝国。"
+    }
+  ],
+  "store.promo.nanite": [
+    {
+      "type": 0,
+      "value": "通过不断增长的生产能力壮大纳米机器人集群。"
+    }
+  ],
+  "store.promo.pulse": [
+    {
+      "type": 0,
+      "value": "建造堡垒，抵御愈发猛烈的攻势。"
+    }
+  ],
+  "store.promo.whitecell": [
+    {
+      "type": 0,
+      "value": "创造病毒、选择突变，并在新的宿主体内进化。"
+    }
+  ],
   "store.region": [
     {
       "type": 0,
@@ -12881,13 +13181,13 @@
   "store.restore.description": [
     {
       "type": 0,
-      "value": "恢复功能只检查双倍无限点与开发者选项。支持者档位属于消耗品，没有账号支持的记录通常无法恢复。"
+      "value": "恢复功能会检查永久升级。支持者档位属于消耗品，无法恢复。"
     }
   ],
   "store.restore.inventory-description": [
     {
       "type": 0,
-      "value": "恢复购买会检查你的 Steam 库存中的支持者购买、开发者选项和双倍无限点数。支持者物品会保留在库存中，并且可以重复购买。"
+      "value": "恢复购买会检查你的Steam库存中的永久升级和支持者购买。支持者物品会保留在库存中，并且可以重复购买。"
     }
   ],
   "store.status.loading": [
@@ -14805,13 +15105,31 @@
   "wiki.patch-notes.version-4-1-9.androidspacing": [
     {
       "type": 0,
-      "value": "修复了Android系统栏周围间距过大的问题。"
+      "value": "修复了系统栏周围的多余空白。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.augments": [
+    {
+      "type": 0,
+      "value": "为超辐射散射新增了七个强化。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.bot-boost": [
+    {
+      "type": 0,
+      "value": "商店新增临时2倍机器人增益，最多可累积10分钟。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.comparisons": [
+    {
+      "type": 0,
+      "value": "分配或取消分配技能时，新增实时产量对比，并可在设置中隐藏。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.debugtabs": [
     {
       "type": 0,
-      "value": "现在可撤销Debug的标签页解锁，重置存档时也会清除该状态。"
+      "value": "现在可以撤销调试标签页的解锁，重置存档时也会清除解锁状态。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.debugunlock": [
@@ -14829,13 +15147,19 @@
   "wiki.patch-notes.version-4-1-9.headers": [
     {
       "type": 0,
-      "value": "移除了商店、故事和Wiki中多余的标题面板，并修正了无限目标输入框内的图标对齐。"
+      "value": "移除了商店、故事和Wiki中重复的标题，并优化了无限输入框的对齐。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.infinityrate": [
     {
       "type": 0,
-      "value": "自动无限现在显示上一次完成无限的每分钟无限点数，不再显示当前及推荐估算值。"
+      "value": "自动无限现在会显示上一次完成无限时的每分钟IP。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.megastructures": [
+    {
+      "type": 0,
+      "value": "本质纯净和超辐射散射现在也会提升巨型结构的产量。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.offlineall": [
@@ -14844,10 +15168,22 @@
       "value": "离线时间滑块的“全部”选项现在会选中所有已储存时间。"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.permanent-boost": [
+    {
+      "type": 0,
+      "value": "新增可选购的永久2倍机器人增益，可随时开启或关闭。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.purchasepersistence": [
     {
       "type": 0,
       "value": "量子和模拟的购买数量设置现在会在重新加载后保留。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purity": [
+    {
+      "type": 0,
+      "value": "重新平衡了纯净技能的成长。身体与心灵的加成现为加算。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.quantumhold": [
@@ -14865,13 +15201,19 @@
   "wiki.patch-notes.version-4-1-9.simulations": [
     {
       "type": 0,
-      "value": "改进了模拟公式、进度显示和紧凑布局。"
+      "value": "优化了模拟的公式和进度显示。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.skill-tree": [
+    {
+      "type": 0,
+      "value": "优化了技能树间距，并为镀锌技能添加了独特的连线。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.speedrun": [
     {
       "type": 0,
-      "value": "在统计中添加了速通标签页。"
+      "value": "统计中新增速通标签页，包含机器人增益的使用记录。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.terra": [
@@ -14883,7 +15225,7 @@
   "wiki.patch-notes.version-4-1-9.trial": [
     {
       "type": 0,
-      "value": "新增挑战：试错"
+      "value": "新增挑战：试错。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

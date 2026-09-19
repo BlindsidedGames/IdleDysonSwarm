@@ -103,6 +103,7 @@ implements StoreAdapter, EntitlementAuthority {
     const ownership = await this.refreshOwnership()
     return Object.freeze({
       restoredProductIds: Object.freeze([
+        ...(ownership.botBoost ? [STORE_PRODUCT_IDS.botBoost] : []),
         ...(ownership.doubleInfinityPoints
           ? [STORE_PRODUCT_IDS.doubleInfinityPoints]
           : []),
@@ -156,6 +157,7 @@ implements StoreAdapter, EntitlementAuthority {
       })
       return Object.freeze({
         doubleInfinityPoints: body.ownership.doubleInfinityPoints === true,
+        ...(body.ownership.botBoost === undefined ? {} : { botBoost: body.ownership.botBoost === true }),
         developerOptions: body.ownership.developerOptions === true,
         supporterCatGallery,
       })

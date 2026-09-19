@@ -291,7 +291,7 @@
 }
 
 .skill-tree-viewport__connections
-  .skill-tree-connection[data-owned="true"][data-state^="non-refundable"] {
+  .skill-tree-connection:not(.skill-tree-connection--galvanized)[data-owned="true"][data-state^="non-refundable"] {
   color: #9a4545;
 }
 
@@ -302,7 +302,7 @@
 }
 
 .skill-tree-viewport__connections
-  .skill-tree-connection:not([data-owned="true"]):not(
+  .skill-tree-connection:not(.skill-tree-connection--galvanized):not([data-owned="true"]):not(
     [data-available="true"]
   ):not(
     [data-queued="true"]
@@ -1720,4 +1720,9 @@
   .skill-tree-viewport__augment-controls { align-items: flex-start; }
   .skill-tree-viewport__augment-controls > span { max-inline-size: 40%; }
   .skill-tree-viewport__augment-controls button { font-size: 0.8rem; }
+}
+
+.skill-tree-connection.skill-tree-connection--galvanized {
+  color: #b6d99a;
+  opacity: 1;
 }

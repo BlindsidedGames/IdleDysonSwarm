@@ -11,6 +11,7 @@ import {
 describe('canonical Store product catalog', () => {
   test('keeps stable IDs and catalog classifications authoritative', () => {
     expect(CANONICAL_STORE_PRODUCTS.map((product) => product.id)).toEqual([
+      STORE_PRODUCT_IDS.botBoost,
       STORE_PRODUCT_IDS.tipTier1,
       STORE_PRODUCT_IDS.tipTier2,
       STORE_PRODUCT_IDS.tipTier3,

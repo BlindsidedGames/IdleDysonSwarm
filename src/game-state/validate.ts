@@ -24,6 +24,13 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  const boost = state.meta.botBoost
+  if (boost !== undefined && (boost === null ||
+    typeof boost.expiresAtMilliseconds !== 'number' ||
+    !Number.isSafeInteger(boost.expiresAtMilliseconds) || boost.expiresAtMilliseconds < 0 ||
+    typeof boost.permanentEnabled !== 'boolean')) {
+    errors.push('Invalid Bot boost state.')
+  }
   if (state.quantum.buyMode !== undefined && !isBuyMode(state.quantum.buyMode)) {
     errors.push('Quantum purchase mode must be a supported buy mode.')
   }

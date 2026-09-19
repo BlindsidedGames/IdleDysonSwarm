@@ -686,8 +686,8 @@ export const basicFacilityMessages = defineMessages({
   },
   assignedSkillPoints: {
     id: 'dyson.facilities.details.formula.assigned-skill-points',
-    defaultMessage: 'Assigned Skill Points',
-    description: 'Current assigned Skill Point input in a formula.',
+    defaultMessage: 'Unspent Skill Points',
+    description: 'Current unspent Skill Point input in a Purity formula.',
   },
   effectivePlanets: {
     id: 'dyson.facilities.details.formula.effective-planets',

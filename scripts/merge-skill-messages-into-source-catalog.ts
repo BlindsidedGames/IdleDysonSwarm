@@ -34,6 +34,15 @@ const EXPECTED_SKILL_COUNT = 104
 // Web copy corrections here when the inherited wording no longer describes
 // the live Web mechanic, rather than mutating the historical handoff data.
 const WEB_SKILL_COPY_OVERRIDES: Readonly<Record<string, string>> = {
+  'skills.node.purityOfBody.technical':
+    'Increase Bot production by 25% per unspent Skill Point. Bonuses are additive.',
+  'skills.node.purityOfMind.technical':
+    'Increase Cash and Science production by 50% per unspent Skill Point. Bonuses are additive.',
+  'skills.node.purityOfSEssence.technical':
+    'Increase Cash, Science, Bot, and all facility production based on unspent Skill Points. Starts at 1.42× with 1 point, with increasing gains per point, reaching 256× at 42 points.',
+  'skills.node.superRadiantScattering.technical':
+    'Increase Cash, Science, Bot, and all facility production by 1% per second while assigned. Bonuses are additive. Charges during Stored Time simulation and resets on Infinity or Quantum Leap.',
+
   'skills.node.androids.technical':
     'While the Androids Skill is assigned, its bonus scales from 0 to 200 seconds of Panel Lifetime over a 10 minute span.\nThis resets on Infinity/Quantum Leap.',
   'skills.node.fragmentAssembly.technical':

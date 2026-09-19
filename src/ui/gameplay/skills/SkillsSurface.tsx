@@ -1,4 +1,6 @@
-import { CASH_SCIENCE_SUBSKILLS, SKILL_AUGMENTS, skillAugments } from '../../../simulation/skillSubskills'
+import type { SkillProductionPreview } from '../../../simulation/skillProductionPreview'
+import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
+import { CASH_SCIENCE_SUBSKILLS, SRS_AUGMENTS, SKILL_AUGMENTS, skillAugments } from '../../../simulation/skillSubskills'
 import galvanizerIcon from '../../assets/currency-galvanizer.png'
 import { InlineImageSymbol, InlineResourceAmount } from '../../components'
 import { challengeMessages } from '../infinity/challengeMessages'
@@ -142,6 +144,7 @@ export interface SkillPresetSelectionPreview {
  * replacement; this surface only presents published previews and outcomes.
  */
 export interface SkillPresetActions {
+  readonly previewProduction?: (skillId: string, kind: 'purchase' | 'refund') => SkillProductionPreview
   readonly previewSelection: (
     slot: CanonicalSkillPresetSlot,
   ) => Promise<SkillPresetSelectionPreview>
@@ -202,8 +205,33 @@ export interface SkillTreeViewState {
   readonly scale: number
 }
 
-const presentation =
+// Shared centre-to-centre grid for regular skill and augment layouts.
+const SKILL_GRID_SPACING = 180
+const legacyPresentation =
   skillTreePresentationJson as SkillTreePresentation
+const srsColumnX = legacyPresentation.nodes.find(node => node.skillId === 'superRadiantScattering')!.x
+const leftOfSrsColumns: Readonly<Record<string, number>> = {
+  quantumComputing: -0.5,
+  parallelComputation: -0.5,
+  hypercubeNetworks: -1,
+  clusterNetworking: 0,
+  pocketAndroids: -2,
+  solarBubbles: -2,
+  shoulderSurgery: -2,
+  shouldersOfTheRevolution: -2,
+  shouldersOfTheFallen: -2,
+  whatWillComeToPass: -1,
+  whatCouldHaveBeen: -1,
+  shouldersOfTheEnlightened: -1,
+  shouldersOfPrecursors: -1,
+}
+// Web-owned layout adjustments leave the frozen Unity compatibility data intact.
+const presentation: SkillTreePresentation = {
+  ...legacyPresentation,
+  nodes: legacyPresentation.nodes.map(node => leftOfSrsColumns[node.skillId] === undefined
+    ? node
+    : { ...node, x: srsColumnX + leftOfSrsColumns[node.skillId] * SKILL_GRID_SPACING }),
+}
 const iconModules = import.meta.glob('../../assets/skill-icons/*.webp', {
   eager: true,
   query: '?url',
@@ -234,6 +262,17 @@ const SKILL_DOUBLE_CLICK_STORAGE_KEY =
   'idle-dyson-swarm:skill-double-click-assignment'
 
 const SKILL_LABELS_STORAGE_KEY = 'idle-dyson-swarm:show-skill-labels'
+
+const SKILL_COMPARISONS_STORAGE_KEY = 'idle-dyson-swarm:show-skill-production-comparisons'
+
+function readSkillComparisonsPreference(): boolean {
+  try {
+    return typeof window === 'undefined' ||
+      window.localStorage.getItem(SKILL_COMPARISONS_STORAGE_KEY) !== 'false'
+  } catch {
+    return true
+  }
+}
 
 function readSkillLabelsPreference(): boolean {
   try {
@@ -348,6 +387,7 @@ export function SkillsSurface({
   const [quickPurchaseSkillId, setQuickPurchaseSkillId] =
     useState<string | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [showProductionComparisons, setShowProductionComparisons] = useState(readSkillComparisonsPreference)
   const [showSkillLabels, setShowSkillLabels] = useState(readSkillLabelsPreference)
   const [doubleClickToAssign, setDoubleClickToAssign] = useState(
     readDoubleClickAssignmentPreference,
@@ -386,23 +426,30 @@ export function SkillsSurface({
   const nodeById = useMemo(
     () => {
       const nodes = new Map(localizedNodes.map((node) => [node.skillId, node]))
-      const augmentPresentation = new Map<string, { message: typeof messages.subskillLifetime; description?: typeof messages.subskillLifetime; effect?: typeof messages.subskillLifetime; iconFileName: string; x: number; y: number; anchorSkillId?: string }>([
-        [CASH_SCIENCE_SUBSKILLS.lifetime, { message: messages.subskillLifetimeName, description: messages.subskillLifetimeDescription, effect: messages.subskillLifetime, iconFileName: 'panelWarranty.webp', x: 0, y: 0, anchorSkillId: 'higgsBoson' }],
-        [CASH_SCIENCE_SUBSKILLS.decay, { message: messages.subskillDecayName, description: messages.subskillDecayDescription, effect: messages.subskillDecay, iconFileName: 'supermassivePanels.webp', x: 0, y: 0, anchorSkillId: 'panelLifetime20Tree' }],
-        [CASH_SCIENCE_SUBSKILLS.production, { message: messages.subskillProductionName, description: messages.subskillProductionDescription, effect: messages.subskillProduction, iconFileName: 'startHereTree.webp', x: 0, y: -230 }],
+      const augmentPresentation = new Map<string, { message: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; description?: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; effect?: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; iconFileName: string; column: number; row: number }>([
+        [SRS_AUGMENTS.stellarMemory, { message: messages.srsStellarMemoryName, description: messages.srsStellarMemoryDescription, effect: messages.srsStellarMemoryEffect, iconFileName: 'srsStellarMemory.webp', column: 2, row: 1 }],
+        [SRS_AUGMENTS.hotStart, { message: messages.srsHotStartName, description: messages.srsHotStartDescription, effect: messages.srsHotStartEffect, iconFileName: 'srsHotStart.webp', column: -1, row: 0 }],
+        [SRS_AUGMENTS.afterglow, { message: messages.srsAfterglowName, description: messages.srsAfterglowDescription, effect: messages.srsAfterglowEffect, iconFileName: 'srsAfterglow.webp', column: -2, row: 0 }],
+        [SRS_AUGMENTS.deepExposure, { message: messages.srsDeepExposureName, description: messages.srsDeepExposureDescription, effect: messages.srsDeepExposureEffect, iconFileName: 'srsDeepExposure.webp', column: 0, row: 1 }],
+        [SRS_AUGMENTS.focusedBeam, { message: messages.srsFocusedBeamName, description: messages.srsFocusedBeamDescription, effect: messages.srsFocusedBeamEffect, iconFileName: 'srsFocusedBeam.webp', column: 1, row: 0 }],
+        [SRS_AUGMENTS.researchConversion, { message: messages.srsResearchConversionName, description: messages.srsResearchConversionDescription, effect: messages.srsResearchConversionEffect, iconFileName: 'srsResearchConversion.webp', column: 2, row: 0 }],
+        [SRS_AUGMENTS.researchActivity, { message: messages.srsResearchActivityName, description: messages.srsResearchActivityDescription, effect: messages.srsResearchActivityEffect, iconFileName: 'srsResearchActivity.webp', column: 1, row: 1 }],
+        [CASH_SCIENCE_SUBSKILLS.lifetime, { message: messages.subskillLifetimeName, description: messages.subskillLifetimeDescription, effect: messages.subskillLifetime, iconFileName: 'panelWarranty.webp', column: 0, row: -1 }],
+        [CASH_SCIENCE_SUBSKILLS.decay, { message: messages.subskillDecayName, description: messages.subskillDecayDescription, effect: messages.subskillDecay, iconFileName: 'supermassivePanels.webp', column: 1, row: 0 }],
+        [CASH_SCIENCE_SUBSKILLS.production, { message: messages.subskillProductionName, description: messages.subskillProductionDescription, effect: messages.subskillProduction, iconFileName: 'startHereTree.webp', column: 0, row: 1 }],
       ])
       for (const augment of SKILL_AUGMENTS) {
         const parent = nodes.get(augment.parentSkillId)
         const authored = augmentPresentation.get(augment.id)
         if (!parent || !authored) continue
-        const anchor = authored.anchorSkillId ? nodes.get(authored.anchorSkillId) ?? parent : parent
         const label = intl.formatMessage(authored.message)
         nodes.set(augment.id, {
           ...parent, skillId: augment.id, displayName: label,
           icon: { fileName: authored.iconFileName },
           description: authored.description ? intl.formatMessage(authored.description) : '',
-          technicalDescription: authored.effect ? intl.formatMessage(authored.effect) : label, cost: 1,
-          x: anchor.x + authored.x, y: anchor.y + authored.y,
+          technicalDescription: authored.effect ? intl.formatMessage(authored.effect) : label, cost: augment.cost,
+          x: parent.x + authored.column * SKILL_GRID_SPACING,
+          y: parent.y - authored.row * SKILL_GRID_SPACING,
         })
       }
       return nodes
@@ -816,6 +863,13 @@ export function SkillsSurface({
           id={`${settingsId}-content`}
           autoAssignNonRefundable={autoAssignNonRefundable}
           doubleClickToAssign={doubleClickToAssign}
+          showProductionComparisons={showProductionComparisons}
+          onShowProductionComparisonsChange={(enabled) => {
+            setShowProductionComparisons(enabled)
+            try {
+              window.localStorage.setItem(SKILL_COMPARISONS_STORAGE_KEY, String(enabled))
+            } catch { /* Keep the toggle usable without persistence. */ }
+          }}
           showSkillLabels={showSkillLabels}
           onShowSkillLabelsChange={(enabled) => {
             setShowSkillLabels(enabled)
@@ -932,6 +986,7 @@ export function SkillsSurface({
           locale={locale}
           fragments={fragments}
           node={selectedNode}
+          showProductionComparisons={showProductionComparisons}
           galvanizers={galvanizers}
           preview={selectedPreview}
           previews={previewById}
@@ -1478,6 +1533,17 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               'data-selection-dimmed':
                 hasSelection && !selectedPath ? true : undefined,
             } as const
+            if (targetPreview?.galvanized) {
+              const { body, x, y } = connector.galvanizedLine
+              return <g key={`${from.skillId}-${to.skillId}`}
+                className="skill-tree-connection skill-tree-connection--galvanized"
+                {...sharedAttributes}>
+                <path d={body} fill="currentColor" opacity={0.38} />
+                <path transform={`translate(${x} ${y})`}
+                  d="M 2 -10 L -7 2 H -1 L -3 10 L 7 -2 H 1 Z"
+                  fill="#83ff52" />
+              </g>
+            }
             if (sourceOwned) {
               return (
                 <path
@@ -1720,6 +1786,7 @@ interface PreparedSkillConnectorPaths {
 interface PreparedSkillConnector {
   readonly from: SkillPresentationNode
   readonly to: SkillPresentationNode
+  readonly galvanizedLine: { readonly body: string; readonly x: number; readonly y: number }
   readonly ownedSourcePaths: PreparedSkillConnectorPaths
   readonly unownedSourcePaths: PreparedSkillConnectorPaths
 }
@@ -1732,7 +1799,7 @@ function prepareSkillConnectors(
   return nodes.flatMap((node) => {
     const preview = previews.get(node.skillId)
     if (!preview) return []
-    return preview.requiredSkillIds.flatMap((requiredId) => {
+    return (preview.authoredRequiredSkillIds ?? preview.requiredSkillIds).flatMap((requiredId) => {
       const required = nodeById.get(requiredId)
       const requiredPreview = previews.get(requiredId)
       if (!required || requiredPreview?.visible !== true) return []
@@ -1747,9 +1814,22 @@ function prepareSkillConnectors(
         startClearance: 7,
       })
       if (ownedLayout === null || unownedLayout === null) return []
+      const lineStart = unownedLayout.start, lineEnd = unownedLayout.arrowTip
+      const x = (lineStart.x + lineEnd.x) / 2, y = (lineStart.y + lineEnd.y) / 2
+      const length = Math.hypot(lineEnd.x - lineStart.x, lineEnd.y - lineStart.y)
+      const gap = Math.min(16, length / 4)
+      const dx = length > 0 ? (lineEnd.x - lineStart.x) / length * gap : 0
+      const dy = length > 0 ? (lineEnd.y - lineStart.y) / length * gap : 0
       return [{
         from: required,
         to: node,
+        galvanizedLine: {
+          x, y,
+          body: preview.galvanized
+            ? buildTaperedSkillConnectorPath(lineStart, { x: x - dx, y: y - dy })
+              + buildTaperedSkillConnectorPath({ x: x + dx, y: y + dy }, lineEnd)
+            : '',
+        },
         ownedSourcePaths: {
           body: buildSolidSkillConnectorPath(
             ownedLayout.start,
@@ -1782,6 +1862,7 @@ function prepareSkillConnectors(
 }
 
 interface SkillDetailsProps {
+  readonly showProductionComparisons: boolean
   readonly galvanizers: bigint
   readonly locale: EnabledLocale
   readonly fragments: bigint
@@ -1856,6 +1937,7 @@ const galvanizedEffectMessages: Readonly<Record<string, typeof messages.galvEcon
 }
 
 function SkillDetails({
+  showProductionComparisons,
   galvanizers,
   locale,
   fragments,
@@ -1887,6 +1969,29 @@ function SkillDetails({
         affectedSkillIds: preview.purchase.affectedSkillIds,
       }
     : null)
+  const [liveProduction, setLiveProduction] = useState<SkillProductionPreview | null>(null)
+  const queryProduction = showProductionComparisons ? presetActions?.previewProduction : undefined
+  const actionKind = actionPreview?.kind
+  useEffect(() => {
+    if (!actionKind || !queryProduction) return
+    const refresh = () => {
+      try {
+        const next = queryProduction(node.skillId, actionKind)
+        // Retain the open row layout even if a bonus temporarily becomes neutral.
+        setLiveProduction((previous) => ({ ...next, rows: previous
+          ? Array.from(new Set([...previous.rows, ...next.rows.filter((row) => row.changed)].map((row) => row.id)))
+            .map((id) => next.rows.find((row) => row.id === id)!)
+          : next.rows.filter((row) => row.changed) }))
+        setQueueFailed(false)
+      } catch {
+        setLiveProduction(null)
+        setQueueFailed(true)
+      }
+    }
+    refresh()
+    const timer = window.setInterval(refresh, 1000)
+    return () => window.clearInterval(timer)
+  }, [actionKind, node.skillId, queryProduction])
   const [galvanizeConfirmation, setGalvanizeConfirmation] = useState(false)
   const confirmationRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -1982,7 +2087,15 @@ function SkillDetails({
       ? preview.purchase.productionImpact
       : preview.refund.productionImpact
     setQueuePreview(null)
-    if (additionalSkillIds.length > 0 || productionImpact !== undefined) {
+    let live: SkillProductionPreview | null = null
+    try {
+      live = queryProduction?.(node.skillId, kind) ?? null
+    } catch {
+      setQueueFailed(true)
+      return
+    }
+    setLiveProduction(live ? { ...live, rows: live.rows.filter((row) => row.changed) } : null)
+    if (additionalSkillIds.length > 0 || (showProductionComparisons && productionImpact !== undefined) || live?.rows.some((row) => row.changed)) {
       setActionPreview({ kind, affectedSkillIds })
       return
     }
@@ -2164,13 +2277,13 @@ function SkillDetails({
                 messages.confirmSkillChange,
               )}
             >
-              <p>
+              {actionPreview.affectedSkillIds.some((id) => id !== node.skillId) && <p>
                 {intl.formatMessage(
                   actionPreview.kind === 'purchase'
                     ? messages.assignDependencies
                     : messages.unassignDependants,
                 )}
-              </p>
+              </p>}
               <AffectedSkillList
                 skillIds={actionPreview.affectedSkillIds.filter(
                   (skillId) => skillId !== node.skillId,
@@ -2179,13 +2292,22 @@ function SkillDetails({
                 label={intl.formatMessage(messages.affectedSkills)}
               />
               {(() => {
+                if (!showProductionComparisons) return null
                 const impact = actionPreview.kind === 'purchase'
                   ? preview.purchase.productionImpact
                   : preview.refund.productionImpact
-                if (impact === undefined) return null
+                if (impact === undefined && liveProduction === null) return null
                 return (
                   <div className="skill-details__production-impact">
-                    {impact.purity && (
+                    {liveProduction && liveProduction.rows.map((row) => (
+                      <ProductionImpactRow key={row.id}
+                        label={intl.formatMessage(productionLabels[row.id])}
+                        before={`${formatGameNumber(locale, row.before)}${row.id === 'panelLifetime' ? 's' : '/s'}`}
+                        after={`${formatGameNumber(locale, row.after)}${row.id === 'panelLifetime' ? 's' : '/s'}${liveProduction.projected ? ' (10m)' : ''}`}
+                        afterTone={row.after >= row.before ? 'gain' : 'loss'}
+                        toLabel={intl.formatMessage(messages.impactTo)} />
+                    ))}
+                    {impact?.purity && (
                       <>
                         <ProductionImpactRow
                           label={intl.formatMessage(messages.impactSkillPoints)}
@@ -2202,6 +2324,7 @@ function SkillDetails({
                             : 'loss'}
                           toLabel={intl.formatMessage(messages.impactTo)}
                         />
+                        {!liveProduction && <>
                         <ProductionImpactRow
                           label={intl.formatMessage(messages.impactCashScience)}
                           before={`×${formatGameNumber(locale, impact.purity.cashScienceBefore)}`}
@@ -2229,9 +2352,10 @@ function SkillDetails({
                             : 'loss'}
                           toLabel={intl.formatMessage(messages.impactTo)}
                         />
+                        </>}
                       </>
                     )}
-                    {impact.manualPurchase && (
+                    {impact?.manualPurchase && (
                       <>
                         <p>
                           {intl.formatMessage(
@@ -2297,6 +2421,21 @@ function SkillDetails({
   )
 }
 
+const productionLabels = {
+  money: messages.productionCash,
+  science: messages.productionScience,
+  bots: messages.impactBots,
+  panels: messages.productionPanels,
+  assembly_lines: facilityMessages.assemblyLinesName,
+  ai_managers: facilityMessages.aiManagersName,
+  servers: facilityMessages.serversName,
+  data_centers: facilityMessages.dataCentersName,
+  planets: facilityMessages.planetsName,
+  matrioshka_brains: facilityMessages.matrioshkaBrainsName,
+  birch_planets: facilityMessages.birchPlanetsName,
+  panelLifetime: facilityMessages.panelLifetime,
+}
+
 function ProductionImpactRow({
   label,
   before,
@@ -2331,6 +2470,8 @@ function ProductionImpactRow({
 }
 
 interface SkillSettingsProps {
+  readonly showProductionComparisons: boolean
+  readonly onShowProductionComparisonsChange: (enabled: boolean) => void
   readonly id: string
   readonly autoAssignNonRefundable: boolean
   readonly doubleClickToAssign: boolean
@@ -2352,6 +2493,8 @@ interface SkillSettingsProps {
 }
 
 function SkillSettings({
+  showProductionComparisons,
+  onShowProductionComparisonsChange,
   id,
   autoAssignNonRefundable,
   doubleClickToAssign,
@@ -2370,6 +2513,11 @@ function SkillSettings({
 
   return (
     <div id={id} className="skill-settings">
+      <label className="skill-settings__toggle">
+        <input type="checkbox" checked={showProductionComparisons}
+          onChange={(event) => onShowProductionComparisonsChange(event.currentTarget.checked)} />
+        <span>{intl.formatMessage(messages.showProductionComparisons)}</span>
+      </label>
       <label className="skill-settings__toggle">
         <input
           type="checkbox"

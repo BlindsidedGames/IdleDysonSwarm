@@ -15,6 +15,7 @@ export const COMMUNITY_EXTERNAL_ORIGINS = Object.freeze([
   'https://apps.apple.com',
   'https://play.google.com',
   'https://www.blindsidedgames.com',
+  'https://store.steampowered.com',
 ] as const)
 
 export type CommunityStorePlatform = 'android' | 'ios' | 'web'

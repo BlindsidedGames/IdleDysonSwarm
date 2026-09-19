@@ -25,6 +25,7 @@ final class NativeEntitlementCache: @unchecked Sendable {
 
     private struct Record: Codable {
         var providerDoubleIp = false
+        var providerBotBoost: Bool?
         var providerDeveloperOptions = false
         var supporterCatGallery: Bool?
         var providerVerifiedAtUtc: TimeInterval?
@@ -44,7 +45,8 @@ final class NativeEntitlementCache: @unchecked Sendable {
                 persistedProviderOwnership: DurableOwnership(
                     doubleInfinityPoints: record.providerDoubleIp,
                     developerOptions: record.providerDeveloperOptions,
-                    supporterCatGallery: record.supporterCatGallery == true
+                    supporterCatGallery: record.supporterCatGallery == true,
+                    botBoost: record.providerBotBoost == true
                 ),
                 legacyDoubleInfinityPoints: record.legacyDoubleIp
             )
@@ -88,6 +90,7 @@ final class NativeEntitlementCache: @unchecked Sendable {
     private func persistProviderOwnership(_ ownership: DurableOwnership) -> Bool {
         var record = readRecord()
         record.providerDoubleIp = ownership.doubleInfinityPoints
+        record.providerBotBoost = ownership.botBoost
         record.providerDeveloperOptions = ownership.developerOptions
         record.supporterCatGallery =
             record.supporterCatGallery == true || ownership.supporterCatGallery
@@ -350,7 +353,8 @@ actor IdleDysonStoreKit {
         let ownership = DurableOwnership(
             doubleInfinityPoints: productIds.contains(Self.doubleIp),
             developerOptions: productIds.contains(Self.developerOptions),
-            supporterCatGallery: cached.supporterCatGallery
+            supporterCatGallery: cached.supporterCatGallery,
+            botBoost: productIds.contains(Self.botBoost)
         )
         let persisted = entitlementCache.writeProviderOwnership(
             ownership,
@@ -380,8 +384,9 @@ actor IdleDysonStoreKit {
     }
 
     private static let doubleIp = "ids.doubleip"
+    private static let botBoost = "ids.botboost"
     private static let developerOptions = "ids.devoptions"
-    private static let durableIds: Set<String> = [doubleIp, developerOptions]
+    private static let durableIds: Set<String> = [doubleIp, developerOptions, botBoost]
     private static let supporterIds: Set<String> = [
         "ids.tiptier1", "ids.tiptier2", "ids.tiptier3",
     ]
@@ -391,5 +396,6 @@ actor IdleDysonStoreKit {
         "ids.tiptier3",
         developerOptions,
         doubleIp,
+        botBoost,
     ]
 }

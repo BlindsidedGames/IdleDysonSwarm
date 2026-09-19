@@ -125,6 +125,50 @@ uses the standard dimmed modal treatment and lists only the target preset
 Skills that remain blocked and queued. The player may close it with the
 standard close control, Escape, or a pointer press on the backdrop.
 
+## SRS augments
+
+All augment layouts use the shared 180-unit centre-to-centre grid in
+`SkillsSurface.tsx`, with column/row offsets relative to their parent. This matches
+the typical spacing of nearby main-tree skills. The Pocket/Shoulders group above-left
+of SRS also uses these horizontal intervals, anchored to SRS's column, with its
+vertical positions retained. Hypercube Networks follows the column below it;
+Cluster Networking sits one column to its right, with Parallel/Quantum Computing
+centred between those two columns. Layout adjustments live in the Web presentation,
+leaving the frozen compatibility data intact. Keep new regular skill/augment layouts on this spacing rather than
+introducing separate gaps for each branch.
+
+Augment queues check galvanization of their own parent skill. Hot Start and Deep
+Exposure cost three Skill Points each; Research Activity and Stellar Memory cost
+two each; the other SRS augments cost one each. Costs are shared by gameplay and
+the UI through `SKILL_AUGMENTS`. Augments share ordinary dependency, refund, and preset rules:
+Afterglow requires Hot Start; Research Conversion requires Focused Beam;
+Research Activity requires both Focused Beam and Deep Exposure. Stellar Memory
+requires both Research Activity and Research Conversion. It sits directly below
+Research Conversion, to the right of Research Activity.
+
+Hot Start grants 1,800 seconds once per run when assigned. Its grant marker
+survives unassignment. Afterglow retains 10% of ending SRS charge on Infinity,
+without a cap, before adding the next Hot Start grant. Quantum Leap and
+challenge restarts discard retained charge. Deep Exposure tracks assigned game
+time separately from SRS charge, integrating its +10%/minute ramp up to +200%.
+Research Activity refreshes for 30 seconds when purchased or generated research
+levels are committed; generated fractions alone do not trigger it. Its +150%
+and Conversion's +100% charging bonuses add to Deep Exposure and the base rate.
+Conversion halves final Science production. Focused Beam scales only the SRS
+bonus above 1× according to actual Worker/Researcher allocation; ties are neutral.
+Stellar Memory adds 10% × log10(max(1, lifetime assigned SRS seconds)) charging
+speed. The SRS secondary timer stores elapsed assigned game time, not bonus
+charge, and survives Infinity, Quantum Leap, Overflow, and challenge restarts
+for the permanent SRS skill. Its logarithmic contribution is integrated over
+simulation intervals. All runtime markers use existing serialized skill timers.
+
+Galvanized skills retain their authored incoming connections visually without
+restoring gameplay prerequisites. These use pale-green dashed lines with the
+same dash geometry, thickness, and 38% opacity as unavailable unassigned prerequisites, and a bright-green
+midpoint lightning marker without an outline.
+The line leaves a gap on either side of the marker and has no arrowhead. Augment
+prerequisite lines keep their ordinary style.
+
 ## Verification requirements
 
 Characterization and regression coverage must include:

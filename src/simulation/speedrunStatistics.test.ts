@@ -64,7 +64,7 @@ describe('whole-save speedruns', () => {
   test('legacy history stays unknown and invalid legacy dates are never guessed', () => {
     const state = fresh()
     const legacy = observeSpeedruns({ ...state, avocado: { ...state.avocado, overflowPoints: 10n }, statistics: { ...state.statistics, speedruns: createSpeedrunStatistics('13/09/2026', false, origin) } }, origin, true)
-    expect(legacy.statistics.speedruns!.milestones.debugQualification).toEqual({ elapsedSeconds: null, debug: 'unknown', storedTime: 'unknown' })
+    expect(legacy.statistics.speedruns!.milestones.debugQualification).toEqual({ elapsedSeconds: null, debug: 'unknown', storedTime: 'unknown', botBoostUsed: false })
     expect(speedrunEligible(legacy.statistics.speedruns!)).toBe(false)
     expect(validateSpeedrunStatistics({ ...legacy.statistics.speedruns, debug: false })).toBeTruthy()
   })

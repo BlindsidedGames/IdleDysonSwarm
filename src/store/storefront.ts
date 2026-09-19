@@ -195,6 +195,7 @@ export class StorefrontController {
       )
       const ownership = await this.options.entitlements.refreshOwnership()
       const restoredCount = [
+        STORE_PRODUCT_IDS.botBoost,
         STORE_PRODUCT_IDS.developerOptions,
         STORE_PRODUCT_IDS.doubleInfinityPoints,
       ].filter(
@@ -203,7 +204,7 @@ export class StorefrontController {
           ownsProduct(ownership, productId),
       ).length
       if (
-        restoredCount > 0 &&
+        (restoredCount > 0 || this.snapshotValue.hostOwnership.botBoost !== ownership.botBoost) &&
         this.options.onVerifiedOwnershipChanged !== undefined &&
         !(await this.options.onVerifiedOwnershipChanged())
       ) {
@@ -315,6 +316,7 @@ export class StorefrontController {
       hostOwnership: update.hostOwnership === undefined
         ? this.snapshotValue.hostOwnership
         : Object.freeze({
+            ...(update.hostOwnership.botBoost === undefined ? {} : { botBoost: update.hostOwnership.botBoost === true }),
             doubleInfinityPoints:
               update.hostOwnership.doubleInfinityPoints === true,
             developerOptions:
@@ -357,6 +359,7 @@ function ownsProduct(
   ownership: Readonly<HostEntitlementOwnership>,
   productId: StoreProductId,
 ): boolean {
+  if (productId === STORE_PRODUCT_IDS.botBoost) return ownership.botBoost === true
   if (productId === STORE_PRODUCT_IDS.developerOptions) {
     return ownership.developerOptions
   }

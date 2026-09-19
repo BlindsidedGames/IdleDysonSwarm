@@ -1146,12 +1146,13 @@ export function createCanonicalGameEngineDefinition(
       }
       if (command.kind === 'internal.replace-host-entitlements') {
         const entitlements = Object.freeze({
+          permanentBotBoost: command.entitlements.permanentBotBoost === true,
           permanentDoubleIp:
             command.entitlements.permanentDoubleIp === true,
         })
         const changed =
           candidate.entitlements.permanentDoubleIp !==
-          entitlements.permanentDoubleIp
+          entitlements.permanentDoubleIp || candidate.entitlements.permanentBotBoost !== entitlements.permanentBotBoost
         if (changed) Object.assign(candidate, { entitlements })
         return { accepted: true, changed }
       }
@@ -1394,6 +1395,7 @@ function commandOptions(
   }
   return {
     runtimeCarriers: carriers,
+    permanentBotBoost: state.entitlements.permanentBotBoost === true,
     runtimeEvaluation: {
       evaluate: (candidate, previous) => {
         const derived = deriveBasicDysonState(

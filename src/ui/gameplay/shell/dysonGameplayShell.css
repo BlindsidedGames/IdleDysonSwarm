@@ -1303,6 +1303,17 @@
   white-space: nowrap;
 }
 
+.dyson-navigation__badge[data-outlined] {
+  background: var(--theme-page);
+  color: var(--theme-accent);
+}
+
+.store-boost-nav-status {
+  font-size: var(--ui-text-meta);
+  font-variant-numeric: tabular-nums;
+  font-weight: normal;
+}
+
 .dyson-navigation--bottom .dyson-navigation__icon {
   inline-size: var(--bottom-navigation-icon-size);
   block-size: var(--bottom-navigation-icon-size);

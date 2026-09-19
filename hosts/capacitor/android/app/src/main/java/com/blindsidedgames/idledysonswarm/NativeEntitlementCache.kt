@@ -54,6 +54,7 @@ internal class NativeEntitlementCache(context: Context) {
 
     private fun readPersistedProviderOwnership(): DurableOwnership = DurableOwnership(
         doubleInfinityPoints = preferences.getBoolean(KEY_PROVIDER_DOUBLE_IP, false),
+        botBoost = preferences.getBoolean("provider_bot_boost", false),
         developerOptions = preferences.getBoolean(KEY_PROVIDER_DEV_OPTIONS, false),
         supporterCatGallery = preferences.getBoolean(KEY_SUPPORTER_CAT_GALLERY, false),
     )
@@ -61,6 +62,7 @@ internal class NativeEntitlementCache(context: Context) {
     private fun persistProviderOwnership(ownership: DurableOwnership): Boolean =
         preferences.edit()
             .putBoolean(KEY_PROVIDER_DOUBLE_IP, ownership.doubleInfinityPoints)
+            .putBoolean("provider_bot_boost", ownership.botBoost)
             .putBoolean(KEY_PROVIDER_DEV_OPTIONS, ownership.developerOptions)
             .putBoolean(
                 KEY_SUPPORTER_CAT_GALLERY,

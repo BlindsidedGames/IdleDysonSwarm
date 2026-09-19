@@ -1330,7 +1330,7 @@
   "dyson.facilities.details.formula.assigned-skill-points": [
     {
       "type": 0,
-      "value": "Pontos de Habilidade atribuídos"
+      "value": "Pontos de Habilidade não gastos"
     }
   ],
   "dyson.facilities.details.formula.effective-planets": [
@@ -10206,7 +10206,7 @@
   "skills.node.purityOfBody.technical": [
     {
       "type": 0,
-      "value": "Multiplica os Robôs por 1,25 para cada Ponto de Habilidade não gasto, com acúmulo exponencial."
+      "value": "Aumenta a produção de Bots em 25% por Ponto de Habilidade não gasto. Os bônus são aditivos."
     }
   ],
   "skills.node.purityOfMind.description": [
@@ -10224,7 +10224,7 @@
   "skills.node.purityOfMind.technical": [
     {
       "type": 0,
-      "value": "Multiplica Dinheiro e Ciência por 1,5 para cada Ponto de Habilidade não gasto, com acúmulo exponencial."
+      "value": "Aumenta a produção de Dinheiro e Ciência em 50% por Ponto de Habilidade não gasto. Os bônus são aditivos."
     }
   ],
   "skills.node.purityOfSEssence.description": [
@@ -10242,7 +10242,7 @@
   "skills.node.purityOfSEssence.technical": [
     {
       "type": 0,
-      "value": "Multiplica tudo por 1,42 para cada Ponto de Habilidade não gasto, com acúmulo exponencial."
+      "value": "Aumenta a produção de Dinheiro, Ciência, Bots e todas as instalações com base nos Pontos de Habilidade não gastos. Começa em 1,42× com 1 ponto, com ganhos crescentes por ponto, chegando a 256× com 42 pontos."
     }
   ],
   "skills.node.quantumComputing.description": [
@@ -10764,7 +10764,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "A cada segundo em que esta Habilidade estiver atribuída e o aplicativo estiver em execução, toda a produção aumenta aditivamente em 1%. O bônus é reiniciado no Infinito ou Salto Quântico."
+      "value": "Aumenta a produção de Dinheiro, Ciência, Bots e todas as instalações em 1% por segundo enquanto esta Habilidade estiver atribuída. Os bônus são aditivos. Acumula durante a simulação de Tempo Armazenado e reinicia no Infinito ou Salto Quântico."
     }
   ],
   "skills.node.superSwarm.description": [
@@ -11385,6 +11385,24 @@
       "value": "name"
     }
   ],
+  "skills.production-cash": [
+    {
+      "type": 0,
+      "value": "Dinheiro"
+    }
+  ],
+  "skills.production-panels": [
+    {
+      "type": 0,
+      "value": "Painéis"
+    }
+  ],
+  "skills.production-science": [
+    {
+      "type": 0,
+      "value": "Ciência"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -11569,6 +11587,12 @@
       "value": "Mostrar notificações de aplicação parcial de predefinições"
     }
   ],
+  "skills.show-production-comparisons": [
+    {
+      "type": 0,
+      "value": "Mostrar comparações de produção"
+    }
+  ],
   "skills.show-skill-labels": [
     {
       "type": 0,
@@ -11585,6 +11609,132 @@
     {
       "type": 0,
       "value": "Arraste para reordenar ou use as setas. Os pré-requisitos são comprados primeiro. Os pontos são guardados até poder comprar a próxima habilidade."
+    }
+  ],
+  "skills.srs.afterglow.description": [
+    {
+      "type": 0,
+      "value": "O último universo já era, mas algumas de suas partículas ainda não entenderam a indireta."
+    }
+  ],
+  "skills.srs.afterglow.effect": [
+    {
+      "type": 0,
+      "value": "Retém 10% da carga SRS ao atingir o Infinito, sem limite. Soma-se à Partida aquecida. O Salto Quântico apaga a carga retida."
+    }
+  ],
+  "skills.srs.afterglow.name": [
+    {
+      "type": 0,
+      "value": "Brilho residual"
+    }
+  ],
+  "skills.srs.deepExposure.description": [
+    {
+      "type": 0,
+      "value": "Seus cientistas recomendam exposição prolongada. Do outro lado de uma janela bem grossa."
+    }
+  ],
+  "skills.srs.deepExposure.effect": [
+    {
+      "type": 0,
+      "value": "Aumenta a velocidade de carga SRS em 10% por minuto com este aumento atribuído, até 200% após 20 minutos. Reinicia no Infinito ou Salto Quântico. Os bônus são aditivos."
+    }
+  ],
+  "skills.srs.deepExposure.name": [
+    {
+      "type": 0,
+      "value": "Exposição prolongada"
+    }
+  ],
+  "skills.srs.focusedBeam.description": [
+    {
+      "type": 0,
+      "value": "Você pede às partículas que formem uma fila organizada. Ninguém esperava que isso funcionasse."
+    }
+  ],
+  "skills.srs.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "Aumenta em 50% o bônus SRS acima de 1× para Dinheiro ou Ciência, conforme qual tiver mais Bots atribuídos, e reduz o outro pela metade. Uma distribuição igual mantém ambos inalterados."
+    }
+  ],
+  "skills.srs.focusedBeam.name": [
+    {
+      "type": 0,
+      "value": "Feixe focalizado"
+    }
+  ],
+  "skills.srs.hotStart.description": [
+    {
+      "type": 0,
+      "value": "Seus cientistas preaqueceram o equipamento. Usaram o modo pizza, mas parece que funcionou."
+    }
+  ],
+  "skills.srs.hotStart.effect": [
+    {
+      "type": 0,
+      "value": "Receba 30 minutos de carga SRS na primeira atribuição de cada Infinito."
+    }
+  ],
+  "skills.srs.hotStart.name": [
+    {
+      "type": 0,
+      "value": "Partida aquecida"
+    }
+  ],
+  "skills.srs.researchActivity.description": [
+    {
+      "type": 0,
+      "value": "Cada descoberta é comemorada apertando um botão. Ninguém lembra para que ele servia originalmente."
+    }
+  ],
+  "skills.srs.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "Ganhar um nível de pesquisa aumenta a velocidade de carga SRS em 150% por 30 segundos. Níveis gerados contam. Novos ganhos renovam a duração. Os bônus são aditivos."
+    }
+  ],
+  "skills.srs.researchActivity.name": [
+    {
+      "type": 0,
+      "value": "Atividade de pesquisa"
+    }
+  ],
+  "skills.srs.researchConversion.description": [
+    {
+      "type": 0,
+      "value": "Você conecta o departamento de pesquisa ao reator. Agora a revisão por pares oferece risco de incêndio."
+    }
+  ],
+  "skills.srs.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "Reduz a produção de Ciência em 50%. Aumenta a velocidade de carga SRS em 100%. Os bônus são aditivos."
+    }
+  ],
+  "skills.srs.researchConversion.name": [
+    {
+      "type": 0,
+      "value": "Conversão de pesquisa"
+    }
+  ],
+  "skills.srs.stellarMemory.description": [
+    {
+      "type": 0,
+      "value": "Seus cientistas guardam as anotações entre universos. A maioria diz “vamos tentar não fazer isso de novo”."
+    }
+  ],
+  "skills.srs.stellarMemory.effect": [
+    {
+      "type": 0,
+      "value": "Aumenta a velocidade de carga SRS em 10% × log10(total de segundos com SRS atribuído). O tempo acumula entre reinícios e inclui a simulação de Tempo Armazenado, mas exclui a carga extra. Os bônus são aditivos."
+    }
+  ],
+  "skills.srs.stellarMemory.name": [
+    {
+      "type": 0,
+      "value": "Memória estelar"
     }
   ],
   "skills.subskill-assign": [
@@ -12087,6 +12237,12 @@
     {
       "type": 0,
       "value": "Outra aba está usando este jogo"
+    }
+  ],
+  "statistics.bot-boost-used": [
+    {
+      "type": 0,
+      "value": "Bônus de Bots usado"
     }
   ],
   "statistics.cause.artificial-intelligence": [
@@ -12673,6 +12829,120 @@
       "value": "price"
     }
   ],
+  "store.boost.activate": [
+    {
+      "type": 0,
+      "value": "Ativar"
+    }
+  ],
+  "store.boost.active": [
+    {
+      "type": 1,
+      "value": "time"
+    },
+    {
+      "type": 0,
+      "value": " restantes"
+    }
+  ],
+  "store.boost.add": [
+    {
+      "type": 0,
+      "value": "Adicionar 5 min"
+    }
+  ],
+  "store.boost.claim": [
+    {
+      "type": 0,
+      "value": "Resgatar 5 min"
+    }
+  ],
+  "store.boost.close": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "store.boost.description": [
+    {
+      "type": 0,
+      "value": "Dobra os ganhos de Bots por 5 minutos. Acumule até 10 minutos."
+    }
+  ],
+  "store.boost.failed": [
+    {
+      "type": 0,
+      "value": "Não foi possível atualizar o bônus. Tente novamente."
+    }
+  ],
+  "store.boost.games": [
+    {
+      "type": 0,
+      "value": "Mais jogos"
+    }
+  ],
+  "store.boost.navigation": [
+    {
+      "type": 0,
+      "value": "Loja: Bots ×2, "
+    },
+    {
+      "type": 1,
+      "value": "status"
+    }
+  ],
+  "store.boost.permanent": [
+    {
+      "type": 0,
+      "value": "Permanente"
+    }
+  ],
+  "store.boost.permanent-description": [
+    {
+      "type": 0,
+      "value": "Dobra os ganhos de Bots sem promoções. Pode ser desativado."
+    }
+  ],
+  "store.boost.permanent-title": [
+    {
+      "type": 0,
+      "value": "Bots ×2 permanentes"
+    }
+  ],
+  "store.boost.play": [
+    {
+      "type": 0,
+      "value": "Jogar "
+    },
+    {
+      "type": 1,
+      "value": "game"
+    }
+  ],
+  "store.boost.promotion": [
+    {
+      "type": 0,
+      "value": "Promoção de jogo"
+    }
+  ],
+  "store.boost.ready": [
+    {
+      "type": 0,
+      "value": "Disponível"
+    }
+  ],
+  "store.boost.title": [
+    {
+      "type": 0,
+      "value": "Bots ×2"
+    }
+  ],
+  "store.boost.wait": [
+    {
+      "type": 0,
+      "value": "Adicionar em 5:00"
+    }
+  ],
   "store.browser-introduction": [
     {
       "type": 0,
@@ -12872,6 +13142,36 @@
       "value": "Apoio: Família"
     }
   ],
+  "store.promo.echoes": [
+    {
+      "type": 0,
+      "value": "Explore um mundo de fantasia e fique mais forte com combates e melhorias."
+    }
+  ],
+  "store.promo.eternum": [
+    {
+      "type": 0,
+      "value": "Construa um império incremental com melhorias e progresso permanente."
+    }
+  ],
+  "store.promo.nanite": [
+    {
+      "type": 0,
+      "value": "Expanda um enxame de nanites com produção crescente."
+    }
+  ],
+  "store.promo.pulse": [
+    {
+      "type": 0,
+      "value": "Construa sua cidadela e sobreviva a ondas cada vez mais intensas."
+    }
+  ],
+  "store.promo.whitecell": [
+    {
+      "type": 0,
+      "value": "Crie um vírus, escolha mutações e evolua em novos hospedeiros."
+    }
+  ],
   "store.region": [
     {
       "type": 0,
@@ -12881,13 +13181,13 @@
   "store.restore.description": [
     {
       "type": 0,
-      "value": "A restauração verifica somente o Dobro de Pontos de Infinito e as Opções de Desenvolvedor. As categorias de apoio são consumíveis e geralmente não podem ser restauradas sem um registro vinculado à conta."
+      "value": "A restauração verifica as melhorias permanentes. As categorias de apoio são consumíveis e não podem ser restauradas."
     }
   ],
   "store.restore.inventory-description": [
     {
       "type": 0,
-      "value": "A restauração verifica seu inventário Steam para recuperar compras de apoio, Opções de desenvolvedor e Pontos de infinito em dobro. Os itens de apoio permanecem no seu inventário e podem ser comprados novamente."
+      "value": "A restauração verifica seu inventário Steam para recuperar melhorias permanentes e compras de apoio. Os itens de apoio permanecem no seu inventário e podem ser comprados novamente."
     }
   ],
   "store.status.loading": [
@@ -14805,13 +15105,31 @@
   "wiki.patch-notes.version-4-1-9.androidspacing": [
     {
       "type": 0,
-      "value": "Corrigidos os espaços excessivos ao redor das barras do sistema no Android."
+      "value": "Corrigido o espaçamento excessivo ao redor das barras do sistema."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.augments": [
+    {
+      "type": 0,
+      "value": "Adicionados sete aprimoramentos para Dispersão Super-radiante."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.bot-boost": [
+    {
+      "type": 0,
+      "value": "Adicionado um bônus temporário de Bots ×2 na Loja, com até 10 minutos acumulados."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.comparisons": [
+    {
+      "type": 0,
+      "value": "Adicionadas comparações de produção em tempo real ao atribuir ou remover habilidades, com opção de ocultá-las."
     }
   ],
   "wiki.patch-notes.version-4-1-9.debugtabs": [
     {
       "type": 0,
-      "value": "O desbloqueio de abas pelo Debug agora pode ser revertido e é removido ao redefinir o save."
+      "value": "O desbloqueio de abas de depuração agora pode ser revertido e é apagado ao reiniciar o save."
     }
   ],
   "wiki.patch-notes.version-4-1-9.debugunlock": [
@@ -14829,13 +15147,19 @@
   "wiki.patch-notes.version-4-1-9.headers": [
     {
       "type": 0,
-      "value": "Removidos os cabeçalhos redundantes da Loja, História e Wiki e corrigido o alinhamento do ícone no campo de meta de Infinito."
+      "value": "Removidos cabeçalhos redundantes da Loja, História e Wiki e melhorado o alinhamento dos campos de Infinito."
     }
   ],
   "wiki.patch-notes.version-4-1-9.infinityrate": [
     {
       "type": 0,
-      "value": "Auto Infinity agora mostra os PI por minuto do último Infinito concluído em vez das estimativas atuais e recomendadas."
+      "value": "O Infinito Automático agora mostra a taxa de PI por minuto do último Infinito concluído."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.megastructures": [
+    {
+      "type": 0,
+      "value": "Pureza da Essência e Dispersão Super-radiante agora também aumentam a produção de Megaestruturas."
     }
   ],
   "wiki.patch-notes.version-4-1-9.offlineall": [
@@ -14844,10 +15168,22 @@
       "value": "A opção Tudo do controle de Tempo offline agora seleciona toda a quantidade armazenada."
     }
   ],
+  "wiki.patch-notes.version-4-1-9.permanent-boost": [
+    {
+      "type": 0,
+      "value": "Adicionada a compra opcional de um bônus permanente de Bots ×2, que pode ser ativado ou desativado."
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.purchasepersistence": [
     {
       "type": 0,
       "value": "As quantidades de compra de Quantum e Simulações agora são mantidas após recarregar."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purity": [
+    {
+      "type": 0,
+      "value": "Rebalanceada a progressão de Pureza. Os bônus de Corpo e Mente agora são aditivos."
     }
   ],
   "wiki.patch-notes.version-4-1-9.quantumhold": [
@@ -14865,13 +15201,19 @@
   "wiki.patch-notes.version-4-1-9.simulations": [
     {
       "type": 0,
-      "value": "Melhoradas as fórmulas, as indicações de progresso e os layouts compactos das Simulações."
+      "value": "Melhoradas as fórmulas e as exibições de progresso das Simulações."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.skill-tree": [
+    {
+      "type": 0,
+      "value": "Melhorado o espaçamento da árvore de habilidades e adicionadas conexões distintas para habilidades galvanizadas."
     }
   ],
   "wiki.patch-notes.version-4-1-9.speedrun": [
     {
       "type": 0,
-      "value": "Adicionada uma aba Speedrun às Estatísticas."
+      "value": "Adicionada uma aba Speedrun às Estatísticas, incluindo o uso do bônus de Bots."
     }
   ],
   "wiki.patch-notes.version-4-1-9.terra": [
@@ -14883,7 +15225,7 @@
   "wiki.patch-notes.version-4-1-9.trial": [
     {
       "type": 0,
-      "value": "Adicionado um novo desafio: Tentativa & erro"
+      "value": "Adicionado um novo desafio: Tentativa e Erro."
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

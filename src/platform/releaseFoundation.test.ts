@@ -10,8 +10,9 @@ import {
 } from './releaseFoundation'
 
 describe('release platform/store foundation', () => {
-  test('exposes exactly Unity’s five canonical product identifiers', () => {
+  test('preserves Unity product identifiers and adds the durable Bot boost', () => {
     expect(CANONICAL_STORE_PRODUCTS.map((product) => product.id)).toEqual([
+      'ids.botboost',
       'ids.tiptier1',
       'ids.tiptier2',
       'ids.tiptier3',
@@ -24,6 +25,7 @@ describe('release platform/store foundation', () => {
       tipTier3: 'ids.tiptier3',
       developerOptions: 'ids.devoptions',
       doubleInfinityPoints: 'ids.doubleip',
+      botBoost: 'ids.botboost',
     })
   })
 
@@ -76,7 +78,7 @@ describe('release platform/store foundation', () => {
     expect(services.storeAvailable).toBe(true)
     expect(services.storeRestoreAvailable).toBe(true)
     expect(services.entitlements).toBe(services.store)
-    await expect(services.store.products()).resolves.toHaveLength(5)
+    await expect(services.store.products()).resolves.toHaveLength(6)
   })
 
   test('does not let shared-save claims grant Double IP or Developer Options', () => {

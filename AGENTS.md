@@ -1,5 +1,11 @@
 # Agent instructions
 
+## Game artwork
+
+- Before creating or changing skill/augment icons or related game symbols, read
+  [the icon artwork workflow](docs/skill-icon-artwork.md). Start with the original
+  high-resolution masters and reuse their shapes; do not imitate runtime thumbnails.
+
 ## Automated browser testing on macOS
 
 - Launch Chrome or Chromium used for automated game tests, performance checks,

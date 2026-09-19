@@ -1,6 +1,7 @@
 import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { formatUnknownError as errorDetail } from '../core/unknownError'
+import { BOT_BOOST_DURATION_MS, botBoostRemaining, canClaimBotBoost } from '../simulation/botBoost'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -312,6 +313,8 @@ export type CanonicalGameCommand =
   | {
       readonly kind: 'time.upgrade-stored-capacity'
     }
+  | { readonly kind: 'boost.claim' }
+  | { readonly kind: 'boost.set-enabled'; readonly enabled: boolean }
   | {
       readonly kind: 'time.request-stored-time-spend'
       readonly requestedSeconds: number
@@ -381,6 +384,7 @@ export type CanonicalGameCommandCode =
   | `time-double-rate:${string}`
   | `time-stored-capacity:${string}`
   | `time-stored-spend:${string}`
+  | `boost:${string}`
 
 export interface CanonicalGameCommandIssue {
   readonly code: string
@@ -493,6 +497,7 @@ export interface CanonicalInfinityResetPort {
 }
 
 export interface CanonicalGameCommandOptions {
+  readonly permanentBotBoost?: boolean
   readonly runtimeCarriers?: Readonly<CanonicalGameRuntimeCarriers>
   readonly runtimeEvaluation?: CanonicalRuntimeEvaluationPort
   readonly quantumLeap?: CanonicalQuantumLeapPort
@@ -783,6 +788,8 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     authority: 'upgradeStoredTimeCapacity',
     requires: ['stored-time-cheater-carrier'],
   },
+  'boost.claim': { supported: true, authority: 'canonical Bot boost claim' },
+  'boost.set-enabled': { supported: true, authority: 'canonical Bot boost preference' },
   'time.request-stored-time-spend': {
     supported: true,
     authority: 'canonical commit-first stored-time spend intent',
@@ -853,6 +860,24 @@ export function routeCanonicalGameCommand(
   }
 
   switch (command.kind) {
+    case 'boost.claim': {
+      if (options.permanentBotBoost) return rejectDomain(state, carriers, 'boost:owned', 'meta.botBoost', 'Use the permanent boost toggle.')
+      const now = Date.now()
+      if (!canClaimBotBoost(state.meta.botBoost, now)) {
+        return rejectDomain(state, carriers, 'boost:full', 'meta.botBoost', 'Bot boost cannot be topped up yet.')
+      }
+      return finalizeAccepted(state, { ...state, meta: { ...state.meta, botBoost: {
+        expiresAtMilliseconds: now + botBoostRemaining(state.meta.botBoost, now) + BOT_BOOST_DURATION_MS,
+        permanentEnabled: state.meta.botBoost?.permanentEnabled ?? false,
+      } } }, true, 'boost:claimed', carriers, options.runtimeEvaluation, EMPTY_ISSUES, false)
+    }
+    case 'boost.set-enabled': {
+      if (!options.permanentBotBoost || typeof command.enabled !== 'boolean') return rejectDomain(state, carriers, 'boost:unavailable', 'meta.botBoost', 'Permanent Bot boost is not owned.')
+      return finalizeAccepted(state, { ...state, meta: { ...state.meta, botBoost: {
+        expiresAtMilliseconds: state.meta.botBoost?.expiresAtMilliseconds ?? 0,
+        permanentEnabled: command.enabled,
+      } } }, true, 'boost:preference-set', carriers, options.runtimeEvaluation, EMPTY_ISSUES, false)
+    }
     case 'navigation.set-route-discovery': {
       const knownRoutes = DISCOVERABLE_NAVIGATION_DESTINATION_IDS.filter(
         (route) => command.knownRoutes.includes(route),

@@ -1330,7 +1330,7 @@
   "dyson.facilities.details.formula.assigned-skill-points": [
     {
       "type": 0,
-      "value": "割り当て済みスキルポイント"
+      "value": "未使用のスキルポイント"
     }
   ],
   "dyson.facilities.details.formula.effective-planets": [
@@ -10206,7 +10206,7 @@
   "skills.node.purityOfBody.technical": [
     {
       "type": 0,
-      "value": "未使用のスキルポイント1点ごとにボットを1.25倍し、指数的に複利計算します。"
+      "value": "未使用のスキルポイント1点ごとにボット生産量が25%増加します。ボーナスは加算されます。"
     }
   ],
   "skills.node.purityOfMind.description": [
@@ -10224,7 +10224,7 @@
   "skills.node.purityOfMind.technical": [
     {
       "type": 0,
-      "value": "未使用のスキルポイント1点ごとにキャッシュとサイエンスを1.5倍し、指数的に複利計算します。"
+      "value": "未使用のスキルポイント1点ごとに資金と科学の生産量が50%増加します。ボーナスは加算されます。"
     }
   ],
   "skills.node.purityOfSEssence.description": [
@@ -10242,7 +10242,7 @@
   "skills.node.purityOfSEssence.technical": [
     {
       "type": 0,
-      "value": "未使用のスキルポイント1点ごとにすべてを1.42倍し、指数的に複利計算します。"
+      "value": "未使用のスキルポイントに応じて、資金、科学、ボット、およびすべての施設の生産量を増加させます。1点で1.42倍から始まり、1点ごとの増加量が大きくなり、42点で256倍になります。"
     }
   ],
   "skills.node.quantumComputing.description": [
@@ -10764,7 +10764,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "このスキルを割り当て、アプリを起動している間、すべての生産量が毎秒1%ずつ加算で増加します。インフィニティまたは量子跳躍でリセットされます。"
+      "value": "このスキルが割り当てられている間、資金、科学、ボット、およびすべての施設の生産量が毎秒1%増加します。ボーナスは加算されます。蓄積時間のシミュレーション中も蓄積し、インフィニティまたは量子跳躍でリセットされます。"
     }
   ],
   "skills.node.superSwarm.description": [
@@ -11385,6 +11385,24 @@
       "value": "name"
     }
   ],
+  "skills.production-cash": [
+    {
+      "type": 0,
+      "value": "資金"
+    }
+  ],
+  "skills.production-panels": [
+    {
+      "type": 0,
+      "value": "パネル"
+    }
+  ],
+  "skills.production-science": [
+    {
+      "type": 0,
+      "value": "科学"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -11569,6 +11587,12 @@
       "value": "プリセットの部分適用通知を表示"
     }
   ],
+  "skills.show-production-comparisons": [
+    {
+      "type": 0,
+      "value": "生産量の比較を表示"
+    }
+  ],
   "skills.show-skill-labels": [
     {
       "type": 0,
@@ -11585,6 +11609,132 @@
     {
       "type": 0,
       "value": "ドラッグまたは矢印で並べ替えます。前提スキルを先に購入し、次のスキルを購入できるまでポイントを貯めます。"
+    }
+  ],
+  "skills.srs.afterglow.description": [
+    {
+      "type": 0,
+      "value": "前の宇宙はもうありません。でも、一部の粒子はまだ空気を読めていないようです。"
+    }
+  ],
+  "skills.srs.afterglow.effect": [
+    {
+      "type": 0,
+      "value": "インフィニティ時にSRSの蓄積を10%維持します。上限はありません。ホットスタートに加算されます。量子跳躍で維持した蓄積は消えます。"
+    }
+  ],
+  "skills.srs.afterglow.name": [
+    {
+      "type": 0,
+      "value": "残光"
+    }
+  ],
+  "skills.srs.deepExposure.description": [
+    {
+      "type": 0,
+      "value": "科学者たちは長時間の照射を勧めています。とても分厚い窓の向こう側から。"
+    }
+  ],
+  "skills.srs.deepExposure.effect": [
+    {
+      "type": 0,
+      "value": "この強化を割り当てている間、毎分SRSの蓄積速度が10%増加し、20分で最大200%になります。インフィニティまたは量子跳躍でリセットされます。ボーナスは加算されます。"
+    }
+  ],
+  "skills.srs.deepExposure.name": [
+    {
+      "type": 0,
+      "value": "長時間露光"
+    }
+  ],
+  "skills.srs.focusedBeam.description": [
+    {
+      "type": 0,
+      "value": "粒子たちにきちんと列に並ぶよう頼んでみました。うまくいくとは誰も思っていませんでした。"
+    }
+  ],
+  "skills.srs.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "資金と科学のうち、割り当てボットが多い側のSRSの1倍を超えるボーナスを50%増加させ、もう一方を半減させます。同数なら両方とも変化しません。"
+    }
+  ],
+  "skills.srs.focusedBeam.name": [
+    {
+      "type": 0,
+      "value": "集束ビーム"
+    }
+  ],
+  "skills.srs.hotStart.description": [
+    {
+      "type": 0,
+      "value": "科学者たちが装置を予熱してくれました。ピザモードを使ったそうですが、うまくいったようです。"
+    }
+  ],
+  "skills.srs.hotStart.effect": [
+    {
+      "type": 0,
+      "value": "各インフィニティで初めて割り当てた際、SRSの蓄積を30分獲得します。"
+    }
+  ],
+  "skills.srs.hotStart.name": [
+    {
+      "type": 0,
+      "value": "ホットスタート"
+    }
+  ],
+  "skills.srs.researchActivity.description": [
+    {
+      "type": 0,
+      "value": "発見のたびに、お祝いにボタンを押します。もともと何のボタンだったかは、誰も覚えていません。"
+    }
+  ],
+  "skills.srs.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "研究レベルを獲得すると、SRSの蓄積速度が30秒間150%増加します。自動生成レベルも対象です。追加獲得で持続時間が更新されます。ボーナスは加算されます。"
+    }
+  ],
+  "skills.srs.researchActivity.name": [
+    {
+      "type": 0,
+      "value": "研究活動"
+    }
+  ],
+  "skills.srs.researchConversion.description": [
+    {
+      "type": 0,
+      "value": "研究部門を原子炉につなぎました。査読が火災の原因になりかねません。"
+    }
+  ],
+  "skills.srs.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "科学の生産量を50%減少させます。SRSの蓄積速度を100%増加させます。ボーナスは加算されます。"
+    }
+  ],
+  "skills.srs.researchConversion.name": [
+    {
+      "type": 0,
+      "value": "研究変換"
+    }
+  ],
+  "skills.srs.stellarMemory.description": [
+    {
+      "type": 0,
+      "value": "科学者たちは宇宙が変わってもメモを残しています。大半には「次は同じことをしないように」と書かれています。"
+    }
+  ],
+  "skills.srs.stellarMemory.effect": [
+    {
+      "type": 0,
+      "value": "SRSの蓄積速度が10% × log10(SRSを割り当てていた累計秒数)増加します。時間はリセットをまたいで累積し、蓄積時間のシミュレーションも含みますが、ボーナスによる蓄積は含みません。ボーナスは加算されます。"
+    }
+  ],
+  "skills.srs.stellarMemory.name": [
+    {
+      "type": 0,
+      "value": "星の記憶"
     }
   ],
   "skills.subskill-assign": [
@@ -12087,6 +12237,12 @@
     {
       "type": 0,
       "value": "別のタブがこのゲームを使用中です"
+    }
+  ],
+  "statistics.bot-boost-used": [
+    {
+      "type": 0,
+      "value": "ボットボーナス使用"
     }
   ],
   "statistics.cause.artificial-intelligence": [
@@ -12673,6 +12829,120 @@
       "value": "price"
     }
   ],
+  "store.boost.activate": [
+    {
+      "type": 0,
+      "value": "有効にする"
+    }
+  ],
+  "store.boost.active": [
+    {
+      "type": 1,
+      "value": "time"
+    },
+    {
+      "type": 0,
+      "value": "で終了"
+    }
+  ],
+  "store.boost.add": [
+    {
+      "type": 0,
+      "value": "5分追加"
+    }
+  ],
+  "store.boost.claim": [
+    {
+      "type": 0,
+      "value": "5分獲得"
+    }
+  ],
+  "store.boost.close": [
+    {
+      "type": 0,
+      "value": "閉じる"
+    }
+  ],
+  "store.boost.description": [
+    {
+      "type": 0,
+      "value": "5分間、ボットの獲得量が2倍に。最大10分まで延長できます。"
+    }
+  ],
+  "store.boost.failed": [
+    {
+      "type": 0,
+      "value": "ボーナスを更新できませんでした。もう一度お試しください。"
+    }
+  ],
+  "store.boost.games": [
+    {
+      "type": 0,
+      "value": "他のゲーム"
+    }
+  ],
+  "store.boost.navigation": [
+    {
+      "type": 0,
+      "value": "ストア：ボット2倍、"
+    },
+    {
+      "type": 1,
+      "value": "status"
+    }
+  ],
+  "store.boost.permanent": [
+    {
+      "type": 0,
+      "value": "永続"
+    }
+  ],
+  "store.boost.permanent-description": [
+    {
+      "type": 0,
+      "value": "ゲーム紹介なしでボットの獲得量が2倍になります。無効にすることもできます。"
+    }
+  ],
+  "store.boost.permanent-title": [
+    {
+      "type": 0,
+      "value": "永続ボット2倍"
+    }
+  ],
+  "store.boost.play": [
+    {
+      "type": 0,
+      "value": "プレイ："
+    },
+    {
+      "type": 1,
+      "value": "game"
+    }
+  ],
+  "store.boost.promotion": [
+    {
+      "type": 0,
+      "value": "ゲーム紹介"
+    }
+  ],
+  "store.boost.ready": [
+    {
+      "type": 0,
+      "value": "利用可能"
+    }
+  ],
+  "store.boost.title": [
+    {
+      "type": 0,
+      "value": "ボット2倍"
+    }
+  ],
+  "store.boost.wait": [
+    {
+      "type": 0,
+      "value": "残り5:00で延長可能"
+    }
+  ],
   "store.browser-introduction": [
     {
       "type": 0,
@@ -12872,6 +13142,36 @@
       "value": "ファミリー・サポーターティア"
     }
   ],
+  "store.promo.echoes": [
+    {
+      "type": 0,
+      "value": "ファンタジー世界を探索し、戦闘とアップグレードで強くなりましょう。"
+    }
+  ],
+  "store.promo.eternum": [
+    {
+      "type": 0,
+      "value": "アップグレードと永続的な成長で放置帝国を築きましょう。"
+    }
+  ],
+  "store.promo.nanite": [
+    {
+      "type": 0,
+      "value": "生産量を増やし、ナノマシンの群れを成長させましょう。"
+    }
+  ],
+  "store.promo.pulse": [
+    {
+      "type": 0,
+      "value": "城塞を築き、激しさを増す敵の波を生き延びましょう。"
+    }
+  ],
+  "store.promo.whitecell": [
+    {
+      "type": 0,
+      "value": "ウイルスを作り、変異を選び、新たな宿主で進化しましょう。"
+    }
+  ],
   "store.region": [
     {
       "type": 0,
@@ -12881,13 +13181,13 @@
   "store.restore.description": [
     {
       "type": 0,
-      "value": "復元対象はインフィニティポイント2倍と開発者オプションのみです。サポーターティアは消費型商品のため、アカウント連携台帳がなければ通常は復元できません。"
+      "value": "永続アップグレードを復元します。サポーターティアは消費型商品のため復元できません。"
     }
   ],
   "store.restore.inventory-description": [
     {
       "type": 0,
-      "value": "購入の復元では、Steamインベントリ内のサポーター購入、開発者オプション、無限ポイント2倍を確認します。サポーターアイテムはインベントリに残り、繰り返し購入できます。"
+      "value": "Steamインベントリ内の永続アップグレードとサポーター購入を確認します。サポーターアイテムはインベントリに残り、繰り返し購入できます。"
     }
   ],
   "store.status.loading": [
@@ -14805,13 +15105,31 @@
   "wiki.patch-notes.version-4-1-9.androidspacing": [
     {
       "type": 0,
-      "value": "Androidのシステムバー周辺の余白が大きすぎる問題を修正しました。"
+      "value": "システムバー周辺の余分な余白を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.augments": [
+    {
+      "type": 0,
+      "value": "超放射散乱に7つのオーグメントを追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.bot-boost": [
+    {
+      "type": 0,
+      "value": "ストアに一時的なボット2倍ブーストを追加しました。最大10分まで貯められます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.comparisons": [
+    {
+      "type": 0,
+      "value": "スキルの割り当て・解除時に生産量をリアルタイムで比較する表示と、それを非表示にする設定を追加しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.debugtabs": [
     {
       "type": 0,
-      "value": "Debugによるタブの解除を取り消せるようになりました。セーブのリセット時にも解除状態が消去されます。"
+      "value": "デバッグタブのロック解除を取り消せるようになり、セーブをリセットすると解除状態も消去されます。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.debugunlock": [
@@ -14829,13 +15147,19 @@
   "wiki.patch-notes.version-4-1-9.headers": [
     {
       "type": 0,
-      "value": "ストア、ストーリー、Wikiの重複した見出しパネルを削除し、インフィニティ目標入力欄のアイコン位置を修正しました。"
+      "value": "ストア・ストーリー・Wikiの重複する見出しを削除し、インフィニティの入力欄の配置を改善しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.infinityrate": [
     {
       "type": 0,
-      "value": "自動インフィニティは現在値や推奨値の予測に代わり、直前に完了したインフィニティの1分あたりのIPを表示します。"
+      "value": "自動インフィニティに、直前に完了したインフィニティの毎分IPを表示するようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.megastructures": [
+    {
+      "type": 0,
+      "value": "本質の純度と超放射散乱がメガストラクチャーの生産も強化するようになりました。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.offlineall": [
@@ -14844,10 +15168,22 @@
       "value": "オフライン時間スライダーの「すべて」で、保存された時間の全量を選択するように修正しました。"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.permanent-boost": [
+    {
+      "type": 0,
+      "value": "オン・オフを切り替えられる永続ボット2倍ブーストを、任意で購入できるようにしました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.purchasepersistence": [
     {
       "type": 0,
       "value": "クアンタムとシミュレーションの購入数量設定が再読み込み後も保持されるようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purity": [
+    {
+      "type": 0,
+      "value": "純粋さの成長バランスを調整しました。身体と精神のボーナスは加算式になりました。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.quantumhold": [
@@ -14865,13 +15201,19 @@
   "wiki.patch-notes.version-4-1-9.simulations": [
     {
       "type": 0,
-      "value": "シミュレーションの計算式、進捗表示、小画面向けレイアウトを改善しました。"
+      "value": "シミュレーションの計算式と進行状況の表示を改善しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.skill-tree": [
+    {
+      "type": 0,
+      "value": "スキルツリーの間隔を改善し、ガルバナイズ済みスキル専用の接続線を追加しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.speedrun": [
     {
       "type": 0,
-      "value": "統計にスピードランタブを追加しました。"
+      "value": "統計にスピードランタブを追加しました。ボットブーストの使用状況も確認できます。"
     }
   ],
   "wiki.patch-notes.version-4-1-9.terra": [
@@ -14883,7 +15225,7 @@
   "wiki.patch-notes.version-4-1-9.trial": [
     {
       "type": 0,
-      "value": "新チャレンジ「試行錯誤」を追加"
+      "value": "新しいチャレンジ「試行錯誤」を追加しました。"
     }
   ],
   "wiki.patch-notes.version-4-1.audio": [

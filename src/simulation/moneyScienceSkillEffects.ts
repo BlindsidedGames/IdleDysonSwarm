@@ -1,3 +1,4 @@
+import { purityMindMultiplier, purityEssenceMultiplier } from './purityMultipliers'
 import { galvanizedSkillIds } from './galvanization'
 import {
   isFiniteNonNegativeNumber,
@@ -9,7 +10,6 @@ import { extractDynamicSkillId } from './dynamicEffectId'
 import {
   DISCRETE_MAXIMUM,
   multiplyContinuous,
-  powerContinuous,
 } from './numeric'
 import {
   resolveGalaxiesEngulfed,
@@ -199,7 +199,7 @@ function resolveMoneyEffect(
       return resolved(starsSurrounded(production.value, true) < 1 ? 3 : 1)
     }
     case 'purityOfMind':
-      return resolveSkillPointMultiplier(state, effectId, 1.5)
+      return resolveSkillPointMultiplier(state, effectId, purityMindMultiplier)
     case 'monetaryPolicy': {
       const fragments = readDiscrete(
         state.skills.fragments,
@@ -217,7 +217,7 @@ function resolveMoneyEffect(
     case 'stellarDominance':
       return resolveStellarDominance(state, derived, effectId)
     case 'purityOfSEssence':
-      return resolveSkillPointMultiplier(state, effectId, 1.42)
+      return resolveSkillPointMultiplier(state, effectId, purityEssenceMultiplier)
     case 'superRadiantScattering':
       return resolveScattering(state, effectId)
   }
@@ -307,13 +307,13 @@ function resolveScienceEffect(
       )
     }
     case 'purityOfMind':
-      return resolveSkillPointMultiplier(state, effectId, 1.5)
+      return resolveSkillPointMultiplier(state, effectId, purityMindMultiplier)
     case 'tasteOfPower':
       return resolveTasteOfPower(state, effectId)
     case 'stellarObliteration':
       return resolveStellarObliteration(state, derived, effectId)
     case 'purityOfSEssence':
-      return resolveSkillPointMultiplier(state, effectId, 1.42)
+      return resolveSkillPointMultiplier(state, effectId, purityEssenceMultiplier)
     case 'superRadiantScattering':
       return resolveScattering(state, effectId)
   }
@@ -357,7 +357,7 @@ function regulatedAcademiaPercentagePoints(fragments: number): number {
 function resolveSkillPointMultiplier(
   state: MoneyScienceCanonicalInputs,
   effectId: string,
-  coefficient: number,
+  multiplier: (points: number) => number,
 ): MoneyScienceSkillEffectResolution {
   const points = readDiscrete(
     state.skills.points,
@@ -366,7 +366,7 @@ function resolveSkillPointMultiplier(
   )
   if (!points.ok) return blocked(points.issue)
   return resolvedFinite(
-    powerContinuous(coefficient, points.value),
+    multiplier(points.value),
     effectId,
   )
 }

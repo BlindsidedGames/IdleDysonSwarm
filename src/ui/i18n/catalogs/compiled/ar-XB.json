@@ -2646,7 +2646,7 @@
     },
     {
       "type": 0,
-      "value": "∀ssıƃuǝp Sʞıʅʅ Ԁoıuʇs"
+      "value": "∩usdǝuʇ Sʞıʅʅ Ԁoıuʇs"
     },
     {
       "type": 0,
@@ -20402,7 +20402,7 @@
     },
     {
       "type": 0,
-      "value": "Wnʅʇıdʅʎ Ԑoʇs qʎ 1.25x ɟoɹ ǝɐɔɥ nusdǝuʇ Sʞıʅʅ Ԁoıuʇ, ɔoɯdonupıuƃ ǝxdouǝuʇıɐʅʅʎ."
+      "value": "Iuɔɹǝɐsǝ Ԑoʇ dɹopnɔʇıou qʎ 25% dǝɹ nusdǝuʇ Sʞıʅʅ Ԁoıuʇ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
     },
     {
       "type": 0,
@@ -20444,7 +20444,7 @@
     },
     {
       "type": 0,
-      "value": "Wnʅʇıdʅʎ Ↄɐsɥ/Sɔıǝuɔǝ qʎ 1.5x ɟoɹ ǝɐɔɥ nusdǝuʇ Sʞıʅʅ Ԁoıuʇ, ɔoɯdonupıuƃ ǝxdouǝuʇıɐʅʅʎ."
+      "value": "Iuɔɹǝɐsǝ Ↄɐsɥ ɐup Sɔıǝuɔǝ dɹopnɔʇıou qʎ 50% dǝɹ nusdǝuʇ Sʞıʅʅ Ԁoıuʇ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
     },
     {
       "type": 0,
@@ -20486,7 +20486,7 @@
     },
     {
       "type": 0,
-      "value": "Wnʅʇıdʅʎ Ǝʌǝɹʎʇɥıuƃ qʎ 1.42x ɟoɹ ǝɐɔɥ nusdǝuʇ Sʞıʅʅ Ԁoıuʇ, ɔoɯdonupıuƃ ǝxdouǝuʇıɐʅʅʎ."
+      "value": "Iuɔɹǝɐsǝ Ↄɐsɥ, Sɔıǝuɔǝ, Ԑoʇ, ɐup ɐʅʅ ɟɐɔıʅıʇʎ dɹopnɔʇıou qɐsǝp ou nusdǝuʇ Sʞıʅʅ Ԁoıuʇs. Sʇɐɹʇs ɐʇ 1.42× ʍıʇɥ 1 doıuʇ, ʍıʇɥ ıuɔɹǝɐsıuƃ ƃɐıus dǝɹ doıuʇ, ɹǝɐɔɥıuƃ 256× ɐʇ 42 doıuʇs."
     },
     {
       "type": 0,
@@ -21704,7 +21704,7 @@
     },
     {
       "type": 0,
-      "value": "Ⅎoɹ ǝɐɔɥ sǝɔoup ʇɥıs sʞıʅʅ ıs ɐssıƃuǝp ɐup ʇɥǝ ɐdd ıs ɹnuuıuƃ, ɐʅʅ dɹopnɔʇıou ıuɔɹǝɐsǝs qʎ 1% ʇɥıs sɔɐʅǝs ɐppıʇıʌǝʅʎ, ɐup ɹǝsǝʇs ou Iuɟıuıʇʎ/Ònɐuʇnɯ ⅂ǝɐd."
+      "value": "Iuɔɹǝɐsǝ Ↄɐsɥ, Sɔıǝuɔǝ, Ԑoʇ, ɐup ɐʅʅ ɟɐɔıʅıʇʎ dɹopnɔʇıou qʎ 1% dǝɹ sǝɔoup ʍɥıʅǝ ɐssıƃuǝp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ. Ↄɥɐɹƃǝs pnɹıuƃ Sʇoɹǝp ⊥ıɯǝ sıɯnʅɐʇıou ɐup ɹǝsǝʇs ou Iuɟıuıʇʎ oɹ Ònɐuʇnɯ ⅂ǝɐd."
     },
     {
       "type": 0,
@@ -23033,6 +23033,48 @@
       "value": "‬"
     }
   ],
+  "skills.production-cash": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐsɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production-panels": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐuǝʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production-science": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɔıǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -23393,6 +23435,20 @@
       "value": "‬"
     }
   ],
+  "skills.show-production-comparisons": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ dɹopnɔʇıou ɔoɯdɐɹısous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.show-skill-labels": [
     {
       "type": 0,
@@ -23429,6 +23485,300 @@
     {
       "type": 0,
       "value": "ᗡɹɐƃ ʇo ɹǝoɹpǝɹ oɹ nsǝ ʇɥǝ ɐɹɹoʍs. ᴚǝbnıɹǝp sʞıʅʅs ɐɹǝ qonƃɥʇ ɟıɹsʇ. Ԁoıuʇs ɐɹǝ sɐʌǝp nuʇıʅ ʇɥǝ uǝxʇ sʞıʅʅ ɔɐu qǝ ɐɟɟoɹpǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.afterglow.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ʅɐsʇ nuıʌǝɹsǝ ıs ƃouǝ, qnʇ soɯǝ oɟ ıʇs dɐɹʇıɔʅǝs ɥɐʌǝu’ʇ ʇɐʞǝu ʇɥǝ ɥıuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.afterglow.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʇɐıu 10% oɟ SᴚS ɔɥɐɹƃǝ ʇɥɹonƃɥ Iuɟıuıʇʎ, ʍıʇɥ uo ɔɐd. ∀pps ʇo Hoʇ Sʇɐɹʇ. Ònɐuʇnɯ ⅂ǝɐd ɔʅǝɐɹs ɹǝʇɐıuǝp ɔɥɐɹƃǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.afterglow.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɟʇǝɹƃʅoʍ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.deepExposure.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ sɔıǝuʇısʇs ɹǝɔoɯɯǝup dɹoʅouƃǝp ǝxdosnɹǝ. Ⅎɹoɯ qǝɥıup ɐ ʌǝɹʎ ʇɥıɔʞ ʍıupoʍ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.deepExposure.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔɹǝɐsǝ SᴚS ɔɥɐɹƃıuƃ sdǝǝp qʎ 10% dǝɹ ɯıunʇǝ ʇɥıs ɐnƃɯǝuʇ ıs ɐssıƃuǝp, nd ʇo 200% ɐɟʇǝɹ 20 ɯıunʇǝs. ᴚǝsǝʇs ou Iuɟıuıʇʎ oɹ Ònɐuʇnɯ ⅂ǝɐd. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.deepExposure.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝǝd Ǝxdosnɹǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.focusedBeam.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on ɐsʞ ʇɥǝ dɐɹʇıɔʅǝs ʇo ɟoɹɯ ɐu oɹpǝɹʅʎ bnǝnǝ. Noqopʎ ǝxdǝɔʇǝp ʇɥɐʇ ʇo ʍoɹʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔɹǝɐsǝ ʇɥǝ SᴚS qouns ɐqoʌǝ 1× qʎ 50% ɟoɹ Ↄɐsɥ oɹ Sɔıǝuɔǝ, ʍɥıɔɥǝʌǝɹ ɥɐs ɯoɹǝ Ԑoʇs ɐssıƃuǝp, ɐup ɥɐʅʌǝ ıʇ ɟoɹ ʇɥǝ oʇɥǝɹ. Ǝbnɐʅ ɐʅʅoɔɐʇıou ʅǝɐʌǝs qoʇɥ nuɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.focusedBeam.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoɔnsǝp Ԑǝɐɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.hotStart.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ sɔıǝuʇısʇs dɹǝɥǝɐʇǝp ʇɥǝ ǝbnıdɯǝuʇ. ⊥ɥǝʎ nsǝp ʇɥǝ dızzɐ sǝʇʇıuƃ, qnʇ ıʇ sǝǝɯs ʇo ɥɐʌǝ ʍoɹʞǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.hotStart.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐıu 30 ɯıunʇǝs oɟ SᴚS ɔɥɐɹƃǝ ou ɟıɹsʇ ɐssıƃuɯǝuʇ ǝɐɔɥ Iuɟıuıʇʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.hotStart.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hoʇ Sʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.researchActivity.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝʌǝɹʎ qɹǝɐʞʇɥɹonƃɥ ƃǝʇs ɐ ɔǝʅǝqɹɐʇoɹʎ qnʇʇou dɹǝss. Noqopʎ ɹǝɯǝɯqǝɹs ʍɥɐʇ ʇɥǝ qnʇʇou ʍɐs oɹıƃıuɐʅʅʎ ɟoɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐıuıuƃ ɐ ɹǝsǝɐɹɔɥ ʅǝʌǝʅ ıuɔɹǝɐsǝs SᴚS ɔɥɐɹƃıuƃ sdǝǝp qʎ 150% ɟoɹ 30 sǝɔoups. ⅁ǝuǝɹɐʇǝp ʅǝʌǝʅs ɔonuʇ. Ⅎnɹʇɥǝɹ ƃɐıus ɹǝɟɹǝsɥ ʇɥǝ pnɹɐʇıou. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.researchActivity.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ ∀ɔʇıʌıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.researchConversion.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on dʅnƃ ʇɥǝ ɹǝsǝɐɹɔɥ pǝdɐɹʇɯǝuʇ ıuʇo ʇɥǝ ɹǝɐɔʇoɹ. Ԁǝǝɹ ɹǝʌıǝʍ ıs uoʍ ɐ ɟıɹǝ ɥɐzɐɹp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝpnɔǝ Sɔıǝuɔǝ dɹopnɔʇıou qʎ 50%. Iuɔɹǝɐsǝ SᴚS ɔɥɐɹƃıuƃ sdǝǝp qʎ 100%. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.researchConversion.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ Ↄouʌǝɹsıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.stellarMemory.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ sɔıǝuʇısʇs ʞǝǝd ʇɥǝıɹ uoʇǝs qǝʇʍǝǝu nuıʌǝɹsǝs. Wosʇ oɟ ʇɥǝɯ sɐʎ “ʇɹʎ uoʇ ʇo po ʇɥɐʇ ɐƃɐıu.”"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.stellarMemory.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔɹǝɐsǝ SᴚS ɔɥɐɹƃıuƃ sdǝǝp qʎ 10% × ʅoƃ10(ʇoʇɐʅ sǝɔoups sdǝuʇ ʍıʇɥ SᴚS ɐssıƃuǝp). ⊥ıɯǝ ɐɔɔnɯnʅɐʇǝs ɐɔɹoss ɹǝsǝʇs ɐup ıuɔʅnpǝs Sʇoɹǝp ⊥ıɯǝ sıɯnʅɐʇıou, qnʇ ǝxɔʅnpǝs qouns ɔɥɐɹƃǝ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.srs.stellarMemory.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇǝʅʅɐɹ Wǝɯoɹʎ"
     },
     {
       "type": 0,
@@ -24547,6 +24897,20 @@
     {
       "type": 0,
       "value": "∀uoʇɥǝɹ ʇɐq ıs nsıuƃ ʇɥıs ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.bot-boost-used": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoʇ Ԑoosʇ ∩sǝp"
     },
     {
       "type": 0,
@@ -25889,6 +26253,256 @@
       "value": "‬"
     }
   ],
+  "store.boost.activate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇıʌɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.active": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "time"
+    },
+    {
+      "type": 0,
+      "value": " ɹǝɯɐıuıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.add": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀pp 5 ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.claim": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅɐıɯ 5 ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.close": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅosǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Ԑoʇ ƃɐıus ɟoɹ 5 ɯıunʇǝs. Sʇɐɔʞ nd ʇo 10 ɯıunʇǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ qoosʇ ɔonʅp uoʇ qǝ ndpɐʇǝp. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.games": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woɹǝ ƃɐɯǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.navigation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹǝ: 2× Ԑoʇs, "
+    },
+    {
+      "type": 1,
+      "value": "status"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.permanent": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɹɯɐuǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.permanent-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Ԑoʇ ƃɐıus ʍıʇɥonʇ dɹoɯoʇıous. Ↄɐu qǝ sʍıʇɔɥǝp oɟɟ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.permanent-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɹɯɐuǝuʇ 2× Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.play": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁʅɐʎ "
+    },
+    {
+      "type": 1,
+      "value": "game"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.promotion": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐɯǝ dɹoɯoʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.ready": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐpʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "2× Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.boost.wait": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥od nd ɐʇ 5:00"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "store.browser-introduction": [
     {
       "type": 0,
@@ -26312,6 +26926,76 @@
       "value": "‬"
     }
   ],
+  "store.promo.echoes": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxdʅoɹǝ ɐ ɟɐuʇɐsʎ ʍoɹʅp ɐup ƃɹoʍ sʇɹouƃǝɹ ʇɥɹonƃɥ ɔoɯqɐʇ ɐup ndƃɹɐpǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.promo.eternum": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp ɐu ıpʅǝ ǝɯdıɹǝ ʇɥɹonƃɥ ndƃɹɐpǝs ɐup dǝɹɯɐuǝuʇ dɹoƃɹǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.promo.nanite": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹoʍ ɐ uɐuıʇǝ sʍɐɹɯ ʇɥɹonƃɥ ɔoɯdonupıuƃ dɹopnɔʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.promo.pulse": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp ʎonɹ ɔıʇɐpǝʅ ɐup snɹʌıʌǝ ǝsɔɐʅɐʇıuƃ ʍɐʌǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.promo.whitecell": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp ɐ ʌıɹns, pɹɐɟʇ ɯnʇɐʇıous ɐup ǝʌoʅʌǝ ɐɔɹoss uǝʍ ɥosʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "store.region": [
     {
       "type": 0,
@@ -26333,7 +27017,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝsʇoɹǝ ɔɥǝɔʞs ouʅʎ ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs ɐup ᗡǝʌǝʅodǝɹ Odʇıous. Snddoɹʇǝɹ ʇıǝɹs ɐɹǝ ɔousnɯɐqʅǝ ɐup ɐɹǝ uoʇ ƃǝuǝɹɐʅʅʎ ɹǝsʇoɹɐqʅǝ ʍıʇɥonʇ ɐu ɐɔɔonuʇ-qɐɔʞǝp ʅǝpƃǝɹ."
+      "value": "ᴚǝsʇoɹǝ ɔɥǝɔʞs dǝɹɯɐuǝuʇ ndƃɹɐpǝs. Snddoɹʇǝɹ ʇıǝɹs ɐɹǝ ɔousnɯɐqʅǝ ɐup ɔɐuuoʇ qǝ ɹǝsʇoɹǝp."
     },
     {
       "type": 0,
@@ -26347,7 +27031,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝsʇoɹǝ ɔɥǝɔʞs ʎonɹ Sʇǝɐɯ ıuʌǝuʇoɹʎ ɟoɹ snddoɹʇǝɹ dnɹɔɥɐsǝs, ᗡǝʌǝʅodǝɹ Odʇıous ɐup ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs. Snddoɹʇǝɹ ıʇǝɯs sʇɐʎ ıu ʎonɹ ıuʌǝuʇoɹʎ ɐup ɔɐu qǝ dnɹɔɥɐsǝp ɐƃɐıu."
+      "value": "ᴚǝsʇoɹǝ ɔɥǝɔʞs ʎonɹ Sʇǝɐɯ ıuʌǝuʇoɹʎ ɟoɹ dǝɹɯɐuǝuʇ ndƃɹɐpǝs ɐup snddoɹʇǝɹ dnɹɔɥɐsǝs. Snddoɹʇǝɹ ıʇǝɯs sʇɐʎ ıu ʎonɹ ıuʌǝuʇoɹʎ ɐup ɔɐu qǝ dnɹɔɥɐsǝp ɐƃɐıu."
     },
     {
       "type": 0,
@@ -29937,7 +30621,49 @@
     },
     {
       "type": 0,
-      "value": "Ⅎıxǝp ǝxɔǝss sdɐɔıuƃ ɐɹonup sʎsʇǝɯ qɐɹs ou ∀upɹoıp."
+      "value": "Ⅎıxǝp ǝxɔǝss sdɐɔıuƃ ɐɹonup sʎsʇǝɯ qɐɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.augments": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp sǝʌǝu ɐnƃɯǝuʇs ɟoɹ Sndǝɹ-ᴚɐpıɐuʇ Sɔɐʇʇǝɹıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.bot-boost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɐ ʇǝɯdoɹɐɹʎ 2× Ԑoʇ qoosʇ ıu ʇɥǝ Sʇoɹǝ, ʍıʇɥ nd ʇo 10 ɯıunʇǝs qɐuʞǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.comparisons": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ʅıʌǝ dɹopnɔʇıou ɔoɯdɐɹısous ʍɥǝu ɐssıƃuıuƃ oɹ nuɐssıƃuıuƃ sʞıʅʅs, ʍıʇɥ ɐu odʇıou ʇo ɥıpǝ ʇɥǝɯ."
     },
     {
       "type": 0,
@@ -29951,7 +30677,7 @@
     },
     {
       "type": 0,
-      "value": "ᗡǝqnƃ ʇɐq nuʅoɔʞıuƃ ɔɐu uoʍ qǝ ɹǝʌǝɹsǝp ɐup ıs ɔʅǝɐɹǝp ʍɥǝu ɹǝsǝʇʇıuƃ ʇɥǝ sɐʌǝ."
+      "value": "ᗡǝqnƃ ʇɐq nuʅoɔʞıuƃ ɔɐu uoʍ qǝ ɹǝʌǝɹsǝp ɐup ɔʅǝɐɹs ʍɥǝu ɹǝsǝʇʇıuƃ ʇɥǝ sɐʌǝ."
     },
     {
       "type": 0,
@@ -29993,7 +30719,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝɯoʌǝp ɹǝpnupɐuʇ Sʇoɹǝ, Sʇoɹʎ, ɐup Mıʞı ɥǝɐpǝɹ dɐuǝʅs ɐup ɔoɹɹǝɔʇǝp ʇɥǝ Iuɟıuıʇʎ ʇɐɹƃǝʇ-ɟıǝʅp ıɔou ɐʅıƃuɯǝuʇ."
+      "value": "ᴚǝɯoʌǝp ɹǝpnupɐuʇ Sʇoɹǝ, Sʇoɹʎ, ɐup Mıʞı ɥǝɐpǝɹs ɐup ıɯdɹoʌǝp Iuɟıuıʇʎ ıudnʇ ɐʅıƃuɯǝuʇ."
     },
     {
       "type": 0,
@@ -30007,7 +30733,21 @@
     },
     {
       "type": 0,
-      "value": "∀nʇo Iuɟıuıʇʎ uoʍ sɥoʍs ʇɥǝ ʅɐsʇ ɔoɯdʅǝʇǝp Iuɟıuıʇʎ’s IԀ-dǝɹ-ɯıunʇǝ ɹɐʇǝ ıusʇǝɐp oɟ ɔnɹɹǝuʇ ɐup ɹǝɔoɯɯǝupǝp ǝsʇıɯɐʇǝs."
+      "value": "∀nʇo Iuɟıuıʇʎ uoʍ sɥoʍs ʇɥǝ ʅɐsʇ ɔoɯdʅǝʇǝp Iuɟıuıʇʎ’s IԀ-dǝɹ-ɯıunʇǝ ɹɐʇǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.megastructures": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹıʇʎ oɟ Ǝssǝuɔǝ ɐup Sndǝɹ-ᴚɐpıɐuʇ Sɔɐʇʇǝɹıuƃ uoʍ ɐʅso qoosʇ Wǝƃɐsʇɹnɔʇnɹǝ dɹopnɔʇıou."
     },
     {
       "type": 0,
@@ -30028,6 +30768,20 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-9.permanent-boost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɐu odʇıouɐʅ dǝɹɯɐuǝuʇ 2× Ԑoʇ qoosʇ dnɹɔɥɐsǝ, ʍɥıɔɥ ɔɐu qǝ sʍıʇɔɥǝp ou oɹ oɟɟ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-9.purchasepersistence": [
     {
       "type": 0,
@@ -30036,6 +30790,20 @@
     {
       "type": 0,
       "value": "Ònɐuʇnɯ ɐup Sıɯnʅɐʇıou dnɹɔɥɐsǝ ɐɯonuʇs uoʍ dǝɹsısʇ ɐɟʇǝɹ ɹǝʅoɐpıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.purity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝqɐʅɐuɔǝp Ԁnɹıʇʎ sɔɐʅıuƃ. Ԑopʎ ɐup Wıup qounsǝs ɐɹǝ uoʍ ɐppıʇıʌǝ."
     },
     {
       "type": 0,
@@ -30077,7 +30845,21 @@
     },
     {
       "type": 0,
-      "value": "Iɯdɹoʌǝp Sıɯnʅɐʇıou ɟoɹɯnʅɐs, dɹoƃɹǝss pısdʅɐʎs, ɐup ɔoɯdɐɔʇ ʅɐʎonʇs."
+      "value": "Iɯdɹoʌǝp Sıɯnʅɐʇıou ɟoɹɯnʅɐs ɐup dɹoƃɹǝss pısdʅɐʎs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-9.skill-tree": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdɹoʌǝp sʞıʅʅ-ʇɹǝǝ sdɐɔıuƃ ɐup ɐppǝp pısʇıuɔʇ ɔouuǝɔʇıous ɟoɹ ⅁ɐʅʌɐuızǝp sʞıʅʅs."
     },
     {
       "type": 0,
@@ -30091,7 +30873,7 @@
     },
     {
       "type": 0,
-      "value": "∀ppǝp ɐ Sdǝǝpɹnu ʇɐq ʇo Sʇɐʇısʇıɔs."
+      "value": "∀ppǝp ɐ Sdǝǝpɹnu ʇɐq ʇo Sʇɐʇısʇıɔs, ıuɔʅnpıuƃ Ԑoʇ qoosʇ nsɐƃǝ."
     },
     {
       "type": 0,
@@ -30119,7 +30901,7 @@
     },
     {
       "type": 0,
-      "value": "∀ppǝp ɐ uǝʍ ɔɥɐʅʅǝuƃǝ: ⊥ɹıɐʅ & Ǝɹɹoɹ"
+      "value": "∀ppǝp ɐ uǝʍ ɔɥɐʅʅǝuƃǝ: ⊥ɹıɐʅ & Ǝɹɹoɹ."
     },
     {
       "type": 0,

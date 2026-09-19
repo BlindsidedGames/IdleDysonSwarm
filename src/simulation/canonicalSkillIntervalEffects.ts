@@ -1,3 +1,4 @@
+import { advanceSrsAugments, refreshSrsResearchActivity } from './srsAugments'
 import { isBreakInfinityEnabled } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -35,8 +36,8 @@ export function applyCanonicalSkillIntervalEffects(
   validateInputs(inputs)
   if (inputs.seconds === 0) return stateAfterArrivals
 
-  const skills = advanceSkillTimers(
-    stateAfterArrivals.skills,
+  let skills = advanceSkillTimers(
+    advanceSrsAugments(stateAfterArrivals, inputs.seconds),
     inputs.seconds,
   )
   const research = accrueShouldersResearch(
@@ -45,6 +46,10 @@ export function applyCanonicalSkillIntervalEffects(
     inputs.moneyUpgradePerSecond,
     inputs.seconds,
   )
+  if (['research.science_boost', 'research.money_multiplier'].some(id =>
+    (research.levelsById[id] ?? 0) > (stateAfterArrivals.research.levelsById[id] ?? 0))) {
+    skills = refreshSrsResearchActivity({ ...stateAfterArrivals, skills })
+  }
   const stellar = resolveStellarAggregate(
     startingState.dyson.bots,
     inputs.botProductionPerSecond,
@@ -174,7 +179,6 @@ function advanceSkillTimers(
   for (const [id, maximum] of [
     ['androids', 600],
     ['pocketAndroids', 3_600],
-    ['superRadiantScattering', Number.MAX_VALUE],
   ] as const) {
     const skill = byId[id]
     if (skill?.owned !== true) continue
