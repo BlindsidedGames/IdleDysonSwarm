@@ -82,6 +82,7 @@ private final class SendablePluginCall: @unchecked Sendable {
     func resolveOwnership(_ response: NativeOwnershipResponse) {
         value.resolve([
             "doubleInfinityPoints": response.ownership.doubleInfinityPoints,
+            "botBoost": response.ownership.botBoost,
             "developerOptions": response.ownership.developerOptions,
             "supporterCatGallery": response.ownership.supporterCatGallery,
             "providerAvailable": response.providerAvailable,
@@ -603,6 +604,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         call.resolve([
             "promoted": promoted,
             "doubleInfinityPoints": nativeStore.entitlementCache.read().doubleInfinityPoints,
+            "botBoost": nativeStore.entitlementCache.read().botBoost,
         ])
     }
 
@@ -613,6 +615,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
     ) {
         call.resolve([
             "doubleInfinityPoints": ownership.doubleInfinityPoints,
+            "botBoost": ownership.botBoost,
             "developerOptions": ownership.developerOptions,
             "supporterCatGallery": ownership.supporterCatGallery,
             "providerAvailable": providerAvailable,
@@ -773,6 +776,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         "ids.tiptier3",
         "ids.devoptions",
         "ids.doubleip",
+        "ids.botboost",
     ]
 }
 

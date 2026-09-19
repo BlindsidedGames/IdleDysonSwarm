@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import { afterEach, expect, test, vi } from 'vitest'
@@ -10,9 +10,13 @@ import { previewCanonicalSkillCatalog, purchaseCanonicalSkill } from '../../../s
 import { SkillsSurface, type SkillsSurfaceProps } from './SkillsSurface'
 import fixture from '../../../../test/fixtures/schema-08-canonical-idb1-main-save.txt?raw'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  window.localStorage.removeItem('idle-dyson-swarm:show-skill-production-comparisons')
+})
 
 test('Scientific Planets reviews all eight prerequisites before assigning nine points from an empty tree', async () => {
+  window.localStorage.setItem('idle-dyson-swarm:show-skill-production-comparisons', 'false')
   const source = hydrateGameState(prepareIdb1Save(fixture).prepared).state
   const initial: CanonicalGameStateV1 = {
     ...source,
@@ -65,4 +69,56 @@ test('Scientific Planets reviews all eight prerequisites before assigning nine p
   expect(current.skills.points).toBe(15n)
   expect(current.skills.byId.scientificPlanets?.owned).toBe(true)
   expect(Object.values(current.skills.byId).filter(skill => skill.owned)).toHaveLength(9)
+})
+
+
+test.each([true, false])('production comparison preference %s controls preview work and confirmation', (showComparisons) => {
+  vi.useFakeTimers()
+  try {
+    const source = hydrateGameState(prepareIdb1Save(fixture).prepared).state
+    const state = { ...source, skills: { ...source.skills, points: 24n, byId: {}, activeAutoAssignment: [] } }
+    const dispatch = vi.fn().mockResolvedValue({ status: 'accepted' })
+    let after = 7
+    const query = vi.fn(() => ({ projected: true,
+      rows: [{ id: 'money' as const, before: 1, after, changed: true }] }))
+    render(<IntlProvider locale="en" messages={{}}>
+      <SkillsSurface locale="en" points={24n} fragments={state.skills.fragments}
+        catalog={previewCanonicalSkillCatalog(state)} presets={state.skills.presets}
+        selectedPresetSlot={1} botDistribution={0} autoAssignNonRefundable={false}
+        commandAvailability={{ purchase: true, refund: true, selectPreset: true,
+          setPresetColor: true, setAutoAssignNonRefundable: true, reset: true }}
+        showPresetApplicationNotifications={true} onShowPresetApplicationNotificationsChange={() => {}}
+        presetActions={{ previewProduction: query } as unknown as NonNullable<SkillsSurfaceProps['presetActions']>}
+        dispatchPlayer={dispatch} />
+    </IntlProvider>)
+    if (!showComparisons) {
+      fireEvent.click(screen.getByRole('button', { name: 'Skill presets and reset' }))
+      fireEvent.click(screen.getByRole('checkbox', { name: 'Show production comparisons' }))
+      expect(window.localStorage.getItem('idle-dyson-swarm:show-skill-production-comparisons')).toBe('false')
+      fireEvent.click(screen.getByRole('button', { name: 'Skill presets and reset' }))
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Cash & Science. Cost: 1 Skill Points' }))
+    expect(query).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'Assign Skill. Will cost 1 Skill Points' }))
+    expect(screen.queryByText('Also assign these required skills:')).toBeNull()
+    if (!showComparisons) {
+      expect(query).not.toHaveBeenCalled()
+      expect(screen.queryByRole('group', { name: 'Confirm skill change' })).toBeNull()
+      expect(dispatch).toHaveBeenCalledExactlyOnceWith({ kind: 'skill.purchase', skillId: 'startHereTree' })
+      return
+    }
+    expect(screen.getByText(/^7(?:\.0+)?\/s \(10m\)$/)).not.toBeNull()
+    const calls = query.mock.calls.length
+    after = 8
+    act(() => vi.advanceTimersByTime(1000))
+    expect(query).toHaveBeenCalledTimes(calls + 1)
+    expect(screen.getByText(/^8(?:\.0+)?\/s \(10m\)$/)).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    act(() => vi.advanceTimersByTime(3000))
+    expect(query).toHaveBeenCalledTimes(calls + 1)
+    expect(dispatch).not.toHaveBeenCalled()
+  } finally {
+    cleanup()
+    vi.useRealTimers()
+  }
 })

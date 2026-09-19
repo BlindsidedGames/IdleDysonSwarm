@@ -1,3 +1,4 @@
+import { permanentSkillRuntime } from './galvanization'
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
@@ -101,7 +102,7 @@ export function applyCanonicalQuantumReset(
     },
     skills: {
       ...state.skills,
-      byId: {},
+      byId: permanentSkillRuntime(state),
       points: 0n,
       fragments: 0n,
     },

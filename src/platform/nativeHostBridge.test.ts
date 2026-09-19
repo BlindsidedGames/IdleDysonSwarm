@@ -234,7 +234,7 @@ describe('native host bootstrap boundary', () => {
     )
     await expect(
       environment.releasePlatformServices.store.products(),
-    ).resolves.toHaveLength(5)
+    ).resolves.toHaveLength(6)
     await expect(
       environment.releasePlatformServices.entitlements.readOwnership(),
     ).resolves.toEqual({
@@ -440,6 +440,7 @@ describe('native host bootstrap boundary', () => {
     ).releasePlatformServices
 
     await expect(services.store.products()).resolves.toEqual([
+      { productId: 'ids.botboost', localizedPrice: null, available: false },
       { productId: 'ids.tiptier1', localizedPrice: null, available: false },
       { productId: 'ids.tiptier2', localizedPrice: null, available: false },
       { productId: 'ids.tiptier3', localizedPrice: null, available: false },

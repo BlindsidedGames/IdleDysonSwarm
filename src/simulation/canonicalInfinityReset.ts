@@ -1,3 +1,4 @@
+import { resetSrsAugments } from './srsAugments'
 import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
 import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
@@ -269,12 +270,12 @@ export function applyCanonicalInfinityReset(
           state.infinity.storedTimeUsedThisCycleSeconds,
         ),
       },
-      skills: {
+      skills: resetSrsAugments(state, {
         ...state.skills,
         points: assignment.points,
         fragments: assignment.fragments,
         byId: resetSkillStates,
-      },
+      }, request.restartOnly === true),
       research: {
         ...state.research,
         levelsById: {},

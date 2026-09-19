@@ -3,6 +3,7 @@ import { isBreakInfinityEnabled, isInfinityChallengeActive } from './infinityCha
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementFacts } from '../achievements/contracts'
+import { recordBotBoostUsage } from './botBoost'
 import {
   isFiniteNonNegativeNumber,
   isFinitePositiveNumber,
@@ -527,6 +528,8 @@ export class CanonicalEventTimeModel
         derived.value.productionArrivalRates,
         seconds,
       )
+      const boost = derived.value.botBoostMultiplier
+      if (boost === 2 && candidate.dyson.bots > startingState.dyson.bots) candidate = recordBotBoostUsage(candidate)
       candidate = applyCanonicalSkillIntervalEffects(
         startingState,
         candidate,
@@ -553,6 +556,7 @@ export class CanonicalEventTimeModel
               derived.value.auxiliary.tinkerAssemblyYield,
             ),
             seconds,
+            boost,
           )
         : {
             state: candidate,

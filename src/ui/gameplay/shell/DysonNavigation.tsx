@@ -143,7 +143,7 @@ function NavigationItemContent({
               )
             : item.icon}
           {placement === 'bottom' && item.badge !== undefined ? (
-            <span className="dyson-navigation__badge">{item.badge}</span>
+            <span className="dyson-navigation__badge" data-outlined={item.badgeOutlined || undefined}>{item.badge}</span>
           ) : null}
         </span>
       )}
@@ -151,7 +151,7 @@ function NavigationItemContent({
         {item.label}
       </span>
       {placement === 'drawer' && item.badge !== undefined ? (
-        <span className="dyson-navigation__drawer-value">
+        <span className="dyson-navigation__drawer-value" data-outlined={item.badgeOutlined || undefined}>
           {item.badge}
         </span>
       ) : null}

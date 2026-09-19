@@ -10,6 +10,17 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 class NativeEntitlementSessionTest {
+    @Test
+    fun botBoostRestorationAndRevocation() {
+        val session = NativeEntitlementSession()
+        val owned = DurableOwnership(false, false, false, botBoost = true)
+        val empty = DurableOwnership(false, false, false)
+        assertTrue(session.resolve(owned, false).botBoost)
+        assertTrue(session.applyProviderOwnership(owned) { true })
+        assertTrue(session.resolve(empty, false).botBoost)
+        assertTrue(session.applyProviderOwnership(empty) { true })
+        assertFalse(session.resolve(owned, true).botBoost)
+    }
     private val staleDisk = DurableOwnership(
         doubleInfinityPoints = true,
         developerOptions = true,

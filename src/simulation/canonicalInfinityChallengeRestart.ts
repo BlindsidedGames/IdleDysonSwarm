@@ -1,3 +1,4 @@
+import { permanentSkillRuntime } from './galvanization'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { applyCanonicalInfinityReset } from './canonicalInfinityReset'
 import { infinityChallenges } from './infinityChallenges'
@@ -19,7 +20,7 @@ export function restartInfinityChallenge(
   const seed = {
     ...state,
     challenges: { ...challenges, active: action === 'enter' ? challengeId : null },
-    skills: { ...state.skills, byId: {} },
+    skills: { ...state.skills, byId: permanentSkillRuntime(state) },
   }
   const reset = applyCanonicalInfinityReset(seed, {
     restartOnly: true, breakInfinity: false, requestedReward: 0n, artifactSkillPoints,

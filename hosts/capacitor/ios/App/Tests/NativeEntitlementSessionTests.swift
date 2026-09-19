@@ -2,6 +2,16 @@ import XCTest
 @testable import IdleDysonNativeEntitlementSession
 
 final class NativeEntitlementSessionTests: XCTestCase {
+    func testBotBoostRestorationAndRevocation() {
+        let session = NativeEntitlementSession()
+        let owned = DurableOwnership(doubleInfinityPoints: false, developerOptions: false, supporterCatGallery: false, botBoost: true)
+        let empty = DurableOwnership(doubleInfinityPoints: false, developerOptions: false, supporterCatGallery: false)
+        XCTAssertTrue(session.resolve(persistedProviderOwnership: owned, legacyDoubleInfinityPoints: false).botBoost)
+        XCTAssertTrue(session.applyProviderOwnership(owned) { _ in true })
+        XCTAssertTrue(session.resolve(persistedProviderOwnership: empty, legacyDoubleInfinityPoints: false).botBoost)
+        XCTAssertTrue(session.applyProviderOwnership(empty) { _ in true })
+        XCTAssertFalse(session.resolve(persistedProviderOwnership: owned, legacyDoubleInfinityPoints: true).botBoost)
+    }
     private let staleDisk = DurableOwnership(
         doubleInfinityPoints: true,
         developerOptions: true,

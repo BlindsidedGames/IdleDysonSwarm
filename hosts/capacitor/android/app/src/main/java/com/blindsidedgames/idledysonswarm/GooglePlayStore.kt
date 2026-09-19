@@ -158,6 +158,7 @@ internal class GooglePlayStore(
                 .toSet()
             val ownership = DurableOwnership(
                 doubleInfinityPoints = durableIds.contains(DOUBLE_IP),
+                botBoost = durableIds.contains(BOT_BOOST),
                 developerOptions = durableIds.contains(DEV_OPTIONS),
                 supporterCatGallery = entitlementCache.read().supporterCatGallery,
             )
@@ -405,6 +406,7 @@ internal class GooglePlayStore(
     ): Boolean =
         entitlementCache.writeProviderOwnership(DurableOwnership(
             doubleInfinityPoints = productIds.contains(DOUBLE_IP),
+            botBoost = productIds.contains(BOT_BOOST),
             developerOptions = productIds.contains(DEV_OPTIONS),
             supporterCatGallery = entitlementCache.read().supporterCatGallery,
         ), refreshSequence)
@@ -430,9 +432,10 @@ internal class GooglePlayStore(
 
     private companion object {
         private const val DOUBLE_IP = "ids.doubleip"
+        private const val BOT_BOOST = "ids.botboost"
         private const val DEV_OPTIONS = "ids.devoptions"
         private val TIP_IDS = setOf("ids.tiptier1", "ids.tiptier2", "ids.tiptier3")
-        private val DURABLE_IDS = setOf(DOUBLE_IP, DEV_OPTIONS)
+        private val DURABLE_IDS = setOf(DOUBLE_IP, DEV_OPTIONS, BOT_BOOST)
         private val PRODUCT_IDS = (TIP_IDS + DURABLE_IDS).toList().sorted()
     }
 }

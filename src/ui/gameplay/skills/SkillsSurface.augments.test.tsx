@@ -13,17 +13,17 @@ import fixture from '../../../../test/fixtures/schema-08-canonical-idb1-main-sav
 
 afterEach(cleanup)
 
-function setup(galvanized = true) {
+function setup(galvanized = true, rootId = 'startHereTree') {
   const source = hydrateGameState(prepareIdb1Save(fixture).prepared).state
   let current: CanonicalGameStateV1 = {
     ...source,
     meta: { ...source.meta, firstInfinityComplete: true },
     skills: { ...source.skills, points: 3n, byId: {
-      startHereTree: { owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0 },
+      [rootId]: { owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0 },
     }, activeAutoAssignment: [] },
     challenges: { unlocked: true, active: null, blankSlateCompleted: true,
       galvanizers: 0n, hasEarnedGalvanizer: true,
-      galvanizedSkillIds: galvanized ? ['startHereTree'] : [] },
+      galvanizedSkillIds: galvanized ? [rootId] : [] },
   }
   const dispatch = vi.fn<SkillsSurfaceProps['dispatchPlayer']>()
   function Harness() {
@@ -140,4 +140,15 @@ test('Enter follows node navigation into augments and back to ordinary skills', 
   enter('Higgs Boson')
   expect(screen.getByRole('dialog', { name: 'Higgs Boson' })).toBeTruthy()
   expect(screen.queryByRole('button', { name: 'Back to skill tree' })).toBeNull()
+})
+
+test('Galvanized SRS keeps its authored incoming line without restoring purchase prerequisites', () => {
+  const { container, state } = setup(true, 'superRadiantScattering')
+  const preview = previewCanonicalSkillCatalog(state()).skills.find(skill => skill.skillId === 'superRadiantScattering')!
+  expect(preview.requiredSkillIds).toEqual([])
+  expect(preview.authoredRequiredSkillIds).toEqual(['scientificPlanets'])
+  const connector = container.querySelector('.skill-tree-connection--galvanized')
+  expect(connector).not.toBeNull()
+  expect(connector!.querySelector('.skill-tree-connection-arrow')).toBeNull()
+  expect(connector!.querySelectorAll('path')).toHaveLength(2)
 })

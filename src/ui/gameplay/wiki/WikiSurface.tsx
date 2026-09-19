@@ -447,10 +447,16 @@ function PatchNotesArticle() {
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion419)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            <li>{intl.formatMessage(messages.patchNotesVersion419Scaling)}</li>
-            <li>{intl.formatMessage(messages.patchNotesVersion419Speedrun)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Augments)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419Trial)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Purity)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Megastructures)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Comparisons)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419SkillTree)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419BotBoost)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Speedrun)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419DebugUnlock)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419Scaling)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419PurchasePersistence)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419QuantumHold)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419Durability)}</li>
@@ -461,6 +467,7 @@ function PatchNotesArticle() {
             <li>{intl.formatMessage(messages.patchNotesVersion419DebugTabs)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419InfinityRate)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion419Headers)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion419PermanentBoost)}</li>
           </ul>
         </section>
         <section className="wiki-surface__section">

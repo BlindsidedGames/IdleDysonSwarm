@@ -1,3 +1,4 @@
+import { previewSkillProduction, type SkillProductionPreview } from '../../simulation/skillProductionPreview'
 import type { SaveFileExportRequest, SaveFileExportResult } from '../../platform/saveFileExport'
 import type {
   ApplicationSnapshot,
@@ -288,6 +289,7 @@ interface BrowserRuntimeGraph {
 }
 
 export interface BrowserSkillPresetQueryPort {
+  previewSkillProduction(skillId: string, kind: 'purchase' | 'refund'): SkillProductionPreview
   previewSkillPresetQueueChange(request: {
     readonly slot: CanonicalSkillPresetSlot
     readonly skillId: string
@@ -356,6 +358,7 @@ export function createBrowserRuntimeFoundation(
       cancel: () => implementation.cancelStoredTimeJob(),
       speedUp: () => implementation.speedUpStoredTimeJob(),
     }),
+    previewSkillProduction: (skillId, kind) => implementation.previewSkillProduction(skillId, kind),
     previewSkillPresetQueueChange: (request) =>
       implementation.previewSkillPresetQueueChange(request),
     exportSkillPreset: (slot) =>
@@ -722,6 +725,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   speedUpStoredTimeJob(): void {
     this.graph?.application.speedUpStoredTimeJob?.()
+  }
+
+  previewSkillProduction(skillId: string, kind: 'purchase' | 'refund'): SkillProductionPreview {
+    const snapshot = this.graph?.application.snapshot()
+    if (snapshot?.phase !== 'ready') throw new Error('Production preview unavailable')
+    return previewSkillProduction(snapshot.state as CanonicalRuntimeState, skillId, kind)
   }
 
   previewSkillPresetQueueChange(request: {

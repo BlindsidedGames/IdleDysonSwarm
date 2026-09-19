@@ -4,6 +4,7 @@ internal data class DurableOwnership(
     val doubleInfinityPoints: Boolean,
     val developerOptions: Boolean,
     val supporterCatGallery: Boolean,
+    val botBoost: Boolean = false,
 )
 
 /**
@@ -42,6 +43,7 @@ internal class NativeEntitlementSession {
             doubleInfinityPoints =
                 provider.doubleInfinityPoints || legacyDoubleInfinityPoints,
             developerOptions = provider.developerOptions,
+            botBoost = provider.botBoost,
             supporterCatGallery =
                 provider.supporterCatGallery ||
                     persistedProviderOwnership.supporterCatGallery,

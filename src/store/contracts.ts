@@ -13,6 +13,7 @@ export const STORE_PRODUCT_IDS = Object.freeze({
   tipTier3: 'ids.tiptier3',
   developerOptions: 'ids.devoptions',
   doubleInfinityPoints: 'ids.doubleip',
+  botBoost: 'ids.botboost',
 } as const)
 
 export type StoreProductId =
@@ -22,6 +23,7 @@ export type StoreProductKind =
   | 'supporter-tier'
   | 'developer-options'
   | 'double-infinity-points'
+  | 'bot-boost'
 
 export type StoreProductDurability = 'consumable' | 'durable'
 
@@ -45,6 +47,8 @@ export interface StoreProductListing {
 
 /** The catalog is product metadata only; it grants no gameplay effect itself. */
 export const CANONICAL_STORE_PRODUCTS: readonly StoreProduct[] = Object.freeze([
+  Object.freeze({ id: STORE_PRODUCT_IDS.botBoost, kind: 'bot-boost', durability: 'durable',
+    title: 'Permanent 2× Bots', description: 'Double Bot gains without promotions. Can be switched off.' }),
   Object.freeze({
     id: STORE_PRODUCT_IDS.tipTier1,
     kind: 'supporter-tier',
@@ -158,6 +162,7 @@ export class NoopStoreAdapter implements StoreAdapter {
 }
 
 export interface HostEntitlementOwnership {
+  readonly botBoost?: boolean
   readonly doubleInfinityPoints: boolean
   readonly developerOptions: boolean
   readonly supporterCatGallery: boolean
@@ -253,6 +258,7 @@ implements EntitlementAuthority, AutomaticUnityPurchaseEvidencePromoter {
     try {
       const verified = await this.source.readVerifiedOwnership()
       ownership = freezeOwnership({
+        ...(verified.botBoost === undefined ? {} : { botBoost: verified.botBoost === true }),
         doubleInfinityPoints:
           verified.doubleInfinityPoints === true ||
           cached?.automaticUnityDoubleIpEvidence !== undefined,
@@ -298,6 +304,7 @@ implements EntitlementAuthority, AutomaticUnityPurchaseEvidencePromoter {
       existingEvidence?.promotedAtUtc ??
       this.sampleUtc()
     const ownership = freezeOwnership({
+      botBoost: this.current?.botBoost ?? cached?.ownership.botBoost,
       doubleInfinityPoints: true,
       developerOptions:
         this.current?.developerOptions ??
@@ -389,6 +396,7 @@ function freezeOwnership(
   ownership: Readonly<HostEntitlementOwnership>,
 ): Readonly<HostEntitlementOwnership> {
   return Object.freeze({
+    ...(ownership.botBoost === undefined ? {} : { botBoost: ownership.botBoost === true }),
     doubleInfinityPoints: ownership.doubleInfinityPoints === true,
     developerOptions: ownership.developerOptions === true,
     supporterCatGallery: ownership.supporterCatGallery === true,

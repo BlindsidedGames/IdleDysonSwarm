@@ -1,3 +1,4 @@
+import { refreshSrsResearchActivity } from './srsAugments'
 import { isTrialAndErrorActive } from './infinityChallenges'
 import {
   isFiniteNonNegativeNumber,
@@ -349,6 +350,7 @@ export function purchaseCanonicalResearch(
     changed: true,
     state: {
       ...state,
+      skills: refreshSrsResearchActivity(state),
       dyson: {
         ...state.dyson,
         science: preview.nextScience,
@@ -442,6 +444,7 @@ export function runResearchAutomationTick(
   return {
     state: {
       ...state,
+      skills: purchases.length > 0 ? refreshSrsResearchActivity(state) : state.skills,
       dyson: {
         ...state.dyson,
         science,

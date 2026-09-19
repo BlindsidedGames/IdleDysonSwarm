@@ -1,4 +1,5 @@
 import { isBreakInfinityEnabled } from './infinityChallenges'
+import { recordBotBoostUsage } from './botBoost'
 import {
   isFiniteNonNegativeNumber,
   isSafeNonNegativeInteger,
@@ -101,6 +102,7 @@ export function selectCanonicalTinkerUiFacts(
   state: Readonly<CanonicalGameStateV1>,
   runtime: Readonly<CanonicalTinkerRuntimeState>,
   assemblyYield: number,
+  botMultiplier: 1 | 2 = 1,
 ): CanonicalTinkerUiFacts {
   const initialStats = deriveCanonicalTinkerStats(
     state,
@@ -123,7 +125,7 @@ export function selectCanonicalTinkerUiFacts(
   const canStart = !synchronized.runtime.running
   return Object.freeze({
     runtime: Object.freeze({ ...synchronized.runtime }),
-    stats: Object.freeze({ ...stats }),
+    stats: Object.freeze({ ...stats, botYield: multiplyContinuous(stats.botYield, botMultiplier) }),
     presentationMode: synchronized.runtime.effectiveManualLabour
       ? 'manual-labour'
       : synchronized.state.skills.byId.manualLabour?.owned === true
@@ -237,6 +239,7 @@ export function advanceCanonicalTinker(
   runtime: Readonly<CanonicalTinkerRuntimeState>,
   stats: Readonly<CanonicalTinkerStats>,
   seconds: number,
+  botMultiplier: 1 | 2 = 1,
 ): CanonicalTinkerAdvanceResult {
   if (!isFiniteNonNegativeNumber(seconds)) {
     throw new RangeError('Tinker advance seconds must be finite and non-negative.')
@@ -301,11 +304,11 @@ export function advanceCanonicalTinker(
             ...candidate,
             dyson: {
               ...candidate.dyson,
-              bots: addContinuous(candidate.dyson.bots, bulkCompletions),
+              bots: addContinuous(candidate.dyson.bots, multiplyContinuous(bulkCompletions, botMultiplier)),
               manualCreationIntervalSeconds: BOT_MINIMUM_COOLDOWN_SECONDS,
             },
           }
-          botsGranted = addContinuous(botsGranted, bulkCompletions)
+          botsGranted = addContinuous(botsGranted, bulkCompletions * botMultiplier)
         }
         completions = Math.min(
           Number.MAX_SAFE_INTEGER,
@@ -380,11 +383,11 @@ export function advanceCanonicalTinker(
         ...candidate,
         dyson: {
           ...candidate.dyson,
-          bots: addContinuous(candidate.dyson.bots, stats.botYield),
+          bots: addContinuous(candidate.dyson.bots, multiplyContinuous(stats.botYield, botMultiplier)),
           manualCreationIntervalSeconds: nextCreationTime,
         },
       }
-      botsGranted = addContinuous(botsGranted, stats.botYield)
+      botsGranted = addContinuous(botsGranted, stats.botYield * botMultiplier)
     }
     completions += 1
     if (!active.repeat) {
@@ -423,6 +426,7 @@ export function advanceCanonicalTinker(
     }
   }
   botsGranted = Math.max(0, cappedBots - startingBots)
+  if (botMultiplier === 2 && botsGranted > 0) candidate = recordBotBoostUsage(candidate)
 
   return {
     state: candidate,

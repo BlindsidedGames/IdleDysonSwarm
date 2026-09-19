@@ -1,5 +1,16 @@
 @import "../../tokens/tokens.css";
 
+.store-boost { display: grid; gap: 0.4rem; }
+.store-boost__status { font-variant-numeric: tabular-nums; }
+.store-boost__browse { justify-self: end; border: 0; padding: 0.25rem; background: none; color: var(--theme-accent); cursor: pointer; font: inherit; font-size: calc(0.78rem * var(--game-text-scale)); text-decoration: underline; }
+.store-promo { display: grid; gap: 1rem; }
+.store-promo article { display: grid; gap: 0.65rem; }
+.store-promo h3 { margin: 0; }
+.store-promo__label { opacity: 0.65; font-size: 0.8em; }
+.store-promo__actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+.store-promo button { flex: 1; white-space: normal; }
+.store-promo .store-surface__secondary-action { padding: 0.6rem; }
+
 .store-surface {
   block-size: 100%;
   min-block-size: 0;

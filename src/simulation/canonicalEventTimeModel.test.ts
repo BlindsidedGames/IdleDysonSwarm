@@ -1,6 +1,7 @@
 import { OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { readFileSync } from 'node:fs'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
+import { createSpeedrunStatistics } from './speedrunStatistics'
 import { hydrateGameState } from '../game-state/mapping'
 import type {
   CanonicalGameStateV1,
@@ -276,6 +277,39 @@ function baseState(): CanonicalGameStateV1 {
     statistics: emptyStatistics(source.statistics),
   }
 }
+
+test('Stored Time uses the current wall-clock boost rather than consuming simulated boost time', () => {
+  const clock = vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+  try {
+    const source = baseState()
+    const boosted = {
+      ...source,
+      meta: { ...source.meta, botBoost: { expiresAtMilliseconds: 1_300_000, permanentEnabled: false } },
+      dyson: { ...source.dyson, facilities: { ...source.dyson.facilities, assembly_lines: [1, 0] as const } },
+      statistics: { ...source.statistics, speedruns: createSpeedrunStatistics(new Date(1_000_000).toISOString(), true, 1_000_000) },
+    }
+    const simulate = (input: CanonicalGameStateV1) => {
+      const result = advanceEventTime({
+        startingState: new CanonicalEventTimeModel(carrier(input), { ...context(), mode: 'stored-time' }),
+        durationSeconds: 3600, automationIntervalSeconds: 3600, automationTimeUntilNextEvent: 3600,
+        infinityMinimumCycleSeconds: 10, processingBudgetMilliseconds: 0,
+      })
+      expect(result.completed).toBe(true)
+      expect(result.candidateState.issue).toBeUndefined()
+      return result.candidateState.state.gameState
+    }
+    const ordinary = simulate({ ...boosted, meta: source.meta })
+    clock.mockReturnValue(1_020_000)
+    const after = simulate(boosted)
+    expect(after.dyson.bots).toBe(ordinary.dyson.bots * 2)
+    expect(after.meta.botBoost?.expiresAtMilliseconds).toBe(1_300_000)
+    expect(after.statistics.speedruns?.botBoostUsed).toBe(true)
+    clock.mockReturnValue(1_300_000)
+    const expired = simulate(boosted)
+    expect(expired.dyson.bots).toBe(ordinary.dyson.bots)
+    expect(expired.statistics.speedruns?.botBoostUsed).not.toBe(true)
+  } finally { clock.mockRestore() }
+})
 
 function carrier(
   gameState: CanonicalGameStateV1,

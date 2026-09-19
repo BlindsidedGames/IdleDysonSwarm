@@ -1,3 +1,5 @@
+import { initializeSrsHotStart } from './srsAugments'
+import { purityBodyMultiplier, purityMindMultiplier, purityEssenceMultiplier as essenceMultiplier } from './purityMultipliers'
 import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, galvanizationDefinition } from './galvanization'
 import { infinityChallenges, hasCompletedInfinityChallenge, isBlankSlateActive } from './infinityChallenges'
@@ -18,9 +20,10 @@ import {
   deriveManualPurchaseProductionLayer,
 } from './canonicalDysonDerivation'
 import { BASIC_DYSON_FACILITY_IDS } from './dysonFacilities'
-import { multiplyContinuous, powerContinuous } from './numeric'
+import { multiplyContinuous } from './numeric'
 
 interface SkillDefinition {
+  readonly authoredRequired?: readonly string[]
   readonly id: string
   readonly cost: bigint
   readonly refundable: boolean
@@ -107,6 +110,7 @@ export interface CanonicalSkillAvailabilityPreview {
   readonly visualState: CanonicalSkillVisualState
   readonly fragment: boolean
   readonly intrinsicallyRefundable: boolean
+  readonly authoredRequiredSkillIds?: readonly string[]
   readonly requiredSkillIds: readonly string[]
   readonly shadowRequiredSkillIds: readonly string[]
   readonly exclusiveWithSkillIds: readonly string[]
@@ -265,6 +269,9 @@ export function previewCanonicalSkillCatalog(
       ),
       fragment: definition.fragment,
       intrinsicallyRefundable: definition.refundable,
+      authoredRequiredSkillIds: isGalvanized(state, definition.id)
+        ? definition.authoredRequired
+        : undefined,
       requiredSkillIds: Object.freeze([...definition.required]),
       shadowRequiredSkillIds: Object.freeze([
         ...definition.shadowRequired,
@@ -375,20 +382,20 @@ function previewProductionImpact(
 
 function purityEssenceMultiplier(state: CanonicalGameStateV1): number {
   return state.skills.byId.purityOfSEssence?.owned === true
-    ? powerContinuous(1.42, Number(state.skills.points))
+    ? essenceMultiplier(Number(state.skills.points))
     : 1
 }
 
 function purityCashScienceMultiplier(state: CanonicalGameStateV1): number {
   const mind = state.skills.byId.purityOfMind?.owned === true
-    ? powerContinuous(1.5, Number(state.skills.points))
+    ? purityMindMultiplier(Number(state.skills.points))
     : 1
   return multiplyContinuous(mind, purityEssenceMultiplier(state))
 }
 
 function purityBotsMultiplier(state: CanonicalGameStateV1): number {
   const body = state.skills.byId.purityOfBody?.owned === true
-    ? powerContinuous(1.25, Number(state.skills.points))
+    ? purityBodyMultiplier(Number(state.skills.points))
     : 1
   return multiplyContinuous(body, purityEssenceMultiplier(state))
 }
@@ -449,13 +456,13 @@ function purchaseWithDefinitions(
   return accepted(
     {
       ...state,
-      skills: {
+      skills: initializeSrsHotStart({ ...state, skills: {
         ...state.skills,
         points: state.skills.points - plan.pointsRequired,
         fragments,
         byId,
         activeAutoAssignment,
-      },
+      } }),
     },
     true,
     plan.affectedSkillIds,
@@ -849,6 +856,7 @@ function loadDefinitions(state: CanonicalGameStateV1): ReadonlyMap<string, Skill
     [...getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND), ...SUBSKILL_ASSETS].map((asset) => {
       const base = parseDefinition(asset)
       const definition = { ...galvanizationDefinition(base, base.id, state),
+        authoredRequired: base.required,
         refundable: isGalvanized(state, base.id) ? false : base.refundable,
         unrefundableWith: base.unrefundableWith.filter((id) => !isGalvanized(state, id)),
       }

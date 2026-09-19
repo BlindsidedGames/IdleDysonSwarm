@@ -631,8 +631,8 @@
     "description": "Label for the ordered facility-modifier contribution row."
   },
   "dyson.facilities.details.formula.assigned-skill-points": {
-    "defaultMessage": "Assigned Skill Points",
-    "description": "Current assigned Skill Point input in a formula."
+    "defaultMessage": "Unspent Skill Points",
+    "description": "Current unspent Skill Point input in a Purity formula."
   },
   "dyson.facilities.details.formula.effective-planets": {
     "defaultMessage": "Effective Planets",
@@ -5069,7 +5069,7 @@
     "description": "Display name for the Purity of Body Skill node."
   },
   "skills.node.purityOfBody.technical": {
-    "defaultMessage": "Multiply Bots by 1.25x for each unspent Skill Point, compounding exponentially.",
+    "defaultMessage": "Increase Bot production by 25% per unspent Skill Point. Bonuses are additive.",
     "description": "Technical gameplay-effect description for the Purity of Body Skill node."
   },
   "skills.node.purityOfMind.description": {
@@ -5081,7 +5081,7 @@
     "description": "Display name for the Purity of Mind Skill node."
   },
   "skills.node.purityOfMind.technical": {
-    "defaultMessage": "Multiply Cash/Science by 1.5x for each unspent Skill Point, compounding exponentially.",
+    "defaultMessage": "Increase Cash and Science production by 50% per unspent Skill Point. Bonuses are additive.",
     "description": "Technical gameplay-effect description for the Purity of Mind Skill node."
   },
   "skills.node.purityOfSEssence.description": {
@@ -5093,7 +5093,7 @@
     "description": "Display name for the Purity of Essence Skill node."
   },
   "skills.node.purityOfSEssence.technical": {
-    "defaultMessage": "Multiply Everything by 1.42x for each unspent Skill Point, compounding exponentially.",
+    "defaultMessage": "Increase Cash, Science, Bot, and all facility production based on unspent Skill Points. Starts at 1.42× with 1 point, with increasing gains per point, reaching 256× at 42 points.",
     "description": "Technical gameplay-effect description for the Purity of Essence Skill node."
   },
   "skills.node.quantumComputing.description": {
@@ -5441,7 +5441,7 @@
     "description": "Display name for the Super-Radiant Scattering Skill node."
   },
   "skills.node.superRadiantScattering.technical": {
-    "defaultMessage": "For each second this skill is assigned and the app is running, all production increases by 1% this scales additively, and resets on Infinity/Quantum Leap.",
+    "defaultMessage": "Increase Cash, Science, Bot, and all facility production by 1% per second while assigned. Bonuses are additive. Charges during Stored Time simulation and resets on Infinity or Quantum Leap.",
     "description": "Technical gameplay-effect description for the Super-Radiant Scattering Skill node."
   },
   "skills.node.superSwarm.description": {
@@ -5796,6 +5796,15 @@
     "defaultMessage": "Priority · {name}",
     "description": "Skill priority editor and subskill controls."
   },
+  "skills.production-cash": {
+    "defaultMessage": "Cash"
+  },
+  "skills.production-panels": {
+    "defaultMessage": "Panels"
+  },
+  "skills.production-science": {
+    "defaultMessage": "Science"
+  },
   "skills.purchase": {
     "defaultMessage": "Assign Skill",
     "description": "Button label for spending skill points to assign a skill."
@@ -5884,6 +5893,9 @@
     "defaultMessage": "Show partial preset application notifications",
     "description": "Presentation preference controlling post-switch partial preset application notices."
   },
+  "skills.show-production-comparisons": {
+    "defaultMessage": "Show production comparisons"
+  },
   "skills.show-skill-labels": {
     "defaultMessage": "Show skill labels",
     "description": "Toggle names below nodes on the main skill tree and augment trees."
@@ -5895,6 +5907,69 @@
   "skills.spending-priority-help": {
     "defaultMessage": "Drag to reorder or use the arrows. Required skills are bought first. Points are saved until the next skill can be afforded.",
     "description": "Explains strict skill preset purchase priority."
+  },
+  "skills.srs.afterglow.description": {
+    "defaultMessage": "The last universe is gone, but some of its particles haven’t taken the hint."
+  },
+  "skills.srs.afterglow.effect": {
+    "defaultMessage": "Retain 10% of SRS charge through Infinity, with no cap. Adds to Hot Start. Quantum Leap clears retained charge."
+  },
+  "skills.srs.afterglow.name": {
+    "defaultMessage": "Afterglow"
+  },
+  "skills.srs.deepExposure.description": {
+    "defaultMessage": "Your scientists recommend prolonged exposure. From behind a very thick window."
+  },
+  "skills.srs.deepExposure.effect": {
+    "defaultMessage": "Increase SRS charging speed by 10% per minute this augment is assigned, up to 200% after 20 minutes. Resets on Infinity or Quantum Leap. Bonuses are additive."
+  },
+  "skills.srs.deepExposure.name": {
+    "defaultMessage": "Deep Exposure"
+  },
+  "skills.srs.focusedBeam.description": {
+    "defaultMessage": "You ask the particles to form an orderly queue. Nobody expected that to work."
+  },
+  "skills.srs.focusedBeam.effect": {
+    "defaultMessage": "Increase the SRS bonus above 1× by 50% for Cash or Science, whichever has more Bots assigned, and halve it for the other. Equal allocation leaves both unchanged."
+  },
+  "skills.srs.focusedBeam.name": {
+    "defaultMessage": "Focused Beam"
+  },
+  "skills.srs.hotStart.description": {
+    "defaultMessage": "Your scientists preheated the equipment. They used the pizza setting, but it seems to have worked."
+  },
+  "skills.srs.hotStart.effect": {
+    "defaultMessage": "Gain 30 minutes of SRS charge on first assignment each Infinity."
+  },
+  "skills.srs.hotStart.name": {
+    "defaultMessage": "Hot Start"
+  },
+  "skills.srs.researchActivity.description": {
+    "defaultMessage": "Every breakthrough gets a celebratory button press. Nobody remembers what the button was originally for."
+  },
+  "skills.srs.researchActivity.effect": {
+    "defaultMessage": "Gaining a research level increases SRS charging speed by 150% for 30 seconds. Generated levels count. Further gains refresh the duration. Bonuses are additive."
+  },
+  "skills.srs.researchActivity.name": {
+    "defaultMessage": "Research Activity"
+  },
+  "skills.srs.researchConversion.description": {
+    "defaultMessage": "You plug the research department into the reactor. Peer review is now a fire hazard."
+  },
+  "skills.srs.researchConversion.effect": {
+    "defaultMessage": "Reduce Science production by 50%. Increase SRS charging speed by 100%. Bonuses are additive."
+  },
+  "skills.srs.researchConversion.name": {
+    "defaultMessage": "Research Conversion"
+  },
+  "skills.srs.stellarMemory.description": {
+    "defaultMessage": "Your scientists keep their notes between universes. Most of them say “try not to do that again.”"
+  },
+  "skills.srs.stellarMemory.effect": {
+    "defaultMessage": "Increase SRS charging speed by 10% × log10(total seconds spent with SRS assigned). Time accumulates across resets and includes Stored Time simulation, but excludes bonus charge. Bonuses are additive."
+  },
+  "skills.srs.stellarMemory.name": {
+    "defaultMessage": "Stellar Memory"
   },
   "skills.subskill-assign": {
     "defaultMessage": "Assign {name} for 1 Skill Point",
@@ -6203,6 +6278,9 @@
   "startup-shell.state.writer-blocked.title": {
     "defaultMessage": "Another tab is using this game",
     "description": "Heading shown when another browser tab or window owns write access."
+  },
+  "statistics.bot-boost-used": {
+    "defaultMessage": "Bot Boost Used"
   },
   "statistics.cause.artificial-intelligence": {
     "defaultMessage": "Artificial Intelligence",
@@ -6580,6 +6658,57 @@
     "defaultMessage": "{price}",
     "description": "Purchases one repeatable supporter tier using a store-localized price."
   },
+  "store.boost.activate": {
+    "defaultMessage": "Activate"
+  },
+  "store.boost.active": {
+    "defaultMessage": "{time} remaining"
+  },
+  "store.boost.add": {
+    "defaultMessage": "Add 5 min"
+  },
+  "store.boost.claim": {
+    "defaultMessage": "Claim 5 min"
+  },
+  "store.boost.close": {
+    "defaultMessage": "Close"
+  },
+  "store.boost.description": {
+    "defaultMessage": "Double Bot gains for 5 minutes. Stack up to 10 minutes."
+  },
+  "store.boost.failed": {
+    "defaultMessage": "The boost could not be updated. Try again."
+  },
+  "store.boost.games": {
+    "defaultMessage": "More games"
+  },
+  "store.boost.navigation": {
+    "defaultMessage": "Store: 2× Bots, {status}"
+  },
+  "store.boost.permanent": {
+    "defaultMessage": "Permanent"
+  },
+  "store.boost.permanent-description": {
+    "defaultMessage": "Double Bot gains without promotions. Can be switched off."
+  },
+  "store.boost.permanent-title": {
+    "defaultMessage": "Permanent 2× Bots"
+  },
+  "store.boost.play": {
+    "defaultMessage": "Play {game}"
+  },
+  "store.boost.promotion": {
+    "defaultMessage": "Game promotion"
+  },
+  "store.boost.ready": {
+    "defaultMessage": "Ready"
+  },
+  "store.boost.title": {
+    "defaultMessage": "2× Bots"
+  },
+  "store.boost.wait": {
+    "defaultMessage": "Top up at 5:00"
+  },
   "store.browser-introduction": {
     "defaultMessage": "Optional ways to support Idle Dyson Swarm and permanent upgrades for this browser on this device.",
     "description": "Web Store introduction."
@@ -6692,16 +6821,31 @@
     "defaultMessage": "Family Supporter Tier",
     "description": "Third supporter tier title."
   },
+  "store.promo.echoes": {
+    "defaultMessage": "Explore a fantasy world and grow stronger through combat and upgrades."
+  },
+  "store.promo.eternum": {
+    "defaultMessage": "Build an idle empire through upgrades and permanent progress."
+  },
+  "store.promo.nanite": {
+    "defaultMessage": "Grow a nanite swarm through compounding production."
+  },
+  "store.promo.pulse": {
+    "defaultMessage": "Build your citadel and survive escalating waves."
+  },
+  "store.promo.whitecell": {
+    "defaultMessage": "Build a virus, draft mutations and evolve across new hosts."
+  },
   "store.region": {
     "defaultMessage": "Store",
     "description": "Accessible name for the native Store route."
   },
   "store.restore.description": {
-    "defaultMessage": "Restore checks only Double Infinity Points and Developer Options. Supporter tiers are consumable and are not generally restorable without an account-backed ledger.",
+    "defaultMessage": "Restore checks permanent upgrades. Supporter tiers are consumable and cannot be restored.",
     "description": "Explains restore scope."
   },
   "store.restore.inventory-description": {
-    "defaultMessage": "Restore checks your Steam inventory for supporter purchases, Developer Options and Double Infinity Points. Supporter items stay in your inventory and can be purchased again.",
+    "defaultMessage": "Restore checks your Steam inventory for permanent upgrades and supporter purchases. Supporter items stay in your inventory and can be purchased again.",
     "description": "Steam inventory restore includes retained supporter items."
   },
   "store.status.loading": {
@@ -7537,11 +7681,23 @@
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.androidspacing": {
-    "defaultMessage": "Fixed excess spacing around system bars on Android.",
+    "defaultMessage": "Fixed excess spacing around system bars.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.augments": {
+    "defaultMessage": "Added seven augments for Super-Radiant Scattering.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.bot-boost": {
+    "defaultMessage": "Added a temporary 2× Bot boost in the Store, with up to 10 minutes banked.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.comparisons": {
+    "defaultMessage": "Added live production comparisons when assigning or unassigning skills, with an option to hide them.",
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.debugtabs": {
-    "defaultMessage": "Debug tab unlocking can now be reversed and is cleared when resetting the save.",
+    "defaultMessage": "Debug tab unlocking can now be reversed and clears when resetting the save.",
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.debugunlock": {
@@ -7553,19 +7709,31 @@
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.headers": {
-    "defaultMessage": "Removed redundant Store, Story, and Wiki header panels and corrected the Infinity target-field icon alignment.",
+    "defaultMessage": "Removed redundant Store, Story, and Wiki headers and improved Infinity input alignment.",
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.infinityrate": {
-    "defaultMessage": "Auto Infinity now shows the last completed Infinity’s IP-per-minute rate instead of current and recommended estimates.",
+    "defaultMessage": "Auto Infinity now shows the last completed Infinity’s IP-per-minute rate.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.megastructures": {
+    "defaultMessage": "Purity of Essence and Super-Radiant Scattering now also boost Megastructure production.",
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.offlineall": {
     "defaultMessage": "Fixed the Offline Time slider’s All option to select the full stored amount.",
     "description": "Version 4.1.9 release notes."
   },
+  "wiki.patch-notes.version-4-1-9.permanent-boost": {
+    "defaultMessage": "Added an optional permanent 2× Bot boost purchase, which can be switched on or off.",
+    "description": "Version 4.1.9 release notes."
+  },
   "wiki.patch-notes.version-4-1-9.purchasepersistence": {
     "defaultMessage": "Quantum and Simulation purchase amounts now persist after reloading.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.purity": {
+    "defaultMessage": "Rebalanced Purity scaling. Body and Mind bonuses are now additive.",
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.quantumhold": {
@@ -7577,11 +7745,15 @@
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.simulations": {
-    "defaultMessage": "Improved Simulation formulas, progress displays, and compact layouts.",
+    "defaultMessage": "Improved Simulation formulas and progress displays.",
+    "description": "Version 4.1.9 release notes."
+  },
+  "wiki.patch-notes.version-4-1-9.skill-tree": {
+    "defaultMessage": "Improved skill-tree spacing and added distinct connections for Galvanized skills.",
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.speedrun": {
-    "defaultMessage": "Added a Speedrun tab to Statistics.",
+    "defaultMessage": "Added a Speedrun tab to Statistics, including Bot boost usage.",
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.terra": {
@@ -7589,7 +7761,8 @@
     "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1-9.trial": {
-    "defaultMessage": "Added a new challenge: Trial & Error"
+    "defaultMessage": "Added a new challenge: Trial & Error.",
+    "description": "Version 4.1.9 release notes."
   },
   "wiki.patch-notes.version-4-1.audio": {
     "defaultMessage": "Added a soundtrack and interface sounds across supported platforms, with separate Music and Effects volume controls, Mute All Audio, and more reliable playback when switching apps or browser windows.",

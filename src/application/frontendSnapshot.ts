@@ -7,6 +7,7 @@ import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { sameOrderedStrings } from '../core/sameOrderedStrings'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
+import { botBoostMultiplier } from '../simulation/botBoost'
 import {
   DREAM_EDUCATION_IDS,
   type CanonicalFacilityId,
@@ -154,6 +155,7 @@ import type {
 export const FRONTEND_GAMEPLAY_SNAPSHOT_VERSION = 2 as const
 
 export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
+  'boost',
   'dyson',
   'research',
   'skill',
@@ -1937,6 +1939,7 @@ function projectDysonDerivedFacts(
           }
   return {
     allocation: source.allocation,
+    botBoostMultiplier: source.botBoostMultiplier,
     globals: source.globals,
     auxiliary: source.auxiliary,
     facilityModifiers: source.facilityModifiers,
@@ -2344,6 +2347,7 @@ function selectRuntimeFacts(
               state,
               context.tinker,
               derived.dyson.value.auxiliary.tinkerAssemblyYield,
+              botBoostMultiplier(state, context.entitlements),
             ),
           }
         : {

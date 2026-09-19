@@ -1,3 +1,5 @@
+import { PURITY_ESSENCE_QUADRATIC_COEFFICIENT } from '../../../simulation/purityMultipliers'
+import { boostMessages } from '../store/boostMessages'
 import {
   useId,
   useRef,
@@ -853,7 +855,7 @@ function DynamicSourceFormula({
       } else if (effectId.startsWith('effect.dysonSubsidies.')) {
         lines = oneInput(intl.formatMessage(messages.starsSurrounded), calculation.starsSurrounded, `${number(calculation.starsSurrounded)} ≥ 1`)
       } else if (effectId.startsWith('effect.purityOfBody.')) {
-        lines = oneInput(intl.formatMessage(messages.assignedSkillPoints), calculation.assignedSkillPoints, `1.25 ^ ${number(calculation.assignedSkillPoints)}`)
+        lines = oneInput(intl.formatMessage(messages.assignedSkillPoints), calculation.assignedSkillPoints, `1 + 25% × ${number(calculation.assignedSkillPoints)}`)
       } else if (effectId.startsWith('effect.clusterNetworking.')) {
         lines = oneInput(intl.formatMessage(messages.serversName), calculation.servers, `1 + 5% × log10(${number(calculation.servers)})`)
       } else if (effectId.startsWith('effect.parallelProcessing.')) {
@@ -865,7 +867,7 @@ function DynamicSourceFormula({
       } else if (effectId.startsWith('effect.galacticPradigmShift.')) {
         lines = oneInput(intl.formatMessage(messages.galaxiesEngulfed), calculation.galaxiesEngulfed, `${number(calculation.galaxiesEngulfed)} ≥ 1`)
       } else if (effectId.startsWith('effect.purityOfSEssence.')) {
-        lines = oneInput(intl.formatMessage(messages.assignedSkillPoints), calculation.assignedSkillPoints, `1.42 ^ ${number(calculation.assignedSkillPoints)}`)
+        lines = oneInput(intl.formatMessage(messages.assignedSkillPoints), calculation.assignedSkillPoints, `1 + 42% × ${number(calculation.assignedSkillPoints)} + ${number(PURITY_ESSENCE_QUADRATIC_COEFFICIENT)} × ${number(calculation.assignedSkillPoints)} × (${number(calculation.assignedSkillPoints)} − 1)`)
       } else {
         lines = oneInput(intl.formatMessage(messages.elapsedSkillTime), calculation.timerSeconds, `1 + 1% × ${number(calculation.timerSeconds)}s`)
       }
@@ -953,6 +955,7 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
   if (source?.kind === 'avocato') return { icon: skillIcons.avocados ?? navigationAssets.infinity, name: intl.formatMessage(messages.avocatoPower), description: intl.formatMessage(messages.avocatoPower) }
   if (source?.id === 'milestone-50') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone50), description: intl.formatMessage(messages.milestone50) }
   if (source?.id === 'milestone-100') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone100), description: intl.formatMessage(messages.milestone100) }
+  if (contribution.sourceId === 'bot-boost') return { icon: navigationAssets.store, name: intl.formatMessage(boostMessages.title), description: '' }
   if (contribution.sourceId === 'canonical.numeric-clamp') return { icon: navigationAssets.settings, name: intl.formatMessage(messages.numericSafety), description: intl.formatMessage(messages.numericSafety) }
   return { icon: facilityIcon(facilityId), name: contributionLabel(contribution.displayRole, facilityPresentation[facilityId].name, intl), description: '' }
 }

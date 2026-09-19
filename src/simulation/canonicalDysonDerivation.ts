@@ -1,4 +1,5 @@
 import { isGalvanized } from './galvanization'
+import { botBoostMultiplier } from './botBoost'
 import { adjustGalvanizedEffects, galvanizedSkillSet } from './galvanizedSkillEffects'
 import { deriveEffectivePurchaseCounts } from './effectivePurchaseCounts'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
@@ -67,6 +68,7 @@ import {
 
 export interface DysonEntitlements {
   readonly permanentDoubleIp: boolean
+  readonly permanentBotBoost?: boolean
 }
 
 export interface DysonPresentationTuning {
@@ -98,6 +100,8 @@ export interface DysonDerivationIssue {
 }
 
 export interface DerivedBasicDysonState {
+  /** Sampled once per derivation so production and usage share the same expiry decision. */
+  readonly botBoostMultiplier: 1 | 2
   readonly allocation: {
     readonly workers: number
     readonly researchers: number
@@ -737,7 +741,7 @@ export function deriveBasicDysonState(
       CanonicalFacilityFacts
     >,
   )
-  const { state: model, facilityCalculations } = createBasicDysonStateWithFacilityCalculations({
+  const { state: unboostedModel, facilityCalculations } = createBasicDysonStateWithFacilityCalculations({
     money: state.dyson.money,
     science: state.dyson.science,
     bots: state.dyson.bots,
@@ -769,6 +773,11 @@ export function deriveBasicDysonState(
       roundedBulkBuy: state.dyson.automation.roundedBulkBuy,
     },
   })
+  const boost = botBoostMultiplier(state, entitlements)
+  const model = boost === 1 ? unboostedModel : {
+    ...unboostedModel,
+    rates: { ...unboostedModel.rates, bots: multiplyContinuous(unboostedModel.rates.bots, boost) },
+  }
   const nextEvaluationSnapshot =
     publishDysonSkillEffectEvaluationSnapshot(state, {
       panelsPerSecond: model.rates.panels,
@@ -785,6 +794,7 @@ export function deriveBasicDysonState(
         workers: state.dyson.workers,
         researchers: state.dyson.researchers,
       }),
+      botBoostMultiplier: boost,
       globals: Object.freeze({
         moneyMultiplier,
         scienceMultiplier,
@@ -822,6 +832,7 @@ export function deriveBasicDysonState(
           planetGenerationEffects,
           evaluationSnapshot,
           presentationTuning,
+          boost,
         ),
         ...specializedFacilityFacts,
       }) as Readonly<Record<CanonicalFacilityId, CanonicalFacilityFacts>>,
@@ -865,10 +876,11 @@ function deriveBasicFacilityFacts(
   planetGenerationEffects: readonly StatEffect[],
   evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
   presentationTuning: Readonly<DysonPresentationTuning>,
+  botMultiplier: 1 | 2,
 ): Readonly<Record<BasicDysonFacilityId, CanonicalBasicFacilityFacts>> {
   const rates = model.rates
   return Object.freeze(
-    Object.fromEntries(
+    Object.fromEntries<CanonicalBasicFacilityFacts>(
       BASIC_DYSON_FACILITY_IDS.map((facilityId) => {
         const pair = state.dyson.facilities[facilityId]
         const total = pair[0] + pair[1]
@@ -915,13 +927,16 @@ function deriveBasicFacilityFacts(
                 rateCalculation.baseProduction,
               effectiveProducerCount: total,
               modifier: modifiers[facilityId],
-              contributions: deriveFacilityContributionRows(
+              contributions: [...deriveFacilityContributionRows(
                 rateCalculation,
                 pair,
                 researchEffects,
                 state,
                 evaluationSnapshot,
-              ),
+              ), ...(facilityId === 'assembly_lines' && botMultiplier === 2 ? [{
+                sourceId: 'bot-boost', displayRole: 'output-adjustments' as const,
+                operation: 'multiply' as const, value: 2, delta: perSecond / 2, runningTotal: perSecond,
+              }] : [])],
               modifierContributions: deriveAttributedEffectRows(
                 1,
                 modifierCalculations[facilityId].effects,
@@ -955,8 +970,8 @@ function deriveBasicFacilityFacts(
                 megaRates,
               ),
             }),
-          }),
-        ]
+          } satisfies CanonicalBasicFacilityFacts),
+        ] as const
       }),
     ) as Record<BasicDysonFacilityId, CanonicalBasicFacilityFacts>,
   )
@@ -1521,9 +1536,18 @@ function materializeCanonicalSkillEffects(
       },
     )
     const effectGroups = materializeSkillEffectsForContexts(contexts)
-    const entries = MATERIALIZED_SKILL_STATS.map(
-      (statId, index) => [statId, adjustGalvanizedEffects(state, statId, effectGroups[index] ?? [])] as const,
-    )
+    // These two production-wide skills also apply to megastructures. Reuse
+    // their resolved Planet effects so values and skill attribution stay shared.
+    const megaSkillEffects = (effectGroups[MATERIALIZED_SKILL_STATS.indexOf('Facility.Planet.Modifier')] ?? [])
+      .filter((effect) => effect.id === 'effect.purityOfSEssence.planets_modifier' ||
+        effect.id === 'effect.superRadiantScattering.planets_modifier')
+    const entries = MATERIALIZED_SKILL_STATS.map((statId, index) => {
+      const facilityId = facilityForStat(statId)
+      const effects = effectGroups[index] ?? []
+      const includesMegaSkills = MEGA_STRUCTURE_FACILITY_IDS.some((id) => id === facilityId)
+      return [statId, adjustGalvanizedEffects(state, statId,
+        includesMegaSkills ? [...effects, ...megaSkillEffects] : effects)] as const
+    })
     return {
       ok: true,
       byStat: Object.freeze(Object.fromEntries(entries)),

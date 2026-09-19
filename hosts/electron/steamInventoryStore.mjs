@@ -14,11 +14,13 @@ export const STEAM_STORE_PRODUCT_IDS = Object.freeze([
   'ids.tiptier3',
   'ids.devoptions',
   'ids.doubleip',
+  'ids.botboost',
 ])
 
 const durableProductIds = Object.freeze([
   'ids.devoptions',
   'ids.doubleip',
+  'ids.botboost',
 ])
 const tipProductIds = new Set([
   'ids.tiptier1',
@@ -48,8 +50,9 @@ export function validateSteamInventoryConfig(value, expectedAppId) {
     throw new Error('Steam Inventory configuration is invalid.')
   }
 
-  const configuredKeys = Object.keys(value.products).sort()
-  const requiredKeys = [...STEAM_STORE_PRODUCT_IDS].sort()
+  // The new product may stay unconfigured until its Steam ItemDef is published.
+  const configuredKeys = Object.keys(value.products).filter(id => id !== 'ids.botboost').sort()
+  const requiredKeys = STEAM_STORE_PRODUCT_IDS.filter(id => id !== 'ids.botboost').sort()
   if (
     configuredKeys.length !== requiredKeys.length ||
     configuredKeys.some((key, index) => key !== requiredKeys[index])
@@ -57,7 +60,7 @@ export function validateSteamInventoryConfig(value, expectedAppId) {
     throw new Error('Steam Inventory product mapping is incomplete.')
   }
 
-  const rawItemDefIds = STEAM_STORE_PRODUCT_IDS.map(
+  const rawItemDefIds = requiredKeys.map(
     (productId) => value.products[productId],
   )
   const allUnset = rawItemDefIds.every((itemDefId) => itemDefId === null)
@@ -75,15 +78,19 @@ export function validateSteamInventoryConfig(value, expectedAppId) {
       'Steam Inventory cannot be enabled without every ItemDef ID.',
     )
   }
+  const boostId = value.products['ids.botboost'] ?? null
+  if (boostId !== null && (!isValidSteamItemDefId(boostId) || rawItemDefIds.includes(boostId))) {
+    throw new Error('Steam Bot boost ItemDef ID must be valid and unique.')
+  }
 
   return Object.freeze({
     schemaVersion: 1,
     enabled: value.enabled,
     steamAppId: expectedAppId,
     products: Object.freeze(Object.fromEntries(
-      STEAM_STORE_PRODUCT_IDS.map((productId, index) => [
+      STEAM_STORE_PRODUCT_IDS.map((productId) => [
         productId,
-        allValid ? rawItemDefIds[index] : null,
+        productId === 'ids.botboost' ? boostId : allValid ? value.products[productId] : null,
       ]),
     )),
   })
@@ -314,6 +321,7 @@ export class SteamInventoryStore {
       try {
         await this.ensureIdentity()
         const itemDefId = this.config.products[productId]
+        if (!isValidSteamItemDefId(itemDefId)) return failedPurchase(productId, 'store-unavailable')
         const current = await this.refreshAuthoritativeState()
         if (durableProductIds.includes(productId) && ownershipForProduct(current.ownership, productId)) return Object.freeze({ accepted: true, productId })
         const before = tipProductIds.has(productId)
@@ -391,7 +399,7 @@ export class SteamInventoryStore {
   configuredItemDefIds() {
     return Object.freeze(STEAM_STORE_PRODUCT_IDS.map(
       (productId) => this.config.products[productId],
-    ))
+    ).filter(isValidSteamItemDefId))
   }
 
   maintenanceState() {
@@ -553,6 +561,7 @@ function ownershipFromItems(items, products) {
   return freezeOwnership({
     developerOptions: ownedItemDefs.has(products['ids.devoptions']),
     doubleInfinityPoints: ownedItemDefs.has(products['ids.doubleip']),
+    botBoost: ownedItemDefs.has(products['ids.botboost']),
     supporterCatGallery: [...tipProductIds].some(id => ownedItemDefs.has(products[id])),
   })
 }
@@ -610,6 +619,7 @@ function validatePurchaseResult(result) {
 }
 
 function ownershipForProduct(ownership, productId) {
+  if (productId === 'ids.botboost') return ownership.botBoost === true
   if (productId === 'ids.devoptions') return ownership.developerOptions
   if (productId === 'ids.doubleip') return ownership.doubleInfinityPoints
   if (tipProductIds.has(productId)) return ownership.supporterCatGallery
@@ -644,6 +654,7 @@ function emptyOwnership() {
 
 function freezeOwnership(ownership) {
   return Object.freeze({
+    ...(ownership.botBoost === undefined ? {} : { botBoost: ownership.botBoost === true }),
     doubleInfinityPoints: ownership.doubleInfinityPoints === true,
     developerOptions: ownership.developerOptions === true,
     supporterCatGallery: ownership.supporterCatGallery === true,
@@ -653,6 +664,7 @@ function freezeOwnership(ownership) {
 function isValidOwnership(ownership) {
   return ownership !== null &&
     typeof ownership === 'object' &&
+    (ownership.botBoost === undefined || typeof ownership.botBoost === 'boolean') &&
     typeof ownership.doubleInfinityPoints === 'boolean' &&
     typeof ownership.developerOptions === 'boolean' &&
     (

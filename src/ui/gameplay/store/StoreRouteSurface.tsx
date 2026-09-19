@@ -1,8 +1,10 @@
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import { StorefrontController } from '../../../store/storefront'
 import { StoreSurface } from './StoreSurface'
+import type { BotBoostControls } from './BotBoostPanel'
 
 export interface StoreRouteSurfaceProps {
+  readonly botBoost?: BotBoostControls
   readonly releasePlatformServices: ReleasePlatformServices
   readonly synchronizeHostEntitlements?: () => Promise<boolean>
   readonly localDeveloperOptionsPurchased: boolean
@@ -46,6 +48,7 @@ function controllerFor(
 
 /** Loads Store-only orchestration while preserving its state across route switches. */
 export function StoreRouteSurface({
+  botBoost,
   releasePlatformServices,
   synchronizeHostEntitlements,
   localDeveloperOptionsPurchased,
@@ -59,6 +62,7 @@ export function StoreRouteSurface({
 
   return (
     <StoreSurface
+      botBoost={botBoost}
       controller={controller}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       deviceOnlyPurchases={deviceOnlyPurchases}

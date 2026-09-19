@@ -4,6 +4,7 @@ struct DurableOwnership: Equatable, Sendable {
     let doubleInfinityPoints: Bool
     let developerOptions: Bool
     let supporterCatGallery: Bool
+    var botBoost: Bool = false
 }
 
 enum NativeDurableEntitlementSnapshotError: Error, Equatable {
@@ -84,7 +85,8 @@ final class NativeEntitlementSession: @unchecked Sendable {
                 developerOptions: provider.developerOptions,
                 supporterCatGallery:
                     provider.supporterCatGallery ||
-                        persistedProviderOwnership.supporterCatGallery
+                        persistedProviderOwnership.supporterCatGallery,
+                botBoost: provider.botBoost
             )
         }
     }

@@ -43,6 +43,7 @@ export class RuntimeEntitlementBridge {
 
   currentDysonEntitlements(): Readonly<DysonEntitlements> {
     return Object.freeze({
+      ...(this.ownership.botBoost === undefined ? {} : { permanentBotBoost: this.ownership.botBoost === true }),
       permanentDoubleIp:
         this.ownership.doubleInfinityPoints &&
         this.doubleInfinityPointsEffect.getSnapshot(),
@@ -53,6 +54,7 @@ export class RuntimeEntitlementBridge {
     ownership: Readonly<HostEntitlementOwnership>,
   ): Readonly<HostEntitlementOwnership> {
     this.ownership = Object.freeze({
+      ...(ownership.botBoost === undefined ? {} : { botBoost: ownership.botBoost === true }),
       doubleInfinityPoints:
         ownership.doubleInfinityPoints === true,
       developerOptions: ownership.developerOptions === true,

@@ -3,6 +3,8 @@ import { isAvocatoRouteUnlocked } from './avocatoNavigation'
 import { InfinityChallenges } from '../infinity/InfinityChallenges'
 import { challengeMessages } from '../infinity/challengeMessages'
 import { avocatoMessages } from '../quantum/messages'
+import { useBotBoost } from '../store/useBotBoost'
+import { boostMessages } from '../store/boostMessages'
 import {
   lazy,
   Suspense,
@@ -683,10 +685,10 @@ export function ReadyDysonSlice({
     [],
   )
   const storeVisible =
-    releasePlatformServices !== undefined &&
-    (releasePlatformServices.hostKind !== 'browser' ||
-      releasePlatformServices.storeAvailable === true)
+    releasePlatformServices !== undefined
   const gameplay = snapshot.gameplay
+  const ownsBotBoost = gameplay.derived.dyson.status === 'ready' && gameplay.derived.dyson.value.entitlements.permanentBotBoost === true
+  const botBoostStatus = useBotBoost(gameplay.progression.meta.botBoost, ownsBotBoost)
   const quantumPurchaseQuantity = quantumQuantityFromBuyMode(gameplay.progression.quantum.buyMode)
   const allTabsUnlocked = gameplay.visibility.allTabsUnlocked === true
   const avocatoRouteUnlocked = isAvocatoRouteUnlocked({
@@ -1270,6 +1272,10 @@ export function ReadyDysonSlice({
                   id: 'store',
                   label: intl.formatMessage(messages.storeRoute),
                   iconSrc: navigationAssets.store,
+                  badge: botBoostStatus.badge,
+                  badgeOutlined: !botBoostStatus.active,
+                  ariaLabel: intl.formatMessage(boostMessages.navigation, { status: botBoostStatus.status }),
+                  drawerIndicator: <span className="store-boost-nav-status">{botBoostStatus.status}</span>,
                   bottom: bottomVisible('store'),
                   ...(storeActive
                     ? { current: true as const }
@@ -2075,6 +2081,17 @@ export function ReadyDysonSlice({
                                           fallback={<LazySurfacePending />}
                                         >
                                           <StoreRouteSurface
+                                            botBoost={{
+                                              boost: gameplay.progression.meta.botBoost,
+                                              owned: ownsBotBoost,
+                                              platform: Capacitor.getPlatform() === 'ios' ? 'ios' : Capacitor.getPlatform() === 'android' ? 'android'
+                                                : releasePlatformServices.hostKind === 'desktop-native' ? 'desktop'
+                                                : /android/i.test(navigator.userAgent) ? 'android'
+                                                : /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ? 'ios' : 'web',
+                                              onClaim: async () => (await dispatchPlayer({ kind: 'boost.claim' })).status === 'accepted',
+                                              onSetEnabled: async (enabled) => (await dispatchPlayer({ kind: 'boost.set-enabled', enabled })).status === 'accepted',
+                                              openExternalUrl: openExternalUrl ?? (async (url) => { window.open(url, '_blank', 'noopener,noreferrer') }),
+                                            }}
                                             releasePlatformServices={releasePlatformServices}
                                             synchronizeHostEntitlements={synchronizeHostEntitlements}
                                             deviceOnlyPurchases={
@@ -2528,6 +2545,7 @@ function createSkillPresetActions(
   runtime: BrowserUiRuntimeFoundation,
 ): SkillPresetActions {
   const actions: SkillPresetActions = {
+    previewProduction: (skillId, kind) => runtime.previewSkillProduction(skillId, kind),
     previewSelection: async (slot) =>
       runtime.previewSkillPresetSelection(slot),
     previewQueueChange: async (request) => {

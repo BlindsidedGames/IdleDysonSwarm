@@ -15,8 +15,11 @@ import { storeMessages as messages } from './messages'
 import { SUPPORTER_CAT_GALLERY_URL } from '../../../store/supporterCatGallery'
 import { StableSingleLineText } from '../../components/StableSingleLineText'
 import './store.css'
+import { BotBoostPanel, type BotBoostControls } from './BotBoostPanel'
+import { boostMessages } from './boostMessages'
 
 export interface StoreSurfaceProps {
+  readonly botBoost?: BotBoostControls
   readonly controller: StorefrontController
   readonly localDeveloperOptionsPurchased: boolean
   readonly deviceOnlyPurchases?: boolean
@@ -31,6 +34,7 @@ const TIP_IDS = new Set<StoreProductId>([
 ])
 
 export function StoreSurface({
+  botBoost,
   controller,
   localDeveloperOptionsPurchased,
   deviceOnlyPurchases = false,
@@ -60,6 +64,7 @@ export function StoreSurface({
   return (
     <div className="store-surface">
       <div className="store-surface__content">
+        {botBoost && <BotBoostPanel {...botBoost} />}
 
         {!snapshot.initialized ? (
           <p className="store-surface__loading" role="status">
@@ -212,7 +217,7 @@ function StoreProductCard({
     ? access.doubleInfinityPoints
     : product.id === STORE_PRODUCT_IDS.developerOptions
       ? access.developerOptions
-      : false
+      : product.id === STORE_PRODUCT_IDS.botBoost ? snapshot.hostOwnership.botBoost === true : false
   const unlockedInGame =
     product.id === STORE_PRODUCT_IDS.developerOptions &&
     access.developerOptionsSource === 'local-in-game-progression'
@@ -326,6 +331,7 @@ function StoreFeedback({
 
 function productTitle(productId: StoreProductId): MessageDescriptor {
   switch (productId) {
+    case STORE_PRODUCT_IDS.botBoost: return boostMessages.permanentTitle
     case STORE_PRODUCT_IDS.tipTier1: return messages.tipTier1Title
     case STORE_PRODUCT_IDS.tipTier2: return messages.tipTier2Title
     case STORE_PRODUCT_IDS.tipTier3: return messages.tipTier3Title
@@ -336,6 +342,7 @@ function productTitle(productId: StoreProductId): MessageDescriptor {
 
 function productDescription(productId: StoreProductId): MessageDescriptor {
   switch (productId) {
+    case STORE_PRODUCT_IDS.botBoost: return boostMessages.permanentDescription
     case STORE_PRODUCT_IDS.tipTier1: return messages.tipTier1Description
     case STORE_PRODUCT_IDS.tipTier2: return messages.tipTier2Description
     case STORE_PRODUCT_IDS.tipTier3: return messages.tipTier3Description

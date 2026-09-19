@@ -31,6 +31,7 @@ const DEFAULT_OUTCOMES: Readonly<
   [STORE_PRODUCT_IDS.tipTier3]: 'failed',
   [STORE_PRODUCT_IDS.developerOptions]: 'success',
   [STORE_PRODUCT_IDS.doubleInfinityPoints]: 'success',
+  [STORE_PRODUCT_IDS.botBoost]: 'success',
 }
 
 const DEVELOPMENT_PRICE_LABEL = 'Test $0'
@@ -53,6 +54,7 @@ implements StoreAdapter, EntitlementAuthority {
       ...options.outcomes,
     })
     this.ownership = freezeOwnership({
+      botBoost: options.initialOwnership?.botBoost,
       doubleInfinityPoints:
         options.initialOwnership?.doubleInfinityPoints === true,
       developerOptions:
@@ -83,7 +85,9 @@ implements StoreAdapter, EntitlementAuthority {
           : 'purchase-failed' as const,
       })
     }
-    if (isSupporterProductId(productId)) {
+    if (productId === STORE_PRODUCT_IDS.botBoost) {
+      this.ownership = freezeOwnership({ ...this.ownership, botBoost: true })
+    } else if (isSupporterProductId(productId)) {
       this.ownership = freezeOwnership({
         ...this.ownership,
         supporterCatGallery: true,
@@ -108,6 +112,7 @@ implements StoreAdapter, EntitlementAuthority {
   async restorePurchases(): Promise<StoreRestoreResult> {
     return Object.freeze({
       restoredProductIds: Object.freeze([
+        ...(this.ownership.botBoost ? [STORE_PRODUCT_IDS.botBoost] : []),
         ...(this.ownership.developerOptions
           ? [STORE_PRODUCT_IDS.developerOptions]
           : []),
@@ -131,6 +136,7 @@ function freezeOwnership(
   ownership: Readonly<HostEntitlementOwnership>,
 ): Readonly<HostEntitlementOwnership> {
   return Object.freeze({
+    ...(ownership.botBoost === undefined ? {} : { botBoost: ownership.botBoost === true }),
     doubleInfinityPoints: ownership.doubleInfinityPoints === true,
     developerOptions: ownership.developerOptions === true,
     supporterCatGallery: ownership.supporterCatGallery === true,

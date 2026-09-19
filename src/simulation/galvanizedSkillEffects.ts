@@ -1,6 +1,6 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { isGalvanized, galvanizedSkillIds } from './galvanization'
-import { hasCashScienceSubskill } from './skillSubskills'
+import { hasCashScienceSubskill, hasSrsAugment, SRS_AUGMENTS } from './skillSubskills'
 import type { StatEffect } from './stat'
 
 /** Authored conditions still resolve normally; only the owning skill's downside disappears. */
@@ -10,7 +10,16 @@ export function adjustGalvanizedEffects(
   const powerSkills = ['tasteOfPower', 'indulgingInPower', 'addictionToPower'] as const
   const separatePowerPenalties = powerSkills.some((id) => isGalvanized(state, id))
   const result: StatEffect[] = []
-  for (const effect of effects) {
+  for (const original of effects) {
+    let effect = original
+    if (effect.id.startsWith('effect.superRadiantScattering.') &&
+        (statId === 'Global.MoneyMultiplier' || statId === 'Global.ScienceMultiplier') &&
+        hasSrsAugment(state, 'focusedBeam')) {
+      const side = Math.sign(state.dyson.workers - state.dyson.researchers)
+      const favoured = statId === 'Global.MoneyMultiplier' ? side > 0 : side < 0
+      const scale = side === 0 ? 1 : favoured ? 1.5 : 0.5
+      effect = { ...effect, value: 1 + (effect.value - 1) * scale }
+    }
     const id = effect.id.split('.')[1]
     if (separatePowerPenalties && id === 'tasteOfPower' &&
         (statId === 'Global.MoneyMultiplier' || statId === 'Global.ScienceMultiplier')) continue
@@ -33,6 +42,9 @@ export function adjustGalvanizedEffects(
   }
   if ((statId === 'Global.MoneyPerSecond' || statId === 'Global.SciencePerSecond') && hasCashScienceSubskill(state, 'production')) {
     result.push({ id: `subskill.cashScience.production.${statId}`, operation: 'multiply', value: 2, order: 250 })
+  }
+  if (statId === 'Global.SciencePerSecond' && hasSrsAugment(state, 'researchConversion')) {
+    result.push({ id: SRS_AUGMENTS.researchConversion, operation: 'multiply', value: 0.5, order: 300 })
   }
   return result
 }
