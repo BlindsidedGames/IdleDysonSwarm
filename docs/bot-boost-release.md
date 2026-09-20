@@ -6,10 +6,10 @@
 
 - Apple: create `ids.botboost` as a non-consumable, with approved price and localized listing. The StoreKit current-entitlements and restore paths include it.
 - Google Play: create `ids.botboost` as a non-consumable one-time product. The billing query, acknowledgement and restore paths include it.
-- Steam: publish a non-tradable, non-marketable permanent inventory item with purchase limit 1, then set its real ItemDef ID in `hosts/electron/steam-inventory.json`. The mapping is deliberately `null` until configured; existing products remain available. Inventory restoration and the encrypted offline cache include the entitlement.
+- Steam: ItemDef `1006` is the non-tradable, non-marketable permanent item, with purchase limit 1 and base price AUD2.99. Its definition is tracked in `hosts/electron/steam/itemdefs.json` and mapped in `hosts/electron/steam-inventory.json`. Inventory restoration and the encrypted offline cache include the entitlement.
 - Website, if resumed: add `ids.botboost` to the website repository's Stripe product allowlist and price mapping, and return `botBoost` in verified ownership. The IDS client already sends the product ID and reads that field. Follow existing browser-bound receipt behaviour; no account or cross-device restoration is added.
 
-No live store products, pricing, submissions or website backend were changed by this implementation. A missing listing remains unavailable; development's `Test $0` uses only the existing in-memory test adapter.
+Store setup on 20 September 2026: Apple product `6814040338` and Google product `ids.botboost` use AUD2.99 base pricing and eight localized listings. Apple is submitted with 4.1.9 for review; Google's backwards-compatible `permanent` Buy option is active. Steam ItemDef `1006` is published. Configuration does not establish purchase/restore acceptance; verify those paths separately. The website backend is unchanged. A missing listing remains unavailable; development's `Test $0` uses only the existing in-memory test adapter.
 
 ## Behaviour
 
