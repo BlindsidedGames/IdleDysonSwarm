@@ -75,6 +75,21 @@
       "icon_url_large": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
       "ids_product_id": "ids.doubleip",
       "purchase_limit": 1
+    },
+    {
+      "itemdefid": 1006,
+      "type": "item",
+      "name": "Permanent 2× Bots",
+      "name_english": "Permanent 2× Bots",
+      "description": "Permanently unlock double Dyson Bot gains without promotions. Enable or disable the boost in the Store.",
+      "description_english": "Permanently unlock double Dyson Bot gains without promotions. Enable or disable the boost in the Store.",
+      "tradable": false,
+      "marketable": false,
+      "price": "1;AUD299",
+      "icon_url": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "icon_url_large": "https://www.blindsidedgames.com/play/icons/pwa-icon-512.png",
+      "ids_product_id": "ids.botboost",
+      "purchase_limit": 1
     }
   ]
 }
