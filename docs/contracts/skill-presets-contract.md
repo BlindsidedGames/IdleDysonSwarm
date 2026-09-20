@@ -146,13 +146,18 @@ Research Activity requires both Focused Beam and Deep Exposure. Stellar Memory
 requires both Research Activity and Research Conversion. It sits directly below
 Research Conversion, to the right of Research Activity.
 
-Hot Start grants 1,800 seconds once per run when assigned. Its grant marker
+Hot Start grants 1,800 seconds once per run when assigned, including auto-assignment
+and preset application. Its grant marker
 survives unassignment. Afterglow retains 10% of ending SRS charge on Infinity,
 without a cap, before adding the next Hot Start grant. Quantum Leap and
 challenge restarts discard retained charge. Deep Exposure tracks assigned game
 time separately from SRS charge, integrating its +10%/minute ramp up to +200%.
 Research Activity refreshes for 30 seconds when purchased or generated research
-levels are committed; generated fractions alone do not trigger it. Its +150%
+levels are committed; generated fractions alone do not trigger it. Generated
+level timings within a simulation interval determine its active coverage and
+ending timer, including gaps between sparse gains and overlapping Cash/Science
+gains. Frequent gains are combined into continuous windows rather than iterated
+level by level. Research at its level cap does not refresh the bonus. Its +150%
 and Conversion's +100% charging bonuses add to Deep Exposure and the base rate.
 Conversion halves final Science production. Focused Beam scales only the SRS
 bonus above 1× according to actual Worker/Researcher allocation; ties are neutral.

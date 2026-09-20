@@ -1,4 +1,4 @@
-import { advanceSrsAugments, refreshSrsResearchActivity } from './srsAugments'
+import { advanceSrsAugments } from './srsAugments'
 import { isBreakInfinityEnabled } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -36,20 +36,24 @@ export function applyCanonicalSkillIntervalEffects(
   validateInputs(inputs)
   if (inputs.seconds === 0) return stateAfterArrivals
 
-  let skills = advanceSkillTimers(
-    advanceSrsAugments(stateAfterArrivals, inputs.seconds),
-    inputs.seconds,
-  )
   const research = accrueShouldersResearch(
     stateAfterArrivals.research,
     inputs.scienceBoostPerSecond,
     inputs.moneyUpgradePerSecond,
     inputs.seconds,
   )
-  if (['research.science_boost', 'research.money_multiplier'].some(id =>
-    (research.levelsById[id] ?? 0) > (stateAfterArrivals.research.levelsById[id] ?? 0))) {
-    skills = refreshSrsResearchActivity({ ...stateAfterArrivals, skills })
-  }
+  const skills = advanceSkillTimers(
+    advanceSrsAugments(stateAfterArrivals, inputs.seconds, ([
+      ['research.science_boost', inputs.scienceBoostPerSecond],
+      ['research.money_multiplier', inputs.moneyUpgradePerSecond],
+    ] as const).map(([id, rate]) => ({
+      rate,
+      progress: stateAfterArrivals.research.progressById[id] ?? 0,
+      gained: (research.levelsById[id] ?? 0) -
+        (stateAfterArrivals.research.levelsById[id] ?? 0),
+    }))),
+    inputs.seconds,
+  )
   const stellar = resolveStellarAggregate(
     startingState.dyson.bots,
     inputs.botProductionPerSecond,
