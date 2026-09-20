@@ -172,7 +172,8 @@
   min-block-size: 2.75rem;
   justify-self: end;
   padding: 0.45rem 0.65rem;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .store-surface__purchase-action--effect-disabled:not(:disabled) {
@@ -231,3 +232,7 @@
     justify-self: stretch;
   }
 }
+
+.store-promo__banner { aspect-ratio: 16 / 9; width: 100%; overflow: hidden; border-radius: 0.65rem; background: var(--color-surface, #171b22); }
+.store-promo__banner img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.store-promo article + article { margin-top: 1.5rem; }

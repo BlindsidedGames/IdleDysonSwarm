@@ -12949,24 +12949,6 @@
       "value": "Des moyens facultatifs de soutenir Idle Dyson Swarm et des améliorations permanentes pour ce navigateur sur cet appareil."
     }
   ],
-  "store.browser-permanent.description": [
-    {
-      "type": 0,
-      "value": "Les achats permanents sur le Web sont vérifiés après le paiement Stripe et enregistrés uniquement dans ce navigateur sur cet appareil."
-    }
-  ],
-  "store.device-only.description": [
-    {
-      "type": 0,
-      "value": "La version Web ne possède ni compte joueur ni restauration entre appareils. Les achats vérifiés restent uniquement dans ce navigateur sur cet appareil et peuvent être perdus si les données de ce site sont effacées. Une adresse e-mail saisie lors du paiement Stripe sert uniquement de coordonnée de contact pour le paiement ; elle ne crée pas de compte de jeu et ne permet pas la restauration. La galerie ne débloque jamais de contenu de jeu."
-    }
-  ],
-  "store.device-only.heading": [
-    {
-      "type": 0,
-      "value": "Les achats restent sur cet appareil"
-    }
-  ],
   "store.feedback.effect-disabled": [
     {
       "type": 0,
@@ -13140,36 +13122,6 @@
     {
       "type": 0,
       "value": "Niveau de soutien Famille"
-    }
-  ],
-  "store.promo.echoes": [
-    {
-      "type": 0,
-      "value": "Explorez un monde fantastique et renforcez-vous grâce aux combats et aux améliorations."
-    }
-  ],
-  "store.promo.eternum": [
-    {
-      "type": 0,
-      "value": "Bâtissez un empire incrémental grâce aux améliorations et à une progression permanente."
-    }
-  ],
-  "store.promo.nanite": [
-    {
-      "type": 0,
-      "value": "Développez un essaim de nanites grâce à une production exponentielle."
-    }
-  ],
-  "store.promo.pulse": [
-    {
-      "type": 0,
-      "value": "Construisez votre citadelle et survivez à des vagues toujours plus puissantes."
-    }
-  ],
-  "store.promo.whitecell": [
-    {
-      "type": 0,
-      "value": "Créez un virus, choisissez des mutations et évoluez à travers de nouveaux hôtes."
     }
   ],
   "store.region": [

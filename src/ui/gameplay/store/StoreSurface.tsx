@@ -98,6 +98,14 @@ export function StoreSurface({
               </section>
             ) : null}
             <StoreSection
+              heading={intl.formatMessage(messages.permanentHeading)}
+              description={intl.formatMessage(messages.permanentDescription)}
+              products={permanent}
+              snapshot={snapshot}
+              access={access}
+              controller={controller}
+            />
+            <StoreSection
               heading={intl.formatMessage(messages.tipsHeading)}
               description={intl.formatMessage(messages.tipsDescription)}
               products={tips}
@@ -105,28 +113,6 @@ export function StoreSurface({
               access={access}
               controller={controller}
             />
-            <StoreSection
-              heading={intl.formatMessage(messages.permanentHeading)}
-              description={intl.formatMessage(
-                deviceOnlyPurchases
-                  ? messages.browserPermanentDescription
-                  : messages.permanentDescription,
-              )}
-              products={permanent}
-              snapshot={snapshot}
-              access={access}
-              controller={controller}
-            />
-            {deviceOnlyPurchases ? (
-              <section className="store-restore" aria-labelledby="store-device-heading">
-                <div>
-                  <h2 id="store-device-heading">
-                    {intl.formatMessage(messages.deviceOnlyHeading)}
-                  </h2>
-                  <p>{intl.formatMessage(messages.deviceOnlyDescription)}</p>
-                </div>
-              </section>
-            ) : null}
             {restoreAvailable ? (
               <section className="store-restore" aria-labelledby="store-restore-heading">
               <div>

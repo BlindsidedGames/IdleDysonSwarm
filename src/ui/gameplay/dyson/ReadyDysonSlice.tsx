@@ -1274,8 +1274,9 @@ export function ReadyDysonSlice({
                   iconSrc: navigationAssets.store,
                   badge: botBoostStatus.badge,
                   badgeOutlined: !botBoostStatus.active,
+                  badgeReady: botBoostStatus.badgeReady,
                   ariaLabel: intl.formatMessage(boostMessages.navigation, { status: botBoostStatus.status }),
-                  drawerIndicator: <span className="store-boost-nav-status">{botBoostStatus.status}</span>,
+                  drawerIndicator: <span className="store-boost-nav-status">{!ownsBotBoost && botBoostStatus.active ? botBoostStatus.time : botBoostStatus.status}</span>,
                   bottom: bottomVisible('store'),
                   ...(storeActive
                     ? { current: true as const }

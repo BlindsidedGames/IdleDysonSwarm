@@ -12949,24 +12949,6 @@
       "value": "Idle Dyson Swarmを任意で支援する方法と、この端末のこのブラウザで使える恒久アップグレードです。"
     }
   ],
-  "store.browser-permanent.description": [
-    {
-      "type": 0,
-      "value": "恒久的なウェブ購入はStripe Checkout後に検証され、この端末のこのブラウザにのみ保存されます。"
-    }
-  ],
-  "store.device-only.description": [
-    {
-      "type": 0,
-      "value": "ウェブ版にはプレイヤーアカウントや端末間復元機能がありません。検証済み購入はこの端末のこのブラウザにのみ保存され、サイトデータを消去すると失われる場合があります。Stripe Checkoutで入力するメールアドレスは決済連絡用であり、ゲームアカウントの作成や復元には使われません。ギャラリーがゲーム進行をアンロックすることはありません。"
-    }
-  ],
-  "store.device-only.heading": [
-    {
-      "type": 0,
-      "value": "購入はこの端末に保存されます"
-    }
-  ],
   "store.feedback.effect-disabled": [
     {
       "type": 0,
@@ -13140,36 +13122,6 @@
     {
       "type": 0,
       "value": "ファミリー・サポーターティア"
-    }
-  ],
-  "store.promo.echoes": [
-    {
-      "type": 0,
-      "value": "ファンタジー世界を探索し、戦闘とアップグレードで強くなりましょう。"
-    }
-  ],
-  "store.promo.eternum": [
-    {
-      "type": 0,
-      "value": "アップグレードと永続的な成長で放置帝国を築きましょう。"
-    }
-  ],
-  "store.promo.nanite": [
-    {
-      "type": 0,
-      "value": "生産量を増やし、ナノマシンの群れを成長させましょう。"
-    }
-  ],
-  "store.promo.pulse": [
-    {
-      "type": 0,
-      "value": "城塞を築き、激しさを増す敵の波を生き延びましょう。"
-    }
-  ],
-  "store.promo.whitecell": [
-    {
-      "type": 0,
-      "value": "ウイルスを作り、変異を選び、新たな宿主で進化しましょう。"
     }
   ],
   "store.region": [

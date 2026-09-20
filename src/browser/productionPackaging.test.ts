@@ -170,12 +170,13 @@ describe('production browser package', () => {
       expect(directives.get('script-src')).toEqual(["'self'"])
       expect(directives.get('style-src')).toEqual(["'self'"])
       expect(directives.get('font-src')).toEqual(["'self'"])
-      expect(directives.get('connect-src')).toEqual(["'self'"])
+      expect(directives.get('connect-src')).toEqual(["'self'", "https://www.blindsidedgames.com/promotions/"])
       expect(directives.get('worker-src')).toEqual(["'self'"])
       expect(directives.get('manifest-src')).toEqual(["'self'"])
       expect(directives.get('img-src')).toEqual([
         "'self'",
         'data:',
+        'blob:',
       ])
 
       const pwaManifest = JSON.parse(readFileSync(

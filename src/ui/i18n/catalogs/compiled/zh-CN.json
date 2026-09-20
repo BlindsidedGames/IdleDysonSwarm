@@ -12949,24 +12949,6 @@
       "value": "支持 Idle Dyson Swarm 的可选方式，以及适用于此设备上此浏览器的永久升级。"
     }
   ],
-  "store.browser-permanent.description": [
-    {
-      "type": 0,
-      "value": "网页永久购买将在 Stripe 结账后验证，并仅保存在此设备上的此浏览器中。"
-    }
-  ],
-  "store.device-only.description": [
-    {
-      "type": 0,
-      "value": "网页版没有玩家账号或跨设备恢复功能。已验证的购买仅保留在此设备上的此浏览器中；清除此网站的数据可能导致丢失。在 Stripe 结账时输入的电子邮件仅作为付款联系方式，不会创建游戏账号或启用恢复。画廊不会解锁任何玩法优势。"
-    }
-  ],
-  "store.device-only.heading": [
-    {
-      "type": 0,
-      "value": "购买内容保留在此设备上"
-    }
-  ],
   "store.feedback.effect-disabled": [
     {
       "type": 0,
@@ -13140,36 +13122,6 @@
     {
       "type": 0,
       "value": "家庭支持档位"
-    }
-  ],
-  "store.promo.echoes": [
-    {
-      "type": 0,
-      "value": "探索奇幻世界，通过战斗和升级变得更强。"
-    }
-  ],
-  "store.promo.eternum": [
-    {
-      "type": 0,
-      "value": "通过升级和永久进度打造放置帝国。"
-    }
-  ],
-  "store.promo.nanite": [
-    {
-      "type": 0,
-      "value": "通过不断增长的生产能力壮大纳米机器人集群。"
-    }
-  ],
-  "store.promo.pulse": [
-    {
-      "type": 0,
-      "value": "建造堡垒，抵御愈发猛烈的攻势。"
-    }
-  ],
-  "store.promo.whitecell": [
-    {
-      "type": 0,
-      "value": "创造病毒、选择突变，并在新的宿主体内进化。"
     }
   ],
   "store.region": [

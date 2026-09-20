@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { useIntl } from 'react-intl'
 import type { BotBoostState } from '../../../simulation/botBoost'
-import { eligiblePromotions, nextPromotion, type GamePromotion, type PromotionPlatform } from '../../../store/promotions'
+import { eligiblePromotions, nextPromotion, startPromotions, refreshPromotions, subscribePromotions, promotionSnapshot, type GamePromotion, type PromotionPlatform } from '../../../store/promotions'
 import { FacilityDetailsDialog } from '../facilities/FacilityDetailsDialog'
 import { boostMessages as messages } from './boostMessages'
 import { storeMessages } from './messages'
@@ -19,13 +19,15 @@ export interface BotBoostControls {
 
 export function BotBoostPanel(props: BotBoostControls) {
   const intl = useIntl()
+  useEffect(() => startPromotions(props.platform), [props.platform])
+  useSyncExternalStore(subscribePromotions, promotionSnapshot, promotionSnapshot)
   const status = useBotBoost(props.boost, props.owned)
   const [promo, setPromo] = useState<GamePromotion>()
   const [browse, setBrowse] = useState(false)
   const [busy, setBusy] = useState(false)
   const [failed, setFailed] = useState(false)
   const pending = useRef(false)
-  const games = eligiblePromotions(props.platform)
+  const games = eligiblePromotions(props.platform, intl.locale)
   async function update(action: () => Promise<boolean>) {
     if (pending.current) return
     pending.current = true
@@ -39,7 +41,7 @@ export function BotBoostPanel(props: BotBoostControls) {
     finally { pending.current = false; setBusy(false) }
   }
   function activate() {
-    const selected = nextPromotion(props.platform)
+    const selected = nextPromotion(props.platform, intl.locale)
     if (selected) setPromo(selected)
     else void update(props.onClaim)
   }
@@ -64,12 +66,12 @@ export function BotBoostPanel(props: BotBoostControls) {
             : !status.claimable ? messages.wait : status.active ? messages.add : messages.activate)}
         </button>
       </div>
-      {games.length > 0 && <button type="button" className="store-boost__browse" onClick={() => setBrowse(true)}>{intl.formatMessage(messages.games)}</button>}
+      {games.length > 0 && <button type="button" className="store-boost__browse" onClick={() => { refreshPromotions(); setBrowse(true) }}>{intl.formatMessage(messages.games)}</button>}
       {failed && <p role="alert">{intl.formatMessage(messages.failed)}</p>}
     </section>
     {promo && <FacilityDetailsDialog title={promo.title} closeLabel={intl.formatMessage(messages.close)} onClose={() => setPromo(undefined)}>
       <div className="store-promo">
-        <p>{intl.formatMessage(messages[promo.id])}</p>
+        <PromotionBanner game={promo} /><p>{promo.description}</p>
         <p className="store-promo__label">{intl.formatMessage(messages.promotion)}</p>
         <div className="store-promo__actions">{gameLink(promo)}
           <button type="button" className="store-surface__purchase-action" disabled={busy || !status.claimable}
@@ -79,7 +81,25 @@ export function BotBoostPanel(props: BotBoostControls) {
       </div>
     </FacilityDetailsDialog>}
     {browse && <FacilityDetailsDialog title={intl.formatMessage(messages.games)} closeLabel={intl.formatMessage(messages.close)} onClose={() => setBrowse(false)}>
-      <div className="store-promo">{games.map(game => <article key={game.id}><h3>{game.title}</h3><p>{intl.formatMessage(messages[game.id])}</p>{gameLink(game)}</article>)}</div>
+      <div className="store-promo">{games.map(game => <article key={game.id}><PromotionBanner game={game} lazy /><h3>{game.title}</h3><p>{game.description}</p>{gameLink(game)}</article>)}</div>
     </FacilityDetailsDialog>}
   </>
+}
+
+/** Each open card owns its URL so a refresh cannot revoke artwork beneath it. */
+function PromotionBanner({ game, lazy = false }: { game: GamePromotion; lazy?: boolean }) {
+  const [url, setUrl] = useState<string>()
+  const [failed, setFailed] = useState(false)
+  useEffect(() => {
+    setFailed(false)
+    if (!game.image) { setUrl(undefined); return }
+    const next = URL.createObjectURL(game.image)
+    setUrl(next)
+    return () => URL.revokeObjectURL(next)
+  }, [game.image])
+  const source = failed ? undefined : url ?? game.fallbackImage
+  return <div className="store-promo__banner" aria-hidden="true">
+    {source && <img src={source} alt="" width={960} height={540} loading={lazy ? 'lazy' : 'eager'}
+      onError={() => { if (url && game.fallbackImage) setUrl(undefined); else setFailed(true) }} />}
+  </div>
 }

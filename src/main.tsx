@@ -113,6 +113,10 @@ async function bootstrap(): Promise<void> {
             )
           : undefined,
     })
+    // Catalog work is optional and never blocks startup or simulation.
+    void import('./store/promotions').then(({ startPromotions, promotionPlatform }) => {
+      startPromotions(promotionPlatform(nativeBridge?.target))
+    }).catch(() => undefined)
     void composition.audio.initialize().catch(() => undefined)
     installSemanticAudioCues(document, composition.audio)
     const pwaUpdateController =

@@ -19,9 +19,4 @@ export const boostMessages = defineMessages({
   failed: { id: 'store.boost.failed', defaultMessage: 'The boost could not be updated. Try again.' },
   navigation: { id: 'store.boost.navigation', defaultMessage: 'Store: 2× Bots, {status}' },
   used: { id: 'statistics.bot-boost-used', defaultMessage: 'Bot Boost Used' },
-  pulse: { id: 'store.promo.pulse', defaultMessage: 'Build your citadel and survive escalating waves.' },
-  eternum: { id: 'store.promo.eternum', defaultMessage: 'Build an idle empire through upgrades and permanent progress.' },
-  nanite: { id: 'store.promo.nanite', defaultMessage: 'Grow a nanite swarm through compounding production.' },
-  echoes: { id: 'store.promo.echoes', defaultMessage: 'Explore a fantasy world and grow stronger through combat and upgrades.' },
-  whitecell: { id: 'store.promo.whitecell', defaultMessage: 'Build a virus, draft mutations and evolve across new hosts.' },
 })

@@ -12949,24 +12949,6 @@
       "value": "Optionale Möglichkeiten, Idle Dyson Swarm zu unterstützen, sowie dauerhafte Upgrades für diesen Browser auf diesem Gerät."
     }
   ],
-  "store.browser-permanent.description": [
-    {
-      "type": 0,
-      "value": "Dauerhafte Webkäufe werden nach dem Stripe Checkout verifiziert und nur für diesen Browser auf diesem Gerät gespeichert."
-    }
-  ],
-  "store.device-only.description": [
-    {
-      "type": 0,
-      "value": "Die Webversion besitzt kein Spielerkonto und keine geräteübergreifende Wiederherstellung. Verifizierte Käufe bleiben nur in diesem Browser auf diesem Gerät und können verloren gehen, wenn die Daten dieser Website gelöscht werden. Eine beim Stripe Checkout eingegebene E-Mail-Adresse dient nur als Zahlungskontakt; sie erstellt weder ein Spielkonto noch ermöglicht sie die Wiederherstellung. Die Galerie schaltet niemals Spielvorteile frei."
-    }
-  ],
-  "store.device-only.heading": [
-    {
-      "type": 0,
-      "value": "Käufe bleiben auf diesem Gerät"
-    }
-  ],
   "store.feedback.effect-disabled": [
     {
       "type": 0,
@@ -13140,36 +13122,6 @@
     {
       "type": 0,
       "value": "Unterstützerstufe Familie"
-    }
-  ],
-  "store.promo.echoes": [
-    {
-      "type": 0,
-      "value": "Erkunde eine Fantasiewelt und werde durch Kämpfe und Verbesserungen stärker."
-    }
-  ],
-  "store.promo.eternum": [
-    {
-      "type": 0,
-      "value": "Baue ein Idle-Imperium mit Verbesserungen und dauerhaftem Fortschritt auf."
-    }
-  ],
-  "store.promo.nanite": [
-    {
-      "type": 0,
-      "value": "Vergrößere einen Nanitenschwarm durch stetig wachsende Produktion."
-    }
-  ],
-  "store.promo.pulse": [
-    {
-      "type": 0,
-      "value": "Baue deine Zitadelle und überlebe immer stärkere Angriffswellen."
-    }
-  ],
-  "store.promo.whitecell": [
-    {
-      "type": 0,
-      "value": "Erschaffe ein Virus, wähle Mutationen und entwickle dich in neuen Wirten weiter."
     }
   ],
   "store.region": [
