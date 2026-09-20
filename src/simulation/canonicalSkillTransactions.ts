@@ -768,12 +768,12 @@ export function runCanonicalSkillAutoAssignment(
   return accepted(
     {
       ...state,
-      skills: {
+      skills: initializeSrsHotStart({ ...state, skills: {
         ...state.skills,
         points,
         fragments,
         byId,
-      },
+      } }),
     },
     true,
     affected,

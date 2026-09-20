@@ -4,7 +4,7 @@ import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
 import { PreparedSave, prepareIdb1Save } from '../save/prepare'
 import { serializeWebSave, deserializeWebSave } from '../save/serialization'
 import { validateCanonicalGameState } from '../game-state/validate'
-import { purchaseCanonicalSkill, refundCanonicalSkill } from './canonicalSkillTransactions'
+import { purchaseCanonicalSkill, refundCanonicalSkill, runCanonicalSkillAutoAssignment, applyCanonicalSkillPresetLayout } from './canonicalSkillTransactions'
 import { previewAddSkillToPreset } from './canonicalSkillPresetTransactions'
 import { applyCanonicalInfinityReset } from './canonicalInfinityReset'
 import { applyCanonicalQuantumReset } from './quantumTransitions'
@@ -86,7 +86,7 @@ test('generated levels refresh once, fractional generation does not; paid resear
   const inputs = { seconds: 1, botProductionPerSecond: 0, stellarPlanetsPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 1_000_000, moneyUpgradePerSecond: 0 }
   const next = applyCanonicalSkillIntervalEffects(s, s, inputs)
   expect(next.skills.byId[A.researchActivity].timerSeconds).toBe(30)
-  expect(next.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(1 + 1 / 1200)
+  expect(next.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(1 + 1 / 1200 + 1.5 * (1 - 1 / 1_000_000))
   const empty = { ...s, research: { ...s.research, levelsById: {}, progressById: {} } }
   expect(applyCanonicalSkillIntervalEffects(empty, empty, { ...inputs, scienceBoostPerSecond: 0.1 }).skills.byId[A.researchActivity].timerSeconds).toBe(0)
   const funded = { ...empty, dyson: { ...empty.dyson, science: 1e100 }, infinity: { ...empty.infinity, automationUnlocked: { ...empty.infinity.automationUnlocked, research: true } } }
@@ -149,4 +149,57 @@ test('Stellar Memory requires Activity and Conversion and uses lifetime time, no
   let split = s
   for (let i = 0; i < 500; i++) split = advance(split, 1)
   expect(whole.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(split.skills.byId.superRadiantScattering.timerSeconds)
+})
+
+
+test('auto-assignment and presets grant Hot Start once per Infinity', () => {
+  const initial = state()
+  for (const assign of [
+    (s: State) => runCanonicalSkillAutoAssignment({ ...s, skills: { ...s.skills, activeAutoAssignment: [A.hotStart] } }),
+    (s: State) => applyCanonicalSkillPresetLayout(s, [A.hotStart]),
+  ]) {
+    const first = assign(initial)
+    expect(first.accepted).toBe(true)
+    expect(first.state.skills.byId.superRadiantScattering.timerSeconds).toBe(1800)
+    const refund = refundCanonicalSkill(first.state, A.hotStart)
+    expect(refund.accepted).toBe(true)
+    const again = assign(refund.state)
+    expect(again.state.skills.byId.superRadiantScattering.timerSeconds).toBe(1800)
+    const reset = applyCanonicalInfinityReset(again.state, { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 20n })
+    expect(reset.ok).toBe(true)
+    expect(reset.state.skills.byId.superRadiantScattering.timerSeconds).toBe(1800)
+  }
+})
+
+test.each([
+  [1, 0, 0, 0, 0],
+  [1 / 60, 0, 0.25, 0, 10],
+  [1 / 60, 1 / 80, 0.25, 0.5, 20],
+  [1, 1 / 80, 0.25, 0.5, 0],
+  [0, 0, 0, 0, 20],
+])('generated research coverage matches split steps (%s, %s)', (science, money, scienceProgress, moneyProgress, timer) => {
+  let initial = buy(state(), A.researchActivity)
+  initial = { ...initial, research: { ...initial.research, levelsById: {}, progressById: {
+    'research.science_boost': scienceProgress, 'research.money_multiplier': moneyProgress,
+  } }, skills: { ...initial.skills, byId: { ...initial.skills.byId,
+    [A.researchActivity]: { ...initial.skills.byId[A.researchActivity], timerSeconds: timer },
+  } } }
+  const step = (s: State, seconds: number) => applyCanonicalSkillIntervalEffects(s, s, {
+    seconds, botProductionPerSecond: 0, stellarPlanetsPerSecond: 0, stellarBotsPerSecond: 0,
+    scienceBoostPerSecond: science, moneyUpgradePerSecond: money,
+  })
+  const whole = step(initial, 361)
+  let split: State = initial
+  for (let i = 0; i < 361; i++) split = step(split, 1)
+  expect(whole.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(split.skills.byId.superRadiantScattering.timerSeconds, 7)
+  expect(whole.skills.byId[A.researchActivity].timerSeconds).toBeCloseTo(split.skills.byId[A.researchActivity].timerSeconds, 7)
+})
+
+test('generated levels stop refreshing Activity at the research cap', () => {
+  let s = buy(state(), A.researchActivity)
+  s = { ...s, research: { ...s.research, levelsById: { 'research.science_boost': Number.MAX_SAFE_INTEGER - 1 }, progressById: {} } }
+  const next = applyCanonicalSkillIntervalEffects(s, s, { seconds: 100, botProductionPerSecond: 0,
+    stellarPlanetsPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 1, moneyUpgradePerSecond: 0 })
+  expect(next.skills.byId[A.researchActivity].timerSeconds).toBe(0)
+  expect(next.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(100 + 100 * 100 / 1200 + 45)
 })
