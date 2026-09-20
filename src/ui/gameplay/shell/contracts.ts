@@ -43,6 +43,7 @@ export type DysonNavigationItem =
       /** Compact value shown on the icon in bottom navigation and beside the label in the drawer. */
       readonly badge?: string
       readonly badgeOutlined?: boolean
+      readonly badgeReady?: boolean
       /** Highlights a newly unlocked destination until it is first visited. */
       readonly newlyUnlocked?: boolean
       readonly progress?: {
@@ -66,6 +67,7 @@ export type DysonNavigationItem =
       /** Compact value shown on the icon in bottom navigation and beside the label in the drawer. */
       readonly badge?: string
       readonly badgeOutlined?: boolean
+      readonly badgeReady?: boolean
       /** Highlights a newly unlocked destination until it is first visited. */
       readonly newlyUnlocked?: boolean
       readonly progress?: {

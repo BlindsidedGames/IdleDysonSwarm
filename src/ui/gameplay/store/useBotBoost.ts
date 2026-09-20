@@ -21,5 +21,6 @@ export function useBotBoost(boost: BotBoostState | undefined, owned: boolean) {
     ? intl.formatMessage(active ? messages.permanent : storeMessages.disabled)
     : active ? intl.formatMessage(messages.active, { time }) : intl.formatMessage(messages.ready)
   return { active, claimable, remaining, time, status,
-    badge: owned && !active ? undefined : active && claimable ? '2×+' : '2×' }
+    badge: owned && !active ? undefined : '2×',
+    badgeReady: active && claimable }
 }

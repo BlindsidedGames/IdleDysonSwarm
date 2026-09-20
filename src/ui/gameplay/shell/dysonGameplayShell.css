@@ -1309,6 +1309,7 @@
 }
 
 .store-boost-nav-status {
+  color: white;
   font-size: var(--ui-text-meta);
   font-variant-numeric: tabular-nums;
   font-weight: normal;
@@ -1946,3 +1947,9 @@
   transform-origin: left center;
 }
 [dir="rtl"] .offline-time-navigation-progress > span { transform-origin: right center; }
+
+.dyson-navigation__badge[data-ready] {
+  background: var(--color-positive);
+  border-color: var(--color-positive);
+  color: #162116;
+}

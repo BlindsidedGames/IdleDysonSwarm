@@ -18,3 +18,7 @@
   on the user repeatedly selecting “Always Allow”.
 - Keep this setting scoped to isolated test browsers; do not apply it to the
   user's personal browser profile or sessions that need existing signed-in data.
+
+## App promotions
+
+- Before changing the game catalog, banner workflow, or offline promotion cache, read [docs/website-managed-promotions.md](docs/website-managed-promotions.md). The website owns catalog content; IDS ships a verified fallback.

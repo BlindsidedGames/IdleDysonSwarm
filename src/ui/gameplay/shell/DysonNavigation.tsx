@@ -143,7 +143,7 @@ function NavigationItemContent({
               )
             : item.icon}
           {placement === 'bottom' && item.badge !== undefined ? (
-            <span className="dyson-navigation__badge" data-outlined={item.badgeOutlined || undefined}>{item.badge}</span>
+            <span className="dyson-navigation__badge" data-outlined={item.badgeOutlined || undefined} data-ready={item.badgeReady || undefined}>{item.badge}</span>
           ) : null}
         </span>
       )}

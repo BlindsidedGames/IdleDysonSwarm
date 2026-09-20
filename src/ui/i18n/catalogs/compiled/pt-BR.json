@@ -12949,24 +12949,6 @@
       "value": "Formas opcionais de apoiar Idle Dyson Swarm e melhorias permanentes para este navegador neste dispositivo."
     }
   ],
-  "store.browser-permanent.description": [
-    {
-      "type": 0,
-      "value": "As compras permanentes na web são verificadas após o Stripe Checkout e salvas somente neste navegador e dispositivo."
-    }
-  ],
-  "store.device-only.description": [
-    {
-      "type": 0,
-      "value": "A versão web não possui conta de jogador nem restauração entre dispositivos. As compras verificadas ficam somente neste navegador e neste dispositivo, e podem ser perdidas se os dados deste site forem apagados. O e-mail informado no Stripe Checkout serve apenas como contato de pagamento; ele não cria uma conta no jogo nem permite restaurações. A galeria nunca desbloqueia vantagens de jogabilidade."
-    }
-  ],
-  "store.device-only.heading": [
-    {
-      "type": 0,
-      "value": "As compras ficam neste dispositivo"
-    }
-  ],
   "store.feedback.effect-disabled": [
     {
       "type": 0,
@@ -13140,36 +13122,6 @@
     {
       "type": 0,
       "value": "Apoio: Família"
-    }
-  ],
-  "store.promo.echoes": [
-    {
-      "type": 0,
-      "value": "Explore um mundo de fantasia e fique mais forte com combates e melhorias."
-    }
-  ],
-  "store.promo.eternum": [
-    {
-      "type": 0,
-      "value": "Construa um império incremental com melhorias e progresso permanente."
-    }
-  ],
-  "store.promo.nanite": [
-    {
-      "type": 0,
-      "value": "Expanda um enxame de nanites com produção crescente."
-    }
-  ],
-  "store.promo.pulse": [
-    {
-      "type": 0,
-      "value": "Construa sua cidadela e sobreviva a ondas cada vez mais intensas."
-    }
-  ],
-  "store.promo.whitecell": [
-    {
-      "type": 0,
-      "value": "Crie um vírus, escolha mutações e evolua em novos hospedeiros."
     }
   ],
   "store.region": [
