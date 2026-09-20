@@ -176,7 +176,7 @@ describe('Electron native host hardening', () => {
     expect(config.products).toEqual({
       'ids.tiptier1': 1001, 'ids.tiptier2': 1002, 'ids.tiptier3': 1003,
       'ids.devoptions': 1004, 'ids.doubleip': 1005,
-      'ids.botboost': null,
+      'ids.botboost': 1006,
     })
   })
 })
