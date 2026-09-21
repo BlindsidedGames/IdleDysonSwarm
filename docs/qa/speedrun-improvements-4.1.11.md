@@ -38,11 +38,11 @@ Validation: 1,757 tests passed, typecheck, lint, production build, localization 
 
 New records and in-progress milestone cards use unaccelerated active playtime. Existing recorded numbers remain unchanged. Older runs without complete active tracking retain elapsed timing, avoiding false zero/partial records. Active accounting occurs inside simulation intervals before arrival milestones; Stored Time/offline processing does not add to it.
 
-Browser gameplay QA earned First Infinity at 15s played with 3m16s elapsed; current/best both displayed15s while the existing1h Quantum best remained. Full1759-test suite passed and independent review found no remaining defect. Internal uploads use the current4.1.10 marketing version with new build identities; no production submission is requested.
+Browser gameplay QA earned First Infinity at 15s played with 3m16s elapsed; current/best both displayed 15s while the existing 1h Quantum best remained. Full 1759-test suite passed and independent review found no remaining defect. Internal uploads use the current 4.1.10 marketing version with new build identities; no production submission is requested.
 
 Internal deployment completed from source bd2692c79bc2c0512db663a11f10d7eeeb23624e:
-- Google Play4.1.10 (2026092102): Available to internal testers.
-- TestFlight4.1.10 (2609.21.02): Testing, Internal group,3 invitations. Uploaded through Xcode using TestFlight Internal Only; export-compliance response completed.
-- Local release gate and GitHub checks passed. Android AAB SHA256:605c1faeeacd78c624eef9476d7fb54603a743d1ed5f5d7236623158c2d4cb1b. Archived iOS native HTML/JS/CSS match the release build.
-- New iOS26.4 Simulator build: verified Speedruns screen; background/resume advanced elapsed time to1m5s while playtime and current milestone timer remained27s. Browser earned record and subsequent checkpoint/reload retained1m37s.
+- Google Play 4.1.10 (2026092102): Available to internal testers.
+- TestFlight 4.1.10 (2609.21.02): Testing, Internal group, 3 invitations. Uploaded through Xcode using TestFlight Internal Only; export-compliance response completed.
+- Local release gate and GitHub checks passed. Android AAB SHA256: 605c1faeeacd78c624eef9476d7fb54603a743d1ed5f5d7236623158c2d4cb1b. Archived iOS native HTML/JS/CSS match the release build.
+- New iOS 26.4 Simulator build: verified Speedruns screen; background/resume advanced elapsed time to 1m 5s while playtime and current milestone timer remained 27s. Browser earned record and subsequent checkpoint/reload retained 1m 37s.
 - Android interaction checks were not repeated in this incremental pass. No production, Steam or Website deployment; branch remains unmerged.
