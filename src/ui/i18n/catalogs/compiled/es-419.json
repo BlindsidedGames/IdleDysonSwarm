@@ -14634,6 +14634,18 @@
       "value": "El Árbol de habilidades ahora recuerda su posición y nivel de zoom al cambiar de pestaña, y Trabajo manual mantiene Experimentar anclado sobre las instalaciones sin cubrir menús ni paneles de la fase final."
     }
   ],
+  "wiki.patch-notes.version-4-1-10": [
+    {
+      "type": 0,
+      "value": "Versión 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.bot-boost": [
+    {
+      "type": 0,
+      "value": "Se corrigió un error por el que Bots ×2 permanentes dejaba de funcionar al reiniciar la partida."
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,

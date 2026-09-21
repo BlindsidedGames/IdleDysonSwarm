@@ -14634,6 +14634,18 @@
       "value": "Der Skill-Baum merkt sich nun seine Position und Zoomstufe beim Wechsel zwischen Tabs. Handarbeit hält das Basteln oberhalb der Anlagen verankert, ohne Menüs oder Bereiche des späten Spiels zu verdecken."
     }
   ],
+  "wiki.patch-notes.version-4-1-10": [
+    {
+      "type": 0,
+      "value": "Version 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.bot-boost": [
+    {
+      "type": 0,
+      "value": "Behoben: Dauerhaft 2× Bots verlor nach dem Zurücksetzen des Spielstands seine Wirkung."
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,

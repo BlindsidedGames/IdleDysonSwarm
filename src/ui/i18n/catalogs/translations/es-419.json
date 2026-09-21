@@ -2036,5 +2036,7 @@
   "wiki.skills.preset-safety-title": "Planear un preajuste",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Temas de la Wiki",
-  "wiki.topics": "Temas"
+  "wiki.topics": "Temas",
+  "wiki.patch-notes.version-4-1-10": "Versión 4.1.10",
+  "wiki.patch-notes.version-4-1-10.bot-boost": "Se corrigió un error por el que Bots ×2 permanentes dejaba de funcionar al reiniciar la partida."
 }

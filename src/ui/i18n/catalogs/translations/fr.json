@@ -2036,5 +2036,7 @@
   "wiki.skills.preset-safety-title": "Préparer un préréglage",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Sujets du wiki",
-  "wiki.topics": "Sujets"
+  "wiki.topics": "Sujets",
+  "wiki.patch-notes.version-4-1-10": "Version 4.1.10",
+  "wiki.patch-notes.version-4-1-10.bot-boost": "Correction du bonus Bots ×2 permanents qui cessait de fonctionner après la réinitialisation de la sauvegarde."
 }

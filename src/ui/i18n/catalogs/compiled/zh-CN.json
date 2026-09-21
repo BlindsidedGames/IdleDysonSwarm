@@ -14634,6 +14634,18 @@
       "value": "技能树现会在切换标签页时记住位置和缩放级别；手工劳动会将组装操作固定在设施上方，不再遮挡菜单或后期面板。"
     }
   ],
+  "wiki.patch-notes.version-4-1-10": [
+    {
+      "type": 0,
+      "value": "版本 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.bot-boost": [
+    {
+      "type": 0,
+      "value": "修复了重置存档后永久双倍机器人加成失效的问题。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,

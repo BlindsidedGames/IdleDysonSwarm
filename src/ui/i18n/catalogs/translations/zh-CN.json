@@ -2036,5 +2036,7 @@
   "wiki.skills.preset-safety-title": "规划预设",
   "wiki.title": "百科",
   "wiki.topic-navigation": "百科主题导航",
-  "wiki.topics": "主题"
+  "wiki.topics": "主题",
+  "wiki.patch-notes.version-4-1-10": "版本 4.1.10",
+  "wiki.patch-notes.version-4-1-10.bot-boost": "修复了重置存档后永久双倍机器人加成失效的问题。"
 }

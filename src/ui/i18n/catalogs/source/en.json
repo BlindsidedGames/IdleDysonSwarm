@@ -7373,6 +7373,14 @@
     "defaultMessage": "The Skill Tree now remembers its position and zoom while switching tabs, and Manual Labour keeps Tinker anchored above facilities without covering menus or late-game panels.",
     "description": "Version 4.1.1 release note for remembered Skill Tree view and anchored Tinker."
   },
+  "wiki.patch-notes.version-4-1-10": {
+    "defaultMessage": "Version 4.1.10",
+    "description": "Version 4.1.10 release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.bot-boost": {
+    "defaultMessage": "Fixed Permanent 2× Bots losing its effect after resetting your save.",
+    "description": "Version 4.1.10 release notes."
+  },
   "wiki.patch-notes.version-4-1-2": {
     "defaultMessage": "Version 4.1.2",
     "description": "Version label for the previous Wiki patch notes."

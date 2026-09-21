@@ -2036,5 +2036,7 @@
   "wiki.skills.preset-safety-title": "プリセットの計画",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Wikiのトピック",
-  "wiki.topics": "トピック"
+  "wiki.topics": "トピック",
+  "wiki.patch-notes.version-4-1-10": "バージョン 4.1.10",
+  "wiki.patch-notes.version-4-1-10.bot-boost": "セーブデータのリセット後に永久2倍ボットの効果が失われる不具合を修正しました。"
 }
