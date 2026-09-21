@@ -3,6 +3,8 @@ import { describe, expect, test, vi } from 'vitest'
 import { createDeferred, type Deferred } from './deferred.test-helper'
 import { gameDataCatalog } from '../game-data/catalog'
 import { prepareIdb1Save } from '../save/prepare'
+import { serializeWebSave } from '../save/serialization'
+import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
 import type {
   FirstLaunchMigrationResult,
   SaveCommitTarget,
@@ -131,6 +133,7 @@ describe('production canonical application factory', () => {
     const repository = new FirstRunRepository()
     let firstRunCalls = 0
     let entitlementReads = 0
+    let ownsBotBoost = false
     const createApplication =
       createProductionCanonicalApplicationFactory({
         createFirstRunSave: () => {
@@ -139,7 +142,7 @@ describe('production canonical application factory', () => {
         },
         readHostEntitlements: () => {
           entitlementReads += 1
-          return { permanentDoubleIp: true }
+          return { permanentDoubleIp: true, permanentBotBoost: ownsBotBoost }
         },
       })
 
@@ -164,8 +167,24 @@ describe('production canonical application factory', () => {
     if (snapshot.phase !== 'ready') return
     expect(snapshot.state.entitlements).toEqual({
       permanentDoubleIp: true,
+      permanentBotBoost: false,
     })
     expect(Object.isFrozen(snapshot.state.entitlements)).toBe(true)
+
+    // A purchase made after startup must survive a reset/imported save session.
+    ownsBotBoost = true
+    const importedAtUtc = new Date().toISOString()
+    await expect(application.importSave({
+      text: serializeWebSave(createUnityFirstRunPreparedSave({ startedAtUtc: importedAtUtc }).copyValidatedState()),
+      importedAtUtc,
+      overwriteApproved: true,
+      target: 'development',
+      context: { kind: 'manual-shared-import', importedAtUtc, intent: 'save-reset' },
+    })).resolves.toMatchObject({ imported: true })
+    const replaced = application.snapshot()
+    expect(replaced.phase).toBe('ready')
+    if (replaced.phase !== 'ready') return
+    expect(replaced.state.entitlements.permanentBotBoost).toBe(true)
   })
 
   test('fails closed when the host entitlement authority is malformed', () => {
@@ -185,14 +204,15 @@ describe('production canonical application factory', () => {
 })
 
 class FirstRunRepository implements SaveRepository {
+  private current: ReturnType<typeof prepareIdb1Save>['prepared'] | null = null
   readonly commitTargets: SaveCommitTarget[] = []
 
   async hasCurrent(): Promise<boolean> {
-    return false
+    return this.current !== null
   }
 
-  async loadCurrent(): Promise<null> {
-    return null
+  async loadCurrent() {
+    return this.current
   }
 
   async migrateLegacyOnFirstLaunch():
@@ -205,6 +225,7 @@ class FirstRunRepository implements SaveRepository {
     target: SaveCommitTarget = 'development',
   ) {
     this.commitTargets.push(target)
+    this.current = save
     return save
   }
 }

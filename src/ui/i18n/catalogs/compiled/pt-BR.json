@@ -14634,6 +14634,18 @@
       "value": "A Árvore de Habilidades agora mantém a posição e o zoom ao trocar de aba, e Trabalho Manual conserva a Gambiarra acima das instalações sem cobrir menus ou painéis do fim do jogo."
     }
   ],
+  "wiki.patch-notes.version-4-1-10": [
+    {
+      "type": 0,
+      "value": "Versão 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.bot-boost": [
+    {
+      "type": 0,
+      "value": "Corrigido um erro que fazia Bots 2× permanentes parar de funcionar após reiniciar o progresso salvo."
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,

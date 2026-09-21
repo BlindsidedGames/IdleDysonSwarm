@@ -16,7 +16,7 @@ const progression = Object.freeze({
 })
 
 describe('Wiki patch-note content', () => {
-  test('shows 4.1.9 first and retains older notes', () => {
+  test('shows 4.1.10 first and retains older notes', () => {
     render(
       <IntlProvider locale="en" messages={{}} onError={() => undefined}>
         <WikiSurface
@@ -27,9 +27,13 @@ describe('Wiki patch-note content', () => {
       </IntlProvider>,
     )
 
-    const latest = screen.getByRole('heading', { name: 'Version 4.1.9' }).closest('section')!
+    const latest = screen.getByRole('heading', { name: 'Version 4.1.10' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
+      'Fixed Permanent 2× Bots losing its effect after resetting your save.',
+    ])
+    const version419List = screen.getByRole('heading', { name: 'Version 4.1.9' }).nextElementSibling as HTMLElement
+    expect(within(version419List).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       "Added seven augments for Super-Radiant Scattering.",
       "Added a new challenge: Trial & Error.",
       "Rebalanced Purity scaling. Body and Mind bonuses are now additive.",

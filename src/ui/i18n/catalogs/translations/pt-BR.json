@@ -2036,5 +2036,7 @@
   "wiki.skills.preset-safety-title": "Planeje uma predefinição",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Tópicos da Wiki",
-  "wiki.topics": "Tópicos"
+  "wiki.topics": "Tópicos",
+  "wiki.patch-notes.version-4-1-10": "Versão 4.1.10",
+  "wiki.patch-notes.version-4-1-10.bot-boost": "Corrigido um erro que fazia Bots 2× permanentes parar de funcionar após reiniciar o progresso salvo."
 }

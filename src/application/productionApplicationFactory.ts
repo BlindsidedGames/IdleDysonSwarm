@@ -19,7 +19,7 @@ import {
   type CanonicalGameApplicationFacade,
 } from './canonicalGameApplication'
 import {
-  createCanonicalRuntimeSessionFactory,
+  CanonicalRuntimeSession,
 } from './canonicalRuntimeSession'
 import {
   BrowserStoredTimeJobRunner,
@@ -36,8 +36,8 @@ export interface ProductionCanonicalApplicationFactoryOptions {
   readonly readDeveloperOptions?: () => boolean
   /**
    * Reads the current host-owned entitlement snapshot when a writable
-   * application graph is constructed. The UI never supplies entitlement
-   * values to a player command or snapshot projection.
+   * application graph or replacement save session is constructed. The UI never
+   * supplies entitlement values to a player command or snapshot projection.
    */
   readonly readHostEntitlements: () => Readonly<DysonEntitlements>
   /**
@@ -64,9 +64,8 @@ export function createProductionCanonicalApplicationFactory(
       CANONICAL_DYSON_PRESENTATION_TUNING,
   )
   return (repository) => {
-    const entitlements = readEntitlements(
-      options.readHostEntitlements,
-    )
+    // Validate at graph creation, then read current ownership again for each save session.
+    readEntitlements(options.readHostEntitlements)
     const localResolver = new RepositoryStartupSaveResolver(
       repository,
       options.createFirstRunSave,
@@ -78,12 +77,14 @@ export function createProductionCanonicalApplicationFactory(
     const application = createCanonicalGameApplication({
       repository,
       startupResolver,
-      sessionFactory: createCanonicalRuntimeSessionFactory({
-        nowUtcMilliseconds: Date.now,
-        entitlements,
-        captureAchievements: options.achievements !== undefined,
-        persistAchievements: options.achievements?.persistEvidence === true,
-      }),
+      sessionFactory: {
+        open: (prepared) => new CanonicalRuntimeSession(prepared, {
+          nowUtcMilliseconds: Date.now,
+          entitlements: readEntitlements(options.readHostEntitlements),
+          captureAchievements: options.achievements !== undefined,
+          persistAchievements: options.achievements?.persistEvidence === true,
+        }),
+      },
       engine: {
         eventContext,
         retainAchievementEvidence: options.achievements?.persistEvidence === true,
@@ -173,5 +174,8 @@ function readEntitlements(
   }
   return Object.freeze({
     permanentDoubleIp: entitlements.permanentDoubleIp,
+    ...(entitlements.permanentBotBoost === undefined
+      ? {}
+      : { permanentBotBoost: entitlements.permanentBotBoost === true }),
   })
 }

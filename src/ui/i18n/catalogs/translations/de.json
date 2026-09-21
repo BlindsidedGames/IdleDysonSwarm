@@ -2036,5 +2036,7 @@
   "wiki.skills.preset-safety-title": "Ein Preset planen",
   "wiki.title": "Wiki",
   "wiki.topic-navigation": "Wiki-Themen",
-  "wiki.topics": "Themen"
+  "wiki.topics": "Themen",
+  "wiki.patch-notes.version-4-1-10": "Version 4.1.10",
+  "wiki.patch-notes.version-4-1-10.bot-boost": "Behoben: Dauerhaft 2× Bots verlor nach dem Zurücksetzen des Spielstands seine Wirkung."
 }

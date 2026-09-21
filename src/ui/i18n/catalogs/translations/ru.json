@@ -2036,5 +2036,7 @@
   "wiki.skills.preset-safety-title": "Планирование пресета",
   "wiki.title": "Вики",
   "wiki.topic-navigation": "Темы Вики",
-  "wiki.topics": "Темы"
+  "wiki.topics": "Темы",
+  "wiki.patch-notes.version-4-1-10": "Версия 4.1.10",
+  "wiki.patch-notes.version-4-1-10.bot-boost": "Исправлена потеря эффекта «Боты ×2 навсегда» после сброса сохранения."
 }

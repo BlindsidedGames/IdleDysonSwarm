@@ -14634,6 +14634,18 @@
       "value": "L’Arbre de compétences mémorise désormais sa position et son niveau de zoom lors d’un changement d’onglet, tandis que Travail manuel maintient le Tinker au-dessus des installations sans recouvrir les menus ni les panneaux de fin de partie."
     }
   ],
+  "wiki.patch-notes.version-4-1-10": [
+    {
+      "type": 0,
+      "value": "Version 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.bot-boost": [
+    {
+      "type": 0,
+      "value": "Correction du bonus Bots ×2 permanents qui cessait de fonctionner après la réinitialisation de la sauvegarde."
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
