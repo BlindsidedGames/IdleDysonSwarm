@@ -19,15 +19,17 @@ function usageState(value: boolean | RunUsage | undefined): RunUsage {
   return value === true ? 'yes' : value === false ? 'no' : value ?? 'unknown'
 }
 
-function UsageIcon({ icon, value, label, interactive = false }: {
+function UsageIcon({ icon, value, label, interactive = false, disqualifies = false }: {
   readonly icon: string
   readonly value?: RunUsage
   readonly label: string
   readonly interactive?: boolean
+  readonly disqualifies?: boolean
 }) {
-  return <span className="speedrun-usage__indicator" data-usage={value}
+  return <span className="speedrun-usage__indicator" data-usage={value} data-disqualifies={disqualifies || undefined}
     role="img" aria-label={label} tabIndex={interactive ? 0 : undefined}>
     <InlineImageSymbol src={icon} tint />
+    {value === 'unknown' && <span className="speedrun-usage__unknown" aria-hidden="true">?</span>}
     {interactive && <span className="speedrun-usage__tooltip" aria-hidden="true">{label}</span>}
   </span>
 }
@@ -41,18 +43,18 @@ export function SpeedrunUsage({ usage, legend = false }: { readonly usage?: Usag
         const name = intl.formatMessage(label)
         const description = `${name}: ${intl.formatMessage(value === 'yes' ? messages.speedrunYes : value === 'no' ? messages.speedrunNo : messages.speedrunUnknown)}`
         return <li key={key}>
-          <UsageIcon icon={icon} value={legend ? undefined : value} label={legend ? name : description} interactive={!legend} />
+          <UsageIcon icon={icon} value={legend ? undefined : value} label={legend ? name : description} interactive={!legend} disqualifies={key === 'debug'} />
           {legend && <span>{name}</span>}
         </li>
       })}
     </ul>
     {legend && <ul className="speedrun-usage speedrun-usage--states">
       {([
-        ['yes', messages.usageUsed],
-        ['no', messages.usageNotUsed],
-        ['unknown', messages.speedrunUnknown],
-      ] as const).map(([value, label]) => <li key={value}>
-        <UsageIcon icon={bot} value={value} label={intl.formatMessage(label)} />
+        ['yes', messages.usageUsed, bot, false],
+        ['no', messages.usageNotUsed, bot, false],
+        ['yes', messages.speedrunDebug, debug, true],
+      ] as const).map(([value, label, icon, disqualifies]) => <li key={label.id}>
+        <UsageIcon icon={icon} value={value} label={intl.formatMessage(label)} disqualifies={disqualifies} />
         <span>{intl.formatMessage(label)}</span>
       </li>)}
     </ul>}
