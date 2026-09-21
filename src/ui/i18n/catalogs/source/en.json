@@ -6615,8 +6615,16 @@
     "description": "Legend for speedrun assistance icons."
   },
   "statistics.speedruns.usageLegendHelp": {
-    "defaultMessage": "Blue: used. Dark: not used. ?: unknown. Personal bests exclude imported saves, Debug use, and unverified times.",
+    "defaultMessage": "Personal bests exclude imported saves, Debug use, and unverified times.",
     "description": "Explains speedrun indicators and record eligibility."
+  },
+  "statistics.speedruns.usageNotUsed": {
+    "defaultMessage": "Not used",
+    "description": "Label for an assistance indicator that was not used."
+  },
+  "statistics.speedruns.usageUsed": {
+    "defaultMessage": "Used",
+    "description": "Label for an assistance indicator that was used."
   },
   "statistics.tab.general": {
     "defaultMessage": "General",

@@ -2045,7 +2045,9 @@
   "statistics.speedruns.doubleIpUsed": "Doppelte IP verwendet",
   "statistics.speedruns.importedRun": "Nicht zugelassen — Importierter Spielstand",
   "statistics.speedruns.usageLegend": "Laufanzeigen",
-  "statistics.speedruns.usageLegendHelp": "Blau: verwendet. Dunkel: nicht verwendet. ?: unbekannt. Importierte Spielstände, Debug-Nutzung und unbestätigte Zeiten zählen nicht als persönliche Bestzeiten.",
+  "statistics.speedruns.usageLegendHelp": "Importierte Spielstände, Debug-Nutzung und unbestätigte Zeiten zählen nicht für persönliche Bestzeiten.",
   "wiki.patch-notes.version-4-1-11": "Version 4.1.11",
-  "wiki.patch-notes.version-4-1-11.speedruns": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert."
+  "wiki.patch-notes.version-4-1-11.speedruns": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert.",
+  "statistics.speedruns.usageUsed": "Verwendet",
+  "statistics.speedruns.usageNotUsed": "Nicht verwendet"
 }

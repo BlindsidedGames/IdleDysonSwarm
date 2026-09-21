@@ -12766,7 +12766,19 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "青：使用済み。暗色：未使用。?：不明。インポートしたセーブ、デバッグの使用、未確認のタイムは自己ベストの対象外です。"
+      "value": "インポートしたセーブ、デバッグの使用、未確認のタイムは自己ベストの対象外です。"
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "未使用"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "使用済み"
     }
   ],
   "statistics.tab.general": [

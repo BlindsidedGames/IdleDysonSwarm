@@ -12766,7 +12766,19 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Blue: used. Dark: not used. ?: unknown. Personal bests exclude imported saves, Debug use, and unverified times."
+      "value": "Personal bests exclude imported saves, Debug use, and unverified times."
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "Not used"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "Used"
     }
   ],
   "statistics.tab.general": [

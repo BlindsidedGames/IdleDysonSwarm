@@ -12766,7 +12766,19 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Blau: verwendet. Dunkel: nicht verwendet. ?: unbekannt. Importierte Spielstände, Debug-Nutzung und unbestätigte Zeiten zählen nicht als persönliche Bestzeiten."
+      "value": "Importierte Spielstände, Debug-Nutzung und unbestätigte Zeiten zählen nicht für persönliche Bestzeiten."
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "Nicht verwendet"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "Verwendet"
     }
   ],
   "statistics.tab.general": [

@@ -12766,7 +12766,19 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Bleu : utilisé. Sombre : non utilisé. ? : inconnu. Les sauvegardes importées, le mode Débogage et les temps non vérifiés sont exclus des records personnels."
+      "value": "Les sauvegardes importées, le débogage et les temps non vérifiés ne comptent pas pour les records personnels."
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "Non utilisé"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "Utilisé"
     }
   ],
   "statistics.tab.general": [

@@ -2045,7 +2045,9 @@
   "statistics.speedruns.doubleIpUsed": "IP doublés utilisés",
   "statistics.speedruns.importedRun": "Non admissible — Sauvegarde importée",
   "statistics.speedruns.usageLegend": "Indicateurs de partie",
-  "statistics.speedruns.usageLegendHelp": "Bleu : utilisé. Sombre : non utilisé. ? : inconnu. Les sauvegardes importées, le mode Débogage et les temps non vérifiés sont exclus des records personnels.",
+  "statistics.speedruns.usageLegendHelp": "Les sauvegardes importées, le débogage et les temps non vérifiés ne comptent pas pour les records personnels.",
   "wiki.patch-notes.version-4-1-11": "Version 4.1.11",
-  "wiki.patch-notes.version-4-1-11.speedruns": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports."
+  "wiki.patch-notes.version-4-1-11.speedruns": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports.",
+  "statistics.speedruns.usageUsed": "Utilisé",
+  "statistics.speedruns.usageNotUsed": "Non utilisé"
 }

@@ -21,3 +21,7 @@ Personal bests stay inside the existing speedrun checkpoint: at most one result 
 ## Limitations
 
 Android debug APK built and installed in the emulator. Interaction QA remains unverified: the computer-control tool cannot target its window and requested permission to use ADB input/screenshots was not received during this pass. No physical devices, real-money purchases, cross-device Cloud synchronization or Steam Cloud round-trip were tested. Release metadata stays at 4.1.10 pending later release preparation; localized 4.1.11 notes are included.
+
+## Palette follow-up
+
+The initial visual pass accepted insufficient contrast for unused indicators. Corrected after Matthew's review: used icons and result values now share `--statistics-value`; unused icons use the existing secondary text color; unknown icons use the existing warning color and retain `?`. The legend has a separate row demonstrating all three states with the same Bot icon, with localized state labels instead of color names. Inspected the live cards and legend at normal and 360px widths and verified computed used-icon/value colors match. Focused UI regression, typecheck, lint and localization checks passed.

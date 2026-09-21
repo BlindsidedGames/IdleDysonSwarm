@@ -2045,7 +2045,9 @@
   "statistics.speedruns.doubleIpUsed": "IP dobles usados",
   "statistics.speedruns.importedRun": "No válida — Partida importada",
   "statistics.speedruns.usageLegend": "Indicadores de partida",
-  "statistics.speedruns.usageLegendHelp": "Azul: usado. Oscuro: no usado. ?: desconocido. Las partidas importadas, el uso de depuración y los tiempos sin verificar no cuentan para las mejores marcas personales.",
+  "statistics.speedruns.usageLegendHelp": "Las partidas importadas, el uso de depuración y los tiempos no verificados no cuentan para los récords personales.",
   "wiki.patch-notes.version-4-1-11": "Versión 4.1.11",
-  "wiki.patch-notes.version-4-1-11.speedruns": "Los speedruns ahora comparan tu partida actual con mejores marcas personales que se conservan al reiniciar la partida. Se agregaron indicadores, seguimiento de IP dobles y la pestaña de Estadísticas recordará tu selección. Las marcas se sincronizan mediante la nube, pero no se incluyen en las exportaciones."
+  "wiki.patch-notes.version-4-1-11.speedruns": "Los speedruns ahora comparan tu partida actual con mejores marcas personales que se conservan al reiniciar la partida. Se agregaron indicadores, seguimiento de IP dobles y la pestaña de Estadísticas recordará tu selección. Las marcas se sincronizan mediante la nube, pero no se incluyen en las exportaciones.",
+  "statistics.speedruns.usageUsed": "Usado",
+  "statistics.speedruns.usageNotUsed": "No usado"
 }

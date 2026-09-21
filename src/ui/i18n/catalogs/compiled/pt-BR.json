@@ -12766,7 +12766,19 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Azul: usado. Escuro: não usado. ?: desconhecido. Partidas importadas, uso de depuração e tempos não verificados não contam para recordes pessoais."
+      "value": "Saves importados, uso de depuração e tempos não verificados não contam para recordes pessoais."
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "Não usado"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "Usado"
     }
   ],
   "statistics.tab.general": [

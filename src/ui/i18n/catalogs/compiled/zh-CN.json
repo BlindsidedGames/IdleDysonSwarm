@@ -12766,7 +12766,19 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "蓝色：已使用。深色：未使用。?：未知。导入的存档、使用过调试功能或计时未经验证的挑战不能创下个人最佳纪录。"
+      "value": "导入的存档、使用过调试功能或计时未经验证的挑战不能创下个人最佳纪录。"
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "未使用"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "已使用"
     }
   ],
   "statistics.tab.general": [
