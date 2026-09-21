@@ -30,7 +30,7 @@ describe('Wiki patch-note content', () => {
     const latest = screen.getByRole('heading', { name: 'Version 4.1.11' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
-      'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. Personal bests sync through Cloud saves but are not shared through exports.',
+      'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.',
     ])
     const version419List = screen.getByRole('heading', { name: 'Version 4.1.9' }).nextElementSibling as HTMLElement
     expect(within(version419List).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
