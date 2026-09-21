@@ -33,8 +33,10 @@ export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStati
           {[{ label: messages.currentRun, result: milestone, current: true }, { label: messages.personalBest, result: run?.personalBests?.[id], current: false }].map(({ label, result, current }) => {
             const seconds = result ? result.elapsedSeconds : current ? elapsed : null
             return <section className="speedrun-result" key={label.id} aria-label={intl.formatMessage(label)}>
-              <h4>{intl.formatMessage(label)}</h4>
-              <p className="speedrun-result__time">{!current && !result ? intl.formatMessage(messages.speedrunNotRecorded) : seconds === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, seconds)}</p>
+              <div className="speedrun-result__heading">
+                <h4>{intl.formatMessage(label)}</h4>
+                <p className="speedrun-result__time">{!current && !result ? intl.formatMessage(messages.speedrunNotRecorded) : seconds === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, seconds)}</p>
+              </div>
               {current && !result && <p className="speedrun-result__progress">{intl.formatMessage(messages.inProgress)}</p>}
               {(current || result) && <SpeedrunUsage usage={result ?? run} />}
             </section>
