@@ -16,10 +16,11 @@ export function ClearSpeedrunBestDialog({ milestone, onConfirm, onClose }: {
   const [failed, setFailed] = useState(false)
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null
+    const heading = previous?.closest('article')?.querySelector('h3')
     dialog.current?.showModal()
     cancel.current?.focus()
     return () => {
-      const target = previous?.matches(':disabled') ? previous.closest('article')?.querySelector('h3') : previous
+      const target = previous?.isConnected && !previous.matches(':disabled') ? previous : heading
       if (target instanceof HTMLElement && target.isConnected) target.focus()
     }
   }, [])

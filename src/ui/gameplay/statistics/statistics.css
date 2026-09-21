@@ -519,11 +519,10 @@
 .speedrun-usage__unknown { position: absolute; inset-inline-end: -.25em; top: 50%; transform: translateY(-50%); font-size: .8em; line-height: 1; font-weight: bold; color: var(--color-text-primary); }
 
 .statistics-speedruns__milestones > .statistics-card { display: flex; flex-direction: column; }
-.speedrun-result__actions { display: flex; justify-content: flex-end; margin-block-start: auto; padding: 0 .25rem .25rem; }
-.speedrun-clear { display: inline-flex; align-items: center; justify-content: center; inline-size: 2.75rem; block-size: 2.75rem; border: 0; border-radius: .35rem; background: transparent; color: var(--color-text-secondary); cursor: pointer; }
+.speedrun-result__indicators { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.speedrun-clear { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; inline-size: 2.75rem; block-size: 2.75rem; border: 0; border-radius: .35rem; background: transparent; color: var(--color-text-secondary); cursor: pointer; }
 .speedrun-clear svg { inline-size: 1.25rem; block-size: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 .speedrun-clear:hover:enabled { color: var(--color-text-primary); background: var(--theme-selected); }
-.speedrun-clear:disabled { opacity: .35; cursor: default; }
 .speedrun-clear:focus-visible { outline: 2px solid var(--statistics-value); outline-offset: -3px; }
 .speedrun-clear-dialog { max-inline-size: min(28rem, calc(100vw - 2rem)); box-sizing: border-box; padding: 1.25rem; border: 1px solid var(--color-control); border-radius: .5rem; background: var(--color-surface); color: var(--color-text-primary); font: inherit; }
 .speedrun-clear-dialog::backdrop { background: #000a; }

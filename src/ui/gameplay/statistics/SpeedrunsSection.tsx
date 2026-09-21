@@ -42,16 +42,16 @@ export function SpeedrunsSection({ run, locale, onClearBest }: { readonly run?: 
                 <h4>{intl.formatMessage(label)}</h4>
                 <p className="speedrun-result__time">{!current && !result ? intl.formatMessage(messages.speedrunNotRecorded) : seconds === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, seconds)}</p>
               </div>
-              {(current || result) && <SpeedrunUsage usage={result ?? run} />}
+              {(current || result) && <div className="speedrun-result__indicators">
+                <SpeedrunUsage usage={result ?? run} />
+                {!current && best && onClearBest && <button type="button" className="speedrun-clear" onClick={() => setClearing(id)}
+                  aria-label={intl.formatMessage(messages.clearBestLabel, { milestone: intl.formatMessage(labels[id]) })}
+                  title={intl.formatMessage(messages.clearBestLabel, { milestone: intl.formatMessage(labels[id]) })}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M5.6 18.4 18.4 5.6" /></svg>
+                </button>}
+              </div>}
             </section>
           })}
-          {onClearBest && <div className="speedrun-result__actions">
-            <button type="button" className="speedrun-clear" disabled={!best} onClick={() => setClearing(id)}
-              aria-label={intl.formatMessage(messages.clearBestLabel, { milestone: intl.formatMessage(labels[id]) })}
-              title={intl.formatMessage(messages.clearBestLabel, { milestone: intl.formatMessage(labels[id]) })}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M5.6 18.4 18.4 5.6" /></svg>
-            </button>
-          </div>}
         </article>
       })}
     </div>
