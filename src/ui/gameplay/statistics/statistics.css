@@ -505,7 +505,7 @@
 .speedrun-usage__indicator { position: relative; display: inline-flex; font-size: 1.6rem; color: var(--color-text-secondary); border-radius: .2rem; }
 .speedrun-usage__indicator[data-usage="yes"] { color: var(--statistics-value); }
 .speedrun-usage__indicator:focus-visible { outline: 2px solid var(--statistics-value); outline-offset: 3px; }
-.speedrun-usage__unknown { position: absolute; right: -.2em; bottom: -.1em; font-size: .65em; font-weight: bold; line-height: 1; color: var(--color-text-primary); background: var(--theme-page); border-radius: .2em; padding: .05em .15em; }
+.speedrun-usage__unknown { position: absolute; right: -.2em; bottom: -.1em; font-size: .65em; font-weight: bold; line-height: 1; color: color-mix(in srgb, var(--color-negative) 60%, var(--color-text-secondary)); }
 .speedrun-legend { padding: var(--ui-panel-inset); }
 .speedrun-legend h3 { margin-top: 0; }
 .speedrun-usage--legend { padding: 0; gap: .6rem 1.2rem; }
