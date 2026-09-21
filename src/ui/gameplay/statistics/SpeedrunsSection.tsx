@@ -43,6 +43,6 @@ export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStati
         </article>
       })}
     </div>
-    <footer className="speedrun-legend"><h3>{intl.formatMessage(messages.usageLegend)}</h3><SpeedrunUsage legend /><p>{intl.formatMessage(messages.usageLegendHelp)}</p></footer>
+    <footer className="speedrun-legend"><h3>{intl.formatMessage(messages.usageLegend)}</h3><SpeedrunUsage legend /></footer>
   </section>
 }
