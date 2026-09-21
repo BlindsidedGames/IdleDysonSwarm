@@ -29,7 +29,6 @@ function UsageIcon({ icon, value, label, interactive = false }: {
     role="img" aria-label={label} tabIndex={interactive ? 0 : undefined}>
     <InlineImageSymbol src={icon} tint />
     {interactive && <span className="speedrun-usage__tooltip" aria-hidden="true">{label}</span>}
-    {value === 'unknown' && <span className="speedrun-usage__unknown" aria-hidden="true">?</span>}
   </span>
 }
 

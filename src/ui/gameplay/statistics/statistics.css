@@ -507,7 +507,6 @@
 .speedrun-usage__indicator[data-usage="no"] { color: var(--statistics-value); }
 .speedrun-usage__indicator[data-usage="yes"] { color: color-mix(in srgb, var(--color-negative) 60%, var(--color-text-secondary)); }
 .speedrun-usage__indicator:focus-visible { outline: 2px solid var(--statistics-value); outline-offset: 3px; }
-.speedrun-usage__unknown { align-self: center; margin-inline-start: .12em; font-size: .8em; font-weight: bold; line-height: 1; color: var(--color-text-primary); }
 .speedrun-legend { padding: var(--ui-panel-inset); }
 .speedrun-legend h3 { margin-top: 0; }
 .speedrun-usage--legend { padding: 0; gap: .6rem 1.2rem; }
