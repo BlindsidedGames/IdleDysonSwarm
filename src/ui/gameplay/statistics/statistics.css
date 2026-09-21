@@ -500,7 +500,6 @@
 .speedrun-result__heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0 1rem; }
 .speedrun-result__heading > * { min-inline-size: 0; }
 .speedrun-result__time { color: var(--statistics-value); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.speedrun-result__progress { font-size: .9em; }
 .speedrun-usage { display: flex; flex-wrap: wrap; gap: .6rem; list-style: none; margin: 0; padding: .5rem var(--ui-panel-inset); }
 .speedrun-result .speedrun-usage { padding-inline: 0; }
 .speedrun-usage li { display: flex; align-items: center; gap: .45rem; }

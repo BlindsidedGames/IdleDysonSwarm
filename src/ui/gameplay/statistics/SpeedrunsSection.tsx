@@ -37,7 +37,6 @@ export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStati
                 <h4>{intl.formatMessage(label)}</h4>
                 <p className="speedrun-result__time">{!current && !result ? intl.formatMessage(messages.speedrunNotRecorded) : seconds === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, seconds)}</p>
               </div>
-              {current && !result && <p className="speedrun-result__progress">{intl.formatMessage(messages.inProgress)}</p>}
               {(current || result) && <SpeedrunUsage usage={result ?? run} />}
             </section>
           })}
