@@ -11,6 +11,7 @@ Personal bests stay inside the existing speedrun checkpoint: at most one result 
 - Full suite: 1,753 tests passed; subsequently added Statistics UI regression passed. Typecheck, lint, production/native builds, localization, data checks and diff whitespace checks passed.
 - Browser, isolated localhost:5190: earned First Infinity, improved its best, confirmed frozen time, reloaded, reset, exported/imported, confirmed imported exclusion and retained best, then reset back to eligibility. Statistics selection survived navigation and reload.
 - Desktop and 360px/130% system-text emulation: reviewed current/best cards, Unknown question marks, legend and keyboard-focus tooltips. Keyboard tab switching covered separately by UI regression.
+- Browser development-only Test $0 Double IP: ownership/enabling left usage No; actual Infinity reward changed it to Yes in current run, frozen milestone and best. Reset cleared current usage while retaining the flagged best.
 - Disposable iOS 18 Simulator: earned First Infinity; current and best both showed 3m26s. Terminated/relaunched the app; best and selected Speedruns tab remained.
 - Isolated packaged macOS app: earned First Infinity at 5m39s; quit/reopened through the normal checkpoint path; best and selected tab remained.
 - Packaged Steam/macOS startup smoke passed with Steam initialized. This is startup evidence, separate from the macOS interaction test.
