@@ -2049,5 +2049,13 @@
   "wiki.patch-notes.version-4-1-11": "バージョン4.1.11",
   "wiki.patch-notes.version-4-1-11.speedruns": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。",
   "statistics.speedruns.usageUsed": "使用済み",
-  "statistics.speedruns.usageNotUsed": "未使用"
+  "statistics.speedruns.usageNotUsed": "未使用",
+  "statistics.speedruns.unboostedBest": "ブーストなしベスト",
+  "statistics.speedruns.boostedBest": "ブーストありベスト",
+  "statistics.speedruns.clearBestLabel": "ベストを消去：{milestone}",
+  "statistics.speedruns.clearBestTitle": "保存したベストを消去しますか？",
+  "statistics.speedruns.clearBestDescription": "次のベストを消去しますか：{milestone}？現在の挑戦のタイムは保持されます。この操作は取り消せません。",
+  "statistics.speedruns.clearBestConfirm": "ベストを消去",
+  "statistics.speedruns.clearBestFailed": "ベストを消去できませんでした。もう一度お試しください。",
+  "statistics.speedruns.cancel": "キャンセル"
 }

@@ -81,11 +81,30 @@ export function snapshotSpeedrunUsage(run: SpeedrunUsage): SpeedrunUsage {
     ...(run.doubleIpUsed === undefined ? {} : { doubleIpUsed: run.doubleIpUsed }) }
 }
 
+/** Only explicit, unused assistance flags establish an unboosted result. */
+export function isUnboostedSpeedrun(usage: SpeedrunUsage): boolean {
+  return usage.botBoostUsed === false && usage.doubleIpUsed === false && usage.storedTime === 'no'
+}
+
 export function recordPersonalBest(records: SpeedrunRecords, id: SpeedrunMilestoneId, candidate: SpeedrunMilestone): SpeedrunRecords {
   if (candidate.debug !== 'no' || candidate.elapsedSeconds === null) return records
   const previous = records[id]
-  if (previous?.elapsedSeconds != null && previous.elapsedSeconds <= candidate.elapsedSeconds) return records
+  if (previous) {
+    const previousUnboosted = isUnboostedSpeedrun(previous)
+    const candidateUnboosted = isUnboostedSpeedrun(candidate)
+    if (previousUnboosted && !candidateUnboosted) return records
+    if (previousUnboosted === candidateUnboosted && previous.elapsedSeconds != null && previous.elapsedSeconds <= candidate.elapsedSeconds) return records
+  }
   return { ...records, [id]: candidate }
+}
+
+/** Keep milestone snapshots so observation cannot immediately recreate a cleared best. */
+export function clearSpeedrunBest(run: SpeedrunStatistics, id: SpeedrunMilestoneId): SpeedrunStatistics {
+  const migrated = migrateSpeedrunRecords(run)
+  if (!migrated.personalBests?.[id]) return migrated
+  const personalBests = { ...migrated.personalBests }
+  delete personalBests[id]
+  return { ...migrated, personalBests }
 }
 
 /** Only older checkpoints without a record collection need seeding. */

@@ -2049,5 +2049,13 @@
   "wiki.patch-notes.version-4-1-11": "Versão 4.1.11",
   "wiki.patch-notes.version-4-1-11.speedruns": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações.",
   "statistics.speedruns.usageUsed": "Usado",
-  "statistics.speedruns.usageNotUsed": "Não usado"
+  "statistics.speedruns.usageNotUsed": "Não usado",
+  "statistics.speedruns.unboostedBest": "Recorde sem bônus",
+  "statistics.speedruns.boostedBest": "Recorde com bônus",
+  "statistics.speedruns.clearBestLabel": "Apagar recorde de {milestone}",
+  "statistics.speedruns.clearBestTitle": "Apagar recorde salvo?",
+  "statistics.speedruns.clearBestDescription": "Apagar seu recorde de {milestone}? O tempo da partida atual será mantido. Esta ação não pode ser desfeita.",
+  "statistics.speedruns.clearBestConfirm": "Apagar recorde",
+  "statistics.speedruns.clearBestFailed": "Não foi possível apagar este recorde. Tente novamente.",
+  "statistics.speedruns.cancel": "Cancelar"
 }

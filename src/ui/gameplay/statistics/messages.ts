@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const statisticsMessages = defineMessages({
+  unboostedBest: { id: 'statistics.speedruns.unboostedBest', defaultMessage: 'Unboosted best', description: 'Best result with no assistance used.' },
+  boostedBest: { id: 'statistics.speedruns.boostedBest', defaultMessage: 'Boosted best', description: 'Best assisted result when no unboosted result exists.' },
+  clearBestLabel: { id: 'statistics.speedruns.clearBestLabel', defaultMessage: 'Clear best for {milestone}', description: 'Accessible name of the per-milestone clear button.' },
+  clearBestTitle: { id: 'statistics.speedruns.clearBestTitle', defaultMessage: 'Clear saved best?', description: 'Confirmation dialog title.' },
+  clearBestDescription: { id: 'statistics.speedruns.clearBestDescription', defaultMessage: 'Clear your saved best for {milestone}? Your current-run time will stay intact. This cannot be undone.', description: 'Explains the scope of clearing one saved record.' },
+  clearBestConfirm: { id: 'statistics.speedruns.clearBestConfirm', defaultMessage: 'Clear best', description: 'Confirms deletion of one saved record.' },
+  clearBestFailed: { id: 'statistics.speedruns.clearBestFailed', defaultMessage: 'Could not clear this best. Please try again.', description: 'Failed record deletion.' },
+  cancel: { id: 'statistics.speedruns.cancel', defaultMessage: 'Cancel', description: 'Dismiss record deletion without changes.' },
   currentRun: { id: 'statistics.speedruns.currentRun', defaultMessage: 'Current run', description: 'Current milestone attempt.' },
   personalBest: { id: 'statistics.speedruns.personalBest', defaultMessage: 'Personal best', description: 'Fastest eligible milestone time across saves.' },
   inProgress: { id: 'statistics.speedruns.inProgress', defaultMessage: 'In progress', description: 'Milestone not yet reached.' },

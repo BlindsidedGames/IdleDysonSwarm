@@ -12613,6 +12613,60 @@
       "value": "Aktueller Quantendurchlauf"
     }
   ],
+  "statistics.speedruns.boostedBest": [
+    {
+      "type": 0,
+      "value": "Bestzeit mit Boni"
+    }
+  ],
+  "statistics.speedruns.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "statistics.speedruns.clearBestConfirm": [
+    {
+      "type": 0,
+      "value": "Bestzeit löschen"
+    }
+  ],
+  "statistics.speedruns.clearBestDescription": [
+    {
+      "type": 0,
+      "value": "Deine Bestzeit für "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": " löschen? Die Zeit des aktuellen Durchlaufs bleibt erhalten. Dies kann nicht rückgängig gemacht werden."
+    }
+  ],
+  "statistics.speedruns.clearBestFailed": [
+    {
+      "type": 0,
+      "value": "Diese Bestzeit konnte nicht gelöscht werden. Bitte versuche es erneut."
+    }
+  ],
+  "statistics.speedruns.clearBestLabel": [
+    {
+      "type": 0,
+      "value": "Bestzeit löschen: "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    }
+  ],
+  "statistics.speedruns.clearBestTitle": [
+    {
+      "type": 0,
+      "value": "Gespeicherte Bestzeit löschen?"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -12755,6 +12809,12 @@
     {
       "type": 0,
       "value": "Speedruns"
+    }
+  ],
+  "statistics.speedruns.unboostedBest": [
+    {
+      "type": 0,
+      "value": "Bestzeit ohne Boni"
     }
   ],
   "statistics.speedruns.usageLegend": [

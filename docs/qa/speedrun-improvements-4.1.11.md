@@ -25,3 +25,11 @@ Android debug APK built and installed in the emulator. Interaction QA remains un
 ## Palette follow-up
 
 The initial visual pass accepted insufficient contrast for unused indicators. Final presentation after Matthew's review: used bonuses share the cyan statistics-value color; unused and unknown icons are grey; used Debug is muted red because it disqualifies the run. Unknown retains a white question mark centered vertically over the right edge without changing layout width. The legend shows Used, Not used and Debug used; it omits Unknown and the eligibility explanation. Times sit beside Current run/Personal best labels, and the In progress text is omitted. Inspected live cards and legend; focused UI regression, typecheck and lint passed.
+
+## Unboosted priority and selective clearing
+
+Confirmed-unboosted results now take priority over assisted or historically unknown results; within the same class, faster wins and ties retain the existing result. Each milestone has a bottom-right clear control with a localized confirmation. It clears only that best, retaining the current milestone and other bests. Confirmation waits for a checkpoint; failed persistence leaves the dialog available for retry.
+
+Interactive browser QA: a real Infinity reward at 3m29s replaced a fixture's 1s boosted best with an Unboosted best. Cancel and Escape retained records. Confirming cleared only First Infinity, preserved its frozen 3m29s current result, and an immediate reload kept it cleared while retaining the Quantum best. Desktop and 360px dialog layouts inspected. This pass caught and fixed missing command-family registration and an immediate-reload autosave race. These incremental controls were not re-tested in native hosts.
+
+Validation: 1,757 tests passed, typecheck, lint, production build, localization and whitespace checks passed. Independent follow-up review performed for selection, clearing and persistence integration.

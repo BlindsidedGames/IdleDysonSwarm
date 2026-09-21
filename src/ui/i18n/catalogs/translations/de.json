@@ -2049,5 +2049,13 @@
   "wiki.patch-notes.version-4-1-11": "Version 4.1.11",
   "wiki.patch-notes.version-4-1-11.speedruns": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert.",
   "statistics.speedruns.usageUsed": "Verwendet",
-  "statistics.speedruns.usageNotUsed": "Nicht verwendet"
+  "statistics.speedruns.usageNotUsed": "Nicht verwendet",
+  "statistics.speedruns.unboostedBest": "Bestzeit ohne Boni",
+  "statistics.speedruns.boostedBest": "Bestzeit mit Boni",
+  "statistics.speedruns.clearBestLabel": "Bestzeit löschen: {milestone}",
+  "statistics.speedruns.clearBestTitle": "Gespeicherte Bestzeit löschen?",
+  "statistics.speedruns.clearBestDescription": "Deine Bestzeit für {milestone} löschen? Die Zeit des aktuellen Durchlaufs bleibt erhalten. Dies kann nicht rückgängig gemacht werden.",
+  "statistics.speedruns.clearBestConfirm": "Bestzeit löschen",
+  "statistics.speedruns.clearBestFailed": "Diese Bestzeit konnte nicht gelöscht werden. Bitte versuche es erneut.",
+  "statistics.speedruns.cancel": "Abbrechen"
 }

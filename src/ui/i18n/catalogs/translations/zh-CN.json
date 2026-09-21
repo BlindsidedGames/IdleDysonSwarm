@@ -2049,5 +2049,13 @@
   "wiki.patch-notes.version-4-1-11": "版本 4.1.11",
   "wiki.patch-notes.version-4-1-11.speedruns": "速通现在会将当前挑战与个人最佳纪录进行比较，重置存档后仍保留最佳纪录。新增挑战标记、双倍无限点数使用记录，并记住上次打开的统计标签页。个人最佳纪录随云存档同步，但不包含在导出的存档中。",
   "statistics.speedruns.usageUsed": "已使用",
-  "statistics.speedruns.usageNotUsed": "未使用"
+  "statistics.speedruns.usageNotUsed": "未使用",
+  "statistics.speedruns.unboostedBest": "无加成最佳",
+  "statistics.speedruns.boostedBest": "有加成最佳",
+  "statistics.speedruns.clearBestLabel": "清除最佳纪录：{milestone}",
+  "statistics.speedruns.clearBestTitle": "清除已保存的最佳纪录？",
+  "statistics.speedruns.clearBestDescription": "清除你在{milestone}的最佳纪录？当前挑战的时间将保留。此操作无法撤销。",
+  "statistics.speedruns.clearBestConfirm": "清除最佳纪录",
+  "statistics.speedruns.clearBestFailed": "无法清除此纪录。请重试。",
+  "statistics.speedruns.cancel": "取消"
 }

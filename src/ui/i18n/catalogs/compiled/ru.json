@@ -12613,6 +12613,60 @@
       "value": "Текущий Квантовый цикл"
     }
   ],
+  "statistics.speedruns.boostedBest": [
+    {
+      "type": 0,
+      "value": "Рекорд с бонусами"
+    }
+  ],
+  "statistics.speedruns.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "statistics.speedruns.clearBestConfirm": [
+    {
+      "type": 0,
+      "value": "Удалить рекорд"
+    }
+  ],
+  "statistics.speedruns.clearBestDescription": [
+    {
+      "type": 0,
+      "value": "Удалить ваш рекорд для «"
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": "»? Время текущего забега сохранится. Это действие нельзя отменить."
+    }
+  ],
+  "statistics.speedruns.clearBestFailed": [
+    {
+      "type": 0,
+      "value": "Не удалось удалить этот рекорд. Попробуйте ещё раз."
+    }
+  ],
+  "statistics.speedruns.clearBestLabel": [
+    {
+      "type": 0,
+      "value": "Удалить рекорд: "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    }
+  ],
+  "statistics.speedruns.clearBestTitle": [
+    {
+      "type": 0,
+      "value": "Удалить сохранённый рекорд?"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -12755,6 +12809,12 @@
     {
       "type": 0,
       "value": "Спидраны"
+    }
+  ],
+  "statistics.speedruns.unboostedBest": [
+    {
+      "type": 0,
+      "value": "Рекорд без бонусов"
     }
   ],
   "statistics.speedruns.usageLegend": [

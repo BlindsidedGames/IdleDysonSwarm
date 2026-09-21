@@ -119,11 +119,11 @@ describe('personal best records', () => {
     const resetRun = { ...fresh().statistics.speedruns!, personalBests: first.statistics.speedruns!.personalBests }
     const attempt = (seconds: number) => observeSpeedruns({ ...fresh(),
       meta: { ...fresh().meta, firstInfinityComplete: true },
-      statistics: { ...fresh().statistics, speedruns: { ...resetRun, storedTime: 'yes' } },
+      statistics: { ...fresh().statistics, speedruns: resetRun },
     }, origin + seconds * 1000).statistics.speedruns!
     expect(attempt(6).personalBests!.firstInfinity).toEqual(best)
     expect(attempt(5).personalBests!.firstInfinity).toEqual(best)
-    expect(attempt(4).personalBests!.firstInfinity).toMatchObject({ elapsedSeconds: 4, storedTime: 'yes' })
+    expect(attempt(4).personalBests!.firstInfinity).toMatchObject({ elapsedSeconds: 4, storedTime: 'no' })
     const later = observeSpeedruns(markSpeedrunUsage(first, 'doubleIpUsed'), origin + 6000)
     expect(later.statistics.speedruns!.personalBests!.firstInfinity).toEqual(best)
     expect(later.statistics.speedruns!.doubleIpUsed).toBe(true)
@@ -168,4 +168,41 @@ describe('personal best records', () => {
     expect(run.doubleIpUsed).toBeUndefined()
     expect(validateSpeedrunStatistics({ ...run, personalBests: { firstInfinity: { elapsedSeconds: -1, storedTime: 'no', debug: 'no' } } })).not.toBeNull()
   })
+})
+
+
+test('unboosted records take precedence over faster assisted or unknown results', async () => {
+  const { recordPersonalBest, isUnboostedSpeedrun } = await import('./speedrunStatistics')
+  const clean = { elapsedSeconds: 40, debug: 'no' as const, storedTime: 'no' as const, botBoostUsed: false, doubleIpUsed: false }
+  for (const assistance of [{ botBoostUsed: true }, { doubleIpUsed: true }, { storedTime: 'yes' as const }, { doubleIpUsed: undefined }]) {
+    const assisted = { ...clean, ...assistance, elapsedSeconds: 25 }
+    expect(isUnboostedSpeedrun(assisted)).toBe(false)
+    expect(recordPersonalBest({ firstInfinity: assisted }, 'firstInfinity', clean).firstInfinity).toEqual(clean)
+    const existing = { firstInfinity: clean }
+    expect(recordPersonalBest(existing, 'firstInfinity', assisted)).toBe(existing)
+    expect(recordPersonalBest({ firstInfinity: assisted }, 'firstInfinity', { ...assisted, elapsedSeconds: 24 }).firstInfinity?.elapsedSeconds).toBe(24)
+  }
+})
+
+test('clearing one best preserves current milestones and stays cleared after checkpoint reload', async () => {
+  const { clearSpeedrunBest } = await import('./speedrunStatistics')
+  const state = fresh()
+  const reached = observeSpeedruns({ ...state, meta: { ...state.meta, firstInfinityComplete: true },
+    timeline: { ...state.timeline, doubleTime: { ...state.timeline.doubleTime, unlocked: true } },
+  }, origin + 5000)
+  const run = reached.statistics.speedruns!
+  const cleared = clearSpeedrunBest(run, 'firstInfinity')
+  expect(cleared.milestones).toBe(run.milestones)
+  expect(cleared.personalBests!.firstInfinity).toBeUndefined()
+  expect(cleared.personalBests!.doubleSpeed).toEqual(run.personalBests!.doubleSpeed)
+  const session = new CanonicalRuntimeSession(createUnityFirstRunPreparedSave({ startedAtUtc: start }), { entitlements: { permanentDoubleIp: false } })
+  const checkpoint = session.prepare({ ...session.initialState, gameState: {
+    ...reached, statistics: { ...reached.statistics, speedruns: cleared },
+  } }).copyValidatedState()
+  const reloaded = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(checkpoint)))).state
+  expect(observeSpeedruns(reloaded, origin + 6000).statistics.speedruns!.personalBests!.firstInfinity).toBeUndefined()
+  const freshAttempt = observeSpeedruns({ ...state, meta: { ...state.meta, firstInfinityComplete: true },
+    statistics: { ...state.statistics, speedruns: { ...state.statistics.speedruns!, personalBests: cleared.personalBests } },
+  }, origin + 7000)
+  expect(freshAttempt.statistics.speedruns!.personalBests!.firstInfinity?.elapsedSeconds).toBe(7)
 })

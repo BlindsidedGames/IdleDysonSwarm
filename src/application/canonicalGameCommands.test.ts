@@ -213,6 +213,7 @@ const COMMAND_EXAMPLES = [
     requiredStepIndex: 0,
   },
   { kind: 'time.upgrade-stored-capacity' },
+  { kind: 'statistics.clear-speedrun-best', milestone: 'firstInfinity' },
   { kind: 'boost.claim' },
   { kind: 'boost.set-enabled', enabled: false },
   {

@@ -2049,5 +2049,13 @@
   "wiki.patch-notes.version-4-1-11": "Versión 4.1.11",
   "wiki.patch-notes.version-4-1-11.speedruns": "Los speedruns ahora comparan tu partida actual con mejores marcas personales que se conservan al reiniciar la partida. Se agregaron indicadores, seguimiento de IP dobles y la pestaña de Estadísticas recordará tu selección. Las marcas se sincronizan mediante la nube, pero no se incluyen en las exportaciones.",
   "statistics.speedruns.usageUsed": "Usado",
-  "statistics.speedruns.usageNotUsed": "No usado"
+  "statistics.speedruns.usageNotUsed": "No usado",
+  "statistics.speedruns.unboostedBest": "Récord sin mejoras",
+  "statistics.speedruns.boostedBest": "Récord con mejoras",
+  "statistics.speedruns.clearBestLabel": "Borrar récord de {milestone}",
+  "statistics.speedruns.clearBestTitle": "¿Borrar el récord guardado?",
+  "statistics.speedruns.clearBestDescription": "¿Borrar tu récord de {milestone}? El tiempo de la partida actual se conservará. Esta acción no se puede deshacer.",
+  "statistics.speedruns.clearBestConfirm": "Borrar récord",
+  "statistics.speedruns.clearBestFailed": "No se pudo borrar este récord. Inténtalo de nuevo.",
+  "statistics.speedruns.cancel": "Cancelar"
 }

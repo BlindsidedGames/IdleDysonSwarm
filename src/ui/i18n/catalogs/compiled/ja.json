@@ -12613,6 +12613,60 @@
       "value": "現在の量子周回"
     }
   ],
+  "statistics.speedruns.boostedBest": [
+    {
+      "type": 0,
+      "value": "ブーストありベスト"
+    }
+  ],
+  "statistics.speedruns.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "statistics.speedruns.clearBestConfirm": [
+    {
+      "type": 0,
+      "value": "ベストを消去"
+    }
+  ],
+  "statistics.speedruns.clearBestDescription": [
+    {
+      "type": 0,
+      "value": "次のベストを消去しますか："
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": "？現在の挑戦のタイムは保持されます。この操作は取り消せません。"
+    }
+  ],
+  "statistics.speedruns.clearBestFailed": [
+    {
+      "type": 0,
+      "value": "ベストを消去できませんでした。もう一度お試しください。"
+    }
+  ],
+  "statistics.speedruns.clearBestLabel": [
+    {
+      "type": 0,
+      "value": "ベストを消去："
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    }
+  ],
+  "statistics.speedruns.clearBestTitle": [
+    {
+      "type": 0,
+      "value": "保存したベストを消去しますか？"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -12755,6 +12809,12 @@
     {
       "type": 0,
       "value": "スピードラン"
+    }
+  ],
+  "statistics.speedruns.unboostedBest": [
+    {
+      "type": 0,
+      "value": "ブーストなしベスト"
     }
   ],
   "statistics.speedruns.usageLegend": [
