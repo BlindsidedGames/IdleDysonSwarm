@@ -12613,6 +12613,36 @@
       "value": "現在の量子周回"
     }
   ],
+  "statistics.speedruns.currentRun": [
+    {
+      "type": 0,
+      "value": "現在の挑戦"
+    }
+  ],
+  "statistics.speedruns.doubleIpUsed": [
+    {
+      "type": 0,
+      "value": "IP倍増を使用"
+    }
+  ],
+  "statistics.speedruns.importedRun": [
+    {
+      "type": 0,
+      "value": "対象外 — インポートしたセーブ"
+    }
+  ],
+  "statistics.speedruns.inProgress": [
+    {
+      "type": 0,
+      "value": "進行中"
+    }
+  ],
+  "statistics.speedruns.personalBest": [
+    {
+      "type": 0,
+      "value": "自己ベスト"
+    }
+  ],
   "statistics.speedruns.speedrunCurrentSave": [
     {
       "type": 0,
@@ -12725,6 +12755,18 @@
     {
       "type": 0,
       "value": "スピードラン"
+    }
+  ],
+  "statistics.speedruns.usageLegend": [
+    {
+      "type": 0,
+      "value": "挑戦の使用状況"
+    }
+  ],
+  "statistics.speedruns.usageLegendHelp": [
+    {
+      "type": 0,
+      "value": "青：使用済み。暗色：未使用。?：不明。インポートしたセーブ、デバッグの使用、未確認のタイムは自己ベストの対象外です。"
     }
   ],
   "statistics.tab.general": [
@@ -14644,6 +14686,18 @@
     {
       "type": 0,
       "value": "セーブデータのリセット後に永久2倍ボットの効果が失われる不具合を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "バージョン4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.speedruns": [
+    {
+      "type": 0,
+      "value": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。"
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

@@ -12613,6 +12613,36 @@
       "value": "Aktueller Quantendurchlauf"
     }
   ],
+  "statistics.speedruns.currentRun": [
+    {
+      "type": 0,
+      "value": "Aktueller Lauf"
+    }
+  ],
+  "statistics.speedruns.doubleIpUsed": [
+    {
+      "type": 0,
+      "value": "Doppelte IP verwendet"
+    }
+  ],
+  "statistics.speedruns.importedRun": [
+    {
+      "type": 0,
+      "value": "Nicht zugelassen — Importierter Spielstand"
+    }
+  ],
+  "statistics.speedruns.inProgress": [
+    {
+      "type": 0,
+      "value": "Läuft"
+    }
+  ],
+  "statistics.speedruns.personalBest": [
+    {
+      "type": 0,
+      "value": "Persönliche Bestzeit"
+    }
+  ],
   "statistics.speedruns.speedrunCurrentSave": [
     {
       "type": 0,
@@ -12725,6 +12755,18 @@
     {
       "type": 0,
       "value": "Speedruns"
+    }
+  ],
+  "statistics.speedruns.usageLegend": [
+    {
+      "type": 0,
+      "value": "Laufanzeigen"
+    }
+  ],
+  "statistics.speedruns.usageLegendHelp": [
+    {
+      "type": 0,
+      "value": "Blau: verwendet. Dunkel: nicht verwendet. ?: unbekannt. Importierte Spielstände, Debug-Nutzung und unbestätigte Zeiten zählen nicht als persönliche Bestzeiten."
     }
   ],
   "statistics.tab.general": [
@@ -14644,6 +14686,18 @@
     {
       "type": 0,
       "value": "Behoben: Dauerhaft 2× Bots verlor nach dem Zurücksetzen des Spielstands seine Wirkung."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Version 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.speedruns": [
+    {
+      "type": 0,
+      "value": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

@@ -64,7 +64,7 @@ describe('whole-save speedruns', () => {
   test('legacy history stays unknown and invalid legacy dates are never guessed', () => {
     const state = fresh()
     const legacy = observeSpeedruns({ ...state, avocado: { ...state.avocado, overflowPoints: 10n }, statistics: { ...state.statistics, speedruns: createSpeedrunStatistics('13/09/2026', false, origin) } }, origin, true)
-    expect(legacy.statistics.speedruns!.milestones.debugQualification).toEqual({ elapsedSeconds: null, debug: 'unknown', storedTime: 'unknown', botBoostUsed: false })
+    expect(legacy.statistics.speedruns!.milestones.debugQualification).toEqual({ elapsedSeconds: null, debug: 'unknown', storedTime: 'unknown' })
     expect(speedrunEligible(legacy.statistics.speedruns!)).toBe(false)
     expect(validateSpeedrunStatistics({ ...legacy.statistics.speedruns, debug: false })).toBeTruthy()
   })
@@ -78,7 +78,7 @@ describe('whole-save speedruns', () => {
     expect(loaded.statistics.speedruns).toEqual(state.statistics.speedruns)
     const imported = prepareImportedSaveText(serializeWebSave(prepared.copyValidatedState()), '2026-09-14T00:00:00.000Z', undefined, undefined,
       createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-14T00:00:00.000Z' }).copyValidatedState())
-    expect(hydrateGameState(imported).state.statistics.speedruns).toEqual(state.statistics.speedruns)
+    expect(hydrateGameState(imported).state.statistics.speedruns).toEqual({ ...state.statistics.speedruns, imported: true, personalBests: {} })
     const reset = applyCanonicalOverflowReset(state)
     expect(reset.ok).toBe(true)
     if (reset.ok) expect(reset.state.statistics.speedruns).toEqual(state.statistics.speedruns)
@@ -110,4 +110,62 @@ test('old saves retain unknown creation versions and malformed versions are reje
   expect(validateSpeedrunStatistics({ ...legacy, createdWithVersion: 419 })).toBeTruthy()
   expect(validateSpeedrunStatistics({ ...legacy, createdWithVersion: '' })).toBeTruthy()
   expect(validateSpeedrunStatistics({ ...legacy, createdWithVersion: '4.1.7' })).toBeNull()
+})
+
+describe('personal best records', () => {
+  test('retains faster results and their flags, including on ties', () => {
+    const first = observeSpeedruns({ ...fresh(), meta: { ...fresh().meta, firstInfinityComplete: true } }, origin + 5000)
+    const best = first.statistics.speedruns!.personalBests!.firstInfinity!
+    const resetRun = { ...fresh().statistics.speedruns!, personalBests: first.statistics.speedruns!.personalBests }
+    const attempt = (seconds: number) => observeSpeedruns({ ...fresh(),
+      meta: { ...fresh().meta, firstInfinityComplete: true },
+      statistics: { ...fresh().statistics, speedruns: { ...resetRun, storedTime: 'yes' } },
+    }, origin + seconds * 1000).statistics.speedruns!
+    expect(attempt(6).personalBests!.firstInfinity).toEqual(best)
+    expect(attempt(5).personalBests!.firstInfinity).toEqual(best)
+    expect(attempt(4).personalBests!.firstInfinity).toMatchObject({ elapsedSeconds: 4, storedTime: 'yes' })
+    const later = observeSpeedruns(markSpeedrunUsage(first, 'doubleIpUsed'), origin + 6000)
+    expect(later.statistics.speedruns!.personalBests!.firstInfinity).toEqual(best)
+    expect(later.statistics.speedruns!.doubleIpUsed).toBe(true)
+  })
+
+  test.each(['debug', 'imported', 'clock'] as const)('%s runs cannot set bests', reason => {
+    const state = fresh()
+    const run = { ...state.statistics.speedruns!, ...(reason === 'debug' ? { debug: 'yes' as const } : reason === 'imported' ? { imported: true } : { clockUncertain: true }) }
+    const observed = observeSpeedruns({ ...state, meta: { ...state.meta, firstInfinityComplete: true }, statistics: { ...state.statistics, speedruns: run } }, origin + 5000)
+    expect(observed.statistics.speedruns!.personalBests).toEqual({})
+  })
+
+  test('full checkpoints retain bests, exports omit them, imports retain recipient records, Reset Save requalifies', async () => {
+    const { serializeSharedWebSave } = await import('../save/serialization')
+    const receiver = fresh()
+    const recorded = observeSpeedruns({ ...receiver, meta: { ...receiver.meta, firstInfinityComplete: true } }, origin + 5000)
+    const session = new CanonicalRuntimeSession(createUnityFirstRunPreparedSave({ startedAtUtc: start }), { entitlements: { permanentDoubleIp: false } })
+    const checkpoint = session.prepare({ ...session.initialState, gameState: recorded }).copyValidatedState()
+    const full = serializeWebSave(checkpoint)
+    expect((deserializeWebSave(full).idsSpeedruns as typeof recorded.statistics.speedruns)!.personalBests!.firstInfinity!.elapsedSeconds).toBe(5)
+    const shared = serializeSharedWebSave(checkpoint)
+    expect((deserializeWebSave(shared).idsSpeedruns as typeof recorded.statistics.speedruns)!.personalBests).toBeUndefined()
+    // Full checkpoint bytes cannot bypass manual-import policy either.
+    const forged = { ...checkpoint, idsSpeedruns: { ...recorded.statistics.speedruns, imported: false, personalBests: { firstInfinity: { elapsedSeconds: 0, debug: 'no', storedTime: 'no' } } } }
+    const imported = hydrateGameState(prepareImportedSaveText(serializeWebSave(forged), start, undefined, undefined, checkpoint)).state.statistics.speedruns!
+    expect(imported.personalBests).toEqual(recorded.statistics.speedruns!.personalBests)
+    expect(imported.imported).toBe(true)
+    expect(speedrunEligible(imported)).toBe(false)
+    const reset = hydrateGameState(prepareImportedSaveText(serializeWebSave(createUnityFirstRunPreparedSave({ startedAtUtc: start }).copyValidatedState()), start, undefined, { kind: 'manual-shared-import', importedAtUtc: start, intent: 'save-reset' }, checkpoint)).state.statistics.speedruns!
+    expect(reset.personalBests).toEqual(recorded.statistics.speedruns!.personalBests)
+    expect(reset.milestones).toEqual({})
+    expect(reset.doubleIpUsed).toBe(false)
+    expect(speedrunEligible(reset)).toBe(true)
+  })
+
+  test('migrates eligible legacy milestones once, preserving unknown usage', () => {
+    const state = fresh()
+    const { personalBests: _bests, doubleIpUsed: _ip, ...legacy } = state.statistics.speedruns!
+    const checkpoint = createUnityFirstRunPreparedSave({ startedAtUtc: start }).copyValidatedState()
+    const run = new CanonicalRuntimeSession(PreparedSave.fromDecoded({ ...checkpoint, idsSpeedruns: { ...legacy, milestones: { firstInfinity: { elapsedSeconds: 12, storedTime: 'no', debug: 'no' } } } }), { entitlements: { permanentDoubleIp: false } }).initialState.gameState.statistics.speedruns!
+    expect(run.personalBests!.firstInfinity).toEqual({ elapsedSeconds: 12, storedTime: 'no', debug: 'no' })
+    expect(run.doubleIpUsed).toBeUndefined()
+    expect(validateSpeedrunStatistics({ ...run, personalBests: { firstInfinity: { elapsedSeconds: -1, storedTime: 'no', debug: 'no' } } })).not.toBeNull()
+  })
 })

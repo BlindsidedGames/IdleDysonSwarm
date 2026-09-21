@@ -1,6 +1,13 @@
 import { defineMessages } from 'react-intl'
 
 export const statisticsMessages = defineMessages({
+  currentRun: { id: 'statistics.speedruns.currentRun', defaultMessage: 'Current run', description: 'Current milestone attempt.' },
+  personalBest: { id: 'statistics.speedruns.personalBest', defaultMessage: 'Personal best', description: 'Fastest eligible milestone time across saves.' },
+  inProgress: { id: 'statistics.speedruns.inProgress', defaultMessage: 'In progress', description: 'Milestone not yet reached.' },
+  doubleIpUsed: { id: 'statistics.speedruns.doubleIpUsed', defaultMessage: 'Double IP used', description: 'Purchased Double Infinity Points increased an awarded reward.' },
+  importedRun: { id: 'statistics.speedruns.importedRun', defaultMessage: 'Ineligible — Imported save', description: 'Imported progress cannot set personal bests until Reset Save.' },
+  usageLegend: { id: 'statistics.speedruns.usageLegend', defaultMessage: 'Run indicators', description: 'Legend for speedrun assistance icons.' },
+  usageLegendHelp: { id: 'statistics.speedruns.usageLegendHelp', defaultMessage: 'Blue: used. Dark: not used. ?: unknown. Personal bests exclude imported saves, Debug use, and unverified times.', description: 'Explains speedrun indicators and record eligibility.' },
   general: { id: 'statistics.tab.general', defaultMessage: 'General', description: 'General statistics tab.' },
   saveCreatedWith: { id: 'statistics.save.createdWith', defaultMessage: 'Save created with', description: 'Game version originally used to create this save.' },
   saveCreated: { id: 'statistics.save.created', defaultMessage: 'Save created', description: 'Exact save creation date and time.' },

@@ -1,3 +1,4 @@
+import { readPresentationPreference, writePresentationPreference } from '../../presentationPreferences'
 import { useId, useState } from 'react'
 import { SpeedrunsSection } from './SpeedrunsSection'
 import {
@@ -156,7 +157,11 @@ export function StatisticsSurface({
   visibility,
 }: StatisticsSurfaceProps) {
   const intl = useIntl()
-  const [tab, setTab] = useState<'general' | 'speedruns'>('general')
+  const [tab, updateTab] = useState<'general' | 'speedruns'>(() => readPresentationPreference('ids.statistics.tab') === 'speedruns' ? 'speedruns' : 'general')
+  const setTab = (next: 'general' | 'speedruns') => {
+    updateTab(next)
+    writePresentationPreference('ids.statistics.tab', next)
+  }
   const id = useId()
   const scopes = [
     {

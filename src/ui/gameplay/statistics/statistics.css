@@ -493,3 +493,23 @@
 .statistics-tabs [aria-selected="true"] { background: var(--theme-selected); border-color: var(--theme-accent); }
 .statistics-tabs [role="tab"]:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 2px; }
 .statistics-speedruns__facts dd { overflow-wrap: anywhere; }
+
+.speedrun-result { padding: var(--ui-panel-inset); }
+.speedrun-result + .speedrun-result { border-top: 1px solid var(--ui-border-color, #66546e); }
+.speedrun-result h4, .speedrun-result p { margin: 0 0 .4rem; }
+.speedrun-result__time { color: cyan; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.speedrun-result__progress { font-size: .9em; }
+.speedrun-usage { display: flex; flex-wrap: wrap; gap: .6rem; list-style: none; margin: 0; padding: .5rem var(--ui-panel-inset); }
+.speedrun-result .speedrun-usage { padding-inline: 0; }
+.speedrun-usage li { display: flex; align-items: center; gap: .45rem; }
+.speedrun-usage__indicator { position: relative; display: inline-flex; font-size: 1.6rem; color: #28202e; border-radius: .2rem; }
+.speedrun-usage__indicator[data-usage="yes"] { color: #7cc9ff; }
+.speedrun-usage__indicator[data-usage="unknown"] { color: #786c82; }
+.speedrun-usage__indicator:focus-visible { outline: 2px solid #7cc9ff; outline-offset: 3px; }
+.speedrun-usage__unknown { position: absolute; right: -.2em; bottom: -.1em; font-size: .65em; font-weight: bold; color: white; text-shadow: 0 0 3px #201526; }
+.speedrun-legend { padding: var(--ui-panel-inset); }
+.speedrun-legend h3 { margin-top: 0; }
+.speedrun-usage--legend { padding: 0; gap: .6rem 1.2rem; }
+
+.speedrun-usage__tooltip { display: none; position: absolute; z-index: 2; inset-block-end: calc(100% + .4rem); inset-inline-start: 0; inline-size: max-content; max-inline-size: 13rem; padding: .35rem .5rem; border: 1px solid var(--theme-divider); border-radius: .25rem; background: var(--theme-panel); color: white; font-size: .8rem; box-shadow: 0 2px 5px #0008; }
+.speedrun-usage__indicator:hover .speedrun-usage__tooltip, .speedrun-usage__indicator:focus-visible .speedrun-usage__tooltip { display: block; }

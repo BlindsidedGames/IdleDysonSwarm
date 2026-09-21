@@ -39,7 +39,7 @@ test('both purchase preferences and Debug evidence survive Overflow and portable
   const restored = hydrateGameState(imported).state
   expect(restored.quantum.buyMode).toBe('buy-100')
   expect(restored.dream.buyMode).toBe('buy-50')
-  expect(restored.statistics.speedruns).toEqual(state.statistics.speedruns)
+  expect(restored.statistics.speedruns).toEqual({ ...state.statistics.speedruns, imported: true, personalBests: {} })
   expect(restored.statistics.speedruns?.debug).toBe('yes')
   expect(restored.avocado.overflowPoints).toBe(1n)
 })

@@ -2038,5 +2038,14 @@
   "wiki.topic-navigation": "Темы Вики",
   "wiki.topics": "Темы",
   "wiki.patch-notes.version-4-1-10": "Версия 4.1.10",
-  "wiki.patch-notes.version-4-1-10.bot-boost": "Исправлена потеря эффекта «Боты ×2 навсегда» после сброса сохранения."
+  "wiki.patch-notes.version-4-1-10.bot-boost": "Исправлена потеря эффекта «Боты ×2 навсегда» после сброса сохранения.",
+  "statistics.speedruns.currentRun": "Текущий забег",
+  "statistics.speedruns.personalBest": "Личный рекорд",
+  "statistics.speedruns.inProgress": "В процессе",
+  "statistics.speedruns.doubleIpUsed": "Удвоение IP использовано",
+  "statistics.speedruns.importedRun": "Не засчитывается — Импортированное сохранение",
+  "statistics.speedruns.usageLegend": "Отметки забега",
+  "statistics.speedruns.usageLegendHelp": "Синий: использовано. Тёмный: не использовано. ?: неизвестно. Импортированные сохранения, использование отладки и неподтверждённое время не учитываются в личных рекордах.",
+  "wiki.patch-notes.version-4-1-11": "Версия 4.1.11",
+  "wiki.patch-notes.version-4-1-11.speedruns": "Спидраны теперь сравнивают текущий забег с личными рекордами, которые сохраняются после сброса сохранения. Добавлены отметки забега, учёт удвоения IP и запоминание вкладки статистики. Рекорды синхронизируются через облачные сохранения, но не входят в экспорт."
 }

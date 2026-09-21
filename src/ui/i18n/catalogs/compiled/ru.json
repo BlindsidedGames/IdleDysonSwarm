@@ -12613,6 +12613,36 @@
       "value": "Текущий Квантовый цикл"
     }
   ],
+  "statistics.speedruns.currentRun": [
+    {
+      "type": 0,
+      "value": "Текущий забег"
+    }
+  ],
+  "statistics.speedruns.doubleIpUsed": [
+    {
+      "type": 0,
+      "value": "Удвоение IP использовано"
+    }
+  ],
+  "statistics.speedruns.importedRun": [
+    {
+      "type": 0,
+      "value": "Не засчитывается — Импортированное сохранение"
+    }
+  ],
+  "statistics.speedruns.inProgress": [
+    {
+      "type": 0,
+      "value": "В процессе"
+    }
+  ],
+  "statistics.speedruns.personalBest": [
+    {
+      "type": 0,
+      "value": "Личный рекорд"
+    }
+  ],
   "statistics.speedruns.speedrunCurrentSave": [
     {
       "type": 0,
@@ -12725,6 +12755,18 @@
     {
       "type": 0,
       "value": "Спидраны"
+    }
+  ],
+  "statistics.speedruns.usageLegend": [
+    {
+      "type": 0,
+      "value": "Отметки забега"
+    }
+  ],
+  "statistics.speedruns.usageLegendHelp": [
+    {
+      "type": 0,
+      "value": "Синий: использовано. Тёмный: не использовано. ?: неизвестно. Импортированные сохранения, использование отладки и неподтверждённое время не учитываются в личных рекордах."
     }
   ],
   "statistics.tab.general": [
@@ -14644,6 +14686,18 @@
     {
       "type": 0,
       "value": "Исправлена потеря эффекта «Боты ×2 навсегда» после сброса сохранения."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Версия 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.speedruns": [
+    {
+      "type": 0,
+      "value": "Спидраны теперь сравнивают текущий забег с личными рекордами, которые сохраняются после сброса сохранения. Добавлены отметки забега, учёт удвоения IP и запоминание вкладки статистики. Рекорды синхронизируются через облачные сохранения, но не входят в экспорт."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

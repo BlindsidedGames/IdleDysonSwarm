@@ -2038,5 +2038,14 @@
   "wiki.topic-navigation": "Wikiのトピック",
   "wiki.topics": "トピック",
   "wiki.patch-notes.version-4-1-10": "バージョン 4.1.10",
-  "wiki.patch-notes.version-4-1-10.bot-boost": "セーブデータのリセット後に永久2倍ボットの効果が失われる不具合を修正しました。"
+  "wiki.patch-notes.version-4-1-10.bot-boost": "セーブデータのリセット後に永久2倍ボットの効果が失われる不具合を修正しました。",
+  "statistics.speedruns.currentRun": "現在の挑戦",
+  "statistics.speedruns.personalBest": "自己ベスト",
+  "statistics.speedruns.inProgress": "進行中",
+  "statistics.speedruns.doubleIpUsed": "IP倍増を使用",
+  "statistics.speedruns.importedRun": "対象外 — インポートしたセーブ",
+  "statistics.speedruns.usageLegend": "挑戦の使用状況",
+  "statistics.speedruns.usageLegendHelp": "青：使用済み。暗色：未使用。?：不明。インポートしたセーブ、デバッグの使用、未確認のタイムは自己ベストの対象外です。",
+  "wiki.patch-notes.version-4-1-11": "バージョン4.1.11",
+  "wiki.patch-notes.version-4-1-11.speedruns": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。"
 }

@@ -1,7 +1,7 @@
 import type { SaveRepository } from '../save/repository'
 import type { StartupSaveResolver, StartupSaveResolution } from '../save/startupResolver'
 import { prepareImportedSaveText } from '../save/import'
-import { serializeSharedWebSave } from '../save/serialization'
+import { serializeCloudWebSave } from '../save/serialization'
 import { UnsupportedFutureSaveSchemaError } from '../save/migrate'
 import type { PreparedSave } from '../save/prepare'
 
@@ -55,7 +55,7 @@ export class CloudStartupResolver implements StartupSaveResolver {
     try {
       const current = await this.loadLocalSaveForComparison()
       if (current !== null) {
-        const localText = serializeSharedWebSave(current.copyValidatedState())
+        const localText = serializeCloudWebSave(current.copyValidatedState())
         if (
           localText !== remote.text &&
           await this.cloud.choose(localText, remote.text) === 'local'
@@ -130,7 +130,7 @@ function prepareCloudSave(candidate: string): PreparedSave {
   // Cloud lifecycle timestamps while stripping device/ownership claims.
   const decoded = prepareImportedSaveText(candidate, now, undefined, context)
   return prepareImportedSaveText(
-    serializeSharedWebSave(decoded.copyValidatedState()),
+    serializeCloudWebSave(decoded.copyValidatedState()),
     now,
     undefined,
     context,

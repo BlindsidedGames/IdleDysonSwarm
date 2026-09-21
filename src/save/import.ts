@@ -1,3 +1,4 @@
+import { createSpeedrunStatistics, migrateSpeedrunRecords, validateSpeedrunStatistics, type SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { prepareIdb1Save, prepareImportedSave, PreparedSave } from './prepare'
 import {
   decodeWebSaveTextBounded,
@@ -93,6 +94,15 @@ export function prepareImportedSaveText(
         transferred,
         effectiveReceivingState,
       )
+      const receivingRun = effectiveReceivingState?.idsSpeedruns
+      const personalBests = receivingRun && validateSpeedrunStatistics(receivingRun) === null
+        ? migrateSpeedrunRecords(receivingRun as SpeedrunStatistics).personalBests : {}
+      const incomingRun = transferred.idsSpeedruns as SpeedrunStatistics | undefined
+      transferred.idsSpeedruns = {
+        ...(incomingRun ?? createSpeedrunStatistics(null, false)),
+        personalBests,
+        imported: context.intent !== 'save-reset',
+      }
       if (context.intent === 'save-reset') transferred.unlockAllTabs = false
       // Repack after receiver-owned flags are restored. Sender ownership was
       // already stripped and cannot be recovered from packed flags.

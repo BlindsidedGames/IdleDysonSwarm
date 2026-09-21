@@ -40,3 +40,19 @@ describe('Cloud startup preparation', () => {
     f.cloud.read=async()=>{throw new Error('Read failed')};await f.resolver.resolve();expect(f.local.resolve).toHaveBeenCalledTimes(2)
   })
 })
+
+test.each([false, true])('Cloud retains personal bests and imported=%s provenance, unlike shared exports', async imported => {
+  const { serializeCloudWebSave, deserializeWebSave } = await import('../save/serialization')
+  const { createSpeedrunStatistics } = await import('../simulation/speedrunStatistics')
+  const data = original.copyValidatedState()
+  data.idsSpeedruns = { ...createSpeedrunStatistics(new Date().toISOString(), true), imported,
+    personalBests: { firstInfinity: { elapsedSeconds: 12, debug: 'no', storedTime: 'no', doubleIpUsed: true } } }
+  const cloudText = serializeCloudWebSave(data)
+  expect(deserializeWebSave(cloudText).idsSpeedruns).toEqual(data.idsSpeedruns)
+  const f = fixture(cloudText)
+  const result = await f.resolver.resolve()
+  expect(result.kind).toBe('ready')
+  if (result.kind === 'ready') expect(result.save.copyValidatedState().idsSpeedruns).toEqual(data.idsSpeedruns)
+  const shared = deserializeWebSave(serializeSharedWebSave(data)).idsSpeedruns as Record<string, unknown>
+  expect(shared.personalBests).toBeUndefined()
+})
