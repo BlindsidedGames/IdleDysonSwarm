@@ -1,4 +1,4 @@
-import { markSpeedrunUsage, observeSpeedruns } from './speedrunStatistics'
+import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime } from './speedrunStatistics'
 import { isBreakInfinityEnabled, isInfinityChallengeActive } from './infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
@@ -626,6 +626,7 @@ export class CanonicalEventTimeModel
         this.context.rateClockMultiplier ?? 1,
       )
       if (this.context.mode === 'active') {
+        candidate = recordActiveSpeedrunTime(candidate, seconds * (this.context.rateClockMultiplier ?? 1))
         candidate = withAdvancedManualInfinityObservation(
           candidate,
           seconds * (this.context.rateClockMultiplier ?? 1),

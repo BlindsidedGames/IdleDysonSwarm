@@ -2047,7 +2047,7 @@
   "statistics.speedruns.usageLegend": "Indicateurs de partie",
   "statistics.speedruns.usageLegendHelp": "Les sauvegardes importées, le débogage et les temps non vérifiés ne comptent pas pour les records personnels.",
   "wiki.patch-notes.version-4-1-11": "Version 4.1.11",
-  "wiki.patch-notes.version-4-1-11.speedruns": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports.",
+  "wiki.patch-notes.version-4-1-11.speedruns": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports. Les nouveaux records utilisent le temps de jeu.",
   "statistics.speedruns.usageUsed": "Utilisé",
   "statistics.speedruns.usageNotUsed": "Non utilisé",
   "statistics.speedruns.unboostedBest": "Record sans bonus",

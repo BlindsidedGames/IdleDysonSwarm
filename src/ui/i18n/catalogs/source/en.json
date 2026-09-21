@@ -7454,7 +7454,7 @@
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.speedruns": {
-    "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. Personal bests sync through Cloud saves but are not shared through exports.",
+    "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.",
     "description": "Version 4.1.11 speedrun improvements."
   },
   "wiki.patch-notes.version-4-1-2": {

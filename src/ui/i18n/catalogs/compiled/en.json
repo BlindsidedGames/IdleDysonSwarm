@@ -14769,7 +14769,7 @@
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
-      "value": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. Personal bests sync through Cloud saves but are not shared through exports."
+      "value": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

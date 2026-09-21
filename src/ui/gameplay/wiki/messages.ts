@@ -95,7 +95,7 @@ export const wikiMessages = defineMessages({
 
   patchNotesMostRecent: { id: 'wiki.patch-notes.most-recent', defaultMessage: 'Most Recent', description: 'Heading for the latest Wiki patch notes.' },
   patchNotesVersion4111: { id: 'wiki.patch-notes.version-4-1-11', defaultMessage: 'Version 4.1.11', description: 'Version 4.1.11 release notes.' },
-  patchNotesVersion4111Speedruns: { id: 'wiki.patch-notes.version-4-1-11.speedruns', defaultMessage: 'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. Personal bests sync through Cloud saves but are not shared through exports.', description: 'Version 4.1.11 speedrun improvements.' },
+  patchNotesVersion4111Speedruns: { id: 'wiki.patch-notes.version-4-1-11.speedruns', defaultMessage: 'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.', description: 'Version 4.1.11 speedrun improvements.' },
   patchNotesVersion4110: { id: 'wiki.patch-notes.version-4-1-10', defaultMessage: 'Version 4.1.10', description: 'Version 4.1.10 release notes.' },
   patchNotesVersion4110BotBoost: { id: 'wiki.patch-notes.version-4-1-10.bot-boost', defaultMessage: 'Fixed Permanent 2× Bots losing its effect after resetting your save.', description: 'Version 4.1.10 release notes.' },
   patchNotesVersion419: { id: 'wiki.patch-notes.version-4-1-9', defaultMessage: 'Version 4.1.9', description: 'Version 4.1.9 release notes.' },

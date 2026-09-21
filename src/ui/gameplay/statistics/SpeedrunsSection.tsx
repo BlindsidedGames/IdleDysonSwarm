@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { elapsedSpeedrunSeconds, SPEEDRUN_MILESTONES, speedrunEligible, isUnboostedSpeedrun, type SpeedrunMilestoneId, type SpeedrunStatistics } from '../../../simulation/speedrunStatistics'
+import { elapsedSpeedrunSeconds, speedrunRecordSeconds, SPEEDRUN_MILESTONES, speedrunEligible, isUnboostedSpeedrun, type SpeedrunMilestoneId, type SpeedrunStatistics } from '../../../simulation/speedrunStatistics'
 import { formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { statisticsMessages as messages } from './messages'
@@ -36,7 +36,7 @@ export function SpeedrunsSection({ run, locale, onClearBest }: { readonly run?: 
         return <article className="statistics-card" key={id} data-speedrun-milestone={id}>
           <h3 tabIndex={-1}>{intl.formatMessage(labels[id])}</h3>
           {[{ label: messages.currentRun, result: milestone, current: true }, { label: bestLabel, result: best, current: false }].map(({ label, result, current }) => {
-            const seconds = result ? result.elapsedSeconds : current ? elapsed : null
+            const seconds = result ? result.elapsedSeconds : current && run ? speedrunRecordSeconds(run, now) : null
             return <section className="speedrun-result" key={label.id} aria-label={intl.formatMessage(label)}>
               <div className="speedrun-result__heading">
                 <h4>{intl.formatMessage(label)}</h4>

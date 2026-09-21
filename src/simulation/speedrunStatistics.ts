@@ -45,6 +45,12 @@ export function elapsedSpeedrunSeconds(run: SpeedrunStatistics, now = Date.now()
     : Math.max(0, Math.max(run.observedAtMilliseconds, now) - run.startedAtMilliseconds) / 1000
 }
 
+/** Older runs without complete playtime keep their existing elapsed-time basis. */
+export function speedrunRecordSeconds(run: SpeedrunStatistics, now = Date.now()): number | null {
+  return run.activeTimeComplete === true && run.activeSeconds !== undefined
+    ? run.activeSeconds : elapsedSpeedrunSeconds(run, now)
+}
+
 export function speedrunEligible(run: SpeedrunStatistics): boolean {
   return run.imported !== true && run.debug === 'no' && !run.clockUncertain && run.startedAtMilliseconds !== null
 }
@@ -66,7 +72,7 @@ export function observeSpeedruns(state: CanonicalGameStateV1, now = Date.now(), 
   let personalBests = run.personalBests ?? {}
   for (const id of SPEEDRUN_MILESTONES) {
     if (reached[id] && !milestones[id]) {
-      const milestone = { elapsedSeconds: historical ? null : elapsedSpeedrunSeconds(run, now), ...snapshotSpeedrunUsage(run) }
+      const milestone = { elapsedSeconds: historical ? null : speedrunRecordSeconds(run, now), ...snapshotSpeedrunUsage(run) }
       milestones[id] = milestone
       if (speedrunEligible(run)) personalBests = recordPersonalBest(personalBests, id, milestone)
     }

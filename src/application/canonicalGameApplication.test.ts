@@ -1393,3 +1393,21 @@ test('continuous active runtime is unaccelerated even with double game speed', (
   expect(definition.applyCommand(state, { kind: 'internal.advance-active-continuous', milliseconds: 1000 }).accepted).toBe(true)
   expect(state.gameState.statistics.speedruns?.activeSeconds).toBeCloseTo(1)
 })
+
+test('new milestones snapshot active time and retain old recorded values', () => {
+  const state = runtime()
+  const run = createSpeedrunStatistics(new Date(Date.now() - 86400000).toISOString(), true)
+  Object.assign(state, { gameState: { ...state.gameState,
+    meta: { ...state.gameState.meta, firstInfinityComplete: false },
+    statistics: { ...state.gameState.statistics, speedruns: { ...run, activeSeconds: 12,
+      milestones: { firstQuantumLeap: { elapsedSeconds: 7200, debug: 'no', storedTime: 'no' } },
+    } },
+  } })
+  const definition = createCanonicalGameEngineDefinition({ eventContext: context() })
+  expect(definition.applyCommand(state, { kind: 'internal.advance-active-continuous', milliseconds: 1000 }).accepted).toBe(true)
+  expect(state.gameState.statistics.speedruns?.activeSeconds).toBeCloseTo(13)
+  state.gameState.meta.firstInfinityComplete = true
+  expect(definition.applyCommand(state, { kind: 'internal.advance-active-continuous', milliseconds: 1000 }).accepted).toBe(true)
+  expect(state.gameState.statistics.speedruns?.milestones.firstInfinity?.elapsedSeconds).toBeCloseTo(13)
+  expect(state.gameState.statistics.speedruns?.milestones.firstQuantumLeap?.elapsedSeconds).toBe(7200)
+})

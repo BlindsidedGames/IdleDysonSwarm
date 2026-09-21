@@ -33,3 +33,9 @@ Confirmed-unboosted results now take priority over assisted or historically unkn
 Interactive browser QA: a real Infinity reward at 3m29s replaced a fixture's 1s boosted best with an Unboosted best. Cancel and Escape retained records. Confirming cleared only First Infinity, preserved its frozen 3m29s current result, and an immediate reload kept it cleared while retaining the Quantum best. Desktop and 360px dialog layouts inspected. This pass caught and fixed missing command-family registration and an immediate-reload autosave race. These incremental controls were not re-tested in native hosts.
 
 Validation: 1,757 tests passed, typecheck, lint, production build, localization and whitespace checks passed. Independent follow-up review performed for selection, clearing and persistence integration.
+
+## Active-playtime records / internal build 2026092102
+
+New records and in-progress milestone cards use unaccelerated active playtime. Existing recorded numbers remain unchanged. Older runs without complete active tracking retain elapsed timing, avoiding false zero/partial records. Active accounting occurs inside simulation intervals before arrival milestones; Stored Time/offline processing does not add to it.
+
+Browser gameplay QA earned First Infinity at 15s played with 3m16s elapsed; current/best both displayed15s while the existing1h Quantum best remained. Full1759-test suite passed and independent review found no remaining defect. Internal uploads use the current4.1.10 marketing version with new build identities; no production submission is requested.

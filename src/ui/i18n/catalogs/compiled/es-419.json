@@ -14769,7 +14769,7 @@
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
-      "value": "Los speedruns ahora comparan tu partida actual con mejores marcas personales que se conservan al reiniciar la partida. Se agregaron indicadores, seguimiento de IP dobles y la pestaña de Estadísticas recordará tu selección. Las marcas se sincronizan mediante la nube, pero no se incluyen en las exportaciones."
+      "value": "Los speedruns ahora comparan tu partida actual con mejores marcas personales que se conservan al reiniciar la partida. Se agregaron indicadores, seguimiento de IP dobles y la pestaña de Estadísticas recordará tu selección. Las marcas se sincronizan mediante la nube, pero no se incluyen en las exportaciones. Los nuevos récords de hitos usan el tiempo jugado."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

@@ -14769,7 +14769,7 @@
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
-      "value": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert."
+      "value": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert. Neue Meilensteinrekorde verwenden die gespielte Zeit."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

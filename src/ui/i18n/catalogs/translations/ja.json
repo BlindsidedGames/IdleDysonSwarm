@@ -2047,7 +2047,7 @@
   "statistics.speedruns.usageLegend": "挑戦の使用状況",
   "statistics.speedruns.usageLegendHelp": "インポートしたセーブ、デバッグの使用、未確認のタイムは自己ベストの対象外です。",
   "wiki.patch-notes.version-4-1-11": "バージョン4.1.11",
-  "wiki.patch-notes.version-4-1-11.speedruns": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。",
+  "wiki.patch-notes.version-4-1-11.speedruns": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。 新しいマイルストーン記録にはプレイ時間を使用します。",
   "statistics.speedruns.usageUsed": "使用済み",
   "statistics.speedruns.usageNotUsed": "未使用",
   "statistics.speedruns.unboostedBest": "ブーストなしベスト",

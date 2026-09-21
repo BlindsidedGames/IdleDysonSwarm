@@ -14769,7 +14769,7 @@
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
-      "value": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports."
+      "value": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports. Les nouveaux records utilisent le temps de jeu."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

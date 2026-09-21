@@ -14769,7 +14769,7 @@
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
-      "value": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações."
+      "value": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações. Novos recordes de marcos usam o tempo jogado."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

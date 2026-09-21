@@ -26,12 +26,12 @@ describe('whole-save speedruns', () => {
     if (dream.ok) expect(dream.state.statistics.speedruns).toEqual(state.statistics.speedruns)
   })
 
-  test('wall time includes away time and ignores gameplay speed and simulated time', () => {
+  test('overview keeps wall time while new milestones use active playtime', () => {
     vi.spyOn(Date, 'now').mockReturnValue(origin + 60000)
-    const state = fresh()
+    const state = recordActiveSpeedrunTime(fresh(), 12)
     const changed = observeSpeedruns({ ...state, timeline: { ...state.timeline, doubleTime: { ...state.timeline.doubleTime, unlocked: true } } })
     expect(elapsedSpeedrunSeconds(changed.statistics.speedruns!)).toBe(60)
-    expect(changed.statistics.speedruns!.milestones.doubleSpeed?.elapsedSeconds).toBe(60)
+    expect(changed.statistics.speedruns!.milestones.doubleSpeed?.elapsedSeconds).toBe(12)
     expect(changed.statistics.lifetime).toEqual(state.statistics.lifetime)
     expect(changed.timeline.doubleTime.unlocked).toBe(true)
     vi.restoreAllMocks()
@@ -114,12 +114,12 @@ test('old saves retain unknown creation versions and malformed versions are reje
 
 describe('personal best records', () => {
   test('retains faster results and their flags, including on ties', () => {
-    const first = observeSpeedruns({ ...fresh(), meta: { ...fresh().meta, firstInfinityComplete: true } }, origin + 5000)
+    const first = observeSpeedruns({ ...recordActiveSpeedrunTime(fresh(), 5), meta: { ...fresh().meta, firstInfinityComplete: true } }, origin + 5000)
     const best = first.statistics.speedruns!.personalBests!.firstInfinity!
     const resetRun = { ...fresh().statistics.speedruns!, personalBests: first.statistics.speedruns!.personalBests }
     const attempt = (seconds: number) => observeSpeedruns({ ...fresh(),
       meta: { ...fresh().meta, firstInfinityComplete: true },
-      statistics: { ...fresh().statistics, speedruns: resetRun },
+      statistics: { ...fresh().statistics, speedruns: { ...resetRun, activeSeconds: seconds } },
     }, origin + seconds * 1000).statistics.speedruns!
     expect(attempt(6).personalBests!.firstInfinity).toEqual(best)
     expect(attempt(5).personalBests!.firstInfinity).toEqual(best)
@@ -138,7 +138,7 @@ describe('personal best records', () => {
 
   test('full checkpoints retain bests, exports omit them, imports retain recipient records, Reset Save requalifies', async () => {
     const { serializeSharedWebSave } = await import('../save/serialization')
-    const receiver = fresh()
+    const receiver = recordActiveSpeedrunTime(fresh(), 5)
     const recorded = observeSpeedruns({ ...receiver, meta: { ...receiver.meta, firstInfinityComplete: true } }, origin + 5000)
     const session = new CanonicalRuntimeSession(createUnityFirstRunPreparedSave({ startedAtUtc: start }), { entitlements: { permanentDoubleIp: false } })
     const checkpoint = session.prepare({ ...session.initialState, gameState: recorded }).copyValidatedState()
@@ -202,7 +202,15 @@ test('clearing one best preserves current milestones and stays cleared after che
   const reloaded = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(checkpoint)))).state
   expect(observeSpeedruns(reloaded, origin + 6000).statistics.speedruns!.personalBests!.firstInfinity).toBeUndefined()
   const freshAttempt = observeSpeedruns({ ...state, meta: { ...state.meta, firstInfinityComplete: true },
-    statistics: { ...state.statistics, speedruns: { ...state.statistics.speedruns!, personalBests: cleared.personalBests } },
+    statistics: { ...state.statistics, speedruns: { ...state.statistics.speedruns!, personalBests: cleared.personalBests, activeSeconds: 7 } },
   }, origin + 7000)
   expect(freshAttempt.statistics.speedruns!.personalBests!.firstInfinity?.elapsedSeconds).toBe(7)
+})
+
+test('older runs without complete active timing retain elapsed-time fallback instead of zero-time bests', () => {
+  const state = fresh()
+  const { activeSeconds: _active, activeTimeComplete: _complete, ...legacy } = state.statistics.speedruns!
+  const partial = recordActiveSpeedrunTime({ ...state, statistics: { ...state.statistics, speedruns: legacy } }, 5)
+  const reached = observeSpeedruns({ ...partial, meta: { ...partial.meta, firstInfinityComplete: true } }, origin + 60000)
+  expect(reached.statistics.speedruns!.personalBests!.firstInfinity!.elapsedSeconds).toBe(60)
 })
