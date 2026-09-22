@@ -871,6 +871,12 @@
       "value": "添加超越点数"
     }
   ],
+  "discovery.details": [
+    {
+      "type": 0,
+      "value": "发现详情"
+    }
+  ],
   "discovery.level": [
     {
       "type": 0,

@@ -871,6 +871,12 @@
       "value": "Transzendenzpunkte hinzufügen"
     }
   ],
+  "discovery.details": [
+    {
+      "type": 0,
+      "value": "Entdeckungsdetails"
+    }
+  ],
   "discovery.level": [
     {
       "type": 0,

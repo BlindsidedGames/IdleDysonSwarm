@@ -56,7 +56,7 @@ Primary-agent observations, using disposable saves:
   without allocation controls. Infinity and Trial & Error entry/abandonment
   retained level 2. Quantum Entanglement conversion retained level 2. Normal export/import retained level 2. Spending the final nine points left Avocato accessible after navigating away/back and reloading, with Speed level 3 and Power level 2.
 - **Packaged macOS/Electron, isolated data:** imported pre-unlock save, unlocked,
-  purchased Speed and Power, Transcended, cold-quit and relaunched. Retained
+  purchased Speed and Power, Transcended, force-terminated the isolated process and relaunched. Retained
   level 1, base strength 15, speed 1.25 and eight points.
 - **iOS Simulator, disposable app:** actual unlock and Starting Power purchase;
   kill/relaunch retained ownership and purchase. The reset loop was **not**
@@ -79,7 +79,7 @@ tracked with source):
 - Committed import fixtures: `test/fixtures/discovery/`; these carry normal manual-import provenance.
 
 Final checks: production build/typecheck, lint, data export parity, first-Dyson
-parity, all seven translation catalogs (2,158 keys each), Electron syntax, iOS
+parity, all seven translation catalogs (2,159 keys each), Electron syntax, iOS
 Simulator build and Android debug build. Existing bundle-size and translation
 glossary notices remain informational. A fixture README basename collided with
 an existing packaged README in the packaging guard; renamed the fixture guide
@@ -198,8 +198,7 @@ records the inspected runtime wording. Additive descriptions use
 
 Handoff leaves `discovery-prototype` unmerged and unreleased, with a draft PR,
 running Transcendence preview at `http://127.0.0.1:5192/play/` and the committed
-pre-unlock fixture under `test/fixtures/discovery/`. The draft PR is linked in the
-final handoff. No deployment or store-submission changes were made.
+pre-unlock fixture under `test/fixtures/discovery/`. Draft PR: [#216](https://github.com/BlindsidedGames/IdleDysonSwarm/pull/216). No deployment or store-submission changes were made.
 
 ## Effect disposition inventory
 
@@ -430,3 +429,8 @@ entries and dynamic-resolver review. Numerical conversions are authored in
 Final UI evidence: [360px](../qa/discovery-prototype/narrow.png),
 [German at 130% text](../qa/discovery-prototype/german-text130.png),
 [actual skill dialogs](../qa/discovery-prototype/skill-descriptions.txt).
+
+Final native card screenshots: [iOS](../qa/discovery-prototype/ios.png),
+[packaged macOS](../qa/discovery-prototype/macos.png). Final accessibility review
+requested a broader “Discovery details” label and a larger info hit target; both
+were applied, localized, and keyboard-tested in the browser.

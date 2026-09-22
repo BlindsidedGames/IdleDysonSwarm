@@ -127,6 +127,7 @@
   "discovery.confirmAction": "Bestätigen",
   "discovery.debug.addCompletions": "Abgeschlossene Entdeckungen hinzufügen",
   "discovery.debug.addPoints": "Transzendenzpunkte hinzufügen",
+  "discovery.details": "Entdeckungsdetails",
   "discovery.level": "Entdeckung · Stufe {value}",
   "discovery.levelLabel": "Entdeckungsstufe",
   "discovery.lifetime": "Panellebensdauer: {value} Sekunden",

@@ -472,6 +472,9 @@
   "discovery.debug.addPoints": {
     "defaultMessage": "Add Transcendence Points"
   },
+  "discovery.details": {
+    "defaultMessage": "Discovery details"
+  },
   "discovery.level": {
     "defaultMessage": "Discovery · Level {value}"
   },

@@ -29,7 +29,7 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
       <Progress className="discovery-progress" label={intl.formatMessage(m.name)} valueText={time}
         value={state.progress} maximum={DISCOVERY_TUNING.completionProgress} />
       <details className="discovery-details">
-        <summary aria-label={intl.formatMessage(m.speedSources)} title={intl.formatMessage(m.resetRule)}>ⓘ</summary>
+        <summary aria-label={intl.formatMessage(m.details)} title={intl.formatMessage(m.resetRule)}>ⓘ</summary>
         <p>{intl.formatMessage(m.level, { value: formatWholeGameNumber(locale, state.completions + 1n) })}</p>
         <p>{intl.formatMessage(m.lifetime, { value: formatGameNumber(locale, effects.strength) })}</p>
         <p>{intl.formatMessage(m.next, { value: formatGameNumber(locale, effects.nextMultiplier), time })}</p>

@@ -127,6 +127,7 @@
   "discovery.confirmAction": "Confirmar",
   "discovery.debug.addCompletions": "Añadir descubrimientos completados",
   "discovery.debug.addPoints": "Añadir puntos de Trascendencia",
+  "discovery.details": "Detalles de Descubrimiento",
   "discovery.level": "Descubrimiento · Nivel {value}",
   "discovery.levelLabel": "Nivel de Descubrimiento",
   "discovery.lifetime": "Vida útil de paneles: {value} segundos",

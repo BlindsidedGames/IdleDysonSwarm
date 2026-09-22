@@ -127,6 +127,7 @@
   "discovery.confirmAction": "Подтвердить",
   "discovery.debug.addCompletions": "Добавить завершённые открытия",
   "discovery.debug.addPoints": "Добавить очки Трансценденции",
+  "discovery.details": "Подробности открытий",
   "discovery.level": "Открытие · Уровень {value}",
   "discovery.levelLabel": "Уровень открытий",
   "discovery.lifetime": "Срок службы панелей: {value} сек.",

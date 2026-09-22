@@ -64,6 +64,10 @@
 .discovery-details { margin-block-start: 0.5rem; }
 .discovery-details summary {
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  min-inline-size: 2rem;
+  min-block-size: 2rem;
   list-style: none;
   inline-size: max-content;
   margin-inline-start: auto;

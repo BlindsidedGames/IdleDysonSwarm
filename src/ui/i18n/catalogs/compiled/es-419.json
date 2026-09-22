@@ -871,6 +871,12 @@
       "value": "Añadir puntos de Trascendencia"
     }
   ],
+  "discovery.details": [
+    {
+      "type": 0,
+      "value": "Detalles de Descubrimiento"
+    }
+  ],
   "discovery.level": [
     {
       "type": 0,

@@ -17,6 +17,7 @@ export const discoveryMessages = defineMessages({
   addCompletions: { id: 'discovery.debug.addCompletions', defaultMessage: 'Add completed discoveries' },
   addPoints: { id: 'discovery.debug.addPoints', defaultMessage: 'Add Transcendence Points' },
   route: { id: 'discovery.route', defaultMessage: 'Transcendence' },
+  details: { id: 'discovery.details', defaultMessage: 'Discovery details' },
   name: { id: 'discovery.name', defaultMessage: 'Discovery' },
   level: { id: 'discovery.level', defaultMessage: 'Discovery · Level {value}' },
   production: { id: 'discovery.production', defaultMessage: 'Cash, Bots & facility production ×{value}' },

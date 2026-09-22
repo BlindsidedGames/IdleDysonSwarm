@@ -127,6 +127,7 @@
   "discovery.confirmAction": "确认",
   "discovery.debug.addCompletions": "添加已完成的发现",
   "discovery.debug.addPoints": "添加超越点数",
+  "discovery.details": "发现详情",
   "discovery.level": "发现 · 等级 {value}",
   "discovery.levelLabel": "发现等级",
   "discovery.lifetime": "面板寿命：{value}秒",

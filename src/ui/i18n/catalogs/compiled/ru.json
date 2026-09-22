@@ -871,6 +871,12 @@
       "value": "Добавить очки Трансценденции"
     }
   ],
+  "discovery.details": [
+    {
+      "type": 0,
+      "value": "Подробности открытий"
+    }
+  ],
   "discovery.level": [
     {
       "type": 0,

@@ -127,6 +127,7 @@
   "discovery.confirmAction": "確定",
   "discovery.debug.addCompletions": "完了した発見を追加",
   "discovery.debug.addPoints": "超越ポイントを追加",
+  "discovery.details": "発見の詳細",
   "discovery.level": "発見 · レベル {value}",
   "discovery.levelLabel": "発見レベル",
   "discovery.lifetime": "パネル寿命：{value}秒",

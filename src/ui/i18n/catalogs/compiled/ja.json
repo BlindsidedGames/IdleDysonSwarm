@@ -871,6 +871,12 @@
       "value": "超越ポイントを追加"
     }
   ],
+  "discovery.details": [
+    {
+      "type": 0,
+      "value": "発見の詳細"
+    }
+  ],
   "discovery.level": [
     {
       "type": 0,
