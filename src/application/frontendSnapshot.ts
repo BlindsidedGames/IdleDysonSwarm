@@ -167,6 +167,7 @@ export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
   'avocado',
   'time',
   'settings',
+  'statistics',
   'navigation',
   'tinker',
 ] as const)

@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { elapsedSpeedrunSeconds, SPEEDRUN_MILESTONES, speedrunEligible, type RunUsage, type SpeedrunStatistics } from '../../../simulation/speedrunStatistics'
+import { elapsedSpeedrunSeconds, speedrunRecordSeconds, SPEEDRUN_MILESTONES, speedrunEligible, isUnboostedSpeedrun, type SpeedrunMilestoneId, type SpeedrunStatistics } from '../../../simulation/speedrunStatistics'
 import { formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { statisticsMessages as messages } from './messages'
-import { boostMessages } from '../store/boostMessages'
+import { SpeedrunUsage } from './SpeedrunUsage'
+import { ClearSpeedrunBestDialog } from './ClearSpeedrunBestDialog'
 
-export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStatistics; readonly locale: EnabledLocale }) {
+export function SpeedrunsSection({ run, locale, onClearBest }: { readonly run?: SpeedrunStatistics; readonly locale: EnabledLocale; readonly onClearBest?: (milestone: SpeedrunMilestoneId) => Promise<boolean> }) {
   const intl = useIntl()
+  const [clearing, setClearing] = useState<SpeedrunMilestoneId | null>(null)
   const [now, setNow] = useState(Date.now)
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer) }, [])
-  const usage = (value: RunUsage) => intl.formatMessage(value === 'yes' ? messages.speedrunYes : value === 'no' ? messages.speedrunNo : messages.speedrunUnknown)
   const elapsed = run ? elapsedSpeedrunSeconds(run, now) : null
   const labels = { firstInfinity: messages.speedrunFirstInfinity, firstQuantumLeap: messages.speedrunFirstQuantum,
     reality: messages.speedrunReality, doubleSpeed: messages.speedrunDoubleSpeed, debugQualification: messages.speedrunDebugQualification }
@@ -22,27 +23,40 @@ export function SpeedrunsSection({ run, locale }: { readonly run?: SpeedrunStati
         <div><dt>{intl.formatMessage(messages.saveCreatedWith)}</dt><dd>{run?.createdWithVersion ?? intl.formatMessage(messages.speedrunUnknown)}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunElapsed)}</dt><dd>{elapsed === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, elapsed)}</dd></div>
         <div><dt>{intl.formatMessage(messages.activeElapsed)}</dt><dd>{run?.activeSeconds === undefined ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, run.activeSeconds)}</dd></div>
-        <div><dt>{intl.formatMessage(messages.speedrunStored)}</dt><dd>{usage(run?.storedTime ?? 'unknown')}</dd></div>
-        <div><dt>{intl.formatMessage(messages.speedrunDebug)}</dt><dd>{usage(run?.debug ?? 'unknown')}</dd></div>
-        <div><dt>{intl.formatMessage(boostMessages.used)}</dt><dd>{usage(run?.botBoostUsed ? 'yes' : 'no')}</dd></div>
-        <div><dt>{intl.formatMessage(messages.speedrunEligibility)}</dt><dd>{intl.formatMessage(run?.debug === 'yes' ? messages.speedrunIneligible : run && speedrunEligible(run) ? messages.speedrunEligible : messages.speedrunUnverified)}</dd></div>
+        <div><dt>{intl.formatMessage(messages.speedrunEligibility)}</dt><dd>{intl.formatMessage(run?.imported ? messages.importedRun : run?.debug === 'yes' ? messages.speedrunIneligible : run && speedrunEligible(run) ? messages.speedrunEligible : messages.speedrunUnverified)}</dd></div>
       </dl>
+      <SpeedrunUsage usage={run} />
     </article>
     <div className="statistics-speedruns__milestones">
       {SPEEDRUN_MILESTONES.map(id => {
         const milestone = run?.milestones[id]
+        const best = run?.personalBests?.[id]
+        const bestLabel = best && isUnboostedSpeedrun(best) ? messages.unboostedBest
+          : best && (best.botBoostUsed || best.doubleIpUsed || best.storedTime === 'yes') ? messages.boostedBest : messages.personalBest
         return <article className="statistics-card" key={id} data-speedrun-milestone={id}>
-          <h3>{intl.formatMessage(labels[id])}</h3>
-          <dl className="statistics-speedruns__facts">
-            <div><dt>{intl.formatMessage(messages.speedrunTime)}</dt><dd>{!milestone ? intl.formatMessage(messages.speedrunNotRecorded) : milestone.elapsedSeconds === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, milestone.elapsedSeconds)}</dd></div>
-            {milestone && <>
-              <div><dt>{intl.formatMessage(messages.speedrunStored)}</dt><dd>{usage(milestone.storedTime)}</dd></div>
-              <div><dt>{intl.formatMessage(messages.speedrunDebug)}</dt><dd>{usage(milestone.debug)}</dd></div>
-              <div><dt>{intl.formatMessage(boostMessages.used)}</dt><dd>{usage(milestone.botBoostUsed ? 'yes' : 'no')}</dd></div>
-            </>}
-          </dl>
+          <h3 tabIndex={-1}>{intl.formatMessage(labels[id])}</h3>
+          {[{ label: messages.currentRun, result: milestone, current: true }, { label: bestLabel, result: best, current: false }].map(({ label, result, current }) => {
+            const seconds = result ? result.elapsedSeconds : current && run ? speedrunRecordSeconds(run, now) : null
+            return <section className="speedrun-result" key={label.id} aria-label={intl.formatMessage(label)}>
+              <div className="speedrun-result__heading">
+                <h4>{intl.formatMessage(label)}</h4>
+                <p className="speedrun-result__time">{!current && !result ? intl.formatMessage(messages.speedrunNotRecorded) : seconds === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, seconds)}</p>
+              </div>
+              {(current || result) && <div className="speedrun-result__indicators">
+                <SpeedrunUsage usage={result ?? run} />
+                {!current && best && onClearBest && <button type="button" className="speedrun-clear" onClick={() => setClearing(id)}
+                  aria-label={intl.formatMessage(messages.clearBestLabel, { milestone: intl.formatMessage(labels[id]) })}
+                  title={intl.formatMessage(messages.clearBestLabel, { milestone: intl.formatMessage(labels[id]) })}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M5.6 18.4 18.4 5.6" /></svg>
+                </button>}
+              </div>}
+            </section>
+          })}
         </article>
       })}
     </div>
+    {clearing && onClearBest && <ClearSpeedrunBestDialog milestone={intl.formatMessage(labels[clearing])}
+      onConfirm={() => onClearBest(clearing)} onClose={() => setClearing(null)} />}
+    <footer className="speedrun-legend"><h3>{intl.formatMessage(messages.usageLegend)}</h3><SpeedrunUsage legend /></footer>
   </section>
 }

@@ -2046,6 +2046,7 @@ export function ReadyDysonSlice({
                                         }
                                       >
                                         <StatisticsSurface
+                                          onClearBest={async (milestone) => (await dispatchPlayer({ kind: 'statistics.clear-speedrun-best', milestone })).status === 'accepted'}
                                           locale={locale}
                                           statistics={
                                             gameplay.progression.statistics

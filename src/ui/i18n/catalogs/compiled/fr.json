@@ -12613,6 +12613,90 @@
       "value": "Partie quantique actuelle"
     }
   ],
+  "statistics.speedruns.boostedBest": [
+    {
+      "type": 0,
+      "value": "Record avec bonus"
+    }
+  ],
+  "statistics.speedruns.cancel": [
+    {
+      "type": 0,
+      "value": "Annuler"
+    }
+  ],
+  "statistics.speedruns.clearBestConfirm": [
+    {
+      "type": 0,
+      "value": "Effacer le record"
+    }
+  ],
+  "statistics.speedruns.clearBestDescription": [
+    {
+      "type": 0,
+      "value": "Effacer votre record pour "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": " ? Le temps de la partie actuelle sera conservé. Cette action est irréversible."
+    }
+  ],
+  "statistics.speedruns.clearBestFailed": [
+    {
+      "type": 0,
+      "value": "Impossible d’effacer ce record. Réessayez."
+    }
+  ],
+  "statistics.speedruns.clearBestLabel": [
+    {
+      "type": 0,
+      "value": "Effacer le record pour "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    }
+  ],
+  "statistics.speedruns.clearBestTitle": [
+    {
+      "type": 0,
+      "value": "Effacer le record enregistré ?"
+    }
+  ],
+  "statistics.speedruns.currentRun": [
+    {
+      "type": 0,
+      "value": "Partie actuelle"
+    }
+  ],
+  "statistics.speedruns.doubleIpUsed": [
+    {
+      "type": 0,
+      "value": "IP doublés utilisés"
+    }
+  ],
+  "statistics.speedruns.importedRun": [
+    {
+      "type": 0,
+      "value": "Non admissible — Sauvegarde importée"
+    }
+  ],
+  "statistics.speedruns.inProgress": [
+    {
+      "type": 0,
+      "value": "En cours"
+    }
+  ],
+  "statistics.speedruns.personalBest": [
+    {
+      "type": 0,
+      "value": "Record personnel"
+    }
+  ],
   "statistics.speedruns.speedrunCurrentSave": [
     {
       "type": 0,
@@ -12725,6 +12809,36 @@
     {
       "type": 0,
       "value": "Speedruns"
+    }
+  ],
+  "statistics.speedruns.unboostedBest": [
+    {
+      "type": 0,
+      "value": "Record sans bonus"
+    }
+  ],
+  "statistics.speedruns.usageLegend": [
+    {
+      "type": 0,
+      "value": "Indicateurs de partie"
+    }
+  ],
+  "statistics.speedruns.usageLegendHelp": [
+    {
+      "type": 0,
+      "value": "Les sauvegardes importées, le débogage et les temps non vérifiés ne comptent pas pour les records personnels."
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "Non utilisé"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "Utilisé"
     }
   ],
   "statistics.tab.general": [
@@ -14644,6 +14758,18 @@
     {
       "type": 0,
       "value": "Correction du bonus Bots ×2 permanents qui cessait de fonctionner après la réinitialisation de la sauvegarde."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Version 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.speedruns": [
+    {
+      "type": 0,
+      "value": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports. Les nouveaux records utilisent le temps de jeu."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

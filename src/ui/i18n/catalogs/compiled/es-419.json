@@ -12613,6 +12613,90 @@
       "value": "Ejecución cuántica actual"
     }
   ],
+  "statistics.speedruns.boostedBest": [
+    {
+      "type": 0,
+      "value": "Récord con mejoras"
+    }
+  ],
+  "statistics.speedruns.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "statistics.speedruns.clearBestConfirm": [
+    {
+      "type": 0,
+      "value": "Borrar récord"
+    }
+  ],
+  "statistics.speedruns.clearBestDescription": [
+    {
+      "type": 0,
+      "value": "¿Borrar tu récord de "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": "? El tiempo de la partida actual se conservará. Esta acción no se puede deshacer."
+    }
+  ],
+  "statistics.speedruns.clearBestFailed": [
+    {
+      "type": 0,
+      "value": "No se pudo borrar este récord. Inténtalo de nuevo."
+    }
+  ],
+  "statistics.speedruns.clearBestLabel": [
+    {
+      "type": 0,
+      "value": "Borrar récord de "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    }
+  ],
+  "statistics.speedruns.clearBestTitle": [
+    {
+      "type": 0,
+      "value": "¿Borrar el récord guardado?"
+    }
+  ],
+  "statistics.speedruns.currentRun": [
+    {
+      "type": 0,
+      "value": "Partida actual"
+    }
+  ],
+  "statistics.speedruns.doubleIpUsed": [
+    {
+      "type": 0,
+      "value": "IP dobles usados"
+    }
+  ],
+  "statistics.speedruns.importedRun": [
+    {
+      "type": 0,
+      "value": "No válida — Partida importada"
+    }
+  ],
+  "statistics.speedruns.inProgress": [
+    {
+      "type": 0,
+      "value": "En curso"
+    }
+  ],
+  "statistics.speedruns.personalBest": [
+    {
+      "type": 0,
+      "value": "Mejor marca personal"
+    }
+  ],
   "statistics.speedruns.speedrunCurrentSave": [
     {
       "type": 0,
@@ -12725,6 +12809,36 @@
     {
       "type": 0,
       "value": "Speedruns"
+    }
+  ],
+  "statistics.speedruns.unboostedBest": [
+    {
+      "type": 0,
+      "value": "Récord sin mejoras"
+    }
+  ],
+  "statistics.speedruns.usageLegend": [
+    {
+      "type": 0,
+      "value": "Indicadores de partida"
+    }
+  ],
+  "statistics.speedruns.usageLegendHelp": [
+    {
+      "type": 0,
+      "value": "Las partidas importadas, el uso de depuración y los tiempos no verificados no cuentan para los récords personales."
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "No usado"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "Usado"
     }
   ],
   "statistics.tab.general": [
@@ -14644,6 +14758,18 @@
     {
       "type": 0,
       "value": "Se corrigió un error por el que Bots ×2 permanentes dejaba de funcionar al reiniciar la partida."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Versión 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.speedruns": [
+    {
+      "type": 0,
+      "value": "Los speedruns ahora comparan tu partida actual con mejores marcas personales que se conservan al reiniciar la partida. Se agregaron indicadores, seguimiento de IP dobles y la pestaña de Estadísticas recordará tu selección. Las marcas se sincronizan mediante la nube, pero no se incluyen en las exportaciones. Los nuevos récords de hitos usan el tiempo jugado."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

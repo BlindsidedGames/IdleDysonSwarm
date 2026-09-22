@@ -1,5 +1,5 @@
 import { CloudStartupResolver, type PortableCloud } from '../platform/portableCloud'
-import { serializeSharedWebSave } from '../save/serialization'
+import { serializeCloudWebSave } from '../save/serialization'
 import { PreparedSave } from '../save/prepare'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementPublication } from '../achievements/contracts'
@@ -150,7 +150,7 @@ function subscribeCloudPublication(
     // Match the repository's durable normalization so the next launch can
     // prove this device has not changed since its last Cloud publication.
     const normalized = PreparedSave.fromDecoded(captured.prepared.copyValidatedState())
-    void cloud.publish(serializeSharedWebSave(normalized.copyValidatedState()))
+    void cloud.publish(serializeCloudWebSave(normalized.copyValidatedState()))
       .catch(() => {
         // A failed older request cannot invalidate a newer checkpoint's
         // publication. Only the latest request owns its retry marker.

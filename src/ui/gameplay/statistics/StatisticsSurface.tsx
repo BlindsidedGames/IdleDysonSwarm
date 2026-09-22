@@ -1,3 +1,5 @@
+import type { SpeedrunMilestoneId } from '../../../simulation/speedrunStatistics'
+import { readPresentationPreference, writePresentationPreference } from '../../presentationPreferences'
 import { useId, useState } from 'react'
 import { SpeedrunsSection } from './SpeedrunsSection'
 import {
@@ -36,6 +38,7 @@ type DisplayMetricKey =
   | 'combinedInfinityPoints'
 
 export interface StatisticsSurfaceProps {
+  readonly onClearBest?: (milestone: SpeedrunMilestoneId) => Promise<boolean>
   readonly locale: EnabledLocale
   readonly statistics: StatisticsState
   readonly currentBreakTarget: bigint
@@ -154,9 +157,14 @@ export function StatisticsSurface({
   currentBreakTarget,
   swarmScale,
   visibility,
+  onClearBest,
 }: StatisticsSurfaceProps) {
   const intl = useIntl()
-  const [tab, setTab] = useState<'general' | 'speedruns'>('general')
+  const [tab, updateTab] = useState<'general' | 'speedruns'>(() => readPresentationPreference('ids.statistics.tab') === 'speedruns' ? 'speedruns' : 'general')
+  const setTab = (next: 'general' | 'speedruns') => {
+    updateTab(next)
+    writePresentationPreference('ids.statistics.tab', next)
+  }
   const id = useId()
   const scopes = [
     {
@@ -215,7 +223,7 @@ export function StatisticsSurface({
         </div>
       </header>
       <div className="statistics-surface__content" role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${tab}`} key={tab}>
-        {tab === 'speedruns' ? <SpeedrunsSection run={statistics.speedruns} locale={locale} /> : <>
+        {tab === 'speedruns' ? <SpeedrunsSection run={statistics.speedruns} locale={locale} onClearBest={onClearBest} /> : <>
         <div className="statistics-surface__scope-grid">
           {scopes.map((scope) => (
             <ScopeCard

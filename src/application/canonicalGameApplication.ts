@@ -1,4 +1,4 @@
-import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime } from '../simulation/speedrunStatistics'
+import { markSpeedrunUsage, observeSpeedruns } from '../simulation/speedrunStatistics'
 import {
   applyDevelopmentAction,
   applyDevelopmentDysonBots,
@@ -1451,7 +1451,6 @@ function advanceActive(
     )
   }
   replaceEventCarrier(candidate, result.state)
-  Object.assign(candidate, { gameState: recordActiveSpeedrunTime(candidate.gameState, result.baseSecondsConsumed) })
   appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
   return { accepted: true, changed: true }
 }
@@ -1482,7 +1481,6 @@ function advanceActiveContinuous(
     return reject(result.issue, `Continuous active step ended as ${result.issue}.`)
   }
   replaceEventCarrier(candidate, result.state)
-  Object.assign(candidate, { gameState: recordActiveSpeedrunTime(candidate.gameState, result.baseSecondsConsumed) })
   appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
   return { accepted: true, changed: true }
 }

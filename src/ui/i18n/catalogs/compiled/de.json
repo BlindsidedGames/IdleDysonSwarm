@@ -12613,6 +12613,90 @@
       "value": "Aktueller Quantendurchlauf"
     }
   ],
+  "statistics.speedruns.boostedBest": [
+    {
+      "type": 0,
+      "value": "Bestzeit mit Boni"
+    }
+  ],
+  "statistics.speedruns.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "statistics.speedruns.clearBestConfirm": [
+    {
+      "type": 0,
+      "value": "Bestzeit löschen"
+    }
+  ],
+  "statistics.speedruns.clearBestDescription": [
+    {
+      "type": 0,
+      "value": "Deine Bestzeit für "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": " löschen? Die Zeit des aktuellen Durchlaufs bleibt erhalten. Dies kann nicht rückgängig gemacht werden."
+    }
+  ],
+  "statistics.speedruns.clearBestFailed": [
+    {
+      "type": 0,
+      "value": "Diese Bestzeit konnte nicht gelöscht werden. Bitte versuche es erneut."
+    }
+  ],
+  "statistics.speedruns.clearBestLabel": [
+    {
+      "type": 0,
+      "value": "Bestzeit löschen: "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    }
+  ],
+  "statistics.speedruns.clearBestTitle": [
+    {
+      "type": 0,
+      "value": "Gespeicherte Bestzeit löschen?"
+    }
+  ],
+  "statistics.speedruns.currentRun": [
+    {
+      "type": 0,
+      "value": "Aktueller Lauf"
+    }
+  ],
+  "statistics.speedruns.doubleIpUsed": [
+    {
+      "type": 0,
+      "value": "Doppelte IP verwendet"
+    }
+  ],
+  "statistics.speedruns.importedRun": [
+    {
+      "type": 0,
+      "value": "Nicht zugelassen — Importierter Spielstand"
+    }
+  ],
+  "statistics.speedruns.inProgress": [
+    {
+      "type": 0,
+      "value": "Läuft"
+    }
+  ],
+  "statistics.speedruns.personalBest": [
+    {
+      "type": 0,
+      "value": "Persönliche Bestzeit"
+    }
+  ],
   "statistics.speedruns.speedrunCurrentSave": [
     {
       "type": 0,
@@ -12725,6 +12809,36 @@
     {
       "type": 0,
       "value": "Speedruns"
+    }
+  ],
+  "statistics.speedruns.unboostedBest": [
+    {
+      "type": 0,
+      "value": "Bestzeit ohne Boni"
+    }
+  ],
+  "statistics.speedruns.usageLegend": [
+    {
+      "type": 0,
+      "value": "Laufanzeigen"
+    }
+  ],
+  "statistics.speedruns.usageLegendHelp": [
+    {
+      "type": 0,
+      "value": "Importierte Spielstände, Debug-Nutzung und unbestätigte Zeiten zählen nicht für persönliche Bestzeiten."
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "Nicht verwendet"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "Verwendet"
     }
   ],
   "statistics.tab.general": [
@@ -14644,6 +14758,18 @@
     {
       "type": 0,
       "value": "Behoben: Dauerhaft 2× Bots verlor nach dem Zurücksetzen des Spielstands seine Wirkung."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Version 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.speedruns": [
+    {
+      "type": 0,
+      "value": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert. Neue Meilensteinrekorde verwenden die gespielte Zeit."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

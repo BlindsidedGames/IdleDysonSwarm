@@ -485,7 +485,7 @@
 .statistics-speedruns__facts { margin: 0; padding: var(--ui-panel-inset); }
 .statistics-speedruns__facts > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem 1rem; padding-block: .2rem; }
 .statistics-speedruns__facts dt, .statistics-speedruns__facts dd { min-width: 0; overflow-wrap: anywhere; }
-.statistics-speedruns__facts dd { margin: 0; color: cyan; font-variant-numeric: tabular-nums; }
+.statistics-speedruns__facts dd { margin: 0; color: var(--statistics-value); font-variant-numeric: tabular-nums; }
 .statistics-speedruns__note { margin: 0; padding: 0 var(--ui-panel-inset) var(--ui-panel-inset); color: #c2d4c1; }
 
 .statistics-tabs { display: flex; gap: var(--ui-section-gap); inline-size: 100%; }
@@ -493,3 +493,41 @@
 .statistics-tabs [aria-selected="true"] { background: var(--theme-selected); border-color: var(--theme-accent); }
 .statistics-tabs [role="tab"]:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 2px; }
 .statistics-speedruns__facts dd { overflow-wrap: anywhere; }
+
+.speedrun-result { padding: var(--ui-panel-inset); }
+.speedrun-result + .speedrun-result { border-top: 1px solid var(--ui-border-color, #66546e); }
+.speedrun-result h4, .speedrun-result p { margin: 0 0 .4rem; }
+.speedrun-result__heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0 1rem; }
+.speedrun-result__heading > * { min-inline-size: 0; }
+.speedrun-result__time { color: var(--statistics-value); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.speedrun-usage { display: flex; flex-wrap: wrap; gap: .6rem; list-style: none; margin: 0; padding: .5rem var(--ui-panel-inset); }
+.speedrun-result .speedrun-usage { padding-inline: 0; }
+.speedrun-usage li { display: flex; align-items: center; gap: .45rem; }
+.speedrun-usage__indicator { position: relative; display: inline-flex; align-items: center; line-height: 1; font-size: 1.6rem; color: var(--color-text-secondary); border-radius: .2rem; }
+.speedrun-usage__indicator[data-usage="yes"] { color: var(--statistics-value); }
+.speedrun-usage__indicator[data-usage="yes"][data-disqualifies="true"] { color: color-mix(in srgb, var(--color-negative) 60%, var(--color-text-secondary)); }
+.speedrun-usage__indicator:focus-visible { outline: 2px solid var(--statistics-value); outline-offset: 3px; }
+.speedrun-legend { padding: var(--ui-panel-inset); }
+.speedrun-legend h3 { margin-top: 0; }
+.speedrun-usage--legend { padding: 0; gap: .6rem 1.2rem; }
+
+.speedrun-usage__tooltip { display: none; position: absolute; z-index: 2; inset-block-end: calc(100% + .4rem); inset-inline-start: 0; inline-size: max-content; max-inline-size: 13rem; padding: .35rem .5rem; border: 1px solid var(--theme-divider); border-radius: .25rem; background: var(--theme-panel); color: white; font-size: .8rem; box-shadow: 0 2px 5px #0008; }
+.speedrun-usage__indicator:hover .speedrun-usage__tooltip, .speedrun-usage__indicator:focus-visible .speedrun-usage__tooltip { display: block; }
+
+.speedrun-usage--states { padding: .8rem 0 0; gap: .6rem 1.2rem; }
+
+.speedrun-usage__unknown { position: absolute; inset-inline-end: -.25em; top: 50%; transform: translateY(-50%); font-size: .8em; line-height: 1; font-weight: bold; color: var(--color-text-primary); }
+
+.statistics-speedruns__milestones > .statistics-card { display: flex; flex-direction: column; }
+.speedrun-result__indicators { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.speedrun-clear { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; inline-size: 2.75rem; block-size: 2.75rem; border: 0; border-radius: .35rem; background: transparent; color: var(--color-text-secondary); cursor: pointer; }
+.speedrun-clear svg { inline-size: 1.25rem; block-size: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.speedrun-clear:hover:enabled { color: var(--color-text-primary); background: var(--theme-selected); }
+.speedrun-clear:focus-visible { outline: 2px solid var(--statistics-value); outline-offset: -3px; }
+.speedrun-clear-dialog { max-inline-size: min(28rem, calc(100vw - 2rem)); box-sizing: border-box; padding: 1.25rem; border: 1px solid var(--color-control); border-radius: .5rem; background: var(--color-surface); color: var(--color-text-primary); font: inherit; }
+.speedrun-clear-dialog::backdrop { background: #000a; }
+.speedrun-clear-dialog h3 { margin-block-start: 0; }
+.speedrun-clear-dialog__actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .75rem; }
+.speedrun-clear-dialog button { min-block-size: 2.75rem; padding: .5rem 1rem; border: 1px solid var(--color-control); border-radius: .35rem; font: inherit; background: var(--color-surface-raised); color: inherit; cursor: pointer; }
+.speedrun-clear-dialog button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.speedrun-clear-dialog button:disabled { opacity: .5; cursor: default; }

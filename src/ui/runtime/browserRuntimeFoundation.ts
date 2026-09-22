@@ -675,6 +675,13 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       } else {
         dispatched = graph.playerCommands.dispatch(command, prepareForDispatch)
       }
+      if (command.kind === 'statistics.clear-speedrun-best') {
+        const result = await dispatched
+        if (result.status === 'accepted' && !(await this.requestCheckpoint())) {
+          return runtimePlayerFailure('RUNTIME-CHECKPOINT-FAILED', 'The cleared best could not be saved.')
+        }
+        return result
+      }
       return command.kind === 'settings.set-processing-interval'
         ? await dispatched
         : dispatched

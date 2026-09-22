@@ -1,4 +1,4 @@
-import { observeSpeedruns } from './speedrunStatistics'
+import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime } from './speedrunStatistics'
 import { isBreakInfinityEnabled, isInfinityChallengeActive } from './infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
@@ -626,6 +626,7 @@ export class CanonicalEventTimeModel
         this.context.rateClockMultiplier ?? 1,
       )
       if (this.context.mode === 'active') {
+        candidate = recordActiveSpeedrunTime(candidate, seconds * (this.context.rateClockMultiplier ?? 1))
         candidate = withAdvancedManualInfinityObservation(
           candidate,
           seconds * (this.context.rateClockMultiplier ?? 1),
@@ -967,9 +968,17 @@ export class CanonicalEventTimeModel
       return
     }
 
+    // Compare actual credited IP, including the storage cap, against the same
+    // reward calculation without the purchased multiplier.
+    const canMarkDoubleIp = this.carrier.entitlements.permanentDoubleIp && result.state.statistics.speedruns?.doubleIpUsed !== true
+    const unboostedReward = canMarkDoubleIp ? infinityPointsForBots(
+      evaluation.breakInfinity ? resetSeed.dyson.bots : ordinaryInfinityBotThreshold(resetSeed.quantum.divisionsPurchased),
+      { ...createInfinityCycleState(this.carrier), permanentDoubleIp: false },
+    ) : result.rewardGranted
+    const usedDoubleIp = this.carrier.entitlements.permanentDoubleIp && result.rewardGranted > unboostedReward
     const nextState = withResetInfinityClock(
       withDeferredEventStatistics(
-        result.state,
+        usedDoubleIp ? markSpeedrunUsage(result.state, 'doubleIpUsed') : result.state,
         this.carrier.gameState.statistics,
       ),
       minimumCycleSeconds,

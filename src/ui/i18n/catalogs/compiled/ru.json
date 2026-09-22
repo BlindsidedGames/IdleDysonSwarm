@@ -12613,6 +12613,90 @@
       "value": "Текущий Квантовый цикл"
     }
   ],
+  "statistics.speedruns.boostedBest": [
+    {
+      "type": 0,
+      "value": "Рекорд с бонусами"
+    }
+  ],
+  "statistics.speedruns.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "statistics.speedruns.clearBestConfirm": [
+    {
+      "type": 0,
+      "value": "Удалить рекорд"
+    }
+  ],
+  "statistics.speedruns.clearBestDescription": [
+    {
+      "type": 0,
+      "value": "Удалить ваш рекорд для «"
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": "»? Время текущего забега сохранится. Это действие нельзя отменить."
+    }
+  ],
+  "statistics.speedruns.clearBestFailed": [
+    {
+      "type": 0,
+      "value": "Не удалось удалить этот рекорд. Попробуйте ещё раз."
+    }
+  ],
+  "statistics.speedruns.clearBestLabel": [
+    {
+      "type": 0,
+      "value": "Удалить рекорд: "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    }
+  ],
+  "statistics.speedruns.clearBestTitle": [
+    {
+      "type": 0,
+      "value": "Удалить сохранённый рекорд?"
+    }
+  ],
+  "statistics.speedruns.currentRun": [
+    {
+      "type": 0,
+      "value": "Текущий забег"
+    }
+  ],
+  "statistics.speedruns.doubleIpUsed": [
+    {
+      "type": 0,
+      "value": "Удвоение IP использовано"
+    }
+  ],
+  "statistics.speedruns.importedRun": [
+    {
+      "type": 0,
+      "value": "Не засчитывается — Импортированное сохранение"
+    }
+  ],
+  "statistics.speedruns.inProgress": [
+    {
+      "type": 0,
+      "value": "В процессе"
+    }
+  ],
+  "statistics.speedruns.personalBest": [
+    {
+      "type": 0,
+      "value": "Личный рекорд"
+    }
+  ],
   "statistics.speedruns.speedrunCurrentSave": [
     {
       "type": 0,
@@ -12725,6 +12809,36 @@
     {
       "type": 0,
       "value": "Спидраны"
+    }
+  ],
+  "statistics.speedruns.unboostedBest": [
+    {
+      "type": 0,
+      "value": "Рекорд без бонусов"
+    }
+  ],
+  "statistics.speedruns.usageLegend": [
+    {
+      "type": 0,
+      "value": "Отметки забега"
+    }
+  ],
+  "statistics.speedruns.usageLegendHelp": [
+    {
+      "type": 0,
+      "value": "Импортированные сохранения, использование отладки и неподтверждённое время не учитываются в личных рекордах."
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "Не использовано"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "Использовано"
     }
   ],
   "statistics.tab.general": [
@@ -14644,6 +14758,18 @@
     {
       "type": 0,
       "value": "Исправлена потеря эффекта «Боты ×2 навсегда» после сброса сохранения."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Версия 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.speedruns": [
+    {
+      "type": 0,
+      "value": "Спидраны теперь сравнивают текущий забег с личными рекордами, которые сохраняются после сброса сохранения. Добавлены отметки забега, учёт удвоения IP и запоминание вкладки статистики. Рекорды синхронизируются через облачные сохранения, но не входят в экспорт. Новые рекорды этапов учитывают время игры."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

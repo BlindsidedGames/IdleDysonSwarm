@@ -25749,6 +25749,186 @@
       "value": "]"
     }
   ],
+  "statistics.speedruns.boostedBest": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿǿǿşŧḗḗḓ ƀḗḗşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.cancel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.clearBestConfirm": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀḗḗȧȧř ƀḗḗşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.clearBestDescription": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀḗḗȧȧř ẏǿǿŭŭř şȧȧṽḗḗḓ ƀḗḗşŧ ƒǿǿř "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": "? Ẏǿǿŭŭř ƈŭŭřřḗḗƞŧ-řŭŭƞ ŧīḿḗḗ ẇīŀŀ şŧȧȧẏ īƞŧȧȧƈŧ. Ŧħīş ƈȧȧƞƞǿǿŧ ƀḗḗ ŭŭƞḓǿǿƞḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.clearBestFailed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿŭŭŀḓ ƞǿǿŧ ƈŀḗḗȧȧř ŧħīş ƀḗḗşŧ. Ƥŀḗḗȧȧşḗḗ ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.clearBestLabel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀḗḗȧȧř ƀḗḗşŧ ƒǿǿř "
+    },
+    {
+      "type": 1,
+      "value": "milestone"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.clearBestTitle": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀḗḗȧȧř şȧȧṽḗḗḓ ƀḗḗşŧ?"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.currentRun": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŭŭřřḗḗƞŧ řŭŭƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.doubleIpUsed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ ĪƤ ŭŭşḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.importedRun": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞḗḗŀīɠīƀŀḗḗ — Īḿƥǿǿřŧḗḗḓ şȧȧṽḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.inProgress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.personalBest": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥḗḗřşǿǿƞȧȧŀ ƀḗḗşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "statistics.speedruns.speedrunCurrentSave": [
     {
       "type": 0,
@@ -26009,6 +26189,76 @@
     {
       "type": 0,
       "value": "Şƥḗḗḗḗḓřŭŭƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.unboostedBest": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞƀǿǿǿǿşŧḗḗḓ ƀḗḗşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.usageLegend": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řŭŭƞ īƞḓīƈȧȧŧǿǿřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.usageLegendHelp": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥḗḗřşǿǿƞȧȧŀ ƀḗḗşŧş ḗḗẋƈŀŭŭḓḗḗ īḿƥǿǿřŧḗḗḓ şȧȧṽḗḗş, Ḓḗḗƀŭŭɠ ŭŭşḗḗ, ȧȧƞḓ ŭŭƞṽḗḗřīƒīḗḗḓ ŧīḿḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.usageNotUsed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿŧ ŭŭşḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "statistics.speedruns.usageUsed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭşḗḗḓ"
     },
     {
       "type": 0,
@@ -29544,6 +29794,34 @@
     {
       "type": 0,
       "value": "Ƒīẋḗḗḓ Ƥḗḗřḿȧȧƞḗḗƞŧ 2× Ɓǿǿŧş ŀǿǿşīƞɠ īŧş ḗḗƒƒḗḗƈŧ ȧȧƒŧḗḗř řḗḗşḗḗŧŧīƞɠ ẏǿǿŭŭř şȧȧṽḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽḗḗřşīǿǿƞ 4.1.11"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.speedruns": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓřŭŭƞş ƞǿǿẇ ƈǿǿḿƥȧȧřḗḗ ẏǿǿŭŭř ƈŭŭřřḗḗƞŧ řŭŭƞ ẇīŧħ ƥḗḗřşǿǿƞȧȧŀ ƀḗḗşŧş ŧħȧȧŧ şŭŭřṽīṽḗḗ Řḗḗşḗḗŧ Şȧȧṽḗḗ. Ȧḓḓḗḗḓ řŭŭƞ īƞḓīƈȧȧŧǿǿřş, Ḓǿǿŭŭƀŀḗḗ ĪƤ ŧřȧȧƈķīƞɠ, ȧȧƞḓ řḗḗḿḗḗḿƀḗḗřḗḗḓ Şŧȧȧŧīşŧīƈş ŧȧȧƀş. Ƞḗḗẇ ḿīŀḗḗşŧǿǿƞḗḗ řḗḗƈǿǿřḓş ŭŭşḗḗ ŧīḿḗḗ ƥŀȧȧẏḗḗḓ. Ƥḗḗřşǿǿƞȧȧŀ ƀḗḗşŧş şẏƞƈ ŧħřǿǿŭŭɠħ Ƈŀǿǿŭŭḓ şȧȧṽḗḗş ƀŭŭŧ ȧȧřḗḗ ƞǿǿŧ şħȧȧřḗḗḓ ŧħřǿǿŭŭɠħ ḗḗẋƥǿǿřŧş."
     },
     {
       "type": 0,

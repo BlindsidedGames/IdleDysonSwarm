@@ -16,7 +16,7 @@ const progression = Object.freeze({
 })
 
 describe('Wiki patch-note content', () => {
-  test('shows 4.1.10 first and retains older notes', () => {
+  test('shows 4.1.11 first and retains older notes', () => {
     render(
       <IntlProvider locale="en" messages={{}} onError={() => undefined}>
         <WikiSurface
@@ -27,10 +27,10 @@ describe('Wiki patch-note content', () => {
       </IntlProvider>,
     )
 
-    const latest = screen.getByRole('heading', { name: 'Version 4.1.10' }).closest('section')!
+    const latest = screen.getByRole('heading', { name: 'Version 4.1.11' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
-      'Fixed Permanent 2× Bots losing its effect after resetting your save.',
+      'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.',
     ])
     const version419List = screen.getByRole('heading', { name: 'Version 4.1.9' }).nextElementSibling as HTMLElement
     expect(within(version419List).getAllByRole('listitem').map((item) => item.textContent)).toEqual([

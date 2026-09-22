@@ -61,13 +61,20 @@ export function serializeWebSave(save: SaveRecord): string {
   }))}`
 }
 
+/** Same-account Cloud carries run records, but never grants store ownership. */
+export function serializeCloudWebSave(save: SaveRecord): string {
+  return serializeWebSave(stripNonShareableEntitlementClaims(save))
+}
+
 /**
- * Produces a player-shareable save without copying device/store ownership.
+ * Produces a player-shareable save without copying device/store ownership or personal bests.
  * Gameplay's Quantum Double IP upgrade is a separate nested progression flag
  * and is intentionally preserved.
  */
 export function serializeSharedWebSave(save: SaveRecord): string {
-  return serializeWebSave(stripNonShareableEntitlementClaims(save))
+  const shared = stripNonShareableEntitlementClaims(save)
+  if (isRecord(shared.idsSpeedruns)) delete shared.idsSpeedruns.personalBests
+  return serializeWebSave(shared)
 }
 
 export function stripNonShareableEntitlementClaims(

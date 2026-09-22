@@ -1,6 +1,23 @@
 import { defineMessages } from 'react-intl'
 
 export const statisticsMessages = defineMessages({
+  unboostedBest: { id: 'statistics.speedruns.unboostedBest', defaultMessage: 'Unboosted best', description: 'Best result with no assistance used.' },
+  boostedBest: { id: 'statistics.speedruns.boostedBest', defaultMessage: 'Boosted best', description: 'Best assisted result when no unboosted result exists.' },
+  clearBestLabel: { id: 'statistics.speedruns.clearBestLabel', defaultMessage: 'Clear best for {milestone}', description: 'Accessible name of the per-milestone clear button.' },
+  clearBestTitle: { id: 'statistics.speedruns.clearBestTitle', defaultMessage: 'Clear saved best?', description: 'Confirmation dialog title.' },
+  clearBestDescription: { id: 'statistics.speedruns.clearBestDescription', defaultMessage: 'Clear your saved best for {milestone}? Your current-run time will stay intact. This cannot be undone.', description: 'Explains the scope of clearing one saved record.' },
+  clearBestConfirm: { id: 'statistics.speedruns.clearBestConfirm', defaultMessage: 'Clear best', description: 'Confirms deletion of one saved record.' },
+  clearBestFailed: { id: 'statistics.speedruns.clearBestFailed', defaultMessage: 'Could not clear this best. Please try again.', description: 'Failed record deletion.' },
+  cancel: { id: 'statistics.speedruns.cancel', defaultMessage: 'Cancel', description: 'Dismiss record deletion without changes.' },
+  currentRun: { id: 'statistics.speedruns.currentRun', defaultMessage: 'Current run', description: 'Current milestone attempt.' },
+  personalBest: { id: 'statistics.speedruns.personalBest', defaultMessage: 'Personal best', description: 'Fastest eligible milestone time across saves.' },
+  inProgress: { id: 'statistics.speedruns.inProgress', defaultMessage: 'In progress', description: 'Milestone not yet reached.' },
+  doubleIpUsed: { id: 'statistics.speedruns.doubleIpUsed', defaultMessage: 'Double IP used', description: 'Purchased Double Infinity Points increased an awarded reward.' },
+  importedRun: { id: 'statistics.speedruns.importedRun', defaultMessage: 'Ineligible — Imported save', description: 'Imported progress cannot set personal bests until Reset Save.' },
+  usageLegend: { id: 'statistics.speedruns.usageLegend', defaultMessage: 'Run indicators', description: 'Legend for speedrun assistance icons.' },
+  usageUsed: { id: 'statistics.speedruns.usageUsed', defaultMessage: 'Used', description: 'Label for an assistance indicator that was used.' },
+  usageNotUsed: { id: 'statistics.speedruns.usageNotUsed', defaultMessage: 'Not used', description: 'Label for an assistance indicator that was not used.' },
+  usageLegendHelp: { id: 'statistics.speedruns.usageLegendHelp', defaultMessage: 'Personal bests exclude imported saves, Debug use, and unverified times.', description: 'Explains speedrun indicators and record eligibility.' },
   general: { id: 'statistics.tab.general', defaultMessage: 'General', description: 'General statistics tab.' },
   saveCreatedWith: { id: 'statistics.save.createdWith', defaultMessage: 'Save created with', description: 'Game version originally used to create this save.' },
   saveCreated: { id: 'statistics.save.created', defaultMessage: 'Save created', description: 'Exact save creation date and time.' },

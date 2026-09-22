@@ -1,3 +1,4 @@
+import { clearSpeedrunBest, SPEEDRUN_MILESTONES, type SpeedrunMilestoneId } from '../simulation/speedrunStatistics'
 import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
 import { formatUnknownError as errorDetail } from '../core/unknownError'
@@ -313,6 +314,7 @@ export type CanonicalGameCommand =
   | {
       readonly kind: 'time.upgrade-stored-capacity'
     }
+  | { readonly kind: 'statistics.clear-speedrun-best'; readonly milestone: SpeedrunMilestoneId }
   | { readonly kind: 'boost.claim' }
   | { readonly kind: 'boost.set-enabled'; readonly enabled: boolean }
   | {
@@ -346,6 +348,7 @@ export type {
 } from '../game-state/types'
 
 export type CanonicalGameCommandCode =
+  | `statistics:${string}`
   | 'quantum-leap-boundary-unavailable'
   | 'research-tuning-carrier-unavailable'
   | 'runtime-evaluation-carrier-unavailable'
@@ -788,6 +791,7 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     authority: 'upgradeStoredTimeCapacity',
     requires: ['stored-time-cheater-carrier'],
   },
+  'statistics.clear-speedrun-best': { supported: true, authority: 'clearSpeedrunBest' },
   'boost.claim': { supported: true, authority: 'canonical Bot boost claim' },
   'boost.set-enabled': { supported: true, authority: 'canonical Bot boost preference' },
   'time.request-stored-time-spend': {
@@ -860,6 +864,13 @@ export function routeCanonicalGameCommand(
   }
 
   switch (command.kind) {
+    case 'statistics.clear-speedrun-best': {
+      if (!SPEEDRUN_MILESTONES.includes(command.milestone)) return rejectDomain(state, carriers, 'statistics:invalid-milestone', 'statistics.speedruns', 'Unknown speedrun milestone.')
+      const run = state.statistics.speedruns
+      const cleared = run ? clearSpeedrunBest(run, command.milestone) : run
+      const next = cleared === run ? state : { ...state, statistics: { ...state.statistics, speedruns: cleared } }
+      return finalizeAccepted(state, next, next !== state, 'statistics:best-cleared', carriers, options.runtimeEvaluation, EMPTY_ISSUES, false)
+    }
     case 'boost.claim': {
       if (options.permanentBotBoost) return rejectDomain(state, carriers, 'boost:owned', 'meta.botBoost', 'Use the permanent boost toggle.')
       const now = Date.now()

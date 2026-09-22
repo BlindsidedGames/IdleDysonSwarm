@@ -1591,3 +1591,20 @@ describe('legacy canonical event-time parity adapter', () => {
     ).toBe(Number.MAX_VALUE * 0.01)
   })
 })
+
+test.each([['active', true], ['active', false], ['stored-time', false]] as const)('Double IP records actual rewards during %s processing (manual=%s)', (mode, manual) => {
+  const source = baseState()
+  const run = createSpeedrunStatistics(new Date(Date.now() - 10000).toISOString(), true)
+  const ready = { ...source, meta: { ...source.meta, firstInfinityComplete: false },
+    statistics: { ...source.statistics, speedruns: run },
+    dyson: { ...source.dyson, bots: 4.2e19 },
+    timeline: { ...source.timeline, infinityCycleSeconds: 1 } }
+  for (const purchased of [false, true]) {
+    const model = new CanonicalEventTimeModel({ ...carrier(ready), entitlements: { permanentDoubleIp: purchased } }, { ...context(), mode })
+    expect(model.state.gameState.statistics.speedruns!.doubleIpUsed).toBe(false)
+    model.applyInfinityReset(1, createSimulationSummary(), manual)
+    expect(model.issue).toBeUndefined()
+    expect(model.state.gameState.statistics.speedruns!.doubleIpUsed).toBe(purchased)
+    expect(model.state.gameState.statistics.speedruns!.milestones.firstInfinity?.doubleIpUsed).toBe(purchased)
+  }
+})

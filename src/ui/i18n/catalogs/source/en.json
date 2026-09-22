@@ -6514,6 +6514,54 @@
     "defaultMessage": "Current Quantum run",
     "description": "Statistics accumulated since the latest Quantum Leap."
   },
+  "statistics.speedruns.boostedBest": {
+    "defaultMessage": "Boosted best",
+    "description": "Best assisted result when no unboosted result exists."
+  },
+  "statistics.speedruns.cancel": {
+    "defaultMessage": "Cancel",
+    "description": "Dismiss record deletion without changes."
+  },
+  "statistics.speedruns.clearBestConfirm": {
+    "defaultMessage": "Clear best",
+    "description": "Confirms deletion of one saved record."
+  },
+  "statistics.speedruns.clearBestDescription": {
+    "defaultMessage": "Clear your saved best for {milestone}? Your current-run time will stay intact. This cannot be undone.",
+    "description": "Explains the scope of clearing one saved record."
+  },
+  "statistics.speedruns.clearBestFailed": {
+    "defaultMessage": "Could not clear this best. Please try again.",
+    "description": "Failed record deletion."
+  },
+  "statistics.speedruns.clearBestLabel": {
+    "defaultMessage": "Clear best for {milestone}",
+    "description": "Accessible name of the per-milestone clear button."
+  },
+  "statistics.speedruns.clearBestTitle": {
+    "defaultMessage": "Clear saved best?",
+    "description": "Confirmation dialog title."
+  },
+  "statistics.speedruns.currentRun": {
+    "defaultMessage": "Current run",
+    "description": "Current milestone attempt."
+  },
+  "statistics.speedruns.doubleIpUsed": {
+    "defaultMessage": "Double IP used",
+    "description": "Purchased Double Infinity Points increased an awarded reward."
+  },
+  "statistics.speedruns.importedRun": {
+    "defaultMessage": "Ineligible — Imported save",
+    "description": "Imported progress cannot set personal bests until Reset Save."
+  },
+  "statistics.speedruns.inProgress": {
+    "defaultMessage": "In progress",
+    "description": "Milestone not yet reached."
+  },
+  "statistics.speedruns.personalBest": {
+    "defaultMessage": "Personal best",
+    "description": "Fastest eligible milestone time across saves."
+  },
   "statistics.speedruns.speedrunCurrentSave": {
     "defaultMessage": "Current save run",
     "description": "Speedrun statistics label or explanation."
@@ -6589,6 +6637,26 @@
   "statistics.speedruns.speedruns": {
     "defaultMessage": "Speedruns",
     "description": "Speedrun statistics label or explanation."
+  },
+  "statistics.speedruns.unboostedBest": {
+    "defaultMessage": "Unboosted best",
+    "description": "Best result with no assistance used."
+  },
+  "statistics.speedruns.usageLegend": {
+    "defaultMessage": "Run indicators",
+    "description": "Legend for speedrun assistance icons."
+  },
+  "statistics.speedruns.usageLegendHelp": {
+    "defaultMessage": "Personal bests exclude imported saves, Debug use, and unverified times.",
+    "description": "Explains speedrun indicators and record eligibility."
+  },
+  "statistics.speedruns.usageNotUsed": {
+    "defaultMessage": "Not used",
+    "description": "Label for an assistance indicator that was not used."
+  },
+  "statistics.speedruns.usageUsed": {
+    "defaultMessage": "Used",
+    "description": "Label for an assistance indicator that was used."
   },
   "statistics.tab.general": {
     "defaultMessage": "General",
@@ -7380,6 +7448,14 @@
   "wiki.patch-notes.version-4-1-10.bot-boost": {
     "defaultMessage": "Fixed Permanent 2× Bots losing its effect after resetting your save.",
     "description": "Version 4.1.10 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11": {
+    "defaultMessage": "Version 4.1.11",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.speedruns": {
+    "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.",
+    "description": "Version 4.1.11 speedrun improvements."
   },
   "wiki.patch-notes.version-4-1-2": {
     "defaultMessage": "Version 4.1.2",
