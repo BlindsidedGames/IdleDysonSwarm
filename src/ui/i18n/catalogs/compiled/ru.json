@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Спасибо, что играете в Idle Dyson Swarm. Бонусы Авокато перемножаются и не влияют на валюты, которые вы тратите на их увеличение. Очки Переполнения сохраняются для следующего этапа игры."
+      "value": "Спасибо, что играете в Idle Dyson Swarm. Бонусы Авокато перемножаются и не влияют на валюты, которые вы тратите на их усиление. Тратьте очки Трансценденции на Открытия и их постоянные улучшения."
     }
   ],
   "avocato.developer-note.title": [
@@ -216,7 +216,7 @@
   "avocato.multiplier.overflow": [
     {
       "type": 0,
-      "value": "Переполнение"
+      "value": "Трансценденция"
     }
   ],
   "avocato.multiplier.strange-matter": [
@@ -234,31 +234,25 @@
   "avocato.overflow.confirm": [
     {
       "type": 0,
-      "value": "Подтвердить Переполнение"
+      "value": "Подтвердить Трансценденцию"
     }
   ],
   "avocato.overflow.description": [
     {
       "type": 0,
-      "value": "Сбросьте Ботов, прогресс Бесконечности, Кванта, Реальности и Симуляции, а также все бонусы Авокато, чтобы получить 1 очко Переполнения. Покупки, настройки, Офлайн-время и завершённые Секреты сохраняются."
+      "value": "Сбрасывает прогресс ботов, Бесконечности, Кванта, Реальности и Симуляции, а также все бонусы Авокато за 1 очко Трансценденции. Открытия возвращаются к начальному уровню. Постоянные улучшения, покупки, настройки, офлайн-время и завершённые Тайны сохраняются."
     }
   ],
   "avocato.overflow.failed": [
     {
       "type": 0,
-      "value": "Не удалось сохранить Переполнение. Текущий забег сохранён. Попробуйте ещё раз."
-    }
-  ],
-  "avocato.overflow.future": [
-    {
-      "type": 0,
-      "value": "Очки Переполнения сохраняются для будущего этапа игры. Пока они не увеличивают производство."
+      "value": "Не удалось сохранить Трансценденцию. Текущий забег сохранён. Попробуйте ещё раз."
     }
   ],
   "avocato.overflow.legacy": [
     {
       "type": 0,
-      "value": "Прежний бонус Переполнения: ×"
+      "value": "Прежний бонус Трансценденции: ×"
     },
     {
       "type": 1,
@@ -268,13 +262,13 @@
   "avocato.overflow.open": [
     {
       "type": 0,
-      "value": "Открыть сброс Переполнения"
+      "value": "Открыть сброс Трансценденции"
     }
   ],
   "avocato.overflow.points": [
     {
       "type": 0,
-      "value": "Очки Переполнения: "
+      "value": "Очки Трансценденции: "
     },
     {
       "type": 1,
@@ -284,13 +278,13 @@
   "avocato.overflow.reached": [
     {
       "type": 0,
-      "value": "Переполнение достигнуто"
+      "value": "Трансценденция достигнута"
     }
   ],
   "avocato.overflow.reset": [
     {
       "type": 0,
-      "value": "Переполнение за 1 очко"
+      "value": "Трансцендировать за 1 очко"
     }
   ],
   "avocato.overflow.threshold": [
@@ -304,7 +298,7 @@
     },
     {
       "type": 0,
-      "value": " Ботов для Переполнения."
+      "value": " ботов для Трансценденции."
     }
   ],
   "avocato.region": [
@@ -402,7 +396,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "Потратьте 1 Катализатор в описании открытого навыка, чтобы сделать его базовый эффект постоянным и убрать штрафы и несовместимости. Раскалывание нельзя отменить; она сохраняется после Переполнения."
+      "value": "Потратьте 1 Катализатор в описании открытого навыка, чтобы сделать его базовый эффект постоянным и убрать штрафы и несовместимости. Раскалывание нельзя отменить; она сохраняется после Трансценденции."
     }
   ],
   "challenges.replay": [
@@ -672,7 +666,7 @@
   "debug.overflow-points": [
     {
       "type": 0,
-      "value": "Очки переполнения"
+      "value": "Очки Трансценденции"
     }
   ],
   "debug.progression": [
@@ -775,6 +769,580 @@
     {
       "type": 0,
       "value": "Открыть все вкладки"
+    }
+  ],
+  "discovery.automationEffect": [
+    {
+      "type": 0,
+      "value": "Навсегда открывает автоботов."
+    }
+  ],
+  "discovery.avocatoBonus": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "% к скорости открытий"
+    }
+  ],
+  "discovery.avocatoProduction": [
+    {
+      "type": 0,
+      "value": "Производство денег и сооружений"
+    }
+  ],
+  "discovery.avocatoSpeed": [
+    {
+      "type": 0,
+      "value": "Авокато"
+    }
+  ],
+  "discovery.baseSpeed": [
+    {
+      "type": 0,
+      "value": "Базовая скорость"
+    }
+  ],
+  "discovery.booster": [
+    {
+      "type": 0,
+      "value": "Усилитель открытий"
+    }
+  ],
+  "discovery.boosterEffect": [
+    {
+      "type": 0,
+      "value": "+10 × log10(1 + купленные уровни)% к скорости открытий, максимум +200%. Бонусы складываются."
+    }
+  ],
+  "discovery.buy": [
+    {
+      "type": 0,
+      "value": "Купить · "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " ОТ"
+    }
+  ],
+  "discovery.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "discovery.completions": [
+    {
+      "type": 0,
+      "value": "Завершённые открытия"
+    }
+  ],
+  "discovery.confirm": [
+    {
+      "type": 0,
+      "value": "Заменить Исследования Открытиями?"
+    }
+  ],
+  "discovery.confirmAction": [
+    {
+      "type": 0,
+      "value": "Подтвердить"
+    }
+  ],
+  "discovery.debug.addCompletions": [
+    {
+      "type": 0,
+      "value": "Добавить завершённые открытия"
+    }
+  ],
+  "discovery.debug.addPoints": [
+    {
+      "type": 0,
+      "value": "Добавить очки Трансценденции"
+    }
+  ],
+  "discovery.level": [
+    {
+      "type": 0,
+      "value": "Открытие · Уровень "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.levelLabel": [
+    {
+      "type": 0,
+      "value": "Уровень открытий"
+    }
+  ],
+  "discovery.lifetime": [
+    {
+      "type": 0,
+      "value": "Срок службы панелей: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " сек."
+    }
+  ],
+  "discovery.multiplier": [
+    {
+      "type": 0,
+      "value": "Множитель производства"
+    }
+  ],
+  "discovery.name": [
+    {
+      "type": 0,
+      "value": "Открытие"
+    }
+  ],
+  "discovery.next": [
+    {
+      "type": 0,
+      "value": "Далее: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
+  "discovery.nextPower": [
+    {
+      "type": 0,
+      "value": "Далее: ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " к начальной мощи"
+    }
+  ],
+  "discovery.nextSpeed": [
+    {
+      "type": 0,
+      "value": "Далее: +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "% скорости от покупок"
+    }
+  ],
+  "discovery.owned": [
+    {
+      "type": 0,
+      "value": "Уровень "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.power": [
+    {
+      "type": 0,
+      "value": "Начальная мощь"
+    }
+  ],
+  "discovery.powerEffect": [
+    {
+      "type": 0,
+      "value": "+5 к начальному множителю и базовому сроку службы панелей в секундах. Бонусы складываются."
+    }
+  ],
+  "discovery.powerSkillsEffect": [
+    {
+      "type": 0,
+      "value": "Открывает навыки Мощи, усиливающие сооружения, деньги и скорость открытий."
+    }
+  ],
+  "discovery.production": [
+    {
+      "type": 0,
+      "value": "Производство денег, ботов и сооружений ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.purchaseFailed": [
+    {
+      "type": 0,
+      "value": "Не удалось сохранить покупку. Ваши очки сохранены. Попробуйте ещё раз."
+    }
+  ],
+  "discovery.resetRule": [
+    {
+      "type": 0,
+      "value": "Сохраняется при Бесконечности и Кванте. Сбрасывается при Трансценденции."
+    }
+  ],
+  "discovery.route": [
+    {
+      "type": 0,
+      "value": "Трансценденция"
+    }
+  ],
+  "discovery.secretsSpeed": [
+    {
+      "type": 0,
+      "value": "Тайны"
+    }
+  ],
+  "discovery.skill.addictionToPower.effect": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, серверы, дата-центры и планеты на 200% эффективнее. На 10% меньше денег, если навык не расколот. Штрафы к деньгам складываются."
+    }
+  ],
+  "discovery.skill.cashScienceProduction.effect": [
+    {
+      "type": 0,
+      "value": "Удваивает производство денег и добавляет +25% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.coldFusion.effect": [
+    {
+      "type": 0,
+      "value": "+75% к скорости открытий; вдвое уменьшает деньги, если навык не расколот. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.coldFusion.flavour": [
+    {
+      "type": 0,
+      "value": "Теория стала фактом. Холодный синтез освоен. Что ещё вселенная забыла спрятать?"
+    }
+  ],
+  "discovery.skill.doubleScienceTree.effect": [
+    {
+      "type": 0,
+      "value": "+25% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.doubleScienceTree.flavour": [
+    {
+      "type": 0,
+      "value": "Прорывы в производстве процессоров. Теперь с меньшим количеством необъяснимых клубов дыма."
+    }
+  ],
+  "discovery.skill.doubleScienceTree.name": [
+    {
+      "type": 0,
+      "value": "Скорость открытий"
+    }
+  ],
+  "discovery.skill.economicDominance.effect": [
+    {
+      "type": 0,
+      "value": "Умножает деньги на 20."
+    }
+  ],
+  "discovery.skill.economicRevolution.effect": [
+    {
+      "type": 0,
+      "value": "Умножает деньги на 5."
+    }
+  ],
+  "discovery.skill.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "Усиливает бонусы SRS к деньгам и скорости открытий на 50%, с учётом «Звёздная память»."
+    }
+  ],
+  "discovery.skill.idleSpaceFlight.effect": [
+    {
+      "type": 0,
+      "value": "+10 × log10(1 + активные панели / 100,000,000)% к скорости открытий, максимум +200%. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.indulgingInPower.effect": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, серверы, дата-центры и планеты на 100% эффективнее. На 15% меньше денег, если навык не расколот. Штрафы к деньгам складываются."
+    }
+  ],
+  "discovery.skill.panelMaintenance.effect": [
+    {
+      "type": 0,
+      "value": "Добавляет 100 секунд к сроку службы панелей."
+    }
+  ],
+  "discovery.skill.paragon.effect": [
+    {
+      "type": 0,
+      "value": "+150% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.pocketMultiverse.effect": [
+    {
+      "type": 0,
+      "value": "«Карманные защитники» вместо этого умножает производство «Карманные измерения» на log10(всего ботов)."
+    }
+  ],
+  "discovery.skill.pocketProtectors.effect": [
+    {
+      "type": 0,
+      "value": "Добавляет log10(всего ботов) к производству «Карманные измерения»."
+    }
+  ],
+  "discovery.skill.pocketProtectors.flavour": [
+    {
+      "type": 0,
+      "value": "Все хотят поучаствовать. Защита карманов теперь обязательна."
+    }
+  ],
+  "discovery.skill.powerUnderwhelming.effect": [
+    {
+      "type": 0,
+      "value": "+25% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.powerUnderwhelming.flavour": [
+    {
+      "type": 0,
+      "value": "Используйте Открытия, чтобы открыть Открытия. Как? Мы никогда не узнаем."
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.effect": [
+    {
+      "type": 0,
+      "value": "+100% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.flavour": [
+    {
+      "type": 0,
+      "value": "Улучшенные сетевые протоколы. Теперь прорывы приходят раньше приглашений на совещания."
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.name": [
+    {
+      "type": 0,
+      "value": "Ускорение открытий"
+    }
+  ],
+  "discovery.skill.purityOfMind.effect": [
+    {
+      "type": 0,
+      "value": "+50% денег и +5% к скорости открытий за каждое непотраченное очко навыков. Бонус скорости открытий ограничен +200%. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.purityOfMind.flavour": [
+    {
+      "type": 0,
+      "value": "Полностью сосредоточившись, вы очищаете разум от всех мыслей, не связанных с деньгами или Открытиями."
+    }
+  ],
+  "discovery.skill.purityOfSEssence.effect": [
+    {
+      "type": 0,
+      "value": "Производство денег, ботов и сооружений ×(1 + 0.42p + 0.13784p(p − 1)), где p — непотраченные очки навыков. +2% к скорости открытий за каждое непотраченное очко, максимум +100%. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.regulatedAcademia.effect": [
+    {
+      "type": 0,
+      "value": "Усиливает бонус производства от открытий на 20%, плюс 10% за каждый Фрагмент после первого. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.regulatedAcademia.flavour": [
+    {
+      "type": 0,
+      "value": "Вы находите фрагмент другой вселенной. Его знания усиливают ваши открытия. Что ещё может хранить эта вселенная?"
+    }
+  ],
+  "discovery.skill.repeatableResearch.effect": [
+    {
+      "type": 0,
+      "value": "+50% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "+150% к скорости зарядки SRS при назначении, усиливается «Звёздная память». Бонусы складываются."
+    }
+  ],
+  "discovery.skill.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "+100% к скорости зарядки SRS, усиливается «Звёздная память». Бонусы складываются."
+    }
+  ],
+  "discovery.skill.scientificDominance.effect": [
+    {
+      "type": 0,
+      "value": "+100% к скорости открытий; уменьшает деньги вчетверо, если навык не расколот. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.scientificPlanets.effect": [
+    {
+      "type": 0,
+      "value": "Производит log10(всего ботов) планет в секунду."
+    }
+  ],
+  "discovery.skill.scientificPlanets.flavour": [
+    {
+      "type": 0,
+      "value": "Научите ботов открывать планеты. Вежливо попросите ничего не потерять."
+    }
+  ],
+  "discovery.skill.scientificRevolution.effect": [
+    {
+      "type": 0,
+      "value": "+50% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.shouldersOfGiants.effect": [
+    {
+      "type": 0,
+      "value": "+10 × log10(1 + Научные планеты производство)% к скорости открытий, максимум +200%. Включает «На плечах павших». Бонусы складываются."
+    }
+  ],
+  "discovery.skill.shouldersOfPrecursors.effect": [
+    {
+      "type": 0,
+      "value": "Заменяет множители денег общей скоростью открытий. После раскола перемножается с ними."
+    }
+  ],
+  "discovery.skill.shouldersOfTheEnlightened.effect": [
+    {
+      "type": 0,
+      "value": "+10% денег за завершённое открытие, пока назначен навык «Научные планеты». Бонусы складываются."
+    }
+  ],
+  "discovery.skill.shouldersOfTheFallen.effect": [
+    {
+      "type": 0,
+      "value": "Добавляет log2(1 + завершённые открытия) планет в секунду, пока назначен навык «Научные планеты»."
+    }
+  ],
+  "discovery.skill.shouldersOfTheFallen.flavour": [
+    {
+      "type": 0,
+      "value": "Реликвия погибшей цивилизации. Прекрасные плечи. Ужасная инструкция."
+    }
+  ],
+  "discovery.skill.shouldersOfTheRevolution.effect": [
+    {
+      "type": 0,
+      "value": "+1% денег за каждое завершённое открытие. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.startHereTree.effect": [
+    {
+      "type": 0,
+      "value": "+20% денег и +20% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.startHereTree.name": [
+    {
+      "type": 0,
+      "value": "Деньги и открытия"
+    }
+  ],
+  "discovery.skill.stellarObliteration.effect": [
+    {
+      "type": 0,
+      "value": "Галактики навыка «Звёздные жертвы» в 1000 раз эффективнее. Делит деньги на Звёздные галактики, если навык не расколот."
+    }
+  ],
+  "discovery.skill.superRadiantScattering.effect": [
+    {
+      "type": 0,
+      "value": "Повышает производство денег, ботов и всех сооружений по мере зарядки SRS. +10 × log10(1 + секунды заряда / 100)% к скорости открытий, максимум +200% до применения «Сфокусированный луч». Бонусы складываются."
+    }
+  ],
+  "discovery.skill.superchargedPower.effect": [
+    {
+      "type": 0,
+      "value": "+50% к производству денег и сооружений; +25% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.skill.tasteOfPower.effect": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, серверы, дата-центры и планеты на 50% эффективнее. На 25% меньше денег, если навык не расколот."
+    }
+  ],
+  "discovery.skill.whatCouldHaveBeen.effect": [
+    {
+      "type": 0,
+      "value": "+10 × log10(1 + Карманные измерения производство)% к скорости открытий, максимум +200%. «Операция на плечах» включает «На плечах павших». Бонусы складываются."
+    }
+  ],
+  "discovery.skill.workerBoost.effect": [
+    {
+      "type": 0,
+      "value": "+10 000% к производству денег."
+    }
+  ],
+  "discovery.speed": [
+    {
+      "type": 0,
+      "value": "Скорость открытий"
+    }
+  ],
+  "discovery.speedEffect": [
+    {
+      "type": 0,
+      "value": "+25% к скорости открытий. Бонусы складываются."
+    }
+  ],
+  "discovery.speedSources": [
+    {
+      "type": 0,
+      "value": "Скорость открытий"
+    }
+  ],
+  "discovery.startingBenefits": [
+    {
+      "type": 0,
+      "value": "Производство денег, ботов и сооружений ×10. Базовый срок службы панелей — 10 секунд."
+    }
+  ],
+  "discovery.totalBots": [
+    {
+      "type": 0,
+      "value": "Всего ботов"
+    }
+  ],
+  "discovery.unlock": [
+    {
+      "type": 0,
+      "value": "Открыть систему открытий"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -7205,6 +7773,12 @@
       "value": "Ярлыки навигации"
     }
   ],
+  "settings.navigation.transcendence": [
+    {
+      "type": 0,
+      "value": "Показывать Трансценденцию"
+    }
+  ],
   "settings.navigation.wiki": [
     {
       "type": 0,
@@ -13520,6 +14094,68 @@
       "value": "История"
     }
   ],
+  "wiki.bots.discovery-overview": [
+    {
+      "type": 0,
+      "value": "Все "
+    },
+    {
+      "type": 8,
+      "value": "bots",
+      "children": [
+        {
+          "type": 0,
+          "value": "боты"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " производят "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Солнечные панели"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", которые автоматически выводятся на орбиту. Открытия заменяют учёных и Исследования. Выполнение целей в "
+    },
+    {
+      "type": 8,
+      "value": "skills",
+      "children": [
+        {
+          "type": 0,
+          "value": "Дереве навыков"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " по-прежнему даёт "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Очки навыков"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "wiki.bots.milestones": [
     {
       "type": 8,
@@ -13918,6 +14554,256 @@
     {
       "type": 0,
       "value": "Древо навыков"
+    }
+  ],
+  "wiki.category.transcendence": [
+    {
+      "type": 0,
+      "value": "Трансценденция"
+    }
+  ],
+  "wiki.discovery.overview": [
+    {
+      "type": 0,
+      "value": "Открытия начинаются с "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "уровня 1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", с "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "производством денег, ботов и сооружений ×10"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " и "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "базовым сроком службы панелей 10 секунд"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Каждое завершение добавляет "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "0.1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " к множителю и базовому сроку службы. При базовой скорости одно открытие занимает час. Учёные и ресурсы не требуются."
+    }
+  ],
+  "wiki.discovery.overview-title": [
+    {
+      "type": 0,
+      "value": "Открытие"
+    }
+  ],
+  "wiki.discovery.resets": [
+    {
+      "type": 0,
+      "value": "Открытия сохраняются при "
+    },
+    {
+      "type": 8,
+      "value": "infinity",
+      "children": [
+        {
+          "type": 0,
+          "value": "Бесконечности"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 8,
+      "value": "quantum",
+      "children": [
+        {
+          "type": 0,
+          "value": "Кванте"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " и испытаниях. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Трансценденция"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " сбрасывает уровень и прогресс; доступ и постоянные улучшения остаются. Накопленное время продвигает Открытия при расходовании. Время отсутствия накапливается, а не применяется к Открытиям автоматически."
+    }
+  ],
+  "wiki.discovery.resets-title": [
+    {
+      "type": 0,
+      "value": "Прогресс и сбросы"
+    }
+  ],
+  "wiki.discovery.skills": [
+    {
+      "type": 0,
+      "value": "Научные навыки теперь повышают "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "скорость открытий"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; их текущие эффекты указаны в дереве навыков. Бонусы скорости складываются. Регулируемая академия и соответствующие раскрытые Тайны усиливают бонус производства от открытий выше "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1×"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", не меняя базовый срок службы панелей. Штрафы к Науке больше не применяются."
+    }
+  ],
+  "wiki.discovery.skills-title": [
+    {
+      "type": 0,
+      "value": "Навыки и Тайны"
+    }
+  ],
+  "wiki.discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "У Авокато "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Скорость открытий"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " добавляет "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25% скорости"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " за покупку. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Начальная мощь"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " добавляет "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " к начальному множителю и базовому сроку службы панелей, сразу же и в текущем прохождении. Каждое улучшение независимо стоит "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1, 2, 3… очка Трансценденции"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Бонусы складываются."
+    }
+  ],
+  "wiki.discovery.upgrades-title": [
+    {
+      "type": 0,
+      "value": "Постоянные улучшения"
     }
   ],
   "wiki.infinity.overview": [
@@ -15649,7 +16535,7 @@
     },
     {
       "type": 0,
-      "value": " в Исследованиях позволяют симуляциям переживать более поздние катастрофы и увеличивают количество "
+      "value": " в исследованиях Реальности Реальности позволяют симуляциям переживать более поздние катастрофы и увеличивают количество "
     },
     {
       "type": 8,
@@ -15894,6 +16780,18 @@
     {
       "type": 0,
       "value": "Множитель Денег"
+    }
+  ],
+  "wiki.secrets.effect.discovery-production-enhancement": [
+    {
+      "type": 0,
+      "value": "Усиление бонуса производства от открытий"
+    }
+  ],
+  "wiki.secrets.effect.discovery-speed": [
+    {
+      "type": 0,
+      "value": "Скорость открытий"
     }
   ],
   "wiki.secrets.effect.planet-boost": [
@@ -16358,6 +17256,60 @@
     {
       "type": 0,
       "value": "Темы"
+    }
+  ],
+  "wiki.transcendence.overview": [
+    {
+      "type": 0,
+      "value": "При "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "4e242 ботах"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " совершите Трансценденцию у Авокато, чтобы сбросить предыдущие слои и получить "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "одно очко Трансценденции"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Потратьте очко на "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "открытие системы открытий"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", чтобы навсегда заменить Науку и Исследования. Накопленная Наука и уровни исследований не переносятся."
+    }
+  ],
+  "wiki.transcendence.overview-title": [
+    {
+      "type": 0,
+      "value": "За пределами роя"
     }
   ]
 }

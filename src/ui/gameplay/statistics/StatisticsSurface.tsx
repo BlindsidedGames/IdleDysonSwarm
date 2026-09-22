@@ -1,3 +1,6 @@
+import { discoveryMessages } from '../discovery/messages'
+import type { DiscoveryState } from '../../../game-state/types'
+import type { DiscoveryEffects } from '../../../simulation/discoveryEffects'
 import type { SpeedrunMilestoneId } from '../../../simulation/speedrunStatistics'
 import { readPresentationPreference, writePresentationPreference } from '../../presentationPreferences'
 import { useId, useState } from 'react'
@@ -17,6 +20,7 @@ import type {
 import {
   formatGameDuration,
   formatGameNumber,
+  formatWholeGameNumber,
 } from '../../i18n/formatters'
 import type {
   EnabledLocale,
@@ -38,6 +42,8 @@ type DisplayMetricKey =
   | 'combinedInfinityPoints'
 
 export interface StatisticsSurfaceProps {
+  readonly discovery?: DiscoveryState
+  readonly discoveryEffects?: DiscoveryEffects
   readonly onClearBest?: (milestone: SpeedrunMilestoneId) => Promise<boolean>
   readonly locale: EnabledLocale
   readonly statistics: StatisticsState
@@ -152,6 +158,7 @@ const windowMetrics = [
 type WindowMetricDefinition = (typeof windowMetrics)[number]
 
 export function StatisticsSurface({
+  discovery, discoveryEffects,
   locale,
   statistics,
   currentBreakTarget,
@@ -224,6 +231,15 @@ export function StatisticsSurface({
       </header>
       <div className="statistics-surface__content" role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${tab}`} key={tab}>
         {tab === 'speedruns' ? <SpeedrunsSection run={statistics.speedruns} locale={locale} onClearBest={onClearBest} /> : <>
+        {discovery?.unlocked && discoveryEffects && <section className="statistics-card statistics-scope-card">
+          <header className="statistics-scope-card__heading"><h2>{intl.formatMessage(discoveryMessages.name)}</h2></header>
+          <dl>
+            <StatisticFact label={intl.formatMessage(discoveryMessages.levelLabel)} value={formatWholeGameNumber(locale, discovery.completions + 1n)} />
+            <StatisticFact label={intl.formatMessage(discoveryMessages.completions)} value={formatWholeGameNumber(locale, discovery.completions)} />
+            <StatisticFact label={intl.formatMessage(discoveryMessages.multiplier)} value={`×${formatGameNumber(locale, discoveryEffects.multiplier)}`} />
+            <StatisticFact label={intl.formatMessage(discoveryMessages.speed)} value={`×${formatGameNumber(locale, discoveryEffects.speed)}`} />
+          </dl>
+        </section>}
         <div className="statistics-surface__scope-grid">
           {scopes.map((scope) => (
             <ScopeCard

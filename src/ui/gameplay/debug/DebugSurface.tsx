@@ -1,3 +1,4 @@
+import { discoveryMessages } from '../discovery/messages'
 import { DEBUG_OVERFLOW_COST } from '../../../simulation/speedrunStatistics'
 import { useId, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -216,6 +217,8 @@ export function DebugSurface({
                 />
               </div>
               <div className="debug-surface__button-grid">
+                <ActionButton label={intl.formatMessage(discoveryMessages.addCompletions)} disabled={pending || !validDiscreteAmount} onClick={() => discreteAmount.ok && apply({ kind: 'add-discoveries', amount: discreteAmount.value }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(discoveryMessages.addPoints)} disabled={pending || !validDiscreteAmount} onClick={() => discreteAmount.ok && apply({ kind: 'add-transcendence-points', amount: discreteAmount.value }, intl.formatMessage(messages.actionSuccess))} />
                 <ActionButton label={intl.formatMessage(messages.addCash)} disabled={pending || !validContinuousAmount} onClick={() => continuousAmount.ok && apply({ kind: 'add-cash', amount: continuousAmount.value }, intl.formatMessage(messages.actionSuccess))} />
                 <ActionButton label={intl.formatMessage(messages.addBots)} disabled={pending || !validContinuousAmount} onClick={() => continuousAmount.ok && apply({ kind: 'add-bots', amount: continuousAmount.value }, intl.formatMessage(messages.actionSuccess))} />
                 <ActionButton label={intl.formatMessage(messages.addSkillPoints)} disabled={pending || !validDiscreteAmount} onClick={() => discreteAmount.ok && apply({ kind: 'add-skill-points', amount: discreteAmount.value }, intl.formatMessage(messages.actionSuccess))} />

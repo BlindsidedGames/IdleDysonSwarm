@@ -1,3 +1,5 @@
+import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
+import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import type { DeepReadonly } from '../core/contracts'
@@ -155,6 +157,7 @@ import type {
 export const FRONTEND_GAMEPLAY_SNAPSHOT_VERSION = 2 as const
 
 export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
+  'discovery',
   'boost',
   'dyson',
   'research',
@@ -456,6 +459,7 @@ export interface FrontendCanonicalProgression {
   readonly skills: DeepReadonly<
     Omit<CanonicalGameStateV1['skills'], 'points' | 'fragments'>
   >
+  readonly discovery?: DeepReadonly<CanonicalGameStateV1['discovery']>
   readonly research: DeepReadonly<CanonicalGameStateV1['research']>
   readonly reality: DeepReadonly<
     Pick<CanonicalGameStateV1['reality'], 'autoGather'>
@@ -839,6 +843,7 @@ export interface FrontendStoryDerivedFacts {
 }
 
 export interface FrontendGameplayDerivedFacts {
+  readonly discovery?: DiscoveryEffects
   readonly dyson: FrontendDysonDerivedFacts
   readonly dysonBotDistribution: {
     readonly workersFraction: number
@@ -1529,6 +1534,7 @@ function selectProgression(
       tabPresetAutomation:
         state.skills.tabPresetAutomation,
     }),
+    discovery: reuseShallowDomain(previous?.discovery, state.discovery ?? EMPTY_DISCOVERY),
     research: reuseShallowDomain(previous?.research, state.research),
     reality: reuseShallowDomain(previous?.reality, {
       autoGather: state.reality.autoGather,
@@ -1651,7 +1657,7 @@ function selectDerivedFacts(
           issues: dyson.issues,
         },
     dysonBotDistribution:
-      state.quantum.unlocks.botMultitasking
+      state.discovery?.unlocked ? { workersFraction: 1, scientistsFraction: 0 } : state.quantum.unlocks.botMultitasking
         ? {
             workersFraction: 1,
             scientistsFraction: 1,
@@ -1737,6 +1743,7 @@ function selectDerivedFacts(
                 )
               : 0,
           ),
+    discovery: state.discovery?.unlocked ? deriveDiscoveryEffects(state, context.evaluationSnapshot) : undefined,
     avocado:
       previous !== undefined && demand !== 'all' && demand !== 'avocato'
         ? previous.avocado
@@ -2547,7 +2554,7 @@ function selectInfinityPreviews(
   state: CanonicalGameStateV1,
 ): FrontendGameplayPreviews['infinity'] {
   return {
-    shop: CANONICAL_INFINITY_SHOP_ITEM_IDS.map((itemId) => {
+    shop: CANONICAL_INFINITY_SHOP_ITEM_IDS.filter(itemId => !state.discovery?.unlocked || itemId !== 'unlock-research-automation').map((itemId) => {
       const result = purchaseCanonicalInfinityShopItem(state, itemId)
       return {
         itemId,

@@ -12,6 +12,7 @@ export {
 const PLANETS_PER_SECOND_SUFFIX = '.planets_per_second'
 
 export interface PlanetGenerationDynamicInputs {
+  readonly discoveryCompletions?: bigint
   readonly ownedSkills: ReadonlySet<string>
   readonly researchers: number
   readonly fragments: bigint
@@ -55,6 +56,7 @@ export function tryResolvePlanetGenerationDynamicEffect(
     case 'stellarSacrifices':
       return stellarSacrificesProduction(inputs)
     case 'shouldersOfTheFallen':
+      if (inputs.discoveryCompletions !== undefined) return inputs.ownedSkills.has('shouldersOfTheFallen') && inputs.ownedSkills.has('scientificPlanets') ? Math.log2(1 + Number(inputs.discoveryCompletions)) : 0
       if (
         !inputs.ownedSkills.has('shouldersOfTheFallen') ||
         inputs.scienceBoostLevel <= 0 ||

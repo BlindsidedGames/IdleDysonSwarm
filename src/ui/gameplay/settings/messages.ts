@@ -224,6 +224,7 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Show Bots',
     description: 'Controls the Bots bottom navigation destination.',
   },
+  transcendenceShortcut: { id: 'settings.navigation.transcendence', defaultMessage: 'Show Transcendence' },
   researchShortcut: {
     id: 'settings.navigation.research',
     defaultMessage: 'Show Research',

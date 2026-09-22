@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Idle Dyson Swarmをプレイしていただきありがとうございます。Avocatoのブーストは互いに乗算され、強化に使用する通貨には影響しません。オーバーフローポイントは次のゲーム段階に向けて保存されます。"
+      "value": "Idle Dyson Swarmを遊んでいただきありがとうございます。アボカトのボーナスは互いに乗算され、強化に使う通貨には影響しません。超越ポイントは発見とその恒久アップグレードに使えます。"
     }
   ],
   "avocato.developer-note.title": [
@@ -216,7 +216,7 @@
   "avocato.multiplier.overflow": [
     {
       "type": 0,
-      "value": "オーバーフロー"
+      "value": "超越"
     }
   ],
   "avocato.multiplier.strange-matter": [
@@ -234,31 +234,25 @@
   "avocato.overflow.confirm": [
     {
       "type": 0,
-      "value": "オーバーフローを確定"
+      "value": "超越を確定"
     }
   ],
   "avocato.overflow.description": [
     {
       "type": 0,
-      "value": "ボット、インフィニティ、量子、現実、シミュレーションの進行状況とAvocatoの全ブーストをリセットし、オーバーフローポイントを1獲得します。購入内容、設定、オフライン時間、完了した秘密は保持されます。"
+      "value": "ボット、インフィニティ、クアンタム、現実、シミュレーションの進行とアボカトの全ボーナスをリセットし、超越ポイントを1獲得します。発見は初期レベルに戻ります。恒久アップグレード、購入、設定、オフライン時間、完了した秘密は保持されます。"
     }
   ],
   "avocato.overflow.failed": [
     {
       "type": 0,
-      "value": "オーバーフローを保存できませんでした。現在の進行状況は保持されています。もう一度お試しください。"
-    }
-  ],
-  "avocato.overflow.future": [
-    {
-      "type": 0,
-      "value": "オーバーフローポイントは今後のゲーム段階に向けて保存されます。現時点では生産量を増やしません。"
+      "value": "超越を保存できませんでした。現在の進行状況は保持されています。もう一度お試しください。"
     }
   ],
   "avocato.overflow.legacy": [
     {
       "type": 0,
-      "value": "以前のオーバーフローブースト：×"
+      "value": "以前の超越ブースト：×"
     },
     {
       "type": 1,
@@ -268,13 +262,13 @@
   "avocato.overflow.open": [
     {
       "type": 0,
-      "value": "オーバーフローリセットを表示"
+      "value": "超越リセットを表示"
     }
   ],
   "avocato.overflow.points": [
     {
       "type": 0,
-      "value": "オーバーフローポイント："
+      "value": "超越ポイント："
     },
     {
       "type": 1,
@@ -284,19 +278,19 @@
   "avocato.overflow.reached": [
     {
       "type": 0,
-      "value": "オーバーフローに到達"
+      "value": "超越に到達"
     }
   ],
   "avocato.overflow.reset": [
     {
       "type": 0,
-      "value": "リセットして1ポイント獲得"
+      "value": "超越して1ポイント獲得"
     }
   ],
   "avocato.overflow.threshold": [
     {
       "type": 0,
-      "value": "ボットが "
+      "value": "ボット数が"
     },
     {
       "type": 1,
@@ -304,7 +298,7 @@
     },
     {
       "type": 0,
-      "value": " 体に到達するとオーバーフローできます。"
+      "value": "に到達すると超越できます。"
     }
   ],
   "avocato.region": [
@@ -402,7 +396,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "表示済みスキルの詳細で触媒を1個消費すると、基本効果が永続化され、ペナルティと排他制限が解除されます。断裂は取り消せず、オーバーフロー後も維持されます。"
+      "value": "表示済みスキルの詳細で触媒を1個消費すると、基本効果が永続化され、ペナルティと排他制限が解除されます。断裂は取り消せず、超越後も維持されます。"
     }
   ],
   "challenges.replay": [
@@ -506,7 +500,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "オーバーフローポイント10を消費して開発者ツールを解放します。購入後は無料で再び有効にできます。"
+      "value": "超越ポイント10を消費して開発者ツールを解放します。購入後は無料で再び有効にできます。"
     }
   ],
   "debug.action-failure": [
@@ -672,7 +666,7 @@
   "debug.overflow-points": [
     {
       "type": 0,
-      "value": "オーバーフローポイント"
+      "value": "超越ポイント"
     }
   ],
   "debug.progression": [
@@ -775,6 +769,580 @@
     {
       "type": 0,
       "value": "すべてのタブをアンロック"
+    }
+  ],
+  "discovery.automationEffect": [
+    {
+      "type": 0,
+      "value": "自動ボットを恒久的に解放します。"
+    }
+  ],
+  "discovery.avocatoBonus": [
+    {
+      "type": 0,
+      "value": "発見速度 +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "discovery.avocatoProduction": [
+    {
+      "type": 0,
+      "value": "資金・施設の生産"
+    }
+  ],
+  "discovery.avocatoSpeed": [
+    {
+      "type": 0,
+      "value": "アボカト"
+    }
+  ],
+  "discovery.baseSpeed": [
+    {
+      "type": 0,
+      "value": "基本速度"
+    }
+  ],
+  "discovery.booster": [
+    {
+      "type": 0,
+      "value": "発見ブースター"
+    }
+  ],
+  "discovery.boosterEffect": [
+    {
+      "type": 0,
+      "value": "発見速度 +10 × log10(1 + 購入レベル)%、上限+200%。 ボーナスは加算されます。"
+    }
+  ],
+  "discovery.buy": [
+    {
+      "type": 0,
+      "value": "購入 · "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " 超越ポイント"
+    }
+  ],
+  "discovery.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "discovery.completions": [
+    {
+      "type": 0,
+      "value": "完了した発見"
+    }
+  ],
+  "discovery.confirm": [
+    {
+      "type": 0,
+      "value": "研究を発見に置き換えますか？"
+    }
+  ],
+  "discovery.confirmAction": [
+    {
+      "type": 0,
+      "value": "確定"
+    }
+  ],
+  "discovery.debug.addCompletions": [
+    {
+      "type": 0,
+      "value": "完了した発見を追加"
+    }
+  ],
+  "discovery.debug.addPoints": [
+    {
+      "type": 0,
+      "value": "超越ポイントを追加"
+    }
+  ],
+  "discovery.level": [
+    {
+      "type": 0,
+      "value": "発見 · レベル "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.levelLabel": [
+    {
+      "type": 0,
+      "value": "発見レベル"
+    }
+  ],
+  "discovery.lifetime": [
+    {
+      "type": 0,
+      "value": "パネル寿命："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "秒"
+    }
+  ],
+  "discovery.multiplier": [
+    {
+      "type": 0,
+      "value": "生産倍率"
+    }
+  ],
+  "discovery.name": [
+    {
+      "type": 0,
+      "value": "発見"
+    }
+  ],
+  "discovery.next": [
+    {
+      "type": 0,
+      "value": "次：×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
+  "discovery.nextPower": [
+    {
+      "type": 0,
+      "value": "次：初期出力 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "倍"
+    }
+  ],
+  "discovery.nextSpeed": [
+    {
+      "type": 0,
+      "value": "次：購入による速度 +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "discovery.owned": [
+    {
+      "type": 0,
+      "value": "レベル "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.power": [
+    {
+      "type": 0,
+      "value": "初期出力"
+    }
+  ],
+  "discovery.powerEffect": [
+    {
+      "type": 0,
+      "value": "初期倍率とパネル基本寿命（秒）に+5。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.powerSkillsEffect": [
+    {
+      "type": 0,
+      "value": "施設・資金・発見速度を強化するパワースキルを解放します。"
+    }
+  ],
+  "discovery.production": [
+    {
+      "type": 0,
+      "value": "資金・ボット・施設の生産 ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.purchaseFailed": [
+    {
+      "type": 0,
+      "value": "購入を保存できませんでした。ポイントは保持されています。もう一度お試しください。"
+    }
+  ],
+  "discovery.resetRule": [
+    {
+      "type": 0,
+      "value": "インフィニティとクアンタムでは保持され、超越でリセットされます。"
+    }
+  ],
+  "discovery.route": [
+    {
+      "type": 0,
+      "value": "超越"
+    }
+  ],
+  "discovery.secretsSpeed": [
+    {
+      "type": 0,
+      "value": "秘密"
+    }
+  ],
+  "discovery.skill.addictionToPower.effect": [
+    {
+      "type": 0,
+      "value": "組立ライン・AIマネージャー・サーバー・データセンター・惑星が200%強化。断裂済みでなければ資金が10%減少。 資金ペナルティは加算されます。"
+    }
+  ],
+  "discovery.skill.cashScienceProduction.effect": [
+    {
+      "type": 0,
+      "value": "資金生産を2倍にし、発見速度に+25%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.coldFusion.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +75%。断裂済みでなければ資金を半減。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.coldFusion.flavour": [
+    {
+      "type": 0,
+      "value": "理論が現実に。常温核融合、解決済み。宇宙はほかに何を隠し忘れたのでしょう？"
+    }
+  ],
+  "discovery.skill.doubleScienceTree.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +25%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.doubleScienceTree.flavour": [
+    {
+      "type": 0,
+      "value": "CPU製造の大躍進。原因不明の煙も少なくなりました。"
+    }
+  ],
+  "discovery.skill.doubleScienceTree.name": [
+    {
+      "type": 0,
+      "value": "発見速度"
+    }
+  ],
+  "discovery.skill.economicDominance.effect": [
+    {
+      "type": 0,
+      "value": "資金を20倍にします。"
+    }
+  ],
+  "discovery.skill.economicRevolution.effect": [
+    {
+      "type": 0,
+      "value": "資金を5倍にします。"
+    }
+  ],
+  "discovery.skill.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "SRSの資金と発見速度のボーナスを50%強化。「星の記憶」に応じて増加します。"
+    }
+  ],
+  "discovery.skill.idleSpaceFlight.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +10 × log10(1 + 稼働パネル / 100,000,000)%、上限+200%。 ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.indulgingInPower.effect": [
+    {
+      "type": 0,
+      "value": "組立ライン・AIマネージャー・サーバー・データセンター・惑星が100%強化。断裂済みでなければ資金が15%減少。 資金ペナルティは加算されます。"
+    }
+  ],
+  "discovery.skill.panelMaintenance.effect": [
+    {
+      "type": 0,
+      "value": "パネル寿命に100秒を追加します。"
+    }
+  ],
+  "discovery.skill.paragon.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +150%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.pocketMultiverse.effect": [
+    {
+      "type": 0,
+      "value": "「ポケットの守護者」は代わりに「ポケット次元」の生産にlog10(ボット総数)を乗算します。"
+    }
+  ],
+  "discovery.skill.pocketProtectors.effect": [
+    {
+      "type": 0,
+      "value": "「ポケット次元」の生産にlog10(ボット総数)を加算します。"
+    }
+  ],
+  "discovery.skill.pocketProtectors.flavour": [
+    {
+      "type": 0,
+      "value": "誰もが参加したがっています。ポケットの保護が義務になりました。"
+    }
+  ],
+  "discovery.skill.powerUnderwhelming.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +25%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.powerUnderwhelming.flavour": [
+    {
+      "type": 0,
+      "value": "発見を使って発見を発見します。どうやって？永遠の謎です。"
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +100%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.flavour": [
+    {
+      "type": 0,
+      "value": "ネットワークプロトコルを改良。会議の招待状より先に大発見が届くようになりました。"
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.name": [
+    {
+      "type": 0,
+      "value": "発見強化"
+    }
+  ],
+  "discovery.skill.purityOfMind.effect": [
+    {
+      "type": 0,
+      "value": "未使用スキルポイント1点につき資金 +50%、発見速度 +5%。発見速度の上限は+200%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.purityOfMind.flavour": [
+    {
+      "type": 0,
+      "value": "ひたすら集中し、資金と発見以外のあらゆる思考を頭から追い出します。"
+    }
+  ],
+  "discovery.skill.purityOfSEssence.effect": [
+    {
+      "type": 0,
+      "value": "資金・ボット・施設の生産 ×(1 + 0.42p + 0.13784p(p − 1))。pは未使用スキルポイント。未使用1点につき発見速度 +2%、上限+100%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.regulatedAcademia.effect": [
+    {
+      "type": 0,
+      "value": "発見の生産ボーナスを20%強化し、2個目以降のフラグメント1個につきさらに10%強化。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.regulatedAcademia.flavour": [
+    {
+      "type": 0,
+      "value": "別の宇宙のかけらを見つけました。その知識が発見を強化します。この宇宙には、ほかに何が眠っているのでしょう？"
+    }
+  ],
+  "discovery.skill.repeatableResearch.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +50%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "割り当て中はSRS充電速度 +150%。「星の記憶」で強化されます。 ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "SRS充電速度 +100%。「星の記憶」で強化されます。 ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.scientificDominance.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +100%。断裂済みでなければ資金を4分の1にします。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.scientificPlanets.effect": [
+    {
+      "type": 0,
+      "value": "毎秒log10(ボット総数)の惑星を生産します。"
+    }
+  ],
+  "discovery.skill.scientificPlanets.flavour": [
+    {
+      "type": 0,
+      "value": "ボットに惑星の発見を教えましょう。なくさないよう、丁寧にお願いしておきましょう。"
+    }
+  ],
+  "discovery.skill.scientificRevolution.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +50%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.shouldersOfGiants.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +10 × log10(1 + サイエンス惑星 生産)%、上限+200%。 「敗者の肩」を含みます。 ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.shouldersOfPrecursors.effect": [
+    {
+      "type": 0,
+      "value": "資金倍率を合計発見速度で置き換えます。断裂済みの場合は既存倍率に乗算します。"
+    }
+  ],
+  "discovery.skill.shouldersOfTheEnlightened.effect": [
+    {
+      "type": 0,
+      "value": "「サイエンス惑星」の割り当て中、完了した発見1回につき資金 +10%。 ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.shouldersOfTheFallen.effect": [
+    {
+      "type": 0,
+      "value": "「サイエンス惑星」の割り当て中、毎秒log2(1 + 完了した発見数)の惑星を追加します。"
+    }
+  ],
+  "discovery.skill.shouldersOfTheFallen.flavour": [
+    {
+      "type": 0,
+      "value": "失われた文明の遺物。見事な肩。ひどい取扱説明書。"
+    }
+  ],
+  "discovery.skill.shouldersOfTheRevolution.effect": [
+    {
+      "type": 0,
+      "value": "完了した発見1回につき資金 +1%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.startHereTree.effect": [
+    {
+      "type": 0,
+      "value": "資金 +20%、発見速度 +20%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.startHereTree.name": [
+    {
+      "type": 0,
+      "value": "資金と発見"
+    }
+  ],
+  "discovery.skill.stellarObliteration.effect": [
+    {
+      "type": 0,
+      "value": "「恒星の犠牲」の銀河が1,000倍強力になります。断裂済みでなければ資金を恒星銀河数で割ります。"
+    }
+  ],
+  "discovery.skill.superRadiantScattering.effect": [
+    {
+      "type": 0,
+      "value": "SRSの充電に応じて資金・ボット・全施設の生産を強化。発見速度 +10 × log10(1 + 充電秒数 / 100)%、上限は「集束ビーム」適用前で+200%。 ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.superchargedPower.effect": [
+    {
+      "type": 0,
+      "value": "資金・施設の生産 +50%、発見速度 +25%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.tasteOfPower.effect": [
+    {
+      "type": 0,
+      "value": "組立ライン・AIマネージャー・サーバー・データセンター・惑星が50%強化。断裂済みでなければ資金が25%減少。"
+    }
+  ],
+  "discovery.skill.whatCouldHaveBeen.effect": [
+    {
+      "type": 0,
+      "value": "発見速度 +10 × log10(1 + ポケット次元 生産)%、上限+200%。 「肩の移植手術」により「敗者の肩」を含みます。 ボーナスは加算されます。"
+    }
+  ],
+  "discovery.skill.workerBoost.effect": [
+    {
+      "type": 0,
+      "value": "資金生産 +10,000%。"
+    }
+  ],
+  "discovery.speed": [
+    {
+      "type": 0,
+      "value": "発見速度"
+    }
+  ],
+  "discovery.speedEffect": [
+    {
+      "type": 0,
+      "value": "発見速度 +25%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.speedSources": [
+    {
+      "type": 0,
+      "value": "発見速度"
+    }
+  ],
+  "discovery.startingBenefits": [
+    {
+      "type": 0,
+      "value": "資金・ボット・施設の生産が10倍。パネルの基本寿命は10秒。"
+    }
+  ],
+  "discovery.totalBots": [
+    {
+      "type": 0,
+      "value": "ボット総数"
+    }
+  ],
+  "discovery.unlock": [
+    {
+      "type": 0,
+      "value": "発見を解放"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -7205,6 +7773,12 @@
       "value": "ナビゲーションショートカット"
     }
   ],
+  "settings.navigation.transcendence": [
+    {
+      "type": 0,
+      "value": "超越を表示"
+    }
+  ],
   "settings.navigation.wiki": [
     {
       "type": 0,
@@ -13520,6 +14094,68 @@
       "value": "ストーリー"
     }
   ],
+  "wiki.bots.discovery-overview": [
+    {
+      "type": 0,
+      "value": "すべての"
+    },
+    {
+      "type": 8,
+      "value": "bots",
+      "children": [
+        {
+          "type": 0,
+          "value": "ボット"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "が"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "ソーラーパネル"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "を生産し、自動で軌道へ打ち上げます。発見が科学者と研究に置き換わります。"
+    },
+    {
+      "type": 8,
+      "value": "skills",
+      "children": [
+        {
+          "type": 0,
+          "value": "スキルツリー"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "の目標達成では、引き続き"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "スキルポイント"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "を獲得できます。"
+    }
+  ],
   "wiki.bots.milestones": [
     {
       "type": 8,
@@ -13918,6 +14554,256 @@
     {
       "type": 0,
       "value": "スキルツリー"
+    }
+  ],
+  "wiki.category.transcendence": [
+    {
+      "type": 0,
+      "value": "超越"
+    }
+  ],
+  "wiki.discovery.overview": [
+    {
+      "type": 0,
+      "value": "発見は"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "レベル1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "から始まり、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "資金・ボット・施設の生産が10倍"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "パネル基本寿命は10秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "になります。完了するたびに倍率と基本寿命に"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "0.1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "が加算されます。基本速度では1時間で1回完了します。科学者や資源は不要です。"
+    }
+  ],
+  "wiki.discovery.overview-title": [
+    {
+      "type": 0,
+      "value": "発見"
+    }
+  ],
+  "wiki.discovery.resets": [
+    {
+      "type": 0,
+      "value": "発見は"
+    },
+    {
+      "type": 8,
+      "value": "infinity",
+      "children": [
+        {
+          "type": 0,
+          "value": "インフィニティ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "、"
+    },
+    {
+      "type": 8,
+      "value": "quantum",
+      "children": [
+        {
+          "type": 0,
+          "value": "クアンタム"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "、チャレンジで保持されます。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "超越"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "ではレベルと進行がリセットされますが、解放状態と恒久アップグレードは残ります。貯蔵時間を使うと発見も進みます。不在中の時間は蓄積され、発見には自動適用されません。"
+    }
+  ],
+  "wiki.discovery.resets-title": [
+    {
+      "type": 0,
+      "value": "進行とリセット"
+    }
+  ],
+  "wiki.discovery.skills": [
+    {
+      "type": 0,
+      "value": "科学スキルは"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "発見速度"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "を向上させるようになり、現在の効果はスキルツリーで確認できます。速度ボーナスは加算されます。統制された学術界と対応する解明済みの秘密は、パネル基本寿命を変えずに発見の"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1倍"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "を超える生産ボーナスを強化します。科学へのペナルティは適用されません。"
+    }
+  ],
+  "wiki.discovery.skills-title": [
+    {
+      "type": 0,
+      "value": "スキルと秘密"
+    }
+  ],
+  "wiki.discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "アボカトの"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "発見速度"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "は購入ごとに"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "速度 +25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "初期出力"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "は初期倍率とパネル基本寿命に"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "を加算し、現在の周回にも即時反映されます。各アップグレードの価格はそれぞれ"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "超越ポイント1、2、3…"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "と増えます。ボーナスは加算されます。"
+    }
+  ],
+  "wiki.discovery.upgrades-title": [
+    {
+      "type": 0,
+      "value": "恒久アップグレード"
     }
   ],
   "wiki.infinity.overview": [
@@ -15649,7 +16535,7 @@
     },
     {
       "type": 0,
-      "value": "を研究するとシミュレーションが後の災害に耐え、リセットで得る"
+      "value": "を現実現実現実研究するとシミュレーションが後の災害に耐え、リセットで得る"
     },
     {
       "type": 8,
@@ -15894,6 +16780,18 @@
     {
       "type": 0,
       "value": "キャッシュ倍率"
+    }
+  ],
+  "wiki.secrets.effect.discovery-production-enhancement": [
+    {
+      "type": 0,
+      "value": "発見の生産ボーナス強化"
+    }
+  ],
+  "wiki.secrets.effect.discovery-speed": [
+    {
+      "type": 0,
+      "value": "発見速度"
     }
   ],
   "wiki.secrets.effect.planet-boost": [
@@ -16358,6 +17256,60 @@
     {
       "type": 0,
       "value": "トピック"
+    }
+  ],
+  "wiki.transcendence.overview": [
+    {
+      "type": 0,
+      "value": "ボット数が"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "4e242ボット"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "に到達したらアボカトで超越し、以前のレイヤーをリセットして"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "超越ポイントを1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "獲得できます。1ポイントで"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "発見を解放"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "すると、科学と研究が恒久的に置き換わります。既存の科学や研究レベルは引き継がれません。"
+    }
+  ],
+  "wiki.transcendence.overview-title": [
+    {
+      "type": 0,
+      "value": "スウォームのその先へ"
     }
   ]
 }

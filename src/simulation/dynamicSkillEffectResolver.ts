@@ -1,3 +1,4 @@
+import { deriveDiscoveryEffects } from './discoveryEffects'
 import { galvanizedSkillSet } from './galvanizedSkillEffects'
 import { deriveEffectivePurchaseCounts } from './effectivePurchaseCounts'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
@@ -107,13 +108,14 @@ function prepareDynamicSkillEffectInputs(
   const managers = state.dyson.facilities.ai_managers
   const servers = state.dyson.facilities.servers
   const planets = state.dyson.facilities.planets
-  const scienceBoostLevel =
+  const scienceBoostLevel = state.discovery?.unlocked ? 0 :
     state.research.levelsById['research.science_boost'] ?? 0
   const panelArea = resolvePanelArea(
     snapshot.panelsPerSecond,
     snapshot.panelLifetimeSeconds,
   )
   const moneyScienceState: MoneyScienceCanonicalInputs = {
+    discovery: state.discovery,
     challenges: state.challenges,
     dyson: state.dyson,
     skills: state.skills,
@@ -123,13 +125,13 @@ function prepareDynamicSkillEffectInputs(
   const moneyScienceDerived: MoneyScienceDerivedInputs = Object.freeze({
     panelsPerSecond: snapshot.panelsPerSecond,
     panelLifetimeSeconds: snapshot.panelLifetimeSeconds,
-    scienceMultiplier: snapshot.scienceMultiplier,
+    scienceMultiplier: state.discovery?.unlocked ? deriveDiscoveryEffects(state, snapshot).speed : snapshot.scienceMultiplier,
   })
   const panel: PanelDynamicEffectInputs = Object.freeze({
     galvanizedSkills: galvanizedSkillSet(state),
     ownedSkills,
     botMultitasking: state.quantum.unlocks.botMultitasking,
-    botDistribution: state.dyson.botDistribution,
+    botDistribution: state.discovery?.unlocked ? 0 : state.dyson.botDistribution,
     fragments: state.skills.fragments,
     managers,
     androidsTimerSeconds:
@@ -166,8 +168,9 @@ function prepareDynamicSkillEffectInputs(
     }),
     panel,
     planetGeneration: Object.freeze({
+      discoveryCompletions: state.discovery?.unlocked ? state.discovery.completions : undefined,
       ownedSkills,
-      researchers: state.dyson.researchers,
+      researchers: state.discovery?.unlocked ? state.dyson.bots : state.dyson.researchers,
       fragments: state.skills.fragments,
       assemblyLines,
       planets,
@@ -177,6 +180,7 @@ function prepareDynamicSkillEffectInputs(
       scienceBoostLevel,
     }),
     shoulders: Object.freeze({
+      discoveryCompletions: state.discovery?.unlocked ? state.discovery.completions : undefined,
       ownedSkills,
       scienceBoostLevel,
       scientificPlanetsProduction:
@@ -213,7 +217,7 @@ export function resolveDynamicSkillEffect(
     {
       panelsPerSecond: snapshot.panelsPerSecond,
       panelLifetimeSeconds: snapshot.panelLifetimeSeconds,
-      scienceMultiplier: snapshot.scienceMultiplier,
+      scienceMultiplier: state.discovery?.unlocked ? deriveDiscoveryEffects(state, snapshot).speed : snapshot.scienceMultiplier,
     },
   )
   if (moneyScience.handled) return moneyScience

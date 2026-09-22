@@ -101,6 +101,7 @@ export interface SettingsSurfaceProps {
 
 const NAVIGATION_SHORTCUTS = [
   ['bots', messages.botsShortcut] as const,
+  ['transcendence', messages.transcendenceShortcut] as const,
   ['research', messages.researchShortcut] as const,
   ['skills', messages.skillsShortcut] as const,
   ['infinity', messages.infinityShortcut] as const,

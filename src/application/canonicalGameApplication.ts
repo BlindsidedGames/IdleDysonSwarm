@@ -521,10 +521,10 @@ export class CanonicalGameApplicationFacade {
   ): Promise<CanonicalPlayerDispatchResult> {
     const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
       envelope.command.kind === 'skill.set-preset-assignment'
-    if (presetPriorityChange || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
+    if (presetPriorityChange || envelope.command.kind === 'discovery.purchase' || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
         envelope.command.kind === 'challenge.enter-trial-and-error' || envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
       const result = await this.application.dispatchCommitFirst(envelope,
-        presetPriorityChange ? 'skill-preset' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
+        presetPriorityChange ? 'skill-preset' : envelope.command.kind === 'discovery.purchase' ? 'discovery-purchase' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
       return {
         kind: 'transition',
         transition: result.committed ? result.transition : {

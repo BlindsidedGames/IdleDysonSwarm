@@ -267,7 +267,7 @@ export function selectCanonicalResearchPresentationFacts(
     visible: meetsPrerequisites || currentLevel > 0,
     maxed,
     automationActive:
-      !isTrialAndErrorActive(state) && state.infinity.automationUnlocked.research &&
+      !state.discovery?.unlocked && !isTrialAndErrorActive(state) && state.infinity.automationUnlocked.research &&
       isAutomationEnabled(definition, state),
     effectKind,
     perLevelEffect,
@@ -383,7 +383,7 @@ export function runResearchAutomationTick(
   > = deriveSecretBuffs(state.infinity.secretsOfTheUniverse)
     .researchCoefficientOverrides,
 ): ResearchAutomationTickResult {
-  if (isTrialAndErrorActive(state) || !state.infinity.automationUnlocked.research) {
+  if (state.discovery?.unlocked || isTrialAndErrorActive(state) || !state.infinity.automationUnlocked.research) {
     return {
       state,
       visitedResearchIds: Object.freeze([]),
@@ -515,7 +515,7 @@ function previewPurchase(
   policy: SimulationAutomationPolicy =
     'preserve-configured-mode',
 ): InternalResearchPurchasePreview {
-  if (isTrialAndErrorActive(state)) return emptyPreview(definition.id, 'challenge-active')
+  if (state.discovery?.unlocked || isTrialAndErrorActive(state)) return emptyPreview(definition.id, 'challenge-active')
   const currentLevel = levelsById[definition.id] ?? 0
   const maximumLevel =
     definition.maxLevel >= 0 ? definition.maxLevel : null

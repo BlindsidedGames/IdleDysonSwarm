@@ -1,3 +1,4 @@
+import { DISCOVERY_TUNING } from '../../../simulation/discovery'
 import { Fragment, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useIntl, type IntlShape, type MessageDescriptor } from 'react-intl'
 import { formatGameNumber } from '../../i18n/formatters'
@@ -21,6 +22,7 @@ import {
 import './wiki.css'
 
 export interface WikiSurfaceProps {
+  readonly discoveryUnlocked?: boolean
   readonly locale: EnabledLocale
   readonly progression: WikiProgression
   readonly initialCategory?: WikiCategoryId
@@ -317,6 +319,7 @@ const secretEntries: readonly SecretEntry[] = [
 export function WikiSurface({
   locale,
   progression,
+  discoveryUnlocked = false,
   initialCategory = 'bots',
   onCategoryChange,
 }: WikiSurfaceProps) {
@@ -324,7 +327,17 @@ export function WikiSurface({
   const topicSelectId = useId()
   const articleRef = useRef<HTMLElement>(null)
   const visibleIds = visibleWikiCategoryIds(progression)
-  const visibleCategories = baseCategories.filter((category) => visibleIds.includes(category.id))
+  const visibleCategories = baseCategories.filter((category) => visibleIds.includes(category.id)).map(category => {
+    if (category.id === 'research' && discoveryUnlocked) return { ...category, title: messages.transcendence, sections: [
+      { title: messages.discoveryOverviewTitle, body: messages.discoveryOverview },
+      { title: messages.discoveryUpgradesTitle, body: messages.discoveryUpgrades },
+      { title: messages.discoverySkillsTitle, body: messages.discoverySkills },
+      { title: messages.discoveryResetsTitle, body: messages.discoveryResets },
+    ] }
+    if (category.id === 'bots' && discoveryUnlocked) return { ...category, sections: category.sections.map(section => section.body === messages.botsOverview ? { ...section, body: messages.botsDiscoveryOverview } : section) }
+    if (category.id === 'quantum') return { ...category, sections: [...category.sections, { title: messages.transcendenceOverviewTitle, body: messages.transcendenceOverview }] }
+    return category
+  })
   const [requestedCategory, setRequestedCategory] = useState<WikiCategoryId>(initialCategory)
   const category = visibleCategories.find(({ id }) => id === requestedCategory) ?? visibleCategories[0]
   const panelId = `wiki-panel-${category.id}`
@@ -414,7 +427,7 @@ export function WikiSurface({
               </section>
             </>
           ) : category.id === 'secrets' ? (
-            <SecretsArticle locale={locale} revealed={progression.secretsOfTheUniverse} />
+            <SecretsArticle discoveryUnlocked={discoveryUnlocked} locale={locale} revealed={progression.secretsOfTheUniverse} />
           ) : category.id === 'patch-notes' ? (
             <PatchNotesArticle />
           ) : category.id === 'lore' ? (
@@ -670,7 +683,7 @@ function wikiTopicLink(
   )
 }
 
-function SecretsArticle({ locale, revealed }: { readonly locale: EnabledLocale; readonly revealed: bigint }) {
+function SecretsArticle({ locale, revealed, discoveryUnlocked }: { readonly discoveryUnlocked: boolean; readonly locale: EnabledLocale; readonly revealed: bigint }) {
   const intl = useIntl()
   const count = Number(revealed > 27n ? 27n : revealed)
   const unlocked = secretEntries.slice(0, count)
@@ -696,9 +709,9 @@ function SecretsArticle({ locale, revealed }: { readonly locale: EnabledLocale; 
             <span className="wiki-surface__secret-letter" aria-hidden="true">{entry.letter}</span>
             <span>
               <strong>{intl.formatMessage(messages.secretLevel, { level: index + 1 })}</strong>
-              <small>{intl.formatMessage(messages[entry.effect])}</small>
+              <small>{intl.formatMessage(discoveryUnlocked && DISCOVERY_TUNING.strengthSecrets.includes(index + 1) ? messages.discoveryProductionEnhancement : discoveryUnlocked && DISCOVERY_TUNING.speedSecrets.includes(index + 1) ? messages.discoverySpeed : messages[entry.effect])}</small>
             </span>
-            <span className="wiki-surface__secret-change">{entry.change}</span>
+            <span className="wiki-surface__secret-change">{discoveryUnlocked && DISCOVERY_TUNING.strengthSecrets.includes(index + 1) ? '+2%' : discoveryUnlocked && DISCOVERY_TUNING.speedSecrets.includes(index + 1) ? '+5%' : entry.change}</span>
           </li>
         ))}
       </ol>

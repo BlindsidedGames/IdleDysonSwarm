@@ -24,11 +24,11 @@ describe('Unity save migration pipeline', () => {
       expect(before).toBe(sourceSchema)
       expect(getSavePath(decoded.root, 'saveVersion')).toBe(sourceSchema)
       expect(migrated.sourceSchema).toBe(sourceSchema)
-      expect(migrated.save.saveVersion).toBe(18)
+      expect(migrated.save.saveVersion).toBe(19)
       expect(migrated.save.infinityAutomaticReset).toBe(true)
       expect(migrated.validation).toEqual({ valid: true, error: null })
       expect(
-        compareGraphs(migrated.save, expected, { expectedSubset: true }),
+        compareGraphs(migrated.save, { ...expected, saveVersion: 19 }, { expectedSubset: true }),
       ).toEqual([])
     },
   )
@@ -192,7 +192,7 @@ describe('Unity save migration pipeline', () => {
     const dailyWindows = statistics.dailyWindows as Record<string, unknown>[]
 
     expect(migrated.sourceSchema).toBe(12)
-    expect(migrated.targetSchema).toBe(18)
+    expect(migrated.targetSchema).toBe(19)
     expect(migrated.appliedSteps).toContain(
       'continuous-influence-and-strange-matter',
     )
@@ -234,7 +234,7 @@ describe('Unity save migration pipeline', () => {
     })
 
     expect(migrated.sourceSchema).toBe(13)
-    expect(migrated.targetSchema).toBe(18)
+    expect(migrated.targetSchema).toBe(19)
     expect(migrated.appliedSteps).not.toContain(
       'continuous-influence-and-strange-matter',
     )
@@ -315,7 +315,7 @@ describe('Unity save migration pipeline', () => {
   })
 
   test('validator rejects future schema and non-finite prepared state', () => {
-    expect(() => migrateDecodedSave({ saveVersion: 19 })).toThrow(
+    expect(() => migrateDecodedSave({ saveVersion: 20 })).toThrow(
       'newer than supported',
     )
     const migrated = migrateDecodedSave({ saveVersion: 12 })
@@ -324,7 +324,7 @@ describe('Unity save migration pipeline', () => {
         migrated.save.dysonVerseSaveData as Record<string, unknown>
       ).dysonVerseInfinityData as Record<string, unknown>
     ).money = Number.NaN
-    expect(validatePreparedSave(migrated.save, 18)).toEqual({
+    expect(validatePreparedSave(migrated.save, 19)).toEqual({
       valid: false,
       error:
         'saveSettings.dysonVerseSaveData.dysonVerseInfinityData.money contains a non-finite number.',

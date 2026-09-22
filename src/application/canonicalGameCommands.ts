@@ -1,3 +1,4 @@
+import { purchaseDiscovery, type DiscoveryPurchase } from '../simulation/discovery'
 import { clearSpeedrunBest, SPEEDRUN_MILESTONES, type SpeedrunMilestoneId } from '../simulation/speedrunStatistics'
 import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
@@ -302,6 +303,10 @@ export type CanonicalGameCommand =
   | {
       readonly kind: 'infinity.purchase-shop-item'
       readonly itemId: CanonicalInfinityShopItemId
+    }
+  | {
+      readonly kind: 'discovery.purchase'
+      readonly purchase: DiscoveryPurchase
     }
   | {
       readonly kind: 'avocado.feed'
@@ -776,6 +781,7 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     authority: 'purchaseCanonicalInfinityShopItem',
     requires: ['runtime-evaluation-port'],
   },
+  'discovery.purchase': { supported: true, authority: 'purchaseDiscovery', requires: ['runtime-evaluation-port'] },
   'avocado.feed': {
     supported: true,
     authority: 'feedAllToAvocado',
@@ -863,7 +869,15 @@ export function routeCanonicalGameCommand(
     return rejectDomain(state, carriers, 'skill:challenge-active', 'skills', 'Skills are disabled during Blank Slate.')
   }
 
+  if (state.discovery?.unlocked && (command.kind.startsWith('research.') || command.kind === 'dyson.set-bot-distribution' || command.kind === 'skill.set-preset-bot-distribution')) {
+    return rejectDomain(state, carriers, 'research-setting:retired', command.kind, 'Research and allocation have been replaced by Discovery.')
+  }
   switch (command.kind) {
+    case 'discovery.purchase': {
+      const next = purchaseDiscovery(state, command.purchase)
+      if (!next) return rejectDomain(state, carriers, 'avocado:discovery-unavailable', command.kind, 'Discovery purchase unavailable.')
+      return finalizeAccepted(state, next, true, 'avocado:discovery-purchased', carriers, options.runtimeEvaluation)
+    }
     case 'statistics.clear-speedrun-best': {
       if (!SPEEDRUN_MILESTONES.includes(command.milestone)) return rejectDomain(state, carriers, 'statistics:invalid-milestone', 'statistics.speedruns', 'Unknown speedrun milestone.')
       const run = state.statistics.speedruns

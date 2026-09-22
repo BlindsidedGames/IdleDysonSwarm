@@ -19,6 +19,7 @@ import {
 } from './stellarArithmetic'
 
 export interface MoneyScienceCanonicalInputs {
+  readonly discovery?: CanonicalGameStateV1['discovery']
   readonly challenges?: CanonicalGameStateV1['challenges']
   readonly dyson: Pick<
     CanonicalGameStateV1['dyson'],
@@ -120,6 +121,7 @@ function resolveMoneyEffect(
 
   switch (skillId) {
     case 'regulatedAcademia': {
+      if (state.discovery?.unlocked) return resolved(0)
       const research = readResearchLevel(
         state,
         'research.money_multiplier',
@@ -176,6 +178,7 @@ function resolveMoneyEffect(
       )
     }
     case 'shouldersOfTheRevolution': {
+      if (state.discovery?.unlocked) return resolved(1 + 0.01 * Number(state.discovery.completions))
       const research = readResearchLevel(
         state,
         'research.science_boost',
@@ -350,7 +353,7 @@ const SCIENCE_SKILL_IDS: ReadonlySet<string> = new Set([
   'superRadiantScattering',
 ])
 
-function regulatedAcademiaPercentagePoints(fragments: number): number {
+export function regulatedAcademiaPercentagePoints(fragments: number): number {
   return 20 + 10 * Math.max(0, fragments - 1)
 }
 
@@ -471,7 +474,7 @@ function readAllocationInputs(
   readonly botDistribution: number
   readonly botMultitasking: boolean
 }> {
-  const distribution = state.dyson.botDistribution
+  const distribution = state.discovery?.unlocked ? 0 : state.dyson.botDistribution
   if (
     typeof distribution !== 'number' ||
     !Number.isFinite(distribution) ||

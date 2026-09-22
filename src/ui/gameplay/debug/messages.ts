@@ -1,10 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const debugSurfaceMessages = defineMessages({
-  overflowPoints: { id: 'debug.overflow-points', defaultMessage: 'Overflow Points', description: 'Debug purchase currency.' },
+  overflowPoints: { id: 'debug.overflow-points', defaultMessage: 'Transcendence Points', description: 'Debug purchase currency.' },
   speedrunWarning: { id: 'debug.speedrun-warning', defaultMessage: 'Using gameplay tools makes this save ineligible for speedruns. Unlocking or opening Developer Options does not.', description: 'Explains persistent Debug usage for speedruns.' },
   title: { id: 'debug.title', defaultMessage: 'Developer Options', description: 'Heading for the developer tools screen.' },
-  accessDescription: { id: 'debug.access-description', defaultMessage: 'Spend 10 Overflow Points to unlock the developer tools. Once purchased, they can be re-enabled for free.', description: 'Explains how developer tools are unlocked and retained.' },
+  accessDescription: { id: 'debug.access-description', defaultMessage: 'Spend 10 Transcendence Points to unlock the developer tools. Once purchased, they can be re-enabled for free.', description: 'Explains how developer tools are unlocked and retained.' },
   quantumShards: { id: 'debug.quantum-shards', defaultMessage: 'Quantum Shards', description: 'Quantum Shards resource label in developer tools.' },
   strangeMatter: { id: 'debug.strange-matter', defaultMessage: 'Strange Matter', description: 'Strange Matter resource label in developer tools.' },
   purchase: { id: 'debug.purchase', defaultMessage: 'Purchase Developer Options', description: 'Action that purchases access to developer tools.' },

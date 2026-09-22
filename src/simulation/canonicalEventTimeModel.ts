@@ -1,3 +1,5 @@
+import { advanceDiscovery } from './discovery'
+import { deriveDiscoveryEffects } from './discoveryEffects'
 import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime } from './speedrunStatistics'
 import { isBreakInfinityEnabled, isInfinityChallengeActive } from './infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
@@ -528,6 +530,9 @@ export class CanonicalEventTimeModel
         derived.value.productionArrivalRates,
         seconds,
       )
+      if (startingState.discovery?.unlocked) {
+        candidate = { ...candidate, discovery: advanceDiscovery(startingState.discovery, seconds, deriveDiscoveryEffects(startingState, this.carrier.evaluationSnapshot).speed) }
+      }
       const boost = derived.value.botBoostMultiplier
       if (boost === 2 && candidate.dyson.bots > startingState.dyson.bots) candidate = recordBotBoostUsage(candidate)
       candidate = applyCanonicalSkillIntervalEffects(

@@ -19,6 +19,7 @@ export interface CanonicalGameStateV1 {
   readonly dyson: DysonState
   readonly infinity: InfinityState
   readonly skills: SkillsState
+  readonly discovery?: DiscoveryState
   readonly research: ResearchState
   readonly reality: RealityState
   readonly quantum: QuantumState
@@ -151,6 +152,14 @@ export interface SkillsState {
   }
 }
 
+export interface DiscoveryState {
+  readonly unlocked: boolean
+  readonly completions: bigint
+  readonly progress: number
+  readonly startingPower: bigint
+  readonly speedUpgrades: bigint
+}
+
 export interface ResearchState {
   readonly levelsById: Readonly<Record<string, number>>
   readonly progressById: Readonly<Record<string, number>>
@@ -205,7 +214,7 @@ export interface AvocadoState {
   readonly strangeMatter: number
   /** Legacy production bonus, cleared by an Overflow reset. */
   readonly overflowMultiplier: number
-  /** Spendable currency reserved for the future Overflow layer. */
+  /** Spendable Transcendence Points; legacy field name retained for saves. */
   readonly overflowPoints?: bigint
 }
 

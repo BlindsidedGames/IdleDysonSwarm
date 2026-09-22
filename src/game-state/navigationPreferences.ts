@@ -1,4 +1,5 @@
 export const BOTTOM_NAVIGATION_DESTINATION_IDS = [
+  'transcendence',
   'bots',
   'research',
   'skills',
@@ -39,6 +40,7 @@ export interface NavigationRouteDiscovery {
 
 /** Product defaults for destinations a player has not explicitly configured. */
 export const DEFAULT_BOTTOM_NAVIGATION_VISIBILITY = Object.freeze({
+  transcendence: true,
   bots: true,
   research: true,
   skills: true,

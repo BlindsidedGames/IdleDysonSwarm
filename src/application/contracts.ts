@@ -56,6 +56,7 @@ export type CommitFirstPurpose =
   | 'away-time'
   | 'bot-cap'
   | 'galvanization'
+  | 'discovery-purchase'
   | 'skill-preset'
   | 'development'
 

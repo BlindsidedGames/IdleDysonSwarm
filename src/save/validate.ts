@@ -1,3 +1,5 @@
+import { validateDiscovery } from '../simulation/discovery'
+import type { DiscoveryState } from '../game-state/types'
 import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { validateInfinityChallenges } from '../simulation/infinityChallenges'
 import { facilityArrayNames } from './facilityArrays'
@@ -31,6 +33,11 @@ export function validatePreparedSave(
     if (!isRecord(value[key])) return invalid(`Required root container ${key} is null.`)
   }
 
+  if (expectedSchema >= 19) {
+    if (!isRecord(value.discovery)) return invalid('Missing Discovery state.')
+    const discoveryError = validateDiscovery(value.discovery as unknown as DiscoveryState)
+    if (discoveryError) return invalid(discoveryError)
+  }
   const speedrunError = validateSpeedrunStatistics(value.idsSpeedruns)
   if (speedrunError) return invalid(speedrunError)
 

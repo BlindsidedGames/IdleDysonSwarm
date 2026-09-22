@@ -1,5 +1,6 @@
 import {
   BotsSymbol,
+  InlineImageSymbol,
   ResourceValue,
   ScienceSymbol,
 } from '../../components'
@@ -76,7 +77,7 @@ function Resource({
         label={presentation.label}
         value={presentation.value}
         leadingSymbol={
-          showBotsIcon
+          presentation.iconSrc ? <InlineImageSymbol src={presentation.iconSrc} tint maskMode="alpha" /> : showBotsIcon
             ? <BotsSymbol />
             : showScienceIcon
               ? <ScienceSymbol />
@@ -91,7 +92,7 @@ function Resource({
           aria-label={presentation.fullPrecisionRate}
           title={presentation.fullPrecisionRate}
         >
-          {showScienceIcon && <ScienceSymbol />}
+          {showScienceIcon && !presentation.iconSrc && <ScienceSymbol />}
           <bdi dir="ltr">{presentation.rate}</bdi>
         </span>
       )}

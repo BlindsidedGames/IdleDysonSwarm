@@ -24,5 +24,5 @@ export const challengeMessages = defineMessages({
   failure: { id: 'challenges.failure', defaultMessage: 'The restart could not be saved. Your current run has been kept. Try again.' },
   view: { id: 'challenges.view', defaultMessage: 'View challenge' },
   galvanizers: { id: 'challenges.galvanizers', defaultMessage: 'Catalysts: {value}' },
-  future: { id: 'challenges.galvanizers.future', defaultMessage: 'Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Overflow.' },
+  future: { id: 'challenges.galvanizers.future', defaultMessage: 'Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence.' },
 })

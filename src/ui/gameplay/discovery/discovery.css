@@ -1,0 +1,74 @@
+.discovery-surface {
+  padding: var(--game-card-content-inset);
+  overflow-y: auto;
+  color: var(--color-text-primary);
+}
+.discovery-card {
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  background: var(--theme-panel);
+  border: 1px solid var(--theme-divider);
+  border-radius: var(--radius-md);
+}
+.discovery-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block-end: 0.8rem;
+}
+.discovery-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: calc(1.2rem * var(--game-text-scale));
+}
+.discovery-heading strong {
+  color: var(--theme-accent);
+  font-size: calc(1.2rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.discovery-progress { position: relative; display: block; }
+.discovery-progress .ui-progress__header {
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.discovery-progress .ui-progress__header > span:first-child {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.discovery-progress .ui-progress__value {
+  color: var(--color-text-primary);
+  font-size: calc(1.05rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+}
+.discovery-card .discovery-progress progress {
+  display: block;
+  appearance: none;
+  block-size: calc(3rem * var(--game-text-scale));
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--theme-page);
+}
+.discovery-card .discovery-progress progress::-webkit-progress-bar { background: var(--theme-page); }
+.discovery-card .discovery-progress progress::-webkit-progress-value { background: var(--theme-selected); }
+.discovery-card .discovery-progress progress::-moz-progress-bar { background: var(--theme-selected); }
+.discovery-details { margin-block-start: 0.5rem; }
+.discovery-details summary {
+  cursor: pointer;
+  list-style: none;
+  inline-size: max-content;
+  margin-inline-start: auto;
+}
+.discovery-details summary::-webkit-details-marker { display: none; }
+.discovery-details p { margin-block: 0.5rem; }
+.discovery-details dl > div { display: flex; justify-content: space-between; gap: 1rem; }
+.discovery-details dd { margin: 0; white-space: nowrap; }

@@ -254,3 +254,11 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+.avocato-total--discovery { flex-wrap: wrap; }
+.avocato-total--discovery > span:last-child { flex-basis: 100%; }
+
+.discovery-purchase > p,
+.discovery-purchase > [role="group"],
+.discovery-purchase > .ui-button { grid-column: 1 / -1; }
+.discovery-purchase > span { text-align: end; }
+.discovery-purchase > [role="group"] { display: grid; gap: var(--ui-card-gap); }

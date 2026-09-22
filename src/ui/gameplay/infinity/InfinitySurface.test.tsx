@@ -20,9 +20,9 @@ test('replaces unavailable IP progress with Overflow navigation', () => {
     previews={{ shop: [], breakTarget: { minimum: 1n, maximum: 1100n, minimumPosition: 0, maximumPosition: 1099, currentPosition: 0 } }}
     commandAvailability={{ purchaseShopItem: true, setBreakTarget: true, setAutomaticReset: true, requestReset: false }}
     dispatchPlayer={vi.fn()} onViewOverflow={open} /> </IntlProvider>)
-  expect(screen.getByText('Overflow reached')).not.toBeNull()
+  expect(screen.getByText('Transcendence reached')).not.toBeNull()
   expect(screen.queryByRole('progressbar')).toBeNull()
   expect(screen.queryByRole('button', { name: /Infinity for/ })).toBeNull()
-  fireEvent.click(screen.getByRole('button', { name: 'View Overflow reset' }))
+  fireEvent.click(screen.getByRole('button', { name: 'View Transcendence reset' }))
   expect(open).toHaveBeenCalledOnce()
 })

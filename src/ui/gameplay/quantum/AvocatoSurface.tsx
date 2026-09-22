@@ -1,3 +1,8 @@
+import { discoveryGrowingBonus } from '../../../simulation/discovery'
+import { discoveryMessages } from '../discovery/messages'
+import { DiscoveryPurchases } from '../discovery/DiscoveryPurchases'
+import { EMPTY_DISCOVERY, type DiscoveryPurchase } from '../../../simulation/discovery'
+import type { DiscoveryState } from '../../../game-state/types'
 import { useRef, useState } from 'react'
 import { useIntl, type MessageDescriptor } from 'react-intl'
 import type {
@@ -15,7 +20,7 @@ import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { avocatoMessages as messages } from './messages'
 import './quantum.css'
 
-type AvocatoCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'avocado.feed' | 'avocado.request-overflow-reset' }>
+type AvocatoCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'avocado.feed' | 'avocado.request-overflow-reset' | 'discovery.purchase' }>
 
 export interface AvocatoCommandAvailability {
   readonly feed: boolean
@@ -23,6 +28,9 @@ export interface AvocatoCommandAvailability {
 }
 
 export interface AvocatoSurfaceProps {
+  readonly discovery?: DiscoveryState
+  readonly discoveryAvailable?: boolean
+  readonly onDiscoveryUnlocked?: () => void
   readonly locale: EnabledLocale
   /** The Quantum upgrade opens the feed economy. */
   readonly unlocked: boolean
@@ -44,7 +52,7 @@ const FEED_META: Readonly<Record<AvocadoFeedSource, { readonly title: MessageDes
   'strange-matter': { title: messages.strangeMatterMultiplier, resource: messages.resourceStrangeMatter },
 }
 
-export function AvocatoSurface({ locale, unlocked, resources, spendable, derived, previews, commandAvailability, dispatchPlayer }: AvocatoSurfaceProps) {
+export function AvocatoSurface({ locale, unlocked, resources, spendable, derived, previews, commandAvailability, dispatchPlayer, discovery = EMPTY_DISCOVERY, discoveryAvailable = false, onDiscoveryUnlocked }: AvocatoSurfaceProps) {
   const intl = useIntl()
   return (
     <div className="avocato-surface">
@@ -64,11 +72,18 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
       </header>
 
       <div className="avocato-surface__content">
+        <DiscoveryPurchases state={discovery} balance={resources.overflowPoints} available={discoveryAvailable} locale={locale}
+          purchase={async (purchase: DiscoveryPurchase) => {
+            const result = await dispatchPlayer({ kind: 'discovery.purchase', purchase })
+            if (result.status === 'accepted' && purchase === 'unlock') onDiscoveryUnlocked?.()
+            return result.status === 'accepted'
+          }} />
         {unlocked ? (
           <>
-        <section className="avocato-total" aria-label={intl.formatMessage(messages.totalBoost)}>
-          <strong>{intl.formatMessage(messages.totalBoost)}</strong>
+        <section className={`avocato-total${discovery.unlocked ? ' avocato-total--discovery' : ''}`} aria-label={intl.formatMessage(discovery.unlocked ? discoveryMessages.avocatoProduction : messages.totalBoost)}>
+          <strong>{intl.formatMessage(discovery.unlocked ? discoveryMessages.avocatoProduction : messages.totalBoost)}</strong>
           <span>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, derived.total) })}</span>
+          {discovery.unlocked && <span>{intl.formatMessage(discoveryMessages.avocatoBonus, { value: formatGameNumber(locale, discoveryGrowingBonus(derived.total - 1) * 100) })}</span>}
         </section>
 
         <div className="avocato-feed-grid">
@@ -133,7 +148,7 @@ function OverflowCard({ locale, resources, preview, routeAvailable, dispatchPlay
         <p>{intl.formatMessage(preview.eligible ? messages.overflowReached : messages.overflowThreshold,
           { value: formatGameNumber(locale, preview.threshold) })}</p>
         <p>{intl.formatMessage(messages.overflowDescription)}</p>
-        <p>{intl.formatMessage(messages.overflowFuture)}</p>
+
         {resources.overflowMultiplier > 0 && <p>{intl.formatMessage(messages.legacyOverflow,
           { value: formatGameNumber(locale, 1 + resources.overflowMultiplier) })}</p>}
       </div>

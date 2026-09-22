@@ -1,3 +1,4 @@
+import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { isSubskill } from '../simulation/skillSubskills'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
@@ -25,7 +26,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 18
+export const CURRENT_SAVE_SCHEMA = 19
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -80,6 +81,10 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   if (sourceSchema < 18) {
     migrateStellarMemoryPrice(save)
     appliedSteps.push('stellar-memory-banked-charge')
+  }
+  if (sourceSchema < 19) {
+    save.discovery = { ...EMPTY_DISCOVERY }
+    appliedSteps.push('discovery-locked')
   }
   migrateResearch(save)
   appliedSteps.push('stable-research-ids')

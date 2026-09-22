@@ -1,3 +1,4 @@
+import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { type SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { clampUnitInterval as clampUnit } from '../core/clampUnitInterval'
@@ -222,6 +223,7 @@ export function hydrateGameState(
 
   const state: CanonicalGameStateV1 = {
     modelVersion: CANONICAL_GAME_MODEL_VERSION,
+    discovery: { ...EMPTY_DISCOVERY, ...recordOrEmpty(source.discovery) } as CanonicalGameStateV1['discovery'],
     challenges: {
       ...EMPTY_INFINITY_CHALLENGES,
       ...recordOrEmpty(source.infinityChallengeData),
@@ -959,6 +961,7 @@ export function dehydrateGameState(
     state.quantum.unlocks.galacticBrains
 
   source.infinityChallengeData = { ...EMPTY_INFINITY_CHALLENGES, ...state.challenges }
+  source.discovery = { ...(state.discovery ?? EMPTY_DISCOVERY) }
   avocado.overflowPoints = state.avocado.overflowPoints ?? 0n
   avocado.unlocked = state.avocado.unlocked
   avocado.infinityPoints = state.avocado.infinityPoints

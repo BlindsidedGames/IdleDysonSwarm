@@ -79,6 +79,7 @@ function derivePocketDimensions(
   rudimentaryProduction: number,
   owned: (id: string) => boolean,
 ): number {
+  const scienceBots = state.discovery?.unlocked ? state.dyson.bots : state.dyson.researchers
   let production =
     owned('pocketDimensions') && state.dyson.workers > 1
       ? Math.log10(state.dyson.workers)
@@ -86,16 +87,16 @@ function derivePocketDimensions(
 
   if (owned('pocketMultiverse')) {
     const multiplier =
-      owned('pocketDimensions') && state.dyson.researchers > 1
-        ? Math.log10(state.dyson.researchers)
+      owned('pocketDimensions') && scienceBots > 1
+        ? Math.log10(scienceBots)
         : 0
     if (multiplier > 0) production *= multiplier
   } else if (
     owned('pocketProtectors') &&
     owned('pocketDimensions') &&
-    state.dyson.researchers > 1
+    scienceBots > 1
   ) {
-    production += Math.log10(state.dyson.researchers)
+    production += Math.log10(scienceBots)
   }
 
   if (owned('dimensionalCatCables')) production *= 5

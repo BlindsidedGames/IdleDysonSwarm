@@ -1,3 +1,5 @@
+import { discoverySkillNames, discoverySkillEffects } from '../discovery/skillMessages'
+import { discoveryMessages } from '../discovery/messages'
 import { PURITY_ESSENCE_QUADRATIC_COEFFICIENT } from '../../../simulation/purityMultipliers'
 import { boostMessages } from '../store/boostMessages'
 import {
@@ -392,6 +394,7 @@ export function FacilityDetailsContent({
         !contribution.sourceId.startsWith('manual-purchase.'),
     ),
   ]
+  const discoveryUnlocked = productionModifierEffects.some(row => row.sourceId === 'discovery.production')
   const researchModifierEffects = productionModifierEffects.filter(
     (contribution) => contribution.source?.kind === 'research',
   )
@@ -480,17 +483,17 @@ export function FacilityDetailsContent({
         <CalculationStage number={2} title={intl.formatMessage(messages.productionModifiersStage)}>
           {researchModifierEffects.length > 0 && (
             <EffectGroup title={intl.formatMessage(messages.researchGroup)}>
-              <EffectList locale={locale} contributions={researchModifierEffects} facilityId={facilityId} />
+              <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={researchModifierEffects} facilityId={facilityId} />
             </EffectGroup>
           )}
           {skillModifierEffects.length > 0 && (
             <EffectGroup title={intl.formatMessage(messages.skillTreeGroup)}>
-              <EffectList locale={locale} contributions={skillModifierEffects} facilityId={facilityId} />
+              <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={skillModifierEffects} facilityId={facilityId} />
             </EffectGroup>
           )}
           {otherModifierEffects.length > 0 && (
             <EffectGroup title={intl.formatMessage(messages.otherBonusesGroup)}>
-              <EffectList locale={locale} contributions={otherModifierEffects} facilityId={facilityId} />
+              <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={otherModifierEffects} facilityId={facilityId} />
             </EffectGroup>
           )}
           {(hasTerraPurchaseEffects || purchaseEffects.length > 0) && (
@@ -499,7 +502,7 @@ export function FacilityDetailsContent({
                 <TerraRows locale={locale} layer={details.manualPurchaseLayer} />
               ) : null}
               {purchaseEffects.length > 0 && (
-                <EffectList locale={locale} contributions={purchaseEffects} facilityId={facilityId} manualPurchaseLayer={details?.manualPurchaseLayer} />
+                <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={purchaseEffects} facilityId={facilityId} manualPurchaseLayer={details?.manualPurchaseLayer} />
               )}
             </EffectGroup>
           )}
@@ -558,7 +561,7 @@ export function FacilityDetailsContent({
           </div>
         ))}
         {generationContributions.length > 0 && (
-          <EffectList locale={locale} contributions={generationContributions} facilityId={facilityId} />
+          <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={generationContributions} facilityId={facilityId} />
         )}
         <div className="facility-effect-row">
           <img className="facility-effect-row__icon" src={facilityIcon(facilityId)} alt="" />
@@ -644,11 +647,11 @@ function EffectGroup({ title, children }: { readonly title: string; readonly chi
   )
 }
 
-function EffectList({ locale, contributions, facilityId, manualPurchaseLayer }: { readonly locale: EnabledLocale; readonly contributions: readonly FacilityContribution[]; readonly facilityId: DysonFacilityId; readonly manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer'] }) {
+function EffectList({ locale, contributions, facilityId, manualPurchaseLayer, discoveryUnlocked }: { readonly discoveryUnlocked: boolean; readonly locale: EnabledLocale; readonly contributions: readonly FacilityContribution[]; readonly facilityId: DysonFacilityId; readonly manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer'] }) {
   const intl = useIntl()
   if (contributions.length === 0) return <p className="facility-details-empty">{intl.formatMessage(messages.noActiveEffects)}</p>
   return <>{contributions.map((contribution) => {
-    const presentation = effectPresentation(contribution, facilityId, intl, manualPurchaseLayer)
+    const presentation = effectPresentation(contribution, facilityId, intl, discoveryUnlocked, manualPurchaseLayer)
     return <EffectRow key={`${contribution.sourceId}-${contribution.order ?? 0}`} locale={locale} contribution={contribution} {...presentation} />
   })}</>
 }
@@ -727,7 +730,7 @@ function DynamicSourceFormula({
         ? Math.log10(calculation.researchers)
         : 0
       lines = [
-        <FormulaLine key="researchers" label={intl.formatMessage(messages.scienceBots)} value={number(calculation.researchers)} />,
+        <FormulaLine key="researchers" label={intl.formatMessage(calculation.usesTotalBots ? discoveryMessages.totalBots : messages.scienceBots)} value={number(calculation.researchers)} />,
         <FormulaLine key="base" label={`log10(${number(calculation.researchers)})`} value={number(current)} />,
       ]
       if (calculation.hubbleTelescope) current *= 2
@@ -767,13 +770,16 @@ function DynamicSourceFormula({
       lines.push(<FormulaLine key="base" label={`log10(${number(adjusted)})²`} value={number(Math.pow(Math.max(0, Math.log10(adjusted)), 2))} />)
       break
     }
-    case 'shoulders-of-the-fallen':
+    case 'shoulders-of-the-fallen': {
+      const level = calculation.discoveryCompletions ?? calculation.scienceBoostLevel
+      const input = calculation.discoveryCompletions === undefined ? level : 1 + level
       lines = [
-        <FormulaLine key="level" label={intl.formatMessage(messages.scienceBoostLevel)} value={number(calculation.scienceBoostLevel)} />,
+        <FormulaLine key="level" label={intl.formatMessage(calculation.discoveryCompletions === undefined ? messages.scienceBoostLevel : discoveryMessages.completions)} value={number(level)} />,
         skillLine('scientificPlanets', calculation.scientificPlanets, intl.formatMessage(messages.requirementMet)),
-        <FormulaLine key="base" label={`log2(${number(calculation.scienceBoostLevel)})`} value={number(calculation.scientificPlanets && calculation.scienceBoostLevel > 0 ? Math.log2(calculation.scienceBoostLevel) : 0)} />,
+        <FormulaLine key="base" label={`log2(${number(input)})`} value={number(calculation.scientificPlanets && input > 0 ? Math.log2(input) : 0)} />,
       ]
       break
+    }
     case 'pocket-dimensions': {
       let current = calculation.workers > 1
         ? Math.log10(calculation.workers)
@@ -935,7 +941,7 @@ function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly
   ))}</>
 }
 
-function effectPresentation(contribution: FacilityContribution, facilityId: DysonFacilityId, intl: IntlShape, manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer']): { icon: string; name: string; description: string } {
+function effectPresentation(contribution: FacilityContribution, facilityId: DysonFacilityId, intl: IntlShape, discoveryUnlocked: boolean, manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer']): { icon: string; name: string; description: string } {
   const source = contribution.source
   if (contribution.sourceId.startsWith('manual-purchase.scaling-') && manualPurchaseLayer) {
     const skillAssigned = source?.kind === 'skill' && source.id === 'productionScaling'
@@ -948,13 +954,18 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
       }),
     }
   }
-  if (source?.kind === 'skill') return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: skillName(source.id, intl), description: skillTechnical(source.id, intl) }
+  if (source?.kind === 'skill') {
+    const name = discoveryUnlocked ? discoverySkillNames[source.id as keyof typeof discoverySkillNames] : undefined
+    const effect = discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined
+    return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: name ? intl.formatMessage(name) : skillName(source.id, intl), description: effect ? intl.formatMessage(effect) : skillTechnical(source.id, intl) }
+  }
   if (source?.kind === 'research') return { icon: navigationAssets.research, name: intl.formatMessage(researchNameMessage(source.id)), description: intl.formatMessage(researchDescriptionMessage(source.id)) }
   if (source?.kind === 'infinity') return { icon: navigationAssets.infinity, name: intl.formatMessage(messages.infinityPower), description: intl.formatMessage(messages.infinityPower) }
   if (source?.kind === 'secret') return { icon: navigationAssets.infinity, name: intl.formatMessage(messages.secretsPower), description: intl.formatMessage(messages.secretsPower) }
   if (source?.kind === 'avocato') return { icon: skillIcons.avocados ?? navigationAssets.infinity, name: intl.formatMessage(messages.avocatoPower), description: intl.formatMessage(messages.avocatoPower) }
   if (source?.id === 'milestone-50') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone50), description: intl.formatMessage(messages.milestone50) }
   if (source?.id === 'milestone-100') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone100), description: intl.formatMessage(messages.milestone100) }
+  if (contribution.sourceId === 'discovery.production') return { icon: navigationAssets.discovery, name: intl.formatMessage(discoveryMessages.name), description: '' }
   if (contribution.sourceId === 'bot-boost') return { icon: navigationAssets.store, name: intl.formatMessage(boostMessages.title), description: '' }
   if (contribution.sourceId === 'canonical.numeric-clamp') return { icon: navigationAssets.settings, name: intl.formatMessage(messages.numericSafety), description: intl.formatMessage(messages.numericSafety) }
   return { icon: facilityIcon(facilityId), name: contributionLabel(contribution.displayRole, facilityPresentation[facilityId].name, intl), description: '' }

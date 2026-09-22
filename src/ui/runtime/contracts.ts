@@ -196,6 +196,8 @@ export type UiRuntimeDevelopmentRealityResult =
     }
 
 export type UiRuntimeDevelopmentAction =
+  | { readonly kind: 'add-discoveries'; readonly amount: bigint }
+  | { readonly kind: 'add-transcendence-points'; readonly amount: bigint }
   | { readonly kind: 'add-cash'; readonly amount: number }
   | { readonly kind: 'add-bots'; readonly amount: number }
   | { readonly kind: 'add-skill-points'; readonly amount: bigint }

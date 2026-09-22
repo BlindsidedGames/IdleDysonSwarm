@@ -1,3 +1,4 @@
+import { deriveDiscoveryEffects } from './discoveryEffects'
 import type { CanonicalEventTimeState } from './canonicalEventTimeModel'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { purchaseCanonicalSkill, refundCanonicalSkill } from './canonicalSkillTransactions'
@@ -12,8 +13,9 @@ export interface SkillProductionPreview {
   }[]
 }
 
-function productionValues(derived: Extract<ReturnType<typeof deriveBasicDysonState>, { ok: true }>['value']) {
-  return { ...derived.productionArrivalRates, panelLifetime: derived.globals.panelLifetimeSeconds }
+function productionValues(derived: Extract<ReturnType<typeof deriveBasicDysonState>, { ok: true }>['value'], state: CanonicalEventTimeState['gameState']) {
+  const discovery = state.discovery?.unlocked ? deriveDiscoveryEffects(state, derived.nextEvaluationSnapshot) : null
+  return { ...derived.productionArrivalRates, panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
 }
 
 /** On-demand comparison only: never advance production, automation, or the real save. */
@@ -42,9 +44,9 @@ export function previewSkillProduction(
     if (!result.ok) throw new Error(result.issues[0]?.detail ?? 'Production preview unavailable')
     return result.value
   }
-  const before = productionValues(derive(state, derive(state).nextEvaluationSnapshot))
+  const before = productionValues(derive(state, derive(state).nextEvaluationSnapshot), state)
   // Assignment refreshes the effect snapshot before the next production read.
-  const after = productionValues(derive(candidate, derive(candidate).nextEvaluationSnapshot))
+  const after = productionValues(derive(candidate, derive(candidate).nextEvaluationSnapshot), candidate)
   const ids = Object.keys(before) as (keyof typeof before)[]
   return {
     projected,

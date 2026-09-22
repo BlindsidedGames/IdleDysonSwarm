@@ -36,7 +36,7 @@ export function applyCanonicalSkillIntervalEffects(
   validateInputs(inputs)
   if (inputs.seconds === 0) return stateAfterArrivals
 
-  const research = accrueShouldersResearch(
+  const research = stateAfterArrivals.discovery?.unlocked ? stateAfterArrivals.research : accrueShouldersResearch(
     stateAfterArrivals.research,
     inputs.scienceBoostPerSecond,
     inputs.moneyUpgradePerSecond,

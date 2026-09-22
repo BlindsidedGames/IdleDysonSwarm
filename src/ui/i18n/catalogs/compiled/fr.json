@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "Merci de jouer à Idle Dyson Swarm. Les bonus d’Avocato se multiplient entre eux et n’affectent pas les monnaies dépensées pour les augmenter. Les points de Débordement sont conservés pour la prochaine étape du jeu."
+      "value": "Merci de jouer à Idle Dyson Swarm. Les bonus d’Avocato se multiplient entre eux et n’affectent pas les monnaies dépensées pour les augmenter. Dépensez vos points de Transcendance pour Découverte et ses améliorations permanentes."
     }
   ],
   "avocato.developer-note.title": [
@@ -216,7 +216,7 @@
   "avocato.multiplier.overflow": [
     {
       "type": 0,
-      "value": "Débordement"
+      "value": "Transcendance"
     }
   ],
   "avocato.multiplier.strange-matter": [
@@ -234,31 +234,25 @@
   "avocato.overflow.confirm": [
     {
       "type": 0,
-      "value": "Confirmer le Débordement"
+      "value": "Confirmer la Transcendance"
     }
   ],
   "avocato.overflow.description": [
     {
       "type": 0,
-      "value": "Réinitialisez vos Bots, votre progression en Infinité, Quantique, Réalité et Simulation, ainsi que tous les bonus d’Avocato, pour 1 point de Débordement. Vos achats, paramètres, Temps hors ligne et Secrets terminés sont conservés."
+      "value": "Réinitialise votre progression de Bots, Infini, Quantique, Réalité et Simulation, ainsi que tous les bonus d’Avocato, contre 1 point de Transcendance. Découverte revient à son niveau initial. Les améliorations permanentes, achats, réglages, Temps hors ligne et Secrets terminés sont conservés."
     }
   ],
   "avocato.overflow.failed": [
     {
       "type": 0,
-      "value": "Le Débordement n’a pas pu être sauvegardé. Votre partie actuelle a été conservée. Réessayez."
-    }
-  ],
-  "avocato.overflow.future": [
-    {
-      "type": 0,
-      "value": "Les points de Débordement sont conservés pour une future étape du jeu. Ils n’augmentent pas encore la production."
+      "value": "La Transcendance n’a pas pu être sauvegardée. Votre partie actuelle a été conservée. Réessayez."
     }
   ],
   "avocato.overflow.legacy": [
     {
       "type": 0,
-      "value": "Ancien bonus de Débordement : ×"
+      "value": "Ancien bonus de Transcendance : ×"
     },
     {
       "type": 1,
@@ -268,13 +262,13 @@
   "avocato.overflow.open": [
     {
       "type": 0,
-      "value": "Voir la réinitialisation de Débordement"
+      "value": "Voir la réinitialisation de Transcendance"
     }
   ],
   "avocato.overflow.points": [
     {
       "type": 0,
-      "value": "Points de Débordement : "
+      "value": "Points de Transcendance : "
     },
     {
       "type": 1,
@@ -284,13 +278,13 @@
   "avocato.overflow.reached": [
     {
       "type": 0,
-      "value": "Débordement atteint"
+      "value": "Transcendance atteinte"
     }
   ],
   "avocato.overflow.reset": [
     {
       "type": 0,
-      "value": "Déborder pour 1 point"
+      "value": "Transcender pour 1 point"
     }
   ],
   "avocato.overflow.threshold": [
@@ -304,7 +298,7 @@
     },
     {
       "type": 0,
-      "value": " Bots pour Déborder."
+      "value": " Bots pour Transcender."
     }
   ],
   "avocato.region": [
@@ -402,7 +396,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "Dépensez 1 Catalyseur dans les détails d’une compétence révélée pour rendre son effet de base permanent et supprimer ses pénalités et exclusions. La fracture est irréversible et survit au Débordement."
+      "value": "Dépensez 1 Catalyseur dans les détails d’une compétence révélée pour rendre son effet de base permanent et supprimer ses pénalités et exclusions. La fracture est irréversible et survit au Transcendance."
     }
   ],
   "challenges.replay": [
@@ -506,7 +500,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "Dépensez 10 points de Débordement pour débloquer les outils de développement. Une fois achetés, ils peuvent être réactivés gratuitement."
+      "value": "Dépensez 10 points de Transcendance pour débloquer les outils de développement. Une fois achetés, ils peuvent être réactivés gratuitement."
     }
   ],
   "debug.action-failure": [
@@ -672,7 +666,7 @@
   "debug.overflow-points": [
     {
       "type": 0,
-      "value": "Points de Débordement"
+      "value": "Points de Transcendance"
     }
   ],
   "debug.progression": [
@@ -775,6 +769,580 @@
     {
       "type": 0,
       "value": "Débloquer tous les onglets"
+    }
+  ],
+  "discovery.automationEffect": [
+    {
+      "type": 0,
+      "value": "Débloque définitivement les Bots automatiques."
+    }
+  ],
+  "discovery.avocatoBonus": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "% de vitesse de Découverte"
+    }
+  ],
+  "discovery.avocatoProduction": [
+    {
+      "type": 0,
+      "value": "Production d’argent et d’installations"
+    }
+  ],
+  "discovery.avocatoSpeed": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "discovery.baseSpeed": [
+    {
+      "type": 0,
+      "value": "Vitesse de base"
+    }
+  ],
+  "discovery.booster": [
+    {
+      "type": 0,
+      "value": "Amplificateur de Découverte"
+    }
+  ],
+  "discovery.boosterEffect": [
+    {
+      "type": 0,
+      "value": "+10 × log10(1 + niveaux achetés)% de vitesse de Découverte, jusqu’à +200%. Les bonus sont additifs."
+    }
+  ],
+  "discovery.buy": [
+    {
+      "type": 0,
+      "value": "Acheter · "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " PT"
+    }
+  ],
+  "discovery.cancel": [
+    {
+      "type": 0,
+      "value": "Annuler"
+    }
+  ],
+  "discovery.completions": [
+    {
+      "type": 0,
+      "value": "Découvertes terminées"
+    }
+  ],
+  "discovery.confirm": [
+    {
+      "type": 0,
+      "value": "Remplacer Recherche par Découverte ?"
+    }
+  ],
+  "discovery.confirmAction": [
+    {
+      "type": 0,
+      "value": "Confirmer"
+    }
+  ],
+  "discovery.debug.addCompletions": [
+    {
+      "type": 0,
+      "value": "Ajouter des découvertes terminées"
+    }
+  ],
+  "discovery.debug.addPoints": [
+    {
+      "type": 0,
+      "value": "Ajouter des points de Transcendance"
+    }
+  ],
+  "discovery.level": [
+    {
+      "type": 0,
+      "value": "Découverte · Niveau "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.levelLabel": [
+    {
+      "type": 0,
+      "value": "Niveau de Découverte"
+    }
+  ],
+  "discovery.lifetime": [
+    {
+      "type": 0,
+      "value": "Durée de vie des panneaux : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " secondes"
+    }
+  ],
+  "discovery.multiplier": [
+    {
+      "type": 0,
+      "value": "Multiplicateur de production"
+    }
+  ],
+  "discovery.name": [
+    {
+      "type": 0,
+      "value": "Découverte"
+    }
+  ],
+  "discovery.next": [
+    {
+      "type": 0,
+      "value": "Ensuite : ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
+  "discovery.nextPower": [
+    {
+      "type": 0,
+      "value": "Ensuite : ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " de puissance initiale"
+    }
+  ],
+  "discovery.nextSpeed": [
+    {
+      "type": 0,
+      "value": "Ensuite : +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "% de vitesse achetée"
+    }
+  ],
+  "discovery.owned": [
+    {
+      "type": 0,
+      "value": "Niveau "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.power": [
+    {
+      "type": 0,
+      "value": "Puissance initiale"
+    }
+  ],
+  "discovery.powerEffect": [
+    {
+      "type": 0,
+      "value": "+5 au multiplicateur initial et à la durée de vie de base des panneaux en secondes. Les bonus sont additifs."
+    }
+  ],
+  "discovery.powerSkillsEffect": [
+    {
+      "type": 0,
+      "value": "Débloque les compétences de Puissance, qui améliorent les installations, l’argent et la vitesse de Découverte."
+    }
+  ],
+  "discovery.production": [
+    {
+      "type": 0,
+      "value": "Production d’argent, de Bots et d’installations ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.purchaseFailed": [
+    {
+      "type": 0,
+      "value": "L’achat n’a pas pu être sauvegardé. Vos points ont été conservés. Réessayez."
+    }
+  ],
+  "discovery.resetRule": [
+    {
+      "type": 0,
+      "value": "Conservée après Infini et Quantique. Réinitialisée à la Transcendance."
+    }
+  ],
+  "discovery.route": [
+    {
+      "type": 0,
+      "value": "Transcendance"
+    }
+  ],
+  "discovery.secretsSpeed": [
+    {
+      "type": 0,
+      "value": "Secrets"
+    }
+  ],
+  "discovery.skill.addictionToPower.effect": [
+    {
+      "type": 0,
+      "value": "Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes 200% plus puissants. 10% d’argent en moins, sauf si fracturée. Les pénalités d’argent sont additives."
+    }
+  ],
+  "discovery.skill.cashScienceProduction.effect": [
+    {
+      "type": 0,
+      "value": "Double la production d’argent et ajoute +25% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.coldFusion.effect": [
+    {
+      "type": 0,
+      "value": "+75% de vitesse de Découverte ; divise l’argent par deux, sauf si fracturée. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.coldFusion.flavour": [
+    {
+      "type": 0,
+      "value": "La théorie devient réalité. Fusion froide : résolue. Qu’est-ce que l’univers a encore oublié de cacher ?"
+    }
+  ],
+  "discovery.skill.doubleScienceTree.effect": [
+    {
+      "type": 0,
+      "value": "+25% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.doubleScienceTree.flavour": [
+    {
+      "type": 0,
+      "value": "Des percées dans la fabrication des processeurs. Avec moins de nuages de fumée inexpliqués, désormais."
+    }
+  ],
+  "discovery.skill.doubleScienceTree.name": [
+    {
+      "type": 0,
+      "value": "Vitesse de Découverte"
+    }
+  ],
+  "discovery.skill.economicDominance.effect": [
+    {
+      "type": 0,
+      "value": "Multiplie l’argent par 20."
+    }
+  ],
+  "discovery.skill.economicRevolution.effect": [
+    {
+      "type": 0,
+      "value": "Multiplie l’argent par 5."
+    }
+  ],
+  "discovery.skill.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "Renforce de 50% les bonus d’argent et de vitesse de Découverte de SRS, selon Mémoire stellaire."
+    }
+  ],
+  "discovery.skill.idleSpaceFlight.effect": [
+    {
+      "type": 0,
+      "value": "+10 × log10(1 + panneaux actifs / 100,000,000)% de vitesse de Découverte, jusqu’à +200%. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.indulgingInPower.effect": [
+    {
+      "type": 0,
+      "value": "Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes 100% plus puissants. 15% d’argent en moins, sauf si fracturée. Les pénalités d’argent sont additives."
+    }
+  ],
+  "discovery.skill.panelMaintenance.effect": [
+    {
+      "type": 0,
+      "value": "Ajoute 100 secondes à la durée de vie des panneaux."
+    }
+  ],
+  "discovery.skill.paragon.effect": [
+    {
+      "type": 0,
+      "value": "+150% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.pocketMultiverse.effect": [
+    {
+      "type": 0,
+      "value": "Protecteurs de poche multiplie désormais la production de Dimensions de poche par log10(total de Bots)."
+    }
+  ],
+  "discovery.skill.pocketProtectors.effect": [
+    {
+      "type": 0,
+      "value": "Ajoute log10(total de Bots) à la production de Dimensions de poche."
+    }
+  ],
+  "discovery.skill.pocketProtectors.flavour": [
+    {
+      "type": 0,
+      "value": "Tout le monde veut participer. Les protège-poches sont désormais obligatoires."
+    }
+  ],
+  "discovery.skill.powerUnderwhelming.effect": [
+    {
+      "type": 0,
+      "value": "+25% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.powerUnderwhelming.flavour": [
+    {
+      "type": 0,
+      "value": "Utilisez Découverte pour découvrir Découverte. Comment ? Nous ne le saurons jamais."
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.effect": [
+    {
+      "type": 0,
+      "value": "+100% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.flavour": [
+    {
+      "type": 0,
+      "value": "Des protocoles réseau améliorés. Les percées arrivent désormais avant les invitations aux réunions."
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.name": [
+    {
+      "type": 0,
+      "value": "Bonus de Découverte"
+    }
+  ],
+  "discovery.skill.purityOfMind.effect": [
+    {
+      "type": 0,
+      "value": "+50% d’argent et +5% de vitesse de Découverte par point de compétence non dépensé. La vitesse de Découverte est plafonnée à +200%. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.purityOfMind.flavour": [
+    {
+      "type": 0,
+      "value": "Avec une concentration absolue, vous videz votre esprit de toute pensée qui ne concerne ni l’argent ni la Découverte."
+    }
+  ],
+  "discovery.skill.purityOfSEssence.effect": [
+    {
+      "type": 0,
+      "value": "Production d’argent, de Bots et d’installations ×(1 + 0.42p + 0.13784p(p − 1)), où p représente les points de compétence non dépensés. +2% de vitesse de Découverte par point non dépensé, jusqu’à +100%. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.regulatedAcademia.effect": [
+    {
+      "type": 0,
+      "value": "Renforce le bonus de production de Découverte de 20%, plus 10% par Fragment après le premier. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.regulatedAcademia.flavour": [
+    {
+      "type": 0,
+      "value": "Vous trouvez un fragment d’un autre univers. Son savoir renforce vos découvertes. Que pourrait encore receler cet univers ?"
+    }
+  ],
+  "discovery.skill.repeatableResearch.effect": [
+    {
+      "type": 0,
+      "value": "+50% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "+150% de vitesse de charge SRS lorsque assignée, renforcée par Mémoire stellaire. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "+100% de vitesse de charge SRS, renforcée par Mémoire stellaire. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.scientificDominance.effect": [
+    {
+      "type": 0,
+      "value": "+100% de vitesse de Découverte ; divise l’argent par quatre, sauf si fracturée. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.scientificPlanets.effect": [
+    {
+      "type": 0,
+      "value": "Produit log10(total de Bots) Planètes par seconde."
+    }
+  ],
+  "discovery.skill.scientificPlanets.flavour": [
+    {
+      "type": 0,
+      "value": "Apprenez à vos Bots à découvrir des planètes. Demandez-leur gentiment de ne pas en égarer."
+    }
+  ],
+  "discovery.skill.scientificRevolution.effect": [
+    {
+      "type": 0,
+      "value": "+50% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.shouldersOfGiants.effect": [
+    {
+      "type": 0,
+      "value": "+10 × log10(1 + Planètes scientifiques production)% de vitesse de Découverte, jusqu’à +200%. Inclut Épaules des Déchus. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.shouldersOfPrecursors.effect": [
+    {
+      "type": 0,
+      "value": "Remplace les multiplicateurs d’argent par la vitesse totale de Découverte. Une fois fracturée, se multiplie avec eux."
+    }
+  ],
+  "discovery.skill.shouldersOfTheEnlightened.effect": [
+    {
+      "type": 0,
+      "value": "+10% d’argent par Découverte terminée lorsque Planètes scientifiques est assignée. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.shouldersOfTheFallen.effect": [
+    {
+      "type": 0,
+      "value": "Ajoute log2(1 + découvertes terminées) Planètes par seconde lorsque Planètes scientifiques est assignée."
+    }
+  ],
+  "discovery.skill.shouldersOfTheFallen.flavour": [
+    {
+      "type": 0,
+      "value": "Une relique d’une civilisation disparue. Excellentes épaules. Mode d’emploi désastreux."
+    }
+  ],
+  "discovery.skill.shouldersOfTheRevolution.effect": [
+    {
+      "type": 0,
+      "value": "+1% d’argent par Découverte terminée. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.startHereTree.effect": [
+    {
+      "type": 0,
+      "value": "+20% d’argent et +20% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.startHereTree.name": [
+    {
+      "type": 0,
+      "value": "Argent et Découverte"
+    }
+  ],
+  "discovery.skill.stellarObliteration.effect": [
+    {
+      "type": 0,
+      "value": "Les Galaxies de Sacrifices stellaires sont 1 000× plus efficaces. Divise l’argent par les Galaxies stellaires, sauf si fracturée."
+    }
+  ],
+  "discovery.skill.superRadiantScattering.effect": [
+    {
+      "type": 0,
+      "value": "Augmente la production d’argent, de Bots et de toutes les installations à mesure que SRS se charge. +10 × log10(1 + secondes de charge / 100)% de vitesse de Découverte, jusqu’à +200% avant Faisceau focalisé. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.superchargedPower.effect": [
+    {
+      "type": 0,
+      "value": "+50% de production d’argent et d’installations ; +25% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.tasteOfPower.effect": [
+    {
+      "type": 0,
+      "value": "Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes 50% plus puissants. 25% d’argent en moins, sauf si fracturée."
+    }
+  ],
+  "discovery.skill.whatCouldHaveBeen.effect": [
+    {
+      "type": 0,
+      "value": "+10 × log10(1 + Dimensions de poche production)% de vitesse de Découverte, jusqu’à +200%. Chirurgie des épaules inclut Épaules des Déchus. Les bonus sont additifs."
+    }
+  ],
+  "discovery.skill.workerBoost.effect": [
+    {
+      "type": 0,
+      "value": "+10 000% de production d’argent."
+    }
+  ],
+  "discovery.speed": [
+    {
+      "type": 0,
+      "value": "Vitesse de Découverte"
+    }
+  ],
+  "discovery.speedEffect": [
+    {
+      "type": 0,
+      "value": "+25% de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.speedSources": [
+    {
+      "type": 0,
+      "value": "Vitesse de Découverte"
+    }
+  ],
+  "discovery.startingBenefits": [
+    {
+      "type": 0,
+      "value": "Production d’argent, de Bots et d’installations ×10. Durée de vie de base des panneaux : 10 secondes."
+    }
+  ],
+  "discovery.totalBots": [
+    {
+      "type": 0,
+      "value": "Total de Bots"
+    }
+  ],
+  "discovery.unlock": [
+    {
+      "type": 0,
+      "value": "Débloquer Découverte"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -7205,6 +7773,12 @@
       "value": "Raccourcis de navigation"
     }
   ],
+  "settings.navigation.transcendence": [
+    {
+      "type": 0,
+      "value": "Afficher Transcendance"
+    }
+  ],
   "settings.navigation.wiki": [
     {
       "type": 0,
@@ -13520,6 +14094,68 @@
       "value": "Histoire"
     }
   ],
+  "wiki.bots.discovery-overview": [
+    {
+      "type": 0,
+      "value": "Tous les "
+    },
+    {
+      "type": 8,
+      "value": "bots",
+      "children": [
+        {
+          "type": 0,
+          "value": "Bots"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " produisent des "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Panneaux solaires"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", lancés automatiquement en orbite. Découverte remplace les scientifiques et la Recherche. Atteindre les objectifs de l’"
+    },
+    {
+      "type": 8,
+      "value": "skills",
+      "children": [
+        {
+          "type": 0,
+          "value": "Arbre de compétences"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " rapporte toujours des "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Points de compétence"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "wiki.bots.milestones": [
     {
       "type": 8,
@@ -13918,6 +14554,256 @@
     {
       "type": 0,
       "value": "Arbre de compétences"
+    }
+  ],
+  "wiki.category.transcendence": [
+    {
+      "type": 0,
+      "value": "Transcendance"
+    }
+  ],
+  "wiki.discovery.overview": [
+    {
+      "type": 0,
+      "value": "Découverte commence au "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "niveau 1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", avec une "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "production d’argent, de Bots et d’installations ×10"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " et une "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "durée de vie de base des panneaux de 10 secondes"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Chaque découverte terminée ajoute "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "0.1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " au multiplicateur et à la durée de vie de base. À vitesse de base, une découverte prend une heure. Découverte ne nécessite ni scientifiques ni ressources."
+    }
+  ],
+  "wiki.discovery.overview-title": [
+    {
+      "type": 0,
+      "value": "Découverte"
+    }
+  ],
+  "wiki.discovery.resets": [
+    {
+      "type": 0,
+      "value": "Découverte est conservée après "
+    },
+    {
+      "type": 8,
+      "value": "infinity",
+      "children": [
+        {
+          "type": 0,
+          "value": "Infini"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 8,
+      "value": "quantum",
+      "children": [
+        {
+          "type": 0,
+          "value": "Quantique"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " et les défis. La "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Transcendance"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " réinitialise son niveau et sa progression ; le déblocage et les améliorations permanentes restent acquis. Le Temps stocké fait avancer Découverte lorsqu’il est dépensé. Le temps d’absence est stocké, pas appliqué automatiquement à Découverte."
+    }
+  ],
+  "wiki.discovery.resets-title": [
+    {
+      "type": 0,
+      "value": "Progression et réinitialisations"
+    }
+  ],
+  "wiki.discovery.skills": [
+    {
+      "type": 0,
+      "value": "Les compétences de Science améliorent désormais la "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "vitesse de Découverte"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ; leurs effets actuels figurent dans l’arbre de compétences. Les bonus de vitesse s’additionnent. Académie réglementée et les Secrets révélés concernés renforcent le bonus de production de Découverte au-delà de "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1×"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", sans modifier sa durée de vie de base des panneaux. Les pénalités de Science ne s’appliquent plus."
+    }
+  ],
+  "wiki.discovery.skills-title": [
+    {
+      "type": 0,
+      "value": "Compétences et Secrets"
+    }
+  ],
+  "wiki.discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "Chez Avocato, "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Vitesse de Découverte"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ajoute "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25% de vitesse"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " par achat. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Puissance initiale"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ajoute "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " au multiplicateur initial et à la durée de vie de base des panneaux, immédiatement aussi dans la partie en cours. Chaque amélioration coûte indépendamment "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1, 2, 3… points de Transcendance"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Les bonus sont additifs."
+    }
+  ],
+  "wiki.discovery.upgrades-title": [
+    {
+      "type": 0,
+      "value": "Améliorations permanentes"
     }
   ],
   "wiki.infinity.overview": [
@@ -15649,7 +16535,7 @@
     },
     {
       "type": 0,
-      "value": " de la Recherche permettent aux simulations de survivre aux catastrophes ultérieures et augmentent la quantité de "
+      "value": " de la recherche de Réalité permettent aux simulations de survivre aux catastrophes ultérieures et augmentent la quantité de "
     },
     {
       "type": 8,
@@ -15894,6 +16780,18 @@
     {
       "type": 0,
       "value": "Multiplicateur d’Argent"
+    }
+  ],
+  "wiki.secrets.effect.discovery-production-enhancement": [
+    {
+      "type": 0,
+      "value": "Renforcement du bonus de production de Découverte"
+    }
+  ],
+  "wiki.secrets.effect.discovery-speed": [
+    {
+      "type": 0,
+      "value": "Vitesse de Découverte"
     }
   ],
   "wiki.secrets.effect.planet-boost": [
@@ -16358,6 +17256,60 @@
     {
       "type": 0,
       "value": "Sujets"
+    }
+  ],
+  "wiki.transcendence.overview": [
+    {
+      "type": 0,
+      "value": "À "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "4e242 Bots"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", Transcendez chez Avocato pour réinitialiser les couches précédentes et gagner "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "un point de Transcendance"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". Dépensez un point pour "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Débloquer Découverte"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " afin de remplacer définitivement Science et Recherche. La Science et les niveaux de recherche existants ne sont pas transférés."
+    }
+  ],
+  "wiki.transcendence.overview-title": [
+    {
+      "type": 0,
+      "value": "Au-delà de l’essaim"
     }
   ]
 }

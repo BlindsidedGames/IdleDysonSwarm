@@ -22,6 +22,8 @@ import type { CanonicalRuntimeState } from './canonicalRuntimeSession'
 
 /** Developer Options mutations; the application still owns admission and publication. */
 export type CanonicalDevelopmentAction =
+  | { readonly kind: 'add-discoveries'; readonly amount: bigint }
+  | { readonly kind: 'add-transcendence-points'; readonly amount: bigint }
   | { readonly kind: 'add-cash'; readonly amount: number }
   | { readonly kind: 'add-bots'; readonly amount: number }
   | { readonly kind: 'add-skill-points'; readonly amount: bigint }
@@ -111,6 +113,12 @@ export function applyDevelopmentAction(
 ): DomainTransition {
   const state = candidate.gameState
   switch (action.kind) {
+    case 'add-discoveries':
+      if (!state.discovery?.unlocked || !isDevelopmentDiscreteAmount(action.amount)) return invalidDevelopmentAction('Discovery completions')
+      return replaceDevelopmentState(candidate, { ...state, discovery: { ...state.discovery, completions: addDiscrete(state.discovery.completions, action.amount) } })
+    case 'add-transcendence-points':
+      if (!isDevelopmentDiscreteAmount(action.amount)) return invalidDevelopmentAction('Transcendence Points')
+      return replaceDevelopmentState(candidate, { ...state, avocado: { ...state.avocado, overflowPoints: addDiscrete(state.avocado.overflowPoints ?? 0n, action.amount) } })
     case 'unlock-all-tabs':
       return replaceDevelopmentRuntime(candidate, { unlockAllTabs: true })
     case 'lock-tabs':

@@ -1,3 +1,5 @@
+import transcendence from '../../assets/nav-transcendence.png'
+import discovery from '../../assets/nav-discovery.png'
 import challenges from '../../assets/nav-challenges-target.png'
 import avocato from '../../assets/nav-avocato.png'
 import bots from '../../assets/nav-bots.png'
@@ -16,6 +18,7 @@ import story from '../../assets/nav-story.png'
 import wiki from '../../assets/nav-wiki.png'
 
 export const navigationAssets = Object.freeze({
+  transcendence, discovery,
   challenges,
   avocato,
   bots,
