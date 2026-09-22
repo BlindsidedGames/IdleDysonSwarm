@@ -14,7 +14,8 @@
 - Hot Start scales its 30-minute grant and tops up only the missing difference
   when Stellar Memory is assigned later. Its grant accounting persists across
   save/reload and refund/reassignment of Stellar Memory. Hot Start is now
-  non-refundable; Banking is refundable in both live and reset assignment paths.
+  non-refundable; Banking and Investment are refundable in both live and reset
+  assignment paths.
 - Afterglow scales retention from 10% to a maximum of 50%, using the ending run's
   bank before its new deposit. Quantum clears retained charge. Deep Exposure,
   Focused Beam, Research Conversion and Research Activity scale their benefits;

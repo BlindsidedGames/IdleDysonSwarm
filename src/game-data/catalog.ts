@@ -9,7 +9,8 @@ const legacyCatalog = catalogJson as unknown as RuntimeGameDataCatalog
 // Current gameplay overrides belong outside the frozen Unity compatibility capsule.
 export const gameDataCatalog: RuntimeGameDataCatalog = {
   ...legacyCatalog,
-  assets: legacyCatalog.assets.map((asset) => asset.kind === 'GameData.SkillDefinition' && asset.id === 'banking'
+  assets: legacyCatalog.assets.map((asset) => asset.kind === 'GameData.SkillDefinition' &&
+    (asset.id === 'banking' || asset.id === 'investmentPortfolio')
     ? { ...asset, data: { ...asset.data, refundable: true } }
     : asset),
 }

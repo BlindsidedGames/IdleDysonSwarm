@@ -192,15 +192,16 @@ test('Afterglow caps retention at 50 percent and Banking can be refunded', () =>
   expect(refundCanonicalSkill(buy(state(), 'banking'), 'banking').accepted).toBe(true)
 })
 
-test('Banking reassigns after Infinity with non-refundable auto-assignment disabled', () => {
-  const assigned = buy(state(), 'banking')
+test.each(['banking', 'investmentPortfolio'])('%s is refundable and reassigns after Infinity with non-refundable auto-assignment disabled', (skillId) => {
+  const assigned = buy(state(), skillId)
+  expect(refundCanonicalSkill(assigned, skillId).accepted).toBe(true)
   const before = { ...assigned, skills: { ...assigned.skills, autoAssignNonRefundable: false } }
   const reset = applyCanonicalInfinityReset(before, {
     breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 30n,
   })
   expect(reset.ok).toBe(true)
-  expect(reset.state.skills.byId.banking?.owned).toBe(true)
-  expect(refundCanonicalSkill(reset.state, 'banking').accepted).toBe(true)
+  expect(reset.state.skills.byId[skillId]?.owned).toBe(true)
+  expect(refundCanonicalSkill(reset.state, skillId).accepted).toBe(true)
 })
 
 test('auto-assignment and presets grant Hot Start once per Infinity', () => {
