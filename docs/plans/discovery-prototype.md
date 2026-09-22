@@ -108,7 +108,8 @@ and reran that guard successfully before the final full suite.
 Matthew's final visual direction supersedes the original Research palette and
 info-button proposal. The default view shows **Discovery** opposite **×M**, with
 a prominent 48px progress bar and the time remaining centered inside it. The
-card uses Avocato's existing purple theme, inset, border, shadow and gradient.
+title, multiplier and bar sit directly on the page without an icon or outer panel,
+using Avocato's purple palette.
 The whole header/bar is the native disclosure control. No standalone info button
 or reset-explanation paragraph remains. Opening it reveals compact label/value
 rows for level, base lifetime, next multiplier and the actual speed breakdown.
@@ -447,3 +448,24 @@ Final native card screenshots: [iOS](../qa/discovery-prototype/ios.png),
 Expanded narrow browser evidence: [360px details](../qa/discovery-prototype/narrow-expanded.png).
 Independent follow-up review found no theme-scope or maintainability issues;
 its accessible-name finding was addressed without adding visible copy.
+
+### Unboxed Discovery and Avocato follow-up
+
+Removed the Discovery title icon and outer panel; retained the full-width bar,
+whole-header disclosure and accessible name. Avocato's total-production panel
+is now two aligned label/value rows above feeding. Discovery purchases follow
+the Transcendence balance/reset card. Reset consequences appear during confirmation,
+with the threshold/status retained in the collapsed card. Avocato's greeting
+scrolls with its page so enlarged text does not pin a large introduction above
+all controls.
+
+Browser visual QA: desktop and 360px collapsed/expanded Discovery, keyboard
+collapse, Avocato desktop/mobile, 130% text with no horizontal overflow, and
+scrolling the greeting away to reach both upgrades. Existing Avocato confirmation,
+cancellation, pending/save-failure and eligibility tests pass (3 tests); typecheck
+and lint pass. Native screenshots above show the preceding iteration; this small
+follow-up was verified in the browser, not rebuilt for native hosts.
+
+Evidence: [Avocato desktop](../qa/discovery-prototype/avocato-desktop.png),
+[360px](../qa/discovery-prototype/avocato-narrow.png),
+[130% text while scrolled](../qa/discovery-prototype/avocato-text130.png).

@@ -102,7 +102,6 @@
 .quantum-leap-card,
 .quantum-upgrade-card,
 .avocato-feed-card,
-.avocato-total,
 .avocato-meditation {
   border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
@@ -181,16 +180,19 @@
 .quantum-upgrade-card--complete { background: var(--quantum-panel); }
 .quantum-upgrade-card--mystery { min-block-size: var(--target-minimum); grid-template-columns: minmax(0, 1fr); background: #28223a; color: #c9bddb; }
 
+.avocato-surface { display: block; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.avocato-surface::-webkit-scrollbar { display: none; }
 .avocato-surface__hero { grid-template-columns: 3.25rem minmax(0, 1fr); align-items: center; }
 .avocato-surface__hero .avocato-surface__portrait { inline-size: 3.25rem; block-size: 3.25rem; object-fit: contain; filter: drop-shadow(0 0.2rem 0.3rem rgb(0 0 0 / 30%)); }
 .avocato-surface__title,
 .avocato-surface__hero p { margin: 0; }
 .avocato-surface__title { font-size: var(--ui-text-page-title); font-weight: var(--font-weight-bold); line-height: 1.15; }
 .avocato-surface__hero p { margin-block-start: var(--ui-related-copy-gap); color: #f0eaf8; font-size: var(--ui-text-body); line-height: 1.25; }
-.avocato-surface__content { display: grid; align-content: start; gap: var(--ui-section-stack-gap); padding-block: var(--ui-route-inset); padding-inline: max(var(--ui-route-inset), var(--safe-area-left)) max(var(--ui-route-inset), var(--safe-area-right)); }
-.avocato-total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-card-gap); padding: var(--ui-panel-inset); background: linear-gradient(135deg, var(--theme-selected), var(--theme-panel)); }
-.avocato-total strong { font-size: var(--ui-text-card-title); }
-.avocato-total span { color: #00e1ff; font-family: var(--font-family-numeric); font-size: var(--ui-text-section-title); font-weight: var(--font-weight-bold); }
+.avocato-surface__content { overflow-y: visible; display: grid; align-content: start; gap: var(--ui-section-stack-gap); padding-block: var(--ui-route-inset); padding-inline: max(var(--ui-route-inset), var(--safe-area-left)) max(var(--ui-route-inset), var(--safe-area-right)); }
+.avocato-total { display: grid; gap: var(--ui-related-copy-gap); margin: 0; padding-block: var(--ui-related-copy-gap); }
+.avocato-total > div { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-card-gap); }
+.avocato-total dt { min-inline-size: 0; font-size: var(--ui-text-card-title); }
+.avocato-total dd { margin: 0; color: #00e1ff; font-family: var(--font-family-numeric); font-size: var(--ui-text-card-title); font-weight: var(--font-weight-bold); white-space: nowrap; }
 .avocato-feed-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--game-card-grid-gap); }
 .avocato-feed-card { display: grid; grid-template-columns: minmax(0, 1fr) var(--quantum-action-width); gap: var(--ui-card-gap); padding: var(--game-card-content-inset); }
 .avocato-feed-card h2,
@@ -254,8 +256,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-.avocato-total--discovery { flex-wrap: wrap; }
-.avocato-total--discovery > span:last-child { flex-basis: 100%; }
 
 .discovery-purchase > p,
 .discovery-purchase > [role="group"],

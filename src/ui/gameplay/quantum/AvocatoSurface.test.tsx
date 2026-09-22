@@ -27,8 +27,9 @@ describe('Avocato Overflow confirmation', () => {
     let complete!: (value: Result) => void
     const dispatch = vi.fn<AvocatoSurfaceProps['dispatchPlayer']>(() => new Promise((resolve) => { complete = resolve }))
     setup(dispatch)
-    expect(screen.getByText(/Reality and Simulation progress/)).not.toBeNull()
+    expect(screen.queryByText(/Reality and Simulation progress/)).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Transcend for 1 point' }))
+    expect(screen.getByText(/Reality and Simulation progress/)).not.toBeNull()
     expect(dispatch).not.toHaveBeenCalled()
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(dispatch).not.toHaveBeenCalled()

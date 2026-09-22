@@ -72,40 +72,45 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
       </header>
 
       <div className="avocato-surface__content">
+        {unlocked ? (
+          <>
+            <dl className="avocato-total">
+              <div>
+                <dt>{intl.formatMessage(discovery.unlocked ? discoveryMessages.avocatoProduction : messages.totalBoost)}</dt>
+                <dd>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, derived.total) })}</dd>
+              </div>
+              {discovery.unlocked && <div>
+                <dt>{intl.formatMessage(discoveryMessages.speedSources)}</dt>
+                <dd>+{formatGameNumber(locale, discoveryGrowingBonus(derived.total - 1) * 100)}%</dd>
+              </div>}
+            </dl>
+
+            <div className="avocato-feed-grid">
+              {previews.feeds.map((preview) => (
+                <AvocatoFeedCard
+                  key={preview.source}
+                  locale={locale}
+                  preview={preview}
+                  invested={investedValue(resources, preview.source)}
+                  multiplier={multiplierValue(derived, preview.source)}
+                  resourceAvailable={spendableValue(spendable, preview.source)}
+                  routeAvailable={commandAvailability.feed}
+                  dispatchPlayer={dispatchPlayer}
+                />
+              ))}
+
+            </div>
+          </>
+        ) : null}
+
+        <OverflowCard locale={locale} resources={resources} preview={previews.overflow}
+          routeAvailable={commandAvailability.overflowReset} dispatchPlayer={dispatchPlayer} />
         <DiscoveryPurchases state={discovery} balance={resources.overflowPoints} available={discoveryAvailable} locale={locale}
           purchase={async (purchase: DiscoveryPurchase) => {
             const result = await dispatchPlayer({ kind: 'discovery.purchase', purchase })
             if (result.status === 'accepted' && purchase === 'unlock') onDiscoveryUnlocked?.()
             return result.status === 'accepted'
           }} />
-        {unlocked ? (
-          <>
-        <section className={`avocato-total${discovery.unlocked ? ' avocato-total--discovery' : ''}`} aria-label={intl.formatMessage(discovery.unlocked ? discoveryMessages.avocatoProduction : messages.totalBoost)}>
-          <strong>{intl.formatMessage(discovery.unlocked ? discoveryMessages.avocatoProduction : messages.totalBoost)}</strong>
-          <span>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, derived.total) })}</span>
-          {discovery.unlocked && <span>{intl.formatMessage(discoveryMessages.avocatoBonus, { value: formatGameNumber(locale, discoveryGrowingBonus(derived.total - 1) * 100) })}</span>}
-        </section>
-
-        <div className="avocato-feed-grid">
-          {previews.feeds.map((preview) => (
-            <AvocatoFeedCard
-              key={preview.source}
-              locale={locale}
-              preview={preview}
-              invested={investedValue(resources, preview.source)}
-              multiplier={multiplierValue(derived, preview.source)}
-              resourceAvailable={spendableValue(spendable, preview.source)}
-              routeAvailable={commandAvailability.feed}
-              dispatchPlayer={dispatchPlayer}
-            />
-          ))}
-
-        </div>
-          </>
-        ) : null}
-
-        <OverflowCard locale={locale} resources={resources} preview={previews.overflow}
-          routeAvailable={commandAvailability.overflowReset} dispatchPlayer={dispatchPlayer} />
 
       </div>
     </div>
@@ -147,7 +152,7 @@ function OverflowCard({ locale, resources, preview, routeAvailable, dispatchPlay
         <h2>{intl.formatMessage(messages.overflowPoints, { value: formatWholeGameNumber(locale, resources.overflowPoints) })}</h2>
         <p>{intl.formatMessage(preview.eligible ? messages.overflowReached : messages.overflowThreshold,
           { value: formatGameNumber(locale, preview.threshold) })}</p>
-        <p>{intl.formatMessage(messages.overflowDescription)}</p>
+        {confirming && <p>{intl.formatMessage(messages.overflowDescription)}</p>}
 
         {resources.overflowMultiplier > 0 && <p>{intl.formatMessage(messages.legacyOverflow,
           { value: formatGameNumber(locale, 1 + resources.overflowMultiplier) })}</p>}

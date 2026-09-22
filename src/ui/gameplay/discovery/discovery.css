@@ -3,12 +3,6 @@
   overflow-y: auto;
   color: var(--color-text-primary);
 }
-.discovery-card {
-  background: var(--theme-panel);
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.3rem;
-  box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 26%);
-}
 .discovery-heading {
   display: flex;
   align-items: center;
@@ -17,9 +11,8 @@
   margin-block-end: 0.8rem;
 }
 .discovery-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   font-weight: var(--font-weight-bold);
   font-size: calc(1.2rem * var(--game-text-scale));
 }
@@ -64,9 +57,7 @@
 /* The header and bar form one native, keyboard-operable disclosure. */
 .discovery-toggle {
   display: block;
-  padding: var(--ui-panel-inset);
-  border-radius: inherit;
-  background: linear-gradient(135deg, var(--theme-selected), var(--theme-panel));
+  padding-block-start: var(--ui-panel-inset);
   cursor: pointer;
   list-style: none;
 }
@@ -77,8 +68,7 @@
 }
 .discovery-toggle:hover .discovery-progress progress { border-color: var(--theme-accent); }
 .discovery-details {
-  padding: var(--ui-panel-inset);
-  border-block-start: 1px solid var(--theme-divider);
+  padding-block: var(--ui-panel-inset);
 }
 .discovery-details dl { margin: 0; }
 .discovery-details .discovery-speed-sources {
