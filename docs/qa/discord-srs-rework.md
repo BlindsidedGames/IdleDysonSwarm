@@ -28,9 +28,8 @@
 - **Planets:** the reported 4.36 Data Centers/s with zero Planets is intentional
   Pocket Dimensions production, reproduced with 22,900 Worker Bots. No production
   calculation change is needed.
-- **Black-hole reward:** verified the current rendered reward lacks a plus sign.
-  Proposed `+X` beside the Strange Matter symbol, with an accessible gain label.
-  Implementation remains pending Matthew's approval.
+- **Black-hole reward:** added the approved visible `+` before the reward value.
+  The existing accessible label already explicitly describes the positive gain.
 - **Double-tap zoom:** explicitly deferred in `docs/BACKLOG.md`.
 - **Legacy Stellar Memory cost:** schema 18 unassigns an existing legacy purchase
   and refunds its original 2 SP once. It preserves the bank, Hot Start grant

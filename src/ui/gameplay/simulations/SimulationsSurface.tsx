@@ -708,7 +708,7 @@ function SimulationPanelCard({
               symbol="strange-matter"
               tint
             />
-            <span>{panel.action.strangeMatterReward}</span>
+            <span>+{panel.action.strangeMatterReward}</span>
           </span>
         ) : panel.action.secondaryLabel ? (
           <span className="simulation-panel-card__action-secondary">
