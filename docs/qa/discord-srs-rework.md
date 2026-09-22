@@ -127,3 +127,25 @@ Gaining a research level increases SRS charging speed by 150%, multiplied by Ste
   disposable SRS preset, reloaded and confirmed the assigned augments and description.
   Exact deposit arithmetic is covered by simulation tests, not inferred from the UI.
 - This follow-up has not been deployed or rechecked on native devices.
+
+### Pre-merge live QA — 22 September 2026
+
+- Used the running localhost game and its Settings export UI, rather than injected
+  browser state, to verify an actual Infinity reset. Bank increased from
+  101177.73699999996 to 104933.7080779696. The ending run excluded
+  10376.074777055255 seconds of grants/carryover. Reconstructing the next run's
+  Hot Start and Afterglow from exported checkpoints matched exactly
+  (7240.918599082543 seconds); the newly earned tally restarted separately.
+- Reload retained the bank and generated-charge tally. Imported a disposable
+  checkpoint with Quantum Entanglement disabled and completed the two-step
+  Quantum reset. The new charge minus earned charge was exactly the new Hot Start
+  grant (4063.190669004557 seconds, within floating-point precision), with no
+  Afterglow carryover. All seven augments auto-assigned.
+- Refunded and reassigned Stellar Memory through the skill dialog. Bank stayed
+  106982.46437562504 and Hot Start's grant stayed unchanged. Spent ten minutes
+  through the Stored Time confirmation/progress/completion UI: earned charge
+  increased, bank stayed fixed, and charge minus earned charge remained the same
+  Hot Start grant.
+- Visually inspected the final Stellar Memory description and controls at normal
+  preview width and 360 × 780. No clipped description or overlapping controls.
+  These additional checks are browser interaction evidence, not new native QA.

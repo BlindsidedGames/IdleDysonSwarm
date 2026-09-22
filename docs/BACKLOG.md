@@ -18,6 +18,20 @@ Status conventions:
   accessibility zoom and do not change zoom behaviour in the current SRS work.
   [Discord report](https://discord.com/channels/712304553931833385/1535228461176590389/1551555264329809953).
 
+## Steam feedback — 22 September 2026
+
+- [ ] **Deferred proposal · Skill-tree hover tooltips.** Matthew relayed a Steam
+  player's request for tooltips. Show the skill/augment name and localized
+  technical effect after a short mouse hover, with keyboard-focus access too.
+  Reuse the full details panel's effect selection, including Fractured variants;
+  do not maintain a second set of descriptions. Keep flavour text, assignment
+  controls and production comparisons in the existing click-open details panel.
+  Support mouse input across Windows, macOS and Linux rather than gating by OS;
+  preserve touch interactions. Use one shared tooltip, keep it within the visible
+  viewport, and dismiss on Escape, tree dragging/zooming or opening details.
+  Confirm the proposed content and behaviour before implementation. Check long
+  descriptions, translations, enlarged text and keyboard navigation.
+
 ## Performance and maintainability — 12 September 2026
 
 - [ ] **In progress:** measured performance, clean-code, duplication and complete
