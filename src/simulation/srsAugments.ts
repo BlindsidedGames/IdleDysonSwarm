@@ -58,8 +58,9 @@ export function stellarMemoryMultiplier(state: State): number {
 
 export function bankedSrsSecondsAfterReset(state: State): number {
   const srs = state.skills.byId.superRadiantScattering
+  const earned = state.skills.byId[SRS_AUGMENTS.stellarMemory]?.timerSeconds ?? 0
   return addContinuous(srs?.secondaryTimerSeconds ?? 0,
-    hasSrsAugment(state, 'stellarMemory') ? srs.timerSeconds : 0)
+    hasSrsAugment(state, 'stellarMemory') ? earned : 0)
 }
 
 export function srsAfterglowRetention(state: State): number {
@@ -113,6 +114,13 @@ export function advanceSrsAugments(state: State, seconds: number, generated: rea
   }
   byId.superRadiantScattering = { ...srs, timerSeconds: addContinuous(srs.timerSeconds, charge),
     secondaryTimerSeconds: srs.secondaryTimerSeconds }
+  // This existing, previously unused timer persists charge earned this run.
+  // Track even before assignment; grants and carryover never pass through here.
+  const memory = byId[SRS_AUGMENTS.stellarMemory]
+  byId[SRS_AUGMENTS.stellarMemory] = {
+    ...(memory ?? { owned: false, level: 0, secondaryTimerSeconds: 0 }),
+    timerSeconds: addContinuous(memory?.timerSeconds ?? 0, charge),
+  }
   return { ...state.skills, byId }
 }
 

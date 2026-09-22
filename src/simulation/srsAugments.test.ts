@@ -148,18 +148,21 @@ test.each([[0, 1], [100_000, 2.25], [1e6, 2.5], [1e7, 2.75], [1e9, 3.25]])(
   },
 )
 
-test('existing lifetime bank is preserved; resets bank full charge once, restarts do not', () => {
+test('existing lifetime bank is preserved; resets bank newly generated charge once, restarts do not', () => {
   let s = buy(withBank(state(), 100_000), A.stellarMemory)
   s = advance(buy(s, A.afterglow), 100)
   const charge = s.skills.byId.superRadiantScattering.timerSeconds
+  const earned = s.skills.byId[A.stellarMemory].timerSeconds
+  expect(earned).toBeCloseTo(charge - 4050)
   const request = { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 30n }
   const infinity = applyCanonicalInfinityReset(s, request)
   const quantum = applyCanonicalQuantumReset(s, 30n)
   const restart = applyCanonicalInfinityReset(s, { ...request, restartOnly: true })
   for (const result of [infinity, quantum, restart]) expect(result.ok).toBe(true)
-  expect(infinity.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000 + charge)
-  expect(quantum.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000 + charge)
+  expect(infinity.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000 + earned)
+  expect(quantum.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000 + earned)
   expect(restart.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000)
+  expect(restart.state.skills.byId[A.stellarMemory].timerSeconds).toBe(0)
   const hotGrant = 1800 * stellarMemoryMultiplier(infinity.state)
   expect(infinity.state.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(charge * 0.225 + hotGrant)
   expect(quantum.state.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(1800 * stellarMemoryMultiplier(quantum.state))
@@ -265,4 +268,53 @@ test('boosted charging integrates identically for Stored Time-sized and split in
   for (let i = 0; i < 3600; i++) split = advance(split, 1)
   expect(whole.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(split.skills.byId.superRadiantScattering.timerSeconds, 6)
   expect(whole.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000)
+  expect(whole.skills.byId[A.stellarMemory].timerSeconds).toBeCloseTo(split.skills.byId[A.stellarMemory].timerSeconds, 6)
+})
+
+
+test('instant Infinity and Quantum resets cannot bank Hot Start or recycled Afterglow', () => {
+  for (const reset of [
+    (s: State) => applyCanonicalInfinityReset(s, { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 40n }),
+    (s: State) => applyCanonicalQuantumReset(s, 40n),
+  ]) {
+    let s = buy(buy(withBank(state(), 100_000), A.afterglow), A.stellarMemory)
+    for (let i = 0; i < 100; i++) {
+      const result = reset(s)
+      expect(result.ok).toBe(true)
+      s = result.state
+      expect(s.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000)
+      expect(s.skills.byId[A.stellarMemory].timerSeconds).toBe(0)
+    }
+  }
+})
+
+test('earned charge survives assignment, refunds and reload, and is deposited only once', () => {
+  let s = advance(buy(withBank(state(), 100_000), A.hotStart), 600)
+  expect(s.skills.byId[A.stellarMemory].timerSeconds).toBe(600)
+  s = buy(s, A.stellarMemory)
+  expect(s.skills.byId.superRadiantScattering.timerSeconds).toBe(4650)
+  const refunded = refundCanonicalSkill(s, A.stellarMemory)
+  expect(refunded.accepted).toBe(true)
+  s = buy(refunded.state, A.stellarMemory)
+  s = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(
+    serializeWebSave(dehydrateGameState(hydrated, s).copyValidatedState()),
+  ))).state
+  expect(s.skills.byId[A.stellarMemory].timerSeconds).toBe(600)
+  const request = { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 40n }
+  const reset = applyCanonicalInfinityReset(s, request)
+  expect(reset.ok).toBe(true)
+  expect(reset.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_600)
+  const again = applyCanonicalInfinityReset(reset.state, request)
+  expect(again.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_600)
+})
+
+test('older saves preserve their bank without treating untracked current charge as earned', () => {
+  const s = buy(buy(withBank(state(), 100_000), A.afterglow), A.stellarMemory)
+  const loaded = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(
+    serializeWebSave(dehydrateGameState(hydrated, s).copyValidatedState()),
+  ))).state
+  expect(loaded.skills.byId[A.stellarMemory].timerSeconds).toBe(0)
+  const result = applyCanonicalQuantumReset(loaded, 40n)
+  expect(result.ok).toBe(true)
+  expect(result.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000)
 })

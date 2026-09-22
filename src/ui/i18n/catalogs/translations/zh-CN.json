@@ -1503,7 +1503,7 @@
   "skills.srs.researchConversion.effect": "科学产量降低50%。SRS充能速度提高100%，并由星辰记忆倍增。加成为加法叠加。",
   "skills.srs.researchConversion.name": "研究转化",
   "skills.srs.stellarMemory.description": "科学家们会把笔记带到下一个宇宙。大部分写的都是“下次尽量别再这么干了”。",
-  "skills.srs.stellarMemory.effect": "分配期间，将其他SRS增幅的收益乘以1 + 0.25 × log10(储备秒数)，最低为1×。分配期间进行无限或量子跃迁时，将结束时的全部SRS充能存入储备，包括初始充能和保留充能。储备在重置后保留；新存入的充能从下一轮开始生效。",
+  "skills.srs.stellarMemory.effect": "在无限或量子重置时，存入本轮新产生的 SRS 充能，不含热启动和余辉。分配后，SRS 强化效果乘以 1 + 0.25 × log10(max(1, 已存秒数))。",
   "skills.srs.stellarMemory.name": "星辰记忆",
   "skills.subskill-assign": "分配{name}，消耗1技能点",
   "skills.subskill-assign-short": "分配",

@@ -1503,7 +1503,7 @@
   "skills.srs.researchConversion.effect": "サイエンス生産を50%減らします。SRSチャージ速度を100%増加させ、この増加分を星の記憶で増幅します。ボーナスは加算されます。",
   "skills.srs.researchConversion.name": "研究変換",
   "skills.srs.stellarMemory.description": "科学者たちは宇宙が変わってもメモを残しています。大半には「次は同じことをしないように」と書かれています。",
-  "skills.srs.stellarMemory.effect": "割り当て中、他のSRS拡張の恩恵を1 + 0.25 × log10(蓄積秒数)倍にします（最低1×）。割り当てた状態でインフィニティまたは量子跳躍を行うと、開始時のチャージと引き継いだチャージを含む終了時のSRSチャージをすべて蓄積します。蓄積量はリセット後も残り、新たな蓄積分は次の周回に適用されます。",
+  "skills.srs.stellarMemory.effect": "無限または量子リセット時、新たに生成したSRSチャージを蓄積します。ホットスタートと残光は含みません。割り当て中、SRSオーグメントの効果を1 + 0.25 × log10(max(1, 蓄積秒数))倍にします。",
   "skills.srs.stellarMemory.name": "星の記憶",
   "skills.subskill-assign": "スキル{name}をスキルポイント1で割り当てる",
   "skills.subskill-assign-short": "割り当て",

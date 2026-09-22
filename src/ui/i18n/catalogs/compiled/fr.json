@@ -11728,7 +11728,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Quand elle est attribuée, multiplie les bénéfices des autres augmentations SRS par 1 + 0.25 × log10(secondes en réserve), avec un minimum de 1×. Lors d’une Infinité ou d’un Saut quantique, mettez toute la charge SRS finale en réserve si cette augmentation est attribuée, y compris la charge initiale et conservée. La réserve survit aux réinitialisations ; les nouveaux dépôts bénéficient à la prochaine partie."
+      "value": "À chaque réinitialisation d’Infinité ou Quantique, met en réserve la charge SRS nouvellement générée, hors Départ à chaud et Rémanence. Tant qu’il est assigné, multiplie les avantages des augments SRS par 1 + 0,25 × log10(max(1, secondes en réserve))."
     }
   ],
   "skills.srs.stellarMemory.name": [

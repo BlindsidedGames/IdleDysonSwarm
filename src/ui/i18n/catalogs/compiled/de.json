@@ -11728,7 +11728,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Wenn zugewiesen, multipliziert dies die Vorteile anderer SRS-Erweiterungen mit 1 + 0.25 × log10(gespeicherte Sekunden), mindestens 1×. Speichert bei Unendlichkeit oder Quantensprung die gesamte abschließende SRS-Ladung, solange zugewiesen, einschließlich Startladung und beibehaltener Ladung. Der Speicher übersteht Rücksetzungen; neue Einzahlungen gelten für den nächsten Lauf."
+      "value": "Speichert bei einem Unendlichkeits- oder Quanten-Reset neu erzeugte SRS-Ladung, ohne Heißstart und Nachglühen. Solange zugewiesen, verstärkt es die Vorteile der SRS-Augmente um den Faktor 1 + 0,25 × log10(max(1, gespeicherte Sekunden))."
     }
   ],
   "skills.srs.stellarMemory.name": [

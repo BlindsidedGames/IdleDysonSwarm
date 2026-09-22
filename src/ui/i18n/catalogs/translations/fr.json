@@ -1503,7 +1503,7 @@
   "skills.srs.researchConversion.effect": "Réduit la production de Science de 50%. Augmente la vitesse de charge SRS de 100%, multipliés par Mémoire stellaire. Les bonus sont additifs.",
   "skills.srs.researchConversion.name": "Conversion de recherche",
   "skills.srs.stellarMemory.description": "Vos scientifiques gardent leurs notes d’un univers à l’autre. La plupart disent « essayons de ne pas refaire ça ».",
-  "skills.srs.stellarMemory.effect": "Quand elle est attribuée, multiplie les bénéfices des autres augmentations SRS par 1 + 0.25 × log10(secondes en réserve), avec un minimum de 1×. Lors d’une Infinité ou d’un Saut quantique, mettez toute la charge SRS finale en réserve si cette augmentation est attribuée, y compris la charge initiale et conservée. La réserve survit aux réinitialisations ; les nouveaux dépôts bénéficient à la prochaine partie.",
+  "skills.srs.stellarMemory.effect": "À chaque réinitialisation d’Infinité ou Quantique, met en réserve la charge SRS nouvellement générée, hors Départ à chaud et Rémanence. Tant qu’il est assigné, multiplie les avantages des augments SRS par 1 + 0,25 × log10(max(1, secondes en réserve)).",
   "skills.srs.stellarMemory.name": "Mémoire stellaire",
   "skills.subskill-assign": "Attribuer {name} pour 1 point de compétence",
   "skills.subskill-assign-short": "Attribuer",

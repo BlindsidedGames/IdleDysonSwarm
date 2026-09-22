@@ -1503,7 +1503,7 @@
   "skills.srs.researchConversion.effect": "Reduz a produção de Ciência em 50%. Aumenta a velocidade de carga de SRS em 100%, multiplicados por Memória estelar. Os bônus são aditivos.",
   "skills.srs.researchConversion.name": "Conversão de pesquisa",
   "skills.srs.stellarMemory.description": "Seus cientistas guardam as anotações entre universos. A maioria diz “vamos tentar não fazer isso de novo”.",
-  "skills.srs.stellarMemory.effect": "Enquanto atribuído, multiplica os benefícios dos outros aprimoramentos de SRS por 1 + 0.25 × log10(segundos acumulados), com mínimo de 1×. Ao realizar um Infinito ou Salto Quântico enquanto atribuído, acumula toda a carga final de SRS, incluindo a carga inicial e retida. A reserva persiste após reinícios; novos depósitos beneficiam a próxima rodada.",
+  "skills.srs.stellarMemory.effect": "Ao reiniciar Infinito ou Quântico, acumula a carga SRS recém-gerada, excluindo Partida aquecida e Brilho residual. Enquanto atribuída, multiplica os benefícios dos aprimoramentos SRS por 1 + 0,25 × log10(max(1, segundos acumulados)).",
   "skills.srs.stellarMemory.name": "Memória estelar",
   "skills.subskill-assign": "Atribuir {name} por 1 Ponto de Habilidade",
   "skills.subskill-assign-short": "Atribuir",

@@ -11728,7 +11728,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Mientras está asignada, multiplica los beneficios de los otros aumentos de SRS por 1 + 0.25 × log10(segundos acumulados), con un mínimo de 1×. Al realizar una Infinidad o un Salto cuántico mientras está asignada, acumula toda la carga final de SRS, incluida la carga inicial y retenida. La reserva persiste tras los reinicios; los nuevos depósitos benefician a la siguiente partida."
+      "value": "Al reiniciar Infinito o Cuántico, acumula la carga SRS recién generada, excluyendo Arranque en caliente y Resplandor residual. Mientras esté asignada, multiplica los beneficios de los aumentos SRS por 1 + 0.25 × log10(max(1, segundos acumulados))."
     }
   ],
   "skills.srs.stellarMemory.name": [

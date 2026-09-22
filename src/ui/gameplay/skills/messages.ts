@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const skillMessages = defineMessages({
   srsStellarMemoryDescription: { id: 'skills.srs.stellarMemory.description', defaultMessage: "Your scientists keep their notes between universes. Most of them say “try not to do that again.”" },
   srsStellarMemoryName: { id: 'skills.srs.stellarMemory.name', defaultMessage: 'Stellar Memory' },
-  srsStellarMemoryEffect: { id: 'skills.srs.stellarMemory.effect', defaultMessage: 'While assigned, multiply the benefits of other SRS augments by 1 + 0.25 × log10(banked seconds), with a minimum of 1×. Bank all ending SRS charge on Infinity or Quantum Leap while assigned. Includes starting and retained charge. The bank survives resets; new deposits benefit the next run.' },
+  srsStellarMemoryEffect: { id: 'skills.srs.stellarMemory.effect', defaultMessage: 'On Infinity or Quantum reset, bank newly generated SRS charge, excluding Hot Start and Afterglow. While assigned, boosts SRS augment benefits by 1 + 0.25 × log10(max(1, banked seconds)).' },
   srsHotStartDescription: { id: 'skills.srs.hotStart.description', defaultMessage: "Your scientists preheated the equipment. They used the pizza setting, but it seems to have worked." },
   srsHotStartName: { id: 'skills.srs.hotStart.name', defaultMessage: 'Hot Start' },
   srsHotStartEffect: { id: 'skills.srs.hotStart.effect', defaultMessage: 'Gain 30 minutes of SRS charge on first assignment each Infinity, multiplied by Stellar Memory. Assigning Stellar Memory later adds any missing charge once. Non-refundable.' },
