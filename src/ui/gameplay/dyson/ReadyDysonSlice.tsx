@@ -2221,7 +2221,7 @@ export function ReadyDysonSlice({
         science: discoveryUnlocked && gameplay.derived.discovery ? {
           label: intl.formatMessage(discoveryMessages.name),
           iconSrc: navigationAssets.discovery,
-          value: `×${display(gameplay.derived.discovery.multiplier)}`,
+          value: display(gameplay.derived.discovery.multiplier),
           rate: formatGameDuration(locale, gameplay.derived.discovery.secondsToNext / (gameplay.progression.timeline?.doubleTime?.unlocked ? 2 : 1)),
         } : {
           label: intl.formatMessage(messages.science),

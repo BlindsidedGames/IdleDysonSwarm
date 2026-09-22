@@ -460,6 +460,9 @@ function PatchNotesArticle() {
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion4111)}</h4>
           <ul className="wiki-surface__patch-note-list">
+            <li>{intl.formatMessage(messages.patchNotesVersion4111Transcendence)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111Discovery)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111DiscoveryUpgrades)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4111Speedruns)}</li>
           </ul>
         </section>

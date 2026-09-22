@@ -101,6 +101,7 @@ export const avocatoMessages = defineMessages({
   overflowThreshold: { id: 'avocato.overflow.threshold', defaultMessage: 'Reach {value} Bots to Transcend.', description: 'Bot threshold for a voluntary Overflow reset.' },
   overflowReached: { id: 'avocato.overflow.reached', defaultMessage: 'Transcendence reached', description: 'Durable Overflow eligibility status.' },
   overflowOpen: { id: 'avocato.overflow.open', defaultMessage: 'View Transcendence reset', description: 'Opens the voluntary reset in Avocato.' },
+  overflowResetReward: { id: 'avocato.overflow.reset-reward', defaultMessage: 'Transcend for {reward}', description: 'Reset action with an inline Transcendence icon and reward amount.' },
   overflowReset: { id: 'avocato.overflow.reset', defaultMessage: 'Transcend for 1 point', description: 'Starts confirmation for an Overflow reset.' },
   overflowConfirm: { id: 'avocato.overflow.confirm', defaultMessage: 'Confirm Transcendence', description: 'Confirms the reset and grants one Overflow Point.' },
   overflowCancel: { id: 'avocato.overflow.cancel', defaultMessage: 'Cancel', description: 'Leaves the current run intact.' },

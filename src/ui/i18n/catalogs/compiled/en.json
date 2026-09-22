@@ -287,6 +287,16 @@
       "value": "Transcend for 1 point"
     }
   ],
+  "avocato.overflow.reset-reward": [
+    {
+      "type": 0,
+      "value": "Transcend for "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    }
+  ],
   "avocato.overflow.threshold": [
     {
       "type": 0,
@@ -15670,10 +15680,28 @@
       "value": "Version 4.1.11"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.discovery": [
+    {
+      "type": 0,
+      "value": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+    {
+      "type": 0,
+      "value": "Added permanent Discovery Speed and Starting Power upgrades in Avocato."
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
       "value": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.transcendence": [
+    {
+      "type": 0,
+      "value": "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

@@ -3,7 +3,8 @@ import { useIntl } from 'react-intl'
 import type { DiscoveryState } from '../../../game-state/types'
 import type { DiscoveryEffects } from '../../../simulation/discoveryEffects'
 import { DISCOVERY_TUNING } from '../../../simulation/discovery'
-import { Progress } from '../../components'
+import { Progress, InlineImageSymbol } from '../../components'
+import { navigationAssets } from '../shell/navigationAssets'
 import { discoverySkillNames } from './skillMessages'
 import { formatGameNumber, formatWholeGameNumber, formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -25,7 +26,7 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
       <summary className="discovery-toggle" aria-label={`${intl.formatMessage(m.details)}: ${productionLabel}, ${time}`}>
         <span className="discovery-heading">
           <span className="discovery-title">{intl.formatMessage(m.name)}</span>
-          <strong aria-label={productionLabel}>×{formatGameNumber(locale, effects.multiplier)}</strong>
+          <strong className="discovery-boost" aria-label={productionLabel}><InlineImageSymbol src={navigationAssets.discovery} tint />{formatGameNumber(locale, effects.multiplier)}</strong>
         </span>
         <Progress className="discovery-progress" label={intl.formatMessage(m.name)} valueText={time}
           value={state.progress} maximum={DISCOVERY_TUNING.completionProgress} />

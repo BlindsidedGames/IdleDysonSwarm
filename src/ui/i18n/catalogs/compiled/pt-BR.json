@@ -287,6 +287,16 @@
       "value": "Transcender por 1 ponto"
     }
   ],
+  "avocato.overflow.reset-reward": [
+    {
+      "type": 0,
+      "value": "Transcender por "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    }
+  ],
   "avocato.overflow.threshold": [
     {
       "type": 0,
@@ -15670,10 +15680,28 @@
       "value": "Versão 4.1.11"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.discovery": [
+    {
+      "type": 0,
+      "value": "Descoberta cresce com o tempo e aumenta Dinheiro, Bots, produção de instalações e vida útil dos painéis. As habilidades relacionadas se adaptam ao desbloqueá-la."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+    {
+      "type": 0,
+      "value": "Adicionadas melhorias permanentes de Velocidade de Descoberta e Poder inicial no Avocato."
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
       "value": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações. Novos recordes de marcos usam o tempo jogado."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.transcendence": [
+    {
+      "type": 0,
+      "value": "Overflow agora se chama Transcendência. Gaste 1 ponto de Transcendência no Avocato para desbloquear Descoberta, que substitui Ciência e Pesquisa."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

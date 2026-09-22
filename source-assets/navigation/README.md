@@ -3,19 +3,23 @@
 Follow [the artwork workflow](../../docs/skill-icon-artwork.md). These are flat,
 white, transparent masters; the app applies the route/theme tint.
 
-- `discovery.svg` reuses the connected-node research path preserved in
-  `source-assets/skill-icons/srs/srsResearchActivity.svg`, traced from the original
-  2084px Science Boost master. It does not trace a runtime thumbnail.
-- `transcendence.svg` uses a compact core and four outward, rounded arms. Its
-  negative space and stroke weight were compared with the existing Research and
-  Quantum navigation masters and inspected in the running game.
+- Discovery now reuses `src/ui/assets/nav-research.png`, the existing high-resolution
+  magnifying-glass navigation master. `navigationAssets.discovery` aliases Research;
+  there is no duplicated bitmap or redraw. The earlier `discovery.svg` and exported
+  node-graph asset remain as prototype drafts pending final artwork selection.
+- `transcendence.svg` is the current figure-and-halo concept based on Matthew's
+  supplied references: a simple ascending figure, open halo and two curved layers.
+  Flat white shapes and rounded endpoints match the existing navigation vocabulary.
+  The same artwork is used for the tab and the Transcendence Points balance.
+  It was compared with Research, Infinity and Quantum at 128px, 40px and 20px,
+  then inspected in the running game. This concept is awaiting Matthew's review.
 
 Export from the repository root using the existing Sharp dependency:
 
 ```sh
 node --input-type=module <<'JS'
 import sharp from 'sharp'
-for (const name of ['discovery', 'transcendence']) {
+for (const name of ['transcendence']) {
   await sharp(`source-assets/navigation/${name}.svg`, { density: 600 })
     .resize(2084, 2084).png()
     .toFile(`src/ui/assets/nav-${name}.png`)

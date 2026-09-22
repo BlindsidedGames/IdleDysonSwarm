@@ -469,3 +469,9 @@ follow-up was verified in the browser, not rebuilt for native hosts.
 Evidence: [Avocato desktop](../qa/discovery-prototype/avocato-desktop.png),
 [360px](../qa/discovery-prototype/avocato-narrow.png),
 [130% text while scrolled](../qa/discovery-prototype/avocato-text130.png).
+
+### Approved presentation and internal candidate — 22 September
+
+Discovery uses a purple panel with a thick recessed track, a raised fill, and a centered timer. Its heading and shared resource slot show the original Research magnifying glass beside the multiplier without an × prefix. The Transcendence figure-and-halo symbol is shared by navigation, the Avocato balance and reset reward. Avocato shows the balance as icon plus amount and the reset action as “Transcend for [icon] 1”. Concise Discovery notes were added to 4.1.11 in every supported locale.
+
+Matthew authorized internal distribution to Google Play, Internal TestFlight and Steam beta. Candidate 2026092202 retains the current 4.1.10 testing marketing version. The feature branch remains unmerged.

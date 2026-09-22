@@ -13,6 +13,7 @@ import type {
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { AvocadoFeedSource } from '../../../simulation/avocadoDomain'
 import avocatoIcon from '../../assets/nav-avocato.png'
+import { navigationAssets } from '../shell/navigationAssets'
 import { Button, InlineImageSymbol } from '../../components'
 import { formatGameNumber, formatWholeGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -149,7 +150,7 @@ function OverflowCard({ locale, resources, preview, routeAvailable, dispatchPlay
   return (
     <article className="quantum-leap-card avocato-overflow-card">
       <div>
-        <h2>{intl.formatMessage(messages.overflowPoints, { value: formatWholeGameNumber(locale, resources.overflowPoints) })}</h2>
+        <h2 className="avocato-overflow-card__balance" aria-label={intl.formatMessage(messages.overflowPoints, { value: formatWholeGameNumber(locale, resources.overflowPoints) })}><InlineImageSymbol src={navigationAssets.transcendence} tint />{formatWholeGameNumber(locale, resources.overflowPoints)}</h2>
         <p>{intl.formatMessage(preview.eligible ? messages.overflowReached : messages.overflowThreshold,
           { value: formatGameNumber(locale, preview.threshold) })}</p>
         {confirming && <p>{intl.formatMessage(messages.overflowDescription)}</p>}
@@ -164,8 +165,8 @@ function OverflowCard({ locale, resources, preview, routeAvailable, dispatchPlay
           <Button disabled={pending} onClick={() => setConfirming(false)}>{intl.formatMessage(messages.overflowCancel)}</Button>
         </div>
       ) : (
-        <Button variant="primary" disabled={disabled} onClick={() => setConfirming(true)}>
-          {intl.formatMessage(messages.overflowReset)}
+        <Button variant="primary" disabled={disabled} aria-label={intl.formatMessage(messages.overflowReset)} onClick={() => setConfirming(true)}>
+          {intl.formatMessage(messages.overflowResetReward, { reward: <span className="avocato-overflow-card__reward"><InlineImageSymbol src={navigationAssets.transcendence} tint />{formatWholeGameNumber(locale, 1n)}</span> })}
         </Button>
       )}
       {failed && <p className="quantum-leap-card__feedback" role="alert">{intl.formatMessage(messages.overflowFailed)}</p>}

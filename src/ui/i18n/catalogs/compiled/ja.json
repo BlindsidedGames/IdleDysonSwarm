@@ -287,6 +287,16 @@
       "value": "超越して1ポイント獲得"
     }
   ],
+  "avocato.overflow.reset-reward": [
+    {
+      "type": 0,
+      "value": "超越して獲得："
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    }
+  ],
   "avocato.overflow.threshold": [
     {
       "type": 0,
@@ -15670,10 +15680,28 @@
       "value": "バージョン4.1.11"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.discovery": [
+    {
+      "type": 0,
+      "value": "発見は時間とともに成長し、資金、ボット、施設生産量、パネル寿命を強化します。関連スキルは解放時に発見向けの効果に変わります。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+    {
+      "type": 0,
+      "value": "アボカトに発見速度と初期パワーの恒久アップグレードを追加しました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
       "value": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。 新しいマイルストーン記録にはプレイ時間を使用します。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.transcendence": [
+    {
+      "type": 0,
+      "value": "オーバーフローを超越に改名しました。アボカトで超越ポイントを1消費すると、科学と研究に代わる発見を解放できます。"
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

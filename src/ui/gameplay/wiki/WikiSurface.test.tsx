@@ -30,6 +30,9 @@ describe('Wiki patch-note content', () => {
     const latest = screen.getByRole('heading', { name: 'Version 4.1.11' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
+      "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research.",
+      "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked.",
+      "Added permanent Discovery Speed and Starting Power upgrades in Avocato.",
       'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.',
     ])
     const version419List = screen.getByRole('heading', { name: 'Version 4.1.9' }).nextElementSibling as HTMLElement

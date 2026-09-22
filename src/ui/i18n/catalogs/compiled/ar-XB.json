@@ -607,6 +607,24 @@
       "value": "‬"
     }
   ],
+  "avocato.overflow.reset-reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹɐusɔǝup ɟoɹ "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "avocato.overflow.threshold": [
     {
       "type": 0,
@@ -31502,6 +31520,34 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.discovery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısɔoʌǝɹʎ ƃɹoʍs oʌǝɹ ʇıɯǝ, qoosʇıuƃ Ↄɐsɥ, Ԑoʇs, ɟɐɔıʅıʇʎ dɹopnɔʇıou ɐup dɐuǝʅ ʅıɟǝʇıɯǝ. ᴚǝʅɐʇǝp sʞıʅʅs ɐpɐdʇ ʍɥǝu nuʅoɔʞǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp dǝɹɯɐuǝuʇ ᗡısɔoʌǝɹʎ Sdǝǝp ɐup Sʇɐɹʇıuƃ Ԁoʍǝɹ ndƃɹɐpǝs ıu ∀ʌoɔɐʇo."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
@@ -31510,6 +31556,20 @@
     {
       "type": 0,
       "value": "Sdǝǝpɹnus uoʍ ɔoɯdɐɹǝ ʎonɹ ɔnɹɹǝuʇ ɹnu ʍıʇɥ dǝɹsouɐʅ qǝsʇs ʇɥɐʇ snɹʌıʌǝ ᴚǝsǝʇ Sɐʌǝ. ∀ppǝp ɹnu ıupıɔɐʇoɹs, ᗡonqʅǝ IԀ ʇɹɐɔʞıuƃ, ɐup ɹǝɯǝɯqǝɹǝp Sʇɐʇısʇıɔs ʇɐqs. Nǝʍ ɯıʅǝsʇouǝ ɹǝɔoɹps nsǝ ʇıɯǝ dʅɐʎǝp. Ԁǝɹsouɐʅ qǝsʇs sʎuɔ ʇɥɹonƃɥ Ↄʅonp sɐʌǝs qnʇ ɐɹǝ uoʇ sɥɐɹǝp ʇɥɹonƃɥ ǝxdoɹʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.transcendence": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʌǝɹɟʅoʍ ıs uoʍ ⊥ɹɐusɔǝupǝuɔǝ. Sdǝup 1 ⊥ɹɐusɔǝupǝuɔǝ Ԁoıuʇ ıu ∀ʌoɔɐʇo ʇo nuʅoɔʞ ᗡısɔoʌǝɹʎ, ɹǝdʅɐɔıuƃ Sɔıǝuɔǝ ɐup ᴚǝsǝɐɹɔɥ."
     },
     {
       "type": 0,

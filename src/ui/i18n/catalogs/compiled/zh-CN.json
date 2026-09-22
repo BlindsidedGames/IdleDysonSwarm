@@ -287,6 +287,16 @@
       "value": "超越并获得1点"
     }
   ],
+  "avocato.overflow.reset-reward": [
+    {
+      "type": 0,
+      "value": "超越并获得"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    }
+  ],
   "avocato.overflow.threshold": [
     {
       "type": 0,
@@ -15670,10 +15680,28 @@
       "value": "版本 4.1.11"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.discovery": [
+    {
+      "type": 0,
+      "value": "发现随时间成长，提升现金、机器人、设施产量和面板寿命。相关技能会在解锁后调整效果。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+    {
+      "type": 0,
+      "value": "在 Avocato 处新增发现速度与初始强度的永久升级。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.speedruns": [
     {
       "type": 0,
       "value": "速通现在会将当前挑战与个人最佳纪录进行比较，重置存档后仍保留最佳纪录。新增挑战标记、双倍无限点数使用记录，并记住上次打开的统计标签页。个人最佳纪录随云存档同步，但不包含在导出的存档中。 新的里程碑纪录使用实际游玩时间。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.transcendence": [
+    {
+      "type": 0,
+      "value": "溢出现更名为超越。在 Avocato 处花费1超越点数即可解锁发现，取代科学与研究。"
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

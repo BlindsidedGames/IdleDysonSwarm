@@ -3,6 +3,15 @@
   overflow-y: auto;
   color: var(--color-text-primary);
 }
+.discovery-card {
+  --discovery-fill: linear-gradient(to bottom,
+    color-mix(in srgb, var(--theme-selected) 72%, var(--theme-accent)),
+    color-mix(in srgb, var(--theme-selected) 86%, var(--theme-accent)));
+  --discovery-fill-highlight: inset 0 1px rgb(255 255 255 / 12%);
+  background: var(--theme-panel);
+  border: 1px solid color-mix(in srgb, var(--theme-divider) 65%, transparent);
+  border-radius: 0.3rem;
+}
 .discovery-heading {
   display: flex;
   align-items: center;
@@ -16,7 +25,15 @@
   font-weight: var(--font-weight-bold);
   font-size: calc(1.2rem * var(--game-text-scale));
 }
+.discovery-boost .ui-inline-image-symbol {
+  inline-size: 0.9em;
+  block-size: 0.9em;
+  flex-shrink: 0;
+}
 .discovery-heading strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
   color: var(--theme-accent);
   font-size: calc(1.2rem * var(--game-text-scale));
   font-variant-numeric: tabular-nums;
@@ -46,18 +63,20 @@
   display: block;
   appearance: none;
   block-size: calc(3rem * var(--game-text-scale));
-  border: 1px solid var(--theme-divider);
-  border-radius: 0.5rem;
+  border: 0;
+  border-radius: 0.4rem;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 25%);
   overflow: hidden;
   background: var(--theme-page);
 }
-.discovery-card .discovery-progress progress::-webkit-progress-bar { background: var(--theme-page); }
-.discovery-card .discovery-progress progress::-webkit-progress-value { background: var(--theme-selected); }
-.discovery-card .discovery-progress progress::-moz-progress-bar { background: var(--theme-selected); }
+.discovery-card .discovery-progress progress::-webkit-progress-bar { background: transparent; }
+.discovery-card .discovery-progress progress::-webkit-progress-value { background: var(--discovery-fill); box-shadow: var(--discovery-fill-highlight); }
+.discovery-card .discovery-progress progress::-moz-progress-bar { background: var(--discovery-fill); box-shadow: var(--discovery-fill-highlight); }
 /* The header and bar form one native, keyboard-operable disclosure. */
 .discovery-toggle {
   display: block;
-  padding-block-start: var(--ui-panel-inset);
+  padding: var(--ui-panel-inset);
+  border-radius: inherit;
   cursor: pointer;
   list-style: none;
 }
@@ -66,9 +85,9 @@
   outline: 2px solid var(--theme-accent);
   outline-offset: 2px;
 }
-.discovery-toggle:hover .discovery-progress progress { border-color: var(--theme-accent); }
 .discovery-details {
-  padding-block: var(--ui-panel-inset);
+  padding: var(--ui-panel-inset);
+  border-block-start: 1px solid var(--theme-divider);
 }
 .discovery-details dl { margin: 0; }
 .discovery-details .discovery-speed-sources {
