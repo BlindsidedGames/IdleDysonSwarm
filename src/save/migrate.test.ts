@@ -24,7 +24,7 @@ describe('Unity save migration pipeline', () => {
       expect(before).toBe(sourceSchema)
       expect(getSavePath(decoded.root, 'saveVersion')).toBe(sourceSchema)
       expect(migrated.sourceSchema).toBe(sourceSchema)
-      expect(migrated.save.saveVersion).toBe(17)
+      expect(migrated.save.saveVersion).toBe(18)
       expect(migrated.save.infinityAutomaticReset).toBe(true)
       expect(migrated.validation).toEqual({ valid: true, error: null })
       expect(
@@ -192,7 +192,7 @@ describe('Unity save migration pipeline', () => {
     const dailyWindows = statistics.dailyWindows as Record<string, unknown>[]
 
     expect(migrated.sourceSchema).toBe(12)
-    expect(migrated.targetSchema).toBe(17)
+    expect(migrated.targetSchema).toBe(18)
     expect(migrated.appliedSteps).toContain(
       'continuous-influence-and-strange-matter',
     )
@@ -234,7 +234,7 @@ describe('Unity save migration pipeline', () => {
     })
 
     expect(migrated.sourceSchema).toBe(13)
-    expect(migrated.targetSchema).toBe(17)
+    expect(migrated.targetSchema).toBe(18)
     expect(migrated.appliedSteps).not.toContain(
       'continuous-influence-and-strange-matter',
     )
@@ -315,7 +315,7 @@ describe('Unity save migration pipeline', () => {
   })
 
   test('validator rejects future schema and non-finite prepared state', () => {
-    expect(() => migrateDecodedSave({ saveVersion: 18 })).toThrow(
+    expect(() => migrateDecodedSave({ saveVersion: 19 })).toThrow(
       'newer than supported',
     )
     const migrated = migrateDecodedSave({ saveVersion: 12 })
@@ -324,10 +324,54 @@ describe('Unity save migration pipeline', () => {
         migrated.save.dysonVerseSaveData as Record<string, unknown>
       ).dysonVerseInfinityData as Record<string, unknown>
     ).money = Number.NaN
-    expect(validatePreparedSave(migrated.save, 17)).toEqual({
+    expect(validatePreparedSave(migrated.save, 18)).toEqual({
       valid: false,
       error:
         'saveSettings.dysonVerseSaveData.dysonVerseInfinityData.money contains a non-finite number.',
     })
   })
+})
+
+test('Stellar Memory price migration refunds only the legacy purchase and preserves bank and grant markers', () => {
+  const legacy = {
+    saveVersion: 17,
+    dysonVerseSaveData: {
+      skillAutoAssignmentIds: ['subskill.srs.stellarMemory'],
+      skillAutoAssignmentIds1: ['subskill.srs.stellarMemory'],
+      dysonVerseSkillTreeData: { skillPointsTree: 10n },
+      dysonVerseInfinityData: { skillStateById: {
+        'subskill.srs.stellarMemory': { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 },
+        'subskill.srs.hotStart': { owned: true, level: 0, timerSeconds: 1, secondaryTimerSeconds: 0 },
+        superRadiantScattering: { owned: true, level: 1, timerSeconds: 1800, secondaryTimerSeconds: 100_000 },
+      } },
+    },
+  }
+  const first = migrateDecodedSave(legacy).save
+  const dyson = requireRecord(first.dysonVerseSaveData, 'dyson')
+  const states = requireRecord(requireRecord(dyson.dysonVerseInfinityData, 'infinity').skillStateById, 'states')
+  expect(requireRecord(states['subskill.srs.stellarMemory'], 'memory').owned).toBe(false)
+  expect(requireRecord(dyson.dysonVerseSkillTreeData, 'tree').skillPointsTree).toBe(12n)
+  expect(requireRecord(states.superRadiantScattering, 'srs').secondaryTimerSeconds).toBe(100_000)
+  expect(requireRecord(states['subskill.srs.hotStart'], 'hot').timerSeconds).toBe(1)
+  expect(dyson.skillAutoAssignmentIds).toEqual([])
+  expect(dyson.skillAutoAssignmentIds1).toEqual(['subskill.srs.stellarMemory'])
+  const secondDyson = requireRecord(migrateDecodedSave(first).save.dysonVerseSaveData, 'dyson')
+  expect(requireRecord(secondDyson.dysonVerseSkillTreeData, 'tree').skillPointsTree).toBe(12n)
+  expect(requireRecord(requireRecord(secondDyson.dysonVerseInfinityData, 'infinity').skillStateById, 'states')).toEqual(states)
+})
+
+
+test('current-schema Stellar Memory ownership keeps its new purchase price and assignment', () => {
+  const migrated = migrateDecodedSave({ saveVersion: 18, dysonVerseSaveData: {
+    skillAutoAssignmentIds: ['subskill.srs.stellarMemory'],
+    dysonVerseSkillTreeData: { skillPointsTree: 7n },
+    dysonVerseInfinityData: { skillStateById: {
+      'subskill.srs.stellarMemory': { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 },
+    } },
+  } }).save
+  const dyson = requireRecord(migrated.dysonVerseSaveData, 'dyson')
+  expect(requireRecord(dyson.dysonVerseSkillTreeData, 'tree').skillPointsTree).toBe(7n)
+  expect(dyson.skillAutoAssignmentIds).toEqual(['subskill.srs.stellarMemory'])
+  const states = requireRecord(requireRecord(dyson.dysonVerseInfinityData, 'infinity').skillStateById, 'states')
+  expect(requireRecord(states['subskill.srs.stellarMemory'], 'memory').owned).toBe(true)
 })

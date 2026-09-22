@@ -392,7 +392,7 @@
   "challenges.galvanizers": [
     {
       "type": 0,
-      "value": "Galvanizadores: "
+      "value": "Catalisadores: "
     },
     {
       "type": 1,
@@ -402,7 +402,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "Gaste 1 Galvanizador nos detalhes de uma habilidade revelada para tornar seu efeito base permanente e remover suas penalidades e exclusões. A galvanização não pode ser desfeita e permanece após o Transbordamento."
+      "value": "Gaste 1 Catalisador nos detalhes de uma habilidade revelada para tornar seu efeito base permanente e remover suas penalidades e exclusões. A fratura não pode ser desfeita e permanece após o Transbordamento."
     }
   ],
   "challenges.replay": [
@@ -8718,7 +8718,7 @@
   "skills.confirm-galvanize": [
     {
       "type": 0,
-      "value": "Gastar 1 Galvanizador"
+      "value": "Gastar 1 Catalisador"
     }
   ],
   "skills.confirm-import": [
@@ -8972,7 +8972,7 @@
   "skills.galvanize-action": [
     {
       "type": 0,
-      "value": "Galvanizar · "
+      "value": "Fraturar · "
     },
     {
       "type": 1,
@@ -8982,7 +8982,7 @@
   "skills.galvanize-warning": [
     {
       "type": 0,
-      "value": "Galvanizar "
+      "value": "Fraturar "
     },
     {
       "type": 1,
@@ -8990,13 +8990,13 @@
     },
     {
       "type": 0,
-      "value": " permanentemente por 1 Galvanizador? Os Pontos de Habilidade investidos nesta habilidade base serão devolvidos. Isso não pode ser desfeito."
+      "value": " permanentemente por 1 Catalisador? Os Pontos de Habilidade investidos nesta habilidade base serão devolvidos. Isso não pode ser desfeito."
     }
   ],
   "skills.galvanized": [
     {
       "type": 0,
-      "value": "Galvanizada"
+      "value": "Fraturada"
     }
   ],
   "skills.galvanized-help": [
@@ -9008,7 +9008,7 @@
   "skills.galvanized-permanent": [
     {
       "type": 0,
-      "value": "Galvanizada · permanentemente ativa"
+      "value": "Fraturada · permanentemente ativa"
     }
   ],
   "skills.impact.bots": [
@@ -11620,7 +11620,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "Retém 10% da carga SRS ao atingir o Infinito, sem limite. Soma-se à Partida aquecida. O Salto Quântico apaga a carga retida."
+      "value": "Retenha 10% da carga de SRS ao realizar um Infinito, multiplicados por Memória estelar até o limite de 50%. Soma-se a Partida aquecida. O Salto Quântico apaga a carga retida."
     }
   ],
   "skills.srs.afterglow.name": [
@@ -11638,7 +11638,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "Aumenta a velocidade de carga SRS em 10% por minuto com este aumento atribuído, até 200% após 20 minutos. Reinicia no Infinito ou Salto Quântico. Os bônus são aditivos."
+      "value": "Aumenta a velocidade de carga de SRS em 10% por minuto que este aprimoramento estiver atribuído, até 200% após 20 minutos. Memória estelar multiplica esses bônus. Reinicia no Infinito ou Salto Quântico. Os bônus são aditivos."
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -11656,7 +11656,7 @@
   "skills.srs.focusedBeam.effect": [
     {
       "type": 0,
-      "value": "Aumenta em 50% o bônus SRS acima de 1× para Dinheiro ou Ciência, conforme qual tiver mais Bots atribuídos, e reduz o outro pela metade. Uma distribuição igual mantém ambos inalterados."
+      "value": "Aumenta em 50% o bônus de SRS acima de 1× para Dinheiro ou Ciência, conforme qual tiver mais Bots atribuídos. Memória estelar multiplica esse aumento. Reduz à metade o bônus do outro recurso. Uma distribuição igual mantém ambos inalterados."
     }
   ],
   "skills.srs.focusedBeam.name": [
@@ -11674,7 +11674,7 @@
   "skills.srs.hotStart.effect": [
     {
       "type": 0,
-      "value": "Receba 30 minutos de carga SRS na primeira atribuição de cada Infinito."
+      "value": "Ganhe 30 minutos de carga de SRS na primeira atribuição de cada Infinito, multiplicados por Memória estelar. Atribuir Memória estelar depois adiciona a carga que faltar uma única vez. Não reembolsável."
     }
   ],
   "skills.srs.hotStart.name": [
@@ -11692,7 +11692,7 @@
   "skills.srs.researchActivity.effect": [
     {
       "type": 0,
-      "value": "Ganhar um nível de pesquisa aumenta a velocidade de carga SRS em 150% por 30 segundos. Níveis gerados contam. Novos ganhos renovam a duração. Os bônus são aditivos."
+      "value": "Ganhar um nível de pesquisa aumenta a velocidade de carga de SRS em 150%, multiplicados por Memória estelar, por 30 segundos. Níveis gerados contam. Novos ganhos renovam a duração. Os bônus são aditivos."
     }
   ],
   "skills.srs.researchActivity.name": [
@@ -11710,7 +11710,7 @@
   "skills.srs.researchConversion.effect": [
     {
       "type": 0,
-      "value": "Reduz a produção de Ciência em 50%. Aumenta a velocidade de carga SRS em 100%. Os bônus são aditivos."
+      "value": "Reduz a produção de Ciência em 50%. Aumenta a velocidade de carga de SRS em 100%, multiplicados por Memória estelar. Os bônus são aditivos."
     }
   ],
   "skills.srs.researchConversion.name": [
@@ -11728,7 +11728,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Aumenta a velocidade de carga SRS em 10% × log10(total de segundos com SRS atribuído). O tempo acumula entre reinícios e inclui a simulação de Tempo Armazenado, mas exclui a carga extra. Os bônus são aditivos."
+      "value": "Ao reiniciar Infinito ou Quântico, acumula a carga SRS recém-gerada, excluindo Partida aquecida e Brilho residual. Enquanto atribuída, multiplica os benefícios dos aprimoramentos SRS por 1 + 0,25 × log10(max(1, segundos acumulados))."
     }
   ],
   "skills.srs.stellarMemory.name": [

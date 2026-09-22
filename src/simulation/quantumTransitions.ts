@@ -1,3 +1,4 @@
+import { bankedSrsSecondsAfterReset } from './srsAugments'
 import { permanentSkillRuntime } from './galvanization'
 import type {
   CanonicalFacilityId,
@@ -94,6 +95,11 @@ export function applyCanonicalQuantumReset(
   artifactSkillPoints: bigint,
   lookup?: CanonicalInfinityResetAssetLookup,
 ): CanonicalQuantumResetResult {
+  const permanentSkills = permanentSkillRuntime(state)
+  if (permanentSkills.superRadiantScattering) {
+    permanentSkills.superRadiantScattering = { ...permanentSkills.superRadiantScattering,
+      secondaryTimerSeconds: bankedSrsSecondsAfterReset(state) }
+  }
   const assignmentSeed: CanonicalGameStateV1 = {
     ...state,
     infinity: {
@@ -102,7 +108,7 @@ export function applyCanonicalQuantumReset(
     },
     skills: {
       ...state.skills,
-      byId: permanentSkillRuntime(state),
+      byId: permanentSkills,
       points: 0n,
       fragments: 0n,
     },

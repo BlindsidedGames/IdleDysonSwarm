@@ -25,7 +25,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 17
+export const CURRENT_SAVE_SCHEMA = 18
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -76,6 +76,10 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   if (sourceSchema < 14) {
     migrateSelectedSkillPresetIntent(save)
     appliedSteps.push('selected-skill-preset-intent')
+  }
+  if (sourceSchema < 18) {
+    migrateStellarMemoryPrice(save)
+    appliedSteps.push('stellar-memory-banked-charge')
   }
   migrateResearch(save)
   appliedSteps.push('stable-research-ids')
@@ -275,6 +279,25 @@ function migrateAvotation(save: SaveRecord): void {
     save.avotation = true
     save.avotationProgressStep = 7
   }
+}
+
+/** Refund the old 2-SP purchase once; preserve the existing lifetime total as the bank. */
+function migrateStellarMemoryPrice(save: SaveRecord): void {
+  const dyson = ensureRecord(save, 'dysonVerseSaveData')
+  const infinity = ensureRecord(dyson, 'dysonVerseInfinityData')
+  const states = ensureRecord(infinity, 'skillStateById')
+  const memory = states['subskill.srs.stellarMemory']
+  if (memory === null || typeof memory !== 'object' || Array.isArray(memory)) return
+  const record = memory as SaveRecord
+  if (record.owned !== true) return
+  record.owned = false
+  ensureRecord(infinity, 'skillOwnedById')['subskill.srs.stellarMemory'] = false
+  const tree = ensureRecord(dyson, 'dysonVerseSkillTreeData')
+  const points = tree.skillPointsTree
+  tree.skillPointsTree = (typeof points === 'bigint' ? points : BigInt(Math.floor(toNonNegativeNumber(points)))) + 2n
+  // Do not immediately repurchase at the new price. Saved presets retain the player's intent.
+  dyson.skillAutoAssignmentIds = stringArray(dyson.skillAutoAssignmentIds)
+    .filter((id) => id !== 'subskill.srs.stellarMemory')
 }
 
 function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {

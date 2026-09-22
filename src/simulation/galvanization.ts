@@ -12,7 +12,7 @@ export function isGalvanized(state: GalvanizationSource, id: string): boolean {
   return galvanizedSkillIds(state).includes(id)
 }
 
-/** Fresh run timers; SRS's secondary timer records lifetime assigned time. */
+/** Fresh run timers; SRS's secondary timer preserves Stellar Memory's bank. */
 export function permanentSkillRuntime(state: GalvanizationSource & { readonly skills?: Pick<CanonicalGameStateV1['skills'], 'byId'> }): Record<string, SkillRuntimeState> {
   const permanent = new Set(galvanizedSkillIds(state))
   if (permanent.size === 0) return {}

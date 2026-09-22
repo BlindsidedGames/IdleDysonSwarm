@@ -392,7 +392,7 @@
   "challenges.galvanizers": [
     {
       "type": 0,
-      "value": "强化器："
+      "value": "催化剂："
     },
     {
       "type": 1,
@@ -402,7 +402,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "在已显示技能的详情中消耗1个强化器，使基础效果永久生效并移除负面效果和互斥限制。永久强化无法撤销，且在溢出后保留。"
+      "value": "在已显示技能的详情中消耗1个催化剂，使基础效果永久生效并移除负面效果和互斥限制。断裂无法撤销，且在溢出后保留。"
     }
   ],
   "challenges.replay": [
@@ -8718,7 +8718,7 @@
   "skills.confirm-galvanize": [
     {
       "type": 0,
-      "value": "消耗1个强化器"
+      "value": "消耗1个催化剂"
     }
   ],
   "skills.confirm-import": [
@@ -8972,7 +8972,7 @@
   "skills.galvanize-action": [
     {
       "type": 0,
-      "value": "永久强化 · "
+      "value": "断裂 · "
     },
     {
       "type": 1,
@@ -8982,7 +8982,7 @@
   "skills.galvanize-warning": [
     {
       "type": 0,
-      "value": "消耗1个强化器永久强化"
+      "value": "消耗1个催化剂断裂"
     },
     {
       "type": 1,
@@ -8996,7 +8996,7 @@
   "skills.galvanized": [
     {
       "type": 0,
-      "value": "已永久强化"
+      "value": "已断裂"
     }
   ],
   "skills.galvanized-help": [
@@ -9008,7 +9008,7 @@
   "skills.galvanized-permanent": [
     {
       "type": 0,
-      "value": "已永久强化 · 永久生效"
+      "value": "已断裂 · 永久生效"
     }
   ],
   "skills.impact.bots": [
@@ -11620,7 +11620,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "无限时保留10%的SRS充能，无上限。与热启动叠加。量子跃迁会清除保留的充能。"
+      "value": "无限时保留10%的SRS充能，经星辰记忆倍增后最多保留50%。与热启动叠加。量子跃迁会清除保留的充能。"
     }
   ],
   "skills.srs.afterglow.name": [
@@ -11638,7 +11638,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "此强化每分配一分钟，SRS充能速度提高10%，20分钟后达到200%上限。无限或量子跃迁时重置。加成为加法叠加。"
+      "value": "此增幅分配期间，每分钟提高10%的SRS充能速度，20分钟后达到200%。星辰记忆会倍增这些加成。无限或量子跃迁时重置。加成为加法叠加。"
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -11656,7 +11656,7 @@
   "skills.srs.focusedBeam.effect": [
     {
       "type": 0,
-      "value": "现金或科学中分配机器人较多的一方，其SRS超出1倍的加成提高50%，另一方的加成减半。分配相等时双方不变。"
+      "value": "现金和科学中分配机器人较多的一方，其超过1×的SRS加成提高50%。星辰记忆会倍增此提高幅度。另一资源的加成减半。分配相同时两者均不变。"
     }
   ],
   "skills.srs.focusedBeam.name": [
@@ -11674,7 +11674,7 @@
   "skills.srs.hotStart.effect": [
     {
       "type": 0,
-      "value": "每次无限期间首次分配时，获得30分钟的SRS充能。"
+      "value": "每次无限中首次分配时，获得30分钟的SRS充能，并由星辰记忆倍增。之后分配星辰记忆会一次性补足缺少的充能。不可退款。"
     }
   ],
   "skills.srs.hotStart.name": [
@@ -11692,7 +11692,7 @@
   "skills.srs.researchActivity.effect": [
     {
       "type": 0,
-      "value": "获得一个研究等级后，SRS充能速度提高150%，持续30秒。自动生成的等级也计入。再次获得等级会刷新持续时间。加成为加法叠加。"
+      "value": "获得一个研究等级后，SRS充能速度提高150%，经星辰记忆倍增，持续30秒。自动生成的等级也计入。再次获得等级会刷新持续时间。加成为加法叠加。"
     }
   ],
   "skills.srs.researchActivity.name": [
@@ -11710,7 +11710,7 @@
   "skills.srs.researchConversion.effect": [
     {
       "type": 0,
-      "value": "科学产量降低50%。SRS充能速度提高100%。加成为加法叠加。"
+      "value": "科学产量降低50%。SRS充能速度提高100%，并由星辰记忆倍增。加成为加法叠加。"
     }
   ],
   "skills.srs.researchConversion.name": [
@@ -11728,7 +11728,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "SRS充能速度提高10% × log10（分配SRS的累计秒数）。时间跨重置累积，包括储存时间模拟，但不包括额外充能。加成为加法叠加。"
+      "value": "在无限或量子重置时，存入本轮新产生的 SRS 充能，不含热启动和余辉。分配后，SRS 强化效果乘以 1 + 0.25 × log10(max(1, 已存秒数))。"
     }
   ],
   "skills.srs.stellarMemory.name": [

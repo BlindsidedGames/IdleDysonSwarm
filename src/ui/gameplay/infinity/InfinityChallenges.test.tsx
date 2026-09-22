@@ -61,7 +61,7 @@ test('shows icon rewards and recorded completion durations without inventing old
     progress={{ ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true, trialAndErrorCompleted: true,
       completionSeconds: { 'trial-and-error': 62.5 } }}
     overflowReached={false} dispatchPlayer={vi.fn()} /></IntlProvider>)
-  expect(screen.getAllByRole('img', { name: 'Galvanizers: 1' })).toHaveLength(2)
+  expect(screen.getAllByRole('img', { name: 'Catalysts: 1' })).toHaveLength(2)
   expect(screen.getByText('Completed in: 1m 2.5s')).not.toBeNull()
   expect(screen.getByText('Completed in: Unknown')).not.toBeNull()
 })

@@ -703,6 +703,7 @@ function SimulationPanelCard({
           </span>
         ) : panel.action.strangeMatterReward ? (
           <span className="simulation-panel-card__action-reward">
+            <span>+</span>
             <InlineImageSymbol
               src={strangeMatterSymbol}
               symbol="strange-matter"

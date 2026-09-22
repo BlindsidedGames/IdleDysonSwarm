@@ -231,7 +231,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     expect(storage.files.get('/recovery/rejected-current.idsw'))
       .toBe('IDSWEB1:not-a-valid-current-save')
 
-    const future = serializeWebSave({ saveVersion: 18 })
+    const future = serializeWebSave({ saveVersion: 19 })
     await expect(application.importSave({
       text: future,
       importedAtUtc: '2026-08-30T02:00:00.000Z',
@@ -292,7 +292,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     ;(state.dyson as SaveRecord).money = '98765'
-    const futureCurrent = serializeWebSave({ saveVersion: 18 })
+    const futureCurrent = serializeWebSave({ saveVersion: 19 })
     const storage = new TransitionalMemoryStorage()
     storage.files.set('/current', futureCurrent)
     const repository = new PortableSaveRepository(
@@ -2056,7 +2056,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   test('does not reinterpret a future canonical save as schema 13', () => {
     const compatibilityBase = recoveryBase
     let recoveryBaseCalls = 0
-    const future = serializeWebSave({ saveVersion: 18 })
+    const future = serializeWebSave({ saveVersion: 19 })
 
     expect(() => prepareImportedSaveText(
       future,

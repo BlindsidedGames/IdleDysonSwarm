@@ -14,11 +14,14 @@ Stored Time completion share the canonical reset reward transition. Quantum
 Leap cannot bypass the challenge. A pending Overflow must be resolved before
 challenge entry or abandonment.
 
-The first completion awards exactly one Galvanizer and marks Blank Slate
-completed in the same canonical state. Replays award no further Galvanizers.
+The first completion awards exactly one Catalyst and marks Blank Slate
+completed in the same canonical state. Replays award no further Catalysts.
 Completion, unlock, currency and the ever-earned visibility flag survive
 Overflow. Currency appears beside Skill Points after the first reward and
-stays visible at zero. No spending or galvanized skill effects are included.
+stays visible at zero. Spending one Catalyst permanently fractures a revealed
+base skill, returns its invested ordinary Skill Points, and removes that skill’s
+penalties and exclusions. Internal `galvanizers` and `galvanizedSkillIds` save
+fields retain their names for compatibility.
 
 Schema 16 saves the challenge state and validates the currency as a
 nonnegative Int64. Older saves derive unlock from completed Infinity history;
@@ -32,6 +35,6 @@ with the generated monochrome target-and-arrow icon and the existing new-route
 highlight and shortcut preferences. Settings exposes both Challenges and Avocato
 shortcuts when their corresponding destinations are available; choices persist
 across reloads. Avocato uses the generated avocado-cat icon with a circular pip. UI uses the shared collapsible section, buttons, status feedback
-and the existing skill details dialog. The Galvanizer wallet uses an unboxed
+and the existing skill details dialog. The Catalyst wallet uses an unboxed
 rounded three-layer coating icon and count beside Skill Points. Restart confirmation is required for both
 entry and abandonment. An active challenge notice links back to the Challenges tab.
