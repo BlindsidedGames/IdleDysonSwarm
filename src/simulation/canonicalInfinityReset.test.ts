@@ -509,14 +509,15 @@ describe('canonical Infinity reset', () => {
       autoAssignNonRefundable: boolean,
     ): CanonicalGameStateV1 => ({
       ...source,
+      challenges: { ...source.challenges, galvanizedSkillIds: ['superRadiantScattering'] },
       infinity: {
         ...source.infinity,
-        permanentSkillPoints: 1n,
+        permanentSkillPoints: 3n,
       },
       skills: {
         ...source.skills,
         byId: {},
-        activeAutoAssignment: ['banking'],
+        activeAutoAssignment: ['subskill.srs.hotStart'],
         autoAssignNonRefundable,
       },
     })
@@ -529,7 +530,7 @@ describe('canonical Infinity reset', () => {
       }),
     )
     expect(blocked.autoAssignedSkillIds).toEqual([])
-    expect(blocked.state.skills.points).toBe(1n)
+    expect(blocked.state.skills.points).toBe(3n)
 
     const allowed = requireSuccess(
       applyCanonicalInfinityReset(makeState(true), {
@@ -538,7 +539,7 @@ describe('canonical Infinity reset', () => {
         artifactSkillPoints: 0n,
       }),
     )
-    expect(allowed.autoAssignedSkillIds).toEqual(['banking'])
+    expect(allowed.autoAssignedSkillIds).toEqual(['subskill.srs.hotStart'])
     expect(allowed.state.skills.points).toBe(0n)
   })
 

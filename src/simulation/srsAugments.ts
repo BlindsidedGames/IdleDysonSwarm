@@ -49,14 +49,34 @@ function researchActivityCoverage(timer: number, seconds: number, generated: rea
   return { covered: Math.min(seconds, covered), remaining: Math.max(0, end - seconds) }
 }
 
-/** The Hot Start timer is a once-per-run grant marker, retained on refund. */
+/** Existing lifetime seconds become the bank in place; no historical charge is invented. */
+export function stellarMemoryMultiplier(state: State): number {
+  return hasSrsAugment(state, 'stellarMemory')
+    ? 1 + 0.25 * Math.log10(Math.max(1, state.skills.byId.superRadiantScattering.secondaryTimerSeconds))
+    : 1
+}
+
+export function bankedSrsSecondsAfterReset(state: State): number {
+  const srs = state.skills.byId.superRadiantScattering
+  return addContinuous(srs?.secondaryTimerSeconds ?? 0,
+    hasSrsAugment(state, 'stellarMemory') ? srs.timerSeconds : 0)
+}
+
+export function srsAfterglowRetention(state: State): number {
+  return hasSrsAugment(state, 'afterglow') ? Math.min(0.5, 0.1 * stellarMemoryMultiplier(state)) : 0
+}
+
+/** Keep the legacy marker; the secondary timer records grants beyond the original 30 minutes. */
 export function initializeSrsHotStart(state: State): State['skills'] {
   const hot = state.skills.byId[SRS_AUGMENTS.hotStart]
-  if (!hasSrsAugment(state, 'hotStart') || hot.timerSeconds > 0) return state.skills
+  if (!hasSrsAugment(state, 'hotStart')) return state.skills
+  const granted = hot.timerSeconds > 0 ? 1800 + hot.secondaryTimerSeconds : 0
+  const target = 1800 * stellarMemoryMultiplier(state)
+  if (target <= granted) return state.skills
   const srs = state.skills.byId.superRadiantScattering
   return { ...state.skills, byId: { ...state.skills.byId,
-    [SRS_AUGMENTS.hotStart]: { ...hot, timerSeconds: 1 },
-    superRadiantScattering: { ...srs, timerSeconds: addContinuous(srs.timerSeconds, 1800) },
+    [SRS_AUGMENTS.hotStart]: { ...hot, timerSeconds: 1, secondaryTimerSeconds: target - 1800 },
+    superRadiantScattering: { ...srs, timerSeconds: addContinuous(srs.timerSeconds, target - granted) },
   } }
 }
 
@@ -74,26 +94,25 @@ export function advanceSrsAugments(state: State, seconds: number, generated: rea
   const srs = state.skills.byId.superRadiantScattering
   if (!srs?.owned) return state.skills
   const byId = { ...state.skills.byId }
-  let charge = seconds * (hasSrsAugment(state, 'researchConversion') ? 2 : 1)
-  const lifetime = srs.secondaryTimerSeconds
-  if (hasSrsAugment(state, 'stellarMemory')) charge += integratedStellarMemoryBonus(lifetime, seconds)
+  const multiplier = stellarMemoryMultiplier(state)
+  let charge = seconds * (1 + (hasSrsAugment(state, 'researchConversion') ? multiplier : 0))
   const deep = byId[SRS_AUGMENTS.deepExposure]
   if (hasSrsAugment(state, 'deepExposure')) {
     const start = Math.min(1200, deep.timerSeconds)
     const rampSeconds = Math.min(seconds, 1200 - start)
-    charge += (start * rampSeconds + rampSeconds * rampSeconds / 2) / 600 +
-      2 * (seconds - rampSeconds)
+    charge += multiplier * ((start * rampSeconds + rampSeconds * rampSeconds / 2) / 600 +
+      2 * (seconds - rampSeconds))
     byId[SRS_AUGMENTS.deepExposure] = { ...deep, timerSeconds: Math.min(1200, start + seconds) }
   }
   const activity = byId[SRS_AUGMENTS.researchActivity]
   if (activity) {
     const active = hasSrsAugment(state, 'researchActivity')
     const coverage = researchActivityCoverage(activity.timerSeconds, seconds, active ? generated : [])
-    if (active) charge += 1.5 * coverage.covered
+    if (active) charge += 1.5 * multiplier * coverage.covered
     byId[SRS_AUGMENTS.researchActivity] = { ...activity, timerSeconds: coverage.remaining }
   }
   byId.superRadiantScattering = { ...srs, timerSeconds: addContinuous(srs.timerSeconds, charge),
-    secondaryTimerSeconds: addContinuous(lifetime, seconds) }
+    secondaryTimerSeconds: srs.secondaryTimerSeconds }
   return { ...state.skills, byId }
 }
 
@@ -101,21 +120,11 @@ export function advanceSrsAugments(state: State, seconds: number, generated: rea
 export function resetSrsAugments(before: State, skills: State['skills'], restartOnly: boolean): State['skills'] {
   const srs = skills.byId.superRadiantScattering
   if (!srs) return skills
-  const retained = !restartOnly && hasSrsAugment(before, 'afterglow')
-    ? before.skills.byId.superRadiantScattering.timerSeconds * 0.1 : 0
+  const retained = !restartOnly
+    ? (before.skills.byId.superRadiantScattering?.timerSeconds ?? 0) * srsAfterglowRetention(before) : 0
   return initializeSrsHotStart({ ...before, skills: { ...skills, byId: {
     ...skills.byId, superRadiantScattering: { ...srs, timerSeconds: retained,
-      secondaryTimerSeconds: before.skills.byId.superRadiantScattering?.secondaryTimerSeconds ?? 0 },
+      secondaryTimerSeconds: restartOnly ? before.skills.byId.superRadiantScattering?.secondaryTimerSeconds ?? 0
+        : bankedSrsSecondsAfterReset(before) },
   } } })
-}
-
-// Integral of 0.1 * log10(max(1, lifetimeSeconds)); stable for tiny ticks at large totals.
-export function integratedStellarMemoryBonus(start: number, seconds: number): number {
-  const duration = Math.max(0, seconds - Math.max(0, 1 - start))
-  if (duration === 0) return 0
-  const a = Math.max(1, start), ratio = duration / a
-  const remainder = ratio < 1e-4
-    ? ratio * ratio * (0.5 - ratio / 6)
-    : (1 + ratio) * Math.log1p(ratio) - ratio
-  return 0.1 * (duration * Math.log(a) + a * remainder) / Math.LN10
 }

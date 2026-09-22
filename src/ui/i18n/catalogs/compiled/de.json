@@ -392,7 +392,7 @@
   "challenges.galvanizers": [
     {
       "type": 0,
-      "value": "Galvanisierer: "
+      "value": "Katalysatoren: "
     },
     {
       "type": 1,
@@ -402,7 +402,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "Gib in den Details eines aufgedeckten Skills 1 Galvanisierer aus, um seinen Basiseffekt dauerhaft zu aktivieren und Nachteile sowie Ausschlüsse zu entfernen. Galvanisierung ist unumkehrbar und bleibt nach einem Überlauf erhalten."
+      "value": "Gib in den Details eines aufgedeckten Skills 1 Katalysator aus, um seinen Basiseffekt dauerhaft zu aktivieren und Nachteile sowie Ausschlüsse zu entfernen. Frakturierung ist unumkehrbar und bleibt nach einem Überlauf erhalten."
     }
   ],
   "challenges.replay": [
@@ -8718,7 +8718,7 @@
   "skills.confirm-galvanize": [
     {
       "type": 0,
-      "value": "1 Galvanisierer ausgeben"
+      "value": "1 Katalysator ausgeben"
     }
   ],
   "skills.confirm-import": [
@@ -8972,7 +8972,7 @@
   "skills.galvanize-action": [
     {
       "type": 0,
-      "value": "Galvanisieren · "
+      "value": "Frakturieren · "
     },
     {
       "type": 1,
@@ -8990,13 +8990,13 @@
     },
     {
       "type": 0,
-      "value": " für 1 Galvanisierer dauerhaft galvanisiert werden? In diesen Basisskill investierte Skill-Punkte werden zurückgegeben. Dies kann nicht rückgängig gemacht werden."
+      "value": " für 1 Katalysator dauerhaft frakturiert werden? In diesen Basisskill investierte Skill-Punkte werden zurückgegeben. Dies kann nicht rückgängig gemacht werden."
     }
   ],
   "skills.galvanized": [
     {
       "type": 0,
-      "value": "Galvanisiert"
+      "value": "Frakturiert"
     }
   ],
   "skills.galvanized-help": [
@@ -9008,7 +9008,7 @@
   "skills.galvanized-permanent": [
     {
       "type": 0,
-      "value": "Galvanisiert · dauerhaft aktiv"
+      "value": "Frakturiert · dauerhaft aktiv"
     }
   ],
   "skills.impact.bots": [
@@ -11620,7 +11620,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "Behält bei Unendlichkeit 10% der SRS-Ladung ohne Obergrenze. Wird zum Heißstart addiert. Quantensprung löscht die gespeicherte Ladung."
+      "value": "Behalte bei Unendlichkeit 10% der SRS-Ladung, multipliziert mit Stellares Gedächtnis bis zu maximal 50%. Addiert sich zum Heißstart. Ein Quantensprung löscht die beibehaltene Ladung."
     }
   ],
   "skills.srs.afterglow.name": [
@@ -11638,7 +11638,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "Erhöht die SRS-Ladegeschwindigkeit pro zugewiesener Minute um 10%, bis zu 200% nach 20 Minuten. Wird bei Unendlichkeit oder Quantensprung zurückgesetzt. Die Boni sind additiv."
+      "value": "Erhöht die SRS-Ladegeschwindigkeit pro zugewiesener Minute um 10%, bis zu 200% nach 20 Minuten. Stellares Gedächtnis multipliziert diese Boni. Wird bei Unendlichkeit oder Quantensprung zurückgesetzt. Boni sind additiv."
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -11656,7 +11656,7 @@
   "skills.srs.focusedBeam.effect": [
     {
       "type": 0,
-      "value": "Erhöht den SRS-Bonus über 1× für Geld oder Wissenschaft um 50%, je nachdem, wo mehr Bots zugewiesen sind, und halbiert den anderen Bonus. Bei gleicher Verteilung bleibt beides unverändert."
+      "value": "Erhöht den SRS-Bonus über 1× für Geld oder Wissenschaft um 50%, je nachdem, welchem mehr Bots zugewiesen sind. Stellares Gedächtnis multipliziert diese Erhöhung. Halbiert den Bonus der anderen Ressource. Bei gleicher Zuweisung bleibt beides unverändert."
     }
   ],
   "skills.srs.focusedBeam.name": [
@@ -11674,7 +11674,7 @@
   "skills.srs.hotStart.effect": [
     {
       "type": 0,
-      "value": "Gewährt bei der ersten Zuweisung in jeder Unendlichkeit 30 Minuten SRS-Ladung."
+      "value": "Erhalte bei der ersten Zuweisung pro Unendlichkeit 30 Minuten SRS-Ladung, multipliziert mit Stellares Gedächtnis. Wird Stellares Gedächtnis später zugewiesen, wird die fehlende Ladung einmalig ergänzt. Nicht erstattbar."
     }
   ],
   "skills.srs.hotStart.name": [
@@ -11692,7 +11692,7 @@
   "skills.srs.researchActivity.effect": [
     {
       "type": 0,
-      "value": "Eine gewonnene Forschungsstufe erhöht die SRS-Ladegeschwindigkeit für 30 Sekunden um 150%. Generierte Stufen zählen. Weitere Stufen erneuern die Dauer. Die Boni sind additiv."
+      "value": "Der Gewinn einer Forschungsstufe erhöht die SRS-Ladegeschwindigkeit für 30 Sekunden um 150%, multipliziert mit Stellares Gedächtnis. Erzeugte Stufen zählen mit. Weitere Gewinne erneuern die Dauer. Boni sind additiv."
     }
   ],
   "skills.srs.researchActivity.name": [
@@ -11710,7 +11710,7 @@
   "skills.srs.researchConversion.effect": [
     {
       "type": 0,
-      "value": "Verringert die Wissenschaftsproduktion um 50%. Erhöht die SRS-Ladegeschwindigkeit um 100%. Die Boni sind additiv."
+      "value": "Reduziert die Wissenschaftsproduktion um 50%. Erhöht die SRS-Ladegeschwindigkeit um 100%, multipliziert mit Stellares Gedächtnis. Boni sind additiv."
     }
   ],
   "skills.srs.researchConversion.name": [
@@ -11728,7 +11728,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Erhöht die SRS-Ladegeschwindigkeit um 10% × log10(gesamte Sekunden mit zugewiesenem SRS). Die Zeit bleibt über Resets erhalten und umfasst die Simulation gespeicherter Zeit, jedoch keine Bonusladung. Die Boni sind additiv."
+      "value": "Wenn zugewiesen, multipliziert dies die Vorteile anderer SRS-Erweiterungen mit 1 + 0.25 × log10(gespeicherte Sekunden), mindestens 1×. Speichert bei Unendlichkeit oder Quantensprung die gesamte abschließende SRS-Ladung, solange zugewiesen, einschließlich Startladung und beibehaltener Ladung. Der Speicher übersteht Rücksetzungen; neue Einzahlungen gelten für den nächsten Lauf."
     }
   ],
   "skills.srs.stellarMemory.name": [

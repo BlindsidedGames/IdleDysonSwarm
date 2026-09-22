@@ -35,8 +35,8 @@ export const SKILL_AUGMENTS: readonly SkillAugmentDefinition[] = Object.freeze(
   })),
   ...Object.entries(SRS_AUGMENTS).map(([key, id]) => Object.freeze({
     id, parentSkillId: 'superRadiantScattering',
-    cost: key === 'hotStart' || key === 'deepExposure' ? 3
-      : key === 'researchActivity' || key === 'stellarMemory' ? 2 : 1,
+    cost: key === 'stellarMemory' ? 5 : key === 'hotStart' || key === 'deepExposure' ? 3
+      : key === 'researchActivity' ? 2 : 1,
     requiredSkillIds: Object.freeze(
       key === 'stellarMemory' ? [SRS_AUGMENTS.researchActivity, SRS_AUGMENTS.researchConversion] :
       key === 'afterglow' ? [SRS_AUGMENTS.hotStart] :
@@ -54,7 +54,7 @@ export const SUBSKILL_ASSETS: readonly RuntimeGameAsset[] = Object.freeze(
   SKILL_AUGMENTS.map(({ id, cost, requiredSkillIds }) => ({
     id, kind: SKILL_DEFINITION_ASSET_KIND,
     data: {
-      cost, refundable: true, isFragment: false,
+      cost, refundable: id !== SRS_AUGMENTS.hotStart, isFragment: false,
       requiredSkillIds: [...requiredSkillIds], shadowRequirementIds: [],
       exclusiveWithIds: [], unrefundableWithIds: [], effects: [],
       firstRunBlocked: false, purityLine: false, terraLine: false,

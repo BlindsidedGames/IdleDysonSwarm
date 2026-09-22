@@ -10,6 +10,14 @@ Status conventions:
 - **In progress** means another isolated task currently owns implementation.
 - **Deferred** means the work is intentionally outside the current release.
 
+## Discord follow-up — 22 September 2026
+
+- [ ] **Deferred by Matthew · Mobile double-tap zoom.** A player reported that
+  double-tapping zoomed the interface again, but could not reliably reproduce it.
+  Investigate rapid taps on individual controls in a future task; preserve
+  accessibility zoom and do not change zoom behaviour in the current SRS work.
+  [Discord report](https://discord.com/channels/712304553931833385/1535228461176590389/1551555264329809953).
+
 ## Performance and maintainability — 12 September 2026
 
 - [ ] **In progress:** measured performance, clean-code, duplication and complete

@@ -392,7 +392,7 @@
   "challenges.galvanizers": [
     {
       "type": 0,
-      "value": "Galvaniseurs : "
+      "value": "Catalyseurs : "
     },
     {
       "type": 1,
@@ -402,7 +402,7 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "Dépensez 1 Galvaniseur dans les détails d’une compétence révélée pour rendre son effet de base permanent et supprimer ses pénalités et exclusions. La galvanisation est irréversible et survit au Débordement."
+      "value": "Dépensez 1 Catalyseur dans les détails d’une compétence révélée pour rendre son effet de base permanent et supprimer ses pénalités et exclusions. La fracture est irréversible et survit au Débordement."
     }
   ],
   "challenges.replay": [
@@ -8718,7 +8718,7 @@
   "skills.confirm-galvanize": [
     {
       "type": 0,
-      "value": "Dépenser 1 Galvaniseur"
+      "value": "Dépenser 1 Catalyseur"
     }
   ],
   "skills.confirm-import": [
@@ -8972,7 +8972,7 @@
   "skills.galvanize-action": [
     {
       "type": 0,
-      "value": "Galvaniser · "
+      "value": "Fracturer · "
     },
     {
       "type": 1,
@@ -8982,7 +8982,7 @@
   "skills.galvanize-warning": [
     {
       "type": 0,
-      "value": "Galvaniser définitivement "
+      "value": "Fracturer définitivement "
     },
     {
       "type": 1,
@@ -8990,13 +8990,13 @@
     },
     {
       "type": 0,
-      "value": " pour 1 Galvaniseur ? Les points de compétence investis dans cette compétence de base seront rendus. Cette action est irréversible."
+      "value": " pour 1 Catalyseur ? Les points de compétence investis dans cette compétence de base seront rendus. Cette action est irréversible."
     }
   ],
   "skills.galvanized": [
     {
       "type": 0,
-      "value": "Galvanisée"
+      "value": "Fracturée"
     }
   ],
   "skills.galvanized-help": [
@@ -9008,7 +9008,7 @@
   "skills.galvanized-permanent": [
     {
       "type": 0,
-      "value": "Galvanisée · active en permanence"
+      "value": "Fracturée · active en permanence"
     }
   ],
   "skills.impact.bots": [
@@ -11620,7 +11620,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "Conservez 10% de la charge SRS lors d’une Infinité, sans plafond. S’ajoute au Départ à chaud. Un Saut quantique efface la charge conservée."
+      "value": "Conservez 10% de la charge SRS lors d’une Infinité, multipliés par Mémoire stellaire jusqu’à 50% de conservation. S’ajoute au Départ à chaud. Un Saut quantique efface la charge conservée."
     }
   ],
   "skills.srs.afterglow.name": [
@@ -11638,7 +11638,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "Augmente la vitesse de charge SRS de 10% par minute pendant laquelle cette augmentation est attribuée, jusqu’à 200% après 20 minutes. Se réinitialise à l’Infinité ou au Saut quantique. Les bonus sont additifs."
+      "value": "Augmente la vitesse de charge SRS de 10% par minute pendant laquelle cette augmentation est attribuée, jusqu’à 200% après 20 minutes. Mémoire stellaire multiplie ces bonus. Se réinitialise à l’Infinité ou au Saut quantique. Les bonus sont additifs."
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -11656,7 +11656,7 @@
   "skills.srs.focusedBeam.effect": [
     {
       "type": 0,
-      "value": "Augmente de 50% le bonus SRS au-delà de 1× pour l’Argent ou la Science, selon lequel compte le plus de Bots attribués, et divise celui de l’autre par deux. Une répartition égale ne change rien."
+      "value": "Augmente de 50% le bonus SRS au-delà de 1× pour l’Argent ou la Science, selon lequel compte le plus de Bots attribués. Mémoire stellaire multiplie cette augmentation. Divise le bonus de l’autre ressource par deux. Une répartition égale ne change rien."
     }
   ],
   "skills.srs.focusedBeam.name": [
@@ -11674,7 +11674,7 @@
   "skills.srs.hotStart.effect": [
     {
       "type": 0,
-      "value": "Gagnez 30 minutes de charge SRS lors de la première attribution à chaque Infinité."
+      "value": "Gagnez 30 minutes de charge SRS lors de la première attribution à chaque Infinité, multipliées par Mémoire stellaire. Attribuer Mémoire stellaire plus tard ajoute une seule fois la charge manquante. Non remboursable."
     }
   ],
   "skills.srs.hotStart.name": [
@@ -11692,7 +11692,7 @@
   "skills.srs.researchActivity.effect": [
     {
       "type": 0,
-      "value": "Gagner un niveau de recherche augmente la vitesse de charge SRS de 150% pendant 30 secondes. Les niveaux générés comptent. Les gains suivants renouvellent la durée. Les bonus sont additifs."
+      "value": "Gagner un niveau de recherche augmente la vitesse de charge SRS de 150%, multipliés par Mémoire stellaire, pendant 30 secondes. Les niveaux générés comptent. Les gains suivants renouvellent la durée. Les bonus sont additifs."
     }
   ],
   "skills.srs.researchActivity.name": [
@@ -11710,7 +11710,7 @@
   "skills.srs.researchConversion.effect": [
     {
       "type": 0,
-      "value": "Réduit la production de Science de 50%. Augmente la vitesse de charge SRS de 100%. Les bonus sont additifs."
+      "value": "Réduit la production de Science de 50%. Augmente la vitesse de charge SRS de 100%, multipliés par Mémoire stellaire. Les bonus sont additifs."
     }
   ],
   "skills.srs.researchConversion.name": [
@@ -11728,7 +11728,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Augmente la vitesse de charge SRS de 10% × log10(total des secondes passées avec SRS attribué). Le temps se cumule entre les réinitialisations et inclut la simulation de Temps stocké, mais exclut la charge bonus. Les bonus sont additifs."
+      "value": "Quand elle est attribuée, multiplie les bénéfices des autres augmentations SRS par 1 + 0.25 × log10(secondes en réserve), avec un minimum de 1×. Lors d’une Infinité ou d’un Saut quantique, mettez toute la charge SRS finale en réserve si cette augmentation est attribuée, y compris la charge initiale et conservée. La réserve survit aux réinitialisations ; les nouveaux dépôts bénéficient à la prochaine partie."
     }
   ],
   "skills.srs.stellarMemory.name": [

@@ -137,7 +137,7 @@ centred between those two columns. Layout adjustments live in the Web presentati
 leaving the frozen compatibility data intact. Keep new regular skill/augment layouts on this spacing rather than
 introducing separate gaps for each branch.
 
-Augment queues check galvanization of their own parent skill. Hot Start and Deep
+Augment queues check fractured status of their own parent skill. Hot Start and Deep
 Exposure cost three Skill Points each; Research Activity and Stellar Memory cost
 two each; the other SRS augments cost one each. Costs are shared by gameplay and
 the UI through `SKILL_AUGMENTS`. Augments share ordinary dependency, refund, and preset rules:
@@ -167,7 +167,7 @@ charge, and survives Infinity, Quantum Leap, Overflow, and challenge restarts
 for the permanent SRS skill. Its logarithmic contribution is integrated over
 simulation intervals. All runtime markers use existing serialized skill timers.
 
-Galvanized skills retain their authored incoming connections visually without
+Fractured skills retain their authored incoming connections visually without
 restoring gameplay prerequisites. These use pale-green dashed lines with the
 same dash geometry, thickness, and 38% opacity as unavailable unassigned prerequisites, and a bright-green
 midpoint lightning marker without an outline.

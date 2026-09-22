@@ -1,3 +1,4 @@
+import { stellarMemoryMultiplier } from './srsAugments'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { isGalvanized, galvanizedSkillIds } from './galvanization'
 import { hasCashScienceSubskill, hasSrsAugment, SRS_AUGMENTS } from './skillSubskills'
@@ -17,7 +18,7 @@ export function adjustGalvanizedEffects(
         hasSrsAugment(state, 'focusedBeam')) {
       const side = Math.sign(state.dyson.workers - state.dyson.researchers)
       const favoured = statId === 'Global.MoneyMultiplier' ? side > 0 : side < 0
-      const scale = side === 0 ? 1 : favoured ? 1.5 : 0.5
+      const scale = side === 0 ? 1 : favoured ? 1 + 0.5 * stellarMemoryMultiplier(state) : 0.5
       effect = { ...effect, value: 1 + (effect.value - 1) * scale }
     }
     const id = effect.id.split('.')[1]

@@ -615,6 +615,16 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           'The browser runtime does not own a writable ready application.',
       )
     }
+    if (
+      command.kind === 'tinker.start' ||
+      command.kind === 'tinker.set-repeat'
+    ) {
+      // Tinker intents already share the canonical lifecycle lane and resolve
+      // against its latest revision. Suspending the clock for every click
+      // repeatedly postpones its next tick, freezing play during autoclicks
+      // and replaying the accumulated time as a burst when clicking stops.
+      return graph.playerCommands.dispatchLatest(command)
+    }
     const suspended = graph.activeTime.suspendForLifecycle()
     const prepareForDispatch = async () => {
       const residue = await resolveSuspendedActiveTime(suspended)
@@ -645,14 +655,6 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     try {
       let dispatched: Promise<UiRuntimePlayerCommandResult>
       if (
-        command.kind === 'tinker.start' ||
-        command.kind === 'tinker.set-repeat'
-      ) {
-        dispatched = graph.playerCommands.dispatchLatest(
-          command,
-          prepareForDispatch,
-        )
-      } else if (
         command.kind === 'dyson.set-bot-distribution' ||
         command.kind === 'dyson.set-buy-mode' ||
         command.kind === 'dyson.set-rounded-bulk-buy' ||

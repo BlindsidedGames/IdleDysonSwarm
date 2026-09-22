@@ -13,7 +13,7 @@ import { purchaseCanonicalResearch, runResearchAutomationTick } from './research
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { DETERMINISTIC_DYSON_TUNING, DETERMINISTIC_DYSON_SNAPSHOT } from '../../scripts/support/deterministicMatureDysonFixture'
 import { SRS_AUGMENTS as A } from './skillSubskills'
-import { advanceSrsAugments, refreshSrsResearchActivity, integratedStellarMemoryBonus } from './srsAugments'
+import { advanceSrsAugments, refreshSrsResearchActivity, stellarMemoryMultiplier, srsAfterglowRetention } from './srsAugments'
 
 const hydrated = hydrateGameState(prepareIdb1Save(readFileSync(new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url), 'utf8')).prepared)
 function state() {
@@ -51,13 +51,12 @@ test('both Activity prerequisites, parent unlock, and dependent refunds use exis
   expect(preset.nextSkillIds).toEqual(expect.arrayContaining([A.deepExposure, A.focusedBeam, A.researchActivity]))
 })
 
-test('Hot Start grants once, Afterglow is uncapped, Infinity reassigns, Quantum clears carryover', () => {
+test('Hot Start is non-refundable, Infinity reassigns, Quantum clears carryover', () => {
   let s = buy(state(), A.afterglow)
   expect(s.skills.points).toBe(16n)
   expect(s.skills.byId.superRadiantScattering.timerSeconds).toBe(1800)
   const refund = refundCanonicalSkill(s, A.hotStart)
-  if (!refund.accepted) throw new Error(refund.reason)
-  s = buy(refund.state, A.afterglow)
+  expect(refund.accepted).toBe(false)
   expect(s.skills.byId.superRadiantScattering.timerSeconds).toBe(1800)
   s = advance(s, 100_000)
   const reset = applyCanonicalInfinityReset(s, { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 0n })
@@ -110,6 +109,9 @@ test('Focused Beam adjusts only the SRS bonus and Conversion halves final Scienc
   const normal = derive(plain), boosted = derive(s)
   expect(boosted.money / normal.money).toBeCloseTo(8.5 / 6)
   expect(boosted.science / normal.science).toBeCloseTo(3.5 / 6 * 0.5)
+  const memory = buy(withBank(s, 100_000), A.stellarMemory)
+  expect(derive(memory).money / normal.money).toBeCloseTo((1 + 5 * 2.125) / 6)
+  expect(derive(memory).science / normal.science).toBeCloseTo(3.5 / 6 * 0.5)
   const equal = { ...s, dyson: { ...s.dyson, researchers: 100 } }
   const equalPlain = { ...plain, dyson: equal.dyson }
   expect(derive(equal).money / derive(equalPlain).money).toBeCloseTo(1)
@@ -126,31 +128,80 @@ test('augment ownership, charge and timers survive save/reload', () => {
   expect(validateCanonicalGameState(loaded)).toEqual({ valid: true, errors: [] })
 })
 
-test('Stellar Memory requires Activity and Conversion and uses lifetime time, not starting charge', () => {
-  let s = buy(state(), A.stellarMemory)
-  expect(s.skills.points).toBe(11n)
-  expect(s.skills.byId[A.researchConversion].owned).toBe(true)
-  expect(s.skills.byId[A.researchActivity].owned).toBe(true)
-  s = advance(s, 100)
-  expect(s.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100)
-  const withHotStart = buy(s, A.hotStart)
-  expect(withHotStart.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100)
-  expect(integratedStellarMemoryBonus(100, 0.001) / 0.001).toBeCloseTo(0.2, 5)
-  expect(integratedStellarMemoryBonus(1000, 0.001) / 0.001).toBeCloseTo(0.3, 5)
-  expect(integratedStellarMemoryBonus(1e9, 0.001) / 0.001).toBeCloseTo(0.9, 5)
-  expect(integratedStellarMemoryBonus(0, 0.5)).toBe(0)
-  const reset = applyCanonicalInfinityReset(s, { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 20n })
-  if (!reset.ok) throw new Error(JSON.stringify(reset.issues))
-  expect(reset.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100)
-  const quantum = applyCanonicalQuantumReset(s, 20n)
-  if (!quantum.ok) throw new Error(JSON.stringify(quantum.issues))
-  expect(quantum.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100)
-  const whole = advance(s, 500)
-  let split = s
-  for (let i = 0; i < 500; i++) split = advance(split, 1)
-  expect(whole.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(split.skills.byId.superRadiantScattering.timerSeconds)
+function withBank(s: State, bank: number): State {
+  return { ...s, skills: { ...s.skills, byId: { ...s.skills.byId,
+    superRadiantScattering: { ...s.skills.byId.superRadiantScattering, secondaryTimerSeconds: bank },
+  } } }
+}
+
+test.each([[0, 1], [100_000, 2.25], [1e6, 2.5], [1e7, 2.75], [1e9, 3.25]])(
+  'Stellar Memory scales all charge bonuses from bank %s', (bank, multiplier) => {
+    let s = buy(withBank(state(), bank), A.stellarMemory)
+    expect(s.skills.points).toBe(8n)
+    expect(stellarMemoryMultiplier(s)).toBe(multiplier)
+    s = advance(s, 1200)
+    s = { ...s, skills: refreshSrsResearchActivity(s) }
+    const next = advance(s, 10)
+    expect(next.skills.byId.superRadiantScattering.timerSeconds - s.skills.byId.superRadiantScattering.timerSeconds)
+      .toBeCloseTo(10 * (1 + 4.5 * multiplier))
+    expect(next.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(bank)
+  },
+)
+
+test('existing lifetime bank is preserved; resets bank full charge once, restarts do not', () => {
+  let s = buy(withBank(state(), 100_000), A.stellarMemory)
+  s = advance(buy(s, A.afterglow), 100)
+  const charge = s.skills.byId.superRadiantScattering.timerSeconds
+  const request = { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 30n }
+  const infinity = applyCanonicalInfinityReset(s, request)
+  const quantum = applyCanonicalQuantumReset(s, 30n)
+  const restart = applyCanonicalInfinityReset(s, { ...request, restartOnly: true })
+  for (const result of [infinity, quantum, restart]) expect(result.ok).toBe(true)
+  expect(infinity.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000 + charge)
+  expect(quantum.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000 + charge)
+  expect(restart.state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000)
+  const hotGrant = 1800 * stellarMemoryMultiplier(infinity.state)
+  expect(infinity.state.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(charge * 0.225 + hotGrant)
+  expect(quantum.state.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(1800 * stellarMemoryMultiplier(quantum.state))
+  const unassigned = refundCanonicalSkill(s, A.stellarMemory)
+  expect(unassigned.accepted).toBe(true)
+  expect(stellarMemoryMultiplier(unassigned.state)).toBe(1)
+  expect(applyCanonicalInfinityReset(unassigned.state, request).state.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000)
 })
 
+test('Hot Start tops up regardless of assignment order without repeat grants, including legacy markers', () => {
+  const base = withBank(state(), 100_000)
+  const hotFirst = buy(buy(base, A.hotStart), A.stellarMemory)
+  const memoryFirst = buy(buy(base, A.stellarMemory), A.hotStart)
+  for (const s of [hotFirst, memoryFirst]) {
+    expect(s.skills.byId.superRadiantScattering.timerSeconds).toBe(4050)
+    const refund = refundCanonicalSkill(s, A.stellarMemory)
+    expect(refund.accepted).toBe(true)
+    expect(buy(refund.state, A.stellarMemory).skills.byId.superRadiantScattering.timerSeconds).toBe(4050)
+  }
+  const legacy = buy(base, A.hotStart)
+  const loaded = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(
+    serializeWebSave(dehydrateGameState(hydrated, legacy).copyValidatedState()),
+  ))).state
+  expect(buy(loaded, A.stellarMemory).skills.byId.superRadiantScattering.timerSeconds).toBe(4050)
+})
+
+test('Afterglow caps retention at 50 percent and Banking can be refunded', () => {
+  const s = buy(buy(withBank(state(), 1e30), A.stellarMemory), A.afterglow)
+  expect(srsAfterglowRetention(s)).toBe(0.5)
+  expect(refundCanonicalSkill(buy(state(), 'banking'), 'banking').accepted).toBe(true)
+})
+
+test('Banking reassigns after Infinity with non-refundable auto-assignment disabled', () => {
+  const assigned = buy(state(), 'banking')
+  const before = { ...assigned, skills: { ...assigned.skills, autoAssignNonRefundable: false } }
+  const reset = applyCanonicalInfinityReset(before, {
+    breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 30n,
+  })
+  expect(reset.ok).toBe(true)
+  expect(reset.state.skills.byId.banking?.owned).toBe(true)
+  expect(refundCanonicalSkill(reset.state, 'banking').accepted).toBe(true)
+})
 
 test('auto-assignment and presets grant Hot Start once per Infinity', () => {
   const initial = state()
@@ -162,8 +213,8 @@ test('auto-assignment and presets grant Hot Start once per Infinity', () => {
     expect(first.accepted).toBe(true)
     expect(first.state.skills.byId.superRadiantScattering.timerSeconds).toBe(1800)
     const refund = refundCanonicalSkill(first.state, A.hotStart)
-    expect(refund.accepted).toBe(true)
-    const again = assign(refund.state)
+    expect(refund.accepted).toBe(false)
+    const again = assign(first.state)
     expect(again.state.skills.byId.superRadiantScattering.timerSeconds).toBe(1800)
     const reset = applyCanonicalInfinityReset(again.state, { breakInfinity: false, requestedReward: 0n, artifactSkillPoints: 20n })
     expect(reset.ok).toBe(true)
@@ -202,4 +253,15 @@ test('generated levels stop refreshing Activity at the research cap', () => {
     stellarPlanetsPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 1, moneyUpgradePerSecond: 0 })
   expect(next.skills.byId[A.researchActivity].timerSeconds).toBe(0)
   expect(next.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(100 + 100 * 100 / 1200 + 45)
+})
+
+
+test('boosted charging integrates identically for Stored Time-sized and split intervals', () => {
+  let s = buy(withBank(state(), 100_000), A.stellarMemory)
+  s = { ...s, skills: refreshSrsResearchActivity(s) }
+  const whole = advance(s, 3600)
+  let split = s
+  for (let i = 0; i < 3600; i++) split = advance(split, 1)
+  expect(whole.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(split.skills.byId.superRadiantScattering.timerSeconds, 6)
+  expect(whole.skills.byId.superRadiantScattering.secondaryTimerSeconds).toBe(100_000)
 })

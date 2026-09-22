@@ -63,8 +63,9 @@ It clears progression-derived skill points, ownership, timers and Research.
 Completed Secrets and their four-point reward survive, as do skill presets,
 automation preferences, host purchases and achievements, lifetime statistics,
 Offline Time and its capacity. Reality's Double Time upgrade is reset.
-Blank Slate completion, its unlock, and the Galvanizer wallet survive Overflow.
-Galvanized skill effects and Galvanizer spending are not implemented. See
+Blank Slate completion, its unlock, and the Catalyst wallet survive Overflow.
+Fractured base skills remain permanent; spending one Catalyst fractures a revealed
+base skill and returns its ordinary invested Skill Points. See
 `infinity-challenges-contract.md` for challenge reset and reward rules.
 
 Overflow Points currently have no production effect or spending action. The

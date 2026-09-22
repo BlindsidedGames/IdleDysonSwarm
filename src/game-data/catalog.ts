@@ -4,8 +4,15 @@ import type {
   RuntimeGameDataCatalog,
 } from './types'
 
-export const gameDataCatalog =
-  catalogJson as unknown as RuntimeGameDataCatalog
+const legacyCatalog = catalogJson as unknown as RuntimeGameDataCatalog
+
+// Current gameplay overrides belong outside the frozen Unity compatibility capsule.
+export const gameDataCatalog: RuntimeGameDataCatalog = {
+  ...legacyCatalog,
+  assets: legacyCatalog.assets.map((asset) => asset.kind === 'GameData.SkillDefinition' && asset.id === 'banking'
+    ? { ...asset, data: { ...asset.data, refundable: true } }
+    : asset),
+}
 
 // Keep kind and ID as separate keys: this lookup runs throughout each game
 // step, so rebuilding and hashing a joined string creates avoidable work.

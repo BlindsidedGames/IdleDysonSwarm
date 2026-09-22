@@ -23,6 +23,6 @@ export const challengeMessages = defineMessages({
   restart: { id: 'challenges.restart', defaultMessage: 'This starts a fresh Infinity run without awarding IP. Infinity upgrades and later layers are kept. Abandoning also starts a fresh normal run.' },
   failure: { id: 'challenges.failure', defaultMessage: 'The restart could not be saved. Your current run has been kept. Try again.' },
   view: { id: 'challenges.view', defaultMessage: 'View challenge' },
-  galvanizers: { id: 'challenges.galvanizers', defaultMessage: 'Galvanizers: {value}' },
-  future: { id: 'challenges.galvanizers.future', defaultMessage: 'Spend 1 Galvanizer in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Galvanization cannot be undone and survives Overflow.' },
+  galvanizers: { id: 'challenges.galvanizers', defaultMessage: 'Catalysts: {value}' },
+  future: { id: 'challenges.galvanizers.future', defaultMessage: 'Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Overflow.' },
 })
