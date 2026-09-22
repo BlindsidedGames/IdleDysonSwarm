@@ -1,5 +1,17 @@
 # Agent instructions
 
+## Deployment shorthand
+
+- When Matthew says **“deploy to internal”**, deploy the current changes to all
+  three destinations: upload and release to **Google Play internal testing**;
+  upload to **App Store Connect** and make the build available to **Internal
+  TestFlight** testers; and upload and activate the build on the **Steam beta
+  branch**. No separate request for each platform is needed.
+- Verify tester availability on each platform and report any processing,
+  authentication, or other blockers. This does not authorize production releases,
+  App Review submissions, Steam live promotion, or website deployment. An explicit
+  narrower scope overrides this shorthand.
+
 ## Game artwork
 
 - Before creating or changing skill/augment icons or related game symbols, read
