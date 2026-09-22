@@ -803,6 +803,12 @@
       "value": "Avocato"
     }
   ],
+  "discovery.baseLifetime": [
+    {
+      "type": 0,
+      "value": "Basis-Panellebensdauer"
+    }
+  ],
   "discovery.baseSpeed": [
     {
       "type": 0,
@@ -935,6 +941,12 @@
     {
       "type": 1,
       "value": "time"
+    }
+  ],
+  "discovery.nextMultiplier": [
+    {
+      "type": 0,
+      "value": "Nächster Multiplikator"
     }
   ],
   "discovery.nextPower": [

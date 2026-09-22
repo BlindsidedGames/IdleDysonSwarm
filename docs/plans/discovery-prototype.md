@@ -105,13 +105,23 @@ and reran that guard successfully before the final full suite.
 
 ### Final presentation refinement
 
-Matthew requested a quieter Transcendence screen during QA. The default view now
-shows **Discovery** opposite **×M**, with a prominent 48px progress bar and the
-time remaining centered inside it. Level, lifetime, next multiplier, reset rule
-and the actual speed-source breakdown are available through the compact info
-disclosure rather than repeated above the bar. The existing Research palette,
-shared Progress component and localized messages are retained. This supersedes
-the original verbose card layout.
+Matthew's final visual direction supersedes the original Research palette and
+info-button proposal. The default view shows **Discovery** opposite **×M**, with
+a prominent 48px progress bar and the time remaining centered inside it. The
+card uses Avocato's existing purple theme, inset, border, shadow and gradient.
+The whole header/bar is the native disclosure control. No standalone info button
+or reset-explanation paragraph remains. Opening it reveals compact label/value
+rows for level, base lifetime, next multiplier and the actual speed breakdown.
+The shared Progress component and localized messages are retained.
+
+Visual follow-up: inspected collapsed/expanded browser views at desktop and
+360px, plus German at 130% text (no horizontal overflow). Clicked the bar to open,
+the heading to close, and verified Enter/Space operation and visible keyboard
+focus. The accessible disclosure name includes production benefit and remaining
+time. Rebuilt and tapped both states in the isolated iOS Simulator app, and checked
+the same presentation and bar interaction in the packaged macOS app after a
+cold process restart. Full
+screen-reader testing and Android interaction remain unavailable as noted above.
 
 ## Balance and performance evidence
 
@@ -431,6 +441,9 @@ Final UI evidence: [360px](../qa/discovery-prototype/narrow.png),
 [actual skill dialogs](../qa/discovery-prototype/skill-descriptions.txt).
 
 Final native card screenshots: [iOS](../qa/discovery-prototype/ios.png),
-[packaged macOS](../qa/discovery-prototype/macos.png). Final accessibility review
-requested a broader “Discovery details” label and a larger info hit target; both
-were applied, localized, and keyboard-tested in the browser.
+[iOS expanded](../qa/discovery-prototype/ios-expanded.png),
+[packaged macOS](../qa/discovery-prototype/macos.png),
+[macOS expanded](../qa/discovery-prototype/macos-expanded.png).
+Expanded narrow browser evidence: [360px details](../qa/discovery-prototype/narrow-expanded.png).
+Independent follow-up review found no theme-scope or maintainability issues;
+its accessible-name finding was addressed without adding visible copy.

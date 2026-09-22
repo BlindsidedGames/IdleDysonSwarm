@@ -17,6 +17,8 @@ export const discoveryMessages = defineMessages({
   addCompletions: { id: 'discovery.debug.addCompletions', defaultMessage: 'Add completed discoveries' },
   addPoints: { id: 'discovery.debug.addPoints', defaultMessage: 'Add Transcendence Points' },
   route: { id: 'discovery.route', defaultMessage: 'Transcendence' },
+  baseLifetime: { id: 'discovery.baseLifetime', defaultMessage: 'Base panel lifetime' },
+  nextMultiplier: { id: 'discovery.nextMultiplier', defaultMessage: 'Next multiplier' },
   details: { id: 'discovery.details', defaultMessage: 'Discovery details' },
   name: { id: 'discovery.name', defaultMessage: 'Discovery' },
   level: { id: 'discovery.level', defaultMessage: 'Discovery · Level {value}' },

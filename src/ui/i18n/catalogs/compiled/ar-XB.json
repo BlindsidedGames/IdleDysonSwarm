@@ -1747,6 +1747,20 @@
       "value": "‬"
     }
   ],
+  "discovery.baseLifetime": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐsǝ dɐuǝʅ ʅıɟǝʇıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "discovery.baseSpeed": [
     {
       "type": 0,
@@ -2011,6 +2025,20 @@
     {
       "type": 1,
       "value": "time"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.nextMultiplier": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ ɯnʅʇıdʅıǝɹ"
     },
     {
       "type": 0,

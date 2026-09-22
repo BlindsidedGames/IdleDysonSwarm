@@ -442,6 +442,9 @@
   "discovery.avocatoSpeed": {
     "defaultMessage": "Avocato"
   },
+  "discovery.baseLifetime": {
+    "defaultMessage": "Base panel lifetime"
+  },
   "discovery.baseSpeed": {
     "defaultMessage": "Base speed"
   },
@@ -492,6 +495,9 @@
   },
   "discovery.next": {
     "defaultMessage": "Next: ×{value} · {time}"
+  },
+  "discovery.nextMultiplier": {
+    "defaultMessage": "Next multiplier"
   },
   "discovery.nextPower": {
     "defaultMessage": "Next: ×{value} starting power"

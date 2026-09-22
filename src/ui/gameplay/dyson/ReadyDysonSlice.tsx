@@ -1055,7 +1055,7 @@ export function ReadyDysonSlice({
         ? undefined
         : intl.formatMessage(messages.releaseFooter, releaseFooter)}
       heading={intl.formatMessage(routeHeading)}
-      routeTheme={route === 'transcendence' ? 'research' : challengesActive ? 'infinity' : debugActive ? 'statistics' : storeActive ? 'bots' : route}
+      routeTheme={route === 'transcendence' ? 'avocato' : challengesActive ? 'infinity' : debugActive ? 'statistics' : storeActive ? 'bots' : route}
       routeContentEdgeToEdge={storeActive}
       routeThemeVariant={
         gameplay.derived.simulations?.currentEra ?? 'foundational'

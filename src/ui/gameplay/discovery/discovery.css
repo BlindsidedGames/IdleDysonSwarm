@@ -4,10 +4,10 @@
   color: var(--color-text-primary);
 }
 .discovery-card {
-  padding: clamp(0.75rem, 2vw, 1.5rem);
   background: var(--theme-panel);
   border: 1px solid var(--theme-divider);
-  border-radius: var(--radius-md);
+  border-radius: 0.3rem;
+  box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 26%);
 }
 .discovery-heading {
   display: flex;
@@ -16,11 +16,11 @@
   gap: 1rem;
   margin-block-end: 0.8rem;
 }
-.discovery-heading h2 {
+.discovery-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 0;
+  font-weight: var(--font-weight-bold);
   font-size: calc(1.2rem * var(--game-text-scale));
 }
 .discovery-heading strong {
@@ -61,18 +61,32 @@
 .discovery-card .discovery-progress progress::-webkit-progress-bar { background: var(--theme-page); }
 .discovery-card .discovery-progress progress::-webkit-progress-value { background: var(--theme-selected); }
 .discovery-card .discovery-progress progress::-moz-progress-bar { background: var(--theme-selected); }
-.discovery-details { margin-block-start: 0.5rem; }
-.discovery-details summary {
+/* The header and bar form one native, keyboard-operable disclosure. */
+.discovery-toggle {
+  display: block;
+  padding: var(--ui-panel-inset);
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--theme-selected), var(--theme-panel));
   cursor: pointer;
-  display: grid;
-  place-items: center;
-  min-inline-size: 2rem;
-  min-block-size: 2rem;
   list-style: none;
-  inline-size: max-content;
-  margin-inline-start: auto;
 }
-.discovery-details summary::-webkit-details-marker { display: none; }
-.discovery-details p { margin-block: 0.5rem; }
+.discovery-toggle::-webkit-details-marker { display: none; }
+.discovery-toggle:focus-visible {
+  outline: 2px solid var(--theme-accent);
+  outline-offset: 2px;
+}
+.discovery-toggle:hover .discovery-progress progress { border-color: var(--theme-accent); }
+.discovery-details {
+  padding: var(--ui-panel-inset);
+  border-block-start: 1px solid var(--theme-divider);
+}
+.discovery-details dl { margin: 0; }
+.discovery-details .discovery-speed-sources {
+  margin-block-start: var(--ui-panel-inset);
+  padding-block-start: var(--ui-panel-inset);
+  border-block-start: 1px solid var(--theme-divider);
+}
+.discovery-speed-total { font-weight: var(--font-weight-bold); }
 .discovery-details dl > div { display: flex; justify-content: space-between; gap: 1rem; }
-.discovery-details dd { margin: 0; white-space: nowrap; }
+.discovery-details dt { min-inline-size: 0; overflow-wrap: anywhere; }
+.discovery-details dd { margin: 0; white-space: nowrap; color: var(--theme-accent); }

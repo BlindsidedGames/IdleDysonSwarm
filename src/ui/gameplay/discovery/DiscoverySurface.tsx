@@ -20,21 +20,25 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
   const intl = useIntl()
   const formatCatalogMessage = intl.formatMessage
   const time = formatGameDuration(locale, effects.secondsToNext / gameSpeed)
+  const productionLabel = intl.formatMessage(m.production, { value: formatGameNumber(locale, effects.multiplier) })
   return <div className="discovery-surface">
-    <section className="discovery-card" aria-label={intl.formatMessage(m.name)}>
-      <header className="discovery-heading">
-        <h2><InlineImageSymbol src={navigationAssets.discovery} label="" tint />{intl.formatMessage(m.name)}</h2>
-        <strong aria-label={intl.formatMessage(m.production, { value: formatGameNumber(locale, effects.multiplier) })}>×{formatGameNumber(locale, effects.multiplier)}</strong>
-      </header>
-      <Progress className="discovery-progress" label={intl.formatMessage(m.name)} valueText={time}
-        value={state.progress} maximum={DISCOVERY_TUNING.completionProgress} />
-      <details className="discovery-details">
-        <summary aria-label={intl.formatMessage(m.details)} title={intl.formatMessage(m.resetRule)}>ⓘ</summary>
-        <p>{intl.formatMessage(m.level, { value: formatWholeGameNumber(locale, state.completions + 1n) })}</p>
-        <p>{intl.formatMessage(m.lifetime, { value: formatGameNumber(locale, effects.strength) })}</p>
-        <p>{intl.formatMessage(m.next, { value: formatGameNumber(locale, effects.nextMultiplier), time })}</p>
-        <p>{intl.formatMessage(m.resetRule)}</p>
-        <dl><div><dt>{intl.formatMessage(m.speedSources)}</dt><dd>×{formatGameNumber(locale, effects.speed)}</dd></div>
+    <details className="discovery-card">
+      <summary className="discovery-toggle" aria-label={`${intl.formatMessage(m.details)}: ${productionLabel}, ${time}`}>
+        <span className="discovery-heading">
+          <span className="discovery-title"><InlineImageSymbol src={navigationAssets.discovery} label="" tint />{intl.formatMessage(m.name)}</span>
+          <strong aria-label={productionLabel}>×{formatGameNumber(locale, effects.multiplier)}</strong>
+        </span>
+        <Progress className="discovery-progress" label={intl.formatMessage(m.name)} valueText={time}
+          value={state.progress} maximum={DISCOVERY_TUNING.completionProgress} />
+      </summary>
+      <div className="discovery-details">
+        <dl className="discovery-facts">
+          <div><dt>{intl.formatMessage(m.levelLabel)}</dt><dd>{formatWholeGameNumber(locale, state.completions + 1n)}</dd></div>
+          <div><dt>{intl.formatMessage(m.baseLifetime)}</dt><dd>{formatGameDuration(locale, effects.strength, { maximumFractionDigits: 1 })}</dd></div>
+          <div><dt>{intl.formatMessage(m.nextMultiplier)}</dt><dd>×{formatGameNumber(locale, effects.nextMultiplier)}</dd></div>
+        </dl>
+        <dl className="discovery-speed-sources">
+          <div className="discovery-speed-total"><dt>{intl.formatMessage(m.speedSources)}</dt><dd>×{formatGameNumber(locale, effects.speed)}</dd></div>
           <div><dt>{intl.formatMessage(m.baseSpeed)}</dt><dd>1×</dd></div>
           {effects.sources.map(source => {
             const descriptor = source.id === 'subskill.cashScience.production' ? skillMessages.subskillProductionName : source.id === 'discovery.speed' ? m.speed
@@ -46,7 +50,7 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
             return <div key={source.id}><dt>{name}</dt><dd>+{formatGameNumber(locale, source.bonus * 100)}%</dd></div>
           })}
         </dl>
-      </details>
-    </section>
+      </div>
+    </details>
   </div>
 }
