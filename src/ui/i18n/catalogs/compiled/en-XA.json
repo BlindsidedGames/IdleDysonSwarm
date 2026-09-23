@@ -31506,21 +31506,7 @@
       "value": "]"
     }
   ],
-  "wiki.patch-notes.version-4-1-11": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ṽḗḗřşīǿǿƞ 4.1.11"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.discovery": [
+  "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
       "value": "["
@@ -31534,7 +31520,7 @@
       "value": "]"
     }
   ],
-  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+  "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
       "value": "["
@@ -31548,7 +31534,21 @@
       "value": "]"
     }
   ],
-  "wiki.patch-notes.version-4-1-11.speedruns": [
+  "wiki.patch-notes.version-4-1-10.save-fix": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīẋḗḗḓ ǿǿŀḓ řḗḗşḗḗȧȧřƈħ ȧȧƞḓ ƈŀḗḗȧȧřḗḗḓ şķīŀŀ ƥřḗḗşḗḗŧş řḗḗŧŭŭřƞīƞɠ ȧȧƒŧḗḗř şȧȧṽīƞɠ ǿǿř řḗḗŀǿǿȧȧḓīƞɠ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
       "value": "["
@@ -31562,7 +31562,7 @@
       "value": "]"
     }
   ],
-  "wiki.patch-notes.version-4-1-11.transcendence": [
+  "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
       "value": "["

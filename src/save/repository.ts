@@ -588,10 +588,9 @@ export class PortableSaveRepository implements SaveRepository {
         'Canonical player-save writes are disabled until mapping coverage is complete.',
       )
     }
-    const normalized = PreparedSave.fromDecoded(
-      save.copyValidatedState(),
-    )
-    const encoded = serializeWebSave(normalized.copyValidatedState())
+    // PreparedSave already crossed the migration boundary. Checkpoints must
+    // preserve its current state, including intentionally empty collections.
+    const encoded = serializeWebSave(save.copyValidatedState())
     await this.storage.writeText(this.paths.temporary, encoded)
     const temporaryText = await this.storage.readText(this.paths.temporary)
     // Exact read-back verifies the durable adapter preserved the already
@@ -600,7 +599,7 @@ export class PortableSaveRepository implements SaveRepository {
     if (temporaryText !== encoded) {
       throw new Error('Temporary save verification failed before atomic replace.')
     }
-    const committed = normalized
+    const committed = save
     if (rotateBackups) await this.rotateBackups()
     await this.storage.replaceAtomically(
       this.paths.temporary,

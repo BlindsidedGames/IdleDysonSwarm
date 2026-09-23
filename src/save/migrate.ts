@@ -65,14 +65,17 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
     )
   }
 
+  // Schema 12 introduced the rewrite's canonical save contract. Legacy mirrors
+  // are migration inputs only; empty canonical collections are intentional.
+  const legacyFormat = sourceSchema < 12
   const appliedSteps: string[] = []
   ensureSaveShape(save)
   applyPackedSettingsFlags(save)
   appliedSteps.push('ensure-root-and-dyson-shape')
-  migrateAvotation(save)
+  if (legacyFormat) migrateAvotation(save)
   // Skill dependency ordering was the schema-12 migration. A schema-12 save
   // upgrading only its continuous resources must retain the player's order.
-  migrateSkills(save, sourceSchema < 12)
+  migrateSkills(save, legacyFormat)
   appliedSteps.push('stable-skill-ids-and-bitsets')
   if (sourceSchema < 14) {
     migrateSelectedSkillPresetIntent(save)
@@ -86,9 +89,9 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
     save.discovery = { ...EMPTY_DISCOVERY }
     appliedSteps.push('discovery-locked')
   }
-  migrateResearch(save)
+  migrateResearch(save, legacyFormat)
   appliedSteps.push('stable-research-ids')
-  migrateAvocado(save)
+  if (legacyFormat) migrateAvocado(save)
   appliedSteps.push('avocado-container')
   const challenges = ensureRecord(save, 'infinityChallengeData')
   for (const [key, value] of Object.entries(EMPTY_INFINITY_CHALLENGES)) {
@@ -116,13 +119,16 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   migrateMegaStructures(save)
   normalizeFacilityArrays(
     ensureRecord(ensureRecord(save, 'dysonVerseSaveData'), 'dysonVerseInfinityData'),
+    legacyFormat,
   )
   appliedSteps.push('dense-facility-arrays')
-  ensureSimulationMathematicsParity(save)
+  if (legacyFormat) ensureSimulationMathematicsParity(save)
   const numericRepair = repairNumericSave(save)
   packSettingsFlags(save)
+  // Materialize packed defaults now, rather than changing the graph on its next load.
+  applyPackedSettingsFlags(save)
   appliedSteps.push('packed-settings-flags')
-  save.lastMigratedFromVersion = sourceSchema
+  if (sourceSchema < CURRENT_SAVE_SCHEMA) save.lastMigratedFromVersion = sourceSchema
   save.saveVersion = CURRENT_SAVE_SCHEMA
   const validation = validatePreparedSave(save, CURRENT_SAVE_SCHEMA)
 
@@ -305,7 +311,7 @@ function migrateStellarMemoryPrice(save: SaveRecord): void {
     .filter((id) => id !== 'subskill.srs.stellarMemory')
 }
 
-function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {
+function migrateSkills(save: SaveRecord, legacyFormat: boolean): void {
   const dyson = ensureRecord(save, 'dysonVerseSaveData')
   const infinity = ensureRecord(dyson, 'dysonVerseInfinityData')
   const prestige = ensureRecord(dyson, 'dysonVersePrestigeData')
@@ -314,9 +320,11 @@ function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {
   const ownedById = ensureRecord(infinity, 'skillOwnedById')
   const stateById = ensureRecord(infinity, 'skillStateById')
 
-  let ownedBits = decodeBitset(infinity.skillOwnedBits, infinity.skillOwnedBitsBase64)
+  let ownedBits = legacyFormat
+    ? decodeBitset(infinity.skillOwnedBits, infinity.skillOwnedBitsBase64)
+    : new Uint8Array()
   const hadBits = ownedBits.length > 0
-  if (!hadBits) {
+  if (!legacyFormat || !hadBits) {
     const ownedIds: string[] = []
     for (const [key, id] of Object.entries(skillLegacyKeyToId)) {
       const state = stateById[id]
@@ -324,9 +332,8 @@ function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {
         (state !== null &&
           typeof state === 'object' &&
           (state as SaveRecord).owned === true) ||
-        ownedById[id] === true ||
-        legacyOwnership[key] === true ||
-        skillTree[id] === true
+        (legacyFormat && (ownedById[id] === true ||
+          legacyOwnership[key] === true || skillTree[id] === true))
       if (owned) ownedIds.push(id)
     }
     ownedBits = skillIdsToBitset(ownedIds)
@@ -352,20 +359,12 @@ function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {
     legacyOwnership[key] = owned
     skillTree[id] = owned
   }
-  migrateSkillTimer(prestige, 'androidsSkillTimer', stateById, 'androids')
-  migrateSkillTimer(prestige, 'pocketAndroidsTimer', stateById, 'pocketAndroids')
-  migrateSkillTimer(
-    skillTree,
-    'superRadiantScatteringTimer',
-    stateById,
-    'superRadiantScattering',
-  )
-  migrateSkillTimer(
-    skillTree,
-    'idleElectricSheepTimer',
-    stateById,
-    'idleElectricSheep',
-  )
+  if (legacyFormat) {
+    migrateSkillTimer(prestige, 'androidsSkillTimer', stateById, 'androids')
+    migrateSkillTimer(prestige, 'pocketAndroidsTimer', stateById, 'pocketAndroids')
+    migrateSkillTimer(skillTree, 'superRadiantScatteringTimer', stateById, 'superRadiantScattering')
+    migrateSkillTimer(skillTree, 'idleElectricSheepTimer', stateById, 'idleElectricSheep')
+  }
 
   for (let preset = 0; preset <= 5; preset += 1) {
     const suffix = preset || ''
@@ -377,18 +376,12 @@ function migrateSkills(save: SaveRecord, runVersionedReorder: boolean): void {
         ? 'skillAutoAssignmentBitsBase64'
         : `skillAutoAssignmentBitsBase64_${preset}`
     let ids = stringArray(dyson[idsKey])
-    const idsWerePresent = ids.length > 0
-    let rebuiltFromBits = false
-    if (ids.length === 0) ids = legacyKeysToSkillIds(dyson[legacyKey])
-    if (ids.length === 0) {
+    if (legacyFormat && ids.length === 0) ids = legacyKeysToSkillIds(dyson[legacyKey])
+    if (legacyFormat && ids.length === 0) {
       ids = bitsetToSkillIds(decodeBitset(dyson[bitsKey], dyson[base64Key]))
-      rebuiltFromBits = ids.length > 0
     }
     ids = [...new Set(ids.filter((id) => (id in skillIdsToLegacyKeysMap || isSubskill(id))))]
-    if (
-      preset > 0 &&
-      (runVersionedReorder || (!idsWerePresent && rebuiltFromBits))
-    ) {
+    if (preset > 0 && legacyFormat) {
       ids = dependencySafeSkillOrder(ids)
     }
     dyson[idsKey] = ids
@@ -441,21 +434,20 @@ function migrateSkillTimer(
   legacyOwner[legacyField] = 0
 }
 
-function migrateResearch(save: SaveRecord): void {
+function migrateResearch(save: SaveRecord, legacyFormat: boolean): void {
   const infinity = ensureRecord(
     ensureRecord(save, 'dysonVerseSaveData'),
     'dysonVerseInfinityData',
   )
   const levels = ensureRecord(infinity, 'researchLevelsById')
   ensureRecord(infinity, 'researchProgressById')
-  const stableLevelsWerePresent = Object.keys(levels).length > 0
   for (const [id, mapping] of Object.entries(researchLegacyFields)) {
-    const legacyValue = mapping.boolean
+    const legacyValue = !legacyFormat ? 0 : mapping.boolean
       ? infinity[mapping.field] === true
         ? 1
         : 0
       : toNonNegativeNumber(infinity[mapping.field])
-    const level = stableLevelsWerePresent && Object.hasOwn(levels, id)
+    const level = Object.hasOwn(levels, id)
       ? toNonNegativeNumber(levels[id])
       : legacyValue
     levels[id] = level

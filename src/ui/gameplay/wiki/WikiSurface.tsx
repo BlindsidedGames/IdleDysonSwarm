@@ -458,20 +458,18 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion4111)}</h4>
+          <h4>{intl.formatMessage(messages.patchNotesVersion4110)}</h4>
           <ul className="wiki-surface__patch-note-list">
-            <li>{intl.formatMessage(messages.patchNotesVersion4111Transcendence)}</li>
-            <li>{intl.formatMessage(messages.patchNotesVersion4111Discovery)}</li>
-            <li>{intl.formatMessage(messages.patchNotesVersion4111DiscoveryUpgrades)}</li>
-            <li>{intl.formatMessage(messages.patchNotesVersion4111Speedruns)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Transcendence)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Discovery)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110DiscoveryUpgrades)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Speedruns)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110BotBoost)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110SaveFix)}</li>
           </ul>
         </section>
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
-          <h4>{intl.formatMessage(messages.patchNotesVersion4110)}</h4>
-          <ul className="wiki-surface__patch-note-list">
-            <li>{intl.formatMessage(messages.patchNotesVersion4110BotBoost)}</li>
-          </ul>
           <h4>{intl.formatMessage(messages.patchNotesVersion419)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion419Augments)}</li>

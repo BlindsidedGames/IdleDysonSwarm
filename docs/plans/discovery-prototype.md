@@ -475,3 +475,11 @@ Evidence: [Avocato desktop](../qa/discovery-prototype/avocato-desktop.png),
 Discovery uses a purple panel with a thick recessed track, a raised fill, and a centered timer. Its heading and shared resource slot show the original Research magnifying glass beside the multiplier without an × prefix. The Transcendence figure-and-halo symbol is shared by navigation, the Avocato balance and reset reward. Avocato shows the balance as icon plus amount and the reset action as “Transcend for [icon] 1”. Concise Discovery notes were added to 4.1.11 in every supported locale.
 
 Matthew authorized internal distribution to Google Play, Internal TestFlight and Steam beta. Candidate 2026092202 retains the current 4.1.10 testing marketing version. The feature branch remains unmerged.
+
+### 23 September — internal 4.1.10 consolidation and persistence review
+
+The unreleased 4.1.11 notes are folded into 4.1.10, including the Permanent 2× Bots fix and a concise research/preset persistence fix. Marketing version remains 4.1.10; internal candidate 2026092301.
+
+Save review: schema 12+ canonical records now take precedence over legacy mirrors, including empty research/presets, ownership, timers, Avocato, facility arrays and historical parity repairs. Ordinary checkpoints publish validated current state without rerunning migration. Pre-12 Unity migration and supported later version upgrades remain covered. Migration-origin metadata is preserved on reload.
+
+Regression evidence: the full suite passed before the notes-only change (1,827 tests); the added exact-checkpoint regression and Wiki consolidation checks pass. Typecheck, lint and localization pass. Live disposable-browser QA used skill reset and Infinity controls, exported state, reloaded, and confirmed the empty preset and zero research stayed cleared. The Research screen was inspected after reload. The separate reported native web-content restart remains unconfirmed; this fix does not claim to resolve its trigger. Native gameplay interactions are not re-certified by this release build.

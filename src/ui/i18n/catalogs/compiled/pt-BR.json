@@ -15674,31 +15674,31 @@
       "value": "Corrigido um erro que fazia Bots 2× permanentes parar de funcionar após reiniciar o progresso salvo."
     }
   ],
-  "wiki.patch-notes.version-4-1-11": [
-    {
-      "type": 0,
-      "value": "Versão 4.1.11"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.discovery": [
+  "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
       "value": "Descoberta cresce com o tempo e aumenta Dinheiro, Bots, produção de instalações e vida útil dos painéis. As habilidades relacionadas se adaptam ao desbloqueá-la."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+  "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
       "value": "Adicionadas melhorias permanentes de Velocidade de Descoberta e Poder inicial no Avocato."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.speedruns": [
+  "wiki.patch-notes.version-4-1-10.save-fix": [
+    {
+      "type": 0,
+      "value": "Corrigido o retorno de pesquisas antigas e predefinições de habilidades esvaziadas após salvar ou recarregar."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
       "value": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações. Novos recordes de marcos usam o tempo jogado."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.transcendence": [
+  "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
       "value": "Overflow agora se chama Transcendência. Gaste 1 ponto de Transcendência no Avocato para desbloquear Descoberta, que substitui Ciência e Pesquisa."

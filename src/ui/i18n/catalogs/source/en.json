@@ -7756,25 +7756,25 @@
     "defaultMessage": "Fixed Permanent 2× Bots losing its effect after resetting your save.",
     "description": "Version 4.1.10 release notes."
   },
-  "wiki.patch-notes.version-4-1-11": {
-    "defaultMessage": "Version 4.1.11",
-    "description": "Version 4.1.11 release notes."
-  },
-  "wiki.patch-notes.version-4-1-11.discovery": {
+  "wiki.patch-notes.version-4-1-10.discovery": {
     "defaultMessage": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked.",
-    "description": "Version 4.1.11 Discovery release notes."
+    "description": "Version 4.1.10 Discovery release notes."
   },
-  "wiki.patch-notes.version-4-1-11.discovery-upgrades": {
+  "wiki.patch-notes.version-4-1-10.discovery-upgrades": {
     "defaultMessage": "Added permanent Discovery Speed and Starting Power upgrades in Avocato.",
-    "description": "Version 4.1.11 Discovery release notes."
+    "description": "Version 4.1.10 Discovery release notes."
   },
-  "wiki.patch-notes.version-4-1-11.speedruns": {
+  "wiki.patch-notes.version-4-1-10.save-fix": {
+    "defaultMessage": "Fixed old research and cleared skill presets returning after saving or reloading.",
+    "description": "Version 4.1.10 release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.speedruns": {
     "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.",
-    "description": "Version 4.1.11 speedrun improvements."
+    "description": "Version 4.1.10 speedrun improvements."
   },
-  "wiki.patch-notes.version-4-1-11.transcendence": {
+  "wiki.patch-notes.version-4-1-10.transcendence": {
     "defaultMessage": "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research.",
-    "description": "Version 4.1.11 Discovery release notes."
+    "description": "Version 4.1.10 Discovery release notes."
   },
   "wiki.patch-notes.version-4-1-2": {
     "defaultMessage": "Version 4.1.2",

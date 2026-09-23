@@ -12,7 +12,7 @@ export const facilityArrayNames = [
   'galacticBrains',
 ] as const
 
-export function normalizeFacilityArrays(infinity: SaveRecord): void {
+export function normalizeFacilityArrays(infinity: SaveRecord, migrateLegacy = false): void {
   for (const name of facilityArrayNames) {
     const existing = Array.isArray(infinity[name]) ? infinity[name] : []
     const dense = [
@@ -21,7 +21,7 @@ export function normalizeFacilityArrays(infinity: SaveRecord): void {
     ]
     const indices = infinity[`${name}SparseIndices`]
     const values = infinity[`${name}SparseValues`]
-    if (Array.isArray(indices) && Array.isArray(values)) {
+    if (migrateLegacy && Array.isArray(indices) && Array.isArray(values)) {
       for (let index = 0; index < Math.min(indices.length, values.length); index += 1) {
         const slot = Number(indices[index])
         const sparseValue = finiteNonNegative(values[index])

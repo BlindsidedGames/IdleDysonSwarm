@@ -77,6 +77,25 @@ class MemoryStorage implements SaveStorageAdapter {
 }
 
 describe('portable transactional save repository', () => {
+  test('checkpoints publish the exact validated state without replaying migration', async () => {
+    const base = PreparedSave.fromDecoded(decodeIdb1SaveRoot(readFileSync(fixtureUrl, 'utf8')))
+    const state = base.copyValidatedState()
+    const dyson = state.dysonVerseSaveData as Record<string, unknown>
+    const infinity = dyson.dysonVerseInfinityData as Record<string, unknown>
+    infinity.researchLevelsById = {}
+    dyson.skillAutoAssignmentIds1 = []
+    const prepared = base.withValidatedState(state)
+    const storage = new MemoryStorage()
+    const repository = new PortableSaveRepository(storage, {
+      current: '/current', temporary: '/current.tmp', legacyRecovery: '/legacy',
+    }, decodeIdb1SaveRoot)
+    expect(await repository.commit(prepared)).toBe(prepared)
+    expect(storage.files.get('/current')).toBe(serializeWebSave(state))
+    const reloaded = hydrateGameState((await repository.loadCurrent())!).state
+    expect(Object.values(reloaded.research.levelsById).every((level) => level === 0)).toBe(true)
+    expect(reloaded.skills.presets[0].skillIds).toEqual([])
+  })
+
   test('preserves the reported 64-to-128-day upgrade through export, import, checkpoint, and reload', async () => {
     const storage = new MemoryStorage()
     const repository = new PortableSaveRepository(

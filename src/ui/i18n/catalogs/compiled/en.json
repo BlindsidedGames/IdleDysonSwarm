@@ -15674,31 +15674,31 @@
       "value": "Fixed Permanent 2× Bots losing its effect after resetting your save."
     }
   ],
-  "wiki.patch-notes.version-4-1-11": [
-    {
-      "type": 0,
-      "value": "Version 4.1.11"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.discovery": [
+  "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
       "value": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+  "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
       "value": "Added permanent Discovery Speed and Starting Power upgrades in Avocato."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.speedruns": [
+  "wiki.patch-notes.version-4-1-10.save-fix": [
+    {
+      "type": 0,
+      "value": "Fixed old research and cleared skill presets returning after saving or reloading."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
       "value": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.transcendence": [
+  "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
       "value": "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research."

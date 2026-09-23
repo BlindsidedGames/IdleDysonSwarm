@@ -15674,31 +15674,31 @@
       "value": "Behoben: Dauerhaft 2× Bots verlor nach dem Zurücksetzen des Spielstands seine Wirkung."
     }
   ],
-  "wiki.patch-notes.version-4-1-11": [
-    {
-      "type": 0,
-      "value": "Version 4.1.11"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.discovery": [
+  "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
       "value": "Entdeckung wächst mit der Zeit und steigert Geld, Bots, Anlagenproduktion und Panel-Lebensdauer. Zugehörige Skills passen sich bei der Freischaltung an."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.discovery-upgrades": [
+  "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
       "value": "Dauerhafte Upgrades für Entdeckungstempo und Startstärke bei Avocato hinzugefügt."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.speedruns": [
+  "wiki.patch-notes.version-4-1-10.save-fix": [
+    {
+      "type": 0,
+      "value": "Behoben: Alte Forschung und geleerte Fähigkeitensets kehrten nach dem Speichern oder Neuladen zurück."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
       "value": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert. Neue Meilensteinrekorde verwenden die gespielte Zeit."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.transcendence": [
+  "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
       "value": "Overflow heißt jetzt Transzendenz. Gib bei Avocato 1 Transzendenzpunkt aus, um Entdeckung freizuschalten und Wissenschaft und Forschung zu ersetzen."
