@@ -483,3 +483,7 @@ The unreleased 4.1.11 notes are folded into 4.1.10, including the Permanent 2× 
 Save review: schema 12+ canonical records now take precedence over legacy mirrors, including empty research/presets, ownership, timers, Avocato, facility arrays and historical parity repairs. Ordinary checkpoints publish validated current state without rerunning migration. Pre-12 Unity migration and supported later version upgrades remain covered. Migration-origin metadata is preserved on reload.
 
 Regression evidence: the full suite passed before the notes-only change (1,827 tests); the added exact-checkpoint regression and Wiki consolidation checks pass. Typecheck, lint and localization pass. Live disposable-browser QA used skill reset and Infinity controls, exported state, reloaded, and confirmed the empty preset and zero research stayed cleared. The Research screen was inspected after reload. The separate reported native web-content restart remains unconfirmed; this fix does not claim to resolve its trigger. Native gameplay interactions are not re-certified by this release build.
+
+### 24 September follow-up
+
+Implemented the approved bug-hunt fixes, iOS 16 minimum and facility/megastructure balance. See [QA evidence and exact final values](../qa/2026-09-24-bughunt-fixes.md). Work remains unmerged and undeployed; native interaction and full progression balance validation are explicitly outstanding.

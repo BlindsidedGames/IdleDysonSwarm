@@ -32,7 +32,7 @@ const TARGET_SELECTORS: Readonly<
   bots: '.dyson-shell__info',
   skills: '.skill-settings__preset-row:first-child',
   settings: '.settings-surface__panel--more',
-  research: '.research-surface__settings, .discovery-card .ui-facility-card__action',
+  research: '.research-surface__settings',
   side: '.dyson-shell__side-heading > span',
 })
 

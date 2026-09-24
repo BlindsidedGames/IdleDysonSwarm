@@ -1648,7 +1648,7 @@
   "dyson.facilities.birch-planets.description": [
     {
       "type": 0,
-      "value": "マトリョーシカ・ブレインを消費し、さらに多くのマトリョーシカ・ブレインを生み出す超大質量の惑星殻です。"
+      "value": "マトリョーシカ・ブレインを生み出す超大質量の惑星殻。"
     }
   ],
   "dyson.facilities.birch-planets.identity": [
@@ -2314,7 +2314,7 @@
   "dyson.facilities.galactic-brains.description": [
     {
       "type": 0,
-      "value": "マトリョーシカ・ブレインとバーチ・プラネットの両方を必要とする究極のメガストラクチャーです。バーチ・プラネットを生産します。"
+      "value": "究極の巨大構造体。バーチ惑星を生み出す。"
     }
   ],
   "dyson.facilities.galactic-brains.identity": [
@@ -2416,7 +2416,7 @@
   "dyson.facilities.matrioshka-brains.description": [
     {
       "type": 0,
-      "value": "惑星を消費して、さらに多くの惑星を生み出す巨大な恒星規模の計算構造体です。"
+      "value": "惑星を生み出す巨大な恒星コンピューティング構造体。"
     }
   ],
   "dyson.facilities.matrioshka-brains.identity": [
@@ -15668,6 +15668,12 @@
       "value": "バージョン 4.1.10"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.balance": [
+    {
+      "type": 0,
+      "value": "施設の価格上昇率と、巨大構造物のコスト・生産量を調整しました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.bot-boost": [
     {
       "type": 0,
@@ -15686,10 +15692,28 @@
       "value": "アボカトに発見速度と初期パワーの恒久アップグレードを追加しました。"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.fixes": [
+    {
+      "type": 0,
+      "value": "獲得した開発者オプションのクラウドでの保持、オーグメントのスキルポイント計算、デバッグでの負の調整、プロモーションのローテーションを修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.ios": [
+    {
+      "type": 0,
+      "value": "iOS 16以降が必要になりました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.save-fix": [
     {
       "type": 0,
       "value": "保存や再読み込み後に、以前の研究や消去したスキルプリセットが復活する不具合を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.secret": [
+    {
+      "type": 0,
+      "value": "発見の解放後、Avotationの6番目の秘密に到達すると自動的に完了するようになりました。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [

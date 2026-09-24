@@ -118,9 +118,9 @@
       {
         "facilityId": "assembly_lines",
         "eligible": true,
-        "selectedQuantity": "38",
-        "affordableQuantity": "38",
-        "cost": 869008.0130797025,
+        "selectedQuantity": "40",
+        "affordableQuantity": "40",
+        "cost": 974952.4831359352,
         "status": "success"
       },
       {
@@ -322,7 +322,7 @@
       "durableRevision": 0
     },
     "resources": {
-      "money": 130991.9869202975,
+      "money": 25047.516864064848,
       "science": 0,
       "bots": 1,
       "workers": 1,
@@ -331,7 +331,7 @@
     "facilities": {
       "assembly_lines": [
         0,
-        38
+        40
       ],
       "ai_managers": [
         0,
@@ -426,15 +426,15 @@
         "eligible": false,
         "selectedQuantity": "1",
         "affordableQuantity": "0",
-        "cost": 191281.76287753452,
+        "cost": 204840.02145854634,
         "status": "insufficient-funds"
       },
       {
         "facilityId": "ai_managers",
         "eligible": true,
-        "selectedQuantity": "9",
-        "affordableQuantity": "9",
-        "cost": 118344.75249296379,
+        "selectedQuantity": "3",
+        "affordableQuantity": "3",
+        "cost": 18542,
         "status": "success"
       },
       {

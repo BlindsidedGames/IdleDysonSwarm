@@ -1565,7 +1565,7 @@ describe('legacy canonical event-time parity adapter', () => {
           },
           infinity: {
             ...source.infinity,
-            points: 5n,
+            points: 10000n,
           },
           quantum: {
             ...source.quantum,

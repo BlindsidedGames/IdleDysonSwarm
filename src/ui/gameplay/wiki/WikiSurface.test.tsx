@@ -36,6 +36,10 @@ describe('Wiki patch-note content', () => {
       'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.',
       'Fixed Permanent 2× Bots losing its effect after resetting your save.',
       'Fixed old research and cleared skill presets returning after saving or reloading.',
+      'Rebalanced facility price growth and megastructure costs and production.',
+      'The sixth Avotation secret now completes automatically once reached with Discovery unlocked.',
+      'Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.',
+      'iOS 16 or later is now required.',
     ])
     expect(screen.queryByRole('heading', { name: 'Version 4.1.11' })).toBeNull()
     const version419List = screen.getByRole('heading', { name: 'Version 4.1.9' }).nextElementSibling as HTMLElement

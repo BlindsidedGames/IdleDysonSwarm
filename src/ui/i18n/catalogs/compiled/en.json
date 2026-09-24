@@ -1648,7 +1648,7 @@
   "dyson.facilities.birch-planets.description": [
     {
       "type": 0,
-      "value": "Supermassive planetary shells that consume Matrioshka Brains to produce more Matrioshka Brains."
+      "value": "Supermassive planetary shells that produce Matrioshka Brains."
     }
   ],
   "dyson.facilities.birch-planets.identity": [
@@ -2314,7 +2314,7 @@
   "dyson.facilities.galactic-brains.description": [
     {
       "type": 0,
-      "value": "The ultimate mega-structure requiring both Matrioshka Brains and Birch Planets. Produces Birch Planets."
+      "value": "The ultimate mega-structure. Produces Birch Planets."
     }
   ],
   "dyson.facilities.galactic-brains.identity": [
@@ -2416,7 +2416,7 @@
   "dyson.facilities.matrioshka-brains.description": [
     {
       "type": 0,
-      "value": "Massive stellar computing structures that consume planets to produce more planets."
+      "value": "Massive stellar computing structures that produce Planets."
     }
   ],
   "dyson.facilities.matrioshka-brains.identity": [
@@ -15668,6 +15668,12 @@
       "value": "Version 4.1.10"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.balance": [
+    {
+      "type": 0,
+      "value": "Rebalanced facility price growth and megastructure costs and production."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.bot-boost": [
     {
       "type": 0,
@@ -15686,10 +15692,28 @@
       "value": "Added permanent Discovery Speed and Starting Power upgrades in Avocato."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.fixes": [
+    {
+      "type": 0,
+      "value": "Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.ios": [
+    {
+      "type": 0,
+      "value": "iOS 16 or later is now required."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.save-fix": [
     {
       "type": 0,
       "value": "Fixed old research and cleared skill presets returning after saving or reloading."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.secret": [
+    {
+      "type": 0,
+      "value": "The sixth Avotation secret now completes automatically once reached with Discovery unlocked."
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [

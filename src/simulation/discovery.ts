@@ -1,3 +1,4 @@
+import { completeRetiredResearchSecret } from './avocadoMeditation'
 import type { CanonicalGameStateV1, DiscoveryState } from '../game-state/types'
 import { addContinuous, addDiscrete, DISCRETE_MAXIMUM, floorToDiscrete, isDiscreteResource, multiplyContinuous } from './numeric'
 
@@ -68,7 +69,7 @@ export function purchaseDiscovery(state: CanonicalGameStateV1, purchase: Discove
   const cost = discoveryPurchaseCost(discovery, purchase)
   const balance = state.avocado.overflowPoints ?? 0n
   if (cost === null || balance < cost || state.infinity.inProgress) return null
-  return {
+  return completeRetiredResearchSecret({
     ...state,
     discovery: {
       ...discovery, unlocked: true,
@@ -84,7 +85,7 @@ export function purchaseDiscovery(state: CanonicalGameStateV1, purchase: Discove
       dyson: { ...state.dyson, science: 0, workers: state.dyson.bots, researchers: 0 },
       research: { ...state.research, levelsById: {}, progressById: {} },
     } : {}),
-  }
+  })
 }
 
 export function validateDiscovery(value: DiscoveryState | undefined): string | null {

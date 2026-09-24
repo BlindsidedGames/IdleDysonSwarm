@@ -1648,7 +1648,7 @@
   "dyson.facilities.birch-planets.description": [
     {
       "type": 0,
-      "value": "Des enveloppes planétaires supermassives qui consomment des Cerveaux matriochka pour produire davantage de Cerveaux matriochka."
+      "value": "Des enveloppes planétaires supermassives qui produisent des Cerveaux Matriochka."
     }
   ],
   "dyson.facilities.birch-planets.identity": [
@@ -2314,7 +2314,7 @@
   "dyson.facilities.galactic-brains.description": [
     {
       "type": 0,
-      "value": "La mégastructure ultime, nécessitant à la fois des Cerveaux matriochka et des Planètes de Birch. Produit des Planètes de Birch."
+      "value": "La mégastructure ultime. Produit des Planètes de Birch."
     }
   ],
   "dyson.facilities.galactic-brains.identity": [
@@ -2416,7 +2416,7 @@
   "dyson.facilities.matrioshka-brains.description": [
     {
       "type": 0,
-      "value": "D’immenses structures informatiques stellaires qui consomment des planètes pour produire davantage de planètes."
+      "value": "D’immenses structures de calcul stellaires qui produisent des Planètes."
     }
   ],
   "dyson.facilities.matrioshka-brains.identity": [
@@ -15668,6 +15668,12 @@
       "value": "Version 4.1.10"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.balance": [
+    {
+      "type": 0,
+      "value": "Rééquilibrage de la hausse des prix des installations, ainsi que des coûts et de la production des mégastructures."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.bot-boost": [
     {
       "type": 0,
@@ -15686,10 +15692,28 @@
       "value": "Ajout d’améliorations permanentes de vitesse de Découverte et de puissance initiale chez Avocato."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.fixes": [
+    {
+      "type": 0,
+      "value": "Correction de la conservation des Options de développement acquises dans le Cloud, du décompte des points de compétence des augmentations, des ajustements négatifs de débogage et de la rotation des promotions."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.ios": [
+    {
+      "type": 0,
+      "value": "iOS 16 ou une version ultérieure est désormais requis."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.save-fix": [
     {
       "type": 0,
       "value": "Correction du retour d’anciennes recherches et de préréglages de compétences effacés après une sauvegarde ou un rechargement."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.secret": [
+    {
+      "type": 0,
+      "value": "Le sixième secret d’Avotation se termine désormais automatiquement lorsqu’il est atteint avec Découverte débloquée."
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [

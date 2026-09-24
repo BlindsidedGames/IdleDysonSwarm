@@ -63,7 +63,13 @@ export function serializeWebSave(save: SaveRecord): string {
 
 /** Same-account Cloud carries run records, but never grants store ownership. */
 export function serializeCloudWebSave(save: SaveRecord): string {
-  return serializeWebSave(stripNonShareableEntitlementClaims(save))
+  const cloud = stripNonShareableEntitlementClaims(save)
+  // This flag records the in-game point purchase. Store ownership is resolved
+  // separately by the host and never writes it.
+  cloud.debugEverEnabled = save.debugEverEnabled === true
+  cloud.debugOptions = cloud.debugEverEnabled && save.debugOptions === true
+  packSettingsFlags(cloud)
+  return serializeWebSave(cloud)
 }
 
 /**

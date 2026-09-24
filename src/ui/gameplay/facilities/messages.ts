@@ -100,20 +100,20 @@ export const basicFacilityMessages = defineMessages({
   matrioshkaBrainsDescription: {
     id: 'dyson.facilities.matrioshka-brains.description',
     defaultMessage:
-      'Massive stellar computing structures that consume planets to produce more planets.',
-    description: 'Exact authored Matrioshka Brains description.',
+      'Massive stellar computing structures that produce Planets.',
+    description: 'Matrioshka Brains description.',
   },
   birchPlanetsDescription: {
     id: 'dyson.facilities.birch-planets.description',
     defaultMessage:
-      'Supermassive planetary shells that consume Matrioshka Brains to produce more Matrioshka Brains.',
-    description: 'Exact authored Birch Planets description.',
+      'Supermassive planetary shells that produce Matrioshka Brains.',
+    description: 'Birch Planets description.',
   },
   galacticBrainsDescription: {
     id: 'dyson.facilities.galactic-brains.description',
     defaultMessage:
-      'The ultimate mega-structure requiring both Matrioshka Brains and Birch Planets. Produces Birch Planets.',
-    description: 'Exact authored Galactic Brains description.',
+      'The ultimate mega-structure. Produces Birch Planets.',
+    description: 'Galactic Brains description.',
   },
   constructMatrioshkaBrain: {
     id: 'dyson.facilities.matrioshka-brains.purchase',

@@ -137,7 +137,7 @@ export function FacilityPresentationCard({
     locale,
     preview.selectedQuantity,
   )
-  const cost = formatGameNumber(locale, preview.cost)
+  const cost = formatFacilityNumber(locale, preview.cost)
   const costPrecise = preciseNumber(locale, preview.cost)
   const displayFeedback = pending
     ? 'pending'
@@ -438,12 +438,12 @@ export function FacilityDetailsContent({
           </p>
           <p className="facility-details-dialog__value">
             {intl.formatMessage(messages.perRealSecond, {
-              rate: formatGameNumber(locale, realRate),
+              rate: formatFacilityNumber(locale, realRate),
             })}
           </p>
           <p className="facility-details-hero__game-rate">
             {intl.formatMessage(messages.perGameSecond, {
-              rate: formatGameNumber(locale, fact.production.perSecond),
+              rate: formatFacilityNumber(locale, fact.production.perSecond),
             })}
           </p>
         </div>
@@ -467,16 +467,16 @@ export function FacilityDetailsContent({
               <span className="facility-effect-row__copy">
                 <strong>{intl.formatMessage(messages.countStage)}</strong>
                 <small className="facility-effect-row__breakdown">
-                  <span>{formatGameNumber(locale, fact.ownership.automatic)} {intl.formatMessage(messages.automaticFacilities)}</span>
-                  <span>{formatGameNumber(locale, fact.ownership.manual)} {intl.formatMessage(messages.manuallyPurchased)}</span>
+                  <span>{formatFacilityNumber(locale, fact.ownership.automatic)} {intl.formatMessage(messages.automaticFacilities)}</span>
+                  <span>{formatFacilityNumber(locale, fact.ownership.manual)} {intl.formatMessage(messages.manuallyPurchased)}</span>
                 </small>
               </span>
-              <span className="facility-effect-row__value">×{formatGameNumber(locale, count.value)}</span>
+              <span className="facility-effect-row__value">×{formatFacilityNumber(locale, count.value)}</span>
             </div>
           )}
           {base && count && (
             <p className="facility-details-stage__result">
-              {formatGameNumber(locale, base.value)} × {formatGameNumber(locale, count.value)} = {formatGameNumber(locale, base.value * count.value)}
+              {formatFacilityNumber(locale, base.value)} × {formatFacilityNumber(locale, count.value)} = {formatFacilityNumber(locale, base.value * count.value)}
             </p>
           )}
         </CalculationStage>
@@ -515,7 +515,7 @@ export function FacilityDetailsContent({
             )}
           {productionFormula && (
             <p className="facility-details-stage__result">
-              <bdi>{productionFormula}</bdi> = {formatGameNumber(
+              <bdi>{productionFormula}</bdi> = {formatFacilityNumber(
                 locale,
                 fact.production.perSecond,
               )}
@@ -527,9 +527,9 @@ export function FacilityDetailsContent({
             <img className="facility-effect-row__icon" src={navigationAssets.offlineTime} alt="" />
             <span className="facility-effect-row__copy">
               <strong>{intl.formatMessage(messages.gameSpeed)}</strong>
-              <small>{intl.formatMessage(messages.gameSpeedDescription, { speed: formatGameNumber(locale, gameSpeed) })}</small>
+              <small>{intl.formatMessage(messages.gameSpeedDescription, { speed: formatFacilityNumber(locale, gameSpeed) })}</small>
             </span>
-            <span className="facility-effect-row__value">×{formatGameNumber(locale, gameSpeed)}</span>
+            <span className="facility-effect-row__value">×{formatFacilityNumber(locale, gameSpeed)}</span>
           </div>
         </CalculationStage>
       </section>
@@ -545,17 +545,17 @@ export function FacilityDetailsContent({
               <strong>{intl.formatMessage(upstreamFacilityNameMessages[source.sourceFacilityId] ?? messages.unknownFacility)}</strong>
               <small>{'producedCount' in source
                 ? intl.formatMessage(messages.megaProducedCountBy, {
-                    count: formatGameNumber(locale, source.producedCount),
+                    count: formatFacilityNumber(locale, source.producedCount),
                     facility: intl.formatMessage(upstreamFacilityNameMessages[source.sourceFacilityId] ?? messages.unknownFacility),
                   })
                 : intl.formatMessage(messages.producedBy, {
                     facility: intl.formatMessage(upstreamFacilityNameMessages[source.sourceFacilityId] ?? messages.unknownFacility),
-                    rate: formatGameNumber(locale, source.contributionPerSecond),
+                    rate: formatFacilityNumber(locale, source.contributionPerSecond),
                   })}</small>
             </span>
             {'producedCount' in source && (
               <span className="facility-effect-row__value">
-                +{formatGameNumber(locale, source.producedCount)}
+                +{formatFacilityNumber(locale, source.producedCount)}
               </span>
             )}
           </div>
@@ -568,7 +568,7 @@ export function FacilityDetailsContent({
           <span className="facility-effect-row__copy">
             <strong>{intl.formatMessage(messages.manualPurchases)}</strong>
             <small>{intl.formatMessage(messages.manualAcquisitionDescription, {
-              count: formatGameNumber(locale, fact.ownership.manual),
+              count: formatFacilityNumber(locale, fact.ownership.manual),
               facility: facilityName,
             })}</small>
           </span>
@@ -589,7 +589,7 @@ function formatProductionFormula(
   contributions: readonly FacilityContribution[],
   baseLabel: string,
 ): string {
-  const number = (value: number) => formatGameNumber(locale, value)
+  const number = (value: number) => formatFacilityNumber(locale, value)
   let formula = `${baseLabel} (${number(base.value * count.value)})`
 
   for (const contribution of contributions) {
@@ -672,7 +672,7 @@ function EffectRow({ locale, contribution, icon, name, description }: { readonly
         {description && <small>{description}</small>}
         {contribution.condition && <small>{intl.formatMessage(messages.condition, { condition: contribution.condition })}</small>}
       </span>
-      <span className="facility-effect-row__value">{operationSymbol(contribution.operation)}{formatGameNumber(locale, contribution.value)}</span>
+      <span className="facility-effect-row__value">{operationSymbol(contribution.operation)}{formatFacilityNumber(locale, contribution.value)}</span>
       {showFormula && (
         <details className="facility-effect-row__technical">
           <summary>{intl.formatMessage(messages.sourceTechnicalDetails)}</summary>
@@ -707,7 +707,7 @@ function DynamicSourceFormula({
   readonly result: number
 }) {
   const intl = useIntl()
-  const number = (value: number) => formatGameNumber(locale, value)
+  const number = (value: number) => formatFacilityNumber(locale, value)
   const skillLine = (
     id: string,
     active: boolean,
@@ -924,8 +924,8 @@ function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly
     ...(layer.transferSkillId
       ? [{
           id: layer.transferSkillId,
-          value: `+${formatGameNumber(locale, layer.transferredPlanetCount)}`,
-          description: intl.formatMessage(messages.terraTransferDescription, { count: formatGameNumber(locale, layer.transferredPlanetCount) }),
+          value: `+${formatFacilityNumber(locale, layer.transferredPlanetCount)}`,
+          description: intl.formatMessage(messages.terraTransferDescription, { count: formatFacilityNumber(locale, layer.transferredPlanetCount) }),
         }]
       : []),
   ]
@@ -1054,9 +1054,9 @@ function effectFormula(
   contribution: FacilityContribution,
   input: number,
 ): string {
-  const formattedInput = formatGameNumber(locale, input)
-  const formattedValue = formatGameNumber(locale, contribution.value)
-  const formattedResult = formatGameNumber(locale, contribution.runningTotal)
+  const formattedInput = formatFacilityNumber(locale, input)
+  const formattedValue = formatFacilityNumber(locale, contribution.value)
+  const formattedResult = formatFacilityNumber(locale, contribution.runningTotal)
   switch (contribution.operation) {
     case 'power':
       return `${formattedInput} ^ ${formattedValue} = ${formattedResult}`
@@ -1079,7 +1079,7 @@ function researchFormula(
     source.level === undefined ||
     source.perLevelValue === undefined
   ) return ''
-  return `${formatGameNumber(locale, source.level)} × ${formatGameNumber(locale, source.perLevelValue * 100)}% = +${formatGameNumber(locale, contribution.value * 100)}%`
+  return `${formatFacilityNumber(locale, source.level)} × ${formatFacilityNumber(locale, source.perLevelValue * 100)}% = +${formatFacilityNumber(locale, contribution.value * 100)}%`
 }
 
 interface FacilityIdentityProps {
@@ -1098,8 +1098,8 @@ function FacilityIdentity({
   const intl = useIntl()
   const manualOwned = fact.ownership.manual
   const totalOwned = fact.ownership.total
-  const total = formatGameNumber(locale, totalOwned)
-  const manual = formatGameNumber(locale, manualOwned)
+  const total = formatFacilityNumber(locale, totalOwned)
+  const manual = formatFacilityNumber(locale, manualOwned)
   const identityText = intl.formatMessage(identity, {
     total,
     manual,
@@ -1149,7 +1149,7 @@ function productionText(
   }
   if (productionPerSecond >= 1) {
     return intl.formatMessage(presentation.productionPerSecond, {
-      rate: formatGameNumber(locale, productionPerSecond),
+      rate: formatFacilityNumber(locale, productionPerSecond),
     })
   }
   const seconds = 1 / productionPerSecond
@@ -1159,7 +1159,7 @@ function productionText(
       ? presentation.productionMinutes
       : presentation.productionSeconds,
     {
-      interval: formatGameNumber(
+      interval: formatFacilityNumber(
         locale,
         inMinutes ? seconds / 60 : seconds,
       ),
@@ -1183,8 +1183,8 @@ function productionDisplay(
     return splitProductionDisplay(text)
   }
   const highlightedValue = productionPerSecond >= 1
-    ? formatGameNumber(locale, productionPerSecond)
-    : formatGameNumber(
+    ? formatFacilityNumber(locale, productionPerSecond)
+    : formatFacilityNumber(
         locale,
         1 / productionPerSecond >= 60
           ? 1 / productionPerSecond / 60
@@ -1271,4 +1271,15 @@ function buttonState(
     default:
       return 'idle'
   }
+}
+
+/** Keep slow facility output visible instead of rounding it to zero. */
+function formatFacilityNumber(locale: EnabledLocale, value: number | bigint): string {
+  if (typeof value === 'number' && Math.abs(value) > 0 && Math.abs(value) < 0.01) {
+    return formatNumber(locale, value, {
+      maximumSignificantDigits: 3, useGrouping: false,
+      notation: Math.abs(value) < 1e-6 ? 'scientific' : 'standard',
+    })
+  }
+  return formatGameNumber(locale, value)
 }

@@ -3,6 +3,7 @@ import type { StartupSaveResolver, StartupSaveResolution } from '../save/startup
 import { prepareImportedSaveText } from '../save/import'
 import { serializeCloudWebSave } from '../save/serialization'
 import { UnsupportedFutureSaveSchemaError } from '../save/migrate'
+import { packSettingsFlags } from '../save/settingsFlags'
 import type { PreparedSave } from '../save/prepare'
 
 export interface PortableCloud {
@@ -64,7 +65,16 @@ export class CloudStartupResolver implements StartupSaveResolver {
           return this.local.resolve()
         }
       }
-      const committed = await this.repository.commit(remote.save)
+      let selected = remote.save
+      if (current?.copyValidatedState().debugEverEnabled === true) {
+        // Older Cloud uploads stripped the earned unlock. Do not revoke a
+        // locally proven purchase when selecting one of those checkpoints.
+        const source = selected.copyValidatedState()
+        source.debugEverEnabled = true
+        packSettingsFlags(source)
+        selected = selected.withValidatedState(source)
+      }
+      const committed = await this.repository.commit(selected)
       // Acknowledge the downloaded primary even when a backup supplied the
       // recovered save: this is the remote version the player resolved.
       await this.cloud.acknowledge(text)

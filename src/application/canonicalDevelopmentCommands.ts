@@ -2,9 +2,9 @@ import { DEBUG_OVERFLOW_COST, qualifiesForDebug } from '../simulation/speedrunSt
 import type { DomainTransition } from '../core/contracts'
 import {
   isFiniteNonNegativeNumber,
-  isSafeNonNegativeInteger,
 } from '../core/finiteNonNegativeNumber'
-import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import { SKILL_COSTS } from '../simulation/skillDefinitions'
+import { isGalvanized } from '../simulation/galvanization'
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import {
   deriveCanonicalArtifactSkillPoints,
@@ -115,10 +115,10 @@ export function applyDevelopmentAction(
   switch (action.kind) {
     case 'add-discoveries':
       if (!state.discovery?.unlocked || !isDevelopmentDiscreteAmount(action.amount)) return invalidDevelopmentAction('Discovery completions')
-      return replaceDevelopmentState(candidate, { ...state, discovery: { ...state.discovery, completions: addDiscrete(state.discovery.completions, action.amount) } })
+      return replaceDevelopmentState(candidate, { ...state, discovery: { ...state.discovery, completions: adjustDevelopmentDiscrete(state.discovery.completions, action.amount) } })
     case 'add-transcendence-points':
       if (!isDevelopmentDiscreteAmount(action.amount)) return invalidDevelopmentAction('Transcendence Points')
-      return replaceDevelopmentState(candidate, { ...state, avocado: { ...state.avocado, overflowPoints: addDiscrete(state.avocado.overflowPoints ?? 0n, action.amount) } })
+      return replaceDevelopmentState(candidate, { ...state, avocado: { ...state.avocado, overflowPoints: adjustDevelopmentDiscrete(state.avocado.overflowPoints ?? 0n, action.amount) } })
     case 'unlock-all-tabs':
       return replaceDevelopmentRuntime(candidate, { unlockAllTabs: true })
     case 'lock-tabs':
@@ -321,22 +321,16 @@ export function applyDevelopmentAction(
       )
       let spent = 0n
       for (const [id, skill] of Object.entries(state.skills.byId)) {
-        if (!skill.owned) continue
-        const definition = context.infinityResetAssetLookup(
-          SKILL_DEFINITION_ASSET_KIND,
-          id,
-        )
-        const cost = definition?.data.cost
-        if (
-          !isSafeNonNegativeInteger(cost)
-        ) {
+        if (!skill.owned || isGalvanized(state, id)) continue
+        const cost = SKILL_COSTS.get(id)
+        if (cost === undefined) {
           return {
             accepted: false,
             code: 'CANONICAL-DEVELOPMENT-SKILL-DEFINITION-GAP',
             reason: `Skill '${id}' does not expose a valid cost.`,
           }
         }
-        spent = addDiscrete(spent, BigInt(cost))
+        spent = addDiscrete(spent, cost)
       }
       const points = earned > spent ? earned - spent : 0n
       return replaceDevelopmentState(candidate, {

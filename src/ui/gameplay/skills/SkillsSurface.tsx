@@ -2923,6 +2923,7 @@ function SkillPresetsDialog({
       </SkillDetailsDialog>
       {managedSlot !== null && managedPreset !== undefined ? (
         <PresetManagementDialog
+          discoveryUnlocked={discoveryUnlocked}
           key={managedSlot}
           slot={managedSlot}
           preset={managedPreset}
@@ -3093,6 +3094,7 @@ function SkillPresetPriority({ preset, nodeById, previews, pending, onReorder, p
 }
 
 interface PresetManagementDialogProps {
+  readonly discoveryUnlocked: boolean
   readonly slot: CanonicalSkillPresetSlot
   readonly preset: SkillPresetState
   readonly canSetColor: boolean
@@ -3107,6 +3109,7 @@ interface PresetManagementDialogProps {
 }
 
 function PresetManagementDialog({
+  discoveryUnlocked,
   slot,
   preset,
   canSetColor,
@@ -3408,6 +3411,7 @@ function PresetManagementDialog({
               <strong>{importPreview.name}</strong>
               <PresetSummary
                 count={importPreview.queuedSkillCount}
+                hideAllocation={discoveryUnlocked}
                 workers={importPreview.workerPercent}
               />
               <span
