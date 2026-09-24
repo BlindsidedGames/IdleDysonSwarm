@@ -78,3 +78,23 @@ test('Stellar Sacrifices with no owned facility neither spends Bots nor creates 
   const next = applyCanonicalSkillIntervalEffects(state, state, { seconds: 10, botProductionPerSecond: 0, stellarFacilitiesPerSecond: 5, stellarBotsPerSecond: 10, scienceBoostPerSecond: 0, moneyUpgradePerSecond: 0 })
   expect(next.dyson).toEqual(state.dyson)
 })
+
+test.each([...DYSON_FACILITY_IDS, null])('Stellar Sacrifices details follow the actual production target: %s', target => {
+  const state = createDeterministicMatureDysonFixture({ ownedSkillIds: ['stellarSacrifices', 'scientificPlanets'] })
+  state.discovery = { unlocked: true, completions: 0n, progress: 0, startingPower: 0n, speedUpgrades: 0n }
+  for (const id of DYSON_FACILITY_IDS) state.dyson.facilities[id] = [0, 0]
+  if (target) state.dyson.facilities[target] = [0.5, 0]
+  const result = deriveBasicDysonState(state, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, { ...DETERMINISTIC_DYSON_SNAPSHOT, panelsPerSecond: 1e30 })
+  if (!result.ok) throw new Error(JSON.stringify(result.issues))
+  for (const id of DYSON_FACILITY_IDS) {
+    const rows = result.value.facilityFacts[id].details?.generationContributions ?? []
+    const stellar = rows.filter(row => row.sourceId === 'effect.stellarSacrifices.planets_per_second')
+    expect(stellar).toHaveLength(id === target ? 1 : 0)
+    if (id === target) {
+      expect(stellar[0].value).toBeGreaterThan(0)
+      expect(stellar[0].value).toBe(result.value.auxiliary.stellarSacrifice.facilitiesPerSecond)
+      expect(stellar[0].source).toMatchObject({ kind: 'skill', id: 'stellarSacrifices' })
+    }
+  }
+  expect(result.value.facilityFacts.planets.details?.generationContributions?.some(row => row.sourceId === 'effect.scientificPlanets.planets_per_second')).toBe(true)
+})

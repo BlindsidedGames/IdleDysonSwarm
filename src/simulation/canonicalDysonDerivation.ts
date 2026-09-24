@@ -163,7 +163,7 @@ export interface CanonicalFacilityFacts {
     readonly contributions?: readonly CanonicalFacilityContributionRow[]
     /** Individual effects that compose the formerly collapsed modifier row. */
     readonly modifierContributions?: readonly CanonicalFacilityContributionRow[]
-    /** Independent skill-driven sources that directly create Planets. */
+    /** Independent skill-driven sources that directly create this facility. */
     readonly generationContributions?: readonly CanonicalFacilityContributionRow[]
     /** Purchase-count bonuses, including the Terra chain, shown separately. */
     readonly manualPurchaseLayer?: Readonly<ManualPurchaseProductionLayer>
@@ -247,6 +247,7 @@ export type CanonicalFacilitySourceCalculation =
     }
   | {
       readonly kind: 'stellar-sacrifices'
+      readonly discoveryMultiplier?: number
       readonly panelsPerSecond: number
       readonly panelLifetimeSeconds: number
       readonly stellarObliteration: boolean
@@ -580,17 +581,27 @@ export function deriveBasicDysonState(
     (effect) =>
       effect.id === 'effect.stellarSacrifices.planets_per_second',
   )
-  const planetGenerationPerSecond = calculateStat(
-    0,
-    planetGenerationEffects.filter(
-      (effect) =>
-        effect.id !== 'effect.stellarSacrifices.planets_per_second',
-    ),
+  const passivePlanetGenerationEffects = planetGenerationEffects.filter(
+    (effect) => effect.id !== 'effect.stellarSacrifices.planets_per_second',
   )
-  const stellarSacrificeFacilitiesPerSecond = highestOwnedFacility(state.dyson.facilities) === null ? 0 : calculateStat(
+  const planetGenerationPerSecond = calculateStat(0, passivePlanetGenerationEffects)
+  const stellarSacrificeTarget = highestOwnedFacility(state.dyson.facilities)
+  const stellarSacrificeFacilitiesPerSecond = stellarSacrificeTarget === null ? 0 : calculateStat(
     0,
     [...stellarSacrificeEffects, ...(discovery ? [multiplierEffect('discovery.production', discovery.multiplier, 1000)] : [])].filter(isEffect),
   )
+  const stellarGenerationContributions: readonly CanonicalFacilityContributionRow[] = deriveAttributedEffectRows(
+    0,
+    stellarSacrificeEffects.map((effect) => ({
+      ...effect, value: stellarSacrificeFacilitiesPerSecond,
+    })),
+    'output-adjustments', research.effects, state, evaluationSnapshot,
+  ).map((row) => ({
+    ...row,
+    ...(row.calculation?.kind === 'stellar-sacrifices' && discovery ? {
+      calculation: { ...row.calculation, discoveryMultiplier: discovery.multiplier },
+    } : {}),
+  }))
   const stellarSacrificeBotsPerSecond =
     stellarSacrificeFacilitiesPerSecond > 0
       ? resolveStellarSacrificesRequiredBots(
@@ -733,6 +744,8 @@ export function deriveBasicDysonState(
               state,
               evaluationSnapshot,
             ),
+            generationContributions: facilityId === stellarSacrificeTarget
+              ? stellarGenerationContributions : [],
             upstreamSources: facilityId === 'matrioshka_brains'
               ? Object.freeze([Object.freeze({
                   sourceFacilityId: 'birch_planets' as const,
@@ -842,7 +855,9 @@ export function deriveBasicDysonState(
           facilityModifiers,
           facilityModifierCalculations,
           research.effects,
-          planetGenerationEffects,
+          passivePlanetGenerationEffects,
+          stellarSacrificeTarget,
+          stellarGenerationContributions,
           evaluationSnapshot,
           presentationTuning,
           boost,
@@ -887,6 +902,8 @@ function deriveBasicFacilityFacts(
   >,
   researchEffects: readonly MaterializedDysonResearchEffect[],
   planetGenerationEffects: readonly StatEffect[],
+  stellarSacrificeTarget: CanonicalFacilityId | null,
+  stellarGenerationContributions: readonly CanonicalFacilityContributionRow[],
   evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
   presentationTuning: Readonly<DysonPresentationTuning>,
   botMultiplier: 1 | 2,
@@ -958,8 +975,8 @@ function deriveBasicFacilityFacts(
                 state,
                 evaluationSnapshot,
               ),
-              generationContributions:
-                facilityId === 'planets'
+              generationContributions: [
+                ...(facilityId === 'planets'
                   ? deriveAttributedEffectRows(
                       0,
                       planetGenerationEffects,
@@ -974,7 +991,9 @@ function deriveBasicFacilityFacts(
                       researchEffects,
                       state,
                       evaluationSnapshot,
-                    ),
+                    )),
+                ...(facilityId === stellarSacrificeTarget ? stellarGenerationContributions : []),
+              ],
               manualPurchaseLayer: manualPurchaseLayers[facilityId],
               upstreamSources: deriveBasicFacilityUpstreamSources(
                 state,

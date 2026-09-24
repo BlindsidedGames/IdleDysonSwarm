@@ -14,3 +14,9 @@
 - Inspected the challenge at desktop and 360-pixel width, and both Stellar descriptions in the running game. Live QA found and fixed the Quantum Entanglement description/confirmation using a missing challenge projection.
 - Code review checked challenge/reset boundaries, once-only rewards, persistence validation, generated Research suppression, Stored Time integration and facility settlement. No known unresolved defects.
 - Native iOS, Android and Steam interaction tests were not repeated for this change. No release or store submission was performed.
+
+## Follow-up: facility detail attribution
+
+Matthew found that Stellar Sacrifices still appeared under Planets despite producing Galactic Brains. The detail projection retained the old stat grouping. It now shares the production target selector and exposes the source only under the highest owned facility, including megastructures. The displayed rate includes Discovery; the expandable formula shows that multiplier.
+
+Validation: focused coverage of every facility tier and no owned facility, preserving Scientific Planets attribution. Live browser inspection of the existing Galactic Brains run confirmed the source and formula under Galactic Brains, and its absence from Planets. This follow-up changes presentation only, not production or saves. Native interaction scenarios were not repeated for this display-only fix; all internal packages are rebuilt from the corrected source.

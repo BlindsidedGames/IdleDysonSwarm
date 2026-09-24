@@ -768,6 +768,9 @@ function DynamicSourceFormula({
       if (calculation.supernova) adjusted *= 1_000
       lines.push(skillLine('supernova', calculation.supernova, `×1,000 = ${number(adjusted)}`))
       lines.push(<FormulaLine key="base" label={`log10(${number(adjusted)})²`} value={number(Math.pow(Math.max(0, Math.log10(adjusted)), 2))} />)
+      if (calculation.discoveryMultiplier !== undefined) {
+        lines.push(<FormulaLine key="discovery" label={intl.formatMessage(discoveryMessages.name)} value={`×${number(calculation.discoveryMultiplier)} = ${number(result)}`} />)
+      }
       break
     }
     case 'shoulders-of-the-fallen': {
