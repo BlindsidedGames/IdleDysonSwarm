@@ -409,6 +409,36 @@
       "value": "Dépensez 1 Catalyseur dans les détails d’une compétence révélée pour rendre son effet de base permanent et supprimer ses pénalités et exclusions. La fracture est irréversible et survit au Transcendance."
     }
   ],
+  "challenges.noScience": [
+    {
+      "type": 0,
+      "value": "Sans Science"
+    }
+  ],
+  "challenges.noScience.active": [
+    {
+      "type": 0,
+      "value": "Sans Science actif · Science et Recherche désactivées"
+    }
+  ],
+  "challenges.noScience.description": [
+    {
+      "type": 0,
+      "value": "Terminez une partie quantique sans Science ni Recherche."
+    }
+  ],
+  "challenges.quantumRestart": [
+    {
+      "type": 0,
+      "value": "Commence une nouvelle partie quantique sans accorder de fragments quantiques. Les améliorations quantiques et les couches suivantes sont conservées. Abandonner commence aussi une nouvelle partie normale."
+    }
+  ],
+  "challenges.quantumTitle": [
+    {
+      "type": 0,
+      "value": "Défis quantiques"
+    }
+  ],
   "challenges.replay": [
     {
       "type": 0,
@@ -6952,7 +6982,7 @@
   "research.challengeActive": [
     {
       "type": 0,
-      "value": "Par essais & erreurs actif · Les achats de recherche manuels et automatiques sont désactivés."
+      "value": "Défi actif · Les achats de recherche manuels et automatiques sont désactivés."
     }
   ],
   "research.challengeDisabled": [
@@ -9538,7 +9568,7 @@
   "skills.galvSacrifices": [
     {
       "type": 0,
-      "value": "Crée chaque seconde un nombre de Planètes égal à log10(Galaxies stellaires englouties)², sans consommer ni nécessiter de Bots."
+      "value": "Crée chaque seconde votre installation possédée la plus avancée, mégastructures comprises. Quantité : log10(Galaxies stellaires englouties)². Aucun Bot requis ni consommé."
     }
   ],
   "skills.galvScientific": [
@@ -11336,7 +11366,7 @@
   "skills.node.stellarSacrifices.description": [
     {
       "type": 0,
-      "value": "Vous décidez de commencer à utiliser les matériaux de vos propres Bots pour créer des structures supplémentaires de la taille d’une planète pour votre empire."
+      "value": "Vous utilisez les matériaux de vos propres Bots pour construire davantage d’installations pour votre empire."
     }
   ],
   "skills.node.stellarSacrifices.name": [
@@ -11348,7 +11378,7 @@
   "skills.node.stellarSacrifices.technical": [
     {
       "type": 0,
-      "value": "Chaque seconde, détruisez un nombre de Bots égal aux Étoiles encerclées et gagnez un nombre de Planètes égal à Log10(Galaxies stellaires englouties) ^ 2.\n\nUne galaxie stellaire est simplement une galaxie normale à laquelle des modificateurs stellaires ont été ajoutés."
+      "value": "Chaque seconde, sacrifiez autant de Bots que d’étoiles entourées pour créer votre installation possédée la plus avancée, mégastructures comprises. Quantité : log10(Galaxies stellaires englouties)²."
     }
   ],
   "skills.node.superRadiantScattering.description": [
@@ -15678,6 +15708,12 @@
     {
       "type": 0,
       "value": "Correction du bonus Bots ×2 permanents qui cessait de fonctionner après la réinitialisation de la sauvegarde."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.challenge": [
+    {
+      "type": 0,
+      "value": "Ajout du défi quantique Sans Science, rapportant 2 Catalyseurs. Sacrifices stellaires crée désormais votre installation possédée la plus avancée, mégastructures comprises."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [

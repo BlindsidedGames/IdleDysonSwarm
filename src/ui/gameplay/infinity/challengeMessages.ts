@@ -1,5 +1,10 @@
 import { defineMessages } from 'react-intl'
 export const challengeMessages = defineMessages({
+  quantumTitle: { id: 'challenges.quantumTitle', defaultMessage: 'Quantum Challenges' },
+  noScience: { id: 'challenges.noScience', defaultMessage: 'No Science' },
+  noScienceDescription: { id: 'challenges.noScience.description', defaultMessage: 'Complete a Quantum run without Science or Research.' },
+  noScienceActive: { id: 'challenges.noScience.active', defaultMessage: 'No Science active · Science and Research disabled' },
+  quantumRestart: { id: 'challenges.quantumRestart', defaultMessage: 'This starts a fresh Quantum run without awarding Quantum Shards. Quantum upgrades and later layers are kept. Abandoning also starts a fresh normal run.' },
   trialAndError: { id: 'challenges.trialAndError', defaultMessage: 'Trial & Error' },
   trialDescription: { id: 'challenges.trialAndError.description', defaultMessage: 'Complete a normal Infinity without research.' },
   trialActive: { id: 'challenges.trialAndError.active', defaultMessage: 'Trial & Error active · Research purchases disabled' },

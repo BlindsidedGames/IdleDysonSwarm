@@ -63,7 +63,7 @@ export interface QuantumSurfaceProps {
   readonly infinityPoints?: bigint
   /** Quantum Entanglement converts only unspent IP. */
   readonly availableInfinityPoints: bigint
-  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'discovery' | 'secretProgress'>
+  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'discovery' | 'secretProgress' | 'challenges'>
   readonly previews: FrontendGameplayPreviews['quantum']
   readonly meditationPreview: FrontendGameplayPreviews['avocado']['meditation']
   readonly commandAvailability: QuantumCommandAvailability
@@ -122,7 +122,7 @@ export function QuantumSurface({
           locale={locale}
           availableInfinityPoints={availableInfinityPoints}
           preview={previews.leap}
-          entangled={progression.quantum.unlocks.quantumEntanglement}
+          entangled={progression.quantum.unlocks.quantumEntanglement && progression.challenges?.active !== 'no-science'}
           routeAvailable={commandAvailability.requestLeap}
           dispatchPlayer={dispatchPlayer}
         />

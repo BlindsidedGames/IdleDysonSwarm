@@ -97,7 +97,7 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   for (const [key, value] of Object.entries(EMPTY_INFINITY_CHALLENGES)) {
     if (challenges[key] === undefined) challenges[key] = value
   }
-  if (save.firstInfinityDone === true || challenges.blankSlateCompleted === true || challenges.trialAndErrorCompleted === true ||
+  if (save.firstInfinityDone === true || challenges.blankSlateCompleted === true || challenges.trialAndErrorCompleted === true || challenges.noScienceCompleted === true ||
       (typeof challenges.galvanizers === 'bigint' && challenges.galvanizers > 0n)) challenges.unlocked = true
   if (typeof challenges.galvanizers === 'bigint' && challenges.galvanizers > 0n) challenges.hasEarnedGalvanizer = true
   if (sourceSchema < 17) appliedSteps.push('permanent-galvanized-skills')

@@ -1,3 +1,5 @@
+import { DYSON_FACILITY_IDS } from '../game-state/facilityIds'
+import type { CanonicalGameStateV1, CanonicalFacilityId } from '../game-state/types'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { multiplyContinuous } from './numeric'
 
@@ -92,4 +94,13 @@ export function resolveStellarSacrificePlanetsPerSecond(
     galaxies = multiplyContinuous(galaxies, 1_000)
   }
   return Math.pow(Math.max(0, Math.log10(galaxies)), 2)
+}
+
+/** Generated and manually bought facilities both count as owned. */
+export function highestOwnedFacility(facilities: CanonicalGameStateV1['dyson']['facilities']): CanonicalFacilityId | null {
+  for (let i = DYSON_FACILITY_IDS.length - 1; i >= 0; i--) {
+    const id = DYSON_FACILITY_IDS[i]
+    if (facilities[id][0] > 0 || facilities[id][1] > 0) return id
+  }
+  return null
 }

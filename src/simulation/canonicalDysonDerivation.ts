@@ -1,3 +1,5 @@
+import { isNoScienceActive } from './infinityChallenges'
+import { highestOwnedFacility } from './stellarArithmetic'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import { isGalvanized } from './galvanization'
 import { botBoostMultiplier } from './botBoost'
@@ -119,7 +121,7 @@ export interface DerivedBasicDysonState {
     readonly moneyUpgradePerSecond: number
     readonly tinkerAssemblyYield: number
     readonly stellarSacrifice: {
-      readonly planetsPerSecond: number
+      readonly facilitiesPerSecond: number
       readonly botsPerSecond: number
     }
   }
@@ -514,7 +516,7 @@ export function deriveBasicDysonState(
     state.infinity.secretsOfTheUniverse,
   )
   const research = materializeDysonResearchEffects(
-    discovery ? {} : state.research.levelsById,
+    discovery || isNoScienceActive(state) ? {} : state.research.levelsById,
     tuning,
     secrets.researchCoefficientOverrides,
   )
@@ -547,7 +549,7 @@ export function deriveBasicDysonState(
       95,
     ),
   ].filter(isEffect))
-  const scienceMultiplier = discovery ? 1 : calculateStat(1, [
+  const scienceMultiplier = isNoScienceActive(state) ? 0 : discovery ? 1 : calculateStat(1, [
     ...effectsFor(research.effects, 'Global.ScienceMultiplier'),
     ...effectsAt(effectiveSkillEffectsByStat, 'Global.ScienceMultiplier'),
     multiplierEffect(
@@ -585,12 +587,12 @@ export function deriveBasicDysonState(
         effect.id !== 'effect.stellarSacrifices.planets_per_second',
     ),
   )
-  const stellarSacrificePlanetsPerSecond = calculateStat(
+  const stellarSacrificeFacilitiesPerSecond = highestOwnedFacility(state.dyson.facilities) === null ? 0 : calculateStat(
     0,
     [...stellarSacrificeEffects, ...(discovery ? [multiplierEffect('discovery.production', discovery.multiplier, 1000)] : [])].filter(isEffect),
   )
   const stellarSacrificeBotsPerSecond =
-    stellarSacrificePlanetsPerSecond > 0
+    stellarSacrificeFacilitiesPerSecond > 0
       ? resolveStellarSacrificesRequiredBots(
           ownedSkillSet,
           evaluationSnapshot.panelsPerSecond,
@@ -606,11 +608,11 @@ export function deriveBasicDysonState(
         'effect.scientificPlanets.planets_per_second',
     ),
   )
-  const scienceBoostPerSecond = calculateStat(
+  const scienceBoostPerSecond = isNoScienceActive(state) ? 0 : calculateStat(
     0,
     effectsAt(effectiveSkillEffectsByStat, 'Global.ScienceBoostPerSecond'),
   )
-  const moneyUpgradePerSecond = calculateStat(
+  const moneyUpgradePerSecond = isNoScienceActive(state) ? 0 : calculateStat(
     0,
     effectsAt(
       effectiveSkillEffectsByStat,
@@ -785,9 +787,9 @@ export function deriveBasicDysonState(
     },
   })
   const boost = botBoostMultiplier(state, entitlements)
-  const model = boost === 1 ? unboostedModel : {
+  const model = boost === 1 && !isNoScienceActive(state) ? unboostedModel : {
     ...unboostedModel,
-    rates: { ...unboostedModel.rates, bots: multiplyContinuous(unboostedModel.rates.bots, boost) },
+    rates: { ...unboostedModel.rates, science: isNoScienceActive(state) ? 0 : unboostedModel.rates.science, bots: multiplyContinuous(unboostedModel.rates.bots, boost) },
   }
   const nextEvaluationSnapshot =
     publishDysonSkillEffectEvaluationSnapshot(state, {
@@ -818,7 +820,7 @@ export function deriveBasicDysonState(
         moneyUpgradePerSecond,
         tinkerAssemblyYield,
         stellarSacrifice: Object.freeze({
-          planetsPerSecond: stellarSacrificePlanetsPerSecond,
+          facilitiesPerSecond: stellarSacrificeFacilitiesPerSecond,
           botsPerSecond: stellarSacrificeBotsPerSecond,
         }),
       }),

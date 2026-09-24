@@ -1289,6 +1289,7 @@ describe('legacy canonical event-time parity adapter', () => {
       dyson: {
         ...source.dyson,
         bots: OVERFLOW_BOT_CAP,
+        facilities: { ...source.dyson.facilities, planets: [0, 1] as const },
       },
       infinity: {
         ...source.infinity,

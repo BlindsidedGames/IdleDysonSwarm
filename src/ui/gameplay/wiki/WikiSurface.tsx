@@ -466,6 +466,7 @@ function PatchNotesArticle() {
             <li>{intl.formatMessage(messages.patchNotesVersion4110Speedruns)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110BotBoost)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110SaveFix)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Challenge)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Balance)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Secret)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Fixes)}</li>

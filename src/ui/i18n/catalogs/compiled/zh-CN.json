@@ -409,6 +409,36 @@
       "value": "在已显示技能的详情中消耗1个催化剂，使基础效果永久生效并移除负面效果和互斥限制。断裂无法撤销，且在超越后保留。"
     }
   ],
+  "challenges.noScience": [
+    {
+      "type": 0,
+      "value": "无科学"
+    }
+  ],
+  "challenges.noScience.active": [
+    {
+      "type": 0,
+      "value": "无科学挑战中 · 科学和研究已禁用"
+    }
+  ],
+  "challenges.noScience.description": [
+    {
+      "type": 0,
+      "value": "不使用科学或研究完成一次量子轮次。"
+    }
+  ],
+  "challenges.quantumRestart": [
+    {
+      "type": 0,
+      "value": "开始新的量子轮次，不获得量子碎片。保留量子升级和后续层级。放弃挑战也会开始新的普通轮次。"
+    }
+  ],
+  "challenges.quantumTitle": [
+    {
+      "type": 0,
+      "value": "量子挑战"
+    }
+  ],
   "challenges.replay": [
     {
       "type": 0,
@@ -6952,7 +6982,7 @@
   "research.challengeActive": [
     {
       "type": 0,
-      "value": "试错挑战进行中 · 手动和自动研究购买均已禁用。"
+      "value": "挑战中 · 手动和自动研究购买已禁用。"
     }
   ],
   "research.challengeDisabled": [
@@ -9538,7 +9568,7 @@
   "skills.galvSacrifices": [
     {
       "type": 0,
-      "value": "每秒产生的行星数量等于log10（已吞噬的恒星星系）²，不消耗也不需要机器人。"
+      "value": "每秒生成你已拥有的最高级设施，包括巨型结构。数量：log10（吞噬的恒星星系）²。不需要或消耗机器人。"
     }
   ],
   "skills.galvScientific": [
@@ -11336,7 +11366,7 @@
   "skills.node.stellarSacrifices.description": [
     {
       "type": 0,
-      "value": "你决定利用自家机器人身上的材料，为帝国建造更多行星级结构。"
+      "value": "你决定利用自己机器人的材料，为帝国建造更多设施。"
     }
   ],
   "skills.node.stellarSacrifices.name": [
@@ -11348,7 +11378,7 @@
   "skills.node.stellarSacrifices.technical": [
     {
       "type": 0,
-      "value": "每秒摧毁等于已包围恒星数量的机器人，并获得等于 Log10（已吞没星辰星系）^2 的行星。\n\n星辰星系就是添加了星辰修正的普通星系。"
+      "value": "每秒牺牲与包围恒星数相等的机器人，生成你已拥有的最高级设施，包括巨型结构。数量：log10（吞噬的恒星星系）²。"
     }
   ],
   "skills.node.superRadiantScattering.description": [
@@ -15678,6 +15708,12 @@
     {
       "type": 0,
       "value": "修复了重置存档后永久双倍机器人加成失效的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.challenge": [
+    {
+      "type": 0,
+      "value": "新增奖励2个催化剂的无科学量子挑战。恒星牺牲现在会生成你已拥有的最高级设施，包括巨型结构。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [

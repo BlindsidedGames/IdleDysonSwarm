@@ -409,6 +409,36 @@
       "value": "Gib in den Details eines aufgedeckten Skills 1 Katalysator aus, um seinen Basiseffekt dauerhaft zu aktivieren und Nachteile sowie Ausschlüsse zu entfernen. Frakturierung ist unumkehrbar und bleibt nach einem Transzendenz erhalten."
     }
   ],
+  "challenges.noScience": [
+    {
+      "type": 0,
+      "value": "Ohne Wissenschaft"
+    }
+  ],
+  "challenges.noScience.active": [
+    {
+      "type": 0,
+      "value": "Ohne Wissenschaft aktiv · Wissenschaft und Forschung deaktiviert"
+    }
+  ],
+  "challenges.noScience.description": [
+    {
+      "type": 0,
+      "value": "Schließe einen Quantenlauf ohne Wissenschaft oder Forschung ab."
+    }
+  ],
+  "challenges.quantumRestart": [
+    {
+      "type": 0,
+      "value": "Beginnt einen neuen Quantenlauf ohne Quantensplitter. Quanten-Upgrades und spätere Ebenen bleiben erhalten. Auch beim Abbrechen beginnt ein neuer normaler Lauf."
+    }
+  ],
+  "challenges.quantumTitle": [
+    {
+      "type": 0,
+      "value": "Quantenherausforderungen"
+    }
+  ],
   "challenges.replay": [
     {
       "type": 0,
@@ -6952,7 +6982,7 @@
   "research.challengeActive": [
     {
       "type": 0,
-      "value": "Versuch & Irrtum aktiv · Manuelle und automatische Forschungskäufe sind deaktiviert."
+      "value": "Herausforderung aktiv · Manuelle und automatische Forschungskäufe sind deaktiviert."
     }
   ],
   "research.challengeDisabled": [
@@ -9538,7 +9568,7 @@
   "skills.galvSacrifices": [
     {
       "type": 0,
-      "value": "Erzeugt pro Sekunde Planeten in Höhe von log10(Verschlungene stellare Galaxien)², ohne Bots zu verbrauchen oder vorauszusetzen."
+      "value": "Erzeuge jede Sekunde deine höchste vorhandene Anlage, einschließlich Megastrukturen. Menge: log10(verschlungene stellare Galaxien)². Keine Bots erforderlich oder verbraucht."
     }
   ],
   "skills.galvScientific": [
@@ -11336,7 +11366,7 @@
   "skills.node.stellarSacrifices.description": [
     {
       "type": 0,
-      "value": "Du beschließt, die Materialien deiner eigenen Bots zu nutzen, um zusätzliche planetengroße Strukturen für dein Imperium zu erschaffen."
+      "value": "Du nutzt die Materialien deiner eigenen Bots, um weitere Anlagen für dein Imperium zu bauen."
     }
   ],
   "skills.node.stellarSacrifices.name": [
@@ -11348,7 +11378,7 @@
   "skills.node.stellarSacrifices.technical": [
     {
       "type": 0,
-      "value": "Vernichtet jede Sekunde Bots in Höhe der umschlossenen Sterne und erhält Planeten in Höhe von Log10(verschlungene stellare Galaxien) ^ 2.\n\nEine stellare Galaxie ist lediglich eine normale Galaxie mit stellaren Modifikatoren."
+      "value": "Opfere jede Sekunde Bots in Höhe der umschlossenen Sterne, um deine höchste vorhandene Anlage zu erzeugen, einschließlich Megastrukturen. Menge: log10(verschlungene stellare Galaxien)²."
     }
   ],
   "skills.node.superRadiantScattering.description": [
@@ -15678,6 +15708,12 @@
     {
       "type": 0,
       "value": "Behoben: Dauerhaft 2× Bots verlor nach dem Zurücksetzen des Spielstands seine Wirkung."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.challenge": [
+    {
+      "type": 0,
+      "value": "Die Quantenherausforderung Ohne Wissenschaft gewährt 2 Katalysatoren. Stellare Opfer erzeugt jetzt deine höchste vorhandene Anlage, einschließlich Megastrukturen."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [

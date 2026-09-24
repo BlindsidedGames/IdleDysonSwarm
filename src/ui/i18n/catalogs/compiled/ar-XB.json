@@ -865,6 +865,76 @@
       "value": "‬"
     }
   ],
+  "challenges.noScience": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "No Sɔıǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.noScience.active": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "No Sɔıǝuɔǝ ɐɔʇıʌǝ · Sɔıǝuɔǝ ɐup ᴚǝsǝɐɹɔɥ pısɐqʅǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.noScience.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ Sɔıǝuɔǝ oɹ ᴚǝsǝɐɹɔɥ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.quantumRestart": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs sʇɐɹʇs ɐ ɟɹǝsɥ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ ɐʍɐɹpıuƃ Ònɐuʇnɯ Sɥɐɹps. Ònɐuʇnɯ ndƃɹɐpǝs ɐup ʅɐʇǝɹ ʅɐʎǝɹs ɐɹǝ ʞǝdʇ. ∀qɐupouıuƃ ɐʅso sʇɐɹʇs ɐ ɟɹǝsɥ uoɹɯɐʅ ɹnu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.quantumTitle": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ònɐuʇnɯ Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "challenges.replay": [
     {
       "type": 0,
@@ -13556,7 +13626,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɹıɐʅ & Ǝɹɹoɹ ɐɔʇıʌǝ · Wɐunɐʅ ɐup ɐnʇoɯɐʇıɔ ɹǝsǝɐɹɔɥ dnɹɔɥɐsǝs ɐɹǝ pısɐqʅǝp."
+      "value": "Ↄɥɐʅʅǝuƃǝ ɐɔʇıʌǝ · Wɐunɐʅ ɐup ɐnʇoɯɐʇıɔ ɹǝsǝɐɹɔɥ dnɹɔɥɐsǝs ɐɹǝ pısɐqʅǝp."
     },
     {
       "type": 0,
@@ -18950,7 +19020,7 @@
     },
     {
       "type": 0,
-      "value": "Ↄɹǝɐʇǝ Ԁʅɐuǝʇs ǝɐɔɥ sǝɔoup ǝbnɐʅ ʇo ʅoƃ10(Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs Ǝuƃnʅɟǝp)², ʍıʇɥonʇ ɔousnɯıuƃ oɹ ɹǝbnıɹıuƃ Ԑoʇs."
+      "value": "Ↄɹǝɐʇǝ ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ ǝɐɔɥ sǝɔoup, ıuɔʅnpıuƃ ɯǝƃɐsʇɹnɔʇnɹǝs. ∀ɯonuʇ: ʅoƃ10(Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs Ǝuƃnʅɟǝp)². No Ԑoʇs ɹǝbnıɹǝp oɹ ɔousnɯǝp."
     },
     {
       "type": 0,
@@ -22948,7 +23018,7 @@
     },
     {
       "type": 0,
-      "value": "⅄on pǝɔıpǝ ʇo sʇɐɹʇ nʇıʅızıuƃ ʇɥǝ ɯɐʇǝɹıɐʅs ıu ʎonɹ oʍu qoʇs ʇo ɔɹǝɐʇǝ ɐppıʇıouɐʅ dʅɐuǝʇ sızǝp sʇɹnɔʇnɹǝs ɟoɹ ʎonɹ ǝɯdıɹǝ."
+      "value": "⅄on pǝɔıpǝ ʇo nsǝ ʇɥǝ ɯɐʇǝɹıɐʅs ıu ʎonɹ oʍu Ԑoʇs ʇo qnıʅp ɯoɹǝ ɟɐɔıʅıʇıǝs ɟoɹ ʎonɹ ǝɯdıɹǝ."
     },
     {
       "type": 0,
@@ -22976,7 +23046,7 @@
     },
     {
       "type": 0,
-      "value": "Ǝʌǝɹʎ sǝɔoup pǝsʇɹoʎ Ԑoʇs ǝbnɐʅ ʇo Sʇɐɹs Snɹɹonupǝp ɐup ƃɐıu Ԁʅɐuǝʇs ǝbnɐʅ ʇo ⅂oƃ10(Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs Ǝuƃnʅɟǝp) ^ 2.\n\n∀ sʇǝʅʅɐɹ ƃɐʅɐxʎ ıs ɾnsʇ ɐ uoɹɯɐʅ ƃɐʅɐxʎ ʍıʇɥ sʇǝʅʅɐɹ ɯopıɟıǝɹs ɐppǝp."
+      "value": "Ǝɐɔɥ sǝɔoup, sɐɔɹıɟıɔǝ Ԑoʇs ǝbnɐʅ ʇo Sʇɐɹs Snɹɹonupǝp ʇo ɔɹǝɐʇǝ ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ, ıuɔʅnpıuƃ ɯǝƃɐsʇɹnɔʇnɹǝs. ∀ɯonuʇ: ʅoƃ10(Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs Ǝuƃnʅɟǝp)²."
     },
     {
       "type": 0,
@@ -31514,6 +31584,20 @@
     {
       "type": 0,
       "value": "Ⅎıxǝp Ԁǝɹɯɐuǝuʇ 2× Ԑoʇs ʅosıuƃ ıʇs ǝɟɟǝɔʇ ɐɟʇǝɹ ɹǝsǝʇʇıuƃ ʎonɹ sɐʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.challenge": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɐ No Sɔıǝuɔǝ Ònɐuʇnɯ ɔɥɐʅʅǝuƃǝ ɐʍɐɹpıuƃ 2 Ↄɐʇɐʅʎsʇs. Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs uoʍ ɔɹǝɐʇǝs ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ, ıuɔʅnpıuƃ ɯǝƃɐsʇɹnɔʇnɹǝs."
     },
     {
       "type": 0,

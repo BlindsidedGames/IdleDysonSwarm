@@ -1490,7 +1490,7 @@ export function ReadyDysonSlice({
                     }
                   >
                     <ResearchSurface
-                      researchDisabled={gameplay.progression.challenges?.active === 'trial-and-error'}
+                      researchDisabled={gameplay.progression.challenges?.active === 'trial-and-error' || gameplay.progression.challenges?.active === 'no-science'}
                       locale={locale}
                       cards={gameplay.previews.research.cards}
                       researchers={resources.researchers}
@@ -1863,6 +1863,7 @@ export function ReadyDysonSlice({
                                 }
                                 progression={{
                                   quantum: gameplay.progression.quantum,
+                                  challenges: gameplay.progression.challenges,
                                   discovery: gameplay.progression.discovery,
                                   avocado: gameplay.progression.avocado,
                                   secretProgress:

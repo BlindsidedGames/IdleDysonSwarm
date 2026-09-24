@@ -91,7 +91,7 @@ describe('Discovery retention across progression resets', () => {
     expect(automated.purchases).toEqual([])
     expect(automated.state.research).toEqual(state.research)
     const generated = applyCanonicalSkillIntervalEffects(state, state, {
-      seconds: 60, botProductionPerSecond: 0, stellarPlanetsPerSecond: 0,
+      seconds: 60, botProductionPerSecond: 0, stellarFacilitiesPerSecond: 0,
       stellarBotsPerSecond: 0, scienceBoostPerSecond: 100, moneyUpgradePerSecond: 100,
     })
     expect(generated.research).toEqual(state.research)

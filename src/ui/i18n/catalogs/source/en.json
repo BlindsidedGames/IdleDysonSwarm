@@ -217,6 +217,21 @@
   "challenges.galvanizers.future": {
     "defaultMessage": "Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence."
   },
+  "challenges.noScience": {
+    "defaultMessage": "No Science"
+  },
+  "challenges.noScience.active": {
+    "defaultMessage": "No Science active · Science and Research disabled"
+  },
+  "challenges.noScience.description": {
+    "defaultMessage": "Complete a Quantum run without Science or Research."
+  },
+  "challenges.quantumRestart": {
+    "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Quantum upgrades and later layers are kept. Abandoning also starts a fresh normal run."
+  },
+  "challenges.quantumTitle": {
+    "defaultMessage": "Quantum Challenges"
+  },
   "challenges.replay": {
     "defaultMessage": "Replay"
   },
@@ -3187,7 +3202,7 @@
     "description": "Research effect line before its first purchase."
   },
   "research.challengeActive": {
-    "defaultMessage": "Trial & Error active · Manual and automatic research purchases are disabled."
+    "defaultMessage": "Challenge active · Manual and automatic research purchases are disabled."
   },
   "research.challengeDisabled": {
     "defaultMessage": "Disabled"
@@ -4588,7 +4603,7 @@
     "description": "Effective skill benefit after fracturing."
   },
   "skills.galvSacrifices": {
-    "defaultMessage": "Create Planets each second equal to log10(Stellar Galaxies Engulfed)², without consuming or requiring Bots.",
+    "defaultMessage": "Create your highest owned facility each second, including megastructures. Amount: log10(Stellar Galaxies Engulfed)². No Bots required or consumed.",
     "description": "Effective skill benefit after fracturing."
   },
   "skills.galvScientific": {
@@ -5688,7 +5703,7 @@
     "description": "Technical gameplay-effect description for the Stellar Obliteration Skill node."
   },
   "skills.node.stellarSacrifices.description": {
-    "defaultMessage": "You decide to start utilizing the materials in your own bots to create additional planet sized structures for your empire.",
+    "defaultMessage": "You decide to use the materials in your own Bots to build more facilities for your empire.",
     "description": "Flavour description for the Stellar Sacrifices Skill node."
   },
   "skills.node.stellarSacrifices.name": {
@@ -5696,7 +5711,7 @@
     "description": "Display name for the Stellar Sacrifices Skill node."
   },
   "skills.node.stellarSacrifices.technical": {
-    "defaultMessage": "Every second destroy Bots equal to Stars Surrounded and gain Planets equal to Log10(Stellar Galaxies Engulfed) ^ 2.\n\nA stellar galaxy is just a normal galaxy with stellar modifiers added.",
+    "defaultMessage": "Each second, sacrifice Bots equal to Stars Surrounded to create your highest owned facility, including megastructures. Amount: log10(Stellar Galaxies Engulfed)².",
     "description": "Technical gameplay-effect description for the Stellar Sacrifices Skill node."
   },
   "skills.node.superRadiantScattering.description": {
@@ -7759,6 +7774,10 @@
   "wiki.patch-notes.version-4-1-10.bot-boost": {
     "defaultMessage": "Fixed Permanent 2× Bots losing its effect after resetting your save.",
     "description": "Version 4.1.10 release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.challenge": {
+    "defaultMessage": "Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures.",
+    "description": "Version 4.1.10 challenge and Stellar Sacrifices changes."
   },
   "wiki.patch-notes.version-4-1-10.discovery": {
     "defaultMessage": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked.",

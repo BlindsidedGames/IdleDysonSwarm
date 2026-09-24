@@ -12,6 +12,7 @@ export type CanonicalPlayerCommand =
   | CanonicalGameCommand
   | { readonly kind: 'challenge.enter-blank-slate' }
   | { readonly kind: 'challenge.enter-trial-and-error' }
+  | { readonly kind: 'challenge.enter-no-science' }
   | { readonly kind: 'challenge.abandon' }
   | { readonly kind: 'avocado.request-overflow-reset' }
   | { readonly kind: 'tinker.start'; readonly repeat: boolean }
@@ -24,6 +25,7 @@ export const CANONICAL_PLAYER_COMMAND_SUPPORT = Object.freeze({
   ...CANONICAL_GAME_COMMAND_SUPPORT,
   'challenge.enter-trial-and-error': { supported: true, authority: 'restartInfinityChallenge' },
   'challenge.enter-blank-slate': { supported: true, authority: 'restartInfinityChallenge' },
+  'challenge.enter-no-science': { supported: true, authority: 'restartInfinityChallenge' },
   'challenge.abandon': { supported: true, authority: 'restartInfinityChallenge' },
   'avocado.request-overflow-reset': Object.freeze({
     supported: true,
@@ -52,6 +54,7 @@ export const CANONICAL_PLAYER_COMMAND_KINDS = Object.freeze([
   ...CANONICAL_GAME_COMMAND_KINDS,
   'challenge.enter-blank-slate',
   'challenge.enter-trial-and-error',
+  'challenge.enter-no-science',
   'challenge.abandon',
   'avocado.request-overflow-reset',
   'tinker.start',

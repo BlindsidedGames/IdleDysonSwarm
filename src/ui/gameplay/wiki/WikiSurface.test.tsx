@@ -36,6 +36,7 @@ describe('Wiki patch-note content', () => {
       'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.',
       'Fixed Permanent 2× Bots losing its effect after resetting your save.',
       'Fixed old research and cleared skill presets returning after saving or reloading.',
+      'Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures.',
       'Rebalanced facility price growth and megastructure costs and production.',
       'The sixth Avotation secret now completes automatically once reached with Discovery unlocked.',
       'Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.',

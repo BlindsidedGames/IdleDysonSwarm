@@ -409,6 +409,36 @@
       "value": "Gaste 1 Catalisador nos detalhes de uma habilidade revelada para tornar seu efeito base permanente e remover suas penalidades e exclusões. A fratura não pode ser desfeita e permanece após o Transbordamento."
     }
   ],
+  "challenges.noScience": [
+    {
+      "type": 0,
+      "value": "Sem Ciência"
+    }
+  ],
+  "challenges.noScience.active": [
+    {
+      "type": 0,
+      "value": "Sem Ciência ativo · Ciência e Pesquisa desativadas"
+    }
+  ],
+  "challenges.noScience.description": [
+    {
+      "type": 0,
+      "value": "Conclua uma partida quântica sem Ciência nem Pesquisa."
+    }
+  ],
+  "challenges.quantumRestart": [
+    {
+      "type": 0,
+      "value": "Inicia uma nova partida quântica sem conceder fragmentos quânticos. Melhorias quânticas e camadas posteriores são mantidas. Abandonar também inicia uma nova partida normal."
+    }
+  ],
+  "challenges.quantumTitle": [
+    {
+      "type": 0,
+      "value": "Desafios quânticos"
+    }
+  ],
   "challenges.replay": [
     {
       "type": 0,
@@ -6952,7 +6982,7 @@
   "research.challengeActive": [
     {
       "type": 0,
-      "value": "Tentativa & erro ativo · Compras manuais e automáticas de pesquisa estão desativadas."
+      "value": "Desafio ativo · Compras de pesquisa manuais e automáticas estão desativadas."
     }
   ],
   "research.challengeDisabled": [
@@ -9538,7 +9568,7 @@
   "skills.galvSacrifices": [
     {
       "type": 0,
-      "value": "Cria a cada segundo uma quantidade de Planetas igual a log10(Galáxias Estelares Engolidas)², sem consumir nem exigir Bots."
+      "value": "Cria a cada segundo sua instalação possuída de maior nível, incluindo megaestruturas. Quantidade: log10(Galáxias estelares engolfadas)². Não exige nem consome Bots."
     }
   ],
   "skills.galvScientific": [
@@ -11336,7 +11366,7 @@
   "skills.node.stellarSacrifices.description": [
     {
       "type": 0,
-      "value": "Você decide aproveitar os materiais dos próprios Robôs para criar estruturas adicionais do tamanho de Planetas para seu império."
+      "value": "Você decide usar os materiais dos próprios Bots para construir mais instalações para seu império."
     }
   ],
   "skills.node.stellarSacrifices.name": [
@@ -11348,7 +11378,7 @@
   "skills.node.stellarSacrifices.technical": [
     {
       "type": 0,
-      "value": "A cada segundo, destrói uma quantidade de Robôs igual às Estrelas cercadas e concede Planetas em quantidade igual a Log10(Galáxias Estelares envolvidas) ^ 2.\n\nUma Galáxia Estelar é uma Galáxia normal com modificadores estelares."
+      "value": "A cada segundo, sacrifique Bots em quantidade igual às Estrelas cercadas para criar sua instalação possuída de maior nível, incluindo megaestruturas. Quantidade: log10(Galáxias estelares engolfadas)²."
     }
   ],
   "skills.node.superRadiantScattering.description": [
@@ -15678,6 +15708,12 @@
     {
       "type": 0,
       "value": "Corrigido um erro que fazia Bots 2× permanentes parar de funcionar após reiniciar o progresso salvo."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.challenge": [
+    {
+      "type": 0,
+      "value": "Adicionado o desafio quântico Sem Ciência, que concede 2 Catalisadores. Sacrifícios Estelares agora cria sua instalação possuída de maior nível, incluindo megaestruturas."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [

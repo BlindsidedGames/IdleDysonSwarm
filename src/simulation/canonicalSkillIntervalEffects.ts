@@ -1,5 +1,6 @@
+import { isBreakInfinityEnabled, isNoScienceActive } from './infinityChallenges'
+import { highestOwnedFacility } from './stellarArithmetic'
 import { advanceSrsAugments } from './srsAugments'
-import { isBreakInfinityEnabled } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import {
@@ -15,7 +16,7 @@ import { settleContinuousDebit } from './conservativeSettlement'
 export interface CanonicalSkillIntervalInputs {
   readonly seconds: number
   readonly botProductionPerSecond: number
-  readonly stellarPlanetsPerSecond: number
+  readonly stellarFacilitiesPerSecond: number
   readonly stellarBotsPerSecond: number
   readonly scienceBoostPerSecond: number
   readonly moneyUpgradePerSecond: number
@@ -36,7 +37,7 @@ export function applyCanonicalSkillIntervalEffects(
   validateInputs(inputs)
   if (inputs.seconds === 0) return stateAfterArrivals
 
-  const research = stateAfterArrivals.discovery?.unlocked ? stateAfterArrivals.research : accrueShouldersResearch(
+  const research = (stateAfterArrivals.discovery?.unlocked || isNoScienceActive(stateAfterArrivals)) ? stateAfterArrivals.research : accrueShouldersResearch(
     stateAfterArrivals.research,
     inputs.scienceBoostPerSecond,
     inputs.moneyUpgradePerSecond,
@@ -54,11 +55,12 @@ export function applyCanonicalSkillIntervalEffects(
     }))),
     inputs.seconds,
   )
+  const target = highestOwnedFacility(startingState.dyson.facilities)
   const stellar = resolveStellarAggregate(
     startingState.dyson.bots,
     inputs.botProductionPerSecond,
     inputs.stellarBotsPerSecond,
-    inputs.stellarPlanetsPerSecond,
+    target === null ? 0 : inputs.stellarFacilitiesPerSecond,
     inputs.seconds,
   )
 
@@ -73,16 +75,16 @@ export function applyCanonicalSkillIntervalEffects(
         isBreakInfinityEnabled(stateAfterArrivals),
         stateAfterArrivals.quantum.divisionsPurchased,
       ),
-      facilities: stellar.planetsProduced === 0
+      facilities: target === null || stellar.facilitiesProduced === 0
         ? stateAfterArrivals.dyson.facilities
         : {
             ...stateAfterArrivals.dyson.facilities,
-            planets: [
+            [target]: [
               addContinuous(
-                stateAfterArrivals.dyson.facilities.planets[0],
-                stellar.planetsProduced,
+                stateAfterArrivals.dyson.facilities[target][0],
+                stellar.facilitiesProduced,
               ),
-              stateAfterArrivals.dyson.facilities.planets[1],
+              stateAfterArrivals.dyson.facilities[target][1],
             ],
           },
     },
@@ -102,7 +104,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
   startingBots: number,
   botProductionPerSecond: number,
   stellarBotsPerSecond: number,
-  stellarPlanetsPerSecond: number,
+  stellarFacilitiesPerSecond: number,
   infinity: Readonly<BasicDysonInfinityState>,
   maximumSeconds: number,
   minimumCycleSeconds: number,
@@ -119,7 +121,7 @@ export function timeToNextInfinityEventAfterStellarSettlement(
   if (
     startingBots <= 0 ||
     stellarBotsPerSecond <= 0 ||
-    stellarPlanetsPerSecond <= 0
+    stellarFacilitiesPerSecond <= 0
   ) {
     return ordinaryHorizon
   }
@@ -253,16 +255,16 @@ function resolveStellarAggregate(
   startingBots: number,
   botProductionPerSecond: number,
   botsPerSecond: number,
-  planetsPerSecond: number,
+  facilitiesPerSecond: number,
   seconds: number,
-): { readonly bots: number; readonly planetsProduced: number } {
+): { readonly bots: number; readonly facilitiesProduced: number } {
   const ordinaryEndingBots = addContinuous(
     startingBots,
     multiplyContinuous(botProductionPerSecond, seconds),
   )
-  if (planetsPerSecond <= 0) return { bots: ordinaryEndingBots, planetsProduced: 0 }
+  if (facilitiesPerSecond <= 0) return { bots: ordinaryEndingBots, facilitiesProduced: 0 }
   if (botsPerSecond <= 0) {
-    return { bots: ordinaryEndingBots, planetsProduced: multiplyContinuous(planetsPerSecond, seconds) }
+    return { bots: ordinaryEndingBots, facilitiesProduced: multiplyContinuous(facilitiesPerSecond, seconds) }
   }
 
   const affordableSeconds = Math.min(
@@ -280,8 +282,8 @@ function resolveStellarAggregate(
       debit.balance,
       multiplyContinuous(botProductionPerSecond, seconds),
     ),
-    planetsProduced: multiplyContinuous(
-      planetsPerSecond,
+    facilitiesProduced: multiplyContinuous(
+      facilitiesPerSecond,
       fundedSeconds,
     ),
   }

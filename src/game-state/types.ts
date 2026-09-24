@@ -533,8 +533,9 @@ export interface SimulationStatisticsState {
 export interface InfinityChallengeState {
   readonly galvanizedSkillIds?: readonly string[]
   readonly unlocked: boolean
-  readonly active: 'blank-slate' | 'trial-and-error' | null
-  readonly completionSeconds?: Readonly<Partial<Record<'blank-slate' | 'trial-and-error', number>>>
+  readonly active: 'blank-slate' | 'trial-and-error' | 'no-science' | null
+  readonly completionSeconds?: Readonly<Partial<Record<'blank-slate' | 'trial-and-error' | 'no-science', number>>>
+  readonly noScienceCompleted?: boolean
   readonly trialAndErrorCompleted?: boolean
   readonly blankSlateCompleted: boolean
   readonly galvanizers: bigint

@@ -50,7 +50,7 @@ export const skillMessages = defineMessages({
   galvStellarObliteration: { id: "skills.galvStellarObliteration", defaultMessage: "Stellar Sacrifices Galaxies are 1000× better.", description: "Effective skill benefit after fracturing." },
   galvSupernova: { id: "skills.galvSupernova", defaultMessage: "Stellar Sacrifices Galaxies are 1000× better. All manual-purchase production bonuses remain active.", description: "Effective skill benefit after fracturing." },
   galvWorthy: { id: "skills.galvWorthy", defaultMessage: "Assembly Lines are 5× as effective.", description: "Effective skill benefit after fracturing." },
-  galvSacrifices: { id: "skills.galvSacrifices", defaultMessage: "Create Planets each second equal to log10(Stellar Galaxies Engulfed)², without consuming or requiring Bots.", description: "Effective skill benefit after fracturing." },
+  galvSacrifices: { id: "skills.galvSacrifices", defaultMessage: "Create your highest owned facility each second, including megastructures. Amount: log10(Stellar Galaxies Engulfed)². No Bots required or consumed.", description: "Effective skill benefit after fracturing." },
   galvEnlightened: { id: "skills.galvEnlightened", defaultMessage: "Scientific Planets also produce Cash Boosts.", description: "Effective skill benefit after fracturing." },
   subskillInclude: { id: "skills.subskill-include", defaultMessage: "Include {name} in {preset}", description: "Accessible subskill preset checkbox label." },
   galvanized: { id: "skills.galvanized", defaultMessage: "Fractured", description: "Fractured skill details interface." },
