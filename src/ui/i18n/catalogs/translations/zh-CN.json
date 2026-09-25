@@ -1447,7 +1447,7 @@
   "skills.node.stellarImprovements.description": "你使用 AI 改进施工流程。新的分子结构让施工耗材更少。",
   "skills.node.stellarImprovements.name": "星辰改良",
   "skills.node.stellarImprovements.technical": "星辰献祭所需机器人数量除以 1000。",
-  "skills.node.stellarObliteration.description": "抹除更多机器人能大幅提高人造行星生成速度，但代价不菲。",
+  "skills.node.stellarObliteration.description": "抹除更多机器人能大幅提高设施生成速度，但代价不菲。",
   "skills.node.stellarObliteration.name": "星辰抹除",
   "skills.node.stellarObliteration.technical": "星辰献祭星系的效果变为 1000 倍，但现金与科学会除以星辰星系数量。",
   "skills.node.stellarSacrifices.description": "你决定利用自己机器人的材料，为帝国建造更多设施。",

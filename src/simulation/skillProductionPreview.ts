@@ -1,3 +1,6 @@
+import { highestOwnedFacility } from './stellarArithmetic'
+import { resolveStellarAggregate } from './canonicalSkillIntervalEffects'
+import { addContinuous } from './numeric'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import type { CanonicalEventTimeState } from './canonicalEventTimeModel'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
@@ -15,7 +18,17 @@ export interface SkillProductionPreview {
 
 function productionValues(derived: Extract<ReturnType<typeof deriveBasicDysonState>, { ok: true }>['value'], state: CanonicalEventTimeState['gameState']) {
   const discovery = state.discovery?.unlocked ? deriveDiscoveryEffects(state, derived.nextEvaluationSnapshot) : null
-  return { ...derived.productionArrivalRates, panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
+  const rates = { ...derived.productionArrivalRates, galactic_brains: 0 }
+  const target = highestOwnedFacility(state.dyson.facilities)
+  if (target !== null) {
+    // Compare one game second using the same starting-balance funding rule as play.
+    const stellar = resolveStellarAggregate(state.dyson.bots, rates.bots,
+      derived.auxiliary.stellarSacrifice.botsPerSecond,
+      derived.auxiliary.stellarSacrifice.facilitiesPerSecond, 1)
+    rates[target] = addContinuous(rates[target], stellar.facilitiesProduced)
+    rates.bots -= stellar.botsConsumed
+  }
+  return { ...rates, panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
 }
 
 /** On-demand comparison only: never advance production, automation, or the real save. */

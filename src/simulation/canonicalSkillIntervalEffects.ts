@@ -251,20 +251,20 @@ function accrueResearch(
   }
 }
 
-function resolveStellarAggregate(
+export function resolveStellarAggregate(
   startingBots: number,
   botProductionPerSecond: number,
   botsPerSecond: number,
   facilitiesPerSecond: number,
   seconds: number,
-): { readonly bots: number; readonly facilitiesProduced: number } {
+): { readonly bots: number; readonly facilitiesProduced: number; readonly botsConsumed: number } {
   const ordinaryEndingBots = addContinuous(
     startingBots,
     multiplyContinuous(botProductionPerSecond, seconds),
   )
-  if (facilitiesPerSecond <= 0) return { bots: ordinaryEndingBots, facilitiesProduced: 0 }
+  if (facilitiesPerSecond <= 0) return { bots: ordinaryEndingBots, facilitiesProduced: 0, botsConsumed: 0 }
   if (botsPerSecond <= 0) {
-    return { bots: ordinaryEndingBots, facilitiesProduced: multiplyContinuous(facilitiesPerSecond, seconds) }
+    return { bots: ordinaryEndingBots, facilitiesProduced: multiplyContinuous(facilitiesPerSecond, seconds), botsConsumed: 0 }
   }
 
   const affordableSeconds = Math.min(
@@ -282,6 +282,7 @@ function resolveStellarAggregate(
       debit.balance,
       multiplyContinuous(botProductionPerSecond, seconds),
     ),
+    botsConsumed: debit.settled,
     facilitiesProduced: multiplyContinuous(
       facilitiesPerSecond,
       fundedSeconds,

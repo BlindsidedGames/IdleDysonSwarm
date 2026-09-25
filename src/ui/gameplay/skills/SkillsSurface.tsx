@@ -1,3 +1,4 @@
+import { galvanizedEffectMessages } from './galvanizedEffectMessages'
 import { discoverySkillNames, discoverySkillEffects, discoverySkillFlavour } from '../discovery/skillMessages'
 import { discoveryMessages } from '../discovery/messages'
 import type { SkillProductionPreview } from '../../../simulation/skillProductionPreview'
@@ -1934,27 +1935,6 @@ function AffectedSkillList({
   )
 }
 
-const galvanizedEffectMessages: Readonly<Record<string, typeof messages.galvEconomic>> = {
-  tasteOfPower: messages.galvPowerTaste,
-  indulgingInPower: messages.galvPowerIndulging,
-  addictionToPower: messages.galvPowerAddiction,
-  agressiveAlgorithms: messages.galvAlgorithms,
-  burnOut: messages.galvBurnout,
-  coldFusion: messages.galvColdFusion,
-  dimensionalCatCables: messages.galvCables,
-  economicDominance: messages.galvEconomic,
-  endOfTheLine: messages.galvEndLine,
-  fusionReactors: messages.galvFusion,
-  scientificDominance: messages.galvScientific,
-  shouldersOfPrecursors: messages.galvPrecursors,
-  stellarDominance: messages.galvStellarDominance,
-  stellarObliteration: messages.galvStellarObliteration,
-  supernova: messages.galvSupernova,
-  worthySacrifice: messages.galvWorthy,
-  stellarSacrifices: messages.galvSacrifices,
-  shouldersOfTheEnlightened: messages.galvEnlightened,
-}
-
 function SkillDetails({
   showProductionComparisons,
   galvanizers,
@@ -2452,6 +2432,7 @@ const productionLabels = {
   planets: facilityMessages.planetsName,
   matrioshka_brains: facilityMessages.matrioshkaBrainsName,
   birch_planets: facilityMessages.birchPlanetsName,
+  galactic_brains: facilityMessages.galacticBrainsName,
   panelLifetime: facilityMessages.panelLifetime,
   discoverySpeed: discoveryMessages.speed,
   discoveryMultiplier: discoveryMessages.name,

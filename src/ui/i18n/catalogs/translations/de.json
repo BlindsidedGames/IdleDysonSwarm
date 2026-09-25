@@ -1447,7 +1447,7 @@
   "skills.node.stellarImprovements.description": "Du nutzt KI, um Bauprozesse zu verbessern. Neue molekulare Strukturen ermöglichen es dir, dabei weniger Material zu verbrauchen.",
   "skills.node.stellarImprovements.name": "Stellare Verbesserungen",
   "skills.node.stellarImprovements.technical": "Teilt die für Stellare Opfer benötigten Bots durch 1000.",
-  "skills.node.stellarObliteration.description": "Die Vernichtung noch weiterer Bots steigert die Geschwindigkeit, mit der du künstliche Planeten erzeugst, erheblich – ist jedoch kostspielig.",
+  "skills.node.stellarObliteration.description": "Die Vernichtung noch weiterer Bots steigert die Geschwindigkeit, mit der du Anlagen erzeugst, erheblich – ist jedoch kostspielig.",
   "skills.node.stellarObliteration.name": "Stellare Auslöschung",
   "skills.node.stellarObliteration.technical": "Galaxien der Stellaren Opfer sind 1000-mal so gut, allerdings werden dein Geld und deine Wissenschaft durch stellare Galaxien geteilt.",
   "skills.node.stellarSacrifices.description": "Du nutzt die Materialien deiner eigenen Bots, um weitere Anlagen für dein Imperium zu bauen.",

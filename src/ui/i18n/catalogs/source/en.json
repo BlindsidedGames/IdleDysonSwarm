@@ -5691,7 +5691,7 @@
     "description": "Technical gameplay-effect description for the Stellar Improvements Skill node."
   },
   "skills.node.stellarObliteration.description": {
-    "defaultMessage": "Obliterating even more Bots greatly improve the rate at which you generate artificial Planets, however this is costly.",
+    "defaultMessage": "Obliterating even more Bots greatly improves the rate at which you generate facilities, however this is costly.",
     "description": "Flavour description for the Stellar Obliteration Skill node."
   },
   "skills.node.stellarObliteration.name": {

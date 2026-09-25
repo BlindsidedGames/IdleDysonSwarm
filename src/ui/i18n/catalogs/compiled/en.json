@@ -11348,7 +11348,7 @@
   "skills.node.stellarObliteration.description": [
     {
       "type": 0,
-      "value": "Obliterating even more Bots greatly improve the rate at which you generate artificial Planets, however this is costly."
+      "value": "Obliterating even more Bots greatly improves the rate at which you generate facilities, however this is costly."
     }
   ],
   "skills.node.stellarObliteration.name": [

@@ -11348,7 +11348,7 @@
   "skills.node.stellarObliteration.description": [
     {
       "type": 0,
-      "value": "さらに多くのボットを消し去ると人工惑星の生成速度が大幅に上がりますが、代償も高くつきます。"
+      "value": "さらに多くのボットを消し去ると施設の生成速度が大幅に上がりますが、代償も高くつきます。"
     }
   ],
   "skills.node.stellarObliteration.name": [

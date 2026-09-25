@@ -1447,7 +1447,7 @@
   "skills.node.stellarImprovements.description": "AIで建設工程を改良します。新しい分子構造により、建設資材が少なくて済みます。",
   "skills.node.stellarImprovements.name": "恒星改良",
   "skills.node.stellarImprovements.technical": "恒星献祭に必要なボット数を1000で割ります。",
-  "skills.node.stellarObliteration.description": "さらに多くのボットを消し去ると人工惑星の生成速度が大幅に上がりますが、代償も高くつきます。",
+  "skills.node.stellarObliteration.description": "さらに多くのボットを消し去ると施設の生成速度が大幅に上がりますが、代償も高くつきます。",
   "skills.node.stellarObliteration.name": "恒星消滅",
   "skills.node.stellarObliteration.technical": "恒星献祭銀河が1000倍強化されますが、キャッシュとサイエンスは恒星銀河数で割られます。",
   "skills.node.stellarSacrifices.description": "自分のボットの材料を使って、帝国の施設をさらに建設します。",

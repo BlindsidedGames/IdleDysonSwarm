@@ -1,3 +1,6 @@
+import { resolveGalaxiesEngulfed } from '../../../simulation/stellarArithmetic'
+import { multiplyContinuous } from '../../../simulation/numeric'
+import { galvanizedEffectMessages } from '../skills/galvanizedEffectMessages'
 import { discoverySkillNames, discoverySkillEffects } from '../discovery/skillMessages'
 import { discoveryMessages } from '../discovery/messages'
 import { PURITY_ESSENCE_QUADRATIC_COEFFICIENT } from '../../../simulation/purityMultipliers'
@@ -755,17 +758,16 @@ function DynamicSourceFormula({
       ]
       break
     case 'stellar-sacrifices': {
-      const galaxies = calculation.panelsPerSecond *
-        calculation.panelLifetimeSeconds / 20_000 / 100_000_000_000
+      const galaxies = resolveGalaxiesEngulfed(calculation.panelsPerSecond, calculation.panelLifetimeSeconds)
       let adjusted = galaxies
       lines = [
         <FormulaLine key="panels" label={intl.formatMessage(messages.panelsPerSecond)} value={number(calculation.panelsPerSecond)} />,
         <FormulaLine key="lifetime" label={intl.formatMessage(messages.panelLifetime)} value={`${number(calculation.panelLifetimeSeconds)}s`} />,
         <FormulaLine key="galaxies" label={intl.formatMessage(messages.galaxiesEngulfed)} value={number(galaxies)} />,
       ]
-      if (calculation.stellarObliteration) adjusted *= 1_000
+      if (calculation.stellarObliteration) adjusted = multiplyContinuous(adjusted, 1_000)
       lines.push(skillLine('stellarObliteration', calculation.stellarObliteration, `×1,000 = ${number(adjusted)}`))
-      if (calculation.supernova) adjusted *= 1_000
+      if (calculation.supernova) adjusted = multiplyContinuous(adjusted, 1_000)
       lines.push(skillLine('supernova', calculation.supernova, `×1,000 = ${number(adjusted)}`))
       lines.push(<FormulaLine key="base" label={`log10(${number(adjusted)})²`} value={number(Math.pow(Math.max(0, Math.log10(adjusted)), 2))} />)
       if (calculation.discoveryMultiplier !== undefined) {
@@ -959,7 +961,8 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
   }
   if (source?.kind === 'skill') {
     const name = discoveryUnlocked ? discoverySkillNames[source.id as keyof typeof discoverySkillNames] : undefined
-    const effect = discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined
+    const effect = (discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
+      ?? (source.fractured ? galvanizedEffectMessages[source.id] : undefined)
     return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: name ? intl.formatMessage(name) : skillName(source.id, intl), description: effect ? intl.formatMessage(effect) : skillTechnical(source.id, intl) }
   }
   if (source?.kind === 'research') return { icon: navigationAssets.research, name: intl.formatMessage(researchNameMessage(source.id)), description: intl.formatMessage(researchDescriptionMessage(source.id)) }

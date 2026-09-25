@@ -1447,7 +1447,7 @@
   "skills.node.stellarImprovements.description": "Вы применяете ИИ для совершенствования строительства. Новые молекулярные структуры позволяют расходовать меньше материалов.",
   "skills.node.stellarImprovements.name": "Звёздные улучшения",
   "skills.node.stellarImprovements.technical": "Делит количество Ботов для Звёздных жертвоприношений на 1000.",
-  "skills.node.stellarObliteration.description": "Уничтожение ещё большего числа Ботов заметно ускоряет создание искусственных Планет, однако обходится недёшево.",
+  "skills.node.stellarObliteration.description": "Уничтожение ещё большего числа Ботов заметно ускоряет создание сооружений, однако обходится недёшево.",
   "skills.node.stellarObliteration.name": "Звёздное уничтожение",
   "skills.node.stellarObliteration.technical": "Галактики Звёздных жертвоприношений в 1000 раз эффективнее, однако Деньги и Наука делятся на число Звёздных галактик.",
   "skills.node.stellarSacrifices.description": "Вы используете материалы собственных Ботов, чтобы строить больше сооружений для своей империи.",

@@ -53,6 +53,8 @@ export function tryResolvePlanetGenerationDynamicEffect(
       return planetAssemblyProduction(inputs)
     case 'shellWorlds':
       return shellWorldsProduction(inputs)
+    // Retain the authored legacy effect ID; canonical derivation removes it
+    // from Planet arrivals and settles it against the highest owned facility.
     case 'stellarSacrifices':
       return stellarSacrificesProduction(inputs)
     case 'shouldersOfTheFallen':

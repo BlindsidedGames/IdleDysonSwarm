@@ -34,6 +34,7 @@ const EXPECTED_SKILL_COUNT = 104
 // Web copy corrections here when the inherited wording no longer describes
 // the live Web mechanic, rather than mutating the historical handoff data.
 const WEB_SKILL_COPY_OVERRIDES: Readonly<Record<string, string>> = {
+  'skills.node.stellarObliteration.description': 'Obliterating even more Bots greatly improves the rate at which you generate facilities, however this is costly.',
   'skills.node.stellarSacrifices.description': 'You decide to use the materials in your own Bots to build more facilities for your empire.',
   'skills.node.stellarSacrifices.technical': 'Each second, sacrifice Bots equal to Stars Surrounded to create your highest owned facility, including megastructures. Amount: log10(Stellar Galaxies Engulfed)².',
   'skills.node.purityOfBody.technical':

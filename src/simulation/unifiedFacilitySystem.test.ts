@@ -290,13 +290,13 @@ describe('unified Dyson facility system', () => {
       result.value.facilityFacts.matrioshka_brains.details.upstreamSources,
     ).toEqual([{
       sourceFacilityId: 'birch_planets',
-      producedCount: 1,
+      contributionPerSecond: result.value.megaRates.birch_planets,
     }])
     expect(
       result.value.facilityFacts.birch_planets.details.upstreamSources,
     ).toEqual([{
       sourceFacilityId: 'galactic_brains',
-      producedCount: 1,
+      contributionPerSecond: result.value.megaRates.galactic_brains,
     }])
   })
 })

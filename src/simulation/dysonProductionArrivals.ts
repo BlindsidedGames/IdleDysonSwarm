@@ -16,7 +16,8 @@ import { clampPreBreakInfinityBots } from './infinityCycle'
  * The facility key names the produced output, not the producer:
  * assembly_lines are produced by managers, planets by planet generation plus
  * Matrioshka brains, Matrioshkas by Birch planets, and Birches by Galactic
- * brains. Nothing passively produces Galactic brains.
+ * brains. The ordinary chain does not produce Galactic brains; Stellar
+ * Sacrifices is settled separately.
  */
 export interface DysonProductionArrivalRates {
   readonly money: number

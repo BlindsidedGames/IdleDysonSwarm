@@ -211,6 +211,7 @@ export interface CanonicalFacilityContributionRow {
       | 'facility'
       | 'system'
     readonly id: string
+    readonly fractured?: boolean
     readonly level?: number
     readonly perLevelValue?: number
   }
@@ -749,14 +750,12 @@ export function deriveBasicDysonState(
             upstreamSources: facilityId === 'matrioshka_brains'
               ? Object.freeze([Object.freeze({
                   sourceFacilityId: 'birch_planets' as const,
-                  producedCount:
-                    mega.facts[facilityId].ownership.automatic,
+                  contributionPerSecond: mega.rates.birch_planets,
                 })])
               : facilityId === 'birch_planets'
                 ? Object.freeze([Object.freeze({
                     sourceFacilityId: 'galactic_brains' as const,
-                    producedCount:
-                      mega.facts[facilityId].ownership.automatic,
+                    contributionPerSecond: mega.rates.galactic_brains,
                   })])
                 : Object.freeze([]),
           }),
@@ -1306,7 +1305,7 @@ function sourceForEffect(
     perLevelValue: research.perLevelValue,
   }
   const skillId = getCompiledSkillEffectCatalog().skillIdForEffect(effectId)
-  if (skillId) return { kind: 'skill', id: skillId }
+  if (skillId) return { kind: 'skill', id: skillId, ...(state && isGalvanized(state, skillId) ? { fractured: true } : {}) }
   if (effectId.startsWith('manual-purchase.scaling-')) {
     return state?.skills.byId.productionScaling?.owned === true
       ? { kind: 'skill', id: 'productionScaling' }

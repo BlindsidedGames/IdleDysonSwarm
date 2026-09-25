@@ -1447,7 +1447,7 @@
   "skills.node.stellarImprovements.description": "Você usa IA para aprimorar os processos de construção. Novas estruturas moleculares permitem usar menos materiais.",
   "skills.node.stellarImprovements.name": "Melhorias Estelares",
   "skills.node.stellarImprovements.technical": "Divide por 1000 os Robôs necessários para Sacrifícios Estelares.",
-  "skills.node.stellarObliteration.description": "Obliterar ainda mais Robôs aumenta muito a taxa de geração de Planetas artificiais, mas isso tem um alto custo.",
+  "skills.node.stellarObliteration.description": "Obliterar ainda mais Robôs aumenta muito a taxa de geração de instalações, mas isso tem um alto custo.",
   "skills.node.stellarObliteration.name": "Obliteração Estelar",
   "skills.node.stellarObliteration.technical": "A eficácia das Galáxias dos Sacrifícios Estelares é multiplicada por 1000, mas seu Dinheiro e sua Ciência são divididos pela quantidade de Galáxias Estelares.",
   "skills.node.stellarSacrifices.description": "Você decide usar os materiais dos próprios Bots para construir mais instalações para seu império.",

@@ -11348,7 +11348,7 @@
   "skills.node.stellarObliteration.description": [
     {
       "type": 0,
-      "value": "抹除更多机器人能大幅提高人造行星生成速度，但代价不菲。"
+      "value": "抹除更多机器人能大幅提高设施生成速度，但代价不菲。"
     }
   ],
   "skills.node.stellarObliteration.name": [
