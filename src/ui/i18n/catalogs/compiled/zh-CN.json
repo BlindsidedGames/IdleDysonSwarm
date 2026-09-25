@@ -12,7 +12,7 @@
   "avocato.developer-note": [
     {
       "type": 0,
-      "value": "感谢你游玩 Idle Dyson Swarm。Avocato 的增益彼此相乘，不会影响用于提升它们的货币。溢出点数将保留供下一阶段的游戏使用。"
+      "value": "感谢游玩Idle Dyson Swarm。牛油果猫的加成彼此相乘，不影响用于提升它们的货币。可使用超越点数购买发现及其永久升级。"
     }
   ],
   "avocato.developer-note.title": [
@@ -216,7 +216,7 @@
   "avocato.multiplier.overflow": [
     {
       "type": 0,
-      "value": "溢出"
+      "value": "超越"
     }
   ],
   "avocato.multiplier.strange-matter": [
@@ -234,31 +234,25 @@
   "avocato.overflow.confirm": [
     {
       "type": 0,
-      "value": "确认溢出"
+      "value": "确认超越"
     }
   ],
   "avocato.overflow.description": [
     {
       "type": 0,
-      "value": "重置你的机器人、无限、量子、现实和模拟进度，以及 Avocato 的所有增益，换取 1 个溢出点数。购买项目、设置、离线时间和已完成的秘密将保留。"
+      "value": "重置机器人、无限、量子、现实、模拟的进度以及所有牛油果猫加成，获得1超越点数。发现回到初始等级。永久升级、购买内容、设置、离线时间和已完成的秘密均保留。"
     }
   ],
   "avocato.overflow.failed": [
     {
       "type": 0,
-      "value": "无法保存溢出。当前进度已保留，请重试。"
-    }
-  ],
-  "avocato.overflow.future": [
-    {
-      "type": 0,
-      "value": "溢出点数将保留供未来的游戏阶段使用，目前不会提高产量。"
+      "value": "无法保存超越。当前进度已保留，请重试。"
     }
   ],
   "avocato.overflow.legacy": [
     {
       "type": 0,
-      "value": "之前的溢出增益：×"
+      "value": "之前的超越增益：×"
     },
     {
       "type": 1,
@@ -268,13 +262,13 @@
   "avocato.overflow.open": [
     {
       "type": 0,
-      "value": "查看溢出重置"
+      "value": "查看超越重置"
     }
   ],
   "avocato.overflow.points": [
     {
       "type": 0,
-      "value": "溢出点数："
+      "value": "超越点数："
     },
     {
       "type": 1,
@@ -284,19 +278,29 @@
   "avocato.overflow.reached": [
     {
       "type": 0,
-      "value": "已达到溢出"
+      "value": "已达到超越"
     }
   ],
   "avocato.overflow.reset": [
     {
       "type": 0,
-      "value": "溢出并获得 1 点"
+      "value": "超越并获得1点"
+    }
+  ],
+  "avocato.overflow.reset-reward": [
+    {
+      "type": 0,
+      "value": "超越并获得"
+    },
+    {
+      "type": 1,
+      "value": "reward"
     }
   ],
   "avocato.overflow.threshold": [
     {
       "type": 0,
-      "value": "达到 "
+      "value": "达到"
     },
     {
       "type": 1,
@@ -304,7 +308,7 @@
     },
     {
       "type": 0,
-      "value": " 个机器人即可溢出。"
+      "value": "个机器人即可超越。"
     }
   ],
   "avocato.region": [
@@ -402,7 +406,37 @@
   "challenges.galvanizers.future": [
     {
       "type": 0,
-      "value": "在已显示技能的详情中消耗1个催化剂，使基础效果永久生效并移除负面效果和互斥限制。断裂无法撤销，且在溢出后保留。"
+      "value": "在已显示技能的详情中消耗1个催化剂，使基础效果永久生效并移除负面效果和互斥限制。断裂无法撤销，且在超越后保留。"
+    }
+  ],
+  "challenges.noScience": [
+    {
+      "type": 0,
+      "value": "无科学"
+    }
+  ],
+  "challenges.noScience.active": [
+    {
+      "type": 0,
+      "value": "无科学挑战中 · 科学和研究已禁用"
+    }
+  ],
+  "challenges.noScience.description": [
+    {
+      "type": 0,
+      "value": "不使用科学或研究完成一次量子轮次。"
+    }
+  ],
+  "challenges.quantumRestart": [
+    {
+      "type": 0,
+      "value": "开始新的量子轮次，不获得量子碎片。保留量子升级和后续层级。放弃挑战也会开始新的普通轮次。"
+    }
+  ],
+  "challenges.quantumTitle": [
+    {
+      "type": 0,
+      "value": "量子挑战"
     }
   ],
   "challenges.replay": [
@@ -506,7 +540,7 @@
   "debug.access-description": [
     {
       "type": 0,
-      "value": "花费10溢出点解锁开发者工具。购买后可免费重新启用。"
+      "value": "花费10超越点解锁开发者工具。购买后可免费重新启用。"
     }
   ],
   "debug.action-failure": [
@@ -672,7 +706,7 @@
   "debug.overflow-points": [
     {
       "type": 0,
-      "value": "溢出点"
+      "value": "超越点数"
     }
   ],
   "debug.progression": [
@@ -775,6 +809,598 @@
     {
       "type": 0,
       "value": "解锁所有标签页"
+    }
+  ],
+  "discovery.automationEffect": [
+    {
+      "type": 0,
+      "value": "永久解锁自动机器人。"
+    }
+  ],
+  "discovery.avocatoBonus": [
+    {
+      "type": 0,
+      "value": "发现速度 +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "discovery.avocatoProduction": [
+    {
+      "type": 0,
+      "value": "现金和设施产量"
+    }
+  ],
+  "discovery.avocatoSpeed": [
+    {
+      "type": 0,
+      "value": "牛油果猫"
+    }
+  ],
+  "discovery.baseLifetime": [
+    {
+      "type": 0,
+      "value": "面板基础寿命"
+    }
+  ],
+  "discovery.baseSpeed": [
+    {
+      "type": 0,
+      "value": "基础速度"
+    }
+  ],
+  "discovery.booster": [
+    {
+      "type": 0,
+      "value": "发现强化器"
+    }
+  ],
+  "discovery.boosterEffect": [
+    {
+      "type": 0,
+      "value": "发现速度 +10 × log10(1 + 已购买等级)%，上限+200%。 加成为加法叠加。"
+    }
+  ],
+  "discovery.buy": [
+    {
+      "type": 0,
+      "value": "购买 · "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " 超越点数"
+    }
+  ],
+  "discovery.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "discovery.completions": [
+    {
+      "type": 0,
+      "value": "已完成的发现"
+    }
+  ],
+  "discovery.confirm": [
+    {
+      "type": 0,
+      "value": "将研究替换为发现？"
+    }
+  ],
+  "discovery.confirmAction": [
+    {
+      "type": 0,
+      "value": "确认"
+    }
+  ],
+  "discovery.debug.addCompletions": [
+    {
+      "type": 0,
+      "value": "添加已完成的发现"
+    }
+  ],
+  "discovery.debug.addPoints": [
+    {
+      "type": 0,
+      "value": "添加超越点数"
+    }
+  ],
+  "discovery.details": [
+    {
+      "type": 0,
+      "value": "发现详情"
+    }
+  ],
+  "discovery.level": [
+    {
+      "type": 0,
+      "value": "发现 · 等级 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.levelLabel": [
+    {
+      "type": 0,
+      "value": "发现等级"
+    }
+  ],
+  "discovery.lifetime": [
+    {
+      "type": 0,
+      "value": "面板寿命："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "秒"
+    }
+  ],
+  "discovery.multiplier": [
+    {
+      "type": 0,
+      "value": "生产倍率"
+    }
+  ],
+  "discovery.name": [
+    {
+      "type": 0,
+      "value": "发现"
+    }
+  ],
+  "discovery.next": [
+    {
+      "type": 0,
+      "value": "下一级：×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
+  "discovery.nextMultiplier": [
+    {
+      "type": 0,
+      "value": "下一级倍率"
+    }
+  ],
+  "discovery.nextPower": [
+    {
+      "type": 0,
+      "value": "下一级：初始强度 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "倍"
+    }
+  ],
+  "discovery.nextSpeed": [
+    {
+      "type": 0,
+      "value": "下一级：购买速度加成 +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "discovery.owned": [
+    {
+      "type": 0,
+      "value": "等级 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.power": [
+    {
+      "type": 0,
+      "value": "初始强度"
+    }
+  ],
+  "discovery.powerEffect": [
+    {
+      "type": 0,
+      "value": "初始倍率和面板基础寿命秒数 +5。加成为加法叠加。"
+    }
+  ],
+  "discovery.powerSkillsEffect": [
+    {
+      "type": 0,
+      "value": "解锁力量技能，增强设施、现金和发现速度。"
+    }
+  ],
+  "discovery.production": [
+    {
+      "type": 0,
+      "value": "现金、机器人和设施产量 ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.purchaseFailed": [
+    {
+      "type": 0,
+      "value": "无法保存购买。点数已保留，请重试。"
+    }
+  ],
+  "discovery.resetRule": [
+    {
+      "type": 0,
+      "value": "在无限和量子重置后保留。超越时重置。"
+    }
+  ],
+  "discovery.route": [
+    {
+      "type": 0,
+      "value": "超越"
+    }
+  ],
+  "discovery.secretsSpeed": [
+    {
+      "type": 0,
+      "value": "秘密"
+    }
+  ],
+  "discovery.skill.addictionToPower.effect": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理者、服务器、数据中心和行星增强200%。未断裂时现金减少10%。 现金减益为加算。"
+    }
+  ],
+  "discovery.skill.cashScienceProduction.effect": [
+    {
+      "type": 0,
+      "value": "现金产量翻倍，发现速度 +25%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.coldFusion.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +75%；未断裂时现金减半。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.coldFusion.flavour": [
+    {
+      "type": 0,
+      "value": "理论变成现实。冷聚变，搞定。宇宙还忘了藏好什么？"
+    }
+  ],
+  "discovery.skill.doubleScienceTree.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +25%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.doubleScienceTree.flavour": [
+    {
+      "type": 0,
+      "value": "CPU制造取得突破。现在，莫名其妙的浓烟更少了。"
+    }
+  ],
+  "discovery.skill.doubleScienceTree.name": [
+    {
+      "type": 0,
+      "value": "发现速度"
+    }
+  ],
+  "discovery.skill.economicDominance.effect": [
+    {
+      "type": 0,
+      "value": "现金乘以20。"
+    }
+  ],
+  "discovery.skill.economicRevolution.effect": [
+    {
+      "type": 0,
+      "value": "现金乘以5。"
+    }
+  ],
+  "discovery.skill.focusedBeam.effect": [
+    {
+      "type": 0,
+      "value": "SRS的现金和发现速度加成增强50%，受「星辰记忆」加成影响。"
+    }
+  ],
+  "discovery.skill.idleSpaceFlight.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +10 × log10(1 + 活跃面板 / 100,000,000)%，上限+200%。 加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.indulgingInPower.effect": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理者、服务器、数据中心和行星增强100%。未断裂时现金减少15%。 现金减益为加算。"
+    }
+  ],
+  "discovery.skill.panelMaintenance.effect": [
+    {
+      "type": 0,
+      "value": "面板寿命增加100秒。"
+    }
+  ],
+  "discovery.skill.paragon.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +150%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.pocketMultiverse.effect": [
+    {
+      "type": 0,
+      "value": "「袖珍保护者」改为将「袖珍次元」产量乘以log10(机器人总数)。"
+    }
+  ],
+  "discovery.skill.pocketProtectors.effect": [
+    {
+      "type": 0,
+      "value": "「袖珍次元」产量增加log10(机器人总数)。"
+    }
+  ],
+  "discovery.skill.pocketProtectors.flavour": [
+    {
+      "type": 0,
+      "value": "大家都想掺一脚。现在必须保护好口袋。"
+    }
+  ],
+  "discovery.skill.powerUnderwhelming.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +25%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.powerUnderwhelming.flavour": [
+    {
+      "type": 0,
+      "value": "用发现来发现发现。怎么做到的？我们永远不会知道。"
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +100%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.flavour": [
+    {
+      "type": 0,
+      "value": "改进了网络协议。现在突破比会议邀请来得还早。"
+    }
+  ],
+  "discovery.skill.producedAsScienceTree.name": [
+    {
+      "type": 0,
+      "value": "发现加成"
+    }
+  ],
+  "discovery.skill.purityOfMind.effect": [
+    {
+      "type": 0,
+      "value": "每个未使用技能点提供现金 +50%、发现速度 +5%。发现速度加成上限为+200%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.purityOfMind.flavour": [
+    {
+      "type": 0,
+      "value": "全神贯注，清空脑中所有与现金或发现无关的念头。"
+    }
+  ],
+  "discovery.skill.purityOfSEssence.effect": [
+    {
+      "type": 0,
+      "value": "现金、机器人和设施产量 ×(1 + 0.42p + 0.13784p(p − 1))，其中p为未使用技能点。每个未使用技能点提供发现速度 +2%，上限+100%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.regulatedAcademia.effect": [
+    {
+      "type": 0,
+      "value": "发现的生产加成增强20%，首个之后的每个碎片再增加10%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.regulatedAcademia.flavour": [
+    {
+      "type": 0,
+      "value": "你找到了另一个宇宙的碎片。其中的知识让你的发现更强大。这个宇宙还藏着什么呢？"
+    }
+  ],
+  "discovery.skill.repeatableResearch.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +50%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.researchActivity.effect": [
+    {
+      "type": 0,
+      "value": "分配后SRS充能速度 +150%，由「星辰记忆」增强。 加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.researchConversion.effect": [
+    {
+      "type": 0,
+      "value": "SRS充能速度 +100%，由「星辰记忆」增强。 加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.scientificDominance.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +100%；未断裂时现金降至四分之一。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.scientificPlanets.effect": [
+    {
+      "type": 0,
+      "value": "每秒生产log10(机器人总数)个行星。"
+    }
+  ],
+  "discovery.skill.scientificPlanets.flavour": [
+    {
+      "type": 0,
+      "value": "教机器人发现行星。好好拜托它们，别弄丢了。"
+    }
+  ],
+  "discovery.skill.scientificRevolution.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +50%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.shouldersOfGiants.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +10 × log10(1 + 科学行星 产量)%，上限+200%。 包含「陨落者之肩」。 加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.shouldersOfPrecursors.effect": [
+    {
+      "type": 0,
+      "value": "以总发现速度替换现金倍率。断裂后则与原倍率相乘。"
+    }
+  ],
+  "discovery.skill.shouldersOfTheEnlightened.effect": [
+    {
+      "type": 0,
+      "value": "分配「科学行星」后，每次完成发现提供现金 +10%。 加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.shouldersOfTheFallen.effect": [
+    {
+      "type": 0,
+      "value": "分配「科学行星」后，每秒额外生产log2(1 + 已完成发现数)个行星。"
+    }
+  ],
+  "discovery.skill.shouldersOfTheFallen.flavour": [
+    {
+      "type": 0,
+      "value": "失落文明的遗物。肩膀很棒，说明书很烂。"
+    }
+  ],
+  "discovery.skill.shouldersOfTheRevolution.effect": [
+    {
+      "type": 0,
+      "value": "每次完成发现提供现金 +1%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.startHereTree.effect": [
+    {
+      "type": 0,
+      "value": "现金 +20%，发现速度 +20%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.startHereTree.name": [
+    {
+      "type": 0,
+      "value": "现金与发现"
+    }
+  ],
+  "discovery.skill.stellarObliteration.effect": [
+    {
+      "type": 0,
+      "value": "「星辰献祭」的星系效果提升至1,000倍。未断裂时现金除以恒星星系数。"
+    }
+  ],
+  "discovery.skill.superRadiantScattering.effect": [
+    {
+      "type": 0,
+      "value": "随SRS充能提升现金、机器人和所有设施产量。发现速度 +10 × log10(1 + 充能秒数 / 100)%，「聚焦光束」生效前上限为+200%。 加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.superchargedPower.effect": [
+    {
+      "type": 0,
+      "value": "现金和设施产量 +50%；发现速度 +25%。加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.tasteOfPower.effect": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理者、服务器、数据中心和行星增强50%。未断裂时现金减少25%。"
+    }
+  ],
+  "discovery.skill.whatCouldHaveBeen.effect": [
+    {
+      "type": 0,
+      "value": "发现速度 +10 × log10(1 + 袖珍次元 产量)%，上限+200%。 「肩膀手术」会计入「陨落者之肩」。 加成为加法叠加。"
+    }
+  ],
+  "discovery.skill.workerBoost.effect": [
+    {
+      "type": 0,
+      "value": "现金产量 +10,000%。"
+    }
+  ],
+  "discovery.speed": [
+    {
+      "type": 0,
+      "value": "发现速度"
+    }
+  ],
+  "discovery.speedEffect": [
+    {
+      "type": 0,
+      "value": "发现速度 +25%。加成为加法叠加。"
+    }
+  ],
+  "discovery.speedSources": [
+    {
+      "type": 0,
+      "value": "发现速度"
+    }
+  ],
+  "discovery.startingBenefits": [
+    {
+      "type": 0,
+      "value": "现金、机器人和设施产量 ×10。面板基础寿命为10秒。"
+    }
+  ],
+  "discovery.totalBots": [
+    {
+      "type": 0,
+      "value": "机器人总数"
+    }
+  ],
+  "discovery.unlock": [
+    {
+      "type": 0,
+      "value": "解锁发现"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -1052,7 +1678,7 @@
   "dyson.facilities.birch-planets.description": [
     {
       "type": 0,
-      "value": "超大质量行星壳层，消耗套娃脑来生产更多套娃脑。"
+      "value": "能够生产套娃脑的超大质量行星壳层。"
     }
   ],
   "dyson.facilities.birch-planets.identity": [
@@ -1718,7 +2344,7 @@
   "dyson.facilities.galactic-brains.description": [
     {
       "type": 0,
-      "value": "终极巨型结构，需要套娃脑和伯奇行星，能够生产伯奇行星。"
+      "value": "终极巨型结构。生产伯奇行星。"
     }
   ],
   "dyson.facilities.galactic-brains.identity": [
@@ -1820,7 +2446,7 @@
   "dyson.facilities.matrioshka-brains.description": [
     {
       "type": 0,
-      "value": "巨型恒星级计算结构，消耗行星来生产更多行星。"
+      "value": "能够生产行星的巨型恒星计算结构。"
     }
   ],
   "dyson.facilities.matrioshka-brains.identity": [
@@ -6356,7 +6982,7 @@
   "research.challengeActive": [
     {
       "type": 0,
-      "value": "试错挑战进行中 · 手动和自动研究购买均已禁用。"
+      "value": "挑战中 · 手动和自动研究购买已禁用。"
     }
   ],
   "research.challengeDisabled": [
@@ -7203,6 +7829,12 @@
     {
       "type": 0,
       "value": "导航快捷方式"
+    }
+  ],
+  "settings.navigation.transcendence": [
+    {
+      "type": 0,
+      "value": "显示超越"
     }
   ],
   "settings.navigation.wiki": [
@@ -8936,7 +9568,7 @@
   "skills.galvSacrifices": [
     {
       "type": 0,
-      "value": "每秒产生的行星数量等于log10（已吞噬的恒星星系）²，不消耗也不需要机器人。"
+      "value": "每秒生成你已拥有的最高级设施，包括巨型结构。数量：log10（吞噬的恒星星系）²。不需要或消耗机器人。"
     }
   ],
   "skills.galvScientific": [
@@ -10716,7 +11348,7 @@
   "skills.node.stellarObliteration.description": [
     {
       "type": 0,
-      "value": "抹除更多机器人能大幅提高人造行星生成速度，但代价不菲。"
+      "value": "抹除更多机器人能大幅提高设施生成速度，但代价不菲。"
     }
   ],
   "skills.node.stellarObliteration.name": [
@@ -10734,7 +11366,7 @@
   "skills.node.stellarSacrifices.description": [
     {
       "type": 0,
-      "value": "你决定利用自家机器人身上的材料，为帝国建造更多行星级结构。"
+      "value": "你决定利用自己机器人的材料，为帝国建造更多设施。"
     }
   ],
   "skills.node.stellarSacrifices.name": [
@@ -10746,7 +11378,7 @@
   "skills.node.stellarSacrifices.technical": [
     {
       "type": 0,
-      "value": "每秒摧毁等于已包围恒星数量的机器人，并获得等于 Log10（已吞没星辰星系）^2 的行星。\n\n星辰星系就是添加了星辰修正的普通星系。"
+      "value": "每秒牺牲与包围恒星数相等的机器人，生成你已拥有的最高级设施，包括巨型结构。数量：log10（吞噬的恒星星系）²。"
     }
   ],
   "skills.node.superRadiantScattering.description": [
@@ -13520,6 +14152,68 @@
       "value": "故事"
     }
   ],
+  "wiki.bots.discovery-overview": [
+    {
+      "type": 0,
+      "value": "所有"
+    },
+    {
+      "type": 8,
+      "value": "bots",
+      "children": [
+        {
+          "type": 0,
+          "value": "机器人"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "都生产"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "太阳能面板"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，并自动将其发射入轨。发现取代科学家和研究。完成"
+    },
+    {
+      "type": 8,
+      "value": "skills",
+      "children": [
+        {
+          "type": 0,
+          "value": "技能树"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "中的目标仍会奖励"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "技能点"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。"
+    }
+  ],
   "wiki.bots.milestones": [
     {
       "type": 8,
@@ -13918,6 +14612,256 @@
     {
       "type": 0,
       "value": "技能树"
+    }
+  ],
+  "wiki.category.transcendence": [
+    {
+      "type": 0,
+      "value": "超越"
+    }
+  ],
+  "wiki.discovery.overview": [
+    {
+      "type": 0,
+      "value": "发现从"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "等级1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "开始，提供"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "现金、机器人和设施产量 ×10"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "以及"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10秒面板基础寿命"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。每次完成会让倍率和基础寿命各增加"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "0.1"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。基础速度下每小时完成一次。发现不需要科学家或资源。"
+    }
+  ],
+  "wiki.discovery.overview-title": [
+    {
+      "type": 0,
+      "value": "发现"
+    }
+  ],
+  "wiki.discovery.resets": [
+    {
+      "type": 0,
+      "value": "发现会在"
+    },
+    {
+      "type": 8,
+      "value": "infinity",
+      "children": [
+        {
+          "type": 0,
+          "value": "无限"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "、"
+    },
+    {
+      "type": 8,
+      "value": "quantum",
+      "children": [
+        {
+          "type": 0,
+          "value": "量子"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "和挑战后保留。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "超越"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "会重置等级和进度，但保留解锁状态与永久升级。使用储存时间会推进发现。离线时间只会储存，不会自动推进发现。"
+    }
+  ],
+  "wiki.discovery.resets-title": [
+    {
+      "type": 0,
+      "value": "进度与重置"
+    }
+  ],
+  "wiki.discovery.skills": [
+    {
+      "type": 0,
+      "value": "科学技能现在提升"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "发现速度"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，当前效果会显示在技能树中。速度加成彼此相加。规范学术界与对应的已揭示秘密会增强发现超过"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1×"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "的生产加成，但不改变面板基础寿命。科学减益不再生效。"
+    }
+  ],
+  "wiki.discovery.skills-title": [
+    {
+      "type": 0,
+      "value": "技能与秘密"
+    }
+  ],
+  "wiki.discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "在牛油果猫中，"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "发现速度"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "每次购买提供"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "速度 +25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "初始强度"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "让初始倍率和面板基础寿命增加"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，并立即作用于当前周目。两种升级的价格独立递增，分别为"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1、2、3…超越点数"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。加成为加法叠加。"
+    }
+  ],
+  "wiki.discovery.upgrades-title": [
+    {
+      "type": 0,
+      "value": "永久升级"
     }
   ],
   "wiki.infinity.overview": [
@@ -14754,22 +15698,70 @@
       "value": "版本 4.1.10"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.balance": [
+    {
+      "type": 0,
+      "value": "重新平衡了设施价格增幅，以及巨型结构的成本和产量。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.bot-boost": [
     {
       "type": 0,
       "value": "修复了重置存档后永久双倍机器人加成失效的问题。"
     }
   ],
-  "wiki.patch-notes.version-4-1-11": [
+  "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "版本 4.1.11"
+      "value": "新增奖励2个催化剂的无科学量子挑战。恒星牺牲现在会生成你已拥有的最高级设施，包括巨型结构。"
     }
   ],
-  "wiki.patch-notes.version-4-1-11.speedruns": [
+  "wiki.patch-notes.version-4-1-10.discovery": [
+    {
+      "type": 0,
+      "value": "发现随时间成长，提升现金、机器人、设施产量和面板寿命。相关技能会在解锁后调整效果。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
+    {
+      "type": 0,
+      "value": "在 Avocato 处新增发现速度与初始强度的永久升级。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.fixes": [
+    {
+      "type": 0,
+      "value": "修复了云端保留已获得的开发者选项、强化技能点统计、负数调试调整和推广轮换的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.ios": [
+    {
+      "type": 0,
+      "value": "现在需要 iOS 16 或更高版本。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.save-fix": [
+    {
+      "type": 0,
+      "value": "修复了保存或重新加载后，旧研究和已清空的技能预设重新出现的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.secret": [
+    {
+      "type": 0,
+      "value": "解锁发现后，到达第六个 Avotation 秘密时会自动完成。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
       "value": "速通现在会将当前挑战与个人最佳纪录进行比较，重置存档后仍保留最佳纪录。新增挑战标记、双倍无限点数使用记录，并记住上次打开的统计标签页。个人最佳纪录随云存档同步，但不包含在导出的存档中。 新的里程碑纪录使用实际游玩时间。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.transcendence": [
+    {
+      "type": 0,
+      "value": "溢出现更名为超越。在 Avocato 处花费1超越点数即可解锁发现，取代科学与研究。"
     }
   ],
   "wiki.patch-notes.version-4-1-2": [
@@ -15649,7 +16641,7 @@
     },
     {
       "type": 0,
-      "value": "研究能让模拟挺过后期灾难，并提高重置时获得的"
+      "value": "现实现实现实研究能让模拟挺过后期灾难，并提高重置时获得的"
     },
     {
       "type": 8,
@@ -15894,6 +16886,18 @@
     {
       "type": 0,
       "value": "现金倍率"
+    }
+  ],
+  "wiki.secrets.effect.discovery-production-enhancement": [
+    {
+      "type": 0,
+      "value": "发现生产加成增强"
+    }
+  ],
+  "wiki.secrets.effect.discovery-speed": [
+    {
+      "type": 0,
+      "value": "发现速度"
     }
   ],
   "wiki.secrets.effect.planet-boost": [
@@ -16358,6 +17362,60 @@
     {
       "type": 0,
       "value": "主题"
+    }
+  ],
+  "wiki.transcendence.overview": [
+    {
+      "type": 0,
+      "value": "达到"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "4e242个机器人"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "后，在牛油果猫中超越可重置此前的层级，并获得"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "1超越点数"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "。花费1点"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "解锁发现"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，即可永久取代科学与研究。已有科学和研究等级不会转移。"
+    }
+  ],
+  "wiki.transcendence.overview-title": [
+    {
+      "type": 0,
+      "value": "超越蜂群"
     }
   ]
 }

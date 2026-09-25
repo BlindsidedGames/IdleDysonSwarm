@@ -1,3 +1,4 @@
+import { discoveryMessages } from '../discovery/messages'
 import {
   useEffect,
   useRef,
@@ -62,7 +63,7 @@ export interface QuantumSurfaceProps {
   readonly infinityPoints?: bigint
   /** Quantum Entanglement converts only unspent IP. */
   readonly availableInfinityPoints: bigint
-  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'secretProgress'>
+  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'discovery' | 'secretProgress' | 'challenges'>
   readonly previews: FrontendGameplayPreviews['quantum']
   readonly meditationPreview: FrontendGameplayPreviews['avocado']['meditation']
   readonly commandAvailability: QuantumCommandAvailability
@@ -121,7 +122,7 @@ export function QuantumSurface({
           locale={locale}
           availableInfinityPoints={availableInfinityPoints}
           preview={previews.leap}
-          entangled={progression.quantum.unlocks.quantumEntanglement}
+          entangled={progression.quantum.unlocks.quantumEntanglement && progression.challenges?.active !== 'no-science'}
           routeAvailable={commandAvailability.requestLeap}
           dispatchPlayer={dispatchPlayer}
         />
@@ -156,7 +157,7 @@ interface QuantumUpgradeSectionProps {
   readonly section: FrontendGameplayPreviews['quantum']['sections'][number]
   readonly previews: FrontendGameplayPreviews['quantum']['upgrades']
   readonly resources: FrontendCanonicalResources['quantum']
-  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado'>
+  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'discovery'>
   readonly routeAvailable: boolean
   readonly dispatchPlayer: QuantumSurfaceProps['dispatchPlayer']
   readonly onOpenAvocato?: () => void
@@ -256,7 +257,7 @@ interface QuantumUpgradeCardProps {
   readonly locale: EnabledLocale
   readonly preview: FrontendGameplayPreviews['quantum']['upgrades'][number]
   readonly resources: FrontendCanonicalResources['quantum']
-  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado'>
+  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'discovery'>
   readonly routeAvailable: boolean
   readonly dispatchPlayer: QuantumSurfaceProps['dispatchPlayer']
   readonly onOpenAvocato?: () => void
@@ -268,7 +269,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
   const pendingRef = useRef(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
-  const name = intl.formatMessage(upgradeMessage(preview.upgradeId, 'Title'))
+  const name = intl.formatMessage(progression.discovery?.unlocked && preview.upgradeId === 'ScienceBonus' ? discoveryMessages.booster : upgradeMessage(preview.upgradeId, 'Title'))
   const completed = preview.code === 'already-maxed'
   const isAvocato = preview.upgradeId === 'Avocado'
   const isFreeClaim = preview.upgradeId === 'DoubleIP' && preview.cost === 0n
@@ -325,7 +326,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
       <div>
         <h4>{name}</h4>
         {level !== null && <p className="quantum-upgrade-card__level">{intl.formatMessage(messages.level, { value: level })}</p>}
-        <p>{intl.formatMessage(upgradeMessage(preview.upgradeId, 'Description'))}</p>
+        <p>{intl.formatMessage(progression.discovery?.unlocked && preview.upgradeId === 'ScienceBonus' ? discoveryMessages.boosterEffect : progression.discovery?.unlocked && preview.upgradeId === 'Automation' ? discoveryMessages.automationEffect : progression.discovery?.unlocked && preview.upgradeId === 'Power' ? discoveryMessages.powerSkillsEffect : upgradeMessage(preview.upgradeId, 'Description'))}</p>
       </div>
       {isAvocato && completed && onOpenAvocato ? (
         <Button variant="primary" onClick={onOpenAvocato}>{intl.formatMessage(messages.openAvocato)}</Button>
@@ -765,7 +766,7 @@ function upgradeMessage(id: QuantumUpgradeId, suffix: 'Title' | 'Description'): 
   return upgradeMessages[`${id}${suffix}` as keyof typeof upgradeMessages]
 }
 
-function upgradeLevel(locale: EnabledLocale, id: QuantumUpgradeId, resources: FrontendCanonicalResources['quantum'], progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado'>): string | null {
+function upgradeLevel(locale: EnabledLocale, id: QuantumUpgradeId, resources: FrontendCanonicalResources['quantum'], progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'discovery'>): string | null {
   let value: bigint | null = null
   if (id === 'Secrets') value = resources.permanentSecrets / QUANTUM_CONSTANTS.secretsPerPurchase
   else if (id === 'Division') value = progression.quantum.divisionsPurchased

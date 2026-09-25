@@ -1,3 +1,8 @@
+import { discoveryGrowingBonus } from '../../../simulation/discovery'
+import { discoveryMessages } from '../discovery/messages'
+import { DiscoveryPurchases } from '../discovery/DiscoveryPurchases'
+import { EMPTY_DISCOVERY, type DiscoveryPurchase } from '../../../simulation/discovery'
+import type { DiscoveryState } from '../../../game-state/types'
 import { useRef, useState } from 'react'
 import { useIntl, type MessageDescriptor } from 'react-intl'
 import type {
@@ -8,6 +13,7 @@ import type {
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { AvocadoFeedSource } from '../../../simulation/avocadoDomain'
 import avocatoIcon from '../../assets/nav-avocato.png'
+import { navigationAssets } from '../shell/navigationAssets'
 import { Button, InlineImageSymbol } from '../../components'
 import { formatGameNumber, formatWholeGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -15,7 +21,7 @@ import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { avocatoMessages as messages } from './messages'
 import './quantum.css'
 
-type AvocatoCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'avocado.feed' | 'avocado.request-overflow-reset' }>
+type AvocatoCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'avocado.feed' | 'avocado.request-overflow-reset' | 'discovery.purchase' }>
 
 export interface AvocatoCommandAvailability {
   readonly feed: boolean
@@ -23,6 +29,9 @@ export interface AvocatoCommandAvailability {
 }
 
 export interface AvocatoSurfaceProps {
+  readonly discovery?: DiscoveryState
+  readonly discoveryAvailable?: boolean
+  readonly onDiscoveryUnlocked?: () => void
   readonly locale: EnabledLocale
   /** The Quantum upgrade opens the feed economy. */
   readonly unlocked: boolean
@@ -44,7 +53,7 @@ const FEED_META: Readonly<Record<AvocadoFeedSource, { readonly title: MessageDes
   'strange-matter': { title: messages.strangeMatterMultiplier, resource: messages.resourceStrangeMatter },
 }
 
-export function AvocatoSurface({ locale, unlocked, resources, spendable, derived, previews, commandAvailability, dispatchPlayer }: AvocatoSurfaceProps) {
+export function AvocatoSurface({ locale, unlocked, resources, spendable, derived, previews, commandAvailability, dispatchPlayer, discovery = EMPTY_DISCOVERY, discoveryAvailable = false, onDiscoveryUnlocked }: AvocatoSurfaceProps) {
   const intl = useIntl()
   return (
     <div className="avocato-surface">
@@ -66,31 +75,43 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
       <div className="avocato-surface__content">
         {unlocked ? (
           <>
-        <section className="avocato-total" aria-label={intl.formatMessage(messages.totalBoost)}>
-          <strong>{intl.formatMessage(messages.totalBoost)}</strong>
-          <span>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, derived.total) })}</span>
-        </section>
+            <dl className="avocato-total">
+              <div>
+                <dt>{intl.formatMessage(discovery.unlocked ? discoveryMessages.avocatoProduction : messages.totalBoost)}</dt>
+                <dd>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, derived.total) })}</dd>
+              </div>
+              {discovery.unlocked && <div>
+                <dt>{intl.formatMessage(discoveryMessages.speedSources)}</dt>
+                <dd>+{formatGameNumber(locale, discoveryGrowingBonus(derived.total - 1) * 100)}%</dd>
+              </div>}
+            </dl>
 
-        <div className="avocato-feed-grid">
-          {previews.feeds.map((preview) => (
-            <AvocatoFeedCard
-              key={preview.source}
-              locale={locale}
-              preview={preview}
-              invested={investedValue(resources, preview.source)}
-              multiplier={multiplierValue(derived, preview.source)}
-              resourceAvailable={spendableValue(spendable, preview.source)}
-              routeAvailable={commandAvailability.feed}
-              dispatchPlayer={dispatchPlayer}
-            />
-          ))}
+            <div className="avocato-feed-grid">
+              {previews.feeds.map((preview) => (
+                <AvocatoFeedCard
+                  key={preview.source}
+                  locale={locale}
+                  preview={preview}
+                  invested={investedValue(resources, preview.source)}
+                  multiplier={multiplierValue(derived, preview.source)}
+                  resourceAvailable={spendableValue(spendable, preview.source)}
+                  routeAvailable={commandAvailability.feed}
+                  dispatchPlayer={dispatchPlayer}
+                />
+              ))}
 
-        </div>
+            </div>
           </>
         ) : null}
 
         <OverflowCard locale={locale} resources={resources} preview={previews.overflow}
           routeAvailable={commandAvailability.overflowReset} dispatchPlayer={dispatchPlayer} />
+        <DiscoveryPurchases state={discovery} balance={resources.overflowPoints} available={discoveryAvailable} locale={locale}
+          purchase={async (purchase: DiscoveryPurchase) => {
+            const result = await dispatchPlayer({ kind: 'discovery.purchase', purchase })
+            if (result.status === 'accepted' && purchase === 'unlock') onDiscoveryUnlocked?.()
+            return result.status === 'accepted'
+          }} />
 
       </div>
     </div>
@@ -129,11 +150,11 @@ function OverflowCard({ locale, resources, preview, routeAvailable, dispatchPlay
   return (
     <article className="quantum-leap-card avocato-overflow-card">
       <div>
-        <h2>{intl.formatMessage(messages.overflowPoints, { value: formatWholeGameNumber(locale, resources.overflowPoints) })}</h2>
+        <h2 className="avocato-overflow-card__balance" aria-label={intl.formatMessage(messages.overflowPoints, { value: formatWholeGameNumber(locale, resources.overflowPoints) })}><InlineImageSymbol src={navigationAssets.transcendence} tint />{formatWholeGameNumber(locale, resources.overflowPoints)}</h2>
         <p>{intl.formatMessage(preview.eligible ? messages.overflowReached : messages.overflowThreshold,
           { value: formatGameNumber(locale, preview.threshold) })}</p>
-        <p>{intl.formatMessage(messages.overflowDescription)}</p>
-        <p>{intl.formatMessage(messages.overflowFuture)}</p>
+        {confirming && <p>{intl.formatMessage(messages.overflowDescription)}</p>}
+
         {resources.overflowMultiplier > 0 && <p>{intl.formatMessage(messages.legacyOverflow,
           { value: formatGameNumber(locale, 1 + resources.overflowMultiplier) })}</p>}
       </div>
@@ -144,8 +165,8 @@ function OverflowCard({ locale, resources, preview, routeAvailable, dispatchPlay
           <Button disabled={pending} onClick={() => setConfirming(false)}>{intl.formatMessage(messages.overflowCancel)}</Button>
         </div>
       ) : (
-        <Button variant="primary" disabled={disabled} onClick={() => setConfirming(true)}>
-          {intl.formatMessage(messages.overflowReset)}
+        <Button variant="primary" disabled={disabled} aria-label={intl.formatMessage(messages.overflowReset)} onClick={() => setConfirming(true)}>
+          {intl.formatMessage(messages.overflowResetReward, { reward: <span className="avocato-overflow-card__reward"><InlineImageSymbol src={navigationAssets.transcendence} tint />{formatWholeGameNumber(locale, 1n)}</span> })}
         </Button>
       )}
       {failed && <p className="quantum-leap-card__feedback" role="alert">{intl.formatMessage(messages.overflowFailed)}</p>}

@@ -168,6 +168,30 @@ describe('Blank Slate application integration', () => {
     await reopened.start()
     expect(readyState(reopened).gameState.challenges?.galvanizers).toBe(1n)
   })
+test.each(['active', 'stored-time'] as const)('No Science Quantum run blocks research across %s, persists, and completes despite Entanglement', async mode => {
+  const { app, repository } = await setup()
+  expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter-no-science' } })).toMatchObject({ transition: { accepted: true } })
+  expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'research.purchase', researchId: 'research.panel_lifetime_1' } })).toMatchObject({ transition: { accepted: false } })
+  const candidate = structuredClone(readyState(app))
+  candidate.gameState = { ...candidate.gameState,
+    dyson: { ...candidate.gameState.dyson, bots: 100, botDistribution: 1, researchers: 100, workers: 0 },
+    infinity: { ...candidate.gameState.infinity, points: 42n },
+    quantum: { ...candidate.gameState.quantum, unlocks: { ...candidate.gameState.quantum.unlocks, quantumEntanglement: true } },
+    timeline: { ...candidate.gameState.timeline, storedTimeAvailableSeconds: 10 },
+  }
+  expect(await app.commitAwayReplacement(revisionEnvelope(app), candidate)).toMatchObject({ committed: true })
+  if (mode === 'stored-time') expect(await app.commitStoredTime(revisionEnvelope(app), 1)).toMatchObject({ committed: true })
+  else expect((await createCoordinator(app).advanceActive(100)).transition.accepted).toBe(true)
+  expect(readyState(app).gameState.dyson.science).toBe(0)
+  expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'quantum.request-leap' } })).toMatchObject({ transition: { accepted: true } })
+  expect(readyState(app).gameState.challenges).toMatchObject({ active: null, noScienceCompleted: true, galvanizers: 2n })
+  expect(readyState(app).gameState.infinity.points).toBe(0n)
+  expect(await app.commitAwayReplacement(revisionEnvelope(app), readyState(app))).toMatchObject({ committed: true })
+  const reopened = createApplication(repository)
+  await reopened.start()
+  expect(readyState(reopened).gameState.challenges).toMatchObject({ noScienceCompleted: true, galvanizers: 2n })
+})
+
 })
 
 function createApplication(repository: SaveRepository) {

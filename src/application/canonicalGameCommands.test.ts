@@ -98,6 +98,7 @@ function options(
 }
 
 const COMMAND_EXAMPLES = [
+  { kind: 'discovery.purchase', purchase: 'unlock' },
   { kind: 'dream.set-buy-mode', buyMode: 'buy-50' },
   {
     kind: 'dyson.purchase-facility',

@@ -7,6 +7,7 @@ export type DysonShellDirection = 'ltr' | 'rtl'
  * presentation boundary. The shell does not derive values or rates.
  */
 export interface DysonResourcePresentation {
+  readonly iconSrc?: string
   readonly label: ReactNode
   readonly value: string
   readonly fullPrecisionValue?: string

@@ -219,7 +219,7 @@ describe('Stellar Sacrifice conservative funding', () => {
       const initial = state()
       const starting: CanonicalGameStateV1 = {
         ...initial,
-        dyson: { ...initial.dyson, bots },
+        dyson: { ...initial.dyson, bots, facilities: { ...initial.dyson.facilities, planets: [0, 1] } },
       }
       const beforePlanets = starting.dyson.facilities.planets[0]
       const result = applyCanonicalSkillIntervalEffects(
@@ -229,7 +229,7 @@ describe('Stellar Sacrifice conservative funding', () => {
           seconds,
           botProductionPerSecond: 0,
           stellarBotsPerSecond: botsPerSecond,
-          stellarPlanetsPerSecond: planetsPerSecond,
+          stellarFacilitiesPerSecond: planetsPerSecond,
           scienceBoostPerSecond: 0,
           moneyUpgradePerSecond: 0,
         },
@@ -255,7 +255,7 @@ describe('Stellar Sacrifice conservative funding', () => {
         seconds: 1,
         botProductionPerSecond: 100,
         stellarBotsPerSecond: 10,
-        stellarPlanetsPerSecond: 5,
+        stellarFacilitiesPerSecond: 5,
         scienceBoostPerSecond: 0,
         moneyUpgradePerSecond: 0,
       },

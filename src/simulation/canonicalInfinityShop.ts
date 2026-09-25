@@ -153,6 +153,7 @@ export function purchaseCanonicalInfinityShopItem(
     case 'permanent-skill-point':
       return purchasePermanentSkillPoint(state)
     case 'unlock-research-automation':
+      if (state.discovery?.unlocked) return rejected(state, 'unknown-item', 0n)
       return purchaseAutomationUnlock(state, 'research')
     case 'unlock-bot-automation':
       return purchaseAutomationUnlock(state, 'bots')

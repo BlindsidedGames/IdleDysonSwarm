@@ -1,3 +1,4 @@
+import { completeRetiredResearchSecret } from '../simulation/avocadoMeditation'
 import { createSpeedrunStatistics, migrateSpeedrunRecords, observeSpeedruns } from '../simulation/speedrunStatistics'
 import { achievementIds } from '../achievements/ids'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
@@ -101,11 +102,11 @@ export class CanonicalRuntimeSession
     const source = prepared.copyValidatedState()
     this.initialState = cloneCanonicalRuntimeState({
       ...(options.captureAchievements ? {achievementEvidence:{unlocked: this.persistAchievements ? readSavedAchievements(source.idsAchievementEvidence) : [],statistics:{},presence:''}} : {}),
-      gameState: this.hydrated.state.statistics.speedruns ? { ...this.hydrated.state, statistics: { ...this.hydrated.state.statistics, speedruns: migrateSpeedrunRecords(this.hydrated.state.statistics.speedruns) } } : observeSpeedruns({
+      gameState: completeRetiredResearchSecret(this.hydrated.state.statistics.speedruns ? { ...this.hydrated.state, statistics: { ...this.hydrated.state.statistics, speedruns: migrateSpeedrunRecords(this.hydrated.state.statistics.speedruns) } } : observeSpeedruns({
         ...this.hydrated.state,
         statistics: { ...this.hydrated.state.statistics,
           speedruns: createSpeedrunStatistics(this.hydrated.state.meta.createdAtLegacyText, false) },
-      }, Date.now(), true),
+      }, Date.now(), true)),
       compatibilityTuning: this.hydrated.compatibilityTuning,
       evaluationSnapshot:
         this.hydrated.skillEffectEvaluationSnapshot,

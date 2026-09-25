@@ -140,7 +140,7 @@ describe('shared gameplay bot boundary', () => {
     expect(arrivals.dyson.money).toBeGreaterThan(OVERFLOW_BOT_CAP)
     const settled = applyCanonicalSkillIntervalEffects(source, arrivals, {
       seconds: 1, botProductionPerSecond: rates.bots, stellarBotsPerSecond: 0.5e242,
-      stellarPlanetsPerSecond: 1, scienceBoostPerSecond: 0, moneyUpgradePerSecond: 0,
+      stellarFacilitiesPerSecond: 1, scienceBoostPerSecond: 0, moneyUpgradePerSecond: 0,
     })
     expect(settled.dyson.bots).toBe(OVERFLOW_BOT_CAP)
     expect(settled.dyson.facilities.planets[0]).toBeCloseTo(source.dyson.facilities.planets[0] + 1, 12)

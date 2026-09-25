@@ -12,6 +12,7 @@ export {
 const PLANETS_PER_SECOND_SUFFIX = '.planets_per_second'
 
 export interface PlanetGenerationDynamicInputs {
+  readonly discoveryCompletions?: bigint
   readonly ownedSkills: ReadonlySet<string>
   readonly researchers: number
   readonly fragments: bigint
@@ -52,9 +53,12 @@ export function tryResolvePlanetGenerationDynamicEffect(
       return planetAssemblyProduction(inputs)
     case 'shellWorlds':
       return shellWorldsProduction(inputs)
+    // Retain the authored legacy effect ID; canonical derivation removes it
+    // from Planet arrivals and settles it against the highest owned facility.
     case 'stellarSacrifices':
       return stellarSacrificesProduction(inputs)
     case 'shouldersOfTheFallen':
+      if (inputs.discoveryCompletions !== undefined) return inputs.ownedSkills.has('shouldersOfTheFallen') && inputs.ownedSkills.has('scientificPlanets') ? Math.log2(1 + Number(inputs.discoveryCompletions)) : 0
       if (
         !inputs.ownedSkills.has('shouldersOfTheFallen') ||
         inputs.scienceBoostLevel <= 0 ||

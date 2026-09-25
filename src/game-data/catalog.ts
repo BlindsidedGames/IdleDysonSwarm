@@ -1,3 +1,4 @@
+import { FACILITY_BALANCE } from './facilityBalance'
 import catalogJson from './generated/runtime-catalog.json'
 import type {
   RuntimeGameAsset,
@@ -12,7 +13,9 @@ export const gameDataCatalog: RuntimeGameDataCatalog = {
   assets: legacyCatalog.assets.map((asset) => asset.kind === 'GameData.SkillDefinition' &&
     (asset.id === 'banking' || asset.id === 'investmentPortfolio')
     ? { ...asset, data: { ...asset.data, refundable: true } }
-    : asset),
+    : asset.kind === 'GameData.FacilityDefinition' && FACILITY_BALANCE[asset.id]
+      ? { ...asset, data: { ...asset.data, ...FACILITY_BALANCE[asset.id] } }
+      : asset),
 }
 
 // Keep kind and ID as separate keys: this lookup runs throughout each game

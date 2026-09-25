@@ -77,6 +77,25 @@ class MemoryStorage implements SaveStorageAdapter {
 }
 
 describe('portable transactional save repository', () => {
+  test('checkpoints publish the exact validated state without replaying migration', async () => {
+    const base = PreparedSave.fromDecoded(decodeIdb1SaveRoot(readFileSync(fixtureUrl, 'utf8')))
+    const state = base.copyValidatedState()
+    const dyson = state.dysonVerseSaveData as Record<string, unknown>
+    const infinity = dyson.dysonVerseInfinityData as Record<string, unknown>
+    infinity.researchLevelsById = {}
+    dyson.skillAutoAssignmentIds1 = []
+    const prepared = base.withValidatedState(state)
+    const storage = new MemoryStorage()
+    const repository = new PortableSaveRepository(storage, {
+      current: '/current', temporary: '/current.tmp', legacyRecovery: '/legacy',
+    }, decodeIdb1SaveRoot)
+    expect(await repository.commit(prepared)).toBe(prepared)
+    expect(storage.files.get('/current')).toBe(serializeWebSave(state))
+    const reloaded = hydrateGameState((await repository.loadCurrent())!).state
+    expect(Object.values(reloaded.research.levelsById).every((level) => level === 0)).toBe(true)
+    expect(reloaded.skills.presets[0].skillIds).toEqual([])
+  })
+
   test('preserves the reported 64-to-128-day upgrade through export, import, checkpoint, and reload', async () => {
     const storage = new MemoryStorage()
     const repository = new PortableSaveRepository(
@@ -161,7 +180,7 @@ describe('portable transactional save repository', () => {
       lowercase,
     )
     expect(storage.files.get('/current')).toMatch(/^IDSWEB1:/)
-    expect((await repository.loadCurrent())?.targetSchema).toBe(18)
+    expect((await repository.loadCurrent())?.targetSchema).toBe(19)
   })
 
   test('migrates once, atomically promotes, and preserves the Odin source', async () => {
@@ -519,15 +538,15 @@ describe('portable transactional save repository', () => {
 
     const prepared = await repository.loadCurrent()
     expect(prepared).not.toBeNull()
-    expect(prepared?.targetSchema).toBe(18)
-    expect(prepared?.copyState().saveVersion).toBe(18)
+    expect(prepared?.targetSchema).toBe(19)
+    expect(prepared?.copyState().saveVersion).toBe(19)
   })
 
   test('rejects a future-schema current save before publication', async () => {
     const storage = new MemoryStorage()
     storage.files.set(
       '/current',
-      serializeWebSave({ saveVersion: 19 }),
+      serializeWebSave({ saveVersion: 20 }),
     )
     const repository = new PortableSaveRepository(
       storage,
@@ -763,7 +782,7 @@ describe('portable transactional save repository', () => {
       sourceClass: 'unity-persistent-data-save',
       opaqueSourceIdentifier: 'canonical-unity',
       pathClass: 'unity-local-low',
-      saveSchemaVersion: 18,
+      saveSchemaVersion: 19,
       contentSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
     })])
   })
@@ -1663,7 +1682,7 @@ describe('portable transactional save repository', () => {
     storage.files.set('/current', '{')
     storage.files.set(
       '/current.backup.1',
-      serializeWebSave({ saveVersion: 19 }),
+      serializeWebSave({ saveVersion: 20 }),
     )
     storage.files.set(
       '/current.backup.2',
@@ -1759,7 +1778,7 @@ describe('portable transactional save repository', () => {
 
   test('stops fallback when the current save has a future schema', async () => {
     const storage = new MemoryStorage()
-    storage.files.set('/current', serializeWebSave({ saveVersion: 19 }))
+    storage.files.set('/current', serializeWebSave({ saveVersion: 20 }))
     storage.files.set('/legacy', 'good')
     storage.candidates = [
       { id: 'legacy', sourcePath: '/legacy', text: 'good' },
@@ -1797,7 +1816,7 @@ describe('portable transactional save repository', () => {
         temporary: '/current.tmp',
         legacyRecovery: '/recovery/original-idb1.txt',
       },
-      (text) => ({ saveVersion: text === 'future' ? 19 : 12 }),
+      (text) => ({ saveVersion: text === 'future' ? 20 : 12 }),
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({

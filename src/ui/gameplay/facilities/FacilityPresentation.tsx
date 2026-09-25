@@ -1,3 +1,8 @@
+import { resolveGalaxiesEngulfed } from '../../../simulation/stellarArithmetic'
+import { multiplyContinuous } from '../../../simulation/numeric'
+import { galvanizedEffectMessages } from '../skills/galvanizedEffectMessages'
+import { discoverySkillNames, discoverySkillEffects } from '../discovery/skillMessages'
+import { discoveryMessages } from '../discovery/messages'
 import { PURITY_ESSENCE_QUADRATIC_COEFFICIENT } from '../../../simulation/purityMultipliers'
 import { boostMessages } from '../store/boostMessages'
 import {
@@ -135,7 +140,7 @@ export function FacilityPresentationCard({
     locale,
     preview.selectedQuantity,
   )
-  const cost = formatGameNumber(locale, preview.cost)
+  const cost = formatFacilityNumber(locale, preview.cost)
   const costPrecise = preciseNumber(locale, preview.cost)
   const displayFeedback = pending
     ? 'pending'
@@ -392,6 +397,7 @@ export function FacilityDetailsContent({
         !contribution.sourceId.startsWith('manual-purchase.'),
     ),
   ]
+  const discoveryUnlocked = productionModifierEffects.some(row => row.sourceId === 'discovery.production')
   const researchModifierEffects = productionModifierEffects.filter(
     (contribution) => contribution.source?.kind === 'research',
   )
@@ -435,12 +441,12 @@ export function FacilityDetailsContent({
           </p>
           <p className="facility-details-dialog__value">
             {intl.formatMessage(messages.perRealSecond, {
-              rate: formatGameNumber(locale, realRate),
+              rate: formatFacilityNumber(locale, realRate),
             })}
           </p>
           <p className="facility-details-hero__game-rate">
             {intl.formatMessage(messages.perGameSecond, {
-              rate: formatGameNumber(locale, fact.production.perSecond),
+              rate: formatFacilityNumber(locale, fact.production.perSecond),
             })}
           </p>
         </div>
@@ -464,33 +470,33 @@ export function FacilityDetailsContent({
               <span className="facility-effect-row__copy">
                 <strong>{intl.formatMessage(messages.countStage)}</strong>
                 <small className="facility-effect-row__breakdown">
-                  <span>{formatGameNumber(locale, fact.ownership.automatic)} {intl.formatMessage(messages.automaticFacilities)}</span>
-                  <span>{formatGameNumber(locale, fact.ownership.manual)} {intl.formatMessage(messages.manuallyPurchased)}</span>
+                  <span>{formatFacilityNumber(locale, fact.ownership.automatic)} {intl.formatMessage(messages.automaticFacilities)}</span>
+                  <span>{formatFacilityNumber(locale, fact.ownership.manual)} {intl.formatMessage(messages.manuallyPurchased)}</span>
                 </small>
               </span>
-              <span className="facility-effect-row__value">×{formatGameNumber(locale, count.value)}</span>
+              <span className="facility-effect-row__value">×{formatFacilityNumber(locale, count.value)}</span>
             </div>
           )}
           {base && count && (
             <p className="facility-details-stage__result">
-              {formatGameNumber(locale, base.value)} × {formatGameNumber(locale, count.value)} = {formatGameNumber(locale, base.value * count.value)}
+              {formatFacilityNumber(locale, base.value)} × {formatFacilityNumber(locale, count.value)} = {formatFacilityNumber(locale, base.value * count.value)}
             </p>
           )}
         </CalculationStage>
         <CalculationStage number={2} title={intl.formatMessage(messages.productionModifiersStage)}>
           {researchModifierEffects.length > 0 && (
             <EffectGroup title={intl.formatMessage(messages.researchGroup)}>
-              <EffectList locale={locale} contributions={researchModifierEffects} facilityId={facilityId} />
+              <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={researchModifierEffects} facilityId={facilityId} />
             </EffectGroup>
           )}
           {skillModifierEffects.length > 0 && (
             <EffectGroup title={intl.formatMessage(messages.skillTreeGroup)}>
-              <EffectList locale={locale} contributions={skillModifierEffects} facilityId={facilityId} />
+              <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={skillModifierEffects} facilityId={facilityId} />
             </EffectGroup>
           )}
           {otherModifierEffects.length > 0 && (
             <EffectGroup title={intl.formatMessage(messages.otherBonusesGroup)}>
-              <EffectList locale={locale} contributions={otherModifierEffects} facilityId={facilityId} />
+              <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={otherModifierEffects} facilityId={facilityId} />
             </EffectGroup>
           )}
           {(hasTerraPurchaseEffects || purchaseEffects.length > 0) && (
@@ -499,7 +505,7 @@ export function FacilityDetailsContent({
                 <TerraRows locale={locale} layer={details.manualPurchaseLayer} />
               ) : null}
               {purchaseEffects.length > 0 && (
-                <EffectList locale={locale} contributions={purchaseEffects} facilityId={facilityId} manualPurchaseLayer={details?.manualPurchaseLayer} />
+                <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={purchaseEffects} facilityId={facilityId} manualPurchaseLayer={details?.manualPurchaseLayer} />
               )}
             </EffectGroup>
           )}
@@ -512,7 +518,7 @@ export function FacilityDetailsContent({
             )}
           {productionFormula && (
             <p className="facility-details-stage__result">
-              <bdi>{productionFormula}</bdi> = {formatGameNumber(
+              <bdi>{productionFormula}</bdi> = {formatFacilityNumber(
                 locale,
                 fact.production.perSecond,
               )}
@@ -524,9 +530,9 @@ export function FacilityDetailsContent({
             <img className="facility-effect-row__icon" src={navigationAssets.offlineTime} alt="" />
             <span className="facility-effect-row__copy">
               <strong>{intl.formatMessage(messages.gameSpeed)}</strong>
-              <small>{intl.formatMessage(messages.gameSpeedDescription, { speed: formatGameNumber(locale, gameSpeed) })}</small>
+              <small>{intl.formatMessage(messages.gameSpeedDescription, { speed: formatFacilityNumber(locale, gameSpeed) })}</small>
             </span>
-            <span className="facility-effect-row__value">×{formatGameNumber(locale, gameSpeed)}</span>
+            <span className="facility-effect-row__value">×{formatFacilityNumber(locale, gameSpeed)}</span>
           </div>
         </CalculationStage>
       </section>
@@ -542,30 +548,30 @@ export function FacilityDetailsContent({
               <strong>{intl.formatMessage(upstreamFacilityNameMessages[source.sourceFacilityId] ?? messages.unknownFacility)}</strong>
               <small>{'producedCount' in source
                 ? intl.formatMessage(messages.megaProducedCountBy, {
-                    count: formatGameNumber(locale, source.producedCount),
+                    count: formatFacilityNumber(locale, source.producedCount),
                     facility: intl.formatMessage(upstreamFacilityNameMessages[source.sourceFacilityId] ?? messages.unknownFacility),
                   })
                 : intl.formatMessage(messages.producedBy, {
                     facility: intl.formatMessage(upstreamFacilityNameMessages[source.sourceFacilityId] ?? messages.unknownFacility),
-                    rate: formatGameNumber(locale, source.contributionPerSecond),
+                    rate: formatFacilityNumber(locale, source.contributionPerSecond),
                   })}</small>
             </span>
             {'producedCount' in source && (
               <span className="facility-effect-row__value">
-                +{formatGameNumber(locale, source.producedCount)}
+                +{formatFacilityNumber(locale, source.producedCount)}
               </span>
             )}
           </div>
         ))}
         {generationContributions.length > 0 && (
-          <EffectList locale={locale} contributions={generationContributions} facilityId={facilityId} />
+          <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={generationContributions} facilityId={facilityId} />
         )}
         <div className="facility-effect-row">
           <img className="facility-effect-row__icon" src={facilityIcon(facilityId)} alt="" />
           <span className="facility-effect-row__copy">
             <strong>{intl.formatMessage(messages.manualPurchases)}</strong>
             <small>{intl.formatMessage(messages.manualAcquisitionDescription, {
-              count: formatGameNumber(locale, fact.ownership.manual),
+              count: formatFacilityNumber(locale, fact.ownership.manual),
               facility: facilityName,
             })}</small>
           </span>
@@ -586,7 +592,7 @@ function formatProductionFormula(
   contributions: readonly FacilityContribution[],
   baseLabel: string,
 ): string {
-  const number = (value: number) => formatGameNumber(locale, value)
+  const number = (value: number) => formatFacilityNumber(locale, value)
   let formula = `${baseLabel} (${number(base.value * count.value)})`
 
   for (const contribution of contributions) {
@@ -644,11 +650,11 @@ function EffectGroup({ title, children }: { readonly title: string; readonly chi
   )
 }
 
-function EffectList({ locale, contributions, facilityId, manualPurchaseLayer }: { readonly locale: EnabledLocale; readonly contributions: readonly FacilityContribution[]; readonly facilityId: DysonFacilityId; readonly manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer'] }) {
+function EffectList({ locale, contributions, facilityId, manualPurchaseLayer, discoveryUnlocked }: { readonly discoveryUnlocked: boolean; readonly locale: EnabledLocale; readonly contributions: readonly FacilityContribution[]; readonly facilityId: DysonFacilityId; readonly manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer'] }) {
   const intl = useIntl()
   if (contributions.length === 0) return <p className="facility-details-empty">{intl.formatMessage(messages.noActiveEffects)}</p>
   return <>{contributions.map((contribution) => {
-    const presentation = effectPresentation(contribution, facilityId, intl, manualPurchaseLayer)
+    const presentation = effectPresentation(contribution, facilityId, intl, discoveryUnlocked, manualPurchaseLayer)
     return <EffectRow key={`${contribution.sourceId}-${contribution.order ?? 0}`} locale={locale} contribution={contribution} {...presentation} />
   })}</>
 }
@@ -669,7 +675,7 @@ function EffectRow({ locale, contribution, icon, name, description }: { readonly
         {description && <small>{description}</small>}
         {contribution.condition && <small>{intl.formatMessage(messages.condition, { condition: contribution.condition })}</small>}
       </span>
-      <span className="facility-effect-row__value">{operationSymbol(contribution.operation)}{formatGameNumber(locale, contribution.value)}</span>
+      <span className="facility-effect-row__value">{operationSymbol(contribution.operation)}{formatFacilityNumber(locale, contribution.value)}</span>
       {showFormula && (
         <details className="facility-effect-row__technical">
           <summary>{intl.formatMessage(messages.sourceTechnicalDetails)}</summary>
@@ -704,7 +710,7 @@ function DynamicSourceFormula({
   readonly result: number
 }) {
   const intl = useIntl()
-  const number = (value: number) => formatGameNumber(locale, value)
+  const number = (value: number) => formatFacilityNumber(locale, value)
   const skillLine = (
     id: string,
     active: boolean,
@@ -727,7 +733,7 @@ function DynamicSourceFormula({
         ? Math.log10(calculation.researchers)
         : 0
       lines = [
-        <FormulaLine key="researchers" label={intl.formatMessage(messages.scienceBots)} value={number(calculation.researchers)} />,
+        <FormulaLine key="researchers" label={intl.formatMessage(calculation.usesTotalBots ? discoveryMessages.totalBots : messages.scienceBots)} value={number(calculation.researchers)} />,
         <FormulaLine key="base" label={`log10(${number(calculation.researchers)})`} value={number(current)} />,
       ]
       if (calculation.hubbleTelescope) current *= 2
@@ -752,28 +758,33 @@ function DynamicSourceFormula({
       ]
       break
     case 'stellar-sacrifices': {
-      const galaxies = calculation.panelsPerSecond *
-        calculation.panelLifetimeSeconds / 20_000 / 100_000_000_000
+      const galaxies = resolveGalaxiesEngulfed(calculation.panelsPerSecond, calculation.panelLifetimeSeconds)
       let adjusted = galaxies
       lines = [
         <FormulaLine key="panels" label={intl.formatMessage(messages.panelsPerSecond)} value={number(calculation.panelsPerSecond)} />,
         <FormulaLine key="lifetime" label={intl.formatMessage(messages.panelLifetime)} value={`${number(calculation.panelLifetimeSeconds)}s`} />,
         <FormulaLine key="galaxies" label={intl.formatMessage(messages.galaxiesEngulfed)} value={number(galaxies)} />,
       ]
-      if (calculation.stellarObliteration) adjusted *= 1_000
+      if (calculation.stellarObliteration) adjusted = multiplyContinuous(adjusted, 1_000)
       lines.push(skillLine('stellarObliteration', calculation.stellarObliteration, `×1,000 = ${number(adjusted)}`))
-      if (calculation.supernova) adjusted *= 1_000
+      if (calculation.supernova) adjusted = multiplyContinuous(adjusted, 1_000)
       lines.push(skillLine('supernova', calculation.supernova, `×1,000 = ${number(adjusted)}`))
       lines.push(<FormulaLine key="base" label={`log10(${number(adjusted)})²`} value={number(Math.pow(Math.max(0, Math.log10(adjusted)), 2))} />)
+      if (calculation.discoveryMultiplier !== undefined) {
+        lines.push(<FormulaLine key="discovery" label={intl.formatMessage(discoveryMessages.name)} value={`×${number(calculation.discoveryMultiplier)} = ${number(result)}`} />)
+      }
       break
     }
-    case 'shoulders-of-the-fallen':
+    case 'shoulders-of-the-fallen': {
+      const level = calculation.discoveryCompletions ?? calculation.scienceBoostLevel
+      const input = calculation.discoveryCompletions === undefined ? level : 1 + level
       lines = [
-        <FormulaLine key="level" label={intl.formatMessage(messages.scienceBoostLevel)} value={number(calculation.scienceBoostLevel)} />,
+        <FormulaLine key="level" label={intl.formatMessage(calculation.discoveryCompletions === undefined ? messages.scienceBoostLevel : discoveryMessages.completions)} value={number(level)} />,
         skillLine('scientificPlanets', calculation.scientificPlanets, intl.formatMessage(messages.requirementMet)),
-        <FormulaLine key="base" label={`log2(${number(calculation.scienceBoostLevel)})`} value={number(calculation.scientificPlanets && calculation.scienceBoostLevel > 0 ? Math.log2(calculation.scienceBoostLevel) : 0)} />,
+        <FormulaLine key="base" label={`log2(${number(input)})`} value={number(calculation.scientificPlanets && input > 0 ? Math.log2(input) : 0)} />,
       ]
       break
+    }
     case 'pocket-dimensions': {
       let current = calculation.workers > 1
         ? Math.log10(calculation.workers)
@@ -918,8 +929,8 @@ function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly
     ...(layer.transferSkillId
       ? [{
           id: layer.transferSkillId,
-          value: `+${formatGameNumber(locale, layer.transferredPlanetCount)}`,
-          description: intl.formatMessage(messages.terraTransferDescription, { count: formatGameNumber(locale, layer.transferredPlanetCount) }),
+          value: `+${formatFacilityNumber(locale, layer.transferredPlanetCount)}`,
+          description: intl.formatMessage(messages.terraTransferDescription, { count: formatFacilityNumber(locale, layer.transferredPlanetCount) }),
         }]
       : []),
   ]
@@ -935,7 +946,7 @@ function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly
   ))}</>
 }
 
-function effectPresentation(contribution: FacilityContribution, facilityId: DysonFacilityId, intl: IntlShape, manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer']): { icon: string; name: string; description: string } {
+function effectPresentation(contribution: FacilityContribution, facilityId: DysonFacilityId, intl: IntlShape, discoveryUnlocked: boolean, manualPurchaseLayer?: FacilityCanonicalFact['details']['manualPurchaseLayer']): { icon: string; name: string; description: string } {
   const source = contribution.source
   if (contribution.sourceId.startsWith('manual-purchase.scaling-') && manualPurchaseLayer) {
     const skillAssigned = source?.kind === 'skill' && source.id === 'productionScaling'
@@ -948,13 +959,19 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
       }),
     }
   }
-  if (source?.kind === 'skill') return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: skillName(source.id, intl), description: skillTechnical(source.id, intl) }
+  if (source?.kind === 'skill') {
+    const name = discoveryUnlocked ? discoverySkillNames[source.id as keyof typeof discoverySkillNames] : undefined
+    const effect = (discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
+      ?? (source.fractured ? galvanizedEffectMessages[source.id] : undefined)
+    return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: name ? intl.formatMessage(name) : skillName(source.id, intl), description: effect ? intl.formatMessage(effect) : skillTechnical(source.id, intl) }
+  }
   if (source?.kind === 'research') return { icon: navigationAssets.research, name: intl.formatMessage(researchNameMessage(source.id)), description: intl.formatMessage(researchDescriptionMessage(source.id)) }
   if (source?.kind === 'infinity') return { icon: navigationAssets.infinity, name: intl.formatMessage(messages.infinityPower), description: intl.formatMessage(messages.infinityPower) }
   if (source?.kind === 'secret') return { icon: navigationAssets.infinity, name: intl.formatMessage(messages.secretsPower), description: intl.formatMessage(messages.secretsPower) }
   if (source?.kind === 'avocato') return { icon: skillIcons.avocados ?? navigationAssets.infinity, name: intl.formatMessage(messages.avocatoPower), description: intl.formatMessage(messages.avocatoPower) }
   if (source?.id === 'milestone-50') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone50), description: intl.formatMessage(messages.milestone50) }
   if (source?.id === 'milestone-100') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone100), description: intl.formatMessage(messages.milestone100) }
+  if (contribution.sourceId === 'discovery.production') return { icon: navigationAssets.discovery, name: intl.formatMessage(discoveryMessages.name), description: '' }
   if (contribution.sourceId === 'bot-boost') return { icon: navigationAssets.store, name: intl.formatMessage(boostMessages.title), description: '' }
   if (contribution.sourceId === 'canonical.numeric-clamp') return { icon: navigationAssets.settings, name: intl.formatMessage(messages.numericSafety), description: intl.formatMessage(messages.numericSafety) }
   return { icon: facilityIcon(facilityId), name: contributionLabel(contribution.displayRole, facilityPresentation[facilityId].name, intl), description: '' }
@@ -1043,9 +1060,9 @@ function effectFormula(
   contribution: FacilityContribution,
   input: number,
 ): string {
-  const formattedInput = formatGameNumber(locale, input)
-  const formattedValue = formatGameNumber(locale, contribution.value)
-  const formattedResult = formatGameNumber(locale, contribution.runningTotal)
+  const formattedInput = formatFacilityNumber(locale, input)
+  const formattedValue = formatFacilityNumber(locale, contribution.value)
+  const formattedResult = formatFacilityNumber(locale, contribution.runningTotal)
   switch (contribution.operation) {
     case 'power':
       return `${formattedInput} ^ ${formattedValue} = ${formattedResult}`
@@ -1068,7 +1085,7 @@ function researchFormula(
     source.level === undefined ||
     source.perLevelValue === undefined
   ) return ''
-  return `${formatGameNumber(locale, source.level)} × ${formatGameNumber(locale, source.perLevelValue * 100)}% = +${formatGameNumber(locale, contribution.value * 100)}%`
+  return `${formatFacilityNumber(locale, source.level)} × ${formatFacilityNumber(locale, source.perLevelValue * 100)}% = +${formatFacilityNumber(locale, contribution.value * 100)}%`
 }
 
 interface FacilityIdentityProps {
@@ -1087,8 +1104,8 @@ function FacilityIdentity({
   const intl = useIntl()
   const manualOwned = fact.ownership.manual
   const totalOwned = fact.ownership.total
-  const total = formatGameNumber(locale, totalOwned)
-  const manual = formatGameNumber(locale, manualOwned)
+  const total = formatFacilityNumber(locale, totalOwned)
+  const manual = formatFacilityNumber(locale, manualOwned)
   const identityText = intl.formatMessage(identity, {
     total,
     manual,
@@ -1138,7 +1155,7 @@ function productionText(
   }
   if (productionPerSecond >= 1) {
     return intl.formatMessage(presentation.productionPerSecond, {
-      rate: formatGameNumber(locale, productionPerSecond),
+      rate: formatFacilityNumber(locale, productionPerSecond),
     })
   }
   const seconds = 1 / productionPerSecond
@@ -1148,7 +1165,7 @@ function productionText(
       ? presentation.productionMinutes
       : presentation.productionSeconds,
     {
-      interval: formatGameNumber(
+      interval: formatFacilityNumber(
         locale,
         inMinutes ? seconds / 60 : seconds,
       ),
@@ -1172,8 +1189,8 @@ function productionDisplay(
     return splitProductionDisplay(text)
   }
   const highlightedValue = productionPerSecond >= 1
-    ? formatGameNumber(locale, productionPerSecond)
-    : formatGameNumber(
+    ? formatFacilityNumber(locale, productionPerSecond)
+    : formatFacilityNumber(
         locale,
         1 / productionPerSecond >= 60
           ? 1 / productionPerSecond / 60
@@ -1260,4 +1277,15 @@ function buttonState(
     default:
       return 'idle'
   }
+}
+
+/** Keep slow facility output visible instead of rounding it to zero. */
+function formatFacilityNumber(locale: EnabledLocale, value: number | bigint): string {
+  if (typeof value === 'number' && Math.abs(value) > 0 && Math.abs(value) < 0.01) {
+    return formatNumber(locale, value, {
+      maximumSignificantDigits: 3, useGrouping: false,
+      notation: Math.abs(value) < 1e-6 ? 'scientific' : 'standard',
+    })
+  }
+  return formatGameNumber(locale, value)
 }

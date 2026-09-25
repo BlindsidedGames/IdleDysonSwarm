@@ -4,7 +4,7 @@
     "description": "Resource currently available to feed Avocato."
   },
   "avocato.developer-note": {
-    "defaultMessage": "Thank you for playing Idle Dyson Swarm. Avocato’s boosts multiply with each other and do not affect the currencies you spend to increase them. Overflow Points are being saved for the next stage of the game.",
+    "defaultMessage": "Thank you for playing Idle Dyson Swarm. Avocato’s boosts multiply with each other and do not affect the currencies you spend to increase them. Spend Transcendence Points on Discovery and its permanent upgrades.",
     "description": "Condensed authored Unity Avocato developer note."
   },
   "avocato.developer-note.title": {
@@ -116,7 +116,7 @@
     "description": "Unity Avocato multiplier label."
   },
   "avocato.multiplier.overflow": {
-    "defaultMessage": "Overflow",
+    "defaultMessage": "Transcendence",
     "description": "Unity Avocato overflow multiplier label."
   },
   "avocato.multiplier.strange-matter": {
@@ -128,43 +128,43 @@
     "description": "Leaves the current run intact."
   },
   "avocato.overflow.confirm": {
-    "defaultMessage": "Confirm Overflow",
+    "defaultMessage": "Confirm Transcendence",
     "description": "Confirms the reset and grants one Overflow Point."
   },
   "avocato.overflow.description": {
-    "defaultMessage": "Reset your Bots, Infinity, Quantum, Reality and Simulation progress, and all Avocato boosts, for 1 Overflow Point. Your purchases, settings, Offline Time and completed Secrets are kept.",
+    "defaultMessage": "Reset your Bots, Infinity, Quantum, Reality and Simulation progress, and all Avocato boosts, for 1 Transcendence Point. Discovery returns to its starting level. Permanent upgrades, purchases, settings, Offline Time and completed Secrets are kept.",
     "description": "Explains the complete scope of the voluntary Overflow reset."
   },
   "avocato.overflow.failed": {
-    "defaultMessage": "Overflow could not be saved. Your current run has been kept. Try again.",
+    "defaultMessage": "Transcendence could not be saved. Your current run has been kept. Try again.",
     "description": "Commit-first reset failure feedback."
   },
-  "avocato.overflow.future": {
-    "defaultMessage": "Overflow Points are saved for a future layer. They do not boost production yet.",
-    "description": "Explains the current purpose of Overflow Points."
-  },
   "avocato.overflow.legacy": {
-    "defaultMessage": "Previous Overflow boost: ×{value}",
+    "defaultMessage": "Previous Transcendence boost: ×{value}",
     "description": "Historical Overflow multiplier retained until the next Overflow reset."
   },
   "avocato.overflow.open": {
-    "defaultMessage": "View Overflow reset",
+    "defaultMessage": "View Transcendence reset",
     "description": "Opens the voluntary reset in Avocato."
   },
   "avocato.overflow.points": {
-    "defaultMessage": "Overflow Points: {value}",
+    "defaultMessage": "Transcendence Points: {value}",
     "description": "Balance reserved for the future Overflow layer."
   },
   "avocato.overflow.reached": {
-    "defaultMessage": "Overflow reached",
+    "defaultMessage": "Transcendence reached",
     "description": "Durable Overflow eligibility status."
   },
   "avocato.overflow.reset": {
-    "defaultMessage": "Overflow for 1 point",
+    "defaultMessage": "Transcend for 1 point",
     "description": "Starts confirmation for an Overflow reset."
   },
+  "avocato.overflow.reset-reward": {
+    "defaultMessage": "Transcend for {reward}",
+    "description": "Reset action with an inline Transcendence icon and reward amount."
+  },
   "avocato.overflow.threshold": {
-    "defaultMessage": "Reach {value} Bots to Overflow.",
+    "defaultMessage": "Reach {value} Bots to Transcend.",
     "description": "Bot threshold for a voluntary Overflow reset."
   },
   "avocato.region": {
@@ -215,7 +215,22 @@
     "defaultMessage": "Catalysts: {value}"
   },
   "challenges.galvanizers.future": {
-    "defaultMessage": "Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Overflow."
+    "defaultMessage": "Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence."
+  },
+  "challenges.noScience": {
+    "defaultMessage": "No Science"
+  },
+  "challenges.noScience.active": {
+    "defaultMessage": "No Science active · Science and Research disabled"
+  },
+  "challenges.noScience.description": {
+    "defaultMessage": "Complete a Quantum run without Science or Research."
+  },
+  "challenges.quantumRestart": {
+    "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Quantum upgrades and later layers are kept. Abandoning also starts a fresh normal run."
+  },
+  "challenges.quantumTitle": {
+    "defaultMessage": "Quantum Challenges"
   },
   "challenges.replay": {
     "defaultMessage": "Replay"
@@ -263,7 +278,7 @@
     "defaultMessage": "View challenge"
   },
   "debug.access-description": {
-    "defaultMessage": "Spend 10 Overflow Points to unlock the developer tools. Once purchased, they can be re-enabled for free.",
+    "defaultMessage": "Spend 10 Transcendence Points to unlock the developer tools. Once purchased, they can be re-enabled for free.",
     "description": "Explains how developer tools are unlocked and retained."
   },
   "debug.action-failure": {
@@ -363,7 +378,7 @@
     "description": "Heading for developer maintenance controls."
   },
   "debug.overflow-points": {
-    "defaultMessage": "Overflow Points",
+    "defaultMessage": "Transcendence Points",
     "description": "Debug purchase currency."
   },
   "debug.progression": {
@@ -433,6 +448,270 @@
   "debug.unlock-tabs": {
     "defaultMessage": "Unlock all tabs",
     "description": "Developer action that unlocks every navigation tab."
+  },
+  "discovery.automationEffect": {
+    "defaultMessage": "Permanently unlocks Auto Bots."
+  },
+  "discovery.avocatoBonus": {
+    "defaultMessage": "+{value}% Discovery speed"
+  },
+  "discovery.avocatoProduction": {
+    "defaultMessage": "Cash & facility production"
+  },
+  "discovery.avocatoSpeed": {
+    "defaultMessage": "Avocato"
+  },
+  "discovery.baseLifetime": {
+    "defaultMessage": "Base panel lifetime"
+  },
+  "discovery.baseSpeed": {
+    "defaultMessage": "Base speed"
+  },
+  "discovery.booster": {
+    "defaultMessage": "Discovery Booster"
+  },
+  "discovery.boosterEffect": {
+    "defaultMessage": "+10 × log10(1 + purchased levels)% Discovery speed, up to +200%. Bonuses are additive."
+  },
+  "discovery.buy": {
+    "defaultMessage": "Buy · {cost} TP"
+  },
+  "discovery.cancel": {
+    "defaultMessage": "Cancel"
+  },
+  "discovery.completions": {
+    "defaultMessage": "Completed discoveries"
+  },
+  "discovery.confirm": {
+    "defaultMessage": "Replace Research with Discovery?"
+  },
+  "discovery.confirmAction": {
+    "defaultMessage": "Confirm"
+  },
+  "discovery.debug.addCompletions": {
+    "defaultMessage": "Add completed discoveries"
+  },
+  "discovery.debug.addPoints": {
+    "defaultMessage": "Add Transcendence Points"
+  },
+  "discovery.details": {
+    "defaultMessage": "Discovery details"
+  },
+  "discovery.level": {
+    "defaultMessage": "Discovery · Level {value}"
+  },
+  "discovery.levelLabel": {
+    "defaultMessage": "Discovery level"
+  },
+  "discovery.lifetime": {
+    "defaultMessage": "Panel lifetime: {value} seconds"
+  },
+  "discovery.multiplier": {
+    "defaultMessage": "Production multiplier"
+  },
+  "discovery.name": {
+    "defaultMessage": "Discovery"
+  },
+  "discovery.next": {
+    "defaultMessage": "Next: ×{value} · {time}"
+  },
+  "discovery.nextMultiplier": {
+    "defaultMessage": "Next multiplier"
+  },
+  "discovery.nextPower": {
+    "defaultMessage": "Next: ×{value} starting power"
+  },
+  "discovery.nextSpeed": {
+    "defaultMessage": "Next: +{value}% purchased speed"
+  },
+  "discovery.owned": {
+    "defaultMessage": "Level {value}"
+  },
+  "discovery.power": {
+    "defaultMessage": "Starting Power"
+  },
+  "discovery.powerEffect": {
+    "defaultMessage": "+5 starting multiplier and base panel-lifetime seconds. Bonuses are additive."
+  },
+  "discovery.powerSkillsEffect": {
+    "defaultMessage": "Unlock Power Skills, which boost facilities, Cash, and Discovery speed."
+  },
+  "discovery.production": {
+    "defaultMessage": "Cash, Bots & facility production ×{value}"
+  },
+  "discovery.purchaseFailed": {
+    "defaultMessage": "Purchase could not be saved. Your points have been kept. Try again."
+  },
+  "discovery.resetRule": {
+    "defaultMessage": "Persists through Infinity and Quantum. Resets on Transcendence."
+  },
+  "discovery.route": {
+    "defaultMessage": "Transcendence"
+  },
+  "discovery.secretsSpeed": {
+    "defaultMessage": "Secrets"
+  },
+  "discovery.skill.addictionToPower.effect": {
+    "defaultMessage": "200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets. 10% less Cash unless Fractured. Cash penalties are additive."
+  },
+  "discovery.skill.cashScienceProduction.effect": {
+    "defaultMessage": "Doubles Cash production and adds +25% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.coldFusion.effect": {
+    "defaultMessage": "+75% Discovery speed; halves Cash unless Fractured. Bonuses are additive."
+  },
+  "discovery.skill.coldFusion.flavour": {
+    "defaultMessage": "Theoretical made fact. Cold fusion, solved. What else did the universe forget to hide?"
+  },
+  "discovery.skill.doubleScienceTree.effect": {
+    "defaultMessage": "+25% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.doubleScienceTree.flavour": {
+    "defaultMessage": "Breakthroughs in CPU manufacturing. Now with fewer unexplained smoke clouds."
+  },
+  "discovery.skill.doubleScienceTree.name": {
+    "defaultMessage": "Discovery Speed"
+  },
+  "discovery.skill.economicDominance.effect": {
+    "defaultMessage": "Multiplies Cash by 20."
+  },
+  "discovery.skill.economicRevolution.effect": {
+    "defaultMessage": "Multiplies Cash by 5."
+  },
+  "discovery.skill.focusedBeam.effect": {
+    "defaultMessage": "Enhances SRS’s Cash bonus and Discovery-speed bonus by 50%, scaled by Stellar Memory."
+  },
+  "discovery.skill.idleSpaceFlight.effect": {
+    "defaultMessage": "+10 × log10(1 + active panels / 100,000,000)% Discovery speed, up to +200%. Bonuses are additive."
+  },
+  "discovery.skill.indulgingInPower.effect": {
+    "defaultMessage": "100% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets. 15% less Cash unless Fractured. Cash penalties are additive."
+  },
+  "discovery.skill.panelMaintenance.effect": {
+    "defaultMessage": "Adds 100 seconds to Panel Lifetime."
+  },
+  "discovery.skill.paragon.effect": {
+    "defaultMessage": "+150% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.pocketMultiverse.effect": {
+    "defaultMessage": "Pocket Protectors instead multiplies Pocket Dimensions production by log10(total Bots)."
+  },
+  "discovery.skill.pocketProtectors.effect": {
+    "defaultMessage": "Adds log10(total Bots) to Pocket Dimensions production."
+  },
+  "discovery.skill.pocketProtectors.flavour": {
+    "defaultMessage": "Everyone wants in on this. Pocket protection is now mandatory."
+  },
+  "discovery.skill.powerUnderwhelming.effect": {
+    "defaultMessage": "+25% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.powerUnderwhelming.flavour": {
+    "defaultMessage": "Use Discovery to discover Discovery. How? We will never know."
+  },
+  "discovery.skill.producedAsScienceTree.effect": {
+    "defaultMessage": "+100% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.producedAsScienceTree.flavour": {
+    "defaultMessage": "Improved networking protocols. The breakthroughs now arrive before the meeting invitations."
+  },
+  "discovery.skill.producedAsScienceTree.name": {
+    "defaultMessage": "Discovery Boost"
+  },
+  "discovery.skill.purityOfMind.effect": {
+    "defaultMessage": "+50% Cash and +5% Discovery speed per unspent SP. Discovery speed is capped at +200%. Bonuses are additive."
+  },
+  "discovery.skill.purityOfMind.flavour": {
+    "defaultMessage": "With singular focus you clear your mind of all thoughts that do not include Cash or Discovery."
+  },
+  "discovery.skill.purityOfSEssence.effect": {
+    "defaultMessage": "Cash, Bots and facility production ×(1 + 0.42p + 0.13784p(p − 1)), where p is unspent SP. +2% Discovery speed per unspent SP, up to +100%. Bonuses are additive."
+  },
+  "discovery.skill.regulatedAcademia.effect": {
+    "defaultMessage": "Enhances Discovery’s production bonus by 20%, plus 10% per Fragment after the first. Bonuses are additive."
+  },
+  "discovery.skill.regulatedAcademia.flavour": {
+    "defaultMessage": "You find a fragment of another universe. Its knowledge strengthens your discoveries. What else might this universe hold?"
+  },
+  "discovery.skill.repeatableResearch.effect": {
+    "defaultMessage": "+50% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.researchActivity.effect": {
+    "defaultMessage": "+150% SRS charging speed while assigned, enhanced by Stellar Memory. Bonuses are additive."
+  },
+  "discovery.skill.researchConversion.effect": {
+    "defaultMessage": "+100% SRS charging speed, enhanced by Stellar Memory. Bonuses are additive."
+  },
+  "discovery.skill.scientificDominance.effect": {
+    "defaultMessage": "+100% Discovery speed; quarters Cash unless Fractured. Bonuses are additive."
+  },
+  "discovery.skill.scientificPlanets.effect": {
+    "defaultMessage": "Produces log10(total Bots) Planets per second."
+  },
+  "discovery.skill.scientificPlanets.flavour": {
+    "defaultMessage": "Teach your Bots to discover planets. Ask them nicely not to misplace any."
+  },
+  "discovery.skill.scientificRevolution.effect": {
+    "defaultMessage": "+50% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.shouldersOfGiants.effect": {
+    "defaultMessage": "+10 × log10(1 + Scientific Planets production)% Discovery speed, up to +200%. Includes Shoulders of the Fallen. Bonuses are additive."
+  },
+  "discovery.skill.shouldersOfPrecursors.effect": {
+    "defaultMessage": "Replaces Cash multipliers with total Discovery speed. When Fractured, multiplies alongside them."
+  },
+  "discovery.skill.shouldersOfTheEnlightened.effect": {
+    "defaultMessage": "+10% Cash per completed Discovery while Scientific Planets is assigned. Bonuses are additive."
+  },
+  "discovery.skill.shouldersOfTheFallen.effect": {
+    "defaultMessage": "Adds log2(1 + completed discoveries) Planets per second while Scientific Planets is assigned."
+  },
+  "discovery.skill.shouldersOfTheFallen.flavour": {
+    "defaultMessage": "A relic of a lost civilization. Excellent shoulders. Terrible instruction manual."
+  },
+  "discovery.skill.shouldersOfTheRevolution.effect": {
+    "defaultMessage": "+1% Cash per completed Discovery. Bonuses are additive."
+  },
+  "discovery.skill.startHereTree.effect": {
+    "defaultMessage": "+20% Cash and +20% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.startHereTree.name": {
+    "defaultMessage": "Cash & Discovery"
+  },
+  "discovery.skill.stellarObliteration.effect": {
+    "defaultMessage": "Stellar Sacrifices Galaxies are 1,000× better. Divides Cash by Stellar Galaxies unless Fractured."
+  },
+  "discovery.skill.superRadiantScattering.effect": {
+    "defaultMessage": "Increases Cash, Bots and all facility production as SRS charges. +10 × log10(1 + charge seconds / 100)% Discovery speed, up to +200% before Focused Beam. Bonuses are additive."
+  },
+  "discovery.skill.superchargedPower.effect": {
+    "defaultMessage": "+50% Cash and facility production; +25% Discovery speed. Bonuses are additive."
+  },
+  "discovery.skill.tasteOfPower.effect": {
+    "defaultMessage": "50% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets. 25% less Cash unless Fractured."
+  },
+  "discovery.skill.whatCouldHaveBeen.effect": {
+    "defaultMessage": "+10 × log10(1 + Pocket Dimensions production)% Discovery speed, up to +200%. Shoulder Surgery includes Shoulders of the Fallen. Bonuses are additive."
+  },
+  "discovery.skill.workerBoost.effect": {
+    "defaultMessage": "+10,000% Cash production."
+  },
+  "discovery.speed": {
+    "defaultMessage": "Discovery Speed"
+  },
+  "discovery.speedEffect": {
+    "defaultMessage": "+25% Discovery speed. Bonuses are additive."
+  },
+  "discovery.speedSources": {
+    "defaultMessage": "Discovery speed"
+  },
+  "discovery.startingBenefits": {
+    "defaultMessage": "10× Cash, Bots & facility production. 10-second base panel lifetime."
+  },
+  "discovery.totalBots": {
+    "defaultMessage": "Total Bots"
+  },
+  "discovery.unlock": {
+    "defaultMessage": "Unlock Discovery"
   },
   "dyson.bot-distribution.accessible-value": {
     "defaultMessage": "{workers} workers, {scientists} scientists",
@@ -523,8 +802,8 @@
     "description": "Accessible name for the compact Assembly Line purchase control."
   },
   "dyson.facilities.birch-planets.description": {
-    "defaultMessage": "Supermassive planetary shells that consume Matrioshka Brains to produce more Matrioshka Brains.",
-    "description": "Exact authored Birch Planets description."
+    "defaultMessage": "Supermassive planetary shells that produce Matrioshka Brains.",
+    "description": "Birch Planets description."
   },
   "dyson.facilities.birch-planets.identity": {
     "defaultMessage": "Birch Planets {total}({manual})",
@@ -839,8 +1118,8 @@
     "description": "Heading for canonical upstream facility sources."
   },
   "dyson.facilities.galactic-brains.description": {
-    "defaultMessage": "The ultimate mega-structure requiring both Matrioshka Brains and Birch Planets. Produces Birch Planets.",
-    "description": "Exact authored Galactic Brains description."
+    "defaultMessage": "The ultimate mega-structure. Produces Birch Planets.",
+    "description": "Galactic Brains description."
   },
   "dyson.facilities.galactic-brains.identity": {
     "defaultMessage": "Galactic Brains {total}({manual})",
@@ -875,8 +1154,8 @@
     "description": "Visible parenthesized manual-owned count beside a facility total."
   },
   "dyson.facilities.matrioshka-brains.description": {
-    "defaultMessage": "Massive stellar computing structures that consume planets to produce more planets.",
-    "description": "Exact authored Matrioshka Brains description."
+    "defaultMessage": "Massive stellar computing structures that produce Planets.",
+    "description": "Matrioshka Brains description."
   },
   "dyson.facilities.matrioshka-brains.identity": {
     "defaultMessage": "Matrioshka Brains {total}({manual})",
@@ -2923,7 +3202,7 @@
     "description": "Research effect line before its first purchase."
   },
   "research.challengeActive": {
-    "defaultMessage": "Trial & Error active · Manual and automatic research purchases are disabled."
+    "defaultMessage": "Challenge active · Manual and automatic research purchases are disabled."
   },
   "research.challengeDisabled": {
     "defaultMessage": "Disabled"
@@ -3383,6 +3662,9 @@
   "settings.navigation.title": {
     "defaultMessage": "Navigation Shortcuts",
     "description": "Heading for optional bottom navigation shortcuts."
+  },
+  "settings.navigation.transcendence": {
+    "defaultMessage": "Show Transcendence"
   },
   "settings.navigation.wiki": {
     "defaultMessage": "Show Wiki",
@@ -4321,7 +4603,7 @@
     "description": "Effective skill benefit after fracturing."
   },
   "skills.galvSacrifices": {
-    "defaultMessage": "Create Planets each second equal to log10(Stellar Galaxies Engulfed)², without consuming or requiring Bots.",
+    "defaultMessage": "Create your highest owned facility each second, including megastructures. Amount: log10(Stellar Galaxies Engulfed)². No Bots required or consumed.",
     "description": "Effective skill benefit after fracturing."
   },
   "skills.galvScientific": {
@@ -5409,7 +5691,7 @@
     "description": "Technical gameplay-effect description for the Stellar Improvements Skill node."
   },
   "skills.node.stellarObliteration.description": {
-    "defaultMessage": "Obliterating even more Bots greatly improve the rate at which you generate artificial Planets, however this is costly.",
+    "defaultMessage": "Obliterating even more Bots greatly improves the rate at which you generate facilities, however this is costly.",
     "description": "Flavour description for the Stellar Obliteration Skill node."
   },
   "skills.node.stellarObliteration.name": {
@@ -5421,7 +5703,7 @@
     "description": "Technical gameplay-effect description for the Stellar Obliteration Skill node."
   },
   "skills.node.stellarSacrifices.description": {
-    "defaultMessage": "You decide to start utilizing the materials in your own bots to create additional planet sized structures for your empire.",
+    "defaultMessage": "You decide to use the materials in your own Bots to build more facilities for your empire.",
     "description": "Flavour description for the Stellar Sacrifices Skill node."
   },
   "skills.node.stellarSacrifices.name": {
@@ -5429,7 +5711,7 @@
     "description": "Display name for the Stellar Sacrifices Skill node."
   },
   "skills.node.stellarSacrifices.technical": {
-    "defaultMessage": "Every second destroy Bots equal to Stars Surrounded and gain Planets equal to Log10(Stellar Galaxies Engulfed) ^ 2.\n\nA stellar galaxy is just a normal galaxy with stellar modifiers added.",
+    "defaultMessage": "Each second, sacrifice Bots equal to Stars Surrounded to create your highest owned facility, including megastructures. Amount: log10(Stellar Galaxies Engulfed)².",
     "description": "Technical gameplay-effect description for the Stellar Sacrifices Skill node."
   },
   "skills.node.superRadiantScattering.description": {
@@ -7065,6 +7347,10 @@
     "defaultMessage": "Story",
     "description": "Accessible name and heading for the Story route."
   },
+  "wiki.bots.discovery-overview": {
+    "defaultMessage": "All <bots>Bots</bots> produce <value>Solar Panels</value>, which launch into orbit automatically. Discovery replaces scientists and Research. Completing goals in <skills>Skill Tree</skills> still awards <value>Skill Points</value>.",
+    "description": "Bots Wiki overview after Discovery retires scientist allocation."
+  },
   "wiki.bots.milestones": {
     "defaultMessage": "<value>Assembly Lines</value>, <value>AI Managers</value>, <value>Servers</value>, <value>Data Centers</value> and <value>Planets</value> double their yield at <value>50</value> manually purchased and double again at <value>100</value>. Each manual purchase beyond <value>100</value> adds another <value>1%</value> boost.",
     "description": "Facility milestone explanation from the Unity WikiContent prefab."
@@ -7140,6 +7426,42 @@
   "wiki.category.skills": {
     "defaultMessage": "Skill Tree",
     "description": "Wiki category about skills and goals."
+  },
+  "wiki.category.transcendence": {
+    "defaultMessage": "Transcendence",
+    "description": "Wiki category replacing Research after Discovery is unlocked."
+  },
+  "wiki.discovery.overview": {
+    "defaultMessage": "Discovery starts at <value>level 1</value>, with <value>10× Cash, Bot and facility production</value> and a <value>10-second base panel lifetime</value>. Each completion adds <value>0.1</value> to both the multiplier and base lifetime. A completion takes one hour at base speed. Discovery needs no scientists or resources.",
+    "description": "Explains Discovery baseline production, lifetime and fixed completion requirement."
+  },
+  "wiki.discovery.overview-title": {
+    "defaultMessage": "Discovery",
+    "description": "Heading for Discovery progression mechanics."
+  },
+  "wiki.discovery.resets": {
+    "defaultMessage": "Discovery persists through <infinity>Infinity</infinity>, <quantum>Quantum</quantum> and challenges. <value>Transcendence</value> resets its level and progress; the unlock and permanent upgrades remain. Stored Time advances Discovery when spent. Time away is banked, not automatically applied to Discovery.",
+    "description": "Explains Discovery preservation, Transcendence reset and Stored Time rules."
+  },
+  "wiki.discovery.resets-title": {
+    "defaultMessage": "Progress and resets",
+    "description": "Heading for Discovery reset and time rules."
+  },
+  "wiki.discovery.skills": {
+    "defaultMessage": "Science skills now improve <value>Discovery speed</value>; their current effects appear in the skill tree. Speed bonuses add together. Regulated Academia and relevant revealed Secrets enhance Discovery’s production bonus above <value>1×</value>, without changing its base panel lifetime. Science penalties no longer apply.",
+    "description": "Explains converted skill and Secret effects without duplicating their individual formulas."
+  },
+  "wiki.discovery.skills-title": {
+    "defaultMessage": "Skills and Secrets",
+    "description": "Heading for effects converted when Discovery replaces Research."
+  },
+  "wiki.discovery.upgrades": {
+    "defaultMessage": "In Avocato, <value>Discovery Speed</value> adds <value>25% speed</value> per purchase. <value>Starting Power</value> adds <value>5</value> to the starting multiplier and base panel lifetime, including immediately in the current run. Each upgrade costs <value>1, 2, 3… Transcendence Points</value> independently. Bonuses are additive.",
+    "description": "Explains independent permanent Discovery upgrade costs and additive effects."
+  },
+  "wiki.discovery.upgrades-title": {
+    "defaultMessage": "Permanent upgrades",
+    "description": "Heading for Discovery purchases in Avocato."
   },
   "wiki.infinity.overview": {
     "defaultMessage": "Reaching the current <infinity>Infinity</infinity> threshold—initially <value>42 quintillion bots</value>—lets you break reality and earn an <value>Infinity Point</value>. The first <value>five</value> breaks extend the Infinity Point production bonus across <value>Assembly Lines</value>, <value>AI Managers</value>, <value>Servers</value>, <value>Data Centers</value> and <value>Planets</value>.",
@@ -7445,17 +7767,49 @@
     "defaultMessage": "Version 4.1.10",
     "description": "Version 4.1.10 release notes."
   },
+  "wiki.patch-notes.version-4-1-10.balance": {
+    "defaultMessage": "Rebalanced facility price growth and megastructure costs and production.",
+    "description": "Version 4.1.10 release notes."
+  },
   "wiki.patch-notes.version-4-1-10.bot-boost": {
     "defaultMessage": "Fixed Permanent 2× Bots losing its effect after resetting your save.",
     "description": "Version 4.1.10 release notes."
   },
-  "wiki.patch-notes.version-4-1-11": {
-    "defaultMessage": "Version 4.1.11",
-    "description": "Version 4.1.11 release notes."
+  "wiki.patch-notes.version-4-1-10.challenge": {
+    "defaultMessage": "Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures.",
+    "description": "Version 4.1.10 challenge and Stellar Sacrifices changes."
   },
-  "wiki.patch-notes.version-4-1-11.speedruns": {
+  "wiki.patch-notes.version-4-1-10.discovery": {
+    "defaultMessage": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked.",
+    "description": "Version 4.1.10 Discovery release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.discovery-upgrades": {
+    "defaultMessage": "Added permanent Discovery Speed and Starting Power upgrades in Avocato.",
+    "description": "Version 4.1.10 Discovery release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.fixes": {
+    "defaultMessage": "Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.",
+    "description": "Version 4.1.10 release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.ios": {
+    "defaultMessage": "iOS 16 or later is now required.",
+    "description": "Version 4.1.10 release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.save-fix": {
+    "defaultMessage": "Fixed old research and cleared skill presets returning after saving or reloading.",
+    "description": "Version 4.1.10 release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.secret": {
+    "defaultMessage": "The sixth Avotation secret now completes automatically once reached with Discovery unlocked.",
+    "description": "Version 4.1.10 release notes."
+  },
+  "wiki.patch-notes.version-4-1-10.speedruns": {
     "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.",
-    "description": "Version 4.1.11 speedrun improvements."
+    "description": "Version 4.1.10 speedrun improvements."
+  },
+  "wiki.patch-notes.version-4-1-10.transcendence": {
+    "defaultMessage": "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research.",
+    "description": "Version 4.1.10 Discovery release notes."
   },
   "wiki.patch-notes.version-4-1-2": {
     "defaultMessage": "Version 4.1.2",
@@ -7958,7 +8312,7 @@
     "description": "Explains city factory yield after Engineering and the unchanged worker yield."
   },
   "wiki.reality.countermeasures": {
-    "defaultMessage": "<value>Countermeasures</value> in Research let simulations survive later disasters and increase the <value>Strange Matter</value> earned from a reset.",
+    "defaultMessage": "<value>Countermeasures</value> in Reality research let simulations survive later disasters and increase the <value>Strange Matter</value> earned from a reset.",
     "description": "Countermeasure explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.reality.countermeasures-title": {
@@ -8028,6 +8382,14 @@
   "wiki.secrets.effect.cash-multiplier": {
     "defaultMessage": "Cash multiplier",
     "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.discovery-production-enhancement": {
+    "defaultMessage": "Discovery production bonus enhancement",
+    "description": "Secret effect label for live enhancement above the base 1x production multiplier."
+  },
+  "wiki.secrets.effect.discovery-speed": {
+    "defaultMessage": "Discovery speed",
+    "description": "Secret effect label after Science is replaced by Discovery."
   },
   "wiki.secrets.effect.planet-boost": {
     "defaultMessage": "Planet research boost",
@@ -8164,5 +8526,13 @@
   "wiki.topics": {
     "defaultMessage": "Topics",
     "description": "Accessible heading for the Wiki topic navigation."
+  },
+  "wiki.transcendence.overview": {
+    "defaultMessage": "At <value>4e242 Bots</value>, Transcend in Avocato to reset the earlier layers and earn <value>one Transcendence Point</value>. Spend one point on <value>Unlock Discovery</value> to permanently replace Science and Research. Existing Science and research levels do not carry over.",
+    "description": "Explains the Transcendence threshold, currency and optional Discovery purchase."
+  },
+  "wiki.transcendence.overview-title": {
+    "defaultMessage": "Beyond the swarm",
+    "description": "Heading for Transcendence progression guidance."
   }
 }

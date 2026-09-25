@@ -91,7 +91,7 @@ describe('Stellar overflow recovery', () => {
       Object.values(recalculation.value.rates).every(Number.isFinite),
     ).toBe(true)
     expect(
-      recalculation.value.auxiliary.stellarSacrifice.planetsPerSecond,
+      recalculation.value.auxiliary.stellarSacrifice.facilitiesPerSecond,
     ).toBeGreaterThan(0)
     expect(
       recalculation.value.auxiliary.stellarSacrifice.botsPerSecond,

@@ -8,6 +8,12 @@ import {
 export const AVOCADO_MEDITATION_TOTAL_STEPS = 7
 export const AVOCADO_MEDITATION_SKILL_POINT_REWARD = 4n
 
+/** Research's secret is retired after Discovery, without skipping any other step. */
+export function completeRetiredResearchSecret(state: CanonicalGameStateV1): CanonicalGameStateV1 {
+  if (!state.discovery?.unlocked || state.secretProgress.completed || state.secretProgress.step !== 5) return state
+  return { ...state, secretProgress: { ...state.secretProgress, step: 6 } }
+}
+
 export type AvocadoMeditationCode =
   | 'step-completed'
   | 'sequence-completed'
@@ -53,7 +59,10 @@ export function completeCanonicalAvocadoMeditationStep(
     return rejected(state, 'out-of-order')
   }
 
-  const nextStep = requiredStepIndex + 1
+  const progressed = completeRetiredResearchSecret({
+    ...state, secretProgress: { completed: false, step: requiredStepIndex + 1 },
+  })
+  const nextStep = progressed.secretProgress.step
   if (nextStep < AVOCADO_MEDITATION_TOTAL_STEPS) {
     return {
       accepted: true,

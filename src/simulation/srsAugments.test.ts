@@ -82,7 +82,7 @@ test('charging integrates the ramp, activity expiry and additive bonuses across 
 
 test('generated levels refresh once, fractional generation does not; paid research also activates', () => {
   const s = buy(state(), A.researchActivity)
-  const inputs = { seconds: 1, botProductionPerSecond: 0, stellarPlanetsPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 1_000_000, moneyUpgradePerSecond: 0 }
+  const inputs = { seconds: 1, botProductionPerSecond: 0, stellarFacilitiesPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 1_000_000, moneyUpgradePerSecond: 0 }
   const next = applyCanonicalSkillIntervalEffects(s, s, inputs)
   expect(next.skills.byId[A.researchActivity].timerSeconds).toBe(30)
   expect(next.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(1 + 1 / 1200 + 1.5 * (1 - 1 / 1_000_000))
@@ -240,7 +240,7 @@ test.each([
     [A.researchActivity]: { ...initial.skills.byId[A.researchActivity], timerSeconds: timer },
   } } }
   const step = (s: State, seconds: number) => applyCanonicalSkillIntervalEffects(s, s, {
-    seconds, botProductionPerSecond: 0, stellarPlanetsPerSecond: 0, stellarBotsPerSecond: 0,
+    seconds, botProductionPerSecond: 0, stellarFacilitiesPerSecond: 0, stellarBotsPerSecond: 0,
     scienceBoostPerSecond: science, moneyUpgradePerSecond: money,
   })
   const whole = step(initial, 361)
@@ -254,7 +254,7 @@ test('generated levels stop refreshing Activity at the research cap', () => {
   let s = buy(state(), A.researchActivity)
   s = { ...s, research: { ...s.research, levelsById: { 'research.science_boost': Number.MAX_SAFE_INTEGER - 1 }, progressById: {} } }
   const next = applyCanonicalSkillIntervalEffects(s, s, { seconds: 100, botProductionPerSecond: 0,
-    stellarPlanetsPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 1, moneyUpgradePerSecond: 0 })
+    stellarFacilitiesPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 1, moneyUpgradePerSecond: 0 })
   expect(next.skills.byId[A.researchActivity].timerSeconds).toBe(0)
   expect(next.skills.byId.superRadiantScattering.timerSeconds).toBeCloseTo(100 + 100 * 100 / 1200 + 45)
 })

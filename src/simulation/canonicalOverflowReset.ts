@@ -23,6 +23,7 @@ export function applyCanonicalOverflowReset(
     ok: true,
     state: {
       ...state,
+      ...(state.discovery ? { discovery: { ...state.discovery, completions: 0n, progress: 0 } } : {}),
       ...(state.challenges ? { challenges: { ...state.challenges, active: null } } : {}),
       meta: { ...state.meta, firstInfinityComplete: false },
       dyson: {

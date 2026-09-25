@@ -1,3 +1,4 @@
+import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { repairNumericSave } from './numericRepair'
 import {
@@ -136,6 +137,7 @@ const V2_DREAM_RESET_CAUSES = new Set([
 ])
 
 const CURRENT_ONLY_STATE_PATHS = new Set([
+  '$.discovery',
   '$.statistics.speedruns',
   '$.challenges',
   '$.avocado.overflowPoints',
@@ -1065,6 +1067,7 @@ function convertCompatibleState(
 
 function convertLike(source: unknown, base: unknown, path: string): unknown {
   if (path === '$.challenges') return { ...EMPTY_INFINITY_CHALLENGES }
+  if (path === '$.discovery') return { ...EMPTY_DISCOVERY }
   if (path === '$.avocado.overflowPoints') return 0n
   if (CURRENT_ONLY_STATE_PATHS.has(path)) return base
   if (V2_NULLABLE_TEXT_PATHS.has(path)) {
@@ -1129,7 +1132,7 @@ function convertLike(source: unknown, base: unknown, path: string): unknown {
         if (CURRENT_ONLY_STATE_PATHS.has(propertyPath)) {
           // Historical V2 never owned Overflow Points; importing it must not
           // inherit the receiver's currency from the compatibility base.
-          return [key, propertyPath === '$.challenges' ? { ...EMPTY_INFINITY_CHALLENGES } : propertyPath === '$.avocado.overflowPoints' ? 0n : baseValue]
+          return [key, propertyPath === '$.discovery' ? { ...EMPTY_DISCOVERY } : propertyPath === '$.challenges' ? { ...EMPTY_INFINITY_CHALLENGES } : propertyPath === '$.avocado.overflowPoints' ? 0n : baseValue]
         }
         if (!Object.prototype.hasOwnProperty.call(sourceRecord, key)) {
           throw new TypeError(

@@ -65,3 +65,14 @@ test('shows icon rewards and recorded completion durations without inventing old
   expect(screen.getByText('Completed in: 1m 2.5s')).not.toBeNull()
   expect(screen.getByText('Completed in: Unknown')).not.toBeNull()
 })
+
+test('No Science uses a Quantum confirmation and a two-Catalyst reward', async () => {
+  const dispatch = vi.fn().mockResolvedValue({ status: 'accepted' })
+  render(<IntlProvider locale="en" messages={{}}><InfinityChallenges progress={{ ...EMPTY_INFINITY_CHALLENGES, unlocked: true }} overflowReached={false} dispatchPlayer={dispatch} /></IntlProvider>)
+  const card = within(screen.getByRole('heading', { name: 'No Science' }).closest('article')!)
+  expect(card.getByRole('img', { name: 'Catalysts: 2' })).toBeTruthy()
+  fireEvent.click(card.getByRole('button', { name: 'Start' }))
+  expect(screen.getByText(/This starts a fresh Quantum run/)).toBeTruthy()
+  fireEvent.click(card.getByRole('button', { name: 'Confirm restart' }))
+  await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.enter-no-science' }))
+})

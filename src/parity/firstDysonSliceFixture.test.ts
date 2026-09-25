@@ -66,7 +66,7 @@ describe('frozen first-Dyson canonical fixture', () => {
       },
     })
     expect(fixture.checkpointedReconstruction.facilities.assembly_lines)
-      .toEqual([0, 38])
+      .toEqual([0, 40])
     expect(fixture.checkpointedReconstruction.visibility).toEqual({
       showTinker: true,
       visibleFacilityIds: [

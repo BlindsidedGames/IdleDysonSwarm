@@ -1,20 +1,11 @@
 import type { DeepReadonly } from '../core/contracts'
 import { DREAM_UPGRADE_FLAGS, type CanonicalGameStateV1, type DreamUpgradeFlag } from '../game-state/types'
-import { getGameAssetsByKind } from '../game-data/catalog'
-import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import { SKILL_COSTS } from '../simulation/skillDefinitions'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../simulation/dreamEducationUpgrades'
 import { QUANTUM_CONSTANTS } from '../simulation/quantumUpgrades'
 import { avocadoDysonMultiplier } from '../simulation/dysonPrestigeEffects'
 import type { AchievementFacts } from './contracts'
 
-let cachedSkillCosts: Map<string, bigint> | undefined
-const readSkillCosts = () => cachedSkillCosts ??= new Map(getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map(asset => {
-  const cost = asset.data.cost
-  if (typeof cost !== 'number' || !Number.isSafeInteger(cost) || cost < 0) {
-    throw new Error(`Invalid achievement skill cost: ${asset.id}`)
-  }
-  return [asset.id, BigInt(cost)] as const
-}))
 const speed = DREAM_UPGRADE_FLAGS.filter(id => /^speed[1-8]$/.test(id))
 const translation = DREAM_UPGRADE_FLAGS.filter(id => /^translation[1-8]$/.test(id))
 export const COMPLETION_UPGRADES = Object.freeze([...SIMULATION_UPGRADE_DEFINITIONS.keys(), ...speed, ...translation])
@@ -52,7 +43,7 @@ export function evaluateAchievements(state: DeepReadonly<CanonicalGameStateV1>, 
   reach('avotation_secrets_complete', secrets >= 7)
   reach('avocados_skill', state.skills.byId.avocados?.owned === true)
   reach('bots_42qi', state.dyson.bots >= 4.2e19)
-  const skillCosts = readSkillCosts()
+  const skillCosts = SKILL_COSTS
   let assigned = 0n
   for (const [id, skill] of Object.entries(state.skills.byId)) if (skill.owned) assigned += skillCosts.get(id) ?? 0n
   reach('skill_points_42', assigned >= 42n)

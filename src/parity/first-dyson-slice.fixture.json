@@ -3,7 +3,7 @@
   "preparedSave": {
     "sourcePath": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
     "sourceSha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78",
-    "preparedStateSha256": "0063fa80bb9e352e63200ff7100555c167576e20a03ad274b25b509742a178d1",
+    "preparedStateSha256": "172dffd880d07f7b05df1a6fbbf35bb93e20976ad9cce7daa32e3d15d3ec888e",
     "catalogSha256": "0f7e96636565c8d2d268eaa417335b9eb049939ddd2463408540b0af64ecf665"
   },
   "initial": {
@@ -118,9 +118,9 @@
       {
         "facilityId": "assembly_lines",
         "eligible": true,
-        "selectedQuantity": "38",
-        "affordableQuantity": "38",
-        "cost": 869008.0130797025,
+        "selectedQuantity": "40",
+        "affordableQuantity": "40",
+        "cost": 974952.4831359352,
         "status": "success"
       },
       {
@@ -322,7 +322,7 @@
       "durableRevision": 0
     },
     "resources": {
-      "money": 130991.9869202975,
+      "money": 25047.516864064848,
       "science": 0,
       "bots": 1,
       "workers": 1,
@@ -331,7 +331,7 @@
     "facilities": {
       "assembly_lines": [
         0,
-        38
+        40
       ],
       "ai_managers": [
         0,
@@ -426,15 +426,15 @@
         "eligible": false,
         "selectedQuantity": "1",
         "affordableQuantity": "0",
-        "cost": 191281.76287753452,
+        "cost": 204840.02145854634,
         "status": "insufficient-funds"
       },
       {
         "facilityId": "ai_managers",
         "eligible": true,
-        "selectedQuantity": "9",
-        "affordableQuantity": "9",
-        "cost": 118344.75249296379,
+        "selectedQuantity": "3",
+        "affordableQuantity": "3",
+        "cost": 18542,
         "status": "success"
       },
       {

@@ -56,3 +56,44 @@ test.each([false, true])('Cloud retains personal bests and imported=%s provenanc
   const shared = deserializeWebSave(serializeSharedWebSave(data)).idsSpeedruns as Record<string, unknown>
   expect(shared.personalBests).toBeUndefined()
 })
+
+test.each([false, true])('Cloud preserves earned Developer Options on startup (local checkpoint=%s)', async hasLocal => {
+  const { serializeCloudWebSave, deserializeWebSave } = await import('../save/serialization')
+  const { CanonicalRuntimeSession } = await import('../application/canonicalRuntimeSession')
+  const { applyDevelopmentAction } = await import('../application/canonicalDevelopmentCommands')
+  const { createProductionEventContext } = await import('../simulation/productionEventContext')
+  const owner = new CanonicalRuntimeSession(original, { entitlements: { permanentDoubleIp: false } })
+  const state = structuredClone(owner.initialState)
+  state.debugEntitlementPurchased = false
+  state.gameState.avocado.overflowPoints = 10n
+  expect(applyDevelopmentAction(state, { kind: 'purchase-debug-options' }, createProductionEventContext()).accepted).toBe(true)
+  const current = owner.prepare(state)
+  const text = serializeCloudWebSave(current.copyValidatedState())
+  const f = fixture(text, hasLocal ? current : null)
+  const result = await f.resolver.resolve()
+  expect(result.kind).toBe('ready')
+  if (result.kind !== 'ready') throw new Error('Cloud startup failed')
+  const restored = new CanonicalRuntimeSession(result.save, { entitlements: { permanentDoubleIp: false } }).initialState
+  expect(restored.debugEntitlementPurchased).toBe(true)
+  expect(restored.debugOptionsEnabled).toBe(true)
+  expect(restored.gameState.avocado.overflowPoints).toBe(0n)
+  expect(f.cloud.choose).not.toHaveBeenCalled()
+  expect(deserializeWebSave(serializeSharedWebSave(current.copyValidatedState())).debugEverEnabled).toBe(false)
+})
+
+test('selecting an old stripped Cloud checkpoint does not revoke a local earned unlock', async () => {
+  const data = original.copyValidatedState()
+  data.debugEverEnabled = true
+  const f = fixture(serializeSharedWebSave(data), original.withValidatedState(data))
+  f.cloud.choose = vi.fn(async () => 'cloud')
+  const result = await f.resolver.resolve()
+  expect(result.kind).toBe('ready')
+  if (result.kind === 'ready') expect(result.save.copyValidatedState().debugEverEnabled).toBe(true)
+})
+
+test('Cloud does not turn host-enabled Developer Options into a gameplay purchase', async () => {
+  const { serializeCloudWebSave, deserializeWebSave } = await import('../save/serialization')
+  const data = original.copyValidatedState()
+  Object.assign(data, { debugOptions: true, debugEverEnabled: false, doubleIp: true })
+  expect(deserializeWebSave(serializeCloudWebSave(data))).toMatchObject({ debugOptions: false, debugEverEnabled: false, doubleIp: false })
+})

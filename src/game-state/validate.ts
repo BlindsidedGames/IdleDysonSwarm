@@ -1,3 +1,4 @@
+import { validateDiscovery } from '../simulation/discovery'
 import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { isSubskill, isSubskillUnlocked } from '../simulation/skillSubskills'
 import { isGalvanized, validateGalvanizedSkills } from '../simulation/galvanization'
@@ -24,6 +25,8 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  const discoveryError = validateDiscovery(state.discovery)
+  if (discoveryError) errors.push(discoveryError)
   const boost = state.meta.botBoost
   if (boost !== undefined && (boost === null ||
     typeof boost.expiresAtMilliseconds !== 'number' ||

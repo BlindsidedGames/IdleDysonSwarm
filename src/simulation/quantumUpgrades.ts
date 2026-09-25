@@ -246,6 +246,7 @@ export function purchaseQuantumUpgrade(
   if (!isQuantumUpgradeId(id) || !definitions.has(id)) {
     return rejected(state, 'unknown-upgrade', 0n)
   }
+  if (state.discovery?.unlocked && id === 'BotMultitasking') return rejected(state, 'prerequisites-not-met', 0n)
   const definition = definitions.get(id)!
   const purchases = quantumUpgradePurchaseCount(state, id)
   if (
@@ -411,7 +412,7 @@ export function previewQuantumUpgradeSections(
     )
     return {
       sectionId: definition.sectionId,
-      upgradeIds: definition.upgradeIds,
+      upgradeIds: state.discovery?.unlocked ? definition.upgradeIds.filter(id => id !== 'BotMultitasking') : definition.upgradeIds,
       revealed,
       revealRequirement: requirement,
     }

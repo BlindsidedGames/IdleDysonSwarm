@@ -97,7 +97,6 @@ type MegaStructureUnlockId =
 interface MegaStructureSpec {
   readonly id: MegaStructureFacilityId
   readonly unlockId: MegaStructureUnlockId
-  readonly baseProduction: number
   readonly productionStatId: string
   readonly outputFacilityId:
     | 'planets'
@@ -111,21 +110,18 @@ const MEGA_STRUCTURE_SPECS: readonly MegaStructureSpec[] = [
   {
     id: 'matrioshka_brains',
     unlockId: 'matrioshkaBrains',
-    baseProduction: 1,
     productionStatId: 'Facility.MatrioshkaBrain.Production',
     outputFacilityId: 'planets',
   },
   {
     id: 'birch_planets',
     unlockId: 'birchPlanets',
-    baseProduction: 0.01,
     productionStatId: 'Facility.BirchPlanet.Production',
     outputFacilityId: 'matrioshka_brains',
   },
   {
     id: 'galactic_brains',
     unlockId: 'galacticBrains',
-    baseProduction: 0.1,
     productionStatId: 'Facility.GalacticBrain.Production',
     outputFacilityId: 'birch_planets',
   },
@@ -149,7 +145,7 @@ export function deriveMegaStructureRates(
   const unlocks = new Map<MegaStructureFacilityId, boolean>()
 
   for (const spec of MEGA_STRUCTURE_SPECS) {
-    const base = readLegacyBaseProduction(spec, lookup, issues)
+    const base = readBaseProduction(spec, lookup, issues)
     if (base !== undefined) bases.set(spec.id, base)
 
     const unlock = state.quantum.unlocks[spec.unlockId]
@@ -252,7 +248,7 @@ export function deriveMegaStructureRates(
   }
 }
 
-function readLegacyBaseProduction(
+function readBaseProduction(
   spec: MegaStructureSpec,
   lookup: MegaStructureAssetLookup,
   issues: MegaStructureRateIssue[],
@@ -275,18 +271,18 @@ function readLegacyBaseProduction(
     asset.kind !== FACILITY_DEFINITION_ASSET_KIND ||
     asset.id !== spec.id ||
     internalId !== spec.id ||
-    asset.data.baseProduction !== spec.baseProduction ||
+    !isFiniteNonNegativeNumber(asset.data.baseProduction) ||
     asset.data.productionStatId !== spec.productionStatId
   ) {
     issues.push({
       code: 'MEGA_STRUCTURE_DEFINITION_INVALID',
       path,
-      detail: `Facility definition '${spec.id}' does not match its characterized Unity production contract.`,
+      detail: `Facility definition '${spec.id}' does not provide a valid production definition.`,
     })
     return undefined
   }
 
-  const legacyBase = Math.fround(spec.baseProduction)
+  const legacyBase = Math.fround(asset.data.baseProduction as number)
   if (!isFiniteNonNegativeNumber(legacyBase)) {
     issues.push({
       code: 'MEGA_STRUCTURE_DEFINITION_INVALID',

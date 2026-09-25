@@ -134,7 +134,7 @@ test('galvanized structural effects retain benefits without their cost', () => {
   const next = { ...source, challenges: { ...source.challenges, galvanizedSkillIds: ['shouldersOfPrecursors', 'stellarSacrifices'] } }
   expect(adjustGalvanizedEffects(next, 'Global.MoneyMultiplier', [{ id: 'effect.shouldersOfPrecursors.money_multiplier', operation: 'override', value: 20, order: 200 }])[0].operation).toBe('multiply')
   expect(resolveStellarSacrificesRequiredBots(new Set(['stellarSacrifices']), 1e20, 10, new Set(['stellarSacrifices']))).toBe(0)
-  const result = applyCanonicalSkillIntervalEffects(next, next, { seconds: 10, botProductionPerSecond: 0, stellarBotsPerSecond: 0, stellarPlanetsPerSecond: 3, scienceBoostPerSecond: 0, moneyUpgradePerSecond: 0 })
+  const result = applyCanonicalSkillIntervalEffects(next, next, { seconds: 10, botProductionPerSecond: 0, stellarBotsPerSecond: 0, stellarFacilitiesPerSecond: 3, scienceBoostPerSecond: 0, moneyUpgradePerSecond: 0 })
   expect(result.dyson.facilities.planets[0]).toBe(next.dyson.facilities.planets[0] + 30)
 })
 

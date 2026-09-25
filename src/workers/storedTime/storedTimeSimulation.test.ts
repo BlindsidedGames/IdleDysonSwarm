@@ -1,3 +1,7 @@
+import { createDeterministicMatureDysonFixture, DETERMINISTIC_DYSON_TUNING } from '../../../scripts/support/deterministicMatureDysonFixture'
+import { withCanonicalBotAllocation } from '../../simulation/canonicalBotAllocation'
+import { deserializeWebSave, serializeWebSave } from '../../save/serialization'
+import { PreparedSave } from '../../save/prepare'
 import { createSpeedrunStatistics } from '../../simulation/speedrunStatistics'
 import { OVERFLOW_BOT_CAP } from '../../simulation/overflowBoundary'
 import { readFileSync } from 'node:fs'
@@ -17,6 +21,29 @@ const fixture = readFileSync(
 )
 
 describe('StoredTimeSimulation shared game-step replay', () => {
+  test('Stellar generation reaches Galactic Brains through Stored Time and survives a checkpoint roundtrip', () => {
+    const source = runtimeWithStoredTime(10)
+    const game = createDeterministicMatureDysonFixture({ ownedSkillIds: ['stellarSacrifices'] })
+    source.gameState = withCanonicalBotAllocation({ ...game,
+      infinity: { ...game.infinity, automaticResetEnabled: false },
+      timeline: source.gameState.timeline,
+      dyson: { ...game.dyson, bots: 1e30 },
+    })
+    source.compatibilityTuning = DETERMINISTIC_DYSON_TUNING
+    const before = source.gameState.dyson.facilities.galactic_brains[0]
+    const terminal = finish(new StoredTimeSimulation({ jobId: 'stellar-highest', state: source,
+      requestedSeconds: 2, infinityMinimumCycleSeconds: 1 / 60, eventContext: context(),
+    }), 1_000)
+    expect(terminal.type).toBe('completed')
+    if (terminal.type !== 'completed') return
+    expect(terminal.candidate.gameState.dyson.facilities.galactic_brains[0]).toBeGreaterThan(before)
+    const session = new CanonicalRuntimeSession(prepareIdb1Save(fixture).prepared, { entitlements: source.entitlements })
+    const encoded = serializeWebSave(session.prepare(terminal.candidate).copyValidatedState())
+    const loaded = new CanonicalRuntimeSession(PreparedSave.fromDecoded(deserializeWebSave(encoded)), { entitlements: source.entitlements })
+    expect(loaded.initialState.gameState.dyson.facilities).toEqual(terminal.candidate.gameState.dyson.facilities)
+    expect(loaded.initialState.gameState.skills.byId.stellarSacrifices.owned).toBe(true)
+  })
+
   test('committed replay records usage while cancellation preserves the original clean record', () => {
     const clock = vi.spyOn(Date, 'now').mockReturnValue(1_800_000_001_000)
     try {

@@ -1,10 +1,11 @@
+import { applyCanonicalQuantumReset } from './quantumTransitions'
 import { permanentSkillRuntime } from './galvanization'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { applyCanonicalInfinityReset } from './canonicalInfinityReset'
 import { infinityChallenges } from './infinityChallenges'
 import { hasReachedOverflow } from './overflowBoundary'
 
-/** Reuse the ordinary run reset without minting IP, completion, or statistics. */
+/** Restart the relevant prestige layer without awarding currency or completion. */
 export function restartInfinityChallenge(
   state: Readonly<CanonicalGameStateV1>,
   action: 'enter' | 'abandon',
@@ -22,7 +23,8 @@ export function restartInfinityChallenge(
     challenges: { ...challenges, active: action === 'enter' ? challengeId : null },
     skills: { ...state.skills, byId: permanentSkillRuntime(state) },
   }
-  const reset = applyCanonicalInfinityReset(seed, {
+  const quantumChallenge = challengeId === 'no-science' || challenges.active === 'no-science'
+  const reset = quantumChallenge ? applyCanonicalQuantumReset(seed, artifactSkillPoints, undefined, { restartOnly: true }) : applyCanonicalInfinityReset(seed, {
     restartOnly: true, breakInfinity: false, requestedReward: 0n, artifactSkillPoints,
   })
   if (!reset.ok) return { ok: false as const, code: reset.issues[0]?.code ?? 'CHALLENGE_RESET_FAILED' }

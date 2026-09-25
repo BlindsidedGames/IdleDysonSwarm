@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const researchMessages = defineMessages({
   challengeDisabled: { id: 'research.challengeDisabled', defaultMessage: 'Disabled' },
-  challengeActive: { id: 'research.challengeActive', defaultMessage: 'Trial & Error active · Manual and automatic research purchases are disabled.' },
+  challengeActive: { id: 'research.challengeActive', defaultMessage: 'Challenge active · Manual and automatic research purchases are disabled.' },
   region: {
     id: 'research.region',
     defaultMessage: 'Research',

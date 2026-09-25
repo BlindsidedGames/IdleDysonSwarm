@@ -1,0 +1,486 @@
+ "Cash & Discovery":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Cash & Discovery" [level=2]: Cash & Discovery
+    - paragraph: Through improvements to core algorithms you improve the efficiency of your bots.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +20% Cash and +20% Discovery speed. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph: Owned
+  - paragraph: Queued for automatic assignment
+  - checkbox "Included in Preset 2" [checked]
+  - generic: Included in Preset 2
+  - button "Unassign Skill. Will refund 2 Skill Points":
+    - generic: Unassign Skill
+    - generic: Will refund 2 Skill Points
+
+ "Discovery Speed":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Discovery Speed" [level=2]: Discovery Speed
+    - paragraph: Breakthroughs in CPU manufacturing. Now with fewer unexplained smoke clouds.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +25% Discovery speed. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 1/1"
+  - paragraph: Owned
+  - paragraph: Queued for automatic assignment
+  - checkbox "Included in Preset 2" [checked]
+  - generic: Included in Preset 2
+  - button "Unassign Skill. Will refund 1 Skill Points":
+    - generic: Unassign Skill
+    - generic: Will refund 1 Skill Points
+
+ "Discovery Boost":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Discovery Boost" [level=2]: Discovery Boost
+    - paragraph: Improved networking protocols. The breakthroughs now arrive before the meeting invitations.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +100% Discovery speed. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 1/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 1 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 1 Skill Points
+
+ "Cold Fusion":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Cold Fusion" [level=2]: Cold Fusion
+    - paragraph: Theoretical made fact. Cold fusion, solved. What else did the universe forget to hide?
+  - paragraph:
+    - strong: "Effect:"
+    - text: +75% Discovery speed; halves Cash unless Fractured. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 4 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 4 Skill Points
+
+ "Scientific Revolution":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Scientific Revolution" [level=2]: Scientific Revolution
+    - paragraph: Self improving bots create a surge in scientific progress.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +50% Discovery speed. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 1/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 1 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 1 Skill Points
+
+ "Scientific Dominance":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Scientific Dominance" [level=2]: Scientific Dominance
+    - paragraph: Shift your goals into the research sector with singular focus.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +100% Discovery speed; quarters Cash unless Fractured. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - paragraph: "Exclusive with: Economic Dominance"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 2 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 2 Skill Points
+
+ "Paragon":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Paragon" [level=2]: Paragon
+    - paragraph: What is more soothing than the blue color of the sky? But of course solar panels emitting blue light. All your population now works with far less stress, increasing the scientific production.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +150% Discovery speed. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - paragraph: "Exclusive with: Renegade"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 5 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 5 Skill Points
+
+ "Supercharged Power":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Supercharged Power" [level=2]: Supercharged Power
+    - paragraph: Supercharge your power grid, drastically improving the performance of your empire!
+  - paragraph:
+    - strong: "Effect:"
+    - text: +50% Cash and facility production; +25% Discovery speed. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 2 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 2 Skill Points
+
+ "Power Underwhelming":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Power Underwhelming" [level=2]: Power Underwhelming
+    - paragraph: Use Discovery to discover Discovery. How? We will never know.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +25% Discovery speed. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 5 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 5 Skill Points
+
+ "Repeatable Research":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Repeatable Research" [level=2]: Repeatable Research
+    - paragraph: Repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +50% Discovery speed. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 1/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 1 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 1 Skill Points
+
+ "Purity of Mind":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Purity of Mind" [level=2]: Purity of Mind
+    - paragraph: With singular focus you clear your mind of all thoughts that do not include Cash or Discovery.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +50% Cash and +5% Discovery speed per unspent SP. Discovery speed is capped at +200%. Bonuses are additive.
+  - strong: "Cost: 2 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 3 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 3 Skill Points
+
+ "Purity of Essence":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Purity of Essence" [level=2]: Purity of Essence
+    - paragraph: You transcend beyond reality, consuming everything in your path you become one with the Universe.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Cash, Bots and facility production ×(1 + 0.42p + 0.13784p(p − 1)), where p is unspent SP. +2% Discovery speed per unspent SP, up to +100%. Bonuses are additive.
+  - strong: "Cost: 3 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 8 Skill Points" [disabled]:
+    - generic: Assign Skill
+    - generic: Will cost 8 Skill Points
+
+ "Idle Spaceflight":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Idle Spaceflight" [level=2]: Idle Spaceflight
+    - paragraph: Collect matter, build buildings and fly your shuttle between the stars.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +10 × log10(1 + active panels / 100,000,000)% Discovery speed, up to +200%. Bonuses are additive.
+  - strong: "Cost: 3 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 4 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 4 Skill Points
+
+ "Super-Radiant Scattering":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Super-Radiant Scattering" [level=2]: Super-Radiant Scattering
+    - paragraph: Scattering... Something... Causes a perpetually increasing value to affect everything you touch.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Increases Cash, Bots and all facility production as SRS charges. +10 × log10(1 + charge seconds / 100)% Discovery speed, up to +200% before Focused Beam. Bonuses are additive.
+  - strong: "Cost: 3 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 11 Skill Points" [disabled]:
+    - generic: Assign Skill
+    - generic: Will cost 11 Skill Points
+
+ "What could’ve been":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "What could’ve been" [level=2]: What could’ve been
+    - paragraph: Sick of imagining what could have been you decide to put your imagination into action.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +10 × log10(1 + Pocket Dimensions production)% Discovery speed, up to +200%. Shoulder Surgery includes Shoulders of the Fallen. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/2"
+  - paragraph: "Exclusive with: What Will Come to Pass"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 11 Skill Points" [disabled]:
+    - generic: Assign Skill
+    - generic: Will cost 11 Skill Points
+
+ "Shoulders of the Revolution":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Shoulders of the Revolution" [level=2]: Shoulders of the Revolution
+    - paragraph: The "Shoulders of the Revolution" is a phrase that refers to a powerful financial system that harnesses the latest advancements in science to dramatically increase wealth. It is said to be built upon the innovations and insights of previous generations of thinkers, and it represents a new era of prosperity and progress for those who use it.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +1% Cash per completed Discovery. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - paragraph: "Exclusive with: Shoulders of Precursors"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 11 Skill Points" [disabled]:
+    - generic: Assign Skill
+    - generic: Will cost 11 Skill Points
+
+ "Shoulders of the Enlightened":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Shoulders of the Enlightened" [level=2]: Shoulders of the Enlightened
+    - paragraph: The "Shoulders of the Enlightened" are a pair of mysterious and powerful artifacts that grant immense knowledge and understanding to their bearer, along with the ability to generate great wealth.
+  - paragraph:
+    - strong: "Effect:"
+    - text: +10% Cash per completed Discovery while Scientific Planets is assigned. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - paragraph: "Exclusive with: Shoulders of Precursors"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 10 Skill Points" [disabled]:
+    - generic: Assign Skill
+    - generic: Will cost 10 Skill Points
+
+ "Shoulders of the Fallen":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Shoulders of the Fallen" [level=2]: Shoulders of the Fallen
+    - paragraph: A relic of a lost civilization. Excellent shoulders. Terrible instruction manual.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Adds log2(1 + completed discoveries) Planets per second while Scientific Planets is assigned.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - paragraph: "Exclusive with: Shoulders of the Enlightened"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 11 Skill Points" [disabled]:
+    - generic: Assign Skill
+    - generic: Will cost 11 Skill Points
+
+ "Regulated Academia":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Regulated Academia" [level=2]: Regulated Academia
+    - paragraph: You find a fragment of another universe. Its knowledge strengthens your discoveries. What else might this universe hold?
+  - paragraph:
+    - strong: "Effect:"
+    - text: Enhances Discovery’s production bonus by 20%, plus 10% per Fragment after the first. Bonuses are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - paragraph: "Fragments owned: 0.00 (+1)"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 5 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 5 Skill Points
+
+ "Shoulders of Precursors":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Shoulders of Precursors" [level=2]: Shoulders of Precursors
+    - paragraph: The Shoulders of Precursors is a powerful artifact with the ability to multiply wealth and knowledge. It negates the effects of other wealth multipliers and also affects cash. This mysterious relic from a lost civilization is highly valuable and sought after. Its true potential remains unknown.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Replaces Cash multipliers with total Discovery speed. When Fractured, multiplies alongside them.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - paragraph: "Exclusive with: Shoulders of the Enlightened"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 10 Skill Points" [disabled]:
+    - generic: Assign Skill
+    - generic: Will cost 10 Skill Points
+
+ "Scientific Planets":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Scientific Planets" [level=2]: Scientific Planets
+    - paragraph: Teach your Bots to discover planets. Ask them nicely not to misplace any.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Produces log10(total Bots) Planets per second.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/2"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 8 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 8 Skill Points
+
+ "Pocket Protectors":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Pocket Protectors" [level=2]: Pocket Protectors
+    - paragraph: Everyone wants in on this. Pocket protection is now mandatory.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Adds log10(total Bots) to Pocket Dimensions production.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 8 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 8 Skill Points
+
+ "Pocket Multiverse":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Pocket Multiverse" [level=2]: Pocket Multiverse
+    - paragraph: Breakthroughs in Pocket technology allow ludicrous improvements.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Pocket Protectors instead multiplies Pocket Dimensions production by log10(total Bots).
+  - strong: "Cost: 2 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 10 Skill Points" [disabled]:
+    - generic: Assign Skill
+    - generic: Will cost 10 Skill Points
+
+ "Economic Dominance":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Economic Dominance" [level=2]: Economic Dominance
+    - paragraph: Shift your goals to economic growth with singular focus.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Multiplies Cash by 20.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - paragraph: "Exclusive with: Scientific Dominance"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 3 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 3 Skill Points
+
+ "Taste of Power":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Taste of Power" [level=2]: Taste of Power
+    - paragraph: After getting your first taste of real power you crave more. Seek it out.
+  - paragraph:
+    - strong: "Effect:"
+    - text: 50% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets. 25% less Cash unless Fractured.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 3 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 3 Skill Points
+
+ "Indulging in Power":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Indulging in Power" [level=2]: Indulging in Power
+    - paragraph: Where is all this power coming from? You decide to take it anyway.
+  - paragraph:
+    - strong: "Effect:"
+    - text: 100% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets. 15% less Cash unless Fractured. Cash penalties are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 4 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 4 Skill Points
+
+ "Addiction to Power":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Addiction to Power" [level=2]: Addiction to Power
+    - paragraph: Unable to help yourself you claim all of the unknown power.
+  - paragraph:
+    - strong: "Effect:"
+    - text: 200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets. 10% less Cash unless Fractured. Cash penalties are additive.
+  - strong: "Cost: 1 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 5 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 5 Skill Points
+
+ "Stellar Obliteration":
+  - banner:
+    - button "Close" [active]: ×
+    - heading "Stellar Obliteration" [level=2]: Stellar Obliteration
+    - paragraph: Obliterating even more Bots greatly improve the rate at which you generate artificial Planets, however this is costly.
+  - paragraph:
+    - strong: "Effect:"
+    - text: Stellar Sacrifices Galaxies are 1,000× better. Divides Cash by Stellar Galaxies unless Fractured.
+  - strong: "Cost: 2 Skill Points"
+  - paragraph:
+    - strong: "Requirements: 0/1"
+  - checkbox "Included in Preset 2"
+  - generic: Included in Preset 2
+  - button "Assign Skill. Will cost 4 Skill Points":
+    - generic: Assign Skill
+    - generic: Will cost 4 Skill Points

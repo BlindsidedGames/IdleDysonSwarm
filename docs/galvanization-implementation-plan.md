@@ -67,7 +67,7 @@ tests and remaining native/release scope.
 ## Confirmed implementation decisions
 
 - UX: preserve node artwork, use a fractured background; subskills in details.
-- Stellar Sacrifices: produce planets without consuming or requiring Bots.
+- Stellar Sacrifices: create the highest owned facility, including megastructures, without consuming or requiring Bots.
 - Stellar Dominance: remove extra sacrifice cost and Cash penalty.
 - Stellar Obliteration: remove Cash and Science penalty.
 - Supernova: retain all manual-purchase bonuses.

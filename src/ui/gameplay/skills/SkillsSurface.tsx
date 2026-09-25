@@ -1,3 +1,6 @@
+import { galvanizedEffectMessages } from './galvanizedEffectMessages'
+import { discoverySkillNames, discoverySkillEffects, discoverySkillFlavour } from '../discovery/skillMessages'
+import { discoveryMessages } from '../discovery/messages'
 import type { SkillProductionPreview } from '../../../simulation/skillProductionPreview'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
 import { CASH_SCIENCE_SUBSKILLS, SRS_AUGMENTS, SKILL_AUGMENTS, skillAugments } from '../../../simulation/skillSubskills'
@@ -84,6 +87,7 @@ interface SkillPresentationNode {
   readonly y: number
   readonly displayName: string
   readonly description: string
+  readonly discoveryTechnical?: boolean
   readonly technicalDescription: string
   readonly cost: number
   readonly messageIds: {
@@ -172,6 +176,7 @@ export interface SkillPresetActions {
 }
 
 export interface SkillsSurfaceProps {
+  readonly discoveryUnlocked?: boolean
   readonly galvanizers?: bigint
   readonly hasEarnedGalvanizer?: boolean
   readonly skillsDisabled?: boolean
@@ -349,6 +354,7 @@ function graphPosition(node: SkillPresentationNode) {
  * exclusively from the supplied canonical catalog.
  */
 export function SkillsSurface({
+  discoveryUnlocked = false,
   galvanizers = 0n,
   hasEarnedGalvanizer = false,
   skillsDisabled = false,
@@ -419,9 +425,16 @@ export function SkillsSurface({
   const localizedNodes = useMemo(
     () =>
       presentation.nodes.map((node) =>
-        localizeSkillPresentation(intl, node),
+        (() => {
+          const localized = localizeSkillPresentation(intl, node)
+          if (!discoveryUnlocked) return localized
+          const name = discoverySkillNames[node.skillId as keyof typeof discoverySkillNames]
+          const effect = discoverySkillEffects[node.skillId as keyof typeof discoverySkillEffects]
+          const flavour = discoverySkillFlavour[node.skillId as keyof typeof discoverySkillFlavour]
+          return { ...localized, ...(flavour ? { description: intl.formatMessage(flavour) } : {}), ...(name ? { displayName: intl.formatMessage(name) } : {}), ...(effect ? { technicalDescription: intl.formatMessage(effect), discoveryTechnical: true } : {}) }
+        })(),
       ),
-    [intl],
+    [intl, discoveryUnlocked],
   )
   const nodeById = useMemo(
     () => {
@@ -452,9 +465,15 @@ export function SkillsSurface({
           y: parent.y - authored.row * SKILL_GRID_SPACING,
         })
       }
+      if (discoveryUnlocked) {
+        for (const [id, node] of nodes) {
+          const effect = discoverySkillEffects[id as keyof typeof discoverySkillEffects]
+          if (effect) nodes.set(id, { ...node, technicalDescription: intl.formatMessage(effect), discoveryTechnical: true })
+        }
+      }
       return nodes
     },
-    [intl, localizedNodes],
+    [intl, localizedNodes, discoveryUnlocked],
   )
   const visibleNodes = useMemo(
     () =>
@@ -908,6 +927,7 @@ export function SkillsSurface({
 
       {presetsOpen && (
         <SkillPresetsDialog
+          discoveryUnlocked={discoveryUnlocked}
           presets={presets}
           previews={previewById}
           selectedPresetSlot={selectedPresetSlot}
@@ -1915,27 +1935,6 @@ function AffectedSkillList({
   )
 }
 
-const galvanizedEffectMessages: Readonly<Record<string, typeof messages.galvEconomic>> = {
-  tasteOfPower: messages.galvPowerTaste,
-  indulgingInPower: messages.galvPowerIndulging,
-  addictionToPower: messages.galvPowerAddiction,
-  agressiveAlgorithms: messages.galvAlgorithms,
-  burnOut: messages.galvBurnout,
-  coldFusion: messages.galvColdFusion,
-  dimensionalCatCables: messages.galvCables,
-  economicDominance: messages.galvEconomic,
-  endOfTheLine: messages.galvEndLine,
-  fusionReactors: messages.galvFusion,
-  scientificDominance: messages.galvScientific,
-  shouldersOfPrecursors: messages.galvPrecursors,
-  stellarDominance: messages.galvStellarDominance,
-  stellarObliteration: messages.galvStellarObliteration,
-  supernova: messages.galvSupernova,
-  worthySacrifice: messages.galvWorthy,
-  stellarSacrifices: messages.galvSacrifices,
-  shouldersOfTheEnlightened: messages.galvEnlightened,
-}
-
 function SkillDetails({
   showProductionComparisons,
   galvanizers,
@@ -2120,7 +2119,7 @@ function SkillDetails({
       >
         <p className="skill-details__technical">
           <strong>{intl.formatMessage(messages.effect)}</strong>{' '}
-          {preview.galvanized && galvanizedEffectMessages[node.skillId]
+          {node.discoveryTechnical ? node.technicalDescription : preview.galvanized && galvanizedEffectMessages[node.skillId]
             ? intl.formatMessage(galvanizedEffectMessages[node.skillId])
             : node.skillId === 'shouldersOfTheEnlightened'
               ? intl.formatMessage(messages.galvEnlightened)
@@ -2302,8 +2301,8 @@ function SkillDetails({
                     {liveProduction && liveProduction.rows.map((row) => (
                       <ProductionImpactRow key={row.id}
                         label={intl.formatMessage(productionLabels[row.id])}
-                        before={`${formatGameNumber(locale, row.before)}${row.id === 'panelLifetime' ? 's' : '/s'}`}
-                        after={`${formatGameNumber(locale, row.after)}${row.id === 'panelLifetime' ? 's' : '/s'}${liveProduction.projected ? ' (10m)' : ''}`}
+                        before={`${formatGameNumber(locale, row.before)}${row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}`}
+                        after={`${formatGameNumber(locale, row.after)}${row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}${liveProduction.projected ? ' (10m)' : ''}`}
                         afterTone={row.after >= row.before ? 'gain' : 'loss'}
                         toLabel={intl.formatMessage(messages.impactTo)} />
                     ))}
@@ -2433,7 +2432,10 @@ const productionLabels = {
   planets: facilityMessages.planetsName,
   matrioshka_brains: facilityMessages.matrioshkaBrainsName,
   birch_planets: facilityMessages.birchPlanetsName,
+  galactic_brains: facilityMessages.galacticBrainsName,
   panelLifetime: facilityMessages.panelLifetime,
+  discoverySpeed: discoveryMessages.speed,
+  discoveryMultiplier: discoveryMessages.name,
 }
 
 function ProductionImpactRow({
@@ -2791,6 +2793,7 @@ function SkillPresetSelectionDialog({
 }
 
 interface SkillPresetsDialogProps {
+  readonly discoveryUnlocked?: boolean
   readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
   readonly presets: SkillsSurfaceProps['presets']
   readonly selectedPresetSlot: CanonicalSkillPresetSlot
@@ -2805,6 +2808,7 @@ interface SkillPresetsDialogProps {
 }
 
 function SkillPresetsDialog({
+  discoveryUnlocked = false,
   presets,
   previews,
   selectedPresetSlot,
@@ -2877,7 +2881,7 @@ function SkillPresetsDialog({
                 {selectedPresetSlot === slot && (
                   <em className="skill-settings__current">{intl.formatMessage(messages.currentPreset)}</em>
                 )}
-                <PresetSummary count={preset.skillIds.filter(id => !previews.get(id)?.galvanized).length} workers={workers} />
+                <PresetSummary count={preset.skillIds.filter(id => !previews.get(id)?.galvanized).length} workers={workers} hideAllocation={discoveryUnlocked} />
               </button>
               <div className="skill-settings__preset-icon-actions">
                 <button type="button" className="skill-settings__preset-priority"
@@ -2900,6 +2904,7 @@ function SkillPresetsDialog({
       </SkillDetailsDialog>
       {managedSlot !== null && managedPreset !== undefined ? (
         <PresetManagementDialog
+          discoveryUnlocked={discoveryUnlocked}
           key={managedSlot}
           slot={managedSlot}
           preset={managedPreset}
@@ -3070,6 +3075,7 @@ function SkillPresetPriority({ preset, nodeById, previews, pending, onReorder, p
 }
 
 interface PresetManagementDialogProps {
+  readonly discoveryUnlocked: boolean
   readonly slot: CanonicalSkillPresetSlot
   readonly preset: SkillPresetState
   readonly canSetColor: boolean
@@ -3084,6 +3090,7 @@ interface PresetManagementDialogProps {
 }
 
 function PresetManagementDialog({
+  discoveryUnlocked,
   slot,
   preset,
   canSetColor,
@@ -3385,6 +3392,7 @@ function PresetManagementDialog({
               <strong>{importPreview.name}</strong>
               <PresetSummary
                 count={importPreview.queuedSkillCount}
+                hideAllocation={discoveryUnlocked}
                 workers={importPreview.workerPercent}
               />
               <span
@@ -3480,13 +3488,16 @@ function PresetManagementDialog({
 }
 
 function PresetSummary({
+  hideAllocation = false,
   count,
   workers,
 }: {
+  readonly hideAllocation?: boolean
   readonly count: number
   readonly workers: number
 }) {
   const intl = useIntl()
+  if (hideAllocation) return <span className="skill-preset-summary">{intl.formatMessage(messages.presetSummary, { count })}</span>
   const workerPercent = Math.max(0, Math.min(100, Math.round(workers)))
   const scientistPercent = 100 - workerPercent
 

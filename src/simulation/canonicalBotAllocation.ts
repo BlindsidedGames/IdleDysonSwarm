@@ -13,6 +13,7 @@ export interface CanonicalBotAllocation {
 export function deriveCanonicalBotAllocation(
   state: Readonly<CanonicalGameStateV1>,
 ): Readonly<CanonicalBotAllocation> {
+  if (state.discovery?.unlocked) return { workers: state.dyson.bots, researchers: 0 }
   if (state.quantum.unlocks.botMultitasking) {
     return Object.freeze({
       workers: state.dyson.bots,

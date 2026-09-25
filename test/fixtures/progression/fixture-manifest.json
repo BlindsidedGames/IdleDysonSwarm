@@ -5,8 +5,8 @@
     {
       "id": "fresh",
       "description": "Unmodified production first-run artifact.",
-      "fingerprint": "b1685c2fb8a267fd3d48ca978b3d18bc1f7a5d9411529ec141c78d192593329e",
-      "saveSha256": "20414ff1cd406269606b1f8834d80eb7245b1db157e2085a24544c2e12d730e5",
+      "fingerprint": "8e6ea8e30ade24e6f78af0e6a5cd0d6e88152a391f65bc89db4a5364c196c5ad",
+      "saveSha256": "5d1b1f6d9793b97949c6659c2ea88388916029e042ffc3174fe05243e968617b",
       "reachableRoutes": [
         "bots",
         "research",
@@ -25,8 +25,8 @@
     {
       "id": "mid-swarm",
       "description": "Deterministic pre-Infinity run with every basic Dyson facility visible.",
-      "fingerprint": "5813c138531bbd85f528cacede0ea3f411de6f7e2f5aba3bca5e8d28d2d0d39c",
-      "saveSha256": "fcf4c0314860b6a4148c5aa96b3698b765cff3f45d4bfa3ac56f46eacec9341e",
+      "fingerprint": "4b63bef6b6189f86d739dab331154f2fb5a8f4866c8bb9772575fcd53bcda629",
+      "saveSha256": "68c207717148df38b5df9f0ac68504fd782d43b6993dac7016c61a214ead3809",
       "reachableRoutes": [
         "bots",
         "research",
@@ -46,8 +46,8 @@
     {
       "id": "first-infinity",
       "description": "The result of one canonical Infinity reset awarding one point.",
-      "fingerprint": "fd8e72f2faf2ed500348d51985ffd595b428675318c227112c0f09c007f3b90c",
-      "saveSha256": "86127f3a2e5c758153f968961475571e4332f8e55dee01bd93c06a412c1bb600",
+      "fingerprint": "b845b07ef77d56048b13c88207586eb5079a4aa715c7651419a81f6ce501f622",
+      "saveSha256": "97d43826052517f25f8d6421cb95c2e6b5fe518886e3268b0a1c9d7c19f0cb5b",
       "reachableRoutes": [
         "bots",
         "research",
@@ -68,8 +68,8 @@
     {
       "id": "mature-infinity",
       "description": "Active mature Infinity economy with twenty Secrets and both automation unlocks purchased canonically.",
-      "fingerprint": "df1dfa418acb0fab03d7272a1136116902184702e3b04c0664d8d2fbaf2fb7ea",
-      "saveSha256": "44dc386032e8b05fd27e1c33e6c43e384cfbbfde5c98984fb3a7b231176b9dc1",
+      "fingerprint": "02eb4740d37406472cbce80211cd29f34c8b24ff7817f9e0573028afafa58f81",
+      "saveSha256": "a878e92511dc84db36f9022318aacd13f1c181753a76998317e91b48bc5567aa",
       "reachableRoutes": [
         "bots",
         "research",
@@ -94,8 +94,8 @@
     {
       "id": "reality-unlock",
       "description": "The authored 27 Secrets and ten permanent Skill purchases paid from 41 Infinity Points.",
-      "fingerprint": "be95601ce9db605e22f097e30e952ae590b32fb5f0ba74a9e5953ab3e39d07e2",
-      "saveSha256": "f85b4fbc4da855126e38812702e6b2ae30077a049e15c11f9494790b1a3a3878",
+      "fingerprint": "062919e0699d8a25b9f82fc92f4c5198bf1799c071a4c9032bad4fbe75eeeb69",
+      "saveSha256": "b6b55cd90a613357b4068ba124eb35e3ba1afc17d3c11f437cffb9ad38914307",
       "reachableRoutes": [
         "bots",
         "research",
@@ -118,8 +118,8 @@
     {
       "id": "mature-simulations",
       "description": "Reality unlocked with a reset, populated Dream run, and Simulation upgrade produced through canonical transactions.",
-      "fingerprint": "cf007b2a31d21677f1042dc5e38039aa98f29545fc7c00eedd7081431fa90757",
-      "saveSha256": "2530969eb35f761b8468f30e07f212db6680af7ec67273e8ab5f756fad008bc6",
+      "fingerprint": "79507d8512df5fabfd21d011a16e0ae2abf67f6ca2cefce6ac9b8f8637ad5671",
+      "saveSha256": "132e74998a868381fa381eacf9af096f27e956aeb0b5c457d58f41203e5301d3",
       "reachableRoutes": [
         "bots",
         "research",
@@ -145,8 +145,8 @@
     {
       "id": "quantum-unlock",
       "description": "The 42 Infinity Point Quantum threshold with valid Reality-unlock spending.",
-      "fingerprint": "7633a09d9194492e6f3d7039da58030ba43ef1bf8360a6bde422c0a8d71c376e",
-      "saveSha256": "654779d345811ef08778eba8ae50de9197e0682b064d8603a5e07de1aab1cbfc",
+      "fingerprint": "ab48758dce027b7eee551424c4d40b051f57f375ae3630c479279ebe7123556f",
+      "saveSha256": "328a72e6e22aaf3e6c3f057daeaa670b64a39b3bc2427117aa8fc14ae791d750",
       "reachableRoutes": [
         "bots",
         "research",
@@ -170,8 +170,8 @@
     {
       "id": "late-quantum",
       "description": "Late Quantum built by 420 canonical leap cycles followed by canonical upgrade transactions.",
-      "fingerprint": "66fce6412502f2a2e6469481b6e0309f37be6a61d2d786904243532327157cf8",
-      "saveSha256": "6b54b76ac996f0204204696372a63070b1be476636469209c9c0ea0f121f166a",
+      "fingerprint": "74eabd27297ee12bbba73f1f79a10094ef8a03bd8dd487dd5bf1a450cc4f6891",
+      "saveSha256": "b17ae2fae28012e49b9fa45026dbb96db84da6ad0b1379c1078fcbebbfb3fc59",
       "reachableRoutes": [
         "bots",
         "research",
@@ -197,8 +197,8 @@
     {
       "id": "maximum-skills",
       "description": "Maximum deterministic non-conflicting Skill ownership from an explicit stress-funding seed and canonical purchases.",
-      "fingerprint": "2372289b1ea4c8f1c5db974b73caf15d1d114ae7774c0050afe4a0a2e6d5f46b",
-      "saveSha256": "1e0a062518499026f3b9ecdd8c5a20b8cc85eff29eddd38fc529aad89a89d5c5",
+      "fingerprint": "102be28235a00f71feedc753b94b8e200c7da1761d40948c6a74ed310341b09a",
+      "saveSha256": "c11f6e0a2fbeab5a348e8a2b040c54f2d7f1d5b28d4bbbf39e1ea5da32b13a4f",
       "reachableRoutes": [
         "bots",
         "research",

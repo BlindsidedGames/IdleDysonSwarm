@@ -134,8 +134,10 @@ function assemblyMegalinesBoundaryState(
   buyMode: 'buy-1' | 'buy-max',
 ): DysonAutomationState {
   const assemblyLevel = 3570
-  const assemblyExponent = 1.22
-  const effectiveBaseCost = Math.exp(
+  const assemblyExponent = 1.21
+  // Stay beyond saturation with the current price curve; the tests above
+  // separately cover the exact rounded-log boundary.
+  const effectiveBaseCost = 1.001 * Math.exp(
     Math.log(CONTINUOUS_MAXIMUM) -
     assemblyLevel * Math.log(assemblyExponent),
   )

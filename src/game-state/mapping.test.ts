@@ -385,7 +385,7 @@ describe('canonical game-state mapping', () => {
     const hydrated = hydrateGameState(current)
     const dehydrated = dehydrateGameState(hydrated)
 
-    expect(current.sourceSchema).toBe(18)
+    expect(current.sourceSchema).toBe(19)
     expect(current.appliedSteps).toEqual([])
     expect(current.numericRepair.repairCount).toBe(0)
     expect(hydrateGameState(dehydrated).state).toEqual(hydrated.state)

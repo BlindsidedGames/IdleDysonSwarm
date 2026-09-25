@@ -1,5 +1,7 @@
+import { advanceDiscovery } from './discovery'
+import { deriveDiscoveryEffects } from './discoveryEffects'
 import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime } from './speedrunStatistics'
-import { isBreakInfinityEnabled, isInfinityChallengeActive } from './infinityChallenges'
+import { isBreakInfinityEnabled, isInfinityChallengeActive, isNoScienceActive } from './infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementFacts } from '../achievements/contracts'
@@ -436,7 +438,7 @@ export class CanonicalEventTimeModel
           this.carrier.gameState.dyson.bots,
           derived.productionArrivalRates.bots,
           derived.auxiliary.stellarSacrifice.botsPerSecond,
-          derived.auxiliary.stellarSacrifice.planetsPerSecond,
+          derived.auxiliary.stellarSacrifice.facilitiesPerSecond,
           createInfinityCycleState(this.carrier),
           Number.MAX_VALUE,
           infinity.automaticResetEnabled
@@ -450,7 +452,7 @@ export class CanonicalEventTimeModel
           this.carrier.gameState.dyson.bots,
           derived.productionArrivalRates.bots,
           derived.auxiliary.stellarSacrifice.botsPerSecond,
-          derived.auxiliary.stellarSacrifice.planetsPerSecond,
+          derived.auxiliary.stellarSacrifice.facilitiesPerSecond,
           createInfinityCycleState(this.carrier),
           Number.MAX_VALUE, 0, OVERFLOW_BOT_CAP,
         )
@@ -528,6 +530,9 @@ export class CanonicalEventTimeModel
         derived.value.productionArrivalRates,
         seconds,
       )
+      if (startingState.discovery?.unlocked) {
+        candidate = { ...candidate, discovery: advanceDiscovery(startingState.discovery, seconds, deriveDiscoveryEffects(startingState, this.carrier.evaluationSnapshot).speed) }
+      }
       const boost = derived.value.botBoostMultiplier
       if (boost === 2 && candidate.dyson.bots > startingState.dyson.bots) candidate = recordBotBoostUsage(candidate)
       candidate = applyCanonicalSkillIntervalEffects(
@@ -537,8 +542,8 @@ export class CanonicalEventTimeModel
           seconds,
           botProductionPerSecond:
             derived.value.productionArrivalRates.bots,
-          stellarPlanetsPerSecond:
-            derived.value.auxiliary.stellarSacrifice.planetsPerSecond,
+          stellarFacilitiesPerSecond:
+            derived.value.auxiliary.stellarSacrifice.facilitiesPerSecond,
           stellarBotsPerSecond:
             derived.value.auxiliary.stellarSacrifice.botsPerSecond,
           scienceBoostPerSecond:
@@ -1094,7 +1099,7 @@ export class CanonicalEventTimeModel
       return
     }
 
-    if (state.quantum.unlocks.quantumEntanglement) {
+    if (state.quantum.unlocks.quantumEntanglement && !isNoScienceActive(state)) {
       const result = applyQuantumEntanglementConversion(state)
       this.replaceGameState(result.state)
       this.queuedInputOutcome = {
@@ -1262,7 +1267,7 @@ export class CanonicalEventTimeModel
       this.carrier.gameState.dyson.bots,
       derived.productionArrivalRates.bots,
       derived.auxiliary.stellarSacrifice.botsPerSecond,
-      derived.auxiliary.stellarSacrifice.planetsPerSecond,
+      derived.auxiliary.stellarSacrifice.facilitiesPerSecond,
       createInfinityCycleState(this.carrier),
       Number.MAX_VALUE,
       automaticResetEnabled ? minimumCycleSeconds : 0,

@@ -59,6 +59,10 @@ Swarm. Update cadence, active play and Offline Time are defined by
 - Stellar Sacrifice rewards are derived from the Bot debit actually represented
   at the interval boundary. An unrepresentable debit grants no reward, while a
   partially represented debit grants only its proportionally funded reward.
+  Fractured Stellar Sacrifices requires no debit. Rewards go to the highest
+  currently owned facility (generated or purchased), including megastructures;
+  owning no facilities grants nothing and consumes no Bots. The target is
+  recalculated each update, and Discovery multiplies this grant exactly once.
 
 ## Persistence boundary
 

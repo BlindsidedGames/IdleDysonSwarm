@@ -64,19 +64,20 @@ export function leastRecentlyShown(platform: PromotionPlatform, history: readonl
 }
 const HISTORY_KEY = 'idle-dyson-swarm:promotions:v1'
 let fallbackHistory: string[] = []
+let historyStorageFailed = false
 
 /** Local rotation only. No impressions or interactions leave this device. */
 export function nextPromotion(platform: PromotionPlatform, locale = 'en'): GamePromotion | undefined {
   let history = fallbackHistory
   try {
-    const stored: unknown = JSON.parse(localStorage.getItem(HISTORY_KEY) ?? '[]')
+    const stored: unknown = historyStorageFailed ? fallbackHistory : JSON.parse(localStorage.getItem(HISTORY_KEY) ?? '[]')
     if (Array.isArray(stored) && stored.every(id => typeof id === 'string')) history = stored
-  } catch { /* Storage is optional for game discovery. */ }
+  } catch { historyStorageFailed = true }
   const game = leastRecentlyShown(platform, history, locale)
   if (game) {
     const ids = new Set(eligiblePromotions(platform).map(candidate => candidate.id))
     fallbackHistory = [...history.filter(id => id !== game.id && ids.has(id)), game.id]
-    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(fallbackHistory)) } catch { /* Keep session rotation. */ }
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(fallbackHistory)) } catch { historyStorageFailed = true }
   }
   return game
 }

@@ -2,7 +2,7 @@ import type { CanonicalGameStateV1 } from '../game-state/types'
 import { addContinuous } from './numeric'
 import { hasSrsAugment, SRS_AUGMENTS } from './skillSubskills'
 
-type State = Pick<CanonicalGameStateV1, 'skills' | 'challenges'>
+type State = Pick<CanonicalGameStateV1, 'skills' | 'challenges' | 'discovery'>
 
 interface GeneratedResearch {
   readonly rate: number
@@ -108,7 +108,7 @@ export function advanceSrsAugments(state: State, seconds: number, generated: rea
   const activity = byId[SRS_AUGMENTS.researchActivity]
   if (activity) {
     const active = hasSrsAugment(state, 'researchActivity')
-    const coverage = researchActivityCoverage(activity.timerSeconds, seconds, active ? generated : [])
+    const coverage = state.discovery?.unlocked && active ? { covered: seconds, remaining: 30 } : researchActivityCoverage(activity.timerSeconds, seconds, active ? generated : [])
     if (active) charge += 1.5 * multiplier * coverage.covered
     byId[SRS_AUGMENTS.researchActivity] = { ...activity, timerSeconds: coverage.remaining }
   }

@@ -11,6 +11,7 @@ const MONEY_UPGRADE_PER_SECOND_SUFFIX =
 const TINKER_ASSEMBLY_YIELD_SUFFIX = '.tinker_assembly_yield'
 
 export interface ShouldersAccrualDynamicInputs {
+  readonly discoveryCompletions?: bigint
   readonly ownedSkills: ReadonlySet<string>
   readonly scienceBoostLevel: number
   readonly scientificPlanetsProduction: number
@@ -149,6 +150,7 @@ function pocketDimensionsWithShoulderSurgery(
 function shouldersOfTheFallenBonus(
   inputs: Readonly<ShouldersAccrualDynamicInputs>,
 ): number {
+  if (inputs.discoveryCompletions !== undefined) return inputs.ownedSkills.has('shouldersOfTheFallen') ? Math.log2(1 + Number(inputs.discoveryCompletions)) : 0
   return inputs.ownedSkills.has('shouldersOfTheFallen') &&
     inputs.scienceBoostLevel > 0
     ? Math.log2(inputs.scienceBoostLevel)

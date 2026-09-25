@@ -1,3 +1,5 @@
+import { DiscoverySurface } from '../discovery/DiscoverySurface'
+import { discoveryMessages } from '../discovery/messages'
 import { QuickStoredTime, StoredTimeNavigationProgress } from '../offline-time/QuickStoredTime'
 import { isAvocatoRouteUnlocked } from './avocatoNavigation'
 import { InfinityChallenges } from '../infinity/InfinityChallenges'
@@ -483,6 +485,7 @@ export interface ReadyDysonSliceProps {
 }
 
 export type ReadyGameRoute =
+  | 'transcendence'
   | 'bots'
   | 'research'
   | 'skills'
@@ -503,6 +506,7 @@ export type ReadyGameRoute =
 export const GAMEPLAY_ROUTE_STORAGE_KEY =
   'idle-dyson-swarm.gameplay.last-route.v1'
 const READY_GAME_ROUTES = new Set<ReadyGameRoute>([
+  'transcendence',
   'bots',
   'research',
   'skills',
@@ -536,6 +540,7 @@ function gameplayPreviewDemandForRoute(
   route: ReadyGameRoute,
 ): FrontendGameplayPreviewDemand {
   switch (route) {
+    case 'transcendence': return 'bots'
     case 'challenges':
       return 'infinity'
     case 'bots':
@@ -567,6 +572,7 @@ const AVOCATO_MEDITATION_ROUTE_PLACEMENT: Partial<
   skills: 'skills',
   settings: 'settings',
   research: 'research',
+  transcendence: 'research',
 })
 
 /**
@@ -687,20 +693,22 @@ export function ReadyDysonSlice({
   const storeVisible =
     releasePlatformServices !== undefined
   const gameplay = snapshot.gameplay
+  const discoveryUnlocked = gameplay.progression.discovery?.unlocked === true
   const ownsBotBoost = gameplay.derived.dyson.status === 'ready' && gameplay.derived.dyson.value.entitlements.permanentBotBoost === true
   const botBoostStatus = useBotBoost(gameplay.progression.meta.botBoost, ownsBotBoost)
   const quantumPurchaseQuantity = quantumQuantityFromBuyMode(gameplay.progression.quantum.buyMode)
   const allTabsUnlocked = gameplay.visibility.allTabsUnlocked === true
   const avocatoRouteUnlocked = isAvocatoRouteUnlocked({
-    purchased: gameplay.progression.avocado.unlocked,
+    purchased: gameplay.progression.avocado.unlocked || discoveryUnlocked,
     overflowPending: gameplay.progression.infinity.botCapTransitionPending,
     overflowPoints: gameplay.resources.avocado.overflowPoints,
     developmentOverride: allTabsUnlocked,
   })
   const challengesUnlocked = allTabsUnlocked || (gameplay.progression.challenges?.unlocked ?? false)
   const requestedRouteUnavailable =
+    (requestedRoute === 'transcendence' && !discoveryUnlocked) ||
     (requestedRoute === 'challenges' && !challengesUnlocked) ||
-    (requestedRoute === 'research' &&
+    (requestedRoute === 'research' && !discoveryUnlocked &&
       !(gameplay.visibility.research?.routeUnlocked ?? true)) ||
     (requestedRoute === 'skills' &&
       !gameplay.visibility.skills.routeUnlocked) ||
@@ -723,7 +731,7 @@ export function ReadyDysonSlice({
   const route =
     requestedRouteUnavailable
       ? 'bots'
-      : requestedRoute
+      : requestedRoute === 'research' && discoveryUnlocked ? 'transcendence' : requestedRoute
   const meditationPlacement: AvocatoMeditationPlacement | null =
     AVOCATO_MEDITATION_ROUTE_PLACEMENT[route] ?? null
   const dyson = gameplay.derived.dyson
@@ -961,8 +969,9 @@ export function ReadyDysonSlice({
     ),
   )
   const availableNavigationItems: BottomNavigationDestinationId[] = [
+    ...(discoveryUnlocked ? ['transcendence' as const] : []),
     'bots',
-    'research',
+    ...(!discoveryUnlocked ? ['research' as const] : []),
     ...(gameplay.visibility.skills.routeVisible ? ['skills' as const] : []),
     ...(gameplay.visibility.infinity.routeVisible ? ['infinity' as const] : []),
     ...(challengesUnlocked ? ['challenges' as const] : []),
@@ -1010,6 +1019,7 @@ export function ReadyDysonSlice({
       ? messages.wikiRoute
     : settingsActive
     ? messages.settingsRoute
+    : route === 'transcendence' ? discoveryMessages.route
     : researchActive
       ? messages.researchRoute
       : skillsActive
@@ -1045,7 +1055,7 @@ export function ReadyDysonSlice({
         ? undefined
         : intl.formatMessage(messages.releaseFooter, releaseFooter)}
       heading={intl.formatMessage(routeHeading)}
-      routeTheme={challengesActive ? 'infinity' : debugActive ? 'statistics' : storeActive ? 'bots' : route}
+      routeTheme={route === 'transcendence' ? 'avocato' : challengesActive ? 'infinity' : debugActive ? 'statistics' : storeActive ? 'bots' : route}
       routeContentEdgeToEdge={storeActive}
       routeThemeVariant={
         gameplay.derived.simulations?.currentEra ?? 'foundational'
@@ -1056,6 +1066,11 @@ export function ReadyDysonSlice({
         bottomAriaLabel: intl.formatMessage(messages.bottomNavigation),
         includeBottomText: bottomNavigationIncludeText,
         items: [
+          ...(discoveryUnlocked ? [{
+            id: 'transcendence', label: intl.formatMessage(discoveryMessages.route), iconSrc: navigationAssets.transcendence,
+            bottom: bottomVisible('transcendence'),
+            ...(route === 'transcendence' ? { current: true as const } : { onActivate: () => navigateTo('transcendence') }),
+          }] : []),
           {
             id: 'bots',
             label: intl.formatMessage(messages.route),
@@ -1065,7 +1080,7 @@ export function ReadyDysonSlice({
               ? { current: true as const }
               : { onActivate: () => onRouteChange('bots') }),
           },
-          {
+          ...(!discoveryUnlocked ? [{
             id: 'research',
             label: intl.formatMessage(messages.researchRoute),
             iconSrc: navigationAssets.research,
@@ -1076,7 +1091,7 @@ export function ReadyDysonSlice({
                 ? { current: true as const }
                 : { onActivate: () => navigateTo('research') }
               : { disabled: true }),
-          },
+          }] : []),
           ...(gameplay.visibility.skills.routeVisible
             ? [{
                 id: 'skills',
@@ -1458,6 +1473,8 @@ export function ReadyDysonSlice({
                 </Suspense>
               ),
             }
+          : route === 'transcendence' && gameplay.progression.discovery && gameplay.derived.discovery
+            ? { ariaLabel: intl.formatMessage(discoveryMessages.route), content: <DiscoverySurface gameSpeed={gameplay.progression.timeline?.doubleTime?.unlocked ? 2 : 1} state={gameplay.progression.discovery} effects={gameplay.derived.discovery} locale={locale} /> }
           : researchActive
             ? {
                 ariaLabel: intl.formatMessage(messages.researchRoute),
@@ -1473,7 +1490,7 @@ export function ReadyDysonSlice({
                     }
                   >
                     <ResearchSurface
-                      researchDisabled={gameplay.progression.challenges?.active === 'trial-and-error'}
+                      researchDisabled={gameplay.progression.challenges?.active === 'trial-and-error' || gameplay.progression.challenges?.active === 'no-science'}
                       locale={locale}
                       cards={gameplay.previews.research.cards}
                       researchers={resources.researchers}
@@ -1565,6 +1582,7 @@ export function ReadyDysonSlice({
                       }
                     >
                       <SkillsSurface
+                        discoveryUnlocked={discoveryUnlocked}
                         galvanizers={gameplay.progression.challenges?.galvanizers ?? 0n}
                         hasEarnedGalvanizer={gameplay.progression.challenges?.hasEarnedGalvanizer ?? false}
                         skillsDisabled={gameplay.progression.challenges?.active === 'blank-slate'}
@@ -1845,6 +1863,8 @@ export function ReadyDysonSlice({
                                 }
                                 progression={{
                                   quantum: gameplay.progression.quantum,
+                                  challenges: gameplay.progression.challenges,
+                                  discovery: gameplay.progression.discovery,
                                   avocado: gameplay.progression.avocado,
                                   secretProgress:
                                     gameplay.progression.secretProgress,
@@ -1896,6 +1916,9 @@ export function ReadyDysonSlice({
                                 }
                               >
                                 <AvocatoSurface
+                                  discovery={gameplay.progression.discovery}
+                                  discoveryAvailable={gameplay.commands.byKind['discovery.purchase'].routeAvailable}
+                                  onDiscoveryUnlocked={() => navigateTo('transcendence')}
                                   locale={locale}
                                   unlocked={
                                     gameplay.progression.avocado.unlocked
@@ -1962,7 +1985,7 @@ export function ReadyDysonSlice({
                                       />
                                     }
                                   >
-                                    <WikiSurface
+                                    <WikiSurface discoveryUnlocked={discoveryUnlocked}
                                       initialCategory={wikiTopicRef.current}
                                       locale={locale}
                                       onCategoryChange={rememberWikiTopic}
@@ -2048,6 +2071,8 @@ export function ReadyDysonSlice({
                                         <StatisticsSurface
                                           onClearBest={async (milestone) => (await dispatchPlayer({ kind: 'statistics.clear-speedrun-best', milestone })).status === 'accepted'}
                                           locale={locale}
+                                          discovery={gameplay.progression.discovery}
+                                          discoveryEffects={gameplay.derived.discovery}
                                           statistics={
                                             gameplay.progression.statistics
                                           }
@@ -2194,7 +2219,12 @@ export function ReadyDysonSlice({
               }
             : {}),
         },
-        science: {
+        science: discoveryUnlocked && gameplay.derived.discovery ? {
+          label: intl.formatMessage(discoveryMessages.name),
+          iconSrc: navigationAssets.discovery,
+          value: display(gameplay.derived.discovery.multiplier),
+          rate: formatGameDuration(locale, gameplay.derived.discovery.secondsToNext / (gameplay.progression.timeline?.doubleTime?.unlocked ? 2 : 1)),
+        } : {
           label: intl.formatMessage(messages.science),
           value: display(resources.science),
           fullPrecisionValue: precise(resources.science),
@@ -2288,7 +2318,7 @@ export function ReadyDysonSlice({
             summary={(
               <div
                 className={
-                  route === 'bots' && botMultitasking
+                  route === 'bots' && botMultitasking && !discoveryUnlocked
                     ? 'dyson-info__summary dyson-info__summary--multitasking'
                     : 'dyson-info__summary dyson-info__summary--single-production'
                 }
@@ -2297,7 +2327,7 @@ export function ReadyDysonSlice({
                   gameplay={gameplay}
                   locale={locale}
                 />
-                {route === 'bots' && botMultitasking && (
+                {route === 'bots' && botMultitasking && !discoveryUnlocked && (
                   <BotDistribution
                     locale={locale}
                     distribution={
@@ -2366,7 +2396,7 @@ export function ReadyDysonSlice({
         ),
       }}
       distribution={
-        (route === 'bots' || researchActive) && !botMultitasking
+        (route === 'bots' || researchActive) && !botMultitasking && !discoveryUnlocked
           ? {
               ariaLabel: intl.formatMessage(
                 messages.botDistribution,

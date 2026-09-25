@@ -1,5 +1,10 @@
 import { defineMessages } from 'react-intl'
 export const challengeMessages = defineMessages({
+  quantumTitle: { id: 'challenges.quantumTitle', defaultMessage: 'Quantum Challenges' },
+  noScience: { id: 'challenges.noScience', defaultMessage: 'No Science' },
+  noScienceDescription: { id: 'challenges.noScience.description', defaultMessage: 'Complete a Quantum run without Science or Research.' },
+  noScienceActive: { id: 'challenges.noScience.active', defaultMessage: 'No Science active · Science and Research disabled' },
+  quantumRestart: { id: 'challenges.quantumRestart', defaultMessage: 'This starts a fresh Quantum run without awarding Quantum Shards. Quantum upgrades and later layers are kept. Abandoning also starts a fresh normal run.' },
   trialAndError: { id: 'challenges.trialAndError', defaultMessage: 'Trial & Error' },
   trialDescription: { id: 'challenges.trialAndError.description', defaultMessage: 'Complete a normal Infinity without research.' },
   trialActive: { id: 'challenges.trialAndError.active', defaultMessage: 'Trial & Error active · Research purchases disabled' },
@@ -24,5 +29,5 @@ export const challengeMessages = defineMessages({
   failure: { id: 'challenges.failure', defaultMessage: 'The restart could not be saved. Your current run has been kept. Try again.' },
   view: { id: 'challenges.view', defaultMessage: 'View challenge' },
   galvanizers: { id: 'challenges.galvanizers', defaultMessage: 'Catalysts: {value}' },
-  future: { id: 'challenges.galvanizers.future', defaultMessage: 'Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Overflow.' },
+  future: { id: 'challenges.galvanizers.future', defaultMessage: 'Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence.' },
 })

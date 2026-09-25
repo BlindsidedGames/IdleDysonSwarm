@@ -78,3 +78,17 @@ describe('purchased-building scaling attribution in facility details', () => {
     expect(fact.details.contributions?.some((entry) => entry.sourceId.startsWith('manual-purchase.scaling-'))).toBe(false)
   })
 })
+
+test.each([
+  ['en', 1 / 7200, '0.000139'],
+  ['fr', 1 / 7200, '0,000139'],
+  ['en', 1e-10, '1E-10'],
+] as const)('slow output remains nonzero and readable in %s (%s/s)', (locale, rate, displayed) => {
+  const fact = facilityFact(1)
+  render(<IntlProvider locale={locale}>
+    <FacilityDetailsContent locale={locale} facilityId="assembly_lines"
+      fact={{ ...fact, production: { ...fact.production, perSecond: rate } }} gameSpeed={1} />
+  </IntlProvider>)
+  expect(screen.getByText(`${displayed} / second`)).toBeTruthy()
+  expect(screen.queryByText('0.00 / second')).toBeNull()
+})

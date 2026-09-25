@@ -290,13 +290,40 @@ describe('unified Dyson facility system', () => {
       result.value.facilityFacts.matrioshka_brains.details.upstreamSources,
     ).toEqual([{
       sourceFacilityId: 'birch_planets',
-      producedCount: 1,
+      contributionPerSecond: result.value.megaRates.birch_planets,
     }])
     expect(
       result.value.facilityFacts.birch_planets.details.upstreamSources,
     ).toEqual([{
       sourceFacilityId: 'galactic_brains',
-      producedCount: 1,
+      contributionPerSecond: result.value.megaRates.galactic_brains,
     }])
   })
+})
+
+test.each([
+  ['assembly_lines', 100, 1.21], ['ai_managers', 5000, 1.22],
+  ['servers', 5e6, 1.23], ['data_centers', 3e8, 1.24], ['planets', 1e9, 1.25],
+  ['matrioshka_brains', 1e10, 1.25], ['birch_planets', 1e11, 1.25], ['galactic_brains', 1e12, 1.25],
+] as const)('%s uses the approved cash curve for manual and automatic purchases', (id, base, exponent) => {
+  const source = state()
+  source.skills.byId = {}
+  source.dyson.facilities[id] = [100, 0]
+  const first = tryPurchaseCanonicalFacility(source, id)
+  expect(first.attempt.purchased).toBe(true)
+  expect(first.attempt.cost).toBeCloseTo(base, -2)
+  const second = previewCanonicalFacilityPurchase(first.state, id)
+  expect(second.cost / first.attempt.cost).toBeCloseTo(exponent, 10)
+})
+
+test('megastructure base output follows the two, four and eight hour chain', async () => {
+  const { deriveMegaStructureRates } = await import('./megaStructureRates')
+  const source = state()
+  for (const id of MEGA_STRUCTURE_FACILITY_IDS) source.dyson.facilities[id] = [0, 1]
+  const result = deriveMegaStructureRates(source, { matrioshka_brains: 1, birch_planets: 1, galactic_brains: 1 })
+  expect(result.ok).toBe(true)
+  if (!result.ok) throw new Error('Invalid rates')
+  expect(result.rates.matrioshka_brains * 7200).toBeCloseTo(1, 7)
+  expect(result.rates.birch_planets * 14400).toBeCloseTo(1, 7)
+  expect(result.rates.galactic_brains * 28800).toBeCloseTo(1, 7)
 })

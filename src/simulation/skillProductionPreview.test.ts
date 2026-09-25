@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest'
 import { createDeterministicMatureDysonFixture, DETERMINISTIC_DYSON_SNAPSHOT, DETERMINISTIC_DYSON_TUNING } from '../../scripts/support/deterministicMatureDysonFixture'
+import { withCanonicalBotAllocation } from './canonicalBotAllocation'
 import { previewSkillProduction } from './skillProductionPreview'
 
 function runtime(ownedSkillIds: string[] = []) {
@@ -46,4 +47,24 @@ test('spending a point includes the loss of Purity production in the same previe
   const result = previewSkillProduction(state, 'startHereTree', 'purchase')
   expect(result.rows.find((row) => row.id === 'bots')!.after).toBeLessThan(result.rows.find((row) => row.id === 'bots')!.before)
   expect(result.rows.find((row) => row.id === 'money')!.after).toBeGreaterThan(result.rows.find((row) => row.id === 'money')!.before)
+})
+
+test.each(['data_centers', 'galactic_brains'] as const)('Stellar refund compares funded %s production and the Bot debit', (target) => {
+  const state = runtime(['stellarSacrifices'])
+  for (const id of Object.keys(state.gameState.dyson.facilities) as Array<keyof typeof state.gameState.dyson.facilities>) {
+    state.gameState.dyson.facilities[id] = [0, id === target ? 1 : 0]
+  }
+  // A representable Bot debit, with enough production for a positive sacrifice formula.
+  state.gameState.dyson.bots = 1e30
+  state.gameState = withCanonicalBotAllocation(state.gameState)
+  const before = structuredClone(state)
+  const preview = previewSkillProduction(state, 'stellarSacrifices', 'refund')
+  const facility = preview.rows.find(row => row.id === target)!
+  expect(facility.before).toBeGreaterThan(0)
+  expect(facility.after).toBe(0)
+  expect(facility.changed).toBe(true)
+  const bots = preview.rows.find(row => row.id === 'bots')!
+  expect(bots.after).toBeGreaterThan(bots.before)
+  expect(preview.rows.find(row => row.id === 'planets')?.changed).toBe(false)
+  expect(state).toEqual(before)
 })

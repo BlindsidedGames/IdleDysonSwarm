@@ -10,6 +10,7 @@ describe('bottom navigation preferences', () => {
     expect(DEFAULT_BOTTOM_NAVIGATION_VISIBILITY).toEqual({
       bots: true,
       research: true,
+      transcendence: true,
       skills: true,
       infinity: true,
       challenges: true,

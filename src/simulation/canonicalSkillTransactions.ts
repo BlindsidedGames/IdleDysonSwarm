@@ -1,12 +1,11 @@
 import { initializeSrsHotStart } from './srsAugments'
 import { purityBodyMultiplier, purityMindMultiplier, purityEssenceMultiplier as essenceMultiplier } from './purityMultipliers'
-import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
+import { isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, galvanizationDefinition } from './galvanization'
 import { infinityChallenges, hasCompletedInfinityChallenge, isBlankSlateActive } from './infinityChallenges'
 import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
-import { getGameAssetsByKind } from '../game-data/catalog'
-import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import { SKILL_DEFINITION_ASSETS } from './skillDefinitions'
 import {
   readStringArray,
   readUnityBoolean,
@@ -853,7 +852,7 @@ export function applyCanonicalSkillPresetLayout(
 
 function loadDefinitions(state: CanonicalGameStateV1): ReadonlyMap<string, SkillDefinition> {
   return new Map(
-    [...getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND), ...SUBSKILL_ASSETS].map((asset) => {
+    SKILL_DEFINITION_ASSETS.map((asset) => {
       const base = parseDefinition(asset)
       const definition = { ...galvanizationDefinition(base, base.id, state),
         authoredRequired: base.required,
