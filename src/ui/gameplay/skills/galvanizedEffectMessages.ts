@@ -20,4 +20,3 @@ export const galvanizedEffectMessages: Readonly<Record<string, typeof messages.g
   stellarSacrifices: messages.galvSacrifices,
   shouldersOfTheEnlightened: messages.galvEnlightened,
 }
-
