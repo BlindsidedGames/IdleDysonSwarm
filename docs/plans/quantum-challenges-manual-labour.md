@@ -100,3 +100,12 @@ manual grants. Artwork follows the original high-resolution masters.
 All new text is in the existing localization catalogs. 4.1.10 patch notes mention
 the expanded Quantum challenges, their disabled Quantum upgrades and the four
 Manual Labour augments.
+
+
+### Scroll follow-up
+
+The expanded Challenges list had `overflow-y: auto` but no constrained height,
+so its parent clipped the content. Set its block size to the available route
+height with a zero minimum. Live wheel scrolling now reaches Supply Shortage
+at 1280x600 and 360x780 with 130% text; narrow content scrolls 1,351px while the
+bottom navigation stays visible. Evidence: `/tmp/ids-quantum-qa/scroll-360.png`.

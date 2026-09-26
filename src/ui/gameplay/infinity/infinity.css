@@ -613,6 +613,8 @@
 .infinity-challenges > .ui-collapsible-section__heading { font-size: var(--ui-text-body); }
 
 .challenges-surface {
+  block-size: 100%;
+  min-block-size: 0;
   padding-block: calc(var(--ui-page-gutter) + var(--safe-area-top)) var(--ui-page-gutter);
   padding-inline: max(var(--ui-page-gutter), var(--safe-area-left)) max(var(--ui-page-gutter), var(--safe-area-right));
   min-inline-size: 0;
