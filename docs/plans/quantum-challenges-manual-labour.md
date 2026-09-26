@@ -19,8 +19,11 @@ their previous rules.
 | Supply Shortage | Facility purchase growth factor is 2; generated facilities do not affect cost |
 
 Built by Hand requires Fractured Manual Labour before entry. Its first ten Bots
-earn one SP, enough to assign Hand Assembly even though later facility goals are
-blocked. No extra SP or hidden goal rewards are granted.
+earn one SP, enough to assign Hand Assembly. The two impossible facility goals
+become **50 Tinkers** and **250 Tinkers**, each still awarding one SP. Patient
+Hands stored work counts. All other goals remain unchanged. Completion uses the
+existing work counter and goal stage, so refunds/reload cannot repeat awards;
+Infinity resets the ladder normally. No bonus starting SP is granted.
 
 ## Manual Labour tuning
 
@@ -169,3 +172,20 @@ It crossed Infinity between the 500- and 550-second samples, automatically earne
 facility remained zero, and retention purchases stayed inactive. Evidence:
 `/tmp/ids-quantum-qa/built-live-9.png`, `built-live-10.png`, and
 `built-live-infinity.png`; log: `/tmp/ids-built-rebalanced-live.log`.
+
+
+### Built by Hand goal follow-up
+
+The initial bootstrap QA reached Infinity but missed that five purchased Lines
+blocked the remaining goal ladder and augment choices. Both facility-dependent
+goals now have shared runtime/UI targets (50 and 250 Tinkers). Regression checks
+cover exact thresholds, one-time rewards after reload, ordinary goals remaining
+unchanged, Patient Hands catch-up, and frontend goal projection.
+
+Live verification: entered Built by Hand, earned/assigned Hand Assembly, observed
+“50 Tinkers”, then “250 Tinkers” with 2 SP available at 30 seconds, then the normal
+star goal with 4 SP available at 60 seconds. All facilities stayed zero. The
+additional point came from the normal decayed-panel goal. Screenshots:
+`/tmp/ids-tinker-goals-qa/built-live-start.png`, `built-live-0.png`, and
+`built-live-1.png`. Full suite: 1,943 tests / 187 files; type, lint, data,
+localization, first-Dyson parity and web build pass.

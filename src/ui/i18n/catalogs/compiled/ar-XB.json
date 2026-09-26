@@ -6947,6 +6947,34 @@
       "value": "‬"
     }
   ],
+  "dyson.info.compact.goal-tinkers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " ⊥ıuʞǝɹs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.info.compact.panel-lifetime": [
     {
       "type": 0,
@@ -7241,6 +7269,28 @@
     {
       "type": 0,
       "value": " Sʇɐɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.goal.tinkers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " ⊥ıuʞǝɹs"
     },
     {
       "type": 0,

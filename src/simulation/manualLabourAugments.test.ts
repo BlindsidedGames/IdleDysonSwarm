@@ -114,3 +114,38 @@ test('the full build is bounded even with extreme legacy practice/research and p
   const ordinary = fixture([A.handAssembly])
   expect(click(ordinary, false, .2, 2).botsGranted).toBe(2)
 })
+
+test.each([[1n, 50], [3n, 250]] as const)('Built by Hand replaces goal %s with %s completed Tinkers', (stage, target) => {
+  let state = fixture()
+  state.challenges = { ...state.challenges, active: 'built-by-hand' } as typeof state.challenges
+  state.dyson.goalStage = stage
+  state.skills.byId[A.handAssembly].level = target - 1
+  const facts = () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 })
+  const before = advanceCanonicalGoalProgression(state, facts)
+  expect(before.ok && before.awardedSkillPoints).toBe(0n)
+  state = completeManualLabour(state) as typeof state
+  const after = advanceCanonicalGoalProgression(state, facts)
+  if (!after.ok) throw Error(after.detail)
+  expect(after.state.dyson.goalStage).toBe(stage + 1n)
+  expect(after.awardedSkillPoints).toBe(1n)
+  const reloaded = hydrateGameState(dehydrateGameState(session(), after.state)).state
+  const again = advanceCanonicalGoalProgression(reloaded, facts)
+  expect(again.ok && again.awardedSkillPoints).toBe(0n)
+  const ordinary = advanceCanonicalGoalProgression({ ...state, challenges: { ...state.challenges, active: null } }, facts)
+  expect(ordinary.ok && ordinary.awardedSkillPoints).toBe(0n)
+})
+
+test('Patient Hands stored Tinkers advance challenge goals and award the normal points', () => {
+  const state = fixture()
+  state.challenges = { ...state.challenges, active: 'built-by-hand' } as typeof state.challenges
+  state.dyson.goalStage = 1n
+  const first = click(advanceManualLabourIdle(state, 42) as typeof state)
+  const after = advanceCanonicalGoalProgression(first.state, () => ({ panelsPerSecond: 2000, panelLifetimeSeconds: 10 }))
+  if (!after.ok) throw Error(after.detail)
+  expect(after.state.dyson.goalStage).toBe(3n)
+  expect(after.awardedSkillPoints).toBe(2n)
+  const second = click(advanceManualLabourIdle(after.state, 42) as typeof state)
+  const next = advanceCanonicalGoalProgression(second.state, () => ({ panelsPerSecond: 2000, panelLifetimeSeconds: 10 }))
+  expect(next.ok && next.state.dyson.goalStage).toBe(4n)
+  expect(next.ok && next.awardedSkillPoints).toBe(1n)
+})

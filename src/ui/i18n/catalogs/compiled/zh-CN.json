@@ -3507,6 +3507,26 @@
       ]
     }
   ],
+  "dyson.info.compact.goal-tinkers": [
+    {
+      "type": 0,
+      "value": "目标: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " 次手工制作"
+        }
+      ]
+    }
+  ],
   "dyson.info.compact.panel-lifetime": [
     {
       "type": 0,
@@ -3709,6 +3729,20 @@
     {
       "type": 0,
       "value": " 颗恒星"
+    }
+  ],
+  "dyson.info.goal.tinkers": [
+    {
+      "type": 0,
+      "value": "目标: "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " 次手工制作"
     }
   ],
   "dyson.info.panel-lifetime": [

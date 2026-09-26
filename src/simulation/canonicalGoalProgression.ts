@@ -2,10 +2,17 @@ import type { CanonicalGameStateV1 } from '../game-state/types'
 import { addDiscrete } from './numeric'
 import { runCanonicalSkillAutoAssignment } from './canonicalSkillTransactions'
 import { resolvePanelArea } from './stellarArithmetic'
+import { MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
 
 const FINAL_REWARDED_GOAL_STAGE = 10n
 const PANEL_COUNT_PER_STAR = 20_000
 const STAR_COUNT_PER_GALAXY = 100_000_000_000
+
+/** Facility goals are replaced only while Built by Hand is active. */
+export function builtByHandTinkerGoal(state: Pick<CanonicalGameStateV1, 'challenges' | 'dyson'>): number | null {
+  if (state.challenges?.active !== 'built-by-hand') return null
+  return state.dyson.goalStage === 1n ? 50 : state.dyson.goalStage === 3n ? 250 : null
+}
 
 export interface CanonicalGoalDysonFacts {
   readonly panelsPerSecond: number
@@ -95,6 +102,10 @@ function isGoalComplete(
     state: CanonicalGameStateV1,
   ) => Readonly<CanonicalGoalDysonFacts>,
 ): boolean {
+  const tinkerTarget = builtByHandTinkerGoal(state)
+  if (tinkerTarget !== null) {
+    return (state.skills.byId[MANUAL_LABOUR_AUGMENTS.handAssembly]?.level ?? 0) >= tinkerTarget
+  }
   switch (stage) {
     case 0n:
       return state.dyson.bots >= 10

@@ -341,7 +341,9 @@ export function DysonGoalSummary({
   currentGoal,
 }: DysonGoalSummaryProps) {
   const intl = useIntl()
-  const goalMessage =
+  const targetDisplay = currentGoal.kind === 'tinkers'
+    ? intl.formatNumber(currentGoal.target) : formatGameNumber(locale, currentGoal.target)
+  const goalMessage = currentGoal.kind === 'tinkers' ? messages.goalTinkers :
     currentGoal.kind === 'create-bots'
       ? messages.goalCreateBots
       : currentGoal.kind === 'build-assembly-lines'
@@ -357,7 +359,7 @@ export function DysonGoalSummary({
                 : currentGoal.kind === 'engulf-galaxies'
                   ? messages.goalEngulfGalaxies
                   : messages.goalReachBots
-  const compactGoalMessage =
+  const compactGoalMessage = currentGoal.kind === 'tinkers' ? messages.compactGoalTinkers :
     currentGoal.kind === 'create-bots' ||
     currentGoal.kind === 'reach-bots'
       ? messages.compactGoalBots
@@ -376,13 +378,13 @@ export function DysonGoalSummary({
     <span
       title={intl.formatMessage(goalMessage, {
         target: currentGoal.target,
-        targetDisplay: formatGameNumber(locale, currentGoal.target),
+        targetDisplay,
       })}
     >
       <FormattedMessage
         {...compactGoalMessage}
         values={{
-          targetDisplay: formatGameNumber(locale, currentGoal.target),
+          targetDisplay,
           emphasis: (chunks) => <>{chunks}</>,
         }}
       />

@@ -1556,6 +1556,9 @@
     "defaultMessage": "Goal: <emphasis>{targetDisplay} Stars</emphasis>",
     "description": "Compact Star goal in the Bots summary."
   },
+  "dyson.info.compact.goal-tinkers": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Tinkers</emphasis>"
+  },
   "dyson.info.compact.panel-lifetime": {
     "defaultMessage": "Lifetime: <emphasis>{value}s</emphasis>",
     "description": "Compact panel-lifetime fact in the Bots summary."
@@ -1603,6 +1606,9 @@
   "dyson.info.goal.surround-stars": {
     "defaultMessage": "Goal: Surround {targetDisplay} Stars",
     "description": "Unity Dyson goal to surround Stars."
+  },
+  "dyson.info.goal.tinkers": {
+    "defaultMessage": "Goal: {targetDisplay} Tinkers"
   },
   "dyson.info.panel-lifetime": {
     "defaultMessage": "Panel lifetime: <emphasis>{value}</emphasis> seconds",

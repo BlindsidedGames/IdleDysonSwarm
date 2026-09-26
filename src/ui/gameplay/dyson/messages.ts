@@ -254,6 +254,8 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Info',
     description: 'Unity Bots information control label.',
   },
+  goalTinkers: { id: 'dyson.info.goal.tinkers', defaultMessage: 'Goal: {targetDisplay} Tinkers' },
+  compactGoalTinkers: { id: 'dyson.info.compact.goal-tinkers', defaultMessage: 'Goal: <emphasis>{targetDisplay} Tinkers</emphasis>' },
   goalCreateBots: {
     id: 'dyson.info.goal.create-bots',
     defaultMessage: 'Goal: Create {targetDisplay} Bots',

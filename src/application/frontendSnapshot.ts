@@ -1,3 +1,4 @@
+import { builtByHandTinkerGoal } from '../simulation/canonicalGoalProgression'
 import { effectiveDivisions, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
@@ -663,6 +664,7 @@ export interface FrontendDysonPresentationFacts {
         readonly kind:
           | 'create-bots'
           | 'build-assembly-lines'
+          | 'tinkers'
           | 'have-active-panels'
           | 'own-planets'
           | 'decay-panels'
@@ -1650,6 +1652,7 @@ function selectDerivedFacts(
             dyson.value,
             state.dyson.goalStage,
             effectiveDivisions(state),
+            builtByHandTinkerGoal(state),
           ),
         }
         : {
@@ -1913,6 +1916,7 @@ function projectDysonDerivedFacts(
   source: Readonly<DerivedBasicDysonState>,
   goalStage: bigint,
   divisionsPurchased: bigint,
+  tinkerGoalTarget: number | null,
 ): Omit<
   DerivedBasicDysonState,
   'nextEvaluationSnapshot' | 'megaRates'
@@ -1962,6 +1966,7 @@ function projectDysonDerivedFacts(
       currentGoal: projectDysonGoal(
         goalStage,
         divisionsPurchased,
+        tinkerGoalTarget,
       ),
       facilities: source.facilityFacts,
     },
@@ -2306,7 +2311,9 @@ function projectGalaxyGroupVisualCompletion(
 function projectDysonGoal(
   goalStage: bigint,
   divisionsPurchased: bigint,
+  tinkerGoalTarget: number | null,
 ): FrontendDysonPresentationFacts['currentGoal'] {
+  if (tinkerGoalTarget !== null) return { kind: 'tinkers', target: tinkerGoalTarget }
   switch (goalStage) {
     case 0n:
       return { kind: 'create-bots', target: 10 }
