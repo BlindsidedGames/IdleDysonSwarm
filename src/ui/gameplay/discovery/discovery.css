@@ -27,10 +27,12 @@
   font-weight: var(--font-weight-bold);
   font-size: calc(1.2rem * var(--game-text-scale));
 }
-.discovery-boost .ui-inline-image-symbol {
+.discovery-bar-icon .ui-inline-image-symbol {
   inline-size: 1.45em;
   block-size: 1.45em;
   flex-shrink: 0;
+  mask-position: right center;
+  -webkit-mask-position: right center;
 }
 .discovery-boost {
   display: inline-flex;
@@ -133,3 +135,12 @@
 
 .discovery-purchase h2 { display: flex; align-items: center; gap: 0.5em; }
 .discovery-purchase h2 .ui-inline-image-symbol { inline-size: 1.5em; block-size: 1.5em; }
+
+.discovery-track { display: flex; align-items: center; gap: 0.6rem; }
+.discovery-track .discovery-bar { flex: 1; min-inline-size: 0; }
+.discovery-bar-icon {
+  display: flex;
+  flex-shrink: 0;
+  font-size: calc(1.05rem * var(--game-text-scale));
+  pointer-events: none;
+}

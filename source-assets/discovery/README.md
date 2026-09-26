@@ -1,6 +1,8 @@
 # Discovery tier icons
 
 White silhouettes on transparent 256-unit SVG canvases, tinted by the interface.
+Runtime exports trim transparent margins and preserve aspect ratio. Bar icons
+align to the right of their shared column so the three silhouettes finish evenly.
 See `docs/skill-icon-artwork.md` for the artwork rules.
 
 Original 2084px masters from archived Unity commit
@@ -24,7 +26,8 @@ node --input-type=module - <<'JS'
 import sharp from 'sharp'
 for (const name of ['discovery', 'elevation', 'enlightenment']) {
   await sharp(`source-assets/discovery/${name}.svg`, { density: 288 })
-    .resize(256, 256).webp({ lossless: true })
+    .trim().resize({ width: 256, height: 256, fit: 'inside' })
+    .webp({ lossless: true })
     .toFile(`src/ui/assets/discovery/${name}.webp`)
 }
 JS

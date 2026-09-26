@@ -144,3 +144,11 @@ section. The latter caught and fixed a missing height constraint on the Discover
 scroll surface. Native interaction QA above predates this presentation follow-up.
 Evidence: `tier-details-narrow.png`, `tier-details-bottom.png`, and
 `upgrades-unboxed.png` under `docs/qa/transcendence-tiers/`.
+
+Final icon placement is outside the right edge of each bar. Runtime exports now
+trim transparent margins and preserve aspect ratio; the icon column aligns the
+silhouettes right. Discovery's blocks and conveyor use a squarer composition.
+The final artwork was checked at large and small sizes and all three disclosure
+UI tests passed. An automatic browser URL-policy rejection prevented reconnecting
+to localhost for another in-game check of this last artwork adjustment; prior
+outside-right placement was visually checked in the game.
