@@ -10178,7 +10178,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "Trabajo manual produce el 5 % de tus Bots actuales cada 0,2 segundos, con un mínimo de 1 Bot. Reemplaza la fabricación de Líneas de ensamblaje; no requiere Gerente de IA."
+      "value": "Construye Bots cada 0,2 segundos sin un Administrador de IA. Rendimiento base: (ensamblajes manuales completados + 1)^5, hasta 10^17 Bots por activación. Reemplaza la creación manual de Líneas de ensamblaje. El trabajo se reinicia con Infinito."
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -10196,7 +10196,7 @@
   "skills.manualLabour.patientHands.effect": [
     {
       "type": 0,
-      "value": "Aumenta la producción de Bots de Ensamblaje manual un 100 % por minuto sin activarlo, hasta +1.000 % después de 10 minutos. Se consume al activarlo. Los bonos son aditivos."
+      "value": "Al estar inactivo, almacena hasta 42 segundos de Ensamblaje manual. La siguiente activación completa el trabajo almacenado con un 25% más de Bots. También acumula práctica. Se consume al activar."
     }
   ],
   "skills.manualLabour.patientHands.name": [
@@ -10214,7 +10214,7 @@
   "skills.manualLabour.practice.effect": [
     {
       "type": 0,
-      "value": "Cada Ensamblaje manual completado aumenta su producción de Bots un 1 % durante este Infinito. Reembolsarlo conserva la práctica. Los bonos son aditivos."
+      "value": "La práctica aumenta el rendimiento del Ensamblaje manual: 200% × activaciones completadas / (activaciones completadas + 500), hasta +200%. Se reinicia con Infinito; se conserva al reembolsar. Los bonos son aditivos."
     }
   ],
   "skills.manualLabour.practice.name": [
@@ -10232,7 +10232,7 @@
   "skills.manualLabour.workingSmarter.effect": [
     {
       "type": 0,
-      "value": "Aumenta la producción de Bots de Ensamblaje manual un 10 % por nivel de investigación de Líneas de ensamblaje. Tras desbloquear Descubrimiento, usa los Descubrimientos completados. Los bonos son aditivos."
+      "value": "Aumenta el rendimiento del Ensamblaje manual un 25% × log10(1 + niveles de investigación de Líneas de ensamblaje), hasta +200%. Tras desbloquear Descubrimiento, usa los Descubrimientos completados. Los bonos son aditivos."
     }
   ],
   "skills.manualLabour.workingSmarter.name": [

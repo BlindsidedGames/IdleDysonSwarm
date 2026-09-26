@@ -2309,7 +2309,7 @@ function SkillDetails({
                       <ProductionImpactRow key={row.id}
                         label={intl.formatMessage(productionLabels[row.id])}
                         before={`${formatGameNumber(locale, row.before)}${row.id.startsWith('manual') ? '' : row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}`}
-                        after={`${formatGameNumber(locale, row.after)}${row.id.startsWith('manual') ? '' : row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}${liveProduction.projected ? ' (10m)' : ''}`}
+                        after={`${formatGameNumber(locale, row.after)}${row.id.startsWith('manual') ? '' : row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}${liveProduction.projected ? ` (${liveProduction.projectedSeconds < 60 ? `${liveProduction.projectedSeconds}s` : `${liveProduction.projectedSeconds / 60}m`})` : ''}`}
                         afterTone={row.after >= row.before ? 'gain' : 'loss'}
                         toLabel={intl.formatMessage(messages.impactTo)} />
                     ))}

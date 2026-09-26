@@ -10178,7 +10178,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "手动劳动每0.2秒制造当前机器人数量的5%，至少1个。替代装配线制造，无需AI管理器。"
+      "value": "每0.2秒制造机器人，无需AI管理器。基础产量为（已完成的手工组装次数 + 1）^5，每次激活上限为10^17个机器人。取代手动制造装配线。无限重置时清空工作次数。"
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -10196,7 +10196,7 @@
   "skills.manualLabour.patientHands.effect": [
     {
       "type": 0,
-      "value": "每分钟不激活手工组装，其机器人数收益增加100%，10分钟后最高+1,000%。激活时消耗。加成叠加计算。"
+      "value": "闲置时储存最多42秒的手工组装。下次激活会完成储存的工作，并额外获得25%的机器人。储存的工作也会增加练习次数。激活时消耗。"
     }
   ],
   "skills.manualLabour.patientHands.name": [
@@ -10214,7 +10214,7 @@
   "skills.manualLabour.practice.effect": [
     {
       "type": 0,
-      "value": "每完成一次手工组装，本次无限轮回的机器人数收益增加1%。退还技能保留熟练度。加成叠加计算。"
+      "value": "练习提高手工组装产量：200% × 完成次数 /（完成次数 + 500），最高+200%。无限重置时清空练习；退还技能时保留。加成相加。"
     }
   ],
   "skills.manualLabour.practice.name": [
@@ -10232,7 +10232,7 @@
   "skills.manualLabour.workingSmarter.effect": [
     {
       "type": 0,
-      "value": "装配线研究每升一级，手工组装的机器人数收益增加10%。解锁发现后，改用已完成的发现次数。加成叠加计算。"
+      "value": "手工组装产量增加25% × log10（1 + 装配线研究等级），最高+200%。解锁发现后改用已完成的发现次数。加成相加。"
     }
   ],
   "skills.manualLabour.workingSmarter.name": [

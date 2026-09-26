@@ -1626,7 +1626,7 @@ test('Stored Time charges Patient Hands without activating Manual Labour or addi
   expect(result.completed).toBe(true)
   expect(result.candidateState.issue).toBeUndefined()
   const after = result.candidateState.state.gameState
-  expect(after.skills.byId[MANUAL_LABOUR_AUGMENTS.patientHands].timerSeconds).toBe(600)
+  expect(after.skills.byId[MANUAL_LABOUR_AUGMENTS.patientHands].timerSeconds).toBe(42)
   expect(after.skills.byId[MANUAL_LABOUR_AUGMENTS.practice].level).toBe(0)
   expect(after.dyson.bots).toBe(100)
 })

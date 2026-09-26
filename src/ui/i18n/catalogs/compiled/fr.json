@@ -10178,7 +10178,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "Travail manuel produit 5 % de vos Bots actuels toutes les 0,2 seconde, avec un minimum de 1 Bot. Remplace le bricolage de Chaînes de montage ; aucun Gestionnaire IA requis."
+      "value": "Produisez des Bots toutes les 0,2 seconde sans gestionnaire IA. Rendement de base : (assemblages manuels terminés + 1)^5, plafonné à 10^17 Bots par activation. Remplace le bricolage de lignes d’assemblage. Le travail est réinitialisé à l’Infinité."
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -10196,7 +10196,7 @@
   "skills.manualLabour.patientHands.effect": [
     {
       "type": 0,
-      "value": "Augmente le rendement en Bots d’Assemblage manuel de 100 % par minute sans activation, jusqu’à +1 000 % après 10 minutes. Consommé à l’activation. Les bonus sont additifs."
+      "value": "Au repos, accumule jusqu’à 42 secondes d’assemblage manuel. La prochaine activation accomplit ce travail avec 25% de Bots supplémentaires. Ce travail améliore aussi la pratique. Consommé à l’activation."
     }
   ],
   "skills.manualLabour.patientHands.name": [
@@ -10214,7 +10214,7 @@
   "skills.manualLabour.practice.effect": [
     {
       "type": 0,
-      "value": "Chaque Assemblage manuel terminé augmente son rendement en Bots de 1 % pendant cet Infini. Le remboursement conserve la pratique. Les bonus sont additifs."
+      "value": "Augmente le rendement de l’assemblage manuel avec la pratique : 200% × activations terminées / (activations terminées + 500), jusqu’à +200%. La pratique est réinitialisée à l’Infinité et conservée après remboursement. Les bonus sont additifs."
     }
   ],
   "skills.manualLabour.practice.name": [
@@ -10232,7 +10232,7 @@
   "skills.manualLabour.workingSmarter.effect": [
     {
       "type": 0,
-      "value": "Augmente le rendement en Bots d’Assemblage manuel de 10 % par niveau de recherche des Chaînes de montage. Après le déblocage de Découverte, utilise les Découvertes terminées. Les bonus sont additifs."
+      "value": "Augmente le rendement de l’assemblage manuel de 25% × log10(1 + niveaux de recherche des lignes d’assemblage), jusqu’à +200%. Après le déblocage de Découverte, utilise les Découvertes terminées. Les bonus sont additifs."
     }
   ],
   "skills.manualLabour.workingSmarter.name": [

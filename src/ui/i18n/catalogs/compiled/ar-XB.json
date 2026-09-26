@@ -20230,7 +20230,7 @@
     },
     {
       "type": 0,
-      "value": "Wɐunɐʅ ⅂ɐqonɹ dɹopnɔǝs 5% oɟ ʎonɹ ɔnɹɹǝuʇ Ԑoʇs ǝʌǝɹʎ 0.2 sǝɔoups, ʍıʇɥ ɐ ɯıuıɯnɯ oɟ 1 Ԑoʇ. ᴚǝdʅɐɔǝs ∀ssǝɯqʅʎ ⅂ıuǝ ʇıuʞǝɹıuƃ; uo ∀I Wɐuɐƃǝɹ ɹǝbnıɹǝp."
+      "value": "Ԑnıʅp Ԑoʇs ǝʌǝɹʎ 0.2 sǝɔoups ʍıʇɥonʇ ɐu ∀I Wɐuɐƃǝɹ. Ԑɐsǝ ʎıǝʅp ıs (ɔoɯdʅǝʇǝp Hɐup ∀ssǝɯqʅıǝs + 1)^5, ɔɐddǝp ɐʇ 100 bnɐpɹıʅʅıou Ԑoʇs dǝɹ ɐɔʇıʌɐʇıou. ᴚǝdʅɐɔǝs ∀ssǝɯqʅʎ ⅂ıuǝ ʇıuʞǝɹıuƃ. Moɹʞ ɹǝsǝʇs ou Iuɟıuıʇʎ."
     },
     {
       "type": 0,
@@ -20272,7 +20272,7 @@
     },
     {
       "type": 0,
-      "value": "Iuɔɹǝɐsǝ Hɐup ∀ssǝɯqʅʎ Ԑoʇ ʎıǝʅp qʎ 100% dǝɹ ɯıunʇǝ ʍıʇɥonʇ ɐɔʇıʌɐʇıuƃ ıʇ, nd ʇo +1,000% ɐɟʇǝɹ 10 ɯıunʇǝs. Ↄousnɯǝp ou ɐɔʇıʌɐʇıou. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+      "value": "Mɥıʅǝ ıpʅǝ, sʇoɹǝ nd ʇo 42 sǝɔoups oɟ Hɐup ∀ssǝɯqʅʎ. ⅄onɹ uǝxʇ ɐɔʇıʌɐʇıou ɔoɯdʅǝʇǝs ʇɥǝ sʇoɹǝp ʍoɹʞ ʍıʇɥ 25% ɯoɹǝ Ԑoʇs. Sʇoɹǝp ʍoɹʞ ɐʅso qnıʅps dɹɐɔʇıɔǝ. Ↄousnɯǝp ou ɐɔʇıʌɐʇıou."
     },
     {
       "type": 0,
@@ -20314,7 +20314,7 @@
     },
     {
       "type": 0,
-      "value": "Ǝɐɔɥ ɔoɯdʅǝʇǝp Hɐup ∀ssǝɯqʅʎ ıuɔɹǝɐsǝs ıʇs Ԑoʇ ʎıǝʅp qʎ 1% ʇɥıs Iuɟıuıʇʎ. ᴚǝɟnupıuƃ dɹǝsǝɹʌǝs dɹɐɔʇıɔǝ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+      "value": "Iuɔɹǝɐsǝ Hɐup ∀ssǝɯqʅʎ ʎıǝʅp qʎ nd ʇo 200% ʍıʇɥ dɹɐɔʇıɔǝ: 200% × ɔoɯdʅǝʇıous / (ɔoɯdʅǝʇıous + 500). Ԁɹɐɔʇıɔǝ ɹǝsǝʇs ou Iuɟıuıʇʎ; ɹǝɟnups dɹǝsǝɹʌǝ ıʇ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
     },
     {
       "type": 0,
@@ -20356,7 +20356,7 @@
     },
     {
       "type": 0,
-      "value": "Iuɔɹǝɐsǝ Hɐup ∀ssǝɯqʅʎ Ԑoʇ ʎıǝʅp qʎ 10% dǝɹ ∀ssǝɯqʅʎ ⅂ıuǝ ɹǝsǝɐɹɔɥ ʅǝʌǝʅ. ∀ɟʇǝɹ nuʅoɔʞıuƃ ᗡısɔoʌǝɹʎ, nsǝ ɔoɯdʅǝʇǝp ᗡısɔoʌǝɹıǝs ıusʇǝɐp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+      "value": "Iuɔɹǝɐsǝ Hɐup ∀ssǝɯqʅʎ ʎıǝʅp qʎ 25% × ʅoƃ10(1 + ∀ssǝɯqʅʎ ⅂ıuǝ ɹǝsǝɐɹɔɥ ʅǝʌǝʅs), ɔɐddǝp ɐʇ +200%. ∀ɟʇǝɹ nuʅoɔʞıuƃ ᗡısɔoʌǝɹʎ, nsǝ ɔoɯdʅǝʇǝp ᗡısɔoʌǝɹıǝs ıusʇǝɐp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
     },
     {
       "type": 0,

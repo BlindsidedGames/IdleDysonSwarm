@@ -10178,7 +10178,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "Manuelle Arbeit erzeugt alle 0,2 Sekunden 5 % deiner aktuellen Bots, mindestens jedoch 1 Bot. Ersetzt das Basteln von Montagelinien; kein KI-Manager erforderlich."
+      "value": "Baue alle 0,2 Sekunden Bots ohne KI-Manager. Basisertrag: (abgeschlossene Handmontagen + 1)^5, begrenzt auf 10^17 Bots pro Aktivierung. Ersetzt das Basteln von Montagelinien. Arbeit wird bei Unendlichkeit zurückgesetzt."
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -10196,7 +10196,7 @@
   "skills.manualLabour.patientHands.effect": [
     {
       "type": 0,
-      "value": "Erhöht den Bot-Ertrag der Handmontage pro Minute ohne Aktivierung um 100 %, bis zu +1.000 % nach 10 Minuten. Wird bei Aktivierung verbraucht. Boni sind additiv."
+      "value": "Speichert im Leerlauf bis zu 42 Sekunden Handmontage. Die nächste Aktivierung erledigt die gespeicherte Arbeit mit 25% mehr Bots. Gespeicherte Arbeit verbessert auch die Übung. Wird bei Aktivierung verbraucht."
     }
   ],
   "skills.manualLabour.patientHands.name": [
@@ -10214,7 +10214,7 @@
   "skills.manualLabour.practice.effect": [
     {
       "type": 0,
-      "value": "Jede abgeschlossene Handmontage erhöht ihren Bot-Ertrag in diesem Infinity um 1 %. Rückerstattungen erhalten die Übung. Boni sind additiv."
+      "value": "Übung erhöht den Ertrag der Handmontage: 200% × Abschlüsse / (Abschlüsse + 500), bis zu +200%. Übung wird bei Unendlichkeit zurückgesetzt und bleibt bei Rückerstattung erhalten. Boni sind additiv."
     }
   ],
   "skills.manualLabour.practice.name": [
@@ -10232,7 +10232,7 @@
   "skills.manualLabour.workingSmarter.effect": [
     {
       "type": 0,
-      "value": "Erhöht den Bot-Ertrag der Handmontage um 10 % pro Forschungsstufe der Montagelinien. Nach Freischaltung von Entdeckung zählen stattdessen abgeschlossene Entdeckungen. Boni sind additiv."
+      "value": "Erhöht den Ertrag der Handmontage um 25% × log10(1 + Montagelinien-Forschungsstufen), bis zu +200%. Nach Freischaltung von Entdeckung zählen abgeschlossene Entdeckungen. Boni sind additiv."
     }
   ],
   "skills.manualLabour.workingSmarter.name": [

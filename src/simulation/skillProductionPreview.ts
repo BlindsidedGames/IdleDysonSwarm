@@ -1,3 +1,4 @@
+import { MANUAL_LABOUR_TUNING } from './manualLabourAugments'
 import { deriveCanonicalTinkerStats } from './canonicalTinker'
 import { hasManualLabourAugment, MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
 import { highestOwnedFacility } from './stellarArithmetic'
@@ -10,6 +11,7 @@ import { purchaseCanonicalSkill, refundCanonicalSkill } from './canonicalSkillTr
 
 export interface SkillProductionPreview {
   readonly projected: boolean
+  readonly projectedSeconds: number
   readonly rows: readonly {
     readonly id: keyof ReturnType<typeof productionValues>
     readonly changed: boolean
@@ -46,13 +48,16 @@ export function previewSkillProduction(
   if (!change.accepted) throw new Error(change.reason)
   let candidate = change.state
   let projected = false
+  let projectedSeconds = 0
   if (kind === 'purchase') {
     for (const id of ['androids', 'pocketAndroids', 'superRadiantScattering', MANUAL_LABOUR_AUGMENTS.patientHands]) {
       const skill = candidate.skills.byId[id]
       if (!change.affectedSkillIds.includes(id) || !skill?.owned || skill.timerSeconds !== 0) continue
       projected = true
+      const seconds = id === MANUAL_LABOUR_AUGMENTS.patientHands ? MANUAL_LABOUR_TUNING.maximumWaitingSeconds : 600
+      projectedSeconds = Math.max(projectedSeconds, seconds)
       candidate = { ...candidate, skills: { ...candidate.skills, byId: {
-        ...candidate.skills.byId, [id]: { ...skill, timerSeconds: 600 },
+        ...candidate.skills.byId, [id]: { ...skill, timerSeconds: seconds },
       } } }
     }
   }
@@ -67,6 +72,7 @@ export function previewSkillProduction(
   const ids = Object.keys(before) as (keyof typeof before)[]
   return {
     projected,
+    projectedSeconds,
     rows: ids.map((id) => ({ id, before: before[id], after: after[id],
       changed: Math.abs(before[id] - after[id]) >
         1e-10 * Math.max(Math.abs(before[id]), Math.abs(after[id]), Number.MIN_VALUE),

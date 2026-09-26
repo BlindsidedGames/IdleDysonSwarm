@@ -1,6 +1,8 @@
 import { expect, test } from 'vitest'
 import { createDeterministicMatureDysonFixture, DETERMINISTIC_DYSON_SNAPSHOT, DETERMINISTIC_DYSON_TUNING } from '../../scripts/support/deterministicMatureDysonFixture'
 import { withCanonicalBotAllocation } from './canonicalBotAllocation'
+import { MANUAL_LABOUR_AUGMENTS as A } from './skillSubskills'
+import { manualBotYield } from './manualLabourAugments'
 import { previewSkillProduction } from './skillProductionPreview'
 
 function runtime(ownedSkillIds: string[] = []) {
@@ -66,5 +68,21 @@ test.each(['data_centers', 'galactic_brains'] as const)('Stellar refund compares
   const bots = preview.rows.find(row => row.id === 'bots')!
   expect(bots.after).toBeGreaterThan(bots.before)
   expect(preview.rows.find(row => row.id === 'planets')?.changed).toBe(false)
+  expect(state).toEqual(before)
+})
+
+
+test('Patient Hands previews 42 seconds of stored work without changing the live counters', () => {
+  const state = runtime(['manualLabour', A.handAssembly, A.practice])
+  state.gameState.challenges.galvanizedSkillIds = ['manualLabour']
+  for (const id of Object.values(A)) state.gameState.skills.byId[id] = {
+    owned: id !== A.patientHands, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0,
+  }
+  const before = structuredClone(state)
+  const preview = previewSkillProduction(state, A.patientHands, 'purchase')
+  const expected = structuredClone(state.gameState)
+  expected.skills.byId[A.patientHands] = { ...expected.skills.byId[A.patientHands], owned: true, timerSeconds: 42 }
+  expect(preview.projectedSeconds).toBe(42)
+  expect(preview.rows.find(row => row.id === 'manualBots')?.after).toBe(manualBotYield(expected))
   expect(state).toEqual(before)
 })

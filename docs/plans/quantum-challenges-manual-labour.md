@@ -29,16 +29,27 @@ three require Hand Assembly. All require the parent to be Fractured, and are
 refundable. Their counters survive refunds/save/load but reset with Infinity and
 Quantum. No new persistence service or save schema is needed.
 
-- Hand Assembly: 5% of current Bots, minimum one, every 0.2 seconds; replaces
-  Assembly Line tinkering, with no AI Manager requirement.
-- Practice Makes Perfect: +1% manual Bot yield per completed activation while
-  assigned; additive.
-- Working Smarter: +10% yield per Assembly Line research level; Discovery
-  completions replace retired research after unlock. No Science suppresses old
-  research's contribution.
-- Patient Hands: +100% yield per idle game-minute, capped at +1,000% after ten
-  minutes. Consumed on activation. Repeat cycles cannot reuse the captured bonus.
-  Stored Time may build the waiting bonus but does not perform tinkering.
+- Hand Assembly: `(completed Hand Assemblies + 1)^5` Bots every 0.2 seconds,
+  capped at `1e17` base Bots per activation. No current-Bot input, no AI Manager
+  requirement, and no Assembly Line grants. Completed work uses the existing
+  augment runtime counter. Rapid clicking receives no initial-progress shortcut.
+- Practice Makes Perfect: `2n / (n + 500)` additive yield bonus, where `n` is
+  work completed while assigned. Approaches +200% rather than growing forever.
+- Working Smarter: `min(2, 0.25 × log10(1 + levels))` additive yield bonus.
+  Assembly Line research supplies levels before Discovery; completed Discoveries
+  afterward. Research-disabled challenges suppress the retired research input.
+- Patient Hands: stores up to 42 gameplay seconds while idle. The next activation
+  completes up to 210 stored work actions plus the normal activation. Stored work
+  follows the same increasing work/practice curve as holding, with 25% more Bots
+  on the stored actions only. Both counters advance accordingly. The charge is
+  consumed once; repeating cannot reuse it. Stored Time can fill the charge but
+  never activates the button or produces manual Bots by itself.
+
+Practice and Working Smarter add together, bounding their combined yield factor
+at 5×. These are prototype tuning values, not a guarantee of final challenge
+pacing. The removed current-Bot percentage was a positive feedback loop: ordinary
+production and every manual payout made the next payout larger. Neither input
+can compound the replacement curve.
 
 Initial tuning is centralized in `manualLabourAugments.ts`. Existing paid Bot
 boost applies once. Ordinary production multipliers are not silently applied to
@@ -54,7 +65,7 @@ manual grants. Artwork follows the original high-resolution masters.
   paid versus Quantum Double IP; forbidden production and purchases; lifetime;
   retention; price growth; preset/refund restrictions; first-point bootstrap;
   augment stacking, refund/reload/reset, waiting consumption and numeric bounds.
-- Checks: full suite 1,937 tests / 187 files passed, TypeScript, lint, data,
+- Checks: full suite 1,938 tests / 187 files passed, TypeScript, lint, data,
   localization, web/native bundles and first-Dyson parity passed. Disabled-facility/Discovery
   regressions also pass. Builds report the existing bundle-size warning.
 - Live browser: entered and abandoned all seven Quantum challenges through their
@@ -68,11 +79,9 @@ manual grants. Artwork follows the original high-resolution masters.
 - Review fixes: invalidate skill preview eligibility when challenge state changes;
   hide refund/reset eligibility in Commitment Issues; suppress disabled facility
   intermediates so they cannot feed generated research or Discovery speed.
-- Live Built by Hand: earned the first goal point, assigned Hand Assembly through
-  its dialog, and held repeat. At 150 seconds it was producing 6.42 quadrillion
-  Bots per activation; within 200 seconds it completed an automatic Infinity,
-  earned 1 IP, and resumed the next run. Facilities remained at zero, including
-  after the reset. No other Manual Labour augment was assigned for this run.
+- The original Built by Hand live check exposed the self-compounding balance
+  problem; its previous sub-200-second Infinity is superseded by the rebalance
+  evidence below.
 - The post-reset shop inspection revealed Infinity retention purchases also
   grant facilities immediately. These are now blocked wherever the challenge
   forbids those purchases, with an inactive label, shared eligibility and focused
@@ -85,17 +94,10 @@ manual grants. Artwork follows the original high-resolution masters.
 
 ## Player-facing augment descriptions
 
-- **Hand Assembly:** Manual Labour produces 5% of your current Bots every 0.2
-  seconds, with a minimum of 1 Bot. Replaces Assembly Line tinkering; no AI Manager
-  required.
-- **Practice Makes Perfect:** Each completed Hand Assembly increases its Bot
-  yield by 1% this Infinity. Refunding preserves practice. Bonuses are additive.
-- **Working Smarter:** Increase Hand Assembly Bot yield by 10% per Assembly Line
-  research level. After unlocking Discovery, use completed Discoveries instead.
-  Bonuses are additive.
-- **Patient Hands:** Increase Hand Assembly Bot yield by 100% per minute without
-  activating it, up to +1,000% after 10 minutes. Consumed on activation. Bonuses
-  are additive.
+- **Hand Assembly:** Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Replaces Assembly Line tinkering. Work resets on Infinity.
+- **Practice Makes Perfect:** Increase Hand Assembly yield by up to 200% with practice: 200% × completions / (completions + 500). Practice resets on Infinity; refunds preserve it. Bonuses are additive.
+- **Working Smarter:** Increase Hand Assembly yield by 25% × log10(1 + Assembly Line research levels), capped at +200%. After unlocking Discovery, use completed Discoveries instead. Bonuses are additive.
+- **Patient Hands:** While idle, store up to 42 seconds of Hand Assembly. Your next activation completes the stored work with 25% more Bots. Stored work also builds practice. Consumed on activation.
 
 All new text is in the existing localization catalogs. 4.1.10 patch notes mention
 the expanded Quantum challenges, their disabled Quantum upgrades and the four
@@ -109,3 +111,61 @@ so its parent clipped the content. Set its block size to the available route
 height with a zero minimum. Live wheel scrolling now reaches Supply Shortage
 at 1280x600 and 360x780 with 130% text; narrow content scrolls 1,351px while the
 bottom navigation stays visible. Evidence: `/tmp/ids-quantum-qa/scroll-360.png`.
+
+
+## Manual Labour rebalance evidence
+
+Measured by repeatedly applying the production and completion functions at five
+activations/second, with no paid boost, Patient Hands waits, facility production
+or resets included. Threshold is the normal first Infinity, `4.2e19` Bots.
+
+| Assigned augments | Research levels | First Infinity threshold | Bots produced in one hour without resetting |
+| --- | --- | --- | --- |
+| Hand Assembly only | 0 | 8m 22.6s | 1.591e21 |
+| All four, continuously held | 0 | 7m 9.6s | 4.575e21 |
+| All four, continuously held | 1,000 | 6m 52s | 5.768e21 |
+| All four, continuously held | 100,000,000 | 6m 30.8s | 7.756e21 |
+
+Collecting Patient Hands every 42 seconds with all four augments and no research
+reached the first Infinity threshold on the tenth collection (7m 2s, including
+ten 0.2-second activations). Holding reached it in 7m 9.6s. This makes waiting
+competitive without the proposed 42× burst.
+
+The normal held-output ceiling is `2.5e18` Bots/second before the existing paid
+boost. Patient Hands adds at most 25% to the stored portion, not another growing
+multiplier. For a normal-production comparison, the non-conflicting maximum-skills
+fixture was given the deterministic mature facility/Bot seed. Its Bot rate
+started at `1.205e15`/second and reached `6.501e68`/second after ten one-second
+production-only steps, without new purchases or manual work. This deliberately
+late-game seeded comparison is not a player playthrough or a claim that every
+possible build is balanced. Manual work can still
+bootstrap Infinity, but cannot sustain the former exponential route to `4e242`.
+Completed work and practice restart each Infinity; later resets do not inherit a
+fully charged yield curve. A full Built by Hand Quantum still needs playtesting
+for pacing; this pass does not claim a complete Quantum was played manually.
+
+Ten thousand fully charged preview calculations took about 260 ms locally;
+each calculation processes at most 211 actions regardless of elapsed offline time.
+Regression checks cover equivalent stored/held work, single consumption, counters,
+refund/reload/Infinity/Quantum, paid boosts, numeric caps and the 42-second preview.
+The final local suite passes 1,938 tests across 187 files, plus TypeScript, lint,
+data, localization, first-Dyson parity, and web/native bundle builds. The build
+still reports its existing chunk-size warning. Self-review found no unresolved
+correctness issues in the revised work counters, capped bonuses, waiting
+consumption, reward paths or previews.
+
+Browser rebalance QA verified all four updated descriptions, costs, assignment
+and 42-second preview; held repeat; stopping on navigation; autosave/reload; and
+all four details at 360x780 with 130% text. A real 42-second wait showed 28.3T
+Bots per activation; clicking awarded 28.3T and consumed the stored work before
+subsequent repeat activations. Evidence: `/tmp/ids-patient-rebalance-qa/` and
+`/tmp/ids-manual-narrow-review/`. Native interaction QA was not repeated.
+
+
+The rebalanced Built by Hand live run earned its first goal point, assigned Hand
+Assembly alone through the skill dialog, and ran continuously for 550 seconds.
+It crossed Infinity between the 500- and 550-second samples, automatically earned
+1 IP, reassigned the queued augment and resumed at the fresh work curve. Every
+facility remained zero, and retention purchases stayed inactive. Evidence:
+`/tmp/ids-quantum-qa/built-live-9.png`, `built-live-10.png`, and
+`built-live-infinity.png`; log: `/tmp/ids-built-rebalanced-live.log`.

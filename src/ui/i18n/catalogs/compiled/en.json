@@ -10178,7 +10178,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "Manual Labour produces 5% of your current Bots every 0.2 seconds, with a minimum of 1 Bot. Replaces Assembly Line tinkering; no AI Manager required."
+      "value": "Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Replaces Assembly Line tinkering. Work resets on Infinity."
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -10196,7 +10196,7 @@
   "skills.manualLabour.patientHands.effect": [
     {
       "type": 0,
-      "value": "Increase Hand Assembly Bot yield by 100% per minute without activating it, up to +1,000% after 10 minutes. Consumed on activation. Bonuses are additive."
+      "value": "While idle, store up to 42 seconds of Hand Assembly. Your next activation completes the stored work with 25% more Bots. Stored work also builds practice. Consumed on activation."
     }
   ],
   "skills.manualLabour.patientHands.name": [
@@ -10214,7 +10214,7 @@
   "skills.manualLabour.practice.effect": [
     {
       "type": 0,
-      "value": "Each completed Hand Assembly increases its Bot yield by 1% this Infinity. Refunding preserves practice. Bonuses are additive."
+      "value": "Increase Hand Assembly yield by up to 200% with practice: 200% × completions / (completions + 500). Practice resets on Infinity; refunds preserve it. Bonuses are additive."
     }
   ],
   "skills.manualLabour.practice.name": [
@@ -10232,7 +10232,7 @@
   "skills.manualLabour.workingSmarter.effect": [
     {
       "type": 0,
-      "value": "Increase Hand Assembly Bot yield by 10% per Assembly Line research level. After unlocking Discovery, use completed Discoveries instead. Bonuses are additive."
+      "value": "Increase Hand Assembly yield by 25% × log10(1 + Assembly Line research levels), capped at +200%. After unlocking Discovery, use completed Discoveries instead. Bonuses are additive."
     }
   ],
   "skills.manualLabour.workingSmarter.name": [

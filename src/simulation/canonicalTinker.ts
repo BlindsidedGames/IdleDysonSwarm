@@ -170,7 +170,8 @@ export function deriveCanonicalTinkerStats(
 }
 
 /**
- * Starts the Tinker action with Unity's initial 0.1-second progress seed.
+ * Keeps Unity's initial progress seed for original Tinker; Hand Assembly always
+ * pays its full cooldown so restarting cannot outperform held repeat.
  */
 export function startCanonicalTinker(
   state: Readonly<CanonicalGameStateV1>,
@@ -192,7 +193,7 @@ export function startCanonicalTinker(
     running: true,
     repeat,
     cycleId: nextCycleId(synchronized.runtime.cycleId),
-    elapsedSeconds: Math.min(
+    elapsedSeconds: hasManualLabourAugment(state, 'handAssembly') ? 0 : Math.min(
       STARTING_PROGRESS_SECONDS,
       synchronized.runtime.cooldownSeconds,
     ),
