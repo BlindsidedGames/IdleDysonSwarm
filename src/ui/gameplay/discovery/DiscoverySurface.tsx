@@ -36,13 +36,16 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
       <summary className="discovery-toggle" aria-label={intl.formatMessage(m.details)}>
         {tiers.map((bar, index) => <span className={`discovery-row${index ? ' discovery-row--supporting' : ''}`} key={bar.id}>
           {index === 0 && <span className="discovery-heading"><span className="discovery-title">{intl.formatMessage(m.name)}</span></span>}
-          <span className="discovery-bar">
-            <Progress className="discovery-progress" label={intl.formatMessage(bar.name)}
-              valueText={formatGameDuration(locale, completionTimes[index] / gameSpeed)}
-              value={bar.tier.progress} maximum={bar.maximum} />
-            <strong className="discovery-boost" aria-label={intl.formatMessage(bar.label, { value: index === 2 ? number(effects.lifetime) : bar.benefit })}>
-              <InlineImageSymbol src={discoveryIcons[bar.id]} tint />{bar.benefit}
-            </strong>
+          <span className="discovery-track">
+            <span className="discovery-timer-icon"><InlineImageSymbol src={discoveryIcons[bar.id]} tint /></span>
+            <span className="discovery-bar">
+              <Progress className="discovery-progress" label={intl.formatMessage(bar.name)}
+                valueText={formatGameDuration(locale, completionTimes[index] / gameSpeed)}
+                value={bar.tier.progress} maximum={bar.maximum} />
+              <strong className="discovery-boost" aria-label={intl.formatMessage(bar.label, { value: index === 2 ? number(effects.lifetime) : bar.benefit })}>
+                {bar.benefit}
+              </strong>
+            </span>
           </span>
         </span>)}
       </summary>
