@@ -118,3 +118,23 @@ Google Play emitted the existing non-blocking warnings for a missing deobfuscati
 - Local logs, distribution screenshots, upload configuration and downloaded beta: `/Users/matthewrushworth/Builds/ids-release-2026092601/`.
 - Play's missing deobfuscation/native-symbol warnings were non-blocking. No distribution blocker remains.
 - Changes since the previous September 24 internal build posted to the authorised Discord dev-ops channel: https://discord.com/channels/712304553931833385/1006856538893340692/1553341867545071627.
+
+## 2026092602 — 4.1.10 Quantum challenges and skill augments internal release
+
+27 September 2026 (AEST). Built from clean source `2abe37681b5401e35d247d8b14d1fc1b0556dc16` on `transcendence-tiers`; gameplay through `822625cd`. PR #217 remains unmerged. Internal deployment only; no production, App Review, website or Steam default changes.
+
+| Destination | Identity | Verified state |
+| --- | --- | --- |
+| Google Play internal | 4.1.10 / 2026092602 | Available to internal testers |
+| Internal TestFlight | 4.1.10 / 2609.26.02 | Testing; Internal group, 3 testers; compliance completed |
+| Steam public-beta | 25548161 | Active; Windows/Linux/macOS depots included; default remains 25430928 |
+
+- Existing localized 4.1.10 patch notes already include the new Quantum challenges, four Manual Labour augments and ten Swarm/Fragment augments; no duplicate entries were added.
+- Local release gate passed: 188 files / 1,958 tests, lint, localization, web/native builds, Electron boundary and signed Android packaging. CI passed on the release source. iOS archive/upload succeeded; minimum iOS 16.0. All three Steam package provenance records identify the source above.
+- Downloaded Steam public-beta to an isolated directory. Manifest confirms build 25548161; all 261 regular macOS package files match the built artifact. Both local and downloaded macOS smoke launches exited successfully. Steam services were unavailable in the isolated launch because the Steam client was not running; this is a renderer/startup check, not a commerce/overlay test. No new iOS/Android/Windows/Linux hands-on interaction QA is claimed by this deployment; feature QA and limits remain in `docs/plans/swarm-augments.md`.
+- Android AAB: `output/local-release/2026092602/android/idle-dyson-swarm-2026092602.aab`, 20,107,439 bytes; SHA-256 `e76437f5fa503149767da31cbc0626b3cb716e72796adbed80977cc40b88c535`.
+- iOS archive: `/Users/matthewrushworth/Library/Developer/Xcode/Archives/2026-09-27/IDS-2026092602.xcarchive`; App executable SHA-256 `63fdc13b8619ff4928a47a548cd0dd44e10055c404689aea2b797ff981095240`.
+- Downloaded macOS depot manifest: `7895178977127011363`.
+- Local logs, distribution screenshots, upload configuration and downloaded beta: `/Users/matthewrushworth/Builds/ids-release-2026092602/`.
+- Play's missing deobfuscation/native-symbol warnings were non-blocking.
+- Discord Dev Ops update through Eve: https://discord.com/channels/712304553931833385/1006856538893340692/1553415115104063592.
