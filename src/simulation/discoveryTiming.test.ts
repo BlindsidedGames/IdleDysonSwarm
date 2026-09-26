@@ -23,22 +23,14 @@ describe('Discovery completion boundaries across Stored Time step sizes', () => 
 })
 
 
-it('projects remaining time including receiving-bar completions', () => {
+it('shows independent full-cycle timers, regardless of unlocked supporting bars', () => {
   const rates = { speed: 1, elevationSpeed: 1, enlightenmentSpeed: 1 }
-  const two = { ...EMPTY_DISCOVERY, unlocked: true, elevation: { ...EMPTY_DISCOVERY_TIER } }
-  expect(discoveryCompletionTimes(two, rates)[0]).toBeCloseTo(1800, 5)
+  const one = { ...EMPTY_DISCOVERY, unlocked: true }
+  const two = { ...one, elevation: { ...EMPTY_DISCOVERY_TIER } }
   const three = { ...two, enlightenment: { ...EMPTY_DISCOVERY_TIER } }
-  const times = discoveryCompletionTimes(three, rates)
-  expect(times[0]).toBeCloseTo(1800, 5)
-  expect(times[1]).toBeCloseTo(1200, 5)
-  expect(times[2]).toBeCloseTo(600, 5)
-  for (let index = 0; index < 3; index++) {
-    const at = advanceDiscovery(three, times[index] + 0.00001, rates)
-    const before = advanceDiscovery(three, times[index] - 0.001, rates)
-    const counts = (s: typeof at) => [s.completions, s.elevation!.completions, s.enlightenment!.completions]
-    expect(counts(at)[index]).toBeGreaterThan(0n)
-    expect(counts(before)[index]).toBe(0n)
-  }
+  expect(discoveryCompletionTimes(one, rates)).toEqual([3600, 0, 0])
+  expect(discoveryCompletionTimes(two, rates)).toEqual([3600, 1800, 0])
+  expect(discoveryCompletionTimes(three, rates)).toEqual([3600, 1800, 600])
 })
 
 it('thirty transferred minutes yield six full five-minute cycles, retaining ordinary progress', () => {
@@ -48,18 +40,13 @@ it('thirty transferred minutes yield six full five-minute cycles, retaining ordi
   const after = advanceDiscovery(state, 1, rates)
   expect(after.completions).toBe(6n)
   expect(after.progress).toBe(102)
-  expect(discoveryCompletionTimes(state, rates)[0]).toBeCloseTo(1, 5)
+  expect(discoveryCompletionTimes(state, rates)[0]).toBe(292.5)
+  expect(discoveryCompletionTimes(after, rates)[0]).toBe(291.5)
 })
 
-it.each([
-  { speed: 11, elevationSpeed: 6, enlightenmentSpeed: 3.5 },
-  { speed: 2.25, elevationSpeed: 1.75, enlightenmentSpeed: 1.5 },
-])('countdowns predict the same accelerated cascades as simulation: %j', rates => {
+it('uses only each bar’s partial progress and speed, even when a transfer is imminent', () => {
   const state = { ...EMPTY_DISCOVERY, unlocked: true, progress: 70,
-    elevation: { ...EMPTY_DISCOVERY_TIER, progress: 150 }, enlightenment: { ...EMPTY_DISCOVERY_TIER, progress: 590 } }
-  const tiers = (s: typeof state) => [s, s.elevation, s.enlightenment]
-  discoveryCompletionTimes(state, rates).forEach((seconds, index) => {
-    expect(tiers(advanceDiscovery(state, seconds + 0.00001, rates) as typeof state)[index].completions).toBeGreaterThan(0n)
-    expect(tiers(advanceDiscovery(state, seconds - 0.001, rates) as typeof state)[index].completions).toBe(0n)
-  })
+    elevation: { ...EMPTY_DISCOVERY_TIER, progress: 150 }, enlightenment: { ...EMPTY_DISCOVERY_TIER, progress: 599 } }
+  expect(discoveryCompletionTimes(state, { speed: 2, elevationSpeed: 5, enlightenmentSpeed: 10 }))
+    .toEqual([1765, 330, 0.1])
 })

@@ -34,7 +34,7 @@ Branch: `transcendence-tiers`. Unmerged preview; no deployment authorised.
 ## Implementation and verification — 26 September 2026
 
 - [x] Shared calculations, fixed-duration transfers, independent purchases, production
-      factors, previews and accurate countdowns including incoming transfers.
+      factors, previews and independent countdowns based on each bar’s own progress and speed.
 - [x] Existing-save compatibility, tier validation, all reset paths, and the
       permanent first-Quantum milestone. Explicit false is respected; old saves
       can infer prior Quantum from current progression and lifetime achievements,
@@ -187,3 +187,16 @@ the full cascade immediately (Elevation 49 → 56; Discovery benefit 66.1 matche
 the authoritative details). Reload restored the last saved checkpoint without
 replaying a transfer. Desktop and 360px layouts were visually checked; no console
 errors appeared. This follow-up did not repeat native host interaction checks.
+
+
+### Independent bar timers — 26 September
+
+Timers now show only `(required progress − current progress) / own speed`,
+converted by the normal gameplay clock. They no longer predict transfers from
+other bars. The expanded next-completion row uses the same rule. Full cycle
+values, transfer rewards, cascades and catch-up animation are unchanged. This
+supersedes the transfer-aware countdown described in earlier QA notes above.
+
+Verified in the running preview: the bars showed distinct remaining times of
+5m 24s / 6m 2s / 1m 47s. Focused simulation and UI coverage: 26 tests passed;
+TypeScript, lint and diff checks passed.

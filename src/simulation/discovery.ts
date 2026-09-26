@@ -77,28 +77,12 @@ export function advanceDiscovery(discovery: Readonly<DiscoveryState>, seconds: n
   return { ...base.state, ...(elevation ? { elevation: elevation.state } : {}), ...(enlightenment ? { enlightenment: enlightenment.state } : {}) }
 }
 
-/** Time to each next completion, including incoming time transfers.
- * Monotone bisection is bounded independently of how many levels a spend earns.
- */
+/** Each bar's own remaining gameplay time; incoming transfers are a surprise. */
 export function discoveryCompletionTimes(state: Readonly<DiscoveryState>, rates: DiscoverySpeeds): readonly number[] {
   const tiers = [state, state.elevation, state.enlightenment]
   const requirements = [DISCOVERY_TUNING.completionProgress, DISCOVERY_TUNING.elevation.progress, DISCOVERY_TUNING.enlightenment.progress]
   const speeds = [rates.speed, rates.elevationSpeed, rates.enlightenmentSpeed]
-  const reaches = (index: number, seconds: number): boolean => {
-    const advanced = advanceDiscovery(state, seconds, rates)
-    return [advanced, advanced.elevation, advanced.enlightenment][index]!.completions > tiers[index]!.completions
-  }
-  return tiers.map((tier, index) => {
-    if (!tier) return 0
-    let low = 0
-    let high = (requirements[index] - tier.progress) / speeds[index]
-    for (let step = 0; step < 40; step++) {
-      const middle = (low + high) / 2
-      if (reaches(index, middle)) high = middle
-      else low = middle
-    }
-    return high
-  })
+  return tiers.map((tier, index) => tier ? (requirements[index] - tier.progress) / speeds[index] : 0)
 }
 
 export function resetDiscoveryProgress(discovery: DiscoveryState): DiscoveryState {
