@@ -1,9 +1,9 @@
+import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive } from './infinityChallenges'
 import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
 import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
 import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
-import { infinityChallenges, isInfinityChallengeActive, isBlankSlateActive } from './infinityChallenges'
 import { ordinaryInfinityBotThreshold } from './infinityCycle'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
@@ -158,7 +158,7 @@ export function applyCanonicalInfinityReset(
   const challenge = infinityChallenges(state)
   const completionKey = challenge.active === 'trial-and-error' ? 'trialAndErrorCompleted' : 'blankSlateCompleted'
   const challengeWon = !request.restartOnly && isInfinityChallengeActive(state) &&
-    !request.breakInfinity && state.dyson.bots >= ordinaryInfinityBotThreshold(state.quantum.divisionsPurchased)
+    !request.breakInfinity && state.dyson.bots >= ordinaryInfinityBotThreshold(effectiveDivisions(state))
   if (!request.restartOnly && isInfinityChallengeActive(state) && !challengeWon) {
     return failed(state, [{ code: 'INFINITY_RESET_REQUEST_INVALID', path: 'request', detail: 'The challenge requires the ordinary Infinity boundary.' }])
   }
@@ -204,7 +204,7 @@ export function applyCanonicalInfinityReset(
     state.skills.byId,
     assignment.byId,
   )
-  const facilities = retainedFacilities(state)
+  const facilities = challengeFacilities(state, retainedFacilities(state))
   const statistics = request.restartOnly ? state.statistics : recordInfinityCycle(
     state.statistics,
     request.breakInfinity,
@@ -372,6 +372,7 @@ function validateResetInputs(
 function retainedFacilities(
   state: Readonly<CanonicalGameStateV1>,
 ): CanonicalGameStateV1['dyson']['facilities'] {
+  if (state.challenges?.active === 'hands-off') return { ...EMPTY_FACILITIES, assembly_lines: [1, 0] }
   return {
     ...EMPTY_FACILITIES,
     assembly_lines: [

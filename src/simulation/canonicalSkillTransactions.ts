@@ -313,14 +313,14 @@ export function previewCanonicalSkillCatalog(
       refundableSkillIds: Object.freeze(
         ownedDefinitions
           .filter((definition) =>
-            isRefundable(definition, state.skills.byId),
+            state.challenges?.active !== 'commitment-issues' && isRefundable(definition, state.skills.byId),
           )
           .map((definition) => definition.id),
       ),
       retainedSkillIds: Object.freeze(
         ownedDefinitions
           .filter((definition) =>
-            !isRefundable(definition, state.skills.byId),
+            state.challenges?.active === 'commitment-issues' || !isRefundable(definition, state.skills.byId),
           )
           .map((definition) => definition.id),
       ),
@@ -625,6 +625,8 @@ function refundWithDefinitions(
     return accepted(state, false, [])
   }
 
+  if (state.challenges?.active === 'commitment-issues') return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be refunded during this Infinity.')
+
   const descendants = dependentIds(
     skillId,
     definitions,
@@ -690,6 +692,7 @@ function refundWithDefinitions(
 export function resetCanonicalSkills(
   state: CanonicalGameStateV1,
 ): CanonicalSkillTransactionResult {
+  if (state.challenges?.active === 'commitment-issues' && Object.values(state.skills.byId).some(skill => skill.owned)) return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be replaced during this Infinity.')
   const definitions = loadDefinitions(state)
   let points = state.skills.points
   let fragments = state.skills.fragments

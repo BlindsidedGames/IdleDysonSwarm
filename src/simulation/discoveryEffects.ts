@@ -1,3 +1,4 @@
+import { challengeAllowsFacility } from './infinityChallenges'
 import { regulatedAcademiaPercentagePoints } from './moneyScienceSkillEffects'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -47,7 +48,7 @@ export function deriveDiscoveryEffects(state: CanonicalGameStateV1, snapshot: Re
       (hasSrsAugment(state, 'focusedBeam') ? 1 + 0.5 * stellarMemoryMultiplier(state) : 1))
     // Reuse the facility contribution formulas, replacing only the retired level input.
     const scienceBoostLevel = 0
-    const scientificPlanetsProduction = tryResolvePlanetGenerationDynamicEffect('effect.scientificPlanets.planets_per_second', {
+    const scientificPlanetsProduction = !challengeAllowsFacility(state, 'planets') ? 0 : tryResolvePlanetGenerationDynamicEffect('effect.scientificPlanets.planets_per_second', {
       discoveryCompletions: discovery.completions,
       ownedSkills: owned, researchers: state.dyson.bots, fragments: state.skills.fragments,
       assemblyLines: state.dyson.facilities.assembly_lines, planets: state.dyson.facilities.planets,
@@ -58,7 +59,7 @@ export function deriveDiscoveryEffects(state: CanonicalGameStateV1, snapshot: Re
       if (owned.has(id)) add(id, G(tryResolveShouldersAccrualDynamicEffect(`effect.${id}.science_boost_per_second`, {
         discoveryCompletions: discovery.completions,
         ownedSkills: owned, scienceBoostLevel, scientificPlanetsProduction,
-        pocketDimensionsProduction: snapshot.pocketDimensionsProduction,
+        pocketDimensionsProduction: challengeAllowsFacility(state, 'planets') ? snapshot.pocketDimensionsProduction : 0,
       }) ?? 0))
     }
     add('quantum.science-booster', G(Number(state.quantum.scienceBonusLevels)))

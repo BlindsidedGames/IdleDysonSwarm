@@ -1,10 +1,9 @@
-import { discoveryFracturedEffects } from '../discovery/skillMessages'
+import { discoveryFracturedEffects, discoverySkillNames, discoverySkillEffects, discoverySkillFlavour } from '../discovery/skillMessages'
 import { galvanizedEffectMessages } from './galvanizedEffectMessages'
-import { discoverySkillNames, discoverySkillEffects, discoverySkillFlavour } from '../discovery/skillMessages'
 import { discoveryMessages } from '../discovery/messages'
 import type { SkillProductionPreview } from '../../../simulation/skillProductionPreview'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
-import { CASH_SCIENCE_SUBSKILLS, SRS_AUGMENTS, SKILL_AUGMENTS, skillAugments } from '../../../simulation/skillSubskills'
+import { CASH_SCIENCE_SUBSKILLS, SRS_AUGMENTS, MANUAL_LABOUR_AUGMENTS, SKILL_AUGMENTS, skillAugments } from '../../../simulation/skillSubskills'
 import galvanizerIcon from '../../assets/currency-galvanizer.png'
 import { InlineImageSymbol, InlineResourceAmount } from '../../components'
 import { challengeMessages } from '../infinity/challengeMessages'
@@ -441,6 +440,10 @@ export function SkillsSurface({
     () => {
       const nodes = new Map(localizedNodes.map((node) => [node.skillId, node]))
       const augmentPresentation = new Map<string, { message: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; description?: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; effect?: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; iconFileName: string; column: number; row: number }>([
+        [MANUAL_LABOUR_AUGMENTS.handAssembly, { message: messages.manualHandAssemblyName, description: messages.manualHandAssemblyDescription, effect: messages.manualHandAssemblyEffect, iconFileName: 'manualHandAssembly.webp', column: 1, row: 0 }],
+        [MANUAL_LABOUR_AUGMENTS.practice, { message: messages.manualPracticeName, description: messages.manualPracticeDescription, effect: messages.manualPracticeEffect, iconFileName: 'manualPractice.webp', column: 2, row: 0 }],
+        [MANUAL_LABOUR_AUGMENTS.workingSmarter, { message: messages.manualWorkingSmarterName, description: messages.manualWorkingSmarterDescription, effect: messages.manualWorkingSmarterEffect, iconFileName: 'manualWorkingSmarter.webp', column: 1, row: 1 }],
+        [MANUAL_LABOUR_AUGMENTS.patientHands, { message: messages.manualPatientHandsName, description: messages.manualPatientHandsDescription, effect: messages.manualPatientHandsEffect, iconFileName: 'manualPatientHands.webp', column: 2, row: 1 }],
         [SRS_AUGMENTS.stellarMemory, { message: messages.srsStellarMemoryName, description: messages.srsStellarMemoryDescription, effect: messages.srsStellarMemoryEffect, iconFileName: 'srsStellarMemory.webp', column: 2, row: 1 }],
         [SRS_AUGMENTS.hotStart, { message: messages.srsHotStartName, description: messages.srsHotStartDescription, effect: messages.srsHotStartEffect, iconFileName: 'srsHotStart.webp', column: -1, row: 0 }],
         [SRS_AUGMENTS.afterglow, { message: messages.srsAfterglowName, description: messages.srsAfterglowDescription, effect: messages.srsAfterglowEffect, iconFileName: 'srsAfterglow.webp', column: -2, row: 0 }],
@@ -2305,8 +2308,8 @@ function SkillDetails({
                     {liveProduction && liveProduction.rows.map((row) => (
                       <ProductionImpactRow key={row.id}
                         label={intl.formatMessage(productionLabels[row.id])}
-                        before={`${formatGameNumber(locale, row.before)}${row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}`}
-                        after={`${formatGameNumber(locale, row.after)}${row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}${liveProduction.projected ? ' (10m)' : ''}`}
+                        before={`${formatGameNumber(locale, row.before)}${row.id.startsWith('manual') ? '' : row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}`}
+                        after={`${formatGameNumber(locale, row.after)}${row.id.startsWith('manual') ? '' : row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}${liveProduction.projected ? ' (10m)' : ''}`}
                         afterTone={row.after >= row.before ? 'gain' : 'loss'}
                         toLabel={intl.formatMessage(messages.impactTo)} />
                     ))}
@@ -2425,6 +2428,8 @@ function SkillDetails({
 }
 
 const productionLabels = {
+  manualBots: messages.manualBots,
+  manualAssemblyLines: messages.manualAssemblyLines,
   money: messages.productionCash,
   science: messages.productionScience,
   bots: messages.impactBots,

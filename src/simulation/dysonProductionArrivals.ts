@@ -1,5 +1,5 @@
+import { challengeAllowsFacility, effectiveDivisions, isBreakInfinityEnabled } from './infinityChallenges'
 import { hasCashScienceSubskill } from './skillSubskills'
-import { isBreakInfinityEnabled } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type {
   CanonicalFacilityId,
@@ -96,6 +96,7 @@ export function applyDysonProductionArrivals(
     ]),
   ) as Record<CanonicalFacilityId, [number, number]>
   for (const id of PRODUCED_FACILITY_IDS) {
+    if (!challengeAllowsFacility(state, id)) continue
     facilities[id][0] = accumulate(
       facilities[id][0],
       rates[id],
@@ -110,9 +111,9 @@ export function applyDysonProductionArrivals(
       money: accumulate(state.dyson.money, rates.money, seconds),
       science: accumulate(state.dyson.science, rates.science, seconds),
       bots: clampPreBreakInfinityBots(
-        accumulate(state.dyson.bots, rates.bots, seconds),
+        accumulate(state.dyson.bots, state.challenges?.active === 'built-by-hand' ? 0 : rates.bots, seconds),
         isBreakInfinityEnabled(state),
-        state.quantum.divisionsPurchased,
+        effectiveDivisions(state),
       ),
       totalPanelsDecayed: accumulate(
         state.dyson.totalPanelsDecayed,

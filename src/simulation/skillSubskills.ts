@@ -19,6 +19,13 @@ export const SRS_AUGMENTS = Object.freeze({
   stellarMemory: 'subskill.srs.stellarMemory',
 } as const)
 
+export const MANUAL_LABOUR_AUGMENTS = Object.freeze({
+  handAssembly: 'subskill.manualLabour.handAssembly',
+  practice: 'subskill.manualLabour.practice',
+  workingSmarter: 'subskill.manualLabour.workingSmarter',
+  patientHands: 'subskill.manualLabour.patientHands',
+} as const)
+
 export interface SkillAugmentDefinition {
   readonly id: string
   readonly parentSkillId: string
@@ -27,7 +34,9 @@ export interface SkillAugmentDefinition {
 }
 
 export const SKILL_AUGMENTS: readonly SkillAugmentDefinition[] = Object.freeze(
-  [...Object.values(CASH_SCIENCE_SUBSKILLS).map((id) => Object.freeze({
+  [...Object.values(MANUAL_LABOUR_AUGMENTS).map(id => Object.freeze({
+    id, parentSkillId: 'manualLabour', cost: 1, requiredSkillIds: Object.freeze(id === MANUAL_LABOUR_AUGMENTS.handAssembly ? ['manualLabour'] : [MANUAL_LABOUR_AUGMENTS.handAssembly]),
+  })), ...Object.values(CASH_SCIENCE_SUBSKILLS).map((id) => Object.freeze({
     id,
     parentSkillId: 'startHereTree',
     cost: 1,
@@ -80,4 +89,8 @@ export function hasSrsAugment(state: Pick<CanonicalGameStateV1, 'skills' | 'chal
   return isGalvanized(state, 'superRadiantScattering') &&
     state.skills.byId.superRadiantScattering?.owned === true &&
     state.skills.byId[SRS_AUGMENTS[bonus]]?.owned === true
+}
+
+export function hasManualLabourAugment(state: Pick<CanonicalGameStateV1, 'skills' | 'challenges'>, bonus: keyof typeof MANUAL_LABOUR_AUGMENTS): boolean {
+  return isGalvanized(state, 'manualLabour') && state.skills.byId.manualLabour?.owned === true && state.skills.byId[MANUAL_LABOUR_AUGMENTS[bonus]]?.owned === true
 }

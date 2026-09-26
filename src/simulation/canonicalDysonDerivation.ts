@@ -1,4 +1,4 @@
-import { isNoScienceActive } from './infinityChallenges'
+import { challengeFacilities, challengeAllowsFacility, isNoScienceActive } from './infinityChallenges'
 import { highestOwnedFacility } from './stellarArithmetic'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import { isGalvanized } from './galvanization'
@@ -485,6 +485,19 @@ export function deriveBasicDysonState(
       'Dyson solid-progress threshold must be finite and non-negative.',
     )
   }
+  const permittedFacilities = challengeFacilities(state, state.dyson.facilities)
+  if (permittedFacilities !== state.dyson.facilities) state = { ...state, dyson: { ...state.dyson, facilities: permittedFacilities } }
+  if (!challengeAllowsFacility(state, 'planets')) {
+    evaluationSnapshot = {
+      ...evaluationSnapshot,
+      scientificPlanetsProduction: 0,
+      pocketDimensionsProduction: 0,
+      ...(!challengeAllowsFacility(state, 'ai_managers') ? {
+        rudimentarySingularityProduction: 0,
+        managerAssemblyLineProduction: 0,
+      } : {}),
+    }
+  }
   const issues = findUnsupportedDependencies(state)
   if (issues.length > 0) {
     return { ok: false, issues: Object.freeze(issues) }
@@ -570,7 +583,7 @@ export function deriveBasicDysonState(
       95,
     ),
   ].filter(isEffect))
-  const panelLifetime = calculateStat(discovery?.lifetime ?? 10, [
+  const panelLifetime = state.challenges?.active === 'short-circuit' ? 2 : calculateStat(discovery?.lifetime ?? 10, [
     ...effectsFor(research.effects, 'Global.PanelLifetime'),
     ...effectsAt(effectiveSkillEffectsByStat, 'Global.PanelLifetime'),
   ])
@@ -585,7 +598,7 @@ export function deriveBasicDysonState(
   const passivePlanetGenerationEffects = planetGenerationEffects.filter(
     (effect) => effect.id !== 'effect.stellarSacrifices.planets_per_second',
   )
-  const planetGenerationPerSecond = calculateStat(0, passivePlanetGenerationEffects)
+  const planetGenerationPerSecond = !challengeAllowsFacility(state, 'planets') ? 0 : calculateStat(0, passivePlanetGenerationEffects)
   const stellarSacrificeTarget = highestOwnedFacility(state.dyson.facilities)
   const stellarSacrificeFacilitiesPerSecond = stellarSacrificeTarget === null ? 0 : calculateStat(
     0,
@@ -612,7 +625,7 @@ export function deriveBasicDysonState(
           galvanizedSkillSet(state),
         )
       : 0
-  const scientificPlanetsProduction = calculateStat(
+  const scientificPlanetsProduction = !challengeAllowsFacility(state, 'planets') ? 0 : calculateStat(
     0,
     effectsAt(effectiveSkillEffectsByStat, 'Global.PlanetsPerSecond').filter(
       (effect) =>
@@ -799,10 +812,12 @@ export function deriveBasicDysonState(
     },
   })
   const boost = botBoostMultiplier(state, entitlements)
-  const model = boost === 1 && !isNoScienceActive(state) ? unboostedModel : {
+  let model = boost === 1 && !isNoScienceActive(state) ? unboostedModel : {
     ...unboostedModel,
     rates: { ...unboostedModel.rates, science: isNoScienceActive(state) ? 0 : unboostedModel.rates.science, bots: multiplyContinuous(unboostedModel.rates.bots, boost) },
   }
+  if (state.challenges?.active === 'grounded') model = { ...model, rates: { ...model.rates, data_centers: 0, planets: 0 } }
+  if (state.challenges?.active === 'built-by-hand') model = { ...model, rates: { ...model.rates, bots: 0, assembly_lines: 0, ai_managers: 0, servers: 0, data_centers: 0, planets: 0 } }
   const nextEvaluationSnapshot =
     publishDysonSkillEffectEvaluationSnapshot(state, {
       panelsPerSecond: model.rates.panels,

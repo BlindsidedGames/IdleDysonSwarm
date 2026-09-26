@@ -353,6 +353,12 @@
       "value": "Page blanche active · Attribution de compétences désactivée"
     }
   ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "Défi actif"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -365,10 +371,34 @@
       "value": "Terminez une Infinité normale sans utiliser de points de compétence."
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "Fait main"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle quantique avec toutes les installations désactivées. Utilisez les augments de Travail manuel pour fabriquer des Bots."
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
       "value": "Annuler"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "Peur de s’engager"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle quantique sans rembourser ni remplacer les compétences assignées. Les réinitialisations d’Infini effacent les affectations normalement."
     }
   ],
   "challenges.completed": [
@@ -409,6 +439,36 @@
       "value": "Dépensez 1 Catalyseur dans les détails d’une compétence révélée pour rendre son effet de base permanent et supprimer ses pénalités et exclusions. La fracture est irréversible et survit au Transcendance."
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "Cloué au sol"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle quantique sans Planètes ni mégastructures. Leur achat et leur génération sont impossibles."
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "Pas touche"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle quantique sans acheter d’installations. Commencez avec une Chaîne de montage ; les installations générées fonctionnent toujours."
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "Nécessite Travail manuel fracturé."
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -430,7 +490,13 @@
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "Commence une nouvelle partie quantique sans accorder de fragments quantiques. Les améliorations quantiques et les couches suivantes sont conservées. Abandonner commence aussi une nouvelle partie normale."
+      "value": "Commence un nouveau cycle quantique sans attribuer d’Éclats quantiques. Division, Double IP quantique et Intrication quantique sont inactifs. Double IP acheté et les couches ultérieures restent actifs. Abandonner commence aussi un nouveau cycle normal."
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "Division, Double IP quantique et Intrication quantique sont inactifs dans les défis quantiques. Les bonus achetés restent actifs."
     }
   ],
   "challenges.quantumTitle": [
@@ -477,6 +543,18 @@
       "value": "Défis"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "Court-circuit"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle quantique avec une durée de vie des panneaux fixée à 2 secondes."
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -487,6 +565,18 @@
     {
       "type": 0,
       "value": "Commencer"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "Pénurie"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle quantique avec des prix d’installations doublant à chaque achat. Les installations générées n’augmentent pas les prix."
     }
   ],
   "challenges.timeUnknown": [
@@ -4097,6 +4187,26 @@
       "value": "Il doit bien y avoir une meilleure façon de s’y prendre..."
     }
   ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "Fabriquez "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Bots à la main."
+    }
+  ],
   "dyson.tinker.description.manual-labour": [
     {
       "type": 0,
@@ -5431,6 +5541,12 @@
     {
       "type": 0,
       "value": "Masquer les améliorations au maximum"
+    }
+  ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "Inactif pendant ce défi"
     }
   ],
   "quantum.leap": [
@@ -10053,6 +10169,78 @@
       "value": "name"
     }
   ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "Usine facultative. Doigts indispensables."
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "Travail manuel produit 5 % de vos Bots actuels toutes les 0,2 seconde, avec un minimum de 1 Bot. Remplace le bricolage de Chaînes de montage ; aucun Gestionnaire IA requis."
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "Assemblage manuel"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "Mesurez deux fois. Prenez un thé. Coupez une fois."
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "Augmente le rendement en Bots d’Assemblage manuel de 100 % par minute sans activation, jusqu’à +1 000 % après 10 minutes. Consommé à l’activation. Les bonus sont additifs."
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "Mains patientes"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "Les mille premiers étaient des prototypes."
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "Chaque Assemblage manuel terminé augmente son rendement en Bots de 1 % pendant cet Infini. Le remboursement conserve la pratique. Les bonus sont additifs."
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "La pratique rend parfait"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "Vous avez enfin lu les instructions."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "Augmente le rendement en Bots d’Assemblage manuel de 10 % par niveau de recherche des Chaînes de montage. Après le déblocage de Découverte, utilise les Découvertes terminées. Les bonus sont additifs."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "Travailler plus intelligemment"
+    }
+  ],
   "skills.matches": [
     {
       "type": 6,
@@ -12241,6 +12429,18 @@
     {
       "type": 0,
       "value": "Science"
+    }
+  ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "Chaînes de montage par activation"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "Bots par activation"
     }
   ],
   "skills.purchase": [
@@ -16019,7 +16219,7 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Ajout du défi Quantum Sans Science, récompensé par 2 Catalyseurs. La Fracture fonctionne pendant les défis et affiche son effet avant achat. Sacrifices stellaires crée votre installation possédée la plus avancée."
+      "value": "Ajout de sept défis quantiques rapportant chacun 2 Catalyseurs. Division et Double IP quantique sont inactifs pendant ces cycles. Ajout de quatre augments de Travail manuel, dont un bonus d’attente entre les activations. La fracturation fonctionne pendant les défis et affiche son effet à l’avance. Sacrifices stellaires crée votre installation possédée la plus avancée."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [

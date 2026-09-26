@@ -193,14 +193,29 @@
   "challenges.active": {
     "defaultMessage": "Blank Slate active · Skill assignment disabled"
   },
+  "challenges.activeLabel": {
+    "defaultMessage": "Challenge active"
+  },
   "challenges.blankSlate": {
     "defaultMessage": "Blank Slate"
   },
   "challenges.blankSlate.description": {
     "defaultMessage": "Complete a normal Infinity without using skill points."
   },
+  "challenges.builtByHand": {
+    "defaultMessage": "Built by Hand"
+  },
+  "challenges.builtByHand.description": {
+    "defaultMessage": "Complete a Quantum run with all facilities disabled. Use Manual Labour augments to build Bots by hand."
+  },
   "challenges.cancel": {
     "defaultMessage": "Cancel"
+  },
+  "challenges.commitmentIssues": {
+    "defaultMessage": "Commitment Issues"
+  },
+  "challenges.commitmentIssues.description": {
+    "defaultMessage": "Complete a Quantum run without refunding or replacing assigned skills. Infinity resets clear assignments normally."
   },
   "challenges.completed": {
     "defaultMessage": "Completed in: {time}"
@@ -217,6 +232,21 @@
   "challenges.galvanizers.future": {
     "defaultMessage": "Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence."
   },
+  "challenges.grounded": {
+    "defaultMessage": "Grounded"
+  },
+  "challenges.grounded.description": {
+    "defaultMessage": "Complete a Quantum run without Planets or megastructures. They cannot be purchased or generated."
+  },
+  "challenges.handsOff": {
+    "defaultMessage": "Hands Off"
+  },
+  "challenges.handsOff.description": {
+    "defaultMessage": "Complete a Quantum run without purchasing facilities. Start with one Assembly Line; generated facilities still work."
+  },
+  "challenges.manualLabourRequired": {
+    "defaultMessage": "Requires Fractured Manual Labour."
+  },
   "challenges.noScience": {
     "defaultMessage": "No Science"
   },
@@ -227,7 +257,10 @@
     "defaultMessage": "Complete a Quantum run without Science or Research."
   },
   "challenges.quantumRestart": {
-    "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Quantum upgrades and later layers are kept. Abandoning also starts a fresh normal run."
+    "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Division, Quantum Double IP and Quantum Entanglement are inactive. Purchased Double IP and later layers remain active. Abandoning also starts a fresh normal run."
+  },
+  "challenges.quantumRules": {
+    "defaultMessage": "Division, Quantum Double IP and Quantum Entanglement are inactive in Quantum challenges. Purchased boosts remain active."
   },
   "challenges.quantumTitle": {
     "defaultMessage": "Quantum Challenges"
@@ -247,11 +280,23 @@
   "challenges.route": {
     "defaultMessage": "Challenges"
   },
+  "challenges.shortCircuit": {
+    "defaultMessage": "Short Circuit"
+  },
+  "challenges.shortCircuit.description": {
+    "defaultMessage": "Complete a Quantum run with panel lifetime fixed at 2 seconds."
+  },
   "challenges.shortcut": {
     "defaultMessage": "Show Challenges"
   },
   "challenges.start": {
     "defaultMessage": "Start"
+  },
+  "challenges.supplyShortage": {
+    "defaultMessage": "Supply Shortage"
+  },
+  "challenges.supplyShortage.description": {
+    "defaultMessage": "Complete a Quantum run with facility prices doubling for each purchase. Generated facilities do not increase prices."
   },
   "challenges.timeUnknown": {
     "defaultMessage": "Unknown"
@@ -1719,6 +1764,9 @@
     "defaultMessage": "There has to be a better way of going about this...",
     "description": "Exact second sentence on the default Unity manual-creation panel."
   },
+  "dyson.tinker.description.hand-assembly": {
+    "defaultMessage": "Build <value>{count}</value> Bots by hand."
+  },
   "dyson.tinker.description.manual-labour": {
     "defaultMessage": "Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce <value>{count}</value>.",
     "description": "Unity manual-creation copy when Manual Labour can create assembly lines."
@@ -2374,6 +2422,9 @@
   "quantum.hide-maxed": {
     "defaultMessage": "Hide maxed upgrades",
     "description": "Hides completed upgrades from the Quantum catalog."
+  },
+  "quantum.inactiveChallenge": {
+    "defaultMessage": "Inactive during this challenge"
   },
   "quantum.leap": {
     "defaultMessage": "Quantum Leap",
@@ -4800,6 +4851,42 @@
     "defaultMessage": "Manage {name}",
     "description": "Dialog title for managing a named skill preset."
   },
+  "skills.manualLabour.handAssembly.description": {
+    "defaultMessage": "Factory optional. Fingers essential."
+  },
+  "skills.manualLabour.handAssembly.effect": {
+    "defaultMessage": "Manual Labour produces 5% of your current Bots every 0.2 seconds, with a minimum of 1 Bot. Replaces Assembly Line tinkering; no AI Manager required."
+  },
+  "skills.manualLabour.handAssembly.name": {
+    "defaultMessage": "Hand Assembly"
+  },
+  "skills.manualLabour.patientHands.description": {
+    "defaultMessage": "Measure twice. Have a cup of tea. Cut once."
+  },
+  "skills.manualLabour.patientHands.effect": {
+    "defaultMessage": "Increase Hand Assembly Bot yield by 100% per minute without activating it, up to +1,000% after 10 minutes. Consumed on activation. Bonuses are additive."
+  },
+  "skills.manualLabour.patientHands.name": {
+    "defaultMessage": "Patient Hands"
+  },
+  "skills.manualLabour.practice.description": {
+    "defaultMessage": "The first thousand were prototypes."
+  },
+  "skills.manualLabour.practice.effect": {
+    "defaultMessage": "Each completed Hand Assembly increases its Bot yield by 1% this Infinity. Refunding preserves practice. Bonuses are additive."
+  },
+  "skills.manualLabour.practice.name": {
+    "defaultMessage": "Practice Makes Perfect"
+  },
+  "skills.manualLabour.workingSmarter.description": {
+    "defaultMessage": "You finally read the instructions."
+  },
+  "skills.manualLabour.workingSmarter.effect": {
+    "defaultMessage": "Increase Hand Assembly Bot yield by 10% per Assembly Line research level. After unlocking Discovery, use completed Discoveries instead. Bonuses are additive."
+  },
+  "skills.manualLabour.workingSmarter.name": {
+    "defaultMessage": "Working Smarter"
+  },
   "skills.matches": {
     "defaultMessage": "{count, plural, one {# match} other {# matches}}",
     "description": "Number of skill-tree search results."
@@ -6176,6 +6263,12 @@
   },
   "skills.production-science": {
     "defaultMessage": "Science"
+  },
+  "skills.production.manualAssemblyLines": {
+    "defaultMessage": "Assembly Lines per activation"
+  },
+  "skills.production.manualBots": {
+    "defaultMessage": "Bots per activation"
   },
   "skills.purchase": {
     "defaultMessage": "Assign Skill",
@@ -7866,7 +7959,7 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.challenge": {
-    "defaultMessage": "Added a No Science Quantum challenge awarding 2 Catalysts. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.",
+    "defaultMessage": "Added seven Quantum challenges awarding 2 Catalysts each. Division and Quantum Double IP are inactive during these runs. Added four Manual Labour augments, including a bonus for waiting between activations. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.",
     "description": "Version 4.1.10 challenge and Stellar Sacrifices changes."
   },
   "wiki.patch-notes.version-4-1-10.discovery": {

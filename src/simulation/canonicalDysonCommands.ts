@@ -1,3 +1,4 @@
+import { challengeAllowsFacilityPurchase } from './infinityChallenges'
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
@@ -158,6 +159,7 @@ function toDysonAutomationState(
     assemblyMegaLinesOwned:
       state.skills.byId.assemblyMegaLines?.owned === true,
     planetModifier,
+    costExponentOverride: state.challenges?.active === 'supply-shortage' ? 2 : undefined,
     terraNovaOwned: state.skills.byId.terraNova?.owned === true,
     terraGloriaeOwned: state.skills.byId.terraGloriae?.owned === true,
   }
@@ -168,6 +170,7 @@ function isFacilityUnlocked(
   candidate: Readonly<DysonAutomationState>,
   id: CanonicalFacilityId,
 ): true | 'locked' | 'prerequisite-not-met' {
+  if (!challengeAllowsFacilityPurchase(canonical, id)) return 'locked'
   const definition = DYSON_FACILITY_DEFINITIONS[id]
   const ownership = candidate.facilities[id]
   if (

@@ -44,6 +44,7 @@ export interface DysonAutomationState {
   roundedBulkBuy: boolean
   retainedFacilities: Record<BasicDysonFacilityId, boolean>
   assemblyMegaLinesOwned: boolean
+  costExponentOverride?: number
   planetModifier?: number
   terraNovaOwned?: boolean
   terraGloriaeOwned?: boolean
@@ -228,7 +229,7 @@ export function previewDysonFacilityPurchase<
 
   const definition = lookupDefinition(facilityId)
   const authoredBaseCost = definition?.baseCost
-  const exponent = definition?.costExponent
+  const exponent = state.costExponentOverride ?? definition?.costExponent
   if (
     typeof authoredBaseCost !== 'number' ||
     !Number.isFinite(authoredBaseCost) ||
@@ -572,6 +573,7 @@ function cloneState(
     retainedFacilities: { ...state.retainedFacilities },
     assemblyMegaLinesOwned: state.assemblyMegaLinesOwned,
     planetModifier: state.planetModifier,
+    costExponentOverride: state.costExponentOverride,
     terraNovaOwned: state.terraNovaOwned,
     terraGloriaeOwned: state.terraGloriaeOwned,
   }

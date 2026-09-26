@@ -745,6 +745,20 @@
       "value": "‬"
     }
   ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥɐʅʅǝuƃǝ ɐɔʇıʌǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -773,6 +787,34 @@
       "value": "‬"
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅʇ qʎ Hɐup"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥ ɐʅʅ ɟɐɔıʅıʇıǝs pısɐqʅǝp. ∩sǝ Wɐunɐʅ ⅂ɐqonɹ ɐnƃɯǝuʇs ʇo qnıʅp Ԑoʇs qʎ ɥɐup."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
@@ -781,6 +823,34 @@
     {
       "type": 0,
       "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯɯıʇɯǝuʇ Issnǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ ɹǝɟnupıuƃ oɹ ɹǝdʅɐɔıuƃ ɐssıƃuǝp sʞıʅʅs. Iuɟıuıʇʎ ɹǝsǝʇs ɔʅǝɐɹ ɐssıƃuɯǝuʇs uoɹɯɐʅʅʎ."
     },
     {
       "type": 0,
@@ -865,6 +935,76 @@
       "value": "‬"
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹonupǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ Ԁʅɐuǝʇs oɹ ɯǝƃɐsʇɹnɔʇnɹǝs. ⊥ɥǝʎ ɔɐuuoʇ qǝ dnɹɔɥɐsǝp oɹ ƃǝuǝɹɐʇǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐups Oɟɟ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ dnɹɔɥɐsıuƃ ɟɐɔıʅıʇıǝs. Sʇɐɹʇ ʍıʇɥ ouǝ ∀ssǝɯqʅʎ ⅂ıuǝ; ƃǝuǝɹɐʇǝp ɟɐɔıʅıʇıǝs sʇıʅʅ ʍoɹʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝbnıɹǝs Ⅎɹɐɔʇnɹǝp Wɐunɐʅ ⅂ɐqonɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -914,7 +1054,21 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥıs sʇɐɹʇs ɐ ɟɹǝsɥ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ ɐʍɐɹpıuƃ Ònɐuʇnɯ Sɥɐɹps. Ònɐuʇnɯ ndƃɹɐpǝs ɐup ʅɐʇǝɹ ʅɐʎǝɹs ɐɹǝ ʞǝdʇ. ∀qɐupouıuƃ ɐʅso sʇɐɹʇs ɐ ɟɹǝsɥ uoɹɯɐʅ ɹnu."
+      "value": "⊥ɥıs sʇɐɹʇs ɐ ɟɹǝsɥ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ ɐʍɐɹpıuƃ Ònɐuʇnɯ Sɥɐɹps. ᗡıʌısıou, Ònɐuʇnɯ ᗡonqʅǝ IԀ ɐup Ònɐuʇnɯ Ǝuʇɐuƃʅǝɯǝuʇ ɐɹǝ ıuɐɔʇıʌǝ. Ԁnɹɔɥɐsǝp ᗡonqʅǝ IԀ ɐup ʅɐʇǝɹ ʅɐʎǝɹs ɹǝɯɐıu ɐɔʇıʌǝ. ∀qɐupouıuƃ ɐʅso sʇɐɹʇs ɐ ɟɹǝsɥ uoɹɯɐʅ ɹnu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡıʌısıou, Ònɐuʇnɯ ᗡonqʅǝ IԀ ɐup Ònɐuʇnɯ Ǝuʇɐuƃʅǝɯǝuʇ ɐɹǝ ıuɐɔʇıʌǝ ıu Ònɐuʇnɯ ɔɥɐʅʅǝuƃǝs. Ԁnɹɔɥɐsǝp qoosʇs ɹǝɯɐıu ɐɔʇıʌǝ."
     },
     {
       "type": 0,
@@ -1013,6 +1167,34 @@
       "value": "‬"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoɹʇ Ↄıɹɔnıʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥ dɐuǝʅ ʅıɟǝʇıɯǝ ɟıxǝp ɐʇ 2 sǝɔoups."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -1035,6 +1217,34 @@
     {
       "type": 0,
       "value": "Sʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddʅʎ Sɥoɹʇɐƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥ ɟɐɔıʅıʇʎ dɹıɔǝs ponqʅıuƃ ɟoɹ ǝɐɔɥ dnɹɔɥɐsǝ. ⅁ǝuǝɹɐʇǝp ɟɐɔıʅıʇıǝs po uoʇ ıuɔɹǝɐsǝ dɹıɔǝs."
     },
     {
       "type": 0,
@@ -7833,6 +8043,34 @@
       "value": "‬"
     }
   ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs qʎ ɥɐup."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.tinker.description.manual-labour": [
     {
       "type": 0,
@@ -10475,6 +10713,20 @@
     {
       "type": 0,
       "value": "Hıpǝ ɯɐxǝp ndƃɹɐpǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɐɔʇıʌǝ pnɹıuƃ ʇɥıs ɔɥɐʅʅǝuƃǝ"
     },
     {
       "type": 0,
@@ -19957,6 +20209,174 @@
       "value": "‬"
     }
   ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɐɔʇoɹʎ odʇıouɐʅ. Ⅎıuƃǝɹs ǝssǝuʇıɐʅ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐunɐʅ ⅂ɐqonɹ dɹopnɔǝs 5% oɟ ʎonɹ ɔnɹɹǝuʇ Ԑoʇs ǝʌǝɹʎ 0.2 sǝɔoups, ʍıʇɥ ɐ ɯıuıɯnɯ oɟ 1 Ԑoʇ. ᴚǝdʅɐɔǝs ∀ssǝɯqʅʎ ⅂ıuǝ ʇıuʞǝɹıuƃ; uo ∀I Wɐuɐƃǝɹ ɹǝbnıɹǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐup ∀ssǝɯqʅʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wǝɐsnɹǝ ʇʍıɔǝ. Hɐʌǝ ɐ ɔnd oɟ ʇǝɐ. Ↄnʇ ouɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔɹǝɐsǝ Hɐup ∀ssǝɯqʅʎ Ԑoʇ ʎıǝʅp qʎ 100% dǝɹ ɯıunʇǝ ʍıʇɥonʇ ɐɔʇıʌɐʇıuƃ ıʇ, nd ʇo +1,000% ɐɟʇǝɹ 10 ɯıunʇǝs. Ↄousnɯǝp ou ɐɔʇıʌɐʇıou. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐʇıǝuʇ Hɐups"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɟıɹsʇ ʇɥonsɐup ʍǝɹǝ dɹoʇoʇʎdǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ ɔoɯdʅǝʇǝp Hɐup ∀ssǝɯqʅʎ ıuɔɹǝɐsǝs ıʇs Ԑoʇ ʎıǝʅp qʎ 1% ʇɥıs Iuɟıuıʇʎ. ᴚǝɟnupıuƃ dɹǝsǝɹʌǝs dɹɐɔʇıɔǝ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹɐɔʇıɔǝ Wɐʞǝs Ԁǝɹɟǝɔʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on ɟıuɐʅʅʎ ɹǝɐp ʇɥǝ ıusʇɹnɔʇıous."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔɹǝɐsǝ Hɐup ∀ssǝɯqʅʎ Ԑoʇ ʎıǝʅp qʎ 10% dǝɹ ∀ssǝɯqʅʎ ⅂ıuǝ ɹǝsǝɐɹɔɥ ʅǝʌǝʅ. ∀ɟʇǝɹ nuʅoɔʞıuƃ ᗡısɔoʌǝɹʎ, nsǝ ɔoɯdʅǝʇǝp ᗡısɔoʌǝɹıǝs ıusʇǝɐp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞıuƃ Sɯɐɹʇǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.matches": [
     {
       "type": 0,
@@ -24901,6 +25321,34 @@
     {
       "type": 0,
       "value": "Sɔıǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssǝɯqʅʎ ⅂ıuǝs dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoʇs dǝɹ ɐɔʇıʌɐʇıou"
     },
     {
       "type": 0,
@@ -32143,7 +32591,7 @@
     },
     {
       "type": 0,
-      "value": "∀ppǝp ɐ No Sɔıǝuɔǝ Ònɐuʇnɯ ɔɥɐʅʅǝuƃǝ ɐʍɐɹpıuƃ 2 Ↄɐʇɐʅʎsʇs. Ⅎɹɐɔʇnɹıuƃ ʍoɹʞs pnɹıuƃ ɔɥɐʅʅǝuƃǝs ɐup dɹǝʌıǝʍs ıʇs ǝɟɟǝɔʇ. Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs ɔɹǝɐʇǝs ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ."
+      "value": "∀ppǝp sǝʌǝu Ònɐuʇnɯ ɔɥɐʅʅǝuƃǝs ɐʍɐɹpıuƃ 2 Ↄɐʇɐʅʎsʇs ǝɐɔɥ. ᗡıʌısıou ɐup Ònɐuʇnɯ ᗡonqʅǝ IԀ ɐɹǝ ıuɐɔʇıʌǝ pnɹıuƃ ʇɥǝsǝ ɹnus. ∀ppǝp ɟonɹ Wɐunɐʅ ⅂ɐqonɹ ɐnƃɯǝuʇs, ıuɔʅnpıuƃ ɐ qouns ɟoɹ ʍɐıʇıuƃ qǝʇʍǝǝu ɐɔʇıʌɐʇıous. Ⅎɹɐɔʇnɹıuƃ ʍoɹʞs pnɹıuƃ ɔɥɐʅʅǝuƃǝs ɐup dɹǝʌıǝʍs ıʇs ǝɟɟǝɔʇ. Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs ɔɹǝɐʇǝs ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ."
     },
     {
       "type": 0,

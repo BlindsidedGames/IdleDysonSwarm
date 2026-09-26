@@ -1,7 +1,8 @@
+import { advanceManualLabourIdle } from './manualLabourAugments'
+import { effectiveDivisions, quantumDoubleIpEnabled, isBreakInfinityEnabled, isInfinityChallengeActive, isQuantumChallengeActive } from './infinityChallenges'
 import { advanceDiscovery } from './discovery'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime } from './speedrunStatistics'
-import { isBreakInfinityEnabled, isInfinityChallengeActive, isNoScienceActive } from './infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementFacts } from '../achievements/contracts'
@@ -427,7 +428,7 @@ export class CanonicalEventTimeModel
       !infinity.automaticResetEnabled &&
       this.carrier.gameState.dyson.bots >=
         ordinaryInfinityBotThreshold(
-          this.carrier.gameState.quantum.divisionsPurchased,
+          effectiveDivisions(this.carrier.gameState),
         )
     const infinityHorizon =
       !hasReachedOverflow(this.carrier.gameState) &&
@@ -493,7 +494,7 @@ export class CanonicalEventTimeModel
     const cappedStartingBots = clampPreBreakInfinityBots(
       uncappedStartingState.dyson.bots,
       isBreakInfinityEnabled(uncappedStartingState),
-      uncappedStartingState.quantum.divisionsPurchased,
+      effectiveDivisions(uncappedStartingState),
     )
     const cappedStartingState =
       cappedStartingBots === uncappedStartingState.dyson.bots
@@ -552,6 +553,7 @@ export class CanonicalEventTimeModel
             derived.value.auxiliary.moneyUpgradePerSecond,
         },
       )
+      if (this.context.mode !== 'active' || !this.carrier.tinker.running) candidate = advanceManualLabourIdle(candidate, seconds)
       const tinker = this.context.mode === 'active'
         ? advanceCanonicalTinker(
             candidate,
@@ -977,7 +979,7 @@ export class CanonicalEventTimeModel
     // reward calculation without the purchased multiplier.
     const canMarkDoubleIp = this.carrier.entitlements.permanentDoubleIp && result.state.statistics.speedruns?.doubleIpUsed !== true
     const unboostedReward = canMarkDoubleIp ? infinityPointsForBots(
-      evaluation.breakInfinity ? resetSeed.dyson.bots : ordinaryInfinityBotThreshold(resetSeed.quantum.divisionsPurchased),
+      evaluation.breakInfinity ? resetSeed.dyson.bots : ordinaryInfinityBotThreshold(effectiveDivisions(resetSeed)),
       { ...createInfinityCycleState(this.carrier), permanentDoubleIp: false },
     ) : result.rewardGranted
     const usedDoubleIp = this.carrier.entitlements.permanentDoubleIp && result.rewardGranted > unboostedReward
@@ -1099,7 +1101,7 @@ export class CanonicalEventTimeModel
       return
     }
 
-    if (state.quantum.unlocks.quantumEntanglement && !isNoScienceActive(state)) {
+    if (state.quantum.unlocks.quantumEntanglement && !isQuantumChallengeActive(state)) {
       const result = applyQuantumEntanglementConversion(state)
       this.replaceGameState(result.state)
       this.queuedInputOutcome = {
@@ -1247,7 +1249,7 @@ export class CanonicalEventTimeModel
     const ordinaryCapReached =
       !breakTheLoop &&
       state.dyson.bots >= ordinaryInfinityBotThreshold(
-        state.quantum.divisionsPurchased,
+        effectiveDivisions(state),
       )
     if (hasReachedOverflow(state) || (!automaticResetEnabled && (breakTheLoop || ordinaryCapReached))) {
       this.replaceGameState(
@@ -1736,10 +1738,10 @@ function withUpdatedInfinityRatePeak(
     points: state.infinity.points,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
     breakTheLoop: isBreakInfinityEnabled(state),
-    divisionsPurchased: state.quantum.divisionsPurchased,
+    divisionsPurchased: effectiveDivisions(state),
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: entitlements.permanentDoubleIp,
-    quantumDoubleIp: state.quantum.unlocks.doubleInfinityPoints,
+    quantumDoubleIp: quantumDoubleIpEnabled(state),
     secondsInCurrentCycle: state.timeline.infinityCycleSeconds,
   })
   const reward = infinityPointsForBots(state.dyson.bots, infinity)
@@ -1861,7 +1863,7 @@ export function evaluateCanonicalInfinityBoundary(
       ? breakReward < (ignoreBreakTarget ? 1n : state.infinity.breakTarget)
       : state.dyson.bots <
         ordinaryInfinityBotThreshold(
-          state.quantum.divisionsPurchased,
+          effectiveDivisions(state),
         ))
   ) {
     return { status: 'not-ready' }
@@ -1869,7 +1871,7 @@ export function evaluateCanonicalInfinityBoundary(
 
   const ordinaryReward = infinityPointsForBots(
     ordinaryInfinityBotThreshold(
-      state.quantum.divisionsPurchased,
+      effectiveDivisions(state),
     ),
     infinity,
   )
@@ -1890,11 +1892,11 @@ function createInfinityCycleState(
     points: state.infinity.points,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
     breakTheLoop: isBreakInfinityEnabled(state),
-    divisionsPurchased: state.quantum.divisionsPurchased,
+    divisionsPurchased: effectiveDivisions(state),
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: carrier.entitlements.permanentDoubleIp,
     quantumDoubleIp:
-      state.quantum.unlocks.doubleInfinityPoints,
+      quantumDoubleIpEnabled(state),
     secondsInCurrentCycle:
       state.timeline.infinityCycleSeconds,
   })

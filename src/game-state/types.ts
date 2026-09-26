@@ -539,11 +539,15 @@ export interface SimulationStatisticsState {
   readonly dailyWindows: readonly StatisticsWindowState[]
 }
 
+export type QuantumChallengeId = 'no-science' | 'short-circuit' | 'grounded' | 'built-by-hand' | 'hands-off' | 'commitment-issues' | 'supply-shortage'
+export type ChallengeId = 'blank-slate' | 'trial-and-error' | QuantumChallengeId
+
 export interface InfinityChallengeState {
   readonly galvanizedSkillIds?: readonly string[]
   readonly unlocked: boolean
-  readonly active: 'blank-slate' | 'trial-and-error' | 'no-science' | null
-  readonly completionSeconds?: Readonly<Partial<Record<'blank-slate' | 'trial-and-error' | 'no-science', number>>>
+  readonly active: ChallengeId | null
+  readonly completedQuantumChallenges?: readonly QuantumChallengeId[]
+  readonly completionSeconds?: Readonly<Partial<Record<ChallengeId, number>>>
   readonly noScienceCompleted?: boolean
   readonly trialAndErrorCompleted?: boolean
   readonly blankSlateCompleted: boolean

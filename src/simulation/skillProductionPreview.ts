@@ -1,6 +1,8 @@
+import { deriveCanonicalTinkerStats } from './canonicalTinker'
+import { hasManualLabourAugment, MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
 import { highestOwnedFacility } from './stellarArithmetic'
 import { resolveStellarAggregate } from './canonicalSkillIntervalEffects'
-import { addContinuous } from './numeric'
+import { addContinuous, multiplyContinuous } from './numeric'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import type { CanonicalEventTimeState } from './canonicalEventTimeModel'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
@@ -28,7 +30,9 @@ function productionValues(derived: Extract<ReturnType<typeof deriveBasicDysonSta
     rates[target] = addContinuous(rates[target], stellar.facilitiesProduced)
     rates.bots -= stellar.botsConsumed
   }
-  return { ...rates, panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, elevationSpeed: state.discovery?.elevation ? discovery!.elevationSpeed : 1, enlightenmentSpeed: state.discovery?.enlightenment ? discovery!.enlightenmentSpeed : 1, cashBotsMultiplier: discovery?.cashBotsMultiplier ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
+  const tinker = deriveCanonicalTinkerStats(state, derived.auxiliary.tinkerAssemblyYield)
+  const makesFacilities = !hasManualLabourAugment(state, 'handAssembly') && state.challenges?.active !== 'built-by-hand' && state.skills.byId.manualLabour?.owned && state.dyson.facilities.ai_managers[1] >= 1
+  return { ...rates, manualBots: makesFacilities ? 0 : multiplyContinuous(tinker.botYield, derived.botBoostMultiplier), manualAssemblyLines: makesFacilities ? tinker.assemblyYield : 0, panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, elevationSpeed: state.discovery?.elevation ? discovery!.elevationSpeed : 1, enlightenmentSpeed: state.discovery?.enlightenment ? discovery!.enlightenmentSpeed : 1, cashBotsMultiplier: discovery?.cashBotsMultiplier ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
 }
 
 /** On-demand comparison only: never advance production, automation, or the real save. */
@@ -43,7 +47,7 @@ export function previewSkillProduction(
   let candidate = change.state
   let projected = false
   if (kind === 'purchase') {
-    for (const id of ['androids', 'pocketAndroids', 'superRadiantScattering']) {
+    for (const id of ['androids', 'pocketAndroids', 'superRadiantScattering', MANUAL_LABOUR_AUGMENTS.patientHands]) {
       const skill = candidate.skills.byId[id]
       if (!change.affectedSkillIds.includes(id) || !skill?.owned || skill.timerSeconds !== 0) continue
       projected = true

@@ -1,3 +1,4 @@
+import type { ChallengeId } from '../game-state/types'
 import {
   CANONICAL_GAME_COMMAND_KINDS,
   CANONICAL_GAME_COMMAND_SUPPORT,
@@ -10,6 +11,7 @@ import {
  */
 export type CanonicalPlayerCommand =
   | CanonicalGameCommand
+  | { readonly kind: 'challenge.enter'; readonly challengeId: ChallengeId }
   | { readonly kind: 'challenge.enter-blank-slate' }
   | { readonly kind: 'challenge.enter-trial-and-error' }
   | { readonly kind: 'challenge.enter-no-science' }
@@ -23,6 +25,7 @@ export type CanonicalPlayerCommandKind =
 
 export const CANONICAL_PLAYER_COMMAND_SUPPORT = Object.freeze({
   ...CANONICAL_GAME_COMMAND_SUPPORT,
+  'challenge.enter': { supported: true, authority: 'restartInfinityChallenge' },
   'challenge.enter-trial-and-error': { supported: true, authority: 'restartInfinityChallenge' },
   'challenge.enter-blank-slate': { supported: true, authority: 'restartInfinityChallenge' },
   'challenge.enter-no-science': { supported: true, authority: 'restartInfinityChallenge' },
@@ -52,6 +55,7 @@ export const CANONICAL_PLAYER_COMMAND_SUPPORT = Object.freeze({
 
 export const CANONICAL_PLAYER_COMMAND_KINDS = Object.freeze([
   ...CANONICAL_GAME_COMMAND_KINDS,
+  'challenge.enter',
   'challenge.enter-blank-slate',
   'challenge.enter-trial-and-error',
   'challenge.enter-no-science',

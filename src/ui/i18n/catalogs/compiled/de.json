@@ -353,6 +353,12 @@
       "value": "Unbeschriebenes Blatt aktiv · Skill-Zuweisung deaktiviert"
     }
   ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "Herausforderung aktiv"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -365,10 +371,34 @@
       "value": "Schließe eine normale Unendlichkeit ab, ohne Skillpunkte zu verwenden."
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "Handarbeit"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "Schließe einen Quantenlauf mit deaktivierten Anlagen ab. Nutze die Augmente von Manueller Arbeit, um Bots von Hand zu bauen."
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
       "value": "Abbrechen"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "Bindungsangst"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "Schließe einen Quantenlauf ab, ohne zugewiesene Fähigkeiten zurückzuerstatten oder zu ersetzen. Infinity-Resets löschen Zuweisungen wie gewohnt."
     }
   ],
   "challenges.completed": [
@@ -409,6 +439,36 @@
       "value": "Gib in den Details eines aufgedeckten Skills 1 Katalysator aus, um seinen Basiseffekt dauerhaft zu aktivieren und Nachteile sowie Ausschlüsse zu entfernen. Frakturierung ist unumkehrbar und bleibt nach einem Transzendenz erhalten."
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "Bodenhaftung"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "Schließe einen Quantenlauf ohne Planeten oder Megastrukturen ab. Sie können weder gekauft noch erzeugt werden."
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "Finger weg"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "Schließe einen Quantenlauf ohne Anlagenkäufe ab. Du startest mit einer Montagelinie; erzeugte Anlagen funktionieren weiterhin."
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "Erfordert frakturierte Manuelle Arbeit."
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -430,7 +490,13 @@
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "Beginnt einen neuen Quantenlauf ohne Quantensplitter. Quanten-Upgrades und spätere Ebenen bleiben erhalten. Auch beim Abbrechen beginnt ein neuer normaler Lauf."
+      "value": "Startet einen neuen Quantenlauf ohne Quantensplitter zu vergeben. Division, Quanten-Doppel-IP und Quantenverschränkung sind inaktiv. Gekaufte Doppel-IP und spätere Ebenen bleiben aktiv. Abbrechen startet ebenfalls einen neuen normalen Lauf."
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "Division, Quanten-Doppel-IP und Quantenverschränkung sind in Quanten-Herausforderungen inaktiv. Gekaufte Boosts bleiben aktiv."
     }
   ],
   "challenges.quantumTitle": [
@@ -477,6 +543,18 @@
       "value": "Herausforderungen"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "Kurzschluss"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "Schließe einen Quantenlauf mit einer festen Panel-Lebensdauer von 2 Sekunden ab."
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -487,6 +565,18 @@
     {
       "type": 0,
       "value": "Starten"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "Lieferengpass"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "Schließe einen Quantenlauf ab, in dem sich Anlagenpreise mit jedem Kauf verdoppeln. Erzeugte Anlagen erhöhen die Preise nicht."
     }
   ],
   "challenges.timeUnknown": [
@@ -4097,6 +4187,26 @@
       "value": "Es muss doch einen besseren Weg geben …"
     }
   ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "Baue "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Bots von Hand."
+    }
+  ],
   "dyson.tinker.description.manual-labour": [
     {
       "type": 0,
@@ -5431,6 +5541,12 @@
     {
       "type": 0,
       "value": "Maximale Verbesserungen ausblenden"
+    }
+  ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "Während dieser Herausforderung inaktiv"
     }
   ],
   "quantum.leap": [
@@ -10053,6 +10169,78 @@
       "value": "name"
     }
   ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "Fabrik optional. Finger unverzichtbar."
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "Manuelle Arbeit erzeugt alle 0,2 Sekunden 5 % deiner aktuellen Bots, mindestens jedoch 1 Bot. Ersetzt das Basteln von Montagelinien; kein KI-Manager erforderlich."
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "Handmontage"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "Zweimal messen. Tee trinken. Einmal schneiden."
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "Erhöht den Bot-Ertrag der Handmontage pro Minute ohne Aktivierung um 100 %, bis zu +1.000 % nach 10 Minuten. Wird bei Aktivierung verbraucht. Boni sind additiv."
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "Geduldige Hände"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "Die ersten tausend waren Prototypen."
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "Jede abgeschlossene Handmontage erhöht ihren Bot-Ertrag in diesem Infinity um 1 %. Rückerstattungen erhalten die Übung. Boni sind additiv."
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "Übung macht den Meister"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "Du hast endlich die Anleitung gelesen."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "Erhöht den Bot-Ertrag der Handmontage um 10 % pro Forschungsstufe der Montagelinien. Nach Freischaltung von Entdeckung zählen stattdessen abgeschlossene Entdeckungen. Boni sind additiv."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "Klüger arbeiten"
+    }
+  ],
   "skills.matches": [
     {
       "type": 6,
@@ -12241,6 +12429,18 @@
     {
       "type": 0,
       "value": "Wissenschaft"
+    }
+  ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "Montagelinien pro Aktivierung"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "Bots pro Aktivierung"
     }
   ],
   "skills.purchase": [
@@ -16019,7 +16219,7 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Quantum-Herausforderung Ohne Wissenschaft mit 2 Katalysatoren als Belohnung hinzugefügt. Frakturieren funktioniert während Herausforderungen und zeigt den Effekt vorab. Stellare Opfer erzeugt die höchste besessene Anlage."
+      "value": "Sieben Quanten-Herausforderungen mit je 2 Katalysatoren hinzugefügt. Division und Quanten-Doppel-IP sind dabei inaktiv. Vier Augmente für Manuelle Arbeit hinzugefügt, darunter ein Wartebonus zwischen Aktivierungen. Frakturieren funktioniert während Herausforderungen und zeigt eine Effektvorschau. Stellare Opfer erzeugt deine höchste vorhandene Anlage."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [

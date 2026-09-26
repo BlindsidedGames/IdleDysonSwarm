@@ -353,6 +353,12 @@
       "value": "白紙の状態に挑戦中 · スキル割り当て無効"
     }
   ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "チャレンジ中"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -365,10 +371,34 @@
       "value": "スキルポイントを使わずに通常のインフィニティを達成します。"
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "手作り"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "すべての施設を無効にして量子ランを完了する。手作業の強化でボットを手作りしよう。"
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
       "value": "キャンセル"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "決断の重み"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "割り当てたスキルを払い戻したり入れ替えたりせずに量子ランを完了する。インフィニティのリセットでは通常通り割り当てが解除される。"
     }
   ],
   "challenges.completed": [
@@ -409,6 +439,36 @@
       "value": "表示済みスキルの詳細で触媒を1個消費すると、基本効果が永続化され、ペナルティと排他制限が解除されます。断裂は取り消せず、超越後も維持されます。"
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "地に足をつけて"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "惑星や巨大構造物なしで量子ランを完了する。購入も生成もできない。"
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "手出し無用"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "施設を購入せずに量子ランを完了する。組立ライン1基で開始し、生成された施設は通常通り働く。"
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "破砕済みの手作業が必要。"
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -430,7 +490,13 @@
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "量子シャードを獲得せずに新しい量子ランを開始します。量子アップグレードとそれ以降の層は保持されます。中止した場合も通常の新しいランを開始します。"
+      "value": "量子の欠片を獲得せず、新しい量子ランを開始する。分割、量子のIP2倍、量子もつれは無効。購入したIP2倍と後のレイヤーは有効。中止しても新しい通常ランを開始する。"
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "量子チャレンジでは分割、量子のIP2倍、量子もつれが無効。購入したブーストは有効のまま。"
     }
   ],
   "challenges.quantumTitle": [
@@ -477,6 +543,18 @@
       "value": "チャレンジ"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "ショート回路"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "パネル寿命を2秒に固定して量子ランを完了する。"
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -487,6 +565,18 @@
     {
       "type": 0,
       "value": "開始"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "供給不足"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "施設価格が購入ごとに倍増する量子ランを完了する。生成された施設は価格を上げない。"
     }
   ],
   "challenges.timeUnknown": [
@@ -4097,6 +4187,26 @@
       "value": "もっと良いやり方があるはずです…"
     }
   ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "手作りで"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "体のボットを製作する。"
+    }
+  ],
   "dyson.tinker.description.manual-labour": [
     {
       "type": 0,
@@ -5431,6 +5541,12 @@
     {
       "type": 0,
       "value": "最大のアップグレードを隠す"
+    }
+  ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "このチャレンジ中は無効"
     }
   ],
   "quantum.leap": [
@@ -10053,6 +10169,78 @@
       "value": "name"
     }
   ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "工場は任意。指は必須。"
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "手作業で0.2秒ごとに現在のボットの5%を製作する。最低1体。組立ラインの手作りに代わり、AIマネージャーは不要。"
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "手組み"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "二度測る。お茶を飲む。一度切る。"
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "手組みを発動しない1分ごとにボット生産量が100%増加し、10分で最大+1,000%。発動時に消費。ボーナスは加算。"
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "忍耐の手"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "最初の千個は試作品だった。"
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "手組みを完了するたびに、このインフィニティでのボット生産量が1%増加。払い戻しても練習成果は残る。ボーナスは加算。"
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "習うより慣れろ"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "ついに説明書を読んだ。"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "組立ライン研究1レベルにつき手組みのボット生産量が10%増加。発見の解放後は完了した発見の数を使う。ボーナスは加算。"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "賢く働く"
+    }
+  ],
   "skills.matches": [
     {
       "type": 6,
@@ -12241,6 +12429,18 @@
     {
       "type": 0,
       "value": "科学"
+    }
+  ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "発動ごとの組立ライン"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "発動ごとのボット"
     }
   ],
   "skills.purchase": [
@@ -16019,7 +16219,7 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "触媒2個を獲得できる科学なしの量子チャレンジを追加。チャレンジ中も破砕でき、効果を事前確認できます。恒星の犠牲は所有する最上位施設を生成します。"
+      "value": "それぞれ触媒2個を獲得できる量子チャレンジを7つ追加。挑戦中は分割と量子のIP2倍が無効。発動間隔によるボーナスを含む手作業の強化を4つ追加。チャレンジ中も破砕でき、効果を事前に確認可能。恒星の犠牲は現在所有する最上位の施設を生成。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
