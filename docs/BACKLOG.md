@@ -10,6 +10,15 @@ Status conventions:
 - **In progress** means another isolated task currently owns implementation.
 - **Deferred** means the work is intentionally outside the current release.
 
+## Discord follow-up — 26 September 2026
+
+- [ ] **Deferred by Matthew · Railgun stall.** A player on iOS 4.1.9
+  (`2609.20.02`) reported a static railgun volley with one round remaining,
+  available panels and energy. Black Hole reportedly recovered it; restart
+  behaviour is unknown. Reproduce on current code with the player's save and
+  inspect final-shot/volley transitions before changing mechanics.
+  [Discord report](https://discord.com/channels/712304553931833385/1535228461176590389/1552519711391096882).
+
 ## Discord follow-up — 22 September 2026
 
 - [ ] **Deferred by Matthew · Mobile double-tap zoom.** A player reported that

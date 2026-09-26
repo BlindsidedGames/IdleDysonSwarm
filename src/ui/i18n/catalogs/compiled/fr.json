@@ -887,6 +887,22 @@
       "value": "Annuler"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "Argent et Bots"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "Gains d’argent et de Bots ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -921,6 +937,96 @@
     {
       "type": 0,
       "value": "Détails de Découverte"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "Élévation"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "Fait passer les gains d’argent et de Bots de 7× à 10×. Toutes les 30 minutes de base : +0,1 au multiplicateur et 30 minutes de progression de Découverte."
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "Puissance d’Élévation"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 au multiplicateur initial d’argent et de Bots. Les bonus sont additifs."
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "Illumination"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "Fait passer la durée de vie de base des panneaux de 20 à 30 secondes. Toutes les 10 minutes de base : +0,1 seconde et 10 minutes de progression d’Élévation."
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "Puissance d’Illumination"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 secondes de durée de vie initiale des panneaux. Les bonus sont additifs."
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes 200 % plus puissants."
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "+75 % de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes 100 % plus puissants."
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "+100 % de vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "Multiplie l’argent par la vitesse totale de Découverte, en plus des autres multiplicateurs d’argent."
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "Les Galaxies de Sacrifices stellaires sont 1 000× plus efficaces."
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "Chaînes de montage, Gestionnaires IA, Serveurs, Centres de données et Planètes 50 % plus puissants."
     }
   ],
   "discovery.level": [
@@ -983,6 +1089,20 @@
       "value": "time"
     }
   ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "Suivant : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " secondes de durée de vie initiale"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
@@ -1030,13 +1150,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "Puissance initiale"
+      "value": "Puissance de Découverte"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "+5 au multiplicateur initial et à la durée de vie de base des panneaux en secondes. Les bonus sont additifs."
+      "value": "+5 au multiplicateur initial des installations. Les bonus sont additifs."
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,7 +1168,7 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "Production d’argent, de Bots et d’installations ×"
+      "value": "Production des installations ×"
     },
     {
       "type": 1,
@@ -1059,6 +1179,12 @@
     {
       "type": 0,
       "value": "L’achat n’a pas pu être sauvegardé. Vos points ont été conservés. Réessayez."
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "La Recherche et la Science seront définitivement remplacées."
     }
   ],
   "discovery.resetRule": [
@@ -1388,7 +1514,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "Production d’argent, de Bots et d’installations ×10. Durée de vie de base des panneaux : 10 secondes."
+      "value": "Production des installations ×10. Gains d’argent et de Bots ×7. Durée de vie de base des panneaux : 20 secondes."
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " : achèvements"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " : vitesse"
     }
   ],
   "discovery.totalBots": [
@@ -1401,6 +1547,12 @@
     {
       "type": 0,
       "value": "Débloquer Découverte"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "Améliorations de Découverte"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -14623,7 +14775,7 @@
   "wiki.discovery.overview": [
     {
       "type": 0,
-      "value": "Découverte commence au "
+      "value": "Découverte commence avec "
     },
     {
       "type": 8,
@@ -14631,13 +14783,13 @@
       "children": [
         {
           "type": 0,
-          "value": "niveau 1"
+          "value": "10× la production des installations"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", avec une "
+      "value": ", "
     },
     {
       "type": 8,
@@ -14645,7 +14797,7 @@
       "children": [
         {
           "type": 0,
-          "value": "production d’argent, de Bots et d’installations ×10"
+          "value": "7× les gains d’argent et de Bots"
         }
       ]
     },
@@ -14659,13 +14811,13 @@
       "children": [
         {
           "type": 0,
-          "value": "durée de vie de base des panneaux de 10 secondes"
+          "value": "durée de vie de base des panneaux de 20 secondes"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Chaque découverte terminée ajoute "
+      "value": ". Chaque achèvement horaire de base ajoute "
     },
     {
       "type": 8,
@@ -14673,13 +14825,13 @@
       "children": [
         {
           "type": 0,
-          "value": "0.1"
+          "value": "0,1"
         }
       ]
     },
     {
       "type": 0,
-      "value": " au multiplicateur et à la durée de vie de base. À vitesse de base, une découverte prend une heure. Découverte ne nécessite ni scientifiques ni ressources."
+      "value": " au multiplicateur des installations. Les bonus des installations et des Bots s’appliquent tous deux aux Chaînes de montage. Découverte ne nécessite ni scientifiques ni ressources."
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14793,13 +14945,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Vitesse de Découverte"
+          "value": "Élévation"
         }
       ]
     },
     {
       "type": 0,
-      "value": " ajoute "
+      "value": " coûte "
     },
     {
       "type": 8,
@@ -14807,13 +14959,13 @@
       "children": [
         {
           "type": 0,
-          "value": "25% de vitesse"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " par achat. "
+      "value": ", porte l’argent et les Bots à "
     },
     {
       "type": 8,
@@ -14821,13 +14973,111 @@
       "children": [
         {
           "type": 0,
-          "value": "Puissance initiale"
+          "value": "10×"
         }
       ]
     },
     {
       "type": 0,
-      "value": " ajoute "
+      "value": " et s’achève toutes les "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 minutes de base"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " : +0,1 au multiplicateur et 30 minutes de progression de Découverte. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Illumination"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " coûte "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", porte la durée de vie de base à "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 secondes"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " et s’achève toutes les "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10 minutes de base"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " : +0,1 seconde et 10 minutes de progression d’Élévation. Les transferts peuvent achever les barres précédentes et conservent le surplus. Les bonus de vitesse de l’arbre s’appliquent à "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100 % / 50 % / 25 %"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ; les autres bonus s’appliquent entièrement. La vitesse ne multiplie pas la progression transférée. Les achats de vitesse partagée ajoutent "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25 %"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ; chaque achat de puissance ajoute "
     },
     {
       "type": 8,
@@ -14841,7 +15091,7 @@
     },
     {
       "type": 0,
-      "value": " au multiplicateur initial et à la durée de vie de base des panneaux, immédiatement aussi dans la partie en cours. Chaque amélioration coûte indépendamment "
+      "value": " au multiplicateur ou à la durée de vie initiale correspondant. Les coûts répétables sont indépendants : "
     },
     {
       "type": 8,
@@ -14849,7 +15099,7 @@
       "children": [
         {
           "type": 0,
-          "value": "1, 2, 3… points de Transcendance"
+          "value": "1, 2, 3… TP"
         }
       ]
     },
@@ -15713,25 +15963,25 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Ajout du défi quantique Sans Science, rapportant 2 Catalyseurs. Sacrifices stellaires crée désormais votre installation possédée la plus avancée, mégastructures comprises."
+      "value": "Ajout du défi Quantum Sans Science, récompensé par 2 Catalyseurs. La Fracture fonctionne pendant les défis et affiche son effet avant achat. Sacrifices stellaires crée votre installation possédée la plus avancée."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "La Découverte progresse avec le temps et augmente l’Argent, les Bots, la production des installations et la durée de vie des panneaux. Les compétences associées s’adaptent au déblocage."
+      "value": "Découverte améliore les installations. Débloquez Élévation pour l’argent et les Bots, puis Illumination pour la durée de vie des panneaux ; chaque nouvelle barre alimente la précédente. Les compétences concernées s’adaptent au déblocage."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "Ajout d’améliorations permanentes de vitesse de Découverte et de puissance initiale chez Avocato."
+      "value": "Ajout d’une vitesse de Découverte partagée et d’améliorations de puissance séparées dans une catégorie repliable d’Avocato."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Correction de la conservation des Options de développement acquises dans le Cloud, du décompte des points de compétence des augmentations, des ajustements négatifs de débogage et de la rotation des promotions."
+      "value": "Après votre premier Quantum, les nouvelles parties commencent avec une Chaîne de montage. Corrections : galaxies devant l’en-tête, conservation Cloud des Options développeur gagnées, comptage des points de compétence des augments, ajustements négatifs de débogage et rotation des promotions."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

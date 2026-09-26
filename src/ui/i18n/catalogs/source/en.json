@@ -479,6 +479,12 @@
   "discovery.cancel": {
     "defaultMessage": "Cancel"
   },
+  "discovery.cashBots": {
+    "defaultMessage": "Cash & Bots"
+  },
+  "discovery.cashBotsProduction": {
+    "defaultMessage": "Cash & Bot gains ×{value}"
+  },
   "discovery.completions": {
     "defaultMessage": "Completed discoveries"
   },
@@ -496,6 +502,51 @@
   },
   "discovery.details": {
     "defaultMessage": "Discovery details"
+  },
+  "discovery.elevation": {
+    "defaultMessage": "Elevation"
+  },
+  "discovery.elevationEffect": {
+    "defaultMessage": "Raises Cash and Bot gains from 7× to 10×. Every 30 base minutes: +0.1 multiplier and 30 minutes of Discovery progress."
+  },
+  "discovery.elevationPower": {
+    "defaultMessage": "Elevation Power"
+  },
+  "discovery.elevationPowerEffect": {
+    "defaultMessage": "+5 starting Cash and Bot multiplier. Bonuses are additive."
+  },
+  "discovery.enlightenment": {
+    "defaultMessage": "Enlightenment"
+  },
+  "discovery.enlightenmentEffect": {
+    "defaultMessage": "Raises base panel lifetime from 20 to 30 seconds. Every 10 base minutes: +0.1 seconds and 10 minutes of Elevation progress."
+  },
+  "discovery.enlightenmentPower": {
+    "defaultMessage": "Enlightenment Power"
+  },
+  "discovery.enlightenmentPowerEffect": {
+    "defaultMessage": "+5 seconds starting panel lifetime. Bonuses are additive."
+  },
+  "discovery.fractured.addictionToPower": {
+    "defaultMessage": "200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+  },
+  "discovery.fractured.coldFusion": {
+    "defaultMessage": "+75% Discovery speed. Bonuses are additive."
+  },
+  "discovery.fractured.indulgingInPower": {
+    "defaultMessage": "100% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+  },
+  "discovery.fractured.scientificDominance": {
+    "defaultMessage": "+100% Discovery speed. Bonuses are additive."
+  },
+  "discovery.fractured.shouldersOfPrecursors": {
+    "defaultMessage": "Multiplies Cash by total Discovery speed alongside other Cash multipliers."
+  },
+  "discovery.fractured.stellarObliteration": {
+    "defaultMessage": "Stellar Sacrifices Galaxies are 1,000× better."
+  },
+  "discovery.fractured.tasteOfPower": {
+    "defaultMessage": "50% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
   },
   "discovery.level": {
     "defaultMessage": "Discovery · Level {value}"
@@ -515,6 +566,9 @@
   "discovery.next": {
     "defaultMessage": "Next: ×{value} · {time}"
   },
+  "discovery.nextLifetime": {
+    "defaultMessage": "Next: {value} seconds starting lifetime"
+  },
   "discovery.nextMultiplier": {
     "defaultMessage": "Next multiplier"
   },
@@ -528,19 +582,22 @@
     "defaultMessage": "Level {value}"
   },
   "discovery.power": {
-    "defaultMessage": "Starting Power"
+    "defaultMessage": "Discovery Power"
   },
   "discovery.powerEffect": {
-    "defaultMessage": "+5 starting multiplier and base panel-lifetime seconds. Bonuses are additive."
+    "defaultMessage": "+5 starting facility multiplier. Bonuses are additive."
   },
   "discovery.powerSkillsEffect": {
     "defaultMessage": "Unlock Power Skills, which boost facilities, Cash, and Discovery speed."
   },
   "discovery.production": {
-    "defaultMessage": "Cash, Bots & facility production ×{value}"
+    "defaultMessage": "Facility production ×{value}"
   },
   "discovery.purchaseFailed": {
     "defaultMessage": "Purchase could not be saved. Your points have been kept. Try again."
+  },
+  "discovery.replacementWarning": {
+    "defaultMessage": "Research and Science will be permanently replaced."
   },
   "discovery.resetRule": {
     "defaultMessage": "Persists through Infinity and Quantum. Resets on Transcendence."
@@ -705,13 +762,22 @@
     "defaultMessage": "Discovery speed"
   },
   "discovery.startingBenefits": {
-    "defaultMessage": "10× Cash, Bots & facility production. 10-second base panel lifetime."
+    "defaultMessage": "10× facility production. 7× Cash and Bot gains. 20-second base panel lifetime."
+  },
+  "discovery.tierCompletions": {
+    "defaultMessage": "{name} completions"
+  },
+  "discovery.tierSpeed": {
+    "defaultMessage": "{name} speed"
   },
   "discovery.totalBots": {
     "defaultMessage": "Total Bots"
   },
   "discovery.unlock": {
     "defaultMessage": "Unlock Discovery"
+  },
+  "discovery.upgrades": {
+    "defaultMessage": "Discovery upgrades"
   },
   "dyson.bot-distribution.accessible-value": {
     "defaultMessage": "{workers} workers, {scientists} scientists",
@@ -7432,7 +7498,7 @@
     "description": "Wiki category replacing Research after Discovery is unlocked."
   },
   "wiki.discovery.overview": {
-    "defaultMessage": "Discovery starts at <value>level 1</value>, with <value>10× Cash, Bot and facility production</value> and a <value>10-second base panel lifetime</value>. Each completion adds <value>0.1</value> to both the multiplier and base lifetime. A completion takes one hour at base speed. Discovery needs no scientists or resources.",
+    "defaultMessage": "Discovery starts with <value>10× facility production</value>, <value>7× Cash and Bot gains</value> and a <value>20-second base panel lifetime</value>. Each hourly base completion adds <value>0.1</value> to the facility multiplier. Facility and Bot bonuses both apply to Assembly Line output. Discovery needs no scientists or resources.",
     "description": "Explains Discovery baseline production, lifetime and fixed completion requirement."
   },
   "wiki.discovery.overview-title": {
@@ -7456,7 +7522,7 @@
     "description": "Heading for effects converted when Discovery replaces Research."
   },
   "wiki.discovery.upgrades": {
-    "defaultMessage": "In Avocato, <value>Discovery Speed</value> adds <value>25% speed</value> per purchase. <value>Starting Power</value> adds <value>5</value> to the starting multiplier and base panel lifetime, including immediately in the current run. Each upgrade costs <value>1, 2, 3… Transcendence Points</value> independently. Bonuses are additive.",
+    "defaultMessage": "In Avocato, <value>Elevation</value> costs <value>3 TP</value>, raises Cash and Bots to <value>10×</value>, and completes every <value>30 base minutes</value>: +0.1 multiplier and 30 minutes of Discovery progress. <value>Enlightenment</value> costs <value>5 TP</value>, raises base lifetime to <value>30 seconds</value>, and completes every <value>10 base minutes</value>: +0.1 seconds and 10 minutes of Elevation progress. Transfers can complete earlier bars and preserve excess progress. Skill-tree speed bonuses apply at <value>100% / 50% / 25%</value>; other speed bonuses apply fully. Transferred progress is not multiplied by speed. Shared speed purchases add <value>25%</value>; each separate power purchase adds <value>5</value> to its starting multiplier or lifetime. Repeatable costs are independently <value>1, 2, 3… TP</value>. Bonuses are additive.",
     "description": "Explains independent permanent Discovery upgrade costs and additive effects."
   },
   "wiki.discovery.upgrades-title": {
@@ -7776,19 +7842,19 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.challenge": {
-    "defaultMessage": "Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures.",
+    "defaultMessage": "Added a No Science Quantum challenge awarding 2 Catalysts. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.",
     "description": "Version 4.1.10 challenge and Stellar Sacrifices changes."
   },
   "wiki.patch-notes.version-4-1-10.discovery": {
-    "defaultMessage": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked.",
+    "defaultMessage": "Discovery boosts facilities. Unlock Elevation for Cash and Bots, then Enlightenment for panel lifetime; each new bar feeds progress into the previous one. Related skills adapt when unlocked.",
     "description": "Version 4.1.10 Discovery release notes."
   },
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": {
-    "defaultMessage": "Added permanent Discovery Speed and Starting Power upgrades in Avocato.",
+    "defaultMessage": "Added shared Discovery Speed and separate power upgrades in a collapsible Avocato category.",
     "description": "Version 4.1.10 Discovery release notes."
   },
   "wiki.patch-notes.version-4-1-10.fixes": {
-    "defaultMessage": "Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.",
+    "defaultMessage": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.",
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.ios": {

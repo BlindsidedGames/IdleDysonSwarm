@@ -511,7 +511,7 @@ export function deriveBasicDysonState(
     )
   const effectiveSkillEffectsByStat = discovery ? Object.fromEntries(Object.entries(ordinarySkillEffectsByStat).map(([statId, effects]) => [statId,
     (statId.startsWith('Facility.') && statId.endsWith('.Production')) || statId === 'Global.PlanetsPerSecond' || statId === 'Global.MoneyPerSecond'
-      ? [...effects, { id: 'discovery.production', operation: 'multiply' as const, value: discovery.multiplier, order: 1000 }]
+      ? [...effects, { id: statId === 'Global.MoneyPerSecond' ? 'discovery.cash-bots' : 'discovery.production', operation: 'multiply' as const, value: statId === 'Global.MoneyPerSecond' ? discovery.cashBotsMultiplier : discovery.multiplier, order: 1000 }, ...(statId === 'Facility.AssemblyLine.Production' ? [{ id: 'discovery.cash-bots', operation: 'multiply' as const, value: discovery.cashBotsMultiplier, order: 1001 }] : [])]
       : effects,
   ])) : ordinarySkillEffectsByStat
   const secrets = deriveSecretBuffs(
@@ -570,7 +570,7 @@ export function deriveBasicDysonState(
       95,
     ),
   ].filter(isEffect))
-  const panelLifetime = calculateStat(discovery?.strength ?? 10, [
+  const panelLifetime = calculateStat(discovery?.lifetime ?? 10, [
     ...effectsFor(research.effects, 'Global.PanelLifetime'),
     ...effectsAt(effectiveSkillEffectsByStat, 'Global.PanelLifetime'),
   ])

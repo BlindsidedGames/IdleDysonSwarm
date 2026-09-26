@@ -28,6 +28,7 @@ export function DysonResourceHeader({
   return (
     <section
       className="dyson-resource-header"
+      data-resource-count={science ? 3 : 2}
       aria-label={ariaLabel}
       dir="ltr"
     >
@@ -42,12 +43,12 @@ export function DysonResourceHeader({
         presentation={totalBots}
         showBotsIcon
       />
-      <Resource
+      {science && <Resource
         placement="science"
         direction={direction}
         presentation={science}
         showScienceIcon
-      />
+      />}
     </section>
   )
 }

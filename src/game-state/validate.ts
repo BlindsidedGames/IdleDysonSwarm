@@ -25,6 +25,7 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  if (state.meta.firstQuantumComplete !== undefined && typeof state.meta.firstQuantumComplete !== 'boolean') errors.push('Invalid first Quantum milestone.')
   const discoveryError = validateDiscovery(state.discovery)
   if (discoveryError) errors.push(discoveryError)
   const boost = state.meta.botBoost

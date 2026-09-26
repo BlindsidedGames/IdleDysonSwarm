@@ -37,18 +37,21 @@ describe('Discovery commit-first purchases', () => {
     await app.start()
     const candidate = structuredClone(readyState(app))
     candidate.gameState = { ...candidate.gameState,
-      avocado: { ...candidate.gameState.avocado, overflowPoints: 10n },
+      avocado: { ...candidate.gameState.avocado, overflowPoints: 100n },
       timeline: { ...candidate.gameState.timeline, storedTimeAvailableSeconds: 10 },
     }
     expect(await app.commitAwayReplacement(revisionEnvelope(app), candidate)).toMatchObject({ committed: true })
     return { app, repository }
   }
 
-  test.each(['unlock', 'power', 'speed'] as const)('%s is atomic on failure, retries once and survives immediate reopen', async purchase => {
+  test.each(['unlock', 'power', 'speed', 'elevation', 'enlightenment', 'elevation-power', 'enlightenment-power'] as const)('%s is atomic on failure, retries once and survives immediate reopen', async purchase => {
     const { app, repository } = await setup()
     if (purchase !== 'unlock') expect(await app.dispatchPlayer({ ...revisionEnvelope(app),
       command: { kind: 'discovery.purchase', purchase: 'unlock' },
     })).toMatchObject({ transition: { accepted: true } })
+    for (const prerequisite of (purchase === 'enlightenment-power' ? ['elevation', 'enlightenment'] : ['enlightenment', 'elevation-power'].includes(purchase) ? ['elevation'] : []) as ('elevation' | 'enlightenment')[]) {
+      expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'discovery.purchase', purchase: prerequisite } })).toMatchObject({ transition: { accepted: true } })
+    }
     const before = structuredClone(readyState(app).gameState)
     const savedBefore = await repository.loadCurrent()
     const command = { kind: 'discovery.purchase' as const, purchase }
@@ -61,7 +64,7 @@ describe('Discovery commit-first purchases', () => {
     expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command })).toMatchObject({ transition: { accepted: true } })
     expect(repository.commits.length).toBe(commitsBefore + 1)
     const after = readyState(app).gameState
-    expect(after.avocado.overflowPoints).toBe(before.avocado.overflowPoints! - 1n)
+    expect(after.avocado.overflowPoints).toBe(before.avocado.overflowPoints! - (purchase === 'elevation' ? 3n : purchase === 'enlightenment' ? 5n : 1n))
     expect(after.discovery).toMatchObject({ unlocked: true,
       startingPower: purchase === 'power' ? 1n : 0n,
       speedUpgrades: purchase === 'speed' ? 1n : 0n,
@@ -98,7 +101,7 @@ describe('Discovery commit-first purchases', () => {
     expect(await pending).toMatchObject({ transition: { accepted: true } })
     expect(await retry).toMatchObject({ transition: { accepted: false } })
     expect(await stored).toMatchObject({ committed: false })
-    expect(readyState(app).gameState.avocado.overflowPoints).toBe(9n)
+    expect(readyState(app).gameState.avocado.overflowPoints).toBe(99n)
     expect(readyState(app).gameState.timeline.storedTimeAvailableSeconds).toBe(10)
   })
 })

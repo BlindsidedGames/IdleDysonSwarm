@@ -28,7 +28,7 @@ function productionValues(derived: Extract<ReturnType<typeof deriveBasicDysonSta
     rates[target] = addContinuous(rates[target], stellar.facilitiesProduced)
     rates.bots -= stellar.botsConsumed
   }
-  return { ...rates, panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
+  return { ...rates, panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, elevationSpeed: state.discovery?.elevation ? discovery!.elevationSpeed : 1, enlightenmentSpeed: state.discovery?.enlightenment ? discovery!.enlightenmentSpeed : 1, cashBotsMultiplier: discovery?.cashBotsMultiplier ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
 }
 
 /** On-demand comparison only: never advance production, automation, or the real save. */

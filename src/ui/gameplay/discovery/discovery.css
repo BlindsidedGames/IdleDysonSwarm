@@ -30,7 +30,7 @@
   block-size: 0.9em;
   flex-shrink: 0;
 }
-.discovery-heading strong {
+.discovery-boost {
   display: inline-flex;
   align-items: center;
   gap: 0.25em;
@@ -44,7 +44,8 @@
   position: absolute;
   inset: 0;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-inline: 0.75rem;
   pointer-events: none;
 }
 .discovery-progress .ui-progress__header > span:first-child {
@@ -62,7 +63,7 @@
 .discovery-card .discovery-progress progress {
   display: block;
   appearance: none;
-  block-size: calc(3rem * var(--game-text-scale));
+  block-size: calc(2.5rem * var(--game-text-scale));
   border: 0;
   border-radius: 0.4rem;
   box-shadow: inset 0 2px 4px rgb(0 0 0 / 25%);
@@ -99,3 +100,19 @@
 .discovery-details dl > div { display: flex; justify-content: space-between; gap: 1rem; }
 .discovery-details dt { min-inline-size: 0; overflow-wrap: anywhere; }
 .discovery-details dd { margin: 0; white-space: nowrap; color: var(--theme-accent); }
+
+.discovery-row { display: block; }
+.discovery-row + .discovery-row { margin-block-start: 0.6rem; }
+.discovery-row--supporting .discovery-heading { justify-content: flex-end; margin-block-end: 0.35rem; }
+.discovery-row--supporting .discovery-boost { font-size: calc(1rem * var(--game-text-scale)); }
+.discovery-card .discovery-row--supporting progress { block-size: calc(1.8rem * var(--game-text-scale)); }
+.discovery-upgrades { margin-block-start: var(--ui-panel-inset); border: 1px solid var(--theme-divider); border-radius: 0.3rem; background: var(--theme-panel); }
+.discovery-upgrades > summary { cursor: pointer; padding: var(--ui-panel-inset); font-weight: var(--font-weight-bold); }
+.discovery-upgrades > .avocato-feed-grid { padding: var(--ui-panel-inset); padding-block-start: 0; }
+.discovery-purchase-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 1rem; }
+
+.discovery-bar { display: block; position: relative; }
+.discovery-bar .discovery-boost { position: absolute; inset-inline-end: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--color-text-primary); pointer-events: none; }
+
+.discovery-confirmation .skill-details-dialog__content { gap: 0.75rem; }
+.discovery-confirmation p { margin: 0; }

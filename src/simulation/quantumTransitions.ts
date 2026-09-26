@@ -1,3 +1,4 @@
+import { hasCompletedQuantum } from './quantumMilestone'
 import { infinityChallenges, isNoScienceActive } from './infinityChallenges'
 import { bankedSrsSecondsAfterReset } from './srsAugments'
 import { permanentSkillRuntime } from './galvanization'
@@ -64,6 +65,7 @@ export function applyQuantumEntanglementConversion(
       meta: {
         ...state.meta,
         firstInfinityComplete: true,
+        firstQuantumComplete: conversionAccepted || hasCompletedQuantum(state),
       },
       infinity: conversionAccepted
         ? {
@@ -153,7 +155,7 @@ export function applyCanonicalQuantumReset(
         'birch_planets',
         'galactic_brains',
       ] as const satisfies readonly CanonicalFacilityId[]
-    ).map((id) => [id, [0, 0] as const]),
+    ).map((id) => [id, [id === 'assembly_lines' && (!options.restartOnly || hasCompletedQuantum(state)) ? 1 : 0, 0] as const]),
   ) as CanonicalGameStateV1['dyson']['facilities']
   const permanentSecrets =
     state.quantum.permanentSecrets > 1n
@@ -169,6 +171,7 @@ export function applyCanonicalQuantumReset(
       meta: {
         ...state.meta,
         firstInfinityComplete: true,
+        firstQuantumComplete: !options.restartOnly || hasCompletedQuantum(state),
       },
       dyson: {
         ...state.dyson,

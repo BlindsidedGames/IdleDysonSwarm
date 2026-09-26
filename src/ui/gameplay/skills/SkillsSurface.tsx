@@ -1,3 +1,4 @@
+import { discoveryFracturedEffects } from '../discovery/skillMessages'
 import { galvanizedEffectMessages } from './galvanizedEffectMessages'
 import { discoverySkillNames, discoverySkillEffects, discoverySkillFlavour } from '../discovery/skillMessages'
 import { discoveryMessages } from '../discovery/messages'
@@ -2101,6 +2102,12 @@ function SkillDetails({
     void applySkillAction(kind)
   }
 
+  const fracturedDescriptor = node.discoveryTechnical
+    ? discoveryFracturedEffects[node.skillId as keyof typeof discoveryFracturedEffects]
+    : galvanizedEffectMessages[node.skillId]
+  const fracturedTechnical = fracturedDescriptor ? intl.formatMessage(fracturedDescriptor) : node.technicalDescription
+  const technical = preview.galvanized ? fracturedTechnical : node.skillId === 'shouldersOfTheEnlightened' && !node.discoveryTechnical ? intl.formatMessage(messages.galvEnlightened) : node.technicalDescription
+
   return (
     <SkillDetailsDialog
       title={<><span className="skill-details__icon" data-state={preview.visualState} data-galvanized={preview.galvanized || undefined}>
@@ -2119,11 +2126,7 @@ function SkillDetails({
       >
         <p className="skill-details__technical">
           <strong>{intl.formatMessage(messages.effect)}</strong>{' '}
-          {node.discoveryTechnical ? node.technicalDescription : preview.galvanized && galvanizedEffectMessages[node.skillId]
-            ? intl.formatMessage(galvanizedEffectMessages[node.skillId])
-            : node.skillId === 'shouldersOfTheEnlightened'
-              ? intl.formatMessage(messages.galvEnlightened)
-              : node.technicalDescription}
+          {technical}
         </p>
         {preview.galvanizationUnlocked && galvanizers > 0n && !preview.galvanized && (
           <div className="skill-details__galvanization">
@@ -2134,6 +2137,7 @@ function SkillDetails({
             </Button>
             {galvanizeConfirmation && (
               <div className="skill-confirmation">
+                <p><strong>{intl.formatMessage(messages.effect)}</strong> {fracturedTechnical}</p>
                 <p>{intl.formatMessage(messages.galvanizeWarning, { name: node.displayName })}</p>
                 <Button variant="primary" disabled={!preview.canGalvanize || pendingKind !== null}
                   onClick={async () => {
@@ -2435,6 +2439,9 @@ const productionLabels = {
   galactic_brains: facilityMessages.galacticBrainsName,
   panelLifetime: facilityMessages.panelLifetime,
   discoverySpeed: discoveryMessages.speed,
+  elevationSpeed: discoveryMessages.elevation,
+  enlightenmentSpeed: discoveryMessages.enlightenment,
+  cashBotsMultiplier: discoveryMessages.cashBots,
   discoveryMultiplier: discoveryMessages.name,
 }
 

@@ -38,8 +38,8 @@ describe('production-valid progression matrix fixtures', () => {
     'reality-unlock': 'b6b55cd90a613357b4068ba124eb35e3ba1afc17d3c11f437cffb9ad38914307',
     'mature-simulations': '132e74998a868381fa381eacf9af096f27e956aeb0b5c457d58f41203e5301d3',
     'quantum-unlock': '328a72e6e22aaf3e6c3f057daeaa670b64a39b3bc2427117aa8fc14ae791d750',
-    'late-quantum': 'b17ae2fae28012e49b9fa45026dbb96db84da6ad0b1379c1078fcbebbfb3fc59',
-    'maximum-skills': 'c11f6e0a2fbeab5a348e8a2b040c54f2d7f1d5b28d4bbbf39e1ea5da32b13a4f',
+    'late-quantum': 'a59565cb0f59cff8e90cbcb9bc74e8d5c3fc8577387c0c32b86988072e511f2f',
+    'maximum-skills': '6b0406cd70420a6348be95de2a6bcb17eea3dbc4126ba84c8d374ad050a2f6bf',
   }
   test('materializes every named deterministic state with stable fingerprints', () => {
     const first = fixtures

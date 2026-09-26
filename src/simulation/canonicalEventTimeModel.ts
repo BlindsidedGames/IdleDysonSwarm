@@ -531,7 +531,7 @@ export class CanonicalEventTimeModel
         seconds,
       )
       if (startingState.discovery?.unlocked) {
-        candidate = { ...candidate, discovery: advanceDiscovery(startingState.discovery, seconds, deriveDiscoveryEffects(startingState, this.carrier.evaluationSnapshot).speed) }
+        candidate = { ...candidate, discovery: advanceDiscovery(startingState.discovery, seconds, deriveDiscoveryEffects(startingState, this.carrier.evaluationSnapshot)) }
       }
       const boost = derived.value.botBoostMultiplier
       if (boost === 2 && candidate.dyson.bots > startingState.dyson.bots) candidate = recordBotBoostUsage(candidate)

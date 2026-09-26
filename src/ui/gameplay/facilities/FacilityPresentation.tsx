@@ -1,7 +1,7 @@
 import { resolveGalaxiesEngulfed } from '../../../simulation/stellarArithmetic'
 import { multiplyContinuous } from '../../../simulation/numeric'
 import { galvanizedEffectMessages } from '../skills/galvanizedEffectMessages'
-import { discoverySkillNames, discoverySkillEffects } from '../discovery/skillMessages'
+import { discoverySkillNames, discoverySkillEffects, discoveryFracturedEffects } from '../discovery/skillMessages'
 import { discoveryMessages } from '../discovery/messages'
 import { PURITY_ESSENCE_QUADRATIC_COEFFICIENT } from '../../../simulation/purityMultipliers'
 import { boostMessages } from '../store/boostMessages'
@@ -961,7 +961,7 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
   }
   if (source?.kind === 'skill') {
     const name = discoveryUnlocked ? discoverySkillNames[source.id as keyof typeof discoverySkillNames] : undefined
-    const effect = (discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
+    const effect = (discoveryUnlocked ? (source.fractured ? discoveryFracturedEffects[source.id as keyof typeof discoveryFracturedEffects] : undefined) ?? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
       ?? (source.fractured ? galvanizedEffectMessages[source.id] : undefined)
     return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: name ? intl.formatMessage(name) : skillName(source.id, intl), description: effect ? intl.formatMessage(effect) : skillTechnical(source.id, intl) }
   }
@@ -971,6 +971,7 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
   if (source?.kind === 'avocato') return { icon: skillIcons.avocados ?? navigationAssets.infinity, name: intl.formatMessage(messages.avocatoPower), description: intl.formatMessage(messages.avocatoPower) }
   if (source?.id === 'milestone-50') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone50), description: intl.formatMessage(messages.milestone50) }
   if (source?.id === 'milestone-100') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone100), description: intl.formatMessage(messages.milestone100) }
+  if (contribution.sourceId === 'discovery.cash-bots') return { icon: navigationAssets.discovery, name: intl.formatMessage(discoveryMessages.cashBots), description: '' }
   if (contribution.sourceId === 'discovery.production') return { icon: navigationAssets.discovery, name: intl.formatMessage(discoveryMessages.name), description: '' }
   if (contribution.sourceId === 'bot-boost') return { icon: navigationAssets.store, name: intl.formatMessage(boostMessages.title), description: '' }
   if (contribution.sourceId === 'canonical.numeric-clamp') return { icon: navigationAssets.settings, name: intl.formatMessage(messages.numericSafety), description: intl.formatMessage(messages.numericSafety) }

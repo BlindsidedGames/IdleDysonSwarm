@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { advanceDiscovery, discoveryBaseStrength, discoveryGrowingBonus, discoveryProductionMultiplier, discoveryPurchaseCost, EMPTY_DISCOVERY, validateDiscovery } from './discovery'
+import { advanceDiscovery, discoveryBaseStrength, discoveryGrowingBonus, discoveryProductionMultiplier, discoveryPurchaseCost, EMPTY_DISCOVERY, EMPTY_DISCOVERY_TIER, discoveryCashBotsStrength, discoveryPanelLifetime, resetDiscoveryProgress, validateDiscovery } from './discovery'
 
 describe('Discovery progression', () => {
   const unlocked = { ...EMPTY_DISCOVERY, unlocked: true }
@@ -32,5 +32,45 @@ describe('Discovery progression', () => {
     expect(validateDiscovery(advanceDiscovery(unlocked, Number.MAX_VALUE, 10))).toBeNull()
     expect(validateDiscovery({ ...unlocked, progress: 3600 })).not.toBeNull()
     expect(validateDiscovery({ ...EMPTY_DISCOVERY, completions: 1n })).not.toBeNull()
+  })
+})
+
+
+describe('Discovery tiers', () => {
+  const all = { ...EMPTY_DISCOVERY, unlocked: true, elevation: { ...EMPTY_DISCOVERY_TIER }, enlightenment: { ...EMPTY_DISCOVERY_TIER } }
+  it('starts each unlocked benefit independently', () => {
+    const first = { ...EMPTY_DISCOVERY, unlocked: true }
+    expect(discoveryCashBotsStrength(first)).toBe(7)
+    expect(discoveryPanelLifetime(first)).toBe(20)
+    expect(discoveryCashBotsStrength(all)).toBe(10)
+    expect(discoveryPanelLifetime(all)).toBe(30)
+    expect(discoveryPurchaseCost(first, 'enlightenment')).toBeNull()
+    expect(discoveryPurchaseCost(first, 'elevation-power')).toBeNull()
+    expect(discoveryPurchaseCost(first, 'elevation')).toBe(3n)
+    expect(discoveryPurchaseCost({ ...first, elevation: all.elevation }, 'enlightenment')).toBe(5n)
+  })
+  it.each([
+    [0, 12n, 16n, 24n],
+    [1, 19n, 22n, 30n],
+    [10, 82n, 76n, 84n],
+  ])('preserves fixed transfers with +%sx tree speed over four hours', (tree, discovery, elevation, enlightenment) => {
+    const rates = { speed: 1 + tree, elevationSpeed: 1 + tree / 2, enlightenmentSpeed: 1 + tree / 4 }
+    const whole = advanceDiscovery(all, 14400, rates)
+    expect([whole.completions, whole.elevation?.completions, whole.enlightenment?.completions]).toEqual([discovery, elevation, enlightenment])
+    let stepped = all
+    for (let i = 0; i < 1440; i++) stepped = advanceDiscovery(stepped, 10, rates) as typeof all
+    expect(stepped).toEqual(whole)
+  })
+  it('cascades a receiving completion without multiplying transferred progress', () => {
+    const before = { ...all, progress: 3500, elevation: { ...all.elevation, progress: 1700 }, enlightenment: { ...all.enlightenment, progress: 599 } }
+    const after = advanceDiscovery(before, 1, { speed: 11, elevationSpeed: 6, enlightenmentSpeed: 3.5 })
+    expect(after).toMatchObject({ completions: 1n, progress: 1711, elevation: { completions: 1n, progress: 506 }, enlightenment: { completions: 1n, progress: 2.5 } })
+    const reset = resetDiscoveryProgress({ ...after, startingPower: 2n, elevation: { ...after.elevation!, startingPower: 3n } })
+    expect(reset).toEqual({ ...all, startingPower: 2n, elevation: { ...all.elevation, startingPower: 3n } })
+  })
+  it('keeps long spends finite and rejects malformed tier saves', () => {
+    expect(validateDiscovery(advanceDiscovery(all, Number.MAX_VALUE, 100))).toBeNull()
+    expect(validateDiscovery({ ...all, elevation: undefined })).not.toBeNull()
+    expect(validateDiscovery({ ...all, enlightenment: { ...all.enlightenment, progress: 600 } })).not.toBeNull()
   })
 })

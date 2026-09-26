@@ -37,6 +37,7 @@ export interface GameMetaState {
   readonly createdAtLegacyText: string | null
   readonly tutorialComplete: boolean
   readonly firstInfinityComplete: boolean
+  readonly firstQuantumComplete?: boolean
   /** Unity settings that control the persistent bottom-menu shortcuts. */
   readonly navigationVisibility?: {
     readonly story: boolean
@@ -152,12 +153,20 @@ export interface SkillsState {
   }
 }
 
+export interface DiscoveryTierState {
+  readonly completions: bigint
+  readonly progress: number
+  readonly startingPower: bigint
+}
+
 export interface DiscoveryState {
   readonly unlocked: boolean
   readonly completions: bigint
   readonly progress: number
   readonly startingPower: bigint
   readonly speedUpgrades: bigint
+  readonly elevation?: DiscoveryTierState
+  readonly enlightenment?: DiscoveryTierState
 }
 
 export interface ResearchState {

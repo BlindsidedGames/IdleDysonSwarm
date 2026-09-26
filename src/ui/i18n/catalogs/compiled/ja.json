@@ -887,6 +887,22 @@
       "value": "キャンセル"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "資金とボット"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "資金・ボット獲得量 ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -921,6 +937,96 @@
     {
       "type": 0,
       "value": "発見の詳細"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "高揚"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "資金・ボット獲得量を7倍から10倍に増加。基準時間30分ごとに倍率+0.1、発見の進捗+30分。"
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "高揚の強化"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "資金・ボットの初期倍率+5。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "悟り"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "パネルの基本寿命を20秒から30秒に延長。基準時間10分ごとに寿命+0.1秒、高揚の進捗+10分。"
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "悟りの強化"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "パネルの初期寿命+5秒。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の能力が200%向上。"
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "発見速度+75%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の能力が100%向上。"
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "発見速度+100%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "他の資金倍率に加え、資金に発見の合計速度を乗算。"
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "恒星の犠牲の銀河効果が1,000倍に向上。"
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の能力が50%向上。"
     }
   ],
   "discovery.level": [
@@ -983,6 +1089,20 @@
       "value": "time"
     }
   ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "次：初期寿命"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "秒"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
@@ -1030,13 +1150,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "初期出力"
+      "value": "発見の強化"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "初期倍率とパネル基本寿命（秒）に+5。ボーナスは加算されます。"
+      "value": "施設の初期倍率+5。ボーナスは加算されます。"
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,7 +1168,7 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "資金・ボット・施設の生産 ×"
+      "value": "施設生産量 ×"
     },
     {
       "type": 1,
@@ -1059,6 +1179,12 @@
     {
       "type": 0,
       "value": "購入を保存できませんでした。ポイントは保持されています。もう一度お試しください。"
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "研究と科学は永久に置き換えられます。"
     }
   ],
   "discovery.resetRule": [
@@ -1388,7 +1514,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "資金・ボット・施設の生産が10倍。パネルの基本寿命は10秒。"
+      "value": "施設生産量10倍。資金・ボット獲得量7倍。パネルの基本寿命20秒。"
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "の完了回数"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "速度"
     }
   ],
   "discovery.totalBots": [
@@ -1401,6 +1547,12 @@
     {
       "type": 0,
       "value": "発見を解放"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "発見のアップグレード"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -14631,21 +14783,7 @@
       "children": [
         {
           "type": 0,
-          "value": "レベル1"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "から始まり、"
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "資金・ボット・施設の生産が10倍"
+          "value": "施設生産量10倍"
         }
       ]
     },
@@ -14659,13 +14797,27 @@
       "children": [
         {
           "type": 0,
-          "value": "パネル基本寿命は10秒"
+          "value": "資金・ボット獲得量7倍"
         }
       ]
     },
     {
       "type": 0,
-      "value": "になります。完了するたびに倍率と基本寿命に"
+      "value": "、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "パネルの基本寿命20秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "から始まります。基準時間1時間の完了ごとに施設倍率が"
     },
     {
       "type": 8,
@@ -14679,7 +14831,7 @@
     },
     {
       "type": 0,
-      "value": "が加算されます。基本速度では1時間で1回完了します。科学者や資源は不要です。"
+      "value": "増加します。組立ラインの出力には施設とボットの両方のボーナスが適用されます。発見に科学者や資源は不要です。"
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14793,13 +14945,13 @@
       "children": [
         {
           "type": 0,
-          "value": "発見速度"
+          "value": "高揚"
         }
       ]
     },
     {
       "type": 0,
-      "value": "は購入ごとに"
+      "value": "は"
     },
     {
       "type": 8,
@@ -14807,13 +14959,13 @@
       "children": [
         {
           "type": 0,
-          "value": "速度 +25%"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。"
+      "value": "で、資金とボットを"
     },
     {
       "type": 8,
@@ -14821,13 +14973,111 @@
       "children": [
         {
           "type": 0,
-          "value": "初期出力"
+          "value": "10倍"
         }
       ]
     },
     {
       "type": 0,
-      "value": "は初期倍率とパネル基本寿命に"
+      "value": "にし、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "基準時間30分"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "ごとに完了：倍率+0.1、発見の進捗+30分。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "悟り"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "は"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "で、基本寿命を"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "にし、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "基準時間10分"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "ごとに完了：寿命+0.1秒、高揚の進捗+10分。転送で前のバーが完了することがあり、余剰進捗は保持されます。スキルツリーの速度ボーナスは"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "で適用され、その他は全量適用されます。転送進捗に速度は乗算されません。共通速度の購入は"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "を加算し、個別の強化購入は対応する初期倍率または寿命に"
     },
     {
       "type": 8,
@@ -14841,7 +15091,7 @@
     },
     {
       "type": 0,
-      "value": "を加算し、現在の周回にも即時反映されます。各アップグレードの価格はそれぞれ"
+      "value": "を加算します。反復購入の価格はそれぞれ"
     },
     {
       "type": 8,
@@ -14849,13 +15099,13 @@
       "children": [
         {
           "type": 0,
-          "value": "超越ポイント1、2、3…"
+          "value": "1、2、3… TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": "と増えます。ボーナスは加算されます。"
+      "value": "です。ボーナスは加算されます。"
     }
   ],
   "wiki.discovery.upgrades-title": [
@@ -15713,25 +15963,25 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "触媒を2個獲得できる「科学なし」量子チャレンジを追加しました。恒星の犠牲は、巨大構造物を含む所有する最上位の施設を生成するようになりました。"
+      "value": "触媒2個を獲得できる科学なしの量子チャレンジを追加。チャレンジ中も破砕でき、効果を事前確認できます。恒星の犠牲は所有する最上位施設を生成します。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "発見は時間とともに成長し、資金、ボット、施設生産量、パネル寿命を強化します。関連スキルは解放時に発見向けの効果に変わります。"
+      "value": "発見は施設を強化します。資金・ボット用の高揚、パネル寿命用の悟りを順に解除すると、新しいバーから前のバーへ進捗が転送されます。関連スキルは解除後に変化します。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "アボカトに発見速度と初期パワーの恒久アップグレードを追加しました。"
+      "value": "アボカトの折りたたみカテゴリに、共通の発見速度と個別の強化アップグレードを追加。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "獲得した開発者オプションのクラウドでの保持、オーグメントのスキルポイント計算、デバッグでの負の調整、プロモーションのローテーションを修正しました。"
+      "value": "初回の量子以降、新しい周回は組立ライン1基から始まります。銀河がヘッダーに重なる問題、獲得済み開発者オプションのクラウド保持、強化のスキルポイント計算、負数のデバッグ調整、プロモーションの巡回を修正。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

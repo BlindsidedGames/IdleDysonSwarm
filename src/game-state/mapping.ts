@@ -233,6 +233,7 @@ export function hydrateGameState(
         nonBlankStringOrNull(source.dateStarted),
       tutorialComplete: toBoolean(source.tutorial),
       firstInfinityComplete: toBoolean(source.firstInfinityDone),
+      ...(typeof source.firstQuantumComplete === 'boolean' ? { firstQuantumComplete: source.firstQuantumComplete } : {}),
       ...(source.idsBotBoost === undefined ? {} : { botBoost: source.idsBotBoost as import('../simulation/botBoost').BotBoostState }),
       navigationVisibility: isRecord(source.bottomNavigationPreferences)
         ? normalizeBottomNavigationVisibility(
@@ -720,6 +721,8 @@ export function dehydrateGameState(
   source.dateStarted = state.meta.createdAtLegacyText
   source.tutorial = state.meta.tutorialComplete
   source.firstInfinityDone = state.meta.firstInfinityComplete
+  if (state.meta.firstQuantumComplete !== undefined) source.firstQuantumComplete = state.meta.firstQuantumComplete
+  else delete source.firstQuantumComplete
   if (state.meta.botBoost !== undefined) source.idsBotBoost = state.meta.botBoost
   else delete source.idsBotBoost
   source.storyButtonToggle =

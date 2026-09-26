@@ -157,7 +157,7 @@ export function galvanizeCanonicalSkill(state: CanonicalGameStateV1, skillId: st
   const definition = isSubskill(skillId) ? undefined : loadDefinitions(state).get(skillId)
   const challenges = infinityChallenges(state)
   if (!definition) return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)
-  if (!hasCompletedInfinityChallenge(state) || isBlankSlateActive(state) || !isUnlocked(definition, state)) {
+  if (!hasCompletedInfinityChallenge(state) || !isUnlocked(definition, state)) {
     return rejected(state, 'GALVANIZATION-LOCKED', 'Galvanization is not available for this skill.')
   }
   if (isGalvanized(state, skillId)) return rejected(state, 'ALREADY-GALVANIZED', 'This skill is already galvanized.')
@@ -253,7 +253,7 @@ export function previewCanonicalSkillCatalog(
       cost: definition.cost,
       galvanized: isGalvanized(state, definition.id),
       galvanizationUnlocked: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state),
-      canGalvanize: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state) && !isBlankSlateActive(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
+      canGalvanize: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
       owned,
       visible: unlocked,
       unlocked,

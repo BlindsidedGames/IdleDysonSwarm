@@ -31,15 +31,15 @@ describe('Wiki patch-note content', () => {
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research.",
-      "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked.",
-      "Added permanent Discovery Speed and Starting Power upgrades in Avocato.",
+      "Discovery boosts facilities. Unlock Elevation for Cash and Bots, then Enlightenment for panel lifetime; each new bar feeds progress into the previous one. Related skills adapt when unlocked.",
+      "Added shared Discovery Speed and separate power upgrades in a collapsible Avocato category.",
       'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.',
       'Fixed Permanent 2× Bots losing its effect after resetting your save.',
       'Fixed old research and cleared skill presets returning after saving or reloading.',
-      'Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures.',
+      'Added a No Science Quantum challenge awarding 2 Catalysts. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.',
       'Rebalanced facility price growth and megastructure costs and production.',
       'The sixth Avotation secret now completes automatically once reached with Discovery unlocked.',
-      'Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.',
+      'After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.',
       'iOS 16 or later is now required.',
     ])
     expect(screen.queryByRole('heading', { name: 'Version 4.1.11' })).toBeNull()

@@ -887,6 +887,22 @@
       "value": "Abbrechen"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "Geld & Bots"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "Geld- und Bot-Gewinne ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -921,6 +937,96 @@
     {
       "type": 0,
       "value": "Entdeckungsdetails"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "Erhebung"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "Erhöht Geld- und Bot-Gewinne von 7× auf 10×. Alle 30 Basisminuten: +0,1 Multiplikator und 30 Minuten Entdeckungsfortschritt."
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "Erhebungsstärke"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 auf den anfänglichen Geld- und Bot-Multiplikator. Boni sind additiv."
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "Erleuchtung"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "Erhöht die Basislebensdauer der Paneele von 20 auf 30 Sekunden. Alle 10 Basisminuten: +0,1 Sekunden und 10 Minuten Erhebungsfortschritt."
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "Erleuchtungsstärke"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 Sekunden anfängliche Paneellebensdauer. Boni sind additiv."
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "Montagelinien, KI-Manager, Server, Rechenzentren und Planeten sind 200 % stärker."
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "+75 % Entdeckungsgeschwindigkeit. Boni sind additiv."
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "Montagelinien, KI-Manager, Server, Rechenzentren und Planeten sind 100 % stärker."
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "+100 % Entdeckungsgeschwindigkeit. Boni sind additiv."
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "Multipliziert Geld zusätzlich zu anderen Geldmultiplikatoren mit der gesamten Entdeckungsgeschwindigkeit."
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "Die Galaxien von Stellare Opfer sind 1.000× besser."
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "Montagelinien, KI-Manager, Server, Rechenzentren und Planeten sind 50 % stärker."
     }
   ],
   "discovery.level": [
@@ -983,6 +1089,20 @@
       "value": "time"
     }
   ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "Nächste Stufe: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Sekunden anfängliche Lebensdauer"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
@@ -1030,13 +1150,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "Startstärke"
+      "value": "Entdeckungsstärke"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "+5 zum Startmultiplikator und zur Basis-Panellebensdauer in Sekunden. Boni werden addiert."
+      "value": "+5 auf den anfänglichen Anlagenmultiplikator. Boni sind additiv."
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,7 +1168,7 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "Geld-, Bot- und Anlagenproduktion ×"
+      "value": "Anlagenproduktion ×"
     },
     {
       "type": 1,
@@ -1059,6 +1179,12 @@
     {
       "type": 0,
       "value": "Der Kauf konnte nicht gespeichert werden. Deine Punkte bleiben erhalten. Versuche es erneut."
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "Forschung und Wissenschaft werden dauerhaft ersetzt."
     }
   ],
   "discovery.resetRule": [
@@ -1388,7 +1514,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "10× Geld-, Bot- und Anlagenproduktion. 10 Sekunden Basis-Panellebensdauer."
+      "value": "10× Anlagenproduktion. 7× Geld- und Bot-Gewinne. 20 Sekunden Basislebensdauer der Paneele."
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "-Abschlüsse"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "-Geschwindigkeit"
     }
   ],
   "discovery.totalBots": [
@@ -1401,6 +1547,12 @@
     {
       "type": 0,
       "value": "Entdeckung freischalten"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "Entdeckungsverbesserungen"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -14623,7 +14775,7 @@
   "wiki.discovery.overview": [
     {
       "type": 0,
-      "value": "Entdeckung beginnt auf "
+      "value": "Entdeckung beginnt mit "
     },
     {
       "type": 8,
@@ -14631,13 +14783,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Stufe 1"
+          "value": "10× Anlagenproduktion"
         }
       ]
     },
     {
       "type": 0,
-      "value": " mit "
+      "value": ", "
     },
     {
       "type": 8,
@@ -14645,7 +14797,7 @@
       "children": [
         {
           "type": 0,
-          "value": "10× Geld-, Bot- und Anlagenproduktion"
+          "value": "7× Geld- und Bot-Gewinnen"
         }
       ]
     },
@@ -14659,13 +14811,13 @@
       "children": [
         {
           "type": 0,
-          "value": "10 Sekunden Basis-Panellebensdauer"
+          "value": "20 Sekunden Basislebensdauer der Paneele"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Jeder Abschluss erhöht Multiplikator und Basislebensdauer um "
+      "value": ". Jeder stündliche Basisabschluss erhöht den Anlagenmultiplikator um "
     },
     {
       "type": 8,
@@ -14673,13 +14825,13 @@
       "children": [
         {
           "type": 0,
-          "value": "0.1"
+          "value": "0,1"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Bei Grundtempo dauert ein Abschluss eine Stunde. Entdeckung benötigt weder Wissenschaftler noch Ressourcen."
+      "value": ". Anlagen- und Bot-Boni gelten beide für Montagelinien. Entdeckung benötigt weder Wissenschaftler noch Ressourcen."
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14785,7 +14937,7 @@
   "wiki.discovery.upgrades": [
     {
       "type": 0,
-      "value": "In Avocato fügt "
+      "value": "Bei Avocato kostet "
     },
     {
       "type": 8,
@@ -14793,13 +14945,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Entdeckungstempo"
+          "value": "Erhebung"
         }
       ]
     },
     {
       "type": 0,
-      "value": " pro Kauf "
+      "value": " "
     },
     {
       "type": 8,
@@ -14807,13 +14959,13 @@
       "children": [
         {
           "type": 0,
-          "value": "25% Tempo"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " hinzu. "
+      "value": ", erhöht Geld und Bots auf "
     },
     {
       "type": 8,
@@ -14821,13 +14973,111 @@
       "children": [
         {
           "type": 0,
-          "value": "Startstärke"
+          "value": "10×"
         }
       ]
     },
     {
       "type": 0,
-      "value": " fügt "
+      "value": " und schließt alle "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 Basisminuten"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ab: +0,1 Multiplikator und 30 Minuten Entdeckungsfortschritt. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Erleuchtung"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " kostet "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", erhöht die Basislebensdauer auf "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 Sekunden"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " und schließt alle "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10 Basisminuten"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ab: +0,1 Sekunden und 10 Minuten Erhebungsfortschritt. Übertragungen können frühere Balken abschließen und bewahren überschüssigen Fortschritt. Geschwindigkeitsboni des Fähigkeitsbaums gelten zu "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100 % / 50 % / 25 %"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; andere Geschwindigkeitsboni gelten vollständig. Übertragener Fortschritt wird nicht mit Geschwindigkeit multipliziert. Gemeinsame Geschwindigkeitskäufe geben "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25 %"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; jeder separate Stärkekauf erhöht seinen Anfangsmultiplikator oder seine Lebensdauer um "
     },
     {
       "type": 8,
@@ -14841,7 +15091,7 @@
     },
     {
       "type": 0,
-      "value": " zum Startmultiplikator und zur Basis-Panellebensdauer hinzu, auch sofort im laufenden Durchgang. Jedes Upgrade kostet unabhängig "
+      "value": ". Wiederholbare Kosten steigen unabhängig: "
     },
     {
       "type": 8,
@@ -14849,13 +15099,13 @@
       "children": [
         {
           "type": 0,
-          "value": "1, 2, 3… Transzendenzpunkte"
+          "value": "1, 2, 3… TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Boni werden addiert."
+      "value": ". Boni sind additiv."
     }
   ],
   "wiki.discovery.upgrades-title": [
@@ -15713,25 +15963,25 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Die Quantenherausforderung Ohne Wissenschaft gewährt 2 Katalysatoren. Stellare Opfer erzeugt jetzt deine höchste vorhandene Anlage, einschließlich Megastrukturen."
+      "value": "Quantum-Herausforderung Ohne Wissenschaft mit 2 Katalysatoren als Belohnung hinzugefügt. Frakturieren funktioniert während Herausforderungen und zeigt den Effekt vorab. Stellare Opfer erzeugt die höchste besessene Anlage."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "Entdeckung wächst mit der Zeit und steigert Geld, Bots, Anlagenproduktion und Panel-Lebensdauer. Zugehörige Skills passen sich bei der Freischaltung an."
+      "value": "Entdeckung verstärkt Anlagen. Schalte Erhebung für Geld und Bots und dann Erleuchtung für Paneellebensdauer frei; jeder neue Balken überträgt Fortschritt auf den vorherigen. Betroffene Fähigkeiten passen sich beim Freischalten an."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "Dauerhafte Upgrades für Entdeckungstempo und Startstärke bei Avocato hinzugefügt."
+      "value": "Gemeinsame Entdeckungsgeschwindigkeit und getrennte Stärkeverbesserungen in einer einklappbaren Avocato-Kategorie hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Cloud-Erhalt verdienter Entwickleroptionen, Fertigkeitspunktzählung für Erweiterungen, negative Debug-Anpassungen und Werberotation wurden korrigiert."
+      "value": "Nach deinem ersten Quantum beginnen neue Durchläufe mit einer Montagelinie. Behoben: Galaxien vor der Kopfzeile, Cloud-Erhalt verdienter Entwickleroptionen, Fähigkeitspunktzählung für Augmente, negative Debug-Anpassungen und Werberotation."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

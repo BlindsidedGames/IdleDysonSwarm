@@ -1,3 +1,4 @@
+import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
 import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
@@ -374,7 +375,7 @@ function retainedFacilities(
   return {
     ...EMPTY_FACILITIES,
     assembly_lines: [
-      0,
+      hasCompletedQuantum(state) && !state.infinity.retainedFacilities.assembly_lines ? 1 : 0,
       state.infinity.retainedFacilities.assembly_lines ? 10 : 0,
     ],
     ai_managers: [

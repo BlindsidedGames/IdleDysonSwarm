@@ -887,6 +887,22 @@
       "value": "Cancel"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "Cash & Bots"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "Cash & Bot gains ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -921,6 +937,96 @@
     {
       "type": 0,
       "value": "Discovery details"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "Elevation"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "Raises Cash and Bot gains from 7× to 10×. Every 30 base minutes: +0.1 multiplier and 30 minutes of Discovery progress."
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "Elevation Power"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 starting Cash and Bot multiplier. Bonuses are additive."
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "Enlightenment"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "Raises base panel lifetime from 20 to 30 seconds. Every 10 base minutes: +0.1 seconds and 10 minutes of Elevation progress."
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "Enlightenment Power"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 seconds starting panel lifetime. Bonuses are additive."
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "+75% Discovery speed. Bonuses are additive."
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "100% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "+100% Discovery speed. Bonuses are additive."
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "Multiplies Cash by total Discovery speed alongside other Cash multipliers."
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "Stellar Sacrifices Galaxies are 1,000× better."
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "50% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
     }
   ],
   "discovery.level": [
@@ -983,6 +1089,20 @@
       "value": "time"
     }
   ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "Next: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " seconds starting lifetime"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
@@ -1030,13 +1150,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "Starting Power"
+      "value": "Discovery Power"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "+5 starting multiplier and base panel-lifetime seconds. Bonuses are additive."
+      "value": "+5 starting facility multiplier. Bonuses are additive."
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,7 +1168,7 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "Cash, Bots & facility production ×"
+      "value": "Facility production ×"
     },
     {
       "type": 1,
@@ -1059,6 +1179,12 @@
     {
       "type": 0,
       "value": "Purchase could not be saved. Your points have been kept. Try again."
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "Research and Science will be permanently replaced."
     }
   ],
   "discovery.resetRule": [
@@ -1388,7 +1514,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "10× Cash, Bots & facility production. 10-second base panel lifetime."
+      "value": "10× facility production. 7× Cash and Bot gains. 20-second base panel lifetime."
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " completions"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " speed"
     }
   ],
   "discovery.totalBots": [
@@ -1401,6 +1547,12 @@
     {
       "type": 0,
       "value": "Unlock Discovery"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "Discovery upgrades"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -14623,7 +14775,7 @@
   "wiki.discovery.overview": [
     {
       "type": 0,
-      "value": "Discovery starts at "
+      "value": "Discovery starts with "
     },
     {
       "type": 8,
@@ -14631,13 +14783,13 @@
       "children": [
         {
           "type": 0,
-          "value": "level 1"
+          "value": "10× facility production"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", with "
+      "value": ", "
     },
     {
       "type": 8,
@@ -14645,7 +14797,7 @@
       "children": [
         {
           "type": 0,
-          "value": "10× Cash, Bot and facility production"
+          "value": "7× Cash and Bot gains"
         }
       ]
     },
@@ -14659,13 +14811,13 @@
       "children": [
         {
           "type": 0,
-          "value": "10-second base panel lifetime"
+          "value": "20-second base panel lifetime"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Each completion adds "
+      "value": ". Each hourly base completion adds "
     },
     {
       "type": 8,
@@ -14679,7 +14831,7 @@
     },
     {
       "type": 0,
-      "value": " to both the multiplier and base lifetime. A completion takes one hour at base speed. Discovery needs no scientists or resources."
+      "value": " to the facility multiplier. Facility and Bot bonuses both apply to Assembly Line output. Discovery needs no scientists or resources."
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14793,13 +14945,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Discovery Speed"
+          "value": "Elevation"
         }
       ]
     },
     {
       "type": 0,
-      "value": " adds "
+      "value": " costs "
     },
     {
       "type": 8,
@@ -14807,13 +14959,13 @@
       "children": [
         {
           "type": 0,
-          "value": "25% speed"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " per purchase. "
+      "value": ", raises Cash and Bots to "
     },
     {
       "type": 8,
@@ -14821,13 +14973,111 @@
       "children": [
         {
           "type": 0,
-          "value": "Starting Power"
+          "value": "10×"
         }
       ]
     },
     {
       "type": 0,
-      "value": " adds "
+      "value": ", and completes every "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 base minutes"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0.1 multiplier and 30 minutes of Discovery progress. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Enlightenment"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " costs "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", raises base lifetime to "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 seconds"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", and completes every "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10 base minutes"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0.1 seconds and 10 minutes of Elevation progress. Transfers can complete earlier bars and preserve excess progress. Skill-tree speed bonuses apply at "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; other speed bonuses apply fully. Transferred progress is not multiplied by speed. Shared speed purchases add "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; each separate power purchase adds "
     },
     {
       "type": 8,
@@ -14841,7 +15091,7 @@
     },
     {
       "type": 0,
-      "value": " to the starting multiplier and base panel lifetime, including immediately in the current run. Each upgrade costs "
+      "value": " to its starting multiplier or lifetime. Repeatable costs are independently "
     },
     {
       "type": 8,
@@ -14849,13 +15099,13 @@
       "children": [
         {
           "type": 0,
-          "value": "1, 2, 3… Transcendence Points"
+          "value": "1, 2, 3… TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " independently. Bonuses are additive."
+      "value": ". Bonuses are additive."
     }
   ],
   "wiki.discovery.upgrades-title": [
@@ -15713,25 +15963,25 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures."
+      "value": "Added a No Science Quantum challenge awarding 2 Catalysts. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked."
+      "value": "Discovery boosts facilities. Unlock Elevation for Cash and Bots, then Enlightenment for panel lifetime; each new bar feeds progress into the previous one. Related skills adapt when unlocked."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "Added permanent Discovery Speed and Starting Power upgrades in Avocato."
+      "value": "Added shared Discovery Speed and separate power upgrades in a collapsible Avocato category."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation."
+      "value": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

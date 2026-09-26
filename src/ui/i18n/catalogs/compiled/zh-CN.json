@@ -887,6 +887,22 @@
       "value": "取消"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "现金与机器人"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "现金与机器人收益 ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -921,6 +937,96 @@
     {
       "type": 0,
       "value": "发现详情"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "升华"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "将现金与机器人收益从7倍提升至10倍。每30个基础分钟完成一次：倍率+0.1，并为发现增加30分钟进度。"
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "升华强度"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "现金与机器人的初始倍率+5。加成为加算。"
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "启悟"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "将面板基础寿命从20秒提升至30秒。每10个基础分钟完成一次：寿命+0.1秒，并为升华增加10分钟进度。"
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "启悟强度"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "面板初始寿命+5秒。加成为加算。"
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高200%。"
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "发现速度+75%。加成为加算。"
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高100%。"
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "发现速度+100%。加成为加算。"
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "将现金收益乘以总发现速度，同时保留其他现金倍率。"
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "恒星献祭的星系效果提高至1,000倍。"
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高50%。"
     }
   ],
   "discovery.level": [
@@ -983,6 +1089,20 @@
       "value": "time"
     }
   ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "下一级：初始寿命"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "秒"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
@@ -1030,13 +1150,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "初始强度"
+      "value": "发现强度"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "初始倍率和面板基础寿命秒数 +5。加成为加法叠加。"
+      "value": "设施初始倍率+5。加成为加算。"
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,7 +1168,7 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "现金、机器人和设施产量 ×"
+      "value": "设施产量 ×"
     },
     {
       "type": 1,
@@ -1059,6 +1179,12 @@
     {
       "type": 0,
       "value": "无法保存购买。点数已保留，请重试。"
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "研究与科学将被永久替换。"
     }
   ],
   "discovery.resetRule": [
@@ -1388,7 +1514,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "现金、机器人和设施产量 ×10。面板基础寿命为10秒。"
+      "value": "设施产量10倍。现金与机器人收益7倍。面板基础寿命20秒。"
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "完成次数"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "速度"
     }
   ],
   "discovery.totalBots": [
@@ -1401,6 +1547,12 @@
     {
       "type": 0,
       "value": "解锁发现"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "发现升级"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -14623,7 +14775,7 @@
   "wiki.discovery.overview": [
     {
       "type": 0,
-      "value": "发现从"
+      "value": "发现初始提供"
     },
     {
       "type": 8,
@@ -14631,13 +14783,13 @@
       "children": [
         {
           "type": 0,
-          "value": "等级1"
+          "value": "10倍设施产量"
         }
       ]
     },
     {
       "type": 0,
-      "value": "开始，提供"
+      "value": "、"
     },
     {
       "type": 8,
@@ -14645,7 +14797,7 @@
       "children": [
         {
           "type": 0,
-          "value": "现金、机器人和设施产量 ×10"
+          "value": "7倍现金与机器人收益"
         }
       ]
     },
@@ -14659,13 +14811,13 @@
       "children": [
         {
           "type": 0,
-          "value": "10秒面板基础寿命"
+          "value": "20秒面板基础寿命"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。每次完成会让倍率和基础寿命各增加"
+      "value": "。每个基础小时完成一次，设施倍率增加"
     },
     {
       "type": 8,
@@ -14679,7 +14831,7 @@
     },
     {
       "type": 0,
-      "value": "。基础速度下每小时完成一次。发现不需要科学家或资源。"
+      "value": "。设施与机器人加成均作用于装配线产出。发现不需要科学家或资源。"
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14785,7 +14937,7 @@
   "wiki.discovery.upgrades": [
     {
       "type": 0,
-      "value": "在牛油果猫中，"
+      "value": "在Avocato中，"
     },
     {
       "type": 8,
@@ -14793,13 +14945,13 @@
       "children": [
         {
           "type": 0,
-          "value": "发现速度"
+          "value": "升华"
         }
       ]
     },
     {
       "type": 0,
-      "value": "每次购买提供"
+      "value": "花费"
     },
     {
       "type": 8,
@@ -14807,13 +14959,13 @@
       "children": [
         {
           "type": 0,
-          "value": "速度 +25%"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。"
+      "value": "，将现金与机器人提升至"
     },
     {
       "type": 8,
@@ -14821,13 +14973,111 @@
       "children": [
         {
           "type": 0,
-          "value": "初始强度"
+          "value": "10倍"
         }
       ]
     },
     {
       "type": 0,
-      "value": "让初始倍率和面板基础寿命增加"
+      "value": "，每"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30个基础分钟"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "完成一次：倍率+0.1，并增加30分钟发现进度。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "启悟"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "花费"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，将基础寿命提升至"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，每"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10个基础分钟"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "完成一次：寿命+0.1秒，并增加10分钟升华进度。传递的进度可以使前面的进度条完成，并保留溢出部分。技能树速度加成分别按"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "生效，其他速度加成全额生效。传递进度不乘以速度。共享速度升级增加"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "；各项独立强度升级为相应的初始倍率或寿命增加"
     },
     {
       "type": 8,
@@ -14841,7 +15091,7 @@
     },
     {
       "type": 0,
-      "value": "，并立即作用于当前周目。两种升级的价格独立递增，分别为"
+      "value": "。重复购买的价格独立递增："
     },
     {
       "type": 8,
@@ -14849,13 +15099,13 @@
       "children": [
         {
           "type": 0,
-          "value": "1、2、3…超越点数"
+          "value": "1、2、3… TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。加成为加法叠加。"
+      "value": "。加成为加算。"
     }
   ],
   "wiki.discovery.upgrades-title": [
@@ -15713,25 +15963,25 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "新增奖励2个催化剂的无科学量子挑战。恒星牺牲现在会生成你已拥有的最高级设施，包括巨型结构。"
+      "value": "新增无科学量子挑战，奖励2个催化剂。挑战中也可碎裂技能，并可预览效果。恒星献祭会生成当前拥有的最高级设施。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "发现随时间成长，提升现金、机器人、设施产量和面板寿命。相关技能会在解锁后调整效果。"
+      "value": "发现增强设施。解锁升华来增强现金与机器人，再解锁启悟来延长面板寿命；每条新进度条会向前一条传递进度。相关技能会在解锁后调整效果。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "在 Avocato 处新增发现速度与初始强度的永久升级。"
+      "value": "在Avocato的可折叠分类中新增共享发现速度与各项独立强度升级。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "修复了云端保留已获得的开发者选项、强化技能点统计、负数调试调整和推广轮换的问题。"
+      "value": "首次量子后，新一轮从一条装配线开始。修复了星系遮挡顶部面板、已获得的开发者选项在云端丢失、强化技能点计数、负数调试调整及推广轮换问题。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

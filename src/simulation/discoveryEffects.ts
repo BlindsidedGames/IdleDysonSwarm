@@ -1,7 +1,7 @@
 import { regulatedAcademiaPercentagePoints } from './moneyScienceSkillEffects'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
-import { DISCOVERY_TUNING as T, discoveryGrowingBonus as G, discoveryBaseStrength, discoveryProductionMultiplier, EMPTY_DISCOVERY } from './discovery'
+import { DISCOVERY_TUNING as T, discoveryGrowingBonus as G, discoveryBaseStrength, discoveryCashBotsStrength, discoveryPanelLifetime, discoveryProductionMultiplier, EMPTY_DISCOVERY } from './discovery'
 import { avocadoDysonMultiplier } from './dysonPrestigeEffects'
 import { hasCashScienceSubskill, hasSrsAugment } from './skillSubskills'
 import { stellarMemoryMultiplier } from './srsAugments'
@@ -13,10 +13,13 @@ export interface DiscoveryEffects {
   readonly speed: number
   readonly sources: readonly { readonly id: string; readonly bonus: number }[]
   readonly enhancement: number
+  readonly elevationSpeed: number
+  readonly enlightenmentSpeed: number
+  readonly cashBotsMultiplier: number
+  readonly lifetime: number
   readonly strength: number
   readonly multiplier: number
   readonly nextMultiplier: number
-  readonly secondsToNext: number
 }
 
 /** Shared authority for simulation, previews and the UI. No research state is read. */
@@ -56,13 +59,20 @@ export function deriveDiscoveryEffects(state: CanonicalGameStateV1, snapshot: Re
     add('secrets.discovery-speed', T.speedSecrets.filter(n => state.infinity.secretsOfTheUniverse >= BigInt(n)).length * 0.05)
   }
   const speed = 1 + sources.reduce((sum, source) => sum + source.bonus, 0)
+  const sharedIds = new Set(['discovery.speed', 'quantum.science-booster', 'avocado', 'secrets.discovery-speed'])
+  const shared = sources.filter(s => sharedIds.has(s.id)).reduce((total, s) => total + s.bonus, 0)
+  const tree = sources.filter(s => !sharedIds.has(s.id)).reduce((total, s) => total + s.bonus, 0)
   const enhancement = discovery.unlocked ?
     (owned.has('regulatedAcademia') ? regulatedAcademiaPercentagePoints(Number(state.skills.fragments)) / 100 : 0) +
     T.strengthSecrets.filter(n => state.infinity.secretsOfTheUniverse >= BigInt(n)).length * 0.02 : 0
   return {
-    speed, sources, enhancement, strength: discoveryBaseStrength(discovery),
+    speed, sources, enhancement,
+    elevationSpeed: 1 + shared + tree * T.elevation.treeWeight,
+    enlightenmentSpeed: 1 + shared + tree * T.enlightenment.treeWeight,
+    cashBotsMultiplier: 1 + (discoveryCashBotsStrength(discovery) - 1) * (1 + enhancement),
+    lifetime: discoveryPanelLifetime(discovery),
+    strength: discoveryBaseStrength(discovery),
     multiplier: discoveryProductionMultiplier(discovery, enhancement),
     nextMultiplier: discoveryProductionMultiplier({ ...discovery, completions: discovery.completions + 1n }, enhancement),
-    secondsToNext: (T.completionProgress - discovery.progress) / speed,
   }
 }

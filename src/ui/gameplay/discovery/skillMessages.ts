@@ -55,3 +55,14 @@ export const discoverySkillFlavour = defineMessages({
   scientificPlanets: { id: 'discovery.skill.scientificPlanets.flavour', defaultMessage: 'Teach your Bots to discover planets. Ask them nicely not to misplace any.' },
   shouldersOfTheFallen: { id: 'discovery.skill.shouldersOfTheFallen.flavour', defaultMessage: 'A relic of a lost civilization. Excellent shoulders. Terrible instruction manual.' },
 })
+
+/** Only effects whose Fractured wording differs in the Discovery phase. */
+export const discoveryFracturedEffects = defineMessages({
+  coldFusion: { id: 'discovery.fractured.coldFusion', defaultMessage: '+75% Discovery speed. Bonuses are additive.' },
+  scientificDominance: { id: 'discovery.fractured.scientificDominance', defaultMessage: '+100% Discovery speed. Bonuses are additive.' },
+  tasteOfPower: { id: 'discovery.fractured.tasteOfPower', defaultMessage: '50% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets.' },
+  indulgingInPower: { id: 'discovery.fractured.indulgingInPower', defaultMessage: '100% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets.' },
+  addictionToPower: { id: 'discovery.fractured.addictionToPower', defaultMessage: '200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets.' },
+  stellarObliteration: { id: 'discovery.fractured.stellarObliteration', defaultMessage: 'Stellar Sacrifices Galaxies are 1,000× better.' },
+  shouldersOfPrecursors: { id: 'discovery.fractured.shouldersOfPrecursors', defaultMessage: 'Multiplies Cash by total Discovery speed alongside other Cash multipliers.' },
+})

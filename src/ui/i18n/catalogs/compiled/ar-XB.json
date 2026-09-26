@@ -1927,6 +1927,38 @@
       "value": "‬"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐsɥ & Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐsɥ & Ԑoʇ ƃɐıus ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -2005,6 +2037,216 @@
     {
       "type": 0,
       "value": "ᗡısɔoʌǝɹʎ pǝʇɐıʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝʅǝʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚɐısǝs Ↄɐsɥ ɐup Ԑoʇ ƃɐıus ɟɹoɯ 7× ʇo 10×. Ǝʌǝɹʎ 30 qɐsǝ ɯıunʇǝs: +0.1 ɯnʅʇıdʅıǝɹ ɐup 30 ɯıunʇǝs oɟ ᗡısɔoʌǝɹʎ dɹoƃɹǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝʅǝʌɐʇıou Ԁoʍǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+5 sʇɐɹʇıuƃ Ↄɐsɥ ɐup Ԑoʇ ɯnʅʇıdʅıǝɹ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝuʅıƃɥʇǝuɯǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚɐısǝs qɐsǝ dɐuǝʅ ʅıɟǝʇıɯǝ ɟɹoɯ 20 ʇo 30 sǝɔoups. Ǝʌǝɹʎ 10 qɐsǝ ɯıunʇǝs: +0.1 sǝɔoups ɐup 10 ɯıunʇǝs oɟ Ǝʅǝʌɐʇıou dɹoƃɹǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝuʅıƃɥʇǝuɯǝuʇ Ԁoʍǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+5 sǝɔoups sʇɐɹʇıuƃ dɐuǝʅ ʅıɟǝʇıɯǝ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "200% sʇɹouƃǝɹ ∀ssǝɯqʅʎ ⅂ıuǝs, ∀I Wɐuɐƃǝɹs, Sǝɹʌǝɹs, ᗡɐʇɐ Ↄǝuʇǝɹs ɐup Ԁʅɐuǝʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+75% ᗡısɔoʌǝɹʎ sdǝǝp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "100% sʇɹouƃǝɹ ∀ssǝɯqʅʎ ⅂ıuǝs, ∀I Wɐuɐƃǝɹs, Sǝɹʌǝɹs, ᗡɐʇɐ Ↄǝuʇǝɹs ɐup Ԁʅɐuǝʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+100% ᗡısɔoʌǝɹʎ sdǝǝp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wnʅʇıdʅıǝs Ↄɐsɥ qʎ ʇoʇɐʅ ᗡısɔoʌǝɹʎ sdǝǝp ɐʅouƃsıpǝ oʇɥǝɹ Ↄɐsɥ ɯnʅʇıdʅıǝɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs ⅁ɐʅɐxıǝs ɐɹǝ 1,000× qǝʇʇǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "50% sʇɹouƃǝɹ ∀ssǝɯqʅʎ ⅂ıuǝs, ∀I Wɐuɐƃǝɹs, Sǝɹʌǝɹs, ᗡɐʇɐ Ↄǝuʇǝɹs ɐup Ԁʅɐuǝʇs."
     },
     {
       "type": 0,
@@ -2119,6 +2361,28 @@
       "value": "‬"
     }
   ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " sǝɔoups sʇɐɹʇıuƃ ʅıɟǝʇıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
@@ -2202,7 +2466,7 @@
     },
     {
       "type": 0,
-      "value": "Sʇɐɹʇıuƃ Ԁoʍǝɹ"
+      "value": "ᗡısɔoʌǝɹʎ Ԁoʍǝɹ"
     },
     {
       "type": 0,
@@ -2216,7 +2480,7 @@
     },
     {
       "type": 0,
-      "value": "+5 sʇɐɹʇıuƃ ɯnʅʇıdʅıǝɹ ɐup qɐsǝ dɐuǝʅ-ʅıɟǝʇıɯǝ sǝɔoups. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+      "value": "+5 sʇɐɹʇıuƃ ɟɐɔıʅıʇʎ ɯnʅʇıdʅıǝɹ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
     },
     {
       "type": 0,
@@ -2244,7 +2508,7 @@
     },
     {
       "type": 0,
-      "value": "Ↄɐsɥ, Ԑoʇs & ɟɐɔıʅıʇʎ dɹopnɔʇıou ×"
+      "value": "Ⅎɐɔıʅıʇʎ dɹopnɔʇıou ×"
     },
     {
       "type": 1,
@@ -2263,6 +2527,20 @@
     {
       "type": 0,
       "value": "Ԁnɹɔɥɐsǝ ɔonʅp uoʇ qǝ sɐʌǝp. ⅄onɹ doıuʇs ɥɐʌǝ qǝǝu ʞǝdʇ. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ ɐup Sɔıǝuɔǝ ʍıʅʅ qǝ dǝɹɯɐuǝuʇʅʎ ɹǝdʅɐɔǝp."
     },
     {
       "type": 0,
@@ -3032,7 +3310,43 @@
     },
     {
       "type": 0,
-      "value": "10× Ↄɐsɥ, Ԑoʇs & ɟɐɔıʅıʇʎ dɹopnɔʇıou. 10-sǝɔoup qɐsǝ dɐuǝʅ ʅıɟǝʇıɯǝ."
+      "value": "10× ɟɐɔıʅıʇʎ dɹopnɔʇıou. 7× Ↄɐsɥ ɐup Ԑoʇ ƃɐıus. 20-sǝɔoup qɐsǝ dɐuǝʅ ʅıɟǝʇıɯǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ɔoɯdʅǝʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " sdǝǝp"
     },
     {
       "type": 0,
@@ -3061,6 +3375,20 @@
     {
       "type": 0,
       "value": "∩uʅoɔʞ ᗡısɔoʌǝɹʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısɔoʌǝɹʎ ndƃɹɐpǝs"
     },
     {
       "type": 0,
@@ -29819,7 +30147,7 @@
     },
     {
       "type": 0,
-      "value": "ᗡısɔoʌǝɹʎ sʇɐɹʇs ɐʇ "
+      "value": "ᗡısɔoʌǝɹʎ sʇɐɹʇs ʍıʇɥ "
     },
     {
       "type": 8,
@@ -29827,13 +30155,13 @@
       "children": [
         {
           "type": 0,
-          "value": "ʅǝʌǝʅ 1"
+          "value": "10× ɟɐɔıʅıʇʎ dɹopnɔʇıou"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", ʍıʇɥ "
+      "value": ", "
     },
     {
       "type": 8,
@@ -29841,7 +30169,7 @@
       "children": [
         {
           "type": 0,
-          "value": "10× Ↄɐsɥ, Ԑoʇ ɐup ɟɐɔıʅıʇʎ dɹopnɔʇıou"
+          "value": "7× Ↄɐsɥ ɐup Ԑoʇ ƃɐıus"
         }
       ]
     },
@@ -29855,13 +30183,13 @@
       "children": [
         {
           "type": 0,
-          "value": "10-sǝɔoup qɐsǝ dɐuǝʅ ʅıɟǝʇıɯǝ"
+          "value": "20-sǝɔoup qɐsǝ dɐuǝʅ ʅıɟǝʇıɯǝ"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Ǝɐɔɥ ɔoɯdʅǝʇıou ɐpps "
+      "value": ". Ǝɐɔɥ ɥonɹʅʎ qɐsǝ ɔoɯdʅǝʇıou ɐpps "
     },
     {
       "type": 8,
@@ -29875,7 +30203,7 @@
     },
     {
       "type": 0,
-      "value": " ʇo qoʇɥ ʇɥǝ ɯnʅʇıdʅıǝɹ ɐup qɐsǝ ʅıɟǝʇıɯǝ. ∀ ɔoɯdʅǝʇıou ʇɐʞǝs ouǝ ɥonɹ ɐʇ qɐsǝ sdǝǝp. ᗡısɔoʌǝɹʎ uǝǝps uo sɔıǝuʇısʇs oɹ ɹǝsonɹɔǝs."
+      "value": " ʇo ʇɥǝ ɟɐɔıʅıʇʎ ɯnʅʇıdʅıǝɹ. Ⅎɐɔıʅıʇʎ ɐup Ԑoʇ qounsǝs qoʇɥ ɐddʅʎ ʇo ∀ssǝɯqʅʎ ⅂ıuǝ onʇdnʇ. ᗡısɔoʌǝɹʎ uǝǝps uo sɔıǝuʇısʇs oɹ ɹǝsonɹɔǝs."
     },
     {
       "type": 0,
@@ -30037,13 +30365,13 @@
       "children": [
         {
           "type": 0,
-          "value": "ᗡısɔoʌǝɹʎ Sdǝǝp"
+          "value": "Ǝʅǝʌɐʇıou"
         }
       ]
     },
     {
       "type": 0,
-      "value": " ɐpps "
+      "value": " ɔosʇs "
     },
     {
       "type": 8,
@@ -30051,13 +30379,13 @@
       "children": [
         {
           "type": 0,
-          "value": "25% sdǝǝp"
+          "value": "3 ⊥Ԁ"
         }
       ]
     },
     {
       "type": 0,
-      "value": " dǝɹ dnɹɔɥɐsǝ. "
+      "value": ", ɹɐısǝs Ↄɐsɥ ɐup Ԑoʇs ʇo "
     },
     {
       "type": 8,
@@ -30065,13 +30393,111 @@
       "children": [
         {
           "type": 0,
-          "value": "Sʇɐɹʇıuƃ Ԁoʍǝɹ"
+          "value": "10×"
         }
       ]
     },
     {
       "type": 0,
-      "value": " ɐpps "
+      "value": ", ɐup ɔoɯdʅǝʇǝs ǝʌǝɹʎ "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 qɐsǝ ɯıunʇǝs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0.1 ɯnʅʇıdʅıǝɹ ɐup 30 ɯıunʇǝs oɟ ᗡısɔoʌǝɹʎ dɹoƃɹǝss. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Ǝuʅıƃɥʇǝuɯǝuʇ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ɔosʇs "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 ⊥Ԁ"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", ɹɐısǝs qɐsǝ ʅıɟǝʇıɯǝ ʇo "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 sǝɔoups"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", ɐup ɔoɯdʅǝʇǝs ǝʌǝɹʎ "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10 qɐsǝ ɯıunʇǝs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0.1 sǝɔoups ɐup 10 ɯıunʇǝs oɟ Ǝʅǝʌɐʇıou dɹoƃɹǝss. ⊥ɹɐusɟǝɹs ɔɐu ɔoɯdʅǝʇǝ ǝɐɹʅıǝɹ qɐɹs ɐup dɹǝsǝɹʌǝ ǝxɔǝss dɹoƃɹǝss. Sʞıʅʅ-ʇɹǝǝ sdǝǝp qounsǝs ɐddʅʎ ɐʇ "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; oʇɥǝɹ sdǝǝp qounsǝs ɐddʅʎ ɟnʅʅʎ. ⊥ɹɐusɟǝɹɹǝp dɹoƃɹǝss ıs uoʇ ɯnʅʇıdʅıǝp qʎ sdǝǝp. Sɥɐɹǝp sdǝǝp dnɹɔɥɐsǝs ɐpp "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; ǝɐɔɥ sǝdɐɹɐʇǝ doʍǝɹ dnɹɔɥɐsǝ ɐpps "
     },
     {
       "type": 8,
@@ -30085,7 +30511,7 @@
     },
     {
       "type": 0,
-      "value": " ʇo ʇɥǝ sʇɐɹʇıuƃ ɯnʅʇıdʅıǝɹ ɐup qɐsǝ dɐuǝʅ ʅıɟǝʇıɯǝ, ıuɔʅnpıuƃ ıɯɯǝpıɐʇǝʅʎ ıu ʇɥǝ ɔnɹɹǝuʇ ɹnu. Ǝɐɔɥ ndƃɹɐpǝ ɔosʇs "
+      "value": " ʇo ıʇs sʇɐɹʇıuƃ ɯnʅʇıdʅıǝɹ oɹ ʅıɟǝʇıɯǝ. ᴚǝdǝɐʇɐqʅǝ ɔosʇs ɐɹǝ ıupǝdǝupǝuʇʅʎ "
     },
     {
       "type": 8,
@@ -30093,13 +30519,13 @@
       "children": [
         {
           "type": 0,
-          "value": "1, 2, 3… ⊥ɹɐusɔǝupǝuɔǝ Ԁoıuʇs"
+          "value": "1, 2, 3… ⊥Ԁ"
         }
       ]
     },
     {
       "type": 0,
-      "value": " ıupǝdǝupǝuʇʅʎ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+      "value": ". Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
     },
     {
       "type": 0,
@@ -31597,7 +32023,7 @@
     },
     {
       "type": 0,
-      "value": "∀ppǝp ɐ No Sɔıǝuɔǝ Ònɐuʇnɯ ɔɥɐʅʅǝuƃǝ ɐʍɐɹpıuƃ 2 Ↄɐʇɐʅʎsʇs. Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs uoʍ ɔɹǝɐʇǝs ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ, ıuɔʅnpıuƃ ɯǝƃɐsʇɹnɔʇnɹǝs."
+      "value": "∀ppǝp ɐ No Sɔıǝuɔǝ Ònɐuʇnɯ ɔɥɐʅʅǝuƃǝ ɐʍɐɹpıuƃ 2 Ↄɐʇɐʅʎsʇs. Ⅎɹɐɔʇnɹıuƃ ʍoɹʞs pnɹıuƃ ɔɥɐʅʅǝuƃǝs ɐup dɹǝʌıǝʍs ıʇs ǝɟɟǝɔʇ. Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs ɔɹǝɐʇǝs ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ."
     },
     {
       "type": 0,
@@ -31611,7 +32037,7 @@
     },
     {
       "type": 0,
-      "value": "ᗡısɔoʌǝɹʎ ƃɹoʍs oʌǝɹ ʇıɯǝ, qoosʇıuƃ Ↄɐsɥ, Ԑoʇs, ɟɐɔıʅıʇʎ dɹopnɔʇıou ɐup dɐuǝʅ ʅıɟǝʇıɯǝ. ᴚǝʅɐʇǝp sʞıʅʅs ɐpɐdʇ ʍɥǝu nuʅoɔʞǝp."
+      "value": "ᗡısɔoʌǝɹʎ qoosʇs ɟɐɔıʅıʇıǝs. ∩uʅoɔʞ Ǝʅǝʌɐʇıou ɟoɹ Ↄɐsɥ ɐup Ԑoʇs, ʇɥǝu Ǝuʅıƃɥʇǝuɯǝuʇ ɟoɹ dɐuǝʅ ʅıɟǝʇıɯǝ; ǝɐɔɥ uǝʍ qɐɹ ɟǝǝps dɹoƃɹǝss ıuʇo ʇɥǝ dɹǝʌıons ouǝ. ᴚǝʅɐʇǝp sʞıʅʅs ɐpɐdʇ ʍɥǝu nuʅoɔʞǝp."
     },
     {
       "type": 0,
@@ -31625,7 +32051,7 @@
     },
     {
       "type": 0,
-      "value": "∀ppǝp dǝɹɯɐuǝuʇ ᗡısɔoʌǝɹʎ Sdǝǝp ɐup Sʇɐɹʇıuƃ Ԁoʍǝɹ ndƃɹɐpǝs ıu ∀ʌoɔɐʇo."
+      "value": "∀ppǝp sɥɐɹǝp ᗡısɔoʌǝɹʎ Sdǝǝp ɐup sǝdɐɹɐʇǝ doʍǝɹ ndƃɹɐpǝs ıu ɐ ɔoʅʅɐdsıqʅǝ ∀ʌoɔɐʇo ɔɐʇǝƃoɹʎ."
     },
     {
       "type": 0,
@@ -31639,7 +32065,7 @@
     },
     {
       "type": 0,
-      "value": "Ⅎıxǝp Ↄʅonp ɹǝʇǝuʇıou oɟ ǝɐɹuǝp ᗡǝʌǝʅodǝɹ Odʇıous, ɐnƃɯǝuʇ Sʞıʅʅ Ԁoıuʇ ɔonuʇıuƃ, uǝƃɐʇıʌǝ pǝqnƃ ɐpɾnsʇɯǝuʇs ɐup dɹoɯoʇıou ɹoʇɐʇıou."
+      "value": "∀ɟʇǝɹ ʎonɹ ɟıɹsʇ Ònɐuʇnɯ, uǝʍ ɹnus sʇɐɹʇ ʍıʇɥ ɐu ∀ssǝɯqʅʎ ⅂ıuǝ. Ⅎıxǝp ƃɐʅɐxıǝs oʌǝɹʅɐddıuƃ ʇɥǝ ɥǝɐpǝɹ, Ↄʅonp ɹǝʇǝuʇıou oɟ ǝɐɹuǝp ᗡǝʌǝʅodǝɹ Odʇıous, ɐnƃɯǝuʇ Sʞıʅʅ Ԁoıuʇ ɔonuʇıuƃ, uǝƃɐʇıʌǝ pǝqnƃ ɐpɾnsʇɯǝuʇs ɐup dɹoɯoʇıou ɹoʇɐʇıou."
     },
     {
       "type": 0,
