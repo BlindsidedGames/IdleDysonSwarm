@@ -2195,5 +2195,11 @@
   "wiki.topic-navigation": "Wikiのトピック",
   "wiki.topics": "トピック",
   "wiki.transcendence.overview": "ボット数が<value>4e242ボット</value>に到達したらアボカトで超越し、以前のレイヤーをリセットして<value>超越ポイントを1</value>獲得できます。1ポイントで<value>発見を解放</value>すると、科学と研究が恒久的に置き換わります。既存の科学や研究レベルは引き継がれません。",
-  "wiki.transcendence.overview-title": "スウォームのその先へ"
+  "wiki.transcendence.overview-title": "スウォームのその先へ",
+  "discovery.completed": "完了回数",
+  "discovery.facilityProduction": "施設生産量",
+  "discovery.rate": "速度",
+  "discovery.nextPanelLifetime": "次のパネル寿命",
+  "discovery.progressPerCompletion": "完了ごと",
+  "discovery.transfer": "{name}：+{time}"
 }

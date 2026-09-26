@@ -22,6 +22,13 @@ export interface DiscoveryEffects {
   readonly nextMultiplier: number
 }
 
+const sharedSpeedSources = new Set(['discovery.speed', 'quantum.science-booster', 'avocado', 'secrets.discovery-speed'])
+
+/** Used by both the rates and their displayed breakdowns. */
+export function discoverySourceWeight(id: string, tier: 'discovery' | 'elevation' | 'enlightenment'): number {
+  return tier === 'discovery' || sharedSpeedSources.has(id) ? 1 : T[tier].treeWeight
+}
+
 /** Shared authority for simulation, previews and the UI. No research state is read. */
 export function deriveDiscoveryEffects(state: CanonicalGameStateV1, snapshot: Readonly<DysonSkillEffectEvaluationSnapshot>): DiscoveryEffects {
   const discovery = state.discovery ?? EMPTY_DISCOVERY
@@ -59,16 +66,13 @@ export function deriveDiscoveryEffects(state: CanonicalGameStateV1, snapshot: Re
     add('secrets.discovery-speed', T.speedSecrets.filter(n => state.infinity.secretsOfTheUniverse >= BigInt(n)).length * 0.05)
   }
   const speed = 1 + sources.reduce((sum, source) => sum + source.bonus, 0)
-  const sharedIds = new Set(['discovery.speed', 'quantum.science-booster', 'avocado', 'secrets.discovery-speed'])
-  const shared = sources.filter(s => sharedIds.has(s.id)).reduce((total, s) => total + s.bonus, 0)
-  const tree = sources.filter(s => !sharedIds.has(s.id)).reduce((total, s) => total + s.bonus, 0)
   const enhancement = discovery.unlocked ?
     (owned.has('regulatedAcademia') ? regulatedAcademiaPercentagePoints(Number(state.skills.fragments)) / 100 : 0) +
     T.strengthSecrets.filter(n => state.infinity.secretsOfTheUniverse >= BigInt(n)).length * 0.02 : 0
   return {
     speed, sources, enhancement,
-    elevationSpeed: 1 + shared + tree * T.elevation.treeWeight,
-    enlightenmentSpeed: 1 + shared + tree * T.enlightenment.treeWeight,
+    elevationSpeed: 1 + sources.reduce((sum, source) => sum + source.bonus * discoverySourceWeight(source.id, 'elevation'), 0),
+    enlightenmentSpeed: 1 + sources.reduce((sum, source) => sum + source.bonus * discoverySourceWeight(source.id, 'enlightenment'), 0),
     cashBotsMultiplier: 1 + (discoveryCashBotsStrength(discovery) - 1) * (1 + enhancement),
     lifetime: discoveryPanelLifetime(discovery),
     strength: discoveryBaseStrength(discovery),

@@ -1,5 +1,11 @@
 import { defineMessages } from 'react-intl'
 export const discoveryMessages = defineMessages({
+  completed: { id: 'discovery.completed', defaultMessage: 'Completions' },
+  facilityProduction: { id: 'discovery.facilityProduction', defaultMessage: 'Facility production' },
+  rate: { id: 'discovery.rate', defaultMessage: 'Speed' },
+  nextPanelLifetime: { id: 'discovery.nextPanelLifetime', defaultMessage: 'Next panel lifetime' },
+  progressPerCompletion: { id: 'discovery.progressPerCompletion', defaultMessage: 'Per completion' },
+  transfer: { id: 'discovery.transfer', defaultMessage: '{name}: +{time}' },
   elevation: { id: 'discovery.elevation', defaultMessage: 'Elevation' },
   enlightenment: { id: 'discovery.enlightenment', defaultMessage: 'Enlightenment' },
   cashBots: { id: 'discovery.cashBots', defaultMessage: 'Cash & Bots' },

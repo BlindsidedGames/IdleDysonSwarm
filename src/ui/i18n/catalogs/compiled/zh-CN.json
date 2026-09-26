@@ -903,6 +903,12 @@
       "value": "value"
     }
   ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "完成次数"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -985,6 +991,12 @@
     {
       "type": 0,
       "value": "面板初始寿命+5秒。加成为加算。"
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "设施产量"
     }
   ],
   "discovery.fractured.addictionToPower": [
@@ -1109,6 +1121,12 @@
       "value": "下一级倍率"
     }
   ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "下次面板寿命"
+    }
+  ],
   "discovery.nextPower": [
     {
       "type": 0,
@@ -1175,10 +1193,22 @@
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "每次完成"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "无法保存购买。点数已保留，请重试。"
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "速度"
     }
   ],
   "discovery.replacementWarning": [
@@ -1541,6 +1571,20 @@
     {
       "type": 0,
       "value": "机器人总数"
+    }
+  ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：+"
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "discovery.unlock": [

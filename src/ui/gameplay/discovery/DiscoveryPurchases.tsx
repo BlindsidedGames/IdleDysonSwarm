@@ -5,7 +5,8 @@ import { DISCOVERY_TUNING, discoveryPurchaseCost, discoveryPurchaseCount, type D
 import { SkillDetailsDialog } from '../skills/SkillDetailsDialog'
 import '../skills/skills.css'
 import './discovery.css'
-import { Button } from '../../components'
+import { discoveryIcons } from './icons'
+import { Button, InlineImageSymbol } from '../../components'
 import { formatGameNumber, formatWholeGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { discoveryMessages as m } from './messages'
@@ -47,8 +48,9 @@ export function DiscoveryPurchases({ state, balance, available, purchase, locale
     const count = discoveryPurchaseCount(state, kind)
     const disabled = pending || !available || cost === null || balance < cost
     const startingValue = kind === 'enlightenment-power' ? DISCOVERY_TUNING.enlightenment.startingStrength : DISCOVERY_TUNING.startingStrength
+    const icon = kind === 'speed' ? null : discoveryIcons[kind.startsWith('enlightenment') ? 'enlightenment' : kind.startsWith('elevation') ? 'elevation' : 'discovery']
     return <article key={kind} className="quantum-leap-card discovery-purchase">
-      <h2>{intl.formatMessage(definitions[kind].name)}</h2>
+      <h2>{icon && <InlineImageSymbol src={icon} tint />}{intl.formatMessage(definitions[kind].name)}</h2>
       {repeatable && <span>{intl.formatMessage(m.owned, { value: formatWholeGameNumber(locale, count) })}</span>}
       <p>{intl.formatMessage(definitions[kind].effect)}</p>
       {repeatable && <p>{intl.formatMessage(kind === 'speed' ? m.nextSpeed : kind === 'enlightenment-power' ? m.nextLifetime : m.nextPower, { value: formatGameNumber(locale, kind === 'speed' ? Number(count + 1n) * DISCOVERY_TUNING.speedPerPurchase * 100 : startingValue + Number(count + 1n) * DISCOVERY_TUNING.strengthPerPurchase) })}</p>}

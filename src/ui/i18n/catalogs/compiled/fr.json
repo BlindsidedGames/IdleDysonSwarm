@@ -903,6 +903,12 @@
       "value": "value"
     }
   ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "Achèvements"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -985,6 +991,12 @@
     {
       "type": 0,
       "value": "+5 secondes de durée de vie initiale des panneaux. Les bonus sont additifs."
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "Production des installations"
     }
   ],
   "discovery.fractured.addictionToPower": [
@@ -1109,6 +1121,12 @@
       "value": "Prochain multiplicateur"
     }
   ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "Prochaine durée de vie des panneaux"
+    }
+  ],
   "discovery.nextPower": [
     {
       "type": 0,
@@ -1175,10 +1193,22 @@
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "Par achèvement"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "L’achat n’a pas pu être sauvegardé. Vos points ont été conservés. Réessayez."
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "Vitesse"
     }
   ],
   "discovery.replacementWarning": [
@@ -1541,6 +1571,20 @@
     {
       "type": 0,
       "value": "Total de Bots"
+    }
+  ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " : +"
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "discovery.unlock": [

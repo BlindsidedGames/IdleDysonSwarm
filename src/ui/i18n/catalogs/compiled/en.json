@@ -903,6 +903,12 @@
       "value": "value"
     }
   ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "Completions"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -985,6 +991,12 @@
     {
       "type": 0,
       "value": "+5 seconds starting panel lifetime. Bonuses are additive."
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "Facility production"
     }
   ],
   "discovery.fractured.addictionToPower": [
@@ -1109,6 +1121,12 @@
       "value": "Next multiplier"
     }
   ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "Next panel lifetime"
+    }
+  ],
   "discovery.nextPower": [
     {
       "type": 0,
@@ -1175,10 +1193,22 @@
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "Per completion"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "Purchase could not be saved. Your points have been kept. Try again."
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "Speed"
     }
   ],
   "discovery.replacementWarning": [
@@ -1541,6 +1571,20 @@
     {
       "type": 0,
       "value": "Total Bots"
+    }
+  ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": +"
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "discovery.unlock": [

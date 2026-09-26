@@ -2195,5 +2195,11 @@
   "wiki.topic-navigation": "Temas de la Wiki",
   "wiki.topics": "Temas",
   "wiki.transcendence.overview": "Con <value>4e242 Bots</value>, Trascender en Avocato reinicia las capas anteriores y otorga <value>un punto de Trascendencia</value>. Gasta un punto en <value>Desbloquear Descubrimiento</value> para reemplazar permanentemente Ciencia e Investigación. La Ciencia y los niveles de investigación existentes no se transfieren.",
-  "wiki.transcendence.overview-title": "Más allá del enjambre"
+  "wiki.transcendence.overview-title": "Más allá del enjambre",
+  "discovery.completed": "Finalizaciones",
+  "discovery.facilityProduction": "Producción de instalaciones",
+  "discovery.rate": "Velocidad",
+  "discovery.nextPanelLifetime": "Próxima vida útil de paneles",
+  "discovery.progressPerCompletion": "Por finalización",
+  "discovery.transfer": "{name}: +{time}"
 }

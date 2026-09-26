@@ -485,6 +485,9 @@
   "discovery.cashBotsProduction": {
     "defaultMessage": "Cash & Bot gains ×{value}"
   },
+  "discovery.completed": {
+    "defaultMessage": "Completions"
+  },
   "discovery.completions": {
     "defaultMessage": "Completed discoveries"
   },
@@ -526,6 +529,9 @@
   },
   "discovery.enlightenmentPowerEffect": {
     "defaultMessage": "+5 seconds starting panel lifetime. Bonuses are additive."
+  },
+  "discovery.facilityProduction": {
+    "defaultMessage": "Facility production"
   },
   "discovery.fractured.addictionToPower": {
     "defaultMessage": "200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
@@ -572,6 +578,9 @@
   "discovery.nextMultiplier": {
     "defaultMessage": "Next multiplier"
   },
+  "discovery.nextPanelLifetime": {
+    "defaultMessage": "Next panel lifetime"
+  },
   "discovery.nextPower": {
     "defaultMessage": "Next: ×{value} starting power"
   },
@@ -593,8 +602,14 @@
   "discovery.production": {
     "defaultMessage": "Facility production ×{value}"
   },
+  "discovery.progressPerCompletion": {
+    "defaultMessage": "Per completion"
+  },
   "discovery.purchaseFailed": {
     "defaultMessage": "Purchase could not be saved. Your points have been kept. Try again."
+  },
+  "discovery.rate": {
+    "defaultMessage": "Speed"
   },
   "discovery.replacementWarning": {
     "defaultMessage": "Research and Science will be permanently replaced."
@@ -772,6 +787,9 @@
   },
   "discovery.totalBots": {
     "defaultMessage": "Total Bots"
+  },
+  "discovery.transfer": {
+    "defaultMessage": "{name}: +{time}"
   },
   "discovery.unlock": {
     "defaultMessage": "Unlock Discovery"

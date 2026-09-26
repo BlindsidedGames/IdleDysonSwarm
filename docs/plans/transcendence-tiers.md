@@ -123,3 +123,24 @@ Keep the branch unmerged and undeployed. The running preview contains disposable
 three-tier progress. The pre-unlock fixture remains at
 `test/fixtures/discovery/pre-unlock.idsweb1.txt` for inspecting the transition.
 No IP balance changes or railgun gameplay changes are included.
+
+## Presentation follow-up
+
+The expanded dropdown now contains one named section per unlocked tier, using
+plain dividers rather than nested cards. Each section shows its own completions,
+current/next benefit, speed and correctly weighted sources, plus incoming-target
+progress per completion where applicable. Cash/Bot and lifetime unlock benefits
+remain visible under Discovery until their respective tier is unlocked.
+
+Avocato's upgrade category is an unboxed disclosure heading above standalone
+purchase cards. There is no enclosing panel. Three related SVG icons reuse the
+original high-resolution conveyor, Bot/currency and panel/stopwatch vocabulary;
+editable masters and export instructions are in `source-assets/discovery/`.
+
+Follow-up checks: full suite 184 files / 1,903 tests passed; one/two/three-tier UI coverage and source percentages (24 focused
+tests); type/lint/localization/build checks; live 360px/130% text and normal-width
+inspection of bars, named sections, the upgrade list and scrolling to the final
+section. The latter caught and fixed a missing height constraint on the Discovery
+scroll surface. Native interaction QA above predates this presentation follow-up.
+Evidence: `tier-details-narrow.png`, `tier-details-bottom.png`, and
+`upgrades-unboxed.png` under `docs/qa/transcendence-tiers/`.

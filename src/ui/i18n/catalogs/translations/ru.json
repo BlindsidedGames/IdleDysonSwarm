@@ -2195,5 +2195,11 @@
   "wiki.topic-navigation": "Темы Вики",
   "wiki.topics": "Темы",
   "wiki.transcendence.overview": "При <value>4e242 ботах</value> совершите Трансценденцию у Авокато, чтобы сбросить предыдущие слои и получить <value>одно очко Трансценденции</value>. Потратьте очко на <value>открытие системы открытий</value>, чтобы навсегда заменить Науку и Исследования. Накопленная Наука и уровни исследований не переносятся.",
-  "wiki.transcendence.overview-title": "За пределами роя"
+  "wiki.transcendence.overview-title": "За пределами роя",
+  "discovery.completed": "Завершения",
+  "discovery.facilityProduction": "Производство сооружений",
+  "discovery.rate": "Скорость",
+  "discovery.nextPanelLifetime": "Следующий срок службы панелей",
+  "discovery.progressPerCompletion": "За завершение",
+  "discovery.transfer": "{name}: +{time}"
 }

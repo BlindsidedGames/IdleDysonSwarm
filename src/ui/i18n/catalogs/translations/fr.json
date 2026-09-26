@@ -2195,5 +2195,11 @@
   "wiki.topic-navigation": "Sujets du wiki",
   "wiki.topics": "Sujets",
   "wiki.transcendence.overview": "À <value>4e242 Bots</value>, Transcendez chez Avocato pour réinitialiser les couches précédentes et gagner <value>un point de Transcendance</value>. Dépensez un point pour <value>Débloquer Découverte</value> afin de remplacer définitivement Science et Recherche. La Science et les niveaux de recherche existants ne sont pas transférés.",
-  "wiki.transcendence.overview-title": "Au-delà de l’essaim"
+  "wiki.transcendence.overview-title": "Au-delà de l’essaim",
+  "discovery.completed": "Achèvements",
+  "discovery.facilityProduction": "Production des installations",
+  "discovery.rate": "Vitesse",
+  "discovery.nextPanelLifetime": "Prochaine durée de vie des panneaux",
+  "discovery.progressPerCompletion": "Par achèvement",
+  "discovery.transfer": "{name} : +{time}"
 }

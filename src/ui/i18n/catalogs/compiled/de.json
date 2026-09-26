@@ -903,6 +903,12 @@
       "value": "value"
     }
   ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "Abschlüsse"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -985,6 +991,12 @@
     {
       "type": 0,
       "value": "+5 Sekunden anfängliche Paneellebensdauer. Boni sind additiv."
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "Anlagenproduktion"
     }
   ],
   "discovery.fractured.addictionToPower": [
@@ -1109,6 +1121,12 @@
       "value": "Nächster Multiplikator"
     }
   ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "Nächste Panel-Lebensdauer"
+    }
+  ],
   "discovery.nextPower": [
     {
       "type": 0,
@@ -1175,10 +1193,22 @@
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "Pro Abschluss"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "Der Kauf konnte nicht gespeichert werden. Deine Punkte bleiben erhalten. Versuche es erneut."
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "Geschwindigkeit"
     }
   ],
   "discovery.replacementWarning": [
@@ -1541,6 +1571,20 @@
     {
       "type": 0,
       "value": "Bots insgesamt"
+    }
+  ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": +"
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "discovery.unlock": [

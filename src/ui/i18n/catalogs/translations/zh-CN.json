@@ -2195,5 +2195,11 @@
   "wiki.topic-navigation": "百科主题导航",
   "wiki.topics": "主题",
   "wiki.transcendence.overview": "达到<value>4e242个机器人</value>后，在牛油果猫中超越可重置此前的层级，并获得<value>1超越点数</value>。花费1点<value>解锁发现</value>，即可永久取代科学与研究。已有科学和研究等级不会转移。",
-  "wiki.transcendence.overview-title": "超越蜂群"
+  "wiki.transcendence.overview-title": "超越蜂群",
+  "discovery.completed": "完成次数",
+  "discovery.facilityProduction": "设施产量",
+  "discovery.rate": "速度",
+  "discovery.nextPanelLifetime": "下次面板寿命",
+  "discovery.progressPerCompletion": "每次完成",
+  "discovery.transfer": "{name}：+{time}"
 }
