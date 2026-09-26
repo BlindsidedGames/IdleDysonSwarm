@@ -1,6 +1,6 @@
 # Transcendence tiers and Discord follow-ups
 
-Branch: `transcendence-tiers`. Unmerged preview; no deployment authorised.
+Branch: `transcendence-tiers`. Unmerged. Internal deployment authorised on 26 September 2026; no production release or merge authorised.
 
 ## Agreed behaviour
 
@@ -207,3 +207,7 @@ and settles on the real remaining time. The expanded details retain the immediat
 authoritative values. Verified a real browser cascade on the isolated QA save;
 the timer tracked the animated fill through multiple wraps. All eight Discovery
 UI/motion tests, TypeScript and lint passed.
+
+### Internal deployment — 26 September 2026
+
+Release `2026092601` from `4d52d93f` is available on Google Play internal, Internal TestFlight (`2609.26.01`, three testers), and Steam public-beta (`25545377`). Full local release gate: 185 files / 1,910 tests passed. Downloaded Steam macOS files matched and smoke launch passed. See `docs/platform/release-ledger.md` for artifact provenance and remaining interaction-QA limits. Branch remains unmerged; no production release occurred.

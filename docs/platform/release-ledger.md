@@ -99,3 +99,22 @@ The archived `App` executable SHA-256 is `b0cd2958bc110c79cc3c115f75ed12cd6fd01d
 | Website | Frozen source unchanged | — | **Untouched**. |
 
 Google Play emitted the existing non-blocking warnings for a missing deobfuscation file and native debug symbols. Apple's uploader completed without an upload error and explicitly reported that the uploaded package was processing.
+
+## 2026092601 — 4.1.10 Transcendence tiers internal release
+
+26 September 2026 (AEST). Built from clean source `4d52d93f1d89569df40c8f0d9dfd7b1853b7e8e0` on `transcendence-tiers`; gameplay through `41eb8f57`. PR #217 remains unmerged. Internal deployment only; no production, App Review, website or Steam default changes.
+
+| Destination | Identity | Verified state |
+| --- | --- | --- |
+| Google Play internal | 4.1.10 / 2026092601 | Available to internal testers |
+| Internal TestFlight | 4.1.10 / 2609.26.01 | Testing; Internal group, 3 testers; compliance completed |
+| Steam public-beta | 25545377 | Active; Windows/Linux/macOS depots included; default remains 25430928 |
+
+- Local release gate passed: 185 files / 1,910 tests, lint, localization, web/native builds, Electron boundary and signed Android packaging. iOS archive/upload succeeded; minimum iOS 16.0. All three Steam package provenance records identify the source above.
+- Downloaded Steam public-beta to an isolated directory. Manifest confirms build 25545377; all 261 regular macOS package files match the built artifact. Both local and downloaded macOS smoke launches exited successfully. No new iOS/Android/Windows/Linux hands-on interaction QA is claimed by this deployment; earlier feature QA and its limits remain in the coverage document.
+- Android AAB: `output/local-release/2026092601/android/idle-dyson-swarm-2026092601.aab`, 20,041,338 bytes; SHA-256 `3869211fb7593bcc6821eaf1ffecd1be8987db91726fbd5fd08bad32121226d6`.
+- iOS archive: `/Users/matthewrushworth/Library/Developer/Xcode/Archives/2026-09-26/IDS-2026092601.xcarchive`; App executable SHA-256 `9f9fb19003c771a4b6825646a4c30e2338e47ec8e15281c47b3e678e53475561`.
+- Steam manifests: Windows `3372032058052744835`, Linux `2983802536680200208`, macOS `3387550695810836494`.
+- Local logs, distribution screenshots, upload configuration and downloaded beta: `/Users/matthewrushworth/Builds/ids-release-2026092601/`.
+- Play's missing deobfuscation/native-symbol warnings were non-blocking. No distribution blocker remains.
+- Changes since the previous September 24 internal build posted to the authorised Discord dev-ops channel: https://discord.com/channels/712304553931833385/1006856538893340692/1553341867545071627.
