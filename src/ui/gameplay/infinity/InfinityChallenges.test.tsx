@@ -16,7 +16,7 @@ test('requires confirmation and keeps a failed restart retryable', async () => {
   expect(dispatch).not.toHaveBeenCalled()
   fireEvent.click(within(screen.getByRole('heading', { name: 'Blank Slate' }).closest('article')!).getByRole('button', { name: 'Start' }))
   fireEvent.click(screen.getByRole('button', { name: 'Confirm restart' }))
-  await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.enter-blank-slate' }))
+  await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.enter', challengeId: 'blank-slate' }))
   await waitFor(() => expect(screen.getByRole('alert')).not.toBeNull())
   expect(screen.getByRole('button', { name: 'Confirm restart' }).hasAttribute('disabled')).toBe(false)
 })
@@ -48,12 +48,12 @@ test('Trial & Error requires confirmation and cannot be started alongside anothe
   expect(dispatch).not.toHaveBeenCalled()
   fireEvent.click(within(screen.getByRole('heading', { name: 'Trial & Error' }).closest('article')!).getByRole('button', { name: 'Start' }))
   fireEvent.click(screen.getByRole('button', { name: 'Confirm restart' }))
-  await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.enter-trial-and-error' }))
+  await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.enter', challengeId: 'trial-and-error' }))
   view.rerender(<IntlProvider locale="en" messages={{}}><InfinityChallenges
     progress={{ ...EMPTY_INFINITY_CHALLENGES, unlocked: true, active: 'trial-and-error' }}
     overflowReached={false} dispatchPlayer={dispatch} /></IntlProvider>)
   expect(within(screen.getByRole('heading', { name: 'Blank Slate' }).closest('article')!).getByRole('button', { name: 'Start' }).hasAttribute('disabled')).toBe(true)
-  expect(screen.getByText('Trial & Error active · Research purchases disabled')).not.toBeNull()
+  expect(screen.getByText('Challenge active')).not.toBeNull()
 })
 
 test('shows icon rewards and recorded completion durations without inventing old times', () => {
@@ -74,5 +74,5 @@ test('No Science uses a Quantum confirmation and a two-Catalyst reward', async (
   fireEvent.click(card.getByRole('button', { name: 'Start' }))
   expect(screen.getByText(/This starts a fresh Quantum run/)).toBeTruthy()
   fireEvent.click(card.getByRole('button', { name: 'Confirm restart' }))
-  await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.enter-no-science' }))
+  await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.enter', challengeId: 'no-science' }))
 })

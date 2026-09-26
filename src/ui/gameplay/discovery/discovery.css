@@ -1,4 +1,6 @@
 .discovery-surface {
+  block-size: 100%;
+  min-block-size: 0;
   padding: var(--game-card-content-inset);
   overflow-y: auto;
   color: var(--color-text-primary);
@@ -25,12 +27,14 @@
   font-weight: var(--font-weight-bold);
   font-size: calc(1.2rem * var(--game-text-scale));
 }
-.discovery-boost .ui-inline-image-symbol {
-  inline-size: 0.9em;
-  block-size: 0.9em;
+.discovery-bar-icon .ui-inline-image-symbol {
+  inline-size: 1.45em;
+  block-size: 1.45em;
   flex-shrink: 0;
+  mask-position: right center;
+  -webkit-mask-position: right center;
 }
-.discovery-heading strong {
+.discovery-boost {
   display: inline-flex;
   align-items: center;
   gap: 0.25em;
@@ -44,7 +48,8 @@
   position: absolute;
   inset: 0;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-inline: 0.75rem;
   pointer-events: none;
 }
 .discovery-progress .ui-progress__header > span:first-child {
@@ -62,7 +67,7 @@
 .discovery-card .discovery-progress progress {
   display: block;
   appearance: none;
-  block-size: calc(3rem * var(--game-text-scale));
+  block-size: calc(2.5rem * var(--game-text-scale));
   border: 0;
   border-radius: 0.4rem;
   box-shadow: inset 0 2px 4px rgb(0 0 0 / 25%);
@@ -92,10 +97,50 @@
 .discovery-details dl { margin: 0; }
 .discovery-details .discovery-speed-sources {
   margin-block-start: var(--ui-panel-inset);
-  padding-block-start: var(--ui-panel-inset);
-  border-block-start: 1px solid var(--theme-divider);
 }
 .discovery-speed-total { font-weight: var(--font-weight-bold); }
 .discovery-details dl > div { display: flex; justify-content: space-between; gap: 1rem; }
 .discovery-details dt { min-inline-size: 0; overflow-wrap: anywhere; }
 .discovery-details dd { margin: 0; white-space: nowrap; color: var(--theme-accent); }
+
+.discovery-row { display: block; }
+.discovery-row + .discovery-row { margin-block-start: 0.6rem; }
+.discovery-row--supporting .discovery-boost { font-size: calc(1rem * var(--game-text-scale)); }
+.discovery-card .discovery-row--supporting progress { block-size: calc(1.8rem * var(--game-text-scale)); }
+.discovery-upgrades { margin-block-start: var(--ui-panel-inset); }
+.discovery-upgrades > summary { cursor: pointer; padding-block: var(--ui-panel-inset); font-weight: var(--font-weight-bold); }
+.discovery-upgrades > .avocato-feed-grid { padding: 0; }
+.discovery-purchase-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 1rem; }
+
+.discovery-bar { display: block; position: relative; }
+.discovery-bar .discovery-boost { position: absolute; inset-inline-end: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--color-text-primary); pointer-events: none; }
+
+.discovery-confirmation .skill-details-dialog__content { gap: 0.75rem; }
+.discovery-confirmation p { margin: 0; }
+
+.discovery-tier-details + .discovery-tier-details {
+  margin-block-start: var(--ui-panel-inset);
+  padding-block-start: var(--ui-panel-inset);
+  border-block-start: 1px solid var(--theme-divider);
+}
+.discovery-tier-details h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0 0 0.6rem;
+  font-size: calc(1rem * var(--game-text-scale));
+}
+.discovery-tier-details h2 .ui-inline-image-symbol { inline-size: 1.4em; block-size: 1.4em; }
+.discovery-transfer dd { white-space: normal; text-align: end; }
+
+.discovery-purchase h2 { display: flex; align-items: center; gap: 0.5em; }
+.discovery-purchase h2 .ui-inline-image-symbol { inline-size: 1.5em; block-size: 1.5em; }
+
+.discovery-track { display: flex; align-items: center; gap: 0.6rem; }
+.discovery-track .discovery-bar { flex: 1; min-inline-size: 0; }
+.discovery-bar-icon {
+  display: flex;
+  flex-shrink: 0;
+  font-size: calc(1.05rem * var(--game-text-scale));
+  pointer-events: none;
+}

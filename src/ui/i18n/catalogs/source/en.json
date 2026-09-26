@@ -193,14 +193,29 @@
   "challenges.active": {
     "defaultMessage": "Blank Slate active · Skill assignment disabled"
   },
+  "challenges.activeLabel": {
+    "defaultMessage": "Challenge active"
+  },
   "challenges.blankSlate": {
     "defaultMessage": "Blank Slate"
   },
   "challenges.blankSlate.description": {
     "defaultMessage": "Complete a normal Infinity without using skill points."
   },
+  "challenges.builtByHand": {
+    "defaultMessage": "Built by Hand"
+  },
+  "challenges.builtByHand.description": {
+    "defaultMessage": "Complete a Quantum run with all facilities disabled. Use Manual Labour augments to build Bots by hand."
+  },
   "challenges.cancel": {
     "defaultMessage": "Cancel"
+  },
+  "challenges.commitmentIssues": {
+    "defaultMessage": "Commitment Issues"
+  },
+  "challenges.commitmentIssues.description": {
+    "defaultMessage": "Complete a Quantum run without refunding or replacing assigned skills. Infinity resets clear assignments normally."
   },
   "challenges.completed": {
     "defaultMessage": "Completed in: {time}"
@@ -217,6 +232,21 @@
   "challenges.galvanizers.future": {
     "defaultMessage": "Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence."
   },
+  "challenges.grounded": {
+    "defaultMessage": "Grounded"
+  },
+  "challenges.grounded.description": {
+    "defaultMessage": "Complete a Quantum run without Planets or megastructures. They cannot be purchased or generated."
+  },
+  "challenges.handsOff": {
+    "defaultMessage": "Hands Off"
+  },
+  "challenges.handsOff.description": {
+    "defaultMessage": "Complete a Quantum run without purchasing facilities. Start with one Assembly Line; generated facilities still work."
+  },
+  "challenges.manualLabourRequired": {
+    "defaultMessage": "Requires Fractured Manual Labour."
+  },
   "challenges.noScience": {
     "defaultMessage": "No Science"
   },
@@ -227,7 +257,10 @@
     "defaultMessage": "Complete a Quantum run without Science or Research."
   },
   "challenges.quantumRestart": {
-    "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Quantum upgrades and later layers are kept. Abandoning also starts a fresh normal run."
+    "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Division, Quantum Double IP and Quantum Entanglement are inactive. Purchased Double IP and later layers remain active. Abandoning also starts a fresh normal run."
+  },
+  "challenges.quantumRules": {
+    "defaultMessage": "Division, Quantum Double IP and Quantum Entanglement are inactive in Quantum challenges. Purchased boosts remain active."
   },
   "challenges.quantumTitle": {
     "defaultMessage": "Quantum Challenges"
@@ -247,11 +280,23 @@
   "challenges.route": {
     "defaultMessage": "Challenges"
   },
+  "challenges.shortCircuit": {
+    "defaultMessage": "Short Circuit"
+  },
+  "challenges.shortCircuit.description": {
+    "defaultMessage": "Complete a Quantum run with panel lifetime fixed at 2 seconds."
+  },
   "challenges.shortcut": {
     "defaultMessage": "Show Challenges"
   },
   "challenges.start": {
     "defaultMessage": "Start"
+  },
+  "challenges.supplyShortage": {
+    "defaultMessage": "Supply Shortage"
+  },
+  "challenges.supplyShortage.description": {
+    "defaultMessage": "Complete a Quantum run with facility prices doubling for each purchase. Generated facilities do not increase prices."
   },
   "challenges.timeUnknown": {
     "defaultMessage": "Unknown"
@@ -479,6 +524,15 @@
   "discovery.cancel": {
     "defaultMessage": "Cancel"
   },
+  "discovery.cashBots": {
+    "defaultMessage": "Cash & Bots"
+  },
+  "discovery.cashBotsProduction": {
+    "defaultMessage": "Cash & Bot gains ×{value}"
+  },
+  "discovery.completed": {
+    "defaultMessage": "Completions"
+  },
   "discovery.completions": {
     "defaultMessage": "Completed discoveries"
   },
@@ -488,6 +542,9 @@
   "discovery.confirmAction": {
     "defaultMessage": "Confirm"
   },
+  "discovery.cycleDuration": {
+    "defaultMessage": "Full cycle"
+  },
   "discovery.debug.addCompletions": {
     "defaultMessage": "Add completed discoveries"
   },
@@ -496,6 +553,54 @@
   },
   "discovery.details": {
     "defaultMessage": "Discovery details"
+  },
+  "discovery.elevation": {
+    "defaultMessage": "Elevation"
+  },
+  "discovery.elevationEffect": {
+    "defaultMessage": "Raises Cash and Bot gains from 7× to 10×. Every 30 base minutes: +0.1 multiplier and 30 minutes of Discovery progress."
+  },
+  "discovery.elevationPower": {
+    "defaultMessage": "Elevation Power"
+  },
+  "discovery.elevationPowerEffect": {
+    "defaultMessage": "+5 starting Cash and Bot multiplier. Bonuses are additive."
+  },
+  "discovery.enlightenment": {
+    "defaultMessage": "Enlightenment"
+  },
+  "discovery.enlightenmentEffect": {
+    "defaultMessage": "Raises base panel lifetime from 20 to 30 seconds. Every 10 base minutes: +0.1 seconds and 10 minutes of Elevation progress."
+  },
+  "discovery.enlightenmentPower": {
+    "defaultMessage": "Enlightenment Power"
+  },
+  "discovery.enlightenmentPowerEffect": {
+    "defaultMessage": "+5 seconds starting panel lifetime. Bonuses are additive."
+  },
+  "discovery.facilityProduction": {
+    "defaultMessage": "Facility production"
+  },
+  "discovery.fractured.addictionToPower": {
+    "defaultMessage": "200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+  },
+  "discovery.fractured.coldFusion": {
+    "defaultMessage": "+75% Discovery speed. Bonuses are additive."
+  },
+  "discovery.fractured.indulgingInPower": {
+    "defaultMessage": "100% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+  },
+  "discovery.fractured.scientificDominance": {
+    "defaultMessage": "+100% Discovery speed. Bonuses are additive."
+  },
+  "discovery.fractured.shouldersOfPrecursors": {
+    "defaultMessage": "Multiplies Cash by total Discovery speed alongside other Cash multipliers."
+  },
+  "discovery.fractured.stellarObliteration": {
+    "defaultMessage": "Stellar Sacrifices Galaxies are 1,000× better."
+  },
+  "discovery.fractured.tasteOfPower": {
+    "defaultMessage": "50% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
   },
   "discovery.level": {
     "defaultMessage": "Discovery · Level {value}"
@@ -515,8 +620,17 @@
   "discovery.next": {
     "defaultMessage": "Next: ×{value} · {time}"
   },
+  "discovery.nextCompletion": {
+    "defaultMessage": "Next completion"
+  },
+  "discovery.nextLifetime": {
+    "defaultMessage": "Next: {value} seconds starting lifetime"
+  },
   "discovery.nextMultiplier": {
     "defaultMessage": "Next multiplier"
+  },
+  "discovery.nextPanelLifetime": {
+    "defaultMessage": "Next panel lifetime"
   },
   "discovery.nextPower": {
     "defaultMessage": "Next: ×{value} starting power"
@@ -528,19 +642,28 @@
     "defaultMessage": "Level {value}"
   },
   "discovery.power": {
-    "defaultMessage": "Starting Power"
+    "defaultMessage": "Discovery Power"
   },
   "discovery.powerEffect": {
-    "defaultMessage": "+5 starting multiplier and base panel-lifetime seconds. Bonuses are additive."
+    "defaultMessage": "+5 starting facility multiplier. Bonuses are additive."
   },
   "discovery.powerSkillsEffect": {
     "defaultMessage": "Unlock Power Skills, which boost facilities, Cash, and Discovery speed."
   },
   "discovery.production": {
-    "defaultMessage": "Cash, Bots & facility production ×{value}"
+    "defaultMessage": "Facility production ×{value}"
+  },
+  "discovery.progressPerCompletion": {
+    "defaultMessage": "Per completion"
   },
   "discovery.purchaseFailed": {
     "defaultMessage": "Purchase could not be saved. Your points have been kept. Try again."
+  },
+  "discovery.rate": {
+    "defaultMessage": "Speed"
+  },
+  "discovery.replacementWarning": {
+    "defaultMessage": "Research and Science will be permanently replaced."
   },
   "discovery.resetRule": {
     "defaultMessage": "Persists through Infinity and Quantum. Resets on Transcendence."
@@ -577,6 +700,9 @@
   },
   "discovery.skill.economicRevolution.effect": {
     "defaultMessage": "Multiplies Cash by 5."
+  },
+  "discovery.skill.economyOfScale.effect": {
+    "defaultMessage": "Multiplies Cash and Bots by M = max(1, log5(total facilities)). Adds min(200%, 10% × log10(M)) Discovery speed. Bonuses are additive."
   },
   "discovery.skill.focusedBeam.effect": {
     "defaultMessage": "Enhances SRS’s Cash bonus and Discovery-speed bonus by 50%, scaled by Stellar Memory."
@@ -705,13 +831,25 @@
     "defaultMessage": "Discovery speed"
   },
   "discovery.startingBenefits": {
-    "defaultMessage": "10× Cash, Bots & facility production. 10-second base panel lifetime."
+    "defaultMessage": "10× facility production. 7× Cash and Bot gains. 20-second base panel lifetime."
+  },
+  "discovery.tierCompletions": {
+    "defaultMessage": "{name} completions"
+  },
+  "discovery.tierSpeed": {
+    "defaultMessage": "{name} speed"
   },
   "discovery.totalBots": {
     "defaultMessage": "Total Bots"
   },
+  "discovery.transfer": {
+    "defaultMessage": "{name}: +{time}"
+  },
   "discovery.unlock": {
     "defaultMessage": "Unlock Discovery"
+  },
+  "discovery.upgrades": {
+    "defaultMessage": "Discovery upgrades"
   },
   "dyson.bot-distribution.accessible-value": {
     "defaultMessage": "{workers} workers, {scientists} scientists",
@@ -1421,6 +1559,9 @@
     "defaultMessage": "Goal: <emphasis>{targetDisplay} Stars</emphasis>",
     "description": "Compact Star goal in the Bots summary."
   },
+  "dyson.info.compact.goal-tinkers": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Tinkers</emphasis>"
+  },
   "dyson.info.compact.panel-lifetime": {
     "defaultMessage": "Lifetime: <emphasis>{value}s</emphasis>",
     "description": "Compact panel-lifetime fact in the Bots summary."
@@ -1468,6 +1609,9 @@
   "dyson.info.goal.surround-stars": {
     "defaultMessage": "Goal: Surround {targetDisplay} Stars",
     "description": "Unity Dyson goal to surround Stars."
+  },
+  "dyson.info.goal.tinkers": {
+    "defaultMessage": "Goal: {targetDisplay} Tinkers"
   },
   "dyson.info.panel-lifetime": {
     "defaultMessage": "Panel lifetime: <emphasis>{value}</emphasis> seconds",
@@ -1628,6 +1772,9 @@
   "dyson.tinker.description.default": {
     "defaultMessage": "There has to be a better way of going about this...",
     "description": "Exact second sentence on the default Unity manual-creation panel."
+  },
+  "dyson.tinker.description.hand-assembly": {
+    "defaultMessage": "Build <value>{count}</value> Bots by hand."
   },
   "dyson.tinker.description.manual-labour": {
     "defaultMessage": "Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce <value>{count}</value>.",
@@ -2284,6 +2431,9 @@
   "quantum.hide-maxed": {
     "defaultMessage": "Hide maxed upgrades",
     "description": "Hides completed upgrades from the Quantum catalog."
+  },
+  "quantum.inactiveChallenge": {
+    "defaultMessage": "Inactive during this challenge"
   },
   "quantum.leap": {
     "defaultMessage": "Quantum Leap",
@@ -4710,6 +4860,42 @@
     "defaultMessage": "Manage {name}",
     "description": "Dialog title for managing a named skill preset."
   },
+  "skills.manualLabour.handAssembly.description": {
+    "defaultMessage": "Factory optional. Fingers essential."
+  },
+  "skills.manualLabour.handAssembly.effect": {
+    "defaultMessage": "Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Replaces Assembly Line tinkering. Work resets on Infinity."
+  },
+  "skills.manualLabour.handAssembly.name": {
+    "defaultMessage": "Hand Assembly"
+  },
+  "skills.manualLabour.patientHands.description": {
+    "defaultMessage": "Measure twice. Have a cup of tea. Cut once."
+  },
+  "skills.manualLabour.patientHands.effect": {
+    "defaultMessage": "While idle, store up to 42 seconds of Hand Assembly. Your next activation completes the stored work with 25% more Bots. Stored work also builds practice. Consumed on activation."
+  },
+  "skills.manualLabour.patientHands.name": {
+    "defaultMessage": "Patient Hands"
+  },
+  "skills.manualLabour.practice.description": {
+    "defaultMessage": "The first thousand were prototypes."
+  },
+  "skills.manualLabour.practice.effect": {
+    "defaultMessage": "Increase Hand Assembly yield by up to 200% with practice: 200% × completions / (completions + 500). Practice resets on Infinity; refunds preserve it. Bonuses are additive."
+  },
+  "skills.manualLabour.practice.name": {
+    "defaultMessage": "Practice Makes Perfect"
+  },
+  "skills.manualLabour.workingSmarter.description": {
+    "defaultMessage": "You finally read the instructions."
+  },
+  "skills.manualLabour.workingSmarter.effect": {
+    "defaultMessage": "Increase Hand Assembly yield by 25% × log10(1 + Assembly Line research levels), capped at +200%. After unlocking Discovery, use completed Discoveries instead. Bonuses are additive."
+  },
+  "skills.manualLabour.workingSmarter.name": {
+    "defaultMessage": "Working Smarter"
+  },
   "skills.matches": {
     "defaultMessage": "{count, plural, one {# match} other {# matches}}",
     "description": "Number of skill-tree search results."
@@ -6087,6 +6273,12 @@
   "skills.production-science": {
     "defaultMessage": "Science"
   },
+  "skills.production.manualAssemblyLines": {
+    "defaultMessage": "Assembly Lines per activation"
+  },
+  "skills.production.manualBots": {
+    "defaultMessage": "Bots per activation"
+  },
   "skills.purchase": {
     "defaultMessage": "Assign Skill",
     "description": "Button label for spending skill points to assign a skill."
@@ -6328,6 +6520,96 @@
   "skills.supernova-suppression-quote": {
     "defaultMessage": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.",
     "description": "Exact warning before purchasing Supernova."
+  },
+  "skills.swarm.botnet.description": {
+    "defaultMessage": "They finally accepted the group invitation."
+  },
+  "skills.swarm.botnet.name": {
+    "defaultMessage": "Botnet"
+  },
+  "skills.swarm.botnet.technical": {
+    "defaultMessage": "Multiplies all facility production by 1 + log20(Bots)."
+  },
+  "skills.swarm.compoundFragments.description": {
+    "defaultMessage": "Somehow the pieces came with interest."
+  },
+  "skills.swarm.compoundFragments.name": {
+    "defaultMessage": "Compound Fragments"
+  },
+  "skills.swarm.compoundFragments.technical": {
+    "defaultMessage": "Replaces linear purchase scaling with (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1."
+  },
+  "skills.swarm.deferredBilling.description": {
+    "defaultMessage": "The invoice is somebody else’s problem."
+  },
+  "skills.swarm.deferredBilling.name": {
+    "defaultMessage": "Deferred Billing"
+  },
+  "skills.swarm.deferredBilling.technical": {
+    "defaultMessage": "Facility purchases require their full Cash price, but do not spend it."
+  },
+  "skills.swarm.economyOfScale.description": {
+    "defaultMessage": "Buying in bulk has become a personality trait."
+  },
+  "skills.swarm.economyOfScale.name": {
+    "defaultMessage": "Economy of Scale"
+  },
+  "skills.swarm.economyOfScale.technical": {
+    "defaultMessage": "Multiplies Cash, Science and Bot production by log5(total facilities), with a minimum of 1×."
+  },
+  "skills.swarm.headStart.description": {
+    "defaultMessage": "Some assembly already completed."
+  },
+  "skills.swarm.headStart.name": {
+    "defaultMessage": "Head Start"
+  },
+  "skills.swarm.headStart.technical": {
+    "defaultMessage": "Gain 30 purchased units of each available facility once per Infinity, without increasing prices. Includes unlocked megastructures."
+  },
+  "skills.swarm.pooledPurchases.description": {
+    "defaultMessage": "One receipt. Everybody takes credit."
+  },
+  "skills.swarm.pooledPurchases.name": {
+    "defaultMessage": "Pooled Purchases"
+  },
+  "skills.swarm.pooledPurchases.technical": {
+    "defaultMessage": "Each facility uses the total purchased count of all facilities for purchase bonuses. Terra applies afterwards. Prices are unchanged."
+  },
+  "skills.swarm.reductiveScaling.description": {
+    "defaultMessage": "The price tags are getting nervous."
+  },
+  "skills.swarm.reductiveScaling.name": {
+    "defaultMessage": "Reductive Scaling"
+  },
+  "skills.swarm.reductiveScaling.technical": {
+    "defaultMessage": "Reduces facility price growth by 0.5 percentage points per active Fragment Skill, to a minimum of 0.1%."
+  },
+  "skills.swarm.selfReplicatingWorkers.description": {
+    "defaultMessage": "The recruitment department has become redundant."
+  },
+  "skills.swarm.selfReplicatingWorkers.name": {
+    "defaultMessage": "Self-Replicating Workers"
+  },
+  "skills.swarm.selfReplicatingWorkers.technical": {
+    "defaultMessage": "Hunters and Gatherers gain (1 + Swarm rate × their count / 10)^0.75 production speed. Launched-panel Energy gains (1 + Swarm rate × launched panels / 100)^0.5."
+  },
+  "skills.swarm.steadySupply.description": {
+    "defaultMessage": "Please leave the factories where you found them."
+  },
+  "skills.swarm.steadySupply.name": {
+    "defaultMessage": "Steady Supply"
+  },
+  "skills.swarm.steadySupply.technical": {
+    "defaultMessage": "Keep paid facility purchases through Infinity. Assign before resetting and again to restore them. Free starter units do not accumulate. Quantum clears the supply."
+  },
+  "skills.swarm.stellarSwarm.description": {
+    "defaultMessage": "Sacrifices are now available in bulk."
+  },
+  "skills.swarm.stellarSwarm.name": {
+    "defaultMessage": "Stellar Swarm"
+  },
+  "skills.swarm.stellarSwarm.technical": {
+    "defaultMessage": "Multiplies Stellar Sacrifices output by P^log12.5(Bots), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged."
   },
   "skills.switch-anyway": {
     "defaultMessage": "Switch anyway",
@@ -7432,7 +7714,7 @@
     "description": "Wiki category replacing Research after Discovery is unlocked."
   },
   "wiki.discovery.overview": {
-    "defaultMessage": "Discovery starts at <value>level 1</value>, with <value>10× Cash, Bot and facility production</value> and a <value>10-second base panel lifetime</value>. Each completion adds <value>0.1</value> to both the multiplier and base lifetime. A completion takes one hour at base speed. Discovery needs no scientists or resources.",
+    "defaultMessage": "Discovery starts with <value>10× facility production</value>, <value>7× Cash and Bot gains</value> and a <value>20-second base panel lifetime</value>. Each hourly base completion adds <value>0.1</value> to the facility multiplier. Facility and Bot bonuses both apply to Assembly Line output. Discovery needs no scientists or resources.",
     "description": "Explains Discovery baseline production, lifetime and fixed completion requirement."
   },
   "wiki.discovery.overview-title": {
@@ -7456,7 +7738,7 @@
     "description": "Heading for effects converted when Discovery replaces Research."
   },
   "wiki.discovery.upgrades": {
-    "defaultMessage": "In Avocato, <value>Discovery Speed</value> adds <value>25% speed</value> per purchase. <value>Starting Power</value> adds <value>5</value> to the starting multiplier and base panel lifetime, including immediately in the current run. Each upgrade costs <value>1, 2, 3… Transcendence Points</value> independently. Bonuses are additive.",
+    "defaultMessage": "In Avocato, <value>Elevation</value> costs <value>3 TP</value>, raises Cash and Bots to <value>10×</value>, and completes every <value>30 base minutes</value>: +0.1 multiplier and 30 minutes of Discovery progress. <value>Enlightenment</value> costs <value>5 TP</value>, raises base lifetime to <value>30 seconds</value>, and completes every <value>10 base minutes</value>: +0.1 seconds and 10 minutes of Elevation progress. Transfers can complete earlier bars and preserve excess progress. Skill-tree speed bonuses apply at <value>100% / 50% / 25%</value>; other speed bonuses apply fully. Transferred progress is not multiplied by speed. Shared speed purchases add <value>25%</value>; each separate power purchase adds <value>5</value> to its starting multiplier or lifetime. Repeatable costs are independently <value>1, 2, 3… TP</value>. Bonuses are additive.",
     "description": "Explains independent permanent Discovery upgrade costs and additive effects."
   },
   "wiki.discovery.upgrades-title": {
@@ -7776,19 +8058,19 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.challenge": {
-    "defaultMessage": "Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures.",
+    "defaultMessage": "Added seven Quantum challenges awarding 2 Catalysts each. Division and Quantum Double IP are inactive during these runs. Added four Manual Labour augments, including a bonus for waiting between activations. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.",
     "description": "Version 4.1.10 challenge and Stellar Sacrifices changes."
   },
   "wiki.patch-notes.version-4-1-10.discovery": {
-    "defaultMessage": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked.",
+    "defaultMessage": "Discovery boosts facilities. Unlock Elevation for Cash and Bots, then Enlightenment for panel lifetime; each new bar feeds progress into the previous one. Related skills adapt when unlocked.",
     "description": "Version 4.1.10 Discovery release notes."
   },
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": {
-    "defaultMessage": "Added permanent Discovery Speed and Starting Power upgrades in Avocato.",
+    "defaultMessage": "Added shared Discovery Speed and separate power upgrades in a collapsible Avocato category.",
     "description": "Version 4.1.10 Discovery release notes."
   },
   "wiki.patch-notes.version-4-1-10.fixes": {
-    "defaultMessage": "Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.",
+    "defaultMessage": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.",
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.ios": {
@@ -7806,6 +8088,9 @@
   "wiki.patch-notes.version-4-1-10.speedruns": {
     "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.",
     "description": "Version 4.1.10 speedrun improvements."
+  },
+  "wiki.patch-notes.version-4-1-10.swarm": {
+    "defaultMessage": "Added ten Swarm and Fragment augments."
   },
   "wiki.patch-notes.version-4-1-10.transcendence": {
     "defaultMessage": "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research.",

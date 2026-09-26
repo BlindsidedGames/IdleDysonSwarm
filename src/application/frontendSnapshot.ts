@@ -1,6 +1,7 @@
+import { builtByHandTinkerGoal } from '../simulation/canonicalGoalProgression'
+import { effectiveDivisions, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
-import { isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import type { DeepReadonly } from '../core/contracts'
 import { clampUnitInterval } from '../core/clampUnitInterval'
@@ -663,6 +664,7 @@ export interface FrontendDysonPresentationFacts {
         readonly kind:
           | 'create-bots'
           | 'build-assembly-lines'
+          | 'tinkers'
           | 'have-active-panels'
           | 'own-planets'
           | 'decay-panels'
@@ -1228,7 +1230,7 @@ export function selectGameplayVisibility(
     state.meta.firstInfinityComplete ||
     Object.values(state.skills.byId).some((skill) => skill.owned)
   const infinityRequiredBots = ordinaryInfinityBotThreshold(
-    state.quantum.divisionsPurchased,
+    effectiveDivisions(state),
   )
   const infinityUnlocked = unlockAllTabs ||
     infinityChallenges(state).unlocked ||
@@ -1620,11 +1622,11 @@ function selectDerivedFacts(
   const infinityProgress = projectInfinityProgress({
     bots: state.dyson.bots,
     totalInfinityPoints: state.infinity.points,
-    divisionsPurchased: state.quantum.divisionsPurchased,
+    divisionsPurchased: effectiveDivisions(state),
     breakTheLoop: isBreakInfinityEnabled(state),
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: context.entitlements.permanentDoubleIp,
-    quantumDoubleIp: state.quantum.unlocks.doubleInfinityPoints,
+    quantumDoubleIp: quantumDoubleIpEnabled(state),
   })
   const minimumInfinityRateSeconds =
     state.timeline.processing.activeIntervalMilliseconds / 1000
@@ -1649,7 +1651,8 @@ function selectDerivedFacts(
           value: projectDysonDerivedFacts(
             dyson.value,
             state.dyson.goalStage,
-            state.quantum.divisionsPurchased,
+            effectiveDivisions(state),
+            builtByHandTinkerGoal(state),
           ),
         }
         : {
@@ -1913,6 +1916,7 @@ function projectDysonDerivedFacts(
   source: Readonly<DerivedBasicDysonState>,
   goalStage: bigint,
   divisionsPurchased: bigint,
+  tinkerGoalTarget: number | null,
 ): Omit<
   DerivedBasicDysonState,
   'nextEvaluationSnapshot' | 'megaRates'
@@ -1962,6 +1966,7 @@ function projectDysonDerivedFacts(
       currentGoal: projectDysonGoal(
         goalStage,
         divisionsPurchased,
+        tinkerGoalTarget,
       ),
       facilities: source.facilityFacts,
     },
@@ -2306,7 +2311,9 @@ function projectGalaxyGroupVisualCompletion(
 function projectDysonGoal(
   goalStage: bigint,
   divisionsPurchased: bigint,
+  tinkerGoalTarget: number | null,
 ): FrontendDysonPresentationFacts['currentGoal'] {
+  if (tinkerGoalTarget !== null) return { kind: 'tinkers', target: tinkerGoalTarget }
   switch (goalStage) {
     case 0n:
       return { kind: 'create-bots', target: 10 }
@@ -2905,6 +2912,7 @@ interface SkillPreviewDependencies {
   readonly firstInfinityComplete: boolean
   readonly quantumUnlockMask: number
   readonly manualFacilityCounts: string
+  readonly challengeSignature: string
 }
 
 const skillPreviewDependenciesByCatalog = new WeakMap<
@@ -2957,6 +2965,15 @@ function selectSkillPreviewDependencies(
     queuedSkillIds: [...state.skills.activeAutoAssignment]
       .sort()
       .join('\u0000'),
+    challengeSignature: [
+      state.challenges?.active ?? '',
+      state.challenges?.galvanizers ?? 0n,
+      state.challenges?.blankSlateCompleted,
+      state.challenges?.trialAndErrorCompleted,
+      state.challenges?.noScienceCompleted,
+      ...(state.challenges?.completedQuantumChallenges ?? []),
+      ...(state.challenges?.galvanizedSkillIds ?? []),
+    ].join('\u0000'),
     manualFacilityCounts: BASIC_DYSON_FACILITY_IDS.map(
       (facilityId) => state.dyson.facilities[facilityId][1],
     ).join('\u0000'),
@@ -2982,6 +2999,7 @@ function sameSkillPreviewDependencies(
     before.ownedSkillIds === after.ownedSkillIds &&
     before.queuedSkillIds === after.queuedSkillIds &&
     before.manualFacilityCounts === after.manualFacilityCounts &&
+    before.challengeSignature === after.challengeSignature &&
     before.firstInfinityComplete === after.firstInfinityComplete &&
     before.quantumUnlockMask === after.quantumUnlockMask
   )

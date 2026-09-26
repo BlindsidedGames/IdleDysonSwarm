@@ -1,3 +1,4 @@
+import { challengeAllowsFacilityPurchase } from './infinityChallenges'
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
@@ -48,6 +49,7 @@ export type CanonicalInfinityShopPurchaseCode =
   | 'output-maxed'
   | 'definition-gap'
   | 'auto-assignment-rejected'
+  | 'challenge-disabled'
 
 export interface CanonicalInfinityShopPurchaseResult {
   readonly accepted: boolean
@@ -270,6 +272,9 @@ function purchaseRetainedFacility(
 ): CanonicalInfinityShopPurchaseResult {
   const cost =
     CANONICAL_INFINITY_SHOP_CONSTANTS.retainedFacilityCost
+  if (!challengeAllowsFacilityPurchase(state, definition.facilityId)) {
+    return rejected(state, 'challenge-disabled', cost)
+  }
   if (state.infinity.retainedFacilities[definition.retainedKey]) {
     return rejected(state, 'already-purchased', cost)
   }

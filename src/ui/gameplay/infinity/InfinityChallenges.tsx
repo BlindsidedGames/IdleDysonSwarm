@@ -1,3 +1,4 @@
+import { QUANTUM_CHALLENGE_IDS, isQuantumChallenge, challengeCompleted } from '../../../simulation/infinityChallenges'
 import { formatGameDuration } from '../../i18n/formatters'
 import { resolveLocale } from '../../i18n/localeRegistry'
 import './infinity.css'
@@ -24,17 +25,19 @@ export function InfinityChallenges(props: ChallengeProps) {
     <ChallengeCard {...props} challengeId="blank-slate" />
     <ChallengeCard {...props} challengeId="trial-and-error" />
   </CollapsibleSection><CollapsibleSection className="infinity-challenges" storageKey="quantum-challenges" title={intl.formatMessage(messages.quantumTitle)}>
-    <ChallengeCard {...props} challengeId="no-science" />
+    <p>{intl.formatMessage(messages.quantumRules)}</p>
+    {QUANTUM_CHALLENGE_IDS.map(id => <ChallengeCard key={id} {...props} challengeId={id} />)}
   </CollapsibleSection></>
 }
 function ChallengeCard({ progress, overflowReached, developmentVisible = false, dispatchPlayer, challengeId }: ChallengeProps & { challengeId: NonNullable<InfinityChallengeState['active']> }) {
   const intl = useIntl()
   const active = progress.active === challengeId
   const trial = challengeId === 'trial-and-error'
-  const quantum = challengeId === 'no-science'
+  const quantum = isQuantumChallenge(challengeId)
   const reward = quantum ? '2' : '1'
-  const completed = quantum ? progress.noScienceCompleted : trial ? progress.trialAndErrorCompleted : progress.blankSlateCompleted
-  const unavailable = overflowReached || !progress.unlocked || (progress.active !== null && !active)
+  const completed = challengeCompleted(progress, challengeId)
+  const needsManualLabour = challengeId === 'built-by-hand' && !progress.galvanizedSkillIds?.includes('manualLabour')
+  const unavailable = needsManualLabour || overflowReached || !progress.unlocked || (progress.active !== null && !active)
   const [confirming, setConfirming] = useState(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
@@ -45,7 +48,7 @@ function ChallengeCard({ progress, overflowReached, developmentVisible = false, 
     if (pendingRef.current || unavailable) return
     pendingRef.current = true; setPending(true); setFailed(false)
     try {
-      const result = await dispatchPlayer({ kind: active ? 'challenge.abandon' : quantum ? 'challenge.enter-no-science' : trial ? 'challenge.enter-trial-and-error' : 'challenge.enter-blank-slate' })
+      const result = await dispatchPlayer(active ? { kind: 'challenge.abandon' } : { kind: 'challenge.enter', challengeId })
       setFailed(result.status !== 'accepted')
       if (result.status === 'accepted') setConfirming(false)
     } catch { setFailed(true) }
@@ -53,11 +56,12 @@ function ChallengeCard({ progress, overflowReached, developmentVisible = false, 
   }
   return <article className="infinity-shop-card infinity-challenge-card">
       <div>
-        <h3>{intl.formatMessage(quantum ? messages.noScience : trial ? messages.trialAndError : messages.blankSlate)}</h3>
-        <p>{intl.formatMessage(quantum ? messages.noScienceDescription : trial ? messages.trialDescription : messages.description)}</p>
+        <h3>{intl.formatMessage(challengePresentation[challengeId].name)}</h3>
+        <p>{intl.formatMessage(challengePresentation[challengeId].description)}</p>
         <p>{intl.formatMessage(completed ? messages.rewarded : messages.reward, { reward: <InlineResourceAmount leadingSymbol={<InlineImageSymbol className="infinity-challenge-card__galvanizer" src={galvanizerIcon} tint maskMode="luminance" label={intl.formatMessage(messages.galvanizers, { value: reward })} />} value={reward} /> })}</p>
+        {needsManualLabour && <p>{intl.formatMessage(messages.manualLabourRequired)}</p>}
         {completed && <p>{intl.formatMessage(messages.completed, { time: progress.completionSeconds?.[challengeId] === undefined ? intl.formatMessage(messages.timeUnknown) : formatGameDuration(resolveLocale(intl.locale), progress.completionSeconds[challengeId]!, { maximumFractionDigits: 2 }) })}</p>}
-        {active && <p role="status">{intl.formatMessage(quantum ? messages.noScienceActive : trial ? messages.trialActive : messages.active)}</p>}
+        {active && <p role="status">{intl.formatMessage(messages.activeLabel)}</p>}
       </div>
       {confirming ? <div className="infinity-challenge-card__confirmation">
         <p>{intl.formatMessage(quantum ? messages.quantumRestart : messages.restart)}</p>
@@ -72,3 +76,15 @@ function ChallengeCard({ progress, overflowReached, developmentVisible = false, 
       {failed && <StatusFeedback tone="error">{intl.formatMessage(messages.failure)}</StatusFeedback>}
     </article>
 }
+
+const challengePresentation = {
+  'blank-slate': { name: messages.blankSlate, description: messages.description },
+  'trial-and-error': { name: messages.trialAndError, description: messages.trialDescription },
+  'no-science': { name: messages.noScience, description: messages.noScienceDescription },
+  'short-circuit': { name: messages.shortCircuit, description: messages.shortCircuitDescription },
+  'grounded': { name: messages.grounded, description: messages.groundedDescription },
+  'built-by-hand': { name: messages.builtByHand, description: messages.builtByHandDescription },
+  'hands-off': { name: messages.handsOff, description: messages.handsOffDescription },
+  'commitment-issues': { name: messages.commitmentIssues, description: messages.commitmentIssuesDescription },
+  'supply-shortage': { name: messages.supplyShortage, description: messages.supplyShortageDescription },
+} as const

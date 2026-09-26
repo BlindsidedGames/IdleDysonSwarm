@@ -1,0 +1,48 @@
+import { defineMessages } from 'react-intl'
+import { SWARM_AUGMENTS } from '../../../simulation/skillSubskills'
+
+export const swarmMessages = defineMessages({
+  headStartName: { id: "skills.swarm.headStart.name", defaultMessage: "Head Start" },
+  headStartDescription: { id: "skills.swarm.headStart.description", defaultMessage: "Some assembly already completed." },
+  headStartTechnical: { id: "skills.swarm.headStart.technical", defaultMessage: "Gain 30 purchased units of each available facility once per Infinity, without increasing prices. Includes unlocked megastructures." },
+  botnetName: { id: "skills.swarm.botnet.name", defaultMessage: "Botnet" },
+  botnetDescription: { id: "skills.swarm.botnet.description", defaultMessage: "They finally accepted the group invitation." },
+  botnetTechnical: { id: "skills.swarm.botnet.technical", defaultMessage: "Multiplies all facility production by 1 + log20(Bots)." },
+  deferredBillingName: { id: "skills.swarm.deferredBilling.name", defaultMessage: "Deferred Billing" },
+  deferredBillingDescription: { id: "skills.swarm.deferredBilling.description", defaultMessage: "The invoice is somebody else’s problem." },
+  deferredBillingTechnical: { id: "skills.swarm.deferredBilling.technical", defaultMessage: "Facility purchases require their full Cash price, but do not spend it." },
+  pooledPurchasesName: { id: "skills.swarm.pooledPurchases.name", defaultMessage: "Pooled Purchases" },
+  pooledPurchasesDescription: { id: "skills.swarm.pooledPurchases.description", defaultMessage: "One receipt. Everybody takes credit." },
+  pooledPurchasesTechnical: { id: "skills.swarm.pooledPurchases.technical", defaultMessage: "Each facility uses the total purchased count of all facilities for purchase bonuses. Terra applies afterwards. Prices are unchanged." },
+  economyOfScaleName: { id: "skills.swarm.economyOfScale.name", defaultMessage: "Economy of Scale" },
+  economyOfScaleDescription: { id: "skills.swarm.economyOfScale.description", defaultMessage: "Buying in bulk has become a personality trait." },
+  economyOfScaleTechnical: { id: "skills.swarm.economyOfScale.technical", defaultMessage: "Multiplies Cash, Science and Bot production by log5(total facilities), with a minimum of 1×." },
+  steadySupplyName: { id: "skills.swarm.steadySupply.name", defaultMessage: "Steady Supply" },
+  steadySupplyDescription: { id: "skills.swarm.steadySupply.description", defaultMessage: "Please leave the factories where you found them." },
+  steadySupplyTechnical: { id: "skills.swarm.steadySupply.technical", defaultMessage: "Keep paid facility purchases through Infinity. Assign before resetting and again to restore them. Free starter units do not accumulate. Quantum clears the supply." },
+  selfReplicatingWorkersName: { id: "skills.swarm.selfReplicatingWorkers.name", defaultMessage: "Self-Replicating Workers" },
+  selfReplicatingWorkersDescription: { id: "skills.swarm.selfReplicatingWorkers.description", defaultMessage: "The recruitment department has become redundant." },
+  selfReplicatingWorkersTechnical: { id: "skills.swarm.selfReplicatingWorkers.technical", defaultMessage: "Hunters and Gatherers gain (1 + Swarm rate × their count / 10)^0.75 production speed. Launched-panel Energy gains (1 + Swarm rate × launched panels / 100)^0.5." },
+  stellarSwarmName: { id: "skills.swarm.stellarSwarm.name", defaultMessage: "Stellar Swarm" },
+  stellarSwarmDescription: { id: "skills.swarm.stellarSwarm.description", defaultMessage: "Sacrifices are now available in bulk." },
+  stellarSwarmTechnical: { id: "skills.swarm.stellarSwarm.technical", defaultMessage: "Multiplies Stellar Sacrifices output by P^log12.5(Bots), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged." },
+  compoundFragmentsName: { id: "skills.swarm.compoundFragments.name", defaultMessage: "Compound Fragments" },
+  compoundFragmentsDescription: { id: "skills.swarm.compoundFragments.description", defaultMessage: "Somehow the pieces came with interest." },
+  compoundFragmentsTechnical: { id: "skills.swarm.compoundFragments.technical", defaultMessage: "Replaces linear purchase scaling with (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1." },
+  reductiveScalingName: { id: "skills.swarm.reductiveScaling.name", defaultMessage: "Reductive Scaling" },
+  reductiveScalingDescription: { id: "skills.swarm.reductiveScaling.description", defaultMessage: "The price tags are getting nervous." },
+  reductiveScalingTechnical: { id: "skills.swarm.reductiveScaling.technical", defaultMessage: "Reduces facility price growth by 0.5 percentage points per active Fragment Skill, to a minimum of 0.1%." },
+})
+
+export const swarmAugmentPresentation = new Map([
+  [SWARM_AUGMENTS.headStart, { message: swarmMessages.headStartName, description: swarmMessages.headStartDescription, effect: swarmMessages.headStartTechnical, iconFileName: 'swarmHeadStart.webp', column: 1, row: -1 }],
+  [SWARM_AUGMENTS.botnet, { message: swarmMessages.botnetName, description: swarmMessages.botnetDescription, effect: swarmMessages.botnetTechnical, iconFileName: 'swarmBotnet.webp', column: 1, row: 0 }],
+  [SWARM_AUGMENTS.deferredBilling, { message: swarmMessages.deferredBillingName, description: swarmMessages.deferredBillingDescription, effect: swarmMessages.deferredBillingTechnical, iconFileName: 'swarmDeferredBilling.webp', column: 1, row: 1 }],
+  [SWARM_AUGMENTS.pooledPurchases, { message: swarmMessages.pooledPurchasesName, description: swarmMessages.pooledPurchasesDescription, effect: swarmMessages.pooledPurchasesTechnical, iconFileName: 'swarmPooledPurchases.webp', column: 1, row: 0 }],
+  [SWARM_AUGMENTS.economyOfScale, { message: swarmMessages.economyOfScaleName, description: swarmMessages.economyOfScaleDescription, effect: swarmMessages.economyOfScaleTechnical, iconFileName: 'swarmEconomyOfScale.webp', column: 1, row: 1 }],
+  [SWARM_AUGMENTS.steadySupply, { message: swarmMessages.steadySupplyName, description: swarmMessages.steadySupplyDescription, effect: swarmMessages.steadySupplyTechnical, iconFileName: 'swarmSteadySupply.webp', column: 1, row: -1 }],
+  [SWARM_AUGMENTS.selfReplicatingWorkers, { message: swarmMessages.selfReplicatingWorkersName, description: swarmMessages.selfReplicatingWorkersDescription, effect: swarmMessages.selfReplicatingWorkersTechnical, iconFileName: 'swarmSelfReplicatingWorkers.webp', column: 1, row: 0 }],
+  [SWARM_AUGMENTS.stellarSwarm, { message: swarmMessages.stellarSwarmName, description: swarmMessages.stellarSwarmDescription, effect: swarmMessages.stellarSwarmTechnical, iconFileName: 'swarmStellarSwarm.webp', column: 1, row: 1 }],
+  [SWARM_AUGMENTS.compoundFragments, { message: swarmMessages.compoundFragmentsName, description: swarmMessages.compoundFragmentsDescription, effect: swarmMessages.compoundFragmentsTechnical, iconFileName: 'swarmCompoundFragments.webp', column: 1, row: 0 }],
+  [SWARM_AUGMENTS.reductiveScaling, { message: swarmMessages.reductiveScalingName, description: swarmMessages.reductiveScalingDescription, effect: swarmMessages.reductiveScalingTechnical, iconFileName: 'swarmReductiveScaling.webp', column: 1, row: 1 }],
+])

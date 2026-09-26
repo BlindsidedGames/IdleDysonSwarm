@@ -37,6 +37,7 @@ export interface GameMetaState {
   readonly createdAtLegacyText: string | null
   readonly tutorialComplete: boolean
   readonly firstInfinityComplete: boolean
+  readonly firstQuantumComplete?: boolean
   /** Unity settings that control the persistent bottom-menu shortcuts. */
   readonly navigationVisibility?: {
     readonly story: boolean
@@ -133,7 +134,17 @@ export type CanonicalSkillPresetAutomationSlot =
   | 0
   | CanonicalSkillPresetSlot
 
+export interface SwarmGrantState {
+  /** Free units already granted in this run; excluded from geometric pricing. */
+  readonly headStart: Partial<Record<CanonicalFacilityId, number>>
+  /** Paid purchases captured at the previous completed Infinity. */
+  readonly retained: Partial<Record<CanonicalFacilityId, number>>
+  /** Amount already restored this run, preventing refund/reassignment duplication. */
+  readonly restored: Partial<Record<CanonicalFacilityId, number>>
+}
+
 export interface SkillsState {
+  readonly swarmGrants?: SwarmGrantState
   readonly points: bigint
   readonly fragments: bigint
   readonly byId: Readonly<Record<string, SkillRuntimeState>>
@@ -152,12 +163,20 @@ export interface SkillsState {
   }
 }
 
+export interface DiscoveryTierState {
+  readonly completions: bigint
+  readonly progress: number
+  readonly startingPower: bigint
+}
+
 export interface DiscoveryState {
   readonly unlocked: boolean
   readonly completions: bigint
   readonly progress: number
   readonly startingPower: bigint
   readonly speedUpgrades: bigint
+  readonly elevation?: DiscoveryTierState
+  readonly enlightenment?: DiscoveryTierState
 }
 
 export interface ResearchState {
@@ -530,11 +549,15 @@ export interface SimulationStatisticsState {
   readonly dailyWindows: readonly StatisticsWindowState[]
 }
 
+export type QuantumChallengeId = 'no-science' | 'short-circuit' | 'grounded' | 'built-by-hand' | 'hands-off' | 'commitment-issues' | 'supply-shortage'
+export type ChallengeId = 'blank-slate' | 'trial-and-error' | QuantumChallengeId
+
 export interface InfinityChallengeState {
   readonly galvanizedSkillIds?: readonly string[]
   readonly unlocked: boolean
-  readonly active: 'blank-slate' | 'trial-and-error' | 'no-science' | null
-  readonly completionSeconds?: Readonly<Partial<Record<'blank-slate' | 'trial-and-error' | 'no-science', number>>>
+  readonly active: ChallengeId | null
+  readonly completedQuantumChallenges?: readonly QuantumChallengeId[]
+  readonly completionSeconds?: Readonly<Partial<Record<ChallengeId, number>>>
   readonly noScienceCompleted?: boolean
   readonly trialAndErrorCompleted?: boolean
   readonly blankSlateCompleted: boolean

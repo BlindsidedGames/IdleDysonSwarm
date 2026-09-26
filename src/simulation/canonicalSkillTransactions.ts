@@ -1,3 +1,4 @@
+import { initializeSwarmGrants } from './swarmAugments'
 import { initializeSrsHotStart } from './srsAugments'
 import { purityBodyMultiplier, purityMindMultiplier, purityEssenceMultiplier as essenceMultiplier } from './purityMultipliers'
 import { isSubskill, isSubskillUnlocked } from './skillSubskills'
@@ -157,7 +158,7 @@ export function galvanizeCanonicalSkill(state: CanonicalGameStateV1, skillId: st
   const definition = isSubskill(skillId) ? undefined : loadDefinitions(state).get(skillId)
   const challenges = infinityChallenges(state)
   if (!definition) return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)
-  if (!hasCompletedInfinityChallenge(state) || isBlankSlateActive(state) || !isUnlocked(definition, state)) {
+  if (!hasCompletedInfinityChallenge(state) || !isUnlocked(definition, state)) {
     return rejected(state, 'GALVANIZATION-LOCKED', 'Galvanization is not available for this skill.')
   }
   if (isGalvanized(state, skillId)) return rejected(state, 'ALREADY-GALVANIZED', 'This skill is already galvanized.')
@@ -253,7 +254,7 @@ export function previewCanonicalSkillCatalog(
       cost: definition.cost,
       galvanized: isGalvanized(state, definition.id),
       galvanizationUnlocked: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state),
-      canGalvanize: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state) && !isBlankSlateActive(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
+      canGalvanize: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
       owned,
       visible: unlocked,
       unlocked,
@@ -313,14 +314,14 @@ export function previewCanonicalSkillCatalog(
       refundableSkillIds: Object.freeze(
         ownedDefinitions
           .filter((definition) =>
-            isRefundable(definition, state.skills.byId),
+            state.challenges?.active !== 'commitment-issues' && isRefundable(definition, state.skills.byId),
           )
           .map((definition) => definition.id),
       ),
       retainedSkillIds: Object.freeze(
         ownedDefinitions
           .filter((definition) =>
-            !isRefundable(definition, state.skills.byId),
+            state.challenges?.active === 'commitment-issues' || !isRefundable(definition, state.skills.byId),
           )
           .map((definition) => definition.id),
       ),
@@ -625,6 +626,8 @@ function refundWithDefinitions(
     return accepted(state, false, [])
   }
 
+  if (state.challenges?.active === 'commitment-issues') return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be refunded during this Infinity.')
+
   const descendants = dependentIds(
     skillId,
     definitions,
@@ -690,6 +693,7 @@ function refundWithDefinitions(
 export function resetCanonicalSkills(
   state: CanonicalGameStateV1,
 ): CanonicalSkillTransactionResult {
+  if (state.challenges?.active === 'commitment-issues' && Object.values(state.skills.byId).some(skill => skill.owned)) return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be replaced during this Infinity.')
   const definitions = loadDefinitions(state)
   let points = state.skills.points
   let fragments = state.skills.fragments
@@ -911,9 +915,10 @@ function isUnlocked(
   definition: SkillDefinition,
   state: CanonicalGameStateV1,
 ): boolean {
+  if (isSubskill(definition.id) && !isSubskillUnlocked(state, definition.id)) return false
   switch (definition.unlock) {
     case 'always':
-      return !isSubskill(definition.id) || isSubskillUnlocked(state, definition.id)
+      return true
     case 'first-infinity':
       return state.meta.firstInfinityComplete
     case 'fragments':
@@ -1097,7 +1102,7 @@ function accepted(
   changed: boolean,
   affectedSkillIds: readonly string[],
 ): CanonicalSkillTransactionResult {
-  return { accepted: true, changed, state, affectedSkillIds }
+  return { accepted: true, changed, state: changed ? initializeSwarmGrants(state) : state, affectedSkillIds }
 }
 
 function rejected(

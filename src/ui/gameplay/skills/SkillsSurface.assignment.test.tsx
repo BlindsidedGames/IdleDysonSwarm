@@ -79,7 +79,7 @@ test.each([true, false])('production comparison preference %s controls preview w
     const state = { ...source, skills: { ...source.skills, points: 24n, byId: {}, activeAutoAssignment: [] } }
     const dispatch = vi.fn().mockResolvedValue({ status: 'accepted' })
     let after = 7
-    const query = vi.fn(() => ({ projected: true,
+    const query = vi.fn(() => ({ projected: true, projectedSeconds: 600,
       rows: [{ id: 'money' as const, before: 1, after, changed: true }] }))
     render(<IntlProvider locale="en" messages={{}}>
       <SkillsSurface locale="en" points={24n} fragments={state.skills.fragments}

@@ -1,6 +1,6 @@
 import type { InfinityCycleHistoryEntry } from '../../../game-state/types'
 import { infinityRunIpPerMinute } from '../statistics/statisticsProjection'
-import { avocatoMessages } from '../quantum/messages'
+import { avocatoMessages, quantumMessages } from '../quantum/messages'
 import {
   useEffect,
   useId,
@@ -574,6 +574,7 @@ function InfinityShopCard({
             })}
           </p>
         ) : null}
+        {preview.code === 'challenge-disabled' && <p>{intl.formatMessage(quantumMessages.inactiveChallenge)}</p>}
         {preview.code === 'prerequisite-not-met' &&
         prerequisite !== null ? (
           <p className="infinity-shop-card__requirement">

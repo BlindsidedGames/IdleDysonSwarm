@@ -61,6 +61,6 @@ describe('Avocato Overflow confirmation', () => {
     expect(button.disabled).toBe(true)
     fireEvent.click(button)
     expect(dispatch).not.toHaveBeenCalled()
-    expect(screen.getByText(/10-second base panel lifetime/)).not.toBeNull()
+    expect(screen.getByText(/20-second base panel lifetime/)).not.toBeNull()
   })
 })

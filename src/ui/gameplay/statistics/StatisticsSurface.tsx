@@ -237,6 +237,10 @@ export function StatisticsSurface({
             <StatisticFact label={intl.formatMessage(discoveryMessages.levelLabel)} value={formatWholeGameNumber(locale, discovery.completions + 1n)} />
             <StatisticFact label={intl.formatMessage(discoveryMessages.completions)} value={formatWholeGameNumber(locale, discovery.completions)} />
             <StatisticFact label={intl.formatMessage(discoveryMessages.multiplier)} value={`×${formatGameNumber(locale, discoveryEffects.multiplier)}`} />
+            {discovery.elevation && <StatisticFact label={intl.formatMessage(discoveryMessages.tierCompletions, { name: intl.formatMessage(discoveryMessages.elevation) })} value={formatWholeGameNumber(locale, discovery.elevation.completions)} />}
+            {discovery.enlightenment && <StatisticFact label={intl.formatMessage(discoveryMessages.tierCompletions, { name: intl.formatMessage(discoveryMessages.enlightenment) })} value={formatWholeGameNumber(locale, discovery.enlightenment.completions)} />}
+            <StatisticFact label={intl.formatMessage(discoveryMessages.cashBots)} value={`×${formatGameNumber(locale, discoveryEffects.cashBotsMultiplier)}`} />
+            <StatisticFact label={intl.formatMessage(discoveryMessages.baseLifetime)} value={formatGameDuration(locale, discoveryEffects.lifetime)} />
             <StatisticFact label={intl.formatMessage(discoveryMessages.speed)} value={`×${formatGameNumber(locale, discoveryEffects.speed)}`} />
           </dl>
         </section>}

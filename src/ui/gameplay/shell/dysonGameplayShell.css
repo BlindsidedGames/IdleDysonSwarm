@@ -654,6 +654,8 @@
 }
 
 .dyson-shell__header {
+  position: relative;
+  z-index: 3;
   grid-row: 1;
   min-inline-size: 0;
 }
@@ -1953,3 +1955,6 @@
   border-color: var(--color-positive);
   color: #162116;
 }
+
+.dyson-resource-header[data-resource-count="2"] { grid-template-columns: 1fr 1fr; }
+.dyson-resource-header[data-resource-count="2"] .dyson-resource-header__item--total-bots { justify-items: end; text-align: end; }

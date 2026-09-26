@@ -865,7 +865,7 @@ export function routeCanonicalGameCommand(
   const carriers =
     options.runtimeCarriers ?? EMPTY_RUNTIME_CARRIERS
 
-  if (isBlankSlateActive(state) && command.kind.startsWith('skill.')) {
+  if (isBlankSlateActive(state) && command.kind.startsWith('skill.') && command.kind !== 'skill.galvanize') {
     return rejectDomain(state, carriers, 'skill:challenge-active', 'skills', 'Skills are disabled during Blank Slate.')
   }
 

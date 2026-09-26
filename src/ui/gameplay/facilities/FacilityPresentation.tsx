@@ -1,7 +1,9 @@
+import { SWARM_AUGMENTS } from '../../../simulation/skillSubskills'
+import { swarmAugmentPresentation } from '../skills/swarmMessages'
 import { resolveGalaxiesEngulfed } from '../../../simulation/stellarArithmetic'
 import { multiplyContinuous } from '../../../simulation/numeric'
 import { galvanizedEffectMessages } from '../skills/galvanizedEffectMessages'
-import { discoverySkillNames, discoverySkillEffects } from '../discovery/skillMessages'
+import { discoverySkillNames, discoverySkillEffects, discoveryFracturedEffects } from '../discovery/skillMessages'
 import { discoveryMessages } from '../discovery/messages'
 import { PURITY_ESSENCE_QUADRATIC_COEFFICIENT } from '../../../simulation/purityMultipliers'
 import { boostMessages } from '../store/boostMessages'
@@ -423,7 +425,7 @@ export function FacilityDetailsContent({
     : null
   const hasTerraPurchaseEffects = Boolean(
     details?.manualPurchaseLayer &&
-      (details.manualPurchaseLayer.transferredPlanetCount > 0 ||
+      (details.manualPurchaseLayer.pooledPurchaseCount !== undefined || details.manualPurchaseLayer.transferredPlanetCount > 0 ||
         (facilityId === 'planets' &&
           details.manualPurchaseLayer.terraIrradiantOwned)),
   )
@@ -922,7 +924,9 @@ function FormulaLine({
 
 function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly layer: NonNullable<FacilityCanonicalFact['details']['manualPurchaseLayer']> }) {
   const intl = useIntl()
+  const pooled = swarmAugmentPresentation.get(SWARM_AUGMENTS.pooledPurchases)!
   const rows = [
+    ...(layer.pooledPurchaseCount !== undefined ? [{ id: SWARM_AUGMENTS.pooledPurchases, value: formatFacilityNumber(locale, layer.pooledPurchaseCount), description: intl.formatMessage(pooled.effect) }] : []),
     ...(layer.terraIrradiantOwned
       ? [{ id: 'terraIrradiant', value: '×12', description: skillTechnical('terraIrradiant', intl) }]
       : []),
@@ -936,9 +940,9 @@ function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly
   ]
   return <>{rows.map(({ id, value, description }) => (
     <div className="facility-effect-row" key={id}>
-      <img className="facility-effect-row__icon" src={skillIcons[id]} alt="" />
+      <img className="facility-effect-row__icon" src={skillIcons[id === SWARM_AUGMENTS.pooledPurchases ? pooled.iconFileName.replace('.webp', '') : id]} alt="" />
       <span className="facility-effect-row__copy">
-        <strong>{skillName(id, intl)}</strong>
+        <strong>{id === SWARM_AUGMENTS.pooledPurchases ? intl.formatMessage(pooled.message) : skillName(id, intl)}</strong>
         <small>{description}</small>
       </span>
       <span className="facility-effect-row__value">{value}</span>
@@ -960,8 +964,12 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
     }
   }
   if (source?.kind === 'skill') {
+    const augment = swarmAugmentPresentation.get(source.id as Parameters<typeof swarmAugmentPresentation.get>[0])
+    if (augment) return { icon: skillIcons[augment.iconFileName.replace('.webp', '')], name: intl.formatMessage(augment.message), description: intl.formatMessage(
+      (discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined) ?? augment.effect,
+    ) }
     const name = discoveryUnlocked ? discoverySkillNames[source.id as keyof typeof discoverySkillNames] : undefined
-    const effect = (discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
+    const effect = (discoveryUnlocked ? (source.fractured ? discoveryFracturedEffects[source.id as keyof typeof discoveryFracturedEffects] : undefined) ?? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
       ?? (source.fractured ? galvanizedEffectMessages[source.id] : undefined)
     return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: name ? intl.formatMessage(name) : skillName(source.id, intl), description: effect ? intl.formatMessage(effect) : skillTechnical(source.id, intl) }
   }
@@ -971,6 +979,7 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
   if (source?.kind === 'avocato') return { icon: skillIcons.avocados ?? navigationAssets.infinity, name: intl.formatMessage(messages.avocatoPower), description: intl.formatMessage(messages.avocatoPower) }
   if (source?.id === 'milestone-50') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone50), description: intl.formatMessage(messages.milestone50) }
   if (source?.id === 'milestone-100') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone100), description: intl.formatMessage(messages.milestone100) }
+  if (contribution.sourceId === 'discovery.cash-bots') return { icon: navigationAssets.discovery, name: intl.formatMessage(discoveryMessages.cashBots), description: '' }
   if (contribution.sourceId === 'discovery.production') return { icon: navigationAssets.discovery, name: intl.formatMessage(discoveryMessages.name), description: '' }
   if (contribution.sourceId === 'bot-boost') return { icon: navigationAssets.store, name: intl.formatMessage(boostMessages.title), description: '' }
   if (contribution.sourceId === 'canonical.numeric-clamp') return { icon: navigationAssets.settings, name: intl.formatMessage(messages.numericSafety), description: intl.formatMessage(messages.numericSafety) }

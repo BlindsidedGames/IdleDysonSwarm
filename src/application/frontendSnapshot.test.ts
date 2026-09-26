@@ -133,3 +133,12 @@ test.each([1n, 2n, 3n, 4n])('Influence Max preserves the final single-purchase s
   expect(runtime.gameState).toEqual(before)
   expect(selectGameplayVisibility(runtime.gameState).allTabsUnlocked).toBe(false)
 })
+
+test.each([[1n, 50], [3n, 250]] as const)('Built by Hand goal %s projects its Tinker requirement', (goalStage, target) => {
+  const state = structuredClone(runtime.gameState)
+  state.dyson.goalStage = goalStage
+  state.challenges = { ...state.challenges!, active: 'built-by-hand' }
+  const snapshot = gameplaySnapshot(state)
+  const dyson = snapshot.derived.dyson
+  expect(dyson.status === 'ready' && dyson.value.presentation.currentGoal).toEqual({ kind: 'tinkers', target })
+})

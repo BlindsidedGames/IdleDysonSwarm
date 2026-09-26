@@ -1,4 +1,6 @@
-import { isBreakInfinityEnabled } from './infinityChallenges'
+import { hasManualLabourAugment, MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
+import { manualBotYield, activateManualLabour, completeManualLabour, MANUAL_LABOUR_TUNING } from './manualLabourAugments'
+import { effectiveDivisions, isBreakInfinityEnabled } from './infinityChallenges'
 import { recordBotBoostUsage } from './botBoost'
 import {
   isFiniteNonNegativeNumber,
@@ -47,6 +49,7 @@ export type CanonicalTinkerStartEligibility =
   | 'already-running'
 
 export type CanonicalTinkerPresentationMode =
+  | 'hand-assembly'
   | 'default'
   | 'manual-labour-blocked'
   | 'manual-labour'
@@ -125,8 +128,8 @@ export function selectCanonicalTinkerUiFacts(
   const canStart = !synchronized.runtime.running
   return Object.freeze({
     runtime: Object.freeze({ ...synchronized.runtime }),
-    stats: Object.freeze({ ...stats, botYield: multiplyContinuous(stats.botYield, botMultiplier) }),
-    presentationMode: synchronized.runtime.effectiveManualLabour
+    stats: Object.freeze({ ...stats, botYield: multiplyContinuous(synchronized.runtime.running && hasManualLabourAugment(state, 'handAssembly') ? manualBotYield(state, state.skills.byId[MANUAL_LABOUR_AUGMENTS.patientHands]?.secondaryTimerSeconds ?? 0) : stats.botYield, botMultiplier) }),
+    presentationMode: hasManualLabourAugment(state, 'handAssembly') ? 'hand-assembly' : synchronized.runtime.effectiveManualLabour
       ? 'manual-labour'
       : synchronized.state.skills.byId.manualLabour?.owned === true
         ? 'manual-labour-blocked'
@@ -151,12 +154,12 @@ export function deriveCanonicalTinkerStats(
   assemblyYield: number,
 ): CanonicalTinkerStats {
   return Object.freeze({
-    botYield: 1,
+    botYield: manualBotYield(state),
     assemblyYield: requireFiniteNonNegative(
       assemblyYield,
       'assemblyYield',
     ),
-    cooldownSeconds: Math.max(
+    cooldownSeconds: hasManualLabourAugment(state, 'handAssembly') ? MANUAL_LABOUR_TUNING.cooldownSeconds : Math.max(
       MINIMUM_TINKER_COOLDOWN_SECONDS,
       requireFiniteNonNegative(
         state.dyson.manualCreationIntervalSeconds,
@@ -167,7 +170,8 @@ export function deriveCanonicalTinkerStats(
 }
 
 /**
- * Starts the Tinker action with Unity's initial 0.1-second progress seed.
+ * Keeps Unity's initial progress seed for original Tinker; Hand Assembly always
+ * pays its full cooldown so restarting cannot outperform held repeat.
  */
 export function startCanonicalTinker(
   state: Readonly<CanonicalGameStateV1>,
@@ -184,12 +188,12 @@ export function startCanonicalTinker(
         : synchronized.runtime,
     )
   }
-  return unchanged(synchronized.state, {
+  return unchanged(activateManualLabour(synchronized.state), {
     ...synchronized.runtime,
     running: true,
     repeat,
     cycleId: nextCycleId(synchronized.runtime.cycleId),
-    elapsedSeconds: Math.min(
+    elapsedSeconds: hasManualLabourAugment(state, 'handAssembly') ? 0 : Math.min(
       STARTING_PROGRESS_SECONDS,
       synchronized.runtime.cooldownSeconds,
     ),
@@ -258,7 +262,7 @@ export function advanceCanonicalTinker(
   let completions = 0
 
   while (active.running && remaining >= 0) {
-    const stableRepeatCooldown = active.repeat
+    const stableRepeatCooldown = active.repeat && !hasManualLabourAugment(candidate, 'handAssembly')
       ? stableRepeatTinkerCooldown(candidate, active)
       : null
     if (stableRepeatCooldown !== null) {
@@ -347,6 +351,8 @@ export function advanceCanonicalTinker(
       break
     }
     remaining = Math.max(0, remaining - untilCompletion)
+    const handAssembly = hasManualLabourAugment(candidate, 'handAssembly')
+    const botYield = handAssembly ? manualBotYield(candidate, candidate.skills.byId[MANUAL_LABOUR_AUGMENTS.patientHands]?.secondaryTimerSeconds ?? 0) : stats.botYield
     const manual = isManualLabourEffective(candidate)
     if (manual) {
       candidate = {
@@ -372,7 +378,7 @@ export function advanceCanonicalTinker(
         stats.assemblyYield,
       )
     } else {
-      const nextCreationTime =
+      const nextCreationTime = handAssembly ? MANUAL_LABOUR_TUNING.cooldownSeconds :
         candidate.dyson.manualCreationIntervalSeconds >= 1
           ? Math.max(
               0,
@@ -383,12 +389,13 @@ export function advanceCanonicalTinker(
         ...candidate,
         dyson: {
           ...candidate.dyson,
-          bots: addContinuous(candidate.dyson.bots, multiplyContinuous(stats.botYield, botMultiplier)),
+          bots: addContinuous(candidate.dyson.bots, multiplyContinuous(botYield, botMultiplier)),
           manualCreationIntervalSeconds: nextCreationTime,
         },
       }
-      botsGranted = addContinuous(botsGranted, stats.botYield * botMultiplier)
+      botsGranted = addContinuous(botsGranted, multiplyContinuous(botYield, botMultiplier))
     }
+    candidate = completeManualLabour(candidate)
     completions += 1
     if (!active.repeat) {
       active = {
@@ -417,7 +424,7 @@ export function advanceCanonicalTinker(
   const cappedBots = clampPreBreakInfinityBots(
     candidate.dyson.bots,
     isBreakInfinityEnabled(candidate),
-    candidate.quantum.divisionsPurchased,
+    effectiveDivisions(candidate),
   )
   if (cappedBots !== candidate.dyson.bots) {
     candidate = {
@@ -509,6 +516,8 @@ function isManualLabourEffective(
   state: Readonly<CanonicalGameStateV1>,
 ): boolean {
   return (
+    state.challenges?.active !== 'built-by-hand' &&
+    !hasManualLabourAugment(state, 'handAssembly') &&
     state.skills.byId.manualLabour?.owned === true &&
     state.dyson.facilities.ai_managers[1] >= 1
   )

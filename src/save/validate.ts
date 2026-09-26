@@ -38,6 +38,7 @@ export function validatePreparedSave(
     const discoveryError = validateDiscovery(value.discovery as unknown as DiscoveryState)
     if (discoveryError) return invalid(discoveryError)
   }
+  if (value.firstQuantumComplete !== undefined && typeof value.firstQuantumComplete !== 'boolean') return invalid('Invalid first Quantum milestone.')
   const speedrunError = validateSpeedrunStatistics(value.idsSpeedruns)
   if (speedrunError) return invalid(speedrunError)
 

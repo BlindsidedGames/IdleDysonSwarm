@@ -11,6 +11,7 @@ import {
 } from './numeric'
 import { buyXCost, tryDebitContinuous } from './transactions'
 import { settleExactContinuousCredit } from './conservativeSettlement'
+import { selfReplicationMultiplier } from './swarmAugments'
 
 export const DREAM_PRODUCER_COST_EXPONENT = 1.01
 
@@ -207,13 +208,13 @@ export function deriveDreamFoundationalInformationProductionFacts(
     hunterTimerProgress: createTimerProductionFact(
       'hunterTimerProgress',
       timers.hunterTimerProgress ?? 0,
-      standardTimerRate(Number(resources.hunters), multiplier),
+      standardTimerRate(Number(resources.hunters), multiplyContinuous(multiplier, selfReplicationMultiplier(state, Number(resources.hunters), 'workers'))),
       productionAmounts({ community: 1 }),
     ),
     gathererTimerProgress: createTimerProductionFact(
       'gathererTimerProgress',
       timers.gathererTimerProgress ?? 0,
-      standardTimerRate(Number(resources.gatherers), multiplier),
+      standardTimerRate(Number(resources.gatherers), multiplyContinuous(multiplier, selfReplicationMultiplier(state, Number(resources.gatherers), 'workers'))),
       productionAmounts({ community: 1 }),
     ),
     communityTimerProgress: createTimerProductionFact(

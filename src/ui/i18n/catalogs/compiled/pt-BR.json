@@ -353,6 +353,12 @@
       "value": "Do Zero ativo · Atribuição de habilidades desativada"
     }
   ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "Desafio ativo"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -365,10 +371,34 @@
       "value": "Conclua um Infinito normal sem usar pontos de habilidade."
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "Feito à mão"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "Conclua uma rodada quântica com todas as instalações desativadas. Use aumentos de Trabalho manual para criar Bots à mão."
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
       "value": "Cancelar"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "Medo de compromisso"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "Conclua uma rodada quântica sem reembolsar ou substituir habilidades atribuídas. Reinícios de Infinito limpam as atribuições normalmente."
     }
   ],
   "challenges.completed": [
@@ -409,6 +439,36 @@
       "value": "Gaste 1 Catalisador nos detalhes de uma habilidade revelada para tornar seu efeito base permanente e remover suas penalidades e exclusões. A fratura não pode ser desfeita e permanece após o Transbordamento."
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "Pés no chão"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "Conclua uma rodada quântica sem Planetas ou megaestruturas. Eles não podem ser comprados nem gerados."
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "Sem tocar"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "Conclua uma rodada quântica sem comprar instalações. Comece com uma Linha de montagem; instalações geradas continuam funcionando."
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "Requer Trabalho manual fraturado."
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -430,7 +490,13 @@
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "Inicia uma nova partida quântica sem conceder fragmentos quânticos. Melhorias quânticas e camadas posteriores são mantidas. Abandonar também inicia uma nova partida normal."
+      "value": "Inicia uma nova rodada quântica sem conceder Fragmentos quânticos. Divisão, IP em dobro quântico e Entrelaçamento quântico ficam inativos. IP em dobro comprado e camadas posteriores permanecem ativos. Abandonar também inicia uma nova rodada normal."
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "Divisão, IP em dobro quântico e Entrelaçamento quântico ficam inativos nos desafios quânticos. Bônus comprados permanecem ativos."
     }
   ],
   "challenges.quantumTitle": [
@@ -477,6 +543,18 @@
       "value": "Desafios"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "Curto-circuito"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "Conclua uma rodada quântica com a duração dos painéis fixada em 2 segundos."
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -487,6 +565,18 @@
     {
       "type": 0,
       "value": "Iniciar"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "Falta de suprimentos"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "Conclua uma rodada quântica com preços de instalações dobrando a cada compra. Instalações geradas não aumentam os preços."
     }
   ],
   "challenges.timeUnknown": [
@@ -887,6 +977,28 @@
       "value": "Cancelar"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "Dinheiro e Bots"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "Ganhos de dinheiro e Bots ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "Conclusões"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -905,6 +1017,12 @@
       "value": "Confirmar"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "Ciclo completo"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -921,6 +1039,102 @@
     {
       "type": 0,
       "value": "Detalhes de Descoberta"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "Elevação"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "Aumenta os ganhos de dinheiro e Bots de 7× para 10×. A cada 30 minutos base: +0,1 no multiplicador e 30 minutos de progresso de Descoberta."
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "Poder de Elevação"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 no multiplicador inicial de dinheiro e Bots. Os bônus são aditivos."
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "Iluminação"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "Aumenta a vida útil base dos painéis de 20 para 30 segundos. A cada 10 minutos base: +0,1 segundo e 10 minutos de progresso de Elevação."
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "Poder de Iluminação"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 segundos de vida útil inicial dos painéis. Os bônus são aditivos."
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "Produção das instalações"
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "Linhas de montagem, Gerentes de IA, Servidores, Centros de dados e Planetas 200% mais fortes."
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "+75% de velocidade de Descoberta. Os bônus são aditivos."
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "Linhas de montagem, Gerentes de IA, Servidores, Centros de dados e Planetas 100% mais fortes."
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "+100% de velocidade de Descoberta. Os bônus são aditivos."
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "Multiplica o dinheiro pela velocidade total de Descoberta junto com os outros multiplicadores de dinheiro."
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "As Galáxias de Sacrifícios estelares são 1.000× melhores."
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "Linhas de montagem, Gerentes de IA, Servidores, Centros de dados e Planetas 50% mais fortes."
     }
   ],
   "discovery.level": [
@@ -983,10 +1197,36 @@
       "value": "time"
     }
   ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "Próxima conclusão"
+    }
+  ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "Próximo: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " segundos de vida útil inicial"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
       "value": "Próximo multiplicador"
+    }
+  ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "Próxima vida útil dos painéis"
     }
   ],
   "discovery.nextPower": [
@@ -1030,13 +1270,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "Poder inicial"
+      "value": "Poder de Descoberta"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "+5 ao multiplicador inicial e aos segundos de vida útil base dos painéis. Os bônus são aditivos."
+      "value": "+5 no multiplicador inicial de instalações. Os bônus são aditivos."
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,17 +1288,35 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "Produção de Dinheiro, Bots e instalações ×"
+      "value": "Produção das instalações ×"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "Por conclusão"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "Não foi possível salvar a compra. Seus pontos foram mantidos. Tente novamente."
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "Velocidade"
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "Pesquisa e Ciência serão substituídas permanentemente."
     }
   ],
   "discovery.resetRule": [
@@ -1131,6 +1389,12 @@
     {
       "type": 0,
       "value": "Multiplica Dinheiro por 5."
+    }
+  ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "Multiplica dinheiro e Bots por M = max(1, log5(total de instalações)). Adiciona min(200%, 10% × log10(M)) à velocidade de Descoberta. Os bônus são aditivos."
     }
   ],
   "discovery.skill.focusedBeam.effect": [
@@ -1388,7 +1652,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "Produção de Dinheiro, Bots e instalações ×10. Vida útil base dos painéis de 10 segundos."
+      "value": "Produção das instalações ×10. Ganhos de dinheiro e Bots ×7. Vida útil base dos painéis: 20 segundos."
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": conclusões"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": velocidade"
     }
   ],
   "discovery.totalBots": [
@@ -1397,10 +1681,30 @@
       "value": "Total de Bots"
     }
   ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": +"
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "discovery.unlock": [
     {
       "type": 0,
       "value": "Desbloquear Descoberta"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "Melhorias de Descoberta"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -3209,6 +3513,26 @@
       ]
     }
   ],
+  "dyson.info.compact.goal-tinkers": [
+    {
+      "type": 0,
+      "value": "Meta: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Criações manuais"
+        }
+      ]
+    }
+  ],
   "dyson.info.compact.panel-lifetime": [
     {
       "type": 0,
@@ -3411,6 +3735,20 @@
     {
       "type": 0,
       "value": " Estrelas"
+    }
+  ],
+  "dyson.info.goal.tinkers": [
+    {
+      "type": 0,
+      "value": "Meta: "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " Criações manuais"
     }
   ],
   "dyson.info.panel-lifetime": [
@@ -3887,6 +4225,26 @@
     {
       "type": 0,
       "value": "Deve haver uma maneira melhor de fazer isso..."
+    }
+  ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "Crie "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Bots à mão."
     }
   ],
   "dyson.tinker.description.manual-labour": [
@@ -5223,6 +5581,12 @@
     {
       "type": 0,
       "value": "Ocultar melhorias no máximo"
+    }
+  ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "Inativo durante este desafio"
     }
   ],
   "quantum.leap": [
@@ -9845,6 +10209,78 @@
       "value": "name"
     }
   ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "Fábrica opcional. Dedos indispensáveis."
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "Produz Bots a cada 0,2 segundo sem um Gerente de IA. Produção base: (montagens manuais concluídas + 1)^5, limitada a 10^17 Bots por ativação. Substitui a criação manual de Linhas de montagem. O trabalho reinicia no Infinito."
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "Montagem manual"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "Meça duas vezes. Tome um chá. Corte uma vez."
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "Enquanto ocioso, armazena até 42 segundos de Montagem manual. A próxima ativação conclui o trabalho armazenado com 25% mais Bots. O trabalho também acumula prática. Consumido na ativação."
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "Mãos pacientes"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "Os primeiros mil eram protótipos."
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "A prática aumenta a produção da Montagem manual: 200% × ativações concluídas / (ativações concluídas + 500), até +200%. Reinicia no Infinito; é preservada ao reembolsar. Os bônus são aditivos."
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "A prática leva à perfeição"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "Você finalmente leu as instruções."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "Aumenta a produção da Montagem manual em 25% × log10(1 + níveis de pesquisa de Linhas de montagem), até +200%. Após desbloquear Descoberta, usa Descobertas concluídas. Os bônus são aditivos."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "Trabalhar com inteligência"
+    }
+  ],
   "skills.matches": [
     {
       "type": 6,
@@ -12035,6 +12471,18 @@
       "value": "Ciência"
     }
   ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "Linhas de montagem por ativação"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "Bots por ativação"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -12509,6 +12957,186 @@
     {
       "type": 0,
       "value": "Supernova suprime toda a camada de Compra Manual: Abacates, os dois marcos de 50/100, Escalonamento de Produção e todas as taxas do Enxame."
+    }
+  ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "Finalmente aceitaram o convite do grupo."
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "Rede de Bots"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica a produção de todas as instalações por 1 + log20(Bots)."
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "De algum jeito, as peças vieram com juros."
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "Fragmentos compostos"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "Substitui a escala linear de compras por (1 + taxa do Enxame)^floor((compras efetivas / limiar dos Fragmentos)^0.825). O limiar mínimo é 1."
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "A fatura é problema de outra pessoa."
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "Cobrança adiada"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "Compras de instalações exigem o preço inteiro em dinheiro, mas não o gastam."
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "Comprar no atacado virou um traço de personalidade."
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "Economia de escala"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica a produção de dinheiro, ciência e Bots por log5(total de instalações), com mínimo de 1×."
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "Parte da montagem já está pronta."
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "Vantagem inicial"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "Receba 30 unidades compradas de cada instalação disponível uma vez por Infinito, sem aumentar os preços. Inclui megaestruturas desbloqueadas."
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "Um recibo. Todo mundo leva o crédito."
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "Compras compartilhadas"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "Cada instalação usa a soma das compras de todas as instalações para seus bônus de compra. Terra é aplicada depois. Os preços não mudam."
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "As etiquetas de preço estão nervosas."
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "Escala redutora"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "Reduz o crescimento do preço das instalações em 0,5 ponto percentual por habilidade de Fragmento ativa, até o mínimo de 0,1%."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "O departamento de contratação ficou obsoleto."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "Trabalhadores autorreplicantes"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "Caçadores e coletores recebem (1 + taxa do Enxame × sua quantidade / 10)^0.75 de velocidade de produção. A energia dos painéis lançados recebe (1 + taxa do Enxame × painéis lançados / 100)^0.5."
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "Deixe as fábricas onde você as encontrou."
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "Abastecimento constante"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "Mantém as compras pagas de instalações após Infinito. Atribua antes de reiniciar e novamente para restaurá-las. Unidades iniciais grátis não se acumulam. Quantum apaga a reserva."
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "Agora os sacrifícios estão disponíveis no atacado."
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "Enxame estelar"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica a produção de Sacrifícios estelares por P^log12.5(Bots), sendo P o multiplicador de compras da sua instalação mais avançada. O custo em Bots não muda."
     }
   ],
   "skills.switch-anyway": [
@@ -14623,7 +15251,7 @@
   "wiki.discovery.overview": [
     {
       "type": 0,
-      "value": "Descoberta começa no "
+      "value": "Descoberta começa com "
     },
     {
       "type": 8,
@@ -14631,13 +15259,13 @@
       "children": [
         {
           "type": 0,
-          "value": "nível 1"
+          "value": "10× de produção das instalações"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", com "
+      "value": ", "
     },
     {
       "type": 8,
@@ -14645,7 +15273,7 @@
       "children": [
         {
           "type": 0,
-          "value": "produção de Dinheiro, Bots e instalações ×10"
+          "value": "7× de ganhos de dinheiro e Bots"
         }
       ]
     },
@@ -14659,13 +15287,13 @@
       "children": [
         {
           "type": 0,
-          "value": "vida útil base dos painéis de 10 segundos"
+          "value": "20 segundos de vida útil base dos painéis"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Cada conclusão adiciona "
+      "value": ". Cada conclusão de uma hora base adiciona "
     },
     {
       "type": 8,
@@ -14673,13 +15301,13 @@
       "children": [
         {
           "type": 0,
-          "value": "0.1"
+          "value": "0,1"
         }
       ]
     },
     {
       "type": 0,
-      "value": " ao multiplicador e à vida útil base. Uma conclusão leva uma hora na velocidade base. Descoberta não precisa de cientistas nem recursos."
+      "value": " ao multiplicador das instalações. Os bônus de instalações e Bots se aplicam juntos às Linhas de montagem. Descoberta não precisa de cientistas nem recursos."
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14793,13 +15421,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Velocidade de Descoberta"
+          "value": "Elevação"
         }
       ]
     },
     {
       "type": 0,
-      "value": " adiciona "
+      "value": " custa "
     },
     {
       "type": 8,
@@ -14807,13 +15435,13 @@
       "children": [
         {
           "type": 0,
-          "value": "25% de velocidade"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " por compra. "
+      "value": ", aumenta dinheiro e Bots para "
     },
     {
       "type": 8,
@@ -14821,13 +15449,111 @@
       "children": [
         {
           "type": 0,
-          "value": "Poder inicial"
+          "value": "10×"
         }
       ]
     },
     {
       "type": 0,
-      "value": " adiciona "
+      "value": " e conclui a cada "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 minutos base"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0,1 no multiplicador e 30 minutos de progresso de Descoberta. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Iluminação"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " custa "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", aumenta a vida útil base para "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 segundos"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " e conclui a cada "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10 minutos base"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0,1 segundo e 10 minutos de progresso de Elevação. Transferências podem concluir barras anteriores e preservam o excedente. Bônus de velocidade da árvore se aplicam a "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; os demais se aplicam integralmente. A velocidade não multiplica o progresso transferido. Compras de velocidade compartilhada adicionam "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; cada compra de poder separado adiciona "
     },
     {
       "type": 8,
@@ -14841,7 +15567,7 @@
     },
     {
       "type": 0,
-      "value": " ao multiplicador inicial e à vida útil base dos painéis, inclusive imediatamente na partida atual. Cada melhoria custa "
+      "value": " ao multiplicador ou vida útil inicial correspondente. Custos repetíveis são independentes: "
     },
     {
       "type": 8,
@@ -14849,13 +15575,13 @@
       "children": [
         {
           "type": 0,
-          "value": "1, 2, 3… pontos de Transcendência"
+          "value": "1, 2, 3… TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " de forma independente. Os bônus são aditivos."
+      "value": ". Os bônus são aditivos."
     }
   ],
   "wiki.discovery.upgrades-title": [
@@ -15713,25 +16439,25 @@
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Adicionado o desafio quântico Sem Ciência, que concede 2 Catalisadores. Sacrifícios Estelares agora cria sua instalação possuída de maior nível, incluindo megaestruturas."
+      "value": "Adicionados sete desafios quânticos que concedem 2 Catalisadores cada. Divisão e IP em dobro quântico ficam inativos nessas rodadas. Adicionados quatro aumentos de Trabalho manual, incluindo um bônus por esperar entre ativações. Fraturar funciona nos desafios e mostra uma prévia do efeito. Sacrifícios estelares cria sua instalação mais avançada atual."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "Descoberta cresce com o tempo e aumenta Dinheiro, Bots, produção de instalações e vida útil dos painéis. As habilidades relacionadas se adaptam ao desbloqueá-la."
+      "value": "Descoberta fortalece instalações. Desbloqueie Elevação para dinheiro e Bots, depois Iluminação para a vida útil dos painéis; cada barra nova fornece progresso à anterior. Habilidades relacionadas se adaptam ao desbloqueio."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "Adicionadas melhorias permanentes de Velocidade de Descoberta e Poder inicial no Avocato."
+      "value": "Adicionadas velocidade de Descoberta compartilhada e melhorias de poder separadas em uma categoria recolhível de Avocato."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Corrigidos a preservação na nuvem das Opções de desenvolvedor obtidas, a contagem de pontos de habilidade dos aprimoramentos, os ajustes negativos de depuração e a rotação de promoções."
+      "value": "Após seu primeiro Quantum, novas partidas começam com uma Linha de montagem. Corrigidos: galáxias sobre o cabeçalho, retenção na nuvem de Opções de desenvolvedor conquistadas, contagem de pontos de aumentos, ajustes negativos de depuração e rotação de promoções."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -15756,6 +16482,12 @@
     {
       "type": 0,
       "value": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações. Novos recordes de marcos usam o tempo jogado."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "Adicionados dez aprimoramentos de Enxame e Fragmento."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

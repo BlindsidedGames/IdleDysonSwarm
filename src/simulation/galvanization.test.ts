@@ -45,6 +45,11 @@ describe('permanent galvanized ownership', () => {
     expect(galvanizeCanonicalSkill(next, 'scientificPlanets').accepted).toBe(false)
     expect(refundCanonicalSkill(next, 'scientificPlanets').accepted).toBe(false)
   })
+  test.each(['blank-slate', 'trial-and-error', 'no-science'] as const)('allows fracturing in %s', active => {
+    const source = state()
+    const result = galvanizeCanonicalSkill({ ...source, challenges: { ...source.challenges, active } }, 'startHereTree')
+    expect(result.accepted).toBe(true)
+  })
   test('returns points invested in the base, but preserves its existing runtime', () => {
     const source = state()
     const next = galvanize({ ...source, skills: { ...source.skills, byId: { androids: { ...runtime, timerSeconds: 37 } } } }, 'androids')

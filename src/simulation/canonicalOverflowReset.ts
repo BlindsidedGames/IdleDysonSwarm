@@ -1,3 +1,5 @@
+import { hasCompletedQuantum } from './quantumMilestone'
+import { resetDiscoveryProgress } from './discovery'
 import { permanentSkillRuntime, permanentFragmentCount } from './galvanization'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { resetCanonicalDreamProgress } from './canonicalDreamReset'
@@ -23,9 +25,9 @@ export function applyCanonicalOverflowReset(
     ok: true,
     state: {
       ...state,
-      ...(state.discovery ? { discovery: { ...state.discovery, completions: 0n, progress: 0 } } : {}),
+      ...(state.discovery ? { discovery: resetDiscoveryProgress(state.discovery) } : {}),
       ...(state.challenges ? { challenges: { ...state.challenges, active: null } } : {}),
-      meta: { ...state.meta, firstInfinityComplete: false },
+      meta: { ...state.meta, firstInfinityComplete: false, firstQuantumComplete: hasCompletedQuantum(state) },
       dyson: {
         ...state.dyson,
         money: 0,
@@ -34,7 +36,7 @@ export function applyCanonicalOverflowReset(
         workers: 0,
         researchers: 0,
         facilities: {
-          assembly_lines: [0, 0], ai_managers: [0, 0],
+          assembly_lines: [hasCompletedQuantum(state) ? 1 : 0, 0], ai_managers: [0, 0],
           servers: [0, 0], data_centers: [0, 0], planets: [0, 0],
           matrioshka_brains: [0, 0], birch_planets: [0, 0], galactic_brains: [0, 0],
         },
@@ -71,6 +73,7 @@ export function applyCanonicalOverflowReset(
       },
       skills: {
         ...state.skills,
+        swarmGrants: undefined,
         points: state.secretProgress.completed ? AVOCADO_MEDITATION_SKILL_POINT_REWARD : 0n,
         fragments: permanentFragmentCount(state),
         byId: permanentSkillRuntime(state),

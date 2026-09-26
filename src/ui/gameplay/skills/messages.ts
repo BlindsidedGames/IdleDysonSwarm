@@ -1,6 +1,20 @@
 import { defineMessages } from 'react-intl'
 
 export const skillMessages = defineMessages({
+  manualBots: { id: 'skills.production.manualBots', defaultMessage: 'Bots per activation' },
+  manualAssemblyLines: { id: 'skills.production.manualAssemblyLines', defaultMessage: 'Assembly Lines per activation' },
+  manualHandAssemblyName: { id: 'skills.manualLabour.handAssembly.name', defaultMessage: 'Hand Assembly' },
+  manualHandAssemblyDescription: { id: 'skills.manualLabour.handAssembly.description', defaultMessage: 'Factory optional. Fingers essential.' },
+  manualHandAssemblyEffect: { id: 'skills.manualLabour.handAssembly.effect', defaultMessage: 'Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Replaces Assembly Line tinkering. Work resets on Infinity.' },
+  manualPracticeName: { id: 'skills.manualLabour.practice.name', defaultMessage: 'Practice Makes Perfect' },
+  manualPracticeDescription: { id: 'skills.manualLabour.practice.description', defaultMessage: 'The first thousand were prototypes.' },
+  manualPracticeEffect: { id: 'skills.manualLabour.practice.effect', defaultMessage: 'Increase Hand Assembly yield by up to 200% with practice: 200% × completions / (completions + 500). Practice resets on Infinity; refunds preserve it. Bonuses are additive.' },
+  manualWorkingSmarterName: { id: 'skills.manualLabour.workingSmarter.name', defaultMessage: 'Working Smarter' },
+  manualWorkingSmarterDescription: { id: 'skills.manualLabour.workingSmarter.description', defaultMessage: 'You finally read the instructions.' },
+  manualWorkingSmarterEffect: { id: 'skills.manualLabour.workingSmarter.effect', defaultMessage: 'Increase Hand Assembly yield by 25% × log10(1 + Assembly Line research levels), capped at +200%. After unlocking Discovery, use completed Discoveries instead. Bonuses are additive.' },
+  manualPatientHandsName: { id: 'skills.manualLabour.patientHands.name', defaultMessage: 'Patient Hands' },
+  manualPatientHandsDescription: { id: 'skills.manualLabour.patientHands.description', defaultMessage: 'Measure twice. Have a cup of tea. Cut once.' },
+  manualPatientHandsEffect: { id: 'skills.manualLabour.patientHands.effect', defaultMessage: 'While idle, store up to 42 seconds of Hand Assembly. Your next activation completes the stored work with 25% more Bots. Stored work also builds practice. Consumed on activation.' },
   srsStellarMemoryDescription: { id: 'skills.srs.stellarMemory.description', defaultMessage: "Your scientists keep their notes between universes. Most of them say “try not to do that again.”" },
   srsStellarMemoryName: { id: 'skills.srs.stellarMemory.name', defaultMessage: 'Stellar Memory' },
   srsStellarMemoryEffect: { id: 'skills.srs.stellarMemory.effect', defaultMessage: 'On Infinity or Quantum reset, bank newly generated SRS charge, excluding Hot Start and Afterglow. While assigned, boosts SRS augment benefits by 1 + 0.25 × log10(max(1, banked seconds)).' },

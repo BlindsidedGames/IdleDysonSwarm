@@ -105,7 +105,7 @@ export function TinkerSurface({
     <span className="tinker-surface__yield">{chunks}</span>
   )
   const description =
-    facts.presentationMode === 'manual-labour'
+    facts.presentationMode === 'hand-assembly' ? intl.formatMessage(tinkerMessages.handAssemblyDescription, { count: formatGameNumber(locale, facts.stats.botYield), value: highlightedValue }) : facts.presentationMode === 'manual-labour'
       ? intl.formatMessage(tinkerMessages.manualLabourDescription, {
           count: formatGameNumber(
             locale,

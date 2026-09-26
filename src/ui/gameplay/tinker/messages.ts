@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const tinkerMessages = defineMessages({
+  handAssemblyDescription: { id: 'dyson.tinker.description.hand-assembly', defaultMessage: 'Build <value>{count}</value> Bots by hand.' },
   title: {
     id: 'dyson.tinker.title',
     defaultMessage: 'Tinker in your garage',

@@ -1,3 +1,4 @@
+import { readSwarmGrants } from '../simulation/swarmAugments'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { type SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
@@ -220,6 +221,7 @@ export function hydrateGameState(
   const hasManualInfinityCalibration =
     source.simulationInfinityManualPeakIpPerMinute !== undefined ||
     source.simulationInfinityManualPeakReward !== undefined
+  const swarmGrants = readSwarmGrants(source.swarmGrants)
 
   const state: CanonicalGameStateV1 = {
     modelVersion: CANONICAL_GAME_MODEL_VERSION,
@@ -233,6 +235,7 @@ export function hydrateGameState(
         nonBlankStringOrNull(source.dateStarted),
       tutorialComplete: toBoolean(source.tutorial),
       firstInfinityComplete: toBoolean(source.firstInfinityDone),
+      ...(typeof source.firstQuantumComplete === 'boolean' ? { firstQuantumComplete: source.firstQuantumComplete } : {}),
       ...(source.idsBotBoost === undefined ? {} : { botBoost: source.idsBotBoost as import('../simulation/botBoost').BotBoostState }),
       navigationVisibility: isRecord(source.bottomNavigationPreferences)
         ? normalizeBottomNavigationVisibility(
@@ -344,6 +347,7 @@ export function hydrateGameState(
       },
     },
     skills: {
+      ...(swarmGrants ? { swarmGrants } : {}),
       points: toNonNegativeBigInt(skillTree.skillPointsTree),
       fragments: toNonNegativeBigInt(skillTree.fragments),
       byId: toSkillStates(infinityData.skillStateById),
@@ -720,6 +724,8 @@ export function dehydrateGameState(
   source.dateStarted = state.meta.createdAtLegacyText
   source.tutorial = state.meta.tutorialComplete
   source.firstInfinityDone = state.meta.firstInfinityComplete
+  if (state.meta.firstQuantumComplete !== undefined) source.firstQuantumComplete = state.meta.firstQuantumComplete
+  else delete source.firstQuantumComplete
   if (state.meta.botBoost !== undefined) source.idsBotBoost = state.meta.botBoost
   else delete source.idsBotBoost
   source.storyButtonToggle =
@@ -893,6 +899,8 @@ export function dehydrateGameState(
       ...preset.skillIds,
     ]
   })
+  if (state.skills.swarmGrants) source.swarmGrants = state.skills.swarmGrants
+  else delete source.swarmGrants
   source.autoAssignNonRefundableSkills =
     state.skills.autoAssignNonRefundable
   source.botsTabPresetOverride =
