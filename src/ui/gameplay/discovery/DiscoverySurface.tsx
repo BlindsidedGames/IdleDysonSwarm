@@ -39,7 +39,7 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
           {index === 0 && <span className="discovery-heading"><span className="discovery-title">{intl.formatMessage(m.name)}</span></span>}
           <span className="discovery-track">
             <DiscoveryBar tier={bar.tier} maximum={bar.maximum} incoming={bar.incoming}
-              name={intl.formatMessage(bar.name)} time={formatGameDuration(locale, completionTimes[index] / gameSpeed)}
+              name={intl.formatMessage(bar.name)} secondsPerProgress={1 / bar.speed / gameSpeed} locale={locale}
               benefit={bar.value} perCompletion={index === 2 ? DISCOVERY_TUNING.strengthPerCompletion : nextBonus}
               formatBenefit={index === 2 ? duration : number} label={intl.formatMessage(bar.label, { value: number(bar.value) })} />
             <span className="discovery-bar-icon"><InlineImageSymbol src={discoveryIcons[bar.id]} tint /></span>
@@ -78,18 +78,20 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
   </div>
 }
 
-function DiscoveryBar({ tier, maximum, incoming, name, time, benefit, perCompletion, formatBenefit, label }: {
+function DiscoveryBar({ tier, maximum, incoming, name, secondsPerProgress, locale, benefit, perCompletion, formatBenefit, label }: {
   readonly tier: DiscoveryTierState
   readonly maximum: number
   readonly incoming: bigint
   readonly name: string
-  readonly time: string
+  readonly secondsPerProgress: number
+  readonly locale: EnabledLocale
   readonly benefit: number
   readonly perCompletion: number
   readonly formatBenefit: (value: number) => string
   readonly label: string
 }) {
   const visible = useDiscoveryBarMotion(tier, maximum, incoming)
+  const time = formatGameDuration(locale, (maximum - visible.progress) * secondsPerProgress)
   const displayedBenefit = benefit - Number(tier.completions - visible.completions) * perCompletion
   return <span className="discovery-bar">
     <Progress className="discovery-progress" label={name} valueText={time} value={visible.progress} maximum={maximum} />

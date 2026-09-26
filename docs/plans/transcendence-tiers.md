@@ -200,3 +200,10 @@ supersedes the transfer-aware countdown described in earlier QA notes above.
 Verified in the running preview: the bars showed distinct remaining times of
 5m 24s / 6m 2s / 1m 47s. Focused simulation and UI coverage: 26 tests passed;
 TypeScript, lint and diff checks passed.
+
+The timer inside each bar now follows the same animated progress as its fill and
+benefit. During a transfer it rapidly counts down, wraps at visible completions,
+and settles on the real remaining time. The expanded details retain the immediate
+authoritative values. Verified a real browser cascade on the isolated QA save;
+the timer tracked the animated fill through multiple wraps. All eight Discovery
+UI/motion tests, TypeScript and lint passed.
