@@ -497,6 +497,9 @@
   "discovery.confirmAction": {
     "defaultMessage": "Confirm"
   },
+  "discovery.cycleDuration": {
+    "defaultMessage": "Full cycle"
+  },
   "discovery.debug.addCompletions": {
     "defaultMessage": "Add completed discoveries"
   },
@@ -571,6 +574,9 @@
   },
   "discovery.next": {
     "defaultMessage": "Next: ×{value} · {time}"
+  },
+  "discovery.nextCompletion": {
+    "defaultMessage": "Next completion"
   },
   "discovery.nextLifetime": {
     "defaultMessage": "Next: {value} seconds starting lifetime"

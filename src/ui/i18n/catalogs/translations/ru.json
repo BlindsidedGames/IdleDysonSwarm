@@ -2201,5 +2201,7 @@
   "discovery.rate": "Скорость",
   "discovery.nextPanelLifetime": "Следующий срок службы панелей",
   "discovery.progressPerCompletion": "За завершение",
-  "discovery.transfer": "{name}: +{time}"
+  "discovery.transfer": "{name}: +{time}",
+  "discovery.cycleDuration": "Полный цикл",
+  "discovery.nextCompletion": "Следующее завершение"
 }

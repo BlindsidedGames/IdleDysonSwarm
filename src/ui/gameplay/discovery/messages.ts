@@ -1,5 +1,7 @@
 import { defineMessages } from 'react-intl'
 export const discoveryMessages = defineMessages({
+  cycleDuration: { id: 'discovery.cycleDuration', defaultMessage: 'Full cycle' },
+  nextCompletion: { id: 'discovery.nextCompletion', defaultMessage: 'Next completion' },
   completed: { id: 'discovery.completed', defaultMessage: 'Completions' },
   facilityProduction: { id: 'discovery.facilityProduction', defaultMessage: 'Facility production' },
   rate: { id: 'discovery.rate', defaultMessage: 'Speed' },

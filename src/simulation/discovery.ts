@@ -64,19 +64,20 @@ function advanceTier<T extends DiscoveryTierState>(tier: T, progressAdded: numbe
   return { state: { ...tier, completions: addDiscrete(tier.completions, completed), progress: atBoundary ? 0 : remainder }, completed }
 }
 
-/** Fixed progress transfers are processed top-down, without recipient-speed amplification. */
+/** Each completion advances the preceding bar by a fixed duration at its current speed.
+ * Process highest tier first so transferred time can complete and cascade normally. */
 export function advanceDiscovery(discovery: Readonly<DiscoveryState>, seconds: number, speeds: number | DiscoverySpeeds): DiscoveryState {
   if (!discovery.unlocked || !Number.isFinite(seconds) || seconds <= 0) return discovery
   const rates = typeof speeds === 'number' ? { speed: speeds, elevationSpeed: speeds, enlightenmentSpeed: speeds } : speeds
   if ([rates.speed, rates.elevationSpeed, rates.enlightenmentSpeed].some(rate => !Number.isFinite(rate) || rate <= 0)) return discovery
   const enlightenment = discovery.enlightenment ? advanceTier(discovery.enlightenment, multiplyContinuous(seconds, rates.enlightenmentSpeed), DISCOVERY_TUNING.enlightenment.progress) : undefined
   const elevation = discovery.elevation ? advanceTier(discovery.elevation,
-    addContinuous(multiplyContinuous(seconds, rates.elevationSpeed), Number(enlightenment?.completed ?? 0n) * DISCOVERY_TUNING.enlightenment.progress), DISCOVERY_TUNING.elevation.progress) : undefined
-  const base = advanceTier(discovery, addContinuous(multiplyContinuous(seconds, rates.speed), Number(elevation?.completed ?? 0n) * DISCOVERY_TUNING.elevation.progress), DISCOVERY_TUNING.completionProgress)
+    multiplyContinuous(addContinuous(seconds, multiplyContinuous(Number(enlightenment?.completed ?? 0n), DISCOVERY_TUNING.enlightenment.progress)), rates.elevationSpeed), DISCOVERY_TUNING.elevation.progress) : undefined
+  const base = advanceTier(discovery, multiplyContinuous(addContinuous(seconds, multiplyContinuous(Number(elevation?.completed ?? 0n), DISCOVERY_TUNING.elevation.progress)), rates.speed), DISCOVERY_TUNING.completionProgress)
   return { ...base.state, ...(elevation ? { elevation: elevation.state } : {}), ...(enlightenment ? { enlightenment: enlightenment.state } : {}) }
 }
 
-/** Time to each next completion, including fixed transfers from faster bars.
+/** Time to each next completion, including incoming time transfers.
  * Monotone bisection is bounded independently of how many levels a spend earns.
  */
 export function discoveryCompletionTimes(state: Readonly<DiscoveryState>, rates: DiscoverySpeeds): readonly number[] {
@@ -84,15 +85,8 @@ export function discoveryCompletionTimes(state: Readonly<DiscoveryState>, rates:
   const requirements = [DISCOVERY_TUNING.completionProgress, DISCOVERY_TUNING.elevation.progress, DISCOVERY_TUNING.enlightenment.progress]
   const speeds = [rates.speed, rates.elevationSpeed, rates.enlightenmentSpeed]
   const reaches = (index: number, seconds: number): boolean => {
-    let transferred = 0
-    for (let i = 2; i >= index; i--) {
-      const tier = tiers[i]
-      if (!tier) continue
-      const completed = Math.floor((tier.progress + seconds * speeds[i] + transferred + 1e-6) / requirements[i])
-      if (i === index) return completed > 0
-      transferred = completed * requirements[i]
-    }
-    return false
+    const advanced = advanceDiscovery(state, seconds, rates)
+    return [advanced, advanced.elevation, advanced.enlightenment][index]!.completions > tiers[index]!.completions
   }
   return tiers.map((tier, index) => {
     if (!tier) return 0

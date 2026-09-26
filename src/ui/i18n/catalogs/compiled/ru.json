@@ -927,6 +927,12 @@
       "value": "Подтвердить"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "Полный цикл"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -1099,6 +1105,12 @@
     {
       "type": 1,
       "value": "time"
+    }
+  ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "Следующее завершение"
     }
   ],
   "discovery.nextLifetime": [

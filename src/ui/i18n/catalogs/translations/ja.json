@@ -2201,5 +2201,7 @@
   "discovery.rate": "速度",
   "discovery.nextPanelLifetime": "次のパネル寿命",
   "discovery.progressPerCompletion": "完了ごと",
-  "discovery.transfer": "{name}：+{time}"
+  "discovery.transfer": "{name}：+{time}",
+  "discovery.cycleDuration": "1サイクル",
+  "discovery.nextCompletion": "次の完了"
 }

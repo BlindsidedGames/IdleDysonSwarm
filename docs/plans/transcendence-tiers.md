@@ -8,11 +8,12 @@ Branch: `transcendence-tiers`. Unmerged preview; no deployment authorised.
   Unlock also supplies 7× Cash/Bots and 20-second base lifetime. Facility and
   Bot factors combine on Assembly Lines: initially 10× × 7× = 70×.
 - Elevation: 3 TP after Discovery, 1800 progress/completion, raises Cash/Bots
-  to 10× + 0.1/completion; transfers 1800 progress to Discovery.
+  to 10× + 0.1/completion; advances Discovery by 30 gameplay minutes at Discovery’s current speed.
 - Enlightenment: 5 TP after Elevation, 600 progress/completion, raises base
-  lifetime to 30 seconds + 0.1/completion; transfers 600 progress to Elevation.
-- Transfers can complete receiving bars, carry remainder, and never multiply
-  transferred progress by recipient speed. Process highest tier first.
+  lifetime to 30 seconds + 0.1/completion; advances Elevation by 10 gameplay minutes at Elevation’s current speed.
+- Transfers can complete receiving bars and cascade, preserving remainders.
+  Durations are fixed; their progress is multiplied by the recipient’s current
+  speed. Process highest tier first, including completions earned by transfers.
 - Skill-tree bonuses receive 100% / 50% / 25% weights. Purchased speed,
   Quantum, Avocato and Secrets remain shared. All are additive.
 - Separate power purchases (+5 to the relevant benefit) with independent
@@ -32,7 +33,7 @@ Branch: `transcendence-tiers`. Unmerged preview; no deployment authorised.
 
 ## Implementation and verification — 26 September 2026
 
-- [x] Shared calculations, fixed transfers, independent purchases, production
+- [x] Shared calculations, fixed-duration transfers, independent purchases, production
       factors, previews and accurate countdowns including incoming transfers.
 - [x] Existing-save compatibility, tier validation, all reset paths, and the
       permanent first-Quantum milestone. Explicit false is respected; old saves
@@ -65,7 +66,7 @@ save/reload/reset retention; combined Assembly Line factors; legacy Quantum
 inference; and Fracturing through the actual command boundary in all challenges.
 
 At baseline, the three tiers produce 3/4/6 completions per hour. With +100% tree
-speed, long-run rates are 4.75/5.5/7.5; with +1000%, 20.5/19/21. Tests use four
+speed, long-run rates are 8.75/6.75/7.5; with +1000%, 308/54/21. Tests use four
 hours to avoid mistaking fractional average rates for partial completions.
 A local pure-calculation probe took 24.8ms for 10,000 countdown evaluations and
 0.23ms to advance one billion seconds (+1000% tree speed). This measures the
@@ -152,3 +153,37 @@ The final artwork was checked at large and small sizes and all three disclosure
 UI tests passed. An automatic browser URL-policy rejection prevented reconnecting
 to localhost for another in-game check of this last artwork adjustment; prior
 outside-right placement was visually checked in the game.
+
+
+### Recipient-speed transfers and catch-up motion — 26 September
+
+The unreleased progress-transfer interpretation was replaced with gameplay-time
+transfers. Thirty minutes advanced into a five-minute Discovery cycle now earns
+six completions; Enlightenment can complete Elevation, cascading its full rewards.
+The countdown uses the same advancement function as simulation. Full cycle and
+next completion appear separately in each expanded section.
+
+The simulation awards immediately. Receiving bars animate to the authoritative
+result over two seconds, with at most three visible wraps for large awards. New
+awards retarget the current animation without creating a queue or extending its
+deadline. Displayed benefits advance alongside the visible completions. Reset,
+navigation/reload, hidden pages and reduced motion settle immediately; animation
+state is never saved. Native hosts have not been rechecked for this follow-up.
+
+Validation: full suite **1,911 tests / 185 files** passed; type, lint,
+localization extraction/translation/compilation and production build passed.
+Independent review found two motion edge cases (moving target wrap and a missed
+RAF deadline); both were fixed, regression-tested and independently re-reviewed.
+A final motion refinement was rechecked with all five motion tests and review.
+
+Hands-on browser QA used a separate localhost save, leaving Matthew’s 127.0.0.1
+save untouched. Bought all tiers and 76 speed upgrades through real controls,
+then observed real active-time cascades at 20× speed. One Enlightenment completion
+awarded seven Elevation completions and seventy Discovery completions in the
+observed cycle. Six samples across the final animation showed Discovery’s visible
+benefit advancing 66.1 → 69.0 → 71.1 → 72.5 → 73.0 → 73.1 over about two seconds,
+while the underlying completed totals updated immediately. Reduced motion showed
+the full cascade immediately (Elevation 49 → 56; Discovery benefit 66.1 matched
+the authoritative details). Reload restored the last saved checkpoint without
+replaying a transfer. Desktop and 360px layouts were visually checked; no console
+errors appeared. This follow-up did not repeat native host interaction checks.

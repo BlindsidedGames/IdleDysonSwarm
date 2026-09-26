@@ -51,9 +51,9 @@ describe('Discovery tiers', () => {
   })
   it.each([
     [0, 12n, 16n, 24n],
-    [1, 19n, 22n, 30n],
-    [10, 82n, 76n, 84n],
-  ])('preserves fixed transfers with +%sx tree speed over four hours', (tree, discovery, elevation, enlightenment) => {
+    [1, 35n, 27n, 30n],
+    [10, 1232n, 216n, 84n],
+  ])('preserves fixed time transfers with +%sx tree speed over four hours', (tree, discovery, elevation, enlightenment) => {
     const rates = { speed: 1 + tree, elevationSpeed: 1 + tree / 2, enlightenmentSpeed: 1 + tree / 4 }
     const whole = advanceDiscovery(all, 14400, rates)
     expect([whole.completions, whole.elevation?.completions, whole.enlightenment?.completions]).toEqual([discovery, elevation, enlightenment])
@@ -61,10 +61,10 @@ describe('Discovery tiers', () => {
     for (let i = 0; i < 1440; i++) stepped = advanceDiscovery(stepped, 10, rates) as typeof all
     expect(stepped).toEqual(whole)
   })
-  it('cascades a receiving completion without multiplying transferred progress', () => {
+  it('scales transferred time at the receiving speed and cascades receiving completions', () => {
     const before = { ...all, progress: 3500, elevation: { ...all.elevation, progress: 1700 }, enlightenment: { ...all.enlightenment, progress: 599 } }
     const after = advanceDiscovery(before, 1, { speed: 11, elevationSpeed: 6, enlightenmentSpeed: 3.5 })
-    expect(after).toMatchObject({ completions: 1n, progress: 1711, elevation: { completions: 1n, progress: 506 }, enlightenment: { completions: 1n, progress: 2.5 } })
+    expect(after).toMatchObject({ completions: 11n, progress: 3511, elevation: { completions: 2n, progress: 1706 }, enlightenment: { completions: 1n, progress: 2.5 } })
     const reset = resetDiscoveryProgress({ ...after, startingPower: 2n, elevation: { ...after.elevation!, startingPower: 3n } })
     expect(reset).toEqual({ ...all, startingPower: 2n, elevation: { ...all.elevation, startingPower: 3n } })
   })

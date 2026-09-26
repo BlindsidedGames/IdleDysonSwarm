@@ -2201,5 +2201,7 @@
   "discovery.rate": "Vitesse",
   "discovery.nextPanelLifetime": "Prochaine durée de vie des panneaux",
   "discovery.progressPerCompletion": "Par achèvement",
-  "discovery.transfer": "{name} : +{time}"
+  "discovery.transfer": "{name} : +{time}",
+  "discovery.cycleDuration": "Cycle complet",
+  "discovery.nextCompletion": "Prochaine complétion"
 }

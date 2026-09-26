@@ -927,6 +927,12 @@
       "value": "Confirmar"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "Ciclo completo"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -1099,6 +1105,12 @@
     {
       "type": 1,
       "value": "time"
+    }
+  ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "Próxima finalización"
     }
   ],
   "discovery.nextLifetime": [

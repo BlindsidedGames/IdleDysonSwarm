@@ -927,6 +927,12 @@
       "value": "確定"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "1サイクル"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -1099,6 +1105,12 @@
     {
       "type": 1,
       "value": "time"
+    }
+  ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "次の完了"
     }
   ],
   "discovery.nextLifetime": [

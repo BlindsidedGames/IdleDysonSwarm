@@ -2015,6 +2015,20 @@
       "value": "‬"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎnʅʅ ɔʎɔʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -2383,6 +2397,20 @@
     {
       "type": 1,
       "value": "time"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ ɔoɯdʅǝʇıou"
     },
     {
       "type": 0,

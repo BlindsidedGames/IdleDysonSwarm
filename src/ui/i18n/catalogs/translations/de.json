@@ -2201,5 +2201,7 @@
   "discovery.rate": "Geschwindigkeit",
   "discovery.nextPanelLifetime": "Nächste Panel-Lebensdauer",
   "discovery.progressPerCompletion": "Pro Abschluss",
-  "discovery.transfer": "{name}: +{time}"
+  "discovery.transfer": "{name}: +{time}",
+  "discovery.cycleDuration": "Vollständiger Zyklus",
+  "discovery.nextCompletion": "Nächster Abschluss"
 }

@@ -927,6 +927,12 @@
       "value": "确认"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "完整周期"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -1099,6 +1105,12 @@
     {
       "type": 1,
       "value": "time"
+    }
+  ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "下次完成"
     }
   ],
   "discovery.nextLifetime": [

@@ -2201,5 +2201,7 @@
   "discovery.rate": "速度",
   "discovery.nextPanelLifetime": "下次面板寿命",
   "discovery.progressPerCompletion": "每次完成",
-  "discovery.transfer": "{name}：+{time}"
+  "discovery.transfer": "{name}：+{time}",
+  "discovery.cycleDuration": "完整周期",
+  "discovery.nextCompletion": "下次完成"
 }
