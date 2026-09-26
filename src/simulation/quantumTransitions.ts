@@ -1,3 +1,4 @@
+import { initializeSwarmGrants } from './swarmAugments'
 import { hasCompletedQuantum } from './quantumMilestone'
 import { infinityChallenges, isQuantumChallengeActive, challengeCompleted, challengeFacilities } from './infinityChallenges'
 import { bankedSrsSecondsAfterReset } from './srsAugments'
@@ -116,6 +117,7 @@ export function applyCanonicalQuantumReset(
     },
     skills: {
       ...state.skills,
+      swarmGrants: undefined,
       byId: permanentSkills,
       points: 0n,
       fragments: 0n,
@@ -164,7 +166,7 @@ export function applyCanonicalQuantumReset(
 
   return {
     ok: true,
-    state: {
+    state: initializeSwarmGrants({
       ...state,
       challenges: !options.restartOnly && isQuantumChallengeActive(state)
         ? completeQuantumChallenge(state) : state.challenges,
@@ -215,6 +217,7 @@ export function applyCanonicalQuantumReset(
       },
       skills: {
         ...assignment.state.skills,
+        swarmGrants: undefined,
         byId: withQuantumResetTimerEntries(
           assignment.state.skills.byId,
         ),
@@ -238,7 +241,7 @@ export function applyCanonicalQuantumReset(
         recentProcessedSegment: createEmptySimulationTotals(),
         recentActiveAutomaticInfinityCycles: [],
       },
-    },
+    }),
     quantumPointGranted,
     autoAssignedSkillIds: assignment.autoAssignedSkillIds,
   }

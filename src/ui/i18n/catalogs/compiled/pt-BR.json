@@ -1391,6 +1391,12 @@
       "value": "Multiplica Dinheiro por 5."
     }
   ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "Multiplica dinheiro e Bots por M = max(1, log5(total de instalações)). Adiciona min(200%, 10% × log10(M)) à velocidade de Descoberta. Os bônus são aditivos."
+    }
+  ],
   "discovery.skill.focusedBeam.effect": [
     {
       "type": 0,
@@ -12953,6 +12959,186 @@
       "value": "Supernova suprime toda a camada de Compra Manual: Abacates, os dois marcos de 50/100, Escalonamento de Produção e todas as taxas do Enxame."
     }
   ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "Finalmente aceitaram o convite do grupo."
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "Rede de Bots"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica a produção de todas as instalações por 1 + log20(Bots)."
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "De algum jeito, as peças vieram com juros."
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "Fragmentos compostos"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "Substitui a escala linear de compras por (1 + taxa do Enxame)^floor((compras efetivas / limiar dos Fragmentos)^0.825). O limiar mínimo é 1."
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "A fatura é problema de outra pessoa."
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "Cobrança adiada"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "Compras de instalações exigem o preço inteiro em dinheiro, mas não o gastam."
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "Comprar no atacado virou um traço de personalidade."
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "Economia de escala"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica a produção de dinheiro, ciência e Bots por log5(total de instalações), com mínimo de 1×."
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "Parte da montagem já está pronta."
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "Vantagem inicial"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "Receba 30 unidades compradas de cada instalação disponível uma vez por Infinito, sem aumentar os preços. Inclui megaestruturas desbloqueadas."
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "Um recibo. Todo mundo leva o crédito."
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "Compras compartilhadas"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "Cada instalação usa a soma das compras de todas as instalações para seus bônus de compra. Terra é aplicada depois. Os preços não mudam."
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "As etiquetas de preço estão nervosas."
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "Escala redutora"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "Reduz o crescimento do preço das instalações em 0,5 ponto percentual por habilidade de Fragmento ativa, até o mínimo de 0,1%."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "O departamento de contratação ficou obsoleto."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "Trabalhadores autorreplicantes"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "Caçadores e coletores recebem (1 + taxa do Enxame × sua quantidade / 10)^0.75 de velocidade de produção. A energia dos painéis lançados recebe (1 + taxa do Enxame × painéis lançados / 100)^0.5."
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "Deixe as fábricas onde você as encontrou."
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "Abastecimento constante"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "Mantém as compras pagas de instalações após Infinito. Atribua antes de reiniciar e novamente para restaurá-las. Unidades iniciais grátis não se acumulam. Quantum apaga a reserva."
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "Agora os sacrifícios estão disponíveis no atacado."
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "Enxame estelar"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica a produção de Sacrifícios estelares por P^log12.5(Bots), sendo P o multiplicador de compras da sua instalação mais avançada. O custo em Bots não muda."
+    }
+  ],
   "skills.switch-anyway": [
     {
       "type": 0,
@@ -16296,6 +16482,12 @@
     {
       "type": 0,
       "value": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações. Novos recordes de marcos usam o tempo jogado."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "Adicionados dez aprimoramentos de Enxame e Fragmento."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

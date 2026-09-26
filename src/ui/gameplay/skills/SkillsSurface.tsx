@@ -1,3 +1,4 @@
+import { swarmAugmentPresentation } from './swarmMessages'
 import { discoveryFracturedEffects, discoverySkillNames, discoverySkillEffects, discoverySkillFlavour } from '../discovery/skillMessages'
 import { galvanizedEffectMessages } from './galvanizedEffectMessages'
 import { discoveryMessages } from '../discovery/messages'
@@ -455,6 +456,7 @@ export function SkillsSurface({
         [CASH_SCIENCE_SUBSKILLS.decay, { message: messages.subskillDecayName, description: messages.subskillDecayDescription, effect: messages.subskillDecay, iconFileName: 'supermassivePanels.webp', column: 1, row: 0 }],
         [CASH_SCIENCE_SUBSKILLS.production, { message: messages.subskillProductionName, description: messages.subskillProductionDescription, effect: messages.subskillProduction, iconFileName: 'startHereTree.webp', column: 0, row: 1 }],
       ])
+      for (const [id, presentation] of swarmAugmentPresentation) augmentPresentation.set(id, presentation)
       for (const augment of SKILL_AUGMENTS) {
         const parent = nodes.get(augment.parentSkillId)
         const authored = augmentPresentation.get(augment.id)

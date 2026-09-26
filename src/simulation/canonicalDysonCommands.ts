@@ -1,3 +1,5 @@
+import { swarmGrants, SWARM_TUNING } from './swarmAugments'
+import { hasSwarmAugment } from './skillSubskills'
 import { challengeAllowsFacilityPurchase } from './infinityChallenges'
 import type {
   CanonicalFacilityId,
@@ -159,6 +161,9 @@ function toDysonAutomationState(
     assemblyMegaLinesOwned:
       state.skills.byId.assemblyMegaLines?.owned === true,
     planetModifier,
+    freePurchases: swarmGrants(state).headStart,
+    deferredBilling: hasSwarmAugment(state, 'deferredBilling'),
+    costExponentReduction: hasSwarmAugment(state, 'reductiveScaling') ? SWARM_TUNING.costReductionPerFragment * Number(state.skills.fragments) : 0,
     costExponentOverride: state.challenges?.active === 'supply-shortage' ? 2 : undefined,
     terraNovaOwned: state.skills.byId.terraNova?.owned === true,
     terraGloriaeOwned: state.skills.byId.terraGloriae?.owned === true,

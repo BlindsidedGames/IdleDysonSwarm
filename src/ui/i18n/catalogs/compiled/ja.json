@@ -1391,6 +1391,12 @@
       "value": "資金を5倍にします。"
     }
   ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "現金とボットをM = max(1, log5(施設の総数))倍にします。発見速度にmin(200%, 10% × log10(M))を加えます。ボーナスは加算されます。"
+    }
+  ],
   "discovery.skill.focusedBeam.effect": [
     {
       "type": 0,
@@ -12953,6 +12959,186 @@
       "value": "超新星は、アボカド、50/100の節目、生産スケーリング、全スウォーム倍率を含む手動購入レイヤー全体を抑制します。"
     }
   ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "やっとグループへの招待を受け入れました。"
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "ボットネット"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "すべての施設の生産量を1 + log20(ボット数)倍にします。"
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "なぜか欠片に利息が付いていました。"
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "複利の欠片"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "線形の購入ボーナスを(1 + スウォーム率)^floor((有効購入数 / 欠片のしきい値)^0.825)に置き換えます。しきい値の最低値は1です。"
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "請求書は誰かの問題です。"
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "後払い請求"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "施設の購入には全額の現金が必要ですが、現金は消費しません。"
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "まとめ買いが性格の一部になりました。"
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "規模の経済"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "現金、科学、ボットの生産量をlog5(施設の総数)倍にします。最低1倍です。"
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "組み立ては少し済ませておきました。"
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "先行スタート"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "無限ごとに一度、利用可能な各施設を購入数として30個獲得します。価格は上がりません。解放済みの巨大構造物も対象です。"
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "領収書は一枚。手柄は全員のもの。"
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "共同購入"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "各施設の購入ボーナスに、全施設の購入数合計を使います。その後にTerraを適用します。価格は変わりません。"
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "値札が不安そうです。"
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "価格上昇の抑制"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "有効な欠片スキルごとに施設価格の上昇率を0.5パーセントポイント下げます。最低0.1%です。"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "採用担当の出番がなくなりました。"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "自己複製労働者"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "狩人と採集者の生産速度に (1 + スウォーム係数 × それぞれの人数 / 10)^0.75 を乗算。打ち上げたパネルのエネルギーに (1 + スウォーム係数 × 打ち上げたパネル数 / 100)^0.5 を乗算。"
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "工場は元の場所に置いてください。"
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "安定供給"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "有料で購入した施設を無限後も保持します。リセット前に割り当て、リセット後に再度割り当てると復元します。無料の初期施設は累積しません。量子で備蓄を消去します。"
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "犠牲もまとめ買いできるようになりました。"
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "恒星スウォーム"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "恒星の犠牲の生産量をP^log12.5(ボット数)倍にします。Pは所持する最上位施設の購入ボーナス倍率です。ボットの消費量は変わりません。"
+    }
+  ],
   "skills.switch-anyway": [
     {
       "type": 0,
@@ -16296,6 +16482,12 @@
     {
       "type": 0,
       "value": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。 新しいマイルストーン記録にはプレイ時間を使用します。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "スウォームとフラグメントのオーグメントを10個追加。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

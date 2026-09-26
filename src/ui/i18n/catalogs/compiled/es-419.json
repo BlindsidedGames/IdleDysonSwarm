@@ -1391,6 +1391,12 @@
       "value": "Multiplica el Dinero por 5."
     }
   ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "Multiplica dinero y Bots por M = max(1, log5(total de instalaciones)). Añade min(200%, 10% × log10(M)) a la velocidad de Descubrimiento. Las bonificaciones son aditivas."
+    }
+  ],
   "discovery.skill.focusedBeam.effect": [
     {
       "type": 0,
@@ -12953,6 +12959,186 @@
       "value": "Supernova suprime toda la capa de compras manuales: Aguacates, los dos hitos de 50/100, Escalado de producción y todas las tasas de Enjambre."
     }
   ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "Por fin aceptaron la invitación al grupo."
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "Red de Bots"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica la producción de todas las instalaciones por 1 + log20(Bots)."
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "De algún modo, las piezas venían con intereses."
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "Fragmentos compuestos"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "Reemplaza la escala lineal de compras por (1 + tasa de Enjambre)^floor((compras efectivas / umbral de Fragmentos)^0.825). El umbral mínimo es 1."
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "La factura es problema de alguien más."
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "Cobro diferido"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "Las compras de instalaciones requieren su precio completo en dinero, pero no lo gastan."
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "Comprar al por mayor se volvió un rasgo de personalidad."
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "Economía de escala"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica la producción de dinero, ciencia y Bots por log5(total de instalaciones), con un mínimo de 1×."
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "Parte del montaje ya está hecha."
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "Ventaja inicial"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "Otorga 30 unidades compradas de cada instalación disponible una vez por Infinito, sin subir los precios. Incluye megaestructuras desbloqueadas."
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "Un recibo. Todos se llevan el crédito."
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "Compras compartidas"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "Cada instalación usa el total de compras de todas las instalaciones para sus bonificaciones por compra. Terra se aplica después. Los precios no cambian."
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "Las etiquetas de precios están nerviosas."
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "Escala reductora"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "Reduce el crecimiento del precio de instalaciones en 0.5 puntos porcentuales por habilidad Fragmento activa, hasta un mínimo de 0.1%."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "El departamento de contratación ya sobra."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "Trabajadores autorreplicantes"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "Cazadores y recolectores obtienen (1 + tasa del Enjambre × su cantidad / 10)^0.75 de velocidad de producción. La energía de paneles lanzados obtiene (1 + tasa del Enjambre × paneles lanzados / 100)^0.5."
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "Deja las fábricas donde las encontraste, por favor."
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "Suministro constante"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "Conserva las compras pagadas de instalaciones tras Infinito. Asigna antes del reinicio y de nuevo para restaurarlas. Las unidades iniciales gratis no se acumulan. Quantum borra la reserva."
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "Ahora los sacrificios vienen al por mayor."
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "Enjambre estelar"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "Multiplica la producción de Sacrificios estelares por P^log12.5(Bots), donde P es el multiplicador de compras de tu instalación más avanzada. El costo en Bots no cambia."
+    }
+  ],
   "skills.switch-anyway": [
     {
       "type": 0,
@@ -16296,6 +16482,12 @@
     {
       "type": 0,
       "value": "Los speedruns ahora comparan tu partida actual con mejores marcas personales que se conservan al reiniciar la partida. Se agregaron indicadores, seguimiento de IP dobles y la pestaña de Estadísticas recordará tu selección. Las marcas se sincronizan mediante la nube, pero no se incluyen en las exportaciones. Los nuevos récords de hitos usan el tiempo jugado."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "Se agregaron diez aumentos de Enjambre y Fragmento."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

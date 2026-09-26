@@ -1,3 +1,5 @@
+import { economyOfScaleMultiplier } from './swarmAugments'
+import { SWARM_AUGMENTS } from './skillSubskills'
 import { challengeAllowsFacility } from './infinityChallenges'
 import { regulatedAcademiaPercentagePoints } from './moneyScienceSkillEffects'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -37,6 +39,7 @@ export function deriveDiscoveryEffects(state: CanonicalGameStateV1, snapshot: Re
   const sources: { id: string; bonus: number }[] = []
   const add = (id: string, bonus: number) => { if (bonus > 0) sources.push({ id, bonus }) }
   if (discovery.unlocked) {
+    add(SWARM_AUGMENTS.economyOfScale, G(economyOfScaleMultiplier(state) - 1))
     add('discovery.speed', T.speedPerPurchase * Number(discovery.speedUpgrades))
     for (const [id, bonus] of Object.entries(T.skillSpeed)) {
       if (id === 'subskill.cashScience.production' ? hasCashScienceSubskill(state, 'production') : owned.has(id)) add(id, bonus)

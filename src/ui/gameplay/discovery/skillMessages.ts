@@ -6,6 +6,7 @@ export const discoverySkillNames = defineMessages({
   producedAsScienceTree: { id: 'discovery.skill.producedAsScienceTree.name', defaultMessage: 'Discovery Boost' },
 })
 export const discoverySkillEffects = defineMessages({
+  'subskill.swarm.economyOfScale': { id: 'discovery.skill.economyOfScale.effect', defaultMessage: 'Multiplies Cash and Bots by M = max(1, log5(total facilities)). Adds min(200%, 10% × log10(M)) Discovery speed. Bonuses are additive.' },
   economicDominance: { id: 'discovery.skill.economicDominance.effect', defaultMessage: 'Multiplies Cash by 20.' },
   economicRevolution: { id: 'discovery.skill.economicRevolution.effect', defaultMessage: 'Multiplies Cash by 5.' },
   workerBoost: { id: 'discovery.skill.workerBoost.effect', defaultMessage: '+10,000% Cash production.' },

@@ -26,15 +26,36 @@ export const MANUAL_LABOUR_AUGMENTS = Object.freeze({
   patientHands: 'subskill.manualLabour.patientHands',
 } as const)
 
+export const SWARM_AUGMENTS = Object.freeze({
+  headStart: 'subskill.swarm.headStart',
+  botnet: 'subskill.swarm.botnet',
+  deferredBilling: 'subskill.swarm.deferredBilling',
+  pooledPurchases: 'subskill.swarm.pooledPurchases',
+  economyOfScale: 'subskill.swarm.economyOfScale',
+  steadySupply: 'subskill.swarm.steadySupply',
+  selfReplicatingWorkers: 'subskill.swarm.selfReplicatingWorkers',
+  stellarSwarm: 'subskill.swarm.stellarSwarm',
+  compoundFragments: 'subskill.swarm.compoundFragments',
+  reductiveScaling: 'subskill.swarm.reductiveScaling',
+} as const)
+
+export const SWARM_AUGMENT_DEFINITIONS = Object.freeze([
+  ['headStart', 'superSwarm', 1], ['botnet', 'superSwarm', 3], ['deferredBilling', 'superSwarm', 3],
+  ['pooledPurchases', 'megaSwarm', 3], ['economyOfScale', 'megaSwarm', 1],
+  ['steadySupply', 'ultimateSwarm', 3], ['selfReplicatingWorkers', 'ultimateSwarm', 5], ['stellarSwarm', 'ultimateSwarm', 4],
+  ['compoundFragments', 'productionScaling', 3], ['reductiveScaling', 'productionScaling', 3],
+] as const)
+
 export interface SkillAugmentDefinition {
   readonly id: string
   readonly parentSkillId: string
   readonly cost: number
   readonly requiredSkillIds: readonly string[]
+  readonly fragment?: boolean
 }
 
 export const SKILL_AUGMENTS: readonly SkillAugmentDefinition[] = Object.freeze(
-  [...Object.values(MANUAL_LABOUR_AUGMENTS).map(id => Object.freeze({
+  [...SWARM_AUGMENT_DEFINITIONS.map(([key, parentSkillId, cost]) => ({ id: SWARM_AUGMENTS[key], parentSkillId, cost, requiredSkillIds: [parentSkillId], fragment: parentSkillId === 'productionScaling' })), ...Object.values(MANUAL_LABOUR_AUGMENTS).map(id => Object.freeze({
     id, parentSkillId: 'manualLabour', cost: 1, requiredSkillIds: Object.freeze(id === MANUAL_LABOUR_AUGMENTS.handAssembly ? ['manualLabour'] : [MANUAL_LABOUR_AUGMENTS.handAssembly]),
   })), ...Object.values(CASH_SCIENCE_SUBSKILLS).map((id) => Object.freeze({
     id,
@@ -60,10 +81,10 @@ export function skillAugments(parentSkillId: string): readonly SkillAugmentDefin
 }
 
 export const SUBSKILL_ASSETS: readonly RuntimeGameAsset[] = Object.freeze(
-  SKILL_AUGMENTS.map(({ id, cost, requiredSkillIds }) => ({
+  SKILL_AUGMENTS.map(({ id, cost, requiredSkillIds, fragment = false }) => ({
     id, kind: SKILL_DEFINITION_ASSET_KIND,
     data: {
-      cost, refundable: id !== SRS_AUGMENTS.hotStart, isFragment: false,
+      cost, refundable: id !== SRS_AUGMENTS.hotStart, isFragment: fragment,
       requiredSkillIds: [...requiredSkillIds], shadowRequirementIds: [],
       exclusiveWithIds: [], unrefundableWithIds: [], effects: [],
       firstRunBlocked: false, purityLine: false, terraLine: false,
@@ -93,4 +114,9 @@ export function hasSrsAugment(state: Pick<CanonicalGameStateV1, 'skills' | 'chal
 
 export function hasManualLabourAugment(state: Pick<CanonicalGameStateV1, 'skills' | 'challenges'>, bonus: keyof typeof MANUAL_LABOUR_AUGMENTS): boolean {
   return isGalvanized(state, 'manualLabour') && state.skills.byId.manualLabour?.owned === true && state.skills.byId[MANUAL_LABOUR_AUGMENTS[bonus]]?.owned === true
+}
+
+export function hasSwarmAugment(state: Pick<CanonicalGameStateV1, 'skills' | 'challenges'>, key: keyof typeof SWARM_AUGMENTS): boolean {
+  const parent = SWARM_AUGMENT_DEFINITIONS.find(([name]) => name === key)![1]
+  return isGalvanized(state, parent) && state.skills.byId[parent]?.owned === true && state.skills.byId[SWARM_AUGMENTS[key]]?.owned === true
 }

@@ -1391,6 +1391,12 @@
       "value": "Multipliziert Geld mit 5."
     }
   ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "Multipliziert Geld und Bots mit M = max(1, log5(Anlagen insgesamt)). Erhöht das Entdeckungstempo um min(200%, 10% × log10(M)). Boni sind additiv."
+    }
+  ],
   "discovery.skill.focusedBeam.effect": [
     {
       "type": 0,
@@ -12953,6 +12959,186 @@
       "value": "Supernova unterdrückt die gesamte Ebene manueller Käufe: Avocados, beide Meilensteine 50/100, Produktionsskalierung und sämtliche Schwarmraten."
     }
   ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "Endlich haben sie die Gruppeneinladung angenommen."
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "Botnetz"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "Multipliziert die Produktion aller Anlagen mit 1 + log20(Bots)."
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "Die Bruchstücke haben irgendwie Zinsen mitgebracht."
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "Zinsfragmente"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "Ersetzt die lineare Kaufskalierung durch (1 + Schwarmrate)^floor((effektive Käufe / Fragmentschwelle)^0.825). Die Schwelle beträgt mindestens 1."
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "Um die Rechnung kümmert sich jemand anderes."
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "Spätere Abrechnung"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "Anlagenkäufe erfordern den vollen Geldbetrag, geben ihn aber nicht aus."
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "Großeinkäufe sind inzwischen eine Charaktereigenschaft."
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "Größenvorteil"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "Multipliziert Geld-, Wissenschafts- und Botproduktion mit log5(Anlagen insgesamt), mindestens jedoch mit 1×."
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "Ein Teil der Montage ist schon erledigt."
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "Vorsprung"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "Gewährt einmal pro Unendlichkeit 30 gekaufte Einheiten jeder verfügbaren Anlage, ohne die Preise zu erhöhen. Einschließlich freigeschalteter Megastrukturen."
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "Ein Beleg. Alle nehmen den Erfolg für sich in Anspruch."
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "Gemeinsame Einkäufe"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "Jede Anlage nutzt die gesamte Kaufanzahl aller Anlagen für ihre Kaufboni. Terra wird danach angewendet. Die Preise bleiben unverändert."
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "Die Preisschilder werden nervös."
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "Sinkende Skalierung"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "Senkt den Preisanstieg der Anlagen um 0,5 Prozentpunkte pro aktiver Fragmentfähigkeit, bis auf mindestens 0,1%."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "Die Personalabteilung ist überflüssig geworden."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "Selbstvermehrende Arbeiter"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "Jäger und Sammler erhalten (1 + Schwarmrate × ihre Anzahl / 10)^0.75 Produktionsgeschwindigkeit. Energie gestarteter Paneele erhält (1 + Schwarmrate × gestartete Paneele / 100)^0.5."
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "Bitte lassen Sie die Fabriken dort, wo Sie sie gefunden haben."
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "Stetiger Nachschub"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "Behält bezahlte Anlagenkäufe über Unendlichkeit hinweg. Vor dem Zurücksetzen und zum Wiederherstellen erneut zuweisen. Kostenlose Starteinheiten sammeln sich nicht an. Quantum leert den Vorrat."
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "Opfer gibt es jetzt auch im Großpack."
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "Sternenschwarm"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "Multipliziert den Ertrag von Sternenopfern mit P^log12.5(Bots). P ist der Kaufmultiplikator deiner höchsten vorhandenen Anlage. Die Botkosten bleiben unverändert."
+    }
+  ],
   "skills.switch-anyway": [
     {
       "type": 0,
@@ -16296,6 +16482,12 @@
     {
       "type": 0,
       "value": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert. Neue Meilensteinrekorde verwenden die gespielte Zeit."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "Zehn Schwarm- und Fragment-Augmente hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

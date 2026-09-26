@@ -134,7 +134,17 @@ export type CanonicalSkillPresetAutomationSlot =
   | 0
   | CanonicalSkillPresetSlot
 
+export interface SwarmGrantState {
+  /** Free units already granted in this run; excluded from geometric pricing. */
+  readonly headStart: Partial<Record<CanonicalFacilityId, number>>
+  /** Paid purchases captured at the previous completed Infinity. */
+  readonly retained: Partial<Record<CanonicalFacilityId, number>>
+  /** Amount already restored this run, preventing refund/reassignment duplication. */
+  readonly restored: Partial<Record<CanonicalFacilityId, number>>
+}
+
 export interface SkillsState {
+  readonly swarmGrants?: SwarmGrantState
   readonly points: bigint
   readonly fragments: bigint
   readonly byId: Readonly<Record<string, SkillRuntimeState>>

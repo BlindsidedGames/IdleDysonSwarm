@@ -73,6 +73,7 @@ export function applyCanonicalOverflowReset(
       },
       skills: {
         ...state.skills,
+        swarmGrants: undefined,
         points: state.secretProgress.completed ? AVOCADO_MEDITATION_SKILL_POINT_REWARD : 0n,
         fragments: permanentFragmentCount(state),
         byId: permanentSkillRuntime(state),

@@ -1391,6 +1391,12 @@
       "value": "Умножает деньги на 5."
     }
   ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "Умножает деньги и Ботов на M = max(1, log5(все сооружения)). Добавляет min(200%, 10% × log10(M)) к скорости Открытия. Бонусы складываются."
+    }
+  ],
   "discovery.skill.focusedBeam.effect": [
     {
       "type": 0,
@@ -12953,6 +12959,186 @@
       "value": "«Сверхновая» подавляет весь слой ручных покупок: Авокадо, оба рубежа 50/100, Масштабирование производства и все скорости Роя."
     }
   ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "Они наконец приняли приглашение в группу."
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "Ботнет"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "Умножает производство всех сооружений на 1 + log20(Боты)."
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "К обломкам каким-то образом прилагались проценты."
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "Сложные фрагменты"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "Заменяет линейный бонус покупок на (1 + ставка Роя)^floor((эффективные покупки / порог Фрагментов)^0.825). Минимальный порог — 1."
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "Оплата — чья-то чужая проблема."
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "Отложенный счёт"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "Для покупки сооружений нужна полная сумма денег, но она не списывается."
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "Оптовые закупки стали чертой характера."
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "Экономия масштаба"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "Умножает производство денег, науки и Ботов на log5(все сооружения), минимум — 1×."
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "Часть сборки уже выполнена."
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "Фора"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "Раз за Бесконечность даёт по 30 купленных единиц каждого доступного сооружения без роста цен. Включает открытые мегаструктуры."
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "Один чек. Заслуги приписывают себе все."
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "Общие закупки"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "Бонусы покупок каждого сооружения используют суммарное число покупок всех сооружений. Затем применяется Terra. Цены не меняются."
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "Ценники начинают нервничать."
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "Снижение роста цен"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "Снижает рост цен сооружений на 0,5 процентного пункта за каждый активный навык Фрагмента, минимум — 0,1%."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "Отдел найма больше не нужен."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "Самовоспроизводящиеся рабочие"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "Скорость производства охотников и собирателей умножается на (1 + коэффициент Роя × их количество / 10)^0.75. Энергия запущенных панелей умножается на (1 + коэффициент Роя × запущенные панели / 100)^0.5."
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "Пожалуйста, оставьте фабрики там, где нашли."
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "Постоянное снабжение"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "Сохраняет оплаченные сооружения после Бесконечности. Назначьте перед сбросом и снова для восстановления. Бесплатные начальные единицы не накапливаются. Квантовый сброс очищает запас."
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "Жертвоприношения теперь доступны оптом."
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "Звёздный рой"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "Умножает выпуск Звёздных жертв на P^log12.5(Боты), где P — множитель покупок самого высокого из имеющихся сооружений. Затраты Ботов не меняются."
+    }
+  ],
   "skills.switch-anyway": [
     {
       "type": 0,
@@ -16296,6 +16482,12 @@
     {
       "type": 0,
       "value": "Спидраны теперь сравнивают текущий забег с личными рекордами, которые сохраняются после сброса сохранения. Добавлены отметки забега, учёт удвоения IP и запоминание вкладки статистики. Рекорды синхронизируются через облачные сохранения, но не входят в экспорт. Новые рекорды этапов учитывают время игры."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "Добавлены десять аугментов Роя и Фрагментов."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

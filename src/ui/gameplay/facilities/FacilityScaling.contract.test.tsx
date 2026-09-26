@@ -92,3 +92,22 @@ test.each([
   expect(screen.getByText(`${displayed} / second`)).toBeTruthy()
   expect(screen.queryByText('0.00 / second')).toBeNull()
 })
+
+test.each([false, true])('Economy of Scale facility details match the active phase (Discovery: %s)', discovery => {
+  const id = 'subskill.swarm.economyOfScale'
+  const result = deriveBasicDysonState({
+    ...baseline,
+    discovery: { unlocked: discovery, completions: 0n, progress: 0, startingPower: 0n, speedUpgrades: 0n },
+    challenges: { ...baseline.challenges!, galvanizedSkillIds: ['megaSwarm'] },
+    skills: { ...baseline.skills, byId: {
+      ...Object.fromEntries(Object.entries(baseline.skills.byId).map(([key, value]) => [key, { ...value, owned: key === 'megaSwarm' }])),
+      [id]: { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 },
+    } },
+  }, hydrateGameState(prepareIdb1Save(fixture).prepared).compatibilityTuning,
+  { permanentDoubleIp: false }, hydrateGameState(prepareIdb1Save(fixture).prepared).skillEffectEvaluationSnapshot)
+  if (!result.ok) throw new Error(JSON.stringify(result.issues))
+  render(<IntlProvider locale="en"><FacilityDetailsContent locale="en" facilityId="assembly_lines" fact={result.value.facilityFacts.assembly_lines} gameSpeed={1} /></IntlProvider>)
+  const row = screen.getByText('Economy of Scale').closest('.facility-effect-row')!
+  expect(row.textContent).toContain(discovery ? 'Discovery speed' : 'Science')
+  if (discovery) expect(row.textContent).not.toContain('Science')
+})

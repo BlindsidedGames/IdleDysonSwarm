@@ -1,3 +1,4 @@
+import { swarmAugmentPresentation } from '../skills/swarmMessages'
 import { skillMessages } from '../skills/messages'
 import { useIntl } from 'react-intl'
 import type { DiscoveryState, DiscoveryTierState } from '../../../game-state/types'
@@ -63,11 +64,11 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
             <div className="discovery-speed-total"><dt>{intl.formatMessage(m.rate)}</dt><dd>×{number(bar.speed)}</dd></div>
             <div><dt>{intl.formatMessage(m.baseSpeed)}</dt><dd>1×</dd></div>
             {effects.sources.map(source => {
-              const descriptor = source.id === 'subskill.cashScience.production' ? skillMessages.subskillProductionName : source.id === 'discovery.speed' ? m.speed
+              const descriptor = swarmAugmentPresentation.get(source.id as Parameters<typeof swarmAugmentPresentation.get>[0])?.message ?? (source.id === 'subskill.cashScience.production' ? skillMessages.subskillProductionName : source.id === 'discovery.speed' ? m.speed
                 : source.id === 'quantum.science-booster' ? m.booster
                 : source.id === 'avocado' ? m.avocatoSpeed
                 : source.id === 'secrets.discovery-speed' ? m.secretsSpeed
-                : discoverySkillNames[source.id as keyof typeof discoverySkillNames]
+                : discoverySkillNames[source.id as keyof typeof discoverySkillNames])
               const name = descriptor ? intl.formatMessage(descriptor) : formatCatalogMessage({ id: `skills.node.${source.id}.name`, defaultMessage: source.id })
               return <div key={source.id}><dt>{name}</dt><dd>+{number(source.bonus * discoverySourceWeight(source.id, bar.id) * 100)}%</dd></div>
             })}

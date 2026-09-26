@@ -701,6 +701,9 @@
   "discovery.skill.economicRevolution.effect": {
     "defaultMessage": "Multiplies Cash by 5."
   },
+  "discovery.skill.economyOfScale.effect": {
+    "defaultMessage": "Multiplies Cash and Bots by M = max(1, log5(total facilities)). Adds min(200%, 10% × log10(M)) Discovery speed. Bonuses are additive."
+  },
   "discovery.skill.focusedBeam.effect": {
     "defaultMessage": "Enhances SRS’s Cash bonus and Discovery-speed bonus by 50%, scaled by Stellar Memory."
   },
@@ -6518,6 +6521,96 @@
     "defaultMessage": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.",
     "description": "Exact warning before purchasing Supernova."
   },
+  "skills.swarm.botnet.description": {
+    "defaultMessage": "They finally accepted the group invitation."
+  },
+  "skills.swarm.botnet.name": {
+    "defaultMessage": "Botnet"
+  },
+  "skills.swarm.botnet.technical": {
+    "defaultMessage": "Multiplies all facility production by 1 + log20(Bots)."
+  },
+  "skills.swarm.compoundFragments.description": {
+    "defaultMessage": "Somehow the pieces came with interest."
+  },
+  "skills.swarm.compoundFragments.name": {
+    "defaultMessage": "Compound Fragments"
+  },
+  "skills.swarm.compoundFragments.technical": {
+    "defaultMessage": "Replaces linear purchase scaling with (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1."
+  },
+  "skills.swarm.deferredBilling.description": {
+    "defaultMessage": "The invoice is somebody else’s problem."
+  },
+  "skills.swarm.deferredBilling.name": {
+    "defaultMessage": "Deferred Billing"
+  },
+  "skills.swarm.deferredBilling.technical": {
+    "defaultMessage": "Facility purchases require their full Cash price, but do not spend it."
+  },
+  "skills.swarm.economyOfScale.description": {
+    "defaultMessage": "Buying in bulk has become a personality trait."
+  },
+  "skills.swarm.economyOfScale.name": {
+    "defaultMessage": "Economy of Scale"
+  },
+  "skills.swarm.economyOfScale.technical": {
+    "defaultMessage": "Multiplies Cash, Science and Bot production by log5(total facilities), with a minimum of 1×."
+  },
+  "skills.swarm.headStart.description": {
+    "defaultMessage": "Some assembly already completed."
+  },
+  "skills.swarm.headStart.name": {
+    "defaultMessage": "Head Start"
+  },
+  "skills.swarm.headStart.technical": {
+    "defaultMessage": "Gain 30 purchased units of each available facility once per Infinity, without increasing prices. Includes unlocked megastructures."
+  },
+  "skills.swarm.pooledPurchases.description": {
+    "defaultMessage": "One receipt. Everybody takes credit."
+  },
+  "skills.swarm.pooledPurchases.name": {
+    "defaultMessage": "Pooled Purchases"
+  },
+  "skills.swarm.pooledPurchases.technical": {
+    "defaultMessage": "Each facility uses the total purchased count of all facilities for purchase bonuses. Terra applies afterwards. Prices are unchanged."
+  },
+  "skills.swarm.reductiveScaling.description": {
+    "defaultMessage": "The price tags are getting nervous."
+  },
+  "skills.swarm.reductiveScaling.name": {
+    "defaultMessage": "Reductive Scaling"
+  },
+  "skills.swarm.reductiveScaling.technical": {
+    "defaultMessage": "Reduces facility price growth by 0.5 percentage points per active Fragment Skill, to a minimum of 0.1%."
+  },
+  "skills.swarm.selfReplicatingWorkers.description": {
+    "defaultMessage": "The recruitment department has become redundant."
+  },
+  "skills.swarm.selfReplicatingWorkers.name": {
+    "defaultMessage": "Self-Replicating Workers"
+  },
+  "skills.swarm.selfReplicatingWorkers.technical": {
+    "defaultMessage": "Hunters and Gatherers gain (1 + Swarm rate × their count / 10)^0.75 production speed. Launched-panel Energy gains (1 + Swarm rate × launched panels / 100)^0.5."
+  },
+  "skills.swarm.steadySupply.description": {
+    "defaultMessage": "Please leave the factories where you found them."
+  },
+  "skills.swarm.steadySupply.name": {
+    "defaultMessage": "Steady Supply"
+  },
+  "skills.swarm.steadySupply.technical": {
+    "defaultMessage": "Keep paid facility purchases through Infinity. Assign before resetting and again to restore them. Free starter units do not accumulate. Quantum clears the supply."
+  },
+  "skills.swarm.stellarSwarm.description": {
+    "defaultMessage": "Sacrifices are now available in bulk."
+  },
+  "skills.swarm.stellarSwarm.name": {
+    "defaultMessage": "Stellar Swarm"
+  },
+  "skills.swarm.stellarSwarm.technical": {
+    "defaultMessage": "Multiplies Stellar Sacrifices output by P^log12.5(Bots), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged."
+  },
   "skills.switch-anyway": {
     "defaultMessage": "Switch anyway",
     "description": "Button label for applying every compatible part of a conflicting preset."
@@ -7995,6 +8088,9 @@
   "wiki.patch-notes.version-4-1-10.speedruns": {
     "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.",
     "description": "Version 4.1.10 speedrun improvements."
+  },
+  "wiki.patch-notes.version-4-1-10.swarm": {
+    "defaultMessage": "Added ten Swarm and Fragment augments."
   },
   "wiki.patch-notes.version-4-1-10.transcendence": {
     "defaultMessage": "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research.",

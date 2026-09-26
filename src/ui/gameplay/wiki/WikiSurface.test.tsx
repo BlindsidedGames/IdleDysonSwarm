@@ -37,6 +37,7 @@ describe('Wiki patch-note content', () => {
       'Fixed Permanent 2× Bots losing its effect after resetting your save.',
       'Fixed old research and cleared skill presets returning after saving or reloading.',
       'Added seven Quantum challenges awarding 2 Catalysts each. Division and Quantum Double IP are inactive during these runs. Added four Manual Labour augments, including a bonus for waiting between activations. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.',
+      'Added ten Swarm and Fragment augments.',
       'Rebalanced facility price growth and megastructure costs and production.',
       'The sixth Avotation secret now completes automatically once reached with Discovery unlocked.',
       'After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.',

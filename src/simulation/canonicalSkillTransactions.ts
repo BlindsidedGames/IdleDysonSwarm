@@ -1,3 +1,4 @@
+import { initializeSwarmGrants } from './swarmAugments'
 import { initializeSrsHotStart } from './srsAugments'
 import { purityBodyMultiplier, purityMindMultiplier, purityEssenceMultiplier as essenceMultiplier } from './purityMultipliers'
 import { isSubskill, isSubskillUnlocked } from './skillSubskills'
@@ -914,9 +915,10 @@ function isUnlocked(
   definition: SkillDefinition,
   state: CanonicalGameStateV1,
 ): boolean {
+  if (isSubskill(definition.id) && !isSubskillUnlocked(state, definition.id)) return false
   switch (definition.unlock) {
     case 'always':
-      return !isSubskill(definition.id) || isSubskillUnlocked(state, definition.id)
+      return true
     case 'first-infinity':
       return state.meta.firstInfinityComplete
     case 'fragments':
@@ -1100,7 +1102,7 @@ function accepted(
   changed: boolean,
   affectedSkillIds: readonly string[],
 ): CanonicalSkillTransactionResult {
-  return { accepted: true, changed, state, affectedSkillIds }
+  return { accepted: true, changed, state: changed ? initializeSwarmGrants(state) : state, affectedSkillIds }
 }
 
 function rejected(

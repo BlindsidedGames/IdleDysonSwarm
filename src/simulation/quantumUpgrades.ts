@@ -1,3 +1,4 @@
+import { initializeSwarmGrants } from './swarmAugments'
 import {
   isSafeNonNegativeInteger,
   isSafePositiveInteger,
@@ -283,13 +284,13 @@ export function purchaseQuantumUpgrade(
     changed: true,
     code: 'purchased',
     cost,
-    state: {
+    state: initializeSwarmGrants({
       ...effected,
       quantum: {
         ...effected.quantum,
         pointsSpent: nextSpent,
       },
-    },
+    }),
   }
 }
 
@@ -354,13 +355,13 @@ export function purchaseQuantumUpgradeBulk(
     changed: true,
     code: 'purchased',
     cost: totalCost,
-    state: {
+    state: initializeSwarmGrants({
       ...effected,
       quantum: {
         ...effected.quantum,
         pointsSpent: state.quantum.pointsSpent + totalCost,
       },
-    },
+    }),
   }
 }
 

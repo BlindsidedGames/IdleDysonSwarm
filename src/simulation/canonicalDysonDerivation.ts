@@ -1,3 +1,5 @@
+import { botnetMultiplier, economyOfScaleMultiplier, purchaseScalingRate, purchaseScalingThreshold, purchaseScalingMultiplier, stellarSwarmMultiplier } from './swarmAugments'
+import { SWARM_AUGMENTS, hasSwarmAugment } from './skillSubskills'
 import { challengeFacilities, challengeAllowsFacility, isNoScienceActive } from './infinityChallenges'
 import { highestOwnedFacility } from './stellarArithmetic'
 import { deriveDiscoveryEffects } from './discoveryEffects'
@@ -312,6 +314,7 @@ const BASIC_FACILITY_PRODUCTION_STATS: Readonly<
 })
 
 export interface ManualPurchaseProductionLayer {
+  readonly pooledPurchaseCount?: number
   readonly rawManualCount: number
   readonly effectiveManualCount: number
   readonly effectiveManualPlanets: number
@@ -330,29 +333,19 @@ export interface ManualPurchaseProductionLayer {
 
 export function deriveManualPurchaseProductionLayer(
   state: Readonly<CanonicalGameStateV1>,
-  facilityId: BasicDysonFacilityId,
+  facilityId: CanonicalFacilityId,
 ): Readonly<ManualPurchaseProductionLayer> {
   const owned = (id: string) => state.skills.byId[id]?.owned === true
   const {
     rawManualCount,
+    pooledPurchaseCount,
     effectiveManualCount,
     effectiveManualPlanets,
     transferredPlanetCount,
     terraSkill,
   } = deriveEffectivePurchaseCounts(state, facilityId)
-  const scalingThreshold = owned('productionScaling')
-    ? Math.max(
-        0,
-        90 - 5 * Math.max(0, Number(state.skills.fragments) - 1),
-      )
-    : 100
-  const scalingRate = owned('ultimateSwarm')
-    ? 0.05
-    : owned('megaSwarm')
-      ? 0.03
-      : owned('superSwarm')
-        ? 0.02
-        : 0.01
+  const scalingThreshold = purchaseScalingThreshold(state)
+  const scalingRate = purchaseScalingRate(state)
   const suppressed = owned('supernova') && !isGalvanized(state, 'supernova')
   const avocadosMultiplier =
     !suppressed && owned('avocados') && effectiveManualCount >= 69 ? 2 : 1
@@ -362,9 +355,10 @@ export function deriveManualPurchaseProductionLayer(
     !suppressed && effectiveManualCount >= 100 ? 2 : 1
   const scalingMultiplier = suppressed
     ? 1
-    : 1 + Math.max(0, effectiveManualCount - scalingThreshold) * scalingRate
+    : purchaseScalingMultiplier(state, effectiveManualCount)
   return Object.freeze({
     rawManualCount,
+    pooledPurchaseCount,
     effectiveManualCount,
     effectiveManualPlanets,
     transferredPlanetCount,
@@ -448,12 +442,16 @@ function withManualPurchaseProductionLayer(
       }
       if (layer.scalingMultiplier > 1) {
         effects.push({
-          id: `manual-purchase.scaling-${Math.round(layer.scalingRate * 100)}pct`,
+          id: hasSwarmAugment(state, 'compoundFragments') ? SWARM_AUGMENTS.compoundFragments : `manual-purchase.scaling-${Math.round(layer.scalingRate * 100)}pct`,
           operation: 'multiply',
           value: layer.scalingMultiplier,
           order: 153,
         })
       }
+    }
+    if (facilityId === 'assembly_lines') {
+      const economy = multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 154)
+      if (economy) effects.push(economy)
     }
     byStat[BASIC_FACILITY_PRODUCTION_STATS[facilityId]] =
       Object.freeze(effects)
@@ -545,6 +543,7 @@ export function deriveBasicDysonState(
   }
   const avocadoMultiplier = avocadoDysonMultiplier(state.avocado)
   const moneyMultiplier = calculateStat(1, [
+    multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 96),
     ...(discovery && ownedSkillSet.has('shouldersOfTheEnlightened') && ownedSkillSet.has('scientificPlanets') ? [multiplierEffect('effect.shouldersOfTheEnlightened.money_multiplier', 1 + 0.1 * Number(state.discovery!.completions), 80)] : []),
     ...effectsFor(research.effects, 'Global.MoneyMultiplier'),
     ...effectsAt(effectiveSkillEffectsByStat, 'Global.MoneyMultiplier'),
@@ -565,6 +564,7 @@ export function deriveBasicDysonState(
     ),
   ].filter(isEffect))
   const scienceMultiplier = isNoScienceActive(state) ? 0 : discovery ? 1 : calculateStat(1, [
+    multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 96),
     ...effectsFor(research.effects, 'Global.ScienceMultiplier'),
     ...effectsAt(effectiveSkillEffectsByStat, 'Global.ScienceMultiplier'),
     multiplierEffect(
@@ -600,15 +600,16 @@ export function deriveBasicDysonState(
   )
   const planetGenerationPerSecond = !challengeAllowsFacility(state, 'planets') ? 0 : calculateStat(0, passivePlanetGenerationEffects)
   const stellarSacrificeTarget = highestOwnedFacility(state.dyson.facilities)
-  const stellarSacrificeFacilitiesPerSecond = stellarSacrificeTarget === null ? 0 : calculateStat(
-    0,
-    [...stellarSacrificeEffects, ...(discovery ? [multiplierEffect('discovery.production', discovery.multiplier, 1000)] : [])].filter(isEffect),
-  )
+  const stellarPurchaseMultiplier = stellarSacrificeTarget === null ? 1
+    : deriveManualPurchaseProductionLayer(state, stellarSacrificeTarget).scalingMultiplier
+  const stellarBaseProduction = stellarSacrificeTarget === null ? 0 : calculateStat(0,
+    [...stellarSacrificeEffects, multiplierEffect('discovery.production', discovery?.multiplier ?? 1, 1000)].filter(isEffect))
+  const stellarBoost = stellarBaseProduction > 0 ? stellarSwarmMultiplier(state, stellarPurchaseMultiplier) : 1
+  const stellarSacrificeFacilitiesPerSecond = multiplyContinuous(stellarBaseProduction, stellarBoost)
   const stellarGenerationContributions: readonly CanonicalFacilityContributionRow[] = deriveAttributedEffectRows(
     0,
-    stellarSacrificeEffects.map((effect) => ({
-      ...effect, value: stellarSacrificeFacilitiesPerSecond,
-    })),
+    [...stellarSacrificeEffects.map(effect => ({ ...effect, value: stellarBaseProduction })),
+      multiplierEffect(SWARM_AUGMENTS.stellarSwarm, stellarBoost, 1001)].filter(isEffect),
     'output-adjustments', research.effects, state, evaluationSnapshot,
   ).map((row) => ({
     ...row,
@@ -1312,6 +1313,7 @@ function sourceForEffect(
   researchEffects: readonly MaterializedDysonResearchEffect[],
   state?: CanonicalGameStateV1,
 ): CanonicalFacilityContributionRow['source'] {
+  if ((Object.values(SWARM_AUGMENTS) as string[]).includes(effectId)) return { kind: 'skill', id: effectId }
   const research = researchEffects.find((effect) => effect.id === effectId)
   if (research) return {
     kind: 'research',
@@ -1495,6 +1497,7 @@ function deriveFacilityModifiers(
         INFINITY_FACILITY_THRESHOLDS[id],
       )
       const later = [
+        multiplierEffect(SWARM_AUGMENTS.botnet, botnetMultiplier(state), 96),
         ...(MEGA_STRUCTURE_FACILITY_IDS.some(megaId => megaId === id) ? [multiplierEffect('discovery.production', discoveryMultiplier, 1000)] : []),
         multiplierEffect('prestige.infinity', infinity, 88),
         multiplierEffect('secrets.facility', secretMultipliers[id], 90),

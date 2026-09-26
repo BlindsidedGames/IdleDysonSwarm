@@ -1,3 +1,5 @@
+import { SWARM_AUGMENTS } from '../../../simulation/skillSubskills'
+import { swarmAugmentPresentation } from '../skills/swarmMessages'
 import { resolveGalaxiesEngulfed } from '../../../simulation/stellarArithmetic'
 import { multiplyContinuous } from '../../../simulation/numeric'
 import { galvanizedEffectMessages } from '../skills/galvanizedEffectMessages'
@@ -423,7 +425,7 @@ export function FacilityDetailsContent({
     : null
   const hasTerraPurchaseEffects = Boolean(
     details?.manualPurchaseLayer &&
-      (details.manualPurchaseLayer.transferredPlanetCount > 0 ||
+      (details.manualPurchaseLayer.pooledPurchaseCount !== undefined || details.manualPurchaseLayer.transferredPlanetCount > 0 ||
         (facilityId === 'planets' &&
           details.manualPurchaseLayer.terraIrradiantOwned)),
   )
@@ -922,7 +924,9 @@ function FormulaLine({
 
 function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly layer: NonNullable<FacilityCanonicalFact['details']['manualPurchaseLayer']> }) {
   const intl = useIntl()
+  const pooled = swarmAugmentPresentation.get(SWARM_AUGMENTS.pooledPurchases)!
   const rows = [
+    ...(layer.pooledPurchaseCount !== undefined ? [{ id: SWARM_AUGMENTS.pooledPurchases, value: formatFacilityNumber(locale, layer.pooledPurchaseCount), description: intl.formatMessage(pooled.effect) }] : []),
     ...(layer.terraIrradiantOwned
       ? [{ id: 'terraIrradiant', value: '×12', description: skillTechnical('terraIrradiant', intl) }]
       : []),
@@ -936,9 +940,9 @@ function TerraRows({ locale, layer }: { readonly locale: EnabledLocale; readonly
   ]
   return <>{rows.map(({ id, value, description }) => (
     <div className="facility-effect-row" key={id}>
-      <img className="facility-effect-row__icon" src={skillIcons[id]} alt="" />
+      <img className="facility-effect-row__icon" src={skillIcons[id === SWARM_AUGMENTS.pooledPurchases ? pooled.iconFileName.replace('.webp', '') : id]} alt="" />
       <span className="facility-effect-row__copy">
-        <strong>{skillName(id, intl)}</strong>
+        <strong>{id === SWARM_AUGMENTS.pooledPurchases ? intl.formatMessage(pooled.message) : skillName(id, intl)}</strong>
         <small>{description}</small>
       </span>
       <span className="facility-effect-row__value">{value}</span>
@@ -960,6 +964,10 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
     }
   }
   if (source?.kind === 'skill') {
+    const augment = swarmAugmentPresentation.get(source.id as Parameters<typeof swarmAugmentPresentation.get>[0])
+    if (augment) return { icon: skillIcons[augment.iconFileName.replace('.webp', '')], name: intl.formatMessage(augment.message), description: intl.formatMessage(
+      (discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined) ?? augment.effect,
+    ) }
     const name = discoveryUnlocked ? discoverySkillNames[source.id as keyof typeof discoverySkillNames] : undefined
     const effect = (discoveryUnlocked ? (source.fractured ? discoveryFracturedEffects[source.id as keyof typeof discoveryFracturedEffects] : undefined) ?? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
       ?? (source.fractured ? galvanizedEffectMessages[source.id] : undefined)

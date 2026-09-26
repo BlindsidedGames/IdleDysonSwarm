@@ -1,3 +1,4 @@
+import { initializeSwarmGrants, swarmGrantsAfterInfinity } from './swarmAugments'
 import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive } from './infinityChallenges'
 import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
@@ -221,7 +222,7 @@ export function applyCanonicalInfinityReset(
 
   return {
     ok: true,
-    state: {
+    state: initializeSwarmGrants({
       ...state,
       challenges: nextChallenges,
       meta: {
@@ -273,6 +274,7 @@ export function applyCanonicalInfinityReset(
       },
       skills: resetSrsAugments(state, {
         ...state.skills,
+        swarmGrants: swarmGrantsAfterInfinity(state, request.restartOnly === true),
         points: assignment.points,
         fragments: assignment.fragments,
         byId: resetSkillStates,
@@ -283,7 +285,7 @@ export function applyCanonicalInfinityReset(
         progressById: {},
       },
       statistics,
-    },
+    }),
     rewardGranted,
     bankedSkillPoints,
     autoAssignedSkillIds: assignment.assignedIds,

@@ -1391,6 +1391,12 @@
       "value": "Multiplie l’argent par 5."
     }
   ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "Multiplie l’argent et les Bots par M = max(1, log5(total des installations)). Ajoute min(200%, 10% × log10(M)) à la vitesse de Découverte. Les bonus sont additifs."
+    }
+  ],
   "discovery.skill.focusedBeam.effect": [
     {
       "type": 0,
@@ -12953,6 +12959,186 @@
       "value": "Supernova désactive toute la couche d’achats manuels : Avocats, les deux paliers 50/100, Montée en puissance de la production et tous les taux des Essaims."
     }
   ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "Ils ont enfin accepté l’invitation au groupe."
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "Réseau de Bots"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "Multiplie la production de toutes les installations par 1 + log20(Bots)."
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "Les morceaux rapportent même des intérêts."
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "Fragments composés"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "Remplace la progression linéaire des achats par (1 + taux d’Essaim)^floor((achats effectifs / seuil des Fragments)^0.825). Le seuil vaut au minimum 1."
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "La facture, c’est le problème de quelqu’un d’autre."
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "Facturation différée"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "Les achats d’installations exigent leur prix total en argent, sans le dépenser."
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "Acheter en gros est devenu un trait de personnalité."
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "Économies d’échelle"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "Multiplie la production d’argent, de science et de Bots par log5(total des installations), avec un minimum de 1×."
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "Une partie du montage est déjà faite."
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "Départ anticipé"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "Recevez 30 unités achetées de chaque installation disponible une fois par Infini, sans augmenter les prix. Inclut les mégastructures débloquées."
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "Un seul reçu. Tout le monde s’attribue le mérite."
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "Achats mutualisés"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "Chaque installation utilise le total des achats de toutes les installations pour ses bonus d’achat. Terra s’applique ensuite. Les prix ne changent pas."
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "Les étiquettes de prix commencent à s’inquiéter."
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "Réduction des prix"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "Réduit la croissance du prix des installations de 0,5 point de pourcentage par compétence Fragment active, jusqu’à un minimum de 0,1%."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "Le service de recrutement ne sert plus à rien."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "Ouvriers autoréplicants"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "La vitesse de production des chasseurs et cueilleurs est multipliée par (1 + taux de l’Essaim × leur nombre / 10)^0.75. L’énergie des panneaux lancés est multipliée par (1 + taux de l’Essaim × panneaux lancés / 100)^0.5."
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "Merci de laisser les usines là où vous les avez trouvées."
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "Approvisionnement stable"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "Conservez les achats payés d’installations après un Infini. Assignez avant la réinitialisation, puis de nouveau pour les restaurer. Les unités gratuites de départ ne s’accumulent pas. Quantum efface la réserve."
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "Les sacrifices sont maintenant disponibles en gros."
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "Essaim stellaire"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "Multiplie la production de Sacrifices stellaires par P^log12.5(Bots), où P est le multiplicateur d’achat de votre installation possédée la plus avancée. Le coût en Bots reste inchangé."
+    }
+  ],
   "skills.switch-anyway": [
     {
       "type": 0,
@@ -16296,6 +16482,12 @@
     {
       "type": 0,
       "value": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports. Les nouveaux records utilisent le temps de jeu."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "Ajout de dix augments d’Essaim et de Fragment."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

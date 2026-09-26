@@ -44,6 +44,9 @@ export interface DysonAutomationState {
   roundedBulkBuy: boolean
   retainedFacilities: Record<BasicDysonFacilityId, boolean>
   assemblyMegaLinesOwned: boolean
+  deferredBilling?: boolean
+  costExponentReduction?: number
+  freePurchases?: Partial<Record<CanonicalFacilityId, number>>
   costExponentOverride?: number
   planetModifier?: number
   terraNovaOwned?: boolean
@@ -187,6 +190,8 @@ export function previewDysonFacilityPurchase<
     lookupFacilityDefinition,
 ): DysonFacilityPurchasePreview<TFacilityId> {
   if (
+    (state.costExponentReduction !== undefined && !isFiniteNonNegativeNumber(state.costExponentReduction)) ||
+    (state.freePurchases !== undefined && DYSON_AUTOMATION_TARGETS.some(id => state.freePurchases?.[id] !== undefined && !isFiniteNonNegativeNumber(state.freePurchases[id]))) ||
     typeof state.globalEnabled !== 'boolean' ||
     !hasValidFacilityBooleanFlags(state.enabledFacilities) ||
     !hasValidFacilityBooleanFlags(state.unlockedFacilities) ||
@@ -229,7 +234,8 @@ export function previewDysonFacilityPurchase<
 
   const definition = lookupDefinition(facilityId)
   const authoredBaseCost = definition?.baseCost
-  const exponent = state.costExponentOverride ?? definition?.costExponent
+  const authoredExponent = state.costExponentOverride ?? definition?.costExponent
+  const exponent = typeof authoredExponent === 'number' && (state.costExponentReduction ?? 0) > 0 ? Math.max(1.001, authoredExponent - state.costExponentReduction!) : authoredExponent
   if (
     typeof authoredBaseCost !== 'number' ||
     !Number.isFinite(authoredBaseCost) ||
@@ -371,7 +377,7 @@ function attemptFacilityPurchase(
     }
   }
 
-  state.money = debit.balance
+  state.money = state.deferredBilling ? state.money : debit.balance
   state.facilities[facilityId][1] = output.balance
   return {
     facilityId,
@@ -403,12 +409,13 @@ function facilityCostLevel(
   facilityId: CanonicalFacilityId,
   manualOwned: number,
 ): number {
+  const paid = Math.max(0, manualOwned - (state.freePurchases?.[facilityId] ?? 0))
   return (
     isBasicFacility(facilityId) &&
     state.retainedFacilities[facilityId]
   )
-    ? Math.max(0, manualOwned - 10)
-    : manualOwned
+    ? Math.max(0, paid - 10)
+    : paid
 }
 
 function effectiveFacilityBaseCost(
@@ -574,6 +581,9 @@ function cloneState(
     assemblyMegaLinesOwned: state.assemblyMegaLinesOwned,
     planetModifier: state.planetModifier,
     costExponentOverride: state.costExponentOverride,
+    costExponentReduction: state.costExponentReduction,
+    deferredBilling: state.deferredBilling,
+    freePurchases: state.freePurchases,
     terraNovaOwned: state.terraNovaOwned,
     terraGloriaeOwned: state.terraGloriaeOwned,
   }
