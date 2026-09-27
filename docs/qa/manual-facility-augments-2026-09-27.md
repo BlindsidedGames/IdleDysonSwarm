@@ -41,10 +41,10 @@ these are not included in passive per-second production.
 
 - Names: **Hand-built {facility}**.
 - AI Managers through Birch Planets: **Tinker also creates 2% of your {facility},
-  capped at 20 seconds of their incoming facility production. Versatile Production
+  capped at 20 seconds of their passive creation. Versatile Production
   Tactics applies.**
 - Galactic Brains: **Tinker also creates 2% of your Galactic Brains, capped at
-  20 seconds of their production output, or 1 Brain if higher.
+  20 seconds of their passive creation, or 1 Brain if higher.
   Versatile Production Tactics applies before the cap.**
 - Hand Assembly changes only “Replaces Assembly Line tinkering.” to
   **“Keeps Assembly Line tinkering.”**

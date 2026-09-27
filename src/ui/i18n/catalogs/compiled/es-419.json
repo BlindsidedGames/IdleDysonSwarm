@@ -10252,7 +10252,7 @@
   "skills.manualFacility.brain-effect": [
     {
       "type": 0,
-      "value": "La creación manual también genera el 2% de tus Cerebros galácticos, hasta 20 segundos de su producción, con un límite mínimo de 1 cerebro. Las tácticas de producción versátiles se aplican antes del límite."
+      "value": "La creación manual también genera el 2% de tus Cerebros galácticos, hasta 20 segundos de su creación pasiva, con un límite mínimo de 1 cerebro. Las tácticas de producción versátiles se aplican antes del límite."
     }
   ],
   "skills.manualFacility.effect": [
@@ -10266,7 +10266,7 @@
     },
     {
       "type": 0,
-      "value": ", hasta 20 segundos de su producción entrante por instalaciones. Se aplican las tácticas de producción versátiles."
+      "value": ", hasta 20 segundos de su creación pasiva. Se aplican las tácticas de producción versátiles."
     }
   ],
   "skills.manualFacility.name": [

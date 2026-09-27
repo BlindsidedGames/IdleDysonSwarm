@@ -10252,7 +10252,7 @@
   "skills.manualFacility.brain-effect": [
     {
       "type": 0,
-      "value": "Tüfteln erzeugt zusätzlich 2 % deiner Galaktischen Gehirne, begrenzt auf 20 Sekunden ihrer Produktion, mindestens jedoch 1 Gehirn. Vielseitige Produktionstaktiken gelten vor der Begrenzung."
+      "value": "Tüfteln erzeugt zusätzlich 2 % deiner Galaktischen Gehirne, begrenzt auf 20 Sekunden ihrer passiven Erzeugung, mindestens jedoch 1 Gehirn. Vielseitige Produktionstaktiken gelten vor der Begrenzung."
     }
   ],
   "skills.manualFacility.effect": [
@@ -10266,7 +10266,7 @@
     },
     {
       "type": 0,
-      "value": ", begrenzt auf 20 Sekunden ihrer eingehenden Anlagenproduktion. Vielseitige Produktionstaktiken gelten."
+      "value": ", begrenzt auf 20 Sekunden ihrer passiven Erzeugung. Vielseitige Produktionstaktiken gelten."
     }
   ],
   "skills.manualFacility.name": [

@@ -4,8 +4,8 @@ import { basicFacilityMessages as facilities } from '../facilities/messages'
 
 export const manualFacilityMessages = defineMessages({
   name: { id: 'skills.manualFacility.name', defaultMessage: 'Hand-built {facility}' },
-  effect: { id: 'skills.manualFacility.effect', defaultMessage: 'Tinker also creates 2% of your {facility}, capped at 20 seconds of their incoming facility production. Versatile Production Tactics applies.' },
-  brainEffect: { id: 'skills.manualFacility.brain-effect', defaultMessage: 'Tinker also creates 2% of your Galactic Brains, capped at 20 seconds of their production output, or 1 Brain if higher. Versatile Production Tactics applies before the cap.' },
+  effect: { id: 'skills.manualFacility.effect', defaultMessage: 'Tinker also creates 2% of your {facility}, capped at 20 seconds of their passive creation. Versatile Production Tactics applies.' },
+  brainEffect: { id: 'skills.manualFacility.brain-effect', defaultMessage: 'Tinker also creates 2% of your Galactic Brains, capped at 20 seconds of their passive creation, or 1 Brain if higher. Versatile Production Tactics applies before the cap.' },
 })
 
 export const manualFacilityPresentation = [
