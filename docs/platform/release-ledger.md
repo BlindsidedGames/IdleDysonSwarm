@@ -138,3 +138,22 @@ Google Play emitted the existing non-blocking warnings for a missing deobfuscati
 - Local logs, distribution screenshots, upload configuration and downloaded beta: `/Users/matthewrushworth/Builds/ids-release-2026092602/`.
 - Play's missing deobfuscation/native-symbol warnings were non-blocking.
 - Discord Dev Ops update through Eve: https://discord.com/channels/712304553931833385/1006856538893340692/1553415115104063592.
+
+## 2026092701 — 4.1.10 audit fixes and speedrun follow-ups
+
+27 September 2026 (AEST). Built from clean source `adaeda45f4e752a32172a8f90026123cc6d834dd` on `transcendence-tiers`, including follow-ups through `90569a4c`. PR #217 remains draft and unmerged.
+
+| Destination | Identity | Verified state |
+| --- | --- | --- |
+| Google Play internal | 4.1.10 / 2026092701 | Available to internal testers |
+| Internal TestFlight | 4.1.10 / 2609.27.01 | Testing; Internal group, 3 testers; compliance completed |
+| Steam public-beta | 25556171 | Active; Windows/Linux/macOS depots included; default remains 25430928 |
+
+- Includes the integration audit fixes, non-refundable skill confirmation and dialog palette correction, active-plus-consumed-Stored-Time speedrun records and First Transcendence milestone. Existing localized 4.1.10 patch notes include these changes.
+- Local release gate passed: 191 files / 2,023 tests, lint, localization, web/native builds, Electron boundary and signed Android packaging. GitHub CI passed on the release source. iOS archive/upload succeeded with minimum iOS 16.0. All Steam package provenance records match the source above.
+- Downloaded Steam public-beta to an isolated directory; build 25556171, macOS depot manifest 7741415523016461731. All 261 regular macOS package files match the built artifact. Local and downloaded macOS smoke launches passed with disposable data and mock Keychain. Steam services were unavailable because the Steam client was not running; this verifies renderer startup, not commerce or overlay.
+- No new iOS/Android/Windows/Linux hands-on gameplay or cross-device Cloud QA is claimed for this deployment. Earlier feature interaction evidence and limits: `docs/plans/overnight-integration-audit.md` and `docs/qa/discord-followups-2026-09-27.md`.
+- Android AAB: `output/local-release/2026092701/android/idle-dyson-swarm-2026092701.aab`, 20,116,120 bytes; SHA-256 `0bfe28fd4389d96d6f644d0f0b833c504b790411d480e493e6df2e4d44366146`.
+- iOS archive: `/Users/matthewrushworth/Library/Developer/Xcode/Archives/2026-09-27/IDS-2026092701.xcarchive`; App executable SHA-256 `f687250a4868594127f7033c1e59071929bd9d825423297235e978eda0abe4fd`.
+- Logs, screenshots, upload configuration and downloaded beta: `/Users/matthewrushworth/Builds/ids-release-2026092701/`.
+- Play deobfuscation/native-symbol warnings were non-blocking. No production, App Review, Steam default, website deployment or Discord posting was performed.
