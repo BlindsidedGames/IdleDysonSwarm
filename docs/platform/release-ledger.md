@@ -189,3 +189,32 @@ Built from clean source `15550045af712c592b668a76b4d698f4a13ded0a` on
   `/Users/matthewrushworth/Builds/ids-release-2026092702/`.
 - Google deobfuscation/native-symbol warnings and the existing web chunk-size
   warning are non-blocking. Production, App Review, website and Discord are untouched.
+
+## 2026092703 — 4.1.10 Compound Fragments stacking correction
+
+Built from clean source `6d6193f2efd8d93ea9b968fb780d725a86ae7b4a` on
+`transcendence-tiers`, including fix `94a861e4`. PR #217 remains unmerged.
+
+- Compound Fragments multiplies normal purchase scaling instead of replacing it.
+  Skill translations and Bots details match; Stellar Swarm consumes the combined
+  factor. No save migration or exponent change.
+- Local release gate: 195 files / 2,059 tests, lint, localization, web/native builds,
+  Electron boundary and signed Android packaging passed. Data check and GitHub
+  PR checks passed. Feature interaction evidence is in `docs/plans/swarm-augments.md`.
+- Android **2026092703 (4.1.10)**: available to internal testers, released 27
+  September at 22:45 AEST. AAB 20,126,423 bytes; SHA-256
+  `751c5e4617fe1c4988f8c4cfb3a03a63cb8d8409ef0839db447f609e2f27d125`.
+- Apple **4.1.10 (2609.27.03)**: signed archive and upload succeeded. Minimum iOS
+  16.0. Internal TestFlight processing/compliance/group availability is **not yet
+  verified**: App Store Connect signed out, and user sign-in has been requested.
+- Steam **public-beta 25560133**: active with Windows/Linux/macOS depots; default
+  remains **25430928**. Downloaded macOS manifest **3830610928221534327**. All 261
+  regular package files match; both local and downloaded macOS startup checks
+  passed with disposable data and mock Keychain. Steam client was not running,
+  so commerce/overlay are not reverified.
+- No new native mobile, Windows/Linux interaction or cross-device Cloud QA is
+  claimed. Achievement provider definitions remain drafts/unpublished.
+- Logs, screenshots, archive export options and downloaded beta:
+  `/Users/matthewrushworth/Builds/ids-release-2026092703/`.
+- No production, App Review, website or Discord changes. Google symbol warnings
+  and the existing web chunk-size warning remain non-blocking.
