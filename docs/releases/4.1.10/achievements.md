@@ -1,6 +1,7 @@
 # 4.1.10 achievements and Bots preset shortcuts
 
-Prepared 2026-09-27. Nothing submitted, published or deployed.
+Prepared 2026-09-27. Provider records remain unpublished. App code is included in
+internal release 2026092702; see the [release ledger](../../platform/release-ledger.md).
 
 | Achievement | Requirement | Points (Apple / Google) | Google ID | Apple ID / Steam API name |
 | --- | --- | --- | --- | --- |

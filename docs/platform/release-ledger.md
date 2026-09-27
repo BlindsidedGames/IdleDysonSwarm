@@ -157,3 +157,35 @@ Google Play emitted the existing non-blocking warnings for a missing deobfuscati
 - iOS archive: `/Users/matthewrushworth/Library/Developer/Xcode/Archives/2026-09-27/IDS-2026092701.xcarchive`; App executable SHA-256 `f687250a4868594127f7033c1e59071929bd9d825423297235e978eda0abe4fd`.
 - Logs, screenshots, upload configuration and downloaded beta: `/Users/matthewrushworth/Builds/ids-release-2026092701/`.
 - Play deobfuscation/native-symbol warnings were non-blocking. No production, App Review, Steam default, website deployment or Discord posting was performed.
+
+## 2026092702 — 4.1.10 facility Tinker augments and UI follow-ups
+
+Built from clean source `15550045af712c592b668a76b4d698f4a13ded0a` on
+`transcendence-tiers`. PR #217 remains draft and unmerged.
+
+- Includes seven facility Tinker augments, preserved Assembly Line tinkering with
+  Hand Assembly, automatic augment-tree opening after Fracturing, five achievement
+  definitions, ten presets and optional Bots/Research preset controls. The latest
+  follow-up adds a right-aligned Stored Time balance and consistent quick-use spacing
+  in the drawer. Localized 4.1.10 notes cover these changes.
+- Release checks: 195 test files / 2,053 tests, lint, localization, generated data,
+  TypeScript, web/native builds and Electron boundary pass. Signed Android and iOS
+  archive/upload succeeded. GitHub PR checks passed on the release source.
+- Android `2026092702` is available to internal testers. AAB size 20,126,405 bytes;
+  SHA-256 `61689f58392ba3147c09fcf049e776a511b3a9b4d04442b17574b339944e9aa9`.
+- Internal TestFlight `4.1.10 (2609.27.2)` is Testing with the Internal group
+  (3 testers). Export compliance is complete and testing notes are saved.
+- Steam `public-beta` is build `25559716`, with Windows/Linux/macOS depots.
+  Default remains `25430928`. Downloaded macOS manifest `697281781650118373`;
+  all 261 regular package files match the source artifact. Local and downloaded
+  startup smoke checks pass using disposable data and mock Keychain. Steam client
+  services were unavailable, so commerce/overlay are not reverified.
+- Latest drawer interaction QA covered desktop, 360px/130% text, German and
+  compact height; spending one minute updated the balance correctly. No new native
+  mobile, Windows/Linux interaction or cross-device Cloud QA is claimed.
+- New achievement provider definitions remain drafts/unpublished. Authenticated
+  unlocks for these new records are not verified by this deployment.
+- Logs, screenshots and downloaded beta:
+  `/Users/matthewrushworth/Builds/ids-release-2026092702/`.
+- Google deobfuscation/native-symbol warnings and the existing web chunk-size
+  warning are non-blocking. Production, App Review, website and Discord are untouched.
