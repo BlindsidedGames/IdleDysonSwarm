@@ -3993,6 +3993,12 @@
       "value": "Arredondar compras em lote"
     }
   ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Sempre mostrar ações rápidas de predefinições"
+    }
+  ],
   "dyson.info.show-run-facts-when-collapsed": [
     {
       "type": 0,
@@ -16488,6 +16494,12 @@
     {
       "type": 0,
       "value": "Versão 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "Adicionadas cinco conquistas e ações rápidas opcionais de predefinições na aba Bots."
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [

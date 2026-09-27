@@ -115,6 +115,7 @@ function setup({ autoAssign = false, prerequisitesOwned = false, nonRefundableOw
         automationEnabledFacilities={{} as DysonInfoProps['automationEnabledFacilities']}
         buyModeRouteAvailable roundedBulkRouteAvailable presetAutomationRouteAvailable automationRouteAvailable
         dispatchPlayer={confirmedDispatch} />
+      <button onClick={() => void confirmedDispatch({ kind: 'skill.select-preset', slot: 2 })}>Bots quick preset</button>
       <button onClick={() => void confirmedDispatch({ kind: 'skill.set-tab-preset-automation', tab: 'bots', slot: 2 })}>Configure tab preset</button>
       <button onClick={() => void confirmedDispatch({ kind: 'skill.set-tab-preset-automation', tab: 'bots', slot: 0 })}>Disable tab preset</button>
       <button onClick={() => void confirmedDispatch({ kind: 'skill.apply-tab-preset-automation', tab: 'bots' })}>Apply saved tab preset</button>
@@ -388,4 +389,18 @@ test('cancelling the real Bots preset setting shows no error and restores the en
   expect(select.value).toBe('0')
   expect(screen.queryByRole('alert')).toBeNull()
   expect(view.state().skills.points).toBe(100n)
+})
+
+
+test('Bots quick preset requires the shared non-refundable acknowledgement', async () => {
+  const view = setup({ autoAssign: true })
+  fireEvent.click(screen.getByRole('button', { name: 'Bots quick preset' }))
+  await waitFor(() => expect(warning()).toBeTruthy())
+  expect(view.state().skills.byId.shouldersOfGiants?.owned).not.toBe(true)
+  fireEvent.keyDown(document, { key: 'Escape' })
+  expect(view.state().skills.byId.shouldersOfGiants?.owned).not.toBe(true)
+  fireEvent.click(screen.getByRole('button', { name: 'Bots quick preset' }))
+  await waitFor(() => expect(warning()).toBeTruthy())
+  confirmWarning()
+  await waitFor(() => expect(view.state().skills.byId.shouldersOfGiants?.owned).toBe(true))
 })

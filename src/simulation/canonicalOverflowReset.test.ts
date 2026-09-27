@@ -12,6 +12,7 @@ import { applyCanonicalSkillIntervalEffects, timeToNextInfinityEventAfterStellar
 import { createBasicDysonInfinityState, ordinaryInfinityBotThreshold } from './infinityCycle'
 import { advanceCanonicalTinker, createCanonicalTinkerRuntimeState, startCanonicalTinker } from './canonicalTinker'
 import { DISCRETE_MAXIMUM } from './numeric'
+import { evaluateAchievements } from '../achievements/evaluate'
 
 const baseline = hydrateGameState(prepareIdb1Save(readFileSync(
   new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url), 'utf8',
@@ -167,4 +168,14 @@ describe('shared gameplay bot boundary', () => {
     expect(horizon).toBeCloseTo(1, 12)
     expect(horizon).toBeGreaterThanOrEqual(1)
   })
+})
+
+
+test('Transcendent unlocks from a completed reset, not merely reaching the threshold', () => {
+  const source = lateGame()
+  const first = { ...source, statistics: { ...source.statistics, lifetime: { ...source.statistics.lifetime, botCapOverflowRewards: 0n } } }
+  expect(evaluateAchievements(first, false).unlocked).not.toContain('achievement.first_transcendence')
+  const reset = applyCanonicalOverflowReset(first)
+  expect(reset.ok).toBe(true)
+  if (reset.ok) expect(evaluateAchievements(reset.state, false).unlocked).toContain('achievement.first_transcendence')
 })

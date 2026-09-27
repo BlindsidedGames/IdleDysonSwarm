@@ -475,6 +475,7 @@ function PatchNotesArticle() {
             <li>{intl.formatMessage(messages.patchNotesVersion4110Secret)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Fixes)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Presentation)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Achievements)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Ios)}</li>
           </ul>
         </section>

@@ -499,3 +499,5 @@
     forced-color-adjust: auto;
   }
 }
+
+.dyson-info .skill-preset-quick-actions { margin-block: var(--ui-related-copy-gap); }

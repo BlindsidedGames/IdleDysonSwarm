@@ -3993,6 +3993,12 @@
       "value": "Sammelkäufe runden"
     }
   ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Voreinstellungs-Schnellaktionen immer anzeigen"
+    }
+  ],
   "dyson.info.show-run-facts-when-collapsed": [
     {
       "type": 0,
@@ -16488,6 +16494,12 @@
     {
       "type": 0,
       "value": "Version 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "Fünf Erfolge und optionale Schnellaktionen für Voreinstellungen im Bots-Tab hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [

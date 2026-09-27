@@ -7641,6 +7641,20 @@
       "value": "‬"
     }
   ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʅʍɐʎs sɥoʍ dɹǝsǝʇ bnıɔʞ ɐɔʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.info.show-run-facts-when-collapsed": [
     {
       "type": 0,
@@ -33188,6 +33202,20 @@
     {
       "type": 0,
       "value": "Ʌǝɹsıou 4.1.10"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɟıʌǝ ɐɔɥıǝʌǝɯǝuʇs ɐup odʇıouɐʅ dɹǝsǝʇ bnıɔʞ ɐɔʇıous ou ʇɥǝ Ԑoʇs ʇɐq."
     },
     {
       "type": 0,

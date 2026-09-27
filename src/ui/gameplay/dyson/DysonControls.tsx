@@ -45,6 +45,7 @@ import './dysonControls.css'
 export interface DysonInfoProps {
   readonly summary: ReactNode
   readonly statusSummary?: ReactNode
+  readonly presetQuickActions?: ReactNode
   readonly buyMode: DysonBuyMode
   readonly roundedBulkBuy: boolean
   readonly presets: readonly SkillPresetState[]
@@ -80,9 +81,12 @@ type DysonBuyMode = Extract<
 const SHOW_RUN_FACTS_WHEN_COLLAPSED_KEY =
   'idle-dyson-swarm.bots.show-run-facts-when-collapsed.v1'
 
+const SHOW_PRESET_QUICK_ACTIONS_KEY = 'idle-dyson-swarm.bots.show-preset-quick-actions.v1'
+
 export function DysonInfo({
   summary,
   statusSummary,
+  presetQuickActions,
   buyMode,
   roundedBulkBuy,
   presets,
@@ -104,6 +108,8 @@ export function DysonInfo({
         SHOW_RUN_FACTS_WHEN_COLLAPSED_KEY,
       ) !== 'false',
     )
+  const [showPresetQuickActions, setShowPresetQuickActions] = useState(() =>
+    readPresentationPreference(SHOW_PRESET_QUICK_ACTIONS_KEY) === 'true')
   const { settingPending, settingFailed, applySetting } =
     usePlayerSettingsCommands(dispatchPlayer)
   const {
@@ -129,8 +135,8 @@ export function DysonInfo({
       settingsLabel={intl.formatMessage(messages.purchaseSettings)}
       onExpandedChange={setSettingsOpen}
       aboveSummary={
-        !settingsOpen && showRunFactsWhenCollapsed
-          ? statusSummary
+        !settingsOpen && (showRunFactsWhenCollapsed || showPresetQuickActions)
+          ? <>{showPresetQuickActions && presetQuickActions}{showRunFactsWhenCollapsed && statusSummary}</>
           : undefined
       }
       summary={summary}
@@ -195,6 +201,14 @@ export function DysonInfo({
             <span>
               {intl.formatMessage(messages.showRunFactsWhenCollapsed)}
             </span>
+          </label>
+          <label className="dyson-info__collapsed-facts-toggle">
+            <input type="checkbox" checked={showPresetQuickActions} onChange={event => {
+              const enabled = event.currentTarget.checked
+              setShowPresetQuickActions(enabled)
+              writeBooleanPresentationPreference(SHOW_PRESET_QUICK_ACTIONS_KEY, enabled)
+            }} />
+            <span>{intl.formatMessage(messages.showPresetQuickActions)}</span>
           </label>
           <PresetAutomationSelect
             label={intl.formatMessage(messages.presetAutomation)}
@@ -263,6 +277,7 @@ export function DysonInfo({
               {intl.formatMessage(messages.purchaseSettingsFailed)}
             </span>
           )}
+          {presetQuickActions}
           {statusSummary !== undefined && (
             <div className="dyson-info__run-status">
               {statusSummary}

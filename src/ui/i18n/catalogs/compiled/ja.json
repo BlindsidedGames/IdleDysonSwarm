@@ -3993,6 +3993,12 @@
       "value": "一括購入数を切りのよい数に調整"
     }
   ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "プリセットのクイック操作を常に表示"
+    }
+  ],
   "dyson.info.show-run-facts-when-collapsed": [
     {
       "type": 0,
@@ -16488,6 +16494,12 @@
     {
       "type": 0,
       "value": "バージョン 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "実績を5つ追加し、ボットタブにプリセットのクイック切り替えを表示できるようにしました。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [

@@ -128,3 +128,12 @@ Use these existing tokens rather than choosing a new nearby value per element:
 
 Do not add screenshot or CSS-literal unit tests for every cosmetic edit. Use
 focused behavioural coverage for real regressions, plus actual visual inspection.
+
+## Bots preset shortcuts
+
+Reuse the Skills five-button preset control and its confirmation flow. In Bots,
+place it immediately above Active/Lifetime/Decayed. Expanded purchase settings
+show it; the independent, device-local “Always show preset quick actions” toggle
+(default off) also keeps it visible when collapsed. The run-facts toggle does not
+control these buttons. Keep preset colours, names, selected states and keyboard
+focus consistent between both entry points.

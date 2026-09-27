@@ -3993,6 +3993,12 @@
       "value": "Arrondir les achats groupés"
     }
   ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Toujours afficher les raccourcis de préréglage"
+    }
+  ],
   "dyson.info.show-run-facts-when-collapsed": [
     {
       "type": 0,
@@ -16488,6 +16494,12 @@
     {
       "type": 0,
       "value": "Version 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "Ajout de cinq succès et de raccourcis de préréglages facultatifs dans l’onglet Bots."
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [

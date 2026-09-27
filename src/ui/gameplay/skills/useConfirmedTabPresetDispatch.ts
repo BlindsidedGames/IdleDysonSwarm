@@ -26,7 +26,7 @@ export function useConfirmedTabPresetDispatch({
   [catalog.skills, previewNonRefundableAssignment])
 
   return useCallback(async (command: CanonicalPlayerCommand): Promise<UiRuntimePlayerCommandResult> => {
-    if (command.kind === 'skill.set-tab-preset-automation' && command.slot !== 0 && autoAssignNonRefundable) {
+    if ((command.kind === 'skill.set-tab-preset-automation' || command.kind === 'skill.select-preset') && command.slot !== 0 && autoAssignNonRefundable) {
       const skillIds = presets[command.slot - 1]?.skillIds ?? []
       let requiresConfirmation: boolean
       try {

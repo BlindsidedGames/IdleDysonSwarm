@@ -466,6 +466,11 @@ export const readyDysonMessages = defineMessages({
     description:
       'Device-local preference for persistently displaying Bots run facts.',
   },
+  showPresetQuickActions: {
+    id: 'dyson.info.show-preset-quick-actions',
+    defaultMessage: 'Always show preset quick actions',
+    description: 'Keep the Bots preset shortcuts visible when purchase settings are collapsed.',
+  },
   purchaseSettingsFailed: {
     id: 'dyson.info.purchase-settings-failed',
     defaultMessage: 'Purchase settings were not changed.',

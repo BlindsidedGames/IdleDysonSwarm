@@ -1,3 +1,4 @@
+import { BotsPresetQuickActions } from '../skills/BotsPresetQuickActions'
 import { DiscoverySurface } from '../discovery/DiscoverySurface'
 import { discoveryMessages } from '../discovery/messages'
 import { NonRefundableSkillConfirmationProvider } from '../skills/NonRefundableSkillConfirmation'
@@ -2323,6 +2324,12 @@ function ReadyDysonSliceContent({
         ariaLabel: intl.formatMessage(messages.info),
         content: (
           <DysonInfo
+            presetQuickActions={gameplay.visibility.skills.routeUnlocked ? <BotsPresetQuickActions
+              presets={gameplay.progression.skills.presets}
+              selectedSlot={gameplay.runtime.selectedSkillPresetSlot}
+              disabled={!gameplay.commands.byKind['skill.select-preset'].routeAvailable || gameplay.progression.challenges?.active === 'blank-slate'}
+              discoveryUnlocked={discoveryUnlocked} presetActions={presetActions} dispatchPlayer={dispatchPlayer}
+            /> : undefined}
             summary={(
               <div
                 className={

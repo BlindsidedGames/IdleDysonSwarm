@@ -71,46 +71,12 @@
   display: contents;
 }
 
-.skills-surface__quick-presets {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-row: 1;
-  grid-template-columns: repeat(5, minmax(var(--target-minimum), 1fr));
-  gap: 0.25rem;
-}
+.skill-tree-viewport__controls .skill-preset-quick-actions { grid-column: 1 / -1; grid-row: 1; }
+.skill-tree-viewport__controls .skill-preset-quick-actions__button { min-block-size: 2rem; }
 
 .skill-tree-viewport__controls .skills-surface__search {
   grid-column: 1;
   grid-row: 2;
-}
-
-.skill-tree-viewport__controls
-  .skills-surface__quick-preset {
-  min-inline-size: 0;
-  min-block-size: 2rem;
-  border-color: color-mix(
-    in srgb,
-    var(--skill-preset-color) 68%,
-    var(--theme-divider)
-  );
-  background: color-mix(
-    in srgb,
-    var(--skill-preset-color) 24%,
-    var(--theme-panel)
-  );
-  color: white;
-  font-size: calc(0.75rem * var(--game-text-scale));
-}
-
-.skill-tree-viewport__controls
-  .skills-surface__quick-preset[aria-pressed="true"] {
-  border-color: var(--skill-preset-color);
-  background: color-mix(
-    in srgb,
-    var(--skill-preset-color) 48%,
-    var(--theme-panel)
-  );
-  box-shadow: inset 0 0 0 1px var(--skill-preset-color);
 }
 
 .skills-surface__search input {

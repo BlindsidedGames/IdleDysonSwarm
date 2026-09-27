@@ -169,6 +169,11 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
 
     // Mirrors hosts/capacitor/achievement-map.json; account identity stays native.
     private let achievementIds: [String: String] = [
+        "achievement.first_transcendence": "ids.first_transcendence",
+        "achievement.enlightenment": "ids.enlightenment",
+        "achievement.first_quantum_challenge": "ids.first_quantum_challenge",
+        "achievement.first_fracture": "ids.first_fracture",
+        "achievement.first_galactic_brain": "ids.first_galactic_brain",
         "achievement.first_bot": "ids.first_bot",
         "achievement.first_assembly_line": "ids.first_assembly_line",
         "achievement.first_data_center": "ids.first_data_center",

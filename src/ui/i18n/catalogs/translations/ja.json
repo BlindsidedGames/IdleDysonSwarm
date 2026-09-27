@@ -2283,5 +2283,7 @@
   "wiki.topic-navigation": "Wikiのトピック",
   "wiki.topics": "トピック",
   "wiki.transcendence.overview": "ボット数が<value>4e242ボット</value>に到達したらアボカトで超越し、以前のレイヤーをリセットして<value>超越ポイントを1</value>獲得できます。1ポイントで<value>発見を解放</value>すると、科学と研究が恒久的に置き換わります。既存の科学や研究レベルは引き継がれません。",
-  "wiki.transcendence.overview-title": "スウォームのその先へ"
+  "wiki.transcendence.overview-title": "スウォームのその先へ",
+  "dyson.info.show-preset-quick-actions": "プリセットのクイック操作を常に表示",
+  "wiki.patch-notes.version-4-1-10.achievements": "実績を5つ追加し、ボットタブにプリセットのクイック切り替えを表示できるようにしました。"
 }

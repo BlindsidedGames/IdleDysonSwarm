@@ -25,5 +25,10 @@
   "achievement.avotation_secrets_complete": "EASTER_SECRETS",
   "achievement.avocados_skill": "EASTER_AVOCADOS",
   "achievement.bots_42qi": "BOTS_42QI",
-  "achievement.skill_points_42": "SKILLS_ASSIGNED"
+  "achievement.skill_points_42": "SKILLS_ASSIGNED",
+  "achievement.first_transcendence": "FIRST_TRANSCENDENCE",
+  "achievement.enlightenment": "ENLIGHTENMENT",
+  "achievement.first_quantum_challenge": "FIRST_QUANTUM_CHALLENGE",
+  "achievement.first_fracture": "FIRST_FRACTURE",
+  "achievement.first_galactic_brain": "FIRST_GALACTIC_BRAIN"
 }

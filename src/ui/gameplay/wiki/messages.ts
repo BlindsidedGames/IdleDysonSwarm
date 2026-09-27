@@ -125,6 +125,7 @@ export const wikiMessages = defineMessages({
   patchNotesVersion4110Secret: { id: 'wiki.patch-notes.version-4-1-10.secret', defaultMessage: "The sixth Avotation secret now completes automatically when reached with Discovery unlocked.", description: 'Version 4.1.10 release notes.' },
   patchNotesVersion4110Fixes: { id: 'wiki.patch-notes.version-4-1-10.fixes', defaultMessage: "Fixed Permanent 2× Bots after Reset Save, cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues.", description: 'Version 4.1.10 release notes.' },
   patchNotesVersion4110Presentation: { id: 'wiki.patch-notes.version-4-1-10.presentation', defaultMessage: "Improved production details, skill previews, scrolling and dialog styling.", description: 'Version 4.1.10 release notes.' },
+  patchNotesVersion4110Achievements: { id: 'wiki.patch-notes.version-4-1-10.achievements', defaultMessage: 'Added five achievements and optional preset quick actions on the Bots tab.', description: 'Version 4.1.10 release notes.' },
   patchNotesVersion4110Ios: { id: 'wiki.patch-notes.version-4-1-10.ios', defaultMessage: "iOS 16 or later is now required.", description: 'Version 4.1.10 release notes.' },
   patchNotesVersion419: { id: 'wiki.patch-notes.version-4-1-9', defaultMessage: 'Version 4.1.9', description: 'Version 4.1.9 release notes.' },
   patchNotesVersion419Augments: { id: 'wiki.patch-notes.version-4-1-9.augments', defaultMessage: "Added seven augments for Super-Radiant Scattering.", description: 'Version 4.1.9 release notes.' },

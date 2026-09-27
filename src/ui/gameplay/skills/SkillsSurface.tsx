@@ -1,12 +1,15 @@
-import { swarmAugmentPresentation } from './swarmMessages'
+import { SkillPresetQuickActions } from './SkillPresetQuickActions'
+import { useSkillPresetSelection, type PresetSelectionCommand } from './useSkillPresetSelection'
+import { AffectedSkillList, SkillPresetSelectionDialog } from './SkillPresetSelectionDialog'
+import { presentation, iconByFileName, useSkillPresentationNodes, type SkillPresentationNode } from './skillPresentation'
 import { NonRefundableSkillConfirmationProvider } from './NonRefundableSkillConfirmation'
 import { useSharedNonRefundableSkillConfirmation } from './nonRefundableSkillConfirmationContext'
-import { discoveryFracturedEffects, discoverySkillNames, discoverySkillEffects, discoverySkillFlavour } from '../discovery/skillMessages'
+import { discoveryFracturedEffects } from '../discovery/skillMessages'
 import { galvanizedEffectMessages } from './galvanizedEffectMessages'
 import { discoveryMessages } from '../discovery/messages'
 import type { SkillProductionPreview } from '../../../simulation/skillProductionPreview'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
-import { CASH_SCIENCE_SUBSKILLS, SRS_AUGMENTS, MANUAL_LABOUR_AUGMENTS, SKILL_AUGMENTS, skillAugments } from '../../../simulation/skillSubskills'
+import { skillAugments } from '../../../simulation/skillSubskills'
 import galvanizerIcon from '../../assets/currency-galvanizer.png'
 import { InlineImageSymbol, InlineResourceAmount } from '../../components'
 import { challengeMessages } from '../infinity/challengeMessages'
@@ -35,8 +38,6 @@ import {
   SKILL_PRESET_COLOR_IDS,
   type SkillPresetColorId,
 } from '../../../game-state/skillPresetColors'
-import skillTreePresentationJson from '../../../game-data/generated/skill-tree-presentation.json'
-import { localizeSkillPresentation } from '../../../game-data/skillPresentationLocalization'
 import {
   includesNewNonRefundableSkillAssignment,
   type CanonicalSkillAvailabilityPreview,
@@ -84,31 +85,6 @@ interface PendingExpectation {
   readonly expectedPresetSlot?: CanonicalSkillPresetSlot
 }
 
-interface SkillPresentationNode {
-  readonly skillId: string
-  readonly legacySkillKey: number
-  readonly x: number
-  readonly y: number
-  readonly displayName: string
-  readonly description: string
-  readonly discoveryTechnical?: boolean
-  readonly technicalDescription: string
-  readonly cost: number
-  readonly messageIds: {
-    readonly displayName: string
-    readonly description: string
-    readonly technicalDescription: string
-  }
-  readonly icon: {
-    readonly fileName: string
-  }
-}
-
-interface SkillTreePresentation {
-  readonly formatVersion: number
-  readonly nodeCount: number
-  readonly nodes: readonly SkillPresentationNode[]
-}
 
 export interface SkillCommandAvailability {
   readonly purchase: boolean
@@ -215,45 +191,6 @@ export interface SkillTreeViewState {
   readonly centerY: number
   readonly scale: number
 }
-
-// Shared centre-to-centre grid for regular skill and augment layouts.
-const SKILL_GRID_SPACING = 180
-const legacyPresentation =
-  skillTreePresentationJson as SkillTreePresentation
-const srsColumnX = legacyPresentation.nodes.find(node => node.skillId === 'superRadiantScattering')!.x
-const leftOfSrsColumns: Readonly<Record<string, number>> = {
-  quantumComputing: -0.5,
-  parallelComputation: -0.5,
-  hypercubeNetworks: -1,
-  clusterNetworking: 0,
-  pocketAndroids: -2,
-  solarBubbles: -2,
-  shoulderSurgery: -2,
-  shouldersOfTheRevolution: -2,
-  shouldersOfTheFallen: -2,
-  whatWillComeToPass: -1,
-  whatCouldHaveBeen: -1,
-  shouldersOfTheEnlightened: -1,
-  shouldersOfPrecursors: -1,
-}
-// Web-owned layout adjustments leave the frozen Unity compatibility data intact.
-const presentation: SkillTreePresentation = {
-  ...legacyPresentation,
-  nodes: legacyPresentation.nodes.map(node => leftOfSrsColumns[node.skillId] === undefined
-    ? node
-    : { ...node, x: srsColumnX + leftOfSrsColumns[node.skillId] * SKILL_GRID_SPACING }),
-}
-const iconModules = import.meta.glob('../../assets/skill-icons/*.webp', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-}) as Record<string, string>
-const iconByFileName = new Map(
-  Object.entries(iconModules).map(([path, url]) => [
-    path.slice(path.lastIndexOf('/') + 1),
-    url,
-  ]),
-)
 
 const PRESET_COLOR_MESSAGES = {
   cyan: messages.presetColorCyan,
@@ -414,12 +351,6 @@ function SkillsSurfaceContent({
   const [presetsOpen, setPresetsOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
   const [pendingKind, setPendingKind] = useState<string | null>(null)
-  const [presetSelectionPending, setPresetSelectionPending] = useState(false)
-  const [presetSelectionPreview, setPresetSelectionPreview] = useState<{
-    readonly slot: CanonicalSkillPresetSlot
-    readonly retainedSkillIds: readonly string[]
-    readonly blockedByRetainedSkillIds: readonly string[]
-  } | null>(null)
   const [pendingExpectation, setPendingExpectation] =
     useState<PendingExpectation | null>(null)
   const [failed, setFailed] = useState(false)
@@ -436,64 +367,7 @@ function SkillsSurfaceContent({
     () => new Map(catalog.skills.map((skill) => [skill.skillId, skill])),
     [catalog.skills],
   )
-  const localizedNodes = useMemo(
-    () =>
-      presentation.nodes.map((node) =>
-        (() => {
-          const localized = localizeSkillPresentation(intl, node)
-          if (!discoveryUnlocked) return localized
-          const name = discoverySkillNames[node.skillId as keyof typeof discoverySkillNames]
-          const effect = discoverySkillEffects[node.skillId as keyof typeof discoverySkillEffects]
-          const flavour = discoverySkillFlavour[node.skillId as keyof typeof discoverySkillFlavour]
-          return { ...localized, ...(flavour ? { description: intl.formatMessage(flavour) } : {}), ...(name ? { displayName: intl.formatMessage(name) } : {}), ...(effect ? { technicalDescription: intl.formatMessage(effect), discoveryTechnical: true } : {}) }
-        })(),
-      ),
-    [intl, discoveryUnlocked],
-  )
-  const nodeById = useMemo(
-    () => {
-      const nodes = new Map(localizedNodes.map((node) => [node.skillId, node]))
-      const augmentPresentation = new Map<string, { message: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; description?: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; effect?: Pick<typeof messages.subskillLifetime, 'id' | 'defaultMessage'>; iconFileName: string; column: number; row: number }>([
-        [MANUAL_LABOUR_AUGMENTS.handAssembly, { message: messages.manualHandAssemblyName, description: messages.manualHandAssemblyDescription, effect: messages.manualHandAssemblyEffect, iconFileName: 'manualHandAssembly.webp', column: 1, row: 0 }],
-        [MANUAL_LABOUR_AUGMENTS.practice, { message: messages.manualPracticeName, description: messages.manualPracticeDescription, effect: messages.manualPracticeEffect, iconFileName: 'manualPractice.webp', column: 2, row: 0 }],
-        [MANUAL_LABOUR_AUGMENTS.workingSmarter, { message: messages.manualWorkingSmarterName, description: messages.manualWorkingSmarterDescription, effect: messages.manualWorkingSmarterEffect, iconFileName: 'manualWorkingSmarter.webp', column: 1, row: 1 }],
-        [MANUAL_LABOUR_AUGMENTS.patientHands, { message: messages.manualPatientHandsName, description: messages.manualPatientHandsDescription, effect: messages.manualPatientHandsEffect, iconFileName: 'manualPatientHands.webp', column: 2, row: 1 }],
-        [SRS_AUGMENTS.stellarMemory, { message: messages.srsStellarMemoryName, description: messages.srsStellarMemoryDescription, effect: messages.srsStellarMemoryEffect, iconFileName: 'srsStellarMemory.webp', column: 2, row: 1 }],
-        [SRS_AUGMENTS.hotStart, { message: messages.srsHotStartName, description: messages.srsHotStartDescription, effect: messages.srsHotStartEffect, iconFileName: 'srsHotStart.webp', column: -1, row: 0 }],
-        [SRS_AUGMENTS.afterglow, { message: messages.srsAfterglowName, description: messages.srsAfterglowDescription, effect: messages.srsAfterglowEffect, iconFileName: 'srsAfterglow.webp', column: -2, row: 0 }],
-        [SRS_AUGMENTS.deepExposure, { message: messages.srsDeepExposureName, description: messages.srsDeepExposureDescription, effect: messages.srsDeepExposureEffect, iconFileName: 'srsDeepExposure.webp', column: 0, row: 1 }],
-        [SRS_AUGMENTS.focusedBeam, { message: messages.srsFocusedBeamName, description: messages.srsFocusedBeamDescription, effect: messages.srsFocusedBeamEffect, iconFileName: 'srsFocusedBeam.webp', column: 1, row: 0 }],
-        [SRS_AUGMENTS.researchConversion, { message: messages.srsResearchConversionName, description: messages.srsResearchConversionDescription, effect: messages.srsResearchConversionEffect, iconFileName: 'srsResearchConversion.webp', column: 2, row: 0 }],
-        [SRS_AUGMENTS.researchActivity, { message: messages.srsResearchActivityName, description: messages.srsResearchActivityDescription, effect: messages.srsResearchActivityEffect, iconFileName: 'srsResearchActivity.webp', column: 1, row: 1 }],
-        [CASH_SCIENCE_SUBSKILLS.lifetime, { message: messages.subskillLifetimeName, description: messages.subskillLifetimeDescription, effect: messages.subskillLifetime, iconFileName: 'panelWarranty.webp', column: 0, row: -1 }],
-        [CASH_SCIENCE_SUBSKILLS.decay, { message: messages.subskillDecayName, description: messages.subskillDecayDescription, effect: messages.subskillDecay, iconFileName: 'supermassivePanels.webp', column: 1, row: 0 }],
-        [CASH_SCIENCE_SUBSKILLS.production, { message: messages.subskillProductionName, description: messages.subskillProductionDescription, effect: messages.subskillProduction, iconFileName: 'startHereTree.webp', column: 0, row: 1 }],
-      ])
-      for (const [id, presentation] of swarmAugmentPresentation) augmentPresentation.set(id, presentation)
-      for (const augment of SKILL_AUGMENTS) {
-        const parent = nodes.get(augment.parentSkillId)
-        const authored = augmentPresentation.get(augment.id)
-        if (!parent || !authored) continue
-        const label = intl.formatMessage(authored.message)
-        nodes.set(augment.id, {
-          ...parent, skillId: augment.id, displayName: label,
-          icon: { fileName: authored.iconFileName },
-          description: authored.description ? intl.formatMessage(authored.description) : '',
-          technicalDescription: authored.effect ? intl.formatMessage(authored.effect) : label, cost: augment.cost,
-          x: parent.x + authored.column * SKILL_GRID_SPACING,
-          y: parent.y - authored.row * SKILL_GRID_SPACING,
-        })
-      }
-      if (discoveryUnlocked) {
-        for (const [id, node] of nodes) {
-          const effect = discoverySkillEffects[id as keyof typeof discoverySkillEffects]
-          if (effect) nodes.set(id, { ...node, technicalDescription: intl.formatMessage(effect), discoveryTechnical: true })
-        }
-      }
-      return nodes
-    },
-    [intl, localizedNodes, discoveryUnlocked],
-  )
+  const { localizedNodes, nodeById } = useSkillPresentationNodes(discoveryUnlocked)
   const visibleNodes = useMemo(
     () =>
       localizedNodes.filter(
@@ -627,47 +501,13 @@ function SkillsSurfaceContent({
       await requestNonRefundableConfirmation(),
   [autoAssignNonRefundable, previewById, requestNonRefundableConfirmation])
 
-  const requestPresetSelection = useCallback(
-    async (slot: CanonicalSkillPresetSlot) => {
-      if (presetSelectionPending) return
-      if (presetActions === undefined) {
-        await dispatch(
-          { kind: 'skill.select-preset', slot },
-          selectedPresetSlot === slot ? {} : { expectedPresetSlot: slot },
-        )
-        return
-      }
-      setPresetSelectionPending(true)
-      setFailed(false)
-      try {
-        const preview = await presetActions.previewSelection(slot)
-        if (preview.blockedByRetainedSkillIds.length > 0) {
-          setPresetsOpen(false)
-          setPresetSelectionPreview({
-            slot,
-            retainedSkillIds: preview.retainedSkillIds,
-            blockedByRetainedSkillIds:
-              preview.blockedByRetainedSkillIds,
-          })
-          return
-        }
-        await dispatch(
-          { kind: 'skill.select-preset', slot },
-          selectedPresetSlot === slot ? {} : { expectedPresetSlot: slot },
-        )
-      } catch {
-        setFailed(true)
-      } finally {
-        setPresetSelectionPending(false)
-      }
-    },
-    [
-      dispatch,
-      presetActions,
-      presetSelectionPending,
-      selectedPresetSlot,
-    ],
-  )
+  const selectPreset = useCallback((command: PresetSelectionCommand) => dispatch(
+    command, selectedPresetSlot === command.slot ? {} : { expectedPresetSlot: command.slot },
+  ), [dispatch, selectedPresetSlot])
+  const { pending: presetSelectionPending, preview: presetSelectionPreview,
+    request: requestPresetSelection, dismiss: dismissPresetSelection, confirm: confirmPresetSelection,
+  } = useSkillPresetSelection({ presetActions, select: selectPreset,
+    onFailure: () => setFailed(true), onConflict: () => setPresetsOpen(false) })
 
   useEffect(() => {
     if (pendingExpectation === null) return
@@ -801,35 +641,9 @@ function SkillsSurfaceContent({
         onViewChange={onTreeViewChange}
         controlsStart={(
           <div className="skills-surface__viewport-controls">
-            <div
-              className="skills-surface__quick-presets"
-              aria-label={intl.formatMessage(messages.presets)}
-              role="group"
-            >
-              {presets.slice(0, 5).map((preset, index) => {
-                const slot = (index + 1) as CanonicalSkillPresetSlot
-                return (
-                  <button
-                    key={slot}
-                    type="button"
-                    className="skills-surface__quick-preset"
-                    style={skillPresetColorStyle(preset.colorId)}
-                    aria-label={intl.formatMessage(messages.switchPreset, {
-                      name: preset.name,
-                    })}
-                    aria-pressed={selectedPresetSlot === slot}
-                    disabled={
-                      !commandAvailability.selectPreset ||
-                      pendingKind === 'skill.select-preset' ||
-                      presetSelectionPending
-                    }
-                    onClick={() => void requestPresetSelection(slot)}
-                  >
-                    <span>{slot}</span>
-                  </button>
-                )
-              })}
-            </div>
+            <SkillPresetQuickActions presets={presets} selectedSlot={selectedPresetSlot}
+              disabled={!commandAvailability.selectPreset || pendingKind === 'skill.select-preset' || presetSelectionPending}
+              onSelect={requestPresetSelection} />
             <div
               className="skills-surface__search"
               data-has-clear={query.length > 0 || undefined}
@@ -992,29 +806,9 @@ function SkillsSurfaceContent({
             presetSelectionPreview.blockedByRetainedSkillIds
           }
           nodeById={nodeById}
-          pending={pendingKind === 'skill.select-preset'}
-          onCancel={() => setPresetSelectionPreview(null)}
-          onConfirm={async () => {
-            const slot = presetSelectionPreview.slot
-            const accepted = await dispatch(
-              {
-                kind: 'skill.select-preset',
-                slot,
-                retainedConflictPolicy: {
-                  kind: 'confirmed',
-                  retainedSkillIds:
-                    presetSelectionPreview.retainedSkillIds,
-                  blockedSkillIds:
-                    presetSelectionPreview
-                      .blockedByRetainedSkillIds,
-                },
-              },
-              selectedPresetSlot === slot
-                ? {}
-                : { expectedPresetSlot: slot },
-            )
-            if (accepted) setPresetSelectionPreview(null)
-          }}
+          pending={presetSelectionPending || pendingKind === 'skill.select-preset'}
+          onCancel={dismissPresetSelection}
+          onConfirm={confirmPresetSelection}
         />
       )}
 
@@ -1945,36 +1739,6 @@ interface SkillDetailsProps {
   ) => Promise<boolean>
 }
 
-function AffectedSkillList({
-  skillIds,
-  nodeById,
-  label,
-}: {
-  readonly skillIds: readonly string[]
-  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
-  readonly label: string
-}) {
-  return (
-    <ul className="skill-details__affected-skills" aria-label={label}>
-      {skillIds.map((skillId) => {
-        const affectedNode = nodeById.get(skillId)
-        return (
-          <li key={skillId}>
-            {affectedNode && (
-              <img
-                src={iconByFileName.get(
-                  affectedNode.icon.fileName,
-                )}
-                alt=""
-              />
-            )}
-            <span>{affectedNode?.displayName ?? skillId}</span>
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
 
 function SkillDetails({
   showProductionComparisons,
@@ -2740,15 +2504,6 @@ function SkillResetDialog({
   )
 }
 
-interface SkillPresetSelectionDialogProps {
-  readonly presetName: string
-  readonly retainedSkillIds: readonly string[]
-  readonly blockedSkillIds: readonly string[]
-  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
-  readonly pending: boolean
-  readonly onCancel: () => void
-  readonly onConfirm: () => Promise<void>
-}
 
 function SkillPresetApplicationNotice({
   presetName,
@@ -2790,61 +2545,6 @@ function SkillPresetApplicationNotice({
   )
 }
 
-function SkillPresetSelectionDialog({
-  presetName,
-  retainedSkillIds,
-  blockedSkillIds,
-  nodeById,
-  pending,
-  onCancel,
-  onConfirm,
-}: SkillPresetSelectionDialogProps) {
-  const intl = useIntl()
-
-  return (
-    <SkillDetailsDialog
-      title={intl.formatMessage(messages.switchPresetConflictTitle, {
-        name: presetName,
-      })}
-      closeLabel={intl.formatMessage(messages.close)}
-      palette="normal"
-      className="skill-reset-dialog"
-      onClose={onCancel}
-    >
-      <p className="skill-reset-dialog__description">
-        {intl.formatMessage(messages.switchPresetConflictWarning)}
-      </p>
-      <section className="skill-reset-dialog__group">
-        <h3>{intl.formatMessage(messages.retainedSkillsHeading)}</h3>
-        <AffectedSkillList
-          skillIds={retainedSkillIds}
-          nodeById={nodeById}
-          label={intl.formatMessage(messages.retainedSkillsHeading)}
-        />
-      </section>
-      <section className="skill-reset-dialog__group">
-        <h3>{intl.formatMessage(messages.blockedSkillsHeading)}</h3>
-        <AffectedSkillList
-          skillIds={blockedSkillIds}
-          nodeById={nodeById}
-          label={intl.formatMessage(messages.blockedSkillsHeading)}
-        />
-      </section>
-      <div className="skill-reset-dialog__actions">
-        <Button onClick={onCancel} disabled={pending}>
-          {intl.formatMessage(messages.cancel)}
-        </Button>
-        <Button
-          variant="primary"
-          state={pending ? 'pending' : 'idle'}
-          onClick={() => void onConfirm()}
-        >
-          {intl.formatMessage(messages.switchAnyway)}
-        </Button>
-      </div>
-    </SkillDetailsDialog>
-  )
-}
 
 interface SkillPresetsDialogProps {
   readonly discoveryUnlocked?: boolean

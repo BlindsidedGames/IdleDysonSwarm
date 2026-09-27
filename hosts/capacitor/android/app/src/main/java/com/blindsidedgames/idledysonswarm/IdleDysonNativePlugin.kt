@@ -71,6 +71,11 @@ class IdleDysonNativePlugin : Plugin() {
 
     // Mirrors hosts/capacitor/achievement-map.json; IDs never leave the native host.
     private val achievementIds = mapOf(
+        "achievement.first_transcendence" to "CgkIkpjJyrENEAIQJg",
+        "achievement.enlightenment" to "CgkIkpjJyrENEAIQJw",
+        "achievement.first_quantum_challenge" to "CgkIkpjJyrENEAIQKA",
+        "achievement.first_fracture" to "CgkIkpjJyrENEAIQKQ",
+        "achievement.first_galactic_brain" to "CgkIkpjJyrENEAIQKg",
         "achievement.first_bot" to "CgkIkpjJyrENEAIQAg",
         "achievement.first_assembly_line" to "CgkIkpjJyrENEAIQAw",
         "achievement.first_data_center" to "CgkIkpjJyrENEAIQBw",

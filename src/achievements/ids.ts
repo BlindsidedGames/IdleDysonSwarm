@@ -1,5 +1,10 @@
 // Provider-neutral IDs only. Native mappings are checked against this list.
 export const achievementIds = [
+  "achievement.first_transcendence",
+  "achievement.enlightenment",
+  "achievement.first_quantum_challenge",
+  "achievement.first_fracture",
+  "achievement.first_galactic_brain",
   "achievement.first_bot",
   "achievement.first_assembly_line",
   "achievement.first_data_center",

@@ -3993,6 +3993,12 @@
       "value": "Redondear compras en lote"
     }
   ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Mostrar siempre las acciones rápidas de preajustes"
+    }
+  ],
   "dyson.info.show-run-facts-when-collapsed": [
     {
       "type": 0,
@@ -16488,6 +16494,12 @@
     {
       "type": 0,
       "value": "Versión 4.1.10"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "Se añadieron cinco logros y accesos rápidos opcionales a preajustes en la pestaña Bots."
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [
