@@ -1,0 +1,72 @@
+<en-AU>
+• Transcendence replaces Overflow, with Discovery, Elevation and Enlightenment.
+• Added 7 Quantum challenges and 14 Manual Labour, Swarm and Fragment augments.
+• Reworked Stellar Memory and Stellar Sacrifices; improved Fracturing.
+• Persistent speedrun bests, run comparisons and a First Transcendence milestone.
+• Rebalanced facilities and megastructures.
+• Fixed Permanent 2× Bots after Reset Save, save recovery and challenge issues.
+• Improved skill previews, production details and UI.
+</en-AU>
+<de-DE>
+• Transzendenz ersetzt Overflow: Entdeckung, Erhebung und Erleuchtung.
+• 7 Quantenherausforderungen und 14 Erweiterungen für Handarbeit, Schwarm und Fragmente.
+• Stellares Gedächtnis und Stellare Opfer überarbeitet; Frakturierung verbessert.
+• Dauerhafte Speedrun-Bestzeiten, Laufvergleiche und Erste Transzendenz.
+• Anlagen und Megastrukturen neu ausbalanciert.
+• Fehler beim permanenten Bot-Bonus nach Reset, Speichern und Herausforderungen behoben.
+• Vorschauen und Produktionsdetails verbessert.
+</de-DE>
+<es-419>
+• Trascendencia reemplaza a Overflow: Descubrimiento, Elevación e Iluminación.
+• 7 desafíos cuánticos y 14 aumentos de Trabajo manual, Enjambre y Fragmentos.
+• Memoria Estelar y Sacrificios Estelares rediseñados; mejoras de fractura.
+• Récords persistentes, comparación de partidas y Primera Trascendencia.
+• Instalaciones y megaestructuras reequilibradas.
+• Correcciones del bono permanente de Bots ×2 tras reiniciar, guardados y desafíos.
+• Mejores vistas previas y detalles de producción.
+</es-419>
+<fr-FR>
+• La Transcendance remplace Overflow : Découverte, Élévation et Illumination.
+• 7 défis quantiques et 14 augmentations de Travail manuel, Essaim et Fragments.
+• Mémoire stellaire et Sacrifices stellaires remaniés ; fracturation améliorée.
+• Records de speedrun persistants, comparaisons et Première Transcendance.
+• Installations et mégastructures rééquilibrées.
+• Correctifs du bonus Bots ×2 permanent après réinitialisation, des sauvegardes et des défis.
+• Aperçus et détails améliorés.
+</fr-FR>
+<ja-JP>
+• Overflowが超越に。発見・上昇・悟りの3本の進捗バーを追加。
+• 7つのクォンタムチャレンジと、手動労働・スウォーム・フラグメントの計14個のオーグメントを追加。
+• 星の記憶と恒星の犠牲を改修し、フラクチャーを改善。
+• スピードランの自己ベストを永続保存。現在の記録との比較と初めての超越の節目を追加。
+• 施設とメガストラクチャーのバランスを調整。
+• セーブリセット後の永続Bots×2、セーブ復元、チャレンジの不具合を修正。
+• スキルプレビュー、生産詳細、UIを改善。
+</ja-JP>
+<pt-BR>
+• Transcendência substitui Overflow: Descoberta, Elevação e Iluminação.
+• 7 desafios Quânticos e 14 aumentos de Trabalho Manual, Enxame e Fragmentos.
+• Memória estelar e Sacrifícios estelares reformulados; Fraturamento melhorado.
+• Recordes persistentes de speedrun, comparações e Primeira Transcendência.
+• Instalações e megaestruturas rebalanceadas.
+• Corrigidos bônus permanente de Bots ×2 após reiniciar, salvamentos e desafios.
+• Melhorias nas prévias, detalhes de produção e interface.
+</pt-BR>
+<ru-RU>
+• Трансценденция вместо Overflow: Открытие, Возвышение и Просветление.
+• 7 квантовых испытаний и 14 усилений Ручного труда, Роя и Фрагментов.
+• Переработаны Звёздная память и Звёздные жертвы; улучшен раскол навыков.
+• Постоянные рекорды спидрана, сравнение забегов и Первая трансценденция.
+• Новый баланс сооружений и мегаструктур.
+• Исправлены постоянный бонус Ботов ×2 после сброса, сохранения и испытания.
+• Улучшены предпросмотры навыков, расчёты производства и интерфейс.
+</ru-RU>
+<zh-CN>
+• 超越取代Overflow，新增发现、升华与启悟三条进度条。
+• 新增7项量子挑战，以及手工劳动、虫群和碎片的14项强化。
+• 重做星辰记忆与星辰献祭，改进技能裂变。
+• 速通个人最佳记录永久保留，新增本轮对比与首次超越里程碑。
+• 调整设施和巨构的成本与产量。
+• 修复重置存档后永久2倍机器人加成、存档恢复和挑战相关问题。
+• 改进技能预览、生产详情与界面。
+</zh-CN>
