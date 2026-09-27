@@ -6622,7 +6622,7 @@
     "defaultMessage": "Compound Fragments"
   },
   "skills.swarm.compoundFragments.technical": {
-    "defaultMessage": "Replaces linear purchase scaling with (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1."
+    "defaultMessage": "Multiplies normal purchase scaling by (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1."
   },
   "skills.swarm.deferredBilling.description": {
     "defaultMessage": "The invoice is somebody else’s problem."

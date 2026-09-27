@@ -1695,7 +1695,7 @@
   "skills.swarm.botnet.technical": "Multiplica a produção de todas as instalações por 1 + log20(Bots).",
   "skills.swarm.compoundFragments.description": "De algum jeito, as peças vieram com juros.",
   "skills.swarm.compoundFragments.name": "Fragmentos compostos",
-  "skills.swarm.compoundFragments.technical": "Substitui a escala linear de compras por (1 + taxa do Enxame)^floor((compras efetivas / limiar dos Fragmentos)^0.825). O limiar mínimo é 1.",
+  "skills.swarm.compoundFragments.technical": "Multiplica a escala normal de compras por (1 + taxa de Enxame)^floor((compras efetivas / limite de Fragmento)^0.825). O limite mínimo é 1.",
   "skills.swarm.deferredBilling.description": "A fatura é problema de outra pessoa.",
   "skills.swarm.deferredBilling.name": "Cobrança adiada",
   "skills.swarm.deferredBilling.technical": "Compras de instalações exigem o preço inteiro em dinheiro, mas não o gastam.",

@@ -14,7 +14,7 @@ Source: Wia's consolidated Discord proposal, 26 September 2026, message 15533788
 - Steady Supply requires assignment at the ending Infinity and reassignment to restore the captured paid purchases. Challenge restarts and Quantum clear this bank. Restoring cannot duplicate purchases by refunding/reassigning.
 - Pooled counts affect production calculations, never the physical inventory or price counter. Terra acts after pooling. Automatically generated buildings do not count as purchases.
 - Economy of Scale retains Cash/Bot effects after Discovery. The Science benefit converts to G(multiplier − 1), using the existing bounded growing-source formula (Matthew confirmed).
-- Self-Replicating Workers targets simulation Hunters/Gatherers and launched-panel Energy. It does not affect main-game Bot allocation. Compound Fragments replaces linear scaling; zero purchases stay neutral at 1×.
+- Self-Replicating Workers targets simulation Hunters/Gatherers and launched-panel Energy. It does not affect main-game Bot allocation. Compound Fragments multiplies normal purchase scaling; zero purchases stay neutral at 1×.
 - Reductive Scaling subtracts 0.5 percentage points per assigned Fragment, including itself and Compound Fragments; growth has a 0.1% floor.
 - Existing Swarm/Terra production bonuses remain scoped to basic facilities. Megastructure purchases join the pooled count, and their own purchase count can supply Stellar Swarm’s target multiplier; Botnet directly affects all eight facilities.
 
@@ -47,7 +47,7 @@ Source: Wia's consolidated Discord proposal, 26 September 2026, message 15533788
 
 - **Stellar Swarm:** Multiplies Stellar Sacrifices output by P^log12.5(Bots), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged.
 
-- **Compound Fragments:** Replaces linear purchase scaling with (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1.
+- **Compound Fragments:** Multiplies normal purchase scaling by (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1.
 
 - **Reductive Scaling:** Reduces facility price growth by 0.5 percentage points per active Fragment Skill, to a minimum of 0.1%.
 
@@ -64,8 +64,32 @@ After Discovery unlocks, Economy of Scale instead retains its Cash/Bot multiplie
 - Economy of Scale’s Discovery-specific description was verified in the actual Assembly Line details, with focused UI regressions for both phases.
 - Browser Simulation displayed 100 Hunters producing 1.36 Community/s, 200 Gatherers producing 1.85 Community/s, and 10,000 launched panels producing 24.4 kW with the augment. Spent one minute of Stored Time through the sidebar and inspected resulting production/charge.
 - Local evidence: `output/qa/swarm-augments/` (ignored screenshots). Reproduction fixtures and live scripts remained disposable under `/tmp`; no player save was changed.
-- Native iOS, Android and packaged Electron interaction checks were not repeated for these additions. No cross-device Cloud test or long-run balance certification is claimed. Prototype tuning remains as proposed; notably Compound Fragments replaces the early linear bonus and can be weaker before its later exponential growth dominates.
+- Native iOS, Android and packaged Electron interaction checks were not repeated for these additions. No cross-device Cloud test or long-run balance certification is claimed. This was the original verification; the stacking correction below supersedes the original replacement curve.
 
 ## Release
 
 Do not deploy or merge this work. Update PR #217 after verification.
+
+## Compound Fragments stacking correction (27 September 2026)
+
+Wia clarified in Dev Ops (messages 1553740026909827123–1553740556348170281)
+that the 0.825 curve was tuned to multiply normal purchase scaling, not replace it.
+The shared calculation now retains the linear factor and multiplies it by the
+Compound Fragments factor. Both are shown separately in Bots details. The combined
+factor feeds Stellar Swarm and existing pricing/production consumers; ordinary
+Supernova still suppresses both. No save migration, new state or exponent change.
+
+- At 1,000 effective purchases, threshold 85 and 5% Swarm rate: 46.75 ×
+  1.4071004227 = 65.7819447592. Zero purchases remain 1×.
+- Regression checks cover all four rates, low/zero thresholds, large counts,
+  assignment/refund, reload, effect attribution and Galactic Brain Stellar Swarm.
+- Full suite: 195 files / 2,059 tests passed. TypeScript, lint, data and localization
+  checks passed.
+- Live disposable browser save: assignment preview 18.6K → 26.3K Bots/s matched
+  actual production; details showed both factors. Refund preview and confirmation
+  restored normal scaling. Locale reload preserved assignment.
+- Inspected desktop details and skill description, 360px/130% text details, and
+  the German skill description at 360px/130%. Formula text and action fit; details
+  scroll to the final row. Evidence: `/tmp/ids-compound-qa/screenshots/`.
+- Native iOS, Android and packaged Steam interaction checks were not repeated.
+  This correction has not been deployed.

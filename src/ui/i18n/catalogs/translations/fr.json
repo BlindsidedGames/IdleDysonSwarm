@@ -1695,7 +1695,7 @@
   "skills.swarm.botnet.technical": "Multiplie la production de toutes les installations par 1 + log20(Bots).",
   "skills.swarm.compoundFragments.description": "Les morceaux rapportent même des intérêts.",
   "skills.swarm.compoundFragments.name": "Fragments composés",
-  "skills.swarm.compoundFragments.technical": "Remplace la progression linéaire des achats par (1 + taux d’Essaim)^floor((achats effectifs / seuil des Fragments)^0.825). Le seuil vaut au minimum 1.",
+  "skills.swarm.compoundFragments.technical": "Multiplie la progression normale des achats par (1 + taux d’Essaim)^floor((achats effectifs / seuil de Fragment)^0.825). Le seuil est de 1 au minimum.",
   "skills.swarm.deferredBilling.description": "La facture, c’est le problème de quelqu’un d’autre.",
   "skills.swarm.deferredBilling.name": "Facturation différée",
   "skills.swarm.deferredBilling.technical": "Les achats d’installations exigent leur prix total en argent, sans le dépenser.",

@@ -28,7 +28,7 @@ export const swarmMessages = defineMessages({
   stellarSwarmTechnical: { id: "skills.swarm.stellarSwarm.technical", defaultMessage: "Multiplies Stellar Sacrifices output by P^log12.5(Bots), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged." },
   compoundFragmentsName: { id: "skills.swarm.compoundFragments.name", defaultMessage: "Compound Fragments" },
   compoundFragmentsDescription: { id: "skills.swarm.compoundFragments.description", defaultMessage: "Somehow the pieces came with interest." },
-  compoundFragmentsTechnical: { id: "skills.swarm.compoundFragments.technical", defaultMessage: "Replaces linear purchase scaling with (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1." },
+  compoundFragmentsTechnical: { id: "skills.swarm.compoundFragments.technical", defaultMessage: "Multiplies normal purchase scaling by (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1." },
   reductiveScalingName: { id: "skills.swarm.reductiveScaling.name", defaultMessage: "Reductive Scaling" },
   reductiveScalingDescription: { id: "skills.swarm.reductiveScaling.description", defaultMessage: "The price tags are getting nervous." },
   reductiveScalingTechnical: { id: "skills.swarm.reductiveScaling.technical", defaultMessage: "Reduces facility price growth by 0.5 percentage points per active Fragment Skill, to a minimum of 0.1%." },

@@ -13170,7 +13170,7 @@
   "skills.swarm.compoundFragments.technical": [
     {
       "type": 0,
-      "value": "Ersetzt die lineare Kaufskalierung durch (1 + Schwarmrate)^floor((effektive Käufe / Fragmentschwelle)^0.825). Die Schwelle beträgt mindestens 1."
+      "value": "Multipliziert die normale Kaufskalierung mit (1 + Schwarmrate)^floor((effektive Käufe / Fragmentschwelle)^0.825). Die Schwelle beträgt mindestens 1."
     }
   ],
   "skills.swarm.deferredBilling.description": [

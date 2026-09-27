@@ -247,3 +247,62 @@ test('Supply Shortage keeps its fixed doubling rule with Reductive Scaling assig
   const next = previewCanonicalFacilityPurchase(bought.state, 'assembly_lines').cost
   expect(next / initial).toBe(2)
 })
+
+// Keep the original curve and the augment independent: assigning an upgrade must
+// never replace a larger ordinary bonus with its smaller compounding factor.
+test.each([['', .01], ['superSwarm', .02], ['megaSwarm', .03], ['ultimateSwarm', .05]] as const)(
+  'Compound Fragments multiplies normal scaling at %s across thresholds and late-game counts', (swarm, rate) => {
+    const source = fixture([A.compoundFragments])
+    const state = { ...source, skills: { ...source.skills, byId: { ...source.skills.byId,
+      ...Object.fromEntries(['superSwarm', 'megaSwarm', 'ultimateSwarm'].map(id => [id, { ...source.skills.byId[id], owned: id === swarm }])),
+    } } }
+    for (const fragments of [2n, 19n, 30n]) {
+      state.skills.fragments = fragments
+      const threshold = purchaseScalingThreshold(state)
+      for (const count of [0, Math.max(0, threshold - 1), threshold, threshold + 1, 1000, 10000, 1e6]) {
+        const linear = 1 + Math.max(0, count - threshold) * rate
+        const compound = (1 + rate) ** Math.floor((count / Math.max(1, threshold)) ** .825)
+        const actual = purchaseScalingMultiplier(state, count)
+        if (Number.isFinite(linear * compound)) expect(actual / (linear * compound)).toBeCloseTo(1)
+        expect(actual).toBeGreaterThanOrEqual(linear)
+        expect(Number.isFinite(actual)).toBe(true)
+      }
+    }
+  },
+)
+
+test('Compound Fragments assignment, reload and refund preserve ordinary scaling', () => {
+  const state = fixture()
+  const assigned = buy(state, A.compoundFragments)
+  expect(purchaseScalingMultiplier(state, 1000)).toBeCloseTo(46.5)
+  expect(purchaseScalingMultiplier(assigned, 1000)).toBeCloseTo(65.78194475917971)
+  const loaded = hydrateGameState(dehydrateGameState(session(), assigned)).state
+  expect(purchaseScalingMultiplier(loaded, 1000)).toBe(purchaseScalingMultiplier(assigned, 1000))
+  expect(purchaseScalingMultiplier(refund(loaded, A.compoundFragments), 1000)).toBeCloseTo(46.5)
+})
+
+test('combined scaling feeds facility breakdowns and Stellar Swarm, respecting Supernova', async () => {
+  const { deriveBasicDysonState, deriveManualPurchaseProductionLayer } = await import('./canonicalDysonDerivation')
+  const { DETERMINISTIC_DYSON_TUNING: tuning, DETERMINISTIC_DYSON_SNAPSHOT: snapshot } = await import('../../scripts/support/deterministicMatureDysonFixture')
+  const source = fixture([A.compoundFragments, A.stellarSwarm, 'stellarSacrifices'])
+  const state = { ...source, dyson: { ...source.dyson, bots: 12.5, facilities: { ...source.dyson.facilities, assembly_lines: [0, 1000] as const, galactic_brains: [0, 1000] as const } } }
+  const layer = deriveManualPurchaseProductionLayer(state, 'galactic_brains')
+  expect(layer.linearScalingMultiplier).toBeCloseTo(46.75)
+  expect(layer.compoundScalingMultiplier).toBeCloseTo(1.4071004226562505)
+  expect(layer.scalingMultiplier).toBeCloseTo(65.78194475917971)
+  const derive = (s: CanonicalGameStateV1) => {
+    const result = deriveBasicDysonState(s, tuning, { permanentDoubleIp: false }, { ...snapshot, panelsPerSecond: 1e50 })
+    if (!result.ok) throw Error(JSON.stringify(result.issues))
+    return result.value
+  }
+  const result = derive(state)
+  const withoutStellar = derive(refund(state, A.stellarSwarm))
+  expect(result.auxiliary.stellarSacrifice.facilitiesPerSecond / withoutStellar.auxiliary.stellarSacrifice.facilitiesPerSecond).toBeCloseTo(layer.scalingMultiplier)
+  expect(result.auxiliary.stellarSacrifice.botsPerSecond).toBe(withoutStellar.auxiliary.stellarSacrifice.botsPerSecond)
+  const rows = result.facilityFacts.assembly_lines.details.contributions
+  expect(rows.find(row => row.sourceId.startsWith('manual-purchase.scaling-'))?.value).toBeCloseTo(layer.linearScalingMultiplier)
+  expect(rows.find(row => row.sourceId === A.compoundFragments)?.value).toBeCloseTo(layer.compoundScalingMultiplier)
+  const suppressed = { ...state, skills: { ...state.skills, byId: { ...state.skills.byId, supernova: { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 } } } }
+  expect(deriveManualPurchaseProductionLayer(suppressed, 'assembly_lines').scalingMultiplier).toBe(1)
+  expect(derive(suppressed).facilityFacts.assembly_lines.details.contributions.some(row => row.sourceId === A.compoundFragments)).toBe(false)
+})

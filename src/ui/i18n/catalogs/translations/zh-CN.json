@@ -1695,7 +1695,7 @@
   "skills.swarm.botnet.technical": "所有设施产量乘以1 + log20(机器人数量)。",
   "skills.swarm.compoundFragments.description": "不知为何，这些碎片还带着利息。",
   "skills.swarm.compoundFragments.name": "复利碎片",
-  "skills.swarm.compoundFragments.technical": "将线性购买加成替换为(1 + 蜂群加成率)^floor((有效购买数 / 碎片阈值)^0.825)。阈值最低为1。",
+  "skills.swarm.compoundFragments.technical": "将正常购买加成乘以 (1 + 虫群倍率)^floor((有效购买数量 / 碎片阈值)^0.825)。阈值最低为 1。",
   "skills.swarm.deferredBilling.description": "账单是别人的问题。",
   "skills.swarm.deferredBilling.name": "延期付款",
   "skills.swarm.deferredBilling.technical": "购买设施需要持有足额现金，但不会扣除现金。",

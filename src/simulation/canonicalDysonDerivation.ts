@@ -1,6 +1,6 @@
 import { deriveAdditionalTinkerYields, resolveTinkerFacilityYields, type TinkerFacilityYields } from './manualFacilityAugments'
-import { botnetMultiplier, economyOfScaleMultiplier, purchaseScalingRate, purchaseScalingThreshold, purchaseScalingMultiplier, stellarSwarmMultiplier } from './swarmAugments'
-import { SWARM_AUGMENTS, hasSwarmAugment } from './skillSubskills'
+import { botnetMultiplier, economyOfScaleMultiplier, purchaseScalingRate, purchaseScalingThreshold, linearPurchaseScalingMultiplier, compoundFragmentsMultiplier, stellarSwarmMultiplier } from './swarmAugments'
+import { SWARM_AUGMENTS } from './skillSubskills'
 import { challengeFacilities, challengeAllowsFacility, isNoScienceActive } from './infinityChallenges'
 import { highestOwnedFacility } from './stellarArithmetic'
 import { deriveDiscoveryEffects } from './discoveryEffects'
@@ -330,6 +330,8 @@ export interface ManualPurchaseProductionLayer {
   readonly milestone100Multiplier: number
   readonly scalingThreshold: number
   readonly scalingRate: number
+  readonly linearScalingMultiplier: number
+  readonly compoundScalingMultiplier: number
   readonly scalingMultiplier: number
   readonly totalMultiplier: number
 }
@@ -356,9 +358,9 @@ export function deriveManualPurchaseProductionLayer(
     !suppressed && effectiveManualCount >= 50 ? 2 : 1
   const milestone100Multiplier =
     !suppressed && effectiveManualCount >= 100 ? 2 : 1
-  const scalingMultiplier = suppressed
-    ? 1
-    : purchaseScalingMultiplier(state, effectiveManualCount)
+  const linearScalingMultiplier = suppressed ? 1 : linearPurchaseScalingMultiplier(state, effectiveManualCount)
+  const compoundScalingMultiplier = suppressed ? 1 : compoundFragmentsMultiplier(state, effectiveManualCount)
+  const scalingMultiplier = multiplyContinuous(linearScalingMultiplier, compoundScalingMultiplier)
   return Object.freeze({
     rawManualCount,
     pooledPurchaseCount,
@@ -375,6 +377,8 @@ export function deriveManualPurchaseProductionLayer(
     milestone100Multiplier,
     scalingThreshold,
     scalingRate,
+    linearScalingMultiplier,
+    compoundScalingMultiplier,
     scalingMultiplier,
     totalMultiplier:
       avocadosMultiplier *
@@ -443,17 +447,20 @@ function withManualPurchaseProductionLayer(
           order: 152,
         })
       }
-      if (layer.scalingMultiplier > 1) {
+      if (layer.linearScalingMultiplier > 1) {
         effects.push({
-          id: hasSwarmAugment(state, 'compoundFragments') ? SWARM_AUGMENTS.compoundFragments : `manual-purchase.scaling-${Math.round(layer.scalingRate * 100)}pct`,
+          id: `manual-purchase.scaling-${Math.round(layer.scalingRate * 100)}pct`,
           operation: 'multiply',
-          value: layer.scalingMultiplier,
+          value: layer.linearScalingMultiplier,
           order: 153,
         })
       }
     }
+    if (layer.compoundScalingMultiplier > 1) {
+      effects.push({ id: SWARM_AUGMENTS.compoundFragments, operation: 'multiply', value: layer.compoundScalingMultiplier, order: 154 })
+    }
     if (facilityId === 'assembly_lines') {
-      const economy = multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 154)
+      const economy = multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 155)
       if (economy) effects.push(economy)
     }
     byStat[BASIC_FACILITY_PRODUCTION_STATS[facilityId]] =

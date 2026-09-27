@@ -1695,7 +1695,7 @@
   "skills.swarm.botnet.technical": "Multiplica la producción de todas las instalaciones por 1 + log20(Bots).",
   "skills.swarm.compoundFragments.description": "De algún modo, las piezas venían con intereses.",
   "skills.swarm.compoundFragments.name": "Fragmentos compuestos",
-  "skills.swarm.compoundFragments.technical": "Reemplaza la escala lineal de compras por (1 + tasa de Enjambre)^floor((compras efectivas / umbral de Fragmentos)^0.825). El umbral mínimo es 1.",
+  "skills.swarm.compoundFragments.technical": "Multiplica el escalado normal de compras por (1 + tasa de Enjambre)^floor((compras efectivas / umbral de Fragmento)^0.825). El umbral mínimo es 1.",
   "skills.swarm.deferredBilling.description": "La factura es problema de alguien más.",
   "skills.swarm.deferredBilling.name": "Cobro diferido",
   "skills.swarm.deferredBilling.technical": "Las compras de instalaciones requieren su precio completo en dinero, pero no lo gastan.",

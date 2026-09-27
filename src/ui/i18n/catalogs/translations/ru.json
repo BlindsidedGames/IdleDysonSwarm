@@ -1695,7 +1695,7 @@
   "skills.swarm.botnet.technical": "Умножает производство всех сооружений на 1 + log20(Боты).",
   "skills.swarm.compoundFragments.description": "К обломкам каким-то образом прилагались проценты.",
   "skills.swarm.compoundFragments.name": "Сложные фрагменты",
-  "skills.swarm.compoundFragments.technical": "Заменяет линейный бонус покупок на (1 + ставка Роя)^floor((эффективные покупки / порог Фрагментов)^0.825). Минимальный порог — 1.",
+  "skills.swarm.compoundFragments.technical": "Умножает обычный бонус от покупок на (1 + коэффициент Роя)^floor((эффективные покупки / порог Фрагмента)^0.825). Минимальный порог — 1.",
   "skills.swarm.deferredBilling.description": "Оплата — чья-то чужая проблема.",
   "skills.swarm.deferredBilling.name": "Отложенный счёт",
   "skills.swarm.deferredBilling.technical": "Для покупки сооружений нужна полная сумма денег, но она не списывается.",

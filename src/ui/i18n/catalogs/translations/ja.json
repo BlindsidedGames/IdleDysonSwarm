@@ -1695,7 +1695,7 @@
   "skills.swarm.botnet.technical": "すべての施設の生産量を1 + log20(ボット数)倍にします。",
   "skills.swarm.compoundFragments.description": "なぜか欠片に利息が付いていました。",
   "skills.swarm.compoundFragments.name": "複利の欠片",
-  "skills.swarm.compoundFragments.technical": "線形の購入ボーナスを(1 + スウォーム率)^floor((有効購入数 / 欠片のしきい値)^0.825)に置き換えます。しきい値の最低値は1です。",
+  "skills.swarm.compoundFragments.technical": "通常の購入ボーナスに (1 + スウォーム率)^floor((有効購入数 / フラグメント閾値)^0.825) を掛けます。閾値の最小値は1です。",
   "skills.swarm.deferredBilling.description": "請求書は誰かの問題です。",
   "skills.swarm.deferredBilling.name": "後払い請求",
   "skills.swarm.deferredBilling.technical": "施設の購入には全額の現金が必要ですが、現金は消費しません。",

@@ -13170,7 +13170,7 @@
   "skills.swarm.compoundFragments.technical": [
     {
       "type": 0,
-      "value": "Replaces linear purchase scaling with (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1."
+      "value": "Multiplies normal purchase scaling by (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1."
     }
   ],
   "skills.swarm.deferredBilling.description": [

@@ -13170,7 +13170,7 @@
   "skills.swarm.compoundFragments.technical": [
     {
       "type": 0,
-      "value": "将线性购买加成替换为(1 + 蜂群加成率)^floor((有效购买数 / 碎片阈值)^0.825)。阈值最低为1。"
+      "value": "将正常购买加成乘以 (1 + 虫群倍率)^floor((有效购买数量 / 碎片阈值)^0.825)。阈值最低为 1。"
     }
   ],
   "skills.swarm.deferredBilling.description": [

@@ -1695,7 +1695,7 @@
   "skills.swarm.botnet.technical": "Multipliziert die Produktion aller Anlagen mit 1 + log20(Bots).",
   "skills.swarm.compoundFragments.description": "Die Bruchstücke haben irgendwie Zinsen mitgebracht.",
   "skills.swarm.compoundFragments.name": "Zinsfragmente",
-  "skills.swarm.compoundFragments.technical": "Ersetzt die lineare Kaufskalierung durch (1 + Schwarmrate)^floor((effektive Käufe / Fragmentschwelle)^0.825). Die Schwelle beträgt mindestens 1.",
+  "skills.swarm.compoundFragments.technical": "Multipliziert die normale Kaufskalierung mit (1 + Schwarmrate)^floor((effektive Käufe / Fragmentschwelle)^0.825). Die Schwelle beträgt mindestens 1.",
   "skills.swarm.deferredBilling.description": "Um die Rechnung kümmert sich jemand anderes.",
   "skills.swarm.deferredBilling.name": "Spätere Abrechnung",
   "skills.swarm.deferredBilling.technical": "Anlagenkäufe erfordern den vollen Geldbetrag, geben ihn aber nicht aus.",

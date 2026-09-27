@@ -2,7 +2,7 @@ import type { CanonicalGameStateV1, CanonicalFacilityId, SwarmGrantState } from 
 import { DYSON_FACILITY_IDS, DYSON_FACILITY_DEFINITIONS, isBasicFacility } from './dysonFacilityCatalog'
 import { hasSwarmAugment } from './skillSubskills'
 import { challengeAllowsFacilityPurchase } from './infinityChallenges'
-import { addContinuous, clampContinuous } from './numeric'
+import { addContinuous, clampContinuous, multiplyContinuous } from './numeric'
 
 export const SWARM_TUNING = Object.freeze({ headStart: 30, botnetBase: 20, economyBase: 5, stellarBase: 12.5, compoundPower: 0.825, costReductionPerFragment: 0.005,
   replication: { workers: { divisor: 10, power: 0.75 }, panels: { divisor: 100, power: 0.5 } },
@@ -79,12 +79,19 @@ export function purchaseScalingThreshold(state: CanonicalGameStateV1): number {
   return state.skills.byId.productionScaling?.owned ? Math.max(0, 90 - 5 * Math.max(0, Number(state.skills.fragments) - 1)) : 100
 }
 
+export function linearPurchaseScalingMultiplier(state: CanonicalGameStateV1, count: number): number {
+  return clampContinuous(1 + Math.max(0, count - purchaseScalingThreshold(state)) * purchaseScalingRate(state))
+}
+
+export function compoundFragmentsMultiplier(state: CanonicalGameStateV1, count: number): number {
+  if (!hasSwarmAugment(state, 'compoundFragments')) return 1
+  const steps = Math.floor(Math.pow(Math.max(0, count) / Math.max(1, purchaseScalingThreshold(state)), SWARM_TUNING.compoundPower))
+  return clampContinuous(Math.exp(Math.log1p(purchaseScalingRate(state)) * steps))
+}
+
+/** Compound Fragments augments ordinary scaling; both also feed Stellar Swarm. */
 export function purchaseScalingMultiplier(state: CanonicalGameStateV1, count: number): number {
-  const threshold = purchaseScalingThreshold(state)
-  const rate = purchaseScalingRate(state)
-  return hasSwarmAugment(state, 'compoundFragments')
-    ? clampContinuous(Math.exp(Math.log1p(rate) * Math.floor(Math.pow(Math.max(0, count) / Math.max(1, threshold), SWARM_TUNING.compoundPower))))
-    : clampContinuous(1 + Math.max(0, count - threshold) * rate)
+  return multiplyContinuous(linearPurchaseScalingMultiplier(state, count), compoundFragmentsMultiplier(state, count))
 }
 
 export function stellarSwarmMultiplier(state: CanonicalGameStateV1, purchaseMultiplier: number): number {

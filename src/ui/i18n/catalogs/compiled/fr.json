@@ -13170,7 +13170,7 @@
   "skills.swarm.compoundFragments.technical": [
     {
       "type": 0,
-      "value": "Remplace la progression linéaire des achats par (1 + taux d’Essaim)^floor((achats effectifs / seuil des Fragments)^0.825). Le seuil vaut au minimum 1."
+      "value": "Multiplie la progression normale des achats par (1 + taux d’Essaim)^floor((achats effectifs / seuil de Fragment)^0.825). Le seuil est de 1 au minimum."
     }
   ],
   "skills.swarm.deferredBilling.description": [

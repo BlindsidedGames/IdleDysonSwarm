@@ -13170,7 +13170,7 @@
   "skills.swarm.compoundFragments.technical": [
     {
       "type": 0,
-      "value": "線形の購入ボーナスを(1 + スウォーム率)^floor((有効購入数 / 欠片のしきい値)^0.825)に置き換えます。しきい値の最低値は1です。"
+      "value": "通常の購入ボーナスに (1 + スウォーム率)^floor((有効購入数 / フラグメント閾値)^0.825) を掛けます。閾値の最小値は1です。"
     }
   ],
   "skills.swarm.deferredBilling.description": [

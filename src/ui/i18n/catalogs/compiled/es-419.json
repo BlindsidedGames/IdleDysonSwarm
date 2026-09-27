@@ -13170,7 +13170,7 @@
   "skills.swarm.compoundFragments.technical": [
     {
       "type": 0,
-      "value": "Reemplaza la escala lineal de compras por (1 + tasa de Enjambre)^floor((compras efectivas / umbral de Fragmentos)^0.825). El umbral mínimo es 1."
+      "value": "Multiplica el escalado normal de compras por (1 + tasa de Enjambre)^floor((compras efectivas / umbral de Fragmento)^0.825). El umbral mínimo es 1."
     }
   ],
   "skills.swarm.deferredBilling.description": [
