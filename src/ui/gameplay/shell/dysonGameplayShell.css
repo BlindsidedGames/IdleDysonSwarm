@@ -1311,10 +1311,16 @@
 }
 
 .dyson-navigation__status {
+  margin-inline-start: auto;
+  text-align: end;
   color: white;
   font-size: var(--ui-text-meta);
   font-variant-numeric: tabular-nums;
   font-weight: normal;
+}
+
+.dyson-navigation__drawer-value + .dyson-navigation__status {
+  margin-inline-start: 0;
 }
 
 .dyson-navigation--bottom .dyson-navigation__icon {

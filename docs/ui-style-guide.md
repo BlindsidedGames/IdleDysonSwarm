@@ -63,7 +63,8 @@ Use these existing tokens rather than choosing a new nearby value per element:
   separation. Related content should be closer than unrelated sections.
 - Reuse `--ui-text-*` roles and the player's `--game-text-scale`. Keep numbers
   stable and align comparative values consistently.
-- Drawer balances and timers use the shared navigation status style. Separate
+- Drawer balances and timers use the shared navigation status style, aligned to
+  the trailing edge like the other drawer values (including wrapped lines). Separate
   Offline Time's quick-use controls from its main button with the same gap as
   neighbouring navigation buttons, including compact-height layouts.
 - Existing authored skill-tree spacing and icon optical sizes are separate
