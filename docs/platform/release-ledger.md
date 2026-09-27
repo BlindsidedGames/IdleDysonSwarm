@@ -205,8 +205,9 @@ Built from clean source `6d6193f2efd8d93ea9b968fb780d725a86ae7b4a` on
   September at 22:45 AEST. AAB 20,126,423 bytes; SHA-256
   `751c5e4617fe1c4988f8c4cfb3a03a63cb8d8409ef0839db447f609e2f27d125`.
 - Apple **4.1.10 (2609.27.03)**: signed archive and upload succeeded. Minimum iOS
-  16.0. Internal TestFlight processing/compliance/group availability is **not yet
-  verified**: App Store Connect signed out, and user sign-in has been requested.
+  16.0. App Store Connect displays **2609.27.3 — Testing**, assigned to the
+  **Internal** group (3 testers). Export compliance is complete and the focused
+  Compound Fragments testing notes are saved.
 - Steam **public-beta 25560133**: active with Windows/Linux/macOS depots; default
   remains **25430928**. Downloaded macOS manifest **3830610928221534327**. All 261
   regular package files match; both local and downloaded macOS startup checks
@@ -216,5 +217,7 @@ Built from clean source `6d6193f2efd8d93ea9b968fb780d725a86ae7b4a` on
   claimed. Achievement provider definitions remain drafts/unpublished.
 - Logs, screenshots, archive export options and downloaded beta:
   `/Users/matthewrushworth/Builds/ids-release-2026092703/`.
-- No production, App Review, website or Discord changes. Google symbol warnings
-  and the existing web chunk-size warning remain non-blocking.
+- Eve posted the combined 2026092701–2026092703 changes to Dev Ops on Matthew’s
+  behalf: https://discord.com/channels/712304553931833385/1006856538893340692/1553751345129852970.
+- No production, App Review or website changes. Google symbol warnings and the
+  existing web chunk-size warning remain non-blocking.
