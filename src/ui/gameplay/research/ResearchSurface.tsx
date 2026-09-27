@@ -1,3 +1,4 @@
+import { readBooleanPresentationPreference, writeBooleanPresentationPreference } from '../../presentationPreferences'
 import {
   useId,
   useLayoutEffect,
@@ -87,7 +88,10 @@ type ResearchSettingCommand = Extract<
   }
 >
 
+const SHOW_PRESET_QUICK_ACTIONS_KEY = 'idle-dyson-swarm.research.show-preset-quick-actions.v1'
+
 export interface ResearchSurfaceProps {
+  readonly presetQuickActions?: ReactNode
   readonly researchDisabled?: boolean
   readonly locale: EnabledLocale
   readonly cards: readonly FrontendResearchCardPreview[]
@@ -116,6 +120,7 @@ export interface ResearchSurfaceProps {
  * effects, automation and command execution to canonical application facts.
  */
 export function ResearchSurface({
+  presetQuickActions,
   researchDisabled = false,
   locale,
   cards,
@@ -140,6 +145,8 @@ export function ResearchSurface({
   const { hideCompleted, setHideCompleted } = useResearchVisibility()
   const settingsId = useId()
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [showPresetQuickActions, setShowPresetQuickActions] = useState(() =>
+    readBooleanPresentationPreference(SHOW_PRESET_QUICK_ACTIONS_KEY))
   const { settingPending, settingFailed, applySetting } =
     usePlayerSettingsCommands<ResearchSettingCommand>(dispatchPlayer)
   const {
@@ -259,6 +266,7 @@ export function ResearchSurface({
           controlsId={settingsId}
           settingsLabel={intl.formatMessage(messages.purchaseSettings)}
           onExpandedChange={setSettingsOpen}
+          aboveSummary={!settingsOpen && showPresetQuickActions ? presetQuickActions : undefined}
           summary={(
             <div
               className={[
@@ -342,6 +350,18 @@ export function ResearchSurface({
               />
               <span>{intl.formatMessage(messages.hideCompleted)}</span>
             </label>
+            <label className="research-surface__hide-completed">
+              <input
+                type="checkbox"
+                checked={showPresetQuickActions}
+                onChange={event => {
+                  const enabled = event.currentTarget.checked
+                  setShowPresetQuickActions(enabled)
+                  writeBooleanPresentationPreference(SHOW_PRESET_QUICK_ACTIONS_KEY, enabled)
+                }}
+              />
+              <span>{intl.formatMessage(messages.showPresetQuickActions)}</span>
+            </label>
             <PresetAutomationSelect
               label={intl.formatMessage(messages.presetAutomation)}
               offLabel={intl.formatMessage(messages.presetAutomationOff)}
@@ -409,6 +429,7 @@ export function ResearchSurface({
                 </div>
               </fieldset>
             ) : null}
+            {presetQuickActions}
             {settingFailed ? (
               <span
                 className="research-surface__settings-failure"

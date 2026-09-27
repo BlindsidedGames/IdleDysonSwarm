@@ -7749,6 +7749,12 @@
       "value": "Округлять массовые покупки"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Всегда показывать быстрый выбор наборов"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,

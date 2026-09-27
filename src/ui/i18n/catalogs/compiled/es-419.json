@@ -7749,6 +7749,12 @@
       "value": "Redondear compras en lote"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Mostrar siempre las acciones rápidas de preajustes"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,

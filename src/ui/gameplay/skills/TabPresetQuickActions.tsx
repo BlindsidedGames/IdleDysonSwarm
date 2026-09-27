@@ -12,7 +12,7 @@ import { SkillPresetSelectionDialog } from './SkillPresetSelectionDialog'
 import { useSkillPresetSelection } from './useSkillPresetSelection'
 import { useSkillPresentationNodes } from './skillPresentation'
 
-export function BotsPresetQuickActions({ presets, selectedSlot, disabled, discoveryUnlocked, presetActions, dispatchPlayer }: {
+export function TabPresetQuickActions({ presets, selectedSlot, disabled, discoveryUnlocked, presetActions, dispatchPlayer }: {
   readonly presets: readonly SkillPresetState[]
   readonly selectedSlot: CanonicalSkillPresetSlot
   readonly disabled: boolean

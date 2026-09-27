@@ -3567,6 +3567,9 @@
     "defaultMessage": "Round bulk purchases",
     "description": "Unity Research rounded-bulk setting."
   },
+  "research.show-preset-quick-actions": {
+    "defaultMessage": "Always show preset quick actions"
+  },
   "settings.achievements.action": {
     "defaultMessage": "Achievements",
     "description": "Opens the native platform achievement list and sign-in when needed."

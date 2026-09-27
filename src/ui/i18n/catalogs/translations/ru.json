@@ -2291,5 +2291,6 @@
   "skills.preset-color-blue": "Синий",
   "skills.preset-color-violet": "Фиолетовый",
   "skills.preset-color-red": "Красный",
-  "skills.preset-color-white": "Белый"
+  "skills.preset-color-white": "Белый",
+  "research.show-preset-quick-actions": "Всегда показывать быстрый выбор наборов"
 }

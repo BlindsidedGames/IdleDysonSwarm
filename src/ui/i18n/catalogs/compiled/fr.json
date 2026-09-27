@@ -7749,6 +7749,12 @@
       "value": "Arrondir les achats groupés"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Toujours afficher les raccourcis de préréglage"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,

@@ -2291,5 +2291,6 @@
   "skills.preset-color-blue": "Azul",
   "skills.preset-color-violet": "Violeta",
   "skills.preset-color-red": "Rojo",
-  "skills.preset-color-white": "Blanco"
+  "skills.preset-color-white": "Blanco",
+  "research.show-preset-quick-actions": "Mostrar siempre las acciones rápidas de preajustes"
 }

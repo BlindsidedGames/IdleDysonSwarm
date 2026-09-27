@@ -7749,6 +7749,12 @@
       "value": "一括購入数を切りのよい数に調整"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "プリセットのクイック操作を常に表示"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,

@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const researchMessages = defineMessages({
+  showPresetQuickActions: {
+    id: 'research.show-preset-quick-actions',
+    defaultMessage: 'Always show preset quick actions',
+  },
   challengeDisabled: { id: 'research.challengeDisabled', defaultMessage: 'Disabled' },
   challengeActive: { id: 'research.challengeActive', defaultMessage: 'Challenge active · Manual and automatic research purchases are disabled.' },
   region: {

@@ -231,6 +231,8 @@
 }
 
 .research-surface__control-panel .ui-progress-controls-panel__body {
+  max-block-size: none;
+  overflow: visible;
   padding: 0;
 }
 
@@ -524,4 +526,8 @@
   .research-surface__buy-modes button {
     forced-color-adjust: auto;
   }
+}
+
+.research-surface__control-panel .skill-preset-quick-actions {
+  margin-block: var(--ui-related-copy-gap);
 }

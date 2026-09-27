@@ -7749,6 +7749,12 @@
       "value": "批量购买取整"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "始终显示预设快捷操作"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,

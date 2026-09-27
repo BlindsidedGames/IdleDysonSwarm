@@ -1,4 +1,4 @@
-import { BotsPresetQuickActions } from '../skills/BotsPresetQuickActions'
+import { TabPresetQuickActions } from '../skills/TabPresetQuickActions'
 import { DiscoverySurface } from '../discovery/DiscoverySurface'
 import { discoveryMessages } from '../discovery/messages'
 import { NonRefundableSkillConfirmationProvider } from '../skills/NonRefundableSkillConfirmation'
@@ -1045,6 +1045,17 @@ function ReadyDysonSliceContent({
             : simulationsActive
               ? messages.simulationsRoute
             : messages.route
+  const presetQuickActions = gameplay.visibility.skills.routeUnlocked ? (
+    <TabPresetQuickActions
+      presets={gameplay.progression.skills.presets}
+      selectedSlot={gameplay.runtime.selectedSkillPresetSlot}
+      disabled={!gameplay.commands.byKind['skill.select-preset'].routeAvailable || gameplay.progression.challenges?.active === 'blank-slate'}
+      discoveryUnlocked={discoveryUnlocked}
+      presetActions={presetActions}
+      dispatchPlayer={dispatchPlayer}
+    />
+  ) : undefined
+
   const infinityRouteLabel =
     gameplay.progression.infinity.botCapTransitionPending ||
     gameplay.derived.infinity.navigationReward === null
@@ -1504,6 +1515,7 @@ function ReadyDysonSliceContent({
                     }
                   >
                     <ResearchSurface
+                      presetQuickActions={presetQuickActions}
                       researchDisabled={gameplay.progression.challenges?.active === 'trial-and-error' || gameplay.progression.challenges?.active === 'no-science'}
                       locale={locale}
                       cards={gameplay.previews.research.cards}
@@ -2324,12 +2336,7 @@ function ReadyDysonSliceContent({
         ariaLabel: intl.formatMessage(messages.info),
         content: (
           <DysonInfo
-            presetQuickActions={gameplay.visibility.skills.routeUnlocked ? <BotsPresetQuickActions
-              presets={gameplay.progression.skills.presets}
-              selectedSlot={gameplay.runtime.selectedSkillPresetSlot}
-              disabled={!gameplay.commands.byKind['skill.select-preset'].routeAvailable || gameplay.progression.challenges?.active === 'blank-slate'}
-              discoveryUnlocked={discoveryUnlocked} presetActions={presetActions} dispatchPlayer={dispatchPlayer}
-            /> : undefined}
+            presetQuickActions={presetQuickActions}
             summary={(
               <div
                 className={

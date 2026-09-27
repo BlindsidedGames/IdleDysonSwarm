@@ -129,16 +129,18 @@ Use these existing tokens rather than choosing a new nearby value per element:
 Do not add screenshot or CSS-literal unit tests for every cosmetic edit. Use
 focused behavioural coverage for real regressions, plus actual visual inspection.
 
-## Bots preset shortcuts
+## Bots and Research preset shortcuts
 
 Reuse the Skills preset control, with five buttons per row and its confirmation flow. In Bots,
 place it immediately above Active/Lifetime/Decayed. Expanded purchase settings
 show it; the independent, device-local “Always show preset quick actions” toggle
 (default off) also keeps it visible when collapsed. The run-facts toggle does not
 control these buttons. Keep preset colours, names, selected states and keyboard
-focus consistent between both entry points. Skills settings can reveal presets
-6–10 as a second row on both screens. Hiding that row preserves its saved presets.
-Use the same compact button height on both screens. Bots purchase settings expand
+focus consistent across Skills, Bots and Research. Research uses the same layout
+above its production summary, with its own independent visibility toggle. Skills
+settings can reveal presets 6–10 as a second row on all three screens. Hiding that
+row preserves its saved presets. Use the same compact button height everywhere.
+Bots and Research purchase settings expand
 upward to fit their content rather than using the shared short scrolling height cap.
 The preset management dialog remains scrollable on small screens with hidden
 scrollbar chrome. The ten preset colours are distinct choices, not subtle shades

@@ -2291,5 +2291,6 @@
   "skills.preset-color-blue": "蓝色",
   "skills.preset-color-violet": "紫色",
   "skills.preset-color-red": "红色",
-  "skills.preset-color-white": "白色"
+  "skills.preset-color-white": "白色",
+  "research.show-preset-quick-actions": "始终显示预设快捷操作"
 }

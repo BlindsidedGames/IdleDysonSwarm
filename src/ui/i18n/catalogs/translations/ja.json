@@ -2291,5 +2291,6 @@
   "skills.preset-color-blue": "青",
   "skills.preset-color-violet": "紫",
   "skills.preset-color-red": "赤",
-  "skills.preset-color-white": "白"
+  "skills.preset-color-white": "白",
+  "research.show-preset-quick-actions": "プリセットのクイック操作を常に表示"
 }

@@ -2291,5 +2291,6 @@
   "skills.preset-color-blue": "Bleu",
   "skills.preset-color-violet": "Violet",
   "skills.preset-color-red": "Rouge",
-  "skills.preset-color-white": "Blanc"
+  "skills.preset-color-white": "Blanc",
+  "research.show-preset-quick-actions": "Toujours afficher les raccourcis de préréglage"
 }
