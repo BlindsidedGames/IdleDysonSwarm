@@ -531,3 +531,9 @@
 .speedrun-clear-dialog button { min-block-size: 2.75rem; padding: .5rem 1rem; border: 1px solid var(--color-control); border-radius: .35rem; font: inherit; background: var(--color-surface-raised); color: inherit; cursor: pointer; }
 .speedrun-clear-dialog button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .speedrun-clear-dialog button:disabled { opacity: .5; cursor: default; }
+
+.speedrun-result__basis {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: var(--ui-text-meta);
+}

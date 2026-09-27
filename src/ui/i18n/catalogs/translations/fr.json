@@ -2087,11 +2087,11 @@
   "wiki.patch-notes.version-4-1-10.challenge": "Ajout de sept défis quantiques rapportant chacun 2 Catalyseurs. Division et Double IP quantique sont inactifs pendant ces cycles. Ajout de quatre augments de Travail manuel, dont un bonus d’attente entre les activations. La fracturation fonctionne pendant les défis et affiche son effet à l’avance. Sacrifices stellaires crée votre installation possédée la plus avancée. Les points de compétence de Réalité sont inactifs ; la progression de Réalité est conservée.",
   "wiki.patch-notes.version-4-1-10.discovery": "Découverte améliore les installations. Débloquez Élévation pour l’argent et les Bots, puis Illumination pour la durée de vie des panneaux ; chaque nouvelle barre alimente la précédente. Les compétences concernées s’adaptent au déblocage.",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "Ajout d’une vitesse de Découverte partagée et d’améliorations de puissance séparées dans une catégorie repliable d’Avocato.",
-  "wiki.patch-notes.version-4-1-10.fixes": "Après votre premier Quantum, les nouvelles parties commencent avec une Chaîne de montage. Corrections : galaxies devant l’en-tête, conservation Cloud des Options développeur gagnées, comptage des points de compétence des augments, ajustements négatifs de débogage et rotation des promotions. Correction des aperçus des augments, des prix en défi et des compteurs de Travail manuel après réinitialisation.",
+  "wiki.patch-notes.version-4-1-10.fixes": "Après votre premier Quantum, les nouvelles parties commencent avec une chaîne de montage. Correction des galaxies devant l’en-tête, de la conservation des Options développeur via le Cloud, du décompte des points des augmentations, des ajustements négatifs de débogage et de la rotation des promotions. Correction des aperçus, des prix des défis et des compteurs de Travail manuel. Ajout d’un premier avertissement pour les compétences non remboursables.",
   "wiki.patch-notes.version-4-1-10.ios": "iOS 16 ou une version ultérieure est désormais requis.",
   "wiki.patch-notes.version-4-1-10.save-fix": "Correction du retour d’anciennes recherches et de préréglages de compétences effacés après une sauvegarde ou un rechargement.",
   "wiki.patch-notes.version-4-1-10.secret": "Le sixième secret d’Avotation se termine désormais automatiquement lorsqu’il est atteint avec Découverte débloquée.",
-  "wiki.patch-notes.version-4-1-10.speedruns": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports. Les nouveaux records utilisent le temps de jeu.",
+  "wiki.patch-notes.version-4-1-10.speedruns": "Les speedruns comparent la partie actuelle aux records personnels conservés après une réinitialisation de sauvegarde. Ajout des indicateurs d’aide, du suivi des PI doublés et de la mémorisation de l’onglet Statistiques. Ajout de la première Transcendance ; les nouveaux records incluent le temps joué et le Temps stocké dépensé. Les records sont synchronisés via le Cloud, mais exclus des exports.",
   "wiki.patch-notes.version-4-1-10.swarm": "Ajout de dix augments d’Essaim et de Fragment.",
   "wiki.patch-notes.version-4-1-10.transcendence": "Overflow devient Transcendance. Dépensez 1 point de Transcendance chez Avocato pour débloquer la Découverte, qui remplace la Science et la Recherche.",
   "wiki.patch-notes.version-4-1-2": "Version 4.1.2",
@@ -2274,5 +2274,10 @@
   "wiki.topic-navigation": "Sujets du wiki",
   "wiki.topics": "Sujets",
   "wiki.transcendence.overview": "À <value>4e242 Bots</value>, Transcendez chez Avocato pour réinitialiser les couches précédentes et gagner <value>un point de Transcendance</value>. Dépensez un point pour <value>Débloquer Découverte</value> afin de remplacer définitivement Science et Recherche. La Science et les niveaux de recherche existants ne sont pas transférés.",
-  "wiki.transcendence.overview-title": "Au-delà de l’essaim"
+  "wiki.transcendence.overview-title": "Au-delà de l’essaim",
+  "statistics.speedruns.combinedTime": "Temps combiné",
+  "statistics.speedruns.previousTiming": "Ancien chronométrage",
+  "statistics.speedruns.firstTranscendence": "Première Transcendance",
+  "skills.non-refundable-confirmation-title": "Compétences non remboursables",
+  "skills.non-refundable-confirmation-warning": "Les compétences non remboursables et leurs prérequis ne peuvent pas être remboursés avant une réinitialisation Infinité ou Quantum. Continuer ?"
 }

@@ -2087,11 +2087,11 @@
   "wiki.patch-notes.version-4-1-10.challenge": "新增七个量子挑战，每个奖励2个催化剂。挑战中禁用除法和量子双倍IP。新增四个手动劳动增幅，包括等待激活的加成。挑战中可以裂变并预览效果。恒星献祭生成当前拥有的最高级设施。 现实技能点暂时无效，但保留现实进度。",
   "wiki.patch-notes.version-4-1-10.discovery": "发现增强设施。解锁升华来增强现金与机器人，再解锁启悟来延长面板寿命；每条新进度条会向前一条传递进度。相关技能会在解锁后调整效果。",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "在Avocato的可折叠分类中新增共享发现速度与各项独立强度升级。",
-  "wiki.patch-notes.version-4-1-10.fixes": "首次量子后，新一轮从一条装配线开始。修复了星系遮挡顶部面板、已获得的开发者选项在云端丢失、强化技能点计数、负数调试调整及推广轮换问题。 修正了强化预览、挑战价格和手动劳动的重置计数。",
+  "wiki.patch-notes.version-4-1-10.fixes": "首次量子后，新流程会以一条装配线开始。修复了星系遮挡页眉、云存档保留已获得开发者选项、增幅技能点计数、负值调试调整及推广轮换。修正增幅预览、挑战价格及手工劳动重置计数。新增首次分配不可退还技能时的警告。",
   "wiki.patch-notes.version-4-1-10.ios": "现在需要 iOS 16 或更高版本。",
   "wiki.patch-notes.version-4-1-10.save-fix": "修复了保存或重新加载后，旧研究和已清空的技能预设重新出现的问题。",
   "wiki.patch-notes.version-4-1-10.secret": "解锁发现后，到达第六个 Avotation 秘密时会自动完成。",
-  "wiki.patch-notes.version-4-1-10.speedruns": "速通现在会将当前挑战与个人最佳纪录进行比较，重置存档后仍保留最佳纪录。新增挑战标记、双倍无限点数使用记录，并记住上次打开的统计标签页。个人最佳纪录随云存档同步，但不包含在导出的存档中。 新的里程碑纪录使用实际游玩时间。",
+  "wiki.patch-notes.version-4-1-10.speedruns": "速通现可对比当前流程与个人最佳纪录，重置存档后纪录仍保留。新增辅助标记、双倍无限点数记录及统计标签记忆。新增首次超越里程碑；新纪录计入游玩时间和已消耗的储存时间。个人纪录通过云存档同步，但不会包含在导出中。",
   "wiki.patch-notes.version-4-1-10.swarm": "新增十个蜂群和碎片强化。",
   "wiki.patch-notes.version-4-1-10.transcendence": "溢出现更名为超越。在 Avocato 处花费1超越点数即可解锁发现，取代科学与研究。",
   "wiki.patch-notes.version-4-1-2": "版本 4.1.2",
@@ -2274,5 +2274,10 @@
   "wiki.topic-navigation": "百科主题导航",
   "wiki.topics": "主题",
   "wiki.transcendence.overview": "达到<value>4e242个机器人</value>后，在牛油果猫中超越可重置此前的层级，并获得<value>1超越点数</value>。花费1点<value>解锁发现</value>，即可永久取代科学与研究。已有科学和研究等级不会转移。",
-  "wiki.transcendence.overview-title": "超越蜂群"
+  "wiki.transcendence.overview-title": "超越蜂群",
+  "statistics.speedruns.combinedTime": "合计时间",
+  "statistics.speedruns.previousTiming": "旧计时方式",
+  "statistics.speedruns.firstTranscendence": "首次超越",
+  "skills.non-refundable-confirmation-title": "不可退还技能",
+  "skills.non-refundable-confirmation-warning": "不可退还的技能及其前置技能必须等到无限或量子重置后才能退还。继续？"
 }

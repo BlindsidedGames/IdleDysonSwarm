@@ -1,5 +1,7 @@
 import { DiscoverySurface } from '../discovery/DiscoverySurface'
 import { discoveryMessages } from '../discovery/messages'
+import { NonRefundableSkillConfirmationProvider } from '../skills/NonRefundableSkillConfirmation'
+import { useConfirmedTabPresetDispatch } from '../skills/useConfirmedTabPresetDispatch'
 import { QuickStoredTime, StoredTimeNavigationProgress } from '../offline-time/QuickStoredTime'
 import { isAvocatoRouteUnlocked } from './avocatoNavigation'
 import { InfinityChallenges } from '../infinity/InfinityChallenges'
@@ -579,10 +581,14 @@ const AVOCATO_MEDITATION_ROUTE_PLACEMENT: Partial<
  * Maps published canonical facts into presentation components without
  * recalculating unlocks, affordability, timing or command outcomes.
  */
-export function ReadyDysonSlice({
+export function ReadyDysonSlice(props: ReadyDysonSliceProps) {
+  return <NonRefundableSkillConfirmationProvider><ReadyDysonSliceContent {...props} /></NonRefundableSkillConfirmationProvider>
+}
+
+function ReadyDysonSliceContent({
   snapshot,
   locale,
-  dispatchPlayer,
+  dispatchPlayer: unconfirmedDispatchPlayer,
   presetActions,
   route: requestedRoute = 'bots',
   onRouteChange = () => undefined,
@@ -693,6 +699,13 @@ export function ReadyDysonSlice({
   const storeVisible =
     releasePlatformServices !== undefined
   const gameplay = snapshot.gameplay
+  const dispatchPlayer = useConfirmedTabPresetDispatch({
+    dispatchPlayer: unconfirmedDispatchPlayer,
+    autoAssignNonRefundable: gameplay.progression.skills.autoAssignNonRefundable,
+    presets: gameplay.progression.skills.presets,
+    catalog: gameplay.previews.skills,
+    previewNonRefundableAssignment: presetActions?.previewNonRefundableAssignment,
+  })
   const discoveryUnlocked = gameplay.progression.discovery?.unlocked === true
   const ownsBotBoost = gameplay.derived.dyson.status === 'ready' && gameplay.derived.dyson.value.entitlements.permanentBotBoost === true
   const botBoostStatus = useBotBoost(gameplay.progression.meta.botBoost, ownsBotBoost)
@@ -2572,6 +2585,7 @@ function createSkillPresetActions(
   runtime: BrowserUiRuntimeFoundation,
 ): SkillPresetActions {
   const actions: SkillPresetActions = {
+    previewNonRefundableAssignment: (skillIds) => runtime.previewNonRefundableSkillAssignment(skillIds),
     previewProduction: (skillId, kind) => runtime.previewSkillProduction(skillId, kind),
     previewSelection: async (slot) =>
       runtime.previewSkillPresetSelection(slot),
@@ -2609,6 +2623,7 @@ function createSkillPresetActions(
       return {
         name: preview.payload.presetName,
         queuedSkillCount: preview.payload.skillIds.length,
+        queuedSkillIds: preview.payload.skillIds,
         workerPercent: Math.round(
           (1 - preview.payload.botDistribution) * 100,
         ),

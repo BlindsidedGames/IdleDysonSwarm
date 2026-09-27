@@ -2087,11 +2087,11 @@
   "wiki.patch-notes.version-4-1-10.challenge": "それぞれ触媒2個を獲得できる量子チャレンジを7つ追加。挑戦中は分割と量子のIP2倍が無効。発動間隔によるボーナスを含む手作業の強化を4つ追加。チャレンジ中も破砕でき、効果を事前に確認可能。恒星の犠牲は現在所有する最上位の施設を生成。 現実のスキルポイントは無効ですが、現実の進行状況は保持されます。",
   "wiki.patch-notes.version-4-1-10.discovery": "発見は施設を強化します。資金・ボット用の高揚、パネル寿命用の悟りを順に解除すると、新しいバーから前のバーへ進捗が転送されます。関連スキルは解除後に変化します。",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "アボカトの折りたたみカテゴリに、共通の発見速度と個別の強化アップグレードを追加。",
-  "wiki.patch-notes.version-4-1-10.fixes": "初回の量子以降、新しい周回は組立ライン1基から始まります。銀河がヘッダーに重なる問題、獲得済み開発者オプションのクラウド保持、強化のスキルポイント計算、負数のデバッグ調整、プロモーションの巡回を修正。 オーグメントのプレビュー、チャレンジ中の価格、リセット後の手作業カウンターを修正しました。",
+  "wiki.patch-notes.version-4-1-10.fixes": "初回クアンタム後は、新しいランを組立ライン1基で開始します。銀河のヘッダーへの重なり、獲得済み開発者オプションのクラウド保持、拡張のスキルポイント計算、負のデバッグ調整、プロモーションの巡回を修正しました。プレビュー、チャレンジ価格、手作業のリセットカウンターを修正し、返還不可スキルの初回警告を追加しました。",
   "wiki.patch-notes.version-4-1-10.ios": "iOS 16以降が必要になりました。",
   "wiki.patch-notes.version-4-1-10.save-fix": "保存や再読み込み後に、以前の研究や消去したスキルプリセットが復活する不具合を修正しました。",
   "wiki.patch-notes.version-4-1-10.secret": "発見の解放後、Avotationの6番目の秘密に到達すると自動的に完了するようになりました。",
-  "wiki.patch-notes.version-4-1-10.speedruns": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。 新しいマイルストーン記録にはプレイ時間を使用します。",
+  "wiki.patch-notes.version-4-1-10.speedruns": "スピードランで現在のランと、セーブをリセットしても残る自己ベストを比較できます。補助機能の使用表示、IP2倍の記録、統計タブの記憶を追加しました。初回の超越を追加し、新記録はプレイ時間と消費した保存時間の合計で計測します。自己ベストはクラウドで同期されますが、エクスポートには含まれません。",
   "wiki.patch-notes.version-4-1-10.swarm": "スウォームとフラグメントのオーグメントを10個追加。",
   "wiki.patch-notes.version-4-1-10.transcendence": "オーバーフローを超越に改名しました。アボカトで超越ポイントを1消費すると、科学と研究に代わる発見を解放できます。",
   "wiki.patch-notes.version-4-1-2": "バージョン4.1.2",
@@ -2274,5 +2274,10 @@
   "wiki.topic-navigation": "Wikiのトピック",
   "wiki.topics": "トピック",
   "wiki.transcendence.overview": "ボット数が<value>4e242ボット</value>に到達したらアボカトで超越し、以前のレイヤーをリセットして<value>超越ポイントを1</value>獲得できます。1ポイントで<value>発見を解放</value>すると、科学と研究が恒久的に置き換わります。既存の科学や研究レベルは引き継がれません。",
-  "wiki.transcendence.overview-title": "スウォームのその先へ"
+  "wiki.transcendence.overview-title": "スウォームのその先へ",
+  "statistics.speedruns.combinedTime": "合計時間",
+  "statistics.speedruns.previousTiming": "以前の計測方式",
+  "statistics.speedruns.firstTranscendence": "初回の超越",
+  "skills.non-refundable-confirmation-title": "返還不可のスキル",
+  "skills.non-refundable-confirmation-warning": "返還不可のスキルとその前提スキルは、無限またはクアンタムのリセットまで返還できません。続けますか？"
 }

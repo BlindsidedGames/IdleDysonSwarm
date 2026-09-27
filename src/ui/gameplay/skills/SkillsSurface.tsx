@@ -1,4 +1,6 @@
 import { swarmAugmentPresentation } from './swarmMessages'
+import { NonRefundableSkillConfirmationProvider } from './NonRefundableSkillConfirmation'
+import { useSharedNonRefundableSkillConfirmation } from './nonRefundableSkillConfirmationContext'
 import { discoveryFracturedEffects, discoverySkillNames, discoverySkillEffects, discoverySkillFlavour } from '../discovery/skillMessages'
 import { galvanizedEffectMessages } from './galvanizedEffectMessages'
 import { discoveryMessages } from '../discovery/messages'
@@ -35,9 +37,10 @@ import {
 } from '../../../game-state/skillPresetColors'
 import skillTreePresentationJson from '../../../game-data/generated/skill-tree-presentation.json'
 import { localizeSkillPresentation } from '../../../game-data/skillPresentationLocalization'
-import type {
-  CanonicalSkillAvailabilityPreview,
-  CanonicalSkillCatalogPreview,
+import {
+  includesNewNonRefundableSkillAssignment,
+  type CanonicalSkillAvailabilityPreview,
+  type CanonicalSkillCatalogPreview,
 } from '../../../simulation/canonicalSkillTransactions'
 import {
   Button,
@@ -130,6 +133,7 @@ export interface SkillPresetQueueChangePreview {
 export interface SkillPresetImportPreview {
   readonly name: string
   readonly queuedSkillCount: number
+  readonly queuedSkillIds: readonly string[]
   readonly workerPercent: number
   readonly colorId: SkillPresetColorId
   readonly lockedQueuedSkillCount?: number
@@ -149,6 +153,7 @@ export interface SkillPresetSelectionPreview {
  * replacement; this surface only presents published previews and outcomes.
  */
 export interface SkillPresetActions {
+  readonly previewNonRefundableAssignment?: (skillIds: readonly string[]) => boolean
   readonly previewProduction?: (skillId: string, kind: 'purchase' | 'refund') => SkillProductionPreview
   readonly previewSelection: (
     slot: CanonicalSkillPresetSlot,
@@ -354,7 +359,14 @@ function graphPosition(node: SkillPresentationNode) {
  * commands. Layout, copy and icons are presentation exports; rule state comes
  * exclusively from the supplied canonical catalog.
  */
-export function SkillsSurface({
+export function SkillsSurface(props: SkillsSurfaceProps) {
+  const sharedConfirmation = useSharedNonRefundableSkillConfirmation()
+  return sharedConfirmation === null
+    ? <NonRefundableSkillConfirmationProvider><SkillsSurfaceContent {...props} /></NonRefundableSkillConfirmationProvider>
+    : <SkillsSurfaceContent {...props} />
+}
+
+function SkillsSurfaceContent({
   discoveryUnlocked = false,
   galvanizers = 0n,
   hasEarnedGalvanizer = false,
@@ -411,6 +423,7 @@ export function SkillsSurface({
   const [pendingExpectation, setPendingExpectation] =
     useState<PendingExpectation | null>(null)
   const [failed, setFailed] = useState(false)
+  const requestNonRefundableConfirmation = useSharedNonRefundableSkillConfirmation()!
   const pendingRef = useRef(false)
   const focusNodeRef = useRef<(skillId: string) => void>(() => undefined)
   const registerTreeFocus = useCallback(
@@ -559,6 +572,16 @@ export function SkillsSurface({
       expectation: Omit<PendingExpectation, 'beforeSignature'> = {},
     ): Promise<boolean> => {
       if (pendingRef.current) return false
+      const purchase = command.kind === 'skill.purchase'
+        ? previewById.get(command.skillId)?.purchase
+        : undefined
+      const requiresNonRefundableConfirmation =
+        (purchase?.eligible === true && includesNewNonRefundableSkillAssignment(purchase.affectedSkillIds, previewById)) ||
+        (command.kind === 'skill.set-auto-assign-non-refundable' && command.enabled && !autoAssignNonRefundable) ||
+        (command.kind === 'skill.select-preset' && autoAssignNonRefundable &&
+          includesNewNonRefundableSkillAssignment(presets[command.slot - 1]?.skillIds ?? [], previewById))
+      if (requiresNonRefundableConfirmation &&
+        !await requestNonRefundableConfirmation()) return false
       pendingRef.current = true
       setPendingKind(command.kind)
       setPendingExpectation({
@@ -592,8 +615,17 @@ export function SkillsSurface({
       dispatchPlayer,
       releasePendingLock,
       skillSignature,
+      autoAssignNonRefundable,
+      previewById,
+      presets,
+      requestNonRefundableConfirmation,
     ],
   )
+
+  const beforeAutoAssignment = useCallback(async (skillIds: readonly string[]) =>
+    !autoAssignNonRefundable || !includesNewNonRefundableSkillAssignment(skillIds, previewById) ||
+      await requestNonRefundableConfirmation(),
+  [autoAssignNonRefundable, previewById, requestNonRefundableConfirmation])
 
   const requestPresetSelection = useCallback(
     async (slot: CanonicalSkillPresetSlot) => {
@@ -939,6 +971,7 @@ export function SkillsSurface({
           selectedPresetSlot={selectedPresetSlot}
           commandAvailability={commandAvailability}
           presetActions={skillsDisabled ? undefined : presetActions}
+          beforeAutoAssignment={beforeAutoAssignment}
           pendingKind={pendingKind}
           selectionPending={presetSelectionPending}
           nodeById={nodeById}
@@ -1024,6 +1057,7 @@ export function SkillsSurface({
             `Preset ${selectedPresetSlot}`
           }
           presetActions={skillsDisabled ? undefined : presetActions}
+          beforeAutoAssignment={beforeAutoAssignment}
           pendingKind={pendingKind}
           initialPurchaseConfirmation={
             quickPurchaseSkillId === selectedSkillId
@@ -1900,6 +1934,7 @@ interface SkillDetailsProps {
   readonly selectedPresetSlot: CanonicalSkillPresetSlot
   readonly selectedPresetName: string
   readonly presetActions?: SkillPresetActions
+  readonly beforeAutoAssignment: (skillIds: readonly string[]) => Promise<boolean>
   readonly pendingKind: string | null
   readonly initialPurchaseConfirmation: boolean
   readonly onBack?: () => void
@@ -1954,6 +1989,7 @@ function SkillDetails({
   selectedPresetSlot,
   selectedPresetName,
   presetActions,
+  beforeAutoAssignment,
   pendingKind,
   initialPurchaseConfirmation,
   onBack,
@@ -2026,6 +2062,7 @@ function SkillDetails({
     request: SkillPresetQueueChangeRequest,
   ) => {
     if (presetActions === undefined || queuePending) return
+    if (request.included && !await beforeAutoAssignment([request.skillId])) return
     setQueuePending(true)
     setQueueFailed(false)
     try {
@@ -2816,6 +2853,7 @@ interface SkillPresetsDialogProps {
   readonly selectedPresetSlot: CanonicalSkillPresetSlot
   readonly commandAvailability: SkillCommandAvailability
   readonly presetActions?: SkillPresetActions
+  readonly beforeAutoAssignment: (skillIds: readonly string[]) => Promise<boolean>
   readonly pendingKind: string | null
   readonly selectionPending: boolean
   readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
@@ -2831,6 +2869,7 @@ function SkillPresetsDialog({
   selectedPresetSlot,
   commandAvailability,
   presetActions,
+  beforeAutoAssignment,
   pendingKind,
   selectionPending,
   nodeById,
@@ -2927,6 +2966,7 @@ function SkillPresetsDialog({
           preset={managedPreset}
           canSetColor={commandAvailability.setPresetColor}
           presetActions={presetActions}
+          beforeAutoAssignment={slotSkillIds => managedSlot !== selectedPresetSlot || beforeAutoAssignment(slotSkillIds)}
           nodeById={nodeById}
           pendingKind={pendingKind}
           dispatch={dispatch}
@@ -3097,6 +3137,7 @@ interface PresetManagementDialogProps {
   readonly preset: SkillPresetState
   readonly canSetColor: boolean
   readonly presetActions?: SkillPresetActions
+  readonly beforeAutoAssignment: (skillIds: readonly string[]) => boolean | Promise<boolean>
   readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
   readonly pendingKind: string | null
   readonly dispatch: (
@@ -3112,6 +3153,7 @@ function PresetManagementDialog({
   preset,
   canSetColor,
   presetActions,
+  beforeAutoAssignment,
   nodeById,
   pendingKind,
   dispatch,
@@ -3208,6 +3250,7 @@ function PresetManagementDialog({
     ) {
       return
     }
+    if (!await beforeAutoAssignment(importPreview.queuedSkillIds)) return
     setTransferPending('import')
     setTransferFailed(false)
     try {

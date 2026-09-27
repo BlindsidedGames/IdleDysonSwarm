@@ -24923,6 +24923,34 @@
       "value": "‬"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nou-ɹǝɟnupɐqʅǝ sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nou-ɹǝɟnupɐqʅǝ sʞıʅʅs ɐup ʇɥǝıɹ dɹǝɹǝbnısıʇǝ dɐʇɥs ɔɐuuoʇ qǝ ɹǝɟnupǝp nuʇıʅ ɐu Iuɟıuıʇʎ oɹ Ònɐuʇnɯ ɹǝsǝʇ. Ↄouʇıunǝ?"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -28707,6 +28735,20 @@
       "value": "‬"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯqıuǝp ʇıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -28729,6 +28771,20 @@
     {
       "type": 0,
       "value": "ᗡonqʅǝ IԀ nsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ ⊥ɹɐusɔǝupǝuɔǝ"
     },
     {
       "type": 0,
@@ -28771,6 +28827,20 @@
     {
       "type": 0,
       "value": "Ԁǝɹsouɐʅ qǝsʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝʌıons ʇıɯıuƃ"
     },
     {
       "type": 0,
@@ -33201,7 +33271,7 @@
     },
     {
       "type": 0,
-      "value": "∀ɟʇǝɹ ʎonɹ ɟıɹsʇ Ònɐuʇnɯ, uǝʍ ɹnus sʇɐɹʇ ʍıʇɥ ɐu ∀ssǝɯqʅʎ ⅂ıuǝ. Ⅎıxǝp ƃɐʅɐxıǝs oʌǝɹʅɐddıuƃ ʇɥǝ ɥǝɐpǝɹ, Ↄʅonp ɹǝʇǝuʇıou oɟ ǝɐɹuǝp ᗡǝʌǝʅodǝɹ Odʇıous, ɐnƃɯǝuʇ Sʞıʅʅ Ԁoıuʇ ɔonuʇıuƃ, uǝƃɐʇıʌǝ pǝqnƃ ɐpɾnsʇɯǝuʇs ɐup dɹoɯoʇıou ɹoʇɐʇıou. Ↄoɹɹǝɔʇǝp ɐnƃɯǝuʇ dɹǝʌıǝʍs, ɔɥɐʅʅǝuƃǝ dɹıɔıuƃ ɐup Wɐunɐʅ ⅂ɐqonɹ ɹǝsǝʇ ɔonuʇǝɹs."
+      "value": "∀ɟʇǝɹ ʎonɹ ɟıɹsʇ Ònɐuʇnɯ, uǝʍ ɹnus sʇɐɹʇ ʍıʇɥ ɐu ∀ssǝɯqʅʎ ⅂ıuǝ. Ⅎıxǝp ƃɐʅɐxıǝs oʌǝɹʅɐddıuƃ ʇɥǝ ɥǝɐpǝɹ, Ↄʅonp ɹǝʇǝuʇıou oɟ ǝɐɹuǝp ᗡǝʌǝʅodǝɹ Odʇıous, ɐnƃɯǝuʇ Sʞıʅʅ Ԁoıuʇ ɔonuʇıuƃ, uǝƃɐʇıʌǝ pǝqnƃ ɐpɾnsʇɯǝuʇs ɐup dɹoɯoʇıou ɹoʇɐʇıou. Ↄoɹɹǝɔʇǝp ɐnƃɯǝuʇ dɹǝʌıǝʍs, ɔɥɐʅʅǝuƃǝ dɹıɔıuƃ ɐup Wɐunɐʅ ⅂ɐqonɹ ɹǝsǝʇ ɔonuʇǝɹs. ∀ppǝp ɐ ɟıɹsʇ-ʇıɯǝ ʍɐɹuıuƃ ɟoɹ uou-ɹǝɟnupɐqʅǝ sʞıʅʅs."
     },
     {
       "type": 0,
@@ -33257,7 +33327,7 @@
     },
     {
       "type": 0,
-      "value": "Sdǝǝpɹnus uoʍ ɔoɯdɐɹǝ ʎonɹ ɔnɹɹǝuʇ ɹnu ʍıʇɥ dǝɹsouɐʅ qǝsʇs ʇɥɐʇ snɹʌıʌǝ ᴚǝsǝʇ Sɐʌǝ. ∀ppǝp ɹnu ıupıɔɐʇoɹs, ᗡonqʅǝ IԀ ʇɹɐɔʞıuƃ, ɐup ɹǝɯǝɯqǝɹǝp Sʇɐʇısʇıɔs ʇɐqs. Nǝʍ ɯıʅǝsʇouǝ ɹǝɔoɹps nsǝ ʇıɯǝ dʅɐʎǝp. Ԁǝɹsouɐʅ qǝsʇs sʎuɔ ʇɥɹonƃɥ Ↄʅonp sɐʌǝs qnʇ ɐɹǝ uoʇ sɥɐɹǝp ʇɥɹonƃɥ ǝxdoɹʇs."
+      "value": "Sdǝǝpɹnus uoʍ ɔoɯdɐɹǝ ʎonɹ ɔnɹɹǝuʇ ɹnu ʍıʇɥ dǝɹsouɐʅ qǝsʇs ʇɥɐʇ snɹʌıʌǝ ᴚǝsǝʇ Sɐʌǝ. ∀ppǝp ɹnu ıupıɔɐʇoɹs, ᗡonqʅǝ IԀ ʇɹɐɔʞıuƃ, ɐup ɹǝɯǝɯqǝɹǝp Sʇɐʇısʇıɔs ʇɐqs. ∀ppǝp Ⅎıɹsʇ ⊥ɹɐusɔǝupǝuɔǝ; uǝʍ ɯıʅǝsʇouǝ ɹǝɔoɹps ıuɔʅnpǝ ʇıɯǝ dʅɐʎǝp dʅns Sʇoɹǝp ⊥ıɯǝ sdǝuʇ. Ԁǝɹsouɐʅ qǝsʇs sʎuɔ ʇɥɹonƃɥ Ↄʅonp sɐʌǝs qnʇ ɐɹǝ uoʇ sɥɐɹǝp ʇɥɹonƃɥ ǝxdoɹʇs."
     },
     {
       "type": 0,

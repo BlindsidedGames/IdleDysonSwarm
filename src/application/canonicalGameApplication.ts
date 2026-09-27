@@ -1202,7 +1202,7 @@ export function createCanonicalGameEngineDefinition(
         Object.assign(candidate, { gameState: before })
         return { accepted: true, changed: false }
       }
-      if (result.accepted && result.changed) Object.assign(candidate, { gameState: observeSpeedruns(candidate.gameState) })
+      if (result.accepted && result.changed) Object.assign(candidate, { gameState: observeSpeedruns(candidate.gameState, Date.now(), false, false, command.kind === 'avocado.request-overflow-reset') })
       else Object.assign(candidate, { gameState: before })
       return result
     },

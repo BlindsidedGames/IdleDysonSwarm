@@ -1275,6 +1275,8 @@ describe('canonical game application engine', () => {
     })
     expect(active.gameState.statistics.speedruns?.activeSeconds).toBeCloseTo(activeBefore + 1)
     expect(stored.gameState.statistics.speedruns?.activeSeconds).toBe(storedBefore)
+    expect(stored.gameState.statistics.speedruns?.storedTimeSeconds).toBeCloseTo(1)
+    expect(active.gameState.statistics.speedruns?.storedTimeSeconds).toBe(configured.gameState.statistics.speedruns?.storedTimeSeconds)
     expect(active.gameState.dyson.facilities.assembly_lines[1]).toBe(1)
     expect(
       stored.gameState.dyson.facilities.assembly_lines[1],
@@ -1410,4 +1412,22 @@ test('new milestones snapshot active time and retain old recorded values', () =>
   expect(definition.applyCommand(state, { kind: 'internal.advance-active-continuous', milliseconds: 1000 }).accepted).toBe(true)
   expect(state.gameState.statistics.speedruns?.milestones.firstInfinity?.elapsedSeconds).toBeCloseTo(13)
   expect(state.gameState.statistics.speedruns?.milestones.firstQuantumLeap?.elapsedSeconds).toBe(7200)
+})
+
+
+test('Stored Time counts consumed bank seconds once at double speed and snapshots them on reward', () => {
+  const state = runtime()
+  Object.assign(state, { gameState: { ...state.gameState,
+    statistics: { ...state.gameState.statistics, speedruns: { ...createSpeedrunStatistics(new Date().toISOString(), true), activeSeconds: 12 } },
+    timeline: { ...state.gameState.timeline, storedTimeAvailableSeconds: 120,
+      doubleTime: { ...state.gameState.timeline.doubleTime, unlocked: true } },
+  } })
+  const definition = createCanonicalGameEngineDefinition({ eventContext: context() })
+  expect(definition.applyCommand(state, { kind: 'internal.advance-stored-time', seconds: 60 })).toMatchObject({ accepted: true })
+  expect(state.gameState.statistics.speedruns).toMatchObject({ activeSeconds: 12, storedTimeSeconds: 60, storedTimeComplete: true })
+  expect(state.gameState.timeline.storedTimeAvailableSeconds).toBeCloseTo(60)
+  // Reaching the Debug qualification after spending snapshots the combined duration.
+  state.gameState.avocado.overflowPoints = 10n
+  expect(definition.applyCommand(state, { kind: 'internal.advance-active-continuous', milliseconds: 1000 }).accepted).toBe(true)
+  expect(state.gameState.statistics.speedruns?.milestones.debugQualification).toMatchObject({ elapsedSeconds: 72, activeSeconds: 12, storedTimeSeconds: 60, timingBasis: 'combined' })
 })

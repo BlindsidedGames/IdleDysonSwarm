@@ -12219,6 +12219,18 @@
       "value": "Allow automatic assignment of non-refundable skills"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "Non-refundable skills"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "Non-refundable skills and their prerequisite paths cannot be refunded until an Infinity or Quantum reset. Continue?"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -13963,6 +13975,12 @@
       "value": "Clear saved best?"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "Combined time"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -13973,6 +13991,12 @@
     {
       "type": 0,
       "value": "Double IP used"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "First Transcendence"
     }
   ],
   "statistics.speedruns.importedRun": [
@@ -13991,6 +14015,12 @@
     {
       "type": 0,
       "value": "Personal best"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "Previous timing"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -16493,7 +16523,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation. Corrected augment previews, challenge pricing and Manual Labour reset counters."
+      "value": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation. Corrected augment previews, challenge pricing and Manual Labour reset counters. Added a first-time warning for non-refundable skills."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16517,7 +16547,7 @@
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports."
+      "value": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. Added First Transcendence; new milestone records include time played plus Stored Time spent. Personal bests sync through Cloud saves but are not shared through exports."
     }
   ],
   "wiki.patch-notes.version-4-1-10.swarm": [

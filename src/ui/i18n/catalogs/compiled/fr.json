@@ -12219,6 +12219,18 @@
       "value": "Autoriser l’attribution automatique des compétences dont les Points de compétence ne sont pas restituables"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "Compétences non remboursables"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "Les compétences non remboursables et leurs prérequis ne peuvent pas être remboursés avant une réinitialisation Infinité ou Quantum. Continuer ?"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -13963,6 +13975,12 @@
       "value": "Effacer le record enregistré ?"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "Temps combiné"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -13973,6 +13991,12 @@
     {
       "type": 0,
       "value": "IP doublés utilisés"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "Première Transcendance"
     }
   ],
   "statistics.speedruns.importedRun": [
@@ -13991,6 +14015,12 @@
     {
       "type": 0,
       "value": "Record personnel"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "Ancien chronométrage"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -16493,7 +16523,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Après votre premier Quantum, les nouvelles parties commencent avec une Chaîne de montage. Corrections : galaxies devant l’en-tête, conservation Cloud des Options développeur gagnées, comptage des points de compétence des augments, ajustements négatifs de débogage et rotation des promotions. Correction des aperçus des augments, des prix en défi et des compteurs de Travail manuel après réinitialisation."
+      "value": "Après votre premier Quantum, les nouvelles parties commencent avec une chaîne de montage. Correction des galaxies devant l’en-tête, de la conservation des Options développeur via le Cloud, du décompte des points des augmentations, des ajustements négatifs de débogage et de la rotation des promotions. Correction des aperçus, des prix des défis et des compteurs de Travail manuel. Ajout d’un premier avertissement pour les compétences non remboursables."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16517,7 +16547,7 @@
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports. Les nouveaux records utilisent le temps de jeu."
+      "value": "Les speedruns comparent la partie actuelle aux records personnels conservés après une réinitialisation de sauvegarde. Ajout des indicateurs d’aide, du suivi des PI doublés et de la mémorisation de l’onglet Statistiques. Ajout de la première Transcendance ; les nouveaux records incluent le temps joué et le Temps stocké dépensé. Les records sont synchronisés via le Cloud, mais exclus des exports."
     }
   ],
   "wiki.patch-notes.version-4-1-10.swarm": [

@@ -2087,11 +2087,11 @@
   "wiki.patch-notes.version-4-1-10.challenge": "Sieben Quanten-Herausforderungen mit je 2 Katalysatoren hinzugefügt. Division und Quanten-Doppel-IP sind dabei inaktiv. Vier Augmente für Manuelle Arbeit hinzugefügt, darunter ein Wartebonus zwischen Aktivierungen. Frakturieren funktioniert während Herausforderungen und zeigt eine Effektvorschau. Stellare Opfer erzeugt deine höchste vorhandene Anlage. Realitäts-Fertigkeitspunkte sind inaktiv; der Realitätsfortschritt bleibt erhalten.",
   "wiki.patch-notes.version-4-1-10.discovery": "Entdeckung verstärkt Anlagen. Schalte Erhebung für Geld und Bots und dann Erleuchtung für Paneellebensdauer frei; jeder neue Balken überträgt Fortschritt auf den vorherigen. Betroffene Fähigkeiten passen sich beim Freischalten an.",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "Gemeinsame Entdeckungsgeschwindigkeit und getrennte Stärkeverbesserungen in einer einklappbaren Avocato-Kategorie hinzugefügt.",
-  "wiki.patch-notes.version-4-1-10.fixes": "Nach deinem ersten Quantum beginnen neue Durchläufe mit einer Montagelinie. Behoben: Galaxien vor der Kopfzeile, Cloud-Erhalt verdienter Entwickleroptionen, Fähigkeitspunktzählung für Augmente, negative Debug-Anpassungen und Werberotation. Augment-Vorschauen, Herausforderungspreise und die Rücksetz-Zähler für Handarbeit wurden korrigiert.",
+  "wiki.patch-notes.version-4-1-10.fixes": "Nach dem ersten Quantum beginnen neue Läufe mit einer Fertigungsstraße. Galaxien vor der Kopfzeile, Cloud-Erhalt verdienter Entwickleroptionen, Fähigkeitspunkte von Augmenten, negative Debug-Anpassungen und Werberotation korrigiert. Augment-Vorschauen, Herausforderungspreise und Zähler für Handarbeit korrigiert. Erstmalige Warnung für nicht erstattbare Fähigkeiten hinzugefügt.",
   "wiki.patch-notes.version-4-1-10.ios": "Ab jetzt wird iOS 16 oder neuer benötigt.",
   "wiki.patch-notes.version-4-1-10.save-fix": "Behoben: Alte Forschung und geleerte Fähigkeitensets kehrten nach dem Speichern oder Neuladen zurück.",
   "wiki.patch-notes.version-4-1-10.secret": "Das sechste Avotation-Geheimnis wird jetzt beim Erreichen automatisch abgeschlossen, wenn Entdeckung freigeschaltet ist.",
-  "wiki.patch-notes.version-4-1-10.speedruns": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert. Neue Meilensteinrekorde verwenden die gespielte Zeit.",
+  "wiki.patch-notes.version-4-1-10.speedruns": "Speedruns vergleichen den aktuellen Lauf mit persönlichen Bestzeiten, die das Zurücksetzen des Spielstands überstehen. Neue Hilfsindikatoren, Erfassung doppelter IP und gemerkte Statistik-Tabs. Erste Transzendenz hinzugefügt; neue Bestzeiten zählen Spielzeit plus verbrauchte Gespeicherte Zeit. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert.",
   "wiki.patch-notes.version-4-1-10.swarm": "Zehn Schwarm- und Fragment-Augmente hinzugefügt.",
   "wiki.patch-notes.version-4-1-10.transcendence": "Overflow heißt jetzt Transzendenz. Gib bei Avocato 1 Transzendenzpunkt aus, um Entdeckung freizuschalten und Wissenschaft und Forschung zu ersetzen.",
   "wiki.patch-notes.version-4-1-2": "Version 4.1.2",
@@ -2274,5 +2274,10 @@
   "wiki.topic-navigation": "Wiki-Themen",
   "wiki.topics": "Themen",
   "wiki.transcendence.overview": "Bei <value>4e242 Bots</value> kannst du in Avocato transzendieren, um frühere Ebenen zurückzusetzen und <value>einen Transzendenzpunkt</value> zu erhalten. Gib einen Punkt für <value>Entdeckung freischalten</value> aus, um Wissenschaft und Forschung dauerhaft zu ersetzen. Vorhandene Wissenschaft und Forschungsstufen werden nicht übertragen.",
-  "wiki.transcendence.overview-title": "Jenseits des Schwarms"
+  "wiki.transcendence.overview-title": "Jenseits des Schwarms",
+  "statistics.speedruns.combinedTime": "Gesamtspielzeit",
+  "statistics.speedruns.previousTiming": "Frühere Zeitmessung",
+  "statistics.speedruns.firstTranscendence": "Erste Transzendenz",
+  "skills.non-refundable-confirmation-title": "Nicht erstattbare Fähigkeiten",
+  "skills.non-refundable-confirmation-warning": "Nicht erstattbare Fähigkeiten und ihre Voraussetzungen können erst nach einem Unendlichkeits- oder Quantum-Reset zurückerstattet werden. Fortfahren?"
 }

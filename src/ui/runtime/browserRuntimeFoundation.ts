@@ -21,6 +21,7 @@ import type {
 } from '../../application/canonicalLifecycleCoordinator'
 import {
   applyCanonicalSkillPresetLayout,
+  previewCanonicalNonRefundableSkillAssignment,
 } from '../../simulation/canonicalSkillTransactions'
 import {
   CanonicalLifecycleCoordinator,
@@ -289,6 +290,7 @@ interface BrowserRuntimeGraph {
 }
 
 export interface BrowserSkillPresetQueryPort {
+  previewNonRefundableSkillAssignment(skillIds: readonly string[]): boolean
   previewSkillProduction(skillId: string, kind: 'purchase' | 'refund'): SkillProductionPreview
   previewSkillPresetQueueChange(request: {
     readonly slot: CanonicalSkillPresetSlot
@@ -359,6 +361,7 @@ export function createBrowserRuntimeFoundation(
       speedUp: () => implementation.speedUpStoredTimeJob(),
     }),
     previewSkillProduction: (skillId, kind) => implementation.previewSkillProduction(skillId, kind),
+    previewNonRefundableSkillAssignment: (skillIds) => implementation.previewNonRefundableSkillAssignment(skillIds),
     previewSkillPresetQueueChange: (request) =>
       implementation.previewSkillPresetQueueChange(request),
     exportSkillPreset: (slot) =>
@@ -740,6 +743,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     const snapshot = this.graph?.application.snapshot()
     if (snapshot?.phase !== 'ready') throw new Error('Production preview unavailable')
     return previewSkillProduction(snapshot.state as CanonicalRuntimeState, skillId, kind)
+  }
+
+  previewNonRefundableSkillAssignment(skillIds: readonly string[]): boolean {
+    return previewCanonicalNonRefundableSkillAssignment(this.readyCanonicalState() as CanonicalGameStateV1, skillIds)
   }
 
   previewSkillPresetQueueChange(request: {

@@ -6166,6 +6166,14 @@
     "defaultMessage": "Allow automatic assignment of non-refundable skills",
     "description": "Toggle allowing presets to assign skills that cannot be refunded."
   },
+  "skills.non-refundable-confirmation-title": {
+    "defaultMessage": "Non-refundable skills",
+    "description": "First-time confirmation before manual or automatic assignment of non-refundable skills."
+  },
+  "skills.non-refundable-confirmation-warning": {
+    "defaultMessage": "Non-refundable skills and their prerequisite paths cannot be refunded until an Infinity or Quantum reset. Continue?",
+    "description": "Explains that prerequisite points also become locked; Reset Skills does not refund them."
+  },
   "skills.none": {
     "defaultMessage": "None",
     "description": "Empty state for a Skills reset confirmation list."
@@ -7125,6 +7133,10 @@
     "defaultMessage": "Clear saved best?",
     "description": "Confirmation dialog title."
   },
+  "statistics.speedruns.combinedTime": {
+    "defaultMessage": "Combined time",
+    "description": "Active playtime plus consumed Stored Time, without game-speed acceleration."
+  },
   "statistics.speedruns.currentRun": {
     "defaultMessage": "Current run",
     "description": "Current milestone attempt."
@@ -7132,6 +7144,10 @@
   "statistics.speedruns.doubleIpUsed": {
     "defaultMessage": "Double IP used",
     "description": "Purchased Double Infinity Points increased an awarded reward."
+  },
+  "statistics.speedruns.firstTranscendence": {
+    "defaultMessage": "First Transcendence",
+    "description": "First successful Transcend reset in this save."
   },
   "statistics.speedruns.importedRun": {
     "defaultMessage": "Ineligible — Imported save",
@@ -7144,6 +7160,10 @@
   "statistics.speedruns.personalBest": {
     "defaultMessage": "Personal best",
     "description": "Fastest eligible milestone time across saves."
+  },
+  "statistics.speedruns.previousTiming": {
+    "defaultMessage": "Previous timing",
+    "description": "A historical record whose timing basis was not stored. Keep its original value."
   },
   "statistics.speedruns.speedrunCurrentSave": {
     "defaultMessage": "Current save run",
@@ -8089,7 +8109,7 @@
     "description": "Version 4.1.10 Discovery release notes."
   },
   "wiki.patch-notes.version-4-1-10.fixes": {
-    "defaultMessage": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation. Corrected augment previews, challenge pricing and Manual Labour reset counters.",
+    "defaultMessage": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation. Corrected augment previews, challenge pricing and Manual Labour reset counters. Added a first-time warning for non-refundable skills.",
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.ios": {
@@ -8105,7 +8125,7 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.speedruns": {
-    "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.",
+    "defaultMessage": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. Added First Transcendence; new milestone records include time played plus Stored Time spent. Personal bests sync through Cloud saves but are not shared through exports.",
     "description": "Version 4.1.10 speedrun improvements."
   },
   "wiki.patch-notes.version-4-1-10.swarm": {

@@ -12219,6 +12219,18 @@
       "value": "Permitir atribuição automática de Habilidades sem devolução de Pontos"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "Habilidades não reembolsáveis"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "Habilidades não reembolsáveis e seus pré-requisitos só podem ser reembolsados após um reset de Infinito ou Quantum. Continuar?"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -13963,6 +13975,12 @@
       "value": "Apagar recorde salvo?"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "Tempo combinado"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -13973,6 +13991,12 @@
     {
       "type": 0,
       "value": "IP em dobro usados"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "Primeira Transcendência"
     }
   ],
   "statistics.speedruns.importedRun": [
@@ -13991,6 +14015,12 @@
     {
       "type": 0,
       "value": "Recorde pessoal"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "Cronometragem anterior"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -16493,7 +16523,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Após seu primeiro Quantum, novas partidas começam com uma Linha de montagem. Corrigidos: galáxias sobre o cabeçalho, retenção na nuvem de Opções de desenvolvedor conquistadas, contagem de pontos de aumentos, ajustes negativos de depuração e rotação de promoções. Corrigidas as prévias de aprimoramentos, os preços dos desafios e os contadores de Trabalho manual após reinícios."
+      "value": "Após o primeiro Quantum, novas partidas começam com uma linha de montagem. Corrigidos galáxias sobre o cabeçalho, retenção de Opções de desenvolvedor na nuvem, pontos de aumentos, ajustes negativos de depuração e rotação de promoções. Corrigidos prévias, preços de desafios e contadores de Trabalho manual. Adicionado aviso inicial para habilidades não reembolsáveis."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16517,7 +16547,7 @@
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações. Novos recordes de marcos usam o tempo jogado."
+      "value": "Speedruns comparam a partida atual com recordes pessoais mantidos ao redefinir o save. Adicionados indicadores de assistência, registro de PI em dobro e memória das abas de Estatísticas. Adicionada Primeira Transcendência; novos recordes incluem tempo jogado mais Tempo armazenado gasto. Recordes são sincronizados pela nuvem, mas não exportados."
     }
   ],
   "wiki.patch-notes.version-4-1-10.swarm": [

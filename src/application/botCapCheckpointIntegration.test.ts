@@ -1,3 +1,4 @@
+import { createSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { gameDataCatalog } from '../game-data/catalog'
@@ -136,6 +137,11 @@ describe('voluntary Overflow coordination', () => {
     const reopened = createApplication(repository)
     await reopened.start()
     expect(readyState(reopened).gameState.avocado.overflowPoints).toBe(1n)
+    const firstTranscendence = readyState(reopened).gameState.statistics.speedruns?.milestones.firstTranscendence
+    expect(firstTranscendence?.elapsedSeconds).toEqual(expect.any(Number))
+    const reloaded = createApplication(repository)
+    await reloaded.start()
+    expect(readyState(reloaded).gameState.statistics.speedruns?.milestones.firstTranscendence).toEqual(firstTranscendence)
     expect(readyState(reopened).gameState.infinity.botCapTransitionPending).toBe(false)
     const start = await reopened.dispatchPlayer({ ...revisionEnvelope(reopened), command: { kind: 'tinker.start', repeat: false } })
     expect(start).toMatchObject({ transition: { accepted: true } })
@@ -160,6 +166,11 @@ describe('voluntary Overflow coordination', () => {
     repository.failureAttempt = undefined
     expect(await requestOverflow(reopened)).toMatchObject({ transition: { accepted: true } })
     expect(readyState(reopened).gameState.avocado.overflowPoints).toBe(1n)
+    const firstTranscendence = readyState(reopened).gameState.statistics.speedruns?.milestones.firstTranscendence
+    expect(firstTranscendence?.elapsedSeconds).toEqual(expect.any(Number))
+    const reloaded = createApplication(repository)
+    await reloaded.start()
+    expect(readyState(reloaded).gameState.statistics.speedruns?.milestones.firstTranscendence).toEqual(firstTranscendence)
     expect(await requestOverflow(reopened)).toMatchObject({ transition: { accepted: false } })
   })
 
@@ -187,6 +198,11 @@ describe('voluntary Overflow coordination', () => {
     expect(readyState(reopened).gameState.infinity.botCapTransitionPending).toBe(true)
     expect(await requestOverflow(reopened)).toMatchObject({ transition: { accepted: true } })
     expect(readyState(reopened).gameState.avocado.overflowPoints).toBe(1n)
+    const firstTranscendence = readyState(reopened).gameState.statistics.speedruns?.milestones.firstTranscendence
+    expect(firstTranscendence?.elapsedSeconds).toEqual(expect.any(Number))
+    const reloaded = createApplication(repository)
+    await reloaded.start()
+    expect(readyState(reloaded).gameState.statistics.speedruns?.milestones.firstTranscendence).toEqual(firstTranscendence)
   })
 })
 
@@ -239,6 +255,7 @@ async function installBotCap(
   const candidate = structuredClone(snapshot.state)
   candidate.gameState = {
     ...candidate.gameState,
+    statistics: { ...candidate.gameState.statistics, speedruns: createSpeedrunStatistics(new Date().toISOString(), true) },
     dyson: {
       ...candidate.gameState.dyson,
       bots: OVERFLOW_BOT_CAP,

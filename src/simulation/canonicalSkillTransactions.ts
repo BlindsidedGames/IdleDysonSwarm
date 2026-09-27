@@ -137,6 +137,38 @@ export interface CanonicalSkillCatalogPreview {
   }
 }
 
+/** Detects new irreversible ownership using the same prerequisite facts as purchase previews. */
+export function includesNewNonRefundableSkillAssignment(
+  skillIds: readonly string[],
+  previews: ReadonlyMap<string, Pick<CanonicalSkillAvailabilityPreview,
+    'owned' | 'galvanized' | 'intrinsicallyRefundable' | 'requiredSkillIds' | 'shadowRequiredSkillIds'>>,
+): boolean {
+  const visited = new Set<string>()
+  const visit = (skillId: string): boolean => {
+    if (visited.has(skillId)) return false
+    visited.add(skillId)
+    const preview = previews.get(skillId)
+    if (preview === undefined || preview.galvanized) return false
+    if (!preview.intrinsicallyRefundable) return !preview.owned
+    // Preset application can refund and rebuild an owned refundable target.
+    return [...preview.requiredSkillIds, ...preview.shadowRequiredSkillIds].some(visit)
+  }
+  return skillIds.some(visit)
+}
+
+/** Fresh, inexpensive query for UI assignment confirmation outside Skills preview demand. */
+export function previewCanonicalNonRefundableSkillAssignment(
+  state: CanonicalGameStateV1,
+  skillIds: readonly string[],
+): boolean {
+  const definitions = loadDefinitions(state)
+  return includesNewNonRefundableSkillAssignment(skillIds, new Map([...definitions].map(([id, definition]) =>
+    [id, { owned: state.skills.byId[id]?.owned === true, galvanized: isGalvanized(state, id),
+      intrinsicallyRefundable: definition.refundable, requiredSkillIds: definition.required,
+      shadowRequiredSkillIds: definition.shadowRequired }],
+  )))
+}
+
 export type CanonicalSkillPresetApplicationResult =
   | {
       readonly accepted: true

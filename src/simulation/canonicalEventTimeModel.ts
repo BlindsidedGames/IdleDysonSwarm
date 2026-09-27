@@ -3,7 +3,7 @@ import { advanceManualLabourIdle } from './manualLabourAugments'
 import { effectiveDivisions, quantumDoubleIpEnabled, isBreakInfinityEnabled, isInfinityChallengeActive, isQuantumChallengeActive } from './infinityChallenges'
 import { advanceDiscovery } from './discovery'
 import { deriveDiscoveryEffects } from './discoveryEffects'
-import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime } from './speedrunStatistics'
+import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime, recordStoredSpeedrunTime } from './speedrunStatistics'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementFacts } from '../achievements/contracts'
@@ -633,6 +633,9 @@ export class CanonicalEventTimeModel
         seconds,
         this.context.rateClockMultiplier ?? 1,
       )
+      if (this.context.mode === 'stored-time') {
+        candidate = recordStoredSpeedrunTime(candidate, seconds * (this.context.rateClockMultiplier ?? 1))
+      }
       if (this.context.mode === 'active') {
         candidate = recordActiveSpeedrunTime(candidate, seconds * (this.context.rateClockMultiplier ?? 1))
         candidate = withAdvancedManualInfinityObservation(

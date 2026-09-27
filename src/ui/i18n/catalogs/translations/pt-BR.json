@@ -2087,11 +2087,11 @@
   "wiki.patch-notes.version-4-1-10.challenge": "Adicionados sete desafios quânticos que concedem 2 Catalisadores cada. Divisão e IP em dobro quântico ficam inativos nessas rodadas. Adicionados quatro aumentos de Trabalho manual, incluindo um bônus por esperar entre ativações. Fraturar funciona nos desafios e mostra uma prévia do efeito. Sacrifícios estelares cria sua instalação mais avançada atual. Os pontos de habilidade da Realidade ficam inativos; o progresso da Realidade é mantido.",
   "wiki.patch-notes.version-4-1-10.discovery": "Descoberta fortalece instalações. Desbloqueie Elevação para dinheiro e Bots, depois Iluminação para a vida útil dos painéis; cada barra nova fornece progresso à anterior. Habilidades relacionadas se adaptam ao desbloqueio.",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "Adicionadas velocidade de Descoberta compartilhada e melhorias de poder separadas em uma categoria recolhível de Avocato.",
-  "wiki.patch-notes.version-4-1-10.fixes": "Após seu primeiro Quantum, novas partidas começam com uma Linha de montagem. Corrigidos: galáxias sobre o cabeçalho, retenção na nuvem de Opções de desenvolvedor conquistadas, contagem de pontos de aumentos, ajustes negativos de depuração e rotação de promoções. Corrigidas as prévias de aprimoramentos, os preços dos desafios e os contadores de Trabalho manual após reinícios.",
+  "wiki.patch-notes.version-4-1-10.fixes": "Após o primeiro Quantum, novas partidas começam com uma linha de montagem. Corrigidos galáxias sobre o cabeçalho, retenção de Opções de desenvolvedor na nuvem, pontos de aumentos, ajustes negativos de depuração e rotação de promoções. Corrigidos prévias, preços de desafios e contadores de Trabalho manual. Adicionado aviso inicial para habilidades não reembolsáveis.",
   "wiki.patch-notes.version-4-1-10.ios": "Agora é necessário iOS 16 ou posterior.",
   "wiki.patch-notes.version-4-1-10.save-fix": "Corrigido o retorno de pesquisas antigas e predefinições de habilidades esvaziadas após salvar ou recarregar.",
   "wiki.patch-notes.version-4-1-10.secret": "O sexto segredo de Avotation agora é concluído automaticamente ao ser alcançado com Descoberta desbloqueada.",
-  "wiki.patch-notes.version-4-1-10.speedruns": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações. Novos recordes de marcos usam o tempo jogado.",
+  "wiki.patch-notes.version-4-1-10.speedruns": "Speedruns comparam a partida atual com recordes pessoais mantidos ao redefinir o save. Adicionados indicadores de assistência, registro de PI em dobro e memória das abas de Estatísticas. Adicionada Primeira Transcendência; novos recordes incluem tempo jogado mais Tempo armazenado gasto. Recordes são sincronizados pela nuvem, mas não exportados.",
   "wiki.patch-notes.version-4-1-10.swarm": "Adicionados dez aprimoramentos de Enxame e Fragmento.",
   "wiki.patch-notes.version-4-1-10.transcendence": "Overflow agora se chama Transcendência. Gaste 1 ponto de Transcendência no Avocato para desbloquear Descoberta, que substitui Ciência e Pesquisa.",
   "wiki.patch-notes.version-4-1-2": "Versão 4.1.2",
@@ -2274,5 +2274,10 @@
   "wiki.topic-navigation": "Tópicos da Wiki",
   "wiki.topics": "Tópicos",
   "wiki.transcendence.overview": "Com <value>4e242 Bots</value>, Transcenda em Avocato para reiniciar as camadas anteriores e ganhar <value>um ponto de Transcendência</value>. Gaste um ponto em <value>Desbloquear Descoberta</value> para substituir Ciência e Pesquisa permanentemente. A Ciência e os níveis de pesquisa existentes não são transferidos.",
-  "wiki.transcendence.overview-title": "Além do enxame"
+  "wiki.transcendence.overview-title": "Além do enxame",
+  "statistics.speedruns.combinedTime": "Tempo combinado",
+  "statistics.speedruns.previousTiming": "Cronometragem anterior",
+  "statistics.speedruns.firstTranscendence": "Primeira Transcendência",
+  "skills.non-refundable-confirmation-title": "Habilidades não reembolsáveis",
+  "skills.non-refundable-confirmation-warning": "Habilidades não reembolsáveis e seus pré-requisitos só podem ser reembolsados após um reset de Infinito ou Quantum. Continuar?"
 }

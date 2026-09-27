@@ -597,6 +597,16 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Allow automatic assignment of non-refundable skills',
     description: 'Toggle allowing presets to assign skills that cannot be refunded.',
   },
+  nonRefundableConfirmationTitle: {
+    id: 'skills.non-refundable-confirmation-title',
+    defaultMessage: 'Non-refundable skills',
+    description: 'First-time confirmation before manual or automatic assignment of non-refundable skills.',
+  },
+  nonRefundableConfirmationWarning: {
+    id: 'skills.non-refundable-confirmation-warning',
+    defaultMessage: 'Non-refundable skills and their prerequisite paths cannot be refunded until an Infinity or Quantum reset. Continue?',
+    description: 'Explains that prerequisite points also become locked; Reset Skills does not refund them.',
+  },
   showSkillLabels: { id: 'skills.show-skill-labels', defaultMessage: 'Show skill labels', description: 'Toggle names below nodes on the main skill tree and augment trees.' },
   doubleClickToAssign: {
     id: 'skills.double-click-to-assign',

@@ -12219,6 +12219,18 @@
       "value": "スキルポイントを返還できないスキルの自動割り当てを許可"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "返還不可のスキル"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "返還不可のスキルとその前提スキルは、無限またはクアンタムのリセットまで返還できません。続けますか？"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -13963,6 +13975,12 @@
       "value": "保存したベストを消去しますか？"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "合計時間"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -13973,6 +13991,12 @@
     {
       "type": 0,
       "value": "IP倍増を使用"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "初回の超越"
     }
   ],
   "statistics.speedruns.importedRun": [
@@ -13991,6 +14015,12 @@
     {
       "type": 0,
       "value": "自己ベスト"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "以前の計測方式"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -16493,7 +16523,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "初回の量子以降、新しい周回は組立ライン1基から始まります。銀河がヘッダーに重なる問題、獲得済み開発者オプションのクラウド保持、強化のスキルポイント計算、負数のデバッグ調整、プロモーションの巡回を修正。 オーグメントのプレビュー、チャレンジ中の価格、リセット後の手作業カウンターを修正しました。"
+      "value": "初回クアンタム後は、新しいランを組立ライン1基で開始します。銀河のヘッダーへの重なり、獲得済み開発者オプションのクラウド保持、拡張のスキルポイント計算、負のデバッグ調整、プロモーションの巡回を修正しました。プレビュー、チャレンジ価格、手作業のリセットカウンターを修正し、返還不可スキルの初回警告を追加しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16517,7 +16547,7 @@
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。 新しいマイルストーン記録にはプレイ時間を使用します。"
+      "value": "スピードランで現在のランと、セーブをリセットしても残る自己ベストを比較できます。補助機能の使用表示、IP2倍の記録、統計タブの記憶を追加しました。初回の超越を追加し、新記録はプレイ時間と消費した保存時間の合計で計測します。自己ベストはクラウドで同期されますが、エクスポートには含まれません。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.swarm": [
