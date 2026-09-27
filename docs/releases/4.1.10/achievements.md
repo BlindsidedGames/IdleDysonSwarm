@@ -6,7 +6,7 @@ Prepared 2026-09-27. Nothing submitted, published or deployed.
 | --- | --- | --- | --- | --- |
 | Transcendent | Complete your first Transcendence. | 25 | CgkIkpjJyrENEAIQJg | ids.first_transcendence / FIRST_TRANSCENDENCE |
 | Enlightened | Unlock all three Discovery bars. | 25 | CgkIkpjJyrENEAIQJw | ids.enlightenment / ENLIGHTENMENT |
-| Challenge Accepted | Complete your first Quantum challenge. | 20 | CgkIkpjJyrENEAIQKA | ids.first_quantum_challenge / FIRST_QUANTUM_CHALLENGE |
+| Challenge Accepted | Complete your first challenge. | 20 | CgkIkpjJyrENEAIQKA | ids.first_quantum_challenge / FIRST_QUANTUM_CHALLENGE |
 | Breaking the Rules | Fracture your first skill. | 20 | CgkIkpjJyrENEAIQKQ | ids.first_fracture / FIRST_FRACTURE |
 | Galaxy Brain | Own your first Galactic Brain. | 25 | CgkIkpjJyrENEAIQKg | ids.first_galactic_brain / FIRST_GALACTIC_BRAIN |
 
@@ -14,7 +14,9 @@ Against All Odds is intentionally excluded. Requirements are provider-neutral;
 existing progress qualifies when still evidenced by the save. Transcendent uses
 the actual lifetime reset counter, not the spendable wallet. Fractional generated
 facilities count together with purchases only once total ownership reaches one.
-Legacy No Science completion also qualifies for Challenge Accepted.
+Blank Slate, Trial and Error and every Quantum challenge qualify for Challenge
+Accepted, including legacy No Science completion. Its original provider identifiers
+are retained to preserve the existing draft records and saved achievement evidence.
 
 ## Provider state
 
@@ -33,6 +35,17 @@ Legacy No Science completion also qualifies for Challenge Accepted.
 [Steam draft evidence](achievement-preset-qa/steam-achievement-drafts.png).
 [Apple draft evidence](achievement-preset-qa/apple-achievement-drafts.png).
 [Google draft evidence](achievement-preset-qa/google-achievement-drafts.png).
+
+## First-challenge correction
+
+Challenge Accepted now accepts the first completed challenge of either tier. Its
+icon uses the actual Challenges tab artwork, replacing the invented target. All
+three provider drafts were updated and reloaded to verify saved copy and images;
+nothing was published. Focused achievement/mapping coverage passes (45 tests),
+along with TypeScript and lint.
+
+[Apple saved localization](achievement-preset-qa/first-challenge-apple.png).
+[Google saved icon and description](achievement-preset-qa/first-challenge-google.png).
 
 ## Preset shortcuts
 

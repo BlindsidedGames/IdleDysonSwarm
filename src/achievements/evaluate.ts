@@ -18,7 +18,9 @@ export function evaluateAchievements(state: DeepReadonly<CanonicalGameStateV1>, 
   const reach = (id: string, met: boolean) => { if (met) unlocked.push(`achievement.${id}`) }
   reach('first_transcendence', state.statistics.lifetime.botCapOverflowRewards > 0n)
   reach('enlightenment', state.discovery?.unlocked === true && state.discovery.enlightenment !== undefined)
-  reach('first_quantum_challenge', state.challenges?.noScienceCompleted === true ||
+  // Retain the existing provider key when broadening the requirement to any challenge.
+  reach('first_quantum_challenge', state.challenges?.blankSlateCompleted === true ||
+    state.challenges?.trialAndErrorCompleted === true || state.challenges?.noScienceCompleted === true ||
     (state.challenges?.completedQuantumChallenges?.length ?? 0) > 0)
   reach('first_fracture', (state.challenges?.galvanizedSkillIds?.length ?? 0) > 0)
   reach('first_bot', state.dyson.bots >= 1)

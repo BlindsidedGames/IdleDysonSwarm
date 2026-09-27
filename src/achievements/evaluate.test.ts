@@ -96,15 +96,15 @@ test('no Strange Matter evidence does not grant the milestone', () => {
    const state = empty()
    Object.assign(state.avocado, { overflowPoints: 10n })
    Object.assign(state.quantum.unlocks, { galacticBrains: true })
-   Object.assign(state, { challenges: { active: 'no-science', galvanizers: 2n, blankSlateCompleted: true } })
+   Object.assign(state, { challenges: { active: 'no-science', galvanizers: 2n, blankSlateCompleted: false } })
    const result = evaluateAchievements(state, false).unlocked
    expect(result).not.toContain('achievement.first_transcendence')
    expect(result).not.toContain('achievement.first_quantum_challenge')
    expect(result).not.toContain('achievement.first_fracture')
    expect(result).not.toContain('achievement.first_galactic_brain')
  })
- test('legacy No Science completion is valid challenge evidence', () => {
+ test.each(['blankSlateCompleted', 'trialAndErrorCompleted', 'noScienceCompleted'])('%s qualifies as the first challenge', field => {
    const state = empty()
-   Object.assign(state, { challenges: { noScienceCompleted: true } })
+   Object.assign(state, { challenges: { [field]: true } })
    expect(evaluateAchievements(state, false).unlocked).toContain('achievement.first_quantum_challenge')
  })
