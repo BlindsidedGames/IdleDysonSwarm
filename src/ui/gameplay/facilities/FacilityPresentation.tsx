@@ -1,3 +1,4 @@
+import { tinkerMessages } from '../tinker/messages'
 import { SWARM_AUGMENTS } from '../../../simulation/skillSubskills'
 import { swarmAugmentPresentation } from '../skills/swarmMessages'
 import { resolveGalaxiesEngulfed } from '../../../simulation/stellarArithmetic'
@@ -565,6 +566,14 @@ export function FacilityDetailsContent({
             )}
           </div>
         ))}
+        {details?.tinkerPerActivation !== undefined && (
+          <div className="facility-effect-row">
+            <img className="facility-effect-row__icon" src={skillIcons.manualLabour} alt="" />
+            <span className="facility-effect-row__copy"><strong>{intl.formatMessage(tinkerMessages.title)}</strong>
+              <small>{intl.formatMessage(tinkerMessages.perActivation, { count: formatFacilityNumber(locale, details.tinkerPerActivation!) })}</small>
+            </span>
+          </div>
+        )}
         {generationContributions.length > 0 && (
           <EffectList discoveryUnlocked={discoveryUnlocked} locale={locale} contributions={generationContributions} facilityId={facilityId} />
         )}

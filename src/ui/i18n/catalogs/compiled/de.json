@@ -4333,6 +4333,16 @@
       "value": "Zum Wiederholen lange drücken..."
     }
   ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " pro Aktivierung"
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -10239,6 +10249,36 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "Tüfteln erzeugt zusätzlich 2 % deiner Galaktischen Gehirne, begrenzt auf 20 Sekunden finanzierter Stellare-Opfer-Produktion, mindestens jedoch 1 Gehirn. Vielseitige Produktionstaktiken gelten vor der Begrenzung."
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "Tüfteln erzeugt zusätzlich 2 % deiner "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": ", begrenzt auf 20 Sekunden ihrer eingehenden Anlagenproduktion. Vielseitige Produktionstaktiken gelten."
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "Handgefertigte "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
   "skills.manualLabour.handAssembly.description": [
     {
       "type": 0,
@@ -10248,7 +10288,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "Baue alle 0,2 Sekunden Bots ohne KI-Manager. Basisertrag: (abgeschlossene Handmontagen + 1)^5, begrenzt auf 10^17 Bots pro Aktivierung. Ersetzt das Basteln von Montagelinien. Arbeit wird bei Unendlichkeit zurückgesetzt."
+      "value": "Baue alle 0,2 Sekunden Bots ohne KI-Manager. Basisertrag: (abgeschlossene Handmontagen + 1)^5, begrenzt auf 10^17 Bots pro Aktivierung. Behält das Basteln von Montagelinien bei. Arbeit wird bei Unendlichkeit zurückgesetzt."
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -12567,10 +12607,52 @@
       "value": "Montagelinien pro Aktivierung"
     }
   ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "Birch-Planeten pro Aktivierung"
+    }
+  ],
   "skills.production.manualBots": [
     {
       "type": 0,
       "value": "Bots pro Aktivierung"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "Rechenzentren pro Aktivierung"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "Galaktische Gehirne pro Aktivierung"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "KI-Manager pro Aktivierung"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "Matrioshka-Gehirne pro Aktivierung"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "Planeten pro Aktivierung"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "Server pro Aktivierung"
     }
   ],
   "skills.purchase": [
@@ -16631,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Vier Erweiterungen für Handarbeit und zehn Schwarm- und Fragment-Erweiterungen hinzugefügt."
+      "value": "Augmente für Handarbeit, Schwarm und Fragmente hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

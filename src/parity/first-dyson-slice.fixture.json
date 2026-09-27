@@ -76,6 +76,7 @@
           "cooldownSeconds": 0.20000000298023224
         },
         "stats": {
+          "facilityYields": {},
           "botYield": 1,
           "assemblyYield": 0,
           "cooldownSeconds": 0.20000000298023224
@@ -273,6 +274,7 @@
             "cooldownSeconds": 0.20000000298023224
           },
           "stats": {
+            "facilityYields": {},
             "botYield": 1,
             "assemblyYield": 0,
             "cooldownSeconds": 0.20000000298023224
@@ -299,6 +301,7 @@
             "cooldownSeconds": 0.5
           },
           "stats": {
+            "facilityYields": {},
             "botYield": 1,
             "assemblyYield": 0,
             "cooldownSeconds": 0.5
@@ -385,6 +388,7 @@
           "cooldownSeconds": 0.5
         },
         "stats": {
+          "facilityYields": {},
           "botYield": 1,
           "assemblyYield": 0,
           "cooldownSeconds": 0.5

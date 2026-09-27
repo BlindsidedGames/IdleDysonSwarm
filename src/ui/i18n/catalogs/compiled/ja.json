@@ -4333,6 +4333,16 @@
       "value": "長押しすると繰り返します…"
     }
   ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": "／回"
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -10239,6 +10249,36 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "手作業で所有する銀河脳の2%も生成します。上限はボットで賄える恒星の犠牲の20秒分の生産量で、最低上限は1個です。「多彩な生産戦術」は上限の前に適用されます。"
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "手作業で所有する"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "の2%も生成します。上限は施設による供給量の20秒分です。「多彩な生産戦術」が適用されます。"
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "手作りの"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
   "skills.manualLabour.handAssembly.description": [
     {
       "type": 0,
@@ -10248,7 +10288,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "AIマネージャーなしで0.2秒ごとにボットを製造。基本生産量は（手作業組立の完了回数 + 1）^5、1回の上限は10^17ボット。組立ラインの手動作成を置き換える。作業回数は無限リセットで初期化。"
+      "value": "AIマネージャーなしで0.2秒ごとにボットを製造。基本生産量は（手作業組立の完了回数 + 1）^5、1回の上限は10^17ボット。組立ラインの手動作成も維持する。作業回数は無限リセットで初期化。"
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -12567,10 +12607,52 @@
       "value": "発動ごとの組立ライン"
     }
   ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "バーチ・プラネット （1回あたり）"
+    }
+  ],
   "skills.production.manualBots": [
     {
       "type": 0,
       "value": "発動ごとのボット"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "データセンター （1回あたり）"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "ギャラクティック・ブレイン （1回あたり）"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "AIマネージャー （1回あたり）"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "マトリョーシカ・ブレイン （1回あたり）"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "惑星 （1回あたり）"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "サーバー （1回あたり）"
     }
   ],
   "skills.purchase": [
@@ -16631,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "手動労働の拡張を4種、スウォームとフラグメントの拡張を10種追加しました。"
+      "value": "手作業、スウォーム、フラグメントのオーグメントを追加。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

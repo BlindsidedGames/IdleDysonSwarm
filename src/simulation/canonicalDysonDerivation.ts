@@ -1,3 +1,4 @@
+import { deriveAdditionalTinkerYields, resolveTinkerFacilityYields, type TinkerFacilityYields } from './manualFacilityAugments'
 import { botnetMultiplier, economyOfScaleMultiplier, purchaseScalingRate, purchaseScalingThreshold, purchaseScalingMultiplier, stellarSwarmMultiplier } from './swarmAugments'
 import { SWARM_AUGMENTS, hasSwarmAugment } from './skillSubskills'
 import { challengeFacilities, challengeAllowsFacility, isNoScienceActive } from './infinityChallenges'
@@ -122,6 +123,7 @@ export interface DerivedBasicDysonState {
     readonly scienceBoostPerSecond: number
     readonly moneyUpgradePerSecond: number
     readonly tinkerAssemblyYield: number
+    readonly tinkerAdditionalFacilityYields: TinkerFacilityYields
     readonly stellarSacrifice: {
       readonly facilitiesPerSecond: number
       readonly botsPerSecond: number
@@ -159,6 +161,7 @@ export interface CanonicalFacilityFacts {
     readonly normalized: number
   }
   readonly details: {
+    readonly tinkerPerActivation?: number
     readonly baseProductionPerSecond: number
     readonly effectiveProducerCount: number
     readonly modifier: number
@@ -813,6 +816,39 @@ export function deriveBasicDysonState(
       scientificPlanetsProduction,
     })
 
+  const productionArrivalRates = combineDysonProductionArrivalRates(model.rates, mega.rates)
+  const tinkerAdditionalFacilityYields = deriveAdditionalTinkerYields(state, productionArrivalRates,
+    stellarSacrificeTarget === 'galactic_brains' ? {
+      facilitiesPerSecond: stellarSacrificeFacilitiesPerSecond,
+      botsPerSecond: stellarSacrificeBotsPerSecond,
+    } : undefined)
+  const tinkerYields = resolveTinkerFacilityYields(state, tinkerAssemblyYield, tinkerAdditionalFacilityYields)
+  const facilityFacts: Record<CanonicalFacilityId, CanonicalFacilityFacts> = {
+    ...deriveBasicFacilityFacts(
+      state,
+      manualPurchaseLayers,
+      facilityCalculations,
+      model,
+      mega.rates,
+      facilityModifiers,
+      facilityModifierCalculations,
+      research.effects,
+      passivePlanetGenerationEffects,
+      stellarSacrificeTarget,
+      stellarGenerationContributions,
+      evaluationSnapshot,
+      presentationTuning,
+      boost,
+    ),
+    ...specializedFacilityFacts,
+  }
+  for (const id of DYSON_FACILITY_IDS) {
+    if (tinkerYields[id] === undefined) continue
+    const fact = facilityFacts[id]
+    facilityFacts[id] = Object.freeze({ ...fact, details: Object.freeze({
+      ...fact.details, tinkerPerActivation: tinkerYields[id],
+    }) })
+  }
   return {
     ok: true,
     value: Object.freeze({
@@ -832,6 +868,7 @@ export function deriveBasicDysonState(
         scienceBoostPerSecond,
         moneyUpgradePerSecond,
         tinkerAssemblyYield,
+        tinkerAdditionalFacilityYields,
         stellarSacrifice: Object.freeze({
           facilitiesPerSecond: stellarSacrificeFacilitiesPerSecond,
           botsPerSecond: stellarSacrificeBotsPerSecond,
@@ -841,29 +878,8 @@ export function deriveBasicDysonState(
       planetPricingModifier,
       rates: Object.freeze({ ...model.rates }),
       megaRates: mega.rates,
-      productionArrivalRates: combineDysonProductionArrivalRates(
-        model.rates,
-        mega.rates,
-      ),
-      facilityFacts: Object.freeze({
-        ...deriveBasicFacilityFacts(
-          state,
-          manualPurchaseLayers,
-          facilityCalculations,
-          model,
-          mega.rates,
-          facilityModifiers,
-          facilityModifierCalculations,
-          research.effects,
-          passivePlanetGenerationEffects,
-          stellarSacrificeTarget,
-          stellarGenerationContributions,
-          evaluationSnapshot,
-          presentationTuning,
-          boost,
-        ),
-        ...specializedFacilityFacts,
-      }) as Readonly<Record<CanonicalFacilityId, CanonicalFacilityFacts>>,
+      productionArrivalRates,
+      facilityFacts: Object.freeze(facilityFacts),
       nextEvaluationSnapshot,
       entitlements: Object.freeze({ ...entitlements }),
     }),

@@ -1,3 +1,5 @@
+import { manualFacilityPresentation } from '../skills/manualFacilityMessages'
+import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
 import {
   useId,
   useRef,
@@ -104,6 +106,12 @@ export function TinkerSurface({
   const highlightedValue = (chunks: ReactNode) => (
     <span className="tinker-surface__yield">{chunks}</span>
   )
+  const facilityRewards = [
+    { facilityId: 'assembly_lines' as const, name: facilityMessages.assemblyLinesName },
+    ...manualFacilityPresentation,
+  ].filter(({ facilityId }) => (facts.stats.facilityYields?.[facilityId] ?? 0) > 0)
+  const combinedRewards = facilityRewards.length > 0 &&
+    (facts.presentationMode === 'hand-assembly' || facilityRewards.some(r => r.facilityId !== 'assembly_lines'))
   const description =
     facts.facilitiesDisabled || facts.presentationMode === 'hand-assembly' ? intl.formatMessage(tinkerMessages.handAssemblyDescription, { count: formatGameNumber(locale, facts.stats.botYield), value: highlightedValue }) : facts.presentationMode === 'manual-labour'
       ? intl.formatMessage(tinkerMessages.manualLabourDescription, {
@@ -174,7 +182,14 @@ export function TinkerSurface({
           {intl.formatMessage(tinkerMessages.action)}
         </span>
         <span id={outputId} className="tinker-surface__output">
-          {description}
+          {combinedRewards ? <span className="tinker-surface__rewards">
+            {facts.presentationMode !== 'manual-labour' && <span>
+              {intl.formatMessage(tinkerMessages.handAssemblyDescription, { count: formatGameNumber(locale, facts.stats.botYield), value: highlightedValue })}
+            </span>}
+            {facilityRewards.map(({ facilityId, name }) => <span key={facilityId}>
+              {intl.formatMessage(name)}: <span className="tinker-surface__yield">{formatGameNumber(locale, facts.stats.facilityYields![facilityId]!)}</span>
+            </span>)}
+          </span> : description}
         </span>
         {showFreshSaveTip && (
           <span id={tipId} className="tinker-surface__tip">

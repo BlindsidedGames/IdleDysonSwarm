@@ -411,6 +411,7 @@ export class CanonicalEventTimeModel
       const tinkerStats = deriveCanonicalTinkerStats(
         this.carrier.gameState,
         derived.auxiliary.tinkerAssemblyYield,
+        derived.auxiliary.tinkerAdditionalFacilityYields,
       )
       const synchronizedTinker = advanceCanonicalTinker(
         this.carrier.gameState,
@@ -562,6 +563,7 @@ export class CanonicalEventTimeModel
             deriveCanonicalTinkerStats(
               startingState,
               derived.value.auxiliary.tinkerAssemblyYield,
+              derived.value.auxiliary.tinkerAdditionalFacilityYields,
             ),
             seconds,
             boost,
@@ -1048,6 +1050,7 @@ export class CanonicalEventTimeModel
         deriveCanonicalTinkerStats(
           this.carrier.gameState,
           derived.auxiliary.tinkerAssemblyYield,
+          derived.auxiliary.tinkerAdditionalFacilityYields,
         ),
         repeat,
       )

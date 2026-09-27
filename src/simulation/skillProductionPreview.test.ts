@@ -1,3 +1,4 @@
+import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { expect, test } from 'vitest'
 import { createDeterministicMatureDysonFixture, DETERMINISTIC_DYSON_SNAPSHOT, DETERMINISTIC_DYSON_TUNING } from '../../scripts/support/deterministicMatureDysonFixture'
 import { withCanonicalBotAllocation } from './canonicalBotAllocation'
@@ -128,4 +129,24 @@ test('Self-Replicating Workers previews shared Simulation worker and launched-pa
     expect(row.after).toBe(base[id])
   }
   expect(state).toEqual(before)
+})
+
+test('facility Tinker assignment comparisons match the same rewards used by facility details', () => {
+  const source = runtime(['manualLabour'])
+  source.gameState.challenges.galvanizedSkillIds = ['manualLabour']
+  source.gameState.skills.points = 50n
+  for (const id of ['assembly_lines', 'ai_managers', 'servers', 'data_centers', 'planets', 'matrioshka_brains', 'birch_planets', 'galactic_brains'] as const) source.gameState.dyson.facilities[id] = [99, 1]
+  source.gameState.quantum.unlocks = { ...source.gameState.quantum.unlocks, matrioshkaBrains: true, birchPlanets: true, galacticBrains: true }
+  const id = 'subskill.manualLabour.birch'
+  const preview = previewSkillProduction(source, id, 'purchase')
+  const purchase = purchaseCanonicalSkill(source.gameState, id)
+  if (!purchase.accepted) throw Error(purchase.reason)
+  const initial = deriveBasicDysonState(purchase.state, source.compatibilityTuning, source.entitlements, source.evaluationSnapshot)
+  if (!initial.ok) throw Error('Derivation failed')
+  const derived = deriveBasicDysonState(purchase.state, source.compatibilityTuning, source.entitlements, initial.value.nextEvaluationSnapshot)
+  if (!derived.ok) throw Error('Derivation failed')
+  for (const [row, facility] of [['manualManagers', 'ai_managers'], ['manualPlanets', 'planets'], ['manualMatrioshka', 'matrioshka_brains'], ['manualBirch', 'birch_planets']] as const) {
+    expect(preview.rows.find(r => r.id === row)?.after).toBe(derived.value.facilityFacts[facility].details.tinkerPerActivation)
+    expect(derived.value.facilityFacts[facility].details.tinkerPerActivation).toBeGreaterThan(0)
+  }
 })

@@ -26,6 +26,17 @@ export const MANUAL_LABOUR_AUGMENTS = Object.freeze({
   patientHands: 'subskill.manualLabour.patientHands',
 } as const)
 
+/** Independent sequential branch: each node retains all earlier Tinker rewards. */
+export const MANUAL_FACILITY_AUGMENTS = Object.freeze([
+  { id: 'subskill.manualLabour.managers', facilityId: 'ai_managers' },
+  { id: 'subskill.manualLabour.servers', facilityId: 'servers' },
+  { id: 'subskill.manualLabour.dataCenters', facilityId: 'data_centers' },
+  { id: 'subskill.manualLabour.planets', facilityId: 'planets' },
+  { id: 'subskill.manualLabour.matrioshka', facilityId: 'matrioshka_brains' },
+  { id: 'subskill.manualLabour.birch', facilityId: 'birch_planets' },
+  { id: 'subskill.manualLabour.galactic', facilityId: 'galactic_brains' },
+] as const)
+
 export const SWARM_AUGMENTS = Object.freeze({
   headStart: 'subskill.swarm.headStart',
   botnet: 'subskill.swarm.botnet',
@@ -55,7 +66,9 @@ export interface SkillAugmentDefinition {
 }
 
 export const SKILL_AUGMENTS: readonly SkillAugmentDefinition[] = Object.freeze(
-  [...SWARM_AUGMENT_DEFINITIONS.map(([key, parentSkillId, cost]) => ({ id: SWARM_AUGMENTS[key], parentSkillId, cost, requiredSkillIds: [parentSkillId], fragment: parentSkillId === 'productionScaling' })), ...Object.values(MANUAL_LABOUR_AUGMENTS).map(id => Object.freeze({
+  [...MANUAL_FACILITY_AUGMENTS.map(({ id }, index) => ({
+    id, parentSkillId: 'manualLabour', cost: 1, requiredSkillIds: [index === 0 ? 'manualLabour' : MANUAL_FACILITY_AUGMENTS[index - 1].id],
+  })), ...SWARM_AUGMENT_DEFINITIONS.map(([key, parentSkillId, cost]) => ({ id: SWARM_AUGMENTS[key], parentSkillId, cost, requiredSkillIds: [parentSkillId], fragment: parentSkillId === 'productionScaling' })), ...Object.values(MANUAL_LABOUR_AUGMENTS).map(id => Object.freeze({
     id, parentSkillId: 'manualLabour', cost: 1, requiredSkillIds: Object.freeze(id === MANUAL_LABOUR_AUGMENTS.handAssembly ? ['manualLabour'] : [MANUAL_LABOUR_AUGMENTS.handAssembly]),
   })), ...Object.values(CASH_SCIENCE_SUBSKILLS).map((id) => Object.freeze({
     id,

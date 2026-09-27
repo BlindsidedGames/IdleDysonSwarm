@@ -4333,6 +4333,16 @@
       "value": "长按以重复……"
     }
   ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": "／次激活"
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -10239,6 +10249,36 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "手工制造额外生成已拥有银河大脑的2%，上限为机器人能够支付的恒星献祭产量的20秒总量，最低上限为1个大脑。“多功能生产策略”在上限之前生效。"
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "手工制造额外生成已拥有"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "的2%，上限为设施供应产量的20秒总量。适用“多功能生产策略”。"
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "手工制造"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
   "skills.manualLabour.handAssembly.description": [
     {
       "type": 0,
@@ -10248,7 +10288,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "每0.2秒制造机器人，无需AI管理器。基础产量为（已完成的手工组装次数 + 1）^5，每次激活上限为10^17个机器人。取代手动制造装配线。无限重置时清空工作次数。"
+      "value": "每0.2秒制造机器人，无需AI管理器。基础产量为（已完成的手工组装次数 + 1）^5，每次激活上限为10^17个机器人。保留手动制造装配线。无限重置时清空工作次数。"
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -12567,10 +12607,52 @@
       "value": "每次激活的装配线"
     }
   ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "伯奇行星 （每次激活）"
+    }
+  ],
   "skills.production.manualBots": [
     {
       "type": 0,
       "value": "每次激活的机器人"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "数据中心 （每次激活）"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "银河脑 （每次激活）"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "AI 管理器 （每次激活）"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "套娃脑 （每次激活）"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "行星 （每次激活）"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "服务器 （每次激活）"
     }
   ],
   "skills.purchase": [
@@ -16631,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "新增四个手工劳动增幅和十个蜂群与碎片增幅。"
+      "value": "新增手工劳动、蜂群和碎片强化。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

@@ -46,3 +46,13 @@ test.each([false, true])('ordinary Tinker retains existing facility advice with 
   render(<IntlProvider locale="en" messages={{}}><TinkerSurface facts={facts} dispatch={vi.fn()} /></IntlProvider>)
   expect(screen.getByRole('button').textContent).toContain(manualLabour ? 'Get 1 AI Manager' : 'Tip:')
 })
+
+
+test('combined facility summary retains the Bot reward before the first Manager purchase', () => {
+  const state = fixture(true, false)
+  const facts = selectCanonicalTinkerUiFacts(state, createCanonicalTinkerRuntimeState(), 0, 1, { servers: 2 })
+  render(<IntlProvider locale="en" messages={{}}><TinkerSurface facts={facts} dispatch={vi.fn()} /></IntlProvider>)
+  const button = screen.getByRole('button')
+  expect(button.textContent).toMatch(/Build [\d.]+ Bots by hand/)
+  expect(button.textContent).toContain('Servers: 2')
+})

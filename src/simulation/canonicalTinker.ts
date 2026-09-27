@@ -1,3 +1,4 @@
+import { grantTinkerFacilities, canTinkerAssemblyLines, resolveTinkerFacilityYields, type TinkerFacilityYields } from './manualFacilityAugments'
 import { hasManualLabourAugment, MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
 import { manualBotYield, activateManualLabour, completeManualLabour, completedManualLabourWork, MANUAL_LABOUR_TUNING } from './manualLabourAugments'
 import { recordCompletedTinkers } from './tinkerGoalProgress'
@@ -20,6 +21,7 @@ const TINKER_TIME_EPSILON_SECONDS = 1e-12
 export interface CanonicalTinkerStats {
   readonly botYield: number
   readonly assemblyYield: number
+  readonly facilityYields?: TinkerFacilityYields
   readonly cooldownSeconds: number
 }
 
@@ -108,10 +110,12 @@ export function selectCanonicalTinkerUiFacts(
   runtime: Readonly<CanonicalTinkerRuntimeState>,
   assemblyYield: number,
   botMultiplier: 1 | 2 = 1,
+  additionalFacilityYields: TinkerFacilityYields = {},
 ): CanonicalTinkerUiFacts {
   const initialStats = deriveCanonicalTinkerStats(
     state,
     assemblyYield,
+    additionalFacilityYields,
   )
   const initial = synchronizeRuntime(
     state,
@@ -121,6 +125,7 @@ export function selectCanonicalTinkerUiFacts(
   const stats = deriveCanonicalTinkerStats(
     initial.state,
     assemblyYield,
+    additionalFacilityYields,
   )
   const synchronized = synchronizeRuntime(
     initial.state,
@@ -155,8 +160,10 @@ export function selectCanonicalTinkerUiFacts(
 export function deriveCanonicalTinkerStats(
   state: Readonly<CanonicalGameStateV1>,
   assemblyYield: number,
+  additionalFacilityYields: TinkerFacilityYields = {},
 ): CanonicalTinkerStats {
   return Object.freeze({
+    facilityYields: resolveTinkerFacilityYields(state, assemblyYield, additionalFacilityYields),
     botYield: manualBotYield(state),
     assemblyYield: requireFiniteNonNegative(
       assemblyYield,
@@ -284,24 +291,10 @@ export function advanceCanonicalTinker(
             stats.assemblyYield,
             bulkCompletions,
           )
-          candidate = {
-            ...candidate,
-            dyson: {
-              ...candidate.dyson,
-              facilities: {
-                ...candidate.dyson.facilities,
-                assembly_lines: [
-                  addContinuous(
-                    candidate.dyson.facilities.assembly_lines[0],
-                    granted,
-                  ),
-                  candidate.dyson.facilities.assembly_lines[1],
-                ],
-              },
-              manualCreationIntervalSeconds:
-                MANUAL_LABOUR_COOLDOWN_SECONDS,
-            },
-          }
+          candidate = grantTinkerFacilities(candidate,
+            stats.facilityYields ?? { assembly_lines: stats.assemblyYield }, bulkCompletions)
+          candidate = { ...candidate, dyson: { ...candidate.dyson,
+            manualCreationIntervalSeconds: MANUAL_LABOUR_COOLDOWN_SECONDS } }
           assemblyLinesGranted = addContinuous(
             assemblyLinesGranted,
             granted,
@@ -317,6 +310,7 @@ export function advanceCanonicalTinker(
           }
           botsGranted = addContinuous(botsGranted, bulkCompletions * botMultiplier)
         }
+        if (!manual) candidate = grantTinkerFacilities(candidate, stats.facilityYields ?? {}, bulkCompletions)
         candidate = recordCompletedTinkers(candidate, bulkCompletions)
         completions = Math.min(
           Number.MAX_SAFE_INTEGER,
@@ -357,31 +351,20 @@ export function advanceCanonicalTinker(
     remaining = Math.max(0, remaining - untilCompletion)
     const handAssembly = hasManualLabourAugment(candidate, 'handAssembly')
     const botYield = handAssembly ? manualBotYield(candidate, candidate.skills.byId[MANUAL_LABOUR_AUGMENTS.patientHands]?.secondaryTimerSeconds ?? 0) : stats.botYield
-    const manual = isManualLabourEffective(candidate)
+    const manual = canTinkerAssemblyLines(candidate)
     if (manual) {
-      candidate = {
-        ...candidate,
-        dyson: {
-          ...candidate.dyson,
-          facilities: {
-            ...candidate.dyson.facilities,
-            assembly_lines: [
-              addContinuous(
-                candidate.dyson.facilities.assembly_lines[0],
-                stats.assemblyYield,
-              ),
-              candidate.dyson.facilities.assembly_lines[1],
-            ],
-          },
-          manualCreationIntervalSeconds:
-            MANUAL_LABOUR_COOLDOWN_SECONDS,
-        },
-      }
+      candidate = grantTinkerFacilities(candidate,
+        stats.facilityYields ?? { assembly_lines: stats.assemblyYield }, 1)
+      candidate = { ...candidate, dyson: { ...candidate.dyson,
+        manualCreationIntervalSeconds: MANUAL_LABOUR_COOLDOWN_SECONDS } }
       assemblyLinesGranted = addContinuous(
         assemblyLinesGranted,
         stats.assemblyYield,
       )
     } else {
+      candidate = grantTinkerFacilities(candidate, stats.facilityYields ?? {}, 1)
+    }
+    if (!manual || handAssembly) {
       const nextCreationTime = handAssembly ? MANUAL_LABOUR_TUNING.cooldownSeconds :
         candidate.dyson.manualCreationIntervalSeconds >= 1
           ? Math.max(
@@ -415,12 +398,13 @@ export function advanceCanonicalTinker(
     const nextStats = deriveCanonicalTinkerStats(
       candidate,
       stats.assemblyYield,
+      stats.facilityYields,
     )
     active = {
       ...active,
       cycleId: nextCycleId(active.cycleId),
       elapsedSeconds: 0,
-      effectiveManualLabour: isManualLabourEffective(candidate),
+      effectiveManualLabour: canTinkerAssemblyLines(candidate),
       cooldownSeconds: nextStats.cooldownSeconds,
     }
     if (remaining === 0) break
@@ -471,7 +455,7 @@ function synchronizeRuntime(
   readonly state: CanonicalGameStateV1
   readonly runtime: CanonicalTinkerRuntimeState
 } {
-  const manual = isManualLabourEffective(state)
+  const manual = canTinkerAssemblyLines(state)
   const modeChanged = runtime.effectiveManualLabour !== manual
   const creationTime = modeChanged
     ? manual
@@ -515,17 +499,6 @@ function synchronizeRuntime(
 function nextCycleId(current: number): number {
   if (!isSafeNonNegativeInteger(current)) return 1
   return current >= Number.MAX_SAFE_INTEGER ? 1 : current + 1
-}
-
-function isManualLabourEffective(
-  state: Readonly<CanonicalGameStateV1>,
-): boolean {
-  return (
-    state.challenges?.active !== 'built-by-hand' &&
-    !hasManualLabourAugment(state, 'handAssembly') &&
-    state.skills.byId.manualLabour?.owned === true &&
-    state.dyson.facilities.ai_managers[1] >= 1
-  )
 }
 
 function requireFiniteNonNegative(value: number, field: string): number {

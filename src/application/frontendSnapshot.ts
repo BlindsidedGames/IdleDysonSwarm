@@ -2364,6 +2364,7 @@ function selectRuntimeFacts(
               context.tinker,
               derived.dyson.value.auxiliary.tinkerAssemblyYield,
               botBoostMultiplier(state, context.entitlements),
+              derived.dyson.value.auxiliary.tinkerAdditionalFacilityYields,
             ),
           }
         : {

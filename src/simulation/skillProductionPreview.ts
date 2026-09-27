@@ -1,3 +1,4 @@
+import { canTinkerAssemblyLines } from './manualFacilityAugments'
 import { MANUAL_LABOUR_TUNING } from './manualLabourAugments'
 import { deriveCanonicalTinkerStats } from './canonicalTinker'
 import { hasManualLabourAugment, MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
@@ -34,13 +35,20 @@ function productionValues(derived: Extract<ReturnType<typeof deriveBasicDysonSta
     rates[target] = addContinuous(rates[target], stellar.facilitiesProduced)
     rates.bots -= stellar.botsConsumed
   }
-  const tinker = deriveCanonicalTinkerStats(state, derived.auxiliary.tinkerAssemblyYield)
-  const makesFacilities = !hasManualLabourAugment(state, 'handAssembly') && state.challenges?.active !== 'built-by-hand' && state.skills.byId.manualLabour?.owned && state.dyson.facilities.ai_managers[1] >= 1
+  const tinker = deriveCanonicalTinkerStats(state, derived.auxiliary.tinkerAssemblyYield, derived.auxiliary.tinkerAdditionalFacilityYields)
+  const makesFacilities = canTinkerAssemblyLines(state)
   // Match the Simulation screen's base rates before the temporary Double Time multiplier.
   const foundational = deriveDreamFoundationalInformationProductionFacts(state, 1)
   const spaceAge = deriveDreamSpaceAgeProductionFacts(state, 1)
   if (foundational.status !== 'success' || spaceAge.status !== 'success') throw new Error('Simulation production preview unavailable')
-  return { ...rates, manualBots: makesFacilities ? 0 : multiplyContinuous(tinker.botYield, derived.botBoostMultiplier), manualAssemblyLines: makesFacilities ? tinker.assemblyYield : 0,
+  return { ...rates, manualBots: makesFacilities && !hasManualLabourAugment(state, 'handAssembly') ? 0 : multiplyContinuous(tinker.botYield, derived.botBoostMultiplier), manualAssemblyLines: tinker.facilityYields?.assembly_lines ?? 0,
+    manualManagers: tinker.facilityYields?.ai_managers ?? 0,
+    manualServers: tinker.facilityYields?.servers ?? 0,
+    manualDataCenters: tinker.facilityYields?.data_centers ?? 0,
+    manualPlanets: tinker.facilityYields?.planets ?? 0,
+    manualMatrioshka: tinker.facilityYields?.matrioshka_brains ?? 0,
+    manualBirch: tinker.facilityYields?.birch_planets ?? 0,
+    manualGalactic: tinker.facilityYields?.galactic_brains ?? 0,
     hunterCommunity: foundational.facts.timers.hunterTimerProgress.outputPerSecond.community,
     gathererCommunity: foundational.facts.timers.gathererTimerProgress.outputPerSecond.community,
     launchedPanelEnergy: spaceAge.facts.energy.swarmPerSecond,

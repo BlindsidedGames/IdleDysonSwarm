@@ -27,14 +27,14 @@ Infinity resets the ladder normally. No bonus starting SP is granted.
 
 ## Manual Labour tuning
 
-All four augments cost one SP. Hand Assembly requires Manual Labour; the other
+The four Bot-work augments cost one SP. Hand Assembly requires Manual Labour; the other
 three require Hand Assembly. All require the parent to be Fractured, and are
 refundable. Their counters survive refunds/save/load but reset with Infinity and
 Quantum. No new persistence service or save schema is needed.
 
 - Hand Assembly: `(completed Hand Assemblies + 1)^5` Bots every 0.2 seconds,
   capped at `1e17` base Bots per activation. No current-Bot input, no AI Manager
-  requirement, and no Assembly Line grants. Completed work uses the existing
+  requirement. Existing Assembly Line tinkering remains available alongside Bots. Completed work uses the existing
   augment runtime counter. Rapid clicking receives no initial-progress shortcut.
 - Practice Makes Perfect: `2n / (n + 500)` additive yield bonus, where `n` is
   work completed while assigned. Approaches +200% rather than growing forever.
@@ -97,7 +97,7 @@ manual grants. Artwork follows the original high-resolution masters.
 
 ## Player-facing augment descriptions
 
-- **Hand Assembly:** Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Replaces Assembly Line tinkering. Work resets on Infinity.
+- **Hand Assembly:** Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Keeps Assembly Line tinkering. Work resets on Infinity.
 - **Practice Makes Perfect:** Increase Hand Assembly yield by up to 200% with practice: 200% × completions / (completions + 500). Practice resets on Infinity; refunds preserve it. Bonuses are additive.
 - **Working Smarter:** Increase Hand Assembly yield by 25% × log10(1 + Assembly Line research levels), capped at +200%. After unlocking Discovery, use completed Discoveries instead. Bonuses are additive.
 - **Patient Hands:** While idle, store up to 42 seconds of Hand Assembly. Your next activation completes the stored work with 25% more Bots. Stored work also builds practice. Consumed on activation.
@@ -219,3 +219,15 @@ localization, first-Dyson parity and web build pass.
 - Self-review checked both SP award paths and target challenge state at reset.
   No native iOS/Android/Steam interaction QA or deployment was performed for this
   follow-up.
+
+
+### Additional facility path (2026-09-27)
+
+Seven sequential, refundable one-SP augments now extend Tinker from AI Managers
+through Galactic Brains, retaining earlier rewards. This path is independent of
+Hand Assembly. Galactic Brain rewards use the approved funded Stellar Sacrifices
+cap. Patient Hands still stores Bot work only, not extra facility activations.
+Successful Fracturing opens an available augment subtree automatically.
+
+Current formulas, descriptions and verification:
+[Manual facility augment QA](../qa/manual-facility-augments-2026-09-27.md).

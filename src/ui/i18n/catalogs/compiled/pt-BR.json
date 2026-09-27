@@ -4333,6 +4333,16 @@
       "value": "Pressione e segure para repetir..."
     }
   ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " por ativação"
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -10239,6 +10249,36 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "A criação manual também gera 2% dos seus Cérebros galácticos, limitada a 20 segundos de produção financiada de Sacrifícios estelares, com limite mínimo de 1 cérebro. Táticas de produção versáteis se aplicam antes do limite."
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "A criação manual também gera 2% dos seus "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": ", limitada a 20 segundos da produção recebida de instalações. Táticas de produção versáteis se aplicam."
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "Construção manual: "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
   "skills.manualLabour.handAssembly.description": [
     {
       "type": 0,
@@ -10248,7 +10288,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "Produz Bots a cada 0,2 segundo sem um Gerente de IA. Produção base: (montagens manuais concluídas + 1)^5, limitada a 10^17 Bots por ativação. Substitui a criação manual de Linhas de montagem. O trabalho reinicia no Infinito."
+      "value": "Produz Bots a cada 0,2 segundo sem um Gerente de IA. Produção base: (montagens manuais concluídas + 1)^5, limitada a 10^17 Bots por ativação. Mantém a criação manual de Linhas de montagem. O trabalho reinicia no Infinito."
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -12567,10 +12607,52 @@
       "value": "Linhas de montagem por ativação"
     }
   ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "Planetas de Birch por ativação"
+    }
+  ],
   "skills.production.manualBots": [
     {
       "type": 0,
       "value": "Bots por ativação"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "Centros de Dados por ativação"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "Cérebros Galácticos por ativação"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "Gerentes de IA por ativação"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "Cérebros Matrioska por ativação"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "Planetas por ativação"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "Servidores por ativação"
     }
   ],
   "skills.purchase": [
@@ -16631,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Adicionados quatro aprimoramentos de Trabalho Manual e dez aprimoramentos de Enxame e Fragmento."
+      "value": "Adicionados aumentos de Trabalho manual, Enxame e Fragmentos."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

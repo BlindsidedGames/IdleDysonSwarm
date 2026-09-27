@@ -475,6 +475,12 @@ function SkillsSurfaceContent({
           result.status === 'accepted' &&
           result.kind === 'transition'
         setFailed(!accepted)
+        if (accepted && result.changed && command.kind === 'skill.galvanize' &&
+          skillAugments(command.skillId).length > 0) {
+          setAugmentRootId(command.skillId)
+          setSelectedSkillId(null)
+          setQuickPurchaseSkillId(null)
+        }
         if (!accepted || !result.changed) {
           clearPending()
         } else {
@@ -2241,6 +2247,13 @@ const productionMetrics = {
   gathererCommunity: { label: messages.gathererCommunity, unit: '/s' },
   launchedPanelEnergy: { label: messages.launchedPanelEnergy, unit: '/s' },
   manualBots: { label: messages.manualBots, unit: '' },
+  manualManagers: { label: messages.manualManagers, unit: '' },
+  manualServers: { label: messages.manualServers, unit: '' },
+  manualDataCenters: { label: messages.manualDataCenters, unit: '' },
+  manualPlanets: { label: messages.manualPlanets, unit: '' },
+  manualMatrioshka: { label: messages.manualMatrioshka, unit: '' },
+  manualBirch: { label: messages.manualBirch, unit: '' },
+  manualGalactic: { label: messages.manualGalactic, unit: '' },
   manualAssemblyLines: { label: messages.manualAssemblyLines, unit: '' },
   money: { label: messages.productionCash, unit: '/s' },
   science: { label: messages.productionScience, unit: '/s' },

@@ -4333,6 +4333,16 @@
       "value": "Long press to repeat..."
     }
   ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " per activation"
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -10239,6 +10249,36 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "Tinker also creates 2% of your Galactic Brains, capped at 20 seconds of funded Stellar Sacrifices output, or 1 Brain if higher. Versatile Production Tactics applies before the cap."
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "Tinker also creates 2% of your "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": ", capped at 20 seconds of their incoming facility production. Versatile Production Tactics applies."
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "Hand-built "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
   "skills.manualLabour.handAssembly.description": [
     {
       "type": 0,
@@ -10248,7 +10288,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Replaces Assembly Line tinkering. Work resets on Infinity."
+      "value": "Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Keeps Assembly Line tinkering. Work resets on Infinity."
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -12567,10 +12607,52 @@
       "value": "Assembly Lines per activation"
     }
   ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "Birch Planets per activation"
+    }
+  ],
   "skills.production.manualBots": [
     {
       "type": 0,
       "value": "Bots per activation"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "Data Centers per activation"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "Galactic Brains per activation"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "AI Managers per activation"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains per activation"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "Planets per activation"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "Servers per activation"
     }
   ],
   "skills.purchase": [
@@ -16631,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Added four Manual Labour augments and ten Swarm and Fragment augments."
+      "value": "Added Manual Labour, Swarm and Fragment augments."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

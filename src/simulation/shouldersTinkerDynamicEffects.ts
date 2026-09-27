@@ -1,3 +1,5 @@
+import { addContinuous } from './numeric'
+import { manualFacilityYield } from './manualFacilityAugments'
 import {
   isFiniteNonNegativeNumber,
   isSafeNonNegativeInteger,
@@ -98,11 +100,7 @@ export function tryResolveTinkerDynamicEffect(
   switch (skillId) {
     case 'manualLabour': {
       if (!inputs.ownedSkills.has(skillId)) return 0
-      const manualLabourAmount =
-        (inputs.assemblyLines[0] + inputs.assemblyLines[1]) / 50
-      const managerProduction =
-        inputs.managerAssemblyLineProduction * 20
-      return Math.min(manualLabourAmount, managerProduction)
+      return manualFacilityYield(addContinuous(inputs.assemblyLines[0], inputs.assemblyLines[1]), inputs.managerAssemblyLineProduction)
     }
     case 'versatileProductionTactics':
       return inputs.ownedSkills.has(skillId) ? 1.5 : 1

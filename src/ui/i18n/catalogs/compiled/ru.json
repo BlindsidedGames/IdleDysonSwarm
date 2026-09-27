@@ -4333,6 +4333,16 @@
       "value": "Нажмите и удерживайте для повтора…"
     }
   ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " за активацию"
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -10239,6 +10249,36 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "Ручная сборка также создаёт 2% ваших Галактических мозгов. Предел — обеспеченная ботами выработка Звёздных жертвоприношений за 20 секунд, но не менее 1 мозга. «Универсальная тактика производства» применяется до ограничения."
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "Ручная сборка также создаёт 2% от ваших "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": ", не более их входящего производства сооружениями за 20 секунд. Применяется «Универсальная тактика производства»."
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "Ручная сборка: "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
   "skills.manualLabour.handAssembly.description": [
     {
       "type": 0,
@@ -10248,7 +10288,7 @@
   "skills.manualLabour.handAssembly.effect": [
     {
       "type": 0,
-      "value": "Создавайте ботов каждые 0,2 секунды без ИИ-менеджера. Базовый выход: (завершённые ручные сборки + 1)^5, максимум 10^17 ботов за активацию. Заменяет ручное создание сборочных линий. Работа сбрасывается при Бесконечности."
+      "value": "Создавайте ботов каждые 0,2 секунды без ИИ-менеджера. Базовый выход: (завершённые ручные сборки + 1)^5, максимум 10^17 ботов за активацию. Сохраняет ручное создание сборочных линий. Работа сбрасывается при Бесконечности."
     }
   ],
   "skills.manualLabour.handAssembly.name": [
@@ -12567,10 +12607,52 @@
       "value": "Сборочные линии за активацию"
     }
   ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "Планеты Бёрча за активацию"
+    }
+  ],
   "skills.production.manualBots": [
     {
       "type": 0,
       "value": "Боты за активацию"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "Центры обработки данных за активацию"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "Галактические мозги за активацию"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "ИИ-менеджеры за активацию"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "Матрёшечные мозги за активацию"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "Планеты за активацию"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "Серверы за активацию"
     }
   ],
   "skills.purchase": [
@@ -16631,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Добавлены четыре усиления Ручного труда и десять усилений Роя и Фрагмента."
+      "value": "Добавлены улучшения Ручного труда, Роя и Фрагментов."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

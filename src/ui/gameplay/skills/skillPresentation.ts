@@ -1,3 +1,4 @@
+import { manualFacilityMessages, manualFacilityPresentation } from './manualFacilityMessages'
 import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import skillTreePresentationJson from '../../../game-data/generated/skill-tree-presentation.json'
@@ -117,6 +118,17 @@ export function useSkillPresentationNodes(discoveryUnlocked: boolean) {
           technicalDescription: authored.effect ? intl.formatMessage(authored.effect) : label, cost: augment.cost,
           x: parent.x + authored.column * SKILL_GRID_SPACING,
           y: parent.y - authored.row * SKILL_GRID_SPACING,
+        })
+      }
+      const manualRoot = nodes.get('manualLabour')
+      if (manualRoot) for (const [index, augment] of manualFacilityPresentation.entries()) {
+        const facility = intl.formatMessage(augment.name)
+        nodes.set(augment.id, { ...manualRoot, skillId: augment.id,
+          displayName: intl.formatMessage(manualFacilityMessages.name, { facility }),
+          description: '', technicalDescription: intl.formatMessage(
+            augment.facilityId === 'galactic_brains' ? manualFacilityMessages.brainEffect : manualFacilityMessages.effect,
+            { facility }), cost: 1, icon: { fileName: augment.icon },
+          x: manualRoot.x - (index + 1) * SKILL_GRID_SPACING, y: manualRoot.y,
         })
       }
       if (discoveryUnlocked) {

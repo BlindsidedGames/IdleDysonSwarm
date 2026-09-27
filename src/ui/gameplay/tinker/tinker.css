@@ -256,3 +256,10 @@
     outline-color: Highlight;
   }
 }
+
+.tinker-surface__rewards {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--ui-control-row-gap);
+  row-gap: var(--ui-related-copy-gap);
+}

@@ -8293,6 +8293,24 @@
       "value": "‬"
     }
   ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -20343,6 +20361,60 @@
       "value": "‬"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıuʞǝɹ ɐʅso ɔɹǝɐʇǝs 2% oɟ ʎonɹ ⅁ɐʅɐɔʇıɔ Ԑɹɐıus, ɔɐddǝp ɐʇ 20 sǝɔoups oɟ ɟnupǝp Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs onʇdnʇ, oɹ 1 Ԑɹɐıu ıɟ ɥıƃɥǝɹ. Ʌǝɹsɐʇıʅǝ Ԁɹopnɔʇıou ⊥ɐɔʇıɔs ɐddʅıǝs qǝɟoɹǝ ʇɥǝ ɔɐd."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıuʞǝɹ ɐʅso ɔɹǝɐʇǝs 2% oɟ ʎonɹ "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": ", ɔɐddǝp ɐʇ 20 sǝɔoups oɟ ʇɥǝıɹ ıuɔoɯıuƃ ɟɐɔıʅıʇʎ dɹopnɔʇıou. Ʌǝɹsɐʇıʅǝ Ԁɹopnɔʇıou ⊥ɐɔʇıɔs ɐddʅıǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐup-qnıʅʇ "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.manualLabour.handAssembly.description": [
     {
       "type": 0,
@@ -20364,7 +20436,7 @@
     },
     {
       "type": 0,
-      "value": "Ԑnıʅp Ԑoʇs ǝʌǝɹʎ 0.2 sǝɔoups ʍıʇɥonʇ ɐu ∀I Wɐuɐƃǝɹ. Ԑɐsǝ ʎıǝʅp ıs (ɔoɯdʅǝʇǝp Hɐup ∀ssǝɯqʅıǝs + 1)^5, ɔɐddǝp ɐʇ 100 bnɐpɹıʅʅıou Ԑoʇs dǝɹ ɐɔʇıʌɐʇıou. ᴚǝdʅɐɔǝs ∀ssǝɯqʅʎ ⅂ıuǝ ʇıuʞǝɹıuƃ. Moɹʞ ɹǝsǝʇs ou Iuɟıuıʇʎ."
+      "value": "Ԑnıʅp Ԑoʇs ǝʌǝɹʎ 0.2 sǝɔoups ʍıʇɥonʇ ɐu ∀I Wɐuɐƃǝɹ. Ԑɐsǝ ʎıǝʅp ıs (ɔoɯdʅǝʇǝp Hɐup ∀ssǝɯqʅıǝs + 1)^5, ɔɐddǝp ɐʇ 100 bnɐpɹıʅʅıou Ԑoʇs dǝɹ ɐɔʇıʌɐʇıou. Ӽǝǝds ∀ssǝɯqʅʎ ⅂ıuǝ ʇıuʞǝɹıuƃ. Moɹʞ ɹǝsǝʇs ou Iuɟıuıʇʎ."
     },
     {
       "type": 0,
@@ -25615,6 +25687,20 @@
       "value": "‬"
     }
   ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑıɹɔɥ Ԁʅɐuǝʇs dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.production.manualBots": [
     {
       "type": 0,
@@ -25623,6 +25709,90 @@
     {
       "type": 0,
       "value": "Ԑoʇs dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡɐʇɐ Ↄǝuʇǝɹs dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅɐɔʇıɔ Ԑɹɐıus dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀I Wɐuɐƃǝɹs dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐʇɹıosɥʞɐ Ԑɹɐıus dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁʅɐuǝʇs dǝɹ ɐɔʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝɹʌǝɹs dǝɹ ɐɔʇıʌɐʇıou"
     },
     {
       "type": 0,
@@ -33523,7 +33693,7 @@
     },
     {
       "type": 0,
-      "value": "∀ppǝp ɟonɹ Wɐunɐʅ ⅂ɐqonɹ ɐnƃɯǝuʇs ɐup ʇǝu Sʍɐɹɯ ɐup Ⅎɹɐƃɯǝuʇ ɐnƃɯǝuʇs."
+      "value": "∀ppǝp Wɐunɐʅ ⅂ɐqonɹ, Sʍɐɹɯ ɐup Ⅎɹɐƃɯǝuʇ ɐnƃɯǝuʇs."
     },
     {
       "type": 0,

@@ -34,7 +34,7 @@ describe('Wiki patch-note content', () => {
       "Added three linked progress bars: Discovery improves facilities, Elevation improves Cash and Bots, and Enlightenment improves panel lifetime. Later bars advance the bar before them.",
       "Added permanent Discovery speed and power upgrades in Avocato.",
       "Added seven Quantum challenges, each awarding 2 Catalysts. Reality Skill Points and selected Quantum upgrades are disabled during these runs; Reality progress is preserved.",
-      "Added four Manual Labour augments and ten Swarm and Fragment augments.",
+      "Added Manual Labour, Swarm and Fragment augments.",
       "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing now works during challenges and previews its effect before purchase.",
       "Reworked Stellar Memory to bank newly generated SRS charge on Infinity and Quantum resets, strengthening SRS augments.",
       "Hot Start is now non-refundable. Banking, Investment and Stellar Memory are refundable. Added a warning before first assigning non-refundable skills.",

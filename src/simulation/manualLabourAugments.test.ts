@@ -60,9 +60,9 @@ test('Hand Assembly grows with completed work, not Bot balance, and cannot accel
   expect(click(state, false, .1).completions).toBe(0)
   const result = click(state)
   expect(result.botsGranted).toBe(1)
-  expect(result.assemblyLinesGranted).toBe(0)
+  expect(result.assemblyLinesGranted).toBe(500)
   expect(manualBotYield(result.state)).toBe(32)
-  expect(result.state.dyson.facilities.assembly_lines).toEqual(state.dyson.facilities.assembly_lines)
+  expect(result.state.dyson.facilities.assembly_lines).toEqual([state.dyson.facilities.assembly_lines[0] + 500, state.dyson.facilities.assembly_lines[1]])
 })
 
 test('work and practice survive refund/reload and reset on Infinity', () => {
