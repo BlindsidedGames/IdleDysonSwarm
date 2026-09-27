@@ -257,10 +257,10 @@
     "defaultMessage": "Complete a Quantum run without Science or Research."
   },
   "challenges.quantumRestart": {
-    "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Division, Quantum Double IP and Quantum Entanglement are inactive. Purchased Double IP and later layers remain active. Abandoning also starts a fresh normal run."
+    "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement are inactive. Reality progress is kept. Purchased Double IP and later layers remain active. Abandoning also starts a fresh normal run."
   },
   "challenges.quantumRules": {
-    "defaultMessage": "Division, Quantum Double IP and Quantum Entanglement are inactive in Quantum challenges. Purchased boosts remain active."
+    "defaultMessage": "Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement are inactive in Quantum challenges. Reality progress is kept. Purchased boosts remain active."
   },
   "challenges.quantumTitle": {
     "defaultMessage": "Quantum Challenges"
@@ -3102,6 +3102,10 @@
   "reality.simulation-upgrades.world-trade3.title": {
     "defaultMessage": "World Trade III",
     "description": "Unity Simulation upgrade title."
+  },
+  "reality.skill-points-inactive": {
+    "defaultMessage": "Skill points apply after leaving the Quantum challenge.",
+    "description": "Reality purchase notice while its skill-point reward is suspended."
   },
   "reality.strange-matter": {
     "defaultMessage": "Strange Matter: {value}",
@@ -8058,7 +8062,7 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.challenge": {
-    "defaultMessage": "Added seven Quantum challenges awarding 2 Catalysts each. Division and Quantum Double IP are inactive during these runs. Added four Manual Labour augments, including a bonus for waiting between activations. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.",
+    "defaultMessage": "Added seven Quantum challenges awarding 2 Catalysts each. Reality Skill Points, Division and Quantum Double IP are inactive during these runs. Reality progress is kept. Added four Manual Labour augments, including a bonus for waiting between activations. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.",
     "description": "Version 4.1.10 challenge and Stellar Sacrifices changes."
   },
   "wiki.patch-notes.version-4-1-10.discovery": {

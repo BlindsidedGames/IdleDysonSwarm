@@ -1,3 +1,4 @@
+import { isQuantumChallengeActive } from './infinityChallenges'
 import {
   isFiniteNonNegativeNumber,
   isNonNegativeInteger,
@@ -439,6 +440,7 @@ function applyRealityUpgradeEffect(
     )
   }
   if (effect.effectType === 2) {
+    if (isQuantumChallengeActive(state)) return state
     return {
       ...state,
       skills: {

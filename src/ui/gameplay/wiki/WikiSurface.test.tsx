@@ -36,7 +36,7 @@ describe('Wiki patch-note content', () => {
       'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.',
       'Fixed Permanent 2× Bots losing its effect after resetting your save.',
       'Fixed old research and cleared skill presets returning after saving or reloading.',
-      'Added seven Quantum challenges awarding 2 Catalysts each. Division and Quantum Double IP are inactive during these runs. Added four Manual Labour augments, including a bonus for waiting between activations. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.',
+      'Added seven Quantum challenges awarding 2 Catalysts each. Reality Skill Points, Division and Quantum Double IP are inactive during these runs. Reality progress is kept. Added four Manual Labour augments, including a bonus for waiting between activations. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.',
       'Added ten Swarm and Fragment augments.',
       'Rebalanced facility price growth and megastructure costs and production.',
       'The sixth Avotation secret now completes automatically once reached with Discovery unlocked.',

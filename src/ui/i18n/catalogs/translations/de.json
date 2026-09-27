@@ -69,8 +69,8 @@
   "challenges.noScience": "Ohne Wissenschaft",
   "challenges.noScience.active": "Ohne Wissenschaft aktiv · Wissenschaft und Forschung deaktiviert",
   "challenges.noScience.description": "Schließe einen Quantenlauf ohne Wissenschaft oder Forschung ab.",
-  "challenges.quantumRestart": "Startet einen neuen Quantenlauf ohne Quantensplitter zu vergeben. Division, Quanten-Doppel-IP und Quantenverschränkung sind inaktiv. Gekaufte Doppel-IP und spätere Ebenen bleiben aktiv. Abbrechen startet ebenfalls einen neuen normalen Lauf.",
-  "challenges.quantumRules": "Division, Quanten-Doppel-IP und Quantenverschränkung sind in Quanten-Herausforderungen inaktiv. Gekaufte Boosts bleiben aktiv.",
+  "challenges.quantumRestart": "Startet einen neuen Quantenlauf ohne Quantensplitter zu vergeben. Division, Quanten-Doppel-IP und Quantenverschränkung sind inaktiv. Gekaufte Doppel-IP und spätere Ebenen bleiben aktiv. Abbrechen startet ebenfalls einen neuen normalen Lauf. Realitäts-Fertigkeitspunkte sind inaktiv; der Realitätsfortschritt bleibt erhalten.",
+  "challenges.quantumRules": "Division, Quanten-Doppel-IP und Quantenverschränkung sind in Quanten-Herausforderungen inaktiv. Gekaufte Boosts bleiben aktiv. Realitäts-Fertigkeitspunkte sind inaktiv; der Realitätsfortschritt bleibt erhalten.",
   "challenges.quantumTitle": "Quantenherausforderungen",
   "challenges.replay": "Wiederholen",
   "challenges.restart": "Dies beginnt einen neuen Unendlichkeitsdurchlauf ohne IP-Belohnung. Unendlichkeitsverbesserungen und spätere Ebenen bleiben erhalten. Ein Abbruch startet ebenfalls einen neuen normalen Durchlauf.",
@@ -817,6 +817,7 @@
   "reality.simulation-upgrades.world-trade2.title": "Welthandel II",
   "reality.simulation-upgrades.world-trade3.description": "Keine Schaltfläche zum Hochladen mehr.",
   "reality.simulation-upgrades.world-trade3.title": "Welthandel III",
+  "reality.skill-points-inactive": "Fertigkeitspunkte werden nach Verlassen der Quantenherausforderung wirksam.",
   "reality.strange-matter": "Seltsame Materie: {value}",
   "reality.unavailable": "Realität ist vorübergehend nicht verfügbar.",
   "reality.universe-designation": "Bezeichnung: {value}",
@@ -2078,7 +2079,7 @@
   "wiki.patch-notes.version-4-1-10": "Version 4.1.10",
   "wiki.patch-notes.version-4-1-10.balance": "Preisanstieg der Anlagen sowie Kosten und Produktion der Megastrukturen wurden neu ausbalanciert.",
   "wiki.patch-notes.version-4-1-10.bot-boost": "Behoben: Dauerhaft 2× Bots verlor nach dem Zurücksetzen des Spielstands seine Wirkung.",
-  "wiki.patch-notes.version-4-1-10.challenge": "Sieben Quanten-Herausforderungen mit je 2 Katalysatoren hinzugefügt. Division und Quanten-Doppel-IP sind dabei inaktiv. Vier Augmente für Manuelle Arbeit hinzugefügt, darunter ein Wartebonus zwischen Aktivierungen. Frakturieren funktioniert während Herausforderungen und zeigt eine Effektvorschau. Stellare Opfer erzeugt deine höchste vorhandene Anlage.",
+  "wiki.patch-notes.version-4-1-10.challenge": "Sieben Quanten-Herausforderungen mit je 2 Katalysatoren hinzugefügt. Division und Quanten-Doppel-IP sind dabei inaktiv. Vier Augmente für Manuelle Arbeit hinzugefügt, darunter ein Wartebonus zwischen Aktivierungen. Frakturieren funktioniert während Herausforderungen und zeigt eine Effektvorschau. Stellare Opfer erzeugt deine höchste vorhandene Anlage. Realitäts-Fertigkeitspunkte sind inaktiv; der Realitätsfortschritt bleibt erhalten.",
   "wiki.patch-notes.version-4-1-10.discovery": "Entdeckung verstärkt Anlagen. Schalte Erhebung für Geld und Bots und dann Erleuchtung für Paneellebensdauer frei; jeder neue Balken überträgt Fortschritt auf den vorherigen. Betroffene Fähigkeiten passen sich beim Freischalten an.",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "Gemeinsame Entdeckungsgeschwindigkeit und getrennte Stärkeverbesserungen in einer einklappbaren Avocato-Kategorie hinzugefügt.",
   "wiki.patch-notes.version-4-1-10.fixes": "Nach deinem ersten Quantum beginnen neue Durchläufe mit einer Montagelinie. Behoben: Galaxien vor der Kopfzeile, Cloud-Erhalt verdienter Entwickleroptionen, Fähigkeitspunktzählung für Augmente, negative Debug-Anpassungen und Werberotation.",
@@ -2086,6 +2087,7 @@
   "wiki.patch-notes.version-4-1-10.save-fix": "Behoben: Alte Forschung und geleerte Fähigkeitensets kehrten nach dem Speichern oder Neuladen zurück.",
   "wiki.patch-notes.version-4-1-10.secret": "Das sechste Avotation-Geheimnis wird jetzt beim Erreichen automatisch abgeschlossen, wenn Entdeckung freigeschaltet ist.",
   "wiki.patch-notes.version-4-1-10.speedruns": "Speedruns vergleichen jetzt den aktuellen Lauf mit persönlichen Bestzeiten, die beim Zurücksetzen des Spielstands erhalten bleiben. Laufanzeigen, Erfassung doppelter IP und gemerkte Statistik-Tabs hinzugefügt. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert. Neue Meilensteinrekorde verwenden die gespielte Zeit.",
+  "wiki.patch-notes.version-4-1-10.swarm": "Zehn Schwarm- und Fragment-Augmente hinzugefügt.",
   "wiki.patch-notes.version-4-1-10.transcendence": "Overflow heißt jetzt Transzendenz. Gib bei Avocato 1 Transzendenzpunkt aus, um Entdeckung freizuschalten und Wissenschaft und Forschung zu ersetzen.",
   "wiki.patch-notes.version-4-1-2": "Version 4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "Double Time lässt nun dauerhaft alle Spielsysteme mit doppelter Normalgeschwindigkeit laufen.",
@@ -2267,6 +2269,5 @@
   "wiki.topic-navigation": "Wiki-Themen",
   "wiki.topics": "Themen",
   "wiki.transcendence.overview": "Bei <value>4e242 Bots</value> kannst du in Avocato transzendieren, um frühere Ebenen zurückzusetzen und <value>einen Transzendenzpunkt</value> zu erhalten. Gib einen Punkt für <value>Entdeckung freischalten</value> aus, um Wissenschaft und Forschung dauerhaft zu ersetzen. Vorhandene Wissenschaft und Forschungsstufen werden nicht übertragen.",
-  "wiki.transcendence.overview-title": "Jenseits des Schwarms",
-  "wiki.patch-notes.version-4-1-10.swarm": "Zehn Schwarm- und Fragment-Augmente hinzugefügt."
+  "wiki.transcendence.overview-title": "Jenseits des Schwarms"
 }

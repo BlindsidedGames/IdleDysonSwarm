@@ -1,3 +1,5 @@
+import { deriveCanonicalArtifactSkillPoints } from './canonicalEventTimeModel'
+import { REALITY_UPGRADE_DEFINITIONS, purchaseRealityUpgrade } from './realityUpgrades'
 import { purchaseCanonicalInfinityShopItem } from './canonicalInfinityShop'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import { selectStableFrontendSkillPreview } from '../application/frontendSnapshot'
@@ -149,4 +151,62 @@ test.each(['built-by-hand', 'hands-off', 'grounded'] as const)('%s blocks Infini
   const ordinary = purchaseCanonicalInfinityShopItem({ ...state, challenges: { ...state.challenges!, active: null } }, 'retain-assembly-lines')
   expect(ordinary.accepted).toBe(true)
   expect(ordinary.state.dyson.facilities.assembly_lines[1]).toBe(10)
+})
+
+
+test.each(QUANTUM_CHALLENGE_IDS)('%s suspends Reality points without losing Reality or other point sources', id => {
+  const state = seed()
+  state.dream.upgrades.translation1 = true
+  state.dream.upgrades.speed1 = true
+  state.dream.strangeMatter = 1e30
+  state.skills.points = 2n
+  const artifact = (s: CanonicalGameStateV1) => {
+    const result = deriveCanonicalArtifactSkillPoints(s, REALITY_UPGRADE_DEFINITIONS)
+    if (!result.ok) throw Error('artifact derivation failed')
+    return result.value
+  }
+  expect(artifact(state)).toBe(2n)
+  const enter = restartInfinityChallenge(state, 'enter', artifact(state), id)
+  if (!enter.ok) throw Error(enter.code)
+  expect(enter.state.skills.points).toBe(0n)
+  expect(enter.state.dream).toEqual(state.dream)
+
+  // Buying Reality upgrades during a challenge still advances Reality, but
+  // cannot inject points through the immediate purchase path.
+  const purchase = purchaseRealityUpgrade(enter.state, 'translation2')
+  expect(purchase.accepted).toBe(true)
+  expect(purchase.candidate.skills.points).toBe(0n)
+  expect(purchase.candidate.dream.upgrades.translation2).toBe(true)
+  expect(artifact(purchase.candidate)).toBe(3n)
+  const current = { ...purchase.candidate, infinity: { ...purchase.candidate.infinity, permanentSkillPoints: 3n } }
+  for (const automatic of [false, true]) {
+    const infinity = applyCanonicalInfinityReset(current, { breakInfinity: false, requestedReward: 1n, artifactSkillPoints: artifact(current), automatic })
+    if (!infinity.ok) throw Error('Infinity reset failed')
+    expect(infinity.state.skills.points).toBe(3n)
+    expect(infinity.state.dream).toEqual(current.dream)
+  }
+  const loaded = hydrateGameState(dehydrateGameState(session(), current)).state
+  expect(loaded.skills.points).toBe(0n)
+  expect(loaded.dream.upgrades).toEqual(current.dream.upgrades)
+  const finish = applyCanonicalQuantumReset(loaded, artifact(loaded))
+  const abandon = restartInfinityChallenge(loaded, 'abandon', artifact(loaded))
+  for (const result of [finish, abandon]) {
+    if (!result.ok) throw Error('Challenge exit failed')
+    expect(result.state.challenges?.active).toBeNull()
+    expect(result.state.skills.points).toBe(3n)
+    expect(result.state.dream).toEqual(loaded.dream)
+  }
+})
+
+test('Avotation points remain available in Quantum challenges and Reality points still work outside them', () => {
+  const state = seed()
+  state.secretProgress = { ...state.secretProgress, completed: true, step: 7 }
+  const enter = restartInfinityChallenge(state, 'enter', 20n, 'no-science')
+  expect(enter.ok && enter.state.skills.points).toBe(4n)
+  const normal = { ...state, dream: { ...state.dream, strangeMatter: 1e30 } }
+  const purchase = purchaseRealityUpgrade(normal, 'translation1')
+  expect(purchase.accepted).toBe(true)
+  expect(purchase.candidate.skills.points).toBe(normal.skills.points + 1n)
+  const infinity = restartInfinityChallenge(state, 'enter', 20n, 'trial-and-error')
+  expect(infinity.ok && infinity.state.skills.points).toBe(20n)
 })

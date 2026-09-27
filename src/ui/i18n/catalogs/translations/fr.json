@@ -69,8 +69,8 @@
   "challenges.noScience": "Sans Science",
   "challenges.noScience.active": "Sans Science actif · Science et Recherche désactivées",
   "challenges.noScience.description": "Terminez une partie quantique sans Science ni Recherche.",
-  "challenges.quantumRestart": "Commence un nouveau cycle quantique sans attribuer d’Éclats quantiques. Division, Double IP quantique et Intrication quantique sont inactifs. Double IP acheté et les couches ultérieures restent actifs. Abandonner commence aussi un nouveau cycle normal.",
-  "challenges.quantumRules": "Division, Double IP quantique et Intrication quantique sont inactifs dans les défis quantiques. Les bonus achetés restent actifs.",
+  "challenges.quantumRestart": "Commence un nouveau cycle quantique sans attribuer d’Éclats quantiques. Division, Double IP quantique et Intrication quantique sont inactifs. Double IP acheté et les couches ultérieures restent actifs. Abandonner commence aussi un nouveau cycle normal. Les points de compétence de Réalité sont inactifs ; la progression de Réalité est conservée.",
+  "challenges.quantumRules": "Division, Double IP quantique et Intrication quantique sont inactifs dans les défis quantiques. Les bonus achetés restent actifs. Les points de compétence de Réalité sont inactifs ; la progression de Réalité est conservée.",
   "challenges.quantumTitle": "Défis quantiques",
   "challenges.replay": "Rejouer",
   "challenges.restart": "Cette action commence un nouveau cycle d’Infini sans accorder de PI. Les améliorations d’Infini et les couches suivantes sont conservées. Abandonner commence également un nouveau cycle normal.",
@@ -817,6 +817,7 @@
   "reality.simulation-upgrades.world-trade2.title": "Commerce mondial II",
   "reality.simulation-upgrades.world-trade3.description": "Plus besoin d’appuyer sur un bouton.",
   "reality.simulation-upgrades.world-trade3.title": "Commerce mondial III",
+  "reality.skill-points-inactive": "Les points de compétence s’appliquent après avoir quitté le défi quantique.",
   "reality.strange-matter": "Matière étrange : {value}",
   "reality.unavailable": "La Réalité est temporairement indisponible.",
   "reality.universe-designation": "Désignation : {value}",
@@ -2078,7 +2079,7 @@
   "wiki.patch-notes.version-4-1-10": "Version 4.1.10",
   "wiki.patch-notes.version-4-1-10.balance": "Rééquilibrage de la hausse des prix des installations, ainsi que des coûts et de la production des mégastructures.",
   "wiki.patch-notes.version-4-1-10.bot-boost": "Correction du bonus Bots ×2 permanents qui cessait de fonctionner après la réinitialisation de la sauvegarde.",
-  "wiki.patch-notes.version-4-1-10.challenge": "Ajout de sept défis quantiques rapportant chacun 2 Catalyseurs. Division et Double IP quantique sont inactifs pendant ces cycles. Ajout de quatre augments de Travail manuel, dont un bonus d’attente entre les activations. La fracturation fonctionne pendant les défis et affiche son effet à l’avance. Sacrifices stellaires crée votre installation possédée la plus avancée.",
+  "wiki.patch-notes.version-4-1-10.challenge": "Ajout de sept défis quantiques rapportant chacun 2 Catalyseurs. Division et Double IP quantique sont inactifs pendant ces cycles. Ajout de quatre augments de Travail manuel, dont un bonus d’attente entre les activations. La fracturation fonctionne pendant les défis et affiche son effet à l’avance. Sacrifices stellaires crée votre installation possédée la plus avancée. Les points de compétence de Réalité sont inactifs ; la progression de Réalité est conservée.",
   "wiki.patch-notes.version-4-1-10.discovery": "Découverte améliore les installations. Débloquez Élévation pour l’argent et les Bots, puis Illumination pour la durée de vie des panneaux ; chaque nouvelle barre alimente la précédente. Les compétences concernées s’adaptent au déblocage.",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "Ajout d’une vitesse de Découverte partagée et d’améliorations de puissance séparées dans une catégorie repliable d’Avocato.",
   "wiki.patch-notes.version-4-1-10.fixes": "Après votre premier Quantum, les nouvelles parties commencent avec une Chaîne de montage. Corrections : galaxies devant l’en-tête, conservation Cloud des Options développeur gagnées, comptage des points de compétence des augments, ajustements négatifs de débogage et rotation des promotions.",
@@ -2086,6 +2087,7 @@
   "wiki.patch-notes.version-4-1-10.save-fix": "Correction du retour d’anciennes recherches et de préréglages de compétences effacés après une sauvegarde ou un rechargement.",
   "wiki.patch-notes.version-4-1-10.secret": "Le sixième secret d’Avotation se termine désormais automatiquement lorsqu’il est atteint avec Découverte débloquée.",
   "wiki.patch-notes.version-4-1-10.speedruns": "Les speedruns comparent désormais votre partie actuelle à vos records personnels, conservés après la réinitialisation de la sauvegarde. Ajout d’indicateurs, du suivi des IP doublés et de la mémorisation de l’onglet Statistiques. Les records sont synchronisés via le Cloud, mais exclus des exports. Les nouveaux records utilisent le temps de jeu.",
+  "wiki.patch-notes.version-4-1-10.swarm": "Ajout de dix augments d’Essaim et de Fragment.",
   "wiki.patch-notes.version-4-1-10.transcendence": "Overflow devient Transcendance. Dépensez 1 point de Transcendance chez Avocato pour débloquer la Découverte, qui remplace la Science et la Recherche.",
   "wiki.patch-notes.version-4-1-2": "Version 4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "Double Time fait désormais fonctionner en permanence tous les systèmes du jeu à deux fois leur vitesse normale.",
@@ -2267,6 +2269,5 @@
   "wiki.topic-navigation": "Sujets du wiki",
   "wiki.topics": "Sujets",
   "wiki.transcendence.overview": "À <value>4e242 Bots</value>, Transcendez chez Avocato pour réinitialiser les couches précédentes et gagner <value>un point de Transcendance</value>. Dépensez un point pour <value>Débloquer Découverte</value> afin de remplacer définitivement Science et Recherche. La Science et les niveaux de recherche existants ne sont pas transférés.",
-  "wiki.transcendence.overview-title": "Au-delà de l’essaim",
-  "wiki.patch-notes.version-4-1-10.swarm": "Ajout de dix augments d’Essaim et de Fragment."
+  "wiki.transcendence.overview-title": "Au-delà de l’essaim"
 }

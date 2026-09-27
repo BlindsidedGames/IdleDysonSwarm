@@ -3,8 +3,8 @@
 ## Scope and decisions
 
 Six new Quantum challenges join No Science; each grants two Catalysts once.
-All Quantum challenges suppress Division, Quantum Double IP and Quantum
-Entanglement without removing ownership. Purchased boosts, Discovery, Avocato,
+All Quantum challenges suppress Reality-earned skill points, Division, Quantum
+Double IP and Quantum Entanglement without removing ownership or resetting Reality. Purchased boosts, Discovery, Avocato,
 Fractured skills and Fracturing remain available. Infinity challenges retain
 their previous rules.
 
@@ -189,3 +189,33 @@ additional point came from the normal decayed-panel goal. Screenshots:
 `/tmp/ids-tinker-goals-qa/built-live-start.png`, `built-live-0.png`, and
 `built-live-1.png`. Full suite: 1,943 tests / 187 files; type, lint, data,
 localization, first-Dyson parity and web build pass.
+
+
+### Reality skill-point restriction (2026-09-27)
+
+- All seven Quantum challenges exclude Reality upgrade SP from challenge entry
+  and subsequent Infinity starting points, before automatic skill assignment.
+- Reality upgrade purchases retain their ownership and other effects but defer
+  their skill points until leaving the challenge. Completion and abandonment
+  restore the full contribution, including upgrades bought during the challenge.
+- Reality progression, goals, permanent Infinity SP and the separate Avotation
+  reward are retained. Infinity challenge rules remain unchanged.
+- Already-running challenges from older builds recalculate their starting points
+  at the next Infinity or challenge restart; loading does not confiscate points
+  or clear assigned skills mid-run.
+- Challenge rules, confirmation text, Reality purchase notices and 4.1.10 notes
+  are localized. Reality notices appear only on purchases with an SP reward.
+- Regression coverage: every Quantum challenge's entry, purchase, manual/automatic
+  Infinity, save/reload, completion and abandonment; ordinary Reality purchases,
+  Infinity challenges, Avotation and frontend notice projection.
+- Verification: full suite 1,966 tests / 188 files passed; after adding the purchase
+  notice, the affected frontend suite passed all 13 tests. TypeScript, lint,
+  localization and production build passed (existing chunk-size warning).
+- Live disposable-browser QA: imported two Reality upgrades, entered No Science
+  (2 Reality SP removed), bought Translation II (no new SP; the ordinary goal SP
+  remained), reloaded, then abandoned (3 Reality SP restored). Reality's upgrades,
+  resources and progression remained intact; the challenge-only purchase notice
+  disappeared outside the challenge. Screenshot: `/tmp/reality-sp-challenge.png`.
+- Self-review checked both SP award paths and target challenge state at reset.
+  No native iOS/Android/Steam interaction QA or deployment was performed for this
+  follow-up.

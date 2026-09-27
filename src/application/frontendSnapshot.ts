@@ -1,5 +1,5 @@
 import { builtByHandTinkerGoal } from '../simulation/canonicalGoalProgression'
-import { effectiveDivisions, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
+import { effectiveDivisions, isQuantumChallengeActive, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
@@ -598,6 +598,7 @@ export interface FrontendDreamResetPreview {
 }
 
 export interface FrontendRealityUpgradePreview {
+  readonly skillPointsInactive?: boolean
   readonly upgradeId: RealityUpgradeId
   readonly eligible: boolean
   readonly cost: number
@@ -2516,6 +2517,8 @@ function selectRealityPreviews(
       const definition = REALITY_UPGRADE_DEFINITIONS.get(upgradeId)
       return {
         upgradeId,
+        skillPointsInactive: isQuantumChallengeActive(state) &&
+          (definition?.purchaseEffects.some(effect => effect.effectType === 2) ?? false),
         eligible: result.accepted && result.changed,
         cost: definition?.cost ?? 0,
         code: result.code,

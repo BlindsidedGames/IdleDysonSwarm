@@ -109,8 +109,11 @@ export function applyCanonicalQuantumReset(
     permanentSkills.superRadiantScattering = { ...permanentSkills.superRadiantScattering,
       secondaryTimerSeconds: options.restartOnly ? permanentSkills.superRadiantScattering.secondaryTimerSeconds : bankedSrsSecondsAfterReset(state) }
   }
+  const nextChallenges = !options.restartOnly && isQuantumChallengeActive(state)
+    ? completeQuantumChallenge(state) : state.challenges
   const assignmentSeed: CanonicalGameStateV1 = {
     ...state,
+    challenges: nextChallenges,
     infinity: {
       ...state.infinity,
       permanentSkillPoints: 0n,
@@ -168,8 +171,7 @@ export function applyCanonicalQuantumReset(
     ok: true,
     state: initializeSwarmGrants({
       ...state,
-      challenges: !options.restartOnly && isQuantumChallengeActive(state)
-        ? completeQuantumChallenge(state) : state.challenges,
+      challenges: nextChallenges,
       meta: {
         ...state.meta,
         firstInfinityComplete: true,

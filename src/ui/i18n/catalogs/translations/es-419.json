@@ -69,8 +69,8 @@
   "challenges.noScience": "Sin Ciencia",
   "challenges.noScience.active": "Sin Ciencia activo · Ciencia e Investigación desactivadas",
   "challenges.noScience.description": "Completa una partida cuántica sin Ciencia ni Investigación.",
-  "challenges.quantumRestart": "Inicia una partida cuántica nueva sin otorgar Fragmentos cuánticos. División, Doble IP cuántico y Entrelazamiento cuántico están inactivos. Doble IP comprado y las capas posteriores siguen activos. Abandonar también inicia una partida normal nueva.",
-  "challenges.quantumRules": "División, Doble IP cuántico y Entrelazamiento cuántico están inactivos en los desafíos cuánticos. Los potenciadores comprados siguen activos.",
+  "challenges.quantumRestart": "Inicia una partida cuántica nueva sin otorgar Fragmentos cuánticos. División, Doble IP cuántico y Entrelazamiento cuántico están inactivos. Doble IP comprado y las capas posteriores siguen activos. Abandonar también inicia una partida normal nueva. Los puntos de habilidad de Realidad están inactivos; el progreso de Realidad se conserva.",
+  "challenges.quantumRules": "División, Doble IP cuántico y Entrelazamiento cuántico están inactivos en los desafíos cuánticos. Los potenciadores comprados siguen activos. Los puntos de habilidad de Realidad están inactivos; el progreso de Realidad se conserva.",
   "challenges.quantumTitle": "Desafíos cuánticos",
   "challenges.replay": "Repetir",
   "challenges.restart": "Esto inicia una nueva partida de Infinito sin otorgar PI. Conservas las mejoras de Infinito y las capas posteriores. Abandonar también inicia una nueva partida normal.",
@@ -817,6 +817,7 @@
   "reality.simulation-upgrades.world-trade2.title": "Comercio mundial II",
   "reality.simulation-upgrades.world-trade3.description": "Ya no hay que presionar botones.",
   "reality.simulation-upgrades.world-trade3.title": "Comercio mundial III",
+  "reality.skill-points-inactive": "Los puntos de habilidad se aplican al salir del desafío cuántico.",
   "reality.strange-matter": "Materia extraña: {value}",
   "reality.unavailable": "Realidad no está disponible temporalmente.",
   "reality.universe-designation": "Designación: {value}",
@@ -2078,7 +2079,7 @@
   "wiki.patch-notes.version-4-1-10": "Versión 4.1.10",
   "wiki.patch-notes.version-4-1-10.balance": "Se reajustaron el aumento de precios de las instalaciones y los costos y la producción de las megaestructuras.",
   "wiki.patch-notes.version-4-1-10.bot-boost": "Se corrigió un error por el que Bots ×2 permanentes dejaba de funcionar al reiniciar la partida.",
-  "wiki.patch-notes.version-4-1-10.challenge": "Se agregaron siete desafíos cuánticos que otorgan 2 Catalizadores cada uno. División y Doble IP cuántico están inactivos durante estas partidas. Se agregaron cuatro aumentos de Trabajo manual, incluido un bono por esperar entre activaciones. La fractura funciona durante los desafíos y muestra su efecto antes de comprarla. Sacrificios estelares crea tu instalación más avanzada actual.",
+  "wiki.patch-notes.version-4-1-10.challenge": "Se agregaron siete desafíos cuánticos que otorgan 2 Catalizadores cada uno. División y Doble IP cuántico están inactivos durante estas partidas. Se agregaron cuatro aumentos de Trabajo manual, incluido un bono por esperar entre activaciones. La fractura funciona durante los desafíos y muestra su efecto antes de comprarla. Sacrificios estelares crea tu instalación más avanzada actual. Los puntos de habilidad de Realidad están inactivos; el progreso de Realidad se conserva.",
   "wiki.patch-notes.version-4-1-10.discovery": "Descubrimiento potencia las instalaciones. Desbloquea Elevación para dinero y Bots, luego Iluminación para la vida útil de paneles; cada barra nueva aporta progreso a la anterior. Las habilidades relacionadas se adaptan al desbloquearlo.",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "Se agregaron velocidad de Descubrimiento compartida y mejoras de potencia separadas en una categoría plegable de Avocato.",
   "wiki.patch-notes.version-4-1-10.fixes": "Después de tu primer Quantum, las nuevas partidas comienzan con una Línea de ensamblaje. Se corrigieron galaxias delante del encabezado, conservación en la nube de Opciones de desarrollador ganadas, conteo de puntos de aumentos, ajustes negativos de depuración y rotación de promociones.",
@@ -2086,6 +2087,7 @@
   "wiki.patch-notes.version-4-1-10.save-fix": "Se corrigió que las investigaciones antiguas y las configuraciones de habilidades vaciadas reaparecieran al guardar o volver a cargar.",
   "wiki.patch-notes.version-4-1-10.secret": "El sexto secreto de Avotation ahora se completa automáticamente al alcanzarlo con Descubrimiento desbloqueado.",
   "wiki.patch-notes.version-4-1-10.speedruns": "Los speedruns ahora comparan tu partida actual con mejores marcas personales que se conservan al reiniciar la partida. Se agregaron indicadores, seguimiento de IP dobles y la pestaña de Estadísticas recordará tu selección. Las marcas se sincronizan mediante la nube, pero no se incluyen en las exportaciones. Los nuevos récords de hitos usan el tiempo jugado.",
+  "wiki.patch-notes.version-4-1-10.swarm": "Se agregaron diez aumentos de Enjambre y Fragmento.",
   "wiki.patch-notes.version-4-1-10.transcendence": "Overflow ahora se llama Trascendencia. Gasta 1 punto de Trascendencia en Avocato para desbloquear Descubrimiento, que reemplaza Ciencia e Investigación.",
   "wiki.patch-notes.version-4-1-2": "Versión 4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "Double Time ahora ejecuta permanentemente todos los sistemas del juego al doble de su velocidad normal.",
@@ -2267,6 +2269,5 @@
   "wiki.topic-navigation": "Temas de la Wiki",
   "wiki.topics": "Temas",
   "wiki.transcendence.overview": "Con <value>4e242 Bots</value>, Trascender en Avocato reinicia las capas anteriores y otorga <value>un punto de Trascendencia</value>. Gasta un punto en <value>Desbloquear Descubrimiento</value> para reemplazar permanentemente Ciencia e Investigación. La Ciencia y los niveles de investigación existentes no se transfieren.",
-  "wiki.transcendence.overview-title": "Más allá del enjambre",
-  "wiki.patch-notes.version-4-1-10.swarm": "Se agregaron diez aumentos de Enjambre y Fragmento."
+  "wiki.transcendence.overview-title": "Más allá del enjambre"
 }

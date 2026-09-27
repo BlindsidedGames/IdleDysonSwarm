@@ -1,5 +1,6 @@
+import { AVOCADO_MEDITATION_SKILL_POINT_REWARD } from './avocadoMeditation'
 import { initializeSwarmGrants, swarmGrantsAfterInfinity } from './swarmAugments'
-import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive } from './infinityChallenges'
+import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive, isQuantumChallengeActive } from './infinityChallenges'
 import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
 import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
@@ -42,7 +43,7 @@ export interface CanonicalInfinityResetRequest {
   readonly restartOnly?: boolean
   readonly breakInfinity: boolean
   readonly requestedReward: bigint
-  /** Platform/achievement contribution derived outside player state. */
+  /** Full Reality and Avotation contribution; challenge restrictions apply here. */
   readonly artifactSkillPoints: bigint
   /** True only when the event model initiated the reset automatically. */
   readonly automatic?: boolean
@@ -188,12 +189,21 @@ export function applyCanonicalInfinityReset(
   const bankedSkillPoints = request.restartOnly ? 0n :
     owned(state.skills.byId, 'banking') +
     owned(state.skills.byId, 'investmentPortfolio')
+  // Reality ownership survives challenges, but only the separate Avotation
+  // reward contributes to their starting points. Keep the supplied total raw
+  // so abandoning/completing a challenge can restore the full contribution.
+  const artifactSkillPoints = isQuantumChallengeActive(state)
+    ? (state.secretProgress.completed
+      ? (request.artifactSkillPoints < AVOCADO_MEDITATION_SKILL_POINT_REWARD
+        ? request.artifactSkillPoints : AVOCADO_MEDITATION_SKILL_POINT_REWARD)
+      : 0n)
+    : request.artifactSkillPoints
   const initialSkillPoints = addDiscrete(
     addDiscrete(
       state.infinity.permanentSkillPoints,
       bankedSkillPoints,
     ),
-    request.artifactSkillPoints,
+    artifactSkillPoints,
   )
   const assignment = applyAutoAssignment(
     initialSkillPoints,

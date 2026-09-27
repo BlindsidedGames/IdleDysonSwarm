@@ -69,8 +69,8 @@
   "challenges.noScience": "Sem Ciência",
   "challenges.noScience.active": "Sem Ciência ativo · Ciência e Pesquisa desativadas",
   "challenges.noScience.description": "Conclua uma partida quântica sem Ciência nem Pesquisa.",
-  "challenges.quantumRestart": "Inicia uma nova rodada quântica sem conceder Fragmentos quânticos. Divisão, IP em dobro quântico e Entrelaçamento quântico ficam inativos. IP em dobro comprado e camadas posteriores permanecem ativos. Abandonar também inicia uma nova rodada normal.",
-  "challenges.quantumRules": "Divisão, IP em dobro quântico e Entrelaçamento quântico ficam inativos nos desafios quânticos. Bônus comprados permanecem ativos.",
+  "challenges.quantumRestart": "Inicia uma nova rodada quântica sem conceder Fragmentos quânticos. Divisão, IP em dobro quântico e Entrelaçamento quântico ficam inativos. IP em dobro comprado e camadas posteriores permanecem ativos. Abandonar também inicia uma nova rodada normal. Os pontos de habilidade da Realidade ficam inativos; o progresso da Realidade é mantido.",
+  "challenges.quantumRules": "Divisão, IP em dobro quântico e Entrelaçamento quântico ficam inativos nos desafios quânticos. Bônus comprados permanecem ativos. Os pontos de habilidade da Realidade ficam inativos; o progresso da Realidade é mantido.",
   "challenges.quantumTitle": "Desafios quânticos",
   "challenges.replay": "Repetir",
   "challenges.restart": "Isso inicia uma nova rodada de Infinito sem conceder PI. As melhorias de Infinito e as camadas posteriores são mantidas. Abandonar também inicia uma nova rodada normal.",
@@ -817,6 +817,7 @@
   "reality.simulation-upgrades.world-trade2.title": "Comércio Mundial II",
   "reality.simulation-upgrades.world-trade3.description": "Chega de apertar botões.",
   "reality.simulation-upgrades.world-trade3.title": "Comércio Mundial III",
+  "reality.skill-points-inactive": "Os pontos de habilidade são aplicados após sair do desafio quântico.",
   "reality.strange-matter": "Matéria Estranha: {value}",
   "reality.unavailable": "A Realidade está temporariamente indisponível.",
   "reality.universe-designation": "Designação: {value}",
@@ -2078,7 +2079,7 @@
   "wiki.patch-notes.version-4-1-10": "Versão 4.1.10",
   "wiki.patch-notes.version-4-1-10.balance": "Rebalanceados o aumento de preços das instalações e os custos e a produção das megaestruturas.",
   "wiki.patch-notes.version-4-1-10.bot-boost": "Corrigido um erro que fazia Bots 2× permanentes parar de funcionar após reiniciar o progresso salvo.",
-  "wiki.patch-notes.version-4-1-10.challenge": "Adicionados sete desafios quânticos que concedem 2 Catalisadores cada. Divisão e IP em dobro quântico ficam inativos nessas rodadas. Adicionados quatro aumentos de Trabalho manual, incluindo um bônus por esperar entre ativações. Fraturar funciona nos desafios e mostra uma prévia do efeito. Sacrifícios estelares cria sua instalação mais avançada atual.",
+  "wiki.patch-notes.version-4-1-10.challenge": "Adicionados sete desafios quânticos que concedem 2 Catalisadores cada. Divisão e IP em dobro quântico ficam inativos nessas rodadas. Adicionados quatro aumentos de Trabalho manual, incluindo um bônus por esperar entre ativações. Fraturar funciona nos desafios e mostra uma prévia do efeito. Sacrifícios estelares cria sua instalação mais avançada atual. Os pontos de habilidade da Realidade ficam inativos; o progresso da Realidade é mantido.",
   "wiki.patch-notes.version-4-1-10.discovery": "Descoberta fortalece instalações. Desbloqueie Elevação para dinheiro e Bots, depois Iluminação para a vida útil dos painéis; cada barra nova fornece progresso à anterior. Habilidades relacionadas se adaptam ao desbloqueio.",
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": "Adicionadas velocidade de Descoberta compartilhada e melhorias de poder separadas em uma categoria recolhível de Avocato.",
   "wiki.patch-notes.version-4-1-10.fixes": "Após seu primeiro Quantum, novas partidas começam com uma Linha de montagem. Corrigidos: galáxias sobre o cabeçalho, retenção na nuvem de Opções de desenvolvedor conquistadas, contagem de pontos de aumentos, ajustes negativos de depuração e rotação de promoções.",
@@ -2086,6 +2087,7 @@
   "wiki.patch-notes.version-4-1-10.save-fix": "Corrigido o retorno de pesquisas antigas e predefinições de habilidades esvaziadas após salvar ou recarregar.",
   "wiki.patch-notes.version-4-1-10.secret": "O sexto segredo de Avotation agora é concluído automaticamente ao ser alcançado com Descoberta desbloqueada.",
   "wiki.patch-notes.version-4-1-10.speedruns": "Os speedruns agora comparam sua partida atual com recordes pessoais que permanecem após reiniciar o progresso salvo. Adicionados indicadores, registro de IP em dobro e memória da aba de Estatísticas. Os recordes são sincronizados pela nuvem, mas não são incluídos nas exportações. Novos recordes de marcos usam o tempo jogado.",
+  "wiki.patch-notes.version-4-1-10.swarm": "Adicionados dez aprimoramentos de Enxame e Fragmento.",
   "wiki.patch-notes.version-4-1-10.transcendence": "Overflow agora se chama Transcendência. Gaste 1 ponto de Transcendência no Avocato para desbloquear Descoberta, que substitui Ciência e Pesquisa.",
   "wiki.patch-notes.version-4-1-2": "Versão 4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "Double Time agora faz todos os sistemas do jogo funcionarem permanentemente com o dobro da velocidade normal.",
@@ -2267,6 +2269,5 @@
   "wiki.topic-navigation": "Tópicos da Wiki",
   "wiki.topics": "Tópicos",
   "wiki.transcendence.overview": "Com <value>4e242 Bots</value>, Transcenda em Avocato para reiniciar as camadas anteriores e ganhar <value>um ponto de Transcendência</value>. Gaste um ponto em <value>Desbloquear Descoberta</value> para substituir Ciência e Pesquisa permanentemente. A Ciência e os níveis de pesquisa existentes não são transferidos.",
-  "wiki.transcendence.overview-title": "Além do enxame",
-  "wiki.patch-notes.version-4-1-10.swarm": "Adicionados dez aprimoramentos de Enxame e Fragmento."
+  "wiki.transcendence.overview-title": "Além do enxame"
 }

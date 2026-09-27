@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const realityMessages = defineMessages({
+  skillPointsInactive: {
+    id: 'reality.skill-points-inactive',
+    defaultMessage: 'Skill points apply after leaving the Quantum challenge.',
+    description: 'Reality purchase notice while its skill-point reward is suspended.',
+  },
   avocatoTitle: {
     id: 'reality.avocato.title',
     defaultMessage: 'Avocato',

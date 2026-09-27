@@ -1,3 +1,4 @@
+import { AVOCADO_MEDITATION_SKILL_POINT_REWARD } from './avocadoMeditation'
 import { advanceManualLabourIdle } from './manualLabourAugments'
 import { effectiveDivisions, quantumDoubleIpEnabled, isBreakInfinityEnabled, isInfinityChallengeActive, isQuantumChallengeActive } from './infinityChallenges'
 import { advanceDiscovery } from './discovery'
@@ -1364,7 +1365,7 @@ export function deriveCanonicalArtifactSkillPoints(
     }
   }
   if (state.secretProgress.completed) {
-    points = addDiscrete(points, 4n)
+    points = addDiscrete(points, AVOCADO_MEDITATION_SKILL_POINT_REWARD)
   }
   return { ok: true, value: points }
 }
