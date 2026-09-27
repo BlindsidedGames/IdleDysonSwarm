@@ -1,3 +1,4 @@
+import type { SkillPresetSlot } from './skillPresetSlots'
 import type { SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import type { BuyMode } from '../simulation/transactions'
 import type { CanonicalFacilityId } from './facilityIds'
@@ -130,7 +131,7 @@ export interface SkillPresetState {
   readonly colorId: SkillPresetColorId
 }
 
-export type CanonicalSkillPresetSlot = 1 | 2 | 3 | 4 | 5
+export type CanonicalSkillPresetSlot = SkillPresetSlot
 
 export type CanonicalSkillPresetAutomationSlot =
   | 0
@@ -151,13 +152,7 @@ export interface SkillsState {
   readonly fragments: bigint
   readonly byId: Readonly<Record<string, SkillRuntimeState>>
   readonly activeAutoAssignment: readonly string[]
-  readonly presets: readonly [
-    SkillPresetState,
-    SkillPresetState,
-    SkillPresetState,
-    SkillPresetState,
-    SkillPresetState,
-  ]
+  readonly presets: readonly SkillPresetState[]
   readonly autoAssignNonRefundable: boolean
   readonly tabPresetAutomation: {
     readonly bots: CanonicalSkillPresetAutomationSlot

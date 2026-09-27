@@ -1,3 +1,4 @@
+import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { isSubskill } from '../simulation/skillSubskills'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
@@ -26,7 +27,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 19
+export const CURRENT_SAVE_SCHEMA = 20
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -235,16 +236,16 @@ function ensureSaveShape(save: SaveRecord): void {
   const prestige = ensureRecord(dyson, 'dysonVersePrestigeData')
   applyDefaults(prestige, { botDistribution: 0.5 })
   ensureRecord(dyson, 'dysonVerseSkillTreeData')
-  for (let preset = 0; preset <= 5; preset += 1) {
+  for (let preset = 0; preset <= SKILL_PRESET_COUNT; preset += 1) {
     ensureArray(dyson, `skillAutoAssignmentList${preset || ''}`)
     ensureArray(dyson, `skillAutoAssignmentIds${preset || ''}`)
   }
-  for (let preset = 1; preset <= 5; preset += 1) {
+  for (let preset = 1; preset <= SKILL_PRESET_COUNT; preset += 1) {
     dyson[`preset${preset}Name`] ??= `Preset ${preset}`
   }
   const selectedPreset =
     typeof dyson.selectedPreset === 'number' ? Math.trunc(dyson.selectedPreset) : 1
-  dyson.selectedPreset = Math.max(1, Math.min(5, selectedPreset))
+  dyson.selectedPreset = Math.max(1, Math.min(SKILL_PRESET_COUNT, selectedPreset))
 }
 
 function applyDefaults(
@@ -366,7 +367,7 @@ function migrateSkills(save: SaveRecord, legacyFormat: boolean): void {
     migrateSkillTimer(skillTree, 'idleElectricSheepTimer', stateById, 'idleElectricSheep')
   }
 
-  for (let preset = 0; preset <= 5; preset += 1) {
+  for (let preset = 0; preset <= SKILL_PRESET_COUNT; preset += 1) {
     const suffix = preset || ''
     const idsKey = `skillAutoAssignmentIds${suffix}`
     const legacyKey = `skillAutoAssignmentList${suffix}`

@@ -25081,6 +25081,20 @@
       "value": "‬"
     }
   ],
+  "skills.preset-color-blue": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑʅnǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.preset-color-cyan": [
     {
       "type": 0,
@@ -25103,6 +25117,20 @@
     {
       "type": 0,
       "value": "⅁oʅp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.preset-color-green": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹǝǝu"
     },
     {
       "type": 0,
@@ -25137,6 +25165,20 @@
       "value": "‬"
     }
   ],
+  "skills.preset-color-red": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.preset-color-rose": [
     {
       "type": 0,
@@ -25145,6 +25187,34 @@
     {
       "type": 0,
       "value": "ᴚosǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.preset-color-violet": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıoʅǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.preset-color-white": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɥıʇǝ"
     },
     {
       "type": 0,
@@ -25885,6 +25955,20 @@
     {
       "type": 0,
       "value": "Sʞıʅʅ dɹǝsǝʇs ɐup ɹǝsǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.settings.showExtendedPresets": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoʍ dɹǝsǝʇs 6–10"
     },
     {
       "type": 0,

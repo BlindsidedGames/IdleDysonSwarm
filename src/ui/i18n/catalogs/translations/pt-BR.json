@@ -2285,5 +2285,11 @@
   "wiki.transcendence.overview": "Com <value>4e242 Bots</value>, Transcenda em Avocato para reiniciar as camadas anteriores e ganhar <value>um ponto de Transcendência</value>. Gaste um ponto em <value>Desbloquear Descoberta</value> para substituir Ciência e Pesquisa permanentemente. A Ciência e os níveis de pesquisa existentes não são transferidos.",
   "wiki.transcendence.overview-title": "Além do enxame",
   "dyson.info.show-preset-quick-actions": "Sempre mostrar ações rápidas de predefinições",
-  "wiki.patch-notes.version-4-1-10.achievements": "Adicionadas cinco conquistas e ações rápidas opcionais de predefinições na aba Bots."
+  "wiki.patch-notes.version-4-1-10.achievements": "Adicionadas cinco conquistas e ações rápidas opcionais de predefinições na aba Bots.",
+  "skills.settings.showExtendedPresets": "Mostrar predefinições 6–10",
+  "skills.preset-color-green": "Verde",
+  "skills.preset-color-blue": "Azul",
+  "skills.preset-color-violet": "Violeta",
+  "skills.preset-color-red": "Vermelho",
+  "skills.preset-color-white": "Branco"
 }

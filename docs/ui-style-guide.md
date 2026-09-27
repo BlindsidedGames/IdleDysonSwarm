@@ -131,9 +131,15 @@ focused behavioural coverage for real regressions, plus actual visual inspection
 
 ## Bots preset shortcuts
 
-Reuse the Skills five-button preset control and its confirmation flow. In Bots,
+Reuse the Skills preset control, with five buttons per row and its confirmation flow. In Bots,
 place it immediately above Active/Lifetime/Decayed. Expanded purchase settings
 show it; the independent, device-local “Always show preset quick actions” toggle
 (default off) also keeps it visible when collapsed. The run-facts toggle does not
 control these buttons. Keep preset colours, names, selected states and keyboard
-focus consistent between both entry points.
+focus consistent between both entry points. Skills settings can reveal presets
+6–10 as a second row on both screens. Hiding that row preserves its saved presets.
+Use the same compact button height on both screens. Bots purchase settings expand
+upward to fit their content rather than using the shared short scrolling height cap.
+The preset management dialog remains scrollable on small screens with hidden
+scrollbar chrome. The ten preset colours are distinct choices, not subtle shades
+of the original five; each slot has its own default colour.

@@ -2285,5 +2285,11 @@
   "wiki.transcendence.overview": "Bei <value>4e242 Bots</value> kannst du in Avocato transzendieren, um frühere Ebenen zurückzusetzen und <value>einen Transzendenzpunkt</value> zu erhalten. Gib einen Punkt für <value>Entdeckung freischalten</value> aus, um Wissenschaft und Forschung dauerhaft zu ersetzen. Vorhandene Wissenschaft und Forschungsstufen werden nicht übertragen.",
   "wiki.transcendence.overview-title": "Jenseits des Schwarms",
   "dyson.info.show-preset-quick-actions": "Voreinstellungs-Schnellaktionen immer anzeigen",
-  "wiki.patch-notes.version-4-1-10.achievements": "Fünf Erfolge und optionale Schnellaktionen für Voreinstellungen im Bots-Tab hinzugefügt."
+  "wiki.patch-notes.version-4-1-10.achievements": "Fünf Erfolge und optionale Schnellaktionen für Voreinstellungen im Bots-Tab hinzugefügt.",
+  "skills.settings.showExtendedPresets": "Voreinstellungen 6–10 anzeigen",
+  "skills.preset-color-green": "Grün",
+  "skills.preset-color-blue": "Blau",
+  "skills.preset-color-violet": "Violett",
+  "skills.preset-color-red": "Rot",
+  "skills.preset-color-white": "Weiß"
 }

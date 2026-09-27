@@ -1,3 +1,4 @@
+import { useExtendedSkillPresets } from '../../useExtendedSkillPresets'
 import { SkillPresetQuickActions } from './SkillPresetQuickActions'
 import { useSkillPresetSelection, type PresetSelectionCommand } from './useSkillPresetSelection'
 import { AffectedSkillList, SkillPresetSelectionDialog } from './SkillPresetSelectionDialog'
@@ -198,6 +199,11 @@ const PRESET_COLOR_MESSAGES = {
   gold: messages.presetColorGold,
   rose: messages.presetColorRose,
   pink: messages.presetColorPink,
+  green: messages.presetColorGreen,
+  blue: messages.presetColorBlue,
+  violet: messages.presetColorViolet,
+  red: messages.presetColorRed,
+  white: messages.presetColorWhite,
 } as const
 const NODE_SIZE = 76
 const GRAPH_PADDING = 180
@@ -2330,9 +2336,14 @@ function SkillSettings({
   onOpenPresets,
 }: SkillSettingsProps) {
   const intl = useIntl()
+  const extendedPresets = useExtendedSkillPresets()
 
   return (
     <div id={id} className="skill-settings">
+      <label className="skill-settings__toggle">
+        <input type="checkbox" checked={extendedPresets.enabled} onChange={(event) => extendedPresets.setEnabled(event.currentTarget.checked)} />
+        <span>{intl.formatMessage(messages.showExtendedPresets)}</span>
+      </label>
       <label className="skill-settings__toggle">
         <input type="checkbox" checked={showProductionComparisons}
           onChange={(event) => onShowProductionComparisonsChange(event.currentTarget.checked)} />
@@ -2578,6 +2589,7 @@ function SkillPresetsDialog({
   onClose,
 }: SkillPresetsDialogProps) {
   const intl = useIntl()
+  const { visibleCount } = useExtendedSkillPresets()
   const [managedSlot, setManagedSlot] =
     useState<CanonicalSkillPresetSlot | null>(null)
   const [prioritySlot, setPrioritySlot] = useState<CanonicalSkillPresetSlot | null>(null)
@@ -2609,7 +2621,7 @@ function SkillPresetsDialog({
               ? { kind: 'skill.set-auto-assignment', skillIds }
               : { kind: 'skill.set-preset-assignment', slot: prioritySlot, skillIds })} />
         </> : <div className="skill-settings__presets">
-          {presets.slice(0, 5).map((preset, index) => {
+          {presets.slice(0, visibleCount).map((preset, index) => {
           const slot = (index + 1) as CanonicalSkillPresetSlot
           const workers = Math.round((1 - preset.botDistribution) * 100)
           return (

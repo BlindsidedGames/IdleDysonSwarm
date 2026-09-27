@@ -6210,6 +6210,9 @@
     "defaultMessage": "Preset color",
     "description": "Label for the selectable skill preset color."
   },
+  "skills.preset-color-blue": {
+    "defaultMessage": "Blue"
+  },
   "skills.preset-color-cyan": {
     "defaultMessage": "Cyan",
     "description": "Name of the cyan skill preset color."
@@ -6217,6 +6220,9 @@
   "skills.preset-color-gold": {
     "defaultMessage": "Gold",
     "description": "Name of the gold skill preset color."
+  },
+  "skills.preset-color-green": {
+    "defaultMessage": "Green"
   },
   "skills.preset-color-orange": {
     "defaultMessage": "Orange",
@@ -6226,9 +6232,18 @@
     "defaultMessage": "Pink",
     "description": "Name of the pink skill preset color."
   },
+  "skills.preset-color-red": {
+    "defaultMessage": "Red"
+  },
   "skills.preset-color-rose": {
     "defaultMessage": "Rose",
     "description": "Name of the rose-red skill preset color."
+  },
+  "skills.preset-color-violet": {
+    "defaultMessage": "Violet"
+  },
+  "skills.preset-color-white": {
+    "defaultMessage": "White"
   },
   "skills.preset-distribution": {
     "defaultMessage": "<workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>",
@@ -6393,6 +6408,9 @@
   "skills.settings": {
     "defaultMessage": "Skill presets and reset",
     "description": "Accessible label for opening skill preset and reset settings."
+  },
+  "skills.settings.showExtendedPresets": {
+    "defaultMessage": "Show presets 6–10"
   },
   "skills.show-preset-application-notifications": {
     "defaultMessage": "Show partial preset application notifications",

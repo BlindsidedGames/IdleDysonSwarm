@@ -45,6 +45,7 @@ describe('Wiki patch-note content', () => {
       "The sixth Avotation secret now completes automatically when reached with Discovery unlocked.",
       "Fixed Permanent 2× Bots after Reset Save, cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues.",
       "Improved production details, skill previews, scrolling and dialog styling.",
+      "Added five achievements and optional preset quick actions on the Bots tab.",
       "iOS 16 or later is now required.",
     ])
     expect(screen.queryByRole('heading', { name: 'Version 4.1.11' })).toBeNull()

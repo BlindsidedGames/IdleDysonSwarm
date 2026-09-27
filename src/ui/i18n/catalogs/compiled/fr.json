@@ -12289,6 +12289,12 @@
       "value": "Couleur du préréglage"
     }
   ],
+  "skills.preset-color-blue": [
+    {
+      "type": 0,
+      "value": "Bleu"
+    }
+  ],
   "skills.preset-color-cyan": [
     {
       "type": 0,
@@ -12299,6 +12305,12 @@
     {
       "type": 0,
       "value": "Or"
+    }
+  ],
+  "skills.preset-color-green": [
+    {
+      "type": 0,
+      "value": "Vert"
     }
   ],
   "skills.preset-color-orange": [
@@ -12313,10 +12325,28 @@
       "value": "Rose"
     }
   ],
+  "skills.preset-color-red": [
+    {
+      "type": 0,
+      "value": "Rouge"
+    }
+  ],
   "skills.preset-color-rose": [
     {
       "type": 0,
       "value": "Vieux rose"
+    }
+  ],
+  "skills.preset-color-violet": [
+    {
+      "type": 0,
+      "value": "Violet"
+    }
+  ],
+  "skills.preset-color-white": [
+    {
+      "type": 0,
+      "value": "Blanc"
     }
   ],
   "skills.preset-distribution": [
@@ -12713,6 +12743,12 @@
     {
       "type": 0,
       "value": "Configurations prédéfinies et réinitialisation des compétences"
+    }
+  ],
+  "skills.settings.showExtendedPresets": [
+    {
+      "type": 0,
+      "value": "Afficher les préréglages 6–10"
     }
   ],
   "skills.show-preset-application-notifications": [

@@ -1,3 +1,4 @@
+import { SKILL_PRESET_COUNT } from '../../game-state/skillPresetSlots'
 import releaseIdentity from '../../../hosts/native-release.json'
 import { createSpeedrunStatistics } from '../../simulation/speedrunStatistics'
 import { prepareIdb1Save, type PreparedSave } from '../../save/prepare'
@@ -44,7 +45,7 @@ export const webFirstRunGameplayOverridePaths = Object.freeze([
   '$.infinityAutomaticReset',
   '$.bottomNavigationPreferences',
   '$.dysonVerseSaveData.dysonVersePrestigeData.botDistribution',
-  ...Array.from({ length: 5 }, (_, index) => `$.dysonVerseSaveData.botDistPreset${index + 1}`),
+  ...Array.from({ length: SKILL_PRESET_COUNT }, (_, index) => `$.dysonVerseSaveData.botDistPreset${index + 1}`),
 ] as const)
 
 /**
@@ -59,7 +60,7 @@ export function createUnityFirstRunPreparedSave(
   const candidate = deterministic.copyValidatedState()
   const dyson = requireRecord(candidate.dysonVerseSaveData)
   requireRecord(dyson.dysonVersePrestigeData).botDistribution = 0
-  for (let preset = 1; preset <= 5; preset += 1) {
+  for (let preset = 1; preset <= SKILL_PRESET_COUNT; preset += 1) {
     dyson[`botDistPreset${preset}`] = 0
   }
   candidate.dateStarted = startedAtUtc

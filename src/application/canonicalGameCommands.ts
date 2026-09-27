@@ -422,7 +422,7 @@ export interface CanonicalGameRuntimeCarriers {
    */
   readonly storedTimeCheater: boolean | null
   /**
-   * Unity persists selectedPreset separately from the five preset payloads,
+   * Unity persists selectedPreset separately from the preset payloads,
    * but CanonicalGameStateV1 does not yet carry that field.
    */
   readonly selectedSkillPresetSlot: CanonicalSkillPresetSlot | null

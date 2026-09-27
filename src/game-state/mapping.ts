@@ -1,3 +1,4 @@
+import { SKILL_PRESET_COUNT } from './skillPresetSlots'
 import { readSwarmGrants } from '../simulation/swarmAugments'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { type SpeedrunStatistics } from '../simulation/speedrunStatistics'
@@ -1304,7 +1305,7 @@ function overlayBuckets(
 function createSkillPresets(
   source: SaveRecord,
 ): CanonicalGameStateV1['skills']['presets'] {
-  return Array.from({ length: 5 }, (_, index) => {
+  return Array.from({ length: SKILL_PRESET_COUNT }, (_, index) => {
     const presetNumber = index + 1
     const name = source[`preset${presetNumber}Name`]
     const colorId = source[`preset${presetNumber}ColorId`]
@@ -1326,14 +1327,14 @@ function createSkillPresets(
         ? colorId
         : defaultSkillPresetColorId(presetNumber),
     }
-  }) as unknown as CanonicalGameStateV1['skills']['presets']
+  })
 }
 
 function toSkillPresetAutomationSlot(
   value: unknown,
 ): CanonicalGameStateV1['skills']['tabPresetAutomation']['bots'] {
   if (typeof value !== 'number' || !Number.isFinite(value)) return 0
-  return Math.max(0, Math.min(5, Math.trunc(value))) as
+  return Math.max(0, Math.min(SKILL_PRESET_COUNT, Math.trunc(value))) as
     CanonicalGameStateV1['skills']['tabPresetAutomation']['bots']
 }
 

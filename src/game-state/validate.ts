@@ -1,3 +1,4 @@
+import { SKILL_PRESET_COUNT } from './skillPresetSlots'
 import { validateDiscovery } from '../simulation/discovery'
 import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
 import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
@@ -89,8 +90,8 @@ export function validateCanonicalGameState(
       errors.push('Unvisited navigation routes must be unique known routes.')
     }
   }
-  if (state.skills.presets.length !== 5) {
-    errors.push('Skills must contain exactly five presets.')
+  if (state.skills.presets.length !== SKILL_PRESET_COUNT) {
+    errors.push(`Skills must contain exactly ${SKILL_PRESET_COUNT} presets.`)
   }
   state.skills.presets.forEach((preset, index) => {
     if (!isSkillPresetColorId(preset.colorId)) {
@@ -102,9 +103,9 @@ export function validateCanonicalGameState(
   for (const [tab, slot] of Object.entries(
     state.skills.tabPresetAutomation,
   )) {
-    if (!isNonNegativeInteger(slot) || slot > 5) {
+    if (!isNonNegativeInteger(slot) || slot > SKILL_PRESET_COUNT) {
       errors.push(
-        `Skill preset automation for '${tab}' must be an integer from 0 to 5.`,
+        `Skill preset automation for '${tab}' must be an integer from 0 to ${SKILL_PRESET_COUNT}.`,
       )
     }
   }

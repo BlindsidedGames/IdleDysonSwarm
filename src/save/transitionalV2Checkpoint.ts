@@ -1,3 +1,4 @@
+import { SKILL_PRESET_SLOTS, createEmptySkillPreset } from '../game-state/skillPresetSlots'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { repairNumericSave } from './numericRepair'
@@ -1062,7 +1063,19 @@ function convertCompatibleState(
   // Schema 13 never recorded speedruns. A fresh recovery template must not
   // certify the imported run as clean or supply a fabricated run origin.
   const { speedruns: _templateSpeedruns, ...statistics } = converted.statistics
-  return { ...converted, statistics }
+  return {
+    ...converted,
+    statistics,
+    skills: {
+      ...converted.skills,
+      // Released V2 has five slots. New slots never inherit the recipient's
+      // presets from the recovery template.
+      presets: [
+        ...converted.skills.presets,
+        ...SKILL_PRESET_SLOTS.slice(5).map(createEmptySkillPreset),
+      ],
+    },
+  }
 }
 
 function convertLike(source: unknown, base: unknown, path: string): unknown {

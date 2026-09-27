@@ -141,7 +141,7 @@ describe('Unity-generated first-run save', () => {
 
     const state = hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: hostFirstRunUtc })).state
     expect(state.dyson.botDistribution).toBe(0)
-    expect(state.skills.presets.map((preset) => preset.botDistribution)).toEqual([0, 0, 0, 0, 0])
+    expect(state.skills.presets.map((preset) => preset.botDistribution)).toEqual(Array(10).fill(0))
     expect(production.dateStarted).toBe(hostFirstRunUtc)
     expect(production.infinityAutomaticReset).toBe(false)
     expect(production.bottomNavigationPreferences).toMatchObject({

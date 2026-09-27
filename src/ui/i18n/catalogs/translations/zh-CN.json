@@ -2285,5 +2285,11 @@
   "wiki.transcendence.overview": "达到<value>4e242个机器人</value>后，在牛油果猫中超越可重置此前的层级，并获得<value>1超越点数</value>。花费1点<value>解锁发现</value>，即可永久取代科学与研究。已有科学和研究等级不会转移。",
   "wiki.transcendence.overview-title": "超越蜂群",
   "dyson.info.show-preset-quick-actions": "始终显示预设快捷操作",
-  "wiki.patch-notes.version-4-1-10.achievements": "新增五项成就，并可在机器人标签页显示预设快捷切换按钮。"
+  "wiki.patch-notes.version-4-1-10.achievements": "新增五项成就，并可在机器人标签页显示预设快捷切换按钮。",
+  "skills.settings.showExtendedPresets": "显示预设 6–10",
+  "skills.preset-color-green": "绿色",
+  "skills.preset-color-blue": "蓝色",
+  "skills.preset-color-violet": "紫色",
+  "skills.preset-color-red": "红色",
+  "skills.preset-color-white": "白色"
 }

@@ -1,3 +1,4 @@
+import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { completeRetiredResearchSecret } from '../simulation/avocadoMeditation'
 import { initializeSpeedrunTracking } from '../simulation/speedrunStatistics'
 import { achievementIds } from '../achievements/ids'
@@ -228,10 +229,10 @@ function extractSelectedSkillPresetSlot(
     typeof value !== 'number' ||
     !Number.isInteger(value) ||
     value < 1 ||
-    value > 5
+    value > SKILL_PRESET_COUNT
   ) {
     throw new Error(
-      "Unity's selected skill preset must be an integer from 1 through 5.",
+      `Selected skill preset must be an integer from 1 through ${SKILL_PRESET_COUNT}.`,
     )
   }
   return value as CanonicalSkillPresetSlot

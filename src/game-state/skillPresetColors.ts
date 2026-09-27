@@ -4,13 +4,18 @@ export const SKILL_PRESET_COLOR_IDS = [
   'gold',
   'rose',
   'pink',
+  'green',
+  'blue',
+  'violet',
+  'red',
+  'white',
 ] as const
 
 export type SkillPresetColorId =
   (typeof SKILL_PRESET_COLOR_IDS)[number]
 
 /**
- * Returns whether an unknown persisted or imported value is one of the five
+ * Returns whether an unknown persisted or imported value is one of the ten
  * authored preset colors.
  */
 export function isSkillPresetColorId(
@@ -23,7 +28,7 @@ export function isSkillPresetColorId(
 }
 
 /**
- * Assigns a distinct authored default to each of the five canonical preset
+ * Assigns a distinct authored default to each of the ten preset
  * slots. Invalid slot values safely fall back to cyan.
  */
 export function defaultSkillPresetColorId(

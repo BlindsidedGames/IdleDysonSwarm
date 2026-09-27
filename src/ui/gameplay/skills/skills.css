@@ -72,7 +72,6 @@
 }
 
 .skill-tree-viewport__controls .skill-preset-quick-actions { grid-column: 1 / -1; grid-row: 1; }
-.skill-tree-viewport__controls .skill-preset-quick-actions__button { min-block-size: 2rem; }
 
 .skill-tree-viewport__controls .skills-surface__search {
   grid-column: 1;
@@ -711,6 +710,11 @@
 
 .skill-presets-dialog .skill-details-dialog__content {
   overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.skill-presets-dialog .skill-details-dialog__content::-webkit-scrollbar {
+  display: none;
 }
 
 .skill-reset-dialog__description,
@@ -1180,6 +1184,7 @@
 }
 
 .skill-preset-color-picker__options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   position: absolute;
   z-index: 3;
   inset-block-start: calc(100% + 0.25rem);

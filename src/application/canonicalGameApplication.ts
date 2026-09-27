@@ -1,3 +1,4 @@
+import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { isQuantumChallengeActive } from '../simulation/infinityChallenges'
 import { markSpeedrunUsage, observeSpeedruns } from '../simulation/speedrunStatistics'
 import {
@@ -1876,7 +1877,7 @@ function validateSkillPresetApplicationOutcome(
   if (
     !Number.isInteger(outcome.slot) ||
     outcome.slot < 1 ||
-    outcome.slot > 5 ||
+    outcome.slot > SKILL_PRESET_COUNT ||
     !Number.isSafeInteger(outcome.applicationSequence) ||
     outcome.applicationSequence < 1 ||
     !['automatic', 'import', 'manual'].includes(outcome.trigger)
@@ -1909,7 +1910,7 @@ function validateRuntimeState(
   if (
     !Number.isInteger(state.selectedSkillPresetSlot) ||
     state.selectedSkillPresetSlot < 1 ||
-    state.selectedSkillPresetSlot > 5
+    state.selectedSkillPresetSlot > SKILL_PRESET_COUNT
   ) {
     return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
   }
@@ -2003,7 +2004,7 @@ function validateRuntimeTransitionState(
   if (
     !Number.isInteger(state.selectedSkillPresetSlot) ||
     state.selectedSkillPresetSlot < 1 ||
-    state.selectedSkillPresetSlot > 5
+    state.selectedSkillPresetSlot > SKILL_PRESET_COUNT
   ) {
     return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
   }

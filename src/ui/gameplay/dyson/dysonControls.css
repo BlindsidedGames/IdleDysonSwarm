@@ -3,6 +3,8 @@
 }
 
 .dyson-info .ui-progress-controls-panel__body {
+  max-block-size: none;
+  overflow: visible;
   padding: 0;
 }
 

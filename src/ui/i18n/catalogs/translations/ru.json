@@ -2285,5 +2285,11 @@
   "wiki.transcendence.overview": "При <value>4e242 ботах</value> совершите Трансценденцию у Авокато, чтобы сбросить предыдущие слои и получить <value>одно очко Трансценденции</value>. Потратьте очко на <value>открытие системы открытий</value>, чтобы навсегда заменить Науку и Исследования. Накопленная Наука и уровни исследований не переносятся.",
   "wiki.transcendence.overview-title": "За пределами роя",
   "dyson.info.show-preset-quick-actions": "Всегда показывать быстрый выбор наборов",
-  "wiki.patch-notes.version-4-1-10.achievements": "Добавлены пять достижений и необязательные кнопки быстрого выбора наборов на вкладке ботов."
+  "wiki.patch-notes.version-4-1-10.achievements": "Добавлены пять достижений и необязательные кнопки быстрого выбора наборов на вкладке ботов.",
+  "skills.settings.showExtendedPresets": "Показать наборы 6–10",
+  "skills.preset-color-green": "Зелёный",
+  "skills.preset-color-blue": "Синий",
+  "skills.preset-color-violet": "Фиолетовый",
+  "skills.preset-color-red": "Красный",
+  "skills.preset-color-white": "Белый"
 }

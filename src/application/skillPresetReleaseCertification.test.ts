@@ -39,6 +39,11 @@ const distinctLayouts = Object.freeze([
   Object.freeze(['startHereTree']),
   Object.freeze(['manualLabour']),
   Object.freeze(['fragmentAssembly']),
+  Object.freeze(['manualLabour']),
+  Object.freeze(['startHereTree']),
+  Object.freeze(['banking']),
+  Object.freeze(['avocados']),
+  Object.freeze(['startHereTree', 'assemblyLineTree']),
 ] as const)
 
 function preparedFixture(): PreparedSave {
@@ -93,7 +98,7 @@ function withLayouts(
     ...preset,
     name: `Certification ${index + 1}`,
     botDistribution: (index + 1) / 10,
-    skillIds: [...layouts[index]!],
+    skillIds: [...(layouts[index] ?? [])],
   })) as unknown as CanonicalGameStateV1['skills']['presets']
 }
 
@@ -116,9 +121,10 @@ function expectPresetState(
     state.gameState.skills.presets.map((preset) => preset.skillIds),
   ).toEqual(distinctLayouts)
   expect(state.gameState.skills.activeAutoAssignment).toEqual(
-    distinctLayouts[3],
+    distinctLayouts[9],
   )
-  expect(state.selectedSkillPresetSlot).toBe(4)
+  expect(state.selectedSkillPresetSlot).toBe(10)
+  expect(state.gameState.skills.tabPresetAutomation.bots).toBe(10)
 }
 
 describe('Skill preset release certification', () => {
@@ -392,7 +398,27 @@ describe('Skill preset release certification', () => {
     )
   })
 
-  test('preserves five distinct layouts through checkpoint, reload, export, and import', () => {
+  test('upper-row presets use the same editing, selection and tab automation commands', () => {
+    let state = gameState()
+    for (const command of [
+      { kind: 'skill.rename-preset', slot: 10, name: 'Late game' },
+      { kind: 'skill.set-preset-color', slot: 10, colorId: 'rose' },
+      { kind: 'skill.set-preset-bot-distribution', slot: 10, distribution: 0.75 },
+      { kind: 'skill.set-preset-assignment', slot: 10, skillIds: ['startHereTree'] },
+    ] as const) {
+      const result = routeCanonicalGameCommand(state, command, commandOptions())
+      expect(result.accepted).toBe(true)
+      state = result.state
+    }
+    const result = routeCanonicalGameCommand(state,
+      { kind: 'skill.set-tab-preset-automation', tab: 'bots', slot: 10 }, commandOptions())
+    expect(result.accepted).toBe(true)
+    expect(result.state.skills.presets[9]).toMatchObject({name: 'Late game', colorId: 'rose', botDistribution: 0.75, skillIds: ['startHereTree']})
+    expect(result.state.skills.tabPresetAutomation.bots).toBe(10)
+    expect(result.state.skills.activeAutoAssignment).toEqual(['startHereTree'])
+  })
+
+  test('preserves ten layouts through checkpoint, reload, export, and import', () => {
     const session = new CanonicalRuntimeSession(preparedFixture(), {
       entitlements: {
         extraAnalysisPower: false,
@@ -405,11 +431,12 @@ describe('Skill preset release certification', () => {
         ...session.initialState.gameState,
         skills: {
           ...session.initialState.gameState.skills,
-          activeAutoAssignment: [...distinctLayouts[3]],
+          activeAutoAssignment: [...distinctLayouts[9]],
+          tabPresetAutomation: { bots: 10 as const, research: 6 as const },
           presets: withLayouts(session.initialState.gameState),
         },
       },
-      selectedSkillPresetSlot: 4 as const,
+      selectedSkillPresetSlot: 10 as const,
     }
     const checkpoint = session.prepare(checkpointState)
 

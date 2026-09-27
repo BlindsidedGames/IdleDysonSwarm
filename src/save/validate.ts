@@ -1,3 +1,4 @@
+import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { validateDiscovery } from '../simulation/discovery'
 import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
 import type { DiscoveryState } from '../game-state/types'
@@ -64,7 +65,7 @@ export function validatePreparedSave(
     if (!isRecord(dyson[key])) return invalid(`Required Dyson container ${key} is null.`)
   }
 
-  for (let preset = 0; preset <= 5; preset += 1) {
+  for (let preset = 0; preset <= (expectedSchema >= 20 ? SKILL_PRESET_COUNT : 5); preset += 1) {
     const suffix = preset || ''
     for (const prefix of ['skillAutoAssignmentList', 'skillAutoAssignmentIds']) {
       const key = `${prefix}${suffix}`

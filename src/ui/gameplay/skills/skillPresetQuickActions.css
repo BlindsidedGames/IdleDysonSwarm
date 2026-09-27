@@ -6,7 +6,7 @@
 
 .skill-preset-quick-actions .skill-preset-quick-actions__button {
   min-inline-size: 0;
-  min-block-size: var(--target-minimum);
+  min-block-size: 2rem;
   border: 1px solid;
   border-radius: 0.25rem;
   padding: 0.25rem;

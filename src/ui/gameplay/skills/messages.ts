@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const skillMessages = defineMessages({
+  showExtendedPresets: { id: 'skills.settings.showExtendedPresets', defaultMessage: 'Show presets 6–10' },
   hunterCommunity: { id: 'skills.production.hunterCommunity', defaultMessage: 'Hunters: Community' },
   gathererCommunity: { id: 'skills.production.gathererCommunity', defaultMessage: 'Gatherers: Community' },
   launchedPanelEnergy: { id: 'skills.production.launchedPanelEnergy', defaultMessage: 'Launched-panel Energy' },
@@ -371,6 +372,11 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Preset color',
     description: 'Label for the selectable skill preset color.',
   },
+  presetColorGreen: { id: 'skills.preset-color-green', defaultMessage: 'Green' },
+  presetColorBlue: { id: 'skills.preset-color-blue', defaultMessage: 'Blue' },
+  presetColorViolet: { id: 'skills.preset-color-violet', defaultMessage: 'Violet' },
+  presetColorRed: { id: 'skills.preset-color-red', defaultMessage: 'Red' },
+  presetColorWhite: { id: 'skills.preset-color-white', defaultMessage: 'White' },
   presetColorCyan: {
     id: 'skills.preset-color-cyan',
     defaultMessage: 'Cyan',

@@ -12289,6 +12289,12 @@
       "value": "Preset color"
     }
   ],
+  "skills.preset-color-blue": [
+    {
+      "type": 0,
+      "value": "Blue"
+    }
+  ],
   "skills.preset-color-cyan": [
     {
       "type": 0,
@@ -12299,6 +12305,12 @@
     {
       "type": 0,
       "value": "Gold"
+    }
+  ],
+  "skills.preset-color-green": [
+    {
+      "type": 0,
+      "value": "Green"
     }
   ],
   "skills.preset-color-orange": [
@@ -12313,10 +12325,28 @@
       "value": "Pink"
     }
   ],
+  "skills.preset-color-red": [
+    {
+      "type": 0,
+      "value": "Red"
+    }
+  ],
   "skills.preset-color-rose": [
     {
       "type": 0,
       "value": "Rose"
+    }
+  ],
+  "skills.preset-color-violet": [
+    {
+      "type": 0,
+      "value": "Violet"
+    }
+  ],
+  "skills.preset-color-white": [
+    {
+      "type": 0,
+      "value": "White"
     }
   ],
   "skills.preset-distribution": [
@@ -12713,6 +12743,12 @@
     {
       "type": 0,
       "value": "Skill presets and reset"
+    }
+  ],
+  "skills.settings.showExtendedPresets": [
+    {
+      "type": 0,
+      "value": "Show presets 6–10"
     }
   ],
   "skills.show-preset-application-notifications": [

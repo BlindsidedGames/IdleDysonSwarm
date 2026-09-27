@@ -9,6 +9,11 @@ export const SKILL_PRESET_COLOR_VALUES: Readonly<
   gold: '#d8c65a',
   rose: '#d86d7f',
   pink: '#e38ace',
+  green: '#72db69',
+  blue: '#6199f5',
+  violet: '#a486f2',
+  red: '#f05242',
+  white: '#ecf1f5',
 })
 
 export type SkillPresetColorStyle = CSSProperties & {

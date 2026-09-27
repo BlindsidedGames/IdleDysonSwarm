@@ -1,3 +1,4 @@
+import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import { LEGACY_INFINITY_STRUCTURAL_DEFAULTS } from './legacyStructuralDefaults'
@@ -281,7 +282,7 @@ function repairAuthoredBounds(
   add: (path: string, original: unknown, replacement: unknown, rule: string) => void,
 ): void {
   const dyson = ensureRecord(settings, 'dysonVerseSaveData')
-  for (let preset = 1; preset <= 5; preset += 1) {
+  for (let preset = 1; preset <= SKILL_PRESET_COUNT; preset += 1) {
     clampNormalized(dyson, `botDistPreset${preset}`, `saveSettings.dysonVerseSaveData.botDistPreset${preset}`, add)
   }
   const prestigePlus = ensureRecord(settings, 'prestigePlus')

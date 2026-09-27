@@ -12289,6 +12289,12 @@
       "value": "プリセット色"
     }
   ],
+  "skills.preset-color-blue": [
+    {
+      "type": 0,
+      "value": "青"
+    }
+  ],
   "skills.preset-color-cyan": [
     {
       "type": 0,
@@ -12299,6 +12305,12 @@
     {
       "type": 0,
       "value": "金色"
+    }
+  ],
+  "skills.preset-color-green": [
+    {
+      "type": 0,
+      "value": "緑"
     }
   ],
   "skills.preset-color-orange": [
@@ -12313,10 +12325,28 @@
       "value": "ピンク"
     }
   ],
+  "skills.preset-color-red": [
+    {
+      "type": 0,
+      "value": "赤"
+    }
+  ],
   "skills.preset-color-rose": [
     {
       "type": 0,
       "value": "ローズ"
+    }
+  ],
+  "skills.preset-color-violet": [
+    {
+      "type": 0,
+      "value": "紫"
+    }
+  ],
+  "skills.preset-color-white": [
+    {
+      "type": 0,
+      "value": "白"
     }
   ],
   "skills.preset-distribution": [
@@ -12713,6 +12743,12 @@
     {
       "type": 0,
       "value": "スキルプリセットとリセット"
+    }
+  ],
+  "skills.settings.showExtendedPresets": [
+    {
+      "type": 0,
+      "value": "プリセット6～10を表示"
     }
   ],
   "skills.show-preset-application-notifications": [
