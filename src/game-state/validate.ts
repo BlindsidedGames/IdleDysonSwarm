@@ -1,4 +1,5 @@
 import { validateDiscovery } from '../simulation/discovery'
+import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
 import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { isSubskill, isSubskillUnlocked } from '../simulation/skillSubskills'
 import { isGalvanized, validateGalvanizedSkills } from '../simulation/galvanization'
@@ -25,6 +26,8 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  const tinkerError = validateCompletedTinkers(state.dyson.completedTinkers)
+  if (tinkerError) errors.push(tinkerError)
   if (state.meta.firstQuantumComplete !== undefined && typeof state.meta.firstQuantumComplete !== 'boolean') errors.push('Invalid first Quantum milestone.')
   const discoveryError = validateDiscovery(state.discovery)
   if (discoveryError) errors.push(discoveryError)

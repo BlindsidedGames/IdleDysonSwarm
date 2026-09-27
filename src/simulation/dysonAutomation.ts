@@ -234,8 +234,9 @@ export function previewDysonFacilityPurchase<
 
   const definition = lookupDefinition(facilityId)
   const authoredBaseCost = definition?.baseCost
-  const authoredExponent = state.costExponentOverride ?? definition?.costExponent
-  const exponent = typeof authoredExponent === 'number' && (state.costExponentReduction ?? 0) > 0 ? Math.max(1.001, authoredExponent - state.costExponentReduction!) : authoredExponent
+  const authoredExponent = definition?.costExponent
+  // A fixed challenge price rule overrides ordinary skill reductions.
+  const exponent = state.costExponentOverride ?? (typeof authoredExponent === 'number' && (state.costExponentReduction ?? 0) > 0 ? Math.max(1.001, authoredExponent - state.costExponentReduction!) : authoredExponent)
   if (
     typeof authoredBaseCost !== 'number' ||
     !Number.isFinite(authoredBaseCost) ||

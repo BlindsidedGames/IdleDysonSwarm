@@ -1,5 +1,6 @@
 import { hasManualLabourAugment, MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
-import { manualBotYield, activateManualLabour, completeManualLabour, MANUAL_LABOUR_TUNING } from './manualLabourAugments'
+import { manualBotYield, activateManualLabour, completeManualLabour, completedManualLabourWork, MANUAL_LABOUR_TUNING } from './manualLabourAugments'
+import { recordCompletedTinkers } from './tinkerGoalProgress'
 import { effectiveDivisions, isBreakInfinityEnabled } from './infinityChallenges'
 import { recordBotBoostUsage } from './botBoost'
 import {
@@ -62,6 +63,7 @@ export interface CanonicalTinkerUiFacts {
   readonly runtime: Readonly<CanonicalTinkerRuntimeState>
   readonly stats: Readonly<CanonicalTinkerStats>
   readonly presentationMode: CanonicalTinkerPresentationMode
+  readonly facilitiesDisabled: boolean
   readonly canStart: boolean
   readonly eligibility: CanonicalTinkerStartEligibility
   readonly timeToCompletionSeconds: number | null
@@ -134,6 +136,7 @@ export function selectCanonicalTinkerUiFacts(
       : synchronized.state.skills.byId.manualLabour?.owned === true
         ? 'manual-labour-blocked'
         : 'default',
+    facilitiesDisabled: state.challenges?.active === 'built-by-hand',
     canStart,
     eligibility: canStart ? 'available' : 'already-running',
     timeToCompletionSeconds: synchronized.runtime.running
@@ -314,6 +317,7 @@ export function advanceCanonicalTinker(
           }
           botsGranted = addContinuous(botsGranted, bulkCompletions * botMultiplier)
         }
+        candidate = recordCompletedTinkers(candidate, bulkCompletions)
         completions = Math.min(
           Number.MAX_SAFE_INTEGER,
           completions + bulkCompletions,
@@ -395,6 +399,7 @@ export function advanceCanonicalTinker(
       }
       botsGranted = addContinuous(botsGranted, multiplyContinuous(botYield, botMultiplier))
     }
+    candidate = recordCompletedTinkers(candidate, completedManualLabourWork(candidate))
     candidate = completeManualLabour(candidate)
     completions += 1
     if (!active.repeat) {

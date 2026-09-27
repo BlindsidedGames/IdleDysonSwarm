@@ -122,3 +122,34 @@ test.each([true, false])('production comparison preference %s controls preview w
     vi.useRealTimers()
   }
 })
+
+
+test('skill comparisons keep multiplier, duration, yield and rate units distinct', () => {
+  const state = hydrateGameState(prepareIdb1Save(fixture).prepared).state
+  const rows = [
+    { id: 'discoverySpeed', before: 1, after: 2 },
+    { id: 'elevationSpeed', before: 1, after: 3 },
+    { id: 'enlightenmentSpeed', before: 1, after: 4 },
+    { id: 'cashBotsMultiplier', before: 7, after: 10 },
+    { id: 'discoveryMultiplier', before: 10, after: 15 },
+    { id: 'panelLifetime', before: 20, after: 30 },
+    { id: 'manualBots', before: 1, after: 42 },
+    { id: 'money', before: 1, after: 50 },
+  ] as const
+  render(<IntlProvider locale="en" messages={{}}>
+    <SkillsSurface locale="en" points={24n} fragments={state.skills.fragments}
+      catalog={previewCanonicalSkillCatalog({ ...state, meta: { ...state.meta, firstInfinityComplete: true }, skills: { ...state.skills, points: 24n, byId: {}, activeAutoAssignment: [] } })}
+      presets={state.skills.presets} selectedPresetSlot={1} botDistribution={0} autoAssignNonRefundable={false}
+      commandAvailability={{ purchase: true, refund: true, selectPreset: true, setPresetColor: true, setAutoAssignNonRefundable: true, reset: true }}
+      showPresetApplicationNotifications={false} onShowPresetApplicationNotificationsChange={() => {}}
+      presetActions={{ previewProduction: () => ({ projected: false, projectedSeconds: 0, rows: rows.map(row => ({ ...row, changed: true })) }) } as unknown as NonNullable<SkillsSurfaceProps['presetActions']>}
+      dispatchPlayer={vi.fn()} />
+  </IntlProvider>)
+  fireEvent.click(screen.getByRole('button', { name: 'Cash & Science. Cost: 1 Skill Points' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Assign Skill. Will cost 1 Skill Points' }))
+  const confirmation = within(screen.getByRole('group', { name: 'Confirm skill change' }))
+  for (const multiplier of [2, 3, 4, 10, 15]) expect(confirmation.getAllByText(new RegExp(`^${multiplier}(?:\\.0+)?×$`)).length).toBeGreaterThan(0)
+  expect(confirmation.getByText(/^30(?:\.0+)?s$/)).not.toBeNull()
+  expect(confirmation.getByText(/^42(?:\.0+)?$/)).not.toBeNull()
+  expect(confirmation.getByText(/^50(?:\.0+)?\/s$/)).not.toBeNull()
+})

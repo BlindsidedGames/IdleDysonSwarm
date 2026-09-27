@@ -10,6 +10,13 @@ import {
 import { IntlProvider } from 'react-intl'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { DYSON_FACILITY_IDS } from '../../../simulation/dysonFacilityCatalog'
+import { MEGA_STRUCTURE_FACILITY_IDS } from '../../../simulation/dysonFacilityCatalog'
+import fixtureText from '../../../../test/fixtures/schema-08-canonical-idb1-main-save.txt?raw'
+import { hydrateGameState } from '../../../game-state/mapping'
+import { prepareIdb1Save } from '../../../save/prepare'
+import { deriveBasicDysonState } from '../../../simulation/canonicalDysonDerivation'
+import { SWARM_AUGMENTS } from '../../../simulation/skillSubskills'
+import { formatGameNumber } from '../../i18n/formatters'
 import { FacilityRegion, type FacilityRegionProps } from './FacilityRegion'
 
 afterEach(() => cleanup())
@@ -229,6 +236,34 @@ describe('FacilityRegion unified presentation contract', () => {
         '.basic-facility-card__production-line',
       )?.textContent,
     ).toBe('Assembling 1 Matrioshka Brain /1.67 Min')
+  })
+
+  test.each(MEGA_STRUCTURE_FACILITY_IDS)('%s details formula includes the actual aggregate modifier without duplicating attribution', facilityId => {
+    const hydrated = hydrateGameState(prepareIdb1Save(fixtureText).prepared)
+    const source = hydrated.state
+    const state = {
+      ...source,
+      discovery: { unlocked: true, completions: 1n, progress: 0, startingPower: 0n, speedUpgrades: 0n },
+      challenges: { ...source.challenges!, blankSlateCompleted: true, galvanizedSkillIds: ['superSwarm'] },
+      skills: { ...source.skills, byId: {
+        ...Object.fromEntries(Object.entries(source.skills.byId).map(([id, skill]) => [id, {
+          ...skill, owned: id === 'superSwarm' || id === 'superRadiantScattering',
+          timerSeconds: id === 'superRadiantScattering' ? 420 : 0,
+        }])), [SWARM_AUGMENTS.botnet]: { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 },
+      } },
+      dyson: { ...source.dyson, facilities: { ...source.dyson.facilities, [facilityId]: [1_000_000, 0] as const } },
+      quantum: { ...source.quantum, unlocks: { ...source.quantum.unlocks, matrioshkaBrains: true, birchPlanets: true, galacticBrains: true } },
+    }
+    const derived = deriveBasicDysonState(state, hydrated.compatibilityTuning, { permanentDoubleIp: false }, hydrated.skillEffectEvaluationSnapshot)
+    if (!derived.ok) throw Error(JSON.stringify(derived.issues))
+    const fact = derived.value.facilityFacts[facilityId]
+    renderRegionProps({ ...props(vi.fn()), facts: derived.value.facilityFacts })
+    fireEvent.click(screen.getAllByRole('button', { name: 'Details' })[DYSON_FACILITY_IDS.indexOf(facilityId)]!)
+    const stages = document.querySelectorAll('.facility-details-stage__result')
+    const number = (value: number) => formatGameNumber('en', value)
+    expect(stages[1]?.textContent).toBe(`Base (${number(fact.details.baseProductionPerSecond * fact.ownership.total)}) × ${number(fact.details.modifier)} = ${number(fact.production.perSecond)}`)
+    expect(screen.getAllByText('Botnet')).toHaveLength(1)
+    expect(screen.getAllByText('Discovery')).toHaveLength(1)
   })
 })
 

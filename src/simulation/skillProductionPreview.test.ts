@@ -1,9 +1,12 @@
 import { expect, test } from 'vitest'
 import { createDeterministicMatureDysonFixture, DETERMINISTIC_DYSON_SNAPSHOT, DETERMINISTIC_DYSON_TUNING } from '../../scripts/support/deterministicMatureDysonFixture'
 import { withCanonicalBotAllocation } from './canonicalBotAllocation'
-import { MANUAL_LABOUR_AUGMENTS as A } from './skillSubskills'
+import { MANUAL_LABOUR_AUGMENTS as A, SWARM_AUGMENTS } from './skillSubskills'
 import { manualBotYield } from './manualLabourAugments'
 import { previewSkillProduction } from './skillProductionPreview'
+import { purchaseCanonicalSkill } from './canonicalSkillTransactions'
+import { deriveDreamFoundationalInformationProductionFacts } from './dreamFoundationalInformation'
+import { deriveDreamSpaceAgeProductionFacts } from './dreamSpaceAge'
 
 function runtime(ownedSkillIds: string[] = []) {
   return {
@@ -84,5 +87,45 @@ test('Patient Hands previews 42 seconds of stored work without changing the live
   expected.skills.byId[A.patientHands] = { ...expected.skills.byId[A.patientHands], owned: true, timerSeconds: 42 }
   expect(preview.projectedSeconds).toBe(42)
   expect(preview.rows.find(row => row.id === 'manualBots')?.after).toBe(manualBotYield(expected))
+  expect(state).toEqual(before)
+})
+
+test('Self-Replicating Workers previews shared Simulation worker and launched-panel production for purchase and refund', () => {
+  const state = runtime(['ultimateSwarm'])
+  state.gameState.challenges.galvanizedSkillIds = ['ultimateSwarm']
+  state.gameState.dream.resources.hunters = 100n
+  state.gameState.dream.resources.gatherers = 200n
+  state.gameState.dream.resources.swarmPanels = 10_000n
+  state.gameState.dream.parameters.swarmPanelGeneration = 1n
+  const before = structuredClone(state)
+  const purchased = purchaseCanonicalSkill(state.gameState, SWARM_AUGMENTS.selfReplicatingWorkers)
+  if (!purchased.accepted) throw Error(purchased.reason)
+  const facts = (gameState: typeof state.gameState) => {
+    const workers = deriveDreamFoundationalInformationProductionFacts(gameState, 1)
+    const energy = deriveDreamSpaceAgeProductionFacts(gameState, 1)
+    if (workers.status !== 'success' || energy.status !== 'success') throw Error('Simulation facts unavailable')
+    return {
+      hunterCommunity: workers.facts.timers.hunterTimerProgress.outputPerSecond.community,
+      gathererCommunity: workers.facts.timers.gathererTimerProgress.outputPerSecond.community,
+      launchedPanelEnergy: energy.facts.energy.swarmPerSecond,
+    }
+  }
+  const base = facts(state.gameState)
+  const boosted = facts(purchased.state)
+  const preview = previewSkillProduction(state, SWARM_AUGMENTS.selfReplicatingWorkers, 'purchase')
+  expect(preview.rows.filter(row => row.changed).map(row => row.id)).toEqual(Object.keys(base))
+  for (const id of Object.keys(base) as Array<keyof typeof base>) {
+    const row = preview.rows.find(row => row.id === id)!
+    expect(row.before).toBe(base[id])
+    expect(row.after).toBe(boosted[id])
+    expect(row.after).toBeGreaterThan(row.before)
+  }
+  expect(boosted.launchedPanelEnergy / base.launchedPanelEnergy).toBeCloseTo(Math.sqrt(6))
+  const refund = previewSkillProduction({ ...state, gameState: purchased.state }, SWARM_AUGMENTS.selfReplicatingWorkers, 'refund')
+  for (const id of Object.keys(base) as Array<keyof typeof base>) {
+    const row = refund.rows.find(row => row.id === id)!
+    expect(row.before).toBe(boosted[id])
+    expect(row.after).toBe(base[id])
+  }
   expect(state).toEqual(before)
 })

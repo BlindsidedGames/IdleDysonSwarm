@@ -3,7 +3,7 @@ import { initializeSwarmGrants, swarmGrantsAfterInfinity } from './swarmAugments
 import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive, isQuantumChallengeActive } from './infinityChallenges'
 import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
-import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
+import { MANUAL_LABOUR_AUGMENTS, SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
 import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
 import { ordinaryInfinityBotThreshold } from './infinityCycle'
@@ -252,6 +252,7 @@ export function applyCanonicalInfinityReset(
         facilities,
         totalPanelsDecayed: 0,
         goalStage: 0n,
+        ...(state.dyson.completedTinkers === undefined ? {} : { completedTinkers: 0 }),
       },
       infinity: {
         ...state.infinity,
@@ -639,7 +640,9 @@ function applyAutoAssignment(
     points -= rule.cost
     byId[rule.id] = {
       owned: true,
-      level: 1,
+      // These levels count completed work, rather than an assigned skill level.
+      level: rule.id === MANUAL_LABOUR_AUGMENTS.handAssembly ||
+        rule.id === MANUAL_LABOUR_AUGMENTS.practice ? 0 : 1,
       timerSeconds: 0,
       secondaryTimerSeconds: 0,
     }

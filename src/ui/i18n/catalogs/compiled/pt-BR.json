@@ -347,6 +347,12 @@
       "value": "Abandonar desafio"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "Isso inicia uma nova partida de Infinito normal sem conceder IP. As restrições do desafio terminam. As melhorias de Infinito e as etapas posteriores são mantidas."
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
@@ -485,6 +491,12 @@
     {
       "type": 0,
       "value": "Conclua uma partida quântica sem Ciência nem Pesquisa."
+    }
+  ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "Isso inicia uma nova partida Quântica normal sem conceder Fragmentos quânticos. As restrições do desafio terminam. Os pontos de habilidade da Realidade, Divisão, IP duplo quântico e Entrelaçamento quântico voltam a ficar ativos. O progresso da Realidade e as etapas posteriores são mantidos."
     }
   ],
   "challenges.quantumRestart": [
@@ -2462,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": " compradas diretamente"
+      "value": " comprados ou concedidos"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "Compras manuais"
+      "value": "Compras e concessões"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "Compradas manualmente"
+      "value": "Comprados / concedidos"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -12477,6 +12489,24 @@
       "value": "Ciência"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "Coletores: Comunidade"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "Caçadores: Comunidade"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "Energia dos painéis lançados"
+    }
+  ],
   "skills.production.manualAssemblyLines": [
     {
       "type": 0,
@@ -15545,7 +15575,7 @@
     },
     {
       "type": 0,
-      "value": "; os demais se aplicam integralmente. A velocidade não multiplica o progresso transferido. Compras de velocidade compartilhada adicionam "
+      "value": "; os demais se aplicam integralmente. As transferências avançam a barra anterior por esse tempo de jogo na velocidade atual dela. Compras de velocidade compartilhada adicionam "
     },
     {
       "type": 8,
@@ -16463,7 +16493,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Após seu primeiro Quantum, novas partidas começam com uma Linha de montagem. Corrigidos: galáxias sobre o cabeçalho, retenção na nuvem de Opções de desenvolvedor conquistadas, contagem de pontos de aumentos, ajustes negativos de depuração e rotação de promoções."
+      "value": "Após seu primeiro Quantum, novas partidas começam com uma Linha de montagem. Corrigidos: galáxias sobre o cabeçalho, retenção na nuvem de Opções de desenvolvedor conquistadas, contagem de pontos de aumentos, ajustes negativos de depuração e rotação de promoções. Corrigidas as prévias de aprimoramentos, os preços dos desafios e os contadores de Trabalho manual após reinícios."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

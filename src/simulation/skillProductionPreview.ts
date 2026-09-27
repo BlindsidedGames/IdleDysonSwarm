@@ -8,6 +8,8 @@ import { deriveDiscoveryEffects } from './discoveryEffects'
 import type { CanonicalEventTimeState } from './canonicalEventTimeModel'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { purchaseCanonicalSkill, refundCanonicalSkill } from './canonicalSkillTransactions'
+import { deriveDreamFoundationalInformationProductionFacts } from './dreamFoundationalInformation'
+import { deriveDreamSpaceAgeProductionFacts } from './dreamSpaceAge'
 
 export interface SkillProductionPreview {
   readonly projected: boolean
@@ -34,7 +36,15 @@ function productionValues(derived: Extract<ReturnType<typeof deriveBasicDysonSta
   }
   const tinker = deriveCanonicalTinkerStats(state, derived.auxiliary.tinkerAssemblyYield)
   const makesFacilities = !hasManualLabourAugment(state, 'handAssembly') && state.challenges?.active !== 'built-by-hand' && state.skills.byId.manualLabour?.owned && state.dyson.facilities.ai_managers[1] >= 1
-  return { ...rates, manualBots: makesFacilities ? 0 : multiplyContinuous(tinker.botYield, derived.botBoostMultiplier), manualAssemblyLines: makesFacilities ? tinker.assemblyYield : 0, panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, elevationSpeed: state.discovery?.elevation ? discovery!.elevationSpeed : 1, enlightenmentSpeed: state.discovery?.enlightenment ? discovery!.enlightenmentSpeed : 1, cashBotsMultiplier: discovery?.cashBotsMultiplier ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
+  // Match the Simulation screen's base rates before the temporary Double Time multiplier.
+  const foundational = deriveDreamFoundationalInformationProductionFacts(state, 1)
+  const spaceAge = deriveDreamSpaceAgeProductionFacts(state, 1)
+  if (foundational.status !== 'success' || spaceAge.status !== 'success') throw new Error('Simulation production preview unavailable')
+  return { ...rates, manualBots: makesFacilities ? 0 : multiplyContinuous(tinker.botYield, derived.botBoostMultiplier), manualAssemblyLines: makesFacilities ? tinker.assemblyYield : 0,
+    hunterCommunity: foundational.facts.timers.hunterTimerProgress.outputPerSecond.community,
+    gathererCommunity: foundational.facts.timers.gathererTimerProgress.outputPerSecond.community,
+    launchedPanelEnergy: spaceAge.facts.energy.swarmPerSecond,
+    panelLifetime: derived.globals.panelLifetimeSeconds, discoverySpeed: discovery?.speed ?? 1, elevationSpeed: state.discovery?.elevation ? discovery!.elevationSpeed : 1, enlightenmentSpeed: state.discovery?.enlightenment ? discovery!.enlightenmentSpeed : 1, cashBotsMultiplier: discovery?.cashBotsMultiplier ?? 1, discoveryMultiplier: discovery?.multiplier ?? 1 }
 }
 
 /** On-demand comparison only: never advance production, automation, or the real save. */

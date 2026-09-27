@@ -347,6 +347,12 @@
       "value": "Herausforderung abbrechen"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "Dies startet einen neuen normalen Unendlichkeits-Durchlauf, ohne IP zu vergeben. Die Einschränkungen der Herausforderung enden. Unendlichkeits-Upgrades und spätere Ebenen bleiben erhalten."
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
@@ -485,6 +491,12 @@
     {
       "type": 0,
       "value": "Schließe einen Quantenlauf ohne Wissenschaft oder Forschung ab."
+    }
+  ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "Dies startet einen neuen normalen Quanten-Durchlauf, ohne Quantensplitter zu vergeben. Die Einschränkungen der Herausforderung enden. Realität-Skillpunkte, Division, Quanten-Doppel-IP und Quantenverschränkung werden wieder aktiv. Der Realitätsfortschritt und spätere Ebenen bleiben erhalten."
     }
   ],
   "challenges.quantumRestart": [
@@ -2462,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": " direkt gekauft"
+      "value": " gekauft oder gewährt"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "Manuelle Käufe"
+      "value": "Käufe und Zuschüsse"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "Manuell gekauft"
+      "value": "Gekauft / gewährt"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -12477,6 +12489,24 @@
       "value": "Wissenschaft"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "Sammler: Gemeinschaft"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "Jäger: Gemeinschaft"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "Energie gestarteter Paneele"
+    }
+  ],
   "skills.production.manualAssemblyLines": [
     {
       "type": 0,
@@ -15545,7 +15575,7 @@
     },
     {
       "type": 0,
-      "value": "; andere Geschwindigkeitsboni gelten vollständig. Übertragener Fortschritt wird nicht mit Geschwindigkeit multipliziert. Gemeinsame Geschwindigkeitskäufe geben "
+      "value": "; andere Geschwindigkeitsboni gelten vollständig. Übertragungen lassen den vorherigen Balken um diese Spielzeit mit seiner aktuellen Geschwindigkeit voranschreiten. Gemeinsame Geschwindigkeitskäufe geben "
     },
     {
       "type": 8,
@@ -16463,7 +16493,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Nach deinem ersten Quantum beginnen neue Durchläufe mit einer Montagelinie. Behoben: Galaxien vor der Kopfzeile, Cloud-Erhalt verdienter Entwickleroptionen, Fähigkeitspunktzählung für Augmente, negative Debug-Anpassungen und Werberotation."
+      "value": "Nach deinem ersten Quantum beginnen neue Durchläufe mit einer Montagelinie. Behoben: Galaxien vor der Kopfzeile, Cloud-Erhalt verdienter Entwickleroptionen, Fähigkeitspunktzählung für Augmente, negative Debug-Anpassungen und Werberotation. Augment-Vorschauen, Herausforderungspreise und die Rücksetz-Zähler für Handarbeit wurden korrigiert."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

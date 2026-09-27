@@ -64,7 +64,9 @@ function ChallengeCard({ progress, overflowReached, developmentVisible = false, 
         {active && <p role="status">{intl.formatMessage(messages.activeLabel)}</p>}
       </div>
       {confirming ? <div className="infinity-challenge-card__confirmation">
-        <p>{intl.formatMessage(quantum ? messages.quantumRestart : messages.restart)}</p>
+        <p>{intl.formatMessage(active
+          ? (quantum ? messages.quantumAbandonRestart : messages.abandonRestart)
+          : (quantum ? messages.quantumRestart : messages.restart))}</p>
         <div className="infinity-challenge-card__actions">
           <Button variant="danger" state={pending ? 'pending' : failed ? 'failure' : 'idle'} disabled={unavailable}
             onClick={() => void restart()}>{intl.formatMessage(messages.confirm)}</Button>

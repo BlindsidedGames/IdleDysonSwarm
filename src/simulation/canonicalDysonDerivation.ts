@@ -728,29 +728,14 @@ export function deriveBasicDysonState(
             effectiveProducerCount:
               mega.facts[facilityId].ownership.total,
             modifier: mega.facts[facilityId].modifier,
-            contributions: Object.freeze([
-              Object.freeze({
-                sourceId: 'base',
-                displayRole: 'base' as const,
-                operation: 'override' as const,
-                value: mega.facts[facilityId].baseProductionPerSecond,
-                delta: mega.facts[facilityId].baseProductionPerSecond,
-                runningTotal:
-                  mega.facts[facilityId].baseProductionPerSecond,
-              }),
-              Object.freeze({
-                sourceId: `${facilityId}.count`,
-                displayRole: 'producer-count' as const,
-                operation: 'multiply' as const,
-                value: mega.facts[facilityId].ownership.total,
-                delta:
-                  mega.facts[facilityId].baseProductionPerSecond *
-                  (mega.facts[facilityId].ownership.total - 1),
-                runningTotal:
-                  mega.facts[facilityId].baseProductionPerSecond *
-                  mega.facts[facilityId].ownership.total,
-              }),
-            ]),
+            contributions: deriveFacilityContributionRows({
+              baseProduction: mega.facts[facilityId].baseProductionPerSecond,
+              effects: [{
+                id: `${facilityId}.count`, operation: 'multiply' as const,
+                value: mega.facts[facilityId].ownership.total, order: 0,
+              }, multiplierEffect(`${facilityId}.modifier`, mega.facts[facilityId].modifier, 10)].filter(isEffect),
+              rate: mega.facts[facilityId].perSecond,
+            }, state.dyson.facilities[facilityId], research.effects, state, evaluationSnapshot),
             modifierContributions: deriveAttributedEffectRows(
               1,
               facilityModifierCalculations[facilityId].effects,

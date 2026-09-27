@@ -40,7 +40,7 @@ describe('Wiki patch-note content', () => {
       'Added ten Swarm and Fragment augments.',
       'Rebalanced facility price growth and megastructure costs and production.',
       'The sixth Avotation secret now completes automatically once reached with Discovery unlocked.',
-      'After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.',
+      'After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation. Corrected augment previews, challenge pricing and Manual Labour reset counters.',
       'iOS 16 or later is now required.',
     ])
     expect(screen.queryByRole('heading', { name: 'Version 4.1.11' })).toBeNull()

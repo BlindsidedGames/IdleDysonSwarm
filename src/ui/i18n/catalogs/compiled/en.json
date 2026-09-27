@@ -347,6 +347,12 @@
       "value": "Abandon challenge"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "This starts a fresh normal Infinity run without awarding IP. Challenge restrictions end. Infinity upgrades and later layers are kept."
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
@@ -485,6 +491,12 @@
     {
       "type": 0,
       "value": "Complete a Quantum run without Science or Research."
+    }
+  ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "This starts a fresh normal Quantum run without awarding Quantum Shards. Challenge restrictions end. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement become active again. Reality progress and later layers are kept."
     }
   ],
   "challenges.quantumRestart": [
@@ -2462,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": " purchased directly"
+      "value": " purchased or granted"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "Manual Purchases"
+      "value": "Purchases & grants"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "Manually purchased"
+      "value": "Purchased / granted"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -12477,6 +12489,24 @@
       "value": "Science"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "Gatherers: Community"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "Hunters: Community"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "Launched-panel Energy"
+    }
+  ],
   "skills.production.manualAssemblyLines": [
     {
       "type": 0,
@@ -15545,7 +15575,7 @@
     },
     {
       "type": 0,
-      "value": "; other speed bonuses apply fully. Transferred progress is not multiplied by speed. Shared speed purchases add "
+      "value": "; other speed bonuses apply fully. Transfers advance the previous bar by that much gameplay time at its current speed. Shared speed purchases add "
     },
     {
       "type": 8,
@@ -16463,7 +16493,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation."
+      "value": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation. Corrected augment previews, challenge pricing and Manual Labour reset counters."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

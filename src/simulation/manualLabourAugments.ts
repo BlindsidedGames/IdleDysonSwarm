@@ -60,7 +60,7 @@ export function completeManualLabour(state: CanonicalGameStateV1): CanonicalGame
   if (!hasManualLabourAugment(state, 'handAssembly')) return state
   const byId = { ...state.skills.byId }
   const waiting = byId[AUGMENTS.patientHands]
-  const completed = 1 + storedActivations(state, waiting?.secondaryTimerSeconds ?? 0)
+  const completed = completedManualLabourWork(state)
   for (const key of ['handAssembly', 'practice'] as const) {
     const skill = byId[AUGMENTS[key]]
     if (skill && hasManualLabourAugment(state, key)) {
@@ -69,6 +69,12 @@ export function completeManualLabour(state: CanonicalGameStateV1): CanonicalGame
   }
   if (waiting) byId[AUGMENTS.patientHands] = { ...waiting, secondaryTimerSeconds: 0, timerSeconds: 0 }
   return { ...state, skills: { ...state.skills, byId } }
+}
+
+/** One ordinary action, plus Patient Hands work consumed by this completion. */
+export function completedManualLabourWork(state: Readonly<CanonicalGameStateV1>): number {
+  return 1 + (hasManualLabourAugment(state, 'handAssembly')
+    ? storedActivations(state, state.skills.byId[AUGMENTS.patientHands]?.secondaryTimerSeconds ?? 0) : 0)
 }
 
 export function advanceManualLabourIdle(state: CanonicalGameStateV1, seconds: number): CanonicalGameStateV1 {

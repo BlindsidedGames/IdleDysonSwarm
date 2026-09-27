@@ -611,8 +611,8 @@ export const basicFacilityMessages = defineMessages({
   },
   manuallyPurchased: {
     id: 'dyson.facilities.details.manually-purchased',
-    defaultMessage: 'Manually purchased',
-    description: 'Manual facility count label.',
+    defaultMessage: 'Purchased / granted',
+    description: 'Facility count from purchases and grants, including Head Start and reset retention.',
   },
   terraTransferDescription: {
     id: 'dyson.facilities.details.terra-transfer-description',
@@ -711,13 +711,13 @@ export const basicFacilityMessages = defineMessages({
   },
   manualPurchases: {
     id: 'dyson.facilities.details.manual-purchases',
-    defaultMessage: 'Manual Purchases',
-    description: 'Manual purchasing route in facility acquisition details.',
+    defaultMessage: 'Purchases & grants',
+    description: 'Purchases and grants route in facility acquisition details.',
   },
   manualAcquisitionDescription: {
     id: 'dyson.facilities.details.manual-acquisition-description',
-    defaultMessage: '{count} {facility} purchased directly',
-    description: 'Manual facility acquisition count and facility name.',
+    defaultMessage: '{count} {facility} purchased or granted',
+    description: 'Purchased or granted facility count and facility name.',
   },
   howYouGain: {
     id: 'dyson.facilities.details.how-you-gain',

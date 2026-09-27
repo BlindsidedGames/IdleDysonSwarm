@@ -235,3 +235,15 @@ test('Self-Replicating Workers boosts Hunters, Gatherers and launched-panel Ener
   expect(spaceTick(boosted, { tickSeconds: 60, doubleTimeMultiplier: 2 }).energyGenerated).toBeCloseTo(energyAfter.facts.energy.totalPerSecond * 60)
   expect(facts(refund(boosted, A.selfReplicatingWorkers), 2)).toEqual(before)
 })
+
+
+test('Supply Shortage keeps its fixed doubling rule with Reductive Scaling assigned', () => {
+  let state = fixture([A.reductiveScaling, A.compoundFragments])
+  state = { ...state, challenges: { ...state.challenges!, active: 'supply-shortage' },
+    dyson: { ...state.dyson, money: 1e30 } }
+  const initial = previewCanonicalFacilityPurchase(state, 'assembly_lines').cost
+  const bought = tryPurchaseCanonicalFacility(state, 'assembly_lines')
+  expect(bought.state.dyson.facilities.assembly_lines[1]).toBe(1)
+  const next = previewCanonicalFacilityPurchase(bought.state, 'assembly_lines').cost
+  expect(next / initial).toBe(2)
+})

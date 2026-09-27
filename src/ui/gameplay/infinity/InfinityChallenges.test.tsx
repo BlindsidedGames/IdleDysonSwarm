@@ -76,3 +76,21 @@ test('No Science uses a Quantum confirmation and a two-Catalyst reward', async (
   fireEvent.click(card.getByRole('button', { name: 'Confirm restart' }))
   await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.enter', challengeId: 'no-science' }))
 })
+
+test.each(['blank-slate', 'no-science'] as const)('abandoning %s confirms a normal run with restrictions ended', async (challengeId) => {
+  const dispatch = vi.fn().mockResolvedValue({ status: 'accepted' })
+  render(<IntlProvider locale="en" messages={{}}><InfinityChallenges
+    progress={{ ...EMPTY_INFINITY_CHALLENGES, unlocked: true, active: challengeId }}
+    overflowReached={false} dispatchPlayer={dispatch} /></IntlProvider>)
+  const card = within(screen.getByRole('button', { name: 'Abandon challenge' }).closest('article')!)
+  fireEvent.click(card.getByRole('button', { name: 'Abandon challenge' }))
+  expect(card.getByText(/fresh normal .* run without awarding/)).toBeTruthy()
+  expect(card.getByText(/Challenge restrictions end/)).toBeTruthy()
+  expect(card.queryByText(/are inactive/)).toBeNull()
+  if (challengeId === 'no-science') {
+    expect(card.getByText(/Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement become active again/)).toBeTruthy()
+  }
+  expect(dispatch).not.toHaveBeenCalled()
+  fireEvent.click(card.getByRole('button', { name: 'Confirm restart' }))
+  await waitFor(() => expect(dispatch).toHaveBeenCalledWith({ kind: 'challenge.abandon' }))
+})

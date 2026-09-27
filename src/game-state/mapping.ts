@@ -271,6 +271,7 @@ export function hydrateGameState(
         infinityData.totalPanelsDecayed,
       ),
       goalStage: toNonNegativeBigInt(infinityData.goalSetter),
+      ...(source.completedTinkers === undefined ? {} : { completedTinkers: source.completedTinkers as number }),
       botDistribution: clampUnit(toFiniteNonNegativeNumber(
         prestige.botDistribution,
         0.5,
@@ -777,6 +778,8 @@ export function dehydrateGameState(
   infinityData.bots = state.dyson.bots
   infinityData.workers = state.dyson.workers
   infinityData.researchers = state.dyson.researchers
+  if (state.dyson.completedTinkers !== undefined) source.completedTinkers = state.dyson.completedTinkers
+  else delete source.completedTinkers
   for (const [id, sourceKey] of Object.entries(FACILITY_PATHS)) {
     infinityData[sourceKey] = [
       ...state.dyson.facilities[id as CanonicalFacilityId],

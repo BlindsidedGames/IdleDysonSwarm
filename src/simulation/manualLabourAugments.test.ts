@@ -7,8 +7,15 @@ import { manualBotYield, advanceManualLabourIdle, completeManualLabour, MANUAL_L
 import { advanceCanonicalTinker, startCanonicalTinker, createCanonicalTinkerRuntimeState, deriveCanonicalTinkerStats, selectCanonicalTinkerUiFacts } from './canonicalTinker'
 import { applyCanonicalQuantumReset } from './quantumTransitions'
 import { applyCanonicalInfinityReset } from './canonicalInfinityReset'
-import { purchaseCanonicalSkill, refundCanonicalSkill } from './canonicalSkillTransactions'
+import { purchaseCanonicalSkill, refundCanonicalSkill, applyCanonicalSkillPresetLayout } from './canonicalSkillTransactions'
 import { advanceCanonicalGoalProgression } from './canonicalGoalProgression'
+import { restartInfinityChallenge } from './canonicalInfinityChallengeRestart'
+import { applyCanonicalOverflowReset } from './canonicalOverflowReset'
+import { validateCompletedTinkers } from './tinkerGoalProgress'
+import { validateCanonicalGameState } from '../game-state/validate'
+import { CanonicalRuntimeSession } from '../application/canonicalRuntimeSession'
+import { PreparedSave } from '../save/prepare'
+import { deserializeWebSave, serializeSharedWebSave } from '../save/serialization'
 
 const session = () => hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-26T00:00:00Z' }))
 function fixture(ids: readonly string[] = Object.values(A)) {
@@ -20,6 +27,31 @@ function click(state: ReturnType<typeof fixture>, repeat = false, seconds = .2, 
   const start = startCanonicalTinker(state, createCanonicalTinkerRuntimeState(), stats, repeat)
   return advanceCanonicalTinker(start.state, start.runtime, stats, seconds, multiplier)
 }
+
+test('live, preset and prestige assignment begin Hand Assembly and Practice with no completed work', () => {
+  const source = fixture([])
+  source.skills.points = 10n
+  const manual = purchaseCanonicalSkill(source, A.practice)
+  const preset = applyCanonicalSkillPresetLayout(source, [A.handAssembly, A.practice])
+  if (!manual.accepted || !preset.accepted) throw Error('Assignment failed')
+  const worked = click(manual.state as ReturnType<typeof fixture>, true, 1).state
+  expect(worked.skills.byId[A.handAssembly].level).toBe(5)
+  expect(worked.skills.byId[A.practice].level).toBe(5)
+  const infinity = applyCanonicalInfinityReset(worked, { requestedReward: 1n, breakInfinity: false, artifactSkillPoints: 10n })
+  const quantum = applyCanonicalQuantumReset(worked, 10n)
+  if (!infinity.ok || !quantum.ok) throw Error('Prestige failed')
+  for (const state of [manual.state, preset.state, infinity.state, quantum.state]) {
+    expect(state.skills.byId[A.handAssembly].owned).toBe(true)
+    expect(state.skills.byId[A.practice].owned).toBe(true)
+    expect(state.skills.byId[A.handAssembly].level).toBe(0)
+    expect(state.skills.byId[A.practice].level).toBe(0)
+    expect(manualBotYield(state)).toBe(1)
+    const first = click(state as ReturnType<typeof fixture>)
+    expect(first.botsGranted).toBe(1)
+    expect(first.state.skills.byId[A.handAssembly].level).toBe(1)
+    expect(first.state.skills.byId[A.practice].level).toBe(1)
+  }
+})
 
 test('Hand Assembly grows with completed work, not Bot balance, and cannot accelerate through repeated starts', () => {
   const state = fixture([A.handAssembly]); state.dyson.facilities.ai_managers = [0, 10]
@@ -119,11 +151,11 @@ test.each([[1n, 50], [3n, 250]] as const)('Built by Hand replaces goal %s with %
   let state = fixture()
   state.challenges = { ...state.challenges, active: 'built-by-hand' } as typeof state.challenges
   state.dyson.goalStage = stage
-  state.skills.byId[A.handAssembly].level = target - 1
+  state.dyson = { ...state.dyson, completedTinkers: target - 1 }
   const facts = () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 })
   const before = advanceCanonicalGoalProgression(state, facts)
   expect(before.ok && before.awardedSkillPoints).toBe(0n)
-  state = completeManualLabour(state) as typeof state
+  state = click(state).state as typeof state
   const after = advanceCanonicalGoalProgression(state, facts)
   if (!after.ok) throw Error(after.detail)
   expect(after.state.dyson.goalStage).toBe(stage + 1n)
@@ -148,4 +180,100 @@ test('Patient Hands stored Tinkers advance challenge goals and award the normal 
   const next = advanceCanonicalGoalProgression(second.state, () => ({ panelsPerSecond: 2000, panelLifetimeSeconds: 10 }))
   expect(next.ok && next.state.dyson.goalStage).toBe(4n)
   expect(next.ok && next.awardedSkillPoints).toBe(1n)
+})
+
+test('Built by Hand counts ordinary Tinkers before Hand Assembly is assigned', () => {
+  const state = fixture([])
+  state.dyson.bots = 0
+  state.dyson.manualCreationIntervalSeconds = .5
+  state.dyson.goalStage = 1n
+  state.challenges = { ...state.challenges, active: 'built-by-hand' } as typeof state.challenges
+  const result = click(state, true, 34.9)
+  expect(result.completions).toBe(70)
+  expect(result.state.dyson.bots).toBe(70)
+  expect(result.state.dyson.completedTinkers).toBe(70)
+  expect(result.state.skills.byId[A.handAssembly]?.level ?? 0).toBe(0)
+  const goal = advanceCanonicalGoalProgression(result.state, () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 }))
+  expect(goal.ok && goal.state.dyson.goalStage).toBe(2n)
+  expect(goal.ok && goal.awardedSkillPoints).toBe(1n)
+})
+
+test('the durable Tinker counter includes Manual Labour actions, not their facility yield', () => {
+  const state = fixture([])
+  state.dyson.facilities.ai_managers = [0, 1]
+  const result = click(state, true, .9)
+  expect(result.completions).toBe(5)
+  expect(result.assemblyLinesGranted).toBe(2500)
+  expect(result.state.dyson.completedTinkers).toBe(5)
+})
+
+test('plain Tinkers count one completed action and do not count another action while idle', () => {
+  const state = session().state
+  const first = click(state as ReturnType<typeof fixture>, false, state.dyson.manualCreationIntervalSeconds - .1)
+  expect(first.completions).toBe(1)
+  expect(first.state.dyson.completedTinkers).toBe(1)
+  const idle = advanceCanonicalTinker(first.state, first.runtime, deriveCanonicalTinkerStats(first.state, 500), 1000)
+  expect(idle.completions).toBe(0)
+  expect(idle.state.dyson.completedTinkers).toBe(1)
+})
+
+test('Patient Hands goal work is bounded, survives refunds/reload and resets on every run restart', () => {
+  const first = click(advanceManualLabourIdle(fixture(), 42) as ReturnType<typeof fixture>).state
+  expect(first.dyson.completedTinkers).toBe(211)
+  const second = click(advanceManualLabourIdle(first, 42) as ReturnType<typeof fixture>).state
+  expect(second.dyson.completedTinkers).toBe(250)
+  expect(second.skills.byId[A.handAssembly].level).toBe(422)
+  const refunded = refundCanonicalSkill(second, A.handAssembly)
+  if (!refunded.accepted) throw Error(refunded.reason)
+  const bought = purchaseCanonicalSkill(refunded.state, A.handAssembly)
+  if (!bought.accepted) throw Error(bought.reason)
+  expect(bought.state.dyson.completedTinkers).toBe(250)
+  const loaded = hydrateGameState(dehydrateGameState(session(), bought.state)).state
+  expect(loaded.dyson.completedTinkers).toBe(250)
+  const runtimeSession = new CanonicalRuntimeSession(dehydrateGameState(session(), loaded), {
+    entitlements: { permanentDoubleIp: false },
+    nowUtcMilliseconds: () => Date.parse('2026-09-27T01:00:00Z'),
+  })
+  const checkpoint = runtimeSession.prepareForPersistence(runtimeSession.initialState)
+  const exported = serializeSharedWebSave(checkpoint.copyValidatedState())
+  const imported = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(exported))).state
+  expect(imported.dyson.completedTinkers).toBe(250)
+  const transitions = [
+    applyCanonicalInfinityReset(loaded, { requestedReward: 1n, breakInfinity: false, artifactSkillPoints: 0n }),
+    applyCanonicalQuantumReset(loaded, 0n),
+    restartInfinityChallenge(loaded, 'enter', 0n, 'built-by-hand'),
+    restartInfinityChallenge({ ...loaded, challenges: { ...loaded.challenges!, active: 'built-by-hand' } }, 'abandon', 0n),
+    applyCanonicalOverflowReset({ ...loaded, dyson: { ...loaded.dyson, bots: 4e242 } }),
+  ]
+  for (const reset of transitions) {
+    if (!reset.ok) throw Error('Run restart failed')
+    expect(reset.state.dyson.completedTinkers).toBe(0)
+  }
+})
+
+test('old skill levels, Bot grants, previews and incomplete Tinkers do not invent completed actions', () => {
+  const state = fixture()
+  state.skills.byId[A.handAssembly].level = 1000
+  state.dyson.bots = 1e100
+  state.dyson.goalStage = 1n
+  state.challenges = { ...state.challenges, active: 'built-by-hand' } as typeof state.challenges
+  const loaded = hydrateGameState(dehydrateGameState(session(), state)).state
+  expect(loaded.dyson.completedTinkers).toBeUndefined()
+  const goal = advanceCanonicalGoalProgression(loaded, () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 }))
+  expect(goal.ok && goal.awardedSkillPoints).toBe(0n)
+  manualBotYield(loaded)
+  const incomplete = click(loaded as ReturnType<typeof fixture>, false, .1)
+  expect(incomplete.completions).toBe(0)
+  expect(incomplete.state.dyson.completedTinkers).toBeUndefined()
+})
+
+test.each([-1, .5, 251, Infinity, '50'])('rejects invalid persisted Tinker count %s', value => {
+  expect(validateCompletedTinkers(value)).toBe('Invalid completed Tinker count.')
+  const hydrated = session()
+  const prepared = dehydrateGameState(hydrated, hydrated.state)
+  expect(() => prepared.withValidatedState({ ...prepared.copyValidatedState(), completedTinkers: value }))
+    .toThrow('Invalid completed Tinker count.')
+  const state = session().state
+  const invalid = { ...state, dyson: { ...state.dyson, completedTinkers: value as number } }
+  expect(validateCanonicalGameState(invalid).errors).toContain('Invalid completed Tinker count.')
 })

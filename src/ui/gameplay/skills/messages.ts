@@ -1,6 +1,9 @@
 import { defineMessages } from 'react-intl'
 
 export const skillMessages = defineMessages({
+  hunterCommunity: { id: 'skills.production.hunterCommunity', defaultMessage: 'Hunters: Community' },
+  gathererCommunity: { id: 'skills.production.gathererCommunity', defaultMessage: 'Gatherers: Community' },
+  launchedPanelEnergy: { id: 'skills.production.launchedPanelEnergy', defaultMessage: 'Launched-panel Energy' },
   manualBots: { id: 'skills.production.manualBots', defaultMessage: 'Bots per activation' },
   manualAssemblyLines: { id: 'skills.production.manualAssemblyLines', defaultMessage: 'Assembly Lines per activation' },
   manualHandAssemblyName: { id: 'skills.manualLabour.handAssembly.name', defaultMessage: 'Hand Assembly' },

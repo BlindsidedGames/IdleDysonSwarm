@@ -81,6 +81,7 @@
           "cooldownSeconds": 0.20000000298023224
         },
         "presentationMode": "default",
+        "facilitiesDisabled": false,
         "canStart": true,
         "eligibility": "available",
         "timeToCompletionSeconds": null
@@ -277,6 +278,7 @@
             "cooldownSeconds": 0.20000000298023224
           },
           "presentationMode": "default",
+          "facilitiesDisabled": false,
           "canStart": false,
           "eligibility": "already-running",
           "timeToCompletionSeconds": 2.980232227667301e-9
@@ -302,6 +304,7 @@
             "cooldownSeconds": 0.5
           },
           "presentationMode": "default",
+          "facilitiesDisabled": false,
           "canStart": true,
           "eligibility": "available",
           "timeToCompletionSeconds": null
@@ -387,6 +390,7 @@
           "cooldownSeconds": 0.5
         },
         "presentationMode": "default",
+        "facilitiesDisabled": false,
         "canStart": true,
         "eligibility": "available",
         "timeToCompletionSeconds": null

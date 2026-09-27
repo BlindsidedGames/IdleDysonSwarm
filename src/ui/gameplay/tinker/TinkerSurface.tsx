@@ -105,7 +105,7 @@ export function TinkerSurface({
     <span className="tinker-surface__yield">{chunks}</span>
   )
   const description =
-    facts.presentationMode === 'hand-assembly' ? intl.formatMessage(tinkerMessages.handAssemblyDescription, { count: formatGameNumber(locale, facts.stats.botYield), value: highlightedValue }) : facts.presentationMode === 'manual-labour'
+    facts.facilitiesDisabled || facts.presentationMode === 'hand-assembly' ? intl.formatMessage(tinkerMessages.handAssemblyDescription, { count: formatGameNumber(locale, facts.stats.botYield), value: highlightedValue }) : facts.presentationMode === 'manual-labour'
       ? intl.formatMessage(tinkerMessages.manualLabourDescription, {
           count: formatGameNumber(
             locale,
@@ -122,7 +122,7 @@ export function TinkerSurface({
             },
           )
         : intl.formatMessage(tinkerMessages.defaultDescription)
-  const showFreshSaveTip = facts.presentationMode === 'default'
+  const showFreshSaveTip = facts.presentationMode === 'default' && !facts.facilitiesDisabled
   const showRepeatStatus = facts.presentationMode !== 'default'
   const running = facts.runtime.running
   const showHeldVisual = gesture.active

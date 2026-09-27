@@ -347,6 +347,12 @@
       "value": "放弃挑战"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "这将开始一次新的普通无限轮回，不奖励IP。挑战限制将解除。无限升级和后续阶段将保留。"
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
@@ -485,6 +491,12 @@
     {
       "type": 0,
       "value": "不使用科学或研究完成一次量子轮次。"
+    }
+  ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "这将开始一次新的普通量子轮回，不奖励量子碎片。挑战限制将解除。现实技能点、除法、量子双倍IP和量子纠缠将重新生效。现实进度和后续阶段将保留。"
     }
   ],
   "challenges.quantumRestart": [
@@ -2454,7 +2466,7 @@
     },
     {
       "type": 0,
-      "value": " "
+      "value": "个"
     },
     {
       "type": 1,
@@ -2462,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": "（直接购买）"
+      "value": "（购买或获赠）"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "手动购买"
+      "value": "购买与赠送"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "手动购买"
+      "value": "购买 / 获赠"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -12477,6 +12489,24 @@
       "value": "科学"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "采集者：社区"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "猎人：社区"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "已发射面板的能量"
+    }
+  ],
   "skills.production.manualAssemblyLines": [
     {
       "type": 0,
@@ -15545,7 +15575,7 @@
     },
     {
       "type": 0,
-      "value": "生效，其他速度加成全额生效。传递进度不乘以速度。共享速度升级增加"
+      "value": "生效，其他速度加成全额生效。传递会让前一条进度条以其当前速度推进相应的游戏时间。共享速度升级增加"
     },
     {
       "type": 8,
@@ -16463,7 +16493,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "首次量子后，新一轮从一条装配线开始。修复了星系遮挡顶部面板、已获得的开发者选项在云端丢失、强化技能点计数、负数调试调整及推广轮换问题。"
+      "value": "首次量子后，新一轮从一条装配线开始。修复了星系遮挡顶部面板、已获得的开发者选项在云端丢失、强化技能点计数、负数调试调整及推广轮换问题。 修正了强化预览、挑战价格和手动劳动的重置计数。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

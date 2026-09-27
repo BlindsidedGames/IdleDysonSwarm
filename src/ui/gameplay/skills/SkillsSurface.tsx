@@ -21,7 +21,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type WheelEvent as ReactWheelEvent,
 } from 'react'
-import { useIntl } from 'react-intl'
+import { useIntl, type MessageDescriptor } from 'react-intl'
 import type {
   CanonicalSkillPresetApplicationOutcome,
   CanonicalSkillPresetSlot,
@@ -2309,9 +2309,9 @@ function SkillDetails({
                   <div className="skill-details__production-impact">
                     {liveProduction && liveProduction.rows.map((row) => (
                       <ProductionImpactRow key={row.id}
-                        label={intl.formatMessage(productionLabels[row.id])}
-                        before={`${formatGameNumber(locale, row.before)}${row.id.startsWith('manual') ? '' : row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}`}
-                        after={`${formatGameNumber(locale, row.after)}${row.id.startsWith('manual') ? '' : row.id === 'panelLifetime' ? 's' : row.id.startsWith('discovery') ? '×' : '/s'}${liveProduction.projected ? ` (${liveProduction.projectedSeconds < 60 ? `${liveProduction.projectedSeconds}s` : `${liveProduction.projectedSeconds / 60}m`})` : ''}`}
+                        label={intl.formatMessage(productionMetrics[row.id].label)}
+                        before={`${formatGameNumber(locale, row.before)}${productionMetrics[row.id].unit}`}
+                        after={`${formatGameNumber(locale, row.after)}${productionMetrics[row.id].unit}${liveProduction.projected ? ` (${liveProduction.projectedSeconds < 60 ? `${liveProduction.projectedSeconds}s` : `${liveProduction.projectedSeconds / 60}m`})` : ''}`}
                         afterTone={row.after >= row.before ? 'gain' : 'loss'}
                         toLabel={intl.formatMessage(messages.impactTo)} />
                     ))}
@@ -2429,28 +2429,31 @@ function SkillDetails({
   )
 }
 
-const productionLabels = {
-  manualBots: messages.manualBots,
-  manualAssemblyLines: messages.manualAssemblyLines,
-  money: messages.productionCash,
-  science: messages.productionScience,
-  bots: messages.impactBots,
-  panels: messages.productionPanels,
-  assembly_lines: facilityMessages.assemblyLinesName,
-  ai_managers: facilityMessages.aiManagersName,
-  servers: facilityMessages.serversName,
-  data_centers: facilityMessages.dataCentersName,
-  planets: facilityMessages.planetsName,
-  matrioshka_brains: facilityMessages.matrioshkaBrainsName,
-  birch_planets: facilityMessages.birchPlanetsName,
-  galactic_brains: facilityMessages.galacticBrainsName,
-  panelLifetime: facilityMessages.panelLifetime,
-  discoverySpeed: discoveryMessages.speed,
-  elevationSpeed: discoveryMessages.elevation,
-  enlightenmentSpeed: discoveryMessages.enlightenment,
-  cashBotsMultiplier: discoveryMessages.cashBots,
-  discoveryMultiplier: discoveryMessages.name,
-}
+const productionMetrics = {
+  hunterCommunity: { label: messages.hunterCommunity, unit: '/s' },
+  gathererCommunity: { label: messages.gathererCommunity, unit: '/s' },
+  launchedPanelEnergy: { label: messages.launchedPanelEnergy, unit: '/s' },
+  manualBots: { label: messages.manualBots, unit: '' },
+  manualAssemblyLines: { label: messages.manualAssemblyLines, unit: '' },
+  money: { label: messages.productionCash, unit: '/s' },
+  science: { label: messages.productionScience, unit: '/s' },
+  bots: { label: messages.impactBots, unit: '/s' },
+  panels: { label: messages.productionPanels, unit: '/s' },
+  assembly_lines: { label: facilityMessages.assemblyLinesName, unit: '/s' },
+  ai_managers: { label: facilityMessages.aiManagersName, unit: '/s' },
+  servers: { label: facilityMessages.serversName, unit: '/s' },
+  data_centers: { label: facilityMessages.dataCentersName, unit: '/s' },
+  planets: { label: facilityMessages.planetsName, unit: '/s' },
+  matrioshka_brains: { label: facilityMessages.matrioshkaBrainsName, unit: '/s' },
+  birch_planets: { label: facilityMessages.birchPlanetsName, unit: '/s' },
+  galactic_brains: { label: facilityMessages.galacticBrainsName, unit: '/s' },
+  panelLifetime: { label: facilityMessages.panelLifetime, unit: 's' },
+  discoverySpeed: { label: discoveryMessages.speed, unit: '×' },
+  elevationSpeed: { label: discoveryMessages.elevation, unit: '×' },
+  enlightenmentSpeed: { label: discoveryMessages.enlightenment, unit: '×' },
+  cashBotsMultiplier: { label: discoveryMessages.cashBots, unit: '×' },
+  discoveryMultiplier: { label: discoveryMessages.name, unit: '×' },
+} satisfies Record<SkillProductionPreview['rows'][number]['id'], { label: MessageDescriptor; unit: string }>
 
 function ProductionImpactRow({
   label,

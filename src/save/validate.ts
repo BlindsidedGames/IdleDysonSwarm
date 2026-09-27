@@ -1,4 +1,5 @@
 import { validateDiscovery } from '../simulation/discovery'
+import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
 import type { DiscoveryState } from '../game-state/types'
 import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { validateInfinityChallenges } from '../simulation/infinityChallenges'
@@ -39,6 +40,8 @@ export function validatePreparedSave(
     if (discoveryError) return invalid(discoveryError)
   }
   if (value.firstQuantumComplete !== undefined && typeof value.firstQuantumComplete !== 'boolean') return invalid('Invalid first Quantum milestone.')
+  const tinkerError = validateCompletedTinkers(value.completedTinkers)
+  if (tinkerError) return invalid(tinkerError)
   const speedrunError = validateSpeedrunStatistics(value.idsSpeedruns)
   if (speedrunError) return invalid(speedrunError)
 

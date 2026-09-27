@@ -61,6 +61,8 @@ export interface DysonState {
   readonly manualCreationIntervalSeconds: number
   readonly totalPanelsDecayed: number
   readonly goalStage: bigint
+  /** Completed Tinker work in this run, capped at the final 250-action goal. */
+  readonly completedTinkers?: number
   readonly botDistribution: number
   readonly automation: {
     readonly buyMode: BuyMode

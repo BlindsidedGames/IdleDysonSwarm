@@ -190,6 +190,9 @@
   "challenges.abandon": {
     "defaultMessage": "Abandon challenge"
   },
+  "challenges.abandonRestart": {
+    "defaultMessage": "This starts a fresh normal Infinity run without awarding IP. Challenge restrictions end. Infinity upgrades and later layers are kept."
+  },
   "challenges.active": {
     "defaultMessage": "Blank Slate active · Skill assignment disabled"
   },
@@ -255,6 +258,9 @@
   },
   "challenges.noScience.description": {
     "defaultMessage": "Complete a Quantum run without Science or Research."
+  },
+  "challenges.quantumAbandonRestart": {
+    "defaultMessage": "This starts a fresh normal Quantum run without awarding Quantum Shards. Challenge restrictions end. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement become active again. Reality progress and later layers are kept."
   },
   "challenges.quantumRestart": {
     "defaultMessage": "This starts a fresh Quantum run without awarding Quantum Shards. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement are inactive. Reality progress is kept. Purchased Double IP and later layers remain active. Abandoning also starts a fresh normal run."
@@ -1164,16 +1170,16 @@
     "description": "Value legend label in facility details."
   },
   "dyson.facilities.details.manual-acquisition-description": {
-    "defaultMessage": "{count} {facility} purchased directly",
-    "description": "Manual facility acquisition count and facility name."
+    "defaultMessage": "{count} {facility} purchased or granted",
+    "description": "Purchased or granted facility count and facility name."
   },
   "dyson.facilities.details.manual-purchases": {
-    "defaultMessage": "Manual Purchases",
-    "description": "Manual purchasing route in facility acquisition details."
+    "defaultMessage": "Purchases & grants",
+    "description": "Purchases and grants route in facility acquisition details."
   },
   "dyson.facilities.details.manually-purchased": {
-    "defaultMessage": "Manually purchased",
-    "description": "Manual facility count label."
+    "defaultMessage": "Purchased / granted",
+    "description": "Facility count from purchases and grants, including Head Start and reset retention."
   },
   "dyson.facilities.details.milestone-100": {
     "defaultMessage": "100 purchased milestone",
@@ -6277,6 +6283,15 @@
   "skills.production-science": {
     "defaultMessage": "Science"
   },
+  "skills.production.gathererCommunity": {
+    "defaultMessage": "Gatherers: Community"
+  },
+  "skills.production.hunterCommunity": {
+    "defaultMessage": "Hunters: Community"
+  },
+  "skills.production.launchedPanelEnergy": {
+    "defaultMessage": "Launched-panel Energy"
+  },
   "skills.production.manualAssemblyLines": {
     "defaultMessage": "Assembly Lines per activation"
   },
@@ -7742,7 +7757,7 @@
     "description": "Heading for effects converted when Discovery replaces Research."
   },
   "wiki.discovery.upgrades": {
-    "defaultMessage": "In Avocato, <value>Elevation</value> costs <value>3 TP</value>, raises Cash and Bots to <value>10×</value>, and completes every <value>30 base minutes</value>: +0.1 multiplier and 30 minutes of Discovery progress. <value>Enlightenment</value> costs <value>5 TP</value>, raises base lifetime to <value>30 seconds</value>, and completes every <value>10 base minutes</value>: +0.1 seconds and 10 minutes of Elevation progress. Transfers can complete earlier bars and preserve excess progress. Skill-tree speed bonuses apply at <value>100% / 50% / 25%</value>; other speed bonuses apply fully. Transferred progress is not multiplied by speed. Shared speed purchases add <value>25%</value>; each separate power purchase adds <value>5</value> to its starting multiplier or lifetime. Repeatable costs are independently <value>1, 2, 3… TP</value>. Bonuses are additive.",
+    "defaultMessage": "In Avocato, <value>Elevation</value> costs <value>3 TP</value>, raises Cash and Bots to <value>10×</value>, and completes every <value>30 base minutes</value>: +0.1 multiplier and 30 minutes of Discovery progress. <value>Enlightenment</value> costs <value>5 TP</value>, raises base lifetime to <value>30 seconds</value>, and completes every <value>10 base minutes</value>: +0.1 seconds and 10 minutes of Elevation progress. Transfers can complete earlier bars and preserve excess progress. Skill-tree speed bonuses apply at <value>100% / 50% / 25%</value>; other speed bonuses apply fully. Transfers advance the previous bar by that much gameplay time at its current speed. Shared speed purchases add <value>25%</value>; each separate power purchase adds <value>5</value> to its starting multiplier or lifetime. Repeatable costs are independently <value>1, 2, 3… TP</value>. Bonuses are additive.",
     "description": "Explains independent permanent Discovery upgrade costs and additive effects."
   },
   "wiki.discovery.upgrades-title": {
@@ -8074,7 +8089,7 @@
     "description": "Version 4.1.10 Discovery release notes."
   },
   "wiki.patch-notes.version-4-1-10.fixes": {
-    "defaultMessage": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.",
+    "defaultMessage": "After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation. Corrected augment previews, challenge pricing and Manual Labour reset counters.",
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.ios": {

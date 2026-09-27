@@ -43,6 +43,7 @@ export function applyCanonicalOverflowReset(
         manualCreationIntervalSeconds: 10,
         totalPanelsDecayed: 0,
         goalStage: 0n,
+        ...(state.dyson.completedTinkers === undefined ? {} : { completedTinkers: 0 }),
         botDistribution: 0,
       },
       infinity: {

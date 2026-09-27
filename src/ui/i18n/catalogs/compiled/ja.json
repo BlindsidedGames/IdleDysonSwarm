@@ -347,6 +347,12 @@
       "value": "チャレンジを放棄"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "IPを獲得せずに、新しい通常の無限ランを開始します。チャレンジの制限は解除されます。無限アップグレードとそれ以降の段階は維持されます。"
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
@@ -485,6 +491,12 @@
     {
       "type": 0,
       "value": "科学と研究を使わずに量子ランを完了します。"
+    }
+  ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "量子シャードを獲得せずに、新しい通常の量子ランを開始します。チャレンジの制限は解除されます。現実のスキルポイント、分割、量子のIP2倍、量子もつれが再び有効になります。現実の進行状況とそれ以降の段階は維持されます。"
     }
   ],
   "challenges.quantumRestart": [
@@ -2454,7 +2466,7 @@
     },
     {
       "type": 0,
-      "value": " "
+      "value": "個の"
     },
     {
       "type": 1,
@@ -2462,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": "を直接購入"
+      "value": "（購入・付与）"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "手動購入"
+      "value": "購入と付与"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "手動購入"
+      "value": "購入・付与"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -12477,6 +12489,24 @@
       "value": "科学"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "採集者：コミュニティ"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "狩人：コミュニティ"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "打ち上げ済みパネルのエネルギー"
+    }
+  ],
   "skills.production.manualAssemblyLines": [
     {
       "type": 0,
@@ -15545,7 +15575,7 @@
     },
     {
       "type": 0,
-      "value": "で適用され、その他は全量適用されます。転送進捗に速度は乗算されません。共通速度の購入は"
+      "value": "で適用され、その他は全量適用されます。転送は前のバーを、その時点の速度で指定されたゲーム時間分進めます。共通速度の購入は"
     },
     {
       "type": 8,
@@ -16463,7 +16493,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "初回の量子以降、新しい周回は組立ライン1基から始まります。銀河がヘッダーに重なる問題、獲得済み開発者オプションのクラウド保持、強化のスキルポイント計算、負数のデバッグ調整、プロモーションの巡回を修正。"
+      "value": "初回の量子以降、新しい周回は組立ライン1基から始まります。銀河がヘッダーに重なる問題、獲得済み開発者オプションのクラウド保持、強化のスキルポイント計算、負数のデバッグ調整、プロモーションの巡回を修正。 オーグメントのプレビュー、チャレンジ中の価格、リセット後の手作業カウンターを修正しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [

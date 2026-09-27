@@ -2,7 +2,6 @@ import type { CanonicalGameStateV1 } from '../game-state/types'
 import { addDiscrete } from './numeric'
 import { runCanonicalSkillAutoAssignment } from './canonicalSkillTransactions'
 import { resolvePanelArea } from './stellarArithmetic'
-import { MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
 
 const FINAL_REWARDED_GOAL_STAGE = 10n
 const PANEL_COUNT_PER_STAR = 20_000
@@ -104,7 +103,7 @@ function isGoalComplete(
 ): boolean {
   const tinkerTarget = builtByHandTinkerGoal(state)
   if (tinkerTarget !== null) {
-    return (state.skills.byId[MANUAL_LABOUR_AUGMENTS.handAssembly]?.level ?? 0) >= tinkerTarget
+    return (state.dyson.completedTinkers ?? 0) >= tinkerTarget
   }
   switch (stage) {
     case 0n:

@@ -67,3 +67,19 @@ editing the next-run assignment queue.
 
 Full rules, Manual Labour tuning and verification are recorded in
 [the implementation notes](../plans/quantum-challenges-manual-labour.md).
+
+
+Reality-earned skill points are suspended throughout Quantum challenges, including
+points from Reality upgrades bought during the challenge. Reality ownership and
+progress remain intact. Completion or abandonment restores the full contribution.
+The separate Avotation reward and points from ordinary challenge progression are
+not suppressed. Existing active saves recalculate starting SP at their next
+Infinity/restart. Supply Shortage's fixed 2× price growth overrides Reductive
+Scaling; other challenges use ordinary price reductions.
+
+Built by Hand's 50/250 Tinker goals use the bounded per-run `completedTinkers`
+counter, including ordinary Tinkers and Patient Hands' completed stored work.
+This is separate from Hand Assembly/Practice output counters. It survives saves,
+resets on a new Infinity/Quantum/Transcendence run, and defaults to zero for old
+saves without guessing historical work. Abandon confirmations describe the fresh
+normal run and restored restrictions rather than repeating entry warnings.

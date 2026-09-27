@@ -187,6 +187,7 @@ export function applyCanonicalQuantumReset(
         facilities: options.restartOnly ? challengeFacilities(state, emptyFacilities) : emptyFacilities,
         totalPanelsDecayed: 0,
         goalStage: 0n,
+        ...(state.dyson.completedTinkers === undefined ? {} : { completedTinkers: 0 }),
         botDistribution: 0,
       },
       infinity: {
