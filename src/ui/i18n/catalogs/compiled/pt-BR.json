@@ -16496,34 +16496,34 @@
       "value": "Rebalanceados o aumento de preços das instalações e os custos e a produção das megaestruturas."
     }
   ],
-  "wiki.patch-notes.version-4-1-10.bot-boost": [
-    {
-      "type": 0,
-      "value": "Corrigido um erro que fazia Bots 2× permanentes parar de funcionar após reiniciar o progresso salvo."
-    }
-  ],
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Adicionados sete desafios quânticos que concedem 2 Catalisadores cada. Divisão e IP em dobro quântico ficam inativos nessas rodadas. Adicionados quatro aumentos de Trabalho manual, incluindo um bônus por esperar entre ativações. Fraturar funciona nos desafios e mostra uma prévia do efeito. Sacrifícios estelares cria sua instalação mais avançada atual. Os pontos de habilidade da Realidade ficam inativos; o progresso da Realidade é mantido."
+      "value": "Adicionados sete desafios quânticos que concedem 2 Catalisadores cada. Pontos de Habilidade da Realidade e certas melhorias quânticas ficam desativados nessas partidas; o progresso da Realidade é preservado."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "Descoberta fortalece instalações. Desbloqueie Elevação para dinheiro e Bots, depois Iluminação para a vida útil dos painéis; cada barra nova fornece progresso à anterior. Habilidades relacionadas se adaptam ao desbloqueio."
+      "value": "Adicionadas três barras conectadas: Descoberta melhora instalações, Elevação melhora Dinheiro e Bots, e Iluminação melhora a duração dos painéis. As barras seguintes fazem a anterior avançar."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "Adicionadas velocidade de Descoberta compartilhada e melhorias de poder separadas em uma categoria recolhível de Avocato."
+      "value": "Adicionadas melhorias permanentes de velocidade e poder de Descoberta no Avocato."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Após o primeiro Quantum, novas partidas começam com uma linha de montagem. Corrigidos galáxias sobre o cabeçalho, retenção de Opções de desenvolvedor na nuvem, pontos de aumentos, ajustes negativos de depuração e rotação de promoções. Corrigidos prévias, preços de desafios e contadores de Trabalho manual. Adicionado aviso inicial para habilidades não reembolsáveis."
+      "value": "Corrigidos Bots 2× permanentes após reiniciar o jogo, predefinições apagadas e pesquisas removidas que reapareciam, entradas rápidas de Tinker e vários problemas de desafios e aprimoramentos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.fracturing": [
+    {
+      "type": 0,
+      "value": "Galvanizadores agora se chamam Catalisadores, e habilidades galvanizadas agora são fraturadas. Fraturar funciona durante desafios e mostra o efeito antes da compra."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16532,34 +16532,58 @@
       "value": "Agora é necessário iOS 16 ou posterior."
     }
   ],
-  "wiki.patch-notes.version-4-1-10.save-fix": [
+  "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Corrigido o retorno de pesquisas antigas e predefinições de habilidades esvaziadas após salvar ou recarregar."
+      "value": "Melhorados os detalhes de produção, as prévias de habilidades, a rolagem e o estilo dos diálogos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.refunds": [
+    {
+      "type": 0,
+      "value": "Partida aquecida não é mais reembolsável. Banco, Investimento e Memória estelar são reembolsáveis. Adicionado um aviso antes da primeira atribuição de habilidades não reembolsáveis."
     }
   ],
   "wiki.patch-notes.version-4-1-10.secret": [
     {
       "type": 0,
-      "value": "O sexto segredo de Avotation agora é concluído automaticamente ao ser alcançado com Descoberta desbloqueada."
+      "value": "O sexto segredo de Avotation é concluído automaticamente ao ser alcançado com Descoberta desbloqueada."
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "Speedruns comparam a partida atual com recordes pessoais mantidos ao redefinir o save. Adicionados indicadores de assistência, registro de PI em dobro e memória das abas de Estatísticas. Adicionada Primeira Transcendência; novos recordes incluem tempo jogado mais Tempo armazenado gasto. Recordes são sincronizados pela nuvem, mas não exportados."
+      "value": "Speedruns melhorados com recordes pessoais persistentes, comparação com a partida atual, indicadores de assistência e um marco de primeira Transcendência. Novos recordes contam o tempo jogado mais o Tempo Armazenado gasto."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.starter": [
+    {
+      "type": 0,
+      "value": "Após seu primeiro salto quântico, novas partidas começam com uma linha de montagem."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-memory": [
+    {
+      "type": 0,
+      "value": "Memória estelar agora armazena a carga SRS recém-gerada nas reinicializações de Infinito e Quântica para fortalecer os aprimoramentos SRS."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-sacrifices": [
+    {
+      "type": 0,
+      "value": "Sacrifícios Estelares agora gera a instalação mais avançada que você possui."
     }
   ],
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Adicionados dez aprimoramentos de Enxame e Fragmento."
+      "value": "Adicionados quatro aprimoramentos de Trabalho Manual e dez aprimoramentos de Enxame e Fragmento."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
-      "value": "Overflow agora se chama Transcendência. Gaste 1 ponto de Transcendência no Avocato para desbloquear Descoberta, que substitui Ciência e Pesquisa."
+      "value": "Overflow agora se chama Transcendência. Desbloqueie Descoberta no Avocato por 1 Ponto de Transcendência para substituir Ciência e Pesquisa."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

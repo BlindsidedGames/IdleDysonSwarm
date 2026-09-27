@@ -30,18 +30,22 @@ describe('Wiki patch-note content', () => {
     const latest = screen.getByRole('heading', { name: 'Version 4.1.10' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
-      "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research.",
-      "Discovery boosts facilities. Unlock Elevation for Cash and Bots, then Enlightenment for panel lifetime; each new bar feeds progress into the previous one. Related skills adapt when unlocked.",
-      "Added shared Discovery Speed and separate power upgrades in a collapsible Avocato category.",
-      'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. Added First Transcendence; new milestone records include time played plus Stored Time spent. Personal bests sync through Cloud saves but are not shared through exports.',
-      'Fixed Permanent 2× Bots losing its effect after resetting your save.',
-      'Fixed old research and cleared skill presets returning after saving or reloading.',
-      'Added seven Quantum challenges awarding 2 Catalysts each. Reality Skill Points, Division and Quantum Double IP are inactive during these runs. Reality progress is kept. Added four Manual Labour augments, including a bonus for waiting between activations. Fracturing works during challenges and previews its effect. Stellar Sacrifices creates your highest owned facility.',
-      'Added ten Swarm and Fragment augments.',
-      'Rebalanced facility price growth and megastructure costs and production.',
-      'The sixth Avotation secret now completes automatically once reached with Discovery unlocked.',
-      'After your first Quantum, new runs start with an Assembly Line. Fixed galaxies overlapping the header, Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation. Corrected augment previews, challenge pricing and Manual Labour reset counters. Added a first-time warning for non-refundable skills.',
-      'iOS 16 or later is now required.',
+      "Overflow is now Transcendence. Unlock Discovery in Avocato for 1 Transcendence Point to replace Science and Research.",
+      "Added three linked progress bars: Discovery improves facilities, Elevation improves Cash and Bots, and Enlightenment improves panel lifetime. Later bars advance the bar before them.",
+      "Added permanent Discovery speed and power upgrades in Avocato.",
+      "Added seven Quantum challenges, each awarding 2 Catalysts. Reality Skill Points and selected Quantum upgrades are disabled during these runs; Reality progress is preserved.",
+      "Added four Manual Labour augments and ten Swarm and Fragment augments.",
+      "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing now works during challenges and previews its effect before purchase.",
+      "Reworked Stellar Memory to bank newly generated SRS charge on Infinity and Quantum resets, strengthening SRS augments.",
+      "Hot Start is now non-refundable. Banking, Investment and Stellar Memory are refundable. Added a warning before first assigning non-refundable skills.",
+      "Stellar Sacrifices now generates your highest owned facility.",
+      "Rebalanced facility price growth and megastructure costs and production.",
+      "After your first Quantum, new runs start with an Assembly Line.",
+      "Improved Speedruns with persistent personal bests, current-run comparisons, assistance indicators and a First Transcendence milestone. New records count time played plus Stored Time spent.",
+      "The sixth Avotation secret now completes automatically when reached with Discovery unlocked.",
+      "Fixed Permanent 2× Bots after Reset Save, cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues.",
+      "Improved production details, skill previews, scrolling and dialog styling.",
+      "iOS 16 or later is now required.",
     ])
     expect(screen.queryByRole('heading', { name: 'Version 4.1.11' })).toBeNull()
     const version419List = screen.getByRole('heading', { name: 'Version 4.1.9' }).nextElementSibling as HTMLElement

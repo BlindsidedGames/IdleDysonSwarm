@@ -463,14 +463,18 @@ function PatchNotesArticle() {
             <li>{intl.formatMessage(messages.patchNotesVersion4110Transcendence)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Discovery)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110DiscoveryUpgrades)}</li>
-            <li>{intl.formatMessage(messages.patchNotesVersion4110Speedruns)}</li>
-            <li>{intl.formatMessage(messages.patchNotesVersion4110BotBoost)}</li>
-            <li>{intl.formatMessage(messages.patchNotesVersion4110SaveFix)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Challenge)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Swarm)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Fracturing)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110StellarMemory)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Refunds)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110StellarSacrifices)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Balance)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Starter)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Speedruns)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Secret)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Fixes)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Presentation)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Ios)}</li>
           </ul>
         </section>

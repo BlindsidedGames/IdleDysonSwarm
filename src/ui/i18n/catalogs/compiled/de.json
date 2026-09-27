@@ -16493,73 +16493,97 @@
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
-      "value": "Preisanstieg der Anlagen sowie Kosten und Produktion der Megastrukturen wurden neu ausbalanciert."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-10.bot-boost": [
-    {
-      "type": 0,
-      "value": "Behoben: Dauerhaft 2× Bots verlor nach dem Zurücksetzen des Spielstands seine Wirkung."
+      "value": "Preisanstieg der Anlagen sowie Kosten und Produktion der Megastrukturen neu abgestimmt."
     }
   ],
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Sieben Quanten-Herausforderungen mit je 2 Katalysatoren hinzugefügt. Division und Quanten-Doppel-IP sind dabei inaktiv. Vier Augmente für Manuelle Arbeit hinzugefügt, darunter ein Wartebonus zwischen Aktivierungen. Frakturieren funktioniert während Herausforderungen und zeigt eine Effektvorschau. Stellare Opfer erzeugt deine höchste vorhandene Anlage. Realitäts-Fertigkeitspunkte sind inaktiv; der Realitätsfortschritt bleibt erhalten."
+      "value": "Sieben Quantenherausforderungen hinzugefügt, die jeweils 2 Katalysatoren vergeben. Realität-Fähigkeitspunkte und ausgewählte Quantenverbesserungen sind während dieser Durchläufe deaktiviert; der Realität-Fortschritt bleibt erhalten."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "Entdeckung verstärkt Anlagen. Schalte Erhebung für Geld und Bots und dann Erleuchtung für Paneellebensdauer frei; jeder neue Balken überträgt Fortschritt auf den vorherigen. Betroffene Fähigkeiten passen sich beim Freischalten an."
+      "value": "Drei verbundene Fortschrittsbalken hinzugefügt: Entdeckung verbessert Anlagen, Erhebung verbessert Geld und Bots, und Erleuchtung verbessert die Panel-Lebensdauer. Spätere Balken lassen den vorherigen voranschreiten."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "Gemeinsame Entdeckungsgeschwindigkeit und getrennte Stärkeverbesserungen in einer einklappbaren Avocato-Kategorie hinzugefügt."
+      "value": "Dauerhafte Verbesserungen für Entdeckungsgeschwindigkeit und -stärke in Avocato hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Nach dem ersten Quantum beginnen neue Läufe mit einer Fertigungsstraße. Galaxien vor der Kopfzeile, Cloud-Erhalt verdienter Entwickleroptionen, Fähigkeitspunkte von Augmenten, negative Debug-Anpassungen und Werberotation korrigiert. Augment-Vorschauen, Herausforderungspreise und Zähler für Handarbeit korrigiert. Erstmalige Warnung für nicht erstattbare Fähigkeiten hinzugefügt."
+      "value": "Permanente 2× Bots nach einem Spielstand-Reset, zurückkehrende gelöschte Presets und ausgemusterte Forschung, schnelle Tinker-Eingaben sowie mehrere Herausforderungs- und Erweiterungsprobleme behoben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.fracturing": [
+    {
+      "type": 0,
+      "value": "Galvanisierer heißen jetzt Katalysatoren und galvanisierte Fähigkeiten heißen frakturierte Fähigkeiten. Frakturieren funktioniert nun während Herausforderungen und zeigt den Effekt vor dem Kauf an."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
-      "value": "Ab jetzt wird iOS 16 oder neuer benötigt."
+      "value": "iOS 16 oder neuer ist jetzt erforderlich."
     }
   ],
-  "wiki.patch-notes.version-4-1-10.save-fix": [
+  "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Behoben: Alte Forschung und geleerte Fähigkeitensets kehrten nach dem Speichern oder Neuladen zurück."
+      "value": "Produktionsdetails, Fähigkeitsvorschauen, Scrollen und Dialoggestaltung verbessert."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.refunds": [
+    {
+      "type": 0,
+      "value": "Heißstart ist nicht mehr erstattbar. Bankwesen, Investition und Stellares Gedächtnis sind erstattbar. Vor der ersten Zuweisung nicht erstattbarer Fähigkeiten erscheint eine Warnung."
     }
   ],
   "wiki.patch-notes.version-4-1-10.secret": [
     {
       "type": 0,
-      "value": "Das sechste Avotation-Geheimnis wird jetzt beim Erreichen automatisch abgeschlossen, wenn Entdeckung freigeschaltet ist."
+      "value": "Das sechste Avotation-Geheimnis wird beim Erreichen automatisch abgeschlossen, wenn Entdeckung freigeschaltet ist."
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "Speedruns vergleichen den aktuellen Lauf mit persönlichen Bestzeiten, die das Zurücksetzen des Spielstands überstehen. Neue Hilfsindikatoren, Erfassung doppelter IP und gemerkte Statistik-Tabs. Erste Transzendenz hinzugefügt; neue Bestzeiten zählen Spielzeit plus verbrauchte Gespeicherte Zeit. Bestzeiten werden über Cloud-Spielstände synchronisiert, aber nicht exportiert."
+      "value": "Speedruns verbessert: dauerhafte persönliche Bestzeiten, Vergleiche mit dem aktuellen Durchlauf, Hilfsindikatoren und ein Meilenstein für die erste Transzendenz. Neue Rekorde zählen Spielzeit plus verbrauchte gespeicherte Zeit."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.starter": [
+    {
+      "type": 0,
+      "value": "Nach deinem ersten Quantensprung beginnen neue Durchläufe mit einer Montagelinie."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-memory": [
+    {
+      "type": 0,
+      "value": "Stellares Gedächtnis speichert bei Unendlichkeits- und Quanten-Resets neu erzeugte SRS-Ladung, um SRS-Erweiterungen zu verstärken."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-sacrifices": [
+    {
+      "type": 0,
+      "value": "Stellare Opfer erzeugt jetzt deine höchste bereits vorhandene Anlage."
     }
   ],
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Zehn Schwarm- und Fragment-Augmente hinzugefügt."
+      "value": "Vier Erweiterungen für Handarbeit und zehn Schwarm- und Fragment-Erweiterungen hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
-      "value": "Overflow heißt jetzt Transzendenz. Gib bei Avocato 1 Transzendenzpunkt aus, um Entdeckung freizuschalten und Wissenschaft und Forschung zu ersetzen."
+      "value": "Overflow heißt jetzt Transzendenz. Schalte Entdeckung in Avocato für 1 Transzendenzpunkt frei, um Wissenschaft und Forschung zu ersetzen."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

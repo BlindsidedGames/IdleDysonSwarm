@@ -16493,37 +16493,37 @@
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
-      "value": "Se reajustaron el aumento de precios de las instalaciones y los costos y la producción de las megaestructuras."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-10.bot-boost": [
-    {
-      "type": 0,
-      "value": "Se corrigió un error por el que Bots ×2 permanentes dejaba de funcionar al reiniciar la partida."
+      "value": "Se ajustaron el aumento de precios de las instalaciones y los costos y la producción de las megaestructuras."
     }
   ],
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Se agregaron siete desafíos cuánticos que otorgan 2 Catalizadores cada uno. División y Doble IP cuántico están inactivos durante estas partidas. Se agregaron cuatro aumentos de Trabajo manual, incluido un bono por esperar entre activaciones. La fractura funciona durante los desafíos y muestra su efecto antes de comprarla. Sacrificios estelares crea tu instalación más avanzada actual. Los puntos de habilidad de Realidad están inactivos; el progreso de Realidad se conserva."
+      "value": "Se agregaron siete desafíos cuánticos que otorgan 2 Catalizadores cada uno. Los puntos de habilidad de Realidad y ciertas mejoras cuánticas se desactivan durante estas partidas; el progreso de Realidad se conserva."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "Descubrimiento potencia las instalaciones. Desbloquea Elevación para dinero y Bots, luego Iluminación para la vida útil de paneles; cada barra nueva aporta progreso a la anterior. Las habilidades relacionadas se adaptan al desbloquearlo."
+      "value": "Se agregaron tres barras vinculadas: Descubrimiento mejora las instalaciones, Elevación mejora el Dinero y los Bots, e Iluminación mejora la duración de los paneles. Las barras posteriores hacen avanzar la anterior."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "Se agregaron velocidad de Descubrimiento compartida y mejoras de potencia separadas en una categoría plegable de Avocato."
+      "value": "Se agregaron mejoras permanentes de velocidad y potencia de Descubrimiento en Avocato."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Después del primer Quantum, las nuevas partidas empiezan con una línea de ensamblaje. Se corrigieron las galaxias sobre el encabezado, la conservación de Opciones de desarrollador en la nube, los puntos de aumentos, los ajustes negativos de depuración y la rotación de promociones. Se corrigieron vistas previas, precios de desafíos y contadores de Trabajo manual. Se añadió una advertencia inicial para habilidades no reembolsables."
+      "value": "Se corrigieron Bots ×2 permanentes tras reiniciar la partida, la reaparición de preajustes borrados e investigaciones retiradas, las entradas rápidas de Tinker y varios problemas de desafíos y aumentos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.fracturing": [
+    {
+      "type": 0,
+      "value": "Los Galvanizadores ahora se llaman Catalizadores y las habilidades galvanizadas, fracturadas. La fractura funciona durante los desafíos y muestra su efecto antes de comprarla."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16532,10 +16532,16 @@
       "value": "Ahora se requiere iOS 16 o posterior."
     }
   ],
-  "wiki.patch-notes.version-4-1-10.save-fix": [
+  "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Se corrigió que las investigaciones antiguas y las configuraciones de habilidades vaciadas reaparecieran al guardar o volver a cargar."
+      "value": "Se mejoraron los detalles de producción, las vistas previas de habilidades, el desplazamiento y el estilo de los diálogos."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.refunds": [
+    {
+      "type": 0,
+      "value": "Arranque en caliente ya no es reembolsable. Reserva, Inversión y Memoria estelar sí lo son. Se agregó una advertencia antes de asignar habilidades no reembolsables por primera vez."
     }
   ],
   "wiki.patch-notes.version-4-1-10.secret": [
@@ -16547,19 +16553,37 @@
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "Los speedruns comparan la partida actual con récords personales que se conservan al reiniciar la partida. Se añadieron indicadores de ayudas, seguimiento de PI dobles y pestañas de Estadísticas recordadas. Se añadió Primera Trascendencia; los nuevos récords incluyen tiempo jugado más Tiempo almacenado gastado. Los récords se sincronizan por la nube, pero no se exportan."
+      "value": "Se mejoraron los Speedruns con mejores marcas persistentes, comparaciones con la partida actual, indicadores de ayudas y un hito de primera Trascendencia. Los nuevos récords cuentan el tiempo jugado más el Tiempo almacenado gastado."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.starter": [
+    {
+      "type": 0,
+      "value": "Después de tu primer salto cuántico, las nuevas partidas comienzan con una línea de ensamblaje."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-memory": [
+    {
+      "type": 0,
+      "value": "Memoria estelar ahora guarda la carga SRS recién generada al reiniciar Infinito o Cuántico para potenciar los aumentos SRS."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-sacrifices": [
+    {
+      "type": 0,
+      "value": "Sacrificios estelares ahora genera la instalación más avanzada que poseas."
     }
   ],
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Se agregaron diez aumentos de Enjambre y Fragmento."
+      "value": "Se agregaron cuatro aumentos de Trabajo manual y diez aumentos de Enjambre y Fragmento."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
-      "value": "Overflow ahora se llama Trascendencia. Gasta 1 punto de Trascendencia en Avocato para desbloquear Descubrimiento, que reemplaza Ciencia e Investigación."
+      "value": "Overflow ahora se llama Trascendencia. Desbloquea Descubrimiento en Avocato por 1 Punto de Trascendencia para reemplazar Ciencia e Investigación."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [
