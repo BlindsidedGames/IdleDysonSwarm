@@ -47,6 +47,17 @@ along with TypeScript and lint.
 [Apple saved localization](achievement-preset-qa/first-challenge-apple.png).
 [Google saved icon and description](achievement-preset-qa/first-challenge-google.png).
 
+## Approved Enlightened artwork
+
+The achievement now uses the Transcendence figure with three rounded rays, one
+for each unlocked bar. Its approved SVG is preserved with mobile and Steam
+exports. The lifetime bar icon is unchanged. Apple, Google and Steam drafts were
+updated and visually verified after reload, including Steam's unearned image.
+No achievement requirements, points or release state changed.
+
+[Apple saved artwork](achievement-preset-qa/enlightened-apple.png).
+[Google saved artwork](achievement-preset-qa/enlightened-google.png).
+
 ## Preset shortcuts
 
 Bots now reuses the Skills buttons, conflict dialog, localized skill labels and
