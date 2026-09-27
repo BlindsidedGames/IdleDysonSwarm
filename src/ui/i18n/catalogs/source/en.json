@@ -8147,7 +8147,7 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.achievements": {
-    "defaultMessage": "Added five achievements and optional preset quick actions on the Bots tab.",
+    "defaultMessage": "Added five achievements, presets 6–10, and optional preset quick actions on Bots and Research.",
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.balance": {
@@ -8171,7 +8171,7 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.fracturing": {
-    "defaultMessage": "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing now works during challenges and previews its effect before purchase.",
+    "defaultMessage": "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing works during challenges, previews its effect and opens its augment tree.",
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.ios": {
@@ -8207,7 +8207,7 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.swarm": {
-    "defaultMessage": "Added Manual Labour, Swarm and Fragment augments.",
+    "defaultMessage": "Added Manual Labour, Swarm and Fragment augments, including seven facility Tinker upgrades. Hand Assembly now keeps Assembly Line tinkering.",
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.transcendence": {

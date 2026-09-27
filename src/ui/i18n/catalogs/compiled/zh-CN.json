@@ -16623,7 +16623,7 @@
   "wiki.patch-notes.version-4-1-10.achievements": [
     {
       "type": 0,
-      "value": "新增五项成就，并可在机器人标签页显示预设快捷切换按钮。"
+      "value": "新增五项成就、预设6–10，以及机器人和研究页的可选预设快捷操作。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [
@@ -16659,7 +16659,7 @@
   "wiki.patch-notes.version-4-1-10.fracturing": [
     {
       "type": 0,
-      "value": "激化器更名为催化剂，激化技能更名为裂变技能。挑战期间也能裂变技能，购买前可预览效果。"
+      "value": "“激化器”更名为“催化剂”，“激化技能”更名为“碎裂技能”。挑战中也可碎裂技能，提前预览效果，并打开其强化树。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16713,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "新增手工劳动、蜂群和碎片强化。"
+      "value": "新增手工劳动、蜂群和碎片强化，包括七种设施手工制造升级。手工组装现在会保留装配线的手工制造。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

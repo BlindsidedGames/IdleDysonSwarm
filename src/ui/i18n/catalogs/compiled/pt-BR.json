@@ -16623,7 +16623,7 @@
   "wiki.patch-notes.version-4-1-10.achievements": [
     {
       "type": 0,
-      "value": "Adicionadas cinco conquistas e ações rápidas opcionais de predefinições na aba Bots."
+      "value": "Adicionadas cinco conquistas, as predefinições 6–10 e ações rápidas opcionais de predefinições em Bots e Pesquisa."
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [
@@ -16659,7 +16659,7 @@
   "wiki.patch-notes.version-4-1-10.fracturing": [
     {
       "type": 0,
-      "value": "Galvanizadores agora se chamam Catalisadores, e habilidades galvanizadas agora são fraturadas. Fraturar funciona durante desafios e mostra o efeito antes da compra."
+      "value": "Galvanizadores agora são Catalisadores, e habilidades galvanizadas são habilidades fraturadas. Fraturar funciona durante desafios, mostra o efeito antes da compra e abre a árvore de aprimoramentos."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16713,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Adicionados aumentos de Trabalho manual, Enxame e Fragmentos."
+      "value": "Adicionados aprimoramentos de Trabalho manual, Enxame e Fragmentos, incluindo sete melhorias de criação manual de instalações. A montagem manual agora mantém a criação de linhas de montagem."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

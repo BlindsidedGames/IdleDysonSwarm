@@ -16623,7 +16623,7 @@
   "wiki.patch-notes.version-4-1-10.achievements": [
     {
       "type": 0,
-      "value": "Fünf Erfolge und optionale Schnellaktionen für Voreinstellungen im Bots-Tab hinzugefügt."
+      "value": "Fünf Erfolge, Vorlagen 6–10 und optionale Vorlagen-Schnellaktionen in Bots und Forschung hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [
@@ -16659,7 +16659,7 @@
   "wiki.patch-notes.version-4-1-10.fracturing": [
     {
       "type": 0,
-      "value": "Galvanisierer heißen jetzt Katalysatoren und galvanisierte Fähigkeiten heißen frakturierte Fähigkeiten. Frakturieren funktioniert nun während Herausforderungen und zeigt den Effekt vor dem Kauf an."
+      "value": "Galvanisierer heißen jetzt Katalysatoren und galvanisierte Fähigkeiten gebrochene Fähigkeiten. Brechen funktioniert in Herausforderungen, zeigt seine Wirkung vorher an und öffnet den Erweiterungsbaum."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16713,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Augmente für Handarbeit, Schwarm und Fragmente hinzugefügt."
+      "value": "Manual-Labour-, Schwarm- und Fragment-Erweiterungen hinzugefügt, darunter sieben Anlagen-Erweiterungen für Tüfteln. Handmontage behält nun das Tüfteln an Fließbändern bei."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

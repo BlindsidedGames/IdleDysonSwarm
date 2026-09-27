@@ -16623,7 +16623,7 @@
   "wiki.patch-notes.version-4-1-10.achievements": [
     {
       "type": 0,
-      "value": "Ajout de cinq succès et de raccourcis de préréglages facultatifs dans l’onglet Bots."
+      "value": "Ajout de cinq succès, des préréglages 6–10 et de raccourcis de préréglages facultatifs dans Bots et Recherche."
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [
@@ -16659,7 +16659,7 @@
   "wiki.patch-notes.version-4-1-10.fracturing": [
     {
       "type": 0,
-      "value": "Les Galvaniseurs deviennent des Catalyseurs, et les compétences galvanisées deviennent fracturées. La Fracture fonctionne pendant les défis et affiche son effet avant l’achat."
+      "value": "Les Galvaniseurs deviennent des Catalyseurs, et les compétences galvanisées deviennent fracturées. La Fracture fonctionne pendant les défis, affiche son effet à l’avance et ouvre son arbre d’augmentations."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16713,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Ajout d’augmentations pour le Travail manuel, l’Essaim et les Fragments."
+      "value": "Ajout d’augmentations pour le Travail manuel, l’Essaim et les Fragments, dont sept améliorations de bricolage d’installations. L’assemblage manuel conserve désormais le bricolage des chaînes de montage."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

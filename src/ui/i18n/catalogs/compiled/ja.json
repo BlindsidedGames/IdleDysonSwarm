@@ -16623,7 +16623,7 @@
   "wiki.patch-notes.version-4-1-10.achievements": [
     {
       "type": 0,
-      "value": "実績を5つ追加し、ボットタブにプリセットのクイック切り替えを表示できるようにしました。"
+      "value": "実績5つ、プリセット6～10、ボットと研究タブの任意のプリセットクイック操作を追加。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [
@@ -16659,7 +16659,7 @@
   "wiki.patch-notes.version-4-1-10.fracturing": [
     {
       "type": 0,
-      "value": "Galvanizerを触媒、Galvanizedスキルを破砕スキルに改称しました。チャレンジ中も破砕でき、購入前に効果を確認できます。"
+      "value": "ガルバナイザーを触媒に、ガルバナイズスキルを破砕スキルに改称。チャレンジ中でも破砕でき、効果を事前に確認できるほか、オーグメントツリーが開きます。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16713,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "手作業、スウォーム、フラグメントのオーグメントを追加。"
+      "value": "手作業・スウォーム・フラグメントのオーグメントを追加。施設を手作業で作る7つの強化も含まれます。手動組立でも組立ラインの手作業生成が維持されます。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [

@@ -34,8 +34,8 @@ describe('Wiki patch-note content', () => {
       "Added three linked progress bars: Discovery improves facilities, Elevation improves Cash and Bots, and Enlightenment improves panel lifetime. Later bars advance the bar before them.",
       "Added permanent Discovery speed and power upgrades in Avocato.",
       "Added seven Quantum challenges, each awarding 2 Catalysts. Reality Skill Points and selected Quantum upgrades are disabled during these runs; Reality progress is preserved.",
-      "Added Manual Labour, Swarm and Fragment augments.",
-      "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing now works during challenges and previews its effect before purchase.",
+      "Added Manual Labour, Swarm and Fragment augments, including seven facility Tinker upgrades. Hand Assembly now keeps Assembly Line tinkering.",
+      "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing works during challenges, previews its effect and opens its augment tree.",
       "Reworked Stellar Memory to bank newly generated SRS charge on Infinity and Quantum resets, strengthening SRS augments.",
       "Hot Start is now non-refundable. Banking, Investment and Stellar Memory are refundable. Added a warning before first assigning non-refundable skills.",
       "Stellar Sacrifices now generates your highest owned facility.",
@@ -45,7 +45,7 @@ describe('Wiki patch-note content', () => {
       "The sixth Avotation secret now completes automatically when reached with Discovery unlocked.",
       "Fixed Permanent 2× Bots after Reset Save, cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues.",
       "Improved production details, skill previews, scrolling and dialog styling.",
-      "Added five achievements and optional preset quick actions on the Bots tab.",
+      "Added five achievements, presets 6–10, and optional preset quick actions on Bots and Research.",
       "iOS 16 or later is now required.",
     ])
     expect(screen.queryByRole('heading', { name: 'Version 4.1.11' })).toBeNull()

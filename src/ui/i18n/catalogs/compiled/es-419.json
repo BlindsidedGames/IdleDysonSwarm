@@ -16623,7 +16623,7 @@
   "wiki.patch-notes.version-4-1-10.achievements": [
     {
       "type": 0,
-      "value": "Se añadieron cinco logros y accesos rápidos opcionales a preajustes en la pestaña Bots."
+      "value": "Se añadieron cinco logros, los preajustes 6–10 y acciones rápidas opcionales de preajustes en Bots e Investigación."
     }
   ],
   "wiki.patch-notes.version-4-1-10.balance": [
@@ -16659,7 +16659,7 @@
   "wiki.patch-notes.version-4-1-10.fracturing": [
     {
       "type": 0,
-      "value": "Los Galvanizadores ahora se llaman Catalizadores y las habilidades galvanizadas, fracturadas. La fractura funciona durante los desafíos y muestra su efecto antes de comprarla."
+      "value": "Los Galvanizadores ahora se llaman Catalizadores y las habilidades galvanizadas, fracturadas. Fracturar funciona durante los desafíos, muestra una vista previa del efecto y abre su árbol de aumentos."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -16713,7 +16713,7 @@
   "wiki.patch-notes.version-4-1-10.swarm": [
     {
       "type": 0,
-      "value": "Se agregaron aumentos de Trabajo manual, Enjambre y Fragmentos."
+      "value": "Se añadieron aumentos de Trabajo manual, Enjambre y Fragmentos, incluidas siete mejoras para crear instalaciones manualmente. El ensamblaje manual ahora conserva la creación de líneas de ensamblaje."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [
