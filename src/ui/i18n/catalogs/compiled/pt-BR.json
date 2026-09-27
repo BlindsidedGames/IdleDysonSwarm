@@ -10252,7 +10252,7 @@
   "skills.manualFacility.brain-effect": [
     {
       "type": 0,
-      "value": "A criação manual também gera 2% dos seus Cérebros galácticos, limitada a 20 segundos de produção financiada de Sacrifícios estelares, com limite mínimo de 1 cérebro. Táticas de produção versáteis se aplicam antes do limite."
+      "value": "A criação manual também gera 2% dos seus Cérebros galácticos, limitada a 20 segundos da produção deles, com limite mínimo de 1 cérebro. Táticas de produção versáteis se aplicam antes do limite."
     }
   ],
   "skills.manualFacility.effect": [

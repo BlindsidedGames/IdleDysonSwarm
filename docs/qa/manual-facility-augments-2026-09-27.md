@@ -44,7 +44,7 @@ these are not included in passive per-second production.
   capped at 20 seconds of their incoming facility production. Versatile Production
   Tactics applies.**
 - Galactic Brains: **Tinker also creates 2% of your Galactic Brains, capped at
-  20 seconds of funded Stellar Sacrifices output, or 1 Brain if higher.
+  20 seconds of their production output, or 1 Brain if higher.
   Versatile Production Tactics applies before the cap.**
 - Hand Assembly changes only “Replaces Assembly Line tinkering.” to
   **“Keeps Assembly Line tinkering.”**

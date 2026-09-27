@@ -2295,7 +2295,7 @@
   "research.show-preset-quick-actions": "始终显示预设快捷操作",
   "skills.manualFacility.name": "手工制造{facility}",
   "skills.manualFacility.effect": "手工制造额外生成已拥有{facility}的2%，上限为设施供应产量的20秒总量。适用“多功能生产策略”。",
-  "skills.manualFacility.brain-effect": "手工制造额外生成已拥有银河大脑的2%，上限为机器人能够支付的恒星献祭产量的20秒总量，最低上限为1个大脑。“多功能生产策略”在上限之前生效。",
+  "skills.manualFacility.brain-effect": "手工制造额外生成已拥有银河大脑的2%，上限为其20秒的产量，最低上限为1个大脑。“多功能生产策略”在上限之前生效。",
   "dyson.tinker.per-activation": "{count}／次激活",
   "skills.production.manualManagers": "AI 管理器 （每次激活）",
   "skills.production.manualServers": "服务器 （每次激活）",

@@ -10252,7 +10252,7 @@
   "skills.manualFacility.brain-effect": [
     {
       "type": 0,
-      "value": "Tüfteln erzeugt zusätzlich 2 % deiner Galaktischen Gehirne, begrenzt auf 20 Sekunden finanzierter Stellare-Opfer-Produktion, mindestens jedoch 1 Gehirn. Vielseitige Produktionstaktiken gelten vor der Begrenzung."
+      "value": "Tüfteln erzeugt zusätzlich 2 % deiner Galaktischen Gehirne, begrenzt auf 20 Sekunden ihrer Produktion, mindestens jedoch 1 Gehirn. Vielseitige Produktionstaktiken gelten vor der Begrenzung."
     }
   ],
   "skills.manualFacility.effect": [

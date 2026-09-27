@@ -2295,7 +2295,7 @@
   "research.show-preset-quick-actions": "Toujours afficher les raccourcis de préréglage",
   "skills.manualFacility.name": "Fabrication manuelle : {facility}",
   "skills.manualFacility.effect": "Le bricolage crée aussi 2 % de vos {facility}, dans la limite de 20 secondes de leur production entrante par les installations. Les tactiques de production polyvalentes s’appliquent.",
-  "skills.manualFacility.brain-effect": "Le bricolage crée aussi 2 % de vos Cerveaux galactiques, limités à 20 secondes de production financée des Sacrifices stellaires, avec un plafond minimal de 1 cerveau. Les tactiques de production polyvalentes s’appliquent avant cette limite.",
+  "skills.manualFacility.brain-effect": "Le bricolage crée aussi 2 % de vos Cerveaux galactiques, limités à 20 secondes de leur production, avec un plafond minimal de 1 cerveau. Les tactiques de production polyvalentes s’appliquent avant cette limite.",
   "dyson.tinker.per-activation": "{count} par activation",
   "skills.production.manualManagers": "Gestionnaires d’IA par activation",
   "skills.production.manualServers": "Serveurs par activation",

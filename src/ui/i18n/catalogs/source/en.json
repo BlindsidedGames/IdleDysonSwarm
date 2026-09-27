@@ -4881,7 +4881,7 @@
     "description": "Dialog title for managing a named skill preset."
   },
   "skills.manualFacility.brain-effect": {
-    "defaultMessage": "Tinker also creates 2% of your Galactic Brains, capped at 20 seconds of funded Stellar Sacrifices output, or 1 Brain if higher. Versatile Production Tactics applies before the cap."
+    "defaultMessage": "Tinker also creates 2% of your Galactic Brains, capped at 20 seconds of their production output, or 1 Brain if higher. Versatile Production Tactics applies before the cap."
   },
   "skills.manualFacility.effect": {
     "defaultMessage": "Tinker also creates 2% of your {facility}, capped at 20 seconds of their incoming facility production. Versatile Production Tactics applies."

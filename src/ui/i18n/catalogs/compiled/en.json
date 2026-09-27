@@ -10252,7 +10252,7 @@
   "skills.manualFacility.brain-effect": [
     {
       "type": 0,
-      "value": "Tinker also creates 2% of your Galactic Brains, capped at 20 seconds of funded Stellar Sacrifices output, or 1 Brain if higher. Versatile Production Tactics applies before the cap."
+      "value": "Tinker also creates 2% of your Galactic Brains, capped at 20 seconds of their production output, or 1 Brain if higher. Versatile Production Tactics applies before the cap."
     }
   ],
   "skills.manualFacility.effect": [

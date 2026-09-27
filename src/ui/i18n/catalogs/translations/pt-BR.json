@@ -2295,7 +2295,7 @@
   "research.show-preset-quick-actions": "Sempre mostrar ações rápidas de predefinições",
   "skills.manualFacility.name": "Construção manual: {facility}",
   "skills.manualFacility.effect": "A criação manual também gera 2% dos seus {facility}, limitada a 20 segundos da produção recebida de instalações. Táticas de produção versáteis se aplicam.",
-  "skills.manualFacility.brain-effect": "A criação manual também gera 2% dos seus Cérebros galácticos, limitada a 20 segundos de produção financiada de Sacrifícios estelares, com limite mínimo de 1 cérebro. Táticas de produção versáteis se aplicam antes do limite.",
+  "skills.manualFacility.brain-effect": "A criação manual também gera 2% dos seus Cérebros galácticos, limitada a 20 segundos da produção deles, com limite mínimo de 1 cérebro. Táticas de produção versáteis se aplicam antes do limite.",
   "dyson.tinker.per-activation": "{count} por ativação",
   "skills.production.manualManagers": "Gerentes de IA por ativação",
   "skills.production.manualServers": "Servidores por ativação",

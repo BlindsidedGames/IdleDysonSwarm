@@ -10252,7 +10252,7 @@
   "skills.manualFacility.brain-effect": [
     {
       "type": 0,
-      "value": "Le bricolage crée aussi 2 % de vos Cerveaux galactiques, limités à 20 secondes de production financée des Sacrifices stellaires, avec un plafond minimal de 1 cerveau. Les tactiques de production polyvalentes s’appliquent avant cette limite."
+      "value": "Le bricolage crée aussi 2 % de vos Cerveaux galactiques, limités à 20 secondes de leur production, avec un plafond minimal de 1 cerveau. Les tactiques de production polyvalentes s’appliquent avant cette limite."
     }
   ],
   "skills.manualFacility.effect": [
