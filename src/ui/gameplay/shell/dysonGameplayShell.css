@@ -1310,7 +1310,7 @@
   color: var(--theme-accent);
 }
 
-.store-boost-nav-status {
+.dyson-navigation__status {
   color: white;
   font-size: var(--ui-text-meta);
   font-variant-numeric: tabular-nums;
@@ -1495,7 +1495,8 @@
 }
 
 .dyson-navigation--drawer .dyson-navigation__list {
-  gap: 0.25rem;
+  --drawer-navigation-gap: 0.25rem;
+  gap: var(--drawer-navigation-gap);
 }
 
 .dyson-navigation--drawer .dyson-navigation__link {
@@ -1590,7 +1591,7 @@
   }
 
   .dyson-navigation--drawer .dyson-navigation__list {
-    gap: 0.25rem;
+    --drawer-navigation-gap: 0.25rem;
   }
 
   .dyson-navigation--drawer .dyson-navigation__link {
@@ -1804,7 +1805,7 @@
   }
 
   .dyson-navigation--drawer .dyson-navigation__list {
-    gap: 0.25rem;
+    --drawer-navigation-gap: 0.25rem;
   }
 
   .dyson-navigation--drawer .dyson-navigation__link {
@@ -1849,7 +1850,7 @@
   }
 
   .dyson-navigation--drawer .dyson-navigation__list {
-    gap: 0.15rem;
+    --drawer-navigation-gap: 0.15rem;
   }
 
   .dyson-navigation--drawer .dyson-navigation__link {
@@ -1924,7 +1925,7 @@
   cursor: pointer;
 }
 
-.offline-time-quick-spend { padding-block-start: 0.15rem; }
+.offline-time-quick-spend { padding-block-start: var(--drawer-navigation-gap); }
 .offline-time-quick-spend__buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.25rem; }
 .offline-time-quick-spend button { min-block-size: 2.25rem; border: 1px solid var(--theme-divider); border-radius: 0.25rem; color: #f4eff5; background: var(--theme-panel); font: inherit; font-size: var(--ui-text-body); cursor: pointer; }
 .offline-time-quick-spend button:disabled { opacity: 0.4; cursor: default; }

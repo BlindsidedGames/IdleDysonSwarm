@@ -1316,7 +1316,7 @@ function ReadyDysonSliceContent({
                   badgeOutlined: !botBoostStatus.active,
                   badgeReady: botBoostStatus.badgeReady,
                   ariaLabel: intl.formatMessage(boostMessages.navigation, { status: botBoostStatus.status }),
-                  drawerIndicator: <span className="store-boost-nav-status">{!ownsBotBoost && botBoostStatus.active ? botBoostStatus.time : botBoostStatus.status}</span>,
+                  drawerIndicator: <span className="dyson-navigation__status">{!ownsBotBoost && botBoostStatus.active ? botBoostStatus.time : botBoostStatus.status}</span>,
                   bottom: bottomVisible('store'),
                   ...(storeActive
                     ? { current: true as const }
@@ -1345,7 +1345,10 @@ function ReadyDysonSliceContent({
           ...(storedTimeCapacitySeconds > 0
             ? [{
                 id: 'offline-time',
-                drawerIndicator: <StoredTimeNavigationProgress storedTime={storedTime} />,
+                drawerIndicator: <>
+                  <span className="dyson-navigation__status">{formatGameDuration(locale, storedTimeAvailableSeconds)}</span>
+                  <StoredTimeNavigationProgress storedTime={storedTime} />
+                </>,
                 drawerContent: <QuickStoredTime
                   availableSeconds={storedTimeAvailableSeconds}
                   disabled={gameplay.runtime.storedTimeCheater || !gameplay.commands.byKind['time.request-stored-time-spend'].routeAvailable}
