@@ -619,7 +619,10 @@
   padding-inline: max(var(--ui-page-gutter), var(--safe-area-left)) max(var(--ui-page-gutter), var(--safe-area-right));
   min-inline-size: 0;
   overflow-y: auto;
+  scrollbar-width: none;
 }
+
+.challenges-surface::-webkit-scrollbar { display: none; }
 
 .infinity-challenge-card > .ui-button { align-self: center; padding-inline: 0.7rem; }
 

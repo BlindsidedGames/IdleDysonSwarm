@@ -24,6 +24,8 @@ an audit finding, release gate, or platform contract.
 
 ## Living references
 
+- [UI style guide](ui-style-guide.md) is the concise entry point for gameplay
+  layout, copy, spacing, scrolling and visual acceptance.
 - [`../README.md`](../README.md) is the repository entry point.
 - [`contracts/`](contracts/) contains current architecture, gameplay,
   persistence, and presentation contracts.

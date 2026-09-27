@@ -3,8 +3,10 @@
   min-block-size: 0;
   padding: var(--game-card-content-inset);
   overflow-y: auto;
+  scrollbar-width: none;
   color: var(--color-text-primary);
 }
+.discovery-surface::-webkit-scrollbar { display: none; }
 .discovery-card {
   --discovery-fill: linear-gradient(to bottom,
     color-mix(in srgb, var(--theme-selected) 72%, var(--theme-accent)),
