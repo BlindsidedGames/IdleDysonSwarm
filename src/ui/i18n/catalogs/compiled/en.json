@@ -16671,7 +16671,7 @@
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Improved production details, skill previews, scrolling and dialog styling."
+      "value": "Improved production details, skill previews, scrolling and dialog styling. The side menu now shows your Stored Time balance."
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [

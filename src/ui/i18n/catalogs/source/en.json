@@ -8179,7 +8179,7 @@
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.presentation": {
-    "defaultMessage": "Improved production details, skill previews, scrolling and dialog styling.",
+    "defaultMessage": "Improved production details, skill previews, scrolling and dialog styling. The side menu now shows your Stored Time balance.",
     "description": "Version 4.1.10 release notes."
   },
   "wiki.patch-notes.version-4-1-10.refunds": {

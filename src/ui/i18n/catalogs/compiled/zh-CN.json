@@ -16671,7 +16671,7 @@
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "改进生产详情、技能预览、滚动和对话框样式。"
+      "value": "改进生产详情、技能预览、滚动和对话框样式。侧边菜单现在会显示你的储存时间余额。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [

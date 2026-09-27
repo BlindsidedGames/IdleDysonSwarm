@@ -2094,7 +2094,7 @@
   "wiki.patch-notes.version-4-1-10.fixes": "修复重置存档后的永久机器人2倍效果、已清除预设和已退役研究再次出现、Tinker快速输入以及多个挑战和增幅问题。",
   "wiki.patch-notes.version-4-1-10.fracturing": "“激化器”更名为“催化剂”，“激化技能”更名为“碎裂技能”。挑战中也可碎裂技能，提前预览效果，并打开其强化树。",
   "wiki.patch-notes.version-4-1-10.ios": "现在需要iOS 16或更高版本。",
-  "wiki.patch-notes.version-4-1-10.presentation": "改进生产详情、技能预览、滚动和对话框样式。",
+  "wiki.patch-notes.version-4-1-10.presentation": "改进生产详情、技能预览、滚动和对话框样式。侧边菜单现在会显示你的储存时间余额。",
   "wiki.patch-notes.version-4-1-10.refunds": "热启动现不可退款。储存、投资和星辰记忆可退款。首次分配不可退款技能前新增警告。",
   "wiki.patch-notes.version-4-1-10.secret": "解锁发现后，到达第六个Avotation秘密时将自动完成。",
   "wiki.patch-notes.version-4-1-10.speedruns": "改进速通：保留个人最佳记录、对比当前轮次、显示辅助使用情况，并新增首次超越里程碑。新记录统计游玩时间与已消耗储存时间之和。",

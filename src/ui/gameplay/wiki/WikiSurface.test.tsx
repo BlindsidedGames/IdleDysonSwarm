@@ -44,7 +44,7 @@ describe('Wiki patch-note content', () => {
       "Improved Speedruns with persistent personal bests, current-run comparisons, assistance indicators and a First Transcendence milestone. New records count time played plus Stored Time spent.",
       "The sixth Avotation secret now completes automatically when reached with Discovery unlocked.",
       "Fixed Permanent 2× Bots after Reset Save, cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues.",
-      "Improved production details, skill previews, scrolling and dialog styling.",
+      "Improved production details, skill previews, scrolling and dialog styling. The side menu now shows your Stored Time balance.",
       "Added five achievements, presets 6–10, and optional preset quick actions on Bots and Research.",
       "iOS 16 or later is now required.",
     ])
