@@ -777,13 +777,13 @@
 }
 
 .skill-details-dialog .ui-button--secondary {
-  border-color: var(--theme-divider);
-  background: var(--theme-selected);
+  border-color: color-mix(in srgb, var(--skill-dialog-accent) 70%, white);
+  background: color-mix(in srgb, var(--skill-dialog-accent) 32%, var(--skill-dialog-background));
   color: #f7f1ff;
 }
 
 .skill-details-dialog .ui-button--secondary:not(:disabled):hover {
-  background: color-mix(in srgb, var(--theme-selected) 82%, var(--theme-accent));
+  background: color-mix(in srgb, var(--skill-dialog-accent) 52%, var(--skill-dialog-background));
 }
 
 .skill-details {
@@ -1355,9 +1355,9 @@
   inline-size: var(--target-minimum);
   block-size: var(--target-minimum);
   padding: 0;
-  border: 1px solid color-mix(in srgb, var(--theme-accent) 70%, white);
+  border: 1px solid color-mix(in srgb, var(--skill-dialog-accent) 70%, white);
   border-radius: 0.25rem;
-  background: color-mix(in srgb, var(--theme-accent) 32%, var(--theme-panel));
+  background: color-mix(in srgb, var(--skill-dialog-accent) 32%, var(--skill-dialog-background));
   box-shadow: 0 0.12rem 0.24rem rgb(0 0 0 / 42%);
   color: white;
   font: inherit;

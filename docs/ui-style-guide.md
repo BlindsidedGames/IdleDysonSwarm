@@ -70,6 +70,8 @@ Use these existing tokens rather than choosing a new nearby value per element:
 
 - Reuse the route's `--theme-*` palette and semantic text/state colours. No new
   hardcoded colours, arbitrary opacity or accent meanings for routine features.
+- A dialog with its own palette must use it for close/back and secondary buttons
+  too; do not inherit mismatched controls from the route underneath it.
 - Discovery/Transcendence uses the approved purple/Avocato family, not the retired
   Science palette. Keep its three bars in one panel: time on the left, benefit
   inside on the right, associated icon immediately outside the right edge.

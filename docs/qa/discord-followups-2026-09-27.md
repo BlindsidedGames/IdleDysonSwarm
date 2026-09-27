@@ -85,6 +85,11 @@ large-chunk advisory; no new dependency or persistence service was added.
 
 ## Limits
 
+Palette follow-up: close/back and secondary buttons now use the skill dialog's
+own accent/background instead of the inherited purple backdrop palette. Checked
+the non-refundable warning at desktop and 360px/130% text; screenshots:
+`warning-palette-desktop.png` and `warning-palette-360-text130.png`.
+
 This pass provides browser interaction evidence and canonical checkpoint tests.
 iOS, Android, packaged Steam, Windows/Linux and cross-device Cloud were not
 interactively retested. No store submission or deployed build changed.
