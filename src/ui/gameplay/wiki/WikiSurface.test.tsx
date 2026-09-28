@@ -44,7 +44,10 @@ describe('Wiki patch-note content', () => {
       "Improved Speedruns with persistent personal bests, current-run comparisons, assistance indicators and a First Transcendence milestone. New records count time played plus Stored Time spent.",
       "The sixth Avotation secret now completes automatically when reached with Discovery unlocked.",
       "Fixed Permanent 2× Bots after Reset Save, cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues.",
-      "Improved production details, skill previews, scrolling and dialog styling. The side menu now shows your Stored Time balance.",
+      "Fixed runaway Stellar Swarm scaling. Steady Supply now carries purchases through Infinity without needing reassignment.",
+      "Hands Off now allows only passive facility generation. Tinker is disabled, and generated Assembly Lines count towards its early goal.",
+      "Added Auto, Portrait and Landscape orientation settings on mobile.",
+      "Improved production details, skill previews, scrolling and dialogs. Added taller facility bars and softer button shading. The side menu shows Stored Time, and visualization is on by default.",
       "Added five achievements, presets 6–10, and optional preset quick actions on Bots and Research.",
       "iOS 16 or later is now required.",
     ])
