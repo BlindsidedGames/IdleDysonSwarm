@@ -221,3 +221,41 @@ Built from clean source `6d6193f2efd8d93ea9b968fb780d725a86ae7b4a` on
   behalf: https://discord.com/channels/712304553931833385/1006856538893340692/1553751345129852970.
 - No production, App Review or website changes. Google symbol warnings and the
   existing web chunk-size warning remain non-blocking.
+
+## 2026092801 — 4.1.10 augment fixes and UI polish
+
+Built from clean source `0dde63fbaad175362df49feeb981f85dc6af4a5e` on
+`transcendence-tiers`. PR #217 remains draft and unmerged.
+
+- Updated the in-game 4.1.10 notes in all eight languages. Includes logarithmic
+  Stellar Swarm scaling, ending-run Steady Supply carryover, passive-only Hands
+  Off and its generated Assembly Line goal, mobile orientation settings, default
+  visualization, taller facility bars and route-coloured action gradients.
+- Local release gate: 196 files / 2,064 tests, lint, localization, web/native builds,
+  Electron checks and signed Android packaging pass. Data and GitHub PR checks pass.
+  The initial run caught an outdated patch-note assertion; corrected before packaging.
+- Android **2026092801 (4.1.10)**: available to internal testers, released
+  28 September at 12:44 AEST. AAB 20,134,169 bytes; SHA-256
+  `ce69b801ba42a0e9b069c4b7380e0b114f2ee5bcf345a5c0f3731860154d10e1`.
+- Apple **4.1.10 (2609.28.01)** (ASC displays **2609.28.1**): processing complete,
+  **Testing** for the **Internal** group with **3** invitations. What to Test saved.
+  Internal-only upload; no App Review submission.
+- Steam **public-beta 25569496** active with Windows/Linux/macOS depots; default
+  remains **25430928**. Downloaded macOS manifest **3376903457660112542**;
+  all 261 regular files match. Local and downloaded startup checks pass with
+  disposable data and mock Keychain. Steam client services were unavailable, so
+  commerce/overlay were not reverified.
+- Browser interaction/layout evidence: `docs/qa/discord-investigation-2026-09-28.md`
+  and `docs/qa/action-gradients-2026-09-28.md`. Updated notes render and scroll at
+  narrow/enlarged text. Native orientation evidence is partial: iOS Landscape and
+  restart were checked before the bridge deduplication; Portrait/Auto and Android
+  interaction remain unverified. No new mobile gameplay, Windows/Linux interaction,
+  full challenge pacing or cross-device Cloud claims.
+- Existing Steam/mobile scan flags the public promotion catalog's Steam store URL.
+  Inspected all 587 mobile asset files while exempting only those four exact public
+  URLs: no SDK/provider markers. No application change was required.
+- Google symbol warnings and the existing bundle-size warning remain non-blocking.
+  New achievement provider definitions remain unpublished.
+- Logs, screenshots and downloaded beta:
+  `/Users/matthewrushworth/Builds/ids-release-2026092801/`.
+- No production, App Review, website or Discord changes.
