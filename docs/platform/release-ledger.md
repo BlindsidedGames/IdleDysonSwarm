@@ -259,3 +259,37 @@ Built from clean source `0dde63fbaad175362df49feeb981f85dc6af4a5e` on
 - Logs, screenshots and downloaded beta:
   `/Users/matthewrushworth/Builds/ids-release-2026092801/`.
 - No production, App Review, website or Discord changes.
+
+## 2026-09-29 — 4.1.10 production review preparation
+
+Matthew authorized Android/iOS review submission with developer-controlled release,
+plus mobile achievement submission and Permanent 2× Bots availability checks.
+
+- Android **2026092801 (4.1.10)**: promoted the existing internal-tested AAB into
+  the production draft, replacing 2026092701. Submitted for review; automated
+  checks completed and Publishing overview shows **Changes in review**.
+  **Managed publishing is on**, so approval does not release the update. Existing
+  20% staged rollout configuration is preserved for the eventual manual release.
+- Apple **4.1.10 (2609.29.01)**, displayed **2609.29.1**: rebuilt the same
+  gameplay source as internal 2026092801 with only a command-line build-number
+  override, because previous uploads are Internal TestFlight-only. All 294 bundled
+  web assets matched the 28 September archive before packaging. Archive and upload
+  succeeded with `testFlightInternalTestingOnly=false`; processing completed and
+  the build is attached to the 4.1.10 version. **Manual release remains selected**.
+  App submission is still pending the export-compliance Save control, which did
+  not respond to browser automation; Matthew has been asked to click it.
+- Apple achievements: all five are added to one iOS draft submission, ready to
+  accompany the app. Not yet sent to App Review.
+- Google achievements: exactly five changes are ready to publish. Play Games
+  offers immediate publication independently of app managed publishing, with no
+  review-and-hold step. Awaiting Matthew's choice to publish now or hold them.
+- Permanent **2× Bots** (`ids.botboost`): Apple shows **Approved**, with all
+  countries/regions selected for sale; Google shows the `permanent` buy option
+  **Active** in 174 countries/regions. No pricing or purchase settings changed.
+  This is store-configuration verification, not a new purchase/restore test.
+- Corrected obsolete augment counts in existing Apple/Google localized release
+  notes; verified all eight saved Apple translations.
+- No gameplay changes, new device gameplay QA, live app release, Steam changes,
+  website deployment or merge. Previous release-gate evidence remains above.
+- Archive: `/Users/matthewrushworth/Library/Developer/Xcode/Archives/2026-09-29/IDS-2026092901.xcarchive`.
+  Logs, export options and screenshots: `/Users/matthewrushworth/Builds/ids-submission-20260929/`.

@@ -1,6 +1,7 @@
 # 4.1.10 achievements and Bots preset shortcuts
 
-Prepared 2026-09-27. Provider records remain unpublished. App code is included in
+Prepared 2026-09-27. Provider records remain unpublished as of the pending
+29 September submission steps noted below. App code is included in
 internal release 2026092702; see the [release ledger](../../platform/release-ledger.md).
 
 | Achievement | Requirement | Points (Apple / Google) | Google ID | Apple ID / Steam API name |
@@ -90,3 +91,12 @@ and non-refundable assignment acknowledgement still apply.
 
 ![Bots shortcuts on desktop](achievement-preset-qa/bots-desktop.png)
 ![Expanded Bots settings in German at 360px and 130% text](achievement-preset-qa/bots-narrow-german-expanded.png)
+
+## 29 September submission staging
+
+All five Apple records are **Ready for Review** in one iOS draft submission.
+The app's new distribution build is attached; submitting the combined review
+is pending export-compliance confirmation. Google lists exactly these five
+achievement changes as **Ready to publish**. Its publication is immediate and
+independent of the app's managed-publishing hold, so Matthew's choice is pending.
+Steam was not changed. No new authenticated SDK unlock test is claimed.
