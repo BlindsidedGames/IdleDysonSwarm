@@ -2,7 +2,7 @@ import { grantTinkerFacilities, canTinkerAssemblyLines, resolveTinkerFacilityYie
 import { hasManualLabourAugment, MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
 import { manualBotYield, activateManualLabour, completeManualLabour, completedManualLabourWork, MANUAL_LABOUR_TUNING } from './manualLabourAugments'
 import { recordCompletedTinkers } from './tinkerGoalProgress'
-import { effectiveDivisions, isBreakInfinityEnabled } from './infinityChallenges'
+import { challengeAllowsTinker, effectiveDivisions, isBreakInfinityEnabled } from './infinityChallenges'
 import { recordBotBoostUsage } from './botBoost'
 import {
   isFiniteNonNegativeNumber,
@@ -50,6 +50,7 @@ export interface CanonicalTinkerAdvanceResult {
 export type CanonicalTinkerStartEligibility =
   | 'available'
   | 'already-running'
+  | 'challenge-disabled'
 
 export type CanonicalTinkerPresentationMode =
   | 'hand-assembly'
@@ -132,7 +133,8 @@ export function selectCanonicalTinkerUiFacts(
     initial.runtime,
     stats,
   )
-  const canStart = !synchronized.runtime.running
+  const allowed = challengeAllowsTinker(state)
+  const canStart = allowed && !synchronized.runtime.running
   return Object.freeze({
     runtime: Object.freeze({ ...synchronized.runtime }),
     stats: Object.freeze({ ...stats, botYield: multiplyContinuous(synchronized.runtime.running && hasManualLabourAugment(state, 'handAssembly') ? manualBotYield(state, state.skills.byId[MANUAL_LABOUR_AUGMENTS.patientHands]?.secondaryTimerSeconds ?? 0) : stats.botYield, botMultiplier) }),
@@ -143,7 +145,7 @@ export function selectCanonicalTinkerUiFacts(
         : 'default',
     facilitiesDisabled: state.challenges?.active === 'built-by-hand',
     canStart,
-    eligibility: canStart ? 'available' : 'already-running',
+    eligibility: !allowed ? 'challenge-disabled' : canStart ? 'available' : 'already-running',
     timeToCompletionSeconds: synchronized.runtime.running
       ? timeToCanonicalTinkerCompletion(
           synchronized.runtime,
@@ -166,7 +168,7 @@ export function deriveCanonicalTinkerStats(
     facilityYields: resolveTinkerFacilityYields(state, assemblyYield, additionalFacilityYields),
     botYield: manualBotYield(state),
     assemblyYield: requireFiniteNonNegative(
-      assemblyYield,
+      challengeAllowsTinker(state) ? assemblyYield : 0,
       'assemblyYield',
     ),
     cooldownSeconds: hasManualLabourAugment(state, 'handAssembly') ? MANUAL_LABOUR_TUNING.cooldownSeconds : Math.max(
@@ -190,6 +192,7 @@ export function startCanonicalTinker(
   repeat: boolean,
 ): CanonicalTinkerAdvanceResult {
   const synchronized = synchronizeRuntime(state, runtime, stats)
+  if (!challengeAllowsTinker(state)) return unchanged(synchronized.state, synchronized.runtime)
   if (synchronized.runtime.running) {
     return unchanged(
       synchronized.state,
@@ -215,6 +218,7 @@ export function setCanonicalTinkerRepeat(
   runtime: Readonly<CanonicalTinkerRuntimeState>,
   enabled: boolean,
 ): CanonicalTinkerAdvanceResult {
+  if (!challengeAllowsTinker(state)) return unchanged(state, createCanonicalTinkerRuntimeState())
   if (enabled && !runtime.running) return unchanged(state, runtime)
   if (runtime.repeat === enabled) return unchanged(state, runtime)
   return unchanged(state, { ...runtime, repeat: enabled })
@@ -455,6 +459,7 @@ function synchronizeRuntime(
   readonly state: CanonicalGameStateV1
   readonly runtime: CanonicalTinkerRuntimeState
 } {
+  if (!challengeAllowsTinker(state)) return { state, runtime: createCanonicalTinkerRuntimeState() }
   const manual = canTinkerAssemblyLines(state)
   const modeChanged = runtime.effectiveManualLabour !== manual
   const creationTime = modeChanged

@@ -474,6 +474,9 @@ function PatchNotesArticle() {
             <li>{intl.formatMessage(messages.patchNotesVersion4110Speedruns)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Secret)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Fixes)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110AugmentFixes)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110HandsOff)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4110Orientation)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Presentation)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Achievements)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Ios)}</li>

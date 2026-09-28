@@ -466,7 +466,7 @@
   "challenges.handsOff.description": [
     {
       "type": 0,
-      "value": "施設を購入せずに量子ランを完了する。組立ライン1基で開始し、生成された施設は通常通り働く。"
+      "value": "施設の購入と手作業なしでクアンタム周回を完了します。組立ライン1つで開始し、施設の自動生成は通常どおり機能します。"
     }
   ],
   "challenges.manualLabourRequired": [
@@ -8289,6 +8289,36 @@
       "value": "数値表記"
     }
   ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "画面の向き"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "自動"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "画面の向きを変更できませんでした。もう一度お試しください。"
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "横向き"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "縦向き"
+    }
+  ],
   "settings.processing.description": [
     {
       "type": 0,
@@ -13296,7 +13326,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "有料で購入した施設を無限後も保持します。リセット前に割り当て、リセット後に再度割り当てると復元します。無料の初期施設は累積しません。量子で備蓄を消去します。"
+      "value": "インフィニティ後も購入した施設を保持します。リセット前に割り当てると購入分が自動で戻ります。無料の初期施設は累積しません。クアンタムで備蓄が消えます。"
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -13314,7 +13344,7 @@
   "skills.swarm.stellarSwarm.technical": [
     {
       "type": 0,
-      "value": "恒星の犠牲の生産量をP^log12.5(ボット数)倍にします。Pは所持する最上位施設の購入ボーナス倍率です。ボットの消費量は変わりません。"
+      "value": "恒星の犠牲の生産量を 1 + log12.5(Bots) × log12.5(P) 倍にします。P は所有する最上位施設の購入数による倍率です。ボットの消費量は変わりません。"
     }
   ],
   "skills.switch-anyway": [
@@ -16626,6 +16656,12 @@
       "value": "実績5つ、プリセット6～10、ボットと研究タブの任意のプリセットクイック操作を追加。"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "恒星スウォームの暴走的な成長を修正。安定供給は再割り当てなしでInfinity後に購入数を引き継ぐようになりました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
@@ -16662,16 +16698,28 @@
       "value": "ガルバナイザーを触媒に、ガルバナイズスキルを破砕スキルに改称。チャレンジ中でも破砕でき、効果を事前に確認できるほか、オーグメントツリーが開きます。"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Offでは施設の自動生成のみが可能に。Tinkerは無効となり、生成されたAssembly Linesも序盤の目標に数えられます。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
       "value": "iOS 16以降が必要になりました。"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.orientation": [
+    {
+      "type": 0,
+      "value": "モバイル版に自動・縦向き・横向きの画面設定を追加。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "生産詳細、スキルのプレビュー、スクロール、ダイアログの表示を改善しました。サイドメニューに保存時間の残量が表示されるようになりました。"
+      "value": "生産詳細、スキルプレビュー、スクロール、ダイアログを改善。施設バーを太くし、ボタンに柔らかなグラデーションを追加。サイドメニューに貯蔵時間を表示し、ビジュアライゼーションを初期設定で有効にしました。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [

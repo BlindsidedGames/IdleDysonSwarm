@@ -466,7 +466,7 @@
   "challenges.handsOff.description": [
     {
       "type": 0,
-      "value": "Terminez un cycle quantique sans acheter d’installations. Commencez avec une Chaîne de montage ; les installations générées fonctionnent toujours."
+      "value": "Terminez un cycle quantique sans acheter d’installations ni bricoler. Vous commencez avec une chaîne d’assemblage ; la génération passive fonctionne normalement."
     }
   ],
   "challenges.manualLabourRequired": [
@@ -8289,6 +8289,36 @@
       "value": "Notation des nombres"
     }
   ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "Orientation"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "Impossible de changer l’orientation. Réessayez."
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "Paysage"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "Portrait"
+    }
+  ],
   "settings.processing.description": [
     {
       "type": 0,
@@ -13296,7 +13326,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Conservez les achats payés d’installations après un Infini. Assignez avant la réinitialisation, puis de nouveau pour les restaurer. Les unités gratuites de départ ne s’accumulent pas. Quantum efface la réserve."
+      "value": "Conserve les achats d’installations après l’Infinité. À assigner avant la réinitialisation ; les achats sont restaurés automatiquement. Les unités de départ gratuites ne se cumulent pas. Le Quantique vide la réserve."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -13314,7 +13344,7 @@
   "skills.swarm.stellarSwarm.technical": [
     {
       "type": 0,
-      "value": "Multiplie la production de Sacrifices stellaires par P^log12.5(Bots), où P est le multiplicateur d’achat de votre installation possédée la plus avancée. Le coût en Bots reste inchangé."
+      "value": "Multiplie la production de Sacrifices stellaires par 1 + log12.5(Bots) × log12.5(P), où P est le multiplicateur lié aux achats de votre installation possédée la plus avancée. Les coûts en Bots ne changent pas."
     }
   ],
   "skills.switch-anyway": [
@@ -16626,6 +16656,12 @@
       "value": "Ajout de cinq succès, des préréglages 6–10 et de raccourcis de préréglages facultatifs dans Bots et Recherche."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "Correction de la croissance incontrôlée de Essaim stellaire. Approvisionnement stable conserve désormais les achats après Infinity sans devoir être réassigné."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
@@ -16662,16 +16698,28 @@
       "value": "Les Galvaniseurs deviennent des Catalyseurs, et les compétences galvanisées deviennent fracturées. La Fracture fonctionne pendant les défis, affiche son effet à l’avance et ouvre son arbre d’augmentations."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Off autorise désormais uniquement la génération passive d’installations. Tinker est désactivé et les Assembly Lines générées comptent pour le premier objectif concerné."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
       "value": "iOS 16 ou une version ultérieure est désormais requis."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.orientation": [
+    {
+      "type": 0,
+      "value": "Ajout des orientations Automatique, Portrait et Paysage sur mobile."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Amélioration des détails de production, des aperçus de compétences, du défilement et du style des dialogues. Le menu latéral affiche désormais votre réserve de Temps stocké."
+      "value": "Amélioration des détails de production, aperçus de compétences, défilement et dialogues. Barres d’installations plus hautes et boutons aux dégradés plus doux. Le menu latéral affiche le temps stocké et la visualisation est activée par défaut."
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [

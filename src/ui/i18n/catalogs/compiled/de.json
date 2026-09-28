@@ -466,7 +466,7 @@
   "challenges.handsOff.description": [
     {
       "type": 0,
-      "value": "Schließe einen Quantenlauf ohne Anlagenkäufe ab. Du startest mit einer Montagelinie; erzeugte Anlagen funktionieren weiterhin."
+      "value": "Schließe einen Quantum-Durchlauf ohne Anlagenkäufe oder Basteln ab. Du beginnst mit einer Montagelinie; passive Anlagenerzeugung funktioniert normal."
     }
   ],
   "challenges.manualLabourRequired": [
@@ -8289,6 +8289,36 @@
       "value": "Zahlendarstellung"
     }
   ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "Ausrichtung"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "Ausrichtung konnte nicht geändert werden. Versuche es erneut."
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "Querformat"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "Hochformat"
+    }
+  ],
   "settings.processing.description": [
     {
       "type": 0,
@@ -13296,7 +13326,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Behält bezahlte Anlagenkäufe über Unendlichkeit hinweg. Vor dem Zurücksetzen und zum Wiederherstellen erneut zuweisen. Kostenlose Starteinheiten sammeln sich nicht an. Quantum leert den Vorrat."
+      "value": "Behält bezahlte Anlagenkäufe durch Unendlichkeit. Vor dem Zurücksetzen zuweisen; die Käufe kehren automatisch zurück. Kostenlose Starteinheiten sammeln sich nicht an. Quantum leert den Vorrat."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -13314,7 +13344,7 @@
   "skills.swarm.stellarSwarm.technical": [
     {
       "type": 0,
-      "value": "Multipliziert den Ertrag von Sternenopfern mit P^log12.5(Bots). P ist der Kaufmultiplikator deiner höchsten vorhandenen Anlage. Die Botkosten bleiben unverändert."
+      "value": "Multipliziert die Produktion von Sternenopfern mit 1 + log12.5(Bots) × log12.5(P). P ist der Kaufskalierungsmultiplikator deiner höchsten vorhandenen Anlage. Die Bot-Kosten bleiben unverändert."
     }
   ],
   "skills.switch-anyway": [
@@ -16626,6 +16656,12 @@
       "value": "Fünf Erfolge, Vorlagen 6–10 und optionale Vorlagen-Schnellaktionen in Bots und Forschung hinzugefügt."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "Unkontrollierte Skalierung von Sternenschwarm behoben. Stetiger Nachschub übernimmt Käufe nach Infinity, ohne erneut zugewiesen werden zu müssen."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
@@ -16662,16 +16698,28 @@
       "value": "Galvanisierer heißen jetzt Katalysatoren und galvanisierte Fähigkeiten gebrochene Fähigkeiten. Brechen funktioniert in Herausforderungen, zeigt seine Wirkung vorher an und öffnet den Erweiterungsbaum."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Off erlaubt jetzt nur passive Anlagenerzeugung. Tinker ist deaktiviert, und erzeugte Assembly Lines zählen für das frühe Ziel."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
       "value": "iOS 16 oder neuer ist jetzt erforderlich."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.orientation": [
+    {
+      "type": 0,
+      "value": "Auf Mobilgeräten stehen jetzt die Ausrichtungen Automatisch, Hochformat und Querformat zur Auswahl."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Produktionsdetails, Fähigkeitsvorschauen, Scrollen und Dialoggestaltung verbessert. Das Seitenmenü zeigt jetzt dein gespeichertes Zeitguthaben."
+      "value": "Produktionsdetails, Skill-Vorschauen, Scrollen und Dialoge verbessert. Höhere Anlagenbalken und sanftere Schaltflächenschattierung hinzugefügt. Das Seitenmenü zeigt gespeicherte Zeit; die Visualisierung ist standardmäßig aktiviert."
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [

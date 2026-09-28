@@ -11,7 +11,7 @@ Source: Wia's consolidated Discord proposal, 26 September 2026, message 15533788
 - All require their Fractured parent, use normal assignment/preset/auto-assignment, and are refundable.
 - Assigned Fragment augments count as Fragments for all existing Fragment-dependent calculations, including Production Scaling, Regulated Academia and Reductive Scaling. Swarm augments do not count as Fragments.
 - Head Start includes unlocked megastructures (Matthew confirmed). Free grants respect challenge restrictions. A bounded per-run ledger excludes these grants from pricing and retention; refunds cannot grant them again.
-- Steady Supply requires assignment at the ending Infinity and reassignment to restore the captured paid purchases. Challenge restarts and Quantum clear this bank. Restoring cannot duplicate purchases by refunding/reassigning.
+- Steady Supply requires assignment at the ending Infinity only; captured paid purchases restore automatically. Challenge restarts and Quantum clear this bank. Restoring cannot duplicate purchases by refunding/reassigning.
 - Pooled counts affect production calculations, never the physical inventory or price counter. Terra acts after pooling. Automatically generated buildings do not count as purchases.
 - Economy of Scale retains Cash/Bot effects after Discovery. The Science benefit converts to G(multiplier − 1), using the existing bounded growing-source formula (Matthew confirmed).
 - Self-Replicating Workers targets simulation Hunters/Gatherers and launched-panel Energy. It does not affect main-game Bot allocation. Compound Fragments multiplies normal purchase scaling; zero purchases stay neutral at 1×.
@@ -41,11 +41,11 @@ Source: Wia's consolidated Discord proposal, 26 September 2026, message 15533788
 
 - **Economy of Scale:** Multiplies Cash, Science and Bot production by log5(total facilities), with a minimum of 1×.
 
-- **Steady Supply:** Keep paid facility purchases through Infinity. Assign before resetting and again to restore them. Free starter units do not accumulate. Quantum clears the supply.
+- **Steady Supply:** Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Quantum clears the supply.
 
 - **Self-Replicating Workers:** Hunters and Gatherers gain (1 + Swarm rate × their count / 10)^0.75 production speed. Launched-panel Energy gains (1 + Swarm rate × launched panels / 100)^0.5.
 
-- **Stellar Swarm:** Multiplies Stellar Sacrifices output by P^log12.5(Bots), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged.
+- **Stellar Swarm:** Multiplies Stellar Sacrifices output by 1 + log12.5(Bots) × log12.5(P), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged.
 
 - **Compound Fragments:** Multiplies normal purchase scaling by (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1.
 

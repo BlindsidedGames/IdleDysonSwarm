@@ -422,11 +422,11 @@
 }
 
 .infinity-shop-card .ui-button:not(:disabled):hover {
-  background: color-mix(in srgb, var(--theme-accent) 82%, white);
+  background-color: color-mix(in srgb, var(--theme-accent) 82%, white);
 }
 
 .infinity-shop-card .ui-button:not(:disabled):active {
-  background: var(--infinity-control-pressed);
+  background-color: var(--infinity-control-pressed);
 }
 
 .infinity-shop-card .ui-button:disabled {
@@ -516,11 +516,11 @@
 }
 
 .infinity-break-target__submit:not(:disabled):hover {
-  background: color-mix(in srgb, var(--infinity-accent) 82%, white);
+  background-color: color-mix(in srgb, var(--infinity-accent) 82%, white);
 }
 
 .infinity-break-target__submit:not(:disabled):active {
-  background: var(--infinity-control-pressed);
+  background-color: var(--infinity-control-pressed);
   color: white;
 }
 
@@ -638,4 +638,18 @@
   block-size: 1em;
   mask-size: 150%;
   -webkit-mask-size: 150%;
+}
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .infinity-shop-card .ui-button:not(:disabled),
+  .infinity-break-target__submit:not(:disabled) {
+    background-image: var(--ui-action-gradient);
+  }
+  .infinity-challenge-card .ui-button:not(:disabled) {
+    background-image: var(--ui-action-gradient);
+  }
+  .infinity-break-target__submit:not(:disabled):active {
+    background-image: var(--ui-action-gradient-dark);
+  }
 }

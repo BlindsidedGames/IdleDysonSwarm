@@ -143,12 +143,12 @@
 .quantum-leap-card__confirm > .ui-button--primary:hover:not(:disabled),
 .quantum-upgrade-card > .ui-button:hover:not(:disabled) {
   border-color: #09060e;
-  background: var(--quantum-action-hover);
+  background-color: var(--quantum-action-hover);
 }
 .quantum-leap-card > .ui-button:active:not(:disabled),
 .quantum-leap-card__confirm > .ui-button--primary:active:not(:disabled),
 .quantum-upgrade-card > .ui-button:active:not(:disabled) {
-  background: var(--quantum-action-pressed);
+  background-color: var(--quantum-action-pressed);
 }
 .quantum-leap-card > .ui-button:focus-visible,
 .quantum-leap-card__confirm > .ui-button--primary:focus-visible,
@@ -201,8 +201,8 @@
 .avocato-feed-card strong { display: block; margin-block-start: 0.15rem; color: #00e1ff; font-family: var(--font-family-numeric); font-size: var(--ui-text-control); }
 .avocato-feed-card p { margin-block-start: 0.15rem; color: #ddd3eb; font-size: var(--ui-text-meta); line-height: 1.2; }
 .avocato-feed-card > .ui-button { min-block-size: var(--target-minimum); border-color: #09060e; background: var(--quantum-action); color: var(--quantum-action-text); font-family: var(--font-family-numeric); font-size: var(--ui-text-control); font-weight: var(--font-weight-bold); }
-.avocato-feed-card > .ui-button:hover:not(:disabled) { border-color: #09060e; background: var(--quantum-action-hover); }
-.avocato-feed-card > .ui-button:active:not(:disabled) { background: var(--quantum-action-pressed); }
+.avocato-feed-card > .ui-button:hover:not(:disabled) { border-color: #09060e; background-color: var(--quantum-action-hover); }
+.avocato-feed-card > .ui-button:active:not(:disabled) { background-color: var(--quantum-action-pressed); }
 .avocato-feed-card > .ui-button:focus-visible { outline-color: #eadcff; }
 .avocato-feed-card > .ui-button:disabled { border-color: #09060e; background: #43355f; color: #b8acca; opacity: 1; }
 .avocato-feed-card--overflow { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
@@ -266,3 +266,17 @@
 .discovery-purchase > .ui-button { grid-column: 1 / -1; }
 .discovery-purchase > span { text-align: end; }
 .discovery-purchase > [role="group"] { display: grid; gap: var(--ui-card-gap); }
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .quantum-leap-card > .ui-button:not(:disabled),
+  .quantum-leap-card__confirm > .ui-button--primary:not(:disabled),
+  .quantum-upgrade-card > .ui-button:not(:disabled),
+  .avocato-feed-card > .ui-button:not(:disabled) {
+    background-image: var(--ui-action-gradient);
+  }
+  .quantum-leap-card__confirm > .ui-button--secondary:not(:disabled),
+  .avocato-meditation > .ui-button:not(:disabled) {
+    background-image: var(--ui-action-gradient-dark);
+  }
+}

@@ -84,11 +84,16 @@ test('Steady Supply retains paid purchases, not free starters, with identical pr
   }
 })
 
-test('Steady Supply requires ownership at both ends and Quantum/restarts clear the bank', () => {
+test('Steady Supply requires ownership only in the ending run and Quantum/restarts clear the bank', () => {
   let state = fixture([A.steadySupply])
   state = { ...state, dyson: { ...state.dyson, facilities: { ...state.dyson.facilities, assembly_lines: [0, 25] } } }
   const reset = infinity(state)
-  expect(reset.dyson.facilities.assembly_lines[1]).toBe(0)
+  expect(reset.dyson.facilities.assembly_lines[1]).toBe(25)
+  expect(reset.skills.byId[A.steadySupply]?.owned).not.toBe(true)
+  expect(initializeSwarmGrants(reset)).toBe(reset)
+  const loaded = hydrateGameState(dehydrateGameState(session(), reset)).state
+  expect(loaded.dyson.facilities.assembly_lines[1]).toBe(25)
+  expect(initializeSwarmGrants(loaded)).toBe(loaded)
   expect(buy(reset, A.steadySupply).dyson.facilities.assembly_lines[1]).toBe(25)
   expect(buy(infinity(refund(state, A.steadySupply)), A.steadySupply).dyson.facilities.assembly_lines[1]).toBe(0)
   expect(buy(infinity(state, true), A.steadySupply).dyson.facilities.assembly_lines[1]).toBe(0)
@@ -156,7 +161,7 @@ test('growing bonuses are finite and neutral at zero, with authored logarithm ba
   state = { ...state, dyson: { ...state.dyson, bots: 400, facilities: { ...state.dyson.facilities, assembly_lines: [125, 0] } } }
   expect(botnetMultiplier(state)).toBe(3)
   expect(economyOfScaleMultiplier(state)).toBeCloseTo(3)
-  expect(stellarSwarmMultiplier({ ...state, dyson: { ...state.dyson, bots: 12.5 } }, 4)).toBeCloseTo(4)
+  expect(stellarSwarmMultiplier({ ...state, dyson: { ...state.dyson, bots: 12.5 } }, 12.5)).toBeCloseTo(2)
   expect(Number.isFinite(purchaseScalingMultiplier(state, Number.MAX_VALUE))).toBe(true)
 })
 
@@ -297,7 +302,7 @@ test('combined scaling feeds facility breakdowns and Stellar Swarm, respecting S
   }
   const result = derive(state)
   const withoutStellar = derive(refund(state, A.stellarSwarm))
-  expect(result.auxiliary.stellarSacrifice.facilitiesPerSecond / withoutStellar.auxiliary.stellarSacrifice.facilitiesPerSecond).toBeCloseTo(layer.scalingMultiplier)
+  expect(result.auxiliary.stellarSacrifice.facilitiesPerSecond / withoutStellar.auxiliary.stellarSacrifice.facilitiesPerSecond).toBeCloseTo(stellarSwarmMultiplier(state, layer.scalingMultiplier))
   expect(result.auxiliary.stellarSacrifice.botsPerSecond).toBe(withoutStellar.auxiliary.stellarSacrifice.botsPerSecond)
   const rows = result.facilityFacts.assembly_lines.details.contributions
   expect(rows.find(row => row.sourceId.startsWith('manual-purchase.scaling-'))?.value).toBeCloseTo(layer.linearScalingMultiplier)
@@ -305,4 +310,18 @@ test('combined scaling feeds facility breakdowns and Stellar Swarm, respecting S
   const suppressed = { ...state, skills: { ...state.skills, byId: { ...state.skills.byId, supernova: { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 } } } }
   expect(deriveManualPurchaseProductionLayer(suppressed, 'assembly_lines').scalingMultiplier).toBe(1)
   expect(derive(suppressed).facilityFacts.assembly_lines.details.contributions.some(row => row.sourceId === A.compoundFragments)).toBe(false)
+})
+
+
+test('Stellar Swarm logarithms stay neutral at zero and avoid the former exponential feedback', () => {
+  const source = fixture([A.stellarSwarm])
+  for (const bots of [0, 1, 1e100, Number.MAX_VALUE]) {
+    const state = { ...source, dyson: { ...source.dyson, bots } }
+    expect(stellarSwarmMultiplier(state, 1)).toBe(1)
+    expect(stellarSwarmMultiplier(state, 0)).toBe(1)
+    expect(stellarSwarmMultiplier(state, Number.MAX_VALUE)).toBeLessThan(80_000)
+  }
+  const state = { ...source, dyson: { ...source.dyson, bots: 1e100 } }
+  expect(stellarSwarmMultiplier(state, 65.78194475917971)).toBeCloseTo(152.10448935167676)
+  expect(stellarSwarmMultiplier(refund(state, A.stellarSwarm), 65.78194475917971)).toBe(1)
 })

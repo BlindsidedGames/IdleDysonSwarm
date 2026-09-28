@@ -466,7 +466,7 @@
   "challenges.handsOff.description": [
     {
       "type": 0,
-      "value": "Completa una partida cuántica sin comprar instalaciones. Empiezas con una Línea de ensamblaje; las instalaciones generadas siguen funcionando."
+      "value": "Completa una partida cuántica sin comprar instalaciones ni Experimentar. Empiezas con una línea de ensamblaje; la generación pasiva funciona normalmente."
     }
   ],
   "challenges.manualLabourRequired": [
@@ -8289,6 +8289,36 @@
       "value": "Notación numérica"
     }
   ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "Orientación"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "No se pudo cambiar la orientación. Inténtalo de nuevo."
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "Horizontal"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "Vertical"
+    }
+  ],
   "settings.processing.description": [
     {
       "type": 0,
@@ -13296,7 +13326,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Conserva las compras pagadas de instalaciones tras Infinito. Asigna antes del reinicio y de nuevo para restaurarlas. Las unidades iniciales gratis no se acumulan. Quantum borra la reserva."
+      "value": "Conserva las instalaciones compradas tras el Infinito. Asígnala antes del reinicio; las compras se restauran automáticamente. Las unidades iniciales gratuitas no se acumulan. Quantum vacía la reserva."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -13314,7 +13344,7 @@
   "skills.swarm.stellarSwarm.technical": [
     {
       "type": 0,
-      "value": "Multiplica la producción de Sacrificios estelares por P^log12.5(Bots), donde P es el multiplicador de compras de tu instalación más avanzada. El costo en Bots no cambia."
+      "value": "Multiplica la producción de Sacrificios estelares por 1 + log12.5(Bots) × log12.5(P), donde P es el multiplicador por compras de tu instalación poseída de mayor nivel. Los costos en Bots no cambian."
     }
   ],
   "skills.switch-anyway": [
@@ -16626,6 +16656,12 @@
       "value": "Se añadieron cinco logros, los preajustes 6–10 y acciones rápidas opcionales de preajustes en Bots e Investigación."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "Se corrigió el crecimiento descontrolado de Enjambre estelar. Suministro constante ahora conserva las compras tras Infinity sin tener que volver a asignarlo."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
@@ -16662,16 +16698,28 @@
       "value": "Los Galvanizadores ahora se llaman Catalizadores y las habilidades galvanizadas, fracturadas. Fracturar funciona durante los desafíos, muestra una vista previa del efecto y abre su árbol de aumentos."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Off ahora solo permite la generación pasiva de instalaciones. Tinker está desactivado y las Assembly Lines generadas cuentan para el objetivo inicial."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
       "value": "Ahora se requiere iOS 16 o posterior."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.orientation": [
+    {
+      "type": 0,
+      "value": "Se agregaron las opciones de orientación Automática, Vertical y Horizontal en móviles."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Se mejoraron los detalles de producción, las vistas previas de habilidades, el desplazamiento y el estilo de los diálogos. El menú lateral ahora muestra tu saldo de Tiempo almacenado."
+      "value": "Se mejoraron los detalles de producción, las vistas previas, el desplazamiento y los diálogos. Barras de instalaciones más altas y botones con degradados suaves. El menú lateral muestra el tiempo almacenado y la visualización está activada por defecto."
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [

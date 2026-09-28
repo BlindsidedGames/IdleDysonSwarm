@@ -116,6 +116,7 @@ export interface NativeSystemInsets {
 }
 
 export interface CapacitorNativeHostPlugin extends Partial<MobileAchievementPlugin> {
+  setOrientation?(request: { orientation: 'auto' | 'portrait' | 'landscape' }): Promise<void>
   showAchievements?(): Promise<void>
   exportSaveFile(request: SaveFileExportRequest): Promise<{ result: SaveFileExportResult }>
   fileExists(request: { relativePath: string }): Promise<{ exists: boolean }>
@@ -167,6 +168,11 @@ export interface CapacitorNativeHostPlugin extends Partial<MobileAchievementPlug
 const capacitorPlugin = registerPlugin<CapacitorNativeHostPlugin>(
   'IdleDysonNative',
 )
+
+export async function setNativeScreenOrientation(request: { orientation: 'auto' | 'portrait' | 'landscape' }): Promise<void> {
+  if (!capacitorPlugin.setOrientation) throw new Error('Orientation is unavailable')
+  await capacitorPlugin.setOrientation(request)
+}
 
 export interface NativeSafeAreaPlugin {
   systemInsets(): Promise<NativeSystemInsets>

@@ -88,6 +88,10 @@ export function challengeAllowsFacility(state: Pick<CanonicalGameStateV1, 'chall
   if (state.challenges?.active === 'built-by-hand') return false
   return state.challenges?.active !== 'grounded' || ['assembly_lines', 'ai_managers', 'servers', 'data_centers'].includes(id)
 }
+/** Hands Off permits passive generation only, including when an old Tinker is running. */
+export function challengeAllowsTinker(state: Pick<CanonicalGameStateV1, 'challenges'>): boolean {
+  return state.challenges?.active !== 'hands-off'
+}
 export function challengeAllowsFacilityPurchase(state: Pick<CanonicalGameStateV1, 'challenges'>, id: CanonicalFacilityId): boolean {
   return state.challenges?.active !== 'hands-off' && challengeAllowsFacility(state, id)
 }

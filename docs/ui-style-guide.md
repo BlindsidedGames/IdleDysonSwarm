@@ -87,6 +87,21 @@ Use these existing tokens rather than choosing a new nearby value per element:
   changing artwork; begin with high-resolution masters.
 - Progress motion is presentation only. Respect reduced motion; never delay or
   duplicate a gameplay reward to match an animation.
+- Facility progress bars use the spare space above them instead of increasing
+  card height. Match the Details button's black border and modest corner rounding,
+  with both outer bottom borders aligned.
+  Use the same gap between the bar and Details as between Purchase and Details.
+- Enabled purchase/action buttons use the shared diagonal lighting tokens over
+  their existing route colours: Research, Infinity, Quantum/challenges, Reality,
+  Simulations, Avocato, Store, Offline Time and Settings. Use the softer dark-surface
+  treatment for white-text buttons; preserve text contrast and semantic danger colours.
+  Keep the gradient through hover/press, and omit it in forced-colour mode.
+  Disabled purchases stay flat. Navigation, disclosures, quantity selectors,
+  skill nodes and presets retain their existing designs.
+- Store actions use a softer pink, mixed towards the selected surface, with
+  gentler diagonal lighting than ordinary purchase buttons.
+- Facility Details buttons and filled progress use the same approved lighting;
+  the progress track stays dark.
 
 ## Scrolling and layering
 

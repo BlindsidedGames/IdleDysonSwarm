@@ -210,3 +210,38 @@ test('Avotation points remain available in Quantum challenges and Reality points
   const infinity = restartInfinityChallenge(state, 'enter', 20n, 'trial-and-error')
   expect(infinity.ok && infinity.state.skills.points).toBe(20n)
 })
+
+// Challenge rules apply to commands and stale held actions, not just hidden UI.
+test('Hands Off cancels Tinker while preserving passive production and generated-Line goals', async () => {
+  const { createCanonicalTinkerRuntimeState, deriveCanonicalTinkerStats, startCanonicalTinker, advanceCanonicalTinker, selectCanonicalTinkerUiFacts } = await import('./canonicalTinker')
+  const { advanceCanonicalGoalProgression } = await import('./canonicalGoalProgression')
+  const { grantTinkerFacilities } = await import('./manualFacilityAugments')
+  const state = createDeterministicMatureDysonFixture({ ownedSkillIds: ['manualLabour', 'scientificPlanets'] })
+  const stats = deriveCanonicalTinkerStats(state, 100, { galactic_brains: 10 })
+  const held = startCanonicalTinker(state, createCanonicalTinkerRuntimeState(), stats, true)
+  const challenge = { ...held.state, challenges: { ...EMPTY_INFINITY_CHALLENGES, active: 'hands-off' as const, unlocked: true } }
+  for (const result of [startCanonicalTinker(challenge, held.runtime, stats, true), advanceCanonicalTinker(challenge, held.runtime, stats, 3600)]) {
+    expect(result.runtime.running).toBe(false)
+    expect(result.runtime.repeat).toBe(false)
+    expect(result.state).toBe(challenge)
+    expect(result.botsGranted).toBe(0)
+    expect(result.completions).toBe(0)
+  }
+  const facts = selectCanonicalTinkerUiFacts(challenge, held.runtime, 100, 1, { galactic_brains: 10 })
+  expect(facts.eligibility).toBe('challenge-disabled')
+  expect(facts.canStart).toBe(false)
+  expect(facts.stats.facilityYields).toEqual({})
+  expect(facts.stats.botYield).toBe(0)
+  expect(facts.stats.assemblyYield).toBe(0)
+  expect(grantTinkerFacilities(challenge, { galactic_brains: 10 }, 100)).toBe(challenge)
+  const derived = deriveBasicDysonState(challenge, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
+  if (!derived.ok) throw Error('Derivation failed')
+  const ordinary = deriveBasicDysonState(state, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
+  if (!ordinary.ok) throw Error('Derivation failed')
+  for (const id of DYSON_FACILITY_IDS) expect(derived.value.facilityFacts[id].production.perSecond).toBe(ordinary.value.facilityFacts[id].production.perSecond)
+  const generated = { ...challenge, dyson: { ...challenge.dyson, goalStage: 1n, facilities: { ...challenge.dyson.facilities, assembly_lines: [5, 0] as const } } }
+  const goal = advanceCanonicalGoalProgression(generated, () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 }))
+  expect(goal.ok && goal.completedStages).toEqual([1n])
+  const normalGoal = advanceCanonicalGoalProgression({ ...generated, challenges: { ...generated.challenges, active: null } }, () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 }))
+  expect(normalGoal.ok && normalGoal.completedStages).toEqual([])
+})

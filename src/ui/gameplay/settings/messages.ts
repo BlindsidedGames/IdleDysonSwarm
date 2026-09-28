@@ -1,6 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 export const settingsSurfaceMessages = defineMessages({
+  orientation: { id: 'settings.orientation', defaultMessage: 'Orientation' },
+  orientationAuto: { id: 'settings.orientation.auto', defaultMessage: 'Auto' },
+  orientationPortrait: { id: 'settings.orientation.portrait', defaultMessage: 'Portrait' },
+  orientationLandscape: { id: 'settings.orientation.landscape', defaultMessage: 'Landscape' },
+  orientationFailed: { id: 'settings.orientation.failed', defaultMessage: 'Could not change orientation. Try again.' },
+
   achievementsAction: { id: 'settings.achievements.action', defaultMessage: 'Achievements', description: 'Opens the native platform achievement list and sign-in when needed.' },
   achievementsUnavailable: { id: 'settings.achievements.unavailable', defaultMessage: 'Achievements are unavailable. Check your game account and connection, then try again.', description: 'Native achievements could not open or sign-in was cancelled.' },
   languageTitle: {

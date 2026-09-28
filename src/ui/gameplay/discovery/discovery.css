@@ -146,3 +146,10 @@
   font-size: calc(1.05rem * var(--game-text-scale));
   pointer-events: none;
 }
+
+@media (forced-colors: none) {
+  .discovery-confirmation .discovery-purchase-actions > .ui-button:not(:disabled),
+  .discovery-confirmation .discovery-purchase-actions > .ui-button:not(:disabled):hover {
+    background-image: var(--ui-action-gradient-dark);
+  }
+}

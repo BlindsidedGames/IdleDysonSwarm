@@ -139,6 +139,8 @@ export function TinkerSurface({
     ? tinkerMessages.rejectedFailure
     : tinkerMessages.runtimeFailure
 
+  if (facts.eligibility === 'challenge-disabled') return null
+
   return (
     <section
       className={['tinker-surface', className ?? '']

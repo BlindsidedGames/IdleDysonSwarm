@@ -1,5 +1,5 @@
 import { builtByHandTinkerGoal } from '../simulation/canonicalGoalProgression'
-import { effectiveDivisions, isQuantumChallengeActive, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
+import { challengeAllowsTinker, effectiveDivisions, isQuantumChallengeActive, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { hasReachedOverflow, OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
@@ -1303,8 +1303,8 @@ export function selectGameplayVisibility(
     allTabsUnlocked: unlockAllTabs,
     dyson: {
       showTinker:
-        (earlyTinkerVisible && !hasDataCenters) ||
-        manualLabourOwned,
+        challengeAllowsTinker(state) &&
+        ((earlyTinkerVisible && !hasDataCenters) || manualLabourOwned),
       visibleFacilityIds: [
         ...visibleBasicFacilityIds,
         ...visibleMegaStructureIds,

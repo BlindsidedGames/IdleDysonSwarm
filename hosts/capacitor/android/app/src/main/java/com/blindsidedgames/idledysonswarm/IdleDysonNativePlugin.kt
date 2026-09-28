@@ -6,6 +6,7 @@ import android.app.Activity
 import androidx.activity.result.ActivityResult
 import com.getcapacitor.annotation.ActivityCallback
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.view.View
 import android.view.ViewTreeObserver
@@ -32,6 +33,20 @@ import java.util.UUID
 
 @CapacitorPlugin(name = "IdleDysonNative")
 class IdleDysonNativePlugin : Plugin() {
+    @PluginMethod
+    fun setOrientation(call: PluginCall) {
+        val orientation = when (call.getString("orientation")) {
+            "auto" -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            "portrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            "landscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            else -> { call.reject("Invalid orientation"); return }
+        }
+        activity.runOnUiThread {
+            try { activity.requestedOrientation = orientation; call.resolve() }
+            catch (error: Exception) { call.reject("Could not change orientation", error) }
+        }
+    }
+
     private var lifecyclePhase = "active"
     private lateinit var entitlementCache: NativeEntitlementCache
     private lateinit var googlePlayStore: GooglePlayStore

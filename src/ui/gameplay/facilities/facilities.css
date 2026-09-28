@@ -65,6 +65,7 @@
 
 .ui-facility-card.basic-facility-card {
   --basic-facility-section-gap: 0.2rem;
+  --basic-facility-surface-gradient: var(--ui-action-gradient);
   position: relative;
   block-size: 100%;
   min-block-size: var(--basic-facility-card-min-block-size);
@@ -72,7 +73,7 @@
     minmax(0, 1fr)
     clamp(6.25rem, 27%, 6.75rem);
   grid-template-rows: auto auto minmax(min-content, 1fr) auto;
-  gap: var(--basic-facility-section-gap) 0.38rem;
+  gap: var(--basic-facility-section-gap);
   align-items: start;
   padding: 0.38rem;
   border: var(--ui-panel-border-width) solid var(--theme-divider);
@@ -101,6 +102,8 @@
   grid-row: 4;
   inline-size: 100%;
   align-self: end;
+  /* Use the existing space below the description rather than growing the card. */
+  margin-block-start: calc(-1 * var(--basic-facility-section-gap));
 }
 
 .basic-facility-card .ui-facility-card__feedback {
@@ -178,11 +181,13 @@
 
 .basic-facility-card__progress-track {
   position: relative;
-  block-size: 0.3rem;
-  margin-block-start: 0.12rem;
+  block-size: 0.72rem;
   overflow: hidden;
-  border-radius: 999px;
+  /* Match the adjacent Details button's border, radius and bottom edge. */
+  border: 1px solid #0b080c;
+  border-radius: 0.2rem;
   background: #171218;
+  background-clip: padding-box;
 }
 
 .basic-facility-card__progress-track[data-visible="false"] {
@@ -202,11 +207,34 @@
 }
 
 .basic-facility-card__progress-fill {
+  position: relative;
   display: block;
   inline-size: 100%;
   block-size: 100%;
+  overflow: hidden;
   background: var(--theme-accent);
+  background-image: var(--basic-facility-surface-gradient);
   transform-origin: left center;
+}
+
+.basic-facility-card__progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%,
+    color-mix(in srgb, var(--color-text-primary) 14%, transparent) 50%,
+    transparent 70%);
+  animation: facility-progress-sheen 6s ease-in-out infinite;
+}
+
+@keyframes facility-progress-sheen {
+  0%, 35% { transform: translateX(-100%); }
+  85%, 100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .basic-facility-card__progress-fill::after { animation: none; content: none; }
 }
 
 .basic-facility-card__feedback,
@@ -279,12 +307,16 @@
   font-size: calc(0.82rem * var(--game-text-scale));
 }
 
+.basic-facility-card .ui-button:not(:disabled) {
+  background-image: var(--basic-facility-surface-gradient);
+}
+
 .basic-facility-card .ui-button:not(:disabled):hover {
-  background: #dbc7df;
+  background-color: #dbc7df;
 }
 
 .basic-facility-card .ui-button:not(:disabled):active {
-  background: #aa9cad;
+  background-color: #aa9cad;
 }
 
 .basic-facility-card .ui-button:disabled {
@@ -300,6 +332,7 @@
   border: 1px solid #0b080c;
   border-radius: 0.2rem;
   background: #c695d7;
+  background-image: var(--basic-facility-surface-gradient);
   color: #0b080c;
   font: inherit;
   padding-block: 0.2rem;
@@ -311,11 +344,11 @@
 }
 
 .basic-facility-card__details-button:hover {
-  background: #d5abe3;
+  background-color: #d5abe3;
 }
 
 .basic-facility-card__details-button:active {
-  background: #b681c8;
+  background-color: #b681c8;
 }
 
 .basic-facility-card__details-button:focus-visible,

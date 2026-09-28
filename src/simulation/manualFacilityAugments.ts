@@ -2,7 +2,7 @@ import { resolveStellarAggregate } from './canonicalSkillIntervalEffects'
 import type { CanonicalFacilityId, CanonicalGameStateV1 } from '../game-state/types'
 import { MANUAL_FACILITY_AUGMENTS } from './skillSubskills'
 import { isGalvanized } from './galvanization'
-import { challengeAllowsFacility } from './infinityChallenges'
+import { challengeAllowsFacility, challengeAllowsTinker } from './infinityChallenges'
 import { DYSON_FACILITY_DEFINITIONS } from './dysonFacilityCatalog'
 import { addContinuous, multiplyContinuous } from './numeric'
 
@@ -10,11 +10,12 @@ export type TinkerFacilityYields = Readonly<Partial<Record<CanonicalFacilityId, 
 export const MANUAL_FACILITY_TUNING = Object.freeze({ ownedFraction: 0.02, productionSeconds: 20, minimumBrainCap: 1 })
 
 export function canTinkerAssemblyLines(state: Readonly<CanonicalGameStateV1>): boolean {
-  return state.challenges?.active !== 'built-by-hand' &&
+  return challengeAllowsTinker(state) && state.challenges?.active !== 'built-by-hand' &&
     state.skills.byId.manualLabour?.owned === true && state.dyson.facilities.ai_managers[1] >= 1
 }
 
 export function resolveTinkerFacilityYields(state: Readonly<CanonicalGameStateV1>, assemblyYield: number, additional: TinkerFacilityYields): TinkerFacilityYields {
+  if (!challengeAllowsTinker(state)) return {}
   const { assembly_lines: _assembly, ...higher } = additional
   return Object.freeze({ ...higher, ...(canTinkerAssemblyLines(state) ? { assembly_lines: assemblyYield } : {}) })
 }
@@ -30,7 +31,7 @@ export function deriveAdditionalTinkerYields(
   rates: Readonly<Partial<Record<CanonicalFacilityId, number>>>,
   stellarSacrifice?: { readonly facilitiesPerSecond: number; readonly botsPerSecond: number },
 ): TinkerFacilityYields {
-  if (!isGalvanized(state, 'manualLabour') || !state.skills.byId.manualLabour?.owned) return {}
+  if (!challengeAllowsTinker(state) || !isGalvanized(state, 'manualLabour') || !state.skills.byId.manualLabour?.owned) return {}
   const result: Partial<Record<CanonicalFacilityId, number>> = {}
   const versatile = state.skills.byId.versatileProductionTactics?.owned ? 1.5 : 1
   for (const { id, facilityId } of MANUAL_FACILITY_AUGMENTS) {
@@ -56,6 +57,7 @@ export function deriveAdditionalTinkerYields(
 
 /** Facility grants are generated units, never purchases or price increases. */
 export function grantTinkerFacilities(state: CanonicalGameStateV1, yields: TinkerFacilityYields, completions: number): CanonicalGameStateV1 {
+  if (!challengeAllowsTinker(state)) return state
   const facilities = { ...state.dyson.facilities }
   let changed = false
   for (const [id, amount] of Object.entries(yields) as [CanonicalFacilityId, number][]) {

@@ -109,7 +109,8 @@ function isGoalComplete(
     case 0n:
       return state.dyson.bots >= 10
     case 1n:
-      return state.dyson.facilities.assembly_lines[1] >= 5
+      return state.dyson.facilities.assembly_lines[1] +
+        (state.challenges?.active === 'hands-off' ? state.dyson.facilities.assembly_lines[0] : 0) >= 5
     case 2n:
       return panelArea(state, deriveDysonFacts) >= 20_000
     case 3n: {

@@ -466,7 +466,7 @@
   "challenges.handsOff.description": [
     {
       "type": 0,
-      "value": "不购买设施完成一次量子轮回。初始拥有一条装配线；生成的设施仍可运作。"
+      "value": "在不购买设施且不手工组装的情况下完成一次量子轮回。开局获得一条装配线；设施的被动生成正常运作。"
     }
   ],
   "challenges.manualLabourRequired": [
@@ -8289,6 +8289,36 @@
       "value": "数字表示法"
     }
   ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "屏幕方向"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "自动"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "无法更改屏幕方向，请重试。"
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "横屏"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "竖屏"
+    }
+  ],
   "settings.processing.description": [
     {
       "type": 0,
@@ -13296,7 +13326,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "无限后保留付费购买的设施。重置前需分配此增强，重置后再次分配即可恢复。免费初始设施不会累积。量子重置清空储备。"
+      "value": "无限重置后保留花钱购买的设施。重置前分配即可自动恢复购买数量。免费初始设施不会累积。量子重置清空储备。"
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -13314,7 +13344,7 @@
   "skills.swarm.stellarSwarm.technical": [
     {
       "type": 0,
-      "value": "恒星献祭产量乘以P^log12.5(机器人数量)，P为当前拥有的最高级设施的购买加成倍率。机器人成本不变。"
+      "value": "将恒星献祭产量乘以 1 + log12.5(Bots) × log12.5(P)，其中 P 是已拥有的最高级设施的购买加成倍率。机器人消耗不变。"
     }
   ],
   "skills.switch-anyway": [
@@ -16626,6 +16656,12 @@
       "value": "新增五项成就、预设6–10，以及机器人和研究页的可选预设快捷操作。"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "修复了恒星蜂群的失控增长。稳定供应现在会在无限重置后保留购买数量，无需重新分配。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
@@ -16662,16 +16698,28 @@
       "value": "“激化器”更名为“催化剂”，“激化技能”更名为“碎裂技能”。挑战中也可碎裂技能，提前预览效果，并打开其强化树。"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Off现在仅允许被动生成设施。修补功能已禁用，生成的装配线会计入早期目标。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
       "value": "现在需要iOS 16或更高版本。"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.orientation": [
+    {
+      "type": 0,
+      "value": "移动端新增自动、竖屏和横屏方向设置。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "改进生产详情、技能预览、滚动和对话框样式。侧边菜单现在会显示你的储存时间余额。"
+      "value": "改进了生产详情、技能预览、滚动和对话框。设施进度条更高，按钮渐变更柔和。侧边菜单显示储存时间，可视化默认开启。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [

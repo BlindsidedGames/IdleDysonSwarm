@@ -56,3 +56,11 @@ test('combined facility summary retains the Bot reward before the first Manager 
   expect(button.textContent).toMatch(/Build [\d.]+ Bots by hand/)
   expect(button.textContent).toContain('Servers: 2')
 })
+
+test('Hands Off does not display a usable Tinker or misleading rewards', () => {
+  const source = fixture(true, false)
+  const state = { ...source, challenges: { ...source.challenges, active: 'hands-off' as const } }
+  const facts = selectCanonicalTinkerUiFacts(state, createCanonicalTinkerRuntimeState(), 500)
+  render(<IntlProvider locale="en" messages={{}}><TinkerSurface facts={facts} dispatch={vi.fn()} /></IntlProvider>)
+  expect(screen.queryByRole('button')).toBeNull()
+})

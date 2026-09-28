@@ -264,11 +264,11 @@
 }
 
 .reality-worker-panel .ui-button:not(:disabled):hover {
-  background: color-mix(in srgb, var(--theme-accent) 82%, white);
+  background-color: color-mix(in srgb, var(--theme-accent) 82%, white);
 }
 
 .reality-worker-panel .ui-button:not(:disabled):active {
-  background: var(--theme-selected);
+  background-color: var(--theme-selected);
 }
 
 .reality-worker-panel .ui-button:disabled {
@@ -579,5 +579,13 @@
   .reality-progress > span {
     border-inline-end-color: HighlightText;
     background: Highlight;
+  }
+}
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .reality-worker-panel .ui-button:not(:disabled),
+  .reality-upgrade-card .ui-button:not(:disabled) {
+    background-image: var(--ui-action-gradient);
   }
 }

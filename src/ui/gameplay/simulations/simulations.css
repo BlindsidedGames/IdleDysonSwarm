@@ -605,11 +605,11 @@
 }
 
 .simulation-panel-card__actions > .ui-button:not(:disabled):hover {
-  background: var(--simulation-card-action-hover);
+  background-color: var(--simulation-card-action-hover);
 }
 
 .simulation-panel-card__actions > .ui-button:not(:disabled):active {
-  background: var(--simulation-card-action-active);
+  background-color: var(--simulation-card-action-active);
 }
 
 .simulation-panel-card__actions > .ui-button:disabled {
@@ -1019,5 +1019,12 @@
 
   .simulation-progress progress::-webkit-progress-value {
     transition: none;
+  }
+}
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .simulation-panel-card__actions > .ui-button:not(:disabled) {
+    background-image: var(--ui-action-gradient);
   }
 }

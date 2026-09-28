@@ -998,7 +998,7 @@
     },
     {
       "type": 0,
-      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ dnɹɔɥɐsıuƃ ɟɐɔıʅıʇıǝs. Sʇɐɹʇ ʍıʇɥ ouǝ ∀ssǝɯqʅʎ ⅂ıuǝ; ƃǝuǝɹɐʇǝp ɟɐɔıʅıʇıǝs sʇıʅʅ ʍoɹʞ."
+      "value": "Ↄoɯdʅǝʇǝ ɐ Ònɐuʇnɯ ɹnu ʍıʇɥonʇ ɟɐɔıʅıʇʎ dnɹɔɥɐsǝs oɹ ⊥ıuʞǝɹıuƃ. Sʇɐɹʇ ʍıʇɥ ouǝ ∀ssǝɯqʅʎ ⅂ıuǝ; dɐssıʌǝ ɟɐɔıʅıʇʎ ƃǝuǝɹɐʇıou ʍoɹʞs uoɹɯɐʅʅʎ."
     },
     {
       "type": 0,
@@ -16377,6 +16377,76 @@
       "value": "‬"
     }
   ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɹıǝuʇɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇo"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄonʅp uoʇ ɔɥɐuƃǝ oɹıǝuʇɐʇıou. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ɐupsɔɐdǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁoɹʇɹɐıʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.processing.description": [
     {
       "type": 0,
@@ -27188,7 +27258,7 @@
     },
     {
       "type": 0,
-      "value": "Ӽǝǝd dɐıp ɟɐɔıʅıʇʎ dnɹɔɥɐsǝs ʇɥɹonƃɥ Iuɟıuıʇʎ. ∀ssıƃu qǝɟoɹǝ ɹǝsǝʇʇıuƃ ɐup ɐƃɐıu ʇo ɹǝsʇoɹǝ ʇɥǝɯ. Ⅎɹǝǝ sʇɐɹʇǝɹ nuıʇs po uoʇ ɐɔɔnɯnʅɐʇǝ. Ònɐuʇnɯ ɔʅǝɐɹs ʇɥǝ snddʅʎ."
+      "value": "Ӽǝǝd dɐıp ɟɐɔıʅıʇʎ dnɹɔɥɐsǝs ʇɥɹonƃɥ Iuɟıuıʇʎ. ∀ssıƃu qǝɟoɹǝ ɹǝsǝʇʇıuƃ; dnɹɔɥɐsǝs ɹǝʇnɹu ɐnʇoɯɐʇıɔɐʅʅʎ. Ⅎɹǝǝ sʇɐɹʇǝɹ nuıʇs po uoʇ ɐɔɔnɯnʅɐʇǝ. Ònɐuʇnɯ ɔʅǝɐɹs ʇɥǝ snddʅʎ."
     },
     {
       "type": 0,
@@ -27230,7 +27300,7 @@
     },
     {
       "type": 0,
-      "value": "Wnʅʇıdʅıǝs Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs onʇdnʇ qʎ Ԁ^ʅoƃ12.5(Ԑoʇs), ʍɥǝɹǝ Ԁ ıs ʇɥǝ dnɹɔɥɐsǝ-sɔɐʅıuƃ ɯnʅʇıdʅıǝɹ oɟ ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ. Ԑoʇ ɔosʇs ɐɹǝ nuɔɥɐuƃǝp."
+      "value": "Wnʅʇıdʅıǝs Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs onʇdnʇ qʎ 1 + ʅoƃ12.5(Ԑoʇs) × ʅoƃ12.5(Ԁ), ʍɥǝɹǝ Ԁ ıs ʇɥǝ dnɹɔɥɐsǝ-sɔɐʅıuƃ ɯnʅʇıdʅıǝɹ oɟ ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ. Ԑoʇ ɔosʇs ɐɹǝ nuɔɥɐuƃǝp."
     },
     {
       "type": 0,
@@ -33490,6 +33560,20 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp ɹnuɐʍɐʎ Sʇǝʅʅɐɹ Sʍɐɹɯ sɔɐʅıuƃ. Sʇǝɐpʎ Snddʅʎ uoʍ ɔɐɹɹıǝs dnɹɔɥɐsǝs ʇɥɹonƃɥ Iuɟıuıʇʎ ʍıʇɥonʇ uǝǝpıuƃ ɹǝɐssıƃuɯǝuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
@@ -33574,6 +33658,20 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐups Oɟɟ uoʍ ɐʅʅoʍs ouʅʎ dɐssıʌǝ ɟɐɔıʅıʇʎ ƃǝuǝɹɐʇıou. ⊥ıuʞǝɹ ıs pısɐqʅǝp, ɐup ƃǝuǝɹɐʇǝp ∀ssǝɯqʅʎ ⅂ıuǝs ɔonuʇ ʇoʍɐɹps ıʇs ǝɐɹʅʎ ƃoɐʅ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
@@ -33588,6 +33686,20 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.orientation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ∀nʇo, Ԁoɹʇɹɐıʇ ɐup ⅂ɐupsɔɐdǝ oɹıǝuʇɐʇıou sǝʇʇıuƃs ou ɯoqıʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
@@ -33595,7 +33707,7 @@
     },
     {
       "type": 0,
-      "value": "Iɯdɹoʌǝp dɹopnɔʇıou pǝʇɐıʅs, sʞıʅʅ dɹǝʌıǝʍs, sɔɹoʅʅıuƃ ɐup pıɐʅoƃ sʇʎʅıuƃ. ⊥ɥǝ sıpǝ ɯǝun uoʍ sɥoʍs ʎonɹ Sʇoɹǝp ⊥ıɯǝ qɐʅɐuɔǝ."
+      "value": "Iɯdɹoʌǝp dɹopnɔʇıou pǝʇɐıʅs, sʞıʅʅ dɹǝʌıǝʍs, sɔɹoʅʅıuƃ ɐup pıɐʅoƃs. ∀ppǝp ʇɐʅʅǝɹ ɟɐɔıʅıʇʎ qɐɹs ɐup soɟʇǝɹ qnʇʇou sɥɐpıuƃ. ⊥ɥǝ sıpǝ ɯǝun sɥoʍs Sʇoɹǝp ⊥ıɯǝ, ɐup ʌısnɐʅızɐʇıou ıs ou qʎ pǝɟɐnʅʇ."
     },
     {
       "type": 0,

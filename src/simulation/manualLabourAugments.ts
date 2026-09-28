@@ -1,7 +1,7 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { MANUAL_LABOUR_AUGMENTS as AUGMENTS, hasManualLabourAugment } from './skillSubskills'
 import { addContinuous, multiplyContinuous } from './numeric'
-import { isResearchDisabledByChallenge } from './infinityChallenges'
+import { challengeAllowsTinker, isResearchDisabledByChallenge } from './infinityChallenges'
 
 export const MANUAL_LABOUR_TUNING = Object.freeze({
   cooldownSeconds: 0.2,
@@ -23,6 +23,7 @@ function storedActivations(state: Readonly<CanonicalGameStateV1>, waitingSeconds
 
 /** No current-Bot input: ordinary production and manual grants cannot amplify this curve. */
 export function manualBotYield(state: Readonly<CanonicalGameStateV1>, waitingSeconds?: number): number {
+  if (!challengeAllowsTinker(state)) return 0
   if (!hasManualLabourAugment(state, 'handAssembly')) return 1
   const t = MANUAL_LABOUR_TUNING
   const work = state.skills.byId[AUGMENTS.handAssembly]?.level ?? 0

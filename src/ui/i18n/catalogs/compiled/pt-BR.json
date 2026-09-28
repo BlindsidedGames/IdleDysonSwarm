@@ -466,7 +466,7 @@
   "challenges.handsOff.description": [
     {
       "type": 0,
-      "value": "Conclua uma rodada quântica sem comprar instalações. Comece com uma Linha de montagem; instalações geradas continuam funcionando."
+      "value": "Conclua uma partida quântica sem comprar instalações nem fazer gambiarras. Comece com uma linha de montagem; a geração passiva funciona normalmente."
     }
   ],
   "challenges.manualLabourRequired": [
@@ -8289,6 +8289,36 @@
       "value": "Notação numérica"
     }
   ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "Orientação"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "Não foi possível mudar a orientação. Tente novamente."
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "Paisagem"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "Retrato"
+    }
+  ],
   "settings.processing.description": [
     {
       "type": 0,
@@ -13296,7 +13326,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Mantém as compras pagas de instalações após Infinito. Atribua antes de reiniciar e novamente para restaurá-las. Unidades iniciais grátis não se acumulam. Quantum apaga a reserva."
+      "value": "Mantém as instalações compradas após o Infinito. Atribua antes do reinício; as compras voltam automaticamente. Unidades iniciais gratuitas não se acumulam. Quantum esvazia a reserva."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -13314,7 +13344,7 @@
   "skills.swarm.stellarSwarm.technical": [
     {
       "type": 0,
-      "value": "Multiplica a produção de Sacrifícios estelares por P^log12.5(Bots), sendo P o multiplicador de compras da sua instalação mais avançada. O custo em Bots não muda."
+      "value": "Multiplica a produção de Sacrifícios Estelares por 1 + log12.5(Bots) × log12.5(P), sendo P o multiplicador por compras da sua instalação possuída de maior nível. Os custos em Bots não mudam."
     }
   ],
   "skills.switch-anyway": [
@@ -16626,6 +16656,12 @@
       "value": "Adicionadas cinco conquistas, as predefinições 6–10 e ações rápidas opcionais de predefinições em Bots e Pesquisa."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "Corrigido o crescimento descontrolado de Enxame estelar. Abastecimento constante agora mantém as compras após Infinity sem precisar ser atribuído novamente."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
@@ -16662,16 +16698,28 @@
       "value": "Galvanizadores agora são Catalisadores, e habilidades galvanizadas são habilidades fraturadas. Fraturar funciona durante desafios, mostra o efeito antes da compra e abre a árvore de aprimoramentos."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Off agora permite apenas geração passiva de instalações. Tinker fica desativado, e Assembly Lines geradas contam para o objetivo inicial."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
       "value": "Agora é necessário iOS 16 ou posterior."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.orientation": [
+    {
+      "type": 0,
+      "value": "Adicionadas as opções de orientação Automática, Retrato e Paisagem no celular."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Melhorados os detalhes de produção, as prévias de habilidades, a rolagem e o estilo dos diálogos. O menu lateral agora mostra seu saldo de Tempo Armazenado."
+      "value": "Melhorados os detalhes de produção, prévias, rolagem e diálogos. Barras de instalações mais altas e sombreamento suave nos botões. O menu lateral mostra o tempo armazenado, e a visualização vem ativada por padrão."
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [

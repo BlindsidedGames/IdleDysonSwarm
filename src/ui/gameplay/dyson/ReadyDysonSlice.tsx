@@ -2490,8 +2490,8 @@ function ReadyDysonSliceContent({
 }
 
 function readVisualizationPreference(): boolean {
-  return readPresentationPreference(SWARM_VISUALIZATION_STORAGE_KEY) ===
-    'visible'
+  const preference = readPresentationPreference(SWARM_VISUALIZATION_STORAGE_KEY)
+  return preference === null || preference === 'visible'
 }
 
 function useNewRouteHighlights(

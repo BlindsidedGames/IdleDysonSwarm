@@ -29,12 +29,12 @@ export function paidFacilityPurchases(state: CanonicalGameStateV1, id: Canonical
     (isBasicFacility(id) && state.infinity.retainedFacilities[id] ? 10 : 0))
 }
 
-/** Called at assignment and unlock boundaries, never from a presentation derivation. */
+/** Applies authorized reset carryover and assignment/unlock grants exactly once. */
 export function initializeSwarmGrants(state: CanonicalGameStateV1): CanonicalGameStateV1 {
   const headStart = hasSwarmAugment(state, 'headStart')
-  const steady = hasSwarmAugment(state, 'steadySupply')
-  if (!headStart && !steady) return state
   const before = swarmGrants(state)
+  // The ending run already authorized retained purchases. Reassignment is not required.
+  if (!headStart && !Object.keys(before.retained).length) return state
   const grants = { headStart: { ...before.headStart }, retained: before.retained, restored: { ...before.restored } }
   const facilities = { ...state.dyson.facilities }
   let changed = false
@@ -42,7 +42,7 @@ export function initializeSwarmGrants(state: CanonicalGameStateV1): CanonicalGam
     const unlock = DYSON_FACILITY_DEFINITIONS[id].quantumUnlock
     if (!challengeAllowsFacilityPurchase(state, id) || (unlock && !state.quantum.unlocks[unlock])) continue
     const free = headStart ? Math.max(0, SWARM_TUNING.headStart - (grants.headStart[id] ?? 0)) : 0
-    const retained = steady ? Math.max(0, (grants.retained[id] ?? 0) - (grants.restored[id] ?? 0)) : 0
+    const retained = Math.max(0, (grants.retained[id] ?? 0) - (grants.restored[id] ?? 0))
     if (free + retained <= 0) continue
     facilities[id] = [facilities[id][0], addContinuous(facilities[id][1], free + retained)]
     grants.headStart[id] = (grants.headStart[id] ?? 0) + free
@@ -94,9 +94,13 @@ export function purchaseScalingMultiplier(state: CanonicalGameStateV1, count: nu
   return multiplyContinuous(linearPurchaseScalingMultiplier(state, count), compoundFragmentsMultiplier(state, count))
 }
 
+/** Logarithmic in both inputs: the production chain must not exponentiate its own Bots. */
 export function stellarSwarmMultiplier(state: CanonicalGameStateV1, purchaseMultiplier: number): number {
-  return hasSwarmAugment(state, 'stellarSwarm')
-    ? clampContinuous(Math.exp(Math.log(Math.max(1, purchaseMultiplier)) * Math.log(Math.max(1, state.dyson.bots)) / Math.log(SWARM_TUNING.stellarBase))) : 1
+  if (!hasSwarmAugment(state, 'stellarSwarm')) return 1
+  const base = Math.log(SWARM_TUNING.stellarBase)
+  const purchases = Math.log(Math.max(1, purchaseMultiplier)) / base
+  const bots = Math.log(Math.max(1, state.dyson.bots)) / base
+  return clampContinuous(1 + purchases * bots)
 }
 
 /** Shared by simulation production facts, active play, Stored Time and UI rates. */

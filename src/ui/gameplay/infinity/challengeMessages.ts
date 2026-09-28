@@ -7,7 +7,7 @@ export const challengeMessages = defineMessages({
   builtByHand: { id: 'challenges.builtByHand', defaultMessage: 'Built by Hand' },
   builtByHandDescription: { id: 'challenges.builtByHand.description', defaultMessage: 'Complete a Quantum run with all facilities disabled. Use Manual Labour augments to build Bots by hand.' },
   handsOff: { id: 'challenges.handsOff', defaultMessage: 'Hands Off' },
-  handsOffDescription: { id: 'challenges.handsOff.description', defaultMessage: 'Complete a Quantum run without purchasing facilities. Start with one Assembly Line; generated facilities still work.' },
+  handsOffDescription: { id: 'challenges.handsOff.description', defaultMessage: 'Complete a Quantum run without facility purchases or Tinkering. Start with one Assembly Line; passive facility generation works normally.' },
   commitmentIssues: { id: 'challenges.commitmentIssues', defaultMessage: 'Commitment Issues' },
   commitmentIssuesDescription: { id: 'challenges.commitmentIssues.description', defaultMessage: 'Complete a Quantum run without refunding or replacing assigned skills. Infinity resets clear assignments normally.' },
   supplyShortage: { id: 'challenges.supplyShortage', defaultMessage: 'Supply Shortage' },

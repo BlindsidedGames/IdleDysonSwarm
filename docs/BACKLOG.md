@@ -10,6 +10,18 @@ Status conventions:
 - **In progress** means another isolated task currently owns implementation.
 - **Deferred** means the work is intentionally outside the current release.
 
+## Discord follow-up — 28 September 2026
+
+- [ ] **Deferred by Matthew · Manual Labour Science production.** Design an
+  optional way for Tinker to produce substantial Science. No formula has been
+  agreed; consider challenge restrictions and the post-Discovery replacement
+  before implementation.
+  [Discussion](https://discord.com/channels/712304553931833385/1006856538893340692/1553768423916441623).
+- [ ] **Deferred by Matthew · Production/balance tooling.** Plot production and
+  skill interactions from the actual game calculations, with explicit starting
+  state, assistance and target duration. Measure Quantum and Transcendence
+  progression before deciding balance changes.
+
 ## Discord follow-up — 26 September 2026
 
 - [ ] **Deferred by Matthew · Railgun stall.** A player on iOS 4.1.9

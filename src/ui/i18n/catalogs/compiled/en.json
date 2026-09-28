@@ -466,7 +466,7 @@
   "challenges.handsOff.description": [
     {
       "type": 0,
-      "value": "Complete a Quantum run without purchasing facilities. Start with one Assembly Line; generated facilities still work."
+      "value": "Complete a Quantum run without facility purchases or Tinkering. Start with one Assembly Line; passive facility generation works normally."
     }
   ],
   "challenges.manualLabourRequired": [
@@ -8289,6 +8289,36 @@
       "value": "Number notation"
     }
   ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "Orientation"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "Could not change orientation. Try again."
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "Landscape"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "Portrait"
+    }
+  ],
   "settings.processing.description": [
     {
       "type": 0,
@@ -13296,7 +13326,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Keep paid facility purchases through Infinity. Assign before resetting and again to restore them. Free starter units do not accumulate. Quantum clears the supply."
+      "value": "Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Quantum clears the supply."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -13314,7 +13344,7 @@
   "skills.swarm.stellarSwarm.technical": [
     {
       "type": 0,
-      "value": "Multiplies Stellar Sacrifices output by P^log12.5(Bots), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged."
+      "value": "Multiplies Stellar Sacrifices output by 1 + log12.5(Bots) × log12.5(P), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged."
     }
   ],
   "skills.switch-anyway": [
@@ -16626,6 +16656,12 @@
       "value": "Added five achievements, presets 6–10, and optional preset quick actions on Bots and Research."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "Fixed runaway Stellar Swarm scaling. Steady Supply now carries purchases through Infinity without needing reassignment."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
@@ -16662,16 +16698,28 @@
       "value": "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing works during challenges, previews its effect and opens its augment tree."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Off now allows only passive facility generation. Tinker is disabled, and generated Assembly Lines count towards its early goal."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
       "value": "iOS 16 or later is now required."
     }
   ],
+  "wiki.patch-notes.version-4-1-10.orientation": [
+    {
+      "type": 0,
+      "value": "Added Auto, Portrait and Landscape orientation settings on mobile."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.presentation": [
     {
       "type": 0,
-      "value": "Improved production details, skill previews, scrolling and dialog styling. The side menu now shows your Stored Time balance."
+      "value": "Improved production details, skill previews, scrolling and dialogs. Added taller facility bars and softer button shading. The side menu shows Stored Time, and visualization is on by default."
     }
   ],
   "wiki.patch-notes.version-4-1-10.refunds": [
