@@ -1,7 +1,7 @@
 # 4.1.10 achievements and Bots preset shortcuts
 
-Prepared 2026-09-27. Provider records remain unpublished as of the pending
-29 September submission steps noted below. App code is included in
+Prepared 2026-09-27. Apple records were submitted and Google records published
+on 29 September; see the current provider status below. App code is included in
 internal release 2026092702; see the [release ledger](../../platform/release-ledger.md).
 
 | Achievement | Requirement | Points (Apple / Google) | Google ID | Apple ID / Steam API name |
@@ -20,7 +20,7 @@ Blank Slate, Trial and Error and every Quantum challenge qualify for Challenge
 Accepted, including legacy No Science completion. Its original provider identifiers
 are retained to preserve the existing draft records and saved achievement evidence.
 
-## Provider state
+## Provider state at initial preparation (27 September)
 
 - Apple: all five records saved as **Prepare for Submission**, non-hidden,
   non-repeatable, English (U.S.) names and both earned/pre-earned descriptions,
@@ -92,11 +92,12 @@ and non-refundable assignment acknowledgement still apply.
 ![Bots shortcuts on desktop](achievement-preset-qa/bots-desktop.png)
 ![Expanded Bots settings in German at 360px and 130% text](achievement-preset-qa/bots-narrow-german-expanded.png)
 
-## 29 September submission staging
+## 29 September submission and publication
 
-All five Apple records are **Ready for Review** in one iOS draft submission.
-The app's new distribution build is attached; submitting the combined review
-is pending export-compliance confirmation. Google lists exactly these five
-achievement changes as **Ready to publish**. Its publication is immediate and
-independent of the app's managed-publishing hold, so Matthew's choice is pending.
+All five Apple records were submitted for review alongside iOS 4.1.10 build
+2609.29.1 in submission `f1e8fac3-23b7-42bb-9e9d-fe8e8ace5b5c`.
+Apple confirms all six items **Waiting for Review**; the app retains manual release.
+Google's five achievement definitions are published; Play Games shows
+**No changes to publish**. Google advises propagation can take a few hours.
+Android app managed publishing remains on, independently of these definitions.
 Steam was not changed. No new authenticated SDK unlock test is claimed.

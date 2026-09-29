@@ -260,14 +260,15 @@ Built from clean source `0dde63fbaad175362df49feeb981f85dc6af4a5e` on
   `/Users/matthewrushworth/Builds/ids-release-2026092801/`.
 - No production, App Review, website or Discord changes.
 
-## 2026-09-29 — 4.1.10 production review preparation
+## 2026-09-29 — 4.1.10 submitted for production review
 
 Matthew authorized Android/iOS review submission with developer-controlled release,
 plus mobile achievement submission and Permanent 2× Bots availability checks.
 
 - Android **2026092801 (4.1.10)**: promoted the existing internal-tested AAB into
   the production draft, replacing 2026092701. Submitted for review; automated
-  checks completed and Publishing overview shows **Changes in review**.
+  checks completed; Google subsequently approved the update and Publishing
+  overview now shows **Changes ready to publish** with **Publish 1 change**.
   **Managed publishing is on**, so approval does not release the update. Existing
   20% staged rollout configuration is preserved for the eventual manual release.
 - Apple **4.1.10 (2609.29.01)**, displayed **2609.29.1**: rebuilt the same
@@ -276,13 +277,14 @@ plus mobile achievement submission and Permanent 2× Bots availability checks.
   web assets matched the 28 September archive before packaging. Archive and upload
   succeeded with `testFlightInternalTestingOnly=false`; processing completed and
   the build is attached to the 4.1.10 version. **Manual release remains selected**.
-  App submission is still pending the export-compliance Save control, which did
-  not respond to browser automation; Matthew has been asked to click it.
-- Apple achievements: all five are added to one iOS draft submission, ready to
-  accompany the app. Not yet sent to App Review.
-- Google achievements: exactly five changes are ready to publish. Play Games
-  offers immediate publication independently of app managed publishing, with no
-  review-and-hold step. Awaiting Matthew's choice to publish now or hold them.
+  Export compliance is complete. Apple confirmed **6 Items Submitted**: the app
+  and all five achievements together, on 29 September at 10:17 AEST.
+  Submission ID: `f1e8fac3-23b7-42bb-9e9d-fe8e8ace5b5c`.
+- Apple achievements: all five and the app show **Waiting for Review**.
+- Google achievements: published all five definitions after Matthew requested
+  completion. Play Games now shows **No changes to publish**. This publication
+  is separate from the Android app, which is approved and held with managed
+  publishing on. Google advises achievement propagation can take a few hours.
 - Permanent **2× Bots** (`ids.botboost`): Apple shows **Approved**, with all
   countries/regions selected for sale; Google shows the `permanent` buy option
   **Active** in 174 countries/regions. No pricing or purchase settings changed.

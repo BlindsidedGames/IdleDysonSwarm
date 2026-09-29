@@ -51,10 +51,11 @@ the eventual public build, after Matthew approves release.
 
 ## 29 September review submission status
 
-Android 2026092801 is in review with managed publishing on. Apple 2609.29.1
-is uploaded, processed and attached with manual release selected, but is not yet
-submitted: export-compliance confirmation needs a manual click. Five Apple
-achievements are staged in the draft submission. Google achievement publication
-is awaiting a decision because Play Games publishes independently of the app hold.
-Permanent 2× Bots is approved/available on Apple and active on Google.
+Android 2026092801 is approved and **Ready to publish**, held by managed publishing. Apple 2609.29.1
+was submitted with all five achievements; all six items are **Waiting for Review**.
+Manual release remains selected. Submission ID:
+`f1e8fac3-23b7-42bb-9e9d-fe8e8ace5b5c`.
+Google's five achievement definitions are published independently of the held app
+update. Permanent 2× Bots is approved/available on Apple and active on Google.
+Neither app update was released publicly. Steam remains unchanged by this task.
 See the [release ledger](../../platform/release-ledger.md) for evidence and limits.
