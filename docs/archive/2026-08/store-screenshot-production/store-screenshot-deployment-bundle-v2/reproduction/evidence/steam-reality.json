@@ -1,0 +1,17 @@
+{
+  "scene": "reality",
+  "fixture": "mature-reality-review",
+  "fixtureSha256": "f5044102dc0483eff727bc22dae6040025c723beafe14608e7c92311adaed13c",
+  "route": "reality",
+  "frozenDate": "2026-08-19T00:00:00.000Z",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "dpr": 1.5,
+    "outputWidth": 1920,
+    "outputHeight": 1080
+  },
+  "routeTheme": "reality",
+  "undefinedVisibleInViewport": false,
+  "visibleText": "Skip to game\nMenu\nBots\nResearch\nSkills\n13\nInfinity\nReality\nSimulations\nQuantum\nStore\nStory\nWiki\nOffline Time\nStatistics\nDebug Options\nSettings\nReality\nDesignation: 513\n25\n312\n@*#i re^$&{^\nUndefined\nAutomatically gathering Influence\nInfluence generation\n4.00 /s\nSimulation Upgrades\nCountermeasures\nCounteract AI Overlords\n\nSquish some bugs, no more Overlords.\n\n42\nFoundational Era\nStart with 1 Hunter\n\nCarry a stronger Foundational Era into every Simulation.\n\n2\nStart with 1 Gatherer\n\nCarry a stronger Foundational Era into every Simulation.\n\n2\nLog10 Workers\n\nCarry a stronger Foundational Era into every Simulation.\n\n42\nCity Booster\n\nCarry a stronger Foundational Era into every Simulation.\n\n1.34K\nEducation\nEngineering I\n\nBetter algorithms. 10m ▸ 5m\n\n2\nReality Upgrades\nAnomaly\nTranslation\nTranslation IV\n\nHalfway through the translation. Gain 1 skill point.\n\nPurchase\n64\nSpeed Reduction\nSpeed Reduction I\n\n100% ▸ 95% - Magnetic fields? Gain 1 skill point.\n\nPurchase\n2.05K"
+}

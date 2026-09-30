@@ -1,0 +1,483 @@
+{
+  "id": "populated-simulations-review",
+  "sourceFixture": "mature-simulations",
+  "sourceFixtureSha256": "775aa66227cd0639c3efb968856264fe99d4bd0493667ae328ea8f58663a18f0",
+  "derivation": "Purchased one additional Hunter and Gatherer through canonical transactions, then applied 24 one-hour canonical production advances and their canonical automation conversions. No state fields were assigned directly.",
+  "transactions": [
+    {
+      "kind": "purchase",
+      "command": "hunters",
+      "cost": 101
+    },
+    {
+      "kind": "purchase",
+      "command": "gatherers",
+      "cost": 101
+    },
+    {
+      "kind": "production-hour",
+      "hour": 1,
+      "produced": {
+        "community": 3122,
+        "housing": 4683,
+        "workers": 0,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 468,
+        "villagesToCities": 18,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 2,
+      "produced": {
+        "community": 3122,
+        "housing": 5512,
+        "workers": 15147,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 551,
+        "villagesToCities": 22,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 3,
+      "produced": {
+        "community": 3122,
+        "housing": 10480,
+        "workers": 17284,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1048,
+        "villagesToCities": 42,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 4,
+      "produced": {
+        "community": 3122,
+        "housing": 10968,
+        "workers": 19129,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1097,
+        "villagesToCities": 44,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 5,
+      "produced": {
+        "community": 3124,
+        "housing": 11290,
+        "workers": 20154,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1129,
+        "villagesToCities": 45,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 6,
+      "produced": {
+        "community": 3122,
+        "housing": 11528,
+        "workers": 21018,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1153,
+        "villagesToCities": 46,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 7,
+      "produced": {
+        "community": 3122,
+        "housing": 11719,
+        "workers": 21594,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1172,
+        "villagesToCities": 47,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 8,
+      "produced": {
+        "community": 3122,
+        "housing": 11879,
+        "workers": 21884,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1187,
+        "villagesToCities": 48,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 9,
+      "produced": {
+        "community": 3124,
+        "housing": 12013,
+        "workers": 22335,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1202,
+        "villagesToCities": 48,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 10,
+      "produced": {
+        "community": 3122,
+        "housing": 12135,
+        "workers": 22677,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1213,
+        "villagesToCities": 48,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 11,
+      "produced": {
+        "community": 3122,
+        "housing": 12238,
+        "workers": 23377,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1224,
+        "villagesToCities": 49,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 12,
+      "produced": {
+        "community": 3122,
+        "housing": 12335,
+        "workers": 23634,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1234,
+        "villagesToCities": 50,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 13,
+      "produced": {
+        "community": 3124,
+        "housing": 12422,
+        "workers": 23116,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1242,
+        "villagesToCities": 49,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 14,
+      "produced": {
+        "community": 3122,
+        "housing": 12501,
+        "workers": 24084,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1250,
+        "villagesToCities": 50,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 15,
+      "produced": {
+        "community": 3122,
+        "housing": 12574,
+        "workers": 24341,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1257,
+        "villagesToCities": 51,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 16,
+      "produced": {
+        "community": 3122,
+        "housing": 12643,
+        "workers": 24019,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1265,
+        "villagesToCities": 50,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 17,
+      "produced": {
+        "community": 3124,
+        "housing": 12705,
+        "workers": 24433,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1270,
+        "villagesToCities": 51,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 18,
+      "produced": {
+        "community": 3122,
+        "housing": 12766,
+        "workers": 24834,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1277,
+        "villagesToCities": 51,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 19,
+      "produced": {
+        "community": 3122,
+        "housing": 12821,
+        "workers": 24911,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1282,
+        "villagesToCities": 51,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 20,
+      "produced": {
+        "community": 3122,
+        "housing": 12875,
+        "workers": 25238,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1287,
+        "villagesToCities": 52,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 21,
+      "produced": {
+        "community": 3122,
+        "housing": 12925,
+        "workers": 25234,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1293,
+        "villagesToCities": 52,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 22,
+      "produced": {
+        "community": 3124,
+        "housing": 12972,
+        "workers": 24739,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1297,
+        "villagesToCities": 51,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 23,
+      "produced": {
+        "community": 3122,
+        "housing": 13019,
+        "workers": 25742,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1302,
+        "villagesToCities": 53,
+        "rocketsToSpaceFactories": 0
+      }
+    },
+    {
+      "kind": "production-hour",
+      "hour": 24,
+      "produced": {
+        "community": 3122,
+        "housing": 13061,
+        "workers": 24440,
+        "factories": 0,
+        "bots": 0,
+        "rockets": 0
+      },
+      "conversions": {
+        "housingToVillages": 1306,
+        "villagesToCities": 52,
+        "rocketsToSpaceFactories": 0
+      }
+    }
+  ],
+  "before": {
+    "reality": {
+      "universeDesignationCount": "512",
+      "workersReady": "0",
+      "workerGenerationProgress": 0,
+      "influence": 312,
+      "autoGather": false
+    },
+    "strangeMatter": 96,
+    "ownedRealityUpgrades": [],
+    "dream": {
+      "resetCount": "1",
+      "disasterStage": "2",
+      "hunters": "1",
+      "gatherers": "1",
+      "community": 800,
+      "housing": 0,
+      "villages": 0,
+      "workers": 0,
+      "cities": 0,
+      "factories": 0,
+      "bots": 0,
+      "counterMeteor": true
+    }
+  },
+  "after": {
+    "reality": {
+      "universeDesignationCount": "512",
+      "workersReady": "0",
+      "workerGenerationProgress": 0,
+      "influence": 110,
+      "autoGather": false
+    },
+    "strangeMatter": 96,
+    "ownedRealityUpgrades": [],
+    "dream": {
+      "resetCount": "1",
+      "disasterStage": "2",
+      "hunters": "2",
+      "gatherers": "2",
+      "community": 75738,
+      "housing": 4,
+      "villages": 6,
+      "workers": 523364,
+      "cities": 1120,
+      "factories": 0,
+      "bots": 0,
+      "counterMeteor": true
+    }
+  },
+  "validation": {
+    "valid": true,
+    "roundTripValid": true
+  },
+  "frozenImportDate": "2026-08-19T00:00:00.000Z",
+  "saveSha256": "16dc911ecedba3a961f39f1641a7c013e6839e0a3b90c6d99e2eeda544017b8f",
+  "file": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/fixtures/populated-simulations-review.idsweb1.txt"
+}

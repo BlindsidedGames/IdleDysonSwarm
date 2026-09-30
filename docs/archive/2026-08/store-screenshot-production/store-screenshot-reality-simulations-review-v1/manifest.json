@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-30T02:40:37.423Z",
+  "sourceCommit": "9577c5af2817ae573a3b5fdfd9aab69fcd033c4d",
+  "sourceBranchObserved": "codex/skill-preset-independence",
+  "sourceWorkingTreeDirty": true,
+  "sourceWorkingTreeDiffSha256": "98e836745f4feaeccf4f0ede86b3852af98b5fcf5734467c197f82200a789af2",
+  "sourceCheckoutNote": "The shared checkout already contained unrelated in-progress Skill Preset work while this review was captured. This task did not modify repository files.",
+  "repositorySourceChanged": false,
+  "uploaded": false,
+  "purpose": "Non-destructive Statistics replacement review only; package v1 is unchanged.",
+  "candidates": {
+    "statistics": {
+      "headline": "WATCH THE NUMBERS EXPLODE",
+      "source": "store-screenshot-package-v1 approved current slide"
+    },
+    "reality": {
+      "headline": "DECODE THE ANOMALY",
+      "fixture": "mature-reality-review",
+      "fixtureSha256": "f5044102dc0483eff727bc22dae6040025c723beafe14608e7c92311adaed13c"
+    },
+    "simulations": {
+      "headline": "REBUILD CIVILIZATION",
+      "fixture": "populated-simulations-review",
+      "fixtureSha256": "16dc911ecedba3a961f39f1641a7c013e6839e0a3b90c6d99e2eeda544017b8f"
+    }
+  },
+  "profiles": {
+    "iphone": {
+      "viewport": "430x932@3",
+      "final": "1320x2868"
+    },
+    "ipad": {
+      "viewport": "1024x768@2",
+      "final": "2732x2048"
+    },
+    "android-phone": {
+      "viewport": "470x812@2",
+      "final": "1080x1920"
+    },
+    "android-tablet": {
+      "viewport": "1280x640@1.5",
+      "final": "1920x1080"
+    }
+  },
+  "outputs": {
+    "iphone": [
+      {
+        "file": "iphone/statistics-current.png",
+        "sha256": "c892b753b171cc476ebd99b97fc960bd140e2551075e7ec23c2af7f6bb60a8e2"
+      },
+      {
+        "file": "iphone/reality-decode-the-anomaly.png",
+        "sha256": "61745bb4ec7535179ec42db96bce87983c1993e1fb72c876aaac6b2f9572cf0a"
+      },
+      {
+        "file": "iphone/simulations-rebuild-civilization.png",
+        "sha256": "c5d71e7909e77f65da1a7a1ddd73e9f23455c1d0bb6d155df4b8e9cc1e312a0e"
+      }
+    ],
+    "ipad": [
+      {
+        "file": "ipad/statistics-current.png",
+        "sha256": "15b883a76cc31637df01c385e6e67c12529d1ff5c5df6948899f1e056356a198"
+      },
+      {
+        "file": "ipad/reality-decode-the-anomaly.png",
+        "sha256": "67e67986a82a7003584f21cfbcb2983672a3d45cb334c376ecc1b9dc9d235b67"
+      },
+      {
+        "file": "ipad/simulations-rebuild-civilization.png",
+        "sha256": "c574a9ebcc063def45efefeecbf2fcf25f02c7628e1066a445ab480e4df64b88"
+      }
+    ],
+    "android-phone": [
+      {
+        "file": "android-phone/statistics-current.png",
+        "sha256": "9991c62950e3c6c294b48c3cd75056c4710fa4326aaf61f7318fc96db1281897"
+      },
+      {
+        "file": "android-phone/reality-decode-the-anomaly.png",
+        "sha256": "7a884f72372089f35fba190fb9108332e9b86835eebe2a6bc0e547411cf6aed2"
+      },
+      {
+        "file": "android-phone/simulations-rebuild-civilization.png",
+        "sha256": "1301d23277632409935ee5e2dd437978a89b1a078ef0189b80d37cf350d8033d"
+      }
+    ],
+    "android-tablet": [
+      {
+        "file": "android-tablet/statistics-current.png",
+        "sha256": "4d6d780ba8ecf07b6c2627d542a0780c80ac971afa8e7f5a5d3de049f8f335b0"
+      },
+      {
+        "file": "android-tablet/reality-decode-the-anomaly.png",
+        "sha256": "39ae6e9a0d1a6eee201a5882832f8bcd99ddcbf4b1a9778cbb07ef738c0977b1"
+      },
+      {
+        "file": "android-tablet/simulations-rebuild-civilization.png",
+        "sha256": "e31b23b966823a867af6c762fa4a7e4a1f507c3217162e76f33c6be858870e93"
+      }
+    ]
+  },
+  "comparisons": {
+    "comparison-iphone.png": "4843163b561dcb6ddb3690e16da5a0d1af45b9e2469642ce7f842f9519d2d9b0",
+    "comparison-ipad.png": "872d829c9a611bfca1227abd2145826513625d40efd1eb063c87f066db5485e3",
+    "comparison-android-phone.png": "428162597fbe11507282c1730dff745cf26eb45e2dcb2676bd83d55b9e5ae2ce",
+    "comparison-android-tablet.png": "53165b480f7701f65a3ca9f4ed326f9238e94dad95fdb5409ab3ac9a5ffa8b45"
+  },
+  "derivationEvidence": {
+    "reality": "fixtures/mature-reality-review.json",
+    "simulations": "fixtures/populated-simulations-review.json"
+  },
+  "scripts": [
+    "derive-review-fixtures.ts",
+    "capture.ts",
+    "compose.ts",
+    "generate-manifest.ts",
+    "qa.ts"
+  ]
+}

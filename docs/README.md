@@ -24,6 +24,9 @@ an audit finding, release gate, or platform contract.
 
 ## Living references
 
+- [Storefront screenshots](platform/storefront-screenshots.md) documents the
+  approved scene order, capture/composition process, Apple display slots and
+  retained reproduction evidence.
 - [UI style guide](ui-style-guide.md) is the concise entry point for gameplay
   layout, copy, spacing, scrolling and visual acceptance.
 - [`../README.md`](../README.md) is the repository entry point.

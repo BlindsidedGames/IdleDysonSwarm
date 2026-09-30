@@ -1,0 +1,95 @@
+{
+  "id": "mature-reality-review",
+  "sourceFixture": "mature-simulations",
+  "sourceFixtureSha256": "775aa66227cd0639c3efb968856264fe99d4bd0493667ae328ea8f58663a18f0",
+  "derivation": "Applied only five accepted canonical Reality purchase transactions to a certified reachable mature-simulations state, then mapped and serialized through the production save codec.",
+  "transactions": [
+    {
+      "id": "translation1",
+      "code": "purchased",
+      "strangeMatterAfter": 88
+    },
+    {
+      "id": "translation2",
+      "code": "purchased",
+      "strangeMatterAfter": 72
+    },
+    {
+      "id": "translation3",
+      "code": "purchased",
+      "strangeMatterAfter": 40
+    },
+    {
+      "id": "doubleTimeOwned",
+      "code": "purchased",
+      "strangeMatterAfter": 35
+    },
+    {
+      "id": "workerAutoConvert",
+      "code": "purchased",
+      "strangeMatterAfter": 25
+    }
+  ],
+  "before": {
+    "reality": {
+      "universeDesignationCount": "512",
+      "workersReady": "0",
+      "workerGenerationProgress": 0,
+      "influence": 312,
+      "autoGather": false
+    },
+    "strangeMatter": 96,
+    "ownedRealityUpgrades": [],
+    "dream": {
+      "resetCount": "1",
+      "disasterStage": "2",
+      "hunters": "1",
+      "gatherers": "1",
+      "community": 800,
+      "housing": 0,
+      "villages": 0,
+      "workers": 0,
+      "cities": 0,
+      "factories": 0,
+      "bots": 0,
+      "counterMeteor": true
+    }
+  },
+  "after": {
+    "reality": {
+      "universeDesignationCount": "512",
+      "workersReady": "0",
+      "workerGenerationProgress": 0,
+      "influence": 312,
+      "autoGather": true
+    },
+    "strangeMatter": 25,
+    "ownedRealityUpgrades": [
+      "translation1",
+      "translation2",
+      "translation3",
+      "workerAutoConvert"
+    ],
+    "dream": {
+      "resetCount": "1",
+      "disasterStage": "2",
+      "hunters": "1",
+      "gatherers": "1",
+      "community": 800,
+      "housing": 0,
+      "villages": 0,
+      "workers": 0,
+      "cities": 0,
+      "factories": 0,
+      "bots": 0,
+      "counterMeteor": true
+    }
+  },
+  "validation": {
+    "valid": true,
+    "roundTripValid": true
+  },
+  "frozenImportDate": "2026-08-19T00:00:00.000Z",
+  "saveSha256": "f5044102dc0483eff727bc22dae6040025c723beafe14608e7c92311adaed13c",
+  "file": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/fixtures/mature-reality-review.idsweb1.txt"
+}

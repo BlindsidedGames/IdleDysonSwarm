@@ -1,0 +1,10 @@
+{
+  "id": "maximum-skills-4-points",
+  "sourceFixture": "maximum-skills",
+  "sourceFixtureSha256": "cfcad1564e865cc3c6be1303706bb0374953d64677d85eab25113fba39bcd00d",
+  "derivation": "Changed only canonical state.skills.points from 73 to 4 before canonical reserialization; ownership and route state are unchanged.",
+  "sourcePoints": "73",
+  "derivedPoints": "4",
+  "saveSha256": "4606f891dc9f420a6e1eec466953109ef300eee95178c26b0bf9703e4fd10186",
+  "file": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/fixtures/maximum-skills-4-points.idsweb1.txt"
+}
