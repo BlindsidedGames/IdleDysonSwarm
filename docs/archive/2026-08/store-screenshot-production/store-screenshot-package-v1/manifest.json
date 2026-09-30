@@ -1,0 +1,366 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-30T00:52:18.645Z",
+  "sourceCommit": "e25694743506a1891c51d0259a1dddb84bf642de",
+  "repository": "/Users/matthewrushworth/Projects/Idle Dyson Swarm",
+  "officialGuidance": {
+    "apple": {
+      "url": "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/",
+      "observed": "1 to 10 screenshots; JPEG/JPG/PNG; no alpha. Selected accepted targets: 1320x2868 iPhone portrait and 2732x2048 iPad landscape."
+    },
+    "googlePlay": {
+      "url": "https://support.google.com/googleplay/android-developer/answer/9866151?hl=en",
+      "observed": "Up to 8 screenshots per supported device type; JPEG or 24-bit PNG without alpha; 320px to 3840px general bounds. Games are highly recommended to provide at least three 9:16 or 16:9 screenshots at minimum 1080 resolution; tablet/Chromebook sections accept 4 or more 1080px to 7680px screenshots."
+    },
+    "steam": {
+      "url": "https://partner.steamgames.com/doc/store/assets?l=english",
+      "observed": "Screenshots are required; 16:9; minimum 1920x1080."
+    }
+  },
+  "targets": {
+    "iphone": {
+      "count": 8,
+      "final": "1320x2868",
+      "orientation": "portrait",
+      "presentation": "approved v3 dedicated header and rounded frame"
+    },
+    "ipad": {
+      "count": 8,
+      "final": "2732x2048",
+      "orientation": "landscape",
+      "presentation": "approved v3 dedicated header and rounded frame"
+    },
+    "android-phone": {
+      "count": 8,
+      "final": "1080x1920",
+      "orientation": "portrait",
+      "presentation": "dedicated header and rounded frame"
+    },
+    "android-tablet": {
+      "count": 8,
+      "final": "1920x1080",
+      "orientation": "landscape",
+      "presentation": "dedicated header and rounded frame"
+    },
+    "steam": {
+      "count": 8,
+      "final": "1920x1080",
+      "orientation": "landscape",
+      "presentation": "unmodified gameplay presentation; no marketing wrapper"
+    }
+  },
+  "viewports": {
+    "iphone": {
+      "css": "430x932",
+      "dpr": 3,
+      "raw": "1290x2796"
+    },
+    "ipad": {
+      "css": "1366x1024",
+      "dpr": 2,
+      "raw": "2732x2048"
+    },
+    "android-phone": {
+      "css": "470x812",
+      "dpr": 2,
+      "raw": "940x1624"
+    },
+    "android-tablet": {
+      "css": "1280x640",
+      "dpr": 1.5,
+      "raw": "1920x960"
+    },
+    "steam": {
+      "css": "1920x1080",
+      "dpr": 1,
+      "raw": "1920x1080"
+    }
+  },
+  "fixtures": {
+    "mature-infinity": "7757466ec7b55d505cfafff4c1b4b4a6ebae5daadd529602080a1e1eae902e63",
+    "maximum-skills": "576febff052c4a23ff76afa894b8e7f9f039356a2a38dc3ecbe9d2ed5e46a552",
+    "maximum-skills-4-points": "4606f891dc9f420a6e1eec466953109ef300eee95178c26b0bf9703e4fd10186",
+    "late-quantum": "40ab29561a1826ff74a2dae9e5ac7cd0cf15ad82d75a9cca5f72f9122ccf3ff2"
+  },
+  "mobileStory": [
+    {
+      "number": 1,
+      "route": "bots",
+      "fixture": "mature-infinity",
+      "headline": "FROM ONE BOT TO / GALACTIC BRAINS"
+    },
+    {
+      "number": 2,
+      "route": "skills",
+      "fixture": "maximum-skills-4-points",
+      "headline": "CHOOSE YOUR PATH"
+    },
+    {
+      "number": 3,
+      "route": "infinity",
+      "fixture": "mature-infinity",
+      "headline": "BREAK INFINITY. / KEEP GOING."
+    },
+    {
+      "number": 4,
+      "route": "quantum",
+      "fixture": "late-quantum",
+      "headline": "LEAP INTO / THE QUANTUM"
+    },
+    {
+      "number": 5,
+      "route": "statistics",
+      "fixture": "late-quantum",
+      "headline": "WATCH THE NUMBERS / EXPLODE"
+    },
+    {
+      "number": 6,
+      "route": "avocato",
+      "fixture": "late-quantum",
+      "headline": "MEET AVOCATO"
+    },
+    {
+      "number": 7,
+      "route": "research",
+      "fixture": "mature-infinity",
+      "headline": "AUTOMATE THE / IMPOSSIBLE"
+    },
+    {
+      "number": 8,
+      "route": "story",
+      "fixture": "late-quantum",
+      "headline": "UNLOCK A / STRANGE STORY"
+    }
+  ],
+  "steamOrder": [
+    "skills",
+    "quantum",
+    "research",
+    "statistics",
+    "bots",
+    "infinity",
+    "avocato",
+    "story"
+  ],
+  "captureMethod": {
+    "server": "Vite loopback at http://127.0.0.1:5176/play/",
+    "browser": "isolated temporary Chromium profiles through the repository CDP harness",
+    "fixtureImport": "production Settings UI with SHA-256 verification; Skills uses the documented artifact-local canonical 4-point derivation",
+    "deterministicState": "date frozen to 2026-08-19T00:00:00Z and 33ms active scheduler held before import",
+    "scripts": [
+      "derive-skills-fixture.ts",
+      "capture.ts",
+      "compose.ts",
+      "generate-manifest.ts",
+      "qa.ts"
+    ]
+  },
+  "rejectedCandidates": [
+    {
+      "route": "simulations",
+      "fixture": "mature-simulations",
+      "reason": "Current certified state rendered an empty era canvas, so it was not suitable for truthful marketing."
+    },
+    {
+      "route": "reality",
+      "fixture": "mature-simulations",
+      "reason": "Current certified state presented undefined/zero content and was rejected rather than marketed."
+    }
+  ],
+  "outputs": {
+    "iphone": [
+      {
+        "file": "iphone/01-from-one-bot-to-galactic-brains.png",
+        "sha256": "1433fd9f5d33ea555f8c74f70ce7aaa2ab79b6283b7239e8a24dbe28bec1d24c"
+      },
+      {
+        "file": "iphone/02-choose-your-path.png",
+        "sha256": "bec52d54690f8b3d3c882f4ce6c8aae7761debaa22bad64d9132fe90c905f276"
+      },
+      {
+        "file": "iphone/03-break-infinity-keep-going.png",
+        "sha256": "73955916ba3cb76abf10f94bae69468c76aba216435002cea469b8c5203f936a"
+      },
+      {
+        "file": "iphone/04-leap-into-the-quantum.png",
+        "sha256": "056b737163cc92b802befed627ead69dc498119fe766d1c1bbdddcc9b35cb5ea"
+      },
+      {
+        "file": "iphone/05-watch-the-numbers-explode.png",
+        "sha256": "c892b753b171cc476ebd99b97fc960bd140e2551075e7ec23c2af7f6bb60a8e2"
+      },
+      {
+        "file": "iphone/06-meet-avocato.png",
+        "sha256": "0701458a3b55130fef3a79d21074be148f06bfc10046bde688b546c47f1ba303"
+      },
+      {
+        "file": "iphone/07-automate-the-impossible.png",
+        "sha256": "ecb9975d435c7725e34558bd25acfcf9cb5af06d3232726d4fd37f17a9c9426c"
+      },
+      {
+        "file": "iphone/08-unlock-a-strange-story.png",
+        "sha256": "9efa299171e633afcf59b92d301f21b0783838f9064d038bb545e88f80e8ceb6"
+      }
+    ],
+    "ipad": [
+      {
+        "file": "ipad/01-from-one-bot-to-galactic-brains.png",
+        "sha256": "392d5e356f3640c39231dc5fa17c9216e38455f9141a3b48c5c15a4537d4dea6"
+      },
+      {
+        "file": "ipad/02-choose-your-path.png",
+        "sha256": "39498b5e02e48837fa497f67f6e469fcefb304ddd062056d4c80d6408490be65"
+      },
+      {
+        "file": "ipad/03-break-infinity-keep-going.png",
+        "sha256": "7dde4b5736b3ee4e5079572a990e4955bee909bfeb3097fcce6f0a5801c851b4"
+      },
+      {
+        "file": "ipad/04-leap-into-the-quantum.png",
+        "sha256": "9c77791a1342e244e52564437f9e1588ac76b7e4d809a1ac88250398496062aa"
+      },
+      {
+        "file": "ipad/05-watch-the-numbers-explode.png",
+        "sha256": "15b883a76cc31637df01c385e6e67c12529d1ff5c5df6948899f1e056356a198"
+      },
+      {
+        "file": "ipad/06-meet-avocato.png",
+        "sha256": "cb7742fa32a468cdc622c00414d863414eb88233f555f29eb81a9d9b9e794112"
+      },
+      {
+        "file": "ipad/07-automate-the-impossible.png",
+        "sha256": "b366539025d997140e906226a8be7b6bbc0cef8fd2f2d7f0463cd8fef3ea44ff"
+      },
+      {
+        "file": "ipad/08-unlock-a-strange-story.png",
+        "sha256": "0a066db0f8cf2ba03918387c37b0726fb3abe363d5a09f116760b675116ccc96"
+      }
+    ],
+    "android-phone": [
+      {
+        "file": "android-phone/01-from-one-bot-to-galactic-brains.png",
+        "sha256": "765b992527318befcf140c7dd4a5fcddf6fca377994e42231afa35c133031c4e"
+      },
+      {
+        "file": "android-phone/02-choose-your-path.png",
+        "sha256": "5231934e3a100bf2d0cc5dfc8db850040902b610b00ec3d3e4494a1d32c81855"
+      },
+      {
+        "file": "android-phone/03-break-infinity-keep-going.png",
+        "sha256": "af9a4da4341dedede81bc8fd2e0452c224feb9823bc36887b9ca417485045c8f"
+      },
+      {
+        "file": "android-phone/04-leap-into-the-quantum.png",
+        "sha256": "9b0374f8233bd81ff272d0c8aa8349496609f9c7bfa841da499f4f7afabdeb98"
+      },
+      {
+        "file": "android-phone/05-watch-the-numbers-explode.png",
+        "sha256": "9991c62950e3c6c294b48c3cd75056c4710fa4326aaf61f7318fc96db1281897"
+      },
+      {
+        "file": "android-phone/06-meet-avocato.png",
+        "sha256": "87b1e287e59f8bf3708e1306d2a2ebf812b0e0d53295dd3a22d8b809f70b4105"
+      },
+      {
+        "file": "android-phone/07-automate-the-impossible.png",
+        "sha256": "1b35ba0553192fe6573bab78da49a0c6a6cb4744085d8eece70a74e7e38f652d"
+      },
+      {
+        "file": "android-phone/08-unlock-a-strange-story.png",
+        "sha256": "b899299bb667b38ee0126d06eff024ad115dd19e60a4c93105a7a7b0150f520e"
+      }
+    ],
+    "android-tablet": [
+      {
+        "file": "android-tablet/01-from-one-bot-to-galactic-brains.png",
+        "sha256": "5a53c5566fd938a9ca701785dc5b21f392c8132de473c2b1ccef7293cbbaee18"
+      },
+      {
+        "file": "android-tablet/02-choose-your-path.png",
+        "sha256": "1010a73782804a15de8d1fc3ca57af3b4f0dee924f2abf357a42e89939841268"
+      },
+      {
+        "file": "android-tablet/03-break-infinity-keep-going.png",
+        "sha256": "25504ad870c31cf34bbbe64083dfeae6ba3c2b4a1c5f4d173341276a06e4d7a5"
+      },
+      {
+        "file": "android-tablet/04-leap-into-the-quantum.png",
+        "sha256": "4d660aed53d97a06b4f3b9340cb675399e2a4b460b4bb42fd987ae0606424c44"
+      },
+      {
+        "file": "android-tablet/05-watch-the-numbers-explode.png",
+        "sha256": "4d6d780ba8ecf07b6c2627d542a0780c80ac971afa8e7f5a5d3de049f8f335b0"
+      },
+      {
+        "file": "android-tablet/06-meet-avocato.png",
+        "sha256": "baf6af284a51d7a5b72266fcd1f2795ffff26c733f8700600e2fe15f6f8f596c"
+      },
+      {
+        "file": "android-tablet/07-automate-the-impossible.png",
+        "sha256": "41a46167c6da6f85b44a26b2cf12a9b2033cb75dce0d95b31c25c2cd89972f58"
+      },
+      {
+        "file": "android-tablet/08-unlock-a-strange-story.png",
+        "sha256": "70e7b8a13be0f6f8cf1d21f96abbb09ed073f2c680252b83305fcd9fab5de8df"
+      }
+    ],
+    "steam": [
+      {
+        "file": "steam/01-skill-tree.png",
+        "sha256": "d1eb7e38adb5f1e1b5f73470ac894ca9210233bbe3f76ac1b848ba3cd3d7639b"
+      },
+      {
+        "file": "steam/02-quantum-upgrades.png",
+        "sha256": "82529bd25f5f37e7001d47af93492fb67e183e02a122815219f9b305d9873f8c"
+      },
+      {
+        "file": "steam/03-research-automation.png",
+        "sha256": "3b54153c07878bc9c2e46aa30b0a367257c461e9d2b8e11fefee6f8ba2b7168b"
+      },
+      {
+        "file": "steam/04-lifetime-statistics.png",
+        "sha256": "06f80d8090dca43f2eb3f7f4d73f2fbbbc0a5bc7902b8ba33f67f3b61c7f1fb5"
+      },
+      {
+        "file": "steam/05-late-game-bots.png",
+        "sha256": "33b2552c27973540deee8b022157a03f8fa121eb486b5c745ec3ec60a4cdee25"
+      },
+      {
+        "file": "steam/06-infinity-shop.png",
+        "sha256": "f6db47e782fe05586daaab460747c15e2ff957e9a0a5f1c6dd96373139a2d5c5"
+      },
+      {
+        "file": "steam/07-avocato.png",
+        "sha256": "e019c97f7e543ac22b6ffd6cc5f294eb7bdfac127b9fa830fffe2f33b219c2e3"
+      },
+      {
+        "file": "steam/08-story.png",
+        "sha256": "aad232049bbc1b8497d5aa1d7bf9ebe87d73e2997bdfb03f26db360428aceeb3"
+      }
+    ]
+  },
+  "contactSheets": [
+    {
+      "file": "contact-sheet-iphone.png",
+      "sha256": "f3271a82e27afea69caa5ba50ec20c91a3ab3b1bb4727592c4cdba2a28e04840"
+    },
+    {
+      "file": "contact-sheet-ipad.png",
+      "sha256": "aa21b8c147566a11d1935e94d4cee722b402f24611ddace11c653b78c1bd62b4"
+    },
+    {
+      "file": "contact-sheet-android-phone.png",
+      "sha256": "73a76ae1d820cccd0a683f38361aa04240d117afbfe4a1c9b51649c651f7183a"
+    },
+    {
+      "file": "contact-sheet-android-tablet.png",
+      "sha256": "ffd43e7b9e9dfec8f1a179485092edac502329503c87ff889575294ca5c0ef53"
+    },
+    {
+      "file": "contact-sheet-steam.png",
+      "sha256": "00b1076fd090c030baac8419ab162c0cff5646753a529c1182bfc08be1fdd681"
+    }
+  ],
+  "repositorySourceChanged": false,
+  "uploaded": false
+}

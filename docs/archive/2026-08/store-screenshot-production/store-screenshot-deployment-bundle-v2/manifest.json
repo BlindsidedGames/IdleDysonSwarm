@@ -1,0 +1,789 @@
+{
+  "generatedAt": "2026-08-30T02:53:14.837Z",
+  "title": "Idle Dyson Swarm storefront deployment bundle v2",
+  "provenance": {
+    "frozenBuildHead": "9577c5af2817ae573a3b5fdfd9aab69fcd033c4d",
+    "branch": "codex/skill-preset-independence",
+    "frozenBuildDirtyDiffSha256": "d6ae9d7302be607c723395221064182b3bfd5603871e5e4df7aadd329502d280",
+    "finalObservedDirtyDiffSha256": "cb7f20ae17299c6902ff56f7384a1b004224c29f7cb7bd6143eea8b1e299afe8",
+    "finalObservedStatusEntryCount": 43,
+    "note": "Shared checkout contained unrelated concurrent edits. Only the two new Steam captures used the frozen external build; approved existing cards were copied byte-for-byte."
+  },
+  "orderedCopy": [
+    [
+      "Bots",
+      "FROM ONE BOT TO / GALACTIC BRAINS"
+    ],
+    [
+      "Skills",
+      "CHOOSE YOUR PATH"
+    ],
+    [
+      "Infinity",
+      "BREAK INFINITY. / KEEP GOING."
+    ],
+    [
+      "Quantum",
+      "LEAP INTO / THE QUANTUM"
+    ],
+    [
+      "Simulations",
+      "REBUILD / CIVILIZATION"
+    ],
+    [
+      "Reality",
+      "DECODE THE / ANOMALY"
+    ],
+    [
+      "Research",
+      "AUTOMATE THE / IMPOSSIBLE"
+    ],
+    [
+      "Story",
+      "UNLOCK A / STRANGE STORY"
+    ]
+  ],
+  "derivations": {
+    "skills": {
+      "fixture": "maximum-skills-4-points",
+      "sha256": "4606f891dc9f420a6e1eec466953109ef300eee95178c26b0bf9703e4fd10186",
+      "availablePoints": 4
+    },
+    "simulations": {
+      "sourceFixture": "mature-simulations",
+      "sourceSha256": "775aa66227cd0639c3efb968856264fe99d4bd0493667ae328ea8f58663a18f0",
+      "derivedSha256": "16dc911ecedba3a961f39f1641a7c013e6839e0a3b90c6d99e2eeda544017b8f"
+    },
+    "reality": {
+      "sourceFixture": "mature-simulations",
+      "sourceSha256": "775aa66227cd0639c3efb968856264fe99d4bd0493667ae328ea8f58663a18f0",
+      "derivedSha256": "f5044102dc0483eff727bc22dae6040025c723beafe14608e7c92311adaed13c"
+    }
+  },
+  "images": [
+    {
+      "profile": "iphone",
+      "order": 1,
+      "route": "bots",
+      "file": "iphone/01-from-one-bot-to-galactic-brains.png",
+      "sha256": "1433fd9f5d33ea555f8c74f70ce7aaa2ab79b6283b7239e8a24dbe28bec1d24c",
+      "width": 1320,
+      "height": 2868,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "iphone",
+      "order": 2,
+      "route": "skills",
+      "file": "iphone/02-choose-your-path.png",
+      "sha256": "bec52d54690f8b3d3c882f4ce6c8aae7761debaa22bad64d9132fe90c905f276",
+      "width": 1320,
+      "height": 2868,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "iphone",
+      "order": 3,
+      "route": "infinity",
+      "file": "iphone/03-break-infinity-keep-going.png",
+      "sha256": "73955916ba3cb76abf10f94bae69468c76aba216435002cea469b8c5203f936a",
+      "width": 1320,
+      "height": 2868,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "iphone",
+      "order": 4,
+      "route": "quantum",
+      "file": "iphone/04-leap-into-the-quantum.png",
+      "sha256": "056b737163cc92b802befed627ead69dc498119fe766d1c1bbdddcc9b35cb5ea",
+      "width": 1320,
+      "height": 2868,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "iphone",
+      "order": 5,
+      "route": "simulations",
+      "file": "iphone/05-rebuild-civilization.png",
+      "sha256": "c5d71e7909e77f65da1a7a1ddd73e9f23455c1d0bb6d155df4b8e9cc1e312a0e",
+      "width": 1320,
+      "height": 2868,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "iphone",
+      "order": 6,
+      "route": "reality",
+      "file": "iphone/06-decode-the-anomaly.png",
+      "sha256": "61745bb4ec7535179ec42db96bce87983c1993e1fb72c876aaac6b2f9572cf0a",
+      "width": 1320,
+      "height": 2868,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "iphone",
+      "order": 7,
+      "route": "research",
+      "file": "iphone/07-automate-the-impossible.png",
+      "sha256": "ecb9975d435c7725e34558bd25acfcf9cb5af06d3232726d4fd37f17a9c9426c",
+      "width": 1320,
+      "height": 2868,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "iphone",
+      "order": 8,
+      "route": "story",
+      "file": "iphone/08-unlock-a-strange-story.png",
+      "sha256": "9efa299171e633afcf59b92d301f21b0783838f9064d038bb545e88f80e8ceb6",
+      "width": 1320,
+      "height": 2868,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "ipad",
+      "order": 1,
+      "route": "bots",
+      "file": "ipad/01-from-one-bot-to-galactic-brains.png",
+      "sha256": "392d5e356f3640c39231dc5fa17c9216e38455f9141a3b48c5c15a4537d4dea6",
+      "width": 2732,
+      "height": 2048,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "ipad",
+      "order": 2,
+      "route": "skills",
+      "file": "ipad/02-choose-your-path.png",
+      "sha256": "39498b5e02e48837fa497f67f6e469fcefb304ddd062056d4c80d6408490be65",
+      "width": 2732,
+      "height": 2048,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "ipad",
+      "order": 3,
+      "route": "infinity",
+      "file": "ipad/03-break-infinity-keep-going.png",
+      "sha256": "7dde4b5736b3ee4e5079572a990e4955bee909bfeb3097fcce6f0a5801c851b4",
+      "width": 2732,
+      "height": 2048,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "ipad",
+      "order": 4,
+      "route": "quantum",
+      "file": "ipad/04-leap-into-the-quantum.png",
+      "sha256": "9c77791a1342e244e52564437f9e1588ac76b7e4d809a1ac88250398496062aa",
+      "width": 2732,
+      "height": 2048,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "ipad",
+      "order": 5,
+      "route": "simulations",
+      "file": "ipad/05-rebuild-civilization.png",
+      "sha256": "c574a9ebcc063def45efefeecbf2fcf25f02c7628e1066a445ab480e4df64b88",
+      "width": 2732,
+      "height": 2048,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "ipad",
+      "order": 6,
+      "route": "reality",
+      "file": "ipad/06-decode-the-anomaly.png",
+      "sha256": "67e67986a82a7003584f21cfbcb2983672a3d45cb334c376ecc1b9dc9d235b67",
+      "width": 2732,
+      "height": 2048,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "ipad",
+      "order": 7,
+      "route": "research",
+      "file": "ipad/07-automate-the-impossible.png",
+      "sha256": "b366539025d997140e906226a8be7b6bbc0cef8fd2f2d7f0463cd8fef3ea44ff",
+      "width": 2732,
+      "height": 2048,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "ipad",
+      "order": 8,
+      "route": "story",
+      "file": "ipad/08-unlock-a-strange-story.png",
+      "sha256": "0a066db0f8cf2ba03918387c37b0726fb3abe363d5a09f116760b675116ccc96",
+      "width": 2732,
+      "height": 2048,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-phone",
+      "order": 1,
+      "route": "bots",
+      "file": "android-phone/01-from-one-bot-to-galactic-brains.png",
+      "sha256": "765b992527318befcf140c7dd4a5fcddf6fca377994e42231afa35c133031c4e",
+      "width": 1080,
+      "height": 1920,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-phone",
+      "order": 2,
+      "route": "skills",
+      "file": "android-phone/02-choose-your-path.png",
+      "sha256": "5231934e3a100bf2d0cc5dfc8db850040902b610b00ec3d3e4494a1d32c81855",
+      "width": 1080,
+      "height": 1920,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-phone",
+      "order": 3,
+      "route": "infinity",
+      "file": "android-phone/03-break-infinity-keep-going.png",
+      "sha256": "af9a4da4341dedede81bc8fd2e0452c224feb9823bc36887b9ca417485045c8f",
+      "width": 1080,
+      "height": 1920,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-phone",
+      "order": 4,
+      "route": "quantum",
+      "file": "android-phone/04-leap-into-the-quantum.png",
+      "sha256": "9b0374f8233bd81ff272d0c8aa8349496609f9c7bfa841da499f4f7afabdeb98",
+      "width": 1080,
+      "height": 1920,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-phone",
+      "order": 5,
+      "route": "simulations",
+      "file": "android-phone/05-rebuild-civilization.png",
+      "sha256": "1301d23277632409935ee5e2dd437978a89b1a078ef0189b80d37cf350d8033d",
+      "width": 1080,
+      "height": 1920,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-phone",
+      "order": 6,
+      "route": "reality",
+      "file": "android-phone/06-decode-the-anomaly.png",
+      "sha256": "7a884f72372089f35fba190fb9108332e9b86835eebe2a6bc0e547411cf6aed2",
+      "width": 1080,
+      "height": 1920,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-phone",
+      "order": 7,
+      "route": "research",
+      "file": "android-phone/07-automate-the-impossible.png",
+      "sha256": "1b35ba0553192fe6573bab78da49a0c6a6cb4744085d8eece70a74e7e38f652d",
+      "width": 1080,
+      "height": 1920,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-phone",
+      "order": 8,
+      "route": "story",
+      "file": "android-phone/08-unlock-a-strange-story.png",
+      "sha256": "b899299bb667b38ee0126d06eff024ad115dd19e60a4c93105a7a7b0150f520e",
+      "width": 1080,
+      "height": 1920,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-tablet",
+      "order": 1,
+      "route": "bots",
+      "file": "android-tablet/01-from-one-bot-to-galactic-brains.png",
+      "sha256": "5a53c5566fd938a9ca701785dc5b21f392c8132de473c2b1ccef7293cbbaee18",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-tablet",
+      "order": 2,
+      "route": "skills",
+      "file": "android-tablet/02-choose-your-path.png",
+      "sha256": "1010a73782804a15de8d1fc3ca57af3b4f0dee924f2abf357a42e89939841268",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-tablet",
+      "order": 3,
+      "route": "infinity",
+      "file": "android-tablet/03-break-infinity-keep-going.png",
+      "sha256": "25504ad870c31cf34bbbe64083dfeae6ba3c2b4a1c5f4d173341276a06e4d7a5",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-tablet",
+      "order": 4,
+      "route": "quantum",
+      "file": "android-tablet/04-leap-into-the-quantum.png",
+      "sha256": "4d660aed53d97a06b4f3b9340cb675399e2a4b460b4bb42fd987ae0606424c44",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-tablet",
+      "order": 5,
+      "route": "simulations",
+      "file": "android-tablet/05-rebuild-civilization.png",
+      "sha256": "e31b23b966823a867af6c762fa4a7e4a1f507c3217162e76f33c6be858870e93",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-tablet",
+      "order": 6,
+      "route": "reality",
+      "file": "android-tablet/06-decode-the-anomaly.png",
+      "sha256": "39ae6e9a0d1a6eee201a5882832f8bcd99ddcbf4b1a9778cbb07ef738c0977b1",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-tablet",
+      "order": 7,
+      "route": "research",
+      "file": "android-tablet/07-automate-the-impossible.png",
+      "sha256": "41a46167c6da6f85b44a26b2cf12a9b2033cb75dce0d95b31c25c2cd89972f58",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "android-tablet",
+      "order": 8,
+      "route": "story",
+      "file": "android-tablet/08-unlock-a-strange-story.png",
+      "sha256": "70e7b8a13be0f6f8cf1d21f96abbb09ed073f2c680252b83305fcd9fab5de8df",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "steam",
+      "order": 1,
+      "route": "bots",
+      "file": "steam/01-late-game-bots.png",
+      "sha256": "33b2552c27973540deee8b022157a03f8fa121eb486b5c745ec3ec60a4cdee25",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "steam",
+      "order": 2,
+      "route": "skills",
+      "file": "steam/02-skill-tree.png",
+      "sha256": "d1eb7e38adb5f1e1b5f73470ac894ca9210233bbe3f76ac1b848ba3cd3d7639b",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "steam",
+      "order": 3,
+      "route": "infinity",
+      "file": "steam/03-infinity-shop.png",
+      "sha256": "f6db47e782fe05586daaab460747c15e2ff957e9a0a5f1c6dd96373139a2d5c5",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "steam",
+      "order": 4,
+      "route": "quantum",
+      "file": "steam/04-quantum-upgrades.png",
+      "sha256": "82529bd25f5f37e7001d47af93492fb67e183e02a122815219f9b305d9873f8c",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "steam",
+      "order": 5,
+      "route": "simulations",
+      "file": "steam/05-simulations.png",
+      "sha256": "b4fbb31dedaefe0ee5b34e91ac8c6836d79d4d8def45f293e37a7bf0aeb191ad",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "steam",
+      "order": 6,
+      "route": "reality",
+      "file": "steam/06-reality.png",
+      "sha256": "4839e04e367fa073d5b37c22ed4be773ab829ab5984483b677f73baec1700bc3",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "steam",
+      "order": 7,
+      "route": "research",
+      "file": "steam/07-research-automation.png",
+      "sha256": "3b54153c07878bc9c2e46aa30b0a367257c461e9d2b8e11fefee6f8ba2b7168b",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    },
+    {
+      "profile": "steam",
+      "order": 8,
+      "route": "story",
+      "file": "steam/08-story.png",
+      "sha256": "aad232049bbc1b8497d5aa1d7bf9ebe87d73e2997bdfb03f26db360428aceeb3",
+      "width": 1920,
+      "height": 1080,
+      "colorspace": "srgb",
+      "channels": 3,
+      "hasAlpha": false
+    }
+  ],
+  "contactSheets": [
+    {
+      "file": "contact-sheet-iphone.png",
+      "sha256": "3c0cd60415632ac8b2930e332aeae5021b6afceebc06d654d51479a409527548",
+      "width": 2320,
+      "height": 2580,
+      "colorspace": "srgb",
+      "hasAlpha": false
+    },
+    {
+      "file": "contact-sheet-ipad.png",
+      "sha256": "a9b6326e47e1ebb73b7fb0bf263d0fa63b7afe81e7b7e57fc1903feaf6d0da29",
+      "width": 3400,
+      "height": 1500,
+      "colorspace": "srgb",
+      "hasAlpha": false
+    },
+    {
+      "file": "contact-sheet-android-phone.png",
+      "sha256": "875f4ff43d4c74ac8577e89edbfc12dc8d870cd3a993d98eacc45e2f6c0e3045",
+      "width": 2320,
+      "height": 2160,
+      "colorspace": "srgb",
+      "hasAlpha": false
+    },
+    {
+      "file": "contact-sheet-android-tablet.png",
+      "sha256": "f5c14314f02f8409b3439f530b0402df9017b15437ab345cc270414fd4dd1432",
+      "width": 3400,
+      "height": 1180,
+      "colorspace": "srgb",
+      "hasAlpha": false
+    },
+    {
+      "file": "contact-sheet-steam.png",
+      "sha256": "dc81ae61423a1a895d909e448e70acfd2e307c247d66fa8756b1e0bbb8087018",
+      "width": 3400,
+      "height": 1180,
+      "colorspace": "srgb",
+      "hasAlpha": false
+    }
+  ],
+  "sourceMatches": [
+    {
+      "file": "iphone/01-from-one-bot-to-galactic-brains.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/iphone/01-from-one-bot-to-galactic-brains.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "iphone/02-choose-your-path.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/iphone/02-choose-your-path.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "iphone/03-break-infinity-keep-going.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/iphone/03-break-infinity-keep-going.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "iphone/04-leap-into-the-quantum.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/iphone/04-leap-into-the-quantum.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "iphone/05-rebuild-civilization.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/iphone/simulations-rebuild-civilization.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "iphone/06-decode-the-anomaly.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/iphone/reality-decode-the-anomaly.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "iphone/07-automate-the-impossible.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/iphone/07-automate-the-impossible.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "iphone/08-unlock-a-strange-story.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/iphone/08-unlock-a-strange-story.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "ipad/01-from-one-bot-to-galactic-brains.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/ipad/01-from-one-bot-to-galactic-brains.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "ipad/02-choose-your-path.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/ipad/02-choose-your-path.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "ipad/03-break-infinity-keep-going.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/ipad/03-break-infinity-keep-going.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "ipad/04-leap-into-the-quantum.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/ipad/04-leap-into-the-quantum.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "ipad/05-rebuild-civilization.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/ipad/simulations-rebuild-civilization.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "ipad/06-decode-the-anomaly.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/ipad/reality-decode-the-anomaly.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "ipad/07-automate-the-impossible.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/ipad/07-automate-the-impossible.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "ipad/08-unlock-a-strange-story.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/ipad/08-unlock-a-strange-story.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-phone/01-from-one-bot-to-galactic-brains.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-phone/01-from-one-bot-to-galactic-brains.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-phone/02-choose-your-path.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-phone/02-choose-your-path.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-phone/03-break-infinity-keep-going.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-phone/03-break-infinity-keep-going.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-phone/04-leap-into-the-quantum.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-phone/04-leap-into-the-quantum.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-phone/05-rebuild-civilization.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/android-phone/simulations-rebuild-civilization.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-phone/06-decode-the-anomaly.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/android-phone/reality-decode-the-anomaly.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-phone/07-automate-the-impossible.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-phone/07-automate-the-impossible.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-phone/08-unlock-a-strange-story.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-phone/08-unlock-a-strange-story.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-tablet/01-from-one-bot-to-galactic-brains.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-tablet/01-from-one-bot-to-galactic-brains.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-tablet/02-choose-your-path.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-tablet/02-choose-your-path.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-tablet/03-break-infinity-keep-going.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-tablet/03-break-infinity-keep-going.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-tablet/04-leap-into-the-quantum.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-tablet/04-leap-into-the-quantum.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-tablet/05-rebuild-civilization.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/android-tablet/simulations-rebuild-civilization.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-tablet/06-decode-the-anomaly.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-reality-simulations-review-v1/android-tablet/reality-decode-the-anomaly.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-tablet/07-automate-the-impossible.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-tablet/07-automate-the-impossible.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "android-tablet/08-unlock-a-strange-story.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/android-tablet/08-unlock-a-strange-story.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "steam/01-late-game-bots.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/steam/05-late-game-bots.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "steam/02-skill-tree.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/steam/01-skill-tree.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "steam/03-infinity-shop.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/steam/06-infinity-shop.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "steam/04-quantum-upgrades.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/steam/02-quantum-upgrades.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "steam/05-simulations.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-deployment-bundle-v2/reproduction/raw-steam/simulations.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "steam/06-reality.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-deployment-bundle-v2/reproduction/raw-steam/reality.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "steam/07-research-automation.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/steam/03-research-automation.png",
+      "exactShaMatch": true
+    },
+    {
+      "file": "steam/08-story.png",
+      "source": "/Users/matthewrushworth/.codex/visualizations/2026/08/29/01a04fb9-5e61-7270-a4e3-bed9639e4d48/store-screenshot-package-v1/steam/08-story.png",
+      "exactShaMatch": true
+    }
+  ]
+}

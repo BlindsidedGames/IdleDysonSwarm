@@ -1,0 +1,484 @@
+{
+  "passed": true,
+  "checkedAt": "2026-08-30T00:52:24.544Z",
+  "outputChecks": [
+    {
+      "profile": "iphone",
+      "file": "01-from-one-bot-to-galactic-brains.png",
+      "width": 1320,
+      "height": 2868,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "iphone",
+      "file": "02-choose-your-path.png",
+      "width": 1320,
+      "height": 2868,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "iphone",
+      "file": "03-break-infinity-keep-going.png",
+      "width": 1320,
+      "height": 2868,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "iphone",
+      "file": "04-leap-into-the-quantum.png",
+      "width": 1320,
+      "height": 2868,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "iphone",
+      "file": "05-watch-the-numbers-explode.png",
+      "width": 1320,
+      "height": 2868,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "iphone",
+      "file": "06-meet-avocato.png",
+      "width": 1320,
+      "height": 2868,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "iphone",
+      "file": "07-automate-the-impossible.png",
+      "width": 1320,
+      "height": 2868,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "iphone",
+      "file": "08-unlock-a-strange-story.png",
+      "width": 1320,
+      "height": 2868,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "01-from-one-bot-to-galactic-brains.png",
+      "width": 2732,
+      "height": 2048,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "02-choose-your-path.png",
+      "width": 2732,
+      "height": 2048,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "03-break-infinity-keep-going.png",
+      "width": 2732,
+      "height": 2048,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "04-leap-into-the-quantum.png",
+      "width": 2732,
+      "height": 2048,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "05-watch-the-numbers-explode.png",
+      "width": 2732,
+      "height": 2048,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "06-meet-avocato.png",
+      "width": 2732,
+      "height": 2048,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "07-automate-the-impossible.png",
+      "width": 2732,
+      "height": 2048,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "08-unlock-a-strange-story.png",
+      "width": 2732,
+      "height": 2048,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "file": "01-from-one-bot-to-galactic-brains.png",
+      "width": 1080,
+      "height": 1920,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "file": "02-choose-your-path.png",
+      "width": 1080,
+      "height": 1920,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "file": "03-break-infinity-keep-going.png",
+      "width": 1080,
+      "height": 1920,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "file": "04-leap-into-the-quantum.png",
+      "width": 1080,
+      "height": 1920,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "file": "05-watch-the-numbers-explode.png",
+      "width": 1080,
+      "height": 1920,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "file": "06-meet-avocato.png",
+      "width": 1080,
+      "height": 1920,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "file": "07-automate-the-impossible.png",
+      "width": 1080,
+      "height": 1920,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "file": "08-unlock-a-strange-story.png",
+      "width": 1080,
+      "height": 1920,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "file": "01-from-one-bot-to-galactic-brains.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "file": "02-choose-your-path.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "file": "03-break-infinity-keep-going.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "file": "04-leap-into-the-quantum.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "file": "05-watch-the-numbers-explode.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "file": "06-meet-avocato.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "file": "07-automate-the-impossible.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "file": "08-unlock-a-strange-story.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "file": "01-skill-tree.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "file": "02-quantum-upgrades.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "file": "03-research-automation.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "file": "04-lifetime-statistics.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "file": "05-late-game-bots.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "file": "06-infinity-shop.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "file": "07-avocato.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "file": "08-story.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    }
+  ],
+  "approvedV3Copies": [
+    {
+      "profile": "iphone",
+      "file": "01-from-one-bot-to-galactic-brains.png",
+      "sourceSha256": "1433fd9f5d33ea555f8c74f70ce7aaa2ab79b6283b7239e8a24dbe28bec1d24c",
+      "outputSha256": "1433fd9f5d33ea555f8c74f70ce7aaa2ab79b6283b7239e8a24dbe28bec1d24c",
+      "ok": true
+    },
+    {
+      "profile": "iphone",
+      "file": "03-break-infinity-keep-going.png",
+      "sourceSha256": "73955916ba3cb76abf10f94bae69468c76aba216435002cea469b8c5203f936a",
+      "outputSha256": "73955916ba3cb76abf10f94bae69468c76aba216435002cea469b8c5203f936a",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "01-from-one-bot-to-galactic-brains.png",
+      "sourceSha256": "392d5e356f3640c39231dc5fa17c9216e38455f9141a3b48c5c15a4537d4dea6",
+      "outputSha256": "392d5e356f3640c39231dc5fa17c9216e38455f9141a3b48c5c15a4537d4dea6",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "file": "03-break-infinity-keep-going.png",
+      "sourceSha256": "7dde4b5736b3ee4e5079572a990e4955bee909bfeb3097fcce6f0a5801c851b4",
+      "outputSha256": "7dde4b5736b3ee4e5079572a990e4955bee909bfeb3097fcce6f0a5801c851b4",
+      "ok": true
+    }
+  ],
+  "contactSheets": [
+    {
+      "profile": "iphone",
+      "width": 2320,
+      "height": 2580,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "width": 3400,
+      "height": 1500,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "width": 2320,
+      "height": 2160,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "width": 3400,
+      "height": 1180,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "width": 3400,
+      "height": 1180,
+      "hasAlpha": false,
+      "space": "srgb",
+      "ok": true
+    }
+  ],
+  "skillEvidence": [
+    {
+      "profile": "iphone",
+      "fixture": "maximum-skills-4-points",
+      "fixtureSha256": "4606f891dc9f420a6e1eec466953109ef300eee95178c26b0bf9703e4fd10186",
+      "renderedFour": true,
+      "renderedSeventyThree": false,
+      "ok": true
+    },
+    {
+      "profile": "ipad",
+      "fixture": "maximum-skills-4-points",
+      "fixtureSha256": "4606f891dc9f420a6e1eec466953109ef300eee95178c26b0bf9703e4fd10186",
+      "renderedFour": true,
+      "renderedSeventyThree": false,
+      "ok": true
+    },
+    {
+      "profile": "android-phone",
+      "fixture": "maximum-skills-4-points",
+      "fixtureSha256": "4606f891dc9f420a6e1eec466953109ef300eee95178c26b0bf9703e4fd10186",
+      "renderedFour": true,
+      "renderedSeventyThree": false,
+      "ok": true
+    },
+    {
+      "profile": "android-tablet",
+      "fixture": "maximum-skills-4-points",
+      "fixtureSha256": "4606f891dc9f420a6e1eec466953109ef300eee95178c26b0bf9703e4fd10186",
+      "renderedFour": true,
+      "renderedSeventyThree": false,
+      "ok": true
+    },
+    {
+      "profile": "steam",
+      "fixture": "maximum-skills-4-points",
+      "fixtureSha256": "4606f891dc9f420a6e1eec466953109ef300eee95178c26b0bf9703e4fd10186",
+      "renderedFour": true,
+      "renderedSeventyThree": false,
+      "ok": true
+    }
+  ],
+  "visualReview": {
+    "performed": true,
+    "notes": "All five contact sheets and all 40 original-resolution individual files inspected. Headers remain above gameplay; rounded clips and borders are continuous; Steam finals contain gameplay only. Every Skills evidence file renders the canonical 4-point state."
+  }
+}
