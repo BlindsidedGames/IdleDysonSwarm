@@ -1,4 +1,4 @@
-import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react'
+import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react'
 
 const HOLD_REPEAT_DELAY_MS = 400
 const HOLD_REPEAT_INTERVAL_MS = 100
@@ -126,7 +126,8 @@ export function usePressAndHoldRepeat(
       }
       void actionRef.current()
     },
-    onPointerDown: () => {
+    onPointerDown: (event: ReactPointerEvent<HTMLButtonElement>) => {
+      if (event.button !== 0) return
       suppressClickRef.current = false
       begin()
     },

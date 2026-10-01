@@ -130,6 +130,38 @@ test('release while affordable ends repeat without adding a click purchase; a ne
   expect(h.state().infinity.permanentSkillPoints).toBe(7n)
 })
 
+test.each([
+  ['secret', 1],
+  ['secret', 2],
+  ['permanent-skill-point', 1],
+  ['permanent-skill-point', 2],
+] as const)('%s ignores a hold with mouse button %s', async (itemId, button) => {
+  vi.useFakeTimers()
+  const h = purchaseHarness(itemId)
+  fireEvent.pointerDown(h.button, { button, pointerType: 'mouse' })
+  if (button === 2) fireEvent.contextMenu(h.button)
+  await act(async () => { await vi.advanceTimersByTimeAsync(1400) })
+  fireEvent.pointerUp(window, { button, pointerType: 'mouse' })
+  expect(h.state().infinity.spentPoints).toBe(688n)
+  expect(h.state().infinity.secretsOfTheUniverse).toBe(25n)
+  expect(h.state().infinity.permanentSkillPoints).toBe(4n)
+  expect(h.dispatch).not.toHaveBeenCalled()
+})
+
+test.each(['mouse', 'touch'])('%s primary holds still repeat and release without an extra purchase', async pointerType => {
+  vi.useFakeTimers()
+  const h = purchaseHarness('permanent-skill-point')
+  fireEvent.pointerDown(h.button, { button: 0, pointerType })
+  await act(async () => { await vi.advanceTimersByTimeAsync(400) })
+  await act(async () => { await vi.advanceTimersByTimeAsync(100) })
+  expect(h.state().infinity.permanentSkillPoints).toBe(6n)
+  expect(h.state().infinity.spentPoints).toBe(690n)
+  fireEvent.pointerUp(window, { button: 0, pointerType })
+  await act(async () => { fireEvent.click(h.button); await vi.advanceTimersByTimeAsync(1000) })
+  expect(h.state().infinity.permanentSkillPoints).toBe(6n)
+  expect(h.state().infinity.spentPoints).toBe(690n)
+})
+
 for (const cancel of ['pointerup', 'pointercancel', 'pointerleave', 'blur', 'hidden', 'unmount']) {
   test(`pending Infinity repeat stays serial and cannot restart after ${cancel}`, async () => {
     vi.useFakeTimers()
