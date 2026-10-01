@@ -2,6 +2,15 @@ import UIKit
 import Capacitor
 
 final class IdleDysonBridgeViewController: CAPBridgeViewController {
+    var orientationPreference = "auto"
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        switch orientationPreference {
+        case "portrait": return .portrait
+        case "landscape": return .landscape
+        default: return super.supportedInterfaceOrientations
+        }
+    }
+
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(IdleDysonNativePlugin())
         bridge?.registerPluginInstance(IdleDysonAudioPlugin())

@@ -400,11 +400,11 @@
 }
 
 .offline-time-job .ui-button:not(:disabled):hover {
-  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
 }
 
 .offline-time-job .ui-button--primary:not(:disabled):hover {
-  background: color-mix(in srgb, var(--theme-accent) 84%, white);
+  background-color: color-mix(in srgb, var(--theme-accent) 84%, white);
 }
 
 .offline-time-job__results {
@@ -561,3 +561,16 @@
   color: #eee7f8;
 }
 .offline-time-max-storage > :last-child { text-align: end; font-family: var(--font-family-numeric); }
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .offline-time-capacity-upgrade .ui-button:not(:disabled),
+  .offline-time-spend-button.ui-button:not(:disabled),
+  .offline-time-job .ui-button--primary:not(:disabled) {
+    background-image: var(--ui-action-gradient);
+  }
+  .offline-time-spend-actions > .ui-button--secondary:not(:disabled),
+  .offline-time-job .ui-button--secondary:not(:disabled) {
+    background-image: var(--ui-action-gradient-dark);
+  }
+}

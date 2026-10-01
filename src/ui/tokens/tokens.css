@@ -57,6 +57,13 @@
 :root {
   color-scheme: dark;
 
+  /* Neutral diagonal lighting preserves each action's route/state base colour. */
+  --ui-action-gradient: linear-gradient(to bottom right,
+    color-mix(in srgb, var(--color-text-primary) 42%, transparent), transparent 55%, rgb(11 8 12 / 16%));
+  /* Shade rather than whiten dark actions, preserving white-text contrast. */
+  --ui-action-gradient-dark: linear-gradient(to bottom right,
+    transparent, rgb(11 8 12 / 16%));
+
   --color-app-background: #1d151f;
   --color-surface: #3f2f43;
   --color-surface-raised: #4b3850;

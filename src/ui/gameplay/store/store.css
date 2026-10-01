@@ -140,11 +140,12 @@
 
 .store-surface__purchase-action,
 .store-surface__secondary-action {
+  --store-action-background: color-mix(in srgb, var(--theme-accent) 80%, var(--theme-selected));
   min-block-size: 3.4rem;
   padding: 0.65rem 0.85rem;
   border: 1px solid var(--theme-divider);
   border-radius: 0.25rem;
-  background: var(--theme-accent);
+  background: var(--store-action-background);
   color: var(--theme-page);
   font: inherit;
   font-weight: var(--font-weight-bold);
@@ -184,7 +185,7 @@
 }
 
 .store-surface__purchase-action--effect-updating:disabled {
-  background: var(--theme-accent);
+  background: var(--store-action-background);
   color: var(--theme-page);
   cursor: wait;
   opacity: 1;
@@ -198,7 +199,7 @@
 }
 
 .store-surface__purchase-action--effect-disabled:not(:disabled):hover {
-  background: var(--theme-accent);
+  background-color: var(--store-action-background);
   color: var(--theme-page);
 }
 
@@ -236,3 +237,13 @@
 .store-promo__banner { aspect-ratio: 16 / 9; width: 100%; overflow: hidden; border-radius: 0.65rem; background: var(--color-surface, #171b22); }
 .store-promo__banner img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .store-promo article + article { margin-top: 1.5rem; }
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .store-surface__purchase-action:not(.store-surface__purchase-action--effect-disabled):not(:disabled),
+  .store-surface__secondary-action:not(:disabled) {
+    background-image: linear-gradient(to bottom right,
+      color-mix(in srgb, var(--color-text-primary) 28%, transparent),
+      transparent 55%, rgb(11 8 12 / 10%));
+  }
+}

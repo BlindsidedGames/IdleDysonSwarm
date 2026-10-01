@@ -347,10 +347,22 @@
       "value": "Abandon challenge"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "This starts a fresh normal Infinity run without awarding IP. Challenge restrictions end. Infinity upgrades and later layers are kept."
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
       "value": "Blank Slate active · Skill assignment disabled"
+    }
+  ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "Challenge active"
     }
   ],
   "challenges.blankSlate": [
@@ -365,10 +377,34 @@
       "value": "Complete a normal Infinity without using skill points."
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "Built by Hand"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "Complete a Quantum run with all facilities disabled. Use Manual Labour augments to build Bots by hand."
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
       "value": "Cancel"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "Commitment Issues"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "Complete a Quantum run without refunding or replacing assigned skills. Infinity resets clear assignments normally."
     }
   ],
   "challenges.completed": [
@@ -409,6 +445,36 @@
       "value": "Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence."
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "Grounded"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "Complete a Quantum run without Planets or megastructures. They cannot be purchased or generated."
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "Hands Off"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "Complete a Quantum run without facility purchases or Tinkering. Start with one Assembly Line; passive facility generation works normally."
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "Requires Fractured Manual Labour."
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -427,10 +493,22 @@
       "value": "Complete a Quantum run without Science or Research."
     }
   ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "This starts a fresh normal Quantum run without awarding Quantum Shards. Challenge restrictions end. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement become active again. Reality progress and later layers are kept."
+    }
+  ],
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "This starts a fresh Quantum run without awarding Quantum Shards. Quantum upgrades and later layers are kept. Abandoning also starts a fresh normal run."
+      "value": "This starts a fresh Quantum run without awarding Quantum Shards. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement are inactive. Reality progress is kept. Purchased Double IP and later layers remain active. Abandoning also starts a fresh normal run."
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement are inactive in Quantum challenges. Reality progress is kept. Purchased boosts remain active."
     }
   ],
   "challenges.quantumTitle": [
@@ -477,6 +555,18 @@
       "value": "Challenges"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "Short Circuit"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "Complete a Quantum run with panel lifetime fixed at 2 seconds."
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -487,6 +577,18 @@
     {
       "type": 0,
       "value": "Start"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "Supply Shortage"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "Complete a Quantum run with facility prices doubling for each purchase. Generated facilities do not increase prices."
     }
   ],
   "challenges.timeUnknown": [
@@ -887,6 +989,28 @@
       "value": "Cancel"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "Cash & Bots"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "Cash & Bot gains ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "Completions"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -905,6 +1029,12 @@
       "value": "Confirm"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "Full cycle"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -921,6 +1051,102 @@
     {
       "type": 0,
       "value": "Discovery details"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "Elevation"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "Raises Cash and Bot gains from 7× to 10×. Every 30 base minutes: +0.1 multiplier and 30 minutes of Discovery progress."
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "Elevation Power"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 starting Cash and Bot multiplier. Bonuses are additive."
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "Enlightenment"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "Raises base panel lifetime from 20 to 30 seconds. Every 10 base minutes: +0.1 seconds and 10 minutes of Elevation progress."
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "Enlightenment Power"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 seconds starting panel lifetime. Bonuses are additive."
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "Facility production"
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "+75% Discovery speed. Bonuses are additive."
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "100% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "+100% Discovery speed. Bonuses are additive."
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "Multiplies Cash by total Discovery speed alongside other Cash multipliers."
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "Stellar Sacrifices Galaxies are 1,000× better."
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "50% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets."
     }
   ],
   "discovery.level": [
@@ -983,10 +1209,36 @@
       "value": "time"
     }
   ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "Next completion"
+    }
+  ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "Next: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " seconds starting lifetime"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
       "value": "Next multiplier"
+    }
+  ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "Next panel lifetime"
     }
   ],
   "discovery.nextPower": [
@@ -1030,13 +1282,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "Starting Power"
+      "value": "Discovery Power"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "+5 starting multiplier and base panel-lifetime seconds. Bonuses are additive."
+      "value": "+5 starting facility multiplier. Bonuses are additive."
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,17 +1300,35 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "Cash, Bots & facility production ×"
+      "value": "Facility production ×"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "Per completion"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "Purchase could not be saved. Your points have been kept. Try again."
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "Speed"
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "Research and Science will be permanently replaced."
     }
   ],
   "discovery.resetRule": [
@@ -1131,6 +1401,12 @@
     {
       "type": 0,
       "value": "Multiplies Cash by 5."
+    }
+  ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "Multiplies Cash and Bots by M = max(1, log5(total facilities)). Adds min(200%, 10% × log10(M)) Discovery speed. Bonuses are additive."
     }
   ],
   "discovery.skill.focusedBeam.effect": [
@@ -1388,7 +1664,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "10× Cash, Bots & facility production. 10-second base panel lifetime."
+      "value": "10× facility production. 7× Cash and Bot gains. 20-second base panel lifetime."
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " completions"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " speed"
     }
   ],
   "discovery.totalBots": [
@@ -1397,10 +1693,30 @@
       "value": "Total Bots"
     }
   ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": +"
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "discovery.unlock": [
     {
       "type": 0,
       "value": "Unlock Discovery"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "Discovery upgrades"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -2158,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": " purchased directly"
+      "value": " purchased or granted"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "Manual Purchases"
+      "value": "Purchases & grants"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "Manually purchased"
+      "value": "Purchased / granted"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -3209,6 +3525,26 @@
       ]
     }
   ],
+  "dyson.info.compact.goal-tinkers": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Tinkers"
+        }
+      ]
+    }
+  ],
   "dyson.info.compact.panel-lifetime": [
     {
       "type": 0,
@@ -3411,6 +3747,20 @@
     {
       "type": 0,
       "value": " Stars"
+    }
+  ],
+  "dyson.info.goal.tinkers": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " Tinkers"
     }
   ],
   "dyson.info.panel-lifetime": [
@@ -3641,6 +3991,12 @@
     {
       "type": 0,
       "value": "Round bulk purchases"
+    }
+  ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Always show preset quick actions"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -3889,6 +4245,26 @@
       "value": "There has to be a better way of going about this..."
     }
   ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "Build "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Bots by hand."
+    }
+  ],
   "dyson.tinker.description.manual-labour": [
     {
       "type": 0,
@@ -3955,6 +4331,16 @@
     {
       "type": 0,
       "value": "Long press to repeat..."
+    }
+  ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " per activation"
     }
   ],
   "dyson.tinker.progress": [
@@ -5225,6 +5611,12 @@
       "value": "Hide maxed upgrades"
     }
   ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "Inactive during this challenge"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -6343,6 +6735,12 @@
       "value": "World Trade III"
     }
   ],
+  "reality.skill-points-inactive": [
+    {
+      "type": 0,
+      "value": "Skill points apply after leaving the Quantum challenge."
+    }
+  ],
   "reality.strange-matter": [
     {
       "type": 0,
@@ -7361,6 +7759,12 @@
       "value": "Round bulk purchases"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Always show preset quick actions"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,
@@ -7883,6 +8287,36 @@
     {
       "type": 0,
       "value": "Number notation"
+    }
+  ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "Orientation"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "Could not change orientation. Try again."
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "Landscape"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "Portrait"
     }
   ],
   "settings.processing.description": [
@@ -9845,6 +10279,108 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "Tinker also creates 2% of your Galactic Brains, capped at 20 seconds of their passive creation, or 1 Brain if higher. Versatile Production Tactics applies before the cap."
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "Tinker also creates 2% of your "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": ", capped at 20 seconds of their passive creation. Versatile Production Tactics applies."
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "Hand-built "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "Factory optional. Fingers essential."
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "Build Bots every 0.2 seconds without an AI Manager. Base yield is (completed Hand Assemblies + 1)^5, capped at 100 quadrillion Bots per activation. Keeps Assembly Line tinkering. Work resets on Infinity."
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "Hand Assembly"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "Measure twice. Have a cup of tea. Cut once."
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "While idle, store up to 42 seconds of Hand Assembly. Your next activation completes the stored work with 25% more Bots. Stored work also builds practice. Consumed on activation."
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "Patient Hands"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "The first thousand were prototypes."
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "Increase Hand Assembly yield by up to 200% with practice: 200% × completions / (completions + 500). Practice resets on Infinity; refunds preserve it. Bonuses are additive."
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "Practice Makes Perfect"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "You finally read the instructions."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "Increase Hand Assembly yield by 25% × log10(1 + Assembly Line research levels), capped at +200%. After unlocking Discovery, use completed Discoveries instead. Bonuses are additive."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "Working Smarter"
+    }
+  ],
   "skills.matches": [
     {
       "type": 6,
@@ -11765,6 +12301,18 @@
       "value": "Allow automatic assignment of non-refundable skills"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "Non-refundable skills"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "Non-refundable skills and their prerequisite paths cannot be refunded until an Infinity or Quantum reset. Continue?"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -11817,6 +12365,12 @@
       "value": "Preset color"
     }
   ],
+  "skills.preset-color-blue": [
+    {
+      "type": 0,
+      "value": "Blue"
+    }
+  ],
   "skills.preset-color-cyan": [
     {
       "type": 0,
@@ -11827,6 +12381,12 @@
     {
       "type": 0,
       "value": "Gold"
+    }
+  ],
+  "skills.preset-color-green": [
+    {
+      "type": 0,
+      "value": "Green"
     }
   ],
   "skills.preset-color-orange": [
@@ -11841,10 +12401,28 @@
       "value": "Pink"
     }
   ],
+  "skills.preset-color-red": [
+    {
+      "type": 0,
+      "value": "Red"
+    }
+  ],
   "skills.preset-color-rose": [
     {
       "type": 0,
       "value": "Rose"
+    }
+  ],
+  "skills.preset-color-violet": [
+    {
+      "type": 0,
+      "value": "Violet"
+    }
+  ],
+  "skills.preset-color-white": [
+    {
+      "type": 0,
+      "value": "White"
     }
   ],
   "skills.preset-distribution": [
@@ -12035,6 +12613,78 @@
       "value": "Science"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "Gatherers: Community"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "Hunters: Community"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "Launched-panel Energy"
+    }
+  ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "Assembly Lines per activation"
+    }
+  ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "Birch Planets per activation"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "Bots per activation"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "Data Centers per activation"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "Galactic Brains per activation"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "AI Managers per activation"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains per activation"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "Planets per activation"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "Servers per activation"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -12211,6 +12861,12 @@
     {
       "type": 0,
       "value": "Skill presets and reset"
+    }
+  ],
+  "skills.settings.showExtendedPresets": [
+    {
+      "type": 0,
+      "value": "Show presets 6–10"
     }
   ],
   "skills.show-preset-application-notifications": [
@@ -12509,6 +13165,186 @@
     {
       "type": 0,
       "value": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate."
+    }
+  ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "They finally accepted the group invitation."
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "Botnet"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "Multiplies all facility production by 1 + log20(Bots)."
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "Somehow the pieces came with interest."
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "Compound Fragments"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "Multiplies normal purchase scaling by (1 + Swarm rate)^floor((effective purchases / Fragment threshold)^0.825). The threshold has a minimum of 1."
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "The invoice is somebody else’s problem."
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "Deferred Billing"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "Facility purchases require their full Cash price, but do not spend it."
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "Buying in bulk has become a personality trait."
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "Economy of Scale"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "Multiplies Cash, Science and Bot production by log5(total facilities), with a minimum of 1×."
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "Some assembly already completed."
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "Head Start"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "Gain 30 purchased units of each available facility once per Infinity, without increasing prices. Includes unlocked megastructures."
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "One receipt. Everybody takes credit."
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "Pooled Purchases"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "Each facility uses the total purchased count of all facilities for purchase bonuses. Terra applies afterwards. Prices are unchanged."
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "The price tags are getting nervous."
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "Reductive Scaling"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "Reduces facility price growth by 0.5 percentage points per active Fragment Skill, to a minimum of 0.1%."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "The recruitment department has become redundant."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "Self-Replicating Workers"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "Hunters and Gatherers gain (1 + Swarm rate × their count / 10)^0.75 production speed. Launched-panel Energy gains (1 + Swarm rate × launched panels / 100)^0.5."
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "Please leave the factories where you found them."
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "Steady Supply"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Quantum clears the supply."
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "Sacrifices are now available in bulk."
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "Stellar Swarm"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "Multiplies Stellar Sacrifices output by 1 + log12.5(Bots) × log12.5(P), where P is the purchase-scaling multiplier of your highest owned facility. Bot costs are unchanged."
     }
   ],
   "skills.switch-anyway": [
@@ -13299,6 +14135,12 @@
       "value": "Clear saved best?"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "Combined time"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -13309,6 +14151,12 @@
     {
       "type": 0,
       "value": "Double IP used"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "First Transcendence"
     }
   ],
   "statistics.speedruns.importedRun": [
@@ -13327,6 +14175,12 @@
     {
       "type": 0,
       "value": "Personal best"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "Previous timing"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -14623,7 +15477,7 @@
   "wiki.discovery.overview": [
     {
       "type": 0,
-      "value": "Discovery starts at "
+      "value": "Discovery starts with "
     },
     {
       "type": 8,
@@ -14631,13 +15485,13 @@
       "children": [
         {
           "type": 0,
-          "value": "level 1"
+          "value": "10× facility production"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", with "
+      "value": ", "
     },
     {
       "type": 8,
@@ -14645,7 +15499,7 @@
       "children": [
         {
           "type": 0,
-          "value": "10× Cash, Bot and facility production"
+          "value": "7× Cash and Bot gains"
         }
       ]
     },
@@ -14659,13 +15513,13 @@
       "children": [
         {
           "type": 0,
-          "value": "10-second base panel lifetime"
+          "value": "20-second base panel lifetime"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Each completion adds "
+      "value": ". Each hourly base completion adds "
     },
     {
       "type": 8,
@@ -14679,7 +15533,7 @@
     },
     {
       "type": 0,
-      "value": " to both the multiplier and base lifetime. A completion takes one hour at base speed. Discovery needs no scientists or resources."
+      "value": " to the facility multiplier. Facility and Bot bonuses both apply to Assembly Line output. Discovery needs no scientists or resources."
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14793,13 +15647,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Discovery Speed"
+          "value": "Elevation"
         }
       ]
     },
     {
       "type": 0,
-      "value": " adds "
+      "value": " costs "
     },
     {
       "type": 8,
@@ -14807,13 +15661,13 @@
       "children": [
         {
           "type": 0,
-          "value": "25% speed"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " per purchase. "
+      "value": ", raises Cash and Bots to "
     },
     {
       "type": 8,
@@ -14821,13 +15675,111 @@
       "children": [
         {
           "type": 0,
-          "value": "Starting Power"
+          "value": "10×"
         }
       ]
     },
     {
       "type": 0,
-      "value": " adds "
+      "value": ", and completes every "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 base minutes"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0.1 multiplier and 30 minutes of Discovery progress. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Enlightenment"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " costs "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", raises base lifetime to "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 seconds"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", and completes every "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10 base minutes"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0.1 seconds and 10 minutes of Elevation progress. Transfers can complete earlier bars and preserve excess progress. Skill-tree speed bonuses apply at "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; other speed bonuses apply fully. Transfers advance the previous bar by that much gameplay time at its current speed. Shared speed purchases add "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; each separate power purchase adds "
     },
     {
       "type": 8,
@@ -14841,7 +15793,7 @@
     },
     {
       "type": 0,
-      "value": " to the starting multiplier and base panel lifetime, including immediately in the current run. Each upgrade costs "
+      "value": " to its starting multiplier or lifetime. Repeatable costs are independently "
     },
     {
       "type": 8,
@@ -14849,13 +15801,13 @@
       "children": [
         {
           "type": 0,
-          "value": "1, 2, 3… Transcendence Points"
+          "value": "1, 2, 3… TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " independently. Bonuses are additive."
+      "value": ". Bonuses are additive."
     }
   ],
   "wiki.discovery.upgrades-title": [
@@ -15698,40 +16650,58 @@
       "value": "Version 4.1.10"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "Added five achievements, presets 6–10, and optional preset quick actions on Bots and Research."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "Fixed runaway Stellar Swarm scaling. Steady Supply now carries purchases through Infinity without needing reassignment."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
       "value": "Rebalanced facility price growth and megastructure costs and production."
     }
   ],
-  "wiki.patch-notes.version-4-1-10.bot-boost": [
-    {
-      "type": 0,
-      "value": "Fixed Permanent 2× Bots losing its effect after resetting your save."
-    }
-  ],
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures."
+      "value": "Added seven Quantum challenges, each awarding 2 Catalysts. Reality Skill Points and selected Quantum upgrades are disabled during these runs; Reality progress is preserved."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked."
+      "value": "Added three linked progress bars: Discovery improves facilities, Elevation improves Cash and Bots, and Enlightenment improves panel lifetime. Later bars advance the bar before them."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "Added permanent Discovery Speed and Starting Power upgrades in Avocato."
+      "value": "Added permanent Discovery speed and power upgrades in Avocato."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation."
+      "value": "Fixed Permanent 2× Bots after Reset Save, cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.fracturing": [
+    {
+      "type": 0,
+      "value": "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing works during challenges, previews its effect and opens its augment tree."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Off now allows only passive facility generation. Tinker is disabled, and generated Assembly Lines count towards its early goal."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -15740,28 +16710,64 @@
       "value": "iOS 16 or later is now required."
     }
   ],
-  "wiki.patch-notes.version-4-1-10.save-fix": [
+  "wiki.patch-notes.version-4-1-10.orientation": [
     {
       "type": 0,
-      "value": "Fixed old research and cleared skill presets returning after saving or reloading."
+      "value": "Added Auto, Portrait and Landscape orientation settings on mobile."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.presentation": [
+    {
+      "type": 0,
+      "value": "Improved production details, skill previews, scrolling and dialogs. Added taller facility bars and softer button shading. The side menu shows Stored Time, and visualization is on by default."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.refunds": [
+    {
+      "type": 0,
+      "value": "Hot Start is now non-refundable. Banking, Investment and Stellar Memory are refundable. Added a warning before first assigning non-refundable skills."
     }
   ],
   "wiki.patch-notes.version-4-1-10.secret": [
     {
       "type": 0,
-      "value": "The sixth Avotation secret now completes automatically once reached with Discovery unlocked."
+      "value": "The sixth Avotation secret now completes automatically when reached with Discovery unlocked."
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports."
+      "value": "Improved Speedruns with persistent personal bests, current-run comparisons, assistance indicators and a First Transcendence milestone. New records count time played plus Stored Time spent."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.starter": [
+    {
+      "type": 0,
+      "value": "After your first Quantum, new runs start with an Assembly Line."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-memory": [
+    {
+      "type": 0,
+      "value": "Reworked Stellar Memory to bank newly generated SRS charge on Infinity and Quantum resets, strengthening SRS augments."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-sacrifices": [
+    {
+      "type": 0,
+      "value": "Stellar Sacrifices now generates your highest owned facility."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "Added Manual Labour, Swarm and Fragment augments, including seven facility Tinker upgrades. Hand Assembly now keeps Assembly Line tinkering."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
-      "value": "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research."
+      "value": "Overflow is now Transcendence. Unlock Discovery in Avocato for 1 Transcendence Point to replace Science and Research."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

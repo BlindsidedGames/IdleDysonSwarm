@@ -1,3 +1,4 @@
+import { hasCompletedQuantum } from './quantumMilestone'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { hydrateGameState } from '../game-state/mapping'
@@ -66,6 +67,7 @@ function unityEntanglementReference(
       meta: {
         ...state.meta,
         firstInfinityComplete: true,
+        firstQuantumComplete: canGrowQuantumBalance || hasCompletedQuantum(state),
       },
       infinity: canGrowQuantumBalance
         ? {
@@ -104,7 +106,7 @@ function unityQuantumResetReferenceWithoutAssignment(
         'birch_planets',
         'galactic_brains',
       ] as const satisfies readonly CanonicalFacilityId[]
-    ).map((id) => [id, [0, 0] as const]),
+    ).map((id) => [id, [id === 'assembly_lines' ? 1 : 0, 0] as const]),
   ) as CanonicalGameStateV1['dyson']['facilities']
 
   return {
@@ -112,6 +114,7 @@ function unityQuantumResetReferenceWithoutAssignment(
     meta: {
       ...state.meta,
       firstInfinityComplete: true,
+      firstQuantumComplete: true,
     },
     dyson: {
       ...state.dyson,

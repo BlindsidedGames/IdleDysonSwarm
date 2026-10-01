@@ -1,4 +1,6 @@
+import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { validateDiscovery } from '../simulation/discovery'
+import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
 import type { DiscoveryState } from '../game-state/types'
 import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { validateInfinityChallenges } from '../simulation/infinityChallenges'
@@ -38,6 +40,9 @@ export function validatePreparedSave(
     const discoveryError = validateDiscovery(value.discovery as unknown as DiscoveryState)
     if (discoveryError) return invalid(discoveryError)
   }
+  if (value.firstQuantumComplete !== undefined && typeof value.firstQuantumComplete !== 'boolean') return invalid('Invalid first Quantum milestone.')
+  const tinkerError = validateCompletedTinkers(value.completedTinkers)
+  if (tinkerError) return invalid(tinkerError)
   const speedrunError = validateSpeedrunStatistics(value.idsSpeedruns)
   if (speedrunError) return invalid(speedrunError)
 
@@ -60,7 +65,7 @@ export function validatePreparedSave(
     if (!isRecord(dyson[key])) return invalid(`Required Dyson container ${key} is null.`)
   }
 
-  for (let preset = 0; preset <= 5; preset += 1) {
+  for (let preset = 0; preset <= (expectedSchema >= 20 ? SKILL_PRESET_COUNT : 5); preset += 1) {
     const suffix = preset || ''
     for (const prefix of ['skillAutoAssignmentList', 'skillAutoAssignmentIds']) {
       const key = `${prefix}${suffix}`

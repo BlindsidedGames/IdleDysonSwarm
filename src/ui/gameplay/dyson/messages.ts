@@ -254,6 +254,8 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Info',
     description: 'Unity Bots information control label.',
   },
+  goalTinkers: { id: 'dyson.info.goal.tinkers', defaultMessage: 'Goal: {targetDisplay} Tinkers' },
+  compactGoalTinkers: { id: 'dyson.info.compact.goal-tinkers', defaultMessage: 'Goal: <emphasis>{targetDisplay} Tinkers</emphasis>' },
   goalCreateBots: {
     id: 'dyson.info.goal.create-bots',
     defaultMessage: 'Goal: Create {targetDisplay} Bots',
@@ -463,6 +465,11 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Always show Active, Lifetime, and Deayed',
     description:
       'Device-local preference for persistently displaying Bots run facts.',
+  },
+  showPresetQuickActions: {
+    id: 'dyson.info.show-preset-quick-actions',
+    defaultMessage: 'Always show preset quick actions',
+    description: 'Keep the Bots preset shortcuts visible when purchase settings are collapsed.',
   },
   purchaseSettingsFailed: {
     id: 'dyson.info.purchase-settings-failed',

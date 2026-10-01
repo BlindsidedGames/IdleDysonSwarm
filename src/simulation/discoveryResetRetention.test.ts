@@ -8,7 +8,7 @@ import { applyCanonicalInfinityReset } from './canonicalInfinityReset'
 import { restartInfinityChallenge } from './canonicalInfinityChallengeRestart'
 import { applyCanonicalOverflowReset } from './canonicalOverflowReset'
 import { applyCanonicalQuantumReset, applyQuantumEntanglementConversion } from './quantumTransitions'
-import { purchaseDiscovery } from './discovery'
+import { purchaseDiscovery, resetDiscoveryProgress } from './discovery'
 import { infinityChallenges } from './infinityChallenges'
 import { runResearchAutomationTick } from './researchAutomation'
 import { applyCanonicalSkillIntervalEffects } from './canonicalSkillIntervalEffects'
@@ -24,7 +24,7 @@ function discoveryState(): CanonicalGameStateV1 {
   }, 'unlock')!
   const bought = purchaseDiscovery(purchaseDiscovery(unlocked, 'power')!, 'speed')!
   return { ...bought,
-    discovery: { ...bought.discovery!, completions: 17n, progress: 1234.5 },
+    discovery: { ...bought.discovery!, completions: 17n, progress: 1234.5, elevation: { completions: 13n, progress: 1400, startingPower: 2n }, enlightenment: { completions: 5n, progress: 250, startingPower: 1n } },
     challenges: { ...infinityChallenges(bought), unlocked: true, active: null },
   }
 }
@@ -72,7 +72,7 @@ describe('Discovery retention across progression resets', () => {
     const after = successful(applyCanonicalOverflowReset({ ...before,
       dyson: { ...before.dyson, bots: 4e242 },
     })).state
-    expect(after.discovery).toEqual({ ...before.discovery, completions: 0n, progress: 0 })
+    expect(after.discovery).toEqual(resetDiscoveryProgress(before.discovery!))
     expect(hydrateGameState(dehydrateGameState(hydrated, after)).state.discovery).toEqual(after.discovery)
   })
 

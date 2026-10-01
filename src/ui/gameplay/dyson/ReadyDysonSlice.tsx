@@ -1,5 +1,8 @@
+import { TabPresetQuickActions } from '../skills/TabPresetQuickActions'
 import { DiscoverySurface } from '../discovery/DiscoverySurface'
 import { discoveryMessages } from '../discovery/messages'
+import { NonRefundableSkillConfirmationProvider } from '../skills/NonRefundableSkillConfirmation'
+import { useConfirmedTabPresetDispatch } from '../skills/useConfirmedTabPresetDispatch'
 import { QuickStoredTime, StoredTimeNavigationProgress } from '../offline-time/QuickStoredTime'
 import { isAvocatoRouteUnlocked } from './avocatoNavigation'
 import { InfinityChallenges } from '../infinity/InfinityChallenges'
@@ -579,10 +582,14 @@ const AVOCATO_MEDITATION_ROUTE_PLACEMENT: Partial<
  * Maps published canonical facts into presentation components without
  * recalculating unlocks, affordability, timing or command outcomes.
  */
-export function ReadyDysonSlice({
+export function ReadyDysonSlice(props: ReadyDysonSliceProps) {
+  return <NonRefundableSkillConfirmationProvider><ReadyDysonSliceContent {...props} /></NonRefundableSkillConfirmationProvider>
+}
+
+function ReadyDysonSliceContent({
   snapshot,
   locale,
-  dispatchPlayer,
+  dispatchPlayer: unconfirmedDispatchPlayer,
   presetActions,
   route: requestedRoute = 'bots',
   onRouteChange = () => undefined,
@@ -693,6 +700,13 @@ export function ReadyDysonSlice({
   const storeVisible =
     releasePlatformServices !== undefined
   const gameplay = snapshot.gameplay
+  const dispatchPlayer = useConfirmedTabPresetDispatch({
+    dispatchPlayer: unconfirmedDispatchPlayer,
+    autoAssignNonRefundable: gameplay.progression.skills.autoAssignNonRefundable,
+    presets: gameplay.progression.skills.presets,
+    catalog: gameplay.previews.skills,
+    previewNonRefundableAssignment: presetActions?.previewNonRefundableAssignment,
+  })
   const discoveryUnlocked = gameplay.progression.discovery?.unlocked === true
   const ownsBotBoost = gameplay.derived.dyson.status === 'ready' && gameplay.derived.dyson.value.entitlements.permanentBotBoost === true
   const botBoostStatus = useBotBoost(gameplay.progression.meta.botBoost, ownsBotBoost)
@@ -1031,6 +1045,17 @@ export function ReadyDysonSlice({
             : simulationsActive
               ? messages.simulationsRoute
             : messages.route
+  const presetQuickActions = gameplay.visibility.skills.routeUnlocked ? (
+    <TabPresetQuickActions
+      presets={gameplay.progression.skills.presets}
+      selectedSlot={gameplay.runtime.selectedSkillPresetSlot}
+      disabled={!gameplay.commands.byKind['skill.select-preset'].routeAvailable || gameplay.progression.challenges?.active === 'blank-slate'}
+      discoveryUnlocked={discoveryUnlocked}
+      presetActions={presetActions}
+      dispatchPlayer={dispatchPlayer}
+    />
+  ) : undefined
+
   const infinityRouteLabel =
     gameplay.progression.infinity.botCapTransitionPending ||
     gameplay.derived.infinity.navigationReward === null
@@ -1291,7 +1316,7 @@ export function ReadyDysonSlice({
                   badgeOutlined: !botBoostStatus.active,
                   badgeReady: botBoostStatus.badgeReady,
                   ariaLabel: intl.formatMessage(boostMessages.navigation, { status: botBoostStatus.status }),
-                  drawerIndicator: <span className="store-boost-nav-status">{!ownsBotBoost && botBoostStatus.active ? botBoostStatus.time : botBoostStatus.status}</span>,
+                  drawerIndicator: <span className="dyson-navigation__status">{!ownsBotBoost && botBoostStatus.active ? botBoostStatus.time : botBoostStatus.status}</span>,
                   bottom: bottomVisible('store'),
                   ...(storeActive
                     ? { current: true as const }
@@ -1320,7 +1345,10 @@ export function ReadyDysonSlice({
           ...(storedTimeCapacitySeconds > 0
             ? [{
                 id: 'offline-time',
-                drawerIndicator: <StoredTimeNavigationProgress storedTime={storedTime} />,
+                drawerIndicator: <>
+                  <span className="dyson-navigation__status">{formatGameDuration(locale, storedTimeAvailableSeconds)}</span>
+                  <StoredTimeNavigationProgress storedTime={storedTime} />
+                </>,
                 drawerContent: <QuickStoredTime
                   availableSeconds={storedTimeAvailableSeconds}
                   disabled={gameplay.runtime.storedTimeCheater || !gameplay.commands.byKind['time.request-stored-time-spend'].routeAvailable}
@@ -1490,6 +1518,7 @@ export function ReadyDysonSlice({
                     }
                   >
                     <ResearchSurface
+                      presetQuickActions={presetQuickActions}
                       researchDisabled={gameplay.progression.challenges?.active === 'trial-and-error' || gameplay.progression.challenges?.active === 'no-science'}
                       locale={locale}
                       cards={gameplay.previews.research.cards}
@@ -2219,12 +2248,7 @@ export function ReadyDysonSlice({
               }
             : {}),
         },
-        science: discoveryUnlocked && gameplay.derived.discovery ? {
-          label: intl.formatMessage(discoveryMessages.name),
-          iconSrc: navigationAssets.discovery,
-          value: display(gameplay.derived.discovery.multiplier),
-          rate: formatGameDuration(locale, gameplay.derived.discovery.secondsToNext / (gameplay.progression.timeline?.doubleTime?.unlocked ? 2 : 1)),
-        } : {
+        science: discoveryUnlocked ? undefined : {
           label: intl.formatMessage(messages.science),
           value: display(resources.science),
           fullPrecisionValue: precise(resources.science),
@@ -2315,6 +2339,7 @@ export function ReadyDysonSlice({
         ariaLabel: intl.formatMessage(messages.info),
         content: (
           <DysonInfo
+            presetQuickActions={presetQuickActions}
             summary={(
               <div
                 className={
@@ -2465,8 +2490,8 @@ export function ReadyDysonSlice({
 }
 
 function readVisualizationPreference(): boolean {
-  return readPresentationPreference(SWARM_VISUALIZATION_STORAGE_KEY) ===
-    'visible'
+  const preference = readPresentationPreference(SWARM_VISUALIZATION_STORAGE_KEY)
+  return preference === null || preference === 'visible'
 }
 
 function useNewRouteHighlights(
@@ -2577,6 +2602,7 @@ function createSkillPresetActions(
   runtime: BrowserUiRuntimeFoundation,
 ): SkillPresetActions {
   const actions: SkillPresetActions = {
+    previewNonRefundableAssignment: (skillIds) => runtime.previewNonRefundableSkillAssignment(skillIds),
     previewProduction: (skillId, kind) => runtime.previewSkillProduction(skillId, kind),
     previewSelection: async (slot) =>
       runtime.previewSkillPresetSelection(slot),
@@ -2614,6 +2640,7 @@ function createSkillPresetActions(
       return {
         name: preview.payload.presetName,
         queuedSkillCount: preview.payload.skillIds.length,
+        queuedSkillIds: preview.payload.skillIds,
         workerPercent: Math.round(
           (1 - preview.payload.botDistribution) * 100,
         ),

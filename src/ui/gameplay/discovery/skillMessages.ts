@@ -6,6 +6,7 @@ export const discoverySkillNames = defineMessages({
   producedAsScienceTree: { id: 'discovery.skill.producedAsScienceTree.name', defaultMessage: 'Discovery Boost' },
 })
 export const discoverySkillEffects = defineMessages({
+  'subskill.swarm.economyOfScale': { id: 'discovery.skill.economyOfScale.effect', defaultMessage: 'Multiplies Cash and Bots by M = max(1, log5(total facilities)). Adds min(200%, 10% × log10(M)) Discovery speed. Bonuses are additive.' },
   economicDominance: { id: 'discovery.skill.economicDominance.effect', defaultMessage: 'Multiplies Cash by 20.' },
   economicRevolution: { id: 'discovery.skill.economicRevolution.effect', defaultMessage: 'Multiplies Cash by 5.' },
   workerBoost: { id: 'discovery.skill.workerBoost.effect', defaultMessage: '+10,000% Cash production.' },
@@ -54,4 +55,15 @@ export const discoverySkillFlavour = defineMessages({
   regulatedAcademia: { id: 'discovery.skill.regulatedAcademia.flavour', defaultMessage: 'You find a fragment of another universe. Its knowledge strengthens your discoveries. What else might this universe hold?' },
   scientificPlanets: { id: 'discovery.skill.scientificPlanets.flavour', defaultMessage: 'Teach your Bots to discover planets. Ask them nicely not to misplace any.' },
   shouldersOfTheFallen: { id: 'discovery.skill.shouldersOfTheFallen.flavour', defaultMessage: 'A relic of a lost civilization. Excellent shoulders. Terrible instruction manual.' },
+})
+
+/** Only effects whose Fractured wording differs in the Discovery phase. */
+export const discoveryFracturedEffects = defineMessages({
+  coldFusion: { id: 'discovery.fractured.coldFusion', defaultMessage: '+75% Discovery speed. Bonuses are additive.' },
+  scientificDominance: { id: 'discovery.fractured.scientificDominance', defaultMessage: '+100% Discovery speed. Bonuses are additive.' },
+  tasteOfPower: { id: 'discovery.fractured.tasteOfPower', defaultMessage: '50% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets.' },
+  indulgingInPower: { id: 'discovery.fractured.indulgingInPower', defaultMessage: '100% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets.' },
+  addictionToPower: { id: 'discovery.fractured.addictionToPower', defaultMessage: '200% stronger Assembly Lines, AI Managers, Servers, Data Centers and Planets.' },
+  stellarObliteration: { id: 'discovery.fractured.stellarObliteration', defaultMessage: 'Stellar Sacrifices Galaxies are 1,000× better.' },
+  shouldersOfPrecursors: { id: 'discovery.fractured.shouldersOfPrecursors', defaultMessage: 'Multiplies Cash by total Discovery speed alongside other Cash multipliers.' },
 })

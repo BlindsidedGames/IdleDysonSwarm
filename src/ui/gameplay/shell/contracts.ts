@@ -24,7 +24,7 @@ export interface DysonResourceHeaderPresentation {
   readonly ariaLabel: string
   readonly cash: DysonResourcePresentation
   readonly totalBots: DysonResourcePresentation
-  readonly science: DysonResourcePresentation
+  readonly science?: DysonResourcePresentation
 }
 
 /**

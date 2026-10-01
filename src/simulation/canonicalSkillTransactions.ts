@@ -1,3 +1,4 @@
+import { initializeSwarmGrants } from './swarmAugments'
 import { initializeSrsHotStart } from './srsAugments'
 import { purityBodyMultiplier, purityMindMultiplier, purityEssenceMultiplier as essenceMultiplier } from './purityMultipliers'
 import { isSubskill, isSubskillUnlocked } from './skillSubskills'
@@ -136,6 +137,38 @@ export interface CanonicalSkillCatalogPreview {
   }
 }
 
+/** Detects new irreversible ownership using the same prerequisite facts as purchase previews. */
+export function includesNewNonRefundableSkillAssignment(
+  skillIds: readonly string[],
+  previews: ReadonlyMap<string, Pick<CanonicalSkillAvailabilityPreview,
+    'owned' | 'galvanized' | 'intrinsicallyRefundable' | 'requiredSkillIds' | 'shadowRequiredSkillIds'>>,
+): boolean {
+  const visited = new Set<string>()
+  const visit = (skillId: string): boolean => {
+    if (visited.has(skillId)) return false
+    visited.add(skillId)
+    const preview = previews.get(skillId)
+    if (preview === undefined || preview.galvanized) return false
+    if (!preview.intrinsicallyRefundable) return !preview.owned
+    // Preset application can refund and rebuild an owned refundable target.
+    return [...preview.requiredSkillIds, ...preview.shadowRequiredSkillIds].some(visit)
+  }
+  return skillIds.some(visit)
+}
+
+/** Fresh, inexpensive query for UI assignment confirmation outside Skills preview demand. */
+export function previewCanonicalNonRefundableSkillAssignment(
+  state: CanonicalGameStateV1,
+  skillIds: readonly string[],
+): boolean {
+  const definitions = loadDefinitions(state)
+  return includesNewNonRefundableSkillAssignment(skillIds, new Map([...definitions].map(([id, definition]) =>
+    [id, { owned: state.skills.byId[id]?.owned === true, galvanized: isGalvanized(state, id),
+      intrinsicallyRefundable: definition.refundable, requiredSkillIds: definition.required,
+      shadowRequiredSkillIds: definition.shadowRequired }],
+  )))
+}
+
 export type CanonicalSkillPresetApplicationResult =
   | {
       readonly accepted: true
@@ -157,7 +190,7 @@ export function galvanizeCanonicalSkill(state: CanonicalGameStateV1, skillId: st
   const definition = isSubskill(skillId) ? undefined : loadDefinitions(state).get(skillId)
   const challenges = infinityChallenges(state)
   if (!definition) return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)
-  if (!hasCompletedInfinityChallenge(state) || isBlankSlateActive(state) || !isUnlocked(definition, state)) {
+  if (!hasCompletedInfinityChallenge(state) || !isUnlocked(definition, state)) {
     return rejected(state, 'GALVANIZATION-LOCKED', 'Galvanization is not available for this skill.')
   }
   if (isGalvanized(state, skillId)) return rejected(state, 'ALREADY-GALVANIZED', 'This skill is already galvanized.')
@@ -253,7 +286,7 @@ export function previewCanonicalSkillCatalog(
       cost: definition.cost,
       galvanized: isGalvanized(state, definition.id),
       galvanizationUnlocked: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state),
-      canGalvanize: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state) && !isBlankSlateActive(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
+      canGalvanize: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
       owned,
       visible: unlocked,
       unlocked,
@@ -313,14 +346,14 @@ export function previewCanonicalSkillCatalog(
       refundableSkillIds: Object.freeze(
         ownedDefinitions
           .filter((definition) =>
-            isRefundable(definition, state.skills.byId),
+            state.challenges?.active !== 'commitment-issues' && isRefundable(definition, state.skills.byId),
           )
           .map((definition) => definition.id),
       ),
       retainedSkillIds: Object.freeze(
         ownedDefinitions
           .filter((definition) =>
-            !isRefundable(definition, state.skills.byId),
+            state.challenges?.active === 'commitment-issues' || !isRefundable(definition, state.skills.byId),
           )
           .map((definition) => definition.id),
       ),
@@ -625,6 +658,8 @@ function refundWithDefinitions(
     return accepted(state, false, [])
   }
 
+  if (state.challenges?.active === 'commitment-issues') return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be refunded during this Infinity.')
+
   const descendants = dependentIds(
     skillId,
     definitions,
@@ -690,6 +725,7 @@ function refundWithDefinitions(
 export function resetCanonicalSkills(
   state: CanonicalGameStateV1,
 ): CanonicalSkillTransactionResult {
+  if (state.challenges?.active === 'commitment-issues' && Object.values(state.skills.byId).some(skill => skill.owned)) return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be replaced during this Infinity.')
   const definitions = loadDefinitions(state)
   let points = state.skills.points
   let fragments = state.skills.fragments
@@ -911,9 +947,10 @@ function isUnlocked(
   definition: SkillDefinition,
   state: CanonicalGameStateV1,
 ): boolean {
+  if (isSubskill(definition.id) && !isSubskillUnlocked(state, definition.id)) return false
   switch (definition.unlock) {
     case 'always':
-      return !isSubskill(definition.id) || isSubskillUnlocked(state, definition.id)
+      return true
     case 'first-infinity':
       return state.meta.firstInfinityComplete
     case 'fragments':
@@ -1097,7 +1134,7 @@ function accepted(
   changed: boolean,
   affectedSkillIds: readonly string[],
 ): CanonicalSkillTransactionResult {
-  return { accepted: true, changed, state, affectedSkillIds }
+  return { accepted: true, changed, state: changed ? initializeSwarmGrants(state) : state, affectedSkillIds }
 }
 
 function rejected(

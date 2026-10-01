@@ -30,17 +30,26 @@ describe('Wiki patch-note content', () => {
     const latest = screen.getByRole('heading', { name: 'Version 4.1.10' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
     expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
-      "Overflow is now Transcendence. Spend 1 Transcendence Point in Avocato to unlock Discovery, replacing Science and Research.",
-      "Discovery grows over time, boosting Cash, Bots, facility production and panel lifetime. Related skills adapt when unlocked.",
-      "Added permanent Discovery Speed and Starting Power upgrades in Avocato.",
-      'Speedruns now compare your current run with personal bests that survive Reset Save. Added run indicators, Double IP tracking, and remembered Statistics tabs. New milestone records use time played. Personal bests sync through Cloud saves but are not shared through exports.',
-      'Fixed Permanent 2× Bots losing its effect after resetting your save.',
-      'Fixed old research and cleared skill presets returning after saving or reloading.',
-      'Added a No Science Quantum challenge awarding 2 Catalysts. Stellar Sacrifices now creates your highest owned facility, including megastructures.',
-      'Rebalanced facility price growth and megastructure costs and production.',
-      'The sixth Avotation secret now completes automatically once reached with Discovery unlocked.',
-      'Fixed Cloud retention of earned Developer Options, augment Skill Point counting, negative debug adjustments and promotion rotation.',
-      'iOS 16 or later is now required.',
+      "Overflow is now Transcendence. Unlock Discovery in Avocato for 1 Transcendence Point to replace Science and Research.",
+      "Added three linked progress bars: Discovery improves facilities, Elevation improves Cash and Bots, and Enlightenment improves panel lifetime. Later bars advance the bar before them.",
+      "Added permanent Discovery speed and power upgrades in Avocato.",
+      "Added seven Quantum challenges, each awarding 2 Catalysts. Reality Skill Points and selected Quantum upgrades are disabled during these runs; Reality progress is preserved.",
+      "Added Manual Labour, Swarm and Fragment augments, including seven facility Tinker upgrades. Hand Assembly now keeps Assembly Line tinkering.",
+      "Renamed Galvanizers to Catalysts and Galvanized skills to Fractured skills. Fracturing works during challenges, previews its effect and opens its augment tree.",
+      "Reworked Stellar Memory to bank newly generated SRS charge on Infinity and Quantum resets, strengthening SRS augments.",
+      "Hot Start is now non-refundable. Banking, Investment and Stellar Memory are refundable. Added a warning before first assigning non-refundable skills.",
+      "Stellar Sacrifices now generates your highest owned facility.",
+      "Rebalanced facility price growth and megastructure costs and production.",
+      "After your first Quantum, new runs start with an Assembly Line.",
+      "Improved Speedruns with persistent personal bests, current-run comparisons, assistance indicators and a First Transcendence milestone. New records count time played plus Stored Time spent.",
+      "The sixth Avotation secret now completes automatically when reached with Discovery unlocked.",
+      "Fixed Permanent 2× Bots after Reset Save, cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues.",
+      "Fixed runaway Stellar Swarm scaling. Steady Supply now carries purchases through Infinity without needing reassignment.",
+      "Hands Off now allows only passive facility generation. Tinker is disabled, and generated Assembly Lines count towards its early goal.",
+      "Added Auto, Portrait and Landscape orientation settings on mobile.",
+      "Improved production details, skill previews, scrolling and dialogs. Added taller facility bars and softer button shading. The side menu shows Stored Time, and visualization is on by default.",
+      "Added five achievements, presets 6–10, and optional preset quick actions on Bots and Research.",
+      "iOS 16 or later is now required.",
     ])
     expect(screen.queryByRole('heading', { name: 'Version 4.1.11' })).toBeNull()
     const version419List = screen.getByRole('heading', { name: 'Version 4.1.9' }).nextElementSibling as HTMLElement

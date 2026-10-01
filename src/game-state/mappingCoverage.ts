@@ -550,6 +550,7 @@ function buildEntries(): readonly MappingCoverageEntry[] {
 
 const entries = buildEntries()
 const developmentExtensions = Object.freeze([
+  owned('$.completedTinkers', 'dyson', '$.dyson.completedTinkers'),
   owned(
     '$.infinityAutomaticReset',
     'infinity',

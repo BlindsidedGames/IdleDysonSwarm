@@ -1,5 +1,17 @@
 # Agent instructions
 
+## UI and player-facing text
+
+- Before changing gameplay UI, layout, styling or player-facing copy, read
+  [the UI style guide](docs/ui-style-guide.md). It summarizes the existing
+  presentation contract and Matthew's approved conventions.
+- Compare changed surfaces with an established neighbouring screen. Check
+  expanded/collapsed states, scrolling, spacing and concise copy in the running
+  app at desktop and narrow/enlarged-text sizes. Tests or builds alone do not
+  establish visual compliance. Report any unverified state or platform.
+- Keep the guide current when Matthew approves a new shared UI convention;
+  preserve explicitly approved screen-specific designs.
+
 ## Deployment shorthand
 
 - When Matthew says **“deploy to internal”**, deploy the current changes to all

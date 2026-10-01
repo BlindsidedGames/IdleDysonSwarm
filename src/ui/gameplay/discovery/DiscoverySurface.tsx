@@ -1,10 +1,12 @@
+import { swarmAugmentPresentation } from '../skills/swarmMessages'
 import { skillMessages } from '../skills/messages'
 import { useIntl } from 'react-intl'
-import type { DiscoveryState } from '../../../game-state/types'
-import type { DiscoveryEffects } from '../../../simulation/discoveryEffects'
-import { DISCOVERY_TUNING } from '../../../simulation/discovery'
+import type { DiscoveryState, DiscoveryTierState } from '../../../game-state/types'
+import { discoverySourceWeight, type DiscoveryEffects } from '../../../simulation/discoveryEffects'
+import { DISCOVERY_TUNING, discoveryCompletionTimes } from '../../../simulation/discovery'
 import { Progress, InlineImageSymbol } from '../../components'
-import { navigationAssets } from '../shell/navigationAssets'
+import { discoveryIcons } from './icons'
+import { useDiscoveryBarMotion } from './useDiscoveryBarMotion'
 import { discoverySkillNames } from './skillMessages'
 import { formatGameNumber, formatWholeGameNumber, formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -19,38 +21,81 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
 }) {
   const intl = useIntl()
   const formatCatalogMessage = intl.formatMessage
-  const time = formatGameDuration(locale, effects.secondsToNext / gameSpeed)
-  const productionLabel = intl.formatMessage(m.production, { value: formatGameNumber(locale, effects.multiplier) })
+  const number = (value: number) => formatGameNumber(locale, value)
+  const duration = (value: number) => formatGameDuration(locale, value, { maximumFractionDigits: 1 })
+  const nextBonus = DISCOVERY_TUNING.strengthPerCompletion * (1 + effects.enhancement)
+  const tiers = [
+    { id: 'discovery' as const, name: m.name, tier: state, maximum: DISCOVERY_TUNING.completionProgress, speed: effects.speed,
+      value: effects.multiplier, incoming: state.elevation?.completions ?? 0n, benefit: number(effects.multiplier), label: m.production, fact: m.facilityProduction, next: number(effects.nextMultiplier) },
+    ...(state.elevation ? [{ id: 'elevation' as const, name: m.elevation, tier: state.elevation, maximum: DISCOVERY_TUNING.elevation.progress, speed: effects.elevationSpeed,
+      value: effects.cashBotsMultiplier, incoming: state.enlightenment?.completions ?? 0n, benefit: number(effects.cashBotsMultiplier), label: m.cashBotsProduction, fact: m.cashBots, next: number(effects.cashBotsMultiplier + nextBonus) }] : []),
+    ...(state.enlightenment ? [{ id: 'enlightenment' as const, name: m.enlightenment, tier: state.enlightenment, maximum: DISCOVERY_TUNING.enlightenment.progress, speed: effects.enlightenmentSpeed,
+      value: effects.lifetime, incoming: 0n, benefit: duration(effects.lifetime), label: m.lifetime, fact: m.baseLifetime, next: duration(effects.lifetime + DISCOVERY_TUNING.strengthPerCompletion) }] : []),
+  ]
+  const completionTimes = discoveryCompletionTimes(state, effects)
   return <div className="discovery-surface">
     <details className="discovery-card">
-      <summary className="discovery-toggle" aria-label={`${intl.formatMessage(m.details)}: ${productionLabel}, ${time}`}>
-        <span className="discovery-heading">
-          <span className="discovery-title">{intl.formatMessage(m.name)}</span>
-          <strong className="discovery-boost" aria-label={productionLabel}><InlineImageSymbol src={navigationAssets.discovery} tint />{formatGameNumber(locale, effects.multiplier)}</strong>
-        </span>
-        <Progress className="discovery-progress" label={intl.formatMessage(m.name)} valueText={time}
-          value={state.progress} maximum={DISCOVERY_TUNING.completionProgress} />
+      <summary className="discovery-toggle" aria-label={intl.formatMessage(m.details)}>
+        {tiers.map((bar, index) => <span className={`discovery-row${index ? ' discovery-row--supporting' : ''}`} key={bar.id}>
+          {index === 0 && <span className="discovery-heading"><span className="discovery-title">{intl.formatMessage(m.name)}</span></span>}
+          <span className="discovery-track">
+            <DiscoveryBar tier={bar.tier} maximum={bar.maximum} incoming={bar.incoming}
+              name={intl.formatMessage(bar.name)} secondsPerProgress={1 / bar.speed / gameSpeed} locale={locale}
+              benefit={bar.value} perCompletion={index === 2 ? DISCOVERY_TUNING.strengthPerCompletion : nextBonus}
+              formatBenefit={index === 2 ? duration : number} label={intl.formatMessage(bar.label, { value: number(bar.value) })} />
+            <span className="discovery-bar-icon"><InlineImageSymbol src={discoveryIcons[bar.id]} tint /></span>
+          </span>
+        </span>)}
       </summary>
       <div className="discovery-details">
-        <dl className="discovery-facts">
-          <div><dt>{intl.formatMessage(m.levelLabel)}</dt><dd>{formatWholeGameNumber(locale, state.completions + 1n)}</dd></div>
-          <div><dt>{intl.formatMessage(m.baseLifetime)}</dt><dd>{formatGameDuration(locale, effects.strength, { maximumFractionDigits: 1 })}</dd></div>
-          <div><dt>{intl.formatMessage(m.nextMultiplier)}</dt><dd>×{formatGameNumber(locale, effects.nextMultiplier)}</dd></div>
-        </dl>
-        <dl className="discovery-speed-sources">
-          <div className="discovery-speed-total"><dt>{intl.formatMessage(m.speedSources)}</dt><dd>×{formatGameNumber(locale, effects.speed)}</dd></div>
-          <div><dt>{intl.formatMessage(m.baseSpeed)}</dt><dd>1×</dd></div>
-          {effects.sources.map(source => {
-            const descriptor = source.id === 'subskill.cashScience.production' ? skillMessages.subskillProductionName : source.id === 'discovery.speed' ? m.speed
-              : source.id === 'quantum.science-booster' ? m.booster
-              : source.id === 'avocado' ? m.avocatoSpeed
-              : source.id === 'secrets.discovery-speed' ? m.secretsSpeed
-              : discoverySkillNames[source.id as keyof typeof discoverySkillNames]
-            const name = descriptor ? intl.formatMessage(descriptor) : formatCatalogMessage({ id: `skills.node.${source.id}.name`, defaultMessage: source.id })
-            return <div key={source.id}><dt>{name}</dt><dd>+{formatGameNumber(locale, source.bonus * 100)}%</dd></div>
-          })}
-        </dl>
+        {tiers.map((bar, index) => <section className="discovery-tier-details" aria-labelledby={`discovery-${bar.id}-heading`} key={bar.id}>
+          <h2 id={`discovery-${bar.id}-heading`}><InlineImageSymbol src={discoveryIcons[bar.id]} tint />{intl.formatMessage(bar.name)}</h2>
+          <dl>
+            <div><dt>{intl.formatMessage(m.completed)}</dt><dd>{formatWholeGameNumber(locale, bar.tier.completions)}</dd></div>
+            <div><dt>{intl.formatMessage(m.cycleDuration)}</dt><dd>{duration(bar.maximum / bar.speed / gameSpeed)}</dd></div>
+            <div><dt>{intl.formatMessage(m.nextCompletion)}</dt><dd>{duration(completionTimes[index] / gameSpeed)}</dd></div>
+            <div><dt>{intl.formatMessage(bar.fact)}</dt><dd>{index === 2 ? '' : '×'}{bar.benefit}</dd></div>
+            <div><dt>{intl.formatMessage(index === 2 ? m.nextPanelLifetime : m.nextMultiplier)}</dt><dd>{index === 2 ? '' : '×'}{bar.next}</dd></div>
+            {index === 0 && !state.elevation && <div><dt>{intl.formatMessage(m.cashBots)}</dt><dd>×{number(effects.cashBotsMultiplier)}</dd></div>}
+            {index === 0 && !state.enlightenment && <div><dt>{intl.formatMessage(m.baseLifetime)}</dt><dd>{duration(effects.lifetime)}</dd></div>}
+            {index > 0 && <div className="discovery-transfer"><dt>{intl.formatMessage(m.progressPerCompletion)}</dt><dd>{intl.formatMessage(m.transfer, { name: intl.formatMessage(tiers[index - 1].name), time: intl.formatNumber(bar.maximum / 60, { style: 'unit', unit: 'minute', unitDisplay: 'narrow' }) })}</dd></div>}
+          </dl>
+          <dl className="discovery-speed-sources">
+            <div className="discovery-speed-total"><dt>{intl.formatMessage(m.rate)}</dt><dd>×{number(bar.speed)}</dd></div>
+            <div><dt>{intl.formatMessage(m.baseSpeed)}</dt><dd>1×</dd></div>
+            {effects.sources.map(source => {
+              const descriptor = swarmAugmentPresentation.get(source.id as Parameters<typeof swarmAugmentPresentation.get>[0])?.message ?? (source.id === 'subskill.cashScience.production' ? skillMessages.subskillProductionName : source.id === 'discovery.speed' ? m.speed
+                : source.id === 'quantum.science-booster' ? m.booster
+                : source.id === 'avocado' ? m.avocatoSpeed
+                : source.id === 'secrets.discovery-speed' ? m.secretsSpeed
+                : discoverySkillNames[source.id as keyof typeof discoverySkillNames])
+              const name = descriptor ? intl.formatMessage(descriptor) : formatCatalogMessage({ id: `skills.node.${source.id}.name`, defaultMessage: source.id })
+              return <div key={source.id}><dt>{name}</dt><dd>+{number(source.bonus * discoverySourceWeight(source.id, bar.id) * 100)}%</dd></div>
+            })}
+          </dl>
+        </section>)}
       </div>
     </details>
   </div>
+}
+
+function DiscoveryBar({ tier, maximum, incoming, name, secondsPerProgress, locale, benefit, perCompletion, formatBenefit, label }: {
+  readonly tier: DiscoveryTierState
+  readonly maximum: number
+  readonly incoming: bigint
+  readonly name: string
+  readonly secondsPerProgress: number
+  readonly locale: EnabledLocale
+  readonly benefit: number
+  readonly perCompletion: number
+  readonly formatBenefit: (value: number) => string
+  readonly label: string
+}) {
+  const visible = useDiscoveryBarMotion(tier, maximum, incoming)
+  const time = formatGameDuration(locale, (maximum - visible.progress) * secondsPerProgress)
+  const displayedBenefit = benefit - Number(tier.completions - visible.completions) * perCompletion
+  return <span className="discovery-bar">
+    <Progress className="discovery-progress" label={name} valueText={time} value={visible.progress} maximum={maximum} />
+    <strong className="discovery-boost" aria-label={label}>{formatBenefit(Math.max(1, displayedBenefit))}</strong>
+  </span>
 }

@@ -385,7 +385,7 @@ describe('canonical game-state mapping', () => {
     const hydrated = hydrateGameState(current)
     const dehydrated = dehydrateGameState(hydrated)
 
-    expect(current.sourceSchema).toBe(19)
+    expect(current.sourceSchema).toBe(20)
     expect(current.appliedSteps).toEqual([])
     expect(current.numericRepair.repairCount).toBe(0)
     expect(hydrateGameState(dehydrated).state).toEqual(hydrated.state)
@@ -681,14 +681,14 @@ describe('canonical game-state mapping', () => {
     })
   })
 
-  test('defaults and round-trips the five authored preset colors', () => {
+  test('defaults and round-trips the ten authored preset colors', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),
     ).prepared
     const session = hydrateGameState(prepared)
 
     expect(session.state.skills.presets.map((preset) => preset.colorId)).toEqual(
-      ['cyan', 'orange', 'gold', 'rose', 'pink'],
+      ['cyan', 'orange', 'gold', 'rose', 'pink', 'green', 'blue', 'violet', 'red', 'white'],
     )
     const defaultSource = session.prepare(session.state).copyValidatedState()
     expect(
@@ -698,6 +698,7 @@ describe('canonical game-state mapping', () => {
 
     const presets = [...session.state.skills.presets]
     presets[0] = { ...presets[0]!, colorId: 'pink' }
+    presets[9] = { ...presets[9]!, colorId: 'green' }
     const dehydrated = session.prepare({
       ...session.state,
       skills: {
@@ -714,6 +715,7 @@ describe('canonical game-state mapping', () => {
         .preset1ColorId,
     ).toBe('pink')
     expect(rehydrated.state.skills.presets[0].colorId).toBe('pink')
+    expect(rehydrated.state.skills.presets[9].colorId).toBe('green')
   })
 
   test('synchronizes the legacy Avocado unlock mirror on dehydration', () => {

@@ -36,6 +36,7 @@
 .settings-surface__panel--audio { order: 2; }
 .settings-surface__panel--language { order: 3; }
 .settings-surface__panel--number-notation { order: 4; }
+.settings-surface__panel--orientation { order: 4; }
 .settings-surface__panel--processing { order: 5; }
 .settings-surface__panel--navigation { order: 6; }
 .settings-surface__panel--save { order: 7; }
@@ -265,12 +266,12 @@
 
 .settings-surface__file-option > button:hover:not(:disabled),
 .settings-surface__dialog-actions > button:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
 }
 
 .settings-surface__file-option > button:active:not(:disabled),
 .settings-surface__dialog-actions > button:active:not(:disabled) {
-  background: var(--theme-panel);
+  background-color: var(--theme-panel);
 }
 
 .settings-surface__file-option > button:disabled,
@@ -434,11 +435,11 @@
 }
 
 .settings-surface__community-action:hover {
-  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
 }
 
 .settings-surface__community-action--primary:hover {
-  background: color-mix(in srgb, #5865f2 88%, black);
+  background-color: color-mix(in srgb, #5865f2 88%, black);
 }
 
 .settings-surface__community-action:focus-visible {
@@ -506,7 +507,7 @@
 }
 
 .settings-surface__processing-default:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
 }
 
 .settings-surface__processing-default:focus-visible {
@@ -777,7 +778,7 @@
 }
 
 .settings-surface__save-actions > button:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
 }
 
 .settings-surface__save-actions > button:focus-visible {
@@ -797,7 +798,7 @@
 
 .settings-surface__save-actions
   > .settings-surface__reset:hover:not(:disabled) {
-  background: #a34444;
+  background-color: #a34444;
 }
 
 .settings-surface__reset {
@@ -813,7 +814,7 @@
 }
 
 .settings-surface__reset:hover:not(:disabled) {
-  background: #a34444;
+  background-color: #a34444;
 }
 
 .settings-surface__reset:focus-visible {
@@ -1058,4 +1059,17 @@
   block-size: 1.75rem;
   object-fit: contain;
   flex-shrink: 0;
+}
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .settings-surface__file-option > button:not(:disabled),
+  .settings-surface__dialog-actions > button:not(:disabled),
+  .settings-surface__save-actions > button:not(:disabled),
+  .settings-surface__reset:not(:disabled),
+  .settings-surface__community-action:not(:disabled),
+  .settings-surface__processing-default:not(:disabled),
+  .settings-surface__development-controls button:not(:disabled) {
+    background-image: var(--ui-action-gradient-dark);
+  }
 }

@@ -3,6 +3,8 @@
 }
 
 .dyson-info .ui-progress-controls-panel__body {
+  max-block-size: none;
+  overflow: visible;
   padding: 0;
 }
 
@@ -499,3 +501,5 @@
     forced-color-adjust: auto;
   }
 }
+
+.dyson-info .skill-preset-quick-actions { margin-block: var(--ui-related-copy-gap); }

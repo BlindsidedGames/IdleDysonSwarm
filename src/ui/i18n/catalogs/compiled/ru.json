@@ -347,10 +347,22 @@
       "value": "Покинуть испытание"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "Начнётся новый обычный забег Бесконечности без выдачи IP. Ограничения испытания снимутся. Улучшения Бесконечности и последующие этапы сохранятся."
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
       "value": "Чистый лист активен · Назначение навыков отключено"
+    }
+  ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "Испытание активно"
     }
   ],
   "challenges.blankSlate": [
@@ -365,10 +377,34 @@
       "value": "Завершите обычную Бесконечность без использования очков навыков."
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "Ручная работа"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "Завершите квантовый забег с отключёнными сооружениями. Создавайте ботов вручную с улучшениями Ручного труда."
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
       "value": "Отмена"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "Страх обязательств"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "Завершите квантовый забег без возврата или замены назначенных навыков. Сброс Бесконечности очищает назначения как обычно."
     }
   ],
   "challenges.completed": [
@@ -409,6 +445,36 @@
       "value": "Потратьте 1 Катализатор в описании открытого навыка, чтобы сделать его базовый эффект постоянным и убрать штрафы и несовместимости. Раскалывание нельзя отменить; она сохраняется после Трансценденции."
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "Приземление"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "Завершите квантовый забег без Планет и мегаструктур. Их нельзя покупать или создавать."
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "Руки прочь"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "Завершите квантовый забег без покупок сооружений и ручной сборки. Начните с одной сборочной линии; пассивное создание сооружений работает как обычно."
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "Требуется расколотый Ручной труд."
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -427,10 +493,22 @@
       "value": "Завершите квантовый забег без науки и исследований."
     }
   ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "Начнётся новый обычный квантовый забег без выдачи квантовых осколков. Ограничения испытания снимутся. Очки навыков Реальности, Деление, квантовое удвоение IP и Квантовая запутанность снова станут активны. Прогресс Реальности и последующие этапы сохранятся."
+    }
+  ],
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "Начинает новый квантовый забег без награды в виде квантовых осколков. Квантовые улучшения и последующие слои сохраняются. Отказ также начинает новый обычный забег."
+      "value": "Начинает новый квантовый забег без выдачи квантовых осколков. Деление, квантовое удвоение IP и Квантовая запутанность отключены. Купленное удвоение IP и поздние слои остаются активны. Отказ также начинает новый обычный забег. Очки навыков Реальности не действуют; прогресс Реальности сохраняется."
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "Деление, квантовое удвоение IP и Квантовая запутанность отключены в квантовых испытаниях. Купленные усиления остаются активны. Очки навыков Реальности не действуют; прогресс Реальности сохраняется."
     }
   ],
   "challenges.quantumTitle": [
@@ -477,6 +555,18 @@
       "value": "Испытания"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "Короткое замыкание"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "Завершите квантовый забег со сроком службы панелей, равным 2 секундам."
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -487,6 +577,18 @@
     {
       "type": 0,
       "value": "Начать"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "Дефицит поставок"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "Завершите квантовый забег, в котором цена сооружений удваивается после каждой покупки. Созданные сооружения не повышают цену."
     }
   ],
   "challenges.timeUnknown": [
@@ -887,6 +989,28 @@
       "value": "Отмена"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "Деньги и боты"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "Доход денег и ботов ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "Завершения"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -905,6 +1029,12 @@
       "value": "Подтвердить"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "Полный цикл"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -921,6 +1051,102 @@
     {
       "type": 0,
       "value": "Подробности открытий"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "Возвышение"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "Повышает доход денег и ботов с 7× до 10×. Каждые 30 базовых минут: +0,1 к множителю и 30 минут прогресса Открытия."
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "Сила Возвышения"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 к начальному множителю денег и ботов. Бонусы складываются."
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "Просветление"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "Повышает базовый срок службы панелей с 20 до 30 секунд. Каждые 10 базовых минут: +0,1 секунды и 10 минут прогресса Возвышения."
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "Сила Просветления"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "+5 секунд к начальному сроку службы панелей. Бонусы складываются."
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "Производство сооружений"
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, серверы, дата-центры и планеты на 200% эффективнее."
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "+75% к скорости Открытия. Бонусы складываются."
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, серверы, дата-центры и планеты на 100% эффективнее."
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "+100% к скорости Открытия. Бонусы складываются."
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "Умножает доход денег на общую скорость Открытия вместе с другими денежными множителями."
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "Галактики Звёздных жертвоприношений в 1 000 раз эффективнее."
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "Сборочные линии, ИИ-менеджеры, серверы, дата-центры и планеты на 50% эффективнее."
     }
   ],
   "discovery.level": [
@@ -983,10 +1209,36 @@
       "value": "time"
     }
   ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "Следующее завершение"
+    }
+  ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "Далее: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " секунд начального срока службы"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
       "value": "Следующий множитель"
+    }
+  ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "Следующий срок службы панелей"
     }
   ],
   "discovery.nextPower": [
@@ -1030,13 +1282,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "Начальная мощь"
+      "value": "Сила Открытия"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "+5 к начальному множителю и базовому сроку службы панелей в секундах. Бонусы складываются."
+      "value": "+5 к начальному множителю сооружений. Бонусы складываются."
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,17 +1300,35 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "Производство денег, ботов и сооружений ×"
+      "value": "Производство сооружений ×"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "За завершение"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "Не удалось сохранить покупку. Ваши очки сохранены. Попробуйте ещё раз."
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "Скорость"
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "Исследования и Наука будут заменены навсегда."
     }
   ],
   "discovery.resetRule": [
@@ -1131,6 +1401,12 @@
     {
       "type": 0,
       "value": "Умножает деньги на 5."
+    }
+  ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "Умножает деньги и Ботов на M = max(1, log5(все сооружения)). Добавляет min(200%, 10% × log10(M)) к скорости Открытия. Бонусы складываются."
     }
   ],
   "discovery.skill.focusedBeam.effect": [
@@ -1388,7 +1664,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "Производство денег, ботов и сооружений ×10. Базовый срок службы панелей — 10 секунд."
+      "value": "Производство сооружений ×10. Доход денег и ботов ×7. Базовый срок службы панелей — 20 секунд."
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": завершения"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": скорость"
     }
   ],
   "discovery.totalBots": [
@@ -1397,10 +1693,30 @@
       "value": "Всего ботов"
     }
   ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": +"
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "discovery.unlock": [
     {
       "type": 0,
       "value": "Открыть систему открытий"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "Улучшения Открытия"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -2158,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": " куплено напрямую"
+      "value": " куплено или получено"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "Ручные покупки"
+      "value": "Покупки и награды"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "Куплено вручную"
+      "value": "Куплено / получено"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -3209,6 +3525,26 @@
       ]
     }
   ],
+  "dyson.info.compact.goal-tinkers": [
+    {
+      "type": 0,
+      "value": "Цель: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " ручных сборок"
+        }
+      ]
+    }
+  ],
   "dyson.info.compact.panel-lifetime": [
     {
       "type": 0,
@@ -3411,6 +3747,20 @@
     {
       "type": 0,
       "value": " ед."
+    }
+  ],
+  "dyson.info.goal.tinkers": [
+    {
+      "type": 0,
+      "value": "Цель: "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " ручных сборок"
     }
   ],
   "dyson.info.panel-lifetime": [
@@ -3641,6 +3991,12 @@
     {
       "type": 0,
       "value": "Округлять массовые покупки"
+    }
+  ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Всегда показывать быстрый выбор наборов"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -3889,6 +4245,26 @@
       "value": "Наверняка есть способ получше…"
     }
   ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "Создайте вручную "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ботов."
+    }
+  ],
   "dyson.tinker.description.manual-labour": [
     {
       "type": 0,
@@ -3955,6 +4331,16 @@
     {
       "type": 0,
       "value": "Нажмите и удерживайте для повтора…"
+    }
+  ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " за активацию"
     }
   ],
   "dyson.tinker.progress": [
@@ -5225,6 +5611,12 @@
       "value": "Скрыть улучшения на максимуме"
     }
   ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "Неактивно в этом испытании"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -6343,6 +6735,12 @@
       "value": "Мировая торговля III"
     }
   ],
+  "reality.skill-points-inactive": [
+    {
+      "type": 0,
+      "value": "Очки навыков станут доступны после выхода из квантового испытания."
+    }
+  ],
   "reality.strange-matter": [
     {
       "type": 0,
@@ -7361,6 +7759,12 @@
       "value": "Округлять массовые покупки"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "Всегда показывать быстрый выбор наборов"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,
@@ -7883,6 +8287,36 @@
     {
       "type": 0,
       "value": "Формат чисел"
+    }
+  ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "Ориентация"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "Авто"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "Не удалось изменить ориентацию. Повторите попытку."
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "Альбомная"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "Портретная"
     }
   ],
   "settings.processing.description": [
@@ -9845,6 +10279,108 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "Ручная сборка также создаёт 2% ваших Галактических мозгов. Предел — их пассивное создание за 20 секунд, но не менее 1 мозга. «Универсальная тактика производства» применяется до ограничения."
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "Ручная сборка также создаёт 2% от ваших "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": ", не более их пассивного создания за 20 секунд. Применяется «Универсальная тактика производства»."
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "Ручная сборка: "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "Фабрика необязательна. Пальцы обязательны."
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "Создавайте ботов каждые 0,2 секунды без ИИ-менеджера. Базовый выход: (завершённые ручные сборки + 1)^5, максимум 10^17 ботов за активацию. Сохраняет ручное создание сборочных линий. Работа сбрасывается при Бесконечности."
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "Ручная сборка"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "Дважды отмерь. Выпей чаю. Один раз отрежь."
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "Во время простоя накапливает до 42 секунд ручной сборки. Следующая активация выполняет накопленную работу, давая на 25% больше ботов. Работа также увеличивает практику. Расходуется при активации."
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "Терпеливые руки"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "Первая тысяча была прототипами."
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "Практика повышает выход ручной сборки: 200% × завершения / (завершения + 500), до +200%. Сбрасывается при Бесконечности; сохраняется при возврате навыка. Бонусы складываются."
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "Практика ведёт к совершенству"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "Вы наконец прочли инструкцию."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "Повышает выход ручной сборки на 25% × log10(1 + уровни исследования сборочных линий), до +200%. После открытия Открытия используются завершённые Открытия. Бонусы складываются."
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "Работать с умом"
+    }
+  ],
   "skills.matches": [
     {
       "type": 6,
@@ -11765,6 +12301,18 @@
       "value": "Разрешить автоматическое назначение навыков без возврата очков навыка"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "Невозвратные навыки"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "Невозвратные навыки и их предварительные навыки нельзя вернуть до сброса Бесконечности или Кванта. Продолжить?"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -11817,6 +12365,12 @@
       "value": "Цвет набора"
     }
   ],
+  "skills.preset-color-blue": [
+    {
+      "type": 0,
+      "value": "Синий"
+    }
+  ],
   "skills.preset-color-cyan": [
     {
       "type": 0,
@@ -11827,6 +12381,12 @@
     {
       "type": 0,
       "value": "Золотой"
+    }
+  ],
+  "skills.preset-color-green": [
+    {
+      "type": 0,
+      "value": "Зелёный"
     }
   ],
   "skills.preset-color-orange": [
@@ -11841,10 +12401,28 @@
       "value": "Розовый"
     }
   ],
+  "skills.preset-color-red": [
+    {
+      "type": 0,
+      "value": "Красный"
+    }
+  ],
   "skills.preset-color-rose": [
     {
       "type": 0,
       "value": "Малиновый"
+    }
+  ],
+  "skills.preset-color-violet": [
+    {
+      "type": 0,
+      "value": "Фиолетовый"
+    }
+  ],
+  "skills.preset-color-white": [
+    {
+      "type": 0,
+      "value": "Белый"
     }
   ],
   "skills.preset-distribution": [
@@ -12035,6 +12613,78 @@
       "value": "Наука"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "Собиратели: Сообщество"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "Охотники: Сообщество"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "Энергия запущенных панелей"
+    }
+  ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "Сборочные линии за активацию"
+    }
+  ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "Планеты Бёрча за активацию"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "Боты за активацию"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "Центры обработки данных за активацию"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "Галактические мозги за активацию"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "ИИ-менеджеры за активацию"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "Матрёшечные мозги за активацию"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "Планеты за активацию"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "Серверы за активацию"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -12211,6 +12861,12 @@
     {
       "type": 0,
       "value": "Наборы и сброс навыков"
+    }
+  ],
+  "skills.settings.showExtendedPresets": [
+    {
+      "type": 0,
+      "value": "Показать наборы 6–10"
     }
   ],
   "skills.show-preset-application-notifications": [
@@ -12509,6 +13165,186 @@
     {
       "type": 0,
       "value": "«Сверхновая» подавляет весь слой ручных покупок: Авокадо, оба рубежа 50/100, Масштабирование производства и все скорости Роя."
+    }
+  ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "Они наконец приняли приглашение в группу."
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "Ботнет"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "Умножает производство всех сооружений на 1 + log20(Боты)."
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "К обломкам каким-то образом прилагались проценты."
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "Сложные фрагменты"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "Умножает обычный бонус от покупок на (1 + коэффициент Роя)^floor((эффективные покупки / порог Фрагмента)^0.825). Минимальный порог — 1."
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "Оплата — чья-то чужая проблема."
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "Отложенный счёт"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "Для покупки сооружений нужна полная сумма денег, но она не списывается."
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "Оптовые закупки стали чертой характера."
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "Экономия масштаба"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "Умножает производство денег, науки и Ботов на log5(все сооружения), минимум — 1×."
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "Часть сборки уже выполнена."
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "Фора"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "Раз за Бесконечность даёт по 30 купленных единиц каждого доступного сооружения без роста цен. Включает открытые мегаструктуры."
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "Один чек. Заслуги приписывают себе все."
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "Общие закупки"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "Бонусы покупок каждого сооружения используют суммарное число покупок всех сооружений. Затем применяется Terra. Цены не меняются."
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "Ценники начинают нервничать."
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "Снижение роста цен"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "Снижает рост цен сооружений на 0,5 процентного пункта за каждый активный навык Фрагмента, минимум — 0,1%."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "Отдел найма больше не нужен."
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "Самовоспроизводящиеся рабочие"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "Скорость производства охотников и собирателей умножается на (1 + коэффициент Роя × их количество / 10)^0.75. Энергия запущенных панелей умножается на (1 + коэффициент Роя × запущенные панели / 100)^0.5."
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "Пожалуйста, оставьте фабрики там, где нашли."
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "Постоянное снабжение"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "Сохраняет оплаченные покупки сооружений после Бесконечности. Назначьте перед сбросом — покупки восстановятся автоматически. Бесплатные стартовые единицы не накапливаются. Квантовый сброс очищает запас."
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "Жертвоприношения теперь доступны оптом."
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "Звёздный рой"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "Умножает производство Звёздных жертвоприношений на 1 + log12.5(Bots) × log12.5(P), где P — множитель покупок вашего самого высокого сооружения. Расход Ботов не меняется."
     }
   ],
   "skills.switch-anyway": [
@@ -13299,6 +14135,12 @@
       "value": "Удалить сохранённый рекорд?"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "Общее игровое время"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -13309,6 +14151,12 @@
     {
       "type": 0,
       "value": "Удвоение IP использовано"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "Первая Трансценденция"
     }
   ],
   "statistics.speedruns.importedRun": [
@@ -13327,6 +14175,12 @@
     {
       "type": 0,
       "value": "Личный рекорд"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "Прежний отсчёт"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -14623,7 +15477,7 @@
   "wiki.discovery.overview": [
     {
       "type": 0,
-      "value": "Открытия начинаются с "
+      "value": "Открытие начинается с "
     },
     {
       "type": 8,
@@ -14631,13 +15485,13 @@
       "children": [
         {
           "type": 0,
-          "value": "уровня 1"
+          "value": "10× производства сооружений"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", с "
+      "value": ", "
     },
     {
       "type": 8,
@@ -14645,7 +15499,7 @@
       "children": [
         {
           "type": 0,
-          "value": "производством денег, ботов и сооружений ×10"
+          "value": "7× дохода денег и ботов"
         }
       ]
     },
@@ -14659,13 +15513,13 @@
       "children": [
         {
           "type": 0,
-          "value": "базовым сроком службы панелей 10 секунд"
+          "value": "20 секунд базового срока службы панелей"
         }
       ]
     },
     {
       "type": 0,
-      "value": ". Каждое завершение добавляет "
+      "value": ". Каждое завершение за базовый час добавляет "
     },
     {
       "type": 8,
@@ -14673,13 +15527,13 @@
       "children": [
         {
           "type": 0,
-          "value": "0.1"
+          "value": "0,1"
         }
       ]
     },
     {
       "type": 0,
-      "value": " к множителю и базовому сроку службы. При базовой скорости одно открытие занимает час. Учёные и ресурсы не требуются."
+      "value": " к множителю сооружений. Бонусы сооружений и ботов оба действуют на выпуск сборочных линий. Открытию не нужны учёные или ресурсы."
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14793,13 +15647,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Скорость открытий"
+          "value": "Возвышение"
         }
       ]
     },
     {
       "type": 0,
-      "value": " добавляет "
+      "value": " стоит "
     },
     {
       "type": 8,
@@ -14807,13 +15661,13 @@
       "children": [
         {
           "type": 0,
-          "value": "25% скорости"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": " за покупку. "
+      "value": ", повышает деньги и ботов до "
     },
     {
       "type": 8,
@@ -14821,13 +15675,111 @@
       "children": [
         {
           "type": 0,
-          "value": "Начальная мощь"
+          "value": "10×"
         }
       ]
     },
     {
       "type": 0,
-      "value": " добавляет "
+      "value": " и завершается каждые "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 базовых минут"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0,1 к множителю и 30 минут прогресса Открытия. "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Просветление"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " стоит "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ", повышает базовый срок службы до "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30 секунд"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " и завершается каждые "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10 базовых минут"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ": +0,1 секунды и 10 минут прогресса Возвышения. Передача может завершать предыдущие полосы, сохраняя излишек. Бонусы скорости дерева навыков действуют на "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; остальные действуют полностью. Передача продвигает предыдущую полосу на это игровое время с её текущей скоростью. Покупки общей скорости добавляют "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "; каждая отдельная покупка силы добавляет "
     },
     {
       "type": 8,
@@ -14841,7 +15793,7 @@
     },
     {
       "type": 0,
-      "value": " к начальному множителю и базовому сроку службы панелей, сразу же и в текущем прохождении. Каждое улучшение независимо стоит "
+      "value": " к своему начальному множителю или сроку службы. Повторные цены растут независимо: "
     },
     {
       "type": 8,
@@ -14849,7 +15801,7 @@
       "children": [
         {
           "type": 0,
-          "value": "1, 2, 3… очка Трансценденции"
+          "value": "1, 2, 3… TP"
         }
       ]
     },
@@ -15698,40 +16650,58 @@
       "value": "Версия 4.1.10"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "Добавлены пять достижений, наборы 6–10 и необязательные кнопки быстрой смены наборов на вкладках ботов и исследований."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "Исправлен неконтролируемый рост Звёздный рой. Постоянное снабжение теперь сохраняет покупки после Infinity без повторного назначения."
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
-      "value": "Перебалансированы рост цен сооружений, а также стоимость и производство мегаструктур."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-10.bot-boost": [
-    {
-      "type": 0,
-      "value": "Исправлена потеря эффекта «Боты ×2 навсегда» после сброса сохранения."
+      "value": "Пересмотрены рост цен сооружений, стоимость и производство мегаструктур."
     }
   ],
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "Добавлено квантовое испытание «Без науки» с наградой в 2 Катализатора. Звёздные жертвы теперь создают самое высокоуровневое из имеющихся сооружений, включая мегаструктуры."
+      "value": "Добавлены семь квантовых испытаний с наградой в 2 Катализатора каждое. Очки навыков Реальности и некоторые квантовые улучшения отключены в этих забегах; прогресс Реальности сохраняется."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "Открытие растёт со временем, увеличивая Деньги, Ботов, производство сооружений и срок службы панелей. Связанные навыки адаптируются после разблокировки."
+      "value": "Добавлены три связанные шкалы: Открытие усиливает сооружения, Возвышение — Деньги и Ботов, Просветление — срок службы панелей. Последующие шкалы продвигают предыдущую."
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "У Авокато добавлены постоянные улучшения скорости открытий и начальной силы."
+      "value": "У Авокато добавлены постоянные улучшения скорости и силы Открытия."
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "Исправлены сохранение заработанных настроек разработчика в облаке, подсчёт очков навыков усилений, отрицательные изменения в отладке и ротация рекомендаций."
+      "value": "Исправлены постоянный бонус Боты ×2 после сброса сохранения, возвращение удалённых наборов и упразднённых исследований, быстрые нажатия Tinker и ряд ошибок испытаний и усилений."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.fracturing": [
+    {
+      "type": 0,
+      "value": "Гальванизаторы переименованы в Катализаторы, а гальванизированные навыки — в Расколотые. Раскол работает в испытаниях, заранее показывает эффект и открывает дерево усилений."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "В Hands Off теперь доступно только пассивное создание сооружений. Tinker отключён, а созданные Assembly Lines учитываются в ранней цели."
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -15740,28 +16710,64 @@
       "value": "Теперь требуется iOS 16 или новее."
     }
   ],
-  "wiki.patch-notes.version-4-1-10.save-fix": [
+  "wiki.patch-notes.version-4-1-10.orientation": [
     {
       "type": 0,
-      "value": "Исправлено возвращение старых исследований и очищенных наборов навыков после сохранения или загрузки."
+      "value": "На мобильных устройствах добавлены настройки ориентации: автоматически, портретная и альбомная."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.presentation": [
+    {
+      "type": 0,
+      "value": "Улучшены сведения о производстве, предпросмотр навыков, прокрутка и диалоги. Полосы сооружений стали выше, градиенты кнопок — мягче. Боковое меню показывает запас времени; визуализация включена по умолчанию."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.refunds": [
+    {
+      "type": 0,
+      "value": "Горячий старт больше нельзя вернуть. Банковское дело, Инвестиции и Звёздную память можно вернуть. Перед первым назначением невозвратных навыков добавлено предупреждение."
     }
   ],
   "wiki.patch-notes.version-4-1-10.secret": [
     {
       "type": 0,
-      "value": "Шестой секрет Avotation теперь завершается автоматически при достижении, если открыто Открытие."
+      "value": "Шестой секрет Авотации теперь завершается автоматически при достижении, если Открытие разблокировано."
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "Спидраны теперь сравнивают текущий забег с личными рекордами, которые сохраняются после сброса сохранения. Добавлены отметки забега, учёт удвоения IP и запоминание вкладки статистики. Рекорды синхронизируются через облачные сохранения, но не входят в экспорт. Новые рекорды этапов учитывают время игры."
+      "value": "Улучшены спидраны: сохраняемые личные рекорды, сравнение с текущим забегом, индикаторы помощи и этап первой Трансценденции. Новые рекорды учитывают время игры и потраченное Накопленное время."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.starter": [
+    {
+      "type": 0,
+      "value": "После первого квантового скачка новые забеги начинаются со сборочной линии."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-memory": [
+    {
+      "type": 0,
+      "value": "Звёздная память теперь сохраняет новую зарядку SRS при сбросах Бесконечности и Кванта, усиливая улучшения SRS."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-sacrifices": [
+    {
+      "type": 0,
+      "value": "Звёздные жертвы теперь создаёт самое высокоуровневое сооружение из имеющихся."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "Добавлены усиления Ручного труда, Роя и Фрагментов, включая семь улучшений ручной сборки сооружений. Ручная сборка теперь сохраняет создание сборочных линий."
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
-      "value": "Overflow теперь называется Трансценденцией. Потратьте 1 очко Трансценденции у Авокато, чтобы открыть Открытие, которое заменяет Науку и Исследования."
+      "value": "Overflow теперь называется Трансценденцией. Откройте Открытие у Авокато за 1 очко Трансценденции, чтобы заменить Науку и Исследования."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

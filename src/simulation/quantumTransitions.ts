@@ -1,4 +1,6 @@
-import { infinityChallenges, isNoScienceActive } from './infinityChallenges'
+import { initializeSwarmGrants } from './swarmAugments'
+import { hasCompletedQuantum } from './quantumMilestone'
+import { infinityChallenges, isQuantumChallengeActive, challengeCompleted, challengeFacilities } from './infinityChallenges'
 import { bankedSrsSecondsAfterReset } from './srsAugments'
 import { permanentSkillRuntime } from './galvanization'
 import type {
@@ -47,7 +49,7 @@ export function applyQuantumEntanglementConversion(
       ? state.infinity.points - state.infinity.spentPoints
       : 0n
   const requestedQuantumPoints =
-    availableInfinityPoints /
+    (isQuantumChallengeActive(state) ? 0n : availableInfinityPoints) /
     QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
   // Earned/spent are cumulative counters; only the spendable wallet has a cap.
   const headroom = DISCRETE_MAXIMUM -
@@ -64,6 +66,7 @@ export function applyQuantumEntanglementConversion(
       meta: {
         ...state.meta,
         firstInfinityComplete: true,
+        firstQuantumComplete: conversionAccepted || hasCompletedQuantum(state),
       },
       infinity: conversionAccepted
         ? {
@@ -98,7 +101,7 @@ export function applyCanonicalQuantumReset(
   options: { readonly restartOnly?: boolean } = {},
 ): CanonicalQuantumResetResult {
   const challenge = infinityChallenges(state)
-  if (!options.restartOnly && isNoScienceActive(state) && !challenge.noScienceCompleted && challenge.galvanizers > DISCRETE_MAXIMUM - 2n) {
+  if (!options.restartOnly && isQuantumChallengeActive(state) && !challengeCompleted(challenge, challenge.active!) && challenge.galvanizers > DISCRETE_MAXIMUM - 2n) {
     return { ok: false, state, issues: [{ code: 'INFINITY_RESET_STATE_INVALID', path: 'challenges.galvanizers', detail: 'There is no room for the challenge reward.' }] }
   }
   const permanentSkills = permanentSkillRuntime(state)
@@ -106,14 +109,18 @@ export function applyCanonicalQuantumReset(
     permanentSkills.superRadiantScattering = { ...permanentSkills.superRadiantScattering,
       secondaryTimerSeconds: options.restartOnly ? permanentSkills.superRadiantScattering.secondaryTimerSeconds : bankedSrsSecondsAfterReset(state) }
   }
+  const nextChallenges = !options.restartOnly && isQuantumChallengeActive(state)
+    ? completeQuantumChallenge(state) : state.challenges
   const assignmentSeed: CanonicalGameStateV1 = {
     ...state,
+    challenges: nextChallenges,
     infinity: {
       ...state.infinity,
       permanentSkillPoints: 0n,
     },
     skills: {
       ...state.skills,
+      swarmGrants: undefined,
       byId: permanentSkills,
       points: 0n,
       fragments: 0n,
@@ -153,7 +160,7 @@ export function applyCanonicalQuantumReset(
         'birch_planets',
         'galactic_brains',
       ] as const satisfies readonly CanonicalFacilityId[]
-    ).map((id) => [id, [0, 0] as const]),
+    ).map((id) => [id, [id === 'assembly_lines' && (!options.restartOnly || hasCompletedQuantum(state) || state.challenges?.active === 'hands-off') ? 1 : 0, 0] as const]),
   ) as CanonicalGameStateV1['dyson']['facilities']
   const permanentSecrets =
     state.quantum.permanentSecrets > 1n
@@ -162,13 +169,13 @@ export function applyCanonicalQuantumReset(
 
   return {
     ok: true,
-    state: {
+    state: initializeSwarmGrants({
       ...state,
-      challenges: !options.restartOnly && isNoScienceActive(state)
-        ? completeNoScienceChallenge(state) : state.challenges,
+      challenges: nextChallenges,
       meta: {
         ...state.meta,
         firstInfinityComplete: true,
+        firstQuantumComplete: !options.restartOnly || hasCompletedQuantum(state),
       },
       dyson: {
         ...state.dyson,
@@ -177,9 +184,10 @@ export function applyCanonicalQuantumReset(
         bots: 0,
         workers: 0,
         researchers: 0,
-        facilities: emptyFacilities,
+        facilities: options.restartOnly ? challengeFacilities(state, emptyFacilities) : emptyFacilities,
         totalPanelsDecayed: 0,
         goalStage: 0n,
+        ...(state.dyson.completedTinkers === undefined ? {} : { completedTinkers: 0 }),
         botDistribution: 0,
       },
       infinity: {
@@ -212,6 +220,7 @@ export function applyCanonicalQuantumReset(
       },
       skills: {
         ...assignment.state.skills,
+        swarmGrants: undefined,
         byId: withQuantumResetTimerEntries(
           assignment.state.skills.byId,
         ),
@@ -235,7 +244,7 @@ export function applyCanonicalQuantumReset(
         recentProcessedSegment: createEmptySimulationTotals(),
         recentActiveAutomaticInfinityCycles: [],
       },
-    },
+    }),
     quantumPointGranted,
     autoAssignedSkillIds: assignment.autoAssignedSkillIds,
   }
@@ -257,12 +266,13 @@ function withQuantumResetTimerEntries(
   return byId
 }
 
-function completeNoScienceChallenge(state: Readonly<CanonicalGameStateV1>) {
+function completeQuantumChallenge(state: Readonly<CanonicalGameStateV1>) {
   const progress = infinityChallenges(state)
   return {
-    ...progress, active: null, noScienceCompleted: true, hasEarnedGalvanizer: true,
-    galvanizers: progress.noScienceCompleted ? progress.galvanizers : addDiscrete(progress.galvanizers, 2n),
+    ...progress, active: null, noScienceCompleted: progress.noScienceCompleted || progress.active === 'no-science', hasEarnedGalvanizer: true,
+    completedQuantumChallenges: [...new Set([...(progress.completedQuantumChallenges ?? []), progress.active as import('../game-state/types').QuantumChallengeId])],
+    galvanizers: challengeCompleted(progress, progress.active!) ? progress.galvanizers : addDiscrete(progress.galvanizers, 2n),
     completionSeconds: { ...progress.completionSeconds,
-      'no-science': Math.min(progress.completionSeconds?.['no-science'] ?? Infinity, state.statistics.currentQuantumRun.simulatedSeconds) },
+      [progress.active!]: Math.min(progress.completionSeconds?.[progress.active!] ?? Infinity, state.statistics.currentQuantumRun.simulatedSeconds) },
   }
 }

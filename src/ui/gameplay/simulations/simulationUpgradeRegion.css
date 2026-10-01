@@ -181,3 +181,10 @@
 .simulation-permanent-upgrade-card__feedback[role="alert"] {
   color: #ffb8b8;
 }
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .simulation-permanent-upgrade-card .ui-button:not(:disabled) {
+    background-image: var(--ui-action-gradient);
+  }
+}

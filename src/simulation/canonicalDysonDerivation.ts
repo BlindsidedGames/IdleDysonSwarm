@@ -1,4 +1,7 @@
-import { isNoScienceActive } from './infinityChallenges'
+import { deriveAdditionalTinkerYields, resolveTinkerFacilityYields, type TinkerFacilityYields } from './manualFacilityAugments'
+import { botnetMultiplier, economyOfScaleMultiplier, purchaseScalingRate, purchaseScalingThreshold, linearPurchaseScalingMultiplier, compoundFragmentsMultiplier, stellarSwarmMultiplier } from './swarmAugments'
+import { SWARM_AUGMENTS } from './skillSubskills'
+import { challengeFacilities, challengeAllowsFacility, isNoScienceActive } from './infinityChallenges'
 import { highestOwnedFacility } from './stellarArithmetic'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import { isGalvanized } from './galvanization'
@@ -120,6 +123,7 @@ export interface DerivedBasicDysonState {
     readonly scienceBoostPerSecond: number
     readonly moneyUpgradePerSecond: number
     readonly tinkerAssemblyYield: number
+    readonly tinkerAdditionalFacilityYields: TinkerFacilityYields
     readonly stellarSacrifice: {
       readonly facilitiesPerSecond: number
       readonly botsPerSecond: number
@@ -157,6 +161,7 @@ export interface CanonicalFacilityFacts {
     readonly normalized: number
   }
   readonly details: {
+    readonly tinkerPerActivation?: number
     readonly baseProductionPerSecond: number
     readonly effectiveProducerCount: number
     readonly modifier: number
@@ -312,6 +317,7 @@ const BASIC_FACILITY_PRODUCTION_STATS: Readonly<
 })
 
 export interface ManualPurchaseProductionLayer {
+  readonly pooledPurchaseCount?: number
   readonly rawManualCount: number
   readonly effectiveManualCount: number
   readonly effectiveManualPlanets: number
@@ -324,35 +330,27 @@ export interface ManualPurchaseProductionLayer {
   readonly milestone100Multiplier: number
   readonly scalingThreshold: number
   readonly scalingRate: number
+  readonly linearScalingMultiplier: number
+  readonly compoundScalingMultiplier: number
   readonly scalingMultiplier: number
   readonly totalMultiplier: number
 }
 
 export function deriveManualPurchaseProductionLayer(
   state: Readonly<CanonicalGameStateV1>,
-  facilityId: BasicDysonFacilityId,
+  facilityId: CanonicalFacilityId,
 ): Readonly<ManualPurchaseProductionLayer> {
   const owned = (id: string) => state.skills.byId[id]?.owned === true
   const {
     rawManualCount,
+    pooledPurchaseCount,
     effectiveManualCount,
     effectiveManualPlanets,
     transferredPlanetCount,
     terraSkill,
   } = deriveEffectivePurchaseCounts(state, facilityId)
-  const scalingThreshold = owned('productionScaling')
-    ? Math.max(
-        0,
-        90 - 5 * Math.max(0, Number(state.skills.fragments) - 1),
-      )
-    : 100
-  const scalingRate = owned('ultimateSwarm')
-    ? 0.05
-    : owned('megaSwarm')
-      ? 0.03
-      : owned('superSwarm')
-        ? 0.02
-        : 0.01
+  const scalingThreshold = purchaseScalingThreshold(state)
+  const scalingRate = purchaseScalingRate(state)
   const suppressed = owned('supernova') && !isGalvanized(state, 'supernova')
   const avocadosMultiplier =
     !suppressed && owned('avocados') && effectiveManualCount >= 69 ? 2 : 1
@@ -360,11 +358,12 @@ export function deriveManualPurchaseProductionLayer(
     !suppressed && effectiveManualCount >= 50 ? 2 : 1
   const milestone100Multiplier =
     !suppressed && effectiveManualCount >= 100 ? 2 : 1
-  const scalingMultiplier = suppressed
-    ? 1
-    : 1 + Math.max(0, effectiveManualCount - scalingThreshold) * scalingRate
+  const linearScalingMultiplier = suppressed ? 1 : linearPurchaseScalingMultiplier(state, effectiveManualCount)
+  const compoundScalingMultiplier = suppressed ? 1 : compoundFragmentsMultiplier(state, effectiveManualCount)
+  const scalingMultiplier = multiplyContinuous(linearScalingMultiplier, compoundScalingMultiplier)
   return Object.freeze({
     rawManualCount,
+    pooledPurchaseCount,
     effectiveManualCount,
     effectiveManualPlanets,
     transferredPlanetCount,
@@ -378,6 +377,8 @@ export function deriveManualPurchaseProductionLayer(
     milestone100Multiplier,
     scalingThreshold,
     scalingRate,
+    linearScalingMultiplier,
+    compoundScalingMultiplier,
     scalingMultiplier,
     totalMultiplier:
       avocadosMultiplier *
@@ -446,14 +447,21 @@ function withManualPurchaseProductionLayer(
           order: 152,
         })
       }
-      if (layer.scalingMultiplier > 1) {
+      if (layer.linearScalingMultiplier > 1) {
         effects.push({
           id: `manual-purchase.scaling-${Math.round(layer.scalingRate * 100)}pct`,
           operation: 'multiply',
-          value: layer.scalingMultiplier,
+          value: layer.linearScalingMultiplier,
           order: 153,
         })
       }
+    }
+    if (layer.compoundScalingMultiplier > 1) {
+      effects.push({ id: SWARM_AUGMENTS.compoundFragments, operation: 'multiply', value: layer.compoundScalingMultiplier, order: 154 })
+    }
+    if (facilityId === 'assembly_lines') {
+      const economy = multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 155)
+      if (economy) effects.push(economy)
     }
     byStat[BASIC_FACILITY_PRODUCTION_STATS[facilityId]] =
       Object.freeze(effects)
@@ -485,6 +493,19 @@ export function deriveBasicDysonState(
       'Dyson solid-progress threshold must be finite and non-negative.',
     )
   }
+  const permittedFacilities = challengeFacilities(state, state.dyson.facilities)
+  if (permittedFacilities !== state.dyson.facilities) state = { ...state, dyson: { ...state.dyson, facilities: permittedFacilities } }
+  if (!challengeAllowsFacility(state, 'planets')) {
+    evaluationSnapshot = {
+      ...evaluationSnapshot,
+      scientificPlanetsProduction: 0,
+      pocketDimensionsProduction: 0,
+      ...(!challengeAllowsFacility(state, 'ai_managers') ? {
+        rudimentarySingularityProduction: 0,
+        managerAssemblyLineProduction: 0,
+      } : {}),
+    }
+  }
   const issues = findUnsupportedDependencies(state)
   if (issues.length > 0) {
     return { ok: false, issues: Object.freeze(issues) }
@@ -511,7 +532,7 @@ export function deriveBasicDysonState(
     )
   const effectiveSkillEffectsByStat = discovery ? Object.fromEntries(Object.entries(ordinarySkillEffectsByStat).map(([statId, effects]) => [statId,
     (statId.startsWith('Facility.') && statId.endsWith('.Production')) || statId === 'Global.PlanetsPerSecond' || statId === 'Global.MoneyPerSecond'
-      ? [...effects, { id: 'discovery.production', operation: 'multiply' as const, value: discovery.multiplier, order: 1000 }]
+      ? [...effects, { id: statId === 'Global.MoneyPerSecond' ? 'discovery.cash-bots' : 'discovery.production', operation: 'multiply' as const, value: statId === 'Global.MoneyPerSecond' ? discovery.cashBotsMultiplier : discovery.multiplier, order: 1000 }, ...(statId === 'Facility.AssemblyLine.Production' ? [{ id: 'discovery.cash-bots', operation: 'multiply' as const, value: discovery.cashBotsMultiplier, order: 1001 }] : [])]
       : effects,
   ])) : ordinarySkillEffectsByStat
   const secrets = deriveSecretBuffs(
@@ -532,6 +553,7 @@ export function deriveBasicDysonState(
   }
   const avocadoMultiplier = avocadoDysonMultiplier(state.avocado)
   const moneyMultiplier = calculateStat(1, [
+    multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 96),
     ...(discovery && ownedSkillSet.has('shouldersOfTheEnlightened') && ownedSkillSet.has('scientificPlanets') ? [multiplierEffect('effect.shouldersOfTheEnlightened.money_multiplier', 1 + 0.1 * Number(state.discovery!.completions), 80)] : []),
     ...effectsFor(research.effects, 'Global.MoneyMultiplier'),
     ...effectsAt(effectiveSkillEffectsByStat, 'Global.MoneyMultiplier'),
@@ -552,6 +574,7 @@ export function deriveBasicDysonState(
     ),
   ].filter(isEffect))
   const scienceMultiplier = isNoScienceActive(state) ? 0 : discovery ? 1 : calculateStat(1, [
+    multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 96),
     ...effectsFor(research.effects, 'Global.ScienceMultiplier'),
     ...effectsAt(effectiveSkillEffectsByStat, 'Global.ScienceMultiplier'),
     multiplierEffect(
@@ -570,7 +593,7 @@ export function deriveBasicDysonState(
       95,
     ),
   ].filter(isEffect))
-  const panelLifetime = calculateStat(discovery?.strength ?? 10, [
+  const panelLifetime = state.challenges?.active === 'short-circuit' ? 2 : calculateStat(discovery?.lifetime ?? 10, [
     ...effectsFor(research.effects, 'Global.PanelLifetime'),
     ...effectsAt(effectiveSkillEffectsByStat, 'Global.PanelLifetime'),
   ])
@@ -585,17 +608,18 @@ export function deriveBasicDysonState(
   const passivePlanetGenerationEffects = planetGenerationEffects.filter(
     (effect) => effect.id !== 'effect.stellarSacrifices.planets_per_second',
   )
-  const planetGenerationPerSecond = calculateStat(0, passivePlanetGenerationEffects)
+  const planetGenerationPerSecond = !challengeAllowsFacility(state, 'planets') ? 0 : calculateStat(0, passivePlanetGenerationEffects)
   const stellarSacrificeTarget = highestOwnedFacility(state.dyson.facilities)
-  const stellarSacrificeFacilitiesPerSecond = stellarSacrificeTarget === null ? 0 : calculateStat(
-    0,
-    [...stellarSacrificeEffects, ...(discovery ? [multiplierEffect('discovery.production', discovery.multiplier, 1000)] : [])].filter(isEffect),
-  )
+  const stellarPurchaseMultiplier = stellarSacrificeTarget === null ? 1
+    : deriveManualPurchaseProductionLayer(state, stellarSacrificeTarget).scalingMultiplier
+  const stellarBaseProduction = stellarSacrificeTarget === null ? 0 : calculateStat(0,
+    [...stellarSacrificeEffects, multiplierEffect('discovery.production', discovery?.multiplier ?? 1, 1000)].filter(isEffect))
+  const stellarBoost = stellarBaseProduction > 0 ? stellarSwarmMultiplier(state, stellarPurchaseMultiplier) : 1
+  const stellarSacrificeFacilitiesPerSecond = multiplyContinuous(stellarBaseProduction, stellarBoost)
   const stellarGenerationContributions: readonly CanonicalFacilityContributionRow[] = deriveAttributedEffectRows(
     0,
-    stellarSacrificeEffects.map((effect) => ({
-      ...effect, value: stellarSacrificeFacilitiesPerSecond,
-    })),
+    [...stellarSacrificeEffects.map(effect => ({ ...effect, value: stellarBaseProduction })),
+      multiplierEffect(SWARM_AUGMENTS.stellarSwarm, stellarBoost, 1001)].filter(isEffect),
     'output-adjustments', research.effects, state, evaluationSnapshot,
   ).map((row) => ({
     ...row,
@@ -612,7 +636,7 @@ export function deriveBasicDysonState(
           galvanizedSkillSet(state),
         )
       : 0
-  const scientificPlanetsProduction = calculateStat(
+  const scientificPlanetsProduction = !challengeAllowsFacility(state, 'planets') ? 0 : calculateStat(
     0,
     effectsAt(effectiveSkillEffectsByStat, 'Global.PlanetsPerSecond').filter(
       (effect) =>
@@ -714,29 +738,14 @@ export function deriveBasicDysonState(
             effectiveProducerCount:
               mega.facts[facilityId].ownership.total,
             modifier: mega.facts[facilityId].modifier,
-            contributions: Object.freeze([
-              Object.freeze({
-                sourceId: 'base',
-                displayRole: 'base' as const,
-                operation: 'override' as const,
-                value: mega.facts[facilityId].baseProductionPerSecond,
-                delta: mega.facts[facilityId].baseProductionPerSecond,
-                runningTotal:
-                  mega.facts[facilityId].baseProductionPerSecond,
-              }),
-              Object.freeze({
-                sourceId: `${facilityId}.count`,
-                displayRole: 'producer-count' as const,
-                operation: 'multiply' as const,
-                value: mega.facts[facilityId].ownership.total,
-                delta:
-                  mega.facts[facilityId].baseProductionPerSecond *
-                  (mega.facts[facilityId].ownership.total - 1),
-                runningTotal:
-                  mega.facts[facilityId].baseProductionPerSecond *
-                  mega.facts[facilityId].ownership.total,
-              }),
-            ]),
+            contributions: deriveFacilityContributionRows({
+              baseProduction: mega.facts[facilityId].baseProductionPerSecond,
+              effects: [{
+                id: `${facilityId}.count`, operation: 'multiply' as const,
+                value: mega.facts[facilityId].ownership.total, order: 0,
+              }, multiplierEffect(`${facilityId}.modifier`, mega.facts[facilityId].modifier, 10)].filter(isEffect),
+              rate: mega.facts[facilityId].perSecond,
+            }, state.dyson.facilities[facilityId], research.effects, state, evaluationSnapshot),
             modifierContributions: deriveAttributedEffectRows(
               1,
               facilityModifierCalculations[facilityId].effects,
@@ -799,10 +808,12 @@ export function deriveBasicDysonState(
     },
   })
   const boost = botBoostMultiplier(state, entitlements)
-  const model = boost === 1 && !isNoScienceActive(state) ? unboostedModel : {
+  let model = boost === 1 && !isNoScienceActive(state) ? unboostedModel : {
     ...unboostedModel,
     rates: { ...unboostedModel.rates, science: isNoScienceActive(state) ? 0 : unboostedModel.rates.science, bots: multiplyContinuous(unboostedModel.rates.bots, boost) },
   }
+  if (state.challenges?.active === 'grounded') model = { ...model, rates: { ...model.rates, data_centers: 0, planets: 0 } }
+  if (state.challenges?.active === 'built-by-hand') model = { ...model, rates: { ...model.rates, bots: 0, assembly_lines: 0, ai_managers: 0, servers: 0, data_centers: 0, planets: 0 } }
   const nextEvaluationSnapshot =
     publishDysonSkillEffectEvaluationSnapshot(state, {
       panelsPerSecond: model.rates.panels,
@@ -812,6 +823,39 @@ export function deriveBasicDysonState(
       scientificPlanetsProduction,
     })
 
+  const productionArrivalRates = combineDysonProductionArrivalRates(model.rates, mega.rates)
+  const tinkerAdditionalFacilityYields = deriveAdditionalTinkerYields(state, productionArrivalRates,
+    stellarSacrificeTarget === 'galactic_brains' ? {
+      facilitiesPerSecond: stellarSacrificeFacilitiesPerSecond,
+      botsPerSecond: stellarSacrificeBotsPerSecond,
+    } : undefined)
+  const tinkerYields = resolveTinkerFacilityYields(state, tinkerAssemblyYield, tinkerAdditionalFacilityYields)
+  const facilityFacts: Record<CanonicalFacilityId, CanonicalFacilityFacts> = {
+    ...deriveBasicFacilityFacts(
+      state,
+      manualPurchaseLayers,
+      facilityCalculations,
+      model,
+      mega.rates,
+      facilityModifiers,
+      facilityModifierCalculations,
+      research.effects,
+      passivePlanetGenerationEffects,
+      stellarSacrificeTarget,
+      stellarGenerationContributions,
+      evaluationSnapshot,
+      presentationTuning,
+      boost,
+    ),
+    ...specializedFacilityFacts,
+  }
+  for (const id of DYSON_FACILITY_IDS) {
+    if (tinkerYields[id] === undefined) continue
+    const fact = facilityFacts[id]
+    facilityFacts[id] = Object.freeze({ ...fact, details: Object.freeze({
+      ...fact.details, tinkerPerActivation: tinkerYields[id],
+    }) })
+  }
   return {
     ok: true,
     value: Object.freeze({
@@ -831,6 +875,7 @@ export function deriveBasicDysonState(
         scienceBoostPerSecond,
         moneyUpgradePerSecond,
         tinkerAssemblyYield,
+        tinkerAdditionalFacilityYields,
         stellarSacrifice: Object.freeze({
           facilitiesPerSecond: stellarSacrificeFacilitiesPerSecond,
           botsPerSecond: stellarSacrificeBotsPerSecond,
@@ -840,29 +885,8 @@ export function deriveBasicDysonState(
       planetPricingModifier,
       rates: Object.freeze({ ...model.rates }),
       megaRates: mega.rates,
-      productionArrivalRates: combineDysonProductionArrivalRates(
-        model.rates,
-        mega.rates,
-      ),
-      facilityFacts: Object.freeze({
-        ...deriveBasicFacilityFacts(
-          state,
-          manualPurchaseLayers,
-          facilityCalculations,
-          model,
-          mega.rates,
-          facilityModifiers,
-          facilityModifierCalculations,
-          research.effects,
-          passivePlanetGenerationEffects,
-          stellarSacrificeTarget,
-          stellarGenerationContributions,
-          evaluationSnapshot,
-          presentationTuning,
-          boost,
-        ),
-        ...specializedFacilityFacts,
-      }) as Readonly<Record<CanonicalFacilityId, CanonicalFacilityFacts>>,
+      productionArrivalRates,
+      facilityFacts: Object.freeze(facilityFacts),
       nextEvaluationSnapshot,
       entitlements: Object.freeze({ ...entitlements }),
     }),
@@ -1297,6 +1321,7 @@ function sourceForEffect(
   researchEffects: readonly MaterializedDysonResearchEffect[],
   state?: CanonicalGameStateV1,
 ): CanonicalFacilityContributionRow['source'] {
+  if ((Object.values(SWARM_AUGMENTS) as string[]).includes(effectId)) return { kind: 'skill', id: effectId }
   const research = researchEffects.find((effect) => effect.id === effectId)
   if (research) return {
     kind: 'research',
@@ -1480,6 +1505,7 @@ function deriveFacilityModifiers(
         INFINITY_FACILITY_THRESHOLDS[id],
       )
       const later = [
+        multiplierEffect(SWARM_AUGMENTS.botnet, botnetMultiplier(state), 96),
         ...(MEGA_STRUCTURE_FACILITY_IDS.some(megaId => megaId === id) ? [multiplierEffect('discovery.production', discoveryMultiplier, 1000)] : []),
         multiplierEffect('prestige.infinity', infinity, 88),
         multiplierEffect('secrets.facility', secretMultipliers[id], 90),

@@ -1,3 +1,6 @@
+import { swarmGrants, SWARM_TUNING } from './swarmAugments'
+import { hasSwarmAugment } from './skillSubskills'
+import { challengeAllowsFacilityPurchase } from './infinityChallenges'
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
@@ -158,6 +161,10 @@ function toDysonAutomationState(
     assemblyMegaLinesOwned:
       state.skills.byId.assemblyMegaLines?.owned === true,
     planetModifier,
+    freePurchases: swarmGrants(state).headStart,
+    deferredBilling: hasSwarmAugment(state, 'deferredBilling'),
+    costExponentReduction: hasSwarmAugment(state, 'reductiveScaling') ? SWARM_TUNING.costReductionPerFragment * Number(state.skills.fragments) : 0,
+    costExponentOverride: state.challenges?.active === 'supply-shortage' ? 2 : undefined,
     terraNovaOwned: state.skills.byId.terraNova?.owned === true,
     terraGloriaeOwned: state.skills.byId.terraGloriae?.owned === true,
   }
@@ -168,6 +175,7 @@ function isFacilityUnlocked(
   candidate: Readonly<DysonAutomationState>,
   id: CanonicalFacilityId,
 ): true | 'locked' | 'prerequisite-not-met' {
+  if (!challengeAllowsFacilityPurchase(canonical, id)) return 'locked'
   const definition = DYSON_FACILITY_DEFINITIONS[id]
   const ownership = candidate.facilities[id]
   if (

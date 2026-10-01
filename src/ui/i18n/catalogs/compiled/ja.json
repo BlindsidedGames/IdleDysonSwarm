@@ -347,10 +347,22 @@
       "value": "チャレンジを放棄"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "IPを獲得せずに、新しい通常の無限ランを開始します。チャレンジの制限は解除されます。無限アップグレードとそれ以降の段階は維持されます。"
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
       "value": "白紙の状態に挑戦中 · スキル割り当て無効"
+    }
+  ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "チャレンジ中"
     }
   ],
   "challenges.blankSlate": [
@@ -365,10 +377,34 @@
       "value": "スキルポイントを使わずに通常のインフィニティを達成します。"
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "手作り"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "すべての施設を無効にして量子ランを完了する。手作業の強化でボットを手作りしよう。"
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
       "value": "キャンセル"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "決断の重み"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "割り当てたスキルを払い戻したり入れ替えたりせずに量子ランを完了する。インフィニティのリセットでは通常通り割り当てが解除される。"
     }
   ],
   "challenges.completed": [
@@ -409,6 +445,36 @@
       "value": "表示済みスキルの詳細で触媒を1個消費すると、基本効果が永続化され、ペナルティと排他制限が解除されます。断裂は取り消せず、超越後も維持されます。"
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "地に足をつけて"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "惑星や巨大構造物なしで量子ランを完了する。購入も生成もできない。"
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "手出し無用"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "施設の購入と手作業なしでクアンタム周回を完了します。組立ライン1つで開始し、施設の自動生成は通常どおり機能します。"
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "破砕済みの手作業が必要。"
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -427,10 +493,22 @@
       "value": "科学と研究を使わずに量子ランを完了します。"
     }
   ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "量子シャードを獲得せずに、新しい通常の量子ランを開始します。チャレンジの制限は解除されます。現実のスキルポイント、分割、量子のIP2倍、量子もつれが再び有効になります。現実の進行状況とそれ以降の段階は維持されます。"
+    }
+  ],
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "量子シャードを獲得せずに新しい量子ランを開始します。量子アップグレードとそれ以降の層は保持されます。中止した場合も通常の新しいランを開始します。"
+      "value": "量子の欠片を獲得せず、新しい量子ランを開始する。分割、量子のIP2倍、量子もつれは無効。購入したIP2倍と後のレイヤーは有効。中止しても新しい通常ランを開始する。 現実のスキルポイントは無効ですが、現実の進行状況は保持されます。"
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "量子チャレンジでは分割、量子のIP2倍、量子もつれが無効。購入したブーストは有効のまま。 現実のスキルポイントは無効ですが、現実の進行状況は保持されます。"
     }
   ],
   "challenges.quantumTitle": [
@@ -477,6 +555,18 @@
       "value": "チャレンジ"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "ショート回路"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "パネル寿命を2秒に固定して量子ランを完了する。"
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -487,6 +577,18 @@
     {
       "type": 0,
       "value": "開始"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "供給不足"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "施設価格が購入ごとに倍増する量子ランを完了する。生成された施設は価格を上げない。"
     }
   ],
   "challenges.timeUnknown": [
@@ -887,6 +989,28 @@
       "value": "キャンセル"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "資金とボット"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "資金・ボット獲得量 ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "完了回数"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -905,6 +1029,12 @@
       "value": "確定"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "1サイクル"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -921,6 +1051,102 @@
     {
       "type": 0,
       "value": "発見の詳細"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "高揚"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "資金・ボット獲得量を7倍から10倍に増加。基準時間30分ごとに倍率+0.1、発見の進捗+30分。"
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "高揚の強化"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "資金・ボットの初期倍率+5。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "悟り"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "パネルの基本寿命を20秒から30秒に延長。基準時間10分ごとに寿命+0.1秒、高揚の進捗+10分。"
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "悟りの強化"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "パネルの初期寿命+5秒。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "施設生産量"
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の能力が200%向上。"
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "発見速度+75%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の能力が100%向上。"
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "発見速度+100%。ボーナスは加算されます。"
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "他の資金倍率に加え、資金に発見の合計速度を乗算。"
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "恒星の犠牲の銀河効果が1,000倍に向上。"
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "組立ライン、AIマネージャー、サーバー、データセンター、惑星の能力が50%向上。"
     }
   ],
   "discovery.level": [
@@ -983,10 +1209,36 @@
       "value": "time"
     }
   ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "次の完了"
+    }
+  ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "次：初期寿命"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "秒"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
       "value": "次の倍率"
+    }
+  ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "次のパネル寿命"
     }
   ],
   "discovery.nextPower": [
@@ -1030,13 +1282,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "初期出力"
+      "value": "発見の強化"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "初期倍率とパネル基本寿命（秒）に+5。ボーナスは加算されます。"
+      "value": "施設の初期倍率+5。ボーナスは加算されます。"
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,17 +1300,35 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "資金・ボット・施設の生産 ×"
+      "value": "施設生産量 ×"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "完了ごと"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "購入を保存できませんでした。ポイントは保持されています。もう一度お試しください。"
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "速度"
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "研究と科学は永久に置き換えられます。"
     }
   ],
   "discovery.resetRule": [
@@ -1131,6 +1401,12 @@
     {
       "type": 0,
       "value": "資金を5倍にします。"
+    }
+  ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "現金とボットをM = max(1, log5(施設の総数))倍にします。発見速度にmin(200%, 10% × log10(M))を加えます。ボーナスは加算されます。"
     }
   ],
   "discovery.skill.focusedBeam.effect": [
@@ -1388,7 +1664,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "資金・ボット・施設の生産が10倍。パネルの基本寿命は10秒。"
+      "value": "施設生産量10倍。資金・ボット獲得量7倍。パネルの基本寿命20秒。"
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "の完了回数"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "速度"
     }
   ],
   "discovery.totalBots": [
@@ -1397,10 +1693,30 @@
       "value": "ボット総数"
     }
   ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：+"
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "discovery.unlock": [
     {
       "type": 0,
       "value": "発見を解放"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "発見のアップグレード"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -2150,7 +2466,7 @@
     },
     {
       "type": 0,
-      "value": " "
+      "value": "個の"
     },
     {
       "type": 1,
@@ -2158,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": "を直接購入"
+      "value": "（購入・付与）"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "手動購入"
+      "value": "購入と付与"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "手動購入"
+      "value": "購入・付与"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -3209,6 +3525,26 @@
       ]
     }
   ],
+  "dyson.info.compact.goal-tinkers": [
+    {
+      "type": 0,
+      "value": "目標: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " 回の手作業"
+        }
+      ]
+    }
+  ],
   "dyson.info.compact.panel-lifetime": [
     {
       "type": 0,
@@ -3411,6 +3747,20 @@
     {
       "type": 0,
       "value": "個包囲"
+    }
+  ],
+  "dyson.info.goal.tinkers": [
+    {
+      "type": 0,
+      "value": "目標: "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " 回の手作業"
     }
   ],
   "dyson.info.panel-lifetime": [
@@ -3641,6 +3991,12 @@
     {
       "type": 0,
       "value": "一括購入数を切りのよい数に調整"
+    }
+  ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "プリセットのクイック操作を常に表示"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -3889,6 +4245,26 @@
       "value": "もっと良いやり方があるはずです…"
     }
   ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "手作りで"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "体のボットを製作する。"
+    }
+  ],
   "dyson.tinker.description.manual-labour": [
     {
       "type": 0,
@@ -3955,6 +4331,16 @@
     {
       "type": 0,
       "value": "長押しすると繰り返します…"
+    }
+  ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": "／回"
     }
   ],
   "dyson.tinker.progress": [
@@ -5225,6 +5611,12 @@
       "value": "最大のアップグレードを隠す"
     }
   ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "このチャレンジ中は無効"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -6343,6 +6735,12 @@
       "value": "世界貿易 III"
     }
   ],
+  "reality.skill-points-inactive": [
+    {
+      "type": 0,
+      "value": "スキルポイントは量子チャレンジを終了すると有効になります。"
+    }
+  ],
   "reality.strange-matter": [
     {
       "type": 0,
@@ -7361,6 +7759,12 @@
       "value": "一括購入数を切りのよい数に調整"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "プリセットのクイック操作を常に表示"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,
@@ -7883,6 +8287,36 @@
     {
       "type": 0,
       "value": "数値表記"
+    }
+  ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "画面の向き"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "自動"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "画面の向きを変更できませんでした。もう一度お試しください。"
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "横向き"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "縦向き"
     }
   ],
   "settings.processing.description": [
@@ -9845,6 +10279,108 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "手作業で所有する銀河脳の2%も生成します。上限はその自動生成量の20秒分で、最低上限は1個です。「多彩な生産戦術」は上限の前に適用されます。"
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "手作業で所有する"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "の2%も生成します。上限はその自動生成量の20秒分です。「多彩な生産戦術」が適用されます。"
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "手作りの"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "工場は任意。指は必須。"
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "AIマネージャーなしで0.2秒ごとにボットを製造。基本生産量は（手作業組立の完了回数 + 1）^5、1回の上限は10^17ボット。組立ラインの手動作成も維持する。作業回数は無限リセットで初期化。"
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "手組み"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "二度測る。お茶を飲む。一度切る。"
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "待機中、最大42秒分の手作業組立を蓄積。次の発動で蓄積した作業を完了し、ボットを25%追加獲得。蓄積した作業は練習にも加算。発動時に消費。"
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "忍耐の手"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "最初の千個は試作品だった。"
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "練習で手作業組立の生産量が増加：200% × 完了回数 /（完了回数 + 500）、最大+200%。無限リセットで初期化され、スキル払い戻しでは維持。ボーナスは加算。"
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "習うより慣れろ"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "ついに説明書を読んだ。"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "手作業組立の生産量を25% × log10（1 + 組立ライン研究レベル）増加、最大+200%。発見の解放後は完了した発見の数を使用。ボーナスは加算。"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "賢く働く"
+    }
+  ],
   "skills.matches": [
     {
       "type": 6,
@@ -11765,6 +12301,18 @@
       "value": "スキルポイントを返還できないスキルの自動割り当てを許可"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "返還不可のスキル"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "返還不可のスキルとその前提スキルは、無限またはクアンタムのリセットまで返還できません。続けますか？"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -11817,6 +12365,12 @@
       "value": "プリセット色"
     }
   ],
+  "skills.preset-color-blue": [
+    {
+      "type": 0,
+      "value": "青"
+    }
+  ],
   "skills.preset-color-cyan": [
     {
       "type": 0,
@@ -11827,6 +12381,12 @@
     {
       "type": 0,
       "value": "金色"
+    }
+  ],
+  "skills.preset-color-green": [
+    {
+      "type": 0,
+      "value": "緑"
     }
   ],
   "skills.preset-color-orange": [
@@ -11841,10 +12401,28 @@
       "value": "ピンク"
     }
   ],
+  "skills.preset-color-red": [
+    {
+      "type": 0,
+      "value": "赤"
+    }
+  ],
   "skills.preset-color-rose": [
     {
       "type": 0,
       "value": "ローズ"
+    }
+  ],
+  "skills.preset-color-violet": [
+    {
+      "type": 0,
+      "value": "紫"
+    }
+  ],
+  "skills.preset-color-white": [
+    {
+      "type": 0,
+      "value": "白"
     }
   ],
   "skills.preset-distribution": [
@@ -12035,6 +12613,78 @@
       "value": "科学"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "採集者：コミュニティ"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "狩人：コミュニティ"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "打ち上げ済みパネルのエネルギー"
+    }
+  ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "発動ごとの組立ライン"
+    }
+  ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "バーチ・プラネット （1回あたり）"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "発動ごとのボット"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "データセンター （1回あたり）"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "ギャラクティック・ブレイン （1回あたり）"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "AIマネージャー （1回あたり）"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "マトリョーシカ・ブレイン （1回あたり）"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "惑星 （1回あたり）"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "サーバー （1回あたり）"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -12211,6 +12861,12 @@
     {
       "type": 0,
       "value": "スキルプリセットとリセット"
+    }
+  ],
+  "skills.settings.showExtendedPresets": [
+    {
+      "type": 0,
+      "value": "プリセット6～10を表示"
     }
   ],
   "skills.show-preset-application-notifications": [
@@ -12509,6 +13165,186 @@
     {
       "type": 0,
       "value": "超新星は、アボカド、50/100の節目、生産スケーリング、全スウォーム倍率を含む手動購入レイヤー全体を抑制します。"
+    }
+  ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "やっとグループへの招待を受け入れました。"
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "ボットネット"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "すべての施設の生産量を1 + log20(ボット数)倍にします。"
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "なぜか欠片に利息が付いていました。"
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "複利の欠片"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "通常の購入ボーナスに (1 + スウォーム率)^floor((有効購入数 / フラグメント閾値)^0.825) を掛けます。閾値の最小値は1です。"
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "請求書は誰かの問題です。"
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "後払い請求"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "施設の購入には全額の現金が必要ですが、現金は消費しません。"
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "まとめ買いが性格の一部になりました。"
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "規模の経済"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "現金、科学、ボットの生産量をlog5(施設の総数)倍にします。最低1倍です。"
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "組み立ては少し済ませておきました。"
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "先行スタート"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "無限ごとに一度、利用可能な各施設を購入数として30個獲得します。価格は上がりません。解放済みの巨大構造物も対象です。"
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "領収書は一枚。手柄は全員のもの。"
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "共同購入"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "各施設の購入ボーナスに、全施設の購入数合計を使います。その後にTerraを適用します。価格は変わりません。"
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "値札が不安そうです。"
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "価格上昇の抑制"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "有効な欠片スキルごとに施設価格の上昇率を0.5パーセントポイント下げます。最低0.1%です。"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "採用担当の出番がなくなりました。"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "自己複製労働者"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "狩人と採集者の生産速度に (1 + スウォーム係数 × それぞれの人数 / 10)^0.75 を乗算。打ち上げたパネルのエネルギーに (1 + スウォーム係数 × 打ち上げたパネル数 / 100)^0.5 を乗算。"
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "工場は元の場所に置いてください。"
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "安定供給"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "インフィニティ後も購入した施設を保持します。リセット前に割り当てると購入分が自動で戻ります。無料の初期施設は累積しません。クアンタムで備蓄が消えます。"
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "犠牲もまとめ買いできるようになりました。"
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "恒星スウォーム"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "恒星の犠牲の生産量を 1 + log12.5(Bots) × log12.5(P) 倍にします。P は所有する最上位施設の購入数による倍率です。ボットの消費量は変わりません。"
     }
   ],
   "skills.switch-anyway": [
@@ -13299,6 +14135,12 @@
       "value": "保存したベストを消去しますか？"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "合計時間"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -13309,6 +14151,12 @@
     {
       "type": 0,
       "value": "IP倍増を使用"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "初回の超越"
     }
   ],
   "statistics.speedruns.importedRun": [
@@ -13327,6 +14175,12 @@
     {
       "type": 0,
       "value": "自己ベスト"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "以前の計測方式"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -14631,21 +15485,7 @@
       "children": [
         {
           "type": 0,
-          "value": "レベル1"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "から始まり、"
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "資金・ボット・施設の生産が10倍"
+          "value": "施設生産量10倍"
         }
       ]
     },
@@ -14659,13 +15499,27 @@
       "children": [
         {
           "type": 0,
-          "value": "パネル基本寿命は10秒"
+          "value": "資金・ボット獲得量7倍"
         }
       ]
     },
     {
       "type": 0,
-      "value": "になります。完了するたびに倍率と基本寿命に"
+      "value": "、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "パネルの基本寿命20秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "から始まります。基準時間1時間の完了ごとに施設倍率が"
     },
     {
       "type": 8,
@@ -14679,7 +15533,7 @@
     },
     {
       "type": 0,
-      "value": "が加算されます。基本速度では1時間で1回完了します。科学者や資源は不要です。"
+      "value": "増加します。組立ラインの出力には施設とボットの両方のボーナスが適用されます。発見に科学者や資源は不要です。"
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14793,13 +15647,13 @@
       "children": [
         {
           "type": 0,
-          "value": "発見速度"
+          "value": "高揚"
         }
       ]
     },
     {
       "type": 0,
-      "value": "は購入ごとに"
+      "value": "は"
     },
     {
       "type": 8,
@@ -14807,13 +15661,13 @@
       "children": [
         {
           "type": 0,
-          "value": "速度 +25%"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。"
+      "value": "で、資金とボットを"
     },
     {
       "type": 8,
@@ -14821,13 +15675,111 @@
       "children": [
         {
           "type": 0,
-          "value": "初期出力"
+          "value": "10倍"
         }
       ]
     },
     {
       "type": 0,
-      "value": "は初期倍率とパネル基本寿命に"
+      "value": "にし、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "基準時間30分"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "ごとに完了：倍率+0.1、発見の進捗+30分。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "悟り"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "は"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "で、基本寿命を"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "にし、"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "基準時間10分"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "ごとに完了：寿命+0.1秒、高揚の進捗+10分。転送で前のバーが完了することがあり、余剰進捗は保持されます。スキルツリーの速度ボーナスは"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "で適用され、その他は全量適用されます。転送は前のバーを、その時点の速度で指定されたゲーム時間分進めます。共通速度の購入は"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "を加算し、個別の強化購入は対応する初期倍率または寿命に"
     },
     {
       "type": 8,
@@ -14841,7 +15793,7 @@
     },
     {
       "type": 0,
-      "value": "を加算し、現在の周回にも即時反映されます。各アップグレードの価格はそれぞれ"
+      "value": "を加算します。反復購入の価格はそれぞれ"
     },
     {
       "type": 8,
@@ -14849,13 +15801,13 @@
       "children": [
         {
           "type": 0,
-          "value": "超越ポイント1、2、3…"
+          "value": "1、2、3… TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": "と増えます。ボーナスは加算されます。"
+      "value": "です。ボーナスは加算されます。"
     }
   ],
   "wiki.discovery.upgrades-title": [
@@ -15698,40 +16650,58 @@
       "value": "バージョン 4.1.10"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "実績5つ、プリセット6～10、ボットと研究タブの任意のプリセットクイック操作を追加。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "恒星スウォームの暴走的な成長を修正。安定供給は再割り当てなしでInfinity後に購入数を引き継ぐようになりました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
-      "value": "施設の価格上昇率と、巨大構造物のコスト・生産量を調整しました。"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-10.bot-boost": [
-    {
-      "type": 0,
-      "value": "セーブデータのリセット後に永久2倍ボットの効果が失われる不具合を修正しました。"
+      "value": "施設価格の上昇率、巨大構造物の価格と生産量を調整しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "触媒を2個獲得できる「科学なし」量子チャレンジを追加しました。恒星の犠牲は、巨大構造物を含む所有する最上位の施設を生成するようになりました。"
+      "value": "触媒を各2個獲得できる量子チャレンジを7種追加しました。挑戦中は現実のスキルポイントと一部の量子アップグレードが無効になります。現実の進行状況は保持されます。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "発見は時間とともに成長し、資金、ボット、施設生産量、パネル寿命を強化します。関連スキルは解放時に発見向けの効果に変わります。"
+      "value": "連動する3本の進行バーを追加しました。発見は施設、昇華は資金とボット、悟りはパネル寿命を強化します。後続のバーは直前のバーを進めます。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "アボカトに発見速度と初期パワーの恒久アップグレードを追加しました。"
+      "value": "Avocatoに発見の速度と強さを高める永続アップグレードを追加しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "獲得した開発者オプションのクラウドでの保持、オーグメントのスキルポイント計算、デバッグでの負の調整、プロモーションのローテーションを修正しました。"
+      "value": "セーブリセット後の永続ボット2倍、削除したプリセットや廃止した研究の復活、Tinkerの高速入力、チャレンジや拡張の不具合を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.fracturing": [
+    {
+      "type": 0,
+      "value": "ガルバナイザーを触媒に、ガルバナイズスキルを破砕スキルに改称。チャレンジ中でも破砕でき、効果を事前に確認できるほか、オーグメントツリーが開きます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Offでは施設の自動生成のみが可能に。Tinkerは無効となり、生成されたAssembly Linesも序盤の目標に数えられます。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
@@ -15740,28 +16710,64 @@
       "value": "iOS 16以降が必要になりました。"
     }
   ],
-  "wiki.patch-notes.version-4-1-10.save-fix": [
+  "wiki.patch-notes.version-4-1-10.orientation": [
     {
       "type": 0,
-      "value": "保存や再読み込み後に、以前の研究や消去したスキルプリセットが復活する不具合を修正しました。"
+      "value": "モバイル版に自動・縦向き・横向きの画面設定を追加。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.presentation": [
+    {
+      "type": 0,
+      "value": "生産詳細、スキルプレビュー、スクロール、ダイアログを改善。施設バーを太くし、ボタンに柔らかなグラデーションを追加。サイドメニューに貯蔵時間を表示し、ビジュアライゼーションを初期設定で有効にしました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.refunds": [
+    {
+      "type": 0,
+      "value": "ホットスタートは返金不可になりました。バンキング、投資、星の記憶は返金可能です。返金不可のスキルを初めて割り当てる前に警告を追加しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.secret": [
     {
       "type": 0,
-      "value": "発見の解放後、Avotationの6番目の秘密に到達すると自動的に完了するようになりました。"
+      "value": "発見が解放済みなら、Avotationの6番目の秘密に到達すると自動的に達成されます。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "スピードランで現在の挑戦と自己ベストを比較できるようになりました。自己ベストはセーブのリセット後も保持されます。使用状況アイコンとIP倍増の記録を追加し、統計のタブ選択を記憶するようにしました。自己ベストはクラウドセーブで同期されますが、エクスポートには含まれません。 新しいマイルストーン記録にはプレイ時間を使用します。"
+      "value": "スピードランを改善しました。個人ベストの保持、現在の周回との比較、補助の使用表示、初回の超越の記録を追加しました。新しい記録はプレイ時間と使用した保存時間を合計します。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.starter": [
+    {
+      "type": 0,
+      "value": "最初の量子跳躍後、新しい周回は組立ライン1基を持って始まります。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-memory": [
+    {
+      "type": 0,
+      "value": "星の記憶を変更しました。無限と量子のリセット時に新たに生成したSRSチャージを蓄え、SRS拡張を強化します。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-sacrifices": [
+    {
+      "type": 0,
+      "value": "恒星の犠牲は、所有する最上位の施設を生成するようになりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "手作業・スウォーム・フラグメントのオーグメントを追加。施設を手作業で作る7つの強化も含まれます。手動組立でも組立ラインの手作業生成が維持されます。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
-      "value": "オーバーフローを超越に改名しました。アボカトで超越ポイントを1消費すると、科学と研究に代わる発見を解放できます。"
+      "value": "Overflowの名称を超越に変更しました。Avocatoで超越ポイント1を使って発見を解放すると、科学と研究が置き換わります。"
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest'
 import { hydrateGameState } from '../game-state/mapping'
 import { prepareIdb1Save } from '../save/prepare'
 import { DREAM_UPGRADE_FLAGS } from '../game-state/types'
+import { achievementIds } from './ids'
 import { COMPLETION_UPGRADES, evaluateAchievements } from './evaluate'
 const source = hydrateGameState(prepareIdb1Save(readFileSync(new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt',import.meta.url),'utf8')).prepared).state
 function empty() {
@@ -14,9 +15,16 @@ function empty() {
   Object.assign(s.dream,{strangeMatter:0,upgrades:Object.fromEntries(DREAM_UPGRADE_FLAGS.map(id=>[id,false]))})
   Object.assign(s.secretProgress,{completed:false,step:0})
   Object.assign(s.skills,{byId:{}})
+  Object.assign(s, { discovery: undefined, challenges: undefined })
+  Object.assign(s.statistics.lifetime, { botCapOverflowRewards: 0n })
   return s
 }
 const cases: [string,(s:ReturnType<typeof empty>)=>void][] = [
+ ['first_transcendence',s=>Object.assign(s.statistics.lifetime,{botCapOverflowRewards:1n})],
+ ['enlightenment',s=>Object.assign(s,{discovery:{unlocked:true,enlightenment:{completions:0n,progress:0,startingPower:0n}}})],
+ ['first_quantum_challenge',s=>Object.assign(s,{challenges:{completedQuantumChallenges:['grounded']}})],
+ ['first_fracture',s=>Object.assign(s,{challenges:{galvanizedSkillIds:['manualLabour']}})],
+ ['first_galactic_brain',s=>Object.assign(s.dyson.facilities,{galactic_brains:[0.5,0.5]})],
  ['first_bot',s=>Object.assign(s.dyson,{bots:1})],
  ...([['first_assembly_line','assembly_lines'],['first_ai_manager','ai_managers'],['first_server','servers'],['first_data_center','data_centers'],['first_planet','planets']] as const).map(([id,f])=>[id,(s:ReturnType<typeof empty>)=>Object.assign(s.dyson.facilities,{[f]:[0,1]})] as [string,(s:ReturnType<typeof empty>)=>void]),
  ['first_influence',s=>Object.assign(s.reality,{influence:1})],
@@ -47,7 +55,7 @@ describe('provider-neutral achievement rules',()=>{
    expect(evaluateAchievements(empty(),false).unlocked).not.toContain('achievement.developer_options')
    expect(evaluateAchievements(empty(),true).unlocked).toContain('achievement.developer_options')
  })
- test('all 27 canonical identifiers have coverage',()=>expect(new Set([...cases.map(([id])=>id),'developer_options']).size).toBe(27))
+ test('every canonical identifier has coverage',()=>expect([...cases.map(([id])=>`achievement.${id}`),'achievement.developer_options'].sort()).toEqual([...achievementIds].sort()))
  test('10 quintillion does not unlock 42 quintillion; exponent retains meaning',()=>{
    const s=empty();Object.assign(s.dyson,{bots:1e19})
    const facts=evaluateAchievements(s,false)
@@ -83,3 +91,20 @@ test('no Strange Matter evidence does not grant the milestone', () => {
   Object.assign(state.avocado, { strangeMatter: 0 })
   expect(evaluateAchievements(state, false).unlocked).not.toContain('achievement.first_strange_matter')
 })
+
+ test('unlock ownership and spendable points do not substitute for completed milestones', () => {
+   const state = empty()
+   Object.assign(state.avocado, { overflowPoints: 10n })
+   Object.assign(state.quantum.unlocks, { galacticBrains: true })
+   Object.assign(state, { challenges: { active: 'no-science', galvanizers: 2n, blankSlateCompleted: false } })
+   const result = evaluateAchievements(state, false).unlocked
+   expect(result).not.toContain('achievement.first_transcendence')
+   expect(result).not.toContain('achievement.first_quantum_challenge')
+   expect(result).not.toContain('achievement.first_fracture')
+   expect(result).not.toContain('achievement.first_galactic_brain')
+ })
+ test.each(['blankSlateCompleted', 'trialAndErrorCompleted', 'noScienceCompleted'])('%s qualifies as the first challenge', field => {
+   const state = empty()
+   Object.assign(state, { challenges: { [field]: true } })
+   expect(evaluateAchievements(state, false).unlocked).toContain('achievement.first_quantum_challenge')
+ })

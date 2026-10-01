@@ -1,3 +1,4 @@
+import { orientationAvailable, readOrientationPreference, applyOrientationPreference, type OrientationPreference } from '../../../platform/screenOrientation'
 import { challengeMessages } from '../infinity/challengeMessages'
 import {
   useEffect,
@@ -176,6 +177,8 @@ export function SettingsSurface({
   const [achievementStatus, setAchievementStatus] = useState<'idle' | 'pending' | 'failed'>('idle')
   const intl = useIntl()
   const language = useLocalePreference()
+  const [orientation, setOrientation] = useState(readOrientationPreference)
+  const [orientationStatus, setOrientationStatus] = useState<'idle' | 'pending' | 'failed'>('idle')
   const numberNotation = useNumberNotation()
   const developmentPresetId = useId()
   const developmentPanelId = useId()
@@ -695,6 +698,29 @@ export function SettingsSurface({
                   </select>
                 </label>
               </section>
+              {!developmentOnly && orientationAvailable() && (
+                <section className="settings-surface__panel settings-surface__panel--orientation">
+                  <label className="settings-surface__select-label">
+                    <span>{intl.formatMessage(messages.orientation)}</span>
+                    <select value={orientation} disabled={orientationStatus === 'pending'} onChange={async event => {
+                      const value = event.currentTarget.value as OrientationPreference
+                      setOrientationStatus('pending')
+                      try {
+                        await applyOrientationPreference(value)
+                        setOrientation(value)
+                        setOrientationStatus('idle')
+                      } catch {
+                        setOrientationStatus('failed')
+                      }
+                    }}>
+                      <option value="auto">{intl.formatMessage(messages.orientationAuto)}</option>
+                      <option value="portrait">{intl.formatMessage(messages.orientationPortrait)}</option>
+                      <option value="landscape">{intl.formatMessage(messages.orientationLandscape)}</option>
+                    </select>
+                  </label>
+                  {orientationStatus === 'failed' && <p role="alert">{intl.formatMessage(messages.orientationFailed)}</p>}
+                </section>
+              )}
               <section className="settings-surface__panel settings-surface__panel--processing">
                 <div className="settings-surface__copy">
                   <h2>{intl.formatMessage(messages.processingTitle)}</h2>

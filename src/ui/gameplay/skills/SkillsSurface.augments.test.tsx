@@ -6,7 +6,7 @@ import { afterEach, expect, test, vi } from 'vitest'
 import { hydrateGameState } from '../../../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../../../game-state/types'
 import { prepareIdb1Save } from '../../../save/prepare'
-import { previewCanonicalSkillCatalog, purchaseCanonicalSkill, refundCanonicalSkill } from '../../../simulation/canonicalSkillTransactions'
+import { galvanizeCanonicalSkill, previewCanonicalSkillCatalog, purchaseCanonicalSkill, refundCanonicalSkill } from '../../../simulation/canonicalSkillTransactions'
 import { CASH_SCIENCE_SUBSKILLS } from '../../../simulation/skillSubskills'
 import { SkillsSurface, type SkillsSurfaceProps } from './SkillsSurface'
 import fixture from '../../../../test/fixtures/schema-08-canonical-idb1-main-save.txt?raw'
@@ -22,7 +22,7 @@ function setup(galvanized = true, rootId = 'startHereTree') {
       [rootId]: { owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0 },
     }, activeAutoAssignment: [] },
     challenges: { unlocked: true, active: null, blankSlateCompleted: true,
-      galvanizers: 0n, hasEarnedGalvanizer: true,
+      galvanizers: 1n, hasEarnedGalvanizer: true,
       galvanizedSkillIds: galvanized ? [rootId] : [] },
   }
   const dispatch = vi.fn<SkillsSurfaceProps['dispatchPlayer']>()
@@ -32,7 +32,8 @@ function setup(galvanized = true, rootId = 'startHereTree') {
       const result = command.kind === 'skill.purchase'
         ? purchaseCanonicalSkill(state, command.skillId)
         : command.kind === 'skill.refund'
-          ? refundCanonicalSkill(state, command.skillId) : null
+          ? refundCanonicalSkill(state, command.skillId)
+          : command.kind === 'skill.galvanize' ? galvanizeCanonicalSkill(state, command.skillId) : null
       if (!result?.accepted) throw new Error('Unexpected/rejected command')
       current = result.state
       setState(current)
@@ -41,6 +42,7 @@ function setup(galvanized = true, rootId = 'startHereTree') {
     })
     return <IntlProvider locale="en" messages={{}}>
       <SkillsSurface locale="en" points={state.skills.points} fragments={state.skills.fragments}
+        galvanizers={state.challenges!.galvanizers}
         catalog={previewCanonicalSkillCatalog(state)} presets={state.skills.presets}
         selectedPresetSlot={1} botDistribution={0} autoAssignNonRefundable={false}
         commandAvailability={{ purchase: true, refund: true, selectPreset: true,
@@ -151,4 +153,17 @@ test('Galvanized SRS keeps its authored incoming line without restoring purchase
   expect(connector).not.toBeNull()
   expect(connector!.querySelector('.skill-tree-connection-arrow')).toBeNull()
   expect(connector!.querySelectorAll('path')).toHaveLength(2)
+})
+
+
+test('fracturing opens the available subtree immediately without assigning augments', async () => {
+  const { container, state } = setup(false)
+  openRoot()
+  fireEvent.click(screen.getByRole('button', { name: /Fracture.*1/ }))
+  fireEvent.click(screen.getByRole('button', { name: 'Spend 1 Catalyst' }))
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  expect(container.querySelector('[data-augment-root="startHereTree"]')).not.toBeNull()
+  expect(screen.getByRole('button', { name: 'Extended Warranty. Cost: 1 Skill Points' })).toBeTruthy()
+  expect(state().challenges!.galvanizers).toBe(0n)
+  expect(state().skills.byId[CASH_SCIENCE_SUBSKILLS.lifetime]?.owned).not.toBe(true)
 })

@@ -61,11 +61,11 @@
 }
 
 .ui-button:not(:disabled):hover {
-  background: var(--color-control-hover);
+  background-color: var(--color-control-hover);
 }
 
 .ui-button:not(:disabled):active {
-  background: var(--color-control-pressed);
+  background-color: var(--color-control-pressed);
 }
 
 .ui-button:focus-visible {

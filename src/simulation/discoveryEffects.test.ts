@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { createDeterministicMatureDysonFixture, DETERMINISTIC_DYSON_SNAPSHOT as snapshot, DETERMINISTIC_DYSON_TUNING as tuning } from '../../scripts/support/deterministicMatureDysonFixture'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { deriveDiscoveryEffects } from './discoveryEffects'
-import { EMPTY_DISCOVERY, DISCOVERY_TUNING, discoveryGrowingBonus } from './discovery'
+import { advanceDiscovery, EMPTY_DISCOVERY, DISCOVERY_TUNING, discoveryGrowingBonus } from './discovery'
 import { SRS_AUGMENTS } from './skillSubskills'
 
 function fixture(skills: string[] = []) {
@@ -22,6 +22,10 @@ function derive(state: ReturnType<typeof fixture>) {
 }
 
 describe('Discovery effect conversions', () => {
+  it('advances using the full runtime effect projection', () => {
+    const state = fixture()
+    expect(advanceDiscovery(state.discovery!, 3600, deriveDiscoveryEffects(state, snapshot)).completions).toBeGreaterThan(0n)
+  })
   it.each(Object.entries(DISCOVERY_TUNING.skillSpeed).filter(([id]) => !id.startsWith('subskill.')))('%s adds only its authored speed benefit', (id, bonus) => {
     const state = fixture([id])
     expect(deriveDiscoveryEffects(state, snapshot).speed - deriveDiscoveryEffects(fixture(), snapshot).speed).toBeCloseTo(bonus)
@@ -49,8 +53,9 @@ describe('Discovery effect conversions', () => {
     const enhanced = { ...state, skills: { ...state.skills, byId: { ...state.skills.byId, regulatedAcademia: { ...state.skills.byId.regulatedAcademia, owned: true } } } }
     const after = derive(enhanced)
     const ratio = deriveDiscoveryEffects(enhanced, snapshot).multiplier / deriveDiscoveryEffects(state, snapshot).multiplier
-    expect(after.rates.money / base.rates.money).toBeCloseTo(ratio, 8)
-    expect(after.rates.bots / base.rates.bots).toBeCloseTo(ratio, 8)
+    const cashBotsRatio = deriveDiscoveryEffects(enhanced, snapshot).cashBotsMultiplier / deriveDiscoveryEffects(state, snapshot).cashBotsMultiplier
+    expect(after.rates.money / base.rates.money).toBeCloseTo(cashBotsRatio, 8)
+    expect(after.rates.bots / base.rates.bots).toBeCloseTo(ratio * cashBotsRatio, 8)
     expect(after.globals.panelLifetimeSeconds).toBe(base.globals.panelLifetimeSeconds)
     expect(after.planetPricingModifier).toEqual(base.planetPricingModifier)
   })

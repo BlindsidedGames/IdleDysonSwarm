@@ -712,6 +712,9 @@ function RealityUpgradeCard({
       <div className="reality-upgrade-card__copy">
         <h4>{name}</h4>
         <p>{intl.formatMessage(copy.description)}</p>
+        {preview.skillPointsInactive ? (
+          <p>{intl.formatMessage(messages.skillPointsInactive)}</p>
+        ) : null}
       </div>
       <Button
         variant="primary"

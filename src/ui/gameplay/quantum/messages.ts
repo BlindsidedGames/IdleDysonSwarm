@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const quantumMessages = defineMessages({
+  inactiveChallenge: { id: 'quantum.inactiveChallenge', defaultMessage: 'Inactive during this challenge' },
   region: { id: 'quantum.region', defaultMessage: 'Quantum', description: 'Accessible name for the Unity Quantum route.' },
   shards: { id: 'quantum.shards', defaultMessage: 'Quantum Shards', description: 'Unity name for the permanent Quantum currency.' },
   spent: { id: 'quantum.shards.spent', defaultMessage: '({value} spent)', description: 'Parenthetical spent Quantum Shard balance.' },

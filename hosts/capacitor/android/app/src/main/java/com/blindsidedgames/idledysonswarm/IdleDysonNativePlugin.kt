@@ -6,6 +6,7 @@ import android.app.Activity
 import androidx.activity.result.ActivityResult
 import com.getcapacitor.annotation.ActivityCallback
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.view.View
 import android.view.ViewTreeObserver
@@ -32,6 +33,20 @@ import java.util.UUID
 
 @CapacitorPlugin(name = "IdleDysonNative")
 class IdleDysonNativePlugin : Plugin() {
+    @PluginMethod
+    fun setOrientation(call: PluginCall) {
+        val orientation = when (call.getString("orientation")) {
+            "auto" -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            "portrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            "landscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            else -> { call.reject("Invalid orientation"); return }
+        }
+        activity.runOnUiThread {
+            try { activity.requestedOrientation = orientation; call.resolve() }
+            catch (error: Exception) { call.reject("Could not change orientation", error) }
+        }
+    }
+
     private var lifecyclePhase = "active"
     private lateinit var entitlementCache: NativeEntitlementCache
     private lateinit var googlePlayStore: GooglePlayStore
@@ -71,6 +86,11 @@ class IdleDysonNativePlugin : Plugin() {
 
     // Mirrors hosts/capacitor/achievement-map.json; IDs never leave the native host.
     private val achievementIds = mapOf(
+        "achievement.first_transcendence" to "CgkIkpjJyrENEAIQJg",
+        "achievement.enlightenment" to "CgkIkpjJyrENEAIQJw",
+        "achievement.first_quantum_challenge" to "CgkIkpjJyrENEAIQKA",
+        "achievement.first_fracture" to "CgkIkpjJyrENEAIQKQ",
+        "achievement.first_galactic_brain" to "CgkIkpjJyrENEAIQKg",
         "achievement.first_bot" to "CgkIkpjJyrENEAIQAg",
         "achievement.first_assembly_line" to "CgkIkpjJyrENEAIQAw",
         "achievement.first_data_center" to "CgkIkpjJyrENEAIQBw",

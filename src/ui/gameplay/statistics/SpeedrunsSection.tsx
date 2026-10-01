@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { elapsedSpeedrunSeconds, speedrunRecordSeconds, SPEEDRUN_MILESTONES, speedrunEligible, isUnboostedSpeedrun, type SpeedrunMilestoneId, type SpeedrunStatistics } from '../../../simulation/speedrunStatistics'
+import { elapsedSpeedrunSeconds, speedrunRecordSeconds, speedrunStoredSeconds, speedrunTimingBasis, SPEEDRUN_MILESTONES, speedrunEligible, isUnboostedSpeedrun, type SpeedrunMilestoneId, type SpeedrunStatistics } from '../../../simulation/speedrunStatistics'
 import { formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { statisticsMessages as messages } from './messages'
@@ -14,7 +14,7 @@ export function SpeedrunsSection({ run, locale, onClearBest }: { readonly run?: 
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer) }, [])
   const elapsed = run ? elapsedSpeedrunSeconds(run, now) : null
   const labels = { firstInfinity: messages.speedrunFirstInfinity, firstQuantumLeap: messages.speedrunFirstQuantum,
-    reality: messages.speedrunReality, doubleSpeed: messages.speedrunDoubleSpeed, debugQualification: messages.speedrunDebugQualification }
+    reality: messages.speedrunReality, doubleSpeed: messages.speedrunDoubleSpeed, firstTranscendence: messages.speedrunFirstTranscendence, debugQualification: messages.speedrunDebugQualification }
   return <section className="statistics-speedruns" aria-label={intl.formatMessage(messages.speedruns)}>
     <article className="statistics-card">
       <h3>{intl.formatMessage(messages.speedrunCurrentSave)}</h3>
@@ -23,6 +23,8 @@ export function SpeedrunsSection({ run, locale, onClearBest }: { readonly run?: 
         <div><dt>{intl.formatMessage(messages.saveCreatedWith)}</dt><dd>{run?.createdWithVersion ?? intl.formatMessage(messages.speedrunUnknown)}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunElapsed)}</dt><dd>{elapsed === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, elapsed)}</dd></div>
         <div><dt>{intl.formatMessage(messages.activeElapsed)}</dt><dd>{run?.activeSeconds === undefined ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, run.activeSeconds)}</dd></div>
+        <div><dt>{intl.formatMessage(messages.speedrunStored)}</dt><dd>{!run || speedrunStoredSeconds(run) === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, speedrunStoredSeconds(run)!)}</dd></div>
+        <div><dt>{intl.formatMessage(messages.combinedTime)}</dt><dd>{!run || speedrunTimingBasis(run) !== 'combined' ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, speedrunRecordSeconds(run, now)!)}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunEligibility)}</dt><dd>{intl.formatMessage(run?.imported ? messages.importedRun : run?.debug === 'yes' ? messages.speedrunIneligible : run && speedrunEligible(run) ? messages.speedrunEligible : messages.speedrunUnverified)}</dd></div>
       </dl>
       <SpeedrunUsage usage={run} />
@@ -37,10 +39,12 @@ export function SpeedrunsSection({ run, locale, onClearBest }: { readonly run?: 
           <h3 tabIndex={-1}>{intl.formatMessage(labels[id])}</h3>
           {[{ label: messages.currentRun, result: milestone, current: true }, { label: bestLabel, result: best, current: false }].map(({ label, result, current }) => {
             const seconds = result ? result.elapsedSeconds : current && run ? speedrunRecordSeconds(run, now) : null
+            const basis = result ? result.timingBasis : current && run ? speedrunTimingBasis(run) : undefined
+            const timingLabel = basis === 'combined' ? messages.combinedTime : basis === 'active' ? messages.activeElapsed : basis === 'elapsed' ? messages.speedrunElapsed : messages.previousTiming
             return <section className="speedrun-result" key={label.id} aria-label={intl.formatMessage(label)}>
               <div className="speedrun-result__heading">
                 <h4>{intl.formatMessage(label)}</h4>
-                <p className="speedrun-result__time">{!current && !result ? intl.formatMessage(messages.speedrunNotRecorded) : seconds === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, seconds)}</p>
+                <p className="speedrun-result__time" title={intl.formatMessage(timingLabel)}>{!current && !result ? intl.formatMessage(messages.speedrunNotRecorded) : seconds === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, seconds)}{seconds !== null && (current || result) && basis !== 'combined' && <small className="speedrun-result__basis">{intl.formatMessage(timingLabel)}</small>}</p>
               </div>
               {(current || result) && <div className="speedrun-result__indicators">
                 <SpeedrunUsage usage={result ?? run} />

@@ -1,3 +1,4 @@
+import type { SkillPresetSlot } from './skillPresetSlots'
 import type { SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import type { BuyMode } from '../simulation/transactions'
 import type { CanonicalFacilityId } from './facilityIds'
@@ -37,6 +38,7 @@ export interface GameMetaState {
   readonly createdAtLegacyText: string | null
   readonly tutorialComplete: boolean
   readonly firstInfinityComplete: boolean
+  readonly firstQuantumComplete?: boolean
   /** Unity settings that control the persistent bottom-menu shortcuts. */
   readonly navigationVisibility?: {
     readonly story: boolean
@@ -60,6 +62,8 @@ export interface DysonState {
   readonly manualCreationIntervalSeconds: number
   readonly totalPanelsDecayed: number
   readonly goalStage: bigint
+  /** Completed Tinker work in this run, capped at the final 250-action goal. */
+  readonly completedTinkers?: number
   readonly botDistribution: number
   readonly automation: {
     readonly buyMode: BuyMode
@@ -127,29 +131,39 @@ export interface SkillPresetState {
   readonly colorId: SkillPresetColorId
 }
 
-export type CanonicalSkillPresetSlot = 1 | 2 | 3 | 4 | 5
+export type CanonicalSkillPresetSlot = SkillPresetSlot
 
 export type CanonicalSkillPresetAutomationSlot =
   | 0
   | CanonicalSkillPresetSlot
 
+export interface SwarmGrantState {
+  /** Free units already granted in this run; excluded from geometric pricing. */
+  readonly headStart: Partial<Record<CanonicalFacilityId, number>>
+  /** Paid purchases captured at the previous completed Infinity. */
+  readonly retained: Partial<Record<CanonicalFacilityId, number>>
+  /** Amount already restored this run, preventing refund/reassignment duplication. */
+  readonly restored: Partial<Record<CanonicalFacilityId, number>>
+}
+
 export interface SkillsState {
+  readonly swarmGrants?: SwarmGrantState
   readonly points: bigint
   readonly fragments: bigint
   readonly byId: Readonly<Record<string, SkillRuntimeState>>
   readonly activeAutoAssignment: readonly string[]
-  readonly presets: readonly [
-    SkillPresetState,
-    SkillPresetState,
-    SkillPresetState,
-    SkillPresetState,
-    SkillPresetState,
-  ]
+  readonly presets: readonly SkillPresetState[]
   readonly autoAssignNonRefundable: boolean
   readonly tabPresetAutomation: {
     readonly bots: CanonicalSkillPresetAutomationSlot
     readonly research: CanonicalSkillPresetAutomationSlot
   }
+}
+
+export interface DiscoveryTierState {
+  readonly completions: bigint
+  readonly progress: number
+  readonly startingPower: bigint
 }
 
 export interface DiscoveryState {
@@ -158,6 +172,8 @@ export interface DiscoveryState {
   readonly progress: number
   readonly startingPower: bigint
   readonly speedUpgrades: bigint
+  readonly elevation?: DiscoveryTierState
+  readonly enlightenment?: DiscoveryTierState
 }
 
 export interface ResearchState {
@@ -530,11 +546,15 @@ export interface SimulationStatisticsState {
   readonly dailyWindows: readonly StatisticsWindowState[]
 }
 
+export type QuantumChallengeId = 'no-science' | 'short-circuit' | 'grounded' | 'built-by-hand' | 'hands-off' | 'commitment-issues' | 'supply-shortage'
+export type ChallengeId = 'blank-slate' | 'trial-and-error' | QuantumChallengeId
+
 export interface InfinityChallengeState {
   readonly galvanizedSkillIds?: readonly string[]
   readonly unlocked: boolean
-  readonly active: 'blank-slate' | 'trial-and-error' | 'no-science' | null
-  readonly completionSeconds?: Readonly<Partial<Record<'blank-slate' | 'trial-and-error' | 'no-science', number>>>
+  readonly active: ChallengeId | null
+  readonly completedQuantumChallenges?: readonly QuantumChallengeId[]
+  readonly completionSeconds?: Readonly<Partial<Record<ChallengeId, number>>>
   readonly noScienceCompleted?: boolean
   readonly trialAndErrorCompleted?: boolean
   readonly blankSlateCompleted: boolean

@@ -5,7 +5,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { CanonicalRuntimeSession } from '../application/canonicalRuntimeSession'
 import { hydrateGameState } from '../game-state/mapping'
-import { recordActiveSpeedrunTime, createSpeedrunStatistics, elapsedSpeedrunSeconds, markSpeedrunUsage, observeSpeedruns, qualifiesForDebug, speedrunEligible, validateSpeedrunStatistics } from './speedrunStatistics'
+import { recordStoredSpeedrunTime, speedrunRecordSeconds, speedrunTimingBasis, speedrunStoredSeconds, initializeSpeedrunTracking, recordPersonalBest, recordActiveSpeedrunTime, createSpeedrunStatistics, elapsedSpeedrunSeconds, markSpeedrunUsage, observeSpeedruns, qualifiesForDebug, speedrunEligible, validateSpeedrunStatistics } from './speedrunStatistics'
 import { serializeWebSave, deserializeWebSave } from '../save/serialization'
 import { PreparedSave } from '../save/prepare'
 import { applyCanonicalOverflowReset } from './canonicalOverflowReset'
@@ -70,7 +70,7 @@ describe('whole-save speedruns', () => {
   })
   test('records survive serialization/reload and Overflow resets; new saves start clean', () => {
     const session = new CanonicalRuntimeSession(createUnityFirstRunPreparedSave({ startedAtUtc: start }), { entitlements: { permanentDoubleIp: false } })
-    let state = recordActiveSpeedrunTime(markSpeedrunUsage(markSpeedrunUsage(session.initialState.gameState, 'debug'), 'storedTime'), 123)
+    let state = recordStoredSpeedrunTime(recordActiveSpeedrunTime(markSpeedrunUsage(session.initialState.gameState, 'debug'), 123), 3600)
     state = { ...state, dyson: { ...state.dyson, bots: OVERFLOW_BOT_CAP }, infinity: { ...state.infinity, overflowEligible: true } }
     const prepared = session.prepare({ ...session.initialState, gameState: state })
     const loaded = new CanonicalRuntimeSession(PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(prepared.copyValidatedState()))), { entitlements: { permanentDoubleIp: false } }).initialState.gameState
@@ -213,4 +213,74 @@ test('older runs without complete active timing retain elapsed-time fallback ins
   const partial = recordActiveSpeedrunTime({ ...state, statistics: { ...state.statistics, speedruns: legacy } }, 5)
   const reached = observeSpeedruns({ ...partial, meta: { ...partial.meta, firstInfinityComplete: true } }, origin + 60000)
   expect(reached.statistics.speedruns!.personalBests!.firstInfinity!.elapsedSeconds).toBe(60)
+})
+
+
+describe('combined timing and Transcendence', () => {
+  test('captures active and spent time before a milestone, without rewriting earlier results', () => {
+    let state = recordStoredSpeedrunTime(recordActiveSpeedrunTime(fresh(), 12), 3600)
+    expect(speedrunRecordSeconds(state.statistics.speedruns!)).toBe(3612)
+    state = observeSpeedruns(state, origin + 12000, false, false, true)
+    const milestone = state.statistics.speedruns!.milestones.firstTranscendence!
+    expect(milestone).toMatchObject({ elapsedSeconds: 3612, activeSeconds: 12, storedTimeSeconds: 3600, timingBasis: 'combined', storedTime: 'yes' })
+    state = observeSpeedruns(recordStoredSpeedrunTime(state, 30), origin + 13000, false, false, true)
+    expect(state.statistics.speedruns!.milestones.firstTranscendence).toEqual(milestone)
+    expect(state.statistics.speedruns!.personalBests!.firstTranscendence).toEqual(milestone)
+    expect(validateSpeedrunStatistics(state.statistics.speedruns)).toBeNull()
+  })
+  test('does not infer a new Transcendence from points; historical resets get no invented time', () => {
+    const state = fresh()
+    const points = { ...state, avocado: { ...state.avocado, overflowPoints: 4n } }
+    expect(observeSpeedruns(points, origin).statistics.speedruns!.milestones.firstTranscendence).toBeUndefined()
+    const historical = initializeSpeedrunTracking({ ...points, statistics: { ...points.statistics,
+      lifetime: { ...points.statistics.lifetime, botCapOverflowRewards: 4n } } })
+    expect(historical.statistics.speedruns!.milestones.firstTranscendence).toEqual({ elapsedSeconds: null, storedTime: 'unknown', debug: 'unknown' })
+    expect(historical.statistics.speedruns!.personalBests!.firstTranscendence).toBeUndefined()
+  })
+  test('migrates an unused Stored Time history but preserves an unknown previously used total', () => {
+    const state = fresh()
+    const { storedTimeSeconds: _seconds, storedTimeComplete: _complete, ...legacy } = state.statistics.speedruns!
+    const unused = initializeSpeedrunTracking({ ...state, statistics: { ...state.statistics, speedruns: legacy } })
+    expect(speedrunStoredSeconds(unused.statistics.speedruns!)).toBe(0)
+    expect(speedrunTimingBasis(unused.statistics.speedruns!)).toBe('combined')
+    const used = recordStoredSpeedrunTime({ ...state, statistics: { ...state.statistics, speedruns: { ...legacy, storedTime: 'yes', activeSeconds: 10 } } }, 60)
+    expect(speedrunStoredSeconds(used.statistics.speedruns!)).toBeNull()
+    expect(speedrunTimingBasis(used.statistics.speedruns!)).toBe('active')
+    expect(speedrunRecordSeconds(used.statistics.speedruns!)).toBe(10)
+  })
+  test('complete results replace unlike legacy timing without defeating unboosted precedence', () => {
+    const old = { elapsedSeconds: 10, storedTime: 'yes' as const, debug: 'no' as const }
+    const current = { ...old, timingBasis: 'combined' as const, activeSeconds: 10, storedTimeSeconds: 100, elapsedSeconds: 110 }
+    expect(recordPersonalBest({ firstInfinity: old }, 'firstInfinity', current).firstInfinity).toBe(current)
+    const existing = { firstInfinity: current }
+    expect(recordPersonalBest(existing, 'firstInfinity', old)).toBe(existing)
+    const clean = { ...old, storedTime: 'no' as const, botBoostUsed: false, doubleIpUsed: false }
+    expect(recordPersonalBest({ firstInfinity: clean }, 'firstInfinity', current).firstInfinity).toBe(clean)
+  })
+  test('new timing fields reject invalid data and saturate huge totals', () => {
+    let state = recordStoredSpeedrunTime(recordActiveSpeedrunTime(fresh(), Number.MAX_VALUE), Number.MAX_VALUE)
+    state = recordStoredSpeedrunTime(state, Number.MAX_VALUE)
+    expect(speedrunRecordSeconds(state.statistics.speedruns!)).toBe(Number.MAX_VALUE)
+    expect(validateSpeedrunStatistics(state.statistics.speedruns)).toBeNull()
+    for (const invalid of [-1, NaN, Infinity]) {
+      expect(validateSpeedrunStatistics({ ...state.statistics.speedruns, storedTimeSeconds: invalid })).toBeTruthy()
+    }
+    expect(validateSpeedrunStatistics({ ...state.statistics.speedruns, storedTimeComplete: 'true' })).toBeTruthy()
+  })
+})
+
+
+test('split Stored Time intervals preserve whole-second display boundaries', () => {
+  let state = fresh()
+  for (let i = 0; i < 600; i++) state = recordStoredSpeedrunTime(state, 0.1)
+  expect(speedrunStoredSeconds(state.statistics.speedruns!)).toBe(60)
+})
+test('different historical clocks have explicit precedence and cannot downgrade combined records', () => {
+  const base = { elapsedSeconds: 10, debug: 'no' as const, storedTime: 'yes' as const }
+  const elapsed = { ...base, timingBasis: 'elapsed' as const }
+  const active = { ...base, elapsedSeconds: 100, timingBasis: 'active' as const }
+  expect(recordPersonalBest({ firstInfinity: elapsed }, 'firstInfinity', active).firstInfinity).toBe(active)
+  expect(recordPersonalBest({ firstInfinity: active }, 'firstInfinity', elapsed).firstInfinity).toBe(active)
+  const run = fresh().statistics.speedruns!
+  expect(validateSpeedrunStatistics({ ...run, milestones: { firstInfinity: { ...base, timingBasis: ['combined'] } } })).toBeTruthy()
 })

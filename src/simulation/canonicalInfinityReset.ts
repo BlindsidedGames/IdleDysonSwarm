@@ -1,8 +1,11 @@
+import { AVOCADO_MEDITATION_SKILL_POINT_REWARD } from './avocadoMeditation'
+import { initializeSwarmGrants, swarmGrantsAfterInfinity } from './swarmAugments'
+import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive, isQuantumChallengeActive } from './infinityChallenges'
+import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
-import { SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
+import { MANUAL_LABOUR_AUGMENTS, SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
 import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
-import { infinityChallenges, isInfinityChallengeActive, isBlankSlateActive } from './infinityChallenges'
 import { ordinaryInfinityBotThreshold } from './infinityCycle'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
@@ -40,7 +43,7 @@ export interface CanonicalInfinityResetRequest {
   readonly restartOnly?: boolean
   readonly breakInfinity: boolean
   readonly requestedReward: bigint
-  /** Platform/achievement contribution derived outside player state. */
+  /** Full Reality and Avotation contribution; challenge restrictions apply here. */
   readonly artifactSkillPoints: bigint
   /** True only when the event model initiated the reset automatically. */
   readonly automatic?: boolean
@@ -157,7 +160,7 @@ export function applyCanonicalInfinityReset(
   const challenge = infinityChallenges(state)
   const completionKey = challenge.active === 'trial-and-error' ? 'trialAndErrorCompleted' : 'blankSlateCompleted'
   const challengeWon = !request.restartOnly && isInfinityChallengeActive(state) &&
-    !request.breakInfinity && state.dyson.bots >= ordinaryInfinityBotThreshold(state.quantum.divisionsPurchased)
+    !request.breakInfinity && state.dyson.bots >= ordinaryInfinityBotThreshold(effectiveDivisions(state))
   if (!request.restartOnly && isInfinityChallengeActive(state) && !challengeWon) {
     return failed(state, [{ code: 'INFINITY_RESET_REQUEST_INVALID', path: 'request', detail: 'The challenge requires the ordinary Infinity boundary.' }])
   }
@@ -186,12 +189,21 @@ export function applyCanonicalInfinityReset(
   const bankedSkillPoints = request.restartOnly ? 0n :
     owned(state.skills.byId, 'banking') +
     owned(state.skills.byId, 'investmentPortfolio')
+  // Reality ownership survives challenges, but only the separate Avotation
+  // reward contributes to their starting points. Keep the supplied total raw
+  // so abandoning/completing a challenge can restore the full contribution.
+  const artifactSkillPoints = isQuantumChallengeActive(state)
+    ? (state.secretProgress.completed
+      ? (request.artifactSkillPoints < AVOCADO_MEDITATION_SKILL_POINT_REWARD
+        ? request.artifactSkillPoints : AVOCADO_MEDITATION_SKILL_POINT_REWARD)
+      : 0n)
+    : request.artifactSkillPoints
   const initialSkillPoints = addDiscrete(
     addDiscrete(
       state.infinity.permanentSkillPoints,
       bankedSkillPoints,
     ),
-    request.artifactSkillPoints,
+    artifactSkillPoints,
   )
   const assignment = applyAutoAssignment(
     initialSkillPoints,
@@ -203,7 +215,7 @@ export function applyCanonicalInfinityReset(
     state.skills.byId,
     assignment.byId,
   )
-  const facilities = retainedFacilities(state)
+  const facilities = challengeFacilities(state, retainedFacilities(state))
   const statistics = request.restartOnly ? state.statistics : recordInfinityCycle(
     state.statistics,
     request.breakInfinity,
@@ -220,7 +232,7 @@ export function applyCanonicalInfinityReset(
 
   return {
     ok: true,
-    state: {
+    state: initializeSwarmGrants({
       ...state,
       challenges: nextChallenges,
       meta: {
@@ -240,6 +252,7 @@ export function applyCanonicalInfinityReset(
         facilities,
         totalPanelsDecayed: 0,
         goalStage: 0n,
+        ...(state.dyson.completedTinkers === undefined ? {} : { completedTinkers: 0 }),
       },
       infinity: {
         ...state.infinity,
@@ -272,6 +285,7 @@ export function applyCanonicalInfinityReset(
       },
       skills: resetSrsAugments(state, {
         ...state.skills,
+        swarmGrants: swarmGrantsAfterInfinity(state, request.restartOnly === true),
         points: assignment.points,
         fragments: assignment.fragments,
         byId: resetSkillStates,
@@ -282,7 +296,7 @@ export function applyCanonicalInfinityReset(
         progressById: {},
       },
       statistics,
-    },
+    }),
     rewardGranted,
     bankedSkillPoints,
     autoAssignedSkillIds: assignment.assignedIds,
@@ -371,10 +385,11 @@ function validateResetInputs(
 function retainedFacilities(
   state: Readonly<CanonicalGameStateV1>,
 ): CanonicalGameStateV1['dyson']['facilities'] {
+  if (state.challenges?.active === 'hands-off') return { ...EMPTY_FACILITIES, assembly_lines: [1, 0] }
   return {
     ...EMPTY_FACILITIES,
     assembly_lines: [
-      0,
+      hasCompletedQuantum(state) && !state.infinity.retainedFacilities.assembly_lines ? 1 : 0,
       state.infinity.retainedFacilities.assembly_lines ? 10 : 0,
     ],
     ai_managers: [
@@ -625,7 +640,9 @@ function applyAutoAssignment(
     points -= rule.cost
     byId[rule.id] = {
       owned: true,
-      level: 1,
+      // These levels count completed work, rather than an assigned skill level.
+      level: rule.id === MANUAL_LABOUR_AUGMENTS.handAssembly ||
+        rule.id === MANUAL_LABOUR_AUGMENTS.practice ? 0 : 1,
       timerSeconds: 0,
       secondaryTimerSeconds: 0,
     }

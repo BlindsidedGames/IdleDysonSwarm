@@ -48,10 +48,10 @@ describe('CanonicalRuntimeSession', () => {
     const options = {entitlements, captureAchievements:true, persistAchievements:true}
     const session = new CanonicalRuntimeSession(prepared, options)
     const state = structuredClone(session.initialState)
-    state.achievementEvidence = {unlocked:['achievement.first_bot', 'achievement.first_influence'], statistics:{}, presence:''}
+    state.achievementEvidence = {unlocked:['achievement.first_bot', 'achievement.first_influence', 'achievement.first_transcendence', 'achievement.enlightenment', 'achievement.first_quantum_challenge', 'achievement.first_fracture', 'achievement.first_galactic_brain'], statistics:{}, presence:''}
     const saved = session.prepare(state)
     const reopened = new CanonicalRuntimeSession(PreparedSave.fromDecoded(deserializeWebSave(serializeSharedWebSave(saved.copyValidatedState()))), options)
-    expect(reopened.initialState.achievementEvidence?.unlocked).toEqual(expect.arrayContaining(['achievement.first_bot','achievement.first_influence']))
+    expect(reopened.initialState.achievementEvidence?.unlocked).toEqual(expect.arrayContaining(state.achievementEvidence.unlocked))
     const imported = new CanonicalRuntimeSession(prepared, options)
     expect(imported.initialState.achievementEvidence?.unlocked).toEqual([])
     expect(prepared.copyValidatedState().idsAchievementEvidence).toBeUndefined()

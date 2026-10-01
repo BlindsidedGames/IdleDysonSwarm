@@ -1,3 +1,4 @@
+import { challengeAllowsFacility } from './infinityChallenges'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -37,9 +38,9 @@ export function publishDysonSkillEffectEvaluationSnapshot(
     panelLifetimeSeconds: inputs.panelLifetimeSeconds,
     scienceMultiplier: inputs.scienceMultiplier,
     rudimentarySingularityProduction:
-      intermediates.rudimentarySingularityProduction,
+      challengeAllowsFacility(state, 'ai_managers') ? intermediates.rudimentarySingularityProduction : 0,
     pocketDimensionsProduction:
-      intermediates.pocketDimensionsProduction,
+      challengeAllowsFacility(state, 'planets') ? intermediates.pocketDimensionsProduction : 0,
     scientificPlanetsProduction:
       inputs.scientificPlanetsProduction,
     managerAssemblyLineProduction:

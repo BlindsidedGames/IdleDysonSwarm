@@ -2,7 +2,7 @@
 
 Android uses Play Games Services v2 (`play-services-games-v2:22.0.0`) and
 project `459986324498`. iOS uses GameKit with the Game Center entitlement.
-Both publish the shared evaluator's 27 neutral achievements; the web host
+Both publish the shared evaluator's 32 neutral achievements; the web host
 does not initialize either provider. Settings exposes the provider's achievement
 list and an explicit sign-in retry. Authentication failure does not block play.
 
@@ -13,9 +13,10 @@ list and an explicit sign-in retry. Authentication failure does not block play.
 `scripts/mobile-achievement-mapping.test.ts`. Never substitute the seven deleted
 Google draft duplicates: the seven published IDs were deliberately repurposed
 with user approval, preserving existing unlock history and their original points.
-The remaining 20 Google records are drafts. Apple's 27 new records are separate
-from the seven archived legacy achievements. Console configuration is still
-unpublished; implementation does not publish it.
+Live console verification on 2026-09-27 found the prior 27 records published on
+Google and live on Apple. The five 4.1.10 additions are drafts on Apple, Google and
+Steam, with English names/descriptions and exported artwork. They have not been
+submitted for review or published. See [the 4.1.10 achievement record](../releases/4.1.10/achievements.md).
 
 ## Evidence and retry
 

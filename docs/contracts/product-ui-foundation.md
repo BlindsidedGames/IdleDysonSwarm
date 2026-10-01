@@ -567,6 +567,11 @@ The application shell owns one active-time driver:
 
 ## Visual standard
 
+Read the [UI style guide](../ui-style-guide.md) for the day-to-day visual and
+copy checklist, semantic spacing roles, scroll treatment and approved exceptions.
+This contract retains the broader architecture, interaction and accessibility
+requirements; runtime tokens remain the source of numerical style values.
+
 ### Reference tokens
 
 The product token set uses semantic aliases so contrast and state meaning remain

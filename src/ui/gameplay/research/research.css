@@ -154,11 +154,11 @@
 }
 
 .research-card .ui-button:not(:disabled):hover {
-  background: color-mix(in srgb, var(--theme-accent) 82%, white);
+  background-color: color-mix(in srgb, var(--theme-accent) 82%, white);
 }
 
 .research-card .ui-button:not(:disabled):active {
-  background: color-mix(in srgb, var(--theme-accent) 72%, var(--theme-page));
+  background-color: color-mix(in srgb, var(--theme-accent) 72%, var(--theme-page));
 }
 
 .research-card .ui-button:disabled {
@@ -231,6 +231,8 @@
 }
 
 .research-surface__control-panel .ui-progress-controls-panel__body {
+  max-block-size: none;
+  overflow: visible;
   padding: 0;
 }
 
@@ -523,5 +525,16 @@
   .research-surface__settings-toggle,
   .research-surface__buy-modes button {
     forced-color-adjust: auto;
+  }
+}
+
+.research-surface__control-panel .skill-preset-quick-actions {
+  margin-block: var(--ui-related-copy-gap);
+}
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .research-card .ui-button:not(:disabled) {
+    background-image: var(--ui-action-gradient);
   }
 }

@@ -1,3 +1,5 @@
+import { MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
+import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
 import { OVERFLOW_BOT_CAP } from './overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
@@ -1608,4 +1610,23 @@ test.each([['active', true], ['active', false], ['stored-time', false]] as const
     expect(model.state.gameState.statistics.speedruns!.doubleIpUsed).toBe(purchased)
     expect(model.state.gameState.statistics.speedruns!.milestones.firstInfinity?.doubleIpUsed).toBe(purchased)
   }
+})
+
+
+test('Stored Time charges Patient Hands without activating Manual Labour or adding practice', () => {
+  const state = baseState()
+  state.challenges = { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true, galvanizedSkillIds: ['manualLabour'], active: 'built-by-hand' }
+  state.skills.byId = Object.fromEntries(['manualLabour', ...Object.values(MANUAL_LABOUR_AUGMENTS)].map(id => [id, { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 }]))
+  state.dyson.bots = 100
+  const result = advanceEventTime({
+    startingState: new CanonicalEventTimeModel(carrier(state), { ...context(), mode: 'stored-time' }),
+    durationSeconds: 600, automationIntervalSeconds: 600, automationTimeUntilNextEvent: 600,
+    infinityMinimumCycleSeconds: 10, processingBudgetMilliseconds: 0,
+  })
+  expect(result.completed).toBe(true)
+  expect(result.candidateState.issue).toBeUndefined()
+  const after = result.candidateState.state.gameState
+  expect(after.skills.byId[MANUAL_LABOUR_AUGMENTS.patientHands].timerSeconds).toBe(42)
+  expect(after.skills.byId[MANUAL_LABOUR_AUGMENTS.practice].level).toBe(0)
+  expect(after.dyson.bots).toBe(100)
 })

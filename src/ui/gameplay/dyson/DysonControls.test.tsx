@@ -37,6 +37,22 @@ describe('Bots collapsed run facts preference', () => {
   })
 })
 
+test('preset shortcuts default to expanded settings and persist independently of run facts', () => {
+  const view = renderInfo()
+  expect(screen.queryByRole('button', {name: 'Preset quick action'})).toBeNull()
+  fireEvent.click(screen.getByRole('button', {name: 'Purchase settings'}))
+  expect(screen.getByRole('button', {name: 'Preset quick action'})).not.toBeNull()
+  fireEvent.click(screen.getByRole('checkbox', {name: 'Always show preset quick actions'}))
+  fireEvent.click(screen.getByRole('checkbox', {name: 'Always show Active, Lifetime, and Deayed'}))
+  fireEvent.click(screen.getByRole('button', {name: 'Purchase settings'}))
+  expect(screen.getByRole('button', {name: 'Preset quick action'})).not.toBeNull()
+  expect(screen.queryByText('Run facts')).toBeNull()
+  view.unmount()
+  renderInfo()
+  expect(screen.getByRole('button', {name: 'Preset quick action'})).not.toBeNull()
+  expect(screen.queryByText('Run facts')).toBeNull()
+})
+
 function renderInfo() {
   return render(
     <IntlProvider locale="en" messages={{}} onError={() => undefined}>
@@ -49,6 +65,7 @@ function props(): DysonInfoProps {
   return {
     summary: <span>Production summary</span>,
     statusSummary: <span>Run facts</span>,
+    presetQuickActions: <button>Preset quick action</button>,
     buyMode: 'buy-1',
     roundedBulkBuy: false,
     presets: [],

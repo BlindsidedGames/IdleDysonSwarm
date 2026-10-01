@@ -542,6 +542,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       ['startHereTree'],
       ['manualLabour'],
       ['fragmentAssembly'],
+      ['banking'], ['avocados'], ['startHereTree'], ['manualLabour'], ['fragmentAssembly'],
     ] as const
     for (let index = 0; index < skillPresetLayouts.length; index += 1) {
       await expect(

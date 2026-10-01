@@ -7,7 +7,7 @@ silently rewrite a preset other than the one the player explicitly edits.
 
 ## State model
 
-Each of the five Skill presets is an independent saved **desired layout**. A
+Each of the ten Skill presets is an independent saved **desired layout**. A
 desired layout records the ordered Skills the player wants automatically
 assigned, including Skills that are currently locked or unaffordable. Live
 Skill ownership after a preset rebuild is the portion of that desired layout
@@ -19,9 +19,20 @@ That explicit queue-only edit is not preset drift.
 
 The selected preset's desired layout and the live automatic-assignment queue
 stay synchronized immediately. Reselecting a preset or restarting the game is
-never required to publish or persist an edit. The other four presets remain
+never required to publish or persist an edit. The other presets remain
 byte-for-byte unchanged unless the player explicitly edits, imports, or selects
 and then edits them.
+
+Presets 1–5 are visible by default. A device-local Skills setting reveals
+presets 6–10 in a second five-button row on Skills and Bots and in management.
+Hiding the row does not clear its layouts, change the selected preset or remove
+an existing automatic tab binding. Each slot has a distinct default colour;
+all ten colours are available to every slot. Management scrolls without visible
+scrollbar chrome on small screens.
+
+Schema 20 extends older saves with five empty slots while preserving the first
+five. The historical schema-13 format still accepts exactly five slots; its
+recovery adapter adds fresh empty slots, never receiver-owned layouts.
 
 ## Editing and ownership
 
@@ -91,7 +102,7 @@ refund transaction says the Skill cannot be removed.
 
 ## Persistence and presentation
 
-Save, export, import, reload, and host lifecycle transitions preserve all five
+Save, export, import, reload, and host lifecycle transitions preserve all ten
 independent desired layouts, the selected preset, and the canonical live queue.
 Reload may reconstruct the retained overlay deterministically from canonical
 ownership, but it cannot use startup as an implicit preset-editing or repair
@@ -179,7 +190,7 @@ prerequisite lines keep their ordinary style.
 Characterization and regression coverage must include:
 
 - assignment and unassignment while each of two distinct presets is selected;
-- dependency cascades without mutation of the other four presets;
+- dependency cascades without mutation of the other presets;
 - intrinsic and dynamically unrefundable retained overlays;
 - compatible and conflicting preset switches, including `Switch anyway`;
 - explicit same-preset rebuild and automatic tab-driven partial application;

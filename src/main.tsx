@@ -1,3 +1,4 @@
+import { restoreScreenOrientation } from './platform/screenOrientation'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
@@ -69,6 +70,7 @@ async function bootstrap(): Promise<void> {
     }
     await Promise.all([
       boundedBootstrapPrerequisite(installNativeSafeAreaInsets()),
+      boundedBootstrapPrerequisite(restoreScreenOrientation()),
       boundedBootstrapPrerequisite(
         nativeBridge?.ready?.() ?? Promise.resolve(),
       ),

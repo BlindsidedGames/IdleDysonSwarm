@@ -1,3 +1,4 @@
+import { useExtendedSkillPresets } from '../useExtendedSkillPresets'
 import type {
   CanonicalSkillPresetAutomationSlot,
   CanonicalSkillPresetSlot,
@@ -27,6 +28,7 @@ export function PresetAutomationSelect({
   disabled = false,
   onChange,
 }: PresetAutomationSelectProps) {
+  const { visibleCount } = useExtendedSkillPresets()
   return (
     <label className="ui-preset-automation">
       <span>{label}</span>
@@ -42,6 +44,7 @@ export function PresetAutomationSelect({
       >
         <option value={0}>{offLabel}</option>
         {presets.map((preset, index) => {
+          if (index >= visibleCount && index + 1 !== value) return null
           const slot = (index + 1) as CanonicalSkillPresetSlot
           return (
             <option key={slot} value={slot}>

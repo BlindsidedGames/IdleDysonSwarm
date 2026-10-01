@@ -244,7 +244,7 @@ describe('native host bootstrap boundary', () => {
     })
   })
 
-  test('preserves five independent Skill presets through a mobile-native runtime checkpoint, reload, export, and import', async () => {
+  test('preserves ten independent Skill presets through a mobile-native runtime checkpoint, reload, export, and import', async () => {
     const bridge = {
       ...fakeBridge(),
       target: 'android' as const,
@@ -255,6 +255,7 @@ describe('native host bootstrap boundary', () => {
       ['startHereTree'],
       ['manualLabour'],
       ['fragmentAssembly'],
+      ['banking'], ['avocados'], ['startHereTree'], ['manualLabour'], ['fragmentAssembly'],
     ] as const
     const createComposition = () =>
       createProductionNativeComposition(

@@ -100,6 +100,8 @@ describe('transitional production V2 checkpoint recovery', () => {
 
     expect(restored.dyson.money).toBe(12_345)
     expect(restored.quantum.buyMode).toBe(buyMode)
+    expect(restored.skills.presets).toHaveLength(10)
+    expect(restored.skills.presets.slice(5).map(preset => preset.skillIds)).toEqual([[], [], [], [], []])
   })
 
   test('does not certify schema-13 imports using a fresh recovery template speedrun record', () => {
@@ -231,7 +233,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     expect(storage.files.get('/recovery/rejected-current.idsw'))
       .toBe('IDSWEB1:not-a-valid-current-save')
 
-    const future = serializeWebSave({ saveVersion: 20 })
+    const future = serializeWebSave({ saveVersion: 21 })
     await expect(application.importSave({
       text: future,
       importedAtUtc: '2026-08-30T02:00:00.000Z',
@@ -292,7 +294,7 @@ describe('transitional production V2 checkpoint recovery', () => {
     const compatibilityBase = recoveryBase
     const state = encodeState(hydrateGameState(compatibilityBase).state)
     ;(state.dyson as SaveRecord).money = '98765'
-    const futureCurrent = serializeWebSave({ saveVersion: 20 })
+    const futureCurrent = serializeWebSave({ saveVersion: 21 })
     const storage = new TransitionalMemoryStorage()
     storage.files.set('/current', futureCurrent)
     const repository = new PortableSaveRepository(
@@ -2056,7 +2058,7 @@ describe('transitional production V2 checkpoint recovery', () => {
   test('does not reinterpret a future canonical save as schema 13', () => {
     const compatibilityBase = recoveryBase
     let recoveryBaseCalls = 0
-    const future = serializeWebSave({ saveVersion: 20 })
+    const future = serializeWebSave({ saveVersion: 21 })
 
     expect(() => prepareImportedSaveText(
       future,
@@ -3559,6 +3561,8 @@ function encodeState(value: unknown): SaveRecord {
     false,
   )
   const skills = state.skills as SaveRecord
+  // Released schema 13 had five slots; project current fixtures to that contract.
+  skills.presets = (skills.presets as unknown[]).slice(0, 5)
   skills.selectedPreset ??= 1
   const currentSkillStates = skills.byId as SaveRecord
   skills.byId = Object.fromEntries(

@@ -1,6 +1,9 @@
 import { defineMessages } from 'react-intl'
 
 export const statisticsMessages = defineMessages({
+  combinedTime: { id: 'statistics.speedruns.combinedTime', defaultMessage: 'Combined time', description: 'Active playtime plus consumed Stored Time, without game-speed acceleration.' },
+  previousTiming: { id: 'statistics.speedruns.previousTiming', defaultMessage: 'Previous timing', description: 'A historical record whose timing basis was not stored. Keep its original value.' },
+  speedrunFirstTranscendence: { id: 'statistics.speedruns.firstTranscendence', defaultMessage: 'First Transcendence', description: 'First successful Transcend reset in this save.' },
   unboostedBest: { id: 'statistics.speedruns.unboostedBest', defaultMessage: 'Unboosted best', description: 'Best result with no assistance used.' },
   boostedBest: { id: 'statistics.speedruns.boostedBest', defaultMessage: 'Boosted best', description: 'Best assisted result when no unboosted result exists.' },
   clearBestLabel: { id: 'statistics.speedruns.clearBestLabel', defaultMessage: 'Clear best for {milestone}', description: 'Accessible name of the per-milestone clear button.' },

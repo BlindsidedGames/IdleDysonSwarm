@@ -95,6 +95,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
     public let identifier = "IdleDysonNativePlugin"
     public let jsName = "IdleDysonNative"
     public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "setOrientation", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "showAchievements", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "achievementStatus", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "submitAchievements", returnType: CAPPluginReturnPromise),
@@ -115,6 +116,30 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         CAPPluginMethod(name: "promoteAutomaticUnityPurchaseEvidence", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "requestStoreReview", returnType: CAPPluginReturnPromise),
     ]
+
+    @objc func setOrientation(_ call: CAPPluginCall) {
+        let mode = call.getString("orientation") ?? ""
+        guard ["auto", "portrait", "landscape"].contains(mode) else {
+            call.reject("Invalid orientation")
+            return
+        }
+        DispatchQueue.main.async { [weak self] in
+            guard let controller = self?.bridge?.viewController as? IdleDysonBridgeViewController,
+                  let scene = controller.view.window?.windowScene else {
+                call.reject("No active window")
+                return
+            }
+            controller.orientationPreference = mode
+            controller.setNeedsUpdateOfSupportedInterfaceOrientations()
+            // Auto releases the app lock; the OS resumes its normal rotation policy.
+            if mode != "auto" {
+                scene.requestGeometryUpdate(.iOS(interfaceOrientations: controller.supportedInterfaceOrientations)) { error in
+                    NSLog("Orientation request: %@", error.localizedDescription)
+                }
+            }
+            call.resolve()
+        }
+    }
 
     private var lifecyclePhase = "active"
     private var lifecycleObservers: [NSObjectProtocol] = []
@@ -169,6 +194,11 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
 
     // Mirrors hosts/capacitor/achievement-map.json; account identity stays native.
     private let achievementIds: [String: String] = [
+        "achievement.first_transcendence": "ids.first_transcendence",
+        "achievement.enlightenment": "ids.enlightenment",
+        "achievement.first_quantum_challenge": "ids.first_quantum_challenge",
+        "achievement.first_fracture": "ids.first_fracture",
+        "achievement.first_galactic_brain": "ids.first_galactic_brain",
         "achievement.first_bot": "ids.first_bot",
         "achievement.first_assembly_line": "ids.first_assembly_line",
         "achievement.first_data_center": "ids.first_data_center",

@@ -24,11 +24,11 @@ describe('Unity save migration pipeline', () => {
       expect(before).toBe(sourceSchema)
       expect(getSavePath(decoded.root, 'saveVersion')).toBe(sourceSchema)
       expect(migrated.sourceSchema).toBe(sourceSchema)
-      expect(migrated.save.saveVersion).toBe(19)
+      expect(migrated.save.saveVersion).toBe(20)
       expect(migrated.save.infinityAutomaticReset).toBe(true)
       expect(migrated.validation).toEqual({ valid: true, error: null })
       expect(
-        compareGraphs(migrated.save, { ...expected, saveVersion: 19 }, { expectedSubset: true }),
+        compareGraphs(migrated.save, { ...expected, saveVersion: 20 }, { expectedSubset: true }),
       ).toEqual([])
     },
   )
@@ -192,7 +192,7 @@ describe('Unity save migration pipeline', () => {
     const dailyWindows = statistics.dailyWindows as Record<string, unknown>[]
 
     expect(migrated.sourceSchema).toBe(12)
-    expect(migrated.targetSchema).toBe(19)
+    expect(migrated.targetSchema).toBe(20)
     expect(migrated.appliedSteps).toContain(
       'continuous-influence-and-strange-matter',
     )
@@ -234,7 +234,7 @@ describe('Unity save migration pipeline', () => {
     })
 
     expect(migrated.sourceSchema).toBe(13)
-    expect(migrated.targetSchema).toBe(19)
+    expect(migrated.targetSchema).toBe(20)
     expect(migrated.appliedSteps).not.toContain(
       'continuous-influence-and-strange-matter',
     )
@@ -315,7 +315,7 @@ describe('Unity save migration pipeline', () => {
   })
 
   test('validator rejects future schema and non-finite prepared state', () => {
-    expect(() => migrateDecodedSave({ saveVersion: 20 })).toThrow(
+    expect(() => migrateDecodedSave({ saveVersion: 21 })).toThrow(
       'newer than supported',
     )
     const migrated = migrateDecodedSave({ saveVersion: 12 })
@@ -324,7 +324,7 @@ describe('Unity save migration pipeline', () => {
         migrated.save.dysonVerseSaveData as Record<string, unknown>
       ).dysonVerseInfinityData as Record<string, unknown>
     ).money = Number.NaN
-    expect(validatePreparedSave(migrated.save, 19)).toEqual({
+    expect(validatePreparedSave(migrated.save, 20)).toEqual({
       valid: false,
       error:
         'saveSettings.dysonVerseSaveData.dysonVerseInfinityData.money contains a non-finite number.',
@@ -374,4 +374,34 @@ test('current-schema Stellar Memory ownership keeps its new purchase price and a
   expect(dyson.skillAutoAssignmentIds).toEqual(['subskill.srs.stellarMemory'])
   const states = requireRecord(requireRecord(dyson.dysonVerseInfinityData, 'infinity').skillStateById, 'states')
   expect(requireRecord(states['subskill.srs.stellarMemory'], 'memory').owned).toBe(true)
+})
+
+test('schema 19 gains empty extra presets without rewriting its existing queues', () => {
+  const previous = migrateDecodedSave({saveVersion: 12}).save
+  previous.saveVersion = 19
+  const dyson = requireRecord(previous.dysonVerseSaveData)
+  dyson.preset5Name = 'Original fifth'
+  dyson.preset5ColorId = 'rose'
+  dyson.botDistPreset5 = 0.75
+  dyson.skillAutoAssignmentIds5 = ['startHereTree']
+  dyson.selectedPreset = 5
+  for (let slot = 6; slot <= 10; slot++) {
+    delete dyson[`preset${slot}Name`]
+    delete dyson[`skillAutoAssignmentIds${slot}`]
+    delete dyson[`skillAutoAssignmentList${slot}`]
+  }
+  const migrated = migrateDecodedSave(previous)
+  expect(migrated.validation.valid).toBe(true)
+  const result = requireRecord(migrated.save.dysonVerseSaveData)
+  expect(result).toMatchObject({preset5Name: 'Original fifth', preset5ColorId: 'rose', botDistPreset5: 0.75,
+    skillAutoAssignmentIds5: ['startHereTree'], selectedPreset: 5})
+  for (let slot = 6; slot <= 10; slot++) {
+    expect(result[`preset${slot}Name`]).toBe(`Preset ${slot}`)
+    expect(result[`skillAutoAssignmentIds${slot}`]).toEqual([])
+  }
+  result.selectedPreset = 10
+  result.skillAutoAssignmentIds10 = []
+  result.skillAutoAssignmentList10 = [1, 2] // Stale legacy mirror must not revive a cleared current preset.
+  expect(requireRecord(migrateDecodedSave(migrated.save).save.dysonVerseSaveData))
+    .toMatchObject({selectedPreset: 10, skillAutoAssignmentIds10: []})
 })

@@ -7,6 +7,12 @@ const FINAL_REWARDED_GOAL_STAGE = 10n
 const PANEL_COUNT_PER_STAR = 20_000
 const STAR_COUNT_PER_GALAXY = 100_000_000_000
 
+/** Facility goals are replaced only while Built by Hand is active. */
+export function builtByHandTinkerGoal(state: Pick<CanonicalGameStateV1, 'challenges' | 'dyson'>): number | null {
+  if (state.challenges?.active !== 'built-by-hand') return null
+  return state.dyson.goalStage === 1n ? 50 : state.dyson.goalStage === 3n ? 250 : null
+}
+
 export interface CanonicalGoalDysonFacts {
   readonly panelsPerSecond: number
   readonly panelLifetimeSeconds: number
@@ -95,11 +101,16 @@ function isGoalComplete(
     state: CanonicalGameStateV1,
   ) => Readonly<CanonicalGoalDysonFacts>,
 ): boolean {
+  const tinkerTarget = builtByHandTinkerGoal(state)
+  if (tinkerTarget !== null) {
+    return (state.dyson.completedTinkers ?? 0) >= tinkerTarget
+  }
   switch (stage) {
     case 0n:
       return state.dyson.bots >= 10
     case 1n:
-      return state.dyson.facilities.assembly_lines[1] >= 5
+      return state.dyson.facilities.assembly_lines[1] +
+        (state.challenges?.active === 'hands-off' ? state.dyson.facilities.assembly_lines[0] : 0) >= 5
     case 2n:
       return panelArea(state, deriveDysonFacts) >= 20_000
     case 3n: {

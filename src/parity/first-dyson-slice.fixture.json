@@ -3,7 +3,7 @@
   "preparedSave": {
     "sourcePath": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
     "sourceSha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78",
-    "preparedStateSha256": "172dffd880d07f7b05df1a6fbbf35bb93e20976ad9cce7daa32e3d15d3ec888e",
+    "preparedStateSha256": "7adca42e04c9dd0a07ad34d056dc0344708c123d776dad3b84618c260f9e0290",
     "catalogSha256": "0f7e96636565c8d2d268eaa417335b9eb049939ddd2463408540b0af64ecf665"
   },
   "initial": {
@@ -76,11 +76,13 @@
           "cooldownSeconds": 0.20000000298023224
         },
         "stats": {
+          "facilityYields": {},
           "botYield": 1,
           "assemblyYield": 0,
           "cooldownSeconds": 0.20000000298023224
         },
         "presentationMode": "default",
+        "facilitiesDisabled": false,
         "canStart": true,
         "eligibility": "available",
         "timeToCompletionSeconds": null
@@ -272,11 +274,13 @@
             "cooldownSeconds": 0.20000000298023224
           },
           "stats": {
+            "facilityYields": {},
             "botYield": 1,
             "assemblyYield": 0,
             "cooldownSeconds": 0.20000000298023224
           },
           "presentationMode": "default",
+          "facilitiesDisabled": false,
           "canStart": false,
           "eligibility": "already-running",
           "timeToCompletionSeconds": 2.980232227667301e-9
@@ -297,11 +301,13 @@
             "cooldownSeconds": 0.5
           },
           "stats": {
+            "facilityYields": {},
             "botYield": 1,
             "assemblyYield": 0,
             "cooldownSeconds": 0.5
           },
           "presentationMode": "default",
+          "facilitiesDisabled": false,
           "canStart": true,
           "eligibility": "available",
           "timeToCompletionSeconds": null
@@ -382,11 +388,13 @@
           "cooldownSeconds": 0.5
         },
         "stats": {
+          "facilityYields": {},
           "botYield": 1,
           "assemblyYield": 0,
           "cooldownSeconds": 0.5
         },
         "presentationMode": "default",
+        "facilitiesDisabled": false,
         "canStart": true,
         "eligibility": "available",
         "timeToCompletionSeconds": null

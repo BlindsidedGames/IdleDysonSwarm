@@ -106,5 +106,25 @@
   "achievement.skill_points_42": {
     "android": "CgkIkpjJyrENEAIQGg",
     "ios": "ids.skills_assigned"
+  },
+  "achievement.first_transcendence": {
+    "android": "CgkIkpjJyrENEAIQJg",
+    "ios": "ids.first_transcendence"
+  },
+  "achievement.enlightenment": {
+    "android": "CgkIkpjJyrENEAIQJw",
+    "ios": "ids.enlightenment"
+  },
+  "achievement.first_quantum_challenge": {
+    "android": "CgkIkpjJyrENEAIQKA",
+    "ios": "ids.first_quantum_challenge"
+  },
+  "achievement.first_fracture": {
+    "android": "CgkIkpjJyrENEAIQKQ",
+    "ios": "ids.first_fracture"
+  },
+  "achievement.first_galactic_brain": {
+    "android": "CgkIkpjJyrENEAIQKg",
+    "ios": "ids.first_galactic_brain"
   }
 }

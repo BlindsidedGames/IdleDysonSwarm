@@ -1,4 +1,4 @@
-import { isBreakInfinityEnabled, isNoScienceActive } from './infinityChallenges'
+import { challengeFacilities, effectiveDivisions, isBreakInfinityEnabled, isNoScienceActive } from './infinityChallenges'
 import { highestOwnedFacility } from './stellarArithmetic'
 import { advanceSrsAugments } from './srsAugments'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
@@ -55,7 +55,7 @@ export function applyCanonicalSkillIntervalEffects(
     }))),
     inputs.seconds,
   )
-  const target = highestOwnedFacility(startingState.dyson.facilities)
+  const target = highestOwnedFacility(challengeFacilities(startingState, startingState.dyson.facilities))
   const stellar = resolveStellarAggregate(
     startingState.dyson.bots,
     inputs.botProductionPerSecond,
@@ -73,7 +73,7 @@ export function applyCanonicalSkillIntervalEffects(
       bots: clampPreBreakInfinityBots(
         stellar.bots,
         isBreakInfinityEnabled(stateAfterArrivals),
-        stateAfterArrivals.quantum.divisionsPurchased,
+        effectiveDivisions(stateAfterArrivals),
       ),
       facilities: target === null || stellar.facilitiesProduced === 0
         ? stateAfterArrivals.dyson.facilities

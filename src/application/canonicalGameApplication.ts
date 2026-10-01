@@ -1,3 +1,5 @@
+import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
+import { isQuantumChallengeActive } from '../simulation/infinityChallenges'
 import { markSpeedrunUsage, observeSpeedruns } from '../simulation/speedrunStatistics'
 import {
   applyDevelopmentAction,
@@ -522,7 +524,7 @@ export class CanonicalGameApplicationFacade {
     const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
       envelope.command.kind === 'skill.set-preset-assignment'
     if (presetPriorityChange || envelope.command.kind === 'discovery.purchase' || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
-        envelope.command.kind === 'challenge.enter-no-science' || envelope.command.kind === 'challenge.enter-trial-and-error' || envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
+        envelope.command.kind === 'challenge.enter' || envelope.command.kind === 'challenge.enter-no-science' || envelope.command.kind === 'challenge.enter-trial-and-error' || envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
       const result = await this.application.dispatchCommitFirst(envelope,
         presetPriorityChange ? 'skill-preset' : envelope.command.kind === 'discovery.purchase' ? 'discovery-purchase' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
       return {
@@ -1054,11 +1056,11 @@ export function createCanonicalGameEngineDefinition(
     validateTransitionState: (state) =>
       validateRuntimeTransitionState(state, eventContext),
     applyCommand: (candidate, command) => {
-      if (command.kind === 'challenge.enter-no-science' || command.kind === 'challenge.enter-trial-and-error' || command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
+      if (command.kind === 'challenge.enter' || command.kind === 'challenge.enter-no-science' || command.kind === 'challenge.enter-trial-and-error' || command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
         const artifact = deriveCanonicalArtifactSkillPoints(candidate.gameState, eventContext.realityUpgradeDefinitions)
         if (!artifact.ok) return reject('CHALLENGE_RESET_FAILED', artifact.issue?.detail ?? 'Artifact skill points unavailable.')
         const reset = restartInfinityChallenge(candidate.gameState,
-          command.kind === 'challenge.abandon' ? 'abandon' : 'enter', artifact.value, command.kind === 'challenge.enter-no-science' ? 'no-science' : command.kind === 'challenge.enter-trial-and-error' ? 'trial-and-error' : 'blank-slate')
+          command.kind === 'challenge.abandon' ? 'abandon' : 'enter', artifact.value, command.kind === 'challenge.enter' ? command.challengeId : command.kind === 'challenge.enter-no-science' ? 'no-science' : command.kind === 'challenge.enter-trial-and-error' ? 'trial-and-error' : 'blank-slate')
         if (!reset.ok) return reject(reset.code, 'The challenge could not be started or abandoned.')
         const derived = deriveBasicDysonState(reset.state, candidate.compatibilityTuning,
           candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)
@@ -1201,7 +1203,7 @@ export function createCanonicalGameEngineDefinition(
         Object.assign(candidate, { gameState: before })
         return { accepted: true, changed: false }
       }
-      if (result.accepted && result.changed) Object.assign(candidate, { gameState: observeSpeedruns(candidate.gameState) })
+      if (result.accepted && result.changed) Object.assign(candidate, { gameState: observeSpeedruns(candidate.gameState, Date.now(), false, false, command.kind === 'avocado.request-overflow-reset') })
       else Object.assign(candidate, { gameState: before })
       return result
     },
@@ -1875,7 +1877,7 @@ function validateSkillPresetApplicationOutcome(
   if (
     !Number.isInteger(outcome.slot) ||
     outcome.slot < 1 ||
-    outcome.slot > 5 ||
+    outcome.slot > SKILL_PRESET_COUNT ||
     !Number.isSafeInteger(outcome.applicationSequence) ||
     outcome.applicationSequence < 1 ||
     !['automatic', 'import', 'manual'].includes(outcome.trigger)
@@ -1908,7 +1910,7 @@ function validateRuntimeState(
   if (
     !Number.isInteger(state.selectedSkillPresetSlot) ||
     state.selectedSkillPresetSlot < 1 ||
-    state.selectedSkillPresetSlot > 5
+    state.selectedSkillPresetSlot > SKILL_PRESET_COUNT
   ) {
     return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
   }
@@ -2002,7 +2004,7 @@ function validateRuntimeTransitionState(
   if (
     !Number.isInteger(state.selectedSkillPresetSlot) ||
     state.selectedSkillPresetSlot < 1 ||
-    state.selectedSkillPresetSlot > 5
+    state.selectedSkillPresetSlot > SKILL_PRESET_COUNT
   ) {
     return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
   }
@@ -2089,7 +2091,7 @@ export function previewCanonicalQuantumLeap(
     }
   }
 
-  const branch = runtime.gameState.quantum.unlocks.quantumEntanglement && runtime.gameState.challenges?.active !== 'no-science'
+  const branch = runtime.gameState.quantum.unlocks.quantumEntanglement && !isQuantumChallengeActive(runtime.gameState)
     ? 'entanglement'
     : 'reset'
   let artifactSkillPoints: bigint | null = null

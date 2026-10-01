@@ -1,3 +1,4 @@
+import { selfReplicationMultiplier } from './swarmAugments'
 import {
   isFiniteNonNegativeNumber,
   isSafePositiveInteger,
@@ -202,8 +203,8 @@ export function deriveDreamSpaceAgeProductionFacts(
     Number(state.dream.parameters.fusionGeneration),
   )
   const swarmPerSecond = multiplyContinuous(
-    Number(resources.swarmPanels),
-    Number(state.dream.parameters.swarmPanelGeneration),
+    multiplyContinuous(Number(resources.swarmPanels), Number(state.dream.parameters.swarmPanelGeneration)),
+    selfReplicationMultiplier(state, Number(resources.swarmPanels), 'panels'),
   )
   const beforeDoubleTimePerSecond = addContinuous(
     addContinuous(solarPerSecond, fusionPerSecond),

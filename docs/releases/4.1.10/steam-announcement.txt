@@ -1,0 +1,35 @@
+I missed posting an announcement with the last update, so this one is getting proper patch notes.
+
+[h2]Transcendence and Discovery[/h2]
+Overflow is now Transcendence. Spend your first Transcendence Point in Avocato to unlock Discovery and replace Science and Research.
+
+Discovery grows facility production. Unlock Elevation for Cash and Bots, then Enlightenment for panel lifetime. Each later bar sends time into the bar before it, setting off a chain of completions. Avocato also has permanent speed and power upgrades for the new system.
+
+[h2]New challenges and augments[/h2]
+[list]
+[*]Seven Quantum challenges, each awarding 2 Catalysts: No Science, Short Circuit, Grounded, Built by Hand, Hands Off, Commitment Issues and Supply Shortage.
+[*]Reality Skill Points and selected Quantum upgrades are inactive during these challenges. Your Reality progress is preserved.
+[*]Four Manual Labour augments and ten Swarm and Fragment augments.
+[*]Galvanizers are now Catalysts, and Galvanized skills are now Fractured skills. You can Fracture during challenges and preview the effect before spending a Catalyst.
+[/list]
+
+[h2]Skills and progression[/h2]
+[list]
+[*]Stellar Memory banks newly generated SRS charge on Infinity and Quantum resets to strengthen SRS augments.
+[*]Stellar Sacrifices generates your highest owned facility, including megastructures.
+[*]Hot Start is non-refundable. Banking, Investment and Stellar Memory are refundable. A first-time warning explains non-refundable assignments.
+[*]Facility price growth and megastructure costs and production have been rebalanced.
+[*]After your first Quantum, new runs start with an Assembly Line.
+[*]The sixth Avotation secret completes automatically when reached with Discovery unlocked.
+[/list]
+
+[h2]Speedruns and fixes[/h2]
+[list]
+[*]Personal bests survive Reset Save, with current-run comparisons, assistance indicators and a First Transcendence milestone.
+[*]New records count time played plus Stored Time spent. Time sitting unused in your Stored Time bank does not count.
+[*]Fixed Permanent 2× Bots losing its effect after Reset Save.
+[*]Fixed cleared presets and retired research returning, rapid Tinker input, and several challenge and augment issues.
+[*]Improved production details, skill previews, scrolling and dialogs.
+[/list]
+
+Thanks to everyone reporting bugs and testing the beta. You've helped catch a lot of the awkward interactions in this update.

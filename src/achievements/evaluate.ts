@@ -16,10 +16,18 @@ const int = (value: bigint) => Number(value > 2147483647n ? 2147483647n : value 
 export function evaluateAchievements(state: DeepReadonly<CanonicalGameStateV1>, developerOptions: boolean): AchievementFacts {
   const unlocked: string[] = []
   const reach = (id: string, met: boolean) => { if (met) unlocked.push(`achievement.${id}`) }
+  reach('first_transcendence', state.statistics.lifetime.botCapOverflowRewards > 0n)
+  reach('enlightenment', state.discovery?.unlocked === true && state.discovery.enlightenment !== undefined)
+  // Retain the existing provider key when broadening the requirement to any challenge.
+  reach('first_quantum_challenge', state.challenges?.blankSlateCompleted === true ||
+    state.challenges?.trialAndErrorCompleted === true || state.challenges?.noScienceCompleted === true ||
+    (state.challenges?.completedQuantumChallenges?.length ?? 0) > 0)
+  reach('first_fracture', (state.challenges?.galvanizedSkillIds?.length ?? 0) > 0)
   reach('first_bot', state.dyson.bots >= 1)
   for (const [id, facility] of [
     ['first_assembly_line', 'assembly_lines'], ['first_ai_manager', 'ai_managers'],
     ['first_server', 'servers'], ['first_data_center', 'data_centers'], ['first_planet', 'planets'],
+    ['first_galactic_brain', 'galactic_brains'],
   ] as const) {
     const [automatic, manual] = state.dyson.facilities[facility]
     reach(id, automatic >= 1 || manual >= 1 || automatic + manual >= 1)

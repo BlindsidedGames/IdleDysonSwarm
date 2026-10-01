@@ -347,10 +347,22 @@
       "value": "放弃挑战"
     }
   ],
+  "challenges.abandonRestart": [
+    {
+      "type": 0,
+      "value": "这将开始一次新的普通无限轮回，不奖励IP。挑战限制将解除。无限升级和后续阶段将保留。"
+    }
+  ],
   "challenges.active": [
     {
       "type": 0,
       "value": "白纸挑战进行中 · 无法分配技能"
+    }
+  ],
+  "challenges.activeLabel": [
+    {
+      "type": 0,
+      "value": "挑战进行中"
     }
   ],
   "challenges.blankSlate": [
@@ -365,10 +377,34 @@
       "value": "不使用技能点，完成一次普通无限。"
     }
   ],
+  "challenges.builtByHand": [
+    {
+      "type": 0,
+      "value": "纯手工"
+    }
+  ],
+  "challenges.builtByHand.description": [
+    {
+      "type": 0,
+      "value": "禁用所有设施，完成一次量子轮回。使用手动劳动增幅手工制造机器人。"
+    }
+  ],
   "challenges.cancel": [
     {
       "type": 0,
       "value": "取消"
+    }
+  ],
+  "challenges.commitmentIssues": [
+    {
+      "type": 0,
+      "value": "承诺难题"
+    }
+  ],
+  "challenges.commitmentIssues.description": [
+    {
+      "type": 0,
+      "value": "不退还或替换已分配的技能，完成一次量子轮回。无限重置仍会正常清除技能分配。"
     }
   ],
   "challenges.completed": [
@@ -409,6 +445,36 @@
       "value": "在已显示技能的详情中消耗1个催化剂，使基础效果永久生效并移除负面效果和互斥限制。断裂无法撤销，且在超越后保留。"
     }
   ],
+  "challenges.grounded": [
+    {
+      "type": 0,
+      "value": "脚踏实地"
+    }
+  ],
+  "challenges.grounded.description": [
+    {
+      "type": 0,
+      "value": "不使用行星或巨型结构完成一次量子轮回。无法购买或生成它们。"
+    }
+  ],
+  "challenges.handsOff": [
+    {
+      "type": 0,
+      "value": "禁止购买"
+    }
+  ],
+  "challenges.handsOff.description": [
+    {
+      "type": 0,
+      "value": "在不购买设施且不手工组装的情况下完成一次量子轮回。开局获得一条装配线；设施的被动生成正常运作。"
+    }
+  ],
+  "challenges.manualLabourRequired": [
+    {
+      "type": 0,
+      "value": "需要已裂变的手动劳动。"
+    }
+  ],
   "challenges.noScience": [
     {
       "type": 0,
@@ -427,10 +493,22 @@
       "value": "不使用科学或研究完成一次量子轮次。"
     }
   ],
+  "challenges.quantumAbandonRestart": [
+    {
+      "type": 0,
+      "value": "这将开始一次新的普通量子轮回，不奖励量子碎片。挑战限制将解除。现实技能点、除法、量子双倍IP和量子纠缠将重新生效。现实进度和后续阶段将保留。"
+    }
+  ],
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "开始新的量子轮次，不获得量子碎片。保留量子升级和后续层级。放弃挑战也会开始新的普通轮次。"
+      "value": "开始一次新的量子轮回，不获得量子碎片。除法、量子双倍IP和量子纠缠无效。付费双倍IP及后续层级仍然有效。放弃挑战也会开始一次新的普通轮回。 现实技能点暂时无效，但保留现实进度。"
+    }
+  ],
+  "challenges.quantumRules": [
+    {
+      "type": 0,
+      "value": "量子挑战中禁用除法、量子双倍IP和量子纠缠。付费增益仍然有效。 现实技能点暂时无效，但保留现实进度。"
     }
   ],
   "challenges.quantumTitle": [
@@ -477,6 +555,18 @@
       "value": "挑战"
     }
   ],
+  "challenges.shortCircuit": [
+    {
+      "type": 0,
+      "value": "短路"
+    }
+  ],
+  "challenges.shortCircuit.description": [
+    {
+      "type": 0,
+      "value": "在面板寿命固定为2秒的情况下完成一次量子轮回。"
+    }
+  ],
   "challenges.shortcut": [
     {
       "type": 0,
@@ -487,6 +577,18 @@
     {
       "type": 0,
       "value": "开始"
+    }
+  ],
+  "challenges.supplyShortage": [
+    {
+      "type": 0,
+      "value": "供应短缺"
+    }
+  ],
+  "challenges.supplyShortage.description": [
+    {
+      "type": 0,
+      "value": "设施价格每购买一次翻倍，完成一次量子轮回。生成的设施不会提高价格。"
     }
   ],
   "challenges.timeUnknown": [
@@ -887,6 +989,28 @@
       "value": "取消"
     }
   ],
+  "discovery.cashBots": [
+    {
+      "type": 0,
+      "value": "现金与机器人"
+    }
+  ],
+  "discovery.cashBotsProduction": [
+    {
+      "type": 0,
+      "value": "现金与机器人收益 ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "discovery.completed": [
+    {
+      "type": 0,
+      "value": "完成次数"
+    }
+  ],
   "discovery.completions": [
     {
       "type": 0,
@@ -905,6 +1029,12 @@
       "value": "确认"
     }
   ],
+  "discovery.cycleDuration": [
+    {
+      "type": 0,
+      "value": "完整周期"
+    }
+  ],
   "discovery.debug.addCompletions": [
     {
       "type": 0,
@@ -921,6 +1051,102 @@
     {
       "type": 0,
       "value": "发现详情"
+    }
+  ],
+  "discovery.elevation": [
+    {
+      "type": 0,
+      "value": "升华"
+    }
+  ],
+  "discovery.elevationEffect": [
+    {
+      "type": 0,
+      "value": "将现金与机器人收益从7倍提升至10倍。每30个基础分钟完成一次：倍率+0.1，并为发现增加30分钟进度。"
+    }
+  ],
+  "discovery.elevationPower": [
+    {
+      "type": 0,
+      "value": "升华强度"
+    }
+  ],
+  "discovery.elevationPowerEffect": [
+    {
+      "type": 0,
+      "value": "现金与机器人的初始倍率+5。加成为加算。"
+    }
+  ],
+  "discovery.enlightenment": [
+    {
+      "type": 0,
+      "value": "启悟"
+    }
+  ],
+  "discovery.enlightenmentEffect": [
+    {
+      "type": 0,
+      "value": "将面板基础寿命从20秒提升至30秒。每10个基础分钟完成一次：寿命+0.1秒，并为升华增加10分钟进度。"
+    }
+  ],
+  "discovery.enlightenmentPower": [
+    {
+      "type": 0,
+      "value": "启悟强度"
+    }
+  ],
+  "discovery.enlightenmentPowerEffect": [
+    {
+      "type": 0,
+      "value": "面板初始寿命+5秒。加成为加算。"
+    }
+  ],
+  "discovery.facilityProduction": [
+    {
+      "type": 0,
+      "value": "设施产量"
+    }
+  ],
+  "discovery.fractured.addictionToPower": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高200%。"
+    }
+  ],
+  "discovery.fractured.coldFusion": [
+    {
+      "type": 0,
+      "value": "发现速度+75%。加成为加算。"
+    }
+  ],
+  "discovery.fractured.indulgingInPower": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高100%。"
+    }
+  ],
+  "discovery.fractured.scientificDominance": [
+    {
+      "type": 0,
+      "value": "发现速度+100%。加成为加算。"
+    }
+  ],
+  "discovery.fractured.shouldersOfPrecursors": [
+    {
+      "type": 0,
+      "value": "将现金收益乘以总发现速度，同时保留其他现金倍率。"
+    }
+  ],
+  "discovery.fractured.stellarObliteration": [
+    {
+      "type": 0,
+      "value": "恒星献祭的星系效果提高至1,000倍。"
+    }
+  ],
+  "discovery.fractured.tasteOfPower": [
+    {
+      "type": 0,
+      "value": "装配线、AI管理器、服务器、数据中心和行星的效能提高50%。"
     }
   ],
   "discovery.level": [
@@ -983,10 +1209,36 @@
       "value": "time"
     }
   ],
+  "discovery.nextCompletion": [
+    {
+      "type": 0,
+      "value": "下次完成"
+    }
+  ],
+  "discovery.nextLifetime": [
+    {
+      "type": 0,
+      "value": "下一级：初始寿命"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "秒"
+    }
+  ],
   "discovery.nextMultiplier": [
     {
       "type": 0,
       "value": "下一级倍率"
+    }
+  ],
+  "discovery.nextPanelLifetime": [
+    {
+      "type": 0,
+      "value": "下次面板寿命"
     }
   ],
   "discovery.nextPower": [
@@ -1030,13 +1282,13 @@
   "discovery.power": [
     {
       "type": 0,
-      "value": "初始强度"
+      "value": "发现强度"
     }
   ],
   "discovery.powerEffect": [
     {
       "type": 0,
-      "value": "初始倍率和面板基础寿命秒数 +5。加成为加法叠加。"
+      "value": "设施初始倍率+5。加成为加算。"
     }
   ],
   "discovery.powerSkillsEffect": [
@@ -1048,17 +1300,35 @@
   "discovery.production": [
     {
       "type": 0,
-      "value": "现金、机器人和设施产量 ×"
+      "value": "设施产量 ×"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
+  "discovery.progressPerCompletion": [
+    {
+      "type": 0,
+      "value": "每次完成"
+    }
+  ],
   "discovery.purchaseFailed": [
     {
       "type": 0,
       "value": "无法保存购买。点数已保留，请重试。"
+    }
+  ],
+  "discovery.rate": [
+    {
+      "type": 0,
+      "value": "速度"
+    }
+  ],
+  "discovery.replacementWarning": [
+    {
+      "type": 0,
+      "value": "研究与科学将被永久替换。"
     }
   ],
   "discovery.resetRule": [
@@ -1131,6 +1401,12 @@
     {
       "type": 0,
       "value": "现金乘以5。"
+    }
+  ],
+  "discovery.skill.economyOfScale.effect": [
+    {
+      "type": 0,
+      "value": "现金和机器人产量乘以M = max(1, log5(设施总数))。发现速度增加min(200%, 10% × log10(M))。加成以加法叠加。"
     }
   ],
   "discovery.skill.focusedBeam.effect": [
@@ -1388,7 +1664,27 @@
   "discovery.startingBenefits": [
     {
       "type": 0,
-      "value": "现金、机器人和设施产量 ×10。面板基础寿命为10秒。"
+      "value": "设施产量10倍。现金与机器人收益7倍。面板基础寿命20秒。"
+    }
+  ],
+  "discovery.tierCompletions": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "完成次数"
+    }
+  ],
+  "discovery.tierSpeed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "速度"
     }
   ],
   "discovery.totalBots": [
@@ -1397,10 +1693,30 @@
       "value": "机器人总数"
     }
   ],
+  "discovery.transfer": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：+"
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "discovery.unlock": [
     {
       "type": 0,
       "value": "解锁发现"
+    }
+  ],
+  "discovery.upgrades": [
+    {
+      "type": 0,
+      "value": "发现升级"
     }
   ],
   "dyson.bot-distribution.accessible-value": [
@@ -2150,7 +2466,7 @@
     },
     {
       "type": 0,
-      "value": " "
+      "value": "个"
     },
     {
       "type": 1,
@@ -2158,19 +2474,19 @@
     },
     {
       "type": 0,
-      "value": "（直接购买）"
+      "value": "（购买或获赠）"
     }
   ],
   "dyson.facilities.details.manual-purchases": [
     {
       "type": 0,
-      "value": "手动购买"
+      "value": "购买与赠送"
     }
   ],
   "dyson.facilities.details.manually-purchased": [
     {
       "type": 0,
-      "value": "手动购买"
+      "value": "购买 / 获赠"
     }
   ],
   "dyson.facilities.details.milestone-100": [
@@ -3209,6 +3525,26 @@
       ]
     }
   ],
+  "dyson.info.compact.goal-tinkers": [
+    {
+      "type": 0,
+      "value": "目标: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " 次手工制作"
+        }
+      ]
+    }
+  ],
   "dyson.info.compact.panel-lifetime": [
     {
       "type": 0,
@@ -3411,6 +3747,20 @@
     {
       "type": 0,
       "value": " 颗恒星"
+    }
+  ],
+  "dyson.info.goal.tinkers": [
+    {
+      "type": 0,
+      "value": "目标: "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " 次手工制作"
     }
   ],
   "dyson.info.panel-lifetime": [
@@ -3641,6 +3991,12 @@
     {
       "type": 0,
       "value": "批量购买取整"
+    }
+  ],
+  "dyson.info.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "始终显示预设快捷操作"
     }
   ],
   "dyson.info.show-run-facts-when-collapsed": [
@@ -3889,6 +4245,26 @@
       "value": "一定还有更好的办法……"
     }
   ],
+  "dyson.tinker.description.hand-assembly": [
+    {
+      "type": 0,
+      "value": "手工制造"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "个机器人。"
+    }
+  ],
   "dyson.tinker.description.manual-labour": [
     {
       "type": 0,
@@ -3955,6 +4331,16 @@
     {
       "type": 0,
       "value": "长按以重复……"
+    }
+  ],
+  "dyson.tinker.per-activation": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": "／次激活"
     }
   ],
   "dyson.tinker.progress": [
@@ -5225,6 +5611,12 @@
       "value": "隐藏满级升级"
     }
   ],
+  "quantum.inactiveChallenge": [
+    {
+      "type": 0,
+      "value": "此挑战中无效"
+    }
+  ],
   "quantum.leap": [
     {
       "type": 0,
@@ -6343,6 +6735,12 @@
       "value": "世界贸易 III"
     }
   ],
+  "reality.skill-points-inactive": [
+    {
+      "type": 0,
+      "value": "离开量子挑战后，技能点才会生效。"
+    }
+  ],
   "reality.strange-matter": [
     {
       "type": 0,
@@ -7361,6 +7759,12 @@
       "value": "批量购买取整"
     }
   ],
+  "research.show-preset-quick-actions": [
+    {
+      "type": 0,
+      "value": "始终显示预设快捷操作"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,
@@ -7883,6 +8287,36 @@
     {
       "type": 0,
       "value": "数字表示法"
+    }
+  ],
+  "settings.orientation": [
+    {
+      "type": 0,
+      "value": "屏幕方向"
+    }
+  ],
+  "settings.orientation.auto": [
+    {
+      "type": 0,
+      "value": "自动"
+    }
+  ],
+  "settings.orientation.failed": [
+    {
+      "type": 0,
+      "value": "无法更改屏幕方向，请重试。"
+    }
+  ],
+  "settings.orientation.landscape": [
+    {
+      "type": 0,
+      "value": "横屏"
+    }
+  ],
+  "settings.orientation.portrait": [
+    {
+      "type": 0,
+      "value": "竖屏"
     }
   ],
   "settings.processing.description": [
@@ -9845,6 +10279,108 @@
       "value": "name"
     }
   ],
+  "skills.manualFacility.brain-effect": [
+    {
+      "type": 0,
+      "value": "手工制造额外生成已拥有银河大脑的2%，上限为其20秒的被动生成量，最低上限为1个大脑。“多功能生产策略”在上限之前生效。"
+    }
+  ],
+  "skills.manualFacility.effect": [
+    {
+      "type": 0,
+      "value": "手工制造额外生成已拥有"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": "的2%，上限为其20秒的被动生成量。适用“多功能生产策略”。"
+    }
+  ],
+  "skills.manualFacility.name": [
+    {
+      "type": 0,
+      "value": "手工制造"
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    }
+  ],
+  "skills.manualLabour.handAssembly.description": [
+    {
+      "type": 0,
+      "value": "工厂可选，手指必备。"
+    }
+  ],
+  "skills.manualLabour.handAssembly.effect": [
+    {
+      "type": 0,
+      "value": "每0.2秒制造机器人，无需AI管理器。基础产量为（已完成的手工组装次数 + 1）^5，每次激活上限为10^17个机器人。保留手动制造装配线。无限重置时清空工作次数。"
+    }
+  ],
+  "skills.manualLabour.handAssembly.name": [
+    {
+      "type": 0,
+      "value": "手工组装"
+    }
+  ],
+  "skills.manualLabour.patientHands.description": [
+    {
+      "type": 0,
+      "value": "量两次，喝杯茶，再切一次。"
+    }
+  ],
+  "skills.manualLabour.patientHands.effect": [
+    {
+      "type": 0,
+      "value": "闲置时储存最多42秒的手工组装。下次激活会完成储存的工作，并额外获得25%的机器人。储存的工作也会增加练习次数。激活时消耗。"
+    }
+  ],
+  "skills.manualLabour.patientHands.name": [
+    {
+      "type": 0,
+      "value": "耐心之手"
+    }
+  ],
+  "skills.manualLabour.practice.description": [
+    {
+      "type": 0,
+      "value": "前一千个都是原型。"
+    }
+  ],
+  "skills.manualLabour.practice.effect": [
+    {
+      "type": 0,
+      "value": "练习提高手工组装产量：200% × 完成次数 /（完成次数 + 500），最高+200%。无限重置时清空练习；退还技能时保留。加成相加。"
+    }
+  ],
+  "skills.manualLabour.practice.name": [
+    {
+      "type": 0,
+      "value": "熟能生巧"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.description": [
+    {
+      "type": 0,
+      "value": "你终于读了说明书。"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.effect": [
+    {
+      "type": 0,
+      "value": "手工组装产量增加25% × log10（1 + 装配线研究等级），最高+200%。解锁发现后改用已完成的发现次数。加成相加。"
+    }
+  ],
+  "skills.manualLabour.workingSmarter.name": [
+    {
+      "type": 0,
+      "value": "聪明工作"
+    }
+  ],
   "skills.matches": [
     {
       "type": 6,
@@ -11765,6 +12301,18 @@
       "value": "允许自动分配无法返还技能点的技能"
     }
   ],
+  "skills.non-refundable-confirmation-title": [
+    {
+      "type": 0,
+      "value": "不可退还技能"
+    }
+  ],
+  "skills.non-refundable-confirmation-warning": [
+    {
+      "type": 0,
+      "value": "不可退还的技能及其前置技能必须等到无限或量子重置后才能退还。继续？"
+    }
+  ],
   "skills.none": [
     {
       "type": 0,
@@ -11817,6 +12365,12 @@
       "value": "预设颜色"
     }
   ],
+  "skills.preset-color-blue": [
+    {
+      "type": 0,
+      "value": "蓝色"
+    }
+  ],
   "skills.preset-color-cyan": [
     {
       "type": 0,
@@ -11827,6 +12381,12 @@
     {
       "type": 0,
       "value": "金色"
+    }
+  ],
+  "skills.preset-color-green": [
+    {
+      "type": 0,
+      "value": "绿色"
     }
   ],
   "skills.preset-color-orange": [
@@ -11841,10 +12401,28 @@
       "value": "粉色"
     }
   ],
+  "skills.preset-color-red": [
+    {
+      "type": 0,
+      "value": "红色"
+    }
+  ],
   "skills.preset-color-rose": [
     {
       "type": 0,
       "value": "玫红色"
+    }
+  ],
+  "skills.preset-color-violet": [
+    {
+      "type": 0,
+      "value": "紫色"
+    }
+  ],
+  "skills.preset-color-white": [
+    {
+      "type": 0,
+      "value": "白色"
     }
   ],
   "skills.preset-distribution": [
@@ -12035,6 +12613,78 @@
       "value": "科学"
     }
   ],
+  "skills.production.gathererCommunity": [
+    {
+      "type": 0,
+      "value": "采集者：社区"
+    }
+  ],
+  "skills.production.hunterCommunity": [
+    {
+      "type": 0,
+      "value": "猎人：社区"
+    }
+  ],
+  "skills.production.launchedPanelEnergy": [
+    {
+      "type": 0,
+      "value": "已发射面板的能量"
+    }
+  ],
+  "skills.production.manualAssemblyLines": [
+    {
+      "type": 0,
+      "value": "每次激活的装配线"
+    }
+  ],
+  "skills.production.manualBirch": [
+    {
+      "type": 0,
+      "value": "伯奇行星 （每次激活）"
+    }
+  ],
+  "skills.production.manualBots": [
+    {
+      "type": 0,
+      "value": "每次激活的机器人"
+    }
+  ],
+  "skills.production.manualDataCenters": [
+    {
+      "type": 0,
+      "value": "数据中心 （每次激活）"
+    }
+  ],
+  "skills.production.manualGalactic": [
+    {
+      "type": 0,
+      "value": "银河脑 （每次激活）"
+    }
+  ],
+  "skills.production.manualManagers": [
+    {
+      "type": 0,
+      "value": "AI 管理器 （每次激活）"
+    }
+  ],
+  "skills.production.manualMatrioshka": [
+    {
+      "type": 0,
+      "value": "套娃脑 （每次激活）"
+    }
+  ],
+  "skills.production.manualPlanets": [
+    {
+      "type": 0,
+      "value": "行星 （每次激活）"
+    }
+  ],
+  "skills.production.manualServers": [
+    {
+      "type": 0,
+      "value": "服务器 （每次激活）"
+    }
+  ],
   "skills.purchase": [
     {
       "type": 0,
@@ -12211,6 +12861,12 @@
     {
       "type": 0,
       "value": "技能预设与重置"
+    }
+  ],
+  "skills.settings.showExtendedPresets": [
+    {
+      "type": 0,
+      "value": "显示预设 6–10"
     }
   ],
   "skills.show-preset-application-notifications": [
@@ -12509,6 +13165,186 @@
     {
       "type": 0,
       "value": "超新星会压制完整的手动购买层：牛油果、50/100 两个里程碑、生产规模化以及所有蜂群倍率。"
+    }
+  ],
+  "skills.swarm.botnet.description": [
+    {
+      "type": 0,
+      "value": "它们终于接受了群聊邀请。"
+    }
+  ],
+  "skills.swarm.botnet.name": [
+    {
+      "type": 0,
+      "value": "机器人网络"
+    }
+  ],
+  "skills.swarm.botnet.technical": [
+    {
+      "type": 0,
+      "value": "所有设施产量乘以1 + log20(机器人数量)。"
+    }
+  ],
+  "skills.swarm.compoundFragments.description": [
+    {
+      "type": 0,
+      "value": "不知为何，这些碎片还带着利息。"
+    }
+  ],
+  "skills.swarm.compoundFragments.name": [
+    {
+      "type": 0,
+      "value": "复利碎片"
+    }
+  ],
+  "skills.swarm.compoundFragments.technical": [
+    {
+      "type": 0,
+      "value": "将正常购买加成乘以 (1 + 虫群倍率)^floor((有效购买数量 / 碎片阈值)^0.825)。阈值最低为 1。"
+    }
+  ],
+  "skills.swarm.deferredBilling.description": [
+    {
+      "type": 0,
+      "value": "账单是别人的问题。"
+    }
+  ],
+  "skills.swarm.deferredBilling.name": [
+    {
+      "type": 0,
+      "value": "延期付款"
+    }
+  ],
+  "skills.swarm.deferredBilling.technical": [
+    {
+      "type": 0,
+      "value": "购买设施需要持有足额现金，但不会扣除现金。"
+    }
+  ],
+  "skills.swarm.economyOfScale.description": [
+    {
+      "type": 0,
+      "value": "批量采购已经成了一种性格。"
+    }
+  ],
+  "skills.swarm.economyOfScale.name": [
+    {
+      "type": 0,
+      "value": "规模效益"
+    }
+  ],
+  "skills.swarm.economyOfScale.technical": [
+    {
+      "type": 0,
+      "value": "现金、科学和机器人产量乘以log5(设施总数)，最低为1倍。"
+    }
+  ],
+  "skills.swarm.headStart.description": [
+    {
+      "type": 0,
+      "value": "有些组装已经完成了。"
+    }
+  ],
+  "skills.swarm.headStart.name": [
+    {
+      "type": 0,
+      "value": "抢先起步"
+    }
+  ],
+  "skills.swarm.headStart.technical": [
+    {
+      "type": 0,
+      "value": "每次无限中，为每种可用设施免费获得30个手动购买单位，不提高价格。包括已解锁的巨构。"
+    }
+  ],
+  "skills.swarm.pooledPurchases.description": [
+    {
+      "type": 0,
+      "value": "一张收据，人人记功。"
+    }
+  ],
+  "skills.swarm.pooledPurchases.name": [
+    {
+      "type": 0,
+      "value": "合并采购"
+    }
+  ],
+  "skills.swarm.pooledPurchases.technical": [
+    {
+      "type": 0,
+      "value": "每种设施的购买加成使用所有设施的总购买数，随后应用Terra效果。价格不变。"
+    }
+  ],
+  "skills.swarm.reductiveScaling.description": [
+    {
+      "type": 0,
+      "value": "价签开始紧张了。"
+    }
+  ],
+  "skills.swarm.reductiveScaling.name": [
+    {
+      "type": 0,
+      "value": "递减涨价"
+    }
+  ],
+  "skills.swarm.reductiveScaling.technical": [
+    {
+      "type": 0,
+      "value": "每个已启用的碎片技能使设施价格增长率降低0.5个百分点，最低为0.1%。"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.description": [
+    {
+      "type": 0,
+      "value": "招聘部门已经多余了。"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.name": [
+    {
+      "type": 0,
+      "value": "自我复制工人"
+    }
+  ],
+  "skills.swarm.selfReplicatingWorkers.technical": [
+    {
+      "type": 0,
+      "value": "猎人和采集者的生产速度乘以 (1 + 蜂群系数 × 各自数量 / 10)^0.75。已发射面板的能量产出乘以 (1 + 蜂群系数 × 已发射面板数 / 100)^0.5。"
+    }
+  ],
+  "skills.swarm.steadySupply.description": [
+    {
+      "type": 0,
+      "value": "请把工厂留在原来的地方。"
+    }
+  ],
+  "skills.swarm.steadySupply.name": [
+    {
+      "type": 0,
+      "value": "稳定供应"
+    }
+  ],
+  "skills.swarm.steadySupply.technical": [
+    {
+      "type": 0,
+      "value": "无限重置后保留花钱购买的设施。重置前分配即可自动恢复购买数量。免费初始设施不会累积。量子重置清空储备。"
+    }
+  ],
+  "skills.swarm.stellarSwarm.description": [
+    {
+      "type": 0,
+      "value": "现在连献祭也可以批发了。"
+    }
+  ],
+  "skills.swarm.stellarSwarm.name": [
+    {
+      "type": 0,
+      "value": "恒星蜂群"
+    }
+  ],
+  "skills.swarm.stellarSwarm.technical": [
+    {
+      "type": 0,
+      "value": "将恒星献祭产量乘以 1 + log12.5(Bots) × log12.5(P)，其中 P 是已拥有的最高级设施的购买加成倍率。机器人消耗不变。"
     }
   ],
   "skills.switch-anyway": [
@@ -13299,6 +14135,12 @@
       "value": "清除已保存的最佳纪录？"
     }
   ],
+  "statistics.speedruns.combinedTime": [
+    {
+      "type": 0,
+      "value": "合计时间"
+    }
+  ],
   "statistics.speedruns.currentRun": [
     {
       "type": 0,
@@ -13309,6 +14151,12 @@
     {
       "type": 0,
       "value": "使用过双倍无限点数"
+    }
+  ],
+  "statistics.speedruns.firstTranscendence": [
+    {
+      "type": 0,
+      "value": "首次超越"
     }
   ],
   "statistics.speedruns.importedRun": [
@@ -13327,6 +14175,12 @@
     {
       "type": 0,
       "value": "个人最佳"
+    }
+  ],
+  "statistics.speedruns.previousTiming": [
+    {
+      "type": 0,
+      "value": "旧计时方式"
     }
   ],
   "statistics.speedruns.speedrunCurrentSave": [
@@ -14623,7 +15477,7 @@
   "wiki.discovery.overview": [
     {
       "type": 0,
-      "value": "发现从"
+      "value": "发现初始提供"
     },
     {
       "type": 8,
@@ -14631,13 +15485,13 @@
       "children": [
         {
           "type": 0,
-          "value": "等级1"
+          "value": "10倍设施产量"
         }
       ]
     },
     {
       "type": 0,
-      "value": "开始，提供"
+      "value": "、"
     },
     {
       "type": 8,
@@ -14645,7 +15499,7 @@
       "children": [
         {
           "type": 0,
-          "value": "现金、机器人和设施产量 ×10"
+          "value": "7倍现金与机器人收益"
         }
       ]
     },
@@ -14659,13 +15513,13 @@
       "children": [
         {
           "type": 0,
-          "value": "10秒面板基础寿命"
+          "value": "20秒面板基础寿命"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。每次完成会让倍率和基础寿命各增加"
+      "value": "。每个基础小时完成一次，设施倍率增加"
     },
     {
       "type": 8,
@@ -14679,7 +15533,7 @@
     },
     {
       "type": 0,
-      "value": "。基础速度下每小时完成一次。发现不需要科学家或资源。"
+      "value": "。设施与机器人加成均作用于装配线产出。发现不需要科学家或资源。"
     }
   ],
   "wiki.discovery.overview-title": [
@@ -14785,7 +15639,7 @@
   "wiki.discovery.upgrades": [
     {
       "type": 0,
-      "value": "在牛油果猫中，"
+      "value": "在Avocato中，"
     },
     {
       "type": 8,
@@ -14793,13 +15647,13 @@
       "children": [
         {
           "type": 0,
-          "value": "发现速度"
+          "value": "升华"
         }
       ]
     },
     {
       "type": 0,
-      "value": "每次购买提供"
+      "value": "花费"
     },
     {
       "type": 8,
@@ -14807,13 +15661,13 @@
       "children": [
         {
           "type": 0,
-          "value": "速度 +25%"
+          "value": "3 TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。"
+      "value": "，将现金与机器人提升至"
     },
     {
       "type": 8,
@@ -14821,13 +15675,111 @@
       "children": [
         {
           "type": 0,
-          "value": "初始强度"
+          "value": "10倍"
         }
       ]
     },
     {
       "type": 0,
-      "value": "让初始倍率和面板基础寿命增加"
+      "value": "，每"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30个基础分钟"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "完成一次：倍率+0.1，并增加30分钟发现进度。"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "启悟"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "花费"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "5 TP"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，将基础寿命提升至"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "30秒"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "，每"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "10个基础分钟"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "完成一次：寿命+0.1秒，并增加10分钟升华进度。传递的进度可以使前面的进度条完成，并保留溢出部分。技能树速度加成分别按"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "100% / 50% / 25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "生效，其他速度加成全额生效。传递会让前一条进度条以其当前速度推进相应的游戏时间。共享速度升级增加"
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "25%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "；各项独立强度升级为相应的初始倍率或寿命增加"
     },
     {
       "type": 8,
@@ -14841,7 +15793,7 @@
     },
     {
       "type": 0,
-      "value": "，并立即作用于当前周目。两种升级的价格独立递增，分别为"
+      "value": "。重复购买的价格独立递增："
     },
     {
       "type": 8,
@@ -14849,13 +15801,13 @@
       "children": [
         {
           "type": 0,
-          "value": "1、2、3…超越点数"
+          "value": "1、2、3… TP"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。加成为加法叠加。"
+      "value": "。加成为加算。"
     }
   ],
   "wiki.discovery.upgrades-title": [
@@ -15698,70 +16650,124 @@
       "value": "版本 4.1.10"
     }
   ],
+  "wiki.patch-notes.version-4-1-10.achievements": [
+    {
+      "type": 0,
+      "value": "新增五项成就、预设6–10，以及机器人和研究页的可选预设快捷操作。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.augment-fixes": [
+    {
+      "type": 0,
+      "value": "修复了恒星蜂群的失控增长。稳定供应现在会在无限重置后保留购买数量，无需重新分配。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-10.balance": [
     {
       "type": 0,
-      "value": "重新平衡了设施价格增幅，以及巨型结构的成本和产量。"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-10.bot-boost": [
-    {
-      "type": 0,
-      "value": "修复了重置存档后永久双倍机器人加成失效的问题。"
+      "value": "重新平衡设施价格增幅以及巨型结构的价格和产量。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.challenge": [
     {
       "type": 0,
-      "value": "新增奖励2个催化剂的无科学量子挑战。恒星牺牲现在会生成你已拥有的最高级设施，包括巨型结构。"
+      "value": "新增七项量子挑战，每项奖励2个催化剂。挑战期间禁用现实技能点和部分量子升级，保留现实进度。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery": [
     {
       "type": 0,
-      "value": "发现随时间成长，提升现金、机器人、设施产量和面板寿命。相关技能会在解锁后调整效果。"
+      "value": "新增三条联动进度条：发现强化设施，升华强化现金和机器人，启悟延长面板寿命。后续进度条会推进前一条。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.discovery-upgrades": [
     {
       "type": 0,
-      "value": "在 Avocato 处新增发现速度与初始强度的永久升级。"
+      "value": "在Avocato中新增发现速度和强度的永久升级。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.fixes": [
     {
       "type": 0,
-      "value": "修复了云端保留已获得的开发者选项、强化技能点统计、负数调试调整和推广轮换的问题。"
+      "value": "修复重置存档后的永久机器人2倍效果、已清除预设和已退役研究再次出现、Tinker快速输入以及多个挑战和增幅问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.fracturing": [
+    {
+      "type": 0,
+      "value": "“激化器”更名为“催化剂”，“激化技能”更名为“碎裂技能”。挑战中也可碎裂技能，提前预览效果，并打开其强化树。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.hands-off": [
+    {
+      "type": 0,
+      "value": "Hands Off现在仅允许被动生成设施。修补功能已禁用，生成的装配线会计入早期目标。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.ios": [
     {
       "type": 0,
-      "value": "现在需要 iOS 16 或更高版本。"
+      "value": "现在需要iOS 16或更高版本。"
     }
   ],
-  "wiki.patch-notes.version-4-1-10.save-fix": [
+  "wiki.patch-notes.version-4-1-10.orientation": [
     {
       "type": 0,
-      "value": "修复了保存或重新加载后，旧研究和已清空的技能预设重新出现的问题。"
+      "value": "移动端新增自动、竖屏和横屏方向设置。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.presentation": [
+    {
+      "type": 0,
+      "value": "改进了生产详情、技能预览、滚动和对话框。设施进度条更高，按钮渐变更柔和。侧边菜单显示储存时间，可视化默认开启。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.refunds": [
+    {
+      "type": 0,
+      "value": "热启动现不可退款。储存、投资和星辰记忆可退款。首次分配不可退款技能前新增警告。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.secret": [
     {
       "type": 0,
-      "value": "解锁发现后，到达第六个 Avotation 秘密时会自动完成。"
+      "value": "解锁发现后，到达第六个Avotation秘密时将自动完成。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.speedruns": [
     {
       "type": 0,
-      "value": "速通现在会将当前挑战与个人最佳纪录进行比较，重置存档后仍保留最佳纪录。新增挑战标记、双倍无限点数使用记录，并记住上次打开的统计标签页。个人最佳纪录随云存档同步，但不包含在导出的存档中。 新的里程碑纪录使用实际游玩时间。"
+      "value": "改进速通：保留个人最佳记录、对比当前轮次、显示辅助使用情况，并新增首次超越里程碑。新记录统计游玩时间与已消耗储存时间之和。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.starter": [
+    {
+      "type": 0,
+      "value": "首次量子跃迁后，新一轮游戏会以一条装配线开局。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-memory": [
+    {
+      "type": 0,
+      "value": "重做星辰记忆：在无限和量子重置时积存新生成的SRS充能，以强化SRS增幅。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.stellar-sacrifices": [
+    {
+      "type": 0,
+      "value": "星辰献祭现在生成你已拥有的最高级设施。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-10.swarm": [
+    {
+      "type": 0,
+      "value": "新增手工劳动、蜂群和碎片强化，包括七种设施手工制造升级。手工组装现在会保留装配线的手工制造。"
     }
   ],
   "wiki.patch-notes.version-4-1-10.transcendence": [
     {
       "type": 0,
-      "value": "溢出现更名为超越。在 Avocato 处花费1超越点数即可解锁发现，取代科学与研究。"
+      "value": "Overflow现更名为超越。在Avocato中花费1点超越点数解锁发现，以替代科学和研究。"
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

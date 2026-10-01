@@ -72,15 +72,17 @@ describe('Blank Slate application integration', () => {
     expect(await reopened.dispatchPlayer({ ...revisionEnvelope(reopened), command: { kind: 'challenge.abandon' } })).toMatchObject({ transition: { accepted: true } })
     expect(readyState(reopened).gameState.challenges?.galvanizers).toBe(0n)
   })
-  test('galvanization publishes only after currency and ownership are durably saved', async () => {
+  test.each([null, 'blank-slate', 'trial-and-error', 'no-science'] as const)('galvanization is durable during %s', async active => {
     const { app, repository } = await setup()
     const candidate = structuredClone(readyState(app))
     candidate.gameState = { ...candidate.gameState, challenges: {
       ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true,
-      hasEarnedGalvanizer: true, galvanizers: 1n,
+      hasEarnedGalvanizer: true, galvanizers: 1n, active: active === 'blank-slate' ? null : active,
     } }
     expect(await app.commitAwayReplacement(revisionEnvelope(app), candidate)).toMatchObject({ committed: true })
+    if (active === 'blank-slate') expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter-blank-slate' } })).toMatchObject({ transition: { accepted: true } })
     const before = readyState(app).gameState
+    if (active === 'blank-slate') expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'skill.purchase', skillId: 'startHereTree' } })).toMatchObject({ transition: { accepted: false } })
     repository.beforeCommit = async () => { throw new Error('deliberate galvanization save failure') }
     expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'skill.galvanize', skillId: 'startHereTree' } })).toMatchObject({ transition: { accepted: false } })
     expect(readyState(app).gameState).toEqual(before)
