@@ -1,10 +1,14 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { useState } from 'react'
+import type { UiRuntimePlayerCommandResult, UiRuntimeStoredTimeControls } from '../../runtime'
+import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
+import type { TinkerPlayerCommand } from './useTinkerPressController'
 import { IntlProvider } from 'react-intl'
 import { afterEach, expect, test, vi } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../../../application/firstRun/unityFirstRunSave'
 import { hydrateGameState } from '../../../game-state/mapping'
-import { createCanonicalTinkerRuntimeState, selectCanonicalTinkerUiFacts } from '../../../simulation/canonicalTinker'
+import { createCanonicalTinkerRuntimeState, selectCanonicalTinkerUiFacts, startCanonicalTinker, setCanonicalTinkerRepeat } from '../../../simulation/canonicalTinker'
 import { EMPTY_INFINITY_CHALLENGES } from '../../../simulation/infinityChallenges'
 import { TinkerSurface } from './TinkerSurface'
 
@@ -63,4 +67,150 @@ test('Hands Off does not display a usable Tinker or misleading rewards', () => {
   const facts = selectCanonicalTinkerUiFacts(state, createCanonicalTinkerRuntimeState(), 500)
   render(<IntlProvider locale="en" messages={{}}><TinkerSurface facts={facts} dispatch={vi.fn()} /></IntlProvider>)
   expect(screen.queryByRole('button')).toBeNull()
+})
+
+// The rendered control owns input/worker-lifecycle ordering; canonical Tinker
+// owns admission and repeat state. Pending dispatches expose real interleavings.
+function lifecycleHarness(delay: 'none' | 'first' | 'repeat' = 'none') {
+  let state = fixture(true, false)
+  let runtime = createCanonicalTinkerRuntimeState()
+  let status: StoredTimeJobStatus = { kind: 'idle' }
+  const listeners = new Set<() => void>()
+  let settle: (() => void) | undefined
+  let didDelay = false
+  let update: (() => void) | undefined
+  const admitted: TinkerPlayerCommand[] = []
+  const storedTime: UiRuntimeStoredTimeControls = {
+    status: () => status,
+    subscribe: listener => { listeners.add(listener); return () => { listeners.delete(listener) } },
+    cancel: () => undefined,
+  }
+  async function dispatch(command: TinkerPlayerCommand): Promise<UiRuntimePlayerCommandResult> {
+    if (!didDelay && command.kind === 'tinker.start' &&
+      (delay === 'first' || (delay === 'repeat' && command.repeat))) {
+      didDelay = true
+      await new Promise<void>(resolve => { settle = resolve })
+    }
+    admitted.push(command)
+    const stats = selectCanonicalTinkerUiFacts(state, runtime, 500).stats
+    const result = command.kind === 'tinker.start'
+      ? startCanonicalTinker(state, runtime, stats, command.repeat)
+      : setCanonicalTinkerRepeat(state, runtime, command.enabled)
+    state = result.state as typeof state
+    runtime = result.runtime
+    update?.()
+    return { status: 'accepted', kind: 'transition', changed: true, stateRevision: admitted.length, activationRevision: { session: 0, state: admitted.length } }
+  }
+  function Harness() {
+    const [, setRevision] = useState(0)
+    update = () => setRevision(value => value + 1)
+    return <IntlProvider locale="en" messages={{}}><TinkerSurface
+      facts={selectCanonicalTinkerUiFacts(state, runtime, 500)}
+      dispatch={dispatch} storedTime={storedTime} /></IntlProvider>
+  }
+  render(<Harness />)
+  const button = screen.getByRole('button') as HTMLButtonElement
+  return {
+    button, admitted, runtime: () => runtime,
+    resolve: () => settle?.(),
+    job: (kind: StoredTimeJobStatus['kind']) => {
+      status = kind === 'idle' ? { kind } : { kind, jobId: 'offline-one', requestedSeconds: 3600,
+        computedSeconds: 1800, fraction: 0.5, elapsedMilliseconds: 10,
+        estimatedRemainingMilliseconds: 10, maximumChunkMilliseconds: 5 }
+      listeners.forEach(listener => listener())
+    },
+  }
+}
+
+for (const kind of ['running', 'cancelling', 'committing'] as const) {
+  test(`Offline Time ${kind} blocks Tinker re-entry until idle; a fresh hold and outside click still work`, async () => {
+    vi.useFakeTimers()
+    const h = lifecycleHarness()
+    act(() => h.job(kind))
+    expect(h.button.disabled).toBe(true)
+    fireEvent.keyDown(h.button, { key: ' ' })
+    await act(async () => { await vi.advanceTimersByTimeAsync(700) })
+    expect(h.runtime().running).toBe(false)
+    expect(screen.queryByText('Repeating')).toBeNull()
+    act(() => h.job('idle'))
+    expect(h.button.disabled).toBe(false)
+    await act(async () => { await vi.advanceTimersByTimeAsync(700) })
+    expect(h.runtime().repeat).toBe(false)
+    fireEvent.keyDown(h.button, { key: ' ' })
+    await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+    fireEvent.keyUp(h.button, { key: ' ' })
+    expect(h.runtime().repeat).toBe(true)
+    expect(screen.getByText('Repeating')).not.toBeNull()
+    await act(async () => { fireEvent.pointerDown(document.body) })
+    expect(h.runtime().repeat).toBe(false)
+    expect(screen.queryByText('Repeating')).toBeNull()
+  })
+}
+
+test.each([200, 600])('starting Offline Time after %sms of holding clears repeat and requires a new press after completion', async elapsed => {
+  vi.useFakeTimers()
+  const h = lifecycleHarness()
+  fireEvent.keyDown(h.button, { key: ' ' })
+  await act(async () => { await vi.advanceTimersByTimeAsync(elapsed) })
+  act(() => h.job('running'))
+  await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+  expect(h.runtime().repeat).toBe(false)
+  expect(h.button.disabled).toBe(true)
+  expect(screen.queryByText('Repeating')).toBeNull()
+  act(() => h.job('idle'))
+  fireEvent.keyUp(h.button, { key: ' ' })
+  await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+  expect(h.runtime().repeat).toBe(false)
+  fireEvent.keyDown(h.button, { key: ' ' })
+  await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+  expect(h.runtime().repeat).toBe(true)
+})
+
+test('Repeating is shown only after the canonical repeat command settles', async () => {
+  vi.useFakeTimers()
+  const h = lifecycleHarness('repeat')
+  fireEvent.keyDown(h.button, { key: ' ' })
+  await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+  expect(h.runtime().repeat).toBe(false)
+  expect(screen.queryByText('Repeating')).toBeNull()
+  await act(async () => { h.resolve() })
+  expect(h.runtime().repeat).toBe(true)
+  expect(screen.getByText('Repeating')).not.toBeNull()
+})
+
+for (const cancel of ['outside click', 'Offline Time'] as const) {
+  test(`delayed Tinker dispatch cannot admit a queued repeat after ${cancel}`, async () => {
+    vi.useFakeTimers()
+    const h = lifecycleHarness('first')
+    fireEvent.keyDown(h.button, { key: ' ' })
+    await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+    if (cancel === 'outside click') fireEvent.pointerDown(document.body)
+    else { act(() => h.job('running')); act(() => h.job('idle')) }
+    await act(async () => { h.resolve(); await vi.advanceTimersByTimeAsync(700) })
+    expect(h.runtime().repeat).toBe(false)
+    expect(h.admitted.some(command => command.kind === 'tinker.start' && command.repeat)).toBe(false)
+    expect(screen.queryByText('Repeating')).toBeNull()
+    fireEvent.keyUp(h.button, { key: ' ' })
+    fireEvent.keyDown(h.button, { key: ' ' })
+    await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+    expect(h.runtime().repeat).toBe(true)
+    expect(screen.getByText('Repeating')).not.toBeNull()
+  })
+}
+
+test('a repeat command already awaiting dispatch cannot restore the canceled UI when it settles', async () => {
+  vi.useFakeTimers()
+  const h = lifecycleHarness('repeat')
+  fireEvent.keyDown(h.button, { key: ' ' })
+  await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+  fireEvent.pointerDown(document.body)
+  await act(async () => { h.resolve(); await vi.advanceTimersByTimeAsync(700) })
+  expect(h.runtime().repeat).toBe(false)
+  expect(screen.queryByText('Repeating')).toBeNull()
+  expect(h.button.dataset.gestureActive).toBe('false')
+  fireEvent.keyUp(h.button, { key: ' ' })
+  fireEvent.keyDown(h.button, { key: ' ' })
+  await act(async () => { await vi.advanceTimersByTimeAsync(600) })
+  expect(h.runtime().repeat).toBe(true)
+  expect(screen.getByText('Repeating')).not.toBeNull()
 })

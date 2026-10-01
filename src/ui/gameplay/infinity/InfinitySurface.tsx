@@ -1,3 +1,4 @@
+import { usePressAndHoldRepeat } from '../usePressAndHoldRepeat'
 import type { InfinityCycleHistoryEntry } from '../../../game-state/types'
 import { infinityRunIpPerMinute } from '../statistics/statisticsProjection'
 import { avocatoMessages, quantumMessages } from '../quantum/messages'
@@ -536,16 +537,16 @@ function InfinityShopCard({
   const completed =
     preview.code === 'already-purchased' ||
     preview.code === 'maximum-reached'
-  const disabled =
-    pending ||
+  const unavailable =
     completed ||
     !preview.eligible ||
     !routeAvailable
+  const disabled = pending || unavailable
   const prerequisite = prerequisiteName(preview.itemId)
   const ownedCount = purchasedCount(preview.itemId, resources)
 
-  const purchase = async (): Promise<void> => {
-    if (disabled || pendingRef.current) return
+  const purchase = async (): Promise<boolean> => {
+    if (unavailable || pendingRef.current) return false
     pendingRef.current = true
     setPending(true)
     setFailed(false)
@@ -555,13 +556,18 @@ function InfinityShopCard({
         itemId: preview.itemId,
       })
       setFailed(result.status !== 'accepted')
+      return result.status === 'accepted'
     } catch {
       setFailed(true)
+      return false
     } finally {
       pendingRef.current = false
       setPending(false)
     }
   }
+
+  const repeatable = preview.itemId === 'secret' || preview.itemId === 'permanent-skill-point'
+  const holdHandlers = usePressAndHoldRepeat(repeatable && !unavailable, purchase, preview.itemId)
 
   return (
     <article className="infinity-shop-card">
@@ -604,7 +610,7 @@ function InfinityShopCard({
                 cost: formatInfinityPointAmount(locale, preview.cost),
               })
         }
-        onClick={() => void purchase()}
+        {...holdHandlers}
       >
         <span>
           {completed

@@ -8241,6 +8241,22 @@
     "defaultMessage": "Overflow is now Transcendence. Unlock Discovery in Avocato for 1 Transcendence Point to replace Science and Research.",
     "description": "Version 4.1.10 release notes."
   },
+  "wiki.patch-notes.version-4-1-11": {
+    "defaultMessage": "Version 4.1.11",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.button-contrast": {
+    "defaultMessage": "Improved button gradients and text contrast across the game. Disabled buttons now use flat colours.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.infinity-hold": {
+    "defaultMessage": "Added repeat purchases for Secret of the Universe and Permanent Skill Points in Infinity. Click and hold or long press to keep buying.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.tinker-offline": {
+    "defaultMessage": "Fixed Tinker showing “Repeating” during Offline Time processing. Tinker is now disabled until processing finishes.",
+    "description": "Version 4.1.11 release notes."
+  },
   "wiki.patch-notes.version-4-1-2": {
     "defaultMessage": "Version 4.1.2",
     "description": "Version label for the previous Wiki patch notes."

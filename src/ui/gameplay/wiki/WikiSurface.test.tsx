@@ -16,7 +16,7 @@ const progression = Object.freeze({
 })
 
 describe('Wiki patch-note content', () => {
-  test('shows 4.1.10 first and retains older notes', () => {
+  test('shows 4.1.11 first and retains older notes', () => {
     render(
       <IntlProvider locale="en" messages={{}} onError={() => undefined}>
         <WikiSurface
@@ -27,9 +27,13 @@ describe('Wiki patch-note content', () => {
       </IntlProvider>,
     )
 
-    const latest = screen.getByRole('heading', { name: 'Version 4.1.10' }).closest('section')!
+    const latest = screen.getByRole('heading', { name: 'Version 4.1.11' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
-    expect(within(latest).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
+    expect(within(latest).getAllByRole('listitem')).toHaveLength(3)
+    const prior = screen.getByRole('heading', { name: 'Version 4.1.10' }).closest('section')!
+    expect(within(prior).getByRole('heading', { name: 'Older' })).not.toBeNull()
+    const priorList = screen.getByRole('heading', { name: 'Version 4.1.10' }).nextElementSibling as HTMLElement
+    expect(within(priorList).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       "Overflow is now Transcendence. Unlock Discovery in Avocato for 1 Transcendence Point to replace Science and Research.",
       "Added three linked progress bars: Discovery improves facilities, Elevation improves Cash and Bots, and Enlightenment improves panel lifetime. Later bars advance the bar before them.",
       "Added permanent Discovery speed and power upgrades in Avocato.",
@@ -51,7 +55,6 @@ describe('Wiki patch-note content', () => {
       "Added five achievements, presets 6–10, and optional preset quick actions on Bots and Research.",
       "iOS 16 or later is now required.",
     ])
-    expect(screen.queryByRole('heading', { name: 'Version 4.1.11' })).toBeNull()
     const version419List = screen.getByRole('heading', { name: 'Version 4.1.9' }).nextElementSibling as HTMLElement
     expect(within(version419List).getAllByRole('listitem').map((item) => item.textContent)).toEqual([
       "Added seven augments for Super-Radiant Scattering.",

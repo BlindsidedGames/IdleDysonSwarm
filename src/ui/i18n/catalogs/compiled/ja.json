@@ -16770,6 +16770,30 @@
       "value": "Overflowの名称を超越に変更しました。Avocatoで超越ポイント1を使って発見を解放すると、科学と研究が置き換わります。"
     }
   ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "バージョン 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.button-contrast": [
+    {
+      "type": 0,
+      "value": "ゲーム全体でボタンのグラデーションと文字のコントラストを改善しました。無効なボタンは単色で表示されます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-hold": [
+    {
+      "type": 0,
+      "value": "インフィニティで宇宙の秘密と永久スキルポイントを繰り返し購入できるようになりました。マウスボタンを押し続けるか長押しすると、購入を続けられます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.tinker-offline": [
+    {
+      "type": 0,
+      "value": "オフライン時間の処理中にTinkerが「繰り返し中」と表示される問題を修正しました。処理が完了するまでTinkerは無効になります。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,

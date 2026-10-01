@@ -96,7 +96,9 @@ Use these existing tokens rather than choosing a new nearby value per element:
   Simulations, Avocato, Store, Offline Time and Settings. Use the softer dark-surface
   treatment for white-text buttons; preserve text contrast and semantic danger colours.
   Keep the gradient through hover/press, and omit it in forced-colour mode.
-  Disabled purchases stay flat. Navigation, disclosures, quantity selectors,
+  Light actions keep dark text and an accent-based pressed fill; do not pair dark
+  selected fills with dark text. Costs and labels inherit the same readable ink.
+  Disabled purchases and disabled Details controls stay flat. Navigation, disclosures, quantity selectors,
   skill nodes and presets retain their existing designs.
 - Store actions use a softer pink, mixed towards the selected surface, with
   gentler diagonal lighting than ordinary purchase buttons.

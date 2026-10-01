@@ -1,15 +1,18 @@
 import { manualFacilityPresentation } from '../skills/manualFacilityMessages'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
 import {
+  useCallback,
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react'
 import { useIntl } from 'react-intl'
 import type {
   FrontendApplicationSnapshot,
   UiRuntimePlayerCommandResult,
+  UiRuntimeStoredTimeControls,
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -36,16 +39,30 @@ export type TinkerFacts = ReadyTinker['value']
 
 export interface TinkerSurfaceProps {
   readonly facts: TinkerFacts
+  readonly storedTime?: UiRuntimeStoredTimeControls
   readonly dispatch: TinkerCommandDispatch
   readonly className?: string
 }
 type TinkerFailureCategory = 'rejected' | 'runtime'
 
+const NO_JOB_SUBSCRIPTION = () => undefined
+const IDLE = () => false
+
 export function TinkerSurface({
   facts,
+  storedTime,
   dispatch,
   className,
 }: TinkerSurfaceProps) {
+  const subscribe = useCallback(
+    (listener: () => void) => storedTime?.subscribe(listener) ?? NO_JOB_SUBSCRIPTION,
+    [storedTime],
+  )
+  const readBusy = useCallback(
+    () => storedTime !== undefined && storedTime.status().kind !== 'idle',
+    [storedTime],
+  )
+  const jobActive = useSyncExternalStore(subscribe, readBusy, IDLE)
   const intl = useIntl()
   const titleId = useId()
   const actionId = useId()
@@ -67,6 +84,7 @@ export function TinkerSurface({
   }
   const gesture = useTinkerPressController({
     canInteract: facts.canStart || facts.runtime.running,
+    interactionBlocked: jobActive,
     repeatAvailable: facts.presentationMode !== 'default',
     runtimeRepeat: facts.runtime.repeat,
     dispatch,
@@ -134,7 +152,7 @@ export function TinkerSurface({
   const showRepeatStatus = facts.presentationMode !== 'default'
   const running = facts.runtime.running
   const showHeldVisual = gesture.active
-  const disabled = !facts.canStart && !running && !gesture.active
+  const disabled = jobActive || (!facts.canStart && !running && !gesture.active)
   const failureMessage = failure === 'rejected'
     ? tinkerMessages.rejectedFailure
     : tinkerMessages.runtimeFailure

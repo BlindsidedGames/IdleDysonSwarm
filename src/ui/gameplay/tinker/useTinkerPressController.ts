@@ -30,6 +30,7 @@ export type TinkerPressPhase = 'idle' | 'pressed' | 'repeating'
 
 export interface TinkerPressControllerOptions {
   readonly canInteract: boolean
+  readonly interactionBlocked: boolean
   readonly repeatAvailable: boolean
   readonly runtimeRepeat: boolean
   readonly dispatch: TinkerCommandDispatch
@@ -72,6 +73,7 @@ type PressSource =
  */
 export function useTinkerPressController({
   canInteract,
+  interactionBlocked,
   repeatAvailable,
   runtimeRepeat,
   dispatch,
@@ -79,6 +81,8 @@ export function useTinkerPressController({
   onDispatchFailure,
 }: TinkerPressControllerOptions): TinkerPressControllerBindings {
   const [phase, setPhase] = useState<TinkerPressPhase>('idle')
+  const interactionGenerationRef = useRef(0)
+  const interactionBlockedRef = useRef(interactionBlocked)
   const mountedRef = useRef(true)
   const sourceRef = useRef<PressSource | null>(null)
   const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -96,6 +100,7 @@ export function useTinkerPressController({
   const onResultRef = useRef(onResult)
   const onDispatchFailureRef = useRef(onDispatchFailure)
 
+  interactionBlockedRef.current = interactionBlocked
   canInteractRef.current = canInteract
   repeatAvailableRef.current = repeatAvailable
   runtimeRepeatRef.current = runtimeRepeat
@@ -103,38 +108,11 @@ export function useTinkerPressController({
   onResultRef.current = onResult
   onDispatchFailureRef.current = onDispatchFailure
 
-  const enqueue = useCallback((command: TinkerPlayerCommand): void => {
-    const run = async (): Promise<void> => {
-      try {
-        const result = await dispatchRef.current(command)
-        if (mountedRef.current) onResultRef.current(command, result)
-      } catch {
-        if (mountedRef.current) onDispatchFailureRef.current(command)
-      }
-    }
-    const previous = dispatchQueueRef.current
-    const current = previous === null ? run() : previous.then(run, run)
-    dispatchQueueRef.current = current
-    void current.finally(() => {
-      if (dispatchQueueRef.current === current) {
-        dispatchQueueRef.current = null
-      }
-    })
-  }, [])
-
   const clearHoldTimer = useCallback((): void => {
     if (holdTimerRef.current === null) return
     clearTimeout(holdTimerRef.current)
     holdTimerRef.current = null
   }, [])
-
-  const requestRepeatDisabled = useCallback((): void => {
-    const repeatMayBeEnabled =
-      repeatEnabledRequestedRef.current || runtimeRepeatRef.current
-    if (!repeatMayBeEnabled || repeatDisabledRequestedRef.current) return
-    repeatDisabledRequestedRef.current = true
-    enqueue({ kind: 'tinker.set-repeat', enabled: false })
-  }, [enqueue])
 
   const releasePointerCapture = useCallback((
     source: PressSource | null,
@@ -150,15 +128,58 @@ export function useTinkerPressController({
     }
   }, [])
 
-  const stopInteraction = useCallback((): void => {
+  const invalidatePress = useCallback((): void => {
+    interactionGenerationRef.current += 1
     const source = sourceRef.current
     sourceRef.current = null
     clearHoldTimer()
-    requestRepeatDisabled()
     repeatEnabledRequestedRef.current = false
     if (mountedRef.current) setPhase('idle')
     releasePointerCapture(source)
-  }, [clearHoldTimer, releasePointerCapture, requestRepeatDisabled])
+  }, [clearHoldTimer, releasePointerCapture])
+
+  const enqueue = useCallback((command: TinkerPlayerCommand): void => {
+    const generation = interactionGenerationRef.current
+    const run = async (): Promise<void> => {
+      // Cancellation must retire queued starts even if an earlier command is
+      // still awaiting the runtime lane. Cleanup intents always reach it.
+      if (command.kind === 'tinker.start' && (
+        generation !== interactionGenerationRef.current ||
+        interactionBlockedRef.current || !mountedRef.current
+      )) return
+      try {
+        const result = await dispatchRef.current(command)
+        if (!mountedRef.current || generation !== interactionGenerationRef.current) return
+        onResultRef.current(command, result)
+        if (command.kind === 'tinker.start' && result.status !== 'accepted') invalidatePress()
+      } catch {
+        if (!mountedRef.current || generation !== interactionGenerationRef.current) return
+        onDispatchFailureRef.current(command)
+        if (command.kind === 'tinker.start') invalidatePress()
+      }
+    }
+    const previous = dispatchQueueRef.current
+    const current = previous === null ? run() : previous.then(run, run)
+    dispatchQueueRef.current = current
+    void current.finally(() => {
+      if (dispatchQueueRef.current === current) {
+        dispatchQueueRef.current = null
+      }
+    })
+  }, [invalidatePress])
+
+  const requestRepeatDisabled = useCallback((): void => {
+    const repeatMayBeEnabled =
+      repeatEnabledRequestedRef.current || runtimeRepeatRef.current
+    if (!repeatMayBeEnabled || repeatDisabledRequestedRef.current) return
+    repeatDisabledRequestedRef.current = true
+    enqueue({ kind: 'tinker.set-repeat', enabled: false })
+  }, [enqueue])
+
+  const stopInteraction = useCallback((): void => {
+    requestRepeatDisabled()
+    invalidatePress()
+  }, [invalidatePress, requestRepeatDisabled])
 
   const releasePress = useCallback((): void => {
     const source = sourceRef.current
@@ -181,7 +202,7 @@ export function useTinkerPressController({
       sourceRef.current !== null ||
       repeatEnabledRequestedRef.current ||
       runtimeRepeatRef.current ||
-      !canInteractRef.current
+      !canInteractRef.current || interactionBlockedRef.current
     ) return false
     sourceRef.current = source
     repeatEnabledRequestedRef.current = false
@@ -191,7 +212,7 @@ export function useTinkerPressController({
     if (!repeatAvailableRef.current) return true
     holdTimerRef.current = setTimeout(() => {
       holdTimerRef.current = null
-      if (sourceRef.current !== source) return
+      if (sourceRef.current !== source || interactionBlockedRef.current) return
       repeatEnabledRequestedRef.current = true
       if (mountedRef.current) setPhase('repeating')
       enqueue({ kind: 'tinker.start', repeat: true })
@@ -271,7 +292,7 @@ export function useTinkerPressController({
         return
       }
       if (
-        canInteractRef.current &&
+        canInteractRef.current && !interactionBlockedRef.current &&
         !repeatEnabledRequestedRef.current &&
         !runtimeRepeatRef.current
       ) {
@@ -358,6 +379,10 @@ export function useTinkerPressController({
   }, [clearHoldTimer, stopInteraction])
 
   useEffect(() => {
+    if (interactionBlocked) stopInteraction()
+  }, [interactionBlocked, stopInteraction])
+
+  useEffect(() => {
     if (repeatAvailable || phase !== 'repeating') return
     stopInteraction()
   }, [phase, repeatAvailable, stopInteraction])
@@ -386,8 +411,8 @@ export function useTinkerPressController({
 
   return {
     phase,
-    active: phase !== 'idle',
-    repeating: phase === 'repeating',
+    active: !interactionBlocked && phase !== 'idle',
+    repeating: !interactionBlocked && phase === 'repeating' && runtimeRepeat,
     controlRef: setControlRef,
     onPointerDown,
     onPointerUp: (event) => finishMatchingPointer(event.pointerId),

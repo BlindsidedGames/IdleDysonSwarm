@@ -16770,6 +16770,30 @@
       "value": "Overflow heißt jetzt Transzendenz. Schalte Entdeckung in Avocato für 1 Transzendenzpunkt frei, um Wissenschaft und Forschung zu ersetzen."
     }
   ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Version 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.button-contrast": [
+    {
+      "type": 0,
+      "value": "Farbverläufe der Schaltflächen und Textkontrast im gesamten Spiel verbessert. Deaktivierte Schaltflächen verwenden jetzt einfarbige Flächen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-hold": [
+    {
+      "type": 0,
+      "value": "Wiederholte Käufe für das Geheimnis des Universums und permanente Skill-Punkte in Unendlichkeit hinzugefügt. Halte die Maustaste gedrückt oder drücke lange, um weiterzukaufen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.tinker-offline": [
+    {
+      "type": 0,
+      "value": "Tinker zeigt während der Verarbeitung von Offline-Zeit nicht mehr fälschlich „Wiederholung läuft“ an. Tinker ist jetzt bis zum Ende der Verarbeitung deaktiviert."
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
