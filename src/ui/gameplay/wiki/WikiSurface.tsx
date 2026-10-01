@@ -458,6 +458,15 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion4111)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            <li>{intl.formatMessage(messages.patchNotesVersion4111InfinityHold)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111ButtonContrast)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111TinkerOffline)}</li>
+          </ul>
+        </section>
+        <section className="wiki-surface__section">
+          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion4110)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion4110Transcendence)}</li>
@@ -481,9 +490,6 @@ function PatchNotesArticle() {
             <li>{intl.formatMessage(messages.patchNotesVersion4110Achievements)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Ios)}</li>
           </ul>
-        </section>
-        <section className="wiki-surface__section">
-          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion419)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion419Augments)}</li>

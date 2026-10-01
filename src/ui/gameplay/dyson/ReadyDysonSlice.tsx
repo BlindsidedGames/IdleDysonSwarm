@@ -2284,6 +2284,7 @@ function ReadyDysonSliceContent({
               content: (
                 <TinkerSurface
                   facts={tinker.value}
+                  storedTime={storedTime}
                   dispatch={dispatchPlayer}
                 />
               ),

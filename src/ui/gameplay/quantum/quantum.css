@@ -9,7 +9,7 @@
   --quantum-warm: #ffa45e;
   --quantum-action: var(--theme-accent);
   --quantum-action-hover: color-mix(in srgb, var(--theme-accent) 82%, white);
-  --quantum-action-pressed: var(--theme-selected);
+  --quantum-action-pressed: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page));
   --quantum-action-disabled: color-mix(in srgb, var(--theme-panel) 72%, var(--theme-page));
   --quantum-action-text: var(--theme-page);
   --quantum-action-width: 6rem;
@@ -279,4 +279,28 @@
   .avocato-meditation > .ui-button:not(:disabled) {
     background-image: var(--ui-action-gradient-dark);
   }
+}
+
+.quantum-leap-card__confirm > .ui-button--secondary,
+.avocato-meditation > .ui-button {
+  border-color: var(--theme-divider);
+  background: var(--theme-selected);
+  color: white;
+}
+
+.quantum-leap-card__confirm > .ui-button--secondary:not(:disabled):hover,
+.avocato-meditation > .ui-button:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--theme-selected) 90%, var(--theme-accent));
+}
+
+.quantum-leap-card__confirm > .ui-button--secondary:not(:disabled):active,
+.avocato-meditation > .ui-button:not(:disabled):active {
+  background-color: var(--theme-panel);
+}
+
+.quantum-leap-card > .ui-button,
+.quantum-leap-card__confirm > .ui-button {
+  min-inline-size: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }

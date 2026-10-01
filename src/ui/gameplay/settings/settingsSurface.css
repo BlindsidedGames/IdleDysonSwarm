@@ -266,7 +266,7 @@
 
 .settings-surface__file-option > button:hover:not(:disabled),
 .settings-surface__dialog-actions > button:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 88%, var(--theme-accent));
 }
 
 .settings-surface__file-option > button:active:not(:disabled),
@@ -435,7 +435,7 @@
 }
 
 .settings-surface__community-action:hover {
-  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 88%, var(--theme-accent));
 }
 
 .settings-surface__community-action--primary:hover {
@@ -507,7 +507,7 @@
 }
 
 .settings-surface__processing-default:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 92%, var(--theme-accent));
 }
 
 .settings-surface__processing-default:focus-visible {
@@ -778,7 +778,7 @@
 }
 
 .settings-surface__save-actions > button:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 88%, var(--theme-accent));
 }
 
 .settings-surface__save-actions > button:focus-visible {

@@ -16770,6 +16770,30 @@
       "value": "Overflow devient Transcendance. Débloquez Découverte dans Avocato pour 1 Point de Transcendance afin de remplacer Science et Recherche."
     }
   ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Version 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.button-contrast": [
+    {
+      "type": 0,
+      "value": "Amélioration des dégradés des boutons et du contraste du texte dans tout le jeu. Les boutons désactivés utilisent désormais des couleurs unies."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-hold": [
+    {
+      "type": 0,
+      "value": "Ajout des achats répétés du Secret de l’Univers et des Points de compétence permanents dans Infinité. Maintenez le clic ou effectuez un appui long pour continuer les achats."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.tinker-offline": [
+    {
+      "type": 0,
+      "value": "Correction de Tinker affichant « Répétition en cours » pendant le traitement du Temps hors ligne. Tinker est désormais désactivé jusqu’à la fin du traitement."
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,

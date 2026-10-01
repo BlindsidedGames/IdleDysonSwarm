@@ -16770,6 +16770,30 @@
       "value": "Overflow现更名为超越。在Avocato中花费1点超越点数解锁发现，以替代科学和研究。"
     }
   ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "版本 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.button-contrast": [
+    {
+      "type": 0,
+      "value": "改进了整个游戏的按钮渐变和文字对比度。禁用的按钮现在使用纯色。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-hold": [
+    {
+      "type": 0,
+      "value": "在无限中新增宇宙的秘密和永久技能点的重复购买功能。按住鼠标按钮或长按即可持续购买。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.tinker-offline": [
+    {
+      "type": 0,
+      "value": "修复了 Tinker 在处理离线时间时显示“正在重复”的问题。现在，Tinker 会保持禁用，直到处理完成。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,

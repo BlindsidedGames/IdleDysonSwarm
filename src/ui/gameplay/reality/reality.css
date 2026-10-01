@@ -268,7 +268,7 @@
 }
 
 .reality-worker-panel .ui-button:not(:disabled):active {
-  background-color: var(--theme-selected);
+  background-color: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page));
 }
 
 .reality-worker-panel .ui-button:disabled {
@@ -340,8 +340,7 @@
 }
 
 .reality-avocato-entry .ui-button:not(:disabled):active {
-  background: var(--theme-selected);
-  color: white;
+  background: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page));
 }
 
 .reality-upgrades > .ui-collapsible-section__heading {
@@ -513,7 +512,7 @@
   padding: 0.28rem;
   border-color: #0a0710;
   border-radius: 0.28rem;
-  background: var(--reality-upgrade-action);
+  background: color-mix(in srgb, var(--reality-upgrade-action) 80%, white);
   color: #171020;
   font-size: calc(0.7rem * var(--game-text-scale));
   font-weight: var(--font-weight-bold);
@@ -588,4 +587,12 @@
   .reality-upgrade-card .ui-button:not(:disabled) {
     background-image: var(--ui-action-gradient);
   }
+}
+
+.reality-upgrade-card .ui-button:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--reality-upgrade-action) 65%, white);
+}
+
+.reality-upgrade-card .ui-button:not(:disabled):active {
+  background-color: color-mix(in srgb, var(--reality-upgrade-action) 85%, white);
 }

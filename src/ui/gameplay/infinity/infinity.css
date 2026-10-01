@@ -6,7 +6,7 @@
   --infinity-panel-raised: var(--theme-selected);
   --infinity-accent: var(--theme-accent);
   --infinity-accent-lead: var(--theme-accent);
-  --infinity-control-pressed: var(--theme-selected);
+  --infinity-control-pressed: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page));
   --infinity-control-disabled: color-mix(in srgb, var(--theme-panel) 72%, var(--theme-page));
   --infinity-available: #ffa45e;
   --infinity-spent: #91dd8f;
@@ -505,7 +505,7 @@
   border-color: var(--color-negative);
 }
 
-.infinity-break-target__submit {
+.infinity-break-target .infinity-break-target__submit {
   grid-column: 2;
   grid-row: 2;
   min-block-size: var(--target-minimum);
@@ -515,16 +515,15 @@
   font-weight: var(--font-weight-bold);
 }
 
-.infinity-break-target__submit:not(:disabled):hover {
+.infinity-break-target .infinity-break-target__submit:not(:disabled):hover {
   background-color: color-mix(in srgb, var(--infinity-accent) 82%, white);
 }
 
-.infinity-break-target__submit:not(:disabled):active {
+.infinity-break-target .infinity-break-target__submit:not(:disabled):active {
   background-color: var(--infinity-control-pressed);
-  color: white;
 }
 
-.infinity-break-target__submit:disabled {
+.infinity-break-target .infinity-break-target__submit:disabled {
   border-color: #171020;
   background: var(--infinity-control-disabled);
   color: #b5a7c8;
@@ -643,13 +642,10 @@
 /* Action lighting only; selectors and navigation retain their existing surfaces. */
 @media (forced-colors: none) {
   .infinity-shop-card .ui-button:not(:disabled),
-  .infinity-break-target__submit:not(:disabled) {
+  .infinity-break-target .infinity-break-target__submit:not(:disabled) {
     background-image: var(--ui-action-gradient);
   }
   .infinity-challenge-card .ui-button:not(:disabled) {
     background-image: var(--ui-action-gradient);
-  }
-  .infinity-break-target__submit:not(:disabled):active {
-    background-image: var(--ui-action-gradient-dark);
   }
 }

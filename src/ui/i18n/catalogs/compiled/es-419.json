@@ -16770,6 +16770,30 @@
       "value": "Overflow ahora se llama Trascendencia. Desbloquea Descubrimiento en Avocato por 1 Punto de Trascendencia para reemplazar Ciencia e Investigación."
     }
   ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Versión 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.button-contrast": [
+    {
+      "type": 0,
+      "value": "Se mejoraron los degradados de los botones y el contraste del texto en todo el juego. Los botones desactivados ahora usan colores uniformes."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-hold": [
+    {
+      "type": 0,
+      "value": "Se agregaron compras repetidas del Secreto del Universo y de Puntos de habilidad permanentes en Infinito. Mantén presionado el botón del mouse o haz una pulsación larga para seguir comprando."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.tinker-offline": [
+    {
+      "type": 0,
+      "value": "Se corrigió que Tinker mostrara «Repitiendo» durante el procesamiento del Tiempo sin conexión. Tinker ahora permanece desactivado hasta que termina el procesamiento."
+    }
+  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
