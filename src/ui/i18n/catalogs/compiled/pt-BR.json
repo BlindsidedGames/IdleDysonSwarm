@@ -4589,6 +4589,46 @@
       "value": ")"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "Produção das instalações aumentada em "
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "–"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "Produção das instalações ×1"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -5347,6 +5387,22 @@
     {
       "type": 0,
       "value": "% concluído"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "Ações rápidas (minutos)"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "Ação "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     }
   ],
   "offline-time.quick-spend": [
@@ -8025,6 +8081,18 @@
       "value": "Menu de Desenvolvimento"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "Tamanho da interface"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "Altere a escala da interface em todo o jogo"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -8603,6 +8671,12 @@
     {
       "type": 0,
       "value": "Dados salvos"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "Incluir data e hora nos nomes dos arquivos exportados"
     }
   ],
   "settings.visualization.description": [
@@ -9815,6 +9889,12 @@
     {
       "type": 0,
       "value": "Copiar"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "Falha ao copiar. Copie o texto selecionado manualmente."
     }
   ],
   "skills.cost": [
@@ -13025,6 +13105,90 @@
       "value": "Memória estelar"
     }
   ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×1.000. Vida útil dos painéis ×10 enquanto seus bots atenderem ao requisito baseado na cobertura, calculado antes deste bônus de vida útil. O dinheiro é dividido por 100 enquanto ativo; o custo comum de bots baseado na cobertura é multiplicado por 100."
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×1.000. Vida útil dos painéis ×10 enquanto os bots atendem ao requisito normal anterior ao bônus. Remove o fator extra de custo de bots e a penalidade de dinheiro desta habilidade."
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×2 e custos de bots divididos por 1.000, permanentemente sem pontos de habilidade atribuídos."
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×1.000 e galáxias estelares efetivas ×1.000. Remove o custo extra de bots e a penalidade de dinheiro e ciência desta habilidade."
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×1.000 e galáxias estelares efetivas ×1.000. Remove o custo extra de bots e a penalidade de dinheiro desta habilidade."
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "Cria sua instalação possuída de maior nível, incluindo megaestruturas, sem consumir bots: max(0, log10(galáxias estelares))² por segundo, multiplicado pelos benefícios estelares possuídos, Descoberta e Enxame Estelar. Sem produção com uma galáxia estelar ou menos."
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×1.000 e mais ×1.000 de galáxias estelares efetivas. Remove o custo extra de bots desta habilidade e restaura os bônus de compra, incluindo a escala do Enxame Estelar."
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×2. Divide por 1.000 os bots necessários para Sacrifícios Estelares."
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×1.000, galáxias estelares efetivas ×1.000 e custo de bots ×1.000. Divide o dinheiro pelas galáxias estelares efetivas, com divisor mínimo de um."
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×1.000, galáxias estelares efetivas ×1.000 e custo de bots ×1.000. Divide o dinheiro e a ciência pelas galáxias estelares efetivas, com divisor mínimo de um."
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "Bônus de produção estelar"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "Multiplicadores de produção combinados de Melhorias Estelares, Domínio Estelar, Obliteração Estelar e Supernova."
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "Consome bots para criar sua instalação possuída de maior nível, incluindo megaestruturas: max(0, log10(galáxias estelares))² por segundo, multiplicado pelos benefícios estelares possuídos, Descoberta e Enxame Estelar. Sem produção com uma galáxia estelar ou menos. O custo base de bots equivale às estrelas cercadas por segundo, com mínimo de um."
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "Produção estelar ×1.000, mais ×1.000 de galáxias estelares efetivas e mais ×1.000 de custo de bots. Suprime todos os bônus de instalações por compras, incluindo a escala de compras usada pelo Enxame Estelar. Reembolsar os restaura."
+    }
+  ],
   "skills.subskill-assign": [
     {
       "type": 0,
@@ -14162,7 +14326,7 @@
   "statistics.speedruns.importedRun": [
     {
       "type": 0,
-      "value": "Inválida — Partida importada"
+      "value": "Jogo salvo importado"
     }
   ],
   "statistics.speedruns.inProgress": [
@@ -14312,7 +14476,7 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Saves importados, uso de depuração e tempos não verificados não contam para recordes pessoais."
+      "value": "Os recordes pessoais excluem o uso de Depuração e tempos não verificados."
     }
   ],
   "statistics.speedruns.usageNotUsed": [
@@ -16782,10 +16946,70 @@
       "value": "Melhorados os gradientes dos botões e o contraste do texto em todo o jogo. Botões desativados agora usam cores sólidas."
     }
   ],
+  "wiki.patch-notes.version-4-1-11.checkbox-labels": [
+    {
+      "type": 0,
+      "value": "Os rótulos das caixas de seleção ficaram mais amplos e consistentes entre Configurações e Habilidades."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "Adicionados tamanho da interface no computador de 80% a 150%, restauração do padrão e zoom da árvore de habilidades até 250%."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "Adicionadas dicas apenas no computador que acompanham o ponteiro e usam as cores dos tipos de habilidades."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "Saves importados válidos agora continuam os speedruns com os critérios de elegibilidade existentes. Um ícone de disquete com estilo consistente aparece antes de Tempo armazenado."
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.infinity-hold": [
     {
       "type": 0,
       "value": "Adicionadas compras repetidas do Segredo do Universo e de Pontos de Habilidade Permanentes no Infinito. Mantenha o clique ou o toque pressionado para continuar comprando."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "Infinito agora mostra junto aos totais o bônus de produção de instalações de todos os PI obtidos, com texto legível e alinhado à linha de base no celular."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-copy": [
+    {
+      "type": 0,
+      "value": "Corrigido Copiar predefinições nos aplicativos nativos sem solicitar permissão da área de transferência. Navegadores sem acesso à área de transferência oferecem cópia manual."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.quick-amounts": [
+    {
+      "type": 0,
+      "value": "Escolha três quantidades de Tempo armazenado para uso rápido em Tempo offline, com rótulos compactos na barra lateral."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.sidebar-freeze": [
+    {
+      "type": 0,
+      "value": "Corrigido o travamento do jogo quando usos rápidos de Tempo armazenado pela barra lateral provocam desastres ou o fim de uma civilização."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "Reformulamos as habilidades estelares com bônus diretos de produção que permanecem após a fratura. Fraturar remove as desvantagens de cada habilidade, e Domínio Estelar usa um requisito de ativação estável. Atualizamos as descrições estelares e os custos de bots."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "Adicionada uma opção para incluir data e hora nos nomes dos saves exportados."
     }
   ],
   "wiki.patch-notes.version-4-1-11.tinker-offline": [

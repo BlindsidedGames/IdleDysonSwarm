@@ -4589,6 +4589,46 @@
       "value": ")"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "Production des installations augmentée de "
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "–"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "Production des installations ×1"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -5347,6 +5387,22 @@
     {
       "type": 0,
       "value": "% terminé"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "Actions rapides (minutes)"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "Action "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     }
   ],
   "offline-time.quick-spend": [
@@ -8025,6 +8081,18 @@
       "value": "Menu de développement"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "Taille de l’interface"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "Modifiez la taille de l’interface dans tout le jeu"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -8603,6 +8671,12 @@
     {
       "type": 0,
       "value": "Données de sauvegarde"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "Horodater les noms des sauvegardes exportées"
     }
   ],
   "settings.visualization.description": [
@@ -9815,6 +9889,12 @@
     {
       "type": 0,
       "value": "Copier"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "Échec de la copie. Copiez manuellement le texte sélectionné."
     }
   ],
   "skills.cost": [
@@ -13025,6 +13105,90 @@
       "value": "Mémoire stellaire"
     }
   ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×1 000. Durée de vie des panneaux ×10 tant que vos robots atteignent le seuil fondé sur la couverture, calculé avant ce bonus de durée de vie. L’argent est divisé par 100 pendant son activation ; le coût ordinaire en robots fondé sur la couverture est multiplié par 100."
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×1 000. Durée de vie des panneaux ×10 tant que le seuil normal de robots avant bonus est atteint. Supprime le facteur de coût supplémentaire en robots et la pénalité d’argent de cette compétence."
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×2 et coûts en robots divisés par 1 000, de façon permanente sans points de compétence assignés."
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×1 000 et galaxies stellaires effectives ×1 000. Supprime le coût supplémentaire en robots et les pénalités d’argent et de science de cette compétence."
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×1 000 et galaxies stellaires effectives ×1 000. Supprime le coût supplémentaire en robots et la pénalité d’argent de cette compétence."
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "Crée votre installation possédée de plus haut niveau, mégastructures comprises, sans consommer de robots : max(0, log10(galaxies stellaires))² par seconde, multiplié par les bénéfices stellaires possédés, Découverte et Essaim stellaire. Aucune production à une galaxie stellaire ou moins."
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×1 000 et galaxies stellaires effectives multipliées à nouveau par 1 000. Supprime le coût supplémentaire en robots de cette compétence et rétablit les bonus d’achat, y compris la progression d’Essaim stellaire."
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×2. Divise par 1 000 les robots requis pour Sacrifices stellaires."
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×1 000, galaxies stellaires effectives ×1 000 et coût en robots ×1 000. Divise l’argent par les galaxies stellaires effectives, avec un diviseur minimum de un."
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×1 000, galaxies stellaires effectives ×1 000 et coût en robots ×1 000. Divise l’argent et la science par les galaxies stellaires effectives, avec un diviseur minimum de un."
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "Bonus de production stellaire"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "Multiplicateurs de production combinés d’Améliorations stellaires, Domination stellaire, Anéantissement stellaire et Supernova."
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "Consomme des robots pour créer votre installation possédée de plus haut niveau, mégastructures comprises : max(0, log10(galaxies stellaires))² par seconde, multiplié par les bénéfices stellaires possédés, Découverte et Essaim stellaire. Aucune production à une galaxie stellaire ou moins. Le coût de base en robots est égal aux étoiles entourées par seconde, avec un minimum de un."
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "Production stellaire ×1 000, galaxies stellaires effectives multipliées à nouveau par 1 000 et coût en robots multiplié à nouveau par 1 000. Désactive tous les bonus d’installation issus des achats, y compris la progression d’achat utilisée par Essaim stellaire. Un remboursement les rétablit."
+    }
+  ],
   "skills.subskill-assign": [
     {
       "type": 0,
@@ -14162,7 +14326,7 @@
   "statistics.speedruns.importedRun": [
     {
       "type": 0,
-      "value": "Non admissible — Sauvegarde importée"
+      "value": "Sauvegarde importée"
     }
   ],
   "statistics.speedruns.inProgress": [
@@ -14312,7 +14476,7 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Les sauvegardes importées, le débogage et les temps non vérifiés ne comptent pas pour les records personnels."
+      "value": "Les records personnels excluent le mode Débogage et les temps non vérifiés."
     }
   ],
   "statistics.speedruns.usageNotUsed": [
@@ -16782,10 +16946,70 @@
       "value": "Amélioration des dégradés des boutons et du contraste du texte dans tout le jeu. Les boutons désactivés utilisent désormais des couleurs unies."
     }
   ],
+  "wiki.patch-notes.version-4-1-11.checkbox-labels": [
+    {
+      "type": 0,
+      "value": "Les libellés des cases à cocher sont plus larges et cohérents entre Paramètres et Compétences."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "Ajout d’une taille d’interface de 80 % à 150 % sur ordinateur, d’un retour à la valeur par défaut et d’un zoom de l’arbre de compétences jusqu’à 250 %."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "Ajout d’infobulles uniquement sur ordinateur, qui suivent le pointeur et utilisent les couleurs des types de compétences."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "Les sauvegardes importées valides poursuivent désormais les speedruns avec les critères d’éligibilité existants. Une icône de disquette assortie apparaît avant le Temps stocké."
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.infinity-hold": [
     {
       "type": 0,
       "value": "Ajout des achats répétés du Secret de l’Univers et des Points de compétence permanents dans Infinité. Maintenez le clic ou effectuez un appui long pour continuer les achats."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "Infinité affiche désormais près des totaux le bonus de production des installations lié à tous les PI gagnés, avec un texte lisible et aligné sur la ligne de base sur mobile."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-copy": [
+    {
+      "type": 0,
+      "value": "Correction de Copier pour les préréglages dans les applications natives, sans demande d’autorisation du presse-papiers. Les navigateurs sans accès au presse-papiers proposent une copie manuelle."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.quick-amounts": [
+    {
+      "type": 0,
+      "value": "Choisissez trois quantités de Temps stocké à utiliser rapidement dans Temps hors ligne, avec des libellés compacts dans la barre latérale."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.sidebar-freeze": [
+    {
+      "type": 0,
+      "value": "Correction du blocage du jeu lorsque les utilisations rapides de Temps stocké depuis la barre latérale déclenchent des catastrophes ou la fin d’une civilisation."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "Compétences stellaires remaniées avec des bonus directs de production conservés après fracturation. La fracturation supprime les inconvénients de chaque compétence, et Domination stellaire utilise un seuil d’activation stable. Descriptions stellaires et coûts en robots mis à jour."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "Ajout d’une option pour horodater les noms des sauvegardes exportées."
     }
   ],
   "wiki.patch-notes.version-4-1-11.tinker-offline": [

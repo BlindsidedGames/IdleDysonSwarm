@@ -1,3 +1,4 @@
+import { stellarTechnicalMessages, stellarDiscoveryObliterationMessage } from './stellarMessages'
 import { manualFacilityMessages, manualFacilityPresentation } from './manualFacilityMessages'
 import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
@@ -76,10 +77,12 @@ export function useSkillPresentationNodes(discoveryUnlocked: boolean) {
     () =>
       presentation.nodes.map((node) =>
         (() => {
-          const localized = localizeSkillPresentation(intl, node)
+          const stellarEffect = node.skillId === 'stellarObliteration' && discoveryUnlocked ? stellarDiscoveryObliterationMessage : stellarTechnicalMessages[node.skillId as keyof typeof stellarTechnicalMessages]
+          const source = localizeSkillPresentation(intl, node)
+          const localized = stellarEffect ? {...source, technicalDescription:intl.formatMessage(stellarEffect)} : source
           if (!discoveryUnlocked) return localized
           const name = discoverySkillNames[node.skillId as keyof typeof discoverySkillNames]
-          const effect = discoverySkillEffects[node.skillId as keyof typeof discoverySkillEffects]
+          const effect = stellarEffect ?? discoverySkillEffects[node.skillId as keyof typeof discoverySkillEffects]
           const flavour = discoverySkillFlavour[node.skillId as keyof typeof discoverySkillFlavour]
           return { ...localized, ...(flavour ? { description: intl.formatMessage(flavour) } : {}), ...(name ? { displayName: intl.formatMessage(name) } : {}), ...(effect ? { technicalDescription: intl.formatMessage(effect), discoveryTechnical: true } : {}) }
         })(),
@@ -133,7 +136,8 @@ export function useSkillPresentationNodes(discoveryUnlocked: boolean) {
       }
       if (discoveryUnlocked) {
         for (const [id, node] of nodes) {
-          const effect = discoverySkillEffects[id as keyof typeof discoverySkillEffects]
+          const effect = (id === 'stellarObliteration' ? stellarDiscoveryObliterationMessage : stellarTechnicalMessages[id as keyof typeof stellarTechnicalMessages])
+            ?? discoverySkillEffects[id as keyof typeof discoverySkillEffects]
           if (effect) nodes.set(id, { ...node, technicalDescription: intl.formatMessage(effect), discoveryTechnical: true })
         }
       }

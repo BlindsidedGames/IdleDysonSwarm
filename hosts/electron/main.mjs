@@ -4,6 +4,7 @@ import { selectSteamSaveRoot } from './steam/offlineProfile.mjs'
 import { loadSteamClient, createSteamPublication } from './steam/client.mjs'
 import {
   app,
+  clipboard,
   dialog,
   BrowserWindow,
   ipcMain,
@@ -35,7 +36,7 @@ import {
   resolve,
   sep,
 } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   readPackagedReleaseMetadata,
   runtimeMetadata,
@@ -88,6 +89,7 @@ const channels = Object.freeze({
   metadata: 'ids:native:metadata',
   diagnostics: 'ids:native:diagnostics:export',
   exportSave: 'ids:native:save:export',
+  writeClipboardText: 'ids:native:clipboard:write-text',
   storeProducts: 'ids:native:store:products',
   storePurchase: 'ids:native:store:purchase',
   storeRestore: 'ids:native:store:restore',
@@ -229,6 +231,18 @@ async function readBoundedText(path) {
 }
 
 function registerNativeHandlers() {
+  ipcMain.handle(channels.writeClipboardText, async (event, text) => {
+    if (mainWindow === null || mainWindow.isDestroyed() || !mainWindow.isFocused() ||
+        event.sender !== mainWindow.webContents ||
+        event.senderFrame !== mainWindow.webContents.mainFrame ||
+        event.senderFrame?.url !== pathToFileURL(rendererEntry).href) {
+      throw new Error('Clipboard copy requires the active game window.')
+    }
+    if (typeof text !== 'string' || Buffer.byteLength(text, 'utf8') > maximumTextBytes) {
+      throw new Error('Clipboard copy requires supported plain text.')
+    }
+    await clipboard.writeText(text)
+  })
   ipcMain.handle(channels.exists, async (_event, relativePath) => {
     const target = rootedPath(relativePath)
     await rejectSymbolicLinks(target)

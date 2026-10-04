@@ -33,6 +33,8 @@ import {
   type StoredTimeAccuracyPreset,
 } from '../../../game-state/types'
 import { basicFacilityMessages } from '../facilities/messages'
+import { QuickStoredTimeSettings } from './QuickStoredTimeSettings'
+import { formatQuickStoredTime, useQuickStoredTimeAmounts } from './quickStoredTimePreferences'
 import './offlineTime.css'
 
 type OfflineTimeCommand = Extract<
@@ -86,12 +88,6 @@ export interface OfflineTimeSurfaceProps {
   ) => void
 }
 
-const QUICK_AMOUNTS = Object.freeze([
-  { seconds: 60, message: messages.oneMinute },
-  { seconds: 600, message: messages.tenMinutes },
-  { seconds: 3_600, message: messages.oneHour },
-] as const)
-
 const FACILITY_NAME_MESSAGES = Object.freeze({
   assembly_lines: basicFacilityMessages.assemblyLinesName,
   ai_managers: basicFacilityMessages.aiManagersName,
@@ -134,6 +130,7 @@ export function OfflineTimeSurface({
   onFirstDisasterDialogsReady,
 }: OfflineTimeSurfaceProps) {
   const intl = useIntl()
+  const { seconds: quickAmounts } = useQuickStoredTimeAmounts()
   const subscribeToJob = useCallback(
     (listener: () => void) => storedTime.subscribe(listener),
     [storedTime],
@@ -577,15 +574,15 @@ export function OfflineTimeSurface({
             role="group"
             aria-label={intl.formatMessage(messages.spendHeading)}
           >
-            {QUICK_AMOUNTS.map(({ seconds, message }) => (
+            {quickAmounts.map((seconds, slot) => (
               <button
-                key={seconds}
+                key={slot}
                 type="button"
                 disabled={bankSeconds < seconds || pendingAction !== null || jobActive || storedTimeCheater}
                 aria-pressed={selectedSeconds === seconds}
                 onClick={() => select(seconds)}
               >
-                {intl.formatMessage(message)}
+                {formatQuickStoredTime(locale, seconds)}
               </button>
             ))}
             <button
@@ -856,6 +853,8 @@ export function OfflineTimeSurface({
             </div>
             </div>, portalHost)
           ) : null}
+
+          <QuickStoredTimeSettings />
 
           {feedback ? (
             <p

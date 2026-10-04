@@ -174,20 +174,74 @@
   margin: 0;
 }
 
-.infinity-surface__points {
+.infinity-surface__points-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-start;
+  min-inline-size: 0;
+  gap: 0.35rem;
+}
+
+.infinity-surface__points > .infinity-surface__boost {
+  flex: 1 1 auto;
+  /* Reserve the separator and readable multiplier at extreme text scales. */
+  min-inline-size: 6rem;
+  max-inline-size: 100%;
+  color: #e8dffa;
+  font-size: calc(0.8rem * var(--game-text-scale));
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.infinity-surface__boost .ui-stable-single-line-text__visible {
   display: inline-flex;
   align-items: baseline;
+  max-inline-size: 100%;
+}
+
+.infinity-surface__boost-copy {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+}
+
+.infinity-surface__boost-separator,
+.infinity-surface__multiplier {
+  flex: 0 0 auto;
+  white-space: pre;
+}
+
+.infinity-surface__boost-measurement::after {
+  content: attr(data-text);
+  white-space: pre;
+}
+
+.infinity-surface__points {
+  display: flex;
+  align-items: baseline;
+  inline-size: 100%;
+  min-inline-size: 0;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  touch-action: pan-x;
   font-family: var(--font-family-numeric);
   font-size: calc(1.05rem * var(--game-text-scale));
   font-weight: var(--font-weight-bold);
   font-variant-numeric: tabular-nums;
 }
 
+.infinity-surface__points::-webkit-scrollbar { display: none; }
+
 .infinity-surface__available {
+  flex: 0 0 auto;
   color: var(--infinity-available);
 }
 
 .infinity-surface__spent {
+  flex: 0 0 auto;
   margin-inline-start: 0.15em;
   color: var(--infinity-spent);
   font-size: 0.78em;
@@ -564,6 +618,10 @@
 }
 
 @media (max-width: 30rem) {
+  .infinity-surface__boost .ui-stable-single-line-text__visible {
+    vertical-align: baseline;
+  }
+
   .infinity-surface__control-panel {
     --infinity-action-edge-safety: 0px;
     --infinity-summary-inline-padding: 0.5rem;
@@ -649,3 +707,5 @@
     background-image: var(--ui-action-gradient);
   }
 }
+
+.infinity-surface__multiplier { color: var(--color-accent-value); white-space: nowrap; }

@@ -51,7 +51,9 @@ import {
 } from '../../../platform/communityLinks'
 import { DiscordIcon } from '../../components/DiscordIcon'
 
-import { canExportSaveFile } from '../../../platform/saveFileExport'
+import { useDesktopInterfaceScale, MINIMUM_INTERFACE_SCALE, MAXIMUM_INTERFACE_SCALE } from '../../desktopPresentation'
+import { readBooleanPresentationPreference, writeBooleanPresentationPreference } from '../../presentationPreferences'
+import { SAVE_EXPORT_TIMESTAMP_KEY, canExportSaveFile } from '../../../platform/saveFileExport'
 
 export interface SettingsSurfaceProps {
   readonly achievementProvider?: 'play-games' | 'game-center'
@@ -187,6 +189,8 @@ export function SettingsSurface({
     useState<TransferStatus>('idle')
   const [exportStatus, setExportStatus] =
     useState<ExportStatus>('idle')
+  const { enabled: desktopPresentation, scale: interfaceScale, setScale: setInterfaceScale } = useDesktopInterfaceScale()
+  const [timestampExports, setTimestampExports] = useState(() => readBooleanPresentationPreference(SAVE_EXPORT_TIMESTAMP_KEY))
   const [importText, setImportText] = useState('')
   const [importPreview, setImportPreview] =
     useState<UiRuntimeImportPreview | null>(null)
@@ -836,11 +840,35 @@ export function SettingsSurface({
             </div>
           </section>
         ) : null}
+        {!developmentOnly && desktopPresentation ? <section className="settings-surface__panel settings-surface__panel--display">
+          <div className="settings-surface__copy">
+            <h2>{intl.formatMessage(messages.interfaceSize)}</h2>
+            <p>{intl.formatMessage(messages.interfaceSizeDescription)}</p>
+          </div>
+          <div className="settings-surface__processing-control">
+            <span className="settings-surface__processing-value">{Math.round(interfaceScale * 100)}%</span>
+            <input aria-label={intl.formatMessage(messages.interfaceSize)} type="range"
+              min={MINIMUM_INTERFACE_SCALE} max={MAXIMUM_INTERFACE_SCALE} step={0.05} value={interfaceScale}
+              style={{ '--settings-processing-progress': `${((interfaceScale - MINIMUM_INTERFACE_SCALE) / (MAXIMUM_INTERFACE_SCALE - MINIMUM_INTERFACE_SCALE)) * 100}%` } as CSSProperties}
+              onChange={event => setInterfaceScale(event.currentTarget.valueAsNumber)} />
+            <button type="button" className="settings-surface__processing-default"
+              disabled={interfaceScale === 1} onClick={() => setInterfaceScale(1)}>
+              {intl.formatMessage(messages.restoreProcessingDefault)}
+            </button>
+          </div>
+        </section> : null}
         {!developmentOnly ? <section className="settings-surface__panel settings-surface__panel--save">
           <div className="settings-surface__copy">
             <h2>{intl.formatMessage(messages.saveData)}</h2>
             <p>{intl.formatMessage(messages.saveDescription)}</p>
           </div>
+          {saveFileExportAvailable && <label className="settings-surface__toggle">
+            <input type="checkbox" checked={timestampExports} onChange={event => {
+              setTimestampExports(event.currentTarget.checked)
+              writeBooleanPresentationPreference(SAVE_EXPORT_TIMESTAMP_KEY, event.currentTarget.checked)
+            }} />
+            <span>{intl.formatMessage(messages.timestampExports)}</span>
+          </label>}
           <div className="settings-surface__save-actions">
             <button
               type="button"
@@ -1281,6 +1309,7 @@ export function SettingsSurface({
                   <button
                     type="button"
                     disabled={operationPending || exportText.length === 0}
+                    data-clipboard-copy
                     onClick={() => void requestExportCopy()}
                   >
                     {intl.formatMessage(messages.copyString)}

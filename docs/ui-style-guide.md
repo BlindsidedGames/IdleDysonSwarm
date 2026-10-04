@@ -37,6 +37,9 @@ precedence; update this guide when a decision becomes a shared convention.
   trigger rather than adding a stray information button.
 - Expanded confirmations need clear separation from the preceding content and
   an aligned action row. Check the expanded state, not just the closed card.
+- Checkbox labels use the full row, including text and spare width, as the hit
+  target. Keep the existing minimum target height and a 1.35rem checkbox; Skills
+  settings use the same padded, theme-coloured label treatment as Settings.
 - Let content determine height. Avoid empty filler, stretched cards and fixed
   heights that clip translations or enlarged text. Preserve usable hit targets.
 - Preserve approved specialist compositions: Facility Details has numbered
@@ -74,6 +77,12 @@ Use these existing tokens rather than choosing a new nearby value per element:
 
 - Reuse the route's `--theme-*` palette and semantic text/state colours. No new
   hardcoded colours, arbitrary opacity or accent meanings for routine features.
+- Desktop skill tooltips follow the pointer into the opposite screen quadrant,
+  stay inside the viewport, and reuse the corresponding skill-detail palette.
+  Interface size uses the existing processing-slider style and a Default reset.
+- Infinity keeps both point totals at their established size. Fit only the
+  production-boost suffix on one line; retain a readable text floor and align
+  shrinking text with the totals’ baseline.
 - A dialog with its own palette must use it for close/back and secondary buttons
   too; do not inherit mismatched controls from the route underneath it.
 - Discovery/Transcendence uses the approved purple/Avocato family, not the retired

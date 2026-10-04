@@ -2,9 +2,10 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
 import { afterEach, expect, test, vi } from 'vitest'
+import { QuickStoredTimeSettings } from './QuickStoredTimeSettings'
 import { QuickStoredTime, StoredTimeNavigationProgress } from './QuickStoredTime'
 
-afterEach(cleanup)
+afterEach(() => { cleanup(); localStorage.clear() })
 test('disables unaffordable amounts and re-enables them as the bank grows', () => {
   const dispatchPlayer = vi.fn()
   const view = (availableSeconds: number) => <IntlProvider locale="en" messages={{}}>
@@ -17,9 +18,9 @@ test('disables unaffordable amounts and re-enables them as the bank grows', () =
   }
   expect(dispatchPlayer).not.toHaveBeenCalled()
   rerender(view(600))
-  expect(screen.getByRole('button', { name: 'Spend 1 M of Offline Time' }).hasAttribute('disabled')).toBe(false)
-  expect(screen.getByRole('button', { name: 'Spend 10 M of Offline Time' }).hasAttribute('disabled')).toBe(false)
-  expect(screen.getByRole('button', { name: 'Spend 1 HR of Offline Time' }).hasAttribute('disabled')).toBe(true)
+  expect(screen.getByRole('button', { name: 'Spend 1M of Offline Time' }).hasAttribute('disabled')).toBe(false)
+  expect(screen.getByRole('button', { name: 'Spend 10M of Offline Time' }).hasAttribute('disabled')).toBe(false)
+  expect(screen.getByRole('button', { name: 'Spend 1HR of Offline Time' }).hasAttribute('disabled')).toBe(true)
 })
 
 
@@ -47,4 +48,39 @@ test('tracks actual job progress and removes the bar when processing finishes', 
   expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('100')
   act(() => { status = { kind: 'idle' }; publish() })
   expect(screen.queryByRole('progressbar')).toBeNull()
+})
+
+
+test('Offline quick amount controls update the sidebar, survive remounts, and reject invalid amounts', async () => {
+  const dispatchPlayer = vi.fn(async () => { throw new Error('offline') })
+  const view = () => <IntlProvider locale="en" messages={{}}>
+    <QuickStoredTimeSettings />
+    <QuickStoredTime availableSeconds={120} disabled={false} dispatchPlayer={dispatchPlayer} onFirstDisasters={vi.fn()} />
+  </IntlProvider>
+  let rendered = render(view())
+  const input = screen.getByRole('spinbutton', { name: 'Action 1' })
+  fireEvent.change(input, { target: { value: '2' } })
+  fireEvent.blur(input)
+  let button = screen.getByRole('button', { name: 'Spend 2M of Offline Time' })
+  fireEvent.click(button)
+  expect(dispatchPlayer).toHaveBeenCalledWith({ kind: 'time.request-stored-time-spend', requestedSeconds: 120 })
+  await act(async () => {})
+  const updatedInput = screen.getByRole('spinbutton', { name: 'Action 1' })
+  fireEvent.change(updatedInput, { target: { value: '0' } })
+  fireEvent.blur(updatedInput)
+  expect((screen.getByRole('spinbutton', { name: 'Action 1' }) as HTMLInputElement).value).toBe('2')
+  rendered.unmount()
+  rendered = render(view())
+  button = screen.getByRole('button', { name: 'Spend 2M of Offline Time' })
+  expect(button.hasAttribute('disabled')).toBe(false)
+  expect(screen.getByRole('button', { name: 'Spend 10M of Offline Time' }).hasAttribute('disabled')).toBe(true)
+  for (const [minutes, label] of [[75, '75M'], [120, '2HR'], [92_160, '1,536HR']] as const) {
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Action 1' }), { target: { value: String(minutes) } })
+    fireEvent.blur(screen.getByRole('spinbutton', { name: 'Action 1' }))
+    expect(screen.getByRole('button', { name: `Spend ${label} of Offline Time` })).toBeTruthy()
+  }
+  rendered.unmount()
+  localStorage.setItem('idle-dyson-swarm:quick-stored-time-minutes', '[1,-1,60]')
+  render(view())
+  expect(screen.getByRole('button', { name: 'Spend 1M of Offline Time' })).not.toBeNull()
 })

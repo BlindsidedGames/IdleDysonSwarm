@@ -10,6 +10,7 @@ const channels = Object.freeze({
   metadata: 'ids:native:metadata',
   diagnostics: 'ids:native:diagnostics:export',
   exportSave: 'ids:native:save:export',
+  writeClipboardText: 'ids:native:clipboard:write-text',
   storeProducts: 'ids:native:store:products',
   storePurchase: 'ids:native:store:purchase',
   storeRestore: 'ids:native:store:restore',
@@ -18,6 +19,14 @@ const channels = Object.freeze({
   prepareClose: 'ids:native:close:prepare',
   closePrepared: 'ids:native:close:prepared',
 })
+
+// A marked Copy button's trusted click grants one write in this event turn.
+let clipboardCopyAction = false
+document.addEventListener('click', (event) => {
+  if (!event.isTrusted || !event.target?.closest?.('[data-clipboard-copy]')) return
+  clipboardCopyAction = true
+  setTimeout(() => { clipboardCopyAction = false }, 0)
+}, true)
 
 let currentPhase = 'active'
 let terminationCheckpointHandler
@@ -46,6 +55,16 @@ contextBridge.exposeInMainWorld(
   'idleDysonSwarmNativeHost',
   Object.freeze({
     target: 'electron',
+    writeClipboardText: (text) => {
+      if (!clipboardCopyAction || !document.hasFocus()) {
+        return Promise.reject(new Error('Clipboard copy requires a Copy click.'))
+      }
+      clipboardCopyAction = false
+      if (typeof text !== 'string' || text.length > 32 * 1024 * 1024) {
+        return Promise.reject(new Error('Clipboard copy requires supported plain text.'))
+      }
+      return ipcRenderer.invoke(channels.writeClipboardText, text)
+    },
     ...(process.argv.includes('--ids-steam-cloud') ? { cloud: Object.freeze({
       read: () => ipcRenderer.invoke('ids:cloud:read'),
       readBackups: () => ipcRenderer.invoke('ids:cloud:backups'),

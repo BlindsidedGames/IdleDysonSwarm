@@ -584,3 +584,10 @@
 .offline-time-job .ui-button--secondary:not(:disabled):active {
   background-color: var(--theme-panel);
 }
+
+.offline-time-quick-settings { margin: 0; padding: 0; border: 0; min-inline-size: 0; }
+.offline-time-quick-settings legend { margin-block-end: var(--ui-related-copy-gap); font-size: var(--ui-text-body); }
+.offline-time-quick-settings > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ui-control-gap); }
+.offline-time-quick-settings label { display: grid; gap: var(--ui-related-copy-gap); font-size: var(--ui-text-body); }
+.offline-time-quick-settings input { box-sizing: border-box; inline-size: 100%; min-inline-size: 0; min-block-size: var(--target-minimum); padding: .4rem; border: 1px solid var(--theme-divider); border-radius: .3rem; background: var(--theme-page); color: inherit; font: inherit; }
+.offline-time-quick-settings input:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 2px; }

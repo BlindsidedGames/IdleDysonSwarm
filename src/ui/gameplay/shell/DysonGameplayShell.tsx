@@ -7,6 +7,8 @@ import {
   useState,
   type CSSProperties,
 } from 'react'
+import { DesktopTooltips } from '../../components/DesktopTooltips'
+import { useDesktopInterfaceScale } from '../../desktopPresentation'
 import { useMediaQuery } from '../../accessibility/useMediaQuery'
 import type {
   DysonGameplayShellProps,
@@ -58,6 +60,7 @@ export function DysonGameplayShell({
   routeContent,
   routeContentEdgeToEdge = false,
 }: DysonGameplayShellProps) {
+  useDesktopInterfaceScale()
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
   const menuId = `dyson-menu-${useId().replaceAll(':', '')}`
   const [menuOpen, setMenuOpen] = useState(false)
@@ -415,6 +418,7 @@ export function DysonGameplayShell({
           </footer>
         )}
       </div>
+      <DesktopTooltips />
     </div>
   )
 }

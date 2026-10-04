@@ -1,0 +1,17 @@
+.skill-details-dialog,
+.desktop-tooltip[data-palette] {
+  --skill-dialog-accent: #cc98ff;
+  --skill-dialog-background: #2e1e3d;
+}
+
+.skill-details-dialog[data-palette="fragment"],
+.desktop-tooltip[data-palette="fragment"] {
+  --skill-dialog-accent: #ff98c8;
+  --skill-dialog-background: #3d1e2c;
+}
+
+.skill-details-dialog[data-palette="non-refundable"],
+.desktop-tooltip[data-palette="non-refundable"] {
+  --skill-dialog-accent: #ff5c5c;
+  --skill-dialog-background: #3d0000;
+}

@@ -13,11 +13,12 @@ import fixture from '../../../../test/fixtures/schema-08-canonical-idb1-main-sav
 
 afterEach(cleanup)
 
-function setup(galvanized = true, rootId = 'startHereTree') {
+function setup(galvanized = true, rootId = 'startHereTree', discoveryUnlocked = false) {
   const source = hydrateGameState(prepareIdb1Save(fixture).prepared).state
   let current: CanonicalGameStateV1 = {
     ...source,
-    meta: { ...source.meta, firstInfinityComplete: true },
+    meta: { ...source.meta, firstInfinityComplete: true, firstQuantumComplete: discoveryUnlocked || source.meta.firstQuantumComplete },
+    quantum: { ...source.quantum, unlocks: { ...source.quantum.unlocks, stellar: discoveryUnlocked || source.quantum.unlocks.stellar } },
     skills: { ...source.skills, points: 3n, byId: {
       [rootId]: { owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0 },
     }, activeAutoAssignment: [] },
@@ -41,7 +42,7 @@ function setup(galvanized = true, rootId = 'startHereTree') {
         stateRevision: 1, activationRevision: { session: 1, state: 1 } }
     })
     return <IntlProvider locale="en" messages={{}}>
-      <SkillsSurface locale="en" points={state.skills.points} fragments={state.skills.fragments}
+      <SkillsSurface discoveryUnlocked={discoveryUnlocked} locale="en" points={state.skills.points} fragments={state.skills.fragments}
         galvanizers={state.challenges!.galvanizers}
         catalog={previewCanonicalSkillCatalog(state)} presets={state.skills.presets}
         selectedPresetSlot={1} botDistribution={0} autoAssignNonRefundable={false}
@@ -166,4 +167,15 @@ test('fracturing opens the available subtree immediately without assigning augme
   expect(screen.getByRole('button', { name: 'Extended Warranty. Cost: 1 Skill Points' })).toBeTruthy()
   expect(state().challenges!.galvanizers).toBe(0n)
   expect(state().skills.byId[CASH_SCIENCE_SUBSKILLS.lifetime]?.owned).not.toBe(true)
+})
+
+test('ordinary Stellar Obliteration after Discovery still explains both direct output and the Bot cost', () => {
+  setup(false, 'stellarObliteration', true)
+  const search = screen.getByRole('searchbox', { name: 'Search skills' })
+  fireEvent.change(search, { target: { value: 'Stellar Obliteration' } })
+  fireEvent.keyDown(search, { key: 'Enter' })
+  const dialog = screen.getByRole('dialog', { name: 'Stellar Obliteration' })
+  expect(dialog.textContent).toContain('1,000× Stellar output')
+  expect(dialog.textContent).toContain('1,000× Bot cost')
+  expect(dialog.textContent).not.toContain('Science')
 })

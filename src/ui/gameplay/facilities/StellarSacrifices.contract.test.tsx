@@ -27,7 +27,7 @@ test.each([false, true])('Stellar facility detail uses the correct description (
     <FacilityDetailsContent locale="en" facilityId="galactic_brains" fact={result.value.facilityFacts.galactic_brains} gameSpeed={1} />
   </IntlProvider>)
   expect(html).toContain('highest')
-  expect(html).toContain(fractured ? 'No Bots required or consumed.' : 'Bots')
+  expect(html).toContain(fractured ? 'without consuming Bots' : 'Bots')
   expect(html).not.toMatch(/<bdi>(?:Infinity|NaN|∞)/)
   if (fractured) expect(html).not.toContain('Sacrifices Bots')
 })

@@ -1073,3 +1073,5 @@
     background-image: var(--ui-action-gradient-dark);
   }
 }
+
+.settings-surface__panel--display { order: 5; grid-template-columns: minmax(0, 1fr); align-content: start; align-items: start; }

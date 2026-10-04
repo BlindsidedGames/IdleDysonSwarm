@@ -1,4 +1,7 @@
+import { copyPlainText } from '../../platform/plainTextClipboard'
 import { previewSkillProduction, type SkillProductionPreview } from '../../simulation/skillProductionPreview'
+import { readBooleanPresentationPreference } from '../presentationPreferences'
+import { saveExportFileName, SAVE_EXPORT_TIMESTAMP_KEY } from '../../platform/saveFileExport'
 import type { SaveFileExportRequest, SaveFileExportResult } from '../../platform/saveFileExport'
 import type {
   ApplicationSnapshot,
@@ -1301,14 +1304,15 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   async downloadSaveText(text: string): Promise<boolean | null> {
+    const fileName = saveExportFileName(readBooleanPresentationPreference(SAVE_EXPORT_TIMESTAMP_KEY))
     if (this.options.exportSaveFile !== undefined) {
       const result = await this.options.exportSaveFile({
-        fileName: 'idle-dyson-swarm-save.idsw', text,
+        fileName, text,
       })
       return result === 'cancelled' ? null : result === 'saved'
     }
     this.downloads.downloadText(
-      'idle-dyson-swarm-save.idsw',
+      fileName,
       text,
       'text/plain;charset=utf-8',
     )
@@ -1380,7 +1384,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   writeClipboardText(value: string): Promise<void> {
-    return this.clipboardAdapter().writeText(value)
+    return this.options.clipboard ? this.clipboardAdapter().writeText(value) : copyPlainText(value)
   }
 
   openExternalUrl(url: string): Promise<void> {

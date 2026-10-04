@@ -460,9 +460,19 @@ function PatchNotesArticle() {
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion4111)}</h4>
           <ul className="wiki-surface__patch-note-list">
+            <li>{intl.formatMessage(messages.patchNotesVersion4111Stellar)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4111InfinityHold)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4111ButtonContrast)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4111TinkerOffline)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111SidebarFreeze)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111PresetCopy)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111ImportedSpeedruns)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111QuickAmounts)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111TimestampExports)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111DesktopSizing)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111DesktopTooltips)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111CheckboxLabels)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111InfinitySummary)}</li>
           </ul>
         </section>
         <section className="wiki-surface__section">

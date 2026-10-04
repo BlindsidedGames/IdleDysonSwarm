@@ -503,6 +503,11 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Paste',
     description: 'Button label for pasting a skill preset import string.',
   },
+  copyFailed: {
+    id: 'skills.copy-failed',
+    defaultMessage: 'Copy failed. Copy the selected text manually.',
+    description: 'Clipboard failure feedback; the preset export text remains selected for manual copying.',
+  },
   copied: {
     id: 'skills.copied',
     defaultMessage: 'Copied',

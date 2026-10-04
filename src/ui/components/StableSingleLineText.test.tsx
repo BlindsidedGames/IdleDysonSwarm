@@ -51,3 +51,36 @@ test('fits enlarged live text below the preferred floor without pulsing on value
   view.unmount()
   expect(disconnect).toHaveBeenCalledOnce()
 })
+
+test('keeps an opted-in pixel readability floor immediately when text scale decreases', () => {
+  vi.useFakeTimers()
+  let onResize: ResizeObserverCallback = () => {}
+  vi.stubGlobal('ResizeObserver', class {
+    constructor(callback: ResizeObserverCallback) { onResize = callback }
+    observe() {}
+    disconnect() {}
+  })
+  const view = render(<StableSingleLineText minimumFontSize={12} measurement="full explanation">visible explanation</StableSingleLineText>)
+  const container = view.container.firstElementChild as HTMLElement
+  const visible = container.querySelector('.ui-stable-single-line-text__visible') as HTMLElement
+  const measurement = container.querySelector('.ui-stable-single-line-text__measurement') as HTMLElement
+  Object.defineProperty(container, 'clientWidth', { value: 100 })
+  const scale = () => Number.parseFloat(container.style.getPropertyValue('--ui-stable-single-line-font-size'))
+  visible.getBoundingClientRect = () => ({ width: 400 * scale() }) as DOMRect
+  measurement.getBoundingClientRect = () => ({ width: 400 }) as DOMRect
+  const resize = () => act(() => onResize([{
+    target: container,
+    contentRect: container.getBoundingClientRect(),
+    borderBoxSize: [],
+    contentBoxSize: [],
+    devicePixelContentBoxSize: [],
+  }], {} as ResizeObserver))
+  container.style.fontSize = '24px'
+  resize()
+  expect(24 * scale()).toBeGreaterThanOrEqual(12)
+  expect(scale()).toBeLessThan(1)
+  container.style.fontSize = '16px'
+  resize()
+  expect(16 * scale()).toBeGreaterThanOrEqual(12)
+  expect(scale()).toBeLessThan(1)
+})
