@@ -91,7 +91,7 @@ private final class SendablePluginCall: @unchecked Sendable {
 }
 
 @objc(IdleDysonNativePlugin)
-public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCenterControllerDelegate {
+public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCenterControllerDelegate, UIDocumentPickerDelegate {
     public let identifier = "IdleDysonNativePlugin"
     public let jsName = "IdleDysonNative"
     public let pluginMethods: [CAPPluginMethod] = [
@@ -109,6 +109,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         CAPPluginMethod(name: "copy", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "discoverUnitySaveCandidates", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "exportDiagnostics", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "exportSaveFile", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getStoreProducts", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "purchaseStoreProduct", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "restoreStorePurchases", returnType: CAPPluginReturnPromise),
@@ -146,6 +147,49 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
     private var lifecycleObservers: [NSObjectProtocol] = []
     private let nativeStore = NativeStoreComponents()
     private var automaticUnityEvidenceTokens: [String: NativeBoundUnityEvidence] = [:]
+    private var saveExportCall: CAPPluginCall?
+    private var saveExportURL: URL?
+    private var saveExportPicker: UIDocumentPickerViewController?
+
+    @objc public func exportSaveFile(_ call: CAPPluginCall) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let presenter = self.bridge?.viewController,
+                  presenter.presentedViewController == nil, self.saveExportCall == nil else {
+                call.reject("Save export unavailable.")
+                return
+            }
+            do {
+                let url = try NativeSaveExport.prepare(fileName: call.getString("fileName"), text: call.getString("text"))
+                let picker = UIDocumentPickerViewController(forExporting: [url], asCopy: true)
+                picker.delegate = self
+                self.saveExportCall = call
+                self.saveExportURL = url
+                self.saveExportPicker = picker
+                presenter.present(picker, animated: true)
+            } catch {
+                call.reject("Save export could not be prepared.")
+            }
+        }
+    }
+
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard controller === saveExportPicker else { return }
+        finishSaveExport(urls.isEmpty ? "cancelled" : "saved")
+    }
+
+    public func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        guard controller === saveExportPicker else { return }
+        finishSaveExport("cancelled")
+    }
+
+    private func finishSaveExport(_ result: String) {
+        let call = saveExportCall
+        saveExportCall = nil
+        saveExportPicker = nil
+        if let url = saveExportURL { NativeSaveExport.discard(url) }
+        saveExportURL = nil
+        call?.resolve(["result": result])
+    }
 
     @objc override public func load() {
         switch UIApplication.shared.applicationState {

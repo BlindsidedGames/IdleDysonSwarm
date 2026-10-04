@@ -40,6 +40,8 @@ precedence; update this guide when a decision becomes a shared convention.
 - Checkbox labels use the full row, including text and spare width, as the hit
   target. Keep the existing minimum target height and a 1.35rem checkbox; Skills
   settings use the same padded, theme-coloured label treatment as Settings.
+- Keep the timestamp-export checkbox inside Export Save, beside the file action,
+  rather than on the Settings save panel.
 - Let content determine height. Avoid empty filler, stretched cards and fixed
   heights that clip translations or enlarged text. Preserve usable hit targets.
 - Preserve approved specialist compositions: Facility Details has numbered
@@ -77,6 +79,12 @@ Use these existing tokens rather than choosing a new nearby value per element:
 
 - Reuse the route's `--theme-*` palette and semantic text/state colours. No new
   hardcoded colours, arbitrary opacity or accent meanings for routine features.
+- Hover tooltips are limited to skill-tree nodes. Use the approved bold title,
+  ordinary-weight short technical description and smaller formula footer when
+  present. Put the existing SP icon and cost at the top right; immediately before
+  it show the flat white augment symbol and total potential subtree count,
+  including before fracture. Hide a zero augment badge. Preserve accessible
+  names and essential visible facts elsewhere without creating hover bubbles.
 - Desktop skill tooltips follow the pointer into the opposite screen quadrant,
   stay inside the viewport, and reuse the corresponding skill-detail palette.
   Interface size uses the existing processing-slider style and a Default reset.

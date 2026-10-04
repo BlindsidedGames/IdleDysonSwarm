@@ -2205,6 +2205,51 @@
     "defaultMessage": "Balanced",
     "description": "Default Stored Time accuracy preset."
   },
+  "offline-time.boost-details": {
+    "defaultMessage": "Details"
+  },
+  "offline-time.boost-drain": {
+    "defaultMessage": "{seconds}s per second"
+  },
+  "offline-time.boost-drain-label": {
+    "defaultMessage": "Use while running"
+  },
+  "offline-time.boost-duration-label": {
+    "defaultMessage": "Boost duration"
+  },
+  "offline-time.boost-explanation": {
+    "defaultMessage": "Use stored time to speed up active play."
+  },
+  "offline-time.boost-pause": {
+    "defaultMessage": "Pause Boost"
+  },
+  "offline-time.boost-paused": {
+    "defaultMessage": "Paused"
+  },
+  "offline-time.boost-regular": {
+    "defaultMessage": "Regular 1×"
+  },
+  "offline-time.boost-running": {
+    "defaultMessage": "Running at {multiplier}×"
+  },
+  "offline-time.boost-selected": {
+    "defaultMessage": "Selected speed"
+  },
+  "offline-time.boost-speed": {
+    "defaultMessage": "Game speed"
+  },
+  "offline-time.boost-stack": {
+    "defaultMessage": "Move the slider above 1× to use stored time. Only extra time uses the bank. Double Time stacks separately. Empty storage, backgrounding and manual resets return the slider to 1×."
+  },
+  "offline-time.boost-start": {
+    "defaultMessage": "Start Boost"
+  },
+  "offline-time.boost-stored": {
+    "defaultMessage": "Stored time"
+  },
+  "offline-time.boost-title": {
+    "defaultMessage": "Offline Boost"
+  },
   "offline-time.calculating": {
     "defaultMessage": "calculating",
     "description": "Shown while a Stored Time job has insufficient data for an ETA."
@@ -2225,6 +2270,15 @@
     "defaultMessage": "{stored} of {capacity}",
     "description": "Stored Offline Time compared with its storage capacity."
   },
+  "offline-time.capacity-cost": {
+    "defaultMessage": "Cost"
+  },
+  "offline-time.capacity-maxed": {
+    "defaultMessage": "Maxed"
+  },
+  "offline-time.capacity-result": {
+    "defaultMessage": "New capacity"
+  },
   "offline-time.close-summary": {
     "defaultMessage": "Continue",
     "description": "Closes the completed Stored Time summary."
@@ -2238,11 +2292,11 @@
     "description": "Warning shown when Unity-style clock-cheat protection disables Offline Time."
   },
   "offline-time.double-storage": {
-    "defaultMessage": "Double Storage",
+    "defaultMessage": "Double Capacity",
     "description": "Button that consumes a full Offline Time bank to double its capacity."
   },
   "offline-time.double-storage-description": {
-    "defaultMessage": "Consume the full bank to increase capacity to {capacity}.",
+    "defaultMessage": "Fill your offline time storage to double its capacity.",
     "description": "Explains the Unity Offline Time capacity upgrade."
   },
   "offline-time.error-code": {
@@ -6819,6 +6873,18 @@
     "defaultMessage": "Some skills can’t be unassigned right now and block part of this preset. You can still switch and apply everything compatible.",
     "description": "Warning before partially applying a preset around retained unrefundable skills."
   },
+  "skills.tooltip.potential-augments": {
+    "defaultMessage": "Potential augments: {value}",
+    "description": "Potential augment count in a skill tree tooltip, including before fracture."
+  },
+  "skills.tooltip.scientific-planets.body": {
+    "defaultMessage": "Produces Planets based on Science Bots.",
+    "description": "Short Scientific Planets hover description. Its formula is displayed separately."
+  },
+  "skills.tooltip.scientific-planets.formula": {
+    "defaultMessage": "Log10(Science Bots)",
+    "description": "Scientific Planets formula displayed at the bottom of the tooltip."
+  },
   "skills.tree": {
     "defaultMessage": "Skill tree",
     "description": "Accessible name for the interactive skill-tree viewport."
@@ -8350,7 +8416,7 @@
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": {
-    "defaultMessage": "Added desktop-only tooltips that follow the pointer, with skill-type colours.",
+    "defaultMessage": "Refined skill-tree tooltips with clearer effects, formulas, SP costs and potential augment counts. Removed redundant tooltips elsewhere.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.imported-speedruns": {

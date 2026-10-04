@@ -1,4 +1,5 @@
 import { purchaseDiscovery, type DiscoveryPurchase } from '../simulation/discovery'
+import { isOfflineBoostMultiplier, offlineBoost, withOfflineBoost } from '../simulation/offlineBoost'
 import { clearSpeedrunBest, SPEEDRUN_MILESTONES, type SpeedrunMilestoneId } from '../simulation/speedrunStatistics'
 import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
@@ -326,6 +327,7 @@ export type CanonicalGameCommand =
       readonly kind: 'time.request-stored-time-spend'
       readonly requestedSeconds: number
     }
+  | { readonly kind: 'time.set-offline-boost-multiplier'; readonly multiplier: number }
   | {
       readonly kind: 'time.set-stored-time-preset'
       readonly preset: StoredTimeAccuracyPreset
@@ -353,6 +355,10 @@ export type {
 } from '../game-state/types'
 
 export type CanonicalGameCommandCode =
+  | 'OFFLINE-BOOST-INVALID-MULTIPLIER'
+  | 'OFFLINE-BOOST-INVALID-ENABLED'
+  | 'OFFLINE-BOOST-UNAVAILABLE'
+  | 'offline-boost:updated'
   | `statistics:${string}`
   | 'quantum-leap-boundary-unavailable'
   | 'research-tuning-carrier-unavailable'
@@ -809,6 +815,7 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'canonical persisted Stored Time accuracy preference',
   },
+  'time.set-offline-boost-multiplier': { supported: true, authority: 'canonical foreground Offline Time speed', requires: ['stored-time-cheater-carrier'] },
   'settings.set-processing-interval': {
     supported: true,
     authority: 'canonical persisted active gameplay cadence preference',
@@ -2571,6 +2578,18 @@ export function routeCanonicalGameCommand(
         EMPTY_ISSUES,
         false,
       )
+    }
+
+    case 'time.set-offline-boost-multiplier': {
+      if (!isOfflineBoostMultiplier(command.multiplier)) {
+        return rejectDomain(state, carriers, 'OFFLINE-BOOST-INVALID-MULTIPLIER', command.kind, 'Choose a whole-number multiplier from 1 to 42.')
+      }
+      if (command.multiplier > 1 && (
+        carriers.storedTimeCheater !== false || state.timeline.storedTimeAvailableSeconds <= 0
+      )) return rejectDomain(state, carriers, 'OFFLINE-BOOST-UNAVAILABLE', command.kind, 'Stored Time is unavailable.')
+      const changed = offlineBoost(state.timeline).multiplier !== command.multiplier
+      return finalizeAccepted(state, changed ? withOfflineBoost(state, { multiplier: command.multiplier }) : state, changed,
+        'offline-boost:updated', carriers, options.runtimeEvaluation, EMPTY_ISSUES, false)
     }
 
     case 'time.request-stored-time-spend': {

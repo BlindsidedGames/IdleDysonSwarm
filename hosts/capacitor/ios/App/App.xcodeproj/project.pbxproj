@@ -20,6 +20,7 @@
 		A1D5A0032FF0000000000001 /* IdleDysonStoreKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5A0042FF0000000000001 /* IdleDysonStoreKit.swift */; };
 		A1D5A0052FF0000000000001 /* IdleDysonAudioPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5A0062FF0000000000001 /* IdleDysonAudioPlugin.swift */; };
 		A1D5A0072FF0000000000001 /* NativeEntitlementSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5A0082FF0000000000001 /* NativeEntitlementSession.swift */; };
+		A1D5A0092FF0000000000001 /* NativeSaveExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5A00A2FF0000000000001 /* NativeSaveExport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		A1D5A0042FF0000000000001 /* IdleDysonStoreKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDysonStoreKit.swift; sourceTree = "<group>"; };
 		A1D5A0062FF0000000000001 /* IdleDysonAudioPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDysonAudioPlugin.swift; sourceTree = "<group>"; };
 		A1D5A0082FF0000000000001 /* NativeEntitlementSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ../NativeEntitlementSession/NativeEntitlementSession.swift; sourceTree = "<group>"; };
+		A1D5A00A2FF0000000000001 /* NativeSaveExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ../NativeEntitlementSession/NativeSaveExport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 				A1D5A0042FF0000000000001 /* IdleDysonStoreKit.swift */,
 				A1D5A0062FF0000000000001 /* IdleDysonAudioPlugin.swift */,
 				A1D5A0082FF0000000000001 /* NativeEntitlementSession.swift */,
+				A1D5A00A2FF0000000000001 /* NativeSaveExport.swift */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
@@ -177,6 +180,7 @@
 				A1D5A0032FF0000000000001 /* IdleDysonStoreKit.swift in Sources */,
 				A1D5A0052FF0000000000001 /* IdleDysonAudioPlugin.swift in Sources */,
 				A1D5A0072FF0000000000001 /* NativeEntitlementSession.swift in Sources */,
+				A1D5A0092FF0000000000001 /* NativeSaveExport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

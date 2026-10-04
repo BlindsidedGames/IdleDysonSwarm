@@ -1,6 +1,7 @@
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { isQuantumChallengeActive } from '../simulation/infinityChallenges'
 import { markSpeedrunUsage, observeSpeedruns } from '../simulation/speedrunStatistics'
+import { pauseOfflineBoost } from '../simulation/offlineBoost'
 import {
   applyDevelopmentAction,
   applyDevelopmentDysonBots,
@@ -1065,7 +1066,7 @@ export function createCanonicalGameEngineDefinition(
         const derived = deriveBasicDysonState(reset.state, candidate.compatibilityTuning,
           candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)
         if (!derived.ok) return reject('CHALLENGE_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Challenge reset could not be derived.')
-        Object.assign(candidate, { gameState: reset.state, evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+        Object.assign(candidate, { gameState: pauseOfflineBoost(reset.state), evaluationSnapshot: derived.value.nextEvaluationSnapshot,
           tinker: createCanonicalTinkerRuntimeState(), lastSkillPresetApplication: null, presentationEvents: [] })
         return { accepted: true, changed: true }
       }
@@ -1080,7 +1081,7 @@ export function createCanonicalGameEngineDefinition(
         )
         if (!derived.ok) return reject('OVERFLOW_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Overflow reset could not be derived.')
         Object.assign(candidate, {
-          gameState: reset.state,
+          gameState: pauseOfflineBoost(reset.state),
           evaluationSnapshot: derived.value.nextEvaluationSnapshot,
           tinker: createCanonicalTinkerRuntimeState(),
           lastSkillPresetApplication: null,
@@ -1353,7 +1354,9 @@ function applyPlayerCommand(
               : previousApplicationSequence + 1,
         })
   Object.assign(candidate, {
-    gameState: result.state,
+    gameState: command.kind === 'infinity.request-reset' || command.kind === 'quantum.request-leap' ||
+      command.kind === 'dream.request-reset' || command.kind === 'dream.request-black-hole-reset'
+      ? pauseOfflineBoost(result.state) : result.state,
     compatibilityTuning:
       result.runtimeCarriers.compatibilityTuning!,
     evaluationSnapshot:

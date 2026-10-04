@@ -18,7 +18,7 @@ export function SkillPresetQuickActions({ presets, selectedSlot, disabled, onSel
       const slot = (index + 1) as CanonicalSkillPresetSlot
       const label = intl.formatMessage(messages.switchPreset, { name: preset.name })
       return <button className="skill-preset-quick-actions__button" key={slot} type="button" style={skillPresetColorStyle(preset.colorId)}
-        aria-label={label} title={label} aria-pressed={selectedSlot === slot}
+        aria-label={label} aria-pressed={selectedSlot === slot}
         disabled={disabled} onClick={() => onSelect(slot)}><span>{slot}</span></button>
     })}
   </div>

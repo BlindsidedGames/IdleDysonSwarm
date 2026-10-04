@@ -5205,6 +5205,108 @@
       "value": "Equilibrada"
     }
   ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "Detalles"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " s por segundo"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "Uso durante el impulso"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "Duración del impulso"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "Usa el tiempo almacenado para acelerar el juego activo."
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "Pausar impulso"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "En pausa"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "Normal 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "Activo a "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "×"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "Velocidad seleccionada"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "Velocidad del juego"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "Mueve el control por encima de 1× para usar tiempo almacenado. Solo el tiempo extra consume la reserva. Double Time se acumula por separado. Una reserva vacía, pasar a segundo plano y los reinicios manuales devuelven el control a 1×."
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "Iniciar impulso"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "Tiempo almacenado"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "Impulso sin conexión"
+    }
+  ],
   "offline-time.calculating": [
     {
       "type": 0,
@@ -5243,6 +5345,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "Costo"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "Máximo"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "Nueva capacidad"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5264,21 +5384,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "Duplicar almacenamiento"
+      "value": "Duplicar capacidad"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "Gasta toda la reserva para aumentar la capacidad a "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "Llena tu almacenamiento de tiempo sin conexión para duplicar su capacidad."
     }
   ],
   "offline-time.error-code": [
@@ -13547,6 +13659,28 @@
       "value": "Algunas habilidades no se pueden desasignar en este momento y bloquean parte de este preajuste. Aun así, puedes cambiar y aplicar todo lo compatible."
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Aumentos potenciales: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Produce Planetas según los Bots científicos."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Bots científicos)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -16961,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Se agregaron descripciones emergentes solo en escritorio que siguen al puntero y usan los colores de cada tipo de habilidad."
+      "value": "Se mejoraron las descripciones del árbol de habilidades con efectos más claros, fórmulas, costos en PH y aumentos potenciales. Se eliminaron las descripciones redundantes en otras partes."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

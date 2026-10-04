@@ -11,7 +11,8 @@
   box-shadow: 0 .25rem .75rem rgb(0 0 0 / 35%);
   font-size: var(--ui-text-body);
   line-height: 1.4;
-  white-space: pre-line;
+  inline-size: 25rem;
+  white-space: normal;
   overflow-wrap: anywhere;
   pointer-events: none;
 }
@@ -20,4 +21,24 @@
   border-color: var(--skill-dialog-accent);
   background: var(--skill-dialog-background);
   color: #f7f1ff;
+}
+
+
+.desktop-tooltip__header { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .3rem .75rem; }
+.desktop-tooltip__header > strong { min-inline-size: 0; flex: 1 1 12rem; font-weight: 700; }
+.desktop-tooltip__counts { display: inline-flex; align-items: center; gap: .6rem; flex-shrink: 0; margin-inline-start: auto; color: #fff; }
+.desktop-tooltip__cost, .desktop-tooltip__augments { display: inline-flex; align-items: center; flex-shrink: 0; gap: .25rem; font-weight: 600; }
+.desktop-tooltip__cost img { inline-size: 1.05em; block-size: 1.05em; object-fit: contain; }
+.desktop-tooltip__body { margin: .4rem 0 0; font-weight: 400; }
+.desktop-tooltip__formula { margin: .55rem 0 0; font-size: .85em; font-weight: 400; overflow-wrap: anywhere; }
+/* Reuse the approved source silhouette, matching its visible bounds to SP. */
+.desktop-tooltip .desktop-tooltip__augment-icon {
+  inline-size: 1.05em;
+  block-size: 1.05em;
+  background-color: #fff;
+  mask-repeat: no-repeat;
+  mask-size: 152.93%;
+  -webkit-mask-size: 152.93%;
+  mask-position: 58.3% 48.8%;
+  -webkit-mask-position: 58.3% 48.8%;
 }

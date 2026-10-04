@@ -5205,6 +5205,108 @@
       "value": "バランス"
     }
   ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "詳細"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "秒/秒"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "加速中の消費"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "加速可能時間"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "蓄積した時間を使って、プレイ中のゲームを加速します。"
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "加速を一時停止"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "一時停止中"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "通常 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "動作中: "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "×"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "選択した速度"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "ゲーム速度"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "スライダーを1×より上に動かすと貯蔵時間を使用します。追加時間のみ貯蔵を消費します。ダブルタイムは別途適用されます。貯蔵が空になる、バックグラウンドに移る、または手動リセットすると、スライダーは1×に戻ります。"
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "加速を開始"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "蓄積時間"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "オフライン加速"
+    }
+  ],
   "offline-time.calculating": [
     {
       "type": 0,
@@ -5243,6 +5345,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "コスト"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "上限到達"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "新しい容量"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5264,21 +5384,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "蓄積上限を2倍"
+      "value": "容量を倍増"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "蓄積時間をすべて消費し、上限を"
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "まで増やします。"
+      "value": "オフライン時間の貯蔵を満たすと容量を倍増できます。"
     }
   ],
   "offline-time.error-code": [
@@ -13547,6 +13659,28 @@
       "value": "現在割り当てを解除できないスキルが、このプリセットの一部をブロックしています。切り替えて、適用可能な部分をすべて適用することはできます。"
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "潜在的な強化数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "科学ボットの数に応じて惑星を生産する。"
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(科学ボット)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -16961,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "PC版のみ、ポインターを追従しスキルの種類に応じた色を使うツールチップを追加しました。"
+      "value": "スキルツリーのツールチップを改良し、効果、数式、SPコスト、潜在的な強化数を見やすくしました。他の画面の重複したツールチップを削除しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

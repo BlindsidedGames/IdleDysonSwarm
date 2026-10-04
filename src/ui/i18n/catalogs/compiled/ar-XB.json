@@ -9957,6 +9957,228 @@
       "value": "‬"
     }
   ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝʇɐıʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s dǝɹ sǝɔoup"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩sǝ ʍɥıʅǝ ɹnuuıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoosʇ pnɹɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩sǝ sʇoɹǝp ʇıɯǝ ʇo sdǝǝp nd ɐɔʇıʌǝ dʅɐʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐnsǝ Ԑoosʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐnsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝƃnʅɐɹ 1×"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚnuuıuƃ ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "×"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝʅǝɔʇǝp sdǝǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐɯǝ sdǝǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woʌǝ ʇɥǝ sʅıpǝɹ ɐqoʌǝ 1× ʇo nsǝ sʇoɹǝp ʇıɯǝ. Ouʅʎ ǝxʇɹɐ ʇıɯǝ nsǝs ʇɥǝ qɐuʞ. ᗡonqʅǝ ⊥ıɯǝ sʇɐɔʞs sǝdɐɹɐʇǝʅʎ. Ǝɯdʇʎ sʇoɹɐƃǝ, qɐɔʞƃɹonupıuƃ ɐup ɯɐunɐʅ ɹǝsǝʇs ɹǝʇnɹu ʇɥǝ sʅıpǝɹ ʇo 1×."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ Ԑoosʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹǝp ʇıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɟɟʅıuǝ Ԑoosʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "offline-time.calculating": [
     {
       "type": 0,
@@ -10035,6 +10257,48 @@
       "value": "‬"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄosʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐxǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝʍ ɔɐdɐɔıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -10084,7 +10348,7 @@
     },
     {
       "type": 0,
-      "value": "ᗡonqʅǝ Sʇoɹɐƃǝ"
+      "value": "ᗡonqʅǝ Ↄɐdɐɔıʇʎ"
     },
     {
       "type": 0,
@@ -10098,15 +10362,7 @@
     },
     {
       "type": 0,
-      "value": "Ↄousnɯǝ ʇɥǝ ɟnʅʅ qɐuʞ ʇo ıuɔɹǝɐsǝ ɔɐdɐɔıʇʎ ʇo "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "Ⅎıʅʅ ʎonɹ oɟɟʅıuǝ ʇıɯǝ sʇoɹɐƃǝ ʇo ponqʅǝ ıʇs ɔɐdɐɔıʇʎ."
     },
     {
       "type": 0,
@@ -27723,6 +27979,52 @@
       "value": "‬"
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁoʇǝuʇıɐʅ ɐnƃɯǝuʇs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹopnɔǝs Ԁʅɐuǝʇs qɐsǝp ou Sɔıǝuɔǝ Ԑoʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂oƃ10(Sɔıǝuɔǝ Ԑoʇs)"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -34237,7 +34539,7 @@
     },
     {
       "type": 0,
-      "value": "∀ppǝp pǝsʞʇod-ouʅʎ ʇooʅʇıds ʇɥɐʇ ɟoʅʅoʍ ʇɥǝ doıuʇǝɹ, ʍıʇɥ sʞıʅʅ-ʇʎdǝ ɔoʅonɹs."
+      "value": "ᴚǝɟıuǝp sʞıʅʅ-ʇɹǝǝ ʇooʅʇıds ʍıʇɥ ɔʅǝɐɹǝɹ ǝɟɟǝɔʇs, ɟoɹɯnʅɐs, SԀ ɔosʇs ɐup doʇǝuʇıɐʅ ɐnƃɯǝuʇ ɔonuʇs. ᴚǝɯoʌǝp ɹǝpnupɐuʇ ʇooʅʇıds ǝʅsǝʍɥǝɹǝ."
     },
     {
       "type": 0,

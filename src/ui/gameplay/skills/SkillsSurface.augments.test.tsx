@@ -64,6 +64,28 @@ function openRoot() {
   return root
 }
 
+test('hover data includes all potential augments before fracture and keeps formulas separate', () => {
+  const { container } = setup(false)
+  const root = container.querySelector<HTMLElement>('[data-skill-id="startHereTree"]')!
+  expect(root.dataset.skillTooltipAugments).toBe('3')
+  expect(root.dataset.skillTooltipAugmentLabel).toBe('Potential augments: 3')
+  expect(root.dataset.skillTooltipName).toBe('Cash & Science')
+  expect(root.dataset.galvanized).toBeUndefined()
+  expect(container.querySelector<HTMLElement>('[data-skill-id="superRadiantScattering"]')!.dataset.skillTooltipAugments).toBe('7')
+  const planets = container.querySelector<HTMLElement>('[data-skill-id="scientificPlanets"]')!
+  expect(planets.dataset.skillTooltipBody).toBe('Produces Planets based on Science Bots.')
+  expect(planets.dataset.skillTooltipFormula).toBe('Log10(Science Bots)')
+  expect(planets.dataset.skillTooltipAugments).toBe('0')
+})
+
+test('converted Discovery and fractured skills retain their actual technical effects', () => {
+  const { container } = setup(true, 'scientificPlanets', true)
+  const planets = container.querySelector<HTMLElement>('[data-skill-id="scientificPlanets"]')!
+  expect(planets.dataset.skillTooltipFormula).toBeUndefined()
+  expect(planets.dataset.skillTooltipBody).not.toContain('Science Bots')
+  expect(planets.dataset.skillTooltipBody).toBe('Produces log10(total Bots) Planets per second.')
+})
+
 test('assigning and refunding augments returns to the tree and updates real ownership', async () => {
   const { state, dispatch } = setup()
   const root = openRoot()

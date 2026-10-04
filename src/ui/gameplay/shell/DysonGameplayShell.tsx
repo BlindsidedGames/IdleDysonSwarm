@@ -36,7 +36,6 @@ export function DysonGameplayShell({
   skipLinkLabel,
   menuHeading,
   closeMenuLabel,
-  openMenuLabel,
   moreMenuLabel,
   moreMenuNewLabel,
   releaseFooter,
@@ -388,7 +387,6 @@ export function DysonGameplayShell({
               : moreMenuLabel
           }
           data-new={hasHiddenNewItem || undefined}
-          title={openMenuLabel}
           aria-controls={menuId}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(true)}

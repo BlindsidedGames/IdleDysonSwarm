@@ -3,7 +3,7 @@ import { DiscoverySurface } from '../discovery/DiscoverySurface'
 import { discoveryMessages } from '../discovery/messages'
 import { NonRefundableSkillConfirmationProvider } from '../skills/NonRefundableSkillConfirmation'
 import { useConfirmedTabPresetDispatch } from '../skills/useConfirmedTabPresetDispatch'
-import { QuickStoredTime, StoredTimeNavigationProgress } from '../offline-time/QuickStoredTime'
+import { StoredTimeNavigationProgress } from '../offline-time/QuickStoredTime'
 import { isAvocatoRouteUnlocked } from './avocatoNavigation'
 import { InfinityChallenges } from '../infinity/InfinityChallenges'
 import { challengeMessages } from '../infinity/challengeMessages'
@@ -28,9 +28,6 @@ import type {
 import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
-import type {
-  CanonicalRuntimePresentationEvent,
-} from '../../../application/canonicalRuntimeSession'
 import type { DeepReadonly } from '../../../core/contracts'
 import { defaultSkillPresetColorId } from '../../../game-state/skillPresetColors'
 import type { CanonicalFacilityId } from '../../../game-state/types'
@@ -79,8 +76,6 @@ import {
 import type { SettingsSurfaceProps } from '../settings'
 import type { DebugSurfaceDraft } from '../debug'
 import type {
-  OfflineTimeSurfaceDraft,
-  StoredTimeFirstDisasterDialogBatch,
 } from '../offline-time'
 import type {
   SkillPresetActions,
@@ -630,16 +625,6 @@ function ReadyDysonSliceContent({
       SKILL_PRESET_APPLICATION_NOTICES_STORAGE_KEY,
     ) !== 'false',
   )
-  const [storedTimeDisasterDialogs, setStoredTimeDisasterDialogs] = useState<{
-    readonly sessionRevision: number
-    readonly events: readonly Extract<
-      CanonicalRuntimePresentationEvent,
-      { readonly kind: 'automatic-dream-disaster' }
-    >[]
-  }>({
-    sessionRevision: snapshot.revision.session,
-    events: [],
-  })
   const updateQuantumHideMaxed = useCallback((hideMaxed: boolean) => {
     setQuantumHideMaxed(hideMaxed)
     writeBooleanPresentationPreference(
@@ -651,11 +636,6 @@ function ReadyDysonSliceContent({
     amount: '1',
     preset: 'early',
   })
-  const offlineTimeDraftRef = useRef<OfflineTimeSurfaceDraft>({
-    selectedSeconds: null,
-    repeatSeconds: null,
-    armed: false,
-  })
   const wikiTopicRef = useRef<WikiCategoryId>('bots')
   const skillTreeViewRef = useRef<SkillTreeViewState | null>(null)
   const rememberDebugDraft = useCallback(
@@ -664,30 +644,6 @@ function ReadyDysonSliceContent({
     },
     [],
   )
-  const rememberOfflineTimeDraft = useCallback(
-    (draft: Readonly<OfflineTimeSurfaceDraft>) => {
-      offlineTimeDraftRef.current = { ...draft }
-    },
-    [],
-  )
-  const presentStoredTimeFirstDisasters = useCallback((
-    batch: Readonly<StoredTimeFirstDisasterDialogBatch>,
-  ) => {
-    const sessionRevision = snapshot.revision.session
-    const events = batch.occurrences.map((occurrence, index) => ({
-      kind: 'automatic-dream-disaster' as const,
-      sequence: -(batch.completionSequence * 4 + index + 1),
-      ...occurrence,
-      firstLifetimeOccurrence: true,
-    }))
-    setStoredTimeDisasterDialogs((current) => ({
-      sessionRevision,
-      events: [
-        ...(current.sessionRevision === sessionRevision ? current.events : []),
-        ...events,
-      ],
-    }))
-  }, [snapshot.revision.session])
   const rememberWikiTopic = useCallback((topic: WikiCategoryId) => {
     wikiTopicRef.current = topic
   }, [])
@@ -1349,13 +1305,6 @@ function ReadyDysonSliceContent({
                   <span className="dyson-navigation__status">{formatGameDuration(locale, storedTimeAvailableSeconds)}</span>
                   <StoredTimeNavigationProgress storedTime={storedTime} />
                 </>,
-                drawerContent: <QuickStoredTime
-                  availableSeconds={storedTimeAvailableSeconds}
-                  disabled={gameplay.runtime.storedTimeCheater || !gameplay.commands.byKind['time.request-stored-time-spend'].routeAvailable}
-                  dispatchPlayer={dispatchPlayer}
-                  storedTime={storedTime}
-                  onFirstDisasters={presentStoredTimeFirstDisasters}
-                />,
                 label: intl.formatMessage(messages.offlineTimeRoute),
                 ariaLabel: intl.formatMessage(messages.offlineTimeProgress, {
                   stored: formatGameDuration(
@@ -2056,27 +2005,10 @@ function ReadyDysonSliceContent({
                                             gameplay.commands.byKind[
                                               'time.upgrade-stored-capacity'
                                             ].routeAvailable,
-                                          requestStoredTimeSpend:
-                                            gameplay.commands.byKind[
-                                              'time.request-stored-time-spend'
-                                              ].routeAvailable,
-                                          setStoredTimePreset:
-                                            gameplay.commands.byKind[
-                                              'time.set-stored-time-preset'
-                                            ]?.routeAvailable ?? false,
+                                          setOfflineBoost:
+                                            gameplay.commands.byKind['time.set-offline-boost-multiplier'].routeAvailable,
                                         }}
-                                        processing={gameplay.progression.timeline.processing}
                                         dispatchPlayer={dispatchPlayer}
-                                        storedTime={storedTime}
-                                        initialDraft={
-                                          offlineTimeDraftRef.current
-                                        }
-                                        onDraftChange={
-                                          rememberOfflineTimeDraft
-                                        }
-                                        onFirstDisasterDialogsReady={
-                                          presentStoredTimeFirstDisasters
-                                        }
                                       />
                                     </Suspense>
                                   ),
@@ -2211,12 +2143,6 @@ function ReadyDysonSliceContent({
         <GameplayNotificationHost
           sessionRevision={snapshot.revision.session}
           events={gameplay.runtime.presentationEvents}
-          storedTimeFirstDisasterEvents={
-            storedTimeDisasterDialogs.sessionRevision ===
-                snapshot.revision.session
-              ? storedTimeDisasterDialogs.events
-              : []
-          }
           locale={locale}
           showPresetApplicationNotices={showSkillPresetApplicationNotices}
           onViewReality={() => navigateTo('reality')}

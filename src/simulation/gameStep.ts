@@ -11,6 +11,7 @@ import {
 import { evaluateCanonicalBotCapCheckpoint } from './canonicalBotCapCheckpoint'
 import { createSimulationSummary, type SimulationPresentationSummary } from './types'
 import { addContinuous } from './numeric'
+import { planOfflineBoost } from './offlineBoost'
 
 export type { ProcessingSource } from '../game-state/types'
 export type ProcessingAutomation = 'enabled' | 'suppressed'
@@ -101,7 +102,9 @@ export function advanceGame(
   if (!isFiniteNonNegativeNumber(input.baseSeconds)) {
     throw new RangeError('Game-step base seconds must be finite and non-negative.')
   }
-  const gameSpeed = state.gameState.timeline.doubleTime.unlocked ? 2 : 1
+  const funding = input.source === 'active' ? planOfflineBoost(state.gameState.timeline, input.baseSeconds) : null
+  const fundedSeconds = funding?.consumedSeconds ?? 0
+  const gameSpeed = (state.gameState.timeline.doubleTime.unlocked ? 2 : 1) * (funding?.multiplier ?? 1)
   const gameSeconds = input.baseSeconds * gameSpeed
   if (!Number.isFinite(gameSeconds)) {
     throw new RangeError('Game-step elapsed game time must be finite.')
@@ -119,9 +122,9 @@ export function advanceGame(
   const stepState = {
     ...state,
     gameState: {
-      ...(input.source === 'stored-time' && input.baseSeconds > 0
+      ...((input.source === 'stored-time' && input.baseSeconds > 0) || fundedSeconds > 0
         ? markSpeedrunUsage(state.gameState, 'storedTime') : state.gameState),
-      infinity: input.source === 'stored-time'
+      infinity: input.source === 'stored-time' || fundedSeconds > 0
         ? {
             ...state.gameState.infinity,
             activeAutomaticThroughputCycleEligible: false,
@@ -129,6 +132,10 @@ export function advanceGame(
         : state.gameState.infinity,
       timeline: {
         ...state.gameState.timeline,
+        ...(funding === null ? {} : {
+          storedTimeAvailableSeconds: funding.bankSeconds,
+          ...(state.gameState.timeline.offlineBoost === undefined ? {} : { offlineBoost: funding.boost }),
+        }),
         automationTimeUntilNextEvent:
           stepContext.automationIntervalSeconds,
       },
@@ -149,6 +156,10 @@ export function advanceGame(
     const stopped = finish(model, 0, 0, gameSpeed, summary, true)
     return { ...stopped, state: { ...stopped.state, gameState: { ...stopped.state.gameState,
       statistics: { ...stopped.state.gameState.statistics, speedruns: state.gameState.statistics.speedruns },
+      timeline: { ...stopped.state.gameState.timeline,
+        storedTimeAvailableSeconds: state.gameState.timeline.storedTimeAvailableSeconds,
+        ...(state.gameState.timeline.offlineBoost === undefined ? {} : { offlineBoost: state.gameState.timeline.offlineBoost }),
+      },
     } } }
   }
 
@@ -156,7 +167,7 @@ export function advanceGame(
     model.applyAutomation('preserve-configured-mode', summary)
     model.applyDerivedTimersAndDoubleTime(0, summary)
     model.applyDreamReset(summary)
-    if (input.source === 'active') model.sampleInfinityRatePeak()
+    if (input.source === 'active' && fundedSeconds === 0 && state.gameState.infinity.storedTimeUsedThisCycleSeconds === 0) model.sampleInfinityRatePeak()
     model.applyInfinityReset(
       infinityMinimumCycleSeconds,
       summary,
@@ -166,7 +177,7 @@ export function advanceGame(
   }
 
   if (gameSeconds > 0) {
-    model.advanceContinuous(gameSeconds)
+    model.advanceContinuous(gameSeconds, fundedSeconds)
     model.applyProductionArrivals(summary)
     model.applyDerivedTimersAndDoubleTime(gameSeconds, summary)
   }

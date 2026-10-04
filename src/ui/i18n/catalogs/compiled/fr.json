@@ -5205,6 +5205,108 @@
       "value": "Équilibrée"
     }
   ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "Détails"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " s par seconde"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "Utilisation en marche"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "Durée du boost"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "Utilisez le temps stocké pour accélérer le jeu actif."
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "Suspendre le boost"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "En pause"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "Normal 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "En cours à "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "×"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "Vitesse sélectionnée"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "Vitesse du jeu"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "Déplacez le curseur au-delà de 1× pour utiliser le temps stocké. Seul le temps supplémentaire utilise la réserve. Double Time se cumule séparément. Une réserve vide, le passage en arrière-plan et les réinitialisations manuelles ramènent le curseur à 1×."
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "Démarrer le boost"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "Temps stocké"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "Boost hors ligne"
+    }
+  ],
   "offline-time.calculating": [
     {
       "type": 0,
@@ -5243,6 +5345,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "Coût"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "Maximum"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "Nouvelle capacité"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5264,21 +5384,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "Doubler le stockage"
+      "value": "Doubler la capacité"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "Utilisez toute la réserve pour porter sa capacité à "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "Remplissez votre réserve de temps hors ligne pour doubler sa capacité."
     }
   ],
   "offline-time.error-code": [
@@ -13547,6 +13659,28 @@
       "value": "Certaines compétences ne peuvent pas être désassignées pour le moment et bloquent une partie de ce préréglage. Vous pouvez tout de même changer et appliquer tous les éléments compatibles."
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Améliorations possibles : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Produit des Planètes selon les Bots scientifiques."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Bots scientifiques)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -16961,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Ajout d’infobulles uniquement sur ordinateur, qui suivent le pointeur et utilisent les couleurs des types de compétences."
+      "value": "Infobulles de l’arbre de compétences améliorées avec des effets plus clairs, des formules, les coûts en PC et le nombre d’améliorations possibles. Infobulles redondantes supprimées ailleurs."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

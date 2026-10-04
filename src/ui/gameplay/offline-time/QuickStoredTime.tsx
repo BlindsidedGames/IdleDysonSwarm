@@ -1,64 +1,8 @@
-import { useCallback, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 import { useIntl } from 'react-intl'
-import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
-import type { UiRuntimePlayerCommandResult, UiRuntimeStoredTimeControls } from '../../runtime'
-import type { StoredTimeFirstDisasterDialogBatch } from './OfflineTimeSurface'
+import type { UiRuntimeStoredTimeControls } from '../../runtime'
 import { offlineTimeMessages as messages } from './messages'
-
 const NO_JOB_SUBSCRIPTION = () => () => undefined
-const IDLE = () => false
-import { useQuickStoredTimeAmounts } from './quickStoredTimePreferences'
-import { formatQuickStoredTime } from './quickStoredTimePreferences'
-import type { EnabledLocale } from '../../i18n/localeRegistry'
-
-
-export function QuickStoredTime({ availableSeconds, disabled, dispatchPlayer, storedTime, onFirstDisasters }: {
-  readonly availableSeconds: number
-  readonly disabled: boolean
-  readonly dispatchPlayer: (command: CanonicalPlayerCommand) => Promise<UiRuntimePlayerCommandResult>
-  readonly storedTime?: UiRuntimeStoredTimeControls
-  readonly onFirstDisasters: (batch: StoredTimeFirstDisasterDialogBatch) => void
-}) {
-  const intl = useIntl()
-  const { seconds: amounts } = useQuickStoredTimeAmounts()
-  const subscribe = useCallback((listener: () => void) => storedTime?.subscribe(listener) ?? NO_JOB_SUBSCRIPTION(), [storedTime])
-  const readBusy = useCallback(() => storedTime !== undefined && storedTime.status().kind !== 'idle', [storedTime])
-  const jobActive = useSyncExternalStore(subscribe, readBusy, IDLE)
-  const pendingRef = useRef(false)
-  const [pending, setPending] = useState(false)
-  const [failed, setFailed] = useState(false)
-  const spend = async (requestedSeconds: number) => {
-    if (pendingRef.current || jobActive || disabled || availableSeconds < requestedSeconds) return
-    pendingRef.current = true
-    setPending(true)
-    setFailed(false)
-    try {
-      const result = await dispatchPlayer({ kind: 'time.request-stored-time-spend', requestedSeconds })
-      if ((result.status === 'accepted' || result.status === 'partial') && result.kind === 'stored-time') {
-        if (result.summary.firstDisasterOccurrences.length > 0) {
-          onFirstDisasters({ completionSequence: result.stateRevision, occurrences: result.summary.firstDisasterOccurrences })
-        }
-      } else {
-        setFailed(true)
-      }
-    } catch { setFailed(true) }
-    finally { pendingRef.current = false; setPending(false) }
-  }
-  return <div className="offline-time-quick-spend">
-    <div className="offline-time-quick-spend__buttons">
-      {amounts.map((seconds, slot) => {
-        const label = formatQuickStoredTime(intl.locale as EnabledLocale, seconds)
-        return <button key={slot} type="button"
-        aria-label={intl.formatMessage(messages.quickSpend, { duration: label })}
-        disabled={disabled || pending || jobActive || availableSeconds < seconds}
-        onClick={() => void spend(seconds)}>{label}</button>})}
-    </div>
-    {pending || jobActive ? <div className="offline-time-quick-spend__status">
-      {storedTime && jobActive ? <button type="button" onClick={() => storedTime.cancel()}>{intl.formatMessage(messages.cancel)}</button> : null}
-    </div> : null}
-    {failed ? <p role="alert">{intl.formatMessage(messages.actionFailed)}</p> : null}
-  </div>
-}
 
 const IDLE_JOB = { kind: 'idle' } as const
 

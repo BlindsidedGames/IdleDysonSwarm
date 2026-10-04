@@ -295,3 +295,116 @@ plus mobile achievement submission and Permanent 2× Bots availability checks.
   website deployment or merge. Previous release-gate evidence remains above.
 - Archive: `/Users/matthewrushworth/Library/Developer/Xcode/Archives/2026-09-29/IDS-2026092901.xcarchive`.
   Logs, export options and screenshots: `/Users/matthewrushworth/Builds/ids-submission-20260929/`.
+
+## 2026100401 — 4.1.11 main internal deployment
+
+4 October 2026 (AEDT, UTC+11). Primary checkout fast-forwarded to `main` at
+`7fe0d4b52d4ddddf5fcf4b9948c9434053e68f4a`, matching the freshly fetched
+`origin/main`. Previous local changes are preserved in the named stash
+`Preserved local work before main internal deployment 20261004` and the
+backup `/tmp/ids-pre-main-20261004/`; they were not reapplied over main.
+
+| Destination | Identity | Verified state |
+| --- | --- | --- |
+| Google Play internal | 4.1.11 / 2026100401 | Available to internal testers; released 4 October at 18:25 AEDT |
+| Internal TestFlight | 4.1.11 / 2610.4.1 | Testing; Internal group with 3 testers; export compliance complete and What to Test saved |
+| Steam public-beta | 25706924 | Uploaded and active with Windows/Linux/macOS depots; all downloaded package files match the uploaded artifacts |
+
+- Clean-source release gate passed: 199 shared suites / 2,114 tests, lint,
+  localization, web/native builds, Electron boundary, Capacitor sync and signed
+  Android packaging. Swift native units: 10 passed; Android native units: 14
+  passed. Shared CI and final native candidate checks passed for the exact source;
+  final native run: https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/37184288828.
+- Android AAB: `output/local-release/2026100401/android/idle-dyson-swarm-2026100401.aab`,
+  20,158,758 bytes; SHA-256
+  `c0001aa8241d377bcd2f67c78df7f96158e0fb8fdcfed5db7f9b30c9eae2f3df`.
+  Local manifest binds it to the source above. Internal notes saved in all eight
+  languages from the committed 4.1.11 Stellar and Infinity repeat-purchase notes.
+  Play's missing deobfuscation/native-symbol warnings were non-blocking.
+- iOS archive: `/tmp/ids-pre-main-20261004/ios/IDS-2026100401.xcarchive`.
+  Minimum iOS 16.0; all 294 bundled public asset files match the synchronized
+  mobile build. Export requested Internal TestFlight-only distribution, but
+  Apple rejected this repeat upload with the previously used build-number error.
+  Reused the existing upload, which App Store Connect reports as validated and
+  uploaded on 4 October at 18:03 AEDT, with the expected bundle ID, version,
+  build number and minimum OS. Used the signed-in Codex browser to complete the
+  missing export-compliance step and save focused testing notes. The build now
+  shows **Testing** for the **Internal** group with **3 testers**. Store screenshots
+  and accessibility snapshots are retained with the release logs. The rebuilt
+  local archive's asset comparison is not a downloaded Apple binary comparison.
+- Steam provenance records identify the exact source and build 25706924. Depot
+  manifests: Windows `8262303015946039045`, Linux `2300222411545372136`, macOS
+  `2020011504333316293`. Download verification: 76 Windows, 76 Linux and 265
+  macOS regular package files matched, with no differences. The rebuilt macOS
+  package passed startup with disposable state and mock Keychain; Steam client
+  services were unavailable, so commerce/overlay were not reverified. No new
+  mobile or Windows/Linux interaction QA is claimed.
+- Steam default remains 25569496. No production, App Review, website or messaging
+  publication was performed. Logs, upload configuration and download comparisons
+  are under `/tmp/ids-pre-main-20261004/`.
+- All three internal destinations are available. The final local change is this
+  release-ledger entry; product source remains main. The earlier Safari sign-in
+  blocker was resolved by using the existing signed-in Codex browser session.
+
+## 2026100403 — 4.1.11 Offline Time trial and save export fixes
+
+5 October 2026 (AEDT; release identity dated 4 October UTC). Released clean
+isolated source `aa29c11d6f5c522f67a1ac681e0c7e3633e54da0` on
+`codex/offline-speed-internal-2026100403`, based on main
+`7fe0d4b52d4ddddf5fcf4b9948c9434053e68f4a`. The primary checkout remains on
+that main revision; this trial was not merged or pushed. Prior local work and
+the earlier ledger entry remain preserved.
+
+| Destination | Identity | Verified state |
+| --- | --- | --- |
+| Google Play internal | 4.1.11 / 2026100403 | Available to internal testers; released 5 October at 00:02 AEDT |
+| Internal TestFlight | 4.1.11 / 2610.4.3 | Testing; Internal group with 3 testers; compliance complete and testing notes persisted |
+| Steam public-beta | 25709745 | Active across Windows/Linux/macOS; downloaded packages match uploaded files |
+
+- Includes the supplied 1–42× direct Offline Time slider trial, separately
+  stacked Double Time, and visible capacity-upgrade cost/affordability/max state.
+  The foreground Tinker integration test passes; existing hold-release and
+  focus-loss behavior remains intact. Tooltip-layout previews are not included.
+- Matthew's screenshot showed a timestamp-enabled export failure. Electron and
+  Android accepted only the fixed filename; both now accept the exact generated
+  UTC filename format while rejecting unsafe names and oversized UTF-8 payloads.
+  The timestamp checkbox now belongs only in Export Save. Narrow dialog rules
+  now apply to the portalled dialog instead of the Settings container.
+- Native iOS Save File uses a copy-export document picker to choose a Files
+  destination. Save text and `.idsw` extension are preserved; success waits for
+  picker completion, cancellation leaves the dialog usable, and temporary files
+  are removed. Copy String remains available. Mobile Apple web browsers retain
+  the clipboard route.
+- Clean local release gate: 200 shared suites / 2,125 tests, lint, localization,
+  web/native builds, Electron boundary, Capacitor sync and signed AAB. Native
+  units: 13 Swift and 17 Android tests passed. The corrected iOS archive and
+  simulator host compiled locally; no merged-main GitHub native run is claimed.
+- Android AAB: isolated checkout `output/local-release/2026100403/android/idle-dyson-swarm-2026100403.aab`,
+  20,159,867 bytes; SHA-256
+  `59b9332316710e8114d4994b0d73881400d1d975292d983bbaec3d1e93c33b6b`.
+  Source-bound manifest verified. Internal notes saved in all eight languages.
+  Play's absent deobfuscation/native-symbol warnings were non-blocking.
+- iOS: archive `/tmp/ids-offline-release-2026100403/ios/IDS-2026100403.xcarchive`,
+  bundle `com.blindsidedgames.idledysonswarm`, minimum iOS 16.0; all 295 public
+  asset files match the synchronized mobile build and simulator bundle. Upload
+  used `testFlightInternalTestingOnly=true`. App Store Connect confirms Testing,
+  Internal group/3 testers, and the saved testing notes after refresh.
+- Export UI verified in disposable Chromium at desktop and 360px/130% size in
+  English and German; timestamped browser download bytes matched the captured
+  text. On a fresh iPhone 17 Pro / iOS 26.4 simulator, native Files cancellation
+  produced no success/error feedback and cleaned staging; a subsequent save to
+  On My iPhone preserved all 8,368 captured bytes and the timestamped filename,
+  displayed success, and cleaned staging. Physical iPhone/iPad, Android document
+  picker, and Windows/Linux interaction were not reverified.
+- Steam manifests: Windows `2707393466804897265`, Linux
+  `2821427975846619929`, macOS `5517216669830568468`. All 76 Windows, 75 Linux
+  and 265 macOS regular downloaded package files matched. Corrected Mac package
+  startup passed with disposable state and mock Keychain; Steam client commerce
+  and overlay were not tested. Default branch remains 25569496.
+- Superseded 0402 was uploaded before Matthew's correction: its Android draft
+  was discarded without publishing; Apple 2610.4.2 remains Missing Compliance
+  and was not made available to testers. Its build identity was not reused.
+- Logs, store evidence and exact-byte comparisons: `/tmp/ids-offline-release-2026100403/`.
+  Save regression/visual evidence: `/tmp/ids-offline-release-2026100402/`.
+  Clean isolated checkout: `/private/tmp/ids-offline-internal-2026100402/`.
+  No production, App Review, Steam default, website or community-message release.
