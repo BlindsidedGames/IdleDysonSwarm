@@ -623,9 +623,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     }
     if (
       command.kind === 'tinker.start' ||
-      command.kind === 'tinker.set-repeat'
+      command.kind === 'tinker.set-repeat' ||
+      command.kind === 'time.set-offline-boost-multiplier'
     ) {
-      // Tinker intents already share the canonical lifecycle lane and resolve
+      // Tinker and live speed intents already share the canonical lifecycle lane and resolve
       // against its latest revision. Suspending the clock for every click
       // repeatedly postpones its next tick, freezing play during autoclicks
       // and replaying the accumulated time as a burst when clicking stops.

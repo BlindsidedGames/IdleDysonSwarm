@@ -5205,6 +5205,108 @@
       "value": "Balanced"
     }
   ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "Details"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s per second"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "Use while running"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "Boost duration"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "Use stored time to speed up active play."
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "Pause Boost"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "Paused"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "Regular 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "Running at "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "×"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "Selected speed"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "Game speed"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "Move the slider above 1× to use stored time. Only extra time uses the bank. Double Time stacks separately. Empty storage, backgrounding and manual resets return the slider to 1×."
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "Start Boost"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "Stored time"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "Offline Boost"
+    }
+  ],
   "offline-time.calculating": [
     {
       "type": 0,
@@ -5243,6 +5345,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "Cost"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "Maxed"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "New capacity"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5264,21 +5384,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "Double Storage"
+      "value": "Double Capacity"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "Consume the full bank to increase capacity to "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "Fill your offline time storage to double its capacity."
     }
   ],
   "offline-time.error-code": [

@@ -1,4 +1,5 @@
 import { SKILL_PRESET_COUNT } from './skillPresetSlots'
+import { DEFAULT_OFFLINE_BOOST_MULTIPLIER } from '../simulation/offlineBoost'
 import { readSwarmGrants } from '../simulation/swarmAugments'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { type SpeedrunStatistics } from '../simulation/speedrunStatistics'
@@ -454,6 +455,10 @@ export function hydrateGameState(
         dreamProgression.doubleTime,
       )
       return {
+      ...(source.offlineBoostMultiplier === undefined ? {} : { offlineBoost: {
+        // A loaded save always starts at regular speed.
+        multiplier: DEFAULT_OFFLINE_BOOST_MULTIPLIER,
+      } }),
       eventClockInitialized: toBoolean(source.eventTimeClockInitialized),
       automationTimeUntilNextEvent: toFiniteNonNegativeNumber(
         source.simulationAutomationTimeUntilNextEvent,
@@ -1006,6 +1011,7 @@ export function dehydrateGameState(
     state.timeline.processing.activeIntervalMilliseconds
   source.processingStoredTimePreset =
     state.timeline.processing.storedTimePreset
+  if (state.timeline.offlineBoost !== undefined) source.offlineBoostMultiplier = state.timeline.offlineBoost.multiplier
   dreamProgression.doubleTimeOwned =
     state.timeline.doubleTime.unlocked
   dreamProgression.doDoubleTime = false

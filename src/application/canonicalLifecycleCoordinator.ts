@@ -445,6 +445,7 @@ export class CanonicalLifecycleCoordinator {
           ...runtime.gameState,
           timeline: {
             ...runtime.gameState.timeline,
+            ...(runtime.gameState.timeline.offlineBoost === undefined ? {} : { offlineBoost: { multiplier: 1 } }),
             storedTimeAvailableSeconds: grant.bankSeconds,
             storedTimeCapacitySeconds: grant.capacitySeconds,
             doubleTime: {

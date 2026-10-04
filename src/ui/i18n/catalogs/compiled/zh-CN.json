@@ -5205,6 +5205,108 @@
       "value": "均衡"
     }
   ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "详情"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒/秒"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "加速时消耗"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "加速时长"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "使用储存的时间来加速正在进行的游戏。"
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "暂停加速"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "已暂停"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "正常 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "以 "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "× 运行"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "所选速度"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "游戏速度"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "将滑块移至 1× 以上即可使用存储时间。只有额外时间消耗储备。双倍时间独立叠加。储备耗尽、切换到后台或手动重置时，滑块会回到 1×。"
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "开始加速"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "储存时间"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "离线加速"
+    }
+  ],
   "offline-time.calculating": [
     {
       "type": 0,
@@ -5243,6 +5345,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "费用"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "已达上限"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "新容量"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5264,21 +5384,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "储存上限翻倍"
+      "value": "容量翻倍"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "消耗全部已储存时间，将上限提高至 "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "。"
+      "value": "填满离线时间存储即可将容量翻倍。"
     }
   ],
   "offline-time.error-code": [

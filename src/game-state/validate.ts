@@ -141,6 +141,11 @@ export function validateCanonicalGameState(
   ) {
     errors.push('Stored Time accuracy preset is invalid.')
   }
+  if (state.timeline.offlineBoost !== undefined && (
+    state.timeline.offlineBoost === null ||
+    !Number.isInteger(state.timeline.offlineBoost.multiplier) ||
+    state.timeline.offlineBoost.multiplier < 1 || state.timeline.offlineBoost.multiplier > 42
+  )) errors.push('Offline boost must be a multiplier from 1 to 42 and a boolean enabled state.')
   if (
     state.reality.workerGenerationProgress < 0 ||
     state.reality.workerGenerationProgress >= 1

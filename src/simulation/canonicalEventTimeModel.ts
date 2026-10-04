@@ -477,11 +477,14 @@ export class CanonicalEventTimeModel
     )
   }
 
-  advanceContinuous(seconds: number): void {
+  advanceContinuous(seconds: number, storedTimeFundingSeconds = 0): void {
     if (this.currentIssue !== undefined) return
     if (
       !Number.isFinite(seconds) ||
       seconds <= 0 ||
+      !Number.isFinite(storedTimeFundingSeconds) ||
+      storedTimeFundingSeconds < 0 ||
+      storedTimeFundingSeconds > seconds ||
       this.pendingInterval !== null
     ) {
       this.fail(
@@ -640,7 +643,14 @@ export class CanonicalEventTimeModel
       }
       if (this.context.mode === 'active') {
         candidate = recordActiveSpeedrunTime(candidate, seconds * (this.context.rateClockMultiplier ?? 1))
-        candidate = withAdvancedManualInfinityObservation(
+        if (storedTimeFundingSeconds > 0) {
+          candidate = recordStoredSpeedrunTime(candidate, storedTimeFundingSeconds)
+          candidate = { ...candidate, infinity: { ...candidate.infinity,
+            activeAutomaticThroughputCycleEligible: false,
+            storedTimeUsedThisCycleSeconds: addContinuous(candidate.infinity.storedTimeUsedThisCycleSeconds, storedTimeFundingSeconds),
+          } }
+        } else if (candidate.infinity.storedTimeUsedThisCycleSeconds === 0) {
+          candidate = withAdvancedManualInfinityObservation(
           candidate,
           seconds * (this.context.rateClockMultiplier ?? 1),
         )
@@ -648,6 +658,7 @@ export class CanonicalEventTimeModel
           candidate,
           this.carrier.entitlements,
         )
+        }
       }
 
       this.carrier = {

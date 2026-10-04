@@ -235,6 +235,8 @@ export interface AvocadoState {
 }
 
 export interface TimelineState {
+  /** Selection survives saves; running is foreground session state only. */
+  readonly offlineBoost?: { readonly multiplier: number }
   readonly eventClockInitialized: boolean
   readonly automationTimeUntilNextEvent: number
   readonly dysonAutomationTargetIndex: number

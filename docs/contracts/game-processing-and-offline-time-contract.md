@@ -1,8 +1,42 @@
 # Game processing and Offline Time contract
 
-IDS uses one authoritative gameplay update for active play and manually spent
-Offline Time. This adapts Antimatter Dimensions' bounded coarse-replay model to
+IDS uses one authoritative gameplay update for active play and legacy stored-time
+replay. The trial Offline Time controls spend the bank during foreground play. This adapts Antimatter Dimensions' bounded coarse-replay model to
 IDS mechanics; it does not import AD progression, upgrades or balance rules.
+
+## Foreground Offline Boost trial
+
+The slider directly selects an integer multiplier from 1× through 42×.
+Values above 1× immediately spend the bank; 1× stops spending and is regular play. Each foreground update of `w` wall seconds may
+consume `(multiplier - 1) * w` stored base seconds. If less bank remains, only
+the represented debit funds additional progress. Permanent Double Time then
+multiplies the combined base time: `gameSeconds = (w + debit) * (owned ? 2 : 1)`.
+At 42× this costs 41 bank seconds per wall second and reaches 84× game time
+with Double Time. Offline accrual and capacity upgrades retain their existing
+wall-time economics. Floating-point debits that cannot change the represented
+bank balance fail closed to regular play.
+
+The configured 33–200 ms foreground delivery cadence remains unchanged.
+Automation and reset decisions retain their existing once-per-update semantics;
+this trial scales the existing game-speed scalar rather than adding updates.
+Tinker and player commands remain available. Timer bonuses, production and
+Stellar ledger settlement use the same canonical game-time update. Infinity
+throughput and active speedrun clocks advance by foreground wall time, while
+bank-funded time is tracked separately and marks Stored Time provenance.
+Bank-assisted cycles do not calibrate Recommended or feed Current samples.
+Changing boost controls clears the current observation session but retains the
+normal-play recommendation.
+
+Exhaustion visibly returns the slider to 1×. Background/pause,
+import, save reload and manual progression resets also return it to 1×; automatic Infinity
+and Dream resets continue it. Visible desktop focus loss follows the existing
+host lifecycle policy. A foreground suspension gap over 60 seconds is banked
+and returns the slider to 1×. The optional `offlineBoostMultiplier` extension
+is tolerated for compatibility, but every loaded save starts at regular 1×.
+The capacity action stays visible: a partial bank shows its full-bank cost and
+next capacity, and the absolute ceiling shows a disabled Maxed action. Legacy
+amount/accuracy worker APIs remain available for compatibility but are no
+longer exposed by the Offline Time player flow.
 
 ## Shared update
 

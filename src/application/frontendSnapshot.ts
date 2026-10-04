@@ -137,7 +137,7 @@ import {
   type CanonicalResearchPurchasePreview,
 } from '../simulation/researchAutomation'
 import { deriveSecretBuffs } from '../simulation/secretBuffs'
-import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
+import { STORED_TIME_MAXIMUM_SECONDS, upgradeStoredTimeCapacity } from '../simulation/timeResources'
 import {
   CANONICAL_PLAYER_COMMAND_KINDS,
   CANONICAL_PLAYER_COMMAND_SUPPORT,
@@ -429,6 +429,7 @@ export interface FrontendCanonicalResources {
   readonly time: {
     readonly storedTimeAvailableSeconds: number
     readonly storedTimeCapacitySeconds: number
+    readonly offlineBoost?: { readonly multiplier: number }
   }
 }
 
@@ -1490,6 +1491,7 @@ function selectResources(
         state.timeline.storedTimeAvailableSeconds,
       storedTimeCapacitySeconds:
         state.timeline.storedTimeCapacitySeconds,
+      offlineBoost: state.timeline.offlineBoost,
     }),
   }
 }
@@ -2629,7 +2631,7 @@ function selectStoredTimePreviews(
           ? 'maximum-reached'
           : 'stored-time-bank-not-full',
       currentCapacitySeconds: state.timeline.storedTimeCapacitySeconds,
-      nextCapacitySeconds: storedCapacity.capacitySeconds,
+      nextCapacitySeconds: Math.min(STORED_TIME_MAXIMUM_SECONDS, state.timeline.storedTimeCapacitySeconds * 2),
       consumesStoredSeconds: storedCapacity.upgraded
         ? state.timeline.storedTimeAvailableSeconds
         : 0,

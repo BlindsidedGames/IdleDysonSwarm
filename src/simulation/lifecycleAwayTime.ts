@@ -1,4 +1,5 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import { pauseOfflineBoost } from './offlineBoost'
 import {
   applyAwayTimeGrant,
   resolveAwayTime,
@@ -154,9 +155,9 @@ export function evaluateLifecycleEvent(
   const stampQuitTimestamp =
     !allowColdStartGateSave &&
     !state.departureTimestampRecorded
-  const candidate = stampQuitTimestamp
+  const candidate = pauseOfflineBoost(stampQuitTimestamp
     ? withQuitTimestamp(state.canonical, clock.serializedUtcText)
-    : state.canonical
+    : state.canonical)
   const nextState: LifecycleCoordinatorState = {
     ...state,
     canonical: candidate,
@@ -190,7 +191,7 @@ export function applyAwayTimeReplay(
     quitTimestamp: request.parsedQuitTimestamp,
     startedTimestamp: request.parsedStartedTimestamp,
   })
-  let canonical = request.state.canonical
+  let canonical = pauseOfflineBoost(request.state.canonical)
   let timestampConsumed = false
   let storedTimeCreditedSeconds = 0
   let markComparisonIntegrityCompromised = resolution.cheater

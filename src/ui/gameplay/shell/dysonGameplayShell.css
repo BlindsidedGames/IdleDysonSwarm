@@ -1931,14 +1931,6 @@
   cursor: pointer;
 }
 
-.offline-time-quick-spend { padding-block-start: var(--drawer-navigation-gap); }
-.offline-time-quick-spend__buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.25rem; }
-.offline-time-quick-spend button { min-block-size: 2.25rem; border: 1px solid var(--theme-divider); border-radius: 0.25rem; color: #f4eff5; background: var(--theme-panel); font: inherit; font-size: var(--ui-text-body); cursor: pointer; }
-.offline-time-quick-spend button:disabled { opacity: 0.4; cursor: default; }
-.offline-time-quick-spend button:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 2px; }
-.offline-time-quick-spend__status { display: grid; gap: 0.25rem; margin-block-start: 0.25rem; font-size: var(--ui-text-body); }
-.offline-time-quick-spend p { margin: 0.25rem 0 0; font-size: var(--ui-text-body); }
-
 .offline-time-navigation-progress {
   position: absolute;
   inset-inline: 0;

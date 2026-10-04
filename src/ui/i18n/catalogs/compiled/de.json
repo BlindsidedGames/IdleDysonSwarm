@@ -5205,6 +5205,108 @@
       "value": "Ausgewogen"
     }
   ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "Details"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " s pro Sekunde"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "Bei aktivem Boost"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "Boost-Dauer"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "Nutze gespeicherte Zeit, um aktives Spielen zu beschleunigen."
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "Boost pausieren"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "Pausiert"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "Normal 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "Läuft mit "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "×"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "Gewähltes Tempo"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "Spieltempo"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "Bewege den Regler über 1×, um gespeicherte Zeit zu nutzen. Nur zusätzliche Zeit verbraucht den Vorrat. Doppelte Zeit wirkt zusätzlich. Ein leerer Speicher, der Hintergrund und manuelle Resets setzen den Regler auf 1× zurück."
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "Boost starten"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "Gespeicherte Zeit"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "Offline-Boost"
+    }
+  ],
   "offline-time.calculating": [
     {
       "type": 0,
@@ -5243,6 +5345,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "Kosten"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "Maximum"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "Neue Kapazität"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5264,21 +5384,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "Speicher verdoppeln"
+      "value": "Kapazität verdoppeln"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "Verbrauche den gesamten Vorrat, um die Kapazität auf "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": " zu erhöhen."
+      "value": "Fülle deinen Offline-Zeitspeicher, um seine Kapazität zu verdoppeln."
     }
   ],
   "offline-time.error-code": [

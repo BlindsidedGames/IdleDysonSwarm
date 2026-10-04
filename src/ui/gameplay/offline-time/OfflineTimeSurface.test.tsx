@@ -1,542 +1,143 @@
 // @vitest-environment jsdom
-
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
-import { afterEach, describe, expect, test } from 'vitest'
-import {
-  createCanonicalGameApplication,
-} from '../../../application/canonicalGameApplication'
-import {
-  createCanonicalRuntimeSessionFactory,
-} from '../../../application/canonicalRuntimeSession'
-import {
-  dehydrateGameState,
-  hydrateGameState,
-} from '../../../game-state/mapping'
-import type {
-  StoredTimeFirstDisasterOccurrence,
-} from '../../../core/storedTimeCompletionSummary'
-import type { LifecyclePhase } from '../../../platform/contracts'
+import { afterEach, expect, test } from 'vitest'
+import { createCanonicalGameApplication } from '../../../application/canonicalGameApplication'
+import { createCanonicalRuntimeSessionFactory } from '../../../application/canonicalRuntimeSession'
+import { dehydrateGameState, hydrateGameState } from '../../../game-state/mapping'
 import { SingleHostSessionWriterAuthority } from '../../../platform/singleHostSessionWriterAuthority'
 import { prepareIdb1Save } from '../../../save/prepare'
-import { prepareImportedSaveText } from '../../../save/import'
-import type {
-  LegacySaveCandidate,
-  SaveStorageAdapter,
-} from '../../../save/repository'
-import type { CanonicalEventTimeContext } from '../../../simulation/canonicalEventTimeModel'
-import {
-  createProductionEventContext,
-} from '../../../simulation/productionEventContext'
-import type {
-  StoredTimeJobRequest,
-  StoredTimeJobRunner,
-  StoredTimeJobRunOptions,
-} from '../../../workers/storedTime/storedTimeJobRunner'
-import { StoredTimeSimulation } from '../../../workers/storedTime/storedTimeSimulation'
-import {
-  STORED_TIME_WORKER_PROTOCOL_VERSION,
-  type StoredTimeJobTerminalMessage,
-} from '../../../workers/storedTime/storedTimeProtocol'
-import {
-  createBrowserRuntimeFoundation,
-  type BrowserUiRuntimeFoundation,
-} from '../../runtime'
-import {
-  GAMEPLAY_ROUTE_STORAGE_KEY,
-  ReadyDysonRuntimeHost,
-} from '../dyson/ReadyDysonSlice'
+import type { LifecyclePhase } from '../../../platform/contracts'
+import type { LegacySaveCandidate, SaveStorageAdapter } from '../../../save/repository'
+import { createProductionEventContext } from '../../../simulation/productionEventContext'
+import { createBrowserRuntimeFoundation, type BrowserUiRuntimeFoundation } from '../../runtime'
+import { GAMEPLAY_ROUTE_STORAGE_KEY, ReadyDysonRuntimeHost } from '../dyson/ReadyDysonSlice'
 import fixtureText from '../../../../test/fixtures/schema-08-canonical-idb1-main-save.txt?raw'
-
-const preparedFixture = prepareIdb1Save(fixtureText).prepared
-
 const activeRuntimes: BrowserUiRuntimeFoundation[] = []
+afterEach(async () => { cleanup(); localStorage.clear(); await Promise.all(activeRuntimes.splice(0).map(runtime => runtime.shutdown())) })
 
-afterEach(async () => {
-  cleanup()
-  localStorage.clear()
-  await Promise.all(
-    activeRuntimes.splice(0).map((runtime) => runtime.shutdown()),
-  )
-})
-
-describe('Offline Time completion boundary through the UI runtime', () => {
-  test.each([0.5, 1, 1.5, 59.9, 60, 60.5])(
-    'All reaches the endpoint and commits the full %s-second bank', async (bank) => {
-      const { runtime, runner } = await createRuntimeHarness(bank, Date.UTC(2026, 1, 2, 23, 4, 43))
-      renderRuntime(runtime)
-      fireEvent.click(await screen.findByRole('button', { name: 'All' }))
-      const slider = screen.getByRole('slider', { name: 'Spend Offline Time' }) as HTMLInputElement
-      expect(slider.valueAsNumber).toBe(Number(slider.max))
-      expect(Number(slider.getAttribute('aria-valuenow'))).toBe(bank)
-      if (bank === 0.5) expect(slider.getAttribute('aria-valuetext')).toBe('0.5s')
-      if (bank === 60.5) expect(slider.getAttribute('aria-valuetext')).toBe('1m 0.5s')
-      fireEvent.click(document.querySelector('.offline-time-spend-button')!)
-      fireEvent.click(screen.getByRole('button', { name: 'Tap again to confirm' }))
-      await screen.findByRole('dialog', { name: 'Offline Time simulation progress' })
-      runner.finish()
-      await screen.findByRole('dialog', { name: 'Offline Time Complete' })
-      const after = runtime.snapshot()
-      expect(after.phase).toBe('ready')
-      if (after.phase !== 'ready') throw new Error('Expected ready runtime')
-      expect(after.gameplay.resources.time.storedTimeAvailableSeconds).toBe(0)
-      const exported = await runtime.readCurrentSaveExport()
-      expect(exported).not.toBeNull()
-      const reloaded = hydrateGameState(prepareImportedSaveText(
-        exported!.text, '2026-02-02T23:04:43Z',
-      ))
-      expect(reloaded.state.timeline.storedTimeAvailableSeconds).toBe(0)
-      fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
-      expect((document.querySelector('.offline-time-spend-button') as HTMLButtonElement).disabled).toBe(true)
-      expect(runtime.storedTime?.status().kind).toBe('idle')
-    },
-  )
-
-  test('dragging off All disarms confirmation and preserves the fractional remainder', async () => {
-    const { runtime, runner } = await createRuntimeHarness(60.5, Date.UTC(2026, 1, 2, 23, 4, 43))
-    renderRuntime(runtime)
-    fireEvent.click(await screen.findByRole('button', { name: 'All' }))
-    fireEvent.click(document.querySelector('.offline-time-spend-button')!)
-    const slider = screen.getByRole('slider', { name: 'Spend Offline Time' })
-    fireEvent.change(slider, { target: { value: '60' } })
-    expect(screen.queryByRole('button', { name: 'Tap again to confirm' })).toBeNull()
-    expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('false')
-    await beginStoredTimeSpend()
-    await screen.findByRole('dialog', { name: 'Offline Time simulation progress' })
-    runner.finish()
-    await screen.findByRole('dialog', { name: 'Offline Time Complete' })
-    fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    fireEvent.change(slider, { target: { value: '0' } })
-    fireEvent.change(slider, { target: { value: '1' } })
-    expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('true')
-    expect(slider.getAttribute('aria-valuenow')).toBe('0.5')
-    const snapshot = runtime.snapshot()
-    if (snapshot.phase !== 'ready') throw new Error('Expected ready runtime')
-    expect(snapshot.gameplay.resources.time.storedTimeAvailableSeconds).toBe(0.5)
-  })
-
-  test('updates Max Storage after a capacity upgrade', async () => {
-    const { runtime } = await createRuntimeHarness(86400)
-    renderRuntime(runtime)
-    expect((await screen.findByText('Max Storage')).parentElement!.textContent).toContain('1d')
-    fireEvent.click(await screen.findByRole('button', { name: 'Double Storage' }))
-    await waitFor(() => expect(screen.getByText('Max Storage').parentElement!.textContent).toContain('2d'))
-  })
-
-  test('shows maximum capacity beneath the storage bar', async () => {
-    const { runtime } = await createRuntimeHarness(59)
-    renderRuntime(runtime)
-    const row = (await screen.findByText('Max Storage')).parentElement!
-    expect(row.textContent).toContain('1d')
-
-  })
-
-  test.each([
-    ['background', 'CANONICAL-STORED-TIME-BACKGROUNDED', true],
-    ['terminating', 'CANONICAL-STORED-TIME-LIFECYCLE-CANCELLED', false],
-    ['user', 'CANONICAL-STORED-TIME-CANCELLED', false],
-    ['failure', 'SIM-RESEARCH-INVALID', false],
-  ] as const)('shows the correct error and preserves the bank after %s cancellation', async (origin, code, backgrounded) => {
-    const { runtime, runner, emitLifecycle } = await createRuntimeHarness()
-    const before = runtime.snapshot()
-    expect(before.phase).toBe('ready')
-    if (before.phase !== 'ready') return
-    const bankBefore = before.gameplay.resources.time.storedTimeAvailableSeconds
-    renderRuntime(runtime)
-    await beginStoredTimeSpend()
-    await screen.findByRole('dialog', { name: 'Offline Time simulation progress' })
-    await act(async () => {
-      if (origin === 'failure') {
-        runner.fail('SIM-RESEARCH-INVALID')
-      } else {
-        if (origin === 'user') runtime.storedTime?.cancel()
-        else emitLifecycle(origin)
-        runner.finish()
-      }
-    })
-    const alert = await screen.findByRole('alert')
-    expect(alert.textContent).toContain(`(Error code: ${code})`)
-    expect(alert.textContent).toContain(backgrounded
-      ? 'App was backgrounded processing cancelled'
-      : 'That action was not completed. Try again.')
-    const after = runtime.snapshot()
-    expect(after.phase).toBe('ready')
-    if (after.phase !== 'ready') return
-    expect(after.gameplay.resources.time.storedTimeAvailableSeconds).toBe(bankBefore)
-  })
-
-  test('keeps pending confirmation dismissal separate from active processing', async () => {
-    const { runtime } = await createRuntimeHarness()
-    renderRuntime(runtime)
-
-    fireEvent.click(
-      await screen.findByRole('button', { name: 'Spend 1m 0s' }),
-    )
-    expect(
-      screen.getByRole('button', { name: 'Tap again to confirm' }),
-    ).not.toBeNull()
-
-    fireEvent.pointerDown(
-      screen.getByRole('heading', { name: 'Stored Offline Time' }),
-    )
-
-    expect(screen.getByRole('button', { name: 'Spend 1m 0s' })).not.toBeNull()
-    expect(runtime.storedTime?.status().kind).toBe('idle')
-  })
-
-  test('dismisses only the committed completion when its backdrop is activated', async () => {
-    const { runtime, runner } = await createRuntimeHarness()
-    renderRuntime(runtime)
-    const before = runtime.snapshot()
-    expect(before.phase).toBe('ready')
-    if (before.phase !== 'ready') return
-    const bankBefore =
-      before.gameplay.resources.time.storedTimeAvailableSeconds
-
-    const accuracy = screen.getByRole('combobox', {
-      name: 'Simulation accuracy',
-    })
-    accuracy.focus()
-    expect(document.activeElement).toBe(accuracy)
-    await beginStoredTimeSpend()
-
-    const processingDialog = await screen.findByRole('dialog', {
-      name: 'Offline Time simulation progress',
-    })
-    const processingBackdrop = processingDialog.parentElement
-    expect(processingBackdrop).not.toBeNull()
-
-    fireEvent.pointerDown(processingBackdrop!)
-
-    expect(runtime.storedTime?.status().kind).toBe('running')
-    expect(
-      screen.getByRole('dialog', {
-        name: 'Offline Time simulation progress',
-      }),
-    ).not.toBeNull()
-
-    runner.finish()
-
-    const completionDialog = await screen.findByRole('dialog', {
-      name: 'Offline Time Complete',
-    })
-    await waitFor(() => expect(runtime.storedTime?.status().kind).toBe('idle'))
-    const snapshot = runtime.snapshot()
-    expect(snapshot.phase).toBe('ready')
-    if (snapshot.phase !== 'ready') return
-    expect(snapshot.gameplay.resources.time.storedTimeAvailableSeconds).toBe(
-      bankBefore - 60,
-    )
-
-    const continueButton = screen.getByRole('button', { name: 'Continue' })
-    expect(document.activeElement).toBe(continueButton)
-
-    fireEvent.click(completionDialog)
-    expect(
-      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
-    ).not.toBeNull()
-
-    const completionBackdrop = completionDialog.parentElement!
-    fireEvent.pointerDown(completionDialog)
-    expect(
-      screen.getByRole('dialog', { name: 'Offline Time Complete' }),
-    ).not.toBeNull()
-
-    fireEvent.pointerDown(completionBackdrop)
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole('dialog', { name: 'Offline Time Complete' }),
-      ).toBeNull()
-    })
-    expect(document.activeElement).toBe(
-      screen.getByRole('button', { name: 'Spend Again: 1m 0s' }),
-    )
-  })
-
-  test('retains the explicit keyboard and screen-reader completion control', async () => {
-    const { runtime, runner } = await createRuntimeHarness()
-    renderRuntime(runtime)
-
-    await beginStoredTimeSpend()
-    await screen.findByRole('dialog', {
-      name: 'Offline Time simulation progress',
-    })
-    runner.finish()
-
-    const continueButton = await screen.findByRole('button', {
-      name: 'Continue',
-    })
-    await waitFor(() => expect(document.activeElement).toBe(continueButton))
-    fireEvent.click(continueButton)
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole('dialog', { name: 'Offline Time Complete' }),
-      ).toBeNull()
-    })
-  })
-
-  test('shows a committed first-disaster dialog only after dismissing the completion summary', async () => {
-    const { runtime, runner } = await createRuntimeHarness(
-      600,
-      Date.UTC(2026, 8, 1),
-      [{
-        cause: 'Meteor',
-        strangeMatterGranted: 1,
-        resetCount: 1n,
-        preResetEra: 'information',
-      }],
-    )
-    renderRuntime(runtime)
-
-    await beginStoredTimeSpend()
-    await screen.findByRole('dialog', {
-      name: 'Offline Time simulation progress',
-    })
-    runner.finish()
-
-    const continueButton = await screen.findByRole('button', {
-      name: 'Continue',
-    })
-    expect(screen.queryByRole('dialog', { name: 'Meteor Storm' })).toBeNull()
-    expect(document.querySelector(
-      '.gameplay-timed-notification__announcement',
-    )).toBeNull()
-    fireEvent.click(continueButton)
-
-    const disasterDialog = await screen.findByRole('dialog', {
-      name: 'Meteor Storm',
-    })
-    expect(disasterDialog.getAttribute('data-simulation-era'))
-      .toBe('information')
-    expect(document.querySelector(
-      '.gameplay-timed-notification__announcement',
-    )).toBeNull()
-  })
-
-  test('restores focus to an enabled control after spending the full bank', async () => {
-    const { runtime, runner } = await createRuntimeHarness(
-      60,
-      Date.UTC(2026, 1, 2, 23, 4, 43),
-    )
-    renderRuntime(runtime)
-
-    await beginStoredTimeSpend()
-    await screen.findByRole('dialog', {
-      name: 'Offline Time simulation progress',
-    })
-    runner.finish()
-
-    const continueButton = await screen.findByRole('button', {
-      name: 'Continue',
-    })
-    await waitFor(() => expect(document.activeElement).toBe(continueButton))
-    await waitFor(() => {
-      const snapshot = runtime.snapshot()
-      expect(snapshot.phase).toBe('ready')
-      if (snapshot.phase !== 'ready') return
-      expect(
-        snapshot.gameplay.resources.time.storedTimeAvailableSeconds,
-      ).toBe(0)
-    })
-    await waitFor(() => {
-      const spendControl = document.querySelector<HTMLButtonElement>(
-        '.offline-time-spend-button',
-      )
-      expect(spendControl?.disabled).toBe(true)
-    })
-    fireEvent.click(continueButton)
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole('dialog', { name: 'Offline Time Complete' }),
-      ).toBeNull()
-    })
-    expect(document.activeElement).toBe(
-      screen.getByRole('combobox', { name: 'Simulation accuracy' }),
-    )
-  })
-})
-
-async function beginStoredTimeSpend(): Promise<void> {
-  const spend = await screen.findByRole('button', { name: 'Spend 1m 0s' })
-  fireEvent.click(spend)
-  const confirmation = screen.getByRole('button', {
-    name: 'Tap again to confirm',
-  })
-  fireEvent.click(confirmation)
-}
-
-function renderRuntime(runtime: BrowserUiRuntimeFoundation): void {
-  localStorage.setItem(GAMEPLAY_ROUTE_STORAGE_KEY, 'offline-time')
-  render(
-    <IntlProvider locale="en" messages={{}} onError={() => undefined}>
-      <ReadyDysonRuntimeHost runtime={runtime} locale="en" />
-    </IntlProvider>,
-  )
-}
-
-async function createRuntimeHarness(
-  storedTimeAvailableSeconds = 600,
-  lifecycleUtcMilliseconds = Date.UTC(2026, 8, 1),
-  firstDisasterOccurrences:
-    readonly Readonly<StoredTimeFirstDisasterOccurrence>[] = [],
-): Promise<{
-  readonly runtime: BrowserUiRuntimeFoundation
-  readonly runner: ControlledStoredTimeJobRunner
-  readonly emitLifecycle: (phase: LifecyclePhase) => void
-}> {
-  const hydrated = hydrateGameState(preparedFixture)
-  const candidate = {
-    ...structuredClone(hydrated.state),
-    timeline: {
-      ...hydrated.state.timeline,
-      eventClockInitialized: true,
-      automationTimeUntilNextEvent: 1,
-      storedTimeAvailableSeconds,
-      storedTimeCapacitySeconds: 86_400,
-    },
-  }
-  const dehydrated = dehydrateGameState(hydrated, candidate)
-  const startingRecord = dehydrated.copyValidatedState()
-  startingRecord.cheater = false
-  const startingSave = dehydrated.withValidatedState(startingRecord)
-  const storage = new MemorySaveStorage()
-  const eventContext = createProductionEventContext()
-  const runner = new ControlledStoredTimeJobRunner(
-    eventContext,
-    firstDisasterOccurrences,
-  )
+async function harness(bank: number, capacity = 86400) {
+  const hydrated = hydrateGameState(prepareIdb1Save(fixtureText).prepared)
+  const candidate = structuredClone(hydrated.state)
+  Object.assign(candidate, { timeline: { ...candidate.timeline, lastSuspendedAtLegacyText: null, storedTimeAvailableSeconds: bank, storedTimeCapacitySeconds: capacity, offlineBoost: { multiplier: 42 }, doubleTime: { ...candidate.timeline.doubleTime, unlocked: false } }, infinity: { ...candidate.infinity, automaticResetEnabled: false } })
+  const prepared = dehydrateGameState(hydrated, candidate)
+  const source = prepared.copyValidatedState(); source.cheater = false; source.idsLastActiveAtUtc = new Date(Date.UTC(2026, 9, 4)).toISOString()
+  const save = prepared.withValidatedState(source)
+  let phase: LifecyclePhase = 'active'
   let lifecycleListener: ((phase: LifecyclePhase) => void) | undefined
+  let now = 0, frame: (() => void) | undefined
   const runtime = createBrowserRuntimeFoundation({
-    createApplication: (repository) => createCanonicalGameApplication({
-      repository,
-      startupResolver: {
-        resolve: async () => ({
-          kind: 'ready',
-          source: 'primary',
-          save: startingSave,
-        }),
-      },
-      sessionFactory: createCanonicalRuntimeSessionFactory({
-        entitlements: { permanentDoubleIp: false },
-      }),
-      engine: { eventContext },
-      storedTimeJobRunner: runner,
-    }),
-    lifecyclePolicy: {
-      saveOnPause: false,
-      saveOnFocusLoss: false,
-      replayOnFocusGain: false,
-    },
-    allowedExternalOrigins: [],
-    saveStorage: storage,
-    saveRepositoryPaths: {
-      current: '/current',
-      temporary: '/current.tmp',
-      legacyRecovery: '/recovery/original.idsw',
-    },
-    allowCanonicalPlayerWrites: true,
-    writerAuthority: new SingleHostSessionWriterAuthority({
-      sessionId: 'offline-time-completion-test',
-    }),
-    lifecycle: {
-      currentPhase: () => 'background',
-      subscribe: (listener) => {
-        lifecycleListener = listener
-        return () => { lifecycleListener = undefined }
-      },
-    },
-    lifecycleClock: {
-      sample: () => ({
-        utcMilliseconds: lifecycleUtcMilliseconds,
-        serializedUtcText: new Date(lifecycleUtcMilliseconds).toISOString(),
-      }),
-    },
+    createApplication: repository => createCanonicalGameApplication({ repository, startupResolver: { resolve: async () => ({ kind: 'ready', source: 'primary', save }) }, sessionFactory: createCanonicalRuntimeSessionFactory({ entitlements: { permanentDoubleIp: false } }), engine: { eventContext: createProductionEventContext() } }),
+    lifecyclePolicy: { saveOnPause: true, saveOnFocusLoss: true, replayOnFocusGain: true }, allowedExternalOrigins: [],
+    saveStorage: new MemorySaveStorage(), saveRepositoryPaths: { current: '/current', temporary: '/current.tmp', legacyRecovery: '/recovery/original.idsw' },
+    allowCanonicalPlayerWrites: true, writerAuthority: new SingleHostSessionWriterAuthority({ sessionId: 'offline-boost-ui-test' }),
+    activeTimeClock: { nowMilliseconds: () => now }, activeTimeScheduler: { requestFrame: callback => { frame = callback; return 1 }, cancelFrame: () => { frame = undefined } },
+    lifecycle: { currentPhase: () => phase, subscribe: listener => { lifecycleListener = listener; return () => { lifecycleListener = undefined } } },
+    lifecycleClock: { sample: () => ({ utcMilliseconds: Date.UTC(2026, 9, 4) + now, serializedUtcText: new Date(Date.UTC(2026, 9, 4) + now).toISOString() }) },
   })
   activeRuntimes.push(runtime)
-  await expect(runtime.start()).resolves.toMatchObject({ phase: 'ready' })
-  return { runtime, runner, emitLifecycle: (phase) => lifecycleListener?.(phase) }
+  await runtime.start()
+  localStorage.setItem(GAMEPLAY_ROUTE_STORAGE_KEY, 'offline-time')
+  render(<IntlProvider locale="en" messages={{}} onError={() => undefined}><ReadyDysonRuntimeHost runtime={runtime} locale="en" /></IntlProvider>)
+  await screen.findByRole('slider', { name: 'Game speed' })
+  const time = () => { const snapshot = runtime.snapshot(); if (snapshot.phase !== 'ready') throw Error('Expected ready'); return snapshot.gameplay.resources.time }
+  const advance = async () => { now += 33; await act(async () => { frame?.(); await new Promise(resolve => setTimeout(resolve, 30)) }) }
+  const changePhase = async (next: LifecyclePhase, elapsed = 0) => { now += elapsed; phase = next; await act(async () => { lifecycleListener?.(next); await new Promise(resolve => setTimeout(resolve, 30)) }) }
+  return { runtime, time, advance, changePhase }
 }
 
-class ControlledStoredTimeJobRunner implements StoredTimeJobRunner {
-  private readonly eventContext: Readonly<CanonicalEventTimeContext>
-  private readonly firstDisasterOccurrences:
-    readonly Readonly<StoredTimeFirstDisasterOccurrence>[]
-  private failPending: ((code: string) => void) | undefined
-  private finishPending: (() => void) | undefined
-
-  constructor(
-    eventContext: Readonly<CanonicalEventTimeContext>,
-    firstDisasterOccurrences:
-      readonly Readonly<StoredTimeFirstDisasterOccurrence>[] = [],
-  ) {
-    this.eventContext = eventContext
-    this.firstDisasterOccurrences = firstDisasterOccurrences
-  }
-
-  run(
-    request: Readonly<StoredTimeJobRequest>,
-    options: Readonly<StoredTimeJobRunOptions> = {},
-  ): Promise<StoredTimeJobTerminalMessage> {
-    const simulation = new StoredTimeSimulation({
-      jobId: request.jobId,
-      state: request.state,
-      requestedSeconds: request.requestedSeconds,
-      infinityMinimumCycleSeconds: request.infinityMinimumCycleSeconds,
-      eventContext: this.eventContext,
-    })
-    options.onProgress?.(simulation.progress())
-    return new Promise((resolve) => {
-      this.failPending = (code) => resolve({
-        type: 'failed',
-        protocolVersion: STORED_TIME_WORKER_PROTOCOL_VERSION,
-        jobId: request.jobId,
-        code,
-        reason: 'Simulated processing failure.',
-        progress: simulation.progress(),
-      })
-      this.finishPending = () => {
-        const terminal = simulation.step(Number.POSITIVE_INFINITY, false)
-        if (terminal === null) {
-          throw new Error('Controlled Stored Time simulation did not finish.')
-        }
-        options.onProgress?.(simulation.progress())
-        resolve(terminal.type === 'completed'
-          ? {
-              ...terminal,
-              firstDisasterOccurrences: this.firstDisasterOccurrences,
-            }
-          : terminal)
-      }
-    })
-  }
-
-  fail(code: string): void {
-    this.failPending?.(code)
-  }
-
-  finish(): void {
-    const finish = this.finishPending
-    if (finish === undefined) {
-      throw new Error('No Stored Time job is waiting to finish.')
-    }
-    this.finishPending = undefined
-    finish()
-  }
-
-  dispose(): void {
-    this.finishPending = undefined
-  }
+const slider = () => screen.getByRole('slider', { name: 'Game speed' }) as HTMLInputElement
+const output = () => screen.getByRole('status', { name: 'Game speed' }).textContent
+const capacityButton = () => screen.getByRole('button', { name: 'Double Capacity' }) as HTMLButtonElement
+const choose = async (value: number) => {
+  fireEvent.change(slider(), { target: { value: String(value) } })
+  await waitFor(() => expect(slider().value).toBe(String(value)))
 }
+
+test('one live slider starts, changes and stops spending with no Start/Pause or processing dialog', async () => {
+  const h = await harness(10)
+  expect(output()).toBe('Regular 1×')
+  expect(screen.queryByText('Boost duration')).toBeNull()
+  expect(screen.queryByRole('button', { name: /Start Boost|Pause Boost/ })).toBeNull()
+  expect(capacityButton().disabled).toBe(true)
+  await choose(8)
+  expect(output()).toBe('8×')
+  expect(screen.getByText('Use while running')).toBeTruthy()
+  await h.advance()
+  expect(h.time().storedTimeAvailableSeconds).toBeCloseTo(9.769, 10)
+  expect(screen.queryByRole('dialog')).toBeNull()
+  // Consecutive drag events must not disable the range or lose the last choice.
+  fireEvent.change(slider(), { target: { value: '6' } })
+  expect(slider().disabled).toBe(false)
+  fireEvent.change(slider(), { target: { value: '2' } })
+  await waitFor(() => expect(h.time().offlineBoost?.multiplier).toBe(2))
+  await h.advance()
+  expect(h.time().storedTimeAvailableSeconds).toBeCloseTo(9.736, 10)
+  await choose(1)
+  expect(output()).toBe('Regular 1×')
+  await h.advance()
+  expect(h.time().storedTimeAvailableSeconds).toBeCloseTo(9.736, 10)
+})
+
+test('bank exhaustion visibly returns the slider to 1× and leaves the capacity action visible', async () => {
+  const h = await harness(0.5)
+  await choose(42)
+  await h.advance()
+  expect(h.time().storedTimeAvailableSeconds).toBe(0)
+  expect(h.time().offlineBoost).toEqual({ multiplier: 1 })
+  expect(slider().value).toBe('1')
+  expect(output()).toBe('Regular 1×')
+  expect(slider().disabled).toBe(true)
+  expect(capacityButton().disabled).toBe(true)
+  expect(screen.queryByRole('dialog')).toBeNull()
+})
+
+test('partial storage shows the requirement, full-bank cost and prospective doubled capacity', async () => {
+  await harness(7200)
+  expect(capacityButton().disabled).toBe(true)
+  expect(screen.getByText('Fill your offline time storage to double its capacity.')).toBeTruthy()
+  expect(screen.getByText('Cost').nextElementSibling?.textContent).toBe('1d 0s')
+  expect(screen.getByText('New capacity').nextElementSibling?.textContent).toBe('2d 0s')
+})
+
+test('a full bank upgrades only at regular speed and spends all stored time', async () => {
+  const h = await harness(86400)
+  expect(capacityButton().disabled).toBe(false)
+  await choose(42)
+  expect(capacityButton().disabled).toBe(true)
+  await choose(1)
+  await waitFor(() => expect(capacityButton().disabled).toBe(false))
+  fireEvent.click(capacityButton())
+  await waitFor(() => expect(h.time().storedTimeCapacitySeconds).toBe(172800))
+  expect(h.time().storedTimeAvailableSeconds).toBe(0)
+  expect(capacityButton().disabled).toBe(true)
+  expect(screen.getByText('Cost').nextElementSibling?.textContent).toBe('2d 0s')
+  expect(screen.getByText('New capacity').nextElementSibling?.textContent).toBe('4d 0s')
+  expect(output()).toBe('Regular 1×')
+  expect(slider().disabled).toBe(true)
+})
+
+test('the absolute capacity ceiling displays a disabled Maxed action', async () => {
+  await harness(Number.MAX_VALUE, Number.MAX_VALUE)
+  expect((screen.getByRole('button', { name: 'Maxed' }) as HTMLButtonElement).disabled).toBe(true)
+  expect(screen.getByText('Maximum storage reached')).toBeTruthy()
+  expect(screen.queryByRole('button', { name: 'Double Capacity' })).toBeNull()
+  expect(screen.queryByText('New capacity')).toBeNull()
+})
+
+test('backgrounding resets the visible slider and resume banks away wall time without restarting it', async () => {
+  const h = await harness(10)
+  await choose(42)
+  await h.advance()
+  const bankBefore = h.time().storedTimeAvailableSeconds
+  await h.changePhase('background')
+  expect(h.time().offlineBoost).toEqual({ multiplier: 1 })
+  expect(output()).toBe('Regular 1×')
+  await h.changePhase('active', 1000)
+  expect(h.time().storedTimeAvailableSeconds).toBeCloseTo(bankBefore + 1, 10)
+  expect(h.time().offlineBoost).toEqual({ multiplier: 1 })
+  expect(slider().value).toBe('1')
+})
 
 class MemorySaveStorage implements SaveStorageAdapter {
   private readonly files = new Map<string, string>()

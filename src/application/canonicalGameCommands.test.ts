@@ -98,6 +98,7 @@ function options(
 }
 
 const COMMAND_EXAMPLES = [
+  { kind: 'time.set-offline-boost-multiplier', multiplier: 42 },
   { kind: 'discovery.purchase', purchase: 'unlock' },
   { kind: 'dream.set-buy-mode', buyMode: 'buy-50' },
   {
