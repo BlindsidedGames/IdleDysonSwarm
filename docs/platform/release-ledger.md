@@ -408,3 +408,73 @@ the earlier ledger entry remain preserved.
   Save regression/visual evidence: `/tmp/ids-offline-release-2026100402/`.
   Clean isolated checkout: `/private/tmp/ids-offline-internal-2026100402/`.
   No production, App Review, Steam default, website or community-message release.
+
+## 2026100404 — complete main integration and skill-only tooltips
+
+5 October 2026 (AEDT, UTC+11; release identity uses 4 October UTC).
+All intended changes were squash-merged through
+[PR #220](https://github.com/BlindsidedGames/IdleDysonSwarm/pull/220) **before
+building**. The primary checkout was clean and fast-forwarded to the same
+remote-main candidate. The clean isolated build checkout was detached at exact
+`fed35195b2545e7d57aa37d243dfd69f9e101b78`; its tree exactly matched the reviewed
+integration head `3b06eb6d0b06fdd5571a3de1da6d870bc01a8b3d`.
+
+| Destination | Identity | Verified state |
+| --- | --- | --- |
+| Google Play Internal testing | `2026100404` / `4.1.11` | **Available to internal testers**, released 5 October 00:41 AEDT |
+| Internal TestFlight | `2610.4.4` / `4.1.11` | **Testing**, assigned to the existing Internal group with **3 testers** |
+| Steam `public-beta` | `25710148` | Active; Windows, Linux and universal macOS depots downloaded and byte-verified |
+
+This candidate includes the previously approved 1–42× Offline Time slider trial,
+capacity presentation, timestamped exports and native file-save fixes. It also
+applies the approved cleaner tooltips to production: bold title, ordinary-weight
+technical effect, smaller Scientific Planets formula, actual SP icon/cost and
+matching flat-white augment icon/count. Counts include the complete potential
+subtree before fracture, with zero badges omitted. Fractured and Discovery
+descriptions retain their actual effects. Generic delegated button/link tooltips
+and native HTML `title` tooltips were removed throughout gameplay; accessible
+names, full-precision labels, speedrun legends, visible facts and dialogs remain.
+The 4.1.11 patch notes and shared UI style guide reflect this scope.
+
+Verification:
+
+- Required PR shared CI and merged-main shared CI passed. The canonical local
+  `release:local -- --release-id 2026100404` gate passed **201 suites / 2,131
+  tests**, lint, all-locale extraction/validation/compilation, production and
+  native builds, Electron process checks, Capacitor synchronization and signed
+  Android bundling. Data compatibility check passed before integration.
+- [Final native candidate verification](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/37205977848)
+  passed unsigned Android assembly and iOS simulator compilation against the
+  exact merged SHA. The included native save changes retain their prior **13
+  Swift / 17 Android** unit and actual iOS simulator Save/Cancel evidence above.
+- Chrome QA used disposable profiles and `--use-mock-keychain`. Approved
+  reference Library `libfile_bf1cd7a73eac81919e8ca167afeb81b1` version 2 was
+  materialized and inspected. Actual production tooltips were inspected at
+  desktop, 150% interface size and **360px / 130% game text** in English/German;
+  no clipping, overflow or header collision occurred. All **16 unlocked routes**
+  were audited for native title absence and non-tree accessible controls without
+  hover bubbles. Simulated mobile touch opened actual skill details with no
+  hover tooltip. Physical mobile devices and Windows/Linux interaction were not
+  reverified in this tooltip iteration.
+- Android AAB: **20,161,468 bytes**, SHA-256
+  `60d1da4b2f4e67193706c9a62dfce2b397d4e80010ab7951b272ff7aa26fd798`;
+  its manifest binds the artifact to the candidate SHA. All eight Play release
+  note languages were saved. The usual nonblocking deobfuscation/native-symbol
+  diagnostics warnings were inspected.
+- iOS archive identity was `com.blindsidedgames.idledysonswarm`, `4.1.11`,
+  `2610.04.04`, minimum iOS 16.0. All **295 public asset files** matched the
+  synchronized Capacitor assets. Xcode upload used
+  `testFlightInternalTestingOnly=true`. Export compliance was completed; What to Test persisted after refresh; the build lists the Internal group with 3 testers and the overview shows **Testing**.
+- All three Steam ASAR manifests name the candidate SHA and Steam provider.
+  Fresh authenticated downloads matched **76 Windows / 75 Linux / 265 macOS**
+  files, with client manifests recording build `25710148` and `public-beta`.
+  Packaged macOS smoke passed with isolated state; no running Steam client was
+  available, so commerce/overlay behavior was not reverified. Default `public`
+  remains `25569496`.
+
+Evidence, upload logs, source-bound artifact manifest, store screenshots and
+Steam download comparison are in `/tmp/ids-internal-release-2026100404/`;
+tooltip screenshots and browser evidence are in `/tmp/ids-tooltip-integration/qa/`.
+The prior unrelated skill/augment work remains preserved in its named stash and
+backup. No production rollout, App Review submission, Steam default promotion,
+website deployment or community message was performed.
