@@ -27979,6 +27979,52 @@
       "value": "‬"
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁoʇǝuʇıɐʅ ɐnƃɯǝuʇs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹopnɔǝs Ԁʅɐuǝʇs qɐsǝp ou Sɔıǝuɔǝ Ԑoʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂oƃ10(Sɔıǝuɔǝ Ԑoʇs)"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -34493,7 +34539,7 @@
     },
     {
       "type": 0,
-      "value": "∀ppǝp pǝsʞʇod-ouʅʎ ʇooʅʇıds ʇɥɐʇ ɟoʅʅoʍ ʇɥǝ doıuʇǝɹ, ʍıʇɥ sʞıʅʅ-ʇʎdǝ ɔoʅonɹs."
+      "value": "ᴚǝɟıuǝp sʞıʅʅ-ʇɹǝǝ ʇooʅʇıds ʍıʇɥ ɔʅǝɐɹǝɹ ǝɟɟǝɔʇs, ɟoɹɯnʅɐs, SԀ ɔosʇs ɐup doʇǝuʇıɐʅ ɐnƃɯǝuʇ ɔonuʇs. ᴚǝɯoʌǝp ɹǝpnupɐuʇ ʇooʅʇıds ǝʅsǝʍɥǝɹǝ."
     },
     {
       "type": 0,

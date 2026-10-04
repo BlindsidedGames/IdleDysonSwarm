@@ -613,6 +613,9 @@
   "offline-time.cancel-confirmation": "取消",
   "offline-time.cancelling": "正在安全取消…",
   "offline-time.capacity": "{stored}/{capacity}",
+  "offline-time.capacity-cost": "费用",
+  "offline-time.capacity-maxed": "已达上限",
+  "offline-time.capacity-result": "新容量",
   "offline-time.close-summary": "继续",
   "offline-time.confirm-spend": "再次点击以确认",
   "offline-time.disabled": "此存档已禁用离线时间。",
@@ -1786,6 +1789,9 @@
   "skills.switch-preset": "切换到{name}",
   "skills.switch-preset-conflict-title": "切换到{name}？",
   "skills.switch-preset-conflict-warning": "有些技能目前无法取消分配，并阻止了此预设的一部分。你仍然可以切换并应用所有兼容的部分。",
+  "skills.tooltip.potential-augments": "潜在增强数量：{value}",
+  "skills.tooltip.scientific-planets.body": "根据科学机器人数量产出行星。",
+  "skills.tooltip.scientific-planets.formula": "Log10(科学机器人)",
   "skills.tree": "技能树",
   "skills.tree-instructions": "拖动以平移。双指捏合或使用缩放控件进行缩放。搜索后按 Enter 键打开第一个匹配技能。",
   "skills.unassign-dependants": "同时取消分配以下依赖技能：",
@@ -2173,7 +2179,7 @@
   "wiki.patch-notes.version-4-1-11.button-contrast": "改进了整个游戏的按钮渐变和文字对比度。禁用的按钮现在使用纯色。",
   "wiki.patch-notes.version-4-1-11.checkbox-labels": "设置和技能页面的复选框标签更宽，样式更加一致。",
   "wiki.patch-notes.version-4-1-11.desktop-sizing": "新增桌面端界面大小调整（80%–150%）、恢复默认按钮，以及最高250%的技能树缩放。",
-  "wiki.patch-notes.version-4-1-11.desktop-tooltips": "新增仅在桌面端显示、随指针移动的提示，并采用技能类型对应的颜色。",
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": "优化技能树提示，清晰显示效果、公式、技能点费用及潜在增强数量。移除其他位置的多余提示。",
   "wiki.patch-notes.version-4-1-11.imported-speedruns": "有效的导入存档现可继续速通，仍遵循原有资格检查。储存时间图标前新增了风格一致的软盘标记。",
   "wiki.patch-notes.version-4-1-11.infinity-hold": "在无限中新增宇宙的秘密和永久技能点的重复购买功能。按住鼠标按钮或长按即可持续购买。",
   "wiki.patch-notes.version-4-1-11.infinity-summary": "无限页面现会在总量旁显示全部已获得无限点带来的设施产量加成，移动端文字保持清晰并与数字基线对齐。",
@@ -2363,8 +2369,5 @@
   "wiki.topic-navigation": "百科主题导航",
   "wiki.topics": "主题",
   "wiki.transcendence.overview": "达到<value>4e242个机器人</value>后，在牛油果猫中超越可重置此前的层级，并获得<value>1超越点数</value>。花费1点<value>解锁发现</value>，即可永久取代科学与研究。已有科学和研究等级不会转移。",
-  "wiki.transcendence.overview-title": "超越蜂群",
-  "offline-time.capacity-cost": "费用",
-  "offline-time.capacity-result": "新容量",
-  "offline-time.capacity-maxed": "已达上限"
+  "wiki.transcendence.overview-title": "超越蜂群"
 }

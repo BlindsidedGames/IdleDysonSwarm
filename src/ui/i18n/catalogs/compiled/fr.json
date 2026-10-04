@@ -13659,6 +13659,28 @@
       "value": "Certaines compétences ne peuvent pas être désassignées pour le moment et bloquent une partie de ce préréglage. Vous pouvez tout de même changer et appliquer tous les éléments compatibles."
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Améliorations possibles : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Produit des Planètes selon les Bots scientifiques."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Bots scientifiques)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -17073,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Ajout d’infobulles uniquement sur ordinateur, qui suivent le pointeur et utilisent les couleurs des types de compétences."
+      "value": "Infobulles de l’arbre de compétences améliorées avec des effets plus clairs, des formules, les coûts en PC et le nombre d’améliorations possibles. Infobulles redondantes supprimées ailleurs."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

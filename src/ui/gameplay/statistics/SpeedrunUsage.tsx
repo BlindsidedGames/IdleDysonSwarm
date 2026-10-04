@@ -21,15 +21,14 @@ function usageState(value: boolean | RunUsage | undefined): RunUsage {
   return value === true ? 'yes' : value === false ? 'no' : value ?? 'unknown'
 }
 
-function UsageIcon({ icon, value, label, interactive = false, disqualifies = false }: {
+function UsageIcon({ icon, value, label, disqualifies = false }: {
   readonly icon: string
   readonly value?: RunUsage
   readonly label: string
-  readonly interactive?: boolean
   readonly disqualifies?: boolean
 }) {
   return <span className="speedrun-usage__indicator" data-usage={value} data-disqualifies={disqualifies || undefined}
-    role="img" aria-label={label} data-desktop-tooltip={interactive ? label : undefined}>
+    role="img" aria-label={label}>
     <InlineImageSymbol src={icon} tint symbol={icon === importedSave ? 'imported-save' : undefined} />
     {value === 'unknown' && <span className="speedrun-usage__unknown" aria-hidden="true">?</span>}
   </span>
@@ -44,7 +43,7 @@ export function SpeedrunUsage({ usage, legend = false }: { readonly usage?: Usag
         const name = intl.formatMessage(label)
         const description = `${name}: ${intl.formatMessage(value === 'yes' ? messages.speedrunYes : value === 'no' ? messages.speedrunNo : messages.speedrunUnknown)}`
         return <li key={key}>
-          <UsageIcon icon={icon} value={legend ? undefined : value} label={legend ? name : description} interactive={!legend} disqualifies={key === 'debug'} />
+          <UsageIcon icon={icon} value={legend ? undefined : value} label={legend ? name : description} disqualifies={key === 'debug'} />
           {legend && <span>{name}</span>}
         </li>
       })}

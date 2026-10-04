@@ -613,6 +613,9 @@
   "offline-time.cancel-confirmation": "Abbrechen",
   "offline-time.cancelling": "Wird sicher abgebrochen …",
   "offline-time.capacity": "{stored} von {capacity}",
+  "offline-time.capacity-cost": "Kosten",
+  "offline-time.capacity-maxed": "Maximum",
+  "offline-time.capacity-result": "Neue Kapazität",
   "offline-time.close-summary": "Weiter",
   "offline-time.confirm-spend": "Tippe zum Bestätigen erneut",
   "offline-time.disabled": "Offline-Zeit ist für diesen Spielstand deaktiviert.",
@@ -1786,6 +1789,9 @@
   "skills.switch-preset": "Wechseln zu {name}",
   "skills.switch-preset-conflict-title": "Zu {name} wechseln?",
   "skills.switch-preset-conflict-warning": "Einige Fertigkeiten können derzeit nicht zurückgesetzt werden und blockieren einen Teil dieser Voreinstellung. Du kannst trotzdem wechseln und alle kompatiblen Teile anwenden.",
+  "skills.tooltip.potential-augments": "Mögliche Augmente: {value}",
+  "skills.tooltip.scientific-planets.body": "Erzeugt Planeten basierend auf Wissenschafts-Bots.",
+  "skills.tooltip.scientific-planets.formula": "Log10(Wissenschafts-Bots)",
   "skills.tree": "Skill-Baum",
   "skills.tree-instructions": "Zum Verschieben ziehen. Zum Zoomen zwei Finger oder die Zoom-Steuerung verwenden. Suchen und die Eingabetaste drücken, um den ersten passenden Skill zu öffnen.",
   "skills.unassign-dependants": "Die Zuweisung dieser abhängigen Skills ebenfalls aufheben:",
@@ -2173,7 +2179,7 @@
   "wiki.patch-notes.version-4-1-11.button-contrast": "Farbverläufe der Schaltflächen und Textkontrast im gesamten Spiel verbessert. Deaktivierte Schaltflächen verwenden jetzt einfarbige Flächen.",
   "wiki.patch-notes.version-4-1-11.checkbox-labels": "Beschriftungen von Kontrollkästchen in Einstellungen und Fähigkeiten sind jetzt breiter und einheitlich.",
   "wiki.patch-notes.version-4-1-11.desktop-sizing": "Desktop-Oberflächengröße von 80 % bis 150 %, Rücksetzung auf den Standardwert und Fähigkeitsbaum-Zoom bis 250 % hinzugefügt.",
-  "wiki.patch-notes.version-4-1-11.desktop-tooltips": "Tooltips nur für Desktop hinzugefügt, die dem Mauszeiger folgen und die Farben der Fähigkeitstypen verwenden.",
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": "Überarbeitete Tooltips im Fähigkeitsbaum mit klareren Effekten, Formeln, Skill-Punkt-Kosten und möglichen Augmenten. Überflüssige Tooltips an anderen Stellen entfernt.",
   "wiki.patch-notes.version-4-1-11.imported-speedruns": "Gültige importierte Spielstände setzen Speedruns unter den bisherigen Teilnahmebedingungen fort. Ein passendes Diskettensymbol steht vor der gespeicherten Zeit.",
   "wiki.patch-notes.version-4-1-11.infinity-hold": "Wiederholte Käufe für das Geheimnis des Universums und permanente Skill-Punkte in Unendlichkeit hinzugefügt. Halte die Maustaste gedrückt oder drücke lange, um weiterzukaufen.",
   "wiki.patch-notes.version-4-1-11.infinity-summary": "Unendlichkeit zeigt neben den Gesamtwerten den Produktionsbonus für Einrichtungen aus allen verdienten IP, mit lesbarem, an der Grundlinie ausgerichtetem Text auf Mobilgeräten.",
@@ -2363,8 +2369,5 @@
   "wiki.topic-navigation": "Wiki-Themen",
   "wiki.topics": "Themen",
   "wiki.transcendence.overview": "Bei <value>4e242 Bots</value> kannst du in Avocato transzendieren, um frühere Ebenen zurückzusetzen und <value>einen Transzendenzpunkt</value> zu erhalten. Gib einen Punkt für <value>Entdeckung freischalten</value> aus, um Wissenschaft und Forschung dauerhaft zu ersetzen. Vorhandene Wissenschaft und Forschungsstufen werden nicht übertragen.",
-  "wiki.transcendence.overview-title": "Jenseits des Schwarms",
-  "offline-time.capacity-cost": "Kosten",
-  "offline-time.capacity-result": "Neue Kapazität",
-  "offline-time.capacity-maxed": "Maximum"
+  "wiki.transcendence.overview-title": "Jenseits des Schwarms"
 }

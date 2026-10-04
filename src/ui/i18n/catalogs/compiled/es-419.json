@@ -13659,6 +13659,28 @@
       "value": "Algunas habilidades no se pueden desasignar en este momento y bloquean parte de este preajuste. Aun así, puedes cambiar y aplicar todo lo compatible."
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Aumentos potenciales: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Produce Planetas según los Bots científicos."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Bots científicos)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -17073,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Se agregaron descripciones emergentes solo en escritorio que siguen al puntero y usan los colores de cada tipo de habilidad."
+      "value": "Se mejoraron las descripciones del árbol de habilidades con efectos más claros, fórmulas, costos en PH y aumentos potenciales. Se eliminaron las descripciones redundantes en otras partes."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

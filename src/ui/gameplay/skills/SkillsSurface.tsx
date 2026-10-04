@@ -737,7 +737,6 @@ function SkillsSurfaceContent({
             {hasEarnedGalvanizer && <button type="button"
               className="skills-surface__currency" aria-haspopup="dialog"
               aria-label={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
-              title={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
               onClick={() => setShowGalvanizerHelp(true)}>
               <InlineResourceAmount leadingSymbol={<InlineImageSymbol src={galvanizerIcon} tint maskMode="luminance" />}
                 value={formatWholeGameNumber(locale, galvanizers)} />
@@ -1457,6 +1456,11 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
             preview.requiredSkillIds.filter(
               (requiredId) => previews.get(requiredId)?.owned,
             ).length
+          const potentialAugments = skillAugments(node.skillId).length
+          const fracturedDescriptor = preview.galvanized ? fracturedSkillDescriptor(node) : undefined
+          const scientificFormula = node.skillId === 'scientificPlanets' && !preview.galvanized && !node.discoveryTechnical
+          const tooltipBody = scientificFormula ? intl.formatMessage(messages.tooltipScientificPlanetsBody)
+            : fracturedDescriptor ? intl.formatMessage(fracturedDescriptor) : node.technicalDescription
           const selected = node.skillId === selectedSkillId
           const selectionRelated =
             selected || selectedRequiredIds.has(node.skillId)
@@ -1483,7 +1487,13 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               data-selected={selected || undefined}
               data-skill-id={node.skillId}
               data-desktop-tooltip-palette={preview.visualState.startsWith('non-refundable') ? 'non-refundable' : preview.fragment ? 'fragment' : 'normal'}
-              data-desktop-tooltip={isDesktopPresentation() ? [node.displayName, intl.formatMessage(messages.cost, { value: node.cost }), preview.galvanized && fracturedSkillDescriptor(node) ? intl.formatMessage(fracturedSkillDescriptor(node)!) : node.technicalDescription].filter(Boolean).join('\n') : undefined}
+              data-skill-tooltip-name={isDesktopPresentation() ? node.displayName : undefined}
+              data-skill-tooltip-body={isDesktopPresentation() ? tooltipBody : undefined}
+              data-skill-tooltip-formula={scientificFormula ? intl.formatMessage(messages.tooltipScientificPlanetsFormula) : undefined}
+              data-skill-tooltip-cost={intl.formatNumber(node.cost, { maximumFractionDigits: 0 })}
+              data-skill-tooltip-cost-label={intl.formatMessage(messages.cost, { value: node.cost })}
+              data-skill-tooltip-augments={potentialAugments}
+              data-skill-tooltip-augment-label={potentialAugments > 0 ? intl.formatMessage(messages.tooltipPotentialAugments, { value: potentialAugments }) : undefined}
               data-selection-related={selectionRelated || undefined}
               data-selection-dimmed={
                 hasSelection && !selectionRelated ? true : undefined
@@ -1560,7 +1570,6 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
                 <i
                   className="skill-tree-node__queue"
                   aria-label={intl.formatMessage(messages.queued)}
-                  title={intl.formatMessage(messages.queued)}
                 >
                   +
                 </i>
@@ -2671,7 +2680,7 @@ function SkillPresetsDialog({
                 <button type="button" className="skill-settings__preset-priority"
                   ref={(element) => { if (element) priorityButtonRefs.current.set(slot, element); else priorityButtonRefs.current.delete(slot) }}
                   aria-label={`${intl.formatMessage(messages.editPriority)}: ${preset.name}`}
-                  title={intl.formatMessage(messages.editPriority)} onClick={() => setPrioritySlot(slot)}>
+                  onClick={() => setPrioritySlot(slot)}>
                   <span aria-hidden="true">⇅</span>
                 </button>
               <button

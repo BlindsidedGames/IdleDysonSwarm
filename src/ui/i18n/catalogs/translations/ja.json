@@ -613,6 +613,9 @@
   "offline-time.cancel-confirmation": "キャンセル",
   "offline-time.cancelling": "安全キャンセル…",
   "offline-time.capacity": "{stored}/{capacity}",
+  "offline-time.capacity-cost": "コスト",
+  "offline-time.capacity-maxed": "上限到達",
+  "offline-time.capacity-result": "新しい容量",
   "offline-time.close-summary": "続ける",
   "offline-time.confirm-spend": "再びタップ以確認",
   "offline-time.disabled": "このセーブではオフライン時間が無効です。",
@@ -1786,6 +1789,9 @@
   "skills.switch-preset": "切り替え先：{name}",
   "skills.switch-preset-conflict-title": "プリセット {name} に切り替えますか？",
   "skills.switch-preset-conflict-warning": "現在割り当てを解除できないスキルが、このプリセットの一部をブロックしています。切り替えて、適用可能な部分をすべて適用することはできます。",
+  "skills.tooltip.potential-augments": "潜在的な強化数：{value}",
+  "skills.tooltip.scientific-planets.body": "科学ボットの数に応じて惑星を生産する。",
+  "skills.tooltip.scientific-planets.formula": "Log10(科学ボット)",
   "skills.tree": "スキルツリー",
   "skills.tree-instructions": "ドラッグで移動します。ピンチ操作またはズーム操作で拡大・縮小します。検索後にEnterキーを押すと、最初に一致したスキルを開きます。",
   "skills.unassign-dependants": "次の依存スキルも同時に割り当て解除：",
@@ -2173,7 +2179,7 @@
   "wiki.patch-notes.version-4-1-11.button-contrast": "ゲーム全体でボタンのグラデーションと文字のコントラストを改善しました。無効なボタンは単色で表示されます。",
   "wiki.patch-notes.version-4-1-11.checkbox-labels": "設定とスキルのチェックボックスラベルを広くし、見た目を統一しました。",
   "wiki.patch-notes.version-4-1-11.desktop-sizing": "PC版のインターフェースサイズを80%～150%に調整できるようにし、デフォルトに戻す操作と最大250%のスキルツリー拡大を追加しました。",
-  "wiki.patch-notes.version-4-1-11.desktop-tooltips": "PC版のみ、ポインターを追従しスキルの種類に応じた色を使うツールチップを追加しました。",
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": "スキルツリーのツールチップを改良し、効果、数式、SPコスト、潜在的な強化数を見やすくしました。他の画面の重複したツールチップを削除しました。",
   "wiki.patch-notes.version-4-1-11.imported-speedruns": "有効なインポート済みセーブで、従来の参加条件を保ったままスピードランを続けられるようになりました。貯蔵時間の前に、他のアイコンと統一したフロッピーディスクの印を表示します。",
   "wiki.patch-notes.version-4-1-11.infinity-hold": "インフィニティで宇宙の秘密と永久スキルポイントを繰り返し購入できるようになりました。マウスボタンを押し続けるか長押しすると、購入を続けられます。",
   "wiki.patch-notes.version-4-1-11.infinity-summary": "無限画面で、獲得したすべてのIPによる施設生産ボーナスを合計値の横に表示します。モバイル版でも文字を読みやすく保ち、数値と同じベースラインに揃えます。",
@@ -2363,8 +2369,5 @@
   "wiki.topic-navigation": "Wikiのトピック",
   "wiki.topics": "トピック",
   "wiki.transcendence.overview": "ボット数が<value>4e242ボット</value>に到達したらアボカトで超越し、以前のレイヤーをリセットして<value>超越ポイントを1</value>獲得できます。1ポイントで<value>発見を解放</value>すると、科学と研究が恒久的に置き換わります。既存の科学や研究レベルは引き継がれません。",
-  "wiki.transcendence.overview-title": "スウォームのその先へ",
-  "offline-time.capacity-cost": "コスト",
-  "offline-time.capacity-result": "新しい容量",
-  "offline-time.capacity-maxed": "上限到達"
+  "wiki.transcendence.overview-title": "スウォームのその先へ"
 }

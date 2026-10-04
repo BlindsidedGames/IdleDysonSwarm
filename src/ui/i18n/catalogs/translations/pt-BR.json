@@ -613,6 +613,9 @@
   "offline-time.cancel-confirmation": "Cancelar",
   "offline-time.cancelling": "Cancelando com segurança…",
   "offline-time.capacity": "{stored} de {capacity}",
+  "offline-time.capacity-cost": "Custo",
+  "offline-time.capacity-maxed": "Máximo",
+  "offline-time.capacity-result": "Nova capacidade",
   "offline-time.close-summary": "Continuar",
   "offline-time.confirm-spend": "Toque novamente para confirmar",
   "offline-time.disabled": "O Tempo Offline está desativado neste jogo salvo.",
@@ -1786,6 +1789,9 @@
   "skills.switch-preset": "Mudar para {name}",
   "skills.switch-preset-conflict-title": "Trocar para {name}?",
   "skills.switch-preset-conflict-warning": "Algumas habilidades não podem ser removidas agora e bloqueiam parte desta predefinição. Você ainda pode trocar e aplicar tudo o que for compatível.",
+  "skills.tooltip.potential-augments": "Aprimoramentos possíveis: {value}",
+  "skills.tooltip.scientific-planets.body": "Produz Planetas com base nos Bots de Ciência.",
+  "skills.tooltip.scientific-planets.formula": "Log10(Bots de Ciência)",
   "skills.tree": "Árvore de Habilidades",
   "skills.tree-instructions": "Arraste para mover. Faça o gesto de pinça ou use os controles para ampliar. Busque e pressione Enter para abrir a primeira Habilidade correspondente.",
   "skills.unassign-dependants": "Retirar também estas Habilidades dependentes:",
@@ -2173,7 +2179,7 @@
   "wiki.patch-notes.version-4-1-11.button-contrast": "Melhorados os gradientes dos botões e o contraste do texto em todo o jogo. Botões desativados agora usam cores sólidas.",
   "wiki.patch-notes.version-4-1-11.checkbox-labels": "Os rótulos das caixas de seleção ficaram mais amplos e consistentes entre Configurações e Habilidades.",
   "wiki.patch-notes.version-4-1-11.desktop-sizing": "Adicionados tamanho da interface no computador de 80% a 150%, restauração do padrão e zoom da árvore de habilidades até 250%.",
-  "wiki.patch-notes.version-4-1-11.desktop-tooltips": "Adicionadas dicas apenas no computador que acompanham o ponteiro e usam as cores dos tipos de habilidades.",
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": "Dicas da árvore de habilidades refinadas com efeitos mais claros, fórmulas, custos em PH e aprimoramentos possíveis. Dicas redundantes removidas de outras telas.",
   "wiki.patch-notes.version-4-1-11.imported-speedruns": "Saves importados válidos agora continuam os speedruns com os critérios de elegibilidade existentes. Um ícone de disquete com estilo consistente aparece antes de Tempo armazenado.",
   "wiki.patch-notes.version-4-1-11.infinity-hold": "Adicionadas compras repetidas do Segredo do Universo e de Pontos de Habilidade Permanentes no Infinito. Mantenha o clique ou o toque pressionado para continuar comprando.",
   "wiki.patch-notes.version-4-1-11.infinity-summary": "Infinito agora mostra junto aos totais o bônus de produção de instalações de todos os PI obtidos, com texto legível e alinhado à linha de base no celular.",
@@ -2363,8 +2369,5 @@
   "wiki.topic-navigation": "Tópicos da Wiki",
   "wiki.topics": "Tópicos",
   "wiki.transcendence.overview": "Com <value>4e242 Bots</value>, Transcenda em Avocato para reiniciar as camadas anteriores e ganhar <value>um ponto de Transcendência</value>. Gaste um ponto em <value>Desbloquear Descoberta</value> para substituir Ciência e Pesquisa permanentemente. A Ciência e os níveis de pesquisa existentes não são transferidos.",
-  "wiki.transcendence.overview-title": "Além do enxame",
-  "offline-time.capacity-cost": "Custo",
-  "offline-time.capacity-result": "Nova capacidade",
-  "offline-time.capacity-maxed": "Máximo"
+  "wiki.transcendence.overview-title": "Além do enxame"
 }

@@ -13659,6 +13659,28 @@
       "value": "Algumas habilidades não podem ser removidas agora e bloqueiam parte desta predefinição. Você ainda pode trocar e aplicar tudo o que for compatível."
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Aprimoramentos possíveis: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Produz Planetas com base nos Bots de Ciência."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Bots de Ciência)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -17073,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Adicionadas dicas apenas no computador que acompanham o ponteiro e usam as cores dos tipos de habilidades."
+      "value": "Dicas da árvore de habilidades refinadas com efeitos mais claros, fórmulas, custos em PH e aprimoramentos possíveis. Dicas redundantes removidas de outras telas."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

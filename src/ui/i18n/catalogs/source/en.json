@@ -6873,6 +6873,18 @@
     "defaultMessage": "Some skills can’t be unassigned right now and block part of this preset. You can still switch and apply everything compatible.",
     "description": "Warning before partially applying a preset around retained unrefundable skills."
   },
+  "skills.tooltip.potential-augments": {
+    "defaultMessage": "Potential augments: {value}",
+    "description": "Potential augment count in a skill tree tooltip, including before fracture."
+  },
+  "skills.tooltip.scientific-planets.body": {
+    "defaultMessage": "Produces Planets based on Science Bots.",
+    "description": "Short Scientific Planets hover description. Its formula is displayed separately."
+  },
+  "skills.tooltip.scientific-planets.formula": {
+    "defaultMessage": "Log10(Science Bots)",
+    "description": "Scientific Planets formula displayed at the bottom of the tooltip."
+  },
   "skills.tree": {
     "defaultMessage": "Skill tree",
     "description": "Accessible name for the interactive skill-tree viewport."
@@ -8404,7 +8416,7 @@
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": {
-    "defaultMessage": "Added desktop-only tooltips that follow the pointer, with skill-type colours.",
+    "defaultMessage": "Refined skill-tree tooltips with clearer effects, formulas, SP costs and potential augment counts. Removed redundant tooltips elsewhere.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.imported-speedruns": {

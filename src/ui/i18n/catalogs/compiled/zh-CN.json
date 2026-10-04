@@ -13659,6 +13659,28 @@
       "value": "有些技能目前无法取消分配，并阻止了此预设的一部分。你仍然可以切换并应用所有兼容的部分。"
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "潜在增强数量："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "根据科学机器人数量产出行星。"
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(科学机器人)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -17073,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "新增仅在桌面端显示、随指针移动的提示，并采用技能类型对应的颜色。"
+      "value": "优化技能树提示，清晰显示效果、公式、技能点费用及潜在增强数量。移除其他位置的多余提示。"
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

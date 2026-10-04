@@ -1,6 +1,9 @@
 import { defineMessages } from 'react-intl'
 
 export const skillMessages = defineMessages({
+  tooltipPotentialAugments: { id: 'skills.tooltip.potential-augments', defaultMessage: 'Potential augments: {value}', description: 'Potential augment count in a skill tree tooltip, including before fracture.' },
+  tooltipScientificPlanetsBody: { id: 'skills.tooltip.scientific-planets.body', defaultMessage: 'Produces Planets based on Science Bots.', description: 'Short Scientific Planets hover description. Its formula is displayed separately.' },
+  tooltipScientificPlanetsFormula: { id: 'skills.tooltip.scientific-planets.formula', defaultMessage: 'Log10(Science Bots)', description: 'Scientific Planets formula displayed at the bottom of the tooltip.' },
   showExtendedPresets: { id: 'skills.settings.showExtendedPresets', defaultMessage: 'Show presets 6–10' },
   hunterCommunity: { id: 'skills.production.hunterCommunity', defaultMessage: 'Hunters: Community' },
   gathererCommunity: { id: 'skills.production.gathererCommunity', defaultMessage: 'Gatherers: Community' },

@@ -13659,6 +13659,28 @@
       "value": "Some skills can’t be unassigned right now and block part of this preset. You can still switch and apply everything compatible."
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Potential augments: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Produces Planets based on Science Bots."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Science Bots)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -17073,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Added desktop-only tooltips that follow the pointer, with skill-type colours."
+      "value": "Refined skill-tree tooltips with clearer effects, formulas, SP costs and potential augment counts. Removed redundant tooltips elsewhere."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

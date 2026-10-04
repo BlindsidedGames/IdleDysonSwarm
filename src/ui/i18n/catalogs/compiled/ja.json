@@ -13659,6 +13659,28 @@
       "value": "現在割り当てを解除できないスキルが、このプリセットの一部をブロックしています。切り替えて、適用可能な部分をすべて適用することはできます。"
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "潜在的な強化数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "科学ボットの数に応じて惑星を生産する。"
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(科学ボット)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -17073,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "PC版のみ、ポインターを追従しスキルの種類に応じた色を使うツールチップを追加しました。"
+      "value": "スキルツリーのツールチップを改良し、効果、数式、SPコスト、潜在的な強化数を見やすくしました。他の画面の重複したツールチップを削除しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [

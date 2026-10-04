@@ -260,7 +260,6 @@ export function FacilityPresentationCard({
             <data
               className="basic-facility-card__purchase-quantity"
               value={String(preview.selectedQuantity)}
-              title={selectedQuantityPrecise}
             >
               <bdi>
                 {automationActive
@@ -276,7 +275,6 @@ export function FacilityPresentationCard({
             <data
               className="basic-facility-card__purchase-cost"
               value={String(preview.cost)}
-              title={costPrecise}
             >
               <bdi>
                 {intl.formatMessage(messages.purchaseCost, { cost })}
@@ -1140,7 +1138,6 @@ function FacilityIdentity({
   return (
     <span
       className="basic-facility-card__identity"
-      title={identityText}
     >
       <span className="ui-visually-hidden">{identityText}</span>
       <span

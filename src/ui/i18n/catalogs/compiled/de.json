@@ -13659,6 +13659,28 @@
       "value": "Einige Fertigkeiten können derzeit nicht zurückgesetzt werden und blockieren einen Teil dieser Voreinstellung. Du kannst trotzdem wechseln und alle kompatiblen Teile anwenden."
     }
   ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Mögliche Augmente: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Erzeugt Planeten basierend auf Wissenschafts-Bots."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Wissenschafts-Bots)"
+    }
+  ],
   "skills.tree": [
     {
       "type": 0,
@@ -17073,7 +17095,7 @@
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Tooltips nur für Desktop hinzugefügt, die dem Mauszeiger folgen und die Farben der Fähigkeitstypen verwenden."
+      "value": "Überarbeitete Tooltips im Fähigkeitsbaum mit klareren Effekten, Formeln, Skill-Punkt-Kosten und möglichen Augmenten. Überflüssige Tooltips an anderen Stellen entfernt."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [
