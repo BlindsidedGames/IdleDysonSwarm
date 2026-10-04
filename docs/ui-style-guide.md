@@ -40,6 +40,8 @@ precedence; update this guide when a decision becomes a shared convention.
 - Checkbox labels use the full row, including text and spare width, as the hit
   target. Keep the existing minimum target height and a 1.35rem checkbox; Skills
   settings use the same padded, theme-coloured label treatment as Settings.
+- Keep the timestamp-export checkbox inside Export Save, beside the file action,
+  rather than on the Settings save panel.
 - Let content determine height. Avoid empty filler, stretched cards and fixed
   heights that clip translations or enlarged text. Preserve usable hit targets.
 - Preserve approved specialist compositions: Facility Details has numbered

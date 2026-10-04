@@ -1,5 +1,16 @@
 # Save import and recovery contract
 
+Save File exports the captured save text unchanged as UTF-8 in an `.idsw`
+file. The optional UTC filename timestamp is a device-local choice in the
+Export Save dialog. Both fixed and generated timestamped names are accepted by
+the desktop and native mobile hosts; path components and other names are rejected.
+Desktop uses its Save dialog, Android uses Create Document, and iOS uses a
+document-export picker with a copy so the player chooses a Files destination.
+The native action reports success after the destination operation completes;
+cancellation keeps the export dialog ready without a success or error message.
+Copy String remains available. Mobile Apple browsers retain the clipboard route;
+native iOS Files support is provided by the Capacitor bridge, not a web download.
+
 The canonical runtime distinguishes three import contexts:
 
 - automatic same-device legacy migration;

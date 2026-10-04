@@ -38,6 +38,24 @@ import {
 } from '../simulation/lifecycleAwayTime'
 
 describe('native host bootstrap boundary', () => {
+  test.each(['android', 'ios'] as const)('preserves the save payload and document-picker result on %s', async target => {
+    let finish!: (value: { result: 'saved' | 'cancelled' }) => void
+    const exportSaveFile = vi.fn(() => new Promise<{ result: 'saved' | 'cancelled' }>(resolve => { finish = resolve }))
+    const plugin = { exportSaveFile } as unknown as CapacitorNativeHostPlugin
+    const bridge = new CapacitorNativeHostBridge(target, plugin)
+    const request = {fileName: 'idle-dyson-swarm-save-2026-10-04T12-00-00-000Z.idsw', text: 'IDSWEB1:captured-UTF8-é\n'}
+    let settled = false
+    const pending = bridge.exportSaveFile(request).then(value => { settled = true; return value })
+    await Promise.resolve()
+    expect(settled).toBe(false)
+    expect(exportSaveFile).toHaveBeenCalledWith(request)
+    finish({result: 'cancelled'})
+    expect(await pending).toBe('cancelled')
+    exportSaveFile.mockResolvedValueOnce({result: 'saved'})
+    expect(await bridge.exportSaveFile(request)).toBe('saved')
+    exportSaveFile.mockRejectedValueOnce(new Error('destination unavailable'))
+    await expect(bridge.exportSaveFile(request)).rejects.toThrow('destination unavailable')
+  })
   test('recognizes only canonical lifecycle phases', () => {
     expect(LIFECYCLE_PHASES).toEqual([
       'active',

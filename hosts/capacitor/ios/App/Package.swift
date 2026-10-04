@@ -15,7 +15,7 @@ let package = Package(
         .target(
             name: "IdleDysonNativeEntitlementSession",
             path: "NativeEntitlementSession",
-            sources: ["NativeEntitlementSession.swift"]
+            sources: ["NativeEntitlementSession.swift", "NativeSaveExport.swift"]
         ),
         .testTarget(
             name: "IdleDysonNativeEntitlementSessionTests",

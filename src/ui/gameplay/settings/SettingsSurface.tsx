@@ -862,13 +862,6 @@ export function SettingsSurface({
             <h2>{intl.formatMessage(messages.saveData)}</h2>
             <p>{intl.formatMessage(messages.saveDescription)}</p>
           </div>
-          {saveFileExportAvailable && <label className="settings-surface__toggle">
-            <input type="checkbox" checked={timestampExports} onChange={event => {
-              setTimestampExports(event.currentTarget.checked)
-              writeBooleanPresentationPreference(SAVE_EXPORT_TIMESTAMP_KEY, event.currentTarget.checked)
-            }} />
-            <span>{intl.formatMessage(messages.timestampExports)}</span>
-          </label>}
           <div className="settings-surface__save-actions">
             <button
               type="button"
@@ -1257,6 +1250,13 @@ export function SettingsSurface({
                   spellCheck={false}
                   onFocus={(event) => event.currentTarget.select()}
                 />
+                {saveFileExportAvailable && <label className="settings-surface__toggle">
+                  <input type="checkbox" checked={timestampExports} disabled={operationPending} onChange={event => {
+                    setTimestampExports(event.currentTarget.checked)
+                    writeBooleanPresentationPreference(SAVE_EXPORT_TIMESTAMP_KEY, event.currentTarget.checked)
+                  }} />
+                  <span>{intl.formatMessage(messages.timestampExports)}</span>
+                </label>}
               </div>
             ) : null}
             {(dialog === 'reset' &&

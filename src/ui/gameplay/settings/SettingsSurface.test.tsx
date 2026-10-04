@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
 import { afterEach, expect, test, vi } from 'vitest'
 import { LocalePreferenceContext } from '../../i18n/localeContext'
@@ -24,10 +24,21 @@ async function openExport(available: boolean, download = vi.fn(async (): Promise
   await waitFor(() => expect((screen.getByLabelText('Save string') as HTMLTextAreaElement).value).toBe('captured-save-text'))
   return download
 }
-test('iOS retains Copy String but has no file export button', async () => {
+test('unsupported Apple browsers retain Copy String without a file export button', async () => {
   await openExport(false)
   expect(screen.getByRole('button', {name: 'Copy String'})).toBeTruthy()
   expect(screen.queryByRole('button', {name: 'Save File'})).toBeNull()
+})
+test('timestamp preference belongs only to the export dialog and survives reopening', async () => {
+  await openExport(true)
+  const dialog = screen.getByRole('dialog')
+  const toggle = within(dialog).getByRole('checkbox', {name: 'Timestamp export filenames'})
+  fireEvent.click(toggle)
+  const selected = (toggle as HTMLInputElement).checked
+  fireEvent.click(screen.getByRole('button', {name: 'Close'}))
+  expect(screen.queryByRole('checkbox', {name: 'Timestamp export filenames'})).toBeNull()
+  fireEvent.click(screen.getByRole('button', {name: 'Export'}))
+  expect((await screen.findByRole('checkbox', {name: 'Timestamp export filenames'}) as HTMLInputElement).checked).toBe(selected)
 })
 test('save action waits for completion and exports the captured text', async () => {
   let finish!: (result: boolean) => void

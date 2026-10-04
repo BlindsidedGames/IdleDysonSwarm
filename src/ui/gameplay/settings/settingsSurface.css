@@ -140,6 +140,7 @@
   z-index: 100;
   inset: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
   padding: 1rem;
   background: rgb(0 0 0 / 68%);
@@ -147,7 +148,9 @@
 
 .settings-surface__dialog {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   box-sizing: border-box;
+  min-inline-size: 0;
   inline-size: min(100%, 34rem);
   gap: 0.8rem;
   padding: 1.25rem;
@@ -186,6 +189,7 @@
 
 .settings-surface__transfer textarea {
   box-sizing: border-box;
+  min-inline-size: 0;
   inline-size: 100%;
   min-block-size: 10rem;
   resize: vertical;
@@ -288,6 +292,7 @@
 
 .settings-surface__dialog-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.65rem;
 }
@@ -993,6 +998,22 @@
     padding: 0.4rem 0.7rem;
   }
 
+  .settings-surface__import-preview {
+    gap: 0.45rem;
+    padding: 0.6rem;
+  }
+
+  .settings-surface__import-preview dl {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 7rem), 1fr)
+    );
+    gap: 0.35rem;
+  }
+}
+
+/* Save dialogs are portalled outside the Settings size container. */
+@media (max-width: 40rem) {
   .settings-surface__dialog-backdrop {
     padding: 0.5rem;
   }
@@ -1007,7 +1028,7 @@
 
   .settings-surface__dialog-actions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
     gap: 0.4rem;
   }
 
@@ -1021,19 +1042,6 @@
   .settings-surface__transfer textarea {
     min-block-size: 8rem;
     font-size: max(1rem, calc(0.68rem * var(--game-text-scale)));
-  }
-
-  .settings-surface__import-preview {
-    gap: 0.45rem;
-    padding: 0.6rem;
-  }
-
-  .settings-surface__import-preview dl {
-    grid-template-columns: repeat(
-      auto-fit,
-      minmax(min(100%, 7rem), 1fr)
-    );
-    gap: 0.35rem;
   }
 }
 

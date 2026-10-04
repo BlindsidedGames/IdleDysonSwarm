@@ -536,7 +536,6 @@ export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
   }
 
   async exportSaveFile(request: SaveFileExportRequest): Promise<SaveFileExportResult> {
-    if (this.target !== 'android') throw new Error('Save file export unavailable.')
     return (await this.plugin.exportSaveFile(request)).result
   }
 

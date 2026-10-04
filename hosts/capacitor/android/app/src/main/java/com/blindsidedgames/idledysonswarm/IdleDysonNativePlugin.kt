@@ -473,12 +473,7 @@ class IdleDysonNativePlugin : Plugin() {
     fun exportSaveFile(call: PluginCall) = withNativeFailure(call) {
         val fileName = call.getString("fileName")
         val text = call.getString("text")
-        require(fileName == "idle-dyson-swarm-save.idsw" && !text.isNullOrEmpty()) {
-            "Invalid save export request."
-        }
-        require(text.toByteArray(StandardCharsets.UTF_8).size <= MAX_FILE_BYTES) {
-            "Save export exceeds supported size."
-        }
+        NativeSaveExport.validate(fileName, text)
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "application/x-idle-dyson-swarm-save"

@@ -42,6 +42,7 @@ import {
   runtimeMetadata,
 } from './releaseMetadata.mjs'
 import { selectElectronSmokeMode } from './smokeMode.mjs'
+import { exportSaveFile } from './saveFileExport.mjs'
 import { loadSteamInventoryBinding } from './steamInventoryBinding.mjs'
 import {
   AtomicSteamEntitlementCache,
@@ -322,20 +323,9 @@ function registerNativeHandlers() {
     return packagedRuntimeMetadata ?? loadRuntimeMetadata()
   })
   ipcMain.handle(channels.exportSave, async (event, request) => {
-    if (request?.fileName !== 'idle-dyson-swarm-save.idsw' ||
-        typeof request.text !== 'string' || request.text.length === 0 ||
-        Buffer.byteLength(request.text, 'utf8') > 32 * 1024 * 1024) {
-      throw new Error('Invalid save export request.')
-    }
     const owner = BrowserWindow.fromWebContents(event.sender)
     if (owner === null) throw new Error('Save export window unavailable.')
-    const result = await dialog.showSaveDialog(owner, {
-      defaultPath: request.fileName,
-      filters: [{ name: 'Idle Dyson Swarm Save', extensions: ['idsw'] }],
-    })
-    if (result.canceled || !result.filePath) return 'cancelled'
-    await durableWriteText(result.filePath, request.text)
-    return 'saved'
+    return exportSaveFile(request, options => dialog.showSaveDialog(owner, options), durableWriteText)
   })
   ipcMain.handle(channels.diagnostics, async (_event, request) => {
     if (

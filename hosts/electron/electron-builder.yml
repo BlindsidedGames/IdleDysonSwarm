@@ -17,6 +17,7 @@ files:
   - hosts/electron/releaseMetadata.mjs
   - hosts/electron/release-version.json
   - hosts/electron/smokeMode.mjs
+  - hosts/electron/saveFileExport.mjs
   - hosts/electron/steamInventoryBinding.mjs
   - hosts/electron/steamInventoryStore.mjs
   - hosts/electron/steam-inventory.json
