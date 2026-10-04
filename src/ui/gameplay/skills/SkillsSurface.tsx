@@ -1,3 +1,6 @@
+import { stellarFracturedMessages, stellarFracturedDiscoveryObliterationMessage } from './stellarMessages'
+import { copyPlainText } from '../../../platform/plainTextClipboard'
+import { isDesktopPresentation } from '../../desktopPresentation'
 import { useExtendedSkillPresets } from '../../useExtendedSkillPresets'
 import { SkillPresetQuickActions } from './SkillPresetQuickActions'
 import { useSkillPresetSelection, type PresetSelectionCommand } from './useSkillPresetSelection'
@@ -208,7 +211,7 @@ const PRESET_COLOR_MESSAGES = {
 const NODE_SIZE = 76
 const GRAPH_PADDING = 180
 const MIN_SCALE = 0.4
-const MAX_SCALE = 1.5
+const MAX_SCALE = isDesktopPresentation() ? 2.5 : 1.5
 const DEFAULT_SCALE = 0.8
 const SKILL_DRAG_THRESHOLD_PX = 6
 const SKILL_DOUBLE_ACTIVATION_MILLISECONDS = 360
@@ -1479,6 +1482,8 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               data-dimmed={searchActive && !matched ? true : undefined}
               data-selected={selected || undefined}
               data-skill-id={node.skillId}
+              data-desktop-tooltip-palette={preview.visualState.startsWith('non-refundable') ? 'non-refundable' : preview.fragment ? 'fragment' : 'normal'}
+              data-desktop-tooltip={isDesktopPresentation() ? [node.displayName, intl.formatMessage(messages.cost, { value: node.cost }), preview.galvanized && fracturedSkillDescriptor(node) ? intl.formatMessage(fracturedSkillDescriptor(node)!) : node.technicalDescription].filter(Boolean).join('\n') : undefined}
               data-selection-related={selectionRelated || undefined}
               data-selection-dimmed={
                 hasSelection && !selectionRelated ? true : undefined
@@ -1920,9 +1925,7 @@ function SkillDetails({
     void applySkillAction(kind)
   }
 
-  const fracturedDescriptor = node.discoveryTechnical
-    ? discoveryFracturedEffects[node.skillId as keyof typeof discoveryFracturedEffects]
-    : galvanizedEffectMessages[node.skillId]
+  const fracturedDescriptor = fracturedSkillDescriptor(node)
   const fracturedTechnical = fracturedDescriptor ? intl.formatMessage(fracturedDescriptor) : node.technicalDescription
   const technical = preview.galvanized ? fracturedTechnical : node.skillId === 'shouldersOfTheEnlightened' && !node.discoveryTechnical ? intl.formatMessage(messages.galvEnlightened) : node.technicalDescription
 
@@ -2888,6 +2891,7 @@ function PresetManagementDialog({
   const [name, setName] = useState(preset.name)
   const [exportText, setExportText] = useState('')
   const [copyComplete, setCopyComplete] = useState(false)
+  const [copyFailed, setCopyFailed] = useState(false)
   const [importText, setImportText] = useState('')
   const [importPreview, setImportPreview] =
     useState<SkillPresetImportPreview | null>(null)
@@ -2905,6 +2909,7 @@ function PresetManagementDialog({
     if (presetActions === undefined || transferPending !== null) return
     setTransferPending('export')
     setTransferFailed(false)
+    setCopyFailed(false)
     setCopyComplete(false)
     try {
       setExportText(await presetActions.exportPreset(slot))
@@ -2918,16 +2923,15 @@ function PresetManagementDialog({
   const copyExport = async () => {
     if (exportText.length === 0) return
     setCopyComplete(false)
+    setCopyFailed(false)
+    setTransferFailed(false)
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(exportText)
-      } else {
-        exportAreaRef.current?.select()
-        if (!document.execCommand('copy')) throw new Error('copy failed')
-      }
+      await copyPlainText(exportText, exportAreaRef.current)
       setCopyComplete(true)
     } catch {
-      setTransferFailed(true)
+      exportAreaRef.current?.focus({ preventScroll: true })
+      exportAreaRef.current?.select()
+      setCopyFailed(true)
     }
   }
 
@@ -3124,7 +3128,7 @@ function PresetManagementDialog({
                   onFocus={(event) => event.currentTarget.select()}
                 />
               </label>
-              <Button onClick={() => void copyExport()}>
+              <Button data-clipboard-copy onClick={() => void copyExport()}>
                 {intl.formatMessage(messages.copy)}
               </Button>
               {copyComplete && (
@@ -3262,6 +3266,7 @@ function PresetManagementDialog({
             </div>
           )}
         </section>
+        {copyFailed && <StatusFeedback tone="error">{intl.formatMessage(messages.copyFailed)}</StatusFeedback>}
         {transferFailed && (
           <StatusFeedback tone="error">
             {intl.formatMessage(messages.presetTransferFailed)}
@@ -3312,4 +3317,10 @@ function PresetSummary({
       </span>
     </span>
   )
+}
+
+function fracturedSkillDescriptor(node: SkillPresentationNode): MessageDescriptor | undefined {
+  if (node.skillId === 'stellarObliteration' && node.discoveryTechnical) return stellarFracturedDiscoveryObliterationMessage
+  return stellarFracturedMessages[node.skillId as keyof typeof stellarFracturedMessages]
+    ?? (node.discoveryTechnical ? discoveryFracturedEffects[node.skillId as keyof typeof discoveryFracturedEffects] : galvanizedEffectMessages[node.skillId])
 }

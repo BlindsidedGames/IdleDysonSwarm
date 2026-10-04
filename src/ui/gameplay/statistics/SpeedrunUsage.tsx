@@ -1,6 +1,7 @@
 import { useIntl } from 'react-intl'
 import type { RunUsage, SpeedrunUsage as Usage } from '../../../simulation/speedrunStatistics'
 import { InlineImageSymbol } from '../../components/InlineImageSymbol'
+import importedSave from '../../assets/symbol-save.svg'
 import bot from '../../assets/nav-bots.png'
 import infinity from '../../assets/nav-infinity.png'
 import debug from '../../assets/nav-debug.png'
@@ -12,6 +13,7 @@ const indicators = [
   { key: 'botBoostUsed', icon: bot, label: boostMessages.used },
   { key: 'doubleIpUsed', icon: infinity, label: messages.doubleIpUsed },
   { key: 'debug', icon: debug, label: messages.speedrunDebug },
+  { key: 'imported', icon: importedSave, label: messages.importedRun },
   { key: 'storedTime', icon: storedTime, label: messages.speedrunStored },
 ] as const
 
@@ -27,10 +29,9 @@ function UsageIcon({ icon, value, label, interactive = false, disqualifies = fal
   readonly disqualifies?: boolean
 }) {
   return <span className="speedrun-usage__indicator" data-usage={value} data-disqualifies={disqualifies || undefined}
-    role="img" aria-label={label} tabIndex={interactive ? 0 : undefined}>
-    <InlineImageSymbol src={icon} tint />
+    role="img" aria-label={label} data-desktop-tooltip={interactive ? label : undefined}>
+    <InlineImageSymbol src={icon} tint symbol={icon === importedSave ? 'imported-save' : undefined} />
     {value === 'unknown' && <span className="speedrun-usage__unknown" aria-hidden="true">?</span>}
-    {interactive && <span className="speedrun-usage__tooltip" aria-hidden="true">{label}</span>}
   </span>
 }
 
@@ -39,7 +40,7 @@ export function SpeedrunUsage({ usage, legend = false }: { readonly usage?: Usag
   return <>
     <ul className={`speedrun-usage${legend ? ' speedrun-usage--legend' : ''}`} aria-label={intl.formatMessage(messages.usageLegend)}>
       {indicators.map(({ key, icon, label }) => {
-        const value = usageState(usage?.[key])
+        const value = key === 'imported' ? usage?.imported === true ? 'yes' : 'no' : usageState(usage?.[key])
         const name = intl.formatMessage(label)
         const description = `${name}: ${intl.formatMessage(value === 'yes' ? messages.speedrunYes : value === 'no' ? messages.speedrunNo : messages.speedrunUnknown)}`
         return <li key={key}>

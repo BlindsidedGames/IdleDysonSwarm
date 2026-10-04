@@ -234,3 +234,32 @@ test('one-time Infinity upgrades retain a single release purchase', async () => 
   expect(h.dispatch).toHaveBeenCalledTimes(1)
   expect(h.state().infinity.spentPoints).toBe(689n)
 })
+
+
+test('earned IP summary shows the live facility production multiplier and survives spending', () => {
+  const props = (points: bigint, spentPoints = 0n) => {
+    const state = { ...runtime.gameState, infinity: { ...runtime.gameState.infinity, points, spentPoints } }
+    const snapshot = gameplaySnapshot(state)
+    return <IntlProvider locale="en" messages={{}}><InfinitySurface locale="en"
+      resources={snapshot.resources.infinity} progression={snapshot.progression}
+      derived={snapshot.derived.infinity} previews={snapshot.previews.infinity}
+      commandAvailability={{ purchaseShopItem: true, setBreakTarget: true, setAutomaticReset: true, requestReset: true }}
+      dispatchPlayer={vi.fn()} /></IntlProvider>
+  }
+  const view = render(props(0n))
+  expect(screen.getByText((_, e) => e?.classList.contains('infinity-surface__boost') === true && e.textContent === ' | Boosting Facility Production by ×1')).toBeTruthy()
+  for (const [points, expected] of [
+    [1n, ' | Boosting Facility Production by ×2'],
+    [2n, ' | Boosting Facility Production by ×3'],
+    [3n, ' | Boosting Facility Production by ×4'],
+    [4n, ' | Boosting Facility Production by ×5'],
+    [5n, ' | Boosting Facility Production by ×6'],
+    [10n, ' | Boosting Facility Production by ×11'],
+    [20n, ' | Boosting Facility Production by ×21'],
+  ] as const) {
+    view.rerender(props(points))
+    expect(screen.getByText((_, e) => e?.classList.contains('infinity-surface__boost') === true && e.textContent === expected)).toBeTruthy()
+  }
+  view.rerender(props(20n, 20n))
+  expect(screen.getByText((_, e) => e?.classList.contains('infinity-surface__boost') === true && e.textContent === ' | Boosting Facility Production by ×21')).toBeTruthy()
+})

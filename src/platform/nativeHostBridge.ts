@@ -55,6 +55,7 @@ export interface NativeUnitySaveCandidate {
 }
 
 export interface NativeHostBridgeApi {
+  readonly writeClipboardText?: (text: string) => Promise<void>
   readonly showAchievements?: () => Promise<void>
   readonly exportSaveFile?: (request: SaveFileExportRequest) => Promise<SaveFileExportResult>
   readonly target: Exclude<RuntimeTarget, 'browser'>
@@ -116,6 +117,7 @@ export interface NativeSystemInsets {
 }
 
 export interface CapacitorNativeHostPlugin extends Partial<MobileAchievementPlugin> {
+  writeClipboardText?(request: { text: string }): Promise<void>
   setOrientation?(request: { orientation: 'auto' | 'portrait' | 'landscape' }): Promise<void>
   showAchievements?(): Promise<void>
   exportSaveFile(request: SaveFileExportRequest): Promise<{ result: SaveFileExportResult }>
@@ -233,6 +235,15 @@ function setNativeSafeAreaProperty(
     ? Math.min(Math.max(value, 0), 2048)
     : 0
   root.style.setProperty(`--android-safe-area-${side}`, `${safeValue}px`)
+}
+
+/** Write-only native capability; avoids creating another lifecycle bridge for Copy. */
+export function nativeClipboardTextWriter(): ((text: string) => Promise<void>) | null {
+  const desktop = globalThis.window?.idleDysonSwarmNativeHost
+  if (desktop !== undefined) return desktop.writeClipboardText?.bind(desktop) ?? null
+  if (!Capacitor.isNativePlatform()) return null
+  return (text) => capacitorPlugin.writeClipboardText?.({ text }) ??
+    Promise.reject(new Error('Native clipboard copy is unavailable.'))
 }
 
 export function detectNativeHostBridge(): NativeHostBridgeApi | null {
@@ -432,6 +443,11 @@ export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
 
   async readText(relativePath: string): Promise<string> {
     return (await this.plugin.readText({ relativePath })).text
+  }
+
+  writeClipboardText(text: string): Promise<void> {
+    return this.plugin.writeClipboardText?.({ text }) ??
+      Promise.reject(new Error('Native clipboard copy is unavailable.'))
   }
 
   writeText(relativePath: string, contents: string): Promise<void> {

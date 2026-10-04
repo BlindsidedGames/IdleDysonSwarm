@@ -5,6 +5,9 @@ import com.google.android.gms.tasks.Tasks
 import android.app.Activity
 import androidx.activity.result.ActivityResult
 import com.getcapacitor.annotation.ActivityCallback
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -355,6 +358,30 @@ class IdleDysonNativePlugin : Plugin() {
         call.resolve(JSObject().apply {
             put("text", target.readText(StandardCharsets.UTF_8))
         })
+    }
+
+    @PluginMethod
+    fun writeClipboardText(call: PluginCall) {
+        val text = call.getString("text")
+        if (text == null || text.toByteArray(StandardCharsets.UTF_8).size > MAX_FILE_BYTES) {
+            call.reject("Clipboard copy requires supported plain text.")
+            return
+        }
+        val host = activity
+        if (host == null) {
+            call.reject("Clipboard copy requires the active game window.")
+            return
+        }
+        host.runOnUiThread {
+            withNativeFailure(call) {
+                require(lifecyclePhase == "active" && host.hasWindowFocus()) {
+                    "Clipboard copy requires the active game window."
+                }
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(ClipData.newPlainText("Idle Dyson Swarm", text))
+                call.resolve()
+            }
+        }
     }
 
     @PluginMethod

@@ -29,7 +29,7 @@ describe('Wiki patch-note content', () => {
 
     const latest = screen.getByRole('heading', { name: 'Version 4.1.11' }).closest('section')!
     expect(within(latest).getByRole('heading', { name: 'Most Recent' })).not.toBeNull()
-    expect(within(latest).getAllByRole('listitem')).toHaveLength(3)
+    expect(within(latest).getAllByRole('listitem')).toHaveLength(13)
     const prior = screen.getByRole('heading', { name: 'Version 4.1.10' }).closest('section')!
     expect(within(prior).getByRole('heading', { name: 'Older' })).not.toBeNull()
     const priorList = screen.getByRole('heading', { name: 'Version 4.1.10' }).nextElementSibling as HTMLElement

@@ -103,6 +103,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         CAPPluginMethod(name: "currentLifecycle", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "fileExists", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "readText", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "writeClipboardText", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "writeText", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "replaceAtomically", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "copy", returnType: CAPPluginReturnPromise),
@@ -419,6 +420,21 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
                 throw NativeBridgeError.invalidText
             }
             call.resolve(["text": text])
+        }
+    }
+
+    @objc public func writeClipboardText(_ call: CAPPluginCall) {
+        guard let text = call.getString("text"), text.utf8.count <= Self.maxFileBytes else {
+            call.reject("Clipboard copy requires supported plain text.")
+            return
+        }
+        DispatchQueue.main.async {
+            guard UIApplication.shared.applicationState == .active else {
+                call.reject("Clipboard copy requires the active game window.")
+                return
+            }
+            UIPasteboard.general.string = text
+            call.resolve()
         }
     }
 

@@ -25,7 +25,7 @@ export function SpeedrunsSection({ run, locale, onClearBest }: { readonly run?: 
         <div><dt>{intl.formatMessage(messages.activeElapsed)}</dt><dd>{run?.activeSeconds === undefined ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, run.activeSeconds)}</dd></div>
         <div><dt>{intl.formatMessage(messages.speedrunStored)}</dt><dd>{!run || speedrunStoredSeconds(run) === null ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, speedrunStoredSeconds(run)!)}</dd></div>
         <div><dt>{intl.formatMessage(messages.combinedTime)}</dt><dd>{!run || speedrunTimingBasis(run) !== 'combined' ? intl.formatMessage(messages.speedrunUnknown) : formatGameDuration(locale, speedrunRecordSeconds(run, now)!)}</dd></div>
-        <div><dt>{intl.formatMessage(messages.speedrunEligibility)}</dt><dd>{intl.formatMessage(run?.imported ? messages.importedRun : run?.debug === 'yes' ? messages.speedrunIneligible : run && speedrunEligible(run) ? messages.speedrunEligible : messages.speedrunUnverified)}</dd></div>
+        <div><dt>{intl.formatMessage(messages.speedrunEligibility)}</dt><dd>{intl.formatMessage(run?.debug === 'yes' ? messages.speedrunIneligible : run && speedrunEligible(run) ? messages.speedrunEligible : messages.speedrunUnverified)}</dd></div>
       </dl>
       <SpeedrunUsage usage={run} />
     </article>

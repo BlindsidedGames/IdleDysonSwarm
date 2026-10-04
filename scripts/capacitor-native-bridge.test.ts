@@ -11,6 +11,7 @@ const bridgeMethods = [
   'fileExists',
   'readText',
   'writeText',
+  'writeClipboardText',
   'replaceAtomically',
   'copy',
   'discoverUnitySaveCandidates',

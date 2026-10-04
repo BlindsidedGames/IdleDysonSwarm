@@ -1,0 +1,23 @@
+.desktop-tooltip {
+  position: fixed;
+  z-index: 2000;
+  box-sizing: border-box;
+  max-inline-size: min(25rem, calc(100vw - 1rem));
+  padding: var(--ui-panel-inset);
+  border: 1px solid var(--color-control);
+  border-radius: .35rem;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: 0 .25rem .75rem rgb(0 0 0 / 35%);
+  font-size: var(--ui-text-body);
+  line-height: 1.4;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+
+.desktop-tooltip[data-palette] {
+  border-color: var(--skill-dialog-accent);
+  background: var(--skill-dialog-background);
+  color: #f7f1ff;
+}

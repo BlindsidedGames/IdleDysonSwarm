@@ -4589,6 +4589,46 @@
       "value": "）"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "设施产量提高至"
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "至"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "设施产量 ×1"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -5347,6 +5387,22 @@
     {
       "type": 0,
       "value": "% 已完成"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "快捷操作（分钟）"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "操作 "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     }
   ],
   "offline-time.quick-spend": [
@@ -8025,6 +8081,18 @@
       "value": "开发菜单"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "界面大小"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "调整整个游戏的界面缩放比例"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -8603,6 +8671,12 @@
     {
       "type": 0,
       "value": "存档数据"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "在导出的存档文件名中添加时间戳"
     }
   ],
   "settings.visualization.description": [
@@ -9815,6 +9889,12 @@
     {
       "type": 0,
       "value": "复制"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "复制失败。请手动复制已选中的文本。"
     }
   ],
   "skills.cost": [
@@ -13025,6 +13105,90 @@
       "value": "星辰记忆"
     }
   ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000。当机器人数满足按覆盖量计算、且不含本寿命加成的要求时，面板寿命×10。生效期间现金÷100；普通的覆盖量相关机器人消耗×100。"
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000。当满足加成前的普通机器人要求时，面板寿命×10。移除此技能的额外机器人消耗倍数和现金惩罚。"
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "星辰产出×2，机器人消耗÷1,000。永久生效，无需分配技能点。"
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系×1,000。移除此技能的额外机器人消耗及现金和科学惩罚。"
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系×1,000。移除此技能的额外机器人消耗和现金惩罚。"
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "无需消耗机器人，即可生成你已拥有的最高级设施（包括巨型结构）：每秒max(0, log10(星辰星系))²，再乘以已拥有的星辰增益、发现和恒星蜂群。星辰星系为1或更少时无产出。"
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系再×1,000。移除此技能的额外机器人消耗，并恢复购买加成，包括恒星蜂群的购买成长。"
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "星辰产出×2。星辰献祭所需机器人数÷1,000。"
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系×1,000，机器人消耗×1,000。现金除以有效星辰星系，除数最低为1。"
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系×1,000，机器人消耗×1,000。现金和科学除以有效星辰星系，除数最低为1。"
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "星辰产出加成"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "星辰改良、星辰霸权、星辰抹除和超新星的合并产出倍数。"
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "消耗机器人以生成你已拥有的最高级设施（包括巨型结构）：每秒max(0, log10(星辰星系))²，再乘以已拥有的星辰增益、发现和恒星蜂群。星辰星系为1或更少时无产出。每秒基础机器人消耗等于包围恒星数，最低为1。"
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系再×1,000，机器人消耗再×1,000。禁用所有由购买带来的设施加成，包括恒星蜂群使用的购买成长。退还技能可恢复加成。"
+    }
+  ],
   "skills.subskill-assign": [
     {
       "type": 0,
@@ -14162,7 +14326,7 @@
   "statistics.speedruns.importedRun": [
     {
       "type": 0,
-      "value": "不符合资格 — 导入的存档"
+      "value": "导入的存档"
     }
   ],
   "statistics.speedruns.inProgress": [
@@ -14312,7 +14476,7 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "导入的存档、使用过调试功能或计时未经验证的挑战不能创下个人最佳纪录。"
+      "value": "个人最佳纪录不包含使用调试功能的纪录和未经验证的时间。"
     }
   ],
   "statistics.speedruns.usageNotUsed": [
@@ -16782,10 +16946,70 @@
       "value": "改进了整个游戏的按钮渐变和文字对比度。禁用的按钮现在使用纯色。"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.checkbox-labels": [
+    {
+      "type": 0,
+      "value": "设置和技能页面的复选框标签更宽，样式更加一致。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "新增桌面端界面大小调整（80%–150%）、恢复默认按钮，以及最高250%的技能树缩放。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "新增仅在桌面端显示、随指针移动的提示，并采用技能类型对应的颜色。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "有效的导入存档现可继续速通，仍遵循原有资格检查。储存时间图标前新增了风格一致的软盘标记。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.infinity-hold": [
     {
       "type": 0,
       "value": "在无限中新增宇宙的秘密和永久技能点的重复购买功能。按住鼠标按钮或长按即可持续购买。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "无限页面现会在总量旁显示全部已获得无限点带来的设施产量加成，移动端文字保持清晰并与数字基线对齐。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-copy": [
+    {
+      "type": 0,
+      "value": "修复了原生应用中的预设复制功能，无需弹出剪贴板权限请求。无法访问剪贴板的浏览器会提供手动复制方式。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.quick-amounts": [
+    {
+      "type": 0,
+      "value": "可在离线时间中设置三个储存时间快捷用量，侧栏标签更加简洁。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.sidebar-freeze": [
+    {
+      "type": 0,
+      "value": "修复了从侧栏快速使用储存时间触发灾难或文明终结时游戏卡死的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "重做了星辰技能，添加碎裂后仍保留的直接产出加成。碎裂可移除各技能的负面效果，星辰霸权使用稳定的激活要求。更新了星辰描述和机器人消耗。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "新增为导出的存档文件名添加时间戳的选项。"
     }
   ],
   "wiki.patch-notes.version-4-1-11.tinker-offline": [

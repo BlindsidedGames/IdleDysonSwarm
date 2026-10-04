@@ -17,3 +17,11 @@ export function canExportSaveFile(
   return !/iPhone|iPad|iPod/i.test(userAgent) &&
     !(/Macintosh/i.test(userAgent) && touchPoints > 1)
 }
+
+export const SAVE_EXPORT_TIMESTAMP_KEY = 'idle-dyson-swarm:timestamp-save-exports'
+
+export function saveExportFileName(timestampEnabled: boolean, now = new Date()): string {
+  return timestampEnabled
+    ? `idle-dyson-swarm-save-${now.toISOString().replace(/[:.]/g, '-')}.idsw`
+    : 'idle-dyson-swarm-save.idsw'
+}

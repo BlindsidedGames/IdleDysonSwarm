@@ -12,6 +12,20 @@ afterEach(() => {
 })
 
 describe('GameplayNotificationHost', () => {
+  test('sidebar burst disaster is interactive outside an inert compact-menu main and restores it on dismissal', async () => {
+    render(<div className="dyson-shell">
+      <aside className="dyson-shell__side-panel"><button>Sidebar burst</button></aside>
+      <div inert>{hostTree([], vi.fn(), [disaster({ sequence: -1, firstLifetimeOccurrence: true })])}</div>
+    </div>)
+    const dialog = await screen.findByRole('dialog', { name: 'Meteor Storm' })
+    expect(dialog.closest('[inert]')).toBeNull()
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Continue' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Sidebar burst' }).closest('[inert]')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Previous focus' }).closest('[inert]')).not.toBeNull()
+  })
+
   test('shows the first disaster as an era-specific accessible dialog and navigates deliberately', async () => {
     const onViewReality = vi.fn()
     renderHost([

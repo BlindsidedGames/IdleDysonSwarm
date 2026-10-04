@@ -8789,6 +8789,70 @@
       "value": "‬"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoosʇıuƃ Ⅎɐɔıʅıʇʎ Ԁɹopnɔʇıou qʎ "
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "–"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɐɔıʅıʇʎ dɹopnɔʇıou ×1"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -10263,6 +10327,38 @@
     {
       "type": 0,
       "value": "% ɔoɯdʅǝʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ònıɔʞ ɐɔʇıous (ɯıunʇǝs)"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇıou "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     },
     {
       "type": 0,
@@ -15761,6 +15857,34 @@
       "value": "‬"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuʇǝɹɟɐɔǝ sızǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥɐuƃǝ ɥoʍ ʇɥǝ ıuʇǝɹɟɐɔǝ sɔɐʅǝs ɐɔɹoss ʇɥǝ ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -17103,6 +17227,20 @@
     {
       "type": 0,
       "value": "Sɐʌǝ ᗡɐʇɐ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝsʇɐɯd ǝxdoɹʇ ɟıʅǝuɐɯǝs"
     },
     {
       "type": 0,
@@ -19547,6 +19685,20 @@
     {
       "type": 0,
       "value": "Ↄodʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄodʎ ɟɐıʅǝp. Ↄodʎ ʇɥǝ sǝʅǝɔʇǝp ʇǝxʇ ɯɐunɐʅʅʎ."
     },
     {
       "type": 0,
@@ -26593,6 +26745,202 @@
       "value": "‬"
     }
   ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1,000× Sʇǝʅʅɐɹ onʇdnʇ. 10× Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ ʍɥıʅǝ ʎonɹ Ԑoʇs ɯǝǝʇ ʇɥǝ ɔoʌǝɹɐƃǝ-qɐsǝp ɹǝbnıɹǝɯǝuʇ ɔɐʅɔnʅɐʇǝp qǝɟoɹǝ ʇɥıs ʅıɟǝʇıɯǝ qouns. Ↄɐsɥ ıs pıʌıpǝp qʎ 100 ʍɥıʅǝ ɐɔʇıʌǝ; oɹpıuɐɹʎ ɔoʌǝɹɐƃǝ-qɐsǝp Ԑoʇ ɔosʇ ıs ɯnʅʇıdʅıǝp qʎ 100."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1,000× Sʇǝʅʅɐɹ onʇdnʇ. 10× Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ ʍɥıʅǝ ʇɥǝ uoɹɯɐʅ dɹǝ-qouns Ԑoʇ ɹǝbnıɹǝɯǝuʇ ıs ɯǝʇ. ᴚǝɯoʌǝs ʇɥıs sʞıʅʅ’s ǝxʇɹɐ Ԑoʇ-ɔosʇ ɟɐɔʇoɹ ɐup Ↄɐsɥ dǝuɐʅʇʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "2× Sʇǝʅʅɐɹ onʇdnʇ ɐup 1,000× ʅoʍǝɹ Ԑoʇ ɔosʇs, dǝɹɯɐuǝuʇʅʎ ʍıʇɥonʇ ɐssıƃuǝp Sʞıʅʅ Ԁoıuʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1,000× Sʇǝʅʅɐɹ onʇdnʇ ɐup 1,000× ǝɟɟǝɔʇıʌǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs. ᴚǝɯoʌǝs ʇɥıs sʞıʅʅ’s ǝxʇɹɐ Ԑoʇ ɔosʇ ɐup Ↄɐsɥ/Sɔıǝuɔǝ dǝuɐʅʇʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1,000× Sʇǝʅʅɐɹ onʇdnʇ ɐup 1,000× ǝɟɟǝɔʇıʌǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs. ᴚǝɯoʌǝs ʇɥıs sʞıʅʅ’s ǝxʇɹɐ Ԑoʇ ɔosʇ ɐup Ↄɐsɥ dǝuɐʅʇʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɹǝɐʇǝ ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ, ıuɔʅnpıuƃ ɯǝƃɐsʇɹnɔʇnɹǝs, ʍıʇɥonʇ ɔousnɯıuƃ Ԑoʇs: ɯɐx(0, ʅoƃ10(Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs))² dǝɹ sǝɔoup, ɯnʅʇıdʅıǝp qʎ oʍuǝp Sʇǝʅʅɐɹ qǝuǝɟıʇs, ᗡısɔoʌǝɹʎ ɐup Sʇǝʅʅɐɹ Sʍɐɹɯ. No onʇdnʇ ɐʇ ouǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxʎ oɹ qǝʅoʍ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1,000× Sʇǝʅʅɐɹ onʇdnʇ ɐup ɐuoʇɥǝɹ 1,000× ǝɟɟǝɔʇıʌǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs. ᴚǝɯoʌǝs ʇɥıs sʞıʅʅ’s ǝxʇɹɐ Ԑoʇ ɔosʇ ɐup ɹǝsʇoɹǝs dnɹɔɥɐsǝ qounsǝs, ıuɔʅnpıuƃ Sʇǝʅʅɐɹ Sʍɐɹɯ sɔɐʅıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "2× Sʇǝʅʅɐɹ onʇdnʇ. ᗡıʌıpǝ Ԑoʇs ɹǝbnıɹǝp ɟoɹ Sʇǝʅʅɐɹ Sɐɔɹıɟıɔǝs qʎ 1,000."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1,000× Sʇǝʅʅɐɹ onʇdnʇ, 1,000× ǝɟɟǝɔʇıʌǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs ɐup 1,000× Ԑoʇ ɔosʇ. ᗡıʌıpǝ Ↄɐsɥ qʎ ǝɟɟǝɔʇıʌǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs, ʍıʇɥ ɐ ɯıuıɯnɯ pıʌısoɹ oɟ ouǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1,000× Sʇǝʅʅɐɹ onʇdnʇ, 1,000× ǝɟɟǝɔʇıʌǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs ɐup 1,000× Ԑoʇ ɔosʇ. ᗡıʌıpǝ Ↄɐsɥ ɐup Sɔıǝuɔǝ qʎ ǝɟɟǝɔʇıʌǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs, ʍıʇɥ ɐ ɯıuıɯnɯ pıʌısoɹ oɟ ouǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇǝʅʅɐɹ onʇdnʇ qounsǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯqıuǝp onʇdnʇ ɯnʅʇıdʅıǝɹs ɟɹoɯ Sʇǝʅʅɐɹ Iɯdɹoʌǝɯǝuʇs, Sʇǝʅʅɐɹ ᗡoɯıuɐuɔǝ, Sʇǝʅʅɐɹ Oqʅıʇǝɹɐʇıou ɐup Sndǝɹuoʌɐ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄousnɯǝ Ԑoʇs ʇo ɔɹǝɐʇǝ ʎonɹ ɥıƃɥǝsʇ oʍuǝp ɟɐɔıʅıʇʎ, ıuɔʅnpıuƃ ɯǝƃɐsʇɹnɔʇnɹǝs: ɯɐx(0, ʅoƃ10(Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs))² dǝɹ sǝɔoup, ɯnʅʇıdʅıǝp qʎ oʍuǝp Sʇǝʅʅɐɹ qǝuǝɟıʇs, ᗡısɔoʌǝɹʎ ɐup Sʇǝʅʅɐɹ Sʍɐɹɯ. No onʇdnʇ ɐʇ ouǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxʎ oɹ qǝʅoʍ. Ԑɐsǝ Ԑoʇ ɔosʇ ǝbnɐʅs Sʇɐɹs Snɹɹonupǝp dǝɹ sǝɔoup, ʍıʇɥ ɐ ɯıuıɯnɯ oɟ ouǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "1,000× Sʇǝʅʅɐɹ onʇdnʇ, ɐuoʇɥǝɹ 1,000× ǝɟɟǝɔʇıʌǝ Sʇǝʅʅɐɹ ⅁ɐʅɐxıǝs ɐup ɐuoʇɥǝɹ 1,000× Ԑoʇ ɔosʇ. Snddɹǝss ɐʅʅ ɟɐɔıʅıʇʎ qounsǝs ɟɹoɯ dnɹɔɥɐsǝs, ıuɔʅnpıuƃ ʇɥǝ dnɹɔɥɐsǝ sɔɐʅıuƃ nsǝp qʎ Sʇǝʅʅɐɹ Sʍɐɹɯ. ᴚǝɟnupıuƃ ɹǝsʇoɹǝs ʇɥǝɯ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.subskill-assign": [
     {
       "type": 0,
@@ -29150,7 +29498,7 @@
     },
     {
       "type": 0,
-      "value": "Iuǝʅıƃıqʅǝ — Iɯdoɹʇǝp sɐʌǝ"
+      "value": "Iɯdoɹʇǝp sɐʌǝ"
     },
     {
       "type": 0,
@@ -29500,7 +29848,7 @@
     },
     {
       "type": 0,
-      "value": "Ԁǝɹsouɐʅ qǝsʇs ǝxɔʅnpǝ ıɯdoɹʇǝp sɐʌǝs, ᗡǝqnƃ nsǝ, ɐup nuʌǝɹıɟıǝp ʇıɯǝs."
+      "value": "Ԁǝɹsouɐʅ qǝsʇs ǝxɔʅnpǝ ᗡǝqnƃ nsǝ ɐup nuʌǝɹıɟıǝp ʇıɯǝs."
     },
     {
       "type": 0,
@@ -33854,6 +34202,62 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.checkbox-labels": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐpǝ ɔɥǝɔʞqox ʅɐqǝʅs ʍıpǝɹ ɐup ɔousısʇǝuʇ ɐɔɹoss Sǝʇʇıuƃs ɐup Sʞıʅʅs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp pǝsʞʇod ıuʇǝɹɟɐɔǝ sızıuƃ ɟɹoɯ 80% ʇo 150%, ɐ ᗡǝɟɐnʅʇ ɹǝsǝʇ, ɐup sʞıʅʅ-ʇɹǝǝ zooɯ nd ʇo 250%."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp pǝsʞʇod-ouʅʎ ʇooʅʇıds ʇɥɐʇ ɟoʅʅoʍ ʇɥǝ doıuʇǝɹ, ʍıʇɥ sʞıʅʅ-ʇʎdǝ ɔoʅonɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌɐʅıp ıɯdoɹʇǝp sɐʌǝs uoʍ ɔouʇıunǝ sdǝǝpɹnus ʍıʇɥ ǝxısʇıuƃ ǝʅıƃıqıʅıʇʎ ɔɥǝɔʞs. ∀ ɯɐʇɔɥıuƃ ɟʅoddʎ-pısʞ ɯɐɹʞǝɹ ɐddǝɐɹs qǝɟoɹǝ Sʇoɹǝp ⊥ıɯǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.infinity-hold": [
     {
       "type": 0,
@@ -33862,6 +34266,90 @@
     {
       "type": 0,
       "value": "∀ppǝp ɹǝdǝɐʇ dnɹɔɥɐsǝs ɟoɹ Sǝɔɹǝʇ oɟ ʇɥǝ ∩uıʌǝɹsǝ ɐup Ԁǝɹɯɐuǝuʇ Sʞıʅʅ Ԁoıuʇs ıu Iuɟıuıʇʎ. Ↄʅıɔʞ ɐup ɥoʅp oɹ ʅouƃ dɹǝss ʇo ʞǝǝd qnʎıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ uoʍ sɥoʍs ʇɥǝ Ⅎɐɔıʅıʇʎ dɹopnɔʇıou qoosʇ ɟɹoɯ ɐʅʅ ǝɐɹuǝp IԀ qǝsıpǝ ʇɥǝ ʇoʇɐʅs, ʍıʇɥ ɹǝɐpɐqʅǝ, qɐsǝʅıuǝ-ɐʅıƃuǝp ʇǝxʇ ou ɯoqıʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-copy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp dɹǝsǝʇ Ↄodʎ ıu uɐʇıʌǝ ɐdds ʍıʇɥonʇ ɐ ɔʅıdqoɐɹp dǝɹɯıssıou dɹoɯdʇ. Ԑɹoʍsǝɹs ʍıʇɥonʇ ɔʅıdqoɐɹp ɐɔɔǝss sɥoʍ ɐ ɯɐunɐʅ-ɔodʎ ɟɐʅʅqɐɔʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.quick-amounts": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥoosǝ ʇɥɹǝǝ Sʇoɹǝp ⊥ıɯǝ bnıɔʞ-nsǝ ɐɯonuʇs ıu Oɟɟʅıuǝ ⊥ıɯǝ, ʍıʇɥ ɔoɯdɐɔʇ sıpǝqɐɹ ʅɐqǝʅs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.sidebar-freeze": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp ʇɥǝ ƃɐɯǝ ɟɹǝǝzıuƃ ʍɥǝu sıpǝqɐɹ Sʇoɹǝp ⊥ıɯǝ qnɹsʇs ʇɹıƃƃǝɹ pısɐsʇǝɹs oɹ ɔıʌıʅısɐʇıou ǝupıuƃs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʍoɹʞǝp Sʇǝʅʅɐɹ sʞıʅʅs ʍıʇɥ pıɹǝɔʇ onʇdnʇ qounsǝs ʇɥɐʇ snɹʌıʌǝ ɟɹɐɔʇnɹıuƃ. Ⅎɹɐɔʇnɹıuƃ ɹǝɯoʌǝs ǝɐɔɥ sʞıʅʅ’s pɹɐʍqɐɔʞs, ɐup Sʇǝʅʅɐɹ ᗡoɯıuɐuɔǝ nsǝs ɐ sʇɐqʅǝ ɐɔʇıʌɐʇıou ɹǝbnıɹǝɯǝuʇ. ∩dpɐʇǝp Sʇǝʅʅɐɹ pǝsɔɹıdʇıous ɐup Ԑoʇ ɔosʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ɐu odʇıou ʇo ʇıɯǝsʇɐɯd ǝxdoɹʇǝp sɐʌǝ ɟıʅǝuɐɯǝs."
     },
     {
       "type": 0,

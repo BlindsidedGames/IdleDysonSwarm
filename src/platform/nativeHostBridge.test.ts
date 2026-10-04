@@ -50,6 +50,22 @@ describe('native host bootstrap boundary', () => {
     expect(isLifecyclePhase(null)).toBe(false)
   })
 
+  test.each(['android', 'ios'] as const)('forwards only plain text to the %s native clipboard writer', async target => {
+    const writeClipboardText = vi.fn(async (_request: { text: string }) => undefined)
+    const plugin = {
+      writeClipboardText,
+      addListener: async () => ({ remove: async () => undefined }),
+      currentLifecycle: async () => ({ phase: 'active' }),
+    } as unknown as CapacitorNativeHostPlugin
+    const bridge = new CapacitorNativeHostBridge(target, plugin)
+    await bridge.writeClipboardText('IDS preset: café\n<literal text>')
+    expect(writeClipboardText).toHaveBeenCalledExactlyOnceWith({ text: 'IDS preset: café\n<literal text>' })
+    writeClipboardText.mockRejectedValueOnce(new Error('Native copy failed'))
+    await expect(bridge.writeClipboardText('retry')).rejects.toThrow('Native copy failed')
+    expect('readClipboardText' in bridge).toBe(false)
+    await bridge.ready()
+  })
+
   test('remains conservatively backgrounded past the bootstrap timeout until reconciliation proves active', async () => {
     vi.useFakeTimers()
     const currentLifecycle = deferred<{ phase: 'active' }>()

@@ -1,3 +1,4 @@
+@import "../../components/skillDialogPalette.css";
 .skills-surface {
   --skills-panel: var(--theme-panel);
   --skills-panel-light: var(--theme-selected);
@@ -685,13 +686,16 @@
 
 .skill-settings__toggle {
   display: flex;
-  gap: 0.65rem;
+  gap: 0.45rem;
   align-items: center;
   min-block-size: var(--target-minimum);
   margin: 0;
-  padding: 0.25rem 0;
-  border: 0;
-  background: transparent;
+  padding: 0.35rem 0.5rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
+  background: var(--theme-selected);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
 }
 
 .skill-settings__toggle input {
@@ -1276,8 +1280,6 @@
 }
 
 .skill-details-dialog {
-  --skill-dialog-accent: #cc98ff;
-  --skill-dialog-background: #2e1e3d;
   inline-size: min(34rem, 100%);
   max-block-size: calc(100dvh - 2rem);
   display: grid;
@@ -1291,16 +1293,6 @@
     0 1rem 3rem rgb(0 0 0 / 58%),
     inset 0 1px 0 rgb(255 255 255 / 8%);
   color: #f7f1ff;
-}
-
-.skill-details-dialog[data-palette="fragment"] {
-  --skill-dialog-accent: #ff98c8;
-  --skill-dialog-background: #3d1e2c;
-}
-
-.skill-details-dialog[data-palette="non-refundable"] {
-  --skill-dialog-accent: #ff5c5c;
-  --skill-dialog-background: #3d0000;
 }
 
 .skill-details-dialog__header {

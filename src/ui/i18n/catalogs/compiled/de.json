@@ -4589,6 +4589,46 @@
       "value": ")"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "Anlagenproduktion verstärkt um "
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "–"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "Anlagenproduktion ×1"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -5347,6 +5387,22 @@
     {
       "type": 0,
       "value": "% abgeschlossen"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "Schnellaktionen (Minuten)"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "Aktion "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     }
   ],
   "offline-time.quick-spend": [
@@ -8025,6 +8081,18 @@
       "value": "Entwicklungsmenü"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "Oberflächengröße"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "Ändere die Größe der Oberfläche im gesamten Spiel"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -8603,6 +8671,12 @@
     {
       "type": 0,
       "value": "Speicherdaten"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "Exportdateinamen mit Zeitstempel"
     }
   ],
   "settings.visualization.description": [
@@ -9815,6 +9889,12 @@
     {
       "type": 0,
       "value": "Kopieren"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "Kopieren fehlgeschlagen. Kopiere den markierten Text manuell."
     }
   ],
   "skills.cost": [
@@ -13025,6 +13105,90 @@
       "value": "Stellares Gedächtnis"
     }
   ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion. 10× Panel-Lebensdauer, solange deine Bots die Abdeckungsanforderung erfüllen, die vor diesem Lebensdauerbonus berechnet wird. Währenddessen wird Geld durch 100 geteilt; die gewöhnlichen abdeckungsabhängigen Bot-Kosten werden mit 100 multipliziert."
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion. 10× Panel-Lebensdauer, solange die normale Bot-Anforderung vor dem Bonus erfüllt ist. Entfernt den zusätzlichen Bot-Kostenfaktor und den Geldnachteil dieser Fähigkeit."
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "2× stellare Produktion und durch 1.000 geteilte Bot-Kosten, dauerhaft ohne zugewiesene Fähigkeitspunkte."
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion und 1.000× effektive stellare Galaxien. Entfernt die zusätzlichen Bot-Kosten und den Geld-/Wissenschaftsnachteil dieser Fähigkeit."
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion und 1.000× effektive stellare Galaxien. Entfernt die zusätzlichen Bot-Kosten und den Geldnachteil dieser Fähigkeit."
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "Erzeugt deine höchste besessene Einrichtung, einschließlich Megastrukturen, ohne Bots zu verbrauchen: max(0, log10(stellare Galaxien))² pro Sekunde, multipliziert mit besessenen stellaren Vorteilen, Entdeckung und Sternenschwarm. Keine Produktion bei einer stellaren Galaxie oder weniger."
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion und nochmals 1.000× effektive stellare Galaxien. Entfernt die zusätzlichen Bot-Kosten dieser Fähigkeit und stellt Kaufboni wieder her, einschließlich der Skalierung des Sternenschwarms."
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "2× stellare Produktion. Teilt die für Stellare Opfer erforderlichen Bots durch 1.000."
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion, 1.000× effektive stellare Galaxien und 1.000× Bot-Kosten. Teilt Geld durch die effektiven stellaren Galaxien, mit einem Mindestdivisor von eins."
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion, 1.000× effektive stellare Galaxien und 1.000× Bot-Kosten. Teilt Geld und Wissenschaft durch die effektiven stellaren Galaxien, mit einem Mindestdivisor von eins."
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "Stellare Produktionsboni"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "Kombinierte Produktionsmultiplikatoren von Stellaren Verbesserungen, Stellarer Dominanz, Stellarer Auslöschung und Supernova."
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "Verbraucht Bots, um deine höchste besessene Einrichtung einschließlich Megastrukturen zu erzeugen: max(0, log10(stellare Galaxien))² pro Sekunde, multipliziert mit besessenen stellaren Vorteilen, Entdeckung und Sternenschwarm. Keine Produktion bei einer stellaren Galaxie oder weniger. Die Basis-Bot-Kosten entsprechen den umschlossenen Sternen pro Sekunde, mindestens eins."
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion, nochmals 1.000× effektive stellare Galaxien und nochmals 1.000× Bot-Kosten. Unterdrückt alle Einrichtungsboni aus Käufen, einschließlich der Kaufskalierung des Sternenschwarms. Eine Rückerstattung stellt sie wieder her."
+    }
+  ],
   "skills.subskill-assign": [
     {
       "type": 0,
@@ -14162,7 +14326,7 @@
   "statistics.speedruns.importedRun": [
     {
       "type": 0,
-      "value": "Nicht zugelassen — Importierter Spielstand"
+      "value": "Importierter Spielstand"
     }
   ],
   "statistics.speedruns.inProgress": [
@@ -14312,7 +14476,7 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Importierte Spielstände, Debug-Nutzung und unbestätigte Zeiten zählen nicht für persönliche Bestzeiten."
+      "value": "Persönliche Bestzeiten schließen Debug-Nutzung und nicht überprüfte Zeiten aus."
     }
   ],
   "statistics.speedruns.usageNotUsed": [
@@ -16782,10 +16946,70 @@
       "value": "Farbverläufe der Schaltflächen und Textkontrast im gesamten Spiel verbessert. Deaktivierte Schaltflächen verwenden jetzt einfarbige Flächen."
     }
   ],
+  "wiki.patch-notes.version-4-1-11.checkbox-labels": [
+    {
+      "type": 0,
+      "value": "Beschriftungen von Kontrollkästchen in Einstellungen und Fähigkeiten sind jetzt breiter und einheitlich."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "Desktop-Oberflächengröße von 80 % bis 150 %, Rücksetzung auf den Standardwert und Fähigkeitsbaum-Zoom bis 250 % hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "Tooltips nur für Desktop hinzugefügt, die dem Mauszeiger folgen und die Farben der Fähigkeitstypen verwenden."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "Gültige importierte Spielstände setzen Speedruns unter den bisherigen Teilnahmebedingungen fort. Ein passendes Diskettensymbol steht vor der gespeicherten Zeit."
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.infinity-hold": [
     {
       "type": 0,
       "value": "Wiederholte Käufe für das Geheimnis des Universums und permanente Skill-Punkte in Unendlichkeit hinzugefügt. Halte die Maustaste gedrückt oder drücke lange, um weiterzukaufen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "Unendlichkeit zeigt neben den Gesamtwerten den Produktionsbonus für Einrichtungen aus allen verdienten IP, mit lesbarem, an der Grundlinie ausgerichtetem Text auf Mobilgeräten."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-copy": [
+    {
+      "type": 0,
+      "value": "Kopieren von Voreinstellungen in nativen Apps funktioniert jetzt ohne Berechtigungsabfrage für die Zwischenablage. Browser ohne Zwischenablagezugriff bieten manuelles Kopieren an."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.quick-amounts": [
+    {
+      "type": 0,
+      "value": "Drei Schnellnutzungsmengen für gespeicherte Zeit lassen sich unter Offline-Zeit wählen, mit kompakten Beschriftungen in der Seitenleiste."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.sidebar-freeze": [
+    {
+      "type": 0,
+      "value": "Behoben, dass das Spiel einfriert, wenn schnelle Nutzungen gespeicherter Zeit in der Seitenleiste Katastrophen oder das Ende einer Zivilisation auslösen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "Stellare Fähigkeiten wurden mit direkten Produktionsboni überarbeitet, die nach dem Frakturieren erhalten bleiben. Frakturieren entfernt die Nachteile der jeweiligen Fähigkeit, und Stellare Dominanz nutzt eine stabile Aktivierungsanforderung. Stellare Beschreibungen und Bot-Kosten wurden aktualisiert."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "Eine Option für Zeitstempel in den Dateinamen exportierter Spielstände hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-11.tinker-offline": [

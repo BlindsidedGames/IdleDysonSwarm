@@ -4589,6 +4589,46 @@
       "value": "）"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "施設の生産量を次の倍率に増加："
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "～"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "施設の生産 ×1"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -5347,6 +5387,22 @@
     {
       "type": 0,
       "value": "%完了"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "クイック操作（分）"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "操作 "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     }
   ],
   "offline-time.quick-spend": [
@@ -8025,6 +8081,18 @@
       "value": "開発メニュー"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "インターフェースのサイズ"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "ゲーム全体のインターフェースの表示倍率を変更します"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -8603,6 +8671,12 @@
     {
       "type": 0,
       "value": "セーブデータ"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "エクスポートするセーブファイル名に日時を追加"
     }
   ],
   "settings.visualization.description": [
@@ -9815,6 +9889,12 @@
     {
       "type": 0,
       "value": "コピー"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "コピーできませんでした。選択したテキストを手動でコピーしてください。"
     }
   ],
   "skills.cost": [
@@ -13025,6 +13105,90 @@
       "value": "星の記憶"
     }
   ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "恒星出力×1,000。この寿命ボーナスを適用する前の被覆量に基づく必要ボット数を満たす間、パネル寿命×10。有効中は資金÷100。通常の被覆量に基づくボット消費は×100。"
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "恒星出力×1,000。ボーナス適用前の通常の必要ボット数を満たす間、パネル寿命×10。このスキルの追加ボット消費倍率と資金ペナルティを解除する。"
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "恒星出力×2、ボット消費÷1,000。スキルポイントを割り当てなくても永続的に有効。"
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "恒星出力×1,000、有効恒星銀河数×1,000。このスキルの追加ボット消費と資金・科学ペナルティを解除する。"
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "恒星出力×1,000、有効恒星銀河数×1,000。このスキルの追加ボット消費と資金ペナルティを解除する。"
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "ボットを消費せず、メガストラクチャーを含む所有済みの最上位施設を生成する。毎秒max(0, log10(恒星銀河数))²に、所有する恒星効果、発見、恒星スウォームを掛ける。恒星銀河数が1以下では生成しない。"
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "恒星出力×1,000、有効恒星銀河数をさらに×1,000。このスキルの追加ボット消費を解除し、恒星スウォームの成長を含む購入ボーナスを復元する。"
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "恒星出力×2。恒星の犠牲に必要なボット数を1,000で割る。"
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "恒星出力×1,000、有効恒星銀河数×1,000、ボット消費×1,000。資金を有効恒星銀河数で割る。除数の最低値は1。"
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "恒星出力×1,000、有効恒星銀河数×1,000、ボット消費×1,000。資金と科学を有効恒星銀河数で割る。除数の最低値は1。"
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "恒星出力ボーナス"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "恒星改良、恒星支配、恒星消滅、超新星を組み合わせた出力倍率。"
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "ボットを消費し、メガストラクチャーを含む所有済みの最上位施設を生成する。毎秒max(0, log10(恒星銀河数))²に、所有する恒星効果、発見、恒星スウォームを掛ける。恒星銀河数が1以下では生成しない。毎秒の基本ボット消費は包囲した恒星数に等しく、最低1。"
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "恒星出力×1,000、有効恒星銀河数をさらに×1,000、ボット消費をさらに×1,000。恒星スウォームの購入数による成長を含む、購入によるすべての施設ボーナスを無効にする。払い戻すと復元される。"
+    }
+  ],
   "skills.subskill-assign": [
     {
       "type": 0,
@@ -14162,7 +14326,7 @@
   "statistics.speedruns.importedRun": [
     {
       "type": 0,
-      "value": "対象外 — インポートしたセーブ"
+      "value": "インポートしたセーブ"
     }
   ],
   "statistics.speedruns.inProgress": [
@@ -14312,7 +14476,7 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "インポートしたセーブ、デバッグの使用、未確認のタイムは自己ベストの対象外です。"
+      "value": "デバッグを使用した記録と未検証の時間は自己ベストから除外されます。"
     }
   ],
   "statistics.speedruns.usageNotUsed": [
@@ -16782,10 +16946,70 @@
       "value": "ゲーム全体でボタンのグラデーションと文字のコントラストを改善しました。無効なボタンは単色で表示されます。"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.checkbox-labels": [
+    {
+      "type": 0,
+      "value": "設定とスキルのチェックボックスラベルを広くし、見た目を統一しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "PC版のインターフェースサイズを80%～150%に調整できるようにし、デフォルトに戻す操作と最大250%のスキルツリー拡大を追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "PC版のみ、ポインターを追従しスキルの種類に応じた色を使うツールチップを追加しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "有効なインポート済みセーブで、従来の参加条件を保ったままスピードランを続けられるようになりました。貯蔵時間の前に、他のアイコンと統一したフロッピーディスクの印を表示します。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.infinity-hold": [
     {
       "type": 0,
       "value": "インフィニティで宇宙の秘密と永久スキルポイントを繰り返し購入できるようになりました。マウスボタンを押し続けるか長押しすると、購入を続けられます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "無限画面で、獲得したすべてのIPによる施設生産ボーナスを合計値の横に表示します。モバイル版でも文字を読みやすく保ち、数値と同じベースラインに揃えます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-copy": [
+    {
+      "type": 0,
+      "value": "ネイティブアプリで、クリップボードの権限確認なしにプリセットをコピーできるよう修正しました。クリップボードを利用できないブラウザーでは手動コピーを案内します。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.quick-amounts": [
+    {
+      "type": 0,
+      "value": "オフライン時間で貯蔵時間のクイック使用量を3つ設定でき、サイドバーの表示も簡潔になりました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.sidebar-freeze": [
+    {
+      "type": 0,
+      "value": "サイドバーから貯蔵時間をまとめて使用して災害や文明の終焉が発生した際に、ゲームが停止する問題を修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "恒星スキルを再設計し、破砕後も残る直接出力ボーナスを追加。破砕すると各スキルの欠点が解除され、恒星支配は安定した発動条件を使用する。恒星の説明とボット消費を更新。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "エクスポートするセーブのファイル名に日時を付けるオプションを追加しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-11.tinker-offline": [

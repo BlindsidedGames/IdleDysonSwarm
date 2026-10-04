@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useIntl, type IntlShape } from 'react-intl'
 import type { CanonicalRuntimePresentationEvent } from '../../../application/canonicalRuntimeSession'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -54,6 +55,10 @@ export function GameplayNotificationHost({
   onViewReality,
 }: GameplayNotificationHostProps) {
   const intl = useIntl()
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(null)
+  const attachHost = useCallback((node: HTMLDivElement | null) => {
+    if (node) setPortalHost(node.closest('.dyson-shell'))
+  }, [])
   const [queue, setQueue] = useState<readonly QueuedNotice[]>([])
   const seenRef = useRef({ sessionRevision, sequence: 0 })
   const seenStoredTimeSequencesRef = useRef(new Set<number>())
@@ -107,11 +112,12 @@ export function GameplayNotificationHost({
   const active = queue[0]
 
   return (
-    <div className="gameplay-notification-host" data-active={active !== undefined || undefined}>
+    <div ref={attachHost} className="gameplay-notification-host" data-active={active !== undefined || undefined}>
       {active?.kind === 'automatic-dream-disaster' &&
       active.firstLifetimeOccurrence ? (
         <FirstDisasterDialog
           key={active.sequence}
+          portalHost={portalHost}
           event={active}
           locale={locale}
           onDismiss={dismiss}
@@ -242,11 +248,13 @@ function TimedNotification({
 }
 
 function FirstDisasterDialog({
+  portalHost,
   event,
   locale,
   onDismiss,
   onViewReality,
 }: {
+  readonly portalHost: HTMLElement | null
   readonly event: DisasterEvent
   readonly locale: EnabledLocale
   readonly onDismiss: () => void
@@ -273,7 +281,10 @@ function FirstDisasterDialog({
     const shellSiblings = shell === null || shell === undefined || main === null || main === undefined
       ? []
       : Array.from(shell.children).filter((element) => element !== main)
-    const siblings = [...contentSiblings, ...shellSiblings]
+    const backdrop = dialogRef.current?.parentElement
+    const siblings = portalHost
+      ? Array.from(portalHost.children).filter((element) => element !== backdrop)
+      : [...contentSiblings, ...shellSiblings]
     const previousInert = siblings.map((element) => ({
       element: element as HTMLElement,
       inert: (element as HTMLElement).inert,
@@ -281,11 +292,12 @@ function FirstDisasterDialog({
     for (const { element } of previousInert) element.inert = true
     return () => {
       for (const item of previousInert) item.element.inert = item.inert
-      if (previousFocus?.isConnected) previousFocus.focus()
+      if (previousFocus?.isConnected && !previousFocus.closest('[inert]')) previousFocus.focus()
     }
-  }, [])
+  }, [portalHost])
 
   const onKeyDown = (keyboardEvent: KeyboardEvent<HTMLDivElement>) => {
+    keyboardEvent.stopPropagation()
     if (keyboardEvent.key === 'Escape') {
       keyboardEvent.preventDefault()
       onDismiss()
@@ -307,7 +319,7 @@ function FirstDisasterDialog({
     }
   }
 
-  return (
+  const dialog = (
     <div className="gameplay-disaster-dialog__backdrop">
       <div
         ref={dialogRef}
@@ -337,6 +349,7 @@ function FirstDisasterDialog({
       </div>
     </div>
   )
+  return portalHost ? createPortal(dialog, portalHost) : dialog
 }
 
 function noticeText(

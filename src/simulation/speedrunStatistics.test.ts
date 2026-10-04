@@ -129,9 +129,9 @@ describe('personal best records', () => {
     expect(later.statistics.speedruns!.doubleIpUsed).toBe(true)
   })
 
-  test.each(['debug', 'imported', 'clock'] as const)('%s runs cannot set bests', reason => {
+  test.each(['debug', 'clock'] as const)('%s runs cannot set bests', reason => {
     const state = fresh()
-    const run = { ...state.statistics.speedruns!, ...(reason === 'debug' ? { debug: 'yes' as const } : reason === 'imported' ? { imported: true } : { clockUncertain: true }) }
+    const run = { ...state.statistics.speedruns!, ...(reason === 'debug' ? { debug: 'yes' as const } : { clockUncertain: true }) }
     const observed = observeSpeedruns({ ...state, meta: { ...state.meta, firstInfinityComplete: true }, statistics: { ...state.statistics, speedruns: run } }, origin + 5000)
     expect(observed.statistics.speedruns!.personalBests).toEqual({})
   })
@@ -151,7 +151,7 @@ describe('personal best records', () => {
     const imported = hydrateGameState(prepareImportedSaveText(serializeWebSave(forged), start, undefined, undefined, checkpoint)).state.statistics.speedruns!
     expect(imported.personalBests).toEqual(recorded.statistics.speedruns!.personalBests)
     expect(imported.imported).toBe(true)
-    expect(speedrunEligible(imported)).toBe(false)
+    expect(speedrunEligible(imported)).toBe(true)
     const reset = hydrateGameState(prepareImportedSaveText(serializeWebSave(createUnityFirstRunPreparedSave({ startedAtUtc: start }).copyValidatedState()), start, undefined, { kind: 'manual-shared-import', importedAtUtc: start, intent: 'save-reset' }, checkpoint)).state.statistics.speedruns!
     expect(reset.personalBests).toEqual(recorded.statistics.speedruns!.personalBests)
     expect(reset.milestones).toEqual({})
@@ -283,4 +283,29 @@ test('different historical clocks have explicit precedence and cannot downgrade 
   expect(recordPersonalBest({ firstInfinity: active }, 'firstInfinity', elapsed).firstInfinity).toBe(active)
   const run = fresh().statistics.speedruns!
   expect(validateSpeedrunStatistics({ ...run, milestones: { firstInfinity: { ...base, timingBasis: ['combined'] } } })).toBeTruthy()
+})
+
+
+test('manual imported runs continue timing and snapshot provenance while preserving all other eligibility guards', () => {
+  const session = new CanonicalRuntimeSession(createUnityFirstRunPreparedSave({ startedAtUtc: start }), { entitlements: { permanentDoubleIp: false } })
+  const played = recordActiveSpeedrunTime(session.initialState.gameState, 17)
+  const prepared = session.prepare({ ...session.initialState, gameState: played })
+  const transferred = hydrateGameState(prepareImportedSaveText(serializeWebSave(prepared.copyValidatedState()), start)).state
+  const continued = recordStoredSpeedrunTime(recordActiveSpeedrunTime(transferred, 3), 60)
+  const reached = observeSpeedruns({ ...continued, meta: { ...continued.meta, firstInfinityComplete: true } }, origin + 1000)
+  expect(reached.statistics.speedruns!.personalBests!.firstInfinity).toMatchObject({
+    elapsedSeconds: 80, activeSeconds: 20, storedTimeSeconds: 60, imported: true, storedTime: 'yes', debug: 'no', timingBasis: 'combined',
+  })
+  expect(speedrunEligible(reached.statistics.speedruns!)).toBe(true)
+  const reloaded = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(session.prepare({ ...session.initialState, gameState: reached }).copyValidatedState())))).state
+  expect(reloaded.statistics.speedruns!.personalBests!.firstInfinity).toEqual(reached.statistics.speedruns!.personalBests!.firstInfinity)
+  for (const run of [
+    { ...continued.statistics.speedruns!, debug: 'yes' as const },
+    { ...continued.statistics.speedruns!, debug: 'unknown' as const },
+    { ...continued.statistics.speedruns!, clockUncertain: true },
+    { ...continued.statistics.speedruns!, startedAtMilliseconds: null },
+  ]) {
+    const blocked = observeSpeedruns({ ...continued, meta: { ...continued.meta, firstInfinityComplete: true }, statistics: { ...continued.statistics, speedruns: run } }, origin + 1000)
+    expect(blocked.statistics.speedruns!.personalBests!.firstInfinity).toBeUndefined()
+  }
 })

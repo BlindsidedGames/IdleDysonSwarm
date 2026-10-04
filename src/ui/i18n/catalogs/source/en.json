@@ -1929,6 +1929,18 @@
     "defaultMessage": "({value})",
     "description": "Unity parenthesized spent Infinity Point value shown after available points."
   },
+  "infinity.production-boost": {
+    "defaultMessage": "Boosting Facility Production by <highlight>×{multiplier}</highlight>",
+    "description": "Live facility production multiplier from total earned IP; individual facility thresholds are unchanged."
+  },
+  "infinity.production-boost.facility-range": {
+    "defaultMessage": "{first}–{last}",
+    "description": "Inclusive range of facility tiers boosted by earned IP, in facility order."
+  },
+  "infinity.production-boost.none": {
+    "defaultMessage": "Facility production ×1",
+    "description": "Production multiplier before earning any IP."
+  },
   "infinity.progress.bots-until-next": {
     "defaultMessage": "Bots until next Infinity Point: {value}",
     "description": "Accessible label for the remaining bot count beside the Infinity Point icon."
@@ -2288,6 +2300,14 @@
   "offline-time.progress-announcement": {
     "defaultMessage": "{percent}% complete",
     "description": "Coarsened screen-reader progress announcement for a Stored Time job."
+  },
+  "offline-time.quick-amounts": {
+    "defaultMessage": "Quick actions (minutes)",
+    "description": "Three device-local quick action amounts."
+  },
+  "offline-time.quick-slot": {
+    "defaultMessage": "Action {slot}",
+    "description": "Label for a numbered quick time action."
   },
   "offline-time.quick-spend": {
     "defaultMessage": "Spend {duration} of Offline Time",
@@ -3693,6 +3713,14 @@
     "defaultMessage": "Development Menu",
     "description": "Heading for development-only gameplay controls."
   },
+  "settings.interface-size": {
+    "defaultMessage": "Interface size",
+    "description": "Desktop interface zoom for readability."
+  },
+  "settings.interface-size.description": {
+    "defaultMessage": "Change how the interface scales across the game",
+    "description": "Desktop interface scaling description beneath its title."
+  },
   "settings.language.chinese-simplified": {
     "defaultMessage": "简体中文",
     "description": "Autonym for the Simplified Chinese language option."
@@ -4070,6 +4098,10 @@
   "settings.save-data.title": {
     "defaultMessage": "Save Data",
     "description": "Heading for save management settings."
+  },
+  "settings.timestamp-exports": {
+    "defaultMessage": "Timestamp export filenames",
+    "description": "Optional UTC timestamp in exported save filenames."
   },
   "settings.visualization.description": {
     "defaultMessage": "Show the evolving star, galaxy, and deep-field visualization above facilities.",
@@ -4686,6 +4718,10 @@
   "skills.copy": {
     "defaultMessage": "Copy",
     "description": "Button label for copying a skill preset export string."
+  },
+  "skills.copy-failed": {
+    "defaultMessage": "Copy failed. Copy the selected text manually.",
+    "description": "Clipboard failure feedback; the preset export text remains selected for manual copying."
   },
   "skills.cost": {
     "defaultMessage": "Cost: {value} Skill Points",
@@ -6545,6 +6581,62 @@
   "skills.srs.stellarMemory.name": {
     "defaultMessage": "Stellar Memory"
   },
+  "skills.stellar.dominance.technical": {
+    "defaultMessage": "1,000× Stellar output. 10× Panel Lifetime while your Bots meet the coverage-based requirement calculated before this lifetime bonus. Cash is divided by 100 while active; ordinary coverage-based Bot cost is multiplied by 100.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.fracturedDominance": {
+    "defaultMessage": "1,000× Stellar output. 10× Panel Lifetime while the normal pre-bonus Bot requirement is met. Removes this skill’s extra Bot-cost factor and Cash penalty.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.fracturedImprovements": {
+    "defaultMessage": "2× Stellar output and 1,000× lower Bot costs, permanently without assigned Skill Points.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.fracturedObliteration": {
+    "defaultMessage": "1,000× Stellar output and 1,000× effective Stellar Galaxies. Removes this skill’s extra Bot cost and Cash/Science penalty.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.fracturedObliteration.discoveryTechnical": {
+    "defaultMessage": "1,000× Stellar output and 1,000× effective Stellar Galaxies. Removes this skill’s extra Bot cost and Cash penalty.",
+    "description": "Fractured Obliteration mechanics after Discovery replaces Science."
+  },
+  "skills.stellar.fracturedSacrifices": {
+    "defaultMessage": "Create your highest owned facility, including megastructures, without consuming Bots: max(0, log10(Stellar Galaxies))² per second, multiplied by owned Stellar benefits, Discovery and Stellar Swarm. No output at one Stellar Galaxy or below.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.fracturedSupernova": {
+    "defaultMessage": "1,000× Stellar output and another 1,000× effective Stellar Galaxies. Removes this skill’s extra Bot cost and restores purchase bonuses, including Stellar Swarm scaling.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.improvements.technical": {
+    "defaultMessage": "2× Stellar output. Divide Bots required for Stellar Sacrifices by 1,000.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.obliteration.discoveryTechnical": {
+    "defaultMessage": "1,000× Stellar output, 1,000× effective Stellar Galaxies and 1,000× Bot cost. Divide Cash by effective Stellar Galaxies, with a minimum divisor of one.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.obliteration.technical": {
+    "defaultMessage": "1,000× Stellar output, 1,000× effective Stellar Galaxies and 1,000× Bot cost. Divide Cash and Science by effective Stellar Galaxies, with a minimum divisor of one.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.outputBonuses": {
+    "defaultMessage": "Stellar output bonuses",
+    "description": "Facility calculation row for combined Stellar output multipliers."
+  },
+  "skills.stellar.outputBonusesDescription": {
+    "defaultMessage": "Combined output multipliers from Stellar Improvements, Stellar Dominance, Stellar Obliteration and Supernova.",
+    "description": "Explains the combined Stellar output multipliers."
+  },
+  "skills.stellar.sacrifices.technical": {
+    "defaultMessage": "Consume Bots to create your highest owned facility, including megastructures: max(0, log10(Stellar Galaxies))² per second, multiplied by owned Stellar benefits, Discovery and Stellar Swarm. No output at one Stellar Galaxy or below. Base Bot cost equals Stars Surrounded per second, with a minimum of one.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
+  "skills.stellar.supernova.technical": {
+    "defaultMessage": "1,000× Stellar output, another 1,000× effective Stellar Galaxies and another 1,000× Bot cost. Suppress all facility bonuses from purchases, including the purchase scaling used by Stellar Swarm. Refunding restores them.",
+    "description": "Web-owned Stellar skill mechanics."
+  },
   "skills.subskill-assign": {
     "defaultMessage": "Assign {name} for 1 Skill Point",
     "description": "Fractured skill details interface."
@@ -7223,8 +7315,8 @@
     "description": "First successful Transcend reset in this save."
   },
   "statistics.speedruns.importedRun": {
-    "defaultMessage": "Ineligible — Imported save",
-    "description": "Imported progress cannot set personal bests until Reset Save."
+    "defaultMessage": "Imported save",
+    "description": "This run continued from an imported save."
   },
   "statistics.speedruns.inProgress": {
     "defaultMessage": "In progress",
@@ -7323,7 +7415,7 @@
     "description": "Legend for speedrun assistance icons."
   },
   "statistics.speedruns.usageLegendHelp": {
-    "defaultMessage": "Personal bests exclude imported saves, Debug use, and unverified times.",
+    "defaultMessage": "Personal bests exclude Debug use and unverified times.",
     "description": "Explains speedrun indicators and record eligibility."
   },
   "statistics.speedruns.usageNotUsed": {
@@ -8249,8 +8341,48 @@
     "defaultMessage": "Improved button gradients and text contrast across the game. Disabled buttons now use flat colours.",
     "description": "Version 4.1.11 release notes."
   },
+  "wiki.patch-notes.version-4-1-11.checkbox-labels": {
+    "defaultMessage": "Made checkbox labels wider and consistent across Settings and Skills.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": {
+    "defaultMessage": "Added desktop interface sizing from 80% to 150%, a Default reset, and skill-tree zoom up to 250%.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": {
+    "defaultMessage": "Added desktop-only tooltips that follow the pointer, with skill-type colours.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": {
+    "defaultMessage": "Valid imported saves now continue speedruns with existing eligibility checks. A matching floppy-disk marker appears before Stored Time.",
+    "description": "Version 4.1.11 release notes."
+  },
   "wiki.patch-notes.version-4-1-11.infinity-hold": {
     "defaultMessage": "Added repeat purchases for Secret of the Universe and Permanent Skill Points in Infinity. Click and hold or long press to keep buying.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.infinity-summary": {
+    "defaultMessage": "Infinity now shows the Facility production boost from all earned IP beside the totals, with readable, baseline-aligned text on mobile.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.preset-copy": {
+    "defaultMessage": "Fixed preset Copy in native apps without a clipboard permission prompt. Browsers without clipboard access show a manual-copy fallback.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.quick-amounts": {
+    "defaultMessage": "Choose three Stored Time quick-use amounts in Offline Time, with compact sidebar labels.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.sidebar-freeze": {
+    "defaultMessage": "Fixed the game freezing when sidebar Stored Time bursts trigger disasters or civilisation endings.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": {
+    "defaultMessage": "Reworked Stellar skills with direct output bonuses that survive fracturing. Fracturing removes each skill’s drawbacks, and Stellar Dominance uses a stable activation requirement. Updated Stellar descriptions and Bot costs.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.timestamp-exports": {
+    "defaultMessage": "Added an option to timestamp exported save filenames.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.tinker-offline": {

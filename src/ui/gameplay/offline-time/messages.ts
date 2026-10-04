@@ -1,6 +1,8 @@
 import { defineMessages } from 'react-intl'
 
 export const offlineTimeMessages = defineMessages({
+  quickAmounts: { id: 'offline-time.quick-amounts', defaultMessage: 'Quick actions (minutes)', description: 'Three device-local quick action amounts.' },
+  quickSlot: { id: 'offline-time.quick-slot', defaultMessage: 'Action {slot}', description: 'Label for a numbered quick time action.' },
   maxStorage: {
     id: 'offline-time.max-storage', defaultMessage: 'Max Storage',
     description: 'Label for maximum bank capacity beneath the storage bar.',

@@ -6,6 +6,7 @@ export const SPEEDRUN_MILESTONES = ['firstInfinity', 'firstQuantumLeap', 'realit
 export type SpeedrunMilestoneId = typeof SPEEDRUN_MILESTONES[number]
 export type RunUsage = 'yes' | 'no' | 'unknown'
 export interface SpeedrunUsage {
+  readonly imported?: boolean
   readonly botBoostUsed?: boolean
   readonly doubleIpUsed?: boolean
   readonly storedTime: RunUsage
@@ -20,7 +21,6 @@ export interface SpeedrunMilestone extends SpeedrunUsage {
   readonly elapsedSeconds: number | null
 }
 export interface SpeedrunStatistics extends SpeedrunUsage {
-  readonly imported?: boolean
   readonly personalBests?: SpeedrunRecords
   readonly createdWithVersion?: string
   readonly activeSeconds?: number
@@ -70,7 +70,7 @@ export function speedrunRecordSeconds(run: SpeedrunStatistics, now = Date.now())
 }
 
 export function speedrunEligible(run: SpeedrunStatistics): boolean {
-  return run.imported !== true && run.debug === 'no' && !run.clockUncertain && run.startedAtMilliseconds !== null
+  return run.debug === 'no' && !run.clockUncertain && run.startedAtMilliseconds !== null
 }
 
 export function observeSpeedruns(state: CanonicalGameStateV1, now = Date.now(), historical = false, quantumLeap = false, transcendence = false): CanonicalGameStateV1 {
@@ -107,6 +107,7 @@ export function observeSpeedruns(state: CanonicalGameStateV1, now = Date.now(), 
 /** Snapshots preserve unknown historical usage rather than inventing a clean run. */
 export function snapshotSpeedrunUsage(run: SpeedrunUsage): SpeedrunUsage {
   return { storedTime: run.storedTime, debug: run.debug,
+    ...(run.imported === undefined ? {} : { imported: run.imported }),
     ...(run.botBoostUsed === undefined ? {} : { botBoostUsed: run.botBoostUsed }),
     ...(run.doubleIpUsed === undefined ? {} : { doubleIpUsed: run.doubleIpUsed }) }
 }
@@ -229,6 +230,7 @@ export function validateSpeedrunStatistics(value: unknown): string | null {
   if (value.personalBests !== undefined && !record(value.personalBests)) return 'Invalid speedrun records.'
   for (const [id, milestone] of [...Object.entries(value.milestones), ...Object.entries(value.personalBests ?? {})]) {
     if (!SPEEDRUN_MILESTONES.includes(id as SpeedrunMilestoneId) || !record(milestone) ||
+      (milestone.imported !== undefined && typeof milestone.imported !== 'boolean') ||
       (milestone.doubleIpUsed !== undefined && typeof milestone.doubleIpUsed !== 'boolean') ||
       (milestone.botBoostUsed !== undefined && typeof milestone.botBoostUsed !== 'boolean') ||
       (milestone.timingBasis !== undefined && (typeof milestone.timingBasis !== 'string' || !['combined', 'active', 'elapsed'].includes(milestone.timingBasis))) ||

@@ -7,7 +7,10 @@ import { offlineTimeMessages as messages } from './messages'
 
 const NO_JOB_SUBSCRIPTION = () => () => undefined
 const IDLE = () => false
-const AMOUNTS = [[60, '1 M'], [600, '10 M'], [3600, '1 HR']] as const
+import { useQuickStoredTimeAmounts } from './quickStoredTimePreferences'
+import { formatQuickStoredTime } from './quickStoredTimePreferences'
+import type { EnabledLocale } from '../../i18n/localeRegistry'
+
 
 export function QuickStoredTime({ availableSeconds, disabled, dispatchPlayer, storedTime, onFirstDisasters }: {
   readonly availableSeconds: number
@@ -17,6 +20,7 @@ export function QuickStoredTime({ availableSeconds, disabled, dispatchPlayer, st
   readonly onFirstDisasters: (batch: StoredTimeFirstDisasterDialogBatch) => void
 }) {
   const intl = useIntl()
+  const { seconds: amounts } = useQuickStoredTimeAmounts()
   const subscribe = useCallback((listener: () => void) => storedTime?.subscribe(listener) ?? NO_JOB_SUBSCRIPTION(), [storedTime])
   const readBusy = useCallback(() => storedTime !== undefined && storedTime.status().kind !== 'idle', [storedTime])
   const jobActive = useSyncExternalStore(subscribe, readBusy, IDLE)
@@ -42,10 +46,12 @@ export function QuickStoredTime({ availableSeconds, disabled, dispatchPlayer, st
   }
   return <div className="offline-time-quick-spend">
     <div className="offline-time-quick-spend__buttons">
-      {AMOUNTS.map(([seconds, label]) => <button key={seconds} type="button"
+      {amounts.map((seconds, slot) => {
+        const label = formatQuickStoredTime(intl.locale as EnabledLocale, seconds)
+        return <button key={slot} type="button"
         aria-label={intl.formatMessage(messages.quickSpend, { duration: label })}
         disabled={disabled || pending || jobActive || availableSeconds < seconds}
-        onClick={() => void spend(seconds)}>{label}</button>)}
+        onClick={() => void spend(seconds)}>{label}</button>})}
     </div>
     {pending || jobActive ? <div className="offline-time-quick-spend__status">
       {storedTime && jobActive ? <button type="button" onClick={() => storedTime.cancel()}>{intl.formatMessage(messages.cancel)}</button> : null}
