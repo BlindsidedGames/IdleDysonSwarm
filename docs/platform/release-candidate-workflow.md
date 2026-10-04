@@ -51,7 +51,15 @@ upload identity, not reasons to rotate it during an ordinary release.
 
 ## Prepare a release locally
 
-Start from a clean checkout at the exact commit intended for release:
+Before building an internal candidate, merge all intended changes into `main`,
+fetch the remote and pin the exact merged `origin/main` SHA. Include approved
+preview changes in production source before this step; a preview or an unmerged
+worktree is not a release integration. Preserve unrelated local work separately.
+Use a clean checkout at that pinned SHA for every platform, and record it beside
+the artifacts. Documentation-only release records may follow the build without
+changing the candidate's source identity.
+
+Start the canonical local gate from that clean checkout:
 
 ```bash
 npm run release:local -- --release-id <YYYYMMDDNN>
