@@ -15772,6 +15772,30 @@
       "value": "超越"
     }
   ],
+  "wiki.credits": [
+    {
+      "type": 0,
+      "value": "クレジット"
+    }
+  ],
+  "wiki.credits.lead-developer": [
+    {
+      "type": 0,
+      "value": "リード開発者"
+    }
+  ],
+  "wiki.credits.sound": [
+    {
+      "type": 0,
+      "value": "サウンド"
+    }
+  ],
+  "wiki.credits.special-mentions": [
+    {
+      "type": 0,
+      "value": "スペシャルサンクス"
+    }
+  ],
   "wiki.discovery.overview": [
     {
       "type": 0,

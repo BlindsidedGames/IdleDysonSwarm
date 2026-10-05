@@ -58,7 +58,6 @@ describe('SimulationsSurface command availability', () => {
           progression={before.gameplay.progression.dream}
           previews={before.gameplay.previews.dream}
           influence={before.gameplay.resources.reality.influence}
-          activeDoubleTimeRate={0}
           spaceAgePurchaseQuantity={1}
           commandAvailability={{
             setBuyMode: true,
@@ -237,13 +236,14 @@ class MemoryRepository implements SaveRepository {
 }
 
 
-function surface(application: CanonicalGameApplicationFacade) {
+function surface(application: CanonicalGameApplicationFacade, gameSpeed = 1) {
   const { gameplay } = readyGameplay(application)
   return <IntlProvider locale="en" messages={{}} onError={() => undefined}>
     <SimulationsSurface
+      gameSpeed={gameSpeed}
       locale="en" facts={gameplay.derived.simulations}
       progression={gameplay.progression.dream} previews={gameplay.previews.dream}
-      influence={gameplay.resources.reality.influence} activeDoubleTimeRate={0}
+      influence={gameplay.resources.reality.influence}
       spaceAgePurchaseQuantity={simulationPurchaseQuantity(gameplay.progression.dream.buyMode ?? 'buy-1')}
       commandAvailability={{setBuyMode:true,purchaseFoundational:true,purchaseSpaceAge:true,startEducation:true,blackHoleReset:true}}
       dispatchPlayer={command => createDispatcher(application).dispatch(command)}
@@ -336,4 +336,28 @@ test('shows a capped Space Factory instead of a false active formula or no-produ
   const view = render(surface(application))
   expandSimulationPanels(view.container)
   expect(screen.getByRole('article', {name:/^Space Factories/}).querySelector('dd')?.textContent).toBe('Capped')
+})
+
+
+test('switches live accelerated cycles to throughput and returns to progress at regular speed', async () => {
+  const application = await createApplication()
+  await installPurchaseScenario(application)
+  const { container, rerender } = render(surface(application, 1))
+  expandSimulationPanels(container)
+  const card = screen.getByRole('article', { name: /^Space Factories/ })
+  const cycle = () => card.querySelector('.simulation-progress')!
+  expect(cycle().getAttribute('data-presentation')).toBe('slow')
+  expect(cycle().textContent).toContain('%')
+  const count = card.querySelector('.simulation-panel-card__value')!.textContent
+  expect(count).toBe('100')
+  rerender(surface(application, 2))
+  expect(cycle().getAttribute('data-presentation')).toBe('medium')
+  expect(cycle().textContent).toContain('/s')
+  rerender(surface(application, 42))
+  expect(cycle().getAttribute('data-presentation')).toBe('fast')
+  expect(cycle().textContent).toContain('/s')
+  expect(card.querySelector('.simulation-panel-card__value')!.textContent).toBe(count)
+  rerender(surface(application, 1))
+  expect(cycle().getAttribute('data-presentation')).toBe('slow')
+  expect(cycle().textContent).toContain('%')
 })

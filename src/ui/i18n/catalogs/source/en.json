@@ -7983,6 +7983,22 @@
     "defaultMessage": "Transcendence",
     "description": "Wiki category replacing Research after Discovery is unlocked."
   },
+  "wiki.credits": {
+    "defaultMessage": "Credits",
+    "description": "Wiki topic for game contributors."
+  },
+  "wiki.credits.lead-developer": {
+    "defaultMessage": "Lead developer",
+    "description": "Credits role heading."
+  },
+  "wiki.credits.sound": {
+    "defaultMessage": "Sound",
+    "description": "Credits role heading."
+  },
+  "wiki.credits.special-mentions": {
+    "defaultMessage": "Special mentions",
+    "description": "Credits acknowledgement heading."
+  },
   "wiki.discovery.overview": {
     "defaultMessage": "Discovery starts with <value>10× facility production</value>, <value>7× Cash and Bot gains</value> and a <value>20-second base panel lifetime</value>. Each hourly base completion adds <value>0.1</value> to the facility multiplier. Facility and Bot bonuses both apply to Assembly Line output. Discovery needs no scientists or resources.",
     "description": "Explains Discovery baseline production, lifetime and fixed completion requirement."

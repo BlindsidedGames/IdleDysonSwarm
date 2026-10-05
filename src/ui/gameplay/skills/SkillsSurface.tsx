@@ -1,3 +1,4 @@
+import { realTimeRate, realTimeDuration } from '../effectiveSpeed'
 import { stellarFracturedMessages, stellarFracturedDiscoveryObliterationMessage } from './stellarMessages'
 import { copyPlainText } from '../../../platform/plainTextClipboard'
 import { isDesktopPresentation } from '../../desktopPresentation'
@@ -162,6 +163,7 @@ export interface SkillPresetActions {
 }
 
 export interface SkillsSurfaceProps {
+  readonly gameSpeed?: number
   readonly discoveryUnlocked?: boolean
   readonly galvanizers?: bigint
   readonly hasEarnedGalvanizer?: boolean
@@ -313,6 +315,7 @@ export function SkillsSurface(props: SkillsSurfaceProps) {
 }
 
 function SkillsSurfaceContent({
+  gameSpeed = 1,
   discoveryUnlocked = false,
   galvanizers = 0n,
   hasEarnedGalvanizer = false,
@@ -850,6 +853,7 @@ function SkillsSurfaceContent({
 
       {selectedNode && selectedPreview && (
         <SkillDetails
+          gameSpeed={gameSpeed}
           locale={locale}
           fragments={fragments}
           node={selectedNode}
@@ -1742,6 +1746,7 @@ function prepareSkillConnectors(
 }
 
 interface SkillDetailsProps {
+  readonly gameSpeed: number
   readonly showProductionComparisons: boolean
   readonly galvanizers: bigint
   readonly locale: EnabledLocale
@@ -1767,6 +1772,7 @@ interface SkillDetailsProps {
 
 
 function SkillDetails({
+  gameSpeed,
   showProductionComparisons,
   galvanizers,
   locale,
@@ -1937,6 +1943,13 @@ function SkillDetails({
   const fracturedDescriptor = fracturedSkillDescriptor(node)
   const fracturedTechnical = fracturedDescriptor ? intl.formatMessage(fracturedDescriptor) : node.technicalDescription
   const technical = preview.galvanized ? fracturedTechnical : node.skillId === 'shouldersOfTheEnlightened' && !node.discoveryTechnical ? intl.formatMessage(messages.galvEnlightened) : node.technicalDescription
+
+  const productionValue = (value: number, unit: string) =>
+    `${formatGameNumber(locale, unit === '/s' ? realTimeRate(value, gameSpeed) : value)}${unit}`
+  const projectedSeconds = realTimeDuration(liveProduction?.projectedSeconds ?? 0, gameSpeed)
+  const productionWait = liveProduction?.projected
+    ? ` (${formatGameNumber(locale, projectedSeconds < 60 ? projectedSeconds : projectedSeconds / 60)}${projectedSeconds < 60 ? 's' : 'm'})`
+    : ''
 
   return (
     <SkillDetailsDialog
@@ -2135,8 +2148,8 @@ function SkillDetails({
                     {liveProduction && liveProduction.rows.map((row) => (
                       <ProductionImpactRow key={row.id}
                         label={intl.formatMessage(productionMetrics[row.id].label)}
-                        before={`${formatGameNumber(locale, row.before)}${productionMetrics[row.id].unit}`}
-                        after={`${formatGameNumber(locale, row.after)}${productionMetrics[row.id].unit}${liveProduction.projected ? ` (${liveProduction.projectedSeconds < 60 ? `${liveProduction.projectedSeconds}s` : `${liveProduction.projectedSeconds / 60}m`})` : ''}`}
+                        before={productionValue(row.before, productionMetrics[row.id].unit)}
+                        after={`${productionValue(row.after, productionMetrics[row.id].unit)}${productionWait}`}
                         afterTone={row.after >= row.before ? 'gain' : 'loss'}
                         toLabel={intl.formatMessage(messages.impactTo)} />
                     ))}

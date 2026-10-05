@@ -1,3 +1,4 @@
+import { realTimeRate } from '../effectiveSpeed'
 import {
   useEffect,
   useRef,
@@ -54,6 +55,7 @@ type RealityCommand = Extract<
 >
 
 export interface RealitySurfaceProps {
+  readonly gameSpeed?: number
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['reality']
   readonly derived: FrontendGameplayDerivedFacts['reality']
@@ -82,6 +84,7 @@ export interface RealitySurfaceProps {
  * lifecycle-owned; this component only displays them and dispatches intent.
  */
 export function RealitySurface({
+  gameSpeed = 1,
   locale,
   resources,
   derived,
@@ -270,7 +273,7 @@ export function RealitySurface({
                     {
                       value: formatGameNumber(
                         locale,
-                        derived.generationPerSecond,
+                        realTimeRate(derived.generationPerSecond, gameSpeed),
                       ),
                     },
                   )}
@@ -285,7 +288,7 @@ export function RealitySurface({
                     {
                       value: formatGameNumber(
                         locale,
-                        derived.generationPerSecond,
+                        realTimeRate(derived.generationPerSecond, gameSpeed),
                       ),
                     },
                   )}
@@ -298,7 +301,7 @@ export function RealitySurface({
                   value={batchProgress}
                   visualValue={visualBatchProgress}
                   normalizedRatePerSecond={
-                    derived.generationPerSecond /
+                    realTimeRate(derived.generationPerSecond, gameSpeed) /
                     Math.max(1, Number(derived.workerBatchSize))
                   }
                   active={!waitingForGather && batchProgress < 1}

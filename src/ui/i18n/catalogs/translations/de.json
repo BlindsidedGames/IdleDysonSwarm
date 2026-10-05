@@ -2369,5 +2369,9 @@
   "wiki.topic-navigation": "Wiki-Themen",
   "wiki.topics": "Themen",
   "wiki.transcendence.overview": "Bei <value>4e242 Bots</value> kannst du in Avocato transzendieren, um frühere Ebenen zurückzusetzen und <value>einen Transzendenzpunkt</value> zu erhalten. Gib einen Punkt für <value>Entdeckung freischalten</value> aus, um Wissenschaft und Forschung dauerhaft zu ersetzen. Vorhandene Wissenschaft und Forschungsstufen werden nicht übertragen.",
-  "wiki.transcendence.overview-title": "Jenseits des Schwarms"
+  "wiki.transcendence.overview-title": "Jenseits des Schwarms",
+  "wiki.credits": "Mitwirkende",
+  "wiki.credits.lead-developer": "Hauptentwickler",
+  "wiki.credits.sound": "Ton",
+  "wiki.credits.special-mentions": "Besondere Erwähnungen"
 }

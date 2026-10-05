@@ -1,3 +1,4 @@
+import { realTimeRate } from '../effectiveSpeed'
 import { stellarTechnicalMessages, stellarDiscoveryObliterationMessage, stellarFracturedMessages, stellarFracturedDiscoveryObliterationMessage, stellarOutputBonusMessages } from '../skills/stellarMessages'
 import { tinkerMessages } from '../tinker/messages'
 import { SWARM_AUGMENTS } from '../../../simulation/skillSubskills'
@@ -104,6 +105,7 @@ const facilityRootSkill: Readonly<Record<DysonFacilityId, string>> = {
 }
 
 export interface FacilityPresentationCardProps {
+  readonly gameSpeed?: number
   readonly locale: EnabledLocale
   readonly facilityId: DysonFacilityId
   readonly fact: FacilityCanonicalFact
@@ -119,6 +121,7 @@ export interface FacilityPresentationCardProps {
 }
 
 export function FacilityPresentationCard({
+  gameSpeed = 1,
   locale,
   facilityId,
   fact,
@@ -178,7 +181,7 @@ export function FacilityPresentationCard({
         <FittedProductionLine
           display={productionDisplay(
             locale,
-            fact.production.perSecond,
+            realTimeRate(fact.production.perSecond, gameSpeed),
             presentation,
             intl,
           )}
@@ -198,7 +201,7 @@ export function FacilityPresentationCard({
             },
           )}
           progress={fact.productionProgress}
-          productionRatePerSecond={fact.production.perSecond}
+          productionRatePerSecond={realTimeRate(fact.production.perSecond, gameSpeed)}
           reducedMotion={reducedMotion}
         />
       }
@@ -413,7 +416,7 @@ export function FacilityDetailsContent({
   )
   const generationContributions = details?.generationContributions ?? []
   const facilityName = intl.formatMessage(presentation.name)
-  const realRate = fact.production.perSecond * gameSpeed
+  const realRate = realTimeRate(fact.production.perSecond, gameSpeed)
   const productionFormula = base && count
     ? formatProductionFormula(
         locale,
@@ -555,7 +558,7 @@ export function FacilityDetailsContent({
                   })
                 : intl.formatMessage(messages.producedBy, {
                     facility: intl.formatMessage(upstreamFacilityNameMessages[source.sourceFacilityId] ?? messages.unknownFacility),
-                    rate: formatFacilityNumber(locale, source.contributionPerSecond),
+                    rate: formatFacilityNumber(locale, realTimeRate(source.contributionPerSecond, gameSpeed)),
                   })}</small>
             </span>
             {'producedCount' in source && (

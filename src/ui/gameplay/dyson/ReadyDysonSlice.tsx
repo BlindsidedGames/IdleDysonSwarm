@@ -1,3 +1,4 @@
+import { activeGameSpeed, realTimeRate } from '../effectiveSpeed'
 import { TabPresetQuickActions } from '../skills/TabPresetQuickActions'
 import { DiscoverySurface } from '../discovery/DiscoverySurface'
 import { discoveryMessages } from '../discovery/messages'
@@ -664,6 +665,7 @@ function ReadyDysonSliceContent({
   const storeVisible =
     releasePlatformServices !== undefined
   const gameplay = snapshot.gameplay
+  const gameSpeed = activeGameSpeed(gameplay.resources.time, gameplay.progression.timeline)
   const dispatchPlayer = useConfirmedTabPresetDispatch({
     dispatchPlayer: unconfirmedDispatchPlayer,
     autoAssignNonRefundable: gameplay.progression.skills.autoAssignNonRefundable,
@@ -1459,7 +1461,7 @@ function ReadyDysonSliceContent({
               ),
             }
           : route === 'transcendence' && gameplay.progression.discovery && gameplay.derived.discovery
-            ? { ariaLabel: intl.formatMessage(discoveryMessages.route), content: <DiscoverySurface gameSpeed={gameplay.progression.timeline?.doubleTime?.unlocked ? 2 : 1} state={gameplay.progression.discovery} effects={gameplay.derived.discovery} locale={locale} /> }
+            ? { ariaLabel: intl.formatMessage(discoveryMessages.route), content: <DiscoverySurface gameSpeed={gameSpeed} state={gameplay.progression.discovery} effects={gameplay.derived.discovery} locale={locale} /> }
           : researchActive
             ? {
                 ariaLabel: intl.formatMessage(messages.researchRoute),
@@ -1480,7 +1482,7 @@ function ReadyDysonSliceContent({
                       locale={locale}
                       cards={gameplay.previews.research.cards}
                       researchers={resources.researchers}
-                      sciencePerSecond={rates.science}
+                      sciencePerSecond={realTimeRate(rates.science, gameSpeed)}
                       buyMode={
                         gameplay.progression.research.automation
                           .buyMode
@@ -1568,6 +1570,7 @@ function ReadyDysonSliceContent({
                       }
                     >
                       <SkillsSurface
+                        gameSpeed={gameSpeed}
                         discoveryUnlocked={discoveryUnlocked}
                         galvanizers={gameplay.progression.challenges?.galvanizers ?? 0n}
                         hasEarnedGalvanizer={gameplay.progression.challenges?.hasEarnedGalvanizer ?? false}
@@ -1718,6 +1721,7 @@ function ReadyDysonSliceContent({
                           }
                         >
                           <RealitySurface
+                            gameSpeed={gameSpeed}
                             locale={locale}
                             resources={gameplay.resources.reality}
                             derived={gameplay.derived.reality}
@@ -1785,15 +1789,13 @@ function ReadyDysonSliceContent({
                             }
                           >
                             <SimulationsSurface
+                              gameSpeed={gameSpeed}
                               locale={locale}
                               facts={gameplay.derived.simulations}
                               progression={gameplay.progression.dream}
                               previews={gameplay.previews.dream}
                               influence={
                                 gameplay.resources.reality.influence
-                              }
-                              activeDoubleTimeRate={
-                                0
                               }
                               spaceAgePurchaseQuantity={simulationPurchaseQuantity(
                                 gameplay.progression.dream.buyMode ?? 'buy-1',
@@ -2164,8 +2166,8 @@ function ReadyDysonSliceContent({
           value: cashValue(display(resources.money)),
           fullPrecisionValue: cashValue(precise(resources.money)),
           machineValue: String(resources.money),
-          rate: cashRate(display(rates.money)),
-          fullPrecisionRate: cashRate(precise(rates.money)),
+          rate: cashRate(display(realTimeRate(rates.money, gameSpeed))),
+          fullPrecisionRate: cashRate(precise(realTimeRate(rates.money, gameSpeed))),
         },
         totalBots: {
           label: intl.formatMessage(messages.totalBots),
@@ -2188,8 +2190,8 @@ function ReadyDysonSliceContent({
           value: display(resources.science),
           fullPrecisionValue: precise(resources.science),
           machineValue: String(resources.science),
-          rate: scienceRate(display(rates.science)),
-          fullPrecisionRate: scienceRate(precise(rates.science)),
+          rate: scienceRate(display(realTimeRate(rates.science, gameSpeed))),
+          fullPrecisionRate: scienceRate(precise(realTimeRate(rates.science, gameSpeed))),
         },
       }}
       showResourceHeader={showSharedResourceHeader}
@@ -2218,6 +2220,7 @@ function ReadyDysonSliceContent({
               ariaLabel: intl.formatMessage(messages.tinker),
               content: (
                 <TinkerSurface
+                  gameSpeed={gameSpeed}
                   facts={tinker.value}
                   storedTime={storedTime}
                   dispatch={dispatchPlayer}
@@ -2254,11 +2257,7 @@ function ReadyDysonSliceContent({
                 automationUnlocked={
                   gameplay.progression.infinity.automationUnlocked.bots
                 }
-                gameSpeed={
-                  gameplay.progression.timeline?.doubleTime?.unlocked
-                    ? 2
-                    : 1
-                }
+                gameSpeed={gameSpeed}
                 revision={snapshot.revision}
                 dispatchPlayer={dispatchPlayer}
               />
@@ -2286,6 +2285,7 @@ function ReadyDysonSliceContent({
                 }
               >
                 <DysonProductionSummary
+                  gameSpeed={gameSpeed}
                   gameplay={gameplay}
                   locale={locale}
                 />

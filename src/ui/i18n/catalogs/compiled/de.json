@@ -15772,6 +15772,30 @@
       "value": "Transzendenz"
     }
   ],
+  "wiki.credits": [
+    {
+      "type": 0,
+      "value": "Mitwirkende"
+    }
+  ],
+  "wiki.credits.lead-developer": [
+    {
+      "type": 0,
+      "value": "Hauptentwickler"
+    }
+  ],
+  "wiki.credits.sound": [
+    {
+      "type": 0,
+      "value": "Ton"
+    }
+  ],
+  "wiki.credits.special-mentions": [
+    {
+      "type": 0,
+      "value": "Besondere Erwähnungen"
+    }
+  ],
   "wiki.discovery.overview": [
     {
       "type": 0,

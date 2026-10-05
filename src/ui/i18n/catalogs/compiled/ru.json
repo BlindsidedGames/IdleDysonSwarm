@@ -15772,6 +15772,30 @@
       "value": "Трансценденция"
     }
   ],
+  "wiki.credits": [
+    {
+      "type": 0,
+      "value": "Авторы"
+    }
+  ],
+  "wiki.credits.lead-developer": [
+    {
+      "type": 0,
+      "value": "Ведущий разработчик"
+    }
+  ],
+  "wiki.credits.sound": [
+    {
+      "type": 0,
+      "value": "Звук"
+    }
+  ],
+  "wiki.credits.special-mentions": [
+    {
+      "type": 0,
+      "value": "Особая благодарность"
+    }
+  ],
   "wiki.discovery.overview": [
     {
       "type": 0,

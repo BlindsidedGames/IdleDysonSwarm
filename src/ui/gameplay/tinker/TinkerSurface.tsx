@@ -1,3 +1,4 @@
+import { realTimeRate, realTimeDuration } from '../effectiveSpeed'
 import { manualFacilityPresentation } from '../skills/manualFacilityMessages'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
 import {
@@ -38,6 +39,7 @@ type ReadyTinker = Extract<
 export type TinkerFacts = ReadyTinker['value']
 
 export interface TinkerSurfaceProps {
+  readonly gameSpeed?: number
   readonly facts: TinkerFacts
   readonly storedTime?: UiRuntimeStoredTimeControls
   readonly dispatch: TinkerCommandDispatch
@@ -49,6 +51,7 @@ const NO_JOB_SUBSCRIPTION = () => undefined
 const IDLE = () => false
 
 export function TinkerSurface({
+  gameSpeed = 1,
   facts,
   storedTime,
   dispatch,
@@ -107,7 +110,7 @@ export function TinkerSurface({
     canonicalProgress: normalizedProgress,
     normalizedRatePerSecond:
       facts.runtime.cooldownSeconds > 0
-        ? 1 / facts.runtime.cooldownSeconds
+        ? realTimeRate(1 / facts.runtime.cooldownSeconds, gameSpeed)
         : 0,
     active: facts.runtime.running,
     wraps: facts.runtime.repeat,
@@ -120,7 +123,7 @@ export function TinkerSurface({
       )
     : facts.stats.cooldownSeconds
   const locale = intl.locale as EnabledLocale
-  const formattedSeconds = formatGameNumber(locale, seconds)
+  const formattedSeconds = formatGameNumber(locale, realTimeDuration(seconds, gameSpeed))
   const highlightedValue = (chunks: ReactNode) => (
     <span className="tinker-surface__yield">{chunks}</span>
   )

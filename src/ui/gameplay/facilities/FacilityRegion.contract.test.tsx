@@ -238,6 +238,35 @@ describe('FacilityRegion unified presentation contract', () => {
     ).toBe('Assembling 1 Matrioshka Brain /1.67 Min')
   })
 
+  test('updates production cadence with active speed without changing costs or game-second details', () => {
+    const base = props(vi.fn())
+    const facts = { ...base.facts, assembly_lines: {
+      ...base.facts.assembly_lines,
+      production: { ...base.facts.assembly_lines.production, perSecond: 0.1, secondsPerUnit: 10 },
+    } }
+    const view = (gameSpeed: number) => <IntlProvider locale="en" messages={{}} onError={() => undefined}>
+      <FacilityRegion {...base} facts={facts} gameSpeed={gameSpeed} />
+    </IntlProvider>
+    const { rerender } = render(view(1))
+    const card = screen.getAllByRole('article')[0]!
+    const production = () => card.querySelector('.basic-facility-card__production-line')!.textContent
+    expect(production()).toBe('Producing 1 Bot /10.0s')
+    const purchaseLabel = within(card).getAllByRole('button')[0]!.textContent
+    rerender(view(10))
+    expect(production()).toBe('Producing 1.00 Bots /s')
+    expect(within(card).getAllByRole('button')[0]!.textContent).toBe(purchaseLabel)
+    fireEvent.click(within(card).getByRole('button', { name: 'Details' }))
+    const dialog = screen.getByRole('dialog')
+    expect(dialog.textContent).toContain('1.00 / second')
+    expect(dialog.textContent).toContain('0.10 / game second')
+    rerender(view(42))
+    expect(production()).toBe('Producing 4.20 Bots /s')
+    expect(dialog.textContent).toContain('4.20 / second')
+    expect(dialog.textContent).toContain('0.10 / game second')
+    rerender(view(1))
+    expect(production()).toBe('Producing 1 Bot /10.0s')
+  })
+
   test.each(MEGA_STRUCTURE_FACILITY_IDS)('%s details formula includes the actual aggregate modifier without duplicating attribution', facilityId => {
     const hydrated = hydrateGameState(prepareIdb1Save(fixtureText).prepared)
     const source = hydrated.state

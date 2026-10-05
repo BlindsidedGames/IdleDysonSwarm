@@ -203,6 +203,7 @@ export function FacilityRegion({
                 )
               }
               const sharedCard = {
+                gameSpeed,
                 locale,
                 preview,
                 routeAvailable: purchaseRouteAvailable,
