@@ -122,6 +122,7 @@ const baseCategories: readonly WikiCategory[] = [
     ],
   },
   { id: 'patch-notes', title: messages.patchNotes, sections: [] },
+  { id: 'credits', title: messages.credits, sections: [] },
 ]
 
 const FLAT_CATEGORY_IDS = new Set<WikiCategoryId>([
@@ -430,6 +431,8 @@ export function WikiSurface({
             <SecretsArticle discoveryUnlocked={discoveryUnlocked} locale={locale} revealed={progression.secretsOfTheUniverse} />
           ) : category.id === 'patch-notes' ? (
             <PatchNotesArticle />
+          ) : category.id === 'credits' ? (
+            <CreditsArticle />
           ) : category.id === 'lore' ? (
             <LoreArticle progression={progression} />
           ) : (
@@ -442,6 +445,36 @@ export function WikiSurface({
           )}
         </article>
       </div>
+    </div>
+  )
+}
+
+function CreditsArticle() {
+  const intl = useIntl()
+  // Avotation labels verified against the current overlay and original Unity scene.
+  const specialMentions = [
+    'MatHeadGetz',
+    'Nuclearion', 'Stupidophobia', 'Gudu', 'wiabobber', 'Wolfh',
+    'QUACKERS', 'Holg', 'Latimer Cross', 'Mentojacka', 'VashVash',
+    'Kad',
+    'Clémentine',
+  ] as const
+  return (
+    <div className="wiki-surface__credits">
+      <section className="wiki-surface__section">
+        <h3>{intl.formatMessage(messages.leadDeveloper)}</h3>
+        <p>Matthew Rushworth</p>
+      </section>
+      <section className="wiki-surface__section">
+        <h3>{intl.formatMessage(messages.sound)}</h3>
+        <p>Technishift</p>
+      </section>
+      <section className="wiki-surface__section">
+        <h3>{intl.formatMessage(messages.specialMentions)}</h3>
+        <ul className="wiki-surface__credit-names">
+          {specialMentions.map((name) => <li key={name}>{name}</li>)}
+        </ul>
+      </section>
     </div>
   )
 }

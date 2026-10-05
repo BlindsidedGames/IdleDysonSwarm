@@ -15772,6 +15772,30 @@
       "value": "Transcendência"
     }
   ],
+  "wiki.credits": [
+    {
+      "type": 0,
+      "value": "Créditos"
+    }
+  ],
+  "wiki.credits.lead-developer": [
+    {
+      "type": 0,
+      "value": "Desenvolvedor principal"
+    }
+  ],
+  "wiki.credits.sound": [
+    {
+      "type": 0,
+      "value": "Som"
+    }
+  ],
+  "wiki.credits.special-mentions": [
+    {
+      "type": 0,
+      "value": "Menções especiais"
+    }
+  ],
   "wiki.discovery.overview": [
     {
       "type": 0,

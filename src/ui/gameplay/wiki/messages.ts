@@ -1,6 +1,10 @@
 import { defineMessages, type MessageDescriptor } from 'react-intl'
 
 export const wikiMessages = defineMessages({
+  credits: { id: 'wiki.credits', defaultMessage: 'Credits', description: 'Wiki topic for game contributors.' },
+  leadDeveloper: { id: 'wiki.credits.lead-developer', defaultMessage: 'Lead developer', description: 'Credits role heading.' },
+  sound: { id: 'wiki.credits.sound', defaultMessage: 'Sound', description: 'Credits role heading.' },
+  specialMentions: { id: 'wiki.credits.special-mentions', defaultMessage: 'Special mentions', description: 'Credits acknowledgement heading.' },
   region: { id: 'wiki.region', defaultMessage: 'Wiki', description: 'Accessible name for the in-game reference surface.' },
   title: { id: 'wiki.title', defaultMessage: 'Wiki', description: 'Heading for the in-game reference surface.' },
   topics: { id: 'wiki.topics', defaultMessage: 'Topics', description: 'Accessible heading for the Wiki topic navigation.' },

@@ -2369,5 +2369,9 @@
   "wiki.topic-navigation": "Tópicos da Wiki",
   "wiki.topics": "Tópicos",
   "wiki.transcendence.overview": "Com <value>4e242 Bots</value>, Transcenda em Avocato para reiniciar as camadas anteriores e ganhar <value>um ponto de Transcendência</value>. Gaste um ponto em <value>Desbloquear Descoberta</value> para substituir Ciência e Pesquisa permanentemente. A Ciência e os níveis de pesquisa existentes não são transferidos.",
-  "wiki.transcendence.overview-title": "Além do enxame"
+  "wiki.transcendence.overview-title": "Além do enxame",
+  "wiki.credits": "Créditos",
+  "wiki.credits.lead-developer": "Desenvolvedor principal",
+  "wiki.credits.sound": "Som",
+  "wiki.credits.special-mentions": "Menções especiais"
 }

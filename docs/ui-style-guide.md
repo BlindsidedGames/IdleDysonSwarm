@@ -167,6 +167,20 @@ Use these existing tokens rather than choosing a new nearby value per element:
 Do not add screenshot or CSS-literal unit tests for every cosmetic edit. Use
 focused behavioural coverage for real regressions, plus actual visual inspection.
 
+## Wiki Credits
+
+Matthew approved the Credits content and rendered layout on 5 October 2026,
+after reviewing the version 2 screenshots with Kad and Clémentine included.
+Credits is an always-available Wiki topic. Preserve its existing Wiki palette,
+role headings and section dividers, with two columns of names on desktop and
+one column on narrow screens.
+
+- Lead developer: Matthew Rushworth.
+- Sound: Technishift.
+- Special mentions, in reading order: MatHeadGetz, Nuclearion, Stupidophobia, Gudu,
+  wiabobber, Wolfh, QUACKERS, Holg, Latimer Cross, Mentojacka, VashVash, Kad,
+  Clémentine. Preserve spelling, case and accents; list each name once.
+
 ## Bots and Research preset shortcuts
 
 Reuse the Skills preset control, with five buttons per row and its confirmation flow. In Bots,

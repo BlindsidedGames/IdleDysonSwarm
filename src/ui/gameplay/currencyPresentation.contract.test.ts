@@ -158,7 +158,7 @@ describe('progression currency presentation contract', () => {
     )
     expect(simulations).toContain('const displayCurrency =')
     expect(simulations).toContain('wholeBelowHundred: true')
-    expect(simulations).toContain('timerDetailRows(timer, intl, display)')
+    expect(simulations).toContain('timerDetailRows(timer, intl, display, gameSpeed)')
     expect(simulations).toMatch(
       /highlightedNumber\(\s*locale,\s*influence,\s*\{ wholeBelowHundred: true \},\s*\)/,
     )

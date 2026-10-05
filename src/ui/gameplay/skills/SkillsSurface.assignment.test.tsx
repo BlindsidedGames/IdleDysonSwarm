@@ -107,12 +107,12 @@ test.each([true, false])('production comparison preference %s controls preview w
       expect(dispatch).toHaveBeenCalledExactlyOnceWith({ kind: 'skill.purchase', skillId: 'startHereTree' })
       return
     }
-    expect(screen.getByText(/^7(?:\.0+)?\/s \(10m\)$/)).not.toBeNull()
+    expect(screen.getByText(/^7(?:\.0+)?\/s \(10(?:\.0+)?m\)$/)).not.toBeNull()
     const calls = query.mock.calls.length
     after = 8
     act(() => vi.advanceTimersByTime(1000))
     expect(query).toHaveBeenCalledTimes(calls + 1)
-    expect(screen.getByText(/^8(?:\.0+)?\/s \(10m\)$/)).not.toBeNull()
+    expect(screen.getByText(/^8(?:\.0+)?\/s \(10(?:\.0+)?m\)$/)).not.toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     act(() => vi.advanceTimersByTime(3000))
     expect(query).toHaveBeenCalledTimes(calls + 1)
@@ -124,7 +124,7 @@ test.each([true, false])('production comparison preference %s controls preview w
 })
 
 
-test('skill comparisons keep multiplier, duration, yield and rate units distinct', () => {
+test.each([{ speed: 1, rate: '50.0/s', loss: '-5.00/s' }, { speed: 42, rate: '2.10K/s', loss: '-210/s' }])('skill comparisons keep static units and signed rates distinct at $speed×', ({ speed, rate, loss }) => {
   const state = hydrateGameState(prepareIdb1Save(fixture).prepared).state
   const rows = [
     { id: 'discoverySpeed', before: 1, after: 2 },
@@ -135,9 +135,10 @@ test('skill comparisons keep multiplier, duration, yield and rate units distinct
     { id: 'panelLifetime', before: 20, after: 30 },
     { id: 'manualBots', before: 1, after: 42 },
     { id: 'money', before: 1, after: 50 },
+    { id: 'bots', before: 4, after: -5 },
   ] as const
   render(<IntlProvider locale="en" messages={{}}>
-    <SkillsSurface locale="en" points={24n} fragments={state.skills.fragments}
+    <SkillsSurface gameSpeed={speed} locale="en" points={24n} fragments={state.skills.fragments}
       catalog={previewCanonicalSkillCatalog({ ...state, meta: { ...state.meta, firstInfinityComplete: true }, skills: { ...state.skills, points: 24n, byId: {}, activeAutoAssignment: [] } })}
       presets={state.skills.presets} selectedPresetSlot={1} botDistribution={0} autoAssignNonRefundable={false}
       commandAvailability={{ purchase: true, refund: true, selectPreset: true, setPresetColor: true, setAutoAssignNonRefundable: true, reset: true }}
@@ -151,5 +152,6 @@ test('skill comparisons keep multiplier, duration, yield and rate units distinct
   for (const multiplier of [2, 3, 4, 10, 15]) expect(confirmation.getAllByText(new RegExp(`^${multiplier}(?:\\.0+)?×$`)).length).toBeGreaterThan(0)
   expect(confirmation.getByText(/^30(?:\.0+)?s$/)).not.toBeNull()
   expect(confirmation.getByText(/^42(?:\.0+)?$/)).not.toBeNull()
-  expect(confirmation.getByText(/^50(?:\.0+)?\/s$/)).not.toBeNull()
+  expect(confirmation.getByText(rate)).not.toBeNull()
+  expect(confirmation.getByText(loss)).not.toBeNull()
 })

@@ -15772,6 +15772,30 @@
       "value": "超越"
     }
   ],
+  "wiki.credits": [
+    {
+      "type": 0,
+      "value": "制作人员"
+    }
+  ],
+  "wiki.credits.lead-developer": [
+    {
+      "type": 0,
+      "value": "首席开发者"
+    }
+  ],
+  "wiki.credits.sound": [
+    {
+      "type": 0,
+      "value": "音效"
+    }
+  ],
+  "wiki.credits.special-mentions": [
+    {
+      "type": 0,
+      "value": "特别鸣谢"
+    }
+  ],
   "wiki.discovery.overview": [
     {
       "type": 0,

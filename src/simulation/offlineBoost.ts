@@ -9,7 +9,7 @@ export function isOfflineBoostMultiplier(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= MAXIMUM_OFFLINE_BOOST_MULTIPLIER
 }
 
-export function offlineBoost(timeline: Readonly<TimelineState>) {
+export function offlineBoost(timeline: Readonly<Pick<TimelineState, 'offlineBoost'>>) {
   return timeline.offlineBoost ?? DEFAULT_OFFLINE_BOOST
 }
 
@@ -19,7 +19,7 @@ export function pauseOfflineBoost(state: CanonicalGameStateV1): CanonicalGameSta
 }
 
 /** Only actual represented bank debits may fund accelerated gameplay. */
-export function planOfflineBoost(timeline: Readonly<TimelineState>, wallSeconds: number) {
+export function planOfflineBoost(timeline: Readonly<Pick<TimelineState, 'storedTimeAvailableSeconds' | 'offlineBoost'>>, wallSeconds: number) {
   const boost = offlineBoost(timeline)
   const requested = boost.multiplier > 1 && wallSeconds > 0
     ? Math.min(Number.MAX_VALUE, (boost.multiplier - 1) * wallSeconds) : 0

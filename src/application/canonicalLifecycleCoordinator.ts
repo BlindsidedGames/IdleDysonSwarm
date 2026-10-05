@@ -277,6 +277,9 @@ export class CanonicalLifecycleCoordinator {
   private shutdownPromise: Promise<void> | undefined
   private suppressImportedAwayReplay = false
   private pendingColdStartTimestamp: ParsedUtcTimestamp | undefined
+  // Lifecycle receipts are queued in order, but several can capture the same
+  // marker before its first credit commits and clears the live marker.
+  private consumedPendingDepartureUtcMilliseconds: number | undefined
   private disposed = false
 
   constructor(options: Readonly<CanonicalLifecycleCoordinatorOptions>) {
@@ -745,6 +748,7 @@ export class CanonicalLifecycleCoordinator {
         request.context.kind === 'manual-shared-import'
       this.suppressImportedAwayReplay = suppressAwayReplay
       this.pendingColdStartTimestamp = undefined
+      this.consumedPendingDepartureUtcMilliseconds = undefined
       const snapshot = this.application.snapshot()
       if (snapshot.phase === 'ready') {
         const importedBaseline = createLifecycleState(
@@ -875,8 +879,14 @@ export class CanonicalLifecycleCoordinator {
     const persistedQuitTimestamp = parseUnityInvariantUtcTimestamp(
       runtime.gameState.timeline.lastSuspendedAtLegacyText,
     )
+    const unconsumedPendingTimestamp =
+      pendingQuitTimestamp?.status === 'valid' &&
+      pendingQuitTimestamp.utcMilliseconds ===
+        this.consumedPendingDepartureUtcMilliseconds
+        ? undefined
+        : pendingQuitTimestamp
     const departureTimestamp = earliestValidDepartureTimestamp(
-      earliestValidDepartureTimestamp(persistedQuitTimestamp, pendingQuitTimestamp),
+      earliestValidDepartureTimestamp(persistedQuitTimestamp, unconsumedPendingTimestamp),
       this.pendingColdStartTimestamp,
     )
     const checkpointTimestamp = parseUnityInvariantUtcTimestamp(
@@ -943,6 +953,8 @@ export class CanonicalLifecycleCoordinator {
     this.pendingColdStartTimestamp = undefined
     this.lifecycleState = replay.state
     if (pendingQuitTimestamp?.status === 'valid') {
+      this.consumedPendingDepartureUtcMilliseconds =
+        pendingQuitTimestamp.utcMilliseconds
       this.clearPendingDepartureTimestamp?.(
         pendingQuitTimestamp.utcMilliseconds,
       )
