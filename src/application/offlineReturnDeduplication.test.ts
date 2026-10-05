@@ -27,6 +27,7 @@ const idle = { requestFrame: () => 0, cancelFrame: () => {} }
 async function fixture(name: string, sheep: boolean, capacityHours: number, bankHours = 0, selectedSlot = 1) {
   const root = await mkdtemp(resolve(tmpdir(), 'ids-offline-return-'))
   let failedReplacements = 0
+  let failureOnReplacement: number | undefined
   let cleanupFails = false
   let heldReplacement: { entered: () => void; release: Promise<void> } | undefined
   function rooted(path: string) {
@@ -39,6 +40,10 @@ async function fixture(name: string, sheep: boolean, capacityHours: number, bank
     async readText(path: string) { return readFile(rooted(path), 'utf8') },
     async writeText(path: string, text: string) { const target = rooted(path); await mkdir(dirname(target), { recursive: true }); await writeFile(target, text) },
     async replaceAtomically(from: string, to: string) {
+      if (failureOnReplacement !== undefined && --failureOnReplacement === 0) {
+        failureOnReplacement = undefined
+        throw new Error('Fixture selected commit failed')
+      }
       if (failedReplacements > 0) { failedReplacements -= 1; throw new Error('Fixture commit failed') }
       if (heldReplacement) { const held = heldReplacement; heldReplacement = undefined; held.entered(); await held.release }
       await rename(rooted(from), rooted(to))
@@ -105,6 +110,7 @@ async function fixture(name: string, sheep: boolean, capacityHours: number, bank
     restart: async () => { await runtime.shutdown(); runtime = open(); expect(await runtime.start()).toMatchObject({ phase: 'ready' }) },
     setNow: (value: number) => { now = value },
     failNextCommits: (count: number) => { failedReplacements = count },
+    failNthCommit: (count: number) => { failureOnReplacement = count },
     denyMarkerCleanup: () => { cleanupFails = true },
     allowMarkerCleanup: () => { cleanupFails = false },
     holdNextCommit: () => {
@@ -302,5 +308,104 @@ test('an uncredited old marker survives a later active checkpoint and restart', 
     await f.restart()
     expect(await f.bank()).toBe(7)
     expect(f.marker.read()).toBeNull()
+  } finally { await f.close() }
+})
+
+// Import must promote the receiver's local acknowledgement with the replacement
+// bank. A later checkpoint cannot close an immediate-restart window.
+test.each([
+  ['own checkpoint', 7, 10],
+  ['foreign checkpoint', 3, 1],
+  ['save-reset', 0, 1],
+] as const)('manual import retains the local credited marker through restart: %s', async (kind, bank, slot) => {
+  const f = await fixture('first-run import ' + kind, false, 24, 0, 10)
+  try {
+    f.emit('background')
+    await f.runtime.requestCheckpoint()
+    f.setNow(t0 + 7*H)
+    f.denyMarkerCleanup()
+    f.emit('active')
+    await f.runtime.requestCheckpoint()
+    expect(await f.bank()).toBe(7)
+    const incoming = kind === 'own checkpoint'
+      ? await f.saved()
+      : createUnityFirstRunPreparedSave({ startedAtUtc: new Date(t0).toISOString() }).copyValidatedState()
+    if (kind !== 'own checkpoint') {
+      Object.assign(incoming, { offlineTime: bank*3600, idsConsumedDepartureAtUtc: new Date(t0 + H).toISOString() })
+      const incomingDyson = incoming.dysonVerseSaveData as Record<string, unknown>
+      incomingDyson.selectedPreset = slot
+    }
+    const held = f.holdNextCommit()
+    const importing = f.runtime.importSave({ text: serializeWebSave(incoming), importedAtUtc: new Date(t0 + 7*H).toISOString(), overwriteApproved: true,
+      ...(kind === 'save-reset' ? { context: { kind: 'manual-shared-import' as const, importedAtUtc: new Date(t0 + 7*H).toISOString(), intent: 'save-reset' as const } } : {}),
+    })
+    await held.entered
+    try {
+      // The authoritative current slot is still the receiver's old committed pair.
+      expect(await f.bank()).toBe(7)
+      expect((await f.saved()).idsConsumedDepartureAtUtc).toBe(new Date(t0).toISOString())
+    } finally { held.release() }
+    expect(await importing).toMatchObject({ imported: true })
+    const installed = await f.saved()
+    expect(installed.offlineTime).toBe(bank*3600)
+    expect(installed.dysonVerseSaveData).toMatchObject({ selectedPreset: slot })
+    expect(f.marker.read()).toBe(new Date(t0).toISOString())
+    await f.restart() // no post-import checkpoint, departure or extra elapsed time
+    expect(await f.bank()).toBe(bank)
+    expect(installed.idsConsumedDepartureAtUtc).toBe(new Date(t0).toISOString())
+    expect((await f.saved()).dysonVerseSaveData).toMatchObject({ selectedPreset: slot })
+  } finally { await f.close() }
+})
+
+test.each([1, 2])('failed manual import retains the receiver receipt around displacement (promotion %s)', async promotion => {
+  const f = await fixture('first-run failed import', false, 24, 0, 10)
+  try {
+    f.emit('background')
+    await f.runtime.requestCheckpoint()
+    f.setNow(t0 + 7*H)
+    f.denyMarkerCleanup()
+    f.emit('active')
+    await f.runtime.requestCheckpoint()
+    const incoming = await f.saved()
+    Object.assign(incoming, { offlineTime: 3600, idsConsumedDepartureAtUtc: new Date(t0 + H).toISOString() })
+    // Dirty setting at the same clock: exercises displacement ordering without
+    // advancing gameplay or depending on the separate import timestamp issue.
+    expect(await f.runtime.dispatchPlayer({ kind: 'settings.set-processing-interval', milliseconds: 200 })).toMatchObject({ status: 'accepted' })
+    f.failNthCommit(promotion)
+    expect(await f.runtime.importSave({ text: serializeWebSave(incoming), importedAtUtc: new Date(t0 + 7*H).toISOString(), overwriteApproved: true })).toMatchObject({
+      imported: false, code: promotion === 1 ? 'APP-IMPORT-CHECKPOINT-FAILED' : 'APP-IMPORT-COMMIT-FAILED',
+    })
+    expect((await f.saved()).idsConsumedDepartureAtUtc).toBe(new Date(t0).toISOString())
+    await f.restart()
+    expect(await f.bank()).toBe(7)
+    expect((await f.saved()).dysonVerseSaveData).toMatchObject({ selectedPreset: 10 })
+  } finally { await f.close() }
+})
+
+test('a foreign sender receipt cannot suppress a different uncredited local marker on import/restart', async () => {
+  const f = await fixture('first-run uncredited import', false, 24, 0, 10)
+  try {
+    f.emit('background')
+    await f.runtime.requestCheckpoint()
+    f.setNow(t0 + 7*H)
+    f.denyMarkerCleanup()
+    f.emit('active')
+    await f.runtime.requestCheckpoint()
+    expect(await f.bank()).toBe(7)
+    f.setNow(t0 + 8*H)
+    f.failNextCommits(2) // new departure and credit both fail; old receipt stays T0
+    f.emit('background')
+    f.setNow(t0 + 9*H)
+    f.emit('active')
+    await f.runtime.requestCheckpoint()
+    expect(await f.bank()).toBe(7)
+    const incoming = createUnityFirstRunPreparedSave({ startedAtUtc: new Date(t0).toISOString() }).copyValidatedState()
+    Object.assign(incoming, { offlineTime: 3*3600, idsConsumedDepartureAtUtc: new Date(t0 + 8*H).toISOString() })
+    expect(await f.runtime.importSave({ text: serializeWebSave(incoming), importedAtUtc: new Date(t0 + 9*H).toISOString(), overwriteApproved: true })).toMatchObject({ imported: true })
+    expect(f.marker.read()).toBe(new Date(t0 + 8*H).toISOString())
+    await f.restart()
+    expect(await f.bank()).toBe(4) // incoming 3h plus the actual uncredited local hour
+    await f.restart()
+    expect(await f.bank()).toBe(4)
   } finally { await f.close() }
 })

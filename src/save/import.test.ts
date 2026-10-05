@@ -50,7 +50,7 @@ describe('save import text preparation', () => {
     )
   })
 
-  test('manual shared import consumes remote lifecycle time but preserves its stored bank', () => {
+  test.each([undefined, 'not a timestamp'])('manual shared import consumes remote lifecycle time but preserves its stored bank (receiver receipt=%s)', receipt => {
     const source = PreparedSave.fromDecoded({
       saveVersion: 12,
       dateQuitString: 'remote quit',
@@ -63,6 +63,9 @@ describe('save import text preparation', () => {
     const imported = prepareImportedSaveText(
       text,
       '2026-07-29T05:00:00Z',
+      undefined,
+      undefined,
+      { idsConsumedDepartureAtUtc: receipt },
     ).copyValidatedState()
 
     expect(imported).toMatchObject({
