@@ -60,6 +60,8 @@ export interface CanonicalRuntimeState extends CanonicalEventTimeState {
   readonly storedTimeCheater: boolean
   /** Loaded checkpoint baseline, pending the first successful startup replay. */
   readonly coldStartCheckpointAtUtc?: string | null
+  /** Exact departure acknowledged atomically with its credited Stored Time. */
+  readonly consumedDepartureAtUtc?: string | null
   readonly selectedSkillPresetSlot: CanonicalSkillPresetSlot
   /** Last exact preset rebuild result for transient player feedback. */
   readonly lastSkillPresetApplication:
@@ -117,6 +119,11 @@ export class CanonicalRuntimeSession
         Number.isFinite(Date.parse(source.idsLastActiveAtUtc))
           ? { coldStartCheckpointAtUtc: source.idsLastActiveAtUtc } : {}
       ),
+      ...(
+        typeof source.idsConsumedDepartureAtUtc === 'string' &&
+        Number.isFinite(Date.parse(source.idsConsumedDepartureAtUtc))
+          ? { consumedDepartureAtUtc: source.idsConsumedDepartureAtUtc } : {}
+      ),
       selectedSkillPresetSlot:
         extractSelectedSkillPresetSlot(source),
       lastSkillPresetApplication: null,
@@ -149,6 +156,11 @@ export class CanonicalRuntimeSession
     if (this.persistAchievements) {
       const facts = mergeAchievementFacts(candidate.achievementEvidence, evaluateAchievements(candidate.gameState, false))
       source.idsAchievementEvidence = readSavedAchievements(facts.unlocked)
+    }
+    if (candidate.consumedDepartureAtUtc == null) {
+      delete source.idsConsumedDepartureAtUtc
+    } else {
+      source.idsConsumedDepartureAtUtc = candidate.consumedDepartureAtUtc
     }
     source.cheater = candidate.storedTimeCheater
     source.unlockAllTabs = candidate.unlockAllTabs === true

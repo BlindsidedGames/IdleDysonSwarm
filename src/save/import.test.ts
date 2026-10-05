@@ -54,6 +54,7 @@ describe('save import text preparation', () => {
     const source = PreparedSave.fromDecoded({
       saveVersion: 12,
       dateQuitString: 'remote quit',
+      idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
       offlineTime: 45,
       futureValue: { retained: true },
     })
@@ -70,6 +71,7 @@ describe('save import text preparation', () => {
       offlineTime: 45,
       futureValue: { retained: true },
     })
+    expect(imported.idsConsumedDepartureAtUtc).toBeUndefined()
   })
 
   test('round-trips a 128-day stored-time bank and capacity without capping them', () => {
@@ -326,6 +328,7 @@ describe('save import text preparation', () => {
       PreparedSave.fromDecoded({
         saveVersion: 12,
         dateQuitString: '2026-07-29T04:00:00Z',
+        idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
         offlineTime: 30,
         doubleIp: true,
         debugOptions: true,
@@ -345,6 +348,7 @@ describe('save import text preparation', () => {
 
     expect(imported).toMatchObject({
       dateQuitString: '2026-07-29T04:00:00Z',
+      idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
       offlineTime: 30,
       doubleIp: true,
       debugOptions: true,
@@ -378,6 +382,7 @@ describe('save import text preparation', () => {
       state: {
         saveVersion: 12,
         dateQuitString: '2026-07-29T04:00:00Z',
+        idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
         debugOptions: true,
         debugEverEnabled: true,
       },
@@ -395,6 +400,7 @@ describe('save import text preparation', () => {
 
     expect(imported).toMatchObject({
       dateQuitString: '2026-07-29T04:00:00Z',
+      idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
       debugOptions: true,
       debugEverEnabled: true,
     })
