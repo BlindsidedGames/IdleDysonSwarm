@@ -1,3 +1,4 @@
+import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { completeRetiredResearchSecret } from '../simulation/avocadoMeditation'
 import { initializeSpeedrunTracking } from '../simulation/speedrunStatistics'
@@ -64,7 +65,8 @@ export interface CanonicalRuntimeState extends CanonicalEventTimeState {
   readonly lastSkillPresetApplication:
     | Readonly<CanonicalRuntimeSkillPresetApplicationOutcome>
     | null
-  /** Sequenced session facts retained across ordinary snapshot publication. */
+  /** Pending presentation events, retained until accepted by the UI queue. */
+  readonly presentationEventSequence?: number
   readonly presentationEvents: readonly Readonly<CanonicalRuntimePresentationEvent>[]
   readonly unlockAllTabs?: boolean
   readonly debugOptionsEnabled?: boolean
@@ -103,7 +105,7 @@ export class CanonicalRuntimeSession
     const source = prepared.copyValidatedState()
     this.initialState = cloneCanonicalRuntimeState({
       ...(options.captureAchievements ? {achievementEvidence:{unlocked: this.persistAchievements ? readSavedAchievements(source.idsAchievementEvidence) : [],statistics:{},presence:''}} : {}),
-      gameState: completeRetiredResearchSecret(initializeSpeedrunTracking(this.hydrated.state)),
+      gameState: withCanonicalBotAllocation(completeRetiredResearchSecret(initializeSpeedrunTracking(this.hydrated.state))),
       compatibilityTuning: this.hydrated.compatibilityTuning,
       evaluationSnapshot:
         this.hydrated.skillEffectEvaluationSnapshot,
@@ -118,6 +120,7 @@ export class CanonicalRuntimeSession
       selectedSkillPresetSlot:
         extractSelectedSkillPresetSlot(source),
       lastSkillPresetApplication: null,
+      presentationEventSequence: 0,
       presentationEvents: [],
       unlockAllTabs: extractBoolean(source, 'debugOptions') &&
         extractBoolean(source, 'unlockAllTabs'),

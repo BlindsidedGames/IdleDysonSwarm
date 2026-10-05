@@ -165,7 +165,7 @@ export function advanceGame(
 
   if (input.automation === 'enabled') {
     model.applyAutomation('preserve-configured-mode', summary)
-    model.applyDerivedTimersAndDoubleTime(0, summary)
+    model.applyDerivedTimers(0, summary)
     model.applyDreamReset(summary)
     if (input.source === 'active' && fundedSeconds === 0 && state.gameState.infinity.storedTimeUsedThisCycleSeconds === 0) model.sampleInfinityRatePeak()
     model.applyInfinityReset(
@@ -179,7 +179,7 @@ export function advanceGame(
   if (gameSeconds > 0) {
     model.advanceContinuous(gameSeconds, fundedSeconds)
     model.applyProductionArrivals(summary)
-    model.applyDerivedTimersAndDoubleTime(gameSeconds, summary)
+    model.applyDerivedTimers(gameSeconds, summary)
   }
   model.finishStep()
   return finish(

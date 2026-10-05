@@ -48,7 +48,7 @@ describe('facility calculation construction snapshots', () => {
     const originalRate = captured.facilityCalculations.assembly_lines.rate
     const model = new BasicDysonSimulationModel(captured.state)
     model.state.facilities.assembly_lines = [0, 0]
-    model.applyDerivedTimersAndDoubleTime()
+    model.applyDerivedTimers()
     expect(model.state.rates.bots).toBe(0)
     expect(captured.facilityCalculations.assembly_lines.rate).toBe(originalRate)
     expect(originalRate).toBeGreaterThan(0)

@@ -1,3 +1,4 @@
+import { withCanonicalBotAllocation } from './canonicalBotAllocation'
 import { canTinkerAssemblyLines } from './manualFacilityAugments'
 import { MANUAL_LABOUR_TUNING } from './manualLabourAugments'
 import { deriveCanonicalTinkerStats } from './canonicalTinker'
@@ -7,7 +8,7 @@ import { resolveStellarAggregate } from './canonicalSkillIntervalEffects'
 import { addContinuous, multiplyContinuous } from './numeric'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import type { CanonicalEventTimeState } from './canonicalEventTimeModel'
-import { deriveBasicDysonState } from './canonicalDysonDerivation'
+import { deriveDysonProduction } from './canonicalDysonDerivation'
 import { purchaseCanonicalSkill, refundCanonicalSkill } from './canonicalSkillTransactions'
 import { deriveDreamFoundationalInformationProductionFacts } from './dreamFoundationalInformation'
 import { deriveDreamSpaceAgeProductionFacts } from './dreamSpaceAge'
@@ -23,7 +24,7 @@ export interface SkillProductionPreview {
   }[]
 }
 
-function productionValues(derived: Extract<ReturnType<typeof deriveBasicDysonState>, { ok: true }>['value'], state: CanonicalEventTimeState['gameState']) {
+function productionValues(derived: Extract<ReturnType<typeof deriveDysonProduction>, { ok: true }>['value'], state: CanonicalEventTimeState['gameState']) {
   const discovery = state.discovery?.unlocked ? deriveDiscoveryEffects(state, derived.nextEvaluationSnapshot) : null
   const rates = { ...derived.productionArrivalRates, galactic_brains: 0 }
   const target = highestOwnedFacility(state.dyson.facilities)
@@ -61,10 +62,10 @@ export function previewSkillProduction(
   skillId: string,
   kind: 'purchase' | 'refund',
 ): SkillProductionPreview {
-  const state = runtime.gameState
+  const state = withCanonicalBotAllocation(runtime.gameState)
   const change = (kind === 'purchase' ? purchaseCanonicalSkill : refundCanonicalSkill)(state, skillId)
   if (!change.accepted) throw new Error(change.reason)
-  let candidate = change.state
+  let candidate = withCanonicalBotAllocation(change.state)
   let projected = false
   let projectedSeconds = 0
   if (kind === 'purchase') {
@@ -80,7 +81,7 @@ export function previewSkillProduction(
     }
   }
   const derive = (source: typeof state, snapshot = runtime.evaluationSnapshot) => {
-    const result = deriveBasicDysonState(source, runtime.compatibilityTuning, runtime.entitlements, snapshot)
+    const result = deriveDysonProduction(source, runtime.compatibilityTuning, runtime.entitlements, snapshot)
     if (!result.ok) throw new Error(result.issues[0]?.detail ?? 'Production preview unavailable')
     return result.value
   }

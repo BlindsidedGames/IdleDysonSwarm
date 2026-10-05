@@ -397,10 +397,8 @@ export function deriveDreamRailgunReadinessFacts(
     resources.dysonPanels /
       BigInt(DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley),
   )
-  const maximumArrayFromCharge = wholeRailgunChargeUnits(
-    chargeTransfer.charge,
-    baseMaximumCharge,
-  )
+  // Size from stored charge; the affordability check handles a nearly full single gun.
+  const maximumArrayFromCharge = Math.max(1, Math.floor(chargeTransfer.charge / baseMaximumCharge))
   const startingPayload = Math.max(
     0,
     Math.min(
@@ -425,9 +423,8 @@ export function deriveDreamRailgunReadinessFacts(
   const shotIntervalSeconds =
     totalFireTimeSeconds /
     DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
-  const chargePerShot =
-    multiplyContinuous(baseMaximumCharge, mechanicalPayload) /
-    DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
+  const fullVolleyCharge = multiplyContinuous(baseMaximumCharge, mechanicalPayload)
+  const chargePerShot = fullVolleyCharge / DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
   const canStartVolley =
     startingPayload >= 1 &&
     hasSufficientRailgunCharge(
@@ -447,6 +444,7 @@ export function deriveDreamRailgunReadinessFacts(
   const hasChargeForNextShot = hasSufficientRailgunCharge(
     chargeTransfer.charge,
     chargePerShot,
+    fullVolleyCharge,
   )
   const reservedPanels = state.dream.railgun.reservedPanels ?? 0n
   const hasReservedPanelsForNextShot = canStartVolley ||
@@ -798,9 +796,8 @@ export function runDreamRailgunAutomation(
       break
     }
     const panelsPerRound = BigInt(activeRailguns)
-    const chargePerRound =
-      multiplyContinuous(readiness.baseMaximumCharge, activeRailguns) /
-      DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
+    const fullVolleyCharge = multiplyContinuous(readiness.baseMaximumCharge, activeRailguns)
+    const chargePerRound = fullVolleyCharge / DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
     const roundsSupportedByPanels = Math.min(
       shotsRemaining,
       safeBigIntToPayload(reservedPanels / panelsPerRound),
@@ -808,6 +805,7 @@ export function runDreamRailgunAutomation(
     const roundsSupportedByCharge = wholeRailgunChargeUnits(
       charge,
       chargePerRound,
+      fullVolleyCharge,
     )
     const remainingSwarmCapacity =
       SIMULATION_RESOURCE_MAXIMUM - swarmPanels
@@ -829,7 +827,7 @@ export function runDreamRailgunAutomation(
       const chargeDebit = tryDebitContinuous(
         charge,
         requestedChargeDebit > charge &&
-          hasSufficientRailgunCharge(charge, requestedChargeDebit)
+          hasSufficientRailgunCharge(charge, requestedChargeDebit, fullVolleyCharge)
           ? charge
           : requestedChargeDebit,
       )
@@ -1200,6 +1198,7 @@ export function applyDreamOverdriveDiminishingReturn(
 function hasSufficientRailgunCharge(
   balance: number,
   cost: number,
+  fullVolleyCharge = cost,
 ): boolean {
   if (
     !Number.isFinite(balance) ||
@@ -1209,12 +1208,13 @@ function hasSufficientRailgunCharge(
   ) {
     return false
   }
-  return cost - balance <= railgunChargeTolerance(balance, cost)
+  return cost - balance <= railgunChargeTolerance(balance, cost, fullVolleyCharge)
 }
 
 function wholeRailgunChargeUnits(
   balance: number,
   unitCost: number,
+  fullVolleyCharge = unitCost,
 ): number {
   if (
     !Number.isFinite(balance) ||
@@ -1225,14 +1225,15 @@ function wholeRailgunChargeUnits(
     return 0
   }
   const supported = Math.floor(
-    (balance + railgunChargeTolerance(balance, unitCost)) / unitCost,
+    (balance + railgunChargeTolerance(balance, unitCost, fullVolleyCharge)) / unitCost,
   )
   return Math.max(0, Math.min(Number.MAX_SAFE_INTEGER, supported))
 }
 
-function railgunChargeTolerance(balance: number, cost: number): number {
+function railgunChargeTolerance(balance: number, cost: number, fullVolleyCharge: number): number {
+  // Keep the same rounding allowance after earlier shots have reduced the balance.
   return (
-    Math.max(1, Math.abs(balance), Math.abs(cost)) *
+    Math.max(1, Math.abs(balance), Math.abs(cost), Math.abs(fullVolleyCharge)) *
     Number.EPSILON *
     RAILGUN_CHARGE_TOLERANCE_SCALE
   )

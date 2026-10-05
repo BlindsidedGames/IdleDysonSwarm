@@ -2754,6 +2754,7 @@ function finalizeAccepted(
     )
   }
 
+  candidate = withCanonicalBotAllocation(candidate)
   let nextCarriers = carriers
   if (refreshEvaluation) {
     let evaluation: CanonicalRuntimeEvaluationPortResult

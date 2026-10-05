@@ -113,7 +113,7 @@ export interface EventTimeSimulationModel<TModel> {
     policy: SimulationAutomationPolicy,
     summary: SimulationPresentationSummary,
   ): void
-  applyDerivedTimersAndDoubleTime(
+  applyDerivedTimers(
     seconds: number,
     summary: SimulationPresentationSummary,
   ): void

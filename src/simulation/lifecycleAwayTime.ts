@@ -204,7 +204,6 @@ export function applyAwayTimeReplay(
         resolution.grantedSeconds * idleElectricSheepMultiplier,
       bankSeconds: canonical.timeline.storedTimeAvailableSeconds,
       capacitySeconds: canonical.timeline.storedTimeCapacitySeconds,
-      dreamDoubleTimeBankSeconds: canonical.timeline.doubleTime.bankSeconds,
       cheater: resolution.cheater,
     })
     storedTimeCreditedSeconds = grant.storedTimeCreditedSeconds

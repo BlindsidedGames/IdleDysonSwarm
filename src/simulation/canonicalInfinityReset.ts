@@ -4,8 +4,8 @@ import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinity
 import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
 import { MANUAL_LABOUR_AUGMENTS, SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
-import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
-import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
+import { isGalvanized, permanentSkillRuntime, permanentFragmentCount } from './galvanization'
+import { planSkillAutoAssignment } from './skillAutoAssignment'
 import { ordinaryInfinityBotThreshold } from './infinityCycle'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
@@ -616,46 +616,30 @@ function applyAutoAssignment(
   rules: readonly SkillAutoAssignmentRule[],
   state: Readonly<CanonicalGameStateV1>,
 ): AutoAssignmentOutcome {
-  let points = initialPoints
-  let fragments = permanentFragmentCount(state)
   const byId: Record<string, SkillRuntimeState> = permanentSkillRuntime(state)
-  const assignedIds: string[] = []
-  const rulesById = new Map(rules.map((rule) => [rule.id, rule]))
-  const dependencies = new Map(rules.map((rule) => [rule.id, {
-    required: rule.requiredSkillIds,
-    shadowRequired: rule.shadowRequirementIds,
+  const rulesById = new Map(rules.map(rule => [rule.id, rule]))
+  const normalized = new Map(rules.map(rule => [rule.id, {
+    cost: rule.cost, fragment: rule.isFragment, refundable: rule.refundable,
+    required: rule.requiredSkillIds, shadowRequired: rule.shadowRequirementIds,
+    exclusiveWith: rule.exclusiveWithIds,
   }]))
-  for (const id of resolveSkillPurchaseOrder(state.skills.activeAutoAssignment, new Set(galvanizedSkillIds(state)), dependencies)) {
-    const rule = rulesById.get(id)
-    if (rule === undefined || !rule.valid || !isRuleUnlocked(rule, state) ||
-      (isSubskill(id) && !isSubskillUnlocked(state, id)) ||
-      rule.id.length === 0 || isOwned(byId, rule.id) ||
-      anyOwned(byId, rule.exclusiveWithIds) ||
-      (!assignNonRefundable && !rule.refundable)) continue
-    // Match live assignment: skip targets whose prerequisites were unavailable,
-    // but preserve priority when the next eligible target needs more points.
-    if (!allOwned(byId, rule.requiredSkillIds) ||
-      !allOwned(byId, rule.shadowRequirementIds)) continue
-    if (points < rule.cost) break
-    points -= rule.cost
-    byId[rule.id] = {
-      owned: true,
-      // These levels count completed work, rather than an assigned skill level.
-      level: rule.id === MANUAL_LABOUR_AUGMENTS.handAssembly ||
-        rule.id === MANUAL_LABOUR_AUGMENTS.practice ? 0 : 1,
-      timerSeconds: 0,
-      secondaryTimerSeconds: 0,
-    }
-    if (rule.isFragment) fragments = addDiscrete(fragments, 1n)
-    assignedIds.push(rule.id)
+  const assignment = planSkillAutoAssignment(state.skills.activeAutoAssignment, normalized,
+    new Set(Object.keys(byId).filter(id => byId[id]?.owned === true)),
+    initialPoints, assignNonRefundable, id => {
+      const rule = rulesById.get(id)!
+      return rule.valid && id.length > 0 && isRuleUnlocked(rule, state) &&
+        (!isSubskill(id) || isSubskillUnlocked(state, id))
+    })
+  for (const id of assignment.assignedIds) byId[id] = {
+    owned: true,
+    // These levels count completed work, rather than an assigned skill level.
+    level: id === MANUAL_LABOUR_AUGMENTS.handAssembly || id === MANUAL_LABOUR_AUGMENTS.practice ? 0 : 1,
+    timerSeconds: 0, secondaryTimerSeconds: 0,
   }
+  return { points: assignment.points,
+    fragments: addDiscrete(permanentFragmentCount(state), assignment.fragmentsGranted),
+    byId, assignedIds: assignment.assignedIds }
 
-  return {
-    points,
-    fragments,
-    byId,
-    assignedIds: Object.freeze(assignedIds),
-  }
 }
 
 function readSkillUnlock(
@@ -699,27 +683,6 @@ function isRuleUnlocked(
     case 'stellar':
       return state.quantum.unlocks.stellar
   }
-}
-
-function allOwned(
-  byId: Readonly<Record<string, SkillRuntimeState>>,
-  ids: readonly string[],
-): boolean {
-  return ids.every((id) => isOwned(byId, id))
-}
-
-function anyOwned(
-  byId: Readonly<Record<string, SkillRuntimeState>>,
-  ids: readonly string[],
-): boolean {
-  return ids.some((id) => isOwned(byId, id))
-}
-
-function isOwned(
-  byId: Readonly<Record<string, SkillRuntimeState>>,
-  id: string,
-): boolean {
-  return byId[id]?.owned === true
 }
 
 function recordInfinityCycle(

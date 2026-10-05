@@ -1,3 +1,4 @@
+import { withCanonicalBotAllocation } from './canonicalBotAllocation'
 import { readFileSync } from 'node:fs'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
@@ -10,7 +11,7 @@ import { advanceCanonicalTinker, createCanonicalTinkerRuntimeState } from './can
 import { leastRecentlyShown, eligiblePromotions } from '../store/promotions'
 
 const hydrated = hydrateGameState(prepareIdb1Save(readFileSync(new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url), 'utf8')).prepared)
-const initial = () => ({ ...hydrated.state, statistics: { ...hydrated.state.statistics,
+const initial = () => withCanonicalBotAllocation({ ...hydrated.state, statistics: { ...hydrated.state.statistics,
   speedruns: createSpeedrunStatistics(new Date(1_000_000).toISOString(), true, 1_000_000) } })
 afterEach(() => vi.restoreAllMocks())
 

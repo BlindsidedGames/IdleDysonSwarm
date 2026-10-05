@@ -12,7 +12,8 @@ import {
   materializeCandidateCertificationTargets,
   materializeCertificationTargets,
 } from '../../scripts/support/skillEffectCertification'
-import { deriveBasicDysonState } from './canonicalDysonDerivation'
+import { withCanonicalBotAllocation } from './canonicalBotAllocation'
+import { deriveDysonProduction, deriveBasicDysonState } from './canonicalDysonDerivation'
 import {
   prepareDynamicSkillEffectResolver,
   resolveDynamicSkillEffect,
@@ -22,6 +23,17 @@ import { materializeSkillEffects } from './skillEffectMaterializer'
 const scenarios = createSkillEffectCertificationScenarios()
 
 describe('skill-effect optimization certification', () => {
+  test.each(scenarios)('numeric production preserves full presentation rates and prior-pass publication for $name', ({ state }) => {
+    const canonical = withCanonicalBotAllocation(state)
+    const full = deriveBasicDysonState(canonical, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
+    const numeric = deriveDysonProduction(canonical, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
+    expect(numeric.ok).toBe(full.ok)
+    if (full.ok && numeric.ok) {
+      const { facilityFacts: _presentation, ...production } = full.value
+      expect(numeric.value).toEqual(production)
+    } else expect(numeric).toEqual(full)
+  })
+
   test.each(scenarios)(
     'preserves complete materialization for $name',
     ({ state }) => {

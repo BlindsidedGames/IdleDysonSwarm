@@ -289,7 +289,6 @@ describe('Stored Time represented credit', () => {
         bankSeconds: bank,
         capacitySeconds: capacity,
         awaySeconds: away,
-        dreamDoubleTimeBankSeconds: 0,
         cheater: false,
       })
 
@@ -301,6 +300,17 @@ describe('Stored Time represented credit', () => {
 })
 
 describe('coarse-ULP purchase probes', () => {
+  test.each([1.3, 10.1])('Dream solar purchase accepts ordinary fractional ownership %s before charging', (balance) => {
+    const initial = state()
+    const before = { ...initial, reality: { ...initial.reality, influence: 1e6 },
+      dream: { ...initial.dream, resources: { ...initial.dream.resources, solarPanels: balance } } }
+    const result = purchaseDreamSpaceAge(before, 'solar')
+    expect(result.purchased).toBe(true)
+    expect(result.state.dream.resources.solarPanels).toBeCloseTo(balance + 1, 12)
+    expect(result.state.reality.influence).toBeLessThan(before.reality.influence)
+    expect(before.dream.resources.solarPanels).toBe(balance)
+  })
+
   test('preserves the established minimum-one-ULP purchase charge', () => {
     const result = tryDebitContinuous(COARSE_BALANCE, 1)
 

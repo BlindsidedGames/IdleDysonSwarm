@@ -27,7 +27,7 @@ import {
 import { advanceCanonicalGoalProgression } from './canonicalGoalProgression'
 import {
   CANONICAL_DYSON_PRESENTATION_TUNING,
-  deriveBasicDysonState,
+  deriveDysonProduction,
   type DysonEntitlements,
   type DysonPresentationTuning,
 } from './canonicalDysonDerivation'
@@ -514,7 +514,7 @@ export class CanonicalEventTimeModel
     const startingState = withCanonicalBotAllocation(cappedStartingState)
     this.replaceGameState(startingState)
     try {
-      const derived = deriveBasicDysonState(
+      const derived = deriveDysonProduction(
         startingState,
         this.carrier.compatibilityTuning,
         this.carrier.entitlements,
@@ -740,7 +740,7 @@ export class CanonicalEventTimeModel
     }
   }
 
-  applyDerivedTimersAndDoubleTime(
+  applyDerivedTimers(
     seconds: number,
     summary: SimulationPresentationSummary,
   ): void {
@@ -1182,7 +1182,7 @@ export class CanonicalEventTimeModel
   private replaceGameState(state: CanonicalGameStateV1): void {
     this.carrier = {
       ...this.carrier,
-      gameState: observeSpeedruns(state),
+      gameState: observeSpeedruns(withCanonicalBotAllocation(state)),
     }
   }
 
@@ -1190,7 +1190,7 @@ export class CanonicalEventTimeModel
     state: CanonicalGameStateV1,
     path: string,
   ) {
-    const derived = deriveBasicDysonState(
+    const derived = deriveDysonProduction(
       state,
       this.carrier.compatibilityTuning,
       this.carrier.entitlements,

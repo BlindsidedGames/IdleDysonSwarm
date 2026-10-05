@@ -680,6 +680,15 @@ describe('canonical game application engine', () => {
       cause: 'Meteor',
       firstLifetimeOccurrence: false,
     })
+    expect(definition.applyCommand(state, { kind: 'internal.accept-presentation-events', throughSequence: 1 }).accepted).toBe(true)
+    expect(state.presentationEvents.map(event => event.sequence)).toEqual([2])
+    expect(definition.applyCommand(state, { kind: 'internal.accept-presentation-events', throughSequence: 2 }).accepted).toBe(true)
+    expect(state.presentationEvents).toEqual([])
+    Object.assign(state, { gameState: { ...state.gameState, dream: { ...state.gameState.dream,
+      disasterStage: 0n, resources: { ...state.gameState.dream.resources, cities: 1 } } } })
+    expect(definition.advance(state, 1_000).accepted).toBe(true)
+    expect(state.presentationEvents.at(-1)?.sequence).toBe(3)
+
   })
 
   test('restores the development cash action without changing player commands', () => {
@@ -1049,6 +1058,7 @@ describe('canonical game application engine', () => {
   test('keeps Tinker outside a stored-time candidate', () => {
     const state = runtime()
     Object.assign(state, {
+      presentationEventSequence: 1,
       presentationEvents: [{
         kind: 'automatic-dream-disaster',
         sequence: 1,
