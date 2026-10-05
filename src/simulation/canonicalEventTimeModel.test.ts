@@ -997,7 +997,7 @@ describe('legacy canonical event-time parity adapter', () => {
     const summary = createSimulationSummary()
     model.advanceContinuous(0.5)
     model.applyProductionArrivals(summary)
-    model.applyDerivedTimersAndDoubleTime(0.5, summary)
+    model.applyDerivedTimers(0.5, summary)
     model.applyDreamReset(summary)
     model.applyBotCapTransition(summary)
 

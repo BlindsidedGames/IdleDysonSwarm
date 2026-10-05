@@ -12,6 +12,20 @@ afterEach(() => {
 })
 
 describe('GameplayNotificationHost', () => {
+  test('acknowledges UI acceptance while retaining the first-discovery dialog after source draining', async () => {
+    const accepted = vi.fn()
+    const props = { sessionRevision: 1, locale: 'en' as const, showPresetApplicationNotices: true,
+      onViewReality: vi.fn(), onEventsAccepted: accepted }
+    const view = render(<IntlProvider locale="en"><GameplayNotificationHost {...props}
+      events={[disaster({ sequence: 1, firstLifetimeOccurrence: true })]} /></IntlProvider>)
+    expect(await screen.findByRole('dialog', { name: 'Meteor Storm' })).toBeTruthy()
+    expect(accepted).toHaveBeenCalledWith(1, 1)
+    view.rerender(<IntlProvider locale="en"><GameplayNotificationHost {...props} events={[]} /></IntlProvider>)
+    expect(screen.getByRole('dialog', { name: 'Meteor Storm' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
   test('sidebar burst disaster is interactive outside an inert compact-menu main and restores it on dismissal', async () => {
     render(<div className="dyson-shell">
       <aside className="dyson-shell__side-panel"><button>Sidebar burst</button></aside>

@@ -43,6 +43,7 @@ export interface GameplayNotificationHostProps {
   readonly storedTimeFirstDisasterEvents?: readonly Readonly<DisasterEvent>[]
   readonly locale: EnabledLocale
   readonly showPresetApplicationNotices: boolean
+  readonly onEventsAccepted?: (sessionRevision: number, throughSequence: number) => void
   readonly onViewReality: () => void
 }
 
@@ -53,6 +54,7 @@ export function GameplayNotificationHost({
   locale,
   showPresetApplicationNotices,
   onViewReality,
+  onEventsAccepted,
 }: GameplayNotificationHostProps) {
   const intl = useIntl()
   const [portalHost, setPortalHost] = useState<HTMLElement | null>(null)
@@ -95,7 +97,9 @@ export function GameplayNotificationHost({
         additions,
       ))
     }
+    if (unseen.length > 0) onEventsAccepted?.(sessionRevision, unseen.at(-1)!.sequence)
   }, [
+    onEventsAccepted,
     events,
     sessionRevision,
     showPresetApplicationNotices,
@@ -258,6 +262,7 @@ function FirstDisasterDialog({
   readonly event: DisasterEvent
   readonly locale: EnabledLocale
   readonly onDismiss: () => void
+  readonly onEventsAccepted?: (sessionRevision: number, throughSequence: number) => void
   readonly onViewReality: () => void
 }) {
   const intl = useIntl()

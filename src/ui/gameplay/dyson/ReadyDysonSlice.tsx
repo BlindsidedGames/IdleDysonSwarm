@@ -320,6 +320,8 @@ function UnprobedReadyDysonRuntimeHost({
     <ReadyDysonSlice
       snapshot={snapshot}
       locale={locale}
+      onFacilityDetailsDemandChange={runtime.setFacilityDetailsDemand}
+      onPresentationEventsAccepted={runtime.acknowledgePresentationEvents}
       dispatchPlayer={dispatchPlayer}
       presetActions={presetActions}
       route={route}
@@ -420,6 +422,8 @@ export function ProbedReadyDysonRuntimeHost({
     <ReadyDysonSlice
       snapshot={snapshot}
       locale={locale}
+      onFacilityDetailsDemandChange={runtime.setFacilityDetailsDemand}
+      onPresentationEventsAccepted={runtime.acknowledgePresentationEvents}
       dispatchPlayer={dispatchPlayer}
       presetActions={presetActions}
       route={route}
@@ -457,6 +461,8 @@ export interface ReadyDysonSliceProps {
   readonly snapshot: ReadySnapshot
   readonly locale: EnabledLocale
   readonly dispatchPlayer: BrowserUiRuntimeFoundation['dispatchPlayer']
+  readonly onFacilityDetailsDemandChange?: (expanded: boolean) => void
+  readonly onPresentationEventsAccepted?: (session: number, sequence: number) => void
   readonly presetActions?: SkillPresetActions
   readonly route?: ReadyGameRoute
   readonly onRouteChange?: (route: ReadyGameRoute) => void
@@ -586,6 +592,8 @@ function ReadyDysonSliceContent({
   locale,
   dispatchPlayer: unconfirmedDispatchPlayer,
   presetActions,
+  onPresentationEventsAccepted,
+  onFacilityDetailsDemandChange,
   route: requestedRoute = 'bots',
   onRouteChange = () => undefined,
   resetSave = unavailableReset,
@@ -2143,6 +2151,7 @@ function ReadyDysonSliceContent({
         <GameplayNotificationHost
           sessionRevision={snapshot.revision.session}
           events={gameplay.runtime.presentationEvents}
+          onEventsAccepted={onPresentationEventsAccepted}
           locale={locale}
           showPresetApplicationNotices={showSkillPresetApplicationNotices}
           onViewReality={() => navigateTo('reality')}
@@ -2229,6 +2238,7 @@ function ReadyDysonSliceContent({
           >
             <div className="dyson-facility-flow">
               <FacilityRegion
+                onDetailsDemandChange={onFacilityDetailsDemandChange}
                 locale={locale}
                 visibility={visibility}
                 facts={dyson.value.presentation.facilities}

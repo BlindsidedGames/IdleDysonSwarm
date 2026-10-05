@@ -1,3 +1,4 @@
+import { withCanonicalBotAllocation } from './canonicalBotAllocation'
 import { stellarOrdinaryOutputMultiplier } from './stellarBenefits'
 import { deriveAdditionalTinkerYields, resolveTinkerFacilityYields, type TinkerFacilityYields } from './manualFacilityAugments'
 import { botnetMultiplier, economyOfScaleMultiplier, purchaseScalingRate, purchaseScalingThreshold, linearPurchaseScalingMultiplier, compoundFragmentsMultiplier, stellarSwarmMultiplier } from './swarmAugments'
@@ -80,6 +81,8 @@ export interface DysonEntitlements {
 }
 
 export interface DysonPresentationTuning {
+  /** Explanation rows are requested only while a facility detail dialog is open. */
+  readonly includeFacilityDetails?: boolean
   /**
    * Matches ProgressBarFlickerManager: production bars at or above this many
    * completions per second render solid instead of exposing a rapidly
@@ -145,6 +148,11 @@ export interface DerivedBasicDysonState {
   readonly nextEvaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
   readonly entitlements: DysonEntitlements
 }
+
+export type DerivedDysonProduction = Omit<DerivedBasicDysonState, 'facilityFacts'>
+export type DysonProductionDerivationResult =
+  | { readonly ok: true; readonly value: DerivedDysonProduction }
+  | { readonly ok: false; readonly issues: readonly DysonDerivationIssue[] }
 
 export interface CanonicalFacilityFacts {
   readonly facilityId: CanonicalFacilityId
@@ -482,9 +490,37 @@ export function deriveBasicDysonState(
   tuning: Readonly<DysonCompatibilityTuning>,
   entitlements: DysonEntitlements,
   evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
-  presentationTuning: Readonly<DysonPresentationTuning> =
-    CANONICAL_DYSON_PRESENTATION_TUNING,
+  presentationTuning: Readonly<DysonPresentationTuning> = CANONICAL_DYSON_PRESENTATION_TUNING,
 ): DysonDerivationResult {
+  return calculateDysonState(state, tuning, entitlements, evaluationSnapshot, presentationTuning, true)
+}
+
+/** Numeric production, pricing and the next previous-pass snapshot; no UI explanation work. */
+export function deriveDysonProduction(
+  state: CanonicalGameStateV1,
+  tuning: Readonly<DysonCompatibilityTuning>,
+  entitlements: DysonEntitlements,
+  evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
+  presentationTuning: Readonly<DysonPresentationTuning> = CANONICAL_DYSON_PRESENTATION_TUNING,
+): DysonProductionDerivationResult {
+  return calculateDysonState(withCanonicalBotAllocation(state), tuning, entitlements, evaluationSnapshot, presentationTuning, false)
+}
+
+function calculateDysonState(
+  state: CanonicalGameStateV1, tuning: Readonly<DysonCompatibilityTuning>, entitlements: DysonEntitlements,
+  evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>, presentationTuning: Readonly<DysonPresentationTuning>,
+  includeFacilityFacts: true,
+): DysonDerivationResult
+function calculateDysonState(
+  state: CanonicalGameStateV1, tuning: Readonly<DysonCompatibilityTuning>, entitlements: DysonEntitlements,
+  evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>, presentationTuning: Readonly<DysonPresentationTuning>,
+  includeFacilityFacts: false,
+): DysonProductionDerivationResult
+function calculateDysonState(
+  state: CanonicalGameStateV1, tuning: Readonly<DysonCompatibilityTuning>, entitlements: DysonEntitlements,
+  evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>, presentationTuning: Readonly<DysonPresentationTuning>,
+  includeFacilityFacts: boolean,
+): DysonDerivationResult | DysonProductionDerivationResult {
   if (
     !Number.isFinite(
       presentationTuning.solidProgressThresholdPerSecond,
@@ -737,7 +773,33 @@ export function deriveBasicDysonState(
   const stellarBoost = stellarBaseProduction > 0 ? stellarSwarmMultiplier(state, stellarPurchaseMultiplier) : 1
   const ordinaryOutputBoost = stellarOrdinaryOutputMultiplier(ownedSkillSet)
   const stellarSacrificeFacilitiesPerSecond = multiplyContinuous(multiplyContinuous(stellarBaseProduction, stellarBoost), ordinaryOutputBoost)
-  const stellarGenerationContributions: readonly CanonicalFacilityContributionRow[] = deriveAttributedEffectRows(
+  const stellarSacrificeBotsPerSecond =
+    stellarSacrificeFacilitiesPerSecond > 0
+      ? resolveStellarSacrificesRequiredBots(
+          ownedSkillSet,
+          evaluationSnapshot.panelsPerSecond,
+          evaluationSnapshot.panelLifetimeSeconds,
+          galvanizedSkillSet(state),
+        )
+      : 0
+  const nextEvaluationSnapshot =
+    publishDysonSkillEffectEvaluationSnapshot(state, {
+      panelsPerSecond: model.rates.panels,
+      panelLifetimeSeconds: panelLifetime,
+      scienceMultiplier,
+      managerAssemblyLineProduction: model.rates.assembly_lines,
+      scientificPlanetsProduction,
+    })
+
+  const productionArrivalRates = combineDysonProductionArrivalRates(model.rates, mega.rates)
+  const tinkerAdditionalFacilityYields = deriveAdditionalTinkerYields(state, productionArrivalRates,
+    stellarSacrificeTarget === 'galactic_brains' ? {
+      facilitiesPerSecond: stellarSacrificeFacilitiesPerSecond,
+      botsPerSecond: stellarSacrificeBotsPerSecond,
+    } : undefined)
+  const tinkerYields = resolveTinkerFacilityYields(state, tinkerAssemblyYield, tinkerAdditionalFacilityYields)
+  const buildFacilityFacts = (): DerivedBasicDysonState['facilityFacts'] => {
+  const stellarGenerationContributions: readonly CanonicalFacilityContributionRow[] = presentationTuning.includeFacilityDetails === false ? [] : deriveAttributedEffectRows(
     0,
     [...stellarSacrificeEffects.map(effect => ({ ...effect, value: stellarBaseProduction })),
       multiplierEffect(SWARM_AUGMENTS.stellarSwarm, stellarBoost, 1001),
@@ -749,15 +811,6 @@ export function deriveBasicDysonState(
       calculation: { ...row.calculation, discoveryMultiplier: discovery.multiplier },
     } : {}),
   }))
-  const stellarSacrificeBotsPerSecond =
-    stellarSacrificeFacilitiesPerSecond > 0
-      ? resolveStellarSacrificesRequiredBots(
-          ownedSkillSet,
-          evaluationSnapshot.panelsPerSecond,
-          evaluationSnapshot.panelLifetimeSeconds,
-          galvanizedSkillSet(state),
-        )
-      : 0
   const specializedFacilityFacts = Object.freeze(
     Object.fromEntries(
       MEGA_STRUCTURE_FACILITY_IDS.map((facilityId) => [
@@ -796,6 +849,7 @@ export function deriveBasicDysonState(
             effectiveProducerCount:
               mega.facts[facilityId].ownership.total,
             modifier: mega.facts[facilityId].modifier,
+            ...(presentationTuning.includeFacilityDetails === false ? {} : {
             contributions: deriveFacilityContributionRows({
               baseProduction: mega.facts[facilityId].baseProductionPerSecond,
               effects: [{
@@ -814,6 +868,7 @@ export function deriveBasicDysonState(
             ),
             generationContributions: facilityId === stellarSacrificeTarget
               ? stellarGenerationContributions : [],
+            }),
             upstreamSources: facilityId === 'matrioshka_brains'
               ? Object.freeze([Object.freeze({
                   sourceFacilityId: 'birch_planets' as const,
@@ -833,22 +888,6 @@ export function deriveBasicDysonState(
       CanonicalFacilityFacts
     >,
   )
-  const nextEvaluationSnapshot =
-    publishDysonSkillEffectEvaluationSnapshot(state, {
-      panelsPerSecond: model.rates.panels,
-      panelLifetimeSeconds: panelLifetime,
-      scienceMultiplier,
-      managerAssemblyLineProduction: model.rates.assembly_lines,
-      scientificPlanetsProduction,
-    })
-
-  const productionArrivalRates = combineDysonProductionArrivalRates(model.rates, mega.rates)
-  const tinkerAdditionalFacilityYields = deriveAdditionalTinkerYields(state, productionArrivalRates,
-    stellarSacrificeTarget === 'galactic_brains' ? {
-      facilitiesPerSecond: stellarSacrificeFacilitiesPerSecond,
-      botsPerSecond: stellarSacrificeBotsPerSecond,
-    } : undefined)
-  const tinkerYields = resolveTinkerFacilityYields(state, tinkerAssemblyYield, tinkerAdditionalFacilityYields)
   const facilityFacts: Record<CanonicalFacilityId, CanonicalFacilityFacts> = {
     ...deriveBasicFacilityFacts(
       state,
@@ -875,9 +914,10 @@ export function deriveBasicDysonState(
       ...fact.details, tinkerPerActivation: tinkerYields[id],
     }) })
   }
-  return {
-    ok: true,
-    value: Object.freeze({
+    return Object.freeze(facilityFacts)
+  }
+
+  const value: DerivedDysonProduction = Object.freeze({
       allocation: Object.freeze({
         workers: state.dyson.workers,
         researchers: state.dyson.researchers,
@@ -905,11 +945,12 @@ export function deriveBasicDysonState(
       rates: Object.freeze({ ...model.rates }),
       megaRates: mega.rates,
       productionArrivalRates,
-      facilityFacts: Object.freeze(facilityFacts),
       nextEvaluationSnapshot,
       entitlements: Object.freeze({ ...entitlements }),
-    }),
-  }
+    })
+  return includeFacilityFacts
+    ? { ok: true, value: Object.freeze({ ...value, facilityFacts: buildFacilityFacts() }) }
+    : { ok: true, value }
 }
 
 const BASIC_FACILITY_OUTPUTS: Readonly<
@@ -999,6 +1040,7 @@ function deriveBasicFacilityFacts(
                 rateCalculation.baseProduction,
               effectiveProducerCount: total,
               modifier: modifiers[facilityId],
+              ...(presentationTuning.includeFacilityDetails === false ? {} : {
               contributions: [...deriveFacilityContributionRows(
                 rateCalculation,
                 pair,
@@ -1037,6 +1079,7 @@ function deriveBasicFacilityFacts(
                 ...(facilityId === stellarSacrificeTarget ? stellarGenerationContributions : []),
               ],
               manualPurchaseLayer: manualPurchaseLayers[facilityId],
+              }),
               upstreamSources: deriveBasicFacilityUpstreamSources(
                 state,
                 facilityId,

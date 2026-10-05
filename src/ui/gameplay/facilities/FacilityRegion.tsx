@@ -12,7 +12,7 @@ import {
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useId, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   FacilityDetailsContent,
@@ -50,6 +50,7 @@ export interface FacilityRegionProps {
   readonly dispatchPlayer: (
     command: FacilityPurchaseCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
+  readonly onDetailsDemandChange?: (expanded: boolean) => void
   readonly headingLevel?: 'h2' | 'h3'
 }
 
@@ -69,6 +70,7 @@ export function FacilityRegion({
   gameSpeed = 1,
   revision,
   dispatchPlayer,
+  onDetailsDemandChange,
   headingLevel = 'h2',
 }: FacilityRegionProps) {
   const intl = useIntl()
@@ -92,6 +94,8 @@ export function FacilityRegion({
   >({})
   const [detailsFacilityId, setDetailsFacilityId] =
     useState<CanonicalFacilityId | null>(null)
+  useLayoutEffect(() => { onDetailsDemandChange?.(detailsFacilityId !== null) }, [detailsFacilityId, onDetailsDemandChange])
+  useEffect(() => () => { onDetailsDemandChange?.(false) }, [onDetailsDemandChange])
   const pendingIdsRef = useRef(new Set<CanonicalFacilityId>())
   const currentRevisionRef = useRef(revision)
   currentRevisionRef.current = revision

@@ -237,7 +237,7 @@ export function advanceEventTime<
     }
 
     if (atBoundary) {
-      candidateState.applyDerivedTimersAndDoubleTime(horizon, summary)
+      candidateState.applyDerivedTimers(horizon, summary)
       candidateState.applyDreamReset(summary)
       candidateState.applyBotCapTransition(summary)
       candidateState.applyInfinityReset(infinityMinimumCycle, summary)

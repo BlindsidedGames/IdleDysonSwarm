@@ -25,6 +25,20 @@ const entitlements = Object.freeze({
 })
 
 describe('CanonicalRuntimeSession', () => {
+  test('refreshes stale compatibility counts on load while retaining current and all preset distribution choices', () => {
+    const session = new CanonicalRuntimeSession(prepareIdb1Save(fixture).prepared, { entitlements })
+    const source = session.initialState.gameState
+    const presets = source.skills.presets.map((preset, index) => ({ ...preset, botDistribution: index / 10 }))
+    const stale = { ...session.initialState, gameState: { ...source,
+      dyson: { ...source.dyson, bots: 100, workers: 0, researchers: 0, botDistribution: 0.37 },
+      quantum: { ...source.quantum, unlocks: { ...source.quantum.unlocks, botMultitasking: false } },
+      skills: { ...source.skills, presets },
+    } }
+    const reopened = new CanonicalRuntimeSession(session.prepare(stale), { entitlements })
+    expect(reopened.initialState.gameState.dyson).toMatchObject({ workers: 63, researchers: 37, botDistribution: 0.37 })
+    expect(reopened.initialState.gameState.skills.presets.map(preset => preset.botDistribution)).toEqual(presets.map(preset => preset.botDistribution))
+  })
+
   test('keeps the tab override across a local checkpoint and reopen', () => {
     const session = new CanonicalRuntimeSession(prepareIdb1Save(fixture).prepared, { entitlements })
     const state = { ...session.initialState, debugOptionsEnabled: true, unlockAllTabs: true }

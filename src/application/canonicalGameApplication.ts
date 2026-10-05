@@ -1,3 +1,5 @@
+import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
+import { StoredTimeSimulation } from '../workers/storedTime/storedTimeSimulation'
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { isQuantumChallengeActive } from '../simulation/infinityChallenges'
 import { markSpeedrunUsage, observeSpeedruns } from '../simulation/speedrunStatistics'
@@ -23,7 +25,8 @@ import type {
   SimulationTransitionResult,
 } from '../core/contracts'
 import {
-  deriveBasicDysonState,
+  deriveDysonProduction,
+  CANONICAL_DYSON_PRESENTATION_TUNING,
   type DysonEntitlements,
 } from '../simulation/canonicalDysonDerivation'
 import {
@@ -43,11 +46,9 @@ import {
 } from '../simulation/canonicalEventTimeModel'
 import {
   createSimulationSummary,
-  type SimulationDisasterPresentationEvent,
 } from '../simulation/types'
 import {
   advanceGame,
-  settleStoredTimeReplayCompletion,
 } from '../simulation/gameStep'
 import { planStoredTimePolicy } from '../simulation/storedTimePolicy'
 import {
@@ -115,6 +116,7 @@ export {
 } from './canonicalPlayerCommands'
 
 type CanonicalInternalCommand =
+  | { readonly kind: 'internal.accept-presentation-events'; readonly throughSequence: number }
   | {
       readonly kind: 'internal.advance-active-continuous'
       readonly milliseconds: number
@@ -260,6 +262,7 @@ export class CanonicalGameApplicationFacade {
   private cachedFrontendSnapshot:
     | DeepReadonly<FrontendApplicationSnapshot>
     | undefined
+  private cachedFacilityDetailsDemand: boolean | undefined
   private cachedFrontendPreviewDemand:
     | FrontendGameplayPreviewDemand
     | undefined
@@ -294,6 +297,13 @@ export class CanonicalGameApplicationFacade {
     return this.application.snapshot()
   }
 
+  acknowledgePresentationEvents(sessionRevision: number, throughSequence: number): void {
+    const current = this.snapshot()
+    if (current.phase !== 'ready' || current.revision.session !== sessionRevision) return
+    this.application.dispatch({ sessionRevision, expectedStateRevision: current.revision.state,
+      command: { kind: 'internal.accept-presentation-events', throughSequence } })
+  }
+
   previewQuantumLeap(): FrontendQuantumLeapPreview {
     const snapshot = this.snapshot()
     if (snapshot.phase !== 'ready') {
@@ -313,11 +323,13 @@ export class CanonicalGameApplicationFacade {
 
   frontendSnapshot(
     previewDemand: FrontendGameplayPreviewDemand = 'all',
+    includeFacilityDetails = true,
   ): DeepReadonly<FrontendApplicationSnapshot> {
     const application = this.snapshot()
     if (
       this.cachedFrontendSnapshot !== undefined &&
       this.cachedFrontendPreviewDemand === previewDemand &&
+      this.cachedFacilityDetailsDemand === includeFacilityDetails &&
       sameFrontendApplicationEnvelope(
         this.cachedFrontendSnapshot,
         application,
@@ -370,14 +382,14 @@ export class CanonicalGameApplicationFacade {
         },
         quantumLeap,
         realityWorkerTuning: this.eventContext.realityWorkerTuning,
-        dysonPresentationTuning:
-          this.eventContext.dysonPresentationTuning,
+        dysonPresentationTuning: { ...(this.eventContext.dysonPresentationTuning ?? CANONICAL_DYSON_PRESENTATION_TUNING), includeFacilityDetails },
         previewDemand,
         previousPreviews,
         previousGameplay,
       },
       'detached-frozen',
     )
+    this.cachedFacilityDetailsDemand = includeFacilityDetails
     this.cachedFrontendPreviewDemand = previewDemand
     return this.cachedFrontendSnapshot
   }
@@ -1057,17 +1069,30 @@ export function createCanonicalGameEngineDefinition(
     validateTransitionState: (state) =>
       validateRuntimeTransitionState(state, eventContext),
     applyCommand: (candidate, command) => {
+      if (command.kind === 'internal.accept-presentation-events') {
+        const sequence = command.throughSequence
+        const last = Math.max(candidate.presentationEventSequence ?? 0,
+          candidate.presentationEvents.at(-1)?.sequence ?? 0)
+        if (!Number.isSafeInteger(sequence) || sequence < 1 || sequence > last) {
+          return reject('CANONICAL-PRESENTATION-SEQUENCE-INVALID', 'Presentation acknowledgement exceeds the published sequence.')
+        }
+        const pending = candidate.presentationEvents.filter(event => event.sequence > sequence)
+        if (pending.length === candidate.presentationEvents.length) return { accepted: true, changed: false }
+        Object.assign(candidate, { presentationEventSequence: last, presentationEvents: Object.freeze(pending) })
+        return { accepted: true, changed: true }
+      }
+
       if (command.kind === 'challenge.enter' || command.kind === 'challenge.enter-no-science' || command.kind === 'challenge.enter-trial-and-error' || command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
         const artifact = deriveCanonicalArtifactSkillPoints(candidate.gameState, eventContext.realityUpgradeDefinitions)
         if (!artifact.ok) return reject('CHALLENGE_RESET_FAILED', artifact.issue?.detail ?? 'Artifact skill points unavailable.')
         const reset = restartInfinityChallenge(candidate.gameState,
           command.kind === 'challenge.abandon' ? 'abandon' : 'enter', artifact.value, command.kind === 'challenge.enter' ? command.challengeId : command.kind === 'challenge.enter-no-science' ? 'no-science' : command.kind === 'challenge.enter-trial-and-error' ? 'trial-and-error' : 'blank-slate')
         if (!reset.ok) return reject(reset.code, 'The challenge could not be started or abandoned.')
-        const derived = deriveBasicDysonState(reset.state, candidate.compatibilityTuning,
+        const derived = deriveDysonProduction(reset.state, candidate.compatibilityTuning,
           candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)
         if (!derived.ok) return reject('CHALLENGE_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Challenge reset could not be derived.')
-        Object.assign(candidate, { gameState: pauseOfflineBoost(reset.state), evaluationSnapshot: derived.value.nextEvaluationSnapshot,
-          tinker: createCanonicalTinkerRuntimeState(), lastSkillPresetApplication: null, presentationEvents: [] })
+        Object.assign(candidate, { gameState: pauseOfflineBoost(withCanonicalBotAllocation(reset.state)), evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+          tinker: createCanonicalTinkerRuntimeState(), lastSkillPresetApplication: null, presentationEventSequence: Math.max(candidate.presentationEventSequence ?? 0, candidate.presentationEvents.at(-1)?.sequence ?? 0), presentationEvents: [] })
         return { accepted: true, changed: true }
       }
       if (command.kind === 'avocado.request-overflow-reset') {
@@ -1075,16 +1100,17 @@ export function createCanonicalGameEngineDefinition(
         if (!reset.ok) return reject(reset.code, 'Reach Overflow before choosing this reset.')
         const evidence = candidate.achievementEvidence === undefined ? undefined
           : mergeAchievementFacts(candidate.achievementEvidence, evaluateAchievements(candidate.gameState, false))
-        const derived = deriveBasicDysonState(
+        const derived = deriveDysonProduction(
           reset.state, candidate.compatibilityTuning, candidate.entitlements,
           candidate.evaluationSnapshot, eventContext.dysonPresentationTuning,
         )
         if (!derived.ok) return reject('OVERFLOW_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Overflow reset could not be derived.')
         Object.assign(candidate, {
-          gameState: pauseOfflineBoost(reset.state),
+          gameState: pauseOfflineBoost(withCanonicalBotAllocation(reset.state)),
           evaluationSnapshot: derived.value.nextEvaluationSnapshot,
           tinker: createCanonicalTinkerRuntimeState(),
           lastSkillPresetApplication: null,
+          presentationEventSequence: Math.max(candidate.presentationEventSequence ?? 0, candidate.presentationEvents.at(-1)?.sequence ?? 0),
           presentationEvents: [],
           ...(evidence === undefined ? {} : { achievementEvidence: evidence }),
         })
@@ -1403,7 +1429,7 @@ function commandOptions(
     permanentBotBoost: state.entitlements.permanentBotBoost === true,
     runtimeEvaluation: {
       evaluate: (candidate, previous) => {
-        const derived = deriveBasicDysonState(
+        const derived = deriveDysonProduction(
           candidate,
           state.compatibilityTuning,
           state.entitlements,
@@ -1527,12 +1553,13 @@ function appendPresentationEvent(
   state: CanonicalRuntimeState,
   create: (sequence: number) => CanonicalRuntimePresentationEvent,
 ): void {
-  const previous = state.presentationEvents.at(-1)?.sequence ?? 0
+  const previous = Math.max(state.presentationEventSequence ?? 0, state.presentationEvents.at(-1)?.sequence ?? 0)
   if (previous >= Number.MAX_SAFE_INTEGER) {
     throw new Error('Canonical presentation event sequence exhausted.')
   }
   const events = [...state.presentationEvents, Object.freeze(create(previous + 1))]
   Object.assign(state, {
+    presentationEventSequence: previous + 1,
     presentationEvents: Object.freeze(events),
   })
 }
@@ -1557,88 +1584,17 @@ function advanceStoredTime(
       'Stored-time spend must be positive, finite, and no greater than the bank.',
     )
   }
-  const working = structuredClone(candidate)
-  const plan = planStoredTimePolicy({
-    requestedSeconds,
-    preset: working.gameState.timeline.processing.storedTimePreset,
-  })
-  let remainingSeconds = requestedSeconds
-  let remainingTicks = plan.plannedTicks
-  const firstDisasterEvents: SimulationDisasterPresentationEvent[] = []
-  while (remainingTicks > 0 && remainingSeconds > 0) {
-    if (cancelRequested?.() === true) {
-      return reject(
-        'CANONICAL-STORED-TIME-CANCELLED',
-        'Cancelled stored-time candidates are discarded without charging the bank.',
-      )
-    }
-    const stepSeconds = remainingSeconds / remainingTicks
-    const result = advanceGame(
-      eventCarrier(working),
-      {
-        source: 'stored-time',
-        baseSeconds: stepSeconds,
-        automation: 'enabled',
-      },
-      context,
-      minimumCycleSeconds,
-    )
-    replaceEventCarrier(working, result.state)
-    firstDisasterEvents.push(
-      ...result.summary.storedTimeFirstDisasterEvents,
-    )
-    if (result.botCapPersistenceRequired) {
-      return reject(
-        'CANONICAL-STORED-TIME-BOT-CAP-UNSETTLED',
-        'Detached Stored Time replay could not settle its bot-cap transition.',
-      )
-    }
-    if (result.issue !== undefined) {
-      return reject(result.issue, `Stored Time game step failed as ${result.issue}.`)
-    }
-    remainingSeconds = Math.max(0, remainingSeconds - stepSeconds)
-    remainingTicks -= 1
-  }
-  const consumedSeconds = requestedSeconds - remainingSeconds
-  if (consumedSeconds <= 0) {
-    return reject(
-      'CANONICAL-STORED-TIME-NO-PROGRESS',
-      'Stored Time replay made no durable progress.',
-    )
-  }
-  const settlement = settleStoredTimeReplayCompletion(
-    eventCarrier(working),
-    context,
-  )
-  replaceEventCarrier(working, settlement.state)
-  firstDisasterEvents.push(
-    ...settlement.summary.storedTimeFirstDisasterEvents,
-  )
-  if (settlement.issue !== undefined) {
-    return reject(
-      settlement.issue,
-      `Stored Time completion boundary failed as ${settlement.issue}.`,
-    )
-  }
-  Object.assign(working, { gameState: {
-    ...working.gameState,
-    timeline: {
-      ...working.gameState.timeline,
-      storedTimeAvailableSeconds: Math.max(
-        0,
-        bank - consumedSeconds,
-      ),
-    },
-  } })
-  captureFirstDisasterOccurrences?.(
-    Object.freeze(firstDisasterEvents.map((event) => Object.freeze({
-      cause: event.cause,
-      strangeMatterGranted: event.strangeMatterGranted,
-      resetCount: event.resetCount,
-      preResetEra: event.preResetEra,
-    }))),
-  )
-  Object.assign(candidate, working)
+  const simulation = new StoredTimeSimulation({ jobId: 'inline-stored-time', state: candidate,
+    requestedSeconds, infinityMinimumCycleSeconds: minimumCycleSeconds, eventContext: context })
+  // One shared-core tick per call retains the inline cancellation boundary.
+  let terminal = simulation.step(0, cancelRequested?.() === true)
+  while (terminal === null) terminal = simulation.step(0, cancelRequested?.() === true)
+  if (terminal.type === 'cancelled') return reject('CANONICAL-STORED-TIME-CANCELLED',
+    'Cancelled stored-time candidates are discarded without charging the bank.')
+  if (terminal.type === 'failed') return reject(terminal.code, terminal.reason)
+  captureFirstDisasterOccurrences?.(terminal.firstDisasterOccurrences)
+  Object.assign(candidate, terminal.candidate)
+
   return { accepted: true, changed: true }
 }
 
@@ -1658,7 +1614,7 @@ function applyBotCapCheckpoint(
     )
   }
   Object.assign(candidate, { gameState: result.candidateState })
-  const derived = deriveBasicDysonState(
+  const derived = deriveDysonProduction(
     candidate.gameState,
     candidate.compatibilityTuning,
     candidate.entitlements,
@@ -1801,6 +1757,7 @@ function validateStoredTimeJobCandidate(
     return 'The worker candidate does not charge exactly its consumed duration.'
   }
   if (
+    candidate.presentationEventSequence !== before.presentationEventSequence ||
     candidate.storedTimeCheater !== before.storedTimeCheater ||
     candidate.coldStartCheckpointAtUtc !== before.coldStartCheckpointAtUtc ||
     candidate.selectedSkillPresetSlot !== before.selectedSkillPresetSlot ||
@@ -1923,6 +1880,7 @@ function validateRuntimeState(
   if (presetApplicationIssue !== undefined) return presetApplicationIssue
   const presentationIssue = validatePresentationEvents(
     state.presentationEvents,
+    state.presentationEventSequence,
   )
   if (presentationIssue !== undefined) return presentationIssue
   return CanonicalEventTimeModel.fromOwnedState(
@@ -2017,6 +1975,7 @@ function validateRuntimeTransitionState(
   if (presetApplicationIssue !== undefined) return presetApplicationIssue
   const presentationIssue = validatePresentationEvents(
     state.presentationEvents,
+    state.presentationEventSequence,
   )
   if (presentationIssue !== undefined) return presentationIssue
   const model = CanonicalEventTimeModel.fromOwnedState(
@@ -2030,8 +1989,10 @@ function validateRuntimeTransitionState(
 
 function validatePresentationEvents(
   events: CanonicalRuntimeState['presentationEvents'],
+  sequence?: number,
 ): string | undefined {
-  if (!Array.isArray(events)) {
+  if (!Array.isArray(events) || (sequence !== undefined &&
+      (!Number.isSafeInteger(sequence) || sequence < 0 || sequence < (events.at(-1)?.sequence ?? 0)))) {
     return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
   }
   let previousSequence = 0

@@ -68,18 +68,22 @@ export function settleContinuousCredit(
   return { balance: next, settled }
 }
 
-/**
- * Represents an all-or-nothing authored purchase output. Unlike production
- * transfers, a purchase may not silently settle a smaller or larger delta.
- */
+/** An authored purchase may tolerate floating-point addition noise, not a lost unit. */
 export function settleExactContinuousCredit(
   balance: number,
   requested: number,
   maximum = CONTINUOUS_MAXIMUM,
 ): ConservativeContinuousSettlement {
-  const settlement = settleContinuousCredit(balance, requested, maximum)
-  return settlement.settled === requested
-    ? settlement
+  if (!isFiniteNonNegativeNumber(balance) || !isFiniteNonNegativeNumber(requested) ||
+      !isFiniteNonNegativeNumber(maximum) || balance > maximum || requested <= 0 ||
+      requested > maximum - balance) return { balance, settled: 0 }
+  const next = balance + requested
+  const represented = next - balance
+  // Bound ordinary addition noise below a whole unit even at enormous balances.
+  const tolerance = Math.min(1e-9, Number.EPSILON * Math.max(balance, requested, next) * 2)
+  return Number.isFinite(next) && next <= maximum && represented > 0 &&
+    Math.abs(represented - requested) <= tolerance
+    ? { balance: next, settled: requested }
     : { balance, settled: 0 }
 }
 

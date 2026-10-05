@@ -711,17 +711,15 @@ describe('Stored Time job application integration', () => {
     expect(repository.commits).toBe(commitsBefore)
   })
 
-  test('rejects a worker mutation of session-owned carriers before persistence', async () => {
+  test.each(['entitlements', 'presentation-sequence'] as const)('rejects a worker mutation of %s before persistence', async (carrier) => {
     const repository = new MemoryRepository()
     const runner = transformingSimulationRunner((terminal) => ({
       ...terminal,
       candidate: {
         ...terminal.candidate,
-        entitlements: {
-          ...terminal.candidate.entitlements,
-          permanentDoubleIp:
-            !terminal.candidate.entitlements.permanentDoubleIp,
-        },
+        ...(carrier === 'presentation-sequence'
+          ? { presentationEventSequence: (terminal.candidate.presentationEventSequence ?? 0) + 1 }
+          : { entitlements: { ...terminal.candidate.entitlements, permanentDoubleIp: !terminal.candidate.entitlements.permanentDoubleIp } }),
       },
     }))
     const application = createApplication(repository, runner)

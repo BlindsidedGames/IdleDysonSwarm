@@ -436,7 +436,6 @@ export class CanonicalLifecycleCoordinator {
         capacitySeconds:
           runtime.gameState.timeline.storedTimeCapacitySeconds,
         cheater: runtime.storedTimeCheater,
-        dreamDoubleTimeBankSeconds: 0,
       })
       const candidate = {
         ...runtime,
