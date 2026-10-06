@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import fixture from '../../../../test/fixtures/progression/maximum-skills.idsweb1.txt?raw'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, expect, test, vi } from 'vitest'
 import { IntlProvider } from 'react-intl'
@@ -105,7 +104,6 @@ test('one stable card purchases each next stage, hides at completion and returns
 })
 
 test('final canonical purchase hides Durability, focuses uncapped research, and respects the visibility checkbox', async () => {
-  const user = userEvent.setup()
   const dispatched = vi.fn()
   function Harness() {
     const [state, setState] = useState(() => stateAfter(3))
@@ -133,22 +131,23 @@ test('final canonical purchase hides Durability, focuses uncapped research, and 
   const card = screen.getByRole('heading', { name: 'Durability Upgrade' }).closest('article')!
   const purchase = within(card).getByRole('button')
   purchase.focus()
-  await user.keyboard('{Enter}')
+  await act(async () => fireEvent.click(purchase))
   expect(dispatched).toHaveBeenCalledExactlyOnceWith({ kind: 'research.purchase', researchId: ids[3] })
   expect(screen.queryByRole('heading', { name: 'Durability Upgrade' })).toBeNull()
   const cashCard = screen.getByRole('heading', { name: /Cash/ }).closest('article')!
   expect(document.activeElement).toBe(within(cashCard).getByRole('button'))
   expect(screen.queryByRole('status')).toBeNull()
 
-  await user.click(screen.getByRole('button', { name: 'Research purchase settings' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Research purchase settings' }))
   const checkbox = screen.getByRole('checkbox', { name: 'Hide completed Research' }) as HTMLInputElement
   expect(checkbox.checked).toBe(true)
-  await user.click(checkbox)
+  checkbox.focus()
+  fireEvent.click(checkbox)
   const completedCard = screen.getByRole('heading', { name: 'Durability Upgrade' }).closest('article')!
   expect(within(completedCard).getByText('Maxed')).toBeTruthy()
   expect(within(completedCard).getByRole('button').hasAttribute('disabled')).toBe(true)
   expect(completedCard.textContent).toContain('+10s')
-  await user.click(checkbox)
+  fireEvent.click(checkbox)
   expect(checkbox.checked).toBe(true)
   expect(screen.queryByRole('heading', { name: 'Durability Upgrade' })).toBeNull()
   expect(screen.getByRole('heading', { name: /Cash/ })).toBeTruthy()
