@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import fixture from '../../../../test/fixtures/progression/maximum-skills.idsweb1.txt?raw'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
 import { afterEach, expect, test, vi } from 'vitest'
 import { IntlProvider } from 'react-intl'
 import { hydrateGameState, dehydrateGameState } from '../../../game-state/mapping'
@@ -23,8 +25,8 @@ function stateAfter(count: number) {
   }
   return state
 }
-function previews(state = stateAfter(0), automatic = false) {
-  return ids.map((id) => {
+function previews(state = stateAfter(0), automatic = false, includeCash = false) {
+  return (includeCash ? [...ids, 'research.money_multiplier'] : ids).map((id) => {
     const purchase = previewCanonicalResearchPurchase(state, session.compatibilityTuning, id)
     return { ...purchase, ...selectCanonicalResearchPresentationFacts(state, session.compatibilityTuning, id, purchase.selectedQuantity)!, automationActive: automatic }
   })
@@ -76,7 +78,7 @@ function surface(cards: ReturnType<typeof previews>, dispatchPlayer: ResearchSur
   </IntlProvider>
 }
 
-test('one stable card purchases each next stage, stays at completion and survives reset', async () => {
+test('one stable card purchases each next stage, hides at completion and returns after reset', async () => {
   const dispatch = vi.fn<ResearchSurfaceProps['dispatchPlayer']>().mockResolvedValue({ status: 'accepted' } as never)
   const view = render(surface(previews(), dispatch))
   const originalCard = screen.getByRole('heading', { name: 'Durability Upgrade' }).closest('article')!
@@ -91,13 +93,75 @@ test('one stable card purchases each next stage, stays at completion and survive
     expect(dispatch).toHaveBeenLastCalledWith({ kind: 'research.purchase', researchId: ids[stage] })
   }
   view.rerender(surface(previews(stateAfter(4)), dispatch))
-  expect(within(originalCard).getByText('Maxed')).toBeTruthy()
-  expect(originalButton.hasAttribute('disabled')).toBe(true)
-  expect(originalCard.textContent).toContain('+10s')
+  expect(screen.queryByRole('heading', { name: 'Durability Upgrade' })).toBeNull()
+  expect(originalCard.isConnected).toBe(false)
+  const emptyState = screen.getByRole('status')
+  expect(emptyState.textContent).toMatch(/research.*completed.*hidden/i)
+  expect(document.activeElement).toBe(emptyState)
   view.rerender(surface(previews(), dispatch))
-  expect(screen.getByRole('heading', { name: 'Durability Upgrade' }).closest('article')).toBe(originalCard)
-  expect(originalButton.hasAttribute('disabled')).toBe(false)
-  expect(originalCard.textContent).toContain('+0s')
+  const restartedCard = screen.getByRole('heading', { name: 'Durability Upgrade' }).closest('article')!
+  expect(within(restartedCard).getByRole('button').hasAttribute('disabled')).toBe(false)
+  expect(restartedCard.textContent).toContain('+0s')
+})
+
+test('final canonical purchase hides Durability, focuses uncapped research, and respects the visibility checkbox', async () => {
+  const user = userEvent.setup()
+  const dispatched = vi.fn()
+  function Harness() {
+    const [state, setState] = useState(() => stateAfter(3))
+    const [hideCompleted, setHideCompleted] = useState(true)
+    const cards = previews(state, false, true)
+    const dispatchPlayer: ResearchSurfaceProps['dispatchPlayer'] = async (command) => {
+      dispatched(command)
+      if (command.kind !== 'research.purchase') throw new Error('Unexpected command')
+      const result = purchaseCanonicalResearch(state, session.compatibilityTuning, command.researchId)
+      if (!result.accepted) throw new Error(result.code)
+      setState(result.state)
+      return { status: 'accepted' } as never
+    }
+    return <IntlProvider locale="en" messages={{}}>
+      <ResearchVisibilityContext.Provider value={{ hideCompleted, setHideCompleted }}>
+        <ResearchSurface cards={cards} locale="en" researchers={1} sciencePerSecond={1}
+          buyMode="buy-max" roundedBulkBuy={false} presets={[]} presetAutomationSlot={0}
+          automationUnlocked={false} automationEnabledById={{}} automationResearchIds={[]}
+          purchaseRouteAvailable buyModeRouteAvailable roundedBulkRouteAvailable presetAutomationRouteAvailable automationRouteAvailable
+          dispatchPlayer={dispatchPlayer} />
+      </ResearchVisibilityContext.Provider>
+    </IntlProvider>
+  }
+  render(<Harness />)
+  const card = screen.getByRole('heading', { name: 'Durability Upgrade' }).closest('article')!
+  const purchase = within(card).getByRole('button')
+  purchase.focus()
+  await user.keyboard('{Enter}')
+  expect(dispatched).toHaveBeenCalledExactlyOnceWith({ kind: 'research.purchase', researchId: ids[3] })
+  expect(screen.queryByRole('heading', { name: 'Durability Upgrade' })).toBeNull()
+  const cashCard = screen.getByRole('heading', { name: /Cash/ }).closest('article')!
+  expect(document.activeElement).toBe(within(cashCard).getByRole('button'))
+  expect(screen.queryByRole('status')).toBeNull()
+
+  await user.click(screen.getByRole('button', { name: 'Research purchase settings' }))
+  const checkbox = screen.getByRole('checkbox', { name: 'Hide completed Research' }) as HTMLInputElement
+  expect(checkbox.checked).toBe(true)
+  await user.click(checkbox)
+  const completedCard = screen.getByRole('heading', { name: 'Durability Upgrade' }).closest('article')!
+  expect(within(completedCard).getByText('Maxed')).toBeTruthy()
+  expect(within(completedCard).getByRole('button').hasAttribute('disabled')).toBe(true)
+  expect(completedCard.textContent).toContain('+10s')
+  await user.click(checkbox)
+  expect(checkbox.checked).toBe(true)
+  expect(screen.queryByRole('heading', { name: 'Durability Upgrade' })).toBeNull()
+  expect(screen.getByRole('heading', { name: /Cash/ })).toBeTruthy()
+  expect(document.activeElement).toBe(checkbox)
+})
+
+test('hide completed keeps unfinished Durability visible when the next stage is unaffordable', () => {
+  const state = stateAfter(2)
+  render(surface(previews({ ...state, dyson: { ...state.dyson, science: 0 } }), vi.fn()))
+  const card = screen.getByRole('heading', { name: 'Durability Upgrade' }).closest('article')!
+  expect(within(card).getByRole('button').hasAttribute('disabled')).toBe(true)
+  expect(card.textContent).toContain('+3s')
+  expect(within(card).queryByText('Maxed')).toBeNull()
 })
 
 test('automation never exposes a manual purchase action', () => {
