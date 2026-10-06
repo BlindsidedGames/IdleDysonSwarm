@@ -50,10 +50,11 @@ describe('save import text preparation', () => {
     )
   })
 
-  test('manual shared import consumes remote lifecycle time but preserves its stored bank', () => {
+  test.each([undefined, 'not a timestamp'])('manual shared import consumes remote lifecycle time but preserves its stored bank (receiver receipt=%s)', receipt => {
     const source = PreparedSave.fromDecoded({
       saveVersion: 12,
       dateQuitString: 'remote quit',
+      idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
       offlineTime: 45,
       futureValue: { retained: true },
     })
@@ -62,6 +63,9 @@ describe('save import text preparation', () => {
     const imported = prepareImportedSaveText(
       text,
       '2026-07-29T05:00:00Z',
+      undefined,
+      undefined,
+      { idsConsumedDepartureAtUtc: receipt },
     ).copyValidatedState()
 
     expect(imported).toMatchObject({
@@ -70,6 +74,7 @@ describe('save import text preparation', () => {
       offlineTime: 45,
       futureValue: { retained: true },
     })
+    expect(imported.idsConsumedDepartureAtUtc).toBeUndefined()
   })
 
   test('round-trips a 128-day stored-time bank and capacity without capping them', () => {
@@ -326,6 +331,7 @@ describe('save import text preparation', () => {
       PreparedSave.fromDecoded({
         saveVersion: 12,
         dateQuitString: '2026-07-29T04:00:00Z',
+        idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
         offlineTime: 30,
         doubleIp: true,
         debugOptions: true,
@@ -345,6 +351,7 @@ describe('save import text preparation', () => {
 
     expect(imported).toMatchObject({
       dateQuitString: '2026-07-29T04:00:00Z',
+      idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
       offlineTime: 30,
       doubleIp: true,
       debugOptions: true,
@@ -378,6 +385,7 @@ describe('save import text preparation', () => {
       state: {
         saveVersion: 12,
         dateQuitString: '2026-07-29T04:00:00Z',
+        idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
         debugOptions: true,
         debugEverEnabled: true,
       },
@@ -395,6 +403,7 @@ describe('save import text preparation', () => {
 
     expect(imported).toMatchObject({
       dateQuitString: '2026-07-29T04:00:00Z',
+      idsConsumedDepartureAtUtc: '2026-07-28T04:00:00Z',
       debugOptions: true,
       debugEverEnabled: true,
     })

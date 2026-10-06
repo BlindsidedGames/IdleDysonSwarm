@@ -574,8 +574,13 @@ export class CanonicalEventTimeModel
         : {
             state: candidate,
             runtime: this.carrier.tinker,
+            unusedIdleSeconds: 0,
           }
-      candidate = withCanonicalBotAllocation(tinker.state)
+      candidate = withCanonicalBotAllocation(
+        tinker.unusedIdleSeconds > 0
+          ? advanceManualLabourIdle(tinker.state, tinker.unusedIdleSeconds)
+          : tinker.state,
+      )
       const space = runDreamSpaceAgeProduction(candidate, {
         tickSeconds: seconds,
         doubleTimeMultiplier: 1,

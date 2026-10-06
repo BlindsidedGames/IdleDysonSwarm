@@ -94,12 +94,14 @@ export interface PreparedLegacySave {
  * and must not award away time again on the importing runtime.
  *
  * The stored offline-time bank and all unrecognized fields are intentionally
- * preserved. Time acquisition remains the caller's responsibility so this
- * transformation is deterministic and platform independent.
+ * preserved. The receiver's consumed departure acknowledgement stays local
+ * across replacement. Time acquisition remains the caller's responsibility so
+ * this transformation is deterministic and platform independent.
  */
 export function prepareImportedSave(
   source: PreparedSave,
   importedAtUtc: string,
+  receivingState?: Readonly<SaveRecord>,
 ): PreparedSave {
   if (importedAtUtc.trim().length === 0) {
     throw new Error('Import timestamp must not be empty.')
@@ -110,6 +112,13 @@ export function prepareImportedSave(
   // A shared/imported checkpoint belongs to the source device's clock.
   // Establish this device's fallback on its next normal persistence commit.
   delete candidate.idsLastActiveAtUtc
+  delete candidate.idsConsumedDepartureAtUtc
+  // Keep the receiver's committed acknowledgement in the replacement itself:
+  // best-effort local marker cleanup may still fail after import promotion.
+  const consumedDeparture = receivingState?.idsConsumedDepartureAtUtc
+  if (typeof consumedDeparture === 'string' && Number.isFinite(Date.parse(consumedDeparture))) {
+    candidate.idsConsumedDepartureAtUtc = consumedDeparture
+  }
   candidate.lastSuccessfulLoadUtc = importedAtUtc
   return source.withValidatedState(candidate)
 }

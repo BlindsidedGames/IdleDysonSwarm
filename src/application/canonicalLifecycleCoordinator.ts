@@ -881,10 +881,22 @@ export class CanonicalLifecycleCoordinator {
     )
     const unconsumedPendingTimestamp =
       pendingQuitTimestamp?.status === 'valid' &&
-      pendingQuitTimestamp.utcMilliseconds ===
-        this.consumedPendingDepartureUtcMilliseconds
+      (pendingQuitTimestamp.utcMilliseconds ===
+        this.consumedPendingDepartureUtcMilliseconds ||
+        pendingQuitTimestamp.utcMilliseconds ===
+          Date.parse(runtime.consumedDepartureAtUtc ?? ''))
         ? undefined
         : pendingQuitTimestamp
+    if (
+      pendingQuitTimestamp?.status === 'valid' &&
+      unconsumedPendingTimestamp === undefined
+    ) {
+      // The bank already contains this exact credit. Retrying cleanup is safe
+      // even on a fresh runtime; a newer marker still has its own absence.
+      this.clearPendingDepartureTimestamp?.(
+        pendingQuitTimestamp.utcMilliseconds,
+      )
+    }
     const departureTimestamp = earliestValidDepartureTimestamp(
       earliestValidDepartureTimestamp(persistedQuitTimestamp, unconsumedPendingTimestamp),
       this.pendingColdStartTimestamp,
@@ -916,6 +928,13 @@ export class CanonicalLifecycleCoordinator {
 
     const candidate = cloneCanonicalRuntimeState(runtime)
     Object.assign(candidate, {
+      ...(unconsumedPendingTimestamp?.status === 'valid'
+        ? {
+            consumedDepartureAtUtc: new Date(
+              unconsumedPendingTimestamp.utcMilliseconds,
+            ).toISOString(),
+          }
+        : {}),
       ...(runtime.coldStartCheckpointAtUtc === undefined
         ? {} : { coldStartCheckpointAtUtc: null }),
       gameState: replay.state.canonical,

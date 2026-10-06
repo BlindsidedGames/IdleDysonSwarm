@@ -3043,6 +3043,9 @@ function reuseSkillCatalogPreview(
       before.skillId !== after.skillId ||
       before.cost !== after.cost ||
       before.owned !== after.owned ||
+      before.galvanized !== after.galvanized ||
+      before.galvanizationUnlocked !== after.galvanizationUnlocked ||
+      before.canGalvanize !== after.canGalvanize ||
       before.visible !== after.visible ||
       before.unlocked !== after.unlocked ||
       before.queued !== after.queued ||
