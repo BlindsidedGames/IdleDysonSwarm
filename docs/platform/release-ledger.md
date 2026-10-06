@@ -478,3 +478,56 @@ tooltip screenshots and browser evidence are in `/tmp/ids-tooltip-integration/qa
 The prior unrelated skill/augment work remains preserved in its named stash and
 backup. No production rollout, App Review submission, Steam default promotion,
 website deployment or community message was performed.
+
+## 2026100601 — pre-Reality checkpoint and Steam beta
+
+6 October 2026 UTC (7 October AEDT). Product source is clean merged main
+`04ea41f6b87a15905a75a207dbeaf1153b2f78f0`, preserved remotely by the annotated
+tag `checkpoint/ids-pre-reality-rework-20261006`. No additional ready PR was
+open. Main includes [PR #224](https://github.com/BlindsidedGames/IdleDysonSwarm/pull/224)
+(Fracture catalog invalidation, Patient Hands residual credit and atomic
+offline/import receipts) and [PR #225](https://github.com/BlindsidedGames/IdleDysonSwarm/pull/225)
+(hide completed Durability research and preserve focus), plus the previously
+reviewed speed, offline-credit and Wiki credits changes.
+
+| Destination | Identity | Verified state |
+| --- | --- | --- |
+| Steam `public-beta` | `25764326` / `4.1.11` / `2026100601` | Active; Windows, Linux and universal macOS packages downloaded and hash-verified |
+
+- The clean isolated packaging commit
+  `5ae05fc386387233d78b5c605307a8dd30e112c8` has the product SHA as its sole
+  parent and changes only the four synchronized release metadata files. All
+  three ASAR manifests record that preparation SHA, Steam distribution,
+  marketing version `4.1.11` and build version `2026100601`. This documentation
+  follow-up does not change the released product source.
+- Local verification passed **205 suites / 2,201 tests**, lint, generated-data
+  compatibility, all localization extraction/validation/compilation,
+  production/native-relative builds and the Electron process boundary.
+  [Merged-main shared CI](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/37444902874)
+  and [exact-source native candidate CI](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/37543194797)
+  passed. The latter compiled unsigned Android debug and iOS simulator hosts;
+  neither target was uploaded in this Steam-only release.
+- Each ASAR's **293 renderer files** match the reviewed native build. Fresh
+  authenticated beta downloads match **76 Windows / 76 Linux / 261 macOS**
+  regular package files. Their client manifests record build `25764326` and
+  `public-beta`. Depot manifests are Windows `6274378177269433804`, Linux
+  `2917408467620863384` and macOS `2669826776444626391`.
+  Steam default `public` remains `25569496`.
+- Extracted, unchanged Steam host/renderer code passed actual macOS window-close
+  checkpoint/quit and minimize/restore readiness checks. Before each diagnostic
+  launch, fresh disposable roots and mock Keychain were configured, real
+  Application Support reads were denied and Steam SDK loading was blocked
+  before native account initialization. An initial generic-desktop close check
+  timed out because generic macOS desktop mode intentionally stays running;
+  the corrected Steam-mode close check passed. No product fix was needed.
+  Steam account services, commerce/overlay and interactive Windows/Linux play
+  were not reverified; Matthew's beta play test remains the next step.
+- All **six existing stashes**, five dirty worktrees and the registered branch
+  history were preserved. No stash was applied/dropped, worktree pruned or
+  existing branch deleted. Reality implementation has not started; Androids
+  remain parked and the Black Hole Capped label remains an unimplemented proposal.
+- Evidence, checkpoint inventory, package SHA-256 manifests, diagnostic logs,
+  upload receipt and downloaded depot manifests are retained on the release Mac
+  at `/Users/matthewrushworth/Documents/Codex/2026-10-05/task-8/evidence/pre-rework-20261006/`.
+  No mobile upload, public/default promotion, website publication or announcement
+  was performed for this candidate.
