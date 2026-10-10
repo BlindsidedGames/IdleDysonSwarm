@@ -1,4 +1,5 @@
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { EventEmitter } from 'node:events'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { expect, test, vi } from 'vitest'
@@ -9,6 +10,7 @@ const state = vi.hoisted(() => ({
   items: [] as { itemDefId: number; instanceId: string; quantity: number }[],
   charges: [] as number[],
   cloud: vi.fn(), publication: vi.fn(),
+  invalidate: vi.fn(), closeWindows: [] as (() => void)[],
 }))
 vi.mock('electron', () => ({
   app: { isPackaged: false, getAppPath: () => state.repo,
@@ -16,10 +18,17 @@ vi.mock('electron', () => ({
     requestSingleInstanceLock: () => true, whenReady: async () => undefined,
     on: () => undefined, quit: vi.fn(), exit: vi.fn(), getVersion: () => '4.1.11',
     commandLine: { appendSwitch: () => undefined } },
-  BrowserWindow: class {
-    webContents = { once: () => undefined, on: () => undefined, setWindowOpenHandler: () => undefined }
-    constructor() { state.windows++ }
-    on() {} once() {} removeMenu() {} loadFile = async () => undefined
+  BrowserWindow: class extends EventEmitter {
+    private destroyed = false
+    private visible = false
+    webContents = { once: () => undefined, on: () => undefined, setWindowOpenHandler: () => undefined, invalidate: state.invalidate }
+    constructor() { super(); state.windows++; state.closeWindows.push(() => this.destroy()) }
+    isDestroyed() { return this.destroyed }
+    isVisible() { return this.visible }
+    isMinimized() { return false }
+    show() { this.visible = true }
+    destroy() { this.destroyed = true; this.emit('closed') }
+    removeMenu() {} loadFile = async () => { this.emit('ready-to-show') }
     static getAllWindows() { return [] }
   },
   ipcMain: { handle: (name: string, handler: (...args: unknown[]) => Promise<unknown>) => state.handlers.set(name, handler) },
@@ -49,19 +58,25 @@ vi.mock('../hosts/electron/steamInventoryBinding.mjs', () => ({
   }),
 }))
 
-test.each(['76561198000000000', '76561198000000001'])('beta host isolates %s before save discovery and keeps simulated purchases/Restore active', async account => {
+test.each(['76561198000000000', '76561198000000001'])('Linux beta host isolates %s before save discovery and keeps simulated purchases/Restore active', async account => {
   const root = await mkdtemp(join(tmpdir(), 'ids-beta-host-'))
   state.root = root; state.repo = resolve(import.meta.dirname, '..'); state.account = account
   state.windows = 0; state.handlers.clear(); state.items = []; state.charges = []
   state.cloud.mockClear(); state.publication.mockClear()
+  state.invalidate.mockClear(); state.closeWindows = []
   const publicFile = join(root, 'steam-offline', 'web-runtime-v1', 'save', 'idle_dyson_swarm_web_save.idsw')
   await mkdir(join(root, 'steam-offline', 'web-runtime-v1', 'save'), { recursive: true })
   await writeFile(publicFile, 'EXACT PUBLIC ORIGINAL')
   vi.stubEnv('VITE_IDS_DESKTOP_DISTRIBUTION', 'steam')
+  // Exercise the non-macOS repaint lifecycle on every test host, including
+  // local macOS; the real Electron window emits closed to cancel its timer.
+  const originalPlatform = process.platform
+  Object.defineProperty(process, 'platform', { value: 'linux' })
   try {
     vi.resetModules()
     await import('../hosts/electron/main.mjs')
     await vi.waitFor(() => expect(state.windows).toBe(1))
+    await vi.waitFor(() => expect(state.invalidate).toHaveBeenCalled())
     const invoke = (name: string, ...args: unknown[]) => state.handlers.get(name)!(undefined, ...args)
     expect(await invoke('ids:native:unity:discover')).toEqual([])
     expect(state.cloud).not.toHaveBeenCalled(); expect(state.publication).not.toHaveBeenCalled()
@@ -78,5 +93,9 @@ test.each(['76561198000000000', '76561198000000001'])('beta host isolates %s bef
     state.account = account === '76561198000000000' ? '76561198000000001' : '76561198000000000'
     await expect(invoke('ids:native:files:write-text', 'save/probe.idsw', 'WRONG ACCOUNT')).rejects.toThrow('Steam account changed')
     expect(await readFile(publicFile, 'utf8')).toBe('EXACT PUBLIC ORIGINAL')
-  } finally { vi.unstubAllEnvs(); await rm(root, { recursive: true, force: true }) }
+  } finally {
+    for (const close of state.closeWindows) close()
+    Object.defineProperty(process, 'platform', { value: originalPlatform })
+    vi.unstubAllEnvs(); await rm(root, { recursive: true, force: true })
+  }
 })
