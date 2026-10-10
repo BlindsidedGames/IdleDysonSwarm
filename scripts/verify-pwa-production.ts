@@ -19,9 +19,9 @@ import {
   type ProductionPreview,
 } from './performance/chromiumHarness'
 import {
-  PRODUCTION_BROWSER_DATABASE_NAME,
-  PRODUCTION_BROWSER_SAVE_PATHS,
-} from '../src/browser/productionBrowserStorage'
+  REWORK_BETA_DATABASE_NAME,
+  REWORK_BETA_SAVE_PATHS,
+} from '../src/browser/reworkBetaStorage'
 import { repositoryRunIdentity } from './performance/reportArtifacts'
 import {
   assertCleanPwaVerificationCandidate,
@@ -47,7 +47,7 @@ const oldDirectory = join(temporaryRoot, 'old')
 const newDirectory = join(temporaryRoot, 'new')
 const port = 4187
 const injectedObsoleteCache =
-  'idle-dyson-swarm-app-obsolete-verification'
+  'idle-dyson-swarm-rework-beta-app-obsolete-verification'
 
 interface SaveFingerprint {
   readonly sha256: string
@@ -112,7 +112,7 @@ try {
   await preview.stop()
   preview = await startProductionPreview(webRoot, port, newDirectory)
   await page.evaluate(
-    `navigator.serviceWorker.getRegistration('/play/').then((registration) => registration?.update())`,
+    `navigator.serviceWorker.getRegistration('/rework-beta/').then((registration) => registration?.update())`,
   )
   await waitForWaitingWorker(page)
   await clickButton(page, 'Save and update')
@@ -129,7 +129,7 @@ try {
   const databaseNames = await page.evaluate<string[]>(
     `indexedDB.databases().then((entries) => entries.map((entry) => entry.name).filter(Boolean))`,
   )
-  if (!databaseNames.includes(PRODUCTION_BROWSER_DATABASE_NAME)) {
+  if (!databaseNames.includes(REWORK_BETA_DATABASE_NAME)) {
     throw new Error('The stable production save database was not retained.')
   }
   assertPwaVerificationCandidateUnchanged(
@@ -146,8 +146,8 @@ try {
     platform: page.environment.platform,
     url: preview.url,
     storageCompatibility: {
-      databaseName: PRODUCTION_BROWSER_DATABASE_NAME,
-      currentPath: PRODUCTION_BROWSER_SAVE_PATHS.current,
+      databaseName: REWORK_BETA_DATABASE_NAME,
+      currentPath: REWORK_BETA_SAVE_PATHS.current,
       databaseNames,
     },
     packages: {
@@ -219,13 +219,13 @@ async function setOffline(page: ChromiumPage, offline: boolean): Promise<void> {
 async function readSaveFingerprint(page: ChromiumPage): Promise<SaveFingerprint> {
   return page.evaluate<SaveFingerprint>(`(async () => {
     const database = await new Promise((resolve, reject) => {
-      const request = indexedDB.open(${JSON.stringify(PRODUCTION_BROWSER_DATABASE_NAME)})
+      const request = indexedDB.open(${JSON.stringify(REWORK_BETA_DATABASE_NAME)})
       request.onsuccess = () => resolve(request.result)
       request.onerror = () => reject(request.error)
     })
     const record = await new Promise((resolve, reject) => {
       const transaction = database.transaction('files', 'readonly')
-      const request = transaction.objectStore('files').get(${JSON.stringify(PRODUCTION_BROWSER_SAVE_PATHS.current)})
+      const request = transaction.objectStore('files').get(${JSON.stringify(REWORK_BETA_SAVE_PATHS.current)})
       request.onsuccess = () => resolve(request.result)
       request.onerror = () => reject(request.error)
     })
@@ -321,7 +321,7 @@ async function setDistinctiveDistribution(
 async function waitForWaitingWorker(page: ChromiumPage): Promise<void> {
   await waitFor(
     page,
-    `navigator.serviceWorker.getRegistration('/play/').then((registration) => registration?.waiting !== null)`,
+    `navigator.serviceWorker.getRegistration('/rework-beta/').then((registration) => registration?.waiting !== null)`,
     30_000,
   )
 }
@@ -339,7 +339,7 @@ async function clickButton(page: ChromiumPage, text: string): Promise<void> {
 async function waitForActiveBuild(page: ChromiumPage): Promise<void> {
   await waitFor(
     page,
-    `navigator.serviceWorker.getRegistration('/play/').then((registration) => registration?.active?.scriptURL.includes('service-worker.js') && registration.waiting === null)`,
+    `navigator.serviceWorker.getRegistration('/rework-beta/').then((registration) => registration?.active?.scriptURL.includes('service-worker.js') && registration.waiting === null)`,
     30_000,
   )
   await delay(1_000)

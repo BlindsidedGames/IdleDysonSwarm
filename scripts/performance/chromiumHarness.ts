@@ -77,7 +77,7 @@ export async function startDevelopmentServer(
   webRoot: string,
   port: number,
 ): Promise<ProductionPreview> {
-  const url = `http://127.0.0.1:${port}/play/`
+  const url = `http://127.0.0.1:${port}/rework-beta/`
   if (await isReachable(url)) {
     throw new Error(
       `Development server port ${port} is already serving another process.`,
@@ -264,7 +264,7 @@ export async function startProductionPreview(
   port: number,
   outDir: string | undefined = process.env.IDS_PERFORMANCE_DIST,
 ): Promise<ProductionPreview> {
-  const url = `http://127.0.0.1:${port}/play/`
+  const url = `http://127.0.0.1:${port}/rework-beta/`
   if (await isReachable(url)) {
     throw new Error(
       `Production preview port ${port} is already serving another process.`,

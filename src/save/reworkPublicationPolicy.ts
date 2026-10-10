@@ -1,7 +1,3 @@
-/**
- * IDLEDS is unknown to public 4.1.11, which may replace it with an old backup.
- * The deployed identities are still shared. Keep startup/publication closed
- * until a reviewed host storage and account policy replaces this hold.
- */
-export const REWORK_PUBLICATION_BLOCK_REASON =
-  'IDLEDS save publication is blocked until isolated rework storage and account namespaces are approved.'
+/** Native hosts must attest these roots before the rework repository starts. */
+export const REWORK_NATIVE_STORAGE_NAMESPACE = 'idleds-rework-beta-v1'
+export const REWORK_ENTITLEMENT_CACHE_NAMESPACE = 'rework-beta-v1'

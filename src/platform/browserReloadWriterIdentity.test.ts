@@ -4,15 +4,15 @@ import {
 } from './browserReloadWriterIdentity'
 
 describe('browser reload writer identity', () => {
-  test('reuses the tab token only for a reload', () => {
+  test.each([undefined, 'idle-dyson-swarm:rework-beta-v1:writer-tab-token'])('reuses the tab token only for a reload in namespace %s', storageKey => {
     const storage = new MemorySessionStorage()
     const first = createBrowserReloadWriterIdentity({
-      storage,
+      storage, storageKey,
       navigationType: 'navigate',
       ownerTokenFactory: () => 'first-tab',
     })
     const reloaded = createBrowserReloadWriterIdentity({
-      storage,
+      storage, storageKey,
       navigationType: 'reload',
       ownerTokenFactory: () => 'unused',
     })

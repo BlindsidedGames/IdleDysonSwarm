@@ -1,3 +1,4 @@
+import { runInNewContext } from 'node:vm'
 import {
   mkdtempSync,
   readFileSync,
@@ -92,7 +93,7 @@ describe('production browser package', () => {
 
       expect(
         readFileSync(resolve(outputDirectory, '_headers'), 'utf8'),
-      ).toBe(renderStaticSecurityHeaders('/play/*'))
+      ).toBe(renderStaticSecurityHeaders('/rework-beta/*'))
       const html = readFileSync(
         resolve(outputDirectory, 'index.html'),
         'utf8',
@@ -110,11 +111,27 @@ describe('production browser package', () => {
       expect(
         document.querySelector('link[rel="manifest"]')
           ?.getAttribute('href'),
-      ).toBe('/play/manifest.webmanifest')
+      ).toBe('/rework-beta/manifest.webmanifest')
       expect(
         document.querySelector('script[type="module"]')
           ?.getAttribute('src'),
-      ).toMatch(/^\/play\/assets\/.+\.js$/)
+      ).toMatch(/^\/rework-beta\/assets\/.+\.js$/)
+
+      const manifest = JSON.parse(readFileSync(resolve(outputDirectory, 'manifest.webmanifest'), 'utf8'))
+      expect(manifest).toMatchObject({ id: '/rework-beta/', start_url: '/rework-beta/', scope: '/rework-beta/' })
+      const events = new Map<string, (event: { waitUntil(value: Promise<unknown>): void }) => void>()
+      const deleted: string[] = []
+      runInNewContext(readFileSync(resolve(outputDirectory, 'service-worker.js'), 'utf8'), {
+        URL,
+        self: { location: { origin: 'https://sandbox.invalid' }, clients: { claim: async () => undefined },
+          addEventListener: (name: string, callback: (event: { waitUntil(value: Promise<unknown>): void }) => void) => events.set(name, callback) },
+        caches: { keys: async () => ['idle-dyson-swarm-app-public', 'idle-dyson-swarm-rework-beta-app-obsolete'],
+          delete: async (name: string) => { deleted.push(name); return true } },
+      })
+      let activation: Promise<unknown> | undefined
+      events.get('activate')!({ waitUntil: value => { activation = value } })
+      await activation
+      expect(deleted).toEqual(['idle-dyson-swarm-rework-beta-app-obsolete'])
 
       const executableResource = html.indexOf('<script')
       const policyPosition = html.indexOf(
@@ -189,8 +206,8 @@ describe('production browser package', () => {
         icons: readonly { src: string; sizes: string; purpose: string }[]
       }
       expect(pwaManifest).toMatchObject({
-        start_url: '/play/',
-        scope: '/play/',
+        start_url: '/rework-beta/',
+        scope: '/rework-beta/',
         display: 'standalone',
       })
       expect(pwaManifest.icons).toEqual(expect.arrayContaining([
@@ -199,11 +216,11 @@ describe('production browser package', () => {
         expect.objectContaining({ sizes: '512x512', purpose: 'maskable' }),
       ]))
       for (const icon of pwaManifest.icons) {
-        expect(icon.src.startsWith('/play/icons/')).toBe(true)
+        expect(icon.src.startsWith('/rework-beta/icons/')).toBe(true)
         expect(
           statSync(resolve(
             outputDirectory,
-            icon.src.slice('/play/'.length),
+            icon.src.slice('/rework-beta/'.length),
           )).size,
         ).toBeGreaterThan(0)
       }
@@ -212,7 +229,7 @@ describe('production browser package', () => {
         resolve(outputDirectory, 'service-worker.js'),
         'utf8',
       )
-      expect(serviceWorker).toContain('const SCOPE_PATH = "/play/"')
+      expect(serviceWorker).toContain('const SCOPE_PATH = "/rework-beta/"')
       expect(serviceWorker).toContain('fetch(request).catch')
       expect(serviceWorker).toContain('caches.match(APP_SHELL_URL)')
       expect(serviceWorker).toContain("event.data?.type === 'ACTIVATE_UPDATE'")

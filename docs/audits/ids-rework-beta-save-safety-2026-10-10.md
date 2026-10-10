@@ -1,6 +1,8 @@
 # Rework beta save safety — 10 October 2026
 
-Status: Matthew selected `IDLEDS` and authorized one-way migration code with synthetic verification. The isolated candidate now writes `IDLEDS:`/schema 21 and retains supported historical readers. Deployed startup/publication is deliberately held pending storage/account namespace approval. No app identity, namespace, migration choice, compensation, real-save path or actual account/cloud data has been changed. No native game was launched.
+Current status: Matthew approved isolated beta progress with the cloud save manager off and purchases available under existing store identities. The candidate now replaces the blanket hold with pre-startup beta storage verification and separate local progress/caches. See the [current isolation audit](ids-beta-storage-isolation-2026-10-10.md) for exact paths, verification and the unresolved web callback/receipt handoff. IDLEDS/schema 21 and historical readers remain. No deployment, real-save migration, provider transaction or native game launch occurred.
+
+The sections below preserve the earlier format/migration checkpoint and its source probes. References there to unchanged namespaces, the blanket hold and proposed new store identities are historical and superseded by the current isolation audit; they are not the current startup policy.
 
 ## Authorized candidate implementation
 

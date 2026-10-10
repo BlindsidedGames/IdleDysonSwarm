@@ -68,7 +68,7 @@ if (precacheMatch?.[1] === undefined) {
 const precacheUrls = JSON.parse(precacheMatch[1]) as readonly string[]
 const precacheFiles = precacheUrls.map((url) => {
   const pathname = decodeURIComponent(new URL(url, 'https://bundle.invalid').pathname)
-  const file = pathname === '/play/'
+  const file = pathname === '/rework-beta/'
     ? 'index.html'
     : pathname.replace(/^\/play\//, '')
   const contents = readFileSync(resolve(distRoot, file))

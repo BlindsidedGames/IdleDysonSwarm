@@ -5,7 +5,7 @@ import type {
   CanonicalLifecycleClock,
 } from '../application/canonicalLifecycleCoordinator'
 import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
-import { REWORK_PUBLICATION_BLOCK_REASON } from '../save/reworkPublicationPolicy'
+import { REWORK_NATIVE_STORAGE_NAMESPACE, REWORK_ENTITLEMENT_CACHE_NAMESPACE } from '../save/reworkPublicationPolicy'
 import {
   createProductionUnityFirstRunSaveFactory,
   createUnityFirstRunResetRequest,
@@ -105,8 +105,7 @@ export function createProductionNativeComposition(
   const createApplication =
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
-      achievements: environment.achievements,
-      cloud: environment.cloud,
+      // Beta is local-only; no Cloud resolver or achievement publisher is composed.
       readDeveloperOptions: () => entitlementBridge.currentOwnership().developerOptions,
       readHostEntitlements: () =>
         entitlementBridge.currentDysonEntitlements(),
@@ -122,12 +121,20 @@ export function createProductionNativeComposition(
     allowedExternalOrigins: COMMUNITY_EXTERNAL_ORIGINS,
     writerAuthority: new SingleHostSessionWriterAuthority(),
     saveStorage: storage,
+    databaseName: 'idle-dyson-swarm-rework-beta-v1',
     exportSaveFile: environment.exportSaveFile ?? (async () => {
       throw new Error('Native save file export unavailable.')
     }),
     saveRepositoryPaths: NATIVE_WEB_SAVE_PATHS,
     allowCanonicalPlayerWrites: true,
-    savePublicationBlockReason: REWORK_PUBLICATION_BLOCK_REASON,
+    verifySaveStorage: async () => {
+      const metadata = await services.metadata.metadata()
+      if (metadata.saveStorageNamespace !== REWORK_NATIVE_STORAGE_NAMESPACE ||
+          metadata.entitlementCacheNamespace !== REWORK_ENTITLEMENT_CACHE_NAMESPACE ||
+          metadata.cloudSavesEnabled !== false || metadata.automaticUnityDiscoveryEnabled !== false) {
+        throw new Error('This host has not verified the native beta storage policy. Existing saves are preserved.')
+      }
+    },
     lifecycle: environment.lifecycle,
     lifecycleClock,
     activeTimeClock: monotonicClock,

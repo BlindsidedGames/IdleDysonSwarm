@@ -13,7 +13,7 @@ import {
   omitDuplicatedEnglishWikiMessagesPlugin,
 } from './scripts/omitDuplicatedEnglishWikiMessages.js'
 import {
-  PWA_BASE_PATH,
+  PWA_REWORK_BETA_BASE_PATH,
   pwaPackagePlugin,
 } from './scripts/pwaPackage.js'
 import {
@@ -34,7 +34,7 @@ function nativeRelativeHtmlPlugin(): Plugin {
   return {
     name: 'idle-dyson-swarm-native-relative-html',
     transformIndexHtml(html) {
-      return html.replaceAll('/play/', './')
+      return html.replaceAll('/rework-beta/', './').replaceAll('/play/', './')
     },
   }
 }
@@ -86,7 +86,7 @@ export default defineConfig(({ mode }) => {
     process.env.IDS_RELEASE_CANDIDATE_ID,
   )
   return {
-    base: nativeBuild ? './' : PWA_BASE_PATH,
+    base: nativeBuild ? './' : PWA_REWORK_BETA_BASE_PATH,
     define: {
       __IDS_PACKAGED_RELEASE_IDENTITY__: JSON.stringify(
         packagedReleaseIdentity,
@@ -120,7 +120,7 @@ export default defineConfig(({ mode }) => {
           this.emitFile({
             type: 'asset',
             fileName: '_headers',
-            source: renderStaticSecurityHeaders('/play/*'),
+            source: renderStaticSecurityHeaders('/rework-beta/*'),
           })
         },
       },

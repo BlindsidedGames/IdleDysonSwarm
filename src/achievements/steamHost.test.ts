@@ -1,8 +1,8 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, test, vi } from 'vitest'
-import { SteamInventoryStore } from '../../hosts/electron/steamInventoryStore.mjs'
+import { AtomicSteamEntitlementCache, SteamInventoryStore } from '../../hosts/electron/steamInventoryStore.mjs'
 import { SteamCloud } from '../../hosts/electron/steam/cloud.mjs'
 import { SteamPublication, bindSteamAccount, formatSteamPrice } from '../../hosts/electron/steam/client.mjs'
 const ids = {'ids.tiptier1':1001,'ids.tiptier2':1002,'ids.tiptier3':1003,'ids.devoptions':1004,'ids.doubleip':1005}
@@ -88,4 +88,27 @@ test('Steam localized price units handle AUD, JPY and KWD',()=>{
  expect(formatSteamPrice(149,'AUD','en-AU')).toBe('$1.49')
  expect(formatSteamPrice(14900,'JPY','en-US')).toBe('¥149')
  expect(formatSteamPrice(149,'KWD','en-US')).toContain('1.490')
+})
+
+
+test('beta entitlement cache seeds only matching verified ownership and never overwrites public or replays its consumable queue', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'ids-beta-entitlements-'))
+  const account = '76561198000000000'
+  const protector = { protect: (text: string) => Buffer.from(text), unprotect: (bytes: Buffer) => bytes.toString() }
+  const publicPath = join(root, 'public-vault.json'), betaPath = join(root, 'beta', 'vault.json')
+  const owned = { doubleInfinityPoints: true, botBoost: true, developerOptions: false, supporterCatGallery: true }
+  try {
+    const publicCache = new AtomicSteamEntitlementCache(publicPath, 4348570, protector)
+    await publicCache.write(account, { ownership: owned, pendingConsumptions: [{ itemDefId: 1001, instanceId: '100', quantity: 1 }] }, '2026-10-10T00:00:00Z')
+    const originalBytes = await readFile(publicPath)
+    const beta = new AtomicSteamEntitlementCache(betaPath, 4348570, protector, publicPath)
+    expect(await beta.read(account)).toMatchObject({ ownership: owned, pendingConsumptions: [] })
+    expect(await beta.read('76561198000000001')).toBeNull()
+    await beta.write(account, { ownership: { ...owned, botBoost: false, doubleInfinityPoints: false }, pendingConsumptions: [] }, '2026-10-10T01:00:00Z')
+    expect(await beta.read(account)).toMatchObject({ ownership: { botBoost: false, doubleInfinityPoints: false } })
+    expect(await readFile(publicPath)).toEqual(originalBytes)
+    await writeFile(betaPath, 'corrupt beta vault')
+    expect(await beta.read(account)).toBeNull()
+    expect(await readFile(publicPath)).toEqual(originalBytes)
+  } finally { await rm(root, { recursive: true, force: true }) }
 })

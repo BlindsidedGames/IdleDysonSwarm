@@ -11,6 +11,7 @@ import {
 } from './contracts'
 
 const STORAGE_KEY = 'idle-dyson-swarm:stripe-device:v1'
+export const BETA_STRIPE_RECORD_KEY = 'idle-dyson-swarm:stripe-rework-beta:v1'
 const API_ROOT = '/api/ids/stripe'
 const EMPTY_OWNERSHIP = createEmptyHostEntitlementOwnership()
 
@@ -27,6 +28,12 @@ interface BrowserStripeVerifyResponse {
   readonly ownership: HostEntitlementOwnership
   readonly tokens: readonly string[]
   readonly completedProductId: StoreProductId | null
+}
+
+export interface BrowserStripeRecordPolicy {
+  readonly storageKey: string
+  /** Existing provider identity/receipts are a read-only seed for beta refreshes. */
+  readonly publicReceiptKey?: string
 }
 
 export interface BrowserStripePorts {
@@ -48,13 +55,16 @@ implements StoreAdapter, EntitlementAuthority {
   private readonly ports: BrowserStripePorts
   private readonly apiRoot: string
   private verifiedSupporterCatGallery = false
+  private readonly recordPolicy: BrowserStripeRecordPolicy
 
   constructor(
     ports: BrowserStripePorts = browserStripePorts(),
     apiRoot = API_ROOT,
+    recordPolicy: BrowserStripeRecordPolicy = { storageKey: STORAGE_KEY },
   ) {
     this.ports = ports
     this.apiRoot = apiRoot
+    this.recordPolicy = recordPolicy
   }
 
   async products(): Promise<readonly StoreProductListing[]> {
@@ -168,35 +178,33 @@ implements StoreAdapter, EntitlementAuthority {
   }
 
   private readRecord(): BrowserStripeRecord {
-    try {
-      const parsed = JSON.parse(
-        this.ports.storage.getItem(STORAGE_KEY) ?? 'null',
-      ) as Partial<BrowserStripeRecord> | null
-      if (
-        parsed !== null &&
-        typeof parsed.deviceKey === 'string' &&
-        parsed.deviceKey.length >= 32 &&
-        Array.isArray(parsed.tokens) &&
-        parsed.tokens.every((token) => typeof token === 'string')
-      ) {
-        return Object.freeze({
-          deviceKey: parsed.deviceKey,
-          tokens: Object.freeze(parsed.tokens.slice(0, 4)),
-        })
-      }
-    } catch {
-      // Replace malformed browser-local state with a fresh device identity.
+    const key = this.recordPolicy.storageKey
+    const publicKey = this.recordPolicy.publicReceiptKey
+    const publicRaw = publicKey === undefined ? null : this.ports.storage.getItem(publicKey)
+    const publicRecord = parseRecord(publicRaw)
+    const cached = parseRecord(this.ports.storage.getItem(key))
+    if (publicRecord !== null) {
+      return Object.freeze({ deviceKey: publicRecord.deviceKey,
+        tokens: Object.freeze([...new Set([
+          ...(cached?.deviceKey === publicRecord.deviceKey ? cached.tokens : []),
+          ...publicRecord.tokens,
+        ])].slice(0, 4)),
+      })
     }
-    const record = Object.freeze({
-      deviceKey: randomDeviceKey(this.ports.randomBytes),
-      tokens: Object.freeze([]),
+    const record = cached ?? Object.freeze({
+      deviceKey: randomDeviceKey(this.ports.randomBytes), tokens: Object.freeze([]),
     })
+    // A first-ever beta purchase must keep the existing public device identity.
+    // Initialize only an absent identity with no receipts; preserve existing bytes.
+    if (publicKey !== undefined && publicRaw === null) {
+      this.ports.storage.setItem(publicKey, JSON.stringify({ deviceKey: record.deviceKey, tokens: [] }))
+    }
     this.writeRecord(record)
     return record
   }
 
   private writeRecord(record: BrowserStripeRecord): void {
-    this.ports.storage.setItem(STORAGE_KEY, JSON.stringify(record))
+    this.ports.storage.setItem(this.recordPolicy.storageKey, JSON.stringify(record))
   }
 
   private currentFallbackOwnership(): Readonly<HostEntitlementOwnership> {
@@ -212,6 +220,17 @@ implements StoreAdapter, EntitlementAuthority {
     url.searchParams.delete('stripe_checkout')
     this.ports.replaceUrl(url.toString())
   }
+}
+
+function parseRecord(value: string | null): BrowserStripeRecord | null {
+  try {
+    const parsed = JSON.parse(value ?? 'null') as Partial<BrowserStripeRecord> | null
+    if (parsed !== null && typeof parsed.deviceKey === 'string' && parsed.deviceKey.length >= 32 &&
+        Array.isArray(parsed.tokens) && parsed.tokens.every(token => typeof token === 'string')) {
+      return Object.freeze({ deviceKey: parsed.deviceKey, tokens: Object.freeze(parsed.tokens.slice(0, 4)) })
+    }
+  } catch { /* Preserve malformed public records; no ownership is inferred. */ }
+  return null
 }
 
 function normalizeTokens(value: unknown): readonly string[] | null {

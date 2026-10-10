@@ -67,7 +67,8 @@ async function readProfile(root) {
 }
 
 /** Select an account-owned copy; never overwrite either original profile. */
-export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensureIdentity, choose }) {
+export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensureIdentity, choose, saveRootName = 'web-runtime-v1' }) {
+  if (!['web-runtime-v1', 'idleds-rework-beta-v1'].includes(saveRootName)) throw new Error('Unsupported Steam save namespace')
   ensureIdentity()
   await rejectLinks(accountDirectory)
   await mkdir(accountDirectory, { recursive: true })
@@ -93,8 +94,8 @@ export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensur
     } catch (error) { if (error.code !== 'ENOENT') throw error }
   }
   const selectedRoot = state.recovery === null
-    ? join(accountDirectory, 'web-runtime-v1')
-    : join(accountDirectory, 'offline-recovery', state.recovery, 'web-runtime-v1')
+    ? join(accountDirectory, saveRootName)
+    : join(accountDirectory, 'offline-recovery', state.recovery, saveRootName)
   await rejectLinks(selectedRoot)
   // A missing selected profile must not silently become a fresh game.
   if (state.recovery !== null && !(await lstat(selectedRoot)).isDirectory()) throw new Error('Recovered offline profile is missing')
@@ -117,7 +118,7 @@ export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensur
     // loss of the selection file later cannot silently load an older profile.
     if (!hasSelection) await writeSelection(accountDirectory, state)
     recovery = randomUUID()
-    root = join(accountDirectory, 'offline-recovery', recovery, 'web-runtime-v1')
+    root = join(accountDirectory, 'offline-recovery', recovery, saveRootName)
     await rejectLinks(root)
     for (const { relative, bytes } of files) await writeDurably(join(root, relative), bytes)
     // Persist every new directory entry before committing the root pointer.
