@@ -39,12 +39,12 @@ function envelope(app: CanonicalGameApplicationFacade) {
 }
 
 function preview(app: CanonicalGameApplicationFacade, id: string) {
-  const value = app.frontendSnapshot('quantum')
+  const value = app.frontendSnapshot('infinity')
   if (value.phase !== 'ready') throw new Error(`Unexpected frontend phase ${value.phase}`)
-  return value.gameplay.previews.quantum.upgrades.find(item => item.upgradeId === id)!
+  return value.gameplay.previews.infinity.shop.find(item => item.itemId === `rework-${id}`)!
 }
 
-test('full-cap purchase, earn again, capped preview, checkpoint and restart preserve exact progress', async () => {
+test('IP purchase at signed64 capacity, capped earning, preview and restart preserve exact progress', async () => {
   const original = prepareIdb1Save(readFileSync(new URL(
     '../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url,
   ), 'utf8')).prepared
@@ -53,11 +53,13 @@ test('full-cap purchase, earn again, capped preview, checkpoint and restart pres
   const initial = structuredClone(session.initialState)
   initial.gameState.quantum = {
     ...initial.gameState.quantum, pointsEarned: DISCRETE_MAXIMUM, pointsSpent: 0n,
-    cashBonusLevels: 0n, scienceBonusLevels: 0n, influenceSpeedBonus: DISCRETE_MAXIMUM - 2n,
-    unlocks: { ...initial.gameState.quantum.unlocks, quantumEntanglement: true },
+    cashBonusLevels: DISCRETE_MAXIMUM - 1n, scienceBonusLevels: 0n, influenceSpeedBonus: DISCRETE_MAXIMUM - 2n,
+    unlocks: { ...initial.gameState.quantum.unlocks, breakTheLoop: true },
   }
-  initial.gameState.infinity.points = 4207n
-  initial.gameState.infinity.spentPoints = 7n
+  initial.gameState.meta = { ...initial.gameState.meta, firstInfinityComplete: true, reworkMigrationChoice: 'keep' }
+  initial.gameState.infinity.points = DISCRETE_MAXIMUM - 2n
+  initial.gameState.infinity.spentPoints = 0n
+  initial.gameState.skills.activeAutoAssignment = []
   initial.gameState.infinity.automaticResetEnabled = false
   const repository = new PortableSaveRepository(new TextStorage(), {
     current: '/current', temporary: '/temporary', legacyRecovery: '/legacy',
@@ -80,41 +82,39 @@ test('full-cap purchase, earn again, capped preview, checkpoint and restart pres
   })
   const app = create()
   await app.start()
+  expect(preview(app, 'CashBonus')).toMatchObject({ eligible: true, cost: 3n })
   expect(await app.dispatchPlayer({ ...envelope(app), command: {
-    kind: 'quantum.set-buy-mode', buyMode: 'buy-50',
-  } })).toMatchObject({ kind: 'transition', transition: { accepted: true, changed: true } })
-  expect(preview(app, 'CashBonus').maximumQuantity).toBe(DISCRETE_MAXIMUM)
-  expect(await app.dispatchPlayer({ ...envelope(app), command: {
-    kind: 'quantum.purchase-upgrade', upgradeId: 'CashBonus', quantity: 'max',
+    kind: 'infinity.purchase-shop-item', itemId: 'rework-CashBonus',
   } })).toMatchObject({ kind: 'transition', transition: { accepted: true, changed: true } })
   expect(snapshot(app).state.gameState.quantum.cashBonusLevels).toBe(DISCRETE_MAXIMUM)
-  expect(preview(app, 'CashBonus')).toMatchObject({ maximumQuantity: 0n, eligible: false })
-  expect(await app.dispatchPlayer({ ...envelope(app), command: { kind: 'quantum.request-leap' } }))
-    .toMatchObject({ kind: 'transition', transition: { accepted: true, changed: true } })
-  expect(snapshot(app).state.gameState.quantum.pointsEarned).toBe(DISCRETE_MAXIMUM + 100n)
-  expect(snapshot(app).state.gameState.infinity).toMatchObject({ points: 7n, spentPoints: 7n })
-  expect(preview(app, 'InfluenceSpeed').maximumQuantity).toBe(1n)
-  const beforeRejected = snapshot(app).state.gameState.quantum
+  expect(snapshot(app).state.gameState.infinity).toMatchObject({ points: DISCRETE_MAXIMUM - 2n, spentPoints: 3n })
+  expect(preview(app, 'CashBonus')).toMatchObject({ eligible: false, code: 'output-maxed' })
+  const beforeRejected = snapshot(app).state.gameState
   expect(await app.dispatchPlayer({ ...envelope(app), command: {
-    kind: 'quantum.purchase-upgrade', upgradeId: 'InfluenceSpeed', quantity: 2n,
-  } })).toMatchObject({ kind: 'transition', transition: { accepted: false } })
-  expect(snapshot(app).state.gameState.quantum).toEqual(beforeRejected)
-  for (const [upgradeId, quantity] of [['InfluenceSpeed', 'max'], ['ScienceBonus', 10n]] as const) {
-    expect(await app.dispatchPlayer({ ...envelope(app), command: {
-      kind: 'quantum.purchase-upgrade', upgradeId, quantity,
-    } })).toMatchObject({ kind: 'transition', transition: { accepted: true, changed: true } })
-  }
-  expect(snapshot(app).state.gameState.quantum).toMatchObject({
-    pointsEarned: DISCRETE_MAXIMUM + 100n, pointsSpent: DISCRETE_MAXIMUM + 11n,
-    cashBonusLevels: DISCRETE_MAXIMUM, scienceBonusLevels: 10n, influenceSpeedBonus: DISCRETE_MAXIMUM,
-  })
-  const expected = snapshot(app).state.gameState.quantum
+    kind: 'infinity.purchase-shop-item', itemId: 'rework-CashBonus',
+  } })).toMatchObject({ transition: { accepted: false } })
+  expect(snapshot(app).state.gameState).toEqual(beforeRejected)
+  const ready = structuredClone(snapshot(app).state)
+  ready.gameState.dyson.bots = 1e99
+  ready.gameState.timeline.infinityCycleSeconds = 10
+  expect(await app.commitAwayReplacement(envelope(app), ready)).toMatchObject({ committed: true })
+  const reset = await app.dispatchPlayer({ ...envelope(app), command: { kind: 'infinity.request-reset' } })
+  expect(reset, JSON.stringify(reset, (_, value) => typeof value === 'bigint' ? String(value) : value))
+    .toMatchObject({ transition: { accepted: true, changed: true } })
+  expect(snapshot(app).state.gameState.infinity).toMatchObject({ points: DISCRETE_MAXIMUM, spentPoints: 3n })
+  expect(snapshot(app).state.gameState.quantum.pointsEarned).toBe(DISCRETE_MAXIMUM)
+  expect(await app.dispatchPlayer({ ...envelope(app), command: {
+    kind: 'infinity.purchase-shop-item', itemId: 'rework-ScienceBonus',
+  } })).toMatchObject({ transition: { accepted: true, changed: true } })
+  const expected = snapshot(app).state.gameState
+  expect(expected.infinity.spentPoints).toBe(6n)
+  expect(expected.quantum.scienceBonusLevels).toBe(1n)
   expect(await app.checkpoint()).toMatchObject({ committed: true })
   const restarted = create()
   await restarted.start()
-  expect(snapshot(restarted).state.gameState.quantum).toEqual(expected)
-  expect(snapshot(restarted).state.gameState.quantum.buyMode).toBe('buy-50')
-  expect(preview(restarted, 'ScienceBonus').maximumQuantity).toBe(89n)
-  expect(preview(restarted, 'InfluenceSpeed')).toMatchObject({ maximumQuantity: 0n, eligible: false })
+  expect(snapshot(restarted).state.gameState.quantum).toEqual(expected.quantum)
+  expect(snapshot(restarted).state.gameState.infinity).toMatchObject({ points: DISCRETE_MAXIMUM, spentPoints: 6n })
+  expect(preview(restarted, 'CashBonus')).toMatchObject({ eligible: false, code: 'output-maxed' })
+  expect(preview(restarted, 'ScienceBonus')).toMatchObject({ eligible: true, cost: 3n })
   expect(restarted.advanceActive(100)).toMatchObject({ accepted: true })
 })

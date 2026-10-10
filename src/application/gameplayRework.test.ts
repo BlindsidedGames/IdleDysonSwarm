@@ -206,6 +206,10 @@ describe('gameplay rework player contract', () => {
   })
 
   test.each<CanonicalGameCommand>([
+    { kind: 'dream.set-buy-mode', buyMode: 'buy-max' },
+    { kind: 'quantum.set-buy-mode', buyMode: 'buy-50' },
+    { kind: 'quantum.purchase-upgrade', upgradeId: 'CashBonus', quantity: 10n },
+    { kind: 'avocado.feed', source: 'influence' },
     { kind: 'quantum.request-leap' }, { kind: 'quantum.purchase-upgrade', upgradeId: 'DoubleIP' },
     { kind: 'reality.gather-influence' }, { kind: 'dream.request-reset' },
     { kind: 'dream.purchase-foundational', purchase: 'hunters' },

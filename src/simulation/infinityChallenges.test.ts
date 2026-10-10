@@ -1,6 +1,5 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { RESEARCH_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
-import { galvanizeCanonicalSkill } from './canonicalSkillTransactions'
 import { validateInfinityChallenges } from './infinityChallenges'
 import { previewCanonicalResearchPurchase, purchaseCanonicalResearch, runResearchAutomationTick } from './researchAutomation'
 import { describe, expect, test } from 'vitest'
@@ -16,7 +15,7 @@ import { ordinaryInfinityBotThreshold } from './infinityCycle'
 const hydrate = () => hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-06T00:00:00.000Z' }))
 const unlocked = () => {
   const state = hydrate().state
-  return { ...state, meta: { ...state.meta, firstInfinityComplete: true }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true } }
+  return { ...state, meta: { ...state.meta, firstInfinityComplete: true, reworkMigrationChoice: 'keep' as const }, infinity: { ...state.infinity, points: 64n }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true } }
 }
 const request = { breakInfinity: false, requestedReward: 1n, artifactSkillPoints: 0n }
 function enter() {
@@ -71,18 +70,20 @@ describe('Blank Slate', () => {
     expect(result.state.dyson.bots).toBe(1)
     expect(restartInfinityChallenge(result.state, 'abandon', 0n)).toMatchObject({ ok: false })
   })
-  test('completion awards exactly one galvanizer; replay cannot farm it', () => {
+  test('completion awards exactly two permanent SP without Catalysts; replay cannot farm it', () => {
     const state = enter()
     const ready = { ...state, dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(0n) } }
     const result = applyCanonicalInfinityReset(ready, request)
     if (!result.ok) throw new Error('reset failed')
-    expect(result.state.challenges).toMatchObject({ active: null, blankSlateCompleted: true, galvanizers: 1n, hasEarnedGalvanizer: true })
+    expect(result.state.challenges).toMatchObject({ active: null, blankSlateCompleted: false, galvanizers: 0n, replacement: { completedIds: ['blank-slate'] } })
     const replay = restartInfinityChallenge(result.state, 'enter', 0n)
     if (!replay.ok) throw new Error(replay.code)
     const second = applyCanonicalInfinityReset({ ...replay.state, dyson: { ...replay.state.dyson, bots: ready.dyson.bots } }, request)
-    expect(second.ok && second.state.challenges?.galvanizers).toBe(1n)
+    expect(second.ok && second.state.challenges?.galvanizers).toBe(0n)
+    expect(second.ok && second.state.skills.points).toBe(2n)
     const overflow = applyCanonicalOverflowReset({ ...result.state, dyson: { ...result.state.dyson, bots: 4e242 } })
-    expect(overflow.ok && overflow.state.challenges).toEqual(result.state.challenges)
+    expect(overflow.ok && overflow.state.challenges?.replacement?.completedIds).toEqual(['blank-slate'])
+    expect(overflow.ok && overflow.state.skills.points).toBe(2n)
   })
   test('save round trips retain active restrictions and earned currency independently', () => {
     const base = hydrate()
@@ -93,49 +94,30 @@ describe('Blank Slate', () => {
   })
 })
 
-describe('Trial and Error', () => {
-  function trial() {
+describe('retired Trial and Error and replacement No Science', () => {
+  function noScience() {
     const before = unlocked()
     const result = restartInfinityChallenge({ ...before,
       infinity: { ...before.infinity, permanentSkillPoints: 10n },
       skills: { ...before.skills, activeAutoAssignment: ['startHereTree'] },
       research: { ...before.research, levelsById: { 'research.panel_lifetime_1': 1 } },
       quantum: { ...before.quantum, unlocks: { ...before.quantum.unlocks, breakTheLoop: true } },
-    }, 'enter', 0n, 'trial-and-error')
+    }, 'enter', 0n, 'no-science')
     if (!result.ok) throw new Error(result.code)
     return result.state
   }
-  test('starts clean, keeps skills available, and requires the ordinary Infinity boundary', () => {
-    const state = trial()
-    expect(state.challenges?.trialAndErrorCompleted ?? false).toBe(false)
-    expect(state.research.levelsById).toEqual({})
-    expect(state.skills.byId.startHereTree?.owned).toBe(true)
-    expect(isBreakInfinityEnabled(state)).toBe(false)
-    expect(restartInfinityChallenge(state, 'enter', 0n)).toMatchObject({ ok: false })
-    expect(applyCanonicalInfinityReset(state, request)).toMatchObject({ ok: false })
-    expect(applyCanonicalInfinityReset({ ...state, dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(0n) } }, { ...request, breakInfinity: true })).toMatchObject({ ok: false })
+  test('rejects Trial and Error entry while preserving its historical record and currency', () => {
+    const state = { ...unlocked(), challenges: { ...EMPTY_INFINITY_CHALLENGES,
+      trialAndErrorCompleted: true, completionSeconds: { 'trial-and-error': 62.5 },
+      galvanizers: 1n, hasEarnedGalvanizer: true } }
+    const result = restartInfinityChallenge(state, 'enter', 0n, 'trial-and-error')
+    expect(result).toMatchObject({ ok: false, code: 'CHALLENGE_RETIRED' })
     const restored = hydrateGameState(dehydrateGameState(hydrate(), state)).state
-    expect(restored.challenges?.active).toBe('trial-and-error')
-    const abandoned = restartInfinityChallenge(restored, 'abandon', 0n)
-    expect(abandoned.ok && abandoned.state.challenges).toMatchObject({ active: null, galvanizers: 0n })
-  })
-  test('awards once, persists through Overflow, and unlocks Galvanization independently', () => {
-    const state = trial()
-    const win = applyCanonicalInfinityReset({ ...state, dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(0n) } }, request)
-    if (!win.ok) throw new Error('completion failed')
-    expect(win.state.challenges).toMatchObject({ active: null, trialAndErrorCompleted: true, blankSlateCompleted: false, galvanizers: 1n })
-    const galvanized = galvanizeCanonicalSkill(win.state, 'startHereTree')
-    expect(galvanized.accepted).toBe(true)
-    if (galvanized.accepted) expect(validateInfinityChallenges(galvanized.state.challenges)).toBeNull()
-    const replay = restartInfinityChallenge(win.state, 'enter', 0n, 'trial-and-error')
-    if (!replay.ok) throw new Error(replay.code)
-    const again = applyCanonicalInfinityReset({ ...replay.state, dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(0n) } }, request)
-    expect(again.ok && again.state.challenges?.galvanizers).toBe(1n)
-    const overflow = applyCanonicalOverflowReset({ ...win.state, dyson: { ...win.state.dyson, bots: 4e242 } })
-    expect(overflow.ok && overflow.state.challenges?.trialAndErrorCompleted).toBe(true)
+    expect(restored.challenges).toEqual(state.challenges)
+    expect(restored.challenges?.replacement).toBeUndefined()
   })
   test('blocks every research purchase and automation without changing preferences', () => {
-    const initial = trial()
+    const initial = noScience()
     const state = { ...initial, dyson: { ...initial.dyson, science: 1e30 },
       infinity: { ...initial.infinity, automationUnlocked: { ...initial.infinity.automationUnlocked, research: true } } }
     const tuning = hydrate().compatibilityTuning
@@ -152,22 +134,21 @@ describe('Trial and Error', () => {
   })
 })
 
-test.each(['blank-slate', 'trial-and-error'] as const)('%s retains its best completion time through replays and saving', challengeId => {
-  let state = unlocked() as ReturnType<typeof enter>
-  for (const seconds of [75, 90, 62.5]) {
-    const started = restartInfinityChallenge(state, 'enter', 0n, challengeId)
-    if (!started.ok) throw new Error(started.code)
-    const reset = applyCanonicalInfinityReset({ ...started.state,
-      infinity: { ...started.state.infinity, lastCycleDurationSeconds: seconds },
-      dyson: { ...started.state.dyson, bots: ordinaryInfinityBotThreshold(0n) },
-    }, request)
-    if (!reset.ok) throw new Error('completion failed')
-    state = reset.state
-    expect(state.challenges?.completionSeconds?.[challengeId]).toBe(Math.min(75, seconds))
-    expect(state.challenges?.galvanizers).toBe(1n)
-  }
-  const loaded = hydrateGameState(dehydrateGameState(hydrate(), state)).state
+test.each(['blank-slate', 'trial-and-error'] as const)('%s historical time survives replacement attempts and invalid times still fail validation', challengeId => {
+  const state = { ...unlocked(), challenges: { ...EMPTY_INFINITY_CHALLENGES,
+    blankSlateCompleted: challengeId === 'blank-slate', trialAndErrorCompleted: challengeId === 'trial-and-error',
+    galvanizers: 1n, hasEarnedGalvanizer: true, completionSeconds: { [challengeId]: 62.5 } } }
+  const entered = restartInfinityChallenge(state, 'enter', 0n, 'blank-slate')
+  if (!entered.ok) throw Error(entered.code)
+  const reset = applyCanonicalInfinityReset({ ...entered.state,
+    infinity: { ...entered.state.infinity, lastCycleDurationSeconds: 75 },
+    dyson: { ...entered.state.dyson, bots: ordinaryInfinityBotThreshold(0n) },
+  }, request)
+  if (!reset.ok) throw Error('completion failed')
+  const loaded = hydrateGameState(dehydrateGameState(hydrate(), reset.state)).state
   expect(loaded.challenges?.completionSeconds?.[challengeId]).toBe(62.5)
-  expect(validateInfinityChallenges({ ...state.challenges, completionSeconds: { [challengeId]: -1 } })).not.toBeNull()
-  expect(validateInfinityChallenges({ ...state.challenges, completionSeconds: { [challengeId]: NaN } })).not.toBeNull()
+  expect(loaded.challenges?.galvanizers).toBe(1n)
+  expect(loaded.challenges?.replacement?.completedIds).toEqual(['blank-slate'])
+  expect(validateInfinityChallenges({ ...loaded.challenges, completionSeconds: { [challengeId]: -1 } })).not.toBeNull()
+  expect(validateInfinityChallenges({ ...loaded.challenges, completionSeconds: { [challengeId]: NaN } })).not.toBeNull()
 })

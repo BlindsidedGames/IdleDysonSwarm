@@ -1,3 +1,4 @@
+import { enterReplacementChallenge } from '../../test/support/replacementChallengeFixture'
 import { expect, test } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
@@ -55,7 +56,7 @@ test('Head Start grants each available facility, keeps prices and cannot repeat 
 test('Head Start respects forbidden facilities and grants newly unlocked megastructures once', () => {
   for (const challenge of ['built-by-hand', 'hands-off', 'grounded'] as const) {
     const source = fixture([A.headStart])
-    const state = initializeSwarmGrants({ ...source, challenges: { ...source.challenges!, active: challenge } })
+    const state = initializeSwarmGrants(enterReplacementChallenge(source, challenge))
     expect(state.dyson.facilities.planets[1]).toBe(0)
     if (challenge !== 'grounded') expect(state.dyson.facilities.assembly_lines[1]).toBe(0)
   }

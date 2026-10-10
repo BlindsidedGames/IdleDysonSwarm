@@ -1,0 +1,371 @@
+{
+  "baseline": {
+    "revision": "ad67db150cf57316d3fcd023c2a884c2b99f9378",
+    "total": 2301,
+    "passed": 2212,
+    "failed": 89
+  },
+  "candidate": {
+    "total": 2286,
+    "passed": 2286,
+    "failed": 0
+  },
+  "originalFailureInventory": [
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/scripts/support/progressionMatrixFixtures.test.ts",
+      "test": "production-valid progression matrix fixtures materializes every named deterministic state with stable fingerprints"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/scripts/support/progressionMatrixFixtures.test.ts",
+      "test": "production-valid progression matrix fixtures canonical builders exactly reproduce the immutable profiling artifacts"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/scripts/support/progressionMatrixFixtures.test.ts",
+      "test": "production-valid progression matrix fixtures opens and advances every checked-in fixture through the full production application engine"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/scripts/support/progressionMatrixFixtures.test.ts",
+      "test": "production-valid progression matrix fixtures records exact route growth at the authored progression boundaries"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/scripts/support/progressionMatrixFixtures.test.ts",
+      "test": "production-valid progression matrix fixtures certifies navigation immediately before and at authored boundaries"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/canonicalGameCommands.test.ts",
+      "test": "canonical game command router routes representative Dream, Reality, Quantum, Avocado, and time actions"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/canonicalGameCommands.test.ts",
+      "test": "canonical game command router delegates Leap gate and branch choice without command-supplied rewards"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/canonicalGameCommands.test.ts",
+      "test": "Simulation purchase preference sets, repeats and validates the canonical buy mode without changing progression"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/frontendNavigationVisibility.test.ts",
+      "test": "progression-aware navigation visibility does not advertise Simulation access from lifetime Influence after Overflow"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/frontendNavigationVisibility.test.ts",
+      "test": "progression-aware navigation visibility reveals locked Quantum after the first Infinity"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/frontendNavigationVisibility.test.ts",
+      "test": "progression-aware navigation visibility reveals Reality after the first Secret with Secrets-only progress"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/frontendNavigationVisibility.test.ts",
+      "test": "progression-aware navigation visibility previews Simulations after Reality is visited and unlocks it at 128 manual Influence"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/frontendNavigationVisibility.test.ts",
+      "test": "progression-aware navigation visibility does not unlock Simulations from automatic Influence"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration blank-slate entry is invisible until saved and a failed abandonment preserves the active run"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration trial-and-error entry is invisible until saved and a failed abandonment preserves the active run"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration galvanization is durable during blank-slate"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration Stored Time and manual commands cannot buy research during Trial and Error"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration completes 'blank-slate' at the ordinary boundary with Break unlocked, mode='manual'"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration completes 'blank-slate' at the ordinary boundary with Break unlocked, mode='automatic'"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration completes 'blank-slate' at the ordinary boundary with Break unlocked, mode='stored-time'"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration completes 'trial-and-error' at the ordinary boundary with Break unlocked, mode='manual'"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration completes 'trial-and-error' at the ordinary boundary with Break unlocked, mode='automatic'"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration completes 'trial-and-error' at the ordinary boundary with Break unlocked, mode='stored-time'"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration No Science Quantum run blocks research across active, persists, and completes despite Entanglement"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/infinityChallengeIntegration.test.ts",
+      "test": "Blank Slate application integration No Science Quantum run blocks research across stored-time, persists, and completes despite Entanglement"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/quantumPurchasePreference.test.ts",
+      "test": "Quantum buy-1 survives canonical checkpoint and portable import"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/quantumPurchasePreference.test.ts",
+      "test": "Quantum buy-10 survives canonical checkpoint and portable import"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/quantumPurchasePreference.test.ts",
+      "test": "Quantum buy-50 survives canonical checkpoint and portable import"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/quantumPurchasePreference.test.ts",
+      "test": "Quantum buy-100 survives canonical checkpoint and portable import"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/quantumPurchasePreference.test.ts",
+      "test": "Quantum buy-max survives canonical checkpoint and portable import"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/application/quantumReleaseCertification.test.ts",
+      "test": "full-cap purchase, earn again, capped preview, checkpoint and restart preserve exact progress"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/canonicalEventTimeModel.test.ts",
+      "test": "legacy canonical event-time parity adapter advances every active Education subject during active time"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/canonicalEventTimeModel.test.ts",
+      "test": "legacy canonical event-time parity adapter advances Dream and Reality under Stored Time while leaving retired Double Time state untouched"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/canonicalEventTimeModel.test.ts",
+      "test": "legacy canonical event-time parity adapter batches at most one railgun volley at each automation boundary"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/canonicalEventTimeModel.test.ts",
+      "test": "legacy canonical event-time parity adapter does not consume the retired Double Time bank inside the domain model"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/canonicalEventTimeModel.test.ts",
+      "test": "legacy canonical event-time parity adapter uses total Infinity points for the 42 gate and selects only the unlocked branch"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/canonicalEventTimeModel.test.ts",
+      "test": "legacy canonical event-time parity adapter derives artifact points internally and preserves only owned AddSkillPoints effects across Infinity and Quantum"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/canonicalEventTimeModel.test.ts",
+      "test": "legacy canonical event-time parity adapter keeps Strange Matter summaries finite above the legacy Int64 ceiling"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/canonicalEventTimeModel.test.ts",
+      "test": "legacy canonical event-time parity adapter fails closed when an owned Reality artifact definition is absent"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/infinityChallenges.test.ts",
+      "test": "Blank Slate completion awards exactly one galvanizer; replay cannot farm it"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/infinityChallenges.test.ts",
+      "test": "Trial and Error starts clean, keeps skills available, and requires the ordinary Infinity boundary"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/infinityChallenges.test.ts",
+      "test": "Trial and Error awards once, persists through Overflow, and unlocks Galvanization independently"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/infinityChallenges.test.ts",
+      "test": "Trial and Error blocks every research purchase and automation without changing preferences"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/infinityChallenges.test.ts",
+      "test": "blank-slate retains its best completion time through replays and saving"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/infinityChallenges.test.ts",
+      "test": "trial-and-error retains its best completion time through replays and saving"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/manualFacilityAugments.test.ts",
+      "test": "challenge restrictions suppress rewards in both facts and execution"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/manualLabourAugments.test.ts",
+      "test": "Working Smarter is logarithmic, bounded and ignores disabled or retired research"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/noScienceChallenge.test.ts",
+      "test": "No Science starts a fresh Quantum without a reward, survives Infinity and saves, and rewards only once"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/noScienceChallenge.test.ts",
+      "test": "No Science suppresses actual Science, old Research effects and generated levels"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/noScienceChallenge.test.ts",
+      "test": "No Science completion still awards Catalysts when the Quantum wallet is full"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumBonusNumericRange.test.ts",
+      "test": "Quantum bonus signed64 numeric range 'CashBonus' Buy Max commits 9007199254740993n exact levels and reloads"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumBonusNumericRange.test.ts",
+      "test": "Quantum bonus signed64 numeric range 'CashBonus' Buy Max commits 9223372036854775807n exact levels and reloads"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumBonusNumericRange.test.ts",
+      "test": "Quantum bonus signed64 numeric range 'ScienceBonus' Buy Max commits 9007199254740993n exact levels and reloads"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumBonusNumericRange.test.ts",
+      "test": "Quantum bonus signed64 numeric range 'ScienceBonus' Buy Max commits 9223372036854775807n exact levels and reloads"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumBonusNumericRange.test.ts",
+      "test": "Quantum bonus signed64 numeric range CashBonus buys only remaining signed64 capacity and preserves excess Shards"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumBonusNumericRange.test.ts",
+      "test": "Quantum bonus signed64 numeric range ScienceBonus buys only remaining signed64 capacity and preserves excess Shards"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "no-science restarts, persists through Infinity/reload, awards two Catalysts once, and restores Quantum effects"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "short-circuit restarts, persists through Infinity/reload, awards two Catalysts once, and restores Quantum effects"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "grounded restarts, persists through Infinity/reload, awards two Catalysts once, and restores Quantum effects"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "built-by-hand restarts, persists through Infinity/reload, awards two Catalysts once, and restores Quantum effects"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "hands-off restarts, persists through Infinity/reload, awards two Catalysts once, and restores Quantum effects"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "commitment-issues restarts, persists through Infinity/reload, awards two Catalysts once, and restores Quantum effects"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "supply-shortage restarts, persists through Infinity/reload, awards two Catalysts once, and restores Quantum effects"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "paid Double IP remains effective while the Quantum bonus is suppressed"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "built-by-hand suppresses purchased, retained, generated and production paths"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "grounded suppresses purchased, retained, generated and production paths"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "Hands Off prevents manual/automatic purchases and starts with one Assembly Line even with retention"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "built-by-hand cannot feed Discovery through disabled Planet generation"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "grounded cannot feed Discovery through disabled Planet generation"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "built-by-hand blocks Infinity retention purchases that would grant forbidden facilities"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "hands-off blocks Infinity retention purchases that would grant forbidden facilities"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "grounded blocks Infinity retention purchases that would grant forbidden facilities"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "no-science suspends Reality points without losing Reality or other point sources"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "short-circuit suspends Reality points without losing Reality or other point sources"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "grounded suspends Reality points without losing Reality or other point sources"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "built-by-hand suspends Reality points without losing Reality or other point sources"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "hands-off suspends Reality points without losing Reality or other point sources"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "commitment-issues suspends Reality points without losing Reality or other point sources"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "supply-shortage suspends Reality points without losing Reality or other point sources"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "Avotation points remain available in Quantum challenges and Reality points still work outside them"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/quantumChallengeRules.test.ts",
+      "test": "Hands Off cancels Tinker while preserving passive production and generated-Line goals"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/simulation/swarmAugments.test.ts",
+      "test": "Head Start respects forbidden facilities and grants newly unlocked megastructures once"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/ui/gameplay/simulations/SimulationsSurface.test.tsx",
+      "test": "SimulationsSurface command availability activates the authored free Community boost without weakening paid or invalid zero-cost gates"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/ui/gameplay/simulations/SimulationsSurface.test.tsx",
+      "test": "Simulation saved purchase controls and formulas purchases each producer with buy-1 and reloads the selection and ownership"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/ui/gameplay/simulations/SimulationsSurface.test.tsx",
+      "test": "Simulation saved purchase controls and formulas purchases each producer with buy-10 and reloads the selection and ownership"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/ui/gameplay/simulations/SimulationsSurface.test.tsx",
+      "test": "Simulation saved purchase controls and formulas purchases each producer with buy-50 and reloads the selection and ownership"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/ui/gameplay/simulations/SimulationsSurface.test.tsx",
+      "test": "Simulation saved purchase controls and formulas purchases each producer with buy-100 and reloads the selection and ownership"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/ui/gameplay/simulations/SimulationsSurface.test.tsx",
+      "test": "Simulation saved purchase controls and formulas purchases each producer with buy-max and reloads the selection and ownership"
+    },
+    {
+      "file": "../../../../../Projects/Idle Dyson Swarm/src/ui/gameplay/tinker/TinkerSurface.test.tsx",
+      "test": "Hands Off does not display a usable Tinker or misleading rewards"
+    }
+  ]
+}

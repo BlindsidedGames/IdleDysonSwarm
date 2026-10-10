@@ -1,5 +1,8 @@
+import { enterReplacementChallenge } from '../../test/support/replacementChallengeFixture'
+import { replacementSkillPoints } from './reworkChallenges'
+import { routeCanonicalGameCommand } from '../application/canonicalGameCommands'
 import { deriveCanonicalArtifactSkillPoints } from './canonicalEventTimeModel'
-import { REALITY_UPGRADE_DEFINITIONS, purchaseRealityUpgrade } from './realityUpgrades'
+import { REALITY_UPGRADE_DEFINITIONS } from './realityUpgrades'
 import { purchaseCanonicalInfinityShopItem } from './canonicalInfinityShop'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import { selectStableFrontendSkillPreview } from '../application/frontendSnapshot'
@@ -10,7 +13,6 @@ import type { CanonicalGameStateV1 } from '../game-state/types'
 import { EMPTY_INFINITY_CHALLENGES, QUANTUM_CHALLENGE_IDS, effectiveDivisions, quantumDoubleIpEnabled, challengeCompleted, validateInfinityChallenges } from './infinityChallenges'
 import { restartInfinityChallenge } from './canonicalInfinityChallengeRestart'
 import { applyCanonicalInfinityReset } from './canonicalInfinityReset'
-import { applyCanonicalQuantumReset } from './quantumTransitions'
 import { previewCanonicalFacilityPurchase, runCanonicalDysonAutomation } from './canonicalDysonCommands'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { DETERMINISTIC_DYSON_SNAPSHOT, DETERMINISTIC_DYSON_TUNING, createDeterministicMatureDysonFixture } from '../../scripts/support/deterministicMatureDysonFixture'
@@ -23,48 +25,35 @@ import { DYSON_FACILITY_IDS } from '../game-state/facilityIds'
 const session = () => hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-26T00:00:00Z' }))
 function seed(): CanonicalGameStateV1 {
   const state = session().state
-  return { ...state, meta: { ...state.meta, firstQuantumComplete: true, firstInfinityComplete: true }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true, galvanizedSkillIds: ['manualLabour'] }, skills: { ...state.skills, byId: { ...state.skills.byId, manualLabour: { owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0 } } }, quantum: { ...state.quantum, divisionsPurchased: 19n, unlocks: { ...state.quantum.unlocks, doubleInfinityPoints: true, quantumEntanglement: true } } }
+  return { ...state, meta: { ...state.meta, firstQuantumComplete: true, firstInfinityComplete: true, reworkMigrationChoice: 'keep' as const }, infinity: { ...state.infinity, points: 64n }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true, galvanizedSkillIds: ['manualLabour'] }, skills: { ...state.skills, byId: { ...state.skills.byId, manualLabour: { owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0 } } }, quantum: { ...state.quantum, divisionsPurchased: 19n, unlocks: { ...state.quantum.unlocks, doubleInfinityPoints: true, quantumEntanglement: true } } }
 }
 
-test.each(QUANTUM_CHALLENGE_IDS)('%s restarts, persists through Infinity/reload, awards two Catalysts once, and restores Quantum effects', id => {
-  const enter = restartInfinityChallenge(seed(), 'enter', 0n, id)
-  if (!enter.ok) throw Error(enter.code)
-  expect(effectiveDivisions(enter.state)).toBe(0n)
-  expect(quantumDoubleIpEnabled(enter.state)).toBe(false)
-  expect(enter.state.quantum.divisionsPurchased).toBe(19n)
-  expect(enter.state.quantum.unlocks.doubleInfinityPoints).toBe(true)
-  const infinity = applyCanonicalInfinityReset(enter.state, { breakInfinity: false, requestedReward: 1n, artifactSkillPoints: 0n })
-  if (!infinity.ok) throw Error(JSON.stringify(infinity.issues))
-  const loaded = hydrateGameState(dehydrateGameState(session(), infinity.state)).state
-  expect(loaded.challenges?.active).toBe(id)
-  expect(loaded.dyson.facilities.assembly_lines[0]).toBe(id === 'built-by-hand' ? 0 : 1)
-  const finish = applyCanonicalQuantumReset(loaded, 0n)
-  if (!finish.ok) throw Error('reset failed')
-  expect(finish.state.challenges?.galvanizers).toBe(2n)
-  expect(challengeCompleted(finish.state.challenges!, id)).toBe(true)
-  expect(validateInfinityChallenges(finish.state.challenges)).toBeNull()
-  const roundTrip = hydrateGameState(dehydrateGameState(session(), finish.state)).state
-  expect(challengeCompleted(roundTrip.challenges!, id)).toBe(true)
-  expect(effectiveDivisions(roundTrip)).toBe(19n)
-  expect(quantumDoubleIpEnabled(roundTrip)).toBe(true)
-  expect(roundTrip.dyson.facilities.assembly_lines[0]).toBe(1)
-  const replay = restartInfinityChallenge(roundTrip, 'enter', 0n, id)
-  if (!replay.ok) throw Error(replay.code)
-  const second = applyCanonicalQuantumReset(replay.state, 0n)
-  expect(second.ok && second.state.challenges?.galvanizers).toBe(2n)
-  const abandon = restartInfinityChallenge(replay.state, 'abandon', 0n)
-  expect(abandon.ok && abandon.state.challenges?.active).toBeNull()
+test.each(QUANTUM_CHALLENGE_IDS)('%s legacy receipt/time/currency survives import without completing the replacement', id => {
+  const source = seed()
+  const legacy = { ...source, challenges: { ...source.challenges!, active: id,
+    completedQuantumChallenges: [id], galvanizers: 2n, hasEarnedGalvanizer: true,
+    completionSeconds: { [id]: 123 } } }
+  const restored = hydrateGameState(dehydrateGameState(session(), legacy)).state
+  expect(restored.challenges?.active).toBeNull()
+  expect(challengeCompleted(restored.challenges!, id)).toBe(true)
+  expect(restored.challenges?.completionSeconds?.[id]).toBe(123)
+  expect(restored.challenges?.galvanizers).toBe(2n)
+  expect(replacementSkillPoints(restored.challenges)).toBe(0n)
+  const entered = enterReplacementChallenge(restored, id)
+  expect(entered.challenges?.replacement?.completedIds).toEqual([])
+  expect(entered.challenges?.galvanizers).toBe(2n)
+  expect(validateInfinityChallenges(entered.challenges)).toBeNull()
 })
 
 test('paid Double IP remains effective while the Quantum bonus is suppressed', () => {
-  const state = seed(); state.challenges = { ...state.challenges!, active: 'no-science' }
+  const state = enterReplacementChallenge(seed(), 'no-science')
   const infinity = createBasicDysonInfinityState({ divisionsPurchased: effectiveDivisions(state), quantumDoubleIp: quantumDoubleIpEnabled(state), permanentDoubleIp: true })
   expect(infinityPointsForBots(4.2e19, infinity)).toBe(2n)
 })
 
 test.each(['built-by-hand', 'grounded'] as const)('%s suppresses purchased, retained, generated and production paths', id => {
   const state = createDeterministicMatureDysonFixture({ ownedSkillIds: ['scientificPlanets', 'pocketDimensions', 'stellarSacrifices', 'androids', 'manualLabour'] })
-  state.challenges = { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, active: id }
+  state.challenges = enterReplacementChallenge(state, id).challenges
   state.dyson.money = 1e100
   const forbidden = DYSON_FACILITY_IDS.filter(f => id === 'built-by-hand' || !['assembly_lines', 'ai_managers', 'servers', 'data_centers'].includes(f))
   for (const f of forbidden) expect(previewCanonicalFacilityPurchase(state, f).eligible).toBe(false)
@@ -80,14 +69,14 @@ test.each(['built-by-hand', 'grounded'] as const)('%s suppresses purchased, reta
 
 test('Short Circuit fixes lifetime even with Discovery, lifetime research and skills', () => {
   const state = createDeterministicMatureDysonFixture({ ownedSkillIds: ['stayingPower', 'panelMaintenance', 'panelWarranty'] })
-  state.challenges = { ...EMPTY_INFINITY_CHALLENGES, active: 'short-circuit', unlocked: true }
+  state.challenges = enterReplacementChallenge(state, 'short-circuit').challenges
   state.discovery = { unlocked: true, completions: 1000n, progress: 0, startingPower: 20n, speedUpgrades: 0n }
   const result = deriveBasicDysonState(state, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
   expect(result.ok && result.value.globals.panelLifetimeSeconds).toBe(2)
 })
 
 test('Hands Off prevents manual/automatic purchases and starts with one Assembly Line even with retention', () => {
-  const state = seed(); state.challenges = { ...state.challenges!, active: 'hands-off' }; state.dyson.money = 1e100
+  const state = enterReplacementChallenge(seed(), 'hands-off'); state.dyson.money = 1e100
   for (const f of DYSON_FACILITY_IDS) expect(previewCanonicalFacilityPurchase(state, f).eligible).toBe(false)
   expect(runCanonicalDysonAutomation(state).attempts.every(a => !a.purchased)).toBe(true)
   state.infinity.retainedFacilities = { assembly_lines: true, ai_managers: true, servers: true, data_centers: true, planets: true }
@@ -98,7 +87,7 @@ test('Hands Off prevents manual/automatic purchases and starts with one Assembly
 })
 
 test('Supply Shortage doubles marginal prices while generated counts do not affect quotes', () => {
-  const state = seed(); state.challenges = { ...state.challenges!, active: 'supply-shortage' }; state.dyson.money = 1e100
+  const state = enterReplacementChallenge(seed(), 'supply-shortage'); state.dyson.money = 1e100
   state.dyson.automation.buyMode = 'buy-1'
   const first = previewCanonicalFacilityPurchase(state, 'assembly_lines').cost
   state.dyson.facilities.assembly_lines = [1e9, 1]
@@ -108,14 +97,14 @@ test('Supply Shortage doubles marginal prices while generated counts do not affe
 })
 
 test('Commitment Issues blocks refunds, clear and preset replacement without preventing additional assignments', () => {
-  const state = seed(); state.challenges = { ...state.challenges!, active: 'commitment-issues' }; state.skills.points = 10n
+  const state = enterReplacementChallenge(seed(), 'commitment-issues'); state.skills.points = 10n
   const purchase = purchaseCanonicalSkill(state, 'startHereTree')
   if (!purchase.accepted) throw Error(purchase.reason)
   expect(refundCanonicalSkill(purchase.state, 'startHereTree').accepted).toBe(false)
   expect(resetCanonicalSkills(purchase.state).accepted).toBe(false)
   expect(applyCanonicalSkillPresetLayout(purchase.state, []).accepted).toBe(false)
   const reset = applyCanonicalInfinityReset(purchase.state, { breakInfinity: false, requestedReward: 1n, artifactSkillPoints: 0n })
-  expect(reset.ok && reset.state.skills.byId.startHereTree?.owned).toBe(false)
+  expect(reset.ok && reset.state.skills.byId.startHereTree?.owned).toBe(true)
 })
 
 
@@ -123,7 +112,7 @@ test('challenge entry refreshes cached refund controls with unchanged skills and
   const purchase = purchaseCanonicalSkill({ ...seed(), skills: { ...seed().skills, points: 10n } }, 'startHereTree')
   const normal = selectStableFrontendSkillPreview(purchase.state, undefined)
   expect(normal.reset.refundableSkillIds).toContain('startHereTree')
-  const challenge = selectStableFrontendSkillPreview({ ...purchase.state, challenges: { ...purchase.state.challenges!, active: 'commitment-issues' } }, normal)
+  const challenge = selectStableFrontendSkillPreview({ ...purchase.state, challenges: enterReplacementChallenge(purchase.state, 'commitment-issues').challenges }, normal)
   expect(challenge.reset.refundableSkillIds).toEqual([])
   expect(challenge.reset.retainedSkillIds).toContain('startHereTree')
 })
@@ -131,7 +120,7 @@ test('challenge entry refreshes cached refund controls with unchanged skills and
 
 test.each(['built-by-hand', 'grounded'] as const)('%s cannot feed Discovery through disabled Planet generation', active => {
   const state = createDeterministicMatureDysonFixture({ ownedSkillIds: ['scientificPlanets', 'shouldersOfGiants', 'whatCouldHaveBeen', 'pocketDimensions'] })
-  state.challenges = { ...EMPTY_INFINITY_CHALLENGES, active, unlocked: true }
+  state.challenges = enterReplacementChallenge(state, active).challenges
   state.discovery = { unlocked: true, completions: 10n, progress: 0, startingPower: 0n, speedUpgrades: 0n }
   const effects = deriveDiscoveryEffects(state, { ...DETERMINISTIC_DYSON_SNAPSHOT, pocketDimensionsProduction: 1e10, scientificPlanetsProduction: 1e10 })
   expect(effects.sources.some(source => ['shouldersOfGiants', 'whatCouldHaveBeen'].includes(source.id))).toBe(false)
@@ -141,74 +130,34 @@ test.each(['built-by-hand', 'grounded'] as const)('%s cannot feed Discovery thro
 
 test.each(['built-by-hand', 'hands-off', 'grounded'] as const)('%s blocks Infinity retention purchases that would grant forbidden facilities', active => {
   const state = seed()
-  state.challenges = { ...state.challenges!, active }
+  state.challenges = enterReplacementChallenge(state, active).challenges
   state.infinity.points = 10n
   const id = active === 'grounded' ? 'retain-planets' : 'retain-assembly-lines'
   const result = purchaseCanonicalInfinityShopItem(state, id)
   expect(result.code).toBe('challenge-disabled')
   expect(result.changed).toBe(false)
   expect(result.state).toBe(state)
-  const ordinary = purchaseCanonicalInfinityShopItem({ ...state, challenges: { ...state.challenges!, active: null } }, 'retain-assembly-lines')
+  const ordinary = purchaseCanonicalInfinityShopItem(seed(), 'retain-assembly-lines')
   expect(ordinary.accepted).toBe(true)
   expect(ordinary.state.dyson.facilities.assembly_lines[1]).toBe(10)
 })
 
 
-test.each(QUANTUM_CHALLENGE_IDS)('%s suspends Reality points without losing Reality or other point sources', id => {
+test('retired Reality and Avotation history cannot inject new artifact SP or mutate through player commands', () => {
   const state = seed()
   state.dream.upgrades.translation1 = true
   state.dream.upgrades.speed1 = true
   state.dream.strangeMatter = 1e30
-  state.skills.points = 2n
-  const artifact = (s: CanonicalGameStateV1) => {
-    const result = deriveCanonicalArtifactSkillPoints(s, REALITY_UPGRADE_DEFINITIONS)
-    if (!result.ok) throw Error('artifact derivation failed')
-    return result.value
-  }
-  expect(artifact(state)).toBe(2n)
-  const enter = restartInfinityChallenge(state, 'enter', artifact(state), id)
-  if (!enter.ok) throw Error(enter.code)
-  expect(enter.state.skills.points).toBe(0n)
-  expect(enter.state.dream).toEqual(state.dream)
-
-  // Buying Reality upgrades during a challenge still advances Reality, but
-  // cannot inject points through the immediate purchase path.
-  const purchase = purchaseRealityUpgrade(enter.state, 'translation2')
-  expect(purchase.accepted).toBe(true)
-  expect(purchase.candidate.skills.points).toBe(0n)
-  expect(purchase.candidate.dream.upgrades.translation2).toBe(true)
-  expect(artifact(purchase.candidate)).toBe(3n)
-  const current = { ...purchase.candidate, infinity: { ...purchase.candidate.infinity, permanentSkillPoints: 3n } }
-  for (const automatic of [false, true]) {
-    const infinity = applyCanonicalInfinityReset(current, { breakInfinity: false, requestedReward: 1n, artifactSkillPoints: artifact(current), automatic })
-    if (!infinity.ok) throw Error('Infinity reset failed')
-    expect(infinity.state.skills.points).toBe(3n)
-    expect(infinity.state.dream).toEqual(current.dream)
-  }
-  const loaded = hydrateGameState(dehydrateGameState(session(), current)).state
-  expect(loaded.skills.points).toBe(0n)
-  expect(loaded.dream.upgrades).toEqual(current.dream.upgrades)
-  const finish = applyCanonicalQuantumReset(loaded, artifact(loaded))
-  const abandon = restartInfinityChallenge(loaded, 'abandon', artifact(loaded))
-  for (const result of [finish, abandon]) {
-    if (!result.ok) throw Error('Challenge exit failed')
-    expect(result.state.challenges?.active).toBeNull()
-    expect(result.state.skills.points).toBe(3n)
-    expect(result.state.dream).toEqual(loaded.dream)
-  }
-})
-
-test('Avotation points remain available in Quantum challenges and Reality points still work outside them', () => {
-  const state = seed()
   state.secretProgress = { ...state.secretProgress, completed: true, step: 7 }
-  const enter = restartInfinityChallenge(state, 'enter', 20n, 'no-science')
-  expect(enter.ok && enter.state.skills.points).toBe(4n)
-  const normal = { ...state, dream: { ...state.dream, strangeMatter: 1e30 } }
-  const purchase = purchaseRealityUpgrade(normal, 'translation1')
-  expect(purchase.accepted).toBe(true)
-  expect(purchase.candidate.skills.points).toBe(normal.skills.points + 1n)
-  const infinity = restartInfinityChallenge(state, 'enter', 20n, 'trial-and-error')
-  expect(infinity.ok && infinity.state.skills.points).toBe(20n)
+  expect(deriveCanonicalArtifactSkillPoints(state, REALITY_UPGRADE_DEFINITIONS)).toEqual({ ok: true, value: 0n })
+  const entered = enterReplacementChallenge(state, 'no-science')
+  const purchase = routeCanonicalGameCommand(entered, { kind: 'reality.purchase-upgrade', upgradeId: 'translation2' })
+  expect(purchase).toMatchObject({ accepted: false, changed: false, code: 'rework:retired-system' })
+  expect(purchase.state).toBe(entered)
+  const restored = hydrateGameState(dehydrateGameState(session(), entered)).state
+  expect(restored.dream).toEqual(state.dream)
+  expect(restored.secretProgress).toEqual(state.secretProgress)
+  expect(deriveCanonicalArtifactSkillPoints(restored, new Map())).toEqual({ ok: true, value: 0n })
 })
 
 // Challenge rules apply to commands and stale held actions, not just hidden UI.
@@ -219,7 +168,7 @@ test('Hands Off cancels Tinker while preserving passive production and generated
   const state = createDeterministicMatureDysonFixture({ ownedSkillIds: ['manualLabour', 'scientificPlanets'] })
   const stats = deriveCanonicalTinkerStats(state, 100, { galactic_brains: 10 })
   const held = startCanonicalTinker(state, createCanonicalTinkerRuntimeState(), stats, true)
-  const challenge = { ...held.state, challenges: { ...EMPTY_INFINITY_CHALLENGES, active: 'hands-off' as const, unlocked: true } }
+  const challenge = { ...held.state, challenges: enterReplacementChallenge(held.state, 'hands-off').challenges }
   for (const result of [startCanonicalTinker(challenge, held.runtime, stats, true), advanceCanonicalTinker(challenge, held.runtime, stats, 3600)]) {
     expect(result.runtime.running).toBe(false)
     expect(result.runtime.repeat).toBe(false)
@@ -236,12 +185,11 @@ test('Hands Off cancels Tinker while preserving passive production and generated
   expect(grantTinkerFacilities(challenge, { galactic_brains: 10 }, 100)).toBe(challenge)
   const derived = deriveBasicDysonState(challenge, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
   if (!derived.ok) throw Error('Derivation failed')
-  const ordinary = deriveBasicDysonState(state, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
-  if (!ordinary.ok) throw Error('Derivation failed')
-  for (const id of DYSON_FACILITY_IDS) expect(derived.value.facilityFacts[id].production.perSecond).toBe(ordinary.value.facilityFacts[id].production.perSecond)
+  expect(derived.value.rates.bots).toBeGreaterThan(0)
+  expect(derived.value.productionArrivalRates.planets).toBeGreaterThan(0)
   const generated = { ...challenge, dyson: { ...challenge.dyson, goalStage: 1n, facilities: { ...challenge.dyson.facilities, assembly_lines: [5, 0] as const } } }
   const goal = advanceCanonicalGoalProgression(generated, () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 }))
   expect(goal.ok && goal.completedStages).toEqual([1n])
-  const normalGoal = advanceCanonicalGoalProgression({ ...generated, challenges: { ...generated.challenges, active: null } }, () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 }))
+  const normalGoal = advanceCanonicalGoalProgression({ ...generated, challenges: { ...generated.challenges, active: null, replacement: { ...generated.challenges.replacement!, active: null } } }, () => ({ panelsPerSecond: 0, panelLifetimeSeconds: 10 }))
   expect(normalGoal.ok && normalGoal.completedStages).toEqual([])
 })

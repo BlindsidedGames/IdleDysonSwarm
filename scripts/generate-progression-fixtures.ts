@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createProgressionMatrixFixtures } from './support/progressionMatrixFixtures'
 
-const output = resolve(import.meta.dirname, '..', 'test', 'fixtures', 'progression')
+const output = resolve(import.meta.dirname, '..', 'test', 'fixtures', 'progression-rework')
 mkdirSync(output, { recursive: true })
 const fixtures = createProgressionMatrixFixtures()
 for (const fixture of fixtures) {

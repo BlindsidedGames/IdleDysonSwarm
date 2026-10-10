@@ -8,7 +8,7 @@ import { deserializeWebSave, serializeWebSave } from '../save/serialization'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { quantumCashMultiplier, quantumScienceMultiplier } from './dysonPrestigeEffects'
 import { DISCRETE_MAXIMUM } from './numeric'
-import { availableQuantumPoints } from './quantumUpgrades'
+import { availableCanonicalInfinityShopPoints } from './canonicalInfinityShop'
 
 const session = hydrateGameState(prepareIdb1Save(readFileSync(
   new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url),
@@ -20,9 +20,9 @@ function derive(state: CanonicalGameStateV1) {
     { permanentDoubleIp: false }, session.skillEffectEvaluationSnapshot)
 }
 
-function buyMax(state: CanonicalGameStateV1, upgradeId: 'CashBonus' | 'ScienceBonus') {
+function buy(state: CanonicalGameStateV1, upgradeId: 'CashBonus' | 'ScienceBonus') {
   return routeCanonicalGameCommand(state, {
-    kind: 'quantum.purchase-upgrade', upgradeId, quantity: 'max',
+    kind: 'infinity.purchase-shop-item', itemId: `rework-${upgradeId}`,
   }, {
     runtimeCarriers: {
       compatibilityTuning: session.compatibilityTuning,
@@ -76,18 +76,18 @@ describe('Quantum bonus signed64 numeric range', () => {
     [BigInt(Number.MAX_SAFE_INTEGER) + 2n, DISCRETE_MAXIMUM]
       .map((balance) => ({ id, balance })),
   ))(
-    '$id Buy Max commits $balance exact levels and reloads', ({ id, balance }) => {
+    '$id IP purchase increments $balance exact ownership and reloads', ({ id, balance }) => {
       const key = id === 'CashBonus' ? 'cashBonusLevels' : 'scienceBonusLevels'
       // Neither tested balance is exactly representable as a JavaScript number.
-      const initial = { ...session.state, quantum: {
-        ...session.state.quantum, pointsEarned: balance, pointsSpent: 0n, [key]: 0n,
-      } }
-      const purchase = buyMax(initial, id)
+      const initial = { ...session.state, meta: { ...session.state.meta, reworkMigrationChoice: 'keep' as const },
+        infinity: { ...session.state.infinity, points: balance, spentPoints: 0n },
+        quantum: { ...session.state.quantum, [key]: balance - 1n } }
+      const purchase = buy(initial, id)
       expect(purchase.accepted).toBe(true)
       expect(purchase.state.quantum[key]).toBe(balance)
-      expect(purchase.state.quantum.pointsSpent).toBe(balance)
-      expect(availableQuantumPoints(purchase.state)).toBe(0n)
-      expect(initial.quantum[key]).toBe(0n)
+      expect(purchase.state.infinity.spentPoints).toBe(3n)
+      expect(availableCanonicalInfinityShopPoints(purchase.state)).toBe(balance - 3n)
+      expect(initial.quantum[key]).toBe(balance - 1n)
       const loaded = roundTrip(purchase.state)
       expect(loaded.quantum).toEqual(purchase.state.quantum)
       expect(derive(loaded).ok).toBe(true)
@@ -95,20 +95,19 @@ describe('Quantum bonus signed64 numeric range', () => {
   )
 
   test.each(['CashBonus', 'ScienceBonus'] as const)(
-    '%s buys only remaining signed64 capacity and preserves excess Shards', (id) => {
+    '%s buys its final signed64 level and preserves excess IP', (id) => {
       const key = id === 'CashBonus' ? 'cashBonusLevels' : 'scienceBonusLevels'
-      const initial = { ...session.state, quantum: {
-        ...session.state.quantum, pointsEarned: DISCRETE_MAXIMUM, pointsSpent: 0n,
-        [key]: DISCRETE_MAXIMUM - 3n,
-      } }
-      const purchase = buyMax(initial, id)
+      const initial = { ...session.state, meta: { ...session.state.meta, reworkMigrationChoice: 'keep' as const },
+        infinity: { ...session.state.infinity, points: DISCRETE_MAXIMUM, spentPoints: 0n },
+        quantum: { ...session.state.quantum, [key]: DISCRETE_MAXIMUM - 1n } }
+      const purchase = buy(initial, id)
       expect(purchase.accepted).toBe(true)
       expect(purchase.state.quantum[key]).toBe(DISCRETE_MAXIMUM)
-      expect(purchase.state.quantum.pointsSpent).toBe(3n)
-      expect(availableQuantumPoints(purchase.state)).toBe(DISCRETE_MAXIMUM - 3n)
+      expect(purchase.state.infinity.spentPoints).toBe(3n)
+      expect(availableCanonicalInfinityShopPoints(purchase.state)).toBe(DISCRETE_MAXIMUM - 3n)
       const loaded = roundTrip(purchase.state)
       expect(loaded.quantum).toEqual(purchase.state.quantum)
-      const repeated = buyMax(loaded, id)
+      const repeated = buy(loaded, id)
       expect(repeated.accepted).toBe(false)
       expect(repeated.state).toEqual(loaded)
     },

@@ -71,7 +71,7 @@ const numericNeighbors = compare(
 const serialization = Object.fromEntries(
   ['fresh', 'maximum-skills', 'late-quantum'].map((fixture) => {
     const source = readFileSync(
-      new URL(`../../test/fixtures/progression/${fixture}.idsweb1.txt`, import.meta.url),
+      new URL(`../../test/fixtures/progression-rework/${fixture}.idsweb1.txt`, import.meta.url),
       'utf8',
     )
     const state = deserializeWebSave(source)

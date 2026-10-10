@@ -1,3 +1,4 @@
+import { enterReplacementChallenge } from '../../test/support/replacementChallengeFixture'
 import { expect, test } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
@@ -74,13 +75,13 @@ test('ordinary held Tinker includes every additional reward in its batched path'
 
 test('challenge restrictions suppress rewards in both facts and execution', () => {
   for (const active of ['built-by-hand', 'grounded'] as const) {
-    const { state } = fixture([H.handAssembly, ...A.map(a => a.id)])
+    const { state: source } = fixture([H.handAssembly, ...A.map(a => a.id)])
+    const state = enterReplacementChallenge(source, active)
     const original = structuredClone(state.dyson.facilities)
-    state.challenges.active = active
     const yields = deriveAdditionalTinkerYields(state, rates)
     const stats = deriveCanonicalTinkerStats(state, 4, yields)
     const started = startCanonicalTinker(state, createCanonicalTinkerRuntimeState(), stats, false)
-    const result = advanceCanonicalTinker(started.state, started.runtime, stats, .2)
+    const result = advanceCanonicalTinker(started.state, started.runtime, stats, stats.cooldownSeconds)
     for (const id of active === 'built-by-hand' ? DYSON_FACILITY_IDS : DYSON_FACILITY_IDS.slice(4)) {
       expect(result.state.dyson.facilities[id]).toEqual(original[id])
       expect(yields[id]).toBeUndefined()

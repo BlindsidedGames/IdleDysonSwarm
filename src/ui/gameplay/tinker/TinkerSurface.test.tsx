@@ -1,3 +1,4 @@
+import { enterReplacementChallenge } from '../../../../test/support/replacementChallengeFixture'
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { useState } from 'react'
@@ -63,7 +64,7 @@ test('combined facility summary retains the Bot reward before the first Manager 
 
 test('Hands Off does not display a usable Tinker or misleading rewards', () => {
   const source = fixture(true, false)
-  const state = { ...source, challenges: { ...source.challenges, active: 'hands-off' as const } }
+  const state = enterReplacementChallenge(source, 'hands-off')
   const facts = selectCanonicalTinkerUiFacts(state, createCanonicalTinkerRuntimeState(), 500)
   render(<IntlProvider locale="en" messages={{}}><TinkerSurface facts={facts} dispatch={vi.fn()} /></IntlProvider>)
   expect(screen.queryByRole('button')).toBeNull()

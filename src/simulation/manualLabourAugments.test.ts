@@ -1,3 +1,4 @@
+import { enterReplacementChallenge } from '../../test/support/replacementChallengeFixture'
 import { expect, test } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
@@ -115,7 +116,7 @@ test('Patient Hands completes up to 42 seconds of real work and practice, reward
 test('Working Smarter is logarithmic, bounded and ignores disabled or retired research', () => {
   const state = fixture([A.handAssembly, A.workingSmarter]); state.research.levelsById = { 'research.assembly_line_upgrade': 99 }
   expect(manualBotYield(state)).toBe(1.5)
-  expect(manualBotYield({ ...state, challenges: { ...state.challenges, active: 'no-science' } })).toBe(1)
+  expect(manualBotYield(enterReplacementChallenge(state, 'no-science'))).toBe(1)
   expect(manualBotYield({ ...state, discovery: { unlocked: true, completions: 9n, progress: 0, startingPower: 0n, speedUpgrades: 0n } })).toBe(1.25)
   state.research.levelsById['research.assembly_line_upgrade'] = 1e100
   expect(manualBotYield(state)).toBe(3)

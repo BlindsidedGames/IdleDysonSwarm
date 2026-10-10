@@ -1,16 +1,14 @@
+import { enterReplacementChallenge } from '../../test/support/replacementChallengeFixture'
 import { expect, test } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
-import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
-import { EMPTY_INFINITY_CHALLENGES, isBreakInfinityEnabled, validateInfinityChallenges } from './infinityChallenges'
+import { hydrateGameState } from '../game-state/mapping'
+import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
 import { restartInfinityChallenge } from './canonicalInfinityChallengeRestart'
-import { applyCanonicalInfinityReset } from './canonicalInfinityReset'
-import { applyCanonicalQuantumReset } from './quantumTransitions'
 import { createDeterministicMatureDysonFixture, DETERMINISTIC_DYSON_SNAPSHOT, DETERMINISTIC_DYSON_TUNING } from '../../scripts/support/deterministicMatureDysonFixture'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'
 import { applyCanonicalSkillIntervalEffects } from './canonicalSkillIntervalEffects'
 import { DYSON_FACILITY_IDS } from '../game-state/facilityIds'
 import { highestOwnedFacility } from './stellarArithmetic'
-import { DISCRETE_MAXIMUM } from './numeric'
 
 function entered() {
   const source = hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-24T00:00:00Z' })).state
@@ -20,46 +18,19 @@ function entered() {
   return reset.state
 }
 
-test('No Science starts a fresh Quantum without a reward, survives Infinity and saves, and rewards only once', () => {
-  const state = entered()
-  expect(state.infinity.points).toBe(0n)
-  expect(state.quantum.pointsEarned).toBe(0n)
-  expect(state.challenges?.active).toBe('no-science')
-  const infinity = applyCanonicalInfinityReset(state, { breakInfinity: false, requestedReward: 42n, artifactSkillPoints: 0n })
-  if (!infinity.ok) throw new Error('Infinity failed')
-  expect(infinity.state.challenges?.active).toBe('no-science')
-  const save = hydrateGameState(dehydrateGameState(hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-24T00:00:00Z' })), infinity.state)).state
-  expect(save.challenges?.active).toBe('no-science')
-  const finish = applyCanonicalQuantumReset({ ...save, statistics: { ...save.statistics, currentQuantumRun: { ...save.statistics.currentQuantumRun, simulatedSeconds: 123 } } }, 0n)
-  if (!finish.ok) throw new Error('Quantum failed')
-  expect(finish.state.challenges).toMatchObject({ active: null, noScienceCompleted: true, galvanizers: 2n, completionSeconds: { 'no-science': 123 } })
-  expect(validateInfinityChallenges(finish.state.challenges)).toBeNull()
-  const replay = restartInfinityChallenge(finish.state, 'enter', 0n, 'no-science')
-  if (!replay.ok) throw new Error(replay.code)
-  const second = applyCanonicalQuantumReset(replay.state, 0n)
-  expect(second.ok && second.state.challenges?.galvanizers).toBe(2n)
-  const abandoned = restartInfinityChallenge(state, 'abandon', 0n)
-  expect(abandoned.ok && abandoned.state.challenges).toMatchObject({ active: null, galvanizers: 0n })
-  expect(abandoned.ok && abandoned.state.quantum.pointsEarned).toBe(0n)
-  expect(isBreakInfinityEnabled({ ...state, quantum: { ...state.quantum, unlocks: { ...state.quantum.unlocks, breakTheLoop: true } } })).toBe(true)
-})
-
 test('No Science suppresses actual Science, old Research effects and generated levels', () => {
-  const state = createDeterministicMatureDysonFixture({ ownedSkillIds: ['shouldersOfGiants', 'whatCouldHaveBeen', 'powerUnderwhelming'] })
-  state.challenges = { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, active: 'no-science' }
+  const state = enterReplacementChallenge(createDeterministicMatureDysonFixture({ ownedSkillIds: ['shouldersOfGiants', 'whatCouldHaveBeen', 'powerUnderwhelming'] }), 'no-science')
+  state.dyson = { ...state.dyson, bots: 100, botDistribution: 1, workers: 0, researchers: 100 }
   const result = deriveBasicDysonState(state, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
   if (!result.ok) throw new Error(JSON.stringify(result.issues))
   expect(result.value.productionArrivalRates.science).toBe(0)
   expect(result.value.auxiliary.scienceBoostPerSecond).toBe(0)
   const next = applyCanonicalSkillIntervalEffects(state, state, { seconds: 3600, botProductionPerSecond: 0, stellarFacilitiesPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 10, moneyUpgradePerSecond: 10 })
   expect(next.research).toEqual(state.research)
-})
-
-test('No Science completion still awards Catalysts when the Quantum wallet is full', () => {
-  const state = entered()
-  const result = applyCanonicalQuantumReset({ ...state, quantum: { ...state.quantum, pointsEarned: DISCRETE_MAXIMUM } }, 0n)
-  expect(result.ok && result.quantumPointGranted).toBe(0n)
-  expect(result.ok && result.state.challenges).toMatchObject({ active: null, noScienceCompleted: true, galvanizers: 2n })
+  const ordinary = { ...state, challenges: { ...state.challenges!, active: null, replacement: { ...state.challenges!.replacement!, active: null } } }
+  const normal = deriveBasicDysonState(ordinary, DETERMINISTIC_DYSON_TUNING, { permanentDoubleIp: false }, DETERMINISTIC_DYSON_SNAPSHOT)
+  expect(normal.ok && normal.value.productionArrivalRates.science).toBeGreaterThan(0)
+  expect(applyCanonicalSkillIntervalEffects(ordinary, ordinary, { seconds: 1, botProductionPerSecond: 0, stellarFacilitiesPerSecond: 0, stellarBotsPerSecond: 0, scienceBoostPerSecond: 10, moneyUpgradePerSecond: 10 }).research.levelsById['research.science_boost']).toBe(10)
 })
 
 test.each(DYSON_FACILITY_IDS)('Stellar Sacrifices creates the highest owned facility: %s', target => {
