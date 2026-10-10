@@ -10,13 +10,16 @@ import type { FrontendApplicationSnapshot } from './frontendSnapshot'
 import type { CanonicalRuntimeState } from './canonicalRuntimeSession'
 import { createProductionCanonicalApplicationFactory } from './productionApplicationFactory'
 import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
+import { dehydrateGameState, hydrateGameState } from '../game-state/mapping'
+import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
 import { validateCanonicalGameState } from '../game-state/validate'
 import { SkillsSurface } from '../ui/gameplay/skills/SkillsSurface'
 
 const prepared = createUnityFirstRunPreparedSave({ startedAtUtc: '2026-10-05T00:00:00Z' })
 class MemoryRepository implements SaveRepository {
-  current = prepared
+  current: PreparedSave
+  constructor(current: PreparedSave) { this.current = current }
   async hasCurrent() { return true }
   async loadCurrent() { return this.current }
   async migrateLegacyOnFirstLaunch() { return { status: 'already-migrated' as const, save: this.current } }
@@ -40,7 +43,7 @@ async function command(app: CanonicalGameApplicationFacade, command: CanonicalPl
   } as const
 }
 async function reachInfinity(app: CanonicalGameApplicationFacade) {
-  // Bounded progression precondition; challenge and reward owners still execute.
+  // Bounded production precondition; the real Infinity reset still executes.
   const source = ready(app).state as CanonicalRuntimeState
   const seed: CanonicalRuntimeState = { ...source, gameState: { ...source.gameState,
     timeline: { ...source.gameState.timeline, infinityCycleSeconds: 10 },
@@ -73,29 +76,31 @@ function mountSkills(app: CanonicalGameApplicationFacade, snapshot: ReadyFronten
 }
 afterEach(cleanup)
 
-// Existing catalog tests exercise projection, but miss route-cache reuse through
-// actual challenge rewards and the rendered detail action.
-test.each([false, true])('Fracture is available after a Catalyst reward when Skills was cached (later=%s)', async later => {
-  const repo = new MemoryRepository()
+// Catalyst acquisition is deferred. Load an already earned balance and exercise
+// route-cache reuse through Infinity, the rendered spend and saved ownership.
+test.each([false, true])('saved Catalysts remain spendable after Infinity when Skills was cached (later=%s)', async later => {
+  const hydrated = hydrateGameState(prepared)
+  const repo = new MemoryRepository(dehydrateGameState(hydrated, {
+    ...hydrated.state,
+    meta: { ...hydrated.state.meta, firstInfinityComplete: true },
+    infinity: { ...hydrated.state.infinity, permanentSkillPoints: 1n },
+    skills: { ...hydrated.state.skills, points: 1n },
+    challenges: { ...EMPTY_INFINITY_CHALLENGES, hasEarnedGalvanizer: true, galvanizers: later ? 2n : 1n },
+  }))
   const app = createProductionCanonicalApplicationFactory({ createFirstRunSave: () => prepared, readHostEntitlements: () => ({ permanentDoubleIp: false }) })(repo)
   await app.start()
-  await reachInfinity(app)
-  await command(app, { kind: 'infinity.purchase-shop-item', itemId: 'permanent-skill-point' })
   if (later) {
-    await command(app, { kind: 'challenge.enter-blank-slate' })
-    await reachInfinity(app)
     await command(app, { kind: 'skill.purchase', skillId: 'startHereTree' })
     await command(app, { kind: 'skill.galvanize', skillId: 'startHereTree' })
     const spent = skills(app)
     expect(spent.gameplay.previews.skills.skills.find(s => s.skillId === 'startHereTree')).toMatchObject({ owned: true, galvanized: true, canGalvanize: false })
-    expect(spent.gameplay.progression.challenges?.galvanizers).toBe(0n)
+    expect(spent.gameplay.progression.challenges?.galvanizers).toBe(1n)
     mountSkills(app, spent)
-    fireEvent.click(document.querySelector('button.skill-tree-node[data-skill-id="manualLabour"]')!)
+    fireEvent.click(document.querySelector('button.skill-tree-node[data-skill-id="startHereTree"]')!)
     expect(screen.queryByRole('button', { name: /^Fracture/ })).toBeNull()
     cleanup()
   }
   const before = skills(app)
-  await command(app, { kind: later ? 'challenge.enter-trial-and-error' : 'challenge.enter-blank-slate' })
   app.frontendSnapshot('infinity')
   await reachInfinity(app)
   app.frontendSnapshot('infinity')

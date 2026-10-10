@@ -8,10 +8,8 @@
 }
 .discovery-surface::-webkit-scrollbar { display: none; }
 .discovery-card {
-  --discovery-fill: linear-gradient(to bottom,
-    color-mix(in srgb, var(--theme-selected) 72%, var(--theme-accent)),
-    color-mix(in srgb, var(--theme-selected) 86%, var(--theme-accent)));
-  --discovery-fill-highlight: inset 0 1px rgb(255 255 255 / 12%);
+  --discovery-fill: var(--theme-accent);
+  --discovery-fill-highlight: none;
   background: var(--theme-panel);
   border: 1px solid color-mix(in srgb, var(--theme-divider) 65%, transparent);
   border-radius: 0.3rem;
@@ -111,7 +109,6 @@
 .discovery-card .discovery-row--supporting progress { block-size: calc(1.8rem * var(--game-text-scale)); }
 .discovery-upgrades { margin-block-start: var(--ui-panel-inset); }
 .discovery-upgrades > summary { cursor: pointer; padding-block: var(--ui-panel-inset); font-weight: var(--font-weight-bold); }
-.discovery-upgrades > .avocato-feed-grid { padding: 0; }
 .discovery-purchase-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 1rem; }
 
 .discovery-bar { display: block; position: relative; }
@@ -137,6 +134,30 @@
 
 .discovery-purchase h2 { display: flex; align-items: center; gap: 0.5em; }
 .discovery-purchase h2 .ui-inline-image-symbol { inline-size: 1.5em; block-size: 1.5em; }
+.discovery-purchase-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--ui-card-gap); margin-block: var(--ui-card-gap); }
+.discovery-purchase {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--ui-related-copy-gap); padding: var(--game-card-content-inset);
+  border: 1px solid var(--theme-divider); border-radius: 0.3rem; background: var(--theme-panel);
+  color: var(--color-text-primary); font-size: var(--ui-text-body);
+}
+.discovery-purchase h2 { min-inline-size: 0; margin: 0; font-size: var(--ui-text-card-title); }
+.discovery-purchase p { grid-column: 1 / -1; margin: 0; }
+.discovery-purchase > span { align-self: center; text-align: end; color: var(--theme-accent); }
+.discovery-purchase > .ui-button {
+  grid-column: 1 / -1;
+  border-color: var(--color-border);
+  background-color: var(--theme-accent); color: var(--theme-page);
+  font-size: var(--ui-text-control); font-weight: var(--font-weight-bold);
+}
+.discovery-purchase > .ui-button:not(:disabled):hover { background-color: color-mix(in srgb, var(--theme-accent) 82%, white); }
+.discovery-purchase > .ui-button:not(:disabled):active { background-color: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page)); }
+.discovery-purchase > .ui-button:disabled { background: var(--theme-selected); color: var(--color-text-secondary); opacity: 1; }
+@media (forced-colors: none) {
+  .discovery-purchase > .ui-button:not(:disabled) { background-image: var(--ui-action-gradient); }
+}
+.discovery-upgrades > summary { padding-block: var(--ui-card-gap); font-size: var(--ui-text-card-title); cursor: pointer; }
+@media (min-width: 1000px) { .discovery-purchase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 .discovery-track { display: flex; align-items: center; gap: 0.6rem; }
 .discovery-track .discovery-bar { flex: 1; min-inline-size: 0; }
@@ -145,11 +166,4 @@
   flex-shrink: 0;
   font-size: calc(1.05rem * var(--game-text-scale));
   pointer-events: none;
-}
-
-@media (forced-colors: none) {
-  .discovery-confirmation .discovery-purchase-actions > .ui-button:not(:disabled),
-  .discovery-confirmation .discovery-purchase-actions > .ui-button:not(:disabled):hover {
-    background-image: var(--ui-action-gradient-dark);
-  }
 }

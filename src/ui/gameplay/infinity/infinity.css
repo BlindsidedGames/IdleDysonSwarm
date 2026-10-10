@@ -8,6 +8,12 @@
   --infinity-accent-lead: var(--theme-accent);
   --infinity-control-pressed: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page));
   --infinity-control-disabled: color-mix(in srgb, var(--theme-panel) 72%, var(--theme-page));
+  --purchase-action-accent: var(--infinity-accent);
+  --purchase-action-ink: #100a18;
+  --purchase-action-pressed: var(--infinity-control-pressed);
+  --purchase-action-disabled: var(--infinity-control-disabled);
+  --purchase-action-disabled-border: #171020;
+  --purchase-action-disabled-ink: #b5a7c8;
   --infinity-available: #ffa45e;
   --infinity-spent: #91dd8f;
 }
@@ -457,39 +463,6 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.infinity-shop-card .ui-button {
-  display: flex;
-  min-inline-size: 0;
-  min-block-size: var(--target-minimum);
-  flex-direction: column;
-  gap: 0.05rem;
-  align-self: stretch;
-  padding: 0.28rem;
-  border-color: var(--theme-divider);
-  border-radius: 0.25rem;
-  background: var(--infinity-accent);
-  color: #100a18;
-  font-family: var(--font-family-numeric);
-  font-size: calc(0.72rem * var(--game-text-scale));
-  font-variant-numeric: tabular-nums;
-  font-weight: var(--font-weight-bold);
-}
-
-.infinity-shop-card .ui-button:not(:disabled):hover {
-  background-color: color-mix(in srgb, var(--theme-accent) 82%, white);
-}
-
-.infinity-shop-card .ui-button:not(:disabled):active {
-  background-color: var(--infinity-control-pressed);
-}
-
-.infinity-shop-card .ui-button:disabled {
-  border-color: #171020;
-  background: var(--infinity-control-disabled);
-  color: #b5a7c8;
-  opacity: 1;
-}
-
 .infinity-shop-card__cost {
   justify-content: center;
 }
@@ -699,7 +672,6 @@
 
 /* Action lighting only; selectors and navigation retain their existing surfaces. */
 @media (forced-colors: none) {
-  .infinity-shop-card .ui-button:not(:disabled),
   .infinity-break-target .infinity-break-target__submit:not(:disabled) {
     background-image: var(--ui-action-gradient);
   }
@@ -709,3 +681,10 @@
 }
 
 .infinity-surface__multiplier { color: var(--color-accent-value); white-space: nowrap; }
+.infinity-surface__upgrade-group + .infinity-surface__upgrade-group {
+  margin-block-start: var(--ui-section-gap);
+}
+.infinity-surface__upgrade-group > h2 {
+  margin: 0 0 var(--ui-card-gap);
+  font-size: var(--ui-text-section-title);
+}

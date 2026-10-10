@@ -80,6 +80,7 @@ function ChallengeCard({ progress, overflowReached, developmentVisible = false, 
 }
 
 const challengePresentation = {
+  'lean-build': { name: { id: 'challenges.leanBuild', defaultMessage: 'Lean Build' }, description: { id: 'challenges.leanBuild.description', defaultMessage: 'Earn 16 IP with at most 4 SP of assigned skills.' } },
   'blank-slate': { name: messages.blankSlate, description: messages.description },
   'trial-and-error': { name: messages.trialAndError, description: messages.trialDescription },
   'no-science': { name: messages.noScience, description: messages.noScienceDescription },

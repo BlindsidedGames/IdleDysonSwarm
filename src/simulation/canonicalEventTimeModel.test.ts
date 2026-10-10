@@ -1,3 +1,5 @@
+import {advanceCivilization,civilizationOpeningComplete} from './civilization'
+import {startFarming,farmingCanBuyGranary,buyFarmingGranary} from './farming'
 import { MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
 import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
 import { OVERFLOW_BOT_CAP } from './overflowBoundary'
@@ -545,15 +547,12 @@ describe('legacy canonical event-time parity adapter', () => {
     ).toThrow(TypeError)
 
     const clone = model.clone()
-    clone.applyQueuedInput(
-      { timeSeconds: 0, kind: CANONICAL_QUANTUM_LEAP_INPUT },
-      createSimulationSummary(),
-    )
-    expect(clone.issue).toBeUndefined()
-    expect(clone.lastQueuedInputOutcome?.code).toBe(
-      'QUANTUM_LEAP_APPLIED',
-    )
-    expect(clone.state.gameState.skills.points).toBe(10n)
+    const cloned = clone.takeState()
+    Object.assign(cloned, { gameState: { ...cloned.gameState,
+      dyson: { ...cloned.gameState.dyson, money: 123 },
+    } })
+    expect(model.state.gameState.dyson.money).toBe(0)
+
   })
 
   test('transfers its owned carrier once and rejects every later use', () => {
@@ -628,7 +627,7 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(next.facilities.data_centers[0]).toBeGreaterThan(0)
   })
 
-  test('advances every active Education subject during active time', () => {
+  test('preserves every retired Education subject during active time', () => {
     const educationIds = [
       'engineering',
       'shipping',
@@ -686,11 +685,11 @@ describe('legacy canonical event-time parity adapter', () => {
       expect(
         result.candidateState.state.gameState.dream.education[id]
           .progress,
-      ).toBe(1)
+      ).toBe(0)
     }
   })
 
-  test('advances Dream and Reality under Stored Time while leaving retired Double Time state untouched', () => {
+  test('preserves retired Dream and Reality under Stored Time and active time while Dyson advances', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {
       ...source,
@@ -785,8 +784,8 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(result.completed).toBe(true)
     expect(result.diagnosticCode).toBeUndefined()
     const next = result.candidateState.state.gameState
-    expect(next.dream).not.toEqual(gameState.dream)
-    expect(next.reality).not.toEqual(gameState.reality)
+    expect(next.dream).toEqual(gameState.dream)
+    expect(next.reality).toEqual(gameState.reality)
     expect(next.timeline.doubleTime).toEqual(beforeDoubleTime)
     expect(next.dyson.money).toBeGreaterThan(gameState.dyson.money)
     expect(next.dyson.bots).toBeGreaterThan(gameState.dyson.bots)
@@ -794,15 +793,7 @@ describe('legacy canonical event-time parity adapter', () => {
       gameState.research.levelsById,
     )
     expect(result.summary.disasterEvents).toEqual([])
-    expect(result.summary.storedTimeFirstDisasterEvents).toEqual([
-      {
-        cause: 'Meteor',
-        strangeMatterGranted: 1,
-        resetCount: 1n,
-        firstLifetimeOccurrence: true,
-        preResetEra: 'space-age',
-      },
-    ])
+    expect(result.summary.storedTimeFirstDisasterEvents).toEqual([])
     const repeatState: CanonicalGameStateV1 = {
       ...gameState,
       statistics: {
@@ -841,37 +832,31 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(activeResult.completed).toBe(true)
     expect(activeResult.diagnosticCode).toBeUndefined()
     const activeNext = activeResult.candidateState.state.gameState
-    expect(activeNext.dream).not.toEqual(gameState.dream)
+    expect(activeNext.dream).toEqual(gameState.dream)
     expect(activeNext.dream.resetCount).toBe(
-      gameState.dream.resetCount + 1n,
+      gameState.dream.resetCount,
     )
-    expect(activeNext.reality.universeDesignationCount).toBeGreaterThan(
+    expect(activeNext.reality.universeDesignationCount).toBe(
       gameState.reality.universeDesignationCount,
     )
     expect(activeNext.timeline.doubleTime).toEqual(
       gameState.timeline.doubleTime,
     )
     expect(activeResult.summary).toMatchObject({
-      meteorDreamResets: 1n,
-      strangeMatter: 1,
-      realityWorkers: 4n,
+      meteorDreamResets: gameState.statistics.lifetime.meteorDreamResets,
+      strangeMatter: gameState.dream.strangeMatter,
+      realityWorkers: gameState.statistics.lifetime.realityWorkers,
     })
-    expect(activeResult.summary.disasterEvents).toEqual([
-      {
-        cause: 'Meteor',
-        strangeMatterGranted: 1,
-        resetCount: 1n,
-        firstLifetimeOccurrence: true,
-        preResetEra: 'space-age',
-      },
-    ])
+    expect(activeResult.summary.disasterEvents).toEqual([])
     expect(
       activeNext.statistics.lifetime.meteorDreamResets,
-    ).toBe(1n)
-    expect(activeNext.statistics.lifetime.realityWorkers).toBe(4n)
+    ).toBe(gameState.statistics.lifetime.meteorDreamResets)
+    expect(activeNext.statistics.lifetime.realityWorkers).toBe(
+      gameState.statistics.lifetime.realityWorkers,
+    )
   })
 
-  test('batches at most one railgun volley at each automation boundary', () => {
+  test('preserves retired railgun state at automation boundaries', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {
       ...source,
@@ -920,11 +905,7 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(result.completed).toBe(true)
     expect(result.diagnosticCode).toBeUndefined()
     const next = result.candidateState.state.gameState
-    expect(next.dream.resources.swarmPanels).toBeGreaterThan(0n)
-    expect(next.dream.resources.railgunCharge).toBeGreaterThanOrEqual(0)
-    expect(next.dream.railgun.lastRoundsFired).toBeGreaterThan(0)
-    expect(next.dream.railgun.lastRoundsFired).toBeLessThanOrEqual(10)
-    expect(next.dream.railgun.reservedPanels).toBeGreaterThanOrEqual(0n)
+    expect(next.dream).toEqual(gameState.dream)
     expect(next.timeline.doubleTime.bankSeconds).toBe(100)
   })
 
@@ -968,10 +949,7 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(result.diagnosticCode).toBeUndefined()
     const next = result.candidateState.state.gameState
     expect(next.timeline.doubleTime.bankSeconds).toBe(0.05)
-    expect(next.dream.resources.swarmPanels).toBe(1n)
-    expect(next.dream.railgun.lastRoundsFired).toBe(1)
-    expect(next.dream.railgun.shotsRemaining).toBe(9)
-    expect(next.dream.railgun.fireProgress).toBe(0)
+    expect(next.dream).toEqual(gameState.dream)
   })
 
   test('finalizes elapsed statistics before a bot-cap persistence pause', () => {
@@ -1009,59 +987,15 @@ describe('legacy canonical event-time parity adapter', () => {
     ).toBeCloseTo(0.5, 12)
   })
 
-  test('uses total Infinity points for the 42 gate and selects only the unlocked branch', () => {
-    const below = new CanonicalEventTimeModel(
-      carrier({
-        ...baseState(),
-        infinity: {
-          ...baseState().infinity,
-          points: 41n,
-        },
-      }),
-      context(),
-    )
-    below.applyQueuedInput(
-      { timeSeconds: 0, kind: CANONICAL_QUANTUM_LEAP_INPUT },
-      createSimulationSummary(),
-    )
-    expect(below.lastQueuedInputOutcome).toEqual({
-      accepted: false,
-      changed: false,
-      code: 'QUANTUM_LEAP_REQUIRES_42_TOTAL_INFINITY_POINTS',
-    })
-    expect(below.state.gameState.infinity.points).toBe(41n)
-
-    const entangledState = baseState()
-    const entangled = new CanonicalEventTimeModel(
-      carrier({
-        ...entangledState,
-        infinity: {
-          ...entangledState.infinity,
-          points: 84n,
-          spentPoints: 42n,
-        },
-        quantum: {
-          ...entangledState.quantum,
-          unlocks: {
-            ...entangledState.quantum.unlocks,
-            quantumEntanglement: true,
-          },
-        },
-      }),
-      context(),
-    )
-    entangled.applyQueuedInput(
-      { timeSeconds: 0, kind: CANONICAL_QUANTUM_LEAP_INPUT },
-      createSimulationSummary(),
-    )
-    expect(entangled.lastQueuedInputOutcome?.code).toBe(
-      'QUANTUM_ENTANGLEMENT_APPLIED',
-    )
-    expect(entangled.state.gameState.infinity.points).toBe(42n)
-    expect(entangled.state.gameState.quantum.pointsEarned).toBe(1n)
-    expect(entangled.state.gameState.dyson).toEqual(
-      entangledState.dyson,
-    )
+  test.each([41n, 42n, 84n])('retired Quantum input cannot convert %s earned IP even with Entanglement', points => {
+    const source = baseState()
+    const state = { ...source, infinity: { ...source.infinity, points },
+      quantum: { ...source.quantum, unlocks: { ...source.quantum.unlocks, quantumEntanglement: true } } }
+    const model = new CanonicalEventTimeModel(carrier(state), context())
+    model.applyQueuedInput({ timeSeconds: 0, kind: CANONICAL_QUANTUM_LEAP_INPUT }, createSimulationSummary())
+    expect(model.lastQueuedInputOutcome).toEqual({ accepted: false, changed: false, code: 'CANONICAL_EVENT_INPUT_UNSUPPORTED' })
+    expect(model.issue).toBeUndefined()
+    expect(model.state.gameState).toEqual(state)
   })
 
   test('captures a bot milestone before reset only when the host enables evidence', () => {
@@ -1078,13 +1012,13 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(reporting.state.gameState).toEqual(ordinary.state.gameState)
   })
 
-  test('derives artifact points internally and preserves only owned AddSkillPoints effects across Infinity and Quantum', () => {
+  test('ignores retired Reality artifact awards and does not reset through Quantum input', () => {
     const source = withRealityArtifacts(baseState())
     const derived = deriveCanonicalArtifactSkillPoints(
       source,
       artifactDefinitions,
     )
-    expect(derived).toEqual({ ok: true, value: 10n })
+    expect(derived).toEqual({ ok: true, value: 0n })
 
     const infinityState: CanonicalGameStateV1 = {
       ...source,
@@ -1103,7 +1037,7 @@ describe('legacy canonical event-time parity adapter', () => {
     )
     infinity.applyInfinityReset(1, createSimulationSummary())
     expect(infinity.issue).toBeUndefined()
-    expect(infinity.state.gameState.skills.points).toBe(10n)
+    expect(infinity.state.gameState.skills.points).toBe(0n)
 
     const quantum = new CanonicalEventTimeModel(
       carrier({
@@ -1121,11 +1055,11 @@ describe('legacy canonical event-time parity adapter', () => {
     )
     expect(quantum.issue).toBeUndefined()
     expect(quantum.lastQueuedInputOutcome?.code).toBe(
-      'QUANTUM_LEAP_APPLIED',
+      'CANONICAL_EVENT_INPUT_UNSUPPORTED',
     )
-    expect(quantum.state.gameState.skills.points).toBe(10n)
-    expect(quantum.state.gameState.infinity.points).toBe(0n)
-    expect(quantum.state.gameState.quantum.pointsEarned).toBe(1n)
+    expect(quantum.state.gameState.skills.points).toBe(0n)
+    expect(quantum.state.gameState.infinity.points).toBe(42n)
+    expect(quantum.state.gameState.quantum.pointsEarned).toBe(source.quantum.pointsEarned)
   })
 
   test('continues Infinity progression under the Stored Time domain policy', () => {
@@ -1258,7 +1192,7 @@ describe('legacy canonical event-time parity adapter', () => {
 
     expect(model.issue).toBeUndefined()
     expect(summary.strangeMatter).toBe(Number(DISCRETE_MAXIMUM) + 4_096)
-    expect(summary.meteorDreamResets).toBe(1n)
+    expect(summary.meteorDreamResets).toBe(0n)
   })
 
   test('does not force a zero-time bot-cap prestige after eligibility is saved when automatic Infinity is disabled', () => {
@@ -1377,7 +1311,7 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(repeated.candidateState.avocado.overflowMultiplier).toBe(overflow)
   })
 
-  test('fails closed when an owned Reality artifact definition is absent', () => {
+  test('does not require retired Reality definitions to reject removed Quantum input', () => {
     const source = withRealityArtifacts(baseState())
     const model = new CanonicalEventTimeModel(
       carrier({
@@ -1398,12 +1332,9 @@ describe('legacy canonical event-time parity adapter', () => {
     expect(model.lastQueuedInputOutcome).toEqual({
       accepted: false,
       changed: false,
-      code: 'CANONICAL_EVENT_QUANTUM_RESET_REJECTED',
+      code: 'CANONICAL_EVENT_INPUT_UNSUPPORTED',
     })
-    expect(model.issue).toMatchObject({
-      code: 'CANONICAL_EVENT_REALITY_DEFINITION_MISSING',
-      path: 'gameData.realityUpgrades.translation1',
-    })
+    expect(model.issue).toBeUndefined()
     expect(model.state.gameState.infinity.points).toBe(42n)
   })
 
@@ -1629,4 +1560,22 @@ test('Stored Time charges Patient Hands without activating Manual Labour or addi
   expect(after.skills.byId[MANUAL_LABOUR_AUGMENTS.patientHands].timerSeconds).toBe(42)
   expect(after.skills.byId[MANUAL_LABOUR_AUGMENTS.practice].level).toBe(0)
   expect(after.dyson.bots).toBe(100)
+})
+
+// Active boost has its own bank-funding boundary, distinct from worker admission.
+test.each([false,true])('Farming manual gate pauses active Stored Time boost without charging the bank (Double Time %s)',doubleTime=>{
+ const seed={...hydrated.state,meta:{...hydrated.state.meta,reworkMigrationChoice:'keep' as const},infinity:{...hydrated.state.infinity,automaticResetEnabled:false},timeline:{...hydrated.state.timeline,doubleTime:{...hydrated.state.timeline.doubleTime,unlocked:doubleTime},offlineBoost:{multiplier:42},storedTimeAvailableSeconds:10000}}
+ let camp=advanceCivilization(seed,1)
+ for(let n=0;n<20000&&!civilizationOpeningComplete(camp.civilization!);n++)camp=advanceCivilization(camp,1)
+ const entered=startFarming(camp);if(!entered)throw Error('Forager opening did not unlock Farming')
+ let village=entered
+ for(let n=0;n<5000&&!farmingCanBuyGranary(village.civilization!.farming!);n++)village=advanceCivilization(village,1)
+ expect(farmingCanBuyGranary(village.civilization!.farming!)).toBe(true)
+ const paused=advanceGame(carrier(village),{source:'active',baseSeconds:1,automation:'enabled'},context(),1/60)
+ expect(paused.issue).toBeUndefined();expect(paused.gameSpeed).toBe(doubleTime?2:1)
+ expect(paused.state.gameState.timeline.storedTimeAvailableSeconds).toBe(10000)
+ const bought=buyFarmingGranary(paused.state.gameState)!
+ const resumed=advanceGame({...paused.state,gameState:bought},{source:'active',baseSeconds:1,automation:'enabled'},context(),1/60)
+ expect(resumed.issue).toBeUndefined();expect(resumed.gameSpeed).toBe(doubleTime?84:42)
+ expect(resumed.state.gameState.timeline.storedTimeAvailableSeconds).toBe(9959)
 })

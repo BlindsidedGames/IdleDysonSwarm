@@ -40,13 +40,6 @@ export function visibleWikiCategoryIds(
     'infinity',
     'lore',
   ]
-  if (
-    progression.infinityPoints >= 42n ||
-    progression.quantumPoints >= 1n
-  ) {
-    ids.push('reality')
-  }
-  if (progression.quantumPoints >= 1n) ids.push('quantum')
   if (progression.secretsOfTheUniverse > 0n) ids.push('secrets')
   ids.push('offline-time', 'other')
   ids.push('patch-notes', 'credits')
@@ -58,7 +51,6 @@ export function visibleWikiLoreSectionIds(
 ): readonly WikiLoreSectionId[] {
   const ids: WikiLoreSectionId[] = ['existence']
   if (progression.infinityAchieved) ids.push('infinity-achieved')
-  if (progression.realityUnlocked) ids.push('reality')
   return ids
 }
 

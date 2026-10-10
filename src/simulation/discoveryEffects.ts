@@ -5,7 +5,6 @@ import { regulatedAcademiaPercentagePoints } from './moneyScienceSkillEffects'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import { DISCOVERY_TUNING as T, discoveryGrowingBonus as G, discoveryBaseStrength, discoveryCashBotsStrength, discoveryPanelLifetime, discoveryProductionMultiplier, EMPTY_DISCOVERY } from './discovery'
-import { avocadoDysonMultiplier } from './dysonPrestigeEffects'
 import { hasCashScienceSubskill, hasSrsAugment } from './skillSubskills'
 import { stellarMemoryMultiplier } from './srsAugments'
 import { resolvePanelArea } from './stellarArithmetic'
@@ -66,7 +65,6 @@ export function deriveDiscoveryEffects(state: CanonicalGameStateV1, snapshot: Re
       }) ?? 0))
     }
     add('quantum.science-booster', G(Number(state.quantum.scienceBonusLevels)))
-    add('avocado', G(avocadoDysonMultiplier(state.avocado) - 1))
     add('secrets.discovery-speed', T.speedSecrets.filter(n => state.infinity.secretsOfTheUniverse >= BigInt(n)).length * 0.05)
   }
   const speed = 1 + sources.reduce((sum, source) => sum + source.bonus, 0)

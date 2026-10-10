@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "source": "Lifecycle-normalized Unity prepared graph",
   "target": "Web dehydrate(hydrate(Unity prepared graph))",
-  "expectedDifferenceCount": 941,
+  "expectedDifferenceCount": 942,
   "allowedDeltas": [
     {
       "id": "legacy-skill-flag-compaction",
@@ -111,6 +111,16 @@
       "actualShape": "false",
       "normalizedPaths": [
         "$.simulationInfinityActiveAutomaticThroughputCycleEligible"
+      ]
+    },
+    {
+      "id": "gameplay-rework-first-run-marker",
+      "reason": "Saves without retired rewards are already enrolled before earning relocated Infinity benefits.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "string",
+      "normalizedPaths": [
+        "$.idsReworkMigrationChoice"
       ]
     }
   ]

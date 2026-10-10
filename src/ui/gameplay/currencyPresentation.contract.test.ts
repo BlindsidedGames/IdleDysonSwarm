@@ -148,22 +148,6 @@ describe('progression currency presentation contract', () => {
     expect(infinity).toContain('className="infinity-manual-reset__reward"')
   })
 
-  test('keeps Simulation formulas on the significant-digit formatter', () => {
-    const simulations = source(
-      'src/ui/gameplay/simulations/SimulationsSurface.tsx',
-    )
-
-    expect(simulations).toContain(
-      'const display = (value: number | bigint) => formatGameNumber(locale, value)',
-    )
-    expect(simulations).toContain('const displayCurrency =')
-    expect(simulations).toContain('wholeBelowHundred: true')
-    expect(simulations).toContain('timerDetailRows(timer, intl, display, gameSpeed)')
-    expect(simulations).toMatch(
-      /highlightedNumber\(\s*locale,\s*influence,\s*\{ wholeBelowHundred: true \},\s*\)/,
-    )
-  })
-
   test('uses whole-below-hundred formatting for both Reality purchase regions', () => {
     const reality = source(
       'src/ui/gameplay/reality/RealitySurface.tsx',

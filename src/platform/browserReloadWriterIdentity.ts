@@ -15,6 +15,7 @@ export interface BrowserReloadWriterIdentity {
 }
 
 export interface BrowserReloadWriterIdentityOptions {
+  readonly storageKey?: string
   readonly storage?: Pick<Storage, 'getItem' | 'setItem'>
   readonly navigationType?: BrowserNavigationType
   readonly ownerTokenFactory?: () => string
@@ -34,7 +35,8 @@ export function createBrowserReloadWriterIdentity(
   const storage = options.storage ?? browserSessionStorage()
   const navigationType =
     options.navigationType ?? browserNavigationType()
-  const previousToken = readToken(storage)
+  const storageKey = options.storageKey ?? WRITER_TAB_TOKEN_KEY
+  const previousToken = readToken(storage, storageKey)
   if (
     navigationType === 'reload' &&
     previousToken !== undefined
@@ -48,7 +50,7 @@ export function createBrowserReloadWriterIdentity(
   const ownerToken = (
     options.ownerTokenFactory ?? createBrowserOwnerToken
   )()
-  writeToken(storage, ownerToken)
+  writeToken(storage, storageKey, ownerToken)
   return Object.freeze({
     ownerToken,
     allowUnexpiredSameOwnerTakeover: false,
@@ -79,9 +81,10 @@ function browserNavigationType(): BrowserNavigationType | undefined {
 
 function readToken(
   storage: Pick<Storage, 'getItem' | 'setItem'> | undefined,
+  storageKey: string,
 ): string | undefined {
   try {
-    const token = storage?.getItem(WRITER_TAB_TOKEN_KEY)?.trim()
+    const token = storage?.getItem(storageKey)?.trim()
     return token === undefined || token.length === 0
       ? undefined
       : token
@@ -92,10 +95,11 @@ function readToken(
 
 function writeToken(
   storage: Pick<Storage, 'getItem' | 'setItem'> | undefined,
+  storageKey: string,
   ownerToken: string,
 ): void {
   try {
-    storage?.setItem(WRITER_TAB_TOKEN_KEY, ownerToken)
+    storage?.setItem(storageKey, ownerToken)
   } catch {
     // Storage denial keeps the ordinary expiry-based lease behavior.
   }

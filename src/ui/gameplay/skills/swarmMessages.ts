@@ -19,7 +19,7 @@ export const swarmMessages = defineMessages({
   economyOfScaleTechnical: { id: "skills.swarm.economyOfScale.technical", defaultMessage: "Multiplies Cash, Science and Bot production by log5(total facilities), with a minimum of 1×." },
   steadySupplyName: { id: "skills.swarm.steadySupply.name", defaultMessage: "Steady Supply" },
   steadySupplyDescription: { id: "skills.swarm.steadySupply.description", defaultMessage: "Please leave the factories where you found them." },
-  steadySupplyTechnical: { id: "skills.swarm.steadySupply.technical", defaultMessage: "Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Quantum clears the supply." },
+  steadySupplyTechnical: { id: "skills.swarm.steadySupply.technical", defaultMessage: "Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Transcendence clears the supply." },
   selfReplicatingWorkersName: { id: "skills.swarm.selfReplicatingWorkers.name", defaultMessage: "Self-Replicating Workers" },
   selfReplicatingWorkersDescription: { id: "skills.swarm.selfReplicatingWorkers.description", defaultMessage: "The recruitment department has become redundant." },
   selfReplicatingWorkersTechnical: { id: "skills.swarm.selfReplicatingWorkers.technical", defaultMessage: "Hunters and Gatherers gain (1 + Swarm rate × their count / 10)^0.75 production speed. Launched-panel Energy gains (1 + Swarm rate × launched panels / 100)^0.5." },

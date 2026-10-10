@@ -224,6 +224,10 @@ class IdleDysonNativePlugin : Plugin() {
                 put("applicationVersion", packageInfo.versionName ?: "0.0.0")
                 put("buildNumber", packageInfo.longVersionCode.toString())
                 put("platform", "android")
+                put("saveStorageNamespace", WEB_SAVE_ROOT)
+                put("entitlementCacheNamespace", "rework-beta-v1")
+                put("cloudSavesEnabled", false)
+                put("automaticUnityDiscoveryEnabled", false)
                 put("locale", Locale.getDefault().toLanguageTag())
             })
         } catch (error: Exception) {
@@ -436,6 +440,11 @@ class IdleDysonNativePlugin : Plugin() {
 
     @PluginMethod
     fun discoverUnitySaveCandidates(call: PluginCall) = withNativeFailure(call) {
+        // Beta requires explicit import; do not read public Unity save files.
+        if (WEB_SAVE_ROOT == "idleds-rework-beta-v1") {
+            call.resolve(JSObject().put("candidates", JSArray()))
+            return@withNativeFailure
+        }
         val candidates = JSArray()
         val unitySave = context.getExternalFilesDir(null)?.resolve(UNITY_SAVE_FILE_NAME)
         if (unitySave?.isFile == true) {
@@ -749,7 +758,7 @@ class IdleDysonNativePlugin : Plugin() {
     }
 
     companion object {
-        private const val WEB_SAVE_ROOT = "web-runtime-v1"
+        private const val WEB_SAVE_ROOT = "idleds-rework-beta-v1"
         private const val UNITY_SAVE_FILE_NAME = "idle_dyson_swarm_save.txt"
         private const val REVIEW_PREFERENCES_NAME = "idle_dyson_swarm_review"
         private const val REVIEW_REQUESTED_KEY = "review_requested_v1"

@@ -7,7 +7,7 @@ import { selectSteamSaveRoot } from '../../hosts/electron/steam/offlineProfile.m
 import { SteamCloud } from '../../hosts/electron/steam/cloud.mjs'
 import { PortableSaveRepository, type SaveStorageAdapter } from '../save/repository'
 import { PreparedSave, prepareIdb1Save } from '../save/prepare'
-import { serializeSharedWebSave } from '../save/serialization'
+import { publicCloudFixture } from './publicCloudFixture.test-helper'
 import { CloudStartupResolver } from './portableCloud'
 import { NATIVE_WEB_SAVE_PATHS } from './platformSaveStorage'
 
@@ -129,22 +129,26 @@ test('linked offline files and missing selected roots fail closed', async () => 
   expect(g.choose).not.toHaveBeenCalled()
 })
 
-test.each(['local', 'cloud'] as const)('recovered offline progress uses normal Cloud conflict resolution: %s', async choice => {
+test('rework offline progress is held before public Cloud conflict writes', async () => {
   const f = await fixture()
   const offline = original.copyValidatedState(); offline.dateQuitString = '2026-09-06T04:00:00Z'
   await repository(f.offlineRoot).commit(PreparedSave.fromDecoded(offline))
   const root = await f.select()
   const localRepository = repository(root)
-  const prompt = vi.fn(async () => choice)
+  const prompt = vi.fn(async () => 'cloud')
   const cloud = new SteamCloud({ userData: f.root, account: '76561198000000000', identity: () => '76561198000000000', choose: prompt })
-  await put(join(cloud.directory, 'current.idsw'), serializeSharedWebSave(original.copyValidatedState()))
+  const publicText = publicCloudFixture(original.copyValidatedState())
+  await put(join(cloud.directory, 'current.idsw'), publicText)
   const local = { resolve: async () => ({ kind: 'ready' as const, source: 'canonical' as const, save: (await localRepository.loadCurrent())! }) }
-  await new CloudStartupResolver(local, localRepository, cloud).resolve()
-  expect(prompt).toHaveBeenCalledOnce()
-  expect((await localRepository.loadCurrent())?.copyValidatedState().dateQuitString).toBe(choice === 'local' ? offline.dateQuitString : original.copyValidatedState().dateQuitString)
+  expect(await new CloudStartupResolver(local, localRepository, cloud).resolve()).toMatchObject({
+    kind: 'blocked', reason: 'recovery-write-failed', error: expect.stringContaining('approved isolated account namespace'),
+  })
+  expect(prompt).not.toHaveBeenCalled()
+  await expect(readFile(cloud.marker)).rejects.toMatchObject({ code: 'ENOENT' })
+  expect(await readFile(join(cloud.directory, 'current.idsw'), 'utf8')).toBe(publicText)
+  expect((await localRepository.loadCurrent())?.copyValidatedState().dateQuitString).toBe(offline.dateQuitString)
   expect((await repository(f.offlineRoot).loadCurrent())?.copyValidatedState().dateQuitString).toBe(offline.dateQuitString)
 })
-
 
 test('offline preferences alone do not offer an empty profile over an account save', async () => {
   const f = await fixture()

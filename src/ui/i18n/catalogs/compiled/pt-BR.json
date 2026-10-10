@@ -639,6 +639,676 @@
       "value": "Ver desafio"
     }
   ],
+  "civilization.allocated": [
+    {
+      "type": 0,
+      "value": "Trabalhadores alocados"
+    }
+  ],
+  "civilization.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.automaticAward": [
+    {
+      "type": 0,
+      "value": "Concedido automaticamente quando todos os requisitos forem cumpridos."
+    }
+  ],
+  "civilization.available": [
+    {
+      "type": 0,
+      "value": "Sem atribuição / total"
+    }
+  ],
+  "civilization.awarded": [
+    {
+      "type": 0,
+      "value": "Catalisadores concedidos: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "civilization.balanced": [
+    {
+      "type": 0,
+      "value": "Equilibrado"
+    }
+  ],
+  "civilization.bootstrap": [
+    {
+      "type": 0,
+      "value": "A coleta familiar não exige insumos nem trabalhadores atribuídos."
+    }
+  ],
+  "civilization.bootstrapV4": [
+    {
+      "type": 0,
+      "value": "Três fundadores começam com um conjunto para abrigo. A coleta precisa de uma equipe real e não consome insumos."
+    }
+  ],
+  "civilization.campExpansion": [
+    {
+      "type": 0,
+      "value": "Expansão do acampamento"
+    }
+  ],
+  "civilization.campProvisioning": [
+    {
+      "type": 0,
+      "value": "Abastecimento do acampamento"
+    }
+  ],
+  "civilization.camps": [
+    {
+      "type": 0,
+      "value": "Acampamentos"
+    }
+  ],
+  "civilization.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "civilization.catalysts": [
+    {
+      "type": 0,
+      "value": "Catalisadores"
+    }
+  ],
+  "civilization.clothing": [
+    {
+      "type": 0,
+      "value": "Roupas"
+    }
+  ],
+  "civilization.completed": [
+    {
+      "type": 0,
+      "value": "Ciclos concluídos"
+    }
+  ],
+  "civilization.continuedDevelopment": [
+    {
+      "type": 0,
+      "value": "Desenvolvimento do acampamento "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.conversion": [
+    {
+      "type": 0,
+      "value": "Cada abrigo aloja 2 trabalhadores; cada acampamento aloja 8. Três abrigos viram um acampamento."
+    }
+  ],
+  "civilization.conversionV4": [
+    {
+      "type": 0,
+      "value": "Um abrigo acrescenta 2 moradores. Durante a conversão, os três abrigos e seus 6 moradores ficam reservados. O acampamento pronto abriga 9 moradores, acrescentando 3."
+    }
+  ],
+  "civilization.craft": [
+    {
+      "type": 0,
+      "value": "Artesanato"
+    }
+  ],
+  "civilization.craftSpecialization": [
+    {
+      "type": 0,
+      "value": "Especialização artesanal"
+    }
+  ],
+  "civilization.duration": [
+    {
+      "type": 0,
+      "value": "Duração do ciclo"
+    }
+  ],
+  "civilization.equip": [
+    {
+      "type": 0,
+      "value": "Equipar "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " trabalhadores"
+    }
+  ],
+  "civilization.equipConfirm": [
+    {
+      "type": 0,
+      "value": "Gastar "
+    },
+    {
+      "type": 1,
+      "value": "tools"
+    },
+    {
+      "type": 0,
+      "value": " ferramentas e "
+    },
+    {
+      "type": 1,
+      "value": "clothing"
+    },
+    {
+      "type": 0,
+      "value": " roupas para equipar "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " trabalhadores?"
+    }
+  ],
+  "civilization.equipmentAutomatic": [
+    {
+      "type": 0,
+      "value": "A cada minuto de simulação, ferramentas e roupas disponíveis equipam até um quarto dos moradores. Cada conjunto mantido custa 2 ferramentas e 1 roupa."
+    }
+  ],
+  "civilization.equipmentEffect": [
+    {
+      "type": 0,
+      "value": "Cada trabalhador de campo equipado contribui com o trabalho de um trabalhador adicional."
+    }
+  ],
+  "civilization.equipmentEffectV4": [
+    {
+      "type": 0,
+      "value": "Cada trabalhador de campo equipado em atividade acrescenta metade do trabalho de outro trabalhador."
+    }
+  ],
+  "civilization.equipmentStock": [
+    {
+      "type": 0,
+      "value": "Equipar trabalhadores consome ferramentas e roupas. O equipamento instalado permanece no acampamento."
+    }
+  ],
+  "civilization.equipped": [
+    {
+      "type": 0,
+      "value": "Trabalhadores equipados"
+    }
+  ],
+  "civilization.era": [
+    {
+      "type": 0,
+      "value": "Era dos caçadores-coletores"
+    }
+  ],
+  "civilization.eraSettings": [
+    {
+      "type": 0,
+      "value": "Detalhes dos coletores"
+    }
+  ],
+  "civilization.establishedCamp": [
+    {
+      "type": 0,
+      "value": "Acampamento estabelecido"
+    }
+  ],
+  "civilization.exchangeNetworks": [
+    {
+      "type": 0,
+      "value": "Redes de troca"
+    }
+  ],
+  "civilization.exchangeRoutes": [
+    {
+      "type": 0,
+      "value": "Rotas comerciais"
+    }
+  ],
+  "civilization.expeditions": [
+    {
+      "type": 0,
+      "value": "Expedições e comércio"
+    }
+  ],
+  "civilization.failed": [
+    {
+      "type": 0,
+      "value": "A ação falhou. Tente novamente."
+    }
+  ],
+  "civilization.firstHunt": [
+    {
+      "type": 0,
+      "value": "Primeira caça"
+    }
+  ],
+  "civilization.fishing": [
+    {
+      "type": 0,
+      "value": "Pesca"
+    }
+  ],
+  "civilization.focus": [
+    {
+      "type": 0,
+      "value": "Foco da força de trabalho"
+    }
+  ],
+  "civilization.focusBalancedHelp": [
+    {
+      "type": 0,
+      "value": "Equilibrado distribui trabalhadores entre as tarefas disponíveis no ritmo normal."
+    }
+  ],
+  "civilization.focusEffect": [
+    {
+      "type": 0,
+      "value": "Mais trabalhadores seguem este caminho conforme o acampamento cresce. Os outros caminhos mantêm equipes menores."
+    }
+  ],
+  "civilization.focusEffectV4": [
+    {
+      "type": 0,
+      "value": "O foco favorece esta área e suas equipes de apoio. Tarefas sem recursos liberam trabalhadores; ciclos pagos mantêm seus insumos."
+    }
+  ],
+  "civilization.focusSelectedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " trabalham a "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "× o ritmo de Equilibrado. As outras tarefas mantêm o ritmo normal."
+    }
+  ],
+  "civilization.focusSupportedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " trabalham a "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "× o ritmo de Equilibrado; "
+    },
+    {
+      "type": 1,
+      "value": "support"
+    },
+    {
+      "type": 0,
+      "value": ", a "
+    },
+    {
+      "type": 1,
+      "value": "supportRate"
+    },
+    {
+      "type": 0,
+      "value": "×. As outras tarefas mantêm o ritmo normal."
+    }
+  ],
+  "civilization.food": [
+    {
+      "type": 0,
+      "value": "Alimentos"
+    }
+  ],
+  "civilization.foodPreservation": [
+    {
+      "type": 0,
+      "value": "Conservação de alimentos"
+    }
+  ],
+  "civilization.foragerGenerator": [
+    {
+      "type": 0,
+      "value": "Acampamento coletor"
+    }
+  ],
+  "civilization.fractureRule": [
+    {
+      "type": 0,
+      "value": "+5% de velocidade de simulação por habilidade fraturada. Os bônus são aditivos."
+    }
+  ],
+  "civilization.fractures": [
+    {
+      "type": 0,
+      "value": "Bônus de fratura +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.gathering": [
+    {
+      "type": 0,
+      "value": "Coleta"
+    }
+  ],
+  "civilization.growthFocus": [
+    {
+      "type": 0,
+      "value": "Crescimento"
+    }
+  ],
+  "civilization.hides": [
+    {
+      "type": 0,
+      "value": "Peles"
+    }
+  ],
+  "civilization.hideworking": [
+    {
+      "type": 0,
+      "value": "Trabalho com peles"
+    }
+  ],
+  "civilization.housing": [
+    {
+      "type": 0,
+      "value": "Capacidade de moradia"
+    }
+  ],
+  "civilization.hunting": [
+    {
+      "type": 0,
+      "value": "Caça"
+    }
+  ],
+  "civilization.inputs": [
+    {
+      "type": 0,
+      "value": "Custo por ciclo"
+    }
+  ],
+  "civilization.legacyWorkHelp": [
+    {
+      "type": 0,
+      "value": "Ciclos antigos já pagos mantêm o ritmo original até terminarem."
+    }
+  ],
+  "civilization.locked": [
+    {
+      "type": 0,
+      "value": "Requer "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.materials": [
+    {
+      "type": 0,
+      "value": "Materiais"
+    }
+  ],
+  "civilization.milestoneStep": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
+  "civilization.next": [
+    {
+      "type": 0,
+      "value": "A seguir: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.nextCatalyst": [
+    {
+      "type": 0,
+      "value": "Próximo catalisador"
+    }
+  ],
+  "civilization.nextEra": [
+    {
+      "type": 0,
+      "value": "A seguir: Cultivo e pastoreio"
+    }
+  ],
+  "civilization.nodeBonus": [
+    {
+      "type": 0,
+      "value": "Quando fraturada: +5% de velocidade global de simulação. Os bônus são aditivos."
+    }
+  ],
+  "civilization.nodeBonusActive": [
+    {
+      "type": 0,
+      "value": "Fraturada: +5% de velocidade global de simulação. Os bônus são aditivos."
+    }
+  ],
+  "civilization.outputs": [
+    {
+      "type": 0,
+      "value": "Produção por ciclo"
+    }
+  ],
+  "civilization.paid": [
+    {
+      "type": 0,
+      "value": "Insumos reservados para este ciclo"
+    }
+  ],
+  "civilization.phaseComplete": [
+    {
+      "type": 0,
+      "value": "Início da era dos caçadores-coletores concluído"
+    }
+  ],
+  "civilization.preview": [
+    {
+      "type": 0,
+      "value": "A agricultura continua em uma fase posterior. Suas atividades continuam funcionando."
+    }
+  ],
+  "civilization.provisioning": [
+    {
+      "type": 0,
+      "value": "Abastecimento"
+    }
+  ],
+  "civilization.provisions": [
+    {
+      "type": 0,
+      "value": "Provisões"
+    }
+  ],
+  "civilization.recruitment": [
+    {
+      "type": 0,
+      "value": "Os trabalhadores permanecem no acampamento. Cada um precisa de uma vaga de moradia."
+    }
+  ],
+  "civilization.seasonalExpeditions": [
+    {
+      "type": 0,
+      "value": "Expedições sazonais"
+    }
+  ],
+  "civilization.settlement": [
+    {
+      "type": 0,
+      "value": "Assentamento"
+    }
+  ],
+  "civilization.shelterBuilding": [
+    {
+      "type": 0,
+      "value": "Construção de abrigos"
+    }
+  ],
+  "civilization.shelters": [
+    {
+      "type": 0,
+      "value": "Abrigos"
+    }
+  ],
+  "civilization.speed": [
+    {
+      "type": 0,
+      "value": "Velocidade de progresso"
+    }
+  ],
+  "civilization.suppliesFocus": [
+    {
+      "type": 0,
+      "value": "Suprimentos"
+    }
+  ],
+  "civilization.toolmaking": [
+    {
+      "type": 0,
+      "value": "Fabricação de ferramentas"
+    }
+  ],
+  "civilization.tools": [
+    {
+      "type": 0,
+      "value": "Ferramentas"
+    }
+  ],
+  "civilization.tradeFocus": [
+    {
+      "type": 0,
+      "value": "Viagens"
+    }
+  ],
+  "civilization.unlock": [
+    {
+      "type": 0,
+      "value": "Ciclos necessários: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.upcoming": [
+    {
+      "type": 0,
+      "value": "Próximas atividades"
+    }
+  ],
+  "civilization.waiting": [
+    {
+      "type": 0,
+      "value": "Aguardando"
+    }
+  ],
+  "civilization.waitingDemand": [
+    {
+      "type": 0,
+      "value": "Demanda atendida; os trabalhadores ajudam outras tarefas até que seja preciso produzir mais."
+    }
+  ],
+  "civilization.waitingHousing": [
+    {
+      "type": 0,
+      "value": "Aguardando moradia"
+    }
+  ],
+  "civilization.waitingInputs": [
+    {
+      "type": 0,
+      "value": "Aguardando: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.waitingRange": [
+    {
+      "type": 0,
+      "value": "O saldo não comporta a produção"
+    }
+  ],
+  "civilization.waitingWorkers": [
+    {
+      "type": 0,
+      "value": "Aguardando trabalhadores"
+    }
+  ],
+  "civilization.workers": [
+    {
+      "type": 0,
+      "value": "Trabalhadores"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -1334,7 +2004,7 @@
   "discovery.resetRule": [
     {
       "type": 0,
-      "value": "É mantida após Infinito e Quântico. Reinicia na Transcendência."
+      "value": "Persiste no Infinito. Reinicia na Transcendência."
     }
   ],
   "discovery.route": [
@@ -4373,6 +5043,702 @@
       "value": "Faça uma gambiarra na garagem"
     }
   ],
+  "farming.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.automatic": [
+    {
+      "type": 0,
+      "value": "Construídas automaticamente pelo plano da aldeia."
+    }
+  ],
+  "farming.averageLabor": [
+    {
+      "type": 0,
+      "value": "O trabalho é dividido ao longo do tempo. Médias aproximadas podem incluir frações; o total conta pessoas inteiras."
+    }
+  ],
+  "farming.balanced": [
+    {
+      "type": 0,
+      "value": "Equilibrado"
+    }
+  ],
+  "farming.begin": [
+    {
+      "type": 0,
+      "value": "Iniciar uma aldeia agrícola"
+    }
+  ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "As eras dos caçadores-coletores e das aldeias agrícolas estão completas. Mais conteúdo em breve."
+    }
+  ],
+  "farming.boost": [
+    {
+      "type": 0,
+      "value": "Fraturas reais: +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "farming.build": [
+    {
+      "type": 0,
+      "value": "Construir celeiro"
+    }
+  ],
+  "farming.buy": [
+    {
+      "type": 0,
+      "value": "Comprar"
+    }
+  ],
+  "farming.cap": [
+    {
+      "type": 0,
+      "value": "Armazenamento cheio; os campos param até gastar comida ou construir um celeiro."
+    }
+  ],
+  "farming.capacity": [
+    {
+      "type": 0,
+      "value": "Armazenamento de comida"
+    }
+  ],
+  "farming.closed": [
+    {
+      "type": 0,
+      "value": "Fechado"
+    }
+  ],
+  "farming.compactStorage": [
+    {
+      "type": 0,
+      "value": "160 depósito"
+    }
+  ],
+  "farming.complete": [
+    {
+      "type": 0,
+      "value": "Aldeia estabelecida"
+    }
+  ],
+  "farming.connection": [
+    {
+      "type": 0,
+      "value": "Conexões comerciais"
+    }
+  ],
+  "farming.constructed": [
+    {
+      "type": 0,
+      "value": "Melhorias construídas"
+    }
+  ],
+  "farming.crew": [
+    {
+      "type": 0,
+      "value": "Trabalho médio atribuído"
+    }
+  ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "As futuras colheitas dos campos rendem 20% mais alimentos. Depois do sistema de água, o aumento da deterioração das moradias cai mais 20%."
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "Sistema de água construído"
+    }
+  ],
+  "farming.done": [
+    {
+      "type": 0,
+      "value": "Estabelecido"
+    }
+  ],
+  "farming.era": [
+    {
+      "type": 0,
+      "value": "Aldeias agrícolas"
+    }
+  ],
+  "farming.export": [
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " trabalhadores mantidos exportam "
+    },
+    {
+      "type": 1,
+      "value": "food"
+    },
+    {
+      "type": 0,
+      "value": " comida e "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " materiais por minuto de simulação, antes dos bônus reais de fratura. Seus estoques anteriores permanecem no acampamento."
+    }
+  ],
+  "farming.failed": [
+    {
+      "type": 0,
+      "value": "A ação falhou. Tente novamente."
+    }
+  ],
+  "farming.fields": [
+    {
+      "type": 0,
+      "value": "Campos"
+    }
+  ],
+  "farming.finish": [
+    {
+      "type": 0,
+      "value": "Estabelecer a aldeia"
+    }
+  ],
+  "farming.finished": [
+    {
+      "type": 0,
+      "value": "Seis casas habitadas, seis conexões comerciais e as três melhorias de preparação urbana estão concluídas. A aldeia está pronta para as primeiras cidades; a próxima era ainda não está disponível."
+    }
+  ],
+  "farming.finite": [
+    {
+      "type": 0,
+      "value": "Estabelecido; sem ciclo repetido de construção."
+    }
+  ],
+  "farming.firstHarvest": [
+    {
+      "type": 0,
+      "value": "Primeira colheita"
+    }
+  ],
+  "farming.focus": [
+    {
+      "type": 0,
+      "value": "Foco da força de trabalho"
+    }
+  ],
+  "farming.focusEffect": [
+    {
+      "type": 0,
+      "value": "Suprimentos favorece estoques com pouca manutenção, mas aumenta o desgaste. Crescimento favorece construção e recuperação. Viagens favorece remessas após o salão; antes usa trabalho equilibrado."
+    }
+  ],
+  "farming.fullFood": [
+    {
+      "type": 0,
+      "value": "Comida: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    }
+  ],
+  "farming.goods": [
+    {
+      "type": 0,
+      "value": "Mercadorias"
+    }
+  ],
+  "farming.granaries": [
+    {
+      "type": 0,
+      "value": "Celeiros"
+    }
+  ],
+  "farming.granary": [
+    {
+      "type": 0,
+      "value": "Celeiro"
+    }
+  ],
+  "farming.granaryDetails": [
+    {
+      "type": 0,
+      "value": "Custos e detalhes do celeiro"
+    }
+  ],
+  "farming.granaryEffect": [
+    {
+      "type": 0,
+      "value": "Cada celeiro acrescenta 160 à capacidade de comida. É uma compra manual instantânea; reparos pendentes mantêm suas reservas de materiais e ferramentas."
+    }
+  ],
+  "farming.granaryFirstHome": [
+    {
+      "type": 0,
+      "value": "Disponível após estabelecer a primeira casa."
+    }
+  ],
+  "farming.granaryInactive": [
+    {
+      "type": 0,
+      "value": "As compras estão fechadas enquanto a aldeia conclui o trabalho pago."
+    }
+  ],
+  "farming.granaryInputs": [
+    {
+      "type": 0,
+      "value": "Faltam materiais ou ferramentas. A compra é instantânea."
+    }
+  ],
+  "farming.granaryMaximum": [
+    {
+      "type": 0,
+      "value": "Limite de celeiros atingido."
+    }
+  ],
+  "farming.granaryRepairReserve": [
+    {
+      "type": 0,
+      "value": "Materiais e ferramentas estão reservados para um reparo de casa pendente."
+    }
+  ],
+  "farming.growth": [
+    {
+      "type": 0,
+      "value": "Crescimento"
+    }
+  ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "Os futuros lotes produzem 3 mercadorias por 6 materiais e 63 segundos de trabalho; lotes já pagos mantêm a receita original."
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "Salão, cinco casas construídas e três conexões comerciais"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "Oficina da guilda"
+    }
+  ],
+  "farming.hall": [
+    {
+      "type": 0,
+      "value": "Salão"
+    }
+  ],
+  "farming.hallNeeded": [
+    {
+      "type": 0,
+      "value": "Quatro casas, pastagem e obras hidráulicas"
+    }
+  ],
+  "farming.handoff": [
+    {
+      "type": 0,
+      "value": "Três fundadores passam para uma nova aldeia. O acampamento restante mantém seus estoques e exporta comida e materiais. O trabalho pago termina antes da transferência."
+    }
+  ],
+  "farming.home": [
+    {
+      "type": 0,
+      "value": "Casa "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.homeEffect": [
+    {
+      "type": 0,
+      "value": "Cada casa sustentada acrescenta dois moradores. Ao chegar a 100 de desgaste perde seu sustento; o reparo usa os materiais, ferramentas e trabalho originais."
+    }
+  ],
+  "farming.homes": [
+    {
+      "type": 0,
+      "value": "Casas"
+    }
+  ],
+  "farming.homesCount": [
+    {
+      "type": 0,
+      "value": "Casas sustentadas"
+    }
+  ],
+  "farming.housingWeathering": [
+    {
+      "type": 0,
+      "value": "Deterioração das casas"
+    }
+  ],
+  "farming.inputs": [
+    {
+      "type": 0,
+      "value": "Custo por ciclo"
+    }
+  ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "Cultivo intensivo"
+    }
+  ],
+  "farming.kiln": [
+    {
+      "type": 0,
+      "value": "Forno"
+    }
+  ],
+  "farming.kilnNeeded": [
+    {
+      "type": 0,
+      "value": "Forno construído"
+    }
+  ],
+  "farming.limit": [
+    {
+      "type": 0,
+      "value": "Limite"
+    }
+  ],
+  "farming.locked": [
+    {
+      "type": 0,
+      "value": "Bloqueado"
+    }
+  ],
+  "farming.lost": [
+    {
+      "type": 0,
+      "value": "Uma casa perdeu seu sustento. O reparo devolve seus moradores; os fundadores permanecem."
+    }
+  ],
+  "farming.manual": [
+    {
+      "type": 0,
+      "value": "Construa um celeiro para continuar. O tempo armazenado para aqui e preserva o saldo restante."
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "Os futuros envios exigem 1.512 segundos de trabalho e retornam 100 materiais. Seis casas e seis conexões concluem a preparação das cidades."
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "Cultivo intensivo, oficina da guilda, cinco casas construídas e três conexões comerciais"
+    }
+  ],
+  "farming.missingInputs": [
+    {
+      "type": 0,
+      "value": "Faltam: "
+    },
+    {
+      "type": 1,
+      "value": "inputs"
+    }
+  ],
+  "farming.need": [
+    {
+      "type": 0,
+      "value": "Falta"
+    }
+  ],
+  "farming.needsInputs": [
+    {
+      "type": 0,
+      "value": "Faltam"
+    }
+  ],
+  "farming.next": [
+    {
+      "type": 0,
+      "value": "Plano atual: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "farming.nextPrice": [
+    {
+      "type": 0,
+      "value": "Próximo preço"
+    }
+  ],
+  "farming.oneGranary": [
+    {
+      "type": 0,
+      "value": "Um celeiro"
+    }
+  ],
+  "farming.outputs": [
+    {
+      "type": 0,
+      "value": "Produção por ciclo"
+    }
+  ],
+  "farming.owned": [
+    {
+      "type": 0,
+      "value": "Possuídos: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.paid": [
+    {
+      "type": 0,
+      "value": "Os ingredientes já estão reservados. Mudar o foco redistribui trabalho sem cobrá-los novamente."
+    }
+  ],
+  "farming.paidStatus": [
+    {
+      "type": 0,
+      "value": "Ciclo pago"
+    }
+  ],
+  "farming.pasture": [
+    {
+      "type": 0,
+      "value": "Pastagem"
+    }
+  ],
+  "farming.pendingFinish": [
+    {
+      "type": 0,
+      "value": "Os ciclos pagos da aldeia estão terminando."
+    }
+  ],
+  "farming.pendingSkill": [
+    {
+      "type": 0,
+      "value": "Este marco aguarda uma opção disponível na árvore de habilidades ou espaço na reserva de catalisadores."
+    }
+  ],
+  "farming.production": [
+    {
+      "type": 0,
+      "value": "Produção"
+    }
+  ],
+  "farming.repair": [
+    {
+      "type": 0,
+      "value": "Reparar casa "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.reserved": [
+    {
+      "type": 0,
+      "value": "Reservado"
+    }
+  ],
+  "farming.risk": [
+    {
+      "type": 0,
+      "value": "Moradias em risco"
+    }
+  ],
+  "farming.settings": [
+    {
+      "type": 0,
+      "value": "Configurações da aldeia"
+    }
+  ],
+  "farming.settling": [
+    {
+      "type": 0,
+      "value": "O trabalho pago do acampamento coletor termina antes do início da aldeia."
+    }
+  ],
+  "farming.ship": [
+    {
+      "type": 0,
+      "value": "Remessa comercial"
+    }
+  ],
+  "farming.shop": [
+    {
+      "type": 0,
+      "value": "Compras"
+    }
+  ],
+  "farming.skillLimit": [
+    {
+      "type": 0,
+      "value": "As fraturas específicas de aldeias agrícolas ainda não foram criadas. Estes seis marcos usam a reserva de catalisadores e as habilidades disponíveis existentes. Catalisadores não gastos não aumentam a velocidade."
+    }
+  ],
+  "farming.source": [
+    {
+      "type": 0,
+      "value": "Acampamento coletor preservado"
+    }
+  ],
+  "farming.stage": [
+    {
+      "type": 0,
+      "value": "Progresso da aldeia"
+    }
+  ],
+  "farming.storageGain": [
+    {
+      "type": 0,
+      "value": "+160 de armazenamento de comida por compra · Total: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.supplies": [
+    {
+      "type": 0,
+      "value": "Suprimentos"
+    }
+  ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "Mercado urbano"
+    }
+  ],
+  "farming.travel": [
+    {
+      "type": 0,
+      "value": "Viagens"
+    }
+  ],
+  "farming.upcoming": [
+    {
+      "type": 0,
+      "value": "Ainda indisponível"
+    }
+  ],
+  "farming.village": [
+    {
+      "type": 0,
+      "value": "Aldeia"
+    }
+  ],
+  "farming.waiting": [
+    {
+      "type": 0,
+      "value": "Aguardando demanda útil ou ingredientes suficientes."
+    }
+  ],
+  "farming.waterworks": [
+    {
+      "type": 0,
+      "value": "Obras hidráulicas"
+    }
+  ],
+  "farming.weatherHelp": [
+    {
+      "type": 0,
+      "value": "Equilibrado reduz a deterioração em 1/min; Suprimentos aumenta 2/min; Crescimento reduz 4/min; Viagens aumenta 4/min. O sistema de água reduz os aumentos em 40%; o cultivo intensivo reduz mais 20% do aumento restante. Em 75, as moradias estão em risco; em 100, uma casa perde seus moradores e a deterioração volta a 40."
+    }
+  ],
+  "farming.weathering": [
+    {
+      "type": 0,
+      "value": "Desgaste"
+    }
+  ],
+  "farming.woodlot": [
+    {
+      "type": 0,
+      "value": "Bosque"
+    }
+  ],
+  "farming.work": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " segundos de trabalho"
+    }
+  ],
+  "farming.workers": [
+    {
+      "type": 0,
+      "value": "Trabalhadores"
+    }
+  ],
+  "farming.workshop": [
+    {
+      "type": 0,
+      "value": "Oficina"
+    }
+  ],
+  "farming.yield": [
+    {
+      "type": 0,
+      "value": "Um envio custa 350 alimentos e 35 mercadorias e retorna "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " materiais e uma conexão. Seis conexões, seis casas habitadas e as melhorias de preparação urbana completam esta era."
+    }
+  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -5703,6 +7069,324 @@
     {
       "type": 0,
       "value": "Tempo simulado"
+    }
+  ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "Abandonar desafio"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "Do zero"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "Conclua um Infinito com habilidades, aprimoramentos e efeitos de fraturas inativos."
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "Requer Quebrar o Ciclo."
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "Recompensas dos desafios: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SP"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "Trabalho Manual"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "Conclua um Infinito sem instalações nem produção automática de Robôs. O acesso a Trabalho Manual é temporariamente concedido."
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "Medo de compromisso"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "Ganhe 32 IP sem devolver pontos nem substituir sua configuração durante toda a tentativa, incluindo os reinícios de Infinito."
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "Desafios de Infinito"
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmar reinício"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "Obtidos: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " SP permanentes"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "Não foi possível iniciar ou salvar o desafio. Sua partida atual foi mantida."
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "Conclua seu primeiro Infinito."
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "Pés no chão"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "Ganhe 32 IP sem Planetas nem megaestruturas. O objetivo de Planetas passa a ser 100 Centros de Dados comprados."
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "Sem tocar"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "Ganhe 32 IP sem comprar instalações nem fazer Gambiarra. Comece com uma Linha de Montagem e uma configuração que gere Planetas."
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "Desafios anteriores concluídos: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ". As recompensas históricas são mantidas; este piloto não aplica compensação."
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "Cada tentativa começa um novo Infinito. Só contam os IP ganhos durante a tentativa. A primeira conclusão de cada desafio concede SP permanentes uma única vez."
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "Configuração enxuta"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "Ganhe 16 IP com no máximo 4 SP em habilidades atribuídas. A devolução de pontos é permitida."
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "Sem Ciência"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "Ganhe 32 IP sem Ciência, Pesquisa ou Descoberta."
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "Conclua ou abandone o desafio ativo."
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "Resolva a Transcendência primeiro."
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "Ativo · "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IP ganhos · "
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": " Infinitos"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "Instalações pagas: "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · tipos: "
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "Repetir"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "Comece um novo Infinito sem ganhar IP. O progresso persistente da civilização, as melhorias, o histórico de recompensas e as fraturas que você possui são mantidos. Abandonar descarta o progresso da tentativa e restaura os efeitos normais."
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "Recompensa: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " SP permanentes"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "Os IP anteriores não contam para o multiplicador de produção. Divisão, Dobrar Pontos de Infinito do jogo, Descoberta e fraturas permanentes ficam inativos; os bônus comprados continuam ativos. As compras na loja do Infinito ficam suspensas durante as tentativas. A maioria começa com 10 SP mais as recompensas de objetivos; Do zero e Trabalho Manual começam com zero, e Configuração enxuta com 4. As tentativas continuam entre Infinitos. A Transcendência descarta uma tentativa inacabada sem conceder seus SP. Repetir não concede SP adicionais."
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "Regras e recompensas das tentativas"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "Curto-circuito"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "Ganhe 64 IP com a vida útil dos painéis fixada em 2 segundos."
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "Iniciar"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "Falta de suprimentos"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "Ganhe 64 IP com preços de compra que dobram e pague 10 instalações de 3 tipos. Instalações geradas e gratuitas não contam."
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "Desafios de Infinito"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "Requer "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP ganhos no total."
     }
   ],
   "pwa.update.accept": [
@@ -7931,6 +9615,154 @@
     {
       "type": 0,
       "value": "Sempre mostrar ações rápidas de predefinições"
+    }
+  ],
+  "rework.action.failed": [
+    {
+      "type": 0,
+      "value": "Não foi possível salvar a alteração. Tente novamente."
+    }
+  ],
+  "rework.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "rework.challenges.completed": [
+    {
+      "type": 0,
+      "value": "Conclusões anteriores: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "rework.challenges.history": [
+    {
+      "type": 0,
+      "value": "As recompensas obtidas e os registros de conclusão são preservados."
+    }
+  ],
+  "rework.challenges.pending": [
+    {
+      "type": 0,
+      "value": "Os desafios estão sendo reformulados."
+    }
+  ],
+  "rework.civilization": [
+    {
+      "type": 0,
+      "value": "Civilização"
+    }
+  ],
+  "rework.infinity.advanced": [
+    {
+      "type": 0,
+      "value": "Melhorias avançadas"
+    }
+  ],
+  "rework.infinity.double-time.description": [
+    {
+      "type": 0,
+      "value": "Dobra a velocidade do jogo."
+    }
+  ],
+  "rework.infinity.double-time.title": [
+    {
+      "type": 0,
+      "value": "Tempo dobrado"
+    }
+  ],
+  "rework.infinity.regular": [
+    {
+      "type": 0,
+      "value": "Melhorias do Infinito"
+    }
+  ],
+  "rework.migration.description": [
+    {
+      "type": 0,
+      "value": "Mantenha as melhorias e fraturas equivalentes ou conquiste novamente as melhorias avançadas. Recomeçar remove fraturas e seus aprimoramentos; jogo base, IP, Transcendência, Descoberta e compras permanecem."
+    }
+  ],
+  "rework.migration.fresh": [
+    {
+      "type": 0,
+      "value": "Obter melhorias novamente"
+    }
+  ],
+  "rework.migration.intro": [
+    {
+      "type": 0,
+      "value": "Estou reconstruindo a progressão. Quantum, Reality e os Sims antigos foram removidos. As melhorias úteis agora estão em Infinity, e os Sims de civilização geram recursos para Catalisadores."
+    }
+  ],
+  "rework.migration.keep": [
+    {
+      "type": 0,
+      "value": "Manter progresso equivalente"
+    }
+  ],
+  "rework.migration.title": [
+    {
+      "type": 0,
+      "value": "Oi, pessoal, dev aqui"
+    }
+  ],
+  "rework.simulations.details": [
+    {
+      "type": 0,
+      "value": "Recursos das eras comprarão Catalisadores. Fraturas permanentes acelerarão cada civilização."
+    }
+  ],
+  "rework.simulations.pending": [
+    {
+      "type": 0,
+      "value": "A progressão de civilizações será a próxima etapa."
+    }
+  ],
+  "rework.transcend": [
+    {
+      "type": 0,
+      "value": "Transcender"
+    }
+  ],
+  "rework.transcend.balance": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " pontos de Transcendência"
+    }
+  ],
+  "rework.transcend.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmar Transcendência"
+    }
+  ],
+  "rework.transcend.confirmation": [
+    {
+      "type": 0,
+      "value": "Redefinir a produção base e as melhorias de Infinity por 1 Ponto de Transcendência? Fraturas, progresso de civilização e melhorias de Discovery permanecem."
+    }
+  ],
+  "rework.transcend.threshold": [
+    {
+      "type": 0,
+      "value": "Alcance "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " bots para Transcender."
     }
   ],
   "settings.achievements.action": [
@@ -10684,7 +12516,7 @@
   "skills.node.androids.technical": [
     {
       "type": 0,
-      "value": "Enquanto a Habilidade Androides estiver atribuída, seu bônus de vida útil dos Painéis aumenta de 0 para 200 segundos ao longo de 10 minutos.\nEsse progresso é reiniciado no Infinito ou Salto Quântico."
+      "value": "Enquanto Androides está atribuído, o bônus aumenta de 0 a 200 segundos de vida útil dos painéis em 10 minutos.\nReinicia no Infinito."
     }
   ],
   "skills.node.artificiallyEnhancedPanels.description": [
@@ -12124,7 +13956,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "Aumenta a produção de Dinheiro, Ciência, Bots e todas as instalações em 1% por segundo enquanto esta Habilidade estiver atribuída. Os bônus são aditivos. Acumula durante a simulação de Tempo Armazenado e reinicia no Infinito ou Salto Quântico."
+      "value": "Aumenta a produção de dinheiro, ciência, bots e todas as instalações em 1% por segundo atribuído. Bônus são aditivos. Carrega durante a simulação de Tempo armazenado e reinicia no Infinito."
     }
   ],
   "skills.node.superSwarm.description": [
@@ -12502,7 +14334,7 @@
   "skills.non-refundable-confirmation-warning": [
     {
       "type": 0,
-      "value": "Habilidades não reembolsáveis e seus pré-requisitos só podem ser reembolsados após um reset de Infinito ou Quantum. Continuar?"
+      "value": "Habilidades não reembolsáveis e seus pré-requisitos só podem ser reembolsados após reiniciar o Infinito. Continuar?"
     }
   ],
   "skills.none": [
@@ -13100,7 +14932,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "Retenha 10% da carga de SRS ao realizar um Infinito, multiplicados por Memória estelar até o limite de 50%. Soma-se a Partida aquecida. O Salto Quântico apaga a carga retida."
+      "value": "Mantém 10% da carga SRS pelo Infinito, multiplicado pela Memória estelar até 50%. Soma-se ao Início quente."
     }
   ],
   "skills.srs.afterglow.name": [
@@ -13118,7 +14950,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "Aumenta a velocidade de carga de SRS em 10% por minuto que este aprimoramento estiver atribuído, até 200% após 20 minutos. Memória estelar multiplica esses bônus. Reinicia no Infinito ou Salto Quântico. Os bônus são aditivos."
+      "value": "Aumenta a velocidade de carga SRS em 10% por minuto atribuído, até 200% após 20 minutos. Memória estelar multiplica esses bônus. Reinicia no Infinito. Os bônus são aditivos."
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -13208,7 +15040,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Ao reiniciar Infinito ou Quântico, acumula a carga SRS recém-gerada, excluindo Partida aquecida e Brilho residual. Enquanto atribuída, multiplica os benefícios dos aprimoramentos SRS por 1 + 0,25 × log10(max(1, segundos acumulados))."
+      "value": "Ao reiniciar o Infinito, armazena a carga SRS recém-gerada, excluindo Início quente e Resplendor. Enquanto atribuído, aumenta os benefícios de aprimoramentos SRS em 1 + 0,25 × log10(max(1, segundos armazenados))."
     }
   ],
   "skills.srs.stellarMemory.name": [
@@ -13602,7 +15434,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Mantém as instalações compradas após o Infinito. Atribua antes do reinício; as compras voltam automaticamente. Unidades iniciais gratuitas não se acumulam. Quantum esvazia a reserva."
+      "value": "Mantém compras pagas de instalações pelo Infinito. Atribua antes de reiniciar; as compras retornam automaticamente. Unidades iniciais gratuitas não se acumulam. Transcendência limpa a reserva."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -14376,7 +16208,7 @@
   "statistics.scope.quantum-run": [
     {
       "type": 0,
-      "value": "Ciclo Quântico atual"
+      "value": "Partida atual"
     }
   ],
   "statistics.speedruns.boostedBest": [
@@ -15867,7 +17699,7 @@
   "wiki.discovery.resets": [
     {
       "type": 0,
-      "value": "Descoberta é mantida após "
+      "value": "Descoberta persiste pelo "
     },
     {
       "type": 8,
@@ -15881,21 +17713,7 @@
     },
     {
       "type": 0,
-      "value": ", "
-    },
-    {
-      "type": 8,
-      "value": "quantum",
-      "children": [
-        {
-          "type": 0,
-          "value": "Quântico"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " e desafios. A "
+      "value": ". "
     },
     {
       "type": 8,
@@ -15909,7 +17727,7 @@
     },
     {
       "type": 0,
-      "value": " reinicia seu nível e progresso; o desbloqueio e as melhorias permanentes permanecem. O Tempo Armazenado avança Descoberta quando gasto. O tempo ausente é armazenado, não aplicado automaticamente a Descoberta."
+      "value": " reinicia seu nível e progresso; o desbloqueio e as melhorias permanentes ficam. Tempo armazenado avança Descoberta quando gasto. O tempo ausente é armazenado, sem aplicação automática à Descoberta."
     }
   ],
   "wiki.discovery.resets-title": [
@@ -16373,21 +18191,21 @@
   "wiki.infinity.secrets": [
     {
       "type": 0,
-      "value": "Após um "
+      "value": "No "
     },
     {
       "type": 8,
-      "value": "quantum",
+      "value": "infinity",
       "children": [
         {
           "type": 0,
-          "value": "Salto Quântico"
+          "value": "Infinito"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", Melhorias de "
+      "value": ", melhorias de "
     },
     {
       "type": 8,
@@ -16401,7 +18219,7 @@
     },
     {
       "type": 0,
-      "value": " revelam o sentido da vida uma letra por vez e aplicam um benefício permanente e oculto à produção."
+      "value": " revelam o sentido da vida letra por letra e concedem um benefício permanente de produção oculto."
     }
   ],
   "wiki.infinity.secrets-title": [
@@ -16825,7 +18643,7 @@
   "wiki.other.offline-results": [
     {
       "type": 0,
-      "value": "Uma execução concluída informa a duração simulada, o banco restante, a precisão final e o número real de atualizações. Ela também mostra os ganhos relevantes de Infinito, Simulação e Realidade. Ganhos de Instalações e Bots aparecem apenas quando não houve Infinito, pois uma redefinição e reconstrução tornariam um total simples de antes e depois enganoso."
+      "value": "Uma execução concluída mostra a duração simulada, o tempo armazenado restante, a precisão final e o número real de atualizações, além dos ganhos de Infinito. Ganhos de instalações e bots aparecem somente sem Infinito, pois reiniciar e reconstruir tornaria enganosa uma comparação direta."
     }
   ],
   "wiki.other.offline-results-title": [
@@ -18387,7 +20205,7 @@
   "wiki.skills.auto-assign": [
     {
       "type": 0,
-      "value": "Você pode incluir ou excluir manualmente cada Habilidade da atribuição automática. A árvore memoriza a ordem para reconstruir a configuração após um "
+      "value": "Você pode incluir ou excluir habilidades individuais da atribuição automática. A árvore lembra a ordem para reconstruir sua configuração após o "
     },
     {
       "type": 8,
@@ -18401,21 +20219,7 @@
     },
     {
       "type": 0,
-      "value": " ou reinício "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Quântico"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": ". Reiniciar a árvore limpa a fila ativa de atribuição automática. Predefinições salvam configurações completas."
+      "value": ". Reiniciar a árvore limpa a fila ativa de atribuição. Predefinições salvam configurações completas."
     }
   ],
   "wiki.skills.auto-assign-title": [
@@ -18787,7 +20591,7 @@
       "children": [
         {
           "type": 0,
-          "value": "4e242 Bots"
+          "value": "4e242 bots"
         }
       ]
     },
@@ -18821,7 +20625,7 @@
     },
     {
       "type": 0,
-      "value": " para substituir Ciência e Pesquisa permanentemente. A Ciência e os níveis de pesquisa existentes não são transferidos."
+      "value": " nessa aba para substituir Ciência e Pesquisa permanentemente. Ciência e níveis de pesquisa existentes não são mantidos."
     }
   ],
   "wiki.transcendence.overview-title": [

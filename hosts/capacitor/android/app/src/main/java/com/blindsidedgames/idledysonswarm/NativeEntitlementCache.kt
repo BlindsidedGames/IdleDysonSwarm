@@ -16,16 +16,23 @@ internal data class NativeBoundUnityEvidence(
  */
 internal class NativeEntitlementCache(context: Context) {
     private val preferences = context.getSharedPreferences(
-        "verified-store-entitlements-v1",
+        "verified-store-entitlements-rework-beta-v1",
         Context.MODE_PRIVATE,
     )
+    // Public is a read-only seed, never a destination for beta provider refreshes.
+    private val publicPreferences = context.getSharedPreferences(
+        "verified-store-entitlements-v1", Context.MODE_PRIVATE,
+    )
     private val session = NativeEntitlementSession()
+    private fun persistedPreferences() =
+        if (preferences.contains(KEY_BETA_INITIALIZED)) preferences else publicPreferences
+
 
     fun read(): DurableOwnership = session.serialized {
         session.resolve(
             persistedProviderOwnership = readPersistedProviderOwnership(),
             legacyDoubleInfinityPoints =
-                preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false),
+                persistedPreferences().getBoolean(KEY_LEGACY_DOUBLE_IP, false),
         )
     }
 
@@ -53,27 +60,34 @@ internal class NativeEntitlementCache(context: Context) {
         }
 
     private fun readPersistedProviderOwnership(): DurableOwnership = DurableOwnership(
-        doubleInfinityPoints = preferences.getBoolean(KEY_PROVIDER_DOUBLE_IP, false),
-        botBoost = preferences.getBoolean("provider_bot_boost", false),
-        developerOptions = preferences.getBoolean(KEY_PROVIDER_DEV_OPTIONS, false),
-        supporterCatGallery = preferences.getBoolean(KEY_SUPPORTER_CAT_GALLERY, false),
+        doubleInfinityPoints = persistedPreferences().getBoolean(KEY_PROVIDER_DOUBLE_IP, false),
+        botBoost = persistedPreferences().getBoolean("provider_bot_boost", false),
+        developerOptions = persistedPreferences().getBoolean(KEY_PROVIDER_DEV_OPTIONS, false),
+        supporterCatGallery = persistedPreferences().getBoolean(KEY_SUPPORTER_CAT_GALLERY, false),
     )
 
     private fun persistProviderOwnership(ownership: DurableOwnership): Boolean =
         preferences.edit()
+            .putBoolean(KEY_BETA_INITIALIZED, true)
+            .putBoolean(KEY_LEGACY_DOUBLE_IP, persistedPreferences().getBoolean(KEY_LEGACY_DOUBLE_IP, false))
             .putBoolean(KEY_PROVIDER_DOUBLE_IP, ownership.doubleInfinityPoints)
             .putBoolean("provider_bot_boost", ownership.botBoost)
             .putBoolean(KEY_PROVIDER_DEV_OPTIONS, ownership.developerOptions)
             .putBoolean(
                 KEY_SUPPORTER_CAT_GALLERY,
                 ownership.supporterCatGallery ||
-                    preferences.getBoolean(KEY_SUPPORTER_CAT_GALLERY, false),
+                    persistedPreferences().getBoolean(KEY_SUPPORTER_CAT_GALLERY, false),
             )
             .putLong(KEY_VERIFIED_AT_UTC_MS, System.currentTimeMillis())
             .commit()
 
     fun grantSupporterCatGallery(): Boolean = session.serialized {
         preferences.edit()
+            .putBoolean(KEY_BETA_INITIALIZED, true)
+            .putBoolean(KEY_PROVIDER_DOUBLE_IP, readPersistedProviderOwnership().doubleInfinityPoints)
+            .putBoolean("provider_bot_boost", readPersistedProviderOwnership().botBoost)
+            .putBoolean(KEY_PROVIDER_DEV_OPTIONS, readPersistedProviderOwnership().developerOptions)
+            .putBoolean(KEY_LEGACY_DOUBLE_IP, persistedPreferences().getBoolean(KEY_LEGACY_DOUBLE_IP, false))
             .putBoolean(KEY_SUPPORTER_CAT_GALLERY, true)
             .putLong(KEY_VERIFIED_AT_UTC_MS, System.currentTimeMillis())
             .commit()
@@ -82,11 +96,16 @@ internal class NativeEntitlementCache(context: Context) {
     fun promoteAutomaticUnityDoubleIpEvidence(
         evidence: NativeBoundUnityEvidence,
     ): Boolean = session.serialized {
-        if (preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false)) {
+        if (persistedPreferences().getBoolean(KEY_LEGACY_DOUBLE_IP, false)) {
             return@serialized false
         }
 
         preferences.edit()
+            .putBoolean(KEY_BETA_INITIALIZED, true)
+            .putBoolean(KEY_PROVIDER_DOUBLE_IP, readPersistedProviderOwnership().doubleInfinityPoints)
+            .putBoolean("provider_bot_boost", readPersistedProviderOwnership().botBoost)
+            .putBoolean(KEY_PROVIDER_DEV_OPTIONS, readPersistedProviderOwnership().developerOptions)
+            .putBoolean(KEY_SUPPORTER_CAT_GALLERY, readPersistedProviderOwnership().supporterCatGallery)
             .putBoolean(KEY_LEGACY_DOUBLE_IP, true)
             .putString(KEY_LEGACY_KIND, "automatic-same-device-unity")
             .putString(KEY_LEGACY_PLATFORM, "android")
@@ -99,6 +118,7 @@ internal class NativeEntitlementCache(context: Context) {
     }
 
     private companion object {
+        private const val KEY_BETA_INITIALIZED = "beta.initialized"
         private const val KEY_PROVIDER_DOUBLE_IP = "provider.double-ip"
         private const val KEY_PROVIDER_DEV_OPTIONS = "provider.developer-options"
         private const val KEY_SUPPORTER_CAT_GALLERY = "provider.supporter-cat-gallery"

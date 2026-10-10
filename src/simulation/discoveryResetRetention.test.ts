@@ -25,6 +25,7 @@ function discoveryState(): CanonicalGameStateV1 {
   const bought = purchaseDiscovery(purchaseDiscovery(unlocked, 'power')!, 'speed')!
   return { ...bought,
     discovery: { ...bought.discovery!, completions: 17n, progress: 1234.5, elevation: { completions: 13n, progress: 1400, startingPower: 2n }, enlightenment: { completions: 5n, progress: 250, startingPower: 1n } },
+    meta: { ...bought.meta, firstInfinityComplete: true, reworkMigrationChoice: 'keep' },
     challenges: { ...infinityChallenges(bought), unlocked: true, active: null },
   }
 }
@@ -50,7 +51,8 @@ const transitions: readonly [string, (state: CanonicalGameStateV1) => CanonicalG
   }],
   ['challenge entry and abandonment', state => {
     const entered = successful(restartInfinityChallenge(state, 'enter', 0n)).state
-    expect(entered.discovery).toEqual(state.discovery)
+    expect(entered.discovery?.unlocked).toBe(false)
+    expect(entered.challenges?.replacement?.savedDiscovery).toEqual(state.discovery)
     return successful(restartInfinityChallenge(entered, 'abandon', 0n)).state
   }],
   ['challenge restart', state => successful(applyCanonicalInfinityReset({ ...state,

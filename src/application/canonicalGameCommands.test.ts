@@ -98,8 +98,15 @@ function options(
 }
 
 const COMMAND_EXAMPLES = [
+  { kind: 'rework.choose-migration', choice: 'keep' },
   { kind: 'time.set-offline-boost-multiplier', multiplier: 42 },
   { kind: 'discovery.purchase', purchase: 'unlock' },
+  { kind: 'civilization.enter-farming' },
+  { kind: 'civilization.build-granary' },
+  { kind: 'civilization.complete-farming' },
+  { kind: 'civilization.farming-focus', focus: 'settlement' },
+  { kind: 'civilization.set-focus', focus: 'settlement' },
+  { kind: 'civilization.equip-worker' },
   { kind: 'dream.set-buy-mode', buyMode: 'buy-50' },
   {
     kind: 'dyson.purchase-facility',
@@ -439,118 +446,6 @@ describe('canonical game command router', () => {
       code: 'dyson-facility:locked',
     })
     expect(result.state).toBe(original)
-  })
-
-  test('routes representative Dream, Reality, Quantum, Avocado, and time actions', () => {
-    const dream = routeCanonicalGameCommand(
-      {
-        ...state(),
-        reality: {
-          ...state().reality,
-          influence: 1_000_000,
-        },
-      },
-      {
-        kind: 'dream.purchase-foundational',
-        purchase: 'hunters',
-      },
-      options(),
-    )
-    expect(dream).toMatchObject({
-      accepted: true,
-      changed: true,
-      code: 'dream-foundational:success',
-    })
-
-    const realityInput = {
-      ...state(),
-      reality: {
-        ...state().reality,
-        workersReady: 1_000_000n,
-        influence: 0,
-      },
-    }
-    const reality = routeCanonicalGameCommand(
-      realityInput,
-      { kind: 'reality.gather-influence' },
-      options(),
-    )
-    expect(reality).toMatchObject({
-      accepted: true,
-      changed: true,
-      code: 'reality-gather:success',
-    })
-
-    const quantumInput = {
-      ...state(),
-      quantum: {
-        ...state().quantum,
-        pointsEarned: 100n,
-        pointsSpent: 0n,
-        unlocks: {
-          ...state().quantum.unlocks,
-          botMultitasking: false,
-        },
-      },
-    }
-    const quantum = routeCanonicalGameCommand(
-      quantumInput,
-      {
-        kind: 'quantum.purchase-upgrade',
-        upgradeId: 'BotMultitasking',
-      },
-      options(),
-    )
-    expect(quantum).toMatchObject({
-      accepted: true,
-      changed: true,
-      code: 'quantum-upgrade:purchased',
-    })
-
-    const quantumBulk = routeCanonicalGameCommand(
-      quantum.state,
-      {
-        kind: 'quantum.purchase-upgrade',
-        upgradeId: 'CashBonus',
-        quantity: 10n,
-      },
-      options(),
-    )
-    expect(quantumBulk).toMatchObject({
-      accepted: true,
-      changed: true,
-      code: 'quantum-upgrade:purchased',
-      state: {
-        quantum: {
-          cashBonusLevels: 10n,
-          pointsSpent: 11n,
-        },
-      },
-    })
-
-    const avocadoInput = {
-      ...state(),
-      reality: {
-        ...state().reality,
-        influence: 42,
-      },
-      avocado: {
-        ...state().avocado,
-        unlocked: true,
-        influence: 0,
-      },
-    }
-    const avocado = routeCanonicalGameCommand(
-      avocadoInput,
-      { kind: 'avocado.feed', source: 'influence' },
-      options(),
-    )
-    expect(avocado).toMatchObject({
-      accepted: true,
-      changed: true,
-      code: 'avocado:fed',
-    })
-
   })
 
   test('synchronizes bot allocation immediately when selecting a preset', () => {
@@ -1230,38 +1125,13 @@ describe('canonical game command router', () => {
     })
   })
 
-  test('delegates Leap gate and branch choice without command-supplied rewards', () => {
+  test('retired Leap cannot invoke an injected conversion port or supply rewards', () => {
     const original = deepFreeze(state())
-    const requestLeap = vi.fn(
-      (source: Readonly<CanonicalGameStateV1>) => ({
-        accepted: true as const,
-        changed: true,
-        code: 'entanglement',
-        state: {
-          ...source,
-          quantum: {
-            ...source.quantum,
-            pointsEarned: source.quantum.pointsEarned + 1n,
-          },
-        },
-      }),
-    )
-
-    const result = routeCanonicalGameCommand(
-      original,
-      { kind: 'quantum.request-leap' },
-      options({ quantumLeap: { requestLeap } }),
-    )
-
-    expect(requestLeap).toHaveBeenCalledExactlyOnceWith(original)
-    expect(result).toMatchObject({
-      accepted: true,
-      changed: true,
-      code: 'quantum-leap:entanglement',
-    })
-    expect(original.quantum.pointsEarned + 1n).toBe(
-      result.state.quantum.pointsEarned,
-    )
+    const requestLeap = vi.fn()
+    const result = routeCanonicalGameCommand(original, { kind: 'quantum.request-leap' }, options({ quantumLeap: { requestLeap } }))
+    expect(requestLeap).not.toHaveBeenCalled()
+    expect(result).toMatchObject({ accepted: false, changed: false, code: 'rework:retired-system' })
+    expect(result.state).toBe(original)
   })
 
   test('toggles automatic Infinity before or after Break The Loop without runtime evaluation', () => {
@@ -1496,12 +1366,11 @@ describe('canonical game command router', () => {
     }]
     const calibrated = {
       ...source,
-      dream: {
-        ...source.dream,
-        strangeMatter: 100,
-      },
+      meta: { ...source.meta, reworkMigrationChoice: 'keep' as const },
       infinity: {
         ...source.infinity,
+        points: 100n,
+        spentPoints: 0n,
         currentCyclePeakIpPerMinute: 74_208.1448,
         currentCyclePeakReward: 82n,
         manualPeakIpPerMinute: 74_208.1448,
@@ -1525,8 +1394,8 @@ describe('canonical game command router', () => {
     const result = routeCanonicalGameCommand(
       calibrated,
       {
-        kind: 'reality.purchase-upgrade',
-        upgradeId: 'doubleTimeOwned',
+        kind: 'infinity.purchase-shop-item',
+        itemId: 'rework-DoubleTime',
       },
       options(),
     )
@@ -1534,7 +1403,7 @@ describe('canonical game command router', () => {
     expect(result).toMatchObject({
       accepted: true,
       changed: true,
-      code: 'reality-upgrade:purchased',
+      code: 'infinity-shop:purchased',
       state: {
         infinity: {
           currentCyclePeakIpPerMinute: 0,
@@ -1664,19 +1533,3 @@ function deepFreeze<T>(value: T): T {
   }
   return value
 }
-
-
-describe('Simulation purchase preference', () => {
-  test('sets, repeats and validates the canonical buy mode without changing progression', () => {
-    const before = state()
-    const result = routeCanonicalGameCommand(before, { kind: 'dream.set-buy-mode', buyMode: 'buy-max' }, options())
-    expect(result.state.dream.buyMode).toBe('buy-max')
-    expect(result.state.dream.resources).toEqual(before.dream.resources)
-    expect(result.state.reality.influence).toBe(before.reality.influence)
-    const unchanged = routeCanonicalGameCommand(result.state, { kind: 'dream.set-buy-mode', buyMode: 'buy-max' }, options())
-    expect(unchanged.state).toBe(result.state)
-    const invalid = routeCanonicalGameCommand(before, { kind: 'dream.set-buy-mode', buyMode: 'bad' } as unknown as CanonicalGameCommand, options())
-    expect(invalid.state).toBe(before)
-    expect(invalid.code).toBe('dream-setting:invalid-buy-mode')
-  })
-})

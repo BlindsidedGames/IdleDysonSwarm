@@ -126,16 +126,23 @@ final class NativeEntitlementCache: @unchecked Sendable {
     }
 
     private func readRecord() -> Record {
-        var query = keychainQuery()
+        let beta = readRecord(service: "com.blindsidedgames.idledysonswarm.verified-entitlements.rework-beta-v1")
+        if !beta.missing { return beta.record ?? Record() }
+        return readRecord(service: "com.blindsidedgames.idledysonswarm.verified-entitlements").record ?? Record()
+    }
+
+    private func readRecord(service: String) -> (record: Record?, missing: Bool) {
+        var query = keychainQuery(service: service)
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
         guard
-            SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+            status == errSecSuccess,
             let data = result as? Data,
             let record = try? JSONDecoder().decode(Record.self, from: data)
-        else { return Record() }
-        return record
+        else { return (nil, status == errSecItemNotFound) }
+        return (record, false)
     }
 
     private func writeRecord(_ record: Record) -> Bool {
@@ -157,11 +164,12 @@ final class NativeEntitlementCache: @unchecked Sendable {
         return SecItemAdd(insert as CFDictionary, nil) == errSecSuccess
     }
 
-    private func keychainQuery() -> [String: Any] {
+    private func keychainQuery(
+        service: String = "com.blindsidedgames.idledysonswarm.verified-entitlements.rework-beta-v1"
+    ) -> [String: Any] {
         [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String:
-                "com.blindsidedgames.idledysonswarm.verified-entitlements",
+            kSecAttrService as String: service,
             kSecAttrAccount as String: "store-cache-v1",
             kSecAttrSynchronizable as String: false,
         ]

@@ -1,3 +1,6 @@
+import { restartInfinityChallenge } from '../simulation/canonicalInfinityChallengeRestart'
+import { replacementSkillPoints } from '../simulation/reworkChallenges'
+import { farmingStoredTimeBudget } from '../simulation/farming'
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import { StoredTimeSimulation } from '../workers/storedTime/storedTimeSimulation'
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
@@ -10,7 +13,6 @@ import {
   applyDevelopmentRealityUnlock,
   type CanonicalDevelopmentAction,
 } from './canonicalDevelopmentCommands'
-import { restartInfinityChallenge } from '../simulation/canonicalInfinityChallengeRestart'
 import { applyCanonicalOverflowReset } from '../simulation/canonicalOverflowReset'
 import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
@@ -536,10 +538,10 @@ export class CanonicalGameApplicationFacade {
   ): Promise<CanonicalPlayerDispatchResult> {
     const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
       envelope.command.kind === 'skill.set-preset-assignment'
-    if (presetPriorityChange || envelope.command.kind === 'discovery.purchase' || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
+    if (presetPriorityChange || envelope.command.kind.startsWith('civilization.') || envelope.command.kind === 'rework.choose-migration' || envelope.command.kind === 'discovery.purchase' || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
         envelope.command.kind === 'challenge.enter' || envelope.command.kind === 'challenge.enter-no-science' || envelope.command.kind === 'challenge.enter-trial-and-error' || envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
       const result = await this.application.dispatchCommitFirst(envelope,
-        presetPriorityChange ? 'skill-preset' : envelope.command.kind === 'discovery.purchase' ? 'discovery-purchase' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
+        presetPriorityChange ? 'skill-preset' : envelope.command.kind.startsWith('civilization.') ? 'civilization-purchase' : envelope.command.kind === 'rework.choose-migration' ? 'rework-migration' : envelope.command.kind === 'discovery.purchase' ? 'discovery-purchase' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
       return {
         kind: 'transition',
         transition: result.committed ? result.transition : {
@@ -597,18 +599,15 @@ export class CanonicalGameApplicationFacade {
     seconds: number,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalStoredTimeCommitResult> {
-    if (this.storedTimeJobRunner !== undefined) {
-      return this.commitStoredTimeInJob(
-        envelope,
-        seconds,
-        cancelRequested,
-      )
-    }
-    return this.commitStoredTimeSynchronously(
-      envelope,
-      seconds,
-      cancelRequested,
-    )
+    const before = this.snapshot()
+    const ready = before.phase === 'ready' ? before.state.gameState : undefined
+    const budget = before.phase === 'ready' && ready && isFinitePositiveNumber(seconds) && seconds <= ready.timeline.storedTimeAvailableSeconds
+      ? farmingStoredTimeBudget(cloneCanonicalRuntimeState(before.state as CanonicalRuntimeState).gameState, seconds) : seconds
+    if (budget <= 0) return rejectedStoredTimeCommit(before, seconds, 'FARMING-MANUAL-ACTION-REQUIRED', 'Build the required Granary or complete the village before spending more Stored Time.')
+    const result = this.storedTimeJobRunner !== undefined
+      ? await this.commitStoredTimeInJob(envelope, budget, cancelRequested)
+      : await this.commitStoredTimeSynchronously(envelope, budget, cancelRequested)
+    return { ...result, remainingSeconds: Math.max(0, seconds - result.consumedSeconds) }
   }
 
   private async commitStoredTimeInJob(
@@ -1083,16 +1082,12 @@ export function createCanonicalGameEngineDefinition(
       }
 
       if (command.kind === 'challenge.enter' || command.kind === 'challenge.enter-no-science' || command.kind === 'challenge.enter-trial-and-error' || command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
-        const artifact = deriveCanonicalArtifactSkillPoints(candidate.gameState, eventContext.realityUpgradeDefinitions)
-        if (!artifact.ok) return reject('CHALLENGE_RESET_FAILED', artifact.issue?.detail ?? 'Artifact skill points unavailable.')
-        const reset = restartInfinityChallenge(candidate.gameState,
-          command.kind === 'challenge.abandon' ? 'abandon' : 'enter', artifact.value, command.kind === 'challenge.enter' ? command.challengeId : command.kind === 'challenge.enter-no-science' ? 'no-science' : command.kind === 'challenge.enter-trial-and-error' ? 'trial-and-error' : 'blank-slate')
-        if (!reset.ok) return reject(reset.code, 'The challenge could not be started or abandoned.')
-        const derived = deriveDysonProduction(reset.state, candidate.compatibilityTuning,
-          candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)
-        if (!derived.ok) return reject('CHALLENGE_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Challenge reset could not be derived.')
-        Object.assign(candidate, { gameState: pauseOfflineBoost(withCanonicalBotAllocation(reset.state)), evaluationSnapshot: derived.value.nextEvaluationSnapshot,
-          tinker: createCanonicalTinkerRuntimeState(), lastSkillPresetApplication: null, presentationEventSequence: Math.max(candidate.presentationEventSequence ?? 0, candidate.presentationEvents.at(-1)?.sequence ?? 0), presentationEvents: [] })
+        const id = command.kind === 'challenge.enter' ? command.challengeId : command.kind === 'challenge.enter-no-science' ? 'no-science' : command.kind === 'challenge.enter-trial-and-error' ? 'trial-and-error' : 'blank-slate'
+        const reset = restartInfinityChallenge(candidate.gameState, command.kind === 'challenge.abandon' ? 'abandon' : 'enter', replacementSkillPoints(candidate.gameState.challenges), id)
+        if (!reset.ok) return reject(reset.code, ('reason' in reset ? reset.reason : undefined) ?? 'Challenge restart unavailable.')
+        const derived = deriveDysonProduction(reset.state, candidate.compatibilityTuning, candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)
+        if (!derived.ok) return reject('CHALLENGE_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Challenge derivation failed.')
+        Object.assign(candidate, { gameState: pauseOfflineBoost(withCanonicalBotAllocation(reset.state)), evaluationSnapshot: derived.value.nextEvaluationSnapshot, tinker: createCanonicalTinkerRuntimeState(), lastSkillPresetApplication: null })
         return { accepted: true, changed: true }
       }
       if (command.kind === 'avocado.request-overflow-reset') {

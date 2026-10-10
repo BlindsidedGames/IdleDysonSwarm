@@ -1,7 +1,6 @@
-import { attachSteamPresentation } from './steam/presentation.mjs'
-import { SteamCloud } from './steam/cloud.mjs'
 import { selectSteamSaveRoot } from './steam/offlineProfile.mjs'
-import { loadSteamClient, createSteamPublication } from './steam/client.mjs'
+import { attachSteamPresentation } from './steam/presentation.mjs'
+import { loadSteamClient } from './steam/client.mjs'
 import {
   app,
   clipboard,
@@ -27,7 +26,7 @@ import {
   rename,
   stat,
 } from 'node:fs/promises'
-import { homedir, tmpdir } from 'node:os'
+import { tmpdir } from 'node:os'
 import {
   dirname,
   isAbsolute,
@@ -75,7 +74,11 @@ const smokeUserData = smokeTest
   ? await mkdtemp(join(tmpdir(), 'idle-dyson-swarm-smoke-'))
   : null
 if (smokeUserData !== null) app.setPath('userData', smokeUserData)
-const webSaveRootName = 'web-runtime-v1'
+const webSaveRootName = 'idleds-rework-beta-v1'
+const betaRootName = 'rework-beta-v1'
+let betaSteamAccount = null
+let steamSaveRoot = null
+let betaUserDataRoot = null
 const maximumTextBytes = 32 * 1024 * 1024
 const maximumDiagnosticBytes = 64 * 1024
 const steamAppId = 4348570
@@ -108,7 +111,6 @@ let packagedRuntimeMetadata
 let smokeCleanupScheduled = false
 let steamInventoryStore
 let steamCloud = null
-let steamSaveRoot = null
 let steamClient = null
 let steamPublication = null
 
@@ -124,7 +126,13 @@ function denyRendererPermissions(electronSession) {
 }
 
 function webSaveRoot() {
-  return steamCloud === null ? join(app.getPath('userData'), ...(steamDistribution ? ['steam-offline'] : []), webSaveRootName) : steamSaveRoot ?? join(steamCloud.localDirectory,webSaveRootName)
+  if (!steamDistribution) return join(betaUserDataRoot ?? app.getPath('userData'), betaRootName, webSaveRootName)
+  if (betaSteamAccount !== null) {
+    if (steamClient?.native.identity() !== betaSteamAccount) throw new Error('Steam account changed; restart before continuing beta progress.')
+    return steamSaveRoot ?? join(betaUserDataRoot ?? app.getPath('userData'), betaRootName, 'steam-local', betaSteamAccount, webSaveRootName)
+  }
+  if (steamClient !== null && /^\d{17}$/.test(steamClient.native.identity())) throw new Error('Steam account became available; restart before continuing beta progress.')
+  return join(betaUserDataRoot ?? app.getPath('userData'), betaRootName, 'steam-offline', webSaveRootName)
 }
 
 function rootedPath(relativePath) {
@@ -371,15 +379,21 @@ async function loadRuntimeMetadata() {
     app.isPackaged ? app.getVersion() : release.marketingVersion,
     release,
   )
-  packagedRuntimeMetadata = metadata
-  return metadata
+  packagedRuntimeMetadata = Object.freeze({ ...metadata,
+    saveStorageNamespace: webSaveRootName,
+    entitlementCacheNamespace: betaRootName,
+    cloudSavesEnabled: false,
+    automaticUnityDiscoveryEnabled: false,
+  })
+  return packagedRuntimeMetadata
 }
 
 async function createElectronSteamInventoryStore() {
   const cache = new AtomicSteamEntitlementCache(
-    join(app.getPath('userData'), 'steam-entitlements-v2.json'),
+    join(betaUserDataRoot ?? app.getPath('userData'), betaRootName, 'steam-entitlements-v2.json'),
     steamAppId,
     createSafeStorageProtector(safeStorage),
+    join(app.getPath('userData'), 'steam-entitlements-v2.json'),
   )
   let config
   try {
@@ -415,102 +429,7 @@ async function createElectronSteamInventoryStore() {
 }
 
 async function discoverUnitySaves() {
-  if (steamDistribution) {
-    if (steamCloud === null) return Object.freeze([])
-    steamCloud.ensureIdentity()
-    // Unity saves were device-scoped. Claim automatic migration once, without
-    // touching those original files or allowing another Steam account to adopt them.
-    const claim = join(app.getPath('userData'), 'steam-unity-migration-account.txt')
-    try {
-      const handle = await open(claim, 'wx', 0o600)
-      try { await handle.writeFile(steamCloud.account); await handle.sync() } finally { await handle.close() }
-    } catch (error) { if (error.code !== 'EEXIST') throw error }
-    if ((await readFile(claim, 'utf8')) !== steamCloud.account) return Object.freeze([])
-  }
-  const definitions = unitySaveDefinitions()
-  const candidates = []
-  for (const definition of definitions) {
-    try {
-      const text = await readBoundedText(definition.absolutePath)
-      candidates.push(Object.freeze({
-        id: definition.id,
-        text,
-        provenance: Object.freeze({
-          kind: 'automatic-same-device-unity',
-          platform: definition.platform,
-          sourceClass: 'unity-persistent-data-save',
-          opaqueSourceIdentifier: definition.id,
-          pathClass: definition.pathClass,
-        }),
-      }))
-      if (process.platform === 'darwin') break
-    } catch (error) {
-      if (error?.code !== 'ENOENT') throw error
-    }
-  }
-  return Object.freeze(candidates)
-}
-
-function unitySaveDefinitions() {
-  const home = homedir()
-  const fileName = 'idle_dyson_swarm_save.txt'
-  if (process.platform === 'win32') {
-    return [{
-      id: 'win32-1',
-      platform: 'windows',
-      pathClass: 'unity-local-low',
-      absolutePath: join(
-        home,
-        'AppData',
-        'LocalLow',
-        'BlindsidedGames',
-        'Idle Dyson Swarm',
-        fileName,
-      ),
-    }]
-  }
-  if (process.platform === 'darwin') {
-    return [
-      {
-        id: 'darwin-1',
-        platform: 'macos',
-        pathClass: 'unity-application-support-editor',
-        absolutePath: join(
-          home,
-          'Library',
-          'Application Support',
-          'BlindsidedGames',
-          'Idle Dyson Swarm',
-          fileName,
-        ),
-      },
-      {
-        id: 'darwin-2',
-        platform: 'macos',
-        pathClass: 'unity-application-support-player',
-        absolutePath: join(
-          home,
-          'Library',
-          'Application Support',
-          'unity.BlindsidedGames.Idle Dyson Swarm',
-          fileName,
-        ),
-      },
-    ]
-  }
-  const configRoot = process.env.XDG_CONFIG_HOME || join(home, '.config')
-  return [{
-    id: 'linux-1',
-    platform: 'linux',
-    pathClass: 'unity-xdg-config',
-    absolutePath: join(
-      configRoot,
-      'unity3d',
-      'BlindsidedGames',
-      'Idle Dyson Swarm',
-      fileName,
-    ),
-  }]
+  return Object.freeze([])
 }
 
 async function waitForRendererReady(window) {
@@ -799,44 +718,35 @@ if (!singleInstanceAcquired) {
   })
   app.whenReady().then(async () => {
     await loadRuntimeMetadata()
-    try {
+    await mkdir(app.getPath('userData'), { recursive: true })
+    betaUserDataRoot = await realpath(app.getPath('userData'))
+    // Select the local beta account root before caches, handlers or renderer startup.
     if (steamClient !== null) {
       const account = steamClient.native.identity()
-      if (/^\d{17}$/.test(account)) steamCloud = new SteamCloud({ userData: smokeUserData ?? join(app.getPath('appData'), 'Idle Dyson Swarm'),account,identity: () => steamClient.native.identity(),choose: async () => {
-        const result = await dialog.showMessageBox({type:'question',title:'Choose your save',message:'Local and Steam Cloud saves differ. Both copies have been preserved.',buttons:['Use local save','Use Steam Cloud save'],defaultId:0,cancelId:0})
-        return result.response === 1 ? 'cloud' : 'local'
-      } })
+      betaSteamAccount = /^\d{17}$/.test(account) ? account : null
     }
-    } catch(error) { steamCloud = null; console.warn('Steam Cloud unavailable:', error.message) }
-    if (steamCloud !== null) {
-      try {
-        await mkdir(app.getPath('userData'), { recursive: true })
-        steamSaveRoot = await selectSteamSaveRoot({
-          offlineRoot: join(await realpath(app.getPath('userData')), 'steam-offline', webSaveRootName),
-          accountDirectory: steamCloud.localDirectory,
-          ensureIdentity: () => steamCloud.ensureIdentity(),
-          choose: async () => {
-            const { response } = await dialog.showMessageBox({
-              type: 'question', title: 'Offline progress found',
-              message: 'A save was created while Steam was unavailable. Use that progress for the signed-in Steam account?',
-              detail: 'Both saves will be kept. If Steam Cloud contains different progress, you will be able to choose which save to continue.',
-              buttons: ['Use offline progress', 'Keep account save', 'Decide next launch'],
-              defaultId: 2, cancelId: 2,
-            })
-            return ['offline', 'account', 'later'][response]
-          },
-        })
-      } catch (error) {
-        console.error('Steam offline save recovery failed.', error)
-        dialog.showErrorBox('Save recovery could not finish', 'Your existing saves have been kept. Restart the game to try again.')
-        app.quit()
-        return
-      }
+    if (betaSteamAccount !== null) {
+      steamSaveRoot = await selectSteamSaveRoot({
+        offlineRoot: join(betaUserDataRoot ?? app.getPath('userData'), betaRootName, 'steam-offline', webSaveRootName),
+        accountDirectory: join(betaUserDataRoot ?? app.getPath('userData'), betaRootName, 'steam-local', betaSteamAccount),
+        saveRootName: webSaveRootName,
+        ensureIdentity: () => {
+          if (steamClient.native.identity() !== betaSteamAccount) throw new Error('Steam account changed during beta startup.')
+        },
+        choose: async () => {
+          const { response } = await dialog.showMessageBox({
+            type: 'question', title: 'Offline beta progress found',
+            message: 'Use your offline beta progress for the signed-in Steam account?',
+            detail: 'Both beta saves will be kept. Cloud saves are off for beta.',
+            buttons: ['Use offline progress', 'Keep account save', 'Decide next launch'],
+            defaultId: 2, cancelId: 2,
+          })
+          return ['offline', 'account', 'later'][response]
+        },
+      })
     }
     steamInventoryStore = await createElectronSteamInventoryStore()
-    if (steamDistribution) steamPublication = await createSteamPublication(steamClient, {
-      readDeveloperOptions: async () => (await steamInventoryStore.readEntitlements()).developerOptions,
-    }).catch(error => { console.warn('Steam achievements unavailable:',error.message);return null })
+    // Cloud saves and achievements are off initially. Store binding remains live.
     registerNativeHandlers()
     denyRendererPermissions(session.defaultSession)
     createMainWindow()

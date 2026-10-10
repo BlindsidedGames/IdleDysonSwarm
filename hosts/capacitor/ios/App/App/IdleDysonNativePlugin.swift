@@ -393,6 +393,10 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
                 forInfoDictionaryKey: "CFBundleVersion"
             ) as? String ?? "0",
             "platform": "ios",
+            "saveStorageNamespace": Self.webSaveRootName,
+            "entitlementCacheNamespace": "rework-beta-v1",
+            "cloudSavesEnabled": false,
+            "automaticUnityDiscoveryEnabled": false,
             "locale": Locale.current.identifier.replacingOccurrences(
                 of: "_",
                 with: "-"
@@ -547,6 +551,10 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
 
     @objc public func discoverUnitySaveCandidates(_ call: CAPPluginCall) {
         perform(call) {
+            // Beta requires explicit import; do not read public Unity save files.
+            if Self.webSaveRootName == "idleds-rework-beta-v1" {
+                return ["candidates": []]
+            }
             let documents = try self.documentsDirectory()
             let unitySave = documents.appendingPathComponent(
                 Self.unitySaveFileName,
@@ -841,7 +849,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         }
     }
 
-    private static let webSaveRootName = "web-runtime-v1"
+    private static let webSaveRootName = "idleds-rework-beta-v1"
     private static let unitySaveFileName = "idle_dyson_swarm_save.txt"
     private static let reviewRequestedKey = "review_requested_v1"
     private static let maxFileBytes = 32 * 1024 * 1024

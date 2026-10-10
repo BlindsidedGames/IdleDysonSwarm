@@ -639,6 +639,676 @@
       "value": "チャレンジを見る"
     }
   ],
+  "civilization.allocated": [
+    {
+      "type": 0,
+      "value": "配置済みの労働者"
+    }
+  ],
+  "civilization.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": "："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.automaticAward": [
+    {
+      "type": 0,
+      "value": "すべての条件を満たすと自動的に付与されます。"
+    }
+  ],
+  "civilization.available": [
+    {
+      "type": 0,
+      "value": "未配置 / 合計"
+    }
+  ],
+  "civilization.awarded": [
+    {
+      "type": 0,
+      "value": "付与された触媒："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "civilization.balanced": [
+    {
+      "type": 0,
+      "value": "均衡"
+    }
+  ],
+  "civilization.bootstrap": [
+    {
+      "type": 0,
+      "value": "家族の採集には材料や配置された労働者は不要です。"
+    }
+  ],
+  "civilization.bootstrapV4": [
+    {
+      "type": 0,
+      "value": "3人の創設者は住居用の資材一式を持って始めます。採集には実際の作業班が必要ですが、材料は消費しません。"
+    }
+  ],
+  "civilization.campExpansion": [
+    {
+      "type": 0,
+      "value": "野営地の拡張"
+    }
+  ],
+  "civilization.campProvisioning": [
+    {
+      "type": 0,
+      "value": "野営地への補給"
+    }
+  ],
+  "civilization.camps": [
+    {
+      "type": 0,
+      "value": "野営地"
+    }
+  ],
+  "civilization.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "civilization.catalysts": [
+    {
+      "type": 0,
+      "value": "触媒"
+    }
+  ],
+  "civilization.clothing": [
+    {
+      "type": 0,
+      "value": "衣服"
+    }
+  ],
+  "civilization.completed": [
+    {
+      "type": 0,
+      "value": "完了したサイクル"
+    }
+  ],
+  "civilization.continuedDevelopment": [
+    {
+      "type": 0,
+      "value": "野営地の発展 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.conversion": [
+    {
+      "type": 0,
+      "value": "住居は2人、野営地は8人を収容します。住居3軒を野営地1つに変換します。"
+    }
+  ],
+  "civilization.conversionV4": [
+    {
+      "type": 0,
+      "value": "住居は住民を2人増やします。改築中は3軒の住居と6人の住民を確保します。完成した野営地には9人が住み、3人増えます。"
+    }
+  ],
+  "civilization.craft": [
+    {
+      "type": 0,
+      "value": "工芸"
+    }
+  ],
+  "civilization.craftSpecialization": [
+    {
+      "type": 0,
+      "value": "工芸の専門化"
+    }
+  ],
+  "civilization.duration": [
+    {
+      "type": 0,
+      "value": "サイクルの長さ"
+    }
+  ],
+  "civilization.equip": [
+    {
+      "type": 0,
+      "value": "労働者"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "人に装備する"
+    }
+  ],
+  "civilization.equipConfirm": [
+    {
+      "type": 0,
+      "value": "道具"
+    },
+    {
+      "type": 1,
+      "value": "tools"
+    },
+    {
+      "type": 0,
+      "value": "と衣服"
+    },
+    {
+      "type": 1,
+      "value": "clothing"
+    },
+    {
+      "type": 0,
+      "value": "を消費して、"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "人の労働者に装備しますか？"
+    }
+  ],
+  "civilization.equipmentAutomatic": [
+    {
+      "type": 0,
+      "value": "シミュレーションの1分ごとに、利用可能な道具と衣服で住民の最大4分の1を装備します。保持される装備一式は道具2と衣服1を消費します。"
+    }
+  ],
+  "civilization.equipmentEffect": [
+    {
+      "type": 0,
+      "value": "装備した野外労働者は、追加の労働者1人分の労働力を提供します。"
+    }
+  ],
+  "civilization.equipmentEffectV4": [
+    {
+      "type": 0,
+      "value": "有効に働く装備済みの野外作業員1人につき、作業員半人分の労働力が加わります。"
+    }
+  ],
+  "civilization.equipmentStock": [
+    {
+      "type": 0,
+      "value": "労働者への装備には道具と衣服を消費します。装備は野営地に残ります。"
+    }
+  ],
+  "civilization.equipped": [
+    {
+      "type": 0,
+      "value": "装備済みの労働者"
+    }
+  ],
+  "civilization.era": [
+    {
+      "type": 0,
+      "value": "狩猟採集時代"
+    }
+  ],
+  "civilization.eraSettings": [
+    {
+      "type": 0,
+      "value": "採集時代の詳細"
+    }
+  ],
+  "civilization.establishedCamp": [
+    {
+      "type": 0,
+      "value": "確立した野営地"
+    }
+  ],
+  "civilization.exchangeNetworks": [
+    {
+      "type": 0,
+      "value": "交換ネットワーク"
+    }
+  ],
+  "civilization.exchangeRoutes": [
+    {
+      "type": 0,
+      "value": "交易路"
+    }
+  ],
+  "civilization.expeditions": [
+    {
+      "type": 0,
+      "value": "遠征と交易"
+    }
+  ],
+  "civilization.failed": [
+    {
+      "type": 0,
+      "value": "操作に失敗しました。再試行してください。"
+    }
+  ],
+  "civilization.firstHunt": [
+    {
+      "type": 0,
+      "value": "初めての狩猟"
+    }
+  ],
+  "civilization.fishing": [
+    {
+      "type": 0,
+      "value": "漁労"
+    }
+  ],
+  "civilization.focus": [
+    {
+      "type": 0,
+      "value": "労働力の重点"
+    }
+  ],
+  "civilization.focusBalancedHelp": [
+    {
+      "type": 0,
+      "value": "バランスでは、利用可能な作業に働き手を割り当て、通常の速さで作業します。"
+    }
+  ],
+  "civilization.focusEffect": [
+    {
+      "type": 0,
+      "value": "野営地の成長に合わせて、この経路により多くの労働者を配置します。他の経路にも少人数を残します。"
+    }
+  ],
+  "civilization.focusEffectV4": [
+    {
+      "type": 0,
+      "value": "重点はこの分野と支援班を優先します。材料が足りない仕事は作業員を解放し、支払い済みのサイクルは材料を保持します。"
+    }
+  ],
+  "civilization.focusSelectedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": "はバランス時の"
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "倍の速さで作業します。その他の作業は通常の速さを維持します。"
+    }
+  ],
+  "civilization.focusSupportedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": "はバランス時の"
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "倍、"
+    },
+    {
+      "type": 1,
+      "value": "support"
+    },
+    {
+      "type": 0,
+      "value": "は"
+    },
+    {
+      "type": 1,
+      "value": "supportRate"
+    },
+    {
+      "type": 0,
+      "value": "倍の速さで作業します。その他の作業は通常の速さを維持します。"
+    }
+  ],
+  "civilization.food": [
+    {
+      "type": 0,
+      "value": "食料"
+    }
+  ],
+  "civilization.foodPreservation": [
+    {
+      "type": 0,
+      "value": "食料の保存"
+    }
+  ],
+  "civilization.foragerGenerator": [
+    {
+      "type": 0,
+      "value": "採集者の野営地"
+    }
+  ],
+  "civilization.fractureRule": [
+    {
+      "type": 0,
+      "value": "破砕済みスキルごとにシミュレーション速度+5%。ボーナスは加算です。"
+    }
+  ],
+  "civilization.fractures": [
+    {
+      "type": 0,
+      "value": "フラクチャー補正 +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.gathering": [
+    {
+      "type": 0,
+      "value": "採集"
+    }
+  ],
+  "civilization.growthFocus": [
+    {
+      "type": 0,
+      "value": "成長"
+    }
+  ],
+  "civilization.hides": [
+    {
+      "type": 0,
+      "value": "毛皮"
+    }
+  ],
+  "civilization.hideworking": [
+    {
+      "type": 0,
+      "value": "皮革加工"
+    }
+  ],
+  "civilization.housing": [
+    {
+      "type": 0,
+      "value": "居住容量"
+    }
+  ],
+  "civilization.hunting": [
+    {
+      "type": 0,
+      "value": "狩猟"
+    }
+  ],
+  "civilization.inputs": [
+    {
+      "type": 0,
+      "value": "サイクルのコスト"
+    }
+  ],
+  "civilization.legacyWorkHelp": [
+    {
+      "type": 0,
+      "value": "旧バージョンで支払い済みの作業は、完了まで元の速さを維持します。"
+    }
+  ],
+  "civilization.locked": [
+    {
+      "type": 0,
+      "value": "必要条件："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.materials": [
+    {
+      "type": 0,
+      "value": "資材"
+    }
+  ],
+  "civilization.milestoneStep": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
+  "civilization.next": [
+    {
+      "type": 0,
+      "value": "次："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.nextCatalyst": [
+    {
+      "type": 0,
+      "value": "次の触媒"
+    }
+  ],
+  "civilization.nextEra": [
+    {
+      "type": 0,
+      "value": "次：栽培と牧畜"
+    }
+  ],
+  "civilization.nodeBonus": [
+    {
+      "type": 0,
+      "value": "破砕後：全体のシミュレーション速度+5%。ボーナスは加算です。"
+    }
+  ],
+  "civilization.nodeBonusActive": [
+    {
+      "type": 0,
+      "value": "破砕済み：全体のシミュレーション速度+5%。ボーナスは加算です。"
+    }
+  ],
+  "civilization.outputs": [
+    {
+      "type": 0,
+      "value": "サイクルの生産"
+    }
+  ],
+  "civilization.paid": [
+    {
+      "type": 0,
+      "value": "この周期の材料は確保済み"
+    }
+  ],
+  "civilization.phaseComplete": [
+    {
+      "type": 0,
+      "value": "狩猟採集時代の序盤を完了"
+    }
+  ],
+  "civilization.preview": [
+    {
+      "type": 0,
+      "value": "農業は後の段階で続きます。現在の活動は稼働し続けます。"
+    }
+  ],
+  "civilization.provisioning": [
+    {
+      "type": 0,
+      "value": "補給"
+    }
+  ],
+  "civilization.provisions": [
+    {
+      "type": 0,
+      "value": "保存食"
+    }
+  ],
+  "civilization.recruitment": [
+    {
+      "type": 0,
+      "value": "労働者は野営地に残ります。各人に居住場所が必要です。"
+    }
+  ],
+  "civilization.seasonalExpeditions": [
+    {
+      "type": 0,
+      "value": "季節ごとの遠征"
+    }
+  ],
+  "civilization.settlement": [
+    {
+      "type": 0,
+      "value": "定住"
+    }
+  ],
+  "civilization.shelterBuilding": [
+    {
+      "type": 0,
+      "value": "住居の建設"
+    }
+  ],
+  "civilization.shelters": [
+    {
+      "type": 0,
+      "value": "住居"
+    }
+  ],
+  "civilization.speed": [
+    {
+      "type": 0,
+      "value": "進行速度"
+    }
+  ],
+  "civilization.suppliesFocus": [
+    {
+      "type": 0,
+      "value": "物資"
+    }
+  ],
+  "civilization.toolmaking": [
+    {
+      "type": 0,
+      "value": "道具の製作"
+    }
+  ],
+  "civilization.tools": [
+    {
+      "type": 0,
+      "value": "道具"
+    }
+  ],
+  "civilization.tradeFocus": [
+    {
+      "type": 0,
+      "value": "遠征"
+    }
+  ],
+  "civilization.unlock": [
+    {
+      "type": 0,
+      "value": "必要な周期数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "、対象："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.upcoming": [
+    {
+      "type": 0,
+      "value": "次の活動"
+    }
+  ],
+  "civilization.waiting": [
+    {
+      "type": 0,
+      "value": "待機中"
+    }
+  ],
+  "civilization.waitingDemand": [
+    {
+      "type": 0,
+      "value": "需要を満たしています。追加の生産が必要になるまで作業員は別の仕事を支援します。"
+    }
+  ],
+  "civilization.waitingHousing": [
+    {
+      "type": 0,
+      "value": "住居を待機中"
+    }
+  ],
+  "civilization.waitingInputs": [
+    {
+      "type": 0,
+      "value": "待機："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.waitingRange": [
+    {
+      "type": 0,
+      "value": "在庫が生産物を受け取れません"
+    }
+  ],
+  "civilization.waitingWorkers": [
+    {
+      "type": 0,
+      "value": "働き手を待機中"
+    }
+  ],
+  "civilization.workers": [
+    {
+      "type": 0,
+      "value": "労働者"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -1334,7 +2004,7 @@
   "discovery.resetRule": [
     {
       "type": 0,
-      "value": "インフィニティとクアンタムでは保持され、超越でリセットされます。"
+      "value": "無限を経ても保持。超越でリセット。"
     }
   ],
   "discovery.route": [
@@ -4373,6 +5043,702 @@
       "value": "ガレージで工作"
     }
   ],
+  "farming.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": "："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.automatic": [
+    {
+      "type": 0,
+      "value": "村の計画に従って自動で建設。"
+    }
+  ],
+  "farming.averageLabor": [
+    {
+      "type": 0,
+      "value": "労働は時間を通じて分配されます。おおよその平均値には小数が含まれますが、労働者総数は整数の人数です。"
+    }
+  ],
+  "farming.balanced": [
+    {
+      "type": 0,
+      "value": "均衡"
+    }
+  ],
+  "farming.begin": [
+    {
+      "type": 0,
+      "value": "農耕集落を始める"
+    }
+  ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "狩猟採集時代と農耕集落は完了しました。続きは近日公開です。"
+    }
+  ],
+  "farming.boost": [
+    {
+      "type": 0,
+      "value": "実際の亀裂：+"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "farming.build": [
+    {
+      "type": 0,
+      "value": "穀倉を建てる"
+    }
+  ],
+  "farming.buy": [
+    {
+      "type": 0,
+      "value": "購入"
+    }
+  ],
+  "farming.cap": [
+    {
+      "type": 0,
+      "value": "貯蔵が満杯です。食料を消費するか穀倉を建てるまで畑は停止します。"
+    }
+  ],
+  "farming.capacity": [
+    {
+      "type": 0,
+      "value": "食料貯蔵"
+    }
+  ],
+  "farming.closed": [
+    {
+      "type": 0,
+      "value": "終了"
+    }
+  ],
+  "farming.compactStorage": [
+    {
+      "type": 0,
+      "value": "貯蔵160"
+    }
+  ],
+  "farming.complete": [
+    {
+      "type": 0,
+      "value": "集落が成立"
+    }
+  ],
+  "farming.connection": [
+    {
+      "type": 0,
+      "value": "交易路"
+    }
+  ],
+  "farming.constructed": [
+    {
+      "type": 0,
+      "value": "建設済みの改良"
+    }
+  ],
+  "farming.crew": [
+    {
+      "type": 0,
+      "value": "平均配分労働力"
+    }
+  ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "今後の畑の収穫で食料が20%増加します。水道設備の効果に加えて、住宅の劣化の増加量がさらに20%減少します。"
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "水道設備の建設"
+    }
+  ],
+  "farming.done": [
+    {
+      "type": 0,
+      "value": "完成済み"
+    }
+  ],
+  "farming.era": [
+    {
+      "type": 0,
+      "value": "農耕集落"
+    }
+  ],
+  "farming.export": [
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": "人の残った労働者が、実際の亀裂強化を適用する前に、シミュレーション1分につき食料"
+    },
+    {
+      "type": 1,
+      "value": "food"
+    },
+    {
+      "type": 0,
+      "value": "と資材"
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": "を供給します。以前の在庫はキャンプに残ります。"
+    }
+  ],
+  "farming.failed": [
+    {
+      "type": 0,
+      "value": "操作に失敗しました。再試行してください。"
+    }
+  ],
+  "farming.fields": [
+    {
+      "type": 0,
+      "value": "畑"
+    }
+  ],
+  "farming.finish": [
+    {
+      "type": 0,
+      "value": "集落を完成させる"
+    }
+  ],
+  "farming.finished": [
+    {
+      "type": 0,
+      "value": "維持されている家6軒、交易路6本、都市に向けた3つの改良が完成しました。村は最初の都市に向けて準備が整っています。次の時代はまだ利用できません。"
+    }
+  ],
+  "farming.finite": [
+    {
+      "type": 0,
+      "value": "完成済みです。建設周期は繰り返しません。"
+    }
+  ],
+  "farming.firstHarvest": [
+    {
+      "type": 0,
+      "value": "最初の収穫"
+    }
+  ],
+  "farming.focus": [
+    {
+      "type": 0,
+      "value": "労働力の重点"
+    }
+  ],
+  "farming.focusEffect": [
+    {
+      "type": 0,
+      "value": "補給は維持費を抑えて在庫を優先しますが、風化が増えます。成長は建設と回復を優先します。遠征は集会所完成後に交易便を優先し、それ以前は均衡した労働配分を使います。"
+    }
+  ],
+  "farming.fullFood": [
+    {
+      "type": 0,
+      "value": "食料："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    }
+  ],
+  "farming.goods": [
+    {
+      "type": 0,
+      "value": "商品"
+    }
+  ],
+  "farming.granaries": [
+    {
+      "type": 0,
+      "value": "穀倉"
+    }
+  ],
+  "farming.granary": [
+    {
+      "type": 0,
+      "value": "穀倉"
+    }
+  ],
+  "farming.granaryDetails": [
+    {
+      "type": 0,
+      "value": "穀倉の費用と詳細"
+    }
+  ],
+  "farming.granaryEffect": [
+    {
+      "type": 0,
+      "value": "穀倉1棟につき食料容量が160増加します。手動で即座に購入でき、修復予定の資材と道具の予備は保持されます。"
+    }
+  ],
+  "farming.granaryFirstHome": [
+    {
+      "type": 0,
+      "value": "最初の家が完成すると利用可能。"
+    }
+  ],
+  "farming.granaryInactive": [
+    {
+      "type": 0,
+      "value": "村が支払済みの作業を終えるまで購入できません。"
+    }
+  ],
+  "farming.granaryInputs": [
+    {
+      "type": 0,
+      "value": "材料か道具が不足しています。購入は即時です。"
+    }
+  ],
+  "farming.granaryMaximum": [
+    {
+      "type": 0,
+      "value": "穀物庫の所有上限に到達。"
+    }
+  ],
+  "farming.granaryRepairReserve": [
+    {
+      "type": 0,
+      "value": "材料と道具は、予定されている家の修理用に確保されています。"
+    }
+  ],
+  "farming.growth": [
+    {
+      "type": 0,
+      "value": "成長"
+    }
+  ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "今後の商品生産は資材6と63人秒で商品3を生産します。支払い済みの生産は元のレシピを維持します。"
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "集会所、建設済みの家5軒、交易路3本"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "ギルド工房"
+    }
+  ],
+  "farming.hall": [
+    {
+      "type": 0,
+      "value": "集会所"
+    }
+  ],
+  "farming.hallNeeded": [
+    {
+      "type": 0,
+      "value": "家屋4棟、牧草地、水利施設"
+    }
+  ],
+  "farming.handoff": [
+    {
+      "type": 0,
+      "value": "3人の開拓者が新しい集落へ移ります。残ったキャンプは在庫を保有し、食料と資材を供給します。支払い済みの作業は移行前に完了します。"
+    }
+  ],
+  "farming.home": [
+    {
+      "type": 0,
+      "value": "家屋 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.homeEffect": [
+    {
+      "type": 0,
+      "value": "維持できている家屋1棟につき住民が2人増えます。風化100で維持を失い、修復には元の資材、道具、労働量が必要です。"
+    }
+  ],
+  "farming.homes": [
+    {
+      "type": 0,
+      "value": "家屋"
+    }
+  ],
+  "farming.homesCount": [
+    {
+      "type": 0,
+      "value": "維持できている家屋"
+    }
+  ],
+  "farming.housingWeathering": [
+    {
+      "type": 0,
+      "value": "住居の劣化"
+    }
+  ],
+  "farming.inputs": [
+    {
+      "type": 0,
+      "value": "サイクルのコスト"
+    }
+  ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "集約農業"
+    }
+  ],
+  "farming.kiln": [
+    {
+      "type": 0,
+      "value": "窯"
+    }
+  ],
+  "farming.kilnNeeded": [
+    {
+      "type": 0,
+      "value": "窯の完成"
+    }
+  ],
+  "farming.limit": [
+    {
+      "type": 0,
+      "value": "上限"
+    }
+  ],
+  "farming.locked": [
+    {
+      "type": 0,
+      "value": "未解放"
+    }
+  ],
+  "farming.lost": [
+    {
+      "type": 0,
+      "value": "家屋1棟が維持できなくなりました。修復すると住民が戻ります。開拓者は残ります。"
+    }
+  ],
+  "farming.manual": [
+    {
+      "type": 0,
+      "value": "続けるには穀倉を建ててください。貯蔵時間はここで停止し、残りを保持します。"
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "今後の輸送は1,512人秒を必要とし、資材100を獲得します。家6軒と交易路6本で都市への準備が整います。"
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "集約農業、ギルド工房、建設済みの家5軒、交易路3本"
+    }
+  ],
+  "farming.missingInputs": [
+    {
+      "type": 0,
+      "value": "不足："
+    },
+    {
+      "type": 1,
+      "value": "inputs"
+    }
+  ],
+  "farming.need": [
+    {
+      "type": 0,
+      "value": "不足"
+    }
+  ],
+  "farming.needsInputs": [
+    {
+      "type": 0,
+      "value": "材料不足"
+    }
+  ],
+  "farming.next": [
+    {
+      "type": 0,
+      "value": "現在の計画："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "farming.nextPrice": [
+    {
+      "type": 0,
+      "value": "次の価格"
+    }
+  ],
+  "farming.oneGranary": [
+    {
+      "type": 0,
+      "value": "穀倉1棟"
+    }
+  ],
+  "farming.outputs": [
+    {
+      "type": 0,
+      "value": "サイクルの生産"
+    }
+  ],
+  "farming.owned": [
+    {
+      "type": 0,
+      "value": "所有数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.paid": [
+    {
+      "type": 0,
+      "value": "投入資源はすでに確保済みです。重点を変えると労働力が移り、再び支払うことはありません。"
+    }
+  ],
+  "farming.paidStatus": [
+    {
+      "type": 0,
+      "value": "支払い済み周期"
+    }
+  ],
+  "farming.pasture": [
+    {
+      "type": 0,
+      "value": "牧草地"
+    }
+  ],
+  "farming.pendingFinish": [
+    {
+      "type": 0,
+      "value": "集落の支払い済み周期を完了しています。"
+    }
+  ],
+  "farming.pendingSkill": [
+    {
+      "type": 0,
+      "value": "この節目は既存のスキルツリーに対象の選択肢が現れるか、触媒の保有量に空きができるまで待機します。"
+    }
+  ],
+  "farming.production": [
+    {
+      "type": 0,
+      "value": "生産"
+    }
+  ],
+  "farming.repair": [
+    {
+      "type": 0,
+      "value": "修復する家屋 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.reserved": [
+    {
+      "type": 0,
+      "value": "確保済み"
+    }
+  ],
+  "farming.risk": [
+    {
+      "type": 0,
+      "value": "住居に危険"
+    }
+  ],
+  "farming.settings": [
+    {
+      "type": 0,
+      "value": "集落の設定"
+    }
+  ],
+  "farming.settling": [
+    {
+      "type": 0,
+      "value": "集落が始まる前に、採集キャンプの支払い済み作業を完了しています。"
+    }
+  ],
+  "farming.ship": [
+    {
+      "type": 0,
+      "value": "交易便"
+    }
+  ],
+  "farming.shop": [
+    {
+      "type": 0,
+      "value": "購入"
+    }
+  ],
+  "farming.skillLimit": [
+    {
+      "type": 0,
+      "value": "農耕集落専用の亀裂はまだ設計されていません。この6つの節目は既存の触媒保有量と対象スキルを利用します。未使用の触媒では加速しません。"
+    }
+  ],
+  "farming.source": [
+    {
+      "type": 0,
+      "value": "残された採集キャンプ"
+    }
+  ],
+  "farming.stage": [
+    {
+      "type": 0,
+      "value": "集落の進捗"
+    }
+  ],
+  "farming.storageGain": [
+    {
+      "type": 0,
+      "value": "購入ごとに食料貯蔵+160 · 合計："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.supplies": [
+    {
+      "type": 0,
+      "value": "物資"
+    }
+  ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "町の市場"
+    }
+  ],
+  "farming.travel": [
+    {
+      "type": 0,
+      "value": "遠征"
+    }
+  ],
+  "farming.upcoming": [
+    {
+      "type": 0,
+      "value": "まだ利用できません"
+    }
+  ],
+  "farming.village": [
+    {
+      "type": 0,
+      "value": "集落"
+    }
+  ],
+  "farming.waiting": [
+    {
+      "type": 0,
+      "value": "有効な需要または十分な投入資源を待っています。"
+    }
+  ],
+  "farming.waterworks": [
+    {
+      "type": 0,
+      "value": "水利施設"
+    }
+  ],
+  "farming.weatherHelp": [
+    {
+      "type": 0,
+      "value": "バランスは劣化を毎分1減少、物資は毎分2増加、成長は毎分4減少、旅は毎分4増加させます。水道設備は増加を40%減らし、集約農業は残りの増加をさらに20%減らします。75で住宅が危険になり、100で家1軒の住民が失われ、劣化が40に戻ります。"
+    }
+  ],
+  "farming.weathering": [
+    {
+      "type": 0,
+      "value": "風化"
+    }
+  ],
+  "farming.woodlot": [
+    {
+      "type": 0,
+      "value": "林地"
+    }
+  ],
+  "farming.work": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 人秒"
+    }
+  ],
+  "farming.workers": [
+    {
+      "type": 0,
+      "value": "労働者"
+    }
+  ],
+  "farming.workshop": [
+    {
+      "type": 0,
+      "value": "工房"
+    }
+  ],
+  "farming.yield": [
+    {
+      "type": 0,
+      "value": "輸送は食料350と商品35を消費し、資材"
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": "と交易路1本を獲得します。交易路6本、維持されている家6軒、都市に向けた改良でこの時代が完了します。"
+    }
+  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -5703,6 +7069,324 @@
     {
       "type": 0,
       "value": "シミュレートした時間"
+    }
+  ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "チャレンジを中止"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "白紙の出発"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "スキル、強化、破砕効果が無効の状態でインフィニティを1回達成します。"
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "「ループを破る」が必要です。"
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "チャレンジ報酬："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SP"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "手動労働"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "施設とボットの自動生産なしでインフィニティを1回達成します。手動労働を一時的に利用できます。"
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "決断の重み"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "インフィニティのリセット時も含め、挑戦全体でポイントの返還や構成の入れ替えをせずに32 IPを獲得します。"
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "インフィニティチャレンジ"
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "再開始を確認"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "獲得済み："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 永続SP"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "チャレンジを開始または保存できませんでした。現在の進行は保持されています。"
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "最初のインフィニティを達成してください。"
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "地に足をつけて"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "惑星と巨大構造物なしで32 IPを獲得します。惑星の目標はデータセンター100個の購入に変わります。"
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "手出し無用"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "施設の購入とTinkerなしで32 IPを獲得します。組立ライン1つと惑星を生成する構成で開始します。"
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "以前のチャレンジ完了数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "。過去の報酬は保持されます。この試行版では補償は適用されません。"
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "各挑戦は新しいインフィニティから始まります。挑戦中に獲得したIPだけが数えられます。各チャレンジの初回クリアで、永続SPを一度だけ獲得できます。"
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "最小構成"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "割り当てたスキルを4 SP以内に抑えて16 IPを獲得します。ポイントの返還は可能です。"
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "科学なし"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "サイエンス、研究、発見なしで32 IPを獲得します。"
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "進行中のチャレンジを完了するか中止してください。"
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "先に超越を完了してください。"
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "挑戦中 · "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IP獲得 · インフィニティ"
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": "回"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "有料で購入した施設："
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · 種類："
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "再挑戦"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "IPを獲得せずに新しいインフィニティを始めます。永続的な文明の進捗、アップグレード、報酬履歴、所有する破砕は保持されます。中止すると挑戦の進捗を破棄し、通常の効果に戻ります。"
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "報酬："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 永続SP"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "以前のIPは生産倍率に含まれません。除算、ゲーム内のインフィニティポイント2倍、発見、永続的な破砕効果は無効ですが、購入済みのブーストは有効です。挑戦中はインフィニティショップで購入できません。多くの挑戦は10 SPと目標報酬で始まります。白紙の出発と手動労働は0 SP、最小構成は4 SPで始まります。挑戦はインフィニティをまたいで継続します。超越すると未完了の挑戦は破棄され、そのSPは獲得できません。再挑戦で追加のSPは獲得できません。"
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "挑戦のルールと報酬"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "ショート回路"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "パネル寿命を2秒に固定して64 IPを獲得します。"
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "開始"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "供給不足"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "購入価格が倍増する状態で64 IPを獲得し、3種類にわたる10個の施設を有料で購入します。生成された施設と無料の施設は数えられません。"
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "インフィニティチャレンジ"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "累計"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IPの獲得が必要です。"
     }
   ],
   "pwa.update.accept": [
@@ -7931,6 +9615,154 @@
     {
       "type": 0,
       "value": "プリセットのクイック操作を常に表示"
+    }
+  ],
+  "rework.action.failed": [
+    {
+      "type": 0,
+      "value": "変更を保存できませんでした。もう一度お試しください。"
+    }
+  ],
+  "rework.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "rework.challenges.completed": [
+    {
+      "type": 0,
+      "value": "過去の達成回数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "rework.challenges.history": [
+    {
+      "type": 0,
+      "value": "獲得済みの報酬と達成記録は保持されます。"
+    }
+  ],
+  "rework.challenges.pending": [
+    {
+      "type": 0,
+      "value": "チャレンジは再設計中です。"
+    }
+  ],
+  "rework.civilization": [
+    {
+      "type": 0,
+      "value": "文明"
+    }
+  ],
+  "rework.infinity.advanced": [
+    {
+      "type": 0,
+      "value": "高度なアップグレード"
+    }
+  ],
+  "rework.infinity.double-time.description": [
+    {
+      "type": 0,
+      "value": "ゲーム速度が2倍になります。"
+    }
+  ],
+  "rework.infinity.double-time.title": [
+    {
+      "type": 0,
+      "value": "ダブルタイム"
+    }
+  ],
+  "rework.infinity.regular": [
+    {
+      "type": 0,
+      "value": "無限アップグレード"
+    }
+  ],
+  "rework.migration.description": [
+    {
+      "type": 0,
+      "value": "同等のアップグレードと断裂を保持するか、高度なアップグレードを再び獲得してください。再獲得を選ぶと断裂とその拡張を削除しますが、基本ゲーム、IP、超越、発見、購入内容は保持します。"
+    }
+  ],
+  "rework.migration.fresh": [
+    {
+      "type": 0,
+      "value": "アップグレードを再獲得"
+    }
+  ],
+  "rework.migration.intro": [
+    {
+      "type": 0,
+      "value": "進行システムを作り直しています。Quantum、Reality、旧Simsは廃止されました。有用なアップグレードはInfinityに移り、文明Simsは触媒の購入に使う資源を生産します。"
+    }
+  ],
+  "rework.migration.keep": [
+    {
+      "type": 0,
+      "value": "同等の進行を保持"
+    }
+  ],
+  "rework.migration.title": [
+    {
+      "type": 0,
+      "value": "みなさん、開発者です"
+    }
+  ],
+  "rework.simulations.details": [
+    {
+      "type": 0,
+      "value": "時代の資源で触媒を購入できるようになります。永続的なフラクチャーは各文明を加速させます。"
+    }
+  ],
+  "rework.simulations.pending": [
+    {
+      "type": 0,
+      "value": "文明の進行は次に実装されます。"
+    }
+  ],
+  "rework.transcend": [
+    {
+      "type": 0,
+      "value": "超越する"
+    }
+  ],
+  "rework.transcend.balance": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 超越ポイント"
+    }
+  ],
+  "rework.transcend.confirm": [
+    {
+      "type": 0,
+      "value": "超越を確定"
+    }
+  ],
+  "rework.transcend.confirmation": [
+    {
+      "type": 0,
+      "value": "基本生産とInfinityアップグレードをリセットして超越ポイントを1獲得しますか？分裂、文明の進行状況、Discoveryアップグレードは維持されます。"
+    }
+  ],
+  "rework.transcend.threshold": [
+    {
+      "type": 0,
+      "value": "超越するには "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ボットに到達する必要があります。"
     }
   ],
   "settings.achievements.action": [
@@ -10684,7 +12516,7 @@
   "skills.node.androids.technical": [
     {
       "type": 0,
-      "value": "「アンドロイド」スキルの割り当て中は、10分かけてパネル寿命ボーナスが0秒から200秒まで上昇します。\nインフィニティまたは量子跳躍でリセットされます。"
+      "value": "アンドロイドのスキルを割り当てると、10分間でパネル寿命のボーナスが0秒から200秒まで増加します。\n無限でリセット。"
     }
   ],
   "skills.node.artificiallyEnhancedPanels.description": [
@@ -12124,7 +13956,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "このスキルが割り当てられている間、資金、科学、ボット、およびすべての施設の生産量が毎秒1%増加します。ボーナスは加算されます。蓄積時間のシミュレーション中も蓄積し、インフィニティまたは量子跳躍でリセットされます。"
+      "value": "割り当て中、現金、科学、ボット、全施設の生産が毎秒1%増加します。ボーナスは加算。蓄積時間のシミュレーション中も充電され、無限でリセット。"
     }
   ],
   "skills.node.superSwarm.description": [
@@ -12502,7 +14334,7 @@
   "skills.non-refundable-confirmation-warning": [
     {
       "type": 0,
-      "value": "返還不可のスキルとその前提スキルは、無限またはクアンタムのリセットまで返還できません。続けますか？"
+      "value": "返還不可のスキルとその前提経路は無限リセットまで返還できません。続行しますか？"
     }
   ],
   "skills.none": [
@@ -13100,7 +14932,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "インフィニティ後にSRSチャージの10%を引き継ぎます。星の記憶で増幅され、引き継ぎ率は最大50%です。ホットスタートに加算されます。量子跳躍では引き継いだチャージが消去されます。"
+      "value": "無限を経てもSRS充電の10%を保持します。恒星の記憶により最大50%まで増加し、ホットスタートと加算されます。"
     }
   ],
   "skills.srs.afterglow.name": [
@@ -13118,7 +14950,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "この拡張の割り当て中、1分ごとにSRSチャージ速度が10%増加し、20分後に最大200%になります。星の記憶がこのボーナスを増幅します。インフィニティまたは量子跳躍でリセットされます。ボーナスは加算されます。"
+      "value": "この拡張を割り当てた1分ごとにSRS充電速度が10%増加し、20分後に最大200%になります。恒星の記憶がこれらのボーナスを乗算します。無限でリセットされ、ボーナスは加算されます。"
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -13208,7 +15040,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "無限または量子リセット時、新たに生成したSRSチャージを蓄積します。ホットスタートと残光は含みません。割り当て中、SRSオーグメントの効果を1 + 0.25 × log10(max(1, 蓄積秒数))倍にします。"
+      "value": "無限リセット時に、ホットスタートと残光を除いた新たなSRS充電を蓄積します。割り当て中はSRS拡張の効果を1 + 0.25 × log10(max(1, 蓄積秒数))倍にします。"
     }
   ],
   "skills.srs.stellarMemory.name": [
@@ -13602,7 +15434,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "インフィニティ後も購入した施設を保持します。リセット前に割り当てると購入分が自動で戻ります。無料の初期施設は累積しません。クアンタムで備蓄が消えます。"
+      "value": "無限を経ても購入した施設を保持します。リセット前に割り当てると購入内容が自動復元されます。無料の初期ユニットは蓄積しません。超越で供給を消去します。"
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -14376,7 +16208,7 @@
   "statistics.scope.quantum-run": [
     {
       "type": 0,
-      "value": "現在の量子周回"
+      "value": "現在の周回"
     }
   ],
   "statistics.speedruns.boostedBest": [
@@ -15875,27 +17707,13 @@
       "children": [
         {
           "type": 0,
-          "value": "インフィニティ"
+          "value": "無限"
         }
       ]
     },
     {
       "type": 0,
-      "value": "、"
-    },
-    {
-      "type": 8,
-      "value": "quantum",
-      "children": [
-        {
-          "type": 0,
-          "value": "クアンタム"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "、チャレンジで保持されます。"
+      "value": "を経ても保持されます。"
     },
     {
       "type": 8,
@@ -15909,7 +17727,7 @@
     },
     {
       "type": 0,
-      "value": "ではレベルと進行がリセットされますが、解放状態と恒久アップグレードは残ります。貯蔵時間を使うと発見も進みます。不在中の時間は蓄積され、発見には自動適用されません。"
+      "value": "はレベルと進行をリセットしますが、解放と永続アップグレードは保持します。蓄積時間を使うと発見が進みます。不在時間は蓄積され、発見には自動適用されません。"
     }
   ],
   "wiki.discovery.resets-title": [
@@ -16373,21 +18191,21 @@
   "wiki.infinity.secrets": [
     {
       "type": 0,
-      "value": "1回の"
+      "value": "ゲームの"
     },
     {
       "type": 8,
-      "value": "quantum",
+      "value": "infinity",
       "children": [
         {
           "type": 0,
-          "value": "量子跳躍"
+          "value": "無限"
         }
       ]
     },
     {
       "type": 0,
-      "value": "後、"
+      "value": "では、"
     },
     {
       "type": 8,
@@ -16395,13 +18213,13 @@
       "children": [
         {
           "type": 0,
-          "value": "シークレット"
+          "value": "秘密"
         }
       ]
     },
     {
       "type": 0,
-      "value": "アップグレードが生命の意味を1文字ずつ明かし、恒久的な隠し生産効果を与えます。"
+      "value": "アップグレードが生命の意味を1文字ずつ明かし、永続的な隠れた生産ボーナスを与えます。"
     }
   ],
   "wiki.infinity.secrets-title": [
@@ -16825,7 +18643,7 @@
   "wiki.other.offline-results": [
     {
       "type": 0,
-      "value": "完了すると、シミュレーション時間、残りの貯蓄、最終精度、実際の更新回数が表示されます。関連するインフィニティ、シミュレーション、リアリティの獲得量も表示されます。施設とボットの獲得量はインフィニティが発生しなかった場合のみ表示されます。リセットと再構築があると単純な前後比較が誤解を招くためです。"
+      "value": "完了した実行にはシミュレーション時間、残りの蓄積時間、最終精度、実際の更新回数と無限の獲得量が表示されます。施設とボットの増加は無限が起きなかった場合のみ表示されます。リセットと再構築により単純な前後比較が誤解を招くためです。"
     }
   ],
   "wiki.other.offline-results-title": [
@@ -18387,7 +20205,7 @@
   "wiki.skills.auto-assign": [
     {
       "type": 0,
-      "value": "自動割り当てに含めるスキルは個別に変更できます。ツリーは順番を記憶し、"
+      "value": "個々のスキルを自動割り当てに含めたり除外したりできます。ツリーは割り当て順を記憶し、"
     },
     {
       "type": 8,
@@ -18395,27 +20213,13 @@
       "children": [
         {
           "type": 0,
-          "value": "インフィニティ"
+          "value": "無限"
         }
       ]
     },
     {
       "type": 0,
-      "value": "または"
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "量子"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "リセット後に配置を再構築します。ツリーのリセットは現在の自動割り当てキューを消去します。プリセットは完全な配置を保存します。"
+      "value": "後に構成を再構築します。ツリーのリセットは現在の自動割り当てキューを消去します。プリセットは構成全体を保存します。"
     }
   ],
   "wiki.skills.auto-assign-title": [
@@ -18793,7 +20597,7 @@
     },
     {
       "type": 0,
-      "value": "に到達したらアボカトで超越し、以前のレイヤーをリセットして"
+      "value": "に達したら、Avocatoタブから超越して以前の層をリセットし、"
     },
     {
       "type": 8,
@@ -18807,7 +20611,7 @@
     },
     {
       "type": 0,
-      "value": "獲得できます。1ポイントで"
+      "value": "獲得できます。そのタブで1ポイントを使い"
     },
     {
       "type": 8,
@@ -18821,7 +20625,7 @@
     },
     {
       "type": 0,
-      "value": "すると、科学と研究が恒久的に置き換わります。既存の科学や研究レベルは引き継がれません。"
+      "value": "すると、科学と研究を永続的に置き換えます。既存の科学と研究レベルは引き継がれません。"
     }
   ],
   "wiki.transcendence.overview-title": [

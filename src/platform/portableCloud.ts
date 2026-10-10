@@ -74,7 +74,7 @@ export class CloudStartupResolver implements StartupSaveResolver {
         packSettingsFlags(source)
         selected = selected.withValidatedState(source)
       }
-      const committed = await this.repository.commit(selected)
+      const committed = await this.repository.commit(selected, 'development', remote.text)
       // Acknowledge the downloaded primary even when a backup supplied the
       // recovered save: this is the remote version the player resolved.
       await this.cloud.acknowledge(text)

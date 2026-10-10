@@ -226,6 +226,10 @@ export interface BrowserRuntimeFoundationOptions {
   readonly saveStorage?: SaveStorageAdapter & BrowserLegacyRecoveryStore
   readonly saveRepositoryPaths?: SaveRepositoryPaths
   readonly allowCanonicalPlayerWrites?: boolean
+  /** Deployment hold checked before leases, host ownership and recovery. */
+  readonly savePublicationBlockReason?: string
+  /** Verifies the native root before acquiring ownership or reading any save. */
+  readonly verifySaveStorage?: () => Promise<void>
   readonly indexedDbFactory?: IDBFactory
   /** Deterministic lifecycle orchestration test seam. */
   readonly lifecycle?: LifecycleAdapter
@@ -903,7 +907,9 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       )
       this.assertCurrentGraph(graph)
       this.publishFrontendSnapshot(graph)
-      return result.committed
+      // Restore may verify ownership that is already projected. No write is
+      // required for an accepted unchanged state; rejected/failed writes fail.
+      return result.committed || (result.transition.accepted && !result.transition.changed)
     } catch {
       return false
     }
@@ -1465,6 +1471,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     this.frontendSnapshots.publishStarting()
     this.publish({ phase: 'starting' })
     try {
+      if (this.options.savePublicationBlockReason !== undefined) {
+        throw new Error(this.options.savePublicationBlockReason)
+      }
+      await this.options.verifySaveStorage?.()
       const acquisition = await this.lease.acquire()
       if (this.shutdownRequested) {
         await this.teardownPromise
@@ -1625,6 +1635,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       {
         allowCanonicalPlayerWrites:
           this.options.allowCanonicalPlayerWrites === true,
+        publicationBlockReason: this.options.savePublicationBlockReason,
       },
       this.options.automaticPurchaseEvidencePromoter,
       this.options.automaticNumberFormattingAdopter,

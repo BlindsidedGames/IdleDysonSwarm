@@ -212,6 +212,23 @@ describe('native host bootstrap boundary', () => {
       .toBe('desktop-native')
   })
 
+  test('refuses an unisolated native host before files, ownership or Cloud access', async () => {
+    const bridge = fakeBridge()
+    bridge.metadata.mockResolvedValue({ applicationVersion: '4.0.0', buildNumber: '2026080200' } as Awaited<ReturnType<NativeHostBridgeApi['metadata']>>)
+    const composition = createProductionNativeComposition(createNativeHostEnvironment(bridge), {
+      createRuntime: options => createBrowserRuntimeFoundation({ ...options, storageManager: {} }),
+    })
+    await expect(composition.runtime.start()).resolves.toMatchObject({
+      phase: 'blocked', reason: expect.stringContaining('native beta storage policy'),
+    })
+    expect(bridge.metadata).toHaveBeenCalledOnce()
+    expect(bridge.exists).not.toHaveBeenCalled()
+    expect(bridge.discoverUnitySaves).not.toHaveBeenCalled()
+    expect(bridge.readEntitlements).not.toHaveBeenCalled()
+    expect(bridge.writeText).not.toHaveBeenCalled()
+    await composition.runtime.shutdown()
+  })
+
   test('injects rooted native saves, lifecycle and Store services into the native graph', async () => {
     const bridge = fakeBridge()
     const environment = createNativeHostEnvironment(bridge)
@@ -645,9 +662,11 @@ function fakeBridge() {
     discoverUnitySaves: vi.fn(async () => []),
     currentLifecyclePhase: vi.fn(() => 'active' as const),
     subscribeLifecycle: vi.fn(() => () => undefined),
-    metadata: vi.fn(async () => ({
+    metadata: vi.fn(async (): Promise<Awaited<ReturnType<NativeHostBridgeApi['metadata']>>> => ({
       applicationVersion: '4.0.0',
       buildNumber: '2026080200',
+      saveStorageNamespace: 'idleds-rework-beta-v1', entitlementCacheNamespace: 'rework-beta-v1',
+      cloudSavesEnabled: false, automaticUnityDiscoveryEnabled: false,
     })),
     exportDiagnostics: vi.fn(async () => ({ exported: true as const })),
     storeProducts: vi.fn(async () => []),

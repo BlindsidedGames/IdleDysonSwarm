@@ -26,7 +26,7 @@ export type CanonicalPlayerCommandKind =
 export const CANONICAL_PLAYER_COMMAND_SUPPORT = Object.freeze({
   ...CANONICAL_GAME_COMMAND_SUPPORT,
   'challenge.enter': { supported: true, authority: 'restartInfinityChallenge' },
-  'challenge.enter-trial-and-error': { supported: true, authority: 'restartInfinityChallenge' },
+  'challenge.enter-trial-and-error': { supported: false, authority: 'restartInfinityChallenge' },
   'challenge.enter-blank-slate': { supported: true, authority: 'restartInfinityChallenge' },
   'challenge.enter-no-science': { supported: true, authority: 'restartInfinityChallenge' },
   'challenge.abandon': { supported: true, authority: 'restartInfinityChallenge' },

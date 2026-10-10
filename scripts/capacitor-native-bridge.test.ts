@@ -49,7 +49,7 @@ describe('Capacitor first-party native bridge', () => {
 
   it('roots Web writes separately and keeps Unity discovery read-only', () => {
     for (const source of [android, ios]) {
-      expect(source).toContain('web-runtime-v1')
+      expect(source).toContain('idleds-rework-beta-v1')
       expect(source).toContain('idle_dyson_swarm_save.txt')
       expect(source).toContain('unity-readonly:')
       expect(source).toContain('automatic-same-device-unity')

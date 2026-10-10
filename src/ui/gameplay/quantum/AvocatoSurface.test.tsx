@@ -12,13 +12,10 @@ const rejected = { status: 'rejected' } as Result
 
 function setup(dispatchPlayer: AvocatoSurfaceProps['dispatchPlayer'], eligible = true) {
   return render(<IntlProvider locale="en" messages={{}}>
-    <AvocatoSurface locale="en" unlocked
+    <AvocatoSurface locale="en"
       resources={{ infinityPoints: 1000, influence: 1000, strangeMatter: 1000, overflowMultiplier: 3, overflowPoints: 0n }}
-      spendable={{ infinityPoints: 0n, influence: 0, strangeMatter: 0 }}
-      derived={{ infinityPoints: 3, influence: 3, strangeMatter: 3, overflow: 4, total: 108 }}
-      previews={{ feeds: [], overflow: { eligible, threshold: 4e242 },
-        meditation: { eligible: false, requiredStepIndex: null, code: 'already-completed', skillPointReward: 0n } }}
-      commandAvailability={{ feed: true, overflowReset: true }} dispatchPlayer={dispatchPlayer} />
+      previews={{ overflow: { eligible, threshold: 4e242 } }}
+      commandAvailability={{ overflowReset: true }} dispatchPlayer={dispatchPlayer} />
   </IntlProvider>)
 }
 
@@ -27,9 +24,9 @@ describe('Avocato Overflow confirmation', () => {
     let complete!: (value: Result) => void
     const dispatch = vi.fn<AvocatoSurfaceProps['dispatchPlayer']>(() => new Promise((resolve) => { complete = resolve }))
     setup(dispatch)
-    expect(screen.queryByText(/Reality and Simulation progress/)).toBeNull()
+    expect(screen.queryByText(/Reset base production and Infinity upgrades/)).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Transcend for 1 point' }))
-    expect(screen.getByText(/Reality and Simulation progress/)).not.toBeNull()
+    expect(screen.getByText(/Reset base production and Infinity upgrades/)).not.toBeNull()
     expect(dispatch).not.toHaveBeenCalled()
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(dispatch).not.toHaveBeenCalled()

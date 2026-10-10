@@ -4,7 +4,7 @@ import { referenceSerializeWebSave } from '../../scripts/support/allocationOptim
 import { deserializeWebSave, serializeWebSave } from './serialization'
 import type { SaveRecord } from './graph'
 
-test('optimized encoding retains exact compressed bytes for every progression fixture', () => {
+test('optimized encoding matches independent canonical encoding for every historical progression fixture', () => {
   const directory = new URL('../../test/fixtures/progression/', import.meta.url)
   for (const filename of readdirSync(directory).filter((name) => name.endsWith('.idsweb1.txt'))) {
     const state = deserializeWebSave(readFileSync(new URL(filename, directory), 'utf8'))

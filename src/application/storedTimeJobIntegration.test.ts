@@ -1,3 +1,5 @@
+import { advanceCivilization } from '../simulation/civilization'
+import { startFarming, buyFarmingGranary, farmingCanBuyGranary } from '../simulation/farming'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
@@ -34,6 +36,30 @@ const prepared = prepareIdb1Save(readFileSync(
 )).prepared
 
 describe('Stored Time job application integration', () => {
+  test.each([false,true])('Farming manual Granary stops a real worker spend before bank charge (Double Time %s)', async doubleTime => {
+    const repository=new MemoryRepository(),application=createApplication(repository,simulationRunner())
+    await application.start();await installStoredBank(application,2000)
+    const initial=application.snapshot();if(initial.phase!=='ready')throw Error('Application not ready')
+    const candidate=structuredClone(initial.state) as CanonicalRuntimeState
+    const opted={...candidate.gameState,meta:{...candidate.gameState.meta,reworkMigrationChoice:'keep' as const},timeline:{...candidate.gameState.timeline,doubleTime:{...candidate.gameState.timeline.doubleTime,unlocked:doubleTime}}}
+    const village=startFarming(advanceCivilization(opted,7200))!
+    Object.assign(candidate,{gameState:village})
+    await expect(application.commitAwayReplacement({sessionRevision:initial.revision.session,expectedStateRevision:initial.revision.state},candidate)).resolves.toMatchObject({committed:true})
+    const spend=async()=>{const snap=application.snapshot();if(snap.phase!=='ready')throw Error('Application not ready');return application.commitStoredTime({sessionRevision:snap.revision.session,expectedStateRevision:snap.revision.state},1000)}
+    const result=await spend();expect(result.committed).toBe(true);expect(result.consumedSeconds).toBeGreaterThan(0);expect(result.consumedSeconds).toBeLessThan(1000);expect(result.remainingSeconds).toBeCloseTo(1000-result.consumedSeconds,7)
+    const gate=application.snapshot();if(gate.phase!=='ready')throw Error('Application not ready')
+    expect(gate.state.gameState.timeline.storedTimeAvailableSeconds).toBeCloseTo(2000-result.consumedSeconds,7)
+    expect(farmingCanBuyGranary(gate.state.gameState.civilization!.farming!)).toBe(true)
+    expect(gate.state.gameState.civilization!.farming!.granaries).toBe(0)
+    const commits=repository.commits
+    await expect(spend()).resolves.toMatchObject({committed:false,consumedSeconds:0,code:'FARMING-MANUAL-ACTION-REQUIRED'})
+    expect(repository.commits).toBe(commits)
+    const bought=buyFarmingGranary(gate.state.gameState as CanonicalRuntimeState['gameState'])!
+    const next=structuredClone(gate.state) as CanonicalRuntimeState;Object.assign(next,{gameState:bought})
+    await application.commitAwayReplacement({sessionRevision:gate.revision.session,expectedStateRevision:gate.revision.state},next)
+    await expect(spend()).resolves.toMatchObject({committed:true,consumedSeconds:1000})
+  },20000)
+
   test('publishes progress but exposes the candidate only after persistence', async () => {
     const repository = new MemoryRepository()
     const runner = simulationRunner()

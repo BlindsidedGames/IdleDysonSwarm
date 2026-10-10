@@ -5,6 +5,9 @@ import { prepareIdb1Save } from '../save/prepare'
 import { DREAM_UPGRADE_FLAGS } from '../game-state/types'
 import { achievementIds } from './ids'
 import { COMPLETION_UPGRADES, evaluateAchievements } from './evaluate'
+import { restartInfinityChallenge } from '../simulation/canonicalInfinityChallengeRestart'
+import { applyCanonicalInfinityReset } from '../simulation/canonicalInfinityReset'
+import { ordinaryInfinityBotThreshold } from '../simulation/infinityCycle'
 const source = hydrateGameState(prepareIdb1Save(readFileSync(new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt',import.meta.url),'utf8')).prepared).state
 function empty() {
   const s = structuredClone(source)
@@ -74,6 +77,16 @@ describe('provider-neutral achievement rules',()=>{
    const s=empty();Object.assign(s.dream.upgrades,Object.fromEntries(COMPLETION_UPGRADES.map(id=>[id,true])))
    for(const missing of COMPLETION_UPGRADES){Object.assign(s.dream.upgrades,{[missing]:false});expect(evaluateAchievements(s,false).unlocked).not.toContain('achievement.simulation_upgrades_complete');Object.assign(s.dream.upgrades,{[missing]:true})}
  })
+})
+
+test('a replacement challenge completion earns the retained first-challenge provider key',()=>{
+ const initial=empty(),ready={...initial,meta:{...initial.meta,firstInfinityComplete:true,reworkMigrationChoice:'keep' as const}}
+ expect(evaluateAchievements(ready,false).unlocked).not.toContain('achievement.first_quantum_challenge')
+ const entered=restartInfinityChallenge(ready,'enter',0n,'blank-slate');if(!entered.ok)throw Error(entered.code)
+ const won=applyCanonicalInfinityReset({...entered.state,dyson:{...entered.state.dyson,bots:ordinaryInfinityBotThreshold(0n)}},{breakInfinity:false,requestedReward:1n,artifactSkillPoints:0n});if(!won.ok)throw Error(won.issues[0]?.code)
+ expect(won.state.challenges!.blankSlateCompleted).toBe(false)
+ expect(won.state.challenges!.replacement!.completedIds).toEqual(['blank-slate'])
+ expect(evaluateAchievements(won.state,false).unlocked).toContain('achievement.first_quantum_challenge')
 })
 
 

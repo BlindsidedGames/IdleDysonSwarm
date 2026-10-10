@@ -12,12 +12,15 @@ const original = prepareIdb1Save(readFileSync(new URL(
   '../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url,
 ), 'utf8')).prepared
 
-test.each(BUY_MODES)('Quantum %s survives canonical checkpoint and portable import', mode => {
-  const session = new CanonicalRuntimeSession(original, { entitlements: {} })
+test.each(BUY_MODES)('legacy Quantum %s survives canonical checkpoint and portable import', mode => {
+  const raw = original.copyState()
+  raw.quantumBuyMode = BUY_MODES.indexOf(mode)
+  const session = new CanonicalRuntimeSession(PreparedSave.fromDecoded(raw), { entitlements: {} })
   const runtime = session.initialState
   const result = routeCanonicalGameCommand(runtime.gameState,
     { kind: 'quantum.set-buy-mode', buyMode: mode })
-  expect(result.accepted).toBe(true)
+  expect(result).toMatchObject({ accepted: false, changed: false, code: 'rework:retired-system' })
+  expect(result.state).toBe(runtime.gameState)
   expect((result.state.quantum.buyMode ?? 'buy-1')).toBe(mode)
   const checkpoint = session.prepare({ ...runtime, gameState: result.state })
   const restored = new CanonicalRuntimeSession(checkpoint, { entitlements: {} })

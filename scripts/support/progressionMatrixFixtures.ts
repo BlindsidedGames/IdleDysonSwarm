@@ -39,7 +39,7 @@ export const MAXIMUM_PERSISTED_STORED_TIME_SECONDS = 5_529_600
 export type ProgressionFixtureId = (typeof PROGRESSION_FIXTURE_IDS)[number]
 export type ProgressionRoute =
   | 'bots' | 'research' | 'skills' | 'infinity' | 'reality'
-  | 'simulations' | 'quantum' | 'avocato' | 'story' | 'wiki'
+  | 'simulations' | 'quantum' | 'avocato' | 'transcendence' | 'challenges' | 'story' | 'wiki'
   | 'offline-time' | 'statistics' | 'settings'
 
 export interface ProgressionMatrixFixture {
@@ -89,9 +89,9 @@ export function createProgressionMatrixFixtures(): readonly ProgressionMatrixFix
   ))
 }
 
-/** Loads the immutable serialized artifacts used by performance runs. */
+/** Current serialization of synthetic/legacy stress profiles; historical public files stay untouched. */
 export function loadCheckedInProgressionMatrixFixtures(): readonly ProgressionMatrixFixture[] {
-  const directory = new URL('../../test/fixtures/progression/', import.meta.url)
+  const directory = new URL('../../test/fixtures/progression-rework-idleds/', import.meta.url)
   const manifest = JSON.parse(readFileSync(new URL('fixture-manifest.json', directory), 'utf8')) as {
     readonly schemaVersion: number
     readonly fixtures: readonly {
@@ -420,9 +420,10 @@ export function deriveProgressionRoutes(state: CanonicalGameStateV1): readonly P
   if (visibility.skills.routeUnlocked) routes.push('skills')
   if (visibility.infinity.routeUnlocked) routes.push('infinity')
   if (visibility.reality.routeVisible && visibility.reality.routeUnlocked) routes.push('reality')
-  if (visibility.reality.routeVisible && visibility.simulations.routeUnlocked) routes.push('simulations')
-  if (state.infinity.points >= 42n || state.quantum.pointsEarned > 0n) routes.push('quantum')
-  if (state.avocado.unlocked) routes.push('avocato')
+  if (visibility.simulations.routeVisible && visibility.simulations.routeUnlocked) routes.push('simulations')
+  if (visibility.quantum.routeVisible && visibility.quantum.routeUnlocked) routes.push('quantum')
+  if (state.meta.firstInfinityComplete) routes.push('transcendence', 'avocato')
+  if (state.challenges?.unlocked) routes.push('challenges')
   routes.push('story', 'wiki', 'offline-time', 'statistics', 'settings')
   return Object.freeze(routes)
 }

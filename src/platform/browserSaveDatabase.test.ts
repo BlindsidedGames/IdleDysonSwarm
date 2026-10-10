@@ -1,5 +1,6 @@
+import { REWORK_BETA_DATABASE_NAME, REWORK_BETA_SAVE_PATHS } from '../browser/reworkBetaStorage'
 import { readFileSync } from 'node:fs'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { CanonicalRuntimeSession } from '../application/canonicalRuntimeSession'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import {
@@ -30,6 +31,8 @@ import {
   WriterLeaseMetadataError,
 } from './browserSaveDatabase'
 import { IndexedDbSaveStorageAdapter } from './indexedDbSaveStorage'
+import { createBrowserReleasePlatformServices } from './releaseFoundation'
+import { StorefrontController } from '../store/storefront'
 
 const repositoryPaths = {
   current: '/current',
@@ -38,6 +41,88 @@ const repositoryPaths = {
 } as const
 
 describe('IndexedDbBrowserSaveDatabase', () => {
+  test('Restore succeeds for already projected ownership and revocation, but fails if changed ownership cannot commit', async () => {
+    const harness = new HarnessIndexedDbFactory()
+    let owned = true
+    const ownership = () => ({ botBoost: owned, doubleInfinityPoints: false, developerOptions: false, supporterCatGallery: false })
+    const services = {
+      ...createBrowserReleasePlatformServices(),
+      entitlements: { readOwnership: async () => ownership(), refreshOwnership: async () => ownership() },
+      store: { products: async () => [], purchase: async () => { throw new Error('No purchases in this fixture') },
+        restorePurchases: async () => ({ restoredProductIds: owned ? ['ids.botboost' as const] : [] }) },
+    }
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: { querySelectorAll: () => [] },
+      releasePlatformServices: services,
+      lifecycleClock: fixedLifecycleClock(), monotonicClock: { nowMilliseconds: () => 0 },
+      createRuntime: options => createBrowserRuntimeFoundation({ ...options, indexedDbFactory: harness.asFactory(),
+        ownerToken: 'restore-owner', autoHeartbeat: false, lifecycle: backgroundLifecycle(),
+        activeTimeScheduler: idleFrameScheduler, storageManager: durableStorageManager }),
+    })
+    try {
+      await expect(composition.runtime.start()).resolves.toMatchObject({ phase: 'ready' })
+      const controller = new StorefrontController({ store: services.store, entitlements: services.entitlements,
+        doubleInfinityPointsEffect: services.doubleInfinityPointsEffect,
+        onVerifiedOwnershipChanged: () => composition.runtime.synchronizeHostEntitlements() })
+      await controller.initialize()
+      await controller.restorePurchases()
+      expect(controller.getSnapshot().feedback).toEqual({ kind: 'restore-completed', restoredCount: 1 })
+      owned = false
+      await controller.restorePurchases()
+      expect(controller.getSnapshot().feedback).toEqual({ kind: 'restore-completed', restoredCount: 0 })
+      const database = new IndexedDbBrowserSaveDatabase(REWORK_BETA_DATABASE_NAME, harness.asFactory())
+      const beforeFailure = await database.readFile(REWORK_BETA_SAVE_PATHS.current)
+      owned = true
+      harness.failNextRequest('readwrite:files:put', new DOMException('Synthetic full beta storage', 'QuotaExceededError'))
+      await controller.restorePurchases()
+      expect(controller.getSnapshot().feedback).toEqual({ kind: 'operation-failed', code: 'restore-failed' })
+      expect(await database.readFile(REWORK_BETA_SAVE_PATHS.current)).toBe(beforeFailure)
+    } finally { await composition.runtime.shutdown() }
+  })
+
+  test('starts beta in its own database without opening public progress', async () => {
+    const harness = new HarnessIndexedDbFactory()
+    const publicDatabase = new IndexedDbBrowserSaveDatabase(PRODUCTION_BROWSER_DATABASE_NAME, harness.asFactory())
+    const publicLease = await publicDatabase.acquireWriterLease('public-player', 1000, 15000)
+    if (!publicLease.acquired) throw new Error('Missing public fixture lease')
+    const originalPaths = [PRODUCTION_BROWSER_SAVE_PATHS.current, ...PRODUCTION_BROWSER_SAVE_PATHS.backups]
+    for (const path of originalPaths) await publicDatabase.mutateFiles({ kind: 'write', path, contents: `PUBLIC ORIGINAL ${path}` }, publicLease.fence, 1000)
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: { querySelectorAll: () => [{ getAttribute: () => 'false' }] },
+      lifecycleClock: fixedLifecycleClock(),
+      monotonicClock: { nowMilliseconds: () => 0 },
+      createRuntime: options => createBrowserRuntimeFoundation({
+        ...options,
+        indexedDbFactory: harness.asFactory(),
+        ownerToken: 'held-production', autoHeartbeat: false,
+        lifecycle: backgroundLifecycle(), activeTimeScheduler: idleFrameScheduler,
+        storageManager: durableStorageManager,
+      }),
+    })
+    const started = await composition.runtime.start()
+    expect(started, JSON.stringify(started)).toMatchObject({ phase: 'ready' })
+    expect(harness.openAttempts(PRODUCTION_BROWSER_DATABASE_NAME)).toBe(1)
+    expect(harness.openAttempts('idle-dyson-swarm-rework-beta-v1')).toBe(1)
+    await composition.runtime.shutdown()
+    for (const path of originalPaths) expect(await publicDatabase.readFile(path)).toBe(`PUBLIC ORIGINAL ${path}`)
+    expect(await publicDatabase.inspectWriterLease()).toEqual(publicLease.fence)
+  })
+
+  test.each(['/play/service-worker.js', '/service-worker.js'])('rejects a foreign controller %s before opening beta IndexedDB', async scriptPath => {
+    const harness = new HarnessIndexedDbFactory()
+    vi.stubGlobal('window', { location: { pathname: '/rework-beta/', href: 'https://sandbox.invalid/rework-beta/' } })
+    vi.stubGlobal('navigator', { serviceWorker: { controller: { scriptURL: 'https://sandbox.invalid' + scriptPath } } })
+    try {
+      const composition = createProductionBrowserComposition({
+        entitlementDocument: { querySelectorAll: () => [{ getAttribute: () => 'false' }] },
+        createRuntime: options => createBrowserRuntimeFoundation({ ...options, indexedDbFactory: harness.asFactory(), autoHeartbeat: false, storageManager: {}, lifecycle: backgroundLifecycle(), activeTimeScheduler: idleFrameScheduler }),
+      })
+      await expect(composition.runtime.start()).resolves.toMatchObject({ phase: 'blocked', reason: expect.stringContaining('public service worker') })
+      expect(harness.requestLog).toEqual([])
+      await composition.runtime.shutdown()
+    } finally { vi.unstubAllGlobals() }
+  })
+
   test('retains the deployed schema-13 browser backup namespace for recovery', () => {
     expect(PRODUCTION_BROWSER_SAVE_PATHS.retainedRecoverySources).toEqual([
       '/development-only/development-only-default-profile/recovery/import-original.idsw',
@@ -468,7 +553,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     ).rejects.toBeInstanceOf(WriterLeaseLostError)
   })
 
-  test('production composition preserves the deployed storage identity, rotates three backups, reconstructs, and recovers', async () => {
+  test('beta composition preserves its isolated storage identity, rotates three backups, reconstructs, and recovers', async () => {
     const harness = new HarnessIndexedDbFactory()
     const checkpointGate = deferred<void>()
     const firstCheckpointScheduler = new ManualIntervalScheduler()
@@ -617,15 +702,15 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     await blocked.runtime.shutdown()
 
     const productionDatabase = new IndexedDbBrowserSaveDatabase(
-      PRODUCTION_BROWSER_DATABASE_NAME,
+      REWORK_BETA_DATABASE_NAME,
       harness.asFactory(),
     )
     await expect(
       productionDatabase.fileExists(
-        PRODUCTION_BROWSER_SAVE_PATHS.current,
+        REWORK_BETA_SAVE_PATHS.current,
       ),
     ).resolves.toBe(true)
-    for (const backup of PRODUCTION_BROWSER_SAVE_PATHS.backups) {
+    for (const backup of REWORK_BETA_SAVE_PATHS.backups) {
       await expect(
         productionDatabase.fileExists(backup),
       ).resolves.toBe(true)
@@ -672,7 +757,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     await productionDatabase.mutateFiles(
       {
         kind: 'write',
-        path: PRODUCTION_BROWSER_SAVE_PATHS.current,
+        path: REWORK_BETA_SAVE_PATHS.current,
         contents: 'corrupted-current-save',
       },
       maintenanceLease.fence,
@@ -691,7 +776,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     })
     await expect(
       productionDatabase.readFile(
-        PRODUCTION_BROWSER_SAVE_PATHS.legacyRecovery,
+        REWORK_BETA_SAVE_PATHS.legacyRecovery,
       ),
     ).resolves.toBe('corrupted-current-save')
     await recovered.runtime.shutdown()
@@ -700,7 +785,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
   test('keeps a maximum Skill Point Purity save finite through the production runtime, Stored Time, and reopen', async () => {
     const harness = new HarnessIndexedDbFactory()
     const database = new IndexedDbBrowserSaveDatabase(
-      PRODUCTION_BROWSER_DATABASE_NAME,
+      REWORK_BETA_DATABASE_NAME,
       harness.asFactory(),
     )
     const seedLease = await database.acquireWriterLease(
@@ -715,7 +800,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     await database.mutateFiles(
       {
         kind: 'write',
-        path: PRODUCTION_BROWSER_SAVE_PATHS.current,
+        path: REWORK_BETA_SAVE_PATHS.current,
         contents: serializeWebSave(
           createPurityDevelopmentSave().copyValidatedState(),
         ),
@@ -799,7 +884,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
   test('updates the final Dyson goal after every Division purchase and reconstructs it from the production save', async () => {
     const harness = new HarnessIndexedDbFactory()
     const database = new IndexedDbBrowserSaveDatabase(
-      PRODUCTION_BROWSER_DATABASE_NAME,
+      REWORK_BETA_DATABASE_NAME,
       harness.asFactory(),
     )
     const seedLease = await database.acquireWriterLease(
@@ -812,7 +897,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     }
     const seedRepository = new PortableSaveRepository(
       storageFor(database, seedLease.fence, 1_000),
-      PRODUCTION_BROWSER_SAVE_PATHS,
+      REWORK_BETA_SAVE_PATHS,
       () => ({ saveVersion: CURRENT_SAVE_SCHEMA }),
     )
     const hydrated = hydrateGameState(
@@ -827,11 +912,10 @@ describe('IndexedDbBrowserSaveDatabase', () => {
           ...hydrated.state.dyson,
           goalStage: 10n,
         },
-        quantum: {
-          ...hydrated.state.quantum,
-          pointsEarned: 2_000_000n,
-          pointsSpent: 0n,
-          divisionsPurchased: 0n,
+        infinity: {
+          ...hydrated.state.infinity,
+          points: 10_000_000n,
+          spentPoints: 0n,
         },
       }),
     )
@@ -882,8 +966,8 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       const observationsBeforePurchase = observedDivisions.length
       await expect(
         first.runtime.dispatchPlayer({
-          kind: 'quantum.purchase-upgrade',
-          upgradeId: 'Division',
+          kind: 'infinity.purchase-shop-item',
+          itemId: 'rework-Division',
         }),
       ).resolves.toMatchObject({
         status: 'accepted',
@@ -901,12 +985,12 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       : -1
     await expect(
       first.runtime.dispatchPlayer({
-        kind: 'quantum.purchase-upgrade',
-        upgradeId: 'Division',
+        kind: 'infinity.purchase-shop-item',
+        itemId: 'rework-Division',
       }),
     ).resolves.toMatchObject({
       status: 'rejected',
-      code: 'quantum-upgrade:already-maxed',
+      code: 'infinity-shop:maximum-reached',
       stateRevision: maximumRevision,
     })
     expectDivisionGoal(first.runtime.snapshot(), 19n)

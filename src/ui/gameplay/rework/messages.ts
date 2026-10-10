@@ -1,0 +1,26 @@
+import { defineMessages } from 'react-intl'
+
+export const reworkMessages = defineMessages({
+  civilization: { id: 'rework.civilization', defaultMessage: 'Civilization' },
+  simulationsPending: { id: 'rework.simulations.pending', defaultMessage: 'Civilization progression is coming next.' },
+  simulationsDetails: { id: 'rework.simulations.details', defaultMessage: 'Era resources will buy Catalysts. Permanent fractures will accelerate each civilization.' },
+  challengesPending: { id: 'rework.challenges.pending', defaultMessage: 'Challenges are being redesigned.' },
+  completedChallenges: { id: 'rework.challenges.completed', defaultMessage: 'Previous completions: {value}' },
+  previousRewards: { id: 'rework.challenges.history', defaultMessage: 'Earned rewards and completion records are preserved.' },
+  progressionUpdate: { id: 'rework.migration.title', defaultMessage: 'Hey guys, Dev here' },
+  migrationIntro: { id: 'rework.migration.intro', defaultMessage: "I'm rebuilding progression. Quantum, Reality and the old Sims are gone. Useful upgrades now live in Infinity, and civilization Sims now earn resources for Catalysts." },
+  migrationDescription: { id: 'rework.migration.description', defaultMessage: 'Choose to keep equivalent upgrades and fractures, or earn the advanced upgrades again. Starting fresh removes fractures and their augments; your base game, IP, Transcendence, Discovery and purchases stay.' },
+  keep: { id: 'rework.migration.keep', defaultMessage: 'Keep equivalent progress' },
+  fresh: { id: 'rework.migration.fresh', defaultMessage: 'Earn upgrades again' },
+  cancel: { id: 'rework.cancel', defaultMessage: 'Cancel' },
+  failed: { id: 'rework.action.failed', defaultMessage: 'The change could not be saved. Try again.' },
+  transcend: { id: 'rework.transcend', defaultMessage: 'Transcend' },
+  transcendConfirmation: { id: 'rework.transcend.confirmation', defaultMessage: 'Reset base production and Infinity upgrades for 1 Transcendence Point? Fractures, civilization progress and Discovery upgrades remain.' },
+  transcendConfirm: { id: 'rework.transcend.confirm', defaultMessage: 'Confirm Transcendence' },
+  threshold: { id: 'rework.transcend.threshold', defaultMessage: 'Reach {value} bots to Transcend.' },
+  tpBalance: { id: 'rework.transcend.balance', defaultMessage: '{value} Transcendence Points' },
+  doubleTime: { id: 'rework.infinity.double-time.title', defaultMessage: 'Double Time' },
+  doubleTimeDescription: { id: 'rework.infinity.double-time.description', defaultMessage: 'Double game speed.' },
+  regularUpgrades: { id: 'rework.infinity.regular', defaultMessage: 'Infinity upgrades' },
+  advancedUpgrades: { id: 'rework.infinity.advanced', defaultMessage: 'Advanced upgrades' },
+})

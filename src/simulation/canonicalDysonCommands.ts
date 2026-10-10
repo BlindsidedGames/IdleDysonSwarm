@@ -1,3 +1,4 @@
+import { activeReworkChallenge, recordChallengePurchases } from './reworkChallenges'
 import { swarmGrants, SWARM_TUNING } from './swarmAugments'
 import { hasSwarmAugment } from './skillSubskills'
 import { challengeAllowsFacilityPurchase } from './infinityChallenges'
@@ -73,12 +74,12 @@ export function tryPurchaseCanonicalFacility(
   )
   return {
     state: result.attempt.purchased
-      ? replaceDysonState(
+      ? recordChallengePurchases(replaceDysonState(
           state,
           result.state.money,
           result.state.facilities,
           state.timeline.dysonAutomationTargetIndex,
-        )
+        ), [result.attempt])
       : state,
     attempt: result.attempt,
   }
@@ -120,12 +121,12 @@ export function runCanonicalDysonAutomation(
       isFacilityUnlocked(state, candidate, facilityId) === true,
   )
   return {
-    state: replaceDysonState(
+    state: recordChallengePurchases(replaceDysonState(
       state,
       result.state.money,
       result.state.facilities,
       result.nextTargetIndex,
-    ),
+    ), result.attempts),
     attempts: result.attempts,
   }
 }
@@ -156,7 +157,7 @@ function toDysonAutomationState(
     buyMode: state.dyson.automation.buyMode,
     roundedBulkBuy: state.dyson.automation.roundedBulkBuy,
     retainedFacilities: {
-      ...state.infinity.retainedFacilities,
+      ...Object.fromEntries(Object.entries(state.infinity.retainedFacilities).map(([id, retained]) => [id, activeReworkChallenge(state) ? false : retained])) as typeof state.infinity.retainedFacilities,
     },
     assemblyMegaLinesOwned:
       state.skills.byId.assemblyMegaLines?.owned === true,

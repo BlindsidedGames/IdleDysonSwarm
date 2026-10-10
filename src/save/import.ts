@@ -29,7 +29,7 @@ import {
 } from './transitionalV2Retirement'
 
 /**
- * Decodes shipped Unity (`IDB1`) or canonical Web (`IDSWEB1`) text,
+ * Decodes Unity (`IDB1`), public Web (`IDSWEB1`) or rework (`IDLEDS`) text,
  * then applies the transfer policy selected by its trusted import context. Manual
  * sharing consumes remote lifecycle time; same-device migration and in-place
  * upgrades preserve local lifecycle evidence for startup processing.

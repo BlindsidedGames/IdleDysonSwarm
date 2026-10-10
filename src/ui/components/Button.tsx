@@ -3,6 +3,7 @@ import type {
   ReactNode,
 } from 'react'
 import './components.css'
+import './purchaseButton.css'
 
 export type ButtonVisualState =
   | 'idle'
@@ -13,7 +14,7 @@ export type ButtonVisualState =
 export interface ButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   readonly children: ReactNode
-  readonly variant?: 'primary' | 'secondary' | 'danger'
+  readonly variant?: 'primary' | 'secondary' | 'danger' | 'purchase'
   readonly state?: ButtonVisualState
   readonly fullWidth?: boolean
 }

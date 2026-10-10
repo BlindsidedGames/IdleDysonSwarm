@@ -1,9 +1,10 @@
+import { activeReworkChallenge } from './reworkChallenges'
 import { initializeSwarmGrants } from './swarmAugments'
 import { initializeSrsHotStart } from './srsAugments'
 import { purityBodyMultiplier, purityMindMultiplier, purityEssenceMultiplier as essenceMultiplier } from './purityMultipliers'
 import { isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, galvanizationDefinition } from './galvanization'
-import { infinityChallenges, hasCompletedInfinityChallenge, isBlankSlateActive } from './infinityChallenges'
+import { infinityChallenges,  isBlankSlateActive } from './infinityChallenges'
 import { planSkillAutoAssignment } from './skillAutoAssignment'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { SKILL_DEFINITION_ASSETS } from './skillDefinitions'
@@ -186,11 +187,20 @@ export type CanonicalSkillPresetApplicationResult =
     }
 
 /** Atomic irreversible currency spend. Ordinary points already invested are returned. */
+/** Uses the same authored unlock and ownership rules as an actual fracture spend. */
+export function eligibleCanonicalFractureIds(state: CanonicalGameStateV1): readonly string[] {
+  if (state.challenges?.replacement?.active) state = { ...state, challenges: { ...state.challenges, active: null, replacement: { ...state.challenges.replacement, active: null } } }
+  return [...loadDefinitions(state)].filter(([id, definition]) =>
+    !isSubskill(id) && isUnlocked(definition, state) && !isGalvanized(state, id),
+  ).map(([id]) => id)
+}
+
 export function galvanizeCanonicalSkill(state: CanonicalGameStateV1, skillId: string): CanonicalSkillTransactionResult {
+  if (activeReworkChallenge(state)) return rejected(state, 'SKILL-CHALLENGE-ACTIVE', 'Permanent fractures cannot be purchased during a challenge attempt.')
   const definition = isSubskill(skillId) ? undefined : loadDefinitions(state).get(skillId)
   const challenges = infinityChallenges(state)
   if (!definition) return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)
-  if (!hasCompletedInfinityChallenge(state) || !isUnlocked(definition, state)) {
+  if (!isUnlocked(definition, state)) {
     return rejected(state, 'GALVANIZATION-LOCKED', 'Galvanization is not available for this skill.')
   }
   if (isGalvanized(state, skillId)) return rejected(state, 'ALREADY-GALVANIZED', 'This skill is already galvanized.')
@@ -285,8 +295,8 @@ export function previewCanonicalSkillCatalog(
       skillId: definition.id,
       cost: definition.cost,
       galvanized: isGalvanized(state, definition.id),
-      galvanizationUnlocked: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state),
-      canGalvanize: !isSubskill(definition.id) && hasCompletedInfinityChallenge(state) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
+      galvanizationUnlocked: !isSubskill(definition.id),
+      canGalvanize: !isSubskill(definition.id) && unlocked && !isGalvanized(state, definition.id) && infinityChallenges(state).galvanizers > 0n,
       owned,
       visible: unlocked,
       unlocked,
@@ -590,6 +600,10 @@ function planPurchaseWithDefinitions(
   if (!visit(skillId)) {
     return failure!
   }
+  if (state.challenges?.replacement?.active === 'lean-build') {
+    const assigned = [...definitions.values()].reduce((sum, definition) => sum + (state.skills.byId[definition.id]?.owned ? definition.cost : 0n), 0n)
+    if (assigned + pointsRequired > 4n) return purchasePlanRejected('SKILL-CHALLENGE-BUDGET', 'Lean Build permits at most 4 SP of assigned skills.')
+  }
   if (state.skills.points < pointsRequired) {
     return {
       eligible: false,
@@ -658,7 +672,7 @@ function refundWithDefinitions(
     return accepted(state, false, [])
   }
 
-  if (state.challenges?.active === 'commitment-issues') return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be refunded during this Infinity.')
+  if (state.challenges?.active === 'commitment-issues') return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be refunded during this challenge attempt.')
 
   const descendants = dependentIds(
     skillId,
@@ -725,7 +739,7 @@ function refundWithDefinitions(
 export function resetCanonicalSkills(
   state: CanonicalGameStateV1,
 ): CanonicalSkillTransactionResult {
-  if (state.challenges?.active === 'commitment-issues' && Object.values(state.skills.byId).some(skill => skill.owned)) return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be replaced during this Infinity.')
+  if (state.challenges?.active === 'commitment-issues' && Object.values(state.skills.byId).some(skill => skill.owned)) return rejected(state, 'SKILL-NOT-REFUNDABLE', 'Skills cannot be replaced during this challenge attempt.')
   const definitions = loadDefinitions(state)
   let points = state.skills.points
   let fragments = state.skills.fragments
@@ -779,11 +793,16 @@ export function runCanonicalSkillAutoAssignment(
     return accepted(state, false, [])
   }
   const byId = { ...state.skills.byId }
+  const assignedCost = [...definitions.values()].reduce((sum, definition) =>
+    sum + (state.skills.byId[definition.id]?.owned ? definition.cost : 0n), 0n)
+  const remainingBudget = state.challenges?.replacement?.active === 'lean-build'
+    ? (assignedCost < 4n ? 4n - assignedCost : 0n) : state.skills.points
+  const assignmentBudget = state.skills.points < remainingBudget ? state.skills.points : remainingBudget
   const assignment = planSkillAutoAssignment(state.skills.activeAutoAssignment, definitions,
     new Set(Object.keys(byId).filter(id => byId[id]?.owned === true)),
-    state.skills.points, state.skills.autoAssignNonRefundable,
+    assignmentBudget, state.skills.autoAssignNonRefundable,
     id => isUnlocked(definitions.get(id)!, state))
-  const points = assignment.points
+  const points = assignment.points + state.skills.points - assignmentBudget
   const fragments = state.skills.fragments + assignment.fragmentsGranted
   const affected = assignment.assignedIds
   for (const id of affected) byId[id] = { ...(byId[id] ?? emptyRuntime()), owned: true }

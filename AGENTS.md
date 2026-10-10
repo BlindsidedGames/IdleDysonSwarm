@@ -2,15 +2,18 @@
 
 ## UI and player-facing text
 
-- Before changing gameplay UI, layout, styling or player-facing copy, read
-  [the UI style guide](docs/ui-style-guide.md). It summarizes the existing
-  presentation contract and Matthew's approved conventions.
-- Compare changed surfaces with an established neighbouring screen. Check
-  expanded/collapsed states, scrolling, spacing and concise copy in the running
-  app at desktop and narrow/enlarged-text sizes. Tests or builds alone do not
-  establish visual compliance. Report any unverified state or platform.
-- Keep the guide current when Matthew approves a new shared UI convention;
-  preserve explicitly approved screen-specific designs.
+- Before UI/layout/copy work, apply the project [IDS UI skill](.agents/skills/ids-ui/SKILL.md),
+  which loads the [compact mandatory core](docs/ui-style-guide.md).
+  Then open only applicable linked reference sections and component source; do
+  not routinely load the full reference, audit, history or unrelated screen specs.
+- For Simulations work only, also read the [current specification](docs/plans/simulations-current-specification-2026-10-08.md).
+- Reuse the named reference pattern; record a justified genuinely new exception
+  and its approval status. Prototypes/assistant proposals are not approvals.
+- Complete the core's reference comparison and visual checklist, including
+  applicable app scales, mobile/long locale, actual targets and touch/keyboard
+  meaning. Tests alone are not visual acceptance; report unverified hosts/states.
+- Update the guide when Matthew approves shared conventions; preserve protected
+  screen-specific designs. Documentation is a review hook, not automated enforcement.
 
 ## Deployment shorthand
 

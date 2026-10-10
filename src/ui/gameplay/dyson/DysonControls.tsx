@@ -358,7 +358,7 @@ export function DysonGoalSummary({
   const intl = useIntl()
   const targetDisplay = currentGoal.kind === 'tinkers'
     ? intl.formatNumber(currentGoal.target) : formatGameNumber(locale, currentGoal.target)
-  const goalMessage = currentGoal.kind === 'tinkers' ? messages.goalTinkers :
+  const goalMessage = currentGoal.kind === 'build-data-centers' ? { id: 'dyson.info.goal.data-centers', defaultMessage: 'Goal: Build {targetDisplay} Data Centers' } : currentGoal.kind === 'tinkers' ? messages.goalTinkers :
     currentGoal.kind === 'create-bots'
       ? messages.goalCreateBots
       : currentGoal.kind === 'build-assembly-lines'
@@ -374,7 +374,7 @@ export function DysonGoalSummary({
                 : currentGoal.kind === 'engulf-galaxies'
                   ? messages.goalEngulfGalaxies
                   : messages.goalReachBots
-  const compactGoalMessage = currentGoal.kind === 'tinkers' ? messages.compactGoalTinkers :
+  const compactGoalMessage = currentGoal.kind === 'build-data-centers' ? { id: 'dyson.info.compact.goal.data-centers', defaultMessage: 'Goal: <emphasis>{targetDisplay} Data Centers</emphasis>' } : currentGoal.kind === 'tinkers' ? messages.compactGoalTinkers :
     currentGoal.kind === 'create-bots' ||
     currentGoal.kind === 'reach-bots'
       ? messages.compactGoalBots

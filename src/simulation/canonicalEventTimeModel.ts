@@ -1,6 +1,8 @@
-import { AVOCADO_MEDITATION_SKILL_POINT_REWARD } from './avocadoMeditation'
+import { activeReworkChallenge, replacementSkillPoints } from './reworkChallenges'
+import { advanceCivilization } from './civilization'
+import { withoutRetiredChallengeRun } from './gameplayRework'
 import { advanceManualLabourIdle } from './manualLabourAugments'
-import { effectiveDivisions, quantumDoubleIpEnabled, isBreakInfinityEnabled, isInfinityChallengeActive, isQuantumChallengeActive } from './infinityChallenges'
+import { effectiveDivisions, quantumDoubleIpEnabled, isBreakInfinityEnabled } from './infinityChallenges'
 import { advanceDiscovery } from './discovery'
 import { deriveDiscoveryEffects } from './discoveryEffects'
 import { markSpeedrunUsage, observeSpeedruns, recordActiveSpeedrunTime, recordStoredSpeedrunTime } from './speedrunStatistics'
@@ -55,35 +57,18 @@ import {
   timeToNextInfinityEventAfterStellarSettlement,
 } from './canonicalSkillIntervalEffects'
 import {
-  applyCanonicalDreamReset,
-  canApplyCanonicalAutomaticDreamReset,
   type CanonicalDreamResetDefinitions,
 } from './canonicalDreamReset'
-import {
-  runDreamFoundationalInformationConversions,
-  runDreamFoundationalInformationProduction,
-} from './dreamFoundationalInformation'
-import { advanceDreamEducation } from './dreamEducationUpgrades'
-import {
-  runDreamRailgunAutomation,
-  runDreamSpaceAgeProduction,
-} from './dreamSpaceAge'
 import {
   addContinuous,
   addDiscrete,
   DISCRETE_MAXIMUM,
 } from './numeric'
 import {
-  applyCanonicalQuantumReset,
-  applyQuantumEntanglementConversion,
-} from './quantumTransitions'
-import {
-  REALITY_UPGRADE_IDS,
   type RealityUpgradeDefinition,
   type RealityUpgradeId,
 } from './realityUpgrades'
 import {
-  advanceRealityWorkers,
   type RealityWorkerTuning,
 } from './realityWorkers'
 import { runResearchAutomationTick } from './researchAutomation'
@@ -107,7 +92,6 @@ import { TIME_EPSILON_SECONDS as TIME_EPSILON } from './timeTolerance'
 
 export const CANONICAL_QUANTUM_LEAP_INPUT = 'quantum-leap'
 export const UNITY_QUANTUM_ACTION_INPUT = 'quantum_action'
-const QUANTUM_LEAP_INFINITY_GATE = 42n
 const OWNED_EVENT_TIME_STATE = Symbol('owned-event-time-state')
 
 /**
@@ -256,6 +240,10 @@ export class CanonicalEventTimeModel
         : cloneCarrier(state),
       this.context.automationIntervalSeconds,
     )
+    const inactiveGame = withoutRetiredChallengeRun(this.ownedCarrier.gameState)
+    if (inactiveGame !== this.ownedCarrier.gameState) {
+      this.ownedCarrier = { ...this.ownedCarrier, gameState: inactiveGame }
+    }
   }
 
   private get carrier(): CanonicalEventTimeState {
@@ -388,10 +376,6 @@ export class CanonicalEventTimeModel
       (
         this.carrier.gameState.dyson.bots >= OVERFLOW_BOT_CAP &&
         !infinity.botCapTransitionPending
-      ) ||
-      (
-        this.context.mode === 'active' &&
-        canApplyCanonicalAutomaticDreamReset(this.carrier.gameState)
       )
     ) {
       this.replaceGameState(
@@ -539,6 +523,7 @@ export class CanonicalEventTimeModel
       if (startingState.discovery?.unlocked) {
         candidate = { ...candidate, discovery: advanceDiscovery(startingState.discovery, seconds, deriveDiscoveryEffects(startingState, this.carrier.evaluationSnapshot)) }
       }
+      candidate = advanceCivilization(candidate, seconds)
       const boost = derived.value.botBoostMultiplier
       if (boost === 2 && candidate.dyson.bots > startingState.dyson.bots) candidate = recordBotBoostUsage(candidate)
       candidate = applyCanonicalSkillIntervalEffects(
@@ -581,63 +566,7 @@ export class CanonicalEventTimeModel
           ? advanceManualLabourIdle(tinker.state, tinker.unusedIdleSeconds)
           : tinker.state,
       )
-      const space = runDreamSpaceAgeProduction(candidate, {
-        tickSeconds: seconds,
-        doubleTimeMultiplier: 1,
-      })
-      if (space.status !== 'success') {
-        this.fail(
-          'CANONICAL_EVENT_DREAM_SPACE_REJECTED',
-          'dream.spaceAge',
-          'Dream Space Age production rejected the interval.',
-        )
-        return
-      }
-      candidate = space.state
-      const earlyDream =
-        runDreamFoundationalInformationProduction(candidate, {
-          tickSeconds: seconds,
-          doubleTimeMultiplier: 1,
-        })
-      if (earlyDream.status !== 'success') {
-        this.fail(
-          'CANONICAL_EVENT_DREAM_PRODUCTION_REJECTED',
-          'dream',
-          'Dream Foundational/Information production rejected the interval.',
-        )
-        return
-      }
-      candidate = earlyDream.state
-      const education = advanceDreamEducation(candidate, seconds, 1)
-      if (!education.accepted) {
-        this.fail(
-          'CANONICAL_EVENT_DREAM_EDUCATION_REJECTED',
-          'dream.education',
-          'Dream Education research rejected the interval.',
-        )
-        return
-      }
-      candidate = education.candidate
-      let intervalSummary = createSimulationSummary()
-      const reality = advanceRealityWorkers(
-        candidate,
-        seconds,
-        this.context.realityWorkerTuning,
-      )
-      if (reality.status !== 'success') {
-        this.fail(
-          `CANONICAL_EVENT_REALITY_${reality.status.toUpperCase().replace('-', '_')}`,
-          'reality',
-          `Reality worker production rejected as ${reality.status}.`,
-        )
-        return
-      }
-      candidate = reality.state
-      intervalSummary = createIntervalSummary(
-        reality.workersGenerated,
-        reality.automaticInfluence,
-        reality.stalledSeconds,
-      )
+      const intervalSummary = createSimulationSummary()
       candidate = withAdvancedClock(
         candidate,
         seconds,
@@ -711,23 +640,6 @@ export class CanonicalEventTimeModel
         this.carrier.compatibilityTuning,
         policy,
       ).state
-      candidate =
-        runDreamFoundationalInformationConversions(candidate).state
-      const railgun = runDreamRailgunAutomation(candidate, {
-        tickSeconds: this.context.automationActionIntervalSeconds,
-        effectiveDoubleTimeMultiplier: 1,
-        doubleTimeActive: false,
-        doubleTimeRate: 0,
-      })
-      if (railgun.status !== 'success') {
-        this.fail(
-          'CANONICAL_EVENT_RAILGUN_AUTOMATION_REJECTED',
-          'dream.railgun',
-          'Dream railgun automation rejected its explicit interval.',
-        )
-        return
-      }
-      candidate = railgun.state
       this.replaceGameState({
         ...candidate,
         timeline: {
@@ -786,69 +698,8 @@ export class CanonicalEventTimeModel
     this.carrier = {...this.carrier, achievementEvidence: mergeAchievementFacts(this.carrier.achievementEvidence,evaluateAchievements(this.carrier.gameState,false))}
   }
 
-  applyDreamReset(summary: SimulationPresentationSummary): void {
-    if (this.currentIssue !== undefined) return
-    this.captureAchievementMilestones()
-    const preResetState = this.carrier.gameState
-    const result = applyCanonicalDreamReset(
-      preResetState,
-      { kind: 'automatic' },
-      this.context.dreamResetDefinitions,
-    )
-    if (!result.ok) {
-      const issue = result.issues[0]
-      this.fail(
-        issue?.code ?? 'CANONICAL_EVENT_DREAM_RESET_REJECTED',
-        issue?.path ?? 'dream',
-        issue?.detail ?? 'Dream reset assets rejected.',
-      )
-      return
-    }
-    if (!result.applied) return
-
-    if (result.cause !== 'BlackHole') {
-      const lifetime = preResetState.statistics.lifetime
-      const previousLifetimeCount =
-        result.cause === 'Meteor'
-          ? lifetime.meteorDreamResets
-          : result.cause === 'ArtificialIntelligence'
-            ? lifetime.aiDreamResets
-            : lifetime.globalWarmingDreamResets
-      const presentationEvent = Object.freeze({
-        cause: result.cause,
-        strangeMatterGranted: result.rewardGranted,
-        resetCount: 1n,
-        firstLifetimeOccurrence: previousLifetimeCount === 0n,
-        preResetEra: simulationEraBeforeReset(preResetState),
-      })
-      if (this.context.mode === 'active') {
-        summary.disasterEvents.push(presentationEvent)
-      } else if (
-        this.context.mode === 'stored-time' &&
-        presentationEvent.firstLifetimeOccurrence
-      ) {
-        summary.storedTimeFirstDisasterEvents.push(presentationEvent)
-      }
-    }
-
-    const deferredState = withDeferredEventStatistics(
-      result.state,
-      this.carrier.gameState.statistics,
-    )
-    this.replaceGameState(deferredState)
-    const event = createSimulationSummary()
-    event.strangeMatter = result.rewardGranted
-    if (result.cause === 'Meteor') event.meteorDreamResets = 1n
-    if (result.cause === 'ArtificialIntelligence') {
-      event.aiDreamResets = 1n
-    }
-    if (result.cause === 'GlobalWarming') {
-      event.globalWarmingDreamResets = 1n
-    }
-    if (result.cause === 'BlackHole') {
-      event.blackHoleDreamResets = 1n
-    }
-    this.appendBoundaryEvent(summary, event)
+  applyDreamReset(_summary: SimulationPresentationSummary): void {
+    // Retired producer/disaster layer: no automatic resets or rewards.
   }
 
   sampleInfinityRatePeak(): void {
@@ -1109,79 +960,7 @@ export class CanonicalEventTimeModel
   }
 
   private applyQuantumLeap(): void {
-    this.captureAchievementMilestones()
-    const state = this.carrier.gameState
-    if (hasReachedOverflow(state) || isInfinityChallengeActive(state)) {
-      this.queuedInputOutcome = { accepted: false, changed: false, code: 'OVERFLOW_RESET_REQUIRED' }
-      return
-    }
-    if (state.infinity.points < QUANTUM_LEAP_INFINITY_GATE) {
-      this.queuedInputOutcome = {
-        accepted: false,
-        changed: false,
-        code: 'QUANTUM_LEAP_REQUIRES_42_TOTAL_INFINITY_POINTS',
-      }
-      return
-    }
-
-    if (state.quantum.unlocks.quantumEntanglement && !isQuantumChallengeActive(state)) {
-      const result = applyQuantumEntanglementConversion(state)
-      this.replaceGameState(result.state)
-      this.queuedInputOutcome = {
-        accepted: true,
-        changed: result.state !== state,
-        code: 'QUANTUM_ENTANGLEMENT_APPLIED',
-      }
-      return
-    }
-
-    this.captureAchievementMilestones()
-    const artifact = deriveCanonicalArtifactSkillPoints(
-      state,
-      this.context.realityUpgradeDefinitions,
-    )
-    if (!artifact.ok) {
-      this.currentIssue = artifact.issue
-      this.queuedInputOutcome = {
-        accepted: false,
-        changed: false,
-        code: 'CANONICAL_EVENT_QUANTUM_RESET_REJECTED',
-      }
-      return
-    }
-    const result = applyCanonicalQuantumReset(
-      state,
-      artifact.value,
-      this.context.infinityResetAssetLookup,
-    )
-    if (!result.ok) {
-      const issue = result.issues[0]
-      this.fail(
-        issue?.code ?? 'CANONICAL_EVENT_QUANTUM_RESET_REJECTED',
-        issue?.path ?? 'quantum',
-        issue?.detail ?? 'Quantum reset assets rejected.',
-      )
-      this.queuedInputOutcome = {
-        accepted: false,
-        changed: false,
-        code: 'CANONICAL_EVENT_QUANTUM_RESET_REJECTED',
-      }
-      return
-    }
-    this.replaceGameState(
-      withResetInfinityClock(
-        observeSpeedruns(result.state, Date.now(), false, true),
-        Math.max(
-          TIME_EPSILON,
-          state.timeline.infinityBoundaryRemaining,
-        ),
-      ),
-    )
-    this.queuedInputOutcome = {
-      accepted: true,
-      changed: true,
-      code: 'QUANTUM_LEAP_APPLIED',
-    }
+    this.queuedInputOutcome = { accepted: false, changed: false, code: 'CANONICAL_EVENT_INPUT_UNSUPPORTED' }
   }
 
   private replaceGameState(state: CanonicalGameStateV1): void {
@@ -1349,47 +1128,12 @@ export class CanonicalEventTimeModel
 
 export function deriveCanonicalArtifactSkillPoints(
   state: Readonly<CanonicalGameStateV1>,
-  definitions: ReadonlyMap<
+  _definitions: ReadonlyMap<
     RealityUpgradeId,
     RealityUpgradeDefinition
   >,
 ): ArtifactSkillPointResult {
-  let points = 0n
-  for (const id of REALITY_UPGRADE_IDS) {
-    if (!isRealityUpgradeOwned(state, id)) continue
-    const definition = definitions.get(id)
-    if (definition === undefined || definition.key !== id) {
-      return {
-        ok: false,
-        value: 0n,
-        issue: Object.freeze({
-          code: 'CANONICAL_EVENT_REALITY_DEFINITION_MISSING',
-          path: `gameData.realityUpgrades.${id}`,
-          detail: `Owned Reality upgrade '${id}' has no matching captured definition.`,
-        }),
-      }
-    }
-    for (const effect of definition.purchaseEffects) {
-      if (effect.effectType !== 2) continue
-      const value = roundedNonNegativeDiscrete(effect.numericValue)
-      if (value === null) {
-        return {
-          ok: false,
-          value: 0n,
-          issue: Object.freeze({
-            code: 'CANONICAL_EVENT_ARTIFACT_SKILL_EFFECT_INVALID',
-            path: `gameData.realityUpgrades.${id}.purchaseEffects`,
-            detail: `Owned Reality upgrade '${id}' has an invalid AddSkillPoints effect.`,
-          }),
-        }
-      }
-      points = addDiscrete(points, value)
-    }
-  }
-  if (state.secretProgress.completed) {
-    points = addDiscrete(points, AVOCADO_MEDITATION_SKILL_POINT_REWARD)
-  }
-  return { ok: true, value: points }
+  return { ok: true, value: replacementSkillPoints(state.challenges) }
 }
 
 /**
@@ -1757,6 +1501,7 @@ function withUpdatedInfinityRatePeak(
   state: CanonicalGameStateV1,
   entitlements: Readonly<DysonEntitlements>,
 ): CanonicalGameStateV1 {
+  if (activeReworkChallenge(state)) return state
   const infinity = createBasicDysonInfinityState({
     points: state.infinity.points,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
@@ -1800,7 +1545,7 @@ function withAdvancedManualInfinityObservation(
   state: CanonicalGameStateV1,
   seconds: number,
 ): CanonicalGameStateV1 {
-  if (state.infinity.automaticResetEnabled || seconds <= 0) return state
+  if (activeReworkChallenge(state) || state.infinity.automaticResetEnabled || seconds <= 0) return state
   return {
     ...state,
     infinity: {
@@ -1966,18 +1711,6 @@ function withResetInfinityClock(
   }
 }
 
-function createIntervalSummary(
-  realityWorkers: bigint,
-  automaticInfluence: number,
-  realityCapacityStallSeconds: number,
-): SimulationPresentationSummary {
-  return {
-    ...createSimulationSummary(),
-    realityWorkers,
-    automaticInfluence,
-    realityCapacityStallSeconds,
-  }
-}
 
 function mergeSummary(
   target: SimulationPresentationSummary,
@@ -2049,47 +1782,8 @@ function mergeSummary(
   )
 }
 
-function simulationEraBeforeReset(
-  state: Readonly<CanonicalGameStateV1>,
-): 'foundational' | 'information' | 'space-age' {
-  if (state.dream.resources.spaceFactories >= 1) return 'space-age'
-  if (state.dream.resources.cities >= 1) return 'information'
-  return 'foundational'
-}
 
-function isRealityUpgradeOwned(
-  state: Readonly<CanonicalGameStateV1>,
-  id: RealityUpgradeId,
-): boolean {
-  if (id === 'doubleTimeOwned') {
-    return state.timeline.doubleTime.unlocked
-  }
-  if (id === 'workerAutoConvert') {
-    return state.reality.autoGather
-  }
-  return state.dream.upgrades[id]
-}
 
-function roundedNonNegativeDiscrete(value: number): bigint | null {
-  if (!isFiniteNonNegativeNumber(value)) return null
-  const floor = Math.floor(value)
-  const fraction = value - floor
-  const rounded =
-    fraction < 0.5
-      ? floor
-      : fraction > 0.5
-        ? floor + 1
-        : floor % 2 === 0
-          ? floor
-          : floor + 1
-  if (
-    !isSafeNonNegativeInteger(rounded)
-  ) {
-    return null
-  }
-  const result = BigInt(rounded)
-  return result <= DISCRETE_MAXIMUM ? result : null
-}
 
 function sameTinkerRuntime(
   left: Readonly<CanonicalTinkerRuntimeState>,

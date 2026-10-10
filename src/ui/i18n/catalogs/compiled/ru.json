@@ -639,6 +639,676 @@
       "value": "Открыть испытание"
     }
   ],
+  "civilization.allocated": [
+    {
+      "type": 0,
+      "value": "Назначенные работники"
+    }
+  ],
+  "civilization.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.automaticAward": [
+    {
+      "type": 0,
+      "value": "Выдаётся автоматически после выполнения всех требований."
+    }
+  ],
+  "civilization.available": [
+    {
+      "type": 0,
+      "value": "Не назначено / всего"
+    }
+  ],
+  "civilization.awarded": [
+    {
+      "type": 0,
+      "value": "Выдано катализаторов: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "civilization.balanced": [
+    {
+      "type": 0,
+      "value": "Баланс"
+    }
+  ],
+  "civilization.bootstrap": [
+    {
+      "type": 0,
+      "value": "Семейный сбор не требует ресурсов или назначенных рабочих."
+    }
+  ],
+  "civilization.bootstrapV4": [
+    {
+      "type": 0,
+      "value": "Три основателя начинают с набора для постройки жилья. Сбор требует настоящую рабочую группу, но не расходует материалы."
+    }
+  ],
+  "civilization.campExpansion": [
+    {
+      "type": 0,
+      "value": "Расширение лагеря"
+    }
+  ],
+  "civilization.campProvisioning": [
+    {
+      "type": 0,
+      "value": "Снабжение лагеря"
+    }
+  ],
+  "civilization.camps": [
+    {
+      "type": 0,
+      "value": "Лагеря"
+    }
+  ],
+  "civilization.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "civilization.catalysts": [
+    {
+      "type": 0,
+      "value": "Катализаторы"
+    }
+  ],
+  "civilization.clothing": [
+    {
+      "type": 0,
+      "value": "Одежда"
+    }
+  ],
+  "civilization.completed": [
+    {
+      "type": 0,
+      "value": "Завершённые циклы"
+    }
+  ],
+  "civilization.continuedDevelopment": [
+    {
+      "type": 0,
+      "value": "Развитие лагеря "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.conversion": [
+    {
+      "type": 0,
+      "value": "Укрытие вмещает 2 рабочих, лагерь — 8. Три укрытия превращаются в один лагерь."
+    }
+  ],
+  "civilization.conversionV4": [
+    {
+      "type": 0,
+      "value": "Жильё добавляет 2 жителей. При преобразовании три жилища и их 6 жителей остаются зарезервированы. Готовый лагерь вмещает 9 жителей, добавляя 3."
+    }
+  ],
+  "civilization.craft": [
+    {
+      "type": 0,
+      "value": "Ремесло"
+    }
+  ],
+  "civilization.craftSpecialization": [
+    {
+      "type": 0,
+      "value": "Ремесленная специализация"
+    }
+  ],
+  "civilization.duration": [
+    {
+      "type": 0,
+      "value": "Длительность цикла"
+    }
+  ],
+  "civilization.equip": [
+    {
+      "type": 0,
+      "value": "Снарядить работников: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "civilization.equipConfirm": [
+    {
+      "type": 0,
+      "value": "Потратить "
+    },
+    {
+      "type": 1,
+      "value": "tools"
+    },
+    {
+      "type": 0,
+      "value": " инструментов и "
+    },
+    {
+      "type": 1,
+      "value": "clothing"
+    },
+    {
+      "type": 0,
+      "value": " одежды, чтобы снарядить работников: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "civilization.equipmentAutomatic": [
+    {
+      "type": 0,
+      "value": "Каждую минуту симуляции доступные инструменты и одежда оснащают до четверти жителей. Каждый сохраняемый комплект стоит 2 инструмента и 1 одежду."
+    }
+  ],
+  "civilization.equipmentEffect": [
+    {
+      "type": 0,
+      "value": "Каждый снаряжённый полевой работник выполняет работу одного дополнительного работника."
+    }
+  ],
+  "civilization.equipmentEffectV4": [
+    {
+      "type": 0,
+      "value": "Каждый полезно занятый оснащённый полевой работник добавляет половину труда ещё одного работника."
+    }
+  ],
+  "civilization.equipmentStock": [
+    {
+      "type": 0,
+      "value": "Снаряжение работников расходует инструменты и одежду. Установленное снаряжение остаётся в лагере."
+    }
+  ],
+  "civilization.equipped": [
+    {
+      "type": 0,
+      "value": "Экипированные рабочие"
+    }
+  ],
+  "civilization.era": [
+    {
+      "type": 0,
+      "value": "Эра охотников и собирателей"
+    }
+  ],
+  "civilization.eraSettings": [
+    {
+      "type": 0,
+      "value": "Сведения об эпохе собирателей"
+    }
+  ],
+  "civilization.establishedCamp": [
+    {
+      "type": 0,
+      "value": "Устроенный лагерь"
+    }
+  ],
+  "civilization.exchangeNetworks": [
+    {
+      "type": 0,
+      "value": "Сети обмена"
+    }
+  ],
+  "civilization.exchangeRoutes": [
+    {
+      "type": 0,
+      "value": "Торговые пути"
+    }
+  ],
+  "civilization.expeditions": [
+    {
+      "type": 0,
+      "value": "Экспедиции и торговля"
+    }
+  ],
+  "civilization.failed": [
+    {
+      "type": 0,
+      "value": "Действие не удалось. Повторите попытку."
+    }
+  ],
+  "civilization.firstHunt": [
+    {
+      "type": 0,
+      "value": "Первая охота"
+    }
+  ],
+  "civilization.fishing": [
+    {
+      "type": 0,
+      "value": "Рыбалка"
+    }
+  ],
+  "civilization.focus": [
+    {
+      "type": 0,
+      "value": "Приоритет работников"
+    }
+  ],
+  "civilization.focusBalancedHelp": [
+    {
+      "type": 0,
+      "value": "Сбалансированный режим распределяет работников между доступными задачами с обычной скоростью работы."
+    }
+  ],
+  "civilization.focusEffect": [
+    {
+      "type": 0,
+      "value": "По мере роста лагеря больше работников выбирают этот путь. На других путях остаются меньшие группы."
+    }
+  ],
+  "civilization.focusEffectV4": [
+    {
+      "type": 0,
+      "value": "Приоритет отдаётся этому направлению и поддерживающим группам. Не обеспеченные ресурсами задания освобождают работников; оплаченные циклы сохраняют материалы."
+    }
+  ],
+  "civilization.focusSelectedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " работают в "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": " раза быстрее, чем в сбалансированном режиме. Остальные задачи сохраняют обычную скорость."
+    }
+  ],
+  "civilization.focusSupportedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " работают в "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": " раза быстрее, чем в сбалансированном режиме; "
+    },
+    {
+      "type": 1,
+      "value": "support"
+    },
+    {
+      "type": 0,
+      "value": " — в "
+    },
+    {
+      "type": 1,
+      "value": "supportRate"
+    },
+    {
+      "type": 0,
+      "value": " раз. Остальные задачи сохраняют обычную скорость."
+    }
+  ],
+  "civilization.food": [
+    {
+      "type": 0,
+      "value": "Еда"
+    }
+  ],
+  "civilization.foodPreservation": [
+    {
+      "type": 0,
+      "value": "Сохранение пищи"
+    }
+  ],
+  "civilization.foragerGenerator": [
+    {
+      "type": 0,
+      "value": "Лагерь собирателей"
+    }
+  ],
+  "civilization.fractureRule": [
+    {
+      "type": 0,
+      "value": "+5% скорости симуляций за каждый расколотый навык. Бонусы складываются."
+    }
+  ],
+  "civilization.fractures": [
+    {
+      "type": 0,
+      "value": "Бонус разлома +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.gathering": [
+    {
+      "type": 0,
+      "value": "Собирательство"
+    }
+  ],
+  "civilization.growthFocus": [
+    {
+      "type": 0,
+      "value": "Рост"
+    }
+  ],
+  "civilization.hides": [
+    {
+      "type": 0,
+      "value": "Шкуры"
+    }
+  ],
+  "civilization.hideworking": [
+    {
+      "type": 0,
+      "value": "Обработка шкур"
+    }
+  ],
+  "civilization.housing": [
+    {
+      "type": 0,
+      "value": "Вместимость жилья"
+    }
+  ],
+  "civilization.hunting": [
+    {
+      "type": 0,
+      "value": "Охота"
+    }
+  ],
+  "civilization.inputs": [
+    {
+      "type": 0,
+      "value": "Затраты за цикл"
+    }
+  ],
+  "civilization.legacyWorkHelp": [
+    {
+      "type": 0,
+      "value": "Ранее оплаченные циклы сохраняют исходную скорость до завершения."
+    }
+  ],
+  "civilization.locked": [
+    {
+      "type": 0,
+      "value": "Требуется "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.materials": [
+    {
+      "type": 0,
+      "value": "Материалы"
+    }
+  ],
+  "civilization.milestoneStep": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
+  "civilization.next": [
+    {
+      "type": 0,
+      "value": "Далее: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.nextCatalyst": [
+    {
+      "type": 0,
+      "value": "Следующий катализатор"
+    }
+  ],
+  "civilization.nextEra": [
+    {
+      "type": 0,
+      "value": "Далее: Земледелие и скотоводство"
+    }
+  ],
+  "civilization.nodeBonus": [
+    {
+      "type": 0,
+      "value": "После раскола: +5% общей скорости симуляций. Бонусы складываются."
+    }
+  ],
+  "civilization.nodeBonusActive": [
+    {
+      "type": 0,
+      "value": "Расколот: +5% общей скорости симуляций. Бонусы складываются."
+    }
+  ],
+  "civilization.outputs": [
+    {
+      "type": 0,
+      "value": "Выход за цикл"
+    }
+  ],
+  "civilization.paid": [
+    {
+      "type": 0,
+      "value": "Ресурсы для этого цикла зарезервированы"
+    }
+  ],
+  "civilization.phaseComplete": [
+    {
+      "type": 0,
+      "value": "Начало эры охотников и собирателей завершено"
+    }
+  ],
+  "civilization.preview": [
+    {
+      "type": 0,
+      "value": "Сельское хозяйство продолжится на следующем этапе. Ваши занятия продолжают работать."
+    }
+  ],
+  "civilization.provisioning": [
+    {
+      "type": 0,
+      "value": "Снабжение"
+    }
+  ],
+  "civilization.provisions": [
+    {
+      "type": 0,
+      "value": "Провизия"
+    }
+  ],
+  "civilization.recruitment": [
+    {
+      "type": 0,
+      "value": "Рабочие остаются в лагере. Каждому нужно место в жилье."
+    }
+  ],
+  "civilization.seasonalExpeditions": [
+    {
+      "type": 0,
+      "value": "Сезонные экспедиции"
+    }
+  ],
+  "civilization.settlement": [
+    {
+      "type": 0,
+      "value": "Поселение"
+    }
+  ],
+  "civilization.shelterBuilding": [
+    {
+      "type": 0,
+      "value": "Строительство укрытий"
+    }
+  ],
+  "civilization.shelters": [
+    {
+      "type": 0,
+      "value": "Укрытия"
+    }
+  ],
+  "civilization.speed": [
+    {
+      "type": 0,
+      "value": "Скорость прогресса"
+    }
+  ],
+  "civilization.suppliesFocus": [
+    {
+      "type": 0,
+      "value": "Запасы"
+    }
+  ],
+  "civilization.toolmaking": [
+    {
+      "type": 0,
+      "value": "Изготовление орудий"
+    }
+  ],
+  "civilization.tools": [
+    {
+      "type": 0,
+      "value": "Инструменты"
+    }
+  ],
+  "civilization.tradeFocus": [
+    {
+      "type": 0,
+      "value": "Путешествия"
+    }
+  ],
+  "civilization.unlock": [
+    {
+      "type": 0,
+      "value": "Нужно циклов: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " для "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.upcoming": [
+    {
+      "type": 0,
+      "value": "Следующие занятия"
+    }
+  ],
+  "civilization.waiting": [
+    {
+      "type": 0,
+      "value": "Ожидание"
+    }
+  ],
+  "civilization.waitingDemand": [
+    {
+      "type": 0,
+      "value": "Потребность удовлетворена; работники помогают другим заданиям до появления нового спроса."
+    }
+  ],
+  "civilization.waitingHousing": [
+    {
+      "type": 0,
+      "value": "Ожидание жилья"
+    }
+  ],
+  "civilization.waitingInputs": [
+    {
+      "type": 0,
+      "value": "Ожидание: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.waitingRange": [
+    {
+      "type": 0,
+      "value": "Баланс не вмещает продукцию"
+    }
+  ],
+  "civilization.waitingWorkers": [
+    {
+      "type": 0,
+      "value": "Ожидание работников"
+    }
+  ],
+  "civilization.workers": [
+    {
+      "type": 0,
+      "value": "Рабочие"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -1334,7 +2004,7 @@
   "discovery.resetRule": [
     {
       "type": 0,
-      "value": "Сохраняется при Бесконечности и Кванте. Сбрасывается при Трансценденции."
+      "value": "Сохраняется через Бесконечность. Сбрасывается при Трансценденции."
     }
   ],
   "discovery.route": [
@@ -4373,6 +5043,702 @@
       "value": "Tinker в гараже"
     }
   ],
+  "farming.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.automatic": [
+    {
+      "type": 0,
+      "value": "Строятся автоматически по плану деревни."
+    }
+  ],
+  "farming.averageLabor": [
+    {
+      "type": 0,
+      "value": "Работа распределяется во времени. Приблизительные средние значения могут содержать дроби; общее число рабочих учитывает целых людей."
+    }
+  ],
+  "farming.balanced": [
+    {
+      "type": 0,
+      "value": "Баланс"
+    }
+  ],
+  "farming.begin": [
+    {
+      "type": 0,
+      "value": "Основать земледельческую деревню"
+    }
+  ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "Эпохи охотников и собирателей и земледельческих деревень завершены. Продолжение скоро."
+    }
+  ],
+  "farming.boost": [
+    {
+      "type": 0,
+      "value": "Реальные расколы: +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "farming.build": [
+    {
+      "type": 0,
+      "value": "Построить зернохранилище"
+    }
+  ],
+  "farming.buy": [
+    {
+      "type": 0,
+      "value": "Купить"
+    }
+  ],
+  "farming.cap": [
+    {
+      "type": 0,
+      "value": "Хранилище заполнено; поля ждут расхода еды или строительства зернохранилища."
+    }
+  ],
+  "farming.capacity": [
+    {
+      "type": 0,
+      "value": "Запас еды"
+    }
+  ],
+  "farming.closed": [
+    {
+      "type": 0,
+      "value": "Закрыто"
+    }
+  ],
+  "farming.compactStorage": [
+    {
+      "type": 0,
+      "value": "160 хранения"
+    }
+  ],
+  "farming.complete": [
+    {
+      "type": 0,
+      "value": "Деревня основана"
+    }
+  ],
+  "farming.connection": [
+    {
+      "type": 0,
+      "value": "Торговые связи"
+    }
+  ],
+  "farming.constructed": [
+    {
+      "type": 0,
+      "value": "Построенные улучшения"
+    }
+  ],
+  "farming.crew": [
+    {
+      "type": 0,
+      "value": "Средняя выделенная рабочая сила"
+    }
+  ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "Будущие урожаи полей дают на 20% больше еды. После водопровода рост износа жилья снижается ещё на 20%."
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "Построен водопровод"
+    }
+  ],
+  "farming.done": [
+    {
+      "type": 0,
+      "value": "Построено"
+    }
+  ],
+  "farming.era": [
+    {
+      "type": 0,
+      "value": "Земледельческие деревни"
+    }
+  ],
+  "farming.export": [
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " оставшихся рабочих поставляют "
+    },
+    {
+      "type": 1,
+      "value": "food"
+    },
+    {
+      "type": 0,
+      "value": " еды и "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " материалов за минуту симуляции, до реальных бонусов раскола. Старые запасы остаются в лагере."
+    }
+  ],
+  "farming.failed": [
+    {
+      "type": 0,
+      "value": "Действие не удалось. Повторите попытку."
+    }
+  ],
+  "farming.fields": [
+    {
+      "type": 0,
+      "value": "Поля"
+    }
+  ],
+  "farming.finish": [
+    {
+      "type": 0,
+      "value": "Основать деревню"
+    }
+  ],
+  "farming.finished": [
+    {
+      "type": 0,
+      "value": "Шесть жилых домов, шесть торговых связей и все три улучшения для подготовки к городам завершены. Деревня готова к первым городам; следующая эпоха пока недоступна."
+    }
+  ],
+  "farming.finite": [
+    {
+      "type": 0,
+      "value": "Построено; повторяющегося строительного цикла нет."
+    }
+  ],
+  "farming.firstHarvest": [
+    {
+      "type": 0,
+      "value": "Первый урожай"
+    }
+  ],
+  "farming.focus": [
+    {
+      "type": 0,
+      "value": "Приоритет работников"
+    }
+  ],
+  "farming.focusEffect": [
+    {
+      "type": 0,
+      "value": "Припасы предпочитает запасы с низким содержанием, но повышает износ. Рост предпочитает строительство и восстановление. Путешествия предпочитает поставки после общего зала; до него распределение сбалансировано."
+    }
+  ],
+  "farming.fullFood": [
+    {
+      "type": 0,
+      "value": "Еда: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    }
+  ],
+  "farming.goods": [
+    {
+      "type": 0,
+      "value": "Товары"
+    }
+  ],
+  "farming.granaries": [
+    {
+      "type": 0,
+      "value": "Зернохранилища"
+    }
+  ],
+  "farming.granary": [
+    {
+      "type": 0,
+      "value": "Зернохранилище"
+    }
+  ],
+  "farming.granaryDetails": [
+    {
+      "type": 0,
+      "value": "Стоимость и сведения об амбаре"
+    }
+  ],
+  "farming.granaryEffect": [
+    {
+      "type": 0,
+      "value": "Каждое зернохранилище добавляет 160 вместимости для еды. Это мгновенная ручная покупка; будущий ремонт сохраняет резерв материалов и инструментов."
+    }
+  ],
+  "farming.granaryFirstHome": [
+    {
+      "type": 0,
+      "value": "Доступно после постройки первого дома."
+    }
+  ],
+  "farming.granaryInactive": [
+    {
+      "type": 0,
+      "value": "Покупки закрыты, пока деревня завершает оплаченную работу."
+    }
+  ],
+  "farming.granaryInputs": [
+    {
+      "type": 0,
+      "value": "Нужно больше материалов или инструментов. Покупка мгновенная."
+    }
+  ],
+  "farming.granaryMaximum": [
+    {
+      "type": 0,
+      "value": "Достигнут предел амбаров."
+    }
+  ],
+  "farming.granaryRepairReserve": [
+    {
+      "type": 0,
+      "value": "Материалы и инструменты зарезервированы для предстоящего ремонта дома."
+    }
+  ],
+  "farming.growth": [
+    {
+      "type": 0,
+      "value": "Рост"
+    }
+  ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "Будущие партии дают 3 товара за 6 материалов и 63 человеко-секунды; уже оплаченные партии сохраняют исходный рецепт."
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "Зал, пять построенных домов и три торговые связи"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "Мастерская гильдии"
+    }
+  ],
+  "farming.hall": [
+    {
+      "type": 0,
+      "value": "Общий зал"
+    }
+  ],
+  "farming.hallNeeded": [
+    {
+      "type": 0,
+      "value": "Четыре дома, пастбище и водоснабжение"
+    }
+  ],
+  "farming.handoff": [
+    {
+      "type": 0,
+      "value": "Три основателя переходят в новую деревню. Оставшийся лагерь сохраняет запасы и поставляет еду и материалы. Оплаченная работа завершается до передачи."
+    }
+  ],
+  "farming.home": [
+    {
+      "type": 0,
+      "value": "Дом "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.homeEffect": [
+    {
+      "type": 0,
+      "value": "Каждый обеспеченный дом добавляет двух жителей. При износе 100 обеспечение теряется; ремонт требует исходные материалы, инструменты и труд."
+    }
+  ],
+  "farming.homes": [
+    {
+      "type": 0,
+      "value": "Дома"
+    }
+  ],
+  "farming.homesCount": [
+    {
+      "type": 0,
+      "value": "Обеспеченные дома"
+    }
+  ],
+  "farming.housingWeathering": [
+    {
+      "type": 0,
+      "value": "Износ жилья"
+    }
+  ],
+  "farming.inputs": [
+    {
+      "type": 0,
+      "value": "Затраты за цикл"
+    }
+  ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "Интенсивное земледелие"
+    }
+  ],
+  "farming.kiln": [
+    {
+      "type": 0,
+      "value": "Печь"
+    }
+  ],
+  "farming.kilnNeeded": [
+    {
+      "type": 0,
+      "value": "Печь построена"
+    }
+  ],
+  "farming.limit": [
+    {
+      "type": 0,
+      "value": "Предел"
+    }
+  ],
+  "farming.locked": [
+    {
+      "type": 0,
+      "value": "Закрыто"
+    }
+  ],
+  "farming.lost": [
+    {
+      "type": 0,
+      "value": "Дом потерял обеспечение. Ремонт вернёт его жителей; основатели остаются."
+    }
+  ],
+  "farming.manual": [
+    {
+      "type": 0,
+      "value": "Постройте зернохранилище для продолжения. Запасённое время останавливается здесь, сохраняя оставшийся запас."
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "Будущие поставки требуют 1 512 человеко-секунд и возвращают 100 материалов. Шесть домов и шесть связей завершают подготовку к городам."
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "Интенсивное земледелие, мастерская гильдии, пять построенных домов и три торговые связи"
+    }
+  ],
+  "farming.missingInputs": [
+    {
+      "type": 0,
+      "value": "Не хватает: "
+    },
+    {
+      "type": 1,
+      "value": "inputs"
+    }
+  ],
+  "farming.need": [
+    {
+      "type": 0,
+      "value": "Нужно"
+    }
+  ],
+  "farming.needsInputs": [
+    {
+      "type": 0,
+      "value": "Не хватает"
+    }
+  ],
+  "farming.next": [
+    {
+      "type": 0,
+      "value": "Текущий план: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "farming.nextPrice": [
+    {
+      "type": 0,
+      "value": "Следующая цена"
+    }
+  ],
+  "farming.oneGranary": [
+    {
+      "type": 0,
+      "value": "Одно зернохранилище"
+    }
+  ],
+  "farming.outputs": [
+    {
+      "type": 0,
+      "value": "Выход за цикл"
+    }
+  ],
+  "farming.owned": [
+    {
+      "type": 0,
+      "value": "В наличии: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.paid": [
+    {
+      "type": 0,
+      "value": "Ресурсы уже зарезервированы. Смена приоритета распределяет труд без повторной оплаты."
+    }
+  ],
+  "farming.paidStatus": [
+    {
+      "type": 0,
+      "value": "Оплаченный цикл"
+    }
+  ],
+  "farming.pasture": [
+    {
+      "type": 0,
+      "value": "Пастбище"
+    }
+  ],
+  "farming.pendingFinish": [
+    {
+      "type": 0,
+      "value": "Завершаются оплаченные циклы деревни."
+    }
+  ],
+  "farming.pendingSkill": [
+    {
+      "type": 0,
+      "value": "Эта веха ждёт доступного выбора в существующем дереве навыков или места в запасе катализаторов."
+    }
+  ],
+  "farming.production": [
+    {
+      "type": 0,
+      "value": "Производство"
+    }
+  ],
+  "farming.repair": [
+    {
+      "type": 0,
+      "value": "Ремонт дома "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.reserved": [
+    {
+      "type": 0,
+      "value": "В резерве"
+    }
+  ],
+  "farming.risk": [
+    {
+      "type": 0,
+      "value": "Жильё под угрозой"
+    }
+  ],
+  "farming.settings": [
+    {
+      "type": 0,
+      "value": "Настройки деревни"
+    }
+  ],
+  "farming.settling": [
+    {
+      "type": 0,
+      "value": "Оплаченная работа лагеря собирателей завершается до начала деревни."
+    }
+  ],
+  "farming.ship": [
+    {
+      "type": 0,
+      "value": "Торговая поставка"
+    }
+  ],
+  "farming.shop": [
+    {
+      "type": 0,
+      "value": "Покупки"
+    }
+  ],
+  "farming.skillLimit": [
+    {
+      "type": 0,
+      "value": "Особые расколы земледельческих деревень пока не созданы. Эти шесть вех используют существующий запас катализаторов и доступные навыки. Неиспользованные катализаторы не ускоряют симуляцию."
+    }
+  ],
+  "farming.source": [
+    {
+      "type": 0,
+      "value": "Сохранённый лагерь собирателей"
+    }
+  ],
+  "farming.stage": [
+    {
+      "type": 0,
+      "value": "Развитие деревни"
+    }
+  ],
+  "farming.storageGain": [
+    {
+      "type": 0,
+      "value": "+160 к хранению еды за покупку · Всего: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.supplies": [
+    {
+      "type": 0,
+      "value": "Запасы"
+    }
+  ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "Городской рынок"
+    }
+  ],
+  "farming.travel": [
+    {
+      "type": 0,
+      "value": "Путешествия"
+    }
+  ],
+  "farming.upcoming": [
+    {
+      "type": 0,
+      "value": "Пока недоступно"
+    }
+  ],
+  "farming.village": [
+    {
+      "type": 0,
+      "value": "Деревня"
+    }
+  ],
+  "farming.waiting": [
+    {
+      "type": 0,
+      "value": "Ожидание полезного спроса или достаточных ресурсов."
+    }
+  ],
+  "farming.waterworks": [
+    {
+      "type": 0,
+      "value": "Водоснабжение"
+    }
+  ],
+  "farming.weatherHelp": [
+    {
+      "type": 0,
+      "value": "Баланс снижает износ на 1/мин; Запасы повышают на 2/мин; Рост снижает на 4/мин; Путешествия повышают на 4/мин. Водопровод снижает рост на 40%; интенсивное земледелие снижает оставшийся рост ещё на 20%. При 75 жильё под угрозой; при 100 один дом теряет жителей, а износ сбрасывается до 40."
+    }
+  ],
+  "farming.weathering": [
+    {
+      "type": 0,
+      "value": "Износ"
+    }
+  ],
+  "farming.woodlot": [
+    {
+      "type": 0,
+      "value": "Лесной участок"
+    }
+  ],
+  "farming.work": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " рабочих секунд"
+    }
+  ],
+  "farming.workers": [
+    {
+      "type": 0,
+      "value": "Рабочие"
+    }
+  ],
+  "farming.workshop": [
+    {
+      "type": 0,
+      "value": "Мастерская"
+    }
+  ],
+  "farming.yield": [
+    {
+      "type": 0,
+      "value": "Поставка стоит 350 еды и 35 товаров, затем возвращает "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " материалов и одну связь. Шесть связей, шесть жилых домов и улучшения для подготовки к городам завершают эпоху."
+    }
+  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -5703,6 +7069,324 @@
     {
       "type": 0,
       "value": "Смоделированное время"
+    }
+  ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "Отменить испытание"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "Чистый лист"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "Завершите одну Бесконечность с неактивными навыками, усилениями и эффектами раскола."
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "Требуется Разорвать цикл."
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "Награды испытаний: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SP"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "Ручной труд"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "Завершите одну Бесконечность без сооружений и автоматического производства Ботов. Ручной труд временно доступен."
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "Страх обязательств"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 32 IP, не возвращая очки и не заменяя сборку на протяжении всей попытки, включая сбросы Бесконечности."
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "Испытания Бесконечности"
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "Подтвердить перезапуск"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "Получено "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " постоянных SP"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "Не удалось начать или сохранить испытание. Текущий забег сохранён."
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "Завершите первую Бесконечность."
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "Приземление"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 32 IP без Планет и мегасооружений. Цель Планет заменяется на 100 купленных Центров обработки данных."
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "Руки прочь"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 32 IP без покупок сооружений и Tinker. Начните с одной Сборочной линии и сборки, генерирующей Планеты."
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "Прежних завершений испытаний: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ". Исторические награды сохранены; в этом пилоте компенсация не применяется."
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "Каждая попытка начинается с новой Бесконечности. Учитываются только IP, заработанные за попытку. Первое завершение каждого испытания один раз даёт постоянные SP."
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "Минимальная сборка"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 16 IP, назначив навыки не более чем на 4 SP. Возврат очков разрешён."
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "Без науки"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 32 IP без Науки, Исследований и Открытия."
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "Завершите или отмените активное испытание."
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "Сначала завершите Трансценденцию."
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "Активно · заработано "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IP · "
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": " Бесконечностей"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "Оплачено сооружений: "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · типов: "
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "Повторить"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "Начните новую Бесконечность без получения IP. Постоянный прогресс цивилизации, улучшения, история наград и полученные расколы сохраняются. Отмена сбрасывает прогресс попытки и восстанавливает обычные эффекты."
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "Награда: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " постоянных SP"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "Прежние IP не учитываются в множителе производства. Деление, игровые Двойные Очки Бесконечности, Открытие и постоянные расколы неактивны; купленные усиления остаются активными. Покупки в магазине Бесконечности приостановлены на время попыток. Большинство попыток начинается с 10 SP плюс награды за цели; Чистый лист и Ручной труд начинают с нуля, а Минимальная сборка — с 4. Попытки продолжаются через несколько Бесконечностей. Трансценденция отменяет незавершённую попытку без выдачи её SP. Повторное прохождение не даёт дополнительных SP."
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "Правила и награды попыток"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "Короткое замыкание"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 64 IP со сроком службы панелей, равным 2 секундам."
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "Начать"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "Дефицит поставок"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 64 IP с удваивающимися ценами покупок и оплатите 10 сооружений 3 типов. Созданные и бесплатные сооружения не учитываются."
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "Испытания Бесконечности"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "Требуется всего "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " заработанных IP."
     }
   ],
   "pwa.update.accept": [
@@ -7931,6 +9615,154 @@
     {
       "type": 0,
       "value": "Всегда показывать быстрый выбор наборов"
+    }
+  ],
+  "rework.action.failed": [
+    {
+      "type": 0,
+      "value": "Не удалось сохранить изменение. Попробуйте снова."
+    }
+  ],
+  "rework.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "rework.challenges.completed": [
+    {
+      "type": 0,
+      "value": "Прошлые прохождения: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "rework.challenges.history": [
+    {
+      "type": 0,
+      "value": "Полученные награды и записи о прохождении сохраняются."
+    }
+  ],
+  "rework.challenges.pending": [
+    {
+      "type": 0,
+      "value": "Испытания перерабатываются."
+    }
+  ],
+  "rework.civilization": [
+    {
+      "type": 0,
+      "value": "Цивилизация"
+    }
+  ],
+  "rework.infinity.advanced": [
+    {
+      "type": 0,
+      "value": "Продвинутые улучшения"
+    }
+  ],
+  "rework.infinity.double-time.description": [
+    {
+      "type": 0,
+      "value": "Удваивает скорость игры."
+    }
+  ],
+  "rework.infinity.double-time.title": [
+    {
+      "type": 0,
+      "value": "Двойное время"
+    }
+  ],
+  "rework.infinity.regular": [
+    {
+      "type": 0,
+      "value": "Улучшения Бесконечности"
+    }
+  ],
+  "rework.migration.description": [
+    {
+      "type": 0,
+      "value": "Сохраните равноценные улучшения и разломы или заработайте продвинутые улучшения заново. Новый старт убирает разломы и их усиления; основная игра, IP, Трансценденция, Открытие и покупки сохраняются."
+    }
+  ],
+  "rework.migration.fresh": [
+    {
+      "type": 0,
+      "value": "Получить улучшения заново"
+    }
+  ],
+  "rework.migration.intro": [
+    {
+      "type": 0,
+      "value": "Я перестраиваю прогрессию. Quantum, Reality и старые Sims удалены. Полезные улучшения теперь находятся в Infinity, а цивилизационные Sims производят ресурсы для Катализаторов."
+    }
+  ],
+  "rework.migration.keep": [
+    {
+      "type": 0,
+      "value": "Сохранить равноценный прогресс"
+    }
+  ],
+  "rework.migration.title": [
+    {
+      "type": 0,
+      "value": "Привет, это разработчик"
+    }
+  ],
+  "rework.simulations.details": [
+    {
+      "type": 0,
+      "value": "Ресурсы эпох позволят покупать Катализаторы. Постоянные разломы ускорят каждую цивилизацию."
+    }
+  ],
+  "rework.simulations.pending": [
+    {
+      "type": 0,
+      "value": "Развитие цивилизаций появится следующим."
+    }
+  ],
+  "rework.transcend": [
+    {
+      "type": 0,
+      "value": "Трансцендировать"
+    }
+  ],
+  "rework.transcend.balance": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " очков Трансценденции"
+    }
+  ],
+  "rework.transcend.confirm": [
+    {
+      "type": 0,
+      "value": "Подтвердить Трансценденцию"
+    }
+  ],
+  "rework.transcend.confirmation": [
+    {
+      "type": 0,
+      "value": "Сбросить базовое производство и улучшения Infinity за 1 очко Трансценденции? Расколы, прогресс цивилизации и улучшения Discovery сохранятся."
+    }
+  ],
+  "rework.transcend.threshold": [
+    {
+      "type": 0,
+      "value": "Достигните "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ботов для Трансценденции."
     }
   ],
   "settings.achievements.action": [
@@ -10684,7 +12516,7 @@
   "skills.node.androids.technical": [
     {
       "type": 0,
-      "value": "Пока навык «Андроиды» назначен, его бонус к сроку службы панелей за 10 минут возрастает с 0 до 200 секунд.\nСбрасывается при Бесконечности или Квантовом скачке."
+      "value": "Пока назначены Андроиды, бонус за 10 минут растёт от 0 до 200 секунд срока службы панелей.\nСбрасывается при Бесконечности."
     }
   ],
   "skills.node.artificiallyEnhancedPanels.description": [
@@ -12124,7 +13956,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "Увеличивает производство денег, науки, ботов и всех сооружений на 1% в секунду, пока навык назначен. Бонусы складываются. Накапливается при симуляции накопленного времени и сбрасывается при Бесконечности или Квантовом скачке."
+      "value": "Повышает производство денег, науки, ботов и всех сооружений на 1% за секунду назначения. Бонусы складываются. Заряжается при симуляции накопленного времени и сбрасывается при Бесконечности."
     }
   ],
   "skills.node.superSwarm.description": [
@@ -12502,7 +14334,7 @@
   "skills.non-refundable-confirmation-warning": [
     {
       "type": 0,
-      "value": "Невозвратные навыки и их предварительные навыки нельзя вернуть до сброса Бесконечности или Кванта. Продолжить?"
+      "value": "Невозвратные навыки и их необходимые предшественники нельзя вернуть до сброса Бесконечности. Продолжить?"
     }
   ],
   "skills.none": [
@@ -13100,7 +14932,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "Сохраняет 10% заряда SRS при Бесконечности, умноженных на Звёздную память, но не более 50%. Складывается с Горячим стартом. Квантовый скачок удаляет сохранённый заряд."
+      "value": "Сохраняет 10% заряда SRS через Бесконечность; Звёздная память увеличивает сохранение до 50%. Складывается с Горячим стартом."
     }
   ],
   "skills.srs.afterglow.name": [
@@ -13118,7 +14950,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "Увеличивает скорость зарядки SRS на 10% за каждую минуту назначения, до 200% через 20 минут. Звёздная память умножает эти бонусы. Сбрасывается при Бесконечности или Квантовом скачке. Бонусы складываются."
+      "value": "Повышает скорость зарядки SRS на 10% за каждую минуту назначения, до 200% через 20 минут. Звёздная память умножает эти бонусы. Сбрасывается при Бесконечности. Бонусы складываются."
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -13208,7 +15040,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "При сбросе Бесконечности или Кванта сохраняет новый заряд SRS, исключая Горячий старт и Послесвечение. Пока назначена, умножает преимущества улучшений SRS на 1 + 0,25 × log10(max(1, сохранённые секунды))."
+      "value": "При сбросе Бесконечности запасает новый заряд SRS, исключая Горячий старт и Послесвечение. Пока назначено, усиливает улучшения SRS в 1 + 0,25 × log10(max(1, запасённые секунды))."
     }
   ],
   "skills.srs.stellarMemory.name": [
@@ -13602,7 +15434,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Сохраняет оплаченные покупки сооружений после Бесконечности. Назначьте перед сбросом — покупки восстановятся автоматически. Бесплатные стартовые единицы не накапливаются. Квантовый сброс очищает запас."
+      "value": "Сохраняет платные покупки сооружений через Бесконечность. Назначьте до сброса; покупки вернутся автоматически. Бесплатные стартовые единицы не накапливаются. Трансценденция очищает запас."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -14376,7 +16208,7 @@
   "statistics.scope.quantum-run": [
     {
       "type": 0,
-      "value": "Текущий Квантовый цикл"
+      "value": "Текущий забег"
     }
   ],
   "statistics.speedruns.boostedBest": [
@@ -15867,7 +17699,7 @@
   "wiki.discovery.resets": [
     {
       "type": 0,
-      "value": "Открытия сохраняются при "
+      "value": "Открытие сохраняется через "
     },
     {
       "type": 8,
@@ -15875,27 +17707,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Бесконечности"
+          "value": "Бесконечность"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", "
-    },
-    {
-      "type": 8,
-      "value": "quantum",
-      "children": [
-        {
-          "type": 0,
-          "value": "Кванте"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " и испытаниях. "
+      "value": ". "
     },
     {
       "type": 8,
@@ -15909,7 +17727,7 @@
     },
     {
       "type": 0,
-      "value": " сбрасывает уровень и прогресс; доступ и постоянные улучшения остаются. Накопленное время продвигает Открытия при расходовании. Время отсутствия накапливается, а не применяется к Открытиям автоматически."
+      "value": " сбрасывает его уровень и прогресс; доступ и постоянные улучшения остаются. Потраченное накопленное время продвигает Открытие. Время отсутствия накапливается, а не применяется к Открытию автоматически."
     }
   ],
   "wiki.discovery.resets-title": [
@@ -16373,15 +18191,15 @@
   "wiki.infinity.secrets": [
     {
       "type": 0,
-      "value": "После "
+      "value": "В "
     },
     {
       "type": 8,
-      "value": "quantum",
+      "value": "infinity",
       "children": [
         {
           "type": 0,
-          "value": "Квантового скачка"
+          "value": "Бесконечности"
         }
       ]
     },
@@ -16395,13 +18213,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Секретов"
+          "value": "Секрет"
         }
       ]
     },
     {
       "type": 0,
-      "value": " по одной букве раскрывают смысл жизни и дают постоянный скрытый производственный бонус."
+      "value": " раскрывают смысл жизни по одной букве и дают постоянный скрытый бонус производства."
     }
   ],
   "wiki.infinity.secrets-title": [
@@ -16825,7 +18643,7 @@
   "wiki.other.offline-results": [
     {
       "type": 0,
-      "value": "Завершённый запуск показывает длительность симуляции, оставшийся запас, итоговую точность и фактическое число обновлений. Также отображаются соответствующие приросты Бесконечности, Симуляции и Реальности. Приросты объектов и ботов показываются только без Бесконечности, поскольку сброс и повторное развитие сделали бы простое сравнение до и после вводящим в заблуждение."
+      "value": "Завершённый запуск показывает длительность симуляции, оставшийся запас времени, итоговую точность и фактическое число обновлений, а также прирост Бесконечности. Прирост сооружений и ботов показывается только без Бесконечности: сброс и восстановление делают прямое сравнение вводящим в заблуждение."
     }
   ],
   "wiki.other.offline-results-title": [
@@ -18387,7 +20205,7 @@
   "wiki.skills.auto-assign": [
     {
       "type": 0,
-      "value": "Отдельные навыки можно вручную включать в автоматическое назначение или исключать из него. Древо запоминает порядок назначения и может восстановить вашу схему после "
+      "value": "Можно вручную включать отдельные навыки в автоназначение или исключать их. Дерево помнит порядок, чтобы восстановить расклад после "
     },
     {
       "type": 8,
@@ -18401,21 +20219,7 @@
     },
     {
       "type": 0,
-      "value": " или "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Квантового"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " сброса. Сброс древа очищает текущую очередь автоназначения. Наборы сохраняют готовые схемы."
+      "value": ". Сброс дерева очищает текущую очередь автоназначения. Пресеты сохраняют полный расклад."
     }
   ],
   "wiki.skills.auto-assign-title": [
@@ -18793,7 +20597,7 @@
     },
     {
       "type": 0,
-      "value": " совершите Трансценденцию у Авокато, чтобы сбросить предыдущие слои и получить "
+      "value": " выполните Трансценденцию во вкладке Avocato, чтобы сбросить прежние слои и получить "
     },
     {
       "type": 8,
@@ -18807,7 +20611,7 @@
     },
     {
       "type": 0,
-      "value": ". Потратьте очко на "
+      "value": ". Потратьте там очко на "
     },
     {
       "type": 8,
@@ -18815,13 +20619,13 @@
       "children": [
         {
           "type": 0,
-          "value": "открытие системы открытий"
+          "value": "Открыть Открытие"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", чтобы навсегда заменить Науку и Исследования. Накопленная Наука и уровни исследований не переносятся."
+      "value": ", чтобы навсегда заменить Науку и Исследование. Имеющаяся Наука и уровни исследований не сохраняются."
     }
   ],
   "wiki.transcendence.overview-title": [

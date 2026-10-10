@@ -21,6 +21,7 @@ export interface CanonicalGameStateV1 {
   readonly infinity: InfinityState
   readonly skills: SkillsState
   readonly discovery?: DiscoveryState
+  readonly civilization?: CivilizationState
   readonly research: ResearchState
   readonly reality: RealityState
   readonly quantum: QuantumState
@@ -32,7 +33,79 @@ export interface CanonicalGameStateV1 {
   readonly statistics: SimulationStatisticsState
 }
 
+export type CivilizationResource = 'food' | 'materials' | 'tools' | 'hides' | 'clothing' | 'provisions' | 'shelters' | 'camps'
+export type CivilizationFocus = 'balanced' | 'provisioning' | 'settlement' | 'expeditions'
+export interface CivilizationActivityState {
+  readonly completions: bigint
+  readonly progress: number
+  /** Recipe inputs have already been reserved for this unfinished cycle. */
+  readonly active: boolean
+  readonly workers: bigint
+  readonly cycleReceipt?: { readonly seconds: number; readonly inputs: Partial<Record<CivilizationResource, bigint>>; readonly outputs: Partial<Record<CivilizationResource, bigint>>; readonly populationDelta: bigint; readonly rate: number; readonly remainingWork: number; readonly finishAt?: number; readonly legacyWorkMultiplier?: 1 }
+  readonly legacyCycle?: { readonly seconds: number; readonly inputs: Partial<Record<CivilizationResource, bigint>>; readonly outputs: Partial<Record<CivilizationResource, bigint>> }
+}
+export type FarmingResource = 'food' | 'materials' | 'tools' | 'goods'
+export type FarmingBuilding = 'pasture' | 'kiln' | 'waterworks' | 'hall' | 'intensiveCultivation' | 'guildWorkshop' | 'townMarket'
+export type FarmingRecipe = Readonly<Partial<Record<FarmingResource, number>>>
+export interface FarmingJob {
+  readonly kind: FarmingResource | FarmingBuilding | 'home' | 'repair' | 'ship'
+  readonly index?: number
+  readonly work: number
+  readonly remainingWork: number
+  /** Paid inputs and the final partial Food batch survive mode changes/reload. */
+  readonly inputs: FarmingRecipe
+  readonly output: number
+}
+export interface FarmingState {
+  readonly version: 1
+  readonly phase: 'settling-forager' | 'farming' | 'settling-village' | 'complete'
+  readonly focus: CivilizationFocus
+  readonly elapsedSeconds: number
+  readonly tickRemainder: number
+  readonly resources: Readonly<Record<FarmingResource, number>>
+  readonly targets: Readonly<Record<FarmingResource, number>>
+  readonly jobs: Readonly<Record<string, FarmingJob>>
+  readonly homes: readonly number[]
+  readonly lostHomes: readonly number[]
+  readonly homesBuilt: number
+  readonly granaries: number
+  readonly shipments: number
+  readonly weathering: number
+  readonly firstHarvest: boolean
+  readonly completedBuildings: readonly FarmingBuilding[]
+  readonly awardedCatalystIds: readonly string[]
+  readonly inheritedFoodPerMinute: number
+  readonly inheritedMaterialsPerMinute: number
+  readonly transferredWorkers: bigint
+  readonly transferredEquippedWorkers: bigint
+  readonly skillRewardPending: boolean
+}
+
+export interface CivilizationState {
+  readonly version: 4 | 5
+  /** Absent on V4 saves predating the approved focus-rate trial. */
+  readonly focusBalanceVersion?: 2
+  readonly farming?: FarmingState
+  readonly populationBaseline: bigint
+  readonly populationGranted: bigint
+  readonly elapsedSeconds: number
+  readonly nextEquipmentSeconds: number
+  readonly supplyHold: Readonly<Record<string, boolean>>
+  readonly focus: CivilizationFocus
+  readonly unlocked: boolean
+  readonly activities: Readonly<Record<string, CivilizationActivityState>>
+  readonly resources: Readonly<Record<CivilizationResource, bigint>>
+  readonly workers: bigint
+  readonly equippedWorkers: bigint
+  readonly awardedCatalystMilestoneIds: readonly string[]
+  readonly legacyUnlockedActivityIds?: readonly string[]
+  /** Preserve the rejected prototype's unused stock without giving it new effects. */
+  readonly legacyKnowledge?: bigint
+}
+
 export interface GameMetaState {
+  /** One-time player choice for the gameplay rework; unrelated progress is retained. */
+  readonly reworkMigrationChoice?: 'keep' | 'fresh'
   readonly botBoost?: import('../simulation/botBoost').BotBoostState
   /** The culture-formatted Unity value is preserved until date parity is characterized. */
   readonly createdAtLegacyText: string | null
@@ -549,9 +622,25 @@ export interface SimulationStatisticsState {
 }
 
 export type QuantumChallengeId = 'no-science' | 'short-circuit' | 'grounded' | 'built-by-hand' | 'hands-off' | 'commitment-issues' | 'supply-shortage'
-export type ChallengeId = 'blank-slate' | 'trial-and-error' | QuantumChallengeId
+export type ReworkChallengeId = 'blank-slate' | QuantumChallengeId | 'lean-build'
+export type ChallengeId = ReworkChallengeId | 'trial-and-error'
+
+export interface ReplacementChallengeProgress {
+  readonly version: 1
+  readonly active: ReworkChallengeId | null
+  readonly completedIds: readonly ReworkChallengeId[]
+  readonly earnedIp: bigint
+  readonly infinities: number
+  readonly paidPurchases: number
+  readonly paidFacilityIds: readonly string[]
+  readonly savedDiscovery: DiscoveryState | undefined
+  readonly savedAutoAssignment: readonly string[]
+  readonly savedBreakTarget: bigint
+  readonly savedBotDistribution: number
+}
 
 export interface InfinityChallengeState {
+  readonly replacement?: ReplacementChallengeProgress
   readonly galvanizedSkillIds?: readonly string[]
   readonly unlocked: boolean
   readonly active: ChallengeId | null

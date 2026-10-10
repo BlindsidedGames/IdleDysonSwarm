@@ -1,28 +1,28 @@
 {
-  "id": "/play/",
-  "name": "Idle Dyson Swarm",
-  "short_name": "Dyson Swarm",
-  "start_url": "/play/",
-  "scope": "/play/",
+  "id": "/rework-beta/",
+  "name": "Idle Dyson Swarm Beta",
+  "short_name": "Dyson Beta",
+  "start_url": "/rework-beta/",
+  "scope": "/rework-beta/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#130f22",
   "theme_color": "#2f1738",
   "icons": [
     {
-      "src": "/play/icons/pwa-icon-192.png",
+      "src": "/rework-beta/icons/pwa-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/play/icons/pwa-icon-512.png",
+      "src": "/rework-beta/icons/pwa-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/play/icons/pwa-maskable-512.png",
+      "src": "/rework-beta/icons/pwa-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

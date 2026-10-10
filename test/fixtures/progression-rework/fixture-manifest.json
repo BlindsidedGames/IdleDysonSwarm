@@ -1,0 +1,244 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "canonical progression builders",
+  "fixtures": [
+    {
+      "id": "fresh",
+      "description": "Unmodified production first-run artifact.",
+      "fingerprint": "a981a24fa9d1b86f613f07bb98bc704f953835361fb494f31129a6aa50dfc76b",
+      "saveSha256": "32274aac47f4e45c7e50e081b0531a67339bb3256d146e76c71807aa74ff6340",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "simulations",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "production first-run artifact",
+        "full production application/engine startup and advance"
+      ],
+      "file": "fresh.idsweb1.txt"
+    },
+    {
+      "id": "mid-swarm",
+      "description": "Deterministic pre-Infinity run with every basic Dyson facility visible.",
+      "fingerprint": "7e49b08cf3d1b64e683fb09a3afe8f6930dc9aa3bbdee526c40f2bc39cccd65e",
+      "saveSha256": "1e69a795c2b79073ee2140ec029c760e16bf753a80f03311bcd6afd1702dfc11",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "simulations",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "pre-Infinity invariants",
+        "full production application/engine startup and advance"
+      ],
+      "file": "mid-swarm.idsweb1.txt"
+    },
+    {
+      "id": "first-infinity",
+      "description": "The result of one canonical Infinity reset awarding one point.",
+      "fingerprint": "8ccf73459aa2e42b225186b29d2b750df4e7fd8130e2aefd60dc7d9f572dadc5",
+      "saveSha256": "7faf474d7019daec6dd8861127b234c5442f81df0be8606d9192f4a783d7fcbc",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "simulations",
+        "transcendence",
+        "avocato",
+        "challenges",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "applyCanonicalInfinityReset",
+        "full production application/engine startup and advance"
+      ],
+      "file": "first-infinity.idsweb1.txt"
+    },
+    {
+      "id": "mature-infinity",
+      "description": "Active mature Infinity economy with twenty Secrets and both automation unlocks purchased canonically.",
+      "fingerprint": "14153fa5730cd1794e35881faf754670c7b362f02e4ec91842a4d10ce262ed71",
+      "saveSha256": "4c36e71c7e65f3916302d807c568fce90edeaa10d245cb6dc3bfc40ee4edec20",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "simulations",
+        "transcendence",
+        "avocato",
+        "challenges",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical reset",
+        "20 canonical Secret purchases",
+        "canonical automation purchases",
+        "characterized active-economy seed",
+        "goal progression fixed point",
+        "full production application/engine startup and advance"
+      ],
+      "file": "mature-infinity.idsweb1.txt"
+    },
+    {
+      "id": "reality-unlock",
+      "description": "The authored 27 Secrets and ten permanent Skill purchases paid from 41 Infinity Points.",
+      "fingerprint": "4dd3c7581faf30e4b8fbaf39a41f5f5315e4155e96f1f5aaa0bbaae781b3def5",
+      "saveSha256": "1497896bdad5270fc2fee4b1dd700718b4bc8f6b500ef02657c63850bb4dbedf",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "simulations",
+        "transcendence",
+        "avocato",
+        "challenges",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical reset",
+        "37 canonical Infinity shop purchases",
+        "full production application/engine startup and advance"
+      ],
+      "file": "reality-unlock.idsweb1.txt"
+    },
+    {
+      "id": "mature-simulations",
+      "description": "Reality unlocked with a reset, populated Dream run, and Simulation upgrade produced through canonical transactions.",
+      "fingerprint": "6fed991b8ffeb8c55d103f41ae6956ff6e65ed5307fdc75d7fdf013688f7480c",
+      "saveSha256": "3de6d9361f42e9af532dd00ec4fd6ac92cfa3416d09508466fac6a37d945ccbb",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "simulations",
+        "transcendence",
+        "avocato",
+        "challenges",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical Dream reset",
+        "canonical Reality generation/gather",
+        "canonical Dream purchases/production",
+        "canonical Simulation upgrade purchase",
+        "full production application/engine startup and advance"
+      ],
+      "file": "mature-simulations.idsweb1.txt"
+    },
+    {
+      "id": "quantum-unlock",
+      "description": "The 42 Infinity Point Quantum threshold with valid Reality-unlock spending.",
+      "fingerprint": "6757a812cda4973f5f1a73ed6878edcfea76b4ba92467b68ab39c7718f26d788",
+      "saveSha256": "2d6d24537a04cf623458a3ff19735949b6e72fbfdcf38ddb852250e537c519ba",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "simulations",
+        "transcendence",
+        "avocato",
+        "challenges",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical reset",
+        "37 canonical Infinity shop purchases",
+        "full production application/engine startup and advance"
+      ],
+      "file": "quantum-unlock.idsweb1.txt"
+    },
+    {
+      "id": "late-quantum",
+      "description": "Late Quantum built by 420 canonical leap cycles followed by canonical upgrade transactions.",
+      "fingerprint": "f252712a20c0556cc355faeb0bba41957ec371ec76b02e81ea3a04ec948dcd9e",
+      "saveSha256": "68782418fb7d3399b4bfee4e418b67b0e31ad2bffcbfec977ad6cdb28dcfbbbc",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "simulations",
+        "transcendence",
+        "avocato",
+        "challenges",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical Infinity resets",
+        "canonical Quantum resets",
+        "canonical Quantum upgrade purchases",
+        "full production application/engine startup and advance"
+      ],
+      "file": "late-quantum.idsweb1.txt"
+    },
+    {
+      "id": "maximum-skills",
+      "description": "Maximum deterministic non-conflicting Skill ownership from an explicit stress-funding seed and canonical purchases.",
+      "fingerprint": "7ca517cd85256b4202fbfa84c1e9cdb48b3d48c577fd1432293fad03b6784519",
+      "saveSha256": "41d0d69475fae72fc2adf846311b0ad17dc0c7b254d99d317acfbe394866915f",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "simulations",
+        "transcendence",
+        "avocato",
+        "challenges",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "explicit 200-point/42-fragment stress seed",
+        "canonical Skill purchase fixed point",
+        "exclusive choices respected",
+        "full production application/engine startup and advance"
+      ],
+      "file": "maximum-skills.idsweb1.txt"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { enterReplacementChallenge } from '../../test/support/replacementChallengeFixture'
 import { expect, test } from 'vitest'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
@@ -20,7 +21,7 @@ import { deserializeWebSave, serializeSharedWebSave } from '../save/serializatio
 const session = () => hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-26T00:00:00Z' }))
 function fixture(ids: readonly string[] = Object.values(A)) {
   const state = session().state
-  return { ...state, meta: { ...state.meta, firstInfinityComplete: true }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true, galvanizedSkillIds: ['manualLabour'] }, dyson: { ...state.dyson, bots: 100, manualCreationIntervalSeconds: 0.2 }, skills: { ...state.skills, byId: { ...state.skills.byId, ...Object.fromEntries(['manualLabour', ...ids].map(id => [id, { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 }])) } } }
+  return { ...state, meta: { ...state.meta, firstInfinityComplete: true, reworkMigrationChoice: 'keep' as const }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true, galvanizedSkillIds: ['manualLabour'] }, dyson: { ...state.dyson, bots: 100, manualCreationIntervalSeconds: 0.2 }, skills: { ...state.skills, byId: { ...state.skills.byId, ...Object.fromEntries(['manualLabour', ...ids].map(id => [id, { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 }])) } } }
 }
 function click(state: ReturnType<typeof fixture>, repeat = false, seconds = .2, multiplier: 1 | 2 = 1) {
   const stats = deriveCanonicalTinkerStats(state, 500)
@@ -115,7 +116,7 @@ test('Patient Hands completes up to 42 seconds of real work and practice, reward
 test('Working Smarter is logarithmic, bounded and ignores disabled or retired research', () => {
   const state = fixture([A.handAssembly, A.workingSmarter]); state.research.levelsById = { 'research.assembly_line_upgrade': 99 }
   expect(manualBotYield(state)).toBe(1.5)
-  expect(manualBotYield({ ...state, challenges: { ...state.challenges, active: 'no-science' } })).toBe(1)
+  expect(manualBotYield(enterReplacementChallenge(state, 'no-science'))).toBe(1)
   expect(manualBotYield({ ...state, discovery: { unlocked: true, completions: 9n, progress: 0, startingPower: 0n, speedUpgrades: 0n } })).toBe(1.25)
   state.research.levelsById['research.assembly_line_upgrade'] = 1e100
   expect(manualBotYield(state)).toBe(3)
@@ -242,7 +243,7 @@ test('Patient Hands goal work is bounded, survives refunds/reload and resets on 
     applyCanonicalInfinityReset(loaded, { requestedReward: 1n, breakInfinity: false, artifactSkillPoints: 0n }),
     applyCanonicalQuantumReset(loaded, 0n),
     restartInfinityChallenge(loaded, 'enter', 0n, 'built-by-hand'),
-    restartInfinityChallenge({ ...loaded, challenges: { ...loaded.challenges!, active: 'built-by-hand' } }, 'abandon', 0n),
+    (() => { const entered = restartInfinityChallenge(loaded, 'enter', 0n, 'built-by-hand'); return entered.ok ? restartInfinityChallenge(entered.state, 'abandon', 0n) : entered })(),
     applyCanonicalOverflowReset({ ...loaded, dyson: { ...loaded.dyson, bots: 4e242 } }),
   ]
   for (const reset of transitions) {

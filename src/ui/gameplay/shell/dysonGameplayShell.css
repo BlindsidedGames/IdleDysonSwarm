@@ -42,7 +42,7 @@
   display: grid;
   grid-template-rows:
     minmax(0, 1fr)
-    calc(var(--bottom-navigation-height) + var(--safe-area-bottom));
+    auto;
   inline-size: 100%;
   block-size: 100vh;
   block-size: 100dvb;
@@ -1019,6 +1019,7 @@
 }
 
 .dyson-shell__bottom-navigation {
+  min-block-size: calc(var(--bottom-navigation-height) + var(--safe-area-bottom));
   position: relative;
   z-index: 30;
   grid-row: 2;
@@ -1057,7 +1058,7 @@
   background: transparent;
   color: white;
   cursor: pointer;
-  font-size: 2.55rem;
+  font-size: var(--bottom-navigation-icon-size);
   line-height: 1;
 }
 
@@ -1386,7 +1387,8 @@
 
 .dyson-shell__bottom-navigation
   :is(.dyson-navigation__link, .dyson-shell__bottom-menu) {
-  min-block-size: var(--target-minimum);
+  min-block-size: 44px;
+  min-inline-size: 44px;
 }
 
 .dyson-shell__bottom-navigation[data-include-text="true"]
@@ -1564,15 +1566,11 @@
   grid-row: 4;
 }
 
+/* Version metadata owns a row so enlarged text never overlaps route icons. */
 .dyson-shell__release-footer--compact {
-  position: absolute;
-  z-index: 0;
-  inset-inline: max(0.25rem, var(--safe-area-left))
-    max(0.25rem, var(--safe-area-right));
-  inset-block-end: max(
-    0.06rem,
-    calc((var(--safe-area-bottom) - 0.56rem) / 2)
-  );
+  grid-column: 1 / -1;
+  min-inline-size: 0;
+  padding-block-start: 0.06rem;
   overflow: hidden;
   pointer-events: none;
   text-overflow: clip;
@@ -1976,4 +1974,27 @@
 :is(.dyson-shell, .skill-details-dialog__backdrop) input[type="checkbox"] {
   min-inline-size: 1.35rem;
   min-block-size: 1.35rem;
+}
+
+/* Drawer destinations remain readable when narrow bars move shortcuts here. */
+.dyson-navigation--drawer .dyson-navigation__link {
+  min-block-size: max(44px, var(--target-minimum));
+}
+.dyson-navigation--drawer .dyson-navigation__label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.dyson-navigation__drawer-metadata { display: contents; }
+@media (max-width: 720px) {
+  .dyson-navigation--drawer .dyson-navigation__link { flex-wrap: wrap; }
+  .dyson-navigation--drawer .dyson-navigation__label { flex: 1 1 0; }
+  .dyson-navigation__drawer-metadata {
+    display: flex;
+    flex: 0 0 100%;
+    min-inline-size: 0;
+    justify-content: flex-end;
+    gap: var(--ui-control-gap);
+  }
 }

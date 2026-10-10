@@ -21,8 +21,9 @@ export function deriveBottomNavigationLayout(
   const selected = Number.isFinite(selectedItemCount)
     ? Math.max(0, Math.floor(selectedItemCount))
     : 0
-  const maxItems = selected
-  const slotWidth = Math.min(76, width / (selected + 1))
+// Reserve the drawer target and fit only complete touch targets.
+  const maxItems = Math.min(selected, Math.max(0, Math.floor(width / 44) - 1))
+  const slotWidth = Math.min(76, width / (maxItems + 1))
   const iconSize = Math.min(36, Math.max(0, slotWidth - 16))
   const safeTextScale = isFinitePositiveNumber(textScale)
     ? textScale

@@ -134,6 +134,10 @@ export class NativeDiagnosticsExporter implements DiagnosticsExporter {
 export interface NativeApplicationMetadata {
   readonly applicationVersion: string
   readonly buildNumber: string
+  readonly saveStorageNamespace?: string
+  readonly entitlementCacheNamespace?: string
+  readonly cloudSavesEnabled?: boolean
+  readonly automaticUnityDiscoveryEnabled?: boolean
 }
 
 export interface NativeApplicationMetadataBridge {
@@ -170,7 +174,11 @@ export class NativePlatformMetadataSource
       applicationId: UNITY_APPLICATION_ID,
       applicationVersion: metadata.applicationVersion,
       applicationBuild: metadata.buildNumber,
-      supportsNativeFilesystemMigration: true,
+      supportsNativeFilesystemMigration: metadata.automaticUnityDiscoveryEnabled !== false,
+      saveStorageNamespace: metadata.saveStorageNamespace,
+      entitlementCacheNamespace: metadata.entitlementCacheNamespace,
+      cloudSavesEnabled: metadata.cloudSavesEnabled,
+      automaticUnityDiscoveryEnabled: metadata.automaticUnityDiscoveryEnabled,
     })
   }
 }

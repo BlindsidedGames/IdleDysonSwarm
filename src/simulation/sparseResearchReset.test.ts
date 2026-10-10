@@ -1,3 +1,4 @@
+import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import {
@@ -65,10 +66,10 @@ function runtimeForSkill(skillId: string) {
     Object.keys(state.quantum.unlocks).map((id) => [id, true]),
   ) as typeof state.quantum.unlocks
   state.quantum.unlocks.breakTheLoop = false
-  for (const [id, upgrade] of REALITY_UPGRADE_DEFINITIONS) {
-    if (upgrade.purchaseEffects.some((effect) => effect.effectType === 2)) {
-      state.dream.upgrades[id] = true
-    }
+  // The twelve-point Revolution branch remains reachable with ten Infinity
+  // shop points and two permanent prerequisite bases, without retired Reality SP.
+  state.challenges = { ...EMPTY_INFINITY_CHALLENGES,
+    galvanizedSkillIds: skillId === 'shouldersOfTheRevolution' ? ['startHereTree', 'planetsTree'] : [],
   }
   return runtime
 }

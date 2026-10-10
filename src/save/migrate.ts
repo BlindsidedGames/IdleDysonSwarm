@@ -27,7 +27,7 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 20
+export const CURRENT_SAVE_SCHEMA = 21
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -129,6 +129,7 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   // Materialize packed defaults now, rather than changing the graph on its next load.
   applyPackedSettingsFlags(save)
   appliedSteps.push('packed-settings-flags')
+  if (sourceSchema < 21) appliedSteps.push('one-way-rework-format')
   if (sourceSchema < CURRENT_SAVE_SCHEMA) save.lastMigratedFromVersion = sourceSchema
   save.saveVersion = CURRENT_SAVE_SCHEMA
   const validation = validatePreparedSave(save, CURRENT_SAVE_SCHEMA)

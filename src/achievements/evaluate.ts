@@ -4,6 +4,7 @@ import { SKILL_COSTS } from '../simulation/skillDefinitions'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../simulation/dreamEducationUpgrades'
 import { QUANTUM_CONSTANTS } from '../simulation/quantumUpgrades'
 import { avocadoDysonMultiplier } from '../simulation/dysonPrestigeEffects'
+import { hasCompletedInfinityChallenge } from '../simulation/infinityChallenges'
 import type { AchievementFacts } from './contracts'
 
 const speed = DREAM_UPGRADE_FLAGS.filter(id => /^speed[1-8]$/.test(id))
@@ -19,9 +20,7 @@ export function evaluateAchievements(state: DeepReadonly<CanonicalGameStateV1>, 
   reach('first_transcendence', state.statistics.lifetime.botCapOverflowRewards > 0n)
   reach('enlightenment', state.discovery?.unlocked === true && state.discovery.enlightenment !== undefined)
   // Retain the existing provider key when broadening the requirement to any challenge.
-  reach('first_quantum_challenge', state.challenges?.blankSlateCompleted === true ||
-    state.challenges?.trialAndErrorCompleted === true || state.challenges?.noScienceCompleted === true ||
-    (state.challenges?.completedQuantumChallenges?.length ?? 0) > 0)
+  reach('first_quantum_challenge', hasCompletedInfinityChallenge(state))
   reach('first_fracture', (state.challenges?.galvanizedSkillIds?.length ?? 0) > 0)
   reach('first_bot', state.dyson.bots >= 1)
   for (const [id, facility] of [

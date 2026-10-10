@@ -34,20 +34,23 @@ const prepared = prepareIdb1Save(readFileSync(
   'utf8',
 )).prepared
 
-describe('Blank Slate application integration', () => {
+describe('replacement Infinity challenge application integration', () => {
   async function setup() {
     const repository = new MemoryRepository()
     const app = createApplication(repository)
     await app.start()
     const candidate = structuredClone(readyState(app))
     candidate.gameState = { ...candidate.gameState,
+      skills: { ...candidate.gameState.skills, activeAutoAssignment: [] },
+      meta: { ...candidate.gameState.meta, firstInfinityComplete: true, reworkMigrationChoice: 'keep' },
+      quantum: { ...candidate.gameState.quantum, unlocks: { ...candidate.gameState.quantum.unlocks, breakTheLoop: true } },
       challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true },
-      infinity: { ...candidate.gameState.infinity, botCapTransitionPending: false, botCapRewardsGranted: false },
+      infinity: { ...candidate.gameState.infinity, points: 64n, spentPoints: 0n, automaticResetEnabled: false, botCapTransitionPending: false, botCapRewardsGranted: false },
     }
     expect(await app.commitAwayReplacement(revisionEnvelope(app), candidate)).toMatchObject({ committed: true })
     return { app, repository }
   }
-  test.each(['blank-slate', 'trial-and-error'] as const)('%s entry is invisible until saved and a failed abandonment preserves the active run', async (challengeId) => {
+  test.each(['blank-slate', 'lean-build'] as const)('%s entry is invisible until saved and a failed abandonment preserves the active run', async (challengeId) => {
     const { app, repository } = await setup()
     const before = readyState(app).gameState
     let release!: () => void
@@ -55,7 +58,7 @@ describe('Blank Slate application integration', () => {
     const enteredPromise = new Promise<void>(resolve => { entered = resolve })
     const releasePromise = new Promise<void>(resolve => { release = resolve })
     repository.beforeCommit = async () => { entered(); await releasePromise }
-    const pending = app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: challengeId === 'blank-slate' ? 'challenge.enter-blank-slate' : 'challenge.enter-trial-and-error' } })
+    const pending = app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter', challengeId } })
     await enteredPromise
     expect(readyState(app).gameState).toEqual(before)
     release()
@@ -72,17 +75,27 @@ describe('Blank Slate application integration', () => {
     expect(await reopened.dispatchPlayer({ ...revisionEnvelope(reopened), command: { kind: 'challenge.abandon' } })).toMatchObject({ transition: { accepted: true } })
     expect(readyState(reopened).gameState.challenges?.galvanizers).toBe(0n)
   })
-  test.each([null, 'blank-slate', 'trial-and-error', 'no-science'] as const)('galvanization is durable during %s', async active => {
+  test.each([null, 'blank-slate', 'lean-build', 'no-science'] as const)('galvanization saves durably outside attempts and cannot spend Catalysts during %s', async active => {
     const { app, repository } = await setup()
     const candidate = structuredClone(readyState(app))
     candidate.gameState = { ...candidate.gameState, challenges: {
       ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true,
-      hasEarnedGalvanizer: true, galvanizers: 1n, active: active === 'blank-slate' ? null : active,
+      hasEarnedGalvanizer: true, galvanizers: 1n, active: null,
     } }
     expect(await app.commitAwayReplacement(revisionEnvelope(app), candidate)).toMatchObject({ committed: true })
-    if (active === 'blank-slate') expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter-blank-slate' } })).toMatchObject({ transition: { accepted: true } })
+    if (active) expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter', challengeId: active } })).toMatchObject({ transition: { accepted: true } })
     const before = readyState(app).gameState
     if (active === 'blank-slate') expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'skill.purchase', skillId: 'startHereTree' } })).toMatchObject({ transition: { accepted: false } })
+    if (active) {
+      const commits = repository.commits.length
+      expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'skill.galvanize', skillId: 'startHereTree' } })).toMatchObject({ transition: { accepted: false } })
+      expect(readyState(app).gameState).toEqual(before)
+      expect(repository.commits).toHaveLength(commits)
+      const reopened = createApplication(repository)
+      await reopened.start()
+      expect(readyState(reopened).gameState.challenges).toMatchObject({ active, galvanizers: 1n, galvanizedSkillIds: [] })
+      return
+    }
     repository.beforeCommit = async () => { throw new Error('deliberate galvanization save failure') }
     expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'skill.galvanize', skillId: 'startHereTree' } })).toMatchObject({ transition: { accepted: false } })
     expect(readyState(app).gameState).toEqual(before)
@@ -128,9 +141,9 @@ describe('Blank Slate application integration', () => {
     const skills = readyState(reopened).gameState.skills
     expect(mode === 'active' ? skills.activeAutoAssignment : skills.presets[4].skillIds).toEqual(skillIds)
   })
-  test('Stored Time and manual commands cannot buy research during Trial and Error', async () => {
+  test('Stored Time and manual commands cannot buy research during No Science', async () => {
     const { app } = await setup()
-    expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter-trial-and-error' } })).toMatchObject({ transition: { accepted: true } })
+    expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter', challengeId: 'no-science' } })).toMatchObject({ transition: { accepted: true } })
     const candidate = structuredClone(readyState(app))
     const state = candidate.gameState
     candidate.gameState = { ...state,
@@ -143,18 +156,18 @@ describe('Blank Slate application integration', () => {
     const before = readyState(app).gameState.research
     expect(await app.commitStoredTime(revisionEnvelope(app), 1)).toMatchObject({ committed: true })
     expect(readyState(app).gameState.research.levelsById).toEqual(before.levelsById)
-    expect(readyState(app).gameState.challenges?.active).toBe('trial-and-error')
+    expect(readyState(app).gameState.challenges?.active).toBe('no-science')
   })
-  test.each((['blank-slate', 'trial-and-error'] as const).flatMap(challengeId => ['manual', 'automatic', 'stored-time'].map(mode => ({ challengeId, mode }))))('completes $challengeId at the ordinary boundary with Break unlocked, mode=$mode', async ({ challengeId, mode }) => {
+  test.each((['blank-slate', 'built-by-hand'] as const).flatMap(challengeId => ['manual', 'automatic', 'stored-time'].map(mode => ({ challengeId, mode }))))('completes $challengeId at the ordinary boundary with Break unlocked, mode=$mode', async ({ challengeId, mode }) => {
     const automatic = mode !== 'manual'
     const { app, repository } = await setup()
-    expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: challengeId === 'blank-slate' ? 'challenge.enter-blank-slate' : 'challenge.enter-trial-and-error' } })).toMatchObject({ transition: { accepted: true } })
+    expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter', challengeId } })).toMatchObject({ transition: { accepted: true } })
     const candidate = structuredClone(readyState(app))
     const state = candidate.gameState
     candidate.gameState = { ...state,
       quantum: { ...state.quantum, unlocks: { ...state.quantum.unlocks, breakTheLoop: true } },
       infinity: { ...state.infinity, automaticResetEnabled: automatic, breakTarget: 1000n },
-      dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(state.quantum.divisionsPurchased),
+      dyson: { ...state.dyson, bots: ordinaryInfinityBotThreshold(0n),
         facilities: Object.fromEntries(Object.keys(state.dyson.facilities).map(id => [id, [0,0]])) as typeof state.dyson.facilities },
       timeline: { ...state.timeline, infinityCycleSeconds: 10, storedTimeAvailableSeconds: 10, eventClockInitialized: false },
     }
@@ -163,16 +176,19 @@ describe('Blank Slate application integration', () => {
     else if (automatic) expect((await createCoordinator(app).advanceActive(100)).transition.accepted).toBe(true)
     else expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'infinity.request-reset' } })).toMatchObject({ transition: { accepted: true } })
     const complete = readyState(app)
-    expect(complete.gameState.challenges).toMatchObject({ active: null, [challengeId === 'blank-slate' ? 'blankSlateCompleted' : 'trialAndErrorCompleted']: true, galvanizers: 1n, hasEarnedGalvanizer: true })
+    expect(complete.gameState.challenges).toMatchObject({ active: null, blankSlateCompleted: false, galvanizers: 0n, replacement: { active: null, completedIds: [challengeId], infinities: 1 } })
+    expect(complete.gameState.challenges?.trialAndErrorCompleted).not.toBe(true)
+    expect(complete.gameState.skills.points).toBe(challengeId === 'built-by-hand' ? 4n : 2n)
     expect(complete.gameState.quantum.unlocks.breakTheLoop).toBe(true)
     expect(await app.commitAwayReplacement(revisionEnvelope(app), complete)).toMatchObject({ committed: true })
     const reopened = createApplication(repository)
     await reopened.start()
-    expect(readyState(reopened).gameState.challenges?.galvanizers).toBe(1n)
+    expect(readyState(reopened).gameState.challenges?.replacement?.completedIds).toEqual([challengeId])
+    expect(readyState(reopened).gameState.challenges?.galvanizers).toBe(0n)
   })
-test.each(['active', 'stored-time'] as const)('No Science Quantum run blocks research across %s, persists, and completes despite Entanglement', async mode => {
+test.each(['active', 'stored-time'] as const)('No Science blocks research across %s and saves its first completion without legacy rewards', async mode => {
   const { app, repository } = await setup()
-  expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter-no-science' } })).toMatchObject({ transition: { accepted: true } })
+  expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'challenge.enter', challengeId: 'no-science' } })).toMatchObject({ transition: { accepted: true } })
   expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'research.purchase', researchId: 'research.panel_lifetime_1' } })).toMatchObject({ transition: { accepted: false } })
   const candidate = structuredClone(readyState(app))
   candidate.gameState = { ...candidate.gameState,
@@ -185,13 +201,22 @@ test.each(['active', 'stored-time'] as const)('No Science Quantum run blocks res
   if (mode === 'stored-time') expect(await app.commitStoredTime(revisionEnvelope(app), 1)).toMatchObject({ committed: true })
   else expect((await createCoordinator(app).advanceActive(100)).transition.accepted).toBe(true)
   expect(readyState(app).gameState.dyson.science).toBe(0)
-  expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'quantum.request-leap' } })).toMatchObject({ transition: { accepted: true } })
-  expect(readyState(app).gameState.challenges).toMatchObject({ active: null, noScienceCompleted: true, galvanizers: 2n })
-  expect(readyState(app).gameState.infinity.points).toBe(0n)
+  expect(readyState(app).gameState.challenges?.replacement?.earnedIp).toBe(0n)
+  const ready = structuredClone(readyState(app))
+  ready.gameState = { ...ready.gameState, dyson: { ...ready.gameState.dyson, bots: 1e99 } }
+  expect(await app.commitAwayReplacement(revisionEnvelope(app), ready)).toMatchObject({ committed: true })
+  expect(await app.dispatchPlayer({ ...revisionEnvelope(app), command: { kind: 'infinity.request-reset' } })).toMatchObject({ transition: { accepted: true } })
+  const complete = readyState(app).gameState
+  expect(complete.challenges).toMatchObject({ active: null, galvanizers: 0n, replacement: { completedIds: ['no-science'] } })
+  expect(complete.challenges?.noScienceCompleted).not.toBe(true)
+  expect(complete.challenges!.replacement!.earnedIp).toBeGreaterThanOrEqual(32n)
+  expect(complete.infinity.points).toBe(42n + complete.challenges!.replacement!.earnedIp)
   expect(await app.commitAwayReplacement(revisionEnvelope(app), readyState(app))).toMatchObject({ committed: true })
   const reopened = createApplication(repository)
   await reopened.start()
-  expect(readyState(reopened).gameState.challenges).toMatchObject({ noScienceCompleted: true, galvanizers: 2n })
+  expect(readyState(reopened).gameState.challenges).toMatchObject({ galvanizers: 0n, replacement: { completedIds: ['no-science'] } })
+  expect(readyState(reopened).gameState.skills.points).toBe(2n)
+
 })
 
 })

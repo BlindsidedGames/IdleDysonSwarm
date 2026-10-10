@@ -1391,6 +1391,1388 @@
       "value": "‬"
     }
   ],
+  "civilization.allocated": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʅʅoɔɐʇǝp ʍoɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.amount": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.automaticAward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʍɐɹpǝp ɐnʇoɯɐʇıɔɐʅʅʎ ʍɥǝu ǝʌǝɹʎ ɹǝbnıɹǝɯǝuʇ ıs ɔoɯdʅǝʇǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.available": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uɐssıƃuǝp / ʇoʇɐʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.awarded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʍɐɹpǝp Ↄɐʇɐʅʎsʇs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.balanced": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐʅɐuɔǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.bootstrap": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɐɯıʅʎ ƃɐʇɥǝɹıuƃ uǝǝps uo ıudnʇs oɹ ɐssıƃuǝp ʍoɹʞǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.bootstrapV4": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥɹǝǝ ɟonupǝɹs qǝƃıu ʍıʇɥ ouǝ sɥǝʅʇǝɹ ʞıʇ. ⅁ɐʇɥǝɹıuƃ uǝǝps ɐ ɹǝɐʅ ɔɹǝʍ ɐup uo ıudnʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.campExpansion": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐɯd Ǝxdɐusıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.campProvisioning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐɯd Ԁɹoʌısıouıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.camps": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐɯds"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.catalysts": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐʇɐʅʎsʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.clothing": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅoʇɥıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.completed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝp ɔʎɔʅǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.continuedDevelopment": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐɯd pǝʌǝʅodɯǝuʇ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.conversion": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ sɥǝʅʇǝɹ ɥonsǝs 2 ʍoɹʞǝɹs; ǝɐɔɥ ɔɐɯd ɥonsǝs 8. ⊥ɥɹǝǝ sɥǝʅʇǝɹs qǝɔoɯǝ ouǝ ɔɐɯd."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.conversionV4": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ sɥǝʅʇǝɹ ɐpps 2 ɹǝsıpǝuʇs. ⊥ɥɹǝǝ sɥǝʅʇǝɹs ɐup ʇɥǝıɹ 6 ɹǝsıpǝuʇs ɹǝɯɐıu ɹǝsǝɹʌǝp pnɹıuƃ ɔouʌǝɹsıou. ⊥ɥǝ ɟıuısɥǝp ɔɐɯd ɥonsǝs 9 ɹǝsıpǝuʇs, ɐppıuƃ 3."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.craft": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɹɐɟʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.craftSpecialization": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɹɐɟʇ Sdǝɔıɐʅızɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.duration": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʎɔʅǝ pnɹɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.equip": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝbnıd "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ʍoɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.equipConfirm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sdǝup "
+    },
+    {
+      "type": 1,
+      "value": "tools"
+    },
+    {
+      "type": 0,
+      "value": " ⊥ooʅs ɐup "
+    },
+    {
+      "type": 1,
+      "value": "clothing"
+    },
+    {
+      "type": 0,
+      "value": " Ↄʅoʇɥıuƃ ʇo ǝbnıd "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ʍoɹʞǝɹs?"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.equipmentAutomatic": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝʌǝɹʎ sıɯnʅɐʇıou ɯıunʇǝ, ɐʌɐıʅɐqʅǝ ⊥ooʅs ɐup Ↄʅoʇɥıuƃ ǝbnıd nd ʇo ouǝ bnɐɹʇǝɹ oɟ ɹǝsıpǝuʇs. Ǝɐɔɥ ɹǝʇɐıuǝp ʞıʇ ɔosʇs 2 ⊥ooʅs ɐup 1 Ↄʅoʇɥıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.equipmentEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ ǝbnıddǝp ɟıǝʅp ʍoɹʞǝɹ ɔouʇɹıqnʇǝs ouǝ ǝxʇɹɐ ʍoɹʞǝɹ oɟ dɹopnɔʇıʌǝ ʅɐqoɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.equipmentEffectV4": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ nsǝɟnʅ ǝbnıddǝp ɟıǝʅp ʍoɹʞǝɹ ɐpps ɥɐʅɟ ɐ ʍoɹʞǝɹ oɟ dɹopnɔʇıʌǝ ʅɐqoɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.equipmentStock": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ooʅs ɐup Ↄʅoʇɥıuƃ ɐɹǝ ɔousnɯǝp ʍɥǝu ǝbnıddıuƃ ʍoɹʞǝɹs. Iusʇɐʅʅǝp ǝbnıdɯǝuʇ sʇɐʎs ʍıʇɥ ʇɥǝ ɔɐɯd."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.equipped": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝbnıddǝp ʍoɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.era": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoɹɐƃǝɹ ǝɹɐ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.eraSettings": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoɹɐƃǝɹ pǝʇɐıʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.establishedCamp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝsʇɐqʅısɥǝp ɔɐɯd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.exchangeNetworks": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxɔɥɐuƃǝ Nǝʇʍoɹʞs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.exchangeRoutes": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxɔɥɐuƃǝ ɹonʇǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.expeditions": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxdǝpıʇıous & ⊥ɹɐpǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇıou ɟɐıʅǝp. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.firstHunt": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ ɥnuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.fishing": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎısɥıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.focus": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞɟoɹɔǝ ɟoɔns"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.focusBalancedHelp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐʅɐuɔǝp sɥɐɹǝs ʍoɹʞǝɹs ɐɔɹoss ɐʌɐıʅɐqʅǝ ɾoqs ɐʇ ʇɥǝıɹ uoɹɯɐʅ ʍoɹʞ ɹɐʇǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.focusEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woɹǝ ʍoɹʞǝɹs ɾoıu ʇɥıs dɐʇɥ ɐs ʇɥǝ ɔɐɯd ƃɹoʍs. Oʇɥǝɹ dɐʇɥs ʞǝǝd sɯɐʅʅǝɹ ɔɹǝʍs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.focusEffectV4": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoɔns ɟɐʌonɹs ʇɥıs dɐʇɥ ɐup ıʇs snddoɹʇıuƃ ɔɹǝʍs. ∩uɟnupǝp ɾoqs ɹǝʅǝɐsǝ ʍoɹʞǝɹs; dɐıp ɔʎɔʅǝs ʞǝǝd ʇɥǝıɹ ıudnʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.focusSelectedHelp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " ʍoɹʞ ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "× ʇɥǝıɹ Ԑɐʅɐuɔǝp ɹɐʇǝ. Oʇɥǝɹ ɾoqs ʞǝǝd ʇɥǝıɹ uoɹɯɐʅ ɹɐʇǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.focusSupportedHelp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " ʍoɹʞ ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "× ʇɥǝıɹ Ԑɐʅɐuɔǝp ɹɐʇǝ; "
+    },
+    {
+      "type": 1,
+      "value": "support"
+    },
+    {
+      "type": 0,
+      "value": " ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "supportRate"
+    },
+    {
+      "type": 0,
+      "value": "×. Oʇɥǝɹ ɾoqs ʞǝǝd ʇɥǝıɹ uoɹɯɐʅ ɹɐʇǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.food": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoop"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.foodPreservation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoop Ԁɹǝsǝɹʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.foragerGenerator": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoɹɐƃǝɹ ɔɐɯd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.fractureRule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+5% sıɯnʅɐʇıou sdǝǝp dǝɹ ɟɹɐɔʇnɹǝp sʞıʅʅ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.fractures": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɹɐɔʇnɹǝ qoosʇ +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.gathering": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʇɥǝɹıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.growthFocus": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹoʍʇɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.hides": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hıpǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.hideworking": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hıpǝʍoɹʞıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.housing": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Honsıuƃ ɔɐdɐɔıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.hunting": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hnuʇıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.inputs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʎɔʅǝ ɔosʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.legacyWorkHelp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʅpǝɹ dɐıp ɔʎɔʅǝs ʞǝǝd ʇɥǝıɹ oɹıƃıuɐʅ ʍoɹʞ ɹɐʇǝs nuʇıʅ ʇɥǝʎ ɟıuısɥ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.locked": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝbnıɹǝs "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.materials": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐʇǝɹıɐʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.milestoneStep": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.next": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.nextCatalyst": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ Ↄɐʇɐʅʎsʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.nextEra": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ: Ↄnʅʇıʌɐʇıou & Hǝɹpıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.nodeBonus": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɥǝu ɟɹɐɔʇnɹǝp: +5% oʌǝɹɐʅʅ sıɯnʅɐʇıou sdǝǝp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.nodeBonusActive": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɹɐɔʇnɹǝp: +5% oʌǝɹɐʅʅ sıɯnʅɐʇıou sdǝǝp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.outputs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʎɔʅǝ onʇdnʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.paid": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iudnʇs ɹǝsǝɹʌǝp ɟoɹ ʇɥıs ɔʎɔʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.phaseComplete": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoɹɐƃǝɹ odǝuıuƃ ɔoɯdʅǝʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.preview": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ƃɹıɔnʅʇnɹǝ ɔouʇıunǝs ıu ɐ ʅɐʇǝɹ dɥɐsǝ. ⅄onɹ ɐɔʇıʌıʇıǝs ʞǝǝd ɹnuuıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.provisioning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoʌısıouıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.provisions": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoʌısıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.recruitment": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞǝɹs ɹǝɯɐıu ıu ʇɥǝ ɔɐɯd. Ǝɐɔɥ uǝǝps ɐ ɥonsıuƃ dʅɐɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.seasonalExpeditions": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝɐsouɐʅ Ǝxdǝpıʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.settlement": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝʇʇʅǝɯǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.shelterBuilding": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥǝʅʇǝɹ Ԑnıʅpıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.shelters": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥǝʅʇǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.speed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoƃɹǝss sdǝǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.suppliesFocus": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddʅıǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.toolmaking": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ooʅɯɐʞıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.tools": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ooʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.tradeFocus": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹɐʌǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.unlock": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝbnıɹǝp ɔʎɔʅǝs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " oɟ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.upcoming": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ ɐɔʇıʌıʇıǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.waiting": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐıʇıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.waitingDemand": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝɯɐup ɯǝʇ; ʍoɹʞǝɹs snddoɹʇ oʇɥǝɹ ɾoqs nuʇıʅ ɯoɹǝ ıs uǝǝpǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.waitingHousing": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐıʇıuƃ ɟoɹ ɥonsıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.waitingInputs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐıʇıuƃ: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.waitingRange": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐʅɐuɔǝ ɔɐuuoʇ ɐɔɔǝdʇ onʇdnʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.waitingWorkers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐıʇıuƃ ɟoɹ ʍoɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.workers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -2890,7 +4272,7 @@
     },
     {
       "type": 0,
-      "value": "Ԁǝɹsısʇs ʇɥɹonƃɥ Iuɟıuıʇʎ ɐup Ònɐuʇnɯ. ᴚǝsǝʇs ou ⊥ɹɐusɔǝupǝuɔǝ."
+      "value": "Ԁǝɹsısʇs ʇɥɹonƃɥ Iuɟıuıʇʎ. ᴚǝsǝʇs ou ⊥ɹɐusɔǝupǝuɔǝ."
     },
     {
       "type": 0,
@@ -8381,6 +9763,1518 @@
       "value": "‬"
     }
   ],
+  "farming.amount": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.automatic": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅʇ ɐnʇoɯɐʇıɔɐʅʅʎ qʎ ʇɥǝ ʌıʅʅɐƃǝ dʅɐu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.averageLabor": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ɐqoɹ ıs sɥɐɹǝp oʌǝɹ ʇıɯǝ. ∀ddɹoxıɯɐʇǝ ɐʌǝɹɐƃǝs ɔɐu ıuɔʅnpǝ ɟɹɐɔʇıous; ʇɥǝ ʍoɹʞǝɹ ʇoʇɐʅ ɔonuʇs ʍɥoʅǝ dǝodʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.balanced": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐʅɐuɔǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.begin": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑǝƃıu Ⅎɐɹɯıuƃ Ʌıʅʅɐƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoɹɐƃǝɹ ɐup Ⅎɐɹɯıuƃ ɐɹǝ ɔoɯdʅǝʇǝ. Woɹǝ ɔoɯıuƃ soou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.boost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇnɐʅ ɟɹɐɔʇnɹǝs: +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.build": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp ⅁ɹɐuɐɹʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.buy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.cap": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹɐƃǝ ɟnʅʅ; Ⅎıǝʅps dɐnsǝ nuʇıʅ Ⅎoop ıs sdǝuʇ oɹ ɐ ⅁ɹɐuɐɹʎ ıs qnıʅʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.capacity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoop sʇoɹɐƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.closed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅosǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.compactStorage": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "160 sʇoɹɐƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.complete": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıʅʅɐƃǝ ǝsʇɐqʅısɥǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.connection": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹɐpǝ ɔouuǝɔʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.constructed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄousʇɹnɔʇǝp ndƃɹɐpǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.crew": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʌǝɹɐƃǝ ɐssıƃuǝp ʅɐqoɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎnʇnɹǝ Ⅎıǝʅps ɥɐɹʌǝsʇs ƃɐıu 20% Ⅎoop. Ԁosıʇıʌǝ ɥonsıuƃ Mǝɐʇɥǝɹıuƃ ɟɐʅʅs qʎ ɐuoʇɥǝɹ 20% ɐɟʇǝɹ Mɐʇǝɹʍoɹʞs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐʇǝɹʍoɹʞs ǝsʇɐqʅısɥǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.done": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝsʇɐqʅısɥǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.era": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɐɹɯıuƃ Ʌıʅʅɐƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.export": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " ɹǝʇɐıuǝp ʍoɹʞǝɹs ǝxdoɹʇ "
+    },
+    {
+      "type": 1,
+      "value": "food"
+    },
+    {
+      "type": 0,
+      "value": " Ⅎoop ɐup "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " Wɐʇǝɹıɐʅs dǝɹ sıɯnʅɐʇıou ɯıunʇǝ, qǝɟoɹǝ ɐɔʇnɐʅ ɟɹɐɔʇnɹǝ qoosʇs. ⊥ɥǝıɹ oʅp sʇoɔʞs ɹǝɯɐıu ʍıʇɥ ʇɥǝ ɔɐɯd."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɐɔʇıou ɔonʅp uoʇ qǝ sɐʌǝp. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.fields": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıǝʅps"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.finish": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝsʇɐqʅısɥ ʇɥǝ ʌıʅʅɐƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.finished": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sıx snddoɹʇǝp Hoɯǝs, sıx ʇɹɐpǝ ɔouuǝɔʇıous ɐup ɐʅʅ ʇɥɹǝǝ ɔıʇʎ-ɹǝɐpıuǝss ndƃɹɐpǝs ɐɹǝ ǝsʇɐqʅısɥǝp. ⊥ɥıs ʌıʅʅɐƃǝ ıs ɹǝɐpʎ ɟoɹ Ⅎıɹsʇ Ↄıʇıǝs; ʇɥǝ uǝxʇ ɐƃǝ ıs uoʇ ɐʌɐıʅɐqʅǝ ʎǝʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.finite": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝsʇɐqʅısɥǝp; uo ɹǝdǝɐʇıuƃ ɔousʇɹnɔʇıou ɔʎɔʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.firstHarvest": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ Ⅎıǝʅps ɥɐɹʌǝsʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.focus": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞɟoɹɔǝ ɟoɔns"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.focusEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddʅıǝs ɟɐʌonɹs sʇoɔʞ ʍıʇɥ ʅoʍ ndʞǝǝd qnʇ ɐpps Mǝɐʇɥǝɹıuƃ. ⅁ɹoʍʇɥ ɟɐʌonɹs qnıʅpıuƃ ɐup ɹǝɔoʌǝɹʎ. ⊥ɹɐʌǝʅ ɟɐʌonɹs sɥıdɯǝuʇs ɐɟʇǝɹ Hɐʅʅ; qǝɟoɹǝ Hɐʅʅ ıʇ nsǝs Ԑɐʅɐuɔǝp ʅɐqoɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.fullFood": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎoop: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.goods": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oops"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granaries": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹɐuɐɹıǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹɐuɐɹʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granaryDetails": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹɐuɐɹʎ ɔosʇs ɐup pǝʇɐıʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granaryEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ ⅁ɹɐuɐɹʎ ɐpps 160 Ⅎoop sʇoɹɐƃǝ. Iʇ ıs ɐu ıusʇɐuʇ ɯɐunɐʅ dnɹɔɥɐsǝ; dǝupıuƃ ɹǝdɐıɹs ʞǝǝd ʇɥǝıɹ Wɐʇǝɹıɐʅs ɐup ⊥ooʅs ɹǝsǝɹʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granaryFirstHome": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʌɐıʅɐqʅǝ ɐɟʇǝɹ ʇɥǝ ɟıɹsʇ Hoɯǝ ıs ǝsʇɐqʅısɥǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granaryInactive": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝs ɐɹǝ ɔʅosǝp ʍɥıʅǝ ʇɥǝ ʌıʅʅɐƃǝ ɟıuısɥǝs dɐıp ʍoɹʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granaryInputs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woɹǝ Wɐʇǝɹıɐʅs oɹ ⊥ooʅs uǝǝpǝp. ⊥ɥıs dnɹɔɥɐsǝ ıs ıusʇɐuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granaryMaximum": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐxıɯnɯ ⅁ɹɐuɐɹıǝs oʍuǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.granaryRepairReserve": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐʇǝɹıɐʅs ɐup ⊥ooʅs ɐɹǝ ɹǝsǝɹʌǝp ɟoɹ ɐ dǝupıuƃ Hoɯǝ ɹǝdɐıɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.growth": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹoʍʇɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎnʇnɹǝ ⅁oops qɐʇɔɥǝs dɹopnɔǝ 3 ɟoɹ 6 Wɐʇǝɹıɐʅs ɐup 63 ʍoɹʞǝɹ-sǝɔoups; ɐʅɹǝɐpʎ ɟnupǝp qɐʇɔɥǝs ʞǝǝd ʇɥǝıɹ oɹıƃıuɐʅ ɹǝɔıdǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐʅʅ, ɟıʌǝ Hoɯǝs qnıʅʇ ɐup ʇɥɹǝǝ ʇɹɐpǝ ɔouuǝɔʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁nıʅp Moɹʞsɥod"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.hall": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐʅʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.hallNeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎonɹ Hoɯǝs, Ԁɐsʇnɹǝ ɐup Mɐʇǝɹʍoɹʞs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.handoff": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥɹǝǝ ɟonupǝɹs ɯoʌǝ ıuʇo ɐ uǝʍ ʌıʅʅɐƃǝ. ⊥ɥǝ ɹǝɯɐıuıuƃ ɔɐɯd ʞǝǝds ıʇs sʇoɔʞs ɐup ǝxdoɹʇs Ⅎoop ɐup Wɐʇǝɹıɐʅs. Ԁɐıp ʍoɹʞ ɟıuısɥǝs qǝɟoɹǝ ʇɥǝ ɥɐupoɟɟ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.home": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hoɯǝ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.homeEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ snddoɹʇǝp Hoɯǝ ɐpps ʇʍo ɹǝsıpǝuʇs. Mǝɐʇɥǝɹıuƃ ɐʇ 100 ɹǝɯoʌǝs ıʇs snddoɹʇ; ɹǝdɐıɹ nsǝs ıʇs oɹıƃıuɐʅ Wɐʇǝɹıɐʅs, ⊥ooʅs ɐup ʅɐqoɹ qıʅʅ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.homes": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hoɯǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.homesCount": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddoɹʇǝp Hoɯǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.housingWeathering": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Honsıuƃ ʍǝɐʇɥǝɹıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.inputs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʎɔʅǝ ɔosʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuʇǝusıʌǝ Ↄnʅʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.kiln": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ӽıʅu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.kilnNeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ӽıʅu ǝsʇɐqʅısɥǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.limit": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ıɯıʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.locked": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂oɔʞǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.lost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ Hoɯǝ ʅosʇ snddoɹʇ. ᴚǝdɐıɹ ɹǝsʇoɹǝs ıʇs ɹǝsıpǝuʇs; ʇɥǝ ɟonupǝɹs ɹǝɯɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.manual": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp ɐ ⅁ɹɐuɐɹʎ ʇo ɔouʇıunǝ. Sʇoɹǝp ⊥ıɯǝ sʇods ɥǝɹǝ ɐup ʞǝǝds ʇɥǝ ɹǝɯɐıuıuƃ qɐuʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎnʇnɹǝ sɥıdɯǝuʇs uǝǝp 1,512 ʍoɹʞǝɹ-sǝɔoups ɐup ɹǝʇnɹu 100 Wɐʇǝɹıɐʅs. Sıx Hoɯǝs ɐup sıx ɔouuǝɔʇıous ɟıuısɥ ɔıʇʎ ɹǝɐpıuǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuʇǝusıʌǝ Ↄnʅʇıʌɐʇıou, ⅁nıʅp Moɹʞsɥod, ɟıʌǝ Hoɯǝs qnıʅʇ ɐup ʇɥɹǝǝ ʇɹɐpǝ ɔouuǝɔʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.missingInputs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wıssıuƃ: "
+    },
+    {
+      "type": 1,
+      "value": "inputs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.need": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.needsInputs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝǝps ıudnʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.next": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ dʅɐu: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.nextPrice": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ dɹıɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.oneGranary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ouǝ ⅁ɹɐuɐɹʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.outputs": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʎɔʅǝ onʇdnʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.owned": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʍuǝp: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.paid": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iudnʇs ɐɹǝ ɐʅɹǝɐpʎ ɹǝsǝɹʌǝp. Ↄɥɐuƃıuƃ ɟoɔns ɯoʌǝs ʅɐqoɹ ʍıʇɥonʇ ɔɥɐɹƃıuƃ ʇɥǝɯ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.paidStatus": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐıp ɔʎɔʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.pasture": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐsʇnɹǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.pendingFinish": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıuısɥıuƃ ʇɥǝ ʌıʅʅɐƃǝ’s dɐıp ɔʎɔʅǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.pendingSkill": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs ɯıʅǝsʇouǝ ıs ʍɐıʇıuƃ ɟoɹ ɐu ǝʅıƃıqʅǝ ǝxısʇıuƃ Sʞıʅʅ ʇɹǝǝ ɔɥoıɔǝ oɹ ɹooɯ ıu ʇɥǝ Ↄɐʇɐʅʎsʇ ʍɐʅʅǝʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.production": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹopnɔʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.repair": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝdɐıɹ Hoɯǝ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.reserved": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɹʌǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.risk": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Honsıuƃ ɐʇ ɹısʞ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.settings": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıʅʅɐƃǝ sǝʇʇıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.settling": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıuısɥıuƃ dɐıp Ⅎoɹɐƃǝɹ ʍoɹʞ qǝɟoɹǝ ʇɥǝ ʌıʅʅɐƃǝ qǝƃıus."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.ship": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹɐpǝ sɥıdɯǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.shop": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.skillLimit": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɐɹɯıuƃ-sdǝɔıɟıɔ ɟɹɐɔʇnɹǝs ɐɹǝ uoʇ ɐnʇɥoɹǝp ʎǝʇ. ⊥ɥǝsǝ sıx ɯıʅǝsʇouǝs nsǝ ʇɥǝ ǝxısʇıuƃ Ↄɐʇɐʅʎsʇ ʍɐʅʅǝʇ ɐup ǝxısʇıuƃ ǝʅıƃıqʅǝ Sʞıʅʅ ʇɹǝǝ ɔɥoıɔǝs. ∩usdǝuʇ Ↄɐʇɐʅʎsʇs ɐpp uo sdǝǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.source": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʇɐıuǝp Ⅎoɹɐƃǝɹ ɔɐɯd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.stage": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıʅʅɐƃǝ dɹoƃɹǝss"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.storageGain": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+160 Ⅎoop sʇoɹɐƃǝ dǝɹ dnɹɔɥɐsǝ · ⊥oʇɐʅ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.supplies": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddʅıǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥oʍu Wɐɹʞǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.travel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹɐʌǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.upcoming": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Noʇ ɐʌɐıʅɐqʅǝ ʎǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.village": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıʅʅɐƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.waiting": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐıʇıuƃ ɟoɹ nsǝɟnʅ pǝɯɐup oɹ ǝuonƃɥ ıudnʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.waterworks": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐʇǝɹʍoɹʞs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.weatherHelp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑɐʅɐuɔǝp ɹǝpnɔǝs Mǝɐʇɥǝɹıuƃ qʎ 1/ɯıu; Snddʅıǝs ɐpps 2/ɯıu; ⅁ɹoʍʇɥ ɹǝpnɔǝs 4/ɯıu; ⊥ɹɐʌǝʅ ɐpps 4/ɯıu. Mɐʇǝɹʍoɹʞs ɔnʇs ıuɔɹǝɐsǝs qʎ 40%; Iuʇǝusıʌǝ Ↄnʅʇıʌɐʇıou ɔnʇs ʇɥǝ ɹǝɯɐıuıuƃ ıuɔɹǝɐsǝ qʎ ɐuoʇɥǝɹ 20%. ∀ʇ 75, ɥonsıuƃ ıs ɐʇ ɹısʞ; ɐʇ 100, ouǝ Hoɯǝ ʅosǝs snddoɹʇ ɐup Mǝɐʇɥǝɹıuƃ ɹǝsǝʇs ʇo 40."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.weathering": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mǝɐʇɥǝɹıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.woodlot": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moopʅoʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.work": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ʍoɹʞǝɹ-sǝɔoups"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.workers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.workshop": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞsɥod"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.yield": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ sɥıdɯǝuʇ ɔosʇs 350 Ⅎoop ɐup 35 ⅁oops, ʇɥǝu ɹǝʇnɹus "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " Wɐʇǝɹıɐʅs ɐup ouǝ ɔouuǝɔʇıou. Sıx ɔouuǝɔʇıous, sıx snddoɹʇǝp Hoɯǝs ɐup ʇɥǝ ɔıʇʎ-ɹǝɐpıuǝss ndƃɹɐpǝs ɔoɯdʅǝʇǝ ʇɥıs ɐƃǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -11027,6 +13921,652 @@
     {
       "type": 0,
       "value": "⊥ıɯǝ sıɯnʅɐʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀qɐupou ɔɥɐʅʅǝuƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑʅɐuʞ Sʅɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ouǝ Iuɟıuıʇʎ ʍıʇɥ sʞıʅʅs, ɐnƃɯǝuʇs ɐup ɟɹɐɔʇnɹǝp ǝɟɟǝɔʇs ıuɐɔʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝbnıɹǝs Ԑɹǝɐʞ ʇɥǝ ⅂ood."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥɐʅʅǝuƃǝ ɹǝʍɐɹps: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐunɐʅ ⅂ɐqonɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ouǝ Iuɟıuıʇʎ ʍıʇɥ uo ɟɐɔıʅıʇıǝs oɹ ɐnʇoɯɐʇıɔ Ԑoʇ dɹopnɔʇıou. ⊥ǝɯdoɹɐɹʎ Wɐunɐʅ ⅂ɐqonɹ ɐɔɔǝss ıs dɹoʌıpǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯɯıʇɯǝuʇ Issnǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu 32 IԀ ʍıʇɥonʇ ɹǝɟnupıuƃ oɹ ɹǝdʅɐɔıuƃ ʎonɹ qnıʅp ʇɥɹonƃɥonʇ ʇɥǝ ɐʇʇǝɯdʇ, ıuɔʅnpıuƃ Iuɟıuıʇʎ ɹǝsǝʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıɹɯ ɹǝsʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹuǝp "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " dǝɹɯɐuǝuʇ SԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɔɥɐʅʅǝuƃǝ ɔonʅp uoʇ qǝ sʇɐɹʇǝp oɹ sɐʌǝp. ⅄onɹ ɔnɹɹǝuʇ ɹnu ɥɐs qǝǝu ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ʎonɹ ɟıɹsʇ Iuɟıuıʇʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɹonupǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu 32 IԀ ʍıʇɥonʇ Ԁʅɐuǝʇs oɹ ɯǝƃɐsʇɹnɔʇnɹǝs. ⊥ɥǝ Ԁʅɐuǝʇ ƃoɐʅ qǝɔoɯǝs 100 dnɹɔɥɐsǝp ᗡɐʇɐ Ↄǝuʇǝɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐups Oɟɟ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu 32 IԀ ʍıʇɥonʇ ɟɐɔıʅıʇʎ dnɹɔɥɐsǝs oɹ ⊥ıuʞǝɹıuƃ. Sʇɐɹʇ ʍıʇɥ ouǝ ∀ssǝɯqʅʎ ⅂ıuǝ ɐup ɐ Ԁʅɐuǝʇ-ƃǝuǝɹɐʇıou qnıʅp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝʌıons ɔɥɐʅʅǝuƃǝ ɔoɯdʅǝʇıous: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ". Hısʇoɹıɔɐʅ ɹǝʍɐɹps ɐɹǝ dɹǝsǝɹʌǝp; ɔoɯdǝusɐʇıou ıs uoʇ ɐddʅıǝp ıu ʇɥıs dıʅoʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ ɐʇʇǝɯdʇ sʇɐɹʇs ɐ ɟɹǝsɥ Iuɟıuıʇʎ. Ouʅʎ IԀ ǝɐɹuǝp pnɹıuƃ ʇɥǝ ɐʇʇǝɯdʇ ɔonuʇs. Ⅎıɹsʇ ɔoɯdʅǝʇıous ɐʍɐɹp dǝɹɯɐuǝuʇ SԀ ouɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ǝɐu Ԑnıʅp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu 16 IԀ ʍıʇɥ uo ɯoɹǝ ʇɥɐu 4 SԀ oɟ ɐssıƃuǝp sʞıʅʅs. ᴚǝɟnups ɐɹǝ ɐʅʅoʍǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "No Sɔıǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu 32 IԀ ʍıʇɥonʇ Sɔıǝuɔǝ, ᴚǝsǝɐɹɔɥ oɹ ᗡısɔoʌǝɹʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıuısɥ oɹ ɐqɐupou ʇɥǝ ɐɔʇıʌǝ ɔɥɐʅʅǝuƃǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsoʅʌǝ ⊥ɹɐusɔǝupǝuɔǝ ɟıɹsʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇıʌǝ · "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IԀ ǝɐɹuǝp · "
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": " Iuɟıuıʇıǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐıp ɟɐɔıʅıʇıǝs: "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · ʇʎdǝs: "
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝdʅɐʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ɐ ɟɹǝsɥ Iuɟıuıʇʎ ʍıʇɥonʇ ɐʍɐɹpıuƃ IԀ. Ԁǝɹsısʇǝuʇ ɔıʌıʅızɐʇıou dɹoƃɹǝss, ndƃɹɐpǝs, ɹǝʍɐɹp ɥısʇoɹʎ ɐup ɟɹɐɔʇnɹǝ oʍuǝɹsɥıd ɐɹǝ ʞǝdʇ. ∀qɐupouıuƃ pısɔɐɹps ɐʇʇǝɯdʇ dɹoƃɹǝss ɐup ɹǝsʇoɹǝs uoɹɯɐʅ ǝɟɟǝɔʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʍɐɹp: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " dǝɹɯɐuǝuʇ SԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝʌıons IԀ poǝs uoʇ ɔonuʇ ʇoʍɐɹp ʇɥǝ dɹopnɔʇıou ɯnʅʇıdʅıǝɹ. ᗡıʌısıou, ƃɐɯǝdʅɐʎ ᗡonqʅǝ IԀ, ᗡısɔoʌǝɹʎ ɐup dǝɹɯɐuǝuʇ ɟɹɐɔʇnɹǝs ɐɹǝ ıuɐɔʇıʌǝ; dnɹɔɥɐsǝp qoosʇs ɹǝɯɐıu ɐɔʇıʌǝ. Iuɟıuıʇʎ sɥod dnɹɔɥɐsǝs dɐnsǝ pnɹıuƃ ɐʇʇǝɯdʇs. Wosʇ ɐʇʇǝɯdʇs sʇɐɹʇ ʍıʇɥ 10 SԀ dʅns ƃoɐʅ ɹǝʍɐɹps; Ԑʅɐuʞ Sʅɐʇǝ ɐup Wɐunɐʅ ⅂ɐqonɹ sʇɐɹʇ ʍıʇɥ zǝɹo, ɐup ⅂ǝɐu Ԑnıʅp sʇɐɹʇs ʍıʇɥ 4. ∀ʇʇǝɯdʇs ɔouʇıunǝ ɐɔɹoss Iuɟıuıʇıǝs. ⊥ɹɐusɔǝupǝuɔǝ pısɔɐɹps ɐu nuɟıuısɥǝp ɐʇʇǝɯdʇ ʍıʇɥonʇ ɐʍɐɹpıuƃ ıʇs SԀ. ᴚǝdʅɐʎs ɐʍɐɹp uo ɐppıʇıouɐʅ SԀ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʇʇǝɯdʇ ɹnʅǝs ɐup ɹǝʍɐɹps"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɥoɹʇ Ↄıɹɔnıʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu 64 IԀ ʍıʇɥ dɐuǝʅ ʅıɟǝʇıɯǝ ɟıxǝp ɐʇ 2 sǝɔoups."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddʅʎ Sɥoɹʇɐƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu 64 IԀ ʍıʇɥ dnɹɔɥɐsǝ dɹıɔǝs ponqʅıuƃ, ɐup dɐʎ ɟoɹ 10 ɟɐɔıʅıʇıǝs ɐɔɹoss 3 ʇʎdǝs. ⅁ǝuǝɹɐʇǝp ɐup ɟɹǝǝ ɟɐɔıʅıʇıǝs po uoʇ ɔonuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ↄɥɐʅʅǝuƃǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝbnıɹǝs "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ʇoʇɐʅ ǝɐɹuǝp IԀ."
     },
     {
       "type": 0,
@@ -15607,6 +19147,330 @@
     {
       "type": 0,
       "value": "∀ʅʍɐʎs sɥoʍ dɹǝsǝʇ bnıɔʞ ɐɔʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.action.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɔɥɐuƃǝ ɔonʅp uoʇ qǝ sɐʌǝp. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.challenges.completed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝʌıons ɔoɯdʅǝʇıous: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.challenges.history": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹuǝp ɹǝʍɐɹps ɐup ɔoɯdʅǝʇıou ɹǝɔoɹps ɐɹǝ dɹǝsǝɹʌǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.challenges.pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥɐʅʅǝuƃǝs ɐɹǝ qǝıuƃ ɹǝpǝsıƃuǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.civilization": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄıʌıʅızɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.infinity.advanced": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀pʌɐuɔǝp ndƃɹɐpǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.infinity.double-time.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ ƃɐɯǝ sdǝǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.infinity.double-time.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ ⊥ıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.infinity.regular": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ ndƃɹɐpǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.migration.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥoosǝ ʇo ʞǝǝd ǝbnıʌɐʅǝuʇ ndƃɹɐpǝs ɐup ɟɹɐɔʇnɹǝs, oɹ ǝɐɹu ʇɥǝ ɐpʌɐuɔǝp ndƃɹɐpǝs ɐƃɐıu. Sʇɐɹʇıuƃ ɟɹǝsɥ ɹǝɯoʌǝs ɟɹɐɔʇnɹǝs ɐup ʇɥǝıɹ ɐnƃɯǝuʇs; ʎonɹ qɐsǝ ƃɐɯǝ, IԀ, ⊥ɹɐusɔǝupǝuɔǝ, ᗡısɔoʌǝɹʎ ɐup dnɹɔɥɐsǝs sʇɐʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.migration.fresh": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu ndƃɹɐpǝs ɐƃɐıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.migration.intro": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "I'ɯ ɹǝqnıʅpıuƃ dɹoƃɹǝssıou. Ònɐuʇnɯ, ᴚǝɐʅıʇʎ ɐup ʇɥǝ oʅp Sıɯs ɐɹǝ ƃouǝ. ∩sǝɟnʅ ndƃɹɐpǝs uoʍ ʅıʌǝ ıu Iuɟıuıʇʎ, ɐup ɔıʌıʅızɐʇıou Sıɯs uoʍ ǝɐɹu ɹǝsonɹɔǝs ɟoɹ Ↄɐʇɐʅʎsʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.migration.keep": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ӽǝǝd ǝbnıʌɐʅǝuʇ dɹoƃɹǝss"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.migration.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hǝʎ ƃnʎs, ᗡǝʌ ɥǝɹǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.simulations.details": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɹɐ ɹǝsonɹɔǝs ʍıʅʅ qnʎ Ↄɐʇɐʅʎsʇs. Ԁǝɹɯɐuǝuʇ ɟɹɐɔʇnɹǝs ʍıʅʅ ɐɔɔǝʅǝɹɐʇǝ ǝɐɔɥ ɔıʌıʅızɐʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.simulations.pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄıʌıʅızɐʇıou dɹoƃɹǝssıou ıs ɔoɯıuƃ uǝxʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.transcend": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹɐusɔǝup"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.transcend.balance": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ⊥ɹɐusɔǝupǝuɔǝ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.transcend.confirm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıɹɯ ⊥ɹɐusɔǝupǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.transcend.confirmation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇ qɐsǝ dɹopnɔʇıou ɐup Iuɟıuıʇʎ ndƃɹɐpǝs ɟoɹ 1 ⊥ɹɐusɔǝupǝuɔǝ Ԁoıuʇ? Ⅎɹɐɔʇnɹǝs, ɔıʌıʅızɐʇıou dɹoƃɹǝss ɐup ᗡısɔoʌǝɹʎ ndƃɹɐpǝs ɹǝɯɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.transcend.threshold": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐɔɥ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " qoʇs ʇo ⊥ɹɐusɔǝup."
     },
     {
       "type": 0,
@@ -21280,7 +25144,7 @@
     },
     {
       "type": 0,
-      "value": "Mɥıʅǝ ʇɥǝ ∀upɹoıps Sʞıʅʅ ıs ɐssıƃuǝp, ıʇs qouns sɔɐʅǝs ɟɹoɯ 0 ʇo 200 sǝɔoups oɟ Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ oʌǝɹ ɐ 10 ɯıunʇǝ sdɐu.\n⊥ɥıs ɹǝsǝʇs ou Iuɟıuıʇʎ/Ònɐuʇnɯ ⅂ǝɐd."
+      "value": "Mɥıʅǝ ʇɥǝ ∀upɹoıps Sʞıʅʅ ıs ɐssıƃuǝp, ıʇs qouns sɔɐʅǝs ɟɹoɯ 0 ʇo 200 sǝɔoups oɟ Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ oʌǝɹ ɐ 10 ɯıunʇǝ sdɐu.\n⊥ɥıs ɹǝsǝʇs ou Iuɟıuıʇʎ."
     },
     {
       "type": 0,
@@ -24640,7 +28504,7 @@
     },
     {
       "type": 0,
-      "value": "Iuɔɹǝɐsǝ Ↄɐsɥ, Sɔıǝuɔǝ, Ԑoʇ, ɐup ɐʅʅ ɟɐɔıʅıʇʎ dɹopnɔʇıou qʎ 1% dǝɹ sǝɔoup ʍɥıʅǝ ɐssıƃuǝp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ. Ↄɥɐɹƃǝs pnɹıuƃ Sʇoɹǝp ⊥ıɯǝ sıɯnʅɐʇıou ɐup ɹǝsǝʇs ou Iuɟıuıʇʎ oɹ Ònɐuʇnɯ ⅂ǝɐd."
+      "value": "Iuɔɹǝɐsǝ Ↄɐsɥ, Sɔıǝuɔǝ, Ԑoʇ, ɐup ɐʅʅ ɟɐɔıʅıʇʎ dɹopnɔʇıou qʎ 1% dǝɹ sǝɔoup ʍɥıʅǝ ɐssıƃuǝp. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ. Ↄɥɐɹƃǝs pnɹıuƃ Sʇoɹǝp ⊥ıɯǝ sıɯnʅɐʇıou ɐup ɹǝsǝʇs ou Iuɟıuıʇʎ."
     },
     {
       "type": 0,
@@ -25522,7 +29386,7 @@
     },
     {
       "type": 0,
-      "value": "Nou-ɹǝɟnupɐqʅǝ sʞıʅʅs ɐup ʇɥǝıɹ dɹǝɹǝbnısıʇǝ dɐʇɥs ɔɐuuoʇ qǝ ɹǝɟnupǝp nuʇıʅ ɐu Iuɟıuıʇʎ oɹ Ònɐuʇnɯ ɹǝsǝʇ. Ↄouʇıunǝ?"
+      "value": "Nou-ɹǝɟnupɐqʅǝ sʞıʅʅs ɐup ʇɥǝıɹ dɹǝɹǝbnısıʇǝ dɐʇɥs ɔɐuuoʇ qǝ ɹǝɟnupǝp nuʇıʅ ɐu Iuɟıuıʇʎ ɹǝsǝʇ. Ↄouʇıunǝ?"
     },
     {
       "type": 0,
@@ -26728,7 +30592,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝʇɐıu 10% oɟ SᴚS ɔɥɐɹƃǝ ʇɥɹonƃɥ Iuɟıuıʇʎ, ɯnʅʇıdʅıǝp qʎ Sʇǝʅʅɐɹ Wǝɯoɹʎ nd ʇo 50% ɹǝʇǝuʇıou. ∀pps ʇo Hoʇ Sʇɐɹʇ. Ònɐuʇnɯ ⅂ǝɐd ɔʅǝɐɹs ɹǝʇɐıuǝp ɔɥɐɹƃǝ."
+      "value": "ᴚǝʇɐıu 10% oɟ SᴚS ɔɥɐɹƃǝ ʇɥɹonƃɥ Iuɟıuıʇʎ, ɯnʅʇıdʅıǝp qʎ Sʇǝʅʅɐɹ Wǝɯoɹʎ nd ʇo 50% ɹǝʇǝuʇıou. ∀pps ʇo Hoʇ Sʇɐɹʇ."
     },
     {
       "type": 0,
@@ -26770,7 +30634,7 @@
     },
     {
       "type": 0,
-      "value": "Iuɔɹǝɐsǝ SᴚS ɔɥɐɹƃıuƃ sdǝǝp qʎ 10% dǝɹ ɯıunʇǝ ʇɥıs ɐnƃɯǝuʇ ıs ɐssıƃuǝp, nd ʇo 200% ɐɟʇǝɹ 20 ɯıunʇǝs. Sʇǝʅʅɐɹ Wǝɯoɹʎ ɯnʅʇıdʅıǝs ʇɥǝsǝ qounsǝs. ᴚǝsǝʇs ou Iuɟıuıʇʎ oɹ Ònɐuʇnɯ ⅂ǝɐd. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
+      "value": "Iuɔɹǝɐsǝ SᴚS ɔɥɐɹƃıuƃ sdǝǝp qʎ 10% dǝɹ ɯıunʇǝ ʇɥıs ɐnƃɯǝuʇ ıs ɐssıƃuǝp, nd ʇo 200% ɐɟʇǝɹ 20 ɯıunʇǝs. Sʇǝʅʅɐɹ Wǝɯoɹʎ ɯnʅʇıdʅıǝs ʇɥǝsǝ qounsǝs. ᴚǝsǝʇs ou Iuɟıuıʇʎ. Ԑounsǝs ɐɹǝ ɐppıʇıʌǝ."
     },
     {
       "type": 0,
@@ -26980,7 +30844,7 @@
     },
     {
       "type": 0,
-      "value": "Ou Iuɟıuıʇʎ oɹ Ònɐuʇnɯ ɹǝsǝʇ, qɐuʞ uǝʍʅʎ ƃǝuǝɹɐʇǝp SᴚS ɔɥɐɹƃǝ, ǝxɔʅnpıuƃ Hoʇ Sʇɐɹʇ ɐup ∀ɟʇǝɹƃʅoʍ. Mɥıʅǝ ɐssıƃuǝp, qoosʇs SᴚS ɐnƃɯǝuʇ qǝuǝɟıʇs qʎ 1 + 0.25 × ʅoƃ10(ɯɐx(1, qɐuʞǝp sǝɔoups))."
+      "value": "Ou Iuɟıuıʇʎ ɹǝsǝʇ, qɐuʞ uǝʍʅʎ ƃǝuǝɹɐʇǝp SᴚS ɔɥɐɹƃǝ, ǝxɔʅnpıuƃ Hoʇ Sʇɐɹʇ ɐup ∀ɟʇǝɹƃʅoʍ. Mɥıʅǝ ɐssıƃuǝp, qoosʇs SᴚS ɐnƃɯǝuʇ qǝuǝɟıʇs qʎ 1 + 0.25 × ʅoƃ10(ɯɐx(1, qɐuʞǝp sǝɔoups))."
     },
     {
       "type": 0,
@@ -27862,7 +31726,7 @@
     },
     {
       "type": 0,
-      "value": "Ӽǝǝd dɐıp ɟɐɔıʅıʇʎ dnɹɔɥɐsǝs ʇɥɹonƃɥ Iuɟıuıʇʎ. ∀ssıƃu qǝɟoɹǝ ɹǝsǝʇʇıuƃ; dnɹɔɥɐsǝs ɹǝʇnɹu ɐnʇoɯɐʇıɔɐʅʅʎ. Ⅎɹǝǝ sʇɐɹʇǝɹ nuıʇs po uoʇ ɐɔɔnɯnʅɐʇǝ. Ònɐuʇnɯ ɔʅǝɐɹs ʇɥǝ snddʅʎ."
+      "value": "Ӽǝǝd dɐıp ɟɐɔıʅıʇʎ dnɹɔɥɐsǝs ʇɥɹonƃɥ Iuɟıuıʇʎ. ∀ssıƃu qǝɟoɹǝ ɹǝsǝʇʇıuƃ; dnɹɔɥɐsǝs ɹǝʇnɹu ɐnʇoɯɐʇıɔɐʅʅʎ. Ⅎɹǝǝ sʇɐɹʇǝɹ nuıʇs po uoʇ ɐɔɔnɯnʅɐʇǝ. ⊥ɹɐusɔǝupǝuɔǝ ɔʅǝɐɹs ʇɥǝ snddʅʎ."
     },
     {
       "type": 0,
@@ -29620,7 +33484,7 @@
     },
     {
       "type": 0,
-      "value": "Ↄnɹɹǝuʇ Ònɐuʇnɯ ɹnu"
+      "value": "Ↄnɹɹǝuʇ ɹnu"
     },
     {
       "type": 0,
@@ -32509,21 +36373,7 @@
     },
     {
       "type": 0,
-      "value": ", "
-    },
-    {
-      "type": 8,
-      "value": "quantum",
-      "children": [
-        {
-          "type": 0,
-          "value": "Ònɐuʇnɯ"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " ɐup ɔɥɐʅʅǝuƃǝs. "
+      "value": ". "
     },
     {
       "type": 8,
@@ -33097,15 +36947,15 @@
     },
     {
       "type": 0,
-      "value": "∀ɟʇǝɹ ɐ "
+      "value": "Iu "
     },
     {
       "type": 8,
-      "value": "quantum",
+      "value": "infinity",
       "children": [
         {
           "type": 0,
-          "value": "Ònɐuʇnɯ ⅂ǝɐd"
+          "value": "Iuɟıuıʇʎ"
         }
       ]
     },
@@ -33965,7 +37815,7 @@
     },
     {
       "type": 0,
-      "value": "∀ ɔoɯdʅǝʇǝp ɹnu ɹǝdoɹʇs ʇɥǝ sıɯnʅɐʇǝp pnɹɐʇıou, ɹǝɯɐıuıuƃ qɐuʞ, ɟıuɐʅ ɐɔɔnɹɐɔʎ ɐup ɐɔʇnɐʅ ndpɐʇǝ ɔonuʇ. Iʇ ɐʅso sɥoʍs ɹǝʅǝʌɐuʇ Iuɟıuıʇʎ, Sıɯnʅɐʇıou ɐup ᴚǝɐʅıʇʎ ƃɐıus. Ⅎɐɔıʅıʇʎ ɐup Ԑoʇ ƃɐıus ɐddǝɐɹ ouʅʎ ʍɥǝu uo Iuɟıuıʇʎ oɔɔnɹɹǝp, qǝɔɐnsǝ ɐ ɹǝsǝʇ ɐup ɹǝqnıʅp ʍonʅp ɯɐʞǝ ɐ sıɯdʅǝ qǝɟoɹǝ-ɐup-ɐɟʇǝɹ ʇoʇɐʅ ɯısʅǝɐpıuƃ."
+      "value": "∀ ɔoɯdʅǝʇǝp ɹnu ɹǝdoɹʇs ʇɥǝ sıɯnʅɐʇǝp pnɹɐʇıou, ɹǝɯɐıuıuƃ qɐuʞ, ɟıuɐʅ ɐɔɔnɹɐɔʎ ɐup ɐɔʇnɐʅ ndpɐʇǝ ɔonuʇ. Iʇ ɐʅso sɥoʍs Iuɟıuıʇʎ ƃɐıus. Ⅎɐɔıʅıʇʎ ɐup Ԑoʇ ƃɐıus ɐddǝɐɹ ouʅʎ ʍɥǝu uo Iuɟıuıʇʎ oɔɔnɹɹǝp, qǝɔɐnsǝ ɐ ɹǝsǝʇ ɐup ɹǝqnıʅp ʍonʅp ɯɐʞǝ ɐ sıɯdʅǝ qǝɟoɹǝ-ɐup-ɐɟʇǝɹ ʇoʇɐʅ ɯısʅǝɐpıuƃ."
     },
     {
       "type": 0,
@@ -37197,21 +41047,7 @@
     },
     {
       "type": 0,
-      "value": " oɹ ɐ "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Ònɐuʇnɯ"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " ɹǝsǝʇ. ᴚǝsǝʇʇıuƃ ʇɥǝ ʇɹǝǝ ɔʅǝɐɹs ʇɥǝ ʅıʌǝ ɐnʇo-ɐssıƃuɯǝuʇ bnǝnǝ. Ԁɹǝsǝʇs sɐʌǝ ɔoɯdʅǝʇǝ ʅɐʎonʇs."
+      "value": ". ᴚǝsǝʇʇıuƃ ʇɥǝ ʇɹǝǝ ɔʅǝɐɹs ʇɥǝ ʅıʌǝ ɐnʇo-ɐssıƃuɯǝuʇ bnǝnǝ. Ԁɹǝsǝʇs sɐʌǝ ɔoɯdʅǝʇǝ ʅɐʎonʇs."
     },
     {
       "type": 0,
@@ -37809,7 +41645,7 @@
     },
     {
       "type": 0,
-      "value": " ʇo dǝɹɯɐuǝuʇʅʎ ɹǝdʅɐɔǝ Sɔıǝuɔǝ ɐup ᴚǝsǝɐɹɔɥ. Ǝxısʇıuƃ Sɔıǝuɔǝ ɐup ɹǝsǝɐɹɔɥ ʅǝʌǝʅs po uoʇ ɔɐɹɹʎ oʌǝɹ."
+      "value": " ıu ʇɥɐʇ ʇɐq ʇo dǝɹɯɐuǝuʇʅʎ ɹǝdʅɐɔǝ Sɔıǝuɔǝ ɐup ᴚǝsǝɐɹɔɥ. Ǝxısʇıuƃ Sɔıǝuɔǝ ɐup ɹǝsǝɐɹɔɥ ʅǝʌǝʅs po uoʇ ɔɐɹɹʎ oʌǝɹ."
     },
     {
       "type": 0,

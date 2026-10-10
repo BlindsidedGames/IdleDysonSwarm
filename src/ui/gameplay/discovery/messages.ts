@@ -48,7 +48,7 @@ export const discoveryMessages = defineMessages({
   production: { id: 'discovery.production', defaultMessage: 'Facility production ×{value}' },
   lifetime: { id: 'discovery.lifetime', defaultMessage: 'Panel lifetime: {value} seconds' },
   next: { id: 'discovery.next', defaultMessage: 'Next: ×{value} · {time}' },
-  resetRule: { id: 'discovery.resetRule', defaultMessage: 'Persists through Infinity and Quantum. Resets on Transcendence.' },
+  resetRule: { id: 'discovery.resetRule', defaultMessage: 'Persists through Infinity. Resets on Transcendence.' },
   unlock: { id: 'discovery.unlock', defaultMessage: 'Unlock Discovery' },
   confirm: { id: 'discovery.confirm', defaultMessage: 'Replace Research with Discovery?' },
   startingBenefits: { id: 'discovery.startingBenefits', defaultMessage: '10× facility production. 7× Cash and Bot gains. 20-second base panel lifetime.' },

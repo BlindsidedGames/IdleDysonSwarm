@@ -118,7 +118,7 @@ const baseCategories: readonly WikiCategory[] = [
     id: 'other',
     title: messages.other,
     sections: [
-      { title: messages.easterEggTitle, body: messages.easterEgg },
+
     ],
   },
   { id: 'patch-notes', title: messages.patchNotes, sections: [] },

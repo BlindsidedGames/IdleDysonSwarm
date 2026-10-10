@@ -275,7 +275,7 @@ export function purchaseQuantumUpgrade(
   }
   const nextSpent = state.quantum.pointsSpent + cost
 
-  const effected = applyQuantumUpgradeEffect(state, id)
+  const effected = applyProgressionUpgradeEffect(state, id)
   if (effected === null) {
     return rejected(state, 'state-saturated', cost)
   }
@@ -455,7 +455,7 @@ export function findQuantumUpgradeCanonicalGaps(
   return QUANTUM_UPGRADE_IDS.filter((id) => !definitions.has(id))
 }
 
-function applyQuantumUpgradeEffect(
+export function applyProgressionUpgradeEffect(
   state: Readonly<CanonicalGameStateV1>,
   id: QuantumUpgradeId,
 ): CanonicalGameStateV1 | null {

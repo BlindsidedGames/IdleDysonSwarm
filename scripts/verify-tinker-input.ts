@@ -9,7 +9,7 @@ import { importSaveThroughSettings } from './performance/browserFixtureImport'
 
 // Run against a local preview. The harness owns a disposable profile and uses
 // --use-mock-keychain on macOS; no existing player saves are touched.
-const url = process.argv[2] ?? 'http://127.0.0.1:5190/play/'
+const url = process.argv[2] ?? 'http://127.0.0.1:5190/rework-beta/'
 const page = await openChromiumPage({
   id: 'tinker-input', width: 1280, height: 900,
   deviceScaleFactor: 1, cpuThrottleRate: 1,

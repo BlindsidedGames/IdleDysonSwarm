@@ -49,7 +49,7 @@ export function DiscoveryPurchases({ state, balance, available, purchase, locale
     const disabled = pending || !available || cost === null || balance < cost
     const startingValue = kind === 'enlightenment-power' ? DISCOVERY_TUNING.enlightenment.startingStrength : DISCOVERY_TUNING.startingStrength
     const icon = kind === 'speed' ? null : discoveryIcons[kind.startsWith('enlightenment') ? 'enlightenment' : kind.startsWith('elevation') ? 'elevation' : 'discovery']
-    return <article key={kind} className="quantum-leap-card discovery-purchase">
+    return <article key={kind} className="discovery-purchase">
       <h2>{icon && <InlineImageSymbol src={icon} tint />}{intl.formatMessage(definitions[kind].name)}</h2>
       {repeatable && <span>{intl.formatMessage(m.owned, { value: formatWholeGameNumber(locale, count) })}</span>}
       <p>{intl.formatMessage(definitions[kind].effect)}</p>
@@ -58,8 +58,8 @@ export function DiscoveryPurchases({ state, balance, available, purchase, locale
     </article>
   }
   return <>
-    {nextUnlock && <div className="avocato-feed-grid">{card(nextUnlock)}</div>}
-    {state.unlocked && <details className="discovery-upgrades"><summary>{intl.formatMessage(m.upgrades)}</summary><div className="avocato-feed-grid">{upgradeKinds.map(kind => card(kind, true))}</div></details>}
+    {nextUnlock && <div className="discovery-purchase-grid">{card(nextUnlock)}</div>}
+    {state.unlocked && <details className="discovery-upgrades"><summary>{intl.formatMessage(m.upgrades)}</summary><div className="discovery-purchase-grid">{upgradeKinds.map(kind => card(kind, true))}</div></details>}
     {failed && <p role="alert">{intl.formatMessage(m.purchaseFailed)}</p>}
     {confirming && <SkillDetailsDialog className="discovery-confirmation" title={intl.formatMessage(m.confirm)} closeLabel={intl.formatMessage(m.cancel)} palette="normal" onClose={() => { if (!pending) setConfirming(false) }}>
       <p>{intl.formatMessage(m.replacementWarning)}</p>

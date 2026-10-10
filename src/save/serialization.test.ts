@@ -24,7 +24,7 @@ describe('canonical web save serialization', () => {
       bits: Uint8Array.from([0, 127, 255]),
     }
     const encoded = serializeWebSave(save)
-    expect(encoded).toMatch(/^IDSWEB1:/)
+    expect(encoded).toMatch(/^IDLEDS:/)
     const decoded = deserializeWebSave(encoded)
 
     expect(decoded.infinityPoints).toBe(9_223_372_036_854_775_807n)
@@ -32,16 +32,16 @@ describe('canonical web save serialization', () => {
     expect(serializeWebSave(decoded)).toBe(encoded)
   })
 
-  test('rejects a canonical IDSWEB1 payload with a corrupted gzip checksum', () => {
+  test('rejects a canonical IDLEDS payload with a corrupted gzip checksum', () => {
     const encoded = serializeWebSave({ saveVersion: 12, cash: 42 })
     const compressed = Buffer.from(
-      encoded.slice('IDSWEB1:'.length),
+      encoded.slice('IDLEDS:'.length),
       'base64',
     )
     compressed[compressed.length - 8] = compressed[compressed.length - 8]! ^ 1
 
     expect(() => deserializeWebSave(
-      `IDSWEB1:${compressed.toString('base64')}`,
+      `IDLEDS:${compressed.toString('base64')}`,
     )).toThrow(/gzip checksum does not match/u)
   })
 
@@ -198,6 +198,17 @@ describe('canonical web save serialization', () => {
       saveVersion: 12,
       infinityPoints: 12_345_678_901_234_567_890n,
     })
+  })
+
+  test('imports compressed public IDSWEB1 without emitting it again', () => {
+    const publicText = `IDSWEB1:${Buffer.from(gzipSync(new TextEncoder().encode(JSON.stringify({
+      format: 'IDSWEB1', schema: 20, state: { saveVersion: 20, points: { $bigint: '9223372036854775807' } },
+    })))).toString('base64')}`
+    const decoded = deserializeWebSave(publicText)
+    expect(decoded.points).toBe(9_223_372_036_854_775_807n)
+    expect(() => deserializeWebSave(publicText.replace(/^IDSWEB1:/, 'IDLEDS:')))
+      .toThrow('transport prefix does not match')
+    expect(serializeWebSave(decoded)).toMatch(/^IDLEDS:/)
   })
 
   test('keeps repetitive canonical exports compact', () => {
