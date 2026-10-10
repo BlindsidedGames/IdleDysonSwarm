@@ -7003,6 +7003,318 @@
       "value": "Смоделированное время"
     }
   ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "Отменить испытание"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "Чистый лист"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "Завершите одну Бесконечность с неактивными навыками, усилениями и эффектами раскола."
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "Требуется Разорвать цикл."
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "Награды испытаний: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SP"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "Ручной труд"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "Завершите одну Бесконечность без сооружений и автоматического производства Ботов. Ручной труд временно доступен."
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "Страх обязательств"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 32 IP, не возвращая очки и не заменяя сборку на протяжении всей попытки, включая сбросы Бесконечности."
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "Подтвердить перезапуск"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "Получено "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " постоянных SP"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "Не удалось начать или сохранить испытание. Текущий забег сохранён."
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "Завершите первую Бесконечность."
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "Приземление"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 32 IP без Планет и мегасооружений. Цель Планет заменяется на 100 купленных Центров обработки данных."
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "Руки прочь"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 32 IP без покупок сооружений и Tinker. Начните с одной Сборочной линии и сборки, генерирующей Планеты."
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "Прежних завершений испытаний: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ". Исторические награды сохранены; в этом пилоте компенсация не применяется."
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "Каждая попытка начинается с новой Бесконечности. Учитываются только IP, заработанные за попытку. Первое завершение каждого испытания один раз даёт постоянные SP."
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "Минимальная сборка"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 16 IP, назначив навыки не более чем на 4 SP. Возврат очков разрешён."
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "Без науки"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 32 IP без Науки, Исследований и Открытия."
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "Завершите или отмените активное испытание."
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "Сначала завершите Трансценденцию."
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "Активно · заработано "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IP · "
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": " Бесконечностей"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "Оплачено сооружений: "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · типов: "
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "Повторить"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "Начните новую Бесконечность без получения IP. Постоянный прогресс цивилизации, улучшения, история наград и полученные расколы сохраняются. Отмена сбрасывает прогресс попытки и восстанавливает обычные эффекты."
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "Награда: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " постоянных SP"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "Прежние IP не учитываются в множителе производства. Деление, игровые Двойные Очки Бесконечности, Открытие и постоянные расколы неактивны; купленные усиления остаются активными. Покупки в магазине Бесконечности приостановлены на время попыток. Большинство попыток начинается с 10 SP плюс награды за цели; Чистый лист и Ручной труд начинают с нуля, а Минимальная сборка — с 4. Попытки продолжаются через несколько Бесконечностей. Трансценденция отменяет незавершённую попытку без выдачи её SP. Повторное прохождение не даёт дополнительных SP."
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "Правила и награды попыток"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "Короткое замыкание"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 64 IP со сроком службы панелей, равным 2 секундам."
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "Начать"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "Дефицит поставок"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "Заработайте 64 IP с удваивающимися ценами покупок и оплатите 10 сооружений 3 типов. Созданные и бесплатные сооружения не учитываются."
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "Испытания Бесконечности"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "Требуется всего "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " заработанных IP."
+    }
+  ],
   "pwa.update.accept": [
     {
       "type": 0,

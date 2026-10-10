@@ -7003,6 +7003,318 @@
       "value": "Temps simulé"
     }
   ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "Abandonner le défi"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "Table rase"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "Terminez une Infinité avec les compétences, les augmentations et les effets de fracture inactifs."
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "Nécessite Briser la boucle."
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "Récompenses des défis : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SP"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "Travail manuel"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "Terminez une Infinité sans installations ni production automatique de Bots. Un accès temporaire à Travail manuel est fourni."
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "Annuler"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "Peur de s’engager"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "Gagnez 32 IP sans restituer de points ni remplacer votre configuration pendant toute la tentative, y compris lors des réinitialisations d’Infinité."
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmer le redémarrage"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "Obtenu : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " SP permanents"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "Le défi n’a pas pu être lancé ou sauvegardé. Votre partie actuelle a été conservée."
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "Terminez votre première Infinité."
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "Cloué au sol"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "Gagnez 32 IP sans Planètes ni mégastructures. L’objectif de Planètes devient 100 Centres de données achetés."
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "Pas touche"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "Gagnez 32 IP sans acheter d’installations ni utiliser Bricolage. Commencez avec une Chaîne d’assemblage et une configuration générant des Planètes."
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "Défis précédents terminés : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ". Les récompenses historiques sont conservées ; aucune compensation n’est appliquée dans ce pilote."
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "Chaque tentative commence une nouvelle Infinité. Seuls les IP gagnés pendant la tentative comptent. La première réussite de chaque défi rapporte des SP permanents une seule fois."
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "Configuration légère"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "Gagnez 16 IP avec au plus 4 SP de compétences assignées. La restitution des points est autorisée."
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "Sans Science"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "Gagnez 32 IP sans Science, Recherche ni Découverte."
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "Terminez ou abandonnez le défi actif."
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "Résolvez d’abord la Transcendance."
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "En cours · "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IP gagnés · "
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": " Infinités"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "Installations payées : "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · types : "
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "Rejouer"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "Commencez une nouvelle Infinité sans gagner d’IP. La progression persistante de la civilisation, les améliorations, l’historique des récompenses et les fractures possédées sont conservés. Abandonner annule la progression de la tentative et rétablit les effets normaux."
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "Récompense : "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " SP permanents"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "Les IP antérieurs ne comptent pas dans le multiplicateur de production. Division, Points d’Infinité doublés du jeu, Découverte et fractures permanentes sont inactifs ; les bonus achetés restent actifs. Les achats dans la boutique d’Infinité sont suspendus pendant les tentatives. La plupart commencent avec 10 SP plus les récompenses d’objectifs ; Table rase et Travail manuel commencent à zéro, et Configuration légère à 4. Les tentatives se poursuivent d’une Infinité à l’autre. La Transcendance annule une tentative inachevée sans accorder ses SP. Rejouer ne rapporte aucun SP supplémentaire."
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "Règles et récompenses des tentatives"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "Court-circuit"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "Gagnez 64 IP avec une durée de vie des panneaux fixée à 2 secondes."
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "Commencer"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "Pénurie"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "Gagnez 64 IP avec des prix d’achat qui doublent, et payez 10 installations de 3 types différents. Les installations générées ou gratuites ne comptent pas."
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "Défis d’Infinité"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "Nécessite "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP gagnés au total."
+    }
+  ],
   "pwa.update.accept": [
     {
       "type": 0,

@@ -1,0 +1,46 @@
+# Rework beta save safety — 10 October 2026
+
+Status: evidence and proposed policy. No schema, app identity, migration choice, cloud/account behavior or real-save path has been changed. No native game was launched.
+
+## Verified source and synthetic probes
+
+Public source is archived at `bdd95551912f8524c5abd02f52417fe9b9f7b799`; its checked-in desktop metadata identifies 4.1.11, build 2026100404. Current rework and that snapshot both use schema 20 and the `IDSWEB1` envelope. The public snapshot uses the isolated current dependency runtime; probes invoke domain, serialization and in-memory repository boundaries, not a packaged public binary.
+
+Four synthetic saves contain actual replacement entry or completion plus a real 9,000-second Forager advancement. No player save/account data was read. Results:
+
+| Synthetic rework input | Public 4.1.11 result | Consequence |
+| --- | --- | --- |
+| Active replacement Blank Slate | Accepted; next public Infinity clears legacy active state and grants a legacy Catalyst (6 → 7). | Public interprets the replacement as the old challenge. Returning that checkpoint to rework fails with `Invalid replacement challenge progress`. |
+| Completed replacement Blank Slate | Accepted; an immediate public checkpoint preserves the new receipt and civilization data. After a public Infinity, available SP goes 2 → 0 while the new completion receipt remains. | Unknown-field preservation alone is insufficient for safe downgrade. This is a measured counter change, not a claim that all public gameplay/save fields are lost. |
+| Active Lean Build, before or after its first incomplete Infinity | Public rejects challenge data as invalid. | Public startup with an older valid backup restores that backup, copies rejected bytes to recovery and replaces current. The synthetic repository performed three writes/copies. |
+| Synthetic schema-21 envelope/state | Public returns `unsupported-future-version`. | With the same older backup available, startup performs zero writes and leaves current byte-for-byte unchanged. |
+
+The ordinary public checkpoint preserved current civilization data, replacement receipts and migration marker in the accepted cases because the save mapping retains unknown source fields. This limited success does not establish downgrade support: running public mechanics demonstrably damages the replacement contract. No blanket unknown-field-discard claim is justified by this probe.
+
+Exact probe output is `output/save-safety/cross-build.json` in the isolated task checkout. The standalone probe is `/Users/matthewrushworth/Documents/Codex/2026-10-10/task-3/cross-build-save-probe.mts`; the pinned source snapshot is alongside it. The initial loader attempts failed before producing results; the completed probe uses `.mts`, checked-in IDB1 input and actual public/current source boundaries.
+
+## Shared identities and side effects
+
+- `src/browser/productionBrowserStorage.ts` keeps the deployed IndexedDB name `idle-dyson-swarm-web-development-v1`, profile `development-only-default-profile`, and `/development-only/...` paths. A different URL path on the same origin does not isolate this database.
+- Electron, Capacitor, Android release and both iOS build configurations use `com.blindsidedgames.idledysonswarm`. Android debug adds `.debug`, but that is not a coordinated beta identity across hosts.
+- Native adapters use `web-runtime-v1`, with the same current/temporary/three backup/recovery relative paths. Electron's ordinary launch uses the established userData location. A temporary smoke userData root does not isolate every source: `discoverUnitySaves` still derives Unity paths from the real home directory, and Steam paths/SDK have their own handling.
+- iOS code uses `UserDefaults.standard` for review/legacy entitlement reads; native StoreKit has a Keychain cache. Merely changing the web save root is not proof of preference, Keychain, purchase or account isolation. No CFPreferences/UserDefaults or Keychain runtime probe was attempted.
+- Published Steam Auto Cloud uses app 4348570 and four nonrecursive files in `Idle Dyson Swarm/steam-cloud/{64BitSteamID}`. A Steam beta branch shares that app/account/cloud configuration; the branch name is not a data namespace. The Steam host also discovers legacy Unity saves and writes a migration-account claim.
+- Existing repository publication verifies temporary bytes before atomic replacement and rotates three backups. Those rotating slots are recovery history, not an immutable pre-rework archive: normal play eventually replaces them. Existing manual import creates a rollback checkpoint of the receiving save; that is not necessarily an exact archive of the imported public source.
+
+## Recommended policy requiring approval
+
+1. **Format boundary:** use schema 21 for rework checkpoints. The current `IDSWEB1` codec identity remains until a separately reviewed IDS-prefix proposal is approved. Import supported public schema ≤20 through the existing validated pipeline; present a concrete one-way migration flow before changing user choices or compensation. Public 4.1.11 already fails closed on 21, as proved above. A channel/version marker can identify rework history for diagnostics, but a schema-20 marker alone cannot protect older builds that ignore it. Rework checkpoints must never be converted back into playable public checkpoints. Original-data archives support recovery and migration diagnostics, not a sanctioned downgrade path.
+2. **Persistent beta namespace:** use a stable `gameplay-rework-beta-v1` channel namespace, not a new directory per build. Give web beta a separate origin and explicit beta database/profile. Give every native beta save adapter a distinct `web-runtime-rework-beta-v1` root; keep all current/temporary/backups/recovery/Stored Time jobs under it. Keep production namespaces untouched. Before distributed beta approval, enumerate and verify every host's resolved paths.
+3. **Local native QA:** use a separate beta app/bundle identity and clean simulator/test-device or disposable host account/profile. Disable real-home Unity discovery, real account/cloud initialization, purchasing and achievement publication in that QA mode. Verify the app-data, preference and Keychain identities before launch. A dedicated `.reworkbeta` identity is proposed, not configured. Store beta updates installed under the existing production identity require a separately approved path/account design; changing identity affects store-product/entitlement setup and is not a silent technical substitution.
+4. **Cloud:** start this beta with local-only saves. Do not initialize the existing Steam cloud folder, publish achievements, write a production migration claim or automatically upload rework checkpoints. If cloud testing is required, provide an explicitly approved isolated provider namespace/test account and verify it before enabling. No shared-account behavior was changed here.
+5. **Archive before conversion:** retain the exact unmodified public source in a write-once local archive with SHA-256, source schema/build and import timestamp. Verify its bytes before publishing a rework candidate; if archive verification fails, leave the old candidate untouched. Preserve existing three-slot beta backup rotation separately. An archive must survive Fresh, reinstall/export planning and ordinary rotation; its deletion and retention policy need approval. Do not rely on a shared export that deliberately strips device ownership/personal-best data as the exact private backup.
+6. **Recovery:** classify a newer schema as incompatible, never corrupt. Preserve unsupported newer checkpoints and stop before scanning an older backup or legacy source. Channel-aware import/recovery should explain the one-way migration and recover original bytes without claiming that downgraded play is supported; the flow requires review before implementation. Keep current failed-save rollback and atomic commit behavior.
+
+These proposals change persistence/channel/account behavior, so they remain pending rather than being implemented under the localization authorization. The proven existing future-schema refusal needs no production repair. Native QA remains blocked on verified isolation; ordinary browser QA uses a disposable profile, synthetic save, mock Keychain, enabled Chromium sandbox and loopback-only requests.
+
+## Follow-up verification after policy approval
+
+Exercise public → beta Keep and Fresh; failed archive/write; beta checkpoint/reopen; corrupted current plus beta backups; mismatched/newer channel/schema with zero mutation; beta → public refusal; exact public archive restore; interrupted migration and Stored Time; cross-host export/import; and intentional cloud conflict tests only in the approved isolated environment. Preserve earned achievements, historical times, receipts and ownership records without inventing new reward compensation.
+
+Retired achievement goals and old Quantum/Reality speedrun categories remain gameplay/content decisions. The recommended early-beta option is to preserve earned records and historical times while hiding obsolete acquisition claims; alternative is versioned replacement goals/categories. Neither option is applied by this audit.

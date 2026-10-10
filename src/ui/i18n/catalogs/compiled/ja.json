@@ -7003,6 +7003,318 @@
       "value": "シミュレートした時間"
     }
   ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "チャレンジを中止"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "白紙の出発"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "スキル、強化、破砕効果が無効の状態でインフィニティを1回達成します。"
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "「ループを破る」が必要です。"
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "チャレンジ報酬："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SP"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "手動労働"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "施設とボットの自動生産なしでインフィニティを1回達成します。手動労働を一時的に利用できます。"
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "決断の重み"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "インフィニティのリセット時も含め、挑戦全体でポイントの返還や構成の入れ替えをせずに32 IPを獲得します。"
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "再開始を確認"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "獲得済み："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 永続SP"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "チャレンジを開始または保存できませんでした。現在の進行は保持されています。"
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "最初のインフィニティを達成してください。"
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "地に足をつけて"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "惑星と巨大構造物なしで32 IPを獲得します。惑星の目標はデータセンター100個の購入に変わります。"
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "手出し無用"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "施設の購入とTinkerなしで32 IPを獲得します。組立ライン1つと惑星を生成する構成で開始します。"
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "以前のチャレンジ完了数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "。過去の報酬は保持されます。この試行版では補償は適用されません。"
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "各挑戦は新しいインフィニティから始まります。挑戦中に獲得したIPだけが数えられます。各チャレンジの初回クリアで、永続SPを一度だけ獲得できます。"
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "最小構成"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "割り当てたスキルを4 SP以内に抑えて16 IPを獲得します。ポイントの返還は可能です。"
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "科学なし"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "サイエンス、研究、発見なしで32 IPを獲得します。"
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "進行中のチャレンジを完了するか中止してください。"
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "先に超越を完了してください。"
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "挑戦中 · "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IP獲得 · インフィニティ"
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": "回"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "有料で購入した施設："
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · 種類："
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "再挑戦"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "IPを獲得せずに新しいインフィニティを始めます。永続的な文明の進捗、アップグレード、報酬履歴、所有する破砕は保持されます。中止すると挑戦の進捗を破棄し、通常の効果に戻ります。"
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "報酬："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 永続SP"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "以前のIPは生産倍率に含まれません。除算、ゲーム内のインフィニティポイント2倍、発見、永続的な破砕効果は無効ですが、購入済みのブーストは有効です。挑戦中はインフィニティショップで購入できません。多くの挑戦は10 SPと目標報酬で始まります。白紙の出発と手動労働は0 SP、最小構成は4 SPで始まります。挑戦はインフィニティをまたいで継続します。超越すると未完了の挑戦は破棄され、そのSPは獲得できません。再挑戦で追加のSPは獲得できません。"
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "挑戦のルールと報酬"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "ショート回路"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "パネル寿命を2秒に固定して64 IPを獲得します。"
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "開始"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "供給不足"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "購入価格が倍増する状態で64 IPを獲得し、3種類にわたる10個の施設を有料で購入します。生成された施設と無料の施設は数えられません。"
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "インフィニティチャレンジ"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "累計"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IPの獲得が必要です。"
+    }
+  ],
   "pwa.update.accept": [
     {
       "type": 0,

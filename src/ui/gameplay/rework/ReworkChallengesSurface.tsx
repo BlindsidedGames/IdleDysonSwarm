@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { DeepReadonly } from '../../../core/contracts'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
@@ -19,6 +19,15 @@ export function ReworkChallengesSurface({ progress, earnedIp, firstInfinity, bre
   const [confirm, setConfirm] = useState<ReworkChallengeId | null>(null)
   const [pending, setPending] = useState(false)
   const [error, setError] = useState(false)
+  const cards = useRef(new Map<ReworkChallengeId, HTMLElement>())
+  const focusOrigin = useRef<ReworkChallengeId | null>(null)
+  useEffect(() => {
+    if (pending) return
+    const id = confirm ?? focusOrigin.current
+    if (!id) return
+    cards.current.get(id)?.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus()
+    if (confirm === null) focusOrigin.current = null
+  }, [confirm, pending])
   const run = progress?.replacement
   const legacy = new Set(progress?.completedQuantumChallenges ?? [])
   if (progress?.noScienceCompleted) legacy.add('no-science')
@@ -49,7 +58,7 @@ export function ReworkChallengesSurface({ progress, earnedIp, firstInfinity, bre
           !active && run?.active ? message('other') :
           earnedIp < c.unlockIp && !active ? message('unlock', { value: String(c.unlockIp) }) :
           c.unlockIp >= 64n && !breakTheLoop && !active ? message('break') : null
-        return <article className="infinity-shop-card infinity-challenge-card" key={c.id}>
+        return <article className="infinity-shop-card infinity-challenge-card" key={c.id} ref={node => { if (node) cards.current.set(c.id, node); else cards.current.delete(c.id) }}>
           <div><h3>{message(`${c.id}.name`)}</h3>
             <p>{message(`${c.id}.rule`)}</p>
             <p>{message(completed ? 'earned' : 'reward', { value: String(c.reward) })}</p>
@@ -60,7 +69,7 @@ export function ReworkChallengesSurface({ progress, earnedIp, firstInfinity, bre
           {confirm === c.id ? <div className="infinity-challenge-card__confirmation">
             <p>{message('restart')}</p>
             <div className="infinity-challenge-card__actions"><Button disabled={!!issue || pending} variant="danger" state={pending ? 'pending' : 'idle'} onClick={() => void act(c.id)}>{message('confirm')}</Button><Button disabled={pending} onClick={() => setConfirm(null)}>{message('cancel')}</Button></div>
-          </div> : <Button disabled={!!issue || pending} onClick={() => setConfirm(c.id)}>{message(active ? 'abandon' : completed ? 'replay' : 'start')}</Button>}
+          </div> : <Button disabled={!!issue || pending} onClick={() => { focusOrigin.current = c.id; setConfirm(c.id) }}>{message(active ? 'abandon' : completed ? 'replay' : 'start')}</Button>}
         </article>
       })}
       {error && <StatusFeedback tone="error">{message('failure')}</StatusFeedback>}

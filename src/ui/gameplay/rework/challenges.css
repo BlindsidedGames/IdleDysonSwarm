@@ -4,3 +4,18 @@
   min-block-size: 44px;
   min-inline-size: 44px;
 }
+
+/* Localized titles and explanations stay readable at narrow enlarged text. */
+.challenges-surface {
+  overflow-wrap: anywhere;
+}
+
+/* Match Infinity purchase actions' readable ink on the shared pale lighting. */
+@media (forced-colors: none) {
+  .challenges-surface .infinity-challenge-card .ui-button:not(:disabled) {
+    color: var(--purchase-action-ink);
+  }
+  .challenges-surface .infinity-challenge-card .ui-button:not(:disabled):active {
+    background-color: var(--purchase-action-pressed);
+  }
+}

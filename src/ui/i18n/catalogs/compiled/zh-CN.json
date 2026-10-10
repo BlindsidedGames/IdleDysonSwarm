@@ -7003,6 +7003,318 @@
       "value": "已模拟时间"
     }
   ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "放弃挑战"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "白纸起步"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "在技能、强化和碎裂效果不生效的情况下完成一次无限。"
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "需要打破循环。"
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "挑战奖励："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SP"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "手工劳动"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "不使用设施或机器人自动生产，完成一次无限。可临时使用手工劳动。"
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "承诺难题"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "在整个尝试期间（包括无限重置时）不返还技能点或替换配置，赚取32 IP。"
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "确认重新开始"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "已获得"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "永久SP"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "无法开始或保存挑战。已保留你当前的进度。"
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "请完成你的第一次无限。"
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "脚踏实地"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "不使用行星或巨型结构，赚取32 IP。行星目标改为购买100个数据中心。"
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "禁止购买"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "不购买设施或进行手工组装，赚取32 IP。开局获得一条装配线和可生成行星的配置。"
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "先前完成挑战的次数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "。历史奖励会保留；此试行版不提供补偿。"
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "每次尝试都从一次新的无限开始。仅计算尝试期间赚取的IP。每个挑战首次完成时，永久SP奖励只发放一次。"
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "精简配置"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "分配技能最多使用4 SP，赚取16 IP。允许返还技能点。"
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "无科学"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "不使用科学、研究或发现，赚取32 IP。"
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "请完成或放弃当前挑战。"
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "请先完成超越。"
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "进行中 · 已赚取"
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IP · "
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": "次无限"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "付费设施："
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · 类型："
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "再次挑战"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "开始一次新的无限，不发放IP。永久文明进度、升级、奖励历史和已拥有的碎裂均会保留。放弃会丢弃尝试进度，并恢复正常效果。"
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "奖励："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "永久SP"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "先前的IP不计入产出倍率。除法、游戏内的双倍无限点、发现和永久碎裂效果均不生效；已购买的加成仍然生效。尝试期间无法在无限商店购物。大多数尝试以10 SP加目标奖励开始；白纸起步和手工劳动以0 SP开始，精简配置以4 SP开始。尝试可跨越多次无限。超越会丢弃未完成的尝试，不发放其SP奖励。重复挑战不会发放额外SP。"
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "尝试规则与奖励"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "短路"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "在面板寿命固定为2秒的情况下赚取64 IP。"
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "开始"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "供应短缺"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "在购买价格翻倍的情况下赚取64 IP，并付费购买3种类型的共10个设施。生成和免费的设施不计入。"
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "无限挑战"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "需要累计赚取"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP。"
+    }
+  ],
   "pwa.update.accept": [
     {
       "type": 0,

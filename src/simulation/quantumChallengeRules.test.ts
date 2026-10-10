@@ -11,7 +11,6 @@ import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFi
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { EMPTY_INFINITY_CHALLENGES, QUANTUM_CHALLENGE_IDS, effectiveDivisions, quantumDoubleIpEnabled, challengeCompleted, validateInfinityChallenges } from './infinityChallenges'
-import { restartInfinityChallenge } from './canonicalInfinityChallengeRestart'
 import { applyCanonicalInfinityReset } from './canonicalInfinityReset'
 import { previewCanonicalFacilityPurchase, runCanonicalDysonAutomation } from './canonicalDysonCommands'
 import { deriveBasicDysonState } from './canonicalDysonDerivation'

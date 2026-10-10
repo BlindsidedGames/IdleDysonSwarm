@@ -7003,6 +7003,318 @@
       "value": "Simulierte Zeit"
     }
   ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "Herausforderung abbrechen"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "Unbeschriebenes Blatt"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "Schließe eine Unendlichkeit ab, während Skills, Erweiterungen und Fraktureffekte inaktiv sind."
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "Erfordert Den Kreislauf durchbrechen."
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "Herausforderungsbelohnungen: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 SP"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "Handarbeit"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "Schließe eine Unendlichkeit ohne Anlagen und automatische Bot-Produktion ab. Handarbeit ist vorübergehend verfügbar."
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "Bindungsangst"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "Verdiene 32 IP, ohne während des gesamten Versuchs Skill-Punkte zurückzugeben oder deinen Build zu ersetzen, auch bei Unendlichkeitsresets."
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "Neustart bestätigen"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "Erhalten: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " dauerhafte SP"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "Die Herausforderung konnte nicht gestartet oder gespeichert werden. Dein aktueller Lauf bleibt erhalten."
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "Schließe deine erste Unendlichkeit ab."
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "Bodenhaftung"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "Verdiene 32 IP ohne Planeten oder Megastrukturen. Das Planetenziel wird zu 100 gekauften Rechenzentren."
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "Finger weg"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "Verdiene 32 IP ohne Anlagenkäufe oder Basteln. Beginne mit einem Fließband und einem Build zur Planetenerzeugung."
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "Frühere Herausforderungsabschlüsse: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ". Historische Belohnungen bleiben erhalten; dieser Pilot gewährt keine Entschädigung."
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "Jeder Versuch beginnt eine neue Unendlichkeit. Nur während des Versuchs verdiente IP zählen. Der erste Abschluss jeder Herausforderung gewährt einmalig dauerhafte SP."
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "Schlanker Build"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "Verdiene 16 IP mit höchstens 4 SP in zugewiesenen Skills. Skill-Punkt-Rückgaben sind erlaubt."
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "Ohne Wissenschaft"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "Verdiene 32 IP ohne Wissenschaft, Forschung oder Entdeckung."
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "Beende die aktive Herausforderung oder brich sie ab."
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "Schließe zuerst die Transzendenz ab."
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "Aktiv · "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " IP verdient · "
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": " Unendlichkeiten"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "Bezahlte Anlagen: "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · Typen: "
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "Wiederholen"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "Beginne eine neue Unendlichkeit, ohne IP zu erhalten. Dauerhafter Zivilisationsfortschritt, Upgrades, Belohnungshistorie und Frakturbesitz bleiben erhalten. Abbrechen verwirft den Versuchsfortschritt und stellt normale Effekte wieder her."
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "Belohnung: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " dauerhafte SP"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "Frühere IP zählen nicht zum Produktionsmultiplikator. Division, Doppelte Unendlichkeitspunkte aus dem Spiel, Entdeckung und dauerhafte Frakturen sind inaktiv; gekaufte Boni bleiben aktiv. Käufe im Unendlichkeitsshop pausieren während der Versuche. Die meisten Versuche beginnen mit 10 SP plus Zielbelohnungen; Unbeschriebenes Blatt und Handarbeit beginnen mit null, Schlanker Build mit 4. Versuche laufen über mehrere Unendlichkeiten weiter. Transzendenz verwirft einen unvollendeten Versuch ohne dessen SP zu vergeben. Wiederholungen gewähren keine zusätzlichen SP."
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "Versuchsregeln und Belohnungen"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "Kurzschluss"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "Verdiene 64 IP mit einer festen Paneellebensdauer von 2 Sekunden."
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "Starten"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "Lieferengpass"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "Verdiene 64 IP mit sich verdoppelnden Kaufpreisen und bezahle 10 Anlagen aus 3 Typen. Erzeugte und kostenlose Anlagen zählen nicht."
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "Herausforderungen der Unendlichkeit"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "Erfordert insgesamt "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " verdiente IP."
+    }
+  ],
   "pwa.update.accept": [
     {
       "type": 0,
