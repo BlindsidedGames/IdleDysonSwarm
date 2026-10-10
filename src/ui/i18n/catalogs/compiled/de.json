@@ -5081,6 +5081,12 @@
       "value": "Bauerndorf beginnen"
     }
   ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "Die Zeitalter der Jäger und Sammler und der Bauerndörfer sind abgeschlossen. Weitere Inhalte folgen bald."
+    }
+  ],
   "farming.boost": [
     {
       "type": 0,

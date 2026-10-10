@@ -5081,6 +5081,12 @@
       "value": "Begin Farming Villages"
     }
   ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "Forager and Farming are complete. More coming soon."
+    }
+  ],
   "farming.boost": [
     {
       "type": 0,

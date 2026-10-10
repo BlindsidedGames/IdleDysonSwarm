@@ -5081,6 +5081,12 @@
       "value": "建立农业村落"
     }
   ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "狩猎采集时代和农业村落已完成。更多内容即将推出。"
+    }
+  ],
   "farming.boost": [
     {
       "type": 0,

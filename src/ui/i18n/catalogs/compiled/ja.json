@@ -5081,6 +5081,12 @@
       "value": "農耕集落を始める"
     }
   ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "狩猟採集時代と農耕集落は完了しました。続きは近日公開です。"
+    }
+  ],
   "farming.boost": [
     {
       "type": 0,

@@ -2616,5 +2616,6 @@
   "pilotChallenges.supply-shortage.name": "供給不足",
   "pilotChallenges.supply-shortage.rule": "購入価格が倍増する状態で64 IPを獲得し、3種類にわたる10個の施設を有料で購入します。生成された施設と無料の施設は数えられません。",
   "pilotChallenges.lean-build.name": "最小構成",
-  "pilotChallenges.lean-build.rule": "割り当てたスキルを4 SP以内に抑えて16 IPを獲得します。ポイントの返還は可能です。"
+  "pilotChallenges.lean-build.rule": "割り当てたスキルを4 SP以内に抑えて16 IPを獲得します。ポイントの返還は可能です。",
+  "farming.betaEndpoint": "狩猟採集時代と農耕集落は完了しました。続きは近日公開です。"
 }

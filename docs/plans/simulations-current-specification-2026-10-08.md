@@ -891,3 +891,30 @@ resources, rewards, population, gear and completion counts, with sub-microsecond
 progress differences. The roundoff boundary includes the existing automatic
 gear calendar. Independent study comparisons retained exactly equal discrete
 ledgers; the largest observed numeric difference was 2.33 nanoseconds.
+
+## Approved two-age beta scope — 10 October, 07:02 UTC
+
+Matthew requires the beta to contain Forager and Farming with their actual
+Catalyst rewards, then a clear endpoint saying More coming soon. Later ages
+must not be presented as playable placeholders. The completed Farming screen
+now names both finished ages and includes that notice, using the existing
+preview composition and all ten compiled catalogs. Existing paid-work settlement
+and frozen completed-village behavior are retained. Narrow completion copy wraps
+without clipping; no new age, action, reward or artwork is fabricated.
+
+The seven Forager plus six Farming total remains a release blocker. Current
+opening/completion domain progression produces six plus six. The extra Forager
+point's placement, finite continuation-reward retirement and historical receipt
+quantity/compensation policy are pending. Farming's six real checks currently
+credit one each through the existing wallet, subject to its existing eligibility
+and capacity deferral; Farming-specific fracture effects remain unauthored.
+Do not claim that endpoint copy resolves these reward decisions. Exact terminal
+state, localization/browser evidence and remaining limits are recorded in the
+[two-age endpoint audit](../audits/ids-two-age-beta-endpoint-2026-10-10.md).
+
+Migration must be one-way. A prefix rename is exploratory: no production storage
+key, codec or app/account identity has been renamed. The [save-safety audit](../audits/ids-rework-beta-save-safety-2026-10-10.md)
+records the concrete migration proposal and why changing the prefix alone causes
+public startup to recover older gameplay instead of refusing a future schema.
+No native launch, release, remote push or real-save/cloud write is authorized by
+this status update.

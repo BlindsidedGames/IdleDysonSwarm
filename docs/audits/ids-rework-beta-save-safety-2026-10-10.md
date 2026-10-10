@@ -28,6 +28,67 @@ Exact probe output is `output/save-safety/cross-build.json` in the isolated task
 - Published Steam Auto Cloud uses app 4348570 and four nonrecursive files in `Idle Dyson Swarm/steam-cloud/{64BitSteamID}`. A Steam beta branch shares that app/account/cloud configuration; the branch name is not a data namespace. The Steam host also discovers legacy Unity saves and writes a migration-account claim.
 - Existing repository publication verifies temporary bytes before atomic replacement and rotates three backups. Those rotating slots are recovery history, not an immutable pre-rework archive: normal play eventually replaces them. Existing manual import creates a rollback checkpoint of the receiving save; that is not necessarily an exact archive of the imported public source.
 
+## IDS Web prefix investigation
+
+Matthew's 07:02 direction approves one-way migration and the first two ages as
+the beta scope. Renaming the prefix is exploratory, not an approval to change
+production keys. "IDS Web" currently covers several independent identities:
+
+| Identity | Current role | Rename consequences |
+| --- | --- | --- |
+| `IDSWEB1:` transport prefix and inner `format: IDSWEB1` | Bounded base64/gzip/CRC/value-codec discriminator in `src/save/serialization.ts:24`; envelope schema must match state schema. | Both decoder and encoder require a coordinated format change. Preserve `IDB1` and existing `IDSWEB1` import adapters; emit only the new format if approved. |
+| Transitional V2 `IDSWEB1:` | Historical manual-import adapter in `src/save/import.ts:159` and `src/save/transitionalV2Checkpoint.ts:63`. | Historical input must retain its exact old discriminator; do not globally replace it. Future canonical formats must not fall through to historical recovery. |
+| Steam portable snapshot validation | `hosts/electron/steam/cloud.mjs:8` rejects anything without the literal existing prefix. | An approved new codec needs host validation plus conflict/import certification. This is separate from permission to enable production cloud. |
+| Browser IndexedDB/profile/path namespace | The deployed database/profile and runtime foundation both retain web-development identifiers. | Codec naming does not change data isolation. Database/profile migration and sidecars require their own transaction and stable beta origin. |
+| Native `web-runtime-v1` | Electron/Android/iOS/platform adapter save roots, including account/offline recovery roots. | A transport rename leaves these paths shared. All hosts and recovery paths must agree on an approved new root. |
+| `.idsw`, export filenames and fixture `.idsweb1.txt` names | Filename/fixture conventions, not the decoded schema discriminator. | Cosmetic renaming cannot establish incompatibility or data safety. Historical fixture bytes/names should remain historical. |
+
+A second synthetic public-repository probe tested schema 21 with the existing
+prefix, an `IDS1:` outer prefix, and both outer/inner `IDS1` identifiers. Existing
+`IDSWEB1` returned `unsupported-future-version`, zero writes and unchanged current.
+Both experimental `IDS1` variants returned `recovered-backup`: public copied the
+rejected bytes, wrote temporary and replaced current with its older valid backup.
+Thus a new prefix in a shared path weakens the proven fail-closed behavior. It
+must not be used as the sole downgrade guard. Evidence is
+`output/save-safety/prefix-rename.json`; the isolated probe is
+`/Users/matthewrushworth/Documents/Codex/2026-10-10/task-3/prefix-rename-probe.mts`.
+
+Recommended first implementation: retain `IDSWEB1`, advance to schema 21, and
+isolate beta storage/account namespaces. If Matthew selects an IDS rename,
+propose the exact versioned name (`IDS1` is only an experimental example), dual
+old-format readers/new-format writer and every host update together. Do not put
+renamed checkpoints where a public build will silently recover older gameplay.
+
+## Concrete one-way migration transaction proposal
+
+1. Discover/import only approved old inputs; decode, bound and validate them
+   without mutating the source. Identify schema, rework status and SHA-256.
+2. Write and verify the exact source archive in private isolated recovery
+   storage. A shared export is not an exact private backup. If archival fails,
+   stop before conversion or rewards.
+3. Build one schema-21 candidate with a versioned one-way migration receipt.
+   Preserve earned achievements, historical times, ownership, existing reward
+   receipts and paid-cycle settlement. Keep the existing Keep/Fresh choices and
+   their concrete consequences until a separately reviewed replacement is
+   approved; neither choice supports return to old gameplay. Do not silently
+   invent compensation for retired currencies or continuation receipts.
+4. Show the migration's concrete effect and one-way notice before the player's
+   choice. Publish only the selected validated candidate through the existing
+   verified-temp/atomic-replace boundary in its approved namespace. Do not mark
+   migration complete, reveal new progress or grant a delta before commit.
+5. Reopen that candidate and verify its receipt. Retries of the same conversion
+   must not grant duplicate Catalysts/SP, repeat Fresh refunds or reuse a paid
+   cycle. Preserve unsupported newer candidates without older-backup fallback.
+6. Export only rework checkpoints going forward. Recovery archives remain data
+   recovery sources; there is no reverse converter, downgrade UI or claim that
+   the resulting rework state is valid in public gameplay.
+
+Before implementation, approval is still needed for the exact storage/app/cloud
+identity, format-name decision, archive retention/deletion policy and any reward
+compensation. The extra Forager Catalyst placement and historical finite-reward
+policy are separate pending gameplay decisions. No schema/path/account change
+or real-save migration is made by this document.
+
 ## Recommended policy requiring approval
 
 1. **Format boundary:** use schema 21 for rework checkpoints. The current `IDSWEB1` codec identity remains until a separately reviewed IDS-prefix proposal is approved. Import supported public schema ≤20 through the existing validated pipeline; present a concrete one-way migration flow before changing user choices or compensation. Public 4.1.11 already fails closed on 21, as proved above. A channel/version marker can identify rework history for diagnostics, but a schema-20 marker alone cannot protect older builds that ignore it. Rework checkpoints must never be converted back into playable public checkpoints. Original-data archives support recovery and migration diagnostics, not a sanctioned downgrade path.

@@ -30,6 +30,7 @@ export const farmingMessages = defineMessages({
   complete: { id: 'farming.complete', defaultMessage: 'Village established' },
   finish: { id: 'farming.finish', defaultMessage: 'Establish the village' },
   finished: { id: 'farming.finished', defaultMessage: 'Six supported Homes and six trade connections are established. This village is complete; the next age is not available yet.' },
+  betaEndpoint: { id: 'farming.betaEndpoint', defaultMessage: 'Forager and Farming are complete. More coming soon.' },
   fields: { id: 'farming.fields', defaultMessage: 'Fields' },
   woodlot: { id: 'farming.woodlot', defaultMessage: 'Woodlot' },
   workshop: { id: 'farming.workshop', defaultMessage: 'Workshop' },

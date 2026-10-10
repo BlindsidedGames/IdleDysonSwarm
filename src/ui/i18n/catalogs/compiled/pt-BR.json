@@ -5081,6 +5081,12 @@
       "value": "Iniciar uma aldeia agrícola"
     }
   ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "As eras dos caçadores-coletores e das aldeias agrícolas estão completas. Mais conteúdo em breve."
+    }
+  ],
   "farming.boost": [
     {
       "type": 0,

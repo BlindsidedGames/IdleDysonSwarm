@@ -2115,6 +2115,9 @@
   "farming.begin": {
     "defaultMessage": "Begin Farming Villages"
   },
+  "farming.betaEndpoint": {
+    "defaultMessage": "Forager and Farming are complete. More coming soon."
+  },
   "farming.boost": {
     "defaultMessage": "Actual fractures: +{value}%"
   },

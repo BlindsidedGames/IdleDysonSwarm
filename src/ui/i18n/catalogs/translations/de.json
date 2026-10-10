@@ -2616,5 +2616,6 @@
   "pilotChallenges.supply-shortage.name": "Lieferengpass",
   "pilotChallenges.supply-shortage.rule": "Verdiene 64 IP mit sich verdoppelnden Kaufpreisen und bezahle 10 Anlagen aus 3 Typen. Erzeugte und kostenlose Anlagen zählen nicht.",
   "pilotChallenges.lean-build.name": "Schlanker Build",
-  "pilotChallenges.lean-build.rule": "Verdiene 16 IP mit höchstens 4 SP in zugewiesenen Skills. Skill-Punkt-Rückgaben sind erlaubt."
+  "pilotChallenges.lean-build.rule": "Verdiene 16 IP mit höchstens 4 SP in zugewiesenen Skills. Skill-Punkt-Rückgaben sind erlaubt.",
+  "farming.betaEndpoint": "Die Zeitalter der Jäger und Sammler und der Bauerndörfer sind abgeschlossen. Weitere Inhalte folgen bald."
 }

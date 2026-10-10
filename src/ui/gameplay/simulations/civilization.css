@@ -38,6 +38,7 @@
 .civilization-confirmation { margin-block-start: var(--ui-card-gap); border-block-start: 1px solid var(--theme-divider); }
 .civilization-preview { margin-block-start: var(--ui-section-gap); padding: var(--game-card-content-inset); }
 .civilization-preview h3 { margin: 0; font-size: var(--ui-text-card-title); }
+.farming-surface .civilization-preview { overflow-wrap: anywhere; }
 :is(.civilization-stock, .civilization-workforce, .civilization-job) > summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 @media (max-width: 720px) { .civilization-activities { grid-template-columns: minmax(0, 1fr); } }
 .civilization-heading { margin-block-end: var(--ui-card-gap); }

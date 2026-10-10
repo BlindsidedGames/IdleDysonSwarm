@@ -2616,5 +2616,6 @@
   "pilotChallenges.supply-shortage.name": "Pénurie",
   "pilotChallenges.supply-shortage.rule": "Gagnez 64 IP avec des prix d’achat qui doublent, et payez 10 installations de 3 types différents. Les installations générées ou gratuites ne comptent pas.",
   "pilotChallenges.lean-build.name": "Configuration légère",
-  "pilotChallenges.lean-build.rule": "Gagnez 16 IP avec au plus 4 SP de compétences assignées. La restitution des points est autorisée."
+  "pilotChallenges.lean-build.rule": "Gagnez 16 IP avec au plus 4 SP de compétences assignées. La restitution des points est autorisée.",
+  "farming.betaEndpoint": "Les ères des chasseurs-cueilleurs et des villages agricoles sont terminées. La suite arrive bientôt."
 }

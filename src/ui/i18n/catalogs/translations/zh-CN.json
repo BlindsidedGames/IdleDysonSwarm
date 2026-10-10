@@ -2616,5 +2616,6 @@
   "pilotChallenges.supply-shortage.name": "供应短缺",
   "pilotChallenges.supply-shortage.rule": "在购买价格翻倍的情况下赚取64 IP，并付费购买3种类型的共10个设施。生成和免费的设施不计入。",
   "pilotChallenges.lean-build.name": "精简配置",
-  "pilotChallenges.lean-build.rule": "分配技能最多使用4 SP，赚取16 IP。允许返还技能点。"
+  "pilotChallenges.lean-build.rule": "分配技能最多使用4 SP，赚取16 IP。允许返还技能点。",
+  "farming.betaEndpoint": "狩猎采集时代和农业村落已完成。更多内容即将推出。"
 }

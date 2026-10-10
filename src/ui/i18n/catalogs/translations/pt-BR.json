@@ -2616,5 +2616,6 @@
   "pilotChallenges.supply-shortage.name": "Falta de suprimentos",
   "pilotChallenges.supply-shortage.rule": "Ganhe 64 IP com preços de compra que dobram e pague 10 instalações de 3 tipos. Instalações geradas e gratuitas não contam.",
   "pilotChallenges.lean-build.name": "Configuração enxuta",
-  "pilotChallenges.lean-build.rule": "Ganhe 16 IP com no máximo 4 SP em habilidades atribuídas. A devolução de pontos é permitida."
+  "pilotChallenges.lean-build.rule": "Ganhe 16 IP com no máximo 4 SP em habilidades atribuídas. A devolução de pontos é permitida.",
+  "farming.betaEndpoint": "As eras dos caçadores-coletores e das aldeias agrícolas estão completas. Mais conteúdo em breve."
 }

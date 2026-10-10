@@ -5081,6 +5081,12 @@
       "value": "Commencer un village agricole"
     }
   ],
+  "farming.betaEndpoint": [
+    {
+      "type": 0,
+      "value": "Les ères des chasseurs-cueilleurs et des villages agricoles sont terminées. La suite arrive bientôt."
+    }
+  ],
   "farming.boost": [
     {
       "type": 0,
