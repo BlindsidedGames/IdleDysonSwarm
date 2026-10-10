@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
-import { afterEach, expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import type { SaveRepository } from '../save/repository'
 import type { PreparedSave } from '../save/prepare'
 import type { CanonicalRuntimeState } from './canonicalRuntimeSession'
@@ -258,3 +258,86 @@ test('era focus stays exposed, distribution matches current crews, and locked re
   expect(mounted.container.querySelector('[data-activity-id="campExpansion"] .civilization-job-timer')?.textContent).toBe('∞')
   expect(mounted.container.querySelector('[data-activity-id="campExpansion"] .civilization-job-timer')?.getAttribute('aria-label')).toContain('Waiting')
  })
+
+test.each(['forager', 'farming'] as const)('%s bars animate published work while keeping real progress accessible', async era => {
+  const animate = vi.fn(() => ({ cancel: vi.fn() }) as unknown as Animation)
+  const original = HTMLElement.prototype.animate
+  HTMLElement.prototype.animate = animate
+  try {
+    const app = factory(seed()); await app.start()
+    if (era === 'farming') {
+      app.advanceActive(7043000)
+      expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(true)
+      for (let n = 0; n < 2_000 && ready(app).state.gameState.civilization!.farming!.phase === 'settling-forager'; n++) app.advanceActive(1000)
+      expect(ready(app).state.gameState.civilization!.farming!.phase).toBe('farming')
+    }
+    app.advanceActive(1000)
+    const view = (gameSpeed = 1, almostFinished = false) => {
+      const snapshot = app.frontendSnapshot('simulations')
+      if (snapshot.phase !== 'ready') throw Error(snapshot.phase)
+      const civilization = snapshot.gameplay.progression.civilization!
+      const nearEnd = era === 'forager'
+        ? { ...civilization, activities: { ...civilization.activities, gathering: { ...civilization.activities.gathering, progress: civilizationCycle(civilization, 0).seconds - .0001 } } }
+        : { ...civilization, farming: { ...civilization.farming!, jobs: { ...civilization.farming!.jobs, food: { ...civilization.farming!.jobs.food, remainingWork: .0001 } } } }
+      const gameplay = almostFinished ? { ...snapshot.gameplay, progression: { ...snapshot.gameplay.progression, civilization: nearEnd } } : snapshot.gameplay
+      return <IntlProvider locale="en" messages={{}}><CivilizationSurface gameplay={gameplay} locale="en" gameSpeed={gameSpeed} dispatchPlayer={async () => { throw Error('No dispatch') }} /></IntlProvider>
+    }
+    const mounted = render(view())
+    app.advanceActive(era === 'farming' ? 1000 : 100)
+    mounted.rerender(view())
+    expect(animate).toHaveBeenCalled()
+    const progress = screen.getByRole('progressbar', { name: era === 'farming' ? 'Fields' : 'Gathering' }) as HTMLProgressElement
+    const c = ready(app).state.gameState.civilization!
+    const actual = era === 'farming' ? c.farming!.jobs.food.work - c.farming!.jobs.food.remainingWork : c.activities.gathering.progress
+    expect(progress.value).toBeCloseTo(actual)
+    const calls = animate.mock.calls.length
+    mounted.rerender(view())
+    expect(animate).toHaveBeenCalledTimes(calls)
+    mounted.rerender(view(1, true))
+    const row = mounted.container.querySelector(`[data-activity-id="${era === 'farming' ? 'fields' : 'gathering'}"]`)!
+    // A nearly finished slow job is still slow: frequency uses the entire
+    // paid receipt, not its tiny remaining time.
+    expect(row.querySelector('.civilization-cycle')?.getAttribute('data-presentation')).toBe('cycle')
+    mounted.rerender(view(1000))
+    expect(row.querySelector('.civilization-cycle')?.getAttribute('data-presentation')).toBe('solid')
+    expect(progress.value).toBeCloseTo(actual)
+  } finally {
+    HTMLElement.prototype.animate = original
+  }
+})
+
+test('switching the mounted Forager surface to Farming cancels old fills and starts with real Farming work', async () => {
+  const animations: { cancel: ReturnType<typeof vi.fn> }[] = []
+  const original = HTMLElement.prototype.animate
+  HTMLElement.prototype.animate = () => {
+    const animation = { cancel: vi.fn() }; animations.push(animation)
+    return animation as unknown as Animation
+  }
+  try {
+    const app = factory(seed()); await app.start(); app.advanceActive(7043000)
+    const view = () => {
+      const snapshot = app.frontendSnapshot('simulations')
+      if (snapshot.phase !== 'ready') throw Error(snapshot.phase)
+      return <IntlProvider locale="en" messages={{}}><CivilizationSurface gameplay={snapshot.gameplay} locale="en" gameSpeed={1} dispatchPlayer={async () => { throw Error('No dispatch') }} /></IntlProvider>
+    }
+    const mounted = render(view())
+    app.advanceActive(100); mounted.rerender(view())
+    expect(animations.length).toBeGreaterThan(0)
+    const oldAnimations = [...animations]
+    const oldFill = mounted.container.querySelector('.civilization-cycle-fill')!
+    expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(true)
+    mounted.rerender(view())
+    expect(oldFill.isConnected).toBe(false)
+    for (const animation of oldAnimations) expect(animation.cancel).toHaveBeenCalledOnce()
+    for (let n = 0; n < 2_000 && ready(app).state.gameState.civilization!.farming!.phase === 'settling-forager'; n++) app.advanceActive(1000)
+    expect(ready(app).state.gameState.civilization!.farming!.phase).toBe('farming')
+    app.advanceActive(1000); mounted.rerender(view())
+    const job = ready(app).state.gameState.civilization!.farming!.jobs.food
+    const progress = screen.getByRole('progressbar', { name: 'Fields' }) as HTMLProgressElement
+    expect(progress.value).toBeCloseTo(job.work - job.remainingWork)
+    expect(progress.max).toBe(job.work)
+    expect(screen.queryByRole('progressbar', { name: 'Gathering' })).toBeNull()
+  } finally {
+    cleanup(); HTMLElement.prototype.animate = original
+  }
+})

@@ -131,6 +131,13 @@
 .civilization-job .civilization-cycle-progress { gap: 0; }
 .civilization-job .civilization-cycle-progress progress { block-size: .72rem; border-radius: .2rem; }
 .civilization-job-timer { font-size: var(--ui-text-meta); line-height: 1.25; color: var(--color-text-primary); white-space: nowrap; font-family: var(--font-family-numeric); font-variant-numeric: tabular-nums; }
+.civilization-cycle-progress--animated progress { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+.civilization-cycle-track { block-size: .72rem; overflow: hidden; border: 1px solid var(--color-border); border-radius: .2rem; background: var(--theme-page); }
+.civilization-cycle-fill { display: block; inline-size: 100%; block-size: 100%; transform-origin: left center; border-radius: inherit; background-color: var(--theme-accent); background-image: var(--ui-action-gradient); }
+.civilization-cycle[data-presentation="solid"] .civilization-cycle-fill { background-image: none; }
+.civilization-cycle-progress--animated + .civilization-job-timer { min-inline-size: max(7ch, var(--civilization-timer-width, 0em)); text-align: end; }
+.civilization-cycle-progress--animated + .civilization-job-timer > span { display: inline-block; }
+@media (forced-colors: active) { .civilization-cycle-track { background: Canvas; border-color: CanvasText; } .civilization-cycle-fill { background: Highlight; } }
 .civilization-job > summary, .civilization-stock > summary, .civilization-workforce > summary { min-block-size: max(44px,var(--target-minimum)); }
 .civilization-control-panel .ui-progress-controls-panel__settings { inline-size: max(44px,var(--target-minimum)); block-size: max(44px,var(--target-minimum)); }
 .civilization-goal-heading > strong { display: inline-flex; align-items: center; gap: var(--ui-related-copy-gap); }

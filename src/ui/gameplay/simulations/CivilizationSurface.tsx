@@ -11,11 +11,12 @@ import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { formatGameDuration, formatWholeGameNumber } from '../../i18n/formatters'
 import { Button, Progress, ProgressControlsPanel, InlineResourceAmount } from '../../components'
 import { CIVILIZATION_ACTIVITIES, CIVILIZATION_RESOURCES, CIVILIZATION_SECTIONS, CIVILIZATION_FOCUSES, EMPTY_CIVILIZATION, allocateCivilizationWorkers, civilizationActivityUnlocked, civilizationSpeed, civilizationJobWaiting, civilizationHousing, civilizationActivityInputs, civilizationCycle, nextCivilizationCatalyst, civilizationMilestoneProgress, civilizationOpeningComplete, type CivilizationResource, type CivilizationRecipe, type CivilizationActivityId } from '../../../simulation/civilization'
-import { realTimeDuration } from '../effectiveSpeed'
+import { realTimeDuration, realTimeRate } from '../effectiveSpeed'
 import { readyDysonMessages } from '../dyson/messages'
 import { CivilizationSymbol } from './CivilizationSymbol'
 import { foragerEraPresentation } from './civilizationEraPresentation'
 import { civilizationMessages as m } from './civilizationMessages'
+import { CivilizationCycleProgress } from './CivilizationCycleProgress'
 import '../rework/rework.css'
 import './simulations.css'
 import './civilization.css'
@@ -107,7 +108,7 @@ export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer, ac
           {Object.keys(civilizationActivityInputs(state,index)).length > 0 && <span className="civilization-recipe-arrow" aria-hidden="true">▶</span>}
           <span className="civilization-output" role="group" aria-label={intl.formatMessage(m.outputs)}>{<>{Object.entries(cycle.outputs).map(([id,amount]) => <span key={id}>{iconAmount(id as CivilizationResource,amount!)}</span>)}{cycle.populationDelta > 0n && iconAmount('worker',cycle.populationDelta)}</>}</span>
         </div></div>
-        <div className="civilization-cycle"><Progress className="civilization-cycle-progress" label={intl.formatMessage(m[definition.id])} value={job.progress} maximum={cycle.seconds} valueText={status} /><span className="civilization-job-timer" aria-label={status}>{waiting.reason === 'running' ? status : '∞'}</span></div>
+        <CivilizationCycleProgress label={intl.formatMessage(m[definition.id])} value={job.progress} maximum={cycle.seconds} valueText={status} timerText={waiting.reason === 'running' ? status : '∞'} sampleSeconds={state.elapsedSeconds} cycleKey={`${definition.id}:${job.completions}`} gameSpeed={gameSpeed} active={job.active && waiting.reason === 'running'} cycleRate={realTimeRate(speed / cycle.seconds, gameSpeed)} locale={locale} />
         <span className="civilization-chevron" aria-hidden="true">›</span></summary><div className="civilization-activity-details"><dl className="civilization-facts civilization-recipe"><div><dt>{intl.formatMessage(m.inputs)}</dt><dd>{recipe(civilizationActivityInputs(state,index)) || '—'}</dd></div><div><dt>{intl.formatMessage(m.outputs)}</dt><dd>{[recipe(cycle.outputs), cycle.populationDelta > 0n ? intl.formatMessage(m.amount, { value: number(cycle.populationDelta), resource: intl.formatMessage(m.workers) }) : ''].filter(Boolean).join(', ')}</dd></div></dl><dl className="civilization-facts"><div><dt>{intl.formatMessage(m.workers)}</dt><dd>{number(job.workers)}</dd></div><div><dt>{intl.formatMessage(m.completed)}</dt><dd>{number(job.completions)}</dd></div><div><dt>{intl.formatMessage(m.duration)}</dt><dd>{duration(cycle.seconds/(speed||1))}</dd></div></dl>{waiting.reason !== 'running' && <p>{status}</p>}{job.active && <p>{intl.formatMessage(m.paid)}</p>}{index === 0 && <p>{intl.formatMessage(m.bootstrapV4)}</p>}{definition.id === 'campProvisioning' && <p>{intl.formatMessage(m.recruitment)}</p>}{definition.id === 'campExpansion' && <p>{intl.formatMessage(m.conversionV4)}</p>}</div></details></article></li>
     })}</ol></section>)}</div>
     {civilizationOpeningComplete(state) && <section className="civilization-preview"><h3>{intl.formatMessage(m.phaseComplete)}</h3><p>{intl.formatMessage(farmingMessages.handoff)}</p><Button fullWidth disabled={pending} onClick={()=>void action({kind:'civilization.enter-farming'})}>{intl.formatMessage(farmingMessages.begin)}</Button></section>}
