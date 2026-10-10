@@ -150,12 +150,16 @@ function NavigationItemContent({
       <span className="dyson-navigation__label">
         {item.label}
       </span>
-      {placement === 'drawer' && item.badge !== undefined ? (
-        <span className="dyson-navigation__drawer-value" data-outlined={item.badgeOutlined || undefined}>
-          {item.badge}
+      {placement === 'drawer' && (item.badge !== undefined || item.drawerIndicator !== undefined) ? (
+        <span className="dyson-navigation__drawer-metadata">
+          {item.badge !== undefined ? (
+            <span className="dyson-navigation__drawer-value" data-outlined={item.badgeOutlined || undefined}>
+              {item.badge}
+            </span>
+          ) : null}
+          {item.drawerIndicator}
         </span>
       ) : null}
-      {placement === 'drawer' ? item.drawerIndicator : null}
       {item.progress !== undefined ? (
         <span
           className="dyson-navigation__progress"

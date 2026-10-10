@@ -1,4 +1,4 @@
-/** Reviewed 9 October candidate. Work is worker-seconds, never a fixed timer. */
+/** Approved Farming progression, including 10 October city-readiness projects. Work is worker-seconds, never a fixed timer. */
 export const FARMING_TUNING = Object.freeze({
   tickSeconds: 1,
   initialFoodCapacity: 80,
@@ -17,6 +17,9 @@ export const FARMING_TUNING = Object.freeze({
     kiln: { inputs: { materials:140,tools:10 }, work:840 },
     waterworks: { inputs: { materials:260,tools:18,goods:40 }, work:1344 },
     hall: { inputs: { materials:400,tools:24,goods:90 }, work:2016 },
+    intensiveCultivation: { inputs: { materials:180,tools:12,goods:40 }, work:1260 },
+    guildWorkshop: { inputs: { materials:250,tools:16,goods:60 }, work:1680 },
+    townMarket: { inputs: { food:450,materials:320,tools:20,goods:80 }, work:2100 },
   },
   weights: {
     balanced: { food:1,materials:1,tools:.8,goods:.8,build:1.6,ship:1.3 },

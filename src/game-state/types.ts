@@ -45,7 +45,7 @@ export interface CivilizationActivityState {
   readonly legacyCycle?: { readonly seconds: number; readonly inputs: Partial<Record<CivilizationResource, bigint>>; readonly outputs: Partial<Record<CivilizationResource, bigint>> }
 }
 export type FarmingResource = 'food' | 'materials' | 'tools' | 'goods'
-export type FarmingBuilding = 'pasture' | 'kiln' | 'waterworks' | 'hall'
+export type FarmingBuilding = 'pasture' | 'kiln' | 'waterworks' | 'hall' | 'intensiveCultivation' | 'guildWorkshop' | 'townMarket'
 export type FarmingRecipe = Readonly<Partial<Record<FarmingResource, number>>>
 export interface FarmingJob {
   readonly kind: FarmingResource | FarmingBuilding | 'home' | 'repair' | 'ship'

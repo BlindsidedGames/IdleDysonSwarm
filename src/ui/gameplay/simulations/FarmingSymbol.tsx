@@ -12,9 +12,9 @@ import kiln from '../../assets/skill-icons/farmingKiln.webp'
 import waterworks from '../../assets/skill-icons/farmingWaterworks.webp'
 import hall from '../../assets/skill-icons/farmingHall.webp'
 export type FarmingSymbolId = FarmingResource | FarmingRow | 'worker' | 'granary'
-const icons={goods,fields,woodlot,homes,granary,pasture,kiln,waterworks,hall}
+const icons={goods,fields,woodlot,homes,granary,pasture,kiln,waterworks,hall,intensiveCultivation:fields,townMarket:hall}
 export function FarmingSymbol({resource}:{resource:FarmingSymbolId}){
  if(resource==='food'||resource==='materials'||resource==='tools'||resource==='worker')return <CivilizationSymbol resource={resource}/>
- if(resource==='workshop')return <CivilizationSymbol resource="tools"/>
+ if(resource==='workshop'||resource==='guildWorkshop')return <CivilizationSymbol resource="tools"/>
  return <InlineImageSymbol src={icons[resource]} symbol={resource} tint maskMode="alpha" className="civilization-symbol"/>
 }

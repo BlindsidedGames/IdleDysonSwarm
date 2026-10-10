@@ -19,3 +19,21 @@
     background-color: var(--purchase-action-pressed);
   }
 }
+
+.challenges-surface > .ui-collapsible-section > .ui-collapsible-section__heading {
+  font-size: var(--ui-text-page-title);
+}
+.challenge-title-compact { display: none; }
+@media (max-width: 480px) {
+  .challenges-surface > .ui-collapsible-section > .ui-collapsible-section__heading > .ui-collapsible-section__trigger {
+    gap: var(--ui-control-gap);
+    padding-inline: var(--ui-page-gutter);
+  }
+  .challenge-title-full { display: none; }
+  .challenge-title-compact { display: inline; }
+}
+
+/* Keep introductory/rules prose at its existing size while honouring text scaling. */
+.challenges-surface .ui-collapsible-section__content > p {
+  font-size: calc(1rem * var(--game-text-scale));
+}

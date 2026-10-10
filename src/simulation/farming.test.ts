@@ -51,13 +51,28 @@ test('Granaries require manual funds, repeated purchases cannot duplicate a rece
  expect(advanceCivilization(before,7200).civilization!.farming!.granaries).toBe(0)
 })
 
-test.each(['balanced','provisioning','settlement','expeditions'] as const)('%s reaches six Homes and connections, conserving caps, repairs and one-time rewards',(focus:CivilizationFocus)=>{
- let s=setFarmingFocus(farm(),focus)??farm(),partial=false,damage=false,recovered=false,previousLost=0
+test.each(['balanced','provisioning','settlement','expeditions'] as const)('%s reaches city readiness with funded upgrades, conserving caps, repairs and six one-time rewards',(focus:CivilizationFocus)=>{
+ let s=setFarmingFocus(farm(),focus)??farm(),partial=false,damage=false,recovered=false,previousLost=0,retainedGoods=false
+ const funded=new Set<string>(),benefited=new Set<string>(),bills={intensiveCultivation:{inputs:{materials:180,tools:12,goods:40},work:1260},guildWorkshop:{inputs:{materials:250,tools:16,goods:60},work:1680},townMarket:{inputs:{food:450,materials:320,tools:20,goods:80},work:2100}}
  for(let n=0;n<10000&&!farmingComplete(s.civilization!.farming!);n++){
   const f=s.civilization!.farming!
   if(farmingGoal(f).kind==='granary'&&farmingCanBuyGranary(f))s=buyFarmingGranary(s)!
   s=advanceCivilization(s,1);const next=s.civilization!.farming!
-  const batch=next.jobs.food?.output,normal=12*(next.completedBuildings.includes('pasture')?1.5:1)*(next.completedBuildings.includes('waterworks')?1.25:1)
+  const construction=next.jobs.build
+  if(construction&&construction.kind in bills&&!funded.has(construction.kind)){
+   const expected=bills[construction.kind as keyof typeof bills];funded.add(construction.kind)
+   expect(construction.inputs).toEqual(expected.inputs);expect(construction.work).toBe(expected.work)
+   expect(next.completedBuildings).toContain('waterworks')
+   if(construction.kind!=='intensiveCultivation'){expect(next.homesBuilt).toBeGreaterThanOrEqual(5);expect(next.shipments).toBeGreaterThanOrEqual(3);expect(next.completedBuildings).toContain('hall')}
+   if(construction.kind==='townMarket'){expect(next.completedBuildings).toEqual(expect.arrayContaining(['intensiveCultivation','guildWorkshop']));expect(next.granaries).toBeGreaterThanOrEqual(3)}
+   expect(next.awardedCatalystIds).not.toContain('farming-catalyst-6')
+   expect(reload(s).civilization!.farming).toEqual(next)
+  }
+  const batch=next.jobs.food?.output,normal=12*(next.completedBuildings.includes('pasture')?1.5:1)*(next.completedBuildings.includes('waterworks')?1.25:1)*(next.completedBuildings.includes('intensiveCultivation')?1.2:1)
+  if(batch===27)benefited.add('fields')
+  if(next.completedBuildings.includes('guildWorkshop')&&next.jobs.goods?.output===2){retainedGoods=true;expect(next.jobs.goods.inputs).toEqual({materials:4});expect(reload(s).civilization!.farming!.jobs.goods).toEqual(next.jobs.goods)}
+  if(next.jobs.goods?.output===3){expect(next.jobs.goods.inputs).toEqual({materials:6});expect(next.jobs.goods.work).toBe(63);benefited.add('goods')}
+  if(next.jobs.ship?.output===100){expect(next.jobs.ship.inputs).toEqual({food:350,goods:35});expect(next.jobs.ship.work).toBe(1512);benefited.add('ship')}
   if(batch&&batch<normal)partial=true
   if(next.lostHomes.length)damage=true;if(previousLost&&!next.lostHomes.length)recovered=true;previousLost=next.lostHomes.length
   expect(next.resources.food+(batch??0)).toBeLessThanOrEqual(farmingCapacity(next)+1e-6)
@@ -65,7 +80,10 @@ test.each(['balanced','provisioning','settlement','expeditions'] as const)('%s r
   expect(validateCivilization(s.civilization)).toBeNull()
  }
  const f=s.civilization!.farming!
- expect(farmingComplete(f)).toBe(true);expect(f.elapsedSeconds/60).toBeGreaterThan(110);expect(f.elapsedSeconds/60).toBeLessThan(135)
+ expect(farmingComplete(f)).toBe(true);expect(f.elapsedSeconds/60).toBeGreaterThan(140);expect(f.elapsedSeconds/60).toBeLessThan(165)
+ expect(funded).toEqual(new Set(Object.keys(bills)));expect(f.completedBuildings).toEqual(expect.arrayContaining(Object.keys(bills)))
+ if(focus==='settlement')expect(retainedGoods).toBe(true)
+ expect(benefited).toEqual(new Set(['fields','goods','ship']))
  expect(partial).toBe(true)
  if(focus==='provisioning'||focus==='expeditions'){expect(damage).toBe(true);expect(recovered).toBe(true)}
  expect(f.awardedCatalystIds).toHaveLength(6)

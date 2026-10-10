@@ -5161,6 +5161,18 @@
       "value": "Average assigned labor"
     }
   ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "Future Fields harvests gain 20% Food. Positive housing Weathering falls by another 20% after Waterworks."
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "Waterworks established"
+    }
+  ],
   "farming.done": [
     {
       "type": 0,
@@ -5220,7 +5232,7 @@
   "farming.finished": [
     {
       "type": 0,
-      "value": "Six supported Homes and six trade connections are established. This village is complete; the next age is not available yet."
+      "value": "Six supported Homes, six trade connections and all three city-readiness upgrades are established. This village is ready for First Cities; the next age is not available yet."
     }
   ],
   "farming.finite": [
@@ -5331,6 +5343,24 @@
       "value": "Growth"
     }
   ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "Future Goods batches produce 3 for 6 Materials and 63 worker-seconds; already funded batches keep their original recipe."
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "Hall, five Homes built and three trade connections"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "Guild Workshop"
+    }
+  ],
   "farming.hall": [
     {
       "type": 0,
@@ -5389,6 +5419,12 @@
       "value": "Cycle cost"
     }
   ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "Intensive Cultivation"
+    }
+  ],
   "farming.kiln": [
     {
       "type": 0,
@@ -5423,6 +5459,18 @@
     {
       "type": 0,
       "value": "Build a Granary to continue. Stored Time stops here and keeps the remaining bank."
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "Future shipments need 1,512 worker-seconds and return 100 Materials. Six Homes and six connections finish city readiness."
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "Intensive Cultivation, Guild Workshop, five Homes built and three trade connections"
     }
   ],
   "farming.missingInputs": [
@@ -5601,6 +5649,12 @@
       "value": "Supplies"
     }
   ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "Town Market"
+    }
+  ],
   "farming.travel": [
     {
       "type": 0,
@@ -5634,7 +5688,7 @@
   "farming.weatherHelp": [
     {
       "type": 0,
-      "value": "Balanced reduces Weathering by 1/min; Supplies adds 2/min; Growth reduces 4/min; Travel adds 4/min. Waterworks cuts increases by 40%. At 75, housing is at risk; at 100, one Home loses support and Weathering resets to 40."
+      "value": "Balanced reduces Weathering by 1/min; Supplies adds 2/min; Growth reduces 4/min; Travel adds 4/min. Waterworks cuts increases by 40%; Intensive Cultivation cuts the remaining increase by another 20%. At 75, housing is at risk; at 100, one Home loses support and Weathering resets to 40."
     }
   ],
   "farming.weathering": [
@@ -5674,7 +5728,15 @@
   "farming.yield": [
     {
       "type": 0,
-      "value": "A shipment costs 350 Food and 35 Goods, then returns 80 Materials and one connection. Six connections complete this age."
+      "value": "A shipment costs 350 Food and 35 Goods, then returns "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " Materials and one connection. Six connections, six supported Homes and the city-readiness upgrades complete this age."
     }
   ],
   "gameplay.notifications.continue": [
@@ -7075,6 +7137,12 @@
     {
       "type": 0,
       "value": "Earn 32 IP without refunding or replacing your build throughout the attempt, including Infinity resets."
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "Infinity Challenges"
     }
   ],
   "pilotChallenges.confirm": [

@@ -5161,6 +5161,18 @@
       "value": "平均分配劳动力"
     }
   ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "此后的农田收获增加20%食物。在水利设施效果之后，住宅损耗的增长再减少20%。"
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "已建成水利设施"
+    }
+  ],
   "farming.done": [
     {
       "type": 0,
@@ -5220,7 +5232,7 @@
   "farming.finished": [
     {
       "type": 0,
-      "value": "六座有供养的房屋和六条贸易联系已建立。村落已完成；下一时代尚未开放。"
+      "value": "六座得到维护的住宅、六条贸易联系和三项建城准备升级均已完成。村庄已为最初的城市做好准备；下一个时代尚未开放。"
     }
   ],
   "farming.finite": [
@@ -5331,6 +5343,24 @@
       "value": "发展"
     }
   ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "此后的商品批次以6材料和63工秒生产3商品；已经支付的批次保留原来的配方。"
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "会堂、已建成五座住宅和三条贸易联系"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "行会工坊"
+    }
+  ],
   "farming.hall": [
     {
       "type": 0,
@@ -5389,6 +5419,12 @@
       "value": "每轮消耗"
     }
   ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "集约耕作"
+    }
+  ],
   "farming.kiln": [
     {
       "type": 0,
@@ -5423,6 +5459,18 @@
     {
       "type": 0,
       "value": "建造粮仓以继续。储存时间会在此停止，保留剩余余额。"
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "此后的运输需要1,512工秒，并带回100材料。六座住宅和六条联系完成建城准备。"
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "集约耕作、行会工坊、已建成五座住宅和三条贸易联系"
     }
   ],
   "farming.missingInputs": [
@@ -5601,6 +5649,12 @@
       "value": "物资"
     }
   ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "城镇市场"
+    }
+  ],
   "farming.travel": [
     {
       "type": 0,
@@ -5634,7 +5688,7 @@
   "farming.weatherHelp": [
     {
       "type": 0,
-      "value": "均衡每分钟减少1风化；补给增加2；成长减少4；远行增加4。水利设施降低40%的增长。达到75时住房面临风险；达到100时一座房屋失去供养，风化重置为40。"
+      "value": "均衡每分钟减少1损耗；供给每分钟增加2；发展每分钟减少4；旅行每分钟增加4。水利设施将增长减少40%；集约耕作将剩余增长再减少20%。达到75时住宅面临风险；达到100时一座住宅失去居民，损耗重置为40。"
     }
   ],
   "farming.weathering": [
@@ -5674,7 +5728,15 @@
   "farming.yield": [
     {
       "type": 0,
-      "value": "每次运输消耗350食物和35货物，返回80材料并建立一条贸易联系。六条联系完成本时代。"
+      "value": "一次运输消耗350食物和35商品，带回"
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": "材料并建立一条联系。六条联系、六座得到维护的住宅和建城准备升级完成这个时代。"
     }
   ],
   "gameplay.notifications.continue": [
@@ -7075,6 +7137,12 @@
     {
       "type": 0,
       "value": "在整个尝试期间（包括无限重置时）不返还技能点或替换配置，赚取32 IP。"
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "无限挑战"
     }
   ],
   "pilotChallenges.confirm": [

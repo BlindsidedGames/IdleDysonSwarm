@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const challengeMessages = defineMessages({
+  compactTitle: { id: "pilotChallenges.compactTitle", defaultMessage: "Infinity Challenges" },
   "title": { id: "pilotChallenges.title", defaultMessage: "Infinity Challenges" },
   "intro": { id: "pilotChallenges.intro", defaultMessage: "Each attempt starts a fresh Infinity. Only IP earned during the attempt counts. First completions award permanent SP once." },
   "rulesTitle": { id: "pilotChallenges.rulesTitle", defaultMessage: "Attempt rules and rewards" },

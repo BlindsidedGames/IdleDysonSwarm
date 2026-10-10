@@ -44,7 +44,7 @@ export function ReworkChallengesSurface({ progress, earnedIp, firstInfinity, bre
     finally { setPending(false) }
   }
   return <section className="challenges-surface">
-    <CollapsibleSection storageKey="replacement-infinity-challenges" title={message('title')}>
+    <CollapsibleSection storageKey="replacement-infinity-challenges" ariaLabel={message('compactTitle')===message('title')?message('title'):`${message('compactTitle')} — ${message('title')}`} title={<><span className="challenge-title-full">{message('title')}</span><span className="challenge-title-compact">{message('compactTitle')}</span></>}>
       <p>{message('intro')}</p>
       <CollapsibleSection storageKey="replacement-challenge-rules" headingLevel="h3" defaultExpanded={false} title={message('rulesTitle')}>
         <p>{message('rules')}</p>

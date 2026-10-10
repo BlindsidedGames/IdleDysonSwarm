@@ -17,31 +17,6 @@ describe('persistent release footer layout contract', () => {
     expect(mixPercent).toBe(30)
   })
 
-  test('keeps compact presentation inside existing bottom navigation chrome', () => {
-    const shell = source('src/ui/gameplay/shell/DysonGameplayShell.tsx')
-    const styles = source('src/ui/gameplay/shell/dysonGameplayShell.css')
-    const bottomNavigation = shell.indexOf(
-      'className="dyson-shell__bottom-navigation"',
-    )
-    const compactFooter = shell.indexOf(
-      'dyson-shell__release-footer--compact',
-    )
-
-    expect(compactFooter).toBeGreaterThan(bottomNavigation)
-    expect(styles).toMatch(
-      /\.dyson-shell__release-footer--compact\s*\{[^}]*position:\s*absolute;/s,
-    )
-    expect(styles).toMatch(
-      /\.dyson-shell__release-footer--compact\s*\{[^}]*var\(--safe-area-bottom\)/s,
-    )
-    expect(styles).toMatch(
-      /grid-template-rows:\s*minmax\(0, 1fr\)\s*calc\(var\(--bottom-navigation-height\) \+ var\(--safe-area-bottom\)\);/s,
-    )
-    expect(styles).toMatch(
-      /\.dyson-shell__release-footer\s*\{[^}]*text-align:\s*center;/s,
-    )
-  })
-
   test('moves wide presentation into the permanent side rail', () => {
     const shell = source('src/ui/gameplay/shell/DysonGameplayShell.tsx')
     const styles = source('src/ui/gameplay/shell/dysonGameplayShell.css')

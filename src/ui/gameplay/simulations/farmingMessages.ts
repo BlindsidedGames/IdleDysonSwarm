@@ -1,5 +1,15 @@
 import { defineMessages } from 'react-intl'
 export const farmingMessages = defineMessages({
+  intensiveCultivation: { id: 'farming.intensiveCultivation', defaultMessage: 'Intensive Cultivation' },
+  guildWorkshop: { id: 'farming.guildWorkshop', defaultMessage: 'Guild Workshop' },
+  townMarket: { id: 'farming.townMarket', defaultMessage: 'Town Market' },
+  cultivationNeeded: { id: 'farming.cultivationNeeded', defaultMessage: 'Waterworks established' },
+  guildNeeded: { id: 'farming.guildNeeded', defaultMessage: 'Hall, five Homes built and three trade connections' },
+  marketNeeded: { id: 'farming.marketNeeded', defaultMessage: 'Intensive Cultivation, Guild Workshop, five Homes built and three trade connections' },
+  cultivationEffect: { id: 'farming.cultivationEffect', defaultMessage: 'Future Fields harvests gain 20% Food. Positive housing Weathering falls by another 20% after Waterworks.' },
+  guildEffect: { id: 'farming.guildEffect', defaultMessage: 'Future Goods batches produce 3 for 6 Materials and 63 worker-seconds; already funded batches keep their original recipe.' },
+  marketEffect: { id: 'farming.marketEffect', defaultMessage: 'Future shipments need 1,512 worker-seconds and return 100 Materials. Six Homes and six connections finish city readiness.' },
+
   need: { id: 'farming.need', defaultMessage: 'Need' },
   missingInputs: { id: 'farming.missingInputs', defaultMessage: 'Missing: {inputs}' },
   granaryDetails: { id: 'farming.granaryDetails', defaultMessage: 'Granary costs and details' },
@@ -29,7 +39,7 @@ export const farmingMessages = defineMessages({
   settling: { id: 'farming.settling', defaultMessage: 'Finishing paid Forager work before the village begins.' },
   complete: { id: 'farming.complete', defaultMessage: 'Village established' },
   finish: { id: 'farming.finish', defaultMessage: 'Establish the village' },
-  finished: { id: 'farming.finished', defaultMessage: 'Six supported Homes and six trade connections are established. This village is complete; the next age is not available yet.' },
+  finished: { id: 'farming.finished', defaultMessage: 'Six supported Homes, six trade connections and all three city-readiness upgrades are established. This village is ready for First Cities; the next age is not available yet.' },
   betaEndpoint: { id: 'farming.betaEndpoint', defaultMessage: 'Forager and Farming are complete. More coming soon.' },
   fields: { id: 'farming.fields', defaultMessage: 'Fields' },
   woodlot: { id: 'farming.woodlot', defaultMessage: 'Woodlot' },
@@ -60,7 +70,7 @@ export const farmingMessages = defineMessages({
   home: { id: 'farming.home', defaultMessage: 'Home {value}' },
   ship: { id: 'farming.ship', defaultMessage: 'Trade shipment' },
   connection: { id: 'farming.connection', defaultMessage: 'Trade connections' },
-  yield: { id: 'farming.yield', defaultMessage: 'A shipment costs 350 Food and 35 Goods, then returns 80 Materials and one connection. Six connections complete this age.' },
+  yield: { id: 'farming.yield', defaultMessage: 'A shipment costs 350 Food and 35 Goods, then returns {materials} Materials and one connection. Six connections, six supported Homes and the city-readiness upgrades complete this age.' },
   crew: { id: 'farming.crew', defaultMessage: 'Average assigned labor' },
   source: { id: 'farming.source', defaultMessage: 'Retained Forager camp' },
   export: { id: 'farming.export', defaultMessage: '{workers} retained workers export {food} Food and {materials} Materials per simulation minute, before actual fracture boosts. Their old stocks remain with the camp.' },
@@ -92,5 +102,5 @@ export const farmingMessages = defineMessages({
   granaries: { id: 'farming.granaries', defaultMessage: 'Granaries' },
   work: { id: 'farming.work', defaultMessage: '{value} worker-seconds' },
   homeEffect: { id: 'farming.homeEffect', defaultMessage: 'Each supported Home adds two residents. Weathering at 100 removes its support; repair uses its original Materials, Tools and labor bill.' },
-  weatherHelp: { id: 'farming.weatherHelp', defaultMessage: 'Balanced reduces Weathering by 1/min; Supplies adds 2/min; Growth reduces 4/min; Travel adds 4/min. Waterworks cuts increases by 40%. At 75, housing is at risk; at 100, one Home loses support and Weathering resets to 40.' },
+  weatherHelp: { id: 'farming.weatherHelp', defaultMessage: 'Balanced reduces Weathering by 1/min; Supplies adds 2/min; Growth reduces 4/min; Travel adds 4/min. Waterworks cuts increases by 40%; Intensive Cultivation cuts the remaining increase by another 20%. At 75, housing is at risk; at 100, one Home loses support and Weathering resets to 40.' },
 })

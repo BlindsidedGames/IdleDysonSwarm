@@ -57,7 +57,7 @@
 .civilization-focus { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ui-card-gap); margin-block-end: var(--ui-card-gap); }
 /* Research quantity surfaces, with Infinity's outward settings-control shadow. */
 .civilization-focus-options { display: flex; flex-wrap: wrap; gap: var(--ui-control-gap); margin-inline-start: auto; }
-.civilization-focus-options button { min-block-size: 2rem; flex: 0 0 auto; min-inline-size: 44px; padding: var(--ui-control-gap); border: 1px solid var(--theme-divider); border-radius: .2rem; background: var(--theme-selected); color: var(--color-text-primary); font: inherit; font-size: calc(.78rem * var(--game-text-scale)); font-weight: var(--font-weight-semibold); line-height: var(--line-height-compact); overflow-wrap: normal; box-shadow: 0 .12rem .24rem rgb(0 0 0 / 42%); cursor: pointer; touch-action: manipulation; user-select: none; }
+.civilization-focus-options button { min-block-size: max(44px,2rem); flex: 0 0 auto; min-inline-size: 44px; padding: var(--ui-control-gap); border: 1px solid var(--theme-divider); border-radius: .2rem; background: var(--theme-selected); color: var(--color-text-primary); font: inherit; font-size: calc(.78rem * var(--game-text-scale)); font-weight: var(--font-weight-semibold); line-height: var(--line-height-compact); overflow-wrap: normal; box-shadow: 0 .12rem .24rem rgb(0 0 0 / 42%); cursor: pointer; touch-action: manipulation; user-select: none; }
 .civilization-focus-options button[aria-checked="true"] { border-color: var(--theme-accent); background: var(--theme-accent); color: var(--theme-page); font-weight: var(--font-weight-bold); }
 .civilization-focus-options button:focus-visible { box-shadow: 0 .12rem .24rem rgb(0 0 0 / 42%), inset 0 0 .7rem rgb(255 255 255 / 24%) !important; }
 .civilization-focus-options button:disabled { cursor: wait; opacity: .7; }
@@ -273,3 +273,19 @@
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 9em), 1fr));
   }
 }
+
+.farming-upgrade-details { inline-size:100%; min-inline-size:0; }
+.farming-upgrade-details > summary { display:flex; align-items:baseline; flex-wrap:wrap; gap:var(--ui-card-gap); min-block-size:44px; cursor:pointer; }
+.farming-upgrade-details > summary > span:last-child { margin-inline-start:auto; color:var(--color-positive); }
+.farming-upgrade-details > summary:focus-visible { outline:2px solid var(--color-focus); outline-offset:2px; }
+
+/* Narrow enlarged text keeps the complete header available in the main scroll. */
+.farming-surface .civilization-scroll { min-inline-size:0; }
+.farming-surface[data-scroll-heading] { grid-template-rows:minmax(0,1fr) auto; }
+.farming-surface[data-scroll-heading] .civilization-era-header { margin-inline:calc(-1 * var(--game-card-content-inset)); }
+.farming-upgrade-details > summary > strong { min-inline-size:0; overflow-wrap:anywhere; }
+.farming-surface .civilization-activity-details p { overflow-wrap:anywhere; }
+.farming-constructed, .farming-constructed li { min-inline-size:0; }
+.farming-constructed ul { grid-template-columns:minmax(0,1fr); }
+.farming-surface .civilization-facts dt { overflow-wrap:anywhere; }
+.farming-surface .civilization-facts dd { flex-shrink:0; }

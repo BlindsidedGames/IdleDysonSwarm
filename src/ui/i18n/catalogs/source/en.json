@@ -2151,6 +2151,12 @@
   "farming.crew": {
     "defaultMessage": "Average assigned labor"
   },
+  "farming.cultivationEffect": {
+    "defaultMessage": "Future Fields harvests gain 20% Food. Positive housing Weathering falls by another 20% after Waterworks."
+  },
+  "farming.cultivationNeeded": {
+    "defaultMessage": "Waterworks established"
+  },
   "farming.done": {
     "defaultMessage": "Established"
   },
@@ -2170,7 +2176,7 @@
     "defaultMessage": "Establish the village"
   },
   "farming.finished": {
-    "defaultMessage": "Six supported Homes and six trade connections are established. This village is complete; the next age is not available yet."
+    "defaultMessage": "Six supported Homes, six trade connections and all three city-readiness upgrades are established. This village is ready for First Cities; the next age is not available yet."
   },
   "farming.finite": {
     "defaultMessage": "Established; no repeating construction cycle."
@@ -2220,6 +2226,15 @@
   "farming.growth": {
     "defaultMessage": "Growth"
   },
+  "farming.guildEffect": {
+    "defaultMessage": "Future Goods batches produce 3 for 6 Materials and 63 worker-seconds; already funded batches keep their original recipe."
+  },
+  "farming.guildNeeded": {
+    "defaultMessage": "Hall, five Homes built and three trade connections"
+  },
+  "farming.guildWorkshop": {
+    "defaultMessage": "Guild Workshop"
+  },
   "farming.hall": {
     "defaultMessage": "Hall"
   },
@@ -2247,6 +2262,9 @@
   "farming.inputs": {
     "defaultMessage": "Cycle cost"
   },
+  "farming.intensiveCultivation": {
+    "defaultMessage": "Intensive Cultivation"
+  },
   "farming.kiln": {
     "defaultMessage": "Kiln"
   },
@@ -2264,6 +2282,12 @@
   },
   "farming.manual": {
     "defaultMessage": "Build a Granary to continue. Stored Time stops here and keeps the remaining bank."
+  },
+  "farming.marketEffect": {
+    "defaultMessage": "Future shipments need 1,512 worker-seconds and return 100 Materials. Six Homes and six connections finish city readiness."
+  },
+  "farming.marketNeeded": {
+    "defaultMessage": "Intensive Cultivation, Guild Workshop, five Homes built and three trade connections"
   },
   "farming.missingInputs": {
     "defaultMessage": "Missing: {inputs}"
@@ -2343,6 +2367,9 @@
   "farming.supplies": {
     "defaultMessage": "Supplies"
   },
+  "farming.townMarket": {
+    "defaultMessage": "Town Market"
+  },
   "farming.travel": {
     "defaultMessage": "Travel"
   },
@@ -2359,7 +2386,7 @@
     "defaultMessage": "Waterworks"
   },
   "farming.weatherHelp": {
-    "defaultMessage": "Balanced reduces Weathering by 1/min; Supplies adds 2/min; Growth reduces 4/min; Travel adds 4/min. Waterworks cuts increases by 40%. At 75, housing is at risk; at 100, one Home loses support and Weathering resets to 40."
+    "defaultMessage": "Balanced reduces Weathering by 1/min; Supplies adds 2/min; Growth reduces 4/min; Travel adds 4/min. Waterworks cuts increases by 40%; Intensive Cultivation cuts the remaining increase by another 20%. At 75, housing is at risk; at 100, one Home loses support and Weathering resets to 40."
   },
   "farming.weathering": {
     "defaultMessage": "Weathering"
@@ -2377,7 +2404,7 @@
     "defaultMessage": "Workshop"
   },
   "farming.yield": {
-    "defaultMessage": "A shipment costs 350 Food and 35 Goods, then returns 80 Materials and one connection. Six connections complete this age."
+    "defaultMessage": "A shipment costs 350 Food and 35 Goods, then returns {materials} Materials and one connection. Six connections, six supported Homes and the city-readiness upgrades complete this age."
   },
   "gameplay.notifications.continue": {
     "defaultMessage": "Continue",
@@ -3050,6 +3077,9 @@
   },
   "pilotChallenges.commitment-issues.rule": {
     "defaultMessage": "Earn 32 IP without refunding or replacing your build throughout the attempt, including Infinity resets."
+  },
+  "pilotChallenges.compactTitle": {
+    "defaultMessage": "Infinity Challenges"
   },
   "pilotChallenges.confirm": {
     "defaultMessage": "Confirm restart"

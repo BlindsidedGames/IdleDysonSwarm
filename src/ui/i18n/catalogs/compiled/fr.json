@@ -5161,6 +5161,18 @@
       "value": "Travail moyen affecté"
     }
   ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "Les futures récoltes des champs donnent 20% de nourriture en plus. Après le service des eaux, la hausse de dégradation des logements baisse encore de 20%."
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "Service des eaux établi"
+    }
+  ],
   "farming.done": [
     {
       "type": 0,
@@ -5220,7 +5232,7 @@
   "farming.finished": [
     {
       "type": 0,
-      "value": "Six maisons soutenues et six liaisons commerciales sont établies. Le village est terminé ; l’âge suivant n’est pas encore disponible."
+      "value": "Six maisons habitées, six liaisons commerciales et les trois améliorations de préparation des villes sont établies. Le village est prêt pour les premières villes; le prochain âge reste indisponible."
     }
   ],
   "farming.finite": [
@@ -5331,6 +5343,24 @@
       "value": "Croissance"
     }
   ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "Les futurs lots produisent 3 marchandises pour 6 matériaux et 63 secondes de travail; les lots déjà financés gardent leur recette initiale."
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "Halle, cinq maisons construites et trois liaisons commerciales"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "Atelier de guilde"
+    }
+  ],
   "farming.hall": [
     {
       "type": 0,
@@ -5389,6 +5419,12 @@
       "value": "Coût par cycle"
     }
   ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "Culture intensive"
+    }
+  ],
   "farming.kiln": [
     {
       "type": 0,
@@ -5423,6 +5459,18 @@
     {
       "type": 0,
       "value": "Construisez un grenier pour continuer. Le temps stocké s’arrête ici et conserve le solde restant."
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "Les futures expéditions demandent 1 512 secondes de travail et rapportent 100 matériaux. Six maisons et six liaisons achèvent la préparation des villes."
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "Culture intensive, atelier de guilde, cinq maisons construites et trois liaisons commerciales"
     }
   ],
   "farming.missingInputs": [
@@ -5601,6 +5649,12 @@
       "value": "Fournitures"
     }
   ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "Marché de la ville"
+    }
+  ],
   "farming.travel": [
     {
       "type": 0,
@@ -5634,7 +5688,7 @@
   "farming.weatherHelp": [
     {
       "type": 0,
-      "value": "Équilibré réduit l’usure de 1/min ; Provisions ajoute 2/min ; Croissance réduit 4/min ; Voyages ajoute 4/min. La gestion de l’eau réduit les hausses de 40%. À 75, les logements sont menacés ; à 100, une maison perd son soutien et l’usure revient à 40."
+      "value": "Équilibre réduit la dégradation de 1/min; Réserves ajoute 2/min; Croissance réduit de 4/min; Voyage ajoute 4/min. Le service des eaux réduit les hausses de 40%; la culture intensive réduit encore la hausse restante de 20%. À 75, les logements sont menacés; à 100, une maison perd ses habitants et la dégradation revient à 40."
     }
   ],
   "farming.weathering": [
@@ -5674,7 +5728,15 @@
   "farming.yield": [
     {
       "type": 0,
-      "value": "Une livraison coûte 350 nourriture et 35 marchandises, puis rapporte 80 matériaux et une liaison. Six liaisons terminent cet âge."
+      "value": "Une expédition coûte 350 nourriture et 35 marchandises, puis rapporte "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " matériaux et une liaison. Six liaisons, six maisons habitées et les améliorations de préparation des villes terminent cet âge."
     }
   ],
   "gameplay.notifications.continue": [
@@ -7075,6 +7137,12 @@
     {
       "type": 0,
       "value": "Gagnez 32 IP sans restituer de points ni remplacer votre configuration pendant toute la tentative, y compris lors des réinitialisations d’Infinité."
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "Défis d’Infinité"
     }
   ],
   "pilotChallenges.confirm": [

@@ -5161,6 +5161,18 @@
       "value": "Trabalho médio atribuído"
     }
   ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "As futuras colheitas dos campos rendem 20% mais alimentos. Depois do sistema de água, o aumento da deterioração das moradias cai mais 20%."
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "Sistema de água construído"
+    }
+  ],
   "farming.done": [
     {
       "type": 0,
@@ -5220,7 +5232,7 @@
   "farming.finished": [
     {
       "type": 0,
-      "value": "Seis casas sustentadas e seis conexões comerciais foram estabelecidas. A aldeia está completa; a próxima era ainda não está disponível."
+      "value": "Seis casas habitadas, seis conexões comerciais e as três melhorias de preparação urbana estão concluídas. A aldeia está pronta para as primeiras cidades; a próxima era ainda não está disponível."
     }
   ],
   "farming.finite": [
@@ -5331,6 +5343,24 @@
       "value": "Crescimento"
     }
   ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "Os futuros lotes produzem 3 mercadorias por 6 materiais e 63 segundos de trabalho; lotes já pagos mantêm a receita original."
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "Salão, cinco casas construídas e três conexões comerciais"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "Oficina da guilda"
+    }
+  ],
   "farming.hall": [
     {
       "type": 0,
@@ -5389,6 +5419,12 @@
       "value": "Custo por ciclo"
     }
   ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "Cultivo intensivo"
+    }
+  ],
   "farming.kiln": [
     {
       "type": 0,
@@ -5423,6 +5459,18 @@
     {
       "type": 0,
       "value": "Construa um celeiro para continuar. O tempo armazenado para aqui e preserva o saldo restante."
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "Os futuros envios exigem 1.512 segundos de trabalho e retornam 100 materiais. Seis casas e seis conexões concluem a preparação das cidades."
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "Cultivo intensivo, oficina da guilda, cinco casas construídas e três conexões comerciais"
     }
   ],
   "farming.missingInputs": [
@@ -5601,6 +5649,12 @@
       "value": "Suprimentos"
     }
   ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "Mercado urbano"
+    }
+  ],
   "farming.travel": [
     {
       "type": 0,
@@ -5634,7 +5688,7 @@
   "farming.weatherHelp": [
     {
       "type": 0,
-      "value": "Equilibrado reduz desgaste em 1/min; Suprimentos acrescenta 2/min; Crescimento reduz 4/min; Viagens acrescenta 4/min. Obras hidráulicas reduzem aumentos em 40%. Com 75, a moradia está em risco; com 100, uma casa perde sustento e o desgaste volta a 40."
+      "value": "Equilibrado reduz a deterioração em 1/min; Suprimentos aumenta 2/min; Crescimento reduz 4/min; Viagens aumenta 4/min. O sistema de água reduz os aumentos em 40%; o cultivo intensivo reduz mais 20% do aumento restante. Em 75, as moradias estão em risco; em 100, uma casa perde seus moradores e a deterioração volta a 40."
     }
   ],
   "farming.weathering": [
@@ -5674,7 +5728,15 @@
   "farming.yield": [
     {
       "type": 0,
-      "value": "Uma remessa custa 350 comida e 35 mercadorias, retornando 80 materiais e uma conexão. Seis conexões completam esta era."
+      "value": "Um envio custa 350 alimentos e 35 mercadorias e retorna "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " materiais e uma conexão. Seis conexões, seis casas habitadas e as melhorias de preparação urbana completam esta era."
     }
   ],
   "gameplay.notifications.continue": [
@@ -7075,6 +7137,12 @@
     {
       "type": 0,
       "value": "Ganhe 32 IP sem devolver pontos nem substituir sua configuração durante toda a tentativa, incluindo os reinícios de Infinito."
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "Desafios de Infinito"
     }
   ],
   "pilotChallenges.confirm": [

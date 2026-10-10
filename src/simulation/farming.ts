@@ -8,8 +8,8 @@ import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
 import { FARMING_TUNING as T } from './farmingTuning'
 export { FARMING_TUNING } from './farmingTuning'
 export const FARMING_RESOURCES: readonly FarmingResource[] = ['food','materials','tools','goods']
-export const FARMING_BUILDINGS: readonly FarmingBuilding[] = ['pasture','kiln','waterworks','hall']
-export const FARMING_ROWS = ['fields','woodlot','workshop','homes','pasture','kiln','waterworks','hall'] as const
+export const FARMING_BUILDINGS: readonly FarmingBuilding[] = ['pasture','kiln','waterworks','hall','intensiveCultivation','guildWorkshop','townMarket']
+export const FARMING_ROWS = ['fields','woodlot','workshop','homes','pasture','kiln','waterworks','hall','intensiveCultivation','guildWorkshop','townMarket'] as const
 export type FarmingRow = typeof FARMING_ROWS[number]
 export type FarmingGoal = { kind:'home'|'repair'|'granary'|'ship'|FarmingBuilding; index?:number }
 type MutableFarming = { -readonly [K in keyof FarmingState]: FarmingState[K] } & {
@@ -22,7 +22,7 @@ const has=(f:Readonly<FarmingState>,id:FarmingBuilding)=>f.completedBuildings.in
 export const farmingCapacity=(f:Readonly<FarmingState>)=>T.initialFoodCapacity+T.granaryCapacity*f.granaries
 export const farmingWorkers=(f:Readonly<FarmingState>)=>T.founders+T.residentsPerHome*f.homes.length
 export const farmingEffectiveFocus=(f:Readonly<FarmingState>):CivilizationFocus=>f.focus==='expeditions'&&!has(f,'hall')?'balanced':f.focus
-export const farmingComplete=(f:Readonly<FarmingState>)=>has(f,'hall')&&f.shipments>=6&&f.homes.length===6
+export const farmingComplete=(f:Readonly<FarmingState>)=>has(f,'hall')&&has(f,'intensiveCultivation')&&has(f,'guildWorkshop')&&has(f,'townMarket')&&f.shipments>=6&&f.homes.length===6
 export function farmingGoal(f:Readonly<FarmingState>):FarmingGoal {
   if(f.lostHomes.length)return {kind:'repair',index:f.lostHomes[0]}
   if(f.homesBuilt===0)return {kind:'home',index:0}
@@ -32,8 +32,11 @@ export function farmingGoal(f:Readonly<FarmingState>):FarmingGoal {
   for(const id of order)if(!has(f,id))return {kind:id}
   if(f.homesBuilt<2)return {kind:'home',index:f.homesBuilt}
   if(!has(f,'waterworks'))return {kind:'waterworks'}
+  if(!has(f,'intensiveCultivation'))return {kind:'intensiveCultivation'}
   if(f.homesBuilt<4)return {kind:T.homeBills[f.homesBuilt][0]>farmingCapacity(f)?'granary':'home',index:T.homeBills[f.homesBuilt][0]>farmingCapacity(f)?f.granaries:f.homesBuilt}
   if(!has(f,'hall'))return {kind:'hall'}
+  if(f.homesBuilt>=5&&f.shipments>=3&&!has(f,'guildWorkshop'))return {kind:'guildWorkshop'}
+  if(f.homesBuilt>=5&&f.shipments>=3&&!has(f,'townMarket'))return {kind:450>farmingCapacity(f)?'granary':'townMarket',index:f.granaries}
   if(f.homesBuilt<6){if(f.shipments<(f.homesBuilt===4?1:3))return {kind:'ship'};return {kind:T.homeBills[f.homesBuilt][0]>farmingCapacity(f)?'granary':'home',index:T.homeBills[f.homesBuilt][0]>farmingCapacity(f)?f.granaries:f.homesBuilt}}
   return {kind:'ship'}
 }
@@ -41,7 +44,7 @@ export function farmingGranaryCost(f:Readonly<FarmingState>):FarmingRecipe{retur
 export function farmingGoalRecipe(f:Readonly<FarmingState>,goal=farmingGoal(f)):{inputs:FarmingRecipe;work:number} {
   if(goal.kind==='home'||goal.kind==='repair'){const [food,materials,tools,work]=T.homeBills[goal.index!];return {inputs:{materials,tools,...(goal.kind==='home'?{food}:{})},work}}
   if(goal.kind==='granary')return {inputs:farmingGranaryCost(f),work:0}
-  if(goal.kind==='ship')return {inputs:{food:350,goods:35},work:1890}
+  if(goal.kind==='ship')return {inputs:{food:350,goods:35},work:has(f,'townMarket')?1512:1890}
   return T.buildings[goal.kind]
 }
 const affordable=(f:Readonly<FarmingState>,cost:FarmingRecipe)=>Object.entries(cost).every(([id,n])=>f.resources[id as FarmingResource]+1e-8>=n!)
@@ -95,6 +98,9 @@ export function farmingRowUnlocked(f:Readonly<FarmingState>,row:FarmingRow):bool
   if(row==='workshop'||row==='homes')return f.firstHarvest
   if(row==='pasture'||row==='kiln')return f.granaries>0
   if(row==='waterworks')return has(f,'kiln')
+  if(row==='intensiveCultivation')return has(f,'waterworks')
+  if(row==='guildWorkshop')return has(f,'hall')&&f.homesBuilt>=5&&f.shipments>=3
+  if(row==='townMarket')return has(f,'intensiveCultivation')&&has(f,'guildWorkshop')&&f.homesBuilt>=5&&f.shipments>=3
   return has(f,'hall')||(f.homesBuilt>=4&&has(f,'waterworks')&&has(f,'pasture'))
 }
 export function farmingJobForRow(f:Readonly<FarmingState>,row:FarmingRow):FarmingJob|undefined {
@@ -114,16 +120,16 @@ function admit(f:MutableFarming) {
   const goal=farmingGoal(f),recipe=farmingGoalRecipe(f,goal)
   if(goal.kind!=='granary'&&!f.jobs.build&&!f.jobs.ship&&(goal.kind!=='home'||f.firstHarvest)&&pay(f,recipe.inputs)){
     const key=goal.kind==='ship'?'ship':'build'
-    f.jobs[key]={kind:goal.kind,...(goal.index===undefined?{}:{index:goal.index}),work:recipe.work,remainingWork:recipe.work,inputs:{...recipe.inputs},output:0}
+    f.jobs[key]={kind:goal.kind,...(goal.index===undefined?{}:{index:goal.index}),work:recipe.work,remainingWork:recipe.work,inputs:{...recipe.inputs},output:goal.kind==='ship'?(has(f,'townMarket')?100:80):0}
   }
   const target:Record<FarmingResource,number>={food:recipe.inputs.food??0,materials:recipe.inputs.materials??0,tools:recipe.inputs.tools??0,goods:recipe.inputs.goods??0}
   if(f.jobs.build||f.jobs.ship){target.food=Math.min(farmingCapacity(f),100);target.materials=80;target.tools=8;target.goods=has(f,'kiln')?20:0}
   target.materials+=3*Math.max(0,target.tools-f.resources.tools)+2*Math.max(0,target.goods-f.resources.goods)
   f.targets=target
   for(const id of FARMING_RESOURCES){if(f.jobs[id]||f.resources[id]>=target[id]-1e-8||id==='tools'&&!f.firstHarvest||id==='goods'&&!has(f,'kiln'))continue
-    const inputs:FarmingRecipe=id==='tools'?{materials:6}:id==='goods'?{materials:4}:{}
+    const inputs:FarmingRecipe=id==='tools'?{materials:6}:id==='goods'?{materials:has(f,'guildWorkshop')?6:4}:{}
     const work=id==='goods'?63:42
-    const output=id==='food'?Math.min(12*(has(f,'pasture')?1.5:1)*(has(f,'waterworks')?1.25:1),Math.max(0,farmingCapacity(f)-f.resources.food)):id==='materials'?8:2
+    const output=id==='food'?Math.min(12*(has(f,'pasture')?1.5:1)*(has(f,'waterworks')?1.25:1)*(has(f,'intensiveCultivation')?1.2:1),Math.max(0,farmingCapacity(f)-f.resources.food)):id==='materials'?8:id==='goods'&&has(f,'guildWorkshop')?3:2
     if(output<=1e-8||!pay(f,inputs))continue
     f.jobs[id]={kind:id,work,remainingWork:work,inputs,output}
   }
@@ -133,7 +139,7 @@ function finishJob(f:MutableFarming,key:string) {
   if(FARMING_RESOURCES.includes(j.kind as FarmingResource)){f.resources[j.kind as FarmingResource]+=j.output;if(j.kind==='food')f.firstHarvest=true}
   else if(j.kind==='home'){f.homes.push(j.index!);f.homesBuilt++}
   else if(j.kind==='repair'){f.homes.push(j.index!);f.lostHomes=f.lostHomes.filter(n=>n!==j.index)}
-  else if(j.kind==='ship'){f.shipments++;f.resources.materials+=80}
+  else if(j.kind==='ship'){f.shipments++;f.resources.materials+=j.output}
   else f.completedBuildings.push(j.kind as FarmingBuilding)
 }
 function tick(f:MutableFarming,speed:number) {
@@ -143,7 +149,7 @@ function tick(f:MutableFarming,speed:number) {
     f.resources.food+=Math.max(0,Math.min(farmingCapacity(f)-f.resources.food-reserved,f.inheritedFoodPerMinute*dt*speed))
     f.resources.materials+=Math.max(0,Math.min(f.targets.materials-f.resources.materials,f.inheritedMaterialsPerMinute*dt*speed))
     const slope=T.weatherPerMinute[focus]
-    f.weathering=Math.max(0,f.weathering+slope*dt*(slope>0&&has(f,'waterworks') ? .6 : 1))
+    f.weathering=Math.max(0,f.weathering+slope*dt*(slope>0&&has(f,'waterworks') ? .6*(has(f,'intensiveCultivation')?.8:1) : 1))
     if(f.weathering>=100){const home=f.homes.pop();if(home!==undefined)f.lostHomes.push(home);f.weathering=40}
     if(!farmingComplete(f))admit(f)
   }
@@ -191,7 +197,7 @@ export function validateFarming(value:unknown):string|null {
   for(const values of [f.resources,f.targets])if(!values||Object.keys(values).length!==4||!FARMING_RESOURCES.every(id=>n(values[id])))return 'Invalid Farming stock or demand.'
   if(f.resources.food+(f.jobs?.food?.output??0)>farmingCapacity(f)+1e-6)return 'Food exceeds unreserved storage.'
   if(!Array.isArray(f.homes)||!Array.isArray(f.lostHomes)||f.homes.length+f.lostHomes.length!==f.homesBuilt||new Set([...f.homes,...f.lostHomes]).size!==f.homesBuilt||[...f.homes,...f.lostHomes].some(x=>!integer(x,5)||x>=f.homesBuilt)||!Array.isArray(f.completedBuildings)||new Set(f.completedBuildings).size!==f.completedBuildings.length||f.completedBuildings.some(id=>!FARMING_BUILDINGS.includes(id))||!Array.isArray(f.awardedCatalystIds)||new Set(f.awardedCatalystIds).size!==f.awardedCatalystIds.length||f.awardedCatalystIds.some(id=>!/^farming-catalyst-[1-6]$/.test(id)))return 'Invalid Farming housing, facilities or rewards.'
-  if(!f.jobs||Object.keys(f.jobs).some(id=>!['food','materials','tools','goods','build','ship'].includes(id))||Object.values(f.jobs).some(j=>!j||!['food','materials','tools','goods','home','repair','pasture','kiln','waterworks','hall','ship'].includes(j.kind)||!n(j.work)||j.work<=0||!n(j.remainingWork)||j.remainingWork>j.work||!n(j.output)||!j.inputs||Object.entries(j.inputs).some(([id,x])=>!FARMING_RESOURCES.includes(id as FarmingResource)||!n(x))||(['home','repair'].includes(j.kind)&&!integer(j.index,5))))return 'Invalid funded Farming work.'
+  if(!f.jobs||Object.keys(f.jobs).some(id=>!['food','materials','tools','goods','build','ship'].includes(id))||Object.values(f.jobs).some(j=>!j||!['food','materials','tools','goods','home','repair',...FARMING_BUILDINGS,'ship'].includes(j.kind)||!n(j.work)||j.work<=0||!n(j.remainingWork)||j.remainingWork>j.work||!n(j.output)||!j.inputs||Object.entries(j.inputs).some(([id,x])=>!FARMING_RESOURCES.includes(id as FarmingResource)||!n(x))||(['home','repair'].includes(j.kind)&&!integer(j.index,5))))return 'Invalid funded Farming work.'
   const sameRecipe=(a:FarmingRecipe,b:FarmingRecipe)=>Object.keys(a).length===Object.keys(b).length&&Object.entries(a).every(([id,n])=>b[id as FarmingResource]===n)
   for(const [key,j] of Object.entries(f.jobs)){
     let expected:{inputs:FarmingRecipe;work:number}
@@ -200,20 +206,23 @@ export function validateFarming(value:unknown):string|null {
       if(j.kind==='home'&&(j.index!==f.homesBuilt||!f.firstHarvest))return 'Invalid new Home receipt.'
       if(j.kind==='repair'&&!f.lostHomes.includes(j.index!))return 'Invalid repair receipt.'
       if(FARMING_BUILDINGS.includes(j.kind as FarmingBuilding)&&f.completedBuildings.includes(j.kind as FarmingBuilding))return 'Facility cannot be funded twice.'
+      if(['intensiveCultivation','guildWorkshop','townMarket'].includes(j.kind)&&!farmingRowUnlocked(f,j.kind as FarmingRow))return 'City-readiness prerequisites are not established.'
       expected=farmingGoalRecipe(f,{kind:j.kind as FarmingGoal['kind'],index:j.index})
       if(j.output!==0)return 'Construction cannot carry inventory output.'
     }else if(key==='ship'){
-      if(j.kind!=='ship'||!has(f,'hall')||f.shipments>=6||j.output!==0)return 'Invalid shipment receipt.'
-      expected={inputs:{food:350,goods:35},work:1890}
+      if(j.kind!=='ship'||!has(f,'hall')||f.shipments>=6||j.output!==(has(f,'townMarket')?100:80))return 'Invalid shipment receipt.'
+      expected=farmingGoalRecipe(f,{kind:'ship'})
     }else{
       if(j.kind!==key||key==='tools'&&!f.firstHarvest||key==='goods'&&!has(f,'kiln'))return 'Locked or mismatched production receipt.'
-      expected={inputs:key==='tools'?{materials:6}:key==='goods'?{materials:4}:{},work:key==='goods'?63:42}
-      const max=key==='food'?12*(has(f,'pasture')?1.5:1)*(has(f,'waterworks')?1.25:1):key==='materials'?8:2
+      // A paid Goods cycle keeps its original bill/output when Guild finishes.
+      const guildBatch=key==='goods'&&j.output===3&&has(f,'guildWorkshop')
+      expected={inputs:key==='tools'?{materials:6}:key==='goods'?{materials:guildBatch?6:4}:{},work:key==='goods'?63:42}
+      const max=key==='food'?12*(has(f,'pasture')?1.5:1)*(has(f,'waterworks')?1.25:1)*(has(f,'intensiveCultivation')?1.2:1):key==='materials'?8:key==='goods'&&guildBatch?3:2
       if(j.output<=0||j.output>max||key!=='food'&&j.output!==max)return 'Invalid reserved production output.'
     }
     if(j.work!==expected.work||!sameRecipe(j.inputs,expected.inputs))return 'Unknown funded Farming bill.'
   }
   if((f.phase==='settling-forager'||f.phase==='complete')&&Object.keys(f.jobs).length)return 'Inactive village cannot own unfinished work.'
-  if(f.phase==='complete'&&!farmingComplete(f))return 'Village completion requires six supported Homes and connections.'
+  if(f.phase==='complete'&&!farmingComplete(f))return 'Village completion requires city-readiness upgrades, six supported Homes and connections.'
   return null
 }

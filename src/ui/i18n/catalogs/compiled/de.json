@@ -5161,6 +5161,18 @@
       "value": "Durchschnittlich zugewiesene Arbeit"
     }
   ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "Künftige Feldernten bringen 20% mehr Nahrung. Nach dem Wasserwerk sinkt die Zunahme des Wohnverfalls um weitere 20%."
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "Wasserwerk errichtet"
+    }
+  ],
   "farming.done": [
     {
       "type": 0,
@@ -5220,7 +5232,7 @@
   "farming.finished": [
     {
       "type": 0,
-      "value": "Sechs unterstützte Häuser und sechs Handelsverbindungen sind aufgebaut. Das Dorf ist abgeschlossen; das nächste Zeitalter ist noch nicht verfügbar."
+      "value": "Sechs bewohnte Häuser, sechs Handelsverbindungen und alle drei Stadtvorbereitungen sind abgeschlossen. Das Dorf ist bereit für die ersten Städte; das nächste Zeitalter ist noch nicht verfügbar."
     }
   ],
   "farming.finite": [
@@ -5331,6 +5343,24 @@
       "value": "Wachstum"
     }
   ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "Künftige Warenchargen erzeugen 3 Waren für 6 Materialien und 63 Arbeitssekunden; bereits bezahlte Chargen behalten ihr ursprüngliches Rezept."
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "Halle, fünf gebaute Häuser und drei Handelsverbindungen"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "Gildenwerkstatt"
+    }
+  ],
   "farming.hall": [
     {
       "type": 0,
@@ -5389,6 +5419,12 @@
       "value": "Kosten pro Zyklus"
     }
   ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "Intensiver Anbau"
+    }
+  ],
   "farming.kiln": [
     {
       "type": 0,
@@ -5423,6 +5459,18 @@
     {
       "type": 0,
       "value": "Baue einen Kornspeicher, um fortzufahren. Gespeicherte Zeit hält hier an und bewahrt den Rest des Vorrats."
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "Künftige Lieferungen benötigen 1.512 Arbeitssekunden und bringen 100 Materialien. Sechs Häuser und sechs Verbindungen schließen die Stadtvorbereitung ab."
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "Intensiver Anbau, Gildenwerkstatt, fünf gebaute Häuser und drei Handelsverbindungen"
     }
   ],
   "farming.missingInputs": [
@@ -5601,6 +5649,12 @@
       "value": "Vorräte"
     }
   ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "Stadtmarkt"
+    }
+  ],
   "farming.travel": [
     {
       "type": 0,
@@ -5634,7 +5688,7 @@
   "farming.weatherHelp": [
     {
       "type": 0,
-      "value": "Ausgewogen senkt Verwitterung um 1/min; Vorräte erhöht sie um 2/min; Wachstum senkt sie um 4/min; Reisen erhöht sie um 4/min. Wasserversorgung senkt Zuwächse um 40%. Bei 75 ist Wohnraum gefährdet; bei 100 verliert ein Haus Versorgung und Verwitterung fällt auf 40."
+      "value": "Ausgewogen senkt den Verfall um 1/min; Vorräte erhöht ihn um 2/min; Wachstum senkt ihn um 4/min; Reisen erhöht ihn um 4/min. Das Wasserwerk senkt Zunahmen um 40%; intensiver Anbau senkt die verbleibende Zunahme um weitere 20%. Bei 75 sind Häuser gefährdet; bei 100 verliert ein Haus seine Bewohner und der Verfall sinkt auf 40."
     }
   ],
   "farming.weathering": [
@@ -5674,7 +5728,15 @@
   "farming.yield": [
     {
       "type": 0,
-      "value": "Eine Lieferung kostet 350 Nahrung und 35 Waren und liefert 80 Materialien sowie eine Verbindung. Sechs Verbindungen schließen dieses Zeitalter ab."
+      "value": "Eine Lieferung kostet 350 Nahrung und 35 Waren und bringt "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " Materialien sowie eine Verbindung. Sechs Verbindungen, sechs bewohnte Häuser und die Stadtvorbereitungen schließen dieses Zeitalter ab."
     }
   ],
   "gameplay.notifications.continue": [
@@ -7075,6 +7137,12 @@
     {
       "type": 0,
       "value": "Verdiene 32 IP, ohne während des gesamten Versuchs Skill-Punkte zurückzugeben oder deinen Build zu ersetzen, auch bei Unendlichkeitsresets."
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "Infinity-Challenges"
     }
   ],
   "pilotChallenges.confirm": [

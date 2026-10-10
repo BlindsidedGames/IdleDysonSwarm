@@ -10017,6 +10017,34 @@
       "value": "‬"
     }
   ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎnʇnɹǝ Ⅎıǝʅps ɥɐɹʌǝsʇs ƃɐıu 20% Ⅎoop. Ԁosıʇıʌǝ ɥonsıuƃ Mǝɐʇɥǝɹıuƃ ɟɐʅʅs qʎ ɐuoʇɥǝɹ 20% ɐɟʇǝɹ Mɐʇǝɹʍoɹʞs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐʇǝɹʍoɹʞs ǝsʇɐqʅısɥǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "farming.done": [
     {
       "type": 0,
@@ -10128,7 +10156,7 @@
     },
     {
       "type": 0,
-      "value": "Sıx snddoɹʇǝp Hoɯǝs ɐup sıx ʇɹɐpǝ ɔouuǝɔʇıous ɐɹǝ ǝsʇɐqʅısɥǝp. ⊥ɥıs ʌıʅʅɐƃǝ ıs ɔoɯdʅǝʇǝ; ʇɥǝ uǝxʇ ɐƃǝ ıs uoʇ ɐʌɐıʅɐqʅǝ ʎǝʇ."
+      "value": "Sıx snddoɹʇǝp Hoɯǝs, sıx ʇɹɐpǝ ɔouuǝɔʇıous ɐup ɐʅʅ ʇɥɹǝǝ ɔıʇʎ-ɹǝɐpıuǝss ndƃɹɐpǝs ɐɹǝ ǝsʇɐqʅısɥǝp. ⊥ɥıs ʌıʅʅɐƃǝ ıs ɹǝɐpʎ ɟoɹ Ⅎıɹsʇ Ↄıʇıǝs; ʇɥǝ uǝxʇ ɐƃǝ ıs uoʇ ɐʌɐıʅɐqʅǝ ʎǝʇ."
     },
     {
       "type": 0,
@@ -10371,6 +10399,48 @@
       "value": "‬"
     }
   ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎnʇnɹǝ ⅁oops qɐʇɔɥǝs dɹopnɔǝ 3 ɟoɹ 6 Wɐʇǝɹıɐʅs ɐup 63 ʍoɹʞǝɹ-sǝɔoups; ɐʅɹǝɐpʎ ɟnupǝp qɐʇɔɥǝs ʞǝǝd ʇɥǝıɹ oɹıƃıuɐʅ ɹǝɔıdǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐʅʅ, ɟıʌǝ Hoɯǝs qnıʅʇ ɐup ʇɥɹǝǝ ʇɹɐpǝ ɔouuǝɔʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁nıʅp Moɹʞsɥod"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "farming.hall": [
     {
       "type": 0,
@@ -10501,6 +10571,20 @@
       "value": "‬"
     }
   ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuʇǝusıʌǝ Ↄnʅʇıʌɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "farming.kiln": [
     {
       "type": 0,
@@ -10579,6 +10663,34 @@
     {
       "type": 0,
       "value": "Ԑnıʅp ɐ ⅁ɹɐuɐɹʎ ʇo ɔouʇıunǝ. Sʇoɹǝp ⊥ıɯǝ sʇods ɥǝɹǝ ɐup ʞǝǝds ʇɥǝ ɹǝɯɐıuıuƃ qɐuʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎnʇnɹǝ sɥıdɯǝuʇs uǝǝp 1,512 ʍoɹʞǝɹ-sǝɔoups ɐup ɹǝʇnɹu 100 Wɐʇǝɹıɐʅs. Sıx Hoɯǝs ɐup sıx ɔouuǝɔʇıous ɟıuısɥ ɔıʇʎ ɹǝɐpıuǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuʇǝusıʌǝ Ↄnʅʇıʌɐʇıou, ⅁nıʅp Moɹʞsɥod, ɟıʌǝ Hoɯǝs qnıʅʇ ɐup ʇɥɹǝǝ ʇɹɐpǝ ɔouuǝɔʇıous"
     },
     {
       "type": 0,
@@ -10969,6 +11081,20 @@
       "value": "‬"
     }
   ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥oʍu Wɐɹʞǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "farming.travel": [
     {
       "type": 0,
@@ -11046,7 +11172,7 @@
     },
     {
       "type": 0,
-      "value": "Ԑɐʅɐuɔǝp ɹǝpnɔǝs Mǝɐʇɥǝɹıuƃ qʎ 1/ɯıu; Snddʅıǝs ɐpps 2/ɯıu; ⅁ɹoʍʇɥ ɹǝpnɔǝs 4/ɯıu; ⊥ɹɐʌǝʅ ɐpps 4/ɯıu. Mɐʇǝɹʍoɹʞs ɔnʇs ıuɔɹǝɐsǝs qʎ 40%. ∀ʇ 75, ɥonsıuƃ ıs ɐʇ ɹısʞ; ɐʇ 100, ouǝ Hoɯǝ ʅosǝs snddoɹʇ ɐup Mǝɐʇɥǝɹıuƃ ɹǝsǝʇs ʇo 40."
+      "value": "Ԑɐʅɐuɔǝp ɹǝpnɔǝs Mǝɐʇɥǝɹıuƃ qʎ 1/ɯıu; Snddʅıǝs ɐpps 2/ɯıu; ⅁ɹoʍʇɥ ɹǝpnɔǝs 4/ɯıu; ⊥ɹɐʌǝʅ ɐpps 4/ɯıu. Mɐʇǝɹʍoɹʞs ɔnʇs ıuɔɹǝɐsǝs qʎ 40%; Iuʇǝusıʌǝ Ↄnʅʇıʌɐʇıou ɔnʇs ʇɥǝ ɹǝɯɐıuıuƃ ıuɔɹǝɐsǝ qʎ ɐuoʇɥǝɹ 20%. ∀ʇ 75, ɥonsıuƃ ıs ɐʇ ɹısʞ; ɐʇ 100, ouǝ Hoɯǝ ʅosǝs snddoɹʇ ɐup Mǝɐʇɥǝɹıuƃ ɹǝsǝʇs ʇo 40."
     },
     {
       "type": 0,
@@ -11134,7 +11260,15 @@
     },
     {
       "type": 0,
-      "value": "∀ sɥıdɯǝuʇ ɔosʇs 350 Ⅎoop ɐup 35 ⅁oops, ʇɥǝu ɹǝʇnɹus 80 Wɐʇǝɹıɐʅs ɐup ouǝ ɔouuǝɔʇıou. Sıx ɔouuǝɔʇıous ɔoɯdʅǝʇǝ ʇɥıs ɐƃǝ."
+      "value": "∀ sɥıdɯǝuʇ ɔosʇs 350 Ⅎoop ɐup 35 ⅁oops, ʇɥǝu ɹǝʇnɹus "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " Wɐʇǝɹıɐʅs ɐup ouǝ ɔouuǝɔʇıou. Sıx ɔouuǝɔʇıous, sıx snddoɹʇǝp Hoɯǝs ɐup ʇɥǝ ɔıʇʎ-ɹǝɐpıuǝss ndƃɹɐpǝs ɔoɯdʅǝʇǝ ʇɥıs ɐƃǝ."
     },
     {
       "type": 0,
@@ -13935,6 +14069,20 @@
     {
       "type": 0,
       "value": "Ǝɐɹu 32 IԀ ʍıʇɥonʇ ɹǝɟnupıuƃ oɹ ɹǝdʅɐɔıuƃ ʎonɹ qnıʅp ʇɥɹonƃɥonʇ ʇɥǝ ɐʇʇǝɯdʇ, ıuɔʅnpıuƃ Iuɟıuıʇʎ ɹǝsǝʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ↄɥɐʅʅǝuƃǝs"
     },
     {
       "type": 0,

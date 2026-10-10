@@ -5161,6 +5161,18 @@
       "value": "Trabajo asignado promedio"
     }
   ],
+  "farming.cultivationEffect": [
+    {
+      "type": 0,
+      "value": "Las futuras cosechas de los campos dan 20% más alimentos. Tras las obras hidráulicas, el aumento del deterioro de las viviendas se reduce otro 20%."
+    }
+  ],
+  "farming.cultivationNeeded": [
+    {
+      "type": 0,
+      "value": "Obras hidráulicas establecidas"
+    }
+  ],
   "farming.done": [
     {
       "type": 0,
@@ -5220,7 +5232,7 @@
   "farming.finished": [
     {
       "type": 0,
-      "value": "Se han establecido seis casas sostenidas y seis conexiones comerciales. La aldea está completa; la siguiente era aún no está disponible."
+      "value": "Hay seis casas habitadas, seis conexiones comerciales y las tres mejoras de preparación urbana. La aldea está lista para las primeras ciudades; la siguiente era aún no está disponible."
     }
   ],
   "farming.finite": [
@@ -5331,6 +5343,24 @@
       "value": "Crecimiento"
     }
   ],
+  "farming.guildEffect": [
+    {
+      "type": 0,
+      "value": "Los futuros lotes producen 3 mercancías por 6 materiales y 63 segundos de trabajo; los lotes ya financiados conservan su receta original."
+    }
+  ],
+  "farming.guildNeeded": [
+    {
+      "type": 0,
+      "value": "Salón, cinco casas construidas y tres conexiones comerciales"
+    }
+  ],
+  "farming.guildWorkshop": [
+    {
+      "type": 0,
+      "value": "Taller del gremio"
+    }
+  ],
   "farming.hall": [
     {
       "type": 0,
@@ -5389,6 +5419,12 @@
       "value": "Costo por ciclo"
     }
   ],
+  "farming.intensiveCultivation": [
+    {
+      "type": 0,
+      "value": "Cultivo intensivo"
+    }
+  ],
   "farming.kiln": [
     {
       "type": 0,
@@ -5423,6 +5459,18 @@
     {
       "type": 0,
       "value": "Construye un granero para continuar. El tiempo almacenado se detiene aquí y conserva el saldo restante."
+    }
+  ],
+  "farming.marketEffect": [
+    {
+      "type": 0,
+      "value": "Los futuros envíos requieren 1,512 segundos de trabajo y devuelven 100 materiales. Seis casas y seis conexiones completan la preparación para las ciudades."
+    }
+  ],
+  "farming.marketNeeded": [
+    {
+      "type": 0,
+      "value": "Cultivo intensivo, taller del gremio, cinco casas construidas y tres conexiones comerciales"
     }
   ],
   "farming.missingInputs": [
@@ -5601,6 +5649,12 @@
       "value": "Suministros"
     }
   ],
+  "farming.townMarket": [
+    {
+      "type": 0,
+      "value": "Mercado urbano"
+    }
+  ],
   "farming.travel": [
     {
       "type": 0,
@@ -5634,7 +5688,7 @@
   "farming.weatherHelp": [
     {
       "type": 0,
-      "value": "Equilibrado reduce deterioro en 1/min; Suministros añade 2/min; Crecimiento reduce 4/min; Viajes añade 4/min. Las obras hidráulicas reducen los aumentos un 40%. A 75, la vivienda está en riesgo; a 100, una casa pierde sostén y el deterioro vuelve a 40."
+      "value": "Equilibrado reduce el deterioro en 1/min; Suministros añade 2/min; Crecimiento reduce 4/min; Viajes añade 4/min. Las obras hidráulicas reducen los aumentos un 40%; el cultivo intensivo reduce otro 20% del aumento restante. A 75, las casas están en riesgo; a 100, una casa pierde sus habitantes y el deterioro vuelve a 40."
     }
   ],
   "farming.weathering": [
@@ -5674,7 +5728,15 @@
   "farming.yield": [
     {
       "type": 0,
-      "value": "Un envío cuesta 350 comida y 35 bienes, y devuelve 80 materiales y una conexión. Seis conexiones completan esta era."
+      "value": "Un envío cuesta 350 alimentos y 35 mercancías, y devuelve "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " materiales y una conexión. Seis conexiones, seis casas habitadas y las mejoras de preparación urbana completan esta era."
     }
   ],
   "gameplay.notifications.continue": [
@@ -7075,6 +7137,12 @@
     {
       "type": 0,
       "value": "Obtén 32 IP sin devolver puntos ni reemplazar tu configuración durante todo el intento, incluidos los reinicios de Infinidad."
+    }
+  ],
+  "pilotChallenges.compactTitle": [
+    {
+      "type": 0,
+      "value": "Desafíos de Infinito"
     }
   ],
   "pilotChallenges.confirm": [

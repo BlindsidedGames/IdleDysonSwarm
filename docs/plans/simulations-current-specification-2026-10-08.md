@@ -918,3 +918,9 @@ records the concrete migration proposal and why changing the prefix alone causes
 public startup to recover older gameplay instead of refusing a future schema.
 No native launch, release, remote push or real-save/cloud write is authorized by
 this status update.
+
+## Approved Farming city readiness and narrow-text correction — 10 October
+
+Matthew approved Intensive Cultivation, Guild Workshop and Town Market, with the sixth Farming Catalyst moved to the extended readiness endpoint and the first five placements unchanged. These projects are now implemented locally using the existing paid-job/automatic-plan system. No grandfathering or compatibility migration for undeployed Farming villages was added. First Cities remains unavailable; explicit completion ends at “More coming soon.” Seventh Forager placement and Farming award banking remain separate unanswered decisions. See [the approved implementation and evidence](../audits/ids-farming-city-readiness-2026-10-10.md).
+
+The corresponding accessibility correction preserves the raised focus styling, dense Research/Bots recipe roles, persistent dock and requested body scale. Focus targets are physically at least 44px; narrow Farming scrolls its era heading with content so enlarged recipes and endpoint actions remain readable. Browser evidence covers actual bounds/reachability and pixels; the earlier screenshot/check count alone was not complete visual acceptance. Native and fluent/screen-reader review remain unverified.
