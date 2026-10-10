@@ -403,7 +403,7 @@ export class TransactionalGameApplication<TState, TCommand>
       }
 
       try {
-        await this.options.repository.commit(prepared, request.target)
+        await this.options.repository.commit(prepared, request.target, request.text)
       } catch (error) {
         this.setSnapshot(previous)
         return {

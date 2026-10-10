@@ -91,7 +91,7 @@ export function createProgressionMatrixFixtures(): readonly ProgressionMatrixFix
 
 /** Current serialization of synthetic/legacy stress profiles; historical public files stay untouched. */
 export function loadCheckedInProgressionMatrixFixtures(): readonly ProgressionMatrixFixture[] {
-  const directory = new URL('../../test/fixtures/progression-rework/', import.meta.url)
+  const directory = new URL('../../test/fixtures/progression-rework-idleds/', import.meta.url)
   const manifest = JSON.parse(readFileSync(new URL('fixture-manifest.json', directory), 'utf8')) as {
     readonly schemaVersion: number
     readonly fixtures: readonly {

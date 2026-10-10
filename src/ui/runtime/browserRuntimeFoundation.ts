@@ -226,6 +226,8 @@ export interface BrowserRuntimeFoundationOptions {
   readonly saveStorage?: SaveStorageAdapter & BrowserLegacyRecoveryStore
   readonly saveRepositoryPaths?: SaveRepositoryPaths
   readonly allowCanonicalPlayerWrites?: boolean
+  /** Deployment hold checked before leases, host ownership and recovery. */
+  readonly savePublicationBlockReason?: string
   readonly indexedDbFactory?: IDBFactory
   /** Deterministic lifecycle orchestration test seam. */
   readonly lifecycle?: LifecycleAdapter
@@ -1465,6 +1467,9 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     this.frontendSnapshots.publishStarting()
     this.publish({ phase: 'starting' })
     try {
+      if (this.options.savePublicationBlockReason !== undefined) {
+        throw new Error(this.options.savePublicationBlockReason)
+      }
       const acquisition = await this.lease.acquire()
       if (this.shutdownRequested) {
         await this.teardownPromise
@@ -1625,6 +1630,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       {
         allowCanonicalPlayerWrites:
           this.options.allowCanonicalPlayerWrites === true,
+        publicationBlockReason: this.options.savePublicationBlockReason,
       },
       this.options.automaticPurchaseEvidencePromoter,
       this.options.automaticNumberFormattingAdopter,

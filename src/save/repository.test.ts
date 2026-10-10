@@ -1,4 +1,6 @@
 import { readFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { gzipSync } from 'fflate'
 import { describe, expect, test, vi } from 'vitest'
 import { decodeIdb1SaveRoot } from './decodeIdb1'
 import { prepareImportedSaveText } from './import'
@@ -77,6 +79,64 @@ class MemoryStorage implements SaveStorageAdapter {
 }
 
 describe('portable transactional save repository', () => {
+  test('archives exact public bytes before one-way replacement and reuses them after interruption', async () => {
+    const storage = new MemoryStorage()
+    const old = PreparedSave.fromDecoded({ saveVersion: 12, checkpointMarker: 'public', offlineTime: 600 }).copyState()
+    old.saveVersion = 20
+    const text = `IDSWEB1:${Buffer.from(gzipSync(new TextEncoder().encode(JSON.stringify({
+      format: 'IDSWEB1', schema: 20, state: old,
+    }, (_key, value) => typeof value === 'bigint' ? { $bigint: String(value) } : value)))).toString('base64')}`
+    storage.files.set('/current', text)
+    const repository = new PortableSaveRepository(storage, {
+      current: '/current', temporary: '/current.tmp', legacyRecovery: '/legacy',
+    }, decodeIdb1SaveRoot)
+    const source = (await repository.loadCurrent())!
+    const archive = `/legacy.one-way/${createHash('sha256').update(text).digest('hex')}.source.txt`
+    storage.failAt = 'replace'
+    await expect(repository.commit(source)).rejects.toThrow('atomic replace failed')
+    expect(storage.files.get('/current')).toBe(text)
+    expect(storage.files.get(archive)).toBe(text)
+    const archiveWrites = vi.spyOn(storage, 'writeText')
+    storage.failAt = null
+    await repository.commit(source)
+    expect(storage.files.get('/current')).toMatch(/^IDLEDS:/)
+    expect((await repository.loadCurrent())!.copyState()).toMatchObject({ saveVersion: 21, checkpointMarker: 'public', offlineTime: 600 })
+    expect(archiveWrites.mock.calls.some(([path]) => path === archive)).toBe(false)
+    await repository.commit((await repository.loadCurrent())!)
+    expect(storage.files.get(archive)).toBe(text)
+  })
+
+  test('refuses conversion when retained archive verification fails', async () => {
+    const storage = new MemoryStorage()
+    const text = readFileSync(fixtureUrl, 'utf8')
+    const archive = `/legacy.one-way/${createHash('sha256').update(text).digest('hex')}.source.txt`
+    storage.files.set(archive, 'damaged archive')
+    const repository = new PortableSaveRepository(storage, {
+      current: '/current', temporary: '/current.tmp', legacyRecovery: '/legacy',
+    }, decodeIdb1SaveRoot)
+    await expect(repository.commit(PreparedSave.fromDecoded(decodeIdb1SaveRoot(text)), 'development', text))
+      .rejects.toThrow('One-way migration archive verification failed')
+    expect(storage.files.has('/current')).toBe(false)
+    expect(storage.files.has('/current.tmp')).toBe(false)
+    expect(storage.files.get(archive)).toBe('damaged archive')
+  })
+
+  test('blocks shared namespace before discovery, recovery writes or checkpoint publication', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', 'unrecognized future format')
+    const write = vi.spyOn(storage, 'writeText'), copy = vi.spyOn(storage, 'copy')
+    const discover = vi.spyOn(storage, 'discoverLegacyCandidates')
+    const repository = new PortableSaveRepository(storage, {
+      current: '/current', temporary: '/current.tmp', legacyRecovery: '/legacy',
+    }, decodeIdb1SaveRoot, { allowCanonicalPlayerWrites: true, publicationBlockReason: 'Isolation awaiting approval' })
+    await expect(repository.migrateLegacyOnFirstLaunch()).rejects.toThrow('Isolation awaiting approval')
+    await expect(repository.commit(PreparedSave.fromDecoded({ saveVersion: 12 }))).rejects.toThrow('Isolation awaiting approval')
+    expect(write).not.toHaveBeenCalled()
+    expect(copy).not.toHaveBeenCalled()
+    expect(discover).not.toHaveBeenCalled()
+    expect(storage.files.get('/current')).toBe('unrecognized future format')
+  })
+
   test('checkpoints publish the exact validated state without replaying migration', async () => {
     const base = PreparedSave.fromDecoded(decodeIdb1SaveRoot(readFileSync(fixtureUrl, 'utf8')))
     const state = base.copyValidatedState()
@@ -179,12 +239,14 @@ describe('portable transactional save repository', () => {
     expect(storage.files.get('/recovery/original-idb1.txt')).toBe(
       lowercase,
     )
-    expect(storage.files.get('/current')).toMatch(/^IDSWEB1:/)
-    expect((await repository.loadCurrent())?.targetSchema).toBe(20)
+    expect(storage.files.get('/current')).toMatch(/^IDLEDS:/)
+    expect((await repository.loadCurrent())?.targetSchema).toBe(21)
   })
 
   test('migrates once, atomically promotes, and preserves the Odin source', async () => {
     const storage = new MemoryStorage()
+    const priorRecovery = readFileSync(fixtureUrl, 'utf8')
+    storage.files.set('/recovery/original-idb1.txt', priorRecovery)
     storage.files.set('/legacy', 'IDB1:test')
     storage.candidates = [
       { id: 'canonical-unity', sourcePath: '/legacy', text: 'IDB1:test' },
@@ -206,6 +268,8 @@ describe('portable transactional save repository', () => {
       ['/legacy', '/recovery/original-idb1.txt'],
     ])
     expect(storage.files.get('/legacy')).toBe('IDB1:test')
+    const archive = `/recovery/original-idb1.txt.one-way/${createHash('sha256').update(priorRecovery).digest('hex')}.source.txt`
+    expect(storage.files.get(archive)).toBe(priorRecovery)
 
     const second = await repository.migrateLegacyOnFirstLaunch()
     expect(second.status).toBe('already-migrated')
@@ -486,7 +550,7 @@ describe('portable transactional save repository', () => {
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
       .toMatchObject({ status: 'migrated' })
-    expect(storage.files.get('/current')).toMatch(/^IDSWEB1:/)
+    expect(storage.files.get('/current')).toMatch(/^IDLEDS:/)
     expect(visibilityAdopter.adoptLegacyUnityHidePurchased)
       .toHaveBeenCalledExactlyOnceWith(false)
   })
@@ -538,15 +602,15 @@ describe('portable transactional save repository', () => {
 
     const prepared = await repository.loadCurrent()
     expect(prepared).not.toBeNull()
-    expect(prepared?.targetSchema).toBe(20)
-    expect(prepared?.copyState().saveVersion).toBe(20)
+    expect(prepared?.targetSchema).toBe(21)
+    expect(prepared?.copyState().saveVersion).toBe(21)
   })
 
   test('rejects a future-schema current save before publication', async () => {
     const storage = new MemoryStorage()
     storage.files.set(
       '/current',
-      serializeWebSave({ saveVersion: 21 }),
+      serializeWebSave({ saveVersion: 22 }),
     )
     const repository = new PortableSaveRepository(
       storage,
@@ -782,7 +846,7 @@ describe('portable transactional save repository', () => {
       sourceClass: 'unity-persistent-data-save',
       opaqueSourceIdentifier: 'canonical-unity',
       pathClass: 'unity-local-low',
-      saveSchemaVersion: 20,
+      saveSchemaVersion: 21,
       contentSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
     })])
   })
@@ -1682,7 +1746,7 @@ describe('portable transactional save repository', () => {
     storage.files.set('/current', '{')
     storage.files.set(
       '/current.backup.1',
-      serializeWebSave({ saveVersion: 21 }),
+      serializeWebSave({ saveVersion: 22 }),
     )
     storage.files.set(
       '/current.backup.2',
@@ -1778,7 +1842,7 @@ describe('portable transactional save repository', () => {
 
   test('stops fallback when the current save has a future schema', async () => {
     const storage = new MemoryStorage()
-    storage.files.set('/current', serializeWebSave({ saveVersion: 21 }))
+    storage.files.set('/current', serializeWebSave({ saveVersion: 22 }))
     storage.files.set('/legacy', 'good')
     storage.candidates = [
       { id: 'legacy', sourcePath: '/legacy', text: 'good' },
@@ -1816,7 +1880,7 @@ describe('portable transactional save repository', () => {
         temporary: '/current.tmp',
         legacyRecovery: '/recovery/original-idb1.txt',
       },
-      (text) => ({ saveVersion: text === 'future' ? 21 : 12 }),
+      (text) => ({ saveVersion: text === 'future' ? 22 : 12 }),
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({

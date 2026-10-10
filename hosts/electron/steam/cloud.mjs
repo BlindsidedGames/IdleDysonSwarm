@@ -5,6 +5,7 @@ import { createHash, randomUUID } from 'node:crypto'
 const hash = text => createHash('sha256').update(text).digest('hex')
 const maximumBytes = 32*1024*1024
 function validateSnapshot(text) {
+  if (typeof text === 'string' && text.startsWith('IDLEDS:')) throw new Error('IDLEDS Cloud publication requires an approved isolated account namespace')
   if (typeof text !== 'string' || !text.startsWith('IDSWEB1:') || Buffer.byteLength(text) > maximumBytes) throw new Error('Invalid portable Cloud snapshot')
 }
 async function rejectLinks(path) {

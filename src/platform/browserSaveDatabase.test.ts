@@ -38,6 +38,27 @@ const repositoryPaths = {
 } as const
 
 describe('IndexedDbBrowserSaveDatabase', () => {
+  test('holds deployed production startup before opening the shared database', async () => {
+    const harness = new HarnessIndexedDbFactory()
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: { querySelectorAll: () => [] },
+      lifecycleClock: fixedLifecycleClock(),
+      monotonicClock: { nowMilliseconds: () => 0 },
+      createRuntime: options => createBrowserRuntimeFoundation({
+        ...options,
+        indexedDbFactory: harness.asFactory(),
+        ownerToken: 'held-production', autoHeartbeat: false,
+        lifecycle: backgroundLifecycle(), activeTimeScheduler: idleFrameScheduler,
+        storageManager: durableStorageManager,
+      }),
+    })
+    await expect(composition.runtime.start()).resolves.toMatchObject({
+      phase: 'blocked', reason: expect.stringContaining('isolated rework storage'),
+    })
+    expect(harness.requestLog).toEqual([])
+    await composition.runtime.shutdown()
+  })
+
   test('retains the deployed schema-13 browser backup namespace for recovery', () => {
     expect(PRODUCTION_BROWSER_SAVE_PATHS.retainedRecoverySources).toEqual([
       '/development-only/development-only-default-profile/recovery/import-original.idsw',
@@ -490,6 +511,8 @@ describe('IndexedDbBrowserSaveDatabase', () => {
         createRuntime: (options) =>
           createBrowserRuntimeFoundation({
             ...options,
+            // Disposable in-memory IDB certification; production remains held.
+            savePublicationBlockReason: undefined,
             createApplication: (repository) => {
               const application = options.createApplication(repository)
               if (!gateCheckpoint) return application
@@ -738,6 +761,8 @@ describe('IndexedDbBrowserSaveDatabase', () => {
         createRuntime: (options) =>
           createBrowserRuntimeFoundation({
             ...options,
+            // Disposable in-memory IDB certification; production remains held.
+            savePublicationBlockReason: undefined,
             indexedDbFactory: harness.asFactory(),
             ownerToken,
             autoHeartbeat: false,
@@ -848,6 +873,8 @@ describe('IndexedDbBrowserSaveDatabase', () => {
         createRuntime: (options) =>
           createBrowserRuntimeFoundation({
             ...options,
+            // Disposable in-memory IDB certification; production remains held.
+            savePublicationBlockReason: undefined,
             indexedDbFactory: harness.asFactory(),
             ownerToken,
             autoHeartbeat: false,

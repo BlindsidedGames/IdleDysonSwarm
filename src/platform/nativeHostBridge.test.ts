@@ -305,6 +305,8 @@ describe('native host bootstrap boundary', () => {
           createRuntime: (options) =>
             createBrowserRuntimeFoundation({
               ...options,
+              // Isolated synthetic bridge; deployed host remains held.
+              savePublicationBlockReason: undefined,
               activeTimeScheduler: {
                 requestFrame: () => 1,
                 cancelFrame: () => undefined,
@@ -391,6 +393,8 @@ describe('native host bootstrap boundary', () => {
           createRuntime: (options) =>
             createBrowserRuntimeFoundation({
               ...options,
+              // Isolated synthetic bridge; deployed host remains held.
+              savePublicationBlockReason: undefined,
               developmentControlsAvailable: true,
               developmentControlsRequireEntitlement: false,
               activeTimeScheduler: {

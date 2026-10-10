@@ -21,8 +21,10 @@ import {
   TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
 } from './transitionalV2Retirement'
 
-const WEB_SAVE_FORMAT = 'IDSWEB1'
+const WEB_SAVE_FORMAT = 'IDLEDS'
 const WEB_SAVE_PREFIX = `${WEB_SAVE_FORMAT}:`
+const LEGACY_WEB_SAVE_FORMAT = 'IDSWEB1'
+const LEGACY_WEB_SAVE_PREFIX = `${LEGACY_WEB_SAVE_FORMAT}:`
 const MAXIMUM_DECODE_DEPTH = 128
 const MAXIMUM_DECODE_CONTAINERS = 100_000
 const MAXIMUM_DECODE_ENTRIES = 250_000
@@ -127,7 +129,7 @@ export function deserializeWebSaveBounded(
 }
 
 /**
- * Performs the bounded IDSWEB1 transport decode exactly once and classifies
+ * Performs the bounded IDLEDS or historical IDSWEB1 decode once and classifies
  * the parsed envelope before applying the canonical value codec. Historical
  * schema adapters can consume the unsupported parsed envelope without a
  * second synchronous base64/gzip/CRC/JSON pass.
@@ -138,15 +140,21 @@ export function decodeWebSaveTextBounded(
 ): DecodedWebSaveText {
   assertSuppliedSaveTextLimit(text, limits)
   const trimmed = text.trim()
-  const json = trimmed.toUpperCase().startsWith(WEB_SAVE_PREFIX)
+  const prefix = [WEB_SAVE_PREFIX, LEGACY_WEB_SAVE_PREFIX].find(
+    (candidate) => trimmed.toUpperCase().startsWith(candidate),
+  )
+  const json = prefix !== undefined
     ? decodeCompressedEnvelope(
-        trimmed.slice(WEB_SAVE_PREFIX.length),
+        trimmed.slice(prefix.length),
         limits,
       )
     : trimmed
   const parsed = parseBoundedJsonText(json)
   const envelope = requireRecord(parsed, 'web save envelope')
-  if (envelope.format !== WEB_SAVE_FORMAT) {
+  if (
+    envelope.format !== WEB_SAVE_FORMAT &&
+    envelope.format !== LEGACY_WEB_SAVE_FORMAT
+  ) {
     return Object.freeze({
       kind: 'unsupported-envelope',
       envelope,
@@ -154,6 +162,9 @@ export function decodeWebSaveTextBounded(
         `Unsupported web save envelope ${String(envelope.format)}.`,
       ),
     })
+  }
+  if (prefix !== undefined && prefix !== `${envelope.format}:`) {
+    throw new Error('Web save transport prefix does not match its envelope format.')
   }
   if (!isNonNegativeInteger(envelope.schema)) {
     throw new Error('Canonical web save envelope has an invalid schema.')
@@ -482,7 +493,7 @@ function gunzipBounded(compressed: Uint8Array, limitBytes: number): Uint8Array {
       'Canonical web save gzip output does not match its advertised size.',
     )
   }
-  assertGzipTrailerIntegrity(compressed, output, 'IDSWEB1 payload')
+  assertGzipTrailerIntegrity(compressed, output, 'Canonical web save payload')
   return output
 }
 

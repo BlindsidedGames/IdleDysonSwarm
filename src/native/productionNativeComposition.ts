@@ -4,9 +4,8 @@ import {
 import type {
   CanonicalLifecycleClock,
 } from '../application/canonicalLifecycleCoordinator'
-import {
-  unityFirstRunProvenance,
-} from '../application/firstRun/unityFirstRunSave'
+import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
+import { REWORK_PUBLICATION_BLOCK_REASON } from '../save/reworkPublicationPolicy'
 import {
   createProductionUnityFirstRunSaveFactory,
   createUnityFirstRunResetRequest,
@@ -128,6 +127,7 @@ export function createProductionNativeComposition(
     }),
     saveRepositoryPaths: NATIVE_WEB_SAVE_PATHS,
     allowCanonicalPlayerWrites: true,
+    savePublicationBlockReason: REWORK_PUBLICATION_BLOCK_REASON,
     lifecycle: environment.lifecycle,
     lifecycleClock,
     activeTimeClock: monotonicClock,
@@ -180,7 +180,7 @@ export function createProductionNativeComposition(
       : 'mobile-native',
     runtime,
     releasePlatformServices: services,
-    saveSchemaVersion: unityFirstRunProvenance.saveSchema,
+    saveSchemaVersion: CURRENT_SAVE_SCHEMA,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
     resetSave: () => runtime.importSave(

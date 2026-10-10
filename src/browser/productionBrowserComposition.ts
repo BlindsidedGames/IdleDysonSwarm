@@ -9,6 +9,7 @@ import {
   createUnityFirstRunResetRequest,
 } from '../application/firstRun/productionFirstRun'
 import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
+import { REWORK_PUBLICATION_BLOCK_REASON } from '../save/reworkPublicationPolicy'
 import {
   BrowserLifecycleUtcClock,
   BrowserMonotonicClock,
@@ -151,6 +152,7 @@ export function createProductionBrowserComposition(
     profileId: PRODUCTION_BROWSER_PROFILE_ID,
     saveRepositoryPaths: PRODUCTION_BROWSER_SAVE_PATHS,
     allowCanonicalPlayerWrites: true,
+    savePublicationBlockReason: REWORK_PUBLICATION_BLOCK_REASON,
     lifecycleClock,
     activeTimeClock: monotonicClock,
     nowUtcMilliseconds: () =>
